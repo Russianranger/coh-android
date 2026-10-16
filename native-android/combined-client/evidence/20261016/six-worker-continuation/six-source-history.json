@@ -1,0 +1,23 @@
+{
+  "canonical_recovery_bundle": true,
+  "purpose": "Self-contained exact six-worker commit histories from the actual published baseline; use instead of incremental coordinator bundles with local-only prerequisites.",
+  "prerequisite": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "worker_tips": {
+    "a": "edb7c1413b2eff4c8ac97d39775d7956de723305",
+    "b": "232d0f2371f6be978fae264c6652fb45cb4b3a99",
+    "c": "aa842acb1c5ebb1bf1e98c94b11248f17cf86218",
+    "d": "06c256f771d0b2b794e53b444839f99e455ae397",
+    "e": "78c9c2ffa0f9c11c38d2084c9777fd88fe4054ee",
+    "f": "bc3cb4ca2954ff8fc02a843d9ec9b173b5ef6643"
+  },
+  "bundle_refs": [
+    "refs/coordinator/recovery-six/a-edb7c1413b2e",
+    "refs/coordinator/recovery-six/b-232d0f2371f6",
+    "refs/coordinator/recovery-six/c-aa842acb1c5e",
+    "refs/coordinator/recovery-six/d-06c256f771d0",
+    "refs/coordinator/recovery-six/e-78c9c2ffa0f9",
+    "refs/coordinator/recovery-six/f-bc3cb4ca2954"
+  ],
+  "bytes": 658496,
+  "sha256": "32da5c492d67c84dd9dc45f002f9244abdebdbf47647224ba14eab791f2a727b"
+}

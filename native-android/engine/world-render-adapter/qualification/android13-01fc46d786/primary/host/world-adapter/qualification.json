@@ -1,0 +1,169 @@
+{
+  "module": "world-render-adapter",
+  "source_revision": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+  "source_tree": "c47ad370bfeb09e708e650c3e509e441b54cbff5",
+  "clean_worktree_before": true,
+  "tracked_changes_before": [],
+  "untracked_source_inputs": [],
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/coh_world_render.h": "78f569a6b556d4104b45bed10ecae2f50de3b976abb688286ba7fbac415884c5",
+    "native-android/engine/world-render-adapter/coh_world_render.c": "ce136724a5050fdef054126ad503962fe2e99e1e810edbd343243965e7db771c",
+    "native-android/engine/world-render-adapter/tests/test_world_render.c": "bb46f7596c24e4a668ca928f35a08703c858ee33108bea49359ef3505d220cac",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/engine/world-render-adapter/check.py": "c729cff4d93d835fb4105a51b9438d210aabfaf72c26e2a52cc743452c474c58",
+    "native-android/engine/world-render-adapter/source-pins.json": "6ed7a03f039859ab8f63163ba2884cdc8db96a6e12fa6b4e9b3114b93ab0a42f",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+  },
+  "fixture_only": true,
+  "authentic_server_interoperability": false,
+  "physical_thor_accepted": false,
+  "android_emulator_qualified": false,
+  "limits": {
+    "aggregate_owned_and_reserved_bytes": 100663296,
+    "draws": 4096,
+    "vertices_per_draw": 65536,
+    "indices_per_draw": 196608
+  },
+  "prerequisites_available": false,
+  "scope": "Immutable CPU adapter/source-matrix/lifecycle contracts only; no real world render",
+  "source_oracle": {
+    "sha256": {
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+    },
+    "function": "mulMat44Inline",
+    "function_sha256_lf": "91693f88d89c57569456361e0744169cc279fb04debc2257f04c48896621a297",
+    "unchanged_original_function_executed": true,
+    "server_executed": false
+  },
+  "fixtures_sha256": {
+    "original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252"
+  },
+  "host": {
+    "passed": true,
+    "checks": 16745,
+    "original_matrix_cases": 512,
+    "bounded_mutations": 5000,
+    "published_generations": 2000,
+    "concurrent_readers": 3,
+    "max_draws_tested": 4096,
+    "render_allocations": 0,
+    "render_frees": 0,
+    "fixture_only": true,
+    "authentic_world_entry": false
+  },
+  "address": {
+    "passed": true,
+    "checks": 16745,
+    "original_matrix_cases": 512,
+    "bounded_mutations": 5000,
+    "published_generations": 2000,
+    "concurrent_readers": 3,
+    "max_draws_tested": 4096,
+    "render_allocations": 0,
+    "render_frees": 0,
+    "fixture_only": true,
+    "authentic_world_entry": false
+  },
+  "undefined": {
+    "passed": true,
+    "checks": 16745,
+    "original_matrix_cases": 512,
+    "bounded_mutations": 5000,
+    "published_generations": 2000,
+    "concurrent_readers": 3,
+    "max_draws_tested": 4096,
+    "render_allocations": 0,
+    "render_frees": 0,
+    "fixture_only": true,
+    "authentic_world_entry": false
+  },
+  "leak_sanitizer": {
+    "executed": false,
+    "reason": "LSan /proc task inspection is unavailable in traced executor; ASan remains enabled. Exact budget release/retirement tests passed."
+  },
+  "android_builds": {
+    "arm64-v8a": {
+      "passed": true,
+      "abi": "arm64-v8a",
+      "api": 26,
+      "executed": false,
+      "binary": "world-render-adapter-test",
+      "binary_sha256": "c509cd378a161d1de75c0c9bf2b241ca6df3d561a7d3874fcedd715882f8b790",
+      "source_revision": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+      "source_tree": "c47ad370bfeb09e708e650c3e509e441b54cbff5",
+      "source_sha256": {
+        "native-android/engine/world-render-adapter/coh_world_render.h": "78f569a6b556d4104b45bed10ecae2f50de3b976abb688286ba7fbac415884c5",
+        "native-android/engine/world-render-adapter/coh_world_render.c": "ce136724a5050fdef054126ad503962fe2e99e1e810edbd343243965e7db771c",
+        "native-android/engine/world-render-adapter/tests/test_world_render.c": "bb46f7596c24e4a668ca928f35a08703c858ee33108bea49359ef3505d220cac",
+        "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+        "native-android/engine/world-render-adapter/check.py": "c729cff4d93d835fb4105a51b9438d210aabfaf72c26e2a52cc743452c474c58",
+        "native-android/engine/world-render-adapter/source-pins.json": "6ed7a03f039859ab8f63163ba2884cdc8db96a6e12fa6b4e9b3114b93ab0a42f",
+        "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+        "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+      },
+      "fixtures_sha256": {
+        "original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252"
+      },
+      "expected_native_result": {
+        "passed": true,
+        "checks": 16745,
+        "original_matrix_cases": 512,
+        "bounded_mutations": 5000,
+        "published_generations": 2000,
+        "concurrent_readers": 3,
+        "max_draws_tested": 4096,
+        "render_allocations": 0,
+        "render_frees": 0,
+        "fixture_only": true,
+        "authentic_world_entry": false
+      }
+    },
+    "x86_64": {
+      "passed": true,
+      "abi": "x86_64",
+      "api": 26,
+      "executed": false,
+      "binary": "world-render-adapter-test",
+      "binary_sha256": "089c75aff4c8b514bf12b18ec1c0f515c34b766fdb53953dc740c28bddfdaaec",
+      "source_revision": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+      "source_tree": "c47ad370bfeb09e708e650c3e509e441b54cbff5",
+      "source_sha256": {
+        "native-android/engine/world-render-adapter/coh_world_render.h": "78f569a6b556d4104b45bed10ecae2f50de3b976abb688286ba7fbac415884c5",
+        "native-android/engine/world-render-adapter/coh_world_render.c": "ce136724a5050fdef054126ad503962fe2e99e1e810edbd343243965e7db771c",
+        "native-android/engine/world-render-adapter/tests/test_world_render.c": "bb46f7596c24e4a668ca928f35a08703c858ee33108bea49359ef3505d220cac",
+        "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+        "native-android/engine/world-render-adapter/check.py": "c729cff4d93d835fb4105a51b9438d210aabfaf72c26e2a52cc743452c474c58",
+        "native-android/engine/world-render-adapter/source-pins.json": "6ed7a03f039859ab8f63163ba2884cdc8db96a6e12fa6b4e9b3114b93ab0a42f",
+        "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+        "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+      },
+      "fixtures_sha256": {
+        "original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252"
+      },
+      "expected_native_result": {
+        "passed": true,
+        "checks": 16745,
+        "original_matrix_cases": 512,
+        "bounded_mutations": 5000,
+        "published_generations": 2000,
+        "concurrent_readers": 3,
+        "max_draws_tested": 4096,
+        "render_allocations": 0,
+        "render_frees": 0,
+        "fixture_only": true,
+        "authentic_world_entry": false
+      }
+    }
+  },
+  "clean_worktree_after": true,
+  "tracked_changes_after": [],
+  "source_inputs_unchanged": true,
+  "passed": true
+}

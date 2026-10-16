@@ -105,9 +105,10 @@ the existing native probe/source-oracle qualification retains its own scope.
    `cohauth.sql`'s two known conversion differences are expected refusals. Review
    stored procedure bodies and execute driver-level positive/negative controls
    in the disposable environment before qualifying conversions; do not silence
-   the refusal or narrow procedure outputs without evidence. The new hosted
-   original-function ODBC harness is supplied as an execution candidate, with
-   actual Windows/ODBC execution still pending.
+   the refusal or narrow procedure outputs without evidence. The hosted
+   original-function ODBC harness passed in run 38948147656 for its exact
+   source/schema, x86 ODBC17 and LocalDB17.0.4025.3 profile. Other driver/schema
+   profiles and full AuthServer service behavior require separate evidence.
 5. Record actual `Encrypt`, `DesApply`, supported `ProtocolVersion`, nonqueued
    list policy, explicit `UseFakeAuth 0`, version and approved checksum policy.
    Disable packet dumps and verbose/debug logging that can include secrets.
@@ -127,7 +128,10 @@ the existing native probe/source-oracle qualification retains its own scope.
 The hosted image inventory makes a fresh source-bound AuthServer build and
 disposable LocalDB experiment feasible; exact public evidence, commands and
 remaining account/probe/DbServer requirements are in `HOSTED-STAGING.md`.
-This Linux environment cannot execute that Windows stage. ODBC conversions,
-original missing-account behavior and real checksum policy remain unqualified.
+Hosted run 38948147656 qualified the documented original x86 ODBC conversions and
+absent-account controls against its exact disposable LocalDB/ODBC17 profile;
+the AuthServer binary remained unexecuted. The metadata-only admission tool still
+does not infer driver compatibility. Real service checksum enforcement, encrypted
+account login and authenticated handoff remain unqualified.
 No listeners were probed. Rollback is omission of this additive tooling; no
 APK, database, profile or active server was changed.

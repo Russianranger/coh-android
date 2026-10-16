@@ -1,0 +1,11 @@
+native-android/engine/scenegraph/coh_scene_lookup.c:49:17:find_file	8	static
+native-android/engine/scenegraph/coh_scene_lookup.c:70:13:copy_string	32	static
+native-android/engine/scenegraph/coh_scene_lookup.c:40:15:base_length	16	static
+native-android/engine/scenegraph/coh_scene_lookup.c:35:12:binding_equal	8	static
+native-android/engine/scenegraph/coh_scene_lookup.c:54:18:insert	96	static
+native-android/engine/scenegraph/coh_scene_lookup.c:71:11:coh_sg_lookup_build	480	static
+native-android/engine/scenegraph/coh_scene_lookup.c:146:11:coh_sg_lookup_publish	24	static
+native-android/engine/scenegraph/coh_scene_lookup.c:153:6:coh_sg_lookup_free	8	static
+native-android/engine/scenegraph/coh_scene_lookup.c:154:8:coh_sg_lookup_owned_bytes	8	static
+native-android/engine/scenegraph/coh_scene_lookup.c:155:11:coh_sg_lookup_find	2560	static
+native-android/engine/scenegraph/coh_scene_lookup.c:184:11:coh_sg_lookup_asset_matches	8	static

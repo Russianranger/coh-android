@@ -1,0 +1,121 @@
+{
+  "run": 38948147675,
+  "kind": "primary",
+  "source_revision": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+  "source_tree": "c47ad370bfeb09e708e650c3e509e441b54cbff5",
+  "host_artifact": 12067283273,
+  "host_archive_sha256": "68b7ec0934a779f7d3f4f4f9de3d3ff8c38c8abe8f6b2059bda2f469f39ef102",
+  "android_artifact": 12067158877,
+  "android_archive_sha256": "d6c7dcc847ea3f53e857fae9478a2d6e1f10303f9b58ab57c0e4c66dd07999fa",
+  "host_qualification_sha256": "1bc5a5cb2f3a35273a4e522165e54a14ef5cd44f64f3b471aac2a24dbbfe86a8",
+  "manifest_sha256": "e1e987195ed3a451434042e2234f278525a275a58a4798bf82fd8b7a1c151423",
+  "android_receipt_sha256": "889111e615b80a231861fe10bd31f384e72df23e3678bee9454ef0cdb0e50fad",
+  "suites": {
+    "auth-interop": {
+      "checks": 2147,
+      "declared_source_byte_maps_verified": true,
+      "host_sanitizers_android_equal": true,
+      "builds": {
+        "arm64-v8a": {
+          "binary_sha256": "e4887e4241247493c6e913182ee6d825cef84d073c4536ccd31823c21725efea",
+          "receipt_sha256": "8f9146a684364881fa62a9226f27fad85af59036561c30a2eef40b061ddb39d1",
+          "bytes": 15888,
+          "executed": false
+        },
+        "x86_64": {
+          "binary_sha256": "f8de181ad74bd23ca2c05475279bd26f7395a276fdcfa4f399ffd23c7cd5d0c1",
+          "receipt_sha256": "05ea15a66cb16de0c0b7940131f2b2ee19849aed7f65336b519f6e9a43cef7dc",
+          "bytes": 15600,
+          "executed": true
+        }
+      }
+    },
+    "entities": {
+      "checks": 2065314,
+      "declared_source_byte_maps_verified": true,
+      "host_sanitizers_android_equal": true,
+      "builds": {
+        "arm64-v8a": {
+          "binary_sha256": "057c7dc49b9efad6538e328f8449fad05cd949290c2bbc63d6d4e1fd16a5441e",
+          "receipt_sha256": "18eb0bc83907b581d55cf39286fa93549ee9e39bc105a429feabe74b70107163",
+          "bytes": 568304,
+          "executed": false
+        },
+        "x86_64": {
+          "binary_sha256": "9a98edc7f717d3f52d1440473a09ad4537b7ce3739fd96e491d9344c9936f283",
+          "receipt_sha256": "1f31540ebe16176e7d1ad1b2e0b1aae762007c672a0c28175c0bd117edd6f1f1",
+          "bytes": 579072,
+          "executed": true
+        }
+      },
+      "fixtures_sha256": "393a258778fbf54941d5279dca40fafc54a0ab9af5ef561a5af8fcf7b13cac87",
+      "costume_fixtures_sha256": "d24e016f82b795312ed2842f554139e110d44cbdc2095fd424e330ea5a5eca6a"
+    },
+    "entity-control": {
+      "checks": 667138,
+      "declared_source_byte_maps_verified": true,
+      "host_sanitizers_android_equal": true,
+      "builds": {
+        "arm64-v8a": {
+          "binary_sha256": "a17a68da40b5a448f78f79653edb9ff860b0750fdca01843debafdc966f04107",
+          "receipt_sha256": "ede75310aeb69001515b252382751d13e9d80830eca769495d663e7a43881a29",
+          "bytes": 203744,
+          "executed": false
+        },
+        "x86_64": {
+          "binary_sha256": "c35c5df6c74cfd306612681e4cc3a95d0755655c96febea17e4788c23cf67d32",
+          "receipt_sha256": "efe4501866b1272a3b44d23c8bcd8f8b2947afd96c69807332d8a0985826f020",
+          "bytes": 207376,
+          "executed": true
+        }
+      },
+      "fixtures_sha256": "9792a5632ab876dc88832a88cb5af8bb912bebf789991bbdf9cff59936a5a7e5"
+    },
+    "scenegraph": {
+      "checks": 193219,
+      "declared_source_byte_maps_verified": true,
+      "host_sanitizers_android_equal": true,
+      "builds": {
+        "arm64-v8a": {
+          "binary_sha256": "a1c7efe1f9e6ddc9bfe33fc0f3ed5b6323011da4a4d33f9935427636e7b5a678",
+          "receipt_sha256": "c5bcc2230acecb48d92eda9de59caec8e5964cc2e0ba35ee494562f963d9cd9c",
+          "bytes": 2411896,
+          "executed": false
+        },
+        "x86_64": {
+          "binary_sha256": "1c89d2d7477bd66f67dd61cd48881629f0e5ca8fec3f2ab1aaf5c08b70694be7",
+          "receipt_sha256": "391b390f65295a7d6acbc5bc98ae296d986d756385d45bd574728979f72a5333",
+          "bytes": 2417504,
+          "executed": true
+        }
+      },
+      "fixtures_sha256": "dad0fd05854873bdbf10830dd2f165425d8b34e0933f9edc20e17a3b25d75390"
+    },
+    "world-adapter": {
+      "checks": 16745,
+      "declared_source_byte_maps_verified": true,
+      "host_sanitizers_android_equal": true,
+      "builds": {
+        "arm64-v8a": {
+          "binary_sha256": "c509cd378a161d1de75c0c9bf2b241ca6df3d561a7d3874fcedd715882f8b790",
+          "receipt_sha256": "ec9b3843997b0730643d48bb913456dfc4b353d9e23c466e2fc69c47c8e769bb",
+          "executed": false
+        },
+        "x86_64": {
+          "binary_sha256": "089c75aff4c8b514bf12b18ec1c0f515c34b766fdb53953dc740c28bddfdaaec",
+          "receipt_sha256": "d2006379bb08fef1b0ec04014cbb4468026ffa677245f5033a7e44802a81236b",
+          "executed": true
+        }
+      }
+    }
+  },
+  "android_sdk": 33,
+  "executed_abi": "x86_64",
+  "arm64_built_only": true,
+  "temporary_files_removed": true,
+  "authentic_catalog_captured": false,
+  "renderer_activation_authorized": false,
+  "gates25_27_complete": false,
+  "adapter_execution_receipt_sha256": "6179dee633b8ff7d0c7521bd382e24b1acfbdc34bb45569b046c51942c28c9e2",
+  "batch_receipt_sha256": "51e2b884512a6d93f5608e1a20ba5c99f01860b94c056d9c6209c1b083bb7ada"
+}

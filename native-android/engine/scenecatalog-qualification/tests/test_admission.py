@@ -41,9 +41,16 @@ class ArtifactAdmission(unittest.TestCase):
                 costume = {"path": path.relative_to(self.root).as_posix(), "sha256": digest(path)}
                 extra["costume_fixtures_sha256"] = costume["sha256"]
             host = self.root / module / "host.json"
+            lookup = None
+            if module == "scenegraph":
+                path = self.root / module / "lookup_fixtures.h"
+                path.write_text("/* original lookup fixture */\n")
+                lookup = {"path": path.relative_to(self.root).as_posix(), "sha256": digest(path)}
+                extra["lookup_fixtures_sha256"] = lookup["sha256"]
+            host = self.root / module / "host.json"
             write(host, {**extra, "passed": True, "fixtures": 4, "fixtures_sha256": fixture["sha256"],
                 "source_sha256": sources, "checks": {mode: result for mode in ("release", "asan", "ubsan")}})
-            suite = {"expected": result, "abis": {}, "fixture": fixture, "costume_fixture": costume, "source_sha256": sources,
+            suite = {"expected": result, "abis": {}, "fixture": fixture, "costume_fixture": costume, "lookup_fixture": lookup, "source_sha256": sources,
                 "host_receipt": host.relative_to(self.root).as_posix(), "host_receipt_sha256": digest(host)}
             for abi, machine in ABIS.items():
                 folder = self.root / module / abi
@@ -91,6 +98,31 @@ class ArtifactAdmission(unittest.TestCase):
                 else:
                     data = json.loads(old_receipt)
                     data["costume_fixtures_sha256"] = "0" * 64
+                    write(receipt_path, data)
+                    descriptor["receipt_sha256"] = digest(receipt_path)
+                with self.assertRaises(ValueError):
+                    validate(self.root, value, "x86_64")
+                target.write_bytes(old)
+                receipt_path.write_bytes(old_receipt)
+
+    def test_lookup_fixture_required_and_bound_to_both_abis(self):
+        suite = self.manifest["suites"]["scenegraph"]
+        lookup = suite["lookup_fixture"]
+        for mode in ("missing", "tampered", "unexecuted_abi"):
+            with self.subTest(mode=mode):
+                value = copy.deepcopy(self.manifest)
+                target = self.root / lookup["path"]
+                old = target.read_bytes()
+                descriptor = value["suites"]["scenegraph"]["abis"]["arm64-v8a"]
+                receipt_path = self.root / descriptor["receipt"]
+                old_receipt = receipt_path.read_bytes()
+                if mode == "missing":
+                    del value["suites"]["scenegraph"]["lookup_fixture"]
+                elif mode == "tampered":
+                    target.write_bytes(b"tampered")
+                else:
+                    data = json.loads(old_receipt)
+                    data["lookup_fixtures_sha256"] = "0" * 64
                     write(receipt_path, data)
                     descriptor["receipt_sha256"] = digest(receipt_path)
                 with self.assertRaises(ValueError):

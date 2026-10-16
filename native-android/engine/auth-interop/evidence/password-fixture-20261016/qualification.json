@@ -1,0 +1,64 @@
+{
+  "schema": "coh-auth-password-fixture-qualification-v1",
+  "passed": true,
+  "original_source_sha256_utf8_lf": {
+    "upstream/ouroboros/AuthServer/src/util.cpp": "d87b7b47cfb52490a27fdf3ec8e5179c96c803058dd4b98204f8e644f631c59a",
+    "upstream/ouroboros/AuthServer/src/Account.cpp": "3e959ac3aa3fcef281fecdf8104c5da297c1b216a7c2553a3d33c4ee15c097d5",
+    "upstream/ouroboros/libs/cryptLib/src/sha512.cpp": "a054a92e285a87a053cb0ec9e64c1c26187a5cac680945424d3bbf1df440c6c3",
+    "upstream/ouroboros/libs/cryptLib/src/sha512Impl.cpp": "39726ebd743ddcf9836f9a472fa3d86692d46e8acd5e5ab4e80de8cf1dd62bdb",
+    "upstream/ouroboros/libs/cryptLib/src/sha512Impl.h": "cb0efbb627b0bc66ec959d8f4cb60e046742f7b0fd085e83d84e18407d3e5105",
+    "upstream/ouroboros/libs/cryptLib/include/cryptlib/sha.h": "fc38be1b44402a969ce0151c71f18569ab5ae724ce96a545ca41dedc79f1b0f9",
+    "upstream/ouroboros/libs/cryptLib/include/cryptlib/sha512.h": "6247398b2de51efd9dbebc6ca398a4277bd73fa0d5be3f3f8d523e17e61141c0"
+  },
+  "original_function_sha256": "6bf03188196aeb5d50e267e94499897112820ddba581f8abb8640e9b24987089",
+  "original_checkpassword_fragment_sha256": "6999287b9aa95addb5e0491027f5fe9e3a4ddfa92e3d24f12dd4bdc961c6235d",
+  "repository_head_at_qualification": "780ff43aa0c39a7ca644b028a4e75ad978d709a1",
+  "native_source_sha256": {
+    "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/engine/auth/tests/oracle_shim.c": "f2f877a9fb2c0e80b4019038bed0b1cb00a70bd9f83b1bb97d13a52c93b3e65b",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+  },
+  "qualification_input_sha256": {
+    "native-android/engine/auth-interop/deployment/password_fixture.py": "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd",
+    "native-android/engine/auth-interop/deployment/password-source-pins.json": "8e891fc684d23cc9a3a2888d0ca55460489851b8971c9890247339d59a23c373",
+    "native-android/engine/auth-interop/deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+    "native-android/engine/auth-interop/deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+    "native-android/engine/auth-interop/source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+  },
+  "generated_control_sha256": "63a2ae7fb13fcac4c59381797a59d3f6954b3caae53de8bb66ab35c39640ea2f",
+  "native_request_cases": 69,
+  "executions": {
+    "release": {
+      "binary_sha256": "d3dd0b4275347c2dedefa3741df6fc045718f2737a701b366d7bec2e451561ae",
+      "result": {
+        "passed": true,
+        "checks": 4554,
+        "real_account_login_verified": false
+      }
+    },
+    "asan_ubsan": {
+      "binary_sha256": "2d1da31148f2270239b5113f0d6209d16539b723479f54599244af910cadda70",
+      "result": {
+        "passed": true,
+        "checks": 4554,
+        "real_account_login_verified": false
+      }
+    }
+  },
+  "scope": "Unchanged EncPwdSha512, cryptLib and CheckPassword digest fragment; native RSA-input capture only.",
+  "full_checkpassword_executed": false,
+  "rsa_encryption_executed": false,
+  "sql_executed": false,
+  "service_started": false,
+  "real_account_login_verified": false,
+  "leak_sanitizer_enabled": false,
+  "physical_thor_accepted": false,
+  "private_fixture_generated": false
+}

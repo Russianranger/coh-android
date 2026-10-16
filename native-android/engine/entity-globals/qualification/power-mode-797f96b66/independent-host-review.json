@@ -1,0 +1,93 @@
+{
+  "schema": "coh-entity-globals-qualification-v1",
+  "passed": true,
+  "original": {
+    "source_sha256_lf": {
+      "Common/entity/PowerInfo.c": "98ef9b93ec9e51623a7955aa173a5e53c24208e1b4ebca972a60753e81dda925",
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+    },
+    "original_functions": {
+      "initBitStream": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3",
+      "bsWriteBits": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0",
+      "bsWriteBitsPack": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb",
+      "bsReadBits": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea",
+      "bsReadBitsPack": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620",
+      "bsAlignByte": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40",
+      "bsGetCursorBitPosition": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac",
+      "entity_SendPowerModeUpdate": "1d2d43267c1123786cc9b2439c80f4db627ec528055977ce8ef12cc98cfd9432",
+      "entity_ReceivePowerModeUpdate": "3f310cb44efe1e2d8f88101b8d3b7069c06548880fbba9f084634ceeafef7b3e"
+    },
+    "generated_oracle_sha256": "7f622c6c027effcaad9643a5f26f0e62438fb75f0c51e8cf0f22fb60d97e950f",
+    "producer_consumer": "both complete unchanged power-mode grammar functions executed",
+    "adapters": "non-debug packet wrappers, bounded deterministic owner/earray shells; no original dictionaries or allocator",
+    "source_oracle_sanitized": false,
+    "scope": "trusted padded fixtures at O0; native parser separately sanitized; no malformed original consumer calls"
+  },
+  "fixtures": {
+    "count": 110,
+    "producer_consumer_comparisons": 100,
+    "sha256": "1acee51b1cc021821d789e2d7478154d9b80eec4857e1299a7d04a14814ff6e3"
+  },
+  "fixtures_sha256": "1acee51b1cc021821d789e2d7478154d9b80eec4857e1299a7d04a14814ff6e3",
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 5930110,
+      "source_fixtures": 110,
+      "truncation_cases": 48692,
+      "random_cases": 25000,
+      "mode_limit": 1024,
+      "state_bytes": 4100,
+      "full_update_complete": false,
+      "acknowledgments_enabled": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 5930110,
+      "source_fixtures": 110,
+      "truncation_cases": 48692,
+      "random_cases": 25000,
+      "mode_limit": 1024,
+      "state_bytes": 4100,
+      "full_update_complete": false,
+      "acknowledgments_enabled": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 5930110,
+      "source_fixtures": 110,
+      "truncation_cases": 48692,
+      "random_cases": 25000,
+      "mode_limit": 1024,
+      "state_bytes": 4100,
+      "full_update_complete": false,
+      "acknowledgments_enabled": false
+    }
+  },
+  "android": {},
+  "source_revision": "8e19b9e1316b75af00ff88a993f63f464fe0df99",
+  "source_tree": "44006ff3258d26d472f2cca87767f2cd4d937df7",
+  "source_worktree_clean_before": false,
+  "source_worktree_clean_after": false,
+  "cpp_link_passed": true,
+  "full_update_complete": false,
+  "acknowledgments_enabled": false,
+  "real_server_interoperability": false,
+  "thor_accepted": false,
+  "source_sha256": {
+    "native-android/engine/entity-globals/coh_entity_globals.c": "3656bfd2a763ec3f65816479ca6fc2460a1d7e76fb37b9001a83d42b01d61234",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-globals/test_entity_globals.c": "28b9ba59d8a68a31ae5b80991a504c45b0887422b4a1bfc934a9d3ed9af3e756",
+    "native-android/engine/entity-globals/coh_entity_globals.h": "5309b04457cad416cbf72b7e65197721bdf1ed1ec086b11c77fca4f85f7c0359",
+    "native-android/engine/entity-globals/oracle_shim.h": "de0d47ac13882de9f794879392e44714cabd041a5fa0825e53805af0007ad8d2",
+    "native-android/engine/entity-globals/CMakeLists.txt": "7d13867f2f8bac23832011eed77afe9048eef1ee3289827bd845de9b3c320b7d",
+    "native-android/engine/entity-globals/check.py": "8cf239180fb70efb2b32ae1fb863cf30a9c7882d70417f7464b79ece8b103a32",
+    "native-android/engine/entity-globals/oracle_fixture.c.inc": "8350c2c37be2feaca268b0ac5a1fcee1cf3eb14294d991d2472df289e6c646e8",
+    "native-android/engine/entity-globals/source-pins.json": "33f59bdce99cb30aae7464252f3e5e1e6933e2f688096c081261caac6c31723f",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  }
+}

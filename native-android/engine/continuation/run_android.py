@@ -46,6 +46,17 @@ def validate(root, manifest, abi):
                 raise ValueError("Costume fixture differs from original host oracle")
         elif costume is not None:
             raise ValueError("Unexpected costume fixture")
+        lookup = suite.get("lookup_fixture")
+        if name == "scenegraph":
+            if not isinstance(lookup, dict):
+                raise ValueError("Original lookup fixture is required")
+            lookup_path = child(root, lookup["path"])
+            if (lookup_path.name != "lookup_fixtures.h"
+                    or digest(lookup_path) != lookup["sha256"]
+                    or host.get("lookup_fixtures_sha256") != lookup["sha256"]):
+                raise ValueError("Lookup fixture differs from original host oracle")
+        elif lookup is not None:
+            raise ValueError("Unexpected lookup fixture")
         fixture = suite.get("fixture")
         if name in FIXTURES:
             if not isinstance(fixture, dict):
@@ -65,6 +76,8 @@ def validate(root, manifest, abi):
                     raise ValueError("Both Android ABI fixtures must match the host oracle: " + name)
                 if costume and built_receipt.get("costume_fixtures_sha256") != costume["sha256"]:
                     raise ValueError("Both ABI costume fixtures must match original oracle")
+                if lookup and built_receipt.get("lookup_fixtures_sha256") != lookup["sha256"]:
+                    raise ValueError("Both ABI lookup fixtures must match original oracle")
         elif fixture is not None:
             raise ValueError("Unexpected external fixture for the standalone auth policy suite")
         if (receipt.get("passed") is not True or receipt.get("abi") != abi

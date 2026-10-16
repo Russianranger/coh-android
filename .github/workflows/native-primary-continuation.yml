@@ -6,6 +6,8 @@ on:
       - native-android/engine/scenegraph/**
       - native-android/engine/entities/**
       - native-android/engine/entity-control/**
+      - native-android/engine/character-data/**
+      - native-android/engine/entity-globals/**
       - native-android/engine/auth-interop/**
       - '!native-android/engine/auth-interop/deployment/**'
       - '!native-android/engine/auth-interop/evidence/**'

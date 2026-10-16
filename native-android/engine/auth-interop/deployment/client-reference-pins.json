@@ -1,0 +1,26 @@
+{
+  "schema": "coh-auth-client-reference-pins-v1",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "original_source_sha256_utf8_lf": {
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppVersion.c": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b"
+  },
+  "donor_apk": {
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.34/COH-Atlas-Gameplay-0.13.34.apk",
+    "bytes": 42048020,
+    "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+  },
+  "client_runtime_zip": {
+    "bytes": 8702383,
+    "sha256": "5636fe9b3d45c313b062ac83ba954bfb3b1b160af4aec1b34f046c8c2b421509"
+  },
+  "client_package_json_sha256": "d01e74d53ff5e25a8efdc6d81e96bb0ec8d57ab48f7c8be585f313659b948062",
+  "reference_build_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+  "reference_build_manifest_sha256": "84a9a9d5d56d819aae04731d5dcf2a0a8ef4c119918a15b63622cef1f361a8b1",
+  "client_executable": {
+    "bytes": 9499648,
+    "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+  }
+}

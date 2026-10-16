@@ -1,7 +1,7 @@
 # Primary protocol continuation qualification
 
-This additive harness qualifies three independent modules: `scenegraph`,
-`entities`, and `auth-interop`. It preserves the existing Combined 0.1.7 APK and
+This additive harness qualifies six independent modules: `scenegraph`,
+`entities`, `entity-control`, `character-data`, `entity-globals`, and `auth-interop`. It preserves the existing Combined 0.1.7 APK and
 does not modify the shared engine build, support client, server runtime, imported
 profile, account, or application data.
 

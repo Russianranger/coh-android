@@ -26,10 +26,10 @@ Checkpoint: additive entity continuation from remote
 | 15 | status effects | Supported mask/vision/status-string metadata |
 | 16 | self inventory sizes | Supported pinned five-type schema; does not contain inventory contents |
 | 17 | self taskforce architect information and parameters if very rare | Complete bounded consecutive wire substructures qualified standalone, with cached/full/custom contact events and raw relative clock words. Prior-state application, retained contact resource identity and complete entity composition remain open |
-| 18 | odd-send, ally ID, ignore-combat flags/offset level | Unsupported very-rare stream |
-| 19 | player type/subtype/praetorian/location | Unsupported very-rare stream (create metadata already supported) |
-| 20 | PvP, collision, selectable, no-draw, map visibility, contact/PNPC, con/walls | Unsupported very-rare stream |
-| 21 | name, pet metadata, AFK | Unsupported very-rare update stream (create variants already supported) |
+| 18 | odd-send, ally ID, ignore-combat flags/offset level | Complete bounded raw prefix qualified standalone; no state application or record composition |
+| 19 | player type/subtype/praetorian/location | Complete bounded raw prefix qualified standalone; source self/player application remains separate |
+| 20 | PvP, collision, selectable, no-draw, map visibility, contact/PNPC, con/walls | Complete bounded raw prefix qualified standalone; control/player/stale application remains separate |
+| 21 | name, pet metadata, AFK | Complete bounded raw prefix qualified standalone; unresolved entity/power references and exact retain/clear/stale application remain separate |
 | 22 | supergroup mission/tokens/recipes/details, leveling pact, logout | Unsupported very-rare stream |
 | 23 | teammate buff stream | Unsupported |
 | 24 | canonical list sentinel; global unique self ownership | Supported across caller's complete supplied staging table |
@@ -93,7 +93,7 @@ First close complete **selected self create**, then the global initial tail:
    candidate costume event across the complete record under an explicit aggregate
    budget; do not embed the large envelope in every slot. Consume through read-only additive
    contracts with gameplay appearance ownership; do not edit its internals.
-2. Retain/resolve staged NetFX events and implement the entire very-rare per-entity stream, plus interpolation
+2. Retain/resolve staged NetFX events and implement the remaining supergroup/leveling-pact/logout very-rare stream, plus interpolation
    and buffs encountered by the actual source profile. Independent original
    producer/consumer comparisons and later-record rollback are required.
 3. Compose the separately qualified control-state block, retain/deduplicate its

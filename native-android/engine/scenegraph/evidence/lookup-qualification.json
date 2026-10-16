@@ -1,0 +1,76 @@
+{
+  "passed": true,
+  "oracle": {
+    "source_sha256_lf": {
+      "Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+      "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+      "Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "libs/UtilitiesLib/src/utils/utils.c": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf",
+      "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9"
+    },
+    "original_function_sha256": {
+      "changeFileExt_s": "a0c19ee589bde10bb284865f401dc45f49477cb9f0e5fae7b160df5cfa003158",
+      "groupGetPublicName": "e532a7b841619677c10de916e20a2e7dc2ddabb05eea51d7d6d130af7edef533",
+      "groupNameIdx": "5a985c8d6ce59fe2c610278375bba9796f9856550822bf3b14a104289507e3d8",
+      "objectLibraryFileCount": "bd5ace4f58fac745d2d44cd9ff1c7ee196cc68f494fc7579b8a3301472a704fa",
+      "objectLibraryEntryFromIdx": "03a57b644fa9d2c0b787dbf933a15e83b4d0d00686f7e08302e99b957e61cce8",
+      "objectLibraryEntryFromObj": "bd2da28af13a6d2233d4ffe5b7b6a37c934a1fd44949935b2e65db545acc5a5f",
+      "compareModelNamesAndLengths": "e8c770e4c00bde4d383941090120788584fe14fe777e22e3f59b1ce61b420104",
+      "compareModelBSearch": "2c3a9a110f66614ceb2eff061be88cf5a613bf1f1b398c675ef5f0f2b1d0107b",
+      "compareModelBSearchCallback": "6369c863e9cacbb4570d3c404ca294a7d3720f8b2a73b4e5d33c96c5469d42db",
+      "modelFind": "2445a1f4b4bf4d413e0f29c3da350064e9a94092372e459f9840e8db204368ae",
+      "compareModelNames": "a82fd8bcbd2ad16fae95d00a1b133234f56355ca39d74291f604fe20341d4ef3",
+      "compareModelNamesCallback": "2313cf23939a0e8fe2bdbdcb1fa3540091655f726b0d4d5a1c2f3638677cb029",
+      "groupModelFind": "2535a3e4a9ea676bcbe00bf9f568fff5bcff26bc127fb7c6e0a9736d1e548fa3"
+    },
+    "generated_oracle_sha256": "f2f5eb0eeb5b9c33d1157e6def92345bf4c52cc72197f1bd00ce17b8a0847995",
+    "fixtures": 526,
+    "extension_fixtures": 9,
+    "fixtures_sha256": "7f8b511bee516f9c7c3434c1f2f3f2dd30fdb4bf21436e59e1579c47e65a1d58",
+    "scope": "unchanged original groupModelFind/modelFind plus lookup/name/extension helpers; synthetic StashDefault ASCII table and geoLoad/header owners; no archive I/O, authentic manifest, trick/material lookup or draw admission",
+    "source_oracle_sanitized": false
+  },
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 72274,
+      "large_model_rows": 32768,
+      "large_library_rows": 32768,
+      "large_owned_bytes": 2720163,
+      "large_aggregate_bytes": 4661934,
+      "live_allocations": 0,
+      "draw_admission": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 72274,
+      "large_model_rows": 32768,
+      "large_library_rows": 32768,
+      "large_owned_bytes": 2720163,
+      "large_aggregate_bytes": 4661934,
+      "live_allocations": 0,
+      "draw_admission": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 72274,
+      "large_model_rows": 32768,
+      "large_library_rows": 32768,
+      "large_owned_bytes": 2720163,
+      "large_aggregate_bytes": 4661934,
+      "live_allocations": 0,
+      "draw_admission": false
+    }
+  },
+  "source_sha256": {
+    "native-android/engine/scenegraph/coh_scene_lookup.c": "809d77cdec4dfc789ee253acec1cb836731624bc45ab934edc79a7082d895c37",
+    "native-android/engine/scenegraph/tests/test_scene_lookup.c": "a5daea424e7e5a7caff903578fa449816fcef6df4bc64096b06faa2950e0b629",
+    "native-android/engine/scenegraph/coh_scene_lookup.h": "d7287236749916277e0b8eb124b4b29594431ce817763d4989ef8d9878d26f6b",
+    "native-android/engine/scenegraph/tests/lookup_oracle_shim.h": "473a69fd94b236952c837d0f8fa1d99ba4f1117a2dd974f22de82ba414fbee4b",
+    "native-android/engine/scenegraph/lookup-source-pins.json": "bb6c60b34b139e2b7f151b3ce548bd85117c9f1476fed3c9a0166ff02ac53b8c",
+    "native-android/engine/scenegraph/check_lookup.py": "78c44a5e23fcf9e49687479254c7e06190a6d7667e4b3248a3a92bf196b7aec8",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "authentic_manifest": false,
+  "renderer_authorized": false
+}

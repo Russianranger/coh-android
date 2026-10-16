@@ -339,10 +339,11 @@ static void expanded_record(Fixture f,unsigned mode,unsigned type){
     list_bad(F(list_late_unsupported##m),m,COH_UNSUPPORTED,COH_ENT_STAGE_APPEARANCE); \
 }while(0)
 #include "test_titles.c.inc"
+#include "test_rare.c.inc"
 void costume_run_tests(unsigned *,unsigned *,unsigned *);
 int main(void){
     costume_run_tests(&checks,&truncations,&randomized);
-    RUN_MODE(0);RUN_MODE(1);titles_run_tests();fuzz();
+    RUN_MODE(0);RUN_MODE(1);titles_run_tests();rare_run_tests();fuzz();
     CohRepReader r=reader(F(end0),0),oldr=r;CohEntFailure d;
     CHECK(coh_ent_full_update_tail(&r,&d)==COH_UNSUPPORTED);CHECK(d.stage==COH_ENT_STAGE_FULL_UPDATE_TAIL&&d.bit==0);same_reader(&r,&oldr);
     CohEntSlot invalid;CohEntRecord rec;coh_ent_slot_init(&invalid,4);invalid.position.packed[0]=0x80000000u;

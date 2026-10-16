@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--sanitize', action='store_true', help='Run declared checksum candidate with ASan/UBSan too')
     args = parser.parse_args()
-    suites = ['test_deployment'] + (['test_hosted_stage', 'test_control_reuse'] if args.source_root else [])
+    suites = ['test_deployment'] + (['test_hosted_stage', 'test_control_reuse', 'test_password_fixture'] if args.source_root else [])
     result = subprocess.run(['python3', '-m', 'unittest', '-v', *suites], cwd=HERE,
                             capture_output=True, text=True, timeout=90)
     if result.returncode:

@@ -6,8 +6,8 @@ import struct
 import subprocess
 
 ABIS = {"arm64-v8a": 183, "x86_64": 62}
-MODULES = ("scenegraph", "entities", "entity-control", "auth-interop")
-FIXTURES = {"scenegraph": "scenegraph_fixtures.h", "entities": "fixtures.h", "entity-control": "fixtures.h"}
+MODULES = ("scenegraph", "entities", "entity-control", "character-data", "entity-globals", "auth-interop")
+FIXTURES = {"scenegraph": "scenegraph_fixtures.h", "entities": "fixtures.h", "entity-control": "fixtures.h", "character-data": "fixtures.h", "entity-globals": "fixtures.h"}
 CLAIMS = ("physical_thor_accepted", "actual_server_interoperability_verified",
           "real_account_login_verified", "full_live_world_verified", "gates25_27_complete",
           "accepted_apks_rebuilt")

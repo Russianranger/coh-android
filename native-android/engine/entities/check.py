@@ -24,7 +24,7 @@ def source_text(repo,name):
     return (path.read_text() if path.exists() else run(['git','show','HEAD:upstream/ouroboros/'+name],cwd=repo).stdout).replace('\r\n','\n')
 
 def extract(text,name):
-    m=re.search(r'^(?:static\s+)?(?:unsigned\s+int|void|int|U32|F32|float|bool)\s+(?:INLINEDBG\s+)?'+name+r'\s*\([^;{}]*\)\s*\{',text,re.M)
+    m=re.search(r'^(?:static\s+)?(?:unsigned\s+int|void|int|U32|F32|float|bool|const\s+BasePower\s*\*)\s*(?:INLINEDBG\s+)?'+name+r'\s*\([^;{}]*\)\s*\{',text,re.M)
     if not m:raise ValueError('Missing original function '+name)
     start=text.index('{',m.start());at=start+1;depth=1
     while depth:
@@ -272,6 +272,26 @@ void original_receive_orientation(const U8 *data,U32 bits,int aligned,U32 id,U32
                  'producer_statement_sha256_lf':hashlib.sha256(title_block.encode()).hexdigest(),
                  'consumer_function_sha256_lf':hashlib.sha256(extract(recv,'entReceiveTitles').encode()).hexdigest(),
                  'source_fields':{'name':128,'the_text':10,'common':32,'origin':32,'special':128}}
+    # Consecutive very-rare prefix: exact inline blocks, not full entities.
+    rare_at=sender.index('        pktSendBits(pak, 1, ENTINFO(e).send_on_odd_send);')
+    rare_end=sender.index('        entSendOtherSupergroupInfo(',rare_at)
+    rare_send=sender[rare_at:rare_end]
+    receiver=extract(recv,'entReceive')
+    rare_at=receiver.index('            // These are just part of the main stream, no separate packet ids are kept')
+    rare_end=receiver.index('            START_BIT_COUNT(pak, "entReceiveOtherSupergroupInfo");',rare_at)
+    rare_receive=receiver[rare_at:rare_end]
+    code+=(HERE/'rare_oracle_shim.h').read_text()
+    code+=get(source['Common/entity/character_net.c'],'basepower_Receive')
+    code+=get(send,'entSendAfk')
+    rare_consumers=['entReceiveSendOnOddSend','entReceiveAllyID','entReceivePvP','entReceiveEntCollision','entReceiveEntSelectable','entReceiveNoDrawOnClient','entReceiveShowOnMap','entReceiveContactOrPnpc','entReceiveNameUpdate','entReceivePetName','entReceivePetInfo','entReceiveAFK']
+    code+=''.join(get(recv,n) for n in rare_consumers)
+    code+='\nstatic void original_rare_send_statement(Packet *pak,Entity *e,int send_afk_string){\n'+rare_send+'\n}\n'
+    code+='\nstatic void original_rare_receive_statement(Packet *pak,Entity *e,int stream_oo_packet,int isSelf){\n'+rare_receive+'\n}\n'
+    code+=(HERE/'rare_fixture.c.inc').read_text()
+    rare_proof={'scope':'unchanged inline rare prefix producer/consumer statements and complete named component functions; no complete sendEntity/entReceive execution; synthetic owner/power/UI adapters',
+                'producer_statement_sha256_lf':hashlib.sha256(rare_send.encode()).hexdigest(),
+                'consumer_statement_sha256_lf':hashlib.sha256(rare_receive.encode()).hexdigest(),
+                'component_consumer_sha256_lf':{n:hashlib.sha256(extract(recv,n).encode()).hexdigest() for n in rare_consumers}}
     cfile=directory/'source-oracle.c';cfile.write_text(code);so=directory/'source-oracle.so'
     run([os.environ.get('CC','cc'),'-std=c99','-O0','-shared','-fPIC','-w','-I'+str(repo/'native-android/include'),'-I'+str(HERE),cfile,'-lm','-o',so])
     lib=C.CDLL(str(so))
@@ -291,7 +311,9 @@ void original_receive_orientation(const U8 *data,U32 bits,int aligned,U32 id,U32
     lib.original_titles_seed.argtypes=[C.c_void_p]
     lib.original_receive_titles.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_uint32,C.c_uint32,C.c_void_p]
     title_proof['state_bytes']=lib.original_titles_size()
-    return lib,pins,names,title_proof
+    lib.original_rare.argtypes=[C.c_int,C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.POINTER(C.c_uint32),C.c_void_p]
+    rare_proof['event_bytes']=lib.original_rare_size()
+    return lib,pins,names,title_proof,rare_proof
 
 def fixtures(lib,directory):
     content=[];count=0
@@ -309,7 +331,7 @@ def fixtures(lib,directory):
     def string(s):return sum((u(8,v) for v in s.encode()+b'\0'),[])
     title_size=lib.original_titles_size();seed=(C.c_uint8*title_size)();lib.original_titles_seed(seed)
     content.append('static const unsigned char title_seed_bytes[]={'+','.join(map(str,seed))+'};\n')
-    title_rows=[]
+    title_rows=[];rare_rows=[]
     for mode in [0,1]:
         for offset in (range(8) if mode==0 else [0]):
             for scenario in range(6):
@@ -321,6 +343,13 @@ def fixtures(lib,directory):
                     value=(C.c_uint8*title_size)();lib.original_receive_titles(out,bits.value,mode,start.value,packet,value)
                     name=f'{label}_expected_{packet}';content.append('static const unsigned char '+name+'[]={'+','.join(map(str,value))+'};\n');expected.append(name)
                 title_rows.append('{'+','.join([label,str(bits.value),str(start.value),str(mode),str(scenario),'{'+','.join(expected)+'}'])+'}')
+        for offset in (range(8) if mode==0 else [0]):
+            for scenario in range(8):
+                out=(C.c_uint8*32768)();bits=C.c_uint32();start=C.c_uint32();expected=(C.c_uint8*lib.original_rare_size())()
+                lib.original_rare(scenario,mode,offset,out,C.byref(bits),C.byref(start),expected)
+                label=f'rare_{mode}_{offset}_{scenario}';emit(label,bytes(out[:(bits.value+7)//8]),bits.value)
+                content.append('static const unsigned char '+label+'_expected[]={'+','.join(map(str,expected))+'};\n')
+                rare_rows.append('{'+','.join([label,str(bits.value),str(start.value),str(mode),str(scenario),label+'_expected'])+'}')
         for self in [0,1]:
             out=(C.c_uint8*32768)();bits=C.c_uint32();expected=(C.c_float*5)();lib.original_stats(self,mode,out,C.byref(bits),expected)
             label=f'stats_{self}_{mode}';emit(label,bytes(out[:(bits.value+7)//8]),bits.value)
@@ -381,6 +410,22 @@ def fixtures(lib,directory):
         fxprefix=p(1,1)+u(2,1)+u(32,100)+u(1,0)*10
         for name,seq in [('netfx_origin_type',fxprefix+opt(2,3)),('netfx_bone_limit',fxprefix+u(1,0)*2+p(2,256)),('netfx_target_limit',fxprefix+u(1,0)*2+p(2,0)+u(1,0)+opt(12,10240,True)),('netfx_infinite_position',fxprefix+opt(2,1)+u(32,0x7f800000))]:
             emit(name+str(mode),*fields(seq,mode))
+        # Adversarial rare-prefix cases use original scalar writers only.
+        lead=u(1,0)+p(2,0)+p(4,0)+p(1,0)
+        types=u(1,0)+u(2,0)+u(3,0)+u(1,0)
+        flags=u(1,0)*2+p(5,0)+u(1,0)*9
+        pre=lead+types+flags
+        petpre=pre+u(1,0)+u(1,1)
+        petbase=petpre+p(12,12)+p(12,0)+u(1,0)+u(1,0)*3
+        emit('rare_bad_ignore'+str(mode),*fields(u(1,0)+p(2,0)+p(4,0)+p(1,2),mode))
+        for name,owner,creator in [('owner_zero',0,0),('owner_limit',10240,0),('creator_limit',12,10240)]:
+            emit('rare_bad_'+name+str(mode),*fields(petpre+p(12,owner)+p(12,creator),mode))
+        for name,seq in [('name',pre+u(1,1)+string('n'*128)),('display',petbase+u(1,1)+string('d'*1000)),('pet',petbase+u(1,0)+p(1,0)+u(1,1)+string('p'*128)),('afk',pre+u(1,0)*2+u(1,1)*2+string('a'*48))]:
+            emit('rare_long_'+name+str(mode),*fields(seq,mode))
+        emit('rare_unknown_crc'+str(mode),*fields(petpre+p(12,12)+p(12,0)+u(1,1)+auto(0x12345678)+u(1,0)*4+p(1,0)+u(1,0)*2,mode))
+        if mode:
+            for name,seq in [('player_bits',lead+u(8,2)),('presence',pre+u(8,2)),('afk',pre+u(1,0)*2+u(8,2)),('auto',u(1,0)+p(2,0)+p(4,0)+p(1,1)+u(8,4))]:
+                emit('rare_bad_'+name,*fields(seq,mode))
         # Adversarial title cases use original scalar writers only; they are
         # not claimed as unchanged original producer output.
         title_prefix=u(1,1)+string('')+p(5,0)
@@ -447,6 +492,7 @@ def fixtures(lib,directory):
         for name,seq in [('delta_indices',p(1,4)+p(1,2)),('delta_descending',p(1,7)+p(1,0xfffffffc)+p(1,4)),('delta_overflow',p(1,10240)),('delta_zero',p(1,0)),('end',u(1,1)+u(1,1)),('update_flag',u(1,0)),('deletes',p(1,2)+p(12,4)+p(12,91)+p(12,7)+p(12,92)),('delete_large_generation',p(1,1)+p(12,4)+p(12,70001)),('delete_zero',p(1,1)+p(12,0)+p(12,91)),('delete_duplicate',p(1,2)+p(12,4)+p(12,91)+p(12,4)+p(12,92)),('delete_limit',p(1,257)),('bad_type',u(1,1)+u(1,0)+p(12,91)+p(2,99)),('bad_id',u(1,1)+u(1,0)+p(12,0)+p(2,1)),('long_name',u(1,1)+u(1,0)+p(12,91)+p(2,1)+u(1,0)+u(1,1)+string('x'*256))]:
             emit(name+str(mode),*fields(seq,mode))
     content.append('typedef struct {const unsigned char *data;unsigned bits,start,mode,scenario;const unsigned char *expected[3];} TitleFixture;\n')
+    content.append('typedef struct {const unsigned char *data;unsigned bits,start,mode,scenario;const unsigned char *expected;} RareFixture;\nstatic const RareFixture rare_fixtures[]={'+','.join(rare_rows)+'};\n')
     content.append('static const TitleFixture title_fixtures[]={'+','.join(title_rows)+'};\n')
     (directory/'fixtures.h').write_text(''.join(content));return count
 
@@ -454,7 +500,7 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--source-root',type=Path,default=REPO);ap.add_argument('--output',type=Path);ap.add_argument('--fixtures-output',type=Path);ap.add_argument('--sanitize',action='store_true');ap.add_argument('--ndk',type=Path);ap.add_argument('--android-output',type=Path);args=ap.parse_args()
     if bool(args.ndk)!=bool(args.android_output):ap.error('--ndk and --android-output must be supplied together')
     with tempfile.TemporaryDirectory(prefix='coh-entities-') as d:
-        directory=Path(d);lib,pins,names,title_proof=oracle(args.source_root.resolve(),directory);n=fixtures(lib,directory)
+        directory=Path(d);lib,pins,names,title_proof,rare_proof=oracle(args.source_root.resolve(),directory);n=fixtures(lib,directory)
         spec=importlib.util.spec_from_file_location('costume_oracle',HERE/'costume_oracle.py');costume_module=importlib.util.module_from_spec(spec);spec.loader.exec_module(costume_module)
         spec=importlib.util.spec_from_file_location('costume_bit_adapter',args.source_root.resolve()/'native-android/tools/protocol_fixture/prepare.py');costume_helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(costume_helper)
         costume_proof=costume_module.generate(args.source_root.resolve(),directory,costume_helper,run)
@@ -471,7 +517,7 @@ def main():
             env=os.environ.copy();env['ASAN_OPTIONS']='detect_leaks=0:halt_on_error=1';env['UBSAN_OPTIONS']='halt_on_error=1:print_stacktrace=1'
             checks[name]=json.loads(run([exe],env=env).stdout)
         fixture_sha=hashlib.sha256((directory/'fixtures.h').read_bytes()).hexdigest()
-        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'CMakeLists.txt',HERE/'coh_entities.h',HERE/'coh_costume.h',HERE/'costume_oracle.py',HERE/'costume_oracle_shim.h',HERE/'costume_envelope_oracle_shim.h',HERE/'costume_envelope_oracle.c.inc',HERE/'costume_envelope_fixture.c.inc',HERE/'power_custom_oracle_shim.h',HERE/'power_custom_observer.c.inc',HERE/'power_custom_fixture.c.inc',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'titles_oracle_shim.h',HERE/'titles_fixture.c.inc',HERE/'test_titles.c.inc',HERE/'coh_taskforce.h',HERE/'taskforce_oracle_shim.h',HERE/'taskforce_fixture.c.inc',HERE/'test_taskforce.c.inc',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
+        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'CMakeLists.txt',HERE/'coh_entities.h',HERE/'coh_costume.h',HERE/'costume_oracle.py',HERE/'costume_oracle_shim.h',HERE/'costume_envelope_oracle_shim.h',HERE/'costume_envelope_oracle.c.inc',HERE/'costume_envelope_fixture.c.inc',HERE/'power_custom_oracle_shim.h',HERE/'power_custom_observer.c.inc',HERE/'power_custom_fixture.c.inc',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'titles_oracle_shim.h',HERE/'titles_fixture.c.inc',HERE/'test_titles.c.inc',HERE/'rare_oracle_shim.h',HERE/'rare_fixture.c.inc',HERE/'test_rare.c.inc',HERE/'coh_taskforce.h',HERE/'taskforce_oracle_shim.h',HERE/'taskforce_fixture.c.inc',HERE/'test_taskforce.c.inc',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
         android={}
         if args.ndk:
             args.android_output.mkdir(parents=True,exist_ok=True)
@@ -483,7 +529,7 @@ def main():
                 run([tc/target,*common,'-O2',*sources,'-lm','-o',exe]);sha=hashlib.sha256(exe.read_bytes()).hexdigest()
                 receipt={'passed':True,'abi':abi,'binary':exe.name,'binary_sha256':sha,'executed':False,'fixtures_sha256':fixture_sha,'costume_fixtures_sha256':costume_proof['fixtures_sha256'],'source_sha256':source_hashes}
                 (dest/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');android[abi]=receipt
-        proof={'schema':1,'passed':True,'scope':'original create/pet CRC, NPC/sequence costume, target, inventory, pose/sequence/delete component producers; original NetFX and standalone complete appearance/costume/reward producer/consumer parity; exact original basic/self schema producer and consumer comparisons; unchanged inline title producer block and full title consumer; synthetic record/list compositions; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'costume_fixtures_sha256':costume_proof['fixtures_sha256'],'source_sha256':source_hashes,'checks':checks,'costume_oracle':costume_proof,'titles_oracle':dict(title_proof,producer_fixtures=54,consumer_comparisons=162),'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
+        proof={'schema':1,'passed':True,'scope':'original create/pet CRC, NPC/sequence costume, target, inventory, pose/sequence/delete component producers; original NetFX and standalone complete appearance/costume/reward producer/consumer parity; exact original basic/self schema producer and consumer comparisons; unchanged inline title producer block and full title consumer; unchanged rare-prefix inline statements and component consumers; synthetic record/list compositions; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'costume_fixtures_sha256':costume_proof['fixtures_sha256'],'source_sha256':source_hashes,'checks':checks,'costume_oracle':costume_proof,'titles_oracle':dict(title_proof,producer_fixtures=54,consumer_comparisons=162),'rare_oracle':dict(rare_proof,producer_fixtures=72,consumer_comparisons=288,consumer_scope='source component cursor and applied-field assertions in fresh/stale and self/nonself contexts; native publishes raw events only'),'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
         if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(proof,indent=2)+'\n')
         print(json.dumps(proof,indent=2))
 if __name__=='__main__':main()

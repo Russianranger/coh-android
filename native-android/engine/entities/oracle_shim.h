@@ -31,14 +31,19 @@ typedef struct {Entity *erSource;float fMagnitude;} AttribMod;
 typedef struct {int pclass,porigin,playerTypeByLocation;BasePower *ppowCreatedMe;
  Entity *entParent,*erAssist,*erTargetInstantaneous;AttribMod *pmodTaunt,**ppmodPlacates;
  int inventory_total[5],inventory_used[5],auction_total,boost_total;
+ int iAllyID,iGangID,bIgnoreCombatMods,ignoreCombatModLevelShift,bPvPActive;
 } Character;
-typedef struct {int pendingCostumeForceTime,current_costume,num_costume_slots,num_costumes_stored,supergroup_mode,hide_supergroup_emblem,npc_costume;void *costume[16];char costumeFxSpecial[128];int isBeingCritter,playerType,playerSubType,praetorianProgress,titleThe,titleColors[2],titleBadge;char *titleTheText,*titleCommon,*titleOrigin,*titleSpecial,*chat_handle;} Player;
+typedef struct {int pvpSwitch,bIsGanker,afk;char afk_string[48];int pendingCostumeForceTime,current_costume,num_costume_slots,num_costumes_stored,supergroup_mode,hide_supergroup_emblem,npc_costume;void *costume[16];char costumeFxSpecial[128];int isBeingCritter,playerType,playerSubType,praetorianProgress,titleThe,titleColors[2],titleBadge;char *titleTheText,*titleCommon,*titleOrigin,*titleSpecial,*chat_handle;} Player;
 typedef struct {char *fileName,*name,*displayClassName;} Villain;
 typedef struct {char *name;} PNPCDef;
 typedef struct {PNPCDef *pnpcdef;int contact;} PNPCInfo;
 typedef struct {int y_used,xz_used,offsets[3];} InterpPosition;
 typedef struct {int idx,ticksToDelay,triggerFxNetId;float timeCreated;} TriggeredMove;
+typedef struct {struct {int no_ent_collision;} input;} RareMotion;
 struct Entity {
+ struct {int send_on_odd_send;} net_info;RareMotion *motion;
+ int notSelectable,noDrawOnClient,showOnMap,contactOrPnpc,contactArchitect,alwaysCon,seeThroughWalls,name_update,petVisibility,pvpClientZoneTimer;
+ float pvpZoneTimer;U32 pvpUpdateTime;
  int type,id,owner,db_id,access_level,commandablePet,petDismissable,specialPowerState,
      fade,randSeed,villainRank,idDetail,dontOverrideName,clear_target,
  npcIndex,costumeIndex,send_all_costume,supergroup_id;
@@ -112,7 +117,7 @@ static Entity *entities[10240];
 #define ABSTIME_SECOND 3000
 #define SELECTED_ENT ((Entity*)0)
 static int demo_recording;
-static struct {int netfxdebug;} game_state;
+static struct {int netfxdebug,skin;} game_state;
 static void setNetFxParams(Entity *e){(void)e;assert(0);}
 static int entSendGetInterpStoreEntityId(void){return 0;}
 static void debugShowNetfx(Entity *e,NetFx *fx){(void)e;(void)fx;assert(0);}

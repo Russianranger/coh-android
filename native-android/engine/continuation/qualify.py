@@ -28,6 +28,12 @@ def manifest_suite(out, module, host):
         if digest(path) != host.get("costume_fixtures_sha256"):
             raise ValueError("Preserved costume fixture differs from original oracle")
         costume = {"path": path.relative_to(out).as_posix(), "sha256": digest(path)}
+    lookup = None
+    if module == "scenegraph":
+        path = child(out, "android/scenegraph/lookup_fixtures.h")
+        if digest(path) != host.get("lookup_fixtures_sha256"):
+            raise ValueError("Preserved lookup fixture differs from original oracle")
+        lookup = {"path": path.relative_to(out).as_posix(), "sha256": digest(path)}
     for abi in ABIS:
         receipt_path = out / "android" / module / abi / "receipt.json"
         receipt = read(receipt_path)
@@ -37,6 +43,8 @@ def manifest_suite(out, module, host):
             raise ValueError("Android fixture differs from the host oracle: " + module + "/" + abi)
         if costume and receipt.get("costume_fixtures_sha256") != costume["sha256"]:
             raise ValueError("Android costume fixture differs from original oracle")
+        if lookup and receipt.get("lookup_fixtures_sha256") != lookup["sha256"]:
+            raise ValueError("Android lookup fixture differs from original oracle")
         name = receipt["binary"]
         if Path(name).name != name:
             raise ValueError("Android executable name must be a basename")
@@ -49,7 +57,7 @@ def manifest_suite(out, module, host):
                         "receipt": receipt_path.relative_to(out).as_posix(),
                         "receipt_sha256": digest(receipt_path)}
     return {"expected": expected, "abis": entries, "fixture": fixture, "costume_fixture": costume,
-            "host_receipt": host_path.relative_to(out).as_posix(),
+            "lookup_fixture": lookup, "host_receipt": host_path.relative_to(out).as_posix(),
             "host_receipt_sha256": digest(host_path)}
 
 
@@ -73,7 +81,7 @@ def main():
     proof = {"schema": "coh-primary-continuation-qualification-v1", "passed": False,
              **{key: False for key in CLAIMS}, "android_executed": False,
              "emulator_qualified": False, "results": {}, "errors": {},
-             "scope": "Additive bounded scene graph, entity records and authentication admission contracts",
+             "scope": "Additive bounded scene graph, entity records, character wire metadata and authentication admission contracts",
              "driver_sha256": digest(Path(__file__)), "sanitizers_requested": args.sanitize,
              "clean_source_required": args.require_clean,
              "ndk_source_properties_sha256": digest(ndk / "source.properties")}

@@ -25,7 +25,8 @@
       "native-android/engine/auth-interop/"
     ],
     "E": [
-      "native-android/engine/world-render-adapter/"
+      "native-android/engine/world-render-adapter/",
+      "native-android/engine/entity-globals/"
     ],
     "F": [
       "native-android/combined-client/tools/analyze_startup_resources.py",
@@ -57,5 +58,5 @@
     "Session accepted package"
   ],
   "gameplay_contact": "No cross-chat coordinator address available; existing recorded ownership plus explicit user boundary honored, no API mutation/integration attempted.",
-  "followup_reassignment": "After completing read-only startup work, F owns new isolated entity-control grammar; C remains entity-record owner. No engine/physics or gameplay API edits. After entity-control qualification, F owns new character-data source grammar with explicit version-bound shared-power-set wire profile; C retains taskforce and entity records."
+  "followup_reassignment": "After completing read-only startup work, F owns new isolated entity-control grammar; C remains entity-record owner. No engine/physics or gameplay API edits. After entity-control qualification, F owns new character-data source grammar with explicit version-bound shared-power-set wire profile; C retains taskforce and entity records. After Android adapter qualification, E owns isolated entity-globals power-mode wire grammar; badges remain a separate future block."
 }

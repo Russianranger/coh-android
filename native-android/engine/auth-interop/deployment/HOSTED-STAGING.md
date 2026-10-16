@@ -9,7 +9,8 @@ an ODBC harness compile error. No LocalDB instance was created or attempted.
 The corrected ODBC harness subsequently compiled, and both x86 checksum-policy
 executables passed. The second attempt loaded original SQL and its fixture but
 stopped at incompatible metadata-output flags before ODBC execution. The ODBC
-harness is **Windows compiled, not yet ODBC runtime qualified**.
+harness then passed its actual x86 ODBC controls in run 38948147656, described
+below. AuthServer service execution and real encrypted login remain unqualified.
 Linux qualification covers source extraction, admission and checksum policy
 controls only. The stage does not start AuthServer or attempt a real login.
 
@@ -100,6 +101,34 @@ The actual ODBC executable SHA256 is
 `6d5c93e5f6c81c40c060df21887791d0a41799f093769273e387293fbe3ebc86`;
 it will run against a newly created disposable SQL instance. No ODBC or real-login
 qualification is inherited from the prior failed overall stage.
+
+## Actual disposable SQL / x86 ODBC qualification
+
+[Run 38948147656](https://github.com/Russianranger/coh-android/actions/runs/38948147656)
+at `01fc46d78611ec9b55d086a2ac55166e13949c82` passed both jobs. The Windows job
+`117132747530` reused the exact AuthServer and three control binaries; none was
+rebuilt. Both policy programs again passed 135 checks. The original ODBC program
+actually executed as x86 against a new SQL LocalDB 17.0.4025.3 instance using
+ODBC Driver 17 for SQL Server (driver DLL SHA256
+`319b6c3b0ab08dd92dc1e5ee6daf3def82503ebbc85944fc1c614cd7a1c7b729`).
+
+Its receipt confirms all tested password/hash-type/salt outputs, both hash-type
+values, 13-parameter statistics/loyalty/region outputs, datetime2 timestamp
+conversion, and absent password/statistics account rejection. One original error
+callback was observed across the complete test; the diagnostic intentionally
+does not export account-bearing driver messages. This is the exact tested schema
+and driver profile, not universal SQL/ODBC compatibility or complete AuthServer
+pool qualification. The unchanged six original methods ran inside the documented
+minimal statement-owner/logger shell. The byte-pattern fixture is not a real
+login account and no password verification or AuthServer service ran.
+
+Schema metadata was captured. Drop, stop and delete commands all returned zero;
+the source checkout remained unchanged. Exact receipt/logs are preserved under
+`../evidence/hosted-odbc-38948147656/`. [Artifact 12066189514](https://github.com/Russianranger/coh-android/actions/runs/38948147656/artifacts/12066189514)
+is 872,480 bytes, ZIP SHA256
+`0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b`.
+Real account login, authenticated DB-to-Map handoff and physical acceptance remain
+false. This stage need not be repeated for unchanged binaries or documentation.
 
 ## Run contract for coordinator-owned CI
 

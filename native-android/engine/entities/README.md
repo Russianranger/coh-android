@@ -22,6 +22,7 @@ Gates 25–27 remain open.
 | `coh_ent_power_custom` | Standalone complete pinned power-customization wire envelope and lists: self/other/owned, slot metadata, raw power CRC/color/token events; no power dictionary or entity-record admission |
 | `coh_ent_titles` | Standalone complete title/name/player-metadata update, bounded original string sizes and exact stale/equal packet behavior; not yet composed into entity records |
 | `coh_ent_taskforce` | Complete bounded consecutive selected-self architect and taskforce-parameter substructures, optional contact costume reuse, raw time deltas and retain/clear event flags; no taskforce state application or record admission |
+| `coh_ent_rare_prefix` | Consecutive bounded odd-send/combat/player/PvP/collision/name/pet/AFK wire events; no state application, dictionary resolution or record admission |
 | `coh_ent_character_stats` | Complete pinned basic/self absolute non-debug stat schemas: current/max attributes, levels, XP/debt/rest/influence, per-scalar packet ordering |
 | `coh_ent_netfx` | Complete bounded original NetFX grammar, including entity/position origins and targets; unresolved events only |
 | `coh_ent_target` | Target, assist, taunter, self clear-target and bounded placater list |
@@ -99,6 +100,8 @@ unspecified and must never be published. On the current 64-bit ABI:
 - `CohEntTaskforce`: 70,632 bytes; off-stack workspace: 151,552 bytes. One prior
   event, candidate event and workspace total 292,816 bytes before shared costume
   dictionaries/other session data. See `TASKFORCE_CONTRACT.md`.
+- `CohEntRarePrefix`: 1,456 bytes, plus a bounded local candidate; raw presence
+  events only. See `RARE_PREFIX_CONTRACT.md`.
 - Immutable costume dictionary: at most 4,194,304 bytes, including slot tables,
   palette, strings and owner metadata. A generation swap retaining the old owner
   may temporarily require two dictionaries; see `COSTUME_IMPORT_CONTRACT.md`.

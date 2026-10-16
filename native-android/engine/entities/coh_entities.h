@@ -26,7 +26,8 @@ typedef enum {
     COH_ENT_STAGE_OWNERSHIP, COH_ENT_STAGE_TARGET, COH_ENT_STAGE_STATUS,
     COH_ENT_STAGE_INVENTORY, COH_ENT_STAGE_ATTRIBUTE_SCHEMA, COH_ENT_STAGE_COSTUME_DICTIONARY,
     COH_ENT_STAGE_COSTUME_BODY, COH_ENT_STAGE_CUSTOM_COSTUME,
-    COH_ENT_STAGE_TASKFORCE_ARCHITECT, COH_ENT_STAGE_TASKFORCE_PARAMETERS
+    COH_ENT_STAGE_TASKFORCE_ARCHITECT, COH_ENT_STAGE_TASKFORCE_PARAMETERS,
+    COH_ENT_STAGE_RARE_PREFIX
 } CohEntStage;
 typedef struct { CohStatus status; CohEntStage stage; size_t bit; } CohEntFailure;
 typedef struct {
@@ -68,6 +69,21 @@ typedef struct {
         turnstile_mission, helper_status;
     char name[128], the_text[10], common[32], origin[32], special[128];
 } CohEntTitles;
+/* Consecutive raw very-rare wire events after selected-self taskforce data and
+ * before supergroup data. Receiver-specific self/player/stale rules are not
+ * applied here; references are unresolved and this is never actor authority. */
+typedef struct {
+    uint32_t send_on_odd,ally_id,gang_id,ignore_combat,combat_shift_wire,
+        player_type,player_subtype,praetorian_progress,player_location,
+        pvp_switch,pvp_active,pvp_timer,is_ganker,no_collision,not_selectable,
+        no_draw,show_on_map,contact_pnpc,contact_architect,always_con,see_through_walls,
+        name_present,is_pet,owner_index,creator_index,power_present,power_crc,
+        commandable_pet,visible_pet,dismissable_pet,power_display_present,
+        special_power_state,pet_name_present,afk,afk_message_present;
+    int32_t combat_shift;
+    char name[128],special_power_display[1000],pet_name[128],afk_message[48];
+    size_t end_bit;
+} CohEntRarePrefix;
 /* Source schema order is translated to these stable named offsets.
  * Attribute IDs: HP, absorb, endurance, meter, perception, stealth, confused,
  * to-hit. Integer IDs: level, combat level, XP, debt, rested XP, influence. */
@@ -159,6 +175,9 @@ CohStatus coh_ent_inventory_sizes(CohRepReader *, CohEntInventorySizes *, CohEnt
  * instead of legacy truncation. Reader/state are atomic on every error.
  * Only caller-owned transaction staging; no record or actor publication. */
 CohStatus coh_ent_titles(CohRepReader *, uint32_t packet_id, CohEntTitles *, CohEntFailure *);
+/* Entire supported rare prefix, including pet/AFK. Atomic reader/output, no
+ * allocation, dictionary resolution, state application or record admission. */
+CohStatus coh_ent_rare_prefix(CohRepReader *, CohEntRarePrefix *, CohEntFailure *);
 /* Reads one complete supported entity record. In/out slot is STAGING ONLY.
  * Unsupported branch, malformed input, or identity failure leaves reader,
  * slot and record unchanged; failure receipt is diagnostic only.

@@ -128,13 +128,19 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--source-root',type=Path,default=REPO);ap.add_argument('--output',type=Path);ap.add_argument('--sanitize',action='store_true');ap.add_argument('--ndk',type=Path);ap.add_argument('--android-output',type=Path);ap.add_argument('--fixtures-output',type=Path);ap.add_argument('--prepare-only',action='store_true');a=ap.parse_args()
     with tempfile.TemporaryDirectory(prefix='coh-sg-') as temp:
         d=Path(temp);receipt,n=prepare(a.source_root.resolve(),d)
+        lookup_spec=importlib.util.spec_from_file_location('graph_lookup_oracle',HERE/'check_lookup.py')
+        lookup_module=importlib.util.module_from_spec(lookup_spec);lookup_spec.loader.exec_module(lookup_module)
+        receipt['lookup_oracle']=lookup_module.prepare(a.source_root.resolve(),d)
+        lookup_fixture_sha=receipt['lookup_oracle']['fixtures_sha256']
         if a.fixtures_output:
             a.fixtures_output.mkdir(parents=True,exist_ok=True);shutil.copyfile(d/'scenegraph_fixtures.h',a.fixtures_output/'scenegraph_fixtures.h')
+            shutil.copyfile(d/'lookup_fixtures.h',a.fixtures_output/'lookup_fixtures.h')
         if a.prepare_only:
             if not a.fixtures_output:ap.error('--prepare-only requires --fixtures-output')
             return
-        sources=[HERE/'coh_scenegraph.c',HERE/'coh_scene_metadata.c',HERE.parent/'scenecatalog/coh_scenecatalog.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
+        sources=[HERE/'coh_scenegraph.c',HERE/'coh_scene_metadata.c',HERE/'coh_scene_lookup.c',HERE/'tests/test_scene_lookup.c',HERE.parent/'scenecatalog/coh_scenecatalog.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
         hashed_sources=[*sources,HERE/'coh_scenegraph.h',HERE/'coh_scene_metadata.h',HERE/'tests/metadata_source_harness.inc',HERE/'tests/reader_padding_control.c',HERE/'check.py',HERE.parent/'replication/coh_replication.h',HERE.parent/'replication/coh_groups.h',HERE.parent/'replication/groups-source-pins.json',HERE.parent/'scenecatalog/coh_scenecatalog.h',HERE.parent/'scenecatalog/check.py',HERE.parent/'scenecatalog/source_export.inc',HERE.parent/'scenecatalog/tests/source_catalog_harness.c']
+        hashed_sources += [HERE/'coh_scene_lookup.h',HERE/'tests/lookup_oracle_shim.h',HERE/'check_lookup.py',HERE/'lookup-source-pins.json',HERE/'CMakeLists.txt',HERE.parent/'coh_contracts.h']
         source_hashes={str(p.relative_to(REPO)):hashlib.sha256(p.read_bytes()).hexdigest() for p in hashed_sources}
         fixture_sha=hashlib.sha256((d/'scenegraph_fixtures.h').read_bytes()).hexdigest()
         flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(d),'-I'+str(HERE),'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free']
@@ -155,13 +161,14 @@ def main():
         if a.ndk:
             if not a.android_output:ap.error('--ndk requires --android-output')
             a.android_output.mkdir(parents=True,exist_ok=True);shutil.copyfile(d/'scenegraph_fixtures.h',a.android_output/'scenegraph_fixtures.h')
+            shutil.copyfile(d/'lookup_fixtures.h',a.android_output/'lookup_fixtures.h')
             for abi,triple in [('arm64-v8a','aarch64-linux-android26'),('x86_64','x86_64-linux-android26')]:
                 out=a.android_output/abi;out.mkdir(parents=True,exist_ok=True);binary=out/'coh_scenegraph_test'
                 cc=a.ndk/'toolchains/llvm/prebuilt/linux-x86_64/bin'/str(triple+'-clang')
                 run([str(cc),*flags,'-O2',*map(str,sources),'-lm','-o',str(binary)])
-                r={'passed':True,'abi':abi,'binary':binary.name,'binary_sha256':hashlib.sha256(binary.read_bytes()).hexdigest(),'execution_qualified':False,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes}
+                r={'passed':True,'abi':abi,'binary':binary.name,'binary_sha256':hashlib.sha256(binary.read_bytes()).hexdigest(),'execution_qualified':False,'fixtures_sha256':fixture_sha,'lookup_fixtures_sha256':lookup_fixture_sha,'source_sha256':source_hashes}
                 (out/'receipt.json').write_text(json.dumps(r,indent=2)+'\n');android.append(r)
-        result={'schema':1,'passed':True,'scope':'dynamic indexed GROUPS topology; source-produced synthetic 508-file catalog imported with aggregate ownership admission, not live server world','source_oracle':receipt,'fixtures':n,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes,'checks':checks,'android_builds':android,'leak_sanitizer':False,'leak_sanitizer_reason':'host ptrace environment denies /proc thread enumeration; every module allocation is independently wrapped/counted and failures injected','catalog_import_adapter_tested':True,'real_import_adapter':False,'renderer_authorized':False,'real_server_capture':False,'thor_accepted':False}
+        result={'schema':1,'passed':True,'scope':'dynamic indexed GROUPS topology and copied model/library lookup metadata; source-produced synthetic 508-file catalog imported with aggregate ownership admission, not live server world','source_oracle':receipt,'fixtures':n,'fixtures_sha256':fixture_sha,'lookup_fixtures_sha256':lookup_fixture_sha,'source_sha256':source_hashes,'checks':checks,'android_builds':android,'leak_sanitizer':False,'leak_sanitizer_reason':'host ptrace environment denies /proc thread enumeration; every module allocation is independently wrapped/counted and failures injected','catalog_import_adapter_tested':True,'real_import_adapter':False,'renderer_authorized':False,'real_server_capture':False,'thor_accepted':False}
         if a.output:a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,indent=2)+'\n')
         print(json.dumps(result,indent=2))
 if __name__=='__main__':main()

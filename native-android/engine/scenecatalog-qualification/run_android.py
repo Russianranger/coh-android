@@ -63,6 +63,15 @@ def validate(root, manifest, abi):
                 raise ValueError("Costume fixture differs from original host oracle")
         elif costume is not None:
             raise ValueError("Unexpected costume fixture")
+        lookup = suite.get("lookup_fixture")
+        if name == "scenegraph":
+            mapping(lookup, "Original lookup fixture")
+            path = child(root, lookup.get("path"))
+            if (path.name != "lookup_fixtures.h" or digest(path) != hash_value(lookup.get("sha256"))
+                    or host.get("lookup_fixtures_sha256") != lookup["sha256"]):
+                raise ValueError("Lookup fixture differs from original host oracle")
+        elif lookup is not None:
+            raise ValueError("Unexpected lookup fixture")
         for built_abi in ABIS:
             item = mapping(suite["abis"][built_abi], "ABI artifact")
             binary, receipt_path = child(root, item.get("binary")), child(root, item.get("receipt"))
@@ -77,6 +86,8 @@ def validate(root, manifest, abi):
             reject_compile_claims(receipt)
             if costume and receipt.get("costume_fixtures_sha256") != costume["sha256"]:
                 raise ValueError("Both ABI costume fixtures must match original oracle")
+            if lookup and receipt.get("lookup_fixtures_sha256") != lookup["sha256"]:
+                raise ValueError("Both ABI lookup fixtures must match original oracle")
             if (receipt.get("passed") is not True or receipt.get("abi") != built_abi
                     or receipt.get("binary") != binary.name
                     or receipt.get("binary_sha256") != item["sha256"]

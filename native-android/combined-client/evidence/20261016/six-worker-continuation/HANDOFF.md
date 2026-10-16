@@ -253,3 +253,89 @@ random inputs. The pointer-free event is70632bytes and workspace151552bytes;
 composed old/new/scratch budget and clock/cache application remain explicit future
 owner duties. Source admission includes the new native and three oracle files.
 This is a standalone prefix, not a complete character transaction or ACK permit.
+
+
+## Original ODBC execution and whole character wire metadata
+
+Hosted auth staging38948147656 passed on01fc46d78611ec9b55d086a2ac55166e13949c82.
+The exact original AuthServer and all control executables were reused without
+rebuilding. Original x86 ODBC functions established a real SQL connection and
+passed password/zero-hash, statistics, timestamp and absent-account controls
+against the unchanged schema. All14 commands returned zero, private database
+cleanup completed and source inputs were unchanged. The coordinator checked all
+10 retained file identities and54 original source identities against the exact
+Git tree. AuthServer was never started: this is SQL/binding qualification only,
+not encrypted login or authenticated DB-to-Map handoff. The checksum-reference
+profile and full service experiment remain separate open work.
+
+F's isolated character-data checkpointf2829915b8ff8a18bb50d95451c045f7f1927b69
+stages complete character_Send wire metadata. Thirty unchanged whole-producer
+fixtures include25 supported cases and5 source-valid cases deliberately refused
+by the declared shared-prefix profile. Twenty-five unchanged inspiration/boost/
+inventory consumer comparisons and232005 native checks per release/ASan/UBSan
+mode pass. C reviewed source grammar and B reviewed ownership/bounds plus all12
+receipt hashes. Full character_Receive gameplay creation and its power consumer
+were not executed. Class/origin/power/reward/inventory references remain raw and
+unresolved, with dictionary_bindings_verified false.
+
+The two pointer-free449688-byte PODs total899376bytes; the declared component
+budget also charges full input and caller-retained bytes and is capped at8MiB.
+Bounded call stack and allocator overhead are explicitly outside this named-data
+budget; it is not a process RSS limit. Mutable aliases are refused before writes.
+Preparation stays off render threads. The new module joins primary source/ABI/
+emulator qualification; until that workflow passes its status is host-qualified.
+No entity transaction, actor certificate, full-update acknowledgment or renderer
+activation is enabled by this addition.
+
+
+## Authentic saved catalog captured; compact ownership is now required
+
+Disposable runtime38948147691, orchestration01fc46d78611, reused the exact
+previously compiled nonshipping MapServer. The real sink completed508 files,
+40225 allocated slots and130314 child links. The retained catalog is12179670bytes,
+SHA25661c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763.
+Artifact12067129520 is2145443bytes with ZIP SHA256
+6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3.
+The private C-drive WinAPI probe passed (root attributes16); the Z-root negative
+control refused (attributes1040). Owned processes and Wine prefix were cleaned,
+source-runtime inventory remained unchanged and no player profile was opened.
+
+The workflow's final status is failure because the existing eager catalog
+materializer refused COH_LIMIT before decoding. Its historical-footer boolean
+remained the default false because comparison was never reached. This is NOT an
+observed footer mismatch. Independent scanning found33 roots and exact historical
+definition/reference CRCs3173822562/3649375123. Complete native import is not yet
+qualified, nor is a matching live GROUPS transaction or physical Thor generation.
+The catalog stores root count/CRC but no root slot matrices; those must come
+from the separate original GROUPS transaction. No roots can be invented.
+
+Read-only decoding measured the eager catalog fixed minimum44548720bytes and
+full named ownership96233285bytes, before the12179670-byte input. Merely raising
+one cap would not resolve simultaneous graph ownership. Actual maximum one-record
+dynamic scratch is1654842bytes. A bounded streaming validator and compact graph
+are now being developed against these exact captured bytes; no further server
+startup is needed for that work. Existing materializer32MiB and graph aggregate
+96MiB ceilings remain unchanged. Assets, matching root transaction and resolved
+geometry/material generation remain separate prerequisites.
+
+The consolidated native source checkpoint adds independently reviewed indexed
+library/model name lookup (265494 full graph checks;72274 standalone lookup checks
+per host/sanitizer mode), rare entity metadata through pet/AFK (2570029checks),
+complete character wire metadata (232005checks), and global power-mode replacement
+(5930110checks). Original functions execute within explicitly documented fixture
+owners; none authorizes full entity or world publication. Primary qualification
+now covers six protocol modules plus the frozen renderer adapter. Both primary
+and catalog workflows bind the second lookup fixture to exact host and both ABI
+receipts, with missing/tampered/unexecuted-ABI refusal controls. Shared tests:
+29 primary and25 catalog. New Android execution remains required for these source
+changes. Both prior01fc Android workflows passed and their exact evidence is
+retained under world-render-adapter/qualification/android13-01fc46d786.
+
+
+Canonical original-worker recovery is now `six-source-history.bundle`, verified
+with the single actual published prerequisite cda93d96f8696e6a0f2ec6940a0c96e5b852f281.
+It retains all six original worker histories through the listed tips without
+requiring unpublished coordinator commit objects. Use its accompanying SHA256,
+refs and tips receipt instead of assembling incremental bundles, some of which
+also reference local coordinator commits. The published integration trees remain
+exact-byte verified and all local worktrees remain intact.

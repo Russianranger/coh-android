@@ -21,9 +21,12 @@ REQUIRED_SOURCES["entities"].update({"native-android/engine/entities/" + name fo
      "power_custom_oracle_shim.h", "power_custom_observer.c.inc", "power_custom_fixture.c.inc",
      "titles_oracle_shim.h", "titles_fixture.c.inc", "test_titles.c.inc",
      "taskforce_oracle_shim.h", "taskforce_fixture.c.inc", "test_taskforce.c.inc",
-     "coh_taskforce.c", "coh_taskforce.h")})
+     "coh_taskforce.c", "coh_taskforce.h",
+     "rare_oracle_shim.h", "rare_fixture.c.inc", "test_rare.c.inc")})
 REQUIRED_SOURCES["scenegraph"].update({"native-android/engine/scenegraph/" + name for name in
-    ("coh_scene_metadata.c", "coh_scene_metadata.h", "tests/metadata_source_harness.inc")})
+    ("coh_scene_metadata.c", "coh_scene_metadata.h", "tests/metadata_source_harness.inc",
+     "check_lookup.py", "lookup-source-pins.json", "coh_scene_lookup.c", "coh_scene_lookup.h",
+     "tests/lookup_oracle_shim.h", "tests/test_scene_lookup.c")})
 CLAIMS = ("physical_thor_accepted", "actual_server_interoperability_verified",
           "real_account_login_verified", "full_live_world_verified", "gates25_27_complete",
           "accepted_apks_rebuilt")

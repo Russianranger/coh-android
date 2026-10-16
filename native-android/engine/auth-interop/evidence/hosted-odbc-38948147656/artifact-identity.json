@@ -1,0 +1,58 @@
+{
+  "schema": "coh-auth-hosted-odbc-evidence-v1",
+  "run_id": 38948147656,
+  "job_id": 117132747530,
+  "repository_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+  "artifact_id": 12066189514,
+  "artifact_bytes": 872480,
+  "artifact_sha256": "0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b",
+  "files": {
+    "receipt.json": {
+      "bytes": 31796,
+      "sha256": "4c03f21d428b825187d4c2869df3082046be2f763bca1dcd70cf91d8c30a11ad"
+    },
+    "original-odbc.log": {
+      "bytes": 309,
+      "sha256": "f8a2bbb9d3e411041762965c9e6b9a8a745307ea91bffe7e31a045c226f18bdb"
+    },
+    "original-policy.log": {
+      "bytes": 124,
+      "sha256": "2de488545af31e9be3519e7010c89702adbcc07ad4d2fa165f10682f457368dd"
+    },
+    "candidate-policy.log": {
+      "bytes": 125,
+      "sha256": "4b65f7b4551d65bd793eb8ff8453f33c1653dad84d262c554810d809981600d8"
+    },
+    "schema-metadata.log": {
+      "bytes": 4265,
+      "sha256": "c0738401a5ae7fe6509e35d7b12e98838042749e8539dc8646d7a1688dab1562"
+    },
+    "original-schema.log": {
+      "bytes": 118,
+      "sha256": "fb5ee7d86f7964f6a9c277744d1461915d92cd57b1ab0ef0617e88b3ef095fd7"
+    },
+    "localdb-version.log": {
+      "bytes": 609,
+      "sha256": "cc376306cc3d90a453d2a2c3319a74182bc7c69dee81fd113210577bd55ba792"
+    },
+    "localdb-drop-owned-schema.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "localdb-stop-owned-instance.log": {
+      "bytes": 66,
+      "sha256": "0b8a85035afca9f0a07e1cfe27978fbf8d859df4f0bff324cfc00ca9906aa619"
+    },
+    "localdb-delete-owned-instance.log": {
+      "bytes": 66,
+      "sha256": "54cc6d41bd9e837ef0c44bcd01cd4702460dbcf3e4cbdc32079c9937ae5327ae"
+    }
+  },
+  "original_authserver_rebuilt": false,
+  "original_authserver_executed": false,
+  "controls_rebuilt": false,
+  "actual_odbc_controls_executed": true,
+  "real_account_login_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "physical_thor_accepted": false
+}

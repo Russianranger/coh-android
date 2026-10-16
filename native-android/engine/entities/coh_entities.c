@@ -60,6 +60,36 @@ CohStatus coh_ent_titles(CohRepReader *r,uint32_t packet_id,CohEntTitles *out,Co
     *r=p.r;clear_failure(failure);return COH_OK;
 }
 
+CohStatus coh_ent_rare_prefix(CohRepReader *r,CohEntRarePrefix *out,CohEntFailure *failure){
+    Parse p;CohEntRarePrefix v={0};
+    if(check_reader(r)!=COH_OK||!out)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_RARE_PREFIX,COH_OK};
+    v.send_on_odd=flag(&p);v.ally_id=pack(&p,2);v.gang_id=pack(&p,4);v.ignore_combat=pack(&p,1);
+    require(&p,v.ignore_combat<=1,COH_INVALID);
+    if(v.ignore_combat){
+        v.combat_shift_wire=auto_bits(&p);uint32_t word=v.combat_shift_wire-UINT32_C(8);
+        v.combat_shift=word<=INT32_MAX?(int32_t)word:-(int32_t)(UINT32_MAX-word)-1;
+    }
+    v.player_type=flag(&p);v.player_subtype=scalar(&p,2);v.praetorian_progress=scalar(&p,3);v.player_location=flag(&p);
+    v.pvp_switch=flag(&p);v.pvp_active=flag(&p);v.pvp_timer=pack(&p,5);v.is_ganker=flag(&p);
+    v.no_collision=flag(&p);v.not_selectable=flag(&p);v.no_draw=flag(&p);v.show_on_map=flag(&p);
+    v.contact_pnpc=flag(&p);v.contact_architect=flag(&p);v.always_con=flag(&p);v.see_through_walls=flag(&p);
+    v.name_present=flag(&p);if(v.name_present)string(&p,v.name,sizeof(v.name));
+    v.is_pet=flag(&p);
+    if(v.is_pet){
+        v.owner_index=pack(&p,12);v.creator_index=pack(&p,12);
+        require(&p,v.owner_index>0&&v.owner_index<=COH_ENT_INDEX_MAX&&v.creator_index<=COH_ENT_INDEX_MAX,COH_LIMIT);
+        v.power_present=flag(&p);if(v.power_present)v.power_crc=auto_bits(&p);
+        v.commandable_pet=flag(&p);v.visible_pet=flag(&p);v.dismissable_pet=flag(&p);
+        v.power_display_present=flag(&p);if(v.power_display_present)string(&p,v.special_power_display,sizeof(v.special_power_display));
+        v.special_power_state=pack(&p,1);v.pet_name_present=flag(&p);if(v.pet_name_present)string(&p,v.pet_name,sizeof(v.pet_name));
+    }
+    v.afk=flag(&p);
+    if(v.afk){v.afk_message_present=flag(&p);if(v.afk_message_present)string(&p,v.afk_message,sizeof(v.afk_message));}
+    if(p.status!=COH_OK)return fail(&p,failure);
+    v.end_bit=p.r.cursor;*out=v;*r=p.r;clear_failure(failure);return COH_OK;
+}
+
 CohStatus coh_ent_next_index(CohRepReader *r,int32_t previous,uint32_t *out,CohEntFailure *failure){
     Parse p;uint32_t delta,index;
     if(check_reader(r)!=COH_OK||!out||previous < -1||previous>(int32_t)COH_ENT_INDEX_MAX)return COH_INVALID;

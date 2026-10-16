@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "abi": "x86_64",
+  "binary": "test_auth_interop",
+  "binary_sha256": "f8de181ad74bd23ca2c05475279bd26f7395a276fdcfa4f399ffd23c7cd5d0c1",
+  "executed": false,
+  "policy_only": true,
+  "real_account_login_verified": false,
+  "source_sha256": {
+    "engine/auth-interop/coh_auth_interop.c": "49511efd076bace8b31b8061e8584e5cdbddda098d6d6da9a723f55ce6df7399",
+    "engine/auth-interop/tests/test_auth_interop.c": "2ac8fe9607d32f8a131b4d64f64f82f330ed0a947bc792c8c8ed76afb38d1a05"
+  }
+}

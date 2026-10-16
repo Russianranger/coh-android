@@ -1,0 +1,14 @@
+{
+  "reviewer": "primary coordinator",
+  "worker_commit": "780ff43aa0c39a7ca644b028a4e75ad978d709a1",
+  "run": 38948147656,
+  "source_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+  "receipt_sha256": "4c03f21d428b825187d4c2869df3082046be2f763bca1dcd70cf91d8c30a11ad",
+  "retained_file_identities_verified": 10,
+  "original_source_identities_verified_against_git_tree": 54,
+  "commands_returned_zero": 14,
+  "actual_odbc_results_verified": true,
+  "original_authserver_executed": false,
+  "real_login_verified": false,
+  "db_map_handoff_verified": false
+}

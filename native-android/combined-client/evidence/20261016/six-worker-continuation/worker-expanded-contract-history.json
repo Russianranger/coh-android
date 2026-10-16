@@ -1,0 +1,21 @@
+{
+  "coordinator_head": "70942e5428963216287e1960c10c4b440b8215bb",
+  "original_worker_tips": [
+    "232d0f2371f6be978fae264c6652fb45cb4b3a99",
+    "aa842acb1c5ebb1bf1e98c94b11248f17cf86218",
+    "06c256f771d0b2b794e53b444839f99e455ae397",
+    "78c9c2ffa0f9c11c38d2084c9777fd88fe4054ee",
+    "f2829915b8ff8a18bb50d95451c045f7f1927b69"
+  ],
+  "excluded_ancestors": [
+    "01fc46d78611ec9b55d086a2ac55166e13949c82",
+    "c0d71e0e999e8d4c943d84ba58d51fee164f9bca",
+    "c0ac22609a8d0af440375d6062fd59c1a939ddae",
+    "ccc77e1e86f7be723ca5c9e391b76310df63234a",
+    "8e19b9e1316b75af00ff88a993f63f464fe0df99",
+    "e630b9a60a0e30bb7bc2588adf0c05c7f7401df0"
+  ],
+  "all_worker_tip_objects_confirmed_in_pack": true,
+  "bundle_bytes": 210494,
+  "bundle_sha256": "8998247915ff8d8a66a41326b637196a5b84875df502537469a7537a5adcb029"
+}
