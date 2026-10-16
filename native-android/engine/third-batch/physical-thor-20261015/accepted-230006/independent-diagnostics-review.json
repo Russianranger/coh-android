@@ -1,0 +1,347 @@
+{
+  "schema": "coh-independent-thor-final-physical-review-v1",
+  "reviewer": "worker-f-audio-perf",
+  "scope": "Read-only analysis of four user reports and pinned source semantics. No repository edits, report upload or additional manual-test request.",
+  "acceptance": {
+    "status": "Accepted within user-approved bounded offline physical scope",
+    "authority": "User reports remaining tests 1,3,4,7 passed and explicitly defers tests 2,5,6.",
+    "user_passed_test_ids": [
+      1,
+      3,
+      4,
+      7
+    ],
+    "deferred_not_passed": [
+      {
+        "id": 2,
+        "scope": "portrait presentation"
+      },
+      {
+        "id": 5,
+        "scope": "audio-focus interruption"
+      },
+      {
+        "id": 6,
+        "scope": "physical audio-route acceptance"
+      }
+    ],
+    "full_numbered_gates_closed": [],
+    "scope_limits": "Exact standalone offline Support Client release, bounded Wretch/world scene and neutral Male preview. Does not establish complete zones, all body types, real combat, live server integration, whole-game performance or gates25\u201327."
+  },
+  "release": {
+    "session_id": "1a142b4e43e",
+    "app": {
+      "package": "org.coh.nativesupport",
+      "version_name": "0.2.0-gameplay",
+      "version_code": 201,
+      "installed_apk": {
+        "bytes": 2917815,
+        "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+      }
+    },
+    "bound_source_revision": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+    "source_binding": "Installed APK SHA256 exactly equals audited release ARM64 APK; source binding is transitive via release receipt.",
+    "device": {
+      "manufacturer": "AYN",
+      "model": "AYN Thor",
+      "sdk": 33,
+      "abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ],
+      "emulator_detected": false
+    },
+    "native_pointer_bytes": 8,
+    "gl_renderer": "Adreno (TM) 740",
+    "all_four_asset_manifests_equal": true
+  },
+  "evidence_and_memory_series": [
+    {
+      "file": "COH-NativeSupport-20261015-221828.json",
+      "sha256": "4800a279dd6ec59fa05eff42b6405c12bb621f4c7901198c41f1d9ba2ec32d2e",
+      "bytes": 363539,
+      "foreground_ms": 195104,
+      "rss_bytes": 189427712,
+      "rss_mib": 180.65234375,
+      "pss_bytes": 76183552,
+      "pss_mib": 72.654296875,
+      "java_used_bytes": 19814200,
+      "java_used_mib": 18.89629364013672,
+      "native_heap_bytes": 27450944,
+      "native_heap_mib": 26.17926025390625
+    },
+    {
+      "file": "COH-NativeSupport-20261015-223100.json",
+      "sha256": "f1ab649c65241079e942ed01dd7bdace7bb92956d45a4817914783a6a5f24460",
+      "bytes": 1002904,
+      "foreground_ms": 943997,
+      "rss_bytes": 185872384,
+      "rss_mib": 177.26171875,
+      "pss_bytes": 71742464,
+      "pss_mib": 68.4189453125,
+      "java_used_bytes": 29431048,
+      "java_used_mib": 28.06763458251953,
+      "native_heap_bytes": 27910448,
+      "native_heap_mib": 26.617477416992188
+    },
+    {
+      "file": "COH-NativeSupport-20261015-224517.json",
+      "sha256": "ff8e577d33279380bd7709531e6c32a6009826780444b3e3ee356fe69da3e2aa",
+      "bytes": 1021637,
+      "foreground_ms": 1798906,
+      "rss_bytes": 209891328,
+      "rss_mib": 200.16796875,
+      "pss_bytes": 95686656,
+      "pss_mib": 91.25390625,
+      "java_used_bytes": 50588696,
+      "java_used_mib": 48.245140075683594,
+      "native_heap_bytes": 28257184,
+      "native_heap_mib": 26.948150634765625
+    },
+    {
+      "file": "COH-NativeSupport-20261015-230006.json",
+      "sha256": "1f9b28e1c8b44ef0bcb2042ecbfe7fc7bd11151b7a2d8294c49b403db9d017de",
+      "bytes": 1023888,
+      "foreground_ms": 2631354,
+      "rss_bytes": 196104192,
+      "rss_mib": 187.01953125,
+      "pss_bytes": 81270784,
+      "pss_mib": 77.505859375,
+      "java_used_bytes": 34123000,
+      "java_used_mib": 32.54222869873047,
+      "native_heap_bytes": 28515056,
+      "native_heap_mib": 27.194076538085938
+    }
+  ],
+  "event_union": {
+    "individual_ranges": [
+      [
+        1,
+        47
+      ],
+      [
+        2,
+        129
+      ],
+      [
+        85,
+        212
+      ],
+      [
+        174,
+        301
+      ]
+    ],
+    "union_range": [
+      1,
+      301
+    ],
+    "unique_events": 301,
+    "exact_matching_overlaps": 130,
+    "gaps": [],
+    "counts": {
+      "session_created": 1,
+      "resume": 10,
+      "surface_changed": 37,
+      "assets_loaded": 1,
+      "key_down": 32,
+      "key_up": 30,
+      "input_clear_requested": 52,
+      "render_returned": 36,
+      "presentation_panel": 5,
+      "presentation_hit": 24,
+      "appearance_preview": 12,
+      "view_distance_requested": 3,
+      "ui_navigation": 5,
+      "mock_chat": 4,
+      "export_requested": 4,
+      "pause_requested": 9,
+      "pause": 9,
+      "surface_destroyed": 9,
+      "export_complete": 3,
+      "reset_requested": 4,
+      "recreate_requested": 3,
+      "mock_animation": 8
+    }
+  },
+  "performance": {
+    "active_foreground_ms": 2631354,
+    "active_duration": "43m51.354s",
+    "native_rendered_frames": 157101,
+    "aggregate_frames_per_active_second": 59.70348345376563,
+    "completed_timing_samples": 157095,
+    "support_frame_calls": 157104,
+    "mean_observed_frame_ms": 15.612250806582004,
+    "p50_upper_ms": 15.999999,
+    "p95_upper_ms": 20.499999,
+    "p99_upper_ms": 27.999999,
+    "max_frame_ms": 47.483125,
+    "frames_over_33_333333_ms": 161,
+    "over_budget_percent": 0.10248575702600338,
+    "stalls_over_100_ms": 0,
+    "invalid_samples": 0,
+    "abandoned_observer_frames": 9,
+    "gpu_timing_samples": 0,
+    "scope": "Bounded-scene foreground aggregate, not minimum per-second FPS or full-game target acceptance. Frame mean is render-thread elapsed observation excluding outer1ms sleep/startup; inverse mean is not FPS. Percentiles are bucket upper bounds. Abandoned observations at lifecycle boundaries are not compositor-drop statistics. Snapshot counts are not globally atomic. Thermal and GPU timing remain unavailable."
+  },
+  "memory_assessment": {
+    "latest_sample_source": "proc_self_smaps_rollup",
+    "latest_sample_duration_ms": 5,
+    "latest_sample_age_ms": 390,
+    "all_rss_pss_known": true,
+    "partial_module_accounted_bytes": 2274480,
+    "skin_cache_bytes": 332928,
+    "world_cache_bytes": 157491,
+    "world_cache_budget_bytes": 524288,
+    "bounded_accounting_constant_across_four": true,
+    "interpretation": "Latest RSS187.02MiB/PSS77.51MiB/Java32.54MiB fell from prior200.17/91.25/48.25MiB. Four endpoints fluctuate, so prior increase did not remain monotonic. Native allocated heap rises26.18\u219226.62\u219226.95\u219227.19MiB; partial caches remain fixed. This neither proves leak freedom nor establishes a leak. Keep developer allocation/GC and report-serialization investigation; no further user endurance run needed."
+  },
+  "audio": {
+    "backend": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 19,
+      "closes": 18,
+      "decode_calls": 321005,
+      "diagnostics_valid": 0,
+      "rendered_frames": 126196848,
+      "underrun_frames": 0,
+      "callback_calls": 291585,
+      "maximum_callback_ns": 86108125
+    },
+    "focus_changes": 0,
+    "route_changes": 10,
+    "route_reopens": 9,
+    "listener_updates": 4084,
+    "last_device_error": 0,
+    "maximum_joined_callback_ms": 86.108125,
+    "retained_checkpoint_advanced": true,
+    "interpretation": "18 completed backend intervals now retain291585callbacks and126196848mixed frames with zero recorded stream-underrun frames. Current nineteenth backend is open, diagnostics_valid=0; counters cover joined/checkpointed intervals, not the current live tail. Maximum callback elapsed time increased from7.152031ms to86.108125ms.",
+    "human_audio_evidence": "User previously confirmed music/audio audible with no apparent defect and now reports remaining approved tests passed.",
+    "developer_followup": "Investigate86.108125ms callback elapsed outlier. Source measures CLOCK_MONOTONIC around mixer callback, so scheduling/preemption may contribute; it is not output latency. Stream underruns differ from platform xruns/deadline overruns; latter metrics are not exported. Add interval/timestamp coverage and expose existing xrun/deadline data for diagnosis. This does not block user-approved offline acceptance.",
+    "deferred": "Audio-focus and physical-route tests remain explicitly deferred despite observed backend reopen counters."
+  },
+  "lifecycle_and_new_coverage": {
+    "contexts_started": 37,
+    "contexts_completed": 36,
+    "pause_resume_pairs": [
+      {
+        "pause_sequence": 50,
+        "resume_sequence": 54,
+        "duration_ms": 1374,
+        "male_preview_active": false
+      },
+      {
+        "pause_sequence": 75,
+        "resume_sequence": 79,
+        "duration_ms": 1384,
+        "male_preview_active": false
+      },
+      {
+        "pause_sequence": 132,
+        "resume_sequence": 136,
+        "duration_ms": 2098,
+        "male_preview_active": false
+      },
+      {
+        "pause_sequence": 215,
+        "resume_sequence": 219,
+        "duration_ms": 1537,
+        "male_preview_active": false
+      },
+      {
+        "pause_sequence": 235,
+        "resume_sequence": 239,
+        "duration_ms": 2537,
+        "male_preview_active": true
+      },
+      {
+        "pause_sequence": 247,
+        "resume_sequence": 251,
+        "duration_ms": 18597,
+        "male_preview_active": true
+      },
+      {
+        "pause_sequence": 257,
+        "resume_sequence": 261,
+        "duration_ms": 6866,
+        "male_preview_active": false
+      },
+      {
+        "pause_sequence": 265,
+        "resume_sequence": 269,
+        "duration_ms": 20838,
+        "male_preview_active": false
+      },
+      {
+        "pause_sequence": 295,
+        "resume_sequence": 299,
+        "duration_ms": 5713,
+        "male_preview_active": false
+      }
+    ],
+    "male_resume_proofs": [
+      {
+        "pause_sequence": 235,
+        "resume_sequence": 239,
+        "duration_ms": 2537,
+        "continued_rendering_sequence": 242,
+        "uploads_before": 6,
+        "uploads_after": 7
+      },
+      {
+        "pause_sequence": 247,
+        "resume_sequence": 251,
+        "duration_ms": 18597,
+        "continued_rendering_sequence": 254,
+        "uploads_before": 7,
+        "uploads_after": 8
+      }
+    ],
+    "male_preview_frames": 4459,
+    "male_preview_draws": 35672,
+    "male_preview_failures": 0,
+    "animation": {
+      "samples": 102374,
+      "triggers": 8,
+      "kind": 3,
+      "neutral_pose": true
+    },
+    "wall_hits": 34,
+    "sliding_ticks": 15,
+    "blocked_ticks": 473,
+    "scope": "User-confirmed Male Home test is corroborated by pause, completed graphics cleanup, Surface destruction, resume, reupload and continued Male frames. Three later Wretch pauses last6.866,20.838,5.713s. Eight mock animation triggers and kind3 are recorded; collision wall/sliding paths now exercised. No whole movement/combat gate closure."
+  },
+  "errors": {
+    "native_valid": true,
+    "native_failed": false,
+    "app_failure": null,
+    "support_failures": 0,
+    "report_write_failed": false,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "source_asset_errors": 0,
+    "transform_mismatches": [
+      0,
+      0,
+      0
+    ],
+    "non_tie_depth_mismatches": 0,
+    "expected_cancel_surface_errors": 3,
+    "expected_cancel_egl_error": 12301,
+    "expected_cancel_scope": "Three classified EGL_BAD_SURFACE cancellations corresponding to explicitRecreate work; no unclassified runtime/cleanup graphics failure and rendering continues."
+  },
+  "followup_ownership": {
+    "user": "No further manual testing required for the approved bounded offline acceptance. Deferred items remain deferred.",
+    "developer": [
+      "Investigate callback elapsed outlier and improve audio checkpoint/xrun/deadline observability.",
+      "Profile managed/native allocation retention and reduce report serialization churn where justified.",
+      "Continue broader engine/world/gameplay development independently; preserve accepted APK and receipts."
+    ]
+  }
+}

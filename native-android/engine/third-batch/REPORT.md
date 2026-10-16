@@ -14,6 +14,8 @@ and qualification-driver revisions, release attempts and exact artifact identiti
 
 ## Physical Thor follow-up received October 15
 
+**[Physical acceptance recorded](physical-thor-20261015/accepted-230006/README.md):** the user confirms all required final checks passed and defers portrait, external audio-focus and alternate-route tests. The exact code 201 APK reached 43m51s / 157,101 frames / 59.70 FPS with zero unexpected graphics/support errors. Male Home/resume, visible Wretch animation cycling and Missions/Contacts panels are now verified. No further manual tests of this APK are requested. Memory/report allocations and an 86.108 ms maximum joined audio callback remain developer follow-ups. This closes the agreed offline physical test round, not full numbered gates. Earlier entries below are historical.
+
 The [22:45 longer-run follow-up](physical-thor-20261015/long-run-224517/README.md) now records 29m59s active / 107,476 frames / 59.75 FPS, successful nonempty chat and Male-active recreation. No repeated long endurance, chat or Recreate test is needed. RSS/PSS increased to 200.17/91.25 MiB; Java/report-allocation investigation is developer follow-up. [Targeted remaining steps](physical-thor-20261015/long-run-224517/REMAINING-TESTS.md) replace the earlier pending-test list. Earlier measurements below are historical.
 
 [Physical assessment and remaining checks](physical-thor-20261015/README.md) records
@@ -118,7 +120,7 @@ controls, immutable background process-memory samples, robust report scheduling,
 and an explicit optional neutral Male costume preview. Preview audio remains
 background Wretch-scene audio and is labeled accordingly.
 
-New package filenames contain `code201`; the package remains
+New package filenames contain `code 201`; the package remains
 `org.coh.nativesupport`, with manifest/report/signature/installed-APK verification.
 The protected-source checker rejects all eleven primary source scopes. Targeted
 host GLES, thread/lifecycle, maximum JSON and ASan/UBSan checks are source-bound
@@ -248,7 +250,7 @@ thermal endurance, GPU timing and sustainable full-game FPS remain unqualified.
 
 The corrected ARM64 and x86_64 packages were built and signed in
 [run 38841247759](https://github.com/Russianranger/coh-android/actions/runs/38841247759).
-Both signatures, native libraries, package/code201 and fifteen packaged assets
+Both signatures, native libraries, package/code 201 and fifteen packaged assets
 were independently checked. ARM64 SHA256:
 `ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc`.
 The test certificate SHA256 is
@@ -313,7 +315,7 @@ this batch.
 
 | Worker | Source/host evidence | ARM64 | Android 13 emulator | Integration / limits |
 | --- | --- | --- | --- | --- |
-| A | App/source/lifecycle/JSON/controller checks and sanitizers | Signed package built | 23/23 scenarios; package/report verification | Code201 runtime; physical subset verified, full checklist open |
+| A | App/source/lifecycle/JSON/controller checks and sanitizers | Signed package built | 23/23 scenarios; package/report verification | Code201 runtime physically accepted in user-approved offline scope; portrait/focus/routes deferred |
 | B | Original geometry/selection/rig comparison; GLES and sanitizer checks | Linked into signed package | Landscape/portrait proof and manual review | Neutral Male landscape verified on Thor; Female/Huge and full visual parity open |
 | C | 4,047 checks; source-matrix oracle; 1,000 bounded selection cycles | Object compilation | Not run | Source integrated; larger scene not in APK |
 | D | Source color comparison, malformed inputs, bounded GLES/UI and sanitizers | Linked into signed package | Integrated panel/mock-state checks passed | Mock local presentation; full FX/icons/combat open |
@@ -330,7 +332,7 @@ this batch.
 | Gates 32–33 | Source/host/ARM64 neighborhood module and rig recovery; larger-world/multi-actor acceptance open |
 | Gates 34–38 | Local mock UI/combat preparation; no authoritative combat or complete FX |
 | Gates 43–45 | Bounded physical endurance/audibility and ~60 FPS observed; focus/thermal/full-game qualification open |
-| Support code 201 | Signed ARM64 built; 23-case emulator qualification; Thor bounded endurance/audibility verified, full checklist open |
+| Support code 201 | Signed ARM64 built; 23-case emulator qualification; user-approved bounded Thor physical acceptance complete |
 
 Recommended next parallel work: complete Female/Huge asset and morphology closure;
 qualify GEO v8/material decoding and conservative streamed bounds/pages; recover

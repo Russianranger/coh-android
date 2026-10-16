@@ -1,5 +1,7 @@
 # Consolidated AYN Thor test — Support Client 0.2.0 code 201
 
+**Closed within user-approved scope:** [Final physical acceptance](physical-thor-20261015/accepted-230006/README.md). Final checks 1, 3, 4, 7 passed; 2 portrait, 5 audio focus and 6 alternate route were explicitly deferred by the user. No further tests of this APK are requested. The instructions/assessments below are historical.
+
 Use the ARM64 APK and SHA256 in `release.json`. Package identity is
 `org.coh.nativesupport`. Keep Session Client 0.3.0, Combined Client and their data
 intact. No server/account changes are needed. Do not clear data or uninstall an

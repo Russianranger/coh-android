@@ -1,0 +1,246 @@
+{
+  "schema": 1,
+  "status": "physically_accepted_user_approved_bounded_offline_scope",
+  "source_apk_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "user_statement": "Consider 2,5, and 6 as unnecessary tests for now. All the rest were successfully completed.",
+  "current_required_checklist_verified": true,
+  "original_full_checklist_verified": false,
+  "full_numbered_gates_closed": [],
+  "deferred_checks": [
+    {
+      "step": 2,
+      "test": "Male portrait framing",
+      "status": "deferred_by_user_not_qualified"
+    },
+    {
+      "step": 5,
+      "test": "External audio-focus interruption",
+      "status": "deferred_by_user_not_qualified"
+    },
+    {
+      "step": 6,
+      "test": "Alternate audio-output route listening",
+      "status": "deferred_by_user_not_qualified"
+    }
+  ],
+  "further_tests_requested_for_this_apk": false,
+  "report_timestamp": "2026-10-15T23:00:05.940-05:00",
+  "inputs": [
+    {
+      "file": "COH-NativeSupport-20261015-230006.json",
+      "bytes": 1023888,
+      "sha256": "1f9b28e1c8b44ef0bcb2042ecbfe7fc7bd11151b7a2d8294c49b403db9d017de",
+      "stored_as": "COH-NativeSupport-20261015-230006.json.gz"
+    },
+    {
+      "file": "02-Screenshot_20261015-225850.png",
+      "bytes": 768127,
+      "sha256": "af91c8f6dfe6169df6e2334bc1d5556bc41e193ed0e6c72c8ec505d820fd7e10",
+      "source": "User attachment; inspected successfully; original unchanged"
+    },
+    {
+      "file": "03-Screenshot_20261015-225838.png",
+      "bytes": 768075,
+      "sha256": "41da3c15f9e31ce4797ee5993b11d6b879b21242675c2ac3803ef9c423f16919",
+      "source": "User attachment; inspected successfully; original unchanged"
+    }
+  ],
+  "app": {
+    "package": "org.coh.nativesupport",
+    "version_name": "0.2.0-gameplay",
+    "version_code": 201,
+    "installed_apk": {
+      "bytes": 2917815,
+      "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+    }
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "event_recovery": {
+    "same_session": "1a142b4e43e",
+    "range": [
+      1,
+      301
+    ],
+    "count": 301,
+    "gaps": 0,
+    "equal_overlaps": 130,
+    "counts": {
+      "session_created": 1,
+      "resume": 10,
+      "surface_changed": 37,
+      "assets_loaded": 1,
+      "key_down": 32,
+      "key_up": 30,
+      "input_clear_requested": 52,
+      "render_returned": 36,
+      "presentation_panel": 5,
+      "presentation_hit": 24,
+      "appearance_preview": 12,
+      "view_distance_requested": 3,
+      "ui_navigation": 5,
+      "mock_chat": 4,
+      "export_requested": 4,
+      "pause_requested": 9,
+      "pause": 9,
+      "surface_destroyed": 9,
+      "export_complete": 3,
+      "reset_requested": 4,
+      "recreate_requested": 3,
+      "mock_animation": 8
+    }
+  },
+  "newly_verified": [
+    "User-confirmed Male Home/resume; report includes Male pause for18.597s, resource restoration and continued rendering",
+    "Seven visible Wretch animation selections; eight total explicit triggers, ending in normal locomotion",
+    "User-confirmed all five panel checks and supplied Missions/Contacts screenshots",
+    "Final Home/return and report export",
+    "Additional bounded-scene wall/sliding observations:34 wall hits and15 sliding ticks; no larger-world qualification"
+  ],
+  "screenshot_review": "Both1920x1080 images read successfully despite attachment-loader error text. Missions and Contacts tabs are readable with selected rows and local intent messages. Source-font HUD, health/endurance, power tray and bounded station remain visible. Missing original icons are explicitly labeled; panels intentionally overlay part of Wretch. No portrait/source-material/full-zone claim.",
+  "measurements": {
+    "frames": 157101,
+    "active_foreground_ms": 2631354,
+    "frames_per_foreground_second": 59.70348345376563,
+    "frame_samples": 157095,
+    "frame_mean_ms": 15.612250806582004,
+    "p95_upper_ms": 20.499999,
+    "p99_upper_ms": 27.999999,
+    "max_frame_ms": 47.483125,
+    "over_33_33ms": 161,
+    "stalls_at_least_100ms": 0,
+    "invalid_samples": 0,
+    "abandoned_observer_intervals": 9,
+    "contexts_started": 37,
+    "contexts_completed": 36,
+    "unexpected_graphics_support_errors": 0,
+    "expected_canceled_surface_errors": 3,
+    "male_preview": {
+      "available": true,
+      "active": false,
+      "body": "Male",
+      "neutral_morphology": true,
+      "frames": 4459,
+      "draws": 35672,
+      "surface_uploads": 8,
+      "failures": 0,
+      "parts": 8,
+      "vertices": 943,
+      "indices": 3792,
+      "cpu_accounted_partial_bytes": 153536,
+      "package_bytes": 1673302,
+      "gpu_buffer_bytes": 0,
+      "source_texture_bytes": 1572868,
+      "memory_scope": "Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory.",
+      "upload_bytes_measured": false,
+      "full_gate_accepted": false
+    },
+    "memory_samples": [
+      {
+        "timestamp": "2026-10-15T22:18:28.774-05:00",
+        "rss_bytes": 189427712,
+        "pss_bytes": 76183552,
+        "java_used_bytes": 19814200,
+        "native_heap_allocated_bytes": 27450944
+      },
+      {
+        "timestamp": "2026-10-15T22:31:00.414-05:00",
+        "rss_bytes": 185872384,
+        "pss_bytes": 71742464,
+        "java_used_bytes": 29431048,
+        "native_heap_allocated_bytes": 27910448
+      },
+      {
+        "timestamp": "2026-10-15T22:45:17.405-05:00",
+        "rss_bytes": 209891328,
+        "pss_bytes": 95686656,
+        "java_used_bytes": 50588696,
+        "native_heap_allocated_bytes": 28257184
+      },
+      {
+        "timestamp": "2026-10-15T23:00:05.940-05:00",
+        "rss_bytes": 196104192,
+        "pss_bytes": 81270784,
+        "java_used_bytes": 34123000,
+        "native_heap_allocated_bytes": 28515056
+      }
+    ],
+    "audio": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 19,
+      "closes": 18,
+      "decode_calls": 321005,
+      "diagnostics_valid": 0,
+      "rendered_frames": 126196848,
+      "underrun_frames": 0,
+      "callback_calls": 291585,
+      "maximum_callback_ns": 86108125
+    },
+    "audio_environment": {
+      "active": true,
+      "focus_granted": true,
+      "request_result": 1,
+      "focus_changes": 0,
+      "route_changes": 10,
+      "route_generation": 11,
+      "route_policy": "close/join then reopen on native backend owner"
+    },
+    "native_audio_environment": {
+      "focus_allowed": true,
+      "route_generation": 11,
+      "route_reopens": 9,
+      "listener_updates": 4084,
+      "recovered_device_errors": 0,
+      "last_device_error": 0,
+      "listener_position": [
+        594.993469,
+        83.2625732,
+        -1337.93408
+      ],
+      "listener_right": [
+        0.998611569,
+        0,
+        -0.0526781753
+      ]
+    },
+    "wall_hits": 34,
+    "sliding_ticks": 15,
+    "skin_cache_bytes": 332928,
+    "world_cache": {
+      "catalog_instances": 11,
+      "selected_instances": 11,
+      "resident_bytes": 157491,
+      "budget_bytes": 524288,
+      "peak_resident_bytes": 157491,
+      "selection_updates": 63,
+      "cache_hits": 505,
+      "cache_misses": 8,
+      "evictions": 0,
+      "generation": 37,
+      "draws": 2637652,
+      "view_radius": 96
+    },
+    "partial_module_accounted": {
+      "known": true,
+      "current_bytes": 2274480,
+      "peak_bytes": 2274480,
+      "observations": 2683
+    }
+  },
+  "memory_scope": "Latest process/Java endpoints fell from22:45; the series is not monotonic growth. Native heap rose slightly. Sparse snapshots do not establish leak freedom. Repeated main-thread report serialization remains a developer profiling/optimization follow-up.",
+  "audio_scope": "Prior user-confirmed audible quality retained. Joined callbacks now291585 with max86.108125ms; zero retained mixer stream-underrun frames does not establish realtime deadlines, platform xruns or latency. Current19th backend live; diagnostics_valid=0. Investigate callback maximum in development; deferred focus/routes remain unqualified.",
+  "scope": "Accepted exact offline Support0.2.0 code201 within user-approved tests. No full original checklist, full numbered gate, complete zone, all-body appearance, authoritative combat or live-session acceptance.",
+  "publication": "Evidence-only update; no APK rebuild, app reset, primary source/workflow changes or server action. Rollback only by additive revert of evidence commit."
+}

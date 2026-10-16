@@ -1,5 +1,7 @@
 # Remaining physical checks — existing Support code 201 APK
 
+**Closed within user-approved scope:** [Final physical acceptance](../accepted-230006/README.md). Final checks 1, 3, 4, 7 passed; 2 portrait, 5 audio focus and 6 alternate route were explicitly deferred by the user. No further tests of this APK are requested. The instructions/assessments below are historical.
+
 The 22:45 report passes nearly 30 active minutes, nonempty chat and explicit Surface recreation in both Wretch and Male modes. Do not repeat endurance, chat or Recreate. These instructions concern the existing offline Support app only.
 
 1. **Male Home/resume.** Tap **Preview: Wretch** so the button reads **Preview: Male**. Press Android **Home**, wait 10 seconds, and reopen Support from Recents. Confirm the complete Male model and music return without missing parts, a black scene or stuck controls. Return to Wretch using **Preview: Male**. To finish the original three deliberate Home cycles, repeat Home → wait 10 seconds → return twice in Wretch, unless you already performed those two deliberately. Report export pauses alone do not identify a Home test.

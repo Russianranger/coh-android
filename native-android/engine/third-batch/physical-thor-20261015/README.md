@@ -1,5 +1,7 @@
 # Support code 201 — AYN Thor physical evidence, October 15, 2026
 
+**Closed within user-approved scope:** [Final physical acceptance](accepted-230006/README.md). Final checks 1, 3, 4, 7 passed; 2 portrait, 5 audio focus and 6 alternate route were explicitly deferred by the user. No further tests of this APK are requested. The instructions/assessments below are historical.
+
 **Newest update:** [22:45 longer-run assessment](long-run-224517/README.md) reaches 29m59s at 59.75 FPS and verifies nonempty chat plus Male-active recreation. [Remaining tests](long-run-224517/REMAINING-TESTS.md) exclude already completed checks. Latest RSS/PSS rise requires developer investigation; earlier records below remain historical.
 
 **Earlier update:** [The 22:31 endurance follow-up](endurance-223100/README.md) verifies 15m44s of active execution at 59.85 frames/s, two pause/resume cycles, audio route reopens and user-confirmed normal music/audio. The bounded ten-minute endurance and audibility checks pass; the full consolidated checklist remains open. The assessment below is the preserved initial 22:18 report.

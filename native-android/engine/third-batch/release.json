@@ -25,7 +25,7 @@
     "implemented": true,
     "host_source_qualified": true,
     "android_emulator_qualified": true,
-    "physical_ayn_thor_qualified": false,
+    "physical_ayn_thor_qualified": true,
     "android_arm64_built_hosted": true,
     "android_x86_64_companion_built_hosted": true,
     "changed_modules_arm64_compiled_locally": true,
@@ -34,7 +34,7 @@
     "physical_ayn_thor_audible_playback_verified": true
   },
   "hosted_result": "success: 23 Android13 x86_64 scenarios, two screenshot proofs, independent report and manual visual review",
-  "physical_acceptance": "Bounded offline endurance/audibility, nonempty chat and Wretch/Male Surface recreation verified; remaining focused physical checks open; memory growth requires developer investigation",
+  "physical_acceptance": "Accepted by user within agreed bounded offline scope; final steps1,3,4,7 passed, steps2,5,6 deferred as unnecessary for now",
   "scope": "bounded offline support application, authentic custom Male neutral preview; no live-server or full-zone qualification",
   "attempts": [
     {
@@ -91,15 +91,8 @@
   ],
   "android_emulator_arch": "x86_64",
   "android_api_level": 33,
-  "arm64_execution": "Exact released APK physically executed on AYN Thor/Adreno740 for29m58.906s active foreground",
-  "additional_device_checks_pending": [
-    "Explicit Android Home/resume while Male active; prior three pauses were all Wretch and two immediately followed report export",
-    "Physical Male portrait framing screenshot, if system rotation is available",
-    "Visible Wretch mock-animation cycle; the sole explicit trigger happened while Male preview was active",
-    "Confirm readable/interactable five panels and provide Missions/Contacts screenshot; counters show Contacts and further intents but not complete visual coverage",
-    "External audio-focus interruption while Support is active; focus_changes remains zero",
-    "Identify alternate audio device and confirm audible switch/recovery if available; three route reopens alone do not identify devices"
-  ],
+  "arm64_execution": "Exact released APK physically executed on AYN Thor/Adreno740 for43m51.354s active foreground",
+  "additional_device_checks_pending": [],
   "artifacts": {
     "arm64": {
       "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-arm64.apk",
@@ -174,18 +167,22 @@
     "scope": "Historical final Android13 x86_64 emulator run; physical observations are recorded separately in physical_evidence"
   },
   "physical_evidence": {
-    "assessment": "physical-thor-20261015/long-run-224517/assessment.json",
-    "report_sha256": "ff8e577d33279380bd7709531e6c32a6009826780444b3e3ee356fe69da3e2aa",
+    "assessment": "physical-thor-20261015/accepted-230006/assessment.json",
+    "report_sha256": "1f9b28e1c8b44ef0bcb2042ecbfe7fc7bd11151b7a2d8294c49b403db9d017de",
     "observed_subset_verified": true,
     "full_checklist_verified": false,
-    "frames": 107476,
-    "active_foreground_ms": 1798906,
-    "observed_frames_per_foreground_second": 59.745200694199696,
+    "current_user_required_checklist_verified": true,
+    "frames": 157101,
+    "active_foreground_ms": 2631354,
+    "observed_frames_per_foreground_second": 59.70348345376563,
+    "scope": "User-approved bounded offline physical acceptance; portrait/focus/route explicitly deferred; no full numbered gate closure",
     "ten_minute_bounded_endurance_verified": true,
     "user_confirmed_audibility": true,
     "nonempty_chat_verified": true,
     "male_active_surface_recreation_verified": true,
-    "scope": "bounded offline only; memory rise requires developer investigation"
+    "male_home_resume_verified": true,
+    "visible_animation_cycle_verified": true,
+    "panel_user_checks_verified": true
   },
   "physical_evidence_history": [
     {
@@ -209,14 +206,50 @@
       "ten_minute_bounded_endurance_verified": true,
       "user_confirmed_audibility": true,
       "scope": "bounded offline support only; no full gate closure"
+    },
+    {
+      "assessment": "physical-thor-20261015/long-run-224517/assessment.json",
+      "report_sha256": "ff8e577d33279380bd7709531e6c32a6009826780444b3e3ee356fe69da3e2aa",
+      "observed_subset_verified": true,
+      "full_checklist_verified": false,
+      "frames": 107476,
+      "active_foreground_ms": 1798906,
+      "observed_frames_per_foreground_second": 59.745200694199696,
+      "ten_minute_bounded_endurance_verified": true,
+      "user_confirmed_audibility": true,
+      "nonempty_chat_verified": true,
+      "male_active_surface_recreation_verified": true,
+      "scope": "bounded offline only; memory rise requires developer investigation"
     }
   ],
   "developer_followups": [
     "Heap/GC/report-allocation analysis",
+    "Profile retained86.108ms maximum joined audio callback; platform xruns/deadlines/latency unexported",
     "Original face/material parity and Female/Huge completion",
     "Authentic larger-zone collision/wall/sliding and full-zone assets",
     "Full FX/power icons/impact audio",
     "Thermal/GPU-time/platform-xrun instrumentation",
     "Live session gates25\u201327 remain exclusively primary-agent owned"
-  ]
+  ],
+  "physical_qualification_scope": "User-approved bounded offline Support code201 tests; excludes deferred portrait, external focus and alternate-route checks and all full numbered gates",
+  "physical_original_full_checklist_verified": false,
+  "physical_current_required_checklist_verified": true,
+  "deferred_physical_checks": [
+    {
+      "step": 2,
+      "test": "Male portrait framing",
+      "status": "deferred_by_user_not_qualified"
+    },
+    {
+      "step": 5,
+      "test": "External audio-focus interruption",
+      "status": "deferred_by_user_not_qualified"
+    },
+    {
+      "step": 6,
+      "test": "Alternate audio-output route listening",
+      "status": "deferred_by_user_not_qualified"
+    }
+  ],
+  "further_tests_requested_for_this_apk": false
 }
