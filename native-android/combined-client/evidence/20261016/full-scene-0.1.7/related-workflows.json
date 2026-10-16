@@ -1,0 +1,457 @@
+{
+  "schema": "coh-native-related-workflows-017-v1",
+  "passed": true,
+  "repository": "Russianranger/coh-android",
+  "source_commit": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "source_tree": "93390b9fb6f765e4b864669eac66995e56c1f955",
+  "branch": "native-android",
+  "read_only_collection": true,
+  "workflow_reruns_requested": false,
+  "all_runs_completed_successfully": true,
+  "scope": "Supplemental CI evidence separate from the Combined0.1.7 APK/framework qualification. Host/Android scripted-peer contracts do not grant original server authentication, imported asset resolution or live-world acceptance.",
+  "runs": [
+    {
+      "id": 38836479966,
+      "name": "Native Android portable core",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+      "head_branch": "native-android",
+      "path": ".github/workflows/native-android-core.yml",
+      "html_url": "https://github.com/Russianranger/coh-android/actions/runs/38836479966",
+      "run_attempt": 1,
+      "created_at": "2026-10-16T01:41:33Z",
+      "updated_at": "2026-10-16T01:42:32Z",
+      "tree_sha": "93390b9fb6f765e4b864669eac66995e56c1f955",
+      "jobs": [
+        {
+          "id": 116766658186,
+          "name": "host-and-android",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12019497706,
+          "name": "native-android-core-evidence",
+          "bytes": 162037,
+          "api_digest": "sha256:c76d8a776948452f46db8a788c80546c6e0f11d4941bb1a794690b3c472e4fe9",
+          "expired": false,
+          "url": "https://github.com/Russianranger/coh-android/actions/runs/38836479966/artifacts/12019497706",
+          "archive_downloaded_and_digest_verified": true
+        }
+      ],
+      "scope": "Portable core source/oracle tests on host plus ARM64 Bionic cross-build; no Android execution in this workflow.",
+      "host_plain": {
+        "passed": true,
+        "checks": 12026,
+        "pointer_bytes": 8,
+        "long_bytes": 8,
+        "platform": "host"
+      },
+      "host_asan_ubsan": {
+        "passed": true,
+        "checks": 12026,
+        "pointer_bytes": 8,
+        "long_bytes": 8,
+        "platform": "host"
+      },
+      "algorithm_asset_oracle": {
+        "known_vectors": 34,
+        "unaligned_vector_cases": 272,
+        "oracle_cases": 2000,
+        "oracle_blocks": 32716,
+        "truncation_cases": 11184,
+        "mutation_cases": 48,
+        "geometry_versions": 6,
+        "pack_cases": 6
+      },
+      "synthetic_dds_oracle": {
+        "oracle_images": 1095,
+        "truncated_inputs": 424,
+        "invalid_headers": 9,
+        "capacity_guards": 1095,
+        "mip_checks": 3
+      },
+      "arm64_build": {
+        "android_cross_compiled": true,
+        "device_executed": false,
+        "files": [
+          {
+            "name": "libcoh_native_core.so",
+            "bytes": 16304,
+            "sha256": "81568e467d4e3f6810056db817d6ade865f2b87ce36bb5067c6078f1057e8fa9"
+          },
+          {
+            "name": "coh-native-core-tests",
+            "bytes": 20872,
+            "sha256": "2a713ab98d01fa95a181f9992817f66089b80d62d0e4a255ed1cefcb9116df37"
+          }
+        ]
+      }
+    },
+    {
+      "id": 38836479985,
+      "name": "Native Android session protocol contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+      "head_branch": "native-android",
+      "path": ".github/workflows/native-session-protocol.yml",
+      "html_url": "https://github.com/Russianranger/coh-android/actions/runs/38836479985",
+      "run_attempt": 1,
+      "created_at": "2026-10-16T01:41:33Z",
+      "updated_at": "2026-10-16T01:47:39Z",
+      "tree_sha": "93390b9fb6f765e4b864669eac66995e56c1f955",
+      "jobs": [
+        {
+          "id": 116766658514,
+          "name": "host-and-arm64",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116767162580,
+          "name": "android-socket-boundary",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12019885606,
+          "name": "native-session-protocol-contracts",
+          "bytes": 1598107,
+          "api_digest": "sha256:e8571ca5a45843cbf2ee11d534c300451ff7832d80dc53ac78d7290e44133962",
+          "expired": false,
+          "url": "https://github.com/Russianranger/coh-android/actions/runs/38836479985/artifacts/12019885606",
+          "archive_downloaded_and_digest_verified": true
+        },
+        {
+          "id": 12019099096,
+          "name": "native-session-android-socket-evidence",
+          "bytes": 74638,
+          "api_digest": "sha256:536d35aeab0cb46925010a1e02d4d352cd2218576df2c7b2fd4467f04b134391",
+          "expired": false,
+          "url": "https://github.com/Russianranger/coh-android/actions/runs/38836479985/artifacts/12019099096",
+          "archive_downloaded_and_digest_verified": true
+        }
+      ],
+      "scope": "Independent host protocol modules and UDP owner executed through synthetic peers on Android shell; no APK or original server login/world.",
+      "host_modules": {
+        "auth": {
+          "status": "PASS",
+          "sanitize": true,
+          "native_tests": {
+            "authenticated_server_session": false,
+            "checks": 1920,
+            "malformed_inputs": 10000
+          },
+          "source_dh_der_exact": true
+        },
+        "replication_prefix": {
+          "scope": "synthetic source-layout fixtures and original position consumer; no real server/capture/device",
+          "fixtures": 44,
+          "checks": {
+            "release": {
+              "passed": true,
+              "checks": 86632,
+              "truncations": 6947,
+              "fuzz_cases": 34000,
+              "bounded_cases": 5642,
+              "live_server": false
+            },
+            "asan": {
+              "passed": true,
+              "checks": 86632,
+              "truncations": 6947,
+              "fuzz_cases": 34000,
+              "bounded_cases": 5642,
+              "live_server": false
+            },
+            "ubsan": {
+              "passed": true,
+              "checks": 86632,
+              "truncations": 6947,
+              "fuzz_cases": 34000,
+              "bounded_cases": 5642,
+              "live_server": false
+            }
+          },
+          "full_groups_suite_executed_here": false
+        },
+        "network": {
+          "passed": true,
+          "native": {
+            "checks": 127218,
+            "negative_cases": 53808,
+            "wire_cases": 640,
+            "session_scenarios": 361,
+            "fixed_link_bytes": 486576,
+            "codec_initial_bytes": 275504,
+            "server_interoperability": false
+          },
+          "udp_adapter": {
+            "checks": 1194,
+            "negative_cases": 61,
+            "socket_scenarios": 22,
+            "actual_os_udp": true,
+            "socket_leak_check": true,
+            "live_server_interoperability": false
+          },
+          "sanitizers": "ASan+UBSan; leak sanitizer disabled on restricted host"
+        },
+        "audio": {
+          "passed": true,
+          "sanitizers": [
+            "address",
+            "undefined"
+          ],
+          "authentic_asset": null,
+          "summary": {
+            "kind": "summary",
+            "passed": true,
+            "checks": 17582,
+            "source_comparisons": 5000,
+            "live_wrapped_allocations_after_teardown": 0
+          },
+          "audible_playback_qualified": false
+        },
+        "cross_module_contract": {
+          "passed": true,
+          "checks": 45,
+          "encrypted_netlink_contract": true,
+          "replication_authorization_guard": true,
+          "real_server": false,
+          "authenticated_account": false,
+          "live_world": false
+        }
+      },
+      "combined_arm64_library": {
+        "passed": true,
+        "android_arm64_bionic_cross_compiled": true,
+        "android_executed": false,
+        "public_android_crypto_provider_linked": false,
+        "library": {
+          "name": "libcoh_native_engine.so",
+          "bytes": 242616,
+          "sha256": "7fb97a70649e25b1dfc5562e00de201948534c41543b0e48a3898c7f7724a53c"
+        }
+      },
+      "android_socket_execution": {
+        "schema": "coh-native-android-socket-boundary-v1",
+        "passed": true,
+        "android_api": "33",
+        "validator_controls": 55,
+        "abi": "x86_64",
+        "binary_sha256": "e141cb6055fd43d008269cf54187301fad1068cf90e635a39f9b619cc9920108",
+        "native": {
+          "checks": 1194,
+          "negative_cases": 61,
+          "socket_scenarios": 22,
+          "actual_os_udp": true,
+          "socket_leak_check": true,
+          "live_server_interoperability": false
+        },
+        "scope": "New native UDP owner/lifecycle on Android shell; synthetic peer, no APK, real shard, account login or world session.",
+        "arm64_executed": false,
+        "physical_thor_accepted": false,
+        "actual_server_interoperability_verified": false
+      },
+      "android_socket_receipt": {
+        "artifact_id": 12019099096,
+        "member": "android-udp-proof.json",
+        "bytes": 669,
+        "sha256": "d3191640cca77db2efd4059231aad7f17f23702042b3381ee79e7a40573cfb97"
+      },
+      "socket_boundary_binaries": {
+        "arm64": {
+          "sha256": "94fcac187db8895caaae5480121911f50835a7eb7290fc7a6bd6d40840cb0c88",
+          "bytes": 68672
+        },
+        "x86_64": {
+          "sha256": "e141cb6055fd43d008269cf54187301fad1068cf90e635a39f9b619cc9920108",
+          "bytes": 72176
+        }
+      }
+    },
+    {
+      "id": 38836479986,
+      "name": "Native Android live-session protocol foundations",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+      "head_branch": "native-android",
+      "path": ".github/workflows/native-live-session.yml",
+      "html_url": "https://github.com/Russianranger/coh-android/actions/runs/38836479986",
+      "run_attempt": 1,
+      "created_at": "2026-10-16T01:41:33Z",
+      "updated_at": "2026-10-16T01:49:59Z",
+      "tree_sha": "93390b9fb6f765e4b864669eac66995e56c1f955",
+      "jobs": [
+        {
+          "id": 116766658582,
+          "name": "host-and-arm64",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116767734720,
+          "name": "android-contract-execution",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12019766734,
+          "name": "native-live-session-host-arm64",
+          "bytes": 24728092,
+          "api_digest": "sha256:01095bc247d5e75c5d75100f0f981ac1aa4fa34c8a8c92b96e7615c219623489",
+          "expired": false,
+          "url": "https://github.com/Russianranger/coh-android/actions/runs/38836479986/artifacts/12019766734",
+          "archive_downloaded_and_digest_verified": false
+        },
+        {
+          "id": 12019498902,
+          "name": "native-live-session-android13-execution",
+          "bytes": 3291,
+          "api_digest": "sha256:bce6872af904c8d1a176d7464c87a8049918c5e35ed4307c724ab5cb9d3ea57c",
+          "expired": false,
+          "url": "https://github.com/Russianranger/coh-android/actions/runs/38836479986/artifacts/12019498902",
+          "archive_downloaded_and_digest_verified": true
+        }
+      ],
+      "scope": "Five native public-crypto/source-layout scripted-peer TCP/UDP suites executed on Android13 x86_64 emulator; not authenticated server interoperability.",
+      "host_completed_checks": [
+        "combined_arm64",
+        "combined_host",
+        "crypto_build",
+        "crypto_host",
+        "dbclient",
+        "live_owner",
+        "login",
+        "mapclient",
+        "server_oracle"
+      ],
+      "android_execution": {
+        "abi": "x86_64",
+        "accepted_apks_rebuilt": false,
+        "actual_server_interoperability_verified": false,
+        "android_executed": true,
+        "android_release": "13",
+        "android_sdk": "33",
+        "device_is_emulator": true,
+        "device_model": "sdk_gphone64_x86_64",
+        "emulator_qualified": true,
+        "full_live_world_verified": false,
+        "gates25_27_complete": false,
+        "manifest_sha256": "c964322f2016087709f8e724a30e1a5b2fb06ed2db0cbe8e4dae68cc87c86939",
+        "passed": true,
+        "physical_android_executed": false,
+        "physical_thor_accepted": false,
+        "real_account_login_verified": false,
+        "schema": "coh-native-live-contracts-android-execution-v1",
+        "scope": "Five native crypto/scripted-peer TCP/UDP contract suites"
+      },
+      "android_suites": {
+        "crypto": {
+          "android_executed": true,
+          "binary_sha256": "5a3f7f0547afe9a71ec9c58eec277b1547a97be194ea1ae27cd56b7342d5dbdc",
+          "build_receipt_sha256": "3d15aa486551e8ad2172d8c58290464907081ec769a673d1691a06ee8df4f402",
+          "passed": true,
+          "result": {
+            "authenticated_server_session": false,
+            "checks": 1920,
+            "malformed_inputs": 10000
+          }
+        },
+        "db_session": {
+          "android_executed": true,
+          "binary_sha256": "dec7b08909445b7dcfac9bb28fdffd782ebb28160cfa434707acadc1f4c0eb37",
+          "build_receipt_sha256": "3fde2b639037ae20dffdb75aceb7197d176f2935c93d07460d29fa6b2288e564",
+          "passed": true,
+          "result": {
+            "actual_os_udp": true,
+            "checks": 958,
+            "passed": true,
+            "real_authenticated_server": false,
+            "socket_leak_check": true,
+            "socket_scenarios": 14,
+            "source_layout_peer": true
+          }
+        },
+        "db_wire": {
+          "android_executed": true,
+          "binary_sha256": "fb2e974ce770a732736b00efb58d8cac38a624de81b32e8b48ef46ed8fe9a909",
+          "build_receipt_sha256": "3fde2b639037ae20dffdb75aceb7197d176f2935c93d07460d29fa6b2288e564",
+          "passed": true,
+          "result": {
+            "checks": 95949,
+            "malformed_inputs": 10000,
+            "passed": true,
+            "real_server_login": false
+          }
+        },
+        "login": {
+          "android_executed": true,
+          "binary_sha256": "a057574ca499fed46d5302b4ed4d8e96948458b5f88c36825d49c2160ed89dfd",
+          "build_receipt_sha256": "2061fbecb94a4772b2e474516c9bac97bdf1ae986e02b0ff5260b1e22666e4e4",
+          "passed": true,
+          "result": {
+            "actual_os_tcp": true,
+            "checks": 523,
+            "descriptor_cleanup": true,
+            "passed": true,
+            "passwords_logged": false,
+            "real_account_login_verified": false,
+            "socket_scenarios": 11,
+            "synthetic_authserver": true
+          }
+        },
+        "mapclient": {
+          "android_executed": true,
+          "binary_sha256": "34484dffd7b90071ba8f450f333362145ab68136e65d7cec9d08f6f17ed98bf8",
+          "build_receipt_sha256": "ebb4f19c2dbd750412af8c8845bfa3877c0124378bbb0ba6fbb70a4fb2ce0099",
+          "passed": true,
+          "result": {
+            "actual_authentication": false,
+            "actual_os_udp": true,
+            "checks": 31480,
+            "decoded_budget_bytes": 4194304,
+            "expanded_scene_fixture": true,
+            "large_scene_decoded_bytes": 139794,
+            "large_scene_max_wire_bytes": 3575,
+            "live_world": false,
+            "negative_cases": 10665,
+            "scenarios": 33,
+            "scene_assets_resolved": false,
+            "scene_crc_verified": false,
+            "scene_tail_parsed": true,
+            "scripted_peer_only": true,
+            "socket_leak_check": true
+          }
+        }
+      },
+      "android_total_checks": 130830,
+      "android_receipt": {
+        "artifact_id": 12019498902,
+        "member": "receipt.json",
+        "bytes": 3441,
+        "sha256": "ddaf11a8c3e63f4b2cbe84948078c38129893ab1bbbb60f4a35686d3073e5353"
+      }
+    }
+  ],
+  "limitations": {
+    "new_parser_real_server_interoperability_verified": false,
+    "real_account_login_verified": false,
+    "new_parser_thor_accepted": false,
+    "full_live_world_verified": false,
+    "new_gate25_27_acceptance_granted": false,
+    "accepted_apks_rebuilt_by_related_workflows": false,
+    "arm64_execution_claimed": false,
+    "all_android_execution_is_x86_64_api33_emulator": true
+  },
+  "collection_method": "GitHub completed workflow metadata and job logs; four downloaded artifact archives verified against GitHub API SHA256/size, then bounded JSON receipts inspected. Large live host/ARM64 artifact identity is API-declared and marked not downloaded."
+}

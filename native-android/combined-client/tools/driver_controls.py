@@ -15,7 +15,8 @@ from unittest.mock import patch
 from emulator_check import (Check, PACKAGE, scene_pixels, settled_preview, viewport_contract,
                             map_report_contract, installed_apk_contract, guest_resources_contract,
                             activity_inventory, retained_launcher, large_scene_contract,
-                            complete_scene_contract, SCENE_INSPECTION_FIELDS)
+                            complete_scene_contract, SCENE_INSPECTION_FIELDS,
+                            idle_preview_contract, initial_map_contract)
 
 FILE = 'native-test-donor.apk'
 BACKGROUND = f'<node package="com.google.android.documentsui" text="{FILE}" bounds="[189,899][583,956]"/>'
@@ -177,6 +178,23 @@ def viewport_protocol_controls(path):
     protocol['map_protocol']['udp']['link']['decode']=dict.fromkeys(
         ('failure_kind','compressed_bytes','declared_raw_bytes','output_budget','normalized_command','command_valid'),0)
     map_report_contract(protocol);count+=1
+    idle_preview_contract({'phase':'IDLE'});count+=1
+    for value in ({'phase':'CLOSED'}, {'phase':'IDLE','attempts':0},
+                  {'phase':'IDLE','password':'private'}, {'phase':'IDLE','map_protocol':{}},
+                  {'phase':'IDLE','authserver_authenticated':True}, None):
+        reject(idle_preview_contract,value)
+    initial=copy.deepcopy(protocol);initial['phase']='CHARACTERS_READY'
+    initial_map_contract(initial);count+=1
+    for mutate in (
+        lambda v:v.update(phase='IDLE'),
+        lambda v:v['map_protocol'].update(scene_structures=1),
+        lambda v:v['map_protocol'].update(last_decoded_bytes=32),
+        lambda v:v['map_protocol'].update(scene_decoded_bytes=32),
+        lambda v:v['map_protocol']['scene_inspection'].update(defs=1),
+        lambda v:v['map_protocol']['scene_failure'].update(stage=4,status=2),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(payload='private'),
+    ):
+        value=copy.deepcopy(initial);mutate(value);reject(initial_map_contract,value)
     for mutate in (
         lambda v:v.update(password='must never appear'),
         lambda v:v['map_protocol'].update(packet_body='must never appear'),

@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   package:
-    if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[combined-requalify]')
+    if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[combined-requalify]') && !contains(github.event.head_commit.message, '[combined-017-requalify]')
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:

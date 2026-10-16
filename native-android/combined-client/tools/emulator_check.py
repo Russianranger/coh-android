@@ -174,6 +174,21 @@ def map_report_contract(value):
             'numeric_privacy_bounds_verified': True}
 
 
+def idle_preview_contract(value):
+    """Before explicit Connect no native network controller has been created."""
+    assert isinstance(value, dict) and value == {'phase':'IDLE'}
+
+
+def initial_map_contract(value):
+    """After explicit DB connect, require the complete untouched Map receipt."""
+    map_report_contract(value)
+    assert value['phase'] == 'CHARACTERS_READY'
+    mapping = value['map_protocol']
+    assert all(mapping[k] == 0 for k in ('scene_structures','last_decoded_bytes','scene_decoded_bytes'))
+    assert all(v == 0 for v in mapping['scene_inspection'].values())
+    assert mapping['scene_failure'] == {'stage':0,'bit_offset':0,'status':0}
+
+
 def large_scene_contract(value, peer, *, tail_parsed=False):
     """Bind real app diagnostics to one explicitly scripted compressed body."""
     proof = map_report_contract(value)
@@ -636,7 +651,7 @@ class Check:
             thread = threading.Thread(target=maintain, daemon=True);thread.start()
             self.tap('Connect local server')
             characters = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'CHARACTERS_READY', 'actual native app DB list from explicit scripted UDP peer')
-            map_report_contract(characters['server_protocol'])
+            initial_map_contract(characters['server_protocol'])
             self.tap('Native Fixture', prefix=True, activate=False)
             before = self.viewport(viewport_label, characters['native']['frames']+30)
             assert before['server_protocol']['phase'] == 'CHARACTERS_READY'
@@ -655,9 +670,7 @@ class Check:
                 reopened = self.report('native-client-report.json')
                 assert reopened['server_protocol']['phase'] == 'IDLE' and reopened['native']['held_dirs'] == 0
                 assert reopened['server_protocol'].get('attempts',0) == 0
-                map_report_contract(reopened['server_protocol'])
-                assert reopened['server_protocol']['map_protocol']['scene_structures'] == 0
-                assert all(v == 0 for v in reopened['server_protocol']['map_protocol']['scene_inspection'].values())
+                idle_preview_contract(reopened['server_protocol'])
                 peer = json.loads(self.adb('exec-out','cat',report_path).stdout)
                 assert peer['character_lists'] == 1 and peer['character_choices'] == 0
                 self.record('native relaunch requires explicit reconnect',new_preview_session=True,

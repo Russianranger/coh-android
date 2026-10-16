@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "scope": "independent synthetic adversarial parser/API review; not original producer oracle, server capture, authenticated session, or device acceptance",
+  "source_sha256": {
+    "coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+    "coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4"
+  },
+  "checks": {
+    "release": {
+      "passed": true,
+      "assertions": 22188,
+      "cases": 2775,
+      "truncations": 2728,
+      "parser_allocation_calls": 0
+    },
+    "asan": {
+      "passed": true,
+      "assertions": 22188,
+      "cases": 2775,
+      "truncations": 2728,
+      "parser_allocation_calls": 0
+    },
+    "ubsan": {
+      "passed": true,
+      "assertions": 22188,
+      "cases": 2775,
+      "truncations": 2728,
+      "parser_allocation_calls": 0
+    }
+  },
+  "undefined_symbols": [
+    "U __stack_chk_fail",
+    "                 U coh_rep_pack",
+    "                 U coh_rep_read",
+    "                 U coh_rep_scene_prefix"
+  ],
+  "stack_usage": [
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/replication/coh_groups.c:23:18:pack\t8\tstatic",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/replication/coh_groups.c:16:18:bits\t32\tstatic",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/replication/coh_groups.c:41:18:floats\t64\tstatic",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/replication/coh_groups.c:31:18:string\t80\tstatic",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/replication/coh_groups.c:48:18:optional_float\t48\tstatic",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/replication/coh_groups.c:57:18:matrix\t96\tstatic",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/replication/coh_groups.c:168:11:coh_rep_groups\t912\tstatic"
+  ],
+  "passed": true
+}

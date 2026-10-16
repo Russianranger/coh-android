@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "exact extracted numeric report function executed through host-only NewStringUTF shim; not Android JNI execution",
+  "source_sha256": "22c8b465b0e2f722e9fd39abb2fcad2363a4212fbd77ad1c05cf641804e6e505",
+  "report_function_sha256": "029aa70c7511c143e1dd237635050f65d129fb3155f765dd88e80bac2ad7a01e",
+  "strict_format_compile": true,
+  "cases": 3,
+  "inspection_field_mappings": 23,
+  "failure_field_mappings": 3,
+  "report_buffer_bytes": 6144,
+  "maximum_scalar_output_bytes": 3656,
+  "no_server_text_or_packet_data_fields": true,
+  "auth_and_live_claims_remain_false": true
+}
