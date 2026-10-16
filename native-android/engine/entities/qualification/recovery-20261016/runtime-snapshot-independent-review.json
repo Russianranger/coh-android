@@ -1,0 +1,180 @@
+{
+  "schema": "coh-runtime-snapshot-independent-review-v1",
+  "reviewer": "Worker C; independent source semantics, decoder and retained-evidence review",
+  "date": "2026-10-16",
+  "result": "no_blocking_findings",
+  "review_scope": "Original owner-thread root/future snapshot producer, paired sink, source/byte admission, bounded native diagnostic and source-oracle qualification. No server was started by this reviewer.",
+  "reviewed_commits": {
+    "producer": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5",
+    "native_diagnostic": "1f90d3a58243ed41e56674e8857bac18cf48ebb0"
+  },
+  "evidence": {
+    "producer": {
+      "path": "native-android/engine/scenecatalog-server/evidence/runtime-snapshot-20261016/host-ee3ab936.json",
+      "sha256": "90a8e1a1ec3accadcf910a24f6facd1b0cf83e5c591bd95cd4fc8be2e553a209",
+      "checks_each_mode": {
+        "producer": 311,
+        "paired_sink": 247
+      },
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "deployment_control_tests": 10,
+      "source_input_files_verified_against_git": 21,
+      "original_lf_file_pins_verified_against_git": 17,
+      "fixture_and_manifest_files_verified": 17
+    },
+    "native_diagnostic": {
+      "path": "native-android/engine/scenegraph/evidence/runtime-snapshot/1f90d3a-source-qualification.json",
+      "sha256": "5d2df90ce4bafc77afabc442bbbfc42d32985946fba56aa319490683765138f5",
+      "checks_each_mode": 21726,
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "fixtures": 8,
+      "native_input_files_verified_against_git": 14,
+      "producer_input_files_verified_against_git": 4,
+      "original_helper_files_verified_against_git": 5,
+      "all_fixture_digests_equal_producer_receipt": true
+    },
+    "review_method": "Read source and original semantics; compare exact working bytes and receipt hashes with the named committed Git blobs; verify retained original pins, fixture identities, results and mode agreement. Reuse completed source/sanitizer runs; do not repeat successful suites."
+  },
+  "review_findings_closed": [
+    {
+      "finding": "Original GroupBounds declaration and reused exporter/helper inputs were not all included in the qualification source-stability boundary.",
+      "resolution": "A pins the whole original group.h, unchanged exporter and all original/helper inputs; compares originals, native inputs and HEAD before/after qualification.",
+      "commit": "f170f7f6b"
+    },
+    {
+      "finding": "Private copied diagnostic MapServer bytes needed verification before execution, not only after capture.",
+      "resolution": "Copy admission checks the complete byte-count/SHA tuple, rechecks immediately before Map launch, and retains post-capture identity verification.",
+      "commit": "f170f7f6b"
+    },
+    {
+      "finding": "Raw versus original-wire matrix comparison needed an executed packed rotation/scale source case.",
+      "resolution": "A fixture 3 reuses original GROUPS fixture 7 rotation 0.25, rotation 0.5 with fractional translation, and zero-X scale forms at sparse root slots 0/2/3, asserting original packMat has_pyr/has_scale. B admits all three matrices in every final mode.",
+      "commit": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5",
+      "fixture_sha256": "28c304743a52d7b77208a6a4a59fb83a36699e516e65935fce600b05b581d787"
+    },
+    {
+      "finding": "Native checker could omit some cycle/depth source controls.",
+      "resolution": "B now requires the expectation manifest, exact corpus coverage and essential fixture IDs 0..7 with statuses 0,0,0,0,1,4,0,0.",
+      "commit": "1f90d3a58243ed41e56674e8857bac18cf48ebb0"
+    }
+  ],
+  "producer_semantics_reviewed": [
+    "Original groupDefNew(pre_alloc) does not allocate normal file slots or advance a unique normal ID. External future objects are recorded in a separate ordinal space by actual pointer incidence; multiple original IDs of zero are valid.",
+    "Every referenced object must be active and named; groupDefFind(canonical name) must equal that exact pointer. Ordinary objects require exact file/slot pointer identity; external objects require actual global pre_alloc ownership and both original flags. Ambiguous canonical names are rejected.",
+    "The observer starts from all active regular definition references and sparse source roots, then closes external references without inserting dummy definitions, promoting future ownership or rewriting regular ordering.",
+    "All root slots, including null-definition tombstones, retain source indices. Present roots carry the raw finite source Mat4 plus unchanged original sendMat4 bytes; matrices are checked before original encoding.",
+    "GroupBounds named fields are encoded explicitly, avoiding ABI padding/bitfield serialization. Live bounds, zeroed scratch objectLibraryGetBounds lookup and original library-path lookup remain distinct observations and never mutate the live definition.",
+    "The unchanged catalog exporter and new sidecar execute at one exclusive owner-thread startup boundary. Stable ownership across both passes is a required precondition; callbacks may not yield, lazy-load or mutate source state.",
+    "Paired sink reuses existing private C-drive/no-reparse checks, creates new partial files, rejects aliases and avoids replacing outputs. Partial or one-file publication cannot mint the final paired binding.",
+    "Wrapper requires complete fresh catalog byte equality with the retained 12,179,670-byte SHA256 61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763 before binding a sidecar; counts/CRCs alone are not treated as the matching witness.",
+    "Source/run identities bind the exact new nonshipping PE, stage/compile evidence, immutable runtime inventory and one disposable instance. The wrapper verifies copied PE bytes before launch and after capture; binding follows successful owned-process cleanup."
+  ],
+  "native_semantics_reviewed": [
+    "Fixed little-endian versioned records, zero reserved bytes, exact extents and complete consumption prevent layout/ABI ambiguity; bounds, counts, canonical names and floats are validated before publication.",
+    "Two complete streaming catalog walks retain original file/slot order, holes and inactive records. One compact charged pool provides name, slot and child indexes; future ordinals cannot shadow ordinary identities.",
+    "All missing references must resolve to admitted source records. External discovery begins at regular records or actual roots and closes outward, so disconnected future cycles cannot justify their own presence.",
+    "Root-reachable DFS validates cycle and depth-128 limits with memoized subtree height. Unreachable corpus cycles can remain; complete source name resolution is not a claim of whole-corpus cycle validity.",
+    "Definition CRC uses the complete catalog. Reference CRC is recomputed in original root-slot order from canonical root and first-child names. Present roots to inactive definitions remain explicitly unsupported because original sendDef omits metadata that refs CRC can still use.",
+    "The test-only matrix bridge includes the unchanged qualified scenegraph decoder. Translation is compared exactly and basis values within the documented 2e-6 relative/absolute tolerance; complete wire consumption and finite raw/decoded values are required.",
+    "Failure, cancellation, malformed data, excess budget, unresolved topology or allocation refusal leaves output byte-for-byte unchanged and releases candidate ownership. Allocation-ordinal and cancellation controls are retained in the qualified harness.",
+    "The API returns copied numeric diagnostics and external identities, never a graph, borrowed source pointer, asset permit, actor snapshot or authority token. Callers supply immutable/disjoint spans and a trustworthy SHA callback; source/run provenance remains an independently verified caller responsibility."
+  ],
+  "memory_limits_and_scope": {
+    "catalog_max_bytes": 33554432,
+    "sidecar_max_bytes": 16777216,
+    "external_objects_max": 64,
+    "indexed_pool_max_bytes": 33554432,
+    "transaction_max_bytes": 100663296,
+    "combined_child_links_max": 262144,
+    "root_slots_max": 65536,
+    "root_depth_max": 128,
+    "native_diagnostic_stack_reserved_bytes": 131072,
+    "streaming_stack_reserved_bytes": 65536,
+    "largest_emitted_native_frame": {
+      "function": "coh_runtime_snapshot_audit",
+      "bytes": 38192,
+      "bound": "static"
+    },
+    "host_harness_caller_crypto_test_reserve_bytes": 262144,
+    "scope": "Named input, pool, decoded-record, output, stack and caller ownership; allocator overhead and whole process RSS are not established. Original Packet allocation may grow before an encoded-output limit is checked."
+  },
+  "nonblocking_followup": [
+    "Numeric producer failure phase/file/slot/root/external ordinals could improve diagnosis if the real source ownership contract rejects. Deferred to avoid additional schema/producer churn; absence does not weaken refusal or admission.",
+    "Legacy original bit-packing bodies remain byte-identical and intentionally outside UBSan instrumentation in the source oracle; new snapshot include, sink and native diagnostic are sanitized. LeakSanitizer is not claimed."
+  ],
+  "separate_reviews": {
+    "postgres_partial_initialization_and_secret_redaction": "Worker F owns final deployment redaction review; this receipt does not replace it.",
+    "coordinator_workflow": "Worker E owns workflow review; this receipt does not approve unreviewed workflow changes."
+  },
+  "not_established": [
+    "No real runtime sidecar was available during this review, so actual seven missing-name reachability and runtime external ownership remain unobserved.",
+    "The diagnostic snapshot is not a received native GROUPS transaction or physical Thor generation binding.",
+    "Geometry/material/version support, complete ALLENTS/UPDATE source grammar, dictionary binding, authoritative actor publication and renderer admission remain open independently of this capture.",
+    "No READY, RECEIVED_CHARACTER, full-update ACK, original character seeder or native client is run by this source snapshot scope.",
+    "No accepted APK was rebuilt or retested; no Android or physical acceptance of this new host-only diagnostic is claimed."
+  ],
+  "runtime_executed_by_reviewer": false,
+  "actual_snapshot_qualified": false,
+  "groups_received": false,
+  "graph_published": false,
+  "world_authority": false,
+  "assets_admitted": false,
+  "actor_admitted": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "accepted_apks_rebuilt": false,
+  "producer_source_sha256": {
+    "source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "source_snapshot_sink.inc": "18b3bf28abb9d8a737f109bf7293a3f3d73d2b604d05fad57f4c81805f882275",
+    "snapshot_oracle.py": "d303a5fee50c783b80353542ac0dcd98f5ae30c08513f171d6e90214b95815ad",
+    "test_snapshot.c": "6b394bbc20798b5a16814560069ac2cdb02667328d19fd0ef313f149805e3148",
+    "test_snapshot_sink.c": "e93039560d8720b3d5cc86b03aa801281c048a9c000587f41975717693a6e6de",
+    "test_snapshot_controls.py": "fdd5eb95afb16b951de0eb58cca88769b8676f676b92f00b9f83d4a160789eeb",
+    "stage_snapshot.py": "ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c",
+    "record_snapshot_compile.py": "d6546647d074e11b35bbb642d64208476c5840ebb5205ea6eec57039941ed977",
+    "admit_snapshot.py": "d3dc88d7d00f47a7afd980d91491c8d3bd1655c3a17b247e10fa571b19e2f548",
+    "capture_snapshot.py": "0e9c264c064acf7a5fb90bbc0c07edb7d11c0703bf13635bb6899a9f781470ed",
+    "check_snapshot.py": "97563ad61ed19d4946448565d45db9e5c6ae16552387f216ad48fee3f1e26911",
+    "stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d",
+    "capture_disposable.py": "cc714446fff59e712970bd4b0c4247715d837b18be4d559fbc8017a98a807d00",
+    "delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "catalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "dependency/native-android/engine/replication/groups_oracle.py": "23fda4a062edca54f1ea4af4d8e1d220f496a854eb68069e669f517f5c41755b",
+    "dependency/native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+    "dependency/native-android/engine/replication/tests/groups_oracle_shim.h": "d6152d20c7ac629323cd15b4ea14fe8c65a8fadea05d5f7db02cb8cb7d0cb518",
+    "dependency/native-android/engine/replication/tests/groups_oracle_harness.c": "5cbcad7546ec127b6602d10b79419a87329ef4dbc8e72c1014b661dd06d53cb2",
+    "dependency/native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "native_source_sha256": {
+    "native-android/engine/scenegraph/runtime_snapshot.c": "b15be731d65ff5ab25b4fa4a453720525203a07592fbcf07bcaeb0235f0aa3a8",
+    "native-android/engine/scenegraph/tests/runtime_matrix_bridge.c": "c9f1070d61fb272716ed0b390a58da9a2715f266a661dd799b3fd85e25a0fe93",
+    "native-android/engine/scenegraph/tests/test_runtime_snapshot.c": "5be8cc497d822228227c8f2f74b4bd3598c05e7c020d5e4b3b5d27eb0da6272a",
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/scenegraph/runtime_snapshot.h": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3",
+    "native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "native-android/engine/scenegraph/check_runtime_snapshot.py": "e1283b6164c2ba7627ab4bae537af0c433abffbd3c162c13aa203e97c5a257a0",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "original_helper_sha256": {
+    "native-android/engine/replication/groups_oracle.py": "23fda4a062edca54f1ea4af4d8e1d220f496a854eb68069e669f517f5c41755b",
+    "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+    "native-android/engine/replication/tests/groups_oracle_harness.c": "5cbcad7546ec127b6602d10b79419a87329ef4dbc8e72c1014b661dd06d53cb2",
+    "native-android/engine/replication/tests/groups_oracle_shim.h": "d6152d20c7ac629323cd15b4ea14fe8c65a8fadea05d5f7db02cb8cb7d0cb518",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  }
+}

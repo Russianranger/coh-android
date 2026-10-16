@@ -1,0 +1,35 @@
+{
+  "schema": "coh-auth-intact-hosted-artifact-v1",
+  "run": 38974164017,
+  "source_commit": "cacc6273834142cf8c8f902018eb13cb8f9b5271",
+  "artifact_id": 12078663003,
+  "archive_bytes": 71999000,
+  "archive_sha256": "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b",
+  "all_zip_crcs_verified": true,
+  "all_retained_crypto_file_hashes_verified": true,
+  "retained_crypto_files": 384,
+  "receipt_sha256": "d857ef8fd309149e92de8a8abe6423d0a8d13c338adc64990fbf8dcccefcfe5e",
+  "native_probe_identity": {
+    "sha256": "7cb5672c32c1d304efea9590366250437687e3b0c8c1fafae5e4ec7cf536f29c",
+    "bytes": 3185664,
+    "machine": "AMD64",
+    "format": "PE32+",
+    "subsystem": 3,
+    "header_identity_only": true
+  },
+  "selected_receipts": {
+    "localdb-owned-process-id.log": "8e3a551867ba60f8040b71c087c457a84a25cf9f8ce28d78c287504d7d824cfc",
+    "receipt.json": "d857ef8fd309149e92de8a8abe6423d0a8d13c338adc64990fbf8dcccefcfe5e",
+    "localdb-drop-owned-schema.log": "238c81734b19f0209a748827869c6d43b2310cd9d27a43d1553e49e599f07f71",
+    "localdb-delete-owned-instance.log": "0a9b8c2ea6687faa3ac2314d9531a5d273872efcbc68e7a40a47ccf3ae36526e",
+    "configure-intact-probe.log": "fb040b9def2ab07276cc0ce6e2e519870ee3d805f1f3c0a6d2789560a1f23387",
+    "build-intact-probe.log": "5badf7f904b41e4a89bde36200a19b2dd9e0f0bba8883d05e5f85ce1b596f55b",
+    "localdb-stop-owned-instance.log": "359d557506d2f8e6541534322c48d826fdc878f4ac200e8758318774cfeeebe2",
+    "manifest.json": "1c1c05eb10132e4d1d172d29a04d36311981e6c7023c7ee388348339c460896b"
+  },
+  "encrypted_account_login_verified": false,
+  "authserver_listener_readiness": false,
+  "source_and_windows_build_qualified": true,
+  "overall_success": false,
+  "failed_evidence_preserved": true
+}

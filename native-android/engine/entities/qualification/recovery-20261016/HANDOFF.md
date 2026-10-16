@@ -131,3 +131,23 @@ READY, RECEIVED_CHARACTER or full-update ACK was added. The renderer must retain
 its complete-transaction prerequisite. Gates 25–27 and first server-authoritative
 native world entry remain open. No new Combined APK or repeat physical test is
 justified by this standalone tranche alone.
+
+## Independent runtime snapshot review
+
+Worker C subsequently reviewed A's startup root/future sidecar and B's bounded
+native diagnostic without changing their source or starting a server. Final
+reviewed commits are `ee3ab936b6e805f6b25fadc21395e66e0fa310a5` (A) and
+`1f90d3a58243ed41e56674e8857bac18cf48ebb0` (B). The independent receipt is
+`runtime-snapshot-independent-review.json`; no blocking findings remain in its
+source-semantics and decoder scope. It binds exact Git inputs and the retained
+release/ASan/UBSan results: 311 producer and 247 sink checks per mode plus ten
+deployment controls, and 21,726 native checks per mode across eight fixtures.
+Original packed rotation/scale matrix cases, required cycle/depth controls,
+source-stability pins and pre-launch copied-PE checks were verified. Completed
+qualification was reused; no optional test rerun was needed.
+
+This is approval of the reviewed startup source diagnostic only. A real sidecar
+was not available during review. Actual seven-name reachability, received GROUPS,
+assets, complete initial character grammar and world publication remain open.
+Worker F owns deployment redaction review and Worker E owns the coordinator
+workflow review. No actor, renderer, Android or physical authority was promoted.

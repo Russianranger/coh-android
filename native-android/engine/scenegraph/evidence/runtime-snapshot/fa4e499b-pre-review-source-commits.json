@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "fa4e499b1c3e30c960005194c32dfcc5d4837598",
+  "producer_commit": "915ac80c1397dcee66fb83ea292e09c109285d0e",
+  "qualification_sha256": "f3d58af47aa9270f90a68e2a51ce0cd1d2902c87cf499fd8349f86da6f484450",
+  "qualification": "fa4e499b-pre-review-qualification.json",
+  "native_source_hashes_verified_against_commit": 14,
+  "producer_source_hashes_verified_against_commit": 4,
+  "fixtures": 8,
+  "checks_per_mode": 21646,
+  "modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "production_scenegraph_files_changed": false,
+  "actual_runtime_snapshot_qualified": false,
+  "graph_published": false,
+  "live_groups_transaction": false,
+  "first_world_entry": false,
+  "physical_acceptance_changed": false,
+  "source_snapshot_only": true,
+  "scope": "Superseded source review checkpoint retained for provenance; full group.h pin added in subsequent producer qualification."
+}

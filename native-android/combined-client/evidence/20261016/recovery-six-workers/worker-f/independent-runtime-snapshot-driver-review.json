@@ -1,0 +1,196 @@
+{
+  "schema": "coh-independent-runtime-snapshot-driver-review-v1",
+  "reviewer": "Worker F",
+  "source_revision": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5",
+  "result": "No remaining blocker within reviewed driver, admission, staging and paired-sink scope.",
+  "reviewed_paths": [
+    "native-android/engine/scenecatalog-server/capture_snapshot.py",
+    "native-android/engine/scenecatalog-server/admit_snapshot.py",
+    "native-android/engine/scenecatalog-server/stage_snapshot.py",
+    "native-android/engine/scenecatalog-server/record_snapshot_compile.py",
+    "native-android/engine/scenecatalog-server/source_snapshot_sink.inc",
+    "native-android/engine/scenecatalog-server/check_snapshot.py",
+    "native-android/engine/scenecatalog-server/snapshot_oracle.py"
+  ],
+  "review_scope": [
+    "Private disposable runtime/PG/Wine ownership; no accepted profile or APK writes",
+    "Paired final/partial output conservation and no-replace publication",
+    "Catalog equality witness and source/run identities; no live GROUPS authority",
+    "Source-stage and same-run compile evidence admission",
+    "Copied MapServer hash checked before launch and after capture",
+    "Owned process group, Wine-prefix and PostgreSQL teardown before binding/consumer",
+    "Bounded private log redaction including partial PostgreSQL initialization",
+    "Output/traversal accounting distinguished from whole-process memory"
+  ],
+  "fixed_findings": [
+    {
+      "finding": "Catalog exporter and original oracle sources omitted from complete before/after source stability guard",
+      "correction": "All 21 local/dependency inputs and 17 original files are pinned before and after execution; original GroupBounds header has a literal source pin",
+      "corrected_by": "f170f7f6ba88c1e6254ad84cea87306394365119"
+    },
+    {
+      "finding": "PostgreSQL initialize could raise before returning credentials, leaving failure-log export without redaction",
+      "correction": "Recover exact admin/game 48-hex values from at most 4096 private bytes; compare a returned Cluster when available; suppress every diagnostic export and passed status on unverified credentials",
+      "corrected_by": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5"
+    },
+    {
+      "finding": "Truncating raw logs before replacing a password could retain an unrecognized secret suffix",
+      "correction": "Replace secrets over the complete bounded raw log, then retain the 256 KiB tail",
+      "corrected_by": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5"
+    }
+  ],
+  "independent_validation": {
+    "qualified_native_and_dependency_hashes_verified": 21,
+    "qualified_original_file_hashes_verified": 17,
+    "hashes_matched_exact_git_blobs": true,
+    "original_sparse_files_read_from_exact_git_blobs": true,
+    "targeted_tests": [
+      "SnapshotControls.test_partial_postgresql_initialize_log_redaction",
+      "SnapshotControls.test_redact_before_tail_boundary"
+    ],
+    "targeted_tests_passed": 2,
+    "targeted_test_elapsed_seconds": 0.004,
+    "independent_synthetic_tail_failure_reproduced_before_fix": true,
+    "broad_suites_rerun_by_reviewer": false,
+    "services_started": false
+  },
+  "retained_qualification": {
+    "file": "coh-snapshot-a-ee3ab936-qualified.json",
+    "bytes": 18672,
+    "sha256": "90a8e1a1ec3accadcf910a24f6facd1b0cf83e5c591bd95cd4fc8be2e553a209",
+    "source_unchanged_before_after": true,
+    "python_control_tests": 10,
+    "modes": [
+      {
+        "mode": "release",
+        "producer": {
+          "passed": true,
+          "checks": 311,
+          "fixtures": 8,
+          "source_snapshot_only": true,
+          "runtime_executed": false
+        },
+        "sink": {
+          "passed": true,
+          "checks": 247,
+          "actual_pair_sink": true,
+          "runtime_executed": false
+        }
+      },
+      {
+        "mode": "asan",
+        "producer": {
+          "passed": true,
+          "checks": 311,
+          "fixtures": 8,
+          "source_snapshot_only": true,
+          "runtime_executed": false
+        },
+        "sink": {
+          "passed": true,
+          "checks": 247,
+          "actual_pair_sink": true,
+          "runtime_executed": false
+        }
+      },
+      {
+        "mode": "ubsan",
+        "producer": {
+          "passed": true,
+          "checks": 311,
+          "fixtures": 8,
+          "source_snapshot_only": true,
+          "runtime_executed": false
+        },
+        "sink": {
+          "passed": true,
+          "checks": 247,
+          "actual_pair_sink": true,
+          "runtime_executed": false
+        }
+      }
+    ],
+    "scope": "Original-producer fixtures and local WinAPI sink shim; no real server or Win32 execution"
+  },
+  "reused_capture_evidence": {
+    "run_id": 38948147691,
+    "receipt_sha256": "e8a8db400482da3ef3b5f26093091da0ae166528e1a80b6e895deee631cf640e",
+    "runtime_files": 176613,
+    "runtime_bytes": 4273657217,
+    "catalog_bytes": 12179670,
+    "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "cleanup_verified": true,
+    "source_runtime_unchanged": true,
+    "owned_process_groups_absent": true,
+    "scope": "Historical capture/helper boundary evidence only; no sidecar execution inherited"
+  },
+  "resource_boundaries": {
+    "catalog_output_max_bytes": 33554432,
+    "sidecar_output_max_bytes": 16777216,
+    "external_objects_max": 64,
+    "log_read_max_bytes": 8388608,
+    "retained_log_tail_input_bytes": 262144,
+    "credential_read_max_bytes": 4096,
+    "catalog_and_sidecar_are_distinct_owned_files": true,
+    "catalog_equality_witness_is_not_original_corpus_replacement": true,
+    "output_caps_are_not_packet_allocator_or_process_memory_caps": true,
+    "exclusive_private_directories_required": true,
+    "failure_can_retain_one_final_file_without_a_binding": true,
+    "sink_publication_is_per_file_not_a_filesystem_atomic_pair": true
+  },
+  "remaining_acceptance": {
+    "source_host_qualified": true,
+    "win32_snapshot_pe_built": false,
+    "snapshot_runtime_executed": false,
+    "native_decoder_review_owned_by": "Worker B",
+    "original_semantics_review_owned_by": "Worker C",
+    "workflow_review_owned_by": "Worker E / coordinator",
+    "matching_live_groups_transaction": false,
+    "physical_thor_accepted": false,
+    "complete_graph_or_actor_published": false,
+    "new_combined_apk": false,
+    "encrypted_auth_actions_performed": false
+  },
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "native-android/engine/scenecatalog-server/source_snapshot_sink.inc": "18b3bf28abb9d8a737f109bf7293a3f3d73d2b604d05fad57f4c81805f882275",
+    "native-android/engine/scenecatalog-server/snapshot_oracle.py": "d303a5fee50c783b80353542ac0dcd98f5ae30c08513f171d6e90214b95815ad",
+    "native-android/engine/scenecatalog-server/test_snapshot.c": "6b394bbc20798b5a16814560069ac2cdb02667328d19fd0ef313f149805e3148",
+    "native-android/engine/scenecatalog-server/test_snapshot_sink.c": "e93039560d8720b3d5cc86b03aa801281c048a9c000587f41975717693a6e6de",
+    "native-android/engine/scenecatalog-server/test_snapshot_controls.py": "fdd5eb95afb16b951de0eb58cca88769b8676f676b92f00b9f83d4a160789eeb",
+    "native-android/engine/scenecatalog-server/stage_snapshot.py": "ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c",
+    "native-android/engine/scenecatalog-server/record_snapshot_compile.py": "d6546647d074e11b35bbb642d64208476c5840ebb5205ea6eec57039941ed977",
+    "native-android/engine/scenecatalog-server/admit_snapshot.py": "d3dc88d7d00f47a7afd980d91491c8d3bd1655c3a17b247e10fa571b19e2f548",
+    "native-android/engine/scenecatalog-server/capture_snapshot.py": "0e9c264c064acf7a5fb90bbc0c07edb7d11c0703bf13635bb6899a9f781470ed",
+    "native-android/engine/scenecatalog-server/check_snapshot.py": "97563ad61ed19d4946448565d45db9e5c6ae16552387f216ad48fee3f1e26911",
+    "native-android/engine/scenecatalog-server/stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "native-android/engine/scenecatalog-server/source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d",
+    "native-android/engine/scenecatalog-server/capture_disposable.py": "cc714446fff59e712970bd4b0c4247715d837b18be4d559fbc8017a98a807d00",
+    "native-android/engine/scenecatalog-server/delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "native-android/engine/replication/groups_oracle.py": "23fda4a062edca54f1ea4af4d8e1d220f496a854eb68069e669f517f5c41755b",
+    "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+    "native-android/engine/replication/tests/groups_oracle_shim.h": "d6152d20c7ac629323cd15b4ea14fe8c65a8fadea05d5f7db02cb8cb7d0cb518",
+    "native-android/engine/replication/tests/groups_oracle_harness.c": "5cbcad7546ec127b6602d10b79419a87329ef4dbc8e72c1014b661dd06d53cb2",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_sha256_lf": {
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h": "822e3698ab8cf76a7344ed3effe607dcda542099382e8ed1a63c2c1d1df4257c",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+    "upstream/ouroboros/Common/group/groupProperties.c": "88975a6c74122a64ded79a860d60592814cdf79579b6a39357bbca79066673a1",
+    "upstream/ouroboros/Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+    "upstream/ouroboros/MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "upstream/ouroboros/Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+    "upstream/ouroboros/Common/group/groupProperties.h": "5522e0e664baab38fb369b59a8d68afd806083cb28c11bda6d58c26d475ab74e",
+    "upstream/ouroboros/Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+    "upstream/ouroboros/Game/src/group/groupnetrecv.c": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/Common/group/group.h": "17e9d423ef7f8e389f9ce39dc6d7f601d9aee500a7a617f0caa8bc049e994a48"
+  }
+}

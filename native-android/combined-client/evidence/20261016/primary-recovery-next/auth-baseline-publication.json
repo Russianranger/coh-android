@@ -1,0 +1,18 @@
+{
+  "chunks": 2,
+  "blobs": 1,
+  "entries": 33,
+  "tree": "2c84d56bf0fb520b2a4bdaacc031d324eb4e0b13",
+  "local_commit": "0372a25c771bbe401dcff5fb275f49463494fbc4",
+  "base": "194895e720aa9670a01496bd0f2851e8f1e8f99d",
+  "base_tree": "67dff9e5556e5aaf355611ca9282e5c196ade170",
+  "published_commit": "cacc6273834142cf8c8f902018eb13cb8f9b5271",
+  "guarded_expected_parent": "194895e720aa9670a01496bd0f2851e8f1e8f99d",
+  "force": false,
+  "remote_tree_verified": true,
+  "workflow_ids": [
+    38974164017
+  ],
+  "accepted_apks_rebuilt": false,
+  "real_world_entry_verified": false
+}

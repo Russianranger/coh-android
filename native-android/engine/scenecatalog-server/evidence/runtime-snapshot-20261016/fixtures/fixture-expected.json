@@ -1,0 +1,1 @@
+{"schema":1,"fixtures":[{"id":0,"expected_status":0},{"id":1,"expected_status":0},{"id":2,"expected_status":0},{"id":3,"expected_status":0},{"id":4,"expected_status":1,"reason":"reachable_cycle"},{"id":5,"expected_status":4,"reason":"depth129"},{"id":6,"expected_status":0,"reason":"unreachable_cycle"},{"id":7,"expected_status":0,"reason":"depth128"}]}

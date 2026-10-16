@@ -60,6 +60,16 @@
         12077123568,
         12076439275
       ]
+    },
+    {
+      "id": 38974164017,
+      "source": "cacc6273834142cf8c8f902018eb13cb8f9b5271",
+      "result": "failure",
+      "scope": "Source controls and new Windows probe build passed. Original service remained alive but missed listener deadline; no probe executed. SQL PID remained outside AuthServer job and alive after its stop; DROP failed, stop/delete succeeded. No login acceptance.",
+      "artifacts": [
+        12078663003,
+        12078006836
+      ]
     }
   ],
   "acceptance": {

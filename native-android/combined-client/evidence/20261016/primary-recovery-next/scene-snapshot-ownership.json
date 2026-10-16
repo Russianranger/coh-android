@@ -1,0 +1,66 @@
+{
+  "schema": "coh-missing-scene-runtime-inputs-ownership-v1",
+  "pinned_source": "cacc6273834142cf8c8f902018eb13cb8f9b5271",
+  "reason": "The retained authentic COHCAT01 and its 33-member ZIP omit actual root matrices and nonregular/pre_alloc objects. The accepted Combined ZIP also lacks an exact GROUPS payload. A new capture is needed only for these missing inputs.",
+  "scope": "Same-owner original-runtime snapshot; not received GROUPS, complete scene admission or physical authority.",
+  "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+  "owners": {
+    "A": {
+      "worktree": "/workspace/scratch/8749ec34cd9b/worker-a-snapshot",
+      "paths": [
+        "native-android/engine/scenecatalog-server/"
+      ],
+      "responsibility": "Additive read-only sidecar, sink, stager, runner and tests."
+    },
+    "B": {
+      "worktree": "/workspace/scratch/8749ec34cd9b/matching-b",
+      "paths": [
+        "native-android/engine/scenegraph/"
+      ],
+      "responsibility": "Diagnostic decoder, reachability, bridge to the unchanged matrix decoder, negative and source-oracle tests; production C/H unchanged."
+    },
+    "C": {
+      "responsibility": "Independent source ownership, alias and lifetime review; no original client seeder or native READY action."
+    },
+    "F": {
+      "responsibility": "Independent capture-driver cleanup, resource and lifetime review."
+    },
+    "coordinator": {
+      "paths": [
+        ".github/workflows/native-scene-runtime-snapshot.yml",
+        "native-android/combined-client/evidence/20261016/primary-recovery-next/"
+      ],
+      "responsibility": "Narrow CI workflow, reviewed integration, guarded publication and capture receipts."
+    },
+    "E": {
+      "responsibility": "Independent coordinator workflow, source/PE admission, trigger and artifact review; no renderer activation."
+    }
+  },
+  "preconditions_before_runtime": [
+    "Host, original-source and sanitizer controls",
+    "Independent reviews",
+    "New nonshipping PE build and source/binary admission",
+    "Reuse of exact donor, assets and bootstrap",
+    "Private owned runtime only",
+    "Same-run catalog byte-equality witness"
+  ],
+  "old_worktrees_untouched": true,
+  "accepted_apks_rebuilt": false,
+  "new_native_ready_or_character_ack": false,
+  "capture_started": false,
+  "reviewed_workflow_sha256": "478c5c194440df72fd2d11fffbe404d95f2d96506502cfc38cf4399226e904a5",
+  "reviewed_source_commits": {
+    "A": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5",
+    "B": "1f90d3a58243ed41e56674e8857bac18cf48ebb0",
+    "E_review": "2856112e7f9e227919174f707a32825ea73cc62e",
+    "F_review": "a71351494bc987a5c12d51767ba6b081aa787588",
+    "C_review": "4f12f9d6d17af19ba148323fbbcde9acf8d6dd3c"
+  },
+  "preserved_worker_tips": {
+    "a": "4de229ddc0ab9dade1c700b71d00056f7109d18d",
+    "b": "341ebdd2258a5f13f20e3732d076b39ec35e44a2",
+    "c": "4f12f9d6d17af19ba148323fbbcde9acf8d6dd3c",
+    "e": "2856112e7f9e227919174f707a32825ea73cc62e",
+    "f": "a71351494bc987a5c12d51767ba6b081aa787588"
+  }
+}

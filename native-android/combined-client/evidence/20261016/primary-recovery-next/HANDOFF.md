@@ -48,8 +48,10 @@ The original catalog remains 12,179,670 bytes, SHA256
 Its exact committed ZIP remains 2,145,443 bytes, SHA256
 `6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3`.
 It contains 508 files, 40,225 slots, 130,314 links and 33 root-count metadata, with original
-definition/reference CRCs 3173822562/3649375123. No new MapServer catalog capture is
-needed or started. Root matrices, matching physical generation, asset mappings,
+definition/reference CRCs 3173822562/3649375123. No recapture is needed to obtain
+those existing catalog bytes. The later missing-runtime-input phase below is a
+separate, justified capture of omitted root/future-object records. Root matrices,
+matching physical generation, asset mappings,
 complete actor transaction and renderer publication remain distinct requirements.
 
 ## Active implementation ownership
@@ -121,7 +123,8 @@ double-counting the catalog span. The existing 32 MiB catalog cap and 96 MiB
 aggregate scene transaction cap remain unchanged.
 
 Definition CRC is recomputed. Reference CRC cannot be recomputed from a catalog
-which lacks root transforms; matching roots remain mandatory. Source order,
+which lacks actual root target records; matching roots remain mandatory. The
+original reference CRC covers root names and first-child names, not transforms. Source order,
 strict missing-name refusal, rollback and owned allocation cleanup are tested.
 Original file/definition lookup, transforms and asset authority remain separate
 from mere catalog traversal. GEO version 8 and complete inherited material/trick
@@ -378,8 +381,9 @@ All 344 controls agree in release and combined ASan/UBSan. The decoder is a boun
 this proves source behavior consistent with the reset, not the private service's
 specific failure cause or full encrypted interoperability.
 
-A separately labeled intact-write baseline is being prepared using an isolated
+A separately labeled intact-write baseline was prepared using an isolated
 wrapper around the unchanged probe and the unchanged original server binary.
+Its later unsuccessful service-readiness result is recorded below.
 The exact seven-byte binary and failure control remain retained. No checksum,
 version, encryption or production runtime policy is relaxed. General TCP
 segmentation acceptance remains false even if an intact loopback exchange passes.
@@ -397,3 +401,107 @@ No new Combined APK exists. No new physical Thor test, authoritative world/actor
 publication, complete initial update or AuthServer-to-DB-to-Map handoff has been
 accepted. Existing accepted APK bytes and their scoped physical acceptance remain
 unchanged. The protected shared renderer/JNI/app paths have no continuation edits.
+
+### Missing runtime scene inputs: narrowly scoped follow-up
+
+The normal-send AuthServer experiment is published as
+`cacc6273834142cf8c8f902018eb13cb8f9b5271`, exact tree
+`2c84d56bf0fb520b2a4bdaacc031d324eb4e0b13`, guarded parent 194895e7.
+Its source controls passed in run 38974164017. Worker D subsequently stopped
+because an automatic safety filter flagged its monitoring turn; the coordinator
+continues read-only inspection of the already-running job and sanitized evidence.
+No blocked worker action was resubmitted.
+
+A/B/C independently established that the original 33-member capture ZIP, its
+19 logs and the accepted Combined export cannot recover actual root matrices or
+the omitted runtime future-definition objects. The original capture's owned
+processes were cleaned up, so that process cannot be resumed. A new capture is
+justified only for those missing inputs. It is not a repeat capture merely to
+obtain the existing saved catalog.
+
+A and B now use fresh isolated worktrees pinned at cacc6273. Their new read-only
+sidecar runs at the existing owner-thread startup boundary, paired with a strict
+byte-equality witness against the preserved catalog. It will record root slots,
+tombstones, target ownership, transforms and nonregular/pre_alloc objects. C
+reviews original ownership/lookup semantics; F reviews cleanup and resource
+bounds. `scene-snapshot-ownership.json` records paths and admission gates.
+The matrix diagnostic uses the unchanged production decoder through a test-only
+bridge, preserving existing qualified C/H bytes. Runtime execution remains gated
+on source/sanitizer controls, independent reviews and exact PE/source admission.
+
+This is an original-runtime snapshot, not an actual received GROUPS transaction
+or a matching physical Thor session. A later real GROUPS capture can reuse the
+original TestClientCreate/Bridge fixture to create and save a disposable character
+before the native three-command capture reconnects. The current synthetic
+one-row SQL seed is insufficient: original MapServer rejects it as BadResumeChar
+unless character_IsInitialized passes. No original seeder is run in this sidecar
+phase, and no native READY/RECEIVED_CHARACTER/full-update ACK is enabled.
+
+### Intact-send AuthServer experiment outcome
+
+Run 38974164017 completed unsuccessfully at source cacc6273. All source controls
+passed, and Windows built the separate probe successfully. The original service
+remained alive but did not acquire its expected listeners within the 90-second
+readiness bound. Neither the new intact-send probe nor the retained fragmentation
+control executed in this run. This does not test or resolve the encrypted-login
+reset from the earlier run.
+
+The owned SQL process remained alive with the same start identity before and after
+AuthServer shutdown and was outside the AuthServer Job Object. Thus this run does
+not support the hypothesis that closing that job killed SQL. The subsequent
+schema DROP still failed with a named-pipe/communication-link error; instance stop
+and delete passed. Service/listener, firewall and private-file cleanup passed;
+aggregate SQL cleanup correctly remained false. The precise service-readiness
+and LocalDB connectivity cause is still unestablished. No authentication policy
+was relaxed and no further service attempt was made after this result.
+
+Artifact [12078663003](https://github.com/Russianranger/coh-android/actions/runs/38974164017/artifacts/12078663003)
+is 71,999,000 bytes, SHA256
+`aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b`.
+All ZIP CRCs and all 384 retained crypto-file hashes were checked after download.
+The new 3,185,664-byte probe SHA256 is
+`7cb5672c32c1d304efea9590366250437687e3b0c8c1fafae5e4ec7cf536f29c`;
+it is build-qualified only. The retained static library SHA256 is
+`95aec97b796992a58f8745e1bbbc6eac634931420f13b0763d2db57537543698`.
+The artifact retains the original OpenSSL source, library, generated headers and
+build manifest for a separately admitted future reuse; another library rebuild
+is not automatically justified. Selected immutable receipts are preserved under
+`auth-intact-38974164017/`.
+
+The independently qualified original receive-offset defect remains open.
+Encrypted account login, arbitrary TCP segmentation and AuthServer-to-DB-to-Map
+handoff remain unaccepted; Gate 26 is open. The exact isolated deployment command,
+source and remaining scope are in `engine/auth-interop/deployment/AUTH-ONLY-LOGIN.md`.
+
+### Reviewed missing-input observer and decoder
+
+A source `ee3ab936b6e805f6b25fadc21395e66e0fa310a5` adds only the separate
+nonshipping observer, paired sink, source stager, PE admission, private capture
+driver and tests. The original qualified catalog exporter and sink stay unchanged.
+Its clean-source receipt SHA256 is
+`90a8e1a1ec3accadcf910a24f6facd1b0cf83e5c591bd95cd4fc8be2e553a209`:
+10 deployment controls and 311 original-producer plus 247 paired-sink checks in
+each release/ASan/UBSan mode. It binds 21 local/helper inputs and 17 original
+source files before and after qualification. C reviewed source ownership and
+original GroupBounds semantics; F independently reviewed source stability,
+copied-PE admission, cleanup and two corrected failure-log redaction paths.
+
+B source `1f90d3a58243ed41e56674e8857bac18cf48ebb0` adds host-only bounded
+runtime snapshot diagnostics. The production scenegraph C/H files remain
+unchanged. Eight original-source fixtures cover sparse roots, shared futures,
+distinct source-id-zero futures, lookup miss with library path present, packed
+rotation/zero scale, root-reachable cycles and the depth-128/129 boundary.
+All 21,726 checks agree in release/ASan/UBSan. Receipt SHA256:
+`5d2df90ce4bafc77afabc442bbbfc42d32985946fba56aa319490683765138f5`.
+The coordinator verified all integrated A/B/helper hashes against these receipts.
+No real runtime snapshot has passed this decoder yet.
+
+E independently reviewed the new three-job workflow at SHA256
+`478c5c194440df72fd2d11fffbe404d95f2d96506502cfc38cf4399226e904a5`.
+It reuses the exact original ZIP, path observer, donors and asset staging; only
+the new observer-enabled MapServer requires compilation. Source controls precede
+Win32 compilation and exact source/PE admission. One private original-runtime
+startup then records the missing root/future inputs. Both files are preserved
+before matching checks, owned shutdown precedes offline decoding, and binding
+is emitted only after cleanup and exact original-catalog equality pass.
+This workflow neither builds an APK nor sends native completion signals.

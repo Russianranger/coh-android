@@ -1,0 +1,61 @@
+{
+  "reviewer": "Worker E independent read-only review of scene runtime snapshot workflow",
+  "passed": true,
+  "blocking_findings": [],
+  "workflow_sha256": "478c5c194440df72fd2d11fffbe404d95f2d96506502cfc38cf4399226e904a5",
+  "workflow_commit_pending": true,
+  "coordinator_revision_context": "7aa71f4c17ed53080fa9b47b0d25661a332e8d21",
+  "read_A_revision_context": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5",
+  "read_B_revision_context": "1f90d3a58243ed41e56674e8857bac18cf48ebb0",
+  "scope": "Workflow command/admission boundary only. A/C/F independently review producer semantics and cleanup; final A partial-PostgreSQL-init redaction and B complete source pin corrections are separate required integration work.",
+  "read_source_sha256": {
+    "native-android/engine/scenecatalog-server/stage_snapshot.py": "ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c",
+    "native-android/engine/scenecatalog-server/record_snapshot_compile.py": "d6546647d074e11b35bbb642d64208476c5840ebb5205ea6eec57039941ed977",
+    "native-android/engine/scenecatalog-server/admit_snapshot.py": "d3dc88d7d00f47a7afd980d91491c8d3bd1655c3a17b247e10fa571b19e2f548",
+    "native-android/engine/scenecatalog-server/capture_snapshot.py": "0e9c264c064acf7a5fb90bbc0c07edb7d11c0703bf13635bb6899a9f781470ed",
+    "native-android/engine/scenecatalog-server/stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "native-android/engine/scenecatalog-server/build_path_probe.py": "ed5b983f7df0026874db3218fceb1c5a990b5204571bdc4182e1ea62b3b3834e",
+    "native-android/engine/scenecatalog-server/path_probe.c": "b5c5f0c6fa4e166ef7319b0f16e18ad64881b16e5914d93f1f146f51566e7829",
+    "native-android/engine/scenecatalog-server/source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d",
+    ".github/workflows/native-scene-runtime-snapshot.yml": "478c5c194440df72fd2d11fffbe404d95f2d96506502cfc38cf4399226e904a5",
+    "native-android/engine/scenegraph/check_runtime_snapshot.py": "e1283b6164c2ba7627ab4bae537af0c433abffbd3c162c13aa203e97c5a257a0"
+  },
+  "actual_retained_archive_validation": {
+    "archive_bytes": 2145443,
+    "archive_sha256": "6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3",
+    "archive_members": 33,
+    "archive_expanded_bytes": 12583050,
+    "archive_crc_verified": true,
+    "catalog_bytes": 12179670,
+    "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "path_probe_bytes": 240430,
+    "path_probe_sha256": "56f6911cff6790952316107de40cf28167509aa7fc9d34560613b1635b04bd68",
+    "path_probe_receipt_bytes": 1017,
+    "path_probe_three_source_files_and_extracted_functions_match_current_A": true
+  },
+  "review_checks": [
+    "Push requires native-android, explicit changed workflow/snapshot paths and scene-sidecar-capture marker. Manual dispatch requires execute_capture=true; repository identity is constrained.",
+    "Planned native-contracts-only and compact-recovery markers suppress redundant broad module/APK work; absent auth-login/catalog-capture markers and unchanged compact-recovery workflow path do not start those service jobs.",
+    "Unique concurrency group with cancel-in-progress=false cannot cancel existing worker workflows. Source controls, Win32 build and disposable runtime are ordered by job needs.",
+    "Original-source controls have gcc, libssl-dev and zlib1g-dev for producer and independent consumer compilation; all CLI options match reviewed A/B entry points.",
+    "Windows LF checkout preserves exact source bytes. Private staged source C:/scene-runtime-snapshot-src is outside checkout; generated /out/ and Python caches are ignored, so require-clean compilation receipts remain compatible with expected generated output.",
+    "Only diagnostic MapServer target is compiled with original VS2026 Win32 OptDebug staging. PE32 i386 executable, CMake source/generator/platform, exact original startup inputs and stage overlays are verified before same-run compile publication.",
+    "Same-workflow compile artifact name/path matches download and candidate admission. Current source revision is passed from GITHUB_SHA; exact manifest, staged source, copied binary hash and existing import/dependency checks precede execution.",
+    "Classic Wine key/fingerprint, all four package SHA/version pins and relative output paths match retained successful capture setup. Existing public donor/asset/preflight helpers are reused unchanged and do not rebuild APK donors.",
+    "Original catalog ZIP is tracked and matched by exact size/SHA, member count/expanded bytes and ZIP CRC. Only exact catalog/path-probe members are copied into fresh output files. Observer receipt binds unchanged helper, C source, sink functions and binary bytes.",
+    "Private capture CLI paths match candidate/runtime/control/db/path-probe staging. Generation 20261016 and 600-second driver deadline are explicitly supplied; known prior capture MapServer source log spans approximately 28 seconds after startup, so no demonstrated timeout regression was found.",
+    "Capture preserves real paired files before downstream matching refusal and emits a binding only after cleanup. Offline diagnostic step validates source-only/no-live-GROUPS scope, catalog identity and source/run receipt hashes before passing four digest pins to B checker.",
+    "Build diagnostics and compile artifacts upload independently with always guards. Runtime always preserves scope/input receipts and capture artifacts, including after independent decoder failure; separate Win32 artifact retains compile provenance.",
+    "Workflow contains no accepted APK build, device action, renderer activation, READY/character ACK, user profile/database access, AuthServer deployment or live-world acceptance claim."
+  ],
+  "limitations": [
+    "No GitHub job, native build, server process or broad test suite was executed by this review.",
+    "New snapshot capture remains a source-generation diagnostic. Exact catalog equality and root/future sidecar bytes do not establish matching physical Thor GROUPS, complete assets, actor transaction or authoritative rendered world.",
+    "Worker source hashes document the dependency versions read; pending independently reviewed producer redaction/consumer pin changes must be integrated before launch. This receipt approves only the exact workflow hash above."
+  ],
+  "workflow_started": false,
+  "runtime_executed_by_review": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "real_world_entry": false
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "coh-runtime-snapshot-worker-history-v1",
+  "tips": {
+    "a": "4de229ddc0ab9dade1c700b71d00056f7109d18d",
+    "b": "341ebdd2258a5f13f20e3732d076b39ec35e44a2",
+    "c": "4f12f9d6d17af19ba148323fbbcde9acf8d6dd3c",
+    "e": "2856112e7f9e227919174f707a32825ea73cc62e",
+    "f": "a71351494bc987a5c12d51767ba6b081aa787588"
+  },
+  "prerequisites": [
+    "cacc6273834142cf8c8f902018eb13cb8f9b5271",
+    "d862000843e30cf9fc8c9deb78ca3a06a72a57aa",
+    "a78b8eebb6a36aa37b2aff907df07fc3b47ef7a1",
+    "f4b415871f22cb73030a3026766d21a42d847c89"
+  ],
+  "bundle": {
+    "file": "runtime-snapshot-history.bundle",
+    "bytes": 96401,
+    "sha256": "63a10ad44931edf1350fe0d9169977d6ab153773e12644487bf913bb618b2c1b"
+  },
+  "source_A": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5",
+  "source_B": "1f90d3a58243ed41e56674e8857bac18cf48ebb0",
+  "workflow_sha256": "478c5c194440df72fd2d11fffbe404d95f2d96506502cfc38cf4399226e904a5",
+  "host_and_sanitizer_passed": true,
+  "runtime_snapshot_captured": false,
+  "accepted_apks_rebuilt": false
+}

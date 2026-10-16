@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "1f90d3a58243ed41e56674e8857bac18cf48ebb0",
+  "producer_commit": "ee3ab936b6e805f6b25fadc21395e66e0fa310a5",
+  "original_helpers_and_source_commit": "0dbae12623a0eace7a13660054ae694f65672b8a",
+  "original_source_path_prefix": "upstream/ouroboros/",
+  "qualification_sha256": "5d2df90ce4bafc77afabc442bbbfc42d32985946fba56aa319490683765138f5",
+  "qualification": "1f90d3a-source-qualification.json",
+  "native_source_hashes_verified_against_commit": 14,
+  "producer_source_hashes_verified_against_commit": 4,
+  "original_helper_hashes_verified_against_commit": 5,
+  "original_full_file_lf_hashes_verified_against_commit": 17,
+  "fixtures": 8,
+  "checks_per_mode": 21726,
+  "modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "required_control_statuses": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    4,
+    0,
+    0
+  ],
+  "packed_rotation_and_zero_scale_fixture": 3,
+  "production_scenegraph_files_changed": false,
+  "actual_runtime_snapshot_qualified": false,
+  "graph_published": false,
+  "live_groups_transaction": false,
+  "first_world_entry": false,
+  "physical_acceptance_changed": false,
+  "source_snapshot_only": true,
+  "scope": "Final source/negative/sanitizer qualification after independent source-closure and packed-matrix review; actual catalog/sidecar pair still required."
+}

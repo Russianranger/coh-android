@@ -1,0 +1,252 @@
+name: Nonshipping original runtime roots and future-object snapshot
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-scene-runtime-snapshot.yml
+    - native-android/engine/scenecatalog-server/*snapshot*
+    - native-android/engine/scenegraph/*runtime_snapshot*
+    - native-android/engine/scenegraph/tests/*runtime_snapshot*
+  workflow_dispatch:
+    inputs:
+      execute_capture:
+        description: Capture missing root/future inputs only in an isolated public fixture; no live-client or device
+          acceptance
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-scene-runtime-snapshot-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-controls:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && ((github.event_name
+      == 'workflow_dispatch' && inputs.execute_capture) || (github.event_name == 'push' && contains(github.event.head_commit.message,
+      '[scene-sidecar-capture]')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - name: Install explicit standalone native oracle dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends gcc libssl-dev zlib1g-dev
+    - name: Qualify bounded original-source snapshot and independent decoder controls
+      run: |
+        mkdir -p out/scene-snapshot-controls
+        python3 native-android/engine/scenecatalog-server/check_snapshot.py --source-root . --sanitize --output out/scene-snapshot-controls/producer.json --fixtures-output out/scene-snapshot-controls/fixtures
+        python3 native-android/engine/scenegraph/check_runtime_snapshot.py --source-root . --output out/scene-snapshot-controls/consumer.json --sanitize
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: native-scene-runtime-snapshot-source-controls
+        path: out/scene-snapshot-controls/
+        if-no-files-found: error
+        retention-days: 90
+  nonshipping-win32-snapshot-build:
+    needs: source-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 45
+    steps:
+    - name: Preserve original LF source bytes
+      shell: pwsh
+      run: git config --global core.autocrlf false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Reuse exact published startup inputs without rebuilding donor assets
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Path out/scene-snapshot-build-diagnostics -Force | Out-Null
+        python tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+        if ($LASTEXITCODE -ne 0) { throw 'Exact startup input admission failed' }
+    - name: Stage private original source and read-only root/future sidecar overlay
+      shell: pwsh
+      run: |
+        python tools/prepare_map_startup_source.py --output C:/scene-runtime-snapshot-src --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest out/native-inputs/server-animation-manifest.json
+        if ($LASTEXITCODE -ne 0) { throw 'Original startup source staging failed' }
+        python native-android/engine/scenecatalog-server/stage_snapshot.py --source-root . --already-staged C:/scene-runtime-snapshot-src
+        if ($LASTEXITCODE -ne 0) { throw 'Read-only snapshot source admission failed' }
+    - name: Configure isolated nonshipping Win32 MapServer
+      working-directory: C:/scene-runtime-snapshot-src
+      shell: pwsh
+      run: |
+        cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF 2>&1 | Tee-Object "$env:GITHUB_WORKSPACE/out/scene-snapshot-build-diagnostics/configure.log"
+        if ($LASTEXITCODE -ne 0) { throw 'Snapshot MapServer configure failed' }
+    - name: Compile only the required diagnostic MapServer target
+      working-directory: C:/scene-runtime-snapshot-src
+      shell: pwsh
+      run: |
+        cmake --build out/build/vs2026 --config OptDebug --parallel 4 --target MapServer 2>&1 | Tee-Object "$env:GITHUB_WORKSPACE/out/scene-snapshot-build-diagnostics/build.log"
+        if ($LASTEXITCODE -ne 0) { throw 'Snapshot MapServer compile failed' }
+    - name: Bind exact PE and complete source-stage provenance
+      shell: pwsh
+      run: |
+        python native-android/engine/scenecatalog-server/record_snapshot_compile.py --source-root . --staged-source C:/scene-runtime-snapshot-src --inputs-receipt out/native-inputs/map-startup-inputs.json --output out/scene-snapshot-compile --require-clean
+        if ($LASTEXITCODE -ne 0) { throw 'Snapshot PE/source admission failed' }
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: native-scene-runtime-snapshot-win32-compile
+        path: out/scene-snapshot-compile/
+        if-no-files-found: warn
+        retention-days: 90
+    - name: Retain bounded source/build diagnostics independently of admission
+      if: always()
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Path out/scene-snapshot-build-diagnostics -Force | Out-Null
+        Get-ChildItem -Path C:/scene-runtime-snapshot-src -Filter '*build-input.json' -File -ErrorAction SilentlyContinue | Where-Object { $_.Length -le 8388608 } | Copy-Item -Destination out/scene-snapshot-build-diagnostics/
+        foreach ($file in @('C:/scene-runtime-snapshot-src/out/build/vs2026/CMakeCache.txt', 'out/native-inputs/map-startup-inputs.json')) {
+          if (Test-Path -PathType Leaf $file) { Copy-Item $file out/scene-snapshot-build-diagnostics/ }
+        }
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: native-scene-runtime-snapshot-win32-diagnostics
+        path: out/scene-snapshot-build-diagnostics/
+        if-no-files-found: warn
+        retention-days: 90
+  disposable-runtime-snapshot:
+    needs: nonshipping-win32-snapshot-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - name: Admit disposable hosted environment and native runtime dependencies
+      run: |
+        test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+        test "$(id -u)" != 0
+        sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
+        python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
+        sudo dpkg --add-architecture i386
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends ca-certificates gnupg xvfb xauth postgresql-16 postgresql-client-16 gcc g++ libssl-dev zlib1g-dev
+    - name: Install exact classic Win32 Wine with native Windows ODBC support
+      run: |
+        mkdir -p out/scene-snapshot-inputs/wine-packages out/scene-snapshot-evidence/wine
+        curl --fail --silent --show-error --location https://dl.winehq.org/wine-builds/winehq.key -o out/scene-snapshot-evidence/wine/winehq.key
+        echo 'd965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8  out/scene-snapshot-evidence/wine/winehq.key' | sha256sum -c -
+        test "$(gpg --show-keys --with-colons out/scene-snapshot-evidence/wine/winehq.key | awk -F: '$1=="fpr" {print $10; exit}')" = D43F640145369C51D786DDEA76F1A20FF987672F
+        gpg --dearmor --output out/scene-snapshot-inputs/winehq.gpg out/scene-snapshot-evidence/wine/winehq.key
+        sudo install -d -m 0755 /etc/apt/keyrings
+        sudo install -m 0644 out/scene-snapshot-inputs/winehq.gpg /etc/apt/keyrings/winehq-scene-snapshot.gpg
+        echo 'deb [arch=amd64,i386 signed-by=/etc/apt/keyrings/winehq-scene-snapshot.gpg] https://dl.winehq.org/wine-builds/ubuntu noble main' | sudo tee /etc/apt/sources.list.d/winehq-scene-snapshot.list
+        sudo apt-get update -qq
+        cd out/scene-snapshot-inputs/wine-packages
+        apt-get download winehq-stable:amd64=10.0.0.0~noble-1 wine-stable:amd64=10.0.0.0~noble-1 wine-stable-amd64:amd64=10.0.0.0~noble-1 wine-stable-i386:i386=10.0.0.0~noble-1
+        cat > ../../scene-snapshot-evidence/wine/packages.sha256 <<'EOF'
+        794ed19f7fc8319d005c10da60833fd0925e2cd2587355b3b97fafdb9e95d368  winehq-stable_10.0.0.0~noble-1_amd64.deb
+        31e6eb2e15ae2e38ef72c9865c0d01da4bc587e554e7db46fe1a75b4420878e1  wine-stable_10.0.0.0~noble-1_amd64.deb
+        393d545040fe5c029eadeb31fcea52126714473e6c11b3cd851447b2dcbf1f72  wine-stable-amd64_10.0.0.0~noble-1_amd64.deb
+        5ba523409f013b12953f577bc3322aeae599bb16afac66c59ebe2dde7b337bfa  wine-stable-i386_10.0.0.0~noble-1_i386.deb
+        EOF
+        sha256sum -c ../../scene-snapshot-evidence/wine/packages.sha256
+        sudo apt-get install -y --install-recommends ./*.deb
+        dpkg-query -W -f='${Package}\t${Architecture}\t${Version}\n' winehq-stable:amd64 wine-stable:amd64 wine-stable-amd64:amd64 wine-stable-i386:i386 > ../../scene-snapshot-evidence/wine/installed-packages.tsv
+        /opt/wine-stable/bin/wine --version | tee ../../scene-snapshot-evidence/wine/version.txt
+    - uses: actions/download-artifact@v4
+      with:
+        name: native-scene-runtime-snapshot-win32-compile
+        path: out/scene-snapshot-compile
+    - name: Admit the same-run diagnostic PE against exact current source
+      run: |
+        python3 native-android/engine/scenecatalog-server/admit_snapshot.py --compile-directory out/scene-snapshot-compile --source-root . --source-revision "$GITHUB_SHA" --output out/scene-snapshot-candidate
+    - name: Recover exact preserved catalog and already-qualified path observer
+      run: |
+        python3 - <<'PYCODE'
+        from pathlib import Path
+        import hashlib, json, zipfile
+        archive=Path('native-android/corpus/server-catalog/capture-38948147691/evidence.zip')
+        assert archive.stat().st_size==2145443
+        assert hashlib.sha256(archive.read_bytes()).hexdigest()=='6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3'
+        out=Path('out/scene-snapshot-retained');out.mkdir(parents=True)
+        with zipfile.ZipFile(archive) as z:
+            assert len(z.infolist())==33 and sum(i.file_size for i in z.infolist())==12583050
+            assert z.testzip() is None
+            for member,name,size,sha in (
+                ('capture/catalog.cohcat','catalog.cohcat',12179670,'61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763'),
+                ('catalog-path-probe.exe','catalog-path-probe.exe',240430,'56f6911cff6790952316107de40cf28167509aa7fc9d34560613b1635b04bd68')):
+                info=z.getinfo(member);assert info.file_size==size
+                data=z.read(member);assert hashlib.sha256(data).hexdigest()==sha
+                with (out/name).open('xb') as f:f.write(data)
+            data=z.read('path-probe-build.json');assert len(data)==1017
+            with (out/'path-probe-build.json').open('xb') as f:f.write(data)
+        print('Original catalog and path observer recovered exactly; no new catalog startup for replacement bytes')
+        PYCODE
+    - name: Stage exact public donor assets and a separate disposable DbServer
+      run: |
+        python3 tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+        python3 - <<'PY'
+        import sys
+        sys.path.insert(0, 'tools/android/interactive')
+        import qualify_runtime_asset_preflight as preflight
+        preflight.ensure_assets('out/asset-cache')
+        PY
+        python3 tools/android/atlasgame/prepare_server_fx_control_fixture.py --donor-apk out/native-inputs/COH-Atlas-Gameplay-0.13.31.apk --payloads out/asset-cache/payloads --output out/scene-snapshot-control
+        python3 tools/android/interactive/build_client_manual_session_apk.py download-donor --output out/scene-snapshot-inputs/db-donor.apk
+    - name: Capture only missing roots and runtime future ownership in one private startup
+      run: |
+        snapshot_runtime=$(python3 -c "import json; print(json.load(open('out/scene-snapshot-control/control-fixture.json'))['runtime_host_path'])")
+        xvfb-run -a python3 native-android/engine/scenecatalog-server/capture_snapshot.py \
+          --runtime "$snapshot_runtime" --control-fixture out/scene-snapshot-control/control-fixture.json \
+          --db-donor-apk out/scene-snapshot-inputs/db-donor.apk --candidate-directory out/scene-snapshot-candidate \
+          --retained-catalog out/scene-snapshot-retained/catalog.cohcat --pg-bin /usr/lib/postgresql/16/bin \
+          --path-probe out/scene-snapshot-retained/catalog-path-probe.exe --path-probe-receipt out/scene-snapshot-retained/path-probe-build.json \
+          --wine /opt/wine-stable/bin/wine --wineserver /opt/wine-stable/bin/wineserver \
+          --work /tmp/coh-scene-runtime-snapshot --output out/scene-snapshot-evidence/capture --generation 20261016 --timeout-seconds 600
+    - name: Verify preserved pair and diagnose root reachability after owned shutdown
+      run: |
+        python3 - <<'PYCODE'
+        from pathlib import Path
+        import hashlib,json,subprocess
+        base=Path('out/scene-snapshot-evidence/capture')
+        r=json.loads((base/'snapshot-binding.json').read_text())
+        assert r['schema']=='coh-runtime-snapshot-binding-v1'
+        assert r['source_snapshot_only'] is True and r['live_groups_transaction'] is False and r['cleanup_verified'] is True
+        assert r['asset_generation']==20261016
+        assert r['catalog']['bytes']==12179670 and r['catalog']['sha256']=='61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763'
+        for key,name in (('source_identity','source-identity.json'),('run_identity','run-identity.json')):
+            assert r[key]['file']==name
+            assert hashlib.sha256((base/name).read_bytes()).hexdigest()==r[key]['sha256']
+        subprocess.run(['python3','native-android/engine/scenegraph/check_runtime_snapshot.py','--source-root','.',
+         '--output','out/scene-snapshot-evidence/runtime-graph-diagnostic.json','--sanitize',
+         '--catalog',str(base/'catalog.cohcat'),'--snapshot',str(base/'runtime.cohrts'),
+         '--catalog-sha256',r['catalog']['sha256'],'--snapshot-sha256',r['snapshot']['sha256'],
+         '--source-sha256',r['source_identity']['sha256'],'--run-sha256',r['run_identity']['sha256'],
+         '--asset-generation',str(r['asset_generation'])],check=True,timeout=300)
+        PYCODE
+    - name: Preserve input provenance and explicit authority scope
+      if: always()
+      run: |
+        python3 - <<'PYCODE'
+        from pathlib import Path
+        import json,shutil,subprocess
+        output=Path('out/scene-snapshot-evidence');output.mkdir(parents=True,exist_ok=True)
+        for source in ('out/scene-snapshot-control/control-fixture.json','out/native-inputs/map-startup-inputs.json','out/scene-snapshot-retained/path-probe-build.json'):
+            p=Path(source)
+            if p.is_file() and p.stat().st_size<=8*1024**2:shutil.copyfile(p,output/p.name)
+        (output/'scope.json').write_text(json.dumps({'scope':'nonshipping_original_runtime_snapshot_only',
+         'source_revision':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+         'accepted_apks_rebuilt':False,'original_catalog_replaced':False,'native_ready_or_character_ack':False,
+         'actual_groups_transaction':False,'physical_thor_accepted':False,'full_live_world_verified':False,
+         'gates25_27_complete':False,'user_device_profile_or_database_used':False},indent=2)+'\n')
+        PYCODE
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: native-scene-runtime-snapshot-evidence
+        path: out/scene-snapshot-evidence/
+        if-no-files-found: error
+        retention-days: 90
