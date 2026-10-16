@@ -5,6 +5,11 @@ GROUPS structural reception, accepted preview input/lifecycle and clean Return/
 server cleanup on AYN Thor. [Acceptance record](evidence/20261016/thor-0.1.7-acceptance/THOR-017-ACCEPTANCE.md).
 No repeat 0.1.7 physical test is required. Saved-library catalog resolution,
 complete character state, real AuthServer and live world remain future stages.
+The [next source milestone](evidence/20261016/catalog-entity-continuation/HANDOFF.md)
+qualifies standalone catalog/entity components and an isolated nonshipping
+server-export build. It does not supply a new Combined APK or change this
+accepted package's physical procedure. No exporter runtime substitution or
+additional device test is requested at this checkpoint.
 The procedure below is retained as the accepted package's historical handoff.
 
 # AYN Thor — combined server and native client test

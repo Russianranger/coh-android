@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "abi": "x86_64",
+  "binary": "coh_scenegraph_test",
+  "binary_sha256": "5959d99e2539425ed366cd0106200b8676ca49cc12d14f871458c63910f76026",
+  "execution_qualified": false,
+  "fixtures_sha256": "623129c591df565d9aff49e39a3d3905d7d694c1f6d8bacb24e1f50700471391",
+  "source_sha256": {
+    "native-android/engine/scenegraph/coh_scenegraph.c": "1d63f738f7010c60567acaf6c7edd3575e12174c8ee9a34e7ffc16063091a632",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/scenegraph/tests/test_scenegraph.c": "5828e2926d442b4ddafe28ebe2dd57891764504f96461622af8f0ce8599b6a16",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "b0ce1687f2be3e4bbf6be34b103dde6bb3d915caab1e8bf82a6a5a54d0213417",
+    "native-android/engine/scenegraph/check.py": "75533549dc5efa8f394709e21a502475dd490582fe89dde759fd7059d4d5276a",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+    "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c"
+  }
+}

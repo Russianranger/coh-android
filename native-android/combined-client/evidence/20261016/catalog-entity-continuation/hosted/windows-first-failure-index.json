@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "workflow_run_id": 38924800093,
+  "job_id": 117054207216,
+  "job_conclusion": "failure",
+  "source_revision": "c4971a15f21f4ca3731e0a0dee274534d13a08ac",
+  "scope": "Preserved first compile evidence admission failure; no executable recovered",
+  "compile_completed_log_observation": true,
+  "pe_artifact_admitted": false,
+  "runtime_executed": false,
+  "deployed": false,
+  "failure": "Recorder expected configuration-types STRING; real preset emits UNINITIALIZED",
+  "fix_source_revision": "887bef22f5f6403d8589ac00a1269c9438e263a6",
+  "artifacts": [
+    {
+      "id": 12057255869,
+      "bytes": 43657,
+      "sha256": "43746bb5b57e13b06a2f684ddbbdd305dda0c021eea114483f7803a14284bf5f",
+      "scope": "Unaccepted compile diagnostics"
+    },
+    {
+      "id": 12056671834,
+      "bytes": 487,
+      "sha256": "d6ac944473acccef35bd34402572d94eb29908f1c973eb45be47e3be70ff6bb4",
+      "scope": "Failed receipt only"
+    }
+  ]
+}

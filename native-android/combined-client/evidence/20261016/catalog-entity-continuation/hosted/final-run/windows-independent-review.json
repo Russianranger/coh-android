@@ -1,0 +1,112 @@
+{
+  "accepted_apks_rebuilt": false,
+  "all_artifact_identities_verified": true,
+  "all_inherited_staged_source_files_in_bundle": false,
+  "artifact_inventory_count": 9,
+  "artifact_receipt_sha256": "303bad9e25ed52bf505e98dc568cfe92d58403ddd31f26fe579b40664ae4cdd6",
+  "cmake": {
+    "configuration": "OptDebug",
+    "configuration_types": "Debug;Release;OptDebug",
+    "configuration_types_key": "CMAKE_CONFIGURATION_TYPES:UNINITIALIZED",
+    "generator": "Visual Studio 18 2026",
+    "platform": "Win32"
+  },
+  "compile_only": true,
+  "deployed": false,
+  "exact_published_input_manifest_verified": true,
+  "exact_staged_source_transform_and_overlay_bytes_verified": true,
+  "full_prior_receipt_reconstructed_from_published_source": true,
+  "nonshipping": true,
+  "passed": true,
+  "payload_bytes_rehashed_by_this_offline_review": false,
+  "pe": {
+    "binary_executed": false,
+    "bytes": 7487488,
+    "dll": false,
+    "entrypoint_backed_by_executable_section": true,
+    "entrypoint_rva": 4323744,
+    "entrypoint_section": 0,
+    "file_alignment": 512,
+    "image_base": 4194304,
+    "machine": "i386",
+    "pe32": true,
+    "section_alignment": 4096,
+    "section_raw_and_virtual_bounds_checked": true,
+    "sections": [
+      {
+        "characteristics": 1610612768,
+        "index": 0,
+        "name": ".text",
+        "raw_offset": 1024,
+        "raw_size": 4634112,
+        "virtual_address": 4096,
+        "virtual_size": 4633834
+      },
+      {
+        "characteristics": 1073741888,
+        "index": 1,
+        "name": ".rdata",
+        "raw_offset": 4635136,
+        "raw_size": 1612800,
+        "virtual_address": 4640768,
+        "virtual_size": 1612528
+      },
+      {
+        "characteristics": 3221225536,
+        "index": 2,
+        "name": ".data",
+        "raw_offset": 6247936,
+        "raw_size": 873984,
+        "virtual_address": 6254592,
+        "virtual_size": 5062092
+      },
+      {
+        "characteristics": 3221225536,
+        "index": 3,
+        "name": "shared_m",
+        "raw_offset": 7121920,
+        "raw_size": 2048,
+        "virtual_address": 11317248,
+        "virtual_size": 1800
+      },
+      {
+        "characteristics": 3221225536,
+        "index": 4,
+        "name": ".fptable",
+        "raw_offset": 7123968,
+        "raw_size": 512,
+        "virtual_address": 11321344,
+        "virtual_size": 128
+      },
+      {
+        "characteristics": 1073741888,
+        "index": 5,
+        "name": ".rsrc",
+        "raw_offset": 7124480,
+        "raw_size": 13824,
+        "virtual_address": 11325440,
+        "virtual_size": 13488
+      },
+      {
+        "characteristics": 1107296320,
+        "index": 6,
+        "name": ".reloc",
+        "raw_offset": 7138304,
+        "raw_size": 349184,
+        "virtual_address": 11341824,
+        "virtual_size": 348908
+      }
+    ],
+    "sha256": "f96f5d51467083a58523187760458ad77e6a48d7b696b0d090aafa8e94e95f39",
+    "sink_environment_and_diagnostic_literals_present": true,
+    "size_of_headers": 1024,
+    "size_of_image": 11694080
+  },
+  "review_limits": [
+    "upstream staged files beyond exported source subset and input payloads were checked by the pinned workflow recorder; they are not retained in this bundle",
+    "no MapServer, Wine or Windows runtime execution by this audit"
+  ],
+  "runtime_executed": false,
+  "schema": "coh-independent-nonshipping-win32-compile-review-v1",
+  "source_revision": "887bef22f5f6403d8589ac00a1269c9438e263a6"
+}

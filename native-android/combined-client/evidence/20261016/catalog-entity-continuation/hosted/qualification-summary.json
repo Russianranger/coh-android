@@ -1,0 +1,181 @@
+{
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "android": {
+    "abi": "x86_64",
+    "build_fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+    "command_logs_verified": 21,
+    "device_model": "sdk_gphone64_x86_64",
+    "emulator": true,
+    "release": "13",
+    "sdk": 33,
+    "temporary_files_removed": true
+  },
+  "arm64_execution_verified": false,
+  "artifacts": [
+    {
+      "bytes": 1106606,
+      "github_digest_verified": true,
+      "id": 12056611896,
+      "name": "native-scene-catalog-host-arm64-x86_64",
+      "sha256": "4a81b48220468e45129fb2fb6e791db08644093512165eae1dd2044584e13137",
+      "zip": "/workspace/scratch/9c69943dc291/ci-scene-catalog-38924800093/host-12056611896.zip",
+      "zip_crc_verified": true,
+      "zip_members": 27
+    },
+    {
+      "bytes": 8842,
+      "github_digest_verified": true,
+      "id": 12055794165,
+      "name": "native-scene-catalog-android13-execution",
+      "sha256": "795122770676cbe67dae0f024c6d7d66a4b17082f1b00e9d57b31d638c8f0bc1",
+      "zip": "/workspace/scratch/9c69943dc291/ci-scene-catalog-38924800093/android-12055794165.zip",
+      "zip_crc_verified": true,
+      "zip_members": 22
+    }
+  ],
+  "catalog_payload_arrays_verified": 48,
+  "exporter_sha256": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "job_results": {
+    "android13-contract-execution": {
+      "conclusion": "success",
+      "job_id": 117054206998
+    },
+    "source-host-and-android-build": {
+      "conclusion": "success",
+      "job_id": 117053495825
+    }
+  },
+  "modules": {
+    "entities": {
+      "android_x86_64_checks": 363305,
+      "checks_per_host_mode": 363305,
+      "fixture_sha256": "ce20d805c9d410e84432afc9dee1c1905b2ae57734337ed0262c36087e4122b3",
+      "fixtures": 98
+    },
+    "scenecatalog": {
+      "android_x86_64_checks": 21110,
+      "checks_per_host_mode": 21110,
+      "fixture_sha256": "5847def2e284351737b31d6bb03359ec68db3e18dcf91fdbfb6470fb6a65a371",
+      "fixtures": 24
+    },
+    "scenegraph": {
+      "android_x86_64_checks": 14784,
+      "checks_per_host_mode": 14784,
+      "fixture_sha256": "623129c591df565d9aff49e39a3d3905d7d694c1f6d8bacb24e1f50700471391",
+      "fixtures": 52
+    }
+  },
+  "native_elfs": [
+    {
+      "abi": "arm64-v8a",
+      "bytes": 4124600,
+      "interpreter": "/system/bin/linker64",
+      "machine": 183,
+      "module": "scenecatalog",
+      "program_headers": 11,
+      "section_headers": 26,
+      "sha256": "fd6ed2c7a40ad61e6fb5372d24efcfe4a5ef9384bb437ec0e47935c8ede181e6",
+      "type": "ET_DYN"
+    },
+    {
+      "abi": "x86_64",
+      "bytes": 4127904,
+      "interpreter": "/system/bin/linker64",
+      "machine": 62,
+      "module": "scenecatalog",
+      "program_headers": 11,
+      "section_headers": 26,
+      "sha256": "083afbcd42bf376d846e91a0a65f8e43c9ef572f2c687286bbe85a3a80200354",
+      "type": "ET_DYN"
+    },
+    {
+      "abi": "arm64-v8a",
+      "bytes": 627520,
+      "interpreter": "/system/bin/linker64",
+      "machine": 183,
+      "module": "scenegraph",
+      "program_headers": 11,
+      "section_headers": 26,
+      "sha256": "ab1fa477de37710deb09e73410b7912144d35205c1fe76cc80594a43911e42e2",
+      "type": "ET_DYN"
+    },
+    {
+      "abi": "x86_64",
+      "bytes": 631192,
+      "interpreter": "/system/bin/linker64",
+      "machine": 62,
+      "module": "scenegraph",
+      "program_headers": 11,
+      "section_headers": 26,
+      "sha256": "5959d99e2539425ed366cd0106200b8676ca49cc12d14f871458c63910f76026",
+      "type": "ET_DYN"
+    },
+    {
+      "abi": "arm64-v8a",
+      "bytes": 82064,
+      "interpreter": "/system/bin/linker64",
+      "machine": 183,
+      "module": "entities",
+      "program_headers": 11,
+      "section_headers": 26,
+      "sha256": "d0c7075fe33e237ff6cee332697655d4680653f9ef5644ddd579dbc6b3df5be7",
+      "type": "ET_DYN"
+    },
+    {
+      "abi": "x86_64",
+      "bytes": 85568,
+      "interpreter": "/system/bin/linker64",
+      "machine": 62,
+      "module": "entities",
+      "program_headers": 11,
+      "section_headers": 26,
+      "sha256": "ee42b1b3ddba841472f5a242712b8449dea983d151b3be06d4df809c12978139",
+      "type": "ET_DYN"
+    }
+  ],
+  "original_source_files_verified": 26,
+  "passed": true,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "receipts": {
+    "aggregate_qualification": {
+      "path": "/workspace/scratch/9c69943dc291/ci-scene-catalog-38924800093/host/qualification.json",
+      "sha256": "130db6b94776f1d7709220752665ebf1f7204c96b38446a0eff514215f1de3fc"
+    },
+    "android_execution": {
+      "path": "/workspace/scratch/9c69943dc291/ci-scene-catalog-38924800093/android/receipt.json",
+      "sha256": "d657f3e058273370e1dec21c8cda19ef2262ba80aa9980ac0e01ab5124953965"
+    },
+    "android_manifest": {
+      "path": "/workspace/scratch/9c69943dc291/ci-scene-catalog-38924800093/host/android-execution-manifest.json",
+      "sha256": "df4db888edd0e1f377b43ffdb929215bff9776fbcbc3573bdc521a3cb0a3e8a9"
+    },
+    "independent_android_admission": {
+      "path": "/workspace/scratch/9c69943dc291/ci-scene-catalog-38924800093/android-admission.json",
+      "sha256": "193b16e2dfdb75344118b1720b7a1e83cc485415fb9f456fb820e48a6319c652"
+    },
+    "independent_host_admission": {
+      "path": "/workspace/scratch/9c69943dc291/ci-scene-catalog-38924800093/independent-host-artifact-audit.json",
+      "sha256": "fbe95ac18daee3bf39bda5eb27daf28c12653c9f8cd6fcb7d90bfb57bc31ac20"
+    },
+    "server_host": {
+      "path": "/workspace/scratch/9c69943dc291/ci-scene-catalog-38924800093/host/server-export/host.json",
+      "sha256": "77fc1afdefe755566dc98c23db30b9ddca26451f74dff2fd5044ca6e774b0445"
+    }
+  },
+  "schema": "coh-scene-catalog-host-android-artifact-qualification-summary-v1",
+  "server_host_controls": {
+    "server_executed": false,
+    "sink_checks_per_release_asan_ubsan": 193,
+    "source_identities_verified": 8,
+    "stager_tests": 41
+  },
+  "source_files_verified": 78,
+  "source_revision": "c4971a15f21f4ca3731e0a0dee274534d13a08ac",
+  "source_tree": "edbe412b0deefbc89743cc5030eb3966abe0f6a9",
+  "windows_compile_audited_here": false,
+  "workflow_run_id": 38924800093
+}

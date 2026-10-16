@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "artifact_id": 12057255869,
+  "member": "CMakeCache.txt",
+  "bytes": 37973,
+  "sha256": "baec51e9042b57ccb5d00be9ee289612b94f3c804845d25d1bd57352d7028462",
+  "critical_fields": {
+    "CMAKE_CONFIGURATION_TYPES:UNINITIALIZED": "Debug;Release;OptDebug",
+    "CMAKE_GENERATOR:INTERNAL": "Visual Studio 18 2026",
+    "CMAKE_GENERATOR_PLATFORM:INTERNAL": "Win32",
+    "CMAKE_HOME_DIRECTORY:INTERNAL": "C:/scene-catalog-export-src"
+  },
+  "full_cache_preserved_in_original_artifact": true
+}

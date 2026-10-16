@@ -1,0 +1,18 @@
+{
+  "accepted_apks_rebuilt": false,
+  "android_executed": false,
+  "compile_only": true,
+  "deployed": false,
+  "errors": {
+    "compile_record": "Expected the isolated VS2026 Win32 MapServer source/build cache"
+  },
+  "experimental": true,
+  "nonshipping": true,
+  "passed": false,
+  "runtime_executed": false,
+  "schema": "coh-scenecatalog-export-compile-v1",
+  "scope": "Win32 MapServer compilation only; no catalog emitted or runtime deployed",
+  "shipping_executable": false,
+  "source_git_status_porcelain": [],
+  "source_revision": "c4971a15f21f4ca3731e0a0dee274534d13a08ac"
+}

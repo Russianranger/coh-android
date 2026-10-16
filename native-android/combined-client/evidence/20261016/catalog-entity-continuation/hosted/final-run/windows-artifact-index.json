@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "source_revision": "887bef22f5f6403d8589ac00a1269c9438e263a6",
+  "workflow_run_id": 38926873046,
+  "job_id": 117061256017,
+  "job_conclusion": "success",
+  "artifact_id": 12058121070,
+  "artifact_name": "native-scene-catalog-nonshipping-win32-compile-only",
+  "artifact_bytes": 3286082,
+  "artifact_sha256": "a57cb97659db151d66941fa8c00baadb1c70eeedd1c37d46565e687a778b6529",
+  "zip_members": 10,
+  "zip_crc_verified": true,
+  "github_digest_verified": true,
+  "exe": {
+    "bytes": 7487488,
+    "sha256": "f96f5d51467083a58523187760458ad77e6a48d7b696b0d090aafa8e94e95f39"
+  },
+  "compile_receipt_sha256": "303bad9e25ed52bf505e98dc568cfe92d58403ddd31f26fe579b40664ae4cdd6",
+  "nonshipping": true,
+  "compile_only": true,
+  "runtime_executed": false,
+  "deployed": false,
+  "apk_changed": false,
+  "actual_catalog_emitted": false,
+  "independent_audit": "windows-independent-review.json"
+}

@@ -15,7 +15,32 @@ catalog loading and atomic entity-list staging. Existing 0.1.7 testing does not
 need to be repeated. Real AuthServer, complete entity tails and live-world
 rendering remain unaccepted.
 
-# Primary protocol continuation — October 16, 2026
+# Saved-definition catalog and entity transaction continuation — October 16, 2026
+
+Implementation `c4971a15f21f4ca3731e0a0dee274534d13a08ac` adds an owned
+original-source saved-definition catalog importer/exporter and atomic bounded
+entity-list staging. An optional **nonshipping**, disabled-by-default startup
+export overlay is isolated from the accepted server/runtime. The
+[continuation report](evidence/20261016/catalog-entity-continuation/HANDOFF.md)
+records recovery, original-source and sanitizer results, memory/ownership
+limits, authenticated-login deployment blockers and remaining world gates.
+Hosted qualification is
+[38926873046](https://github.com/Russianranger/coh-android/actions/runs/38926873046):
+original-source release/ASan/UBSan, both Android ABI builds, exact Android 13
+x86_64 execution and isolated Win32 MapServer compile pass. A recorder-only
+real-CMake-cache correction is published as
+`887bef22f5f6403d8589ac00a1269c9438e263a6`; native implementation, fixtures and all
+six test executables are byte-identical to the initial qualified run.
+The nonshipping server executable is compiled and independently admitted,
+not executed or deployed; no real catalog was captured.
+
+The catalog adapter now exists; the actual matching loaded-server catalog,
+larger dynamically indexed graph, required imported assets and complete entity/
+character tails remain pending. This source milestone does not link new modules
+into Combined or publish a new APK. The exact physically accepted 0.1.7 delivery
+and its data remain preserved. No repeat physical test is needed now.
+
+# Earlier primary protocol continuation — October 16, 2026
 
 Published source `f7e53e401567f89ac219bb7bfef3b2b603c1df62` adds isolated owned
 scene topology, bounded entity staging and a strict encrypted-auth deployment
@@ -23,8 +48,8 @@ probe. [Continuation handoff and exact evidence](evidence/20261016/primary-conti
 records recovery, scope, limitations and next steps. Source-oracle/sanitizer host
 checks, both native Android ABI builds and three Android 13 standalone contract
 suites pass in [38850903152](https://github.com/Russianranger/coh-android/actions/runs/38850903152).
-The current real imported-file adapter, complete entity/character tails and
-live renderer integration remain incomplete; no READY or character ACK is added.
+That checkpoint left the real imported-file adapter, complete entity/character
+tails and live renderer integration incomplete; no READY or character ACK was added.
 Real AuthServer deployment/account qualification remains blocked.
 
 **The delivery APK is still the exact existing Combined 0.1.7 below.** Its code

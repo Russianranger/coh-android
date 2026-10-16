@@ -1,0 +1,66 @@
+{
+  "accepted_apks_rebuilt": false,
+  "android_executed": false,
+  "artifacts": {
+    "CMakeCache.txt": {
+      "bytes": 37973,
+      "sha256": "baec51e9042b57ccb5d00be9ee289612b94f3c804845d25d1bd57352d7028462"
+    },
+    "MapServer.exe": {
+      "bytes": 7487488,
+      "sha256": "f96f5d51467083a58523187760458ad77e6a48d7b696b0d090aafa8e94e95f39"
+    },
+    "map-startup-build-input.json": {
+      "bytes": 45593,
+      "sha256": "3b37339e2bdd94456715cff78e5093399410ede8980efa6fc51681c1a4d3fc09"
+    },
+    "map-startup-inputs.json": {
+      "bytes": 1202,
+      "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+    },
+    "native-scene-catalog-server-build-input.json": {
+      "bytes": 48784,
+      "sha256": "0ebd0384fc46001007aa334436eb741e73df45d583cd18e54ecc938c2779f59f"
+    },
+    "source/MapServer/src/group/coh_source_catalog_export.inc": {
+      "bytes": 18748,
+      "sha256": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b"
+    },
+    "source/MapServer/src/group/coh_source_catalog_sink.inc": {
+      "bytes": 8130,
+      "sha256": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d"
+    },
+    "source/MapServer/src/group/groupnetsend.c": {
+      "bytes": 16431,
+      "sha256": "fe50720a958359d26897baf910f8ace2bd4a71741e64ba673c0415e9ec64fa79"
+    },
+    "source/MapServer/src/svr/svr_init.c": {
+      "bytes": 73077,
+      "sha256": "751c97220e1bfa14e83ee0323e875eb4388770a4afbc3d2eb871ab8fc614d3be"
+    }
+  },
+  "build_role": "nonshipping_startup_native_scene_catalog_export",
+  "build_target": "MapServer",
+  "compile_only": true,
+  "configuration": "OptDebug",
+  "deployed": false,
+  "errors": {},
+  "experimental": true,
+  "generator": "Visual Studio 18 2026",
+  "inputs_driver_sha256": "4569c16039b12abce7613c9805eaec21dbaa70d3c3f1f1ccfef0b2d4731b7b85",
+  "nonshipping": true,
+  "passed": true,
+  "pe_machine": "i386",
+  "platform": "Win32",
+  "producer_driver_sha256": "62e57478f1271312997ddf72155ae9f4ff0454f88c6f2e55c8afcb2660779d78",
+  "published_inputs_reverified": true,
+  "runtime_executed": false,
+  "schema": "coh-scenecatalog-export-compile-v1",
+  "scope": "Win32 MapServer compilation only; no catalog emitted or runtime deployed",
+  "shipping_executable": false,
+  "source_git_status_porcelain": [],
+  "source_revision": "887bef22f5f6403d8589ac00a1269c9438e263a6",
+  "source_stage_verified": true,
+  "stage_receipt_sha256": "0ebd0384fc46001007aa334436eb741e73df45d583cd18e54ecc938c2779f59f",
+  "workflow_sha256": "6b979863fa156575aca453cfc9056f4846d6d7ac580b8dce5e2df667b0beb650"
+}
