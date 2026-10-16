@@ -1,0 +1,38 @@
+{
+  "host": {
+    "passed": true,
+    "negative_cases": 93,
+    "create_destroy_cycles": 64,
+    "cpu_bytes": 153536,
+    "package_bytes": 1673302,
+    "texture_bytes": 1572868,
+    "parts": 8,
+    "vertices": 943,
+    "indices": 3792,
+    "GL_calls_during_create": false
+  },
+  "san": {
+    "passed": true,
+    "negative_cases": 93,
+    "create_destroy_cycles": 64,
+    "cpu_bytes": 153536,
+    "package_bytes": 1673302,
+    "texture_bytes": 1572868,
+    "parts": 8,
+    "vertices": 943,
+    "indices": 3792,
+    "GL_calls_during_create": false
+  },
+  "arm64": {
+    "built": true,
+    "executed": false,
+    "bytes": 114152,
+    "sha256": "930a72a30d697de1492d5974e0dfe790fc23bd8292d559a47502b569a6c19efd"
+  },
+  "x86_64": {
+    "built": true,
+    "executed": false,
+    "bytes": 118696,
+    "sha256": "e22165ba28c3f651365faa42324785191b7d2b6b98abf2bbbe2135b0c2ab3736"
+  }
+}

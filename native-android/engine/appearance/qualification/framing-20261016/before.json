@@ -1,0 +1,657 @@
+{
+  "passed": false,
+  "identity": {
+    "vendor": "Mesa",
+    "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+    "glsl": "OpenGL ES GLSL ES 3.20"
+  },
+  "source_pose": "first source frame, neutral morphology",
+  "package_sha256": "bda4a9f1098281d3ddc32842aeda792e83cebb0be3185d9458e3402032f77df9",
+  "inherited_gl_state_reset": true,
+  "frames": 36,
+  "aspects": [
+    {
+      "width": 1920,
+      "height": 790,
+      "frames": [
+        {
+          "seconds": 0.0,
+          "bbox": [
+            793,
+            70,
+            1127,
+            721
+          ],
+          "normalized_bbox": [
+            0.41302,
+            0.08861,
+            0.58698,
+            0.91266
+          ],
+          "fully_framed": false,
+          "sha256": "46a661d6da6b1299c5beb84179c2c88c95a8f473b577f42cda827adcb8778400"
+        },
+        {
+          "seconds": 0.8,
+          "bbox": [
+            723,
+            17,
+            1102,
+            734
+          ],
+          "normalized_bbox": [
+            0.37656,
+            0.02152,
+            0.57396,
+            0.92911
+          ],
+          "fully_framed": false,
+          "sha256": "382f16d3d22b131d02bc4d977f3942d0dfe6c379a0d7cdede5b4577b2ab4b098"
+        },
+        {
+          "seconds": 1.2,
+          "bbox": [
+            823,
+            0,
+            984,
+            278
+          ],
+          "normalized_bbox": [
+            0.42865,
+            0.0,
+            0.5125,
+            0.3519
+          ],
+          "fully_framed": false,
+          "sha256": "5574cbc437b187a41a4ee1ac398de7d22c8a1eca99b1c693584f1ca7cd31ef8c"
+        },
+        {
+          "seconds": 2.0,
+          "bbox": [
+            778,
+            0,
+            1023,
+            387
+          ],
+          "normalized_bbox": [
+            0.40521,
+            0.0,
+            0.53281,
+            0.48987
+          ],
+          "fully_framed": false,
+          "sha256": "990d55f9077f1710420cebd3a3c2667144ef20606cc073e2d81e39bdd7109e96"
+        },
+        {
+          "seconds": 3.0,
+          "bbox": [
+            722,
+            307,
+            1075,
+            722
+          ],
+          "normalized_bbox": [
+            0.37604,
+            0.38861,
+            0.5599,
+            0.91392
+          ],
+          "fully_framed": false,
+          "sha256": "a561d21a3585a631e74b2f426c6e5cbdfc42912aff03cd0e0ad94049b646cb0c"
+        },
+        {
+          "seconds": 4.0,
+          "bbox": [
+            771,
+            70,
+            1118,
+            721
+          ],
+          "normalized_bbox": [
+            0.40156,
+            0.08861,
+            0.58229,
+            0.91266
+          ],
+          "fully_framed": false,
+          "sha256": "14b53616370fcb791a882c4e8de2d72eac751e4082f4c0a1e2b6d23e73be4024"
+        },
+        {
+          "seconds": 10.0,
+          "bbox": [
+            797,
+            0,
+            988,
+            181
+          ],
+          "normalized_bbox": [
+            0.4151,
+            0.0,
+            0.51458,
+            0.22911
+          ],
+          "fully_framed": false,
+          "sha256": "bf4e8bc52ad30dd049bc976870a5ddb7f7ddd91f087d0b9440b33f0c981e2942"
+        },
+        {
+          "seconds": 3600.0,
+          "bbox": [
+            739,
+            144,
+            1171,
+            721
+          ],
+          "normalized_bbox": [
+            0.3849,
+            0.18228,
+            0.6099,
+            0.91266
+          ],
+          "fully_framed": false,
+          "sha256": "cb2cf88f6e9b44e153279b66590c3e3a070c1e64d84fb0d5c09d6c1f5917260e"
+        },
+        {
+          "seconds": 86400.0,
+          "bbox": [
+            666,
+            148,
+            1151,
+            722
+          ],
+          "normalized_bbox": [
+            0.34687,
+            0.18734,
+            0.59948,
+            0.91392
+          ],
+          "fully_framed": false,
+          "sha256": "39d95872191986df06c4b137758d03e47df8f4c62a3bf3a334945109dfe58572"
+        }
+      ],
+      "same_pose_at_all_clocks": false
+    },
+    {
+      "width": 1080,
+      "height": 959,
+      "frames": [
+        {
+          "seconds": 0.0,
+          "bbox": [
+            337,
+            84,
+            743,
+            875
+          ],
+          "normalized_bbox": [
+            0.31204,
+            0.08759,
+            0.68796,
+            0.91241
+          ],
+          "fully_framed": false,
+          "sha256": "a556aaafc3d827684c796c2f05922de75e5ec763b53bc2c94d508116e23bbb65"
+        },
+        {
+          "seconds": 0.8,
+          "bbox": [
+            252,
+            20,
+            712,
+            891
+          ],
+          "normalized_bbox": [
+            0.23333,
+            0.02086,
+            0.65926,
+            0.92909
+          ],
+          "fully_framed": false,
+          "sha256": "44cc59ba6f547a6243ec8c4bac584943cba64e1e41db542c4dc6d3a939c9ab13"
+        },
+        {
+          "seconds": 1.2,
+          "bbox": [
+            373,
+            0,
+            569,
+            338
+          ],
+          "normalized_bbox": [
+            0.34537,
+            0.0,
+            0.52685,
+            0.35245
+          ],
+          "fully_framed": false,
+          "sha256": "4cf8f52fd9fbf1a2976ffdce7aaba614484e392def3cf75d609ed39ff0436e1e"
+        },
+        {
+          "seconds": 2.0,
+          "bbox": [
+            319,
+            0,
+            616,
+            470
+          ],
+          "normalized_bbox": [
+            0.29537,
+            0.0,
+            0.57037,
+            0.49009
+          ],
+          "fully_framed": false,
+          "sha256": "363b62703cf07e1d13e3da8643608c35f11e26ed91f122a047080fbfb1462122"
+        },
+        {
+          "seconds": 3.0,
+          "bbox": [
+            251,
+            373,
+            679,
+            876
+          ],
+          "normalized_bbox": [
+            0.23241,
+            0.38895,
+            0.6287,
+            0.91345
+          ],
+          "fully_framed": false,
+          "sha256": "ac2c63af1977d4972addae0163d4479ad61b4eba96a9e14c5370c47ee546ac52"
+        },
+        {
+          "seconds": 4.0,
+          "bbox": [
+            310,
+            85,
+            731,
+            875
+          ],
+          "normalized_bbox": [
+            0.28704,
+            0.08863,
+            0.67685,
+            0.91241
+          ],
+          "fully_framed": false,
+          "sha256": "0d4a339d35c1f47b4e397e26b49ab858dd2626cce63e84de70ab9d70b52bb3b9"
+        },
+        {
+          "seconds": 10.0,
+          "bbox": [
+            342,
+            0,
+            574,
+            220
+          ],
+          "normalized_bbox": [
+            0.31667,
+            0.0,
+            0.53148,
+            0.22941
+          ],
+          "fully_framed": false,
+          "sha256": "acb281fcfa4979737b41260526e7566ba91e9f5436a448a57e3d03d3f20089d6"
+        },
+        {
+          "seconds": 3600.0,
+          "bbox": [
+            271,
+            175,
+            796,
+            876
+          ],
+          "normalized_bbox": [
+            0.25093,
+            0.18248,
+            0.73704,
+            0.91345
+          ],
+          "fully_framed": false,
+          "sha256": "a3b2cf2564e3db90d8243a2ea979dfe6142d7274b71d054f10b79d4e93e111c9"
+        },
+        {
+          "seconds": 86400.0,
+          "bbox": [
+            183,
+            179,
+            773,
+            876
+          ],
+          "normalized_bbox": [
+            0.16944,
+            0.18665,
+            0.71574,
+            0.91345
+          ],
+          "fully_framed": false,
+          "sha256": "01ba74026b39eed9c0e9c7e7b9dff426f717bdfc3d44a8c8b003f0efecb47a7a"
+        }
+      ],
+      "same_pose_at_all_clocks": false
+    },
+    {
+      "width": 640,
+      "height": 1280,
+      "frames": [
+        {
+          "seconds": 0.0,
+          "bbox": [
+            49,
+            112,
+            591,
+            1168
+          ],
+          "normalized_bbox": [
+            0.07656,
+            0.0875,
+            0.92344,
+            0.9125
+          ],
+          "fully_framed": false,
+          "sha256": "a8d98b8a531caaf4cfc91abade7f19e6124ebfd3b6cf2e34619fad7c6e6265e5"
+        },
+        {
+          "seconds": 0.8,
+          "bbox": [
+            0,
+            27,
+            549,
+            1190
+          ],
+          "normalized_bbox": [
+            0.0,
+            0.02109,
+            0.85781,
+            0.92969
+          ],
+          "fully_framed": false,
+          "sha256": "5d27f34dcec6269a14470719750ef63f1d901021eefbb8c296de8cbd8b2f5271"
+        },
+        {
+          "seconds": 1.2,
+          "bbox": [
+            97,
+            0,
+            359,
+            451
+          ],
+          "normalized_bbox": [
+            0.15156,
+            0.0,
+            0.56094,
+            0.35234
+          ],
+          "fully_framed": false,
+          "sha256": "a36a26c18acc25b812817a951d9ffb4ea23945a66a2484447c78f5c6c95c9bae"
+        },
+        {
+          "seconds": 2.0,
+          "bbox": [
+            25,
+            0,
+            422,
+            627
+          ],
+          "normalized_bbox": [
+            0.03906,
+            0.0,
+            0.65938,
+            0.48984
+          ],
+          "fully_framed": false,
+          "sha256": "553746c8368ab8eb51d5a673118f290277fa5e3e9d2d6cee1aba555053f8d88f"
+        },
+        {
+          "seconds": 3.0,
+          "bbox": [
+            0,
+            497,
+            506,
+            1170
+          ],
+          "normalized_bbox": [
+            0.0,
+            0.38828,
+            0.79063,
+            0.91406
+          ],
+          "fully_framed": false,
+          "sha256": "e088835ead58bb4209066cff1f4086410a58cbb20744fad74b79bbb2647f49f4"
+        },
+        {
+          "seconds": 4.0,
+          "bbox": [
+            14,
+            114,
+            575,
+            1168
+          ],
+          "normalized_bbox": [
+            0.02187,
+            0.08906,
+            0.89844,
+            0.9125
+          ],
+          "fully_framed": false,
+          "sha256": "024a9dc9e3ead414331455fa17ed0c89b935306714e8d23dbaa806d50f7f89bf"
+        },
+        {
+          "seconds": 10.0,
+          "bbox": [
+            55,
+            0,
+            366,
+            294
+          ],
+          "normalized_bbox": [
+            0.08594,
+            0.0,
+            0.57188,
+            0.22969
+          ],
+          "fully_framed": false,
+          "sha256": "bc37506da053bd5e5326aaf5adf3d29535ca6313c474cf6ee7a8b7b8e3b82bd7"
+        },
+        {
+          "seconds": 3600.0,
+          "bbox": [
+            0,
+            233,
+            640,
+            1169
+          ],
+          "normalized_bbox": [
+            0.0,
+            0.18203,
+            1.0,
+            0.91328
+          ],
+          "fully_framed": false,
+          "sha256": "a7c47c5a923382f8c88146f80937781be9688496c8367bb472b89caf2915295f"
+        },
+        {
+          "seconds": 86400.0,
+          "bbox": [
+            0,
+            240,
+            631,
+            1169
+          ],
+          "normalized_bbox": [
+            0.0,
+            0.1875,
+            0.98594,
+            0.91328
+          ],
+          "fully_framed": false,
+          "sha256": "f778290a42393426aa39de9c2ad6ca9da6ccb98524762344dbe5628b454d5158"
+        }
+      ],
+      "same_pose_at_all_clocks": false
+    },
+    {
+      "width": 1280,
+      "height": 480,
+      "frames": [
+        {
+          "seconds": 0.0,
+          "bbox": [
+            539,
+            42,
+            741,
+            438
+          ],
+          "normalized_bbox": [
+            0.42109,
+            0.0875,
+            0.57891,
+            0.9125
+          ],
+          "fully_framed": false,
+          "sha256": "ab33527c052a3c32e419f8d4ade9f434b78c57662e01e0472869ffb5c5a851d5"
+        },
+        {
+          "seconds": 0.8,
+          "bbox": [
+            496,
+            10,
+            726,
+            446
+          ],
+          "normalized_bbox": [
+            0.3875,
+            0.02083,
+            0.56719,
+            0.92917
+          ],
+          "fully_framed": false,
+          "sha256": "ab80cc098cdcb91356c128f1a6f2db5b69aebeddcc5452ca7d253bc295375a10"
+        },
+        {
+          "seconds": 1.2,
+          "bbox": [
+            557,
+            0,
+            655,
+            169
+          ],
+          "normalized_bbox": [
+            0.43516,
+            0.0,
+            0.51172,
+            0.35208
+          ],
+          "fully_framed": false,
+          "sha256": "22455a43e69b59dc7b6c63e0bab6be481ff9a209fb71eef2c8f898616afe5270"
+        },
+        {
+          "seconds": 2.0,
+          "bbox": [
+            529,
+            0,
+            678,
+            235
+          ],
+          "normalized_bbox": [
+            0.41328,
+            0.0,
+            0.52969,
+            0.48958
+          ],
+          "fully_framed": false,
+          "sha256": "4e1e32a3698dabad77fdb1aa55e06cf1d46c7245e8ad7e5212601eca09cbf774"
+        },
+        {
+          "seconds": 3.0,
+          "bbox": [
+            496,
+            187,
+            710,
+            439
+          ],
+          "normalized_bbox": [
+            0.3875,
+            0.38958,
+            0.55469,
+            0.91458
+          ],
+          "fully_framed": false,
+          "sha256": "efc5c651f9bb5cff4fd8303709c9085aaaa6d96a0efd7bca067a6a36c80666e2"
+        },
+        {
+          "seconds": 4.0,
+          "bbox": [
+            525,
+            43,
+            736,
+            438
+          ],
+          "normalized_bbox": [
+            0.41016,
+            0.08958,
+            0.575,
+            0.9125
+          ],
+          "fully_framed": false,
+          "sha256": "25fb15ef4c922b960d333f633cc3fc92e62d88f4c2daaf0bc9f2a0b1a8ac0bc7"
+        },
+        {
+          "seconds": 10.0,
+          "bbox": [
+            541,
+            0,
+            657,
+            110
+          ],
+          "normalized_bbox": [
+            0.42266,
+            0.0,
+            0.51328,
+            0.22917
+          ],
+          "fully_framed": false,
+          "sha256": "b70109e4a29630bd9d05a14c88a55560e073a5d96df37fd9b691d5e75ff7fe41"
+        },
+        {
+          "seconds": 3600.0,
+          "bbox": [
+            505,
+            87,
+            768,
+            438
+          ],
+          "normalized_bbox": [
+            0.39453,
+            0.18125,
+            0.6,
+            0.9125
+          ],
+          "fully_framed": false,
+          "sha256": "6aab7dbf32733e9746ca0fc40fb3f1f1244fecf7b2c8532c35ebdab648691eef"
+        },
+        {
+          "seconds": 86400.0,
+          "bbox": [
+            462,
+            90,
+            756,
+            438
+          ],
+          "normalized_bbox": [
+            0.36094,
+            0.1875,
+            0.59062,
+            0.9125
+          ],
+          "fully_framed": false,
+          "sha256": "3d476483059841aa57b395eba637d3b499dad753472a249a1555a4117698e334"
+        }
+      ],
+      "same_pose_at_all_clocks": false
+    }
+  ],
+  "android": false,
+  "physical_thor": false
+}

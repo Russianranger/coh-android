@@ -20,10 +20,12 @@ typedef struct {
  * out must point to NULL; failure never replaces an existing owner. */
 CohStatus coh_appearance_preview_create(CohBytes,CohAppearancePreview **);
 /* GL thread: caller binds its destination framebuffer first. Clears that frame
- * and renders complete neutral Male source-menu costume with a fixed camera.
+ * and renders complete neutral Male source-menu costume at its first source
+ * pose. Full bounds fit in the centered 70% of both viewport dimensions.
  * First frame/new context creates GPU storage; steady frames allocate no heap,
  * read no assets, perform no readback/fence/glFinish, and send no network data.
- * seconds is local preview time, not authoritative or gameplay animation. */
+ * seconds is validated for API compatibility but does not advance this fixed
+ * inspection pose. Applications own overlays within the fitted region. */
 CohStatus coh_appearance_preview_draw(CohAppearancePreview *,uint32_t width,
  uint32_t height,uint32_t surface_generation,double seconds);
 /* GL owner only. If the old context is gone, pass 0: old numeric GL names must

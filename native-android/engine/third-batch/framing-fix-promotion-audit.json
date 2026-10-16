@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "promotion_base": "27efb628d4d01bc5b63a8fb4d9d1996c7b1fbc8e",
+  "primary_handoff_preserved": true,
+  "intervening_path_count": 63,
+  "path_overlap": [],
+  "original_worker_commits": [
+    "7208f42e5684c192f74952bcc1a5e9329a5a9d9c",
+    "a7aac83a3114477290cb575a5936db81767e0e0d"
+  ],
+  "changed_paths": [
+    "native-android/engine/appearance/ACTOR-PREVIEW.md",
+    "native-android/engine/appearance/coh_appearance_preview.c",
+    "native-android/engine/appearance/coh_appearance_preview.h",
+    "native-android/engine/appearance/qualification/framing-20261016/after-landscape.png",
+    "native-android/engine/appearance/qualification/framing-20261016/after-portrait.png",
+    "native-android/engine/appearance/qualification/framing-20261016/after.json",
+    "native-android/engine/appearance/qualification/framing-20261016/before-landscape.png",
+    "native-android/engine/appearance/qualification/framing-20261016/before.json",
+    "native-android/engine/appearance/qualification/framing-20261016/contexts.json",
+    "native-android/engine/appearance/qualification/framing-20261016/host-android.json",
+    "native-android/engine/appearance/qualification/framing-20261016/source-identity.json",
+    "native-android/engine/appearance/tests/preview_framing.py",
+    "native-android/engine/appearance/tests/preview_gpu.py",
+    "native-android/engine/third-batch/REPORT.md",
+    "native-android/engine/third-batch/THOR-TEST.md",
+    "native-android/support-client/README.md",
+    "native-android/support-client/emulator-scenario.json",
+    "native-android/support-client/qualification-next/INTEGRATION.md",
+    "native-android/support-client/qualification-next/preview-framing-android-compile.json",
+    "native-android/support-client/qualification-next/preview-framing-hud.json",
+    "native-android/support-client/qualification-next/preview-framing-image-regression.json",
+    "native-android/support-client/src/support_ui.c",
+    "native-android/support-client/tools/emulator_check.py",
+    "native-android/support-client/tools/preview_image.py",
+    "native-android/support-client/tools/tests/presentation_adapter.c"
+  ],
+  "workflow_behavior": "only support and portable-core triggers; same unchanged workflows; primary not triggered or canceled",
+  "first_candidate_retained": true
+}

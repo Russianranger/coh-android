@@ -15,7 +15,9 @@ mock neutral authentic animation clips and streamed Atlas Plaza/steam audio.
 The tray uses authentic original ring and 1–9,0 numeral artwork; ability-specific icons remain unavailable. UI-navigation mode routes the left stick through bounded focus hysteresis/repeat, and D-pad/A continue to navigate. Character choices change mock data only. The code201 continuation adds an explicit
 **Preview: Male** toggle for a complete eight-part authentic neutral Male costume,
 matching rig and textures. Wretch remains the default scene actor; Male is a separate
-fixed-camera preview without movement. Female and additional full Huge costumes
+fixed-camera inspection of the first neutral source pose, without movement. Mock
+chat/tray controls are hidden and disabled there to keep all body parts visible;
+top health/target labels remain and the Wretch HUD is restored when returning. Female and additional full Huge costumes
 remain incomplete. Jump-and-smash is an animation preview, not jump physics.
 
 `CohHudState` and `CohHudIntent` are copied game-state/intent boundaries. Future
@@ -81,7 +83,7 @@ establish full-game FPS, full-map memory use or Adreno performance.
    damage text and a genuine Huge punch cue in Wretch mode. Inventory, missions,
    health and combat state remain mock; authentic impact audio is unavailable.
 7. Toggle **Preview: Wretch** to Male. Inspect all eight genuine parts, head texture,
-   attachment transforms and neutral rig at several poses. Capture a screenshot,
+   attachment transforms and the fixed neutral rig pose. Capture a screenshot,
    recreate the Surface and Home/resume, then return to Wretch and confirm WALK.
    Music/ambient remains explicitly background audio from the retained Wretch
    scene; its listener does not follow the fixed Male preview camera.
@@ -135,3 +137,9 @@ Export must identify package org.coh.nativesupport, version 0.2.0-gameplay/code2
 the installed APK SHA and all original asset identities. The historical qualified
 code200 artifact remains unchanged; code201 needs its own Android13 execution.
 No full-map FPS or physical qualification is inferred.
+
+The first code201 artifact from run38839177252 passed23 counter scenarios but
+failed visual review: jump-clip root movement escaped its initial camera bounds.
+It is retained as failed visual qualification. The corrected preview freezes the
+first neutral pose, fits both aspects, and requires source-bound screenshot bounds
+in landscape and after Home/resume; required screenshot capture fails closed.

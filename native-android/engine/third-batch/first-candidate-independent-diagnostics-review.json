@@ -1,0 +1,255 @@
+{
+  "schema": 1,
+  "status": "independently-reviewed-with-performance-and-audio-limitations",
+  "github_actions_run_id": 38839177252,
+  "review_scope": "Read-only analysis of actual hosted Android13 report fields. No APK/signature/source identity requalification, no new execution, no physical or sustained benchmark claim.",
+  "evidence": {
+    "reports_reviewed": 25,
+    "scenario_steps": 23,
+    "unique_memory_sample_timestamps": 24,
+    "final_duplicates_step22": true,
+    "report_window_seconds": 152.0,
+    "final_report_active_foreground_ms": 150681,
+    "excluded_alias_report": "emulator-latest-report.json",
+    "report_sha256": {
+      "emulator-initial-report.json": "48ac491d4d8b368c24e09c8f708f0e47d337540eb6d88794503b212fad1793a3",
+      "emulator-step-00-report.json": "b07bb99a44ec027e80850846dcafd1e82fc2e32132e0c25f916ba262bd813c40",
+      "emulator-step-01-report.json": "c6b097d4fea1bd338bcff6bac9b936f0a99c0b3fa520688ccdd6d8a7f661ffde",
+      "emulator-step-02-report.json": "224151470eaf874d9ae8a47c97a9a2780cb1f1d1e624c3b6fafeb05aa3dfde95",
+      "emulator-step-03-report.json": "2ec02fdf998614812459d121b23e2ec861de6254240a67d178621102ded31205",
+      "emulator-step-04-report.json": "eaaeb07d3ef482a01fffe2d336f852bf3a75ea14b46c30d4357cf7eef02cd2ab",
+      "emulator-step-05-report.json": "5143c0b04e5172f1bf87e0b4686882368b45c81ae95c6edb07241126d9c2edbf",
+      "emulator-step-06-report.json": "182fb48f5c84ead7eddf5ced83d46609c490591ba50d1083fa774a347130cdb0",
+      "emulator-step-07-report.json": "830e0950a6ade8a0532e37cc18d8827be1c5bc605061369c3efea5cebdbd0560",
+      "emulator-step-08-report.json": "a12338c8fe4389830825d735da6ccfe8128146f42cc85bd0a893d49a0c8645f2",
+      "emulator-step-09-report.json": "ecb9881b10e83111432925eec5e4ca0e9454cf7135af2e25e3c5845e3c6b601a",
+      "emulator-step-10-report.json": "0f0a0d8b92ca1b53c68d0c436493717d739619a6e10fbdb63f22832de4089154",
+      "emulator-step-11-report.json": "bfd241b5a8a169d277dcaec35975e8e0f4ba5f8b83ade42e63195a9f644b0e26",
+      "emulator-step-12-report.json": "a08f016337c1fb573fa1c14cca26717f8a18a6d665430e1c1760e674ec4b7864",
+      "emulator-step-13-report.json": "1528a7d66bace1898b183abfa7d2c092232951756d610b5c034e079771d1af03",
+      "emulator-step-14-report.json": "d0b9ba626bc3db2d1e0b3c71562fb5645fd29f9ce316c636b75c15b0ed8f1ff0",
+      "emulator-step-15-report.json": "80fac39ba886376e143229da29cdb2c1342f42a5471862fe68f86ceacf11eb56",
+      "emulator-step-16-report.json": "fb827d411029729c4e135e7cdfea4cc5d3fe5435c50c6b2a3453d8567defc006",
+      "emulator-step-17-report.json": "2a464fd05ff690bafa321c15c9c2b38cb83bafccc3df3f5935de0c46d9d1cdca",
+      "emulator-step-18-report.json": "991398a798f712dc3d95b117eddb58af3fa09fc7f4827f353647e86e8d398385",
+      "emulator-step-19-report.json": "9e15b1320a3c33ad9cbd1dc707db8f698b123c0d73880ba2b2b6bcb7c5c51a24",
+      "emulator-step-20-report.json": "c1f34c4ba47894d42e20510a7787834a38fae28bd260d29ed9452576819fe04b",
+      "emulator-step-21-report.json": "9329c8b8e145f018677d308e881517ae7794e006ebdcd6e606b5e2605b123f65",
+      "emulator-step-22-report.json": "3504ba96fdf6c664e2264de139a48b7cf81c690ba3ed6253409735920eafc8e2",
+      "emulator-final-report.json": "3504ba96fdf6c664e2264de139a48b7cf81c690ba3ed6253409735920eafc8e2"
+    }
+  },
+  "process_memory": {
+    "source": "proc_self_smaps_rollup",
+    "rss_and_pss_known_reports": 25,
+    "measurement_errors": 0,
+    "rss_bytes": {
+      "min": 89419776,
+      "max": 169402368,
+      "initial": 169402368,
+      "final": 94932992,
+      "final_minus_initial": -74469376,
+      "min_report": "emulator-step-18-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "pss_bytes": {
+      "min": 20604928,
+      "max": 86582272,
+      "initial": 86582272,
+      "final": 37349376,
+      "final_minus_initial": -49232896,
+      "min_report": "emulator-step-08-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "native_heap_allocated_bytes": {
+      "min": 29548768,
+      "max": 36463232,
+      "initial": 35519984,
+      "final": 36380832,
+      "final_minus_initial": 860848,
+      "min_report": "emulator-step-09-report.json",
+      "max_report": "emulator-step-20-report.json"
+    },
+    "java_used_bytes": {
+      "min": 2865312,
+      "max": 39087000,
+      "initial": 39087000,
+      "final": 7540864,
+      "final_minus_initial": -31546136,
+      "min_report": "emulator-step-04-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "sample_duration_ms": {
+      "min": 2,
+      "max": 46,
+      "initial": 32,
+      "final": 27,
+      "final_minus_initial": -5,
+      "min_report": "emulator-step-08-report.json",
+      "max_report": "emulator-step-09-report.json"
+    },
+    "sample_age_ms": {
+      "min": 128,
+      "max": 1620,
+      "initial": 1029,
+      "final": 1113,
+      "final_minus_initial": 84,
+      "min_report": "emulator-step-01-report.json",
+      "max_report": "emulator-step-09-report.json"
+    },
+    "files_opened_each_sample": 1,
+    "read_calls_each_sample": 2,
+    "bridge_process_gauges_correctly_remain_unsubmitted": true,
+    "interpretation": "RSS/PSS are now actual separate process observations, not sums of module accounting. RSS decreased from 169402368 to 94932992 bytes; PSS decreased from 86582272 to 37349376 bytes. Native allocator-reported heap ended 860848 bytes above initial amid lifecycle, UI and preview changes. No monotonic RSS/PSS growth signal or growing fixed-cache accounting appears in this short heterogeneous run; this cannot establish leak freedom."
+  },
+  "bounded_resource_observations": {
+    "module_partial_accounted_bytes": {
+      "min": 2274440,
+      "max": 2274440,
+      "final": 2274440
+    },
+    "physics_owned_bytes": {
+      "min": 562232,
+      "max": 562232,
+      "final": 562232
+    },
+    "skin_cache_bytes": {
+      "min": 332928,
+      "max": 332928,
+      "final": 332928
+    },
+    "world_asset_resident_bytes": {
+      "min": 157491,
+      "max": 157491,
+      "final": 157491
+    },
+    "world_asset_budget_bytes": 524288,
+    "world_asset_peak_bytes": 157491,
+    "world_cache_evictions": 0,
+    "preview_partial_cpu_bytes": {
+      "min": 153528,
+      "max": 153528,
+      "final": 153528
+    },
+    "preview_cached_gpu_buffer_bytes": {
+      "min": 0,
+      "max": 67976,
+      "final": 67976
+    },
+    "preview_final_surface_uploads": 2,
+    "preview_final_frames": 217,
+    "preview_final_draws": 1736,
+    "preview_memory_scope": "Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory.",
+    "interpretation": "Fixed observed module/physics/skin-cache/world byte budgets remained constant. Preview allocated its bounded GPU buffers when used and retained them when returning to Wretch; retaining a live-context cache is expected, not itself a leak. Source texture payload is not total GPU residency."
+  },
+  "performance": {
+    "final_frame_samples": 1406,
+    "frame_mean_ns": 92927438.0682788,
+    "frame_max_ns": 898392396,
+    "frame_p50_bucket_upper_ns": 78499999,
+    "frame_p95_bucket_upper_ns": 898392396,
+    "frame_p99_bucket_upper_ns": 898392396,
+    "target_frame_ns": 33333333,
+    "over_budget_frames": 1404,
+    "over_budget_percent": 99.85775248933143,
+    "stalls": 308,
+    "stall_threshold_ns": 100000000,
+    "dropped_incomplete_frames": 3,
+    "invalid_samples": 0,
+    "stage_mean_ns": {
+      "animation": 151331.84135977336,
+      "skinning": 61937.098072087174,
+      "collision": 113735.20623398805,
+      "render_submit": 48401374.16903409,
+      "present": 43325370.00142247
+    },
+    "unsampled_stages": [
+      "asset_loading",
+      "audio_control"
+    ],
+    "gpu_timing_samples": 0,
+    "gpu_unavailable": 7,
+    "final_observed_counters": {
+      "copied_bytes": 146812944,
+      "upload_bytes": 246985984,
+      "draw_calls": 128645,
+      "skinned_vertices": 3006682,
+      "collision_tests": 4684,
+      "asset_hits": 8,
+      "asset_misses": 0,
+      "asset_evictions": 0
+    },
+    "unknown_counters": [
+      "state_binds",
+      "readbacks",
+      "explicit_waits",
+      "allocations"
+    ],
+    "counter_binding_rejections": 0,
+    "skin_cache_hits": 561,
+    "skin_cache_misses": 12793,
+    "interpretation": "Hosted emulator frame pacing does not meet the 33.33 ms target: mean 92.927 ms with 1404/1406 sampled frames over budget. Render submission/present dominate recorded stage time. This mixes UI, scenes, preview and lifecycle and cannot predict physical Adreno FPS. p95/p99 are conservative histogram upper bounds; the overflow bucket returns the observed maximum rather than an exact percentile. GPU time, asset-loading stage and audio-control stage are unmeasured, not zero-cost."
+  },
+  "audio": {
+    "valid_quiescent_snapshots": [
+      {
+        "report": "emulator-step-09-report.json",
+        "initialized": 1,
+        "running": 0,
+        "last_status": 0,
+        "device_error": 0,
+        "opens": 1,
+        "closes": 1,
+        "decode_calls": 7478,
+        "diagnostics_valid": 1,
+        "rendered_frames": 2906500,
+        "underrun_frames": 419,
+        "callback_calls": 5490,
+        "maximum_callback_ns": 60228296
+      }
+    ],
+    "maximum_reported_stream_underrun_frames": 419,
+    "maximum_reported_callback_ns": 60228296,
+    "final_running": true,
+    "final_diagnostics_valid": false,
+    "final_opens": 8,
+    "final_closes": 7,
+    "final_route_reopens": 3,
+    "device_error_reports": 0,
+    "last_status_errors": 0,
+    "platform_xrun_count_exported": false,
+    "callback_deadline_overrun_count_exported": false,
+    "interpretation": "The actual joined step 09 snapshot records 419 stream-underrun frames and a 60.228296 ms maximum callback. Audio recovery worked with no reported device/owner status errors; 8 opens/7 closes with a currently running backend is consistent, not an unmatched-handle leak signal. Later running snapshots retain last joined callback values and have diagnostics_valid=false; their zeros/nonincreases cannot prove continuous underrun-free audio. No physical audibility, latency or route-switch quality claim is established."
+  },
+  "error_checks": {
+    "maximum_values_expected_zero": {
+      "native.gl_errors": 0,
+      "native.egl_error": 0,
+      "native.cleanup_gl_errors": 0,
+      "native.cleanup_egl_errors": 0,
+      "native.tf_mismatches": 0,
+      "native.walkable_tf_mismatches": 0,
+      "native.source_assets.errors": 0,
+      "native.static_renderer.tf_mismatches": 0,
+      "native.appearance_preview.failures": 0,
+      "support.failures": 0,
+      "support.hud.gl_errors": 0,
+      "support.performance.invalid_samples": 0,
+      "support.audio.last_status": 0,
+      "support.audio.device_error": 0
+    },
+    "all_reports_native_valid_without_failure": true,
+    "all_report_write_failed_flags_false": true,
+    "all_counter_bindings_rejected_zero": true
+  },
+  "outstanding_acceptance": [
+    "Physical AYN Thor audio audibility/routes/focus/latency and sustained underrun testing.",
+    "Longer comparable scene-phase RSS/PSS traces across repeated complete lifecycle cycles before leak/endurance conclusions.",
+    "Representative physical-device 30 FPS/frame-pacing/thermal qualification; emulator does not meet target.",
+    "Actual GPU timing, allocation events and missing stage timings remain unmeasured.",
+    "Platform xrun and callback deadline-overrun values are not exported in these support audio JSON objects."
+  ],
+  "physical_thor_accepted": false,
+  "full_game_performance_qualified": false,
+  "sustained_endurance_qualified": false
+}

@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "source_commit": "bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00",
+  "source_tree": "8643e57b40f423c7e1e6efca905a5d1eb01ce1bb",
+  "local_identical_tree_commit": "4ea4b7352e37f16178cd13005a75a0d834cfe7c1",
+  "publication": {
+    "branch": "native-android",
+    "method": "connected GitHub app Git data API",
+    "expected_previous_head": "8e237b984c188dd19c171387914e795916712556",
+    "force": false,
+    "tree_equality_verified": true,
+    "primary_workflow_canceled_or_restarted": false,
+    "previous_primary_run": {
+      "id": 38838677592,
+      "result_observed_after_our_publication": "success",
+      "canceled_or_restarted_by_us": false
+    }
+  },
+  "package": "org.coh.nativesupport",
+  "version_name": "0.2.0-gameplay",
+  "version_code": 201,
+  "workflow_run_id": 38839177252,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38839177252",
+  "stages": {
+    "implemented": true,
+    "host_source_qualified": true,
+    "android_arm64_built_local": true,
+    "android_emulator_qualified": false,
+    "physical_ayn_thor_qualified": false
+  },
+  "hosted_result": "first candidate rejected by visual review; corrected source qualification pending",
+  "physical_acceptance": "pending actual AYN Thor report and observations",
+  "scope": "bounded offline support application, authentic custom Male neutral preview; no live-server or full-zone qualification",
+  "attempts": [
+    {
+      "source_commit": "bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00",
+      "run_id": 38839177252,
+      "artifact_id": 12020965744,
+      "workflow_result": "success",
+      "counter_scenarios_passed": 23,
+      "visual_review_passed": false,
+      "release_accepted": false,
+      "reason": "Male preview samples full jump motion beyond first-pose camera bounds; actual screenshot shows clipped costume",
+      "arm64_sha256": "5aba7cd516f5588d76ebc4dc04c28798f27a45d2804f229640b04376d1bedbe3"
+    }
+  ]
+}

@@ -164,7 +164,7 @@ class Check:
         ready=self.scenario['ready'];require(ready,'Scenario must declare actual readiness observations')
         first=self.wait(ready,'Native support client ready',timeout=self.a.startup_timeout)
         verify_report_identity(first,build,admitted[0])
-        self.save('emulator-initial-report.json',first);self.screenshot('emulator-initial.png')
+        self.save('emulator-initial-report.json',first);require(self.screenshot('emulator-initial.png'),'Initial screenshot capture failed')
         previous=first
         for i,step in enumerate(self.scenario.get('steps',[])):
             require(step.get('assert'),'Every scenario step must declare observable assertions')
@@ -172,11 +172,24 @@ class Check:
             for action in step.get('actions',[step.get('action')]):
                 if action:self.action(action)
             current=self.wait(step.get('assert',ready),step['label'],before,step.get('timeout',60))
+            verify_report_identity(current,build,admitted[0])
             receipt={'label':step['label'],'passed':True,'actions':step.get('actions',[step.get('action')]),'assertions':step.get('assert',ready)}
             self.steps.append(receipt);self.save('emulator-step-%02d-report.json'%i,current)
-            if step.get('screenshot'):self.screenshot('emulator-step-%02d.png'%i)
+            if step.get('screenshot'):
+                name='emulator-step-%02d.png'%i
+                require(self.screenshot(name),'Required screenshot capture failed: '+step['label'])
+                if step.get('image_check'):
+                    require(step['image_check']=='male_neutral_full_body','Unknown screenshot acceptance profile')
+                    spec=importlib.util.spec_from_file_location('coh_preview_image',Path(__file__).with_name('preview_image.py'))
+                    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+                    visual=module.verify_preview_image(self.a.output/name,current)
+                    visual['source_commit']=self.source_commit;visual['report_sha256']=hashlib.sha256((self.a.output/('emulator-step-%02d-report.json'%i)).read_bytes()).hexdigest()
+                    visual['verifier_sha256']=hashlib.sha256(Path(__file__).with_name('preview_image.py').read_bytes()).hexdigest()
+                    self.save('emulator-step-%02d-image-proof.json'%i,visual)
+                    require(visual['passed'],'Male preview image bounds failed: '+str(visual['errors']))
             print(json.dumps({'step':step['label'],'passed':True}),flush=True);previous=current
-        self.save('emulator-final-report.json',previous);self.screenshot('emulator-final.png')
+        verify_report_identity(previous,build,admitted[0])
+        self.save('emulator-final-report.json',previous);require(self.screenshot('emulator-final.png'),'Final screenshot capture failed')
         summary={'schema':1,'passed':True,'package':PACKAGE,'source_commit':self.source_commit,
                  'version_name':build['version_name'],'version_code':build['version_code'],
                  'installed_apk':{'bytes':self.a.apk.stat().st_size,'sha256':hashlib.sha256(self.a.apk.read_bytes()).hexdigest()},

@@ -36,7 +36,7 @@ def run(library,package,output):
    # Leave first-context names to context destruction, exercise alive=0 path.
    if cycle:g.glDeleteFramebuffers(1,C.byref(fbo));g.glDeleteTextures(1,C.byref(target));g.glDeleteRenderbuffers(1,C.byref(depth))
   assert [x['sha256'] for x in contexts[0]['frames']]==[x['sha256'] for x in contexts[1]['frames']]
-  stats=lib.coh_appearance_preview_stats(owner);result={'passed':True,'identity':e.identity,'package_sha256':hashlib.sha256(raw).hexdigest(),'contexts':contexts,'recovery':recovery,'stats':{k:getattr(stats,k) for k,_ in Stats._fields_},'android':False,'physical_thor':False,'scope':'Complete source-menu neutral Male preview through production owner; not original full-client image equivalence, custom morphology, Female/Huge, or full Gate31'}
+  stats=lib.coh_appearance_preview_stats(owner);result={'passed':True,'identity':e.identity,'package_sha256':hashlib.sha256(raw).hexdigest(),'contexts':contexts,'recovery':recovery,'stats':{k:getattr(stats,k) for k,_ in Stats._fields_},'android':False,'physical_thor':False,'scope':'Complete source-menu neutral Male fixed first-pose preview through production owner; not original full-client image equivalence, custom morphology, Female/Huge, or full Gate31'}
   (output/'preview-gpu.json').write_text(json.dumps(result,indent=2)+'\n');return result
  finally:lib.coh_appearance_preview_destroy(owner,1);e.close()
 if __name__=='__main__':

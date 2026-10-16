@@ -498,7 +498,8 @@
           "increases": true
         }
       },
-      "screenshot": true
+      "screenshot": true,
+      "image_check": "male_neutral_full_body"
     },
     {
       "label": "Male preview survives background and Surface recovery",
@@ -528,7 +529,8 @@
         },
         "support.audio.running": 1
       },
-      "screenshot": true
+      "screenshot": true,
+      "image_check": "male_neutral_full_body"
     },
     {
       "label": "Return to accepted Wretch scene after Male preview",

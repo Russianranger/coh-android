@@ -1,0 +1,11 @@
+{
+  "parent_worker_revision": "c083907355a1fed442e798136a76d8d035b477c3",
+  "files": {
+    "native-android/engine/appearance/coh_appearance_preview.c": "954fe2c908107d495eacc6a4409b19a2006595f4286bc777e44c54046ec7ca2e",
+    "native-android/engine/appearance/coh_appearance_preview.h": "ca4d53d2221eff5a4147e78e52c0974211d797f7df950df12b0bd6bb0b114697",
+    "native-android/engine/appearance/tests/preview_framing.py": "aa0ced8f5a4c51455aa5d351bd0fcaaae7201324afa8e9819414e15b2345e633",
+    "native-android/engine/appearance/tests/preview_gpu.py": "699f65e88cc4d12ff9d1c5c58fb0cf51356322ff2546d6ce29c260c89af92a1b"
+  },
+  "test_library_sha256": "2a0d4e65b205f7e93dd2573a445b8855af41a14da197d28a305ec971f84f3a3d",
+  "android_visual_acceptance_pending": true
+}

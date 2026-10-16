@@ -1,0 +1,199 @@
+{
+  "schema": "coh-support-independent-report-review-v1",
+  "passed": false,
+  "status": "identity_and_counter_checks_passed_but_visual_qualification_rejected",
+  "source_commit": "bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00",
+  "run": 38839177252,
+  "artifact": 12020965744,
+  "reports_verified": 25,
+  "source_scenario_binding_passed": true,
+  "scenario_sha256": "45f15c2bd830ce26ade1dede5b07c54682bc8611ea85ec373f79a1726b0091e0",
+  "scenario_steps": 23,
+  "absolute_assertions_rechecked": 42,
+  "relative_assertion_scope": "Original driver checked immediate before-action reports; independent review binds its exact assertions/actions to frozen published scenario, without claiming independent reexecution of unretained baselines.",
+  "reports": [
+    {
+      "file": "emulator-initial-report.json",
+      "sha256": "48ac491d4d8b368c24e09c8f708f0e47d337540eb6d88794503b212fad1793a3"
+    },
+    {
+      "file": "emulator-step-00-report.json",
+      "sha256": "b07bb99a44ec027e80850846dcafd1e82fc2e32132e0c25f916ba262bd813c40"
+    },
+    {
+      "file": "emulator-step-01-report.json",
+      "sha256": "c6b097d4fea1bd338bcff6bac9b936f0a99c0b3fa520688ccdd6d8a7f661ffde"
+    },
+    {
+      "file": "emulator-step-02-report.json",
+      "sha256": "224151470eaf874d9ae8a47c97a9a2780cb1f1d1e624c3b6fafeb05aa3dfde95"
+    },
+    {
+      "file": "emulator-step-03-report.json",
+      "sha256": "2ec02fdf998614812459d121b23e2ec861de6254240a67d178621102ded31205"
+    },
+    {
+      "file": "emulator-step-04-report.json",
+      "sha256": "eaaeb07d3ef482a01fffe2d336f852bf3a75ea14b46c30d4357cf7eef02cd2ab"
+    },
+    {
+      "file": "emulator-step-05-report.json",
+      "sha256": "5143c0b04e5172f1bf87e0b4686882368b45c81ae95c6edb07241126d9c2edbf"
+    },
+    {
+      "file": "emulator-step-06-report.json",
+      "sha256": "182fb48f5c84ead7eddf5ced83d46609c490591ba50d1083fa774a347130cdb0"
+    },
+    {
+      "file": "emulator-step-07-report.json",
+      "sha256": "830e0950a6ade8a0532e37cc18d8827be1c5bc605061369c3efea5cebdbd0560"
+    },
+    {
+      "file": "emulator-step-08-report.json",
+      "sha256": "a12338c8fe4389830825d735da6ccfe8128146f42cc85bd0a893d49a0c8645f2"
+    },
+    {
+      "file": "emulator-step-09-report.json",
+      "sha256": "ecb9881b10e83111432925eec5e4ca0e9454cf7135af2e25e3c5845e3c6b601a"
+    },
+    {
+      "file": "emulator-step-10-report.json",
+      "sha256": "0f0a0d8b92ca1b53c68d0c436493717d739619a6e10fbdb63f22832de4089154"
+    },
+    {
+      "file": "emulator-step-11-report.json",
+      "sha256": "bfd241b5a8a169d277dcaec35975e8e0f4ba5f8b83ade42e63195a9f644b0e26"
+    },
+    {
+      "file": "emulator-step-12-report.json",
+      "sha256": "a08f016337c1fb573fa1c14cca26717f8a18a6d665430e1c1760e674ec4b7864"
+    },
+    {
+      "file": "emulator-step-13-report.json",
+      "sha256": "1528a7d66bace1898b183abfa7d2c092232951756d610b5c034e079771d1af03"
+    },
+    {
+      "file": "emulator-step-14-report.json",
+      "sha256": "d0b9ba626bc3db2d1e0b3c71562fb5645fd29f9ce316c636b75c15b0ed8f1ff0"
+    },
+    {
+      "file": "emulator-step-15-report.json",
+      "sha256": "80fac39ba886376e143229da29cdb2c1342f42a5471862fe68f86ceacf11eb56"
+    },
+    {
+      "file": "emulator-step-16-report.json",
+      "sha256": "fb827d411029729c4e135e7cdfea4cc5d3fe5435c50c6b2a3453d8567defc006"
+    },
+    {
+      "file": "emulator-step-17-report.json",
+      "sha256": "2a464fd05ff690bafa321c15c9c2b38cb83bafccc3df3f5935de0c46d9d1cdca"
+    },
+    {
+      "file": "emulator-step-18-report.json",
+      "sha256": "991398a798f712dc3d95b117eddb58af3fa09fc7f4827f353647e86e8d398385"
+    },
+    {
+      "file": "emulator-step-19-report.json",
+      "sha256": "9e15b1320a3c33ad9cbd1dc707db8f698b123c0d73880ba2b2b6bcb7c5c51a24"
+    },
+    {
+      "file": "emulator-step-20-report.json",
+      "sha256": "c1f34c4ba47894d42e20510a7787834a38fae28bd260d29ed9452576819fe04b"
+    },
+    {
+      "file": "emulator-step-21-report.json",
+      "sha256": "9329c8b8e145f018677d308e881517ae7794e006ebdcd6e606b5e2605b123f65"
+    },
+    {
+      "file": "emulator-step-22-report.json",
+      "sha256": "3504ba96fdf6c664e2264de139a48b7cf81c690ba3ed6253409735920eafc8e2"
+    },
+    {
+      "file": "emulator-final-report.json",
+      "sha256": "3504ba96fdf6c664e2264de139a48b7cf81c690ba3ed6253409735920eafc8e2"
+    }
+  ],
+  "measurements": {
+    "device": {
+      "manufacturer": "Google",
+      "model": "sdk_gphone64_x86_64",
+      "sdk": 33,
+      "abis": [
+        "x86_64"
+      ],
+      "emulator_detected": true
+    },
+    "renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "native_frames": 1408,
+    "active_foreground_ms": 150681,
+    "contexts_started": 7,
+    "male_frames": 217,
+    "male_draws": 1736,
+    "male_surface_uploads": 2,
+    "male_vertices": 943,
+    "male_indices": 3792,
+    "landscape_scene": {
+      "left": 0,
+      "top": 228,
+      "width": 1920,
+      "height": 789,
+      "shown": true,
+      "surface_ready": true,
+      "controls_expanded": false,
+      "root_width": 1920,
+      "root_height": 954,
+      "scene_fraction": 0.8270440251572327
+    },
+    "final_scene": {
+      "left": 0,
+      "top": 898,
+      "width": 1080,
+      "height": 959,
+      "shown": true,
+      "surface_ready": true,
+      "controls_expanded": true,
+      "root_width": 1080,
+      "root_height": 1794,
+      "scene_fraction": 0.5345596432552955
+    },
+    "rss_bytes_range": [
+      89419776,
+      169402368
+    ],
+    "pss_bytes_range": [
+      20604928,
+      86582272
+    ],
+    "sample_age_ms_max": 1620,
+    "sample_duration_ms_max": 46,
+    "cpu_frame_samples": 1406,
+    "cpu_frame_mean_ms": 92.9274380682788,
+    "cpu_frame_p50_upper_ms": 78.499999,
+    "cpu_frame_max_ms": 898.392396,
+    "quiescent_audio": {
+      "initialized": 1,
+      "running": 0,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 1,
+      "closes": 1,
+      "decode_calls": 7478,
+      "diagnostics_valid": 1,
+      "rendered_frames": 2906500,
+      "underrun_frames": 419,
+      "callback_calls": 5490,
+      "maximum_callback_ns": 60228296
+    },
+    "final_audio_counters_stale": true
+  },
+  "blocking_findings": [
+    "Male screenshots20 and21 have cropped/displaced body; counters alone incorrectly allowed visual failure. Artifact preserved and superseding fix requires new Android run."
+  ],
+  "limits": [
+    "SwiftShader x86_64, not Adreno/ARM64 execution.",
+    "150.681s active, not10-minute endurance; CPUmean92.93ms and419quiescent audio underrun frames do not meet30FPS/glitch-free audio targets.",
+    "Emulator uses noaudio; audible quality, physical route/controller and Thor acceptance remain pending.",
+    "Male Home recovery returned portrait; landscape scene evidence is separate."
+  ],
+  "physical_thor_accepted": false
+}

@@ -2,9 +2,14 @@
 
 This batch develops the separate, entirely offline `org.coh.nativesupport` app
 and reusable modules. It does not qualify live gameplay or replace the accepted
-Session Client. Final release identity and emulator results are recorded in
-`release.json` when available; implementation and build status must not be read
-as physical acceptance.
+Session Client. Release identity and emulator results are recorded in `release.json`.
+Implementation, build and emulator status must not be read as physical acceptance.
+The published source is `bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00`; its Git tree
+exactly matches local reviewed integration `4ea4b7352e37f16178cd13005a75a0d834cfe7c1`.
+Shell push lacked credentials, so publication used the connected GitHub app with
+`expected_sha=8e237b984c188dd19c171387914e795916712556` and `force=false`.
+Worker/local commits remain preserved; GitHub received one additive integration
+commit, not a rewrite of existing history.
 
 ## Repository, recovery and ownership
 
@@ -68,6 +73,13 @@ checkpoint records physical acceptance of Combined 0.1.6's **bounded scene
 reception and return-to-launcher scope**. That does not establish complete scene
 decoding, authoritative spawning or full gates 25–27 acceptance.
 
+The primary agent subsequently published `27efb628d4d01bc5b63a8fb4d9d1996c7b1fbc8e`,
+preserving this batch without overlap. Its Combined 0.1.7 handoff records 34/34
+Android checks for bounded full normal-world structure parsing. Imported scene
+graphs/checksums, authoritative identities/positions/entities and encrypted
+AuthServer login remain open; the new 0.1.7 physical test is pending. This
+coordinator did not modify or independently requalify those capabilities.
+
 ## Development and independent qualification
 
 ### A — consolidated Support Client 0.2.0, code 201
@@ -109,6 +121,16 @@ color bytes. Negative/lifecycle checks, ASan/UBSan, ARM64/x86_64 linkage and act
 host GLES rendering across context recreation are independently recorded under
 `engine/appearance/`. E reviewed source-mask evidence and failure cleanup; F
 reviewed application resource/thread ownership.
+
+Independent Android screenshot review rejected the first counter-passing
+candidate: full jump root motion escaped a camera fitted to its first pose.
+Appearance fix `7208f42e5684c192f74952bcc1a5e9329a5a9d9c` holds the first
+source pose and fits all bounds to 70% of both viewport dimensions. Thirty-six
+raster checks across four aspects and clocks through 24 hours reproduce the
+old failure and pass after correction. Support fix `a7aac83a3114477290cb575a5936db81767e0e0d`
+hides chat/tray and closes any presentation panel to
+prevent occlusion; required screenshot bounds now form part of acceptance.
+The original failed candidate artifact is retained in the release record.
 
 This is one authentic **source-menu custom Male costume**, not an authored NPC,
 full morphology parity, Female/Huge completion or animated multi-actor gameplay.

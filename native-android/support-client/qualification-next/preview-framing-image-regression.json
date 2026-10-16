@@ -1,0 +1,218 @@
+{
+  "passed": true,
+  "verifier_sha256": "11dab692e74a1aec659419a096bd08e3e76fec655e15930eb0f4f8d1778ad131",
+  "rejected_actual_bad_android_screenshots": 2,
+  "accepted_actual_fixed_host_gles_screenshots": 2,
+  "additional_negative_cases": [
+    "panel_visible",
+    "outside_scene",
+    "missing_image"
+  ],
+  "cases": [
+    {
+      "schema": "coh-support-neutral-preview-image-v1",
+      "passed": false,
+      "image": "emulator-step-20.png",
+      "image_sha256": "19a2f1cf2b3dcf3c1fc1d5d2da17078b27f4fd24cf0415fea373e649d9db661b",
+      "screenshot_size": [
+        1920,
+        1080
+      ],
+      "scene_rectangle": [
+        0,
+        228,
+        1920,
+        789
+      ],
+      "background_rgb": [
+        9,
+        11,
+        17
+      ],
+      "excluded_top_hud_rectangles": [
+        [
+          443,
+          9,
+          768,
+          121
+        ],
+        [
+          1104,
+          9,
+          1477,
+          108
+        ]
+      ],
+      "visible_pixels": 203053,
+      "visible_fraction": 0.13403899978876216,
+      "bounds_normalized": [
+        0.23229166666666667,
+        0.0,
+        0.7677083333333333,
+        0.9847908745247148
+      ],
+      "extent_normalized": [
+        0.5354166666666667,
+        0.9847908745247148
+      ],
+      "required_minimum_margin": 0.08,
+      "errors": [
+        "silhouette touches reserved outer margin/cropped body or HUD obstruction"
+      ],
+      "scope": "Actual screenshot silhouette/framing check with only two top HUD exclusions; not original-client pixel equivalence or physical acceptance."
+    },
+    {
+      "schema": "coh-support-neutral-preview-image-v1",
+      "passed": false,
+      "image": "emulator-step-21.png",
+      "image_sha256": "f7dec9a5728359ebb800749406a48701a986c9b06f46b569a512c51dfed62389",
+      "screenshot_size": [
+        1080,
+        1920
+      ],
+      "scene_rectangle": [
+        0,
+        898,
+        1080,
+        959
+      ],
+      "background_rgb": [
+        9,
+        11,
+        17
+      ],
+      "excluded_top_hud_rectangles": [
+        [
+          9,
+          84,
+          343,
+          198
+        ],
+        [
+          688,
+          84,
+          1071,
+          186
+        ]
+      ],
+      "visible_pixels": 242159,
+      "visible_fraction": 0.2338073996833121,
+      "bounds_normalized": [
+        0.012037037037037037,
+        0.38790406673618355,
+        0.9879629629629629,
+        0.913451511991658
+      ],
+      "extent_normalized": [
+        0.9759259259259259,
+        0.5255474452554745
+      ],
+      "required_minimum_margin": 0.08,
+      "errors": [
+        "silhouette touches reserved outer margin/cropped body or HUD obstruction",
+        "silhouette is not centered in the inspection viewport"
+      ],
+      "scope": "Actual screenshot silhouette/framing check with only two top HUD exclusions; not original-client pixel equivalence or physical acceptance."
+    },
+    {
+      "schema": "coh-support-neutral-preview-image-v1",
+      "passed": true,
+      "image": "after-landscape.png",
+      "image_sha256": "ca009a1afbd5d6ecb8f20a6415be43decd3dc2fd19f016714b6b83a1ba7e26dd",
+      "screenshot_size": [
+        1920,
+        790
+      ],
+      "scene_rectangle": [
+        0,
+        0,
+        1920,
+        790
+      ],
+      "background_rgb": [
+        9,
+        11,
+        17
+      ],
+      "excluded_top_hud_rectangles": [
+        [
+          442,
+          9,
+          768,
+          121
+        ],
+        [
+          1105,
+          9,
+          1478,
+          108
+        ]
+      ],
+      "visible_pixels": 61492,
+      "visible_fraction": 0.04054061181434599,
+      "bounds_normalized": [
+        0.42604166666666665,
+        0.15063291139240506,
+        0.5739583333333333,
+        0.8493670886075949
+      ],
+      "extent_normalized": [
+        0.1479166666666667,
+        0.6987341772151898
+      ],
+      "required_minimum_margin": 0.08,
+      "errors": [],
+      "scope": "Actual host-GLES neutral preview raster with synthetic crop metadata; Android screenshots pending"
+    },
+    {
+      "schema": "coh-support-neutral-preview-image-v1",
+      "passed": true,
+      "image": "after-portrait.png",
+      "image_sha256": "c5ef9d8f16feed4206cd4477f3cc820f2ecd110bae0e81554bd7af496e2cf913",
+      "screenshot_size": [
+        1080,
+        959
+      ],
+      "scene_rectangle": [
+        0,
+        0,
+        1080,
+        959
+      ],
+      "background_rgb": [
+        9,
+        11,
+        17
+      ],
+      "excluded_top_hud_rectangles": [
+        [
+          9,
+          84,
+          343,
+          198
+        ],
+        [
+          688,
+          84,
+          1071,
+          186
+        ]
+      ],
+      "visible_pixels": 90661,
+      "visible_fraction": 0.0875342756729618,
+      "bounds_normalized": [
+        0.34074074074074073,
+        0.15015641293013557,
+        0.6592592592592592,
+        0.8498435870698644
+      ],
+      "extent_normalized": [
+        0.3185185185185185,
+        0.6996871741397288
+      ],
+      "required_minimum_margin": 0.08,
+      "errors": [],
+      "scope": "Actual host-GLES neutral preview raster with synthetic crop metadata; Android screenshots pending"
+    }
+  ]
+}

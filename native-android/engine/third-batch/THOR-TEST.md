@@ -4,6 +4,9 @@ Use the ARM64 APK and SHA256 in `release.json`. Package identity is
 `org.coh.nativesupport`. Keep Session Client 0.3.0, Combined Client and their data
 intact. No server/account changes are needed. Do not clear data or uninstall an
 existing app to work around an installation/signature error; report the error.
+The build uses a fresh disposable test certificate, recorded in `release.json`.
+A previously installed Support APK with another signer cannot be upgraded in
+place. This does not affect the distinct Session or Combined packages.
 
 1. **Wretch, landscape and WALK.** Confirm the compact toolbar leaves the scene
    visible. Walk with the left stick, look with the right stick, and check

@@ -8,8 +8,16 @@ void presentation_adapter_checks(void){
  assert(support_ui_surface(ui,1,1280,720,(CohHudInsets){0,0,0,0})==COH_OK);
  assert(support_ui_context_create(ui,1)==COH_OK);assert(support_ui_tick_mock(ui,10)==COH_OK);
  assert(support_ui_draw(ui,1280,720,1)==COH_OK);
- support_ui_preview_label(ui,1);assert(support_ui_draw(ui,1280,720,1)==COH_OK);
- support_ui_preview_label(ui,0);assert(support_ui_draw(ui,1280,720,1)==COH_OK);
+ assert(support_ui_presentation(ui,0)==COH_OK);
+ assert(support_ui_snapshot(ui,&before)==COH_OK&&before.presentation_visible);
+ support_ui_preview_label(ui,1);assert(support_ui_tick_mock(ui,11)==COH_OK);assert(support_ui_draw(ui,1280,720,1)==COH_OK);
+ assert(support_ui_snapshot(ui,&after)==COH_OK&&!after.presentation_visible);uint64_t compact_quads=after.gpu.quads-before.gpu.quads;
+ /* Hidden tray must not emit or capture an otherwise valid slot touch. */
+ (void)support_ui_pointer(ui,0,0,408.4375f,671.25f,&consumed);assert(!consumed);
+ (void)support_ui_pointer(ui,1,0,408.4375f,671.25f,&consumed);assert(!consumed);
+ assert(support_ui_snapshot(ui,&after)==COH_OK&&after.power_uses==before.power_uses);
+ support_ui_preview_label(ui,0);assert(support_ui_snapshot(ui,&before)==COH_OK);assert(support_ui_draw(ui,1280,720,1)==COH_OK);
+ assert(support_ui_snapshot(ui,&after)==COH_OK&&after.gpu.quads-before.gpu.quads>compact_quads);
  assert(support_ui_presentation(ui,0)==COH_OK);assert(support_ui_draw(ui,1280,720,1)==COH_OK);
  assert(support_ui_snapshot(ui,&before)==COH_OK&&before.presentation_visible&&before.presentation_tab==0);
  assert(support_ui_presentation(ui,0)==COH_OK);assert(support_ui_draw(ui,1280,720,1)==COH_OK);

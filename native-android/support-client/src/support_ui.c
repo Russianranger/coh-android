@@ -19,6 +19,7 @@ struct SupportUi {
     CohHudAxisNavigation axis;uint64_t prior_axis_actions,prior_axis_repeats;
     pthread_mutex_t mutex;CohHud hud;CohHudIme ime;CohHudState state;
     CohPresentation presentation;CohHudAxisNavigation presentation_axis;uint64_t presentation_sequence;
+    int preview_mode;uint32_t preview_hidden[3],preview_flags[3];size_t preview_hidden_count;
     CohPresentationCue presentation_cues[COH_PRESENTATION_QUEUE];size_t presentation_cue_count;
     CohHudGles gpu;CohHudGlesStats prior_gpu;uint32_t texture,tray[11];
     CohHudIntent history[COH_HUD_INTENTS];size_t history_count;
@@ -42,7 +43,24 @@ static void gpu_add(CohHudGlesStats *sum,const CohHudGlesStats *part){
     if(part->batch_high_water>sum->batch_high_water)sum->batch_high_water=part->batch_high_water;
 }
 static CohStatus record(SupportUi *u,CohStatus s){u->stats.last_status=(int)s;return s;}
-static CohStatus update(SupportUi *u){u->state.revision++;return coh_hud_set_state(&u->hud,&u->state);}
+/* Resolve existing HUD widgets by public bindings; never hard-code private IDs.
+ * The explicit costume inspection mode retains top status/target, while chat,
+ * tray and the character-menu button cannot cover or capture the model. */
+static void preview_visibility(SupportUi *u,int hide){
+    if(hide&&!u->preview_hidden_count){
+        for(size_t i=0;i<u->hud.ui.widget_count;i++){
+            CohUiWidget *w=&u->hud.ui.widgets[i];uint32_t id=0;
+            if(w->desc.binding==COH_HUD_BIND_CHAT_INPUT||w->desc.binding==COH_HUD_BIND_POWER_FIRST)id=w->desc.parent;
+            else if(w->desc.binding==COH_HUD_BIND_CHARACTER_MENU)id=w->desc.id;
+            if(id)for(size_t j=0;j<u->hud.ui.widget_count;j++)if(u->hud.ui.widgets[j].desc.id==id){
+                size_t n=u->preview_hidden_count;if(n<3){u->preview_hidden[n]=id;u->preview_flags[n]=u->hud.ui.widgets[j].desc.flags;u->preview_hidden_count++;}break;
+            }
+        }
+    }
+    for(size_t i=0;i<u->preview_hidden_count;i++)(void)coh_ui_set_flags(&u->hud.ui,u->preview_hidden[i],hide?0:u->preview_flags[i]);
+    if(!hide)u->preview_hidden_count=0;
+}
+static CohStatus update(SupportUi *u){u->state.revision++;CohStatus s=coh_hud_set_state(&u->hud,&u->state);if(s==COH_OK&&u->preview_mode)preview_visibility(u,1);return s;}
 static void presentation_state(SupportUi *u){
     CohPresentationState state;coh_presentation_mock_state(&state,&u->state);
     (void)coh_presentation_set_state(&u->presentation,&state);
@@ -310,6 +328,9 @@ int support_ui_poll_presentation_cue(SupportUi *u,CohPresentationCue *out){
 void support_ui_preview_label(SupportUi *u,int male){
     if(!u)return;
     pthread_mutex_lock(&u->mutex);
+    if(!male&&u->preview_mode)preview_visibility(u,0);
+    u->preview_mode=!!male;
+    if(male){(void)coh_presentation_show(&u->presentation,0,u->presentation.tab);u->state.show_character_select=0;(void)coh_hud_touch(&u->hud,COH_UI_TOUCH_CANCEL,u->hud.ui.capture_pointer,0,0);}
     strcpy(u->state.actor_name,male?"Neutral Male costume (offline)":"Offline Huge / Wretch");
     (void)update(u);presentation_state(u);pthread_mutex_unlock(&u->mutex);
 }

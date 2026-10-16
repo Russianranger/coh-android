@@ -164,3 +164,25 @@ scenario, including landscape, typed panel interactions, mock impact binding,
 Male rendering, Male Home/resume and restoration of Wretch. Local compilation
 never establishes emulator or physical acceptance. The README procedure and
 physical review template describe the single consolidated Thor session.
+
+
+## Visual-qualification correction after first code201 execution
+
+Run38839177252/artifact12020965744 source
+`bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00` passed all23 counter scenarios and
+all25 independently checked package/report identities, but failed visual review:
+playing the Male jump clip moved the body beyond its first-frame camera bounds.
+That exact artifact remains failed visual qualification, not the recommended APK.
+The appearance owner now uses the advertised first neutral source pose and
+aspect-aware bounds. Support preview mode hides/disables chat/tray/menu widgets,
+closes an open presentation panel and restores the original HUD on Wretch return.
+
+`preview-framing-hud.json` covers actual host GLES, ASan/UBSan, hidden-control
+noncapture/nonactivation and restoration. The source-bound screenshot gate masks
+only the top health/target windows, rejects visible panels, requires centered
+full-body pixel extent with margins, and fails on missing required captures.
+`preview-framing-image-regression.json` rejects both real bad Android screenshots
+and accepts fixed host-GLES landscape/portrait rasters; that is not a substitute
+for the new actual Android screenshots. Every step report now rechecks package
+identity. There are still23 scenarios; the two Male scenarios require image
+proofs in addition to counters. Physical acceptance remains pending.

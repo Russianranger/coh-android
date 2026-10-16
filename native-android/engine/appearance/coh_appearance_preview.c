@@ -15,7 +15,7 @@ struct CohAppearancePreview {
  CohAppearanceMaterialBinding materials[PARTS];uint32_t material_counts[PARTS],bindings[PARTS][2];
  PreviewTexture textures[TEXTURES];CohAppearanceActorRequest request;CohAppearanceActorWorkspace workspace;
  CohRenderDraw draws[PARTS];CohRenderVertex *vertices;uint32_t *indices;
- CohRenderer *renderer;CohGlesRenderer *driver;float center[3],scale;
+ CohRenderer *renderer;CohGlesRenderer *driver;float center[3],extent[3];
 };
 static uint32_t read32(const uint8_t *p){return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
 static int zeros(const uint8_t*p,size_t n){for(size_t i=0;i<n;i++)if(p[i])return 0;return 1;}
@@ -63,8 +63,7 @@ CohStatus coh_appearance_preview_create(CohBytes bytes,CohAppearancePreview **ou
  float low[3]={INFINITY,INFINITY,INFINITY},high[3]={-INFINITY,-INFINITY,-INFINITY};
  for(unsigned i=0;i<d.vertices;i++)for(unsigned k=0;k<3;k++){float x=p->vertices[i].position[k];if(x<low[k])low[k]=x;if(x>high[k])high[k]=x;}
  if(!(high[1]>low[1]))goto invalid;
- for(unsigned k=0;k<3;k++)p->center[k]=(low[k]+high[k])*.5f;
- p->scale=1.65f/fmaxf(high[1]-low[1],(high[0]-low[0])*1.25f);
+ for(unsigned k=0;k<3;k++){p->center[k]=(low[k]+high[k])*.5f;p->extent[k]=high[k]-low[k];}
  p->stats.parts=PARTS;p->stats.vertices=d.vertices;p->stats.indices=d.indices;p->stats.owned_cpu_bytes=sizeof *p+d.vertex_bytes+d.index_bytes;p->stats.borrowed_package_bytes=n;*out=p;return COH_OK;
 invalid:coh_appearance_preview_destroy(p,0);return COH_INVALID;
 }
@@ -82,10 +81,16 @@ static CohStatus upload(CohAppearancePreview*p,uint32_t generation){
 CohStatus coh_appearance_preview_draw(CohAppearancePreview*p,uint32_t width,uint32_t height,uint32_t generation,double seconds){
  if(!p||!width||!height||width>8192||height>8192||!generation||!isfinite(seconds)||seconds<0)return COH_INVALID;
  if(p->stats.surface_generation!=generation){coh_appearance_preview_surface_lost(p,0);CohStatus s=upload(p,generation);if(s){p->stats.failures++;return s;}}
- float length=p->rig.last_frame-p->rig.first_frame;float frame=p->rig.first_frame+(length>0?(float)fmod(seconds*30.,length):0);
- if(coh_animation_sample(&p->rig,frame,&p->pose)){p->stats.failures++;return COH_INVALID;}
+ /* This is a neutral costume inspection, not a jump playback camera. Advancing
+  * source jump root translation escapes a camera fitted to the initial pose.
+  * Keep the exact initial source pose at every application clock value. */
+ if(coh_animation_sample(&p->rig,p->rig.first_frame,&p->pose)){p->stats.failures++;return COH_INVALID;}
  if(p->request.actor.pose_generation==UINT32_MAX)p->request.actor.pose_generation=1;else p->request.actor.pose_generation++;
- float mv[16],projection[16];identity(mv);identity(projection);for(unsigned k=0;k<3;k++)mv[12+k]=-p->center[k];projection[0]=p->scale*(float)height/(float)width;projection[5]=p->scale;projection[10]=-.08f;
+ float mv[16],projection[16];identity(mv);identity(projection);for(unsigned k=0;k<3;k++)mv[12+k]=-p->center[k];
+ /* Fit the complete bounds to 70% of either viewport dimension. The margin is
+  * generic; applications decide whether their overlays obscure this region. */
+ float aspect=(float)height/(float)width;float scale=1.4f/fmaxf(p->extent[1],p->extent[0]*aspect);
+ projection[0]=scale*aspect;projection[5]=scale;projection[10]=-.08f;
  size_t count=0;CohStatus s=coh_appearance_actor_render(&p->request,mv,projection,&p->workspace,p->vertices,p->stats.vertices,p->indices,p->stats.indices,p->draws,PARTS,&count,NULL);if(s){p->stats.failures++;return s;}
  glViewport(0,0,(GLsizei)width,(GLsizei)height);glDisable(GL_SCISSOR_TEST);glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glDepthMask(GL_TRUE);glClearDepthf(1);glClearColor(.035f,.045f,.065f,1);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
  s=coh_renderer_begin(p->renderer,generation);

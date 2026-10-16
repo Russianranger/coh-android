@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "scope": "Strict API26 NDK compile only of changed support_ui.c; coordinator owns fresh complete APK/link.",
+  "results": [
+    {
+      "abi": "arm64",
+      "source_sha256": "2051ac42e7b75d3bf224fec917f50b3da3c2d9c05715949aea23344ff22568ad"
+    },
+    {
+      "abi": "x86_64",
+      "source_sha256": "2051ac42e7b75d3bf224fec917f50b3da3c2d9c05715949aea23344ff22568ad"
+    }
+  ]
+}

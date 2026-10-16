@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "source_commit": "bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00",
+  "checked": [
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-arm64.apk",
+      "sha256": "5aba7cd516f5588d76ebc4dc04c28798f27a45d2804f229640b04376d1bedbe3",
+      "signature_verified": true,
+      "package_version_verified": true,
+      "assets_verified": 15,
+      "local_compiled_library_byte_identical": true
+    },
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-emulator-x86_64.apk",
+      "sha256": "6cddaed711c2537adc9fd21c6fdf4e1638a66100beaab281662dfe1bd148decf",
+      "signature_verified": true,
+      "package_version_verified": true,
+      "assets_verified": 15,
+      "local_compiled_library_byte_identical": true
+    }
+  ],
+  "visual_review_passed": false,
+  "visual_blocker": "Male fixed camera bound to first pose while runtime samples jumping root motion; landscape fullbody cropped",
+  "release_accepted": false,
+  "physical_accepted": false,
+  "screenshots": [
+    {
+      "file": "emulator-step-20.png",
+      "sha256": "19a2f1cf2b3dcf3c1fc1d5d2da17078b27f4fd24cf0415fea373e649d9db661b",
+      "observed": "costume clipped by animated root motion outside neutral camera"
+    },
+    {
+      "file": "emulator-step-21.png",
+      "sha256": "f7dec9a5728359ebb800749406a48701a986c9b06f46b569a512c51dfed62389",
+      "observed": "costume clipped by animated root motion outside neutral camera"
+    }
+  ],
+  "github_actions_artifact": "https://github.com/Russianranger/coh-android/actions/runs/38839177252/artifacts/12020965744"
+}
