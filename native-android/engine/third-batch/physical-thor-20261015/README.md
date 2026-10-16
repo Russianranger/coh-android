@@ -1,6 +1,8 @@
 # Support code 201 — AYN Thor physical evidence, October 15, 2026
 
-**Latest update:** [The 22:31 endurance follow-up](endurance-223100/README.md) verifies 15m44s of active execution at 59.85 frames/s, two pause/resume cycles, audio route reopens and user-confirmed normal music/audio. The bounded ten-minute endurance and audibility checks pass; the full consolidated checklist remains open. The assessment below is the preserved initial 22:18 report.
+**Newest update:** [22:45 longer-run assessment](long-run-224517/README.md) reaches 29m59s at 59.75 FPS and verifies nonempty chat plus Male-active recreation. [Remaining tests](long-run-224517/REMAINING-TESTS.md) exclude already completed checks. Latest RSS/PSS rise requires developer investigation; earlier records below remain historical.
+
+**Earlier update:** [The 22:31 endurance follow-up](endurance-223100/README.md) verifies 15m44s of active execution at 59.85 frames/s, two pause/resume cycles, audio route reopens and user-confirmed normal music/audio. The bounded ten-minute endurance and audibility checks pass; the full consolidated checklist remains open. The assessment below is the preserved initial 22:18 report.
 
 **Physical execution and the exercised subset pass. The full consolidated physical checklist remains open.** The user supplied one JSON report and four screenshots, without a blanket statement that every requested test passed.
 

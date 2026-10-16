@@ -1,0 +1,237 @@
+{
+  "schema": 1,
+  "status": "bounded_offline_endurance_preserved_new_chat_and_male_recreation_verified",
+  "full_checklist_verified": false,
+  "source_apk_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "report_timestamp": "2026-10-15T22:45:17.405-05:00",
+  "app": {
+    "package": "org.coh.nativesupport",
+    "version_name": "0.2.0-gameplay",
+    "version_code": 201,
+    "installed_apk": {
+      "bytes": 2917815,
+      "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+    }
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "input": {
+    "file": "COH-NativeSupport-20261015-224517.json",
+    "bytes": 1021637,
+    "sha256": "ff8e577d33279380bd7709531e6c32a6009826780444b3e3ee356fe69da3e2aa",
+    "stored_as": "COH-NativeSupport-20261015-224517.json.gz"
+  },
+  "event_recovery": {
+    "report_count": 3,
+    "same_session": "1a142b4e43e",
+    "sequence_range": [
+      1,
+      212
+    ],
+    "count": 212,
+    "gaps": 0,
+    "equal_overlaps": 91,
+    "counts": {
+      "session_created": 1,
+      "resume": 4,
+      "surface_changed": 24,
+      "assets_loaded": 1,
+      "key_down": 31,
+      "key_up": 30,
+      "input_clear_requested": 31,
+      "render_returned": 23,
+      "presentation_panel": 4,
+      "presentation_hit": 24,
+      "appearance_preview": 8,
+      "view_distance_requested": 3,
+      "ui_navigation": 4,
+      "mock_chat": 4,
+      "export_requested": 3,
+      "pause_requested": 3,
+      "pause": 3,
+      "surface_destroyed": 3,
+      "export_complete": 2,
+      "reset_requested": 3,
+      "recreate_requested": 2,
+      "mock_animation": 1
+    }
+  },
+  "newly_verified": [
+    "Successful nonempty local chat submission",
+    "Male active across explicit Surface recreation with upload/frame continuation and zero failure",
+    "Two explicit recreations now covered: Wretch and Male",
+    "Longer bounded foreground execution and fourth local character-selection intent"
+  ],
+  "measurements": {
+    "frames": 107476,
+    "active_foreground_ms": 1798906,
+    "frames_per_foreground_second": 59.745200694199696,
+    "frame_mean_ms": 15.603650416502289,
+    "frame_samples": 107476,
+    "p95_upper_ms": 19.999999,
+    "p99_upper_ms": 27.499999,
+    "frame_max_ms": 47.483125,
+    "over_33_33ms": 94,
+    "stalls_at_least_100ms": 0,
+    "abandoned_observer_intervals": 3,
+    "contexts_started": 24,
+    "contexts_completed": 23,
+    "unexpected_graphics_support_errors": 0,
+    "expected_canceled_surface_errors": 2,
+    "male_preview": {
+      "available": true,
+      "active": false,
+      "body": "Male",
+      "neutral_morphology": true,
+      "frames": 2809,
+      "draws": 22472,
+      "surface_uploads": 5,
+      "failures": 0,
+      "parts": 8,
+      "vertices": 943,
+      "indices": 3792,
+      "cpu_accounted_partial_bytes": 153536,
+      "package_bytes": 1673302,
+      "gpu_buffer_bytes": 0,
+      "source_texture_bytes": 1572868,
+      "memory_scope": "Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory.",
+      "upload_bytes_measured": false,
+      "full_gate_accepted": false
+    },
+    "chat_submits": 1,
+    "animation_triggers": 1,
+    "presentation": {
+      "visible": false,
+      "tab": 4,
+      "events": 65,
+      "intents": 31,
+      "cues": 65,
+      "missing_audio": 65,
+      "missing_animation": 0,
+      "animation_bindings": 65,
+      "cue_drops": 0,
+      "audio_binding_available": false,
+      "queue_limits": 0,
+      "builds": 107479,
+      "target_health": 28,
+      "offline_only": true
+    },
+    "memory_samples": [
+      {
+        "timestamp": "2026-10-15T22:18:28.774-05:00",
+        "active_foreground_ms": 195104,
+        "rss_bytes": 189427712,
+        "pss_bytes": 76183552,
+        "java_used_bytes": 19814200,
+        "native_heap_allocated_bytes": 27450944
+      },
+      {
+        "timestamp": "2026-10-15T22:31:00.414-05:00",
+        "active_foreground_ms": 943997,
+        "rss_bytes": 185872384,
+        "pss_bytes": 71742464,
+        "java_used_bytes": 29431048,
+        "native_heap_allocated_bytes": 27910448
+      },
+      {
+        "timestamp": "2026-10-15T22:45:17.405-05:00",
+        "active_foreground_ms": 1798906,
+        "rss_bytes": 209891328,
+        "pss_bytes": 95686656,
+        "java_used_bytes": 50588696,
+        "native_heap_allocated_bytes": 28257184
+      }
+    ],
+    "audio": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 7,
+      "closes": 6,
+      "decode_calls": 219449,
+      "diagnostics_valid": 0,
+      "rendered_frames": 45316824,
+      "underrun_frames": 0,
+      "callback_calls": 104708,
+      "maximum_callback_ns": 7152031
+    },
+    "audio_environment": {
+      "active": true,
+      "focus_granted": true,
+      "request_result": 1,
+      "focus_changes": 0,
+      "route_changes": 4,
+      "route_generation": 5,
+      "route_policy": "close/join then reopen on native backend owner"
+    },
+    "native_audio_environment": {
+      "focus_allowed": true,
+      "route_generation": 5,
+      "route_reopens": 3,
+      "listener_updates": 3349,
+      "recovered_device_errors": 0,
+      "last_device_error": 0,
+      "listener_position": [
+        563.744385,
+        85.3658752,
+        -1375.21863
+      ],
+      "listener_right": [
+        -0.394188046,
+        0,
+        0.919029832
+      ]
+    },
+    "world_cache": {
+      "catalog_instances": 11,
+      "selected_instances": 11,
+      "resident_bytes": 157491,
+      "budget_bytes": 524288,
+      "peak_resident_bytes": 157491,
+      "selection_updates": 63,
+      "cache_hits": 505,
+      "cache_misses": 8,
+      "evictions": 0,
+      "generation": 24,
+      "draws": 1582180,
+      "view_radius": 96
+    },
+    "skin_cache_bytes": 332928,
+    "partial_module_bytes": {
+      "known": true,
+      "current_bytes": 2274480,
+      "peak_bytes": 2274480,
+      "observations": 1838
+    }
+  },
+  "memory_assessment": "Latest RSS/PSS and Java-used endpoints rose; native heap rose slightly. Fixed measured caches are unchanged. Three snapshots do not prove a leak or flat whole-process residency. Investigate reporting/heap/GC allocations as developer work, not repeated manual endurance.",
+  "reporting_allocation_observation": "Pinned MainActivity.report clones the ring with new JSONArray(events.toString()); saveReport pretty-serializes to UTF-8 on the main thread every second. This creates transient allocations and is a profiling candidate, not a proven leak diagnosis.",
+  "audio_scope": "User previously confirmed audible music/audio. Retained joined counters:104708 callbacks,7.152031ms max,zero recorded stream underruns. Current seventh backend is live and uncheckpointed. No platform xrun/latency or external focus-interruption qualification.",
+  "remaining_user_tests": [
+    "Explicit Android Home/resume while Male active; prior three pauses were all Wretch and two immediately followed report export",
+    "Physical Male portrait framing screenshot, if system rotation is available",
+    "Visible Wretch mock-animation cycle; the sole explicit trigger happened while Male preview was active",
+    "Confirm readable/interactable five panels and provide Missions/Contacts screenshot; counters show Contacts and further intents but not complete visual coverage",
+    "External audio-focus interruption while Support is active; focus_changes remains zero",
+    "Identify alternate audio device and confirm audible switch/recovery if available; three route reopens alone do not identify devices"
+  ],
+  "developer_only_gaps": [
+    "Heap/GC/report-allocation analysis",
+    "Original face/material parity and Female/Huge completion",
+    "Authentic larger-zone collision/wall/sliding and full-zone assets",
+    "Full FX/power icons/impact audio",
+    "Thermal/GPU-time/platform-xrun instrumentation",
+    "Live session gates25\u201327 remain exclusively primary-agent owned"
+  ],
+  "scope": "Evidence/documents only; same signed APK, no runtime rebuild, no new full numbered gate closure"
+}

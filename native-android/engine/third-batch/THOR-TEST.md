@@ -62,6 +62,6 @@ are explicitly partial/source-payload observations; thermal readings and driver
 residency are not inferred. Emulator execution cannot establish audible quality,
 Adreno performance or physical controller behavior.
 
-**Physical acceptance remains pending the actual Thor report and observations.**
+**Physical reports have now verified endurance/audibility, chat and Wretch/Male Surface recreation.** Use the [remaining checks after the 22:45 report](physical-thor-20261015/long-run-224517/REMAINING-TESTS.md); do not repeat the full procedure above. The full consolidated checklist remains open.
 This qualifies only the bounded offline build: it does not establish complete
 zones, Female/Huge costume coverage, authoritative combat or full-game FPS.

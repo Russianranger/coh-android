@@ -1,0 +1,330 @@
+{
+  "schema": "coh-independent-thor-long-review-v1",
+  "reviewer": "worker-f-audio-perf",
+  "scope": "Read-only review; no repository edits or upload. Supersedes earlier stable-memory wording with three observed endpoints. No further endurance run requested.",
+  "identity": {
+    "same_session": "1a142b4e43e",
+    "app": {
+      "package": "org.coh.nativesupport",
+      "version_name": "0.2.0-gameplay",
+      "version_code": 201,
+      "installed_apk": {
+        "bytes": 2917815,
+        "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+      }
+    },
+    "source_revision": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+    "source_binding": "Installed SHA256 equals audited release ARM64 APK; report does not embed revision.",
+    "device": {
+      "manufacturer": "AYN",
+      "model": "AYN Thor",
+      "sdk": 33,
+      "abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ],
+      "emulator_detected": false
+    },
+    "gl_renderer": "Adreno (TM) 740",
+    "native_pointer_bytes": 8,
+    "all_asset_manifests_equal": true
+  },
+  "three_report_series": [
+    {
+      "file": "COH-NativeSupport-20261015-221828.json",
+      "sha256": "4800a279dd6ec59fa05eff42b6405c12bb621f4c7901198c41f1d9ba2ec32d2e",
+      "bytes": 363539,
+      "foreground_ms": 195104,
+      "native_frames": 11660,
+      "foreground_frames_per_second": 59.762998195834015,
+      "mean_frame_ms": 15.551948220926244,
+      "rss_bytes": 189427712,
+      "pss_bytes": 76183552,
+      "java_used_bytes": 19814200,
+      "native_heap_bytes": 27450944,
+      "rss_mib": 180.65234375,
+      "pss_mib": 72.654296875,
+      "java_used_mib": 18.89629364013672,
+      "native_heap_mib": 26.17926025390625
+    },
+    {
+      "file": "COH-NativeSupport-20261015-223100.json",
+      "sha256": "f1ab649c65241079e942ed01dd7bdace7bb92956d45a4817914783a6a5f24460",
+      "bytes": 1002904,
+      "foreground_ms": 943997,
+      "native_frames": 56495,
+      "foreground_frames_per_second": 59.84658849551429,
+      "mean_frame_ms": 15.565821425425709,
+      "rss_bytes": 185872384,
+      "pss_bytes": 71742464,
+      "java_used_bytes": 29431048,
+      "native_heap_bytes": 27910448,
+      "rss_mib": 177.26171875,
+      "pss_mib": 68.4189453125,
+      "java_used_mib": 28.06763458251953,
+      "native_heap_mib": 26.617477416992188
+    },
+    {
+      "file": "COH-NativeSupport-20261015-224517.json",
+      "sha256": "ff8e577d33279380bd7709531e6c32a6009826780444b3e3ee356fe69da3e2aa",
+      "bytes": 1021637,
+      "foreground_ms": 1798906,
+      "native_frames": 107476,
+      "foreground_frames_per_second": 59.745200694199696,
+      "mean_frame_ms": 15.603650416502289,
+      "rss_bytes": 209891328,
+      "pss_bytes": 95686656,
+      "java_used_bytes": 50588696,
+      "native_heap_bytes": 28257184,
+      "rss_mib": 200.16796875,
+      "pss_mib": 91.25390625,
+      "java_used_mib": 48.245140075683594,
+      "native_heap_mib": 26.948150634765625
+    }
+  ],
+  "event_recovery": {
+    "retained_ranges": [
+      [
+        1,
+        47
+      ],
+      [
+        2,
+        129
+      ],
+      [
+        85,
+        212
+      ]
+    ],
+    "union_sequences": [
+      1,
+      212
+    ],
+    "unique_events": 212,
+    "matching_duplicate_events": 91,
+    "gaps": [],
+    "event_counts": {
+      "session_created": 1,
+      "resume": 4,
+      "surface_changed": 24,
+      "assets_loaded": 1,
+      "key_down": 31,
+      "key_up": 30,
+      "input_clear_requested": 31,
+      "render_returned": 23,
+      "presentation_panel": 4,
+      "presentation_hit": 24,
+      "appearance_preview": 8,
+      "view_distance_requested": 3,
+      "ui_navigation": 4,
+      "mock_chat": 4,
+      "export_requested": 3,
+      "pause_requested": 3,
+      "pause": 3,
+      "surface_destroyed": 3,
+      "export_complete": 2,
+      "reset_requested": 3,
+      "recreate_requested": 2,
+      "mock_animation": 1
+    },
+    "scope": "Latest128-event ring omits earlier actions. Counts use the verified union, not latest report alone."
+  },
+  "performance": {
+    "active_ms": 1798906,
+    "active_minutes": 29.981766666666665,
+    "rendered_frames": 107476,
+    "aggregate_foreground_frames_per_second": 59.745200694199696,
+    "frame_samples": 107476,
+    "mean_observed_ms": 15.603650416502289,
+    "p50_upper_ms": 15.999999,
+    "p95_upper_ms": 19.999999,
+    "p99_upper_ms": 27.499999,
+    "max_ms": 47.483125,
+    "frames_over_33_333333_ms": 94,
+    "over_budget_percent": 0.08746138672819978,
+    "stalls_over_100_ms": 0,
+    "invalid_samples": 0,
+    "abandoned_observer_frames": 3,
+    "since_previous": {
+      "active_ms": 854909,
+      "new_frames": 50981,
+      "aggregate_foreground_frames_per_second": 59.63324751523262,
+      "mean_frame_ms": 15.645569349103605,
+      "additional_over_budget": 76
+    },
+    "stages": {
+      "animation": {
+        "samples": 93080,
+        "mean_ms": 0.04392491072195961
+      },
+      "skinning": {
+        "samples": 1151370,
+        "mean_ms": 0.08668088678878205
+      },
+      "collision": {
+        "samples": 52472,
+        "mean_ms": 0.13271361028739137
+      },
+      "asset_loading": {
+        "samples": 0,
+        "mean_ms": null
+      },
+      "render_submit": {
+        "samples": 107476,
+        "mean_ms": 13.939758914604191
+      },
+      "present": {
+        "samples": 107476,
+        "mean_ms": 0.5471248209460716
+      },
+      "audio_control": {
+        "samples": 0,
+        "mean_ms": null
+      }
+    },
+    "gpu_samples": 0,
+    "scope": "Almost30 active minutes in bounded offline scene. Frame histograms widened relative to15m44s report (p95 upper18\u219220ms; p99 upper21\u219227.5ms). No100ms observed stalls. Render-thread elapsed timing excludes outer1ms sleep/startup, so inverse mean is not FPS. dropped_frames means canceled/abandoned observations, not compositor drops. No per-second minimum, GPU timing, temperature or full-game result."
+  },
+  "memory": {
+    "rss_latest_minus_previous_bytes": 24018944,
+    "pss_latest_minus_previous_bytes": 23944192,
+    "java_latest_minus_previous_bytes": 21157648,
+    "native_heap_latest_minus_previous_bytes": 346736,
+    "sample_age_ms": 379,
+    "sample_duration_ms": 9,
+    "sample_source": "proc_self_smaps_rollup",
+    "rss_pss_all_known": true,
+    "partial_module_accounted_bytes": [
+      2274480,
+      2274480,
+      2274480
+    ],
+    "skin_cache_bytes": [
+      332928,
+      332928,
+      332928
+    ],
+    "world_cache_bytes": [
+      157491,
+      157491,
+      157491
+    ],
+    "world_cache_budget_bytes": 524288,
+    "scope": "Process memory is higher now, not stable: RSS200.17MiB/PSS91.25MiB versus177.26/68.42MiB at prior endpoint. Java used heap rose28.07\u219248.25MiB; native heap26.62\u219226.95MiB. Constant partial module/cache values do not cover Java, codecs, renderer/driver or allocator retention. Three points do not establish a leak, a plateau or peak memory.",
+    "developer_followup": "Profile managed allocations/GC and report serialization, retained event objects and lifecycle owners; sample before/after controlled report generation and GC in a development environment. e89 MainActivity caps events128 but clones via new JSONArray(events.toString()), then pretty-serializes ~1MB report to UTF-8 each second; java_used is sampled after cloning. Transient report allocation is a concrete investigation target, not proven cause. User does not need another long run."
+  },
+  "audio": {
+    "backend": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 7,
+      "closes": 6,
+      "decode_calls": 219449,
+      "diagnostics_valid": 0,
+      "rendered_frames": 45316824,
+      "underrun_frames": 0,
+      "callback_calls": 104708,
+      "maximum_callback_ns": 7152031
+    },
+    "environment": {
+      "active": true,
+      "focus_granted": true,
+      "request_result": 1,
+      "focus_changes": 0,
+      "route_changes": 4,
+      "route_generation": 5,
+      "route_policy": "close/join then reopen on native backend owner"
+    },
+    "route_reopens": 3,
+    "listener_updates": 3349,
+    "last_device_error": 0,
+    "maximum_joined_callback_ms": 7.152031,
+    "human_evidence": "Prior user explicitly heard music/audio with no apparent audible defect; no new independent listening assertion inferred.",
+    "validity": "diagnostics_valid=0 while seventh backend is running.104708callbacks,7.152031ms max and zero stream-underrun frames are retained through six completed backend intervals, not complete current interval. Most recent long foreground interval is not yet represented by a new joined checkpoint. No exported platform-xrun/deadline-overrun values or end-to-end latency.",
+    "focus": "focus_changes remains0; foreground focus interruption remains unverified. Three route reopens show backend response, not identity/quality of each physical route."
+  },
+  "lifecycle": {
+    "contexts_started": 24,
+    "contexts_completed": 23,
+    "pause_resume_pairs": [
+      {
+        "pause_sequence": 50,
+        "resume_sequence": 54,
+        "duration_ms": 1374,
+        "preview_active": false
+      },
+      {
+        "pause_sequence": 75,
+        "resume_sequence": 79,
+        "duration_ms": 1384,
+        "preview_active": false
+      },
+      {
+        "pause_sequence": 132,
+        "resume_sequence": 136,
+        "duration_ms": 2098,
+        "preview_active": false
+      }
+    ],
+    "explicit_recreate_sequences": [
+      101,
+      146
+    ],
+    "male_surface_recovery_evidence": {
+      "active_from_sequence": 140,
+      "surface_change_sequence": 141,
+      "completed_context_sequence": 142,
+      "new_context_and_upload_sequence": 143,
+      "explicit_recreate_sequence": 146,
+      "completed_context_sequence_after_recreate": 148,
+      "new_context_and_upload_sequence_after_recreate": 149,
+      "preview_upload_counts": [
+        3,
+        4,
+        5
+      ],
+      "preview_continues_until_sequence": 159
+    },
+    "male_preview_frames": 2809,
+    "male_preview_draws": 22472,
+    "male_preview_failures": 0,
+    "scope": "Two explicitRecreate actions now recorded, including Male; Male Surface reupload and continued rendering newly supported. Three pause/resume pairs are all Wretch. First/third follow exports and likely document picker; do not label all as Home. Male Home/background test remains open. Current context/backend still live; no final process-destruction test."
+  },
+  "errors": {
+    "native_failed": false,
+    "support_failures": 0,
+    "report_write_failed": false,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "source_asset_errors": 0,
+    "transform_mismatches": [
+      0,
+      0,
+      0
+    ],
+    "non_tie_depth_mismatches": 0,
+    "expected_cancel_surface_errors": 2,
+    "expected_cancel_egl_error": 12301,
+    "expected_cancel_scope": "Two classified EGL_BAD_SURFACE occurrences during explicitRecreate actions; subsequent contexts continue; no unclassified runtime or cleanup graphics error."
+  },
+  "remaining_manual_steps_f_scope": [
+    "Do not repeat endurance or already-evidenced Male Surface recreation. Finish targeted checks in the existing app.",
+    "Select Male preview, press actual Android Home, wait5\u201310seconds, return. Confirm same costume renders, controls respond and background music/ambient returns without doubling. Return to Wretch and verify movement. This also joins audio before next export.",
+    "If three actual Home tests have not already been performed, repeat only the remaining count and state that Home was used; exported document-picker pauses are not proof of Home.",
+    "Test audio focus while CoH remains resumed/visible: use existing media notification playback or supported split screen to start another media source. Confirm CoH audio interrupts appropriately, then restores after stopping/returning. Record the method; focus_changes must rise to establish callback coverage. Launching another app after Home may only test pause/resume.",
+    "If an actual output switch has already been done, state which route and whether audio followed without duplicate sound. Otherwise briefly switch an available headphone/Bluetooth route and back, checking audible recovery; no extended run needed.",
+    "After the explicit Home/return and focus/route checks, Export report and share requested screenshots plus observations. Export freezes JSON before document picker pauses the app, so that picker does not checkpoint audio inside the just-exported file."
+  ],
+  "developer_owned_remaining": [
+    "Investigate rising managed/process memory and report serialization/GC without asking user for repeated endurance.",
+    "Add timestamp/coverage for joined audio snapshots and platform-xrun/deadline metrics as needed; current live zero or stale fields cannot prove full-session audio health.",
+    "GPU timing, thermal telemetry, whole-game/zone performance and complete gate acceptance remain future development/qualification."
+  ],
+  "decision": "Endurance target is already covered. Strong bounded-scene physical rendering and Male Surface evidence; memory growth warrants developer investigation. Remaining user work is short targeted lifecycle/focus/visual checks, not another endurance run. No gate closure."
+}

@@ -14,6 +14,8 @@ and qualification-driver revisions, release attempts and exact artifact identiti
 
 ## Physical Thor follow-up received October 15
 
+The [22:45 longer-run follow-up](physical-thor-20261015/long-run-224517/README.md) now records 29m59s active / 107,476 frames / 59.75 FPS, successful nonempty chat and Male-active recreation. No repeated long endurance, chat or Recreate test is needed. RSS/PSS increased to 200.17/91.25 MiB; Java/report-allocation investigation is developer follow-up. [Targeted remaining steps](physical-thor-20261015/long-run-224517/REMAINING-TESTS.md) replace the earlier pending-test list. Earlier measurements below are historical.
+
 [Physical assessment and remaining checks](physical-thor-20261015/README.md) records
 the exact ARM64 build on AYN Thor/Adreno 740. The [22:31 follow-up](physical-thor-20261015/endurance-223100/README.md)
 extends the same session to **56,495 frames over 943.997 foreground seconds**

@@ -34,7 +34,7 @@
     "physical_ayn_thor_audible_playback_verified": true
   },
   "hosted_result": "success: 23 Android13 x86_64 scenarios, two screenshot proofs, independent report and manual visual review",
-  "physical_acceptance": "Bounded offline ten-minute endurance, audible playback and exercised functional subset verified; full consolidated physical checklist remains open",
+  "physical_acceptance": "Bounded offline endurance/audibility, nonempty chat and Wretch/Male Surface recreation verified; remaining focused physical checks open; memory growth requires developer investigation",
   "scope": "bounded offline support application, authentic custom Male neutral preview; no live-server or full-zone qualification",
   "attempts": [
     {
@@ -91,18 +91,14 @@
   ],
   "android_emulator_arch": "x86_64",
   "android_api_level": 33,
-  "arm64_execution": "Exact released APK physically executed on AYN Thor/Adreno740; bounded 15m44s endurance and user-confirmed audibility verified",
+  "arm64_execution": "Exact released APK physically executed on AYN Thor/Adreno740 for29m58.906s active foreground",
   "additional_device_checks_pending": [
-    "Full lifecycle repetition count: checklist requests three Home cycles and two explicit Recreate actions; report records two brief pauses (about 1.4 s each) and one explicit Recreate, without identifying the Home action",
-    "Audio-focus interruption: focus_changes=0; alternate output-device identity and route-specific listening are not recorded",
-    "Current live audio interval, platform xruns, end-to-end latency and thermal behavior remain unmeasured; retained joined callback counters have a bounded scope",
-    "Nonempty keyboard/chat submission: chat_submits=0",
-    "Male-active Surface recreation and portrait proof: second upload follows recreation while Wretch was selected; all reported viewports remain landscape",
-    "Explicit mock-animation selector/jump/reaction: animation.triggers=0; jump physics unsupported",
-    "Wall/sliding geometry: bounded blocking is observed, but wall_hits and sliding_ticks remain zero",
-    "Full presentation panel coverage remains undocumented; character selections now number three",
-    "Longer leak/thermal stress and larger representative scenes: two process-memory endpoints are not a continuous memory trace",
-    "Original face/material/morphology/lighting parity, Female/Huge completion, complete zones and authoritative gameplay remain open"
+    "Explicit Android Home/resume while Male active; prior three pauses were all Wretch and two immediately followed report export",
+    "Physical Male portrait framing screenshot, if system rotation is available",
+    "Visible Wretch mock-animation cycle; the sole explicit trigger happened while Male preview was active",
+    "Confirm readable/interactable five panels and provide Missions/Contacts screenshot; counters show Contacts and further intents but not complete visual coverage",
+    "External audio-focus interruption while Support is active; focus_changes remains zero",
+    "Identify alternate audio device and confirm audible switch/recovery if available; three route reopens alone do not identify devices"
   ],
   "artifacts": {
     "arm64": {
@@ -178,16 +174,18 @@
     "scope": "Historical final Android13 x86_64 emulator run; physical observations are recorded separately in physical_evidence"
   },
   "physical_evidence": {
-    "assessment": "physical-thor-20261015/endurance-223100/assessment.json",
-    "report_sha256": "f1ab649c65241079e942ed01dd7bdace7bb92956d45a4817914783a6a5f24460",
+    "assessment": "physical-thor-20261015/long-run-224517/assessment.json",
+    "report_sha256": "ff8e577d33279380bd7709531e6c32a6009826780444b3e3ee356fe69da3e2aa",
     "observed_subset_verified": true,
     "full_checklist_verified": false,
-    "frames": 56495,
-    "active_foreground_ms": 943997,
-    "observed_frames_per_foreground_second": 59.84658849551429,
+    "frames": 107476,
+    "active_foreground_ms": 1798906,
+    "observed_frames_per_foreground_second": 59.745200694199696,
     "ten_minute_bounded_endurance_verified": true,
     "user_confirmed_audibility": true,
-    "scope": "bounded offline support only; no full gate closure"
+    "nonempty_chat_verified": true,
+    "male_active_surface_recreation_verified": true,
+    "scope": "bounded offline only; memory rise requires developer investigation"
   },
   "physical_evidence_history": [
     {
@@ -199,6 +197,26 @@
       "active_foreground_ms": 195104,
       "observed_frames_per_foreground_second": 59.762998195834015,
       "scope": "bounded offline support only; no full gate closure"
+    },
+    {
+      "assessment": "physical-thor-20261015/endurance-223100/assessment.json",
+      "report_sha256": "f1ab649c65241079e942ed01dd7bdace7bb92956d45a4817914783a6a5f24460",
+      "observed_subset_verified": true,
+      "full_checklist_verified": false,
+      "frames": 56495,
+      "active_foreground_ms": 943997,
+      "observed_frames_per_foreground_second": 59.84658849551429,
+      "ten_minute_bounded_endurance_verified": true,
+      "user_confirmed_audibility": true,
+      "scope": "bounded offline support only; no full gate closure"
     }
+  ],
+  "developer_followups": [
+    "Heap/GC/report-allocation analysis",
+    "Original face/material parity and Female/Huge completion",
+    "Authentic larger-zone collision/wall/sliding and full-zone assets",
+    "Full FX/power icons/impact audio",
+    "Thermal/GPU-time/platform-xrun instrumentation",
+    "Live session gates25\u201327 remain exclusively primary-agent owned"
   ]
 }
