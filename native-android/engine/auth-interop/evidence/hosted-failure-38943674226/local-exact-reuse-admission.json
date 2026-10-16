@@ -1,0 +1,43 @@
+{
+  "run_id": 38943674226,
+  "artifact_id": 12064402579,
+  "archive_sha256": "eda726ddc281b2e6b29e8c4d3c0f5e0805f505a8542c0ef80f5dad6208eb570d",
+  "original_repository_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "files": {
+    "receipt.json": {
+      "bytes": 21725,
+      "sha256": "dea350fb6c46904acc8e497965d86d39ab2bbd62cf888aeb90c58bb48482a099"
+    },
+    "AuthServer-original.exe": {
+      "bytes": 864256,
+      "sha256": "6d4d6a9f16104a8327fb90467f0d00fc1e3fad2a7af17ec839e7a8cfe3094ea8"
+    },
+    "original-CMakeCache.txt": {
+      "bytes": 36202,
+      "sha256": "1c3442c32d8e2cca51ba3cd4f967d4393e0c84c0b9bde1b0dcd47c8f64c2d2f5"
+    },
+    "configure-original-authserver.log": {
+      "bytes": 13173,
+      "sha256": "de54f065e983ceb79162f3b1b728598328887d43fbcdb22061d584b4f3263a1b"
+    },
+    "build-original-authserver.log": {
+      "bytes": 4794,
+      "sha256": "bcc62ad420b4b0ef2a02396175290fd479fba8625dbb4f74674d85c8fa27e9ca"
+    }
+  },
+  "original_authserver": {
+    "sha256": "6d4d6a9f16104a8327fb90467f0d00fc1e3fad2a7af17ec839e7a8cfe3094ea8",
+    "bytes": 864256,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 2,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "scope": "Reuse of exact original target build only; prior overall stage failed before SQL and never ran AuthServer.",
+  "rebuilt": false,
+  "authserver_executed": false,
+  "sql_qualification_inherited": false,
+  "real_account_login_verified": false
+}

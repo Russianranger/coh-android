@@ -1,0 +1,11 @@
+{
+  "sha256_lf": {
+    "MapServer/src/svr/svr_player.c": "82fee142cd2a0d37f2ec8cb62c91b54ee34d5bb31655d1d33961187868a667a8",
+    "Game/src/player/player.c": "88015bed6468f12f5ed8e129fd48f37842a4ca531b8ae907af436fbeddcdb6b2",
+    "Common/cmdparse/cmdcontrols.h": "7ddc6241c80e3e0187e34624283cb0db9ef11144b1bf954eb1dde14ab13c28e9",
+    "Common/entity/motion.h": "47421369bfccfa07caaec2452094a80f60083939a13e86634a0361c4c835858d",
+    "Common/player/pmotion.c": "a5bd9d1fa7f048a2745c3ac17a989523d28312b2d5441a3c8a401703f08f444e",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+  }
+}

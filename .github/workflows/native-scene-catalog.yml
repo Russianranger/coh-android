@@ -69,6 +69,9 @@ jobs:
           --output native-android/results/scene-catalog/server-export/host.json
       - name: Check external catalog transport and read-only startup attribution
         run: |
+          # The executed original diagnostic methods are pinned to this historical
+          # commit; a depth-one checkout intentionally lacks that object.
+          git fetch --no-tags --depth=1 origin cda93d96f8696e6a0f2ec6940a0c96e5b852f281
           python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_delivery.py -v
           python3 -m unittest discover -s native-android/combined-client/tools -p test_startup_resources.py -v
           python3 -m unittest discover -s native-android/combined-client/tools -p test_startup_receipts.py -v

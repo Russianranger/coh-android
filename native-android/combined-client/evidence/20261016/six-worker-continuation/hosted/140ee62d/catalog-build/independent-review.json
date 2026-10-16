@@ -1,0 +1,15 @@
+{
+  "source_revision": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+  "artifact_id": 12063314717,
+  "run_id": 38943674264,
+  "archive_sha256": "35e718068514edfd0849b942249570238420951437cfb632b94861ad84e8e862",
+  "independent_full_artifact_admission": true,
+  "exact_source_bytes_verified": true,
+  "both_abi_binary_identity_verified": true,
+  "native_build_and_source_suites_passed": true,
+  "workflow_passed": false,
+  "workflow_failure": "later startup source-oracle tests lacked historical commit in shallow checkout",
+  "android_catalog_execution_attempted": false,
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false
+}

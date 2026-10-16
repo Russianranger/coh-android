@@ -13,7 +13,7 @@ FILES=['MapServer/src/entity/entsend.c','Game/src/entity/entrecv.c',
        'Common/entity/entity_enum.h','Common/entity/entVarUpdate.h','Common/entity/entity.h','Common/entity/ragdoll.h',
        'libs/UtilitiesLib/src/components/BitStream.c','libs/UtilitiesLib/src/network/netcomp.c',
        'libs/UtilitiesLib/src/network/net_packetutil.c','libs/UtilitiesLib/src/utils/Quat.c',
-       'libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h','Common/entity/gametypes.h','MapServer/src/entity/entserver.c','MapServer/src/entity/entsend.h','Common/entity/character_net.c','Common/entity/character_inventory.h','Common/comm_game.h','libs/UtilitiesLib/src/utils/structNet.c','Game/src/entity/character_net_client.c','Common/entity/attrib_net.c','libs/UtilitiesLib/src/utils/textparser.c','libs/UtilitiesLib/include/utilitieslib/utils/textparser.h','Common/entity/netfx.h','Common/entity/costume.c','Common/entity/costume.h','Common/entity/entPlayer.h','Common/gameData/costume_data.c','Common/gameData/BodyPart.c','libs/UtilitiesLib/src/utils/mathutil.c']
+       'libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h','Common/entity/gametypes.h','MapServer/src/entity/entserver.c','MapServer/src/entity/entsend.h','Common/entity/character_net.c','Common/entity/character_inventory.h','Common/comm_game.h','libs/UtilitiesLib/src/utils/structNet.c','Game/src/entity/character_net_client.c','Common/entity/attrib_net.c','libs/UtilitiesLib/src/utils/textparser.c','libs/UtilitiesLib/include/utilitieslib/utils/textparser.h','Common/entity/netfx.h','Common/entity/costume.c','Common/entity/costume.h','Common/entity/entPlayer.h','Common/gameData/costume_data.c','Common/gameData/BodyPart.c','libs/UtilitiesLib/src/utils/mathutil.c','Common/entity/power_customization.c','Common/entity/power_customization.h']
 def run(cmd,**kw):
     p=subprocess.run([str(c) for c in cmd],text=True,capture_output=True,**kw)
     if p.returncode:raise RuntimeError(repr(cmd)+'\n'+p.stdout+p.stderr)
@@ -355,6 +355,14 @@ def fixtures(lib,directory):
         for name,seq in [('envelope_unknown',opt(2,5,True)),('envelope_reward_limit',self_envelope+u(32,257)),('envelope_reward_hole',self_envelope+u(32,1)+u(1,1)*3+p(4,2)),('envelope_reward_null',self_envelope+u(32,1)+u(1,1)+u(1,0)),('envelope_slots',own_empty_rewards+u(8,10)+u(8,0)),('envelope_current',own_empty_rewards+u(8,255)+u(8,3)),('envelope_count_zero',own_empty_rewards+u(8,0)+u(8,3)+u(1,1)+u(4,0)),('envelope_count_limit',own_empty_rewards+u(8,0)+u(8,10)+u(1,1)+u(4,11)),('envelope_other_multiple',opt(2,1,True)+u(1,0)*2+u(1,1)+u(4,1)),('envelope_custom_flag',opt(2,3,True)+p(12,1)+p(1,0)+u(1,0)+p(1,2)),('envelope_sequence_long',opt(2,4,True)+string('x'*260)),('envelope_fx_long',opt(2,1,True)+u(1,0)*3+costume_body+u(1,1)+p(4,0)+u(1,0)+u(1,1)+string('x'*260))]:
             emit(name+str(mode),*fields(seq,mode))
         emit('envelope_rewards_max'+str(mode),*fields(self_envelope+u(32,256)+u(1,0)*256+u(32,256)+u(1,0)*256+u(1,0)+u(8,0)+u(8,255)+u(1,0)+costume_body+u(1,1)+p(4,0)+u(1,0)*3,mode))
+        power_self=opt(2,1,True)+u(1,1)
+        power_owned=opt(2,2,True)+u(1,1)
+        for name,seq in [('power_unknown',opt(2,3,True)),('power_current',power_self+u(8,10)+u(8,0)),('power_slots_zero',power_self+u(8,0)*2+u(1,1)+u(4,0)),('power_slots_limit',power_self+u(8,0)*2+u(1,1)+u(4,11)),('power_current_unstored',power_self+u(8,2)+u(8,0)+u(1,1)+u(4,2)),('power_count_limit',power_owned+auto(513)),('power_long_token',power_owned+auto(1)+auto(1)+auto(0)*2+string('x'*260))]:
+            emit(name+str(mode),*fields(seq,mode))
+        power_items=(auto(1)+auto(0)*2+string(''))*512
+        power_full_list=u(1,1)+auto(512)+power_items
+        emit('power_aggregate_max'+str(mode),*fields(power_self+u(8,0)+u(8,7)+u(1,1)+u(4,8)+power_full_list*8,mode))
+        emit('power_aggregate_limit'+str(mode),*fields(power_self+u(8,0)+u(8,8)+u(1,1)+u(4,9)+power_full_list*8+u(1,1)+auto(512),mode))
         # Manual zero-field fixture complements original nonempty stats.
         pchar=npc+u(1,0)+pos+qrot+u(1,1)+u(1,0)*2+u(1,1)*2+u(1,0)+vision+auto(8)+u(1,0)+u(1,1)+status+u(1,0)
         emit('record_pchar'+str(mode),*fields(pchar,mode))
@@ -404,7 +412,7 @@ def main():
             env=os.environ.copy();env['ASAN_OPTIONS']='detect_leaks=0:halt_on_error=1';env['UBSAN_OPTIONS']='halt_on_error=1:print_stacktrace=1'
             checks[name]=json.loads(run([exe],env=env).stdout)
         fixture_sha=hashlib.sha256((directory/'fixtures.h').read_bytes()).hexdigest()
-        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'CMakeLists.txt',HERE/'coh_entities.h',HERE/'coh_costume.h',HERE/'costume_oracle.py',HERE/'costume_oracle_shim.h',HERE/'costume_envelope_oracle_shim.h',HERE/'costume_envelope_oracle.c.inc',HERE/'costume_envelope_fixture.c.inc',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
+        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'CMakeLists.txt',HERE/'coh_entities.h',HERE/'coh_costume.h',HERE/'costume_oracle.py',HERE/'costume_oracle_shim.h',HERE/'costume_envelope_oracle_shim.h',HERE/'costume_envelope_oracle.c.inc',HERE/'costume_envelope_fixture.c.inc',HERE/'power_custom_oracle_shim.h',HERE/'power_custom_observer.c.inc',HERE/'power_custom_fixture.c.inc',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
         android={}
         if args.ndk:
             args.android_output.mkdir(parents=True,exist_ok=True)

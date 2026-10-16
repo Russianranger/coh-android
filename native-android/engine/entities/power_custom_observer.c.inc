@@ -1,0 +1,3 @@
+static struct {PowerCustomizationList *list;size_t end;unsigned query_first,query_count;} power_receipts[10];static unsigned power_receipt_count;
+static int observed_power_receive(Packet *p,Entity *e,PowerCustomizationList *list){unsigned start=query_count;int r=powerCustList_receive(p,e,list);assert(power_receipt_count<10);power_receipts[power_receipt_count].list=list;power_receipts[power_receipt_count].end=bsGetCursorBitPosition(&p->stream);power_receipts[power_receipt_count].query_first=start;power_receipts[power_receipt_count++].query_count=query_count-start;return r;}
+#define powerCustList_receive observed_power_receive

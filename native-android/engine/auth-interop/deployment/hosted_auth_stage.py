@@ -80,6 +80,49 @@ def pe_identity(path, subsystem):
             'subsystem': actual_subsystem, 'header_identity_only': True, 'executed': False}
 
 
+def admit_original_reuse(directory, current_original_tree):
+    """Admit only the pinned successful original target from a failed stage.
+
+    Full repository HEAD differs when only the harness changes. The imported
+    original subtree, exact prior receipt, build inputs/logs and binary must not.
+    The coordinator independently verifies the outer archive identity.
+    """
+    pins = json.loads((HERE / 'original-build-reuse-pins.json').read_text())
+    if current_original_tree != ORIGINAL_TREE or pins['original_source_tree'] != current_original_tree:
+        raise ValueError('reused_original_source_tree_mismatch')
+    for name, expected in pins['files'].items():
+        file = directory / name
+        if (file.is_symlink() or not file.is_file() or file.stat().st_size != expected['bytes']
+                or expected['bytes'] > LOG_LIMIT or sha(file) != expected['sha256']):
+            raise ValueError('reused_original_file_identity_mismatch')
+    receipt = json.loads((directory / 'receipt.json').read_text())
+    if (receipt.get('schema') != 'coh-hosted-auth-stage-v1'
+            or receipt.get('repository_commit') != pins['repository_commit']
+            or receipt.get('original_source_tree') != current_original_tree
+            or receipt.get('source_inputs_unchanged') is not True
+            or receipt.get('passed') is not False
+            or receipt.get('failure') != 'stage_command_failed_build-controls'
+            or any(receipt.get(key) is not False for key in ('original_authserver_started', 'patched_dbserver_built',
+                    'real_account_login_verified', 'authenticated_db_map_handoff_verified', 'native_live_world',
+                    'physical_thor_accepted', 'owned_localdb_created', 'owned_localdb_creation_attempted'))):
+        raise ValueError('reused_original_receipt_scope_mismatch')
+    for name in ('configure-original-authserver', 'build-original-authserver'):
+        records = [row for row in receipt.get('commands', []) if row.get('name') == name]
+        if (len(records) != 1 or type(records[0].get('returncode')) is not int or records[0]['returncode'] != 0
+                or records[0].get('log_sha256') != pins['files'][name + '.log']['sha256']
+                or records[0].get('log_truncated') is not False):
+            raise ValueError('reused_original_target_not_qualified')
+    binary = pe_identity(directory / 'AuthServer-original.exe', 2)
+    if receipt.get('original_authserver') != binary:
+        raise ValueError('reused_original_binary_receipt_mismatch')
+    return {'run_id': pins['run_id'], 'artifact_id': pins['artifact_id'], 'archive_sha256': pins['archive_sha256'],
+            'original_repository_commit': pins['repository_commit'], 'original_source_tree': current_original_tree,
+            'files': pins['files'], 'original_authserver': binary,
+            'scope': 'Reuse of exact original target build only; prior overall stage failed before SQL and never ran AuthServer.',
+            'rebuilt': False, 'authserver_executed': False, 'sql_qualification_inherited': False,
+            'real_account_login_verified': False}
+
+
 class Commands:
     def __init__(self, output):
         self.output, self.records = output, []
@@ -152,9 +195,12 @@ def main():
     parser.add_argument('--source-root', type=Path, required=True)
     parser.add_argument('--expected-commit', required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--reuse-auth-stage', type=Path,
+                        help='Extracted exact pinned run38943674226 artifact12064402579; never rebuild original target')
     args = parser.parse_args()
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = require_hosted(root, output, args.expected_commit)
+    reused = admit_original_reuse(args.reuse_auth_stage.resolve(), identity['original_source_tree']) if args.reuse_auth_stage else None
     output.mkdir(parents=True)
     runner = Commands(output)
     proof = {'schema': 'coh-hosted-auth-stage-v1', **identity, 'passed': False,
@@ -195,17 +241,26 @@ def main():
             with tarfile.open(archive) as tar:
                 tar.extractall(temporary / 'source', filter='data')
             source = temporary / 'source/upstream/ouroboros'
-            build = temporary / 'build'
-            patch_tool = Path(os.environ['ProgramFiles']) / 'Git/usr/bin/patch.exe'
-            if not patch_tool.is_file():
-                raise ValueError('qualified_patch_tool_unavailable')
-            runner.run('configure-original-authserver', ['cmake', '-S', source, '-B', build, '-G', 'Visual Studio 18 2026', '-A', 'Win32',
-                       '-DCOX_BUILD_MAPSERVER=OFF', '-DCOX_BUILD_BEACONSERVER=OFF', '-DPATCH_EXECUTABLE=' + str(patch_tool)], timeout=900)
-            runner.run('build-original-authserver', ['cmake', '--build', build, '--config', 'OptDebug', '--parallel', '2', '--target', 'AuthServer'], timeout=1500)
-            authserver = build / 'bin/OptDebug/AuthServer.exe'
-            proof['original_authserver'] = pe_identity(authserver, 2)
-            shutil.copy2(authserver, output / 'AuthServer-original.exe')
-            shutil.copy2(build / 'CMakeCache.txt', output / 'original-CMakeCache.txt')
+            if reused:
+                for name, expected in reused['files'].items():
+                    destination = output / ('reused-original-receipt.json' if name == 'receipt.json' else name)
+                    shutil.copy2(args.reuse_auth_stage / name, destination)
+                    if destination.stat().st_size != expected['bytes'] or sha(destination) != expected['sha256']:
+                        raise ValueError('reused_original_changed_during_copy')
+                proof['original_build_reuse'] = reused
+                proof['original_authserver'] = pe_identity(output / 'AuthServer-original.exe', 2)
+            else:
+                build = temporary / 'build'
+                patch_tool = Path(os.environ['ProgramFiles']) / 'Git/usr/bin/patch.exe'
+                if not patch_tool.is_file():
+                    raise ValueError('qualified_patch_tool_unavailable')
+                runner.run('configure-original-authserver', ['cmake', '-S', source, '-B', build, '-G', 'Visual Studio 18 2026', '-A', 'Win32',
+                           '-DCOX_BUILD_MAPSERVER=OFF', '-DCOX_BUILD_BEACONSERVER=OFF', '-DPATCH_EXECUTABLE=' + str(patch_tool)], timeout=900)
+                runner.run('build-original-authserver', ['cmake', '--build', build, '--config', 'OptDebug', '--parallel', '2', '--target', 'AuthServer'], timeout=1500)
+                authserver = build / 'bin/OptDebug/AuthServer.exe'
+                proof['original_authserver'] = pe_identity(authserver, 2)
+                shutil.copy2(authserver, output / 'AuthServer-original.exe')
+                shutil.copy2(build / 'CMakeCache.txt', output / 'original-CMakeCache.txt')
             harness = temporary / 'harness'
             harness.mkdir()
             proof['checksum_candidate'] = checksum_candidate.prepare(root, harness)

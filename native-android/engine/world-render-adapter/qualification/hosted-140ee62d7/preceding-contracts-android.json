@@ -1,0 +1,65 @@
+{
+  "abi": "x86_64",
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "android_executed": true,
+  "android_release": "13",
+  "android_sdk": 33,
+  "device_is_emulator": true,
+  "device_model": "sdk_gphone64_x86_64",
+  "emulator_qualified": false,
+  "errors": {
+    "scenegraph": "Android command failed; retained 019.log"
+  },
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "manifest_sha256": "1d588fc0e1eabd39017138d31151892446d2d1d1efeadb3ab8713f83b0618d22",
+  "passed": false,
+  "physical_android_executed": false,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "schema": "coh-primary-continuation-android-execution-v1",
+  "scope": "Standalone source-oracle contracts; no Combined APK, server, accounts or live world",
+  "source_revision": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+  "suites": {
+    "auth-interop": {
+      "android_executed": true,
+      "binary_sha256": "f8de181ad74bd23ca2c05475279bd26f7395a276fdcfa4f399ffd23c7cd5d0c1",
+      "build_receipt_sha256": "05ea15a66cb16de0c0b7940131f2b2ee19849aed7f65336b519f6e9a43cef7dc",
+      "passed": true,
+      "result": {
+        "checks": 2147,
+        "native_live_world": false,
+        "network_connections": 0,
+        "passed": true,
+        "policy_only": true,
+        "real_account_login_verified": false
+      }
+    },
+    "entities": {
+      "android_executed": true,
+      "binary_sha256": "aa060bde26d3ee26f5878fe44f69f826f8c5d1aa88a9a37448feb1a0391edd6c",
+      "build_receipt_sha256": "69fa6d71f836dfb5dbfd714da44de405429e0a5d5a5df4d32ea83870446672ba",
+      "passed": true,
+      "result": {
+        "checks": 1083422,
+        "costume_bytes": 49008,
+        "costume_envelope_bytes": 692064,
+        "costume_envelope_workspace_bytes": 772984,
+        "costume_workspace_bytes": 80920,
+        "custom_costume_bytes": 16904,
+        "every_bit_truncations": 211896,
+        "full_update_accepted": false,
+        "list_cases": 50,
+        "list_every_bit_truncations": 9084,
+        "passed": true,
+        "randomized_cases": 25000,
+        "record_bytes": 3824,
+        "render_spawn": false,
+        "slot_bytes": 3600,
+        "workspace_bytes": 922624
+      }
+    }
+  },
+  "temporary_files_removed": true
+}

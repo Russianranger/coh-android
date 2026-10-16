@@ -134,7 +134,7 @@ def main():
             if not a.fixtures_output:ap.error('--prepare-only requires --fixtures-output')
             return
         sources=[HERE/'coh_scenegraph.c',HERE/'coh_scene_metadata.c',HERE.parent/'scenecatalog/coh_scenecatalog.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
-        hashed_sources=[*sources,HERE/'coh_scenegraph.h',HERE/'coh_scene_metadata.h',HERE/'tests/metadata_source_harness.inc',HERE/'check.py',HERE.parent/'replication/coh_replication.h',HERE.parent/'replication/coh_groups.h',HERE.parent/'replication/groups-source-pins.json',HERE.parent/'scenecatalog/coh_scenecatalog.h',HERE.parent/'scenecatalog/check.py',HERE.parent/'scenecatalog/source_export.inc',HERE.parent/'scenecatalog/tests/source_catalog_harness.c']
+        hashed_sources=[*sources,HERE/'coh_scenegraph.h',HERE/'coh_scene_metadata.h',HERE/'tests/metadata_source_harness.inc',HERE/'tests/reader_padding_control.c',HERE/'check.py',HERE.parent/'replication/coh_replication.h',HERE.parent/'replication/coh_groups.h',HERE.parent/'replication/groups-source-pins.json',HERE.parent/'scenecatalog/coh_scenecatalog.h',HERE.parent/'scenecatalog/check.py',HERE.parent/'scenecatalog/source_export.inc',HERE.parent/'scenecatalog/tests/source_catalog_harness.c']
         source_hashes={str(p.relative_to(REPO)):hashlib.sha256(p.read_bytes()).hexdigest() for p in hashed_sources}
         fixture_sha=hashlib.sha256((d/'scenegraph_fixtures.h').read_bytes()).hexdigest()
         flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(d),'-I'+str(HERE),'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free']
@@ -145,6 +145,12 @@ def main():
             binary=d/name;run([os.environ.get('CC','cc'),*flags,*extra,*map(str,sources),'-lm','-o',str(binary)])
             env={**os.environ,'ASAN_OPTIONS':'detect_leaks=0:halt_on_error=1','UBSAN_OPTIONS':'halt_on_error=1:print_stacktrace=1'}
             checks[name]=json.loads(run([str(binary)],env=env).stdout)
+        # A valid reader may carry different padding after each initialization.
+        # This host-only control exercises byte rollback independently of the
+        # compiler's ordinary choice of struct object representation.
+        padding_binary=d/'reader-padding';padding_source=HERE/'tests/reader_padding_control.c'
+        run([os.environ.get('CC','cc'),*flags,'-O2','-Wl,--wrap=coh_rep_reader_bounded',*map(str,sources),str(padding_source),'-lm','-o',str(padding_binary)])
+        checks['reader_padding']=json.loads(run([str(padding_binary)]).stdout)
         android=[]
         if a.ndk:
             if not a.android_output:ap.error('--ndk requires --android-output')

@@ -159,3 +159,33 @@ CohStatus coh_ent_costume_envelope(CohRepReader *r,const CohEntCostumeDictionary
     if(p.status!=COH_OK)return failed(&p,failure);
     s->end_bit=p.r.cursor;*out=*s;*r=p.r;if(failure)memset(failure,0,sizeof(*failure));return COH_OK;
 }
+static uint32_t auto_bits(Parse *p){static const unsigned widths[]={2,10,24,32};uint32_t n=bits(p,2);return p->status==COH_OK?bits(p,widths[n]):0;}
+static void power_list(Parse *p,CohEntPowerCustomEnvelope *s,uint32_t n){
+    CohEntPowerCustomRange *range=&s->lists[n];uint32_t i;
+    range->present=bits(p,1);range->first=s->item_count;
+    if(range->present){
+        range->count=auto_bits(p);need(p,range->count<=COH_POWER_CUSTOM_LIST_MAX&&range->count<=COH_POWER_CUSTOM_TOTAL_MAX-s->item_count,COH_LIMIT);
+        for(i=0;i<range->count&&p->status==COH_OK;i++){
+            CohEntPowerCustom *item=&s->items[s->item_count++];
+            item->power_crc=auto_bits(p);item->colors[0]=auto_bits(p);item->colors[1]=auto_bits(p);text(p,item->token);
+        }
+    }
+    range->end_bit=p->r.cursor;
+}
+CohStatus coh_ent_power_custom(CohRepReader *r,int self,CohEntPowerCustomWorkspace *w,CohEntPowerCustomEnvelope *out,CohEntFailure *failure){
+    Parse p;CohEntPowerCustomEnvelope *s;uint32_t unused,i;
+    if(!r||(self!=0&&self!=1)||!w||!out||out==&w->candidate)return COH_INVALID;
+    p=(Parse){*r,COH_OK,COH_ENT_STAGE_POWER_CUSTOM};p.status=coh_rep_read(&p.r,0,&unused);if(p.status!=COH_OK)return failed(&p,failure);
+    memset(w,0,sizeof(*w));s=&w->candidate;s->type=bits(&p,1)?pack(&p,2):0;need(&p,s->type<=2,COH_UNSUPPORTED);
+    if(s->type==1){
+        s->is_self=bits(&p,1);need(&p,s->is_self==(uint32_t)self,COH_STATE);
+        if(s->is_self){
+            s->current_slot=bits(&p,8);s->additional_slots=bits(&p,8);need(&p,s->current_slot<COH_COSTUME_STORED_MAX,COH_LIMIT);
+            s->multiple=bits(&p,1);s->list_count=s->multiple?bits(&p,4):1;
+            need(&p,s->list_count>0&&s->list_count<=COH_COSTUME_STORED_MAX,COH_LIMIT);if(s->multiple)need(&p,s->current_slot<s->list_count,COH_LIMIT);
+        }
+    }else if(s->type==2)s->list_count=1;
+    for(i=0;i<s->list_count&&p.status==COH_OK;i++)power_list(&p,s,i);
+    if(p.status!=COH_OK)return failed(&p,failure);
+    s->end_bit=p.r.cursor;*out=*s;*r=p.r;if(failure)memset(failure,0,sizeof(*failure));return COH_OK;
+}

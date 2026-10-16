@@ -14,7 +14,7 @@ HERE = Path(__file__).resolve().parent
 def validate(root, manifest, abi):
     if (manifest.get("schema") != "coh-primary-continuation-android-v1"
             or manifest.get("passed") is not True or set(manifest.get("suites", {})) != set(MODULES)):
-        raise ValueError("All three successful continuation suites are required")
+        raise ValueError("All required successful continuation suites are required")
     if any(manifest.get(key) is not False for key in CLAIMS):
         raise ValueError("Contract artifact has an invalid acceptance claim")
     if not re.fullmatch(r"[a-f0-9]{40}", manifest.get("source_revision", "")):

@@ -14,6 +14,7 @@ on:
         default: false
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: native-auth-deployment-${{ github.ref }}
   cancel-in-progress: false
@@ -52,10 +53,33 @@ jobs:
         with: {persist-credentials: false}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
+      - name: Reuse exact previously compiled unchanged original AuthServer
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, os, subprocess, zipfile
+          temporary = Path(os.environ['RUNNER_TEMP'])
+          archive = temporary/'auth-original-stage.zip'
+          with archive.open('xb') as stream:
+              subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/12064402579/zip'], stdout=stream, check=True, timeout=180)
+          assert archive.stat().st_size == 428036
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'eda726ddc281b2e6b29e8c4d3c0f5e0805f505a8542c0ef80f5dad6208eb570d'
+          output = temporary/'auth-original-reuse'
+          output.mkdir()
+          with zipfile.ZipFile(archive) as source:
+              infos = source.infolist()
+              assert len(infos) <= 64 and sum(x.file_size for x in infos) <= 32*1024**2
+              assert all(not PurePosixPath(x.filename).is_absolute() and '..' not in PurePosixPath(x.filename).parts and '\\' not in x.filename for x in infos)
+              source.extractall(output)
+          print('Exact prior original AuthServer artifact admitted; no server executed')
+          PY
       - name: Stage original AuthServer and execute original x86 ODBC bindings in private LocalDB
         shell: pwsh
         run: |
-          python native-android/engine/auth-interop/deployment/hosted_auth_stage.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-staging"
+          python native-android/engine/auth-interop/deployment/hosted_auth_stage.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-staging" --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse"
           if ($LASTEXITCODE -ne 0) { throw 'Isolated auth staging did not qualify; preserve exact diagnostics' }
       - uses: actions/upload-artifact@v4
         if: always()

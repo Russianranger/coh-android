@@ -1,0 +1,22 @@
+{
+  "coordinator_head": "839b0c42f65505a82c36f9eb3fc49b0415932cb0",
+  "original_worker_tips": [
+    "c0d71e0e999e8d4c943d84ba58d51fee164f9bca",
+    "4c1cd8153b32fafad6bc52a1e37188e5a4257316",
+    "c068e3321c2bb52c6b65686caceb0f5e0d02ae96",
+    "b24874e6a7a21fec86911d8218bffdb5584300aa",
+    "e630b9a60a0e30bb7bc2588adf0c05c7f7401df0"
+  ],
+  "excluded_ancestors": [
+    "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+    "3124352f20f06d979f51dc94d20277a19848f26f",
+    "fe3cd7b52cde3ab029bec55a698f0d1348b35ed5",
+    "81f0533dae6d9e364f6f60dcb4bced856d8290b5",
+    "afba82d12cb226c71865d6abb3c13940f41b29f5",
+    "d841d3bddb08d3c15cb6dc7fe0cef4be593e283d"
+  ],
+  "all_worker_tip_objects_confirmed_in_pack": true,
+  "bundle_bytes": 168450,
+  "bundle_sha256": "b14e7e9beef2a621c6f61a55c629e19390c2f9e99a7ed2396dc9f77a2c8c556b",
+  "purpose": "Exact independent source history; apply after earlier worker bundles and published history. Catalog worker continues independently."
+}

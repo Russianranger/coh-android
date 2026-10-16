@@ -4,9 +4,11 @@ The exact original source can be built on a fresh `windows-2025-vs2026` runner.
 The original AuthServer target already compiled in the preserved upstream run,
 but there is no currently recoverable AuthServer binary artifact from that run.
 This candidate builds it again without changing any accepted APK or server.
-The executable staging tool is **not yet Windows executed or ODBC qualified**.
-Its Linux qualification covers source extraction, admission and checksum policy
-controls only. It does not start AuthServer or attempt a real login.
+The first hosted attempt built original AuthServer successfully, then stopped at
+an ODBC harness compile error. No LocalDB instance was created or attempted.
+The corrected ODBC harness is **not yet Windows compiled or ODBC qualified**.
+Linux qualification covers source extraction, admission and checksum policy
+controls only. The stage does not start AuthServer or attempt a real login.
 
 ## Verified inputs and feasibility
 
@@ -25,6 +27,43 @@ The image inventory is an availability lead, not proof of a running SQL instance
 or installed x86 driver. The runner checks those actual components. No production
 endpoint, profile, account, secret or user-supplied credential is required for this
 stage. Network downloads are only the original CMake build dependencies.
+
+## Preserved first attempt and exact binary reuse
+
+[Run 38943674226](https://github.com/Russianranger/coh-android/actions/runs/38943674226)
+used repository commit `140ee62d7b648de737fcec5e7d80b52bfbb9ae67`. Its source
+controls passed, and its original AuthServer configure/build commands returned
+zero. The overall Windows stage failed at `build-controls`: including original
+`Protocol.h` also included `GlobalAuth.h`/`Log.h`, whose `extern CLog logger`
+conflicted with the harness's quiet logger. The correction extracts the unchanged
+return-code enum from pinned `Protocol.h`, records that fragment hash and keeps
+all six original function bodies and original account/ServerId class headers.
+
+The retained [Windows artifact 12064402579](https://github.com/Russianranger/coh-android/actions/runs/38943674226/artifacts/12064402579)
+is 428,036 bytes, ZIP SHA256
+`eda726ddc281b2e6b29e8c4d3c0f5e0805f505a8542c0ef80f5dad6208eb570d`.
+`AuthServer-original.exe` is 864,256 bytes, SHA256
+`6d4d6a9f16104a8327fb90467f0d00fc1e3fad2a7af17ec839e7a8cfe3094ea8`.
+It is source-built Win32 PE32 and **unexecuted**. The complete failed receipt and
+compile-error log are preserved under `../evidence/hosted-failure-38943674226/`.
+
+For a harness-only continuation, download that exact artifact into a separate
+private directory and append:
+
+```powershell
+--reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse"
+```
+
+The coordinator binds the outer archive ID/digest before extraction. The runner
+independently binds the exact receipt, binary, CMake cache and original configure/
+build logs using `original-build-reuse-pins.json`, verifies both original-target
+commands succeeded and the binary's PE32 identity matches the receipt, and
+requires the current imported original source subtree to match. It deliberately
+allows the full repository HEAD to differ when only native/harness files change.
+It copies and rehashes those inputs before use and skips original AuthServer
+configuration and compilation entirely. It inherits no SQL, AuthServer execution,
+login or handoff qualification from the failed overall stage. The corrected
+controls and disposable SQL stage still must execute independently.
 
 ## Run contract for coordinator-owned CI
 
@@ -56,8 +95,9 @@ The sequence is:
 
 1. Refuse non-Windows, non-hosted environments, dirty inputs, source-tree or
    commit mismatches, and existing output locations. Verify all source pins.
-2. Build the **unchanged** original AuthServer target using VS2026 Win32 and
-   OptDebug. Record its exact SHA256 and limited PE header identity. Do not run it.
+2. Reuse the exact qualified original build as above, or build the **unchanged**
+   original AuthServer target using VS2026 Win32 and OptDebug for a new source
+   candidate. Record its exact SHA256 and limited PE header identity. Do not run it.
 3. Compile and execute original/corrected checksum-policy controls as x86
    executables. The corrected policy remains a separate generated patch and
    test function; no patched DbServer is built or deployed here.

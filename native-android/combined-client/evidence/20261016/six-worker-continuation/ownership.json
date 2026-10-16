@@ -31,7 +31,10 @@
       "native-android/combined-client/tools/analyze_startup_resources.py",
       "native-android/combined-client/tools/test_startup_resources.py",
       "native-android/combined-client/evidence/20261016/startup-diagnostics/",
-      "native-android/combined-client/tools/bench_startup_console.py"
+      "native-android/combined-client/tools/bench_startup_console.py",
+      "native-android/combined-client/tools/read_startup_receipts.py",
+      "native-android/combined-client/tools/test_startup_receipts.py",
+      "native-android/engine/entity-control/"
     ]
   },
   "coordinator": [
@@ -52,5 +55,6 @@
     "renderer",
     "Session accepted package"
   ],
-  "gameplay_contact": "No cross-chat coordinator address available; existing recorded ownership plus explicit user boundary honored, no API mutation/integration attempted."
+  "gameplay_contact": "No cross-chat coordinator address available; existing recorded ownership plus explicit user boundary honored, no API mutation/integration attempted.",
+  "followup_reassignment": "After completing read-only startup work, F owns new isolated entity-control grammar; C remains entity-record owner. No engine/physics or gameplay API edits."
 }

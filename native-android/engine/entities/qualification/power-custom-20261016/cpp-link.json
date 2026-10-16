@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "base": "35870d6f14fe388b8d51b3fcb496cfad77676bbd",
+  "unchanged_c_preprocessing": true,
+  "c_preprocessed_sha256": "e1e239dd0656f818290426fcabd86bc5e22a5996a54ae9df89e3c1e0d31efb39",
+  "binary_sha256": "85502c0884535b8c1798ba91eb75a160c5c6cff0a7d7aa35542b91e45f38fee1",
+  "cc": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "cxx": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "sources": {
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "native-android/engine/entities/test_costume_cpp.cpp": "b6af91ad0a80fd15e0a0d2624ed1129fcad280830fc079a2b040b101250c43d6",
+    "native-android/engine/entities/check_cpp_link.py": "6f75bfdef2635815bcd029744f279a926a11ef16442d66566f8422bfcdf1b16e",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/entities/coh_entities.h": "4a3549f29b5f3a50a2eb73c48948edc7cbe1b9cfa798df5da17bfb08c3e28df9",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/qualification/power-custom-20261016/coh_costume-base.h": "e57791a875d3add9f7ac304209212e61c8a176496108a9a2cc11f7e7a5096e56",
+    "native-android/engine/entities/qualification/power-custom-20261016/host.json": "2337cad0f250aa59966680dd4c4b22f8450db5e91ba42c6bc95780eb69a90d6b"
+  },
+  "scope": "C++ linkage to separately C-compiled public APIs; no parser behavior change, Android execution or server acceptance"
+}

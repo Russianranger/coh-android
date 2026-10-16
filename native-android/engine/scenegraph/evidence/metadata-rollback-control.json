@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "scope": "test-only metadata byte rollback snapshots; production sources unchanged",
+  "baseline_commit": "3124352f20f06d979f51dc94d20277a19848f26f",
+  "android_failure": {
+    "run_id": 38943674280,
+    "source_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+    "artifact_id": 12064093925,
+    "artifact_sha256": "6da3355a63bd3d1d38c76b979c710d0be59f4421427f9dd95360a306a779ef0d",
+    "log": "019.log",
+    "assertion_line": 164,
+    "status_vs_byte_failure_not_separately_observed": true,
+    "emulator_fixed_execution_qualified": false
+  },
+  "negative_control": {
+    "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+    "baseline_test_blob": "a52c3aa1f5391b238e5a76817d3b2213c0d97282",
+    "method": "Baseline test with diagnostic printing around failing identity check, linked with --wrap=coh_rep_reader_bounded and tests/reader_padding_control.c. Wrapper changes only reader object padding; original initializer member values and production parser remain unchanged.",
+    "coh_status_observed": 7,
+    "coh_state_expected": 7,
+    "fixture": 0,
+    "metadata_size": 2096,
+    "reader_offset": 2048,
+    "changed_metadata_offsets": [
+      2084,
+      2085,
+      2086,
+      2087
+    ],
+    "reader_padding_relative_offsets": [
+      36,
+      37,
+      38,
+      39
+    ],
+    "original_test_failed": true,
+    "this_control_proves_actual_android_cause": false,
+    "log": "metadata-padding-negative-control.log",
+    "log_sha256": "f810366d7287c210c7d8fd3029af1ff8fdfc66d75a283176b0863c197bb8e01c"
+  },
+  "positive_control": {
+    "receipt": "metadata-rollback-qualification.json",
+    "checks": {
+      "release": {
+        "passed": true,
+        "checks": 193219,
+        "allocation_failure_points": 34,
+        "source_fixtures_accepted": 44,
+        "source_fixtures_rejected": 8,
+        "stress_controls": 18,
+        "stress_definitions": 12192,
+        "stress_children": 36567,
+        "stress_graph_bytes": 26806591,
+        "stress_candidate_peak_bytes": 26843167,
+        "stress_aggregate_peak_bytes": 81706049,
+        "metadata_checks": 68415,
+        "metadata_truncations": 33623,
+        "live_world": false
+      },
+      "asan": {
+        "passed": true,
+        "checks": 193219,
+        "allocation_failure_points": 34,
+        "source_fixtures_accepted": 44,
+        "source_fixtures_rejected": 8,
+        "stress_controls": 18,
+        "stress_definitions": 12192,
+        "stress_children": 36567,
+        "stress_graph_bytes": 26806591,
+        "stress_candidate_peak_bytes": 26843167,
+        "stress_aggregate_peak_bytes": 81706049,
+        "metadata_checks": 68415,
+        "metadata_truncations": 33623,
+        "live_world": false
+      },
+      "ubsan": {
+        "passed": true,
+        "checks": 193219,
+        "allocation_failure_points": 34,
+        "source_fixtures_accepted": 44,
+        "source_fixtures_rejected": 8,
+        "stress_controls": 18,
+        "stress_definitions": 12192,
+        "stress_children": 36567,
+        "stress_graph_bytes": 26806591,
+        "stress_candidate_peak_bytes": 26843167,
+        "stress_aggregate_peak_bytes": 81706049,
+        "metadata_checks": 68415,
+        "metadata_truncations": 33623,
+        "live_world": false
+      },
+      "reader_padding": {
+        "passed": true,
+        "checks": 193219,
+        "allocation_failure_points": 34,
+        "source_fixtures_accepted": 44,
+        "source_fixtures_rejected": 8,
+        "stress_controls": 18,
+        "stress_definitions": 12192,
+        "stress_children": 36567,
+        "stress_graph_bytes": 26806591,
+        "stress_candidate_peak_bytes": 26843167,
+        "stress_aggregate_peak_bytes": 81706049,
+        "metadata_checks": 68415,
+        "metadata_truncations": 33623,
+        "live_world": false
+      }
+    },
+    "test_padding_changes_member_values": false,
+    "test_padding_changes_production_sources": false
+  },
+  "runtime_acceptance_promoted": false
+}

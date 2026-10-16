@@ -222,3 +222,23 @@ property fixture. Release, ASan and UBSan each pass **159,514 total checks**;
 see `evidence/metadata-qualification.json`. Android execution remains a separate
 hosted gate. Host GCC `-O2 -fstack-usage` reports 7,024 bytes for metadata decoding
 and 4,272 bytes for property iteration, with no recursion or allocation.
+
+
+## Byte rollback test portability
+
+The follow-up `evidence/metadata-rollback-qualification.json` retains release,
+ASan, UBSan and a test-only reader-padding control. Each passes 193,219 checks,
+including the same 33,623 metadata bit truncations; higher check count separates
+status and byte-preservation assertions and adds explicit invalid-input rollback.
+Every byte rollback comparison now snapshots object representation with `memcpy`
+immediately before the rejected operation. It does not compare padding across
+successful struct assignments or successful decodes.
+
+The original Android qualification at `140ee62d` stopped at the combined metadata
+identity/status-and-bytes assertion. A controlled host reproduction changes only
+padding in otherwise identical valid readers: the original test rejects the
+correct `COH_STATE` result because it compares against bytes from a previous
+successful decode. The revised test passes this control without production code
+changes. See `evidence/metadata-rollback-control.json`; this identifies a real
+test defect but does not independently establish the original emulator's status
+or changed byte offsets. Corrected Android execution remains a separate gate.

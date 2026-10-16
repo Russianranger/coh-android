@@ -1,0 +1,310 @@
+-- The C compiler identification is MSVC 19.51.36260.0
+-- The CXX compiler identification is MSVC 19.51.36260.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x86/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x86/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- CPM: Adding package chromium_zlib@0 (cf333892c34ab6dbaed37c38a1d5aa6da7b2f99d)
+-- CPM: Adding package cryptopp@0 (b5242667a24e3db8e4600e77b2e502ef204e5280)
+-- The ASM_MASM compiler identification is MSVC
+-- Found assembler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x86/ml.exe
+-- CPM: Adding package sparsehash@2.0.4 (f93c0c69e959c1c77611d0ba8d107aa971338811)
+-- Populating sparsehash
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/sparsehash-subbuild
+MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+
+  1>Checking Build System
+  1>Creating directories for 'sparsehash-populate'
+  Performing download step (git clone) for 'sparsehash-populate'
+  Cloning into 'sparsehash-src'...
+  HEAD is now at f93c0c6 Merge pull request #153 from howsiwei/memaccess
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/sparsehash-subbuild/CMakeLists.txt
+  Performing update step for 'sparsehash-populate'
+  -- Already at requested ref: f93c0c69e959c1c77611d0ba8d107aa971338811
+  No patch step for 'sparsehash-populate'
+  No configure step for 'sparsehash-populate'
+  No build step for 'sparsehash-populate'
+  No install step for 'sparsehash-populate'
+  No test step for 'sparsehash-populate'
+  Completed 'sparsehash-populate'
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/sparsehash-subbuild/CMakeLists.txt
+-- CPM: Adding package yajl@2.1.1 (5e3a7856e643b4d6410ddc3f84bc2f38174f2872)
+-- Populating yajl
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/yajl-subbuild
+MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+
+  1>Checking Build System
+  1>Creating directories for 'yajl-populate'
+  Performing download step (git clone) for 'yajl-populate'
+  Cloning into 'yajl-src'...
+  HEAD is now at 5e3a785 Merge pull request #157 from setempler/bugfix-configure
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/yajl-subbuild/CMakeLists.txt
+  Performing update step for 'yajl-populate'
+  -- Already at requested ref: 5e3a7856e643b4d6410ddc3f84bc2f38174f2872
+  No patch step for 'yajl-populate'
+  No configure step for 'yajl-populate'
+  No build step for 'yajl-populate'
+  No install step for 'yajl-populate'
+  No test step for 'yajl-populate'
+  Completed 'yajl-populate'
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/yajl-subbuild/CMakeLists.txt
+-- CPM: Adding package freetype@2.1.9 (2.1.9)
+-- Populating freetype
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/freetype-subbuild
+MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+
+  1>Checking Build System
+  1>Creating directories for 'freetype-populate'
+  Performing download step (download, verify and extract) for 'freetype-populate'
+  -- Downloading...
+     dst='D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/freetype-subbuild/freetype-populate-prefix/src/archive.tar'
+     timeout='none'
+     inactivity timeout='none'
+  -- Using src='https://codeload.github.com/freetype/freetype/tar.gz/9f182c1fe07d067cd7a6a1b74f53792cc7d203cd'
+  -- verifying file...
+         file='D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/freetype-subbuild/freetype-populate-prefix/src/archive.tar'
+  -- Downloading... done
+  -- extracting...
+       src='D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/freetype-subbuild/freetype-populate-prefix/src/archive.tar'
+       dst='D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/freetype-src'
+  -- extracting... [tar xf]
+  -- extracting... [analysis]
+  -- extracting... [rename]
+  -- extracting... [clean up]
+  -- extracting... done
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/freetype-subbuild/CMakeLists.txt
+  No update step for 'freetype-populate'
+  No patch step for 'freetype-populate'
+  No configure step for 'freetype-populate'
+  No build step for 'freetype-populate'
+  No install step for 'freetype-populate'
+  No test step for 'freetype-populate'
+  Completed 'freetype-populate'
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/freetype-subbuild/CMakeLists.txt
+-- CPM: Adding package glew@2.1.0 (2.1.0)
+-- Found OpenGL: opengl32
+-- CPM: Adding package jpeg@0 (ec32420f6b5dfa4e86883d42b209e8371e55aeb5)
+-- Populating jpeg
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/jpeg-subbuild
+MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+
+  1>Checking Build System
+  1>Creating directories for 'jpeg-populate'
+  Performing download step (git clone) for 'jpeg-populate'
+  Cloning into 'jpeg-src'...
+  HEAD is now at ec32420f example.c: Fix 12-bit PPM write w/ big endian CPUs
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/jpeg-subbuild/CMakeLists.txt
+  Performing update step for 'jpeg-populate'
+  -- Already at requested ref: ec32420f6b5dfa4e86883d42b209e8371e55aeb5
+  No patch step for 'jpeg-populate'
+  No configure step for 'jpeg-populate'
+  No build step for 'jpeg-populate'
+  No install step for 'jpeg-populate'
+  No test step for 'jpeg-populate'
+  Completed 'jpeg-populate'
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/jpeg-subbuild/CMakeLists.txt
+-- CPM: Adding package jpgd@0 (a385a2045aa01584987a6bafc0f7e0c420d28c82)
+-- CPM: Adding package ogg@0 (be05b13e98b048f0b5a0f5fa8ce514d56db5f822)
+CMake Warning (deprecated) at D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/ogg-src/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+-- Configuring ogg 1.3.6
+-- Looking for include file inttypes.h
+-- Looking for include file inttypes.h - found
+-- Looking for include file stdint.h
+-- Looking for include file stdint.h - found
+-- Looking for include file sys/types.h
+-- Looking for include file sys/types.h - found
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of int16_t
+-- Check size of int16_t - done
+-- Check size of uint16_t
+-- Check size of uint16_t - done
+-- Check size of u_int16_t
+-- Check size of u_int16_t - failed
+-- Check size of int32_t
+-- Check size of int32_t - done
+-- Check size of uint32_t
+-- Check size of uint32_t - done
+-- Check size of u_int32_t
+-- Check size of u_int32_t - failed
+-- Check size of int64_t
+-- Check size of int64_t - done
+-- Check size of short
+-- Check size of short - done
+-- Check size of int
+-- Check size of int - done
+-- Check size of long
+-- Check size of long - done
+-- Check size of long long
+-- Check size of long long - done
+-- CPM: Adding package vorbis@0 (0657aee69dec8508a0011f47f3b69d7538e9d262)
+-- Configuring vorbis 1.3.7
+-- Looking for floor in m
+-- Looking for floor in m - not found
+-- CPM: Adding package cubemapgen@1.4 (1.4)
+-- Populating cubemapgen
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cubemapgen-subbuild
+MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+
+  1>Checking Build System
+  1>Creating directories for 'cubemapgen-populate'
+  Performing download step (download, verify and extract) for 'cubemapgen-populate'
+  -- Downloading...
+     dst='D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cubemapgen-subbuild/cubemapgen-populate-prefix/src/CubeMapGen-1.4-Source.zip'
+     timeout='none'
+     inactivity timeout='none'
+  -- Using src='https://gpuopen.com/download/CubeMapGen-1.4-Source.zip'
+  -- [download 0% complete]
+  -- [download 1% complete]
+  -- [download 2% complete]
+  -- [download 3% complete]
+  -- [download 4% complete]
+  -- [download 5% complete]
+  -- [download 6% complete]
+  -- [download 7% complete]
+  -- [download 8% complete]
+  -- [download 9% complete]
+  -- [download 10% complete]
+  -- [download 11% complete]
+  -- [download 12% complete]
+  -- [download 13% complete]
+  -- [download 14% complete]
+  -- [download 15% complete]
+  -- [download 16% complete]
+  -- [download 17% complete]
+  -- [download 18% complete]
+  -- [download 19% complete]
+  -- [download 20% complete]
+  -- [download 21% complete]
+  -- [download 22% complete]
+  -- [download 23% complete]
+  -- [download 24% complete]
+  -- [download 25% complete]
+  -- [download 26% complete]
+  -- [download 27% complete]
+  -- [download 28% complete]
+  -- [download 29% complete]
+  -- [download 30% complete]
+  -- [download 31% complete]
+  -- [download 32% complete]
+  -- [download 33% complete]
+  -- [download 34% complete]
+  -- [download 35% complete]
+  -- [download 36% complete]
+  -- [download 37% complete]
+  -- [download 38% complete]
+  -- [download 39% complete]
+  -- [download 40% complete]
+  -- [download 41% complete]
+  -- [download 42% complete]
+  -- [download 43% complete]
+  -- [download 44% complete]
+  -- [download 45% complete]
+  -- [download 46% complete]
+  -- [download 47% complete]
+  -- [download 48% complete]
+  -- [download 49% complete]
+  -- [download 50% complete]
+  -- [download 51% complete]
+  -- [download 52% complete]
+  -- [download 53% complete]
+  -- [download 54% complete]
+  -- [download 55% complete]
+  -- [download 56% complete]
+  -- [download 57% complete]
+  -- [download 58% complete]
+  -- [download 59% complete]
+  -- [download 60% complete]
+  -- [download 61% complete]
+  -- [download 62% complete]
+  -- [download 63% complete]
+  -- [download 64% complete]
+  -- [download 65% complete]
+  -- [download 66% complete]
+  -- [download 67% complete]
+  -- [download 68% complete]
+  -- [download 69% complete]
+  -- [download 70% complete]
+  -- [download 71% complete]
+  -- [download 72% complete]
+  -- [download 73% complete]
+  -- [download 74% complete]
+  -- [download 75% complete]
+  -- [download 76% complete]
+  -- [download 77% complete]
+  -- [download 78% complete]
+  -- [download 79% complete]
+  -- [download 80% complete]
+  -- [download 81% complete]
+  -- [download 82% complete]
+  -- [download 83% complete]
+  -- [download 84% complete]
+  -- [download 85% complete]
+  -- [download 86% complete]
+  -- [download 87% complete]
+  -- [download 88% complete]
+  -- [download 89% complete]
+  -- [download 90% complete]
+  -- [download 91% complete]
+  -- [download 92% complete]
+  -- [download 93% complete]
+  -- [download 94% complete]
+  -- [download 95% complete]
+  -- [download 96% complete]
+  -- [download 97% complete]
+  -- [download 98% complete]
+  -- [download 99% complete]
+  -- [download 100% complete]
+  -- verifying file...
+         file='D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cubemapgen-subbuild/cubemapgen-populate-prefix/src/CubeMapGen-1.4-Source.zip'
+  -- Downloading... done
+  -- extracting...
+       src='D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cubemapgen-subbuild/cubemapgen-populate-prefix/src/CubeMapGen-1.4-Source.zip'
+       dst='D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cubemapgen-src'
+  -- extracting... [tar xf]
+  -- extracting... [analysis]
+  -- extracting... [rename]
+  -- extracting... [clean up]
+  -- extracting... done
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cubemapgen-subbuild/CMakeLists.txt
+  No update step for 'cubemapgen-populate'
+  No patch step for 'cubemapgen-populate'
+  No configure step for 'cubemapgen-populate'
+  No build step for 'cubemapgen-populate'
+  No install step for 'cubemapgen-populate'
+  No test step for 'cubemapgen-populate'
+  Completed 'cubemapgen-populate'
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cubemapgen-subbuild/CMakeLists.txt
+-- CPM: Adding package lua51@5.1.5 (5.1.5)
+-- Configuring done (66.8s)
+-- Generating done (1.3s)
+-- Build files have been written to: D:/a/_temp/coh-auth-stage-yngbh27b/build

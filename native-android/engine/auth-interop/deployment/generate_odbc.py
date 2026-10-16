@@ -4,6 +4,7 @@ This is not AuthServer execution. A minimal statement-owner/logger shell replace
 the server connection pool. No passwords, account values or diagnostics are
 printed. Fixture rows contain byte patterns, with no supplied login credential.
 """
+import re
 from source_audit import AUTH, digest, extract, pinned_sources
 
 
@@ -17,6 +18,11 @@ def prepare(root, directory):
         raise ValueError('original_destructor_changed')
     functions = [extract(account, name) if name != 'CAccount::~CAccount' else destructor for name in names]
     functions += [extract(dbc, 'CDBConn::Fetch'), extract(dbc, 'CDBConn::ResetHtmt')]
+    # Protocol.h includes GlobalAuth.h -> Log.h, which declares the real global
+    # logger. Only the unchanged return-code enum belongs in this quiet shell.
+    status_enum = re.search(r'enum\s*\{\s*S_ALL_OK\b.*?\};', values[AUTH + 'Protocol.h'], re.S)
+    if not status_enum:
+        raise ValueError('original_return_code_enum_missing')
     prefix = r'''#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <sql.h>
@@ -26,7 +32,6 @@ def prepare(root, directory):
 #include <string.h>
 #include "ServerId.h"
 #include "Account.h"
-#include "Protocol.h"
 static_assert(sizeof(void*)==4,"actual x86 ODBC required");
 static_assert(sizeof(unsigned int)==4 && sizeof(int)==4,"original integer ABI");
 static_assert(sizeof(ServerId)==1,"original server ID binding ABI");
@@ -71,7 +76,7 @@ int main(int argc,char **argv){
  SecureZeroMemory(password,sizeof(password));SQLDisconnect(fixture_dbc);SQLFreeHandle(SQL_HANDLE_DBC,fixture_dbc);SQLFreeHandle(SQL_HANDLE_ENV,env);return passed?0:1;
 }
 '''
-    code = prefix + '\n'.join(functions) + suffix
+    code = prefix + status_enum[0] + '\n' + '\n'.join(functions) + suffix
     (directory / 'original-odbc.cpp').write_text(code)
     fixture = "USE cohauth;\nSET NOCOUNT ON;\n"
     fixture += "INSERT INTO dbo.user_auth(account,password,salt,hash_type) VALUES('odbcprobe',0x" + bytes(range(128)).hex() + ",145,1);\n"
@@ -81,6 +86,7 @@ int main(int argc,char **argv){
     return {'schema': 'coh-original-odbc-candidate-v1', 'generated_source_sha256': digest(code.encode()),
             'fixture_sha256': digest(fixture.encode()), 'source_identities': identities,
             'original_function_sha256': {name: digest(body.encode()) for name, body in zip(names + ['CDBConn::Fetch', 'CDBConn::ResetHtmt'], functions)},
+            'original_return_code_enum_sha256': digest(status_enum[0].encode()),
             'scope': 'Unchanged account methods and Fetch/ResetHtmt with a minimal statement owner; actual x86 driver only when hosted runner executes.',
             'fixture_login_attempted': False, 'authserver_started': False, 'real_account_login_verified': False,
             'original_password_hash_algorithm_executed': False}

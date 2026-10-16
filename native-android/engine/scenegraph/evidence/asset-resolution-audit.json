@@ -1,0 +1,242 @@
+{
+  "schema": 1,
+  "scope": "read-only source and stable public-interface audit; no new resolver implementation or runtime acceptance",
+  "integration_revision": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+  "historical_checkpoint": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "original_functions_audited_not_executed_in_this_audit": true,
+  "original_source_root": "upstream/ouroboros",
+  "identities": [
+    {
+      "path": "upstream/ouroboros/Common/group/group.c",
+      "git_blob": "9ba9d808065cf36a92e76b570e671a2c2c2a0669",
+      "sha256": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+      "bytes": 64194,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "groupModelFind",
+        "groupInfoCrcDefs",
+        "groupInfoCrcRefs",
+        "createDefTexSwap"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Common/group/group.h",
+      "git_blob": "58f5dfab6e62003b0e59ecea7c36ccf8564d07bf",
+      "sha256": "17e9d423ef7f8e389f9ce39dc6d7f601d9aee500a7a617f0caa8bc049e994a48",
+      "bytes": 18533,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "GroupBoundsMembers"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Common/group/groupfilelib.c",
+      "git_blob": "83cc4bbfafebf9aaa6cdf5831b97fe489282b410",
+      "sha256": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+      "bytes": 26504,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "groupGetPublicName",
+        "groupNameIdx",
+        "objectLibraryEntryFromObj",
+        "objectLibraryEntryFromIdx",
+        "objectLibraryLoadNames",
+        "parse_lib_obj",
+        "objectLibraryLoadBoundsFileInternal",
+        "objectLibraryWriteBoundsFileIfDifferent"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Common/group/groupfileload.c",
+      "git_blob": "821b4cdc2c5ccd5a914148cb85e1177a157920ac",
+      "sha256": "5fc2891ed78626b9fa38b181fd5fc975b69f000bf2f79bbb3c5527c86503e8d7",
+      "bytes": 63848,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "groupSetTrickFlags",
+        "groupSetLodValues"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/anim.c",
+      "git_blob": "86ee0b4c9fbbb90aaf28f14a0b0664ee1098ca80",
+      "sha256": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "bytes": 88082,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "modelFind",
+        "compareModelNamesAndLengths",
+        "compareModelBSearch",
+        "modelInitTrickNodeFromName"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/tricks.c",
+      "git_blob": "b8c7ae519d1d5ec31c9fd7861b96b3356eca82e9",
+      "sha256": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+      "bytes": 57263,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "trickFromObjectName",
+        "trickFromTextureName"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/group/groupnetrecv.c",
+      "git_blob": "248bb8c46014b1ab67e7d6e6e7f9e116ea1f8f70",
+      "sha256": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+      "bytes": 36471,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "receiveDef",
+        "setClientFlags",
+        "getGeo",
+        "groupSetDrawInfo"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/MapServer/src/group/groupnetsend.c",
+      "git_blob": "34d79a75416ea4bb74c43f3fc66ead055b0e228a",
+      "sha256": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+      "bytes": 16285,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "sendDef"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/tex.c",
+      "git_blob": "32fa55bac30691a2893a8b52ad8702287d8cdb8a",
+      "sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+      "bytes": 113372,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "texFixName",
+        "texFind",
+        "texFindComposite",
+        "texCheckForSceneMaterialSwap",
+        "texResetTrickBasedParametersBasic",
+        "texResetTrickBasedParametersComposite",
+        "texSetBindsSubComposite",
+        "texFindVerify",
+        "fixLightingScalesOnFallback"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/model_cache.c",
+      "git_blob": "fe9480bd52a45006cced14f2c30d3b51cedcd6e9",
+      "sha256": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b",
+      "bytes": 18214,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "modelSetupVertexObject"
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp",
+      "git_blob": "9bbfa3c491861cd52ee1f5c9eb243ce406374092",
+      "sha256": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+      "bytes": 8684,
+      "unchanged_from_checkpoint": true,
+      "audited_symbols": [
+        "cryptAdler32Init",
+        "cryptAdler32Update",
+        "cryptAdler32Final"
+      ]
+    },
+    {
+      "path": "native-android/engine/assets/coh_asset_loader.h",
+      "git_blob": "974312be5ebce59f961dfe2e6bd24fe6a01a3161",
+      "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+      "bytes": 4499,
+      "unchanged_from_checkpoint": true
+    },
+    {
+      "path": "native-android/engine/assets/coh_asset_geo.h",
+      "git_blob": "2307a86f3cb9ef9664c1f01314cf8f62b4a1b407",
+      "sha256": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+      "bytes": 2263,
+      "unchanged_from_checkpoint": true
+    },
+    {
+      "path": "native-android/engine/bridge/coh_asset_render.h",
+      "git_blob": "72f69f965ef58c51ca4066b3941d3d0f9afbc2e0",
+      "sha256": "c69090c79b78f302713834b21f0c9a59acb15722598369b0efe67f0ef4fe7f87",
+      "bytes": 5124,
+      "unchanged_from_checkpoint": true
+    },
+    {
+      "path": "native-android/engine/bridge/coh_asset_render.c",
+      "git_blob": "cfe0e01bf9af247ae548148f088c2cd189a96211",
+      "sha256": "50524a72baa219033a01073135ef4b61b8dd289c634d1be6cb85394210f0e983",
+      "bytes": 22114,
+      "unchanged_from_checkpoint": true
+    },
+    {
+      "path": "native-android/engine/renderer/coh_renderer.h",
+      "git_blob": "1d814efbd2cb921d5498088975225a822f3f9f7f",
+      "sha256": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+      "bytes": 5299,
+      "unchanged_from_checkpoint": true
+    },
+    {
+      "path": "native-android/engine/appearance/coh_appearance_render.h",
+      "git_blob": "129531ec0ae6887db37055eed3eb279ba1b541a9",
+      "sha256": "6abaf594eef941649fec665dd4822f3cfd18bed6c03840d7ed51daa3e40720f8",
+      "bytes": 4093,
+      "unchanged_from_checkpoint": true
+    },
+    {
+      "path": "native-android/engine/offline-world/coh_offline_world.h",
+      "git_blob": "fca06906daca125aac9ad6fc8a78d56a3ae7efec",
+      "sha256": "25584080115a8998f1da83dd3b3fea42950b33b75ddb47b5a1d772527d14c072",
+      "bytes": 3431,
+      "unchanged_from_checkpoint": true
+    },
+    {
+      "path": "native-android/engine/offline-world/evidence/source-summary.json",
+      "git_blob": "357264acdf8a9a64732fd32dd6453a9918a56bf1",
+      "sha256": "d514a08ba3ff65be7267f1e8c90b0c466b7568e7bf8b06dcd22608270313546d",
+      "bytes": 11983,
+      "unchanged_from_checkpoint": true
+    }
+  ],
+  "existing_atlas_offline_evidence": {
+    "source_revision": "58caf1d4ab3b39757190f194100ccbc697d57857",
+    "geometry_versions_by_endpoint": {
+      "8": 738,
+      "0": 760,
+      "7": 315,
+      "5": 37,
+      "2": 18,
+      "uninspected": 62,
+      "4": 10
+    },
+    "unique_external_geometry_identities": 220,
+    "unique_external_geometry_bytes": 42856847,
+    "not_real_server_catalog": true,
+    "not_admitted_draw_instances": true
+  },
+  "missing_binding_inputs": [
+    "loaded source object-library public-name to file/GEO rows and original indexes",
+    "authenticated actual GEO model tables and archive/payload identities",
+    "matching loaded model/texture trick tables and generation",
+    "effective composite material tables, scene swaps and capability profile",
+    "exact source GroupBounds records/ABI or independently qualified matching bounds-cache decoder"
+  ],
+  "existing_bridge_admission": {
+    "geo_versions": [
+      0,
+      7
+    ],
+    "all_other_versions_fail_closed": true,
+    "broader_actor_reader_is_not_a_world_renderer_fallback": true
+  },
+  "protected_module_edits": false,
+  "ownership_handoff_obtained": false,
+  "native_resolver_added": false,
+  "authentic_catalog_captured_by_this_audit": false,
+  "rendering_authorized": false,
+  "apk_rebuilt": false,
+  "tests_required_for_documentation": false
+}

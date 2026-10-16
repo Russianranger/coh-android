@@ -1,6 +1,9 @@
 #ifndef COH_COSTUME_H
 #define COH_COSTUME_H
 #include "coh_entities.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define COH_COSTUME_PART_MAX 30u
 #define COH_COSTUME_CUSTOM_MAX 63u
 #define COH_COSTUME_CACHE_MAX 119u
@@ -80,4 +83,25 @@ typedef struct {
 CohStatus coh_ent_costume_envelope(CohRepReader *,const CohEntCostumeDictionary *,
     uint32_t expected_generation,int expected_self,CohEntCostumeEnvelopeWorkspace *,
     CohEntCostumeEnvelope *,CohEntFailure *);
+#define COH_POWER_CUSTOM_LIST_MAX 512u
+#define COH_POWER_CUSTOM_TOTAL_MAX 4096u
+typedef struct {uint32_t power_crc,colors[2];char token[260];} CohEntPowerCustom;
+typedef struct {uint32_t present,first,count;size_t end_bit;} CohEntPowerCustomRange;
+typedef struct {
+    uint32_t type,is_self,current_slot,additional_slots,multiple,list_count,item_count;
+    CohEntPowerCustomRange lists[COH_COSTUME_STORED_MAX];
+    CohEntPowerCustom items[COH_POWER_CUSTOM_TOTAL_MAX];size_t end_bit;
+} CohEntPowerCustomEnvelope;
+typedef struct {CohEntPowerCustomEnvelope candidate;} CohEntPowerCustomWorkspace;
+/* Complete standalone non-debug entReceivePowerCust wire envelope. Raw power
+ * CRCs remain unresolved; no source power dictionary or asset admission.
+ * A list with present=0 retains previous data, while present=1/count=0 clears
+ * it when a future complete transaction applies the event. Wire order and
+ * duplicate CRCs are retained, not source runtime sorted. Off-stack workspace,
+ * no parser allocation; output/reader commit atomically on complete syntax. */
+CohStatus coh_ent_power_custom(CohRepReader *,int expected_self,
+    CohEntPowerCustomWorkspace *,CohEntPowerCustomEnvelope *,CohEntFailure *);
+#ifdef __cplusplus
+}
+#endif
 #endif

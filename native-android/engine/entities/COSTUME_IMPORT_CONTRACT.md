@@ -117,7 +117,8 @@ executes nonstale original envelopes, not that historical stale-body bug.
 
 Entire/owned/custom cases remain unsupported in `coh_ent_appearance` and
 `coh_ent_record` until transaction composition and lifetime ownership exist.
-Power customization, titles and very-rare entity continuation are still open.
+Power-customization transaction composition (its wire syntax is now separately
+qualified), titles and very-rare entity continuation are still open.
 Consequently no standalone body or envelope can produce an authoritative actor,
 make an entity list complete, or enable READY, RECEIVED_CHARACTER or full-update
 acknowledgment.

@@ -1,0 +1,36 @@
+{
+  "run": 38943674280,
+  "artifact": 12064401812,
+  "artifact_sha256": "5a4fdce958d76293acc584dbfba9dc8d2bfd128d8dbe58369b0bf420ee1f32e3",
+  "source_revision": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+  "source_tree": "1564740084820438298a580040e1382ae21ed1fe",
+  "host": {
+    "passed": true,
+    "checks": 16745,
+    "original_matrix_cases": 512,
+    "bounded_mutations": 5000,
+    "published_generations": 2000,
+    "concurrent_readers": 3,
+    "max_draws_tested": 4096,
+    "render_allocations": 0,
+    "render_frees": 0,
+    "fixture_only": true,
+    "authentic_world_entry": false
+  },
+  "source_byte_map_verified": true,
+  "source_tree_verified": true,
+  "builds": {
+    "arm64-v8a": {
+      "sha256": "c509cd378a161d1de75c0c9bf2b241ca6df3d561a7d3874fcedd715882f8b790",
+      "build_receipt_sha256": "cbd26e3582437a4d23267a22e9a1402443e409d01187b9be6a75ee6fd0a748ef",
+      "elf_machine": 183,
+      "executed": false
+    },
+    "x86_64": {
+      "sha256": "089c75aff4c8b514bf12b18ec1c0f515c34b766fdb53953dc740c28bddfdaaec",
+      "build_receipt_sha256": "53f39159b3080a89f81c1404d36839c6fb0ac018c8cc73a0bdabbcf71a0a021b",
+      "elf_machine": 62,
+      "executed": false
+    }
+  }
+}

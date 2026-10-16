@@ -10,7 +10,7 @@ def extract(text,name):
     while depth:depth+=(text[at]=='{')-(text[at]=='}');at+=1
     return text[m.start():at]+'\n'
 def generate(repo,directory,helper,run):
-    paths=FILES+['libs/UtilitiesLib/src/network/net_packetutil.c','libs/UtilitiesLib/src/components/BitStream.c','Common/comm_game.h','Common/entity/entity_enum.h','MapServer/src/entity/entsend.c','Game/src/entity/entrecv.c']
+    paths=FILES+['libs/UtilitiesLib/src/network/net_packetutil.c','libs/UtilitiesLib/src/components/BitStream.c','Common/comm_game.h','Common/entity/entity_enum.h','MapServer/src/entity/entsend.c','Game/src/entity/entrecv.c','Common/entity/power_customization.c','Common/entity/power_customization.h']
     source={f:(repo/'upstream/ouroboros'/f).read_text() for f in paths}
     pins=json.loads((HERE/'source-pins.json').read_text())['sha256_lf']
     for name,data in source.items():
@@ -24,7 +24,8 @@ def generate(repo,directory,helper,run):
     functions=[]
     def get(src,name):functions.append(name);return extract(src,name)
     bit=source['libs/UtilitiesLib/src/components/BitStream.c'];util=source['libs/UtilitiesLib/src/network/net_packetutil.c'];costume=source[FILES[0]]
-    code=helper.PREAMBLE+'\n'+''.join(get(bit,n) for n in ['initBitStream','bsWriteBits','bsWriteBitsPack','bsReadBits','bsReadBitsPack','bsAlignByte','bsGetCursorBitPosition','bsWriteString'])
+    pre=re.sub(r'static void pktSendBitsAuto\([^\n]+\n','',helper.PREAMBLE)
+    code=pre+'\n'+''.join(get(bit,n) for n in ['initBitStream','bsWriteBits','bsWriteBitsPack','bsReadBits','bsReadBitsPack','bsAlignByte','bsGetCursorBitPosition','bsWriteString'])
     code+='''
 static void pktSendBits(Packet *p,int n,U32 v){bsWriteBits(&p->stream,n,v);}
 static void pktSendBitsPack(Packet *p,int n,U32 v){bsWriteBitsPack(&p->stream,n,v);}
@@ -93,19 +94,30 @@ void original_custom(int aligned,U8 *out,U32 *length,U8 *expected,U32 *expected_
     code+=get(source['MapServer/src/entity/entsend.c'],'entSendCostume')
     code+=get(source['Game/src/entity/entrecv.c'],'entReceiveCostume')
     code+=(HERE/'costume_envelope_fixture.c.inc').read_text()
+    code+=(HERE/'power_custom_oracle_shim.h').read_text()
+    code+='static int auto_bins[]={2,10,24,32};\n'
+    code+=''.join(get(util,n) for n in ['pktSendBitsAuto','pktGetBitsAuto'])
+    code+=get(costume,'costume_get_num_slots')
+    code+=''.join(get(source['Common/entity/power_customization.c'],n) for n in ['comparePowerCustomizations','powerCustList_send','powerCustList_receive'])
+    code+=(HERE/'power_custom_observer.c.inc').read_text()
+    code+=get(source['MapServer/src/entity/entsend.c'],'entSendPowerCust')
+    code+=get(source['Game/src/entity/entrecv.c'],'entReceivePowerCust')
+    code+=(HERE/'power_custom_fixture.c.inc').read_text()
     cfile=directory/'costume-oracle.c';cfile.write_text(code);so=directory/'costume-oracle.so'
     run([os.environ.get('CC','cc'),'-std=c99','-O0','-shared','-fPIC','-w','-I'+str(repo/'native-android/include'),'-I'+str(HERE),cfile,'-lm','-o',so])
     lib=C.CDLL(str(so));lib.original_costume.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)];lib.original_custom.argtypes=[C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_envelope.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)]
+    lib.original_power_custom.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)]
     content=['typedef struct {unsigned offset;unsigned char value;} CostumeExpectedByte;\n']
     for mode in [0,1]:
-        for scenario in range(14):
-            data=(C.c_uint8*131072)();expected=(C.c_uint8*1048576)();bits=C.c_uint32();size=C.c_uint32()
+        for scenario in range(22):
+            data=(C.c_uint8*131072)();expected=(C.c_uint8*2097152)();bits=C.c_uint32();size=C.c_uint32()
             if scenario<3:lib.original_costume(scenario,mode,data,C.byref(bits),expected,C.byref(size))
             elif scenario==3:lib.original_custom(mode,data,C.byref(bits),expected,C.byref(size))
-            else:lib.original_envelope(scenario-4,mode,data,C.byref(bits),expected,C.byref(size))
+            elif scenario<14:lib.original_envelope(scenario-4,mode,data,C.byref(bits),expected,C.byref(size))
+            else:lib.original_power_custom(scenario-14,mode,data,C.byref(bits),expected,C.byref(size))
             label=f'costume_{scenario}_{mode}'
             content.append('static const unsigned char '+label+'[]={'+','.join(map(str,data[:(bits.value+7)//8]))+'};\n#define '+label+'_bits '+str(bits.value)+'u\n')
             content.append('static const CostumeExpectedByte '+label+'_expected[]={'+','.join('{'+str(i)+','+str(v)+'}' for i,v in enumerate(expected[:size.value]) if v)+'};\n#define '+label+'_size '+str(size.value)+'u\n')
     path=directory/'costume_fixtures.h';path.write_text(''.join(content))
-    return {'original_functions':functions,'fixtures':28,'fixtures_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'scope':'original full/owned/custom costume bodies and outer appearance/reward producer and consumer functions with synthetic dictionary/storage/render adapters; no entity record integration or server dictionary capture'}
+    return {'original_functions':functions,'fixtures':44,'fixtures_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'scope':'original full/owned/custom costume bodies and outer appearance/reward/powercustom producer and consumer functions with synthetic dictionary/storage/render adapters; no entity record integration or server dictionary capture'}

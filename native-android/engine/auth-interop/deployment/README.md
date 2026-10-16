@@ -5,9 +5,11 @@ does not change native authentication. The original metadata/audit tools do not
 connect to SQL. The additional [hosted staging candidate](HOSTED-STAGING.md) can
 build original AuthServer and run original account methods against a uniquely
 owned disposable LocalDB instance; it requires a fresh GitHub-hosted Windows
-runner and remains unexecuted on Windows at this checkpoint. It never starts
-AuthServer or logs in an account. No real encrypted login or DB-to-Map handoff
-was observed.
+runner. The first Windows attempt built original AuthServer, then failed compiling
+the ODBC harness before creating SQL. Its binary and failed receipt are preserved;
+the corrected harness and exact-binary reuse path await hosted execution. The stage
+never starts AuthServer or logs in an account. No real encrypted login or DB-to-Map
+handoff was observed.
 
 ## Source and schema discovery
 

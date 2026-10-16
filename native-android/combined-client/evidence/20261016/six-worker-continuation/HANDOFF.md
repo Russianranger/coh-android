@@ -142,3 +142,60 @@ into a repository containing its prerequisite recovers every listed original
 worker commit object, even though connected GitHub publication assigns different
 commit identities. Remote trees were verified byte-for-byte before guarded
 non-force updates. Local worktrees were preserved.
+
+
+## Second hosted checkpoint and next source closure
+
+Remote140ee62d7 preserves exact expanded source. Catalog job38943674264 passed
+native/source/sanitizer and both Android ABI builds, then failed six startup
+reader source-oracle tests because the depth-one checkout lacked pinnedcda93d96.
+The original build artifact12063314717 is retained and independently admitted;
+a coordinator workflow fix fetches that exact historical object before tests.
+Primary run38943674280 executed auth2147 and entities1083422 checks successfully
+on Android13, then failed a combined scene metadata status/rollback assertion.
+The adapter was **not attempted**. No new full workflow acceptance follows.
+
+The graph test fix snapshots object bytes immediately before each operation;
+a controlled padding-only mutation reproduces the old assertion failure while
+the API correctly returns COH_STATE. That control does not establish the actual
+Android padding contents. Separate status/byte diagnostics and193219 host checks
+pass, with unchanged production graph code; Android replay remains required.
+The coordinator now attempts protocol and renderer suites independently and
+records each driver outcome, even if the other fails.
+
+Source-qualified power customization adds bounded512-entry lists,4096 total
+entries and up to10 source slots. Native1142224 checks,227549 truncations and44
+costume/power fixtures pass release/ASan/UBSan with independent review. The
+1114392-byte output and same-size workspace require3343176 bytes for future
+old/new/scratch composition. Unresolved IDs are not asset authority. C++ linkage
+is checked without changing the qualified C preprocessing.
+
+F, after finishing startup analysis, owns an additional isolatedentity-control
+module. It links the accepted replication prefix without changing physics or
+entities.90 unchanged original producer fixtures and280 TEST_CLIENT consumer
+comparisons qualify a1064-byte pointer-free update and176-byte state. Prediction
+history, forward-push application, recording and full-update/DBID/ACK remain out
+of scope. Android build/execution is a new standalone gate, not an APK change.
+
+Actual disposable capture38943674136 reached ready DbServer, validated99 schema
+tables/5935 columns/56411 attributes, and loaded real Atlas on MapServer. The
+exporter refused the output path before serialization: status3/producer_status0,
+zero catalog files/definitions. Cleanup and unchanged source checks passed.
+Wine10 source shows that Z:\ maps Linux filesystem root and receives reparse
+attributes rejected by the unchanged sink. A separate private C-drive path and
+read-only exact WinAPI preflight are being qualified. No real catalog exists yet.
+
+Authrun38943674226 successfully compiled unchanged original AuthServer:
+864256 bytes, SHA2566d4d6a9f16104a8327fb90467f0d00fc1e3fad2a7af17ec839e7a8cfe3094ea8.
+Its later test-harness compile failed on a logger declaration collision; no SQL
+instance was created. Corrected staging reuses that exact executable, original
+build logs/cache/receipt and source subtree, without rebuilding or inheriting
+SQL/login acceptance.30 deployment controls and independent artifact-tamper
+checks pass. Fresh Windows ODBC execution remains pending.
+
+The real asset-resolution audit is in scenegraph/ASSET_RESOLUTION_AUDIT.md. The
+saved catalog alone lacks loaded object-library model→GEO bindings, full trick/
+material generations and bounds provenance. The existing rigid bridge only
+supports v0/v7, while existing offline metadata includes v8 assets. No guessing
+of geometry paths or unsupported material semantics is permitted. These remain
+independent blockers to genuine rendered server world entry.

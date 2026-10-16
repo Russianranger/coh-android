@@ -1,0 +1,246 @@
+MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/source/upstream/ouroboros/CMakeLists.txt
+  precise_floating_point.cpp
+  cox_precise_floating_point_test.vcxproj -> D:\a\_temp\coh-auth-stage-yngbh27b\build\bin\OptDebug\cox_precise_floating_point_test.exe
+  1>Verifying precise floating-point behavior
+  Precise floating-point behavior verified.
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/source/upstream/ouroboros/CMakeLists.txt
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/source/upstream/ouroboros/libs/cryptLib/CMakeLists.txt
+  Generating OptDebug/rdrand.asm.obj
+   Assembling: D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cryptopp-src/rdrand.asm
+  Generating OptDebug/rdseed.asm.obj
+   Assembling: D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cryptopp-src/rdseed.asm
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/build/_deps/cryptopp-src/CMakeLists.txt
+  cryptlib.cpp
+  sha512.cpp
+  sha512Impl.cpp
+  cryptLib.vcxproj -> D:\a\_temp\coh-auth-stage-yngbh27b\build\libs\cryptLib\OptDebug\cryptLib.lib
+  cpu.cpp
+  integer.cpp
+  3way.cpp
+  adler32.cpp
+  algebra.cpp
+  algparam.cpp
+  allocate.cpp
+  arc4.cpp
+  aria.cpp
+  ariatab.cpp
+  asn.cpp
+  authenc.cpp
+  base32.cpp
+  base64.cpp
+  basecode.cpp
+  bfinit.cpp
+  blake2.cpp
+  blake2b_simd.cpp
+  blake2s_simd.cpp
+  Generating Code...
+  Compiling...
+  blowfish.cpp
+  blumshub.cpp
+  camellia.cpp
+  cast.cpp
+  casts.cpp
+  cbcmac.cpp
+  ccm.cpp
+  chacha.cpp
+  chacha_simd.cpp
+  chachapoly.cpp
+  cham.cpp
+  cham_simd.cpp
+  channels.cpp
+  cmac.cpp
+  crc.cpp
+  crc_simd.cpp
+  darn.cpp
+  default.cpp
+  des.cpp
+  dessp.cpp
+  Generating Code...
+  Compiling...
+  dh.cpp
+  dh2.cpp
+  dll.cpp
+  donna_32.cpp
+  donna_64.cpp
+  donna_sse.cpp
+  dsa.cpp
+  eax.cpp
+  ec2n.cpp
+  eccrypto.cpp
+  ecp.cpp
+  elgamal.cpp
+  emsa2.cpp
+  eprecomp.cpp
+  esign.cpp
+  files.cpp
+  filters.cpp
+  fips140.cpp
+  fipstest.cpp
+  gcm.cpp
+  Generating Code...
+  Compiling...
+  gcm_simd.cpp
+  gf256.cpp
+  gf2_32.cpp
+  gf2n.cpp
+  gf2n_simd.cpp
+  gfpcrypt.cpp
+  gost.cpp
+  gzip.cpp
+  hc128.cpp
+  hc256.cpp
+  hex.cpp
+  hight.cpp
+  hmac.cpp
+  hrtimer.cpp
+  ida.cpp
+  idea.cpp
+  iterhash.cpp
+  kalyna.cpp
+  kalynatab.cpp
+  keccak.cpp
+  Generating Code...
+  Compiling...
+  keccak_core.cpp
+  keccak_simd.cpp
+  lea.cpp
+  lea_simd.cpp
+  lsh256.cpp
+  lsh256_sse.cpp
+  lsh512.cpp
+  lsh512_sse.cpp
+  luc.cpp
+  mars.cpp
+  marss.cpp
+  md2.cpp
+  md4.cpp
+  md5.cpp
+  misc.cpp
+  modes.cpp
+  mqueue.cpp
+  mqv.cpp
+  nbtheory.cpp
+  neon_simd.cpp
+  Generating Code...
+  Compiling...
+  oaep.cpp
+  osrng.cpp
+  padlkrng.cpp
+  panama.cpp
+  pkcspad.cpp
+  poly1305.cpp
+  polynomi.cpp
+  ppc_simd.cpp
+  primetab.cpp
+  pssr.cpp
+  pubkey.cpp
+  queue.cpp
+  rabbit.cpp
+  rabin.cpp
+  randpool.cpp
+  rc2.cpp
+  rc5.cpp
+  rc6.cpp
+  rdrand.cpp
+  rdtables.cpp
+  Generating Code...
+  Compiling...
+  rijndael.cpp
+  rijndael_simd.cpp
+  ripemd.cpp
+  rng.cpp
+  rsa.cpp
+  rw.cpp
+  safer.cpp
+  salsa.cpp
+  scrypt.cpp
+  seal.cpp
+  seed.cpp
+  serpent.cpp
+  sha.cpp
+  sha3.cpp
+  sha_simd.cpp
+  shacal2.cpp
+  shacal2_simd.cpp
+  shake.cpp
+  shark.cpp
+  sharkbox.cpp
+  Generating Code...
+  Compiling...
+  simeck.cpp
+  simon.cpp
+  simon128_simd.cpp
+  skipjack.cpp
+  sm3.cpp
+  sm4.cpp
+  sm4_simd.cpp
+  sosemanuk.cpp
+  speck.cpp
+  speck128_simd.cpp
+  square.cpp
+  squaretb.cpp
+  sse_simd.cpp
+  strciphr.cpp
+  tea.cpp
+  tftables.cpp
+  threefish.cpp
+  tiger.cpp
+  tigertab.cpp
+  ttmac.cpp
+  Generating Code...
+  Compiling...
+  tweetnacl.cpp
+  twofish.cpp
+  vmac.cpp
+  wake.cpp
+  whrlpool.cpp
+  xed25519.cpp
+  xtr.cpp
+  xtrcrypt.cpp
+  xts.cpp
+  zdeflate.cpp
+  zinflate.cpp
+  zlib.cpp
+  Generating Code...
+  chacha_avx.cpp
+  lsh256_avx.cpp
+  lsh512_avx.cpp
+  Generating Code...
+  cryptopp.vcxproj -> D:\a\_temp\coh-auth-stage-yngbh27b\build\_deps\cryptopp-build\OptDebug\cryptopp.lib
+  Building Custom Rule D:/a/_temp/coh-auth-stage-yngbh27b/source/upstream/ouroboros/AuthServer/CMakeLists.txt
+  Account.cpp
+  AccountDB.cpp
+  Blowfish.cpp
+  buildVersion.cpp
+  Config.cpp
+  CSocketInt.cpp
+  CSocketServer.cpp
+  DBConn.cpp
+  Exception.cpp
+  GlobalAuth.cpp
+  IOBuffer.cpp
+  IOObject.cpp
+  IOServer.cpp
+  IOSocket.cpp
+  IPList.cpp
+  IPSessionDB.cpp
+  Job.cpp
+  Lock.cpp
+  Log.cpp
+  LogSocket.cpp
+  md5.cpp
+  Memory.cpp
+  PacketServerEx.cpp
+  Parser.cpp
+  Reporter.cpp
+  ServerId.cpp
+  ServerList.cpp
+  SocketServerEx.cpp
+  Thread.cpp
+  util.cpp
+  WantedSocket.cpp
+  Des.c
+  AuthServer.vcxproj -> D:\a\_temp\coh-auth-stage-yngbh27b\build\bin\OptDebug\AuthServer.exe

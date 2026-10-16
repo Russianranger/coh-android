@@ -19,16 +19,20 @@
 #define log_printf(...)
 #define Strncpyt(dst,src) do{assert(strlen(src)<sizeof(dst));strcpy(dst,src);}while(0)
 typedef struct {const char *reward;} RewardToken;
+typedef struct {uint32_t crcFullName;const char *pchFullName;} BasePower;
+typedef struct {const char *powerFullName;const BasePower *power;struct {Color primary,secondary;} customTint;const char *token;} PowerCustomization;
+typedef struct {PowerCustomization **powerCustomizations;} PowerCustomizationList;
 typedef struct {
  int pendingCostumeForceTime,current_costume,current_powerCust,num_costume_slots,num_costumes_stored,supergroup_mode,hide_supergroup_emblem,npc_costume;
  int pendingCostumeIgnoreTime,pendingCostumeNumber;
- Costume *costume[10],*superCostume,*pendingCostume;
+ Costume *costume[10],*superCostume,*pendingCostume;PowerCustomizationList *powerCustomizationLists[10];
  RewardToken **rewardTokens,**ArchitectRewardTokens;
  char costumeFxSpecial[260];
 } Player;
 typedef struct {struct {const char *name;} *type;} SeqInst;
 typedef struct {
- int type,npcIndex,costumeIndex,send_all_costume,supergroup_id,randSeed,next_move_idx,next_move_bits;
+ int type,npcIndex,costumeIndex,send_all_costume,supergroup_id,randSeed,next_move_idx,next_move_bits,updated_powerCust,send_all_powerCust;
+ PowerCustomizationList *ownedPowerCustomizationList,*powerCust;
  Player *pl;SeqInst *seq;Costume *ownedCostume;const Costume *costume;
  CustomNPCCostume *customNPC_costume;const char *costumeWorldGroup;const char *name;
 } Entity;

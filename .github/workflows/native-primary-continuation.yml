@@ -5,6 +5,7 @@ on:
     paths:
       - native-android/engine/scenegraph/**
       - native-android/engine/entities/**
+      - native-android/engine/entity-control/**
       - native-android/engine/auth-interop/**
       - native-android/engine/continuation/**
       - native-android/engine/world-render-adapter/**
@@ -92,8 +93,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
           script: |
-            python3 native-android/engine/continuation/run_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --require-clean --artifacts native-android/results/primary-continuation --output native-android/results/primary-continuation/android-execution/receipt.json
-            python3 native-android/engine/continuation/run_adapter_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/primary-continuation/world-adapter --output native-android/results/primary-continuation/android-execution/world-adapter/receipt.json
+            python3 native-android/engine/continuation/run_android_batch.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/primary-continuation
       - uses: actions/upload-artifact@v4
         if: always()
         with:

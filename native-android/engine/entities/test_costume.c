@@ -80,6 +80,29 @@ static void envelope_max_rewards(Fixture f,unsigned mode,CohEntCostumeDictionary
     CHECK(envelope_output.reward_count[0]==256&&envelope_output.reward_count[1]==256&&envelope_output.current_slot==0&&envelope_output.additional_slots==255);
     for(unsigned i=0;i<256;i++)CHECK(!envelope_output.rewards[0][i].present&&!envelope_output.rewards[1][i].present);
 }
+static CohEntPowerCustomWorkspace power_workspace;
+static CohEntPowerCustomEnvelope power_output,power_prior,power_expected;
+static void power_custom(Fixture f,unsigned mode,int self,const CostumeExpectedByte *pairs,size_t count,size_t expected_size){
+    CohRepReader r=reader(f,mode),start=r;CohEntFailure failure;
+    CHECK(expected_size==sizeof(power_expected));memset(&power_expected,0,sizeof(power_expected));for(size_t i=0;i<count;i++){CHECK(pairs[i].offset<sizeof(power_expected));((unsigned char*)&power_expected)[pairs[i].offset]=pairs[i].value;}
+    memset(&power_output,0xa5,sizeof(power_output));power_prior=power_output;
+    if(power_expected.type==1){CHECK(coh_ent_power_custom(&r,!self,&power_workspace,&power_output,&failure)==COH_STATE);CHECK(!memcmp(&r,&start,sizeof(r))&&!memcmp(&power_output,&power_prior,sizeof(power_output)));}
+    CHECK(coh_ent_power_custom(&r,self,&power_workspace,&power_output,&failure)==COH_OK);CHECK(r.cursor==f.bits);CHECK(!memcmp(&power_output,&power_expected,sizeof(power_output)));
+    for(size_t n=0;n<f.bits;n++){
+        r=start;r.bits=n;CohRepReader oldr=r;power_output=power_prior;truncations++;
+        CHECK(coh_ent_power_custom(&r,self,&power_workspace,&power_output,&failure)!=COH_OK);CHECK(!memcmp(&r,&oldr,sizeof(r))&&!memcmp(&power_output,&power_prior,sizeof(power_output)));CHECK(failure.bit<=n);
+    }
+}
+static void power_bad(Fixture f,unsigned mode,int self,CohStatus status){
+    CohRepReader r;CHECK(coh_rep_reader_bounded(&r,(CohBytes){f.data,(f.bits+7)/8},f.bits,(int)mode,COH_REP_BOUNDED_MESSAGE_MAX)==COH_OK);CohRepReader before=r;CohEntFailure failure;
+    memset(&power_output,0xa5,sizeof(power_output));power_prior=power_output;
+    CHECK(coh_ent_power_custom(&r,self,&power_workspace,&power_output,&failure)==status);CHECK(!memcmp(&r,&before,sizeof(r))&&!memcmp(&power_output,&power_prior,sizeof(power_output)));CHECK(failure.bit<=f.bits);
+}
+static void power_max(Fixture f,unsigned mode){
+    CohRepReader r;CHECK(coh_rep_reader_bounded(&r,(CohBytes){f.data,(f.bits+7)/8},f.bits,(int)mode,COH_REP_BOUNDED_MESSAGE_MAX)==COH_OK);CohEntFailure failure;
+    CHECK(coh_ent_power_custom(&r,1,&power_workspace,&power_output,&failure)==COH_OK);CHECK(r.cursor==f.bits&&power_output.item_count==4096&&power_output.list_count==8);
+    for(unsigned i=0;i<4096;i++)CHECK(power_output.items[i].power_crc==1&&!power_output.items[i].colors[0]&&!power_output.items[i].colors[1]&&!power_output.items[i].token[0]);
+}
 static void fuzz(CohEntCostumeDictionary *d){
     uint32_t seed=0xabc12345;unsigned char bytes[1024];
     for(unsigned k=0;k<5000;k++){
@@ -92,13 +115,19 @@ static void fuzz(CohEntCostumeDictionary *d){
         if(k<1000){
             r=before;memset(&envelope_output,0xa5,sizeof(envelope_output));envelope_prior=envelope_output;status=coh_ent_costume_envelope(&r,d,9,(k/2)%2,&envelope_workspace,&envelope_output,&failure);
             if(status!=COH_OK){CHECK(!memcmp(&r,&before,sizeof(r))&&!memcmp(&envelope_output,&envelope_prior,sizeof(envelope_output)));CHECK(failure.bit<=n);}else CHECK(r.cursor<=n);
+            r=before;memset(&power_output,0xa5,sizeof(power_output));power_prior=power_output;status=coh_ent_power_custom(&r,(k/2)%2,&power_workspace,&power_output,&failure);
+            if(status!=COH_OK){CHECK(!memcmp(&r,&before,sizeof(r))&&!memcmp(&power_output,&power_prior,sizeof(power_output)));CHECK(failure.bit<=n);}else CHECK(r.cursor<=n);
         }
     }
 }
 #define ENVELOPE(s,m,self,d) envelope(F(costume_##s##_##m),m,self,costume_##s##_##m##_expected,sizeof(costume_##s##_##m##_expected)/sizeof(CostumeExpectedByte),costume_##s##_##m##_size,d)
+#define POWER(s,m,self) power_custom(F(costume_##s##_##m),m,self,costume_##s##_##m##_expected,sizeof(costume_##s##_##m##_expected)/sizeof(CostumeExpectedByte),costume_##s##_##m##_size)
 #define FULL(s,m,d) full(F(costume_##s##_##m),m,costume_##s##_##m##_expected,sizeof(costume_##s##_##m##_expected)/sizeof(CostumeExpectedByte),costume_##s##_##m##_size,d)
 #define MODE(m,d) do { \
  FULL(0,m,d);FULL(1,m,d);FULL(2,m,d); \
+ POWER(14,m,1);POWER(15,m,0);POWER(16,m,1);POWER(17,m,0);POWER(18,m,1);POWER(19,m,0);POWER(20,m,1);POWER(21,m,1); \
+ power_bad(F(power_unknown##m),m,0,COH_UNSUPPORTED);power_bad(F(power_current##m),m,1,COH_LIMIT);power_bad(F(power_slots_zero##m),m,1,COH_LIMIT);power_bad(F(power_slots_limit##m),m,1,COH_LIMIT);power_bad(F(power_current_unstored##m),m,1,COH_LIMIT); \
+ power_bad(F(power_count_limit##m),m,0,COH_LIMIT);power_bad(F(power_long_token##m),m,0,COH_LIMIT);power_bad(F(power_aggregate_limit##m),m,1,COH_LIMIT);power_max(F(power_aggregate_max##m),m); \
  envelope_max_rewards(F(envelope_rewards_max##m),m,d); \
  ENVELOPE(4,m,1,d);ENVELOPE(5,m,1,d);ENVELOPE(6,m,0,d);ENVELOPE(7,m,0,d);ENVELOPE(8,m,0,d);ENVELOPE(9,m,0,d);ENVELOPE(10,m,0,d);ENVELOPE(11,m,1,d);ENVELOPE(12,m,1,d);ENVELOPE(13,m,1,d); \
  envelope_bad(F(envelope_unknown##m),m,0,COH_UNSUPPORTED,d);envelope_bad(F(envelope_reward_limit##m),m,1,COH_LIMIT,d);envelope_bad(F(envelope_reward_hole##m),m,1,COH_NOT_FOUND,d);envelope_bad(F(envelope_reward_null##m),m,1,COH_INVALID,d); \

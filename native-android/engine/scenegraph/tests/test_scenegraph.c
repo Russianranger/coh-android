@@ -56,7 +56,7 @@ static const Fixture *fixture(unsigned which,unsigned aligned,unsigned legacy) {
     abort();
 }
 static CohStatus apply(CohSceneGraph **g,const Fixture *f,Control *control,CohSgFailure *failure) {
-    CohRepReader r=reader(f),before=r;CohSceneGraph *old=*g;CohSgImports imports={control,load_file,load_asset,7};
+    CohRepReader r=reader(f);unsigned char before[sizeof(r)];memcpy(before,&r,sizeof(r));CohSceneGraph *old=*g;CohSgImports imports={control,load_file,load_asset,7};
     uint32_t generation=*g?(*g)->generation+1:1;
     CohStatus status=coh_scenegraph_apply(g,&r,&imports,generation,failure);
     if(status!=COH_OK){CHECK(*g==old);CHECK(memcmp(&r,&before,sizeof(r))==0);}else{CHECK(r.cursor==f->bits);CHECK((*g)->generation==generation);CHECK((*g)->owned_bytes<=COH_SG_MEMORY_MAX);}
@@ -105,9 +105,9 @@ static void stress(void){
     CHECK(report.aggregate_peak_bytes<=COH_SG_TRANSACTION_MAX);stress_aggregate_peak=report.aggregate_peak_bytes;
     /* Refuse one byte below measured peak, malformed external reservations and
      * adversarial preallocation hints without changing any published bytes. */
-    CohSceneGraph *old=g;CohSceneGraph snapshot=*g;size_t retained=live_bytes;
+    CohSceneGraph *old=g;unsigned char snapshot[sizeof(*g)];memcpy(snapshot,g,sizeof(*g));size_t retained=live_bytes;
     for(unsigned kind=0;kind<6;kind++){
-        CohSgBudget bad=budget;CohRepReader before=stress_reader();r=before;
+        CohSgBudget bad=budget;r=stress_reader();unsigned char before[sizeof(r)];memcpy(before,&r,sizeof(r));
         if(kind==0)bad.aggregate_limit=stress_aggregate_peak-1;
         if(kind==1)bad.external_bytes=SIZE_MAX;
         if(kind==2)bad.aggregate_limit=COH_SG_TRANSACTION_MAX+1u;
@@ -121,7 +121,7 @@ static void stress(void){
      * preparation. Small-world tests exhaust every allocation separately. */
     const size_t points[]={1,2,3,4,5,6,7,31,511,4096,16000,24000};
     for(size_t i=0;i<sizeof(points)/sizeof(*points);i++){
-        CohRepReader before=stress_reader();r=before;allocation_calls=0;fail_at=points[i];
+        r=stress_reader();unsigned char before[sizeof(r)];memcpy(before,&r,sizeof(r));allocation_calls=0;fail_at=points[i];
         CohStatus status=coh_scenegraph_apply_bounded(&g,&r,&imports,3,&budget,&report,&failure);fail_at=0;
         CHECK(status==COH_LIMIT&&g==old&&live_bytes==retained&&memcmp(g,&snapshot,sizeof(snapshot))==0&&memcmp(&r,&before,sizeof(r))==0);stress_controls++;
     }
@@ -153,22 +153,41 @@ static void metadata(void){
             if(f->which==6)CHECK(strcmp(prop.value,"layouts/original_fixture.texword")==0);else CHECK(strlen(prop.value)==192);
             CHECK(coh_scenegraph_property_next(&cursor,&prop)==COH_OK&&prop.type==1&&strcmp(prop.name,"OracleRadius")==0&&strcmp(prop.value,"12.5")==0);
         }else CHECK(m.property_count==0);
-        CohSgProperty last=prop;CohSgPropertyCursor last_cursor=cursor;
-        CHECK(coh_scenegraph_property_next(&cursor,&prop)==COH_NOT_FOUND&&memcmp(&prop,&last,sizeof(prop))==0&&memcmp(&cursor,&last_cursor,sizeof(cursor))==0);
-        /* Every logical bit truncation preserves the metadata output. */
-        size_t complete=d.wire_bits;CohSgMetadata old=m;
+        unsigned char last[sizeof(prop)],last_cursor[sizeof(cursor)],old[sizeof(m)];
+        memcpy(last,&prop,sizeof(prop));memcpy(last_cursor,&cursor,sizeof(cursor));
+        CHECK(coh_scenegraph_property_next(&cursor,&prop)==COH_NOT_FOUND);
+        CHECK(memcmp(&prop,last,sizeof(prop))==0&&memcmp(&cursor,last_cursor,sizeof(cursor))==0);
+        /* Snapshot object bytes immediately before the rejected operation.
+         * Struct assignment need not preserve padding; successful decodes need
+         * not reproduce previous padding even when all member values agree. */
+        size_t complete=d.wire_bits;
         for(size_t bit=0;bit<complete;bit++){
-            d.wire_bits=bit;CHECK(coh_scenegraph_metadata(&g,0,&m)!=COH_OK&&memcmp(&m,&old,sizeof(m))==0);metadata_truncations++;
+            d.wire_bits=bit;memcpy(old,&m,sizeof(m));
+            CHECK(coh_scenegraph_metadata(&g,0,&m)!=COH_OK);
+            CHECK(memcmp(&m,old,sizeof(m))==0);metadata_truncations++;
         }
         d.wire_bits=complete;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_OK);
-        d.mod_time++;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_STATE&&memcmp(&m,&old,sizeof(m))==0);d.mod_time--;
-        g.asset_generation=0;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID);g.asset_generation=7;
-        CHECK(coh_scenegraph_metadata(&g,1,&m)==COH_INVALID);
-        g.definitions=NULL;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID);g.definitions=&d;
-        if(d.swap_count){CohSgSwap *swaps=d.swaps;d.swaps=NULL;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID&&memcmp(&m,&old,sizeof(m))==0);d.swaps=swaps;}
+        d.mod_time++;memcpy(old,&m,sizeof(m));
+        CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_STATE);
+        CHECK(memcmp(&m,old,sizeof(m))==0);d.mod_time--;
+        g.asset_generation=0;memcpy(old,&m,sizeof(m));
+        CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID);
+        CHECK(memcmp(&m,old,sizeof(m))==0);g.asset_generation=7;
+        memcpy(old,&m,sizeof(m));CHECK(coh_scenegraph_metadata(&g,1,&m)==COH_INVALID);
+        CHECK(memcmp(&m,old,sizeof(m))==0);
+        g.definitions=NULL;memcpy(old,&m,sizeof(m));
+        CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID);
+        CHECK(memcmp(&m,old,sizeof(m))==0);g.definitions=&d;
+        if(d.swap_count){
+            CohSgSwap *swaps=d.swaps;d.swaps=NULL;memcpy(old,&m,sizeof(m));
+            CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID);
+            CHECK(memcmp(&m,old,sizeof(m))==0);d.swaps=swaps;
+        }
         if(m.property_count){
-            CHECK(coh_scenegraph_property_begin(&m,&cursor)==COH_OK);cursor.reader.bits=cursor.reader.cursor;last_cursor=cursor;last=prop;
-            CHECK(coh_scenegraph_property_next(&cursor,&prop)!=COH_OK&&memcmp(&prop,&last,sizeof(prop))==0&&memcmp(&cursor,&last_cursor,sizeof(cursor))==0);
+            CHECK(coh_scenegraph_property_begin(&m,&cursor)==COH_OK);cursor.reader.bits=cursor.reader.cursor;
+            memcpy(last_cursor,&cursor,sizeof(cursor));memcpy(last,&prop,sizeof(prop));
+            CHECK(coh_scenegraph_property_next(&cursor,&prop)!=COH_OK);
+            CHECK(memcmp(&prop,last,sizeof(prop))==0&&memcmp(&cursor,last_cursor,sizeof(cursor))==0);
         }
         CHECK(allocation_calls==allocations_before);
         coh_scenegraph_definition_dispose(&d);CHECK(!live_allocations&&!live_bytes);
@@ -214,8 +233,8 @@ int main(void) {
         for(size_t fail=1;fail<256;fail++) {
             Control c={0};CohSceneGraph *g=NULL;CohSgFailure failure;
             if(incremental)CHECK(apply(&g,fixture(2,1,0),&c,&failure)==COH_OK);
-            size_t retained=live_allocations;CohSceneGraph *prior=g;CohSceneGraph snapshot={0};CohSgDefinition defs[5];
-            if(g){snapshot=*g;memcpy(defs,g->definitions,sizeof(defs));}
+            size_t retained=live_allocations;CohSceneGraph *prior=g;unsigned char snapshot[sizeof(*g)];CohSgDefinition defs[5];
+            if(g){memcpy(snapshot,g,sizeof(*g));memcpy(defs,g->definitions,sizeof(defs));}
             allocation_calls=0;fail_at=fail;
             CohStatus status=apply(&g,fixture(incremental?3:2,1,0),&c,&failure);
             fail_at=0;
@@ -228,7 +247,7 @@ int main(void) {
     }
     /* Truncation at every logical bit of minimal fixture stays transactional. */
     {const Fixture *f=fixture(1,0,0);Control c={0};CohSceneGraph *g=NULL;CohSgImports imports={&c,load_file,load_asset,7};
-     for(size_t bits=0;bits<f->bits;bits++){CohRepReader r=reader(f);r.bits=bits;CohRepReader old=r;CHECK(coh_scenegraph_apply(&g,&r,&imports,1,NULL)!=COH_OK);CHECK(g==NULL);CHECK(memcmp(&r,&old,sizeof(r))==0);}}
+     for(size_t bits=0;bits<f->bits;bits++){CohRepReader r=reader(f);r.bits=bits;unsigned char old[sizeof(r)];memcpy(old,&r,sizeof(r));CHECK(coh_scenegraph_apply(&g,&r,&imports,1,NULL)!=COH_OK);CHECK(g==NULL);CHECK(memcmp(&r,&old,sizeof(r))==0);}}
     /* CRC mismatch, generation mismatch, missing previous incremental world. */
     {Control c={0};CohSceneGraph *g=NULL;CohSgFailure failure;CHECK(apply(&g,fixture(3,1,0),&c,&failure)==COH_STATE);
      const Fixture *f=fixture(1,1,0);unsigned char *bad=malloc(f->bytes);CHECK(bad!=NULL);memcpy(bad,f->data,f->bytes);bad[f->bytes-1]^=1;

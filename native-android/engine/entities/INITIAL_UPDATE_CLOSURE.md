@@ -17,7 +17,7 @@ Checkpoint: additive entity continuation from remote
 | 6 | triggered moves and AI animation list | Bounded metadata; no FX execution |
 | 7 | pchar flag and NetFX flag | Complete bounded NetFX event grammar supported; event handles/resources remain unresolved, list inspection does not retain events |
 | 8 | costume and translucency | NPC index and sequence-name references supported. Complete appearance wire envelope and raw full/owned/custom bodies source-qualified standalone, including rewards/multiple/super/FX/NPC fallthrough. Entity records still reject these variants pending dictionary capture, complete transaction ownership and semantic state composition |
-| 9 | power customization and titles if very rare | Unsupported |
+| 9 | power customization and titles if very rare | Complete power-customization envelope source-qualified standalone, including list/slot/owned branches; unresolved power CRCs and entity-record composition remain open. Very-rare titles still unsupported |
 | 10 | ragdoll | Bounded scalar consumption; not skeleton-qualified publication |
 | 11 | basic character stats if pchar | Complete pinned basic absolute non-debug schema supported |
 | 12 | vision phases, exclusive phase, yellow con | Supported numeric values |
@@ -88,7 +88,8 @@ First close complete **selected self create**, then the global initial tail:
    appearance envelope are now source-qualified standalone. Compose those wire
    events into the complete entity transaction: packet order, prior costume
    ownership, deferred intent, optional-field retain/clear rules and generation
-   lifetimes. Add power customization and very-rare titles. Preserve every
+   lifetimes. Compose the now source-qualified power-customization envelope with
+   an admitted power dictionary, and add very-rare titles. Preserve every
    candidate costume event across the complete record under an explicit aggregate
    budget; do not embed the large envelope in every slot. Consume through read-only additive
    contracts with gameplay appearance ownership; do not edit its internals.

@@ -1,0 +1,6 @@
+fixture=0 status=7 expected=7 sizeof_metadata=2096 reader_offset=2048
+different offset=2084 old=8e new=e0
+different offset=2085 old=8e new=e0
+different offset=2086 old=8e new=e0
+different offset=2087 old=8e new=e0
+check failed /tmp/coh-sg-padding-review/diagnostic.c:169: mismatch_status==COH_STATE&&memcmp(&m,&old,sizeof(m))==0
