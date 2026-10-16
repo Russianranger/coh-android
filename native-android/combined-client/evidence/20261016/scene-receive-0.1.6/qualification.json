@@ -55,12 +55,14 @@
     "same_retained_launcher_task_and_process_verified": true,
     "client_sockets_closed_and_owned_body_released": true,
     "real_json_and_zip_document_exports_verified": true,
-    "physical_016_thor_accepted": false,
+    "physical_016_thor_accepted": true,
     "actual_016_arm64_guest_liveness_after_return_verified": false,
-    "authentic_016_large_scene_reception_verified": false,
+    "authentic_016_large_scene_reception_verified": true,
     "real_encrypted_authentication_verified": false,
     "complete_groups_tail_parsed": false,
-    "server_authoritative_world_rendering_verified": false
+    "server_authoritative_world_rendering_verified": false,
+    "physical_016_explicit_return_accepted": true,
+    "physical_016_server_report_ready_after_return": true
   },
   "expanded_scene_contract": {
     "large_body_fixture": true,
@@ -101,5 +103,18 @@
       "sha256": "63f99bb8dd352c36107b90e3da0113e2f425b3c5147cbfbd7c4b442c8746c506"
     }
   },
-  "scope": "One bounded decoded Map GROUPS body and prefix inspection, not full GROUPS/entity replication or live world. Actual app/emulator peers are synthetic; real Thor reception, Return/server continuity and encrypted login need separate evidence. Runtime/import/profile and accepted preview remain preserved."
+  "scope": "One bounded decoded Map GROUPS body and prefix inspection, not full GROUPS/entity replication or live world. Actual app/emulator peers are synthetic; real Thor reception, Return/server continuity and encrypted login need separate evidence. Runtime/import/profile and accepted preview remain preserved.",
+  "physical_acceptance": {
+    "record": "../thor-0.1.6-acceptance/THOR-016-ACCEPTANCE.md",
+    "summary": "../thor-0.1.6-acceptance/thor-016-sanitized.json",
+    "scene_decoded_bytes": 42889,
+    "scene_compressed_bytes": 10354,
+    "scene_prefixes": 1,
+    "owned_retained_bytes": 0,
+    "return_owner_ready_ms": 15,
+    "closed_sockets": 2,
+    "completed_contexts": 2,
+    "server_ready_at_ms": 392192,
+    "accepted_scope": "Bounded authentic local Map GROUPS reception/prefix and explicit Return with reported server continuity. No complete scene, encrypted login or authoritative world acceptance."
+  }
 }

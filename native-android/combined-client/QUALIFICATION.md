@@ -1,6 +1,43 @@
 # Combined server/native client — October 16, 2026
 
+## Physical Thor acceptance of 0.1.6
+
+The user declared the exact code-7 APK successful. The new
+[physical acceptance record](evidence/20261016/thor-0.1.6-acceptance/THOR-016-ACCEPTANCE.md)
+binds both native snapshots and the current launcher report to the qualified
+11,532,139-byte APK, SHA256
+`c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d`.
+Actual MapServer `GROUPS` reception succeeds: **42,889 decoded bytes** from
+**10,354 compressed bytes**, one supported scene prefix, zero decode failure,
+zero retained owned bytes and no local connection failure. This physically
+accepts the bounded large-body receive milestone, beyond the old 16 KiB cap.
+
+The later report captures explicit Return requested/ready **15 ms** apart,
+both client sockets closed, both rendering contexts completed, released GPU
+resources and zero cleanup/GL/transform errors. The subsequent launcher report
+still records its server ready and owned process alive. This accepts Return and
+reported server continuity for this attempt; launcher PID/task identity, fresh
+client reopen, held-input Return and a current server Stop are not new physical
+observations. Existing hosted regressions and earlier controller acceptance
+remain separate.
+
+Current server readiness is **392,192 ms (6m32.192s)**. The detailed guest cache
+timings in this ZIP belong to the previous 0.1.4 session, so current warm/cold
+classification and the cause of its faster start remain unknown. No current
+low-memory exit is evidenced. All eight recorded Android exits predate this
+native session; the separate earlier low-memory causes remain unresolved.
+
+The accepted endpoint remains `SCENE_INCOMPLETE`: its full `GROUPS` tail is
+unsupported, zero entity prefixes were inspected, and AuthServer authentication
+and server-world rendering remain false. This does not accept complete Gates
+25–27. Gates 1–24 retain their earlier documented physical scope. The next
+milestone is complete bounded normal-world scene-message structural decoding,
+followed by imported-library resolution and authoritative entities.
+
 ## Bounded compressed scene receive 0.1.6
+
+Historical qualification at delivery; the physical record above supersedes the
+then-pending Thor receive/Return status within its stated scope.
 
 Qualified runtime and driver source: `7c9cfdb9d5f87c2297f8772fc3aeff528577728f`, tree `15cce2275e7d6c55b4b4f0acddd62c6803174e76`, on
 `native-android`. Local integration pin `648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01`

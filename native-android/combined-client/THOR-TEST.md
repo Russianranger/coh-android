@@ -7,6 +7,14 @@ clear their storage. Gates 22–24 remain accepted within their documented scope
 
 ## Current update: 0.1.6 bounded scene reception
 
+**Physically accepted on AYN Thor.** The new
+[acceptance record](evidence/20261016/thor-0.1.6-acceptance/THOR-016-ACCEPTANCE.md)
+confirms real 42,889-byte scene-body reception, prefix inspection, buffer release,
+explicit Return, closed client sockets and the server still reported ready.
+The procedure below is retained as the qualified 0.1.6 handoff; it does not need
+to be repeated to start the next implementation. Complete scene/entity rendering
+and encrypted authentication remain pending.
+
 ARM64 APK: **11,532,139 bytes**, SHA256 `c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d`.
 [Download package artifact](https://github.com/Russianranger/coh-android/actions/runs/38830583681/artifacts/12016524031).
 [Qualification workflow](https://github.com/Russianranger/coh-android/actions/runs/38830583681): thirteen host suites, both ABI packages

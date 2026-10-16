@@ -36,8 +36,10 @@ unexplained; no memory protection or asset check is weakened. See the current
   application connection and shortcut-catalog acceptance, followed by a scene
   request. That 0.1.4 scene reception failed with `COH_LIMIT` in queued
   decompression; its rejected declared size was not recorded. The 0.1.6 bounded
-  receive path passes host/build checks and 33 Android13 framework checks against
-  explicit source-layout fixtures; actual Thor scene reception needs a new report. Complete scene
+  receive path passes host/build checks and 33 Android13 framework checks. The
+  new [0.1.6 Thor report](evidence/20261016/thor-0.1.6-acceptance/THOR-016-ACCEPTANCE.md)
+  physically accepts real 42,889-byte scene reception, prefix inspection, buffer
+  release and Return with the server still reported ready. Complete scene
   transfer, encrypted AuthServer authentication and server-authoritative
   rendering remain pending. Deterministic socket peers do not prove a real
   server session.

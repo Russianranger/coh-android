@@ -1,0 +1,1012 @@
+{
+  "schema": "coh-thor-016-acceptance-sanitized-v1",
+  "reference_commit": "bf653dd4ef5372c921b049a76f902a4a921e8c4d",
+  "user_declared_success": true,
+  "accepted_scope": "bounded_real_group_prefix_receive_and_launcher_return",
+  "source_reports": {
+    "standalone_json": {
+      "name": "COH-NativeCombined-20261015-200934.json",
+      "bytes": 38391,
+      "sha256": "fafbc93c30c0677c5f9dc18c52e5239ec590c22f082a1432725e4151cf213c43"
+    },
+    "launcher_zip": {
+      "name": "COH-NativeCombined-1792112986044.zip",
+      "bytes": 27108,
+      "sha256": "f4b0d29988272e83b2582094649660841a9e5217152b26dd461106e832016f3f",
+      "all_member_crcs_verified": true,
+      "members": [
+        {
+          "name": "combined-report.json",
+          "bytes": 39093,
+          "crc32": "314710c0",
+          "sha256": "edcce58ed13fb0894195cabbe8d76ff4d351e05a8ec28a9a5cf62b6630f824cc"
+        },
+        {
+          "name": "native-client-report.json",
+          "bytes": 142145,
+          "crc32": "ec109340",
+          "sha256": "265de895de68e3e27e5f37227dd6dc6a2ea3cc22d8393dcf42bf89cf6674a956"
+        },
+        {
+          "name": "previous-session-combined-server-latest-report.json",
+          "bytes": 30332,
+          "crc32": "32dd1333",
+          "sha256": "6dced80f39f95e60c527799704d5c13ea9e38586ad5eacf241b3ea9c6bc55461"
+        },
+        {
+          "name": "combined-server-previous-attempts.json",
+          "bytes": 118349,
+          "crc32": "2c548b3c",
+          "sha256": "26857b48dffbeef06a46e8d5758a949e0c3335fe9ef025b9618df5155bb11d60"
+        }
+      ]
+    },
+    "same_native_activity_session": true,
+    "current_server_differs_from_historical_guest": true,
+    "historical_guest_matches_last_historical_attempt": true
+  },
+  "installed_app": {
+    "version_code": 7,
+    "version_name": "0.1.6-local-server-native",
+    "apk_bytes": 11532139,
+    "apk_sha256": "c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d",
+    "matched_all_three_current_report_identities": true
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "primary_abi": "arm64-v8a",
+    "emulator_detected": false
+  },
+  "standalone_client": {
+    "protocol": {
+      "phase": "SCENE_INCOMPLETE",
+      "local_development_auth": 1,
+      "server_identity_bound": 1,
+      "generation": 1,
+      "selection_generation": 1,
+      "db_phase": 9,
+      "map_phase": 5,
+      "last_status": 2,
+      "attempts": 1,
+      "character_lists": 1,
+      "character_choices": 1,
+      "map_handoffs": 1,
+      "policy_rejections": 0,
+      "failures": 0,
+      "suspends": 0,
+      "cancellations": 0,
+      "opened_sockets": 2,
+      "closed_sockets": 1,
+      "terminal_failure": 0,
+      "terminal_db_phase": 0,
+      "terminal_map_phase": 0,
+      "authserver_authenticated": false,
+      "live_world_rendered": false,
+      "map": {
+        "phase": 5,
+        "stage": 6,
+        "last_status": 2,
+        "last_command_valid": 1,
+        "last_command": 6,
+        "last_payload_bits": 343112,
+        "last_decoded_bytes": 42889,
+        "scene_decoded_bytes": 42889,
+        "last_byte_aligned": 1,
+        "accepted_messages": 2,
+        "rejected_messages": 1,
+        "malformed": 0,
+        "unsupported": 1,
+        "scene_prefixes": 1,
+        "entity_prefixes": 0,
+        "disconnects": 0,
+        "suspends": 0,
+        "timeouts": 0,
+        "udp": {
+          "state": 1,
+          "link_state": 3,
+          "sockets_opened": 1,
+          "sockets_closed": 0,
+          "datagrams_sent": 10,
+          "datagrams_received": 24,
+          "peer_rejects": 0,
+          "truncated": 0,
+          "empty": 0,
+          "malformed": 0,
+          "unsupported": 0,
+          "send_would_block": 0,
+          "interrupted": 0,
+          "io_errors": 0,
+          "receive_budget_exhausted": 0,
+          "suspends": 0,
+          "resumes": 0,
+          "cancellations": 0,
+          "timeouts": 0,
+          "last_system_error": 0,
+          "link": {
+            "sent": 10,
+            "received": 24,
+            "retransmits": 0,
+            "acknowledged": 5,
+            "duplicates": 0,
+            "malformed": 0,
+            "queue_limits": 0,
+            "fragment_expirations": 0,
+            "timeouts": 0,
+            "unsupported": 0,
+            "tx_pending": 0,
+            "rx_pending": 0,
+            "fragment_groups": 0,
+            "storage_bytes": 486576,
+            "codec_bytes": 275600,
+            "high_water_retained_bytes": 42889,
+            "owned_retained_bytes": 0,
+            "owned_high_water_bytes": 42889,
+            "decode": {
+              "failure_kind": 0,
+              "compressed_bytes": 10354,
+              "declared_raw_bytes": 42889,
+              "output_budget": 4194304,
+              "normalized_command": 6,
+              "command_valid": 1
+            }
+          }
+        }
+      }
+    },
+    "render": {
+      "valid": true,
+      "failed": false,
+      "running": true,
+      "pointer_bytes": 8,
+      "source_controlled": true,
+      "collision": true,
+      "live_server": false,
+      "full_atlas": false,
+      "gpu_palette_skinning": false,
+      "frames": 579,
+      "world_draws": 10,
+      "actor_draws": 6422,
+      "skin_samples": 583,
+      "contexts_started": 1,
+      "contexts_completed": 0,
+      "objects_released": false,
+      "width": 1920,
+      "height": 410,
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 320,
+      "shader_precise": true,
+      "tf_components": 40794,
+      "tf_mismatches": 0,
+      "tf_max_error": 0,
+      "depth_order_mismatches": 0,
+      "movement_ticks": 289,
+      "direction_mask": 0,
+      "held_dirs": 0,
+      "animation_state": 0,
+      "animation_transitions": 0,
+      "idle_samples": 289,
+      "run_samples": 0,
+      "foreground": true,
+      "expected_cancel_surface_errors": 0,
+      "expected_cancel_egl_error": 0,
+      "cleanup_gl_errors": 0,
+      "cleanup_egl_errors": 0,
+      "cleanup_egl_error": 0,
+      "input_pending_edges": 0,
+      "walkable_tf_components": 88062,
+      "walkable_tf_mismatches": 0,
+      "walk_contact_hits": 290,
+      "walk_wall_hits": 0,
+      "walk_ground_hits": 290,
+      "depth_sampler_controls_passed": true,
+      "raw_changed_pixels": 2,
+      "qualified_equal_depth_ties": 2,
+      "non_tie_mismatches": 0,
+      "source_assets": {
+        "geo_loads": 3,
+        "texture_loads": 6,
+        "errors": 0
+      },
+      "stream": {
+        "catalog_instances": 11,
+        "selected_instances": 6,
+        "resident_bytes": 157491,
+        "budget_bytes": 524288,
+        "peak_resident_bytes": 157491,
+        "selection_updates": 1,
+        "cache_hits": 9,
+        "cache_misses": 8,
+        "evictions": 0,
+        "generation": 1,
+        "draws": 6948,
+        "view_radius": 24
+      },
+      "static_renderer": {
+        "draw_packets": 6948,
+        "tf_components": 41496,
+        "tf_mismatches": 0,
+        "visible_pixels": 35023,
+        "material_mode_mask": 3,
+        "owned_cpu_bytes": 267456,
+        "gpu_bytes": 557056,
+        "tf_max_error": 7.62939453e-06
+      }
+    },
+    "assets_verified": true,
+    "preview_is_server_world": false,
+    "resumed": true,
+    "render_busy": true,
+    "report_write_failed": false
+  },
+  "zip_client_after_return": {
+    "protocol": {
+      "phase": "SUSPENDED",
+      "local_development_auth": 1,
+      "server_identity_bound": 0,
+      "generation": 1,
+      "selection_generation": 1,
+      "db_phase": 8,
+      "map_phase": 8,
+      "last_status": 2,
+      "attempts": 1,
+      "character_lists": 1,
+      "character_choices": 1,
+      "map_handoffs": 1,
+      "policy_rejections": 0,
+      "failures": 0,
+      "suspends": 3,
+      "cancellations": 0,
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "terminal_failure": 0,
+      "terminal_db_phase": 0,
+      "terminal_map_phase": 0,
+      "authserver_authenticated": false,
+      "live_world_rendered": false,
+      "map": {
+        "phase": 8,
+        "stage": 6,
+        "last_status": 2,
+        "last_command_valid": 1,
+        "last_command": 6,
+        "last_payload_bits": 343112,
+        "last_decoded_bytes": 42889,
+        "scene_decoded_bytes": 42889,
+        "last_byte_aligned": 1,
+        "accepted_messages": 2,
+        "rejected_messages": 1,
+        "malformed": 0,
+        "unsupported": 1,
+        "scene_prefixes": 1,
+        "entity_prefixes": 0,
+        "disconnects": 0,
+        "suspends": 1,
+        "timeouts": 0,
+        "udp": {
+          "state": 2,
+          "link_state": 7,
+          "sockets_opened": 1,
+          "sockets_closed": 1,
+          "datagrams_sent": 10,
+          "datagrams_received": 24,
+          "peer_rejects": 0,
+          "truncated": 0,
+          "empty": 0,
+          "malformed": 0,
+          "unsupported": 0,
+          "send_would_block": 0,
+          "interrupted": 0,
+          "io_errors": 0,
+          "receive_budget_exhausted": 0,
+          "suspends": 1,
+          "resumes": 0,
+          "cancellations": 0,
+          "timeouts": 0,
+          "last_system_error": 0,
+          "link": {
+            "sent": 10,
+            "received": 24,
+            "retransmits": 0,
+            "acknowledged": 5,
+            "duplicates": 0,
+            "malformed": 0,
+            "queue_limits": 0,
+            "fragment_expirations": 0,
+            "timeouts": 0,
+            "unsupported": 0,
+            "tx_pending": 0,
+            "rx_pending": 0,
+            "fragment_groups": 0,
+            "storage_bytes": 486576,
+            "codec_bytes": 275600,
+            "high_water_retained_bytes": 42889,
+            "owned_retained_bytes": 0,
+            "owned_high_water_bytes": 42889,
+            "decode": {
+              "failure_kind": 0,
+              "compressed_bytes": 10354,
+              "declared_raw_bytes": 42889,
+              "output_budget": 4194304,
+              "normalized_command": 6,
+              "command_valid": 1
+            }
+          }
+        }
+      }
+    },
+    "render": {
+      "valid": true,
+      "failed": false,
+      "running": false,
+      "pointer_bytes": 8,
+      "source_controlled": true,
+      "collision": true,
+      "live_server": false,
+      "full_atlas": false,
+      "gpu_palette_skinning": false,
+      "frames": 938,
+      "world_draws": 10,
+      "actor_draws": 10371,
+      "skin_samples": 944,
+      "contexts_started": 2,
+      "contexts_completed": 2,
+      "objects_released": true,
+      "width": 1920,
+      "height": 410,
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 320,
+      "shader_precise": true,
+      "tf_components": 81588,
+      "tf_mismatches": 0,
+      "tf_max_error": 0,
+      "depth_order_mismatches": 0,
+      "movement_ticks": 467,
+      "direction_mask": 0,
+      "held_dirs": 0,
+      "animation_state": 0,
+      "animation_transitions": 0,
+      "idle_samples": 467,
+      "run_samples": 0,
+      "foreground": false,
+      "expected_cancel_surface_errors": 0,
+      "expected_cancel_egl_error": 0,
+      "cleanup_gl_errors": 0,
+      "cleanup_egl_errors": 0,
+      "cleanup_egl_error": 0,
+      "input_pending_edges": 0,
+      "walkable_tf_components": 176124,
+      "walkable_tf_mismatches": 0,
+      "walk_contact_hits": 468,
+      "walk_wall_hits": 0,
+      "walk_ground_hits": 468,
+      "depth_sampler_controls_passed": true,
+      "raw_changed_pixels": 2,
+      "qualified_equal_depth_ties": 2,
+      "non_tie_mismatches": 0,
+      "source_assets": {
+        "geo_loads": 3,
+        "texture_loads": 6,
+        "errors": 0
+      },
+      "stream": {
+        "catalog_instances": 11,
+        "selected_instances": 6,
+        "resident_bytes": 157491,
+        "budget_bytes": 524288,
+        "peak_resident_bytes": 157491,
+        "selection_updates": 1,
+        "cache_hits": 9,
+        "cache_misses": 8,
+        "evictions": 0,
+        "generation": 2,
+        "draws": 11256,
+        "view_radius": 24
+      },
+      "static_renderer": {
+        "draw_packets": 11256,
+        "tf_components": 82992,
+        "tf_mismatches": 0,
+        "visible_pixels": 70046,
+        "material_mode_mask": 3,
+        "owned_cpu_bytes": 267456,
+        "gpu_bytes": 0,
+        "tf_max_error": 7.62939453e-06
+      }
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "type": "session_created",
+        "session_elapsed_ms": 0
+      },
+      {
+        "sequence": 2,
+        "type": "resume",
+        "session_elapsed_ms": 2
+      },
+      {
+        "sequence": 3,
+        "type": "surface_changed",
+        "session_elapsed_ms": 25
+      },
+      {
+        "sequence": 4,
+        "type": "assets_loaded",
+        "session_elapsed_ms": 54,
+        "render": {
+          "frames": 0,
+          "contexts_started": 0,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "running": false,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 5,
+        "type": "local_connect_requested",
+        "session_elapsed_ms": 3492,
+        "render": {
+          "frames": 199,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 6,
+        "type": "local_character_choice_requested",
+        "session_elapsed_ms": 4834,
+        "render": {
+          "frames": 280,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 7,
+        "type": "export_requested",
+        "session_elapsed_ms": 9817,
+        "render": {
+          "frames": 578,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 8,
+        "type": "pause_requested",
+        "session_elapsed_ms": 9837,
+        "render": {
+          "frames": 579,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 9,
+        "type": "input_clear_requested",
+        "session_elapsed_ms": 9837,
+        "render": {
+          "frames": 579,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 10,
+        "type": "pause",
+        "session_elapsed_ms": 9837,
+        "render": {
+          "frames": 579,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "running": true,
+          "foreground": false,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 11,
+        "type": "render_returned",
+        "session_elapsed_ms": 9850,
+        "render": {
+          "frames": 580,
+          "contexts_started": 1,
+          "contexts_completed": 1,
+          "objects_released": true,
+          "running": false,
+          "foreground": false,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 12,
+        "type": "input_clear_requested",
+        "session_elapsed_ms": 9867,
+        "render": {
+          "frames": 580,
+          "contexts_started": 1,
+          "contexts_completed": 1,
+          "objects_released": true,
+          "running": false,
+          "foreground": false,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 13,
+        "type": "surface_destroyed",
+        "session_elapsed_ms": 10366,
+        "render": {
+          "frames": 580,
+          "contexts_started": 1,
+          "contexts_completed": 1,
+          "objects_released": true,
+          "running": false,
+          "foreground": false,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 14,
+        "type": "resume",
+        "session_elapsed_ms": 11319,
+        "render": {
+          "frames": 580,
+          "contexts_started": 1,
+          "contexts_completed": 1,
+          "objects_released": true,
+          "running": false,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 15,
+        "type": "surface_changed",
+        "session_elapsed_ms": 11341,
+        "render": {
+          "frames": 580,
+          "contexts_started": 1,
+          "contexts_completed": 1,
+          "objects_released": true,
+          "running": false,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 16,
+        "type": "export_complete",
+        "session_elapsed_ms": 11347,
+        "render": {
+          "frames": 580,
+          "contexts_started": 2,
+          "contexts_completed": 1,
+          "objects_released": true,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 17,
+        "type": "return_to_launcher_requested",
+        "session_elapsed_ms": 17294,
+        "render": {
+          "frames": 934,
+          "contexts_started": 2,
+          "contexts_completed": 1,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 18,
+        "type": "return_to_launcher_ready",
+        "session_elapsed_ms": 17309,
+        "render": {
+          "frames": 935,
+          "contexts_started": 2,
+          "contexts_completed": 1,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 19,
+        "type": "pause_requested",
+        "session_elapsed_ms": 17337,
+        "render": {
+          "frames": 937,
+          "contexts_started": 2,
+          "contexts_completed": 1,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 20,
+        "type": "input_clear_requested",
+        "session_elapsed_ms": 17338,
+        "render": {
+          "frames": 937,
+          "contexts_started": 2,
+          "contexts_completed": 1,
+          "objects_released": false,
+          "running": true,
+          "foreground": true,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 21,
+        "type": "pause",
+        "session_elapsed_ms": 17338,
+        "render": {
+          "frames": 937,
+          "contexts_started": 2,
+          "contexts_completed": 1,
+          "objects_released": false,
+          "running": true,
+          "foreground": false,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      },
+      {
+        "sequence": 22,
+        "type": "render_returned",
+        "session_elapsed_ms": 17359,
+        "render": {
+          "frames": 938,
+          "contexts_started": 2,
+          "contexts_completed": 2,
+          "objects_released": true,
+          "running": false,
+          "foreground": false,
+          "held_dirs": 0,
+          "gl_errors": 0,
+          "egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0
+        }
+      }
+    ],
+    "return_requested_to_ready_ms": 15,
+    "return_requested_to_render_completed_ms": 65,
+    "assets_verified": true,
+    "preview_is_server_world": false,
+    "resumed": false,
+    "render_busy": false,
+    "report_write_failed": false,
+    "external_input": {
+      "key_down": 0,
+      "key_up": 0,
+      "key_repeat": 0,
+      "motion": 0,
+      "touch_begin": 0,
+      "touch_move": 0,
+      "touch_end": 0,
+      "touch_cancel": 0,
+      "focus_clear": 3,
+      "device_removed": 0,
+      "controller_events": 0,
+      "left_axis_directions": 0,
+      "right_axis_directions": 0,
+      "button_down_mask": 0,
+      "touch_motion_directions": 0
+    }
+  },
+  "current_launcher": {
+    "version_code": 7,
+    "phase": "ready",
+    "busy": true,
+    "runtime_ready": true,
+    "old_application_modified": false,
+    "real_authserver_login_verified": false,
+    "native_live_world_verified": false,
+    "local_development_auth": true,
+    "server": {
+      "ready": true,
+      "guest_exit_code": -1,
+      "owned_process_alive": true,
+      "elapsed_ms": 421288,
+      "stage_elapsed_ms": 29096,
+      "stages": [
+        {
+          "stage": "guest_starting",
+          "elapsed_ms": 0
+        },
+        {
+          "stage": "server_memory_admission",
+          "elapsed_ms": 7
+        },
+        {
+          "stage": "prepare_immutable_server_inputs",
+          "elapsed_ms": 8
+        },
+        {
+          "stage": "preflight_local_server_ports",
+          "elapsed_ms": 626
+        },
+        {
+          "stage": "server_only_input_admission",
+          "elapsed_ms": 631
+        },
+        {
+          "stage": "prepare_private_server_inputs",
+          "elapsed_ms": 5911
+        },
+        {
+          "stage": "isolated_required_geometry_preparation",
+          "elapsed_ms": 12932
+        },
+        {
+          "stage": "persistent_server_profile",
+          "elapsed_ms": 14155
+        },
+        {
+          "stage": "postgres_native_combined",
+          "elapsed_ms": 14888
+        },
+        {
+          "stage": "preflight_selected_map_port",
+          "elapsed_ms": 16030
+        },
+        {
+          "stage": "prepare_owned_presentation_endpoint",
+          "elapsed_ms": 16036
+        },
+        {
+          "stage": "presentation_display",
+          "elapsed_ms": 16042
+        },
+        {
+          "stage": "wine_initialization",
+          "elapsed_ms": 16307
+        },
+        {
+          "stage": "local_login_odbc",
+          "elapsed_ms": 27766
+        },
+        {
+          "stage": "local_dbserver_startup",
+          "elapsed_ms": 42102
+        },
+        {
+          "stage": "local_atlas_startup",
+          "elapsed_ms": 111889
+        },
+        {
+          "stage": "server_running_manual_native_client",
+          "elapsed_ms": 392192
+        }
+      ],
+      "ready_at_ms": 392192,
+      "db_stage_delta_ms": 69787,
+      "atlas_stage_delta_ms": 280303
+    },
+    "memory": {
+      "admitted": true,
+      "stop_requested": false,
+      "samples": 416,
+      "invalid_samples": 0,
+      "minimum_system_headroom_bytes": 8270680064,
+      "minimum_java_heap_headroom_bytes": 209006312,
+      "pressure_samples": 0,
+      "last_elapsed_ms": 420870
+    },
+    "guest_resource_observation": {
+      "samples": 28,
+      "self_peak_rss_kib": 305184,
+      "current_rss_sample_max_kib": 114976,
+      "children_peak_rss_sample_max_kib": 305184,
+      "all_cgroup_fields_unavailable": true
+    },
+    "android_exit_history": {
+      "record_count": 8,
+      "low_memory_records": 3,
+      "reason_3_records": 3,
+      "reason_10_records": 5,
+      "all_records_predate_current_native_session": true
+    }
+  },
+  "historical_only": {
+    "attempts": [
+      {
+        "history_index": 0,
+        "version_code": 4,
+        "phase": "stopped",
+        "failure_code": "SERVER_ADMISSION_FAILED",
+        "ready": false,
+        "guest_exit_code": -1,
+        "owned_process_alive": false,
+        "elapsed_ms": 8
+      },
+      {
+        "history_index": 1,
+        "version_code": 4,
+        "phase": "starting",
+        "failure_code": "",
+        "ready": false,
+        "guest_exit_code": -1,
+        "owned_process_alive": true,
+        "elapsed_ms": 5135
+      },
+      {
+        "history_index": 2,
+        "version_code": 4,
+        "phase": "failed",
+        "failure_code": "OWNED_DISPLAY_SOCKET_ALREADY_EXISTS",
+        "ready": false,
+        "guest_exit_code": 1,
+        "owned_process_alive": false,
+        "elapsed_ms": 15652,
+        "guest": {
+          "profile_preserved": true,
+          "cleanup_complete": true,
+          "cleanup": {
+            "postgres_graceful": true,
+            "wine_prefix_stopped": false,
+            "owned_processes_reaped": true
+          }
+        }
+      },
+      {
+        "history_index": 3,
+        "version_code": 5,
+        "phase": "stopped",
+        "failure_code": "",
+        "ready": false,
+        "guest_exit_code": 0,
+        "owned_process_alive": false,
+        "elapsed_ms": 920216,
+        "guest": {
+          "profile_preserved": true,
+          "cleanup_complete": true,
+          "cleanup": {
+            "postgres_graceful": true,
+            "wine_prefix_stopped": true,
+            "owned_processes_reaped": true,
+            "presentation_socket_removed": true
+          }
+        }
+      }
+    ],
+    "previous_guest_version_code": 5,
+    "previous_guest_cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true,
+      "presentation_socket_removed": true
+    },
+    "previous_guest_profile_preserved": true,
+    "previous_guest_preparation_seconds": {
+      "base_schema_and_native_runtime": 0.145444,
+      "required_original_geometry": 0.946149,
+      "native_dependencies_and_manual_atlas": 0.258191,
+      "server_data_cache_checkout": 0.021762,
+      "cold_server_data_mirror": 438.672194,
+      "cold_server_data_receipt_seal": 2.085772,
+      "prepared_server_definition_caches": 4.305548,
+      "server_fx_catalog": 0.395594,
+      "server_animation_pack": 2.724486,
+      "atlas_beacon_graph": 67.560703
+    }
+  },
+  "not_established": {
+    "full_groups_tail_parsed": false,
+    "entity_replication": false,
+    "server_authoritative_spawn_or_render": false,
+    "encrypted_authserver_login": false,
+    "current_boot_warm_cache_classification": false,
+    "current_server_graceful_stop": false,
+    "new_physical_controller_motion": false,
+    "held_input_return_case": false,
+    "same_launcher_pid_task_or_fresh_reopen": false
+  }
+}
