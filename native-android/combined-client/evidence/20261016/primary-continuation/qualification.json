@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "runtime_commit": "f7e53e401567f89ac219bb7bfef3b2b603c1df62",
+  "runtime_tree": "9754ae85a286ea5f8451a7085cac71d82e6755e4",
+  "recovery_diagnostics_commit": "17e8560f4bfde6abefe4a204472bb367fa9b81ad",
+  "local_integration_commit": "0792b04a42",
+  "worker_commits": {
+    "scene": "e5c8bfcaf5eee9fff539d755112eaa31d0ba2597",
+    "entities": "4d666875b9",
+    "auth": "84474a6a3c",
+    "diagnostics": "0f55b331b2",
+    "qualification": [
+      "c51d762596",
+      "4477580d8c"
+    ]
+  },
+  "host_source_oracle_sanitizers_pass": true,
+  "android_arm64_build": true,
+  "android_x86_64_build": true,
+  "android13_x86_64_execution": true,
+  "android_contract_suites": 3,
+  "android_assertions": 258172,
+  "read_only_diagnostic_tests": 26,
+  "artifact_admission_tests": 10,
+  "workflow": 38850903152,
+  "portable_core_workflow": 38850903107,
+  "conflicts": [],
+  "existing_support_paths_changed": false,
+  "accepted_apks_rebuilt": false,
+  "physical_017_accepted": false,
+  "actual_imported_catalog_adapter": false,
+  "complete_entity_character_tails": false,
+  "real_account_login_verified": false,
+  "authoritative_native_world": false,
+  "gates25_27_complete": false
+}

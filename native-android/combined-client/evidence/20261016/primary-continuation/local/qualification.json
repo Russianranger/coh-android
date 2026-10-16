@@ -1,0 +1,415 @@
+{
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "android_executed": false,
+  "android_manifest_sha256": "121e7a0d84c385b72e8bf091c137d38df5597697f12497d86ce27ea2dfe0984d",
+  "clean_source_required": true,
+  "driver_sha256": "ca884dfd6d1d81209bec5961617ed2efed77315f572cd02069cae1ea75287e31",
+  "emulator_qualified": false,
+  "errors": {},
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "ndk_source_properties_sha256": "c00aa236fdb205e9be9edd9e2169763e48aca52735efff4e16f34205d49783b5",
+  "passed": true,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "results": {
+    "auth-interop": {
+      "android": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "test_auth_interop",
+          "binary_sha256": "e4887e4241247493c6e913182ee6d825cef84d073c4536ccd31823c21725efea",
+          "executed": false,
+          "passed": true,
+          "policy_only": true,
+          "real_account_login_verified": false,
+          "source_sha256": {
+            "engine/auth-interop/coh_auth_interop.c": "49511efd076bace8b31b8061e8584e5cdbddda098d6d6da9a723f55ce6df7399",
+            "engine/auth-interop/tests/test_auth_interop.c": "2ac8fe9607d32f8a131b4d64f64f82f330ed0a947bc792c8c8ed76afb38d1a05"
+          }
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "test_auth_interop",
+          "binary_sha256": "f8de181ad74bd23ca2c05475279bd26f7395a276fdcfa4f399ffd23c7cd5d0c1",
+          "executed": false,
+          "passed": true,
+          "policy_only": true,
+          "real_account_login_verified": false,
+          "source_sha256": {
+            "engine/auth-interop/coh_auth_interop.c": "49511efd076bace8b31b8061e8584e5cdbddda098d6d6da9a723f55ce6df7399",
+            "engine/auth-interop/tests/test_auth_interop.c": "2ac8fe9607d32f8a131b4d64f64f82f330ed0a947bc792c8c8ed76afb38d1a05"
+          }
+        }
+      },
+      "checks": {
+        "asan_ubsan": {
+          "checks": 2147,
+          "native_live_world": false,
+          "network_connections": 0,
+          "passed": true,
+          "policy_only": true,
+          "real_account_login_verified": false
+        },
+        "release": {
+          "checks": 2147,
+          "native_live_world": false,
+          "network_connections": 0,
+          "passed": true,
+          "policy_only": true,
+          "real_account_login_verified": false
+        }
+      },
+      "host_probe": {
+        "built": true,
+        "executed": true,
+        "execution_scope": "isolated TCP no-success lifecycle only",
+        "sha256": "18159aa5064fce8d2dcb700c4829f2941ef76a28857ac43137d6c871bbc9c577",
+        "source_sha256": {
+          "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+          "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+          "engine/dbclient/coh_db_session.c": "8d2b20a9a5ea26db2d97ccc8a20bcb512d3f747b53d47ec922dadda8c759d91c",
+          "engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+          "engine/live/coh_live.c": "21e5e2f2ede974e5d6df236254431dd474fbcf04a7ae6b6cd66596359cd479bb",
+          "engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+          "engine/mapclient/coh_mapclient.c": "89fdb30d76a1e74a946af9de166ddb34d24ebafd443bfddb171673b4282fb910",
+          "engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+          "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+          "engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+          "engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+          "engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+          "engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+          "engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+          "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+          "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+        }
+      },
+      "native_live_world": false,
+      "original_source_oracle": {
+        "checks": 26,
+        "original_auth_cache_binding": true,
+        "original_auth_cache_one_shot": true,
+        "passed": true,
+        "real_account_login_verified": false,
+        "synthetic_auth_cache_records": true,
+        "upstream_checksum_sizeof_pointer_defect_observed": true
+      },
+      "passed": true,
+      "physical_thor_accepted": false,
+      "probe_lifecycle": {
+        "auth_success_replies_sent": 0,
+        "checks": 23,
+        "credential_input_rejection_cases": 1,
+        "credentials_logged": false,
+        "passed": true,
+        "real_account_login_verified": false,
+        "real_tcp_lifecycle_cases": 2
+      },
+      "real_account_login_verified": false,
+      "sanitizers": "ASan+UBSan; LeakSanitizer not claimed",
+      "schema": "coh-auth-interop-qualification-v1",
+      "scope": "Strict encrypted deployment admission and redaction only; no network connections from tests.",
+      "source_pins_sha256": "4a2b636ca27720f48df26c9359517a808fc6f84a416289cff3b6b1c0b5c00f41",
+      "source_policy_verified": true,
+      "source_sha256": {
+        "engine/auth-interop/check.py": "41062a02db27b6dcaae56b0327672f8b0fedaa3ef1db445e0cbb42502c924a99",
+        "engine/auth-interop/coh_auth_interop.c": "49511efd076bace8b31b8061e8584e5cdbddda098d6d6da9a723f55ce6df7399",
+        "engine/auth-interop/coh_auth_interop.h": "a75ee62b3db2bca47f568b0d8733314794347e6876e773e7aeff0bbf1b29507e",
+        "engine/auth-interop/probe.c": "4946ae7d1821862b9a40b717bbc09879e2674313dd61f3672e97b09885b397f5",
+        "engine/auth-interop/probe_test.py": "2b99a8c038c5a316a54ac393d0508640f20595bed616ee22bb09aeac74667e64",
+        "engine/auth-interop/run.py": "aa0577de87e3838828c8e051d6234aa520aac91744f4ac847e06a43db22d9b75",
+        "engine/auth-interop/source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f",
+        "engine/auth-interop/tests/test_auth_interop.c": "2ac8fe9607d32f8a131b4d64f64f82f330ed0a947bc792c8c8ed76afb38d1a05"
+      }
+    },
+    "entities": {
+      "android": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "coh_entities_test",
+          "binary_sha256": "4e298dbda7052ac865692785afe22d73e464b89a71696fb4e2e3e48b3c187c44",
+          "executed": false,
+          "fixtures_sha256": "ee4e80f3d3f42c81009b92b8e2ba46b6614aed8134312e929acc985ca5b0857d",
+          "passed": true,
+          "source_sha256": {
+            "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+            "native-android/engine/entities/check.py": "6b904ff2abaa7495458cf68291d443fbefab915fb362817cf5240c73d16e7f93",
+            "native-android/engine/entities/coh_entities.c": "670269c11e0821879c367ea249f3d7768ec17da473014494039767675c9421f9",
+            "native-android/engine/entities/coh_entities.h": "d5d5d89cafb497abf71a7a297c177a648cf2adc9a14a538fbed702ed6a5fc050",
+            "native-android/engine/entities/oracle_shim.h": "598e3e47ba77bd8d628f6929bdf92d1f663c957d877823e00471c742335a557f",
+            "native-android/engine/entities/source-pins.json": "9a8baca4a54fe42a2e4b1036733dfc683a307333617cd0644308b0e5a70b9319",
+            "native-android/engine/entities/test_entities.c": "ceef289dd03f1ebea03ea3ed4136a140ce6bcf6097d0f7bebaf060f9b70da6a5",
+            "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+            "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+            "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+          }
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "coh_entities_test",
+          "binary_sha256": "0ddf50a991a1233e3f8470e6a63dfadd64e90c680a85762291c5bf4a0e327ea4",
+          "executed": false,
+          "fixtures_sha256": "ee4e80f3d3f42c81009b92b8e2ba46b6614aed8134312e929acc985ca5b0857d",
+          "passed": true,
+          "source_sha256": {
+            "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+            "native-android/engine/entities/check.py": "6b904ff2abaa7495458cf68291d443fbefab915fb362817cf5240c73d16e7f93",
+            "native-android/engine/entities/coh_entities.c": "670269c11e0821879c367ea249f3d7768ec17da473014494039767675c9421f9",
+            "native-android/engine/entities/coh_entities.h": "d5d5d89cafb497abf71a7a297c177a648cf2adc9a14a538fbed702ed6a5fc050",
+            "native-android/engine/entities/oracle_shim.h": "598e3e47ba77bd8d628f6929bdf92d1f663c957d877823e00471c742335a557f",
+            "native-android/engine/entities/source-pins.json": "9a8baca4a54fe42a2e4b1036733dfc683a307333617cd0644308b0e5a70b9319",
+            "native-android/engine/entities/test_entities.c": "ceef289dd03f1ebea03ea3ed4136a140ce6bcf6097d0f7bebaf060f9b70da6a5",
+            "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+            "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+            "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+          }
+        }
+      },
+      "checks": {
+        "asan": {
+          "checks": 241241,
+          "every_bit_truncations": 14543,
+          "full_update_accepted": false,
+          "passed": true,
+          "randomized_cases": 20000,
+          "render_spawn": false
+        },
+        "release": {
+          "checks": 241241,
+          "every_bit_truncations": 14543,
+          "full_update_accepted": false,
+          "passed": true,
+          "randomized_cases": 20000,
+          "render_spawn": false
+        },
+        "ubsan": {
+          "checks": 241241,
+          "every_bit_truncations": 14543,
+          "full_update_accepted": false,
+          "passed": true,
+          "randomized_cases": 20000,
+          "render_spawn": false
+        }
+      },
+      "emulator_qualified": false,
+      "fixtures": 70,
+      "fixtures_sha256": "ee4e80f3d3f42c81009b92b8e2ba46b6614aed8134312e929acc985ca5b0857d",
+      "full_update_tail_supported": false,
+      "original_functions": [
+        "initBitStream",
+        "bsWriteBits",
+        "bsWriteBitsPack",
+        "bsReadBits",
+        "bsAlignByte",
+        "bsGetCursorBitPosition",
+        "bsWriteString",
+        "pktSendIfSetBitsPack",
+        "pktSendIfSetBits",
+        "pktGetIfSetBits",
+        "pktSendIfSetString",
+        "pktSendBitsAuto",
+        "entSendPetInfo",
+        "entSendCreate",
+        "entSendPosUpdate",
+        "entSendQrotUpdate",
+        "entSendModes",
+        "entSendSeqTriggeredMoves",
+        "entSendAiAnimList",
+        "entSendDeletes",
+        "unpackQuatElem",
+        "quatCalcWFromXYZ",
+        "quatNormalize",
+        "entGetOrientation"
+      ],
+      "passed": true,
+      "real_server_interoperability": false,
+      "renderable_authoritative_actor": false,
+      "schema": 1,
+      "scope": "original create/pose/quaternion/modes/trigger/AI/delete functions; bounded independent staged entity records; synthetic fixtures only",
+      "source_files": 14,
+      "source_sha256": {
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/entities/check.py": "6b904ff2abaa7495458cf68291d443fbefab915fb362817cf5240c73d16e7f93",
+        "native-android/engine/entities/coh_entities.c": "670269c11e0821879c367ea249f3d7768ec17da473014494039767675c9421f9",
+        "native-android/engine/entities/coh_entities.h": "d5d5d89cafb497abf71a7a297c177a648cf2adc9a14a538fbed702ed6a5fc050",
+        "native-android/engine/entities/oracle_shim.h": "598e3e47ba77bd8d628f6929bdf92d1f663c957d877823e00471c742335a557f",
+        "native-android/engine/entities/source-pins.json": "9a8baca4a54fe42a2e4b1036733dfc683a307333617cd0644308b0e5a70b9319",
+        "native-android/engine/entities/test_entities.c": "ceef289dd03f1ebea03ea3ed4136a140ce6bcf6097d0f7bebaf060f9b70da6a5",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+      },
+      "thor_accepted": false
+    },
+    "public-crypto-oracle": {
+      "actual_server_interoperability_verified": false,
+      "android_arm64_portable_object_built": false,
+      "android_crypto_provider_available": false,
+      "credential_derivation_source_oracle_cases": 80,
+      "dh_python_pow_oracle_cases": 64,
+      "emulator_qualified": false,
+      "global_auth_source_frame_cases": 140,
+      "host_crypto_provider": "OpenSSL3",
+      "leak_sanitizer_enabled": false,
+      "leak_sanitizer_limitation": "Execution environment blocks /proc task inspection; ASan address and UBSan remain enabled.",
+      "native_tests": {
+        "authenticated_server_session": false,
+        "checks": 1920,
+        "malformed_inputs": 10000
+      },
+      "physical_thor_accepted": false,
+      "sanitize": true,
+      "source_dh_der_exact": true,
+      "source_pins_sha256": "263ad05c0db3b07997b08c4a0f8b879e78e51d5593d4f65aa1a4d273d184f3e8",
+      "status": "PASS"
+    },
+    "scenegraph": {
+      "android_builds": [
+        {
+          "abi": "arm64-v8a",
+          "binary": "coh_scenegraph_test",
+          "binary_sha256": "c9064313a37fad0fc8eeadfcd5f4fd4d31d3a812082da57f3fa2a3ba004c19ad",
+          "execution_qualified": false,
+          "fixtures_sha256": "623129c591df565d9aff49e39a3d3905d7d694c1f6d8bacb24e1f50700471391",
+          "passed": true,
+          "source_sha256": {
+            "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+            "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+            "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+            "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+            "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+            "native-android/engine/scenegraph/check.py": "75533549dc5efa8f394709e21a502475dd490582fe89dde759fd7059d4d5276a",
+            "native-android/engine/scenegraph/coh_scenegraph.c": "d39ded34576a4ac53063871b550b00260dbad0abf24a3eaa8ffcb548008dae01",
+            "native-android/engine/scenegraph/coh_scenegraph.h": "97ba09419202261b91657a11d9bbbce8399348f21863fa5b08dc4576d1d0497c",
+            "native-android/engine/scenegraph/tests/test_scenegraph.c": "5828e2926d442b4ddafe28ebe2dd57891764504f96461622af8f0ce8599b6a16"
+          }
+        },
+        {
+          "abi": "x86_64",
+          "binary": "coh_scenegraph_test",
+          "binary_sha256": "40699e547cae4272fd1f28fab5bae1ec53607ae7bae863a8170b7e2121f327df",
+          "execution_qualified": false,
+          "fixtures_sha256": "623129c591df565d9aff49e39a3d3905d7d694c1f6d8bacb24e1f50700471391",
+          "passed": true,
+          "source_sha256": {
+            "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+            "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+            "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+            "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+            "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+            "native-android/engine/scenegraph/check.py": "75533549dc5efa8f394709e21a502475dd490582fe89dde759fd7059d4d5276a",
+            "native-android/engine/scenegraph/coh_scenegraph.c": "d39ded34576a4ac53063871b550b00260dbad0abf24a3eaa8ffcb548008dae01",
+            "native-android/engine/scenegraph/coh_scenegraph.h": "97ba09419202261b91657a11d9bbbce8399348f21863fa5b08dc4576d1d0497c",
+            "native-android/engine/scenegraph/tests/test_scenegraph.c": "5828e2926d442b4ddafe28ebe2dd57891764504f96461622af8f0ce8599b6a16"
+          }
+        }
+      ],
+      "checks": {
+        "asan": {
+          "allocation_failure_points": 26,
+          "checks": 14784,
+          "live_world": false,
+          "passed": true,
+          "source_fixtures_accepted": 44,
+          "source_fixtures_rejected": 8
+        },
+        "release": {
+          "allocation_failure_points": 26,
+          "checks": 14784,
+          "live_world": false,
+          "passed": true,
+          "source_fixtures_accepted": 44,
+          "source_fixtures_rejected": 8
+        },
+        "ubsan": {
+          "allocation_failure_points": 26,
+          "checks": 14784,
+          "live_world": false,
+          "passed": true,
+          "source_fixtures_accepted": 44,
+          "source_fixtures_rejected": 8
+        }
+      },
+      "fixtures": 52,
+      "fixtures_sha256": "623129c591df565d9aff49e39a3d3905d7d694c1f6d8bacb24e1f50700471391",
+      "leak_sanitizer": false,
+      "leak_sanitizer_reason": "host ptrace environment denies /proc thread enumeration; every module allocation is independently wrapped/counted and failures injected",
+      "passed": true,
+      "real_import_adapter": false,
+      "real_server_capture": false,
+      "renderer_authorized": false,
+      "schema": 1,
+      "scope": "owned transactional GROUPS topology; pinned synthetic original producers and supplied fixture catalogs, not imported live world",
+      "source_oracle": {
+        "authentic_server_interoperability": false,
+        "authenticated_session": false,
+        "authoritative_spawn": false,
+        "checksum_adapter": "zlib Adler32 with source Crypto++ digest-byte order; original groupInfoCrcDefs/Refs/RefCount executed",
+        "compression_helpers": "unchanged pktSetCompression, pktSetByteAlignment and bsSetByteAlignment; trusted packet factory supplies controlled compressionDefault0/1 before any writes",
+        "fixtures": 44,
+        "fixtures_sha256": "9aed9a199ed1854638d635055a62d7334770d2d55584a9092b9fd18b4905e49a",
+        "graph_extension_sha256": "ab3056cf0cb5fac51441d0b49b3ec6c39e7d41224383b19181d5c569c89ce815",
+        "graph_fixture_header_sha256": "623129c591df565d9aff49e39a3d3905d7d694c1f6d8bacb24e1f50700471391",
+        "large_fixture": {
+          "expected": {
+            "children": 384,
+            "defs": 192,
+            "files": 1,
+            "footer_active_roots": 4,
+            "footer_defs_crc": 1837505798,
+            "footer_file_count": 1,
+            "footer_refs_crc": 154190089,
+            "max_def_id": 191,
+            "max_root_id": 3,
+            "new_world": 1,
+            "packed_matrices": 194,
+            "present_files": 1,
+            "properties": 384,
+            "raw_matrices": 194,
+            "removed_defs": 0,
+            "removed_roots": 0,
+            "roots": 4,
+            "swaps": 384
+          },
+          "name": "large_world_byte_aligned",
+          "payload_bits": 1118352,
+          "payload_bytes": 139794,
+          "sha256": "7bef42694975fa322319de16ef7d9c8c3328fd2e5173bec822a1fca4b21531fc"
+        },
+        "original_harness_sha256": "265ec1a45f255df334adae872ab82a56f1da92a7d35b0f069a82d0517d8054af",
+        "original_producer_sanitized": false,
+        "packed_full_updates": 0,
+        "passed": true,
+        "resolved_asset_graph": false,
+        "schema": 1,
+        "scope": "deterministic trusted original-source producer execution; no server capture/login/world acceptance",
+        "source_files": 16,
+        "source_functions": 41,
+        "source_pin_sha256": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+        "success_fixtures": 40,
+        "unsupported_base_fixtures": 4
+      },
+      "source_sha256": {
+        "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+        "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+        "native-android/engine/scenegraph/check.py": "75533549dc5efa8f394709e21a502475dd490582fe89dde759fd7059d4d5276a",
+        "native-android/engine/scenegraph/coh_scenegraph.c": "d39ded34576a4ac53063871b550b00260dbad0abf24a3eaa8ffcb548008dae01",
+        "native-android/engine/scenegraph/coh_scenegraph.h": "97ba09419202261b91657a11d9bbbce8399348f21863fa5b08dc4576d1d0497c",
+        "native-android/engine/scenegraph/tests/test_scenegraph.c": "5828e2926d442b4ddafe28ebe2dd57891764504f96461622af8f0ce8599b6a16"
+      },
+      "thor_accepted": false
+    }
+  },
+  "sanitizers_requested": true,
+  "schema": "coh-primary-continuation-qualification-v1",
+  "scope": "Additive bounded scene graph, entity records and authentication admission contracts",
+  "source_git_status_porcelain": [],
+  "source_git_status_porcelain_end": [],
+  "source_revision": "0792b04a42fd6cdce1f2323992bc8c6c3f46815c",
+  "source_revision_end": "0792b04a42fd6cdce1f2323992bc8c6c3f46815c",
+  "source_worktree_dirty": false
+}

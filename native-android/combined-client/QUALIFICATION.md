@@ -1,3 +1,20 @@
+# Primary protocol continuation — October 16, 2026
+
+Published source `f7e53e401567f89ac219bb7bfef3b2b603c1df62` adds isolated owned
+scene topology, bounded entity staging and a strict encrypted-auth deployment
+probe. [Continuation handoff and exact evidence](evidence/20261016/primary-continuation/HANDOFF.md)
+records recovery, scope, limitations and next steps. Source-oracle/sanitizer host
+checks, both native Android ABI builds and three Android 13 standalone contract
+suites pass in [38850903152](https://github.com/Russianranger/coh-android/actions/runs/38850903152).
+The current real imported-file adapter, complete entity/character tails and
+live renderer integration remain incomplete; no READY or character ACK is added.
+Real AuthServer deployment/account qualification remains blocked.
+
+**The delivery APK is still the exact existing Combined 0.1.7 below.** Its code
+and native libraries were not rebuilt or changed. Its physical Thor acceptance
+is still pending; accepted 0.1.6 and gates 1–24 remain preserved. New standalone
+module tests do not establish an authenticated or server-authoritative world.
+
 # Combined server/native client — October 16, 2026
 
 ## Complete normal-world scene structure 0.1.7

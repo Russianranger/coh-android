@@ -8,7 +8,6 @@
   "process_scope": "Accessible process table and /proc only; does not establish past execution or inaccessible sessions",
   "physical_017_report_found": false,
   "latest_combined_report": {
-    "library_file_id": "libfile_27055bf23c348191ab6aa174f402d7d8",
     "filename": "COH-NativeCombined-20261015-200934.json",
     "version": "0.1.6-local-server-native"
   },

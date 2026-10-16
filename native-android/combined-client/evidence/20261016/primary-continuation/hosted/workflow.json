@@ -1,0 +1,23 @@
+{
+  "run_id": 38850903152,
+  "head_sha": "f7e53e401567f89ac219bb7bfef3b2b603c1df62",
+  "status": "completed",
+  "conclusion": "success",
+  "updated_at": "2026-10-16T04:33:39Z",
+  "artifacts": [
+    {
+      "id": 12025471703,
+      "name": "native-primary-continuation-android13-execution",
+      "size_in_bytes": 4566,
+      "digest": "sha256:521f3be1d951145925111a3871724f112364e935f569375c23e06a94c05ada13",
+      "expired": false
+    },
+    {
+      "id": 12024902863,
+      "name": "native-primary-continuation-host-arm64-x86_64",
+      "size_in_bytes": 717858,
+      "digest": "sha256:2096ce8a8100bab9dcf5bf2e6a94c37b45dd5357298b383a80efe0248c126071",
+      "expired": false
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "reviewed_modules": [
+    "scenegraph",
+    "entities",
+    "auth-interop",
+    "continuation",
+    "read-only-startup-diagnostics"
+  ],
+  "blocking_findings_fixed": [
+    "Property value capacity mismatch",
+    "New-world prefix/file-zero identity binding",
+    "Distinct entity slot and generation bounds",
+    "Typed-stage diagnostic refusal and decompression errors",
+    "External peer provenance remains unknown",
+    "Private stdin enforced; terminal error phase preserved"
+  ],
+  "source_scope": "Independent inspection against pinned original producers/consumers; complete appearance/character-tail, importer and renderer adapters remain absent",
+  "standalone_scene_entity_render_permission": false,
+  "allents_character_tail_supported": false,
+  "application_acknowledgments_added": false,
+  "support_paths_changed": false,
+  "actual_thor_execution": false
+}

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "apks": [
+    {
+      "version": "0.1.7",
+      "filename": "CoH-Native-Combined-0.1.7-arm64.apk",
+      "bytes": 11536171,
+      "sha256": "58c45d44501373309788d70e2483786e412d9b0593e86ba1bae94140a8147475",
+      "native_libraries_sha256": {
+        "lib/arm64-v8a/libcoh_combined_network.so": "d9ac8b4c5839a2eaddbe82836ab33f73e81aec76c366d34b9d84fbfe4a5375ac",
+        "lib/arm64-v8a/libcoh_session_client.so": "5362ae64938a46e9685e2a51c259b368e88f070dde9b962245b066b4f461b4c8",
+        "lib/arm64-v8a/libproot-loader.so": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c",
+        "lib/arm64-v8a/libproot.so": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+      },
+      "zip_crc_valid": true,
+      "rebuilt": false
+    },
+    {
+      "version": "0.1.6",
+      "filename": "CoH-Native-Combined-0.1.6-arm64.apk",
+      "bytes": 11532139,
+      "sha256": "c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d",
+      "native_libraries_sha256": {
+        "lib/arm64-v8a/libcoh_combined_network.so": "729fcbade77e4f30ebeaa941c326b2909975961e05e14b70f7450dac53abdd9c",
+        "lib/arm64-v8a/libcoh_session_client.so": "5362ae64938a46e9685e2a51c259b368e88f070dde9b962245b066b4f461b4c8",
+        "lib/arm64-v8a/libproot-loader.so": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c",
+        "lib/arm64-v8a/libproot.so": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+      },
+      "zip_crc_valid": true,
+      "rebuilt": false
+    }
+  ]
+}

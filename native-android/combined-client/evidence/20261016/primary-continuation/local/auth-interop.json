@@ -1,0 +1,109 @@
+{
+  "schema": "coh-auth-interop-qualification-v1",
+  "passed": true,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 2147,
+      "policy_only": true,
+      "network_connections": 0,
+      "real_account_login_verified": false,
+      "native_live_world": false
+    },
+    "asan_ubsan": {
+      "passed": true,
+      "checks": 2147,
+      "policy_only": true,
+      "network_connections": 0,
+      "real_account_login_verified": false,
+      "native_live_world": false
+    }
+  },
+  "android": {
+    "arm64-v8a": {
+      "passed": true,
+      "abi": "arm64-v8a",
+      "binary": "test_auth_interop",
+      "binary_sha256": "e4887e4241247493c6e913182ee6d825cef84d073c4536ccd31823c21725efea",
+      "executed": false,
+      "policy_only": true,
+      "real_account_login_verified": false,
+      "source_sha256": {
+        "engine/auth-interop/coh_auth_interop.c": "49511efd076bace8b31b8061e8584e5cdbddda098d6d6da9a723f55ce6df7399",
+        "engine/auth-interop/tests/test_auth_interop.c": "2ac8fe9607d32f8a131b4d64f64f82f330ed0a947bc792c8c8ed76afb38d1a05"
+      }
+    },
+    "x86_64": {
+      "passed": true,
+      "abi": "x86_64",
+      "binary": "test_auth_interop",
+      "binary_sha256": "f8de181ad74bd23ca2c05475279bd26f7395a276fdcfa4f399ffd23c7cd5d0c1",
+      "executed": false,
+      "policy_only": true,
+      "real_account_login_verified": false,
+      "source_sha256": {
+        "engine/auth-interop/coh_auth_interop.c": "49511efd076bace8b31b8061e8584e5cdbddda098d6d6da9a723f55ce6df7399",
+        "engine/auth-interop/tests/test_auth_interop.c": "2ac8fe9607d32f8a131b4d64f64f82f330ed0a947bc792c8c8ed76afb38d1a05"
+      }
+    }
+  },
+  "source_policy_verified": true,
+  "source_pins_sha256": "4a2b636ca27720f48df26c9359517a808fc6f84a416289cff3b6b1c0b5c00f41",
+  "real_account_login_verified": false,
+  "native_live_world": false,
+  "physical_thor_accepted": false,
+  "scope": "Strict encrypted deployment admission and redaction only; no network connections from tests.",
+  "original_source_oracle": {
+    "passed": true,
+    "checks": 26,
+    "synthetic_auth_cache_records": true,
+    "original_auth_cache_binding": true,
+    "original_auth_cache_one_shot": true,
+    "upstream_checksum_sizeof_pointer_defect_observed": true,
+    "real_account_login_verified": false
+  },
+  "probe_lifecycle": {
+    "passed": true,
+    "checks": 23,
+    "real_tcp_lifecycle_cases": 2,
+    "credential_input_rejection_cases": 1,
+    "auth_success_replies_sent": 0,
+    "real_account_login_verified": false,
+    "credentials_logged": false
+  },
+  "host_probe": {
+    "built": true,
+    "sha256": "18159aa5064fce8d2dcb700c4829f2941ef76a28857ac43137d6c871bbc9c577",
+    "executed": true,
+    "execution_scope": "isolated TCP no-success lifecycle only",
+    "source_sha256": {
+      "engine/live/coh_live.c": "21e5e2f2ede974e5d6df236254431dd474fbcf04a7ae6b6cd66596359cd479bb",
+      "engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+      "engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+      "engine/dbclient/coh_db_session.c": "8d2b20a9a5ea26db2d97ccc8a20bcb512d3f747b53d47ec922dadda8c759d91c",
+      "engine/mapclient/coh_mapclient.c": "89fdb30d76a1e74a946af9de166ddb34d24ebafd443bfddb171673b4282fb910",
+      "engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+      "engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+      "engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+      "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+      "engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+      "engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+      "engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+      "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+      "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+      "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+      "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+    }
+  },
+  "source_sha256": {
+    "engine/auth-interop/coh_auth_interop.c": "49511efd076bace8b31b8061e8584e5cdbddda098d6d6da9a723f55ce6df7399",
+    "engine/auth-interop/tests/test_auth_interop.c": "2ac8fe9607d32f8a131b4d64f64f82f330ed0a947bc792c8c8ed76afb38d1a05",
+    "engine/auth-interop/coh_auth_interop.h": "a75ee62b3db2bca47f568b0d8733314794347e6876e773e7aeff0bbf1b29507e",
+    "engine/auth-interop/probe.c": "4946ae7d1821862b9a40b717bbc09879e2674313dd61f3672e97b09885b397f5",
+    "engine/auth-interop/check.py": "41062a02db27b6dcaae56b0327672f8b0fedaa3ef1db445e0cbb42502c924a99",
+    "engine/auth-interop/source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f",
+    "engine/auth-interop/probe_test.py": "2b99a8c038c5a316a54ac393d0508640f20595bed616ee22bb09aeac74667e64",
+    "engine/auth-interop/run.py": "aa0577de87e3838828c8e051d6234aa520aac91744f4ac847e06a43db22d9b75"
+  },
+  "sanitizers": "ASan+UBSan; LeakSanitizer not claimed"
+}

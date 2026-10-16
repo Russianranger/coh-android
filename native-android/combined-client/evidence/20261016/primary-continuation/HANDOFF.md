@@ -70,6 +70,118 @@ commit title's “Thor acceptance” refers to 0.1.6, not 0.1.7.
 
 ## Continuation implementation and qualification
 
-This section is finalized after the independent module review and qualification.
-No new gate acceptance, production world, real authentication or replacement APK
-is implied by the in-progress development directories.
+Published protocol implementation: `f7e53e401567f89ac219bb7bfef3b2b603c1df62`,
+source tree `9754ae85a286ea5f8451a7085cac71d82e6755e4`. The local integrated
+source `0792b04a42` has the exact same tree. Recovery/read-only diagnostics were
+published separately as `17e8560f4bfde6abefe4a204472bb367fa9b81ad` with CI skipped;
+this avoids rebuilding the unchanged Combined package for evidence-only changes.
+The protocol commit triggers only its isolated continuation workflow and portable
+core checks. No Support Client path or workflow was modified or interrupted.
+
+| Workstream | Implemented now | Qualification and remaining boundary |
+| --- | --- | --- |
+| A: scene graph | Bounded owned topology after GROUPS inspection; original file/catalog identity, saved-library omissions, forward names, definition/root removals, transforms, explicit geometry/texture identities, CRCs, generation/ownership and transactional allocation failure | 52 pinned original-producer fixtures; 44 accepted, eight intentionally rejected. Release/ASan/UBSan each 14,784 checks, including 26 allocation failures. Needs actual imported Ouroboros catalog and complete material/render semantics; fixture catalogs are not real imported assets. |
+| B: entity/character | Sparse indices, create/self-DBID checks, position/orientation, supported state/sequence records, atomic deletes/tombstones and stale ordering | 70 fixtures, 24 unchanged original functions and 14 source pins; 241,241 checks per release/ASan/UBSan, 14,543 bit truncations and 20,000 random cases. Source sub-producers and manual negative fixtures are distinguished. Appearance dictionaries, character stats, global ownership and full UPDATE/ALLENTS tails remain unsupported. No whole-message or actor publication. |
+| C: encrypted AuthServer | Strict deployment profile and real-module Auth→DB→Map probe; endpoint approval, fixed encrypted profile, version/checksum admission, private credential pipe and redacted diagnostics | 2,147 optimized and sanitized policy checks, 26 original auth-cache/checksum oracle checks, 23 fully linked sanitized TCP cancellation/timeout/input checks. Those peers send no authentication success. Real deployment/account login is unavailable, not accepted. |
+| D: startup/memory | Read-only bounded ZIP analyzer separates matching current and historical sessions, clocks, memory samples and cleanup evidence | 26 malformed/provenance/privacy tests. Actual readiness 392,192 ms; DB 69,787 ms, Atlas 280,303 ms (89.265% combined). Current cold/warm state unknown. No production runtime, persistence, checksum or cleanup changes. |
+
+The aggregate local source/oracle/sanitizer gate passed all four suites, both
+Android ABI executable builds and the linked auth probe lifecycle test. Ten
+receipt-admission tests pass. Exact local receipts and executable hashes are
+retained under [local/](local/). Android builds are standalone contracts, not
+new APKs or actual ARM64 server execution. Physical acceptance is never inferred.
+LeakSanitizer cannot enumerate this host's threads; scene allocation wrappers
+independently check ownership and every tested failure cleanup.
+
+[Hosted continuation workflow](https://github.com/Russianranger/coh-android/actions/runs/38850903152)
+and [portable core](https://github.com/Russianranger/coh-android/actions/runs/38850903107)
+both passed. Hosted ARM64/x86_64 builds, sanitized source-oracle suites and all
+three actual Android 13 x86_64 contracts passed. The 258,172 aggregate Android
+checks exactly match host results. Downloaded host/execution ZIP hashes and CRCs,
+fixture/ELF/receipt hashes, recorded source inputs and Android cleanup were
+independently verified. See [Android receipt](hosted/android13-receipt.json) and
+[artifact review](hosted/independent-artifact-review.json). The exact hosted
+native hashes are kept separately from local compiler output hashes; no ARM64
+physical execution or Combined app qualification is inferred from these tests.
+
+Independent review found and corrected a property-value capacity mismatch,
+missing new-world prefix/file-zero identity binding and conflated entity index/
+generation limits. It verified the resulting negative controls, noncommuting
+matrix tests, finite overflow and allocation rollback. No remaining blocking
+issue was found inside the explicitly staged/topology scope. This review does
+not qualify the absent importer, full entity tail or renderer integration.
+
+### Authentication deployment blocker and source finding
+
+No compatible authorized AuthServer endpoint/account or SQL Server/ODBC account
+schema exists in the recovered test environment. The local PostgreSQL/UseFakeAuth
+profile remains the working fallback. A real test deployment must match the
+source version/encryption policy, wire AuthServer to DbServer, provide its account
+schema and a disposable existing character. Credentials and session keys must
+stay out of reports. The new probe never promotes its counters to independent
+real-server acceptance.
+
+The original `clientCommLoginVerifyChecksum` compares `sizeof` a decayed pointer
+against a 16-byte array before checking bytes. The unchanged-function oracle
+reproduces return zero; the DbServer caller therefore does not set its checksum
+failure version string through that path. Separate patch-version and real-auth
+checks remain. This is a pinned source defect, not a claim about any deployed
+binary or an authentication bypass. Server code was not changed. A disposable
+real-auth deployment needs independently verified binary/version/checksum policy;
+a checksum repair belongs in a separately reviewed and qualified experiment.
+
+### Startup and memory evidence
+
+The current live export contains current stage boundaries but detailed guest
+preparation data from an older 0.1.4 session. The current helper writes its final
+guest report during cleanup, explaining that mismatch without assuming a cold
+cache. Export after normal Stop to collect the current finalized detail. The
+older 438.672-second cold mirror and 67.561-second beacon timings must not be
+assigned to 0.1.6.
+
+No sampled pressure-stop request was observed in this current run, but sparse
+self/reaped-child samples do not measure simultaneous whole-server peaks and do
+not identify earlier Android low-memory allocation causes. Retained child-output
+capacity merits measurement; the old completed inventory actually retained
+65,128 bytes across 36 processes, so no leak was established. Next safe work is
+matching-session stage/resource telemetry and cold/warm comparison. Any change
+to preparation, caching or memory behavior needs a separate measurable experiment.
+See [the full diagnostics findings](../../../diagnostics/continuation-20261016/README.md).
+
+## Integration, rollback and next authoritative world
+
+All integration is additive on `native-android`, using fresh fetch/path inspection,
+matching local/remote trees and expected-HEAD guarded non-force ref updates. No
+remote worker branches, resets or `main` changes were made. No integration
+conflicts remain at this checkpoint. Existing local worker commits/worktrees are
+preserved. [APK preservation](apk-preservation.json) records original APK/native
+library hashes; [source preservation](apk-source-preservation.json) verifies all
+109 checked compiler/application inputs still match qualified 0.1.7 source.
+
+There is **no new consolidated APK in this batch**. These modules remain outside
+Combined; a replacement APK would neither exercise them through a qualified live
+adapter nor remove the outstanding physical 0.1.7 test. Reuse the exact 0.1.7
+package above. Rollback is the unchanged accepted 0.1.6/0.1.7 package path plus an
+additive revert of the isolated protocol commit if required, after checking later
+dependencies. Never downgrade by clearing application storage or resetting data.
+
+To reach the first genuine native authoritative world:
+
+1. Receive and review physical 0.1.7 JSON/ZIP, including exact GROUPS consumed bits
+   and failure stage. Handle any real unsupported branch without bypassing it.
+2. Build a qualified adapter from the actual imported Ouroboros library/geometry/
+   material generation into the owned scene catalog. Resolve saved omissions and
+   complete renderer semantics; offline i24 support catalogs cannot establish
+   the runtime's original IDs/checksums.
+3. Complete appearance/data dictionaries, character statistics and every required
+   UPDATE/ALLENTS tail; bind selected DBID/self ownership and server position.
+   Commit the entire validated packet atomically, not independent record prefixes.
+4. Publish immutable scene/actor snapshots and send READY/RECEIVED_CHARACTER/full
+   update acknowledgments only after the full prerequisites pass. Integrate them
+   into Combined, source-oracle/sanitizer/build/Android qualify a new exact APK,
+   then prove actual server-supplied character rendering on Thor.
+5. Independently exercise the strict encrypted probe against the compatible
+   disposable AuthServer deployment and qualify DB list/selection/Map handoff.
+
+Gates 25–27 remain open. No live-world, complete character replication or real
+encrypted-authentication acceptance is claimed by this continuation.
