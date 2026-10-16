@@ -1,0 +1,69 @@
+{
+  "artifact_sha256": {
+    "README.md": "7754ed0a49296882d6326f0706d2e1903309346a8ba5377d695173bf09f81e00",
+    "analyze_startup.py": "a136aefdc0d9db35955aa870b0171191bb3d57321954d264528b5d856a115727",
+    "test_analyze_startup.py": "711037c637fed2ffd25098017bce2ae9ffc632d3dcf51f80f7798d59cbc4351d",
+    "thor-016-analysis.json": "344ddfa8670527f1617e16b4e293242cc90113353f1ae7b77fb5c54527e5a4f6"
+  },
+  "base_commit": "fbc1aa0718c9a6d02a32cd6e14cfdff560dadbbd",
+  "host_unittest": {
+    "command": "python3 -m unittest discover -s native-android/combined-client/diagnostics/continuation-20261016 -p 'test_*.py' -v",
+    "failed": 0,
+    "passed": 26
+  },
+  "physical_export_reanalysis": {
+    "accepted_numeric_record_matches": true,
+    "archive_bytes": 27108,
+    "archive_sha256": "f4b0d29988272e83b2582094649660841a9e5217152b26dd461106e832016f3f",
+    "current_atlas_stage_ms": 280303,
+    "current_cache_classification": "unknown",
+    "current_db_stage_ms": 69787,
+    "current_ready_ms": 392192,
+    "historical_cold_receipt_assigned_to_code": 5,
+    "new_physical_runtime_execution": false,
+    "read_only_input_hash_unchanged": true
+  },
+  "python_version": "3.12.14",
+  "recovered_donor_checks": {
+    "client_startup_diagnostic.py": {
+      "matches_recovered_donor_manifest": true,
+      "matches_repository": true,
+      "sha256": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53"
+    },
+    "diagnostic.py": {
+      "matches_recovered_donor_manifest": true,
+      "matches_repository": true,
+      "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+    },
+    "local_character_server.py": {
+      "matches_recovered_donor_manifest": true,
+      "matches_repository": true,
+      "sha256": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180"
+    },
+    "local_login_server.py": {
+      "matches_recovered_donor_manifest": true,
+      "matches_repository": true,
+      "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+    }
+  },
+  "schema": "coh-offline-startup-qualification-v1",
+  "scope": {
+    "android_test_required_for_offline_addition": false,
+    "historical_low_memory_cause_identified": false,
+    "new_apk_built": false,
+    "prior_apk_reused": true,
+    "production_source_changed": false,
+    "runtime_or_profile_mutated": false,
+    "whole_guest_peak_memory_measured": false
+  },
+  "source_sha256": {
+    "android/guest/client_startup_diagnostic.py": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53",
+    "android/guest/diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+    "android/guest/local_character_server.py": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180",
+    "android/guest/local_login_server.py": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/MainActivity.java": "24404056821761c550b83c0514410ac28704df88f27a0e9a2481cc7ca4427319",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerMemoryPolicy.java": "54e62b9ff65dffe30dfb564582bc4438eecf3cc4102f33bc823193eb33501f3a",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerService.java": "1b29d95018a3e29fbae3771e7951d54d19aa1aa70affe9f33b166ed191308d8b",
+    "native-android/combined-client/runtime/server_runtime.py": "36d4853bfd696254a326f8fd6b9595b1dbac3a9c761808b2a9654ceae91b5895"
+  }
+}

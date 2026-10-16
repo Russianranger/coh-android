@@ -1,0 +1,26 @@
+{
+  "checked_at_utc": "2026-10-16",
+  "in_progress": {
+    "total_count": 0,
+    "runs": []
+  },
+  "queued": {
+    "total_count": 0,
+    "runs": []
+  },
+  "original_package_run": {
+    "id": 38836479975,
+    "status": "completed",
+    "conclusion": "failure",
+    "sha": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+    "updated": "2026-10-16T01:56:47Z"
+  },
+  "exact_package_qualification": {
+    "id": 38838677592,
+    "status": "completed",
+    "conclusion": "success",
+    "sha": "8e237b984c188dd19c171387914e795916712556",
+    "updated": "2026-10-16T02:13:29Z"
+  },
+  "note": "Original package job succeeded; original overall run failed on Android driver/framework. Exact existing packages later qualified successfully; no binary rebuild inferred."
+}

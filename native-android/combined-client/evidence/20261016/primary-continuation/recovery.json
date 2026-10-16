@@ -1,0 +1,306 @@
+{
+  "schema": 1,
+  "recovered_at_utc": "2026-10-16T04:15:55.856491+00:00",
+  "remote_head_at_recovery": "fbc1aa0718c9a6d02a32cd6e14cfdff560dadbbd",
+  "primary_stopping_commit": "27efb628d4d01bc5b63a8fb4d9d1996c7b1fbc8e",
+  "primary_stop": "Completed 0.1.7 qualification and handoff; no late unpublished 0.1.7 continuation found",
+  "active_stalled_build_observed": false,
+  "process_scope": "Accessible process table and /proc only; does not establish past execution or inaccessible sessions",
+  "physical_017_report_found": false,
+  "latest_combined_report": {
+    "library_file_id": "libfile_27055bf23c348191ab6aa174f402d7d8",
+    "filename": "COH-NativeCombined-20261015-200934.json",
+    "version": "0.1.6-local-server-native"
+  },
+  "prior_worktrees": [
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/coh-native",
+      "head": "27efb628d4d01bc5b63a8fb4d9d1996c7b1fbc8e",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/audit-combined-013-hosted",
+      "head": "a903bb9ffc01dd3f6336e367de2b1581820b5901",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-build",
+      "head": "b566c293a5bdbca750c9e22bc638c309b262e65c",
+      "status_porcelain": [
+        "?? native-android/combined-client/app/"
+      ]
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-immutable",
+      "head": "0b6abf77370d152462c3e9ba267f27f634d908c0",
+      "status_porcelain": [
+        "M native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportStore.java",
+        " M native-android/combined-client/app/src/main/java/org/coh/nativecombined/RuntimeSetup.java",
+        " M native-android/combined-client/imports/tests/check_imports.py"
+      ]
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-import",
+      "head": "44a6c2a12d87898b230ed7887526fb7484f07d2f",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-local",
+      "head": "57226043126a3c48dd7c314ec3839851fee04f43",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-native-view",
+      "head": "337ebeb7a73c5b2d1165ca41c8953b6ba1e324de",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-server",
+      "head": "44b688112ab62a7326c913121476e148f1c222f9",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/coh-012-requal-proof",
+      "head": "9afb33f33cd4c0ab2a10b86f0767b913e5431ea2",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/coh-camera-recovery",
+      "head": "f834e6cf02cb29d29f8f7c7c68100c25891c12ba",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/coh-memory-policy",
+      "head": "0b6abf77370d152462c3e9ba267f27f634d908c0",
+      "status_porcelain": [
+        "A  native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerMemoryPolicy.java",
+        "A  native-android/combined-client/qualification/check_server_memory.py"
+      ]
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-apk-report-identity-014",
+      "head": "cef74c5f09875b342d0b54486c29ae8a632b6cb4",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-client-protocol-013",
+      "head": "c6ad7e72f3589b453241f35c706cf227e29f7543",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-012",
+      "head": "0b6abf77370d152462c3e9ba267f27f634d908c0",
+      "status_porcelain": [
+        "M .github/workflows/native-combined-client.yml",
+        " M native-android/combined-client/README.md",
+        " M native-android/combined-client/THOR-TEST.md",
+        " M native-android/combined-client/app/build.gradle",
+        " M native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportStore.java",
+        " M native-android/combined-client/app/src/main/java/org/coh/nativecombined/MainActivity.java",
+        " M native-android/combined-client/app/src/main/java/org/coh/nativecombined/RuntimeSetup.java",
+        " M native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerService.java",
+        " M native-android/combined-client/imports/tests/check_imports.py",
+        " M native-android/combined-client/runtime/server_runtime.py",
+        " M native-android/combined-client/runtime/test_runtime.py",
+        " M native-android/combined-client/tools/emulator_check.py",
+        " M native-android/combined-client/tools/host_check.py",
+        "?? native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerMemoryPolicy.java",
+        "?? native-android/combined-client/qualification/check_server_memory.py"
+      ]
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-012-qualified",
+      "head": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+      "status_porcelain": [
+        "M native-android/combined-client/tools/driver_controls.py",
+        " M native-android/combined-client/tools/emulator_check.py"
+      ]
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-013",
+      "head": "84d957675e5315f6227148fd829082aab78b83cf",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-014",
+      "head": "8052b0edc2badc478ca492f38383e5d91ef8f2f5",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-driver-013",
+      "head": "4c89c343554416ddb179742ed522bb8fbac0dbe7",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-driver-014",
+      "head": "a8436a3ce94bbed7c5912d83f58c3a69d8e48e81",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-display-restart-014",
+      "head": "34883c171c90f2a1360eff5e92acefcbf9019529",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-server-memory",
+      "head": "0b6abf77370d152462c3e9ba267f27f634d908c0",
+      "status_porcelain": [
+        "M native-android/combined-client/runtime/server_runtime.py",
+        " M native-android/combined-client/runtime/test_runtime.py"
+      ]
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-server-runtime",
+      "head": "e279f6c352328844eb7cc86fd8be8c68dc51c8bc",
+      "status_porcelain": [
+        "M native-android/combined-client/runtime/check.py",
+        " M native-android/combined-client/runtime/server_runtime.py",
+        " M native-android/combined-client/runtime/test_runtime.py"
+      ]
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-build-017",
+      "head": "15c12d5dda4af0fb964fd710fc7d4731f74a4365",
+      "status_porcelain": [],
+      "worker_changed_paths_compared": 55,
+      "different_from_current_remote": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-decoder-017",
+      "head": "dbf451253e639fa1e73940f86dc1b13570407d3a",
+      "status_porcelain": [],
+      "worker_changed_paths_compared": 12,
+      "different_from_current_remote": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-map-017",
+      "head": "edd582d7f98d5b04eeee7ab7542fd90cee72eb5f",
+      "status_porcelain": [],
+      "worker_changed_paths_compared": 22,
+      "different_from_current_remote": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-oracle-017",
+      "head": "dd318faf914614ca60ba170e38d0cb980245dd36",
+      "status_porcelain": [],
+      "worker_changed_paths_compared": 6,
+      "different_from_current_remote": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-requalify-helper-017",
+      "head": "8478d89859e39cdabad556a22ba3aa21686c431d",
+      "status_porcelain": [],
+      "worker_changed_paths_compared": 2,
+      "different_from_current_remote": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-review-017",
+      "head": "4bbbddb8fe405cbbad5a170040c72407ba2ee92b",
+      "status_porcelain": [],
+      "worker_changed_paths_compared": 8,
+      "different_from_current_remote": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/return-launcher-build-015",
+      "head": "1d3f73170ae7f407cb371b9b37c3622bd2baff25",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/return-launcher-ui-015",
+      "head": "813112ec27d243fb4cc9c915cfeb79285aba63ca",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-build-016",
+      "head": "d810b7f04f173a456b08aeca3f4fa0d7256ebc73",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-map-016",
+      "head": "ca9678736d6537e7fa4aa03e55e5b5bc2283623d",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-replication-016",
+      "head": "b40250c3a060ee52195629e48b5b36f7e23ae9f2",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-review-record-016",
+      "head": "160566e62bfddb9fbf9373bd41eff711a00d7825",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-transport-016",
+      "head": "ce7a14ff353a3b63192e80926257185cfecf2938",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/session-boundary-016",
+      "head": "9474ddbef371b3dc89aab6dc349f590264173bb8",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/thor-evidence-013",
+      "head": "25b449fd5126ce5f530fef423215ec0b2e9ac8e8",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/thor-evidence-014",
+      "head": "498f18c81d01afa1c80bd5bb71120fec4ebdf606",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/thor-evidence-015",
+      "head": "8068f94ca696dcd0e31b91a687d297fdec4c8f93",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/thor-evidence-017",
+      "head": "c36ceb0867bc4e30cd3f5594a44c3eaa4d463e0f",
+      "status_porcelain": [],
+      "worker_changed_paths_compared": 2,
+      "different_from_current_remote": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/worker-crypto",
+      "head": "7d621abfcefd11f655aafb1bea3397dc4ef8612e",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/worker-db",
+      "head": "ae6b9924b8f8d4125e21f67450c235395831e2d2",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/worker-map",
+      "head": "3ef5aceb0c2dd28ed86ef5861206d301663cc900",
+      "status_porcelain": []
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/worker-server",
+      "head": "0dc6405f4e8aaa26f7879f334c14b96716d8b615",
+      "status_porcelain": [
+        "?? native-android/engine/dbclient/",
+        "?? native-android/engine/login/",
+        "?? native-android/engine/mapclient/"
+      ]
+    }
+  ],
+  "exact_artifacts": [
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-017-delivery/CoH-Native-Combined-0.1.7-arm64.apk",
+      "size_bytes": 11536171,
+      "sha256": "58c45d44501373309788d70e2483786e412d9b0593e86ba1bae94140a8147475",
+      "unchanged": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-016-delivery/CoH-Native-Combined-0.1.6-arm64.apk",
+      "size_bytes": 11532139,
+      "sha256": "c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d",
+      "unchanged": true
+    }
+  ],
+  "preservation": "All old trees, local commits, uncommitted changes and artifacts retained. No reset, checkout or cleanup in old trees.",
+  "unpublished_older_evidence": "worker-server/native-android/engine/dbclient/evidence/followup-host.json remains preserved locally; not treated as new 0.1.7 work."
+}
