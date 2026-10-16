@@ -89,7 +89,9 @@ Recovery commit `80896484a0`; core integration commit
 `b0626762fcd6c92399d288f4b483eba21e417a40`; later appearance integration is listed
 in the final commit ledger: runtime `f3fe45117109c65afc4acb742e7b77e253553295`,
 evidence `3770bca0abadb06942a434d8d8943d14379f5e3c` and documentation
-`14c9bbec36b4e45d7e36b9591400b1e27853f9a4`. Only A edited the application.
+`14c9bbec36b4e45d7e36b9591400b1e27853f9a4`. Driver-only reuse/orientation
+commit `469b8604a07480e2831cb1e3afd5e99250ab1963` preserves the compiled APK.
+Only A edited the application.
 
 The existing offline Wretch/Atlas WALK scene, authentic source font, Near/Far,
 health/endurance, targeting, powers, keyboard/chat, controller, music/ambient and
@@ -246,7 +248,34 @@ records the driver revision. Its reuse gate compares compiled source/header/Java
 manifest/build and generated-input dependencies against the original source and
 current checkout; APK/native/asset identity is checked without rebuilding.
 No old emulator reports or screenshots are copied into the new execution result.
-Final continuation status is recorded in `release.json`.
+[Exact-package continuation 38843336617](https://github.com/Russianranger/coh-android/actions/runs/38843336617)
+passed all **23 scenarios** with driver revision
+`c610cefbd55144238e88849bd54591c907561061`, preserving APK source `e89f20c…`.
+The two actual Male images passed pixel bounds and independent manual review in
+landscape and portrait. All 25 report identities and 42 absolute assertions were
+independently rechecked. Execution reached 1,644 frames and six contexts; the
+Male preview recorded 332 frames, 2,656 draws and two Surface uploads, with zero
+preview/native/graphics/support/export errors. Relative assertions remain bound
+to the original driver's immediate-before-action observations; they are not
+represented as independent reexecution.
+
+[Download Actions artifact 12022206631](https://github.com/Russianranger/coh-android/actions/runs/38843336617/artifacts/12022206631),
+15,696,164 bytes, ZIP SHA256
+`e5e5a9b1bbc71a89b1108d79c40be5128f62bb0c8fb5a20ccbc8d24cc1b9a75a`.
+It includes the unchanged signed ARM64 and x86_64 APKs, original build receipts,
+new detailed JSON diagnostics and screenshots. The previously qualified code200
+APK/receipts are preserved separately, unchanged.
+
+Across the final 160.8-second report window, RSS was **93.20–163.23 MiB** and PSS
+**25.12–79.22 MiB**. Fixed module/cache accounting remained constant. The emulator's
+mean frame measurement was **84.80 ms**; **1,588/1,642** samples exceeded 33.33 ms.
+This does not establish 30 FPS, leak freedom, sustained endurance or Adreno
+performance. Recorded stream-underrun frames were zero, but the maximum joined
+audio callback was **56.84 ms**. Running-state statistics retain prior stopped
+backend snapshots; platform xruns, continuous live callback deadlines and audible
+route quality are not qualified. Earlier 419-underrun/92.93-ms observations belong
+to the rejected first candidate and are not substituted for these results.
+Final identities, stage flags and scope are recorded in `release.json`.
 
 The earlier run 38839177252 passed counter checks but failed manual image review;
 its APK was rejected. The camera/preview correction is included in the current
@@ -259,6 +288,21 @@ reports/screenshots. Keep accepted Session and Combined applications and their
 data intact. A different installed Support signing key may prevent an in-place
 upgrade; report the installation error rather than clearing or uninstalling.
 
+## Qualification stages by workstream
+
+Implemented, source/host qualification, ARM64 compilation, emulator execution and
+physical acceptance are separate stages. No new full numbered gate is closed by
+this batch.
+
+| Worker | Source/host evidence | ARM64 | Android 13 emulator | Integration / limits |
+| --- | --- | --- | --- | --- |
+| A | App/source/lifecycle/JSON/controller checks and sanitizers | Signed package built | 23/23 scenarios; package/report verification | Code201 runtime; Thor pending |
+| B | Original geometry/selection/rig comparison; GLES and sanitizer checks | Linked into signed package | Landscape/portrait proof and manual review | One neutral custom Male; Female/Huge and full visual parity open |
+| C | 4,047 checks; source-matrix oracle; 1,000 bounded selection cycles | Object compilation | Not run | Source integrated; larger scene not in APK |
+| D | Source color comparison, malformed inputs, bounded GLES/UI and sanitizers | Linked into signed package | Integrated panel/mock-state checks passed | Mock local presentation; full FX/icons/combat open |
+| E | 4,737 neighborhood checks; 532 source states; 80 concurrent preparations | Shared-library linkage | New neighborhood adapter not run | Source integrated; adapter remains out of APK |
+| F | 114,112 checks; independent memory oracle/fault cases and sanitizers | Linked into signed package | Integrated diagnostics observed; limits below | Audible routes, sustained performance and Thor open |
+
 ## Acceptance boundaries and next batch
 
 | Area | Current boundary |
@@ -269,7 +313,7 @@ upgrade; report the installation error rather than clearing or uninstalling.
 | Gates 32–33 | Source/host/ARM64 neighborhood module and rig recovery; larger-world/multi-actor acceptance open |
 | Gates 34–38 | Local mock UI/combat preparation; no authoritative combat or complete FX |
 | Gates 43–45 | Reused bounded audio/perf plus new memory diagnostics; physical endurance/performance open |
-| Support code 201 | Fresh build/emulator status in release record; Thor pending user evidence |
+| Support code 201 | Signed ARM64 built; 23-case x86_64 Android13 companion qualified; Thor pending |
 
 Recommended next parallel work: complete Female/Huge asset and morphology closure;
 qualify GEO v8/material decoding and conservative streamed bounds/pages; recover

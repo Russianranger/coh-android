@@ -1,0 +1,267 @@
+{
+  "schema": 1,
+  "status": "complete-artifact-diagnostics-reviewed",
+  "github_actions_run_id": 38843336617,
+  "source_revision": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "scope": "Read-only report evaluation; successful scenario completion does not establish sustained audio/performance or physical-device acceptance.",
+  "evidence": {
+    "scenario_steps": 23,
+    "reports_reviewed": 25,
+    "window_seconds": 160.808,
+    "unique_memory_sample_timestamps": 23,
+    "final_duplicates_last_step": true,
+    "summary_sha256": "a68c317225668cef0858530f9c203e0e2842501d29c20977969e0ced37a53da3",
+    "report_sha256": {
+      "emulator-initial-report.json": "e84e51dcec9cd340706f2084ff5ae5e24069570f24eea8e2c710d03ec6cf1fcd",
+      "emulator-step-00-report.json": "e54b28c8f51d1cbb5d5a42c486c1d9164c074e12fa97f77892ee0efd928e4b2a",
+      "emulator-step-01-report.json": "8c7d7357fe6d520448dc0a33ff94366eb3c72b208eda3a36c78ec095b4cea493",
+      "emulator-step-02-report.json": "2c0a2f90475c8c2fc23052ddd9923d31b1925fbadb0760de1e4bfb89caf65b75",
+      "emulator-step-03-report.json": "29eb5a3af965e3b71b638847a24c95feb4244fa7e40124eb51543345614cf738",
+      "emulator-step-04-report.json": "6bcb7714c055cdb350f2f780797e42c5b3268cc5c55fbf0b5922129e366ad1e6",
+      "emulator-step-05-report.json": "e1e3b3df19a115ec414e171acb0c11c181e75cc45b62cf2d7ed1984d93561c29",
+      "emulator-step-06-report.json": "c3cc6f86fd747478b99980ddacda95d860dc30e65d46d74acddd1796db9dd62b",
+      "emulator-step-07-report.json": "d513fe59a6a0418866652949e5b3ff5d5608a14168a17385526e155acfe313ef",
+      "emulator-step-08-report.json": "e5a161433ea85865de5ed9a75634a8d7192f94f81627f1ccbd65ea74e5fa7e4a",
+      "emulator-step-09-report.json": "6d9e957de0dfc770a268d1ebe5379148024becbb1904c64482d2b0097b83a64b",
+      "emulator-step-10-report.json": "f72e2e629ec5e1552d2d532bde963149ddc3a5b15897bcd711512b9a996964fb",
+      "emulator-step-11-report.json": "ed54bb06bc5cb4bb2bbb3da03763116b2962ce95307443b4a2293f980a00c6c9",
+      "emulator-step-12-report.json": "bcdfd93bf68cdb512c58407f85d9c28f23df69ac1c4bf5eb2e9803a6eb594ffc",
+      "emulator-step-13-report.json": "287dcb52cd5a85755ad7f1c8eeaf6325eca454531115fa19da2dcc49ad6c8e3b",
+      "emulator-step-14-report.json": "fc8db150680c157daa29f425b7f3b90ddb1a944dba225f31311c7c9f3997d005",
+      "emulator-step-15-report.json": "049260a0cc1e61c9eccb99e4714ad0cf3076fadd89d11707538cff2aeb7a5d2f",
+      "emulator-step-16-report.json": "5c165366ab7235c744c92bb25fed8a903cada0bb3dbb2271ea87de5c9dbf6548",
+      "emulator-step-17-report.json": "1397966af1704d1945d0f98a5cf7b0f71410eeb5906adc6ab983e19b55ad4fd1",
+      "emulator-step-18-report.json": "7a270fbe818d0534db688612a4d71f99c4384a5d6b5b94aee4bcff8a1e173b46",
+      "emulator-step-19-report.json": "0fbacfd27fb1113a2c88aec6b1c9346b4e79a469a03756da778f116d0f388e70",
+      "emulator-step-20-report.json": "e8723cac9594fbf0d7eed7a6b710bbd1d45f9b60b62466fee6a3bcc4752e652d",
+      "emulator-step-21-report.json": "f750ced098d1959f3050604634eec08aac2518ae20970f4cb4e67368fc91f67a",
+      "emulator-step-22-report.json": "b88b67c4a7489a628df7faec269171ab5cac4a437c4a043e89184c88888843fe",
+      "emulator-final-report.json": "b88b67c4a7489a628df7faec269171ab5cac4a437c4a043e89184c88888843fe"
+    }
+  },
+  "memory": {
+    "measured_counts": {
+      "rss": 25,
+      "pss": 25
+    },
+    "measurement_unavailable": [],
+    "sources": [
+      "proc_self_smaps_rollup"
+    ],
+    "ranges": {
+      "rss": {
+        "known_reports": 25,
+        "min_bytes": 97726464,
+        "max_bytes": 171155456,
+        "first_measured_bytes": 171155456,
+        "last_measured_bytes": 107188224
+      },
+      "pss": {
+        "known_reports": 25,
+        "min_bytes": 26338304,
+        "max_bytes": 83072000,
+        "first_measured_bytes": 83072000,
+        "last_measured_bytes": 43105280
+      }
+    },
+    "native_heap_allocated_bytes": {
+      "min": 29592032,
+      "max": 36612960,
+      "initial": 35515248,
+      "final": 36283552,
+      "final_minus_initial": 768304,
+      "min_report": "emulator-step-09-report.json",
+      "max_report": "emulator-step-19-report.json"
+    },
+    "java_used_bytes": {
+      "min": 2833400,
+      "max": 39876792,
+      "initial": 39876792,
+      "final": 7394720,
+      "final_minus_initial": -32482072,
+      "min_report": "emulator-step-05-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "sample_duration_ms": {
+      "min": 2,
+      "max": 48,
+      "initial": 41,
+      "final": 6,
+      "final_minus_initial": -35,
+      "min_report": "emulator-step-08-report.json",
+      "max_report": "emulator-step-14-report.json"
+    },
+    "sample_age_ms": {
+      "min": 70,
+      "max": 1126,
+      "initial": 1064,
+      "final": 1059,
+      "final_minus_initial": -5,
+      "min_report": "emulator-step-03-report.json",
+      "max_report": "emulator-step-19-report.json"
+    },
+    "module_partial_accounted_bytes": {
+      "min": 2274480,
+      "max": 2274480,
+      "initial": 2274480,
+      "final": 2274480,
+      "final_minus_initial": 0,
+      "min_report": "emulator-initial-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "physics_owned_bytes": {
+      "min": 562232,
+      "max": 562232,
+      "initial": 562232,
+      "final": 562232,
+      "final_minus_initial": 0,
+      "min_report": "emulator-initial-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "skin_cache_bytes": {
+      "min": 332928,
+      "max": 332928,
+      "initial": 332928,
+      "final": 332928,
+      "final_minus_initial": 0,
+      "min_report": "emulator-initial-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "asset_resident_bytes": {
+      "min": 157491,
+      "max": 157491,
+      "initial": 157491,
+      "final": 157491,
+      "final_minus_initial": 0,
+      "min_report": "emulator-initial-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "asset_budget_bytes": 524288,
+    "preview_partial_cpu_bytes": {
+      "min": 153536,
+      "max": 153536,
+      "initial": 153536,
+      "final": 153536,
+      "final_minus_initial": 0,
+      "min_report": "emulator-initial-report.json",
+      "max_report": "emulator-initial-report.json"
+    },
+    "preview_cached_gpu_buffer_bytes": {
+      "min": 0,
+      "max": 67976,
+      "initial": 0,
+      "final": 67976,
+      "final_minus_initial": 67976,
+      "min_report": "emulator-initial-report.json",
+      "max_report": "emulator-step-20-report.json"
+    },
+    "limitation": "Short mixed scenes, UI, GC and lifecycle changes cannot establish leak freedom or an unbounded-growth trend. Fixed module accounting is not process RAM or total GPU residency."
+  },
+  "performance": {
+    "frame_samples": 1642,
+    "frame_mean_ns": 84802712.55115713,
+    "frame_max_ns": 958234636,
+    "frame_p50_upper_ns": 71999999,
+    "frame_p95_upper_ns": 958234636,
+    "frame_p99_upper_ns": 958234636,
+    "target_frame_ns": 33333333,
+    "over_budget": 1588,
+    "stalls": 296,
+    "dropped_frames": 3,
+    "invalid_samples": 0,
+    "stage_mean_ns": {
+      "animation": 95015.93398751115,
+      "skinning": 47203.913587934134,
+      "collision": 70241.12676609105,
+      "render_submit": 42684455.33556231,
+      "present": 41391256.85992692
+    },
+    "unsampled_stages": [
+      "asset_loading",
+      "audio_control"
+    ],
+    "gpu_samples": 0,
+    "gpu_unavailable": 6,
+    "known_counters": {
+      "copied_bytes": 159811296,
+      "upload_bytes": 254226512,
+      "draw_calls": 130139,
+      "skinned_vertices": 3272744,
+      "collision_tests": 5096,
+      "asset_hits": 8,
+      "asset_misses": 0,
+      "asset_evictions": 0
+    },
+    "unknown_counters": [
+      "state_binds",
+      "readbacks",
+      "explicit_waits",
+      "allocations"
+    ],
+    "limitation": "Emulator mixed-workload CPU timing only. Histogram percentiles are conservative bucket upper bounds; overflow reports observed maximum. No inferred GPU time or Adreno FPS."
+  },
+  "audio": {
+    "valid_quiescent_snapshots": [
+      {
+        "report": "emulator-step-09-report.json",
+        "initialized": 1,
+        "running": 0,
+        "last_status": 0,
+        "device_error": 0,
+        "opens": 1,
+        "closes": 1,
+        "decode_calls": 7472,
+        "diagnostics_valid": 1,
+        "rendered_frames": 2902080,
+        "underrun_frames": 0,
+        "callback_calls": 5463,
+        "maximum_callback_ns": 56839048
+      }
+    ],
+    "maximum_reported_stream_underrun_frames": 0,
+    "maximum_reported_callback_ns": 56839048,
+    "final_snapshot": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 7,
+      "closes": 6,
+      "decode_calls": 19005,
+      "diagnostics_valid": 0,
+      "rendered_frames": 6777128,
+      "underrun_frames": 0,
+      "callback_calls": 12755,
+      "maximum_callback_ns": 56839048
+    },
+    "final_environment": {
+      "focus_allowed": true,
+      "route_generation": 5,
+      "route_reopens": 3,
+      "listener_updates": 1,
+      "recovered_device_errors": 0,
+      "last_device_error": 0,
+      "listener_position": [
+        582.5,
+        81.3050156,
+        -1358.28088
+      ],
+      "listener_right": [
+        1,
+        0,
+        4.7683713e-07
+      ]
+    },
+    "platform_xrun_count_exported": false,
+    "callback_deadline_overrun_count_exported": false,
+    "limitation": "Validity=0 means retained joined snapshots, not current live callback statistics. Stream starvation is not identical to platform xruns; missing platform diagnostics are unknown. No physical audibility/latency/route quality claim."
+  },
+  "error_findings": [],
+  "qualification_flags": [
+    "Final audio is running or otherwise non-quiescent: callback values are retained joined snapshots, not current live totals.",
+    "Hosted emulator recorded 1588 of 1642 frames over the target; no physical 30 FPS qualification."
+  ],
+  "physical_thor_accepted": false,
+  "full_game_performance_qualified": false,
+  "sustained_endurance_qualified": false
+}

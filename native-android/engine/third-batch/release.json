@@ -19,18 +19,18 @@
   "package": "org.coh.nativesupport",
   "version_name": "0.2.0-gameplay",
   "version_code": 201,
-  "workflow_run_id": 38841247759,
-  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38841247759",
+  "workflow_run_id": 38843336617,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38843336617",
   "stages": {
     "implemented": true,
     "host_source_qualified": true,
-    "android_emulator_qualified": false,
+    "android_emulator_qualified": true,
     "physical_ayn_thor_qualified": false,
     "android_arm64_built_hosted": true,
     "android_x86_64_companion_built_hosted": true,
     "changed_modules_arm64_compiled_locally": true
   },
-  "hosted_result": "ARM64/x86_64 built; run stopped at scenario 19 because Android changed orientation after Home; runtime preserved state; exact-package continuation pending",
+  "hosted_result": "success: 23 Android13 x86_64 scenarios, two screenshot proofs, independent report and manual visual review",
   "physical_acceptance": "pending actual AYN Thor report and observations",
   "scope": "bounded offline support application, authentic custom Male neutral preview; no live-server or full-zone qualification",
   "attempts": [
@@ -55,6 +55,18 @@
       "reason": "Step19 landscape Home/resume test did not explicitly restore requested orientation; Android reported portrait and correctly expanded controls. State/audio/native/GL/EGL checks remained sound. Driver-only correction and unchanged-APK rerun pending.",
       "arm64_sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc",
       "artifact_zip_sha256": "474c3c1ca94f7ce8f27f4d972d02704ded73fef2e6f6c09687e0b188152cf983"
+    },
+    {
+      "source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+      "qualification_source_commit": "c610cefbd55144238e88849bd54591c907561061",
+      "run_id": 38843336617,
+      "artifact_id": 12022206631,
+      "workflow_result": "success",
+      "counter_scenarios_passed": 23,
+      "visual_review_passed": true,
+      "offline_emulator_release_accepted": true,
+      "physical_ayn_thor_qualified": false,
+      "runtime_rebuilt": false
     }
   ],
   "publication_history": [
@@ -100,5 +112,60 @@
     "apk_v2_v3_verified": true,
     "certificate_sha256": "cea53d96cb0953a57ce798a6aa7dce9c1c0289f538d19bba2194cc357ac3f03f",
     "both_abis_same_signer": true
+  },
+  "qualification_source_commit": "c610cefbd55144238e88849bd54591c907561061",
+  "qualification_source_tree": "66f0628636797da18b9ccec1118d9feadd505300",
+  "qualification_local_identical_tree_commit": "f9e96778b88234d65938965ce4e622eb599d47ef",
+  "qualification_worker_commit": "469b8604a07480e2831cb1e3afd5e99250ab1963",
+  "runtime_apk_rebuilt_for_continuation": false,
+  "reuse_tracked_inputs_verified": 183,
+  "reuse_tracked_generator_inputs_verified": 63,
+  "qualification_publication": {
+    "expected_previous_head": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+    "force": false,
+    "branch": "native-android",
+    "tree_equality_verified": true,
+    "primary_workflows_canceled_or_restarted": false,
+    "full_build_workflow": {
+      "run_id": 38843336570,
+      "conclusion": "skipped"
+    }
+  },
+  "artifact_id": 12022206631,
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38843336617/artifacts/12022206631",
+  "artifact_zip_sha256": "e5e5a9b1bbc71a89b1108d79c40be5128f62bb0c8fb5a20ccbc8d24cc1b9a75a",
+  "artifact_zip_bytes": 15696164,
+  "scenario_steps_passed": 23,
+  "reports_independently_verified": 25,
+  "absolute_assertions_independently_rechecked": 42,
+  "manual_visual_review_passed": true,
+  "male_image_orientations": [
+    "landscape",
+    "portrait"
+  ],
+  "native_frames": 1644,
+  "contexts_started": 6,
+  "male_preview_frames": 332,
+  "male_preview_draws": 2656,
+  "male_preview_surface_uploads": 2,
+  "native_graphics_support_export_errors": 0,
+  "measurements": {
+    "report_window_seconds": 160.808,
+    "rss_bytes": [
+      97726464,
+      171155456
+    ],
+    "pss_bytes": [
+      26338304,
+      83072000
+    ],
+    "emulator_frame_mean_ms": 84.80271255115713,
+    "frames_over_33_33ms": 1588,
+    "frame_samples": 1642,
+    "recorded_stream_underrun_frames": 0,
+    "maximum_joined_audio_callback_ms": 56.839048,
+    "audio_scope": "Retained joined snapshots; no continuous live/platform xrun or physical audibility guarantee",
+    "full_game_performance_qualified": false,
+    "sustained_endurance_qualified": false
   }
 }

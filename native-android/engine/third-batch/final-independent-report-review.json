@@ -1,0 +1,231 @@
+{
+  "schema": 1,
+  "identity_and_source_assertions_passed": true,
+  "apk_source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "qualification_source_commit": "c610cefbd55144238e88849bd54591c907561061",
+  "run_id": 38843336617,
+  "scenario_steps": 23,
+  "reports_verified": 25,
+  "absolute_assertions_rechecked": 42,
+  "relative_assertion_scope": "Original driver checked immediate before-action reports; independent review binds its assertions/actions to published scenario without independently replaying unretained baselines.",
+  "reports": [
+    {
+      "file": "emulator-initial-report.json",
+      "sha256": "e84e51dcec9cd340706f2084ff5ae5e24069570f24eea8e2c710d03ec6cf1fcd"
+    },
+    {
+      "file": "emulator-step-00-report.json",
+      "sha256": "e54b28c8f51d1cbb5d5a42c486c1d9164c074e12fa97f77892ee0efd928e4b2a"
+    },
+    {
+      "file": "emulator-step-01-report.json",
+      "sha256": "8c7d7357fe6d520448dc0a33ff94366eb3c72b208eda3a36c78ec095b4cea493"
+    },
+    {
+      "file": "emulator-step-02-report.json",
+      "sha256": "2c0a2f90475c8c2fc23052ddd9923d31b1925fbadb0760de1e4bfb89caf65b75"
+    },
+    {
+      "file": "emulator-step-03-report.json",
+      "sha256": "29eb5a3af965e3b71b638847a24c95feb4244fa7e40124eb51543345614cf738"
+    },
+    {
+      "file": "emulator-step-04-report.json",
+      "sha256": "6bcb7714c055cdb350f2f780797e42c5b3268cc5c55fbf0b5922129e366ad1e6"
+    },
+    {
+      "file": "emulator-step-05-report.json",
+      "sha256": "e1e3b3df19a115ec414e171acb0c11c181e75cc45b62cf2d7ed1984d93561c29"
+    },
+    {
+      "file": "emulator-step-06-report.json",
+      "sha256": "c3cc6f86fd747478b99980ddacda95d860dc30e65d46d74acddd1796db9dd62b"
+    },
+    {
+      "file": "emulator-step-07-report.json",
+      "sha256": "d513fe59a6a0418866652949e5b3ff5d5608a14168a17385526e155acfe313ef"
+    },
+    {
+      "file": "emulator-step-08-report.json",
+      "sha256": "e5a161433ea85865de5ed9a75634a8d7192f94f81627f1ccbd65ea74e5fa7e4a"
+    },
+    {
+      "file": "emulator-step-09-report.json",
+      "sha256": "6d9e957de0dfc770a268d1ebe5379148024becbb1904c64482d2b0097b83a64b"
+    },
+    {
+      "file": "emulator-step-10-report.json",
+      "sha256": "f72e2e629ec5e1552d2d532bde963149ddc3a5b15897bcd711512b9a996964fb"
+    },
+    {
+      "file": "emulator-step-11-report.json",
+      "sha256": "ed54bb06bc5cb4bb2bbb3da03763116b2962ce95307443b4a2293f980a00c6c9"
+    },
+    {
+      "file": "emulator-step-12-report.json",
+      "sha256": "bcdfd93bf68cdb512c58407f85d9c28f23df69ac1c4bf5eb2e9803a6eb594ffc"
+    },
+    {
+      "file": "emulator-step-13-report.json",
+      "sha256": "287dcb52cd5a85755ad7f1c8eeaf6325eca454531115fa19da2dcc49ad6c8e3b"
+    },
+    {
+      "file": "emulator-step-14-report.json",
+      "sha256": "fc8db150680c157daa29f425b7f3b90ddb1a944dba225f31311c7c9f3997d005"
+    },
+    {
+      "file": "emulator-step-15-report.json",
+      "sha256": "049260a0cc1e61c9eccb99e4714ad0cf3076fadd89d11707538cff2aeb7a5d2f"
+    },
+    {
+      "file": "emulator-step-16-report.json",
+      "sha256": "5c165366ab7235c744c92bb25fed8a903cada0bb3dbb2271ea87de5c9dbf6548"
+    },
+    {
+      "file": "emulator-step-17-report.json",
+      "sha256": "1397966af1704d1945d0f98a5cf7b0f71410eeb5906adc6ab983e19b55ad4fd1"
+    },
+    {
+      "file": "emulator-step-18-report.json",
+      "sha256": "7a270fbe818d0534db688612a4d71f99c4384a5d6b5b94aee4bcff8a1e173b46"
+    },
+    {
+      "file": "emulator-step-19-report.json",
+      "sha256": "0fbacfd27fb1113a2c88aec6b1c9346b4e79a469a03756da778f116d0f388e70"
+    },
+    {
+      "file": "emulator-step-20-report.json",
+      "sha256": "e8723cac9594fbf0d7eed7a6b710bbd1d45f9b60b62466fee6a3bcc4752e652d"
+    },
+    {
+      "file": "emulator-step-21-report.json",
+      "sha256": "f750ced098d1959f3050604634eec08aac2518ae20970f4cb4e67368fc91f67a"
+    },
+    {
+      "file": "emulator-step-22-report.json",
+      "sha256": "b88b67c4a7489a628df7faec269171ab5cac4a437c4a043e89184c88888843fe"
+    },
+    {
+      "file": "emulator-final-report.json",
+      "sha256": "b88b67c4a7489a628df7faec269171ab5cac4a437c4a043e89184c88888843fe"
+    }
+  ],
+  "images": [
+    {
+      "schema": "coh-support-neutral-preview-image-v1",
+      "passed": true,
+      "image": "emulator-step-20.png",
+      "image_sha256": "2ed64b71a776442baa163ff30de8787786b0a3ffce56f63bb10219d03b68d114",
+      "screenshot_size": [
+        1920,
+        1080
+      ],
+      "scene_rectangle": [
+        0,
+        228,
+        1920,
+        789
+      ],
+      "background_rgb": [
+        9,
+        11,
+        17
+      ],
+      "excluded_top_hud_rectangles": [
+        [
+          443,
+          9,
+          768,
+          121
+        ],
+        [
+          1104,
+          9,
+          1477,
+          108
+        ]
+      ],
+      "visible_pixels": 61342,
+      "visible_fraction": 0.04049297634136037,
+      "bounds_normalized": [
+        0.4265625,
+        0.15082382762991128,
+        0.5739583333333333,
+        0.8504435994930292
+      ],
+      "extent_normalized": [
+        0.14739583333333334,
+        0.6996197718631179
+      ],
+      "required_minimum_margin": 0.08,
+      "errors": [],
+      "scope": "Actual screenshot silhouette/framing check with only two top HUD exclusions; not original-client pixel equivalence or physical acceptance.",
+      "source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+      "qualification_source_commit": "c610cefbd55144238e88849bd54591c907561061",
+      "expected_display_orientation": "landscape",
+      "observed_display_orientation": "landscape",
+      "report_sha256": "e8723cac9594fbf0d7eed7a6b710bbd1d45f9b60b62466fee6a3bcc4752e652d",
+      "verifier_sha256": "11dab692e74a1aec659419a096bd08e3e76fec655e15930eb0f4f8d1778ad131"
+    },
+    {
+      "schema": "coh-support-neutral-preview-image-v1",
+      "passed": true,
+      "image": "emulator-step-21.png",
+      "image_sha256": "517a4dd5706403f5d5e97d328b5072faa316f7bef4ee874662487f4b648d4733",
+      "screenshot_size": [
+        1080,
+        1920
+      ],
+      "scene_rectangle": [
+        0,
+        898,
+        1080,
+        959
+      ],
+      "background_rgb": [
+        9,
+        11,
+        17
+      ],
+      "excluded_top_hud_rectangles": [
+        [
+          9,
+          84,
+          343,
+          198
+        ],
+        [
+          688,
+          84,
+          1071,
+          186
+        ]
+      ],
+      "visible_pixels": 90662,
+      "visible_fraction": 0.08753524118487623,
+      "bounds_normalized": [
+        0.34074074074074073,
+        0.15015641293013557,
+        0.6592592592592592,
+        0.8498435870698644
+      ],
+      "extent_normalized": [
+        0.3185185185185185,
+        0.6996871741397288
+      ],
+      "required_minimum_margin": 0.08,
+      "errors": [],
+      "scope": "Actual screenshot silhouette/framing check with only two top HUD exclusions; not original-client pixel equivalence or physical acceptance.",
+      "source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+      "qualification_source_commit": "c610cefbd55144238e88849bd54591c907561061",
+      "expected_display_orientation": "portrait",
+      "observed_display_orientation": "portrait",
+      "report_sha256": "f750ced098d1959f3050604634eec08aac2518ae20970f4cb4e67368fc91f67a",
+      "verifier_sha256": "11dab692e74a1aec659419a096bd08e3e76fec655e15930eb0f4f8d1778ad131"
+    }
+  ],
+  "manual_visual_review_required": false,
+  "physical_ayn_thor_qualified": false,
+  "manual_visual_review_passed": true,
+  "manual_visual_scope": "Coordinator and independent appearance worker viewed whole-body landscape/portrait images; Wretch return and contacts panel also inspected. Original-client material/lighting equivalence remains open."
+}

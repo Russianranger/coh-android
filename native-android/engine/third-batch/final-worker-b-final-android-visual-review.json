@@ -1,0 +1,128 @@
+{
+  "schema": "coh-worker-b-final-android-visual-review-v1",
+  "reviewer": "Worker B appearance owner; independent manual inspection after coordinator artifact retrieval",
+  "actions_run_id": 38843336617,
+  "artifact_id": 12022206631,
+  "runtime_source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "qualification_source_commit": "c610cefbd55144238e88849bd54591c907561061",
+  "review_passed": true,
+  "platform": {
+    "sdk": 33,
+    "android_version": "13",
+    "model": "sdk_gphone64_x86_64",
+    "emulator": true,
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)"
+  },
+  "arm64_apk_sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc",
+  "executed_x86_64_apk_sha256": "67e8f0e3a5a5048205ce81bb30c85f32fdb50e68e9cc2221ae11949f01b21321",
+  "images": [
+    {
+      "step": 20,
+      "orientation": "landscape",
+      "image": "emulator-step-20.png",
+      "image_sha256": "2ed64b71a776442baa163ff30de8787786b0a3ffce56f63bb10219d03b68d114",
+      "report_sha256": "e8723cac9594fbf0d7eed7a6b710bbd1d45f9b60b62466fee6a3bcc4752e652d",
+      "automated_proof_sha256": "1ba2b62ab61b305670627a69b2d2cbbcdf1aa411e162e2c1af46ce019d353e87",
+      "scene_rectangle": [
+        0,
+        228,
+        1920,
+        789
+      ],
+      "normalized_silhouette_bounds": [
+        0.4265625,
+        0.15082382762991128,
+        0.5739583333333333,
+        0.8504435994930292
+      ],
+      "manual_viewed_full_screenshot": true,
+      "complete_visible_silhouette": true,
+      "head_and_hair_uncut": true,
+      "both_hands_gloves_uncut": true,
+      "torso_and_hips_visible": true,
+      "both_legs_boots_uncut": true,
+      "native_surface_edge_clipping": false,
+      "hud_or_panel_occlusion_of_costume": false,
+      "chat_and_tray_hidden": true,
+      "observed_pose": "Same first source pose in both orientations; static neutral-morphology custom costume inspection",
+      "appearance_preview_report": {
+        "available": true,
+        "active": true,
+        "body": "Male",
+        "neutral_morphology": true,
+        "frames": 23,
+        "draws": 184,
+        "surface_uploads": 1,
+        "failures": 0,
+        "parts": 8,
+        "vertices": 943,
+        "indices": 3792,
+        "cpu_accounted_partial_bytes": 153536,
+        "package_bytes": 1673302,
+        "gpu_buffer_bytes": 67976,
+        "source_texture_bytes": 1572868,
+        "memory_scope": "Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory.",
+        "upload_bytes_measured": false,
+        "full_gate_accepted": false
+      }
+    },
+    {
+      "step": 21,
+      "orientation": "portrait",
+      "image": "emulator-step-21.png",
+      "image_sha256": "517a4dd5706403f5d5e97d328b5072faa316f7bef4ee874662487f4b648d4733",
+      "report_sha256": "f750ced098d1959f3050604634eec08aac2518ae20970f4cb4e67368fc91f67a",
+      "automated_proof_sha256": "101e10c5840b179d2ec1c328077dd0e958e6b1a0cfe082475fa3fcd5e7ea9d09",
+      "scene_rectangle": [
+        0,
+        898,
+        1080,
+        959
+      ],
+      "normalized_silhouette_bounds": [
+        0.34074074074074073,
+        0.15015641293013557,
+        0.6592592592592592,
+        0.8498435870698644
+      ],
+      "manual_viewed_full_screenshot": true,
+      "complete_visible_silhouette": true,
+      "head_and_hair_uncut": true,
+      "both_hands_gloves_uncut": true,
+      "torso_and_hips_visible": true,
+      "both_legs_boots_uncut": true,
+      "native_surface_edge_clipping": false,
+      "hud_or_panel_occlusion_of_costume": false,
+      "chat_and_tray_hidden": true,
+      "observed_pose": "Same first source pose in both orientations; static neutral-morphology custom costume inspection",
+      "appearance_preview_report": {
+        "available": true,
+        "active": true,
+        "body": "Male",
+        "neutral_morphology": true,
+        "frames": 145,
+        "draws": 1160,
+        "surface_uploads": 2,
+        "failures": 0,
+        "parts": 8,
+        "vertices": 943,
+        "indices": 3792,
+        "cpu_accounted_partial_bytes": 153536,
+        "package_bytes": 1673302,
+        "gpu_buffer_bytes": 67976,
+        "source_texture_bytes": 1572868,
+        "memory_scope": "Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory.",
+        "upload_bytes_measured": false,
+        "full_gate_accepted": false
+      }
+    }
+  ],
+  "conclusion": "Both actual Android screenshots show the entire source-menu custom Male costume, with head/hair, both gloved hands and both boots uncut and unobscured by the retained top HUD. The root-motion framing failure and preview chat/tray occlusion observed in the rejected candidate are absent.",
+  "scope_limits": [
+    "Visual framing and visible complete costume on the Android 13 x86_64 emulator only.",
+    "No original full-client pixel, lighting, trick/culling, material or authored morphology parity claim.",
+    "No dynamic Male animation, Female/Huge completion, multi-actor gameplay, complete Gate31 or live-server acceptance.",
+    "ARM64 package hash is recorded; screenshots execute the separately identified x86_64 companion.",
+    "No physical AYN Thor or Adreno740 visual acceptance is inferred."
+  ]
+}

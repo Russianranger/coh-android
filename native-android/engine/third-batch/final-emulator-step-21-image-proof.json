@@ -1,0 +1,56 @@
+{
+  "schema": "coh-support-neutral-preview-image-v1",
+  "passed": true,
+  "image": "emulator-step-21.png",
+  "image_sha256": "517a4dd5706403f5d5e97d328b5072faa316f7bef4ee874662487f4b648d4733",
+  "screenshot_size": [
+    1080,
+    1920
+  ],
+  "scene_rectangle": [
+    0,
+    898,
+    1080,
+    959
+  ],
+  "background_rgb": [
+    9,
+    11,
+    17
+  ],
+  "excluded_top_hud_rectangles": [
+    [
+      9,
+      84,
+      343,
+      198
+    ],
+    [
+      688,
+      84,
+      1071,
+      186
+    ]
+  ],
+  "visible_pixels": 90662,
+  "visible_fraction": 0.08753524118487623,
+  "bounds_normalized": [
+    0.34074074074074073,
+    0.15015641293013557,
+    0.6592592592592592,
+    0.8498435870698644
+  ],
+  "extent_normalized": [
+    0.3185185185185185,
+    0.6996871741397288
+  ],
+  "required_minimum_margin": 0.08,
+  "errors": [],
+  "scope": "Actual screenshot silhouette/framing check with only two top HUD exclusions; not original-client pixel equivalence or physical acceptance.",
+  "source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "qualification_source_commit": "c610cefbd55144238e88849bd54591c907561061",
+  "expected_display_orientation": "portrait",
+  "observed_display_orientation": "portrait",
+  "report_sha256": "f750ced098d1959f3050604634eec08aac2518ae20970f4cb4e67368fc91f67a",
+  "verifier_sha256": "11dab692e74a1aec659419a096bd08e3e76fec655e15930eb0f4f8d1778ad131"
+}
