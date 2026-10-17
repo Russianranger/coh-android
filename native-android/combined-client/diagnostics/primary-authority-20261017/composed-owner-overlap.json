@@ -1,0 +1,409 @@
+{
+  "schema": "coh-source-bound-latest-owner-overlap-v1",
+  "passed": true,
+  "source_revision": "f41a30dd0f59dcda94525d45495fb7713289676e",
+  "audit_source_sha256": "75a6066023540b024675fc7295e466745d115e7aab0e0e97ce2979db203e8b48",
+  "source_sha256": {
+    "native-android/engine/character-dictionary/coh_power_boost_slots.h": "20baafabebd5ac7cac61f6ddbf49d95b6a19c49785cb761d7fb78194b9860fce",
+    "native-android/engine/character-dictionary/coh_power_stream.h": "7230579d8a96303aae576d4623d8be5eb086e1a6bc0cf3ac55f16b2017dd30ec",
+    "native-android/engine/character-dictionary/coh_origins.h": "2260de2c5aea4b2b277f5c428e18d074ae2b2f665c468b088bada158f60724cb",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/character-dictionary/coh_schedules.h": "1cfc71995eabffec1118773346557f1e352533c81ce577b7eacc121c8f071310",
+    "native-android/engine/world-render-adapter/coh_wr_trick_model.h": "80a252beffff4e6be159758732f347ffac996a46f1cdb019a7590a48fa27ef82",
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached.h": "48160bf855ef3d83934fd53e465b6663467a15d6d72148186f37a4e03f9fe9a3",
+    "native-android/engine/world-render-adapter/coh_wr_trick.h": "c30f9735166dd2db73a801bc998cdd3f90447ff3ef3fe8ac027973f90aa015ed",
+    "native-android/engine/world-render-adapter/coh_wr_texopt.h": "0cc9b48deea230a5ff028c93289d6e458302ee43e8dbb1f5666744e8d706291e",
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.h": "20ff6b2c6478fb44197433de4e34c9685c3e01af6a400a87986b610411d191c8",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/engine/world-render-adapter/coh_wr_tex_dependencies.h": "428b1ba73c36e5bcef90df587cbc02ff555eae6c4a6584104504104e19ca5ef0",
+    "native-android/engine/world-render-adapter/coh_wr_texopt_lookup.h": "7b8228cb68b1e042227e0f9d545b948635989db579fdf62f7ddb4e5c6965eca3",
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.h": "be1e6392b45c26b2925faa3ec0de15fc3d272811af30a4fc92aeb81c7baf700b",
+    "native-android/engine/scenecatalog/tests/test_source_sealed.c": "60c9152d63ce4b543f62e93380f934eccca21cf432b3d6d4467f620d80d62667",
+    "native-android/engine/scenecatalog/coh_source_sealed.c": "740d6880d32d0b6ef94a32ce7b3e787482651aaaa021ff67622015591751be7c",
+    "native-android/engine/scenecatalog/coh_source_sealed.h": "e7a3a01269ab9249812658f47084d1a525d77c61da75874865e31813a3231d6d",
+    "native-android/engine/scenecatalog/coh_source_mesh_batch.h": "f6659cac162c73d291cfc375f8f1668a108dfe28fa3a85b70df8619b6f82e198",
+    "native-android/engine/scenecatalog/coh_source_mesh.h": "2acc6fcf6b91d7ad1f3617a66465e92ee56207377b68b4699e3f94dbeb8ef0c8",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/scenecatalog/coh_source_selection.h": "293ae2341f481edb01b034701aa66b38bb401bffb81a832e5f37881b9f5ffe72",
+    "native-android/engine/scenecatalog/coh_resource_join.h": "dc4c3324e719ccd1b4db3fccdb4da054d6a403f7e844209cea440bec6b858a68",
+    "native-android/engine/scenegraph/runtime_graph.h": "ea635edfc31eda5e29308b85d7420cc0da242bbc291bc34221ea8d615ea93a84",
+    "native-android/engine/scenegraph/runtime_snapshot.h": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+    "native-android/engine/scenecatalog/coh_resource_index.h": "d4774726285d8ba6037e8c2f35d4f9647e171e06aaccf8edc07b686f4dbc3228",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/scenecatalog/coh_catalog_snapshot.h": "389021a429fe7c4720303fd00723de873fd18bc915d4c8aa9b4c437cd2dabb76",
+    "native-android/engine/scenecatalog/coh_catalog_owner.h": "4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c",
+    "native-android/engine/world-render-adapter/coh_wr_lod_cache.c": "fce01bf14d05ac5c5a45924e84712f322679b8e66683e29d58f9e32758ee7787",
+    "native-android/engine/world-render-adapter/coh_wr_lod_cache.h": "e60faf067b187d093b98d383d276ca8122adb09caae164a26455089b001a8316",
+    "native-android/engine/world-render-adapter/coh_wr_model_material.h": "5d2deab90fa8740193520945eb33eafb75b3df6258e17cec7e73cd01789e67f6",
+    "native-android/engine/character-dictionary/coh_shared_power_sets.h": "1363aaaae1ae1b9a4c49e8ebb0e635e6ba60f189660e3a9cf6ca39b83ddc41bf",
+    "native-android/engine/character-dictionary/coh_power_ids.h": "60ad9653181aabd9198fa8aa5fe8ef5d6615b9c4c98d8603842e11932a4d2c95",
+    "native-android/engine/character-dictionary/coh_power_join.h": "293f603ec426af79e79081d0fc58f423bd9f8b58426ef8f0e5b8193a8ac9b259",
+    "native-android/engine/character-dictionary/coh_power_sets.h": "e7a27d21907f7147795441a6d6563217765cd382e33e755a1db77798f57604ca",
+    "native-android/engine/character-dictionary/coh_power_categories.h": "60c66f0f6a04473682e55021b6d653bc556c2d4315c2f41f8ec1063f65e13a69",
+    "native-android/engine/world-render-adapter/coh_world_render.c": "36541b0561cc236dcf323598f50329414a8eed4876f58d2ec451b7b3cafc94d7",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.inc": "07bcb8a215402961fdbb98f7ce5f93a6238147265d37d8827e5022ed4751f11b",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.h": "245966845cc87f156b6402f5f56ecc2ab2abf5ef84976efeb3d4c887a5471908",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130"
+  },
+  "audit_handoff_sha256": "7262c1b35b15d7dcdeeccda5c0614e7b0734c4ed3d6e367a17b4af76ec263320",
+  "qualified_receipts": {
+    "parent_reference": {
+      "path": "native-android/combined-client/diagnostics/continuation-f-20261017/parent-phase-replay.json",
+      "bytes": 5183,
+      "sha256": "44a78980d37f057d74e9f4d5c283057a124d1d9b6225d11493e1d3d1d958e499",
+      "source_hash_entries_checked": 7,
+      "historical_absolute_path_comparison_only_remapping": {},
+      "historical_source_changes_no_current_execution_requalification": {}
+    },
+    "sealed_source": {
+      "path": "native-android/engine/scenecatalog/evidence/source-sealed-complete-host.json",
+      "bytes": 67960,
+      "sha256": "6f97ad07c831957df4ed2cb783cb4de79c50a6225f045d3e59ec9797fe285e38",
+      "source_hash_entries_checked": 59,
+      "historical_absolute_path_comparison_only_remapping": {
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_selection.c": "native-android/engine/scenecatalog/coh_source_selection.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_catalog_snapshot.c": "native-android/engine/scenecatalog/coh_catalog_snapshot.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_geo_source.c": "native-android/engine/scenecatalog/coh_resource_geo_source.c",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h": "native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_index.c": "native-android/engine/scenecatalog/coh_resource_index.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/coh_scenegraph.c": "native-android/engine/scenegraph/coh_scenegraph.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_join.c": "native-android/engine/scenecatalog/coh_resource_join.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/check_source_sealed.py": "native-android/engine/scenecatalog/check_source_sealed.py",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt_post_source.inc": "native-android/engine/world-render-adapter/coh_wr_texopt_post_source.inc",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt.h": "native-android/engine/world-render-adapter/coh_wr_texopt.h",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/coh_contracts.h": "native-android/engine/coh_contracts.h",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_surface_core.inc": "native-android/engine/world-render-adapter/coh_wr_surface_core.inc",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_catalog_owner.c": "native-android/engine/scenecatalog/coh_catalog_owner.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/coh_contracts.h": "native-android/engine/coh_contracts.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_scenecatalog.h": "native-android/engine/scenecatalog/coh_scenecatalog.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_mesh.c": "native-android/engine/scenecatalog/coh_source_mesh.c",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_surface_states.c": "native-android/engine/world-render-adapter/coh_wr_surface_states.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/replication/coh_replication.c": "native-android/engine/replication/coh_replication.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/runtime_snapshot.c": "native-android/engine/scenegraph/runtime_snapshot.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_selection.h": "native-android/engine/scenecatalog/coh_source_selection.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/replication/coh_groups.c": "native-android/engine/replication/coh_groups.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/replication/coh_groups.h": "native-android/engine/replication/coh_groups.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/tests/runtime_matrix_bridge.c": "native-android/engine/scenegraph/tests/runtime_matrix_bridge.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/runtime_snapshot.h": "native-android/engine/scenegraph/runtime_snapshot.h",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick.h": "native-android/engine/world-render-adapter/coh_wr_trick.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/assets/coh_asset_loader.h": "native-android/engine/assets/coh_asset_loader.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_geo_source.h": "native-android/engine/scenecatalog/coh_resource_geo_source.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_catalog_owner.h": "native-android/engine/scenecatalog/coh_catalog_owner.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/assets/coh_asset_geo.c": "native-android/engine/assets/coh_asset_geo.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_mesh_batch.h": "native-android/engine/scenecatalog/coh_source_mesh_batch.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/src/byte_reader.h": "native-android/src/byte_reader.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/assets/coh_asset_geo.h": "native-android/engine/assets/coh_asset_geo.h",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick_post_source.inc": "native-android/engine/world-render-adapter/coh_wr_trick_post_source.inc",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_surface_states.h": "native-android/engine/world-render-adapter/coh_wr_surface_states.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_catalog_snapshot.h": "native-android/engine/scenecatalog/coh_catalog_snapshot.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_sealed.c": "native-android/engine/scenecatalog/coh_source_sealed.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/coh_scenegraph.h": "native-android/engine/scenegraph/coh_scenegraph.h",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt_tables_internal.inc": "native-android/engine/world-render-adapter/coh_wr_texopt_tables_internal.inc",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick_tables_internal.inc": "native-android/engine/world-render-adapter/coh_wr_trick_tables_internal.inc",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/runtime_graph.h": "native-android/engine/scenegraph/runtime_graph.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_index.h": "native-android/engine/scenecatalog/coh_resource_index.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_mesh.h": "native-android/engine/scenecatalog/coh_source_mesh.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/src/coh_assets.c": "native-android/src/coh_assets.c",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick.c": "native-android/engine/world-render-adapter/coh_wr_trick.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/assets/coh_asset_loader.c": "native-android/engine/assets/coh_asset_loader.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_mesh_batch.c": "native-android/engine/scenecatalog/coh_source_mesh_batch.c",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt.c": "native-android/engine/world-render-adapter/coh_wr_texopt.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_join.h": "native-android/engine/scenecatalog/coh_resource_join.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/tests/test_source_sealed.c": "native-android/engine/scenecatalog/tests/test_source_sealed.c",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/include/coh_native_core.h": "native-android/include/coh_native_core.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_scenecatalog.c": "native-android/engine/scenecatalog/coh_scenecatalog.c",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/assets/coh_asset_loader.h": "native-android/engine/assets/coh_asset_loader.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/renderer/coh_renderer.h": "native-android/engine/renderer/coh_renderer.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_selection_profile.inc": "native-android/engine/scenecatalog/coh_source_selection_profile.inc",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/src/coh_dds.c": "native-android/src/coh_dds.c",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_sealed.h": "native-android/engine/scenecatalog/coh_source_sealed.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/include/coh_native_core.h": "native-android/include/coh_native_core.h",
+        "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/replication/coh_replication.h": "native-android/engine/replication/coh_replication.h",
+        "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h": "native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h"
+      },
+      "historical_source_changes_no_current_execution_requalification": {
+        "native-android/engine/scenegraph/runtime_snapshot.c": {
+          "historical_sha256": "7c8d987e56f730995c9970fb83b7a528de21f8469d451a88d04c23a716b90200",
+          "current_sha256": "116e084476e16155f20624d9a7e902dd46b1de84ef6b51f569329572da528b35"
+        },
+        "native-android/engine/scenecatalog/coh_source_sealed.c": {
+          "historical_sha256": "6b5b5567f9e2b1df66d0fee1d3f2b2e7af5b1f90fac5c7bcdb459010ae5b1cde",
+          "current_sha256": "740d6880d32d0b6ef94a32ce7b3e787482651aaaa021ff67622015591751be7c"
+        },
+        "native-android/engine/scenegraph/runtime_graph.h": {
+          "historical_sha256": "761582b9b245dd7f49b3abb4dde9c2a9644442946bf9010a0e80a9aea9ba2a37",
+          "current_sha256": "ea635edfc31eda5e29308b85d7420cc0da242bbc291bc34221ea8d615ea93a84"
+        },
+        "native-android/engine/world-render-adapter/coh_wr_trick.c": {
+          "historical_sha256": "355c7b9bf156bc10bac1863742ba0d26efbc3643dd3dd84072b7c01a6317459e",
+          "current_sha256": "636b41a9da8501816bd9bbdb9b6a5bd5997baa13d52b465a19e4b66e61bc246c"
+        },
+        "native-android/engine/scenecatalog/coh_source_sealed.h": {
+          "historical_sha256": "04ea27a60595601f21020f142c9d78d2a84ec592c086bec1998b413d8e831e5c",
+          "current_sha256": "e7a3a01269ab9249812658f47084d1a525d77c61da75874865e31813a3231d6d"
+        }
+      }
+    },
+    "lod": {
+      "path": "native-android/engine/world-render-adapter/qualification/lod-cache-20261017/host.json",
+      "bytes": 13632,
+      "sha256": "ca1803fe5e3b2669c89afe8534119a0a90f85b4f27cfb1911ea709c0a1b9cd36",
+      "source_hash_entries_checked": 39,
+      "historical_absolute_path_comparison_only_remapping": {},
+      "historical_source_changes_no_current_execution_requalification": {}
+    },
+    "model_policy": {
+      "path": "native-android/engine/world-render-adapter/qualification/model-material-policy-20261017/host.json",
+      "bytes": 12215,
+      "sha256": "f8547d09ddc0701b5230b5ae95c3412c1d87ee98e1758af2e36ad513efb43eeb",
+      "source_hash_entries_checked": 44,
+      "historical_absolute_path_comparison_only_remapping": {},
+      "historical_source_changes_no_current_execution_requalification": {
+        "native-android/engine/world-render-adapter/coh_wr_trick.c": {
+          "historical_sha256": "355c7b9bf156bc10bac1863742ba0d26efbc3643dd3dd84072b7c01a6317459e",
+          "current_sha256": "636b41a9da8501816bd9bbdb9b6a5bd5997baa13d52b465a19e4b66e61bc246c"
+        }
+      }
+    },
+    "join": {
+      "path": "native-android/engine/character-dictionary/qualification/power-join-20261017-final.json.gz",
+      "bytes": 12036,
+      "sha256": "575e9056a37c1ae25903494ed6cbb74a4ac20c8fcf5bf7e4e4728c856e77d775",
+      "source_hash_entries_checked": 62,
+      "historical_absolute_path_comparison_only_remapping": {},
+      "historical_source_changes_no_current_execution_requalification": {}
+    },
+    "ids": {
+      "path": "native-android/engine/character-dictionary/qualification/power-ids-20261017-final.json.gz",
+      "bytes": 12179,
+      "sha256": "41fd57f8e9b75d1d48517482ad537c648368a985be862dbd7bf3f355b4997e22",
+      "source_hash_entries_checked": 65,
+      "historical_absolute_path_comparison_only_remapping": {},
+      "historical_source_changes_no_current_execution_requalification": {}
+    },
+    "shared": {
+      "path": "native-android/engine/character-dictionary/qualification/shared-power-sets-20261017-final.json.gz",
+      "bytes": 13238,
+      "sha256": "e850401e9db728731e35110878a8fa4edd77ac71200b341971a54cb24939f860",
+      "source_hash_entries_checked": 68,
+      "historical_absolute_path_comparison_only_remapping": {},
+      "historical_source_changes_no_current_execution_requalification": {}
+    },
+    "presentation": {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-e1b844b88-host.json",
+      "bytes": 6845,
+      "sha256": "77cbecd8fd55dca47b1768dbd0e703e59bd37b269e72fdd8b47d478078e65d18",
+      "source_hash_entries_checked": 17,
+      "historical_absolute_path_comparison_only_remapping": {},
+      "historical_source_changes_no_current_execution_requalification": {}
+    }
+  },
+  "host_layouts": {
+    "CohWrBudget": {
+      "bytes": 88,
+      "alignment": 8
+    },
+    "CohWrSnapshot": {
+      "bytes": 352,
+      "alignment": 8
+    },
+    "CohWrMailbox": {
+      "bytes": 56,
+      "alignment": 8
+    },
+    "CohWrBindings": {
+      "bytes": 56,
+      "alignment": 8
+    },
+    "CohWrFrame": {
+      "bytes": 168,
+      "alignment": 8
+    },
+    "CohWrPreparedFrame": {
+      "bytes": 80,
+      "alignment": 8
+    },
+    "CohWrPresentation": {
+      "bytes": 144,
+      "alignment": 8
+    },
+    "CohWrDrawInput": {
+      "bytes": 368,
+      "alignment": 8
+    },
+    "CohRenderVertex": {
+      "bytes": 56,
+      "alignment": 4
+    },
+    "CohPowerStreamDictionary": {
+      "bytes": 1048744,
+      "alignment": 8
+    },
+    "CohPowerJoin": {
+      "bytes": 524344,
+      "alignment": 8
+    },
+    "CohPowerJoinWorkspace": {
+      "bytes": 524344,
+      "alignment": 8
+    },
+    "CohPowerIDs": {
+      "bytes": 689184,
+      "alignment": 8
+    },
+    "CohPowerIDsWorkspace": {
+      "bytes": 689184,
+      "alignment": 8
+    },
+    "CohSharedPowerSets": {
+      "bytes": 32792,
+      "alignment": 8
+    },
+    "CohSharedPowerSetsWorkspace": {
+      "bytes": 32792,
+      "alignment": 8
+    },
+    "CohWrModelMaterialInput": {
+      "bytes": 56,
+      "alignment": 8
+    },
+    "CohWrModelMaterialPart": {
+      "bytes": 48,
+      "alignment": 8
+    },
+    "CohWrModelMaterialProjection": {
+      "bytes": 2088,
+      "alignment": 4
+    },
+    "CohWrTrickModelQuery": {
+      "bytes": 24,
+      "alignment": 8
+    },
+    "CohWrTrickModelLimits": {
+      "bytes": 16,
+      "alignment": 8
+    },
+    "CohWrTrickModelSelection": {
+      "bytes": 320,
+      "alignment": 8
+    },
+    "CohSchedules": {
+      "bytes": 16496,
+      "alignment": 8
+    },
+    "CohSchedulesWorkspace": {
+      "bytes": 16496,
+      "alignment": 8
+    },
+    "CohPowerBoostSlots": {
+      "bytes": 56,
+      "alignment": 8
+    },
+    "CohPowerBoostSlotsWorkspace": {
+      "bytes": 65536,
+      "alignment": 1
+    }
+  },
+  "host_layout_build": {
+    "C": "6f98e69bd6c9c7f53674bc12d27df9a702d92753a3df60b05f038def75c53752",
+    "C++": "345db3f9bc78b38bfa35d64c542a1dd35efeb0f1262d81521c49b39601f387ef",
+    "verbatim_private_declarations": "45278591bc57b627b329edb1d7463621dfce0f24ddd2021e81e7fb3d20b80321",
+    "C_compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+    "C++_compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+    "matching_size_and_alignment": true,
+    "module_functions_or_captures_executed": false
+  },
+  "old_world_phase_numbers_are_historical_reference_not_current_pipeline_measurements": true,
+  "cap_bytes": 100663296,
+  "new_named_owner_bytes": {
+    "B_LOD_raw_cache_metadata": 139424,
+    "B_LOD_dictionary_retaining_cache": 1373496,
+    "C_streamed_power_dictionary_metadata": 1048744,
+    "C_complete_forward_join": 524344,
+    "C_sorted_ID_view": 689184,
+    "C_shared_set_layout": 32792,
+    "C_schedules_if_new_header_present": 16496,
+    "C_boost_slot_projection_if_new_header_present": 56
+  },
+  "new_named_owner_total": 3824536,
+  "reference_phase_comparisons": [
+    {
+      "phase": "old_plus_candidate_reference_before_external_cleanup",
+      "reference_bytes": 100074681,
+      "additional_named_owners": 3824536,
+      "total_named_lower_bound": 103899217,
+      "allowance": -3235921,
+      "fits_named_cap_before_unmeasured_charges": false
+    },
+    {
+      "phase": "reference_after_explicit_cleanup_and_existing_power_sets",
+      "reference_bytes": 67361231,
+      "additional_named_owners": 3824536,
+      "total_named_lower_bound": 71185767,
+      "allowance": 29477529,
+      "fits_named_cap_before_unmeasured_charges": true
+    }
+  ],
+  "conditional_E_consumer_overlap": {
+    "assumption": "one distinct geometry identity per source part; 21 descriptors; only bar ordinal26509 payload is known here",
+    "draws": 21,
+    "known_bar_parts": 12,
+    "known_bar_payload_bytes": 21771948,
+    "other_plaza_payload_charged": false,
+    "selected_actor_payload_charged": false,
+    "adapter_context_bytes": 288,
+    "one_snapshot_lower_bound": 21780028,
+    "one_frame_binding_bundle_bytes": 1018,
+    "one_caller_policy_result_bytes": 2088,
+    "one_caller_model_selection_result_if_present": 320,
+    "one_snapshot_plus_one_bundle_total": 92969509,
+    "two_snapshots_plus_two_bundles_total": 114750555,
+    "same_snapshot_camera_publications_share_geometry": true,
+    "actual_consumer_instantiated": false,
+    "one_snapshot_named_allowance": 7693787,
+    "two_snapshot_named_allowance": -14087259
+  },
+  "preparation_workspace_bytes": {
+    "join": 524344,
+    "IDs": 689184,
+    "shared_sets": 32792,
+    "optional_prior_shared_layout": 32792,
+    "CohSchedulesWorkspace": 16496,
+    "CohPowerBoostSlotsWorkspace": 65536
+  },
+  "excluded_required_charges": [
+    "LOD whole loader reservation/blob/provider/control peaks",
+    "power stream provider context/handles and scratch",
+    "all other preparation stacks/runtime peaks",
+    "unmeasured actor and omitted plaza geometry",
+    "effective texture/material/GPU/driver and resource provider owners"
+  ],
+  "retirement_boundary": {
+    "source": "native-android/engine/world-render-adapter/coh_world_render.c::prepare",
+    "condition": "only successful complete synchronous validation/copy return, then release all independent material/source borrowers",
+    "actual_existing_owner_release": "native-android/engine/scenecatalog/coh_source_sealed.c::coh_source_sealed_free",
+    "actual_existing_deferred_callback": "native-android/engine/world-render-adapter/coh_wr_presentation.inc::coh_wr_presentation_collect -> resources.drop",
+    "source_payload_is_live_during_copy": true,
+    "callback_is_currently_real_source_provider": false,
+    "graph_required_for_future_GROUPS_deltas_must_remain": true,
+    "external_GEO_loader_FILE_requires_actual_trim_destroy_close": true,
+    "arithmetic_credit_taken": false,
+    "production_handoff_executed": false
+  },
+  "A_capture_tools_are_host_MapServer_PostgreSQL_scope_not_client_96MiB_owners": true,
+  "literal_child_caps_do_not_automatically_become_parent_tickets": true,
+  "current_parent_module_adapter_exists": false,
+  "actual_owner_retirement_observed_by_this_audit": false,
+  "Android_ABI_checked": false,
+  "RSS_measured": false,
+  "startup_improvement_measured": false,
+  "world_authority": false
+}

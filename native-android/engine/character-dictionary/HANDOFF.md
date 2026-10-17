@@ -367,3 +367,53 @@ Final shared-layout receipt:
 `e850401e9db728731e35110878a8fa4edd77ac71200b341971a54cb24939f860`.
 It binds68exact source/helper/header inputs before/after execution and records
 606,353checks/mode, C++link and1,104Bconservative new/getter-module stack.
+
+## Initial power boost-slot arithmetic — 2026-10-17 continuation
+
+`coh_schedules_read` now copies the whole original seven-array schedules binary
+schema. The exact retained520B schedules cache has106signed words and SHA256
+`a6b344b7f37b8bade2f5fbc28906d122690791ca08b381a10e6581664a348de6`.
+Whole original reader/writer round-trip and original ParseTableCRC reproduce
+`0x9f2a61e2`. Source `CountForLevel` preserves order, stops at the first threshold
+above the clamped level, and does not sort or count all qualifying thresholds.
+
+`coh_power_boost_slots_prepare` validates and streams the complete selected
+BasePower record before applying the exact initial ReceivePowers free-slot cap
+and purchased-slot arithmetic. Persisted field93 MaxBoosts is checked against
+the regenerated full source descriptor; all20,241 authentic values match the
+whole original reader and a separate descriptor decoder. The exact four-line
+source arithmetic slice executes on explicit host Character/Power fixtures.
+Unsafe signed level subtraction and purchased-slot overflow refuse with the
+entire prior output preserved. Native wire count is bounded at2048. The raw row
+must come from the source-qualified ID lookup; no numeric wire identity is
+invented. Original pre-bin FixPowerSetErrors can set temporary-power MaxBoosts
+to0; no unproven preprocessing/current-loader branch is replayed here.
+
+Schedules owner/workspace each16,496B; projection56B; record workspace65,536B;
+borrowed stream owner1,048,744B on this host. Provider/file and schedules leases
+remain immutable and live while projections borrow them. Complete owners,
+context/scratch/retained and8KiB/16KiB stack reserves are charged before any
+callback under literal256KiB/4MiB local caps. Selected reads never exceed4096B.
+The provider lease guarantees immutability: fullname CRC is not a cryptographic
+per-record revalidation of the originally imported payload.
+
+Final source commit `e6c39757d101f7f5b6f4b5a7de6f4896f77b8fd4`, receipt
+`qualification/power-boost-slots-20261017-final.json.gz`, SHA256
+`95d26b98b307c577dbb91a2b6ce8bf62c986436916fee221d563096c03266962`.
+It binds59source/helper/header inputs before/after execution. Eleven scenarios
+pass375,012checks per release/ASan/UBSan mode, including empty, duplicate,
+unsorted and signed threshold arrays,4096-word success/4097-word refusal,
+six original-written MaxBoosts variants, signed-overflow refusal, every schedule
+truncation, exact budget boundaries, per-read I/O/cancellation failures, aliases,
+record-length/name mutation and output rollback. C++link passes; conservative
+new-module measured stack sum times4 is3,104B including bounded record recursion.
+F independently reviewed source/oracle/tests with no concrete blocker.
+
+This closes an actual character_ReceivePowers scalar dependency. It does not
+execute power_LevelFinalize, instantiate boost objects, complete character
+CreatePartOne/Two, apply inventories, admit a current dictionary generation,
+publish an actor or authorize an ACK. The next source power_LevelFinalize uses
+the same schedule plus selected BasePower.pBoostsAllowed and prior owned boost
+slots; authentic raw data is available, but prior slots must belong to the
+eventual complete character owner rather than a caller assertion. The live
+initial packet/current generation remain separate required evidence.

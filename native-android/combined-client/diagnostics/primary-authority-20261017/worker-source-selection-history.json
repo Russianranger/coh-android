@@ -1,0 +1,34 @@
+{
+  "schema": "coh-preserved-source-selection-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/source-selection-20261017/a",
+      "tip": "f6ee1243756a686002843549093eb8cb0c606be1",
+      "prerequisite": "d3da923c5c500895fd831990113339ddf5541694"
+    },
+    "B": {
+      "ref": "refs/recovery/source-selection-20261017/b",
+      "tip": "6b0ab48cc582b0967ca642a5a7896e5f2ff749af",
+      "prerequisite": "35299ada512a0a02df0c8ce738cf2cc36aa1c999"
+    },
+    "C": {
+      "ref": "refs/recovery/source-selection-20261017/c",
+      "tip": "a84995b16f5fd197a1e5c9f8b64a0cc6e1068149",
+      "prerequisite": "cf6cd4e8b0557cdd3468e03a52006560f7012dd5"
+    },
+    "D": {
+      "ref": "refs/recovery/source-selection-20261017/d",
+      "tip": "93bfd2347625ef53c6589a05d63f1f351be58aa7",
+      "prerequisite": "3b7057a54c450e1ab80002561485961662c63caf"
+    },
+    "F": {
+      "ref": "refs/recovery/source-selection-20261017/f",
+      "tip": "7066d39c4b267f1cef3c59050eb2f30194084350",
+      "prerequisite": "ea907c176e60a45a816fdc58c71e4752eaac48e5"
+    }
+  },
+  "bundle": "worker-source-selection-history.bundle",
+  "bytes": 100129,
+  "sha256": "cf0c1f6860e58049779b9e8b4f6af94a4e9e1568186a4726231cd592454d497e",
+  "scope": "Reviewed A public-status controls, B source lookup, C original power state, D actual dialog evidence and F independent reviews/owner audit."
+}

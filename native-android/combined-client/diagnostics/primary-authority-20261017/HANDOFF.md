@@ -25,7 +25,7 @@ their then-current state. The following table supersedes those pending fields.
 The actual Windows diagnostic39070610385 refused at the unchanged300second
 readiness deadline. Its exact6148B artifact SHA256 is
 `f9d3b02dbd3f3661044312fc29ba8c06c46c26e6d21bb769ff6e355e2a5c4889`.
-The same owned DbServer generation had65 sleeping SQL sessions, zero user or
+The same owned DbServer generation had 65 sleeping SQL sessions, zero user or
 attribute tables, zero active/waiting/blocked SQL requests,1047ms CPU and nine
 waiting threads. All owned cleanup checks passed. This localizes the stall
 before expected worker population; it does not identify an assertion or justify
@@ -33,7 +33,7 @@ a binary repair. A failure-only modal/assertion classifier is independently revi
 for the next focused service attempt. The intervening39069981922 unit failure
 occurred before services and is not a second runtime stall.
 
-Gates25–27 are open. No new APK, authoritative world/player, source-generation
+Gates 25–27 are open. No new APK, authoritative world/player, source-generation
 admission, complete initial update, application ACK or Thor result is claimed.
 The accepted Session0.3.0, Combined0.1.7 and Support0.2.0/code201 are unchanged.
 
@@ -102,7 +102,7 @@ allows 67,361,231 named bytes including sets. These numbers do not establish RAM
 headroom, integrated global adapters, renderer/driver cost or actual RSS. Startup
 remains the accepted 387,340 ms (about 6m27s); no measured speedup is claimed.
 
-Gates1–24 retain their accepted scopes. Gates25–27 remain open. No complete
+Gates1–24 retain their accepted scopes. Gates 25–27 remain open. No complete
 initial player update, semantic character_Receive, actor publication, live scene
 generation, true server-world rendering or encrypted Auth→DB→Map is accepted.
 No successor APK is justified by these standalone closures alone. Accepted
@@ -304,10 +304,10 @@ hashes and all qualification metadata are retained under its own evidence path.
 
 ## Owned original Db modal diagnosis
 
-Worker D3b7057a54 and retained evidence433e62991 are integrated. The new
-read-only failure observer classifies only original Static child control10
+Worker D commit 3b7057a54 and retained evidence 433e62991 are integrated. The new
+read-only failure observer classifies only original Static child control 10
 from the exact owned DbServer generation. Nine original source hashes define
-21 assertion IDs and22 exception labels. Raw titles, control text, paths and
+21 assertion IDs and 22 exception labels. Raw titles, control text, paths and
 stacks remain private. Fixed bounds cover windows, text, time and JSON size;
 unexpected enumeration failure refuses. Generation checks bracket observation
 and observer failure still reaches complete owned cleanup. E/F independent
@@ -325,3 +325,63 @@ whether an original assertion or exception can actually be observed.
 its explicit prior worker prerequisite. Existing failed runs remain retained.
 The graphical fixture retry39071130820 continues independently at its pinned
 08e6a96f2 source; this source publication does not cancel or repeat it.
+
+
+## Model selection, original power state and current owner layouts
+
+Reviewed B commit 6b0ab48cc reproduces the complete unchanged original
+trickFromObjectName rule: first double-underscore suffix only, or whole model
+name when no suffix exists. Both existing owner forms agree with all 3,083
+retained root model/name/file associations: 1,959 hits across 528 distinct rows
+and 1,124 misses. Each release/ASan/UBSan mode passes 301,210 checks and 28,046
+original-function comparisons; six mutations refuse. No new heap or lease is
+introduced.45 receipt hashes match composed source and exact worker commit.
+Current CLIENT generation, textures/defaults and render materials remain open.
+
+Reviewed C commits e6c39757d/a84995b16 adds the exact 520 B schedules import and original
+received-power boost-slot arithmetic, with bounded selected whole-record reads
+from the existing streamed dictionary. All 20,241 MaxBoosts values agree with
+whole original reads;11 cases / 375,012 checks pass per release/ASan/UBSan mode,
+plus C++ linkage, stack and exact descriptor regeneration.59 source hashes
+match composed source and exact worker commits. No eager power object graph
+is built. Real character ownership, runtime generation and complete initial
+update/actor/ACK remain refused.
+
+F commits 532a16543/7066d39c4 retain independent B/C reviews and a new C/C++ size and
+alignment reporter. `composed-owner-overlap.json` executes it against the
+composed source, including new optional headers. Additional named owners sum
+to 3,824,536 B, including the previously omitted 1,048,744 B stream dictionary. The
+old historical 100,074,681 B transition plus these owners is 103,899,217 B, 3,235,921 B
+over 96 MiB before excluded costs. This is a historical-reference lower bound,
+not a current production measurement. Geometry payloads remain alive during
+actual synchronous renderer deep-copy preparation; no provider retirement or
+RSS/Android/GPU headroom is credited.
+
+A commits 0817cdb23/f6ee12437 adds eight privacy/refusal controls and a fixed internally
+assigned stage vocabulary for future missing-pair diagnosis. Only explicit
+booleans/coarse fixed enums/public helper identity may leave the private run;
+account, selected DBID, cookie, raw packet/envelope/logs and private receipts
+remain unexported. Primary failure stage survives cleanup. Existing original
+observer/native binaries are unchanged.
+
+Focused `native-source-selection.yml` runs only these new B/C/F qualifiers and
+A public-status tests using one exact accepted cache/resource recovery. It does
+not rerun older LOD, power schema, shared layout or material-policy qualifiers,
+start servers, acquire GEO bodies or build an APK. Hosted results remain pending
+until the new run completes. Worker histories and prerequisites are preserved
+in `worker-source-selection-history.bundle` and its JSON index.
+
+## Actual original assertion dialog observed
+
+Focused Windows run 39072189359 at 81568446e completed all 13 pre-service tests,
+including actual C# Add-Type/API self-observation, then refused the unchanged
+300 second original-service readiness deadline. Artifact 12115752164 is 7,122 B,
+SHA256: 8acbbeac960d073574a1a902c1b6ba7f1d769d25da167557adb08f4eef730f11.
+Root independently checked its metadata/archive/CRC/sanitized receipt and
+actual job logs. The exact DbServer generation owned one original assertion
+dialog; all12 text reads completed without limits or owner changes. It was
+classified source_assertion_unknown. SQL still had 65 sleeping sessions and no
+tables or active requests. All cleanup checks passed. This establishes an
+actual assertion stall, but no specific source assertion/root cause or repair.
+D is preparing a source/PE-bound expanded observation policy; no binary change,
+profile change, version/checksum relaxation or readiness success is inferred.

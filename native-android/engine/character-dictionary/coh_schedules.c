@@ -1,0 +1,23 @@
+#include "coh_schedules.h"
+#include <string.h>
+typedef struct{const void*p;size_t n;}Span;
+typedef struct{CohBytes input;size_t at;CohStatus status;}Cursor;
+static int valid(Span s){return s.p?(uintptr_t)s.p<=UINTPTR_MAX-s.n:!s.n;}
+static int overlap(Span a,Span b){return a.n&&b.n&&(uintptr_t)a.p<(uintptr_t)b.p+b.n&&(uintptr_t)b.p<(uintptr_t)a.p+a.n;}
+static CohStatus charge(size_t*used,size_t n,size_t cap){if(*used>cap||n>cap-*used)return COH_LIMIT;*used+=n;return COH_OK;}
+static void need(Cursor*c,int ok,CohStatus why){if(c->status==COH_OK&&!ok)c->status=why;}
+static const uint8_t*bytes(Cursor*c,size_t n){if(c->status!=COH_OK)return NULL;if(c->at>c->input.size||n>c->input.size-c->at){c->status=COH_INVALID;return NULL;}const uint8_t*p=c->input.data+c->at;c->at+=n;return p;}
+static uint32_t word(Cursor*c){const uint8_t*p=bytes(c,4);return p?((uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24):0;}
+static size_t segment(Cursor*c){uint32_t n=word(c);need(c,c->at<=c->input.size&&n<=c->input.size-c->at,COH_INVALID);return c->status==COH_OK?c->at+n:c->at;}
+static CohBytes text(Cursor*c){CohBytes value={0};const uint8_t*p=bytes(c,2);if(!p)return value;size_t n=(size_t)p[0]|(size_t)p[1]<<8;need(c,n<260,COH_LIMIT);p=bytes(c,n);if(!p)return value;need(c,!memchr(p,0,n),COH_INVALID);value=(CohBytes){p,n};(void)bytes(c,(4-(n+2)%4)%4);return value;}
+static int literal(CohBytes a,const char*b){return a.size==strlen(b)&&!memcmp(a.data,b,a.size);}
+CohStatus coh_schedules_read(CohBytes input,uint64_t lease,const uint8_t expected[32],const CohCostumeImportDigest*d,CohSchedules*out,CohSchedulesWorkspace*w,size_t budget,size_t retained){
+ if(!input.data||!input.size||input.size>COH_SCHEDULE_INPUT_MAX||!lease||!expected||!d||!d->sha256||!out||!w||!budget||budget>COH_SCHEDULE_RAM_MAX||(!d->context&&d->context_bytes)||(d->context&&!d->context_bytes))return COH_INVALID;
+ Span spans[]={{input.data,input.size},{expected,32},{d,sizeof(*d)},{d->context,d->context_bytes},{out,sizeof(*out)},{w,sizeof(*w)}};size_t used=COH_SCHEDULE_STACK_RESERVE;
+ for(unsigned i=0;i<6;i++){if(!valid(spans[i]))return COH_INVALID;for(unsigned j=0;j<i;j++)if(overlap(spans[i],spans[j]))return COH_INVALID;CohStatus status=charge(&used,spans[i].n,budget);if(status!=COH_OK)return status;}
+ CohStatus status=charge(&used,d->scratch_reserve,budget);if(status!=COH_OK)return status;status=charge(&used,retained,budget);if(status!=COH_OK)return status;unsigned nonzero=0;for(unsigned i=0;i<32;i++)nonzero|=expected[i];if(!nonzero)return COH_STATE;
+ CohSchedules*c=&w->candidate;memset(c,0,sizeof(*c));Cursor r={input,0,COH_OK};const uint8_t*magic=bytes(&r,8);need(&r,magic&&!memcmp(magic,"CrypticS",8),COH_INVALID);c->schema_crc=word(&r);need(&r,c->schema_crc==UINT32_C(0x9f2a61e2),COH_STATE);CohBytes parse=text(&r),files=text(&r);need(&r,literal(parse,"Parse6")&&literal(files,"Files1"),COH_UNSUPPORTED);size_t files_end=segment(&r);c->dependency_count=word(&r);need(&r,c->dependency_count<=64,COH_LIMIT);for(uint32_t i=0;i<c->dependency_count&&r.status==COH_OK;i++){(void)text(&r);(void)word(&r);need(&r,r.at<=files_end,COH_INVALID);}need(&r,r.at==files_end,COH_INVALID);size_t root=segment(&r),embedded=segment(&r);need(&r,root==input.size&&embedded==root,COH_INVALID);
+ for(unsigned i=0;i<COH_SCHEDULE_FIELDS&&r.status==COH_OK;i++){uint32_t n=word(&r);need(&r,n<=COH_SCHEDULE_WORDS_MAX-c->word_count,COH_LIMIT);c->fields[i]=(CohScheduleSpan){c->word_count,n};for(uint32_t j=0;j<n&&r.status==COH_OK;j++)c->words[c->word_count++]=word(&r);need(&r,r.at<=embedded,COH_INVALID);}need(&r,r.at==embedded&&r.at==input.size,COH_INVALID);if(r.status!=COH_OK)return r.status;uint8_t hash[32];status=d->sha256(d->context,input,hash);if(status!=COH_OK)return status;if(memcmp(hash,expected,32))return COH_STATE;c->source_lease=lease;memcpy(c->input_sha256,hash,32);c->raw_schema_validated=c->historical_schema_crc_matched=1;*out=*c;return COH_OK;
+}
+static int32_t signed_word(uint32_t n){return n<=INT32_MAX?(int32_t)n:-1-(int32_t)(UINT32_MAX-n);}
+CohStatus coh_schedule_count(const CohSchedules*d,uint32_t field,int32_t level,uint32_t*out){if(!d||!out||field>=COH_SCHEDULE_FIELDS)return COH_INVALID;if(!valid((Span){d,sizeof(*d)})||!valid((Span){out,sizeof(*out)})||overlap((Span){d,sizeof(*d)},(Span){out,sizeof(*out)}))return COH_INVALID;if(!d->raw_schema_validated||!d->historical_schema_crc_matched||d->schema_crc!=UINT32_C(0x9f2a61e2)||!d->source_lease||d->word_count>COH_SCHEDULE_WORDS_MAX)return COH_STATE;CohScheduleSpan span=d->fields[field];if(span.first>d->word_count||span.count>d->word_count-span.first)return COH_STATE;if(level<0)level=0;uint32_t n=0;while(n<span.count&&signed_word(d->words[span.first+n])<=level)n++;*out=n;return COH_OK;}

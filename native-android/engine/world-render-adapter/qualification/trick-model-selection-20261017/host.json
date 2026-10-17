@@ -1,0 +1,270 @@
+{
+  "passed": true,
+  "source_revision": "35299ada512a0a02df0c8ce738cf2cc36aa1c999",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/check_trick_model.py": "53a4fb635731e9f8a53df70131231dd42acfd83606182e092fd98e7a6a1a600f",
+    "native-android/engine/world-render-adapter/trick_model_oracle.py": "fcd71c445fb48a7886dbfd0cc89b7e52b75f6773e7a645ce7b1df21b36ddb320",
+    "native-android/engine/world-render-adapter/coh_wr_trick_model.h": "80a252beffff4e6be159758732f347ffac996a46f1cdb019a7590a48fa27ef82",
+    "native-android/engine/world-render-adapter/coh_wr_trick_model_internal.inc": "5c322333e8418ea62b907418c5b0a1c2553f250b8ed253420bda75dbbd293fe7",
+    "native-android/engine/world-render-adapter/tests/test_trick_model.c": "179f39ae24b6c40ae9a92a5a8431eb9af0b7485e3f8b799d9d03697d6271d773",
+    "native-android/engine/world-render-adapter/tests/test_trick_model_cpp.cpp": "45135c6ccab7f681da0c1d60894e5cb2dec409e978da5973e96e437e98ba5dea",
+    "native-android/engine/world-render-adapter/tests/trick_model_oracle.h": "fb0dcd53b0853ccc2cfadd1e2fa98c6ed20b7dc24956ba30940184240c21d957",
+    "native-android/engine/world-render-adapter/coh_wr_trick.c": "636b41a9da8501816bd9bbdb9b6a5bd5997baa13d52b465a19e4b66e61bc246c",
+    "native-android/engine/world-render-adapter/coh_wr_trick.h": "c30f9735166dd2db73a801bc998cdd3f90447ff3ef3fe8ac027973f90aa015ed",
+    "native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h": "56a022958f4d6ff3a79104c4bd3c81bd674b58a445fb1123283d054ddbdde7e4",
+    "native-android/engine/world-render-adapter/coh_wr_trick_tables_internal.inc": "ae251157a486ea880259634f2682b4266be883024b9bb8c60c6d143d934188ab",
+    "native-android/engine/world-render-adapter/coh_wr_trick_post_source.inc": "9269e084013850a5b55d36dcaab1a2e7699274b6efbadf0d8ea816505d02d621",
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached.c": "9f74f39e668120b926343a76d1e7021ba9828c62df06149613003a1eac2097cd",
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached.h": "48160bf855ef3d83934fd53e465b6663467a15d6d72148186f37a4e03f9fe9a3",
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached_core.inc": "06d6cc6e765542b1853e1b2de5bb28f1f4a503f897bdc006d5b5976b8e2139b3",
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached_storage_internal.h": "dfef7e286e6021387ed9887b5dca6ad3b856e4a09ba8c2b7d66d85bed1142aee",
+    "native-android/engine/world-render-adapter/coh_wr_texopt.c": "c8232e976061fa8715f185cd5507886fc2b3755679b0f8408b35bdad87ecdb5b",
+    "native-android/engine/world-render-adapter/coh_wr_texopt.h": "0cc9b48deea230a5ff028c93289d6e458302ee43e8dbb1f5666744e8d706291e",
+    "native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h": "10cbd1b1ea3a42dfed7c7920aac0b1e78d01a536b5b6ee8b71cea2fcd5f6ce77",
+    "native-android/engine/world-render-adapter/coh_wr_texopt_tables_internal.inc": "49f71abc0405ca7aaf20164656ebd367ebc5a97bb157817203cceac2cc7a64a1",
+    "native-android/engine/world-render-adapter/coh_wr_texopt_post_source.inc": "3dbf81969ee634384dc71ec7fec7e2f1bc837ce19dc1f380f73a24de606f1488",
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.c": "5bf9528bbf1fb78e400e904b87af7d3fbdb0ea5263944e9d3d564f5f4cef363c",
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.h": "20ff6b2c6478fb44197433de4e34c9685c3e01af6a400a87986b610411d191c8",
+    "native-android/engine/world-render-adapter/coh_wr_surface_core.inc": "e20a99603a20e6f58c2c57c1fb8954c93583368eb2d22a35dad9653787a48fee",
+    "native-android/engine/world-render-adapter/check_texname.py": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+    "native-android/engine/world-render-adapter/texopt_cache_contract.py": "a193a583ddffde758d4e6877114852b3d419bae9548a77ddc1d2b631a1497734",
+    "native-android/engine/world-render-adapter/trick_cache_contract.py": "a849a6591ff5cf1c102a80fdc11f1f22d329f43338fa1d370740d51b42554b6e",
+    "native-android/engine/world-render-adapter/check_trick_cache.py": "f2ab9bfffa02e8bc756635225911c507c48f51182f6c75db7d8856bec3b95d3a",
+    "native-android/engine/world-render-adapter/check_trick_detached.py": "0e41a5f1f7eb7c515b95cda29ac0e674718b6962213fefdd9d0a6d855a03502f",
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/Common/seq/AutoLOD.c": "f34c46abac3e6e95bd5829d1d72a203756a7764872f6a9483c4377a05a546722",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/utils_opt.c": "e86e629114f213a0c13cc101f5690fd47a9f6b48eb21c1f4dc3cff62ab3ec351",
+    "native-android/engine/scenecatalog/evidence/root-model-texture-partitions-38994607354.json": "46df6643795c3d06aa5b52b3c2fadeed1eac00a3693f33ac611bb5d990109e2a",
+    "native-android/engine/scenecatalog-server/resource_oracle.py": "b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "input_sha256": {
+    "cache": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+    "resources": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6",
+    "roots": "46df6643795c3d06aa5b52b3c2fadeed1eac00a3693f33ac611bb5d990109e2a"
+  },
+  "original_function_sha256_lf": {
+    "trickFromObjectName": "fc9b1afe2226848b2fb41fe972fecf3ec86f2a95fe626cd7a138a4ff944516c8",
+    "getDirectoryName": "6c02eb3b89092237fd9c986d49da926955bebe465d0470722618c08c9f40a9e1"
+  },
+  "generated_original_sha256": "b038c135fc786b6627497ff9406bb8e42e00c9f0181cd745af5e8915b6789566",
+  "generated_independent_dictionary_and_actual_root_fixture_sha256": "090c4852179644f27cc9733b7787bebd7fb5d49f5d2fa342bc6c6b2820146ba6",
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 301210,
+      "source_comparisons": 28046,
+      "comparisons_per_owner": 14023,
+      "actual_root_models_per_owner": 3083,
+      "suffix_queries": 1958,
+      "whole_name_queries": 1125,
+      "historical_matches": 1959,
+      "historical_misses": 1124,
+      "distinct_selected_rows": 528,
+      "actual_name_file_disagreements": 0,
+      "whole_owner_bytes": 208600,
+      "detached_owner_bytes": 956892,
+      "selection_output_bytes": 320,
+      "policy_heap_allocations": 0,
+      "detached_after_actual_loader_provider_retirement": true,
+      "SERVER_CLIENT_generation_equality": false,
+      "current_material_selection": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 301210,
+      "source_comparisons": 28046,
+      "comparisons_per_owner": 14023,
+      "actual_root_models_per_owner": 3083,
+      "suffix_queries": 1958,
+      "whole_name_queries": 1125,
+      "historical_matches": 1959,
+      "historical_misses": 1124,
+      "distinct_selected_rows": 528,
+      "actual_name_file_disagreements": 0,
+      "whole_owner_bytes": 208600,
+      "detached_owner_bytes": 956892,
+      "selection_output_bytes": 320,
+      "policy_heap_allocations": 0,
+      "detached_after_actual_loader_provider_retirement": true,
+      "SERVER_CLIENT_generation_equality": false,
+      "current_material_selection": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 301210,
+      "source_comparisons": 28046,
+      "comparisons_per_owner": 14023,
+      "actual_root_models_per_owner": 3083,
+      "suffix_queries": 1958,
+      "whole_name_queries": 1125,
+      "historical_matches": 1959,
+      "historical_misses": 1124,
+      "distinct_selected_rows": 528,
+      "actual_name_file_disagreements": 0,
+      "whole_owner_bytes": 208600,
+      "detached_owner_bytes": 956892,
+      "selection_output_bytes": 320,
+      "policy_heap_allocations": 0,
+      "detached_after_actual_loader_provider_retirement": true,
+      "SERVER_CLIENT_generation_equality": false,
+      "current_material_selection": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "5c7da2731a97e4bce0e9ec630cc06064f5d97ad7c32317b6bd2a1f0e0ab68703",
+    "address": "0e6bd60dae34726d50e30bbb1b18db74928fcc95e1724b7dde50725cc6ad5b2e",
+    "undefined": "7abae5728969849ac700ece23fa148dc913eb6187b64a3300e7b1ba250261ffb"
+  },
+  "standalone_public_exports": {
+    "release": {
+      "whole": {
+        "symbols": [
+          "coh_wr_trick_autolod",
+          "coh_wr_trick_find",
+          "coh_wr_trick_model_select",
+          "coh_wr_trick_numeric_projection",
+          "coh_wr_trick_open",
+          "coh_wr_trick_release",
+          "coh_wr_trick_report",
+          "coh_wr_trick_stanim",
+          "coh_wr_trick_view"
+        ],
+        "object_sha256": "d7fa11db3e54c327783515acbeb4bf11f9e8e09fc82522f2bc396a15c76eb79d"
+      },
+      "detached": {
+        "symbols": [
+          "coh_wr_trick_detach",
+          "coh_wr_trick_detached_autolod",
+          "coh_wr_trick_detached_find",
+          "coh_wr_trick_detached_model_select",
+          "coh_wr_trick_detached_numeric_projection",
+          "coh_wr_trick_detached_release",
+          "coh_wr_trick_detached_report",
+          "coh_wr_trick_detached_source_bytes",
+          "coh_wr_trick_detached_stanim",
+          "coh_wr_trick_detached_view"
+        ],
+        "object_sha256": "580787e0898bc4bae2dd8367463c976958ae7cb421ed9c005e467ddff7bf112e"
+      }
+    },
+    "address": {
+      "whole": {
+        "symbols": [
+          "coh_wr_trick_autolod",
+          "coh_wr_trick_find",
+          "coh_wr_trick_model_select",
+          "coh_wr_trick_numeric_projection",
+          "coh_wr_trick_open",
+          "coh_wr_trick_release",
+          "coh_wr_trick_report",
+          "coh_wr_trick_stanim",
+          "coh_wr_trick_view"
+        ],
+        "object_sha256": "0814cb683d731d6e57635a5a62e0d6865e0a6f49abc2a0d59ef19a45813f382a"
+      },
+      "detached": {
+        "symbols": [
+          "coh_wr_trick_detach",
+          "coh_wr_trick_detached_autolod",
+          "coh_wr_trick_detached_find",
+          "coh_wr_trick_detached_model_select",
+          "coh_wr_trick_detached_numeric_projection",
+          "coh_wr_trick_detached_release",
+          "coh_wr_trick_detached_report",
+          "coh_wr_trick_detached_source_bytes",
+          "coh_wr_trick_detached_stanim",
+          "coh_wr_trick_detached_view"
+        ],
+        "object_sha256": "1999e844746a0a1d9ee5f38fe25bf861f5ab0b0ee1aadc4d10e3c8111877c6b4"
+      }
+    },
+    "undefined": {
+      "whole": {
+        "symbols": [
+          "coh_wr_trick_autolod",
+          "coh_wr_trick_find",
+          "coh_wr_trick_model_select",
+          "coh_wr_trick_numeric_projection",
+          "coh_wr_trick_open",
+          "coh_wr_trick_release",
+          "coh_wr_trick_report",
+          "coh_wr_trick_stanim",
+          "coh_wr_trick_view"
+        ],
+        "object_sha256": "f3d8b2fd95ae11c093b5278e5e7a01d784dd8dabfa9251c77b990a1a77119a5f"
+      },
+      "detached": {
+        "symbols": [
+          "coh_wr_trick_detach",
+          "coh_wr_trick_detached_autolod",
+          "coh_wr_trick_detached_find",
+          "coh_wr_trick_detached_model_select",
+          "coh_wr_trick_detached_numeric_projection",
+          "coh_wr_trick_detached_release",
+          "coh_wr_trick_detached_report",
+          "coh_wr_trick_detached_source_bytes",
+          "coh_wr_trick_detached_stanim",
+          "coh_wr_trick_detached_view"
+        ],
+        "object_sha256": "9f109cf9106224b08f08f021d9d387c9c6fb68c61f046308216aaefcf778602d"
+      }
+    }
+  },
+  "actual_C_object_CPP_link_test": {
+    "passed": true,
+    "executed": true,
+    "source_sha256": "45135c6ccab7f681da0c1d60894e5cb2dec409e978da5973e96e437e98ba5dea",
+    "actual_whole_C_object_sha256": "d7fa11db3e54c327783515acbeb4bf11f9e8e09fc82522f2bc396a15c76eb79d",
+    "actual_detached_C_object_sha256": "580787e0898bc4bae2dd8367463c976958ae7cb421ed9c005e467ddff7bf112e",
+    "binary_sha256": "2a9ac0ad21d50c022d0eb17b93de70e06801e0d1ccee9469f9579dd38acbd5f9"
+  },
+  "host_release_selector_stack_usage": [
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_trick_model_internal.inc:12:11:coh_wr_trick_model_select\t432\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_trick_model_internal.inc:12:11:coh_wr_trick_detached_model_select\t432\tstatic"
+  ],
+  "production_mutations_refused": [
+    "whole_name_instead_of_suffix",
+    "last_suffix_instead_of_first",
+    "base_fallback_after_suffix_miss",
+    "source_path_as_lookup_key",
+    "diagnostic_on_whole_name_miss",
+    "aggregate_limit_bypass"
+  ],
+  "unchanged_original_trickFromObjectName_and_getDirectoryName_executed": true,
+  "dictionary_registration_storage_logging_observers": true,
+  "actual_root_model_name_path_and_captured_Trick_name_file_inputs": true,
+  "captured_SERVER_generation_labels": [
+    20261016
+  ],
+  "historical_CLIENT_cache_label_in_native_fixture": 17,
+  "SERVER_CLIENT_generation_equality": false,
+  "whole_and_detached_owners_compared": true,
+  "detached_after_actual_loader_provider_retirement": true,
+  "new_selection_heap_allocations": 0,
+  "new_persistent_owner_bytes": 0,
+  "unchanged_preexisting_owner_implementation_sha256": {
+    "coh_wr_trick.c": "355c7b9bf156bc10bac1863742ba0d26efbc3643dd3dd84072b7c01a6317459e",
+    "coh_wr_trick_detached.c": "1e811f67ec02ccbedb9e5a30ee12ec0f9f6257b843e5694e88f7d7bc5fcfb56f"
+  },
+  "existing_Trick_reader_getter_bodies_unchanged": true,
+  "full_Trick_animation_postprocess": false,
+  "current_CLIENT_material_selection": false,
+  "material_or_GPU_owner_created": false,
+  "world_authority": false,
+  "android_execution": false,
+  "old_qualifiers_rerun": false
+}

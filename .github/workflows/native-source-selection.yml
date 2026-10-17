@@ -1,0 +1,84 @@
+name: Native source selection and owner contracts
+'on':
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-source-selection.yml]
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-source-selection-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  original-source-selections:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[source-selection]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install only source oracle dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev
+      - name: Reuse exact accepted cache and resource bytes
+        id: inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib,os,pathlib,stat,subprocess,zipfile
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'source-selection-inputs';out.mkdir()
+          specs=[
+            (11092897979,26476333,'51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae',
+             'client-caches.zip','client-caches.zip',27071659,'5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051'),
+            (12086339123,2945220,'572d5cde08f698173cce4c9a0860902a2da91841b22dbdd124501e1e601e192d',
+             'capture/resources.cohres','resources.cohres',12596422,'8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6')]
+          for ident,size,digest,member,name,raw_size,raw_digest in specs:
+              archive=out/(str(ident)+'.zip')
+              with archive.open('xb') as output:
+                  subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=180)
+              assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==digest
+              with zipfile.ZipFile(archive) as z:
+                  infos=z.infolist()
+                  assert len(infos)<=128 and len({i.filename for i in infos})==len(infos)
+                  assert sum(i.file_size for i in infos)<=128*1024**2 and z.testzip() is None
+                  info=z.getinfo(member)
+                  assert not info.flag_bits&1 and stat.S_IFMT(info.external_attr>>16) in (0,stat.S_IFREG)
+                  assert info.file_size==raw_size
+                  raw=z.read(info);assert hashlib.sha256(raw).hexdigest()==raw_digest
+                  (out/name).write_bytes(raw)
+              archive.unlink()
+          with zipfile.ZipFile(out/'client-caches.zip') as z:
+              member='data/bin/tricks.bin';info=z.getinfo(member)
+              assert info.file_size==13537052 and not info.flag_bits&1
+              assert stat.S_IFMT(info.external_attr>>16) in (0,stat.S_IFREG)
+              raw=z.read(info)
+              assert hashlib.sha256(raw).hexdigest()=='cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1'
+              (out/'tricks.bin').write_bytes(raw)
+          print('Exact retained inputs reused; no server startup or GEO download')
+          PY
+      - name: Qualify only original model-name Trick selection
+        if: always() && steps.inputs.conclusion == 'success'
+        run: |
+          python3 native-android/engine/world-render-adapter/check_trick_model.py --actual-cache "$RUNNER_TEMP/source-selection-inputs/tricks.bin" --resources "$RUNNER_TEMP/source-selection-inputs/resources.cohres" --output out/source-selection/trick-model.json
+      - name: Qualify only original per-power boost-slot state
+        if: always() && steps.inputs.conclusion == 'success'
+        run: |
+          python3 native-android/engine/character-dictionary/check_power_boost_slots.py --cache-zip "$RUNNER_TEMP/source-selection-inputs/client-caches.zip" --sanitize --output out/source-selection/power-boost-slots.json.gz
+      - name: Measure only current host ABI owners and lower-bound overlap
+        if: always() && steps.inputs.conclusion == 'success'
+        run: |
+          python3 native-android/combined-client/diagnostics/continuation-f-20261017/latest-owner-overlap/qualify.py --source-root . --output out/source-selection/latest-owner-overlap.json
+      - name: Check only new private-capture public status controls
+        if: always() && steps.inputs.conclusion == 'success'
+        run: |
+          python3 native-android/engine/scenecatalog-server/test_groups_public_summary.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-selection-contracts-${{ github.sha }}
+          path: out/source-selection/
+          if-no-files-found: error
+          retention-days: 90

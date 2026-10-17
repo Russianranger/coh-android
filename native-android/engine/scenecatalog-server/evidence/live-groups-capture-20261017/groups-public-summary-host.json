@@ -1,0 +1,38 @@
+{
+  "schema": "coh-groups-public-summary-host-v1",
+  "passed": true,
+  "test_methods": 8,
+  "source_files": {
+    "summarize_groups_capture.py": {
+      "bytes": 6427,
+      "sha256": "b527f44fb38db189ac64742d89b249f9487e5daf0021e5ddeddf34d2b17b3898"
+    },
+    "test_groups_public_summary.py": {
+      "bytes": 6938,
+      "sha256": "1cc90c8d6b05135eb3fa74f5a0f144e595262758af71b136302dd859f64c36ef"
+    },
+    "GROUPS_PUBLIC_SUMMARY.md": {
+      "bytes": 2411,
+      "sha256": "4cb7f6f3eda364ea11ce870ba22b72becc40e4c01a0ed5073b76650b8714c7da"
+    },
+    "groups_capture_stages.py": {
+      "bytes": 610,
+      "sha256": "76faf1ee5dd3b0ef0f1a725869024cd6d4c7da4f6300f2221f4b0346599b442b"
+    },
+    "capture_groups_transaction.py": {
+      "bytes": 26092,
+      "sha256": "7554174340131cc869ebcc7e95180350d8187fb8e8a0fb9b2b74a61d5a878ab7"
+    }
+  },
+  "private_canaries_absent": true,
+  "source_owned_fixed_failure_enums": true,
+  "private_dictionary_serialization": false,
+  "runtime_executed": false,
+  "actual_pair_admitted": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "fixed_source_owned_stage_enum": true,
+  "preserves_primary_stage_during_cleanup": true,
+  "supervisor_existing_fixture_checks": 101,
+  "supervisor_existing_fixture_refusals": 94
+}

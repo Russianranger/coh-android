@@ -1,4 +1,5 @@
 #include "coh_wr_trick_detached.h"
+#include "coh_wr_trick_model.h"
 #include "coh_wr_trick_types_internal.h"
 #include <stdlib.h>
 #include <string.h>
@@ -44,3 +45,9 @@ CohStatus coh_wr_trick_detach(CohAssetLoader*loader,CohWrTrickCache**source,CohW
  if(stop(cancel)){status=COH_CANCELLED;goto fail;}coh_asset_release(loader,blob);coh_wr_trick_release(source);*out=c;return COH_OK;
 fail:if(blob)coh_asset_release(loader,blob);free(c);return status;
 }
+
+#define MODEL_SELECT_FUNCTION coh_wr_trick_detached_model_select
+#define MODEL_SELECT_OWNER CohWrTrickDetached
+#define MODEL_SELECT_OWNED(c) ((c)->detached.owned_bytes)
+#define MODEL_SELECT_LOADER(c) ((size_t)0)
+#include "coh_wr_trick_model_internal.inc"

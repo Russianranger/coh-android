@@ -170,6 +170,188 @@
     "inference": "Stalled before template/DDL work and before the expected SQL-worker population was established. Specific failing instruction/assertion remains unobserved.",
     "actual_root_cause_identified": false,
     "deadline_increased": false,
-    "additional_service_retry_authorized_by_this_record": false
+    "additional_service_retry_authorized_by_this_record": false,
+    "original_assertion_dialog_observed": true,
+    "specific_source_assertion_identified": false
+  },
+  "runtime_modal_refusal": {
+    "run_id": 39072189359,
+    "job_id": 117511911641,
+    "repository_commit": "81568446e43f56eb1a8aaf0970ab1ede13103f41",
+    "artifact_id": 12115752164,
+    "archive": "original-modal-diagnostic-39072189359.zip",
+    "bytes": 7122,
+    "sha256": "8acbbeac960d073574a1a902c1b6ba7f1d769d25da167557adb08f4eef730f11",
+    "passed": false,
+    "failure": "shard_db_ready_deadline",
+    "services_started": true,
+    "pre_service_hosted_methods_passed": 13,
+    "actual_windows_modal_api_smoke_passed": true,
+    "modal_diagnostic": {
+      "read_only": true,
+      "raw_titles_controls_or_stacks_exported": false,
+      "generation_before": {
+        "pid": 4480,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278703414935047,
+        "executable_path_sha256": "f76416a0cba397e07a90f81aea8333ea7e4e88bfba710a723449be02f9184823"
+      },
+      "observation": {
+        "schema": "coh-owned-db-modal-classifier-v1",
+        "pid": 4480,
+        "current_desktop_only": true,
+        "read_only": true,
+        "raw_titles_controls_or_stacks_exported": false,
+        "owned_top_level_count": 3,
+        "owned_child_count": 9,
+        "dialog_class_count": 1,
+        "source_main_text_control_count": 1,
+        "top_level_enumeration_completed": true,
+        "class_enum_counts": {
+          "dialog": 1,
+          "static": 3,
+          "button": 6,
+          "edit": 0,
+          "combo": 0,
+          "list": 0,
+          "unknown": 2
+        },
+        "text_status_counts": {
+          "ok": 12,
+          "owner_changed": 0,
+          "timeout": 0,
+          "truncated": 0
+        },
+        "inspected_characters": 542,
+        "source_matches": [
+          {
+            "kind": "source_assertion_unknown",
+            "exception_enum": "none",
+            "assertion_enum": "none",
+            "source_assertion_line_verified": false
+          }
+        ],
+        "unknown_control_count": 11,
+        "deadline_reached": false,
+        "inventory_bound_reached": false,
+        "text_bound_reached": false,
+        "owner_changed_count": 0,
+        "original_source_sha256": {
+          "libs/UtilitiesLib/src/utils/SuperAssert.c": "9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6",
+          "DBServer/src/sql_fifo.c": "345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879",
+          "Common/sql/sqltask.cpp": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02",
+          "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp": "ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7",
+          "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de",
+          "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp": "eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81",
+          "libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp": "e7ce6ebd9c14097d65830fd1390408b9a1c9c2a46ee992a47d8d483478a46d0e",
+          "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110",
+          "libs/UtilitiesLib/src/components/MemoryPool.c": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83"
+        },
+        "classifier_source_sha256": {
+          "native-android/engine/auth-interop/deployment/db_modal_diagnostic.py": "1b370e4f2527e5ea51578e18242653db437db3abf59bc15574fc1f3e81df8b95",
+          "native-android/engine/auth-interop/deployment/windows/db_modal_observer.cs": "3359269a277aa9c50aac8ea74cca7bcdaabb8ff098f224a1f16df63379e8efd6"
+        }
+      },
+      "generation_after": {
+        "pid": 4480,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278703414935047,
+        "executable_path_sha256": "f76416a0cba397e07a90f81aea8333ea7e4e88bfba710a723449be02f9184823"
+      },
+      "complete": true
+    },
+    "numeric_diagnostic": {
+      "read_only": true,
+      "raw_console_or_sql_exported": false,
+      "generation_before": {
+        "pid": 4480,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278703414935047,
+        "executable_path_sha256": "f76416a0cba397e07a90f81aea8333ea7e4e88bfba710a723449be02f9184823"
+      },
+      "sql": {
+        "user_tables": 0,
+        "attribute_tables": 0,
+        "dbserver_sessions": 65,
+        "sleeping_sessions": 65,
+        "active_requests": 0,
+        "waiting_requests": 0,
+        "blocked_requests": 0,
+        "wait_lock": 0,
+        "wait_network": 0,
+        "wait_io": 0,
+        "wait_memory": 0,
+        "wait_threadpool": 0,
+        "wait_other": 0
+      },
+      "process": {
+        "pid": 4480,
+        "cpu_ms": 547,
+        "thread_count": 8,
+        "thread_state_enum_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 8,
+          "6": 0,
+          "7": 0
+        },
+        "wait_reason_enum_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 1,
+          "5": 0,
+          "6": 5,
+          "7": 0,
+          "8": 2,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0
+        },
+        "thread_ids_or_stacks_exported": false
+      },
+      "generation_after": {
+        "pid": 4480,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278703414935047,
+        "executable_path_sha256": "f76416a0cba397e07a90f81aea8333ea7e4e88bfba710a723449be02f9184823"
+      },
+      "complete": true
+    },
+    "private_console_summary": {
+      "bytes": 389,
+      "inspected_prefix_bytes": 389,
+      "content_exported": false,
+      "source_markers": {
+        "db_ready": false,
+        "auth_version_received": false,
+        "sql_connected": true,
+        "checksum_reference_missing": false,
+        "loading_templates": false,
+        "update_tables": false,
+        "clearing_teamups": false,
+        "waiting_for_launchers": false,
+        "sql_connection_gave_up": false,
+        "missing_input_error": false,
+        "bind_error": false
+      }
+    },
+    "cleanup": {
+      "owned_service_cleanup_complete": true,
+      "owned_firewall_cleanup_complete": true,
+      "owned_localdb_cleanup_complete": true,
+      "private_files_removed": true,
+      "source_inputs_unchanged": true
+    }
   }
 }

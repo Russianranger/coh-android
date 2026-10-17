@@ -1,4 +1,5 @@
 #include "coh_wr_trick.h"
+#include "coh_wr_trick_model.h"
 #include "coh_wr_trick_types_internal.h"
 #include <stdlib.h>
 #include <string.h>
@@ -110,3 +111,9 @@ static CohStatus child(const CohWrTrickCache*c,uint32_t ordinal,uint32_t index,i
  CohBytes b=coh_asset_bytes(c->blob);Reader r={b,(lod?row.lod_offset:row.st_offset)+4,row.offset+row.size};for(uint32_t i=0;i<=index;i++){uint32_t bytes;if(!word(&r,&bytes)||bytes>r.end-r.pos)return COH_INVALID;if(i==index){Reader selected={b,r.pos,r.pos+bytes};CohStatus s=table(&selected,lod?parse_auto_lod:parse_st_anim,value,meta,1);if(s==COH_OK&&selected.pos!=selected.end)return COH_INVALID;return s;}r.pos+=bytes;}return COH_NOT_FOUND;}
 CohStatus coh_wr_trick_stanim(const CohWrTrickCache*c,uint32_t row,uint32_t index,CohWrTrickStAnim*out){if(!c||!out||!output(c,out,sizeof(*out)))return COH_INVALID;StAnim a;memset(&a,0,sizeof(a));Meta m;memset(&m,0,sizeof(m));CohStatus s=child(c,row,index,0,&a,&m);if(s!=COH_OK)return s;CohWrTrickStAnim v={a.speed_scale,a.st_scale,m.strings[0],(uint32_t)a.flags,1};*out=v;return COH_OK;}
 CohStatus coh_wr_trick_autolod(const CohWrTrickCache*c,uint32_t row,uint32_t index,CohWrTrickAutoLOD*out){if(!c||!out||!output(c,out,sizeof(*out)))return COH_INVALID;AutoLOD a;memset(&a,0,sizeof(a));Meta m;memset(&m,0,sizeof(m));CohStatus s=child(c,row,index,1,&a,&m);if(s!=COH_OK)return s;CohWrTrickAutoLOD v={a.max_error,a.lod_near,a.lod_far,a.lod_nearfade,a.lod_farfade,(uint32_t)a.flags,a.modelname_specified,m.strings[0],{0},1};*out=v;return COH_OK;}
+
+#define MODEL_SELECT_FUNCTION coh_wr_trick_model_select
+#define MODEL_SELECT_OWNER CohWrTrickCache
+#define MODEL_SELECT_OWNED(c) ((c)->report.owned_bytes)
+#define MODEL_SELECT_LOADER(c) ((c)->report.loader_reservation)
+#include "coh_wr_trick_model_internal.inc"
