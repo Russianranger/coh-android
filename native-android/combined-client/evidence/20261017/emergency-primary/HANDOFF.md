@@ -225,3 +225,76 @@ This publication opts into `[wire-qualify]` and `[auth-candidate-login]` only.
 Successful source767 graph/frame and concurrent corrected-PE/suffix results are
 reused. New wire-device and candidate-service results remain pending until
 observed and admitted; no full actor/world or Gate26 completion follows.
+
+## Final actual qualification checkpoint
+
+Implementation publication `767d55e48fa35261f1428bd542aa6cd3b2b9fa32` and
+`d949c59fd579bd7256445078cc6aeacc3b331c70` both preserved concurrent remote
+recovery. This final evidence-only checkpoint changes no production source.
+
+Wire run `38993564322` at exact d949c59 **succeeded**. Artifact 12086321527 is
+238,983 bytes, SHA256
+`2c818d0f0ca085b54d26f7386191ab5810f1b354bb0cf0a2834001f1badc3587`.
+The exact raw ZIP is retained in `hosted-d949c59/`; E's independently reviewed
+proofs and all bounded execution/cleanup logs are under
+`engine/world-render-adapter/qualification/independent-wire-android13-38993564322/`.
+All 38 ZIP members/1,431,578 expanded bytes pass CRC, and 34 module source-map
+entries match exact Git blobs at d949c59. Both ABI ELF/build/fixture identities
+were admitted. Android13 x86_64 executes prefix 646,561 checks/280 fixtures and
+ranges 85,440 checks/208 fixtures, exactly matching release/ASan/UBSan results.
+Both receipts say native_match=true, native_result_validated=true, exit0 and
+temporary_files_removed=true. ARM64 remains build-only. Whole character, full
+PowerInfoUpdate, actor, ACK and world claims remain false.
+
+Candidate account run `38993564320` at exact d949c59 **failed before candidate
+startup**. Artifact 12086206965 is 8,066 bytes, SHA256
+`1781e58ffdb870428f0b97284c73f7b2d97312300a8f9528f4e3404c9e93d35d`.
+Its complete original sanitized members and exact ZIP are retained under
+`engine/auth-interop/evidence/candidate-login-runtime-20261017/`. Fresh source
+controls passed; all four exact compiled-input admissions passed. The mandatory
+x86 readiness observer reports pointer_bytes4, attempted1/opened0, queryfalse,
+SQLSTATE08S01/native233 twice then08001/native0. candidate_started=false; neither
+normal nor capped probe ran, no positive mode or encrypted login was verified.
+
+The owned SQL PID6804/start identity remained the same before/after the gate;
+that is process identity, not database health. AuthServer/Job/firewall never
+started; their cleanup is vacuously complete. Private files and source integrity
+passed. Schema DROP failed (exit1); instance stop and delete returned0. Aggregate
+LocalDB cleanup remains **false** and is not retroactively converted to success.
+No old-service repeat, corrected-server rebuild, OpenSSL rebuild or further
+candidate retry was performed.
+
+D's source comparison shows the same exact x86 ODBC17 driver, integrated-auth
+connection string/instance/database/Encrypt=No as prior successful native
+SQLDriverConnectA controls. This new observer uses System.Data.Odbc Unicode/.NET
+and intends three connections, but fails on the first before concurrency.
+Subsequent SQLCMD also fails with a closed named pipe. These observations do not
+prove an exclusively .NET problem, failed crypto, a receive-correction defect,
+or that an AuthServer Job killed SQL (no such job existed). The server-side close
+cause is unproven; private raw SQL/server logs were intentionally not exported.
+
+| Component | Host/source/sanitizers | Android/Windows build | Actual execution | Acceptance boundary |
+| --- | --- | --- | --- | --- |
+| Retained catalog/import/source graph+witness | Release/ASan/UBSan; exact original capture+CRCs | New graph/owner Android build not qualified | Host authentic-source replay; no live client transaction | Detached source topology and lifetime only |
+| Character header and power ranges | Full original selected functions/statement blocks plus independent negative controls; release/ASan/UBSan | ARM64+x86_64 standalone ELFs | Android13 x86_64 exact match and cleanup | Standalone wire staging; no whole actor or full update |
+| Bounded renderer frames/selection | Release/ASan/UBSan; original matrix+same-Surface rollback controls | ARM64+x86_64 standalone ELFs | Android13 x86_64 32,320 checks | CPU fixture contracts; no actual server geometry/GLES world |
+| Receive-offset correction | Original/candidate exact-function source controls; release and ASan/UBSan | Existing Win32 PE admitted and reused | New candidate not started: x86 SQL readiness refused | Encrypted account login, DB/Map handoff and Gate26 remain open |
+| Startup and owned-memory diagnostics | Python host/negative controls; prior physical export attribution | No new application build | Bounded host child/process observation | No physical speedup or whole-process peak inferred |
+
+All six workers completed their owned source/review/evidence tasks. The two new
+qualification workflows are completed (wire success, account pre-service failure);
+no local runtime service was started. Remote SQL cleanup remains unqualified as
+recorded above; completed hosted jobs do not retroactively prove schema DROP.
+Accepted APKs, user profiles/accounts/characters/assets and deferred tests are
+unchanged; no Combined successor or Thor retest is offered. Gates25–27 stay open.
+
+Next implementation inputs remain exact: authentic loaded model-to-GEO/trick/
+material/LOD generation and GEOv8 semantics; matching live GROUPS/session binding;
+complete true PowerInfo and remaining character/UI/account/inventory/team/global
+transaction with actual dictionaries, selected DBID and exact end; then immutable
+world+actor resource publication, native GLES/application qualification and one
+meaningful consolidated APK. The separate auth next step is a source-reviewed
+minimal comparison of the known successful native ANSI connection with this
+failed .NET path and bounded SQL health at each setup boundary in a fresh owned
+instance, before any further AuthServer attempt. Preserve old failure receipts;
+process existence alone must never satisfy readiness.

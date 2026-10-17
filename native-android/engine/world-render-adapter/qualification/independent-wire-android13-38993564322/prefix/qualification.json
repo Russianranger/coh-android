@@ -1,0 +1,175 @@
+{
+  "wire_runner_host_controls": {
+    "passed": true,
+    "test_methods": 9,
+    "failures": 0,
+    "errors": 0,
+    "scope": "synthetic command-executor and ELF-header controls only",
+    "android_executed": false,
+    "emulator_qualified": false,
+    "actor_publication": false,
+    "acknowledgments_enabled": false
+  },
+  "source_unchanged_before_after": true,
+  "production_source_sha256": {
+    "native-android/engine/entities/coh_character_prefix.c": "d0c5870795c349be967b1d79b088a47c4718fcdad4c86e24ee9837e08087d78e",
+    "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+    "native-android/engine/entities/test_character_prefix.c": "024e25e5fd958a0241a2b606e355708dd286783a01b26f0463b82a863d2cb493",
+    "native-android/engine/entities/check_character_prefix.py": "6a0b1b72bc8ab5cf222bee505180c67907ded62fb3ef874a7c763e7df7e9ff47",
+    "native-android/engine/entities/character-prefix-source-pins.json": "3ccae26768381f0cce59f6a5e903a0fdf039ec5c23487293a6d6bcc0077a0f4f",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/engine/entities/run_wire_android.py": "9ce7f3b890e3b6638b3eb631760f8ff771882c5fa0eeab451432adb8ee1f3e59",
+    "native-android/engine/entities/test_run_wire_android.py": "ec6ec845fc34b59d37f805e5c556a0629dd537f7ad92e9a3d9ca57adb216f790",
+    "native-android/engine/continuation/run_adapter_android.py": "c7af8aed683e36ba567021b25504ebf94ca895cf8bf2cad9e2e328b8533c17e1",
+    "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e"
+  },
+  "passed": true,
+  "schema": "coh-character-prefix-v1",
+  "source_revision": "d949c59fd579bd7256445078cc6aeacc3b331c70",
+  "source_tree": "42cbc7f39baac4f9bcefd9398bac68d06363d3bc",
+  "source_sha256_lf": {
+    "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+    "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+  },
+  "original_statement_blocks_sha256_lf": {
+    "send": "8e8d51a04a6099e35030242df44fd4d03cfbcd572b05f13f936cbded4854948b",
+    "receive": "5723fe13bf7159568bd015af7ef324884491016eb1cd1b55874aca0c5f9cbd18"
+  },
+  "original_generated_oracle_sha256": "f0b1aa123fb6e8f0d725e64a52f6d71116b2ed1fa28b82ec798d334e8b4b260d",
+  "fixture_sha256": "4158150872ee3c553d043699ad79d214797881c69f47a638befc4f1c375586b3",
+  "checks": {
+    "release": {
+      "fixtures": 280,
+      "checks": 646561,
+      "whole_character_complete": false
+    },
+    "asan": {
+      "fixtures": 280,
+      "checks": 646561,
+      "whole_character_complete": false
+    },
+    "ubsan": {
+      "fixtures": 280,
+      "checks": 646561,
+      "whole_character_complete": false
+    }
+  },
+  "binary_sha256": {
+    "release": "b2f38d04fab195958bade23f9619d43914ba5732129255a2f40b071a6825ae88",
+    "asan": "5c91dd57d7313fb407640f99eb8bb16ce2ded7ee482da70842be15992e65853f",
+    "ubsan": "1333e1fed6780c7d88671a38ff71bd64cf920c560ca0dd38469e78d6f62776f4"
+  },
+  "production_stack": [
+    "/home/runner/work/coh-android/coh-android/native-android/engine/entities/coh_character_prefix.c:12:11:coh_character_prefix\t304\tstatic"
+  ],
+  "cpp_link_passed": true,
+  "original_oracle_sanitized": false,
+  "scope": "exact pre-character original statement blocks with synthetic state; bit and byte-array writer/readers are original full functions",
+  "android": {
+    "arm64-v8a": {
+      "built": true,
+      "executed": false,
+      "abi": "arm64-v8a",
+      "api_level": 26,
+      "binary": "coh_character_prefix_test",
+      "binary_sha256": "6b7e03d03b32f3ec676fc94c40b93e6d834ea9cd2ba1208cd2f0484b67b498f7",
+      "fixtures_sha256": "4158150872ee3c553d043699ad79d214797881c69f47a638befc4f1c375586b3",
+      "source_revision": "d949c59fd579bd7256445078cc6aeacc3b331c70",
+      "source_tree": "42cbc7f39baac4f9bcefd9398bac68d06363d3bc",
+      "expected_native_result": {
+        "fixtures": 280,
+        "checks": 646561,
+        "whole_character_complete": false
+      },
+      "source_sha256": {
+        "native-android/engine/entities/coh_character_prefix.c": "d0c5870795c349be967b1d79b088a47c4718fcdad4c86e24ee9837e08087d78e",
+        "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+        "native-android/engine/entities/test_character_prefix.c": "024e25e5fd958a0241a2b606e355708dd286783a01b26f0463b82a863d2cb493",
+        "native-android/engine/entities/check_character_prefix.py": "6a0b1b72bc8ab5cf222bee505180c67907ded62fb3ef874a7c763e7df7e9ff47",
+        "native-android/engine/entities/character-prefix-source-pins.json": "3ccae26768381f0cce59f6a5e903a0fdf039ec5c23487293a6d6bcc0077a0f4f",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+        "native-android/engine/entities/run_wire_android.py": "9ce7f3b890e3b6638b3eb631760f8ff771882c5fa0eeab451432adb8ee1f3e59",
+        "native-android/engine/entities/test_run_wire_android.py": "ec6ec845fc34b59d37f805e5c556a0629dd537f7ad92e9a3d9ca57adb216f790",
+        "native-android/engine/continuation/run_adapter_android.py": "c7af8aed683e36ba567021b25504ebf94ca895cf8bf2cad9e2e328b8533c17e1",
+        "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e"
+      },
+      "original_source_sha256_lf": {
+        "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+        "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+        "Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+        "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+        "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+      },
+      "thor_accepted": false,
+      "whole_character_complete": false,
+      "actor_publication": false,
+      "acknowledgments_enabled": false
+    },
+    "x86_64": {
+      "built": true,
+      "executed": false,
+      "abi": "x86_64",
+      "api_level": 26,
+      "binary": "coh_character_prefix_test",
+      "binary_sha256": "a8caeeed045e2cb059ea5f5854e8e4bd7c65beb31ac154edaf3b6713ed175fc6",
+      "fixtures_sha256": "4158150872ee3c553d043699ad79d214797881c69f47a638befc4f1c375586b3",
+      "source_revision": "d949c59fd579bd7256445078cc6aeacc3b331c70",
+      "source_tree": "42cbc7f39baac4f9bcefd9398bac68d06363d3bc",
+      "expected_native_result": {
+        "fixtures": 280,
+        "checks": 646561,
+        "whole_character_complete": false
+      },
+      "source_sha256": {
+        "native-android/engine/entities/coh_character_prefix.c": "d0c5870795c349be967b1d79b088a47c4718fcdad4c86e24ee9837e08087d78e",
+        "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+        "native-android/engine/entities/test_character_prefix.c": "024e25e5fd958a0241a2b606e355708dd286783a01b26f0463b82a863d2cb493",
+        "native-android/engine/entities/check_character_prefix.py": "6a0b1b72bc8ab5cf222bee505180c67907ded62fb3ef874a7c763e7df7e9ff47",
+        "native-android/engine/entities/character-prefix-source-pins.json": "3ccae26768381f0cce59f6a5e903a0fdf039ec5c23487293a6d6bcc0077a0f4f",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+        "native-android/engine/entities/run_wire_android.py": "9ce7f3b890e3b6638b3eb631760f8ff771882c5fa0eeab451432adb8ee1f3e59",
+        "native-android/engine/entities/test_run_wire_android.py": "ec6ec845fc34b59d37f805e5c556a0629dd537f7ad92e9a3d9ca57adb216f790",
+        "native-android/engine/continuation/run_adapter_android.py": "c7af8aed683e36ba567021b25504ebf94ca895cf8bf2cad9e2e328b8533c17e1",
+        "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e"
+      },
+      "original_source_sha256_lf": {
+        "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+        "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+        "Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+        "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+        "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+      },
+      "thor_accepted": false,
+      "whole_character_complete": false,
+      "actor_publication": false,
+      "acknowledgments_enabled": false
+    }
+  },
+  "android_built": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "android_executed": false,
+  "thor_accepted": false,
+  "whole_character_complete": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false
+}

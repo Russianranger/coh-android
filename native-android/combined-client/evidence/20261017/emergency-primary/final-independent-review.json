@@ -1,0 +1,15 @@
+{
+  "reviewer": "F independent qualification worker",
+  "reviewed_local_checkpoint": "696024f76049bf7033f6dbc5bd0e9717d9196913",
+  "passed": true,
+  "wire_actual_receipts_checked": true,
+  "arm64_build_only_scope_checked": true,
+  "sql_preflight_no_candidate_no_probe_checked": true,
+  "sql_cleanup_false_preserved": true,
+  "protected_source_unchanged": true,
+  "raw_artifact_digests_checked": true,
+  "bundles_verified": true,
+  "suggested_doc_correction_applied": "Observer executed and refused; candidate service/account probes remain unexecuted.",
+  "corrected_doc_sha256": "ca47e6de81794ed90ef2af7eefad2c52eb75bfd02bd20bd747041afb772307d3",
+  "new_tests_or_workflows_run": false
+}

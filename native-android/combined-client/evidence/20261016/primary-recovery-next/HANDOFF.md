@@ -1,5 +1,10 @@
 # Current continuation checkpoint
 
+Latest continuation and actual Android/SQL outcomes:
+[`20261017/emergency-primary/HANDOFF.md`](../../20261017/emergency-primary/HANDOFF.md).
+Read that continuation after this historical recovery record; it preserves
+concurrent publications and does not expand physical world acceptance.
+
 The latest primary implementation and successful hosted qualification supersede
 this historical handoff. Read [Emergency recovery handoff](../../20261017/emergency-recovery/HANDOFF.md)
 and its `hosted-234d9c7` exact artifact/source receipts. Source is

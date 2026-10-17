@@ -1,0 +1,56 @@
+{
+  "schema": "coh-renderer-independent-hosted-wire-artifact-review-v1",
+  "passed": true,
+  "run_id": 38993564322,
+  "artifact_id": 12086321527,
+  "artifact_bytes": 238983,
+  "artifact_sha256": "2c818d0f0ca085b54d26f7386191ab5810f1b354bb0cf0a2834001f1badc3587",
+  "source_revision": "d949c59fd579bd7256445078cc6aeacc3b331c70",
+  "source_tree": "42cbc7f39baac4f9bcefd9398bac68d06363d3bc",
+  "scope": "Both exact standalone wire grammars, host Release/ASan/UBSan and both ABI builds; x86_64 Android13 executed.",
+  "modules": {
+    "prefix": {
+      "passed": true,
+      "source_entries_verified": 15,
+      "result": {
+        "fixtures": 280,
+        "checks": 646561,
+        "whole_character_complete": false
+      },
+      "abi_builds_verified": [
+        "arm64-v8a",
+        "x86_64"
+      ],
+      "x86_64_android13_executed": true,
+      "cleanup_verified_by_source_bound_receipt": true,
+      "native_and_cleanup_logs_inspected": true,
+      "host_asan_ubsan_equal": true
+    },
+    "ranges": {
+      "passed": true,
+      "source_entries_verified": 19,
+      "result": {
+        "fixtures": 208,
+        "checks": 85440,
+        "full_power_info_update": false
+      },
+      "abi_builds_verified": [
+        "arm64-v8a",
+        "x86_64"
+      ],
+      "x86_64_android13_executed": true,
+      "cleanup_verified_by_source_bound_receipt": true,
+      "native_and_cleanup_logs_inspected": true,
+      "host_asan_ubsan_equal": true
+    }
+  },
+  "android_arm64_executed": false,
+  "whole_character_complete": false,
+  "full_power_info_update": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "physical_thor_accepted": false,
+  "authentic_world_entry": false,
+  "independent_tests_rerun": false,
+  "reviewer_admitted_source_and_artifact_receipts": true
+}

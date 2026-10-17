@@ -1,0 +1,61 @@
+{
+  "schema": "coh-candidate-auth-runtime-evidence-v1",
+  "run_id": 38993564320,
+  "artifact_id": 12086206965,
+  "repository_commit": "d949c59fd579bd7256445078cc6aeacc3b331c70",
+  "archive_bytes": 8066,
+  "archive_sha256": "1781e58ffdb870428f0b97284c73f7b2d97312300a8f9528f4e3404c9e93d35d",
+  "zip_crc_passed": true,
+  "members": 10,
+  "files": {
+    "archive-original-source.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "localdb-delete-owned-instance.log": {
+      "bytes": 66,
+      "sha256": "4c4c23cf938c0d39fdbc2ea8389567a16b5e93a883e9bd0c6e1c4ea96796deac"
+    },
+    "localdb-create.log": {
+      "bytes": 91,
+      "sha256": "0fec75a7f035be1cc591cc4a369a9e97b7ca0efefd3713a1ba622eaf016327bb"
+    },
+    "localdb-drop-owned-schema.log": {
+      "bytes": 561,
+      "sha256": "238c81734b19f0209a748827869c6d43b2310cd9d27a43d1553e49e599f07f71"
+    },
+    "localdb-memory-bound.log": {
+      "bytes": 230,
+      "sha256": "db52144897915b17529a7fc6a9bf1f640a94cb23d6bb37536512e02e01d5ef1a"
+    },
+    "localdb-owned-process-id.log": {
+      "bytes": 6,
+      "sha256": "3c4936a9a60e626750371dc82ffd0e917dd4c6017114192907927d1b3010afa1"
+    },
+    "localdb-start.log": {
+      "bytes": 66,
+      "sha256": "f222f2d7971d2e76f347ea4852ae6c9844a45b10904bacd3943009bd11c0eebd"
+    },
+    "localdb-stop-owned-instance.log": {
+      "bytes": 66,
+      "sha256": "2132192d9e8351f4d40de223ff499ee214fb82f0f6109b2e03e76d948816f4de"
+    },
+    "localdb-version.log": {
+      "bytes": 306,
+      "sha256": "48e0b114d081d0e178cb06f07afae2179e952df5a9e57da71d660c4c451af6a0"
+    },
+    "receipt.json": {
+      "bytes": 22970,
+      "sha256": "d60d398ca60e93943a4b1dbad9efd31022c0bec7d50ddabbc52850a789aeba02"
+    }
+  },
+  "candidate_started": false,
+  "probes_executed": false,
+  "failure": "candidate_x86_sql_not_ready",
+  "encrypted_account_login_verified": false,
+  "owned_localdb_cleanup_complete": false,
+  "owned_sql_same_pid_and_start": true,
+  "private_files_removed": true,
+  "source_inputs_unchanged": true,
+  "further_workflow_or_run_started_by_this_review": false
+}

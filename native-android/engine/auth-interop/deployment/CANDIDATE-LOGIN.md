@@ -96,9 +96,22 @@ positive observed before a later failure remains separately recorded, while
 aggregate success stays false. SQL process identity and job membership are
 retained without exporting account rows, raw private logs, packet bodies or keys.
 
-The prepared Windows/x86 observer and candidate service suite remain unexecuted.
-Host controls use mocked process/SQL boundaries. Actual x86 readiness may expose
-the historical LocalDB failure before any candidate starts. Modal DB failure and
+The Windows/x86 observer executed and refused readiness in the first attempt
+recorded below. The candidate service and account probes remain unexecuted.
+Host controls use mocked process/SQL boundaries; actual observer results do not
+qualify any encrypted account case. Modal DB failure and
 an empty internal SQL pool remain source-supported possibilities if listeners
 still fail after independent connection health succeeds. This suite admits no
 DbServer, MapServer, shard, selected character, world, Android or Thor success.
+
+## Actual first candidate-suite attempt
+
+Run38993564320 at d949c59 failed the mandatory independent x86 SQL check before
+starting the corrected candidate. First connection failed08S01/native233 and
+08001; no probe ran. SQL process identity stayed unchanged, but later SQLCMD
+DROP also failed; stop/delete succeeded and aggregate SQL cleanup remains false.
+Private files and source cleanup passed. Exact receipts, archive and comparison
+with the earlier successful ANSI native connection are retained in
+`../evidence/candidate-login-runtime-20261017/`. This exposes a pre-service SQL
+connectivity blocker; neither encrypted login nor the receive correction was
+exercised in that run. No subsequent service attempt was made.

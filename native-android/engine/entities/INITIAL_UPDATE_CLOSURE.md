@@ -154,3 +154,15 @@ and resource generation. All global tails and exact message end must pass before
 minting its receipt. Failed preparation leaves the previous published generation
 untouched. No READY/RECEIVED_CHARACTER/full-update ACK may depend on these staging
 APIs or user-supplied booleans alone.
+
+## New standalone Android13 wire checkpoint
+
+Source d949c59fd579bd7256445078cc6aeacc3b331c70, run38993564322 and exact
+artifact12086321527 qualify the new character prefix and power-range/false
+PowerInfo bodies on host release/ASan/UBSan, ARM64+x86_64 builds and actual
+Android13x86_64. Prefix646561/280 fixtures and ranges85440/208 fixtures match;
+owned device files are removed and verified absent. ARM64 execution, whole
+character/full true PowerInfo, enclosing exact-end transaction, actual dictionary/
+DBID admission, immutable actor and completion ACK remain unqualified. Full
+receipts are retained under independent-wire-android13-38993564322; do not
+promote these standalone successes into full-update application.

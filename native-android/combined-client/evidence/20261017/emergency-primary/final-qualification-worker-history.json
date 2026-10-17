@@ -1,0 +1,26 @@
+{
+  "tips": {
+    "a": "3135abc7b1caf6a4893b4b29d695ce2baef07be9",
+    "b": "88785554293e462300d942065dab3a42b70d5257",
+    "c": "26d01dba72ece234df5c6eb659658c3339f6a193",
+    "d": "3ff74d953d6b0e6890389c6650e65f404349f2d0",
+    "e": "7447d543181b7be22b82be44947efdbffce318f1",
+    "f": "3fd0d8c668177f9245e03e662af5f38f0d5632bb"
+  },
+  "prerequisites": {
+    "a": "3135abc7b1caf6a4893b4b29d695ce2baef07be9",
+    "b": "88785554293e462300d942065dab3a42b70d5257",
+    "c": "26d01dba72ece234df5c6eb659658c3339f6a193",
+    "d": "0a01eac1b71c7e758d1fe57ede0dd9068066762d",
+    "e": "4895e9711932566641365ffc854f7c906302eafc",
+    "f": "3fd0d8c668177f9245e03e662af5f38f0d5632bb"
+  },
+  "bundle_bytes": 30810,
+  "bundle_sha256": "56db8ba0417506d17d9ec4e04150179c22505cd1aac75de663fb9e8e7040d1d0",
+  "verified": true,
+  "protected_source_paths_changed": [],
+  "active_coordinator_workflows": [],
+  "new_apk": false,
+  "world_authority": false,
+  "physical_thor_accepted": false
+}
