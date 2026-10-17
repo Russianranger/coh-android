@@ -117,7 +117,7 @@ class DbShardActivationTests(unittest.TestCase):
         @dataclass(frozen=True)
         class Prerequisite:
             fresh_authentication_required:bool=True
-        for failure in (None,'before_db','after_db','close_stream'):
+        for failure in (None,'before_db','after_db','diagnostic','close_stream'):
             with self.subTest(failure=failure),tempfile.TemporaryDirectory() as temp:
                 base=Path(temp);events=[];processes=[]
                 candidate=base/'candidate';candidate.mkdir();(candidate/stage.service.candidate.BINARY).write_bytes(b'auth')
@@ -153,7 +153,7 @@ class DbShardActivationTests(unittest.TestCase):
                 values=iter([1 if failure=='before_db' else 0,1,99])
                 def capture(argv):return 'a'*40 if argv[-1]=='HEAD' else ''
                 def channel(*args):
-                    if failure=='after_db':raise ValueError('test_after_db')
+                    if failure in ('after_db','diagnostic'):raise ValueError('test_after_db')
                     return {'loopback_pair_verified':True}
                 def firewall(runner,name,binary,direction,add):events.append(('add-' if add else 'remove-')+name)
                 def service_snapshot(child,path,previous=None):
@@ -193,6 +193,9 @@ class DbShardActivationTests(unittest.TestCase):
                     stack.enter_context(mock.patch.object(stage,'owned_channel',side_effect=channel))
                     stack.enter_context(mock.patch.object(stage,'game_listener',return_value={'owner_pid':20}))
                     stack.enter_context(mock.patch.object(stage,'service_process_snapshot',side_effect=service_snapshot))
+                    observer=stack.enter_context(mock.patch.object(stage.db_startup_diagnostic,'observe_sql',return_value={'user_tables':0}))
+                    if failure=='diagnostic':observer.side_effect=OSError('private SQL details never exported')
+                    stack.enter_context(mock.patch.object(stage.db_startup_diagnostic,'observe_process',return_value={'thread_count':64}))
                     stack.enter_context(mock.patch.object(stage.login,'owned_process_snapshot',side_effect=sql_snapshot))
                     stack.enter_context(mock.patch.object(stage,'close_streams',side_effect=close_streams))
                     proof=stage.run(args)
@@ -202,6 +205,11 @@ class DbShardActivationTests(unittest.TestCase):
                 self.assertFalse(proof['client_login_attempted'])
                 self.assertFalse(proof['authenticated_db_map_handoff_verified'])
                 self.assertFalse(proof['checksum_policy_relaxed'])
+                if failure in ('after_db','diagnostic'):
+                    diagnostic=proof['owned_db_startup_diagnostic']
+                    self.assertEqual(diagnostic['complete'],failure=='after_db')
+                    self.assertFalse(diagnostic['raw_console_or_sql_exported'])
+                    self.assertNotIn('private SQL details',json.dumps(proof))
                 self.assertEqual(len([e for e in events if e.startswith('add-coh-shard-')]),4)
                 self.assertEqual(len([e for e in events if e.startswith('remove-coh-shard-')]),4)
                 self.assertEqual(events[-4:],['drop-owned-game-db','localdb-drop-owned-schema','localdb-stop-owned-instance','localdb-delete-owned-instance'])

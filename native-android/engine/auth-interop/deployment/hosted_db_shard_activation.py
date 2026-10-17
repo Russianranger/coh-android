@@ -23,6 +23,7 @@ import zipfile
 
 import auth_readiness
 import auth_service_profile
+import db_startup_diagnostic
 import hosted_auth_login as login
 import hosted_auth_stage as prior
 import hosted_candidate_login as service
@@ -260,6 +261,7 @@ def run(args):
         checksum_policy_relaxed=False,shipping_profiles_modified=False,
         original_interserver_shard_activation_verified=False,private_console_exported=False)
     created=False;localdb=sqlcmd=None;children=[];rules=[];handles=[];pending_jobs=[]
+    db_child=db=db_start=sql=None
     try:
         schema_dir = temporary/'accepted-schema'
         schema_manifest = recover_schema(root,schema_dir)
@@ -345,6 +347,19 @@ def run(args):
         proof['passed']=True
     except Exception as error:
         proof['failure']=service.safe_failure(error)
+        # Diagnose an actual owned startup refusal before terminating services.
+        # Observer failure cannot prevent the original cleanup sequence.
+        if db_child is not None and db_start is not None and sql is not None:
+            diagnostic={'read_only':True,'raw_console_or_sql_exported':False}
+            try:
+                diagnostic['generation_before']=service_process_snapshot(db_child,db,db_start)
+                diagnostic['sql']=db_startup_diagnostic.observe_sql(sql,database,db_child.pid,temporary)
+                diagnostic['process']=db_startup_diagnostic.observe_process(db_child.pid)
+                diagnostic['generation_after']=service_process_snapshot(db_child,db,db_start)
+                diagnostic['complete']=True
+            except Exception as observed:
+                diagnostic['complete']=False;diagnostic['failure']=service.safe_failure(observed)
+            proof['owned_db_startup_diagnostic']=diagnostic
     finally:
         cleanup=True
         for child,job in reversed(children):
@@ -373,6 +388,9 @@ def run(args):
                 'source_markers':{key:needle in body for key,needle in (
                     ('db_ready',b'DbServer Ready.'),('auth_version_received',b'AuthServer Git Commit Hash:'),
                     ('sql_connected',b'SQL server '),('checksum_reference_missing',b'game checksum = 0'),
+                    ('loading_templates',b'Loading templates...'),('update_tables',b'Update tables...'),
+                    ('clearing_teamups',b'Clearing teamups and invalid characters...'),
+                    ('waiting_for_launchers',b'Waiting for launchers to link up...'),
                     ('sql_connection_gave_up',b'Giving up.'),('missing_input_error',b"Can't open"),
                     ('bind_error',b'Error binding'))}}
         try:shutil.rmtree(temporary);proof['private_files_removed']=not temporary.exists()

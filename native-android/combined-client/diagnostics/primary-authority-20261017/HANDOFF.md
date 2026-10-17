@@ -192,3 +192,27 @@ service-driver tests, eight compile-admission tests and101 private-supervisor
 controls/94 refusals (no native binary supplied in that hosted unit invocation).
 `hosted-followup-source-review.json` independently admits all three exact artifact
 members and107 source hashes. The separate Windows service job result is pending.
+
+## Original service refusal and new diagnostic scope
+
+The original Windows job117502420363 in run39068923933 executed but refused
+`shard_db_ready_deadline` after300seconds. Exact artifact12114885725 is5,822B,
+SHAb47cfea3b2af04634a1802b889010756058bf2211f2ea7ddc87a7bb2342f459e; its
+unmodified sanitized receipt is retained as`original-registration-39068923933.json`.
+Both exact service process generations were live, x86ODBC opened/closed3/3
+connections and the private console recorded SQL connected. The389B console
+did not establish the subsequent startup stage: stdout buffering may conceal
+progress. Process/firewall/LocalDB/private-file cleanup and source preservation
+all passed. No registration, shard play or DB/Map interoperability is accepted.
+
+Reviewed new failure-only diagnostics observe owned SQL table/session/request
+counts and fixed wait categories, plus fixed process CPU/thread-state/wait-reason
+counts before cleanup. No query text, stack, account, cookie, UID or raw console
+is exported. The300second deadline, original binaries, SQL and version/checksum
+policies remain unchanged. The separate focused Windows workflow executes only
+these new tests and the additional observed startup attempt.
+
+Shared-layout hosted run39069499391/job117503962736 passed. Artifact12114677408
+(13,371B, SHA8ec981b5aec60b1d06b823005022ce8bf7be8c6613621743959062ecfc8fc865)
+and all68 source hash entries were independently admitted; see
+`hosted-shared-layout-review.json`.

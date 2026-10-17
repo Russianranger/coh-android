@@ -1,0 +1,16 @@
+{
+  "schema": "coh-shared-layout-hosted-review-v1",
+  "passed": true,
+  "run_id": 39069499391,
+  "job_id": 117503962736,
+  "artifact_id": 12114677408,
+  "source_commit": "643359f11c7805a25b0a2b3a430d46f13c7c68ae",
+  "archive_bytes": 13371,
+  "archive_sha256": "8ec981b5aec60b1d06b823005022ce8bf7be8c6613621743959062ecfc8fc865",
+  "receipt_sha256": "fdc9a06c1cb0083cfa88679bbe9102dca2917dd62a079dcb3debf78f3e6204cd",
+  "source_hash_entries_verified": 68,
+  "scope": "source-only shared set layout; whole original function twice on explicit fixture adapters",
+  "runtime_generation": false,
+  "actor_authority": false,
+  "world_authority": false
+}

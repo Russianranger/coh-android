@@ -117,6 +117,33 @@ initial misuse of the SQL-only observer before any service execution; its
 dedicated replacement is covered by the new real-shaped observation controls.
 No Windows service execution is claimed until that new workflow actually runs.
 
+The first actual Windows service execution, run `39068923933` at
+`a4cc6b61443cecf6394b0500028277874be6cf82`, refused with
+`shard_db_ready_deadline`. Artifact `12114885725` is 5,822 bytes, SHA256
+`b47cfea3b2af04634a1802b889010756058bf2211f2ea7ddc87a7bb2342f459e`.
+It recorded healthy original SQL bindings, both exact service processes alive,
+the required inactive shard before DB start, and complete cleanup. The private
+console contained 389 bytes and its fixed SQL-connected marker was present;
+readiness, Auth-version and checksum markers were absent. This does not qualify
+registration or selected play. It does not establish whether the original
+64-worker SQL FIFO initialization, later template/DDL work, or another startup
+step was blocked. The original SQL-connected print precedes `sqlFifoInit()`.
+
+On a subsequent actual refusal, `db_startup_diagnostic.py` observes only the
+owned DB process and already owned SQL instance before cleanup. It returns user
+and attribute-table counts; counts of the original `App=DBSERVER` sessions with
+the exact DB PID; active, blocked and waiting request counts grouped into fixed
+wait categories; and DB CPU milliseconds plus aggregated numeric .NET thread
+state/wait-reason enums. It exports no submitted SQL, account data, provider
+messages, window titles, thread IDs or stacks. Same service generation/path/PE
+checks surround the observation. Diagnostic failure is recorded without stopping
+cleanup. The existing readiness deadline is unchanged, and new allowlisted
+template/table/cleanup/launcher console markers export only presence Booleans.
+This is diagnostic instrumentation, not a startup or policy fix. `AssertMode
+Exit` in servers.cfg controls launched MapServer arguments; the original DB
+startup sets its own assertion mode, so this config does not prove absence of a
+blocked original assertion UI.
+
 ```sh
 python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v
 ```
