@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "reviewer": "Worker B / graph",
+  "reviewed_source_commit": "ec684722fb40655f9cc67eee0cb43c776e288116",
+  "original_worker_commit": "924b72ad1bfd245379565da23709e0e5b9c63861",
+  "review_scope": "Read-only source and retained evidence review; no downloads, service capture, native oracle reruns, or new payload authentication",
+  "partial_evidence_approved": true,
+  "new_header_getter_source_review_approved": true,
+  "unconditional_acquirer_resume_approval": false,
+  "checks": {
+    "receipt_source_hashes_match_reviewed_git_tree": true,
+    "three_mode_result_rows_equal": true,
+    "all_rows_metadata_equal": true,
+    "all_rows_source_and_assets_false": true,
+    "independent_envelope_headers_match_native": true,
+    "top_level_scope_flags_false": true
+  },
+  "actual_partial_counts": {
+    "available_files": 132,
+    "missing_files": 259,
+    "metadata_equal_files": 132,
+    "reachable_unique_model_pairs": 1191,
+    "all_observed_source_rows_compared": 2758,
+    "retained_body_bytes": 18147595,
+    "largest_body_bytes": 2477624,
+    "named_native_reservation_peak_bytes": 52856702
+  },
+  "findings": [
+    {
+      "id": "B-RESOURCE-RESUME-01",
+      "severity": "continuation_defect",
+      "status": "confirmed_by_owner_fix_pending",
+      "path": "native-android/engine/scenecatalog/acquire_resource_candidates.py",
+      "detail": "Resume indexes only acquisition.json but prior resume writes acquisition-resume-N.json; a second resume refuses previously created later bodies instead of adopting exact verified receipt-chain identities. Existing partial comparison remains valid. Owner A confirmed and is implementing receipt-chain revalidation; no concurrent writer or overwrite is authorized."
+    }
+  ],
+  "safety_review": [
+    "Native resource stream is bounded by COH_RESOURCE_INPUT_MAX and COH_RESOURCE_ROWS_MAX before source views; source record grammar remains delegated to the qualified bounded parser. TSV entries cap at 512, line extent 8192, candidate mounted body at16MiB; resource index admits one GEO at a time with immutable retained blob/header workspace. Early host CLI failures exit without publishing an index or generation permit.",
+    "Header getter finds exact retained owner, rejects absent/no-model owners without touching output, and borrows the already retained immutable GEO workspace until index retirement. It adds no allocations or admission state. Output must be disjoint, as documented.",
+    "Acquirer reads exact bounded ZIP ranges through the preserved helper, verifies selected payload size/SHA and ZIP CRC, and creates files exclusively. Its range ETag and selected-body SHA prove selected downloaded bytes, not full archive or runtime generation identity.",
+    "Body comparison checks model names, sorted runtime rank versus disk row, version, vertex/triangle counts and texture partitions through the resource index. It does not compare source trick/bounds/scale/CLIENT state, nor prove the runtime opened this exact body.",
+    "The observed 52,856,702-byte peak is named native reservation accounting, not complete process RSS or world-publication budget. Python source/body rehash stages and native CLI inputs are qualified only for the exact pinned candidate report and retained capture; arbitrary attacker-controlled documents are outside this evidence."
+  ],
+  "authority": {
+    "full_archive_sha_verified": false,
+    "runtime_opened_file_identity_proven": false,
+    "source_generation_admitted": false,
+    "assets_admitted": false,
+    "client_materials_or_lods_available": false,
+    "world_authority": false,
+    "android_or_physical_qualification": false
+  },
+  "reviewed_sha256": {
+    "native-android/engine/scenecatalog/verify_resource_candidates.c": "3ab0aac3026fb5854f31a572ff60c5de02105d2ae578417c0fb53c48987b1d81",
+    "native-android/engine/scenecatalog/check_resource_candidates.py": "9be95a433d058545fbc9f863585efa1f56294e440addb4f057458637afad74cb",
+    "native-android/engine/scenecatalog/acquire_resource_candidates.py": "1a131f266dea11811d0dfba4a064af3fb4ffa18710178e293fb671f8bba4436b",
+    "native-android/engine/scenecatalog/coh_resource_index.c": "4baa0abf74a391d5d3a9719a09f1be235d8b31f7c42ff0659e22aa5cd3f1bf83",
+    "native-android/engine/scenecatalog/coh_resource_index.h": "131179624f7fb194596af480ef2cd2c7e648d46e6191ef6dc7f1e11a7658aa6b",
+    "native-android/engine/scenecatalog/RESOURCE_BODY_COMPARISON.md": "2a80e7800395c8a33d74f4d8b678c91de60e2a274bdfcd33f7ee156bc58c0257",
+    "native-android/engine/scenecatalog/tests/test_resource_index.c": "ecdc88eede1ee70d176dc4ceabf9e067034d75383048e4f1d7b2c5990ba73a54",
+    "native-android/engine/scenecatalog/evidence/actual-resource-bodies-header-partial-38994607354.json": "9d84d52727ce0904b8403722418f668d2dd9fc50d36a0cfd9cb8cc1cc7dc60ff",
+    "native-android/engine/scenecatalog/evidence/resource-index-header-view-host.json": "5cbc373857368bea2598cac486f988da7d3e5995e3a7633c3873dfa4406e7a85",
+    "native-android/engine/scenecatalog/evidence/resource-candidate-acquisition-attempt1-failed.json": "42f9c953fb710d1afd085d22a68d0302088c1bf5ac3478b014a54f01eb60550b"
+  }
+}

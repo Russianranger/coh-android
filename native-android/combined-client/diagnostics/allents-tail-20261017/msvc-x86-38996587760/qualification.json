@@ -1,0 +1,41 @@
+{
+  "schema": "coh-dynamic-msvc-x86-layout-v1",
+  "source_pin": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+  "original_source_sha256_lf": {
+    "Common/group/groupdyn.h": "3beff4340a596eecb6374fff890ec3e2ebbcb4f0c1f49de3130171ec37bc8c3a",
+    "libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f"
+  },
+  "source_fragments": {
+    "u8_sha256_lf": "9b144fa0c685b09e53be7fb984a490f7dd81ccf2dab4d5d4050e6b832be8e965",
+    "macros_sha256_lf": "0647c70236a9465c3bcec0192256681a3af0b22ef60d44c0853ff25d48a94d40",
+    "typedef_sha256_lf": "63b330971cf1b15dcc3102f0c32d74b66e0f200d140733e574616873b0c41c83"
+  },
+  "generated_c_sha256": "48b1589762dbba77f93af86d876d798f17fa8592d7a10db3221e4e112c5271bc",
+  "helper_sha256": "9a90ce951905782c3ee0ffb97cee157992c9e3fa00023bbe7f39c6b564d8ee0a",
+  "mapserver_rebuilt": false,
+  "service_or_probe_binaries_rebuilt": false,
+  "live_status_or_world_authority": false,
+  "passed": true,
+  "compiled": true,
+  "executed": true,
+  "actual_msvc_qualified": true,
+  "actual_compiler_path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX86\\x86\\cl.exe",
+  "actual_compiler_sha256": "aa25483dec4821a189e494689ff8b619d99224328e290dafd790a96527b568b3",
+  "compiler_log_sha256": "d6ce453daefcf6824ba188d0d7ae9e46d228ce7575ce4f85745239816a573dea",
+  "probe_pe_sha256": "b62ee7c70f2e14e9ed48604881d9bf918b2d90732edd8ab898549970044ee0bb",
+  "probe_object_sha256": "e893711d3cdaad2ce4cb4dd9e997e64a9388a7d0d386803949ff321534ada9d4",
+  "pe_machine": 332,
+  "compiler_environment_target": "x86",
+  "result": {
+    "passed": true,
+    "patterns": 256,
+    "reverse_patterns": 256,
+    "status_bytes": 1,
+    "pointer_bytes": 4,
+    "msc_ver": 1951,
+    "msc_full_ver": 195136260,
+    "msc_build": 0,
+    "m_ix86": 600,
+    "native_bytes_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"
+  }
+}

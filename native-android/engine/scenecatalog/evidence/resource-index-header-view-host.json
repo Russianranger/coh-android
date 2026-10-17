@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_sha256": {
+    "upstream/ouroboros/Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+    "native-android/engine/scenecatalog/coh_resource_index.c": "4baa0abf74a391d5d3a9719a09f1be235d8b31f7c42ff0659e22aa5cd3f1bf83",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/scenecatalog/coh_resource_index.h": "131179624f7fb194596af480ef2cd2c7e648d46e6191ef6dc7f1e11a7658aa6b",
+    "native-android/engine/scenecatalog/tests/test_resource_index.c": "ecdc88eede1ee70d176dc4ceabf9e067034d75383048e4f1d7b2c5990ba73a54",
+    "native-android/engine/scenecatalog/tests/resource-fixtures/observed.cohres": "23c13ab4d9e84cbf3a7a29d5eeeef31f039c26b61f868cbbb24e8ea98d6cf4ce",
+    "native-android/engine/scenecatalog/check_resource_index.py": "14ac745f90294043607432f37d56a254120e2e41506c3694fa8429cab2c32f35",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "original_functions": [
+    "groupGetPublicName",
+    "groupNameIdx",
+    "compareModelNamesAndLengths",
+    "trickFromObjectName",
+    "compareModelNames",
+    "compareModelNamesCallback",
+    "compareModelBSearch",
+    "geoSortModels"
+  ],
+  "original_lookup_comparisons": 6942,
+  "original_runtime_model_order_comparisons": 6548,
+  "modes": {
+    "release": {
+      "observed_source_controls": {
+        "passed": true,
+        "checks": 21851,
+        "authentic_geo": false
+      },
+      "authentic_geo_controls": {
+        "passed": true,
+        "checks": 18713,
+        "authentic_geo": true
+      },
+      "binary_sha256": "b94553bf78a83e76758a4bfa1777d2bde8f094c4332efee6ac1929152c414d8b"
+    },
+    "asan": {
+      "observed_source_controls": {
+        "passed": true,
+        "checks": 21851,
+        "authentic_geo": false
+      },
+      "authentic_geo_controls": {
+        "passed": true,
+        "checks": 18713,
+        "authentic_geo": true
+      },
+      "binary_sha256": "c873e304cd1e0bbc41746b3f9930b6ac06d3cc546d914b390b7ffcf92c477c99"
+    },
+    "ubsan": {
+      "observed_source_controls": {
+        "passed": true,
+        "checks": 21851,
+        "authentic_geo": false
+      },
+      "authentic_geo_controls": {
+        "passed": true,
+        "checks": 18713,
+        "authentic_geo": true
+      },
+      "binary_sha256": "3d1584f925e761703de1ccaad215b2567fb7614cfa63c04a283c032e5475bfd2"
+    }
+  },
+  "actual_geo_sha256": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5",
+  "actual_geo_path": "data/object_library/worldnpcs/praetorian_box/g_praetorianbox_open.geo",
+  "actual_geo_model_row": 0,
+  "actual_runtime_resource_capture": false,
+  "source_fixture_only": true,
+  "client_materials_admitted": false,
+  "live_groups_admitted": false,
+  "graph_published": false,
+  "world_authority": false,
+  "android_executed": false,
+  "protected_asset_source_modified": false,
+  "leak_sanitizer": false,
+  "allocation_balance_controls": true
+}

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "reviewer": "Worker B / graph",
+  "reviewed_commit": "3c1b37c0df01f9f8f068ce4d6a380b43b316fb89",
+  "resolves_finding": "B-RESOURCE-RESUME-01",
+  "approved": true,
+  "scope": "Independent read-only source review and offline journal test replay only; active acquisition untouched",
+  "offline_replay": {
+    "passed": true,
+    "checks": 10,
+    "network_started": false,
+    "game_asset_files_written": false,
+    "source_sha256": {
+      "acquire_resource_candidates.py": "3df02300830b14ab7dcec327543c06fedc4ea35475ca87f69f7d7df222c89896",
+      "check_resource_candidate_resume.py": "7115f012424cb81f9222bc1ba24e4e4d00c615606ddfc1d3f48fcaf54db9f2f7"
+    }
+  },
+  "review": [
+    "Immutable base and every numbered resume receipt are merged without relying on lexical journal order. Each journal is bounded at8MiB and512 records and must match exact candidate and capture identities. Duplicate rows within one receipt and conflicting identities across receipts refuse.",
+    "Every reused body remains rehashed and compared with candidate SHA/size, source GEO identity and manifest in the main selection loop. The helper does not substitute receipt assertions for actual body validation. Existing output bodies and receipts are never overwritten.",
+    "The original19-body failed receipt and its matching script remain retained. Code changes do not retroactively alter the already running first-resume source identity; no second writer was launched during this review."
+  ],
+  "source_generation_admitted": false,
+  "assets_admitted": false,
+  "runtime_opened_file_identity_proven": false,
+  "world_authority": false,
+  "downloads_started": false,
+  "service_or_oracle_rerun": false
+}

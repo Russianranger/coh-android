@@ -1,0 +1,182 @@
+{
+  "schema": "coh-startup-resource-budget-observation-v1",
+  "passed": true,
+  "measurements": {
+    "current": {
+      "history_index": null,
+      "ready_ms": 387340,
+      "stage_boundary_native_ms": {
+        "local_dbserver_startup": 70678,
+        "local_atlas_startup": 271736
+      },
+      "native_total_ms": 342414,
+      "other_exclusive_boundary_ms": 44926,
+      "native_fraction": 0.8840140445087004,
+      "preparation_seconds": {
+        "atlas_beacon_graph": 24.258214,
+        "base_schema_and_native_runtime": 0.189197,
+        "native_dependencies_and_manual_atlas": 0.260933,
+        "prepared_server_definition_caches": 2.178455,
+        "required_original_geometry": 0.836561,
+        "server_animation_pack": 3.199829,
+        "server_data_cache_checkout": 5.551716,
+        "server_fx_catalog": 0.271645,
+        "warm_schema_restore": 0.183016
+      },
+      "preparation_overlap": "Preparation counters are suboperations within guest stages; do not add to boundary totals."
+    },
+    "historical_ready_attempts": [
+      {
+        "history_index": 2,
+        "ready_ms": 800298,
+        "stage_boundary_native_ms": {
+          "local_dbserver_startup": 550903,
+          "local_atlas_startup": 205644
+        },
+        "native_total_ms": 756547,
+        "other_exclusive_boundary_ms": 43751,
+        "native_fraction": 0.9453316139737947,
+        "preparation_seconds": {
+          "atlas_beacon_graph": 67.560703,
+          "base_schema_and_native_runtime": 0.145444,
+          "cold_server_data_mirror": 438.672194,
+          "cold_server_data_receipt_seal": 2.085772,
+          "native_dependencies_and_manual_atlas": 0.258191,
+          "prepared_server_definition_caches": 4.305548,
+          "required_original_geometry": 0.946149,
+          "server_animation_pack": 2.724486,
+          "server_data_cache_checkout": 0.021762,
+          "server_fx_catalog": 0.395594
+        },
+        "preparation_overlap": "Preparation counters are suboperations within guest stages; do not add to boundary totals."
+      },
+      {
+        "history_index": 3,
+        "ready_ms": 392192,
+        "stage_boundary_native_ms": {
+          "local_dbserver_startup": 69787,
+          "local_atlas_startup": 280303
+        },
+        "native_total_ms": 350090,
+        "other_exclusive_boundary_ms": 42102,
+        "native_fraction": 0.8926495186031331,
+        "preparation_seconds": {
+          "atlas_beacon_graph": 23.277543,
+          "base_schema_and_native_runtime": 0.242206,
+          "native_dependencies_and_manual_atlas": 0.266742,
+          "prepared_server_definition_caches": 2.16043,
+          "required_original_geometry": 0.730572,
+          "server_animation_pack": 2.784857,
+          "server_data_cache_checkout": 6.669636,
+          "server_fx_catalog": 0.272881,
+          "warm_schema_restore": 0.235047
+        },
+        "preparation_overlap": "Preparation counters are suboperations within guest stages; do not add to boundary totals."
+      }
+    ],
+    "current_vs_other_warm_observation": {
+      "history_index": 3,
+      "ready_delta_ms": -4852,
+      "db_delta_ms": 891,
+      "atlas_delta_ms": -8567,
+      "other_delta_ms": 2824,
+      "controlled_speedup_established": false
+    }
+  },
+  "counterfactual_arithmetic_only": [
+    {
+      "hypothetical_native_stage_reduction_fraction": 0.1,
+      "ready_ms_if_all_other_boundaries_fixed": 353098.6,
+      "measured_speedup": false
+    },
+    {
+      "hypothetical_native_stage_reduction_fraction": 0.25,
+      "ready_ms_if_all_other_boundaries_fixed": 301736.5,
+      "measured_speedup": false
+    },
+    {
+      "hypothetical_native_stage_reduction_fraction": 0.5,
+      "ready_ms_if_all_other_boundaries_fixed": 216133.0,
+      "measured_speedup": false
+    },
+    {
+      "hypothetical_other_exclusive_boundaries_removed": true,
+      "ready_ms_if_native_unchanged": 342414,
+      "measured_speedup": false
+    }
+  ],
+  "resource_metadata_transaction": {
+    "aggregate_limit_bytes": 100663296,
+    "observed_join_aggregate_peak_bytes": 51666425,
+    "observed_peak_fraction": 0.5132598181565603,
+    "remaining_named_payload_bytes": 48996871,
+    "remaining_named_payload_mib": 46.727057456970215,
+    "owned_join_bytes": 14688742,
+    "resource_input_bytes": 12596422,
+    "rows": 40232,
+    "model_references": 9611,
+    "resources_indices_built": false,
+    "scope": "Named payload reservations only. Excludes Python process RSS, allocator metadata, actual GPU heaps and future GEO/material/texture owners. Input/copy coexist at import peak; no peak reduction measured."
+  },
+  "ranked_measurements": [
+    {
+      "rank": 1,
+      "target": "Native Atlas startup",
+      "observed_envelope_ms": 271736,
+      "next_evidence": "Separate original loader/cache-hit/file-open/decompression/world-build/idle-wait stage times; retain exact bytes/checksums. Measure during next meaningful consolidated run.",
+      "production_optimization_justified": false
+    },
+    {
+      "rank": 2,
+      "target": "Native DB startup",
+      "observed_envelope_ms": 70678,
+      "next_evidence": "Separate DB connect/schema/cache deserialization/import/file and listener-wait timers. Preserve accepted SQL/profile/checksum policy.",
+      "production_optimization_justified": false
+    },
+    {
+      "rank": 3,
+      "target": "Beacon preparation inside Atlas envelope",
+      "observed_seconds": 24.258214,
+      "next_evidence": "Export already-generated cache receipt first: archive_decoded, inventory/fingerprint walks, bytes_hashed/reused, writes and refusal. Then split operation timers; missing counters cannot prove repeated decode.",
+      "production_optimization_justified": false
+    },
+    {
+      "rank": 4,
+      "target": "Scene import and visibility resource working set",
+      "observed_envelope_bytes": 51666425,
+      "next_evidence": "Before authentic GEO/texture admission, measure unique acquired blobs, metadata wire copies, decoded geometry/RGBA, active visibility and old/new retirement overlap within the existing aggregate cap.",
+      "production_optimization_justified": false
+    },
+    {
+      "rank": 5,
+      "target": "Concurrent owned process memory",
+      "next_evidence": "Use existing opt-in PID/starttime/UID sampler during next meaningful run; correlate timestamps across DB/Atlas/launcher. Historical boundary high-waters cannot establish overlapping RSS/PSS peak.",
+      "production_optimization_justified": false
+    },
+    {
+      "rank": 6,
+      "target": "Warm checkout/definition/animation preparation",
+      "observed_seconds": {
+        "server_data_cache_checkout": 5.551716,
+        "prepared_server_definition_caches": 2.178455,
+        "server_animation_pack": 3.199829,
+        "warm_schema_restore": 0.183016
+      },
+      "next_evidence": "Retain operation receipts and quantify hashing/copy/decode separately. Warm schema restore is only0.183s; it cannot explain native DB/Atlas envelopes.",
+      "production_optimization_justified": false
+    }
+  ],
+  "evidence_limits": {
+    "startup_accepted_apk_rebuilt": false,
+    "new_server_or_device_run": false,
+    "physical_speedup_measured": false,
+    "cache_hit_or_native_cache_consumption_proven_by_duration": false,
+    "current_concurrent_process_peak_established": false,
+    "resource_geos_materials_or_textures_admitted": false,
+    "world_authority": false
+  },
+  "input_sha256": {
+    "startup": "634d1d4cf393bac3ca193edd1b5a6f4128346f9a861bb15191e505511700869a",
+    "resource_join": "75a6ac1214fa3fab6a0eb1cef314a42387bdd3978087ea91bc721499adcf6012"
+  }
+}

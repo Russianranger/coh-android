@@ -69,4 +69,9 @@ CohStatus coh_resource_index_view(const CohResourceIndex *,uint32_t owner_kind,
     uint32_t file,uint32_t slot,CohResourceView *);
 CohStatus coh_resource_index_material(const CohResourceIndex *,uint32_t owner_kind,
     uint32_t file,uint32_t slot,uint32_t part,CohAssetGeoMaterial *);
+/* Borrowed immutable decompressed original GEO header selected by this exact
+ * owner, valid only until index retirement. No allocation or authority change;
+ * output unchanged for absent/no-model owners. Output must be disjoint. */
+CohStatus coh_resource_index_header(const CohResourceIndex *,uint32_t owner_kind,
+    uint32_t file,uint32_t slot,CohBytes *);
 #endif

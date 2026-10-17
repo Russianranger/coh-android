@@ -107,3 +107,4 @@ CohStatus coh_resource_index_material(const CohResourceIndex *i,uint32_t k,uint3
 
 CohStatus coh_resource_index_metadata(const CohResourceIndex *i,CohResourceBinding *binding,CohResourceReport *report){if(!i||!binding||!report)return COH_INVALID;*binding=i->binding;*report=i->report;return COH_OK;}
 CohStatus coh_resource_index_record(const CohResourceIndex *i,uint32_t ordinal,CohBytes *bytes,CohResourceView *view){if(!i||!bytes||!view)return COH_INVALID;if(ordinal>=i->count)return COH_NOT_FOUND;*bytes=(CohBytes){i->rows[ordinal].record,i->rows[ordinal].bytes};*view=i->rows[ordinal].view;return COH_OK;}
+CohStatus coh_resource_index_header(const CohResourceIndex *i,uint32_t k,uint32_t f,uint32_t s,CohBytes *out){if(!i||!out)return COH_INVALID;const Row *r=find(i,k,f,s);if(!r||!r->view.model_present)return COH_NOT_FOUND;*out=i->geos[r->geo].geo.header;return COH_OK;}

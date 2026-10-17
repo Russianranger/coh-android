@@ -1,4 +1,29 @@
-# Exact original AuthServer encrypted account experiment
+# Corrected original AuthServer: isolated encrypted account suite qualified
+
+
+Latest actual milestone: run [38996587760](https://github.com/Russianranger/coh-android/actions/runs/38996587760),
+source `28fe37cc2432db4adbfe047bd07a1e738d6aa754`, qualified all eight encrypted
+account cases against the isolated corrected original AuthServer with the
+explicit **1024-MiB disposable SQL profile**. Normal and seven-byte capped probes
+both completed real valid login plus the normal empty shard list; wrong password,
+missing account and corrupted encrypted frame were refused in each mode. Owned
+AuthServer/listener, firewall, full SQL schema/instance, private-file and source
+cleanup all passed. Exact runtime receipts and source/binary replay admission are
+under [`../evidence/auth-success-38996587760/`](../evidence/auth-success-38996587760/).
+
+This qualifies a nonshipping, disposable host AuthServer-only development
+milestone. The accepted shipping/default 256-MiB profile is unchanged.
+`general_tcp_segmentation_accepted=false` and
+`receiver_segmentation_controlled=false` remain explicit. No actual shard,
+authenticated DbServer/MapServer handoff, selected character, Android or Thor
+qualification is established. Historical failures below remain failed evidence.
+
+`verify_auth_acceptance.py` seals the exact archive, eight cases, runtime source
+and reused binary pins. Its immutable `AuthenticatedHandoffPrerequisite`
+requires fresh authentication for a future handoff driver: the stopped historical
+session cannot be reused and supplies no selected-character DBID or session key.
+See [`AUTHENTICATED-HANDOFF-PREREQUISITE.md`](AUTHENTICATED-HANDOFF-PREREQUISITE.md).
+
 
 This continuation recovers the previous worker's unpublished Windows transport,
 auth-only profile and probe. Their exact original bytes and prior 46-control

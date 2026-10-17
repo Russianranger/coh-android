@@ -1,0 +1,10 @@
+{
+  "published_source": "2cdbaf42fcd51e32a420ece3e609111a4e2725aa",
+  "local_equivalent_merge_revision": "8c6a90b7225ac04e9bb2ee973a7167a64ea7a2ef",
+  "all_modes_passed": true,
+  "checks_each_mode": 9991,
+  "earlier_attempt_disqualified": "coordinator merged publication history while revision-guarded test running; guard correctly refused input changed; repeated once with stable revision",
+  "full_initial_update": false,
+  "actor": false,
+  "ack": false
+}

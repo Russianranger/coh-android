@@ -1,7 +1,8 @@
 # Authoritative world continuation — 2026-10-17
 
-Target branch remains native-android. Remote guarded compatibility publication:
-28fe37cc2432db4adbfe047bd07a1e738d6aa754. All preceding remote publications and
+Target branch remains native-android. Remote guarded component publication:
+2cdbaf42fcd51e32a420ece3e609111a4e2725aa (tree565a9193660bb4a482a262df3c617d820d307346).
+The compatibility retry source is28fe37cc2432db4adbfe047bd07a1e738d6aa754. All preceding remote publications and
 concurrent power-range/Android/auth work are preserved in the integration merge.
 All original worktrees remain intact. No accepted APK or gameplay-owned source changed.
 
@@ -65,7 +66,40 @@ default256 remains unchanged. Isolated corrected candidate profile requires exac
 preserves encryption/version/checksum/password refusals.
 Run38996044100 failed Python static mock nesting before Windows jobs; preserved logs
 and ExitStack correction pass29 host tests. Retry38996587760 passed source controls;
-Windows auth/MSVC results must be inspected separately. No encrypted login is yet accepted.
+Actual artifact12087506300 (6854bytes,
+SHAbd04a2baaee03e3d736e3419686849d4e3551770a020c0e321fe49e4d1151d3e)
+now proves real corrected isolated encrypted AuthServer account login. Both normal
+and seven-byte capped sends passed valid protocol191021 login/three frames/state5;
+wrong password reason3,missing account reason2 and corrupt frame refusal passed
+in both modes (eight cases). Every socket/password/service/owned-listener/firewall/
+SQL DROP+stop+delete/private/source cleanup check passed. All exact existing PE,
+probe and OpenSSL identities were reused; no binary was rebuilt. Original shipping
+server and checksum policy remain unchanged. Receiver segmentation was not controlled;
+general TCP segmentation acceptance remains false. Shards were empty and DB handoff
+was not attempted. Gate26/Android authenticated handoff remains unqualified.
+D commitc3bb4125cfecb544fce044a1352850f05ba43dd7 preserves exact archive/receipt and
+source/binary replay; five mutation/immutability suites pass. Its immutable prerequisite
+requires fresh authentication and contains no historical session or selected DBID.
+Independent actualAuthsealcb708a33c is retained.
+
+Separate actual MSVC artifact12087641708 (71613bytes,
+SHA7e0fab778d8311ca3558ac2b0eedd46c5b103a836b848248b2e2ba4c968aeb3d)
+proves original dynamic U8 bitfield size1, pointer4 and all256forward+reversepatterns
+under actual MSVC19.51 x86. Source/helper/generatedC/compiler log/PE/object/runtime
+bindings are independently sealed. It supplies no live tracker ownership.
+
+Suffix final preallocation/partial-loan cleanup fixes259106292/561cd8404 and Fseal
+cd463d8e6 are integrated. Stable coordinator release/ASan/UBSan rerun passed9991
+checks per mode,2390matched loans and5993424-byte peak. The prior attempt correctly
+refused a changed revision when the coordinator merged publication history; its scope
+receipt is preserved and only the stable rerun is qualified.
+
+Standalone suffix Android packaging/admission driverdc063362c is implemented with
+five host admission suites including missing-source/ABI, contradictory-scope and partial-mkdir cleanup controls. Android ABI compilation and
+execution are still pending. It regenerates original fixtures, binds complete sources,
+providers and driver identities, checks both ELF architectures and transferred SHA,
+requires explicit Android13 emulator, records platform libz hash and cleans its own path.
+The dependency stack/sanitizer closure remains false. No accepted APK is rebuilt.
 
 ## Next implementation and acceptance
 
@@ -77,3 +111,45 @@ World+actor publication remains atomic and blocked until all required inputs pas
 No READY, RECEIVED_CHARACTER or application ACK, new Combined APK, physical Thor test,
 Gate26 or live world acceptance is claimed. Accepted Session0.3.0,Combined0.1.7,
 Support0.2.0 and account/profile/asset state remain unchanged.
+
+## Active work checkpoint
+
+All six workers resumed in independent preserved trees. A is acquiring exact pinned
+GEO members with bounded HTTP ranges and replaying original header/model/material
+metadata under release/ASan/UBSan; interrupted403 receipt and verified bodies are retained.
+B is qualifying original group bounds/transform radius semantics. C is composing existing
+replication/entity/control/delete parsers with selected-self framing and updating the
+closure ledger. D is investigating fresh authenticated DB/shard/handoff grammar.
+E has executed a preliminary Linux software EGL/GLES backend; source/sanitizer/Android
+qualification remains active and is not accepted world rendering. F independently reviews
+new admission/cleanup source and reads existing startup/cache/memory evidence.
+No disposable Map capture or successful Android test needs repetition. No new Combined
+APK is justified until complete authentic world/resource/actor publication is ready.
+
+## Further qualified components
+
+Full-body comparison component924b72ad1 records132 acquired exact-SHA/ZIPCRC GEO
+files, zero metadata refusals in release/ASan/UBSan and independent bounded decoded-header
+SHA agreement. This is partial:259 candidates were absent at that receipt snapshot.
+Verified metadata includes every captured observation for each available file, original
+sorted model rank/disk row, model names/version/counts and texture partitions. It does
+not compare every trick/bounds/LOD/body property and does not prove direct opened-file
+identity. Acquisition continues resumably; preserve all interrupted receipts and bodies.
+
+Original group bounds6ec87e508 passed2068controls/mode including1024byte-exact
+unchanged-source numerical fixtures. Original post-trick LOD precedenceb13439cfa passed
+8200controls/mode including4096byte-exact fixtures. Both allocate no heap and refuse
+atomically. Their source-specific radius and precedence behavior is preserved; neither
+provides missing CLIENT trick/auto-LOD/material state. FP contraction must remain off.
+
+Startup analysisaa6880d8a passed five offline controls and changed no runtime. DB+Atlas
+account for342414/387340ms=88.4percent; beacon preparation overlaps the Atlas envelope.
+Actual51666425-byte resource metadata peak leaves48996871bytes within its96MiB named
+budget before GEO/material/RGBA/GPU/retirement ownership. This is not whole-process RSS.
+Cache-hit/hash/decode counters remain unmeasured; no speedup is claimed.
+
+The second-interrupted-resume journal issue identified by B is fixed in3c1b37c0d:
+all prior immutable attempt receipts are checked together, source/identity conflicts
+refuse, reused bodies are rehashed and existing files are never overwritten.
+Ten offline interruption controls passed independently in the integration tree.
+The first active resume retains its original source identity; no duplicate writer ran.

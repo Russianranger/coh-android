@@ -1,0 +1,44 @@
+{
+  "schema": "coh-f-post-trick-lod-source-review-v1",
+  "passed": true,
+  "source_commit": "b13439cfac65dff8bc6e46bf12dbede5efc6d2b5",
+  "receipt_sha256": "cce4664f262d307632a89b4fa88a0ef5d5395db14b1aa396aa20d03cfd609d81",
+  "tested_source_sha256": {
+    "native-android/engine/scenegraph/coh_group_lod.c": "6d33214ff56b3f5724527653ae3037a2f803eea140a3124e1251a978cf2e61e5",
+    "native-android/engine/scenegraph/tests/test_group_lod.c": "81dd7cb755bad3bf22e0c89d479ab9a49f7cdcadb6f56fdd3443ee7aa18afa4a",
+    "native-android/engine/scenegraph/coh_group_lod.h": "e49858fd4f142eb778e0641baf452b901e4d1d834fbeef39e7da79d7740bdc19",
+    "native-android/engine/scenegraph/tests/lod_oracle_shim.h": "68aaaa9d53db5b1998123de6aa9da771aaf08d5a4b54625f5d3e80df4ef5b14a",
+    "native-android/engine/scenegraph/check_group_lod.py": "c6751abe669ead063fc1a3e662e15519ffd2953c9e02bfd48f83a89c965ec7c2",
+    "native-android/engine/scenegraph/check_group_bounds.py": "eb9d4c64ad2459f80674e9eb976cf2532944a028eea7fcbf7a42b292c5ed1f30"
+  },
+  "original_source_sha256_lf": {
+    "upstream/ouroboros/Common/group/groupfileload.c": "5fc2891ed78626b9fa38b181fd5fc975b69f000bf2f79bbb3c5527c86503e8d7",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+  },
+  "reported_checks": {
+    "release": {
+      "passed": true,
+      "checks": 8200
+    },
+    "asan": {
+      "passed": true,
+      "checks": 8200
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 8200
+    }
+  },
+  "source_fixtures": 4096,
+  "review": [
+    "originalfile/trickprecedenceexact;nearvaluespreserved;fromfilealwaysreplacescaleandonlyreplacesfarwhen!fromtrick",
+    "zeroscale1;missingfarwithmodelusesfloatdiagonalhalf+shadow and10*(r+10);missingfadeonly!fromtrick",
+    "originalfsqrtmacroequals(float)sqrt;sourceandkerneloperationorderagreeunderexplicitnoFMA/fastmathcontract",
+    "finiteflags/inputusedboxes/outputvalidated;overflowandinversionrefuse;outputatomic",
+    "constantwork/noallocation;unusedfieldsnotspuriouslyrequired",
+    "priortrick/CLIENTModelLODInfoownershipremainscallerprerequisite;noactualLOD/material/worldauthority"
+  ],
+  "independent_expensive_tests_reexecuted": false,
+  "android_executed": false,
+  "world_authority": false
+}

@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 2068,
+      "heap_bytes": 0
+    },
+    "asan": {
+      "passed": true,
+      "checks": 2068,
+      "heap_bytes": 0
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 2068,
+      "heap_bytes": 0
+    }
+  },
+  "fixtures": 1024,
+  "original_source_sha256_lf": {
+    "upstream/ouroboros/Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+  },
+  "original_functions_sha256": [
+    "5b88fbd041800c072d550739d12b13f50567609c437d7ca55da7b194e8d4f1a3",
+    "48a1ef09778fe5a8e4f648b8d7a747272101b2cb7223721a64c253a293eefab3",
+    "20ba81cab0eb9b7903c72c6774d68cd12c27027c94750bc700a1bb1d08c93f32",
+    "020cc95943ddd1219bc2fbb0ef7fd690eb434235eed91a54e111ec1ea52d5869"
+  ],
+  "oracle_sha256": "b637a41fb78ec740b27822a4bbd4fadf68b7a6bf869e4115912fab48623df2cf",
+  "source_oracle_sanitized": false,
+  "leak_sanitizer": false,
+  "native_source_sha256": {
+    "native-android/engine/scenegraph/coh_group_bounds.c": "f806ee76b023842fdfe3615473ed1ea5170499c01f4e2ed493551dbbe1efcda9",
+    "native-android/engine/scenegraph/tests/test_group_bounds.c": "95372dd48d597c8f3f204035bfff6bfd912e036eb518bf8125c21cd5991d381e",
+    "native-android/engine/scenegraph/coh_group_bounds.h": "24785de1fcf70a03c7c1debf964ec77581428911334743be73cecc2cd4cf4426",
+    "native-android/engine/scenegraph/check_group_bounds.py": "eb9d4c64ad2459f80674e9eb976cf2532944a028eea7fcbf7a42b292c5ed1f30",
+    "native-android/engine/scenegraph/tests/bounds_oracle_shim.h": "113566a9736e2307a256a833684729c731c061a494188effd6b9e168cf65142a"
+  },
+  "world_resource_renderer_authority": false,
+  "android_execution": false
+}

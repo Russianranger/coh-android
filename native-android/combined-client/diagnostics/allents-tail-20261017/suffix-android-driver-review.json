@@ -1,0 +1,32 @@
+{
+  "schema": "coh-f-suffix-android-driver-source-seal-v1",
+  "passed": true,
+  "reviewed_commits": [
+    "dc063362c1bbe2f9dfa87374da64e61ca5fb6e79",
+    "69e2374fae367054cb540fe737ac939c9ea357d4"
+  ],
+  "source_sha256": {
+    "native-android/combined-client/diagnostics/initial-suffix-android-20261017/prepare.py": "cf8dfce01d4d728f836caf343cb7896fc33c1b3ac53ffd24064d1ee59aa27ff9",
+    "native-android/combined-client/diagnostics/initial-suffix-android-20261017/run.py": "1ed17c13e4749729cfbe1438a2a94a6f523bfb3c81d1e59a35713bc346e61939",
+    "native-android/combined-client/diagnostics/initial-suffix-android-20261017/test_admission.py": "d2ac7492d4ffa5d0e1ad516fbacf931fe62620412ff064f46b3577d4b9e841f0"
+  },
+  "independent_host_test_suites_passed": 5,
+  "review": [
+    "complete compiled source and exact original provider closures bound to host and current files",
+    "hostsanitizer result equality and regenerated fixture hash equality;bothABI ELFmachine,binary and fixture identities",
+    "contradictory top-level host actor/ACK/wholetransaction/dependency flags refused",
+    "explicit Android13x86emulator selection;binarytransferSHA and exact runtimeJSON equality",
+    "UUIDremotecleanupresponsibility beforemkdir,including partialcreationfailure;owned removalandabsenceverified",
+    "platformzlibfile observedbefore/afterstable;loadedmappingverificationfalse and externaldependencyclosurefalse",
+    "source artifacts readmitted afterruntime;source-only noapplication/actor/liveworldpermit"
+  ],
+  "resolved_findings": [
+    "hostauthoritycontradiction",
+    "partialmkdircleanup",
+    "platformzlibfilevsloadedmapping"
+  ],
+  "android_executed_by_reviewer": false,
+  "ndk_built_by_reviewer": false,
+  "actual_gles_driver_review_included": false,
+  "world_authority": false
+}

@@ -1,0 +1,376 @@
+{
+  "schema": 1,
+  "passed": false,
+  "candidate_report_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+  "helper_sha256": "12fad465c6c087fa0a2bdb6917d1c6fd619926f83378efd86e3f6ddcabcc95da",
+  "script_sha256": "a5e4e2457347f88fe3cb1743d0d5585f2a7a41d68b6c9d05f2be07913180d1cc",
+  "source_capture_identity": {
+    "catalog.cohcat": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "source-identity.json": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+    "run-identity.json": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+    "resource-binding.json": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c",
+    "runtime.cohrts": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+    "resources.cohres": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+  },
+  "manifest_sha256": {
+    "client-visual-manifest.json": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+    "atlas-world-supplement-manifest.json": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+  },
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+  "outer_expected_bytes": 1630092780,
+  "outer_full_sha_verified": false,
+  "inner_full_sha_verified": false,
+  "selected_payload_sha_verified": false,
+  "same_source_generation_established": false,
+  "assets_admitted": false,
+  "records": [
+    {
+      "source_geo_name": "object_library/Buildings/Elements/bldg_lights/bldg_lights.geo",
+      "asset_path": "data/object_library/buildings/elements/bldg_lights/bldg_lights.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 15140,
+      "sha256": "2df82340cdc1de6704004795f5737dcb8c9b96952e3330d9fce1fc935a144849",
+      "zip_crc32": "446da23c",
+      "zip_header_offset": 0,
+      "zip_method": 8,
+      "zip_compressed_bytes": 12765,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Elements/roofs/vents_etc/vents_etc.geo",
+      "asset_path": "data/object_library/buildings/elements/roofs/vents_etc/vents_etc.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 38869,
+      "sha256": "ce14d108a926f8912a34bceebd62614e1116dc639363e78bf4b0202e32e8b59a",
+      "zip_crc32": "aca00beb",
+      "zip_header_offset": 20104,
+      "zip_method": 0,
+      "zip_compressed_bytes": 38869,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Elements/roofs/ware_elmnts01/ware_elmnts01.geo",
+      "asset_path": "data/object_library/buildings/elements/roofs/ware_elmnts01/ware_elmnts01.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 65762,
+      "sha256": "71ebe7d0c4bf0c0b89f8fc8c87d39a1c7cf1f71b8ca52d5ef823e42b36e80132",
+      "zip_crc32": "91628e1e",
+      "zip_header_offset": 59071,
+      "zip_method": 8,
+      "zip_compressed_bytes": 58926,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Elements/signs/Neon/neon.geo",
+      "asset_path": "data/object_library/buildings/elements/signs/neon/neon.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 3684,
+      "sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+      "zip_crc32": "d8a4955a",
+      "zip_header_offset": 118103,
+      "zip_method": 0,
+      "zip_compressed_bytes": 3684,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Elements/signs/Special_Signs/Chaser_Sign_4to1/chaser_sign_4to1.geo",
+      "asset_path": "data/object_library/buildings/elements/signs/special_signs/chaser_sign_4to1/chaser_sign_4to1.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 1654,
+      "sha256": "66742a3b485b7772e6ab20a4edc750a7e46d99891e35473bfc587a3b0e9fd374",
+      "zip_crc32": "6f6cb92d",
+      "zip_header_offset": 121875,
+      "zip_method": 0,
+      "zip_compressed_bytes": 1654,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Filler_Buildings/Filler_Brick1/filler_brick1.geo",
+      "asset_path": "data/object_library/buildings/style/filler_buildings/filler_brick1/filler_brick1.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 145576,
+      "sha256": "76e80d0469717fbd992148af8e59140f78978eac28b8d33e9399fae9655ad2cc",
+      "zip_crc32": "1765979d",
+      "zip_header_offset": 1060646,
+      "zip_method": 0,
+      "zip_compressed_bytes": 145576,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Filler_Buildings/Filler_Ruin1/filler_ruin1.geo",
+      "asset_path": "data/object_library/buildings/style/filler_buildings/filler_ruin1/filler_ruin1.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 82044,
+      "sha256": "8a131b1a30211252be6cf4b0db90c98b70374f2408291c7490911e6fee220ea1",
+      "zip_crc32": "14a331e1",
+      "zip_header_offset": 1206336,
+      "zip_method": 0,
+      "zip_compressed_bytes": 82044,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Filler_Shops/filler_shops.geo",
+      "asset_path": "data/object_library/buildings/style/filler_shops/filler_shops.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 184987,
+      "sha256": "8e6551a9894eba871ef1a7c3f577e01f5531fe0a7f0a9f73f8dc9aaea6d7c295",
+      "zip_crc32": "b2ff37e9",
+      "zip_header_offset": 1288492,
+      "zip_method": 0,
+      "zip_compressed_bytes": 184987,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Oldtown/Oldtown_Elements/lights/ot_lights.geo",
+      "asset_path": "data/object_library/buildings/style/oldtown/oldtown_elements/lights/ot_lights.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 24443,
+      "sha256": "7c65a06993f456b9f5238b0f1a06ac90c4a2707d5bdb9df45e5bf19ed73acc5a",
+      "zip_crc32": "268b7226",
+      "zip_header_offset": 1473574,
+      "zip_method": 0,
+      "zip_compressed_bytes": 24443,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_01.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_01.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 676200,
+      "sha256": "c5048847e040e2ad2c0c160f469cde3c9eb472732128bbeaf848832b265cca68",
+      "zip_crc32": "9a444474",
+      "zip_header_offset": 1498128,
+      "zip_method": 0,
+      "zip_compressed_bytes": 676200,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_02.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_02.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 379529,
+      "sha256": "a787b3633e43de8f12cbacaab7e95714b829134cafb74951b1dcef2fb3bbfb90",
+      "zip_crc32": "2473a7f9",
+      "zip_header_offset": 2174439,
+      "zip_method": 0,
+      "zip_compressed_bytes": 379529,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_03.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_03.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 499440,
+      "sha256": "82cc14510e4a3d62186ceb77b33b1caee45b7b2be8fca860dbc7237bf1f8a32e",
+      "zip_crc32": "d3e86c77",
+      "zip_header_offset": 2554079,
+      "zip_method": 0,
+      "zip_compressed_bytes": 499440,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_04.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_04.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 473836,
+      "sha256": "34600797d709205f5ee6dd0489d433d4186473da89cb585c7b62f24a107edf9f",
+      "zip_crc32": "d051cdd8",
+      "zip_header_offset": 3053630,
+      "zip_method": 0,
+      "zip_compressed_bytes": 473836,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_05.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_05.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 433098,
+      "sha256": "f1bbe574afaa3910b440a3ec1748fd6f046da7fdf5fd8cd10f9a70b87cd91ff5",
+      "zip_crc32": "0db71bf8",
+      "zip_header_offset": 3527577,
+      "zip_method": 0,
+      "zip_compressed_bytes": 433098,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_06.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_06.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 1041930,
+      "sha256": "604880c8b748a9dfcf90660ee8256cbfc376c53a333044bb41ec8c1cf28b6371",
+      "zip_crc32": "326efcd5",
+      "zip_header_offset": 3960786,
+      "zip_method": 0,
+      "zip_compressed_bytes": 1041930,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_07.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_07.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 466000,
+      "sha256": "7243eb32f6e503381ff963b1a31b1039dd7c870aa35b163ef60a54c2f08bca46",
+      "zip_crc32": "1255b974",
+      "zip_header_offset": 5002827,
+      "zip_method": 0,
+      "zip_compressed_bytes": 466000,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_08.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_08.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 406608,
+      "sha256": "e3983632ba107b5a08a025f44cf4c739e73d14b60b6eae26e4548959472e6153",
+      "zip_crc32": "1568c246",
+      "zip_header_offset": 5468938,
+      "zip_method": 0,
+      "zip_compressed_bytes": 406608,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_09.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_09.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 584556,
+      "sha256": "c73702ec87a9b239377421397bcc49af6eef9f7fdd563ce18c30619e244080ec",
+      "zip_crc32": "38c046d7",
+      "zip_header_offset": 5875657,
+      "zip_method": 0,
+      "zip_compressed_bytes": 584556,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_10.geo",
+      "asset_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_10.geo",
+      "manifest": "atlas-world-supplement-manifest.json",
+      "bytes": 231028,
+      "sha256": "44996110fd44cf6230ddc37da80dde94268498dbd0eb4f1c363b99f21f63ec6a",
+      "zip_crc32": "7b5a26ea",
+      "zip_header_offset": 6460324,
+      "zip_method": 0,
+      "zip_compressed_bytes": 231028,
+      "payload_sha_verified": true,
+      "same_source_generation_established": false
+    }
+  ],
+  "failure": "<urlopen error Tunnel connection failed: 403 Forbidden>",
+  "range_bytes": 8011244,
+  "ranges": [
+    [
+      1630076928,
+      1630092779
+    ],
+    [
+      357695488,
+      357761023
+    ],
+    [
+      565510144,
+      565575679
+    ],
+    [
+      565116928,
+      565575679
+    ],
+    [
+      594411520,
+      594477055
+    ],
+    [
+      1453522944,
+      1453588479
+    ],
+    [
+      1452146688,
+      1453588479
+    ],
+    [
+      357761024,
+      357826559
+    ],
+    [
+      357826560,
+      357892095
+    ],
+    [
+      358744064,
+      358809599
+    ],
+    [
+      358809600,
+      358940671
+    ],
+    [
+      358940672,
+      359071743
+    ],
+    [
+      359071744,
+      359202815
+    ],
+    [
+      359202816,
+      359268351
+    ],
+    [
+      359268352,
+      359923711
+    ],
+    [
+      359923712,
+      360316927
+    ],
+    [
+      360316928,
+      360841215
+    ],
+    [
+      360841216,
+      361299967
+    ],
+    [
+      361299968,
+      361693183
+    ],
+    [
+      361693184,
+      362741759
+    ],
+    [
+      362741760,
+      363200511
+    ],
+    [
+      363200512,
+      363659263
+    ],
+    [
+      363659264,
+      364183551
+    ],
+    [
+      364183552,
+      364445695
+    ]
+  ],
+  "etag": "\"0x8DF27B1DA04C5EA\""
+}
