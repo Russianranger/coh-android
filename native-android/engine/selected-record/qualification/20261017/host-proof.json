@@ -1,0 +1,3667 @@
+{
+  "schema": "coh-selected-record-qualification-v1",
+  "passed": true,
+  "source_revision": "2dcfce5859a06d3ea8265af986888aecde12df8b",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/buffs_fixture.c.inc": "355ddd71a324c9bdd37d95a19b43fbd95c0ae27db9c6cf3cb2bfc63f8902ae75",
+    "native-android/engine/entities/buffs_oracle_shim.h": "f439daf190a9f9682bd1f6378b16da0682fbdff67c8a47fc75e648d078508729",
+    "native-android/engine/entities/character-initial-source-pins.json": "2ec71168262ec694574073fb601acee39aeb2320ec851c9a852c5259765076fa",
+    "native-android/engine/entities/character-prefix-source-pins.json": "3ccae26768381f0cce59f6a5e903a0fdf039ec5c23487293a6d6bcc0077a0f4f",
+    "native-android/engine/entities/character_tail_fixture.py": "b43da9235859f4293d365a70b67938e26cfec4f43a815e2d5c68bc22240583d9",
+    "native-android/engine/entities/character_tail_test_writer.h": "ff9aec7b36841ccec5aae219efc5926c7673a01e9cbe821364019b3cc6e16400",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/check_character_creation.py": "9389e2d834ac29216410e5ec39da546a1539929aa83ce547fd69ca400979d32b",
+    "native-android/engine/entities/check_character_initial.py": "bd1944990fd5525f89f4d4a6922375b9dfa8a3899a887e881437c76ad8800e7f",
+    "native-android/engine/entities/check_character_outer.py": "15271706124e07e056af5c6fd90014c6cbb95d800170f2132033ef88df8922c3",
+    "native-android/engine/entities/check_character_prefix.py": "6a0b1b72bc8ab5cf222bee505180c67907ded62fb3ef874a7c763e7df7e9ff47",
+    "native-android/engine/entities/check_character_tail.py": "697dc9eb9a03f6980682ad95831d53c151bf9756731edf9720af024918d96ea1",
+    "native-android/engine/entities/check_character_ui.py": "f08faabfd4fd75b1660c14584ecfd2c40bff4dc87702c04f847c1cf3b92c6940",
+    "native-android/engine/entities/check_cpp_link.py": "f128b621e178b14d19fd3881b4262f7199dcf746e819fee4253b5093c46595e9",
+    "native-android/engine/entities/check_power_ranges.py": "921278fa2d226535c7bd84635c2770b2b98bc071fc6fd23acb69d99a987e7352",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/engine/entities/check_very_rare_tail.py": "773754a7b33763ae02011485daa3f91d5b3c2f591f20e1f8e022d3a463762d96",
+    "native-android/engine/entities/coh_character_creation.h": "5281769a276e3853b66cefa250511e82381fe5d29845b50c33a8a057dbb5722e",
+    "native-android/engine/entities/coh_character_initial.h": "081204665a475a1dcc0056bf1dffcd1b9ad147f4eb780a971dfb52687535ee99",
+    "native-android/engine/entities/coh_character_options_schema.h": "48a9c41ac2c28d5aa4de299714d39be848220ad23351e3dd451a60d7e4f4e732",
+    "native-android/engine/entities/coh_character_outer.h": "4261a314b5757f50f2273917ee7bab495511fea61d21e9ab1409b29db84e9bd6",
+    "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+    "native-android/engine/entities/coh_character_tail.h": "925bc44fb27d5095f0fe2f1093bf0dc697a0debafc0e252539b6d61e887f14cf",
+    "native-android/engine/entities/coh_character_ui.h": "acc7cd1a94cfd75ebccfcecd666febaf9e0733a68113c955fe63ecf1d62487ac",
+    "native-android/engine/entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.c": "730e09df080c26efa240844bbea707a88138ea966864006fa26487249e18d1e3",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/coh_power_ranges.h": "199d35f40a3eac1d8882d088006bfae7c1335bf8a88721f353f202e7af081b80",
+    "native-android/engine/entities/coh_taskforce.c": "341a9a36b3b0ab4441f7485119e8d059be0dee7a83777ef5abb2fc5814d10704",
+    "native-android/engine/entities/coh_taskforce.h": "0580284849d5027d27cb386ee17dc6ab27c7395c493863694bf799410755d73e",
+    "native-android/engine/entities/coh_teammate_buffs.c": "ee817fb457f9ae108d623241750577a2d83d5f9e7a893d91a4f7c2ae04f2d553",
+    "native-android/engine/entities/coh_teammate_buffs.h": "44df43e89339d0fec73d7dc75c728c16f8917a851f5a6cbaa9f32146a3e7f85e",
+    "native-android/engine/entities/coh_very_rare_tail.c": "4db976052dad6e463161cbc5afe02d6d424b6c24d795e663870f9027b91241b8",
+    "native-android/engine/entities/coh_very_rare_tail.h": "6f1fc81912aac0690db7331a0d95f89015b0df6e34f0574aaefe82b7a32b2c36",
+    "native-android/engine/entities/costume_envelope_fixture.c.inc": "e360c69290027ef37cd162a3a157c38dafe44c3e9afdb4273d5a52db2f2265aa",
+    "native-android/engine/entities/costume_envelope_oracle.c.inc": "c13ded81f1c909e34832676e76ab6607e415a2a30498c65489db5fff7868d9f5",
+    "native-android/engine/entities/costume_envelope_oracle_shim.h": "5591deb9492e6cfecaea26d572e8a0bb290ff8a90a76b248d47668810269bd7d",
+    "native-android/engine/entities/costume_oracle.py": "d24379c691fd02152819fe8fe7a08556c6a5545c8bbdab0860dfd93ddba41785",
+    "native-android/engine/entities/costume_oracle_shim.h": "3e442ef49b35482e5b446efd1fa293d96f1949138d3f9a2be05f9b5bacb7aac0",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/power-ranges-source-pins.json": "68cd2a6dec40ee5b15db89e9d651c2451780d7defce0908684f84dbcf727325b",
+    "native-android/engine/entities/power_custom_fixture.c.inc": "07aa0b398575e0300a29c31c1500aef81cecbdd29b7e0955b3966a86019bdc22",
+    "native-android/engine/entities/power_custom_observer.c.inc": "8128511c251f5818a28b4a2906230d9d7eb57f6b587d084021460caa965ad8b0",
+    "native-android/engine/entities/power_custom_oracle_shim.h": "dc1c24aa7b003a1a4c8b83bc6b86c628b2a75cb3ae6ec51386d61ec72b4f99ec",
+    "native-android/engine/entities/power_ranges_fixture.c.inc": "a5d5bad60c01444860e8d8fc33eeaf3135708e38ca83190fcb3f65558adf8f33",
+    "native-android/engine/entities/power_ranges_oracle.c.inc": "b2e420209ec1a55321a6417911dafc7c505bcceb3c56cf5d254e233645ddc04e",
+    "native-android/engine/entities/rare_fixture.c.inc": "a0d754e64045062018d41d35815dbcb4e352d45b3921247f0a99500ba5d80040",
+    "native-android/engine/entities/rare_oracle_shim.h": "04fa3ec89865c7c5f1473c526e64b4329f41e4cd0b21bc0d0bff30588f70df6d",
+    "native-android/engine/entities/run_character_android.py": "9253edc51d48e77191c135060e815fb9b2c3e87ba59e0ecfb215e078d26dab46",
+    "native-android/engine/entities/run_wire_android.py": "9ce7f3b890e3b6638b3eb631760f8ff771882c5fa0eeab451432adb8ee1f3e59",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/entities/tail_fixture.c.inc": "e6bc9fe0f2b2aeb9808e5354b54853db890a149a67b0148f773366b960125bd7",
+    "native-android/engine/entities/tail_observation.h": "990fa40a03879ff1a592f6f10a8bc2139c171c39727cff77536afac81e28f4eb",
+    "native-android/engine/entities/tail_oracle_shim.h": "94c0cf23e01432312019c1e936e457a68c303530c5985c394c6e0c1a0910fb4e",
+    "native-android/engine/entities/taskforce_fixture.c.inc": "61b7a520b528426e0fd9888a2124b15280b89c425f9b9f9df31561871061ae61",
+    "native-android/engine/entities/taskforce_oracle_shim.h": "0dc37b98a6c19d333fff0d2dde98fb0da7093d499c68be1db4d2e1291cb6fa09",
+    "native-android/engine/entities/teammate-buffs-source-pins.json": "1fac23e9fb29ebfe4578eaab9a8591b23a14fb883044dac4dc986536fd824777",
+    "native-android/engine/entities/test_rare.c.inc": "53606d4173b9cfde69834c4dec87d81787161417de1d4aaafa911891e1a7ca8c",
+    "native-android/engine/entities/test_run_character_android.py": "a2fef3f89e15808e296053bb206cf6bee42465669d3f534dd435095c15f8049e",
+    "native-android/engine/entities/test_run_wire_android.py": "ec6ec845fc34b59d37f805e5c556a0629dd537f7ad92e9a3d9ca57adb216f790",
+    "native-android/engine/entities/test_taskforce.c.inc": "1025365a63a6288de46af9e441380cd3a61322307a31f9293f96f5c8fbac6c9a",
+    "native-android/engine/entities/test_titles.c.inc": "128b261a892be50ac766fa97e9467350f3ade86ee1d5b7cf4d2c774ef4600b80",
+    "native-android/engine/entities/titles_fixture.c.inc": "39d062b156340ad34b525d70382d9ee961e7e5d2c4079283f65a62d2ec6b0992",
+    "native-android/engine/entities/titles_oracle_shim.h": "b553a29e61060dedd35c8bdcf1ac64e4956321475a9d464b9308f56db2db565e",
+    "native-android/engine/entities/very-rare-tail-source-pins.json": "c22588fc9022427809e74e6e23c66e278afa60fd0f4bbe6a3d784b386f03bfa8",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/selected-record/check.py": "5e64cedcd475dd44dacc287e58ad4a1e49b010c948943eaca9a983e50ddde226",
+    "native-android/engine/selected-record/coh_selected_record.c": "25b2bda8f16f7b6bbfe62ad48e6202e1b2338a4d8de67258654c0fc67e9ac360",
+    "native-android/engine/selected-record/coh_selected_record.h": "c05eb2270b3b000ce34fe23a88d6e2d8e655709003073ebb6d2ec7182f619b80",
+    "native-android/engine/selected-record/fixtures.py": "eb543093382b9a2d875817f2803f154cd3bdcd08aa233fe76903138ae35127fc",
+    "native-android/engine/selected-record/oracle_front.h": "bfdee7f1fc3d46c98badd5ea1ddc32034f37b9dfac55cb953f0f434b08ae044d",
+    "native-android/engine/selected-record/test_selected_record.c": "a834e6b8dadbccfebeee78c7f64f898237fd5682befd541fd7729295c798cbb6",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_components": {
+    "base_original_source_sha256_lf": {
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "Common/entity/entity_enum.h": "52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d",
+      "Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e",
+      "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+      "Common/entity/ragdoll.h": "9a93c71d31de0ea319dc1cb7776a4ba5044dc479fa9b7354c85705fa7c6405cd",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "libs/UtilitiesLib/src/utils/Quat.c": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+      "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+      "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "MapServer/src/entity/entsend.h": "48cb0e645e452ba697051de1fc61c80267934801c636a6b5345d165ae7876a4c",
+      "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+      "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+      "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+      "libs/UtilitiesLib/src/utils/structNet.c": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1",
+      "Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+      "Common/entity/attrib_net.c": "dc634ef7f142e1f5e1ca9f49b2b99dc82a0455717b0d84250b39d309e309ce90",
+      "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "Common/entity/netfx.h": "b86429ca627be5aecf6b993617ae871ab1e3de2eef7a58e9c4c38f1765246e73",
+      "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+      "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+      "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "Common/entity/power_customization.c": "7cad6c8e8184fc45b2457b35da0cc71a3fbb47c92ba003954cb423816baf8883",
+      "Common/entity/power_customization.h": "f8b5ffca5740b9dbc7e2359d6bbaec9802b5ed39951c31d998ae2baea780be62",
+      "Common/entity/teamCommon.h": "db0018467ae696e3cd6f6b4183e932560cc427f812850331b69987cda740a0fc",
+      "Common/entity/TaskforceParams.c": "ca5a9331764db9a7d5c5af4738f7ad429f5629cbc3fcd71f30c00b00723d93a1"
+    },
+    "base_extracted_functions": [
+      "initBitStream",
+      "bsWriteBits",
+      "bsWriteBitsPack",
+      "bsReadBits",
+      "bsReadBitsPack",
+      "bsAlignByte",
+      "bsGetCursorBitPosition",
+      "bsWriteString",
+      "pktSendIfSetBitsPack",
+      "pktSendIfSetBits",
+      "pktGetIfSetBits",
+      "pktSendIfSetString",
+      "pktSendBitsAuto",
+      "pktSendIfSetF32",
+      "pktGetIfSetF32",
+      "pktGetIfSetBitsPack",
+      "basepower_Send",
+      "character_SendInventorySizes",
+      "entSendPetInfo",
+      "entSendCreate",
+      "entSendPosUpdate",
+      "entSendQrotUpdate",
+      "entSendModes",
+      "entSendSeqTriggeredMoves",
+      "entSendAiAnimList",
+      "entSendDeletes",
+      "entSendCostume",
+      "entSendTargetUpdate",
+      "entSendNetFx",
+      "unpackQuatElem",
+      "quatCalcWFromXYZ",
+      "quatNormalize",
+      "entGetOrientation",
+      "entReceiveNetFx",
+      "ParserUnpackFloat",
+      "ParserPackFloat",
+      "ParserFloatMinBits",
+      "int_senddiff",
+      "float_senddiff",
+      "struct_senddiff",
+      "int_recvdiff",
+      "float_recvdiff",
+      "struct_recvdiff",
+      "sdPackStruct",
+      "ParserSend",
+      "sdUnpackStruct",
+      "ParserRecv",
+      "pktGetBitsAuto",
+      "entReceiveTitles",
+      "basepower_Receive",
+      "entSendAfk",
+      "entReceiveSendOnOddSend",
+      "entReceiveAllyID",
+      "entReceivePvP",
+      "entReceiveEntCollision",
+      "entReceiveEntSelectable",
+      "entReceiveNoDrawOnClient",
+      "entReceiveShowOnMap",
+      "entReceiveContactOrPnpc",
+      "entReceiveNameUpdate",
+      "entReceivePetName",
+      "entReceivePetInfo",
+      "entReceiveAFK"
+    ],
+    "base_titles": {
+      "producer_scope": "unchanged inline sendEntity title statement block; not full sendEntity",
+      "producer_statement_sha256_lf": "ab73c224f252d978ee4a5d5c7cc80793698d988b42201af44ca3838b640c8241",
+      "consumer_function_sha256_lf": "04562e9fadcc0d0f7823156ce200fe51968a27ef81c474a4522065d5ce76ab69",
+      "source_fields": {
+        "name": 128,
+        "the_text": 10,
+        "common": 32,
+        "origin": 32,
+        "special": 128
+      },
+      "state_bytes": 388
+    },
+    "base_rare": {
+      "scope": "unchanged inline rare prefix producer/consumer statements and complete named component functions; no complete sendEntity/entReceive execution; synthetic owner/power/UI adapters",
+      "producer_statement_sha256_lf": "441d9fad7af16f9353e369fcf60c10225d8e5352781752d429ed35ce072df6b0",
+      "consumer_statement_sha256_lf": "3a4ae0ea6e368338e5894e31afb7d8aa2c7ddddcbb985835fad6a97063a2ffb9",
+      "component_consumer_sha256_lf": {
+        "entReceiveSendOnOddSend": "0db82be9c70a74146fc19e7fdc8df661a8ab15ece97a9dc3a4a11445ce3fcb19",
+        "entReceiveAllyID": "73213a9a0c7c5825503e4ced256b0d2c88365098680e406e77f7afad30b52b6b",
+        "entReceivePvP": "70fa540b95170be3a5759414faf38f580aeb09ad26f5028edcf8fed8af9a4c12",
+        "entReceiveEntCollision": "f0a2a788e571e67ba7964679dedf2a7db15938662d8f424aaf5752fc41990b09",
+        "entReceiveEntSelectable": "cd587246e3979ace04f8c342f6175d2682874b298989ccae1cf0d9988d6fbf57",
+        "entReceiveNoDrawOnClient": "dcf833eddb7e92873138e0ec2f4f7ded6a60a8066d0c51ed07568e25a5724fd6",
+        "entReceiveShowOnMap": "de7936d143e30bf3ea63057d29b1a53959a113b28d6a93149e04d68a4786d40c",
+        "entReceiveContactOrPnpc": "0445789290fd3ba693561ee39b92c310e6d5c35fcb90ef8daffbd4204992b949",
+        "entReceiveNameUpdate": "42fc937d2e4ef3adf952e2421a6c02e3533df449e3f18997b2aeeb3d1c10b42c",
+        "entReceivePetName": "96f34b2afbd40e0145a281e026446bc3d481d0dd75a10bfa52b598a3aeca749e",
+        "entReceivePetInfo": "022d3d1cd3223121b163275750a4dcda8b8a758e95e8070d892c3555fc071dff",
+        "entReceiveAFK": "93671f6aa0a055425dda915d37e91fbf562b9f05cf6c7fca244c1da03d155309"
+      },
+      "event_bytes": 1456
+    },
+    "costume": {
+      "original_functions": [
+        "initBitStream",
+        "bsWriteBits",
+        "bsWriteBitsPack",
+        "bsReadBits",
+        "bsReadBitsPack",
+        "bsAlignByte",
+        "bsGetCursorBitPosition",
+        "bsWriteString",
+        "log2i",
+        "pktSendF",
+        "pktGetF",
+        "defaultBitsPack",
+        "defaultBitsPackGeneric",
+        "pktSendIndexedString",
+        "pktGetIndexedString",
+        "pktSendIndexedGeneric",
+        "pktGetIndexedGeneric",
+        "sendCachedIndexedString",
+        "getCachedIndexedString",
+        "sendCachedIndexedColor",
+        "getCachedIndexedColor",
+        "costume_send",
+        "costume_receive",
+        "NPCcostume_send",
+        "NPCcostume_receive",
+        "pktSendIfSetBitsPack",
+        "pktSendIfSetString",
+        "pktGetIfSetBitsPack",
+        "pktGetIfSetString",
+        "ent_SendCostumeRewards",
+        "ent_ReceiveCostumeRewards",
+        "entSendCostume",
+        "entReceiveCostume",
+        "pktSendBitsAuto",
+        "pktGetBitsAuto",
+        "costume_get_num_slots",
+        "comparePowerCustomizations",
+        "powerCustList_send",
+        "powerCustList_receive",
+        "entSendPowerCust",
+        "entReceivePowerCust",
+        "TaskForceIsParameterEnabled",
+        "entSendTaskforceArchitectInfo",
+        "entSendTaskforceParameters",
+        "entRecieveTaskforceArchitectInfo",
+        "entReceiveTaskforceParameters"
+      ],
+      "fixtures": 66,
+      "fixtures_sha256": "d24e016f82b795312ed2842f554139e110d44cbdc2095fd424e330ea5a5eca6a",
+      "scope": "original full/owned/custom costume bodies and outer appearance/reward/powercustom/taskforce producer and consumer functions with synthetic dictionary/storage/render adapters; no entity record integration or server dictionary capture"
+    },
+    "buffs": {
+      "source_sha256_lf": {
+        "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+        "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+        "MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+        "Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+        "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+        "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+        "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+        "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12"
+      },
+      "functions": {
+        "initBitStream": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+        },
+        "bsWriteBits": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+        },
+        "bsWriteBitsPack": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+        },
+        "bsReadBits": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea"
+        },
+        "bsReadBitsPack": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620"
+        },
+        "bsAlignByte": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+        },
+        "bsGetCursorBitPosition": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+        },
+        "pktSendBitsAuto": {
+          "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+          "sha256_lf": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa"
+        },
+        "pktGetBitsAuto": {
+          "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+          "sha256_lf": "24d347775510cb0e5cd093758aee6967bda392c99d0baf5c46c1a19de7897cd7"
+        },
+        "basepower_Send": {
+          "source": "Common/entity/character_net.c",
+          "sha256_lf": "ce3f2ff7c7daee7ea15f144b7e7989742a12066fd3aa5df7b5353362f5731fe7"
+        },
+        "basepower_Receive": {
+          "source": "Common/entity/character_net.c",
+          "sha256_lf": "e16bc06cdcc12cb1609dbbf305eca3735c8982f2a6c086e400b5f1379f167b95"
+        },
+        "character_SendBuffs": {
+          "source": "MapServer/src/entity/character_net_server.c",
+          "sha256_lf": "854d640b8603e640937b2b26278745c6e8310891690b5b10b3f041711b75c1a6"
+        },
+        "character_ReceiveBuffs": {
+          "source": "Game/src/entity/character_net_client.c",
+          "sha256_lf": "a227f00c40e2c72cbf58524d07cbe532e22e51ec88f4cda20b730a0d5146fd94"
+        },
+        "appendTeammatePacket": {
+          "source": "MapServer/src/entity/entsend.c",
+          "sha256_lf": "60b633ce1bb9177fb93769c431ee896a27cc4f5221b976ea3e140550d3c2607b"
+        },
+        "entReceiveBuffs": {
+          "source": "Game/src/entity/entrecv.c",
+          "sha256_lf": "8694fdf72a2fd525cdf9f02a860f09916883ca090123c05acd3c24ddb81ed378"
+        }
+      },
+      "generated_oracle_sha256": "a97020370bf45d3474cb7ca8d1e97b5f6dcaeb7c5c3455eacd193ae5fefd3ce6",
+      "whole_functions_executed": [
+        "basepower_Send",
+        "basepower_Receive",
+        "character_SendBuffs",
+        "character_ReceiveBuffs",
+        "appendTeammatePacket",
+        "entReceiveBuffs"
+      ],
+      "oracle_sanitized": false,
+      "scope": "Original complete standalone producer/consumer functions with explicit synthetic entity, stash, dictionary and UI shells. No enclosing entity or live packet."
+    },
+    "tail": {
+      "source_sha256_lf": {
+        "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+        "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+        "MapServer/src/storyarc/storySend.c": "b1bc173b8328339564b23c5233599745ecc822ac0e4f2316e2e2e85de406375c",
+        "Game/src/storyarc/contactClient.c": "b5deea307fa92bb05e9b7997a5278882bfcad01c6e02fb3425d320954046caa5",
+        "Game/src/storyarc/contactClient.h": "2d3f9b2b15977d240b40ab96d801bd24204331b39b22cb10f92f1c7cdefd3080",
+        "Game/src/UI/uiCompass.h": "0446c9a9a3be3b26119d528d0eb546c11ec73993d4f94c6b99381bedfc60f963",
+        "Common/storyarc/contactCommon.h": "6a9e2dc04800ab10444d7b2fd886dfdb426e83082efb70aa20c9d2527e560fb3",
+        "Common/entity/teamCommon.h": "db0018467ae696e3cd6f6b4183e932560cc427f812850331b69987cda740a0fc",
+        "Common/entity/Supergroup.h": "507ecb84875692c585045a724c9fbec8247c7b00f940e51d2b7907ec48a995f8",
+        "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+        "Game/src/entity/entIncludeClient.h": "3acc9aec76e2efbcd4675dc0e42cb54fcf1df5bb8dc49f15a9fab00c5203d573",
+        "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+        "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+      },
+      "functions": {
+        "initBitStream": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+        },
+        "bsWriteBits": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+        },
+        "bsWriteBitsPack": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+        },
+        "bsReadBits": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea"
+        },
+        "bsReadBitsPack": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620"
+        },
+        "bsAlignByte": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+        },
+        "bsGetCursorBitPosition": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+        },
+        "bsWriteString": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81"
+        },
+        "bsReadStringAndLength": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "e7606801ddc22b76d0aeec630597a653ab025a2f501653ecdbe341a692fe0c3f"
+        },
+        "pktSendBitsAuto": {
+          "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+          "sha256_lf": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa"
+        },
+        "pktGetBitsAuto": {
+          "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+          "sha256_lf": "24d347775510cb0e5cd093758aee6967bda392c99d0baf5c46c1a19de7897cd7"
+        },
+        "pktSendIfSetBitsPack": {
+          "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+          "sha256_lf": "bb355f0f50556e55d323d3bc1e12bbc17dcc4669f6f7246b2bad12bbf3f00559"
+        },
+        "pktGetIfSetBitsPack": {
+          "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+          "sha256_lf": "8085a057f64fe94f1643ab276f547c9e065315577a5b924e073a909d93ca92b3"
+        },
+        "TaskStatusSend": {
+          "source": "MapServer/src/storyarc/storySend.c",
+          "sha256_lf": "434624286a6021e3ea2322248bc610ddc7323cacc73a11f132d198d92c336f82"
+        },
+        "TaskStatusReceive": {
+          "source": "Game/src/storyarc/contactClient.c",
+          "sha256_lf": "c0c381c5e92e1f804ecf08a0fa53254a40cd4317b44b85cdee88c548df565193"
+        },
+        "entSendOtherSupergroupInfo": {
+          "source": "MapServer/src/entity/entsend.c",
+          "sha256_lf": "9fbfb338f3cc3c6caa8915b78cbaa8949b6e3f338ea166a18838b041531186aa"
+        },
+        "entSendLevelingpactInfo": {
+          "source": "MapServer/src/entity/entsend.c",
+          "sha256_lf": "66a1296d9f687399171ee61fa2a5241dee54d527e66df8090e8423ec50c1c2e3"
+        },
+        "entSendLogoutUpdate": {
+          "source": "MapServer/src/entity/entsend.c",
+          "sha256_lf": "6a32081a2d4cf7bdd73992712ef43aff358e141784c1f2909aa392f7eff31e0a"
+        },
+        "entReceiveOtherSupergroupInfo": {
+          "source": "Game/src/entity/entrecv.c",
+          "sha256_lf": "a4a288173ed5643607d73fbe90e1c9a1c75e7c68d77d6ec0879136b765a626ae"
+        },
+        "entReceiveLevelingpactInfo": {
+          "source": "Game/src/entity/entrecv.c",
+          "sha256_lf": "33c83e2f717a198a22dc922d26d726bc5dc13652de19a540cee649175608811f"
+        },
+        "entReceiveLogoutUpdate": {
+          "source": "Game/src/entity/entrecv.c",
+          "sha256_lf": "685c92ddb86e2c6b916b2a8266f66096facb0060a87c968a62c8d86b1cd5e4d5"
+        }
+      },
+      "generated_oracle_sha256": "26174d0f4e7cac919d22e40584ff35dfe74c35a406988ddfec027cbc93e9233c",
+      "whole_functions_executed": [
+        "entSendOtherSupergroupInfo",
+        "entSendLevelingpactInfo",
+        "entSendLogoutUpdate",
+        "entReceiveOtherSupergroupInfo",
+        "entReceiveLevelingpactInfo",
+        "entReceiveLogoutUpdate",
+        "TaskStatusSend",
+        "TaskStatusReceive"
+      ],
+      "sender_order_block_sha256_lf": "020a96ca33540d2dc451c2fe90f8236d81210b59ef78ac96da0f929b92f20dc3",
+      "receiver_order_block_sha256_lf": "270186c0330042f57149e63389aaff60d1104fb7f97bc5c7a61833948834573a",
+      "oracle_sanitized": false,
+      "scope": "Whole named source functions with synthetic object/dictionary/location/UI shells; original enclosing sendEntity/entReceive do not execute.",
+      "consumer_projection": "Exact byte serialization of numeric/string receiver state. Fixture dictionary behavior is explicit; not original dictionary/gameplay application."
+    },
+    "front_c_sha256": "c66e7a2f31cd56550f1da895f039c8c2d7b3505994115fad436ce7138bd2f729",
+    "scope": "Component original producer fixtures + explicit synthetic flags/concatenation. No complete original sendEntity, live dictionary/identity, or actor."
+  },
+  "fixtures": {
+    "sha256": "62f16a4fd64d5a6da4bcf408cf46cc2ae6c36172d190199cd4505290b9414e33",
+    "count": 50,
+    "component_cases": [
+      {
+        "boundaries": {
+          "front_end": 1318,
+          "costume_end": 12495,
+          "power_end": 13514,
+          "titles_end": 14162,
+          "ragdoll_end": 14228,
+          "common_end": 14802,
+          "taskforce_end": 15513,
+          "rare_end": 15547,
+          "tail_end": 15550,
+          "buff_end": 15552
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1318,
+            "end_bit": 12486,
+            "source_bits": 11168,
+            "sha256": "52e6863840e5d73fd0e9ffb6e782c11965510f0e2c694145e8b438473da849d2"
+          },
+          {
+            "name": "power",
+            "begin_bit": 12495,
+            "end_bit": 13514,
+            "source_bits": 1019,
+            "sha256": "b3d429aa577e0167c90c38128fa5e22d341ad246100ee685218c1ccaa7fb1345"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 13514,
+            "end_bit": 14162,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 14802,
+            "end_bit": 15513,
+            "source_bits": 711,
+            "sha256": "10a1ef29afc65201acaf3e3120611b6e483c0a4072bba8388508bea8bd7e9c90"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 15513,
+            "end_bit": 15547,
+            "source_bits": 34,
+            "sha256": "8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 15547,
+            "end_bit": 15550,
+            "source_bits": 3,
+            "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 15550,
+            "end_bit": 15552,
+            "source_bits": 2,
+            "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1318,
+          "costume_end": 5042,
+          "power_end": 10037,
+          "titles_end": 10685,
+          "ragdoll_end": 10751,
+          "common_end": 11313,
+          "taskforce_end": 14356,
+          "rare_end": 14850,
+          "tail_end": 14861,
+          "buff_end": 15498
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1318,
+            "end_bit": 5033,
+            "source_bits": 3715,
+            "sha256": "30342b436de1f4c9255c9a16295292ed5b350ce0611e4c59da6e796f0fee56eb"
+          },
+          {
+            "name": "power",
+            "begin_bit": 5042,
+            "end_bit": 10037,
+            "source_bits": 4995,
+            "sha256": "158b2f35374ad665791a4acc34f36d2bcc4a6b1fd2fa6ca8af5decb0cfa98798"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10037,
+            "end_bit": 10685,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 11313,
+            "end_bit": 14356,
+            "source_bits": 3043,
+            "sha256": "49a274ecec9c10c07c7beaba2669b81d9ec4581195bc25340a841f4bc3c6651b"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 14356,
+            "end_bit": 14850,
+            "source_bits": 494,
+            "sha256": "2dce7d6df936bc4c4f74dd66ad225f923a43e7b00a968b180d6c2e7961c1ad67"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 14850,
+            "end_bit": 14861,
+            "source_bits": 11,
+            "sha256": "1e41fa5a397c649fafed65eff53596d2a39f114b8142acb53a5cb5a7b564496e"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 14861,
+            "end_bit": 15498,
+            "source_bits": 637,
+            "sha256": "8adbc7aa4bfde4d1eda590edfdf8cf1f72371b47d0a2e2ece5b7d3d342d645d8"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1318,
+          "costume_end": 8541,
+          "power_end": 8563,
+          "titles_end": 9211,
+          "ragdoll_end": 9277,
+          "common_end": 9785,
+          "taskforce_end": 12829,
+          "rare_end": 13063,
+          "tail_end": 13538,
+          "buff_end": 13665
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1318,
+            "end_bit": 8532,
+            "source_bits": 7214,
+            "sha256": "f3a5a08e71e0d90aeaccc79333707734f1837c4415ea057b097c3aa89e8c2691"
+          },
+          {
+            "name": "power",
+            "begin_bit": 8541,
+            "end_bit": 8563,
+            "source_bits": 22,
+            "sha256": "0c8d0ed650b85b064b221f4631e8a5b0e678ec02acf8fc18db25888ad8d4a0ab"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 8563,
+            "end_bit": 9211,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 9785,
+            "end_bit": 12829,
+            "source_bits": 3044,
+            "sha256": "c4e6224903cfff3955cfb0761d274316ee90021750fc00b687fee6b1af6bb81d"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 12829,
+            "end_bit": 13063,
+            "source_bits": 234,
+            "sha256": "26f38affa72407752ff68023fc9e339022b3f209011d84d5a275c59820de1d71"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 13063,
+            "end_bit": 13538,
+            "source_bits": 475,
+            "sha256": "b863dee71e5b9627fe35307ef25237c5d7c75800798934ff166188d4ec8df7db"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 13538,
+            "end_bit": 13665,
+            "source_bits": 127,
+            "sha256": "91f67046d9cbecb2504f905d91ee22c0b68d3a3c065095b27d77e1a6d93abe32"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1318,
+          "costume_end": 36501,
+          "power_end": 36527,
+          "titles_end": 37175,
+          "ragdoll_end": 37241,
+          "common_end": 37815,
+          "taskforce_end": 38130,
+          "rare_end": 38202,
+          "tail_end": 64057,
+          "buff_end": 118931
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1318,
+            "end_bit": 36492,
+            "source_bits": 35174,
+            "sha256": "a39c4f78b290171f40a41ba4c19c0d849ba355caf8e9be37ccb6c4a5a192627e"
+          },
+          {
+            "name": "power",
+            "begin_bit": 36501,
+            "end_bit": 36527,
+            "source_bits": 26,
+            "sha256": "f28704debed865503aa695c24a74aef78748b68828f014b7a086c7fe599efb38"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 36527,
+            "end_bit": 37175,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 37815,
+            "end_bit": 38130,
+            "source_bits": 315,
+            "sha256": "f510d42dfb5d1ff45997d333f2887744d152a55469348c0befc179337c55d0ac"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 38130,
+            "end_bit": 38202,
+            "source_bits": 72,
+            "sha256": "408a96fc90375a8b3a403dcb46cf3a23a4f4e048d37b1950a71c95471e4ebed3"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 38202,
+            "end_bit": 64057,
+            "source_bits": 25855,
+            "sha256": "fd8fad786f768d5042d64b3376db1f89b8b1ef05f7e06c8e9c35b7b8e8f5024d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 64057,
+            "end_bit": 118931,
+            "source_bits": 54874,
+            "sha256": "e40897f904a3f1f776dd329df6494b37293af08706bd79e695f6230c77ed2055"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1319,
+          "costume_end": 12496,
+          "power_end": 13515,
+          "titles_end": 14163,
+          "ragdoll_end": 14229,
+          "common_end": 14803,
+          "taskforce_end": 15514,
+          "rare_end": 15548,
+          "tail_end": 15551,
+          "buff_end": 15553
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1319,
+            "end_bit": 12487,
+            "source_bits": 11168,
+            "sha256": "52e6863840e5d73fd0e9ffb6e782c11965510f0e2c694145e8b438473da849d2"
+          },
+          {
+            "name": "power",
+            "begin_bit": 12496,
+            "end_bit": 13515,
+            "source_bits": 1019,
+            "sha256": "b3d429aa577e0167c90c38128fa5e22d341ad246100ee685218c1ccaa7fb1345"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 13515,
+            "end_bit": 14163,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 14803,
+            "end_bit": 15514,
+            "source_bits": 711,
+            "sha256": "10a1ef29afc65201acaf3e3120611b6e483c0a4072bba8388508bea8bd7e9c90"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 15514,
+            "end_bit": 15548,
+            "source_bits": 34,
+            "sha256": "8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 15548,
+            "end_bit": 15551,
+            "source_bits": 3,
+            "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 15551,
+            "end_bit": 15553,
+            "source_bits": 2,
+            "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1319,
+          "costume_end": 5043,
+          "power_end": 10038,
+          "titles_end": 10686,
+          "ragdoll_end": 10752,
+          "common_end": 11314,
+          "taskforce_end": 14357,
+          "rare_end": 14851,
+          "tail_end": 14862,
+          "buff_end": 15499
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1319,
+            "end_bit": 5034,
+            "source_bits": 3715,
+            "sha256": "30342b436de1f4c9255c9a16295292ed5b350ce0611e4c59da6e796f0fee56eb"
+          },
+          {
+            "name": "power",
+            "begin_bit": 5043,
+            "end_bit": 10038,
+            "source_bits": 4995,
+            "sha256": "158b2f35374ad665791a4acc34f36d2bcc4a6b1fd2fa6ca8af5decb0cfa98798"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10038,
+            "end_bit": 10686,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 11314,
+            "end_bit": 14357,
+            "source_bits": 3043,
+            "sha256": "49a274ecec9c10c07c7beaba2669b81d9ec4581195bc25340a841f4bc3c6651b"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 14357,
+            "end_bit": 14851,
+            "source_bits": 494,
+            "sha256": "2dce7d6df936bc4c4f74dd66ad225f923a43e7b00a968b180d6c2e7961c1ad67"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 14851,
+            "end_bit": 14862,
+            "source_bits": 11,
+            "sha256": "1e41fa5a397c649fafed65eff53596d2a39f114b8142acb53a5cb5a7b564496e"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 14862,
+            "end_bit": 15499,
+            "source_bits": 637,
+            "sha256": "8adbc7aa4bfde4d1eda590edfdf8cf1f72371b47d0a2e2ece5b7d3d342d645d8"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1319,
+          "costume_end": 8542,
+          "power_end": 8564,
+          "titles_end": 9212,
+          "ragdoll_end": 9278,
+          "common_end": 9786,
+          "taskforce_end": 12830,
+          "rare_end": 13064,
+          "tail_end": 13539,
+          "buff_end": 13666
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1319,
+            "end_bit": 8533,
+            "source_bits": 7214,
+            "sha256": "f3a5a08e71e0d90aeaccc79333707734f1837c4415ea057b097c3aa89e8c2691"
+          },
+          {
+            "name": "power",
+            "begin_bit": 8542,
+            "end_bit": 8564,
+            "source_bits": 22,
+            "sha256": "0c8d0ed650b85b064b221f4631e8a5b0e678ec02acf8fc18db25888ad8d4a0ab"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 8564,
+            "end_bit": 9212,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 9786,
+            "end_bit": 12830,
+            "source_bits": 3044,
+            "sha256": "c4e6224903cfff3955cfb0761d274316ee90021750fc00b687fee6b1af6bb81d"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 12830,
+            "end_bit": 13064,
+            "source_bits": 234,
+            "sha256": "26f38affa72407752ff68023fc9e339022b3f209011d84d5a275c59820de1d71"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 13064,
+            "end_bit": 13539,
+            "source_bits": 475,
+            "sha256": "b863dee71e5b9627fe35307ef25237c5d7c75800798934ff166188d4ec8df7db"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 13539,
+            "end_bit": 13666,
+            "source_bits": 127,
+            "sha256": "91f67046d9cbecb2504f905d91ee22c0b68d3a3c065095b27d77e1a6d93abe32"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1319,
+          "costume_end": 36502,
+          "power_end": 36528,
+          "titles_end": 37176,
+          "ragdoll_end": 37242,
+          "common_end": 37816,
+          "taskforce_end": 38131,
+          "rare_end": 38203,
+          "tail_end": 64058,
+          "buff_end": 118932
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1319,
+            "end_bit": 36493,
+            "source_bits": 35174,
+            "sha256": "a39c4f78b290171f40a41ba4c19c0d849ba355caf8e9be37ccb6c4a5a192627e"
+          },
+          {
+            "name": "power",
+            "begin_bit": 36502,
+            "end_bit": 36528,
+            "source_bits": 26,
+            "sha256": "f28704debed865503aa695c24a74aef78748b68828f014b7a086c7fe599efb38"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 36528,
+            "end_bit": 37176,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 37816,
+            "end_bit": 38131,
+            "source_bits": 315,
+            "sha256": "f510d42dfb5d1ff45997d333f2887744d152a55469348c0befc179337c55d0ac"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 38131,
+            "end_bit": 38203,
+            "source_bits": 72,
+            "sha256": "408a96fc90375a8b3a403dcb46cf3a23a4f4e048d37b1950a71c95471e4ebed3"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 38203,
+            "end_bit": 64058,
+            "source_bits": 25855,
+            "sha256": "fd8fad786f768d5042d64b3376db1f89b8b1ef05f7e06c8e9c35b7b8e8f5024d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 64058,
+            "end_bit": 118932,
+            "source_bits": 54874,
+            "sha256": "e40897f904a3f1f776dd329df6494b37293af08706bd79e695f6230c77ed2055"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1320,
+          "costume_end": 12497,
+          "power_end": 13516,
+          "titles_end": 14164,
+          "ragdoll_end": 14230,
+          "common_end": 14804,
+          "taskforce_end": 15515,
+          "rare_end": 15549,
+          "tail_end": 15552,
+          "buff_end": 15554
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1320,
+            "end_bit": 12488,
+            "source_bits": 11168,
+            "sha256": "52e6863840e5d73fd0e9ffb6e782c11965510f0e2c694145e8b438473da849d2"
+          },
+          {
+            "name": "power",
+            "begin_bit": 12497,
+            "end_bit": 13516,
+            "source_bits": 1019,
+            "sha256": "b3d429aa577e0167c90c38128fa5e22d341ad246100ee685218c1ccaa7fb1345"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 13516,
+            "end_bit": 14164,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 14804,
+            "end_bit": 15515,
+            "source_bits": 711,
+            "sha256": "10a1ef29afc65201acaf3e3120611b6e483c0a4072bba8388508bea8bd7e9c90"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 15515,
+            "end_bit": 15549,
+            "source_bits": 34,
+            "sha256": "8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 15549,
+            "end_bit": 15552,
+            "source_bits": 3,
+            "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 15552,
+            "end_bit": 15554,
+            "source_bits": 2,
+            "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1320,
+          "costume_end": 5044,
+          "power_end": 10039,
+          "titles_end": 10687,
+          "ragdoll_end": 10753,
+          "common_end": 11315,
+          "taskforce_end": 14358,
+          "rare_end": 14852,
+          "tail_end": 14863,
+          "buff_end": 15500
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1320,
+            "end_bit": 5035,
+            "source_bits": 3715,
+            "sha256": "30342b436de1f4c9255c9a16295292ed5b350ce0611e4c59da6e796f0fee56eb"
+          },
+          {
+            "name": "power",
+            "begin_bit": 5044,
+            "end_bit": 10039,
+            "source_bits": 4995,
+            "sha256": "158b2f35374ad665791a4acc34f36d2bcc4a6b1fd2fa6ca8af5decb0cfa98798"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10039,
+            "end_bit": 10687,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 11315,
+            "end_bit": 14358,
+            "source_bits": 3043,
+            "sha256": "49a274ecec9c10c07c7beaba2669b81d9ec4581195bc25340a841f4bc3c6651b"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 14358,
+            "end_bit": 14852,
+            "source_bits": 494,
+            "sha256": "2dce7d6df936bc4c4f74dd66ad225f923a43e7b00a968b180d6c2e7961c1ad67"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 14852,
+            "end_bit": 14863,
+            "source_bits": 11,
+            "sha256": "1e41fa5a397c649fafed65eff53596d2a39f114b8142acb53a5cb5a7b564496e"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 14863,
+            "end_bit": 15500,
+            "source_bits": 637,
+            "sha256": "8adbc7aa4bfde4d1eda590edfdf8cf1f72371b47d0a2e2ece5b7d3d342d645d8"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1320,
+          "costume_end": 8543,
+          "power_end": 8565,
+          "titles_end": 9213,
+          "ragdoll_end": 9279,
+          "common_end": 9787,
+          "taskforce_end": 12831,
+          "rare_end": 13065,
+          "tail_end": 13540,
+          "buff_end": 13667
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1320,
+            "end_bit": 8534,
+            "source_bits": 7214,
+            "sha256": "f3a5a08e71e0d90aeaccc79333707734f1837c4415ea057b097c3aa89e8c2691"
+          },
+          {
+            "name": "power",
+            "begin_bit": 8543,
+            "end_bit": 8565,
+            "source_bits": 22,
+            "sha256": "0c8d0ed650b85b064b221f4631e8a5b0e678ec02acf8fc18db25888ad8d4a0ab"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 8565,
+            "end_bit": 9213,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 9787,
+            "end_bit": 12831,
+            "source_bits": 3044,
+            "sha256": "c4e6224903cfff3955cfb0761d274316ee90021750fc00b687fee6b1af6bb81d"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 12831,
+            "end_bit": 13065,
+            "source_bits": 234,
+            "sha256": "26f38affa72407752ff68023fc9e339022b3f209011d84d5a275c59820de1d71"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 13065,
+            "end_bit": 13540,
+            "source_bits": 475,
+            "sha256": "b863dee71e5b9627fe35307ef25237c5d7c75800798934ff166188d4ec8df7db"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 13540,
+            "end_bit": 13667,
+            "source_bits": 127,
+            "sha256": "91f67046d9cbecb2504f905d91ee22c0b68d3a3c065095b27d77e1a6d93abe32"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1320,
+          "costume_end": 36503,
+          "power_end": 36529,
+          "titles_end": 37177,
+          "ragdoll_end": 37243,
+          "common_end": 37817,
+          "taskforce_end": 38132,
+          "rare_end": 38204,
+          "tail_end": 64059,
+          "buff_end": 118933
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1320,
+            "end_bit": 36494,
+            "source_bits": 35174,
+            "sha256": "a39c4f78b290171f40a41ba4c19c0d849ba355caf8e9be37ccb6c4a5a192627e"
+          },
+          {
+            "name": "power",
+            "begin_bit": 36503,
+            "end_bit": 36529,
+            "source_bits": 26,
+            "sha256": "f28704debed865503aa695c24a74aef78748b68828f014b7a086c7fe599efb38"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 36529,
+            "end_bit": 37177,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 37817,
+            "end_bit": 38132,
+            "source_bits": 315,
+            "sha256": "f510d42dfb5d1ff45997d333f2887744d152a55469348c0befc179337c55d0ac"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 38132,
+            "end_bit": 38204,
+            "source_bits": 72,
+            "sha256": "408a96fc90375a8b3a403dcb46cf3a23a4f4e048d37b1950a71c95471e4ebed3"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 38204,
+            "end_bit": 64059,
+            "source_bits": 25855,
+            "sha256": "fd8fad786f768d5042d64b3376db1f89b8b1ef05f7e06c8e9c35b7b8e8f5024d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 64059,
+            "end_bit": 118933,
+            "source_bits": 54874,
+            "sha256": "e40897f904a3f1f776dd329df6494b37293af08706bd79e695f6230c77ed2055"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1321,
+          "costume_end": 12498,
+          "power_end": 13517,
+          "titles_end": 14165,
+          "ragdoll_end": 14231,
+          "common_end": 14805,
+          "taskforce_end": 15516,
+          "rare_end": 15550,
+          "tail_end": 15553,
+          "buff_end": 15555
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1321,
+            "end_bit": 12489,
+            "source_bits": 11168,
+            "sha256": "52e6863840e5d73fd0e9ffb6e782c11965510f0e2c694145e8b438473da849d2"
+          },
+          {
+            "name": "power",
+            "begin_bit": 12498,
+            "end_bit": 13517,
+            "source_bits": 1019,
+            "sha256": "b3d429aa577e0167c90c38128fa5e22d341ad246100ee685218c1ccaa7fb1345"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 13517,
+            "end_bit": 14165,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 14805,
+            "end_bit": 15516,
+            "source_bits": 711,
+            "sha256": "10a1ef29afc65201acaf3e3120611b6e483c0a4072bba8388508bea8bd7e9c90"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 15516,
+            "end_bit": 15550,
+            "source_bits": 34,
+            "sha256": "8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 15550,
+            "end_bit": 15553,
+            "source_bits": 3,
+            "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 15553,
+            "end_bit": 15555,
+            "source_bits": 2,
+            "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1321,
+          "costume_end": 5045,
+          "power_end": 10040,
+          "titles_end": 10688,
+          "ragdoll_end": 10754,
+          "common_end": 11316,
+          "taskforce_end": 14359,
+          "rare_end": 14853,
+          "tail_end": 14864,
+          "buff_end": 15501
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1321,
+            "end_bit": 5036,
+            "source_bits": 3715,
+            "sha256": "30342b436de1f4c9255c9a16295292ed5b350ce0611e4c59da6e796f0fee56eb"
+          },
+          {
+            "name": "power",
+            "begin_bit": 5045,
+            "end_bit": 10040,
+            "source_bits": 4995,
+            "sha256": "158b2f35374ad665791a4acc34f36d2bcc4a6b1fd2fa6ca8af5decb0cfa98798"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10040,
+            "end_bit": 10688,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 11316,
+            "end_bit": 14359,
+            "source_bits": 3043,
+            "sha256": "49a274ecec9c10c07c7beaba2669b81d9ec4581195bc25340a841f4bc3c6651b"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 14359,
+            "end_bit": 14853,
+            "source_bits": 494,
+            "sha256": "2dce7d6df936bc4c4f74dd66ad225f923a43e7b00a968b180d6c2e7961c1ad67"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 14853,
+            "end_bit": 14864,
+            "source_bits": 11,
+            "sha256": "1e41fa5a397c649fafed65eff53596d2a39f114b8142acb53a5cb5a7b564496e"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 14864,
+            "end_bit": 15501,
+            "source_bits": 637,
+            "sha256": "8adbc7aa4bfde4d1eda590edfdf8cf1f72371b47d0a2e2ece5b7d3d342d645d8"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1321,
+          "costume_end": 8544,
+          "power_end": 8566,
+          "titles_end": 9214,
+          "ragdoll_end": 9280,
+          "common_end": 9788,
+          "taskforce_end": 12832,
+          "rare_end": 13066,
+          "tail_end": 13541,
+          "buff_end": 13668
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1321,
+            "end_bit": 8535,
+            "source_bits": 7214,
+            "sha256": "f3a5a08e71e0d90aeaccc79333707734f1837c4415ea057b097c3aa89e8c2691"
+          },
+          {
+            "name": "power",
+            "begin_bit": 8544,
+            "end_bit": 8566,
+            "source_bits": 22,
+            "sha256": "0c8d0ed650b85b064b221f4631e8a5b0e678ec02acf8fc18db25888ad8d4a0ab"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 8566,
+            "end_bit": 9214,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 9788,
+            "end_bit": 12832,
+            "source_bits": 3044,
+            "sha256": "c4e6224903cfff3955cfb0761d274316ee90021750fc00b687fee6b1af6bb81d"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 12832,
+            "end_bit": 13066,
+            "source_bits": 234,
+            "sha256": "26f38affa72407752ff68023fc9e339022b3f209011d84d5a275c59820de1d71"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 13066,
+            "end_bit": 13541,
+            "source_bits": 475,
+            "sha256": "b863dee71e5b9627fe35307ef25237c5d7c75800798934ff166188d4ec8df7db"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 13541,
+            "end_bit": 13668,
+            "source_bits": 127,
+            "sha256": "91f67046d9cbecb2504f905d91ee22c0b68d3a3c065095b27d77e1a6d93abe32"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1321,
+          "costume_end": 36504,
+          "power_end": 36530,
+          "titles_end": 37178,
+          "ragdoll_end": 37244,
+          "common_end": 37818,
+          "taskforce_end": 38133,
+          "rare_end": 38205,
+          "tail_end": 64060,
+          "buff_end": 118934
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1321,
+            "end_bit": 36495,
+            "source_bits": 35174,
+            "sha256": "a39c4f78b290171f40a41ba4c19c0d849ba355caf8e9be37ccb6c4a5a192627e"
+          },
+          {
+            "name": "power",
+            "begin_bit": 36504,
+            "end_bit": 36530,
+            "source_bits": 26,
+            "sha256": "f28704debed865503aa695c24a74aef78748b68828f014b7a086c7fe599efb38"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 36530,
+            "end_bit": 37178,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 37818,
+            "end_bit": 38133,
+            "source_bits": 315,
+            "sha256": "f510d42dfb5d1ff45997d333f2887744d152a55469348c0befc179337c55d0ac"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 38133,
+            "end_bit": 38205,
+            "source_bits": 72,
+            "sha256": "408a96fc90375a8b3a403dcb46cf3a23a4f4e048d37b1950a71c95471e4ebed3"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 38205,
+            "end_bit": 64060,
+            "source_bits": 25855,
+            "sha256": "fd8fad786f768d5042d64b3376db1f89b8b1ef05f7e06c8e9c35b7b8e8f5024d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 64060,
+            "end_bit": 118934,
+            "source_bits": 54874,
+            "sha256": "e40897f904a3f1f776dd329df6494b37293af08706bd79e695f6230c77ed2055"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1322,
+          "costume_end": 12499,
+          "power_end": 13518,
+          "titles_end": 14166,
+          "ragdoll_end": 14232,
+          "common_end": 14806,
+          "taskforce_end": 15517,
+          "rare_end": 15551,
+          "tail_end": 15554,
+          "buff_end": 15556
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1322,
+            "end_bit": 12490,
+            "source_bits": 11168,
+            "sha256": "52e6863840e5d73fd0e9ffb6e782c11965510f0e2c694145e8b438473da849d2"
+          },
+          {
+            "name": "power",
+            "begin_bit": 12499,
+            "end_bit": 13518,
+            "source_bits": 1019,
+            "sha256": "b3d429aa577e0167c90c38128fa5e22d341ad246100ee685218c1ccaa7fb1345"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 13518,
+            "end_bit": 14166,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 14806,
+            "end_bit": 15517,
+            "source_bits": 711,
+            "sha256": "10a1ef29afc65201acaf3e3120611b6e483c0a4072bba8388508bea8bd7e9c90"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 15517,
+            "end_bit": 15551,
+            "source_bits": 34,
+            "sha256": "8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 15551,
+            "end_bit": 15554,
+            "source_bits": 3,
+            "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 15554,
+            "end_bit": 15556,
+            "source_bits": 2,
+            "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1322,
+          "costume_end": 5046,
+          "power_end": 10041,
+          "titles_end": 10689,
+          "ragdoll_end": 10755,
+          "common_end": 11317,
+          "taskforce_end": 14360,
+          "rare_end": 14854,
+          "tail_end": 14865,
+          "buff_end": 15502
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1322,
+            "end_bit": 5037,
+            "source_bits": 3715,
+            "sha256": "30342b436de1f4c9255c9a16295292ed5b350ce0611e4c59da6e796f0fee56eb"
+          },
+          {
+            "name": "power",
+            "begin_bit": 5046,
+            "end_bit": 10041,
+            "source_bits": 4995,
+            "sha256": "158b2f35374ad665791a4acc34f36d2bcc4a6b1fd2fa6ca8af5decb0cfa98798"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10041,
+            "end_bit": 10689,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 11317,
+            "end_bit": 14360,
+            "source_bits": 3043,
+            "sha256": "49a274ecec9c10c07c7beaba2669b81d9ec4581195bc25340a841f4bc3c6651b"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 14360,
+            "end_bit": 14854,
+            "source_bits": 494,
+            "sha256": "2dce7d6df936bc4c4f74dd66ad225f923a43e7b00a968b180d6c2e7961c1ad67"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 14854,
+            "end_bit": 14865,
+            "source_bits": 11,
+            "sha256": "1e41fa5a397c649fafed65eff53596d2a39f114b8142acb53a5cb5a7b564496e"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 14865,
+            "end_bit": 15502,
+            "source_bits": 637,
+            "sha256": "8adbc7aa4bfde4d1eda590edfdf8cf1f72371b47d0a2e2ece5b7d3d342d645d8"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1322,
+          "costume_end": 8545,
+          "power_end": 8567,
+          "titles_end": 9215,
+          "ragdoll_end": 9281,
+          "common_end": 9789,
+          "taskforce_end": 12833,
+          "rare_end": 13067,
+          "tail_end": 13542,
+          "buff_end": 13669
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1322,
+            "end_bit": 8536,
+            "source_bits": 7214,
+            "sha256": "f3a5a08e71e0d90aeaccc79333707734f1837c4415ea057b097c3aa89e8c2691"
+          },
+          {
+            "name": "power",
+            "begin_bit": 8545,
+            "end_bit": 8567,
+            "source_bits": 22,
+            "sha256": "0c8d0ed650b85b064b221f4631e8a5b0e678ec02acf8fc18db25888ad8d4a0ab"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 8567,
+            "end_bit": 9215,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 9789,
+            "end_bit": 12833,
+            "source_bits": 3044,
+            "sha256": "c4e6224903cfff3955cfb0761d274316ee90021750fc00b687fee6b1af6bb81d"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 12833,
+            "end_bit": 13067,
+            "source_bits": 234,
+            "sha256": "26f38affa72407752ff68023fc9e339022b3f209011d84d5a275c59820de1d71"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 13067,
+            "end_bit": 13542,
+            "source_bits": 475,
+            "sha256": "b863dee71e5b9627fe35307ef25237c5d7c75800798934ff166188d4ec8df7db"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 13542,
+            "end_bit": 13669,
+            "source_bits": 127,
+            "sha256": "91f67046d9cbecb2504f905d91ee22c0b68d3a3c065095b27d77e1a6d93abe32"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1322,
+          "costume_end": 36505,
+          "power_end": 36531,
+          "titles_end": 37179,
+          "ragdoll_end": 37245,
+          "common_end": 37819,
+          "taskforce_end": 38134,
+          "rare_end": 38206,
+          "tail_end": 64061,
+          "buff_end": 118935
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1322,
+            "end_bit": 36496,
+            "source_bits": 35174,
+            "sha256": "a39c4f78b290171f40a41ba4c19c0d849ba355caf8e9be37ccb6c4a5a192627e"
+          },
+          {
+            "name": "power",
+            "begin_bit": 36505,
+            "end_bit": 36531,
+            "source_bits": 26,
+            "sha256": "f28704debed865503aa695c24a74aef78748b68828f014b7a086c7fe599efb38"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 36531,
+            "end_bit": 37179,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 37819,
+            "end_bit": 38134,
+            "source_bits": 315,
+            "sha256": "f510d42dfb5d1ff45997d333f2887744d152a55469348c0befc179337c55d0ac"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 38134,
+            "end_bit": 38206,
+            "source_bits": 72,
+            "sha256": "408a96fc90375a8b3a403dcb46cf3a23a4f4e048d37b1950a71c95471e4ebed3"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 38206,
+            "end_bit": 64061,
+            "source_bits": 25855,
+            "sha256": "fd8fad786f768d5042d64b3376db1f89b8b1ef05f7e06c8e9c35b7b8e8f5024d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 64061,
+            "end_bit": 118935,
+            "source_bits": 54874,
+            "sha256": "e40897f904a3f1f776dd329df6494b37293af08706bd79e695f6230c77ed2055"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1323,
+          "costume_end": 12500,
+          "power_end": 13519,
+          "titles_end": 14167,
+          "ragdoll_end": 14233,
+          "common_end": 14807,
+          "taskforce_end": 15518,
+          "rare_end": 15552,
+          "tail_end": 15555,
+          "buff_end": 15557
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1323,
+            "end_bit": 12491,
+            "source_bits": 11168,
+            "sha256": "52e6863840e5d73fd0e9ffb6e782c11965510f0e2c694145e8b438473da849d2"
+          },
+          {
+            "name": "power",
+            "begin_bit": 12500,
+            "end_bit": 13519,
+            "source_bits": 1019,
+            "sha256": "b3d429aa577e0167c90c38128fa5e22d341ad246100ee685218c1ccaa7fb1345"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 13519,
+            "end_bit": 14167,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 14807,
+            "end_bit": 15518,
+            "source_bits": 711,
+            "sha256": "10a1ef29afc65201acaf3e3120611b6e483c0a4072bba8388508bea8bd7e9c90"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 15518,
+            "end_bit": 15552,
+            "source_bits": 34,
+            "sha256": "8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 15552,
+            "end_bit": 15555,
+            "source_bits": 3,
+            "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 15555,
+            "end_bit": 15557,
+            "source_bits": 2,
+            "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1323,
+          "costume_end": 5047,
+          "power_end": 10042,
+          "titles_end": 10690,
+          "ragdoll_end": 10756,
+          "common_end": 11318,
+          "taskforce_end": 14361,
+          "rare_end": 14855,
+          "tail_end": 14866,
+          "buff_end": 15503
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1323,
+            "end_bit": 5038,
+            "source_bits": 3715,
+            "sha256": "30342b436de1f4c9255c9a16295292ed5b350ce0611e4c59da6e796f0fee56eb"
+          },
+          {
+            "name": "power",
+            "begin_bit": 5047,
+            "end_bit": 10042,
+            "source_bits": 4995,
+            "sha256": "158b2f35374ad665791a4acc34f36d2bcc4a6b1fd2fa6ca8af5decb0cfa98798"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10042,
+            "end_bit": 10690,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 11318,
+            "end_bit": 14361,
+            "source_bits": 3043,
+            "sha256": "49a274ecec9c10c07c7beaba2669b81d9ec4581195bc25340a841f4bc3c6651b"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 14361,
+            "end_bit": 14855,
+            "source_bits": 494,
+            "sha256": "2dce7d6df936bc4c4f74dd66ad225f923a43e7b00a968b180d6c2e7961c1ad67"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 14855,
+            "end_bit": 14866,
+            "source_bits": 11,
+            "sha256": "1e41fa5a397c649fafed65eff53596d2a39f114b8142acb53a5cb5a7b564496e"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 14866,
+            "end_bit": 15503,
+            "source_bits": 637,
+            "sha256": "8adbc7aa4bfde4d1eda590edfdf8cf1f72371b47d0a2e2ece5b7d3d342d645d8"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1323,
+          "costume_end": 8546,
+          "power_end": 8568,
+          "titles_end": 9216,
+          "ragdoll_end": 9282,
+          "common_end": 9790,
+          "taskforce_end": 12834,
+          "rare_end": 13068,
+          "tail_end": 13543,
+          "buff_end": 13670
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1323,
+            "end_bit": 8537,
+            "source_bits": 7214,
+            "sha256": "f3a5a08e71e0d90aeaccc79333707734f1837c4415ea057b097c3aa89e8c2691"
+          },
+          {
+            "name": "power",
+            "begin_bit": 8546,
+            "end_bit": 8568,
+            "source_bits": 22,
+            "sha256": "0c8d0ed650b85b064b221f4631e8a5b0e678ec02acf8fc18db25888ad8d4a0ab"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 8568,
+            "end_bit": 9216,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 9790,
+            "end_bit": 12834,
+            "source_bits": 3044,
+            "sha256": "c4e6224903cfff3955cfb0761d274316ee90021750fc00b687fee6b1af6bb81d"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 12834,
+            "end_bit": 13068,
+            "source_bits": 234,
+            "sha256": "26f38affa72407752ff68023fc9e339022b3f209011d84d5a275c59820de1d71"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 13068,
+            "end_bit": 13543,
+            "source_bits": 475,
+            "sha256": "b863dee71e5b9627fe35307ef25237c5d7c75800798934ff166188d4ec8df7db"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 13543,
+            "end_bit": 13670,
+            "source_bits": 127,
+            "sha256": "91f67046d9cbecb2504f905d91ee22c0b68d3a3c065095b27d77e1a6d93abe32"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1323,
+          "costume_end": 36506,
+          "power_end": 36532,
+          "titles_end": 37180,
+          "ragdoll_end": 37246,
+          "common_end": 37820,
+          "taskforce_end": 38135,
+          "rare_end": 38207,
+          "tail_end": 64062,
+          "buff_end": 118936
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1323,
+            "end_bit": 36497,
+            "source_bits": 35174,
+            "sha256": "a39c4f78b290171f40a41ba4c19c0d849ba355caf8e9be37ccb6c4a5a192627e"
+          },
+          {
+            "name": "power",
+            "begin_bit": 36506,
+            "end_bit": 36532,
+            "source_bits": 26,
+            "sha256": "f28704debed865503aa695c24a74aef78748b68828f014b7a086c7fe599efb38"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 36532,
+            "end_bit": 37180,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 37820,
+            "end_bit": 38135,
+            "source_bits": 315,
+            "sha256": "f510d42dfb5d1ff45997d333f2887744d152a55469348c0befc179337c55d0ac"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 38135,
+            "end_bit": 38207,
+            "source_bits": 72,
+            "sha256": "408a96fc90375a8b3a403dcb46cf3a23a4f4e048d37b1950a71c95471e4ebed3"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 38207,
+            "end_bit": 64062,
+            "source_bits": 25855,
+            "sha256": "fd8fad786f768d5042d64b3376db1f89b8b1ef05f7e06c8e9c35b7b8e8f5024d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 64062,
+            "end_bit": 118936,
+            "source_bits": 54874,
+            "sha256": "e40897f904a3f1f776dd329df6494b37293af08706bd79e695f6230c77ed2055"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1324,
+          "costume_end": 12501,
+          "power_end": 13520,
+          "titles_end": 14168,
+          "ragdoll_end": 14234,
+          "common_end": 14808,
+          "taskforce_end": 15519,
+          "rare_end": 15553,
+          "tail_end": 15556,
+          "buff_end": 15558
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1324,
+            "end_bit": 12492,
+            "source_bits": 11168,
+            "sha256": "52e6863840e5d73fd0e9ffb6e782c11965510f0e2c694145e8b438473da849d2"
+          },
+          {
+            "name": "power",
+            "begin_bit": 12501,
+            "end_bit": 13520,
+            "source_bits": 1019,
+            "sha256": "b3d429aa577e0167c90c38128fa5e22d341ad246100ee685218c1ccaa7fb1345"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 13520,
+            "end_bit": 14168,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 14808,
+            "end_bit": 15519,
+            "source_bits": 711,
+            "sha256": "10a1ef29afc65201acaf3e3120611b6e483c0a4072bba8388508bea8bd7e9c90"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 15519,
+            "end_bit": 15553,
+            "source_bits": 34,
+            "sha256": "8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 15553,
+            "end_bit": 15556,
+            "source_bits": 3,
+            "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 15556,
+            "end_bit": 15558,
+            "source_bits": 2,
+            "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1324,
+          "costume_end": 5048,
+          "power_end": 10043,
+          "titles_end": 10691,
+          "ragdoll_end": 10757,
+          "common_end": 11319,
+          "taskforce_end": 14362,
+          "rare_end": 14856,
+          "tail_end": 14867,
+          "buff_end": 15504
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1324,
+            "end_bit": 5039,
+            "source_bits": 3715,
+            "sha256": "30342b436de1f4c9255c9a16295292ed5b350ce0611e4c59da6e796f0fee56eb"
+          },
+          {
+            "name": "power",
+            "begin_bit": 5048,
+            "end_bit": 10043,
+            "source_bits": 4995,
+            "sha256": "158b2f35374ad665791a4acc34f36d2bcc4a6b1fd2fa6ca8af5decb0cfa98798"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10043,
+            "end_bit": 10691,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 11319,
+            "end_bit": 14362,
+            "source_bits": 3043,
+            "sha256": "49a274ecec9c10c07c7beaba2669b81d9ec4581195bc25340a841f4bc3c6651b"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 14362,
+            "end_bit": 14856,
+            "source_bits": 494,
+            "sha256": "2dce7d6df936bc4c4f74dd66ad225f923a43e7b00a968b180d6c2e7961c1ad67"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 14856,
+            "end_bit": 14867,
+            "source_bits": 11,
+            "sha256": "1e41fa5a397c649fafed65eff53596d2a39f114b8142acb53a5cb5a7b564496e"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 14867,
+            "end_bit": 15504,
+            "source_bits": 637,
+            "sha256": "8adbc7aa4bfde4d1eda590edfdf8cf1f72371b47d0a2e2ece5b7d3d342d645d8"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1324,
+          "costume_end": 8547,
+          "power_end": 8569,
+          "titles_end": 9217,
+          "ragdoll_end": 9283,
+          "common_end": 9791,
+          "taskforce_end": 12835,
+          "rare_end": 13069,
+          "tail_end": 13544,
+          "buff_end": 13671
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1324,
+            "end_bit": 8538,
+            "source_bits": 7214,
+            "sha256": "f3a5a08e71e0d90aeaccc79333707734f1837c4415ea057b097c3aa89e8c2691"
+          },
+          {
+            "name": "power",
+            "begin_bit": 8547,
+            "end_bit": 8569,
+            "source_bits": 22,
+            "sha256": "0c8d0ed650b85b064b221f4631e8a5b0e678ec02acf8fc18db25888ad8d4a0ab"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 8569,
+            "end_bit": 9217,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 9791,
+            "end_bit": 12835,
+            "source_bits": 3044,
+            "sha256": "c4e6224903cfff3955cfb0761d274316ee90021750fc00b687fee6b1af6bb81d"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 12835,
+            "end_bit": 13069,
+            "source_bits": 234,
+            "sha256": "26f38affa72407752ff68023fc9e339022b3f209011d84d5a275c59820de1d71"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 13069,
+            "end_bit": 13544,
+            "source_bits": 475,
+            "sha256": "b863dee71e5b9627fe35307ef25237c5d7c75800798934ff166188d4ec8df7db"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 13544,
+            "end_bit": 13671,
+            "source_bits": 127,
+            "sha256": "91f67046d9cbecb2504f905d91ee22c0b68d3a3c065095b27d77e1a6d93abe32"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1324,
+          "costume_end": 36507,
+          "power_end": 36533,
+          "titles_end": 37181,
+          "ragdoll_end": 37247,
+          "common_end": 37821,
+          "taskforce_end": 38136,
+          "rare_end": 38208,
+          "tail_end": 64063,
+          "buff_end": 118937
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1324,
+            "end_bit": 36498,
+            "source_bits": 35174,
+            "sha256": "a39c4f78b290171f40a41ba4c19c0d849ba355caf8e9be37ccb6c4a5a192627e"
+          },
+          {
+            "name": "power",
+            "begin_bit": 36507,
+            "end_bit": 36533,
+            "source_bits": 26,
+            "sha256": "f28704debed865503aa695c24a74aef78748b68828f014b7a086c7fe599efb38"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 36533,
+            "end_bit": 37181,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 37821,
+            "end_bit": 38136,
+            "source_bits": 315,
+            "sha256": "f510d42dfb5d1ff45997d333f2887744d152a55469348c0befc179337c55d0ac"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 38136,
+            "end_bit": 38208,
+            "source_bits": 72,
+            "sha256": "408a96fc90375a8b3a403dcb46cf3a23a4f4e048d37b1950a71c95471e4ebed3"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 38208,
+            "end_bit": 64063,
+            "source_bits": 25855,
+            "sha256": "fd8fad786f768d5042d64b3376db1f89b8b1ef05f7e06c8e9c35b7b8e8f5024d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 64063,
+            "end_bit": 118937,
+            "source_bits": 54874,
+            "sha256": "e40897f904a3f1f776dd329df6494b37293af08706bd79e695f6230c77ed2055"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1325,
+          "costume_end": 12502,
+          "power_end": 13521,
+          "titles_end": 14169,
+          "ragdoll_end": 14235,
+          "common_end": 14809,
+          "taskforce_end": 15520,
+          "rare_end": 15554,
+          "tail_end": 15557,
+          "buff_end": 15559
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1325,
+            "end_bit": 12493,
+            "source_bits": 11168,
+            "sha256": "52e6863840e5d73fd0e9ffb6e782c11965510f0e2c694145e8b438473da849d2"
+          },
+          {
+            "name": "power",
+            "begin_bit": 12502,
+            "end_bit": 13521,
+            "source_bits": 1019,
+            "sha256": "b3d429aa577e0167c90c38128fa5e22d341ad246100ee685218c1ccaa7fb1345"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 13521,
+            "end_bit": 14169,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 14809,
+            "end_bit": 15520,
+            "source_bits": 711,
+            "sha256": "10a1ef29afc65201acaf3e3120611b6e483c0a4072bba8388508bea8bd7e9c90"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 15520,
+            "end_bit": 15554,
+            "source_bits": 34,
+            "sha256": "8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 15554,
+            "end_bit": 15557,
+            "source_bits": 3,
+            "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 15557,
+            "end_bit": 15559,
+            "source_bits": 2,
+            "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1325,
+          "costume_end": 5049,
+          "power_end": 10044,
+          "titles_end": 10692,
+          "ragdoll_end": 10758,
+          "common_end": 11320,
+          "taskforce_end": 14363,
+          "rare_end": 14857,
+          "tail_end": 14868,
+          "buff_end": 15505
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1325,
+            "end_bit": 5040,
+            "source_bits": 3715,
+            "sha256": "30342b436de1f4c9255c9a16295292ed5b350ce0611e4c59da6e796f0fee56eb"
+          },
+          {
+            "name": "power",
+            "begin_bit": 5049,
+            "end_bit": 10044,
+            "source_bits": 4995,
+            "sha256": "158b2f35374ad665791a4acc34f36d2bcc4a6b1fd2fa6ca8af5decb0cfa98798"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10044,
+            "end_bit": 10692,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 11320,
+            "end_bit": 14363,
+            "source_bits": 3043,
+            "sha256": "49a274ecec9c10c07c7beaba2669b81d9ec4581195bc25340a841f4bc3c6651b"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 14363,
+            "end_bit": 14857,
+            "source_bits": 494,
+            "sha256": "2dce7d6df936bc4c4f74dd66ad225f923a43e7b00a968b180d6c2e7961c1ad67"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 14857,
+            "end_bit": 14868,
+            "source_bits": 11,
+            "sha256": "1e41fa5a397c649fafed65eff53596d2a39f114b8142acb53a5cb5a7b564496e"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 14868,
+            "end_bit": 15505,
+            "source_bits": 637,
+            "sha256": "8adbc7aa4bfde4d1eda590edfdf8cf1f72371b47d0a2e2ece5b7d3d342d645d8"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1325,
+          "costume_end": 8548,
+          "power_end": 8570,
+          "titles_end": 9218,
+          "ragdoll_end": 9284,
+          "common_end": 9792,
+          "taskforce_end": 12836,
+          "rare_end": 13070,
+          "tail_end": 13545,
+          "buff_end": 13672
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1325,
+            "end_bit": 8539,
+            "source_bits": 7214,
+            "sha256": "f3a5a08e71e0d90aeaccc79333707734f1837c4415ea057b097c3aa89e8c2691"
+          },
+          {
+            "name": "power",
+            "begin_bit": 8548,
+            "end_bit": 8570,
+            "source_bits": 22,
+            "sha256": "0c8d0ed650b85b064b221f4631e8a5b0e678ec02acf8fc18db25888ad8d4a0ab"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 8570,
+            "end_bit": 9218,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 9792,
+            "end_bit": 12836,
+            "source_bits": 3044,
+            "sha256": "c4e6224903cfff3955cfb0761d274316ee90021750fc00b687fee6b1af6bb81d"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 12836,
+            "end_bit": 13070,
+            "source_bits": 234,
+            "sha256": "26f38affa72407752ff68023fc9e339022b3f209011d84d5a275c59820de1d71"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 13070,
+            "end_bit": 13545,
+            "source_bits": 475,
+            "sha256": "b863dee71e5b9627fe35307ef25237c5d7c75800798934ff166188d4ec8df7db"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 13545,
+            "end_bit": 13672,
+            "source_bits": 127,
+            "sha256": "91f67046d9cbecb2504f905d91ee22c0b68d3a3c065095b27d77e1a6d93abe32"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 1325,
+          "costume_end": 36508,
+          "power_end": 36534,
+          "titles_end": 37182,
+          "ragdoll_end": 37248,
+          "common_end": 37822,
+          "taskforce_end": 38137,
+          "rare_end": 38209,
+          "tail_end": 64064,
+          "buff_end": 118938
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 1325,
+            "end_bit": 36499,
+            "source_bits": 35174,
+            "sha256": "a39c4f78b290171f40a41ba4c19c0d849ba355caf8e9be37ccb6c4a5a192627e"
+          },
+          {
+            "name": "power",
+            "begin_bit": 36508,
+            "end_bit": 36534,
+            "source_bits": 26,
+            "sha256": "f28704debed865503aa695c24a74aef78748b68828f014b7a086c7fe599efb38"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 36534,
+            "end_bit": 37182,
+            "source_bits": 648,
+            "sha256": "02314cddc5d083b87d739bdaaacd478315cec7a7f2b48a9489d576eea597fa06"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 37822,
+            "end_bit": 38137,
+            "source_bits": 315,
+            "sha256": "f510d42dfb5d1ff45997d333f2887744d152a55469348c0befc179337c55d0ac"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 38137,
+            "end_bit": 38209,
+            "source_bits": 72,
+            "sha256": "408a96fc90375a8b3a403dcb46cf3a23a4f4e048d37b1950a71c95471e4ebed3"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 38209,
+            "end_bit": 64064,
+            "source_bits": 25855,
+            "sha256": "fd8fad786f768d5042d64b3376db1f89b8b1ef05f7e06c8e9c35b7b8e8f5024d"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 64064,
+            "end_bit": 118938,
+            "source_bits": 54874,
+            "sha256": "e40897f904a3f1f776dd329df6494b37293af08706bd79e695f6230c77ed2055"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 2592,
+          "costume_end": 15224,
+          "power_end": 16456,
+          "titles_end": 17200,
+          "ragdoll_end": 17312,
+          "common_end": 19400,
+          "taskforce_end": 20272,
+          "rare_end": 20552,
+          "tail_end": 20576,
+          "buff_end": 20592
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 2592,
+            "end_bit": 15208,
+            "source_bits": 12616,
+            "sha256": "8f27789caae52b4735c63f518c9aa2e55a24dcfc2aba97c9aa4f83cc36b77cae"
+          },
+          {
+            "name": "power",
+            "begin_bit": 15224,
+            "end_bit": 16456,
+            "source_bits": 1232,
+            "sha256": "5c16bc4cf840fe599cfbe1e80f32ff1348fe0839ded37a8674496693aa721c19"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 16456,
+            "end_bit": 17200,
+            "source_bits": 744,
+            "sha256": "b34192cfc78a7af3a9e58c26412e525abc2271e10ece4b9c13dfc8511fe0b06e"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 19400,
+            "end_bit": 20272,
+            "source_bits": 872,
+            "sha256": "c936133bab6e2167fb1a608b79496638cc2eb04881da22587f6aae7ebe9d0438"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 20272,
+            "end_bit": 20552,
+            "source_bits": 280,
+            "sha256": "0d5535e13cc9708d0ff0289af2fae27e564b6bcbcd9242f5140d96957744a517"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 20552,
+            "end_bit": 20576,
+            "source_bits": 24,
+            "sha256": "709e80c88487a2411e1ee4dfb9f22a861492d20c4765150c0c794abd70f8147c"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 20576,
+            "end_bit": 20592,
+            "source_bits": 16,
+            "sha256": "47dc540c94ceb704a23875c11273e16bb0b8a87aed84de911f2133568115f254"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 2592,
+          "costume_end": 6912,
+          "power_end": 12752,
+          "titles_end": 13496,
+          "ragdoll_end": 13608,
+          "common_end": 15664,
+          "taskforce_end": 19184,
+          "rare_end": 20016,
+          "tail_end": 20104,
+          "buff_end": 21112
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 2592,
+            "end_bit": 6896,
+            "source_bits": 4304,
+            "sha256": "e2d7353ca18a29bc4d857bd1100fcd254a1b43e4878daed4ec0b12ef82501678"
+          },
+          {
+            "name": "power",
+            "begin_bit": 6912,
+            "end_bit": 12752,
+            "source_bits": 5840,
+            "sha256": "579efedcc8a95a48d73cbbbc4310b0208530a68c4e1e05e3d910fabc03f2a659"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 12752,
+            "end_bit": 13496,
+            "source_bits": 744,
+            "sha256": "b34192cfc78a7af3a9e58c26412e525abc2271e10ece4b9c13dfc8511fe0b06e"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 15664,
+            "end_bit": 19184,
+            "source_bits": 3520,
+            "sha256": "0d0671da08adfea4faa38dd02458f77a1bb976dab469dd4a9c9c8f53c8653abc"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 19184,
+            "end_bit": 20016,
+            "source_bits": 832,
+            "sha256": "a45cb7a2ba0d3109d9985c876e95118b765867cec7909280bebc0b6d028f175f"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 20016,
+            "end_bit": 20104,
+            "source_bits": 88,
+            "sha256": "aefef1032be3babe759aa8d9e5b5397ee8759a203198e224334563aad808f7c3"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 20104,
+            "end_bit": 21112,
+            "source_bits": 1008,
+            "sha256": "a0426dc1ec7ed05570471a72dba490321e28d80043401d81cd3d63f59b1177cf"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 2592,
+          "costume_end": 10792,
+          "power_end": 10872,
+          "titles_end": 11616,
+          "ragdoll_end": 11728,
+          "common_end": 13592,
+          "taskforce_end": 17120,
+          "rare_end": 17680,
+          "tail_end": 18344,
+          "buff_end": 18656
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 2592,
+            "end_bit": 10776,
+            "source_bits": 8184,
+            "sha256": "090e1519b455d44d97c0c85d1d100ffb2de4c0c819a1414d06ce5e49dcb77b80"
+          },
+          {
+            "name": "power",
+            "begin_bit": 10792,
+            "end_bit": 10872,
+            "source_bits": 80,
+            "sha256": "3bb0f22f0610d43dbe8101c9991a2605bbb2dfa7efa38095c3fbdb069a63bfa3"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10872,
+            "end_bit": 11616,
+            "source_bits": 744,
+            "sha256": "b34192cfc78a7af3a9e58c26412e525abc2271e10ece4b9c13dfc8511fe0b06e"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 13592,
+            "end_bit": 17120,
+            "source_bits": 3528,
+            "sha256": "d86d198c770ca3666f223a598fe8d48fc393d4e5f8c0590f55346c789c805eb7"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 17120,
+            "end_bit": 17680,
+            "source_bits": 560,
+            "sha256": "26d1e1e29da2996967fc43752d655179fa0f45294e7b9371db284d019d719c58"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 17680,
+            "end_bit": 18344,
+            "source_bits": 664,
+            "sha256": "2f1f217592bafe91744d539ea5faf83618f7ab8d7289392a40ee6b211c55aa20"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 18344,
+            "end_bit": 18656,
+            "source_bits": 312,
+            "sha256": "33311ef6dd38e65cbfb3eae4bb6735062822735d46057b6d749f5ee66251a18f"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 2592,
+          "costume_end": 41768,
+          "power_end": 41864,
+          "titles_end": 42608,
+          "ragdoll_end": 42720,
+          "common_end": 44808,
+          "taskforce_end": 45256,
+          "rare_end": 45536,
+          "tail_end": 80752,
+          "buff_end": 160672
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 2592,
+            "end_bit": 41752,
+            "source_bits": 39160,
+            "sha256": "58f91e57698e76cf24e2e8fd8f360358235b9d61d1502ff043ee1ec3f1e8e033"
+          },
+          {
+            "name": "power",
+            "begin_bit": 41768,
+            "end_bit": 41864,
+            "source_bits": 96,
+            "sha256": "6f33d864b535986dd84a433389b8cb58ee3aacbf342b0054c97312a350b18363"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 41864,
+            "end_bit": 42608,
+            "source_bits": 744,
+            "sha256": "b34192cfc78a7af3a9e58c26412e525abc2271e10ece4b9c13dfc8511fe0b06e"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 44808,
+            "end_bit": 45256,
+            "source_bits": 448,
+            "sha256": "652fac288a411ee322ed9c92c00425982fb9a780d8cb70ba346c5b450a2f3013"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 45256,
+            "end_bit": 45536,
+            "source_bits": 280,
+            "sha256": "d1789a92fb945d1947fbe54f2718ca7114a8060c776d59096378d3f78f37cd3f"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 45536,
+            "end_bit": 80752,
+            "source_bits": 35216,
+            "sha256": "0bc77cb464097cfac8db4632cc3d0e141b3effb08256a59a34f2db092e99d6b9"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 80752,
+            "end_bit": 160672,
+            "source_bits": 79920,
+            "sha256": "d03d18f6a064c87957b053ddcfb5bd1134aec7b41d0d463e2f761b19ddf40d24"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 2600,
+          "costume_end": 15232,
+          "power_end": 16464,
+          "titles_end": 17208,
+          "ragdoll_end": 17320,
+          "common_end": 19408,
+          "taskforce_end": 20280,
+          "rare_end": 20560,
+          "tail_end": 20584,
+          "buff_end": 20600
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 2600,
+            "end_bit": 15216,
+            "source_bits": 12616,
+            "sha256": "8f27789caae52b4735c63f518c9aa2e55a24dcfc2aba97c9aa4f83cc36b77cae"
+          },
+          {
+            "name": "power",
+            "begin_bit": 15232,
+            "end_bit": 16464,
+            "source_bits": 1232,
+            "sha256": "5c16bc4cf840fe599cfbe1e80f32ff1348fe0839ded37a8674496693aa721c19"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 16464,
+            "end_bit": 17208,
+            "source_bits": 744,
+            "sha256": "b34192cfc78a7af3a9e58c26412e525abc2271e10ece4b9c13dfc8511fe0b06e"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 19408,
+            "end_bit": 20280,
+            "source_bits": 872,
+            "sha256": "c936133bab6e2167fb1a608b79496638cc2eb04881da22587f6aae7ebe9d0438"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 20280,
+            "end_bit": 20560,
+            "source_bits": 280,
+            "sha256": "0d5535e13cc9708d0ff0289af2fae27e564b6bcbcd9242f5140d96957744a517"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 20560,
+            "end_bit": 20584,
+            "source_bits": 24,
+            "sha256": "709e80c88487a2411e1ee4dfb9f22a861492d20c4765150c0c794abd70f8147c"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 20584,
+            "end_bit": 20600,
+            "source_bits": 16,
+            "sha256": "47dc540c94ceb704a23875c11273e16bb0b8a87aed84de911f2133568115f254"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 2600,
+          "costume_end": 6920,
+          "power_end": 12760,
+          "titles_end": 13504,
+          "ragdoll_end": 13616,
+          "common_end": 15672,
+          "taskforce_end": 19192,
+          "rare_end": 20024,
+          "tail_end": 20112,
+          "buff_end": 21120
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 2600,
+            "end_bit": 6904,
+            "source_bits": 4304,
+            "sha256": "e2d7353ca18a29bc4d857bd1100fcd254a1b43e4878daed4ec0b12ef82501678"
+          },
+          {
+            "name": "power",
+            "begin_bit": 6920,
+            "end_bit": 12760,
+            "source_bits": 5840,
+            "sha256": "579efedcc8a95a48d73cbbbc4310b0208530a68c4e1e05e3d910fabc03f2a659"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 12760,
+            "end_bit": 13504,
+            "source_bits": 744,
+            "sha256": "b34192cfc78a7af3a9e58c26412e525abc2271e10ece4b9c13dfc8511fe0b06e"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 15672,
+            "end_bit": 19192,
+            "source_bits": 3520,
+            "sha256": "0d0671da08adfea4faa38dd02458f77a1bb976dab469dd4a9c9c8f53c8653abc"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 19192,
+            "end_bit": 20024,
+            "source_bits": 832,
+            "sha256": "a45cb7a2ba0d3109d9985c876e95118b765867cec7909280bebc0b6d028f175f"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 20024,
+            "end_bit": 20112,
+            "source_bits": 88,
+            "sha256": "aefef1032be3babe759aa8d9e5b5397ee8759a203198e224334563aad808f7c3"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 20112,
+            "end_bit": 21120,
+            "source_bits": 1008,
+            "sha256": "a0426dc1ec7ed05570471a72dba490321e28d80043401d81cd3d63f59b1177cf"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 2600,
+          "costume_end": 10800,
+          "power_end": 10880,
+          "titles_end": 11624,
+          "ragdoll_end": 11736,
+          "common_end": 13600,
+          "taskforce_end": 17128,
+          "rare_end": 17688,
+          "tail_end": 18352,
+          "buff_end": 18664
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 2600,
+            "end_bit": 10784,
+            "source_bits": 8184,
+            "sha256": "090e1519b455d44d97c0c85d1d100ffb2de4c0c819a1414d06ce5e49dcb77b80"
+          },
+          {
+            "name": "power",
+            "begin_bit": 10800,
+            "end_bit": 10880,
+            "source_bits": 80,
+            "sha256": "3bb0f22f0610d43dbe8101c9991a2605bbb2dfa7efa38095c3fbdb069a63bfa3"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 10880,
+            "end_bit": 11624,
+            "source_bits": 744,
+            "sha256": "b34192cfc78a7af3a9e58c26412e525abc2271e10ece4b9c13dfc8511fe0b06e"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 13600,
+            "end_bit": 17128,
+            "source_bits": 3528,
+            "sha256": "d86d198c770ca3666f223a598fe8d48fc393d4e5f8c0590f55346c789c805eb7"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 17128,
+            "end_bit": 17688,
+            "source_bits": 560,
+            "sha256": "26d1e1e29da2996967fc43752d655179fa0f45294e7b9371db284d019d719c58"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 17688,
+            "end_bit": 18352,
+            "source_bits": 664,
+            "sha256": "2f1f217592bafe91744d539ea5faf83618f7ab8d7289392a40ee6b211c55aa20"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 18352,
+            "end_bit": 18664,
+            "source_bits": 312,
+            "sha256": "33311ef6dd38e65cbfb3eae4bb6735062822735d46057b6d749f5ee66251a18f"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      },
+      {
+        "boundaries": {
+          "front_end": 2600,
+          "costume_end": 41776,
+          "power_end": 41872,
+          "titles_end": 42616,
+          "ragdoll_end": 42728,
+          "common_end": 44816,
+          "taskforce_end": 45264,
+          "rare_end": 45544,
+          "tail_end": 80760,
+          "buff_end": 160680
+        },
+        "children": [
+          {
+            "name": "costume",
+            "begin_bit": 2600,
+            "end_bit": 41760,
+            "source_bits": 39160,
+            "sha256": "58f91e57698e76cf24e2e8fd8f360358235b9d61d1502ff043ee1ec3f1e8e033"
+          },
+          {
+            "name": "power",
+            "begin_bit": 41776,
+            "end_bit": 41872,
+            "source_bits": 96,
+            "sha256": "6f33d864b535986dd84a433389b8cb58ee3aacbf342b0054c97312a350b18363"
+          },
+          {
+            "name": "titles",
+            "begin_bit": 41872,
+            "end_bit": 42616,
+            "source_bits": 744,
+            "sha256": "b34192cfc78a7af3a9e58c26412e525abc2271e10ece4b9c13dfc8511fe0b06e"
+          },
+          {
+            "name": "taskforce",
+            "begin_bit": 44816,
+            "end_bit": 45264,
+            "source_bits": 448,
+            "sha256": "652fac288a411ee322ed9c92c00425982fb9a780d8cb70ba346c5b450a2f3013"
+          },
+          {
+            "name": "rare",
+            "begin_bit": 45264,
+            "end_bit": 45544,
+            "source_bits": 280,
+            "sha256": "d1789a92fb945d1947fbe54f2718ca7114a8060c776d59096378d3f78f37cd3f"
+          },
+          {
+            "name": "tail",
+            "begin_bit": 45544,
+            "end_bit": 80760,
+            "source_bits": 35216,
+            "sha256": "0bc77cb464097cfac8db4632cc3d0e141b3effb08256a59a34f2db092e99d6b9"
+          },
+          {
+            "name": "buff",
+            "begin_bit": 80760,
+            "end_bit": 160680,
+            "source_bits": 79920,
+            "sha256": "d03d18f6a064c87957b053ddcfb5bd1134aec7b41d0d463e2f761b19ddf40d24"
+          }
+        ],
+        "synthetic_outer_and_status_fields": true,
+        "whole_original_outer_executed": false
+      }
+    ],
+    "whole_original_outer_executed": false
+  },
+  "checks": {
+    "release": {
+      "checks": 352228,
+      "fixtures": 50,
+      "successes": 9757,
+      "refusals": 29602,
+      "truncations": 25411,
+      "byte_mutations": 12148,
+      "loan_controls": 1260
+    },
+    "asan": {
+      "checks": 352228,
+      "fixtures": 50,
+      "successes": 9757,
+      "refusals": 29602,
+      "truncations": 25411,
+      "byte_mutations": 12148,
+      "loan_controls": 1260
+    },
+    "ubsan": {
+      "checks": 352228,
+      "fixtures": 50,
+      "successes": 9757,
+      "refusals": 29602,
+      "truncations": 25411,
+      "byte_mutations": 12148,
+      "loan_controls": 1260
+    }
+  },
+  "binary_sha256": {
+    "release": "25638e7ec09ffde1b4e46bba3faa7ecb988a1c0f8d46b1cb17d50c009cf7b771",
+    "asan": "4342435250a238b99620111b3b62f560934f1311484063ada56bab8c5b354ea6",
+    "ubsan": "8de26dba1a929d2ad86a1e91669609969a2fac26e1c0c94af9ad439c30b5908e"
+  },
+  "production_stack_frames": [
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_disconnect.part.0",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_reader",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_reader_bounded",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_read",
+      "bytes": 24,
+      "bound": "static"
+    },
+    {
+      "function": "f32",
+      "bytes": 112,
+      "bound": "static"
+    },
+    {
+      "function": "auto_bits",
+      "bytes": 112,
+      "bound": "static"
+    },
+    {
+      "function": "boolean",
+      "bytes": 112,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string.part.0",
+      "bytes": 384,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_pack",
+      "bytes": 144,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_shortcuts.part.0",
+      "bytes": 1488,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_scene_prefix.part.0",
+      "bytes": 992,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_connect",
+      "bytes": 384,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_shortcuts",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_scene_prefix",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_update_prefix",
+      "bytes": 224,
+      "bound": "static"
+    },
+    {
+      "function": "session_message",
+      "bytes": 1232,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_position_init",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_position",
+      "bytes": 320,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_physics",
+      "bytes": 208,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_init",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_begin",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_disconnect",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_message",
+      "bytes": 48,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_rep_session_message_bounded",
+      "bytes": 48,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "automatic",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_taskforce",
+      "bytes": 192,
+      "bound": "static"
+    },
+    {
+      "function": "list_table",
+      "bytes": 40,
+      "bound": "static"
+    },
+    {
+      "function": "clear_failure.part.0",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_slot_init.part.0",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "discard_string",
+      "bytes": 1104,
+      "bound": "static"
+    },
+    {
+      "function": "flag",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "auto_bits",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "status_effects",
+      "bytes": 2176,
+      "bound": "static"
+    },
+    {
+      "function": "optional_string",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "opt_bits",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "opt_pack",
+      "bytes": 64,
+      "bound": "static"
+    },
+    {
+      "function": "orientation",
+      "bytes": 96,
+      "bound": "static"
+    },
+    {
+      "function": "inventory_sizes",
+      "bytes": 160,
+      "bound": "static"
+    },
+    {
+      "function": "character_stats",
+      "bytes": 128,
+      "bound": "static"
+    },
+    {
+      "function": "netfx",
+      "bytes": 80,
+      "bound": "static"
+    },
+    {
+      "function": "target",
+      "bytes": 272,
+      "bound": "static"
+    },
+    {
+      "function": "appearance",
+      "bytes": 928,
+      "bound": "static"
+    },
+    {
+      "function": "creation.part.0",
+      "bytes": 80,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_titles",
+      "bytes": 576,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_rare_prefix",
+      "bytes": 1632,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_next_index",
+      "bytes": 144,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_create",
+      "bytes": 544,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_orientation_init",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_orientation",
+      "bytes": 176,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_slot_init",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_netfx",
+      "bytes": 3360,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_character_stats",
+      "bytes": 352,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_appearance",
+      "bytes": 704,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_target",
+      "bytes": 304,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_status_effects",
+      "bytes": 2224,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_inventory_sizes",
+      "bytes": 192,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_record",
+      "bytes": 7696,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_list",
+      "bytes": 4208,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_ent_deletes",
+      "bytes": 2272,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_stage_deletes",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_full_update_tail",
+      "bytes": 112,
+      "bound": "static"
+    },
+    {
+      "function": "bits",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "string_table_size.isra",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "text",
+      "bytes": 64,
+      "bound": "static"
+    },
+    {
+      "function": "indexed_string",
+      "bytes": 80,
+      "bound": "static"
+    },
+    {
+      "function": "cached_string",
+      "bytes": 64,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_costume.part.0",
+      "bytes": 208,
+      "bound": "static"
+    },
+    {
+      "function": "envelope_body.part.0",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_costume_dictionary_load",
+      "bytes": 144,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_costume_dictionary_free",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_costume_dictionary_bytes",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_costume",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_custom_costume",
+      "bytes": 17088,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_costume_envelope",
+      "bytes": 240,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_power_custom",
+      "bytes": 208,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_teammate_buffs",
+      "bytes": 272,
+      "bound": "static"
+    },
+    {
+      "function": "scalar",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "text",
+      "bytes": 96,
+      "bound": "static"
+    },
+    {
+      "function": "automatic",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "count",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_very_rare_tail",
+      "bytes": 256,
+      "bound": "static"
+    },
+    {
+      "function": "overlap",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "scalar",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "pack",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "opt_bits",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "automatic",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "opt_pack",
+      "bytes": 64,
+      "bound": "static"
+    },
+    {
+      "function": "coh_selected_record_stage_bytes",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_selected_record_read",
+      "bytes": 528,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_worktree_clean": false,
+  "full_initial_transaction": false,
+  "whole_entity_list": false,
+  "authentic_dictionary_authority": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "real_server_accepted": false,
+  "android_built": false,
+  "thor_accepted": false,
+  "leak_sanitizer": false
+}

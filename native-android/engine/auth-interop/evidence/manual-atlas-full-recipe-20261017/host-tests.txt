@@ -1,0 +1,10 @@
+test_all_original_and_manual_layers_only_checksum_delta (test_manual_atlas_full_recipe.FullRecipeTests.test_all_original_and_manual_layers_only_checksum_delta) ... ok
+test_build_inputs_and_dependency_mutations_refused (test_manual_atlas_full_recipe.FullRecipeTests.test_build_inputs_and_dependency_mutations_refused) ... ok
+test_compile_profile_keeps_normal_flags_and_only_dbserver (test_manual_atlas_full_recipe.FullRecipeTests.test_compile_profile_keeps_normal_flags_and_only_dbserver) ... ok
+test_extra_linked_missing_and_existing_destination_refused (test_manual_atlas_full_recipe.FullRecipeTests.test_extra_linked_missing_and_existing_destination_refused) ... ok
+test_saved_persistence_version_auth_and_guard_mutations_refused (test_manual_atlas_full_recipe.FullRecipeTests.test_saved_persistence_version_auth_and_guard_mutations_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 11.182s
+
+OK

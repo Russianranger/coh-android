@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "source_revision": "47d0c2478f0b1319c79912b5a530a7723877d51e",
+  "helper_sha256": "fde1c2a11434549f6b6294ee91177f5dffb58f4dabcb187ad1c3c40db1e6072c",
+  "pins_sha256": "774b0131b805619a452ad192a05bcc219615d7bfb8a6a29eb8aa875ed7d0deb7",
+  "archive": {
+    "bytes": 27071659,
+    "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+  },
+  "member": {
+    "path": "data/bin/tricks.bin",
+    "bytes": 13537052,
+    "sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+    "observed_schema_crc": "5ba1b0e3"
+  },
+  "zip_crc32": "43e09a35",
+  "zip_crc_verified": true,
+  "archive_preserved": true,
+  "network_download_performed": false,
+  "original_client_executed": false,
+  "material_authority": false,
+  "world_authority": false
+}

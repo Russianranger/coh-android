@@ -1,0 +1,145 @@
+{
+  "schema": "coh-full-manual-atlas-checksum-source-recipe-v1",
+  "passed": true,
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_repository_commit": "1b225a89101f953df0dee4958c049eb19230c4cd",
+  "accepted_manifest_sha256": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+  "accepted_manual_binary": {
+    "bytes": 1664512,
+    "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba",
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ODBC32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "accepted_base_normal_binary": {
+    "bytes": 1661440,
+    "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ODBC32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "retained_runtime_dependency_records": {
+    "CrashRpt.dll": {
+      "bytes": 39424,
+      "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6",
+      "pe_machine": 332,
+      "imports": [
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "KERNEL32.dll",
+        "MSVCP140.dll",
+        "VCRUNTIME140.dll"
+      ],
+      "delay_imports": []
+    },
+    "vcruntime140.dll": {
+      "bytes": 123328,
+      "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3",
+      "pe_machine": 332,
+      "imports": [
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "KERNEL32.dll"
+      ],
+      "delay_imports": []
+    },
+    "msvcp140.dll": {
+      "bytes": 618944,
+      "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a",
+      "pe_machine": 332,
+      "imports": [
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-environment-l1-1-0.dll",
+        "api-ms-win-crt-filesystem-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-locale-l1-1-0.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-time-l1-1-0.dll",
+        "api-ms-win-crt-utility-l1-1-0.dll",
+        "KERNEL32.dll",
+        "VCRUNTIME140.dll"
+      ],
+      "delay_imports": []
+    }
+  },
+  "accepted_cmake_cache": {
+    "bytes": 39656,
+    "sha256": "474ed502fa27aba77c3a98539c46611f9b55f02e06da12ebee71c0bda4f8938b"
+  },
+  "layers": [
+    {
+      "patch": "patches/postgresql/0001-dbserver-postgresql.patch",
+      "sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad"
+    },
+    {
+      "patch": "patches/wine-dbserver/0001-wine-odbc.patch",
+      "sha256": "48e5433350017c0d050709c37c5f41b34b1be8ed7628ab510fdd477a57c1b673"
+    },
+    {
+      "patch": "patches/startup-dbserver/0001-manual-atlas-launcher-wait.patch",
+      "sha256": "ab1b7a6bc627aebf817acbde49e4c5659ec1aa98722f64c4aa61e0a9d6ec97b7"
+    },
+    {
+      "patch": "patches/startup-bundle/0001-pg-cancelled-child-insert.patch",
+      "sha256": "36ee0b86fad6207166b6a46a6334b0e9846f90d81140fec49dc187d2fb45a600"
+    },
+    {
+      "patch": "patches/levelup-ui-repair/0001-pg-empty-row-witness.patch",
+      "sha256": "66653e01f415ba00f8e65655b8e9db1e1bbb21d76dd54b3bb4741ea13032671b"
+    }
+  ],
+  "original_files": 5995,
+  "original_bytes": 173081714,
+  "complete_source_files": 6007,
+  "sole_additional_changed_path": "Common/ClientLogin/clientcommLogin.c",
+  "build_profile": {
+    "generator": "Visual Studio 18 2026",
+    "architecture": "Win32",
+    "configuration": "OptDebug",
+    "target": "DbServer",
+    "parallel": 2,
+    "COH_PG_PERSISTENCE_TESTS": false,
+    "COX_BUILD_MAPSERVER": false,
+    "COX_BUILD_BEACONSERVER": false,
+    "build_executed": false,
+    "service_executed": false
+  },
+  "full_first_party_build_source_materialized": true,
+  "external_CPM_dependencies_materialized": false,
+  "new_binary_built": false,
+  "build_executed": false,
+  "runtime_profile_admitted": false,
+  "shipping_runtime_replacement_permit": false,
+  "manual_wait_skip_permitted_for_real_auth": false,
+  "native_reference_alias_created": false,
+  "nondevelopment_version_observed": false,
+  "actual_persistence_or_authenticated_db_execution": false,
+  "source_maps_sha256": "0cf8c44c7f3fc1f840834ab69cb5a8c3800d24a572a92a7f80d1d2a2d70fefa4",
+  "source_maps_file": "source-recipe.source-maps.json.gz"
+}

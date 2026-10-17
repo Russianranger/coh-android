@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "reviewed_revision": "1ad272478fd5ae355860160e84348e729256a48f",
+  "verifier_sha256": "716c87c503112d995070600374e980cddf4da4fb34b70a739d1e74792556786b",
+  "review_kind": "Independent source review and actual four-archive read-only evidence replay, no binary/CI/device execution",
+  "blocking_findings": [],
+  "resolved_findings": [
+    "Per-ABI crypto/login receipt native source maps now explicitly checked at fixed6005 Git pin, in addition to complete772-path summary map and recorded combined/native module maps.",
+    "UDP boundary source receipt written before cleanup and swallows cleanup errors; boundary_device_cleanup_verified now explicitlyfalse. Five suite driver success is set only after successful cleanup command, separately named receiptverified; no directfileabsence claim."
+  ],
+  "independent_replay_matches_committed_result": true,
+  "independent_replay_sha256": "b064cdd51e5108af9dc934a0601ec1e68993d0f19a2b1b57976a457b7759c2e0",
+  "committed_result_sha256": "b064cdd51e5108af9dc934a0601ec1e68993d0f19a2b1b57976a457b7759c2e0",
+  "review": [
+    "Four exact archive length+SHA roots; ZIP count/size/path/symlink/CRC bounds before owned-temp extraction, complete temp retirement. No binary executes.",
+    "Only small validators loaded from exact Git6005; manifest/driver/sourceRevision/dirtyStatus and bothABI five suite binary+receipt identities checked. Exact64bitLE ELF machine perABI and fourcombined library bytes/size/SHA/machines verified.",
+    "Android13SDK33x86_64 emulator proof and allfive per-suite result/binary/buildreceipt fingerprints admitted; standaloneUDP native report exact sourcevalidator matched. ARM64buildonly, noARM64execution.",
+    "Scope flags prohibit realauth/server/world/physicalThor/APK acceptance. Native descriptor cleanup and devicefiles cleanup explicitly distinct."
+  ],
+  "qualified_pin": "6005bbf34376cb71bb5b3fc71058af629b19ce86",
+  "verified_source_files": 772,
+  "artifact_identities_verified": [
+    "12090071990",
+    "12089827111",
+    "12088939718",
+    "12090290394"
+  ],
+  "android13_suites": {
+    "crypto": {
+      "authenticated_server_session": false,
+      "checks": 1920,
+      "malformed_inputs": 10000
+    },
+    "db_session": {
+      "actual_os_udp": true,
+      "checks": 958,
+      "passed": true,
+      "real_authenticated_server": false,
+      "socket_leak_check": true,
+      "socket_scenarios": 14,
+      "source_layout_peer": true
+    },
+    "db_wire": {
+      "checks": 95949,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false
+    },
+    "login": {
+      "actual_os_tcp": true,
+      "checks": 523,
+      "descriptor_cleanup": true,
+      "passed": true,
+      "passwords_logged": false,
+      "real_account_login_verified": false,
+      "socket_scenarios": 11,
+      "synthetic_authserver": true
+    },
+    "mapclient": {
+      "actual_authentication": false,
+      "actual_os_udp": true,
+      "checks": 31780,
+      "decoded_budget_bytes": 4194304,
+      "expanded_scene_fixture": true,
+      "large_scene_decoded_bytes": 139794,
+      "large_scene_max_wire_bytes": 3575,
+      "live_world": false,
+      "negative_cases": 10665,
+      "scenarios": 33,
+      "scene_assets_resolved": false,
+      "scene_crc_verified": false,
+      "scene_tail_parsed": true,
+      "scripted_peer_only": true,
+      "socket_leak_check": true
+    }
+  },
+  "android13_udp": {
+    "actual_os_udp": true,
+    "checks": 1194,
+    "live_server_interoperability": false,
+    "negative_cases": 61,
+    "socket_leak_check": true,
+    "socket_scenarios": 22
+  },
+  "boundary_device_cleanup_verified": false,
+  "live_suites_device_cleanup_receipt_verified": true,
+  "arm64_executed": false,
+  "physical_thor_accepted": false,
+  "live_world": false,
+  "accepted_apks_rebuilt": false
+}

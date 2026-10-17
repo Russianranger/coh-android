@@ -1,0 +1,10 @@
+{
+  "schema": "coh-selected-record-source-binding-v1",
+  "source_commit": "3dc8f9f28d44f7c7649dae7cdfee6d581367aac7",
+  "host_proof_sha256": "d0a73e78548d6a876b4eec39a51912a9ec87e46084302e369f7a47818ce4d8d8",
+  "tested_inputs_match_commit": true,
+  "input_count": 78,
+  "scope": "Exact production/test/provider inputs bound by hash. Qualification executed on a dirty source worktree before source commit; committed bytes equal all tested inputs. Whole original enclosing sender remains unexecuted in this component fixture tranche.",
+  "actor_publication": false,
+  "ack_permitted": false
+}

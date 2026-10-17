@@ -1,0 +1,32 @@
+{
+  "heads": {
+    "catalog-coverage": "51719bc697c51972390beb7ff2b29ae76bdeac6e",
+    "auth-manual": "966b2ad0c7cbd6017968c193db935acc64c13f6e",
+    "renderer-inputs": "a354ed73c37f8114fdcc7740a95b8a81bb64e2c8",
+    "qualification": "265dbf8ab8d71edb9ff35d0f3d359a4aefb071f7"
+  },
+  "refs": [
+    "refs/recovery/20261017/milestone5-catalog-coverage",
+    "refs/recovery/20261017/milestone5-auth-manual",
+    "refs/recovery/20261017/milestone5-renderer-inputs",
+    "refs/recovery/20261017/milestone5-qualification"
+  ],
+  "prerequisite_refs": [
+    "refs/recovery/20261017/milestone4-auth",
+    "refs/recovery/20261017/milestone4-catalog",
+    "refs/recovery/20261017/milestone4-entities",
+    "refs/recovery/20261017/milestone4-graph-bounds",
+    "refs/recovery/20261017/milestone4-graph-groups",
+    "refs/recovery/20261017/milestone4-qualification",
+    "refs/recovery/20261017/milestone4-renderer",
+    "refs/recovery/20261017/milestone4append-catalog-bridge",
+    "refs/recovery/20261017/milestone4append-entities-identity",
+    "refs/recovery/20261017/milestone4append-graph-instances",
+    "refs/recovery/20261017/milestone4append-qualification"
+  ],
+  "remote_prerequisite_commit": "6005bbf34376cb71bb5b3fc71058af629b19ce86",
+  "bytes": 1216074,
+  "sha256": "b771520763b3c6497bf10fd10d5b975d7ef29a1afa617335b16d1d4b686fc1bb",
+  "verification": "The bundle contains these 4 refs:\n51719bc697c51972390beb7ff2b29ae76bdeac6e refs/recovery/20261017/milestone5-catalog-coverage\n966b2ad0c7cbd6017968c193db935acc64c13f6e refs/recovery/20261017/milestone5-auth-manual\na354ed73c37f8114fdcc7740a95b8a81bb64e2c8 refs/recovery/20261017/milestone5-renderer-inputs\n265dbf8ab8d71edb9ff35d0f3d359a4aefb071f7 refs/recovery/20261017/milestone5-qualification\nThe bundle requires these 4 refs:\n953126aaa341e14177f77a173bdda8ea1450493d \n8c0f4925cfd1590ca0da74ff5916f30bc2683628 \n1b225a89101f953df0dee4958c049eb19230c4cd \n58abf96984b55bb100e22f13d9d35a14bbffee10 \nThe bundle uses this hash algorithm: sha1\nnative-android/combined-client/evidence/20261017/emergency-recovery/milestone5-source-history.bundle is okay\n",
+  "scope": "Original reviewed worker ancestry only; active unfinished later worktrees preserved separately and never reset. Coordinator exact historical source snapshot is supplemental pack, not recursive private ancestry."
+}

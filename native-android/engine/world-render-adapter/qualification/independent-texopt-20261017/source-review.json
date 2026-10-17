@@ -1,0 +1,101 @@
+{
+  "schema": "coh-independent-historical-texopt-wire-review-v1",
+  "approved": true,
+  "source_reviews": [
+    {
+      "source_commit": "47d0c2478f0b1319c79912b5a530a7723877d51e",
+      "receipt_sha256": "6d7f9627d0c63dd2a229944341b32895f769d2bc37b591071e9a909f0cd28a97",
+      "verified_source_count": 14,
+      "controls": 36,
+      "modes": {
+        "release": {
+          "leak_sanitizer_enabled": false,
+          "original_filelist_reader_executed": true,
+          "original_pascal_reader_executed": true,
+          "transcript_sha256": "6d50ca4f51460660e6c73c366539cf8ad2bad626ede7ef659639c9ab1fce54c6",
+          "prefixes": 14715,
+          "file_entries": 1585,
+          "opaque_tricks": 3644
+        },
+        "address": {
+          "leak_sanitizer_enabled": false,
+          "original_filelist_reader_executed": true,
+          "original_pascal_reader_executed": true,
+          "transcript_sha256": "6d50ca4f51460660e6c73c366539cf8ad2bad626ede7ef659639c9ab1fce54c6",
+          "prefixes": 14715,
+          "file_entries": 1585,
+          "opaque_tricks": 3644
+        },
+        "undefined": {
+          "leak_sanitizer_enabled": false,
+          "original_filelist_reader_executed": true,
+          "original_pascal_reader_executed": true,
+          "transcript_sha256": "6d50ca4f51460660e6c73c366539cf8ad2bad626ede7ef659639c9ab1fce54c6",
+          "prefixes": 14715,
+          "file_entries": 1585,
+          "opaque_tricks": 3644
+        }
+      }
+    },
+    {
+      "source_commit": "9cc6e0f1aff1c1c0d65145aee3b88447dd45f59d",
+      "receipt_sha256": "5ab9e9b6b747c81eab95cd1dc142e8cc63e6926e3d11c454f53e8e490fc836b1",
+      "verified_source_count": 16,
+      "controls": 42,
+      "modes": {
+        "release": {
+          "passed": true,
+          "texopts": 14715,
+          "scalar_string_observations": 2251395,
+          "transcript_bytes": 11539670,
+          "transcript_sha256": "b7494736082e979345d62d0a46666972d666894613528c0166f39355de36acfe"
+        },
+        "address": {
+          "passed": true,
+          "texopts": 14715,
+          "scalar_string_observations": 2251395,
+          "transcript_bytes": 11539670,
+          "transcript_sha256": "b7494736082e979345d62d0a46666972d666894613528c0166f39355de36acfe"
+        },
+        "undefined": {
+          "passed": true,
+          "texopts": 14715,
+          "scalar_string_observations": 2251395,
+          "transcript_bytes": 11539670,
+          "transcript_sha256": "b7494736082e979345d62d0a46666972d666894613528c0166f39355de36acfe"
+        }
+      }
+    }
+  ],
+  "retained_cache_source": "536b513e7",
+  "retained_cache_evidence": "b451c05a3",
+  "archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+  "raw_cache_sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+  "compressed_cache_sha256": "3e00fe9f1fcc98eb3ae91208ff7b3153569c747878f33a93001acdf253d1fbdb",
+  "raw_bytes": 13537052,
+  "independent_existing_archive_member_and_retained_gzip_equal": true,
+  "independent_prefix_file_texopt_trick_counts": [
+    1585,
+    14715,
+    3644
+  ],
+  "review": [
+    "Prefix immutable bytes owner bounds whole file, file-list and each row; observes schema CRC without recomputation; four TexOpt fields only and opaque remainder/Trick records.",
+    "Retained cache inflation bounded to exact expected size with EOF/no suffix and fixed compressed/raw digests; original donor ZIP whole hash and unique member CRC/read match retained bytes.",
+    "Complete TexOpt decoder admits exact original six schema declarations, supports only persisted scalar/string/fixed/embedded forms and rejects unknown declarations. Per-record depth4/512field caps and exact nested spans/full row consumption preserve transactional results.",
+    "Original reader oracle executes unchanged token reader bodies with explicit wire-type/TokenStore observers; source offsets/defaults/enum tables and whole original runtime storage are replaced by harness interfaces. This qualifies historical wire grammar, not effective original TexOpt objects.",
+    "Full historical transcript equality is retained for14715 TexOpts/2251395 scalar-string observations per mode. Python decoder/raw-byte result is immutable; floats preserve parsed float values without establishing finite effective material policy.",
+    "No postprocess/setupTexOpt, full Trick/AutoLOD semantics, compiled source schema CRC, capability profile, active namespace/generation or client material permission. Recovery helper creates a fresh external output and does not delete or overwrite archives; a filesystem error can leave its own fresh output for inspection."
+  ],
+  "reviewer_reran_oracles": false,
+  "scope": {
+    "historical_wire": true,
+    "original_runtime_storage": false,
+    "compiled_schema_crc": false,
+    "postprocess": false,
+    "client_materials": false,
+    "active_generation": false,
+    "android": false,
+    "world": false
+  }
+}

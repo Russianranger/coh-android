@@ -1,0 +1,48 @@
+{
+  "schema": "coh-manual-atlas-donor-recovery-v1",
+  "passed": true,
+  "publication_path": "docs/android-evidence/client-saved-map-reopen-0.13.34-publication.json",
+  "publication_sha256": "b1d01a5a315fbdd6451887cf458240e0e793f751dac10c0989e3c9255fa80ab9",
+  "donor": {
+    "run_id": 38285895633,
+    "repository_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+    "apk": {
+      "bytes": 42043924,
+      "sha256": "482481fd14357f56a0c77069124fdce42712a06180ead8cb4c0cca2a671d4fc2"
+    },
+    "build_report": {
+      "bytes": 8201429,
+      "sha256": "26e93ea6b3be82de6b525043eb20c83ffa84205c91f80c5371f460c695b14ba4"
+    },
+    "build_report_artifact_id": 11764118240,
+    "build_report_artifact_zip": {
+      "bytes": 50257461,
+      "sha256": "6d6312b3ef4f7b9d25252ced724cbbdb36a4712a011647a8339b5a3207857911"
+    },
+    "public_byte_audit_artifact_id": 11763964703,
+    "public_byte_audit_artifact_zip": {
+      "bytes": 752,
+      "sha256": "62338f1c99da7f2161b8e8c14044cc3e9c1af9bca058aebbb4e5cd13e44250d4"
+    }
+  },
+  "manifest_sha256": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+  "manual_pe": {
+    "bytes": 1664512,
+    "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba",
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ODBC32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "pe_executed": false,
+  "apk_installed": false,
+  "shipping_profile_modified": false
+}

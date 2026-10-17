@@ -1,0 +1,37 @@
+{
+  "manifest_sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+  "bar": {
+    "asset_path": "data/texture_library/world/swappables_and_decals/signs/billboard/neon/bar_vert_sign.texture",
+    "bytes": 22163,
+    "sha256": "c224a6dff69716bde300bb956d7415745780ceeee249e526ad1de69cab654b58",
+    "source": {
+      "bytes": 22163,
+      "cached_header_id": 1395,
+      "compressed": true,
+      "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+      "md5_table": "6250ec0209522fc0cd505ca6a9329b09",
+      "offset": 85356549,
+      "path": "texture_library/WORLD/Swappables_and_Decals/Signs/Billboard/Neon/Bar_vert_sign.texture",
+      "sha256": "c224a6dff69716bde300bb956d7415745780ceeee249e526ad1de69cab654b58",
+      "source_archive": "stage3f.pigg",
+      "source_archive_bytes": 89617460,
+      "source_content_range": "bytes 84580662-85511829/89617460",
+      "source_etag": "\"b04d2e31c61306fbc19ad1a83ca73ae8\"",
+      "source_last_modified": "Sun, 28 Sep 2025 02:28:27 GMT",
+      "source_metadata_sha256": "4b915cd38df89551e83f443fe6d9a887f2ea644e1425ed58ab85d3b717ba7524",
+      "source_url": "https://dists.thunderspy.org/piggs/stage3f.pigg",
+      "stored_bytes": 11567,
+      "stored_sha256": "5a97236a8128ac2fb0847dbd2619f801f5eab7088a64c2fb6d3c9acdb4fe70bf"
+    }
+  },
+  "release": {
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+    "outer_bytes": 1630092780,
+    "inner_member": "payloads/runtime/atlas-world-supplement.zip",
+    "inner_bytes": 207803201,
+    "expected_inner_sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+  },
+  "asset_generation_permit": false,
+  "material_authority": false,
+  "world_authority": false
+}

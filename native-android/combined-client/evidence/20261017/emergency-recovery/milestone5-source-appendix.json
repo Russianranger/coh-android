@@ -1,0 +1,26 @@
+{
+  "heads": {
+    "entities-selected": "55c1db2f0f016a5720eb85ce921bdb679b590780",
+    "qualification-selected": "8b3b0c28fa485c0bb312714b18c8f835820a326a"
+  },
+  "prerequisite_refs": [
+    "refs/recovery/20261017/milestone4-auth",
+    "refs/recovery/20261017/milestone4-catalog",
+    "refs/recovery/20261017/milestone4-entities",
+    "refs/recovery/20261017/milestone4-graph-bounds",
+    "refs/recovery/20261017/milestone4-graph-groups",
+    "refs/recovery/20261017/milestone4-qualification",
+    "refs/recovery/20261017/milestone4-renderer",
+    "refs/recovery/20261017/milestone4append-catalog-bridge",
+    "refs/recovery/20261017/milestone4append-entities-identity",
+    "refs/recovery/20261017/milestone4append-graph-instances",
+    "refs/recovery/20261017/milestone4append-qualification",
+    "refs/recovery/20261017/milestone5-auth-manual",
+    "refs/recovery/20261017/milestone5-catalog-coverage",
+    "refs/recovery/20261017/milestone5-qualification",
+    "refs/recovery/20261017/milestone5-renderer-inputs"
+  ],
+  "bytes": 57375,
+  "sha256": "2eaf084fa986b7e473a77bbcfde021c5683087de6f4f27318b9e4b0f6c59c59b",
+  "verification": "The bundle contains these 2 refs:\n55c1db2f0f016a5720eb85ce921bdb679b590780 refs/recovery/20261017/milestone5append-entities-selected\n8b3b0c28fa485c0bb312714b18c8f835820a326a refs/recovery/20261017/milestone5append-qualification-selected\nThe bundle requires these 2 refs:\n41f6e7167e6c8438fa48f85eb2695a0c16a59e22 \n265dbf8ab8d71edb9ff35d0f3d359a4aefb071f7 \nThe bundle uses this hash algorithm: sha1\nnative-android/combined-client/evidence/20261017/emergency-recovery/milestone5-source-appendix.bundle is okay\n"
+}

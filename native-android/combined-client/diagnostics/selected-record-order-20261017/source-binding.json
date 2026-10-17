@@ -1,0 +1,24 @@
+{
+  "source_revision": "640320ca8615fe041458623302dd8be1ba784f61",
+  "existing_bit_provider_revision": "41f6e7167e6c8438fa48f85eb2695a0c16a59e22",
+  "host_proof_sha256": "979e6b88e072c8aabb3966849710eed3086a0a2407c9df8d25acc85f85886e44",
+  "all_tested_helper_bytes_equal_committed_blobs": true,
+  "tested_source_sha256": {
+    "fixture:native-android/combined-client/diagnostics/selected-record-order-20261017/check_order.py": "76a60b2c7ed3f2bdb74237963faee0ca2f748119d83a9373f41c6a419a7846fa",
+    "fixture:native-android/combined-client/diagnostics/selected-record-order-20261017/order_oracle.py": "9cc8c60df72c4870ed78aae1a0bfd518dadb8cd4705fd37dffbb4f46383b1564",
+    "fixture:native-android/combined-client/diagnostics/selected-record-order-20261017/outer_wrapper.h": "3235ddbddb1d12a30e7b25c5f6dc3a6e64576262019b3a66a221de84ec8cc1c3",
+    "fixture:native-android/combined-client/diagnostics/selected-record-order-20261017/outer_adapters.h": "d18fe34af352b8778887431ccbce81af5de50725879a6590f213bc07672ff11b",
+    "provider:native-android/engine/dbclient/check.py": "2cd5e8b80b593584e71f63cab21d774c00d39ec4056ae846d4698da68faac410",
+    "provider:native-android/engine/dbclient/source-pins.json": "a8c82a4c35eb73325ab4c7e0727645e40899330e7d7450b2c5976b26a89dbeb1",
+    "provider:native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "cases": 144,
+  "checks": 8208,
+  "whole_original_sendEntity_control_executed": true,
+  "child_serializers_explicit_injected_spans": true,
+  "marker_corpus_is_not_child_grammar": true,
+  "original_consumer_executed": false,
+  "whole_engine_or_win32_abi": false,
+  "sanitizers": false,
+  "actual_server_android_actor_ACK": false
+}

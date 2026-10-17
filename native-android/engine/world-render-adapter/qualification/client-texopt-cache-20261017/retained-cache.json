@@ -1,0 +1,14 @@
+{
+  "format": "gzip",
+  "gzip_mtime": 0,
+  "compression_level": 9,
+  "compressed_bytes": 603236,
+  "compressed_sha256": "3e00fe9f1fcc98eb3ae91208ff7b3153569c747878f33a93001acdf253d1fbdb",
+  "raw_bytes": 13537052,
+  "raw_sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+  "source_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+  "source_member": "data/bin/tricks.bin",
+  "retained_original_archive_preserved": true,
+  "material_authority": false,
+  "world_authority": false
+}

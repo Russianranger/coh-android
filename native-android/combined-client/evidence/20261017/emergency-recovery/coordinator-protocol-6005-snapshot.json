@@ -1,0 +1,13 @@
+{
+  "snapshot_commit": "1ad272478fd5ae355860160e84348e729256a48f",
+  "tree": "dbcfc44ad7e311d0ca52767bedbee41eb0bfe04c",
+  "base": [
+    "6005bbf34376cb71bb5b3fc71058af629b19ce86",
+    "a354ed73c37f8114fdcc7740a95b8a81bb64e2c8",
+    "7b1b763f34f14fe3bce1e1531d113b0bac813a7d"
+  ],
+  "objects": 24,
+  "bytes": 150095,
+  "sha256": "e775a067370ddd5c1d359f64b2713d5e3ffa7a84b993828c24150dbf3a17c173",
+  "scope": "Supplemental exact commit/tree objects for historical git-show evidence replay only, not complete coordinator ancestry. Base remote6005 plus milestone5 worker bundle source trees. Import with git index-pack --stdin; retain pack for recovery."
+}

@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "review_kind": "Coordinator independent source review and exact pinned receipt/aggregate recount; no native corpus rerun",
+  "source_commit": "51719bc697c51972390beb7ff2b29ae76bdeac6e",
+  "receipt_sha256": "5df9bc58cb49c9a177a8315a841701bd300dbdf6641d27ef0b81345f1f6be197",
+  "source_bindings": {
+    "native-android/engine/scenecatalog/inspect_rigid_coverage.c": {
+      "revision": "51719bc69",
+      "sha256": "63c86787116a4860ec1cd3930166c9cdeacc58ebc66eaead51af9eb5bf174e58"
+    },
+    "native-android/engine/scenecatalog/coh_resource_geo_source.c": {
+      "revision": "51719bc69",
+      "sha256": "c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec"
+    },
+    "native-android/engine/assets/coh_asset_geo.c": {
+      "revision": "51719bc69",
+      "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+    },
+    "native-android/src/coh_assets.c": {
+      "revision": "51719bc69",
+      "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+    },
+    "native-android/src/coh_dds.c": {
+      "revision": "51719bc69",
+      "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+    },
+    "native-android/engine/scenecatalog/coh_resource_geo_source.h": {
+      "revision": "51719bc69",
+      "sha256": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769"
+    },
+    "native-android/engine/assets/coh_asset_geo.h": {
+      "revision": "51719bc69",
+      "sha256": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b"
+    },
+    "native-android/engine/assets/coh_asset_loader.h": {
+      "revision": "51719bc69",
+      "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36"
+    },
+    "native-android/include/coh_native_core.h": {
+      "revision": "51719bc69",
+      "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+    },
+    "native-android/engine/coh_contracts.h": {
+      "revision": "51719bc69",
+      "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+    },
+    "native-android/engine/scenecatalog/check_rigid_coverage.py": {
+      "revision": "51719bc69",
+      "sha256": "28908757f49e1d6d794355afaa134f245ea5e8239408e49ab80f689c1a2cc0f9"
+    },
+    "native-android/engine/world-render-adapter/coh_wr_rigid.c": {
+      "revision": "6005bbf34376cb71bb5b3fc71058af629b19ce86",
+      "sha256": "ee6bb8c90915116edc5fa065fdfdf58dae9323edf794aef1f353a109105fc93b"
+    },
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.c": {
+      "revision": "6005bbf34376cb71bb5b3fc71058af629b19ce86",
+      "sha256": "8430ffd01c83e8476f9672eab63020434477206943bcb39b2007e75111fd746d"
+    }
+  },
+  "unique_model_pairs": 2916,
+  "unique_owner_ordinals": 3083,
+  "complete_body_identities": 391,
+  "scope": "Metadata audit only; no CPU/body/material/live/world admission. Explicit unsupported version gate retained."
+}

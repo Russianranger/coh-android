@@ -1,0 +1,16 @@
+{
+  "workflow_run": 38995343373,
+  "artifact_sha256": "16fdb1671bbac5c3a3abc6e2d6668ecd2efaf5ac34d0ef523fe651fffa56a773",
+  "member_count": 105,
+  "member_inventory_sha256": "12ccf17eb8674e51eef1a4d6f7412caae1609d776af2d69767715c7e5fec0b34",
+  "searched_case_insensitive_substrings": [
+    ".texture",
+    "sampler",
+    "cloud01",
+    ".ktx"
+  ],
+  "matching_members": [],
+  "reused_retained_local_artifact": true,
+  "network_download_performed": false,
+  "complete_texture_inventory_claim": false
+}

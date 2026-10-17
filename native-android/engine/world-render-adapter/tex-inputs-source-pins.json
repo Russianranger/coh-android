@@ -1,0 +1,16 @@
+{
+  "source_sha256": {
+    "upstream/ouroboros/Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+    "upstream/ouroboros/Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22"
+  },
+  "raw_trick_git": {
+    "path": "upstream/i24/data/tricks/coh_r/buildings/cohr_shaders_brickfiller.txt",
+    "bytes": 56583,
+    "sha256": "af91e94a4b9c32afc313e4f806615c810c625699003aca6689418a6ed9a785ea",
+    "blob": "4f1a4ba10314bbf6b310b859c86b9c42a1fa264a",
+    "parsed": false,
+    "client_generation_proven": false
+  }
+}

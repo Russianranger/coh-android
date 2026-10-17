@@ -1,0 +1,1461 @@
+{
+  "passed": true,
+  "checks": 630,
+  "case_count": 144,
+  "source_sha256": {
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/check_leaves.py": "6b666b92d942e3f46293ac7ea6dc942f599cea4fdecad72331063f9e5e8f68da",
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/leaf-source-pins.json": "44e49dc9f1474e2ee90091f28a957bd32443c0de4acc9fe756b2ece4d42fd93b",
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/leaf_adapters.h": "c971528dc88b9d5047d50b37c2df4018b378494b0529926d13b1ea0c07164d92",
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/leaf_oracle.py": "f328244df491b079689bf40d63cfe31554ab1a794759df9d5d57f23169a3e855",
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/leaf_wrapper.h": "a462575fbe500f2089a559f04e63e547119c99937205dcc7915dc5aaffe1ab3b",
+    "native-android/engine/entities/buffs_fixture.c.inc": "355ddd71a324c9bdd37d95a19b43fbd95c0ae27db9c6cf3cb2bfc63f8902ae75",
+    "native-android/engine/entities/buffs_oracle_shim.h": "f439daf190a9f9682bd1f6378b16da0682fbdff67c8a47fc75e648d078508729",
+    "native-android/engine/entities/character-prefix-source-pins.json": "3ccae26768381f0cce59f6a5e903a0fdf039ec5c23487293a6d6bcc0077a0f4f",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/check_character_prefix.py": "40acdaafd945575909b5d5a5ae03ff01b060b1b779870e00c488e6b25db29c7f",
+    "native-android/engine/entities/check_cpp_link.py": "f128b621e178b14d19fd3881b4262f7199dcf746e819fee4253b5093c46595e9",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/engine/entities/check_very_rare_tail.py": "773754a7b33763ae02011485daa3f91d5b3c2f591f20e1f8e022d3a463762d96",
+    "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/coh_taskforce.h": "0580284849d5027d27cb386ee17dc6ab27c7395c493863694bf799410755d73e",
+    "native-android/engine/entities/coh_teammate_buffs.h": "44df43e89339d0fec73d7dc75c728c16f8917a851f5a6cbaa9f32146a3e7f85e",
+    "native-android/engine/entities/coh_very_rare_tail.h": "6f1fc81912aac0690db7331a0d95f89015b0df6e34f0574aaefe82b7a32b2c36",
+    "native-android/engine/entities/costume_envelope_fixture.c.inc": "e360c69290027ef37cd162a3a157c38dafe44c3e9afdb4273d5a52db2f2265aa",
+    "native-android/engine/entities/costume_envelope_oracle.c.inc": "c13ded81f1c909e34832676e76ab6607e415a2a30498c65489db5fff7868d9f5",
+    "native-android/engine/entities/costume_envelope_oracle_shim.h": "5591deb9492e6cfecaea26d572e8a0bb290ff8a90a76b248d47668810269bd7d",
+    "native-android/engine/entities/costume_oracle.py": "d24379c691fd02152819fe8fe7a08556c6a5545c8bbdab0860dfd93ddba41785",
+    "native-android/engine/entities/costume_oracle_shim.h": "3e442ef49b35482e5b446efd1fa293d96f1949138d3f9a2be05f9b5bacb7aac0",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/power_custom_fixture.c.inc": "07aa0b398575e0300a29c31c1500aef81cecbdd29b7e0955b3966a86019bdc22",
+    "native-android/engine/entities/power_custom_observer.c.inc": "8128511c251f5818a28b4a2906230d9d7eb57f6b587d084021460caa965ad8b0",
+    "native-android/engine/entities/power_custom_oracle_shim.h": "dc1c24aa7b003a1a4c8b83bc6b86c628b2a75cb3ae6ec51386d61ec72b4f99ec",
+    "native-android/engine/entities/rare_fixture.c.inc": "a0d754e64045062018d41d35815dbcb4e352d45b3921247f0a99500ba5d80040",
+    "native-android/engine/entities/rare_oracle_shim.h": "04fa3ec89865c7c5f1473c526e64b4329f41e4cd0b21bc0d0bff30588f70df6d",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/entities/tail_fixture.c.inc": "e6bc9fe0f2b2aeb9808e5354b54853db890a149a67b0148f773366b960125bd7",
+    "native-android/engine/entities/tail_observation.h": "990fa40a03879ff1a592f6f10a8bc2139c171c39727cff77536afac81e28f4eb",
+    "native-android/engine/entities/tail_oracle_shim.h": "94c0cf23e01432312019c1e936e457a68c303530c5985c394c6e0c1a0910fb4e",
+    "native-android/engine/entities/taskforce_fixture.c.inc": "61b7a520b528426e0fd9888a2124b15280b89c425f9b9f9df31561871061ae61",
+    "native-android/engine/entities/taskforce_oracle_shim.h": "0dc37b98a6c19d333fff0d2dde98fb0da7093d499c68be1db4d2e1291cb6fa09",
+    "native-android/engine/entities/teammate-buffs-source-pins.json": "1fac23e9fb29ebfe4578eaab9a8591b23a14fb883044dac4dc986536fd824777",
+    "native-android/engine/entities/test_rare.c.inc": "53606d4173b9cfde69834c4dec87d81787161417de1d4aaafa911891e1a7ca8c",
+    "native-android/engine/entities/test_taskforce.c.inc": "1025365a63a6288de46af9e441380cd3a61322307a31f9293f96f5c8fbac6c9a",
+    "native-android/engine/entities/test_titles.c.inc": "128b261a892be50ac766fa97e9467350f3ade86ee1d5b7cf4d2c774ef4600b80",
+    "native-android/engine/entities/titles_fixture.c.inc": "39d062b156340ad34b525d70382d9ee961e7e5d2c4079283f65a62d2ec6b0992",
+    "native-android/engine/entities/titles_oracle_shim.h": "b553a29e61060dedd35c8bdcf1ac64e4956321475a9d464b9308f56db2db565e",
+    "native-android/engine/entities/very-rare-tail-source-pins.json": "c22588fc9022427809e74e6e23c66e278afa60fd0f4bbe6a3d784b386f03bfa8",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/tools/protocol_fixture/check.py": "339a6080a8b66d5a4cf5d97c9e3f73875fa312c142a7d60753f94b5a9fa6f7a4",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/tools/protocol_fixture/source-pins.json": "15095538cb7de2b6c4fca28d1ed01a33b5be730973a44be110c7e0368ed2039f",
+    "upstream/ouroboros/Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+    "upstream/ouroboros/Common/entity/TaskforceParams.c": "ca5a9331764db9a7d5c5af4738f7ad429f5629cbc3fcd71f30c00b00723d93a1",
+    "upstream/ouroboros/Common/entity/attrib_net.c": "dc634ef7f142e1f5e1ca9f49b2b99dc82a0455717b0d84250b39d309e309ce90",
+    "upstream/ouroboros/Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+    "upstream/ouroboros/Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+    "upstream/ouroboros/Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+    "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+    "upstream/ouroboros/Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+    "upstream/ouroboros/Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e",
+    "upstream/ouroboros/Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "upstream/ouroboros/Common/entity/entity_enum.h": "52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d",
+    "upstream/ouroboros/Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "upstream/ouroboros/Common/entity/netfx.h": "b86429ca627be5aecf6b993617ae871ab1e3de2eef7a58e9c4c38f1765246e73",
+    "upstream/ouroboros/Common/entity/power_customization.c": "7cad6c8e8184fc45b2457b35da0cc71a3fbb47c92ba003954cb423816baf8883",
+    "upstream/ouroboros/Common/entity/power_customization.h": "f8b5ffca5740b9dbc7e2359d6bbaec9802b5ed39951c31d998ae2baea780be62",
+    "upstream/ouroboros/Common/entity/ragdoll.h": "9a93c71d31de0ea319dc1cb7776a4ba5044dc479fa9b7354c85705fa7c6405cd",
+    "upstream/ouroboros/Common/entity/teamCommon.h": "db0018467ae696e3cd6f6b4183e932560cc427f812850331b69987cda740a0fc",
+    "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "upstream/ouroboros/Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+    "upstream/ouroboros/Common/seq/seqstate.h": "56c692d96a91b753bbeb456f214e2a7d3b91912210334268303b373b874d2dab",
+    "upstream/ouroboros/Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+    "upstream/ouroboros/Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "upstream/ouroboros/MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "upstream/ouroboros/MapServer/src/entity/entsend.h": "48cb0e645e452ba697051de1fc61c80267934801c636a6b5345d165ae7876a4c",
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/Quat.c": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structNet.c": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+  },
+  "source_proof": {
+    "base_source_pins": {
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "Common/entity/entity_enum.h": "52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d",
+      "Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e",
+      "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+      "Common/entity/ragdoll.h": "9a93c71d31de0ea319dc1cb7776a4ba5044dc479fa9b7354c85705fa7c6405cd",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "libs/UtilitiesLib/src/utils/Quat.c": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+      "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+      "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "MapServer/src/entity/entsend.h": "48cb0e645e452ba697051de1fc61c80267934801c636a6b5345d165ae7876a4c",
+      "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+      "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+      "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+      "libs/UtilitiesLib/src/utils/structNet.c": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1",
+      "Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+      "Common/entity/attrib_net.c": "dc634ef7f142e1f5e1ca9f49b2b99dc82a0455717b0d84250b39d309e309ce90",
+      "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "Common/entity/netfx.h": "b86429ca627be5aecf6b993617ae871ab1e3de2eef7a58e9c4c38f1765246e73",
+      "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+      "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+      "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "Common/entity/power_customization.c": "7cad6c8e8184fc45b2457b35da0cc71a3fbb47c92ba003954cb423816baf8883",
+      "Common/entity/power_customization.h": "f8b5ffca5740b9dbc7e2359d6bbaec9802b5ed39951c31d998ae2baea780be62",
+      "Common/entity/teamCommon.h": "db0018467ae696e3cd6f6b4183e932560cc427f812850331b69987cda740a0fc",
+      "Common/entity/TaskforceParams.c": "ca5a9331764db9a7d5c5af4738f7ad429f5629cbc3fcd71f30c00b00723d93a1"
+    },
+    "additional_full_sources_sha256_lf": {
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+      "libs/UtilitiesLib/src/utils/structNet.c": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1",
+      "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+      "Common/seq/seqstate.h": "56c692d96a91b753bbeb456f214e2a7d3b91912210334268303b373b874d2dab",
+      "libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f"
+    },
+    "whole_functions_sha256_lf": {
+      "libs/UtilitiesLib/src/utils/structNet.c:ParserSendEmptyDiff": "3b4659615f8786308b45b3b9e6ee873917480378935069b3396e701b74eba088",
+      "MapServer/src/entity/entsend.c:entSendCharacterStats": "37a1779b31771efb5494ecc9281005411b40336d548fedc7b3f3844609801785",
+      "MapServer/src/entity/entsend.c:entSendRagdollUpdate": "421de41a007b5cf8fc9f7804d1294c2183ef4ecdd0fc123ce9af4bc7fa239af2",
+      "MapServer/src/entity/entsend.c:entSendSeqMoveUpdate": "a81ca0d1d829317460c978ef43cb4153ed83e07a23267fcbc1574f2f34bfe145",
+      "MapServer/src/entity/character_net_server.c:character_SendStatusEffects": "4f2efd3e7328963eadfda879881efd4993bc359c0daad20107658ab8d9d6913c"
+    },
+    "exact_constant_definitions_sha256": "88b882517d6bd1c0ba96ee70e199355aed2cf08bdab7ac70c94035a6cb5a86e5",
+    "generated_c_sha256": "3a718f4cfed45420241f4be970b860fae6630d1af18994e585fd70ac22669b38",
+    "full_self_stats_force_all_fields": true,
+    "original_child_functions_executed": true,
+    "RAGDOLL_defined": false,
+    "class_stance_array_interfaces": "explicit bounded fixture shells; no dictionary/gameplay admission",
+    "whole_engine_win32_sanitizer_actor_ACK": false
+  },
+  "cases": [
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 158,
+      "wire_hex": "77fb719d5ce42161ee9f040ceee8260f0a773c0e"
+    },
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 159,
+      "wire_hex": "eef6e33ab9c843c2dc3f0918dcd14d1e14ee781c"
+    },
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 160,
+      "wire_hex": "deedc77572918784b97f1230b8a39b3c28dcf138"
+    },
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 161,
+      "wire_hex": "badb8febe4220f0973ff24607047377950b8e37100"
+    },
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 162,
+      "wire_hex": "7ab71fd7c9451e12e6fe49c0e08e6ef2a070c7e300"
+    },
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 163,
+      "wire_hex": "ea6e3fae938b3c24ccfd9380c11ddde441e18ec701"
+    },
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 164,
+      "wire_hex": "eadd7e5c2717794898fb2701833bbac983c21d8f03"
+    },
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 165,
+      "wire_hex": "aabbfdb84e2ef29030f74f020677749307853b1e07"
+    },
+    {
+      "kind": 1,
+      "scenario": 0,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 1080,
+      "wire_hex": "01010100000000010101000000007b00000001010000002e00000001020000001200000001030000000800000001040000000900000000010100000001010100000000c800000001010000003800000001020000001400000001030000000900000001040000000a000000000102000000010101000000000c00000001010000000e0000000000"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 1,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 2,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 3,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 4,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 5,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 6,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 7,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 8,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 1,
+      "scenario": 1,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 8,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 2,
+      "wire_hex": "01"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 3,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 4,
+      "wire_hex": "06"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 5,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 6,
+      "wire_hex": "1a"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 7,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 8,
+      "wire_hex": "6a"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 9,
+      "wire_hex": "aa00"
+    },
+    {
+      "kind": 1,
+      "scenario": 2,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 16,
+      "wire_hex": "0100"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 144,
+      "wire_hex": "7780011c58e001600e3080030b3c00dcc100"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 145,
+      "wire_hex": "ee000338b0c003c01c600007167800b8830100"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 146,
+      "wire_hex": "de0106706081078039c0000e2cf00070070300"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 147,
+      "wire_hex": "ba030ce0c0020f007380011c58e001e00e0600"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 148,
+      "wire_hex": "7a0718c081051e00e6000338b0c003c01d0c00"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 149,
+      "wire_hex": "ea0e3080030b3c00cc010670608107803b1800"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 150,
+      "wire_hex": "ea1d60000716780098030ce0c0020f00773000"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 151,
+      "wire_hex": "aa3bc0000e2cf000300718c081051e00ee6000"
+    },
+    {
+      "kind": 1,
+      "scenario": 3,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 1080,
+      "wire_hex": "010101000000000101010000000000000000010100000000000000010200000000000000010300000000000000010400000000000000000101000000010101000000000000000001010000000000000001020000000000000001030000000000000001040000000000000000010200000001010100000000000000000101000000000000000000"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 1,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 2,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 3,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 4,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 5,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 6,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 7,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 8,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 2,
+      "scenario": 0,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 8,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 1,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 2,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 3,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 4,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 5,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 6,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 7,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 8,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 2,
+      "scenario": 1,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 8,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 1,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 2,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 3,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 4,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 5,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 6,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 7,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 8,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 2,
+      "scenario": 2,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 8,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 1,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 2,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 3,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 4,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 5,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 6,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 7,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 8,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 2,
+      "scenario": 3,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 8,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 16,
+      "wire_hex": "8724"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 17,
+      "wire_hex": "0e4900"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 18,
+      "wire_hex": "1e9200"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 19,
+      "wire_hex": "3a2401"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 20,
+      "wire_hex": "7a4802"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 21,
+      "wire_hex": "ea9004"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 22,
+      "wire_hex": "ea2109"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 23,
+      "wire_hex": "aa4312"
+    },
+    {
+      "kind": 3,
+      "scenario": 0,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 96,
+      "wire_hex": "010121000000010400000000"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 1,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 2,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 3,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 4,
+      "wire_hex": "02"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 5,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 6,
+      "wire_hex": "0a"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 7,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 8,
+      "wire_hex": "2a"
+    },
+    {
+      "kind": 3,
+      "scenario": 1,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 8,
+      "wire_hex": "00"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 15,
+      "wire_hex": "094e"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 16,
+      "wire_hex": "129c"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 17,
+      "wire_hex": "263801"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 18,
+      "wire_hex": "4a7002"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 19,
+      "wire_hex": "9ae004"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 20,
+      "wire_hex": "2ac109"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 21,
+      "wire_hex": "6a8213"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 22,
+      "wire_hex": "aa0427"
+    },
+    {
+      "kind": 3,
+      "scenario": 2,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 48,
+      "wire_hex": "01000001e004"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 88,
+      "wire_hex": "ffffff07fcfbfffdff787f"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 89,
+      "wire_hex": "feffff0ff8f7fffbfff1fe00"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 90,
+      "wire_hex": "feffff1ff0effff7ffe3fd01"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 91,
+      "wire_hex": "faffff3fe0dfffefffc7fb03"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 92,
+      "wire_hex": "faffff7fc0bfffdfff8ff707"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 93,
+      "wire_hex": "eaffffff807fffbfff1fef0f"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 94,
+      "wire_hex": "eaffffff01fffe7fff3fde1f"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 95,
+      "wire_hex": "aaffffff03fefdfffe7fbc3f"
+    },
+    {
+      "kind": 3,
+      "scenario": 3,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 96,
+      "wire_hex": "0101ffffff7f01ffff000000"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 22,
+      "wire_hex": "001000"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 23,
+      "wire_hex": "002000"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 24,
+      "wire_hex": "024000"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 25,
+      "wire_hex": "02800000"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 26,
+      "wire_hex": "0a000100"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 27,
+      "wire_hex": "0a000200"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 28,
+      "wire_hex": "2a000400"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 29,
+      "wire_hex": "2a000800"
+    },
+    {
+      "kind": 4,
+      "scenario": 0,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 64,
+      "wire_hex": "0000000100000000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 150,
+      "wire_hex": "ff5700e1dc5b9ddc5859cb1c5d185ddd1c0000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 151,
+      "wire_hex": "feaf00c2b9b73ab9b1b29639ba30baba390000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 152,
+      "wire_hex": "fe5f0184736f757263652d7374617475730000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 153,
+      "wire_hex": "fabf0208e7deeae4c6ca5ae6e8c2e8eae6000000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 154,
+      "wire_hex": "fa7f0510cebdd5c98d95b5ccd185d1d5cd010000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 155,
+      "wire_hex": "eaff0a209c7bab931b2b6b99a30ba3ab9b030000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 156,
+      "wire_hex": "eaff154038f756273756d6324717465737070000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 157,
+      "wire_hex": "aaff2b8070eead4e6eacac658e2e8cae6e0e0000"
+    },
+    {
+      "kind": 4,
+      "scenario": 1,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 192,
+      "wire_hex": "ff0301050000010002736f757263652d7374617475730000"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 22,
+      "wire_hex": "001000"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 23,
+      "wire_hex": "002000"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 24,
+      "wire_hex": "024000"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 25,
+      "wire_hex": "02800000"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 26,
+      "wire_hex": "0a000100"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 27,
+      "wire_hex": "0a000200"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 28,
+      "wire_hex": "2a000400"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 29,
+      "wire_hex": "2a000800"
+    },
+    {
+      "kind": 4,
+      "scenario": 2,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 64,
+      "wire_hex": "0000000100000000"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 0,
+      "begin": 0,
+      "end": 134,
+      "wire_hex": "0413d0dc5b9ddc5859cb1c5d185ddd1c00"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 1,
+      "begin": 1,
+      "end": 135,
+      "wire_hex": "0826a0b9b73ab9b1b29639ba30baba3900"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 2,
+      "begin": 2,
+      "end": 136,
+      "wire_hex": "124c40736f757263652d73746174757300"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 3,
+      "begin": 3,
+      "end": 137,
+      "wire_hex": "229880e6deeae4c6ca5ae6e8c2e8eae60000"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 4,
+      "begin": 4,
+      "end": 138,
+      "wire_hex": "4a3001cdbdd5c98d95b5ccd185d1d5cd0100"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 5,
+      "begin": 5,
+      "end": 139,
+      "wire_hex": "8a60029a7bab931b2b6b99a30ba3ab9b0300"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 6,
+      "begin": 6,
+      "end": 140,
+      "wire_hex": "2ac10434f756273756d63247174657370700"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 0,
+      "prefix": 7,
+      "begin": 7,
+      "end": 141,
+      "wire_hex": "2a820968eead4e6eacac658e2e8cae6e0e00"
+    },
+    {
+      "kind": 4,
+      "scenario": 3,
+      "aligned": 1,
+      "prefix": 0,
+      "begin": 0,
+      "end": 176,
+      "wire_hex": "0403000100000001736f757263652d73746174757300"
+    }
+  ],
+  "scope": {
+    "original_trusted_host_producers": true,
+    "original_schema_consumer_for_self_stats": true,
+    "original_sequence_status_ragdoll_consumers": false,
+    "sanitizers": false,
+    "whole_engine": false,
+    "win32": false,
+    "live_server": false,
+    "dictionary_authority": false,
+    "actor": false,
+    "ACK": false
+  },
+  "source_commit": "c4b117046046a71bcc389c0f457e1bb5904fe876"
+}

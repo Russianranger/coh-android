@@ -1,0 +1,24 @@
+{
+  "source_sha256": {
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparserUtils.h": "3ca527a5209a3ebd672719ed1e3c802aa9f070b8db78e48ad38f9533d837edf8",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81"
+  },
+  "cache": {
+    "path": "data/bin/tricks.bin",
+    "bytes": 13537052,
+    "sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+    "observed_schema_crc": "5ba1b0e3"
+  },
+  "archive": {
+    "bytes": 27071659,
+    "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+  },
+  "manifest": "native-android/engine/entities/qualification/costume-export-20261017/client-cache-manifest.json",
+  "manifest_sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352"
+}

@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "manifest_sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+  "helper_sha256": "12fad465c6c087fa0a2bdb6917d1c6fd619926f83378efd86e3f6ddcabcc95da",
+  "script_sha256": "194b26d4f7ed2352a48fd4b58e9b9b8d4ca40c7262fe25068c270ce794b4f7b4",
+  "outer_full_sha_verified": false,
+  "inner_full_sha_verified": false,
+  "source_generation_established": false,
+  "asset_generation_permit": false,
+  "material_authority": false,
+  "world_authority": false,
+  "selected_payload_sha256": "c224a6dff69716bde300bb956d7415745780ceeee249e526ad1de69cab654b58",
+  "selected_payload_bytes": 22163,
+  "zip_crc_verified": true,
+  "zip_crc32": "addbef4a",
+  "zip_header_offset": 168044576,
+  "zip_method": 8,
+  "zip_compressed_bytes": 11561,
+  "range_bytes": 671212,
+  "ranges": [
+    [
+      1630076928,
+      1630092779
+    ],
+    [
+      357695488,
+      357761023
+    ],
+    [
+      565510144,
+      565575679
+    ],
+    [
+      565116928,
+      565575679
+    ],
+    [
+      525729792,
+      525795327
+    ]
+  ],
+  "etag": "\"0x8DF27B1DA04C5EA\""
+}

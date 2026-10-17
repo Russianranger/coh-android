@@ -1,0 +1,60 @@
+{
+  "schema": "coh-independent-selected-record-component-review-v1",
+  "approved": true,
+  "source_commit": "3dc8f9f28d44f7c7649dae7cdfee6d581367aac7",
+  "evidence_commit": "55c1db2f0",
+  "host_proof_sha256": "d0a73e78548d6a876b4eec39a51912a9ec87e46084302e369f7a47818ce4d8d8",
+  "verified_commit_input_count": 78,
+  "production_sha256": {
+    "native-android/engine/selected-record/coh_selected_record.c": "25b2bda8f16f7b6bbfe62ad48e6202e1b2338a4d8de67258654c0fc67e9ac360",
+    "native-android/engine/selected-record/coh_selected_record.h": "c05eb2270b3b000ce34fe23a88d6e2d8e655709003073ebb6d2ec7182f619b80"
+  },
+  "review": [
+    "All13 source-ordered child stages, exact optional branches and full basic schema consumption; full original enclosing sender is not executed by this historical component tranche.",
+    "Precallback named budget includes full input, context, prior, output, workspace, failure, dictionary extent, retained owner,64KiB native reserve and active charged loan. Partial represented error loans release exactly once; active scratch released before next stage; no loan pointer escapes.",
+    "Power/costume/taskforce scratch is sequential; SG-tail and teammate children retain stricter4MiB total caps. Allowance is calculated before acquisition; callbacks and actual dictionary/packet owner lifetimes remain explicit external contracts.",
+    "Overflow-safe known-span disjoint checks precede mutable failure/workspace writes; whole reader and public output commit only after every child passes. Failure diagnostic/workspace can mutate on refusal.",
+    "Selected DBID must originate from real opaque DBSession handoff; context POD itself grants no identity authority. Dictionary source authenticity and whole-list ordering remain enclosing prerequisites."
+  ],
+  "qualification": {
+    "release": {
+      "checks": 352228,
+      "fixtures": 50,
+      "successes": 9757,
+      "refusals": 29602,
+      "truncations": 25411,
+      "byte_mutations": 12148,
+      "loan_controls": 1260
+    },
+    "asan": {
+      "checks": 352228,
+      "fixtures": 50,
+      "successes": 9757,
+      "refusals": 29602,
+      "truncations": 25411,
+      "byte_mutations": 12148,
+      "loan_controls": 1260
+    },
+    "ubsan": {
+      "checks": 352228,
+      "fixtures": 50,
+      "successes": 9757,
+      "refusals": 29602,
+      "truncations": 25411,
+      "byte_mutations": 12148,
+      "loan_controls": 1260
+    }
+  },
+  "rerun_by_reviewer": false,
+  "scope": {
+    "component_syntax_only": true,
+    "complete_original_sendEntity": false,
+    "whole_entity_list": false,
+    "live_dictionary": false,
+    "initial_update": false,
+    "actor": false,
+    "ACK": false,
+    "android": false,
+    "thor": false
+  }
+}

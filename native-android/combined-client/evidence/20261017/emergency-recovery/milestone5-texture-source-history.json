@@ -1,0 +1,29 @@
+{
+  "heads": {
+    "renderer-texcache": "b451c05a342f88098d6f431ac32cb2f6b46b1c39",
+    "renderer-fulltexopt": "89fb08a6a34f188dcf9c78b4d040fdcb855388b8",
+    "qualification-texcache": "43d0fe87bce21c417e6bb04d48f0fc48d51ed2ea"
+  },
+  "prerequisite_refs": [
+    "refs/recovery/20261017/milestone4-auth",
+    "refs/recovery/20261017/milestone4-catalog",
+    "refs/recovery/20261017/milestone4-entities",
+    "refs/recovery/20261017/milestone4-graph-bounds",
+    "refs/recovery/20261017/milestone4-graph-groups",
+    "refs/recovery/20261017/milestone4-qualification",
+    "refs/recovery/20261017/milestone4-renderer",
+    "refs/recovery/20261017/milestone4append-catalog-bridge",
+    "refs/recovery/20261017/milestone4append-entities-identity",
+    "refs/recovery/20261017/milestone4append-graph-instances",
+    "refs/recovery/20261017/milestone4append-qualification",
+    "refs/recovery/20261017/milestone5-auth-manual",
+    "refs/recovery/20261017/milestone5-catalog-coverage",
+    "refs/recovery/20261017/milestone5-qualification",
+    "refs/recovery/20261017/milestone5-renderer-inputs",
+    "refs/recovery/20261017/milestone5append-entities-selected",
+    "refs/recovery/20261017/milestone5append-qualification-selected"
+  ],
+  "bytes": 620018,
+  "sha256": "aa9c9b8e5a54120f1f2c00d3754c8726251f46958bdacd9692a1a836cb8c94c4",
+  "verification": "The bundle contains these 3 refs:\nb451c05a342f88098d6f431ac32cb2f6b46b1c39 refs/recovery/20261017/milestone5tex-renderer-texcache\n89fb08a6a34f188dcf9c78b4d040fdcb855388b8 refs/recovery/20261017/milestone5tex-renderer-fulltexopt\n43d0fe87bce21c417e6bb04d48f0fc48d51ed2ea refs/recovery/20261017/milestone5tex-qualification-texcache\nThe bundle requires these 2 refs:\n48ac2c94e3c3d0d91631880aea34af01aaae3b0d \n8b3b0c28fa485c0bb312714b18c8f835820a326a \nThe bundle uses this hash algorithm: sha1\nnative-android/combined-client/evidence/20261017/emergency-recovery/milestone5-texture-source-history.bundle is okay\n"
+}

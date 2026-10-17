@@ -1,0 +1,100 @@
+{
+  "passed": true,
+  "source_revision": "9cc6e0f1aff1c1c0d65145aee3b88447dd45f59d",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/CLIENT_TEXOPT_FULL.md": "7cbc5a1803553907648543a96d54b5a01956d6b8c0ec427889cf634a05cf94eb",
+    "native-android/engine/world-render-adapter/texopt_full_cache.py": "048bbc3537365c1a620c2786d956f31ce3658cb864b332e05e0cc5edcb5d24e6",
+    "native-android/engine/world-render-adapter/texopt_full_oracle.py": "5cd6ab31031e64ac0d2096111268787d32055431fb7e31001b4e10be4ed1a514",
+    "native-android/engine/world-render-adapter/check_texopt_full.py": "a1f7b546fec6cf2644c8cc9b8fcee962007352413952fbf4bf9b50fb174cbaec",
+    "native-android/engine/world-render-adapter/texopt_cache_contract.py": "a193a583ddffde758d4e6877114852b3d419bae9548a77ddc1d2b631a1497734",
+    "native-android/engine/world-render-adapter/texopt-cache-source-pins.json": "774b0131b805619a452ad192a05bcc219615d7bfb8a6a29eb8aa875ed7d0deb7",
+    "native-android/engine/world-render-adapter/check_texopt_cache.py": "e89da3e91acee48710812cc636278dcc6ab80a6b2a7bde27eb83f3514c067e4e",
+    "native-android/engine/world-render-adapter/check_texname.py": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparserUtils.h": "3ca527a5209a3ebd672719ed1e3c802aa9f070b8db78e48ad38f9533d837edf8",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81"
+  },
+  "cache": {
+    "path": "data/bin/tricks.bin",
+    "bytes": 13537052,
+    "sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+    "observed_schema_crc": "5ba1b0e3"
+  },
+  "controls": 42,
+  "modes": {
+    "release": {
+      "passed": true,
+      "texopts": 14715,
+      "scalar_string_observations": 2251395,
+      "transcript_bytes": 11539670,
+      "transcript_sha256": "b7494736082e979345d62d0a46666972d666894613528c0166f39355de36acfe"
+    },
+    "address": {
+      "passed": true,
+      "texopts": 14715,
+      "scalar_string_observations": 2251395,
+      "transcript_bytes": 11539670,
+      "transcript_sha256": "b7494736082e979345d62d0a46666972d666894613528c0166f39355de36acfe"
+    },
+    "undefined": {
+      "passed": true,
+      "texopts": 14715,
+      "scalar_string_observations": 2251395,
+      "transcript_bytes": 11539670,
+      "transcript_sha256": "b7494736082e979345d62d0a46666972d666894613528c0166f39355de36acfe"
+    }
+  },
+  "schema_tables": [
+    [
+      "Vec2Default1",
+      2
+    ],
+    [
+      "Vec3Default1",
+      3
+    ],
+    [
+      "RGBDefault255",
+      3
+    ],
+    [
+      "parse_rgb3",
+      4
+    ],
+    [
+      "parse_tex_opt_fallback",
+      10
+    ],
+    [
+      "parse_tex_opt",
+      96
+    ]
+  ],
+  "original_table_declarations_executed": true,
+  "original_readbin_functions": [
+    "ParserReadBinaryTable",
+    "struct_readbin",
+    "nonarray_readbin",
+    "fixedarray_readbin",
+    "string_readbin",
+    "float_readbin",
+    "int_readbin",
+    "u8_readbin",
+    "ReadPascalString"
+  ],
+  "table_macros_use_wire_observer_types": true,
+  "original_storage_runtime_executed": false,
+  "tokenstore_observers_used": true,
+  "runtime_structure_offsets_qualified": false,
+  "compiled_schema_crc_recomputed": false,
+  "postprocess_executed": false,
+  "active_client_generation": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_execution": false
+}

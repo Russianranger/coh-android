@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "reviewed_revision": "a354ed73c37f8114fdcc7740a95b8a81bb64e2c8",
+  "original_source_revision": "661864b8b26d31ab9051245fad4d7f68688c0c0b",
+  "budget_fix_revision": "727c7d08c9ae3f557a884920020d4157bf6ae36f",
+  "review_kind": "Independent immutable cached-header/raw-trick input owner source, fixed budget finding and exact retained proof/blob audit; no replay",
+  "blocking_findings": [],
+  "resolved_findings": [
+    "Own preparation/control storage missing from initial aggregate preflight; fixed explicit reportable16KiB reserve charged before calloc/acquire. Minus-reserve budget negative asserts no extra loader reads or digest calls. External dependency/compiler/sanitizer/callback stack closure remains explicitly external."
+  ],
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/tests/test_tex_inputs.c": "4d338e9a9197f56d587161720d7b1b7ea21c177654851e3c777f118d6b747212",
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.c": "86245d945f660f46ed1c3ed86493f43c8d0f0e19785a84c07bfc33f6cb084194",
+    "native-android/engine/world-render-adapter/coh_wr_texname_guarded.c": "239e01dc9d0409e9684fb0a6a39514dad2b50970add729629a40fb34c67124f8",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.h": "be1e6392b45c26b2925faa3ec0de15fc3d272811af30a4fc92aeb81c7baf700b",
+    "native-android/engine/world-render-adapter/coh_wr_texname_guarded.h": "1fcb2868680ec238fa3fcb509e839d6bee110b479d64708d200660492e0a0027",
+    "native-android/engine/world-render-adapter/coh_wr_texname.h": "68d93c487612db16f8c784d38c227d0e94006b0c5b4d5c5ddc4089359d78d115",
+    "native-android/engine/world-render-adapter/check_tex_inputs.py": "4780fbd47bbc8aa5ced1d4d661979d8be39a947bcf586d25e38299b5fd7fd190",
+    "native-android/engine/world-render-adapter/check_texname.py": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+    "native-android/engine/world-render-adapter/tex-inputs-authentic-pins.json": "217111c6909ba08a1acee6460df9840455a429091b9998625e85cc2f91799a98",
+    "native-android/engine/world-render-adapter/tex-inputs-source-pins.json": "54ea43a850e204f5c035b814f9682653578c56a6ba4bb3ab7b72cd5d57ee4c27",
+    "native-android/engine/world-render-adapter/sampler-authentic-pins.json": "a80887dacabe98deb119ac948e498fbba7d51cf97a1057c96f79e22df0d849bc",
+    "native-android/engine/world-render-adapter/acquire_tex_inputs.py": "194b26d4f7ed2352a48fd4b58e9b9b8d4ca40c7262fe25068c270ce794b4f7b4",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "upstream/ouroboros/Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+    "upstream/ouroboros/Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22"
+  },
+  "receipt_sha256": "1f64f6c6e84e8d3841182e7c95fc3c87f2d660ee935b943383c02afd0514d112",
+  "review": [
+    "One bounded owner allocation and acquired immutable full-body pins; exact trusted SHA256 callback, actual acquired asset path/generation, cached header grammar checked before publication. Every failed prefix retires all acquired pins; old out remains unchanged.",
+    "Up to256 inputs/kind, bounded ASCII names/paths, safe original suffix subset, cached filename/key role equality, underscore path refusal and32+1024 source cached header cap. Input ordinals preserved, separate in-place heapsort indexes, case-insensitive Basic-key collisions refuse instead of inventing original overlay order.",
+    "Original cached-name pre-stash block+safe texFixName execute with exact source32-byte header struct; model-table last-extension policy is a separate projection. Imported Basic-key namespace only, absence means absent from this subset.",
+    "Known output/input/source aliases rejected, overflow-safe bounded sizes and finite heap allocation counts, loader entire configured reservation precharged and historical peak checked. Old/material/digest/provider and external runtime storage explicitly caller-budgeted.",
+    "Raw trick text pinned/unparsed, no BasicTexture/TexBind/defaultseed, TexOpt postprocess, capabilities/material/activeCLIENT table or sourcegeneration produced. Cachedflags differ from runtimeBasicflag domain.",
+    "Bar acquired by bounded existing range retrieval with selected body SHA/ZIPCRC, not full archiveSHA verification. Existing prior artifact inspected and reused; no repeat workflow/server/download by F."
+  ],
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 1682,
+      "actual_cached_headers": 2,
+      "actual_raw_trick_files": 1,
+      "derived_namespace_rows": 256,
+      "raw_tricks_parsed": false,
+      "basic_texture_created": false,
+      "texbind_created": false,
+      "asset_generation_permit": false,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 1682,
+      "actual_cached_headers": 2,
+      "actual_raw_trick_files": 1,
+      "derived_namespace_rows": 256,
+      "raw_tricks_parsed": false,
+      "basic_texture_created": false,
+      "texbind_created": false,
+      "asset_generation_permit": false,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 1682,
+      "actual_cached_headers": 2,
+      "actual_raw_trick_files": 1,
+      "derived_namespace_rows": 256,
+      "raw_tricks_parsed": false,
+      "basic_texture_created": false,
+      "texbind_created": false,
+      "asset_generation_permit": false,
+      "material_authority": false,
+      "world_authority": false
+    }
+  },
+  "independent_tricks_inventory": {
+    "passed": true,
+    "method": "independent ls-tree exact membership plus streaming git cat-file --batch full blob SHA256",
+    "revision": "661864b8b26d31ab9051245fad4d7f68688c0c0b",
+    "inventory_receipt_sha256": "06b62b49ad6a7cac80a099701919fc74d6aaac31ebef4da47ea9775e23c1a1d2",
+    "files": 1585,
+    "bytes": 12161418,
+    "active_CLIENT_generation_proven": false
+  },
+  "actual_body_sha256": {
+    "Bar": {
+      "bytes": 22163,
+      "sha256": "c224a6dff69716bde300bb956d7415745780ceeee249e526ad1de69cab654b58"
+    },
+    "Box": {
+      "bytes": 43990,
+      "sha256": "c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a"
+    }
+  },
+  "basic_texture_created": false,
+  "texbind_created": false,
+  "raw_tricks_parsed": false,
+  "source_generation_established": false,
+  "asset_generation_permit": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_execution": false,
+  "preserved_initial_receipts": {
+    "retained-tricks-inventory.json": "06b62b49ad6a7cac80a099701919fc74d6aaac31ebef4da47ea9775e23c1a1d2",
+    "prior-artifact-inspection.json": "b4fb5570c9e9da550a3ea4492e9f7c7ff5350dd0f8e203e9af8f2bf5ce7a2da3",
+    "bar-acquisition.json": "a5b6176a75c4570bbad30c59f74bf4539fb6333ee756c5b6d8bf76deacae2bb0",
+    "host.json": "244ab57109a98987d43b067872253de9dad3189197db214f10e2147062d12629",
+    "files.json": "5d7a0c1a64db62a016e0ab824da23211d8ac1825022f02fbb54a45043bd98bfe"
+  },
+  "raw_trick_git": {
+    "path": "upstream/i24/data/tricks/coh_r/buildings/cohr_shaders_brickfiller.txt",
+    "bytes": 56583,
+    "sha256": "af91e94a4b9c32afc313e4f806615c810c625699003aca6689418a6ed9a785ea",
+    "blob": "4f1a4ba10314bbf6b310b859c86b9c42a1fa264a",
+    "parsed": false,
+    "client_generation_proven": false
+  }
+}

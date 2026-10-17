@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "source_revision": "536b513e791c1e54c1921be3716e2ee94480046d",
+  "helper_sha256": "90343dd59c13909b7850db2b8fa5b4be6d8358debdfd47124ebbec0abb75ca80",
+  "controls": 7,
+  "raw_sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+  "raw_bytes": 13537052,
+  "compressed_sha256": "3e00fe9f1fcc98eb3ae91208ff7b3153569c747878f33a93001acdf253d1fbdb",
+  "compressed_bytes": 603236,
+  "material_authority": false,
+  "world_authority": false
+}

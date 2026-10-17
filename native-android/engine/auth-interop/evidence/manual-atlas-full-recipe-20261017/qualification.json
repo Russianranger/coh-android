@@ -1,0 +1,40 @@
+{
+  "schema": "coh-manual-atlas-full-source-host-qualification-v1",
+  "passed": true,
+  "suites": 5,
+  "skips": 0,
+  "local_inputs": {
+    "native-android/engine/auth-interop/deployment/manual_atlas_full_recipe.py": "ee8ece73aba177100993f32e27bface62b5e054d71a3b34c7fc0c20af0c07223",
+    "native-android/engine/auth-interop/deployment/test_manual_atlas_full_recipe.py": "bb96fa5ed1a162f0801ffd8d32ef9d0417b4a1feec3a29f842557ea9bbb252a8",
+    "native-android/engine/auth-interop/deployment/qualify_manual_atlas_full_recipe.py": "b515d6a3944baef2736c5d9569e1e7e6a69b64558f4e11fe9bda810e7fe6323e",
+    "native-android/engine/auth-interop/deployment/MANUAL-ATLAS-FULL-RECIPE.md": "b64695c97a18ecb4b4572303852096d3765e7090fa420e62b4defafabe96b87e",
+    "native-android/engine/auth-interop/deployment/pg_wine_checksum_recipe.py": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
+    "native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+    "native-android/engine/auth-interop/deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+    "native-android/engine/auth-interop/deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+    "native-android/engine/auth-interop/deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+    "native-android/engine/auth-interop/deployment/source-pins.json": "a49c8290d8a720c86c825e593d073733fb0cf429c4efff1337d8be8ca6226b3b",
+    "native-android/engine/auth-interop/source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+  },
+  "retained_evidence": {
+    "static-build-plan.json": "052bb95ea037ec0cf3b98342e7d2beac1a4e1a1e3228efc1ed855a6b873c4d89",
+    "recovery.json": "fc86782fa1775b687a2e3f9f2a1bbc0372111c19125c5466c5b583d3a2b5a50b",
+    "source-recipe.json": "bdd7aa999c413bfb49bf4fd5ddbce20c417f355efea1be9f373262ffd2e9d979",
+    "accepted-startup-dbserver-manifest.json": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+    "host-tests.txt": "d091a0b7ca0cc8d0ac567a5883cb301682701123ff94f625e43ce8bc45eb2ff7",
+    "source-recipe.source-maps.json.gz": "0cf8c44c7f3fc1f840834ab69cb5a8c3800d24a572a92a7f80d1d2a2d70fefa4"
+  },
+  "original_files": 5995,
+  "manual_files": 6007,
+  "candidate_files": 6007,
+  "static_declared_cmake_inputs": 504,
+  "external_CPM_dependencies_materialized": false,
+  "build_executed": false,
+  "service_executed": false,
+  "android_or_thor_executed": false,
+  "sanitizers": "not_applicable_python_source_composition",
+  "shipping_runtime_replacement_permit": false,
+  "live_authenticated_db_login_verified": false
+}

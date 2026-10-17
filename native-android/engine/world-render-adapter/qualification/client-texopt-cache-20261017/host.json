@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "source_revision": "47d0c2478f0b1319c79912b5a530a7723877d51e",
+  "source_sha256": {
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparserUtils.h": "3ca527a5209a3ebd672719ed1e3c802aa9f070b8db78e48ad38f9533d837edf8",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+    "native-android/engine/world-render-adapter/CLIENT_TEXOPT_CACHE.md": "f0609e2926131165897f6d7efad895bf0daf653d5f5a4243e0c603fa2cb0ba21",
+    "native-android/engine/world-render-adapter/recover_texopt_cache.py": "fde1c2a11434549f6b6294ee91177f5dffb58f4dabcb187ad1c3c40db1e6072c",
+    "native-android/engine/world-render-adapter/texopt_cache_contract.py": "a193a583ddffde758d4e6877114852b3d419bae9548a77ddc1d2b631a1497734",
+    "native-android/engine/world-render-adapter/check_texopt_cache.py": "e89da3e91acee48710812cc636278dcc6ab80a6b2a7bde27eb83f3514c067e4e",
+    "native-android/engine/world-render-adapter/check_texname.py": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+    "native-android/engine/world-render-adapter/texopt-cache-source-pins.json": "774b0131b805619a452ad192a05bcc219615d7bfb8a6a29eb8aa875ed7d0deb7"
+  },
+  "cache": {
+    "path": "data/bin/tricks.bin",
+    "bytes": 13537052,
+    "sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+    "observed_schema_crc": "5ba1b0e3"
+  },
+  "schema_tables": {
+    "parse_tex_opt_fallback": {
+      "source_sha256_lf": "e5330d5204194a7503f2452ad38a0be954590e30a2a4ba5165c1bec8ac0ac40f",
+      "declaration_bytes": 1470
+    },
+    "parse_tex_opt": {
+      "source_sha256_lf": "54111ac55f184b2401b4a48a6b3ade03ba4e980a8589c0e6fb30a57c25a05bf0",
+      "declaration_bytes": 9581
+    },
+    "parse_trick": {
+      "source_sha256_lf": "df784d3dcd4c4460556bcaa9af6e4688c35da887ecc9ed5e2e14ce138526065e",
+      "declaration_bytes": 2319
+    },
+    "parse_trick_list": {
+      "source_sha256_lf": "86dcd1b241a76b09b7b7b8257e13400ad71d12f42e472d61b0defbdeb2e9d8ff",
+      "declaration_bytes": 202
+    }
+  },
+  "schema_crc_recomputed_from_compiled_tables": false,
+  "controls": 36,
+  "modes": {
+    "release": {
+      "leak_sanitizer_enabled": false,
+      "original_filelist_reader_executed": true,
+      "original_pascal_reader_executed": true,
+      "transcript_sha256": "6d50ca4f51460660e6c73c366539cf8ad2bad626ede7ef659639c9ab1fce54c6",
+      "prefixes": 14715,
+      "file_entries": 1585,
+      "opaque_tricks": 3644
+    },
+    "address": {
+      "leak_sanitizer_enabled": false,
+      "original_filelist_reader_executed": true,
+      "original_pascal_reader_executed": true,
+      "transcript_sha256": "6d50ca4f51460660e6c73c366539cf8ad2bad626ede7ef659639c9ab1fce54c6",
+      "prefixes": 14715,
+      "file_entries": 1585,
+      "opaque_tricks": 3644
+    },
+    "undefined": {
+      "leak_sanitizer_enabled": false,
+      "original_filelist_reader_executed": true,
+      "original_pascal_reader_executed": true,
+      "transcript_sha256": "6d50ca4f51460660e6c73c366539cf8ad2bad626ede7ef659639c9ab1fce54c6",
+      "prefixes": 14715,
+      "file_entries": 1585,
+      "opaque_tricks": 3644
+    }
+  },
+  "files": 1585,
+  "texopts": 14715,
+  "tricks": 3644,
+  "original_compiler_warning_preserved": "FileListRead maybe-uninitialized",
+  "opaque_material_payloads": true,
+  "complete_material_grammar_parsed": false,
+  "cache_generation_live_matched": false,
+  "effective_postprocess_executed": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_execution": false
+}

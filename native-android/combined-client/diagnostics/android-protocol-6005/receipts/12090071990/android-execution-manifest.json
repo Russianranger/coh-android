@@ -1,0 +1,154 @@
+{
+  "actual_server_interoperability_verified": false,
+  "android_executed": false,
+  "passed": true,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "schema": "coh-native-live-contracts-android-v1",
+  "scope": "Five independent native crypto/TCP/UDP contracts with scripted peers; no full-shard authentication",
+  "suites": {
+    "crypto": {
+      "abis": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "crypto/arm64-v8a/test_auth_android",
+          "bytes": 5574840,
+          "receipt": "crypto/arm64-v8a/receipt.json",
+          "receipt_sha256": "d8e3421fab4bb55c3c70f3c9ca56ddae7cd9a67ba37e980184235c7d8c366084",
+          "sha256": "8f1884bcbf290e7a4626551e3b9484adfd0e132fb6a6c4a82986fef988cf8217"
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "crypto/x86_64/test_auth_android",
+          "bytes": 5827936,
+          "receipt": "crypto/x86_64/receipt.json",
+          "receipt_sha256": "3d15aa486551e8ad2172d8c58290464907081ec769a673d1691a06ee8df4f402",
+          "sha256": "5a3f7f0547afe9a71ec9c58eec277b1547a97be194ea1ae27cd56b7342d5dbdc"
+        }
+      },
+      "receipt_kind": "crypto",
+      "required": {
+        "authenticated_server_session": false,
+        "checks": 1920,
+        "malformed_inputs": 10000
+      }
+    },
+    "db_session": {
+      "abis": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "android/dbclient/coh-db-session-arm64-v8a",
+          "bytes": 102576,
+          "receipt": "android/dbclient/android-build.json",
+          "receipt_sha256": "ea4e5b44aa895ab3b13842edfcf9a3067d9057f993136c19f78e4afc99b066d7",
+          "sha256": "c1056843425e8255378f71921d417ba295020156635df41ee0e55a4cb3a558f6"
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "android/dbclient/coh-db-session-x86_64",
+          "bytes": 106928,
+          "receipt": "android/dbclient/android-build.json",
+          "receipt_sha256": "ea4e5b44aa895ab3b13842edfcf9a3067d9057f993136c19f78e4afc99b066d7",
+          "sha256": "fd68166b0008189716b83eeeb80b5924a19948ffe56858f5763c8f7587b9a9db"
+        }
+      },
+      "artifact_kind": "session",
+      "receipt_kind": "db",
+      "required": {
+        "actual_os_udp": true,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 14,
+        "source_layout_peer": true
+      }
+    },
+    "db_wire": {
+      "abis": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "android/dbclient/coh-db-wire-arm64-v8a",
+          "bytes": 81184,
+          "receipt": "android/dbclient/android-build.json",
+          "receipt_sha256": "ea4e5b44aa895ab3b13842edfcf9a3067d9057f993136c19f78e4afc99b066d7",
+          "sha256": "e13c8c33930a12e79c3a0af04a427dce31e5ab1db84c20163add7254e652c9c1"
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "android/dbclient/coh-db-wire-x86_64",
+          "bytes": 83344,
+          "receipt": "android/dbclient/android-build.json",
+          "receipt_sha256": "ea4e5b44aa895ab3b13842edfcf9a3067d9057f993136c19f78e4afc99b066d7",
+          "sha256": "fb2e974ce770a732736b00efb58d8cac38a624de81b32e8b48ef46ed8fe9a909"
+        }
+      },
+      "artifact_kind": "wire",
+      "receipt_kind": "db",
+      "required": {
+        "malformed_inputs": 10000,
+        "passed": true,
+        "real_server_login": false
+      }
+    },
+    "login": {
+      "abis": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "android/login/arm64-v8a/test_login_android",
+          "bytes": 5588720,
+          "receipt": "android/login/arm64-v8a/receipt.json",
+          "receipt_sha256": "0fb89afd879b0f6213e809430ed5e1f701fae1968022750542c3a338031bce9a",
+          "sha256": "1882da26dd1f02d72178ad651f3fc00df1e46b29b4fc0fa13bd79271e571581d"
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "android/login/x86_64/test_login_android",
+          "bytes": 5837768,
+          "receipt": "android/login/x86_64/receipt.json",
+          "receipt_sha256": "2061fbecb94a4772b2e474516c9bac97bdf1ae986e02b0ff5260b1e22666e4e4",
+          "sha256": "a057574ca499fed46d5302b4ed4d8e96948458b5f88c36825d49c2160ed89dfd"
+        }
+      },
+      "receipt_kind": "module",
+      "required": {
+        "actual_os_tcp": true,
+        "descriptor_cleanup": true,
+        "passed": true,
+        "passwords_logged": false,
+        "real_account_login_verified": false,
+        "socket_scenarios": 11,
+        "synthetic_authserver": true
+      }
+    },
+    "mapclient": {
+      "abis": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "android/mapclient/arm64-v8a/test_mapclient_android",
+          "bytes": 330600,
+          "receipt": "android/mapclient/arm64-v8a/receipt.json",
+          "receipt_sha256": "d689fd7eac5f06a2565a485a7598c7b64197a0b9c8d125e4627b47b2f85f4f57",
+          "sha256": "e9991e1f04f5bee1106466bcb15ea5ae22395400958149bbbc4da0ba956e6685"
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "android/mapclient/x86_64/test_mapclient_android",
+          "bytes": 331296,
+          "receipt": "android/mapclient/x86_64/receipt.json",
+          "receipt_sha256": "2aecfe6f6ae6177e096c784f684a3d7cdb52eb41c5301ac5a61a6e02ae2aa172",
+          "sha256": "39c4ba0db44af3478c701bcd8cf6c22186a65ee26eefa9c0a4debfa63ada4645"
+        }
+      },
+      "receipt_kind": "module",
+      "required": {
+        "actual_authentication": false,
+        "actual_os_udp": true,
+        "live_world": false,
+        "negative_cases": 10665,
+        "scenarios": 33,
+        "scripted_peer_only": true,
+        "socket_leak_check": true
+      }
+    }
+  }
+}

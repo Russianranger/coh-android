@@ -1,0 +1,18 @@
+{
+  "additional_full_sources_sha256_lf": {
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+    "libs/UtilitiesLib/src/utils/structNet.c": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/seq/seqstate.h": "56c692d96a91b753bbeb456f214e2a7d3b91912210334268303b373b874d2dab",
+    "libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f"
+  },
+  "whole_functions_sha256_lf": {
+    "libs/UtilitiesLib/src/utils/structNet.c:ParserSendEmptyDiff": "3b4659615f8786308b45b3b9e6ee873917480378935069b3396e701b74eba088",
+    "MapServer/src/entity/entsend.c:entSendCharacterStats": "37a1779b31771efb5494ecc9281005411b40336d548fedc7b3f3844609801785",
+    "MapServer/src/entity/entsend.c:entSendRagdollUpdate": "421de41a007b5cf8fc9f7804d1294c2183ef4ecdd0fc123ce9af4bc7fa239af2",
+    "MapServer/src/entity/entsend.c:entSendSeqMoveUpdate": "a81ca0d1d829317460c978ef43cb4153ed83e07a23267fcbc1574f2f34bfe145",
+    "MapServer/src/entity/character_net_server.c:character_SendStatusEffects": "4f2efd3e7328963eadfda879881efd4993bc359c0daad20107658ab8d9d6913c"
+  },
+  "exact_constant_definitions_sha256": "88b882517d6bd1c0ba96ee70e199355aed2cf08bdab7ac70c94035a6cb5a86e5"
+}

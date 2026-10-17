@@ -1,0 +1,40 @@
+{
+  "cache_sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+  "file_count": 1585,
+  "texopts": 14715,
+  "tricks": 3644,
+  "selected_actual_prefixes": [
+    {
+      "ordinal": 273,
+      "name_ascii": "asphalt_squaremask2",
+      "source_file_ascii": "TRICKS/BUILDINGS/FILLER_RUIN1.TXT",
+      "timestamp": 1767225600,
+      "record_offset": 313740,
+      "record_bytes": 788,
+      "record_sha256": "b0d55c7c6b0e1eb22889acd4d64195be202b6f45ab98d6e95edc2f3286a58a03",
+      "opaque_material_offset": 313828,
+      "opaque_material_bytes": 700,
+      "material_decoded": false,
+      "effective_material_authority": false
+    },
+    {
+      "ordinal": 2913,
+      "name_ascii": "asphalt_squaremask",
+      "source_file_ascii": "TRICKS/COH_R/BUILDINGS/COHR_SHADERS_BRICKFILLER.TXT",
+      "timestamp": 1767225600,
+      "record_offset": 2729228,
+      "record_bytes": 940,
+      "record_sha256": "8340db724d676144bd5ba132ee5ad7ca1a325aa4ab07ad314b9476e9080843a3",
+      "opaque_material_offset": 2729328,
+      "opaque_material_bytes": 840,
+      "material_decoded": false,
+      "effective_material_authority": false
+    }
+  ],
+  "direct_bar_vert_sign_name_present": false,
+  "direct_absence_proves_no_directory_trick": false,
+  "ascii_casefold_used_for_observation_only": true,
+  "file_list_is_original_parse_order": false,
+  "postprocessed_table": false,
+  "live_generation_proven": false
+}

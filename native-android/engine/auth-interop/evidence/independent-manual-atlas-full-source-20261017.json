@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "reviewed_revision": "966b2ad0c7cbd6017968c193db935acc64c13f6e",
+  "review_kind": "Independent complete source recipe/layer/build-plan and retained donor/fullmap byte audit; no recipe suite/compiler/server replay",
+  "blocking_findings": [],
+  "local_source_sha256": {
+    "native-android/engine/auth-interop/deployment/manual_atlas_full_recipe.py": "ee8ece73aba177100993f32e27bface62b5e054d71a3b34c7fc0c20af0c07223",
+    "native-android/engine/auth-interop/deployment/test_manual_atlas_full_recipe.py": "bb96fa5ed1a162f0801ffd8d32ef9d0417b4a1feec3a29f842557ea9bbb252a8",
+    "native-android/engine/auth-interop/deployment/qualify_manual_atlas_full_recipe.py": "b515d6a3944baef2736c5d9569e1e7e6a69b64558f4e11fe9bda810e7fe6323e",
+    "native-android/engine/auth-interop/deployment/MANUAL-ATLAS-FULL-RECIPE.md": "b64695c97a18ecb4b4572303852096d3765e7090fa420e62b4defafabe96b87e",
+    "native-android/engine/auth-interop/deployment/pg_wine_checksum_recipe.py": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
+    "native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+    "native-android/engine/auth-interop/deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+    "native-android/engine/auth-interop/deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+    "native-android/engine/auth-interop/deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+    "native-android/engine/auth-interop/deployment/source-pins.json": "a49c8290d8a720c86c825e593d073733fb0cf429c4efff1337d8be8ca6226b3b",
+    "native-android/engine/auth-interop/source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+  },
+  "retained_evidence_sha256": {
+    "static-build-plan.json": "052bb95ea037ec0cf3b98342e7d2beac1a4e1a1e3228efc1ed855a6b873c4d89",
+    "recovery.json": "fc86782fa1775b687a2e3f9f2a1bbc0372111c19125c5466c5b583d3a2b5a50b",
+    "source-recipe.json": "bdd7aa999c413bfb49bf4fd5ddbce20c417f355efea1be9f373262ffd2e9d979",
+    "accepted-startup-dbserver-manifest.json": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+    "host-tests.txt": "d091a0b7ca0cc8d0ac567a5883cb301682701123ff94f625e43ce8bc45eb2ff7",
+    "source-recipe.source-maps.json.gz": "0cf8c44c7f3fc1f840834ab69cb5a8c3800d24a572a92a7f80d1d2a2d70fefa4"
+  },
+  "review": [
+    "Exact external949manifest and accepted base PGWine inputs compose full original archive plusfive accepted PG/Wine/manual/cancelledINSERT/emptyrow layers in fresh owned external tree. All accepted source and overlay hashes checked, no existing accepted worktree/profile replaced.",
+    "All5995 originals retained and whole6007-file accepted/candidate source maps compared; sole additional checksum verifier path differs. FIFO/merger/thread support/version/authcookie semantics unchanged. Exact fake-only/noAuthserver manualguard remains.",
+    "Build plan is static bounded audit, NOT CMakeexecution or a general interpreter. Common+DbServer only, Win32OptDebug fixtureOFF,41registeredprojectsOFF;504declared input names and95sealed firstparty buildtool/dependency files checked; three CPM exactcommits/patches unmaterialized.",
+    "Accepted manualea1d PE and accepted normal535b PE lineages distinct; recovered actual donorAPK/PE used for identity only, not installed/executed. Compile-only future product cannot inherit persistence/runtime/authenticatedDB admission.",
+    "Original/rawCRLFmanifest retained exactly. No source version bypass, native checksum alias, realauth manual-wait skip, newbinary/runtime replacement permit or Android/Thor acceptance."
+  ],
+  "host_suites": 5,
+  "build_executed": false,
+  "service_executed": false,
+  "runtime_profile_admitted": false,
+  "shipping_runtime_replacement_permit": false,
+  "manual_wait_skip_permitted_for_real_auth": false,
+  "android_or_thor_executed": false,
+  "independent_fullmap_audit": {
+    "original_files": 5995,
+    "original_bytes": 173081714,
+    "candidate_files": 6007,
+    "actual_staged_files_match": true,
+    "sole_changed_path": "Common/ClientLogin/clientcommLogin.c",
+    "map_archive_sha256": "0cf8c44c7f3fc1f840834ab69cb5a8c3800d24a572a92a7f80d1d2a2d70fefa4"
+  },
+  "independent_donor_identity": {
+    "archive_bytes": 50257461,
+    "archive_sha256": "6d6312b3ef4f7b9d25252ced724cbbdb36a4712a011647a8339b5a3207857911",
+    "apk_bytes": 42043924,
+    "apk_sha256": "482481fd14357f56a0c77069124fdce42712a06180ead8cb4c0cca2a671d4fc2",
+    "manifest_sha256": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+    "PE_bytes": 1664512,
+    "PE_sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba",
+    "installed_or_executed": false
+  },
+  "static_plan_inputs": {
+    "declared": 504,
+    "sealed_tool_inputs": 95,
+    "registered_enabled": [
+      "Common",
+      "DbServer"
+    ],
+    "registered_disabled_count": 41,
+    "external_dependencies": {
+      "chromium_zlib": {
+        "repository": "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+        "git_commit": "cf333892c34ab6dbaed37c38a1d5aa6da7b2f99d",
+        "definition_sha256": "dbabf749271e73e4bb5eb62c5d914ace1259520f6e8b52bbcf2600371b5d50be",
+        "materialized": false,
+        "compiled": false,
+        "patch": {
+          "path": "cmake/patches/chromium-zlib-cmake.patch",
+          "sha256": "55273bf390fd1093718d28f1141979fa97d23d1f071a1d90653f801cd425a107"
+        }
+      },
+      "cryptopp": {
+        "repository": "https://github.com/weidai11/cryptopp",
+        "git_commit": "b5242667a24e3db8e4600e77b2e502ef204e5280",
+        "definition_sha256": "4477f15cb07e42366770f9990afd7cf94f2fd1ef7b08337a9ae0426033dadc67",
+        "materialized": false,
+        "compiled": false,
+        "patch": {
+          "path": "cmake/patches/cryptopp-cmake.patch",
+          "sha256": "b11b1c872f1922d85da273259f989c2ff3dc80681a52af663f782a3138746b85"
+        }
+      },
+      "sparsehash": {
+        "repository": "sparsehash/sparsehash",
+        "git_commit": "f93c0c69e959c1c77611d0ba8d107aa971338811",
+        "definition_sha256": "b82f5c28b4cf87264f83ad9eb62a890470e3a4549d193d559ee39dae551b0ae3",
+        "materialized": false,
+        "compiled": false
+      }
+    }
+  }
+}
