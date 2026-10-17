@@ -23,3 +23,57 @@ The additive API therefore does not widen zero-row admission into draw capabilit
 `check_lod.py --output /tmp/FRESH-lod.json` runs release, ASan and UBSan source comparisons, malformed-input/output preservation controls and three mutations (near-boundary, NightLight/AddGlow and the original double-literal stipple threshold). Source and all helper dependencies are pinned before execution and checked afterward. No original CLIENT process, Android, GLES or Thor execution is claimed.
 
 The rigid selection loop advances a bounded raw record cursor and decodes borrowed one-row views at row zero. The selected raw offset is retained directly. This avoids repeated scans from the first record while preserving original ordinals. A private test observer requires exactly72 decoder calls with row zero and increasing original offsets for the authentic body; both default and explicit source entries use the same linear selection plumbing.
+
+## Automatic source LOD construction
+
+`coh_wr_lod_autodata` now implements the complete numerical construction in
+original CLIENT `lodinfoFillInAutoData`. It consumes separately resolved model
+radius, source triangle count, Trick near/near-fade/far/far-fade/shadow values and
+an explicitly present or absent three-distance reduction array. Its fixed output
+contains at most four ordered rows with exact source error and fallback-material
+flags. It allocates nothing, borrows no source storage and retains no asset,
+material, dictionary or GPU ownership. Every refusal preserves the output.
+
+The original loop tests the **previous iteration's** triangle count before
+updating that count, admits strict 125-unit near/far thresholds, initially avoids
+high-poly quarter reduction, and uses a strict radius-greater-than-200 condition
+for its 25-unit fades. Only an entirely zero Trick range tuple enables the
+quarter-far default fade. The implementation preserves those distinctions;
+negative finite reduction distances retain the original stop-sentinel behavior.
+Nonfinite/negative model/range inputs, unsigned triangle counts outside the
+source signed-int domain, invalid presence flags, overflow and output aliases
+refuse before publication. This is a bounded valid source domain; it does not
+make malformed original inputs valid.
+
+The qualifier executes the unchanged original function against narrow
+lookup/Trick, fixed allocator and EArray observers. Release, ASan and UBSan each
+pass 74,366 checks over 17,799 source comparisons. The comparisons include all
+3,083 exact root-model radius/triangle/Trick numeric observations in retained
+COHRES SHA `8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6`,
+joined by exact source ordinal/model/GEO/partition identities to the previously
+qualified root ledger. **COHRES does not capture CLIENT reduction arrays**. Those
+authentic numeric controls explicitly test the source function with a NULL array;
+they do not assert that the actual model has no reductions. Separate derived
+controls exercise all four row counts, threshold boundaries, prior-loop counts,
+integer truncation, negative-distance stop, supplied Trick fades, rollback and
+source-int limits. Five production semantic mutations must fail. The existing
+`modelCalcAlpha` qualifier still passes all 311,296 source combinations in all
+three modes against its unchanged original function.
+
+The retained client cache archive also contains original `data/bin/lods.bin`:
+1,059,016 bytes, SHA
+`13800255781138248226340be316cd628e98800d9ba889fe1aecc902e483b66a`.
+That availability is not native admission or an active CLIENT dictionary.
+Original `lodinfoFromObjectName` first consults a fileLocateWrite-derived LOD
+hash and can return an existing nonremoved row before automatic construction.
+Current dictionary precedence, removed/force-auto state, default GEO/legacy LOD,
+Trick AutoLOD children, cape/tray policy, original model/reduction selection,
+object-library lookup and matching CLIENT generation must still be resolved by
+the caller before using these numerical rows for visibility or draw selection.
+No row grants a reduced mesh, fallback material, current resource, world or actor
+permit. Android, GLES and physical Thor execution remain unqualified.
+
+```
+python native-android/engine/world-render-adapter/check_lod_autodata.py \
+  --resources /path/to/exact/resources.cohres --output /tmp/FRESH-autolod.json
+```

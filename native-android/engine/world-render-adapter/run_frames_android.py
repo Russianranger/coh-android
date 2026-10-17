@@ -24,13 +24,16 @@ def frame_result(result):
     """Require the recovered frame corpus, not a historical adapter-only build."""
     numeric = ('checks', 'ordered_batch_draws', 'ordered_batches', 'original_matrix_cases',
                'bounded_mutations', 'published_generations', 'concurrent_readers',
-               'max_draws_tested', 'render_allocations', 'render_frees')
+               'max_draws_tested', 'render_allocations', 'render_frees',
+               'concurrent_presentation_publications')
     if (type(result) is not dict or any(type(result.get(key)) is not int for key in numeric)
             or result.get('passed') is not True
-            or type(result.get('checks')) is not int or result['checks'] < 32284
+            or type(result.get('checks')) is not int or result['checks'] < 34465
             or result.get('ordered_batch_draws') != 1025
             or result.get('ordered_batches') != 3
             or result.get('selective_binding') is not True
+            or result.get('presentation_lifecycle') is not True
+            or result.get('concurrent_presentation_publications') != 512
             or result.get('original_matrix_cases') != 512
             or result.get('bounded_mutations') != 5000
             or result.get('published_generations') != 2000

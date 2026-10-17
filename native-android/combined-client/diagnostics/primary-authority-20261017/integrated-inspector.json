@@ -1,0 +1,11 @@
+{
+  "schema": "coh-source-groups-envelope-inspector-host-v1",
+  "passed": true,
+  "checks": 6253,
+  "corruption_refusals": 6226,
+  "parser_sha256": "01b622e95bef513e637bcff62be7d78af4bf83fca00e0eb3269f7385937a6c4e",
+  "fixture_sha256": "177533419d553c2ffc2a192e5439eadcf7a9c8ab6bb555048a25b8a6ecd0cfae",
+  "synthetic_source_fixture": true,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

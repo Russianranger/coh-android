@@ -14,10 +14,11 @@ spec.loader.exec_module(frames)
 
 class FrameAdmission(unittest.TestCase):
     def setUp(self):
-        self.value = dict(passed=True, checks=32284, ordered_batch_draws=1025,
+        self.value = dict(passed=True, checks=34465, ordered_batch_draws=1025,
                           ordered_batches=3, selective_binding=True, original_matrix_cases=512,
                           bounded_mutations=5000, published_generations=2000, concurrent_readers=3,
                           max_draws_tested=4096, render_allocations=0, render_frees=0,
+                          presentation_lifecycle=True, concurrent_presentation_publications=512,
                           fixture_only=True, authentic_world_entry=False)
 
     def test_current_corpus(self):
@@ -31,9 +32,11 @@ class FrameAdmission(unittest.TestCase):
                 frames.frame_result(changed)
 
     def test_failed_or_inflated_authority(self):
-        for key, value in [('checks', 32283), ('checks', True), ('passed', False),
+        for key, value in [('checks', 34464), ('checks', True), ('passed', False),
                            ('ordered_batch_draws', 1024), ('ordered_batches', 2),
-                           ('selective_binding', False), ('fixture_only', False),
+                           ('selective_binding', False), ('presentation_lifecycle', False),
+                           ('concurrent_presentation_publications', 511),
+                           ('concurrent_presentation_publications', True), ('fixture_only', False),
                            ('authentic_world_entry', True), ('render_allocations', 1),
                            ('render_frees', 1), ('original_matrix_cases', 511)]:
             changed = dict(self.value, **{key: value})

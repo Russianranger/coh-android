@@ -1,0 +1,107 @@
+{
+  "schema": "coh-independent-parent-phase-replay-v1",
+  "passed": true,
+  "source_revision": "ea8d99e8e642376cf8945c0db0810898d19c5db6",
+  "source_sha256": {
+    "native-android/combined-client/diagnostics/continuation-f-20261017/phase_replay.c": "c7fadd22f04d415b5f2848f6d0f9ca5dafa6b23cc8881b3ad1b20447176475eb",
+    "native-android/combined-client/diagnostics/continuation-f-20261017/qualify_phase_replay.py": "9d4f9f819fedf374e4fb09b6712d11c9e07fc6ef8df902cbd401283039062b59",
+    "native-android/combined-client/diagnostics/aggregate-memory-20261017/verify.py": "cf412c92ecb551744fd39763ba07c547a80e34b3e2fd1ebbbb9a1dcc2042a1bc",
+    "native-android/combined-client/diagnostics/aggregate-memory-20261017/source-pins.json": "e5cfd7e3e2320f0e8a235752d714d1b672c42bf19deef0ea12be9746d4411598",
+    "native-android/engine/working-set/coh_working_set.c": "d792406d282e69c4c3f73847804436eb8321145f03fb6e51c0acc9614c64b7b6",
+    "native-android/engine/working-set/coh_working_set.h": "807381ea2b507f382a6bf0c2e6407d567f6063aea7421332f5796b9a3abaeddc",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "receipt_sha256": {
+    "native-android/engine/scenecatalog/evidence/source-mesh-batch-preflight-host.json": "ec739c5b2ca0a919af80423652d9f9321606d63af1eac8b0844fd6f5d791cada",
+    "native-android/engine/character-dictionary/qualification/classes-20261017/host-proof.json.gz": "899daf960d3a5d78ca744018fb9e2f7fdf2960465b013059454590e6bc83a4ae",
+    "native-android/engine/character-dictionary/qualification/origins-20261017/host-proof.json.gz": "a03e18061939d2886b0d931cdcce5b78f4a1f0024dee9283d0da7687bcd8839e",
+    "native-android/engine/character-dictionary/qualification/power-categories-20261017/host-proof.json.gz": "cf90af87851d61b7c2a00e7ca6515d8e90886e90e2f90b31e595893750358f4c",
+    "native-android/engine/character-dictionary/qualification/class-level-20261017/host-proof.json.gz": "8d4bfdce9973071b4847f3e8fa8ffdf6c4f6880258db12bdd75b6788db5cf7ff",
+    "native-android/engine/character-dictionary/qualification/class-named-20261017/host-proof-work-bound.json.gz": "609b5d5f02c8c9ddf43aeb531b1dc5497f75abeb6246fac2585a2eec9b2de1c4",
+    "native-android/engine/character-dictionary/qualification/power-sets-20261017/host-proof.json.gz": "4efdaf761528ac9b743d47e4bc339a3c92d63b388ffe0f8c03d809fef88cc7fc",
+    "native-android/engine/scenecatalog/evidence/source-sealed-complete-host.json": "6f97ad07c831957df4ed2cb783cb4de79c50a6225f045d3e59ec9797fe285e38",
+    "native-android/engine/working-set/evidence/measured-host.json.gz": "8cdf39a94d2cde0fe420e2409e37adcd64c7b10120c1e1889720cbfe60a6d19f"
+  },
+  "derived_billing_partitions": {
+    "SHARED_SOURCE": 37128632,
+    "PRIOR_ALLOWANCE": 17633248,
+    "GEO_RESERVATION": 33554432,
+    "WORLD_OLD": 90834926,
+    "SEALED_OWNED": 2376823,
+    "SEAL_CALL_RESERVE": 16384,
+    "DICTIONARIES": 6827548,
+    "POWER_SETS": 3375980,
+    "EXPECTED_PARENT": 19000,
+    "WORLD_RETIRED": 57138703,
+    "OLD_EXCLUSIVE": 2518614,
+    "EXPECTED_TRANSITION": 100074681,
+    "EXPECTED_FINAL": 67361231
+  },
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 64,
+      "parent_bytes": 19000,
+      "old_plus_dictionaries": 97681474,
+      "old_candidate_transition": 100074681,
+      "after_commit_before_external_retirement": 100058297,
+      "after_retirement_and_sets": 67361231,
+      "remaining_named_bytes": 33302065,
+      "actual_resource_cleanup_observed": false,
+      "module_adapter_qualified": false,
+      "rss_measured": false,
+      "world_authority": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 64,
+      "parent_bytes": 19000,
+      "old_plus_dictionaries": 97681474,
+      "old_candidate_transition": 100074681,
+      "after_commit_before_external_retirement": 100058297,
+      "after_retirement_and_sets": 67361231,
+      "remaining_named_bytes": 33302065,
+      "actual_resource_cleanup_observed": false,
+      "module_adapter_qualified": false,
+      "rss_measured": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 64,
+      "parent_bytes": 19000,
+      "old_plus_dictionaries": 97681474,
+      "old_candidate_transition": 100074681,
+      "after_commit_before_external_retirement": 100058297,
+      "after_retirement_and_sets": 67361231,
+      "remaining_named_bytes": 33302065,
+      "actual_resource_cleanup_observed": false,
+      "module_adapter_qualified": false,
+      "rss_measured": false,
+      "world_authority": false
+    }
+  },
+  "parent_stack": {
+    "release": {
+      "maximum_parent_frame_bytes": 32,
+      "sum_parent_frames_bytes": 96
+    },
+    "asan": {
+      "maximum_parent_frame_bytes": 176,
+      "sum_parent_frames_bytes": 472
+    },
+    "ubsan": {
+      "maximum_parent_frame_bytes": 48,
+      "sum_parent_frames_bytes": 312
+    }
+  },
+  "synthetic_billing_keys": true,
+  "source_owners_instantiated": false,
+  "actual_resource_retirement_observed": false,
+  "module_adapters_qualified": false,
+  "rss_measured": false,
+  "android_built": false,
+  "android_executed": false,
+  "world_authority": false,
+  "leak_sanitizer": false
+}

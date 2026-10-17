@@ -1,0 +1,110 @@
+{
+  "source_pin": "d96354411d2f69ec325b1bfe9d0e14999626ba91",
+  "reviewed_nonidentical_files": [
+    {
+      "path": "native-android/engine/scenegraph/check_compact.py",
+      "bytes": 6844,
+      "blob": "7320e7a8136b7511a3a2c94fe4d2a556742852fb",
+      "pin_blob": "96cfd5c9f0fdf24d86efbc9c4ac23f1d5e1b9678",
+      "classification": "different_unclassified",
+      "preserved_tree": "worker-b",
+      "old_sha256": "ce8fcce1f17468b4f2af697932cf614a3d562652ed0e5cb0eaccf8f6903722a0",
+      "current_sha256": "6dab7ec107964b308526c5b1330ebff0699d12d1cdd06d23b5e2c318dd9c5771",
+      "diff_added_lines": 17,
+      "diff_removed_lines": 3,
+      "review": "Older implementation snapshot; current version retains feature and adds compact-graph diagnostics/stack qualification or world-capture alias/provenance/map identity qualification. Do not replay old file over accepted current source.",
+      "confirmed_unpublished_qualified_work": false
+    },
+    {
+      "path": "native-android/engine/scenegraph/coh_scene_compact.c",
+      "bytes": 13314,
+      "blob": "0b74d3075d29bbe6dc2e416b285e3cc8042ee1ce",
+      "pin_blob": "aff9a7d87a816187b2a3e5ffc205b5df20f6f9e0",
+      "classification": "different_unclassified",
+      "preserved_tree": "worker-b",
+      "old_sha256": "e5b5e4f76c17e1be56f8acf4b13f0173f4161f087d7ba42264c5756807c34afa",
+      "current_sha256": "f1e8abfed10fd67b72771887ee50228d201894bae52b2f3d71fb64cea69cc3c8",
+      "diff_added_lines": 42,
+      "diff_removed_lines": 5,
+      "review": "Older implementation snapshot; current version retains feature and adds compact-graph diagnostics/stack qualification or world-capture alias/provenance/map identity qualification. Do not replay old file over accepted current source.",
+      "confirmed_unpublished_qualified_work": false
+    },
+    {
+      "path": "native-android/engine/scenegraph/coh_scene_compact.h",
+      "bytes": 3859,
+      "blob": "d3fe82877ab0123609ff907521e9872a522bb9c2",
+      "pin_blob": "d08c490ffbf1212643f396e317776e3f34eaadd9",
+      "classification": "different_unclassified",
+      "preserved_tree": "worker-b",
+      "old_sha256": "8b419e602fc97a7cae51aef2bd6d690b81596774c0ce221208ec4a5a8c55074c",
+      "current_sha256": "3c358131944a0dfa89a3dbb86cef962806cb12b00882e349eb6425e81017cd3d",
+      "diff_added_lines": 24,
+      "diff_removed_lines": 0,
+      "review": "Older implementation snapshot; current version retains feature and adds compact-graph diagnostics/stack qualification or world-capture alias/provenance/map identity qualification. Do not replay old file over accepted current source.",
+      "confirmed_unpublished_qualified_work": false
+    },
+    {
+      "path": "native-android/engine/scenegraph/tests/test_scene_compact.c",
+      "bytes": 11062,
+      "blob": "3eb733f71f2cb8c7ee3e171c71aa95f6d04b1fc0",
+      "pin_blob": "f8ee8fd1765f7f2b9753252010f03b87d3dd7829",
+      "classification": "different_unclassified",
+      "preserved_tree": "worker-b",
+      "old_sha256": "f18338d1df79ab6dcfce9c0e751676369e80f09d9937c8ef59eacf201a22e8ab",
+      "current_sha256": "7c185239da0f8164afc20ee27a10a5c65c2112806ac53889686434606b0b6c4e",
+      "diff_added_lines": 49,
+      "diff_removed_lines": 4,
+      "review": "Older implementation snapshot; current version retains feature and adds compact-graph diagnostics/stack qualification or world-capture alias/provenance/map identity qualification. Do not replay old file over accepted current source.",
+      "confirmed_unpublished_qualified_work": false
+    },
+    {
+      "path": "native-android/engine/world-capture/check.py",
+      "bytes": 10193,
+      "blob": "970b0501fa35834576192a43f28b7d5eacd45eb8",
+      "pin_blob": "111db9a0528946bee7fbe82c30f0453cfb0f11a8",
+      "classification": "different_unclassified",
+      "preserved_tree": "worker-c",
+      "old_sha256": "7abb7c461ef7fdc80f38f14ed4cec904980e9e7be1e1b3a9cf76fd1bf41335c8",
+      "current_sha256": "cbe53964e24f759e355f3220de61fbd4d1e4431334a94070bb56b023010f5473",
+      "diff_added_lines": 13,
+      "diff_removed_lines": 6,
+      "review": "Older implementation snapshot; current version retains feature and adds compact-graph diagnostics/stack qualification or world-capture alias/provenance/map identity qualification. Do not replay old file over accepted current source.",
+      "confirmed_unpublished_qualified_work": false
+    },
+    {
+      "path": "native-android/engine/world-capture/coh_world_capture.c",
+      "bytes": 5028,
+      "blob": "da8fa8417575093fa0efab9cb488f40d0994547a",
+      "pin_blob": "7a529ae10777f4c4210188f22a08954108fb54e4",
+      "classification": "different_unclassified",
+      "preserved_tree": "worker-c",
+      "old_sha256": "706c1550aad7c8862c4a16ecf589f600a722fac4362bde3d10013310f737b8cf",
+      "current_sha256": "ff6b357ab3db2f5cac314297feefc9fde8cffba80714f650b34d10561c585667",
+      "diff_added_lines": 12,
+      "diff_removed_lines": 0,
+      "review": "Older implementation snapshot; current version retains feature and adds compact-graph diagnostics/stack qualification or world-capture alias/provenance/map identity qualification. Do not replay old file over accepted current source.",
+      "confirmed_unpublished_qualified_work": false
+    },
+    {
+      "path": "native-android/engine/world-capture/test_capture.c",
+      "bytes": 7716,
+      "blob": "f5c8dd6028c971064f566d5869375b993ebff901",
+      "pin_blob": "468c83982c8654643b344884e470028dfe645381",
+      "classification": "different_unclassified",
+      "preserved_tree": "worker-c",
+      "old_sha256": "c71c29ec935e2e9943ab7a335a81ad0355b8aff4030ff870b79a9084d7458c1d",
+      "current_sha256": "a9c8b135e9fcc57f62f58084fbe9bf00a14a51cc1fafbae39670909eb930f472",
+      "diff_added_lines": 31,
+      "diff_removed_lines": 1,
+      "review": "Older implementation snapshot; current version retains feature and adds compact-graph diagnostics/stack qualification or world-capture alias/provenance/map identity qualification. Do not replay old file over accepted current source.",
+      "confirmed_unpublished_qualified_work": false
+    }
+  ],
+  "confirmed_unpublished_qualified_implementation_found": false,
+  "classification_scope": [
+    "native-android",
+    ".github/workflows",
+    "tools"
+  ],
+  "non_source_artifacts_not_exhaustively_audited": true
+}

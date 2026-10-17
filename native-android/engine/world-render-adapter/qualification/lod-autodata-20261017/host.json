@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "source_revision": "d96354411d2f69ec325b1bfe9d0e14999626ba91",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/check_lod_autodata.py": "2c672ff10db3dbce1cc494c567da27b339d7979d3e35b1b0554bf109df663a3d",
+    "native-android/engine/world-render-adapter/coh_wr_lod.c": "856b9b0aabdd076c9f219c546c816d0f73df338bf8de3b4243d752ff8e6b34be",
+    "native-android/engine/world-render-adapter/coh_wr_lod.h": "26c54fd4e3c3fd72a4bdc76a7734d2fe403023581a35cbf43a214069f7d97d6c",
+    "native-android/engine/world-render-adapter/tests/test_lod_autodata.c": "bb0efad748c454536df6ea1973f569cb3ce6e449cc0835c3ed9dc64426cf8ca0",
+    "upstream/ouroboros/Common/seq/AutoLOD.c": "f34c46abac3e6e95bd5829d1d72a203756a7764872f6a9483c4377a05a546722",
+    "upstream/ouroboros/Common/seq/AutoLOD.h": "22fcff5c7eb9887057a8d6fa2b64dcb8a72c69cf585e208995205be5912865e5",
+    "native-android/engine/scenecatalog-server/resource_oracle.py": "b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7",
+    "native-android/engine/scenecatalog/evidence/root-model-texture-partitions-38994607354.json": "46df6643795c3d06aa5b52b3c2fadeed1eac00a3693f33ac611bb5d990109e2a",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "resources_sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6",
+  "root_ledger_sha256": "46df6643795c3d06aa5b52b3c2fadeed1eac00a3693f33ac611bb5d990109e2a",
+  "unchanged_original_function_sha256_lf": "e38833340108caf16214fd8d833370d6660132b04f6c2bbaaae6812865ed1325",
+  "generated_original_sha256": "e984263e0c23cbcd75bb5194be2984e969b58b7fba8d3fe760b0cedf8921cc2f",
+  "generated_fixture_sha256": "9ceae0aad366fade6790dd5ae2f8a9d24fda61d7e265c04c1d42a820a6744ce7",
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 74366,
+      "source_combinations": 17799,
+      "actual_root_model_numeric_inputs": 3083,
+      "row_counts": [
+        11148,
+        4857,
+        1767,
+        27
+      ],
+      "active_LOD_selection": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 74366,
+      "source_combinations": 17799,
+      "actual_root_model_numeric_inputs": 3083,
+      "row_counts": [
+        11148,
+        4857,
+        1767,
+        27
+      ],
+      "active_LOD_selection": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 74366,
+      "source_combinations": 17799,
+      "actual_root_model_numeric_inputs": 3083,
+      "row_counts": [
+        11148,
+        4857,
+        1767,
+        27
+      ],
+      "active_LOD_selection": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "a730993f4972f7e0aa7e919740482f24c5575cb43052dba50f27c186072b2a1d",
+    "address": "0916582db853c24d370e1010a09013e718833ffc68787cd1821921b3e3c1c62a",
+    "undefined": "218e8563318f3674e1fc7f3580cc392ae8724e75dc009670a2701f9da5782612"
+  },
+  "production_mutations_refused": [
+    "radius_boundary",
+    "previous_triangle_count",
+    "strict_near_threshold",
+    "far_trick_suppresses_default_fade",
+    "first_quarter_high_poly"
+  ],
+  "actual_root_numeric_observations": 3083,
+  "actual_CLIENT_reduction_arrays_captured": false,
+  "authentic_field_no_array_source_projection": true,
+  "synthetic_reduction_threshold_controls": true,
+  "original_allocator_earray_lookup_observers": true,
+  "full_LOD_dictionary_selection": false,
+  "reduced_mesh_selected": false,
+  "current_CLIENT_generation": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_execution": false
+}

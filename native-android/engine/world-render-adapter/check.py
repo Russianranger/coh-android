@@ -67,7 +67,9 @@ def main():
     dirty_before = run(['git', '-C', ROOT, 'status', '--porcelain', '--untracked-files=no']).strip()
     sources = [HERE / 'coh_world_render.c', HERE / 'tests/test_world_render.c',
                ROOT / 'native-android/engine/renderer/coh_renderer.c']
-    pin_files = [HERE / 'coh_world_render.h', *sources, HERE / 'check.py',
+    pin_files = [HERE / 'coh_world_render.h', HERE / 'coh_wr_presentation.h',
+                 HERE / 'coh_wr_presentation.inc', *sources, HERE / 'check.py',
+                 HERE / 'tests/presentation_cases.inc',
                  HERE / 'source-pins.json', ROOT / 'native-android/engine/renderer/coh_renderer.h',
                  ROOT / 'native-android/engine/renderer/coh_renderer_shaders.h',
                  ROOT / 'native-android/engine/coh_contracts.h',

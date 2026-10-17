@@ -1,4 +1,5 @@
 #include "coh_world_render.h"
+#include "coh_wr_presentation.h"
 #include <math.h>
 #include <pthread.h>
 #include <stdatomic.h>
@@ -490,3 +491,4 @@ void coh_wr_frame_destroy(CohWrFrame *f) {
     budget=f->snapshot->budget; bytes=f->bytes;
     coh_wr_release(f->snapshot); free(f); unreserve(budget,bytes);
 }
+#include "coh_wr_presentation.inc"

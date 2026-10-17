@@ -223,3 +223,53 @@ category/set/reference order and alternate fullname semantics. Missing required
 DuplicateMissingPowers clone identities must refuse rather than be fabricated
 or silently dropped. Any unfinished join is recovery-only until source/native
 proof and independent review are complete.
+
+## Compact forward reference closure — 2026-10-17 continuation
+
+`coh_power_join_prepare` now composes the existing three raw dictionary owners
+without an eager powers graph. It implements source category/set order, actual
+short-name lookup and the exact alternate-fullname decision, retaining both
+declared and resolved BasePower ordinals. Reverse source set/power parent
+precedence is projected. Missing references refuse the entire join rather than
+reproduce the source's logged-and-skipped shortened arrays; missing clones are
+never fabricated. All input/provider leases remain required.
+
+The exact recovered donor ZIP, unchanged SHA5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051,
+was recovered from the accepted original artifact without a donor/server
+recapture. Whole original forward/backpointer loops and original fullname/CRC
+lookup functions execute on explicit compact fixture objects. Existing stash
+constructors are reused as previously qualified prerequisites, with first-array
+lookup adapters declared. Independent projection compares every reference and
+parent. Exact native bounded imports close186 categories/6,527ordered setrefs/
+6,547allocated sets/20,241reached powerrefs/20,241allocated powers with zero
+source errors and zero alternate decisions. Twenty category-unreferenced raw
+sets remain intact. Short-name suffix inference would give false failures for
+actual names containing periods and is not used.
+
+The524,344B immutable owner and same-sized workspace charge the category/set/
+power owners, complete leased set input, reserved provider context/scratch,
+caller retained bytes and16KiB native stack under a literal8MiB standalone cap.
+The62MB provider remains file-backed. Aggregate64MiB work admission covers
+scans/probes/names/parent writes before work; no implicit global96MiB partition.
+Thirteen scenarios qualify exact historical data, ordered duplicate references,
+real alternate identity, missing declared/alternate/set refusals, case-sensitive
+alternate decisions, period-containing short names, slash CRC normalization,
+unreached allocations and two explicit native cap refusals. Release/ASan/UBSan
+match170,281assertions/mode; provider failures and early/middle/late cancellation
+preserve the whole previous owner, including late parent cancellation. C++ and
+measured native stack checks pass. Original host oracles remain unsanitized;
+fixture modifiers do not represent native authentic AttribModTemplate application.
+
+This closes the historical forward-join implementation prerequisite only.
+Original DuplicateMissingPowers, complete modifier backpointers/finalization,
+CLIENT/SERVERONLY/cache callback association and current live generation are
+still open. No runtime/actor flag is enabled. Complete semantic class/power and
+initial-character transaction application, actor publication and any READY/
+RECEIVED_CHARACTER/full-update ACK remain prohibited. The production owner must
+retain all three immutable owners and leases; a later generation owner must
+supply actual cache/startup/current-server witnesses instead of asserting them.
+
+Final receipt: `qualification/power-join-20261017-final.json.gz`, source
+`031792ef4b97749035d9f0b3cfa2bb2c1a9df46e`, SHA256
+`575e9056a37c1ae25903494ed6cbb74a4ac20c8fcf5bf7e4e4728c856e77d775`.
+It binds 62 exact source/helper/header inputs before and after execution.

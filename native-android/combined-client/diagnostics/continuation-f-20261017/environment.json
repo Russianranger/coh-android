@@ -1,0 +1,23 @@
+{
+  "observed_utc": "2026-10-17T20:28:58.057211+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "tools": {
+    "git": "/usr/local/bin/git",
+    "cc": "/usr/bin/cc",
+    "c++": "/usr/bin/c++",
+    "gcc": "/usr/bin/gcc",
+    "cmake": null,
+    "ninja": null,
+    "clang": null,
+    "java": "/usr/bin/java",
+    "adb": null,
+    "emulator": null,
+    "wine": null,
+    "psql": null,
+    "x86_64-w64-mingw32-gcc": null
+  },
+  "c_compiler_version": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "local_game_runtime_started": false,
+  "device_connected": false,
+  "integrated_process_overlap_measured": false
+}

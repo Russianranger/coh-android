@@ -1,0 +1,3897 @@
+{
+  "schema": "coh-preserved-worktree-byte-audit-v1",
+  "source_pin": "d96354411d2f69ec325b1bfe9d0e14999626ba91",
+  "scope": [
+    "native-android",
+    ".github/workflows",
+    "tools"
+  ],
+  "history_commits_examined": 100,
+  "classification_does_not_establish_qualification": true,
+  "old_files_executed": false,
+  "old_files_modified": false,
+  "publication_manifests": [
+    {
+      "file": "publication-manifest.json",
+      "sha256": "272c34d76fc733856f187b72b4fa9833762a0af8fe26abdf7d938ec503dc9988",
+      "base": "2d94aad69ed303d3587c509321eb7e79cb44f0b7",
+      "head": "30772a3857875213e423f8672d9f5b5f69155c32",
+      "entries": 151,
+      "same_at_current_pin": 111,
+      "entry_blob_history_classification": {
+        "remote_history_superseded": 40,
+        "identical_at_pin": 111
+      }
+    },
+    {
+      "file": "publication4-manifest.json",
+      "sha256": "99c176886e6252edd4c17823af06ba10ee49643f2b5b891ac17dfedeacf3a9be",
+      "base": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+      "head": "c41168f27511ce5cfeee12bba6bfb31af080fa4e",
+      "entries": 90,
+      "same_at_current_pin": 67,
+      "entry_blob_history_classification": {
+        "remote_history_superseded": 23,
+        "identical_at_pin": 67
+      }
+    },
+    {
+      "file": "publication5-manifest.json",
+      "sha256": "e68454d511059c1911f58d53e4e70642b1fa11231771b23ebe37e20c647b7bd9",
+      "base": "fd86ff196f172bf62cd24c7e0f807df39c33e0a5",
+      "head": "979812155982e3c2f8ca09e82b60c3d4c9bdd6c8",
+      "entries": 128,
+      "same_at_current_pin": 113,
+      "entry_blob_history_classification": {
+        "identical_at_pin": 113,
+        "remote_history_superseded": 15
+      }
+    },
+    {
+      "file": "publication6-manifest.json",
+      "sha256": "c1a7e791037d832e315727ebd2a758b0ee83bbab90015a590303c30867b65e87",
+      "base": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+      "head": "f92356e371cb52ed61ef51e134e568f749199666",
+      "entries": 190,
+      "same_at_current_pin": 176,
+      "entry_blob_history_classification": {
+        "remote_history_superseded": 14,
+        "identical_at_pin": 176
+      }
+    },
+    {
+      "file": "publication7/manifest.json",
+      "sha256": "24bcf96f96b0879116b55d2a03102201a6cd05a7d615424c8e2d1ebc0200c2de",
+      "base": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a",
+      "head": "eaf8601127f71fee201187d17f008358917d4678",
+      "entries": 144,
+      "same_at_current_pin": 140,
+      "entry_blob_history_classification": {
+        "identical_at_pin": 140,
+        "remote_history_superseded": 4
+      }
+    }
+  ],
+  "trees": {
+    "worker-a": {
+      "files": 2920,
+      "counts": {
+        "identical_at_pin": 2869,
+        "remote_history_superseded": 51
+      },
+      "ignored_symlinks": [],
+      "gitdir_record": "gitdir: /workspace/scratch/9c69943dc291/coh-next/.git/worktrees/worker-a",
+      "different": [
+        {
+          "path": "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+          "bytes": 2377,
+          "blob": "93070c932f4d331f2951308cffdf0a4dffbc7743",
+          "pin_blob": "1f67cbdbe1fcb690daab4e2023f76c9ffb680346",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/auth-interop/README.md",
+          "bytes": 5147,
+          "blob": "805c54fa6a9b66193c821f8306bea50ded47feea",
+          "pin_blob": "50b2b0f9f5b2ad0a4965b3859353db9c9f9fa910",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/auth-interop/SOURCE-AUDIT.md",
+          "bytes": 6176,
+          "blob": "c5607c7dc2111e18fc486b2e741d15a393dcda34",
+          "pin_blob": "990ca32a3aa129b65fae53f50228185a3a38d4dc",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/continuation/README.md",
+          "bytes": 4958,
+          "blob": "32dd9eccd08d13fa5973e5b1d9011128ae163d78",
+          "pin_blob": "f3d8e0f95ed6ecd59d3651f9841b9837f4b046d8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82"
+        },
+        {
+          "path": "native-android/engine/continuation/common.py",
+          "bytes": 3825,
+          "blob": "323724d00ad050f15e6839021bffedba74250f7c",
+          "pin_blob": "c720858d497e0f4b177348c94fa3d76b4c797623",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": "native-android/engine/continuation/qualify.py",
+          "bytes": 8091,
+          "blob": "5d62a47c5204e70a0bbeca9fccf8e18c03b228b7",
+          "pin_blob": "7c791a87358c8cb5456d4066f40f988ddd4a0a77",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/run_android.py",
+          "bytes": 10015,
+          "blob": "7d48d9d953e54c5fb851a271944254f36fa7416a",
+          "pin_blob": "b8cf6a7f21085613934f89e3464b727352b6344f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/tests/test_admission.py",
+          "bytes": 6806,
+          "blob": "25f3329e9076a37d5be89321d369413c3fa8faf2",
+          "pin_blob": "f68f79a073f6a7f41f1a77559e14c7982a4da38d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/dbclient/SOURCE-AUDIT.md",
+          "bytes": 4566,
+          "blob": "3a0bd4a648da43a677ba1a773295cf7038d02ab5",
+          "pin_blob": "49b4a75d2efc8fc3c5a1314683d421f1d063d98d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.c",
+          "bytes": 13421,
+          "blob": "fe56d1a545d1c4495961232aac6b8fbafea53adc",
+          "pin_blob": "8cd443957041d4e6767682396c49e715b8953658",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.h",
+          "bytes": 3531,
+          "blob": "75d13575d0459cf0632a836a5e96307fc42b7f4b",
+          "pin_blob": "2dca3f1a94b90d0f8fc99901393274c1e94b948d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/tests/test_db_session.c",
+          "bytes": 18614,
+          "blob": "49f4440c2a0febb68e797f977e355b4a599de6b6",
+          "pin_blob": "a2cc769490facd1810bdc82d089efd5c4d1c4524",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/entities/CMakeLists.txt",
+          "bytes": 978,
+          "blob": "8801dad0543c395cdfc8c31ae0ff5f59ade6c238",
+          "pin_blob": "4416b1dc8ee3267db49ee6319e3cf752d0af11a8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/README.md",
+          "bytes": 11856,
+          "blob": "bdb21cfb17b43090d1f884232fb9e29ed3c0cde9",
+          "pin_blob": "f06044fa10486df50d141d70e0bc80f0f94b139f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/check.py",
+          "bytes": 19987,
+          "blob": "c310c702e7f13b1511ffebaea22d1a06d62be523",
+          "pin_blob": "3490d02be77e2c9e86728a46cba5641bf49527df",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.c",
+          "bytes": 18088,
+          "blob": "1403f1c70f55aff7b1c81461edc5958bcc7ad1a7",
+          "pin_blob": "9f16bc2c4167b54b2cc31f52283ccc3f9adba08b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.h",
+          "bytes": 6146,
+          "blob": "8a8724e18035db1e8cedd970f85a52e577684bd7",
+          "pin_blob": "8ef29ef584f4513fa8a12fb749a68d5e7719ce52",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/oracle_shim.h",
+          "bytes": 3882,
+          "blob": "73dfc76f703dc5848b4abd2a147c226a328d2377",
+          "pin_blob": "91fc4c05c82a0b9ed1a35563456f7c85cf2a875d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/source-pins.json",
+          "bytes": 1620,
+          "blob": "4aa612227c514a11664f78a3108641a7491f412e",
+          "pin_blob": "caea39f1a87ad62e39ecb39038b8753b40d8b1e1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/test_entities.c",
+          "bytes": 21899,
+          "blob": "cc6394d71f7ddde8aec0fc520bee2ddab7fffeb9",
+          "pin_blob": "0ca16dfb952f8113ad6b48d126d617f0ac71d0fe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/live/README.md",
+          "bytes": 5831,
+          "blob": "ae9d4c0fc08a9d315d79be54f1cb06f2dab37bca",
+          "pin_blob": "df709750e6b97c2ec22a8754c5f76dd972a93faf",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/coh_live.c",
+          "bytes": 13090,
+          "blob": "c55b0ef6eb32a19a349fc0a3b2cd51ca4d6741cb",
+          "pin_blob": "882567e337792c211879cb0d27f0d124d0bb9858",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/test_live.c",
+          "bytes": 16971,
+          "blob": "071c4614035a6ac6a3e622305b5d0daba7ee7676",
+          "pin_blob": "40c66802fda5159c68f02e572cb1021ba322459c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/README.md",
+          "bytes": 7782,
+          "blob": "6fa43e63a7765d3c44e92c892b18698270cb84bc",
+          "pin_blob": "63f97b4dcfd4e8854d987bd051578b1890c341f5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/check.py",
+          "bytes": 8529,
+          "blob": "1134556bbf6b52c557da40859f39c9674683533b",
+          "pin_blob": "b60820aeb24a62583e31e4e4be150f11c0bd6422",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.c",
+          "bytes": 10495,
+          "blob": "66caadba7587604da40d52ad2c82e0709335e61a",
+          "pin_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.h",
+          "bytes": 3399,
+          "blob": "6e04fbb26b753cda8ab5ae9255bd773d68357736",
+          "pin_blob": "fca014f79fb7ceafd5dc6bf17b4350e471d15c1d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/test_local.c",
+          "bytes": 12759,
+          "blob": "d972e133c0a7a1714a17fb2995f23e81e1a21d6c",
+          "pin_blob": "4ad8ea853583b998085cb167792c777ca0715c97",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/mapclient/CMakeLists.txt",
+          "bytes": 396,
+          "blob": "a6772ba11fd877f23292d0013059f8dc18146a5f",
+          "pin_blob": "97ba231363cd8afb98e8a16d1a1fe0f981623fe8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/mapclient/README.md",
+          "bytes": 10318,
+          "blob": "49631a2728c28e50b84bf7e87c2f95eb272ea82e",
+          "pin_blob": "62cc2ffea8d9a383286a1aa62e19f8632bc6cf65",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.c",
+          "bytes": 15480,
+          "blob": "0ec41ddae460d55026044839a5a5d9ddeddb8308",
+          "pin_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.h",
+          "bytes": 5552,
+          "blob": "21162afb3735dc9bdd1003ee97b53766c4f3e5db",
+          "pin_blob": "5b75c0a7ba4b92bd77fe480b115f36db18329da5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/tests/test_mapclient.c",
+          "bytes": 36553,
+          "blob": "44ada40623002fe11b8948560cc6ee9a5a5325b1",
+          "pin_blob": "8311a4d572afd8dfcf18686d50c1c67ebb379f44",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.c",
+          "bytes": 8086,
+          "blob": "7f68c55bc2e786b77eef0f76eac82767f1b7f8ee",
+          "pin_blob": "7de94ac2ecd3bf5aadd47884e2e2790630eb13c2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.h",
+          "bytes": 2953,
+          "blob": "832e3d71bfaf2e70ef735f0d9fee5025ec9ced33",
+          "pin_blob": "731555ced9de4971ecfa7a207146924bc972736a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/CMakeLists.txt",
+          "bytes": 1759,
+          "blob": "d207dee951266e1e84143a50bd553f603bc97276",
+          "pin_blob": "eb0a640d43e7d07b9747191036c51c9c2bd1bb2c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check.py",
+          "bytes": 8329,
+          "blob": "36085478937f8ddcce6f42a1fa8e1dc7009ba17d",
+          "pin_blob": "3344a0415764f230c59685e35ce7e9b6121b4d3d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/tests/test_scenecatalog.c",
+          "bytes": 10358,
+          "blob": "373fd42e4813293c9fe3291940bf9f3ba41d4270",
+          "pin_blob": "3073da088acc2c875ee7ff8c6306de39137dfece",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/common.py",
+          "bytes": 6933,
+          "blob": "08c7ac3a0e7bef28b1aa002d62daed677156629b",
+          "pin_blob": "c2ee46079dc45e5278e9693e187731059295a588",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/qualify.py",
+          "bytes": 10486,
+          "blob": "f7543d08ce90bde3a45dbb8328a046067bac9831",
+          "pin_blob": "22343148294e1c5b731688ca397217f0bdc0a23b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/run_android.py",
+          "bytes": 11779,
+          "blob": "800dcaa7dc265312d6e6ab971134bab1d7a9528f",
+          "pin_blob": "439e0cdb0e78a215ec4bc14af8bc15f4b6a44df4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/tests/test_admission.py",
+          "bytes": 12934,
+          "blob": "65e37b51b3bbdd4960cea2c1c5243d97d7e70962",
+          "pin_blob": "18a3cfa1aeb7a0673fdcc8d54b3bf870350abb73",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenegraph/CMakeLists.txt",
+          "bytes": 1731,
+          "blob": "bb4e5f5fac7ac666ff353897c9b3a45a44400a4e",
+          "pin_blob": "c6f2d82150dcb56c02a7b725eea7f94357b46b08",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenegraph/README.md",
+          "bytes": 11068,
+          "blob": "bc0fedbb9425b3283e922095f180f3babcaf4217",
+          "pin_blob": "8a692c46ba9d84ee53e64f67ed9b913a0b43f668",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenegraph/check.py",
+          "bytes": 11045,
+          "blob": "a4f6e643cf64a0817c53f3c19eed071228466351",
+          "pin_blob": "7654b790386a739aa56c59fccac86008a409acf2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenegraph/tests/test_scenegraph.c",
+          "bytes": 18821,
+          "blob": "0aab9610ed70d8da45e8414dae9d3e5de4b42b54",
+          "pin_blob": "bb91b26eaacbfd66918fe2256d07fa0a3ec85499",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": ".github/workflows/native-android-core.yml",
+          "bytes": 2006,
+          "blob": "e781bf9ff459b32f63352f1d7574c4ea45e26a5d",
+          "pin_blob": "5ff951216facaf3768ede48c9539f43a5d2f7f4d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-combined-client.yml",
+          "bytes": 6394,
+          "blob": "574f5a3030a1e38e3d6791e8681d982d3a4fc4d5",
+          "pin_blob": "1a29a02aaf444534d9062473ae01758e1beb8eab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-live-session.yml",
+          "bytes": 3958,
+          "blob": "ed2cf8c7ea46a4df557de683648624cf4e5650cc",
+          "pin_blob": "b3b3dc2e9e8ff822036ca1fffcab5f2c947b006e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": ".github/workflows/native-primary-continuation.yml",
+          "bytes": 3962,
+          "blob": "7f30bb0777b60167bfe6ef204bfc25d5cf64f2f0",
+          "pin_blob": "d7fd3ba51c1cd4c7bbf0412bce847df97e1c0a62",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-scene-catalog.yml",
+          "bytes": 9705,
+          "blob": "f4ca025397ba6ace533a4276ba949068dd08d8e1",
+          "pin_blob": "761713710ac32303c5dcb2bacf4e4cc129bfc739",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        }
+      ]
+    },
+    "worker-b": {
+      "files": 2908,
+      "counts": {
+        "identical_at_pin": 2855,
+        "remote_history_superseded": 49,
+        "different_unclassified": 4
+      },
+      "ignored_symlinks": [],
+      "gitdir_record": "gitdir: /workspace/scratch/9c69943dc291/coh-next/.git/worktrees/worker-b",
+      "different": [
+        {
+          "path": "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+          "bytes": 2377,
+          "blob": "93070c932f4d331f2951308cffdf0a4dffbc7743",
+          "pin_blob": "1f67cbdbe1fcb690daab4e2023f76c9ffb680346",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/auth-interop/README.md",
+          "bytes": 5147,
+          "blob": "805c54fa6a9b66193c821f8306bea50ded47feea",
+          "pin_blob": "50b2b0f9f5b2ad0a4965b3859353db9c9f9fa910",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/auth-interop/SOURCE-AUDIT.md",
+          "bytes": 6176,
+          "blob": "c5607c7dc2111e18fc486b2e741d15a393dcda34",
+          "pin_blob": "990ca32a3aa129b65fae53f50228185a3a38d4dc",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/continuation/README.md",
+          "bytes": 4958,
+          "blob": "32dd9eccd08d13fa5973e5b1d9011128ae163d78",
+          "pin_blob": "f3d8e0f95ed6ecd59d3651f9841b9837f4b046d8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82"
+        },
+        {
+          "path": "native-android/engine/continuation/common.py",
+          "bytes": 3825,
+          "blob": "323724d00ad050f15e6839021bffedba74250f7c",
+          "pin_blob": "c720858d497e0f4b177348c94fa3d76b4c797623",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": "native-android/engine/continuation/qualify.py",
+          "bytes": 8091,
+          "blob": "5d62a47c5204e70a0bbeca9fccf8e18c03b228b7",
+          "pin_blob": "7c791a87358c8cb5456d4066f40f988ddd4a0a77",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/run_android.py",
+          "bytes": 10015,
+          "blob": "7d48d9d953e54c5fb851a271944254f36fa7416a",
+          "pin_blob": "b8cf6a7f21085613934f89e3464b727352b6344f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/tests/test_admission.py",
+          "bytes": 6806,
+          "blob": "25f3329e9076a37d5be89321d369413c3fa8faf2",
+          "pin_blob": "f68f79a073f6a7f41f1a77559e14c7982a4da38d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/dbclient/SOURCE-AUDIT.md",
+          "bytes": 4566,
+          "blob": "3a0bd4a648da43a677ba1a773295cf7038d02ab5",
+          "pin_blob": "49b4a75d2efc8fc3c5a1314683d421f1d063d98d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.c",
+          "bytes": 13421,
+          "blob": "fe56d1a545d1c4495961232aac6b8fbafea53adc",
+          "pin_blob": "8cd443957041d4e6767682396c49e715b8953658",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.h",
+          "bytes": 3531,
+          "blob": "75d13575d0459cf0632a836a5e96307fc42b7f4b",
+          "pin_blob": "2dca3f1a94b90d0f8fc99901393274c1e94b948d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/tests/test_db_session.c",
+          "bytes": 18614,
+          "blob": "49f4440c2a0febb68e797f977e355b4a599de6b6",
+          "pin_blob": "a2cc769490facd1810bdc82d089efd5c4d1c4524",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/entities/CMakeLists.txt",
+          "bytes": 978,
+          "blob": "8801dad0543c395cdfc8c31ae0ff5f59ade6c238",
+          "pin_blob": "4416b1dc8ee3267db49ee6319e3cf752d0af11a8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/README.md",
+          "bytes": 11856,
+          "blob": "bdb21cfb17b43090d1f884232fb9e29ed3c0cde9",
+          "pin_blob": "f06044fa10486df50d141d70e0bc80f0f94b139f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/check.py",
+          "bytes": 19987,
+          "blob": "c310c702e7f13b1511ffebaea22d1a06d62be523",
+          "pin_blob": "3490d02be77e2c9e86728a46cba5641bf49527df",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.c",
+          "bytes": 18088,
+          "blob": "1403f1c70f55aff7b1c81461edc5958bcc7ad1a7",
+          "pin_blob": "9f16bc2c4167b54b2cc31f52283ccc3f9adba08b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.h",
+          "bytes": 6146,
+          "blob": "8a8724e18035db1e8cedd970f85a52e577684bd7",
+          "pin_blob": "8ef29ef584f4513fa8a12fb749a68d5e7719ce52",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/oracle_shim.h",
+          "bytes": 3882,
+          "blob": "73dfc76f703dc5848b4abd2a147c226a328d2377",
+          "pin_blob": "91fc4c05c82a0b9ed1a35563456f7c85cf2a875d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/source-pins.json",
+          "bytes": 1620,
+          "blob": "4aa612227c514a11664f78a3108641a7491f412e",
+          "pin_blob": "caea39f1a87ad62e39ecb39038b8753b40d8b1e1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/test_entities.c",
+          "bytes": 21899,
+          "blob": "cc6394d71f7ddde8aec0fc520bee2ddab7fffeb9",
+          "pin_blob": "0ca16dfb952f8113ad6b48d126d617f0ac71d0fe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/live/README.md",
+          "bytes": 5831,
+          "blob": "ae9d4c0fc08a9d315d79be54f1cb06f2dab37bca",
+          "pin_blob": "df709750e6b97c2ec22a8754c5f76dd972a93faf",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/coh_live.c",
+          "bytes": 13090,
+          "blob": "c55b0ef6eb32a19a349fc0a3b2cd51ca4d6741cb",
+          "pin_blob": "882567e337792c211879cb0d27f0d124d0bb9858",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/test_live.c",
+          "bytes": 16971,
+          "blob": "071c4614035a6ac6a3e622305b5d0daba7ee7676",
+          "pin_blob": "40c66802fda5159c68f02e572cb1021ba322459c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/README.md",
+          "bytes": 7782,
+          "blob": "6fa43e63a7765d3c44e92c892b18698270cb84bc",
+          "pin_blob": "63f97b4dcfd4e8854d987bd051578b1890c341f5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/check.py",
+          "bytes": 8529,
+          "blob": "1134556bbf6b52c557da40859f39c9674683533b",
+          "pin_blob": "b60820aeb24a62583e31e4e4be150f11c0bd6422",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.c",
+          "bytes": 10495,
+          "blob": "66caadba7587604da40d52ad2c82e0709335e61a",
+          "pin_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.h",
+          "bytes": 3399,
+          "blob": "6e04fbb26b753cda8ab5ae9255bd773d68357736",
+          "pin_blob": "fca014f79fb7ceafd5dc6bf17b4350e471d15c1d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/test_local.c",
+          "bytes": 12759,
+          "blob": "d972e133c0a7a1714a17fb2995f23e81e1a21d6c",
+          "pin_blob": "4ad8ea853583b998085cb167792c777ca0715c97",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/mapclient/CMakeLists.txt",
+          "bytes": 396,
+          "blob": "a6772ba11fd877f23292d0013059f8dc18146a5f",
+          "pin_blob": "97ba231363cd8afb98e8a16d1a1fe0f981623fe8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/mapclient/README.md",
+          "bytes": 10318,
+          "blob": "49631a2728c28e50b84bf7e87c2f95eb272ea82e",
+          "pin_blob": "62cc2ffea8d9a383286a1aa62e19f8632bc6cf65",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.c",
+          "bytes": 15480,
+          "blob": "0ec41ddae460d55026044839a5a5d9ddeddb8308",
+          "pin_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.h",
+          "bytes": 5552,
+          "blob": "21162afb3735dc9bdd1003ee97b53766c4f3e5db",
+          "pin_blob": "5b75c0a7ba4b92bd77fe480b115f36db18329da5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/tests/test_mapclient.c",
+          "bytes": 36553,
+          "blob": "44ada40623002fe11b8948560cc6ee9a5a5325b1",
+          "pin_blob": "8311a4d572afd8dfcf18686d50c1c67ebb379f44",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.c",
+          "bytes": 8086,
+          "blob": "7f68c55bc2e786b77eef0f76eac82767f1b7f8ee",
+          "pin_blob": "7de94ac2ecd3bf5aadd47884e2e2790630eb13c2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.h",
+          "bytes": 2953,
+          "blob": "832e3d71bfaf2e70ef735f0d9fee5025ec9ced33",
+          "pin_blob": "731555ced9de4971ecfa7a207146924bc972736a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/CMakeLists.txt",
+          "bytes": 1759,
+          "blob": "d207dee951266e1e84143a50bd553f603bc97276",
+          "pin_blob": "eb0a640d43e7d07b9747191036c51c9c2bd1bb2c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check.py",
+          "bytes": 8329,
+          "blob": "36085478937f8ddcce6f42a1fa8e1dc7009ba17d",
+          "pin_blob": "3344a0415764f230c59685e35ce7e9b6121b4d3d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/tests/test_scenecatalog.c",
+          "bytes": 10358,
+          "blob": "373fd42e4813293c9fe3291940bf9f3ba41d4270",
+          "pin_blob": "3073da088acc2c875ee7ff8c6306de39137dfece",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/common.py",
+          "bytes": 6933,
+          "blob": "08c7ac3a0e7bef28b1aa002d62daed677156629b",
+          "pin_blob": "c2ee46079dc45e5278e9693e187731059295a588",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/qualify.py",
+          "bytes": 10486,
+          "blob": "f7543d08ce90bde3a45dbb8328a046067bac9831",
+          "pin_blob": "22343148294e1c5b731688ca397217f0bdc0a23b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/run_android.py",
+          "bytes": 11779,
+          "blob": "800dcaa7dc265312d6e6ab971134bab1d7a9528f",
+          "pin_blob": "439e0cdb0e78a215ec4bc14af8bc15f4b6a44df4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/tests/test_admission.py",
+          "bytes": 12934,
+          "blob": "65e37b51b3bbdd4960cea2c1c5243d97d7e70962",
+          "pin_blob": "18a3cfa1aeb7a0673fdcc8d54b3bf870350abb73",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/README.md",
+          "bytes": 5585,
+          "blob": "92287f7a33263d7269efc9db7160dff81622c2e8",
+          "pin_blob": "70939aa9a67e7ff58e55c4c035bcd6a221df1c7c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/check.py",
+          "bytes": 5289,
+          "blob": "72a072e33a4141c91d2d55b374d5a9292bba90cd",
+          "pin_blob": "3601775cbadd587b13bfe4dff49d6ec138744683",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/check_compact.py",
+          "bytes": 6844,
+          "blob": "7320e7a8136b7511a3a2c94fe4d2a556742852fb",
+          "pin_blob": "96cfd5c9f0fdf24d86efbc9c4ac23f1d5e1b9678",
+          "classification": "different_unclassified"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scene_compact.c",
+          "bytes": 13314,
+          "blob": "0b74d3075d29bbe6dc2e416b285e3cc8042ee1ce",
+          "pin_blob": "aff9a7d87a816187b2a3e5ffc205b5df20f6f9e0",
+          "classification": "different_unclassified"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scene_compact.h",
+          "bytes": 3859,
+          "blob": "d3fe82877ab0123609ff907521e9872a522bb9c2",
+          "pin_blob": "d08c490ffbf1212643f396e317776e3f34eaadd9",
+          "classification": "different_unclassified"
+        },
+        {
+          "path": "native-android/engine/scenegraph/tests/test_scene_compact.c",
+          "bytes": 11062,
+          "blob": "3eb733f71f2cb8c7ee3e171c71aa95f6d04b1fc0",
+          "pin_blob": "f8ee8fd1765f7f2b9753252010f03b87d3dd7829",
+          "classification": "different_unclassified"
+        },
+        {
+          "path": ".github/workflows/native-android-core.yml",
+          "bytes": 2006,
+          "blob": "e781bf9ff459b32f63352f1d7574c4ea45e26a5d",
+          "pin_blob": "5ff951216facaf3768ede48c9539f43a5d2f7f4d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-combined-client.yml",
+          "bytes": 6394,
+          "blob": "574f5a3030a1e38e3d6791e8681d982d3a4fc4d5",
+          "pin_blob": "1a29a02aaf444534d9062473ae01758e1beb8eab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-live-session.yml",
+          "bytes": 3958,
+          "blob": "ed2cf8c7ea46a4df557de683648624cf4e5650cc",
+          "pin_blob": "b3b3dc2e9e8ff822036ca1fffcab5f2c947b006e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": ".github/workflows/native-primary-continuation.yml",
+          "bytes": 3962,
+          "blob": "7f30bb0777b60167bfe6ef204bfc25d5cf64f2f0",
+          "pin_blob": "d7fd3ba51c1cd4c7bbf0412bce847df97e1c0a62",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-scene-catalog.yml",
+          "bytes": 9705,
+          "blob": "f4ca025397ba6ace533a4276ba949068dd08d8e1",
+          "pin_blob": "761713710ac32303c5dcb2bacf4e4cc129bfc739",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        }
+      ]
+    },
+    "worker-c": {
+      "files": 2933,
+      "counts": {
+        "identical_at_pin": 2879,
+        "remote_history_superseded": 51,
+        "different_unclassified": 3
+      },
+      "ignored_symlinks": [],
+      "gitdir_record": "gitdir: /workspace/scratch/9c69943dc291/coh-next/.git/worktrees/worker-c",
+      "different": [
+        {
+          "path": "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+          "bytes": 2377,
+          "blob": "93070c932f4d331f2951308cffdf0a4dffbc7743",
+          "pin_blob": "1f67cbdbe1fcb690daab4e2023f76c9ffb680346",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/auth-interop/README.md",
+          "bytes": 5147,
+          "blob": "805c54fa6a9b66193c821f8306bea50ded47feea",
+          "pin_blob": "50b2b0f9f5b2ad0a4965b3859353db9c9f9fa910",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/auth-interop/SOURCE-AUDIT.md",
+          "bytes": 6176,
+          "blob": "c5607c7dc2111e18fc486b2e741d15a393dcda34",
+          "pin_blob": "990ca32a3aa129b65fae53f50228185a3a38d4dc",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/continuation/README.md",
+          "bytes": 4958,
+          "blob": "32dd9eccd08d13fa5973e5b1d9011128ae163d78",
+          "pin_blob": "f3d8e0f95ed6ecd59d3651f9841b9837f4b046d8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82"
+        },
+        {
+          "path": "native-android/engine/continuation/common.py",
+          "bytes": 3825,
+          "blob": "323724d00ad050f15e6839021bffedba74250f7c",
+          "pin_blob": "c720858d497e0f4b177348c94fa3d76b4c797623",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": "native-android/engine/continuation/qualify.py",
+          "bytes": 8091,
+          "blob": "5d62a47c5204e70a0bbeca9fccf8e18c03b228b7",
+          "pin_blob": "7c791a87358c8cb5456d4066f40f988ddd4a0a77",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/run_android.py",
+          "bytes": 10015,
+          "blob": "7d48d9d953e54c5fb851a271944254f36fa7416a",
+          "pin_blob": "b8cf6a7f21085613934f89e3464b727352b6344f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/tests/test_admission.py",
+          "bytes": 6806,
+          "blob": "25f3329e9076a37d5be89321d369413c3fa8faf2",
+          "pin_blob": "f68f79a073f6a7f41f1a77559e14c7982a4da38d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/dbclient/SOURCE-AUDIT.md",
+          "bytes": 4566,
+          "blob": "3a0bd4a648da43a677ba1a773295cf7038d02ab5",
+          "pin_blob": "49b4a75d2efc8fc3c5a1314683d421f1d063d98d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.c",
+          "bytes": 13421,
+          "blob": "fe56d1a545d1c4495961232aac6b8fbafea53adc",
+          "pin_blob": "8cd443957041d4e6767682396c49e715b8953658",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.h",
+          "bytes": 3531,
+          "blob": "75d13575d0459cf0632a836a5e96307fc42b7f4b",
+          "pin_blob": "2dca3f1a94b90d0f8fc99901393274c1e94b948d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/tests/test_db_session.c",
+          "bytes": 18614,
+          "blob": "49f4440c2a0febb68e797f977e355b4a599de6b6",
+          "pin_blob": "a2cc769490facd1810bdc82d089efd5c4d1c4524",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/entities/INITIAL_UPDATE_CLOSURE.md",
+          "bytes": 9660,
+          "blob": "bd600cb70b742dc38824cdb70e4064b21dbbf878",
+          "pin_blob": "70bea512c4f965f23384f6c65bfff37576650ad9",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/live/README.md",
+          "bytes": 5831,
+          "blob": "ae9d4c0fc08a9d315d79be54f1cb06f2dab37bca",
+          "pin_blob": "df709750e6b97c2ec22a8754c5f76dd972a93faf",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/coh_live.c",
+          "bytes": 13090,
+          "blob": "c55b0ef6eb32a19a349fc0a3b2cd51ca4d6741cb",
+          "pin_blob": "882567e337792c211879cb0d27f0d124d0bb9858",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/test_live.c",
+          "bytes": 16971,
+          "blob": "071c4614035a6ac6a3e622305b5d0daba7ee7676",
+          "pin_blob": "40c66802fda5159c68f02e572cb1021ba322459c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/README.md",
+          "bytes": 7782,
+          "blob": "6fa43e63a7765d3c44e92c892b18698270cb84bc",
+          "pin_blob": "63f97b4dcfd4e8854d987bd051578b1890c341f5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/check.py",
+          "bytes": 8529,
+          "blob": "1134556bbf6b52c557da40859f39c9674683533b",
+          "pin_blob": "b60820aeb24a62583e31e4e4be150f11c0bd6422",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.c",
+          "bytes": 10495,
+          "blob": "66caadba7587604da40d52ad2c82e0709335e61a",
+          "pin_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.h",
+          "bytes": 3399,
+          "blob": "6e04fbb26b753cda8ab5ae9255bd773d68357736",
+          "pin_blob": "fca014f79fb7ceafd5dc6bf17b4350e471d15c1d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/test_local.c",
+          "bytes": 12759,
+          "blob": "d972e133c0a7a1714a17fb2995f23e81e1a21d6c",
+          "pin_blob": "4ad8ea853583b998085cb167792c777ca0715c97",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/mapclient/CMakeLists.txt",
+          "bytes": 396,
+          "blob": "a6772ba11fd877f23292d0013059f8dc18146a5f",
+          "pin_blob": "97ba231363cd8afb98e8a16d1a1fe0f981623fe8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/mapclient/README.md",
+          "bytes": 10318,
+          "blob": "49631a2728c28e50b84bf7e87c2f95eb272ea82e",
+          "pin_blob": "62cc2ffea8d9a383286a1aa62e19f8632bc6cf65",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.c",
+          "bytes": 15480,
+          "blob": "0ec41ddae460d55026044839a5a5d9ddeddb8308",
+          "pin_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.h",
+          "bytes": 5552,
+          "blob": "21162afb3735dc9bdd1003ee97b53766c4f3e5db",
+          "pin_blob": "5b75c0a7ba4b92bd77fe480b115f36db18329da5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/tests/test_mapclient.c",
+          "bytes": 36553,
+          "blob": "44ada40623002fe11b8948560cc6ee9a5a5325b1",
+          "pin_blob": "8311a4d572afd8dfcf18686d50c1c67ebb379f44",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.c",
+          "bytes": 8086,
+          "blob": "7f68c55bc2e786b77eef0f76eac82767f1b7f8ee",
+          "pin_blob": "7de94ac2ecd3bf5aadd47884e2e2790630eb13c2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.h",
+          "bytes": 2953,
+          "blob": "832e3d71bfaf2e70ef735f0d9fee5025ec9ced33",
+          "pin_blob": "731555ced9de4971ecfa7a207146924bc972736a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/CMakeLists.txt",
+          "bytes": 1759,
+          "blob": "d207dee951266e1e84143a50bd553f603bc97276",
+          "pin_blob": "eb0a640d43e7d07b9747191036c51c9c2bd1bb2c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/README.md",
+          "bytes": 9248,
+          "blob": "350f37b775a6f7e562a93790838b495ae23b5e83",
+          "pin_blob": "fcaab678b821de679e371141e51bf54fff25c8f3",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check.py",
+          "bytes": 8300,
+          "blob": "4cff0095dbe06afcbd83d9325ad6e7ad1ba9a522",
+          "pin_blob": "3344a0415764f230c59685e35ce7e9b6121b4d3d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.c",
+          "bytes": 8839,
+          "blob": "14170fcf409c48509f48beaed512ad0c1dcda7f5",
+          "pin_blob": "268fc929ef42e3c2060602ff763bd21085691fbe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.h",
+          "bytes": 2268,
+          "blob": "8e5bf57b49546b721f42b992a14cb21c915ddd09",
+          "pin_blob": "0a4b6af916071969fa9a15d743a0e6a667d62ec4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/tests/test_scenecatalog.c",
+          "bytes": 10156,
+          "blob": "06c610cc9eed9a081460d76dbf1d1ae29079b6da",
+          "pin_blob": "3073da088acc2c875ee7ff8c6306de39137dfece",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/common.py",
+          "bytes": 6933,
+          "blob": "08c7ac3a0e7bef28b1aa002d62daed677156629b",
+          "pin_blob": "c2ee46079dc45e5278e9693e187731059295a588",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/qualify.py",
+          "bytes": 10486,
+          "blob": "f7543d08ce90bde3a45dbb8328a046067bac9831",
+          "pin_blob": "22343148294e1c5b731688ca397217f0bdc0a23b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/run_android.py",
+          "bytes": 11779,
+          "blob": "800dcaa7dc265312d6e6ab971134bab1d7a9528f",
+          "pin_blob": "439e0cdb0e78a215ec4bc14af8bc15f4b6a44df4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/tests/test_admission.py",
+          "bytes": 12934,
+          "blob": "65e37b51b3bbdd4960cea2c1c5243d97d7e70962",
+          "pin_blob": "18a3cfa1aeb7a0673fdcc8d54b3bf870350abb73",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/README.md",
+          "bytes": 5585,
+          "blob": "92287f7a33263d7269efc9db7160dff81622c2e8",
+          "pin_blob": "70939aa9a67e7ff58e55c4c035bcd6a221df1c7c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/check.py",
+          "bytes": 5289,
+          "blob": "72a072e33a4141c91d2d55b374d5a9292bba90cd",
+          "pin_blob": "3601775cbadd587b13bfe4dff49d6ec138744683",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/CMakeLists.txt",
+          "bytes": 1696,
+          "blob": "fd17b07a23a83794345b14723762d34f1b95930b",
+          "pin_blob": "c6f2d82150dcb56c02a7b725eea7f94357b46b08",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/README.md",
+          "bytes": 7203,
+          "blob": "dc44653e3884da92818006106cc9b743a8185e7a",
+          "pin_blob": "8a692c46ba9d84ee53e64f67ed9b913a0b43f668",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/check.py",
+          "bytes": 8576,
+          "blob": "2a0a42c7d237f8add55fd69e187bb7624536bd3c",
+          "pin_blob": "7654b790386a739aa56c59fccac86008a409acf2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.c",
+          "bytes": 19247,
+          "blob": "ea9fd21c611cf38217326ebbdda2507b8c705e6e",
+          "pin_blob": "77aa2e5066caacc8195af8e5782877677dd91425",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.h",
+          "bytes": 4432,
+          "blob": "d42f6f40f7c568630449c2347080eefe691d5adb",
+          "pin_blob": "428fd1aef10c8d42141d0445f1eff1a9b84156d1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/tests/test_scenegraph.c",
+          "bytes": 12282,
+          "blob": "232e3e26923a67341aa36fc1a2c68dd2c3cbf792",
+          "pin_blob": "bb91b26eaacbfd66918fe2256d07fa0a3ec85499",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/world-capture/check.py",
+          "bytes": 10193,
+          "blob": "970b0501fa35834576192a43f28b7d5eacd45eb8",
+          "pin_blob": "111db9a0528946bee7fbe82c30f0453cfb0f11a8",
+          "classification": "different_unclassified"
+        },
+        {
+          "path": "native-android/engine/world-capture/coh_world_capture.c",
+          "bytes": 5028,
+          "blob": "da8fa8417575093fa0efab9cb488f40d0994547a",
+          "pin_blob": "7a529ae10777f4c4210188f22a08954108fb54e4",
+          "classification": "different_unclassified"
+        },
+        {
+          "path": "native-android/engine/world-capture/test_capture.c",
+          "bytes": 7716,
+          "blob": "f5c8dd6028c971064f566d5869375b993ebff901",
+          "pin_blob": "468c83982c8654643b344884e470028dfe645381",
+          "classification": "different_unclassified"
+        },
+        {
+          "path": ".github/workflows/native-android-core.yml",
+          "bytes": 2006,
+          "blob": "e781bf9ff459b32f63352f1d7574c4ea45e26a5d",
+          "pin_blob": "5ff951216facaf3768ede48c9539f43a5d2f7f4d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-combined-client.yml",
+          "bytes": 6394,
+          "blob": "574f5a3030a1e38e3d6791e8681d982d3a4fc4d5",
+          "pin_blob": "1a29a02aaf444534d9062473ae01758e1beb8eab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-live-session.yml",
+          "bytes": 3958,
+          "blob": "ed2cf8c7ea46a4df557de683648624cf4e5650cc",
+          "pin_blob": "b3b3dc2e9e8ff822036ca1fffcab5f2c947b006e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": ".github/workflows/native-primary-continuation.yml",
+          "bytes": 3962,
+          "blob": "7f30bb0777b60167bfe6ef204bfc25d5cf64f2f0",
+          "pin_blob": "d7fd3ba51c1cd4c7bbf0412bce847df97e1c0a62",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-scene-catalog.yml",
+          "bytes": 9705,
+          "blob": "f4ca025397ba6ace533a4276ba949068dd08d8e1",
+          "pin_blob": "761713710ac32303c5dcb2bacf4e4cc129bfc739",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        }
+      ]
+    },
+    "worker-d": {
+      "files": 2943,
+      "counts": {
+        "identical_at_pin": 2885,
+        "remote_history_superseded": 58
+      },
+      "ignored_symlinks": [],
+      "gitdir_record": "gitdir: /workspace/scratch/9c69943dc291/coh-next/.git/worktrees/worker-d",
+      "different": [
+        {
+          "path": "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+          "bytes": 2377,
+          "blob": "93070c932f4d331f2951308cffdf0a4dffbc7743",
+          "pin_blob": "1f67cbdbe1fcb690daab4e2023f76c9ffb680346",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/auth-interop/deployment/CHECKSUM-REFERENCE.md",
+          "bytes": 5828,
+          "blob": "fed9953acc4193e124821184625195aa31f51487",
+          "pin_blob": "ee7a22d544ae21e554a407982431761295e2de13",
+          "classification": "remote_history_superseded",
+          "historical_commit": "279650a6cda9d05c04678a98459a5ba5e1e7efcf"
+        },
+        {
+          "path": "native-android/engine/auth-interop/deployment/README.md",
+          "bytes": 8886,
+          "blob": "acf03e4d5fd583ad74720ede3b98568b31a38879",
+          "pin_blob": "d95f4a72b0d011d81d7bbc12b0827a9d0487dca5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/continuation/README.md",
+          "bytes": 4958,
+          "blob": "32dd9eccd08d13fa5973e5b1d9011128ae163d78",
+          "pin_blob": "f3d8e0f95ed6ecd59d3651f9841b9837f4b046d8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82"
+        },
+        {
+          "path": "native-android/engine/continuation/common.py",
+          "bytes": 3825,
+          "blob": "323724d00ad050f15e6839021bffedba74250f7c",
+          "pin_blob": "c720858d497e0f4b177348c94fa3d76b4c797623",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": "native-android/engine/continuation/qualify.py",
+          "bytes": 8091,
+          "blob": "5d62a47c5204e70a0bbeca9fccf8e18c03b228b7",
+          "pin_blob": "7c791a87358c8cb5456d4066f40f988ddd4a0a77",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/run_android.py",
+          "bytes": 10015,
+          "blob": "7d48d9d953e54c5fb851a271944254f36fa7416a",
+          "pin_blob": "b8cf6a7f21085613934f89e3464b727352b6344f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/tests/test_admission.py",
+          "bytes": 6806,
+          "blob": "25f3329e9076a37d5be89321d369413c3fa8faf2",
+          "pin_blob": "f68f79a073f6a7f41f1a77559e14c7982a4da38d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/dbclient/SOURCE-AUDIT.md",
+          "bytes": 4566,
+          "blob": "3a0bd4a648da43a677ba1a773295cf7038d02ab5",
+          "pin_blob": "49b4a75d2efc8fc3c5a1314683d421f1d063d98d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.c",
+          "bytes": 13421,
+          "blob": "fe56d1a545d1c4495961232aac6b8fbafea53adc",
+          "pin_blob": "8cd443957041d4e6767682396c49e715b8953658",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.h",
+          "bytes": 3531,
+          "blob": "75d13575d0459cf0632a836a5e96307fc42b7f4b",
+          "pin_blob": "2dca3f1a94b90d0f8fc99901393274c1e94b948d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/tests/test_db_session.c",
+          "bytes": 18614,
+          "blob": "49f4440c2a0febb68e797f977e355b4a599de6b6",
+          "pin_blob": "a2cc769490facd1810bdc82d089efd5c4d1c4524",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/entities/CMakeLists.txt",
+          "bytes": 978,
+          "blob": "8801dad0543c395cdfc8c31ae0ff5f59ade6c238",
+          "pin_blob": "4416b1dc8ee3267db49ee6319e3cf752d0af11a8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/README.md",
+          "bytes": 11856,
+          "blob": "bdb21cfb17b43090d1f884232fb9e29ed3c0cde9",
+          "pin_blob": "f06044fa10486df50d141d70e0bc80f0f94b139f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/check.py",
+          "bytes": 19987,
+          "blob": "c310c702e7f13b1511ffebaea22d1a06d62be523",
+          "pin_blob": "3490d02be77e2c9e86728a46cba5641bf49527df",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.c",
+          "bytes": 18088,
+          "blob": "1403f1c70f55aff7b1c81461edc5958bcc7ad1a7",
+          "pin_blob": "9f16bc2c4167b54b2cc31f52283ccc3f9adba08b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.h",
+          "bytes": 6146,
+          "blob": "8a8724e18035db1e8cedd970f85a52e577684bd7",
+          "pin_blob": "8ef29ef584f4513fa8a12fb749a68d5e7719ce52",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/oracle_shim.h",
+          "bytes": 3882,
+          "blob": "73dfc76f703dc5848b4abd2a147c226a328d2377",
+          "pin_blob": "91fc4c05c82a0b9ed1a35563456f7c85cf2a875d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/source-pins.json",
+          "bytes": 1620,
+          "blob": "4aa612227c514a11664f78a3108641a7491f412e",
+          "pin_blob": "caea39f1a87ad62e39ecb39038b8753b40d8b1e1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/test_entities.c",
+          "bytes": 21899,
+          "blob": "cc6394d71f7ddde8aec0fc520bee2ddab7fffeb9",
+          "pin_blob": "0ca16dfb952f8113ad6b48d126d617f0ac71d0fe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/live/README.md",
+          "bytes": 5831,
+          "blob": "ae9d4c0fc08a9d315d79be54f1cb06f2dab37bca",
+          "pin_blob": "df709750e6b97c2ec22a8754c5f76dd972a93faf",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/coh_live.c",
+          "bytes": 13090,
+          "blob": "c55b0ef6eb32a19a349fc0a3b2cd51ca4d6741cb",
+          "pin_blob": "882567e337792c211879cb0d27f0d124d0bb9858",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/test_live.c",
+          "bytes": 16971,
+          "blob": "071c4614035a6ac6a3e622305b5d0daba7ee7676",
+          "pin_blob": "40c66802fda5159c68f02e572cb1021ba322459c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/README.md",
+          "bytes": 7782,
+          "blob": "6fa43e63a7765d3c44e92c892b18698270cb84bc",
+          "pin_blob": "63f97b4dcfd4e8854d987bd051578b1890c341f5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/check.py",
+          "bytes": 8529,
+          "blob": "1134556bbf6b52c557da40859f39c9674683533b",
+          "pin_blob": "b60820aeb24a62583e31e4e4be150f11c0bd6422",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.c",
+          "bytes": 10495,
+          "blob": "66caadba7587604da40d52ad2c82e0709335e61a",
+          "pin_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.h",
+          "bytes": 3399,
+          "blob": "6e04fbb26b753cda8ab5ae9255bd773d68357736",
+          "pin_blob": "fca014f79fb7ceafd5dc6bf17b4350e471d15c1d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/test_local.c",
+          "bytes": 12759,
+          "blob": "d972e133c0a7a1714a17fb2995f23e81e1a21d6c",
+          "pin_blob": "4ad8ea853583b998085cb167792c777ca0715c97",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/mapclient/CMakeLists.txt",
+          "bytes": 396,
+          "blob": "a6772ba11fd877f23292d0013059f8dc18146a5f",
+          "pin_blob": "97ba231363cd8afb98e8a16d1a1fe0f981623fe8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/mapclient/README.md",
+          "bytes": 10318,
+          "blob": "49631a2728c28e50b84bf7e87c2f95eb272ea82e",
+          "pin_blob": "62cc2ffea8d9a383286a1aa62e19f8632bc6cf65",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.c",
+          "bytes": 15480,
+          "blob": "0ec41ddae460d55026044839a5a5d9ddeddb8308",
+          "pin_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.h",
+          "bytes": 5552,
+          "blob": "21162afb3735dc9bdd1003ee97b53766c4f3e5db",
+          "pin_blob": "5b75c0a7ba4b92bd77fe480b115f36db18329da5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/tests/test_mapclient.c",
+          "bytes": 36553,
+          "blob": "44ada40623002fe11b8948560cc6ee9a5a5325b1",
+          "pin_blob": "8311a4d572afd8dfcf18686d50c1c67ebb379f44",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.c",
+          "bytes": 8086,
+          "blob": "7f68c55bc2e786b77eef0f76eac82767f1b7f8ee",
+          "pin_blob": "7de94ac2ecd3bf5aadd47884e2e2790630eb13c2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.h",
+          "bytes": 2953,
+          "blob": "832e3d71bfaf2e70ef735f0d9fee5025ec9ced33",
+          "pin_blob": "731555ced9de4971ecfa7a207146924bc972736a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/CMakeLists.txt",
+          "bytes": 1759,
+          "blob": "d207dee951266e1e84143a50bd553f603bc97276",
+          "pin_blob": "eb0a640d43e7d07b9747191036c51c9c2bd1bb2c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/README.md",
+          "bytes": 9248,
+          "blob": "350f37b775a6f7e562a93790838b495ae23b5e83",
+          "pin_blob": "fcaab678b821de679e371141e51bf54fff25c8f3",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check.py",
+          "bytes": 8300,
+          "blob": "4cff0095dbe06afcbd83d9325ad6e7ad1ba9a522",
+          "pin_blob": "3344a0415764f230c59685e35ce7e9b6121b4d3d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.c",
+          "bytes": 8839,
+          "blob": "14170fcf409c48509f48beaed512ad0c1dcda7f5",
+          "pin_blob": "268fc929ef42e3c2060602ff763bd21085691fbe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.h",
+          "bytes": 2268,
+          "blob": "8e5bf57b49546b721f42b992a14cb21c915ddd09",
+          "pin_blob": "0a4b6af916071969fa9a15d743a0e6a667d62ec4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/tests/test_scenecatalog.c",
+          "bytes": 10156,
+          "blob": "06c610cc9eed9a081460d76dbf1d1ae29079b6da",
+          "pin_blob": "3073da088acc2c875ee7ff8c6306de39137dfece",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/common.py",
+          "bytes": 6933,
+          "blob": "08c7ac3a0e7bef28b1aa002d62daed677156629b",
+          "pin_blob": "c2ee46079dc45e5278e9693e187731059295a588",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/qualify.py",
+          "bytes": 10486,
+          "blob": "f7543d08ce90bde3a45dbb8328a046067bac9831",
+          "pin_blob": "22343148294e1c5b731688ca397217f0bdc0a23b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/run_android.py",
+          "bytes": 11779,
+          "blob": "800dcaa7dc265312d6e6ab971134bab1d7a9528f",
+          "pin_blob": "439e0cdb0e78a215ec4bc14af8bc15f4b6a44df4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/tests/test_admission.py",
+          "bytes": 12934,
+          "blob": "65e37b51b3bbdd4960cea2c1c5243d97d7e70962",
+          "pin_blob": "18a3cfa1aeb7a0673fdcc8d54b3bf870350abb73",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/README.md",
+          "bytes": 5585,
+          "blob": "92287f7a33263d7269efc9db7160dff81622c2e8",
+          "pin_blob": "70939aa9a67e7ff58e55c4c035bcd6a221df1c7c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/check.py",
+          "bytes": 5289,
+          "blob": "72a072e33a4141c91d2d55b374d5a9292bba90cd",
+          "pin_blob": "3601775cbadd587b13bfe4dff49d6ec138744683",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/CMakeLists.txt",
+          "bytes": 1696,
+          "blob": "fd17b07a23a83794345b14723762d34f1b95930b",
+          "pin_blob": "c6f2d82150dcb56c02a7b725eea7f94357b46b08",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/README.md",
+          "bytes": 7203,
+          "blob": "dc44653e3884da92818006106cc9b743a8185e7a",
+          "pin_blob": "8a692c46ba9d84ee53e64f67ed9b913a0b43f668",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/check.py",
+          "bytes": 8576,
+          "blob": "2a0a42c7d237f8add55fd69e187bb7624536bd3c",
+          "pin_blob": "7654b790386a739aa56c59fccac86008a409acf2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.c",
+          "bytes": 19247,
+          "blob": "ea9fd21c611cf38217326ebbdda2507b8c705e6e",
+          "pin_blob": "77aa2e5066caacc8195af8e5782877677dd91425",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.h",
+          "bytes": 4432,
+          "blob": "d42f6f40f7c568630449c2347080eefe691d5adb",
+          "pin_blob": "428fd1aef10c8d42141d0445f1eff1a9b84156d1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/tests/test_scenegraph.c",
+          "bytes": 12282,
+          "blob": "232e3e26923a67341aa36fc1a2c68dd2c3cbf792",
+          "pin_blob": "bb91b26eaacbfd66918fe2256d07fa0a3ec85499",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-android-core.yml",
+          "bytes": 2006,
+          "blob": "e781bf9ff459b32f63352f1d7574c4ea45e26a5d",
+          "pin_blob": "5ff951216facaf3768ede48c9539f43a5d2f7f4d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-combined-client.yml",
+          "bytes": 6394,
+          "blob": "574f5a3030a1e38e3d6791e8681d982d3a4fc4d5",
+          "pin_blob": "1a29a02aaf444534d9062473ae01758e1beb8eab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-live-session.yml",
+          "bytes": 3958,
+          "blob": "ed2cf8c7ea46a4df557de683648624cf4e5650cc",
+          "pin_blob": "b3b3dc2e9e8ff822036ca1fffcab5f2c947b006e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": ".github/workflows/native-primary-continuation.yml",
+          "bytes": 3962,
+          "blob": "7f30bb0777b60167bfe6ef204bfc25d5cf64f2f0",
+          "pin_blob": "d7fd3ba51c1cd4c7bbf0412bce847df97e1c0a62",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-scene-catalog.yml",
+          "bytes": 9705,
+          "blob": "f4ca025397ba6ace533a4276ba949068dd08d8e1",
+          "pin_blob": "761713710ac32303c5dcb2bacf4e4cc129bfc739",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        }
+      ]
+    },
+    "worker-e": {
+      "files": 3161,
+      "counts": {
+        "identical_at_pin": 3094,
+        "remote_history_superseded": 67
+      },
+      "ignored_symlinks": [],
+      "gitdir_record": "gitdir: /workspace/scratch/9c69943dc291/coh-next/.git/worktrees/worker-e",
+      "different": [
+        {
+          "path": "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+          "bytes": 2377,
+          "blob": "93070c932f4d331f2951308cffdf0a4dffbc7743",
+          "pin_blob": "1f67cbdbe1fcb690daab4e2023f76c9ffb680346",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/auth-interop/README.md",
+          "bytes": 5147,
+          "blob": "805c54fa6a9b66193c821f8306bea50ded47feea",
+          "pin_blob": "50b2b0f9f5b2ad0a4965b3859353db9c9f9fa910",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/auth-interop/SOURCE-AUDIT.md",
+          "bytes": 6176,
+          "blob": "c5607c7dc2111e18fc486b2e741d15a393dcda34",
+          "pin_blob": "990ca32a3aa129b65fae53f50228185a3a38d4dc",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/continuation/README.md",
+          "bytes": 4958,
+          "blob": "32dd9eccd08d13fa5973e5b1d9011128ae163d78",
+          "pin_blob": "f3d8e0f95ed6ecd59d3651f9841b9837f4b046d8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82"
+        },
+        {
+          "path": "native-android/engine/continuation/common.py",
+          "bytes": 3825,
+          "blob": "323724d00ad050f15e6839021bffedba74250f7c",
+          "pin_blob": "c720858d497e0f4b177348c94fa3d76b4c797623",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": "native-android/engine/continuation/qualify.py",
+          "bytes": 8091,
+          "blob": "5d62a47c5204e70a0bbeca9fccf8e18c03b228b7",
+          "pin_blob": "7c791a87358c8cb5456d4066f40f988ddd4a0a77",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/run_android.py",
+          "bytes": 10015,
+          "blob": "7d48d9d953e54c5fb851a271944254f36fa7416a",
+          "pin_blob": "b8cf6a7f21085613934f89e3464b727352b6344f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/tests/test_admission.py",
+          "bytes": 6806,
+          "blob": "25f3329e9076a37d5be89321d369413c3fa8faf2",
+          "pin_blob": "f68f79a073f6a7f41f1a77559e14c7982a4da38d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/dbclient/SOURCE-AUDIT.md",
+          "bytes": 4566,
+          "blob": "3a0bd4a648da43a677ba1a773295cf7038d02ab5",
+          "pin_blob": "49b4a75d2efc8fc3c5a1314683d421f1d063d98d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.c",
+          "bytes": 13421,
+          "blob": "fe56d1a545d1c4495961232aac6b8fbafea53adc",
+          "pin_blob": "8cd443957041d4e6767682396c49e715b8953658",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.h",
+          "bytes": 3531,
+          "blob": "75d13575d0459cf0632a836a5e96307fc42b7f4b",
+          "pin_blob": "2dca3f1a94b90d0f8fc99901393274c1e94b948d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/tests/test_db_session.c",
+          "bytes": 18614,
+          "blob": "49f4440c2a0febb68e797f977e355b4a599de6b6",
+          "pin_blob": "a2cc769490facd1810bdc82d089efd5c4d1c4524",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/entities/CMakeLists.txt",
+          "bytes": 978,
+          "blob": "8801dad0543c395cdfc8c31ae0ff5f59ade6c238",
+          "pin_blob": "4416b1dc8ee3267db49ee6319e3cf752d0af11a8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/README.md",
+          "bytes": 11856,
+          "blob": "bdb21cfb17b43090d1f884232fb9e29ed3c0cde9",
+          "pin_blob": "f06044fa10486df50d141d70e0bc80f0f94b139f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/check.py",
+          "bytes": 19987,
+          "blob": "c310c702e7f13b1511ffebaea22d1a06d62be523",
+          "pin_blob": "3490d02be77e2c9e86728a46cba5641bf49527df",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.c",
+          "bytes": 18088,
+          "blob": "1403f1c70f55aff7b1c81461edc5958bcc7ad1a7",
+          "pin_blob": "9f16bc2c4167b54b2cc31f52283ccc3f9adba08b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.h",
+          "bytes": 6146,
+          "blob": "8a8724e18035db1e8cedd970f85a52e577684bd7",
+          "pin_blob": "8ef29ef584f4513fa8a12fb749a68d5e7719ce52",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/oracle_shim.h",
+          "bytes": 3882,
+          "blob": "73dfc76f703dc5848b4abd2a147c226a328d2377",
+          "pin_blob": "91fc4c05c82a0b9ed1a35563456f7c85cf2a875d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/source-pins.json",
+          "bytes": 1620,
+          "blob": "4aa612227c514a11664f78a3108641a7491f412e",
+          "pin_blob": "caea39f1a87ad62e39ecb39038b8753b40d8b1e1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/test_entities.c",
+          "bytes": 21899,
+          "blob": "cc6394d71f7ddde8aec0fc520bee2ddab7fffeb9",
+          "pin_blob": "0ca16dfb952f8113ad6b48d126d617f0ac71d0fe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entity-globals/CMakeLists.txt",
+          "bytes": 911,
+          "blob": "9c8cc7578ca843b881b807a1f1791cac3efbdcd5",
+          "pin_blob": "c9b4cb7a20e54dd14104dbb4301558fa2413b5b5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/entity-globals/README.md",
+          "bytes": 5956,
+          "blob": "5359ec9d5f05b940692abda4999963b503b0b2e4",
+          "pin_blob": "9683bba0f9ee568530be40b8dca29d3cf52f64e2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/entity-globals/check.py",
+          "bytes": 10288,
+          "blob": "6dc4d8c503a66266984202c52c61570495174d18",
+          "pin_blob": "082d7cc4b35b72e84ddf068aacf0f33fd0bc4369",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/entity-globals/test_entity_globals.c",
+          "bytes": 7806,
+          "blob": "0a529e3c0a5db20582aa4182022b2e7365937aae",
+          "pin_blob": "4648bc184ef03619e5622ecddbb25e9faaf35067",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/live/README.md",
+          "bytes": 5831,
+          "blob": "ae9d4c0fc08a9d315d79be54f1cb06f2dab37bca",
+          "pin_blob": "df709750e6b97c2ec22a8754c5f76dd972a93faf",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/coh_live.c",
+          "bytes": 13090,
+          "blob": "c55b0ef6eb32a19a349fc0a3b2cd51ca4d6741cb",
+          "pin_blob": "882567e337792c211879cb0d27f0d124d0bb9858",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/test_live.c",
+          "bytes": 16971,
+          "blob": "071c4614035a6ac6a3e622305b5d0daba7ee7676",
+          "pin_blob": "40c66802fda5159c68f02e572cb1021ba322459c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/README.md",
+          "bytes": 7782,
+          "blob": "6fa43e63a7765d3c44e92c892b18698270cb84bc",
+          "pin_blob": "63f97b4dcfd4e8854d987bd051578b1890c341f5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/check.py",
+          "bytes": 8529,
+          "blob": "1134556bbf6b52c557da40859f39c9674683533b",
+          "pin_blob": "b60820aeb24a62583e31e4e4be150f11c0bd6422",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.c",
+          "bytes": 10495,
+          "blob": "66caadba7587604da40d52ad2c82e0709335e61a",
+          "pin_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.h",
+          "bytes": 3399,
+          "blob": "6e04fbb26b753cda8ab5ae9255bd773d68357736",
+          "pin_blob": "fca014f79fb7ceafd5dc6bf17b4350e471d15c1d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/test_local.c",
+          "bytes": 12759,
+          "blob": "d972e133c0a7a1714a17fb2995f23e81e1a21d6c",
+          "pin_blob": "4ad8ea853583b998085cb167792c777ca0715c97",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/mapclient/CMakeLists.txt",
+          "bytes": 396,
+          "blob": "a6772ba11fd877f23292d0013059f8dc18146a5f",
+          "pin_blob": "97ba231363cd8afb98e8a16d1a1fe0f981623fe8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/mapclient/README.md",
+          "bytes": 10318,
+          "blob": "49631a2728c28e50b84bf7e87c2f95eb272ea82e",
+          "pin_blob": "62cc2ffea8d9a383286a1aa62e19f8632bc6cf65",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.c",
+          "bytes": 15480,
+          "blob": "0ec41ddae460d55026044839a5a5d9ddeddb8308",
+          "pin_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.h",
+          "bytes": 5552,
+          "blob": "21162afb3735dc9bdd1003ee97b53766c4f3e5db",
+          "pin_blob": "5b75c0a7ba4b92bd77fe480b115f36db18329da5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/tests/test_mapclient.c",
+          "bytes": 36553,
+          "blob": "44ada40623002fe11b8948560cc6ee9a5a5325b1",
+          "pin_blob": "8311a4d572afd8dfcf18686d50c1c67ebb379f44",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.c",
+          "bytes": 8086,
+          "blob": "7f68c55bc2e786b77eef0f76eac82767f1b7f8ee",
+          "pin_blob": "7de94ac2ecd3bf5aadd47884e2e2790630eb13c2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.h",
+          "bytes": 2953,
+          "blob": "832e3d71bfaf2e70ef735f0d9fee5025ec9ced33",
+          "pin_blob": "731555ced9de4971ecfa7a207146924bc972736a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/CMakeLists.txt",
+          "bytes": 1759,
+          "blob": "d207dee951266e1e84143a50bd553f603bc97276",
+          "pin_blob": "eb0a640d43e7d07b9747191036c51c9c2bd1bb2c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/README.md",
+          "bytes": 9248,
+          "blob": "350f37b775a6f7e562a93790838b495ae23b5e83",
+          "pin_blob": "fcaab678b821de679e371141e51bf54fff25c8f3",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check.py",
+          "bytes": 8300,
+          "blob": "4cff0095dbe06afcbd83d9325ad6e7ad1ba9a522",
+          "pin_blob": "3344a0415764f230c59685e35ce7e9b6121b4d3d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.c",
+          "bytes": 8839,
+          "blob": "14170fcf409c48509f48beaed512ad0c1dcda7f5",
+          "pin_blob": "268fc929ef42e3c2060602ff763bd21085691fbe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.h",
+          "bytes": 2268,
+          "blob": "8e5bf57b49546b721f42b992a14cb21c915ddd09",
+          "pin_blob": "0a4b6af916071969fa9a15d743a0e6a667d62ec4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/tests/test_scenecatalog.c",
+          "bytes": 10156,
+          "blob": "06c610cc9eed9a081460d76dbf1d1ae29079b6da",
+          "pin_blob": "3073da088acc2c875ee7ff8c6306de39137dfece",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/common.py",
+          "bytes": 6933,
+          "blob": "08c7ac3a0e7bef28b1aa002d62daed677156629b",
+          "pin_blob": "c2ee46079dc45e5278e9693e187731059295a588",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/qualify.py",
+          "bytes": 10486,
+          "blob": "f7543d08ce90bde3a45dbb8328a046067bac9831",
+          "pin_blob": "22343148294e1c5b731688ca397217f0bdc0a23b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/run_android.py",
+          "bytes": 11779,
+          "blob": "800dcaa7dc265312d6e6ab971134bab1d7a9528f",
+          "pin_blob": "439e0cdb0e78a215ec4bc14af8bc15f4b6a44df4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/tests/test_admission.py",
+          "bytes": 12934,
+          "blob": "65e37b51b3bbdd4960cea2c1c5243d97d7e70962",
+          "pin_blob": "18a3cfa1aeb7a0673fdcc8d54b3bf870350abb73",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/README.md",
+          "bytes": 5585,
+          "blob": "92287f7a33263d7269efc9db7160dff81622c2e8",
+          "pin_blob": "70939aa9a67e7ff58e55c4c035bcd6a221df1c7c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/check.py",
+          "bytes": 5289,
+          "blob": "72a072e33a4141c91d2d55b374d5a9292bba90cd",
+          "pin_blob": "3601775cbadd587b13bfe4dff49d6ec138744683",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/CMakeLists.txt",
+          "bytes": 1696,
+          "blob": "fd17b07a23a83794345b14723762d34f1b95930b",
+          "pin_blob": "c6f2d82150dcb56c02a7b725eea7f94357b46b08",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/README.md",
+          "bytes": 7203,
+          "blob": "dc44653e3884da92818006106cc9b743a8185e7a",
+          "pin_blob": "8a692c46ba9d84ee53e64f67ed9b913a0b43f668",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/check.py",
+          "bytes": 8576,
+          "blob": "2a0a42c7d237f8add55fd69e187bb7624536bd3c",
+          "pin_blob": "7654b790386a739aa56c59fccac86008a409acf2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.c",
+          "bytes": 19247,
+          "blob": "ea9fd21c611cf38217326ebbdda2507b8c705e6e",
+          "pin_blob": "77aa2e5066caacc8195af8e5782877677dd91425",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.h",
+          "bytes": 4432,
+          "blob": "d42f6f40f7c568630449c2347080eefe691d5adb",
+          "pin_blob": "428fd1aef10c8d42141d0445f1eff1a9b84156d1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/tests/test_scenegraph.c",
+          "bytes": 12282,
+          "blob": "232e3e26923a67341aa36fc1a2c68dd2c3cbf792",
+          "pin_blob": "bb91b26eaacbfd66918fe2256d07fa0a3ec85499",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/README.md",
+          "bytes": 10194,
+          "blob": "fdc5d5c621d1a597ce151cb34d9f87c119e4bdf6",
+          "pin_blob": "7fbae74f989051503661da3c836b8399b084abdd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/check.py",
+          "bytes": 8277,
+          "blob": "6f498274fe929212a456f2eca76bae8f1441fe45",
+          "pin_blob": "11539863535d76cf8fe46790f44a256b55018c21",
+          "classification": "remote_history_superseded",
+          "historical_commit": "9f6cd4537ad45324f7866caea6d5a732308bce8b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/coh_world_render.c",
+          "bytes": 15830,
+          "blob": "58d999efeeced7c94db701dc6659d44f60eccb9e",
+          "pin_blob": "5cffc53ad9dcf9ffdf01a9357c60284d260e15ab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/coh_world_render.h",
+          "bytes": 6587,
+          "blob": "cb9cadb5244c5e8e2f04d13efa5a3d3aa9cb582b",
+          "pin_blob": "2b0a3c2d0be824902a7b0cdb7fa4e0ed1a8af3f4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/tests/test_world_render.c",
+          "bytes": 20133,
+          "blob": "e3bc6ef65f068f2f3f10c4a2dac9ec1259b2da91",
+          "pin_blob": "429ca06a1151b1de2ad8308a15187b2cf2e9cd72",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": ".github/workflows/native-android-core.yml",
+          "bytes": 2006,
+          "blob": "e781bf9ff459b32f63352f1d7574c4ea45e26a5d",
+          "pin_blob": "5ff951216facaf3768ede48c9539f43a5d2f7f4d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-combined-client.yml",
+          "bytes": 6394,
+          "blob": "574f5a3030a1e38e3d6791e8681d982d3a4fc4d5",
+          "pin_blob": "1a29a02aaf444534d9062473ae01758e1beb8eab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-live-session.yml",
+          "bytes": 3958,
+          "blob": "ed2cf8c7ea46a4df557de683648624cf4e5650cc",
+          "pin_blob": "b3b3dc2e9e8ff822036ca1fffcab5f2c947b006e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": ".github/workflows/native-primary-continuation.yml",
+          "bytes": 3962,
+          "blob": "7f30bb0777b60167bfe6ef204bfc25d5cf64f2f0",
+          "pin_blob": "d7fd3ba51c1cd4c7bbf0412bce847df97e1c0a62",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-scene-catalog.yml",
+          "bytes": 9705,
+          "blob": "f4ca025397ba6ace533a4276ba949068dd08d8e1",
+          "pin_blob": "761713710ac32303c5dcb2bacf4e4cc129bfc739",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        }
+      ]
+    },
+    "worker-f": {
+      "files": 2908,
+      "counts": {
+        "identical_at_pin": 2847,
+        "remote_history_superseded": 61
+      },
+      "ignored_symlinks": [],
+      "gitdir_record": "gitdir: /workspace/scratch/9c69943dc291/coh-next/.git/worktrees/worker-f",
+      "different": [
+        {
+          "path": "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+          "bytes": 2377,
+          "blob": "93070c932f4d331f2951308cffdf0a4dffbc7743",
+          "pin_blob": "1f67cbdbe1fcb690daab4e2023f76c9ffb680346",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/combined-client/tools/analyze_startup_resources.py",
+          "bytes": 10249,
+          "blob": "545170e4f331d461d32eb50588abff40b346b735",
+          "pin_blob": "9aa4226ee2f9e2ffca124413c604e9a85522a665",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/combined-client/tools/read_startup_receipts.py",
+          "bytes": 16298,
+          "blob": "d47565fb3767c7aa8f18d895e2df404ea2c665ed",
+          "pin_blob": "025e7b5c104a694526c644db690a238857f42f48",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/combined-client/tools/test_startup_resources.py",
+          "bytes": 5916,
+          "blob": "b0deaebd68c84ce841d1953efb4823c8c91443b7",
+          "pin_blob": "9d47873c1d8ee6b6582192d136c148d8604eb21a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/auth-interop/README.md",
+          "bytes": 5147,
+          "blob": "805c54fa6a9b66193c821f8306bea50ded47feea",
+          "pin_blob": "50b2b0f9f5b2ad0a4965b3859353db9c9f9fa910",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/auth-interop/SOURCE-AUDIT.md",
+          "bytes": 6176,
+          "blob": "c5607c7dc2111e18fc486b2e741d15a393dcda34",
+          "pin_blob": "990ca32a3aa129b65fae53f50228185a3a38d4dc",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/continuation/README.md",
+          "bytes": 4958,
+          "blob": "32dd9eccd08d13fa5973e5b1d9011128ae163d78",
+          "pin_blob": "f3d8e0f95ed6ecd59d3651f9841b9837f4b046d8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82"
+        },
+        {
+          "path": "native-android/engine/continuation/common.py",
+          "bytes": 3825,
+          "blob": "323724d00ad050f15e6839021bffedba74250f7c",
+          "pin_blob": "c720858d497e0f4b177348c94fa3d76b4c797623",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": "native-android/engine/continuation/qualify.py",
+          "bytes": 8091,
+          "blob": "5d62a47c5204e70a0bbeca9fccf8e18c03b228b7",
+          "pin_blob": "7c791a87358c8cb5456d4066f40f988ddd4a0a77",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/run_android.py",
+          "bytes": 10015,
+          "blob": "7d48d9d953e54c5fb851a271944254f36fa7416a",
+          "pin_blob": "b8cf6a7f21085613934f89e3464b727352b6344f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/tests/test_admission.py",
+          "bytes": 6806,
+          "blob": "25f3329e9076a37d5be89321d369413c3fa8faf2",
+          "pin_blob": "f68f79a073f6a7f41f1a77559e14c7982a4da38d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/dbclient/SOURCE-AUDIT.md",
+          "bytes": 4566,
+          "blob": "3a0bd4a648da43a677ba1a773295cf7038d02ab5",
+          "pin_blob": "49b4a75d2efc8fc3c5a1314683d421f1d063d98d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.c",
+          "bytes": 13421,
+          "blob": "fe56d1a545d1c4495961232aac6b8fbafea53adc",
+          "pin_blob": "8cd443957041d4e6767682396c49e715b8953658",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.h",
+          "bytes": 3531,
+          "blob": "75d13575d0459cf0632a836a5e96307fc42b7f4b",
+          "pin_blob": "2dca3f1a94b90d0f8fc99901393274c1e94b948d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/tests/test_db_session.c",
+          "bytes": 18614,
+          "blob": "49f4440c2a0febb68e797f977e355b4a599de6b6",
+          "pin_blob": "a2cc769490facd1810bdc82d089efd5c4d1c4524",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/entities/CMakeLists.txt",
+          "bytes": 978,
+          "blob": "8801dad0543c395cdfc8c31ae0ff5f59ade6c238",
+          "pin_blob": "4416b1dc8ee3267db49ee6319e3cf752d0af11a8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/README.md",
+          "bytes": 11856,
+          "blob": "bdb21cfb17b43090d1f884232fb9e29ed3c0cde9",
+          "pin_blob": "f06044fa10486df50d141d70e0bc80f0f94b139f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/check.py",
+          "bytes": 19987,
+          "blob": "c310c702e7f13b1511ffebaea22d1a06d62be523",
+          "pin_blob": "3490d02be77e2c9e86728a46cba5641bf49527df",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.c",
+          "bytes": 18088,
+          "blob": "1403f1c70f55aff7b1c81461edc5958bcc7ad1a7",
+          "pin_blob": "9f16bc2c4167b54b2cc31f52283ccc3f9adba08b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.h",
+          "bytes": 6146,
+          "blob": "8a8724e18035db1e8cedd970f85a52e577684bd7",
+          "pin_blob": "8ef29ef584f4513fa8a12fb749a68d5e7719ce52",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/oracle_shim.h",
+          "bytes": 3882,
+          "blob": "73dfc76f703dc5848b4abd2a147c226a328d2377",
+          "pin_blob": "91fc4c05c82a0b9ed1a35563456f7c85cf2a875d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/source-pins.json",
+          "bytes": 1620,
+          "blob": "4aa612227c514a11664f78a3108641a7491f412e",
+          "pin_blob": "caea39f1a87ad62e39ecb39038b8753b40d8b1e1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/entities/test_entities.c",
+          "bytes": 21899,
+          "blob": "cc6394d71f7ddde8aec0fc520bee2ddab7fffeb9",
+          "pin_blob": "0ca16dfb952f8113ad6b48d126d617f0ac71d0fe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/live/README.md",
+          "bytes": 5831,
+          "blob": "ae9d4c0fc08a9d315d79be54f1cb06f2dab37bca",
+          "pin_blob": "df709750e6b97c2ec22a8754c5f76dd972a93faf",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/coh_live.c",
+          "bytes": 13090,
+          "blob": "c55b0ef6eb32a19a349fc0a3b2cd51ca4d6741cb",
+          "pin_blob": "882567e337792c211879cb0d27f0d124d0bb9858",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/test_live.c",
+          "bytes": 16971,
+          "blob": "071c4614035a6ac6a3e622305b5d0daba7ee7676",
+          "pin_blob": "40c66802fda5159c68f02e572cb1021ba322459c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/README.md",
+          "bytes": 7782,
+          "blob": "6fa43e63a7765d3c44e92c892b18698270cb84bc",
+          "pin_blob": "63f97b4dcfd4e8854d987bd051578b1890c341f5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/check.py",
+          "bytes": 8529,
+          "blob": "1134556bbf6b52c557da40859f39c9674683533b",
+          "pin_blob": "b60820aeb24a62583e31e4e4be150f11c0bd6422",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.c",
+          "bytes": 10495,
+          "blob": "66caadba7587604da40d52ad2c82e0709335e61a",
+          "pin_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.h",
+          "bytes": 3399,
+          "blob": "6e04fbb26b753cda8ab5ae9255bd773d68357736",
+          "pin_blob": "fca014f79fb7ceafd5dc6bf17b4350e471d15c1d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/test_local.c",
+          "bytes": 12759,
+          "blob": "d972e133c0a7a1714a17fb2995f23e81e1a21d6c",
+          "pin_blob": "4ad8ea853583b998085cb167792c777ca0715c97",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/mapclient/CMakeLists.txt",
+          "bytes": 396,
+          "blob": "a6772ba11fd877f23292d0013059f8dc18146a5f",
+          "pin_blob": "97ba231363cd8afb98e8a16d1a1fe0f981623fe8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/mapclient/README.md",
+          "bytes": 10318,
+          "blob": "49631a2728c28e50b84bf7e87c2f95eb272ea82e",
+          "pin_blob": "62cc2ffea8d9a383286a1aa62e19f8632bc6cf65",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.c",
+          "bytes": 15480,
+          "blob": "0ec41ddae460d55026044839a5a5d9ddeddb8308",
+          "pin_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.h",
+          "bytes": 5552,
+          "blob": "21162afb3735dc9bdd1003ee97b53766c4f3e5db",
+          "pin_blob": "5b75c0a7ba4b92bd77fe480b115f36db18329da5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/tests/test_mapclient.c",
+          "bytes": 36553,
+          "blob": "44ada40623002fe11b8948560cc6ee9a5a5325b1",
+          "pin_blob": "8311a4d572afd8dfcf18686d50c1c67ebb379f44",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.c",
+          "bytes": 8086,
+          "blob": "7f68c55bc2e786b77eef0f76eac82767f1b7f8ee",
+          "pin_blob": "7de94ac2ecd3bf5aadd47884e2e2790630eb13c2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.h",
+          "bytes": 2953,
+          "blob": "832e3d71bfaf2e70ef735f0d9fee5025ec9ced33",
+          "pin_blob": "731555ced9de4971ecfa7a207146924bc972736a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/CMakeLists.txt",
+          "bytes": 1759,
+          "blob": "d207dee951266e1e84143a50bd553f603bc97276",
+          "pin_blob": "eb0a640d43e7d07b9747191036c51c9c2bd1bb2c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/README.md",
+          "bytes": 9248,
+          "blob": "350f37b775a6f7e562a93790838b495ae23b5e83",
+          "pin_blob": "fcaab678b821de679e371141e51bf54fff25c8f3",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check.py",
+          "bytes": 8300,
+          "blob": "4cff0095dbe06afcbd83d9325ad6e7ad1ba9a522",
+          "pin_blob": "3344a0415764f230c59685e35ce7e9b6121b4d3d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.c",
+          "bytes": 8839,
+          "blob": "14170fcf409c48509f48beaed512ad0c1dcda7f5",
+          "pin_blob": "268fc929ef42e3c2060602ff763bd21085691fbe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.h",
+          "bytes": 2268,
+          "blob": "8e5bf57b49546b721f42b992a14cb21c915ddd09",
+          "pin_blob": "0a4b6af916071969fa9a15d743a0e6a667d62ec4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/tests/test_scenecatalog.c",
+          "bytes": 10156,
+          "blob": "06c610cc9eed9a081460d76dbf1d1ae29079b6da",
+          "pin_blob": "3073da088acc2c875ee7ff8c6306de39137dfece",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/common.py",
+          "bytes": 6933,
+          "blob": "08c7ac3a0e7bef28b1aa002d62daed677156629b",
+          "pin_blob": "c2ee46079dc45e5278e9693e187731059295a588",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/qualify.py",
+          "bytes": 10486,
+          "blob": "f7543d08ce90bde3a45dbb8328a046067bac9831",
+          "pin_blob": "22343148294e1c5b731688ca397217f0bdc0a23b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/run_android.py",
+          "bytes": 11779,
+          "blob": "800dcaa7dc265312d6e6ab971134bab1d7a9528f",
+          "pin_blob": "439e0cdb0e78a215ec4bc14af8bc15f4b6a44df4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/tests/test_admission.py",
+          "bytes": 12934,
+          "blob": "65e37b51b3bbdd4960cea2c1c5243d97d7e70962",
+          "pin_blob": "18a3cfa1aeb7a0673fdcc8d54b3bf870350abb73",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/README.md",
+          "bytes": 5585,
+          "blob": "92287f7a33263d7269efc9db7160dff81622c2e8",
+          "pin_blob": "70939aa9a67e7ff58e55c4c035bcd6a221df1c7c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/check.py",
+          "bytes": 5289,
+          "blob": "72a072e33a4141c91d2d55b374d5a9292bba90cd",
+          "pin_blob": "3601775cbadd587b13bfe4dff49d6ec138744683",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/CMakeLists.txt",
+          "bytes": 1696,
+          "blob": "fd17b07a23a83794345b14723762d34f1b95930b",
+          "pin_blob": "c6f2d82150dcb56c02a7b725eea7f94357b46b08",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/README.md",
+          "bytes": 7203,
+          "blob": "dc44653e3884da92818006106cc9b743a8185e7a",
+          "pin_blob": "8a692c46ba9d84ee53e64f67ed9b913a0b43f668",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/check.py",
+          "bytes": 8576,
+          "blob": "2a0a42c7d237f8add55fd69e187bb7624536bd3c",
+          "pin_blob": "7654b790386a739aa56c59fccac86008a409acf2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.c",
+          "bytes": 19247,
+          "blob": "ea9fd21c611cf38217326ebbdda2507b8c705e6e",
+          "pin_blob": "77aa2e5066caacc8195af8e5782877677dd91425",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.h",
+          "bytes": 4432,
+          "blob": "d42f6f40f7c568630449c2347080eefe691d5adb",
+          "pin_blob": "428fd1aef10c8d42141d0445f1eff1a9b84156d1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": "native-android/engine/scenegraph/tests/test_scenegraph.c",
+          "bytes": 12282,
+          "blob": "232e3e26923a67341aa36fc1a2c68dd2c3cbf792",
+          "pin_blob": "bb91b26eaacbfd66918fe2256d07fa0a3ec85499",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-android-core.yml",
+          "bytes": 2006,
+          "blob": "e781bf9ff459b32f63352f1d7574c4ea45e26a5d",
+          "pin_blob": "5ff951216facaf3768ede48c9539f43a5d2f7f4d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-combined-client.yml",
+          "bytes": 6394,
+          "blob": "574f5a3030a1e38e3d6791e8681d982d3a4fc4d5",
+          "pin_blob": "1a29a02aaf444534d9062473ae01758e1beb8eab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-live-session.yml",
+          "bytes": 3958,
+          "blob": "ed2cf8c7ea46a4df557de683648624cf4e5650cc",
+          "pin_blob": "b3b3dc2e9e8ff822036ca1fffcab5f2c947b006e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": ".github/workflows/native-primary-continuation.yml",
+          "bytes": 3962,
+          "blob": "7f30bb0777b60167bfe6ef204bfc25d5cf64f2f0",
+          "pin_blob": "d7fd3ba51c1cd4c7bbf0412bce847df97e1c0a62",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        },
+        {
+          "path": ".github/workflows/native-scene-catalog.yml",
+          "bytes": 9705,
+          "blob": "f4ca025397ba6ace533a4276ba949068dd08d8e1",
+          "pin_blob": "761713710ac32303c5dcb2bacf4e4cc129bfc739",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+        }
+      ]
+    },
+    "integration": {
+      "files": 2930,
+      "counts": {
+        "identical_at_pin": 2854,
+        "remote_history_superseded": 76
+      },
+      "ignored_symlinks": [],
+      "gitdir_record": "gitdir: /workspace/scratch/9c69943dc291/coh-next/.git/worktrees/integration",
+      "different": [
+        {
+          "path": "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+          "bytes": 2377,
+          "blob": "93070c932f4d331f2951308cffdf0a4dffbc7743",
+          "pin_blob": "1f67cbdbe1fcb690daab4e2023f76c9ffb680346",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/HANDOFF.md",
+          "bytes": 5806,
+          "blob": "520b9c05f5b08b52d514c6762b73a3906ee8600b",
+          "pin_blob": "a24ae7fd467f724d57db86b601eae8fdf618b901",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/ownership.json",
+          "bytes": 1745,
+          "blob": "3ea3d31c241cad5afd117d2496b63dd01740ed5e",
+          "pin_blob": "114cb03a0d2a3afd52ad56fca856695bdb2ba9ca",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/workers.json",
+          "bytes": 1303,
+          "blob": "7e4127e6f97a8cd768f1d1491c1847aba17bb5b6",
+          "pin_blob": "04f29e2cccd0a5546bc6b7ae037d466d41a3abc3",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/combined-client/tools/analyze_startup_resources.py",
+          "bytes": 10249,
+          "blob": "545170e4f331d461d32eb50588abff40b346b735",
+          "pin_blob": "9aa4226ee2f9e2ffca124413c604e9a85522a665",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/combined-client/tools/test_startup_resources.py",
+          "bytes": 5916,
+          "blob": "b0deaebd68c84ce841d1953efb4823c8c91443b7",
+          "pin_blob": "9d47873c1d8ee6b6582192d136c148d8604eb21a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/auth-interop/deployment/README.md",
+          "bytes": 7863,
+          "blob": "e5652f1a2552c4dfaa811df37618578f09159731",
+          "pin_blob": "d95f4a72b0d011d81d7bbc12b0827a9d0487dca5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/auth-interop/deployment/check.py",
+          "bytes": 2269,
+          "blob": "d882a35c523c4cecea4fd9bfb6450f1014702897",
+          "pin_blob": "a0dc74958344c9553cbf3f0785b48afea808a236",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/auth-interop/deployment/source-pins.json",
+          "bytes": 2714,
+          "blob": "a8c86bcfc802d29920a31b8e45f44ba24fd71b76",
+          "pin_blob": "7a0ec7745adf211b8c32ed25e9168ef0e91e8bfa",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/README.md",
+          "bytes": 4958,
+          "blob": "32dd9eccd08d13fa5973e5b1d9011128ae163d78",
+          "pin_blob": "f3d8e0f95ed6ecd59d3651f9841b9837f4b046d8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82"
+        },
+        {
+          "path": "native-android/engine/continuation/common.py",
+          "bytes": 3825,
+          "blob": "323724d00ad050f15e6839021bffedba74250f7c",
+          "pin_blob": "c720858d497e0f4b177348c94fa3d76b4c797623",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": "native-android/engine/continuation/qualify.py",
+          "bytes": 8091,
+          "blob": "5d62a47c5204e70a0bbeca9fccf8e18c03b228b7",
+          "pin_blob": "7c791a87358c8cb5456d4066f40f988ddd4a0a77",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/run_adapter_android.py",
+          "bytes": 10702,
+          "blob": "4bad62f8d7287e9312c29ec2a944eed53d01bbad",
+          "pin_blob": "cd7bce2542730781d383cba3caba02e323d190b8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/run_android.py",
+          "bytes": 10015,
+          "blob": "7d48d9d953e54c5fb851a271944254f36fa7416a",
+          "pin_blob": "b8cf6a7f21085613934f89e3464b727352b6344f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/tests/test_adapter_admission.py",
+          "bytes": 7051,
+          "blob": "b0c80a131cdccdabe1ade0d6e8e235522b01ef09",
+          "pin_blob": "961c6d5b48596e29e20287ccde0272244eb4fe5f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/continuation/tests/test_admission.py",
+          "bytes": 6806,
+          "blob": "25f3329e9076a37d5be89321d369413c3fa8faf2",
+          "pin_blob": "f68f79a073f6a7f41f1a77559e14c7982a4da38d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/dbclient/SOURCE-AUDIT.md",
+          "bytes": 4566,
+          "blob": "3a0bd4a648da43a677ba1a773295cf7038d02ab5",
+          "pin_blob": "49b4a75d2efc8fc3c5a1314683d421f1d063d98d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.c",
+          "bytes": 13421,
+          "blob": "fe56d1a545d1c4495961232aac6b8fbafea53adc",
+          "pin_blob": "8cd443957041d4e6767682396c49e715b8953658",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.h",
+          "bytes": 3531,
+          "blob": "75d13575d0459cf0632a836a5e96307fc42b7f4b",
+          "pin_blob": "2dca3f1a94b90d0f8fc99901393274c1e94b948d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/tests/test_db_session.c",
+          "bytes": 18614,
+          "blob": "49f4440c2a0febb68e797f977e355b4a599de6b6",
+          "pin_blob": "a2cc769490facd1810bdc82d089efd5c4d1c4524",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/entities/CMakeLists.txt",
+          "bytes": 978,
+          "blob": "8801dad0543c395cdfc8c31ae0ff5f59ade6c238",
+          "pin_blob": "4416b1dc8ee3267db49ee6319e3cf752d0af11a8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/INITIAL_UPDATE_CLOSURE.md",
+          "bytes": 7863,
+          "blob": "1f1df0fd18fd621616e339f66ad6abf2a464e234",
+          "pin_blob": "70bea512c4f965f23384f6c65bfff37576650ad9",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/README.md",
+          "bytes": 9281,
+          "blob": "a57f91638b92c48744ae5d7629f0e06a972f9462",
+          "pin_blob": "f06044fa10486df50d141d70e0bc80f0f94b139f",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/check.py",
+          "bytes": 33502,
+          "blob": "5f2de96f3d7fc846337efe9e912d5b45fd1042c3",
+          "pin_blob": "3490d02be77e2c9e86728a46cba5641bf49527df",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.c",
+          "bytes": 28212,
+          "blob": "55e6574960ca4da37361aad4649ed9ed195f8bdd",
+          "pin_blob": "9f16bc2c4167b54b2cc31f52283ccc3f9adba08b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "fd86ff196f172bf62cd24c7e0f807df39c33e0a5"
+        },
+        {
+          "path": "native-android/engine/entities/coh_entities.h",
+          "bytes": 10073,
+          "blob": "0826a313506096e450b7b214eae88e415ae9f9b8",
+          "pin_blob": "8ef29ef584f4513fa8a12fb749a68d5e7719ce52",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/oracle_shim.h",
+          "bytes": 6429,
+          "blob": "aed0ec88f09b10e29d1d33b5b5811fb28dc1cc7e",
+          "pin_blob": "91fc4c05c82a0b9ed1a35563456f7c85cf2a875d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "01fc46d78611ec9b55d086a2ac55166e13949c82"
+        },
+        {
+          "path": "native-android/engine/entities/source-pins.json",
+          "bytes": 2607,
+          "blob": "b276184d6cedb87c0dcafbfb2bd25a38b6a45277",
+          "pin_blob": "caea39f1a87ad62e39ecb39038b8753b40d8b1e1",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/entities/test_entities.c",
+          "bytes": 33223,
+          "blob": "7a1998f85d0cc83965c7ee29e1c1e8f0c1ff4a35",
+          "pin_blob": "0ca16dfb952f8113ad6b48d126d617f0ac71d0fe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/live/README.md",
+          "bytes": 5831,
+          "blob": "ae9d4c0fc08a9d315d79be54f1cb06f2dab37bca",
+          "pin_blob": "df709750e6b97c2ec22a8754c5f76dd972a93faf",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/coh_live.c",
+          "bytes": 13090,
+          "blob": "c55b0ef6eb32a19a349fc0a3b2cd51ca4d6741cb",
+          "pin_blob": "882567e337792c211879cb0d27f0d124d0bb9858",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/test_live.c",
+          "bytes": 16971,
+          "blob": "071c4614035a6ac6a3e622305b5d0daba7ee7676",
+          "pin_blob": "40c66802fda5159c68f02e572cb1021ba322459c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/README.md",
+          "bytes": 7782,
+          "blob": "6fa43e63a7765d3c44e92c892b18698270cb84bc",
+          "pin_blob": "63f97b4dcfd4e8854d987bd051578b1890c341f5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/check.py",
+          "bytes": 8529,
+          "blob": "1134556bbf6b52c557da40859f39c9674683533b",
+          "pin_blob": "b60820aeb24a62583e31e4e4be150f11c0bd6422",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.c",
+          "bytes": 10495,
+          "blob": "66caadba7587604da40d52ad2c82e0709335e61a",
+          "pin_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.h",
+          "bytes": 3399,
+          "blob": "6e04fbb26b753cda8ab5ae9255bd773d68357736",
+          "pin_blob": "fca014f79fb7ceafd5dc6bf17b4350e471d15c1d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/test_local.c",
+          "bytes": 12759,
+          "blob": "d972e133c0a7a1714a17fb2995f23e81e1a21d6c",
+          "pin_blob": "4ad8ea853583b998085cb167792c777ca0715c97",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/mapclient/CMakeLists.txt",
+          "bytes": 396,
+          "blob": "a6772ba11fd877f23292d0013059f8dc18146a5f",
+          "pin_blob": "97ba231363cd8afb98e8a16d1a1fe0f981623fe8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/mapclient/README.md",
+          "bytes": 10318,
+          "blob": "49631a2728c28e50b84bf7e87c2f95eb272ea82e",
+          "pin_blob": "62cc2ffea8d9a383286a1aa62e19f8632bc6cf65",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.c",
+          "bytes": 15480,
+          "blob": "0ec41ddae460d55026044839a5a5d9ddeddb8308",
+          "pin_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.h",
+          "bytes": 5552,
+          "blob": "21162afb3735dc9bdd1003ee97b53766c4f3e5db",
+          "pin_blob": "5b75c0a7ba4b92bd77fe480b115f36db18329da5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/tests/test_mapclient.c",
+          "bytes": 36553,
+          "blob": "44ada40623002fe11b8948560cc6ee9a5a5325b1",
+          "pin_blob": "8311a4d572afd8dfcf18686d50c1c67ebb379f44",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.c",
+          "bytes": 8086,
+          "blob": "7f68c55bc2e786b77eef0f76eac82767f1b7f8ee",
+          "pin_blob": "7de94ac2ecd3bf5aadd47884e2e2790630eb13c2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.h",
+          "bytes": 2953,
+          "blob": "832e3d71bfaf2e70ef735f0d9fee5025ec9ced33",
+          "pin_blob": "731555ced9de4971ecfa7a207146924bc972736a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/CMakeLists.txt",
+          "bytes": 1759,
+          "blob": "d207dee951266e1e84143a50bd553f603bc97276",
+          "pin_blob": "eb0a640d43e7d07b9747191036c51c9c2bd1bb2c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/README.md",
+          "bytes": 9618,
+          "blob": "7207f92bbae21f8a1b1137811f75e204dff424c6",
+          "pin_blob": "fcaab678b821de679e371141e51bf54fff25c8f3",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check.py",
+          "bytes": 8300,
+          "blob": "4cff0095dbe06afcbd83d9325ad6e7ad1ba9a522",
+          "pin_blob": "3344a0415764f230c59685e35ce7e9b6121b4d3d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check_file.py",
+          "bytes": 6363,
+          "blob": "a99536b4a2280067e03f08e6365446b98de8a8a0",
+          "pin_blob": "d517df1ff37f57b82736290b82fc73344a9a6be6",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.c",
+          "bytes": 8839,
+          "blob": "14170fcf409c48509f48beaed512ad0c1dcda7f5",
+          "pin_blob": "268fc929ef42e3c2060602ff763bd21085691fbe",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/coh_scenecatalog.h",
+          "bytes": 2268,
+          "blob": "8e5bf57b49546b721f42b992a14cb21c915ddd09",
+          "pin_blob": "0a4b6af916071969fa9a15d743a0e6a667d62ec4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/validate_file.c",
+          "bytes": 1741,
+          "blob": "66952c12d7e3dd32350cc34cd5a8d53082b53a82",
+          "pin_blob": "dc2399f7a7f7b48195fddfb7d740bc965cdc52fc",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/tests/test_scenecatalog.c",
+          "bytes": 10313,
+          "blob": "760bb36b67b173ae6fb1e930ec4260e60932be83",
+          "pin_blob": "3073da088acc2c875ee7ff8c6306de39137dfece",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/common.py",
+          "bytes": 6933,
+          "blob": "08c7ac3a0e7bef28b1aa002d62daed677156629b",
+          "pin_blob": "c2ee46079dc45e5278e9693e187731059295a588",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/qualify.py",
+          "bytes": 10486,
+          "blob": "f7543d08ce90bde3a45dbb8328a046067bac9831",
+          "pin_blob": "22343148294e1c5b731688ca397217f0bdc0a23b",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/run_android.py",
+          "bytes": 11779,
+          "blob": "800dcaa7dc265312d6e6ab971134bab1d7a9528f",
+          "pin_blob": "439e0cdb0e78a215ec4bc14af8bc15f4b6a44df4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/tests/test_admission.py",
+          "bytes": 12934,
+          "blob": "65e37b51b3bbdd4960cea2c1c5243d97d7e70962",
+          "pin_blob": "18a3cfa1aeb7a0673fdcc8d54b3bf870350abb73",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/DEPLOYMENT.md",
+          "bytes": 9940,
+          "blob": "047b603cde89b976f56f43a102dedd18ca87267e",
+          "pin_blob": "dc51f335924768051c93b67c8d79777a817aba32",
+          "classification": "remote_history_superseded",
+          "historical_commit": "97ba1b82306858d0f6c4b2e226dfa435c8170c8a"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/HOSTED-CAPTURE.md",
+          "bytes": 7826,
+          "blob": "52b71781f84a3bb5f6f31bb95b0de9ea594e586e",
+          "pin_blob": "2fc90e3be5f16c44c53c5b1c1f047924a3374d0e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/capture_disposable.py",
+          "bytes": 23228,
+          "blob": "505d23e9cbf8c1131a9499f9f9027ea0118b9e54",
+          "pin_blob": "1203a12320eb3d4b7e2a696523202d0a5ae700ef",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-server/test_capture_disposable.py",
+          "bytes": 7499,
+          "blob": "4aedf6fe40e78886fe8e072ac228cc1810f43738",
+          "pin_blob": "abd247a8e91d78bd5cf36fffee9ea5ad033942fd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenegraph/CMakeLists.txt",
+          "bytes": 1731,
+          "blob": "bb4e5f5fac7ac666ff353897c9b3a45a44400a4e",
+          "pin_blob": "c6f2d82150dcb56c02a7b725eea7f94357b46b08",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenegraph/README.md",
+          "bytes": 11068,
+          "blob": "bc0fedbb9425b3283e922095f180f3babcaf4217",
+          "pin_blob": "8a692c46ba9d84ee53e64f67ed9b913a0b43f668",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenegraph/check.py",
+          "bytes": 11045,
+          "blob": "a4f6e643cf64a0817c53f3c19eed071228466351",
+          "pin_blob": "7654b790386a739aa56c59fccac86008a409acf2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/scenegraph/coh_scenegraph.c",
+          "bytes": 29460,
+          "blob": "1cceddf5858fc94ad23df5ae493075bf150b0322",
+          "pin_blob": "77aa2e5066caacc8195af8e5782877677dd91425",
+          "classification": "remote_history_superseded",
+          "historical_commit": "cc92cad36eb8136274794a2beed9c6945647abbe"
+        },
+        {
+          "path": "native-android/engine/scenegraph/tests/test_scenegraph.c",
+          "bytes": 18821,
+          "blob": "0aab9610ed70d8da45e8414dae9d3e5de4b42b54",
+          "pin_blob": "bb91b26eaacbfd66918fe2256d07fa0a3ec85499",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/README.md",
+          "bytes": 10194,
+          "blob": "fdc5d5c621d1a597ce151cb34d9f87c119e4bdf6",
+          "pin_blob": "7fbae74f989051503661da3c836b8399b084abdd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/check.py",
+          "bytes": 8277,
+          "blob": "6f498274fe929212a456f2eca76bae8f1441fe45",
+          "pin_blob": "11539863535d76cf8fe46790f44a256b55018c21",
+          "classification": "remote_history_superseded",
+          "historical_commit": "9f6cd4537ad45324f7866caea6d5a732308bce8b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/coh_world_render.c",
+          "bytes": 15830,
+          "blob": "58d999efeeced7c94db701dc6659d44f60eccb9e",
+          "pin_blob": "5cffc53ad9dcf9ffdf01a9357c60284d260e15ab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/coh_world_render.h",
+          "bytes": 6587,
+          "blob": "cb9cadb5244c5e8e2f04d13efa5a3d3aa9cb582b",
+          "pin_blob": "2b0a3c2d0be824902a7b0cdb7fa4e0ed1a8af3f4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/tests/test_world_render.c",
+          "bytes": 17781,
+          "blob": "500b3384784d8332550eb61323f24e7f703e23e5",
+          "pin_blob": "429ca06a1151b1de2ad8308a15187b2cf2e9cd72",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": ".github/workflows/native-android-core.yml",
+          "bytes": 2006,
+          "blob": "e781bf9ff459b32f63352f1d7574c4ea45e26a5d",
+          "pin_blob": "5ff951216facaf3768ede48c9539f43a5d2f7f4d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-catalog-capture.yml",
+          "bytes": 6062,
+          "blob": "335c0f69d70ebcf822ce0bb15e6704ef121f291d",
+          "pin_blob": "6b672b701bd85cd8795f41444397b7d96954665e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": ".github/workflows/native-combined-client.yml",
+          "bytes": 6746,
+          "blob": "1ced57fe0b5e46e90cf88b0a8667c963f6357657",
+          "pin_blob": "1a29a02aaf444534d9062473ae01758e1beb8eab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        },
+        {
+          "path": ".github/workflows/native-live-session.yml",
+          "bytes": 3958,
+          "blob": "ed2cf8c7ea46a4df557de683648624cf4e5650cc",
+          "pin_blob": "b3b3dc2e9e8ff822036ca1fffcab5f2c947b006e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": ".github/workflows/native-primary-continuation.yml",
+          "bytes": 5063,
+          "blob": "6f80230da915fbf1cd79e31b33902a1e7ee3515b",
+          "pin_blob": "d7fd3ba51c1cd4c7bbf0412bce847df97e1c0a62",
+          "classification": "remote_history_superseded",
+          "historical_commit": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67"
+        },
+        {
+          "path": ".github/workflows/native-scene-catalog.yml",
+          "bytes": 10359,
+          "blob": "8c05875a2f43dc125ae12fee1badca2f23f1da28",
+          "pin_blob": "761713710ac32303c5dcb2bacf4e4cc129bfc739",
+          "classification": "remote_history_superseded",
+          "historical_commit": "2d94aad69ed303d3587c509321eb7e79cb44f0b7"
+        }
+      ]
+    },
+    "published": {
+      "files": 3509,
+      "counts": {
+        "identical_at_pin": 3462,
+        "remote_history_superseded": 47
+      },
+      "ignored_symlinks": [],
+      "gitdir_record": "gitdir: /workspace/scratch/9c69943dc291/coh-next/.git/worktrees/published",
+      "different": [
+        {
+          "path": "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+          "bytes": 2377,
+          "blob": "93070c932f4d331f2951308cffdf0a4dffbc7743",
+          "pin_blob": "1f67cbdbe1fcb690daab4e2023f76c9ffb680346",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/HANDOFF.md",
+          "bytes": 24607,
+          "blob": "4681a4dbf29da703f1badf2ffeb86bfe8ca39a33",
+          "pin_blob": "a24ae7fd467f724d57db86b601eae8fdf618b901",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8a55a883706e4e7a92741d27175350f874357009"
+        },
+        {
+          "path": "native-android/combined-client/tools/analyze_startup_resources.py",
+          "bytes": 10249,
+          "blob": "545170e4f331d461d32eb50588abff40b346b735",
+          "pin_blob": "9aa4226ee2f9e2ffca124413c604e9a85522a665",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/combined-client/tools/read_startup_receipts.py",
+          "bytes": 16298,
+          "blob": "d47565fb3767c7aa8f18d895e2df404ea2c665ed",
+          "pin_blob": "025e7b5c104a694526c644db690a238857f42f48",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/combined-client/tools/test_startup_resources.py",
+          "bytes": 5916,
+          "blob": "b0deaebd68c84ce841d1953efb4823c8c91443b7",
+          "pin_blob": "9d47873c1d8ee6b6582192d136c148d8604eb21a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/auth-interop/deployment/CHECKSUM-REFERENCE.md",
+          "bytes": 5828,
+          "blob": "fed9953acc4193e124821184625195aa31f51487",
+          "pin_blob": "ee7a22d544ae21e554a407982431761295e2de13",
+          "classification": "remote_history_superseded",
+          "historical_commit": "279650a6cda9d05c04678a98459a5ba5e1e7efcf"
+        },
+        {
+          "path": "native-android/engine/auth-interop/deployment/README.md",
+          "bytes": 8886,
+          "blob": "acf03e4d5fd583ad74720ede3b98568b31a38879",
+          "pin_blob": "d95f4a72b0d011d81d7bbc12b0827a9d0487dca5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/dbclient/SOURCE-AUDIT.md",
+          "bytes": 4566,
+          "blob": "3a0bd4a648da43a677ba1a773295cf7038d02ab5",
+          "pin_blob": "49b4a75d2efc8fc3c5a1314683d421f1d063d98d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.c",
+          "bytes": 13421,
+          "blob": "fe56d1a545d1c4495961232aac6b8fbafea53adc",
+          "pin_blob": "8cd443957041d4e6767682396c49e715b8953658",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/coh_db_session.h",
+          "bytes": 3531,
+          "blob": "75d13575d0459cf0632a836a5e96307fc42b7f4b",
+          "pin_blob": "2dca3f1a94b90d0f8fc99901393274c1e94b948d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/dbclient/tests/test_db_session.c",
+          "bytes": 18614,
+          "blob": "49f4440c2a0febb68e797f977e355b4a599de6b6",
+          "pin_blob": "a2cc769490facd1810bdc82d089efd5c4d1c4524",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/entities/INITIAL_UPDATE_CLOSURE.md",
+          "bytes": 9660,
+          "blob": "bd600cb70b742dc38824cdb70e4064b21dbbf878",
+          "pin_blob": "70bea512c4f965f23384f6c65bfff37576650ad9",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/entity-globals/CMakeLists.txt",
+          "bytes": 911,
+          "blob": "9c8cc7578ca843b881b807a1f1791cac3efbdcd5",
+          "pin_blob": "c9b4cb7a20e54dd14104dbb4301558fa2413b5b5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/entity-globals/README.md",
+          "bytes": 5956,
+          "blob": "5359ec9d5f05b940692abda4999963b503b0b2e4",
+          "pin_blob": "9683bba0f9ee568530be40b8dca29d3cf52f64e2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/entity-globals/check.py",
+          "bytes": 10288,
+          "blob": "6dc4d8c503a66266984202c52c61570495174d18",
+          "pin_blob": "082d7cc4b35b72e84ddf068aacf0f33fd0bc4369",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/entity-globals/test_entity_globals.c",
+          "bytes": 7806,
+          "blob": "0a529e3c0a5db20582aa4182022b2e7365937aae",
+          "pin_blob": "4648bc184ef03619e5622ecddbb25e9faaf35067",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/live/README.md",
+          "bytes": 5831,
+          "blob": "ae9d4c0fc08a9d315d79be54f1cb06f2dab37bca",
+          "pin_blob": "df709750e6b97c2ec22a8754c5f76dd972a93faf",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/coh_live.c",
+          "bytes": 13090,
+          "blob": "c55b0ef6eb32a19a349fc0a3b2cd51ca4d6741cb",
+          "pin_blob": "882567e337792c211879cb0d27f0d124d0bb9858",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/live/test_live.c",
+          "bytes": 16971,
+          "blob": "071c4614035a6ac6a3e622305b5d0daba7ee7676",
+          "pin_blob": "40c66802fda5159c68f02e572cb1021ba322459c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/README.md",
+          "bytes": 7782,
+          "blob": "6fa43e63a7765d3c44e92c892b18698270cb84bc",
+          "pin_blob": "63f97b4dcfd4e8854d987bd051578b1890c341f5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/check.py",
+          "bytes": 8529,
+          "blob": "1134556bbf6b52c557da40859f39c9674683533b",
+          "pin_blob": "b60820aeb24a62583e31e4e4be150f11c0bd6422",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.c",
+          "bytes": 10495,
+          "blob": "66caadba7587604da40d52ad2c82e0709335e61a",
+          "pin_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/local/coh_local.h",
+          "bytes": 3399,
+          "blob": "6e04fbb26b753cda8ab5ae9255bd773d68357736",
+          "pin_blob": "fca014f79fb7ceafd5dc6bf17b4350e471d15c1d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/local/test_local.c",
+          "bytes": 12759,
+          "blob": "d972e133c0a7a1714a17fb2995f23e81e1a21d6c",
+          "pin_blob": "4ad8ea853583b998085cb167792c777ca0715c97",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/mapclient/CMakeLists.txt",
+          "bytes": 396,
+          "blob": "a6772ba11fd877f23292d0013059f8dc18146a5f",
+          "pin_blob": "97ba231363cd8afb98e8a16d1a1fe0f981623fe8",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": "native-android/engine/mapclient/README.md",
+          "bytes": 10318,
+          "blob": "49631a2728c28e50b84bf7e87c2f95eb272ea82e",
+          "pin_blob": "62cc2ffea8d9a383286a1aa62e19f8632bc6cf65",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.c",
+          "bytes": 15480,
+          "blob": "0ec41ddae460d55026044839a5a5d9ddeddb8308",
+          "pin_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/coh_mapclient.h",
+          "bytes": 5552,
+          "blob": "21162afb3735dc9bdd1003ee97b53766c4f3e5db",
+          "pin_blob": "5b75c0a7ba4b92bd77fe480b115f36db18329da5",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/mapclient/tests/test_mapclient.c",
+          "bytes": 36553,
+          "blob": "44ada40623002fe11b8948560cc6ee9a5a5325b1",
+          "pin_blob": "8311a4d572afd8dfcf18686d50c1c67ebb379f44",
+          "classification": "remote_history_superseded",
+          "historical_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.c",
+          "bytes": 8086,
+          "blob": "7f68c55bc2e786b77eef0f76eac82767f1b7f8ee",
+          "pin_blob": "7de94ac2ecd3bf5aadd47884e2e2790630eb13c2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/replication/coh_groups.h",
+          "bytes": 2953,
+          "blob": "832e3d71bfaf2e70ef735f0d9fee5025ec9ced33",
+          "pin_blob": "731555ced9de4971ecfa7a207146924bc972736a",
+          "classification": "remote_history_superseded",
+          "historical_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/CMakeLists.txt",
+          "bytes": 1759,
+          "blob": "d207dee951266e1e84143a50bd553f603bc97276",
+          "pin_blob": "eb0a640d43e7d07b9747191036c51c9c2bd1bb2c",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/check.py",
+          "bytes": 8329,
+          "blob": "36085478937f8ddcce6f42a1fa8e1dc7009ba17d",
+          "pin_blob": "3344a0415764f230c59685e35ce7e9b6121b4d3d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog/tests/test_scenecatalog.c",
+          "bytes": 10358,
+          "blob": "373fd42e4813293c9fe3291940bf9f3ba41d4270",
+          "pin_blob": "3073da088acc2c875ee7ff8c6306de39137dfece",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenecatalog-qualification/common.py",
+          "bytes": 8042,
+          "blob": "747c4a009f435d426e746451ddf32e686e4e1b30",
+          "pin_blob": "c2ee46079dc45e5278e9693e187731059295a588",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenegraph/CMakeLists.txt",
+          "bytes": 1797,
+          "blob": "11b8341398b0701fab0f354bfe1f66bc93307179",
+          "pin_blob": "c6f2d82150dcb56c02a7b725eea7f94357b46b08",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenegraph/check.py",
+          "bytes": 17742,
+          "blob": "5845ebb32c35c8ecdd8ab345f664c5f4e1a14645",
+          "pin_blob": "7654b790386a739aa56c59fccac86008a409acf2",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/scenegraph/tests/test_scenegraph.c",
+          "bytes": 24558,
+          "blob": "31885a9c6668f75aca5ac22e63e49775b1b16b57",
+          "pin_blob": "bb91b26eaacbfd66918fe2256d07fa0a3ec85499",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/README.md",
+          "bytes": 10194,
+          "blob": "fdc5d5c621d1a597ce151cb34d9f87c119e4bdf6",
+          "pin_blob": "7fbae74f989051503661da3c836b8399b084abdd",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/check.py",
+          "bytes": 8277,
+          "blob": "6f498274fe929212a456f2eca76bae8f1441fe45",
+          "pin_blob": "11539863535d76cf8fe46790f44a256b55018c21",
+          "classification": "remote_history_superseded",
+          "historical_commit": "9f6cd4537ad45324f7866caea6d5a732308bce8b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/coh_world_render.c",
+          "bytes": 15830,
+          "blob": "58d999efeeced7c94db701dc6659d44f60eccb9e",
+          "pin_blob": "5cffc53ad9dcf9ffdf01a9357c60284d260e15ab",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/coh_world_render.h",
+          "bytes": 6587,
+          "blob": "cb9cadb5244c5e8e2f04d13efa5a3d3aa9cb582b",
+          "pin_blob": "2b0a3c2d0be824902a7b0cdb7fa4e0ed1a8af3f4",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/tests/test_world_render.c",
+          "bytes": 20133,
+          "blob": "e3bc6ef65f068f2f3f10c4a2dac9ec1259b2da91",
+          "pin_blob": "429ca06a1151b1de2ad8308a15187b2cf2e9cd72",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        },
+        {
+          "path": ".github/workflows/native-android-core.yml",
+          "bytes": 2006,
+          "blob": "e781bf9ff459b32f63352f1d7574c4ea45e26a5d",
+          "pin_blob": "5ff951216facaf3768ede48c9539f43a5d2f7f4d",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-live-session.yml",
+          "bytes": 3958,
+          "blob": "ed2cf8c7ea46a4df557de683648624cf4e5650cc",
+          "pin_blob": "b3b3dc2e9e8ff822036ca1fffcab5f2c947b006e",
+          "classification": "remote_history_superseded",
+          "historical_commit": "187c9358bdf198f3d00f22576e140572210b4461"
+        },
+        {
+          "path": ".github/workflows/native-primary-continuation.yml",
+          "bytes": 4921,
+          "blob": "5b400c113cc469825fa7edbceda52e02b4d083a0",
+          "pin_blob": "d7fd3ba51c1cd4c7bbf0412bce847df97e1c0a62",
+          "classification": "remote_history_superseded",
+          "historical_commit": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f"
+        },
+        {
+          "path": ".github/workflows/native-scene-catalog.yml",
+          "bytes": 11284,
+          "blob": "4198f8d43bd3df66cbd1d53164523ae116faba05",
+          "pin_blob": "761713710ac32303c5dcb2bacf4e4cc129bfc739",
+          "classification": "remote_history_superseded",
+          "historical_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+        }
+      ]
+    }
+  },
+  "files_audited": 24212
+}

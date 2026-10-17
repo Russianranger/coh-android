@@ -1,0 +1,93 @@
+{
+  "advertised_head": "becbff99e52dc197c787bfeaf2583da081d3d2e1",
+  "base": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "reference_delta_bases": 32,
+  "baseline_path_matches": 20,
+  "recovered_bases": [
+    {
+      "path": ".github/workflows/native-combined-client.yml",
+      "sha": "574f5a3030a1e38e3d6791e8681d982d3a4fc4d5",
+      "from": "worker-a"
+    },
+    {
+      "path": ".github/workflows/native-primary-continuation.yml",
+      "sha": "7f30bb0777b60167bfe6ef204bfc25d5cf64f2f0",
+      "from": "worker-a"
+    },
+    {
+      "path": ".github/workflows/native-scene-catalog.yml",
+      "sha": "f4ca025397ba6ace533a4276ba949068dd08d8e1",
+      "from": "worker-a"
+    },
+    {
+      "path": "native-android/engine/auth-interop/README.md",
+      "sha": "805c54fa6a9b66193c821f8306bea50ded47feea",
+      "from": "worker-a"
+    },
+    {
+      "path": "native-android/engine/auth-interop/SOURCE-AUDIT.md",
+      "sha": "c5607c7dc2111e18fc486b2e741d15a393dcda34",
+      "from": "worker-a"
+    },
+    {
+      "path": "native-android/engine/entities/check.py",
+      "sha": "c310c702e7f13b1511ffebaea22d1a06d62be523",
+      "from": "worker-a"
+    },
+    {
+      "path": "native-android/engine/entities/coh_entities.h",
+      "sha": "8a8724e18035db1e8cedd970f85a52e577684bd7",
+      "from": "worker-a"
+    },
+    {
+      "path": "native-android/engine/entities/oracle_shim.h",
+      "sha": "73dfc76f703dc5848b4abd2a147c226a328d2377",
+      "from": "worker-a"
+    },
+    {
+      "path": "native-android/engine/entities/test_entities.c",
+      "sha": "cc6394d71f7ddde8aec0fc520bee2ddab7fffeb9",
+      "from": "worker-a"
+    },
+    {
+      "path": "native-android/engine/scenecatalog-server/README.md",
+      "sha": "92287f7a33263d7269efc9db7160dff81622c2e8",
+      "from": "worker-b"
+    },
+    {
+      "path": "native-android/engine/scenecatalog-server/check.py",
+      "sha": "72a072e33a4141c91d2d55b374d5a9292bba90cd",
+      "from": "worker-b"
+    },
+    {
+      "path": "native-android/engine/scenegraph/CMakeLists.txt",
+      "sha": "fd17b07a23a83794345b14723762d34f1b95930b",
+      "from": "worker-c"
+    },
+    {
+      "path": "native-android/engine/scenegraph/README.md",
+      "sha": "dc44653e3884da92818006106cc9b743a8185e7a",
+      "from": "worker-c"
+    },
+    {
+      "path": "native-android/engine/scenegraph/coh_scenegraph.c",
+      "sha": "ea9fd21c611cf38217326ebbdda2507b8c705e6e",
+      "from": "worker-c"
+    },
+    {
+      "path": "native-android/engine/scenegraph/coh_scenegraph.h",
+      "sha": "d42f6f40f7c568630449c2347080eefe691d5adb",
+      "from": "worker-c"
+    }
+  ],
+  "imported": true,
+  "bundle_bytes": 179282,
+  "bundle_sha256": "ebe728f3018caa60a0f1a32250f18dd574414946a0d9f22ea47ee99d2125ed32",
+  "recovered_commit_count": 13,
+  "original_worktrees_modified": false,
+  "audit_repository_is_new": true,
+  "all_recovered_base_bytes_hash_verified": true,
+  "existing_repository_identical_bundles": [
+    "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-history.bundle"
+  ]
+}

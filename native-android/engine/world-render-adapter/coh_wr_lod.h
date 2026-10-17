@@ -24,4 +24,25 @@ typedef struct {uint32_t alpha,beyond_fog,stipple_alpha;} CohWrLodProjection;
  * inherited model/draw tricks, radius, fog and sun state must already be resolved.
  * This is neither LOD-model selection nor a draw/visibility permit. */
 CohStatus coh_wr_lod_project(const CohWrLodInput *,CohWrLodProjection *);
+/* Pure source lodinfoFillInAutoData construction, before runtime LOD dictionary
+ * precedence and CLIENT model/reduction selection. These values must come from
+ * independently selected model/trick generations. No actual reduced mesh or
+ * fallback material is selected here. The three source reduction distances are
+ * finite and may be negative (original sentinel); has_reduction_distances=0 is
+ * an explicitly absent source array, never a replacement for unknown distances.
+ * source_triangle_count is the original signed-int domain, not decoded indices.
+ * Output is fixed at four rows; no allocation, pins, ownership or world permit.
+ * All refusals preserve output, including overflow and input/output overlap. */
+enum { COH_WR_AUTOLOD_ERROR_TRICOUNT=2u, COH_WR_AUTOLOD_FALLBACK_MATERIAL=128u };
+typedef struct {
+ float model_radius,shadow_distance,trick_lod[4]; /* near,nearfade,far,farfade */
+ float reduction_distances[3];
+ uint32_t source_triangle_count,has_reduction_distances;
+} CohWrAutoLodInput;
+typedef struct {
+ float max_error,lod_near,lod_nearfade,lod_far,lod_farfade;
+ uint32_t flags;
+} CohWrAutoLodRow;
+typedef struct { uint32_t count; CohWrAutoLodRow rows[4]; } CohWrAutoLodProjection;
+CohStatus coh_wr_lod_autodata(const CohWrAutoLodInput *,CohWrAutoLodProjection *);
 #endif

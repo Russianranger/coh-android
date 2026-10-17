@@ -1,4 +1,5 @@
 #include "../coh_world_render.h"
+#include "../coh_wr_presentation.h"
 #include "original_matrix.h"
 #include <float.h>
 #include <math.h>
@@ -685,12 +686,14 @@ static void visibility_frames(void) {
     free(draws);
 }
 
+#include "presentation_cases.inc"
+
 int main(void) {
     rejection_and_lifetime(); rollback_tests(); generation_and_capacity();
-    shared_geometry_and_capacity(); renderer_and_original_matrix(); visibility_frames(); concurrent_publication();
+    shared_geometry_and_capacity(); renderer_and_original_matrix(); visibility_frames(); concurrent_publication(); presentation_lifecycle(); presentation_concurrent_consumer();
     printf("{\"passed\":true,\"checks\":%u,\"original_matrix_cases\":512,\"bounded_mutations\":5000,"
         "\"published_generations\":2000,\"concurrent_readers\":3,\"max_draws_tested\":4096,"
-        "\"ordered_batch_draws\":1025,\"ordered_batches\":3,\"selective_binding\":true,\"render_allocations\":0,\"render_frees\":0,\"fixture_only\":true,\"authentic_world_entry\":false,"
+        "\"ordered_batch_draws\":1025,\"ordered_batches\":3,\"selective_binding\":true,\"presentation_lifecycle\":true,\"concurrent_presentation_publications\":512,\"render_allocations\":0,\"render_frees\":0,\"fixture_only\":true,\"authentic_world_entry\":false,"
         "\"shared_geometry\":{\"unique_meshes\":%zu,\"unique_vertices\":%zu,\"unique_indices\":%zu,"
         "\"instanced_vertices\":%zu,\"instanced_indices\":%zu,\"geometry_bytes\":%zu,"
         "\"instanced_geometry_bytes\":%zu,\"snapshot_bytes\":%zu,\"scratch_bytes\":%zu,"

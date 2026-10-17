@@ -1,0 +1,65 @@
+{
+  "schema": "coh-shard-userdata-host-qualification-v1",
+  "passed": true,
+  "host_suites": 5,
+  "host_original_execution_modes": [
+    "optimized",
+    "ASan_UBSan"
+  ],
+  "host_pointer_bytes": 8,
+  "host_SQL_API": "explicit_synthetic_fixture",
+  "actual_x86_runtime_receipt_rejects_host_shim": true,
+  "actual_ODBC_executed": false,
+  "windows_stage_executed": false,
+  "leak_sanitizer_enabled": false,
+  "source_generation": {
+    "schema": "coh-original-shard-userdata-source-v1",
+    "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+    "source_sha256": {
+      "upstream/ouroboros/AuthServer/src/AccountDB.cpp": "b00306c11f77fdce7d02ba07202ee6bb7ca963f3ceca66731e22ae6b5c34d9bd",
+      "upstream/ouroboros/AuthServer/src/CSocketServer.cpp": "11673fea61c9db472146ff4371629d10b31781801dc401bb0e55e3caa9d3b1e5",
+      "upstream/ouroboros/AuthServer/src/ServerList.cpp": "17ec8216324d817fb38691ecbcf96fd161592a4799935ee562a5c37d590ecd7a",
+      "upstream/ouroboros/AuthServer/src/DBConn.cpp": "9b2715d756e6b51a170fa2c544bab3bd8d84a396bd5b8e9d70a5a766cf036dd9",
+      "upstream/ouroboros/AuthServer/src/AuthType.h": "4eda9fb9a08f99676359588705c3108906743bc872d35f53d273e92539845fc6",
+      "upstream/ouroboros/AuthServer/src/ServerId.h": "89213a9f2a99c44c42738038d527d76bf2228769689ceba44f0490a6ccd57cd8",
+      "upstream/ouroboros/AuthServer/src/Protocol.h": "0b863fe331643ec30f5f103b18711dc91d1783a9da98cd215c22278ccac80d46",
+      "upstream/ouroboros/AuthServer/src/util.cpp": "d87b7b47cfb52490a27fdf3ec8e5179c96c803058dd4b98204f8e644f631c59a",
+      "upstream/ouroboros/Assets/DBSchemas/cohauth.sql": "d18756ba04f9f16d40a5f6d55772d19ed430a6438316327aa51fde818a349cbf"
+    },
+    "function_sha256": {
+      "CServerList::Load": "6936b660a35b89e353a229668a8ea13e40f8794c2242548b840911f73fe955a0",
+      "CServerList::SetServerSocketByAddress": "dd9f23d65dac367a0caa4cb562fbcc55974ac46b8ed6bd99007a92b01053b65f",
+      "CServerList::SetServerStatus": "827ff2db0e32ee4b897530d56beedf41338e21c0ff471d61152f43cdc267d752",
+      "CServerList::IsServerUp": "db264ebc776cfff7e5719ec6b23403ce0115caf5c08eea53c22fabef987c36fa",
+      "CServerList::GetInternalAddress": "61e0e0d27966daf0d899f0e13724b83fdf999cc6af6d007cadc4b7b8a08a9d18",
+      "CServerList::GetFreeServerId": "478c8efaf69e5510454f024f19721f3c09a53a496b9edcb43afe3a03419aa386",
+      "CDBConn::Execute": "05a2dced49bf5a367c661bef2c7121f230f6aebadfe8ed89056a4392b83f6387",
+      "CDBConn::Fetch": "d4ff24fb393d755d468aa17d2f74341bae1a4341f70cd35eb2b4383e01825f58",
+      "CDBConn::ResetHtmt": "37a3b3734bffedcc2dfa5ae38e18139c2d379e21a52dd952cff07b3714b54a1c",
+      "AccountDB::AboutToPlay": "798a1b9d692b738f4bd6dd7fe2fd956862f6ad442c16bb72a4b21e8ac1027bc4",
+      "ServerReadGameData": "08d9a4760ce74085892fb5a7d13560bd4e0ae0eae22e97f230531650b0c4665c",
+      "Assemble": "b6a0faedea049f87568715ef72e0722c2cc67778b46bfc331aaf9ceab3a140c9",
+      "CDBConn::Bind overloads": "afa883cff4ef73a7f48b5fd5c1b3bd06a96c4c52ce011aafa30490ce044f9edf"
+    },
+    "generated_source_sha256": "5fd06295d9702f017873d41d33fb03a9eb2f41a95e9c0868d1be82fa607de4b3",
+    "fixture_sql_sha256": "ae112926124be5fd2e14878d328b0f644d88a2847239caeec6299931cdfc77e8",
+    "source_struct_sha256": "c6736ece4418ad8a21d1b1c1db8a6d0fd0e710f864ab424c580abfe4bdb4b81f",
+    "protocol_enums_sha256": "983f1ee3a4079447d4933c4590f62e6f21844dcb7a9414ddb5ea12a04090c11e",
+    "no_authentication_grant_generated": true,
+    "network_registration_verified": false,
+    "authenticated_db_map_handoff_verified": false
+  },
+  "helper_sha256": {
+    "hosted_shard_userdata.py": "68d63a3b6090744f3f3befea113d72668f4fd84c438ee72b0ceddf1e025d2e33",
+    "shard_userdata_fixture.py": "6cd78fdcaae30e40dfcbfb3a7c6278e6525b23ee9d2e8ace5bc6a756af98b3d4",
+    "shard_userdata_fixture.cpp": "3512880feb6db1504322c77954bafb843cba204c705f223ea916e6e4899d6be8",
+    "test_shard_userdata.py": "e68753568a94c694b6545f9292fa5128eb79e784894b2187773b6e6b95ae3bbd",
+    "test_userdata_host_api.h": "adfecb3ad7d87ab9b7654d32968eaa54f8d268e2b729db48ff1358c6c00be69b"
+  },
+  "actual_auth_only_login_repeated": false,
+  "authentication_grant_generated": false,
+  "network_shard_registration_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "android_qualified": false,
+  "physical_thor_accepted": false
+}

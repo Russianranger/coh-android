@@ -1,0 +1,13 @@
+{
+  "pinned_remote_base": "d96354411d2f69ec325b1bfe9d0e14999626ba91",
+  "heads": {
+    "recovery-a": "2ade983336192ccf492ccdc63e4c732859784a0b",
+    "recovery-b": "1c8d770284e38154efe30b4964fb9a334a89046a",
+    "recovery-c": "c64abd947519ea12372ab6a1b712c6fdf103663c",
+    "recovery-d": "fdde1a0f519a547ac0743fb91aafaa8bfc114a8e",
+    "recovery-e": "2917fbfbfc4906f32a476cb548ef8abc1406f20a",
+    "recovery-f": "169d0b36e95ec1f2e51573f56023088e8643a9a9"
+  },
+  "preserved_without_history_rewrite": true,
+  "contains_uncommitted_changes": false
+}

@@ -1,0 +1,182 @@
+name: Reviewed native world dependency continuation
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-authority-continuation.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-authority-continuation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-contracts:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[authority-continuation]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install source oracle dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev
+      - name: Reuse exact accepted cache and source-resource artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, os, pathlib, stat, subprocess, zipfile
+          out = pathlib.Path(os.environ['RUNNER_TEMP']) / 'coh-retained-authority-inputs'
+          out.mkdir()
+          specs = [
+            (11092897979,26476333,'51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae','client-caches.zip','client-caches.zip',27071659,'5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051'),
+            (12086339123,2945220,'572d5cde08f698173cce4c9a0860902a2da91841b22dbdd124501e1e601e192d','capture/resources.cohres','resources.cohres',12596422,'8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6')]
+          for ident,size,sha,member,name,raw_size,raw_sha in specs:
+              archive=out/(str(ident)+'.zip')
+              with archive.open('xb') as stream:
+                  subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=stream,check=True,timeout=180)
+              assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==sha
+              with zipfile.ZipFile(archive) as z:
+                  infos=z.infolist()
+                  assert len(infos)<=128 and len({x.filename for x in infos})==len(infos)
+                  assert sum(x.file_size for x in infos)<=128*1024**2
+                  assert z.testzip() is None
+                  info=z.getinfo(member)
+                  assert not stat.S_ISLNK(info.external_attr>>16) and info.file_size==raw_size
+                  raw=z.read(member)
+                  assert hashlib.sha256(raw).hexdigest()==raw_sha
+                  (out/name).write_bytes(raw)
+              archive.unlink()
+          print('Exact accepted caches and source resource body reused; no donor/server capture repeated')
+          PY
+      - name: Qualify changed source capture, dictionary and LOD behavior
+        run: |
+          mkdir -p out/authority-continuation/source
+          python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_stage_groups_capture.py -v
+          python3 native-android/engine/scenecatalog-server/check_groups_capture.py --output out/authority-continuation/source/groups.json --fixture-output "$RUNNER_TEMP/groups-fixture.cohgtx"
+          python3 native-android/engine/scenecatalog-server/test_groups_capture_inspect.py --fixture "$RUNNER_TEMP/groups-fixture.cohgtx" --output out/authority-continuation/source/inspector.json
+          python3 native-android/engine/character-dictionary/check_power_join.py --cache-zip "$RUNNER_TEMP/coh-retained-authority-inputs/client-caches.zip" --output out/authority-continuation/source/power-join.json.gz --sanitize
+          python3 native-android/engine/world-render-adapter/check_lod_autodata.py --resources "$RUNNER_TEMP/coh-retained-authority-inputs/resources.cohres" --output out/authority-continuation/source/lod.json
+      - name: Qualify actual owned socket observer and independent memory phases
+        run: |
+          python3 native-android/combined-client/tools/check_local_scene_capture.py --output out/authority-continuation/source/native-capture --test --sanitize
+          python3 native-android/combined-client/diagnostics/continuation-f-20261017/qualify_phase_replay.py --source-root . --output out/authority-continuation/source/memory.json
+          python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_shard_userdata.py -v
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reviewed-authority-source-${{ github.sha }}
+          path: out/authority-continuation/source/
+          if-no-files-found: error
+          retention-days: 90
+  presentation-android13:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[authority-continuation]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install pinned NDK and native dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ curl unzip
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/authority-ndk
+      - name: Build exact new presentation consumer for both ABIs
+        run: |
+          python3 -m unittest discover -s native-android/engine/world-render-adapter/tests -p test_frame_driver.py -v
+          python3 native-android/engine/world-render-adapter/check.py --source-root . --sanitize --ndk /tmp/authority-ndk/android-ndk-r28c --output out/authority-continuation/presentation/qualification.json --android-output out/authority-continuation/presentation/android
+          python3 native-android/engine/world-render-adapter/run_frames_android.py --source-root . --artifacts out/authority-continuation/presentation --validate-only --output out/authority-continuation/presentation-admission/receipt.json
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute exact presentation consumer on Android 13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/engine/world-render-adapter/run_frames_android.py --source-root . --artifacts out/authority-continuation/presentation --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --output out/authority-continuation/presentation-execution/receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reviewed-presentation-both-abis-android13-${{ github.sha }}
+          path: |
+            out/authority-continuation/presentation/
+            out/authority-continuation/presentation-admission/
+            out/authority-continuation/presentation-execution/
+          if-no-files-found: error
+          retention-days: 90
+  original-shard-userdata-runtime:
+    needs: source-contracts
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 15
+    steps:
+      - name: Preserve exact original source bytes
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Execute only missing original shard and full UserData SQL prerequisite
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_shard_userdata.py --source-root . --expected-commit $env:GITHUB_SHA --auth-success-archive native-android/engine/auth-interop/evidence/auth-success-38996587760/artifact.zip --output "$env:RUNNER_TEMP/shard-userdata"
+          if ($LASTEXITCODE -ne 0) { throw 'Original shard/UserData prerequisite did not qualify' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-shard-userdata-runtime-${{ github.sha }}
+          path: ${{ runner.temp }}/shard-userdata/
+          if-no-files-found: error
+          retention-days: 90
+  original-groups-observer-compile:
+    needs: source-contracts
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 45
+    steps:
+      - name: Preserve exact original source bytes
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Reuse exact published assets and stage private original observer
+        run: |
+          python tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+          if ($LASTEXITCODE -ne 0) { throw 'Exact published input admission failed' }
+          python tools/prepare_map_startup_source.py --output C:/groups-capture-src --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest out/native-inputs/server-animation-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'Private original source staging failed' }
+          python native-android/engine/scenecatalog-server/stage_groups_capture.py --source-root . --already-staged C:/groups-capture-src
+          if ($LASTEXITCODE -ne 0) { throw 'New transaction sink source staging failed' }
+      - name: Build only the changed nonshipping MapServer observer
+        working-directory: C:/groups-capture-src
+        run: |
+          New-Item -ItemType Directory -Path "$env:RUNNER_TEMP/groups-build-logs" -Force | Out-Null
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF 2>&1 | Tee-Object "$env:RUNNER_TEMP/groups-build-logs/configure.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Private observer configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel 4 --target MapServer 2>&1 | Tee-Object "$env:RUNNER_TEMP/groups-build-logs/build.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Private observer compile failed' }
+      - name: Bind exact changed source and diagnostic PE without running a server
+        run: |
+          python native-android/engine/scenecatalog-server/record_groups_compile.py --source-root . --staged-source C:/groups-capture-src --inputs-receipt out/native-inputs/map-startup-inputs.json --output "$env:RUNNER_TEMP/groups-compile" --require-clean
+          if ($LASTEXITCODE -ne 0) { throw 'Observer build/source identity admission failed' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-live-groups-observer-compile-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/groups-compile/
+            ${{ runner.temp }}/groups-build-logs/
+          if-no-files-found: warn
+          retention-days: 90
