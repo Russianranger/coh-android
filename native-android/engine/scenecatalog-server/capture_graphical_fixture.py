@@ -45,6 +45,10 @@ def committed_source(root,revision,names):
         path=regular(root/name,8*1024**2)
         require(path.read_bytes()==expected,'COMMITTED_SOURCE_BYTES');result[name]=pin(path,8*1024**2)
     return result
+def donor_file_pin(root,name):
+    # The exact donor's original leaf inventory is44,476,275 bytes. Source
+    # bodies keep their8MiB limit; this known metadata file needs its own cap.
+    return pin(root/name,64*1024**2 if name=='docs/data-manifest.json' else 8*1024**2)
 def donor_source(root):
     require(subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()==DONOR,'DONOR_HEAD')
     tracked=subprocess.check_output(['git','ls-files','-z'],cwd=root).decode().rstrip('\0').split('\0')
@@ -56,7 +60,7 @@ def donor_source(root):
     for prefix in ('tools/android','android'):
         require(all(path.relative_to(root).as_posix() in expected for path in (root/prefix).rglob('*.py')),
                 'DONOR_UNTRACKED_PYTHON')
-    hashes={name:pin(root/name,8*1024**2) for name in selected if name.endswith(('.py','.json','.java','.c','.h','.xml'))}
+    hashes={name:donor_file_pin(root,name) for name in selected if name.endswith(('.py','.json','.java','.c','.h','.xml'))}
     canonical=json.dumps(hashes,sort_keys=True,separators=(',',':')).encode()
     return {'revision':DONOR,'tree':subprocess.check_output(['git','rev-parse','HEAD^{tree}'],cwd=root,text=True).strip(),
             'source_files':len(hashes),'source_inventory_sha256':hashlib.sha256(canonical).hexdigest()}

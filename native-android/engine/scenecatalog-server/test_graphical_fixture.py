@@ -65,6 +65,17 @@ class Controls(unittest.TestCase):
             data=request();data[key]=value
             with self.subTest(key=key),self.assertRaises(guest.Refused):guest.request_identity(data)
 
+    def test_actual_postmaster_fixed_width_ready_status(self):
+        pgdata=Path('/state/diagnostic/android-local-login/pgdata');socket=pgdata.parent/'socket'
+        lines=['123',str(pgdata),'1780000000','45678',str(socket),'127.0.0.1','0','ready   ']
+        self.assertEqual(guest.postmaster_port('\n'.join(lines)+'\n',pgdata,socket),45678)
+        for index,bad in ((0,'-123'),(1,'/other/pgdata'),(3,'543'),(4,'/other/socket'),(5,'*'),
+                          (7,'ready'),(7,'ready  '),(7,'starting'),(7,'stopping'),(7,'standby '),(7,'ready\t')):
+            changed=list(lines);changed[index]=bad
+            with self.subTest(index=index,bad=bad),self.assertRaises(guest.Refused):
+                guest.postmaster_port('\n'.join(changed)+'\n',pgdata,socket)
+        with self.assertRaises(guest.Refused):guest.postmaster_port('\n'.join(lines[:7])+'\n',pgdata,socket)
+
     def test_same_guest_paths_and_environment_command(self):
         command=['/tmp/proot','-r','/tmp/root','-b','/tmp/state:/state','/usr/bin/env','-i','HOME=/state',
                  '/usr/bin/python3','/opt/coh/character_creation_diagnostic.py','--session-id','a'*32]
@@ -133,6 +144,22 @@ class Controls(unittest.TestCase):
             (directory/'untracked.py').write_text('pass\n')
             with self.assertRaises(subprocess.CalledProcessError):driver.committed_source(directory,revision,['untracked.py'])
 
+    def test_actual_donor_data_manifest_size_admitted(self):
+        path=driver.ROOT/'docs/data-manifest.json'
+        # Exact blob retained unchanged from donor204615, not a short stand-in
+        # that can miss the actual preflight failure before a graphical boot.
+        self.assertEqual(path.stat().st_size,44476275)
+        actual=subprocess.check_output(['git','hash-object',str(path)],text=True).strip()
+        expected=subprocess.check_output(['git','rev-parse',driver.DONOR+':docs/data-manifest.json'],
+                                         cwd=driver.ROOT,text=True).strip()
+        self.assertEqual(actual,expected)
+        with self.assertRaises(driver.Refused):driver.pin(path,8*1024**2)
+        self.assertEqual(driver.donor_file_pin(driver.ROOT,'docs/data-manifest.json')['bytes'],44476275)
+        with tempfile.TemporaryDirectory() as raw:
+            root=Path(raw);body=root/'body.py'
+            with body.open('wb') as output:output.truncate(8*1024**2+1)
+            with self.assertRaises(driver.Refused):driver.donor_file_pin(root,'body.py')
+
     def test_owned_real_child_group_cleanup(self):
         process=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True)
         self.assertFalse(driver.group_absent(process));self.assertTrue(driver.stop_group(process))
@@ -195,7 +222,7 @@ class Controls(unittest.TestCase):
             profile=state/'diagnostic/android-local-login';pgdata=profile/'pgdata';pgdata.mkdir(parents=True)
             (pgdata/'PG_VERSION').write_text('18\n');socket=profile/'socket';socket.mkdir()
             driver.write_json(profile/'credentials.json',{'cohdiag_admin':'d'*64,'cohtest':'e'*64})
-            (pgdata/'postmaster.pid').write_text('123\n'+str(pgdata)+'\n0\n45678\n'+str(socket)+'\n127.0.0.1\n0\nready\n')
+            (pgdata/'postmaster.pid').write_text('123\n'+str(pgdata)+'\n0\n45678\n'+str(socket)+'\n127.0.0.1\n0\nready   \n')
             (pgdata/'postmaster.pid').chmod(0o600)
             commands=[];closed=[]
             class MockSnapshot:

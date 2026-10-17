@@ -170,7 +170,7 @@ unless a separate reviewed fixture-output policy is implemented.
 ## Local qualification
 
 `python3 native-android/engine/scenecatalog-server/test_graphical_fixture.py`
-passes14 offline test methods. These cover the **actual inherited** finish-hook
+passes16 offline test methods. These cover the **actual inherited** finish-hook
 order, refused save gates and backup failures, strict malformed receipt shapes,
 source/launcher pin drift, downstream fixture artifact closure, private
 retention/secret scanning, original-error-preserving rollback, a real owned
@@ -178,3 +178,23 @@ Linux child-group cleanup and a real JSON pipe lifecycle. The full database
 tool operations are explicitly mocked in these tests. No actual PG18/Wine/
 graphical creation/dump/restore/source-native capture or world admission has
 been established by this local suite.
+
+The pidfile READY parser uses the source-defined eight-character `ready   `
+value, including its three trailing spaces, from PostgreSQL
+[`src/include/utils/pidfile.h`](https://doxygen.postgresql.org/pidfile_8h_source.html).
+The initial14-method mock used an unpadded word and missed this real-format
+refusal. The added status method admits the exact upstream field and refuses
+unpadded/truncated/tab/starting/stopping/standby states. This correction was
+identified while the first hosted attempt was still acquiring its inputs,
+before its graphical boot or any actual save/backup evidence.
+
+The first attempt39070610494 subsequently refused `REGULAR_INPUT` in preflight,
+before extracting/importing/launching the game. Its complete exact input
+acquisition and small PRoot build passed. The donor's unchanged
+`docs/data-manifest.json` is44,476,275 bytes (Git blob
+`e65bdb51bcc4f6bff4a5294bc559bee753e41907`), exceeding the original generic8MiB
+source-file cap. Only that known metadata inventory now has a64MiB admission
+cap, still fully hashed and bound to the clean exact donor; source bodies keep
+the8MiB cap. The16th method uses this actual unchanged donor blob and verifies
+both admission and continued refusal of oversized source bodies. No graphical
+boot, character save or database backup is claimed from the failed attempt.

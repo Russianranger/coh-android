@@ -1,30 +1,30 @@
 {
   "schema": "coh-graphical-fixture-offline-qualification-v1",
   "passed": true,
-  "test_methods": 14,
+  "test_methods": 16,
   "source_files": {
     "capture_graphical_fixture.py": {
-      "bytes": 25910,
-      "sha256": "92e5aeb4170d97c167296e74f0a39973cd0c12cd5701ac220eca7a0afe5cd068"
+      "bytes": 26183,
+      "sha256": "b034a9c9f5f8960c70484792668b663dfb1095e828a453068c70e3e5513fbab5"
     },
     "graphical_fixture_backup_guest.py": {
-      "bytes": 13593,
-      "sha256": "05317f2574145eeadcf06d8ee4bd6c495ed3067e6e11a8189c10b2e43d53e714"
+      "bytes": 13855,
+      "sha256": "c1823e91931ad056476bfca4148143a023e24e5912fcb3a3507531f050b52a61"
     },
     "admit_graphical_fixture.py": {
       "bytes": 6391,
       "sha256": "8d0e32f1d3a3848522e60590ac184b6492a4367cc5c144c8ac02d89e8db02889"
     },
     "test_graphical_fixture.py": {
-      "bytes": 22206,
-      "sha256": "c4324432a8023f79747d074a86cbbd983d16dee8cd29ad0f63d30337fba37e2f"
+      "bytes": 24160,
+      "sha256": "1de165bb627b114c6bec547a1dce4b8f5f1a8041267bfd7dd57b94211bae3fd1"
     },
     "GRAPHICAL_FIXTURE.md": {
-      "bytes": 11588,
-      "sha256": "75e56550e45790965e860dd1b5329d6384ab47e7f29cef41b5b87f4714c55a2b"
+      "bytes": 12921,
+      "sha256": "420ae85cf76c2e2eb7e20f5dce6137d2afdd7d6aed7a128c60ae9da137f4eb39"
     }
   },
-  "test_output_sha256": "6249eb46e28fbec2ff6c334872e3e1a38ba0d0e74f0a34ac82b331d743014029",
+  "test_output_sha256": "53e15c9c2e63078450367f6019325a6cf58affba8a888b338569cc295cbff3be",
   "scope": [
     "actual inherited original finish-hook ordering",
     "strict malformed request/receipt and retained artifact byte closure",
@@ -32,7 +32,9 @@
     "mocked all-table exported snapshot full custom dump",
     "combined primary dump and cleanup failure rollback",
     "real Linux owned child process group cleanup",
-    "real line-oriented JSON pipe lifecycle"
+    "real line-oriented JSON pipe lifecycle",
+    "exact upstream fixed-width padded postmaster READY status and incorrect-state refusal",
+    "actual unchanged44476275-byte donor data manifest admission with source-body cap preserved"
   ],
   "runtime_executed": false,
   "postgresql_executed": false,
@@ -41,5 +43,36 @@
   "full_real_database_backup_created": false,
   "source_native_transaction_captured": false,
   "source_generation_admitted": false,
-  "world_authority": false
+  "world_authority": false,
+  "runtime_format_correction": {
+    "field": "postmaster.pid line8",
+    "source_url": "https://doxygen.postgresql.org/pidfile_8h_source.html",
+    "expected_ascii": "ready   ",
+    "first_attempt_run": 39070610494,
+    "identified_before_graphical_step": true,
+    "no_save_or_backup_witness_from_first_attempt_claimed": true
+  },
+  "first_hosted_attempt": {
+    "run_id": 39070610494,
+    "job_id": 117507248968,
+    "result": "failed",
+    "failure_code": "REGULAR_INPUT",
+    "failing_input": "docs/data-manifest.json",
+    "input_bytes": 44476275,
+    "input_git_blob": "e65bdb51bcc4f6bff4a5294bc559bee753e41907",
+    "retained_input_acquisition_passed": true,
+    "small_host_proot_build_passed": true,
+    "game_asset_import_started": false,
+    "graphical_boot_started": false,
+    "character_created": false,
+    "database_backup_created": false,
+    "artifacts_created": false,
+    "canceled": false
+  },
+  "source_inventory_guard_check": {
+    "current_tracked_source_inventory_evaluated": true,
+    "source_files": 660,
+    "revision_adapter_for_offline_guard_check_only": true,
+    "exact_donor_runtime_execution_qualified": false
+  }
 }

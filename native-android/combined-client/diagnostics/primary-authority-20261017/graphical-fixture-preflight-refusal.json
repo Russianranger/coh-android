@@ -1,0 +1,22 @@
+{
+  "schema": "coh-graphical-fixture-preflight-refusal-v1",
+  "run_id": 39070610494,
+  "job_id": 117507248968,
+  "source_commit": "dd5c3f9a2c30ea20b0a4c714007b1de0b0409546",
+  "failure_code": "REGULAR_INPUT",
+  "cause": "exact unchanged donor docs/data-manifest.json 44476275B exceeds8MiB generic source-inventory bound",
+  "exact_inputs_retrieved": true,
+  "small_host_proot_built": true,
+  "game_import_started": false,
+  "graphical_boot_started": false,
+  "new_character_created": false,
+  "complete_database_dump_created": false,
+  "artifact_produced": false,
+  "canceled": false,
+  "corrections": [
+    "27a077e1e57fafef123cafff6e62721eb3d2a760",
+    "d3da923c5c500895fd831990113339ddf5541694"
+  ],
+  "new_offline_tests_passed": 16,
+  "postgresql_padded_status_issue_caught_before_backup": true
+}

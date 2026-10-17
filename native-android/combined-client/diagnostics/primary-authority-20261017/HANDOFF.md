@@ -256,3 +256,15 @@ D a780aa66b additionally checks the live returned UID privately against the
 actual fresh SQL fixture UID and refuses a different nonzero UID. Six selected
 host methods now cover16 native outcomes per mode; no identifier or grant was
 added to output and the default diagnostic path remains unchanged.
+
+The first ARM64 fixture job39070610494 fetched every exact input and built the
+small host PRoot launcher but refusedREGULAR_INPUT before importing/booting any
+game process: the untouched donor docs/data-manifest.json is44,476,275B, larger
+than the initial8MiB per-source inventory bound. Only that exact manifest path
+now admits64MiB with full hash; source bodies keep8MiB. The backup helper also
+now requires PostgreSQL's exact padded ready-status literal. Sixteen tests pass,
+including real donor manifest sizing and strict status negatives. No character
+or database backup was created and the run completed failed, not canceled. The
+next focused fixture attempt also retains the small actual host launcher/receipt.
+Model-policy hosted39070610444 independently succeeded; exact archive, source
+hashes and all qualification metadata are retained under its own evidence path.

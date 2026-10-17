@@ -38,6 +38,14 @@ def request_identity(value):
             and all(type(value.get(key)) is int and 0<value[key]<=2147483647 for key in ('client_pid','character_id'))
             and value['account']=='COHLOCAL' and value['character_name']=='THORHERO', 'SAVE_REQUEST')
     return value
+def postmaster_port(raw,pgdata,socket):
+    lines=raw.splitlines()
+    # PostgreSQL src/include/utils/pidfile.h pads all PM_STATUS values to eight
+    # characters; its actual READY value is "ready   ", not the word "ready".
+    require(len(lines)>=8 and lines[0].isdigit() and int(lines[0])>0 and lines[1]==str(pgdata)
+            and lines[3].isdigit() and 1024<=int(lines[3])<=65535 and lines[4]==str(socket)
+            and lines[5]=='127.0.0.1' and lines[7]=='ready   ','OWNED_POSTMASTER')
+    return int(lines[3])
 
 class Snapshot:
     """One actual read-only psql transaction stays open during pg_dump."""
@@ -99,16 +107,13 @@ def capture(state=Path('/state'),pgbin=Path('/opt/coh/pgsql/bin')):
     require(set(credentials)=={'cohdiag_admin','cohtest'} and all(type(value) is str and
             re.fullmatch('[0-9a-f]{64}',value) for value in credentials.values()),'PROFILE_CREDENTIALS')
     # PostgreSQL writes this owned file itself: obtain the actual chosen port.
-    pidfile=pgdata/'postmaster.pid';regular(pidfile,4096);lines=pidfile.read_text().splitlines()
-    require(len(lines)>=8 and lines[0].isdigit() and int(lines[0])>0 and lines[1]==str(pgdata)
-            and lines[3].isdigit() and 1024<=int(lines[3])<=65535 and lines[4]==str(socket)
-            and lines[5]=='127.0.0.1' and lines[7]=='ready','OWNED_POSTMASTER')
+    pidfile=pgdata/'postmaster.pid';regular(pidfile,4096);port=postmaster_port(pidfile.read_text(),pgdata,socket)
     require((pgdata/'PG_VERSION').read_text().strip()=='18','POSTGRES_MAJOR')
     environment={key:value for key,value in os.environ.items() if not key.startswith('PG')}
     # The diagnostic administrator can read every schema and server setting;
     # pg_dump is database-only and never serializes role/password definitions.
     environment.update(PGPASSWORD=credentials['cohdiag_admin'],PGCONNECT_TIMEOUT='5',PGOPTIONS='-c search_path=dbo,pg_catalog')
-    connection=['-h',str(socket),'-p',lines[3],'-U','cohdiag_admin','-d',local.DATABASE,'-w']
+    connection=['-h',str(socket),'-p',str(port),'-U','cohdiag_admin','-d',local.DATABASE,'-w']
     dump_version=tool([str(pgbin/'pg_dump'),'--version'],environment,deadline,4096).decode().strip()
     restore_version=tool([str(pgbin/'pg_restore'),'--version'],environment,deadline,4096).decode().strip()
     require(dump_version=='pg_dump (PostgreSQL) 18.6' and restore_version=='pg_restore (PostgreSQL) 18.6','PG_TOOL_VERSION')
@@ -119,7 +124,7 @@ def capture(state=Path('/state'),pgbin=Path('/opt/coh/pgsql/bin')):
         require(info.get('database')==local.DATABASE and info.get('user')=='cohdiag_admin'
                 and info.get('server_version_num')==180006 and type(info['server_version_num']) is int
                 and info.get('data_directory')==str(pgdata) and info.get('listen')=='127.0.0.1'
-                and info.get('port')==int(lines[3]) and info.get('socket')==str(socket)
+                and info.get('port')==port and info.get('socket')==str(socket)
                 and all(info.get(key)=='on' for key in ('fsync','synchronous_commit','full_page_writes'))
                 and re.fullmatch('[0-9A-Fa-f]+-[0-9A-Fa-f]+-[0-9]+',info.get('snapshot','')),'LIVE_DATABASE_IDENTITY')
         who=snapshot.query("SELECT json_build_object('accounts',(SELECT count(*) FROM dbo.shardaccounts),'account',(SELECT authname FROM dbo.shardaccounts LIMIT 1),'auth_id',(SELECT containerid FROM dbo.shardaccounts LIMIT 1),'characters',(SELECT count(*) FROM dbo.ents),'character_id',(SELECT containerid FROM dbo.ents LIMIT 1),'character_name',(SELECT name FROM dbo.ents LIMIT 1),'character_account',(SELECT authname FROM dbo.ents LIMIT 1),'character_auth_id',(SELECT authid FROM dbo.ents LIMIT 1),'map_id',(SELECT staticmapid FROM dbo.ents LIMIT 1));")

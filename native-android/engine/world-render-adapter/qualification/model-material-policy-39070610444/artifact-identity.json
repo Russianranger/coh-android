@@ -1,0 +1,54 @@
+{
+  "review": "downloaded actual completed CI artifact; no qualifier reruns",
+  "run_id": 39070610444,
+  "job_id": 117507248472,
+  "run_attempt": 1,
+  "conclusion": "success",
+  "source_revision": "dd5c3f9a2c30ea20b0a4c714007b1de0b0409546",
+  "reviewed_tree": "6e77fe92b2c0c5986b8ec81433bfb4f882466dba",
+  "workflow_sha256": "e7477c0e590d1c4182b37b899d416d3e87a7d9b9ba14d2166c78c2705f0159f5",
+  "artifact_id": 12114788461,
+  "downloaded_zip_bytes": 4694,
+  "downloaded_zip_sha256": "ff40f5956afd00cf585301b6fe23e3e50254fc88698b5faa21455cb84efa328f",
+  "qualification_bytes": 12220,
+  "qualification_sha256": "036b8bf8c69cba127bf248831c01e12a9766db7edfeacad4ecb283b0a94292a0",
+  "all_44_sources_match_published_commit_and_host": true,
+  "historical_inputs_and_original_functions_match_host": true,
+  "fresh_initial_projection_controls_not_actual_CLIENT_material_selection": true,
+  "actual_C_object_CPP_link_executed": true,
+  "current_TexBind_selection_proven": false,
+  "current_CLIENT_generation": false,
+  "effective_material_or_GPU_owner_created": false,
+  "world_authority": false,
+  "android_execution": false,
+  "files": {
+    "REVIEW.md": {
+      "bytes": 2614,
+      "sha256": "2be9f3ede8421913094833afc84a386552633aaf8a0084ffe3e0e08a1e4f84a4"
+    },
+    "artifact.zip": {
+      "bytes": 4694,
+      "sha256": "ff40f5956afd00cf585301b6fe23e3e50254fc88698b5faa21455cb84efa328f"
+    },
+    "artifacts.json": {
+      "bytes": 890,
+      "sha256": "ef5b957cfe38a1ea1cc2bd6921238f1a74bb4f7411fc060fbf6434316ef58262"
+    },
+    "job.log": {
+      "bytes": 26824,
+      "sha256": "852bfb0d6ffcdec2e68a6f2024783b0a752df7332b618d1192e99f8b05cfec00"
+    },
+    "jobs.json": {
+      "bytes": 1616,
+      "sha256": "8fef6a333099681a5263f843283bfc5b98dc64fc493a17451e7f103e08778fe0"
+    },
+    "qualification.json": {
+      "bytes": 12220,
+      "sha256": "036b8bf8c69cba127bf248831c01e12a9766db7edfeacad4ecb283b0a94292a0"
+    },
+    "run.json": {
+      "bytes": 15400,
+      "sha256": "326c2f45f1f269f37aed7d0e8f5401a9962c51fc7753a9df92e844f8349fc2be"
+    }
+  }
+}
