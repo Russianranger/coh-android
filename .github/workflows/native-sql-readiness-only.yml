@@ -7,6 +7,12 @@ name: Isolated x86 x64 SQL transport readiness diagnosis
       - native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py
       - native-android/engine/auth-interop/deployment/test_sql_readiness_diagnostic.py
   workflow_dispatch:
+    inputs:
+      memory_limit_1024:
+        description: Change only the disposable diagnostic SQL memory setting to 1024 MiB after reviewing the 256 MiB evidence
+        type: boolean
+        required: true
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -14,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   sql-transport-only:
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[sql-readiness-only]'))
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[sql-readiness-only]') || contains(github.event.head_commit.message, '[sql-readiness-1024]'))
     runs-on: windows-2025-vs2026
     timeout-minutes: 25
     steps:
@@ -33,7 +39,7 @@ jobs:
       - name: Compare named-instance and owned-pipe connections without AuthServer
         shell: pwsh
         run: |
-          python native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-sql-readiness-only" --memory-limit-mb 256
+          python native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-sql-readiness-only" --memory-limit-mb ${{ ((github.event_name == 'workflow_dispatch' && inputs.memory_limit_1024) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[sql-readiness-1024]'))) && '1024' || '256' }}
           if ($LASTEXITCODE -ne 0) { throw 'Bounded SQL readiness diagnosis or owned cleanup did not complete' }
       - uses: actions/upload-artifact@v4
         if: always()

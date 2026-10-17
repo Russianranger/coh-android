@@ -1,0 +1,202 @@
+{
+  "schema": "coh-sql-readiness-transport-only-v1",
+  "passed": false,
+  "phases": [
+    {
+      "phase": "default_memory_before_schema",
+      "transports": [
+        {
+          "architecture_bits": 32,
+          "transport": "named_instance",
+          "healthy": true,
+          "errors": []
+        },
+        {
+          "architecture_bits": 32,
+          "transport": "owned_named_pipe",
+          "healthy": true,
+          "errors": []
+        },
+        {
+          "architecture_bits": 64,
+          "transport": "named_instance",
+          "healthy": true,
+          "errors": []
+        },
+        {
+          "architecture_bits": 64,
+          "transport": "owned_named_pipe",
+          "healthy": true,
+          "errors": []
+        }
+      ],
+      "sql_generation_stable": true,
+      "working_set_after": 339931136,
+      "private_bytes_after": 489738240,
+      "sql_errorlog_flags": {
+        "ready_marker": true,
+        "termination_marker": false,
+        "insufficient_memory_marker": false
+      },
+      "sql_numeric_errors_unique": []
+    },
+    {
+      "phase": "configured_memory_before_schema",
+      "transports": [
+        {
+          "architecture_bits": 32,
+          "transport": "named_instance",
+          "healthy": true,
+          "errors": []
+        },
+        {
+          "architecture_bits": 32,
+          "transport": "owned_named_pipe",
+          "healthy": true,
+          "errors": []
+        },
+        {
+          "architecture_bits": 64,
+          "transport": "named_instance",
+          "healthy": true,
+          "errors": []
+        },
+        {
+          "architecture_bits": 64,
+          "transport": "owned_named_pipe",
+          "healthy": true,
+          "errors": []
+        }
+      ],
+      "sql_generation_stable": true,
+      "working_set_after": 346378240,
+      "private_bytes_after": 492830720,
+      "sql_errorlog_flags": {
+        "ready_marker": true,
+        "termination_marker": false,
+        "insufficient_memory_marker": false
+      },
+      "sql_numeric_errors_unique": []
+    },
+    {
+      "phase": "after_original_schema",
+      "transports": [
+        {
+          "architecture_bits": 32,
+          "transport": "named_instance",
+          "healthy": false,
+          "errors": [
+            {
+              "sqlstate": "08001",
+              "native_error": 26
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 233
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 26
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 233
+            }
+          ]
+        },
+        {
+          "architecture_bits": 32,
+          "transport": "owned_named_pipe",
+          "healthy": false,
+          "errors": [
+            {
+              "sqlstate": "08001",
+              "native_error": 26
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 233
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 26
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 233
+            }
+          ]
+        },
+        {
+          "architecture_bits": 64,
+          "transport": "named_instance",
+          "healthy": false,
+          "errors": [
+            {
+              "sqlstate": "08001",
+              "native_error": 26
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 233
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 26
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 233
+            }
+          ]
+        },
+        {
+          "architecture_bits": 64,
+          "transport": "owned_named_pipe",
+          "healthy": false,
+          "errors": [
+            {
+              "sqlstate": "08S01",
+              "native_error": 233
+            },
+            {
+              "sqlstate": "08S01",
+              "native_error": 233
+            },
+            {
+              "sqlstate": "08001",
+              "native_error": 0
+            }
+          ]
+        }
+      ],
+      "sql_generation_stable": true,
+      "working_set_after": 349093888,
+      "private_bytes_after": 490926080,
+      "sql_errorlog_flags": {
+        "ready_marker": true,
+        "termination_marker": false,
+        "insufficient_memory_marker": true
+      },
+      "sql_numeric_errors_unique": [
+        [
+          17300,
+          16,
+          1
+        ],
+        [
+          17312,
+          16,
+          1
+        ]
+      ]
+    }
+  ],
+  "failure": "private_sql_command_failed",
+  "cleanup": {
+    "owned_localdb_cleanup_complete": false,
+    "private_files_removed": true,
+    "source_inputs_unchanged": true
+  },
+  "authserver_started": false
+}

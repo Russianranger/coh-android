@@ -1,0 +1,21 @@
+{
+  "review": "Independent read-only review of literal disposable SQL memory-only experiment selection",
+  "workflow": ".github/workflows/native-sql-readiness-only.yml",
+  "workflow_sha256": "1ff4c7076fc4f239bb2c4b8137119424dee3ddfd3ec3423ac6d770f27a06f981",
+  "source_helper_unchanged_from_prior_review": "dc936b037867feb3a3f96bbc8ec733e1586a6bfb",
+  "verdict": "no source review blocker",
+  "checks": [
+    "repository and native-android guard",
+    "default boolean false selects fixed literal256",
+    "explicit boolean true or push marker selects fixed literal1024",
+    "no arbitrary shell interpolation",
+    "cancel-in-progress false",
+    "25minute outer bound",
+    "exact LF checkout and owned source-helper invocation",
+    "same host privacy and cleanup tests",
+    "always upload diagnostics",
+    "no AuthServer step"
+  ],
+  "execution_performed": false,
+  "evidence_reason": "Actual256experiment healthy all four transport paths before schema, then errors17300/17312; change only diagnostic owned instance memory setting."
+}

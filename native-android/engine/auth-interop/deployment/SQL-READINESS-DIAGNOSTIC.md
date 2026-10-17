@@ -98,3 +98,37 @@ controls additionally test private console suppression/invalid-output refusal,
 DROP failure followed by stop/delete, overall budget refusal and preserved
 receipts when final source-status observation raises. No raw SQL console file
 is stored in the uploaded output directory.
+
+## Actual 256-MiB experiment, run 38994607249
+
+The source/diagnostic controls passed and actual Windows execution established:
+
+| Phase | x86 named | x86 pipe | x64 named | x64 pipe |
+| --- | --- | --- | --- | --- |
+| Default memory, master | Healthy | Healthy | Healthy | Healthy |
+| Configured 256 MiB, master | Healthy | Healthy | Healthy | Healthy |
+| Original schema, cohauth | Failed | Failed | Failed | Failed |
+
+The same SQL PID 7824 and start identity persisted through all measured phases.
+After schema creation, the owned SQL error log grew from 14,868 to 201,746 bytes,
+its memory-pressure marker became true, and numeric errors 17300/17312 appeared
+(severity16/state1). All failed paths reported native26/233 or233/0; the
+subsequent public credential seed failed before any AuthServer startup. The
+failed DROP remains visible; stop/delete, private-file removal and source
+integrity passed, while aggregate SQL cleanup remains false. This run rules out
+a simple x86-only or named-instance-resolution-only account of this failure.
+
+This is evidence for a memory/system-task constraint after opening the original
+schema, rather than proof that the memory cap alone is the complete cause.
+Microsoft's documented error17300 covers either insufficient memory or exhausted
+configured sessions:
+https://learn.microsoft.com/sql/relational-databases/errors-events/mssqlserver-17300-database-engine-error
+The next justified single-variable experiment is this exact readiness-only run
+with `--memory-limit-mb 1024`, preserving source, schema, driver, version,
+transport and auth policy. Do not restart AuthServer until the independent x86
+cohauth prerequisite and complete cleanup are demonstrated.
+
+The actual receipt, ZIP, per-file hashes and phase summary are preserved in
+`../evidence/sql-readiness-38994607249/`. Artifact12087075311 is 2,959 bytes,
+SHA256 `12621341783a100c31ead2168df9e5489064bc2c44412642420672bf2e47ea9c`.
+No raw private SQL console text or SQL error-log content was exported.

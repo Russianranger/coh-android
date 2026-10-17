@@ -1,0 +1,18 @@
+{
+  "run_id": 38994607249,
+  "artifact_id": 12087075311,
+  "artifact_bytes": 2959,
+  "artifact_sha256": "12621341783a100c31ead2168df9e5489064bc2c44412642420672bf2e47ea9c",
+  "files": {
+    "archive-original-source.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt.json": {
+      "bytes": 27435,
+      "sha256": "0515baca0880bb923ed04c0202532e6f0d1dd3a9c7f96ae14c0aa4d69dafe452"
+    }
+  },
+  "observed_boundary": "All32/64-bit named-instance/direct-pipe paths healthy for master before and after256MiB configuration; all four fail forcohauth after original schema. OwnedSQL generation stable; errorlog memory marker appears with17300/17312. NoAuthServer started.",
+  "next_controlled_variable": "Same readiness-only exact source/driver/version/schema/seed experiment with--memory-limit-mb1024; noservice retry untilits x86precondition andcleanup pass."
+}
