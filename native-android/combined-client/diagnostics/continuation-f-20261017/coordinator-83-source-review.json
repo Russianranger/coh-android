@@ -1,0 +1,34 @@
+{
+  "schema": "coh-worker-f-coordinator-source-and-workflow-review-v1",
+  "source_revision": "83b93ed89775feb51793df6ee3fca7ac2f0d1334",
+  "source_sha256": {
+    ".github/workflows/native-authority-continuation.yml": "f9dda5e1ceb96be7f6f348e77f6b5c1b0a9079104010c1ba196dc8bb039a0d77",
+    "native-android/combined-client/tools/capture_local_scene.c": "f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec",
+    "native-android/combined-client/tools/check_local_scene_capture.py": "87e45e7e17352939f3747cb0998f8a82343d0b5a13b05edd33028507b764d105"
+  },
+  "reviewed_source_receipts_not_live_world": true,
+  "capture_cli_verdict": "approved_nonshipping_owned_synchronous_receive_observation_only",
+  "prior_review_fixes_verified": [
+    "only_own_created_capture_json_unlinked",
+    "short_account_file_reads_refuse",
+    "tracked_native_helpers_and_original_source_pins_frozen",
+    "dirty_checkout_and_per_file_build_authority_explicit"
+  ],
+  "review": [
+    "Private fresh directory and exclusive file creation preserve preexisting output; borrowed loan bytes stream synchronously and no reader/message/opaque client pointer survives callback return.",
+    "Socket cleanup is checked before final report; native owner supplies selected DBID/map handoff. CLI accepts slot only and remains explicit local-development authorization with AuthServer/source-generation/actor/world flags false.",
+    "Workflow source job uses exact accepted archive/member hashes and bounded ZIP admission; it does not rerun donor or old expensive capture.",
+    "Branch/repository and explicit publication-marker guards protect source and Android jobs; dependent Windows jobs require successful source qualification. Read-only repository permissions, pinned NDK digest and exact native artifact admission preserve tested source binding.",
+    "Presentation job builds ARM64/x86_64 and runs standalone consumer on Android13. Mock/backend/fixture tests are not real GLES authority or Thor acceptance. Windows MapServer job compiles a private nonshipping observer without starting it.",
+    "Full template assets are retained in docs/schema-generation-evidence/accepted-36088012666.zip; they are not established absent. Actual scene run separately needs an admissible existing private character PostgreSQL dump and source/native transaction witness; synthetic character seeds cannot substitute."
+  ],
+  "ci_run_id": 39067419736,
+  "ci_run_head_independently_verified": "83b93ed89775feb51793df6ee3fca7ac2f0d1334",
+  "run_attempt": 1,
+  "all_ci_jobs_complete_at_review": false,
+  "actual_server_capture": false,
+  "authserver_authenticated": false,
+  "source_generation_admitted": false,
+  "actor_authority": false,
+  "world_authority": false
+}

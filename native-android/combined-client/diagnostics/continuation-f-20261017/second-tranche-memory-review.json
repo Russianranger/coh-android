@@ -1,0 +1,65 @@
+{
+  "schema": "coh-worker-f-second-tranche-owner-review-v1",
+  "passed": true,
+  "prior_parent_phase_receipt_sha256": "44a78980d37f057d74e9f4d5c283057a124d1d9b6225d11493e1d3d1d958e499",
+  "LOD_independent_proof_sha256": "5ba075609b5becee4f70b75920269fa786443b2f8cb3a910e38a4a3d35560ffa",
+  "power_ID_worker_receipt_sha256": "41fd57f8e9b75d1d48517482ad537c648368a985be862dbd7bf3f355b4997e22",
+  "old_candidate_transition_unassigned_bytes": 588615,
+  "additional_owner_bytes": {
+    "LOD_cache": 139424,
+    "LOD_dictionary_metadata": 1373496,
+    "power_ID_view": 689184,
+    "power_ID_workspace_transient": 689184
+  },
+  "proposed_additional_charge_comparisons": [
+    {
+      "set": "historical_LOD_cache_owner",
+      "named_owner_bytes": 139424,
+      "remaining_from_prior_transition": 449191,
+      "fits_prior_transition_allowance": true
+    },
+    {
+      "set": "initial_LOD_dictionary_retaining_cache",
+      "named_owner_bytes": 1512920,
+      "remaining_from_prior_transition": -924305,
+      "fits_prior_transition_allowance": false
+    },
+    {
+      "set": "power_ID_view_only",
+      "named_owner_bytes": 689184,
+      "remaining_from_prior_transition": -100569,
+      "fits_prior_transition_allowance": false
+    },
+    {
+      "set": "power_ID_view_and_workspace",
+      "named_owner_bytes": 1378368,
+      "remaining_from_prior_transition": -789753,
+      "fits_prior_transition_allowance": false
+    },
+    {
+      "set": "LOD_cache_dictionary_and_ID_view",
+      "named_owner_bytes": 2202104,
+      "remaining_from_prior_transition": -1613489,
+      "fits_prior_transition_allowance": false
+    },
+    {
+      "set": "LOD_cache_dictionary_ID_view_and_ID_workspace",
+      "named_owner_bytes": 2891288,
+      "remaining_from_prior_transition": -2302673,
+      "fits_prior_transition_allowance": false
+    }
+  ],
+  "notes": [
+    "LOD dictionary consume transfers the raw cache owner pointer; it does not free cache/blob/loader storage. Both source owners remain charged.",
+    "Power ID owner borrows the complete join, which borrows all dictionary/provider/file leases. The ID workspace is additional temporary storage and is not included in the ID output owner.",
+    "These comparisons omit newly required loader/provider/control/callback/packet/material/GPU/driver charges. Actual shared loader identity and limits must prove any deduplication. Matching hash/path is not a billing identity.",
+    "No current concrete parent/global child adapter executes all these modules under96MiB. Existing standalone8MiB dictionary and LOD aggregate limits retain their original semantics.",
+    "The prior588615byte transition allowance cannot fit either LOD dictionary metadata or one ID view. Preparation order/lifetime changes require source-backed execution and actual owner cleanup before any credit. No production caching or persistence change follows from this arithmetic."
+  ],
+  "actual_combined_pipeline_executed": false,
+  "actual_owner_retirement_observed": false,
+  "actor_packet_gpu_fit_proved": false,
+  "process_RSS_measured": false,
+  "runtime_memory_headroom_proved": false,
+  "world_authority": false
+}

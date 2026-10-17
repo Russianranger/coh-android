@@ -157,6 +157,103 @@ This remains historical forward/parent projection, without current generation,
 `DuplicateMissingPowers`, nested AttribMod finalization or authoritative actor.
 `independent-c-power-join.json` preserves exact review/proof provenance.
 
+### Second source tranche and exact added owners
+
+B source `fd9ea649322aff5dd952878b6a00d9d813a50ba7` was independently executed
+and its 39 committed inputs verified: **167,019 checks** per release/ASan/UBSan,
+five semantic mutations refused. All 4,976 historical LOD rows/9,158 children,
+39 force-auto-empty entries, 50 derived duplicate-key collisions and 3,083
+retained root queries agree with original initial dictionary behavior. The
+root projection finds 356 existing and 2,727 absent rows under an explicit
+fixture writable-path mapping. This does not establish actual CLIENT path,
+current cache generation, child-model/reduced-GEO selection or material state.
+
+C source `92454cfc85a55d1f64fd0db51defa5043b5c60cf` was independently reviewed;
+65 final receipt hash entries (64 normalized unique inputs) match committed
+bytes. The worker's nine cases report **272,407 checks** per release/ASan/UBSan,
+including all 20,241 original gameplay IDs/reverse lookups and sorted parent
+precedence. F requested and verified precharged comparator/validation work
+accounting before proof. This receipt was not independently re-executed by F.
+Sorted gameplay category/set/power ordinals remain historical source projections;
+complete runtime finalization and authoritative character state remain absent.
+
+These add actual source owners: LOD cache **139,424 bytes**, initial LOD dictionary
+**1,373,496 bytes**, power-ID view **689,184 bytes**, and a separate **689,184-byte**
+ID workspace during preparation. Consuming the LOD cache transfers its ownership
+and does not free its blob/loader/cache metadata. The ID view continues borrowing
+the complete join and dictionary/provider/file leases. Either dictionary metadata
+alone or one ID view exceeds the old transition's **588,615-byte** allowance.
+`second-tranche-memory-review.json` records refusal arithmetic without constructing
+a fictional integrated pipeline. Whole loader/provider/callback/control, old/new,
+packet/material/GPU/driver costs must still be admitted; actual identities must
+prove any sharing. No existing global adapter admits all these modules together.
+
+### Coordinator source and hosted continuation review
+
+`coordinator-83-source-review.json` binds the exact published
+`83b93ed89775feb51793df6ee3fca7ac2f0d1334` workflow and native CLI. The earlier
+report ownership, account short-read and build-source provenance fixes are
+present. Run `39067419736` was independently verified as that exact SHA/attempt1;
+its Linux source contracts, both-ABI/Android13 fixture presentation consumer and
+original shard/UserData runtime jobs succeeded. The GROUPS observer Win32 compile
+was still running at the recorded observation. This is a timestamped partial
+workflow observation; the coordinator preserves final hosted receipts separately.
+Android fixture execution does not establish genuine world/GLES/Thor acceptance.
+
+Full DbServer template assets are retained in
+`docs/schema-generation-evidence/accepted-36088012666.zip`; they are not absent.
+The actual scene transaction separately lacks an admitted existing private
+character PostgreSQL dump. No synthetic character/account seed substitutes for it.
+
+The later independent `ci-39067419736-final-observation.json` confirms all four
+jobs completed successfully, including the changed original Win32 MapServer
+observer compile. This updates the earlier partial observation without erasing
+it. Actual MapServer execution/native pairing remains absent.
+
+### Original Auth/Db service experiment review
+
+F and a delegated independent C review found a concrete deployment failure in
+the first service supervisor: its final AuthServer/DbServer snapshots called a
+helper that accepts only `sqlservr`. Mocked tests hid the mismatch. D source
+`a5e0c47b92ab22ad3a84b46da55417af8db1b737` fixes it with dedicated service
+name/image-path/start-tick/Popen/binary identity and baseline/final generation
+checks, preserving the SQL-only helper. F independently ran all six host test
+methods successfully and verified exact committed source/helper bytes.
+Requested stream-close failure handling now continues firewall/LocalDB/private
+cleanup; its scopes explicitly describe original IPv4 service isolation.
+
+`independent-d-service-activation-review.json` approves only the narrow fresh
+Windows service experiment. Recovered full templates and a coherent original
+interserver registration test do not qualify actual runtime execution, selected
+shard play, nondevelopment version/checksum admission, client DB/Map or world
+authority. Those require the independently supervised hosted run receipts.
+
+### Restore-only scene supervisor review
+
+A source `8613045c22d9faa76ba5b6b4635ea5dcce9138c7` was independently reviewed
+and hash-bound. F executed **102 helper checks/94 refusals**, including exact
+native ELF/37 project dependency admission and cleanup of a real trivial owned
+Linux child, plus all **eight compile-admission test methods**. No PostgreSQL,
+Wine, MapServer or actual native scene session executed in these tests.
+
+F's requested fixes are included: binary/receipt/source rehashes immediately
+before launches and after cleanup, incremental log-FD ownership, and exact raw
+account bytes in final input identity. Restore reads only a new 0600 hash-verified
+private copy of the supplied existing custom-format backup. The supervisor checks
+actual read-only account membership and obtains selected DBID through the opaque
+native owner. It cannot seed or manufacture a replacement character.
+
+The unchanged PG helpers have 180-second operations/900-second dump-restore limits
+and pause health/log polling. The result explicitly records a non-strict whole-run
+deadline, polled log bounds and no hard memory cap; no stronger guarantee follows
+from this review. Cleanup uses only owned process groups, private Wine prefix and
+new PG cluster. Windows path-key normalization is limited to metadata comparison;
+original compile receipt/PE/source bytes are never rewritten, and alias controls
+refuse duplicate/mixed forms. Captured character output remains private with
+`public_upload_permitted:false`. Real pairing remains blocked by the missing
+admissible private backup or a separately qualified original graphical creation
+pipeline, and current source generation/cache/actor/world admission remains false.
+
 The coordinator's native local receive CLI uses the existing opaque owner and
 streams its synchronous loan directly to a fresh private directory. F requested
 report-file ownership tracking on rollback, account short-read rejection and

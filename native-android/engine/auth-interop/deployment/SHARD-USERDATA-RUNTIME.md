@@ -73,16 +73,25 @@ it is 64-bit host testing, does not execute ODBC, and is deliberately refused by
 the actual x86 runtime-receipt admission. Other controls verify every receipt
 field mutation, source copies and fixture columns, signed port limits,
 build-before-SQL ordering, success/failure cleanup and local-host refusal before
-side effects. LeakSanitizer is disabled. The Windows stage has **not** executed
-in this local Linux environment.
+side effects. LeakSanitizer is disabled.
+
+The actual x86 Windows/ODBC stage subsequently passed
+[run 39067419736](https://github.com/Russianranger/coh-android/actions/runs/39067419736)
+at source `83b93ed89775feb51793df6ee3fca7ac2f0d1334`, artifact12113592578.
+Its admitted native result reports both full SQL-to-wire bodies, original shard
+loading/address lookup, missing/NULL guards and all owned cleanup successful.
+It still reports no network registration, grant or DB/Map authentication.
 
 Remaining full-session dependencies are fresh encrypted authentication, a real
 owned registered DbServer channel/shard activation, actual nondevelopment version
 and full-checksum admission, authentic PlayOK/cache consumption, selected DBID
-and Map handoff. Current source checkouts contain only DB configuration, without
-the required `server/db/templates/vars.attribute`, `badgestats.attribute` or
-`pophelp.attribute` runtime corpus. Those exact input bodies need recovery and
-provenance before running the complete compiled MSSQL DbServer. No current
+and Map handoff. The generated template bodies are absent from the unpacked
+source tree but have now been recovered exactly from the already committed
+accepted schema artifact by `tools/android/dbserver/prepare_dbserver_schema.py`.
+The 62-file manifest matches the accepted `b8913689…` identity, including all
+three required attribute files. This input dependency is closed; see
+[DB-SHARD-ACTIVATION.md](DB-SHARD-ACTIVATION.md) for the actual full-process
+continuation. No current
 service, Android, Thor, selected-shard or authenticated DB/Map acceptance is
 claimed by this source/diagnostic addition.
 

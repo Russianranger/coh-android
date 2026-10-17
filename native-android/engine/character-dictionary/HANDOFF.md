@@ -273,3 +273,50 @@ Final receipt: `qualification/power-join-20261017-final.json.gz`, source
 `031792ef4b97749035d9f0b3cfa2bb2c1a9df46e`, SHA256
 `575e9056a37c1ae25903494ed6cbb74a4ac20c8fcf5bf7e4e4728c856e77d775`.
 It binds 62 exact source/helper/header inputs before and after execution.
+
+## Source-finalized gameplay ID projection — 2026-10-17 continuation
+
+The isolated `coh_power_ids` owner closes a concrete identity gap after forward
+joining: original `powerdict_FinalizeDict` sorts category pointers with exact
+case-sensitive strcmp before assigning BasePowerID.185of186 authentic category
+positions change. Raw row0/Base_Defenses becomes sorted7; sorted0/5thColumn was
+raw58. Runtime IDs must never be allocated dictionary ordinals or raw category
+indices. The new view preserves source local set/power positions and last-write
+ID precedence, then separately applies reverse source first-parent precedence
+in sorted category order. Unreached powers retain assigned=false.
+
+Whole original FinalizeDict/comparator/basepower_SetID/ResetStats/FX leaf and
+sorted SetBackPointers execute using explicit compact fixture objects. Nonzero
+stats and normal/custom FX fixtures verify those source bodies; authentic FX,
+diminishing-return data, development-art override and complete FinalizePower are
+not admitted. Independent source sorting and every20,241 authentic ID plus all
+reverse category/set/power lookups agree. Ordered repeated/shared refs, actual
+alternate identity, case/slash behavior, period-containing short names, byte
+sorting and unreachable allocations have separate synthetic source fixtures.
+
+Owner/workspace each689,184B; the literal8MiB standalone budget charges complete
+join/transitive raw owners/leased set input/provider context/scratch/retained
+bytes and16KiB native stack. The64MiB aggregate work cap precharges complete key
+scans/comparisons, index validation and both assignment passes. No callbacks,
+allocation, packet mutation, actor or ACK occurs. Output commits only after all
+validation, sorting and assignment; aliases/budgets and partial-sort duplicate
+failures preserve the old view. Runtime/current-generation/complete-finalization
+and actor flags remain false.
+
+The pinned full original ParserLoadFiles source establishes a branch-specific
+prerequisite correction: successful persisted binary cache read returns before
+its preprocessing callback. DuplicateMissingPowers is required by text/rebuild
+load_PreprocPowerDictionary, not by an observed qualified binary cache hit.
+The exact historical donor requires no missing alternate clone. Neither branch
+has been observed for the current live SERVERONLY/shared/client generation, so
+this source audit cannot select runtime authority. Remaining concrete closure is
+actual branch/generation witnesses, authentic FX/dim-return and full per-power
+finalization/template semantic application, complete character state and atomic
+actor transaction ownership. Earlier accepted APK scopes remain unchanged.
+
+Final ID receipt: `qualification/power-ids-20261017-final.json.gz`, source
+`92454cfc85a55d1f64fd0db51defa5043b5c60cf`, SHA256
+`41fd57f8e9b75d1d48517482ad537c648368a985be862dbd7bf3f355b4997e22`.
+It binds 65 exact inputs. Nine release/ASan/UBSan profiles each pass
+272,407assertions, including partial-sort duplicate and transitive alias rollback.
+C++ linkage and536B summed measured native source stack fit16KiB reserve.

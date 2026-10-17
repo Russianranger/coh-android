@@ -1,0 +1,18 @@
+{
+  "schema": "coh-independent-original-groups-compile-review-v1",
+  "passed": true,
+  "source_revision": "83b93ed89775feb51793df6ee3fca7ac2f0d1334",
+  "run_id": 39067419736,
+  "artifact_id": 12114435243,
+  "archive_bytes": 3347636,
+  "archive_sha256": "cfe1a5fc58b0390fa28d86922573304044f633cfab1ca60ae6ed2f1dcaade8d7",
+  "compile_receipt_sha256": "698da0508b0849f1e5c95f2ea2198f56a6664a6c893b0e33f7243c038491b235",
+  "binary_bytes": 7504384,
+  "binary_sha256": "646aac0bf34a114595df209747f4352d5ce5651b36be2fe52750a4ae670709a1",
+  "staged_source_and_overlays_admitted": true,
+  "known_inline_manifest_path_keys_normalized_for_cross_platform_comparison": true,
+  "original_receipt_bytes_preserved": true,
+  "runtime_executed": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

@@ -1,0 +1,20 @@
+{
+  "heads": {
+    "recovery-a": "8613045c22d9faa76ba5b6b4635ea5dcce9138c7",
+    "recovery-b": "fd9ea649322aff5dd952878b6a00d9d813a50ba7",
+    "recovery-c": "1a01a468cb102e75d0738089f55a38f125961720",
+    "recovery-d": "a5e0c47b92ab22ad3a84b46da55417af8db1b737",
+    "recovery-e": "2917fbfbfc4906f32a476cb548ef8abc1406f20a",
+    "recovery-f": "ea907c176e60a45a816fdc58c71e4752eaac48e5"
+  },
+  "requires_first_worker_history_bundle": true,
+  "prerequisite_refs": {
+    "recovery-a": "2ade983336192ccf492ccdc63e4c732859784a0b",
+    "recovery-b": "1c8d770284e38154efe30b4964fb9a334a89046a",
+    "recovery-c": "c64abd947519ea12372ab6a1b712c6fdf103663c",
+    "recovery-d": "fdde1a0f519a547ac0743fb91aafaa8bfc114a8e",
+    "recovery-e": "2917fbfbfc4906f32a476cb548ef8abc1406f20a",
+    "recovery-f": "169d0b36e95ec1f2e51573f56023088e8643a9a9"
+  },
+  "raw_sources_preserved": true
+}

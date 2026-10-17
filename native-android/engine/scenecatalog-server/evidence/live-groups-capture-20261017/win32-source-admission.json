@@ -1,0 +1,26 @@
+{
+  "schema": "coh-original-groups-observer-win32-source-admission-v1",
+  "passed": true,
+  "github_artifact_id": 12114435243,
+  "artifact_zip": {
+    "bytes": 3347636,
+    "sha256": "cfe1a5fc58b0390fa28d86922573304044f633cfab1ca60ae6ed2f1dcaade8d7"
+  },
+  "source_revision": "83b93ed89775feb51793df6ee3fca7ac2f0d1334",
+  "compile_receipt_sha256": "698da0508b0849f1e5c95f2ea2198f56a6664a6c893b0e33f7243c038491b235",
+  "binary": {
+    "bytes": 7504384,
+    "sha256": "646aac0bf34a114595df209747f4352d5ce5651b36be2fe52750a4ae670709a1"
+  },
+  "exact_staged_source_and_overlay_bytes_verified": true,
+  "actual_win32_build": true,
+  "original_group_bounds_layout_compile_assertions_present": true,
+  "inline_windows_manifest_paths_compared_portably": true,
+  "original_receipt_bytes_preserved": true,
+  "admission_module_sha256": "896f232ade83f45fcdb5090ef18a1d4b4001629234ae2f7e2ac10552cc219018",
+  "admission_unit_tests": 8,
+  "runtime_executed": false,
+  "live_groups_captured": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

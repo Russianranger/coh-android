@@ -1,0 +1,41 @@
+{
+  "schema": "coh-worker-f-private-source-capture-supervisor-review-v1",
+  "source_revision": "8613045c22d9faa76ba5b6b4635ea5dcce9138c7",
+  "verified_committed_source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "d3ae59e41ec13e805be9e0677487ebab4f41f76b8e0d40413fb33548b91f279a",
+    "native-android/engine/scenecatalog-server/admit_groups_capture.py": "896f232ade83f45fcdb5090ef18a1d4b4001629234ae2f7e2ac10552cc219018",
+    "native-android/engine/scenecatalog-server/test_capture_groups_transaction.py": "628452f513132e995400e495448aaf425a6c9570957bd6c36c3d69e30b00d793",
+    "native-android/engine/scenecatalog-server/test_admit_groups_capture.py": "ea75d1a7ce59b75284d5555078eae32b110ff6b15d0412f6154c1c8cfdc64b2d",
+    "native-android/engine/scenecatalog-server/PRIVATE_GROUPS_RUN.md": "74291056040a004be9d97337c6e41882e30dbbaf8cc1ac4e34d4c6d00b04abe5",
+    "native-android/engine/scenecatalog-server/delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "native-android/engine/scenecatalog-server/capture_disposable.py": "cc714446fff59e712970bd4b0c4247715d837b18be4d559fbc8017a98a807d00",
+    "native-android/engine/scenecatalog-server/capture_resources.py": "58174c4c37daccaca55dbb9e59dbcb2baa6f5a6c6debbb43bf65722c59aef69e",
+    "native-android/engine/scenecatalog-server/inspect_groups_capture.py": "01b622e95bef513e637bcff62be7d78af4bf83fca00e0eb3269f7385937a6c4e",
+    "native-android/engine/scenecatalog-server/stage_groups_capture.py": "2036e1ee954d3de5db7c637add4acc281a8079b52455650efe7e58132e1fc478"
+  },
+  "independent_supervisor_helper_checks": 102,
+  "independent_supervisor_refusals": 94,
+  "independent_compile_admission_test_methods": 8,
+  "independent_native_elf_transitive_project_dependencies": 37,
+  "independent_actual_linux_trivial_child_group_cleanup": true,
+  "postgres_executed": false,
+  "wine_executed": false,
+  "real_mapserver_executed": false,
+  "actual_native_scene_receive_in_this_test": false,
+  "verdict": "approved_restore_only_supervisor_source_and_helper_scope_only",
+  "review": [
+    "Missing or invalid exact private PGDMP/account inputs refuse before compiler/PG/Wine/runtime work. Only a supplied existing backup is restored into a fresh NEW cluster/database; no synthetic account/character/DBID row creation occurs.",
+    "Original accepted runtime copied into private disjoint work, new Wine prefix/privatePGcluster and exact PE/donor/provider admission preserve accepted profiles. Existing membership query is bounded/read-only; native wire slot selects through opaque DB/Map owner.",
+    "Whole packet bytes/SHA/bit extent, same actual selected DBID and Atlas map, transport profile and GROUPS footer/consumption must match. These numerical observations do not mint source-generation/cache/actor/world admission.",
+    "Requested producer/binary rehashes bracket source/native launch and final cleanup; native C dependencies are compiler-discovered and exact37project files verified. Actual source compile receipt and copied MapServer PE remain independently pinned.",
+    "Requested FD failure fix registers each opened log immediately before the next open. Stop only owned process groups; private Wine prefix and PG teardown run independently. Input dump and exact account bytes plus semantic account are rechecked.",
+    "Restore uses an exclusive0600 verified private backup copy, rehashed before/after restore and during cleanup. All private output carries public_upload_permitted:false; no raw account/backup/log content is exported as a public artifact.",
+    "Existing PG helpers can block180s or900s for dump/restore outside health polling. Numeric timeout policy honestly says strict_whole_run_deadline:false, polling_pauses:true; logs are not kernel capped and no hard RSS/heap bound is established.",
+    "Committed-source admission rejects missing/untracked helper substitutes. Windows backslash normalization applies only to inline-producer metadata comparison, rejects mixed/duplicate aliases, and never changes original trusted compile receipt/PE/source bytes."
+  ],
+  "original_win32_compile_admission_independently_repeated_by_F": false,
+  "actual_pair_captured": false,
+  "source_generation_admitted": false,
+  "actor_authority": false,
+  "world_authority": false
+}

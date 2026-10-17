@@ -1,0 +1,49 @@
+{
+  "schema": "coh-db-shard-activation-preparation-v1",
+  "passed": true,
+  "host_suites": 6,
+  "schema_recovery_helper": "tools/android/dbserver/prepare_dbserver_schema.py",
+  "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+  "schema_recovery_executed": true,
+  "recovered_files": 62,
+  "required_template_files": {
+    "vars.attribute": {
+      "bytes": 1928476,
+      "sha256": "26c5f2bba77ab66ef7619c995f343633dc1748297dc9963605734ef3aa1053bb"
+    },
+    "badgestats.attribute": {
+      "bytes": 62106,
+      "sha256": "ec57e497c6c044269d8d7e207b0869400ceeb18a03b94bda1a9d00a9d99cced2"
+    },
+    "pophelp.attribute": {
+      "bytes": 2185,
+      "sha256": "34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1"
+    }
+  },
+  "compiled_db_archive_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+  "compiled_db_binary_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+  "compiled_db_build_admission_replayed": true,
+  "compiled_db_platform_imports": [
+    "advapi32.dll",
+    "gdi32.dll",
+    "iphlpapi.dll",
+    "kernel32.dll",
+    "odbc32.dll",
+    "user32.dll",
+    "winmm.dll",
+    "ws2_32.dll"
+  ],
+  "separate_nonplatform_static_imports": false,
+  "windows_services_executed": false,
+  "authentication_grants_generated": false,
+  "live_shard_activation_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "shipping_profile_mutated": false,
+  "helpers_sha256": {
+    "hosted_db_shard_activation.py": "954e1bbd7e171b3a852833027f7c4a3ff1db56eadf52bf4d25db2326dab416ab",
+    "test_db_shard_activation.py": "1b1923b30df4e8ca48332f793e65f13f5970d2d64395efc6222537d299e7bb8e"
+  },
+  "independent_review_sql_observer_blocker_fixed_before_execution": true,
+  "dedicated_service_name_path_start_generation_controls": true,
+  "stream_close_failure_remaining_cleanup_exercised": true
+}

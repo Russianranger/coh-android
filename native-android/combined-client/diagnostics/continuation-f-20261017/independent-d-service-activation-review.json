@@ -1,0 +1,38 @@
+{
+  "schema": "coh-worker-f-original-service-activation-review-v1",
+  "source_revision": "a5e0c47b92ab22ad3a84b46da55417af8db1b737",
+  "verified_committed_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "954e1bbd7e171b3a852833027f7c4a3ff1db56eadf52bf4d25db2326dab416ab",
+    "native-android/engine/auth-interop/deployment/test_db_shard_activation.py": "1b1923b30df4e8ca48332f793e65f13f5970d2d64395efc6222537d299e7bb8e",
+    "native-android/engine/auth-interop/deployment/DB-SHARD-ACTIVATION.md": "949ae7590b98f5c0421ec7eef274ad4282f2967491ba2446feec5d5a24e5c0ee",
+    "native-android/engine/auth-interop/deployment/hosted_auth_login.py": "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/hosted_candidate_login.py": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+    "native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+    "native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+    "native-android/engine/auth-interop/deployment/auth_readiness.py": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+    "native-android/engine/auth-interop/deployment/auth_service_profile.py": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+    "native-android/engine/auth-interop/deployment/verify_auth_acceptance.py": "67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8"
+  },
+  "independently_executed_host_test_command": "python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v",
+  "independent_host_test_methods": 6,
+  "host_test_passed": true,
+  "actual_windows_service_execution": false,
+  "verdict": "approved_narrow_disposable_original_service_experiment_after_observer_fix",
+  "review": [
+    "Independent parallel C/F review found real defect: initial implementation reused SQL-only owned_process_snapshot for AuthServer/DbServer; actual service snapshots would always refuse. Old fully mocked orchestration tests hid it.",
+    "Fix separates service snapshots: exact expected normalized AuthServer/DbServer image path and name, positive start ticks, PID, original Popen liveness before/after, unchanged binary SHA and matching initial/final generation. Existing SQL-only observer remains unchanged and SQL generation is compared separately.",
+    "Real-shaped snapshot JSON tests refuse wrong service/path/PID/bool ticks/process reuse/binary mutation/exit. Orchestration SQL mock now rejects every servicePID. Six independent host methods pass.",
+    "Fresh hosted nonce LocalDB/database, exact accepted full schema/templates and retained Db/Auth binaries, inactive-before-Db to active-after-original-source transition, two exact owned reciprocal loopback endpoints and game listener proof form a coherent bounded experiment.",
+    "Owned reverse-order Job Object cleanup precedes firewall removal and LocalDB teardown. Requested stream-close error handling now continues all subsequent cleanup and failed cleanup refuses passed.",
+    "Firewall rules are explicitly scoped to original IPv4 surfaces/nonloopbackIPv4, rather than claiming universal IPv6 isolation. No client account login/probe repeats, checksum reference alias, version override or MapServer is introduced.",
+    "Host schema recovery/source mocks are not actual LocalDB/service/network qualification. Fresh Windows run must preserve exact schema/binary/source identity and cleanup receipts before claiming original interserver activation."
+  ],
+  "retained_full_template_archive": "docs/schema-generation-evidence/accepted-36088012666.zip",
+  "real_auth_login_repeated": false,
+  "actual_interserver_activation_verified_by_this_review": false,
+  "selected_shard_play_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "checksum_policy_relaxed": false,
+  "world_authority": false
+}

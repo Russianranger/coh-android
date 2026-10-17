@@ -1,0 +1,33 @@
+{
+  "schema": "coh-independent-userdata-runtime-review-v1",
+  "passed": true,
+  "run_id": 39067419736,
+  "artifact_id": 12113592578,
+  "archive_bytes": 95128,
+  "archive_sha256": "afcb77e3e765ff19704aa345a5849ff3ebd10c71a6e87b8d7751c66dfbaaf0a7",
+  "published_source_hashes_verified": 12,
+  "binary_sha256": "74127f0c665c222d350942bf717a463e64e95f577d898cbd62579a9a2d7cbbc7",
+  "runtime_result": {
+    "schema": "coh-original-shard-userdata-odbc-v1",
+    "passed": true,
+    "pointer_bytes": 4,
+    "sql_connected": true,
+    "shard_sql_loaded": true,
+    "source_address_lookup": true,
+    "unknown_address_refused": true,
+    "full_auth_sql_to_wire": true,
+    "full_game_sql_to_wire": true,
+    "missing_userdata_guard": true,
+    "null_userdata_guard": true,
+    "source_missing_userdata_zero_filled": true,
+    "source_game_missing_zero_filled": true,
+    "source_queue_disabled": true,
+    "source_sql_errors": 0,
+    "network_registration_verified": false,
+    "authentication_grant_generated": false,
+    "authenticated_db_map_handoff_verified": false
+  },
+  "owned_cleanup_verified": true,
+  "authserver_login_repeated": false,
+  "authenticated_db_map": false
+}

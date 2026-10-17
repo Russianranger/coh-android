@@ -89,6 +89,70 @@ Next dependency order:
    measure real parent/child/old-candidate/GPU overlap and Android lifecycle.
 5. Build one meaningful Combined APK and qualify Android13/Thor only after that
    production path can exercise new authentic functionality.
-6. In parallel, run the new shard/UserData prerequisite, recover original full
-   DbServer template assets, then qualify real selected-shard play and authenticated
-   DB/Map. Preserve original checksum/version enforcement and all negative cases.
+6. In parallel, reuse the now-accepted shard/UserData prerequisite and recovered
+   original DbServer schema assets, then qualify real original Auth/Db activation,
+   selected-shard play and authenticated DB/Map. Preserve original checksum/version
+   enforcement and all negative cases.
+
+## Completed hosted qualification and reviewed follow-up
+
+Published first integration is `83b93ed89775feb51793df6ee3fca7ac2f0d1334`, exact
+tree `0fa055c2fbb885cf7119e07c83ecb91a01482fd3`. All four jobs in
+[39067419736](https://github.com/Russianranger/coh-android/actions/runs/39067419736)
+passed. Independent archive/CRC/source/binary/receipt reviews are retained here.
+
+| Hosted artifact | Exact qualification |
+|---|---|
+|12113188644, 789,886B, SHA1e744cb15196d026763d197be159cdbfbfd8b1b7c2d9ba88043eea040b6d0696|Six passing new host receipts, 1,754 exact published-source hash entries checked|
+|12113369724, 112,714B, SHAbe2c61bd478bf61ff0f25a60c80c160f6c57a5b14f0ee007b222beb022474c01|Both Android ABI builds and exact 34,465-check Android13 x86_64 presentation fixture execution; CPU consumer, no GLES/world/Thor claim|
+|12113592578, 95,128B, SHAafcb77e3e765ff19704aa345a5849ff3ebd10c71a6e87b8d7751c66dfbaaf0a7|Actual original x86 shard-list/full UserData SQL-to-wire routines against fresh LocalDB, positive missing/NULL guards and owned cleanup; no Auth login repeated|
+|12114435243, 3,347,636B, SHAcfe1a5fc58b0390fa28d86922573304044f633cfab1ca60ae6ed2f1dcaade8d7|Actual changed private original Win32 observer compile and source admission; PE7,504,384B SHA646aac0bf34a114595df209747f4352d5ce5651b36be2fe52750a4ae670709a1; not executed|
+
+Additional integrated source closures:
+
+- Historical CLIENT LOD cache admission preserves 4,976 rows/9,158 children and
+  exact initial dictionary precedence. Under an explicitly substituted historical
+  writable-path mapping, all3,083 source root queries agree with original code:
+  356 existing entries return before construction, 2,727 are absent. Each host
+  mode passes167,019 checks. Actual current namespace/reload/model/material
+  selection remains open.
+- Source FinalizeDict sorts categories before gameplay IDs:185/186 retained
+  category positions change. All20,241 IDs and reverse lookups now agree with
+  complete original SetID/finalization ordering; nine cases/272,407 checks per
+  host mode pass. ParserLoadFiles binary-cache hits bypass preprocessing;
+  DuplicateMissingPowers is not unconditionally required on a proven cache hit.
+  Current cache branch/generation and full semantic finalization remain open.
+- Restore-only source/native transaction supervisor and independently pinned
+  compile admission pass102 controls/94 refusals/eight admission tests. Real
+  native binary dependencies and actual original Win32 PE were admitted without
+  rebuilding. Actual capture requires a complete authorized existing-character
+  PG custom-format backup/account/wire slot. Eleven retained DB archives and the
+  exact original hosted artifact11164315967 (179 outer/12 report members) contain
+  projections rather than that dump. The original graphical creation/save path
+  can produce such an input; no synthetic row or DBID substitutes for it.
+- All62 accepted schema files,99 tables and58,272 attribute rows are recoverable
+  through existing exact `prepare_dbserver_schema.py` inputs. Required vars,
+  badgestats and pophelp attributes were in retained accepted-36088012666.zip.
+  The former missing-template statement was a source-tree inventory error.
+  New reviewed Windows stage runs original retained AuthServer/DbServer binaries
+  in fresh SQL, observing actual worldstatus activation and process-owned TCP
+  channel. Six host suites pass, including realistic image/path/start-generation
+  and close-failure teardown tests. Actual service execution is qualified only
+  after the separate follow-up workflow succeeds; no AC_PLAY_OK is claimed.
+
+The new retained LOD owners need139,424+1,373,496B; the gameplay ID view and
+workspace each need689,184B. They cannot fit into the earlier transition's
+588,615B remainder. No current source-backed global adapter admits this complete
+pipeline. Actual provider/resource retirement and process/GPU overlap must be
+resolved before activation, with no inferred headroom from arithmetic.
+
+`worker-followup-history.bundle` preserves subsequent worker commits and requires
+the first worker history bundle. `unit-groups-fixture.cohgtx` is the exact6,186B
+already-qualified SYNTHETIC source unit fixture, SHA
+177533419d553c2ffc2a192e5439eadcf7a9c8ab6bb555048a25b8a6ecd0cfae. It is used only
+by host admission tests and never installed as live server data.
+
+Follow-up workflow `native-authority-followup.yml` runs only new source tests and
+actual original Auth/Db activation. It reuses retained binaries and does not
+repeat accepted account-only cases, renderer/Android qualification, server
+compilation or captures. Its exact result must be appended after execution.

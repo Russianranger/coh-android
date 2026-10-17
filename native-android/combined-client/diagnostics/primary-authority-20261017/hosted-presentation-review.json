@@ -1,0 +1,22 @@
+{
+  "schema": "coh-independent-presentation-android-review-v1",
+  "passed": true,
+  "run_id": 39067419736,
+  "artifact_id": 12113369724,
+  "archive_bytes": 112714,
+  "archive_sha256": "be2c61bd478bf61ff0f25a60c80c160f6c57a5b14f0ee007b222beb022474c01",
+  "source_revision": "83b93ed89775feb51793df6ee3fca7ac2f0d1334",
+  "published_source_hashes_verified": 17,
+  "binaries_sha256": {
+    "arm64-v8a": "ee7a438024731941c66b4c25cf50c22bacf009c813cac67f15975689602b3c9e",
+    "x86_64": "98bc5de013e91cb4802c7accc0acdbecbef33def164674bfafd8457587eb7352"
+  },
+  "android13_execution_receipt_verified": true,
+  "checks": 34465,
+  "cleanup_verified": true,
+  "device_fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+  "fixture_only": true,
+  "gpu_execution": false,
+  "physical_thor": false,
+  "authentic_world_entry": false
+}

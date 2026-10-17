@@ -1,0 +1,61 @@
+{
+  "schema": "coh-independent-hosted-source-review-v1",
+  "passed": true,
+  "source_revision": "83b93ed89775feb51793df6ee3fca7ac2f0d1334",
+  "run_id": 39067419736,
+  "artifact_id": 12113188644,
+  "archive_sha256": "1e744cb15196d026763d197be159cdbfbfd8b1b7c2d9ba88043eea040b6d0696",
+  "archive_bytes": 789886,
+  "member_crcs_checked": true,
+  "source_hash_entries_verified": 1754,
+  "normalized_source_aliases": [
+    {
+      "receipt": "power-join.json.gz",
+      "observed": "native-android/engine/character-dictionary/../costume-inputs/oracle.py",
+      "normalized": "native-android/engine/costume-inputs/oracle.py"
+    },
+    {
+      "receipt": "power-join.json.gz",
+      "observed": "native-android/engine/character-dictionary/../costume-inputs/source-pins.json",
+      "normalized": "native-android/engine/costume-inputs/source-pins.json"
+    },
+    {
+      "receipt": "power-join.json.gz",
+      "observed": "native-android/engine/character-dictionary/../costume-tree/crc_provider.py",
+      "normalized": "native-android/engine/costume-tree/crc_provider.py"
+    },
+    {
+      "receipt": "power-join.json.gz",
+      "observed": "native-android/engine/character-dictionary/../stash32/coh_stash32.c",
+      "normalized": "native-android/engine/stash32/coh_stash32.c"
+    }
+  ],
+  "receipts": {
+    "groups.json": {
+      "sha256": "a0949abe8201e57d1aaac3354dc7197e6ad856177246b94425707ee77587637a",
+      "passed": true
+    },
+    "inspector.json": {
+      "sha256": "1dd3f1f8d75f39be48c0931a9ba868d26fcaddfbd353b6d4ccb10a18a0b92d12",
+      "passed": true
+    },
+    "power-join.json.gz": {
+      "sha256": "53e5d9c212486e63e984f0a3d28fb58d163220325555ec53288d2981912259f9",
+      "passed": true
+    },
+    "lod.json": {
+      "sha256": "11160165f8b938d516428ba725be9762c76190edd8d948a8923092c231641697",
+      "passed": true
+    },
+    "memory.json": {
+      "sha256": "f9ba1bafddaeeca5d3232cfabd8b662e45c70ceeaf0129f41ba0dc1aac93a25d",
+      "passed": true
+    },
+    "native-capture/build.json": {
+      "sha256": "9b6ad1ba708b68c8ed05bdf8fc72cbfa1926570a84e976fc7e0e842b26f85a77",
+      "passed": true
+    }
+  },
+  "android_execution": false,
+  "world_authority": false
+}

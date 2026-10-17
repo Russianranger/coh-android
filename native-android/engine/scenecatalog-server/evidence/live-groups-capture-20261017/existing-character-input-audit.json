@@ -1,0 +1,195 @@
+{
+  "schema": "coh-existing-character-restore-input-audit-v1",
+  "passed": true,
+  "archives": [
+    {
+      "file": "docs/postgresql-evidence/character-persistence-36269025801.zip",
+      "bytes": 3908,
+      "sha256": "99ca2a984344d479f5843f7ce0900d9fd8ee69e8162ed1b2d83b432ee1ce3a04",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": []
+    },
+    {
+      "file": "docs/postgresql-evidence/character-persistence-36270565732.zip",
+      "bytes": 4136,
+      "sha256": "676ad69d27d588844cbd92a2f989d092b585a7ff0b0db0e5d9880e04985b648f",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": []
+    },
+    {
+      "file": "docs/postgresql-evidence/character-persistence-36281372316.zip",
+      "bytes": 5969,
+      "sha256": "e3bdcdf7b8e4f87a15048d0582db703d743b102e50fe19e2d769831c57ecbb51",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout"
+      ]
+    },
+    {
+      "file": "docs/postgresql-evidence/character-persistence-36282414135.zip",
+      "bytes": 7936,
+      "sha256": "0dafdeb556326fb743d49ffd4d4075fe989aee2975eec31857256fc5b424db99",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout",
+        "after_service_restart",
+        "after_short_resume"
+      ]
+    },
+    {
+      "file": "docs/postgresql-evidence/character-persistence-36293644040.zip",
+      "bytes": 8325,
+      "sha256": "83caf217475c384e25e7592c2531ba31a0a3caee54f346b732cba620c40d9893",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout",
+        "after_service_restart",
+        "after_short_resume"
+      ]
+    },
+    {
+      "file": "docs/postgresql-evidence/character-persistence-36295176352.zip",
+      "bytes": 8201,
+      "sha256": "dccf2310c7a8b23bc91c7636595029664f164d09b91c415a04ef4b21f51e1926",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout",
+        "after_service_restart",
+        "after_short_resume"
+      ]
+    },
+    {
+      "file": "docs/postgresql-evidence/character-persistence-36297326643.zip",
+      "bytes": 8363,
+      "sha256": "d5da5a7da3f2f966b70f4fa9976ea55349c31cbc8a7d6135eb05f9a0db449a13",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout",
+        "after_service_restart",
+        "after_short_resume"
+      ]
+    },
+    {
+      "file": "docs/postgresql-evidence/character-session-36293644180.zip",
+      "bytes": 10005,
+      "sha256": "491214ced33579d31c4bec4ef3bd07cd05b6bdd34aca1f6b859e3e227175364e",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout",
+        "after_service_restart",
+        "after_missing_name_refusal"
+      ]
+    },
+    {
+      "file": "docs/postgresql-evidence/character-session-36295176484.zip",
+      "bytes": 12505,
+      "sha256": "410e79e8815ef829a387dc5812f8e4b9b5bc050a3dee855262847366e899dbdc",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout",
+        "after_service_restart",
+        "after_missing_name_refusal",
+        "after_second_protocol_logout"
+      ]
+    },
+    {
+      "file": "docs/postgresql-evidence/character-session-36297542986.zip",
+      "bytes": 12686,
+      "sha256": "862c3e5d98ca79f8f24ad7932c0c9c7a6c113d27591da5dfd53de346f19ec53a",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout",
+        "after_service_restart",
+        "after_missing_name_refusal",
+        "after_second_protocol_logout"
+      ]
+    },
+    {
+      "file": "docs/postgresql-evidence/character-transfer-36297542986.zip",
+      "bytes": 15804,
+      "sha256": "260589aa765e330a891f8769fe33108c22769c829d122110e4b2098041a5ce42",
+      "members": [
+        "character-persistence-report.json",
+        "selected-diagnostics.txt"
+      ],
+      "contains_complete_database": false,
+      "source_snapshot_scope": "selected_character_sql_projection",
+      "snapshot_labels": [
+        "after_protocol_logout",
+        "after_service_restart",
+        "after_missing_name_refusal",
+        "after_transfer1",
+        "after_transfer2",
+        "after_second_protocol_logout"
+      ]
+    }
+  ],
+  "original_hosted_artifact": {
+    "artifact_id": 11164315967,
+    "bytes": 72279263,
+    "sha256": "b360972ceec148399c1eb0758ae2b3486b4d696f3bff8964fe54850c61c82d2f",
+    "outer_members": 179,
+    "nested_members": 12,
+    "selected_snapshot_bytes": 8682,
+    "selected_snapshot_sha256": "5ad00cfbe7a1ae41f264ccacfd59a120f60ef1cd6abfdd414c6e9f1a5280b77d",
+    "contains_complete_database": false,
+    "restore_input_admitted": false
+  },
+  "source_projection_contract": "database/postgresql/tests/character_snapshot.py",
+  "full_database_input_recovered": false,
+  "source_produced_graphical_creation_path": "tools/android/interactive/character_host_smoke.py",
+  "synthetic_sql_seed_permitted": false,
+  "real_server_capture": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

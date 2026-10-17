@@ -1,0 +1,103 @@
+name: Native dictionary refinements and original shard activation
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-authority-followup.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-authority-followup-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  refinement-contracts:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[authority-followup]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install only new source oracle dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev
+      - name: Reuse exact historical input bytes without building donors or running a server
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib,os,pathlib,subprocess,zipfile
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'coh-followup-inputs';out.mkdir()
+          for ident,size,sha,member,name,raw_size,raw_sha in [
+            (11092897979,26476333,'51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae','client-caches.zip','client-caches.zip',27071659,'5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051'),
+            (12086339123,2945220,'572d5cde08f698173cce4c9a0860902a2da91841b22dbdd124501e1e601e192d','capture/resources.cohres','resources.cohres',12596422,'8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6')]:
+              archive=out/(str(ident)+'.zip')
+              with archive.open('xb') as stream:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=stream,check=True,timeout=180)
+              assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==sha
+              with zipfile.ZipFile(archive) as z:
+                  assert len(z.infolist())<=128 and sum(i.file_size for i in z.infolist())<=128*1024**2 and z.testzip() is None
+                  assert z.getinfo(member).file_size==raw_size
+                  raw=z.read(member);assert hashlib.sha256(raw).hexdigest()==raw_sha
+                  (out/name).write_bytes(raw)
+              archive.unlink()
+          with zipfile.ZipFile(out/'client-caches.zip') as z:raw=z.read('data/bin/lods.bin')
+          assert len(raw)==1059016 and hashlib.sha256(raw).hexdigest()=='13800255781138248226340be316cd628e98800d9ba889fe1aecc902e483b66a'
+          (out/'lods.bin').write_bytes(raw)
+          PY
+      - name: Qualify only new LOD cache, sorted power IDs and owned supervisor changes
+        run: |
+          mkdir -p out/authority-followup/source
+          python3 native-android/engine/world-render-adapter/check_lod_cache.py --actual-cache "$RUNNER_TEMP/coh-followup-inputs/lods.bin" --resources "$RUNNER_TEMP/coh-followup-inputs/resources.cohres" --output out/authority-followup/source/lod-cache.json
+          python3 native-android/engine/character-dictionary/check_power_ids.py --cache-zip "$RUNNER_TEMP/coh-followup-inputs/client-caches.zip" --output out/authority-followup/source/power-ids.json.gz --sanitize
+          python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v
+          python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_admit_groups_capture.py -v
+          python3 native-android/engine/scenecatalog-server/test_capture_groups_transaction.py --fixture native-android/combined-client/diagnostics/primary-authority-20261017/unit-groups-fixture.cohgtx --output out/authority-followup/source/private-supervisor.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: authority-followup-source-${{ github.sha }}
+          path: out/authority-followup/source/
+          if-no-files-found: error
+          retention-days: 90
+  actual-original-auth-db-registration:
+    needs: refinement-contracts
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 20
+    steps:
+      - name: Preserve exact original source bytes
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Reuse exact accepted corrected AuthServer without recompilation or account tests
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import hashlib,os,pathlib,stat,subprocess,zipfile
+          root=pathlib.Path(os.environ['RUNNER_TEMP']);archive=root/'exact-auth-candidate.zip'
+          with archive.open('xb') as stream:subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/12085517046/zip'],stdout=stream,check=True,timeout=180)
+          assert archive.stat().st_size==427525 and hashlib.sha256(archive.read_bytes()).hexdigest()=='da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d'
+          out=root/'auth-candidate';out.mkdir()
+          with zipfile.ZipFile(archive) as z:
+              infos=z.infolist();assert len(infos)<=128 and len({i.filename for i in infos})==len(infos) and sum(i.file_size for i in infos)<=8*1024**2 and z.testzip() is None
+              for info in infos:
+                  path=pathlib.PurePosixPath(info.filename)
+                  assert not path.is_absolute() and '..' not in path.parts and '\\' not in info.filename and ':' not in info.filename and not stat.S_ISLNK(info.external_attr>>16)
+              z.extractall(out)
+          archive.unlink()
+          PY
+      - name: Observe original AuthServer DbServer registration in owned disposable SQL namespace
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py --source-root . --expected-commit $env:GITHUB_SHA --auth-success-archive native-android/engine/auth-interop/evidence/auth-success-38996587760/artifact.zip --auth-candidate-stage "$env:RUNNER_TEMP/auth-candidate" --output "$env:RUNNER_TEMP/db-shard-activation"
+          if ($LASTEXITCODE -ne 0) { throw 'Original interserver activation did not qualify; retain refusal and cleanup receipts' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: actual-original-auth-db-registration-${{ github.sha }}
+          path: ${{ runner.temp }}/db-shard-activation/
+          if-no-files-found: error
+          retention-days: 90

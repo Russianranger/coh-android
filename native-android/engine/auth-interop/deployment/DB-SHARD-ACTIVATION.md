@@ -1,0 +1,122 @@
+# Actual original DbServer shard activation experiment
+
+`hosted_db_shard_activation.py` prepares and runs the exact retained corrected
+AuthServer and compiled MSSQL DbServer against a fresh LocalDB instance. It uses
+the existing accepted schema recovery helper rather than regenerating templates,
+rebuilding a donor or unpacking a large asset corpus. No accepted profile,
+character or database is touched.
+
+## Recovered input dependency
+
+The missing unpacked template files were already present in committed immutable
+artifact `docs/schema-generation-evidence/accepted-36088012666.zip`, artifact
+10845505221, 665,051 bytes, SHA256
+`62da453ef5673238e11b4b418692117ea7692597a079119b3aaf72504a2502ae`.
+Its nested `schema-evidence/schema-outputs.zip` has 56 generated files, 682,745
+bytes, SHA256 `a7bb94cd936198850f1a35ac58df925b3638caae29c02f47dca1cb3e21dbc132`.
+
+The existing helper verifies this complete acceptance/source/data chain, combines
+six pinned supplemental inputs and stages 62 exact files with manifest SHA256
+`b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92`.
+This is the same manifest pinned by accepted Android runtime/Atlas packaging.
+The required files are real recovered bodies:
+
+| Path beneath `data/server/db/templates/` | Bytes | SHA256 |
+| --- | ---: | --- |
+| `vars.attribute` | 1,928,476 | `26c5f2bba77ab66ef7619c995f343633dc1748297dc9963605734ef3aa1053bb` |
+| `badgestats.attribute` | 62,106 | `ec57e497c6c044269d8d7e207b0869400ceeb18a03b94bda1a9d00a9d99cced2` |
+| `pophelp.attribute` | 2,185 | `34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1` |
+
+All three bodies also match both earlier accepted schema artifacts. Original
+ordinary MapServer `-templates` run 36176806895 subsequently compared all 56
+outputs byte for byte with these accepted data-only outputs; its retained
+`docs/reference-runtime-evidence/reference-template-comparison-36176806895.json`
+records that equality. The schema is sufficient input to a new DB experiment;
+historical PostgreSQL/Wine runtime acceptance does not qualify a new MSSQL service.
+
+The complete compiled checksum PE is already committed inside
+`evidence/independent-db-build-39000395572/artifact.zip`: SHA256
+`2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7`.
+The existing strict build admission replays the exact retained receipt/PE hashes,
+original source map, sole checksum correction and original compilation inputs.
+The new recovery checks the actual PE import table: only eight Windows platform
+DLLs occur. No donor VC or CrashRpt DLL is required for static imports, and the
+owned profile disables the original optional CrashRpt preload.
+
+## Runtime observation and its limit
+
+The driver creates a new game database and original Auth schema in one owned
+LocalDB instance. The original full-userdata, nonqueue Auth profile loads an
+explicit loopback shard with unknown-server and explicit-ID bypasses disabled.
+`supportReconnect=true` leaves the shard inactive when its address is attached;
+the original `CSocketServer::ServerSetActive` handling of `AS_SET_CONNECT` must
+make it active. This is a new isolated configuration; the accepted Auth-only
+profile is unchanged.
+
+The exact copied DbServer uses `UseFakeAuth 0`, ordinary encrypted startup and
+the recovered schema. The experiment requires its original `DbServer Ready.`
+marker, creation of all 99 game tables, original `worldstatus` transition from
+zero before the DB process to one afterward, the actual reverse TCP endpoint
+pair owned by these two live processes, and DB ownership of the original UDP
+7000 game listener. Those observations must occur within the same process
+lifetimes. A dedicated service observer validates the expected AuthServer and
+DbServer process names and exact executable paths, rehashes their copied PEs,
+checks the original Popen handle before and after observation, and compares
+initial/final PID and UTC start ticks. Exported path identities are hashes. The
+existing SQL-only process observer remains unchanged and its initial/final
+generation must also match. The driver records numeric diagnostics.
+It neither creates nor consumes an account grant.
+
+Both executables receive owned inbound and outbound firewall rules for every
+protocol on their original IPv4 service surfaces, blocking IPv4 addresses outside
+127/8. This does not claim IPv6 isolation. Raw service/SQL consoles stay in a
+private directory and are removed after owned Job Objects terminate the services.
+Only fixed marker-presence Booleans, process/port/count values and artifact hashes
+are retained. Source inputs, both database drops, instance stop/delete, firewall
+removal and private-file cleanup must all succeed. Stream-close failure is
+recorded without preventing subsequent firewall, database and private-file
+cleanup attempts. The source marker and file
+bounds are monitored; they are not OS memory/disk quotas.
+
+No account-login suite is repeated. No client version is invented, no
+`Ouroboros.exe` alias/reference is installed, and no checksum/version bypass is
+enabled. Missing reference still causes the reviewed checksum correction to
+refuse client login. The driver explicitly leaves selected-shard **play**,
+nondevelopment-version admission, authenticated DB login and Map transfer false.
+Successful actual registration/readiness is a useful independent next stage,
+not complete Gate 26 or a playable world.
+
+## Coordinator-owned execution
+
+Use fresh `windows-2025-vs2026`, Python 3.12, the qualified LocalDB/ODBC17 image
+and a clean reviewed checkout with `core.autocrlf=false`. Historical Git commits
+`28fe37cc2432db4adbfe047bd07a1e738d6aa754` and
+`8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919` must be available for existing
+source/binary admission. The already-built corrected AuthServer artifact is
+12085517046, 427,525 bytes, ZIP SHA256
+`da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d`.
+Download that exact archive and extract it to a fresh `auth-candidate` directory;
+the driver independently admits its retained receipt, source and binary.
+
+```powershell
+python native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py `
+  --source-root . --expected-commit $env:GITHUB_SHA `
+  --auth-success-archive native-android/engine/auth-interop/evidence/auth-success-38996587760/artifact.zip `
+  --auth-candidate-stage "$env:RUNNER_TEMP/auth-candidate" `
+  --output "$env:RUNNER_TEMP/db-shard-activation"
+```
+
+Always upload only `db-shard-activation`. It contains the sanitized receipt and
+firewall command logs, including failure/cleanup status. Allow approximately
+15 minutes for bounded SQL startup, service readiness and cleanup. This Linux
+session recovered and verified the real accepted schema/PE and passed six
+new host suites, including realistic service observer/name/path/PID-generation
+refusals, success and early/late failure cleanup orchestration, and nonfatal
+stream-close failures. The independent C/F review caught and reproduced the
+initial misuse of the SQL-only observer before any service execution; its
+dedicated replacement is covered by the new real-shaped observation controls.
+No Windows service execution is claimed until that new workflow actually runs.
+
+```sh
+python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v
+```
