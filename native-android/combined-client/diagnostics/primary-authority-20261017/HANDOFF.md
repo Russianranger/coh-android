@@ -171,3 +171,24 @@ Both passing receipts and all104 source hashes were independently rechecked
 against current bytes. The workflow repair fetches only the required historical
 identities, reuses these results, and executes remaining admission tests plus
 the original service stage. It does not repeat either successful qualifier.
+
+## Source-ordered shared power-set closure
+
+New reviewed worker commits6fb1858d5/cf6cd4e8b derive the original unsent
+shared-set layout from finalized IDs and the original U8 Shared conversion.
+The historical source walk reaches26 entries, excluding one of27 allocated
+Shared rows; a second modeled append retains52 entries because the original
+global function does not clear its list. Eleven profiles pass606,353 checks
+in each release/ASan/UBSan mode, whole original function comparison, C++ linkage
+and a conservative1,104B measured stack check. All68 receipt source entries
+were independently verified after integration. Owner/workspace each32,792B,
+plus an optional prior owner and all transitive leases, require explicit budget.
+This closes a source packet-layout prerequisite; actual initial/reload global
+state, current generation, bound wire profile, character application, actor and
+ACK remain unqualified. A new focused workflow runs only this new qualifier.
+
+The repaired follow-up Linux job117502283775 in run39068923933 passed: six
+service-driver tests, eight compile-admission tests and101 private-supervisor
+controls/94 refusals (no native binary supplied in that hosted unit invocation).
+`hosted-followup-source-review.json` independently admits all three exact artifact
+members and107 source hashes. The separate Windows service job result is pending.

@@ -320,3 +320,50 @@ Final ID receipt: `qualification/power-ids-20261017-final.json.gz`, source
 It binds 65 exact inputs. Nine release/ASan/UBSan profiles each pass
 272,407assertions, including partial-sort duplicate and transitive alias rollback.
 C++ linkage and536B summed measured native source stack fit16KiB reserve.
+
+## Ordered shared power-set structural layout — 2026-10-17 continuation
+
+`coh_shared_power_sets_prepare` now derives the source ordered shared set layout
+from the immutable finalized ID hierarchy and exact set-field4 Shared values.
+Original FindSharedPowersets walks category-reachable set references, not the
+allocated global set array. Exact retained donor has27allocated Shared rows but
+only26reachable references; N_Tutorial_Powers.Atlas_Normal_VisionPhase is the
+extra unreachable row and stays retained raw. This closes a concrete unsent
+structural input: original character_ReceivePowers omits the first shared entries
+from builds1..7 while copying the corresponding build0 pointers.
+
+Whole original FindSharedPowersets executes twice, preserving append/repeated
+reference semantics; it does not clear its global list. Authentic initial source
+fixture yields26 then52 entries. Whole original u8_readbin executes per Shared
+word through declared binary-word/U8-storage adapters, matching low8 conversion
+for256/257/255 controls. Original runtime initially-empty/reload globals are not
+observed. Only append with the same immutable ID/dictionary owner is supported;
+a different generation's retained source pointers refuse. Source prior order,
+count and call multiplicity are revalidated rather than trusted. No caller count
+can establish grammar authority, wire-profile binding, current generation,
+semantic character, actor or ACK.
+
+Output/workspace fixed sizes and all transitive IDs/join/raw owners/set input/
+provider context/scratch, optional prior, retained bytes and16KiB native stack
+are charged under a literal8MiB standalone cap before work. Complete bounded
+field scans and prior validation fit64MiB work units. All ID/dictionary/input/
+provider/file leases must outlive this layout and future append. A copied prior
+sequence may retire after successful disjoint append; transitive leases remain.
+No file callbacks, heap allocation, deduplication or eager power graph occurs.
+
+Eleven source/native profiles pass606,353checks each in release/ASan/UBSan.
+They cover authentic26vs27, ordered repeated/shared/unreached sets, zero Shared,
+U8 conversions, a second append, cross-owner refusal, valid-prefix capacity
+refusal, overflow, wrong count/appended count/row mutations, partial sorted-identity
+failure, alias/budget refusal and full output rollback. C++ linkage passes.
+The stack receipt includes the new module and conservative complete power-set
+getter/module functions; no external callback stack is inferred. Runtime cache
+branch/generation/global-list state and complete character application remain
+separate live/source prerequisites. Accepted APK scopes are unchanged.
+
+Final shared-layout receipt:
+`qualification/shared-power-sets-20261017-final.json.gz`, source
+`6fb1858d52c70626a23415f650533b639bd743c0`, SHA256
+`e850401e9db728731e35110878a8fa4edd77ac71200b341971a54cb24939f860`.
+It binds68exact source/helper/header inputs before/after execution and records
+606,353checks/mode, C++link and1,104Bconservative new/getter-module stack.

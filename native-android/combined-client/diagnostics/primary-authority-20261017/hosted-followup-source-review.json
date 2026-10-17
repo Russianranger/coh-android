@@ -1,0 +1,41 @@
+{
+  "schema": "coh-reviewed-followup-hosted-evidence-v1",
+  "passed": true,
+  "run_id": 39068923933,
+  "job_id": 117502283775,
+  "source_commit": "a4cc6b61443cecf6394b0500028277874be6cf82",
+  "artifact_id": 12114745835,
+  "archive_bytes": 16936,
+  "archive_sha256": "c78d8189aa2362c32ff3f594e48b1ce044373ffc8edcf1f39e97899035b9255d",
+  "members": {
+    "power-ids.json.gz": {
+      "passed": true,
+      "source_hashes_verified": 65,
+      "sha256": "7a60df8c140a00f27f6615211fd10a966e22ace2b17fa1e64e71403ce455d948"
+    },
+    "lod-cache.json": {
+      "passed": true,
+      "source_hashes_verified": 39,
+      "sha256": "68f3bbda383cd183938e2ebf5dfa80987bd507d3c21aa9c314b6318671a83574"
+    },
+    "private-supervisor.json": {
+      "passed": true,
+      "source_hashes_verified": 3,
+      "sha256": "41f229243ca933e28d1667badefeeb1a287cfcf776112826c6942979f3d2c923"
+    }
+  },
+  "new_tests": {
+    "auth_shard_stage_unittest": 6,
+    "compile_admission_unittest": 8,
+    "private_supervisor_checks": 101,
+    "private_supervisor_refusals": 94
+  },
+  "reused_successful_qualifiers": [
+    "lod-cache",
+    "power-ids"
+  ],
+  "postgres_executed": false,
+  "wine_executed": false,
+  "original_windows_services_separate_job": true,
+  "world_authority": false
+}

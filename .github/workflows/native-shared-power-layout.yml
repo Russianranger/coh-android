@@ -1,0 +1,51 @@
+name: Original ordered shared power-set layout
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-shared-power-layout.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-shared-power-layout-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  original-shared-layout:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[shared-layout]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install only source oracle compilers
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++
+      - name: Reuse exact accepted historical cache bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib,os,pathlib,stat,subprocess,zipfile
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'shared-layout-inputs';out.mkdir()
+          archive=out/'accepted-caches.zip'
+          with archive.open('xb') as stream:subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/11092897979/zip'],stdout=stream,check=True,timeout=180)
+          assert archive.stat().st_size==26476333 and hashlib.sha256(archive.read_bytes()).hexdigest()=='51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae'
+          with zipfile.ZipFile(archive) as z:
+              infos=z.infolist();assert len(infos)<=128 and len({i.filename for i in infos})==len(infos) and sum(i.file_size for i in infos)<=128*1024**2 and z.testzip() is None
+              info=z.getinfo('client-caches.zip');assert info.file_size==27071659 and not stat.S_ISLNK(info.external_attr>>16)
+              raw=z.read(info);assert hashlib.sha256(raw).hexdigest()=='5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051'
+              (out/'client-caches.zip').write_bytes(raw)
+          archive.unlink()
+          PY
+      - name: Qualify only the new shared layout against whole original functions
+        run: |
+          python3 native-android/engine/character-dictionary/check_shared_power_sets.py --cache-zip "$RUNNER_TEMP/shared-layout-inputs/client-caches.zip" --output out/shared-power-layout/qualification.json.gz --sanitize
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-shared-power-layout-${{ github.sha }}
+          path: out/shared-power-layout/
+          if-no-files-found: error
+          retention-days: 90
