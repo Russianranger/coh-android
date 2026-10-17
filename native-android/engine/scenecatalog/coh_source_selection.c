@@ -151,3 +151,13 @@ CohStatus coh_source_body_lease(const CohSourceBody *b,uint32_t ordinal,CohSourc
  TRY(add(&total,sizeof(profile_wire)+sizeof(profile_wire_sha)+sizeof(evidence_sha)+sizeof(evidence_sizes),COH_SG_TRANSACTION_MAX));
  v.loader=b->loader;v.loader_reservation=b->reservation;v.retained_owner_bytes=total;*out=v;return COH_OK;
 }
+
+CohStatus coh_source_body_dependencies(const CohSourceBody *b,CohSourceBodyDependencies *out){
+ if(!b||!out||!disjoint(b,sizeof(*b),out,sizeof(*out)))return COH_INVALID;
+ const CohSourceSelection*s=b->selection;TRY(controls(s,out,sizeof(*out)));
+ CohBytes record;CohResourceView model;TRY(coh_resource_index_record(b->index,0,&record,&model));
+ CohResourceOwnerSources source;TRY(coh_resource_index_owner_sources(b->index,model.owner_kind,model.file,model.slot,&source));
+ CohBytes spans[]={record,source.header,source.blob};for(unsigned n=0;n<3;n++)if(!disjoint(out,sizeof(*out),spans[n].data,spans[n].size))return COH_INVALID;
+ CohSourceBodyDependencies value={0};value.body_identity=b;value.index_identity=b->index;value.selection_identity=s;value.profile_identity=profile_wire;value.join_identity=s->join;
+ value.body_owned_bytes=b->report.owned_bytes;value.selection_owned_bytes=s->report.owned_bytes;value.profile_bytes=sizeof(profile_wire)+sizeof(profile_wire_sha)+sizeof(evidence_sha)+sizeof(evidence_sizes);value.join=s->identity;value.loader=b->loader;value.loader_reservation=b->reservation;*out=value;return COH_OK;
+}

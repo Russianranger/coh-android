@@ -37,5 +37,9 @@ CohStatus coh_source_mesh_v8_create(CohSourceBody**,const CohSourceMeshRequest*,
 CohStatus coh_source_mesh_report(const CohSourceMesh*,CohSourceMeshReport*);
 /* Views require mesh lifetime; controls disjoint from all owned/source storage. */
 CohStatus coh_source_mesh_part(const CohSourceMesh*,uint32_t,CohSourceMeshPart*);
+typedef struct {CohBytes mesh_storage;CohSourceBodyDependencies body;}CohSourceMeshDependencies;
+/* Borrowed through mesh lifetime, no allocation/reference/authority change.
+ * Actual storage and dependency identities support exact unique-owner charges. */
+CohStatus coh_source_mesh_dependencies(const CohSourceMesh*,CohSourceMeshDependencies*);
 void coh_source_mesh_free(CohSourceMesh*);
 #endif

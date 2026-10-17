@@ -1,0 +1,37 @@
+{
+  "schema": "coh-class-level-source-binding-v1",
+  "source_commit": "534b6a9b652176b0d173324d35ff8ff136fdbb4c",
+  "tested_git_blobs_match": true,
+  "tested_source_count": 51,
+  "host_proof_sha256": "8d4bfdce9973071b4847f3e8fa8ffdf6c4f6880258db12bdd75b6788db5cf7ff",
+  "checks": {
+    "release": {
+      "checks": 272493,
+      "cases": 195,
+      "projection_bytes": 2880,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 272493,
+      "cases": 195,
+      "projection_bytes": 2880,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 272493,
+      "cases": 195,
+      "projection_bytes": 2880,
+      "runtime_generation": false,
+      "actor_authority": false
+    }
+  },
+  "original_whole_repack_transpose_executed": true,
+  "original_category_lookup_inside_repack_executed": false,
+  "original_parser_retirement_executed": false,
+  "independent_all_690_words_per_case": true,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false
+}

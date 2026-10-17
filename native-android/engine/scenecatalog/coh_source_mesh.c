@@ -65,3 +65,10 @@ CohStatus coh_source_mesh_v8_create(CohSourceBody**body,const CohSourceMeshReque
  candidate->report=(CohSourceMeshReport){lease,verts,tris,parts,1,1,own,temporary,PREPARATION,peak,0,0,0};candidate->body=*body;*body=NULL;*report=candidate->report;*out=candidate;free(values);free(encoded);return COH_OK;
  fail:free(values);free(encoded);coh_source_mesh_free(candidate);return s;
 }
+
+CohStatus coh_source_mesh_dependencies(const CohSourceMesh*m,CohSourceMeshDependencies*out){
+ if(!m||!out||!safe(m,out,sizeof(*out)))return COH_INVALID;
+ CohSourceMeshDependencies value={0};CohStatus s=coh_source_body_dependencies(m->body,&value.body);if(s!=COH_OK)return s;
+ const CohResourceJoinIdentity*j=&value.body.join;CohBytes spans[]={j->catalog_bytes,j->snapshot_bytes,j->resource_bytes};for(unsigned n=0;n<3;n++)if(!separate(out,sizeof(*out),spans[n].data,spans[n].size))return COH_INVALID;
+ value.mesh_storage=(CohBytes){(const uint8_t*)m,m->report.owned_bytes};*out=value;return COH_OK;
+}

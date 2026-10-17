@@ -41,3 +41,22 @@ ELF ABIs and transferred hashes, requires an Android13 x86_64 emulator, compares
 the actual result to the source-qualified host result and verifies owned-temp
 cleanup. Synthetic driver controls do not execute Android. Until actual CI output
 is inspected, ARM64 build and emulator execution remain pending.
+
+
+## Optional exact receive observation
+
+`coh_local_service_observed` forwards a successfully inspected normal GROUPS
+message synchronously with the actual opaque Map client and exact event address.
+This permits `coh_map_client_scene_lease` and the separately bounded immutable
+scene recorder without exposing or retaining the private client between calls.
+The default service installs no observer. A malformed/unsupported structural
+message never invokes it. Callback work and copies require an explicit complete
+aggregate budget. The callback must not retain client/event/input pointers.
+
+Local service, begin, selection and character reads refuse reentry during the
+callback; suspend, cancel, close and destroy do nothing. Numeric diagnostics may
+be read. All other Map calls remain forbidden by the Map callback contract.
+Callback return has no protocol result and cannot enable READY, character ACK,
+entity requests, source generation or world authority. The local development
+authentication scope remains unchanged. No producer capture or live correlation
+has been performed by adding this seam.

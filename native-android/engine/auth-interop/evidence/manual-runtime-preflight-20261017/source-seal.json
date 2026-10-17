@@ -1,0 +1,31 @@
+{
+  "schema": "coh-manual-runtime-preflight-source-seal-v1",
+  "inputs": {
+    "deployment/manual_runtime_preflight.py": {
+      "bytes": 9822,
+      "sha256": "1755c1613430c9e43d64c151e38a94ec34fce08c99ef37c88eafdf8e0cdf4d67"
+    },
+    "deployment/test_manual_runtime_preflight.py": {
+      "bytes": 2802,
+      "sha256": "3f16ae9233aa71c6e02b3b3824d011456e5c202336bc24467a42c4e27caf2580"
+    },
+    "evidence/manual-runtime-preflight-20261017/actual-loader-prerequisites.json": {
+      "bytes": 79816,
+      "sha256": "cd531306294dbc0e0f6e1423621bd6652d52a8c124307ac72c8950b546b8fad3"
+    },
+    "evidence/manual-runtime-preflight-20261017/host-controls.txt": {
+      "bytes": 962,
+      "sha256": "8aaaf8b5f7822758075f90704894b684435f0b3536dee5f2cbd9bce3dabdef27"
+    },
+    "evidence/manual-runtime-preflight-20261017/README.md": {
+      "bytes": 5291,
+      "sha256": "1a4c41a90b6287fc61baa2ca41efa13aecdb84e1202930fc838964fbee718728"
+    }
+  },
+  "tests": 6,
+  "skips": 0,
+  "cold_unit_pyc_prefix": true,
+  "actual_archives_inspected": true,
+  "service_executed": false,
+  "runtime_profile_admitted": false
+}

@@ -8,7 +8,10 @@ none publishes an actor or permits an initial-update application ACK.
 |---|---|---|---|
 | Owned exact origins |711dd62e8|2966426fb, da322a5b0,08578d06a|F e71ff6767|
 | Complete compact class raw schema |31e63af1b|dfebc2d6d|F15b0498c8|
-| Original dynamic defines/class CRC |93135aa0f|c87bdd4df,7ab4da864,f9f3730a6,2ae2387f0|Final seal supplied separately by F|
+| Original dynamic defines/class CRC |93135aa0f|c87bdd4df,7ab4da864,f9f3730a6,2ae2387f0|F a11f57db0|
+| Authentic compact raw categories |c92e1fdf5|81739adf6|F e55bb842b|
+| Selected class level projection |534b6a9b6|3c4dbac9e|F5d1bf63a8|
+| Named-table source finalization/lookup |18892c8e1,9e337a4d6,588b0f698|ee8882023,5088b9e89,cf73aa246|Fca42|
 
 Origins preserve five normal rows and one villain row; all five strings are
 copied in original order. Original schema CRC0x6d177c17 and exact whole original
@@ -59,17 +62,67 @@ No server recapture or CI workflow was run. The qualifier uses same-exec
 
 Next source-defined prerequisites:
 
-- `classes_Repack` actual category resolution, missing-minimum defaults and four
-  attribute transpositions; `classes_Finalize` named-table stashes.
+- Current SERVERONLY/cache-generation association for the separately source-qualified
+  historical class/category/selected-level/named-table owners.
 - Native immutable source-current dictionary/cache/SERVERONLY generation admission.
 - Actual power-set/base-power identifier ownership; no eager62MB powers tree.
 - Whole actor selected DB-to-Map owner/entity generation/dictionary/world closure;
   source-only syntax and historical CRC do not permit actor/READY/ACK.
 
-A separate unqualified `power_categories_oracle.py` probe is intentionally left
-outside the frozen tranche. It has observed an exact whole original roundtrip of
-powercats.bin239,304B SHA25667b46915b9bf4440de8f5cf8bf7dd4a9047daee7dc5cb96f2c2be3999f8fc5e7
-and source CRC0x59248ecb:186 categories,6527 set-name references,zero persisted
-pointer-index rows. It still needs full input/helper closure, independent
-projection and native qualification; no category/runtime/actor claim from this
-prototype. Preserve it for the next worker rather than rerunning a server.
+The category tranche is now qualified, replacing the earlier prototype-only
+status. Exact powercats.bin239,304B SHA256
+67b46915b9bf4440de8f5cf8bf7dd4a9047daee7dc5cb96f2c2be3999f8fc5e7
+roundtrips through whole original category schemas and reproduces source
+CRC0x59248ecb:186 categories,6,527 ordered set-name references,zero persisted
+pointer-index rows. Whole original category-only CreateDictHashes and category
+lookup execute, yielding186 valid/512 slots. Dictionary-level set/power arrays
+remain genuinely empty in this source profile; no absent objects/CRCs invented.
+Native owner374,856B copies all names/references/rawindices. Eight sourcewriter
+variants and80,281 assertions/mode qualify duplicate refusal, source lookup,
+limits, truncation/mutation/callback/aliases/budgets under1MiB. All53 Git inputs
+and proofcf90af87851d61b7c2a00e7ca6515d8e90886e90e2f90b31e595893750358f4c
+are bound by81739adf6, independently sealed F e55bb842b. Recovery-only original
+prototype bytes remain archived in af9e80138; no old work erased.
+
+Selected-level source534b6a9b6/receipt3c4dbac9e is independently sealed F5d1bf63a8.
+Whole original classes_Repack/CreateCharacterAttributes/TransposeArray executes
+with declared pointer/heap/category-lookup/retirement adapters. Native copied
+projection2,880B plus same transient workspace compares195 selections: all59
+actual classes at first/middle/final level plus original-writer minimum/default/
+short-array/PoolEpic-fallback controls. Independent raw projection matches every
+690 words; release/ASan/UBSan each272,493 assertions, C++ and measured16KiB stack
+reserve pass. Original table schema writes Defense twice, moves Absorb last,
+and omits ElusivityBase: native preserves overwrite/default1, not a permutation.
+Neither original category lookup within that repack oracle nor actual parser
+retirement executes; no live generation/actor semantics are admitted.
+
+Named-table source18892c8e1/ee8882023 plus empty-key9e337a4d6/5088b9e89 and
+required bounded-work588b0f698/cf73aa246 is independently approved Fca42.
+Whole original classes_Finalize and class_GetNamedTableValue executes with
+source stash constructor/hash/probe/lookup and declared parser/float/heap fixture
+storage. Actual normal1,296 tables/3,584 aggregate slots and villain4,005 tables/
+11,520 slots have no duplicates or empty arrays. Fourteen original-writer cache
+profiles retain duplicates, empty keys/values, unknown names, empty lists and
+work-cap cases. Every23,671 query is independently compared; release/ASan/UBSan
+each260,792 assertions, C++ and measured8KiB native stack reserve pass.
+
+Borrowed owner56B/value24B retain original class spans/lease; no eager arrays.
+Each raw record/value array validates once; previously validated keys are used
+in constant time. Preparation charges one unit for each same-class key-length
+comparison plus all equal-length key bytes BEFORE comparing, under8,388,608 work
+units. Original Finalize accepts256 distinct259-byte keys (256valid/512slots),
+but independently calculated8,486,400 work units deliberately exceed this
+native cap: LIMIT preserves the complete owner. No cap raising or truncation.
+Source empty keys remain supported, distinct from missing/source1.0 fallback
+and empty value arrays. Empty value lookup refuses UNSUPPORTED instead of
+executing original negative-index underflow. All historical receipts are retained.
+The original unsafe stash hash remains unsanitized and Win32/live/shared-memory
+startup is not executed. Runtime generation and actor flags stay false.
+
+Next exact input work: powersets.bin3,179,276B/header0x2fe0d52d and
+powers.bin62,047,164B/header0xb553b8ff in the same retained donor ZIP. Power-set
+schema has30 persisted fields including ordered power names/raw32bit pointer
+indices and availability/rank/difficulty arrays. Full base-power grammar also
+includes AttribMod/PowerVar/CustomFX and flat ParsePowerFX fields; record-length
+skipping is not complete grammar. Preserve source order and current-vs-historical
+association. No62MB eager native object graph or invented runtime identifiers.

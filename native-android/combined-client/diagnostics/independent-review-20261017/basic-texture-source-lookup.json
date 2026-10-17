@@ -1,0 +1,22 @@
+{
+  "schema": "coh-independent-basic-texture-subset-lookup-review-v1",
+  "source_commit": "d4e7614ef1f6a2aae1e9814b61b74772589d6a6c",
+  "evidence_commit": "0241f2216",
+  "verdict": "approved_readonly_historical_header_subset_lookup_only",
+  "proof_sha256": "57f7a7441c38729c1a4f4e35783a0ae4a006c38b1641dddc2c67c00b1c8e9aae",
+  "tested_git_source_matches": 21,
+  "reported_checks_per_mode": 4774,
+  "review": [
+    "Native lookup follows original BasicTexture texFind branch, not model/composite/material path: NULL stays null; removes exactly one leading bang; bounded printable ASCII and positional case-sensitive suffix handling preserve source TexFlags32/64/8192. PORTAL/directory/arbitrary last-extension/material-swap transformations are absent. Strict4..7 unsafe bare-key path refuses; explicitly named guarded entry uses qualified original offset guard correction, never claims unchanged-source behavior for repaired cases.",
+    "Only actual immutable cached-header subset is searched. Box/Bar matched results return actual header ordinal/SHA/input generation scalar observations. Missing/empty normalized keys remain namespaceUNKNOWN, never global absence, white/default creation, locale fallback permission or material identity. Returned POD contains no borrowed resource handle or pin; owner/loader must remain alive during query.",
+    "No allocations, references or side effects. Complete oldowner/wholeloader/oldcontrol minimum is enforced in externalbytes, and own16KiB nested/input/output/control reserve added with overflow-safe arithmetic before query. Known output aliases against limits/query/oldowner/full pinned cached bodies/rawtricks refuse; output changes only after complete success. Header base recovery uses previously admitted exact cached-header layout solely for alias checks, not independent body authority. Caller C-string validity/provider/runtime overhead and complete external lifetime budget remain prerequisites.",
+    "Oracle executes whole original texFind and original/explicitly corrected texFixName with release debug assertions disabled, bounded string observer and explicit two-row casefold stash observer. It does not execute active namespace construction or original stash table. True source TexFlags and repair/source bodies are pinned.21 dependency hashes frozen before helpers, direct source-compiled loads and final readmission match exactGit. Recorded4774controls per release/ASan/UBSan,391strict safe/397guarded queries,sixstrictrefusals,three semantic mutations rejected,twoexports only. No independent corpus replay."
+  ],
+  "active_namespace": false,
+  "namespace_absence_proven": false,
+  "default_or_white_created": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_executed": false,
+  "cpp_linkage_qualified": false
+}

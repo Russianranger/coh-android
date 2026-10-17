@@ -9,7 +9,7 @@ struct CohLocal {
     CohMapClient *map;
     uint64_t clock_ms,retired_opened,retired_closed,observed_lists;
     uint32_t db_id,map_id,last_db_id,last_map_id,selected_slot;
-    unsigned selected;
+    unsigned selected,observing;
 };
 static int loopback(CohNetEndpoint e){return e.address[0]==127;}
 static int active(CohLocalPhase p){return p>=COH_LOCAL_DB_CONNECTING&&p<=COH_LOCAL_SCENE_INCOMPLETE;}
@@ -65,7 +65,7 @@ CohLocal *coh_local_create(const CohLocalConfig *c){
     CohLocal *s=calloc(1,sizeof(*s));if(!s)return NULL;
     s->config=*c;s->diagnostics.local_development_auth=1;return s;
 }
-void coh_local_destroy(CohLocal *s){if(s){coh_db_session_destroy(s->db);coh_map_client_destroy(s->map);coh_db_wipe(s,sizeof(*s));free(s);}}
+void coh_local_destroy(CohLocal *s){if(s&&!s->observing){coh_db_session_destroy(s->db);coh_map_client_destroy(s->map);coh_db_wipe(s,sizeof(*s));free(s);}}
 static int valid_account(const char *name){
     if(!name)return 0;
     for(unsigned n=0;n<15;n++){
@@ -76,7 +76,7 @@ static int valid_account(const char *name){
 CohStatus coh_local_begin(CohLocal *s,const CohDbLogin *policy,const char *name,uint32_t dbid,uint32_t mapid,uint64_t now){
     if(!s||!policy||!valid_account(name)||policy->account[0]||policy->user_id||policy->cookie||
         policy->protocol_version!=COH_DB_PROTOCOL_VERSION||!dbid||!mapid||dbid==mapid)return COH_INVALID;
-    if(active(s->diagnostics.phase))return COH_STATE;
+    if(s->observing||active(s->diagnostics.phase))return COH_STATE;
     if(now<s->clock_ms||dbid<=s->last_db_id||dbid<=s->last_map_id||mapid<=s->last_db_id||mapid<=s->last_map_id)return COH_INVALID;
     if(s->diagnostics.generation==UINT32_MAX)return COH_LIMIT;
     CohDbSession *db=coh_db_session_create(&s->config.db);if(!db)return COH_LIMIT;
@@ -98,14 +98,14 @@ CohStatus coh_local_begin(CohLocal *s,const CohDbLogin *policy,const char *name,
 }
 CohStatus coh_local_characters(const CohLocal *s,CohLocalCharacters *out){
     if(!s||!out)return COH_INVALID;
-    if(s->diagnostics.phase!=COH_LOCAL_CHARACTERS_READY)return COH_STATE;
+    if(s->observing||s->diagnostics.phase!=COH_LOCAL_CHARACTERS_READY)return COH_STATE;
     CohDbPlayers p;CohStatus status=coh_db_session_players(s->db,&p);
     if(status==COH_OK){CohLocalCharacters c;memset(&c,0,sizeof(c));c.count=p.max_slots;c.selectable_count=p.selectable_count;memcpy(c.players,p.players,sizeof(c.players));*out=c;}
     coh_db_wipe(&p,sizeof(p));return status;
 }
 CohStatus coh_local_choose_character(CohLocal *s,uint32_t slot,uint64_t now){
     if(!s)return COH_INVALID;
-    if(s->diagnostics.phase!=COH_LOCAL_CHARACTERS_READY)return COH_STATE;
+    if(s->observing||s->diagnostics.phase!=COH_LOCAL_CHARACTERS_READY)return COH_STATE;
     if(now<s->clock_ms)return COH_INVALID;
     if(s->diagnostics.selection_generation==UINT32_MAX)return COH_LIMIT;
     /* Source -db local_map_server is false for the existing independently
@@ -147,8 +147,18 @@ static CohStatus begin_map(CohLocal *s,uint64_t now){
     if(status==COH_OK){s->diagnostics.map_handoffs++;s->diagnostics.phase=COH_LOCAL_MAP_CONNECTING;}
     return status;
 }
+typedef struct {CohLocal *local;CohLocalSceneObserver observer;void *context;} LocalSceneCall;
+static void scene_observe(void *context,const CohMapSceneObservation *event){
+    LocalSceneCall *call=context;CohLocal *s=call->local;
+    s->observing=1;call->observer(call->context,s->map,event);s->observing=0;
+}
 CohStatus coh_local_service(CohLocal *s,uint64_t now,CohCancel cancel){
+    return coh_local_service_observed(s,now,cancel,NULL,NULL);
+}
+CohStatus coh_local_service_observed(CohLocal *s,uint64_t now,CohCancel cancel,
+    CohLocalSceneObserver observer,void *context){
     if(!s)return COH_INVALID;
+    if(s->observing)return COH_STATE;
     if(!active(s->diagnostics.phase))return s->diagnostics.phase==COH_LOCAL_CANCELLED?COH_CANCELLED:COH_STATE;
     if(now<s->clock_ms)return COH_INVALID;
     s->clock_ms=now;
@@ -164,7 +174,7 @@ CohStatus coh_local_service(CohLocal *s,uint64_t now,CohCancel cancel){
         if(p==COH_DB_CHARACTERS)s->diagnostics.phase=COH_LOCAL_CHARACTERS_READY;
         if(p==COH_DB_HANDOFF_READY){status=begin_map(s,now);if(status!=COH_OK)return stop(s,COH_LOCAL_FAILED,status);}
     }
-    if(s->map){status=coh_map_client_service(s->map,now,(CohCancel){0});CohMapDiagnostics m={0};coh_map_client_diagnostics(s->map,&m);
+    if(s->map){LocalSceneCall call={s,observer,context};status=coh_map_client_service_observed(s->map,now,(CohCancel){0},observer?scene_observe:NULL,&call);CohMapDiagnostics m={0};coh_map_client_diagnostics(s->map,&m);
         if(m.phase==COH_MAP_SCENE_INCOMPLETE&&(status==COH_OK||status==COH_UNSUPPORTED)){
             s->diagnostics.phase=COH_LOCAL_SCENE_INCOMPLETE;s->diagnostics.last_status=COH_UNSUPPORTED;snapshot(s);return COH_UNSUPPORTED;
         }
@@ -173,7 +183,7 @@ CohStatus coh_local_service(CohLocal *s,uint64_t now,CohCancel cancel){
     }
     snapshot(s);return COH_OK;
 }
-void coh_local_suspend(CohLocal *s){if(s){if(s->db)coh_db_session_suspend(s->db);if(s->map)coh_map_client_suspend(s->map);s->selected=0;s->diagnostics.server_identity_bound=0;s->diagnostics.phase=COH_LOCAL_SUSPENDED;s->diagnostics.suspends++;snapshot(s);}}
-void coh_local_cancel(CohLocal *s){if(s){close_modules(s);s->diagnostics.phase=COH_LOCAL_CANCELLED;s->diagnostics.cancellations++;}}
-void coh_local_close(CohLocal *s){if(s){close_modules(s);s->diagnostics.phase=COH_LOCAL_CLOSED;}}
+void coh_local_suspend(CohLocal *s){if(s&&!s->observing){if(s->db)coh_db_session_suspend(s->db);if(s->map)coh_map_client_suspend(s->map);s->selected=0;s->diagnostics.server_identity_bound=0;s->diagnostics.phase=COH_LOCAL_SUSPENDED;s->diagnostics.suspends++;snapshot(s);}}
+void coh_local_cancel(CohLocal *s){if(s&&!s->observing){close_modules(s);s->diagnostics.phase=COH_LOCAL_CANCELLED;s->diagnostics.cancellations++;}}
+void coh_local_close(CohLocal *s){if(s&&!s->observing){close_modules(s);s->diagnostics.phase=COH_LOCAL_CLOSED;}}
 void coh_local_diagnostics(const CohLocal *s,CohLocalDiagnostics *out){if(s&&out)*out=s->diagnostics;}

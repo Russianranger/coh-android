@@ -1,0 +1,324 @@
+{
+  "schema": "coh-source-groups-boundary-preparation-v1",
+  "passed": true,
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/check_groups_boundary.py": "946e33019a7224c64cc64cafadc30ed071062fca6469d98dbd3556868dd206a3",
+    "native-android/engine/scenecatalog-server/stage_groups_boundary.py": "9b99e841f219715ff3ba2f4389d829da57bba9322e4b9f251fcdcc2b02f61b65",
+    "native-android/engine/scenecatalog-server/test_groups_boundary.c": "03850c5fb850a355eb223cf8e0b408e875af34f70b402e05192d8b220881d797",
+    "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "41be4a08cf82b30c72e0e5f771f2a4c22ee4ecabc9aa48f31f8798812b305e46",
+    "native-android/engine/scenecatalog-server/source_groups_owner.inc": "7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc",
+    "native-android/engine/scenecatalog-server/source_groups_eligibility.inc": "38338a38411745c889cc78a381e19cfafebd5a83bc00132e17b5b079023f1dbb",
+    "native-android/engine/scenecatalog-server/source_groups_transaction.inc": "a531ae0c9031c160b4f2cf99f2cba49487fba3ea7d396dcc23d0f0969ed922c6",
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+    "native-android/engine/scenecatalog-server/GROUPS_BOUNDARY.md": "f981788f4a6118b2b9d7a4c33e412bc1fdb5d8d3aa70f27b201eb531f039d786",
+    "native-android/engine/scenecatalog-server/stage_groups_transaction.py": "a94fcd1cbc0fcd07bae5079a721e65e42faf66f3d00a672adccb10212ae611db",
+    "native-android/engine/scenecatalog-server/groups-owner-source-pins.json": "5693a060b7a727c6bf9a7375bf2fcc860c1398e986d4d41ef314f4162f8985a2",
+    "native-android/engine/scenecatalog-server/resource-source-pins.json": "6508ab2824fb83ee5a47ea3f04dc33b8f5542b9f05dd0b38c2e34ace437c90e9",
+    "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "native-android/engine/replication/groups_oracle.py": "23fda4a062edca54f1ea4af4d8e1d220f496a854eb68069e669f517f5c41755b",
+    "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+    "native-android/engine/replication/tests/groups_oracle_shim.h": "d6152d20c7ac629323cd15b4ea14fe8c65a8fadea05d5f7db02cb8cb7d0cb518",
+    "native-android/engine/replication/tests/groups_oracle_harness.c": "5cbcad7546ec127b6602d10b79419a87329ef4dbc8e72c1014b661dd06d53cb2",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_sources": {
+    "schema": 1,
+    "repository": "Russianranger/coh-android",
+    "reference_commit": "bf653dd4ef5372c921b049a76f902a4a921e8c4d",
+    "sha256_lf": {
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h": "822e3698ab8cf76a7344ed3effe607dcda542099382e8ed1a63c2c1d1df4257c",
+      "libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+      "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "Common/group/groupProperties.c": "88975a6c74122a64ded79a860d60592814cdf79579b6a39357bbca79066673a1",
+      "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+      "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+      "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+      "Common/group/groupProperties.h": "5522e0e664baab38fb369b59a8d68afd806083cb28c11bda6d58c26d475ab74e",
+      "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+      "libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+      "Game/src/group/groupnetrecv.c": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+      "libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+    },
+    "functions": {
+      "initBitStream": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+      },
+      "bsSetByteAlignment": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "c5f01d08b819d093574461b0b256c93f8c1e686e939a91e64566630acfbba965"
+      },
+      "bsWriteBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+      },
+      "bsWriteBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+      },
+      "bsWriteString": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81"
+      },
+      "bsWriteF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "38d78cadee1f9bc73c25ef1f0dfcb6249a3e101165151abb8d0f8ca7c76462c9"
+      },
+      "bsAlignByte": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+      },
+      "bsGetCursorBitPosition": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+      },
+      "pktSetByteAlignment": {
+        "source": "libs/UtilitiesLib/src/network/net_packet.c",
+        "sha256_lf": "039804cf64e15f616e2c1ba200be92d7e92cb62204d24af64a4b85a23673cb76"
+      },
+      "pktSetCompression": {
+        "source": "libs/UtilitiesLib/src/network/net_packet.c",
+        "sha256_lf": "2f10dbd25b520629828ad056c0fe23bf55521e517ddc102c4097a44d9b17defa"
+      },
+      "pktSendBits": {
+        "source": "libs/UtilitiesLib/src/network/net_packet.c",
+        "sha256_lf": "417040312877e0288d45ada572d2f2a6d7a6ca42f08f501fae315d503be1abc5"
+      },
+      "pktSendBitsPack": {
+        "source": "libs/UtilitiesLib/src/network/net_packet.c",
+        "sha256_lf": "8746bc145e72c7cfe59e4cde7081348032e11ed2275d6336bd48a7fa0a007abd"
+      },
+      "pktSendString": {
+        "source": "libs/UtilitiesLib/src/network/net_packet.c",
+        "sha256_lf": "57bf516d6b96cd2d8b7aa95da381e4a8181de9a609473086678709e3fb23d9f5"
+      },
+      "pktSendF32": {
+        "source": "libs/UtilitiesLib/src/network/net_packet.c",
+        "sha256_lf": "2c43f35b445da0c785fd3ebac6d5a2285547ad6d640cd011a082c0f872bc35b9"
+      },
+      "pktSendIfSetF32": {
+        "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+        "sha256_lf": "ddcc05bc48479b323c0c9b970cb84991ec85f4ef747a9d1776fa96e5cd82e309"
+      },
+      "pktSendBitsAuto": {
+        "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+        "sha256_lf": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa"
+      },
+      "pktSendVec3": {
+        "source": "libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h",
+        "sha256_lf": "32a46d3ae2ff7b18cf772338aaaf4a92bf629339f835fca4ec97ef4bfdac9ce8"
+      },
+      "pktSendMat4": {
+        "source": "libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h",
+        "sha256_lf": "d316f3c5f833d2c8a1f701c6427c936546f65bd5704a75c4b8c6cd0404940e80"
+      },
+      "unitZeroMat": {
+        "source": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "afdf4e5536a710e62e8c606ecdcbc84f6756c223eb120389cc425acc2c103cea"
+      },
+      "unpackMat": {
+        "source": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "192ff7aa49fba688fa9db45c936d24052f80a5f2a5fe37256e7e7a4454ed678a"
+      },
+      "packMat": {
+        "source": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "8f82124f6fd6ac8d27148ff64515d803cb4dceecac3c457a6e8fae9540fe51fc"
+      },
+      "pktSendF32Comp": {
+        "source": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "841db24bc9ee5853891e767ca11ad8e05d5a19a9acba73f5b55f8d38aa4110c8"
+      },
+      "pktSendF32Deg": {
+        "source": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "33a8dd5add52544d19082deaeec42ad35bc6b250347cb8e6afe4ebf383ee381b"
+      },
+      "sendMat4": {
+        "source": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "2e9e8503747aaf3ce81dc7452001ae1146a0fa30a1bb7903d1371a017debd44c"
+      },
+      "nearSameVec3": {
+        "source": "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+        "sha256_lf": "57b89bfd277f454f87c7a19f28edf2cab533238cc50955f7ec6583a88c95357b"
+      },
+      "nearSameVec3Tol": {
+        "source": "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+        "sha256_lf": "1b6fde1ff869de7d45ac6ea54e15bc8139bd334e01fcd5bc5e9936771e9ebd31"
+      },
+      "normalVec3": {
+        "source": "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+        "sha256_lf": "6fcf9942a270836372bdea6d52446c7d0395257f8f286641baa75c6d2377d58e"
+      },
+      "extractScale": {
+        "source": "libs/UtilitiesLib/src/utils/mathutil.c",
+        "sha256_lf": "aecbcea5b90db88c2853d33f7ee55d3bc51cffea07a596f0451b7ee3bb64eca5"
+      },
+      "scaleMat3Vec3": {
+        "source": "libs/UtilitiesLib/src/utils/mathutil.c",
+        "sha256_lf": "a25503311cdffb1c03ac89fa2019cb87e4a732f3c4e036d7ef033c3e0824ded9"
+      },
+      "createMat3YPR": {
+        "source": "libs/UtilitiesLib/src/utils/mathutil.c",
+        "sha256_lf": "1d7b221f5b829c99e55d47cd21ac928036a8fb93b5ebb09d83fea70977a392c7"
+      },
+      "getMat3YPR": {
+        "source": "libs/UtilitiesLib/src/utils/mathutil.c",
+        "sha256_lf": "ea4557cc4f5680d9983604fee09ba17a4760b636e2205ecd212c9efcf065f6c1"
+      },
+      "PropertyTablePaketWriter": {
+        "source": "Common/group/groupProperties.c",
+        "sha256_lf": "80026261195c597c7b9ec88252eaeeff1110b6255bb6f9456b23c640555d9cd3"
+      },
+      "WriteGroupPropertiesToPacket": {
+        "source": "Common/group/groupProperties.c",
+        "sha256_lf": "edbf3385f590174662fba75f5ded5bd88c88ef4e33576261696825e334e08a28"
+      },
+      "groupInfoCrcDefs": {
+        "source": "Common/group/group.c",
+        "sha256_lf": "b0fe7d99b67d25a6ef7a84963be60d7884f0f3d9c276fb71016d41439b649393"
+      },
+      "cryptAdler32UpdateString": {
+        "source": "Common/group/group.c",
+        "sha256_lf": "3c782ec3737b8a2e53d2b4ca687434c810fe8532ebe3acd47217413c4253af17"
+      },
+      "groupInfoCrcRefs": {
+        "source": "Common/group/group.c",
+        "sha256_lf": "0704521e08043d4a6a3c73b5ff4d709da12189a125b8ff3d64d3760c51f4d3ac"
+      },
+      "groupInfoRefCount": {
+        "source": "Common/group/group.c",
+        "sha256_lf": "522c36fbe8eee5025eef1d4003498aeb24b9fd09f1f0e11de116d60002c8ea69"
+      },
+      "sendDef": {
+        "source": "MapServer/src/group/groupnetsend.c",
+        "sha256_lf": "c5cf9d09f217c55c17e03f252ddd3efd957ae4cd2304efe3cc83f4878a0183ad"
+      },
+      "sendGroupFile": {
+        "source": "MapServer/src/group/groupnetsend.c",
+        "sha256_lf": "5bae1853a7397e83d073ac9ba88259415e4aaa398f6697880583b3063df68087"
+      },
+      "sendLoadScreenPages": {
+        "source": "MapServer/src/group/groupnetsend.c",
+        "sha256_lf": "34240a0ad72fb612938a9773b1869912af0ab32a0b04d6d0ee690ffd1b6e44db"
+      },
+      "worldSendUpdate": {
+        "source": "MapServer/src/group/groupnetsend.c",
+        "sha256_lf": "7659b6de769a01956efd4b138ff4341c100f209c656c9d121b4649f2cb2b21c1"
+      }
+    },
+    "checksum_adapter": "zlib Adler32 with source Crypto++ digest-byte order; original groupInfoCrcDefs/Refs/RefCount executed"
+  },
+  "original_supplier_owner_sha256_lf": {
+    "MapServer/src/player/clientEntityLink.c": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b",
+    "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "MapServer/src/svr/svr_base.h": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64",
+    "MapServer/src/svr/svr_base.c": "7d7379d255c8bbd6e45663499d70dad2672455704d25716d0adb6e3694d4de40",
+    "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "MapServer/src/entity/entIncludeServer.h": "bebba4c2ab7102debd043817a9d30abf4699f3af9d0d8dca612700df1fb52029",
+    "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/entity/entity.c": "07b6666d673757cd8e9f4d377ec58fb2988fc09db8abc2e212e29788b84fbd8f",
+    "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+    "libs/UtilitiesLib/include/utilitieslib/components/ArrayOld.h": "52f889750b03c07f52896ca9a569ed4acfeb93f0b5bdbb09072de9d2a343da30",
+    "Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+    "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+    "Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+    "Game/src/render/thread/rt_model_cache.h": "cb68344bdd53130816b7cf597426a8ac1e73f65d01c9f67336f7d9d7544fde6e"
+  },
+  "staged_group_sha256_lf": "35f4efb5fb4eace5ca4bfd5f725bdffd1c22d7b1b21ab747437613f84e22d47c",
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 478,
+      "static_helper_bytes": 131552,
+      "original_world_producer_executed": true,
+      "quiet_export_owner_dependencies_substituted": true,
+      "real_server_executed": false,
+      "live_groups_captured": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 478,
+      "static_helper_bytes": 131552,
+      "original_world_producer_executed": true,
+      "quiet_export_owner_dependencies_substituted": true,
+      "real_server_executed": false,
+      "live_groups_captured": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 478,
+      "static_helper_bytes": 131552,
+      "original_world_producer_executed": true,
+      "quiet_export_owner_dependencies_substituted": true,
+      "real_server_executed": false,
+      "live_groups_captured": false
+    }
+  },
+  "binary_sha256": {
+    "release": "1a35cf69063fb1aea7e70a8be9fde7e4dcebebe39d65ca63f6207e0ccd2e37c8",
+    "asan": "4a8632b27f5574c840844256b712347318feb9844ae8b7ba3eb787fa95d67c71",
+    "ubsan": "81cdee3b984d904b723ad457b5838f69de7b4a3718cee527f0081dcfb67d5b55"
+  },
+  "stack": {
+    "release": {
+      "helper_frames": {
+        "coh_groups_boundary_write": 16,
+        "coh_groups_boundary_prepare": 8,
+        "coh_groups_boundary_record": 8,
+        "coh_groups_boundary_abort": 32,
+        "coh_groups_boundary_begin": 240,
+        "coh_groups_boundary_finish": 320
+      },
+      "conservative_helper_bytes": 4720
+    },
+    "asan": {
+      "helper_frames": {
+        "coh_groups_boundary_prepare": 208,
+        "coh_groups_boundary_write": 16,
+        "coh_groups_boundary_record": 16,
+        "coh_groups_boundary_abort": 16,
+        "coh_groups_boundary_begin": 576,
+        "coh_groups_boundary_finish": 480
+      },
+      "conservative_helper_bytes": 5408
+    },
+    "ubsan": {
+      "helper_frames": {
+        "coh_groups_boundary_prepare": 16,
+        "coh_groups_boundary_write": 16,
+        "coh_groups_boundary_record": 16,
+        "coh_groups_boundary_abort": 16,
+        "coh_groups_boundary_begin": 224,
+        "coh_groups_boundary_finish": 336
+      },
+      "conservative_helper_bytes": 4720
+    }
+  },
+  "host_static_helper_bytes": 131552,
+  "fresh_admitted_helper_execution": true,
+  "output_limit_bytes": 134217728,
+  "record_scratch_bytes": 131072,
+  "output_caps_are_not_original_allocator_bound": true,
+  "quiet_export_owner_dependencies_substituted": true,
+  "original_legacy_ubsan": false,
+  "hook_installed": false,
+  "sink_installed": false,
+  "original_win32_compiled": false,
+  "real_server_executed": false,
+  "live_groups_captured": false,
+  "source_generation_admitted": false,
+  "crypto_auth_verified": false,
+  "native_entity_decode_verified": false,
+  "world_authority": false
+}

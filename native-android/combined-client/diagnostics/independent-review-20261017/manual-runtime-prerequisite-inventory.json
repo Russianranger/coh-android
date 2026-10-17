@@ -1,0 +1,27 @@
+{
+  "schema": "coh-independent-manual-runtime-prerequisite-review-v1",
+  "source_commits": [
+    "6de033017096e68c21f5ceab2a2c514d248273cd",
+    "0403c6e25ba4f6c90dba16aa0c735c8d3dbb2193"
+  ],
+  "evidence_commit": "f59dfdfc4199e52741797d09ef28609ca2ebe8ea",
+  "verdict": "approved_readonly_loader_symbol_prerequisite_inventory_only",
+  "helper_sha256": "1755c1613430c9e43d64c151e38a94ec34fce08c99ef37c88eafdf8e0cdf4d67",
+  "actual_receipt_sha256": "cd531306294dbc0e0f6e1423621bd6652d52a8c124307ac72c8950b546b8fad3",
+  "review": [
+    "Standalone stdlib-only code checks exact candidate compile archive/donor archive/member/VC/manifest hashes before parsing. No project import or bytecode, extraction, PE execution, loader, Wine/ODBC/PostgreSQL/service action. CLI binds its current helper Git bytes/HEAD and exact Wine export map before parsing, revalidating helper/HEAD afterward; source seal inputs and actual source0403 helper binding independently matched Git.",
+    "Bounded PE32/x86 header, section/image/unique-RVA reads, descriptor/symbol count/termination, import name/ordinal/duplicate checks and export counts/name-index/forwarder metadata are conservative inventory. Delay import directory refuses. Exported zero-initialized data targets require one valid virtual section/image range instead of fabricated file bytes. This is not a full Windows loader, dynamic LoadLibrary inventory, forwarder chain resolver, ABI compatibility or malicious PE execution permit.",
+    "Retained exact DbServer9144727b/CrashRpt055c and accepted donor VC DLLs f0cda2a0/2fa6efc0 inspected at0403:27 direct VC imported symbols present,zero matched forwarders.26 actual ODBC ordinals map to exact Wine source b073 declarations;19 platform DLL/APIset families remain unqualified. This does not prove selected runtime exports/implements those functions or that a complete native dependency set exists.",
+    "Five source-seal artifacts match committed bytes; six frozen0403 unit suites independently replayed in fresh owned tmpfs source copies (0.001s), all pass. Tests cover named/ordinal imports,exports/forwarders,wrongmachine/range/alias/delay/index,virtual-only exported data,archive identity. Actual archive parsing was not repeated and no executable was launched."
+  ],
+  "independent_unit_suites": 6,
+  "direct_vc_symbols_present": 27,
+  "unresolved_platform_families": 19,
+  "source_wine_odbc_ordinals": 26,
+  "runtime_profile_admitted": false,
+  "wine_odbc_pg_loader_qualified": false,
+  "service_executed": false,
+  "actual_persistence_verified": false,
+  "authenticated_db_login_verified": false,
+  "shipping_runtime_replacement_permit": false
+}

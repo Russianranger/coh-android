@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "source_revision": "f4263de849b1c2405268d3abe32c835369e260a1",
+  "host_proof_gzip_sha256": "44f7a5cec329a1c8468b310efa0cbb0da37a056a72631a196eff8bc0fc044ff6",
+  "modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "checks_per_mode": 1106,
+  "actual_os_udp": true,
+  "source_fixture_peer": true,
+  "android_build": false,
+  "android_execution": false,
+  "real_server": false,
+  "world_authority": false,
+  "physical_thor": false
+}

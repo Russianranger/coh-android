@@ -1,0 +1,43 @@
+{
+  "schema": "coh-class-named-source-binding-v1",
+  "source_commit": "18892c8e1c7f5890a8409102a78219861d27972b",
+  "tested_git_blobs_match": true,
+  "tested_source_count": 53,
+  "host_proof_sha256": "a49ae58ea1214fe268199beb46837c47d085eb536c20d57f722850a2ee09a281",
+  "checks": {
+    "release": {
+      "checks": 252083,
+      "queries": 22888,
+      "files": 10,
+      "owner_bytes": 56,
+      "value_bytes": 24,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 252083,
+      "queries": 22888,
+      "files": 10,
+      "owner_bytes": 56,
+      "value_bytes": 24,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 252083,
+      "queries": 22888,
+      "files": 10,
+      "owner_bytes": 56,
+      "value_bytes": 24,
+      "runtime_generation": false,
+      "actor_authority": false
+    }
+  },
+  "original_named_finalize_executed": true,
+  "original_named_value_executed": true,
+  "original_empty_value_lookup_executed": false,
+  "original_stash_hash_sanitized": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false
+}

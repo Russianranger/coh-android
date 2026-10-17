@@ -504,3 +504,65 @@ MapServer cache or entity-generation admission. Native class raw owner flags
 remain unchanged. Actual power categories, classes_Repack/Finalize, SERVERONLY/
 shared cache branch and current-server generation are still required before
 semantic class/actor application. No actor or READY/RECEIVED_CHARACTER/ACK.
+
+## Authentic raw category owner continuation (2026-10-17)
+
+Source c92e1fdf5 and receipt81739adf6, independently sealed F e55bb842b,
+qualify the exact historical239,304B powercats.bin payload and copied immutable
+category owner. Original schemaCRC0x59248ecb and binary roundtrip match; all186
+category rows,6,527 ordered set references and zero packed pointer-index rows
+survive. Whole original category-only powerdict_CreateDictHashes and category
+lookups execute:186 valid/512 slots. Dictionary-level set/power arrays are empty
+in this profile; their semantic ownership/full dictionary remains unqualified.
+
+Native release/ASan/UBSan each80,281 assertions qualify eight original-writer
+variants,297 truncations,581 mutations, source duplicate refusal, unknown raw
+identifiers, budget/alias/provider rollback. Owner374,856B and same transient
+workspace fit the exact input under1MiB. Historical category/schema matching
+does not admit current MapServer/SERVERONLY/cache generation or actor/ACK.
+Actual class repack projection and named-table finalization remain separately
+tracked components; no unchanged raw-importer authority flag was enabled.
+
+## Compact selected-class source repack projection (2026-10-17)
+
+Source534b6a9b6/receipt3c4dbac9e, independently sealed F5d1bf63a8, adds a
+2,880B copied historical selected-class/level projection. Whole original
+classes_Repack/CreateCharacterAttributes/TransposeArray executes using explicit
+pointer/heap/category-lookup/retirement fixture interfaces. All59 actual rows
+at first/middle/final levels and original-writer default/short-array/fallback
+variants yield195 independent690-word comparisons; release/ASan/UBSan each
+272,493 assertions, C++ and measured native stack pass. No full table allocation
+for every class/level is needed. Source double-Defense, last-Absorb and absent
+ElusivityBase/default1 behavior is preserved.
+
+The frozen raw class importer remains unchanged with source_crc_verified false.
+Separate historical schema proof and selected-row projection do not admit current
+SERVERONLY/shared/cache generation, power-set/base-power ownership or authentic
+actor/application ACK. Named-table Finalize/GetNamedTableValue is separately source-qualified below;
+these components are not an accepted live dictionary.
+
+## Bounded historical class named-table owner (2026-10-17)
+
+Sources18892c8e1/9e337a4d6 plus REQUIRED588b0f698, receipts ee8882023/
+5088b9e89/cf73aa246 and independent Fca42 qualify unchanged whole original
+classes_Finalize/class_GetNamedTableValue and stash interfaces on exact class
+inputs. Actual normal1,296 named tables and villain4,005 have no duplicates or
+empty value arrays. Fourteen original-writer profiles cover same-class duplicate
+refusal, empty keys, empty arrays, unknown names, empty table lists and bounded
+work refusal;23,671 independent source/native queries and260,792 assertions
+per release/ASan/UBSan mode pass.
+
+The compact owner borrows the immutable raw class dictionary/input lease (56B);
+value observations own24B. Empty string keys are source-supported. Missing keys
+report found=false/source1.0 fallback; empty arrays refuse original unsafe
+negative indexing. Oversized positive indices repeat the final value. Native
+finite ASCII profile and8MiB aggregate budget are explicit. Every raw record
+validates once; source key duplicate checks precharge at most8,388,608 length/
+byte comparison work units. Source-accepted256 distinct259-byte keys cost
+8,486,400 units independently and deliberately return native LIMIT atomically.
+
+This closes historical class repack/named-value prerequisites without changing
+frozen raw class owner flags. Full authentic set/base-power grammar/ID ownership,
+actual SERVERONLY/shared/cache-generation association, selected Map/DB/entity
+generation, world/resource closure and atomic actor/application ACK remain gates.
+No runtime class identity is inferred merely from a matching historical CRC.

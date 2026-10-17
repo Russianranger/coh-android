@@ -1,0 +1,30 @@
+{
+  "schema": "coh-independent-class-named-table-review-v1",
+  "source_commits": [
+    "18892c8e1c7f5890a8409102a78219861d27972b",
+    "9e337a4d67b4aa8f436206c2770b76f3a42fcbe6",
+    "588b0f6982ecb70bc7fccef92e6f95d09ffde655"
+  ],
+  "evidence_commits": [
+    "ee8882023",
+    "5088b9e89",
+    "cf73aa246"
+  ],
+  "verdict": "approved_historical_borrowed_named_table_profile_after_required_work_bound",
+  "proof_sha256": "609b5d5f02c8c9ddf43aeb531b1dc5497f75abeb6246fac2585a2eec9b2de1c4",
+  "tested_git_source_matches": 53,
+  "reported_checks_per_mode": 260792,
+  "queries": 23671,
+  "source_cases": 14,
+  "review": [
+    "Prepare validates immutable borrowed class owner/input and every named row/ASCII key/finite float span. Known descriptor/input/query/output spans are overflow and alias checked and charged with8KiB native reserve/retained storage under8MiB before traversal. Fixed56B dictionary and24B result allocate nothing; caller must retain raw dictionary and input throughout their use. SHA/lease labels detect owner replacement, not mutable input or real runtime generation. Every refusal preserves public output.",
+    "Whole original classes_Finalize/class_GetNamedTableValue and stash constructor/add/find/hash/probe/resize execute with explicit parser/earray/float storage/heap adapters. Independent queries preserve original same-class duplicate refusal, cross-class duplicate keys, casefold names and source table order. Empty-string keys/nonnull empty queries are explicitly source-supported after9e correction. Missing key returns foundfalse/value1.0; present short arrays extend final value. Empty value arrays remain present but native lookup UNSUPPORTED avoids original undefined negative index.",
+    "Review found repeated full row/float scans within duplicate-key loop. Required588 refinement validates each raw row once, uses already-validated immutable O(1) copied prior keys, and charges one length comparison for every same-class pair plus worst-case equal-length string bytes BEFORE comparison against8,388,608 work units. Source-written256 distinct259byte keys are accepted by original constructor but independently exceed budget8,486,400 and native refuses atomically. Historical unbounded receipts are preserved, not final proof.",
+    "Final53 source hashes match committed588 blobs/proof609b5d...; checked helper source loads with stale-PYC/changed-source controls,14 actual/source-writer caches,260792 assertions/23671 queries per release/ASan/UBSan,C++ linkage and bounded stack recorded. Unsafe original hash is not claimed sanitized/Win32 ABI. No large independent corpus replay."
+  ],
+  "classes_finalize_source_executed": true,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "world_authority": false,
+  "android_executed": false
+}

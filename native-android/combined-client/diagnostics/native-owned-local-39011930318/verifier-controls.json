@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "semantic_negative_controls": [
+    {
+      "name": "missing_local_code_domain",
+      "refused": true,
+      "reason": "complete historical Git source domain"
+    },
+    {
+      "name": "local_source_git_mismatch",
+      "refused": true,
+      "reason": "historical source Git binding native-android/engine/local/coh_local.c"
+    },
+    {
+      "name": "local_abi_fixture_mismatch",
+      "refused": true,
+      "reason": "host and Android receipts disagree"
+    },
+    {
+      "name": "local_device_cleanup_false",
+      "refused": true,
+      "reason": "local actual execution cleanup_verified"
+    }
+  ],
+  "exact_archive_identity_checks_bypassed_only_inside_owned_test_wrapper": true,
+  "binaries_executed": false
+}

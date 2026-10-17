@@ -1,6 +1,6 @@
 # Authoritative world continuation — 2026-10-17
 
-Latest detailed checkpoint: [MILESTONE10.md](MILESTONE10.md). Published floor187c9358bdf198f3d00f22576e140572210b4461; actual187 native/Android admissions and the new owned-local qualification boundary are recorded there. Earlier sections below retain their historical source scopes.
+Latest detailed checkpoint: [MILESTONE11.md](MILESTONE11.md). Publication parent01cbd938463ea8387d02328ebb477db90870c69b; actual01cbd owned local ARM64-build/Android13 execution admission, optional host-qualified receive observation and historical class semantics are recorded there. Earlier sections below retain their historical source scopes.
 
 Target branch remains native-android. Remote guarded component publication:
 2cdbaf42fcd51e32a420ece3e609111a4e2725aa (tree565a9193660bb4a482a262df3c617d820d307346).

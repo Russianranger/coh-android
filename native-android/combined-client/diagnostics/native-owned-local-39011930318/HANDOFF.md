@@ -1,0 +1,7 @@
+# Native owned local Android qualification
+
+Run 39011930318 at 01cbd938463ea8387d02328ebb477db90870c69b completed both jobs. Exact archives and source/binary/fixture associations are admitted in admission.json. The sole 25,233,772-byte host ZIP remains in coordinator cache native-core-39011930318/12093113588/artifact.zip; it is not duplicated here. Small Android ZIP and source-bound host proof are retained. verify.py reads only archives/Git and executes historical pure admission functions, with a reconstructed historical Git source identity adapter; it never executes native binaries, compiler, adb, network or server. Four semantic mutation controls exercise missing source, source mismatch, ABI fixture mismatch and cleanup refusal.
+
+Both ARM64 and x86_64 native builds passed. Actual Android 13 x86_64 emulator execution passed five existing protocol suites plus the new opaque DB-owner to local Map scripted UDP chain: 1,088 checks, nine scenarios, matching host release/ASan/UBSan results. New local runner separately verified owned temporary-device-file deletion and native socket cleanup. The older five-suite runner reports successful removal command but no separately measured post-delete absence; these cleanup boundaries remain distinct.
+
+This qualifies the default opaque handoff continuation at this exact source. It does not qualify the later optional f4263de local scene observer on Android. No APK, physical Thor, actual Auth/DB/Map server session, actor or world rendering acceptance occurred.

@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "module": "local",
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "file": "coh-local-arm64-v8a",
+      "sha256": "7aca70d2dc3cc20714fb4fc00d158ec7a57530159f2ca3f0f300128a95bfc7d8",
+      "built": true,
+      "executed": false,
+      "fixture_sha256": {
+        "fixtures.h": "0e6aae45f26274265ae8d498904064dd8f86ea3db33b501cb78006bd09cc1484",
+        "groups-fixtures.h": "727a31288a648a8e7d3276aa4ce085be76a5144366713da0911645aef635910f",
+        "server-command-fixtures.h": "d3f3a2a67e0354cf0c369caa310ed4cf9b514e545881467a880950a9f03b2a35"
+      }
+    },
+    {
+      "abi": "x86_64",
+      "file": "coh-local-x86_64",
+      "sha256": "7b337316cba20a602b9310805b00334a4c1bc1f92a8c0bf8037f21277c0415c6",
+      "built": true,
+      "executed": false,
+      "fixture_sha256": {
+        "fixtures.h": "0e6aae45f26274265ae8d498904064dd8f86ea3db33b501cb78006bd09cc1484",
+        "groups-fixtures.h": "727a31288a648a8e7d3276aa4ce085be76a5144366713da0911645aef635910f",
+        "server-command-fixtures.h": "d3f3a2a67e0354cf0c369caa310ed4cf9b514e545881467a880950a9f03b2a35"
+      }
+    }
+  ],
+  "scripted_ui_peer_artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "file": "coh-local-peer-arm64-v8a",
+      "sha256": "92e89e950761a0223f1fed14ca9a2615404ed673e1aeebfc86a59280acff2054",
+      "built": true,
+      "executed": false,
+      "role": "scripted-ui-peer",
+      "real_server_interoperability": false
+    },
+    {
+      "abi": "x86_64",
+      "file": "coh-local-peer-x86_64",
+      "sha256": "c45575fd49f6b44cc1879266dd47557a39a7868e388fa9a376b2b34ae7a77bf1",
+      "built": true,
+      "executed": false,
+      "role": "scripted-ui-peer",
+      "real_server_interoperability": false
+    }
+  ],
+  "android_execution_qualified": false,
+  "actual_server_interoperability_verified": false
+}

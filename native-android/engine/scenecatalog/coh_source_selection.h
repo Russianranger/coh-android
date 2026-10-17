@@ -76,4 +76,19 @@ typedef struct {
  * No allocations/digests. Output disjoint from body/index and all borrowed
  * source/owner storage; known source spans checked; unchanged on refusal. */
 CohStatus coh_source_body_lease(const CohSourceBody *,uint32_t source_ordinal,CohSourceBodyLease *);
+/* Actual immutable dependency identities, never caller labels. Bytes exclude
+ * loader reservation. body_owned_bytes includes its private index. Shared
+ * selection/join/catalog/snapshot/graph/profile may be charged once ONLY by
+ * actual pointer identity; equal hashes do not establish shared ownership.
+ * Borrowed through Body lifetime. Graph+loader still need caller-held leases.
+ * Controls/output disjoint from opaque owners and known source storage. */
+typedef struct {
+ const void *body_identity,*index_identity,*selection_identity,*profile_identity;
+ const CohResourceJoin *join_identity;
+ size_t body_owned_bytes,selection_owned_bytes,profile_bytes;
+ CohResourceJoinIdentity join;
+ CohAssetLoader *loader;size_t loader_reservation;
+} CohSourceBodyDependencies;
+CohStatus coh_source_body_dependencies(const CohSourceBody *,CohSourceBodyDependencies *);
+
 #endif

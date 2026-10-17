@@ -1,0 +1,4068 @@
+{
+  "schema": "coh-exact-manual-runtime-loader-prerequisite-v1",
+  "passed": true,
+  "candidate_binaries_sha256": {
+    "DbServer.exe": "9144727b021526b3777cba53e4935c0ab9c35a76a51d6f00aa50678b7590ea63",
+    "CrashRpt.dll": "055c5e42e43fc19f29eea88dbd6854448989ccb2fc2f7e8a928f8cecc04ed5b3"
+  },
+  "donor_vc_sha256": {
+    "msvcp140.dll": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a",
+    "vcruntime140.dll": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+  },
+  "accepted_apk_sha256": "482481fd14357f56a0c77069124fdce42712a06180ead8cb4c0cca2a671d4fc2",
+  "imports": {
+    "DbServer.exe": {
+      "odbc32.dll": [
+        {
+          "ordinal": 160
+        },
+        {
+          "ordinal": 154
+        },
+        {
+          "ordinal": 145
+        },
+        {
+          "ordinal": 140
+        },
+        {
+          "ordinal": 236
+        },
+        {
+          "ordinal": 111
+        },
+        {
+          "ordinal": 72
+        },
+        {
+          "ordinal": 61
+        },
+        {
+          "ordinal": 41
+        },
+        {
+          "ordinal": 75
+        },
+        {
+          "ordinal": 39
+        },
+        {
+          "ordinal": 19
+        },
+        {
+          "ordinal": 38
+        },
+        {
+          "ordinal": 33
+        },
+        {
+          "ordinal": 43
+        },
+        {
+          "ordinal": 16
+        },
+        {
+          "ordinal": 31
+        },
+        {
+          "ordinal": 13
+        },
+        {
+          "ordinal": 12
+        },
+        {
+          "ordinal": 11
+        },
+        {
+          "ordinal": 29
+        },
+        {
+          "ordinal": 9
+        },
+        {
+          "ordinal": 26
+        },
+        {
+          "ordinal": 5
+        },
+        {
+          "ordinal": 4
+        },
+        {
+          "ordinal": 24
+        }
+      ],
+      "iphlpapi.dll": [
+        {
+          "name": "GetIpAddrTable"
+        }
+      ],
+      "ws2_32.dll": [
+        {
+          "ordinal": 16
+        },
+        {
+          "ordinal": 13
+        },
+        {
+          "ordinal": 8
+        },
+        {
+          "ordinal": 1
+        },
+        {
+          "ordinal": 57
+        },
+        {
+          "ordinal": 52
+        },
+        {
+          "name": "WSASocketA"
+        },
+        {
+          "ordinal": 111
+        },
+        {
+          "ordinal": 19
+        },
+        {
+          "ordinal": 11
+        },
+        {
+          "ordinal": 4
+        },
+        {
+          "ordinal": 3
+        },
+        {
+          "ordinal": 9
+        },
+        {
+          "ordinal": 23
+        },
+        {
+          "ordinal": 15
+        },
+        {
+          "ordinal": 18
+        },
+        {
+          "ordinal": 21
+        },
+        {
+          "ordinal": 51
+        },
+        {
+          "name": "getaddrinfo"
+        },
+        {
+          "name": "freeaddrinfo"
+        },
+        {
+          "name": "inet_ntop"
+        },
+        {
+          "ordinal": 20
+        },
+        {
+          "name": "WSARecv"
+        },
+        {
+          "name": "WSARecvFrom"
+        },
+        {
+          "name": "WSASend"
+        },
+        {
+          "ordinal": 115
+        },
+        {
+          "ordinal": 151
+        },
+        {
+          "ordinal": 10
+        },
+        {
+          "ordinal": 2
+        },
+        {
+          "ordinal": 6
+        },
+        {
+          "ordinal": 14
+        },
+        {
+          "ordinal": 7
+        },
+        {
+          "ordinal": 17
+        }
+      ],
+      "winmm.dll": [
+        {
+          "name": "timeBeginPeriod"
+        },
+        {
+          "name": "timeGetTime"
+        }
+      ],
+      "advapi32.dll": [
+        {
+          "name": "RegOpenKeyExA"
+        },
+        {
+          "name": "RegQueryValueExA"
+        },
+        {
+          "name": "RegCloseKey"
+        },
+        {
+          "name": "RegDeleteValueA"
+        },
+        {
+          "name": "RegCreateKeyExA"
+        }
+      ],
+      "user32.dll": [
+        {
+          "name": "SetWindowTextA"
+        },
+        {
+          "name": "EnableWindow"
+        },
+        {
+          "name": "KillTimer"
+        },
+        {
+          "name": "SetTimer"
+        },
+        {
+          "name": "SetFocus"
+        },
+        {
+          "name": "SendDlgItemMessageA"
+        },
+        {
+          "name": "ShowCursor"
+        },
+        {
+          "name": "EndDialog"
+        },
+        {
+          "name": "DialogBoxIndirectParamA"
+        },
+        {
+          "name": "MoveWindow"
+        },
+        {
+          "name": "ShowWindow"
+        },
+        {
+          "name": "SendMessageA"
+        },
+        {
+          "name": "MessageBoxA"
+        },
+        {
+          "name": "GetWindowRect"
+        },
+        {
+          "name": "MapWindowPoints"
+        },
+        {
+          "name": "IsIconic"
+        },
+        {
+          "name": "PeekMessageA"
+        },
+        {
+          "name": "GetSystemMenu"
+        },
+        {
+          "name": "DeleteMenu"
+        },
+        {
+          "name": "OpenClipboard"
+        },
+        {
+          "name": "CloseClipboard"
+        },
+        {
+          "name": "SetClipboardData"
+        },
+        {
+          "name": "EmptyClipboard"
+        },
+        {
+          "name": "FindWindowA"
+        },
+        {
+          "name": "FlashWindowEx"
+        },
+        {
+          "name": "SendMessageW"
+        },
+        {
+          "name": "CreateIconIndirect"
+        },
+        {
+          "name": "GetDlgItem"
+        }
+      ],
+      "gdi32.dll": [
+        {
+          "name": "TextOutW"
+        },
+        {
+          "name": "SetTextColor"
+        },
+        {
+          "name": "SetBkMode"
+        },
+        {
+          "name": "SelectObject"
+        },
+        {
+          "name": "GetTextExtentPoint32W"
+        },
+        {
+          "name": "DeleteObject"
+        },
+        {
+          "name": "DeleteDC"
+        },
+        {
+          "name": "CreateFontW"
+        },
+        {
+          "name": "CreateDCA"
+        },
+        {
+          "name": "CreateCompatibleDC"
+        },
+        {
+          "name": "CreateCompatibleBitmap"
+        },
+        {
+          "name": "CreateBitmap"
+        },
+        {
+          "name": "CreateFontIndirectA"
+        }
+      ],
+      "kernel32.dll": [
+        {
+          "name": "GetCommandLineW"
+        },
+        {
+          "name": "GetCommandLineA"
+        },
+        {
+          "name": "GetModuleFileNameW"
+        },
+        {
+          "name": "UnhandledExceptionFilter"
+        },
+        {
+          "name": "GetCurrentDirectoryW"
+        },
+        {
+          "name": "SetCurrentDirectoryW"
+        },
+        {
+          "name": "SetEnvironmentVariableW"
+        },
+        {
+          "name": "CreateProcessW"
+        },
+        {
+          "name": "SetStdHandle"
+        },
+        {
+          "name": "PeekNamedPipe"
+        },
+        {
+          "name": "GetFileType"
+        },
+        {
+          "name": "CreateFileW"
+        },
+        {
+          "name": "ReadConsoleW"
+        },
+        {
+          "name": "FreeLibraryAndExitThread"
+        },
+        {
+          "name": "ExitThread"
+        },
+        {
+          "name": "CreateThread"
+        },
+        {
+          "name": "SystemTimeToTzSpecificLocalTime"
+        },
+        {
+          "name": "FindNextFileW"
+        },
+        {
+          "name": "FindFirstFileExW"
+        },
+        {
+          "name": "GetConsoleCP"
+        },
+        {
+          "name": "GetFullPathNameW"
+        },
+        {
+          "name": "GetDriveTypeW"
+        },
+        {
+          "name": "GetModuleHandleExW"
+        },
+        {
+          "name": "TerminateProcess"
+        },
+        {
+          "name": "FlsFree"
+        },
+        {
+          "name": "FlsSetValue"
+        },
+        {
+          "name": "FlsGetValue"
+        },
+        {
+          "name": "FlsAlloc"
+        },
+        {
+          "name": "InterlockedPushEntrySList"
+        },
+        {
+          "name": "RtlUnwind"
+        },
+        {
+          "name": "GetCPInfo"
+        },
+        {
+          "name": "GetStringTypeW"
+        },
+        {
+          "name": "DecodePointer"
+        },
+        {
+          "name": "EncodePointer"
+        },
+        {
+          "name": "InitializeCriticalSectionEx"
+        },
+        {
+          "name": "GetSystemTimePreciseAsFileTime"
+        },
+        {
+          "name": "TryAcquireSRWLockExclusive"
+        },
+        {
+          "name": "GetModuleHandleW"
+        },
+        {
+          "name": "GetStartupInfoW"
+        },
+        {
+          "name": "SetUnhandledExceptionFilter"
+        },
+        {
+          "name": "SleepConditionVariableSRW"
+        },
+        {
+          "name": "ReadConsoleInputW"
+        },
+        {
+          "name": "AcquireSRWLockExclusive"
+        },
+        {
+          "name": "PeekConsoleInputA"
+        },
+        {
+          "name": "CreateDirectoryW"
+        },
+        {
+          "name": "SetFileAttributesW"
+        },
+        {
+          "name": "GetFileSizeEx"
+        },
+        {
+          "name": "GetConsoleOutputCP"
+        },
+        {
+          "name": "HeapQueryInformation"
+        },
+        {
+          "name": "IsValidCodePage"
+        },
+        {
+          "name": "GetACP"
+        },
+        {
+          "name": "GetOEMCP"
+        },
+        {
+          "name": "GetEnvironmentStringsW"
+        },
+        {
+          "name": "FreeEnvironmentStringsW"
+        },
+        {
+          "name": "ReleaseSRWLockExclusive"
+        },
+        {
+          "name": "InitializeSListHead"
+        },
+        {
+          "name": "IsProcessorFeaturePresent"
+        },
+        {
+          "name": "InitOnceExecuteOnce"
+        },
+        {
+          "name": "GetTickCount"
+        },
+        {
+          "name": "ReadDirectoryChangesW"
+        },
+        {
+          "name": "SetThreadPriority"
+        },
+        {
+          "name": "WaitForMultipleObjectsEx"
+        },
+        {
+          "name": "TlsFree"
+        },
+        {
+          "name": "FindNextFileA"
+        },
+        {
+          "name": "GetFileInformationByHandle"
+        },
+        {
+          "name": "GetFileAttributesA"
+        },
+        {
+          "name": "FindFirstFileA"
+        },
+        {
+          "name": "FindClose"
+        },
+        {
+          "name": "GetVersionExA"
+        },
+        {
+          "name": "VirtualProtect"
+        },
+        {
+          "name": "CreateMutexA"
+        },
+        {
+          "name": "ReleaseMutex"
+        },
+        {
+          "name": "GetModuleHandleA"
+        },
+        {
+          "name": "GetExitCodeProcess"
+        },
+        {
+          "name": "HeapUnlock"
+        },
+        {
+          "name": "HeapLock"
+        },
+        {
+          "name": "HeapValidate"
+        },
+        {
+          "name": "QueueUserAPC"
+        },
+        {
+          "name": "SetEvent"
+        },
+        {
+          "name": "GetConsoleTitleA"
+        },
+        {
+          "name": "OpenFileMappingA"
+        },
+        {
+          "name": "GlobalLock"
+        },
+        {
+          "name": "GlobalUnlock"
+        },
+        {
+          "name": "GlobalAlloc"
+        },
+        {
+          "name": "MapViewOfFileEx"
+        },
+        {
+          "name": "GetProcessHeap"
+        },
+        {
+          "name": "HeapFree"
+        },
+        {
+          "name": "HeapAlloc"
+        },
+        {
+          "name": "PostQueuedCompletionStatus"
+        },
+        {
+          "name": "LoadLibraryExW"
+        },
+        {
+          "name": "HeapSize"
+        },
+        {
+          "name": "CompareStringW"
+        },
+        {
+          "name": "LCMapStringW"
+        },
+        {
+          "name": "HeapReAlloc"
+        },
+        {
+          "name": "DeleteFileW"
+        },
+        {
+          "name": "GetFileAttributesExW"
+        },
+        {
+          "name": "MoveFileExW"
+        },
+        {
+          "name": "GetNumberOfConsoleInputEvents"
+        },
+        {
+          "name": "WakeAllConditionVariable"
+        },
+        {
+          "name": "InitializeCriticalSection"
+        },
+        {
+          "name": "Sleep"
+        },
+        {
+          "name": "GetSystemInfo"
+        },
+        {
+          "name": "GetTimeZoneInformation"
+        },
+        {
+          "name": "EnterCriticalSection"
+        },
+        {
+          "name": "LeaveCriticalSection"
+        },
+        {
+          "name": "MultiByteToWideChar"
+        },
+        {
+          "name": "CloseHandle"
+        },
+        {
+          "name": "InitializeCriticalSectionAndSpinCount"
+        },
+        {
+          "name": "DeleteCriticalSection"
+        },
+        {
+          "name": "ReleaseSemaphore"
+        },
+        {
+          "name": "WaitForSingleObject"
+        },
+        {
+          "name": "SleepEx"
+        },
+        {
+          "name": "CreateEventA"
+        },
+        {
+          "name": "SignalObjectAndWait"
+        },
+        {
+          "name": "SwitchToThread"
+        },
+        {
+          "name": "GetExitCodeThread"
+        },
+        {
+          "name": "CreateSemaphoreA"
+        },
+        {
+          "name": "WideCharToMultiByte"
+        },
+        {
+          "name": "IsDebuggerPresent"
+        },
+        {
+          "name": "GetLastError"
+        },
+        {
+          "name": "SetConsoleCtrlHandler"
+        },
+        {
+          "name": "GetConsoleWindow"
+        },
+        {
+          "name": "GetEnvironmentVariableA"
+        },
+        {
+          "name": "CreateFileA"
+        },
+        {
+          "name": "SetLastError"
+        },
+        {
+          "name": "GetCurrentProcessId"
+        },
+        {
+          "name": "GetCurrentThreadId"
+        },
+        {
+          "name": "MapViewOfFile"
+        },
+        {
+          "name": "UnmapViewOfFile"
+        },
+        {
+          "name": "CreateFileMappingA"
+        },
+        {
+          "name": "DuplicateHandle"
+        },
+        {
+          "name": "WriteConsoleW"
+        },
+        {
+          "name": "GetCurrentProcess"
+        },
+        {
+          "name": "GetCurrentThread"
+        },
+        {
+          "name": "SuspendThread"
+        },
+        {
+          "name": "ResumeThread"
+        },
+        {
+          "name": "CreateProcessA"
+        },
+        {
+          "name": "VirtualQuery"
+        },
+        {
+          "name": "FreeLibrary"
+        },
+        {
+          "name": "GetModuleFileNameA"
+        },
+        {
+          "name": "GetProcAddress"
+        },
+        {
+          "name": "LoadLibraryA"
+        },
+        {
+          "name": "FormatMessageA"
+        },
+        {
+          "name": "CreateToolhelp32Snapshot"
+        },
+        {
+          "name": "Thread32First"
+        },
+        {
+          "name": "Thread32Next"
+        },
+        {
+          "name": "TlsAlloc"
+        },
+        {
+          "name": "TlsGetValue"
+        },
+        {
+          "name": "TlsSetValue"
+        },
+        {
+          "name": "K32GetProcessMemoryInfo"
+        },
+        {
+          "name": "FileTimeToLocalFileTime"
+        },
+        {
+          "name": "LocalFileTimeToFileTime"
+        },
+        {
+          "name": "QueryPerformanceCounter"
+        },
+        {
+          "name": "QueryPerformanceFrequency"
+        },
+        {
+          "name": "GetSystemTimeAsFileTime"
+        },
+        {
+          "name": "GetLocalTime"
+        },
+        {
+          "name": "FileTimeToSystemTime"
+        },
+        {
+          "name": "SystemTimeToFileTime"
+        },
+        {
+          "name": "GetStdHandle"
+        },
+        {
+          "name": "OutputDebugStringA"
+        },
+        {
+          "name": "RaiseException"
+        },
+        {
+          "name": "GetSystemTime"
+        },
+        {
+          "name": "GetConsoleMode"
+        },
+        {
+          "name": "SetConsoleMode"
+        },
+        {
+          "name": "GetConsoleScreenBufferInfo"
+        },
+        {
+          "name": "SetConsoleScreenBufferSize"
+        },
+        {
+          "name": "GetLargestConsoleWindowSize"
+        },
+        {
+          "name": "SetConsoleTextAttribute"
+        },
+        {
+          "name": "SetConsoleWindowInfo"
+        },
+        {
+          "name": "SetConsoleTitleA"
+        },
+        {
+          "name": "ExitProcess"
+        },
+        {
+          "name": "LocalFree"
+        },
+        {
+          "name": "TryEnterCriticalSection"
+        },
+        {
+          "name": "CancelIo"
+        },
+        {
+          "name": "CreateDirectoryA"
+        },
+        {
+          "name": "FlushFileBuffers"
+        },
+        {
+          "name": "GetDiskFreeSpaceExA"
+        },
+        {
+          "name": "GetFileSize"
+        },
+        {
+          "name": "GetFileTime"
+        },
+        {
+          "name": "GetFullPathNameA"
+        },
+        {
+          "name": "ReadFile"
+        },
+        {
+          "name": "SetEndOfFile"
+        },
+        {
+          "name": "SetFilePointerEx"
+        },
+        {
+          "name": "WriteFile"
+        },
+        {
+          "name": "GetCurrentDirectoryA"
+        },
+        {
+          "name": "CreateIoCompletionPort"
+        },
+        {
+          "name": "GetQueuedCompletionStatus"
+        }
+      ]
+    },
+    "CrashRpt.dll": {
+      "kernel32.dll": [
+        {
+          "name": "SetUnhandledExceptionFilter"
+        },
+        {
+          "name": "GetCurrentThreadId"
+        },
+        {
+          "name": "GetEnvironmentVariableA"
+        },
+        {
+          "name": "GetCurrentDirectoryA"
+        },
+        {
+          "name": "CloseHandle"
+        },
+        {
+          "name": "DuplicateHandle"
+        },
+        {
+          "name": "GetLastError"
+        },
+        {
+          "name": "SetLastError"
+        },
+        {
+          "name": "SetEvent"
+        },
+        {
+          "name": "WaitForSingleObject"
+        },
+        {
+          "name": "SleepEx"
+        },
+        {
+          "name": "CreateEventA"
+        },
+        {
+          "name": "QueueUserAPC"
+        },
+        {
+          "name": "GetCurrentProcess"
+        },
+        {
+          "name": "GetCurrentProcessId"
+        },
+        {
+          "name": "CreateThread"
+        },
+        {
+          "name": "GetCurrentThread"
+        },
+        {
+          "name": "TerminateThread"
+        },
+        {
+          "name": "GetThreadContext"
+        },
+        {
+          "name": "FreeLibrary"
+        },
+        {
+          "name": "GetModuleFileNameA"
+        },
+        {
+          "name": "GetProcAddress"
+        },
+        {
+          "name": "LoadLibraryA"
+        },
+        {
+          "name": "GetSystemTimeAsFileTime"
+        },
+        {
+          "name": "QueryPerformanceCounter"
+        },
+        {
+          "name": "IsProcessorFeaturePresent"
+        },
+        {
+          "name": "InitializeSListHead"
+        }
+      ],
+      "msvcp140.dll": [
+        {
+          "name": "?_Xlength_error@std@@YAXPBD@Z"
+        }
+      ],
+      "vcruntime140.dll": [
+        {
+          "name": "__std_exception_destroy"
+        },
+        {
+          "name": "memcpy"
+        },
+        {
+          "name": "_except_handler4_common"
+        },
+        {
+          "name": "__std_type_info_destroy_list"
+        },
+        {
+          "name": "memset"
+        },
+        {
+          "name": "__CxxFrameHandler3"
+        },
+        {
+          "name": "memmove"
+        },
+        {
+          "name": "_CxxThrowException"
+        },
+        {
+          "name": "__std_exception_copy"
+        }
+      ],
+      "api-ms-win-crt-runtime-l1-1-0.dll": [
+        {
+          "name": "_configure_narrow_argv"
+        },
+        {
+          "name": "_initialize_onexit_table"
+        },
+        {
+          "name": "_seh_filter_dll"
+        },
+        {
+          "name": "_execute_onexit_table"
+        },
+        {
+          "name": "_crt_atexit"
+        },
+        {
+          "name": "_cexit"
+        },
+        {
+          "name": "_initterm"
+        },
+        {
+          "name": "_initialize_narrow_environment"
+        },
+        {
+          "name": "_register_onexit_function"
+        },
+        {
+          "name": "_getpid"
+        },
+        {
+          "name": "_initterm_e"
+        }
+      ],
+      "api-ms-win-crt-string-l1-1-0.dll": [
+        {
+          "name": "strncpy_s"
+        }
+      ],
+      "api-ms-win-crt-stdio-l1-1-0.dll": [
+        {
+          "name": "__stdio_common_vfprintf"
+        },
+        {
+          "name": "__acrt_iob_func"
+        },
+        {
+          "name": "__stdio_common_vsprintf_s"
+        },
+        {
+          "name": "__stdio_common_vsnprintf_s"
+        }
+      ],
+      "api-ms-win-crt-heap-l1-1-0.dll": [
+        {
+          "name": "malloc"
+        },
+        {
+          "name": "_callnewh"
+        },
+        {
+          "name": "free"
+        }
+      ]
+    },
+    "msvcp140.dll": {
+      "vcruntime140.dll": [
+        {
+          "name": "_except_handler4_common"
+        },
+        {
+          "name": "__current_exception_context"
+        },
+        {
+          "name": "__uncaught_exceptions"
+        },
+        {
+          "name": "__uncaught_exception"
+        },
+        {
+          "name": "memchr"
+        },
+        {
+          "name": "memmove"
+        },
+        {
+          "name": "__std_terminate"
+        },
+        {
+          "name": "_purecall"
+        },
+        {
+          "name": "memset"
+        },
+        {
+          "name": "memcpy"
+        },
+        {
+          "name": "__CxxFrameHandler3"
+        },
+        {
+          "name": "_CxxThrowException"
+        },
+        {
+          "name": "__AdjustPointer"
+        },
+        {
+          "name": "__current_exception"
+        },
+        {
+          "name": "__std_exception_destroy"
+        },
+        {
+          "name": "__std_type_info_destroy_list"
+        },
+        {
+          "name": "__std_exception_copy"
+        }
+      ],
+      "api-ms-win-crt-heap-l1-1-0.dll": [
+        {
+          "name": "malloc"
+        },
+        {
+          "name": "realloc"
+        },
+        {
+          "name": "calloc"
+        },
+        {
+          "name": "free"
+        },
+        {
+          "name": "_callnewh"
+        }
+      ],
+      "api-ms-win-crt-runtime-l1-1-0.dll": [
+        {
+          "name": "_execute_onexit_table"
+        },
+        {
+          "name": "_initialize_onexit_table"
+        },
+        {
+          "name": "_endthreadex"
+        },
+        {
+          "name": "_beginthreadex"
+        },
+        {
+          "name": "_set_new_handler"
+        },
+        {
+          "name": "abort"
+        },
+        {
+          "name": "_initialize_narrow_environment"
+        },
+        {
+          "name": "_cexit"
+        },
+        {
+          "name": "terminate"
+        },
+        {
+          "name": "_initterm"
+        },
+        {
+          "name": "_register_onexit_function"
+        },
+        {
+          "name": "_initterm_e"
+        },
+        {
+          "name": "_errno"
+        },
+        {
+          "name": "_seh_filter_dll"
+        },
+        {
+          "name": "_crt_atexit"
+        },
+        {
+          "name": "_configure_narrow_argv"
+        }
+      ],
+      "api-ms-win-crt-string-l1-1-0.dll": [
+        {
+          "name": "wcsnlen"
+        },
+        {
+          "name": "__strncnt"
+        },
+        {
+          "name": "tolower"
+        },
+        {
+          "name": "isupper"
+        },
+        {
+          "name": "strcspn"
+        },
+        {
+          "name": "_wcsdup"
+        },
+        {
+          "name": "wcscpy_s"
+        },
+        {
+          "name": "islower"
+        },
+        {
+          "name": "isspace"
+        }
+      ],
+      "api-ms-win-crt-locale-l1-1-0.dll": [
+        {
+          "name": "___lc_locale_name_func"
+        },
+        {
+          "name": "___mb_cur_max_func"
+        },
+        {
+          "name": "__pctype_func"
+        },
+        {
+          "name": "localeconv"
+        },
+        {
+          "name": "___lc_codepage_func"
+        },
+        {
+          "name": "___lc_collate_cp_func"
+        },
+        {
+          "name": "_wsetlocale"
+        },
+        {
+          "name": "setlocale"
+        },
+        {
+          "name": "_lock_locales"
+        },
+        {
+          "name": "_unlock_locales"
+        }
+      ],
+      "api-ms-win-crt-stdio-l1-1-0.dll": [
+        {
+          "name": "ungetwc"
+        },
+        {
+          "name": "fputwc"
+        },
+        {
+          "name": "_wfsopen"
+        },
+        {
+          "name": "_fsopen"
+        },
+        {
+          "name": "fgetwc"
+        },
+        {
+          "name": "fputs"
+        },
+        {
+          "name": "__acrt_iob_func"
+        },
+        {
+          "name": "_get_stream_buffer_pointers"
+        },
+        {
+          "name": "fclose"
+        },
+        {
+          "name": "fflush"
+        },
+        {
+          "name": "fgetc"
+        },
+        {
+          "name": "fgetpos"
+        },
+        {
+          "name": "fputc"
+        },
+        {
+          "name": "__stdio_common_vsprintf_s"
+        },
+        {
+          "name": "fread"
+        },
+        {
+          "name": "fsetpos"
+        },
+        {
+          "name": "ungetc"
+        },
+        {
+          "name": "setvbuf"
+        },
+        {
+          "name": "fwrite"
+        },
+        {
+          "name": "_fseeki64"
+        },
+        {
+          "name": "fseek"
+        }
+      ],
+      "api-ms-win-crt-filesystem-l1-1-0.dll": [
+        {
+          "name": "_wremove"
+        },
+        {
+          "name": "_wrmdir"
+        },
+        {
+          "name": "_wchdir"
+        },
+        {
+          "name": "_lock_file"
+        },
+        {
+          "name": "_unlock_file"
+        },
+        {
+          "name": "_wrename"
+        }
+      ],
+      "api-ms-win-crt-time-l1-1-0.dll": [
+        {
+          "name": "_Strftime"
+        },
+        {
+          "name": "_W_Getmonths"
+        },
+        {
+          "name": "_W_Getdays"
+        },
+        {
+          "name": "_Gettnames"
+        },
+        {
+          "name": "_Getmonths"
+        },
+        {
+          "name": "_Getdays"
+        },
+        {
+          "name": "_Wcsftime"
+        },
+        {
+          "name": "_W_Gettnames"
+        }
+      ],
+      "api-ms-win-crt-environment-l1-1-0.dll": [
+        {
+          "name": "_wgetcwd"
+        }
+      ],
+      "api-ms-win-crt-math-l1-1-0.dll": [
+        {
+          "name": "_dsign"
+        },
+        {
+          "name": "_fdsign"
+        },
+        {
+          "name": "_libm_sse2_pow_precise"
+        },
+        {
+          "name": "_dclass"
+        },
+        {
+          "name": "lgammal"
+        },
+        {
+          "name": "lgammaf"
+        },
+        {
+          "name": "lgamma"
+        },
+        {
+          "name": "copysignf"
+        },
+        {
+          "name": "copysign"
+        },
+        {
+          "name": "_fdclass"
+        },
+        {
+          "name": "_ldclass"
+        },
+        {
+          "name": "frexp"
+        }
+      ],
+      "api-ms-win-crt-convert-l1-1-0.dll": [
+        {
+          "name": "wcstod"
+        },
+        {
+          "name": "wcstof"
+        },
+        {
+          "name": "strtof"
+        },
+        {
+          "name": "strtod"
+        }
+      ],
+      "api-ms-win-crt-utility-l1-1-0.dll": [
+        {
+          "name": "rand_s"
+        }
+      ],
+      "kernel32.dll": [
+        {
+          "name": "GetModuleHandleExW"
+        },
+        {
+          "name": "CompareStringEx"
+        },
+        {
+          "name": "MultiByteToWideChar"
+        },
+        {
+          "name": "GetCPInfo"
+        },
+        {
+          "name": "WideCharToMultiByte"
+        },
+        {
+          "name": "LCMapStringEx"
+        },
+        {
+          "name": "GetLocaleInfoEx"
+        },
+        {
+          "name": "ReleaseSRWLockExclusive"
+        },
+        {
+          "name": "AcquireSRWLockExclusive"
+        },
+        {
+          "name": "CreateDirectoryW"
+        },
+        {
+          "name": "FindClose"
+        },
+        {
+          "name": "FindFirstFileExW"
+        },
+        {
+          "name": "FindNextFileW"
+        },
+        {
+          "name": "GetDiskFreeSpaceExW"
+        },
+        {
+          "name": "GetFileAttributesExW"
+        },
+        {
+          "name": "GetFileInformationByHandle"
+        },
+        {
+          "name": "SetFileAttributesW"
+        },
+        {
+          "name": "InitializeSListHead"
+        },
+        {
+          "name": "GetSystemTimeAsFileTime"
+        },
+        {
+          "name": "GetCurrentProcessId"
+        },
+        {
+          "name": "IsProcessorFeaturePresent"
+        },
+        {
+          "name": "GetProcAddress"
+        },
+        {
+          "name": "GetModuleHandleW"
+        },
+        {
+          "name": "CloseThreadpoolWait"
+        },
+        {
+          "name": "SetThreadpoolWait"
+        },
+        {
+          "name": "CreateThreadpoolWait"
+        },
+        {
+          "name": "CloseThreadpoolTimer"
+        },
+        {
+          "name": "WaitForThreadpoolTimerCallbacks"
+        },
+        {
+          "name": "SetThreadpoolTimer"
+        },
+        {
+          "name": "CreateThreadpoolTimer"
+        },
+        {
+          "name": "GetTickCount64"
+        },
+        {
+          "name": "GetCurrentProcessorNumber"
+        },
+        {
+          "name": "FlushProcessWriteBuffers"
+        },
+        {
+          "name": "CreateSemaphoreExW"
+        },
+        {
+          "name": "CreateEventExW"
+        },
+        {
+          "name": "GetTempPathW"
+        },
+        {
+          "name": "InitOnceExecuteOnce"
+        },
+        {
+          "name": "GetStringTypeW"
+        },
+        {
+          "name": "DeleteCriticalSection"
+        },
+        {
+          "name": "InitializeCriticalSectionEx"
+        },
+        {
+          "name": "LeaveCriticalSection"
+        },
+        {
+          "name": "EnterCriticalSection"
+        },
+        {
+          "name": "GetSystemTimePreciseAsFileTime"
+        },
+        {
+          "name": "QueryPerformanceFrequency"
+        },
+        {
+          "name": "QueryPerformanceCounter"
+        },
+        {
+          "name": "RaiseException"
+        },
+        {
+          "name": "CloseThreadpoolWork"
+        },
+        {
+          "name": "SubmitThreadpoolWork"
+        },
+        {
+          "name": "CreateThreadpoolWork"
+        },
+        {
+          "name": "FreeLibraryWhenCallbackReturns"
+        },
+        {
+          "name": "RtlCaptureStackBackTrace"
+        },
+        {
+          "name": "TryAcquireSRWLockExclusive"
+        },
+        {
+          "name": "GetLogicalProcessorInformationEx"
+        },
+        {
+          "name": "GetExitCodeThread"
+        },
+        {
+          "name": "SwitchToThread"
+        },
+        {
+          "name": "Sleep"
+        },
+        {
+          "name": "WaitForSingleObjectEx"
+        },
+        {
+          "name": "GetCurrentThreadId"
+        },
+        {
+          "name": "SleepConditionVariableSRW"
+        },
+        {
+          "name": "WakeAllConditionVariable"
+        },
+        {
+          "name": "WakeConditionVariable"
+        },
+        {
+          "name": "FormatMessageA"
+        },
+        {
+          "name": "LocalFree"
+        },
+        {
+          "name": "DecodePointer"
+        },
+        {
+          "name": "EncodePointer"
+        },
+        {
+          "name": "CreateSymbolicLinkW"
+        },
+        {
+          "name": "GetFileInformationByHandleEx"
+        },
+        {
+          "name": "CreateHardLinkW"
+        },
+        {
+          "name": "CopyFile2"
+        },
+        {
+          "name": "GetLastError"
+        },
+        {
+          "name": "CloseHandle"
+        },
+        {
+          "name": "AreFileApisANSI"
+        },
+        {
+          "name": "CreateFile2"
+        },
+        {
+          "name": "SetFileTime"
+        },
+        {
+          "name": "SetFileInformationByHandle"
+        }
+      ]
+    },
+    "vcruntime140.dll": {
+      "api-ms-win-crt-runtime-l1-1-0.dll": [
+        {
+          "name": "terminate"
+        },
+        {
+          "name": "abort"
+        }
+      ],
+      "api-ms-win-crt-heap-l1-1-0.dll": [
+        {
+          "name": "calloc"
+        },
+        {
+          "name": "malloc"
+        },
+        {
+          "name": "free"
+        }
+      ],
+      "api-ms-win-crt-string-l1-1-0.dll": [
+        {
+          "name": "strcpy_s"
+        },
+        {
+          "name": "strncmp"
+        }
+      ],
+      "api-ms-win-crt-stdio-l1-1-0.dll": [
+        {
+          "name": "__stdio_common_vsprintf_s"
+        },
+        {
+          "name": "__stdio_common_vsprintf"
+        }
+      ],
+      "api-ms-win-crt-convert-l1-1-0.dll": [
+        {
+          "name": "atol"
+        }
+      ],
+      "kernel32.dll": [
+        {
+          "name": "LeaveCriticalSection"
+        },
+        {
+          "name": "GetSystemTimeAsFileTime"
+        },
+        {
+          "name": "GetCurrentThreadId"
+        },
+        {
+          "name": "GetCurrentProcessId"
+        },
+        {
+          "name": "QueryPerformanceCounter"
+        },
+        {
+          "name": "IsProcessorFeaturePresent"
+        },
+        {
+          "name": "RtlUnwind"
+        },
+        {
+          "name": "VirtualQuery"
+        },
+        {
+          "name": "LoadLibraryExW"
+        },
+        {
+          "name": "GetModuleHandleW"
+        },
+        {
+          "name": "GetModuleFileNameW"
+        },
+        {
+          "name": "FlsFree"
+        },
+        {
+          "name": "FlsSetValue"
+        },
+        {
+          "name": "FlsGetValue"
+        },
+        {
+          "name": "FlsAlloc"
+        },
+        {
+          "name": "EncodePointer"
+        },
+        {
+          "name": "InterlockedPushEntrySList"
+        },
+        {
+          "name": "InterlockedFlushSList"
+        },
+        {
+          "name": "RaiseException"
+        },
+        {
+          "name": "EnterCriticalSection"
+        },
+        {
+          "name": "GetLastError"
+        },
+        {
+          "name": "InitializeCriticalSectionEx"
+        },
+        {
+          "name": "DeleteCriticalSection"
+        },
+        {
+          "name": "SetLastError"
+        }
+      ]
+    }
+  },
+  "matched_vc_imports": [
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "msvcp140.dll",
+      "symbol": {
+        "name": "?_Xlength_error@std@@YAXPBD@Z"
+      },
+      "target": {
+        "ordinal": 655,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__std_exception_destroy"
+      },
+      "target": {
+        "ordinal": 35,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "memcpy"
+      },
+      "target": {
+        "ordinal": 71,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "_except_handler4_common"
+      },
+      "target": {
+        "ordinal": 54,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__std_type_info_destroy_list"
+      },
+      "target": {
+        "ordinal": 38,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "memset"
+      },
+      "target": {
+        "ordinal": 73,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__CxxFrameHandler3"
+      },
+      "target": {
+        "ordinal": 17,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "memmove"
+      },
+      "target": {
+        "ordinal": 72,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "_CxxThrowException"
+      },
+      "target": {
+        "ordinal": 2,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "CrashRpt.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__std_exception_copy"
+      },
+      "target": {
+        "ordinal": 34,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "_except_handler4_common"
+      },
+      "target": {
+        "ordinal": 54,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__current_exception_context"
+      },
+      "target": {
+        "ordinal": 30,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__uncaught_exceptions"
+      },
+      "target": {
+        "ordinal": 46,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__uncaught_exception"
+      },
+      "target": {
+        "ordinal": 45,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "memchr"
+      },
+      "target": {
+        "ordinal": 69,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "memmove"
+      },
+      "target": {
+        "ordinal": 72,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__std_terminate"
+      },
+      "target": {
+        "ordinal": 36,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "_purecall"
+      },
+      "target": {
+        "ordinal": 62,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "memset"
+      },
+      "target": {
+        "ordinal": 73,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "memcpy"
+      },
+      "target": {
+        "ordinal": 71,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__CxxFrameHandler3"
+      },
+      "target": {
+        "ordinal": 17,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "_CxxThrowException"
+      },
+      "target": {
+        "ordinal": 2,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__AdjustPointer"
+      },
+      "target": {
+        "ordinal": 10,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__current_exception"
+      },
+      "target": {
+        "ordinal": 29,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__std_exception_destroy"
+      },
+      "target": {
+        "ordinal": 35,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__std_type_info_destroy_list"
+      },
+      "target": {
+        "ordinal": 38,
+        "forwarder": null
+      }
+    },
+    {
+      "consumer": "msvcp140.dll",
+      "dll": "vcruntime140.dll",
+      "symbol": {
+        "name": "__std_exception_copy"
+      },
+      "target": {
+        "ordinal": 34,
+        "forwarder": null
+      }
+    }
+  ],
+  "forwarded_vc_exports_needing_platform_admission": [],
+  "unqualified_platform_imports": {
+    "odbc32.dll": [
+      {
+        "consumer": "DbServer.exe",
+        "symbols": [
+          {
+            "ordinal": 160
+          },
+          {
+            "ordinal": 154
+          },
+          {
+            "ordinal": 145
+          },
+          {
+            "ordinal": 140
+          },
+          {
+            "ordinal": 236
+          },
+          {
+            "ordinal": 111
+          },
+          {
+            "ordinal": 72
+          },
+          {
+            "ordinal": 61
+          },
+          {
+            "ordinal": 41
+          },
+          {
+            "ordinal": 75
+          },
+          {
+            "ordinal": 39
+          },
+          {
+            "ordinal": 19
+          },
+          {
+            "ordinal": 38
+          },
+          {
+            "ordinal": 33
+          },
+          {
+            "ordinal": 43
+          },
+          {
+            "ordinal": 16
+          },
+          {
+            "ordinal": 31
+          },
+          {
+            "ordinal": 13
+          },
+          {
+            "ordinal": 12
+          },
+          {
+            "ordinal": 11
+          },
+          {
+            "ordinal": 29
+          },
+          {
+            "ordinal": 9
+          },
+          {
+            "ordinal": 26
+          },
+          {
+            "ordinal": 5
+          },
+          {
+            "ordinal": 4
+          },
+          {
+            "ordinal": 24
+          }
+        ]
+      }
+    ],
+    "iphlpapi.dll": [
+      {
+        "consumer": "DbServer.exe",
+        "symbols": [
+          {
+            "name": "GetIpAddrTable"
+          }
+        ]
+      }
+    ],
+    "ws2_32.dll": [
+      {
+        "consumer": "DbServer.exe",
+        "symbols": [
+          {
+            "ordinal": 16
+          },
+          {
+            "ordinal": 13
+          },
+          {
+            "ordinal": 8
+          },
+          {
+            "ordinal": 1
+          },
+          {
+            "ordinal": 57
+          },
+          {
+            "ordinal": 52
+          },
+          {
+            "name": "WSASocketA"
+          },
+          {
+            "ordinal": 111
+          },
+          {
+            "ordinal": 19
+          },
+          {
+            "ordinal": 11
+          },
+          {
+            "ordinal": 4
+          },
+          {
+            "ordinal": 3
+          },
+          {
+            "ordinal": 9
+          },
+          {
+            "ordinal": 23
+          },
+          {
+            "ordinal": 15
+          },
+          {
+            "ordinal": 18
+          },
+          {
+            "ordinal": 21
+          },
+          {
+            "ordinal": 51
+          },
+          {
+            "name": "getaddrinfo"
+          },
+          {
+            "name": "freeaddrinfo"
+          },
+          {
+            "name": "inet_ntop"
+          },
+          {
+            "ordinal": 20
+          },
+          {
+            "name": "WSARecv"
+          },
+          {
+            "name": "WSARecvFrom"
+          },
+          {
+            "name": "WSASend"
+          },
+          {
+            "ordinal": 115
+          },
+          {
+            "ordinal": 151
+          },
+          {
+            "ordinal": 10
+          },
+          {
+            "ordinal": 2
+          },
+          {
+            "ordinal": 6
+          },
+          {
+            "ordinal": 14
+          },
+          {
+            "ordinal": 7
+          },
+          {
+            "ordinal": 17
+          }
+        ]
+      }
+    ],
+    "winmm.dll": [
+      {
+        "consumer": "DbServer.exe",
+        "symbols": [
+          {
+            "name": "timeBeginPeriod"
+          },
+          {
+            "name": "timeGetTime"
+          }
+        ]
+      }
+    ],
+    "advapi32.dll": [
+      {
+        "consumer": "DbServer.exe",
+        "symbols": [
+          {
+            "name": "RegOpenKeyExA"
+          },
+          {
+            "name": "RegQueryValueExA"
+          },
+          {
+            "name": "RegCloseKey"
+          },
+          {
+            "name": "RegDeleteValueA"
+          },
+          {
+            "name": "RegCreateKeyExA"
+          }
+        ]
+      }
+    ],
+    "user32.dll": [
+      {
+        "consumer": "DbServer.exe",
+        "symbols": [
+          {
+            "name": "SetWindowTextA"
+          },
+          {
+            "name": "EnableWindow"
+          },
+          {
+            "name": "KillTimer"
+          },
+          {
+            "name": "SetTimer"
+          },
+          {
+            "name": "SetFocus"
+          },
+          {
+            "name": "SendDlgItemMessageA"
+          },
+          {
+            "name": "ShowCursor"
+          },
+          {
+            "name": "EndDialog"
+          },
+          {
+            "name": "DialogBoxIndirectParamA"
+          },
+          {
+            "name": "MoveWindow"
+          },
+          {
+            "name": "ShowWindow"
+          },
+          {
+            "name": "SendMessageA"
+          },
+          {
+            "name": "MessageBoxA"
+          },
+          {
+            "name": "GetWindowRect"
+          },
+          {
+            "name": "MapWindowPoints"
+          },
+          {
+            "name": "IsIconic"
+          },
+          {
+            "name": "PeekMessageA"
+          },
+          {
+            "name": "GetSystemMenu"
+          },
+          {
+            "name": "DeleteMenu"
+          },
+          {
+            "name": "OpenClipboard"
+          },
+          {
+            "name": "CloseClipboard"
+          },
+          {
+            "name": "SetClipboardData"
+          },
+          {
+            "name": "EmptyClipboard"
+          },
+          {
+            "name": "FindWindowA"
+          },
+          {
+            "name": "FlashWindowEx"
+          },
+          {
+            "name": "SendMessageW"
+          },
+          {
+            "name": "CreateIconIndirect"
+          },
+          {
+            "name": "GetDlgItem"
+          }
+        ]
+      }
+    ],
+    "gdi32.dll": [
+      {
+        "consumer": "DbServer.exe",
+        "symbols": [
+          {
+            "name": "TextOutW"
+          },
+          {
+            "name": "SetTextColor"
+          },
+          {
+            "name": "SetBkMode"
+          },
+          {
+            "name": "SelectObject"
+          },
+          {
+            "name": "GetTextExtentPoint32W"
+          },
+          {
+            "name": "DeleteObject"
+          },
+          {
+            "name": "DeleteDC"
+          },
+          {
+            "name": "CreateFontW"
+          },
+          {
+            "name": "CreateDCA"
+          },
+          {
+            "name": "CreateCompatibleDC"
+          },
+          {
+            "name": "CreateCompatibleBitmap"
+          },
+          {
+            "name": "CreateBitmap"
+          },
+          {
+            "name": "CreateFontIndirectA"
+          }
+        ]
+      }
+    ],
+    "kernel32.dll": [
+      {
+        "consumer": "DbServer.exe",
+        "symbols": [
+          {
+            "name": "GetCommandLineW"
+          },
+          {
+            "name": "GetCommandLineA"
+          },
+          {
+            "name": "GetModuleFileNameW"
+          },
+          {
+            "name": "UnhandledExceptionFilter"
+          },
+          {
+            "name": "GetCurrentDirectoryW"
+          },
+          {
+            "name": "SetCurrentDirectoryW"
+          },
+          {
+            "name": "SetEnvironmentVariableW"
+          },
+          {
+            "name": "CreateProcessW"
+          },
+          {
+            "name": "SetStdHandle"
+          },
+          {
+            "name": "PeekNamedPipe"
+          },
+          {
+            "name": "GetFileType"
+          },
+          {
+            "name": "CreateFileW"
+          },
+          {
+            "name": "ReadConsoleW"
+          },
+          {
+            "name": "FreeLibraryAndExitThread"
+          },
+          {
+            "name": "ExitThread"
+          },
+          {
+            "name": "CreateThread"
+          },
+          {
+            "name": "SystemTimeToTzSpecificLocalTime"
+          },
+          {
+            "name": "FindNextFileW"
+          },
+          {
+            "name": "FindFirstFileExW"
+          },
+          {
+            "name": "GetConsoleCP"
+          },
+          {
+            "name": "GetFullPathNameW"
+          },
+          {
+            "name": "GetDriveTypeW"
+          },
+          {
+            "name": "GetModuleHandleExW"
+          },
+          {
+            "name": "TerminateProcess"
+          },
+          {
+            "name": "FlsFree"
+          },
+          {
+            "name": "FlsSetValue"
+          },
+          {
+            "name": "FlsGetValue"
+          },
+          {
+            "name": "FlsAlloc"
+          },
+          {
+            "name": "InterlockedPushEntrySList"
+          },
+          {
+            "name": "RtlUnwind"
+          },
+          {
+            "name": "GetCPInfo"
+          },
+          {
+            "name": "GetStringTypeW"
+          },
+          {
+            "name": "DecodePointer"
+          },
+          {
+            "name": "EncodePointer"
+          },
+          {
+            "name": "InitializeCriticalSectionEx"
+          },
+          {
+            "name": "GetSystemTimePreciseAsFileTime"
+          },
+          {
+            "name": "TryAcquireSRWLockExclusive"
+          },
+          {
+            "name": "GetModuleHandleW"
+          },
+          {
+            "name": "GetStartupInfoW"
+          },
+          {
+            "name": "SetUnhandledExceptionFilter"
+          },
+          {
+            "name": "SleepConditionVariableSRW"
+          },
+          {
+            "name": "ReadConsoleInputW"
+          },
+          {
+            "name": "AcquireSRWLockExclusive"
+          },
+          {
+            "name": "PeekConsoleInputA"
+          },
+          {
+            "name": "CreateDirectoryW"
+          },
+          {
+            "name": "SetFileAttributesW"
+          },
+          {
+            "name": "GetFileSizeEx"
+          },
+          {
+            "name": "GetConsoleOutputCP"
+          },
+          {
+            "name": "HeapQueryInformation"
+          },
+          {
+            "name": "IsValidCodePage"
+          },
+          {
+            "name": "GetACP"
+          },
+          {
+            "name": "GetOEMCP"
+          },
+          {
+            "name": "GetEnvironmentStringsW"
+          },
+          {
+            "name": "FreeEnvironmentStringsW"
+          },
+          {
+            "name": "ReleaseSRWLockExclusive"
+          },
+          {
+            "name": "InitializeSListHead"
+          },
+          {
+            "name": "IsProcessorFeaturePresent"
+          },
+          {
+            "name": "InitOnceExecuteOnce"
+          },
+          {
+            "name": "GetTickCount"
+          },
+          {
+            "name": "ReadDirectoryChangesW"
+          },
+          {
+            "name": "SetThreadPriority"
+          },
+          {
+            "name": "WaitForMultipleObjectsEx"
+          },
+          {
+            "name": "TlsFree"
+          },
+          {
+            "name": "FindNextFileA"
+          },
+          {
+            "name": "GetFileInformationByHandle"
+          },
+          {
+            "name": "GetFileAttributesA"
+          },
+          {
+            "name": "FindFirstFileA"
+          },
+          {
+            "name": "FindClose"
+          },
+          {
+            "name": "GetVersionExA"
+          },
+          {
+            "name": "VirtualProtect"
+          },
+          {
+            "name": "CreateMutexA"
+          },
+          {
+            "name": "ReleaseMutex"
+          },
+          {
+            "name": "GetModuleHandleA"
+          },
+          {
+            "name": "GetExitCodeProcess"
+          },
+          {
+            "name": "HeapUnlock"
+          },
+          {
+            "name": "HeapLock"
+          },
+          {
+            "name": "HeapValidate"
+          },
+          {
+            "name": "QueueUserAPC"
+          },
+          {
+            "name": "SetEvent"
+          },
+          {
+            "name": "GetConsoleTitleA"
+          },
+          {
+            "name": "OpenFileMappingA"
+          },
+          {
+            "name": "GlobalLock"
+          },
+          {
+            "name": "GlobalUnlock"
+          },
+          {
+            "name": "GlobalAlloc"
+          },
+          {
+            "name": "MapViewOfFileEx"
+          },
+          {
+            "name": "GetProcessHeap"
+          },
+          {
+            "name": "HeapFree"
+          },
+          {
+            "name": "HeapAlloc"
+          },
+          {
+            "name": "PostQueuedCompletionStatus"
+          },
+          {
+            "name": "LoadLibraryExW"
+          },
+          {
+            "name": "HeapSize"
+          },
+          {
+            "name": "CompareStringW"
+          },
+          {
+            "name": "LCMapStringW"
+          },
+          {
+            "name": "HeapReAlloc"
+          },
+          {
+            "name": "DeleteFileW"
+          },
+          {
+            "name": "GetFileAttributesExW"
+          },
+          {
+            "name": "MoveFileExW"
+          },
+          {
+            "name": "GetNumberOfConsoleInputEvents"
+          },
+          {
+            "name": "WakeAllConditionVariable"
+          },
+          {
+            "name": "InitializeCriticalSection"
+          },
+          {
+            "name": "Sleep"
+          },
+          {
+            "name": "GetSystemInfo"
+          },
+          {
+            "name": "GetTimeZoneInformation"
+          },
+          {
+            "name": "EnterCriticalSection"
+          },
+          {
+            "name": "LeaveCriticalSection"
+          },
+          {
+            "name": "MultiByteToWideChar"
+          },
+          {
+            "name": "CloseHandle"
+          },
+          {
+            "name": "InitializeCriticalSectionAndSpinCount"
+          },
+          {
+            "name": "DeleteCriticalSection"
+          },
+          {
+            "name": "ReleaseSemaphore"
+          },
+          {
+            "name": "WaitForSingleObject"
+          },
+          {
+            "name": "SleepEx"
+          },
+          {
+            "name": "CreateEventA"
+          },
+          {
+            "name": "SignalObjectAndWait"
+          },
+          {
+            "name": "SwitchToThread"
+          },
+          {
+            "name": "GetExitCodeThread"
+          },
+          {
+            "name": "CreateSemaphoreA"
+          },
+          {
+            "name": "WideCharToMultiByte"
+          },
+          {
+            "name": "IsDebuggerPresent"
+          },
+          {
+            "name": "GetLastError"
+          },
+          {
+            "name": "SetConsoleCtrlHandler"
+          },
+          {
+            "name": "GetConsoleWindow"
+          },
+          {
+            "name": "GetEnvironmentVariableA"
+          },
+          {
+            "name": "CreateFileA"
+          },
+          {
+            "name": "SetLastError"
+          },
+          {
+            "name": "GetCurrentProcessId"
+          },
+          {
+            "name": "GetCurrentThreadId"
+          },
+          {
+            "name": "MapViewOfFile"
+          },
+          {
+            "name": "UnmapViewOfFile"
+          },
+          {
+            "name": "CreateFileMappingA"
+          },
+          {
+            "name": "DuplicateHandle"
+          },
+          {
+            "name": "WriteConsoleW"
+          },
+          {
+            "name": "GetCurrentProcess"
+          },
+          {
+            "name": "GetCurrentThread"
+          },
+          {
+            "name": "SuspendThread"
+          },
+          {
+            "name": "ResumeThread"
+          },
+          {
+            "name": "CreateProcessA"
+          },
+          {
+            "name": "VirtualQuery"
+          },
+          {
+            "name": "FreeLibrary"
+          },
+          {
+            "name": "GetModuleFileNameA"
+          },
+          {
+            "name": "GetProcAddress"
+          },
+          {
+            "name": "LoadLibraryA"
+          },
+          {
+            "name": "FormatMessageA"
+          },
+          {
+            "name": "CreateToolhelp32Snapshot"
+          },
+          {
+            "name": "Thread32First"
+          },
+          {
+            "name": "Thread32Next"
+          },
+          {
+            "name": "TlsAlloc"
+          },
+          {
+            "name": "TlsGetValue"
+          },
+          {
+            "name": "TlsSetValue"
+          },
+          {
+            "name": "K32GetProcessMemoryInfo"
+          },
+          {
+            "name": "FileTimeToLocalFileTime"
+          },
+          {
+            "name": "LocalFileTimeToFileTime"
+          },
+          {
+            "name": "QueryPerformanceCounter"
+          },
+          {
+            "name": "QueryPerformanceFrequency"
+          },
+          {
+            "name": "GetSystemTimeAsFileTime"
+          },
+          {
+            "name": "GetLocalTime"
+          },
+          {
+            "name": "FileTimeToSystemTime"
+          },
+          {
+            "name": "SystemTimeToFileTime"
+          },
+          {
+            "name": "GetStdHandle"
+          },
+          {
+            "name": "OutputDebugStringA"
+          },
+          {
+            "name": "RaiseException"
+          },
+          {
+            "name": "GetSystemTime"
+          },
+          {
+            "name": "GetConsoleMode"
+          },
+          {
+            "name": "SetConsoleMode"
+          },
+          {
+            "name": "GetConsoleScreenBufferInfo"
+          },
+          {
+            "name": "SetConsoleScreenBufferSize"
+          },
+          {
+            "name": "GetLargestConsoleWindowSize"
+          },
+          {
+            "name": "SetConsoleTextAttribute"
+          },
+          {
+            "name": "SetConsoleWindowInfo"
+          },
+          {
+            "name": "SetConsoleTitleA"
+          },
+          {
+            "name": "ExitProcess"
+          },
+          {
+            "name": "LocalFree"
+          },
+          {
+            "name": "TryEnterCriticalSection"
+          },
+          {
+            "name": "CancelIo"
+          },
+          {
+            "name": "CreateDirectoryA"
+          },
+          {
+            "name": "FlushFileBuffers"
+          },
+          {
+            "name": "GetDiskFreeSpaceExA"
+          },
+          {
+            "name": "GetFileSize"
+          },
+          {
+            "name": "GetFileTime"
+          },
+          {
+            "name": "GetFullPathNameA"
+          },
+          {
+            "name": "ReadFile"
+          },
+          {
+            "name": "SetEndOfFile"
+          },
+          {
+            "name": "SetFilePointerEx"
+          },
+          {
+            "name": "WriteFile"
+          },
+          {
+            "name": "GetCurrentDirectoryA"
+          },
+          {
+            "name": "CreateIoCompletionPort"
+          },
+          {
+            "name": "GetQueuedCompletionStatus"
+          }
+        ]
+      },
+      {
+        "consumer": "CrashRpt.dll",
+        "symbols": [
+          {
+            "name": "SetUnhandledExceptionFilter"
+          },
+          {
+            "name": "GetCurrentThreadId"
+          },
+          {
+            "name": "GetEnvironmentVariableA"
+          },
+          {
+            "name": "GetCurrentDirectoryA"
+          },
+          {
+            "name": "CloseHandle"
+          },
+          {
+            "name": "DuplicateHandle"
+          },
+          {
+            "name": "GetLastError"
+          },
+          {
+            "name": "SetLastError"
+          },
+          {
+            "name": "SetEvent"
+          },
+          {
+            "name": "WaitForSingleObject"
+          },
+          {
+            "name": "SleepEx"
+          },
+          {
+            "name": "CreateEventA"
+          },
+          {
+            "name": "QueueUserAPC"
+          },
+          {
+            "name": "GetCurrentProcess"
+          },
+          {
+            "name": "GetCurrentProcessId"
+          },
+          {
+            "name": "CreateThread"
+          },
+          {
+            "name": "GetCurrentThread"
+          },
+          {
+            "name": "TerminateThread"
+          },
+          {
+            "name": "GetThreadContext"
+          },
+          {
+            "name": "FreeLibrary"
+          },
+          {
+            "name": "GetModuleFileNameA"
+          },
+          {
+            "name": "GetProcAddress"
+          },
+          {
+            "name": "LoadLibraryA"
+          },
+          {
+            "name": "GetSystemTimeAsFileTime"
+          },
+          {
+            "name": "QueryPerformanceCounter"
+          },
+          {
+            "name": "IsProcessorFeaturePresent"
+          },
+          {
+            "name": "InitializeSListHead"
+          }
+        ]
+      },
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "GetModuleHandleExW"
+          },
+          {
+            "name": "CompareStringEx"
+          },
+          {
+            "name": "MultiByteToWideChar"
+          },
+          {
+            "name": "GetCPInfo"
+          },
+          {
+            "name": "WideCharToMultiByte"
+          },
+          {
+            "name": "LCMapStringEx"
+          },
+          {
+            "name": "GetLocaleInfoEx"
+          },
+          {
+            "name": "ReleaseSRWLockExclusive"
+          },
+          {
+            "name": "AcquireSRWLockExclusive"
+          },
+          {
+            "name": "CreateDirectoryW"
+          },
+          {
+            "name": "FindClose"
+          },
+          {
+            "name": "FindFirstFileExW"
+          },
+          {
+            "name": "FindNextFileW"
+          },
+          {
+            "name": "GetDiskFreeSpaceExW"
+          },
+          {
+            "name": "GetFileAttributesExW"
+          },
+          {
+            "name": "GetFileInformationByHandle"
+          },
+          {
+            "name": "SetFileAttributesW"
+          },
+          {
+            "name": "InitializeSListHead"
+          },
+          {
+            "name": "GetSystemTimeAsFileTime"
+          },
+          {
+            "name": "GetCurrentProcessId"
+          },
+          {
+            "name": "IsProcessorFeaturePresent"
+          },
+          {
+            "name": "GetProcAddress"
+          },
+          {
+            "name": "GetModuleHandleW"
+          },
+          {
+            "name": "CloseThreadpoolWait"
+          },
+          {
+            "name": "SetThreadpoolWait"
+          },
+          {
+            "name": "CreateThreadpoolWait"
+          },
+          {
+            "name": "CloseThreadpoolTimer"
+          },
+          {
+            "name": "WaitForThreadpoolTimerCallbacks"
+          },
+          {
+            "name": "SetThreadpoolTimer"
+          },
+          {
+            "name": "CreateThreadpoolTimer"
+          },
+          {
+            "name": "GetTickCount64"
+          },
+          {
+            "name": "GetCurrentProcessorNumber"
+          },
+          {
+            "name": "FlushProcessWriteBuffers"
+          },
+          {
+            "name": "CreateSemaphoreExW"
+          },
+          {
+            "name": "CreateEventExW"
+          },
+          {
+            "name": "GetTempPathW"
+          },
+          {
+            "name": "InitOnceExecuteOnce"
+          },
+          {
+            "name": "GetStringTypeW"
+          },
+          {
+            "name": "DeleteCriticalSection"
+          },
+          {
+            "name": "InitializeCriticalSectionEx"
+          },
+          {
+            "name": "LeaveCriticalSection"
+          },
+          {
+            "name": "EnterCriticalSection"
+          },
+          {
+            "name": "GetSystemTimePreciseAsFileTime"
+          },
+          {
+            "name": "QueryPerformanceFrequency"
+          },
+          {
+            "name": "QueryPerformanceCounter"
+          },
+          {
+            "name": "RaiseException"
+          },
+          {
+            "name": "CloseThreadpoolWork"
+          },
+          {
+            "name": "SubmitThreadpoolWork"
+          },
+          {
+            "name": "CreateThreadpoolWork"
+          },
+          {
+            "name": "FreeLibraryWhenCallbackReturns"
+          },
+          {
+            "name": "RtlCaptureStackBackTrace"
+          },
+          {
+            "name": "TryAcquireSRWLockExclusive"
+          },
+          {
+            "name": "GetLogicalProcessorInformationEx"
+          },
+          {
+            "name": "GetExitCodeThread"
+          },
+          {
+            "name": "SwitchToThread"
+          },
+          {
+            "name": "Sleep"
+          },
+          {
+            "name": "WaitForSingleObjectEx"
+          },
+          {
+            "name": "GetCurrentThreadId"
+          },
+          {
+            "name": "SleepConditionVariableSRW"
+          },
+          {
+            "name": "WakeAllConditionVariable"
+          },
+          {
+            "name": "WakeConditionVariable"
+          },
+          {
+            "name": "FormatMessageA"
+          },
+          {
+            "name": "LocalFree"
+          },
+          {
+            "name": "DecodePointer"
+          },
+          {
+            "name": "EncodePointer"
+          },
+          {
+            "name": "CreateSymbolicLinkW"
+          },
+          {
+            "name": "GetFileInformationByHandleEx"
+          },
+          {
+            "name": "CreateHardLinkW"
+          },
+          {
+            "name": "CopyFile2"
+          },
+          {
+            "name": "GetLastError"
+          },
+          {
+            "name": "CloseHandle"
+          },
+          {
+            "name": "AreFileApisANSI"
+          },
+          {
+            "name": "CreateFile2"
+          },
+          {
+            "name": "SetFileTime"
+          },
+          {
+            "name": "SetFileInformationByHandle"
+          }
+        ]
+      },
+      {
+        "consumer": "vcruntime140.dll",
+        "symbols": [
+          {
+            "name": "LeaveCriticalSection"
+          },
+          {
+            "name": "GetSystemTimeAsFileTime"
+          },
+          {
+            "name": "GetCurrentThreadId"
+          },
+          {
+            "name": "GetCurrentProcessId"
+          },
+          {
+            "name": "QueryPerformanceCounter"
+          },
+          {
+            "name": "IsProcessorFeaturePresent"
+          },
+          {
+            "name": "RtlUnwind"
+          },
+          {
+            "name": "VirtualQuery"
+          },
+          {
+            "name": "LoadLibraryExW"
+          },
+          {
+            "name": "GetModuleHandleW"
+          },
+          {
+            "name": "GetModuleFileNameW"
+          },
+          {
+            "name": "FlsFree"
+          },
+          {
+            "name": "FlsSetValue"
+          },
+          {
+            "name": "FlsGetValue"
+          },
+          {
+            "name": "FlsAlloc"
+          },
+          {
+            "name": "EncodePointer"
+          },
+          {
+            "name": "InterlockedPushEntrySList"
+          },
+          {
+            "name": "InterlockedFlushSList"
+          },
+          {
+            "name": "RaiseException"
+          },
+          {
+            "name": "EnterCriticalSection"
+          },
+          {
+            "name": "GetLastError"
+          },
+          {
+            "name": "InitializeCriticalSectionEx"
+          },
+          {
+            "name": "DeleteCriticalSection"
+          },
+          {
+            "name": "SetLastError"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-runtime-l1-1-0.dll": [
+      {
+        "consumer": "CrashRpt.dll",
+        "symbols": [
+          {
+            "name": "_configure_narrow_argv"
+          },
+          {
+            "name": "_initialize_onexit_table"
+          },
+          {
+            "name": "_seh_filter_dll"
+          },
+          {
+            "name": "_execute_onexit_table"
+          },
+          {
+            "name": "_crt_atexit"
+          },
+          {
+            "name": "_cexit"
+          },
+          {
+            "name": "_initterm"
+          },
+          {
+            "name": "_initialize_narrow_environment"
+          },
+          {
+            "name": "_register_onexit_function"
+          },
+          {
+            "name": "_getpid"
+          },
+          {
+            "name": "_initterm_e"
+          }
+        ]
+      },
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "_execute_onexit_table"
+          },
+          {
+            "name": "_initialize_onexit_table"
+          },
+          {
+            "name": "_endthreadex"
+          },
+          {
+            "name": "_beginthreadex"
+          },
+          {
+            "name": "_set_new_handler"
+          },
+          {
+            "name": "abort"
+          },
+          {
+            "name": "_initialize_narrow_environment"
+          },
+          {
+            "name": "_cexit"
+          },
+          {
+            "name": "terminate"
+          },
+          {
+            "name": "_initterm"
+          },
+          {
+            "name": "_register_onexit_function"
+          },
+          {
+            "name": "_initterm_e"
+          },
+          {
+            "name": "_errno"
+          },
+          {
+            "name": "_seh_filter_dll"
+          },
+          {
+            "name": "_crt_atexit"
+          },
+          {
+            "name": "_configure_narrow_argv"
+          }
+        ]
+      },
+      {
+        "consumer": "vcruntime140.dll",
+        "symbols": [
+          {
+            "name": "terminate"
+          },
+          {
+            "name": "abort"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-string-l1-1-0.dll": [
+      {
+        "consumer": "CrashRpt.dll",
+        "symbols": [
+          {
+            "name": "strncpy_s"
+          }
+        ]
+      },
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "wcsnlen"
+          },
+          {
+            "name": "__strncnt"
+          },
+          {
+            "name": "tolower"
+          },
+          {
+            "name": "isupper"
+          },
+          {
+            "name": "strcspn"
+          },
+          {
+            "name": "_wcsdup"
+          },
+          {
+            "name": "wcscpy_s"
+          },
+          {
+            "name": "islower"
+          },
+          {
+            "name": "isspace"
+          }
+        ]
+      },
+      {
+        "consumer": "vcruntime140.dll",
+        "symbols": [
+          {
+            "name": "strcpy_s"
+          },
+          {
+            "name": "strncmp"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-stdio-l1-1-0.dll": [
+      {
+        "consumer": "CrashRpt.dll",
+        "symbols": [
+          {
+            "name": "__stdio_common_vfprintf"
+          },
+          {
+            "name": "__acrt_iob_func"
+          },
+          {
+            "name": "__stdio_common_vsprintf_s"
+          },
+          {
+            "name": "__stdio_common_vsnprintf_s"
+          }
+        ]
+      },
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "ungetwc"
+          },
+          {
+            "name": "fputwc"
+          },
+          {
+            "name": "_wfsopen"
+          },
+          {
+            "name": "_fsopen"
+          },
+          {
+            "name": "fgetwc"
+          },
+          {
+            "name": "fputs"
+          },
+          {
+            "name": "__acrt_iob_func"
+          },
+          {
+            "name": "_get_stream_buffer_pointers"
+          },
+          {
+            "name": "fclose"
+          },
+          {
+            "name": "fflush"
+          },
+          {
+            "name": "fgetc"
+          },
+          {
+            "name": "fgetpos"
+          },
+          {
+            "name": "fputc"
+          },
+          {
+            "name": "__stdio_common_vsprintf_s"
+          },
+          {
+            "name": "fread"
+          },
+          {
+            "name": "fsetpos"
+          },
+          {
+            "name": "ungetc"
+          },
+          {
+            "name": "setvbuf"
+          },
+          {
+            "name": "fwrite"
+          },
+          {
+            "name": "_fseeki64"
+          },
+          {
+            "name": "fseek"
+          }
+        ]
+      },
+      {
+        "consumer": "vcruntime140.dll",
+        "symbols": [
+          {
+            "name": "__stdio_common_vsprintf_s"
+          },
+          {
+            "name": "__stdio_common_vsprintf"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-heap-l1-1-0.dll": [
+      {
+        "consumer": "CrashRpt.dll",
+        "symbols": [
+          {
+            "name": "malloc"
+          },
+          {
+            "name": "_callnewh"
+          },
+          {
+            "name": "free"
+          }
+        ]
+      },
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "malloc"
+          },
+          {
+            "name": "realloc"
+          },
+          {
+            "name": "calloc"
+          },
+          {
+            "name": "free"
+          },
+          {
+            "name": "_callnewh"
+          }
+        ]
+      },
+      {
+        "consumer": "vcruntime140.dll",
+        "symbols": [
+          {
+            "name": "calloc"
+          },
+          {
+            "name": "malloc"
+          },
+          {
+            "name": "free"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-locale-l1-1-0.dll": [
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "___lc_locale_name_func"
+          },
+          {
+            "name": "___mb_cur_max_func"
+          },
+          {
+            "name": "__pctype_func"
+          },
+          {
+            "name": "localeconv"
+          },
+          {
+            "name": "___lc_codepage_func"
+          },
+          {
+            "name": "___lc_collate_cp_func"
+          },
+          {
+            "name": "_wsetlocale"
+          },
+          {
+            "name": "setlocale"
+          },
+          {
+            "name": "_lock_locales"
+          },
+          {
+            "name": "_unlock_locales"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-filesystem-l1-1-0.dll": [
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "_wremove"
+          },
+          {
+            "name": "_wrmdir"
+          },
+          {
+            "name": "_wchdir"
+          },
+          {
+            "name": "_lock_file"
+          },
+          {
+            "name": "_unlock_file"
+          },
+          {
+            "name": "_wrename"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-time-l1-1-0.dll": [
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "_Strftime"
+          },
+          {
+            "name": "_W_Getmonths"
+          },
+          {
+            "name": "_W_Getdays"
+          },
+          {
+            "name": "_Gettnames"
+          },
+          {
+            "name": "_Getmonths"
+          },
+          {
+            "name": "_Getdays"
+          },
+          {
+            "name": "_Wcsftime"
+          },
+          {
+            "name": "_W_Gettnames"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-environment-l1-1-0.dll": [
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "_wgetcwd"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-math-l1-1-0.dll": [
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "_dsign"
+          },
+          {
+            "name": "_fdsign"
+          },
+          {
+            "name": "_libm_sse2_pow_precise"
+          },
+          {
+            "name": "_dclass"
+          },
+          {
+            "name": "lgammal"
+          },
+          {
+            "name": "lgammaf"
+          },
+          {
+            "name": "lgamma"
+          },
+          {
+            "name": "copysignf"
+          },
+          {
+            "name": "copysign"
+          },
+          {
+            "name": "_fdclass"
+          },
+          {
+            "name": "_ldclass"
+          },
+          {
+            "name": "frexp"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-convert-l1-1-0.dll": [
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "wcstod"
+          },
+          {
+            "name": "wcstof"
+          },
+          {
+            "name": "strtof"
+          },
+          {
+            "name": "strtod"
+          }
+        ]
+      },
+      {
+        "consumer": "vcruntime140.dll",
+        "symbols": [
+          {
+            "name": "atol"
+          }
+        ]
+      }
+    ],
+    "api-ms-win-crt-utility-l1-1-0.dll": [
+      {
+        "consumer": "msvcp140.dll",
+        "symbols": [
+          {
+            "name": "rand_s"
+          }
+        ]
+      }
+    ]
+  },
+  "source_wine_odbc_ordinal_expectations": [
+    {
+      "ordinal": 160,
+      "name": "SQLForeignKeysW",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 154,
+      "name": "SQLTablesW",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 145,
+      "name": "SQLGetInfoW",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 140,
+      "name": "SQLColumnsW",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 236,
+      "name": "SQLGetDiagRecA",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 111,
+      "name": "SQLExecDirectW",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 72,
+      "name": "SQLBindParameter",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 61,
+      "name": "SQLMoreResults",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 41,
+      "name": "SQLDriverConnect",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 75,
+      "name": "SQLSetEnvAttr",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 39,
+      "name": "SQLSetConnectAttr",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 19,
+      "name": "SQLPrepare",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 38,
+      "name": "SQLGetStmtAttr",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 33,
+      "name": "SQLGetDescField",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 43,
+      "name": "SQLGetData",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 16,
+      "name": "SQLFreeStmt",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 31,
+      "name": "SQLFreeHandle",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 13,
+      "name": "SQLFetch",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 12,
+      "name": "SQLExecute",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 11,
+      "name": "SQLExecDirect",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 29,
+      "name": "SQLEndTran",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 9,
+      "name": "SQLDisconnect",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 26,
+      "name": "SQLCloseCursor",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 5,
+      "name": "SQLCancel",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 4,
+      "name": "SQLBindCol",
+      "kind": "stdcall"
+    },
+    {
+      "ordinal": 24,
+      "name": "SQLAllocHandle",
+      "kind": "stdcall"
+    }
+  ],
+  "wine_export_map_sha256": "8752eb591dbd7395e350a6b8a1ad78468a9f099ec84e707724e431a9e18f5f53",
+  "direct_vc_import_exports_present": true,
+  "wine_odbc_pg_loader_qualified": false,
+  "runtime_profile_admitted": false,
+  "service_executed": false,
+  "actual_persistence_verified": false,
+  "nondevelopment_version_observed": false,
+  "authenticated_db_login_verified": false,
+  "shipping_runtime_replacement_permit": false,
+  "source_commit": "0403c6e25ba4f6c90dba16aa0c735c8d3dbb2193",
+  "helper_sha256": "1755c1613430c9e43d64c151e38a94ec34fce08c99ef37c88eafdf8e0cdf4d67"
+}

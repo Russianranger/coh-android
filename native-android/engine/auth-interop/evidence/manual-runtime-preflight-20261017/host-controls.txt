@@ -1,0 +1,11 @@
+test_archive_identity_fails_before_zip_parse (test_manual_runtime_preflight.RuntimePreflight.test_archive_identity_fails_before_zip_parse) ... ok
+test_delay_imports_and_export_index_refused (test_manual_runtime_preflight.RuntimePreflight.test_delay_imports_and_export_index_refused) ... ok
+test_exported_zero_initialized_data_is_virtual_not_file_read (test_manual_runtime_preflight.RuntimePreflight.test_exported_zero_initialized_data_is_virtual_not_file_read) ... ok
+test_exports_names_ordinals_forwarders (test_manual_runtime_preflight.RuntimePreflight.test_exports_names_ordinals_forwarders) ... ok
+test_name_and_ordinal_imports (test_manual_runtime_preflight.RuntimePreflight.test_name_and_ordinal_imports) ... ok
+test_parser_wrong_bitness_bounds_and_aliases (test_manual_runtime_preflight.RuntimePreflight.test_parser_wrong_bitness_bounds_and_aliases) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.001s
+
+OK

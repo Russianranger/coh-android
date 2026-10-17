@@ -1,0 +1,24 @@
+{
+  "schema": "coh-independent-private-groups-boundary-review-v1",
+  "source_commit": "d305a603f8ffb64b805524149866b6040f0af9d3",
+  "required_scope_note_commit": "520dc6dc4",
+  "verdict": "approved_uninstalled_orchestration_preparation_only",
+  "proof_sha256": "c0e70cb5343a77b56015ed42315345b7dce522df164b8d036f4871cfe457abc1",
+  "local_git_maps": 20,
+  "unique_original_git_lf_maps": 32,
+  "reported_checks_per_mode": 478,
+  "review": [
+    "Stage accepts hash-pinned original groupnetsend source, appends admitted supplier/owner helpers and inserts only begin at original worldSendUpdate entry and finish immediately before original pktSend. Original production functions remain otherwise unchanged; staged text is a return value only. Hook state remains zero; prepare merely returns a hook value. No file sink, source hook installation, actual server build or capture.",
+    "Private serialized helper acquires real named try-only quiet interface, derives actual client entity owner, emits fresh catalog/runtime/resource outputs, and retains the same lease through existing preproducer eligibility/exact original logical packet. Callbacks synchronously copy into provisional outputs. Commit happens only after successful quiet release; every failure invokes abort, including partial sink.open. Release failure quarantines helper; no future begin accepted. Final owner equality excludes only documented world/time words changed by original producer. Caller/sink callbacks must not reenter, mutate, load or yield.",
+    "Phase/ID/wrap, total128MiB/perkind emission caps, packet bit extent, reports/status/streamed counts and final owner identity are checked. Static131552B/helper stackmax5408B are separate from original packet allocator/sink/provider memory, not an aggregate allocator guarantee. Exclusive valid original pointer ownership and completed loader/folder scheduling prerequisites remain external and unimplemented.",
+    "Preexecution complete local bytes admitted; project helper itself source-compiles stored bytes. Its nested original preparation import occurs under a newly-created empty per-run pycache_prefix with bytecode writes disabled and complete before/after hash checks, preventing stale project caches.52 distinct local/original hashes match exact Git; recorded478controls per mode execute unchanged original world producer with explicitly substituted owner/export/quiet dependencies. No independent native corpus replay.",
+    "Required520 raw-bounds note leaves14346 public ordinary60B GroupBounds absent,860760 raw bytes plus decision/layout/generation evidence; normalized fields cannot replace compiler/padding bits. Current supplier outputs alone do not establish CLIENT bounds-cache equality. File0 and zero checksum fastpaths retain separate semantics. Do not install or repeat a server capture until actual caller/sink/layout/quiescence/source-generation/receive prerequisites and genuinely new required raw observations are separately qualified."
+  ],
+  "hook_installed": false,
+  "sink_installed": false,
+  "quiescence_runtime_qualified": false,
+  "raw_public_bounds_complete": false,
+  "cache_equivalence": false,
+  "world_authority": false,
+  "actual_server_executed": false
+}

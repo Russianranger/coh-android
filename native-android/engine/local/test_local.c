@@ -64,7 +64,30 @@ static void send_handoff(Peer *db,CohNetEndpoint target,Peer *map,int remote){
     for(unsigned i=0;i<7;i++)CHECK(!coh_protocol_write_pack(&b,1,fields[i]));
     application_send(db,target,p,&b,0);
 }
+typedef struct {CohLocal *local;unsigned calls;CohMapSceneLease lease;} SceneCall;
+static void scene_received(void *context,const CohMapClient *client,const CohMapSceneObservation *event){
+    SceneCall *call=context;call->calls++;
+    CHECK(client&&event&&call->calls==1);
+    CHECK(coh_map_client_scene_lease(client,event,&call->lease)==COH_OK);
+    CHECK(call->lease.selected_dbid_owner_bound&&call->lease.selected_dbid==17);
+    CHECK(call->lease.local_development_authorized&&!call->lease.source_generation_admitted&&!call->lease.world_authority);
+    CHECK(call->lease.reader.bits==source_groups_minimal_world_packed_bits);
+    CHECK(call->lease.inspection.consumed_bits==source_groups_minimal_world_packed_bits);
+    CohMapSceneObservation copied=*event;CohMapSceneLease refused={0},before=refused;
+    CHECK(coh_map_client_scene_lease(client,&copied,&refused)!=COH_OK);
+    CHECK(!memcmp(&before,&refused,sizeof(before)));
+    CohLocalDiagnostics old=diag(call->local);CohLocalCharacters characters;
+    CHECK(coh_local_service(call->local,115,(CohCancel){0})==COH_STATE);
+    CHECK(coh_local_service_observed(call->local,115,(CohCancel){0},scene_received,context)==COH_STATE);
+    CHECK(coh_local_choose_character(call->local,0,115)==COH_STATE);
+    CHECK(coh_local_characters(call->local,&characters)==COH_STATE);
+    CohDbLogin policy;CHECK(coh_local_login_policy(&policy)==COH_OK);
+    CHECK(coh_local_begin(call->local,&policy,"Fixture",201,202,115)==COH_STATE);
+    coh_local_suspend(call->local);coh_local_cancel(call->local);coh_local_close(call->local);coh_local_destroy(call->local);
+    CohLocalDiagnostics after=diag(call->local);CHECK(!memcmp(&old,&after,sizeof(old)));
+}
 static void happy_chain(unsigned malformed_catalog){
+    SceneCall observed={0};
     Peer db=peer_open(),map=peer_open();CohLocal *s=start(&db,101,102,100);CohNetEndpoint db_target=list_characters(s,&db,100);
     send_handoff(&db,db_target,&map,0);service_ok(s,106);drain_ack(&db,5);CHECK(diag(s).phase==COH_LOCAL_MAP_CONNECTING&&diag(s).map_handoffs==1&&diag(s).server_identity_bound);
     CHECK(diag(s).selected_dbid_owner_bound);
@@ -101,8 +124,10 @@ static void happy_chain(unsigned malformed_catalog){
     service_ok(s,113);drain_ack(&map,5);service_ok(s,114);request=frame_read(&map,5,0);CHECK(command(&request,5,0)==COH_MAP_REQSCENE);
     if(malformed_catalog==3)peer_message(&map,map_target,5,source_groups_unsupported_base_byte_aligned,source_groups_unsupported_base_byte_aligned_bits,1,request.id);
     else peer_message(&map,map_target,5,source_groups_minimal_world_packed,source_groups_minimal_world_packed_bits-(malformed_catalog==2?1:0),0,request.id);
+    observed.local=s;
     if(malformed_catalog==2) {
-        CHECK(coh_local_service(s,115,(CohCancel){0})==COH_INVALID);drain_ack(&map,5);
+        CHECK(coh_local_service_observed(s,115,(CohCancel){0},scene_received,&observed)==COH_INVALID);
+        CHECK(!observed.calls);drain_ack(&map,5);
         CohLocalDiagnostics d=diag(s);CHECK(d.phase==COH_LOCAL_FAILED&&d.last_status==COH_INVALID);
         CHECK(d.terminal_failure&&d.terminal_map_phase==COH_MAP_SCENE_INCOMPLETE&&d.map_phase==COH_MAP_CLOSED);
         CHECK(d.map_protocol.stage==COH_MAP_STAGE_SCENE_STRUCTURE&&d.map_protocol.scene_prefixes==1&&!d.map_protocol.scene_structures);
@@ -112,7 +137,8 @@ static void happy_chain(unsigned malformed_catalog){
         coh_local_suspend(s);CHECK(diag(s).map_protocol.scene_failure.status==COH_INVALID);
         coh_local_destroy(s);peer_close(&map);peer_close(&db);scenarios++;return;
     }
-    CHECK(coh_local_service(s,115,(CohCancel){0})==COH_UNSUPPORTED);drain_ack(&map,5);
+    CHECK(coh_local_service_observed(s,115,(CohCancel){0},scene_received,&observed)==COH_UNSUPPORTED);drain_ack(&map,5);
+    CHECK(observed.calls==(malformed_catalog==3?0u:1u));
     CHECK(diag(s).phase==COH_LOCAL_SCENE_INCOMPLETE&&diag(s).local_development_auth&&diag(s).map_phase==COH_MAP_SCENE_INCOMPLETE);
     if(malformed_catalog==3)CHECK(!diag(s).map_protocol.scene_structures&&diag(s).map_protocol.scene_failure.stage==COH_GROUPS_STAGE_FILE&&diag(s).map_protocol.scene_failure.status==COH_UNSUPPORTED);
     else CHECK(diag(s).map_protocol.scene_structures==1&&diag(s).map_protocol.scene_inspection.consumed_bits==source_groups_minimal_world_packed_bits&&!diag(s).map_protocol.scene_failure.status);

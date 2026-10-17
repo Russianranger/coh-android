@@ -1,0 +1,47 @@
+{
+  "schema": "coh-class-named-source-binding-v2",
+  "source_commit": "9e337a4d67b4aa8f436206c2770b76f3a42fcbe6",
+  "previous_source_commit": "18892c8e1c7f5890a8409102a78219861d27972b",
+  "previous_receipt_preserved": true,
+  "tested_git_blobs_match": true,
+  "tested_source_count": 53,
+  "host_proof_sha256": "8e967167d59c0aa140772d7511e7ad8de6dc3e204d6a01a9a5b86a8cfaee4b90",
+  "host_proof_file": "host-proof-empty-keys.json.gz",
+  "checks": {
+    "release": {
+      "checks": 260776,
+      "queries": 23671,
+      "files": 12,
+      "owner_bytes": 56,
+      "value_bytes": 24,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 260776,
+      "queries": 23671,
+      "files": 12,
+      "owner_bytes": 56,
+      "value_bytes": 24,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 260776,
+      "queries": 23671,
+      "files": 12,
+      "owner_bytes": 56,
+      "value_bytes": 24,
+      "runtime_generation": false,
+      "actor_authority": false
+    }
+  },
+  "original_named_finalize_executed": true,
+  "original_named_value_executed": true,
+  "source_empty_named_keys_supported": true,
+  "source_empty_value_lookup_executed": false,
+  "original_stash_hash_sanitized": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false
+}

@@ -59,6 +59,20 @@ CohStatus coh_local_begin(CohLocal *, const CohDbLogin *policy,
     const char *account, uint32_t db_connect_id, uint32_t map_connect_id,
     uint64_t now_ms);
 CohStatus coh_local_service(CohLocal *, uint64_t now_ms, CohCancel);
+/* Optional synchronous diagnostic seam to the actual owned Map receive loan.
+ * No observer is installed across service calls. Default service uses NULL.
+ * Client/event/reader pointers expire on callback return; do not retain them.
+ * Only coh_map_client_scene_lease or the bounded scene-record constructor may
+ * use the supplied client during the callback. Other Map calls are forbidden.
+ * Local mutations/reentrant service are refused; void mutations are no-ops.
+ * Local diagnostics may be read. Copies/record/provider allocations require the
+ * caller's complete aggregate budget; no memory is allocated by this seam.
+ * Callback result cannot change protocol policy, SCENE_INCOMPLETE, READY or ACK.
+ * Actual DB handoff ownership does not establish entity or world authority. */
+typedef void (*CohLocalSceneObserver)(void *,const CohMapClient *,
+    const CohMapSceneObservation *);
+CohStatus coh_local_service_observed(CohLocal *,uint64_t now_ms,CohCancel,
+    CohLocalSceneObserver,void *context);
 CohStatus coh_local_characters(const CohLocal *, CohLocalCharacters *);
 CohStatus coh_local_choose_character(CohLocal *, uint32_t wire_slot,
     uint64_t now_ms);

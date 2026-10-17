@@ -1,0 +1,23 @@
+{
+  "schema": "coh-independent-local-current-scene-observer-review-v1",
+  "source_commit": "f4263de849b1c2405268d3abe32c835369e260a1",
+  "source_tree": "142758d0264f090a904bd765131bc4880a9175cf",
+  "verdict": "approved_optional_synchronous_local_diagnostic_seam_only",
+  "proof_sha256": "85b768a197ba71e03b3172db21373b312b513be9b7320323439c8e319eeeb285",
+  "tested_git_source_matches": 1401,
+  "checked_helpers": 8,
+  "reported_checks_per_mode": 1106,
+  "actual_scripted_udp_scenarios": 9,
+  "review": [
+    "Default local_service forwards NULL observer through the same actual Map service path. Optional service creates only a stack callback descriptor and installs no persistent callback; actual owned Map pointer and exact current event are passed synchronously. Existing Map current-event getter enforces actual receive owner/event identity. Caller may copy through bounded record constructor but cannot retain client/event/reader loan pointers beyond return. No new ownership, arbitrary event injection or protocol policy permit.",
+    "Local observing guard spans external observer call. Reentrant service/character selection/character enumeration/begin refuse; void destroy/suspend/cancel/close become no-ops, preserving DB/Map/owner lifetimes while underlying callback runs. Diagnostics reads remain allowed. Direct Map mutations are forbidden by the public callback contract; const opaque client is supplied only for qualified lease/record getters. External callback validity/non-throwing return/exclusive-thread discipline remains caller responsibility.",
+    "Tests acquire owner-bound selectedDBID17 from actual callback lease in complete scripted DB-to-Map OSUDP chain, reject copied event, assert reentrant APIs and all void lifecycle calls preserve diagnostics. Truncated/unsupported source structure never invokes callback. SCENE_INCOMPLETE/no application ACK unchanged. Native1106checks/9scenarios each release/ASan/UBSan plus large scripted UIpeer/socket cleanup recorded.",
+    "Independent1401-file map matched exactGitf426 tree; eight checked helpers and five source loader controls recorded. No native corpus/Android/actualserver replay. Proof file is coordinator local-observed-host.json; SHA bound here pending coordinator durable retention."
+  ],
+  "retains_scene_loan": false,
+  "new_allocations": false,
+  "world_authority": false,
+  "actor_authority": false,
+  "android_executed": false,
+  "real_server_executed": false
+}

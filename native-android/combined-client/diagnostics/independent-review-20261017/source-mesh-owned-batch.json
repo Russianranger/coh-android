@@ -1,0 +1,31 @@
+{
+  "schema": "coh-independent-source-mesh-batch-review-v1",
+  "source_commits": [
+    "2e4e94ebf48b711646b6f924323a3947724538b8",
+    "2aafc7bd64b69d77ac04dd38e3545db98e592130"
+  ],
+  "base_mesh_review": "1679ebfd9",
+  "verdict": "approved_immutable_source_mesh_transfer_batch_after_budget_preflight_fix",
+  "proof_sha256": "ec739c5b2ca0a919af80423652d9f9321606d63af1eac8b0844fd6f5d791cada",
+  "tested_git_bindings": {
+    "2aafc7bd64b69d77ac04dd38e3545db98e592130": 41,
+    "d4e7614ef1f6a2aae1e9814b61b74772589d6a6c": 16
+  },
+  "reported_checks_per_mode": 419,
+  "review": [
+    "New borrowed Body/Mesh dependency getters derive actual opaque owner/index/selection/profile/join/catalog/snapshot/graph identities and current owned sizes, with known output/source/mesh alias checks. Caller-disjoint opaque owners and valid immutable lifetimes remain explicit; labels or equal hashes cannot substitute for actual pointer identity. No old mesh factory policy changes.",
+    "Factory accepts1..64 source-ordered actual meshes and<=4096 parts, rejects duplicate ordinal/mesh/Body/index, mixed actual dependencies and descending order. Each mesh and private Body/index charged separately; exact common dependency pointers once; each actual loader maximum supplied reservation once. Actual graph and loaders remain externally owned and must outlive batch. Holding meshes does not retain external graph/loader. Other live owners, old batches, callback/provider/context/runtime peaks belong in caller retainedbytes.",
+    "Complete immutable ownership/budget measurement is bounded64squared read-only/noIO/noallocation. Required2a preflight adds retained+batch+16KiB reserve check and removes all external cancellation polling until full owner/loader aggregate admitted; overbudget test observes zero polls. Only afterward polls/calloc/candidate copies occur. Every allocation/cancel/refusal preserves all input slots/out/report; final success clears all input slots together and owns every mesh. Destructor frees mesh geometry then its Body/index pins.",
+    "Views borrow batch lifetime, preserve global ordinal/partition prefix/source material descriptors and canonical shared vertices; output known-source/batch/mesh aliases refuse. Binary-search lookup remains source ordinal only, not invented renderer geometry identity. Bounded getters/call chains reviewed against16KiB reserve; diagnostic compiler file maxima9360/9304/9256 retained, external callback/system stack not qualified.",
+    "Actual CityHall/Plaza two distinct Body/index owners share actual loader/blob/profile; exact equal-hash DISTINCT selection negative refuses. Batch preparation90,851,310B, target earlier decode stage91,075,118B; separately staged negative owner92,258,595B not targetclaim. Future9,588,178B is allowance only, no existing actor/material owner guarantee. Authentic historical full TexOpt/Trick owners retained in test;41 A plus16 external E exact committed dependency blobs independently match57 receipt source hashes.",
+    "Recorded419controls per release/ASan/UBSan,transfer/rollback/cancellation/allocation/budget/aliases/order/partition/final zero pins. Old2e receipt preserved; finalec739... preflight receipt authoritative. CityHall fixture UV1 packet matches earlier whole original-delta proof; arbitrary CLIENT material UV transforms/scene/currentgeneration/actor/GPU not qualified. No corpus replay, capture, Android or C++ qualification from this review."
+  ],
+  "batch_peak_bytes": 90851310,
+  "target_preparation_peak_bytes": 91075118,
+  "additional_negative_owner_peak_bytes": 92258595,
+  "renderer_ready": false,
+  "client_materials_available": false,
+  "actor_available": false,
+  "world_authority": false,
+  "android_executed": false
+}

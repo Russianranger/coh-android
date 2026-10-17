@@ -1,0 +1,22 @@
+{
+  "schema": "coh-independent-class-selected-level-review-v1",
+  "source_commit": "534b6a9b652176b0d173324d35ff8ff136fdbb4c",
+  "evidence_commit": "3c4dbac9e",
+  "verdict": "approved_historical_one_level_projection_only",
+  "proof_sha256": "8d4bfdce9973071b4847f3e8fa8ffdf6c4f6880258db12bdd75b6788db5cf7ff",
+  "tested_git_source_matches": 51,
+  "reported_checks_per_mode": 272493,
+  "source_selections": 195,
+  "review": [
+    "Fixed2880B output/workspace projects six115-word rows from borrowed immutable class input and copied category owner, preserving owner SHA/lease labels. Pairwise known-span overflow/alias checks and complete dictionary/input/output/workspace/16KiB native reserve/retained precharge precede workspace writes. All early and late failures leave public output unchanged; no heap allocations, actor or application table mutation. External immutable source owner/input lifetime remains caller responsibility.",
+    "Four maximum tables use exact source attribute-name map, including duplicated Defense overwrite, omitted ElusivityBase default1 and final Absorb field; map is checked against independently extracted original schemas. Empty arrays default1, shorter arrays extend last value. Strength/resistance minima use original zero/-100 when absent; required base/min structures are validated even though not returned. Every float word must be finite. Source MaxMax HitPoints determines bounded valid level count; all counts/spans/endpoints checked, invalid level refuses.",
+    "Category names preserve four source identities and Pool/Epic fallbacks through separately qualified case-insensitive category owner. Missing dependencies refuse. No complete power/set dictionary, source cache generation or actor is inferred from category indices.",
+    "Oracle executes unchanged classes_Repack, CreateCharacterAttributes and TransposeArray with explicit host parser/earray/float-storage allocation interfaces, category pointer lookup adapter and observed retirement. Whole original category lookup and parser retirement are explicitly not executed by this oracle; all fixture allocations reset after copying results. Independent raw decoder compares all690words before native tests.",
+    "Recorded195 selections cover all59 authentic normal/villain class rows first/middle/final levels plus original-writer variants for absent minima/empty-short maxima/fallbacks. Release/ASan/UBSan272493 checks each, C++ linkage and native measured summedframes760B under16KiB reserve.51 complete tested source hashes match source commit; checked helper loads consume admitted source bytes with stale-PYC/changed-source controls. No expensive independent replay performed."
+  ],
+  "classes_finalize_executed": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false,
+  "world_authority": false
+}
