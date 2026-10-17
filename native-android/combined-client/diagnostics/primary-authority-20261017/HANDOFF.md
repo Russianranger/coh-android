@@ -7,8 +7,8 @@ Git links, existing bundles, accepted APKs and user profiles were preserved.
 
 ## Current qualification checkpoint
 
-Last verified remote publication: `b3fbacf90626e29542e878313c2812eba1e1375b`
-(tree `55f87f9f1b37c09d8250fcbfee473a6608e5dd01`). New reviewed source below
+Last verified remote publication: `6a6809d07a130af60129f569b59a627420b6bf54`
+(tree `a56a1f5e81beb6a13ee247429e99c8bb5599e907`). New reviewed source below
 is integrated locally for guarded publication. Chronological sections preserve
 their original pending states; this checkpoint supersedes those fields.
 
@@ -30,6 +30,16 @@ update ACK. Initial refusal preserves successful GROUPS/source artifacts. Raw
 initial export is restricted to the admitted fresh disposable fixture and an
 independently reviewed fixed two-file gate; generic private captures remain
 ineligible. Workflow preparation is not actual interoperability.
+
+Actual scene attempt39078358295 passed fixture and retained observer admission,
+then stopped before any runtime/staging because APT did not index the requested
+18.6-3 packaging revision. F preserved the624B public artifact12117447894 and
+fixed absent-private-receipt summary. The next retry pins all three available
+18.6-1.pgdg24.04+2 packages by full SHA256; root and D independently verified
+the official signed index and dependency stanzas. No runtime was repeated in the
+failed attempt. All four original Wine10 package hashes remain indexed and
+signature-verified. The standalone GPU workflow has E/D static review and awaits
+actual two-ABI build and Android13 native602-check execution; no APK is built.
 
 Gates25–27 remain open. No new APK, authoritative rendered world/player,
 complete character update, application ACK or AYN Thor result is claimed.

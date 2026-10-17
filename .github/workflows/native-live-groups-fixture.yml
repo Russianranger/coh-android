@@ -154,7 +154,21 @@ jobs:
           test "$(gpg --show-keys --with-colons /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc | awk -F: '$1=="fpr" {print $10; exit}')" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
           printf '%s\n' 'Types: deb' 'URIs: https://apt.postgresql.org/pub/repos/apt' 'Suites: noble-pgdg' 'Architectures: amd64' 'Components: main' 'Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc' | sudo tee /etc/apt/sources.list.d/coh-groups-pgdg.sources
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends postgresql-18=18.6-3.pgdg24.04+1 postgresql-client-18=18.6-3.pgdg24.04+1
+          # Exact signed noble-pgdg index exposes this18.6 packaging revision.
+          # Pin server, matching client and libpq together, then verify full bytes.
+          mkdir -p "$RUNNER_TEMP/groups-pg-packages"
+          (
+            cd "$RUNNER_TEMP/groups-pg-packages"
+            apt-get download postgresql-18:amd64=18.6-1.pgdg24.04+2 postgresql-client-18:amd64=18.6-1.pgdg24.04+2 libpq5:amd64=18.6-1.pgdg24.04+2
+            cat > packages.sha256 <<'EOF'
+          c0773357df8769abb70e92722196d9b53422d71c0f29a4f39c834b94276cfa3d  postgresql-18_18.6-1.pgdg24.04+2_amd64.deb
+          b9d10d99a73bf7aa375be2fe36626c40499cfdf553d0ad174674a88a1b256b43  postgresql-client-18_18.6-1.pgdg24.04+2_amd64.deb
+          b487c5ed2ceb9244c6a9d6ae65818ed6707c3c44a2e14488394ae4194c52c53b  libpq5_18.6-1.pgdg24.04+2_amd64.deb
+          EOF
+            sha256sum -c packages.sha256
+            sudo apt-get install -y --no-install-recommends ./*.deb
+          )
+          test "$(/usr/lib/postgresql/18/bin/postgres --version)" = 'postgres (PostgreSQL) 18.6 (Ubuntu 18.6-1.pgdg24.04+2)'
           mkdir -p "$RUNNER_TEMP/groups-wine-packages"
           curl --fail --silent --show-error --location https://dl.winehq.org/wine-builds/winehq.key -o "$RUNNER_TEMP/groups-wine-packages/winehq.key"
           echo "d965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8  $RUNNER_TEMP/groups-wine-packages/winehq.key" | sha256sum -c -

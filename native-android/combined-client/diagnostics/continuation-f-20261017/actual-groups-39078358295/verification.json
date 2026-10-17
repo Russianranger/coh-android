@@ -1,0 +1,49 @@
+{
+  "artifact": {
+    "bytes": 624,
+    "id": 12117447894,
+    "sha256": "1e0f48852881ce4946f05954c5c4b49132740a0f22b663b1eec173c7b546d68d"
+  },
+  "audit_passed_not_runtime_qualification": true,
+  "default_body_artifact_exists": false,
+  "exact_published_source_sha256": {
+    ".github/workflows/native-live-groups-fixture.yml": "a56da2d4c0740f6c7fa89bcba6bfedb18a2e76f205a48d5fec0433e6a2ee3577",
+    "native-android/engine/scenecatalog-server/summarize_groups_capture.py": "b527f44fb38db189ac64742d89b249f9487e5daf0021e5ddeddf34d2b17b3898"
+  },
+  "failure_stage": "PUBLIC_RUNTIME_PACKAGE_INSTALLATION",
+  "generic_joblogs_or_private_profiles_or_packets_exported": false,
+  "hosted_fixture_and_retained_pe_provenance_gates_passed": true,
+  "initial_raw_artifact_exists": false,
+  "installation_refusal": {
+    "packages": [
+      "postgresql-18",
+      "postgresql-client-18"
+    ],
+    "public_step_number": 7,
+    "reason": "REQUESTED_VERSION_NOT_FOUND",
+    "requested_version": "18.6-3.pgdg24.04+1"
+  },
+  "job_id": 117530080563,
+  "only_member": {
+    "bytes": 1018,
+    "name": "summary.json",
+    "sha256": "d92479a5c85b5dd52d2189ce9e69376cfa35138e6c79830b1572124bdb16ae2b"
+  },
+  "passed": true,
+  "private_summary_receipt_absence_not_cleanup_failure_inference": true,
+  "public_summary_placeholder_failure": "PRIVATE_RECEIPT_ABSENT",
+  "qualification_rerun": false,
+  "retry_or_dispatch_performed": false,
+  "reviewer": "Worker F",
+  "run_attempt": 1,
+  "run_id": 39078358295,
+  "runtime_or_initial_packet_captured": false,
+  "schema": "coh-independent-actual-groups-public-outcome-v1",
+  "source_commit": "6a6809d07a130af60129f569b59a627420b6bf54",
+  "source_generation_admitted": false,
+  "source_snapshot_artifact_exists": false,
+  "source_tree": "a56a1f5e81beb6a13ee247429e99c8bb5599e907",
+  "tool_build_staging_defaults_and_runtime_steps_skipped": true,
+  "workflow_outcome": "failure",
+  "world_authority": false
+}

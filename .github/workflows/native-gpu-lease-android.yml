@@ -1,0 +1,298 @@
+name: Standalone GPU lease Android qualification
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-gpu-lease-android.yml
+      - native-android/engine/world-render-adapter/**
+      - native-android/engine/assets/coh_asset_loader.*
+      - native-android/src/coh_assets.c
+      - native-android/src/coh_dds.c
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-gpu-lease-android-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  native-android13:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[gpu-lease-android]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install native host dependencies and exact NDKr28c
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev libegl1-mesa-dev libgles2-mesa-dev
+          python3 -m pip install Pillow==12.3.0
+          curl --fail --silent --show-error --location --output /tmp/gpu-lease-ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/gpu-lease-ndk.zip' | sha256sum -c -
+          unzip -q /tmp/gpu-lease-ndk.zip -d /tmp/gpu-lease-ndk
+      - name: Materialize only the source-bound standalone qualifier
+        run: |
+          test ! -e /tmp/coh-gpu-lease-android.py
+          test ! -L /tmp/coh-gpu-lease-android.py
+          cat > /tmp/coh-gpu-lease-android.py <<'PY'
+          # GPU_LEASE_DRIVER_BEGIN
+          from pathlib import Path
+          import argparse,hashlib,importlib.util,json,os,re,secrets,shlex,struct,subprocess,sys,zipfile
+          sys.dont_write_bytecode=True
+          ROOT=Path.cwd().resolve()
+          WR=ROOT/'native-android/engine/world-render-adapter'
+          WORKFLOW=ROOT/'.github/workflows/native-gpu-lease-android.yml'
+          OUT=ROOT/'out/gpu-lease-android'
+          NDK=Path('/tmp/gpu-lease-ndk/android-ndk-r28c')
+          ARCHIVE=WR/'qualification/egl-host-20261017/retained-host-artifact.zip'
+          ARCHIVE_SHA='5ca5aa03dcd7fa83f7ac536aac70d9a82fcbfd8f34a428de3362929d6044f36b'
+          TEXTURE_SHA='c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a'
+          HEADER_SHA='e66ca5aa9d9440d0c0050fb66cb263440322cb520b7eba49e125b08f1919731b'
+          READBACK_SHA='a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523'
+          NDK_ZIP_SHA='dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f'
+          ABI={'arm64-v8a':('aarch64-linux-android26-clang','aarch64-linux-android',183),
+               'x86_64':('x86_64-linux-android26-clang','x86_64-linux-android',62)}
+          BASE=('coh_wr_gpu_lease.c','coh_wr_gpu_texture.c','coh_wr_texture.c','coh_wr_sampler.c',
+                '../assets/coh_asset_loader.c','../../src/coh_assets.c','../../src/coh_dds.c')
+          FALSE_SCOPE={'production_prepare_executed':False,'nine_world_prerequisites_admitted':False,
+              'current_generation_admitted':False,'source_generation_admitted':False,'actor_authority':False,
+              'material_authority':False,'world_authority':False,'application_or_apk_built':False,
+              'application_context_adopted':False,'android_sanitizers_enabled':False,
+              'finite_fixture_digest_is_general_sha256':False}
+          def need(ok,code):
+              if not ok:raise ValueError(code)
+          def sha(path):
+              with Path(path).open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
+          def identity(path):return {'bytes':Path(path).stat().st_size,'sha256':sha(path)}
+          def command(args,timeout=180,logs=None):
+              p=subprocess.run(list(map(str,args)),stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=timeout)
+              need(len(p.stdout)+len(p.stderr)<=4*1024**2,'BOUNDED_CHILD_OUTPUT')
+              if logs is not None:
+                  logs.with_suffix('.stdout').write_bytes(p.stdout);logs.with_suffix('.stderr').write_bytes(p.stderr)
+              if p.returncode:raise ValueError('CHILD_FAILED_'+Path(str(args[0])).name)
+              return p.stdout
+          def git(*args):return command(['git','-C',ROOT,*args],30).decode().strip()
+          def emit(path,value):
+              with path.open('x') as stream:json.dump(value,stream,indent=2,sort_keys=True);stream.write('\n')
+          def committed(pins,revision):
+              need(git('rev-parse','HEAD')==revision==os.environ.get('GITHUB_SHA'),'EXACT_CHECKOUT_REVISION')
+              for name,digest in pins.items():
+                  need(sha(ROOT/name)==digest and hashlib.sha256(command(['git','-C',ROOT,'show',revision+':'+name],30)).hexdigest()==digest,'COMMITTED_CONSUMED_BYTES')
+          def driver():
+              need(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')
+              raw=WORKFLOW.read_text();lines=raw.splitlines(keepends=True)
+              begin=lines.index('          # GPU_LEASE_DRIVER_BEGIN\n');end=lines.index('          # GPU_LEASE_DRIVER_END\n')
+              expected=''.join(line[10:] if line.strip() else '\n' for line in lines[begin:end+1])
+              need(Path(__file__).read_text()==expected,'EXACT_COMMITTED_WORKFLOW_DRIVER')
+              name=WORKFLOW.relative_to(ROOT).as_posix();revision=git('rev-parse','HEAD')
+              checker=WR/'check_gpu_lease.py'
+              committed({name:sha(WORKFLOW),checker.relative_to(ROOT).as_posix():sha(checker)},revision)
+              spec=importlib.util.spec_from_file_location('source_bound_gpu_lease',checker)
+              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+              return module,revision
+          def elf(path,machine):
+              raw=path.read_bytes()
+              need(64<=len(raw)<=16*1024**2 and raw[:7]==b'\x7fELF\x02\x01\x01'
+                  and struct.unpack_from('<HH',raw,16)==(3,machine)
+                  and struct.unpack_from('<I',raw,20)[0]==1 and struct.unpack_from('<H',raw,52)[0]==64,'ANDROID_ABI_PIE')
+              offset=struct.unpack_from('<Q',raw,32)[0];size,count=struct.unpack_from('<HH',raw,54)
+              need(size==56 and 2<=count<=128 and offset<=len(raw)-size*count,'ELF_PROGRAM_HEADERS')
+              kinds=set();interpreters=[]
+              for i in range(count):
+                  at=offset+i*size;kind=struct.unpack_from('<I',raw,at)[0]
+                  start=struct.unpack_from('<Q',raw,at+8)[0];n,m=struct.unpack_from('<QQ',raw,at+32)
+                  need(start<=len(raw) and n<=len(raw)-start and (kind!=1 or n<=m),'ELF_SEGMENT_BOUNDS');kinds.add(kind)
+                  if kind==3:interpreters.append(raw[start:start+n])
+              need({1,2,3}<=kinds and interpreters==[b'/system/bin/linker64\0'],'ANDROID_INTERPRETER')
+          def ndk_files():
+              tool=NDK/'toolchains/llvm/prebuilt/linux-x86_64';headers=json.loads((WR/'egl-host-header-pins.json').read_bytes())
+              need('Pkg.Revision = 28.2.13676358' in (NDK/'source.properties').read_text(),'NDKR28C')
+              files=[NDK/'source.properties',tool/'bin/clang',tool/'bin/ld.lld',tool/'bin/llvm-readelf']
+              files += [tool/'bin'/item[0] for item in ABI.values()]
+              files += [tool/'sysroot/usr/include'/name for name in headers]
+              for _,triplet,_ in ABI.values():
+                  files += [tool/'sysroot/usr/lib'/triplet/'26'/name for name in ('libEGL.so','libGLESv3.so','libz.so','libm.so','libc.so','libdl.so')]
+              return {str(path.relative_to(NDK)):sha(path) for path in files}
+          def readmit(module,revision):
+              q=json.loads((OUT/'build.json').read_bytes());need(q['schema']=='coh-gpu-lease-android-build-v1' and q['passed'] is True,'BUILD_SCOPE')
+              need(q['source_revision']==revision and q['source_tree']==git('rev-parse','HEAD^{tree}') and q['driver_sha256']==sha(Path(__file__)),'BUILD_SOURCE_IDENTITY')
+              need(q['api_level']==26 and q['ndk_revision']=='28.2.13676358' and set(q['android'])==set(ABI)
+                  and q['android_executed'] is False and q['host_actual_gles_executed'] is True,'TWO_ABI_BUILD_SCOPE')
+              committed(q['source_sha256'],revision)
+              need(q['ndk_files_sha256']==ndk_files() and sha('/tmp/gpu-lease-ndk.zip')==q['ndk_zip_sha256']==NDK_ZIP_SHA,'NDK_BYTES_UNCHANGED')
+              need(q['retained_texture_archive']=={'bytes':1316470,'sha256':ARCHIVE_SHA},'RETAINED_ARCHIVE_RECEIPT')
+              need(identity(OUT/'input/box-1.texture')==q['fixture'] and q['fixture']=={'bytes':43990,'sha256':TEXTURE_SHA},'FIXTURE_BYTES')
+              need(identity(OUT/'host/egl_fixture_digest.h')==q['finite_fixture_header'] and q['finite_fixture_header']['sha256']==HEADER_SHA
+                  and identity(OUT/'host/qualification.json')==q['host_qualification'],'HOST_EVIDENCE_BYTES')
+              host=json.loads((OUT/'host/qualification.json').read_bytes())
+              need(host['passed'] is True and host['source_revision']==revision and host['current_committed_sources_verified'] is True,'HOST_SOURCE_SCOPE')
+              need(set(host['results'])=={mode+'-'+kind for mode in ('release','asan','ubsan','finite-fixture') for kind in ('model','egl')},'ALL_NEW_HOST_MODES')
+              for name,digest in host['source_sha256'].items():need(q['source_sha256'].get(name)==digest,'HOST_SAME_SOURCE')
+              for key,result in host['results'].items():
+                  module.native(result['native'],key.endswith('-egl'))
+                  mode,kind=key.rsplit('-',1);need(sha(OUT/'host'/mode/kind)==result['binary_sha256'],'HOST_BINARY_BYTES')
+                  if kind=='egl':module.packet(OUT/'host'/mode/'readback.rgba')
+              for abi,(_,_,machine) in ABI.items():
+                  path=OUT/'android'/abi/'coh_gpu_lease_egl';item=q['android'][abi]
+                  need(item['built'] is True and item['executed'] is False and identity(path)==item['binary'],'BOTH_ABI_BYTES');elf(path,machine)
+              for name,value in FALSE_SCOPE.items():need(q.get(name) is value,'BUILD_AUTHORITY_SCOPE')
+              return q
+          def prepare(module,revision):
+              need(not OUT.exists(),'NEW_OUTPUT');OUT.mkdir(parents=True);(OUT/'input').mkdir()
+              need(identity(ARCHIVE)=={'bytes':1316470,'sha256':ARCHIVE_SHA},'RETAINED_ARCHIVE_BYTES')
+              with zipfile.ZipFile(ARCHIVE) as archive:
+                  entries=[i for i in archive.infolist() if i.filename=='box-1.texture'];need(len(entries)==1,'ONE_TEXTURE_MEMBER');item=entries[0]
+                  need(item.file_size==43990 and item.compress_size==21501 and item.CRC==0x6db64911 and not item.flag_bits&1,'TEXTURE_MEMBER_ENVELOPE')
+                  raw=archive.read(item)
+              need(len(raw)==43990 and hashlib.sha256(raw).hexdigest()==TEXTURE_SHA,'EXACT_TEXTURE_BODY')
+              (OUT/'input/box-1.texture').write_bytes(raw)
+              headers=Path(os.environ['RUNNER_TEMP'])/'gpu-lease-primary-headers'
+              command([sys.executable,WR/'acquire_egl_headers.py','--output',headers])
+              command([sys.executable,WR/'check_gpu_lease.py','--source-root',ROOT,'--actual-texture',OUT/'input/box-1.texture',
+                  '--host-headers',headers,'--host-egl','/usr/lib/x86_64-linux-gnu/libEGL.so.1',
+                  '--host-gles','/usr/lib/x86_64-linux-gnu/libGLESv2.so.2','--sanitize','--output',OUT/'host'],900)
+              host=json.loads((OUT/'host/qualification.json').read_bytes());need(host['passed'] is True and host['source_revision']==revision,'EXACT_NEW_HOST_PROOF')
+              pins=dict(host['source_sha256'])
+              for path in (WORKFLOW,ARCHIVE,ARCHIVE.with_suffix('.json'),WR/'acquire_egl_headers.py'):
+                  pins[path.relative_to(ROOT).as_posix()]=sha(path)
+              tool=NDK/'toolchains/llvm/prebuilt/linux-x86_64';ndk_before=ndk_files();android={}
+              sources=[(WR/name).resolve() for name in BASE]+[WR/'tests/test_gpu_lease_egl.c']
+              header=OUT/'host/egl_fixture_digest.h'
+              common=['-std=c11','-Wall','-Wextra','-Werror','-pedantic','-fno-fast-math','-ffp-contract=off','-O2',
+                  '-fPIE','-DCOH_GPU_LEASE_FIXTURE_DIGEST','-I'+str(ROOT/'native-android/include'),'-I'+str(header.parent)]
+              for abi,(compiler,_,machine) in ABI.items():
+                  cc=tool/'bin'/compiler
+                  deps=command([cc,*common,'-MM',*sources],logs=OUT/('dependencies-'+abi)).decode().replace('\\\n',' ')
+                  project={}
+                  for line in deps.splitlines():
+                      need(':' in line,'NDK_DEPENDENCIES')
+                      for name in shlex.split(line.split(':',1)[1]):
+                          path=Path(name).resolve()
+                          if path==header:continue
+                          relative=path.relative_to(ROOT).as_posix();project[relative]=sha(path);pins[relative]=project[relative]
+                  committed(pins,revision)
+                  directory=OUT/'android'/abi;directory.mkdir(parents=True);binary=directory/'coh_gpu_lease_egl'
+                  argv=[cc,*common,'-pie',*sources,'-lEGL','-lGLESv3','-lz','-lm','-o',binary]
+                  command(argv,logs=directory/'compile');elf(binary,machine)
+                  dynamic=command([tool/'bin/llvm-readelf','--dynamic',binary]).decode();(directory/'dynamic.txt').write_text(dynamic)
+                  needed=sorted(re.findall(r'Shared library: \[([^\]]+)\]',dynamic))
+                  need({'libEGL.so','libGLESv3.so','libz.so','libc.so'}<=set(needed)
+                      and set(needed)<={'libEGL.so','libGLESv3.so','libz.so','libm.so','libc.so','libdl.so'},'PLATFORM_ONLY_DYNAMIC_LIBRARIES')
+                  android[abi]={'binary':identity(binary),'elf_machine':machine,'built':True,'executed':False,
+                      'compile_command':list(map(str,argv)),'project_dependencies_sha256':project,'needed_libraries':needed}
+              need(ndk_before==ndk_files() and sha('/tmp/gpu-lease-ndk.zip')==NDK_ZIP_SHA,'NDK_CHANGED_DURING_BUILD')
+              committed(pins,revision)
+              q={'schema':'coh-gpu-lease-android-build-v1','passed':True,'source_revision':revision,
+                  'source_tree':git('rev-parse','HEAD^{tree}'),'source_sha256':pins,'driver_sha256':sha(Path(__file__)),
+                  'retained_texture_archive':identity(ARCHIVE),'fixture':identity(OUT/'input/box-1.texture'),
+                  'finite_fixture_header':identity(header),'host_qualification':identity(OUT/'host/qualification.json'),
+                  'ndk_revision':'28.2.13676358','ndk_zip_sha256':NDK_ZIP_SHA,'ndk_files_sha256':ndk_before,
+                  'api_level':26,'android':android,'android_executed':False,'host_actual_gles_executed':True,**FALSE_SCOPE}
+              emit(OUT/'build.json',q);readmit(module,revision)
+              print(json.dumps({'passed':True,'android_built':list(android),'android_executed':False,'world_authority':False}))
+          def execute(module,revision,adb_path):
+              q=readmit(module,revision);build_pin=identity(OUT/'build.json');directory=OUT/'execution';directory.mkdir()
+              counter=0
+              def adb(args,timeout=45):
+                  nonlocal counter
+                  counter+=1;p=subprocess.run([str(adb_path),'-s','emulator-5554',*map(str,args)],capture_output=True,timeout=timeout)
+                  need(len(p.stdout)<=2*1024**2 and len(p.stderr)<=1024**2,'BOUNDED_ADB_OUTPUT')
+                  (directory/f'adb-{counter:02}.stdout').write_bytes(p.stdout);(directory/f'adb-{counter:02}.stderr').write_bytes(p.stderr)
+                  need(p.returncode==0,'ADB_OPERATION');return p.stdout.decode().strip()
+              def device_hash(path):
+                  line=adb(['shell','sha256sum',path]);match=re.fullmatch(r'([0-9a-f]{64})\s+\*?'+re.escape(path),line)
+                  need(match is not None,'DEVICE_HASH_SHAPE');return match.group(1)
+              remote='/data/local/tmp/coh-gpu-lease-'+secrets.token_hex(12);creation_attempted=False
+              result={'schema':'coh-gpu-lease-android13-execution-v1','passed':False,'source_revision':revision,
+                  'build_receipt':build_pin,'abi':'x86_64','arm64_executed':False,'native_execution_attempted':False,
+                  'android_executed':False,'device_cleanup_verified':False,'post_source_artifact_admission_verified':False,
+                  'platform_loaded_mapping_verified':False,'platform_driver_sanitized':False,
+                  'emulator_software_graphics_requested':True,'physical_android_device_executed':False,**FALSE_SCOPE}
+              try:
+                  device={name:adb(['shell','getprop',name]) for name in ('ro.build.version.sdk','ro.product.cpu.abi','ro.kernel.qemu','ro.build.fingerprint')}
+                  need(device['ro.build.version.sdk']=='33' and device['ro.product.cpu.abi']=='x86_64'
+                      and device['ro.kernel.qemu']=='1' and 0<len(device['ro.build.fingerprint'])<512
+                      and all(32<=ord(c)<127 for c in device['ro.build.fingerprint']),'ACTUAL_ANDROID13_X86_64_EMULATOR')
+                  result['device_properties']=device
+                  result['platform_library_files_before']={name:device_hash(name) for name in ('/system/lib64/libEGL.so','/system/lib64/libGLESv3.so','/system/lib64/libz.so')}
+                  adb(['shell','test','!','-e',remote]);adb(['shell','test','!','-L',remote])
+                  # A transport/timeout failure may follow successful creation.
+                  # This fresh absent nonce path is owned from the attempt.
+                  creation_attempted=True;adb(['shell','mkdir','-m','700',remote])
+                  for source,name,pin in ((OUT/'android/x86_64/coh_gpu_lease_egl','coh_gpu_lease_egl',q['android']['x86_64']['binary']),
+                      (OUT/'input/box-1.texture','box-1.texture',q['fixture'])):
+                      need(identity(source)==pin,'TRANSFER_HOST_BYTES');adb(['push',source,remote+'/'+name])
+                      need(device_hash(remote+'/'+name)==pin['sha256'],'TRANSFER_DEVICE_BYTES')
+                  adb(['shell','chmod','700',remote+'/coh_gpu_lease_egl']);adb(['shell','chmod','600',remote+'/box-1.texture'])
+                  result['native_execution_attempted']=True
+                  native=json.loads(adb(['shell','timeout','-s','KILL','120',remote+'/coh_gpu_lease_egl',remote+'/box-1.texture',remote+'/readback.rgba'],180))
+                  result['native']=module.native(native,True);result['android_executed']=True
+                  need(adb(['shell','stat','-c','%s',remote+'/readback.rgba'])=='1398096' and device_hash(remote+'/readback.rgba')==READBACK_SHA,'DEVICE_ALL_MIP_READBACK')
+                  adb(['pull',remote+'/readback.rgba',directory/'readback.rgba']);result['readback']=module.packet(directory/'readback.rgba')
+                  need(device_hash(remote+'/coh_gpu_lease_egl')==q['android']['x86_64']['binary']['sha256']
+                      and device_hash(remote+'/box-1.texture')==TEXTURE_SHA,'DEVICE_INPUTS_CHANGED')
+                  result['passed']=True
+              except Exception:
+                  result['failure_code']='ANDROID_GPU_LEASE_EXECUTION_REFUSED'
+              finally:
+                  try:
+                      before=result.get('platform_library_files_before');need(before is not None,'PLATFORM_OBSERVATION_INCOMPLETE')
+                      result['platform_library_files_after']={name:device_hash(name) for name in before}
+                      need(result['platform_library_files_after']==before,'PLATFORM_FILES_CHANGED')
+                  except Exception:result['passed']=False;result['platform_file_observation_failed']=True
+                  try:
+                      if creation_attempted:
+                          adb(['shell','rm','-rf',remote]);adb(['shell','test','!','-e',remote]);adb(['shell','test','!','-L',remote])
+                      result['device_cleanup_verified']=True
+                  except Exception:result['passed']=False
+                  try:
+                      readmit(module,revision);need(identity(OUT/'build.json')==build_pin,'BUILD_RECEIPT_CHANGED')
+                      result['post_source_artifact_admission_verified']=True
+                  except Exception:result['passed']=False
+                  result['passed']=result['passed'] and result['device_cleanup_verified'] and result['post_source_artifact_admission_verified']
+                  emit(directory/'receipt.json',result)
+              print(json.dumps({key:result[key] for key in ('passed','android_executed','device_cleanup_verified','post_source_artifact_admission_verified','world_authority')}))
+              need(result['passed'],'ANDROID_GPU_LEASE_REFUSED')
+          parser=argparse.ArgumentParser();parser.add_argument('mode',choices=('prepare','execute'));parser.add_argument('--adb',type=Path)
+          args=parser.parse_args();module,revision=driver()
+          if args.mode=='prepare':prepare(module,revision)
+          else:
+              need(args.adb is not None,'EXPLICIT_ADB');execute(module,revision,args.adb)
+          # GPU_LEASE_DRIVER_END
+          PY
+      - name: Run only new host controls and build standalone arm64 and x86_64 executables
+        run: python3 /tmp/coh-gpu-lease-android.py prepare
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute only the standalone x86_64 GPU lease contract on Android13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 /tmp/coh-gpu-lease-android.py execute --adb "$ANDROID_HOME/platform-tools/adb"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: standalone-gpu-lease-both-abis-android13-${{ github.sha }}
+          path: out/gpu-lease-android/
+          if-no-files-found: error
+          retention-days: 90

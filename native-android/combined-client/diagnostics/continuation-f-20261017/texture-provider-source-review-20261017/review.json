@@ -1,0 +1,44 @@
+{
+  "actor_authority": false,
+  "authentic_default_bodies_inspected": false,
+  "current_bytes_equal_committed_revision": true,
+  "current_generation_admitted": false,
+  "global_budget_admitted": false,
+  "independent_read_only_source_review": true,
+  "original_client_executed": false,
+  "provider_descriptor_implemented": false,
+  "qualifier_replayed": false,
+  "review_sha256": "ff5b09fd33b39db3eb0a944dc8813a3ce1458df4f48cd5bfde99e1228f0249d0",
+  "rss_improvement_measured": false,
+  "schema": "coh-f-texture-provider-source-review-v1",
+  "source_namespace_admitted": false,
+  "source_pins": {
+    "upstream/ouroboros/Game/src/render/tex.c": {
+      "bytes": 113372,
+      "sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h": {
+      "bytes": 9950,
+      "sha256": "42f1b9c5555abdc93afe7029cdf02bb551d572c18557fed00d7610d6c58e177c"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": {
+      "bytes": 49055,
+      "sha256": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCacheNode.c": {
+      "bytes": 13441,
+      "sha256": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c": {
+      "bytes": 92002,
+      "sha256": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/fileutil.c": {
+      "bytes": 19189,
+      "sha256": "6d3991db4e8c1a1b7f55280c7ea69711d765e01009022172a2c90eccd759fdd7"
+    }
+  },
+  "source_revision": "6a6809d07a130af60129f569b59a627420b6bf54",
+  "source_tree": "a56a1f5e81beb6a13ee247429e99c8bb5599e907",
+  "world_authority": false
+}

@@ -1,6 +1,6 @@
 {
   "schema": "coh-live-groups-workflow-static-review-v1",
-  "workflow_sha256": "a56da2d4c0740f6c7fa89bcba6bfedb18a2e76f205a48d5fec0433e6a2ee3577",
+  "workflow_sha256": "ef1111a30228eb298b6597ebd7b461733b0c552cccca27c49edc12af36a18f14",
   "independent_reviewer": "D",
   "shell_blocks_parsed": 13,
   "embedded_python_blocks_compiled": 9,
@@ -14,5 +14,7 @@
   "fixed_upload_allowlists": true,
   "actual_runtime_executed": false,
   "source_generation_admitted": false,
-  "world_authority": false
+  "world_authority": false,
+  "prior_workflow_sha256": "a56da2d4c0740f6c7fa89bcba6bfedb18a2e76f205a48d5fec0433e6a2ee3577",
+  "revision_note": "Only exact PG18.6 package revision acquisition changed after pre-runtime refusal; three signed-index stanzas independently matched by D."
 }

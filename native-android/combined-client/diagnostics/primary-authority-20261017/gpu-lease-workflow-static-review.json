@@ -1,0 +1,17 @@
+{
+  "schema": "coh-gpu-lease-workflow-static-review-v1",
+  "workflow_sha256": "45f1ca6e36b9d4d65adf92815d8a64eb664b333a2de3b4ee4638859c97952678",
+  "implementation": "1312257b7505b78adb85745c8ebcf9d9cabf219a",
+  "independent_reviewer": "D",
+  "draft_owner": "E",
+  "shell_blocks_parsed": 4,
+  "embedded_driver_ast_and_recipe_checked": true,
+  "two_native_abi_builds_prepared": true,
+  "android13_x86_64_native_egl_execution_prepared": true,
+  "unchanged_retained_texture_reused": true,
+  "source_admitted_before_helper_import": true,
+  "ambiguous_device_directory_creation_cleanup_covered": true,
+  "actual_build_or_android_execution": false,
+  "apk_built": false,
+  "world_authority": false
+}
