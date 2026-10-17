@@ -1,0 +1,18 @@
+{
+  "schema": "coh-candidate-python-compatibility-v1",
+  "failure_run": 38996044100,
+  "tests_passed": 29,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "independent_review": "worker D: same18patches/bothmemoryprofiles/freshrefusalcleanup preserved; all29explicitPython3.12.14 suites pass",
+  "correction": "contextlib.ExitStack removes static with-block nesting without changing production source or refusal assertions",
+  "source_sha256": {
+    "test_candidate_login.py": "ddbed0d2483cdb0b4c0f605ee2b66d1a1135f94f26cdff8155ac6c56d5322333",
+    "test_auth_readiness.py": "d4fcdfea9283af2fbd92052fdd063bc21e8f07fb82f795f6f73679f4e9f6b27c",
+    "test_candidate_sql_memory.py": "3e56a32850299e23474e62ad16f26e6fa852019c54ae9adc3d3affa26dfb7964",
+    "test_sql_readiness_diagnostic.py": "15be59ecf66e7c17abf347cbf57cd9d562918ce5141328d87b1973a274c0869e",
+    "hosted_candidate_login.py": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+    "candidate_sql_memory.py": "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde"
+  },
+  "authserver_started": false,
+  "real_authentication_accepted": false
+}

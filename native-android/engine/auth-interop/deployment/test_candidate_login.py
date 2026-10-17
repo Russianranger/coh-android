@@ -1,3 +1,4 @@
+from contextlib import ExitStack
 """Isolated orchestration boundaries; no Windows, SQL, service or crypto executed."""
 import json
 from pathlib import Path
@@ -84,22 +85,29 @@ class CandidateLoginTests(unittest.TestCase):
                         if name=='archive-original-source':
                             path=next(str(x).split('=',1)[1]for x in command if str(x).startswith('--output='))
                             with tarfile.open(path,'w'): pass
-                with patch.dict(stage.os.environ,{'RUNNER_TEMP':temporary}), \
-                     patch.object(stage.prior,'require_hosted',return_value={'original_source_tree':stage.prior.ORIGINAL_TREE}), \
-                     patch.object(stage.candidate,'admit',return_value={}), \
-                     patch.object(stage.login,'admit_odbc_receipt',return_value={}), \
-                     patch.object(stage.login,'admit_probe_reuse',return_value={}), \
-                     patch.object(stage,'admit_intact',return_value={}), \
-                     patch.object(stage,'tools',return_value=(Path('sql-localdb'),Path('sqlcmd'),{})), \
-                     patch.object(stage.login,'qualify_listener_projection',return_value={}), \
-                     patch.object(stage.prior,'Commands',Commands), patch.object(sql_readiness_diagnostic,'RedactedCommands',Commands), patch.object(stage.prior,'capture',return_value=''), \
-                     patch.object(stage.login.profile,'audit',return_value={}), \
-                     patch.object(stage.login,'private_command'), \
-                     patch.object(stage.login,'owned_process_snapshot',return_value={'exists':True}), \
-                     patch.object(stage.auth_readiness,'observe',return_value={'healthy':False}), \
-                     patch.object(stage.prior,'cleanup_owned_instance',return_value=True) as cleanup, \
-                     patch.object(stage.login,'firewall_rule') as firewall, \
-                     patch.object(stage.subprocess,'Popen') as popen:
+                cleanup=Mock(return_value=True);firewall=Mock();popen=Mock()
+                patches=[
+                    patch.dict(stage.os.environ,{'RUNNER_TEMP':temporary}),
+                    patch.object(stage.prior,'require_hosted',return_value={'original_source_tree':stage.prior.ORIGINAL_TREE}),
+                    patch.object(stage.candidate,'admit',return_value={}),
+                    patch.object(stage.login,'admit_odbc_receipt',return_value={}),
+                    patch.object(stage.login,'admit_probe_reuse',return_value={}),
+                    patch.object(stage,'admit_intact',return_value={}),
+                    patch.object(stage,'tools',return_value=(Path('sql-localdb'),Path('sqlcmd'),{})),
+                    patch.object(stage.login,'qualify_listener_projection',return_value={}),
+                    patch.object(stage.prior,'Commands',Commands),
+                    patch.object(sql_readiness_diagnostic,'RedactedCommands',Commands),
+                    patch.object(stage.prior,'capture',return_value=''),
+                    patch.object(stage.login.profile,'audit',return_value={}),
+                    patch.object(stage.login,'private_command'),
+                    patch.object(stage.login,'owned_process_snapshot',return_value={'exists':True}),
+                    patch.object(stage.auth_readiness,'observe',return_value={'healthy':False}),
+                    patch.object(stage.prior,'cleanup_owned_instance',cleanup),
+                    patch.object(stage.login,'firewall_rule',firewall),
+                    patch.object(stage.subprocess,'Popen',popen),
+                ]
+                with ExitStack() as contexts:
+                    for patcher in patches:contexts.enter_context(patcher)
                     proof=stage.run(args)
                 popen.assert_not_called();firewall.assert_not_called();cleanup.assert_called_once()
                 self.assertEqual(proof['failure'],'candidate_x86_sql_not_ready')

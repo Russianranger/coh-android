@@ -1,0 +1,10 @@
+{
+  "run_id": 38996044100,
+  "source_revision": "bc65605f10e4f64ec7cbf35e2ed4a05d6803d2a8",
+  "job_id": 117288724718,
+  "failure": "hostedPython_static_nested_block_limit_in_test_candidate_login",
+  "corrected": "contextlib.ExitStack preserves all patches and both SQL profiles",
+  "authserver_started": false,
+  "msvc_layout_executed": false,
+  "account_probes_executed": false
+}
