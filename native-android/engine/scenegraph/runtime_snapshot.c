@@ -30,7 +30,7 @@ typedef struct {
     uint8_t discovered[COH_RUNTIME_SNAPSHOT_EXTERNAL_MAX];
     File*files;Node*nodes;uint32_t*slots,*names,*edges;uint16_t*heights;uint8_t*colors;
     uint32_t capacity,nodes_count,edges_count,file,slot,node,edge,phase,root_end;
-    size_t base,available;
+    size_t base,available,pool_owned_limit;
     CohRuntimeGraph *graph;
 } Audit;
 typedef char RuntimeReportFits[sizeof(CohRuntimeSnapshotReport)<64u*1024u?1:-1];
@@ -215,7 +215,7 @@ static CohStatus run_audit(Audit*a,const CohRuntimeSnapshotBudget*budget){
     a->capacity=1;while(a->capacity<a->nodes_count*2u)a->capacity*=2u;
     size_t owned=(size_t)scan.files*sizeof(File)+(size_t)a->nodes_count*sizeof(Node)+((size_t)scan.slots+a->capacity+a->edges_count)*sizeof(uint32_t)+(size_t)a->nodes_count*(sizeof(uint16_t)+sizeof(uint8_t));
     if(a->graph)owned+=(size_t)a->nodes_count*sizeof(Detail)+(size_t)a->edges_count*sizeof(CohSgMatrix)+(size_t)a->r->root_slots*sizeof(CohRuntimeGraphRoot);
-    if(owned>COH_SG_MEMORY_MAX||owned>a->available)return COH_LIMIT;
+    if(owned>(a->pool_owned_limit?a->pool_owned_limit:COH_SG_MEMORY_MAX)||owned>a->available)return COH_LIMIT;
     void*pool=calloc(1,owned?owned:1);if(!pool)return COH_LIMIT;
     a->r->owned_bytes=owned?owned:1;a->base+=a->r->owned_bytes;a->available-=a->r->owned_bytes;
     a->files=pool;a->nodes=(Node*)(a->files+scan.files);a->slots=(uint32_t*)(a->nodes+a->nodes_count);a->names=a->slots+scan.slots;a->edges=a->names+a->capacity;
@@ -284,9 +284,10 @@ static int same_identity(const CohRuntimeGraphBinding*a,const CohRuntimeGraphBin
         !memcmp(a->pins.run_sha256,b->pins.run_sha256,32);
 }
 void coh_runtime_graph_free(CohRuntimeGraph*g){if(g){free(g->pool);free(g);}}
-CohStatus coh_runtime_graph_build(const CohRuntimeGraph*prior,CohBytes catalog,CohBytes snapshot,
+CohStatus coh_runtime_graph_build_limited(const CohRuntimeGraph*prior,CohBytes catalog,CohBytes snapshot,
     const CohRuntimeGraphBinding*binding,const CohRuntimeSnapshotBudget*budget,const CohCancel*cancel,
-    CohRuntimeGraph**candidate,CohRuntimeGraphReport*out){
+    size_t graph_owned_limit,CohRuntimeGraph**candidate,CohRuntimeGraphReport*out){
+    if(graph_owned_limit<=sizeof(CohRuntimeGraph)||graph_owned_limit>COH_SG_MEMORY_MAX)return COH_LIMIT;
     if(!binding||!budget||!candidate||*candidate||!out||!binding->generation||!binding->catalog_generation)return COH_INVALID;
     const CohRuntimeSnapshotPins*p=&binding->pins;
     if(!p->digest||!catalog.data||!snapshot.data||!p->asset_generation||!nonzero(p->catalog_sha256)||!nonzero(p->snapshot_sha256)||!nonzero(p->source_sha256)||!nonzero(p->run_sha256))return COH_INVALID;
@@ -306,13 +307,19 @@ CohStatus coh_runtime_graph_build(const CohRuntimeGraph*prior,CohBytes catalog,C
     CohRuntimeSnapshotReport*r=&g->report.source;r->catalog_bytes=catalog.size;r->snapshot_bytes=snapshot.size;
     r->retained_bytes=budget->retained_bytes+old_owned+old_inputs+sizeof(*g)+sizeof(*out);
     r->stack_reserve=COH_RUNTIME_SNAPSHOT_STACK_RESERVE+COH_CATALOG_WALK_STACK_RESERVE;r->aggregate_peak_bytes=budget->aggregate_limit-available;
-    Audit a;memset(&a,0,sizeof(a));a.catalog=catalog;a.snapshot=snapshot;a.pins=p;a.cancel=cancel;a.r=r;a.available=available;a.base=r->aggregate_peak_bytes;a.graph=g;
+    Audit a;memset(&a,0,sizeof(a));a.catalog=catalog;a.snapshot=snapshot;a.pins=p;a.cancel=cancel;a.r=r;a.available=available;a.base=r->aggregate_peak_bytes;a.graph=g;a.pool_owned_limit=graph_owned_limit-sizeof(*g);
     CohStatus status=run_audit(&a,budget);if(status!=COH_OK){coh_runtime_graph_free(g);return status;}
-    if(r->owned_bytes>COH_SG_MEMORY_MAX-sizeof(*g)){coh_runtime_graph_free(g);return COH_LIMIT;}
+    if(r->owned_bytes>graph_owned_limit-sizeof(*g)){coh_runtime_graph_free(g);return COH_LIMIT;}
     g->report.generation=binding->generation;g->report.catalog_generation=binding->catalog_generation;g->report.asset_generation=p->asset_generation;
     g->report.nodes=a.nodes_count;g->report.edges=a.edges_count;g->report.owned_bytes=sizeof(*g)+r->owned_bytes;
     g->report.prior_owned_bytes=old_owned;g->report.prior_input_bytes=old_inputs;g->report.aggregate_peak_bytes=r->aggregate_peak_bytes;
     *out=g->report;*candidate=g;return COH_OK;
+}
+CohStatus coh_runtime_graph_build(const CohRuntimeGraph*prior,CohBytes catalog,CohBytes snapshot,
+    const CohRuntimeGraphBinding*binding,const CohRuntimeSnapshotBudget*budget,const CohCancel*cancel,
+    CohRuntimeGraph**candidate,CohRuntimeGraphReport*out){
+    return coh_runtime_graph_build_limited(prior,catalog,snapshot,binding,budget,cancel,
+        COH_SG_MEMORY_MAX,candidate,out);
 }
 CohStatus coh_runtime_graph_publish(CohRuntimeGraph**current,CohRuntimeGraph**candidate,CohRuntimeGraph**retired){
     if(!current||!candidate||!retired||current==candidate||current==retired||candidate==retired||!*candidate||*retired||*current==*candidate)return COH_INVALID;

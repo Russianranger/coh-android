@@ -1,0 +1,21 @@
+#include "source_special_routes.inc"
+static void special_refuses(CohSourceBody*body,uint32_t ordinal,void*w,size_t cap,const CohSourceSpecialBudget*b,CohCancel c,CohStatus expected){CohSourceSpecial out,prior;memset(&out,0xa5,sizeof(out));prior=out;size_t before=live,n=calls;CohStatus s=coh_source_special_prepare(body,ordinal,w,cap,b,c,&out);CHECK(s!=COH_OK&&(expected==COH_OK||s==expected)&&!memcmp(&out,&prior,sizeof(out))&&live==before&&calls==n);}
+static void special_checks(CohSourceSelection*selection,CohSourceBody*neon,CohSourceBody*shop,CohAssetLoader*loader,CohSourceBodyBudget bb,const char*directory,FILE*files[9]){
+ const CohResourceIndex*ignored;CohSourceBodyReport n,s;CHECK(coh_source_body_view(neon,&ignored,&n)==COH_OK&&coh_source_body_view(shop,&ignored,&s)==COH_OK);bb.retained_bytes+=n.owned_bytes+s.owned_bytes;
+ CohSourceSpecialBudget budget={96u<<20,bb.retained_bytes};const size_t cap=512u<<10;void*w=malloc(cap);CHECK(w);bb.retained_bytes+=cap;
+ for(unsigned k=0;k<9;k++){
+  const SpecialRoute*r=&special_routes[k];uint32_t file;CohResourceGeoPin pin;CHECK(coh_source_selection_pin(selection,r->ordinal,&file,&pin)==COH_OK&&!strcmp(pin.id.path,r->path));char path[8192];CHECK(snprintf(path,sizeof(path),"%s/%s",directory,pin.id.path)>0);files[k]=fopen(path,"rb");CHECK(files[k]&&!fseek(files[k],0,SEEK_END));long size=ftell(files[k]);CHECK(size>0);rewind(files[k]);CHECK(coh_asset_mount_file(loader,pin.id.path,(CohAssetSource){read_at,files[k],(uint64_t)size,pin.id.generation})==COH_OK);
+  CohSourceBody*body=NULL;CohSourceBodyReport br;CHECK(coh_source_body_create(NULL,selection,file,loader,&bb,digest,NULL,(CohCancel){0},&body,&br)==COH_OK);
+  CohSourceSpecial out;size_t initial=calls;CHECK(coh_source_special_prepare(body,r->ordinal,w,cap,&budget,(CohCancel){0},&out)==COH_OK&&calls==initial);CHECK(out.kinds==r->kinds&&out.reflection_quads==r->quads&&out.alternate_pivots==r->pivots&&!strcmp(out.source.model.model_name,r->model)&&out.source.source_ordinal==r->ordinal);CHECK(!out.ordinary_cpu_ready&&!out.client_semantics_admitted&&!out.world_authority&&out.aggregate_reserved_bytes<=budget.aggregate_limit&&out.workspace_bytes==cap);CHECK(out.observed_cast_shadow==(r->kinds==COH_SOURCE_SPECIAL_MISSING_UV));
+  uint8_t hash[32],expected[32];CHECK(digest(NULL,(CohBytes){(const uint8_t*)out.reflection_vertices,(size_t)r->quads*48},hash)==COH_OK);hex(r->points_sha,expected);CHECK(!memcmp(hash,expected,32));CHECK(digest(NULL,(CohBytes){(const uint8_t*)out.alternate_pivot,(size_t)r->pivots*48},hash)==COH_OK);hex(r->pivots_sha,expected);CHECK(!memcmp(hash,expected,32));
+  CohSourceSpecialBudget tight=budget;tight.aggregate_limit=out.aggregate_reserved_bytes-1;special_refuses(body,r->ordinal,w,cap,&tight,(CohCancel){0},COH_LIMIT);tight.aggregate_limit=out.aggregate_reserved_bytes-COH_SOURCE_SPECIAL_PREPARATION_RESERVE;special_refuses(body,r->ordinal,w,cap,&tight,(CohCancel){0},COH_LIMIT);polls=0;stop=1;special_refuses(body,r->ordinal,w,cap,&budget,(CohCancel){cancelled,NULL},COH_CANCELLED);special_refuses(body,UINT32_MAX,w,cap,&budget,(CohCancel){0},COH_NOT_FOUND);
+  CohBytes spans[]={out.source.actual_sources.record,out.source.actual_sources.header,out.source.actual_sources.blob};for(unsigned j=0;j<3;j++){CHECK(coh_source_special_prepare(body,r->ordinal,(void*)spans[j].data,spans[j].size<cap?spans[j].size:cap,&budget,(CohCancel){0},&out)==COH_INVALID);CHECK(coh_source_special_prepare(body,r->ordinal,w,cap,&budget,(CohCancel){0},(CohSourceSpecial*)spans[j].data)==COH_INVALID);}
+  CHECK(coh_source_special_prepare(body,r->ordinal,w,cap,&budget,(CohCancel){0},(CohSourceSpecial*)w)==COH_INVALID);CHECK(coh_source_special_prepare(body,r->ordinal,w,cap,(CohSourceSpecialBudget*)w,(CohCancel){0},&out)==COH_INVALID);CHECK(coh_source_special_prepare(body,r->ordinal,(void*)(UINTPTR_MAX-3),16,&budget,(CohCancel){0},&out)==COH_INVALID);
+  if(r->quads)special_refuses(body,r->ordinal,w,1,&budget,(CohCancel){0},COH_LIMIT);
+  if(out.aggregate_reserved_bytes>special_peak)special_peak=out.aggregate_reserved_bytes;
+  coh_source_body_free(body);coh_asset_trim(loader);special_completions++;
+ }
+ /* Existing ordinary file remains ordinary; never silently promoted. */
+ special_refuses(neon,35283,w,cap,&budget,(CohCancel){0},COH_NOT_FOUND);
+ free(w);
+}

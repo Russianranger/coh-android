@@ -1,0 +1,103 @@
+{
+  "approved": true,
+  "source_commits": [
+    "70be1417bd60ac4f1c3654330d779d93c2cba457",
+    "2ac9ba789bc6cfa1520ee5c76207f9a8a5d8564d"
+  ],
+  "evidence_commits": [
+    "f6a9c0671",
+    "0c6763e5c"
+  ],
+  "records": {
+    "source-binding.json": {
+      "sha256": "3b0120b9bca3e962f869e823bd5970f8f75929472a1f6fdbbc8f67d78d97d97e",
+      "tested_sources": 253,
+      "checks": {
+        "release": {
+          "checks": 6545,
+          "fixtures": 498,
+          "syntax_only": 144,
+          "cuts": 45,
+          "mutations": 207,
+          "loan_controls": 162,
+          "whole_update_accepted": false,
+          "actor_publication": false,
+          "ack_permitted": false
+        },
+        "asan": {
+          "checks": 6545,
+          "fixtures": 498,
+          "syntax_only": 144,
+          "cuts": 45,
+          "mutations": 207,
+          "loan_controls": 162,
+          "whole_update_accepted": false,
+          "actor_publication": false,
+          "ack_permitted": false
+        },
+        "ubsan": {
+          "checks": 6545,
+          "fixtures": 498,
+          "syntax_only": 144,
+          "cuts": 45,
+          "mutations": 207,
+          "loan_controls": 162,
+          "whole_update_accepted": false,
+          "actor_publication": false,
+          "ack_permitted": false
+        }
+      }
+    },
+    "framing-source-binding.json": {
+      "sha256": "fa54c54ea8e4042a2b1de58db3eb5f9bd7b9fdf480906c03cc92c2868fa5721e",
+      "tested_sources": 263,
+      "checks": {
+        "release": {
+          "checks": 467797,
+          "cases": 180,
+          "admitted_narrow_framing": 144,
+          "local_marker_limit_refused": 36,
+          "strict_truncations": 155572,
+          "actor_publication": false,
+          "ack_permitted": false
+        },
+        "asan": {
+          "checks": 467797,
+          "cases": 180,
+          "admitted_narrow_framing": 144,
+          "local_marker_limit_refused": 36,
+          "strict_truncations": 155572,
+          "actor_publication": false,
+          "ack_permitted": false
+        },
+        "ubsan": {
+          "checks": 467797,
+          "cases": 180,
+          "admitted_narrow_framing": 144,
+          "local_marker_limit_refused": 36,
+          "strict_truncations": 155572,
+          "actor_publication": false,
+          "ack_permitted": false
+        }
+      }
+    }
+  },
+  "production_c_and_header_unchanged_after_framing": true,
+  "review": [
+    "Nine enclosing spans and overflow endpoints disjoint; opaque provider context and dictionary charged",
+    "Child retained formula subtracts exactly child-recharged storage; enclosing128KiB reserve and strict child caps retained",
+    "Partial-error loans stay represented and are released by children; scratch reader advances only after validated spans",
+    "Samepacket deletes require staged indices but do not apply simulation retirement",
+    "Full suffix/list/control/order and exact zero-end validated syntactically; unknown nested commands refuse",
+    "Narrow native256command limit deliberately refuses36 maximal sourceframes; exact private helper compared against180 original sourcecases"
+  ],
+  "boundaries": {
+    "source_framing_pending_superseded": true,
+    "original_public_reader_always_unchanged": true,
+    "whole_original_update_producer_executed": false,
+    "runtime_dictionary_or_dynamic_ownership": false,
+    "complete_update_actor_ack": false,
+    "external_dependency_stack_or_sanitizer_closure": false,
+    "corpus_ci_or_server_replayed_by_review": false
+  }
+}

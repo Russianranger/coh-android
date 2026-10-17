@@ -11,6 +11,17 @@ struct CohWrRigidResource {
 };
 static uint32_t u32(const uint8_t*p){return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
 static int bounded_name(const char*p){if(!p)return 0;size_t n=0;while(n<=COH_ASSET_PATH_MAX&&p[n])n++;return n>0&&n<=COH_ASSET_PATH_MAX;}
+static int version_allowed(CohWrRigidPolicy policy,uint32_t version){
+ switch(policy){
+ case COH_WR_RIGID_DEFAULT_0_8:return version==0||version==8;
+ case COH_WR_RIGID_EXACT_SOURCE_7:return version==7;
+ case COH_WR_RIGID_EXACT_SOURCE_5:return version==5;
+ case COH_WR_RIGID_EXACT_SOURCE_2:return version==2;
+ case COH_WR_RIGID_EXACT_SOURCE_3:return version==3;
+ case COH_WR_RIGID_EXACT_SOURCE_4:return version==4;
+ default:return 0;
+ }
+}
 static int nonzero(const uint8_t *p){unsigned n=0;for(unsigned i=0;i<32;i++)n|=p[i];return n!=0;}
 static int cancelled(CohCancel c){return c.poll&&c.poll(c.context);}
 static int add(size_t *a,size_t n,size_t s){if(n&&s>(SIZE_MAX-*a)/n)return 0;*a+=n*s;return 1;}
@@ -61,7 +72,7 @@ CohStatus coh_wr_rigid_acquire_policy(CohAssetLoader*l,const CohWrRigidRequest*q
     size_t workspace=0,max_stream=0,owned=sizeof(*r),temporary=0,peak=0;
     if(!l||!q||!b||!out||!open_header||!read_model||!q->geo.path||!q->geo.generation||!bounded_name(q->model)||
        !q->material_generation||!q->digest||!q->acquire||!q->release||!nonzero(q->geo_sha256))return COH_INVALID;
-    if(policy!=COH_WR_RIGID_DEFAULT_0_8&&policy!=COH_WR_RIGID_EXACT_SOURCE_7&&policy!=COH_WR_RIGID_EXACT_SOURCE_5)return COH_INVALID;
+    if(policy!=COH_WR_RIGID_DEFAULT_0_8&&policy!=COH_WR_RIGID_EXACT_SOURCE_7&&policy!=COH_WR_RIGID_EXACT_SOURCE_5&&policy!=COH_WR_RIGID_EXACT_SOURCE_2&&policy!=COH_WR_RIGID_EXACT_SOURCE_3&&policy!=COH_WR_RIGID_EXACT_SOURCE_4)return COH_INVALID;
     if(*out)return COH_STATE;
     if(!b->loader_reservation||!b->aggregate_limit||b->aggregate_limit>COH_WR_MAX_MEMORY||b->external_bytes>b->aggregate_limit||
        !b->max_models||b->max_models>65536||!b->max_vertices||b->max_vertices>COH_WR_MAX_VERTICES||
@@ -77,12 +88,12 @@ CohStatus coh_wr_rigid_acquire_policy(CohAssetLoader*l,const CohWrRigidRequest*q
     if(workspace>b->max_workspace_bytes||!room(l,b,0,workspace,&peak)){s=COH_LIMIT;goto fail;}
     temp=malloc(workspace);if(!temp){s=COH_LIMIT;goto fail;}
     s=open_header(bytes,temp,workspace,b->max_models,&geo);if(s!=COH_OK)goto fail;
-    if(policy==COH_WR_RIGID_EXACT_SOURCE_5?geo.version!=5:policy==COH_WR_RIGID_EXACT_SOURCE_7?geo.version!=7:(geo.version!=0&&geo.version!=8)){s=COH_UNSUPPORTED;goto fail;}
+    if(!version_allowed(policy,geo.version)){s=COH_UNSUPPORTED;goto fail;}
     uint32_t matches=0,selected_zero=0;size_t cursor=geo.records_offset,selected_record=0;
     for(uint32_t i=0;i<geo.model_count;i++){
         CohAssetGeoModel m;if(cancelled(cancel)){s=COH_CANCELLED;goto fail;}
-        if(cursor>geo.header.size||geo.header.size-cursor<(geo.version==0?216u:4u)){s=COH_INVALID;goto fail;}
-        size_t record_bytes=geo.version==0?216u:u32(geo.header.data+cursor);
+        if(cursor>geo.header.size||geo.header.size-cursor<(geo.version<3?216u:4u)){s=COH_INVALID;goto fail;}
+        size_t record_bytes=geo.version<3?216u:u32(geo.header.data+cursor);
         if(record_bytes<4||record_bytes>geo.header.size-cursor){s=COH_INVALID;goto fail;}
         CohAssetGeo one=geo;one.records_offset=cursor;one.model_count=1;
         uint32_t zero=0;s=read_model(&one,0,&m,&zero);if(s!=COH_OK)goto fail;
@@ -93,9 +104,9 @@ CohStatus coh_wr_rigid_acquire_policy(CohAssetLoader*l,const CohWrRigidRequest*q
     if(matches!=1){s=matches?COH_INVALID:COH_NOT_FOUND;goto fail;}
     if(selected_zero){s=COH_UNSUPPORTED;goto fail;}
     /* Public parser validates each record; original readModel uses fixed
-     *216-byte ModelFormatOnDisk_v2 for legacyv0, variable records forv8. */
+     *216-byte ModelFormatOnDisk_v2 for v0/v2, variable records for v3+. */
     size_t record=selected_record;
-    if(geo.version==0){
+    if(geo.version<3){
         const uint8_t*p=geo.header.data+record;
         /* Original legacy source asserts these runtime-only pointers null.
          * Serialized flags remain unsupported CLIENT semantics in this slice. */

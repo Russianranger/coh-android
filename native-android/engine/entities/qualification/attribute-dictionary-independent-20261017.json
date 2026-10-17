@@ -1,0 +1,48 @@
+{
+  "approved": true,
+  "source_commit": "85a2d34d1",
+  "evidence_commit": "bfc991f5f",
+  "tested_source_count_git_and_current_equal": 37,
+  "binding_sha256": "1eefc53108aa5570a7af16c3eda1a2d62ca4ef8eba7e03edcb98c0f4f48aa94b",
+  "host_proof_gzip_sha256": "b51fd5e20feac0ada6b608529011ad6978bd46afe3b898f4350b1afc78d2c5de",
+  "checks": {
+    "release": {
+      "checks": 67391,
+      "fixtures": 5,
+      "truncations": 27463,
+      "mutations": 5892,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 67391,
+      "fixtures": 5,
+      "truncations": 27463,
+      "mutations": 5892,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 67391,
+      "fixtures": 5,
+      "truncations": 27463,
+      "mutations": 5892,
+      "runtime_generation": false,
+      "actor_authority": false
+    }
+  },
+  "review": [
+    "Complete bounded Parse6 segments/counts/text/fullEOF before SHA and late outputcommit",
+    "All known spans+digestcontext/scratch16KiBnative reserve+input/out/work/retained charged<=512KiB; no allocation",
+    "Borrowed strings remain inputleased; reverseflatten equals original reversecategories/reverserows",
+    "Rawlookup sizeofCharacterAttributes460*type+offset preserves sourcewidth; no duplicate filtering or simulatedpostprocessor"
+  ],
+  "limits": {
+    "runtime_cache_branch_or_live_generation": false,
+    "actual_postprocessor_or_stash_builder": false,
+    "network_full_attributes_admitted_by_this_module": false,
+    "actor_authority": false,
+    "external_crypto_stack_or_sanitizer_closure": false,
+    "tests_replayed_by_review": false
+  }
+}

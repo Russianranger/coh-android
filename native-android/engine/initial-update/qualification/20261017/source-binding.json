@@ -1,0 +1,61 @@
+{
+  "schema": "coh-whole-initial-source-binding-v1",
+  "source_commit": "70be1417bd60ac4f1c3654330d779d93c2cba457",
+  "tested_source_count": 253,
+  "tested_source_git_blobs_match": true,
+  "host_proof_sha256": "661492dcf0e7b1dd7aaa672d0740a638ac96b8ed2a51de39090952062c374f07",
+  "native_fixtures_gzip_sha256": "ce9e2143b3e0e21042688c916dd6369c4d67a560c12fb76f3bd1bb984fdd1892",
+  "native_fixtures_uncompressed_sha256": "f5917df7da86829ad280051fa16c492209159f09f746b688e05d6b080141c508",
+  "checks": {
+    "release": {
+      "checks": 6545,
+      "fixtures": 498,
+      "syntax_only": 144,
+      "cuts": 45,
+      "mutations": 207,
+      "loan_controls": 162,
+      "whole_update_accepted": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    },
+    "asan": {
+      "checks": 6545,
+      "fixtures": 498,
+      "syntax_only": 144,
+      "cuts": 45,
+      "mutations": 207,
+      "loan_controls": 162,
+      "whole_update_accepted": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    },
+    "ubsan": {
+      "checks": 6545,
+      "fixtures": 498,
+      "syntax_only": 144,
+      "cuts": 45,
+      "mutations": 207,
+      "loan_controls": 162,
+      "whole_update_accepted": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    }
+  },
+  "native_stack_sum_bytes": 69840,
+  "native_stack_reserve_bytes": 131072,
+  "workspace_host_bytes": 75632,
+  "report_host_bytes": 14448,
+  "source_framing_independent_oracle_pending": true,
+  "original_producer_probe_refusal": {
+    "scenario": 0,
+    "reason": "Forcing full_update1 with original fixture scenario0 has no queued server control state and original assert refuses; excluded from valid full-control profiles. No original function was changed to suppress it."
+  },
+  "whole_initial_update_accepted": false,
+  "runtime_dictionary_authority": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "android_built": false,
+  "android_executed": false,
+  "physical_thor": false,
+  "real_server": false
+}

@@ -1,4 +1,4 @@
-name: Reviewed full manual PG Wine checksum candidate compile only
+name: Reviewed full manual PG Wine compile with portable CMake paths
 on:
   push:
     branches: [native-android]
@@ -21,6 +21,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      # Run39006696548 stopped at a generated CMake RC path escape. This new
+      # source attempt proves the corrected rendering with the exact locked
+      # interpreter before configuring the unchanged full manual recipe.
+      - name: Rehash reviewed tools and require all fifteen controls without skips
+        shell: pwsh
+        run: >-
+          python native-android/combined-client/tools/run_reviewed_manual_controls.py
+          --source-root $PWD --expected-commit $env:GITHUB_SHA
+          --output "$env:RUNNER_TEMP/coh-manual-pg-wine-controls"
+          --expected-driver-qualification-sha256 de2bb9e6dabfbfbdc16a8329f46af8348f6757eea4f58603a3a008c148ecf7ec
+          --expected-toolchain-sha256 a70e878ad1f8872cc876987f6ec644f27bbf7c5ec98db528742f28ed5b098125
       - name: Verify reviewed tools and compile the full manual checksum candidate
         shell: pwsh
         run: >-
@@ -36,5 +47,12 @@ jobs:
         with:
           name: full-manual-pg-wine-checksum-compile-only
           path: ${{ runner.temp }}/coh-full-manual-pg-wine-compile/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-manual-pg-wine-reviewed-controls
+          path: ${{ runner.temp }}/coh-manual-pg-wine-controls/
           if-no-files-found: error
           retention-days: 90

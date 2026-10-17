@@ -1,0 +1,19 @@
+{
+  "approved": true,
+  "source_commit": "706fc4dd71bbdb50acce67946ee192beaa4ee029",
+  "receipt_sha256": {
+    "source-rigid-legacy-final-host.json": "187fe4620a42001c83a54b3d3581fca868a74ee6c372230c2fe8f16d10df1ed0",
+    "source-rigid-default-regression-after-owned-legacy-host.json": "21d1d09c6a275aedbf8f8d6d408b8491223ef0c321fe34958e43cda0c1f3bea5",
+    "source-rigid-v57-regression-after-owned-legacy-host.json": "70bad2d0a5ace18c545212e057d64d5b914ef4e3de1fc063b2a16b10e1b7eea5"
+  },
+  "tested_source_git_and_current_equal": [
+    64,
+    48,
+    57
+  ],
+  "review": "Fixed2/3/4 wrappers derive actual Body labels/version/SHA; private helper ownership/budget/destructor unchanged; transfer only after fullsuccess.36routes/35pairs originaldelta CPU packets equal, all old policy/Body regressions preserved. Named bridge71454259B separate inheritedBody71063020B.",
+  "original32_execution": false,
+  "fixture_materials_only": true,
+  "portal_client_lod_live_world": false,
+  "tests_replayed_by_review": false
+}

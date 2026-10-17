@@ -1,0 +1,452 @@
+{
+  "approved": true,
+  "source_commit": "814f3ebfe",
+  "receipts": {
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/all35-host.json": {
+      "sha256": "f9093e41a3a5269e94251270ccb7d5aad59356c92021ead5091005d42fbfa181",
+      "source_count": 38,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 5296,
+          "authentic_cases": 35,
+          "versions": [
+            2,
+            3,
+            4
+          ],
+          "allocation_failure_stages": 175,
+          "grammar_controls": 313,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 5296,
+          "authentic_cases": 35,
+          "versions": [
+            2,
+            3,
+            4
+          ],
+          "allocation_failure_stages": 175,
+          "grammar_controls": 313,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 5296,
+          "authentic_cases": 35,
+          "versions": [
+            2,
+            3,
+            4
+          ],
+          "allocation_failure_stages": 175,
+          "grammar_controls": 313,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        }
+      }
+    },
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/source-default-bridge-regression.json": {
+      "sha256": "ee6d3f8f652d5e67898d32801bdf301f329fc6608a14ed9e3f4ce9389f2ac075",
+      "source_count": 48,
+      "modes": {
+        "release": {
+          "result": {
+            "version_completions": 0,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947306,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 2,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "2414e190e481dea26fa71d587ce10a90614644267d99f24ab1398944e7feeef3"
+        },
+        "asan": {
+          "result": {
+            "version_completions": 0,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947306,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 2,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "7b357ff6f43e5ad740284bcf3bc7f1902b15e19a609f8db920e8dc77dd6c3a30"
+        },
+        "ubsan": {
+          "result": {
+            "version_completions": 0,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947306,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 2,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "7bda77973cc03f6fcfce462459707b97acaf7de63634d1dbd619a15fc8d778d8"
+        }
+      }
+    },
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/source-version-bridge-regression.json": {
+      "sha256": "925cec8cd2f09e00685119f513440c98e5db5130779293bf1e1f1ef782f522d2",
+      "source_count": 57,
+      "modes": {
+        "release": {
+          "result": {
+            "version_completions": 2,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947664,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 4,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "2f28170e194932ae7f8396a06913114923426bb0b5fb4f643d26c8b9a729e47e"
+        },
+        "asan": {
+          "result": {
+            "version_completions": 2,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947664,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 4,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "dcc5b6a81eb5030e1e23efe4cf908096fd89dadb762f10508557ae4b7e1558e2"
+        },
+        "ubsan": {
+          "result": {
+            "version_completions": 2,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947664,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 4,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "9716aeca2703701a619081b652d32459be8c631ec53422c685fa8726b9df1967"
+        }
+      }
+    },
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/regressions/default8-regression.json": {
+      "sha256": "abadc6c676ded49fc49430016ad4a75c18e79f06a7564e4382735234f381c953",
+      "source_count": 33,
+      "modes": {
+        "release": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "9331385703b9496d41341f658d747400db3e2546185643dcd44ca8caeae9a961",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "683f42aafb2b4203b02cedf07e9233bcfd96145d261dd4eed3dd0c6132afeac5"
+          }
+        },
+        "address": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "5f700bf2c74f0b6cdec9f146f1bfa4dbe3c93e966a800d88593c6e08eeafd551",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "be9adb8b1afac599263c28f68bd8e85e8c9ee0747a0e5e869788d61e742c0396"
+          }
+        },
+        "undefined": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "2ab1264edec43f23395bc572fd4a952f137afc23a4749c121081a31157a7bd6b",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "26572a67266bd84b9e048b6983d64351e10c20f3475bc582a43378e9767cbfdf"
+          }
+        }
+      }
+    },
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/regressions/source08-regression.json": {
+      "sha256": "cb8eaee557f61275748a013d79e4f60e46d2f115362dcd654276c6e2a659c221",
+      "source_count": 29,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        }
+      }
+    },
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/regressions/default0-regression.json": {
+      "sha256": "f03b166aa7735d153a853c9b2a23bf8ad18f407238caff15d3bceddae0dbe610",
+      "source_count": 27,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        }
+      }
+    },
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/regressions/v7-regression.json": {
+      "sha256": "b2fb3a8abd53a8a4973e7b35b2ac25ea376ab6b7a05f11b00036c69297f50572",
+      "source_count": 32,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        }
+      }
+    },
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/regressions/host.json": {
+      "sha256": "e1230c9cecb57f7e7f5baef1dd13c2846959aa44add82d31a28833fc97f1ee86",
+      "source_count": 34,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 206,
+          "actual_models": 1,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 206,
+          "actual_models": 1,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 206,
+          "actual_models": 1,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        }
+      }
+    }
+  },
+  "retained_original32_member_count": 325,
+  "source_review": [
+    "Fixed2/3/4entries; default0/8 and approved5/7 fixed policies preserved",
+    "v2 fixed216byte row and original seven-pack remap/null runtime guards; v3 variable rows; v4 obsolete24byte cells source-skipped",
+    "LegacyLOD148byte rows bounded by model count, active count<=6 and finite fields; raw unused bytes retained unapplied",
+    "One-row model cursor preserves linear traversal; material/loader/ownership rollback follows reviewed common kernel"
+  ],
+  "limits": {
+    "actual_original32_execution": false,
+    "source_body_bridge_extended_to234": false,
+    "effective_portal_material_client_lod": false,
+    "world_or_live_generation_permit": false,
+    "tests_rerun_by_review": false
+  }
+}

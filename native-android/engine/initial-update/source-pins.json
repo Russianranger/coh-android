@@ -1,0 +1,15 @@
+{
+  "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+  "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+  "MapServer/src/svr/svr_base.h": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64",
+  "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+  "libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+  "Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+  "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+  "Common/entity/classes.c": "d62fdde685bc4a647ed9b8d0a7d25550dd39fb1107648aa2cc6bcc95288652da",
+  "Common/entity/origins.c": "6791eb358399b34cb15134b733f0a1a376d4ea7304cc1a216e41d9b2aeb6e661",
+  "Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+  "Common/entity/powers.c": "6d5c9ad363b29f35f866516d253a05edb8ced653576e4c4b31b83322bbe69330",
+  "Common/entity/powers_load.c": "c5b7bbf32621922a36ba097d566840bdd9d4afc692d8e3baacd0e207dc1e12b8",
+  "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+}

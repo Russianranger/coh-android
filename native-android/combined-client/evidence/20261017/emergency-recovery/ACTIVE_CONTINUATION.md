@@ -1,5 +1,7 @@
 # Authoritative world continuation — 2026-10-17
 
+Latest detailed checkpoint: [MILESTONE8.md](MILESTONE8.md). Published floor8cf325f4dc78eab451f23382ac8a13f8fa9ffe5c; later exact publication and actual-check receipts belong to that checkpoint. Earlier sections below retain their historical source boundaries.
+
 Target branch remains native-android. Remote guarded component publication:
 2cdbaf42fcd51e32a420ece3e609111a4e2725aa (tree565a9193660bb4a482a262df3c617d820d307346).
 The compatibility retry source is28fe37cc2432db4adbfe047bd07a1e738d6aa754. All preceding remote publications and

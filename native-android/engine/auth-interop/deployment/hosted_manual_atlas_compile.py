@@ -118,17 +118,24 @@ def commands(source,build,patch,expected,lock,dependencies):
     return command_argv(plan,source,build,patch,lock,dependencies)
 
 
+def cmake_path(value):
+    # CMake serializes compiler/cache paths into quoted .cmake source files.
+    # Backslashes are escapes there; the tool identity still uses the exact
+    # canonical observed Windows path. Render only consumed argument values.
+    return str(value).replace('\\','/')
+
+
 def command_argv(plan,source,build,patch,lock,dependencies):
     configure,compile_command=[list(argv) for argv in plan['commands']]
-    configure[2]=str(source);configure[4]=str(build);compile_command[2]=str(build)
-    configure=[('-DPATCH_EXECUTABLE='+str(patch)) if arg.startswith('-DPATCH_EXECUTABLE=') else arg for arg in configure]
+    configure[2]=cmake_path(source);configure[4]=cmake_path(build);compile_command[2]=cmake_path(build)
+    configure=[('-DPATCH_EXECUTABLE='+cmake_path(patch)) if arg.startswith('-DPATCH_EXECUTABLE=') else arg for arg in configure]
     configure[0]=lock['tools']['cmake']['path'];compile_command[0]=configure[0];compile_command+=['--','/nr:false']
-    configure+=['-DCMAKE_GENERATOR_INSTANCE='+lock['vs_installation'],
+    configure+=['-DCMAKE_GENERATOR_INSTANCE='+cmake_path(lock['vs_installation']),
                 '-T','version='+lock['vc_toolset_version']+',host=x64',
                 '-DCMAKE_SYSTEM_VERSION='+lock['windows_sdk_version'],'-DCPM_SOURCE_CACHE=OFF','-DCPM_USE_LOCAL_PACKAGES=OFF',
                 '-DCPM_DOWNLOAD_ALL=ON','-DFETCHCONTENT_FULLY_DISCONNECTED=ON','-DFETCHCONTENT_UPDATES_DISCONNECTED=ON']
-    configure+=['-D'+key+'='+lock['tools'][tool]['path'] for key,tool in (('CMAKE_MAKE_PROGRAM','msbuild'),('CMAKE_LINKER','link'),('CMAKE_RC_COMPILER','rc'),('CMAKE_ASM_MASM_COMPILER','ml'))]
-    configure+=['-DCPM_'+name+'_SOURCE='+str(path) for name,path in dependencies.items()]
+    configure+=['-D'+key+'='+cmake_path(lock['tools'][tool]['path']) for key,tool in (('CMAKE_MAKE_PROGRAM','msbuild'),('CMAKE_LINKER','link'),('CMAKE_RC_COMPILER','rc'),('CMAKE_ASM_MASM_COMPILER','ml'))]
+    configure+=['-DCPM_'+name+'_SOURCE='+cmake_path(path) for name,path in dependencies.items()]
     return [configure,compile_command]
 
 
@@ -394,9 +401,10 @@ def admit(directory,receipt_sha,binary_sha,toolchain_sha,root):
     configure,compile_command=command_argv(plan,source,build_dir,lock['tools']['patch']['path'],lock,deps)
     expected_records.extend([('configure-full-manual',configure),('build-full-manual',compile_command)])
     normal_argv=lambda argv:[str(x).replace('\\','/') for x in argv] if isinstance(argv,list) else None
-    if normal_argv(value.get('exact_configure_argv'))!=normal_argv(configure) or normal_argv(value.get('exact_build_argv'))!=normal_argv(compile_command) or len(value.get('commands',[]))!=len(expected_records):raise ValueError('manual_compile_command_count_profile')
+    if value.get('exact_configure_argv')!=configure or value.get('exact_build_argv')!=compile_command or len(value.get('commands',[]))!=len(expected_records):raise ValueError('manual_compile_command_count_profile')
     for row,(name,argv) in zip(value['commands'],expected_records):
-        if (row.get('name')!=name or normal_argv(row.get('argv'))!=normal_argv(list(map(str,argv))) or type(row.get('returncode')) is not int or row['returncode']!=0
+        matches=(row.get('argv')==list(map(str,argv))) if name in ('configure-full-manual','build-full-manual') else normal_argv(row.get('argv'))==normal_argv(list(map(str,argv)))
+        if (row.get('name')!=name or not matches or type(row.get('returncode')) is not int or row['returncode']!=0
                 or row.get('log_truncated') is not False or row.get('log_sha256')!=host.sha(directory/(name+'.log'))):raise ValueError('manual_compile_exact_command_result')
     cache_profile(directory/'CMakeCache.txt',lock)
     if compiler_profile(directory,lock,True)!=value.get('compiler_profile'):raise ValueError('manual_compile_retained_compiler_profile')

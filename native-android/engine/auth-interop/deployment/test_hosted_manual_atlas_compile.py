@@ -1,6 +1,6 @@
 from pathlib import Path
 from unittest.mock import patch
-import copy,json,os,struct,tempfile,unittest
+import copy,json,os,shutil,struct,subprocess,tempfile,unittest
 import hosted_manual_atlas_compile as d
 
 class CompileControls(unittest.TestCase):
@@ -62,6 +62,42 @@ class CompileControls(unittest.TestCase):
   self.assertIn('-DCPM_cryptopp_SOURCE=new-crypto',commands[0]);self.assertIn('-DFETCHCONTENT_FULLY_DISCONNECTED=ON',commands[0])
   self.assertIn('-DCMAKE_SYSTEM_VERSION=10.0.26100.0',commands[0]);self.assertEqual(commands[1][-4:],['--target','DbServer','--','/nr:false'])
   self.assertEqual(plan['commands'][0][2],'old-source')
+
+ def test_real_windows_lock_paths_render_only_cmake_values(self):
+  bs=chr(92);nl=chr(10)
+  path=Path(__file__).resolve().parent.parent/'evidence/windows-tool-inventory-39005570623/reviewed-toolchain-lock.json'
+  raw=path.read_bytes();lock=json.loads(raw);saved=copy.deepcopy(lock)
+  source=str(d.PureWindowsPath('D:/owned path/source'));build=str(d.PureWindowsPath('D:/owned path/build'));dependency=str(d.PureWindowsPath('D:/owned path/dependencies/cryptopp'))
+  plan={'commands':[['cmake','-S','old','-B','old','-DPATCH_EXECUTABLE=old'],['cmake','--build','old','--config','OptDebug','--parallel','2','--target','DbServer']]}
+  configure,compileargv=d.command_argv(plan,source,build,lock['tools']['patch']['path'],lock,{'cryptopp':dependency})
+  self.assertEqual(configure[0],lock['tools']['cmake']['path']);self.assertEqual(compileargv[0],configure[0])
+  for arg in configure[1:]+compileargv[1:]:self.assertNotIn(bs,arg)
+  self.assertIn('-DCMAKE_RC_COMPILER='+lock['tools']['rc']['path'].replace(bs,'/'),configure)
+  self.assertIn('-DCPM_cryptopp_SOURCE='+dependency.replace(bs,'/'),configure)
+  self.assertEqual(lock,saved);self.assertEqual(path.read_bytes(),raw)
+  # CMake emits forward paths; metadata remains canonical Windows spelling.
+  self.lock=lock;cache={k:v.replace(bs,'/') for k,v in self.valid_cache().items()}
+  p=self.root/'WindowsCache.txt';p.write_text(''.join(k+':STRING='+v+nl for k,v in cache.items()))
+  self.assertEqual(d.cache_profile(p,lock)['CMAKE_RC_COMPILER'],lock['tools']['rc']['path'])
+  for lang in ('C','CXX'):
+   values={'COMPILER':lock['tools']['cl']['path'].replace(bs,'/'),'COMPILER_VERSION':lock['compiler_version'],'COMPILER_ID':'MSVC','SIZEOF_DATA_PTR':'4'}
+   (self.root/('CMake'+lang+'Compiler.cmake')).write_text(''.join('set(CMAKE_'+lang+'_'+k+' "'+v+'")'+nl for k,v in values.items()))
+  self.assertEqual(set(d.compiler_profile(self.root,lock,True)),{'C','CXX'})
+ @unittest.skipUnless(shutil.which('cmake'),'CMake interpreter unavailable locally; Windows workflow must execute this regression')
+ def test_cmake_script_reproduces_backslash_escape_and_parses_forward_path(self):
+  bs=chr(92);nl=chr(10)
+  lock=json.loads((Path(__file__).resolve().parent.parent/'evidence/windows-tool-inventory-39005570623/reviewed-toolchain-lock.json').read_bytes())
+  canonical=lock['tools']['rc']['path'];writer=self.root/'writer.cmake'
+  generated='cmake_minimum_required(VERSION 3.24)'+bs+'nset(CMAKE_RC_COMPILER '+bs+'"${TOOL_PATH}'+bs+'")'+bs+'n'
+  writer.write_text('file(WRITE "${GENERATED}" "'+generated+'")'+nl)
+  bad=self.root/'bad-CMakeRCCompiler.cmake';good=self.root/'good-CMakeRCCompiler.cmake'
+  for value,destination in ((canonical,bad),(d.cmake_path(canonical),good)):
+   result=subprocess.run(['cmake','-DTOOL_PATH='+value,'-DGENERATED='+str(destination),'-P',str(writer)],capture_output=True,text=True,timeout=15)
+   self.assertEqual(result.returncode,0,result.stderr)
+  failed=subprocess.run(['cmake','-P',str(bad)],capture_output=True,text=True,timeout=15)
+  self.assertNotEqual(failed.returncode,0);self.assertIn('Invalid character escape',failed.stderr);self.assertIn(bs+'P',failed.stderr)
+  fixed=subprocess.run(['cmake','-P',str(good)],capture_output=True,text=True,timeout=15)
+  self.assertEqual(fixed.returncode,0,fixed.stderr);self.assertIn(d.cmake_path(canonical),good.read_text())
  def valid_cache(self):
   values={'CMAKE_GENERATOR':'Visual Studio 18 2026','CMAKE_GENERATOR_PLATFORM':'Win32','COH_PG_PERSISTENCE_TESTS':'OFF',
           'COX_BUILD_COMMON':'ON','COX_BUILD_DBSERVER':'ON','COX_BUILD_MAPSERVER':'OFF','COX_BUILD_BEACONSERVER':'OFF','COX_BUILD_AUTHserver':'OFF',
@@ -164,6 +200,11 @@ class CompileControls(unittest.TestCase):
    value['commands'][-1]['argv']=list(compileargv);value['commands'][-1]['argv'][value['commands'][-1]['argv'].index('DbServer')]='AuthServer';persist()
    with self.assertRaises(ValueError):admit()
    value['commands'][-1]['argv']=compileargv
+   canonical_configure=list(value['exact_configure_argv']);bad=list(canonical_configure)
+   index=next(i for i,arg in enumerate(bad) if arg.startswith('-DCMAKE_RC_COMPILER='))
+   bad[index]=bad[index].replace('/',chr(92));value['exact_configure_argv']=bad;value['commands'][-2]['argv']=bad;persist()
+   with self.assertRaises(ValueError):admit()
+   value['exact_configure_argv']=canonical_configure;value['commands'][-2]['argv']=canonical_configure
    maps['source_after_build']['Common/ClientLogin/clientcommLogin.c']='c'*64;persist()
    with self.assertRaises(ValueError):admit()
  def test_linux_cannot_start_compile_driver(self):

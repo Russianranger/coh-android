@@ -3,7 +3,7 @@
 #include "coh_source_rigid.h"
 /* Private ownership plumbing for fixed module entry points. Never expose a
  * caller-selected policy/decoder as semantic or source admission. Version0 is
- * the existing source0/8 entry; exact7/5 require the actual retained Body version.
+ * the existing source0/8 entry; exact2/3/4/5/7 require the actual retained Body version.
  * Public requests contain no geometry labels/version/generation/mask. */
 typedef CohStatus (*CohSourceRigidAcquire)(CohAssetLoader*,const CohWrRigidRequest*,
  const CohWrRigidLimits*,CohCancel,CohWrRigidResource**);

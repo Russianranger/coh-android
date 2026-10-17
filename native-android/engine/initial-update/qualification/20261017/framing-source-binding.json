@@ -1,0 +1,47 @@
+{
+  "schema": "coh-whole-initial-framing-binding-v1",
+  "source_commit": "2ac9ba789bc6cfa1520ee5c76207f9a8a5d8564d",
+  "tested_source_count": 263,
+  "tested_source_git_blobs_match": true,
+  "proof_sha256": "bb117b485ee6e14c8dc3f3ce51f2b5360286ccc3eaf39e5b886b68d1678957ba",
+  "checks": {
+    "release": {
+      "checks": 467797,
+      "cases": 180,
+      "admitted_narrow_framing": 144,
+      "local_marker_limit_refused": 36,
+      "strict_truncations": 155572,
+      "actor_publication": false,
+      "ack_permitted": false
+    },
+    "asan": {
+      "checks": 467797,
+      "cases": 180,
+      "admitted_narrow_framing": 144,
+      "local_marker_limit_refused": 36,
+      "strict_truncations": 155572,
+      "actor_publication": false,
+      "ack_permitted": false
+    },
+    "ubsan": {
+      "checks": 467797,
+      "cases": 180,
+      "admitted_narrow_framing": 144,
+      "local_marker_limit_refused": 36,
+      "strict_truncations": 155572,
+      "actor_publication": false,
+      "ack_permitted": false
+    }
+  },
+  "whole_initial_source_commit": "70be1417bd60ac4f1c3654330d779d93c2cba457",
+  "native_production_unchanged": true,
+  "supersedes_source_framing_independent_oracle_pending": true,
+  "original_provider_commits": [
+    "91e4534de09a80d5d723f9287cc7af8c5105f103",
+    "b81b8777d"
+  ],
+  "old_whole_qualification_replayed": false,
+  "whole_original_dispatcher_executed": false,
+  "actor_publication": false,
+  "ack_permitted": false
+}

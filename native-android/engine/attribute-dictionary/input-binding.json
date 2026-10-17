@@ -1,0 +1,13 @@
+{
+  "schema": "coh-attrib-description-input-v1",
+  "cache_archive_bytes": 27071659,
+  "cache_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+  "member": "data/bin/attrib_descriptions.bin",
+  "bytes": 5892,
+  "sha256": "20f770f406e661050434284e4253f721699df2112ea4481de66b50146304c132",
+  "schema_crc_manifest": "315acdb1",
+  "body_segment_begin": 72,
+  "body_segment_payload_begin": 76,
+  "runtime_cache_branch_observed": false,
+  "current_server_generation": false
+}

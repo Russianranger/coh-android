@@ -146,3 +146,5 @@ CohStatus coh_runtime_graph_compare_groups_witness(const CohRuntimeGraph*graph,c
  if(m.report.files_equal!=gr.source.files||m.root_slot!=gr.source.root_slots||m.report.root_wires_equal!=gr.source.active_roots||m.report.emitted_definitions_equal!=inspection.defs)return COH_STATE;
  *out=m.report;return COH_OK;
 }
+
+size_t coh_runtime_groups_witness_owned_bytes(const CohRuntimeGroupsWitness*t){return t?t->report.owned_bytes:0;}

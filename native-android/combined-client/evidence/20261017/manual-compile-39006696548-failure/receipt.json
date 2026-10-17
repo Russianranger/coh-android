@@ -1,0 +1,736 @@
+{
+  "repository_commit": "8cf325f4dc78eab451f23382ac8a13f8fa9ffe5c",
+  "repository_tree": "0ccab0ae8a86e5f13d1e28d006b7969e717520a8",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "github_run_id": "39006696548",
+  "image_os": "win25-vs2026",
+  "image_version": "20261007.264.1",
+  "schema": "coh-full-manual-atlas-compile-v1",
+  "passed": false,
+  "toolchain_lock_sha256": "a70e878ad1f8872cc876987f6ec644f27bbf7c5ec98db528742f28ed5b098125",
+  "host_qualification_sha256": "c15813238fff23cff22984dd283981965a4fd1208932cb7e18fba6e2319568d6",
+  "service_executed": false,
+  "shipping_runtime_replacement_permit": false,
+  "live_authenticated_db_login_verified": false,
+  "actual_persistence_verified": false,
+  "nondevelopment_version_observed": false,
+  "manual_wait_skip_permitted_for_real_auth": false,
+  "input_state_before": {
+    "commit": "8cf325f4dc78eab451f23382ac8a13f8fa9ffe5c",
+    "tracked_dirty": "",
+    "git_config_environment": {
+      "GIT_CONFIG_COUNT": "1",
+      "GIT_CONFIG_KEY_0": "core.autocrlf",
+      "GIT_CONFIG_VALUE_0": "false"
+    },
+    "helper_inputs": {
+      "deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+      "deployment/admit_tool_inventory.py": "6bc9e50b97db637c7643cf7869dbb72fdff5399907ea14f1b45a0cbbacfc676a",
+      "deployment/authenticated_handoff_contract.py": "46a9f73c4c0367026732cf996c91db494f2213bb33f3267fac126781bcea7989",
+      "deployment/auth_readiness.py": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+      "deployment/auth_service_profile.py": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+      "deployment/candidate_service.py": "07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe",
+      "deployment/candidate_sql_memory.py": "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde",
+      "deployment/check.py": "622a5d10f7b22a5fabe9a507baafe2234a3855b62fa89ab719ec9037377c705c",
+      "deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+      "deployment/db_handoff_profile.py": "551d9d682e83f541a8245e8f88c864e97a88acb638438979d8b1568136574ea0",
+      "deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+      "deployment/hosted_auth_login.py": "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2",
+      "deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+      "deployment/hosted_candidate_login.py": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+      "deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+      "deployment/hosted_manual_atlas_compile.py": "04126c67c4e4eee48336b2b519a7ac4ca489a6da1afb699b7a5c0263fc148efb",
+      "deployment/hosted_receive_candidate.py": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+      "deployment/inspect_client_reference.py": "43fc2bcb150d78f91b39efe5306e7510cb25714c807ec3dcab83e535064a8a67",
+      "deployment/manual_atlas_full_recipe.py": "ee8ece73aba177100993f32e27bface62b5e054d71a3b34c7fc0c20af0c07223",
+      "deployment/monitor_channel_contract.py": "627d09a46776f4026910a73d52316c498836050f361a3e6ed98aa56b48298b40",
+      "deployment/password_fixture.py": "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd",
+      "deployment/pg_wine_checksum_recipe.py": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
+      "deployment/qualify_auth_bit_merge.py": "42c2329635c009734dc179e153a2cb3afd234858e69637cc1e9c31502765db2e",
+      "deployment/qualify_auth_cache_consumer.py": "077cc53c2166d611c077c8cc356791692c7cf4766ac8f9e4233c71e40ad40280",
+      "deployment/qualify_auth_only.py": "1aeb26e564a6bc1dcd7adc03cc514075c87e59e0be8a5c14cafcd7d5dd6c5400",
+      "deployment/qualify_db_policy_matrix.py": "f93235c1ad24c93e844c380bacd6ce124db9e8c7de2eee706d1f2be8ffc71ef6",
+      "deployment/qualify_handoff_wire.py": "748d9748bad473de5ba97190f60f6c6aaedd490fba244930790bd45d5196de47",
+      "deployment/qualify_manual_atlas_full_recipe.py": "b515d6a3944baef2736c5d9569e1e7e6a69b64558f4e11fe9bda810e7fe6323e",
+      "deployment/qualify_monitor_envelope.py": "1962e442e8faa8739f1b00e74edc1c6b2c8b74c61cee9f4f9223d42b76321fba",
+      "deployment/qualify_original_receive.py": "500c417967baae54511f016f596a87ef602f4421add1be1211b041b460e98b58",
+      "deployment/qualify_receive_candidate.py": "ffae4b5a824e99570e39f05f89925c8e849ccb5e552c737c04a8ba51e0f2dc76",
+      "deployment/qualify_version_string_writer.py": "1a394a6d23ff1051789d37435bc4616f45708f3ffe96f584c4425ad5ebe8c1e0",
+      "deployment/qualify_windows_adapter.py": "d412943acb74b913d99bc93545445cd6e663241fc21f07b31b4738e1995608d8",
+      "deployment/receive_candidate.py": "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78",
+      "deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+      "deployment/sql_readiness_diagnostic.py": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+      "deployment/test_admit_tool_inventory.py": "1a453c96ae92e513a0466ad890b4cf04393434b99fa237de1c4fa988fcce627f",
+      "deployment/test_authenticated_handoff_contract.py": "a45216c71b110accceb5b822bee84811b70dcd2581305c041e6e59b8bec48564",
+      "deployment/test_auth_acceptance.py": "9522d9765fbddf882992677a09c1e1fc9896587aa3b35235b237023fa12f2d7b",
+      "deployment/test_auth_login_stage.py": "8b08ddf862e8ff48eb72ee0336d030935544885c738c8a8d444f881092d3efed",
+      "deployment/test_auth_readiness.py": "d4fcdfea9283af2fbd92052fdd063bc21e8f07fb82f795f6f73679f4e9f6b27c",
+      "deployment/test_candidate_login.py": "ddbed0d2483cdb0b4c0f605ee2b66d1a1135f94f26cdff8155ac6c56d5322333",
+      "deployment/test_candidate_service.py": "df7c75440e5b775151ee8293619fe13f8e33483de784b8d98f1682ea6ee41292",
+      "deployment/test_candidate_sql_memory.py": "3e56a32850299e23474e62ad16f26e6fa852019c54ae9adc3d3affa26dfb7964",
+      "deployment/test_client_reference.py": "7c3b4fb4102bd322c228748f5be44bd7d71010567d5e65c0803cca6b25e0dd54",
+      "deployment/test_control_reuse.py": "5356bfe72def5498648efbc983c73781c5d92df7924afdaeae12c0100bb57afe",
+      "deployment/test_db_checksum_candidate.py": "809ac909defc470ba5d88b5b2df9bfdc1d3462dc28b3d7232f9a13bb928dc2c3",
+      "deployment/test_db_handoff_profile.py": "f23e2169313741b3b50dd3aa414950889b63e7e292c76061df9f264fde5fb7c8",
+      "deployment/test_deployment.py": "5d4270727423473b8fe64ced4041fd40f54feed56f9e438e18ebeeb9f6f22b79",
+      "deployment/test_hosted_manual_atlas_compile.py": "47ed1030dc73bfae401c48fcf4895ed97ddadcd356d8e5d1a9d4e69a74d49b1d",
+      "deployment/test_hosted_stage.py": "6681ca7cc2e6bd2d85eea1804b34b873e6268787569cb1b77530ba14267d2f6d",
+      "deployment/test_manual_atlas_full_recipe.py": "bb96fa5ed1a162f0801ffd8d32ef9d0417b4a1feec3a29f842557ea9bbb252a8",
+      "deployment/test_monitor_channel_contract.py": "c2242f9571a9d2142906fba8fd2c1fd283738c84b141db92faffa5da1c34922c",
+      "deployment/test_password_fixture.py": "a0ee8bf388be29f7ea1337c4b36ac40228fd0316dc51f59217ac578e31bf8e2e",
+      "deployment/test_pg_wine_checksum_recipe.py": "8ee0d9de7414a80d0904eeb06f25da55de17a02c27b83105295f527aec6832e5",
+      "deployment/test_receive_candidate_stage.py": "c4c223f947b08e683c15d6e7799f8d3d94a74897f57b1058d2b85a37563cc9dc",
+      "deployment/test_sql_readiness_diagnostic.py": "15be59ecf66e7c17abf347cbf57cd9d562918ce5141328d87b1973a274c0869e",
+      "deployment/test_version_observation_contract.py": "4a79159f1500b6c8c2e48c706b274cbe96bfb5dc662adb21a25348024d7277ea",
+      "deployment/test_windows_tool_inventory.py": "4e123d625cc95e0187016d657878092ed3c433d92eb05ff9268ced0ea3fe5d21",
+      "deployment/verify_auth_acceptance.py": "67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8",
+      "deployment/version_observation_contract.py": "ca8b13b0a11e5b7b5814143178d279c43b8374f4e028b5a6da5e21ad6c56518a",
+      "deployment/windows_tool_inventory.py": "aa39572cf910daaf922a83a8346f57ed45ed449fadae80f016b101408234e29e",
+      "source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+    },
+    "recipe_inputs": {
+      "accepted-startup-dbserver-manifest.json": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+      "host-tests.txt": "d091a0b7ca0cc8d0ac567a5883cb301682701123ff94f625e43ce8bc45eb2ff7",
+      "qualification.json": "c15813238fff23cff22984dd283981965a4fd1208932cb7e18fba6e2319568d6",
+      "recovery.json": "fc86782fa1775b687a2e3f9f2a1bbc0372111c19125c5466c5b583d3a2b5a50b",
+      "source-recipe.json": "bdd7aa999c413bfb49bf4fd5ddbce20c417f355efea1be9f373262ffd2e9d979",
+      "source-recipe.source-maps.json.gz": "0cf8c44c7f3fc1f840834ab69cb5a8c3800d24a572a92a7f80d1d2a2d70fefa4",
+      "static-build-plan.json": "052bb95ea037ec0cf3b98342e7d2beac1a4e1a1e3228efc1ed855a6b873c4d89"
+    }
+  },
+  "all_file_maps_sha256": "3ef8d45e7f829c7ac9d5927f932cd0d453b98d985a5dcd98e7d8b3c2bafabf19",
+  "command_paths": {
+    "source": "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\source",
+    "build": "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\build",
+    "dependencies": {
+      "chromium_zlib": "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\chromium_zlib",
+      "cryptopp": "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\cryptopp",
+      "sparsehash": "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\sparsehash"
+    }
+  },
+  "exact_configure_argv": [
+    "C:\\Program Files\\CMake\\bin\\cmake.exe",
+    "-S",
+    "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\source",
+    "-B",
+    "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\build",
+    "-G",
+    "Visual Studio 18 2026",
+    "-A",
+    "Win32",
+    "-DCOH_PG_PERSISTENCE_TESTS=OFF",
+    "-DCOX_BUILD_MAPSERVER=OFF",
+    "-DCOX_BUILD_BEACONSERVER=OFF",
+    "-DCOX_BUILD_DEV_TOOLS=OFF",
+    "-DCOX_BUILD_ART_TOOLS=OFF",
+    "-DCOX_BUILD_UTILITIES_TESTS=OFF",
+    "-DCOX_BUILD_PIG_TESTS=OFF",
+    "-DCOX_BUILD_CODEC_TESTS=OFF",
+    "-DPATCH_EXECUTABLE=C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+    "-DCOX_BUILD_COMMON=ON",
+    "-DCOX_BUILD_SERVERLIB=OFF",
+    "-DCOX_BUILD_CRYPTLIB=OFF",
+    "-DCOX_BUILD_AUTHSERVER=OFF",
+    "-DCOX_BUILD_ARENASERVER=OFF",
+    "-DCOX_BUILD_ACCOUNTSERVER=OFF",
+    "-DCOX_BUILD_AUCTIONSERVER=OFF",
+    "-DCOX_BUILD_CHATADMIN=OFF",
+    "-DCOX_BUILD_CHATSERVER=OFF",
+    "-DCOX_BUILD_CMDRELAY=OFF",
+    "-DCOX_BUILD_DBSERVER=ON",
+    "-DCOX_BUILD_GAME=OFF",
+    "-DCOX_BUILD_LAUNCHER=OFF",
+    "-DCOX_BUILD_MISSIONSERVER=OFF",
+    "-DCOX_BUILD_QUEUESERVER=OFF",
+    "-DCOX_BUILD_RAIDSERVER=OFF",
+    "-DCOX_BUILD_SERVERMONITOR=OFF",
+    "-DCOX_BUILD_SHARDMONITOR=OFF",
+    "-DCOX_BUILD_STATSERVER=OFF",
+    "-DCOX_BUILD_TURNSTILESERVER=OFF",
+    "-DCOX_BUILD_DBQUERY=OFF",
+    "-DCOX_BUILD_REMOTEDEBUGGERER=OFF",
+    "-DCOX_BUILD_TESTCLIENT=OFF",
+    "-DCOX_BUILD_TESTCLIENTLAUNCHER=OFF",
+    "-DCOX_BUILD_CHECKSUMGEN=OFF",
+    "-DCOX_BUILD_CHATCLIENT=OFF",
+    "-DCOX_BUILD_FTPGRABBER=OFF",
+    "-DCOX_BUILD_LWCPIPETEST=OFF",
+    "-DCOX_BUILD_LOGPARSER=OFF",
+    "-DCOX_BUILD_LOGPARSERMON=OFF",
+    "-DCOX_BUILD_NETTEST=OFF",
+    "-DCOX_BUILD_OGLEXTEXTRACTOR=OFF",
+    "-DCOX_BUILD_REWARDCRITTERTALLY=OFF",
+    "-DCOX_BUILD_ASSERTDLG=OFF",
+    "-DCOX_BUILD_DUMPANDPACK=OFF",
+    "-DCOX_BUILD_DUMPSTK=OFF",
+    "-DCOX_BUILD_LOGFILTER=OFF",
+    "-DCOX_BUILD_MEMTRACK=OFF",
+    "-DCOX_BUILD_PUBLINK=OFF",
+    "-DCOX_BUILD_GETANIMATION=OFF",
+    "-DCOX_BUILD_GETANIMATION2=OFF",
+    "-DCOX_BUILD_GETTEX=OFF",
+    "-DCOX_BUILD_GETVRML=OFF",
+    "-DCMAKE_GENERATOR_INSTANCE=C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise",
+    "-T",
+    "version=14.51.36231,host=x64",
+    "-DCMAKE_SYSTEM_VERSION=10.0.26100.0",
+    "-DCPM_SOURCE_CACHE=OFF",
+    "-DCPM_USE_LOCAL_PACKAGES=OFF",
+    "-DCPM_DOWNLOAD_ALL=ON",
+    "-DFETCHCONTENT_FULLY_DISCONNECTED=ON",
+    "-DFETCHCONTENT_UPDATES_DISCONNECTED=ON",
+    "-DCMAKE_MAKE_PROGRAM=C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
+    "-DCMAKE_LINKER=C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\link.exe",
+    "-DCMAKE_RC_COMPILER=C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+    "-DCMAKE_ASM_MASM_COMPILER=C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\ml.exe",
+    "-DCPM_chromium_zlib_SOURCE=D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\chromium_zlib",
+    "-DCPM_cryptopp_SOURCE=D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\cryptopp",
+    "-DCPM_sparsehash_SOURCE=D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\sparsehash"
+  ],
+  "exact_build_argv": [
+    "C:\\Program Files\\CMake\\bin\\cmake.exe",
+    "--build",
+    "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\build",
+    "--config",
+    "OptDebug",
+    "--parallel",
+    "2",
+    "--target",
+    "DbServer",
+    "--",
+    "/nr:false"
+  ],
+  "final_maps_captured": true,
+  "failure": "stage_command_failed_configure-full-manual",
+  "commands": [
+    {
+      "name": "chromium_zlib-init",
+      "returncode": 0,
+      "elapsed_seconds": 0.204,
+      "log_sha256": "08b5037372ce31bc218fd249809615935992b38e3b473e9d6a41d7f7cf783aa4",
+      "log_bytes": 114,
+      "log_original_bytes": 114,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "init",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\chromium_zlib"
+      ]
+    },
+    {
+      "name": "chromium_zlib-fetch",
+      "returncode": 0,
+      "elapsed_seconds": 0.812,
+      "log_sha256": "e0bc1065d815929b3ea928294adcad095524d1cdaf0ab64431a447f8a1b3f8f1",
+      "log_bytes": 145,
+      "log_original_bytes": 145,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\chromium_zlib",
+        "fetch",
+        "--depth=1",
+        "https://chromium.googlesource.com/chromium/src/third_party/zlib",
+        "cf333892c34ab6dbaed37c38a1d5aa6da7b2f99d"
+      ]
+    },
+    {
+      "name": "chromium_zlib-checkout",
+      "returncode": 0,
+      "elapsed_seconds": 0.203,
+      "log_sha256": "7fcd35af696119577b86fa513f532063dc58027a19ab8c535522b1d4cf102d4a",
+      "log_bytes": 79,
+      "log_original_bytes": 79,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\chromium_zlib",
+        "-c",
+        "core.autocrlf=false",
+        "checkout",
+        "--detach",
+        "cf333892c34ab6dbaed37c38a1d5aa6da7b2f99d"
+      ]
+    },
+    {
+      "name": "chromium_zlib-patch-check",
+      "returncode": 0,
+      "elapsed_seconds": 0.203,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\chromium_zlib",
+        "-c",
+        "core.autocrlf=false",
+        "apply",
+        "--check",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\source\\cmake\\patches\\chromium-zlib-cmake.patch"
+      ]
+    },
+    {
+      "name": "chromium_zlib-patch",
+      "returncode": 0,
+      "elapsed_seconds": 0.203,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\chromium_zlib",
+        "-c",
+        "core.autocrlf=false",
+        "apply",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\source\\cmake\\patches\\chromium-zlib-cmake.patch"
+      ]
+    },
+    {
+      "name": "cryptopp-init",
+      "returncode": 0,
+      "elapsed_seconds": 0.188,
+      "log_sha256": "752ece7b019dbe447c3f10824cd3f6014f6fd3a89b47c2bd605e2e53e4397e89",
+      "log_bytes": 109,
+      "log_original_bytes": 109,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "init",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\cryptopp"
+      ]
+    },
+    {
+      "name": "cryptopp-fetch",
+      "returncode": 0,
+      "elapsed_seconds": 1.391,
+      "log_sha256": "32a2263be45b17d1a0ec5702a846bf45c5da941cfbb1dec6ad40e34f39d18836",
+      "log_bytes": 118,
+      "log_original_bytes": 118,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\cryptopp",
+        "fetch",
+        "--depth=1",
+        "https://github.com/weidai11/cryptopp",
+        "b5242667a24e3db8e4600e77b2e502ef204e5280"
+      ]
+    },
+    {
+      "name": "cryptopp-checkout",
+      "returncode": 0,
+      "elapsed_seconds": 0.39,
+      "log_sha256": "40da3c9fc268f653c3c239a3e6208829f5ef3b78d30faae7c5d1e97f099d953e",
+      "log_bytes": 65,
+      "log_original_bytes": 65,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\cryptopp",
+        "-c",
+        "core.autocrlf=false",
+        "checkout",
+        "--detach",
+        "b5242667a24e3db8e4600e77b2e502ef204e5280"
+      ]
+    },
+    {
+      "name": "cryptopp-patch-check",
+      "returncode": 0,
+      "elapsed_seconds": 0.187,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\cryptopp",
+        "-c",
+        "core.autocrlf=false",
+        "apply",
+        "--check",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\source\\cmake\\patches\\cryptopp-cmake.patch"
+      ]
+    },
+    {
+      "name": "cryptopp-patch",
+      "returncode": 0,
+      "elapsed_seconds": 0.187,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\cryptopp",
+        "-c",
+        "core.autocrlf=false",
+        "apply",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\source\\cmake\\patches\\cryptopp-cmake.patch"
+      ]
+    },
+    {
+      "name": "sparsehash-init",
+      "returncode": 0,
+      "elapsed_seconds": 0.203,
+      "log_sha256": "b55f0d757a232be691649a8d576deb755431ffb3d32023fbfed8c9484c1c27c7",
+      "log_bytes": 111,
+      "log_original_bytes": 111,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "init",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\sparsehash"
+      ]
+    },
+    {
+      "name": "sparsehash-fetch",
+      "returncode": 0,
+      "elapsed_seconds": 0.609,
+      "log_sha256": "76afcc9947e54ee820372953b5c855ce1efae1679d5b52a57c703c68894fbc1b",
+      "log_bytes": 122,
+      "log_original_bytes": 122,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\sparsehash",
+        "fetch",
+        "--depth=1",
+        "https://github.com/sparsehash/sparsehash.git",
+        "f93c0c69e959c1c77611d0ba8d107aa971338811"
+      ]
+    },
+    {
+      "name": "sparsehash-checkout",
+      "returncode": 0,
+      "elapsed_seconds": 0.203,
+      "log_sha256": "0085512e90f6c1d40618ec88a19340d850254d9e05b8d0ceeba320535b03116b",
+      "log_bytes": 71,
+      "log_original_bytes": 71,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "-C",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\sparsehash",
+        "-c",
+        "core.autocrlf=false",
+        "checkout",
+        "--detach",
+        "f93c0c69e959c1c77611d0ba8d107aa971338811"
+      ]
+    },
+    {
+      "name": "configure-full-manual",
+      "returncode": 1,
+      "elapsed_seconds": 10.625,
+      "log_sha256": "9a7804e72a7c1eca25f4d94e369e61f3b0f3305d703b6937e210fcb355b1f7be",
+      "log_bytes": 1005,
+      "log_original_bytes": 1005,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "C:\\Program Files\\CMake\\bin\\cmake.exe",
+        "-S",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\source",
+        "-B",
+        "D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\build",
+        "-G",
+        "Visual Studio 18 2026",
+        "-A",
+        "Win32",
+        "-DCOH_PG_PERSISTENCE_TESTS=OFF",
+        "-DCOX_BUILD_MAPSERVER=OFF",
+        "-DCOX_BUILD_BEACONSERVER=OFF",
+        "-DCOX_BUILD_DEV_TOOLS=OFF",
+        "-DCOX_BUILD_ART_TOOLS=OFF",
+        "-DCOX_BUILD_UTILITIES_TESTS=OFF",
+        "-DCOX_BUILD_PIG_TESTS=OFF",
+        "-DCOX_BUILD_CODEC_TESTS=OFF",
+        "-DPATCH_EXECUTABLE=C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+        "-DCOX_BUILD_COMMON=ON",
+        "-DCOX_BUILD_SERVERLIB=OFF",
+        "-DCOX_BUILD_CRYPTLIB=OFF",
+        "-DCOX_BUILD_AUTHSERVER=OFF",
+        "-DCOX_BUILD_ARENASERVER=OFF",
+        "-DCOX_BUILD_ACCOUNTSERVER=OFF",
+        "-DCOX_BUILD_AUCTIONSERVER=OFF",
+        "-DCOX_BUILD_CHATADMIN=OFF",
+        "-DCOX_BUILD_CHATSERVER=OFF",
+        "-DCOX_BUILD_CMDRELAY=OFF",
+        "-DCOX_BUILD_DBSERVER=ON",
+        "-DCOX_BUILD_GAME=OFF",
+        "-DCOX_BUILD_LAUNCHER=OFF",
+        "-DCOX_BUILD_MISSIONSERVER=OFF",
+        "-DCOX_BUILD_QUEUESERVER=OFF",
+        "-DCOX_BUILD_RAIDSERVER=OFF",
+        "-DCOX_BUILD_SERVERMONITOR=OFF",
+        "-DCOX_BUILD_SHARDMONITOR=OFF",
+        "-DCOX_BUILD_STATSERVER=OFF",
+        "-DCOX_BUILD_TURNSTILESERVER=OFF",
+        "-DCOX_BUILD_DBQUERY=OFF",
+        "-DCOX_BUILD_REMOTEDEBUGGERER=OFF",
+        "-DCOX_BUILD_TESTCLIENT=OFF",
+        "-DCOX_BUILD_TESTCLIENTLAUNCHER=OFF",
+        "-DCOX_BUILD_CHECKSUMGEN=OFF",
+        "-DCOX_BUILD_CHATCLIENT=OFF",
+        "-DCOX_BUILD_FTPGRABBER=OFF",
+        "-DCOX_BUILD_LWCPIPETEST=OFF",
+        "-DCOX_BUILD_LOGPARSER=OFF",
+        "-DCOX_BUILD_LOGPARSERMON=OFF",
+        "-DCOX_BUILD_NETTEST=OFF",
+        "-DCOX_BUILD_OGLEXTEXTRACTOR=OFF",
+        "-DCOX_BUILD_REWARDCRITTERTALLY=OFF",
+        "-DCOX_BUILD_ASSERTDLG=OFF",
+        "-DCOX_BUILD_DUMPANDPACK=OFF",
+        "-DCOX_BUILD_DUMPSTK=OFF",
+        "-DCOX_BUILD_LOGFILTER=OFF",
+        "-DCOX_BUILD_MEMTRACK=OFF",
+        "-DCOX_BUILD_PUBLINK=OFF",
+        "-DCOX_BUILD_GETANIMATION=OFF",
+        "-DCOX_BUILD_GETANIMATION2=OFF",
+        "-DCOX_BUILD_GETTEX=OFF",
+        "-DCOX_BUILD_GETVRML=OFF",
+        "-DCMAKE_GENERATOR_INSTANCE=C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise",
+        "-T",
+        "version=14.51.36231,host=x64",
+        "-DCMAKE_SYSTEM_VERSION=10.0.26100.0",
+        "-DCPM_SOURCE_CACHE=OFF",
+        "-DCPM_USE_LOCAL_PACKAGES=OFF",
+        "-DCPM_DOWNLOAD_ALL=ON",
+        "-DFETCHCONTENT_FULLY_DISCONNECTED=ON",
+        "-DFETCHCONTENT_UPDATES_DISCONNECTED=ON",
+        "-DCMAKE_MAKE_PROGRAM=C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
+        "-DCMAKE_LINKER=C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\link.exe",
+        "-DCMAKE_RC_COMPILER=C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+        "-DCMAKE_ASM_MASM_COMPILER=C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\ml.exe",
+        "-DCPM_chromium_zlib_SOURCE=D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\chromium_zlib",
+        "-DCPM_cryptopp_SOURCE=D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\cryptopp",
+        "-DCPM_sparsehash_SOURCE=D:\\a\\_temp\\coh-manual-atlas-compile-yuf6rc04\\dependencies\\sparsehash"
+      ]
+    }
+  ],
+  "input_state_after": {
+    "commit": "8cf325f4dc78eab451f23382ac8a13f8fa9ffe5c",
+    "tracked_dirty": "",
+    "git_config_environment": {
+      "GIT_CONFIG_COUNT": "1",
+      "GIT_CONFIG_KEY_0": "core.autocrlf",
+      "GIT_CONFIG_VALUE_0": "false"
+    },
+    "helper_inputs": {
+      "deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+      "deployment/admit_tool_inventory.py": "6bc9e50b97db637c7643cf7869dbb72fdff5399907ea14f1b45a0cbbacfc676a",
+      "deployment/authenticated_handoff_contract.py": "46a9f73c4c0367026732cf996c91db494f2213bb33f3267fac126781bcea7989",
+      "deployment/auth_readiness.py": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+      "deployment/auth_service_profile.py": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+      "deployment/candidate_service.py": "07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe",
+      "deployment/candidate_sql_memory.py": "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde",
+      "deployment/check.py": "622a5d10f7b22a5fabe9a507baafe2234a3855b62fa89ab719ec9037377c705c",
+      "deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+      "deployment/db_handoff_profile.py": "551d9d682e83f541a8245e8f88c864e97a88acb638438979d8b1568136574ea0",
+      "deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+      "deployment/hosted_auth_login.py": "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2",
+      "deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+      "deployment/hosted_candidate_login.py": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+      "deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+      "deployment/hosted_manual_atlas_compile.py": "04126c67c4e4eee48336b2b519a7ac4ca489a6da1afb699b7a5c0263fc148efb",
+      "deployment/hosted_receive_candidate.py": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+      "deployment/inspect_client_reference.py": "43fc2bcb150d78f91b39efe5306e7510cb25714c807ec3dcab83e535064a8a67",
+      "deployment/manual_atlas_full_recipe.py": "ee8ece73aba177100993f32e27bface62b5e054d71a3b34c7fc0c20af0c07223",
+      "deployment/monitor_channel_contract.py": "627d09a46776f4026910a73d52316c498836050f361a3e6ed98aa56b48298b40",
+      "deployment/password_fixture.py": "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd",
+      "deployment/pg_wine_checksum_recipe.py": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
+      "deployment/qualify_auth_bit_merge.py": "42c2329635c009734dc179e153a2cb3afd234858e69637cc1e9c31502765db2e",
+      "deployment/qualify_auth_cache_consumer.py": "077cc53c2166d611c077c8cc356791692c7cf4766ac8f9e4233c71e40ad40280",
+      "deployment/qualify_auth_only.py": "1aeb26e564a6bc1dcd7adc03cc514075c87e59e0be8a5c14cafcd7d5dd6c5400",
+      "deployment/qualify_db_policy_matrix.py": "f93235c1ad24c93e844c380bacd6ce124db9e8c7de2eee706d1f2be8ffc71ef6",
+      "deployment/qualify_handoff_wire.py": "748d9748bad473de5ba97190f60f6c6aaedd490fba244930790bd45d5196de47",
+      "deployment/qualify_manual_atlas_full_recipe.py": "b515d6a3944baef2736c5d9569e1e7e6a69b64558f4e11fe9bda810e7fe6323e",
+      "deployment/qualify_monitor_envelope.py": "1962e442e8faa8739f1b00e74edc1c6b2c8b74c61cee9f4f9223d42b76321fba",
+      "deployment/qualify_original_receive.py": "500c417967baae54511f016f596a87ef602f4421add1be1211b041b460e98b58",
+      "deployment/qualify_receive_candidate.py": "ffae4b5a824e99570e39f05f89925c8e849ccb5e552c737c04a8ba51e0f2dc76",
+      "deployment/qualify_version_string_writer.py": "1a394a6d23ff1051789d37435bc4616f45708f3ffe96f584c4425ad5ebe8c1e0",
+      "deployment/qualify_windows_adapter.py": "d412943acb74b913d99bc93545445cd6e663241fc21f07b31b4738e1995608d8",
+      "deployment/receive_candidate.py": "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78",
+      "deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+      "deployment/sql_readiness_diagnostic.py": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+      "deployment/test_admit_tool_inventory.py": "1a453c96ae92e513a0466ad890b4cf04393434b99fa237de1c4fa988fcce627f",
+      "deployment/test_authenticated_handoff_contract.py": "a45216c71b110accceb5b822bee84811b70dcd2581305c041e6e59b8bec48564",
+      "deployment/test_auth_acceptance.py": "9522d9765fbddf882992677a09c1e1fc9896587aa3b35235b237023fa12f2d7b",
+      "deployment/test_auth_login_stage.py": "8b08ddf862e8ff48eb72ee0336d030935544885c738c8a8d444f881092d3efed",
+      "deployment/test_auth_readiness.py": "d4fcdfea9283af2fbd92052fdd063bc21e8f07fb82f795f6f73679f4e9f6b27c",
+      "deployment/test_candidate_login.py": "ddbed0d2483cdb0b4c0f605ee2b66d1a1135f94f26cdff8155ac6c56d5322333",
+      "deployment/test_candidate_service.py": "df7c75440e5b775151ee8293619fe13f8e33483de784b8d98f1682ea6ee41292",
+      "deployment/test_candidate_sql_memory.py": "3e56a32850299e23474e62ad16f26e6fa852019c54ae9adc3d3affa26dfb7964",
+      "deployment/test_client_reference.py": "7c3b4fb4102bd322c228748f5be44bd7d71010567d5e65c0803cca6b25e0dd54",
+      "deployment/test_control_reuse.py": "5356bfe72def5498648efbc983c73781c5d92df7924afdaeae12c0100bb57afe",
+      "deployment/test_db_checksum_candidate.py": "809ac909defc470ba5d88b5b2df9bfdc1d3462dc28b3d7232f9a13bb928dc2c3",
+      "deployment/test_db_handoff_profile.py": "f23e2169313741b3b50dd3aa414950889b63e7e292c76061df9f264fde5fb7c8",
+      "deployment/test_deployment.py": "5d4270727423473b8fe64ced4041fd40f54feed56f9e438e18ebeeb9f6f22b79",
+      "deployment/test_hosted_manual_atlas_compile.py": "47ed1030dc73bfae401c48fcf4895ed97ddadcd356d8e5d1a9d4e69a74d49b1d",
+      "deployment/test_hosted_stage.py": "6681ca7cc2e6bd2d85eea1804b34b873e6268787569cb1b77530ba14267d2f6d",
+      "deployment/test_manual_atlas_full_recipe.py": "bb96fa5ed1a162f0801ffd8d32ef9d0417b4a1feec3a29f842557ea9bbb252a8",
+      "deployment/test_monitor_channel_contract.py": "c2242f9571a9d2142906fba8fd2c1fd283738c84b141db92faffa5da1c34922c",
+      "deployment/test_password_fixture.py": "a0ee8bf388be29f7ea1337c4b36ac40228fd0316dc51f59217ac578e31bf8e2e",
+      "deployment/test_pg_wine_checksum_recipe.py": "8ee0d9de7414a80d0904eeb06f25da55de17a02c27b83105295f527aec6832e5",
+      "deployment/test_receive_candidate_stage.py": "c4c223f947b08e683c15d6e7799f8d3d94a74897f57b1058d2b85a37563cc9dc",
+      "deployment/test_sql_readiness_diagnostic.py": "15be59ecf66e7c17abf347cbf57cd9d562918ce5141328d87b1973a274c0869e",
+      "deployment/test_version_observation_contract.py": "4a79159f1500b6c8c2e48c706b274cbe96bfb5dc662adb21a25348024d7277ea",
+      "deployment/test_windows_tool_inventory.py": "4e123d625cc95e0187016d657878092ed3c433d92eb05ff9268ced0ea3fe5d21",
+      "deployment/verify_auth_acceptance.py": "67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8",
+      "deployment/version_observation_contract.py": "ca8b13b0a11e5b7b5814143178d279c43b8374f4e028b5a6da5e21ad6c56518a",
+      "deployment/windows_tool_inventory.py": "aa39572cf910daaf922a83a8346f57ed45ed449fadae80f016b101408234e29e",
+      "source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+    },
+    "recipe_inputs": {
+      "accepted-startup-dbserver-manifest.json": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+      "host-tests.txt": "d091a0b7ca0cc8d0ac567a5883cb301682701123ff94f625e43ce8bc45eb2ff7",
+      "qualification.json": "c15813238fff23cff22984dd283981965a4fd1208932cb7e18fba6e2319568d6",
+      "recovery.json": "fc86782fa1775b687a2e3f9f2a1bbc0372111c19125c5466c5b583d3a2b5a50b",
+      "source-recipe.json": "bdd7aa999c413bfb49bf4fd5ddbce20c417f355efea1be9f373262ffd2e9d979",
+      "source-recipe.source-maps.json.gz": "0cf8c44c7f3fc1f840834ab69cb5a8c3800d24a572a92a7f80d1d2a2d70fefa4",
+      "static-build-plan.json": "052bb95ea037ec0cf3b98342e7d2beac1a4e1a1e3228efc1ed855a6b873c4d89"
+    }
+  },
+  "source_and_toolchain_unchanged": true,
+  "files": {
+    "all-file-maps.json.gz": {
+      "bytes": 646368,
+      "sha256": "3ef8d45e7f829c7ac9d5927f932cd0d453b98d985a5dcd98e7d8b3c2bafabf19"
+    },
+    "chromium_zlib-checkout.log": {
+      "bytes": 79,
+      "sha256": "7fcd35af696119577b86fa513f532063dc58027a19ab8c535522b1d4cf102d4a"
+    },
+    "chromium_zlib-fetch.log": {
+      "bytes": 145,
+      "sha256": "e0bc1065d815929b3ea928294adcad095524d1cdaf0ab64431a447f8a1b3f8f1"
+    },
+    "chromium_zlib-init.log": {
+      "bytes": 114,
+      "sha256": "08b5037372ce31bc218fd249809615935992b38e3b473e9d6a41d7f7cf783aa4"
+    },
+    "chromium_zlib-patch-check.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "chromium_zlib-patch.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "configure-full-manual.log": {
+      "bytes": 1005,
+      "sha256": "9a7804e72a7c1eca25f4d94e369e61f3b0f3305d703b6937e210fcb355b1f7be"
+    },
+    "cryptopp-checkout.log": {
+      "bytes": 65,
+      "sha256": "40da3c9fc268f653c3c239a3e6208829f5ef3b78d30faae7c5d1e97f099d953e"
+    },
+    "cryptopp-fetch.log": {
+      "bytes": 118,
+      "sha256": "32a2263be45b17d1a0ec5702a846bf45c5da941cfbb1dec6ad40e34f39d18836"
+    },
+    "cryptopp-init.log": {
+      "bytes": 109,
+      "sha256": "752ece7b019dbe447c3f10824cd3f6014f6fd3a89b47c2bd605e2e53e4397e89"
+    },
+    "cryptopp-patch-check.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cryptopp-patch.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "host-qualification.json": {
+      "bytes": 3053,
+      "sha256": "c15813238fff23cff22984dd283981965a4fd1208932cb7e18fba6e2319568d6"
+    },
+    "source-recipe.json": {
+      "bytes": 4888,
+      "sha256": "6afd1741f59374a5b3a4edafc4ab20b4c9bbf95fe8c6d45c7819b5af681d0c14"
+    },
+    "sparsehash-checkout.log": {
+      "bytes": 71,
+      "sha256": "0085512e90f6c1d40618ec88a19340d850254d9e05b8d0ceeba320535b03116b"
+    },
+    "sparsehash-fetch.log": {
+      "bytes": 122,
+      "sha256": "76afcc9947e54ee820372953b5c855ce1efae1679d5b52a57c703c68894fbc1b"
+    },
+    "sparsehash-init.log": {
+      "bytes": 111,
+      "sha256": "b55f0d757a232be691649a8d576deb755431ffb3d32023fbfed8c9484c1c27c7"
+    },
+    "toolchain-lock.json": {
+      "bytes": 3481,
+      "sha256": "a70e878ad1f8872cc876987f6ec644f27bbf7c5ec98db528742f28ed5b098125"
+    }
+  }
+}

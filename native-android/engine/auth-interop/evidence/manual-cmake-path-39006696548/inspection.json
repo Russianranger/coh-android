@@ -1,0 +1,20 @@
+{
+  "schema": "coh-manual-cmake-path-failure-inspection-v1",
+  "run": 39006696548,
+  "artifact": 12090714854,
+  "artifact_sha256": "4703de08a2ef50d3af14112668b2ce48f482a21f7a6f02b3b865ceb9fe329baa",
+  "source_commit": "8cf325f4dc78eab451f23382ac8a13f8fa9ffe5c",
+  "receipt_sha256": "a511aa00dd20ab0f908ef78f19c16214eaabc8736a40221a5a85cebe57e96d10",
+  "all_retained_files_verified": true,
+  "raw_git_helper_inputs_verified": 63,
+  "source_files_unchanged": 6007,
+  "dependency_maps_unchanged": 3,
+  "configure_returncode": 1,
+  "failure": "stage_command_failed_configure-full-manual",
+  "cause": "Windows rc.exe backslashes serialized as CMake string escapes; invalid escape \\P",
+  "dependencies_completed": 13,
+  "target_build_executed": false,
+  "compiler_identification_observed": "MSVC 19.51.36260.0",
+  "services_executed": false,
+  "scope": "Failure inspection only. Corrected path rendering has local controls; CMake parser regression skipped without local CMake. No retry/target binary."
+}

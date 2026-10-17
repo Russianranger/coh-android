@@ -1,0 +1,27 @@
+name: Retained original32 legacy geometry metadata execution only
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-retained-legacy35.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-retained-legacy35-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  retained-legacy35:
+    if: github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message, '[retained-legacy35-check]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Execute exact retained v2 v3 v4 witnesses without rebuilding
+        run: python3 native-android/combined-client/tools/run_retained_legacy35.py --source-root . --expected-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/coh-retained-legacy35"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: retained-original32-legacy35-execution
+          path: ${{ runner.temp }}/coh-retained-legacy35/
+          if-no-files-found: error
+          retention-days: 90

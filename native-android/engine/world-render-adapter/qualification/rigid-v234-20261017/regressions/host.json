@@ -1,0 +1,209 @@
+{
+  "passed": true,
+  "original32_required": false,
+  "scope": "Explicit v5 CPU opt-in with authentic compressed positions/two partitions, unchanged original delta consumer and executed unchanged legacy LOD wire consumer. Materials fixtures only.",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/tests/test_rigid_v5.c": "644588c1ba64c526efc175df87b3437de243d06b6bee9df0c754d4d8c88efb02",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.c": "7124e339ecac9d0fb0c0b8d43eca1a784d6d52b7d18600452b646965be279ee4",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v5.c": "5a15b36bbf501d069af81c82f2f7e3445798bd0afcd47427df346f86d44a3b53",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v7.c": "16e682a8b4914c5980c90255f8e087c7ada62ac7025d1ee04362ed6ae9989ddc",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.c": "8430ffd01c83e8476f9672eab63020434477206943bcb39b2007e75111fd746d",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.c": "c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v5.h": "991c6d021d6933259b833d414e30ec47b45ed22f280b3e315de785e3b5f113b5",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v7.h": "a4a40dba78073fab1af02100f540227bcb7a361789cbc1a819251f6f35b4eaaf",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_internal.h": "484295680436f84675ba4f87449c9cec6ff306285818387ec1aec062854f3278",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.h": "01f60ed231e19dd8570740c9ebe90dae3209e055f1fc2bbc5c19bafb4b955ddb",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.h": "b6a5a2106455756712d258af00508801b76bb9e00ee94cc51784403f1c655a0a",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/world-render-adapter/check_rigid_v5.py": "adc70af122bc72ffd46668d304b45f1178fb3bf3665c2ce721130168e4f5fd49",
+    "native-android/engine/world-render-adapter/check_rigid_legacy.py": "60e6ce50e4c80680c0c5038a7ed9b9323d72c60b7e7d80e8b20ec339ecaf9cfa",
+    "native-android/engine/world-render-adapter/rigid-v5-pins.json": "31f568cc37f63f530fdd7b1bc464d50cde2f1b6e1c7d2d9382c6d464873e7bdf",
+    "native-android/engine/world-render-adapter/rigid-source-pins.json": "246dd1893b5d3d7c9be9b087f8eab42a31272499331e9fb1bf1a270284cdc5ab",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.h": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+  },
+  "regression_input_sha256": {
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/elements/signs/neon/neon.geo": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+    "/workspace/scratch/9174d12e2a11/rigid-authentic/praetorianbox_open.geo": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/elements/signs/special_signs/chaser_sign_4to1/chaser_sign_4to1.geo": "66742a3b485b7772e6ab20a4edc750a7e46d99891e35473bfc587a3b0e9fd374"
+  },
+  "actual_body": {
+    "scope": "Exact retained rootreachable v5 model/body observation; material and query generation fixtures independent",
+    "source_geo_name": "object_library/Villain_Lairs/tech/structure/platforms/platforms.geo",
+    "asset_path": "data/object_library/villain_lairs/tech/structure/platforms/platforms.geo",
+    "bytes": 3162,
+    "sha256": "e1462116a522be747e72ddaccf353c25c17d8d510246704563affa54695ec6c5",
+    "version": 5,
+    "model": "tek1_pltform_ramp",
+    "disk_row": 13,
+    "source_observations": [
+      {
+        "resource_ordinal": 14026,
+        "record_sha256": "987b193fc41134cb5e7c951395baa5e7451e4d9ac287799e982f99df3ed135c8",
+        "owner_kind": 1,
+        "file": 105,
+        "slot": 13,
+        "original_id": 13,
+        "definition_name": "tek1_pltform_ramp",
+        "sorted_runtime_model_row": 7,
+        "geo_version": 5,
+        "texture_partitions": [
+          [
+            3,
+            2,
+            "tek1_main_uprwall01.tga"
+          ],
+          [
+            2,
+            2,
+            "tek1_blcny_flr_fill.tga"
+          ]
+        ]
+      }
+    ],
+    "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "resources_sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6",
+    "source_generation_admitted": false,
+    "material_fixture_only": true
+  },
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 206,
+      "actual_models": 1,
+      "allocation_failure_stages": 5,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 206,
+      "actual_models": 1,
+      "allocation_failure_stages": 5,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 206,
+      "actual_models": 1,
+      "allocation_failure_stages": 5,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    }
+  },
+  "original_readModel": {
+    "source_layout_passed": true,
+    "original_consumer_executed": false,
+    "true32bit_freestanding_linux_execution": false,
+    "execution_refusal": {
+      "errno": 8,
+      "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-v5-original/original-read-model'",
+      "binary_sha256": "f4af83cbf3e752f6d95dc5c03d109d4a8f6cbc0b004d9f1ddc345acceffcd741",
+      "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+    },
+    "source_layout_offsets": [
+      216,
+      0,
+      4,
+      12,
+      20,
+      28,
+      32,
+      36,
+      40,
+      80,
+      84,
+      88,
+      92,
+      132
+    ],
+    "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+    "source_model_record_bytes": 208,
+    "source_version": 5,
+    "metadata_and_pack_scalars_compared": 0,
+    "original_grid_pack_declarations_unchanged": true,
+    "generated_oracle_sha256": "ed427288ae245a4f4953f840f1dd5d74e4c129d5a3565040f7ffe2e2a1c1c5c2",
+    "binary_sha256": "f4af83cbf3e752f6d95dc5c03d109d4a8f6cbc0b004d9f1ddc345acceffcd741",
+    "harness_scope": "Unchanged original readModel+original32 disk declarations; v5 call and expected facts/CLIENT autolod -1 checks added. Execution refusal is not qualification."
+  },
+  "original_legacy_lod": {
+    "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+    "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+    "generated_harness_sha256": "1bdfe6d0d7c99f46181f318e80ab4ac0ebc0043418ca2f27d5713c6242843168",
+    "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+    "model_rows": 14,
+    "raw_bytes": 2072,
+    "active_lod_records": 14,
+    "modes": {
+      "release": {
+        "passed": true,
+        "binary_sha256": "e5f406f32db01cc7d53c24e25ff0bfea720e834e0cc43a4bf6734e712b16699c",
+        "output_sha256": "7717df2cb128e00611938a89eedd7c725005afb42a77293d6025bbe0c694543d"
+      },
+      "address": {
+        "passed": true,
+        "binary_sha256": "b58999b70531d81f4d82300bab11517940b22be923e2eabb4d0400f4d6be88e2",
+        "output_sha256": "7717df2cb128e00611938a89eedd7c725005afb42a77293d6025bbe0c694543d"
+      },
+      "undefined": {
+        "passed": true,
+        "binary_sha256": "e50a667e93b5b5d542056c1cb88b2165f4192dca26db21f4e28b3dbdce42c715",
+        "output_sha256": "7717df2cb128e00611938a89eedd7c725005afb42a77293d6025bbe0c694543d"
+      }
+    },
+    "client_lod_applied": false
+  },
+  "channels": [
+    {
+      "channel": 0,
+      "packed_bytes": 0,
+      "decoded_delta_bytes": 15
+    },
+    {
+      "channel": 1,
+      "packed_bytes": 39,
+      "decoded_delta_bytes": 65
+    },
+    {
+      "channel": 2,
+      "packed_bytes": 0,
+      "decoded_delta_bytes": 18
+    },
+    {
+      "channel": 3,
+      "packed_bytes": 0,
+      "decoded_delta_bytes": 32
+    }
+  ],
+  "packet_sha256": "93d7d45c4519de22024d1c36f140a444446c5df47096e076c399e8b77e0dee08",
+  "packet_bytes": 1168,
+  "original_delta_scalar_count": 92,
+  "original_delta_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "default_policy_unchanged": true,
+  "client_lod_applied": false,
+  "client_materials_available": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_executed": false,
+  "leak_sanitizer": false
+}

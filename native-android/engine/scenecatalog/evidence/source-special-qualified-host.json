@@ -1,0 +1,299 @@
+{
+  "passed": true,
+  "source_sha256": {
+    "coordinator:native-android/engine/scenecatalog/coh_source_special.c": "1c9bee2563c4cbbf7b02f86ae807994cab34a8a544926bf23bb5226623742118",
+    "coordinator:native-android/engine/scenecatalog/coh_source_rigid.c": "5cd38ef68d387096b0da1e077371168c666ab64767b47c97c1b5c3444aef598a",
+    "renderer:native-android/engine/world-render-adapter/coh_wr_rigid.c": "7124e339ecac9d0fb0c0b8d43eca1a784d6d52b7d18600452b646965be279ee4",
+    "renderer:native-android/engine/world-render-adapter/coh_wr_rigid_source.c": "8430ffd01c83e8476f9672eab63020434477206943bcb39b2007e75111fd746d",
+    "coordinator:native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "coordinator:native-android/engine/scenecatalog/tests/test_source_selection.c": "eb8047e3c4ec86cb4be8ef265e297c966b570d6762fda20f13b00507efc2abad",
+    "coordinator:native-android/engine/scenecatalog/coh_source_selection.c": "f5cdd7968150e50d3f131944828ae608bfa7e6df41fc4a77822a8b869c2e2c76",
+    "coordinator:native-android/engine/scenecatalog/coh_resource_join.c": "48b57f05d320e6e6319900ea5a979cf05680ff8e26ab90526946ec9d25e665fe",
+    "coordinator:native-android/engine/scenecatalog/coh_resource_index.c": "1966e3f13e93fa6d4b2fc50ac5088fe192df4b4a6b5d501eb3f7eb6482d000a0",
+    "coordinator:native-android/engine/scenecatalog/coh_resource_geo_source.c": "c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec",
+    "coordinator:native-android/engine/scenecatalog/coh_catalog_snapshot.c": "b2068cec02b16f357db0abafe94862103a22faf25256e282ac3b0d84bc1bf6de",
+    "coordinator:native-android/engine/scenecatalog/coh_catalog_owner.c": "f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7",
+    "coordinator:native-android/engine/scenecatalog/coh_scenecatalog.c": "1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66",
+    "coordinator:native-android/engine/scenegraph/runtime_snapshot.c": "7c8d987e56f730995c9970fb83b7a528de21f8469d451a88d04c23a716b90200",
+    "coordinator:native-android/engine/scenegraph/tests/runtime_matrix_bridge.c": "c9f1070d61fb272716ed0b390a58da9a2715f266a661dd799b3fd85e25a0fe93",
+    "coordinator:native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "coordinator:native-android/engine/replication/coh_groups.c": "b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd",
+    "coordinator:native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "coordinator:native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "coordinator:native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "coordinator:native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "coordinator:native-android/engine/scenecatalog/tests/test_source_special_grammar.c": "6b157e946b63d2109f8721f8403f2cbd0be0a7576cc989f0c446013ef6f4be7d",
+    "coordinator:native-android/engine/scenecatalog/coh_source_special.h": "07e82510c1e6c9e12c9ba2dd5ee96abfc0548f82d48c353a4c31ab20ca2a08e6",
+    "coordinator:native-android/engine/scenecatalog/tests/test_source_special.inc": "015489c29616c292635957ab430eb55dca5b21324b3b43e3cbf59aaf3f9b092a",
+    "coordinator:native-android/engine/scenecatalog/tests/source_special_routes.inc": "f6e8ccd8b04db7303691c4bd2b923d2de7c02d3fd16e50ed16fab1400f5a8eb1",
+    "coordinator:native-android/engine/scenecatalog/tests/source_special_routes.json": "7b44d90e8c84c05572ea8a08ab4878b128b48217a8587a740111be83b60d93bd",
+    "coordinator:native-android/engine/scenecatalog/coh_source_rigid_internal.h": "3f5d45b6848be8bddbdcc82c8e346c2fe103c90727e2b56d177d714d15076859",
+    "coordinator:native-android/engine/scenecatalog/coh_source_rigid.h": "65c99db929bd3166b1ad8c08fbd7946004c1e243d13ed5da5f5b030d101cf931",
+    "coordinator:native-android/engine/scenecatalog/tests/test_source_rigid.inc": "2d2120a884591ba95ec9de695fb819be171f1b9d8a4e77dbdfb38a9f8300532b",
+    "renderer:native-android/engine/world-render-adapter/coh_wr_rigid_internal.h": "484295680436f84675ba4f87449c9cec6ff306285818387ec1aec062854f3278",
+    "renderer:native-android/engine/world-render-adapter/coh_wr_rigid.h": "01f60ed231e19dd8570740c9ebe90dae3209e055f1fc2bbc5c19bafb4b955ddb",
+    "renderer:native-android/engine/world-render-adapter/coh_wr_rigid_source.h": "b6a5a2106455756712d258af00508801b76bb9e00ee94cc51784403f1c655a0a",
+    "renderer:native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "coordinator:native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "coordinator:native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "coordinator:native-android/engine/scenecatalog/coh_source_selection.h": "89ed5ca4e68b4574daf289e591e2eacb75a92b8c6aaaefb0c9c967fa057669bb",
+    "coordinator:native-android/engine/scenecatalog/coh_source_selection_profile.inc": "3e02c49a2e6de6bbc23f691f58e82f5f43b985ffe1d66bb027c1f93a43fade72",
+    "coordinator:native-android/engine/scenecatalog/coh_resource_join.h": "dc4c3324e719ccd1b4db3fccdb4da054d6a403f7e844209cea440bec6b858a68",
+    "coordinator:native-android/engine/scenecatalog/coh_resource_index.h": "d4774726285d8ba6037e8c2f35d4f9647e171e06aaccf8edc07b686f4dbc3228",
+    "coordinator:native-android/engine/scenecatalog/coh_resource_geo_source.h": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769",
+    "coordinator:native-android/engine/scenecatalog/coh_catalog_snapshot.h": "389021a429fe7c4720303fd00723de873fd18bc915d4c8aa9b4c437cd2dabb76",
+    "coordinator:native-android/engine/scenecatalog/coh_catalog_owner.h": "4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f",
+    "coordinator:native-android/engine/scenecatalog/coh_scenecatalog.h": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c",
+    "coordinator:native-android/engine/scenegraph/runtime_snapshot.h": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3",
+    "coordinator:native-android/engine/scenegraph/runtime_graph.h": "761582b9b245dd7f49b3abb4dde9c2a9644442946bf9010a0e80a9aea9ba2a37",
+    "coordinator:native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+    "coordinator:native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "coordinator:native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "coordinator:native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+    "coordinator:native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "coordinator:native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "coordinator:native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "coordinator:native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "coordinator:native-android/engine/scenecatalog/check_source_special.py": "07daeea8a5b6b3071cbcabf9a2fe9179e5a67ab51a6ee281aafdba49354f62a2",
+    "coordinator:native-android/engine/scenecatalog/inspect_root_partitions.py": "eac1ac1ce1e357a3b6944b63309371ee5740f3b3a13363a43d8aa954e765b846",
+    "coordinator:native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+    "coordinator:upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "coordinator:upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "coordinator:upstream/ouroboros/Game/src/render/model_cache.c": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b",
+    "coordinator:upstream/ouroboros/Game/src/graphics/groupdrawinline.c": "894a0f0f25f56a6659b66d6419f5089cb08d041c8b10371e7a154cae3f331824",
+    "coordinator:upstream/ouroboros/Game/src/render/rendertree.c": "9160762900e4f1a9124b7e852e8f98b0336934343eceddbaf37775c03c9c0e32",
+    "coordinator:upstream/ouroboros/Game/src/graphics/FX/fx.c": "384ab06a3e7ad7718474bdc2c615d418daab55735fcf5c538d78dd4240f8c9a5",
+    "coordinator:upstream/ouroboros/Game/src/render/rendershadow.c": "7bdc57e771e2a25903d722d4cc236f718696c96224a3ba5e69716e0d38e4e126"
+  },
+  "input_sha256": {
+    "/workspace/scratch/9174d12e2a11/resource-capture-38994607354/evidence/capture/catalog.cohcat": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "/workspace/scratch/9174d12e2a11/resource-capture-38994607354/evidence/capture/runtime.cohrts": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+    "/workspace/scratch/9174d12e2a11/resource-capture-38994607354/evidence/capture/resources.cohres": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6",
+    "/workspace/scratch/9174d12e2a11/resource-capture-38994607354/evidence/capture/source-identity.json": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+    "/workspace/scratch/9174d12e2a11/resource-capture-38994607354/evidence/capture/run-identity.json": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+    "/workspace/scratch/9174d12e2a11/resource-capture-38994607354/evidence/control-fixture.json": "3be317b5cc4b24aad8b19cd93e18762f12270ad4284c31a81e7587e4e35fadc1",
+    "/workspace/scratch/9174d12e2a11/resource-capture-38994607354/evidence/capture/resource-binding.json": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c",
+    "/workspace/scratch/9174d12e2a11/resource-capture-38994607354/evidence/capture/capture-receipt.json": "0947a6a172c083350d3229de5facebc5862fdc1bdd98e9b6c181b14cf3a715e4",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/evidence/actual-resource-bodies-source-adapter-sealed-38994607354.json": "4c704b4bec89685c75d2e157a9fc6f9df80e0161efd22d3cc2a4d0cd3b3855fa",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/evidence/prepared-geo-source-route-final-38994607354.json": "d977098428d2d51058a0cfe59443d3187cd07b1de518ff7172261037f868fa1c",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/elements/signs/neon/neon.geo": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/special_buildings/shop_interiors/shop_tailor/shop_tailor.geo": "98f0d86d789f90fc35e5e9f5008bf987ef97ba90998cae99f5c9930036fa80d9",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_01.geo": "c5048847e040e2ad2c0c160f469cde3c9eb472732128bbeaf848832b265cca68",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_02.geo": "a787b3633e43de8f12cbacaab7e95714b829134cafb74951b1dcef2fb3bbfb90",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_05.geo": "f1bbe574afaa3910b440a3ec1748fd6f046da7fdf5fd8cd10f9a70b87cd91ff5",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_06.geo": "604880c8b748a9dfcf90660ee8256cbfc376c53a333044bb41ec8c1cf28b6371",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_07.geo": "7243eb32f6e503381ff963b1a31b1039dd7c870aa35b163ef60a54c2f08bca46",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_13.geo": "af31643681e48e0c9b42a1ea01481cce5a33d19b8d212d9d1c49b4673cb4db98",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/nature/trees/conifers/conifers.geo": "a5001dac2091f7e552715bf04dc13ad159720587c1084a5676e347d984843b5a",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/special_buildings/architect_entertainment/architect_entertainment_exterior.geo": "ed0221d33ebeb10922803b94626da6ba8fd4ec5dda392c5c776c7be94b19df71",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/temp/pivot_test/pivot_test.geo": "3099705582b76eb8cf612731a9f202380e35f2f7fbbd301243c0b1c19a6f08a0",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/evidence/root-model-texture-partitions-38994607354.json": "46df6643795c3d06aa5b52b3c2fadeed1eac00a3693f33ac611bb5d990109e2a",
+    "/workspace/scratch/9174d12e2a11/body-coverage/native-android/engine/scenecatalog/evidence/actual-rigid-metadata-coverage-final-38994607354.json": "5df9bc58cb49c9a177a8315a841701bd300dbdf6641d27ef0b81345f1f6be197"
+  },
+  "modes": {
+    "release": {
+      "result": {
+        "special_completions": 9,
+        "special_reserved_peak_bytes": 71794134,
+        "legacy_completions": 0,
+        "legacy_files": 0,
+        "legacy_bridge_reserved_peak_bytes": 0,
+        "version_completions": 0,
+        "bridge_completions": 2,
+        "passed": true,
+        "checks": 948264,
+        "profile_files": 391,
+        "covered_model_rows": 8250,
+        "source_root_references": 3083,
+        "body_alloc_failure_cases": 15,
+        "selection_peak_bytes": 38733621,
+        "body_peak_bytes": 71063020,
+        "input_evidence_bytes": 1212085,
+        "procedural_file_bodies_checked": 2,
+        "shop_zero_model_owners": 4,
+        "direct_open_observed": false,
+        "assets_admitted": false,
+        "world_authority": false
+      },
+      "binary_sha256": "42111ac99580bfea34bb0c1f43f398deefc4757a8505546ee61dedd10320d744"
+    },
+    "asan": {
+      "result": {
+        "special_completions": 9,
+        "special_reserved_peak_bytes": 71794134,
+        "legacy_completions": 0,
+        "legacy_files": 0,
+        "legacy_bridge_reserved_peak_bytes": 0,
+        "version_completions": 0,
+        "bridge_completions": 2,
+        "passed": true,
+        "checks": 948264,
+        "profile_files": 391,
+        "covered_model_rows": 8250,
+        "source_root_references": 3083,
+        "body_alloc_failure_cases": 15,
+        "selection_peak_bytes": 38733621,
+        "body_peak_bytes": 71063020,
+        "input_evidence_bytes": 1212085,
+        "procedural_file_bodies_checked": 2,
+        "shop_zero_model_owners": 4,
+        "direct_open_observed": false,
+        "assets_admitted": false,
+        "world_authority": false
+      },
+      "binary_sha256": "f4ab791a1e3a8345157528f247c4c2a9deed1e8457a10d40b15bfec395fe4993"
+    },
+    "ubsan": {
+      "result": {
+        "special_completions": 9,
+        "special_reserved_peak_bytes": 71794134,
+        "legacy_completions": 0,
+        "legacy_files": 0,
+        "legacy_bridge_reserved_peak_bytes": 0,
+        "version_completions": 0,
+        "bridge_completions": 2,
+        "passed": true,
+        "checks": 948264,
+        "profile_files": 391,
+        "covered_model_rows": 8250,
+        "source_root_references": 3083,
+        "body_alloc_failure_cases": 15,
+        "selection_peak_bytes": 38733621,
+        "body_peak_bytes": 71063020,
+        "input_evidence_bytes": 1212085,
+        "procedural_file_bodies_checked": 2,
+        "shop_zero_model_owners": 4,
+        "direct_open_observed": false,
+        "assets_admitted": false,
+        "world_authority": false
+      },
+      "binary_sha256": "4e7b957e7babaa3c4cb403326d2a094a32052a5e49d3e706af062e92e552a536"
+    }
+  },
+  "special_original_oracle": [
+    {
+      "ordinal": 23835,
+      "reflection_scalars": 396,
+      "pivot_scalars": 0,
+      "points_sha256": "4fee765fd174723f3b3df073114ca7e2a8103ee38b8028e771d6c743a2e3fd0f",
+      "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "ordinal": 23839,
+      "reflection_scalars": 240,
+      "pivot_scalars": 0,
+      "points_sha256": "a4c65d6b2cabb950104397755135461bef99896fa2e928a1f6893557dfe5f03f",
+      "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "ordinal": 23855,
+      "reflection_scalars": 744,
+      "pivot_scalars": 0,
+      "points_sha256": "dbbc0859c0cb70f54d9a2a180068d6aef619a15f0f58f0e245e6b6b665e64771",
+      "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "ordinal": 23848,
+      "reflection_scalars": 816,
+      "pivot_scalars": 0,
+      "points_sha256": "e8b5afa292c26a6818dd687001fa332a946551e4f114e45a82c3c699343e06b6",
+      "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "ordinal": 23676,
+      "reflection_scalars": 1512,
+      "pivot_scalars": 0,
+      "points_sha256": "406b7893605e720597ab3d6c9998dc375c4281210ae25003d70df616c3bc7c75",
+      "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "ordinal": 23856,
+      "reflection_scalars": 348,
+      "pivot_scalars": 0,
+      "points_sha256": "bb888aaa5ec602966ed15a02c77965ea8440e31f2af87b709fe87bc657e642da",
+      "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "ordinal": 35044,
+      "reflection_scalars": 0,
+      "pivot_scalars": 0,
+      "points_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "ordinal": 25926,
+      "reflection_scalars": 240,
+      "pivot_scalars": 0,
+      "points_sha256": "8772a8748b506fe234bef8a0ea8def46d1f5c93d41c296041107d95c20b2628b",
+      "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "ordinal": 39692,
+      "reflection_scalars": 0,
+      "pivot_scalars": 36,
+      "points_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pivots_sha256": "9635bf7ba4b2e008d4a74434043eba19052e6c528af22ef1f541783fbb785631"
+    }
+  ],
+  "synthetic_grammar": {
+    "release": [
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 26
+      },
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 13
+      },
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 19
+      }
+    ],
+    "asan": [
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 26
+      },
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 13
+      },
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 19
+      }
+    ],
+    "ubsan": [
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 26
+      },
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 13
+      },
+      {
+        "passed": true,
+        "synthetic_grammar_only": true,
+        "checks": 19
+      }
+    ]
+  },
+  "scope": "Actual opaque SourceBody supplemental reflection/pivot/absent-UV source contract; no ordinary CPU, CLIENT or world authority",
+  "evidence_kind": "PROCEDURAL_EXACT_COLD_CAPTURE",
+  "direct_open_observed": false,
+  "assets_admitted": false,
+  "world_authority": false,
+  "android_executed": false,
+  "allocation_balance_controls": true,
+  "leak_sanitizer": false
+}

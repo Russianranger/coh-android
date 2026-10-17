@@ -1,0 +1,49 @@
+{
+  "approved": true,
+  "source_commits": [
+    "30e71d2c4",
+    "6357e956c"
+  ],
+  "receipts": {
+    "scene-protocol-host.json": {
+      "source_commit": "30e71d2c4",
+      "sha256": "c247e6780b758cb28e343a2c289b0c7efd053f4ed771498cd5816bda24f4a7f5",
+      "source_count": 319,
+      "current_inputs_verified": false
+    },
+    "scene-protocol-stack-host.json": {
+      "source_commit": "30e71d2c4",
+      "sha256": "5881b7b120d91c381453bd4d1eefc624c384e0a332653520677c7288e340f6c6",
+      "source_count": 196,
+      "current_inputs_verified": false
+    },
+    "graph-owner-host.json": {
+      "source_commit": "6357e956c",
+      "sha256": "c4a4ecce0c117d3c5cac9aae403c8f9a91ee4a468a7d8e0032d1a2e727a6c311",
+      "source_count": 323,
+      "current_inputs_verified": true
+    },
+    "graph-owner-stack.json": {
+      "source_commit": "6357e956c",
+      "sha256": "4b92933340f33a00309fd39c0ef60c0e10c6371acbef0bcb0df713f6f814a2ae",
+      "source_count": 198,
+      "current_inputs_verified": true
+    }
+  },
+  "review": [
+    "Protocol immutable descriptors borrow exact source wire; Catalog and complete Snapshot owners retained, no eagerdefinition fields",
+    "Detached source seed versus checked compatibility explicit; optionalwitness owned and updatepresence unknown for detached/future records",
+    "Old/new owners and graph/source copies charged conservatively; exactlynext localgeneration/guardedcurrentpointer, samecataloggeneration sourcepins preserved",
+    "GraphOwner really retains Catalog/Snapshot; graphpool+object ceiling checked BEFORE poolcalloc, ownerallocation follows successful graphadmission",
+    "Ownedprotocol entry retains GraphOwner through finalstate; graph freed before underlying sources, no historicalowner chain",
+    "Known spans/control/source outputs disjoint, external opaqueallocations and digest/callback runtime remain explicitcallerpreconditions",
+    "Measured nestedprotocol133064<=196608B; graphowner local38648 and protocollocal38568<=65536, othercompilers unqualified"
+  ],
+  "bounds": {
+    "owned_cap": 33554432,
+    "aggregate_cap": 100663296,
+    "runtime_dictionary_material_cache_crc_source_generation_world_ack": false,
+    "actual_capture_or_android_execution": false,
+    "corpus_or_sanitizers_replayed_by_review": false
+  }
+}

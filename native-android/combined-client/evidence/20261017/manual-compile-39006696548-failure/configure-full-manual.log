@@ -1,0 +1,21 @@
+-- The C compiler identification is MSVC 19.51.36260.0
+-- The CXX compiler identification is MSVC 19.51.36260.0
+CMake Error at D:/a/_temp/coh-manual-atlas-compile-yuf6rc04/build/CMakeFiles/4.4.4/CMakeRCCompiler.cmake:1 (set):
+  Syntax error in cmake code at
+
+    D:/a/_temp/coh-manual-atlas-compile-yuf6rc04/build/CMakeFiles/4.4.4/CMakeRCCompiler.cmake:1
+
+  when parsing string
+
+    C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\rc.exe
+
+  Invalid character escape '\P'.
+Call Stack (most recent call first):
+  C:/Program Files/CMake/share/cmake-4.4/Modules/Platform/Windows-MSVC.cmake:592 (enable_language)
+  C:/Program Files/CMake/share/cmake-4.4/Modules/Platform/Windows-MSVC.cmake:565 (__windows_compiler_msvc_enable_rc)
+  C:/Program Files/CMake/share/cmake-4.4/Modules/Platform/Windows-MSVC-C.cmake:5 (__windows_compiler_msvc)
+  C:/Program Files/CMake/share/cmake-4.4/Modules/CMakeCInformation.cmake:48 (include)
+  CMakeLists.txt:3 (project)
+
+
+-- Configuring incomplete, errors occurred!

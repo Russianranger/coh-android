@@ -1,0 +1,49 @@
+{
+  "schema": "coh-exact-attribute-dictionary-binding-v1",
+  "source_commit": "85a2d34d1a3794806a71bd366e0f51c2af5c7e40",
+  "tested_source_count": 37,
+  "tested_source_git_blobs_match": true,
+  "proof_sha256": "b51fd5e20feac0ada6b608529011ad6978bd46afe3b898f4350b1afc78d2c5de",
+  "actual_input_sha256": "20f770f406e661050434284e4253f721699df2112ea4481de66b50146304c132",
+  "actual_input_bytes": 5892,
+  "actual_category_count": 7,
+  "actual_ordered_rows": 69,
+  "original_ParseTableCRC": "315acdb1",
+  "original_whole_binary_roundtrip": true,
+  "source_schema_static_define_traversal": true,
+  "checks": {
+    "release": {
+      "checks": 67391,
+      "fixtures": 5,
+      "truncations": 27463,
+      "mutations": 5892,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 67391,
+      "fixtures": 5,
+      "truncations": 27463,
+      "mutations": 5892,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 67391,
+      "fixtures": 5,
+      "truncations": 27463,
+      "mutations": 5892,
+      "runtime_generation": false,
+      "actor_authority": false
+    }
+  },
+  "native_stack_sum_bytes": 416,
+  "native_stack_reserve_bytes": 16384,
+  "runtime_cache_branch_observed": false,
+  "current_server_generation": false,
+  "actor_authority": false,
+  "network_full_attribute_decoder_qualified": false,
+  "android_executed": false,
+  "thor_accepted": false,
+  "source_fixture_projection_fix": "Empty original earray stores NULL; fixture-only diagnostic projection guards zero count before reverse traversal. Original parser bodies unchanged."
+}

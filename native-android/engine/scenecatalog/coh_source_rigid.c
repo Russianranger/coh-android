@@ -8,7 +8,7 @@ static CohStatus add(size_t *n,size_t x,size_t cap){if(*n>cap||x>cap-*n)return C
 static CohStatus tick(CohCancel c){return c.poll&&c.poll(c.context)?COH_CANCELLED:COH_OK;}
 void coh_source_rigid_free(CohSourceRigid *r){if(!r)return;coh_wr_rigid_release(&r->rigid);coh_source_body_free(r->body);free(r);}
 CohStatus coh_source_rigid_create_using(CohSourceBody **body,const CohSourceRigidRequest *q,const CohSourceRigidLimits *b,CohCancel cancel,CohSourceRigid **out,CohSourceRigidReport *report,uint32_t exact_version,CohSourceRigidAcquire acquire_cpu){
- if(!acquire_cpu||(exact_version!=0&&exact_version!=7&&exact_version!=5))return COH_INVALID;
+ if(!acquire_cpu||(exact_version!=0&&exact_version!=7&&exact_version!=5&&exact_version!=2&&exact_version!=3&&exact_version!=4))return COH_INVALID;
  if(!body||!*body||!q||!b||!out||!report||!q->digest||!q->acquire||!q->release||!q->material_generation)return COH_INVALID;
  const void *p[]={body,q,b,out,report};size_t sizes[]={sizeof(*body),sizeof(*q),sizeof(*b),sizeof(*out),sizeof(*report)};
  for(unsigned n=0;n<5;n++)for(unsigned k=n+1;k<5;k++)if(!disjoint(p[n],sizes[n],p[k],sizes[k]))return COH_INVALID;

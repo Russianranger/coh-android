@@ -1,0 +1,29 @@
+{
+  "whole_sources_sha256_lf": {
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+    "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+    "libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039"
+  },
+  "whole_functions_sha256_lf": {
+    "initBitStream": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3",
+    "bsWriteBits": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0",
+    "bsReadBits": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea",
+    "bsWriteBitsPack": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb",
+    "bsReadBitsPack": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620",
+    "bsAlignByte": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40",
+    "bsGetCursorBitPosition": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac",
+    "bsGetBitLength": "a23c21214b9a21cbc90c752bb3f9b58eaef43a4f7c67e841201e0fe58860f77a",
+    "bsWriteBitsArray": "d1f563ac0460441027cdda2892d89e3612cbd13154c68a6470e3777dcac46e82",
+    "pktSendBitsPack": "8746bc145e72c7cfe59e4cde7081348032e11ed2275d6336bd48a7fa0a007abd",
+    "pktGetBitsPack": "beaeef547f7c85066be17d8c878abe86acc9068a155df977484234f51f2ee617",
+    "pktSendBitsArray": "50d95c26f722973120211fcb71862abe1f9d813148e426a24e341dccb9e4f795",
+    "pktAlignBitsArray": "d4134d7e4071bb7c467fb5dc6e81b116bc496c8a41142682e7c51315cb29e153",
+    "receiveByteAlignmentTag": "a5a2c9e94229beb1800cc294728da9dd299cb47c746de555758f5c5ea5a51623"
+  },
+  "append_block_sha256_lf": "7cd76f68e6cccd87f0ad1be759444f9cf410474facde8b64dcf51bdaff32e621",
+  "final_statement_sha256": "312b7892732dac9d515020c7beb8d051a66233930dd1725c3886fba2e633cbde",
+  "prepare_shell_sha256": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+}

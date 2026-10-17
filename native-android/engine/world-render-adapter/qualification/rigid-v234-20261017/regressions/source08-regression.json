@@ -1,0 +1,148 @@
+{
+  "passed": true,
+  "source_revision": "6c8142003d75f3d4cccdba6577bd906055945c14",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/tests/test_rigid_source.c": "17dc4a5df16041e0fdf61c9babcb941b5763b864b33755772deae497797fa116",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.c": "7124e339ecac9d0fb0c0b8d43eca1a784d6d52b7d18600452b646965be279ee4",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.c": "8430ffd01c83e8476f9672eab63020434477206943bcb39b2007e75111fd746d",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.c": "c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_internal.h": "484295680436f84675ba4f87449c9cec6ff306285818387ec1aec062854f3278",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.h": "01f60ed231e19dd8570740c9ebe90dae3209e055f1fc2bbc5c19bafb4b955ddb",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.h": "b6a5a2106455756712d258af00508801b76bb9e00ee94cc51784403f1c655a0a",
+    "native-android/engine/world-render-adapter/check_rigid_source.py": "2c324e5f013d27dfb493a8e33a01c0e7f2196d4c289838a5182d64c6a0dc5e09",
+    "native-android/engine/world-render-adapter/rigid-source-zero-pins.json": "c87a4d534db6d96c7495aefc99ebbe8814a5cadabba00ac2e496076aee7b18cf",
+    "native-android/engine/world-render-adapter/rigid-source-pins.json": "246dd1893b5d3d7c9be9b087f8eab42a31272499331e9fb1bf1a270284cdc5ab",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.h": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+  },
+  "source_inputs_unchanged": true,
+  "actual_body": {
+    "bytes": 252088,
+    "sha256": "98f0d86d789f90fc35e5e9f5008bf987ef97ba90998cae99f5c9930036fa80d9",
+    "model": "_shptlr_K_Roof__FLRSHPS_SHELLS",
+    "original_disk_row": 59,
+    "source_geo_name": "object_library/Special_Buildings/Shop_interiors/Shop_tailor/shop_tailor.geo",
+    "lookup_candidate": {
+      "manifest": "client-visual-manifest.json",
+      "manifest_asset_path": "data/object_library/special_buildings/shop_interiors/shop_tailor/shop_tailor.geo",
+      "original_pigg_path": "object_library/Special_Buildings/Shop_interiors/Shop_tailor/Shop_tailor.geo",
+      "comparison": "ascii_casefold_provenance_path",
+      "bytes": 252088,
+      "sha256": "98f0d86d789f90fc35e5e9f5008bf987ef97ba90998cae99f5c9930036fa80d9",
+      "source_archive": "stage3c.pigg",
+      "source_metadata_sha256": "0a4d351cd41703dd9e21c81c088fda900c1d8d0456fdd59cdbe2188d49b6b46d",
+      "source_url": "https://dists.thunderspy.org/piggs/stage3c.pigg",
+      "source_etag": "\"2f71c55dbc18d7ccd3f2d97714a544bc\"",
+      "source_member_range": "bytes 60323734-60575821/120989824",
+      "md5_table": "1f4adf952d720a59258715b0f5eddfa6",
+      "cached_header_sha256": "8f8416285b732702c9aeaf72bd96ce11385d958fd945f80d8d4901a6d5c6105b",
+      "cached_header_id": 287,
+      "geometry_header": {
+        "baseline_loader_accepts_version": true,
+        "data_block_bounds_verified": true,
+        "header_decompression_verified": true,
+        "header_uncompressed_bytes": 22124,
+        "runtime_compatibility": "unverified",
+        "version": 8
+      },
+      "observed_header_version_equal": true,
+      "body_bytes_acquired": false,
+      "source_generation_proven": false,
+      "status": "lookup_candidate_not_resource_pin"
+    },
+    "source_observations": [
+      {
+        "resource_ordinal": 32184,
+        "record_sha256": "49ac32b65058c001be38a87ed992858e80238ea05f003791da92c40ea5576a85",
+        "owner_kind": 1,
+        "file": 427,
+        "slot": 59,
+        "original_id": 59,
+        "definition_name": "_shptlr_K_Roof",
+        "sorted_runtime_model_row": 28,
+        "geo_version": 8,
+        "texture_partitions": [
+          [
+            51,
+            2,
+            "asphalt_squaremask.tga"
+          ]
+        ]
+      }
+    ],
+    "source_generation_established": false,
+    "material_fixture_only": true,
+    "world_authority": false,
+    "candidate_report_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+    "capture_sha256": {
+      "catalog.cohcat": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+      "source-identity.json": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+      "run-identity.json": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+      "resource-binding.json": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c",
+      "runtime.cohrts": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+      "resources.cohres": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+    },
+    "closure_sha256": "ca0dac973f04c79b14da8b6859ab5085c99714b751ac9d41e0499c281c8b08ca"
+  },
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 291,
+      "ordinary_vertices": 4,
+      "ordinary_triangles": 2,
+      "zero_rows_preserved": 4,
+      "linear_row_zero_decoder_calls": 72,
+      "selected_zero_refused_before_material": true,
+      "material_fixture_only": true,
+      "source_generation_established": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 291,
+      "ordinary_vertices": 4,
+      "ordinary_triangles": 2,
+      "zero_rows_preserved": 4,
+      "linear_row_zero_decoder_calls": 72,
+      "selected_zero_refused_before_material": true,
+      "material_fixture_only": true,
+      "source_generation_established": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 291,
+      "ordinary_vertices": 4,
+      "ordinary_triangles": 2,
+      "zero_rows_preserved": 4,
+      "linear_row_zero_decoder_calls": 72,
+      "selected_zero_refused_before_material": true,
+      "material_fixture_only": true,
+      "source_generation_established": false,
+      "world_authority": false
+    }
+  },
+  "packet_sha256": "c9964309a395471a2a97735058f66c8bcb7c086102f31be2713b5d3e924931f5",
+  "original_delta_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "material_fixture_only": true,
+  "source_generation_established": false,
+  "world_authority": false,
+  "android_execution": false
+}

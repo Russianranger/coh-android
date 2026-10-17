@@ -1,0 +1,24 @@
+{
+  "approved": true,
+  "original_workflow_wrapper_commit": "c907b76315de6f5d46958b3e6ec160057144a92d",
+  "required_source_execution_guard_fix": "c95c02c2de9c5e9ea21c784c2d3031f3decfe66f",
+  "frozen_git_current_inputs": {
+    "native-android/combined-client/tools/run_reviewed_manual_controls.py": "4ec82b24127f5a1fc7fa74c17577af0a303ed273e0f4c7cb7bf89286a801d049",
+    "native-android/combined-client/tools/check_reviewed_manual_controls.py": "e19b1520e9ef6f53914b17547d7a718c64a7b3d1dcbabe6140130bf6ec5a6007",
+    ".github/workflows/native-manual-pg-wine-compile.yml": "9cde4dd66af09c7aa67ca4e42713ca4bac37d4399d01ea9c6ff45e3a367ec177"
+  },
+  "independent_guard_controls_passed": 5,
+  "review": [
+    "Projectpyc/pyo/any__pycache__ rejected before firstprojectimport andafter; dontwrite flag remains true",
+    "Every helper/test/qualification/tool-lock source Gitbyte identity frozen beforeimport, pathaliases refused",
+    "Actual15tests only onWindows, exact11tool SDK files rehashed and PATH CMake equalslockedinterpreter beforetests; all15pass/noskipsmandatory",
+    "Postsource/tool rehash and separatealwaysuploadcontrolsartifact preservefailure",
+    "Exact driverqualification de2bb9 andlocka70 fixed; correctedbuild remainsCommon/DbServerOptDebug only"
+  ],
+  "scope": {
+    "cmake_interpreter_or_windows_executed_by_this_review": false,
+    "actual15tests_run_by_this_review": false,
+    "compiler_service_ci_dispatch": false,
+    "legacy35_runner_unrelated_approved_acd27": true
+  }
+}

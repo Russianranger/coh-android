@@ -44,6 +44,12 @@ typedef struct {
 CohStatus coh_runtime_graph_build(const CohRuntimeGraph *,CohBytes catalog,CohBytes snapshot,
     const CohRuntimeGraphBinding *,const CohRuntimeSnapshotBudget *,const CohCancel *,
     CohRuntimeGraph **candidate,CohRuntimeGraphReport *);
+/* Same admission, with a smaller graph-owned payload ceiling. Both graph object
+ * and complete retained pool are checked against it before pool allocation.
+ * Ceiling must be <=32MiB; callers reserve their own owner metadata separately. */
+CohStatus coh_runtime_graph_build_limited(const CohRuntimeGraph *,CohBytes,CohBytes,
+    const CohRuntimeGraphBinding *,const CohRuntimeSnapshotBudget *,const CohCancel *,
+    size_t graph_owned_limit,CohRuntimeGraph **,CohRuntimeGraphReport *);
 CohStatus coh_runtime_graph_publish(CohRuntimeGraph **current,CohRuntimeGraph **candidate,
     CohRuntimeGraph **retired);
 void coh_runtime_graph_free(CohRuntimeGraph *);

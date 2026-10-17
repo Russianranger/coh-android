@@ -1,0 +1,113 @@
+{
+  "approved": true,
+  "source_commits": [
+    "73eaf93e0",
+    "aec9fff31"
+  ],
+  "evidence_commits": [
+    "7344977bd",
+    "fde09b289"
+  ],
+  "receipts": [
+    {
+      "receipt": "native-android/engine/world-render-adapter/qualification/client-tex-dependencies-20261017/host.json",
+      "revision": "7344977bd",
+      "sha256": "94ce11dc143b48fdbdab51ff936a5404be3f7fbb07dd15bbc259fa069137f097",
+      "sources": 56,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 2427,
+          "actual_headers": 2,
+          "derived_fixture_headers": 34,
+          "valid_dependencies": 12,
+          "present_imported_only": 2,
+          "not_observed": 5,
+          "unqualified_short_keys": 5,
+          "owned_bytes": 30288,
+          "material_authority": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 2427,
+          "actual_headers": 2,
+          "derived_fixture_headers": 34,
+          "valid_dependencies": 12,
+          "present_imported_only": 2,
+          "not_observed": 5,
+          "unqualified_short_keys": 5,
+          "owned_bytes": 30288,
+          "material_authority": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 2427,
+          "actual_headers": 2,
+          "derived_fixture_headers": 34,
+          "valid_dependencies": 12,
+          "present_imported_only": 2,
+          "not_observed": 5,
+          "unqualified_short_keys": 5,
+          "owned_bytes": 30288,
+          "material_authority": false,
+          "world_authority": false
+        }
+      }
+    },
+    {
+      "receipt": "native-android/engine/world-render-adapter/qualification/client-texopt-10499-20261017/host.json",
+      "revision": "fde09b289",
+      "sha256": "6196cf9ae102f7ddd553a7e60aad2938ebc722febecf03e29cb2cd5d6bea19a8",
+      "sources": 43,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 21,
+          "source_prefix_executed": true,
+          "factory_single_row_guard_skipped_LWC_false_and_true": true,
+          "native_identity_refusal_preserved": true,
+          "whole_dictionary_exclusion": false,
+          "material_authority": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 21,
+          "source_prefix_executed": true,
+          "factory_single_row_guard_skipped_LWC_false_and_true": true,
+          "native_identity_refusal_preserved": true,
+          "whole_dictionary_exclusion": false,
+          "material_authority": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 21,
+          "source_prefix_executed": true,
+          "factory_single_row_guard_skipped_LWC_false_and_true": true,
+          "native_identity_refusal_preserved": true,
+          "whole_dictionary_exclusion": false,
+          "material_authority": false,
+          "world_authority": false
+        }
+      }
+    }
+  ],
+  "source_review": [
+    "Immutable input-header owner transfers ONLY after fullsuccess; all matching TexOpt records independentlyowned, cache/Surface retire safely afterprep",
+    "DDS-derived Basic flags separate cached TexOpt flags; original fill lookup preseed/reset/target statements source-order consistent; TexWord factory absent rather than fabricated",
+    "64KiB totalprep reserve includes16KiB own plus nested lookup/record32+16; previous/currentrecord owners and full loaders externally precharged",
+    "Known input-header rawbody spans recovered only foralias refusals from validated blob+32 header layout; opaque cache/source borrowed blobs remain caller-disjointprecondition",
+    "Allten missing supplier bits stayset; local subset PRESENT/NOT_OBSERVED/UNQUALIFIED never active namespace availability",
+    "10499 source prefix stops before unsafe nameflag/stash, whole single-row factory guard skips missingBase1 underboth LWC fixtures; nativeUTF8 unsupported maintained"
+  ],
+  "limits": {
+    "a_supplier_ledger_or_closure_independently_regenerated_here": false,
+    "whole_dictionary_exclusion_or_global_unreachable": false,
+    "active_remaps_namespace_client_factory_material_world": false,
+    "actual_client_or_android_execution": false,
+    "corpus_replayed_by_review": false
+  }
+}

@@ -344,3 +344,68 @@ selection/session and dictionary generation. Exact appended command framing,
 normal viewed-entity ownership, semantic dictionary/state/resource admission
 and immutable actor publication remain open. A syntax-complete raw list alone
 cannot emit READY, RECEIVED_CHARACTER or a full-update application ACK.
+
+
+## Whole initial raw diagnostic composition (2026-10-17)
+
+`engine/initial-update/` composes source header, complete supported generic
+INITIAL create list, control, deletes, character groups1..6 and the complete
+ten-stage global suffix under one bounded sequential-loan owner. Compact reports
+retain exact immutable packet spans; no per-entity giant appearance POD and no
+publication/ACK occur. The caller reader always stays unchanged because runtime
+selected handoff/dictionary/world-generation authority is not yet admitted.
+
+Trailing meta-command parsing consumes original nested GAME_CMDS15 and
+BEGIN_BYTE_ALIGNED_DATA197 and requires a final Pack1zero at the exact payload
+bit end. Unknown appended command bodies, missing/end-extra bits and marker cap
+refuse. Read alignment padding is not required to be zero. This narrow framing
+profile does not implement every possible appended game command. Retained
+qualified original child bytes and complete original control writers form
+explicit synthetic source-order joins, not a whole live original object graph.
+
+Initial full_update forces both team and league upToDate flags to zero; existing
+full social bodies are complete. A true flag is an impossible source initial
+profile, not missing social grammar. Attributes are sent only at the owner/tick
+modulo8 schedule. Their full branch additionally requires the saved combat
+numbers window displaying; full ordered attribute values and modifier list
+remain unsupported until the exact description schema is admitted. The monitor
+branch already reads all11 source slots. Active invention raw producer data are
+completely decoded in `coh_invention_update_read`, but the combined phase refuses
+nonzero statusChange because the original invention_Receive is a no-op. Any
+future producer-wire-only diagnostic extension must retain that distinction.
+
+Same-packet create/delete order is preserved for admitted creates; unknown prior
+tombstones require a previous-world owner. Raw control forced-position events
+are not applied as final actor position. `initial-update/DICTIONARY_DEPENDENCIES.md`
+records exact class/origin reverse-array lookup, normal/villain fallback, power
+full-name CRC constructor, retained exact cache identities, SERVERONLY/shared
+cache and callback gates. No invented BoneIdEnum requirement is added to an
+exact cache-hit branch. Large power-tree eager materialization remains prohibited
+by the aggregate working-set budget. Runtime dictionary generation, normal
+viewed-entity ownership, semantic character/resources and actor application
+remain gates even after supported raw initial syntax and exact end are read.
+
+## Optional full attribute raw description (2026-10-17)
+
+The additive `entity-attributes/coh_attrib_description` component now decodes the
+full original ordered attribute-value and matching-modifier grammar, preserving
+all raw power CRCs/source identities and exact row ordinals without applying
+attribute/UI/contributor state. Its explicit full-schema prerequisite is the
+new bounded `attribute-dictionary` candidate: exact authentic5892B cache,7cats/
+69rows, whole original read/write byte equality and original ParseTableCRC with
+static define traversal0x315acdb1. Normal/reverse ordering and all scalar/string
+fields agree with an independent decoder. Runtime cache/shared selection and
+matching live server generation remain unobserved; integrity does not mint
+semantic dictionary or actor authority.
+
+The native full reader is atomic across every required value/modifier and
+optional callback cancellation. It retains finite raw floats, source2/3 names
+and server IDs, and bounded unknown power/hash identities. The existing monitor
+parser and social source are unchanged.144 retained whole-original full sender/
+consumer fixtures and120 original monitor cases pass release/ASan/UBSan;
+1,265,128 assertions/mode include416,464 every-bit truncations,648 cancellation
+boundaries,181 mutations and13 explicit local modifier/text-cap/nonfinite/tag
+controls. The latter are synthetic exact-original-leaf joins, not additional
+original gameplay object executions. No complete initial update, actor or ACK
+is accepted; the frozen initial suffix/composer still uses its previous monitor
+profile until an explicit schema-bound additive profile is integrated/qualified.

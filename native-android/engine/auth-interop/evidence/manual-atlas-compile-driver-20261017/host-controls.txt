@@ -1,5 +1,6 @@
 test_all_existing_source_immutable_generated_domain_bounded (test_hosted_manual_atlas_compile.CompileControls.test_all_existing_source_immutable_generated_domain_bounded) ... ok
 test_cache_refuses_fixture_wrong_version_unexpected_target (test_hosted_manual_atlas_compile.CompileControls.test_cache_refuses_fixture_wrong_version_unexpected_target) ... ok
+test_cmake_script_reproduces_backslash_escape_and_parses_forward_path (test_hosted_manual_atlas_compile.CompileControls.test_cmake_script_reproduces_backslash_escape_and_parses_forward_path) ... skipped 'CMake interpreter unavailable locally; Windows workflow must execute this regression'
 test_compilation_admission_scope_commands_and_source_mutations (test_hosted_manual_atlas_compile.CompileControls.test_compilation_admission_scope_commands_and_source_mutations) ... ok
 test_compile_argv_offline_exact_sources_toolchain_and_only_db (test_hosted_manual_atlas_compile.CompileControls.test_compile_argv_offline_exact_sources_toolchain_and_only_db) ... ok
 test_exact_checkout_lf_environment_only (test_hosted_manual_atlas_compile.CompileControls.test_exact_checkout_lf_environment_only) ... ok
@@ -10,9 +11,10 @@ test_git_path_substitution_refused (test_hosted_manual_atlas_compile.CompileCont
 test_linux_cannot_start_compile_driver (test_hosted_manual_atlas_compile.CompileControls.test_linux_cannot_start_compile_driver) ... ok
 test_lock_sha_image_owner_and_every_tool_byte (test_hosted_manual_atlas_compile.CompileControls.test_lock_sha_image_owner_and_every_tool_byte) ... ok
 test_pure_pe_import_ranges_and_win32 (test_hosted_manual_atlas_compile.CompileControls.test_pure_pe_import_ranges_and_win32) ... ok
+test_real_windows_lock_paths_render_only_cmake_values (test_hosted_manual_atlas_compile.CompileControls.test_real_windows_lock_paths_render_only_cmake_values) ... ok
 test_unreviewed_profile_and_relative_tool_refused (test_hosted_manual_atlas_compile.CompileControls.test_unreviewed_profile_and_relative_tool_refused) ... ok
 
 ----------------------------------------------------------------------
-Ran 13 tests in 0.537s
+Ran 15 tests in 0.763s
 
-OK
+OK (skipped=1)

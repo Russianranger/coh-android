@@ -1,0 +1,54 @@
+{
+  "approved": true,
+  "source_commit": "f4f716a867408d1b0b8408aa5532419d669da395",
+  "evidence_commit": "a801d6d7a",
+  "tested_source_git_and_current_equal": 79,
+  "binding_sha256": "6e341d52ca2b588e70ffdd235abf351fd2501857f9819c883f078e92aa2f0596",
+  "host_proof_gzip_sha256": "5cddc52748147728d1d683928a248dc83cbb3b7b4b55445c3c85cf7746eb71fc",
+  "checks": {
+    "release": {
+      "checks": 1265128,
+      "full_cases": 144,
+      "monitor_cases": 120,
+      "truncations": 416464,
+      "mutations": 181,
+      "cancel_controls": 648,
+      "dictionary_authority": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 1265128,
+      "full_cases": 144,
+      "monitor_cases": 120,
+      "truncations": 416464,
+      "mutations": 181,
+      "cancel_controls": 648,
+      "dictionary_authority": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 1265128,
+      "full_cases": 144,
+      "monitor_cases": 120,
+      "truncations": 416464,
+      "mutations": 181,
+      "cancel_controls": 648,
+      "dictionary_authority": false,
+      "actor_authority": false
+    }
+  },
+  "review": [
+    "Whole schema input SHA/lease and parsed candidate required before fullvaluecount; no fieldskip without schema",
+    "Source reverse69row ordinal wirevalues and permodifier hash/AutoCRC/sourceType/text/Pack20/F32 retained without merging",
+    "Finitefloat/scalar/count/aggregate text bounds; bothsentinels before finalreader/outputcommit",
+    "All reader/output/work/input/schema/expected/control/providercontext/borrowedschema spans disjoint before mutation;16KiB+providerscratch+retained charged<=2MiB",
+    "Monitor uses unchanged child with exact recharged fixedspan subtraction; cancellation leaves outputs andreader unchanged"
+  ],
+  "limits": {
+    "original_gameplay_state_applied": false,
+    "runtime_dictionary_generation_or_actor_authority": false,
+    "unknown_power_keys_resolved": false,
+    "external_callback_stack_or_sanitizer_closure": false,
+    "corpus_replayed_by_review": false
+  }
+}

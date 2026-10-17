@@ -1,0 +1,28 @@
+{
+  "approved": true,
+  "historical_source_commit": "da80e73ae315363ffcbc08ff1ef86e7290c4eefc",
+  "script_sha256": "b49e25c49b2fc04e8289c98a1357ea1687416416ed9e23f28856b2faa7f3ddcd",
+  "workflow_sha256": "9b2b124443d531304fdcde7dd6658aacdffaab592300d5dd387b10a95aec806e",
+  "archive_sha256": "e5a064bacd57dc14de306c2bfbec7ca1b08f268b57d6b73e11ddaea1b670a4ee",
+  "controls": [
+    "exact_retained_elf_admitted_without_execution",
+    "short_header",
+    "elf64",
+    "wrong_machine",
+    "dynamic_interpreter",
+    "program_header_extent",
+    "load_file_extent",
+    "failed_domain_guard"
+  ],
+  "source_review": [
+    "Fixed35 version2/3/4 metadata binaries only; no compiler/assets/server/NDK",
+    "ExactGit/325members/615638bytes/source/binary/220byte expected facts binding before execution",
+    "ELF class/data/machine/EXEC/nointerp/load extents guarded",
+    "Per-case subprocess timeout and CPU/AS/file/FD/core limits, emptyenv, temporary executable cleanup",
+    "Zeroexit+empty stderr+wholestdout exact equality required; validation_only never sets execution flags",
+    "Source/head clean and inputhashes rechecked; always artifact preserves partial refusal"
+  ],
+  "binary_executed_by_review": false,
+  "compile_or_service_started": false,
+  "original32_future_execution_not_yet_qualified_here": true
+}

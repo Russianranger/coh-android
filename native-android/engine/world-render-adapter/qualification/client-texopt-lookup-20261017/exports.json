@@ -1,0 +1,11 @@
+{
+  "source_revision": "4871944d7",
+  "source_sha256": "5f4ed6a830d7d183cbfdf2a0a6fc01f621ab7843194bdc0fcecc7fd42eeb960c",
+  "command": "cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic -I native-android/engine/world-render-adapter -I native-android/include -c native-android/engine/world-render-adapter/coh_wr_texopt_lookup.c -o /tmp/texopt-lookup-4871944d7.o",
+  "object_sha256": "88f6218ff17bbd044aeca01d910f69905280a50331c216def03a8e66136fb8c4",
+  "nm_global_defined_only": "0000000000000420 T coh_wr_texopt_lookup\n",
+  "expected_public_symbols": [
+    "coh_wr_texopt_lookup"
+  ],
+  "passed": true
+}

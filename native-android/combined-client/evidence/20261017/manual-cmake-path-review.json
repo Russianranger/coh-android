@@ -1,0 +1,27 @@
+{
+  "approved": true,
+  "source_commit": "da992e1b2df40e92da57d0c3082a29cd1cae3b5a",
+  "host_qualification_sha256": "de2bb9e6dabfbfbdc16a8329f46af8348f6757eea4f58603a3a008c148ecf7ec",
+  "tested_git_current_inputs": 17,
+  "independent_local_suites": {
+    "discovered": 15,
+    "passed": 14,
+    "skipped_cmake_interpreter_unavailable": 1
+  },
+  "actual_failure": {
+    "zip_sha256": "4703de08a2ef50d3af14112668b2ce48f482a21f7a6f02b3b865ceb9fe329baa",
+    "receipt_sha256": "a511aa00dd20ab0f908ef78f19c16214eaabc8736a40221a5a85cebe57e96d10",
+    "source": "8cf325f4dc78eab451f23382ac8a13f8fa9ffe5c",
+    "raw_git_helper_inputs": 63,
+    "source_files_before_cleanup_equal": 6007,
+    "dependency_cleanup_equals_expected_prepatched_maps": 3,
+    "target_build_executed": false
+  },
+  "review": [
+    "Only CMake-consumed path values forward-rendered; canonical observedlock and executable identities unchanged",
+    "Exact rendered configure/build argv equality required by admission; non-CMake Git command spelling handling unchanged",
+    "source/dep/toolcache semanticguards remain; no services or PEexecution",
+    "Actual CMake parser test unexecuted locally; Windows must execute it before retry or successful future configure supplies evidence"
+  ],
+  "actual_retry_or_cmake_execution_by_review": false
+}

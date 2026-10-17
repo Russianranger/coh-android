@@ -1,0 +1,12 @@
+{
+  "scope": "authorized_generated_stage_reclaim",
+  "path": "/workspace/scratch/9174d12e2a11/manual-atlas-corrected-full-source",
+  "files": 6007,
+  "bytes": 173144296,
+  "qualified_map_sha256": "0cf8c44c7f3fc1f840834ab69cb5a8c3800d24a572a92a7f80d1d2a2d70fefa4",
+  "complete_map_equal": true,
+  "symlinks": false,
+  "extra_or_changed_files": false,
+  "actual_map_sha256": "a9bb8886a3dc374cefb9690cbccee5c793f47ece82b836433cb8fe42a26dfa29",
+  "note": "Recorded from completed pre-removal full-map comparison; approved generated copy only."
+}

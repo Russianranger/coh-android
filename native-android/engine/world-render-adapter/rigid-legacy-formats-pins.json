@@ -1,0 +1,1295 @@
+{
+  "scope": "All35rootunique authentic retained v2/v3/v4 model pairs; standalone CPU fixture materials/generation only",
+  "fixtures": [
+    {
+      "version": 2,
+      "model": "_fence_gate_post01__dockdngrpostHI",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17440,
+          "record_sha256": "1b90a25a1df6800b6d481817a2dd95c78883f99b372467c57736ff8ce79f4a9a",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_fence_gate_post01",
+          "sorted_runtime_model_row": 0,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              8,
+              22,
+              "wall_docks_stripe02.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 4,
+      "vertices": 26,
+      "triangles": 22,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_fence_gate_post_LOD__dockdngrpostLO",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17441,
+          "record_sha256": "f1839925ea3b300073a61f28d3180ab57d93839a2f44038c27f794ceea056500",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_fence_gate_post_LOD",
+          "sorted_runtime_model_row": 3,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              8,
+              8,
+              "wall_docks_stripe02.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 5,
+      "vertices": 18,
+      "triangles": 8,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_fence_gate_wheel__secpostlod01",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17442,
+          "record_sha256": "6977431d36802c368268b480cc72a1dce5d1fba92d5c60d87b700fa27760d77d",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 6,
+          "original_id": 6,
+          "definition_name": "_fence_gate_wheel",
+          "sorted_runtime_model_row": 9,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              6,
+              28,
+              "ind_elements_metal02.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 6,
+      "vertices": 32,
+      "triangles": 28,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_fence_gate_secpost2__secpostlod04",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17443,
+          "record_sha256": "7f773ff7f7d5e321e378549945035e8044babdf036cf10bd7afbd3f93bcd409d",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 7,
+          "original_id": 7,
+          "definition_name": "_fence_gate_secpost2",
+          "sorted_runtime_model_row": 8,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              2,
+              20,
+              "ind_ware12_roof01.tga"
+            ],
+            [
+              3,
+              9,
+              "wall_docks_gatehouse01.tga"
+            ],
+            [
+              9,
+              13,
+              "wall_docks_gatehouse_walls.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 7,
+      "vertices": 71,
+      "triangles": 42,
+      "parts": 3
+    },
+    {
+      "version": 2,
+      "model": "_gate_fence_secpost_wdwpane__secpostwdwlod2",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17444,
+          "record_sha256": "79008e3c9df6afafaf1652665e7c316f77bdcf52ccd5049bb46dabd10d0b5e19",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 8,
+          "original_id": 8,
+          "definition_name": "_gate_fence_secpost_wdwpane",
+          "sorted_runtime_model_row": 15,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              10,
+              2,
+              "deco_reflect1.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 8,
+      "vertices": 4,
+      "triangles": 2,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_gate_secpost_wdw1__secpostlod01",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17445,
+          "record_sha256": "5cd2f9acf5ed461e391e27ffe290c56412751c51994d48f62f674e2d7d8803b7",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 9,
+          "original_id": 9,
+          "definition_name": "_gate_secpost_wdw1",
+          "sorted_runtime_model_row": 16,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              3,
+              32,
+              "wall_docks_gatehouse01.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 9,
+      "vertices": 46,
+      "triangles": 32,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_gate_secpost_wdw2__secpostlod01",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17446,
+          "record_sha256": "796680bc850f95b3cc32a32be36d031b739ac8edb7cf8675b9725555ea4b1ab2",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 10,
+          "original_id": 10,
+          "definition_name": "_gate_secpost_wdw2",
+          "sorted_runtime_model_row": 17,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              3,
+              52,
+              "wall_docks_gatehouse01.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 10,
+      "vertices": 75,
+      "triangles": 52,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_gate_secpost_wdw2pane__secpostwdwlod2",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17447,
+          "record_sha256": "20c34f93fa16a6f8427bda71bd9cfe2ff29237f7a55879967c825380308437f1",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 11,
+          "original_id": 11,
+          "definition_name": "_gate_secpost_wdw2pane",
+          "sorted_runtime_model_row": 18,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              10,
+              4,
+              "deco_reflect1.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 11,
+      "vertices": 8,
+      "triangles": 4,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_gate_fence_secpost2_LOD__docksecpostLOD1",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17450,
+          "record_sha256": "4224128f13e5197a88a1943d810af3c24842d609774bbe8f9fe6c6f416b8de1c",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 14,
+          "original_id": 14,
+          "definition_name": "_gate_fence_secpost2_LOD",
+          "sorted_runtime_model_row": 11,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              3,
+              7,
+              "wall_docks_gatehouse01.tga"
+            ],
+            [
+              9,
+              7,
+              "wall_docks_gatehouse_walls.tga"
+            ],
+            [
+              2,
+              6,
+              "ind_ware12_roof01.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 14,
+      "vertices": 36,
+      "triangles": 20,
+      "parts": 3
+    },
+    {
+      "version": 2,
+      "model": "_gate_fence_secpost_trim2__secpostlod02",
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "bytes": 11071,
+      "source_observations": [
+        {
+          "resource_ordinal": 17452,
+          "record_sha256": "ae096266e9838fcef7f2117dbb5133d7875fc51b3cb5ad1edc3f8f2562bf14bd",
+          "owner_kind": 1,
+          "file": 133,
+          "slot": 16,
+          "original_id": 16,
+          "definition_name": "_gate_fence_secpost_trim2",
+          "sorted_runtime_model_row": 14,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              3,
+              28,
+              "wall_docks_gatehouse01.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 16,
+      "vertices": 50,
+      "triangles": 28,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_Swr_Light_1_Cone__swr_coneglow",
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/lights/lights.geo",
+      "asset_path": "data/object_library/villain_lairs/sewers/elements/lights/lights.geo",
+      "sha256": "3af513441091b352808a704c9b2f7c3de9b24b2e58a73437e3609fa2c2938ae1",
+      "bytes": 5995,
+      "source_observations": [
+        {
+          "resource_ordinal": 17569,
+          "record_sha256": "10d1ab1b020bbca15d16c0d7c5321641567f10857c6d7821da5927e3f2f1cb49",
+          "owner_kind": 1,
+          "file": 137,
+          "slot": 3,
+          "original_id": 3,
+          "definition_name": "_Swr_Light_1_Cone",
+          "sorted_runtime_model_row": 1,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              22,
+              24,
+              "sewer_light_shaft.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 3,
+      "vertices": 26,
+      "triangles": 24,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_Swr_Light_1_Glow__sewer_lights2",
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/lights/lights.geo",
+      "asset_path": "data/object_library/villain_lairs/sewers/elements/lights/lights.geo",
+      "sha256": "3af513441091b352808a704c9b2f7c3de9b24b2e58a73437e3609fa2c2938ae1",
+      "bytes": 5995,
+      "source_observations": [
+        {
+          "resource_ordinal": 17571,
+          "record_sha256": "9194b56eb7b0dab1bb386399eea2929d83abe2e53ef94087413487626cfbe71b",
+          "owner_kind": 1,
+          "file": 137,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_Swr_Light_1_Glow",
+          "sorted_runtime_model_row": 2,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              23,
+              138,
+              "sewer_lights_1.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 5,
+      "vertices": 169,
+      "triangles": 138,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_Graffiti_2to1_med__Graflg",
+      "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+      "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+      "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+      "bytes": 1439,
+      "source_observations": [
+        {
+          "resource_ordinal": 19465,
+          "record_sha256": "17fa6ca19debf05baf4b99951cbbbeba04be8774bb77fc0b38d7746ac3e78dc4",
+          "owner_kind": 1,
+          "file": 184,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_Graffiti_2to1_med",
+          "sorted_runtime_model_row": 7,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              1,
+              2,
+              "Graf_2to1_a.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 0,
+      "vertices": 4,
+      "triangles": 2,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_Graffiti_2to1_lg__Graflg",
+      "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+      "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+      "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+      "bytes": 1439,
+      "source_observations": [
+        {
+          "resource_ordinal": 19466,
+          "record_sha256": "7ce5cc7c9ae8d6d74ad6fb78f9985af1ba358c80208d7908315777159ad61d17",
+          "owner_kind": 1,
+          "file": 184,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_Graffiti_2to1_lg",
+          "sorted_runtime_model_row": 5,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              1,
+              2,
+              "Graf_2to1_a.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 1,
+      "vertices": 4,
+      "triangles": 2,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_Graffiti_2to1_xlg__Graflg",
+      "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+      "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+      "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+      "bytes": 1439,
+      "source_observations": [
+        {
+          "resource_ordinal": 19467,
+          "record_sha256": "258c319a15b3921a54df969d7e3a7a45c739feabf18b7e01a8736b38c7f25c16",
+          "owner_kind": 1,
+          "file": 184,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_Graffiti_2to1_xlg",
+          "sorted_runtime_model_row": 9,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              1,
+              2,
+              "Graf_2to1_a.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 2,
+      "vertices": 4,
+      "triangles": 2,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_Graffiti_1to1_lg__Graflg",
+      "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+      "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+      "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+      "bytes": 1439,
+      "source_observations": [
+        {
+          "resource_ordinal": 19468,
+          "record_sha256": "495915e4df1e8d3267136a6114a158b54b156e1d506fbeb3d7055a22abd96572",
+          "owner_kind": 1,
+          "file": 184,
+          "slot": 3,
+          "original_id": 3,
+          "definition_name": "_Graffiti_1to1_lg",
+          "sorted_runtime_model_row": 0,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              1,
+              2,
+              "Graf_2to1_a.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 3,
+      "vertices": 4,
+      "triangles": 2,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_Graffiti_1to1_xlg__Graflg",
+      "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+      "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+      "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+      "bytes": 1439,
+      "source_observations": [
+        {
+          "resource_ordinal": 19469,
+          "record_sha256": "868956f15d902f6a0956f18cea3e7ebfd91f605502253c593428a65c32f234e5",
+          "owner_kind": 1,
+          "file": 184,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_Graffiti_1to1_xlg",
+          "sorted_runtime_model_row": 4,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              1,
+              2,
+              "Graf_2to1_a.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 4,
+      "vertices": 4,
+      "triangles": 2,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "_Graffiti_1to1_med__Graflg",
+      "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+      "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+      "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+      "bytes": 1439,
+      "source_observations": [
+        {
+          "resource_ordinal": 19470,
+          "record_sha256": "7111c5c0f2f7e5ff1d2037351e09de817dc94e15de20a2063fda0157ab813359",
+          "owner_kind": 1,
+          "file": 184,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_Graffiti_1to1_med",
+          "sorted_runtime_model_row": 2,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              1,
+              2,
+              "Graf_2to1_a.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 5,
+      "vertices": 4,
+      "triangles": 2,
+      "parts": 1
+    },
+    {
+      "version": 2,
+      "model": "arac_crate_ammo",
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Arachnos/elements/interior/interior.geo",
+      "asset_path": "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo",
+      "sha256": "435ac148edc5a3eb8e89786276126dffe1ca3a720953f72b40fab44c92957679",
+      "bytes": 37314,
+      "source_observations": [
+        {
+          "resource_ordinal": 30869,
+          "record_sha256": "6b79416f6e4f9d8ae479c20d7cf2f507f5908499d03b33353fa6bc4a8392dc8e",
+          "owner_kind": 1,
+          "file": 405,
+          "slot": 11,
+          "original_id": 11,
+          "definition_name": "arac_crate_ammo",
+          "sorted_runtime_model_row": 20,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              20,
+              28,
+              "crates.tga"
+            ],
+            [
+              22,
+              32,
+              "crates_b.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 11,
+      "vertices": 70,
+      "triangles": 60,
+      "parts": 2
+    },
+    {
+      "version": 2,
+      "model": "arac_barrel_01",
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Arachnos/elements/interior/interior.geo",
+      "asset_path": "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo",
+      "sha256": "435ac148edc5a3eb8e89786276126dffe1ca3a720953f72b40fab44c92957679",
+      "bytes": 37314,
+      "source_observations": [
+        {
+          "resource_ordinal": 30872,
+          "record_sha256": "e571e60d27ab3d541708c258df5579ff67c9e5111b2c6c995aa3a3ca6598eab4",
+          "owner_kind": 1,
+          "file": 405,
+          "slot": 14,
+          "original_id": 14,
+          "definition_name": "arac_barrel_01",
+          "sorted_runtime_model_row": 14,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              2,
+              20,
+              "plate_c.tga"
+            ],
+            [
+              23,
+              16,
+              "arac_machinery_t_01.tga"
+            ],
+            [
+              7,
+              20,
+              "plate_a.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 14,
+      "vertices": 64,
+      "triangles": 56,
+      "parts": 3
+    },
+    {
+      "version": 2,
+      "model": "Truck_Frame__Editorprop",
+      "source_geo_name": "object_library/Doors/Truck_door/truck_door.geo",
+      "asset_path": "data/object_library/doors/truck_door/truck_door.geo",
+      "sha256": "f26e938389cfe699421b42b75aa306427278b4e6d88d2885965009c2e61879df",
+      "bytes": 2025,
+      "source_observations": [
+        {
+          "resource_ordinal": 37790,
+          "record_sha256": "c595f33823a3b18f17c46a2c407387034e13c2b4a6601c8702ee9e3b2863d869",
+          "owner_kind": 1,
+          "file": 472,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "Truck_Frame",
+          "sorted_runtime_model_row": 0,
+          "geo_version": 2,
+          "texture_partitions": [
+            [
+              1,
+              92,
+              "blue.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 0,
+      "vertices": 134,
+      "triangles": 92,
+      "parts": 1
+    },
+    {
+      "version": 3,
+      "model": "_BNK_HALLWAY_01__bankTray",
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Bank/Bus_Bank_trays/bus_bank_trays.geo",
+      "asset_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+      "sha256": "418de08e35dccfddc1dca001cccaa10ad9b632c1a7e16569dc41d7581590cfd1",
+      "bytes": 8367,
+      "source_observations": [
+        {
+          "resource_ordinal": 690,
+          "record_sha256": "ec06a3c27e669aa9651b3435292db0f1e56b160c94cad8c7d254b7660dfee03f",
+          "owner_kind": 1,
+          "file": 0,
+          "slot": 690,
+          "original_id": 690,
+          "definition_name": "grp141231",
+          "sorted_runtime_model_row": 2,
+          "geo_version": 3,
+          "texture_partitions": [
+            [
+              2,
+              2,
+              "PORTAL_door6.tga"
+            ],
+            [
+              3,
+              2,
+              "PORTAL_door2.tga"
+            ],
+            [
+              4,
+              2,
+              "PORTAL_door5.tga"
+            ],
+            [
+              5,
+              2,
+              "PORTAL_door4.tga"
+            ],
+            [
+              6,
+              2,
+              "PORTAL_door3.tga"
+            ],
+            [
+              1,
+              42,
+              "blackbox.tga"
+            ]
+          ]
+        },
+        {
+          "resource_ordinal": 710,
+          "record_sha256": "04d1a314d8e3f182bddd0ba3b4ce48e0c34d196a03db88e1048c7308cad2cd05",
+          "owner_kind": 1,
+          "file": 0,
+          "slot": 710,
+          "original_id": 710,
+          "definition_name": "grp1113960",
+          "sorted_runtime_model_row": 2,
+          "geo_version": 3,
+          "texture_partitions": [
+            [
+              2,
+              2,
+              "PORTAL_door6.tga"
+            ],
+            [
+              3,
+              2,
+              "PORTAL_door2.tga"
+            ],
+            [
+              4,
+              2,
+              "PORTAL_door5.tga"
+            ],
+            [
+              5,
+              2,
+              "PORTAL_door4.tga"
+            ],
+            [
+              6,
+              2,
+              "PORTAL_door3.tga"
+            ],
+            [
+              1,
+              42,
+              "blackbox.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 1,
+      "vertices": 84,
+      "triangles": 52,
+      "parts": 6
+    },
+    {
+      "version": 3,
+      "model": "_BNK_BANKLOBBY_01__bankTray",
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Bank/Bus_Bank_trays/bus_bank_trays.geo",
+      "asset_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+      "sha256": "418de08e35dccfddc1dca001cccaa10ad9b632c1a7e16569dc41d7581590cfd1",
+      "bytes": 8367,
+      "source_observations": [
+        {
+          "resource_ordinal": 968,
+          "record_sha256": "6af7de69e93b8b77d7e27a7af7700152a09393f8c30a6523a8efcfd54aa41592",
+          "owner_kind": 1,
+          "file": 0,
+          "slot": 968,
+          "original_id": 968,
+          "definition_name": "grp142074",
+          "sorted_runtime_model_row": 0,
+          "geo_version": 3,
+          "texture_partitions": [
+            [
+              2,
+              2,
+              "PORTAL_door6.tga"
+            ],
+            [
+              3,
+              2,
+              "PORTAL_door2.tga"
+            ],
+            [
+              4,
+              2,
+              "PORTAL_door5.tga"
+            ],
+            [
+              5,
+              2,
+              "PORTAL_door4.tga"
+            ],
+            [
+              6,
+              2,
+              "PORTAL_door3.tga"
+            ],
+            [
+              7,
+              2,
+              "PORTAL_door1.tga"
+            ],
+            [
+              1,
+              52,
+              "blackbox.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 0,
+      "vertices": 96,
+      "triangles": 64,
+      "parts": 7
+    },
+    {
+      "version": 4,
+      "model": "_baseportaldoor_outside__baseportalLO",
+      "source_geo_name": "object_library/Doors/Playerbase_Doors/playerbase_doors.geo",
+      "asset_path": "data/object_library/doors/playerbase_doors/playerbase_doors.geo",
+      "sha256": "390c9297e4cc0483c5a540b20d40509f09d4d11a8e239d1bf13f238db685cdaf",
+      "bytes": 2000,
+      "source_observations": [
+        {
+          "resource_ordinal": 8290,
+          "record_sha256": "40ee0b7d58fe8597c3e9ab7b5db911e367ea7bd690c802ce7a60edc953ec0489",
+          "owner_kind": 1,
+          "file": 20,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_baseportaldoor_outside",
+          "sorted_runtime_model_row": 2,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              1,
+              22,
+              "blue.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 1,
+      "vertices": 26,
+      "triangles": 22,
+      "parts": 1
+    },
+    {
+      "version": 4,
+      "model": "_Fifthcol_liteanchor",
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+      "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+      "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+      "bytes": 7086,
+      "source_observations": [
+        {
+          "resource_ordinal": 28829,
+          "record_sha256": "20b00926743b40175ef8c5f54113bd3d342bf12e718b172434468d166f7f645c",
+          "owner_kind": 1,
+          "file": 369,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_Fifthcol_liteanchor",
+          "sorted_runtime_model_row": 3,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              1,
+              8,
+              "5th_pipe01.tga"
+            ],
+            [
+              2,
+              18,
+              "5th_bandedcement.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 0,
+      "vertices": 52,
+      "triangles": 26,
+      "parts": 2
+    },
+    {
+      "version": 4,
+      "model": "_FiFthcol_litebrace",
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+      "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+      "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+      "bytes": 7086,
+      "source_observations": [
+        {
+          "resource_ordinal": 28830,
+          "record_sha256": "51747e5032746cc6095a47329e0a5cad83346ebe4d46de4e6af50ddd68cb5861",
+          "owner_kind": 1,
+          "file": 369,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_FiFthcol_litebrace",
+          "sorted_runtime_model_row": 4,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              1,
+              48,
+              "5th_pipe01.tga"
+            ],
+            [
+              4,
+              32,
+              "5th_roundtrim.tga"
+            ],
+            [
+              3,
+              32,
+              "5th_metalstrap.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 1,
+      "vertices": 154,
+      "triangles": 112,
+      "parts": 3
+    },
+    {
+      "version": 4,
+      "model": "_fifthcol_neon1__5thneon",
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+      "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+      "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+      "bytes": 7086,
+      "source_observations": [
+        {
+          "resource_ordinal": 28831,
+          "record_sha256": "ffaffd5e3ede276e3f7b55d8dc8046ab1bd7d1fc01614e8533450644147a69d1",
+          "owner_kind": 1,
+          "file": 369,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_fifthcol_neon1",
+          "sorted_runtime_model_row": 6,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              5,
+              2,
+              "5th_lightface1.tga"
+            ],
+            [
+              6,
+              40,
+              "5th_lightrim1.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 2,
+      "vertices": 84,
+      "triangles": 42,
+      "parts": 2
+    },
+    {
+      "version": 4,
+      "model": "_fifthcol_lightglass__5thglass",
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+      "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+      "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+      "bytes": 7086,
+      "source_observations": [
+        {
+          "resource_ordinal": 28832,
+          "record_sha256": "46e37e3b83a59fedd660be7424b15984d6b7c4861801b1109314d853a2f716fb",
+          "owner_kind": 1,
+          "file": 369,
+          "slot": 3,
+          "original_id": 3,
+          "definition_name": "_fifthcol_lightglass",
+          "sorted_runtime_model_row": 2,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              7,
+              2,
+              "5th_glassreflect1.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 3,
+      "vertices": 4,
+      "triangles": 2,
+      "parts": 1
+    },
+    {
+      "version": 4,
+      "model": "_FiFthcol_liteglow__5thglow",
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+      "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+      "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+      "bytes": 7086,
+      "source_observations": [
+        {
+          "resource_ordinal": 28833,
+          "record_sha256": "73bf78b743afe592de96842a02b94ba1b407ceda70ba88594e063383cae364a3",
+          "owner_kind": 1,
+          "file": 369,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_FiFthcol_liteglow",
+          "sorted_runtime_model_row": 5,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              8,
+              32,
+              "bblightshaft.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 4,
+      "vertices": 64,
+      "triangles": 32,
+      "parts": 1
+    },
+    {
+      "version": 4,
+      "model": "_fifthcol_lightback",
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+      "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+      "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+      "bytes": 7086,
+      "source_observations": [
+        {
+          "resource_ordinal": 28834,
+          "record_sha256": "b16e40138b86c15825c7d131d8f80a55953a4670e4a014faad2b6cde2f4b463a",
+          "owner_kind": 1,
+          "file": 369,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_fifthcol_lightback",
+          "sorted_runtime_model_row": 1,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              9,
+              16,
+              "5th_lightedge.tga"
+            ],
+            [
+              6,
+              32,
+              "5th_lightrim1.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 5,
+      "vertices": 92,
+      "triangles": 48,
+      "parts": 2
+    },
+    {
+      "version": 4,
+      "model": "_freeway_sign_xlg_02__fsignglow",
+      "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "asset_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+      "bytes": 14425,
+      "source_observations": [
+        {
+          "resource_ordinal": 30754,
+          "record_sha256": "232a50aba50db6f82f5a9498430308cb9f7d1883978e70d064d8053fed37d021",
+          "owner_kind": 1,
+          "file": 399,
+          "slot": 14,
+          "original_id": 14,
+          "definition_name": "_freeway_sign_xlg_02",
+          "sorted_runtime_model_row": 10,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              5,
+              2,
+              "sign_green01.tga"
+            ],
+            [
+              4,
+              20,
+              "sign_freeway.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 14,
+      "vertices": 40,
+      "triangles": 22,
+      "parts": 2
+    },
+    {
+      "version": 4,
+      "model": "freeway_sign_xlgframe_02__fsign",
+      "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "asset_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+      "bytes": 14425,
+      "source_observations": [
+        {
+          "resource_ordinal": 30755,
+          "record_sha256": "5e105fa33eed87be803d5ea1c97a280be52ef7a723bcbf8811af03dae35221cd",
+          "owner_kind": 1,
+          "file": 399,
+          "slot": 15,
+          "original_id": 15,
+          "definition_name": "freeway_sign_xlgframe_02",
+          "sorted_runtime_model_row": 18,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              3,
+              16,
+              "helipad_xbeams.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 15,
+      "vertices": 32,
+      "triangles": 16,
+      "parts": 1
+    },
+    {
+      "version": 4,
+      "model": "_freeway_sign_xlg_02_back__fsign",
+      "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "asset_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+      "bytes": 14425,
+      "source_observations": [
+        {
+          "resource_ordinal": 30756,
+          "record_sha256": "56d780c1d92af3762634121c5c6de576460714ca608f12b7958646f24039f2e1",
+          "owner_kind": 1,
+          "file": 399,
+          "slot": 16,
+          "original_id": 16,
+          "definition_name": "_freeway_sign_xlg_02_back",
+          "sorted_runtime_model_row": 11,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              6,
+              22,
+              "billboard_backing.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 16,
+      "vertices": 21,
+      "triangles": 22,
+      "parts": 1
+    },
+    {
+      "version": 4,
+      "model": "_freeway_sign_hzrd__fsignglow",
+      "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "asset_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+      "bytes": 14425,
+      "source_observations": [
+        {
+          "resource_ordinal": 30757,
+          "record_sha256": "b210aa3b0ebc9fd5182453d3058f3093557abf0f040afd8b3cf201d6ba95c68d",
+          "owner_kind": 1,
+          "file": 399,
+          "slot": 17,
+          "original_id": 17,
+          "definition_name": "_freeway_sign_hzrd",
+          "sorted_runtime_model_row": 0,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              9,
+              2,
+              "sign_blue01.tga"
+            ],
+            [
+              8,
+              28,
+              "sign_hazardwarn.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 17,
+      "vertices": 51,
+      "triangles": 30,
+      "parts": 2
+    },
+    {
+      "version": 4,
+      "model": "Hatch_Frame__EditorVisible",
+      "source_geo_name": "object_library/Doors/Hatch_door/hatch_door.geo",
+      "asset_path": "data/object_library/doors/hatch_door/hatch_door.geo",
+      "sha256": "162b5659a5435edc0dba4875b75f37b437b12ea730b1b94a214ca97835eada87",
+      "bytes": 6658,
+      "source_observations": [
+        {
+          "resource_ordinal": 36698,
+          "record_sha256": "92acbd446a28504b4aa511f4e34d1977220a6f4d71a18f71a5ec35d6bfb4275d",
+          "owner_kind": 1,
+          "file": 465,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "Hatch_Frame",
+          "sorted_runtime_model_row": 0,
+          "geo_version": 4,
+          "texture_partitions": [
+            [
+              1,
+              484,
+              "blue8x8.tga"
+            ]
+          ]
+        }
+      ],
+      "disk_row": 0,
+      "vertices": 501,
+      "triangles": 484,
+      "parts": 1
+    }
+  ],
+  "material_fixture_only": true,
+  "source_generation_admitted": false
+}

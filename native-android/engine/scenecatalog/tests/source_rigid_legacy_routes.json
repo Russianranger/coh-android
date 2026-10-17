@@ -1,0 +1,836 @@
+[
+  {
+    "version": 2,
+    "ordinal": 17440,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_fence_gate_post01__dockdngrpostHI",
+    "record_sha": "1b90a25a1df6800b6d481817a2dd95c78883f99b372467c57736ff8ce79f4a9a",
+    "packet_sha": "57456a10205ace41a45f86711db0b42677faf42af64da388aa6131f9fc7e5d41",
+    "packet_bytes": 1720,
+    "vertices": 26,
+    "triangles": 22,
+    "parts": 1,
+    "materials": [
+      [
+        8,
+        22,
+        "wall_docks_stripe02.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17441,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_fence_gate_post_LOD__dockdngrpostLO",
+    "record_sha": "f1839925ea3b300073a61f28d3180ab57d93839a2f44038c27f794ceea056500",
+    "packet_sha": "f2cac6b1b58ab2b87057517f3fa9d3685ff89041756edb8eb79da2c67c5bca7b",
+    "packet_bytes": 1104,
+    "vertices": 18,
+    "triangles": 8,
+    "parts": 1,
+    "materials": [
+      [
+        8,
+        8,
+        "wall_docks_stripe02.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17442,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_fence_gate_wheel__secpostlod01",
+    "record_sha": "6977431d36802c368268b480cc72a1dce5d1fba92d5c60d87b700fa27760d77d",
+    "packet_sha": "a110b73caad90b6dbe8d700a1708b011848cc254f9d47e838eb09b617912a9d7",
+    "packet_bytes": 2128,
+    "vertices": 32,
+    "triangles": 28,
+    "parts": 1,
+    "materials": [
+      [
+        6,
+        28,
+        "ind_elements_metal02.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17443,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_fence_gate_secpost2__secpostlod04",
+    "record_sha": "7f773ff7f7d5e321e378549945035e8044babdf036cf10bd7afbd3f93bcd409d",
+    "packet_sha": "16ffa87488a1654d8393544d75fc110a0c7e08ca414198e448e03550b49811a2",
+    "packet_bytes": 12432,
+    "vertices": 71,
+    "triangles": 42,
+    "parts": 3,
+    "materials": [
+      [
+        2,
+        20,
+        "ind_ware12_roof01.tga"
+      ],
+      [
+        3,
+        9,
+        "wall_docks_gatehouse01.tga"
+      ],
+      [
+        9,
+        13,
+        "wall_docks_gatehouse_walls.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17444,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_gate_fence_secpost_wdwpane__secpostwdwlod2",
+    "record_sha": "79008e3c9df6afafaf1652665e7c316f77bdcf52ccd5049bb46dabd10d0b5e19",
+    "packet_sha": "96db53edcdc6f19507d88bedf1ae3b2bb4cb6b15c0f1430ff976f07eb553c3e9",
+    "packet_bytes": 248,
+    "vertices": 4,
+    "triangles": 2,
+    "parts": 1,
+    "materials": [
+      [
+        10,
+        2,
+        "deco_reflect1.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17445,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_gate_secpost_wdw1__secpostlod01",
+    "record_sha": "5cd2f9acf5ed461e391e27ffe290c56412751c51994d48f62f674e2d7d8803b7",
+    "packet_sha": "d92c998ff60c9564e61ce5ce18c0cd86837b0e788686b26a26e7782c06db9ab8",
+    "packet_bytes": 2960,
+    "vertices": 46,
+    "triangles": 32,
+    "parts": 1,
+    "materials": [
+      [
+        3,
+        32,
+        "wall_docks_gatehouse01.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17446,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_gate_secpost_wdw2__secpostlod01",
+    "record_sha": "796680bc850f95b3cc32a32be36d031b739ac8edb7cf8675b9725555ea4b1ab2",
+    "packet_sha": "fa715c6238db402422df8c54755349d7f59630d999c071dc18dec8b1302d5cd9",
+    "packet_bytes": 4824,
+    "vertices": 75,
+    "triangles": 52,
+    "parts": 1,
+    "materials": [
+      [
+        3,
+        52,
+        "wall_docks_gatehouse01.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17447,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_gate_secpost_wdw2pane__secpostwdwlod2",
+    "record_sha": "20c34f93fa16a6f8427bda71bd9cfe2ff29237f7a55879967c825380308437f1",
+    "packet_sha": "a36e79fdc5b5b4cee08e39283ea1c0eb3815168329bae9482e483b69270de8fc",
+    "packet_bytes": 496,
+    "vertices": 8,
+    "triangles": 4,
+    "parts": 1,
+    "materials": [
+      [
+        10,
+        4,
+        "deco_reflect1.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17450,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_gate_fence_secpost2_LOD__docksecpostLOD1",
+    "record_sha": "4224128f13e5197a88a1943d810af3c24842d609774bbe8f9fe6c6f416b8de1c",
+    "packet_sha": "aafcf08aab3c476a8251ab6e6573f4261c0e13fb0a9c17bbe439ea4aacf4611e",
+    "packet_bytes": 6288,
+    "vertices": 36,
+    "triangles": 20,
+    "parts": 3,
+    "materials": [
+      [
+        3,
+        7,
+        "wall_docks_gatehouse01.tga"
+      ],
+      [
+        9,
+        7,
+        "wall_docks_gatehouse_walls.tga"
+      ],
+      [
+        2,
+        6,
+        "ind_ware12_roof01.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17452,
+    "path": "data/object_library/streets/elements/fence/gate/gate.geo",
+    "model": "_gate_fence_secpost_trim2__secpostlod02",
+    "record_sha": "ae096266e9838fcef7f2117dbb5133d7875fc51b3cb5ad1edc3f8f2562bf14bd",
+    "packet_sha": "5e51bd0044f15082577c40d5186270b7dc451f2850c11bdc57c3efef2dfc5b3b",
+    "packet_bytes": 3136,
+    "vertices": 50,
+    "triangles": 28,
+    "parts": 1,
+    "materials": [
+      [
+        3,
+        28,
+        "wall_docks_gatehouse01.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17569,
+    "path": "data/object_library/villain_lairs/sewers/elements/lights/lights.geo",
+    "model": "_Swr_Light_1_Cone__swr_coneglow",
+    "record_sha": "10d1ab1b020bbca15d16c0d7c5321641567f10857c6d7821da5927e3f2f1cb49",
+    "packet_sha": "0a958e0f60742f9dde81557a858bc6add9e3f97b4af64456156b4817dbffbc67",
+    "packet_bytes": 1744,
+    "vertices": 26,
+    "triangles": 24,
+    "parts": 1,
+    "materials": [
+      [
+        22,
+        24,
+        "sewer_light_shaft.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 17571,
+    "path": "data/object_library/villain_lairs/sewers/elements/lights/lights.geo",
+    "model": "_Swr_Light_1_Glow__sewer_lights2",
+    "record_sha": "9194b56eb7b0dab1bb386399eea2929d83abe2e53ef94087413487626cfbe71b",
+    "packet_sha": "453a9b945f8540d884aff4be47d5547a6d2f9ecb47dacd51f1810d4fc439dc66",
+    "packet_bytes": 11120,
+    "vertices": 169,
+    "triangles": 138,
+    "parts": 1,
+    "materials": [
+      [
+        23,
+        138,
+        "sewer_lights_1.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 19465,
+    "path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+    "model": "_Graffiti_2to1_med__Graflg",
+    "record_sha": "17fa6ca19debf05baf4b99951cbbbeba04be8774bb77fc0b38d7746ac3e78dc4",
+    "packet_sha": "c384793ae77470b128c553f04fa5587395733a2578affe44e52fe05e789ae6d9",
+    "packet_bytes": 248,
+    "vertices": 4,
+    "triangles": 2,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        2,
+        "Graf_2to1_a.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 19466,
+    "path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+    "model": "_Graffiti_2to1_lg__Graflg",
+    "record_sha": "7ce5cc7c9ae8d6d74ad6fb78f9985af1ba358c80208d7908315777159ad61d17",
+    "packet_sha": "3881101301f0bd07c45ff92e34fae5f43d1f3ab624aacc16941083b995908589",
+    "packet_bytes": 248,
+    "vertices": 4,
+    "triangles": 2,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        2,
+        "Graf_2to1_a.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 19467,
+    "path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+    "model": "_Graffiti_2to1_xlg__Graflg",
+    "record_sha": "258c319a15b3921a54df969d7e3a7a45c739feabf18b7e01a8736b38c7f25c16",
+    "packet_sha": "e42f0ba1c0ed601077dbebe8861074ee3eaeada9ec7704b13a29fecbea5e585b",
+    "packet_bytes": 248,
+    "vertices": 4,
+    "triangles": 2,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        2,
+        "Graf_2to1_a.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 19468,
+    "path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+    "model": "_Graffiti_1to1_lg__Graflg",
+    "record_sha": "495915e4df1e8d3267136a6114a158b54b156e1d506fbeb3d7055a22abd96572",
+    "packet_sha": "087b1d27707100523137c4443af48b478678ae92c57f83477c1e6d389f1bc69b",
+    "packet_bytes": 248,
+    "vertices": 4,
+    "triangles": 2,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        2,
+        "Graf_2to1_a.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 19469,
+    "path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+    "model": "_Graffiti_1to1_xlg__Graflg",
+    "record_sha": "868956f15d902f6a0956f18cea3e7ebfd91f605502253c593428a65c32f234e5",
+    "packet_sha": "f8ea9d4b4af44fce5b7dfbcce9dfa1fcca69e8228f3e79fc3beee6ea55f9c4f3",
+    "packet_bytes": 248,
+    "vertices": 4,
+    "triangles": 2,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        2,
+        "Graf_2to1_a.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 19470,
+    "path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+    "model": "_Graffiti_1to1_med__Graflg",
+    "record_sha": "7111c5c0f2f7e5ff1d2037351e09de817dc94e15de20a2063fda0157ab813359",
+    "packet_sha": "b42a5ffb1a56d37095062e13a36fe1597ec24274bb4a329351101006753d6111",
+    "packet_bytes": 248,
+    "vertices": 4,
+    "triangles": 2,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        2,
+        "Graf_2to1_a.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 30869,
+    "path": "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo",
+    "model": "arac_crate_ammo",
+    "record_sha": "6b79416f6e4f9d8ae479c20d7cf2f507f5908499d03b33353fa6bc4a8392dc8e",
+    "packet_sha": "0e00ddda06fe11f16d31b4b8aa25eb67c40f596f8ec04b7aa67e9bee0a5b05ae",
+    "packet_bytes": 8560,
+    "vertices": 70,
+    "triangles": 60,
+    "parts": 2,
+    "materials": [
+      [
+        20,
+        28,
+        "crates.tga"
+      ],
+      [
+        22,
+        32,
+        "crates_b.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 30872,
+    "path": "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo",
+    "model": "arac_barrel_01",
+    "record_sha": "e571e60d27ab3d541708c258df5579ff67c9e5111b2c6c995aa3a3ca6598eab4",
+    "packet_sha": "bb276daf9077b08b5bea909878b1a20652f5e0d3dc486fd442a3e3a66352fb88",
+    "packet_bytes": 11424,
+    "vertices": 64,
+    "triangles": 56,
+    "parts": 3,
+    "materials": [
+      [
+        2,
+        20,
+        "plate_c.tga"
+      ],
+      [
+        23,
+        16,
+        "arac_machinery_t_01.tga"
+      ],
+      [
+        7,
+        20,
+        "plate_a.tga"
+      ]
+    ]
+  },
+  {
+    "version": 2,
+    "ordinal": 37790,
+    "path": "data/object_library/doors/truck_door/truck_door.geo",
+    "model": "Truck_Frame__Editorprop",
+    "record_sha": "c595f33823a3b18f17c46a2c407387034e13c2b4a6601c8702ee9e3b2863d869",
+    "packet_sha": "ff978cef480aff1e01c0eb4a90d2afc8d48f8da9e6c26efe51ce99ff15de3f6a",
+    "packet_bytes": 8608,
+    "vertices": 134,
+    "triangles": 92,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        92,
+        "blue.tga"
+      ]
+    ]
+  },
+  {
+    "version": 3,
+    "ordinal": 690,
+    "path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+    "model": "_BNK_HALLWAY_01__bankTray",
+    "record_sha": "ec06a3c27e669aa9651b3435292db0f1e56b160c94cad8c7d254b7660dfee03f",
+    "packet_sha": "8ecda26503450aaaf450ff78a8597f48a0f29c73daf7194c4123d14c29878cc1",
+    "packet_bytes": 28848,
+    "vertices": 84,
+    "triangles": 52,
+    "parts": 6,
+    "materials": [
+      [
+        2,
+        2,
+        "PORTAL_door6.tga"
+      ],
+      [
+        3,
+        2,
+        "PORTAL_door2.tga"
+      ],
+      [
+        4,
+        2,
+        "PORTAL_door5.tga"
+      ],
+      [
+        5,
+        2,
+        "PORTAL_door4.tga"
+      ],
+      [
+        6,
+        2,
+        "PORTAL_door3.tga"
+      ],
+      [
+        1,
+        42,
+        "blackbox.tga"
+      ]
+    ]
+  },
+  {
+    "version": 3,
+    "ordinal": 710,
+    "path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+    "model": "_BNK_HALLWAY_01__bankTray",
+    "record_sha": "04d1a314d8e3f182bddd0ba3b4ce48e0c34d196a03db88e1048c7308cad2cd05",
+    "packet_sha": "8ecda26503450aaaf450ff78a8597f48a0f29c73daf7194c4123d14c29878cc1",
+    "packet_bytes": 28848,
+    "vertices": 84,
+    "triangles": 52,
+    "parts": 6,
+    "materials": [
+      [
+        2,
+        2,
+        "PORTAL_door6.tga"
+      ],
+      [
+        3,
+        2,
+        "PORTAL_door2.tga"
+      ],
+      [
+        4,
+        2,
+        "PORTAL_door5.tga"
+      ],
+      [
+        5,
+        2,
+        "PORTAL_door4.tga"
+      ],
+      [
+        6,
+        2,
+        "PORTAL_door3.tga"
+      ],
+      [
+        1,
+        42,
+        "blackbox.tga"
+      ]
+    ]
+  },
+  {
+    "version": 3,
+    "ordinal": 968,
+    "path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+    "model": "_BNK_BANKLOBBY_01__bankTray",
+    "record_sha": "6af7de69e93b8b77d7e27a7af7700152a09393f8c30a6523a8efcfd54aa41592",
+    "packet_sha": "3b349ae430e039157838bc82300d66a916a7a10b4805be7490ffc69a7ba40456",
+    "packet_bytes": 38400,
+    "vertices": 96,
+    "triangles": 64,
+    "parts": 7,
+    "materials": [
+      [
+        2,
+        2,
+        "PORTAL_door6.tga"
+      ],
+      [
+        3,
+        2,
+        "PORTAL_door2.tga"
+      ],
+      [
+        4,
+        2,
+        "PORTAL_door5.tga"
+      ],
+      [
+        5,
+        2,
+        "PORTAL_door4.tga"
+      ],
+      [
+        6,
+        2,
+        "PORTAL_door3.tga"
+      ],
+      [
+        7,
+        2,
+        "PORTAL_door1.tga"
+      ],
+      [
+        1,
+        52,
+        "blackbox.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 8290,
+    "path": "data/object_library/doors/playerbase_doors/playerbase_doors.geo",
+    "model": "_baseportaldoor_outside__baseportalLO",
+    "record_sha": "40ee0b7d58fe8597c3e9ab7b5db911e367ea7bd690c802ce7a60edc953ec0489",
+    "packet_sha": "b0960bfaf36fdef1f05ce8d76f1dc1cd631d901144673dc761675908d48cfc41",
+    "packet_bytes": 1720,
+    "vertices": 26,
+    "triangles": 22,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        22,
+        "blue.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 28829,
+    "path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+    "model": "_Fifthcol_liteanchor",
+    "record_sha": "20b00926743b40175ef8c5f54113bd3d342bf12e718b172434468d166f7f645c",
+    "packet_sha": "e4ba5ffc904995d5dd8878e80c88ee25b63bfe12655c1dddfb9e63519116dd51",
+    "packet_bytes": 6136,
+    "vertices": 52,
+    "triangles": 26,
+    "parts": 2,
+    "materials": [
+      [
+        1,
+        8,
+        "5th_pipe01.tga"
+      ],
+      [
+        2,
+        18,
+        "5th_bandedcement.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 28830,
+    "path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+    "model": "_FiFthcol_litebrace",
+    "record_sha": "51747e5032746cc6095a47329e0a5cad83346ebe4d46de4e6af50ddd68cb5861",
+    "packet_sha": "c6e5c3ad9447603660cc05d6ffc64aa34b799e3953d257d53e8629222f2a0d18",
+    "packet_bytes": 27216,
+    "vertices": 154,
+    "triangles": 112,
+    "parts": 3,
+    "materials": [
+      [
+        1,
+        48,
+        "5th_pipe01.tga"
+      ],
+      [
+        4,
+        32,
+        "5th_roundtrim.tga"
+      ],
+      [
+        3,
+        32,
+        "5th_metalstrap.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 28831,
+    "path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+    "model": "_fifthcol_neon1__5thneon",
+    "record_sha": "ffaffd5e3ede276e3f7b55d8dc8046ab1bd7d1fc01614e8533450644147a69d1",
+    "packet_sha": "c35b187cb03da35c2ff9c2863df2ca4cdb9a0705d5efb0b43f2b981840b4ffc2",
+    "packet_bytes": 9912,
+    "vertices": 84,
+    "triangles": 42,
+    "parts": 2,
+    "materials": [
+      [
+        5,
+        2,
+        "5th_lightface1.tga"
+      ],
+      [
+        6,
+        40,
+        "5th_lightrim1.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 28832,
+    "path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+    "model": "_fifthcol_lightglass__5thglass",
+    "record_sha": "46e37e3b83a59fedd660be7424b15984d6b7c4861801b1109314d853a2f716fb",
+    "packet_sha": "dbc32fff34d1e421a7a7d84ffb999d840675b0d045632a413ef5f948e4275c00",
+    "packet_bytes": 248,
+    "vertices": 4,
+    "triangles": 2,
+    "parts": 1,
+    "materials": [
+      [
+        7,
+        2,
+        "5th_glassreflect1.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 28833,
+    "path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+    "model": "_FiFthcol_liteglow__5thglow",
+    "record_sha": "73bf78b743afe592de96842a02b94ba1b407ceda70ba88594e063383cae364a3",
+    "packet_sha": "678c62fb1a2bd6c348b699a1574234d81978d9673b3a430f00a21db81d2788d7",
+    "packet_bytes": 3968,
+    "vertices": 64,
+    "triangles": 32,
+    "parts": 1,
+    "materials": [
+      [
+        8,
+        32,
+        "bblightshaft.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 28834,
+    "path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+    "model": "_fifthcol_lightback",
+    "record_sha": "b16e40138b86c15825c7d131d8f80a55953a4670e4a014faad2b6cde2f4b463a",
+    "packet_sha": "d749466414e5c04fb96c95a72f1e4efab94df177f39af2d937ccfae13c76455f",
+    "packet_bytes": 10880,
+    "vertices": 92,
+    "triangles": 48,
+    "parts": 2,
+    "materials": [
+      [
+        9,
+        16,
+        "5th_lightedge.tga"
+      ],
+      [
+        6,
+        32,
+        "5th_lightrim1.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 30754,
+    "path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+    "model": "_freeway_sign_xlg_02__fsignglow",
+    "record_sha": "232a50aba50db6f82f5a9498430308cb9f7d1883978e70d064d8053fed37d021",
+    "packet_sha": "0da09a91a833a8e175bf0faf406f3e024bc3764f5e8789f67ab00d2c828b1509",
+    "packet_bytes": 4744,
+    "vertices": 40,
+    "triangles": 22,
+    "parts": 2,
+    "materials": [
+      [
+        5,
+        2,
+        "sign_green01.tga"
+      ],
+      [
+        4,
+        20,
+        "sign_freeway.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 30755,
+    "path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+    "model": "freeway_sign_xlgframe_02__fsign",
+    "record_sha": "5e105fa33eed87be803d5ea1c97a280be52ef7a723bcbf8811af03dae35221cd",
+    "packet_sha": "724f16455f20305c0c9e658ff185a4e09dd58a600093c02701c5ee1df16e5e4a",
+    "packet_bytes": 1984,
+    "vertices": 32,
+    "triangles": 16,
+    "parts": 1,
+    "materials": [
+      [
+        3,
+        16,
+        "helipad_xbeams.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 30756,
+    "path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+    "model": "_freeway_sign_xlg_02_back__fsign",
+    "record_sha": "56d780c1d92af3762634121c5c6de576460714ca608f12b7958646f24039f2e1",
+    "packet_sha": "a9f99a1ac11d7851199776895cb1a8e9ea53db0e9fe7a3033db7c07ee041287d",
+    "packet_bytes": 1440,
+    "vertices": 21,
+    "triangles": 22,
+    "parts": 1,
+    "materials": [
+      [
+        6,
+        22,
+        "billboard_backing.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 30757,
+    "path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+    "model": "_freeway_sign_hzrd__fsignglow",
+    "record_sha": "b210aa3b0ebc9fd5182453d3058f3093557abf0f040afd8b3cf201d6ba95c68d",
+    "packet_sha": "31afe7774fdb0f21ce7b30d4d4634d1c88e4041b2c5093f4fb38159476e024cf",
+    "packet_bytes": 6072,
+    "vertices": 51,
+    "triangles": 30,
+    "parts": 2,
+    "materials": [
+      [
+        9,
+        2,
+        "sign_blue01.tga"
+      ],
+      [
+        8,
+        28,
+        "sign_hazardwarn.tga"
+      ]
+    ]
+  },
+  {
+    "version": 4,
+    "ordinal": 36698,
+    "path": "data/object_library/doors/hatch_door/hatch_door.geo",
+    "model": "Hatch_Frame__EditorVisible",
+    "record_sha": "92acbd446a28504b4aa511f4e34d1977220a6f4d71a18f71a5ec35d6bfb4275d",
+    "packet_sha": "328404f049d9dd9964557ed655544bb639ca96c632f908a89295f3213dd9d9aa",
+    "packet_bytes": 33864,
+    "vertices": 501,
+    "triangles": 484,
+    "parts": 1,
+    "materials": [
+      [
+        1,
+        484,
+        "blue8x8.tga"
+      ]
+    ]
+  }
+]

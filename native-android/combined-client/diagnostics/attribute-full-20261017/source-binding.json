@@ -1,0 +1,11 @@
+{
+  "source_commit": "e093b451607a38e4df1c3a75784e9cb2fb4265ea",
+  "tested_git_blob_matches": true,
+  "tested_source_count": 33,
+  "host_proof_gzip_sha256": "be06f922d1ef9ca5d8f851fc61d212b079c896d1574c4eeedfe80fbb1e41b579",
+  "host_proof_raw_sha256": "f2bc51c3d0c2c0ce956c6fddd3eab7ae081639a8a73016361e97b0a756780f60",
+  "cases": 144,
+  "checks": 56799,
+  "original_host_code_sanitized": false,
+  "dictionary_builder_runtime_generation_actor_world_ack": false
+}

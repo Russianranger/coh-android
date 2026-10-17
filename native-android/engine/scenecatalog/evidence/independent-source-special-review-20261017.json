@@ -1,0 +1,23 @@
+{
+  "approved": true,
+  "source_commit": "33707fa86",
+  "required_reservation_followup": "ebc9abbd9",
+  "receipt_sha256": "8f6e9191f0f6414dd374e8e8e70f31d534def30f3d07079c4a2a3f8082227c9c",
+  "tested_git_and_current_sources": 63,
+  "review": [
+    "Actual opaqueBody ordinal supplies allrecord/header/blob/pin identities; no caller geometry permission",
+    "Rawrecord walk uses diskrow andboundedheader; originalv0/v8 only; reflection count/stream/input/output/workspace and15x48byte pivotextent finiteactivefields validated",
+    "AbsentUV remains explicit raw channel observation, no synthetic coordinates or ordinary CPU permit",
+    "All known source/control/workspace/outputspans disjoint beforewrites; workspace scratch only onerror andoutput latecommit",
+    "Required16KiB ownprepare reserve now charged BEFORE poll/decode; measured native sums4680/6768/4832B, externalzlib/callback/system stack separatecallercharge",
+    "Source TRICK2_CASTSHADOW bit22 independently checked; reflection originaldelta proof and9actualroutes retained"
+  ],
+  "qualification": {
+    "controls_each_mode": 948273,
+    "synthetic_grammar_each_mode": 58,
+    "named_peak_bytes": 71810518,
+    "ordinary_cpu_ready_client_semantics_world": false,
+    "android_compiler_or_live_execution": false,
+    "no_corpus_or_capture_repeated_by_review": true
+  }
+}

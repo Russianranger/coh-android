@@ -1,0 +1,23 @@
+{
+  "source_commit": "91e4534de09a80d5d723f9287cc7af8c5105f103",
+  "tested_input_blobs_match": {
+    "native-android/combined-client/diagnostics/trailing-command-20261017/oracle.py": "2de95e13c5c54a3e744d5d44c486b910a3f0ea2fe2ec47fcf6e772ee8679a42c",
+    "native-android/combined-client/diagnostics/trailing-command-20261017/wrapper.h": "90b730f3d28bb1ff3212291a29ff91ee17ffc4f760d86638eac58723b3cc9488",
+    "native-android/combined-client/diagnostics/trailing-command-20261017/source-pins.json": "688551af9fc56e31b97ca56b49156fd20aa1376adfb2c572b45ad7b1125044aa",
+    "native-android/combined-client/diagnostics/trailing-command-20261017/check.py": "2e01d8b0b78646962b44ffeca364d2bff723f6b70283e0cba6471d66a03cd21d",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+    "upstream/ouroboros/Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+    "native-android/combined-client/diagnostics/trailing-command-20261017/CONTRACT.md": "b2223eb57dad529a375519a3564bb6af6e465f6fc7fa917eaf882fd7ca02d79b"
+  },
+  "host_proof_raw_sha256": "b3ec70faabe34e2b8955611b02ecb72bec8d0fbed295a33f37253a3cfd7c5fe4",
+  "host_proof_gzip_sha256": "ab8d0fb33fc19a97de033e82134f1ffb28b737868426181e79883520966c9cbf",
+  "checks": 156112,
+  "cases": 180,
+  "contract_doc_hashed_after_execution": true,
+  "native_production_sanitizer_android_live_actor_ack": false
+}

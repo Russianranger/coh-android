@@ -1,0 +1,13 @@
+{
+  "schema": "coh-private-index-v4-preservation-v1",
+  "original_index": "/workspace/scratch/9174d12e2a11/coh-recovery/.git/worktrees/qualification-next/index",
+  "original_preserved": "/dev/shm/coh-f-index-v4-20261017/original.index",
+  "original_sha256": "4a8aaffc8ec0753c9a843bf80742123b733d01b3230f72a9d4c54aa7904908b6",
+  "original_bytes": 24649765,
+  "candidate_sha256": "d72952da5223cdc59491b66fd3253529bb220da7dc95395d112859f972d27f5c",
+  "candidate_bytes": 13535037,
+  "stage_skip_assume_flags_bytes_equal": true,
+  "listing_sha256": "35475e1de98d5b0369309ccda423975b62ce4a57cc6034f7dd24de4b67b5fad9",
+  "shared_config_source_history_changed": false,
+  "replacement_complete": true
+}

@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-static unsigned checks,bridge_completions,version_completions;static size_t calls,fail_at,live;
+static unsigned checks,bridge_completions,version_completions,legacy_completions,legacy_files_count;static unsigned special_completions;static size_t special_peak;static size_t legacy_peak;static size_t calls,fail_at,live;
 #define CHECK(x) do{checks++;if(!(x)){fprintf(stderr,"selection line%d check%u: %s\n",__LINE__,checks,#x);abort();}}while(0)
 void *__real_malloc(size_t);void *__real_calloc(size_t,size_t);void __real_free(void*);
 void *__wrap_malloc(size_t n){calls++;if(calls==fail_at)return NULL;void *p=__real_malloc(n);if(p)live++;return p;}
@@ -27,6 +27,14 @@ static CohStatus read_bad(void*ctx,uint64_t off,void*dst,size_t n){CohStatus st=
 #ifdef COH_SOURCE_RIGID_VERSIONS_TEST
 #include "coh_source_rigid_versions.h"
 #include "test_source_rigid_versions.inc"
+#endif
+#ifdef COH_SOURCE_RIGID_LEGACY_TEST
+#include "coh_source_rigid_legacy_formats.h"
+#include "test_source_rigid_legacy.inc"
+#endif
+#ifdef COH_SOURCE_SPECIAL_TEST
+#include "coh_source_special.h"
+#include "test_source_special.inc"
 #endif
 int main(int argc,char**argv){CHECK(argc==12);CohCancel never={NULL,NULL};CohCatalogDigest dig={NULL,digest};CohBytes input=file(argv[1],32u<<20),side=file(argv[2],1u<<20),resources=file(argv[3],32u<<20);CohSourceSelectionEvidence evidence;
  for(unsigned n=0;n<7;n++)evidence.bytes[n]=file(argv[4+n],8u<<20);
@@ -65,7 +73,11 @@ int main(int argc,char**argv){CHECK(argc==12);CohCancel never={NULL,NULL};CohCat
  CHECK(covered==8250&&neon!=UINT32_MAX&&shop!=UINT32_MAX);uint32_t sentinel=123;CohResourceGeoPin untouched,before;memset(&untouched,0xa5,sizeof(untouched));before=untouched;CHECK(coh_source_selection_pin(selection,UINT32_MAX,&sentinel,&untouched)==COH_NOT_FOUND);CHECK(sentinel==123&&!memcmp(&untouched,&before,sizeof(before)));
  for(unsigned n=0;n<7;n++)free((void*)evidence.bytes[n].data);
  CHECK(coh_source_selection_retain(selection)==COH_OK);coh_source_selection_free(selection);coh_resource_join_free(join);join=NULL; /* selection retains the actualjoin */
- CohAssetLoader*loader=NULL;CohAssetLimits limits={32u<<20,16u<<20,16u<<20,16u<<20,16,4,4};CHECK(coh_asset_create(&limits,&loader)==COH_OK);char path[8192];snprintf(path,sizeof(path),"%s/%s",argv[11],np.id.path);FILE*nf=fopen(path,"rb");CHECK(nf);CHECK(!fseek(nf,0,SEEK_END));long nb=ftell(nf);rewind(nf);CHECK(coh_asset_mount_file(loader,np.id.path,(CohAssetSource){read_at,nf,(uint64_t)nb,20261016})==COH_OK);
+ CohAssetLoader*loader=NULL;CohAssetLimits limits={32u<<20,16u<<20,16u<<20,16u<<20,16,4,4};
+#if defined(COH_SOURCE_RIGID_LEGACY_TEST) || defined(COH_SOURCE_SPECIAL_TEST)
+ limits.sources=16; /*14 immutable loose-file sources; byte/cache caps unchanged.*/
+#endif
+CHECK(coh_asset_create(&limits,&loader)==COH_OK);char path[8192];snprintf(path,sizeof(path),"%s/%s",argv[11],np.id.path);FILE*nf=fopen(path,"rb");CHECK(nf);CHECK(!fseek(nf,0,SEEK_END));long nb=ftell(nf);rewind(nf);CHECK(coh_asset_mount_file(loader,np.id.path,(CohAssetSource){read_at,nf,(uint64_t)nb,20261016})==COH_OK);
  snprintf(path,sizeof(path),"%s/%s",argv[11],sp.id.path);FILE*sf=fopen(path,"rb");CHECK(sf);CHECK(!fseek(sf,0,SEEK_END));long ns=ftell(sf);rewind(sf);CHECK(coh_asset_mount_file(loader,sp.id.path,(CohAssetSource){read_at,sf,(uint64_t)ns,20261016})==COH_OK);
  CohSourceBodyBudget bb={32u<<20,96u<<20,262144,32u<<20};CohSourceBody*body=NULL;CohSourceBodyReport br;CHECK(coh_source_body_create(NULL,selection,neon,loader,&bb,digest,NULL,never,&body,&br)==COH_OK);CHECK(br.derived_origin_verified&&br.evidence_kind==COH_SOURCE_PROCEDURAL_EXACT_COLD_CAPTURE&&!br.direct_open_observed&&!br.assets_admitted&&!br.world_authority);size_t bodypeak=br.aggregate_reserved_bytes;
  CohSourceBodyBudget too_small=bb;too_small.aggregate_limit=40u<<20;size_t noalloc=calls;body_refuses(body,selection,neon,loader,&too_small,digest,never);CHECK(calls==noalloc);
@@ -86,11 +98,23 @@ int main(int argc,char**argv){CHECK(argc==12);CohCancel never={NULL,NULL};CohCat
 #ifdef COH_SOURCE_RIGID_VERSIONS_TEST
  FILE*version_files[2]={NULL,NULL};version_checks(selection,body,shopbody,loader,bb,argv[11],version_files);
 #endif
+#ifdef COH_SOURCE_RIGID_LEGACY_TEST
+ FILE*legacy_files[10]={0};legacy_checks(selection,body,shopbody,loader,bb,argv[11],legacy_files);
+#endif
+#ifdef COH_SOURCE_SPECIAL_TEST
+ FILE*special_files[9]={0};special_checks(selection,body,shopbody,loader,bb,argv[11],special_files);
+#endif
  coh_source_selection_free(selection);selection=NULL; /* both FILE owners retain it */
  CHECK(coh_source_body_view(body,&index,&br)==COH_OK&&br.derived_origin_verified);coh_source_body_free(shopbody);coh_source_body_free(body);coh_asset_trim(loader);CHECK(coh_asset_destroy(&loader)==COH_OK);CHECK(!fclose(nf)&&!fclose(sf));
 #ifdef COH_SOURCE_RIGID_VERSIONS_TEST
  CHECK(!fclose(version_files[0])&&!fclose(version_files[1]));
 #endif
+#ifdef COH_SOURCE_RIGID_LEGACY_TEST
+ for(unsigned n=0;n<legacy_files_count;n++)CHECK(!fclose(legacy_files[n]));
+#endif
+#ifdef COH_SOURCE_SPECIAL_TEST
+ for(unsigned n=0;n<9;n++)CHECK(!fclose(special_files[n]));
+#endif
  coh_runtime_graph_free(graph);coh_catalog_snapshot_release(snapshot);coh_catalog_owner_release(catalog);CHECK(!live);
- printf("{\"version_completions\":%u,\"bridge_completions\":%u,\"passed\":true,\"checks\":%u,\"profile_files\":391,\"covered_model_rows\":8250,\"source_root_references\":3083,\"body_alloc_failure_cases\":%zu,\"selection_peak_bytes\":%zu,\"body_peak_bytes\":%zu,\"input_evidence_bytes\":%zu,\"procedural_file_bodies_checked\":%u,\"shop_zero_model_owners\":4,\"direct_open_observed\":false,\"assets_admitted\":false,\"world_authority\":false}\n",version_completions,bridge_completions,checks,allocs,selectionpeak,bodypeak,evidencebytes,2u+version_completions);return 0;
+ printf("{\"special_completions\":%u,\"special_reserved_peak_bytes\":%zu,\"legacy_completions\":%u,\"legacy_files\":%u,\"legacy_bridge_reserved_peak_bytes\":%zu,\"version_completions\":%u,\"bridge_completions\":%u,\"passed\":true,\"checks\":%u,\"profile_files\":391,\"covered_model_rows\":8250,\"source_root_references\":3083,\"body_alloc_failure_cases\":%zu,\"selection_peak_bytes\":%zu,\"body_peak_bytes\":%zu,\"input_evidence_bytes\":%zu,\"procedural_file_bodies_checked\":%u,\"shop_zero_model_owners\":4,\"direct_open_observed\":false,\"assets_admitted\":false,\"world_authority\":false}\n",special_completions,special_peak,legacy_completions,legacy_files_count,legacy_peak,version_completions,bridge_completions,checks,allocs,selectionpeak,bodypeak,evidencebytes,2u+version_completions+legacy_files_count);return 0;
 }

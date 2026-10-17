@@ -1,0 +1,75 @@
+{
+  "approved": true,
+  "source_commits": [
+    "f22a6015a",
+    "4871944d7"
+  ],
+  "evidence_commit": "7f3508870",
+  "receipts": {
+    "native-android/engine/world-render-adapter/qualification/client-texopt-lookup-20261017/host.json": {
+      "sha256": "fa51e2a18556caf727a160b5fb85172e71f263b8415e77ae425397aea4023961",
+      "source_count": 46,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 147279,
+          "paths": 29446,
+          "direct_hits": 29418,
+          "inherited_hits": 21,
+          "misses": 7,
+          "bar_matched": 0,
+          "bar_direct": 0,
+          "bar_ordinal": 4294967295,
+          "bar_key": "",
+          "bar_name_flags": 0,
+          "material_authority": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 147279,
+          "paths": 29446,
+          "direct_hits": 29418,
+          "inherited_hits": 21,
+          "misses": 7,
+          "bar_matched": 0,
+          "bar_direct": 0,
+          "bar_ordinal": 4294967295,
+          "bar_key": "",
+          "bar_name_flags": 0,
+          "material_authority": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 147279,
+          "paths": 29446,
+          "direct_hits": 29418,
+          "inherited_hits": 21,
+          "misses": 7,
+          "bar_matched": 0,
+          "bar_direct": 0,
+          "bar_ordinal": 4294967295,
+          "bar_key": "",
+          "bar_name_flags": 0,
+          "material_authority": false,
+          "world_authority": false
+        }
+      }
+    }
+  },
+  "source_review": [
+    "Whole original lookup/flags/strEndsWith bodies compared to source; only lookup signature receives private context",
+    "Full ASCII path<260 with slash; basename-only NULLslash increment and empty texture_library suffix domains refused before source",
+    "All source helpers private; bounded casefold cache lookup is observer substitution, not original stash execution",
+    "16KiB lookup reserve adds to cache/Surface/loader/static/old record external accounting before record allocation",
+    "Cancellation and late failures release provisional record and preserve both outputs; matched record owns retained postprocessed bytes"
+  ],
+  "limits": {
+    "original_stash_executed": false,
+    "active_basic_or_composite_namespace": false,
+    "bar_historical_lookup_matched": false,
+    "material_or_world_permit": false,
+    "tests_rerun_by_review": false
+  }
+}

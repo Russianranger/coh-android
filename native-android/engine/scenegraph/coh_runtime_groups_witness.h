@@ -41,6 +41,8 @@ CohStatus coh_runtime_groups_witness_create(const CohRuntimeGraph *,CohCatalogOw
  CohBytes records,const CohRepReader *,const CohRuntimeGroupsWitnessBinding *,
  const CohRuntimeGroupsWitnessBudget *,const CohCatalogDigest *,
  CohRuntimeGroupsWitness **out,CohRuntimeGroupsWitnessReport *);
+/* Actual immutable allocation payload only, not retained source dependencies. */
+size_t coh_runtime_groups_witness_owned_bytes(const CohRuntimeGroupsWitness *);
 CohStatus coh_runtime_groups_witness_retain(CohRuntimeGroupsWitness *);
 void coh_runtime_groups_witness_release(CohRuntimeGroupsWitness *);
 /* Optional compatibility extension; original compare_groups is unchanged.

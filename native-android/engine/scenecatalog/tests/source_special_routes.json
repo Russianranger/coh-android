@@ -1,0 +1,101 @@
+[
+  {
+    "ordinal": 23835,
+    "path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_01.geo",
+    "model": "_deco_skyscraper_01",
+    "body_sha256": "c5048847e040e2ad2c0c160f469cde3c9eb472732128bbeaf848832b265cca68",
+    "quads": 33,
+    "pivots": 0,
+    "points_sha256": "4fee765fd174723f3b3df073114ca7e2a8103ee38b8028e771d6c743a2e3fd0f",
+    "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "kinds": 1
+  },
+  {
+    "ordinal": 23839,
+    "path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_02.geo",
+    "model": "_deco_skyscraper_02",
+    "body_sha256": "a787b3633e43de8f12cbacaab7e95714b829134cafb74951b1dcef2fb3bbfb90",
+    "quads": 20,
+    "pivots": 0,
+    "points_sha256": "a4c65d6b2cabb950104397755135461bef99896fa2e928a1f6893557dfe5f03f",
+    "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "kinds": 1
+  },
+  {
+    "ordinal": 23855,
+    "path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_05.geo",
+    "model": "_deco_skyscraper_05",
+    "body_sha256": "f1bbe574afaa3910b440a3ec1748fd6f046da7fdf5fd8cd10f9a70b87cd91ff5",
+    "quads": 62,
+    "pivots": 0,
+    "points_sha256": "dbbc0859c0cb70f54d9a2a180068d6aef619a15f0f58f0e245e6b6b665e64771",
+    "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "kinds": 1
+  },
+  {
+    "ordinal": 23848,
+    "path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_06.geo",
+    "model": "_deco_skyscaper_06",
+    "body_sha256": "604880c8b748a9dfcf90660ee8256cbfc376c53a333044bb41ec8c1cf28b6371",
+    "quads": 68,
+    "pivots": 0,
+    "points_sha256": "e8b5afa292c26a6818dd687001fa332a946551e4f114e45a82c3c699343e06b6",
+    "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "kinds": 1
+  },
+  {
+    "ordinal": 23676,
+    "path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_07.geo",
+    "model": "_deco_skyscraper_07",
+    "body_sha256": "7243eb32f6e503381ff963b1a31b1039dd7c870aa35b163ef60a54c2f08bca46",
+    "quads": 126,
+    "pivots": 0,
+    "points_sha256": "406b7893605e720597ab3d6c9998dc375c4281210ae25003d70df616c3bc7c75",
+    "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "kinds": 1
+  },
+  {
+    "ordinal": 23856,
+    "path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_13.geo",
+    "model": "_deco_skyscraper_13",
+    "body_sha256": "af31643681e48e0c9b42a1ea01481cce5a33d19b8d212d9d1c49b4673cb4db98",
+    "quads": 29,
+    "pivots": 0,
+    "points_sha256": "bb888aaa5ec602966ed15a02c77965ea8440e31f2af87b709fe87bc657e642da",
+    "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "kinds": 1
+  },
+  {
+    "ordinal": 35044,
+    "path": "data/object_library/nature/trees/conifers/conifers.geo",
+    "model": "_conifer_shadow_sml1__ffshadowlg",
+    "body_sha256": "a5001dac2091f7e552715bf04dc13ad159720587c1084a5676e347d984843b5a",
+    "quads": 0,
+    "pivots": 0,
+    "points_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "kinds": 2
+  },
+  {
+    "ordinal": 25926,
+    "path": "data/object_library/special_buildings/architect_entertainment/architect_entertainment_exterior.geo",
+    "model": "_ArchEnt_Bldg_Exterior",
+    "body_sha256": "ed0221d33ebeb10922803b94626da6ba8fd4ec5dda392c5c776c7be94b19df71",
+    "quads": 20,
+    "pivots": 0,
+    "points_sha256": "8772a8748b506fe234bef8a0ea8def46d1f5c93d41c296041107d95c20b2628b",
+    "pivots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "kinds": 1
+  },
+  {
+    "ordinal": 39692,
+    "path": "data/object_library/temp/pivot_test/pivot_test.geo",
+    "model": "masterpivot",
+    "body_sha256": "3099705582b76eb8cf612731a9f202380e35f2f7fbbd301243c0b1c19a6f08a0",
+    "quads": 0,
+    "pivots": 3,
+    "points_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pivots_sha256": "9635bf7ba4b2e008d4a74434043eba19052e6c528af22ef1f541783fbb785631",
+    "kinds": 4
+  }
+]

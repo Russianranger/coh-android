@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "tests": 5,
+  "project_bytecode_executed": false,
+  "compiler_executed": false,
+  "cmake_executed": false,
+  "controls": [
+    "source-only directory accepted",
+    "legacy pyc refused",
+    "empty cache directory refused",
+    "nested uppercase PYC refused",
+    "cache directory alias refused"
+  ],
+  "source_sha256": {
+    "native-android/combined-client/tools/check_reviewed_manual_controls.py": "e19b1520e9ef6f53914b17547d7a718c64a7b3d1dcbabe6140130bf6ec5a6007",
+    "native-android/combined-client/tools/run_reviewed_manual_controls.py": "4ec82b24127f5a1fc7fa74c17577af0a303ed273e0f4c7cb7bf89286a801d049"
+  }
+}

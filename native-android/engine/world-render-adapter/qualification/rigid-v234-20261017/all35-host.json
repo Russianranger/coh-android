@@ -1,0 +1,4043 @@
+{
+  "passed": true,
+  "original32_required": false,
+  "scope": "Separate exactv2/v3/v4 CPU entries, actual compressed streams/fixedlegacy+variable+obsolete slots and original wire consumers; fixture materials only. Portal parts preserved; no portal/material/world authority.",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/tests/test_rigid_legacy_formats.c": "7cfb312392e143c4b362ee7db3f54837866b8de3011aa9a9e373d57413cef09d",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.c": "7124e339ecac9d0fb0c0b8d43eca1a784d6d52b7d18600452b646965be279ee4",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_legacy_formats.c": "ddd61836f6cfca7e206d2fe17442bb63794c069898e16e439da391e950c92781",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v7.c": "16e682a8b4914c5980c90255f8e087c7ada62ac7025d1ee04362ed6ae9989ddc",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v5.c": "5a15b36bbf501d069af81c82f2f7e3445798bd0afcd47427df346f86d44a3b53",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.c": "8430ffd01c83e8476f9672eab63020434477206943bcb39b2007e75111fd746d",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.c": "c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_legacy_formats.h": "c5a25be0bbc141d30a03c425996cf5913d29c6bed301d1cc06f8309da89884b9",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v7.h": "a4a40dba78073fab1af02100f540227bcb7a361789cbc1a819251f6f35b4eaaf",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v5.h": "991c6d021d6933259b833d414e30ec47b45ed22f280b3e315de785e3b5f113b5",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_internal.h": "484295680436f84675ba4f87449c9cec6ff306285818387ec1aec062854f3278",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.h": "01f60ed231e19dd8570740c9ebe90dae3209e055f1fc2bbc5c19bafb4b955ddb",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.h": "b6a5a2106455756712d258af00508801b76bb9e00ee94cc51784403f1c655a0a",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/world-render-adapter/check_rigid_legacy_formats.py": "feedb2e8e684dda0d68516d1dd88b94cdd9e66aa7400efdadd74676423b9e5c8",
+    "native-android/engine/world-render-adapter/check_rigid_legacy.py": "60e6ce50e4c80680c0c5038a7ed9b9323d72c60b7e7d80e8b20ec339ecaf9cfa",
+    "native-android/engine/world-render-adapter/check_rigid_v5.py": "adc70af122bc72ffd46668d304b45f1178fb3bf3665c2ce721130168e4f5fd49",
+    "native-android/engine/world-render-adapter/rigid-legacy-formats-pins.json": "bafd267e01560c1b357754096fc7e51da04c729d54c3e50de0e3f4742097b25e",
+    "native-android/engine/world-render-adapter/rigid-source-pins.json": "246dd1893b5d3d7c9be9b087f8eab42a31272499331e9fb1bf1a270284cdc5ab",
+    "native-android/engine/world-render-adapter/tests/rigid_legacy_formats_pins.inc": "6f18b0030084ceaa0aa00b38853fe945238888e3a1b266f44397d48b7fa9f9ff",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.h": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+  },
+  "input_sha256": {
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/streets/elements/fence/gate/gate.geo": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/villain_lairs/sewers/elements/lights/lights.geo": "3af513441091b352808a704c9b2f7c3de9b24b2e58a73437e3609fa2c2938ae1",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/streets/elements/graffiti/graffiti.geo": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo": "435ac148edc5a3eb8e89786276126dffe1ca3a720953f72b40fab44c92957679",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/doors/truck_door/truck_door.geo": "f26e938389cfe699421b42b75aa306427278b4e6d88d2885965009c2e61879df",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo": "418de08e35dccfddc1dca001cccaa10ad9b632c1a7e16569dc41d7581590cfd1",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/doors/playerbase_doors/playerbase_doors.geo": "390c9297e4cc0483c5a540b20d40509f09d4d11a8e239d1bf13f238db685cdaf",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/villain_lairs/5th_column/elements/lights/lights.geo": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/doors/hatch_door/hatch_door.geo": "162b5659a5435edc0dba4875b75f37b437b12ea730b1b94a214ca97835eada87"
+  },
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 5296,
+      "authentic_cases": 35,
+      "versions": [
+        2,
+        3,
+        4
+      ],
+      "allocation_failure_stages": 175,
+      "grammar_controls": 313,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 5296,
+      "authentic_cases": 35,
+      "versions": [
+        2,
+        3,
+        4
+      ],
+      "allocation_failure_stages": 175,
+      "grammar_controls": 313,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 5296,
+      "authentic_cases": 35,
+      "versions": [
+        2,
+        3,
+        4
+      ],
+      "allocation_failure_stages": 175,
+      "grammar_controls": 313,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    }
+  },
+  "cases": [
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_fence_gate_post01__dockdngrpostHI",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17440,
+            "record_sha256": "1b90a25a1df6800b6d481817a2dd95c78883f99b372467c57736ff8ce79f4a9a",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 4,
+            "original_id": 4,
+            "definition_name": "_fence_gate_post01",
+            "sorted_runtime_model_row": 0,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                8,
+                22,
+                "wall_docks_stripe02.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 4,
+        "vertices": 26,
+        "triangles": 22,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/0/original-read-model'",
+          "binary_sha256": "5cb1225e75b1ab5647d299b6564d2e7e79443b167a8043edc115e3ce6ba8cee4",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "5ca34074974bad560406b02ed1f7636f64237e4f9d08ad200bb500c7130a9ca0",
+        "binary_sha256": "5cb1225e75b1ab5647d299b6564d2e7e79443b167a8043edc115e3ce6ba8cee4",
+        "expected_facts_sha256": "f945651168951497fe43a5e010b469f89ac869b4655f7433a8909b55f2d5e278",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 67
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 113,
+          "delta_bytes": 153
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 62
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 96
+        }
+      ],
+      "packet_bytes": 1720,
+      "packet_sha256": "57456a10205ace41a45f86711db0b42677faf42af64da388aa6131f9fc7e5d41",
+      "original_delta_scalars": 274,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_fence_gate_post_LOD__dockdngrpostLO",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17441,
+            "record_sha256": "f1839925ea3b300073a61f28d3180ab57d93839a2f44038c27f794ceea056500",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 5,
+            "original_id": 5,
+            "definition_name": "_fence_gate_post_LOD",
+            "sorted_runtime_model_row": 3,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                8,
+                8,
+                "wall_docks_stripe02.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 5,
+        "vertices": 18,
+        "triangles": 8,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/1/original-read-model'",
+          "binary_sha256": "f5da17a4afdb5eeab599a9a4089981aaabdf9becb0262a962688a38df4cff1a1",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "105d9048e80199447d5da3538e0372fcb519a8445eb0eacfa856bbb65c03fb5e",
+        "binary_sha256": "f5da17a4afdb5eeab599a9a4089981aaabdf9becb0262a962688a38df4cff1a1",
+        "expected_facts_sha256": "95c31f3be80474c03e2f74997b929f5b6340124bc652ea98afbb10caac5fbabf",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 27
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 105
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 37
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 57
+        }
+      ],
+      "packet_bytes": 1104,
+      "packet_sha256": "f2cac6b1b58ab2b87057517f3fa9d3685ff89041756edb8eb79da2c67c5bca7b",
+      "original_delta_scalars": 168,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_fence_gate_wheel__secpostlod01",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17442,
+            "record_sha256": "6977431d36802c368268b480cc72a1dce5d1fba92d5c60d87b700fa27760d77d",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 6,
+            "original_id": 6,
+            "definition_name": "_fence_gate_wheel",
+            "sorted_runtime_model_row": 9,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                6,
+                28,
+                "ind_elements_metal02.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 6,
+        "vertices": 32,
+        "triangles": 28,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/2/original-read-model'",
+          "binary_sha256": "847c90fa387b28f0cd31dd347cadd250dee7ed02f9d07d018e817a460773d007",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "9a0d51c31e386653dd6d0ad8d47f0c2ca128b632dcf3ded10a2a616a7998786b",
+        "binary_sha256": "847c90fa387b28f0cd31dd347cadd250dee7ed02f9d07d018e817a460773d007",
+        "expected_facts_sha256": "e3634f51883fef99fcd4e1e95679315403f82907a2a7872aeee16ada7c91af62",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 62,
+          "delta_bytes": 79
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 154
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 73
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 84,
+          "delta_bytes": 121
+        }
+      ],
+      "packet_bytes": 2128,
+      "packet_sha256": "a110b73caad90b6dbe8d700a1708b011848cc254f9d47e838eb09b617912a9d7",
+      "original_delta_scalars": 340,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_fence_gate_secpost2__secpostlod04",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17443,
+            "record_sha256": "7f773ff7f7d5e321e378549945035e8044babdf036cf10bd7afbd3f93bcd409d",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 7,
+            "original_id": 7,
+            "definition_name": "_fence_gate_secpost2",
+            "sorted_runtime_model_row": 8,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                2,
+                20,
+                "ind_ware12_roof01.tga"
+              ],
+              [
+                3,
+                9,
+                "wall_docks_gatehouse01.tga"
+              ],
+              [
+                9,
+                13,
+                "wall_docks_gatehouse_walls.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 7,
+        "vertices": 71,
+        "triangles": 42,
+        "parts": 3
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/3/original-read-model'",
+          "binary_sha256": "be76c6fbb53b76410bb71364c2eaa94df6a95e2ee7292f9906f6cdeb0a81c3ba",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "d1a3dc18e51ef7367c33ebd77ddc8c1acb5328f84e25921fe7ead3ef5cd2489f",
+        "binary_sha256": "be76c6fbb53b76410bb71364c2eaa94df6a95e2ee7292f9906f6cdeb0a81c3ba",
+        "expected_facts_sha256": "e47782d67bb1f56a654cee47ec5f5c0ffd2caed7f4ae56912d0f636b2b220bb0",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 94,
+          "delta_bytes": 132
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 284,
+          "delta_bytes": 540
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 91,
+          "delta_bytes": 129
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 258
+        }
+      ],
+      "packet_bytes": 12432,
+      "packet_sha256": "16ffa87488a1654d8393544d75fc110a0c7e08ca414198e448e03550b49811a2",
+      "original_delta_scalars": 694,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_gate_fence_secpost_wdwpane__secpostwdwlod2",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17444,
+            "record_sha256": "79008e3c9df6afafaf1652665e7c316f77bdcf52ccd5049bb46dabd10d0b5e19",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 8,
+            "original_id": 8,
+            "definition_name": "_gate_fence_secpost_wdwpane",
+            "sorted_runtime_model_row": 15,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                10,
+                2,
+                "deco_reflect1.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 8,
+        "vertices": 4,
+        "triangles": 2,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/4/original-read-model'",
+          "binary_sha256": "159dec357ecbe5f0863f627c487937d0f92e2cb54c0e0f258cd8e69370fb5c02",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "409e977ddba6e6f46462000a6312b33d75bd27d767c1343123b8008a263e8df7",
+        "binary_sha256": "159dec357ecbe5f0863f627c487937d0f92e2cb54c0e0f258cd8e69370fb5c02",
+        "expected_facts_sha256": "7ddfd5bfd67ffe6d388c0810fb3585a64ed4447d9c71c340e48e423420ee25f1",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 32
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 17
+        }
+      ],
+      "packet_bytes": 248,
+      "packet_sha256": "96db53edcdc6f19507d88bedf1ae3b2bb4cb6b15c0f1430ff976f07eb553c3e9",
+      "original_delta_scalars": 38,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_gate_secpost_wdw1__secpostlod01",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17445,
+            "record_sha256": "5cd2f9acf5ed461e391e27ffe290c56412751c51994d48f62f674e2d7d8803b7",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 9,
+            "original_id": 9,
+            "definition_name": "_gate_secpost_wdw1",
+            "sorted_runtime_model_row": 16,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                3,
+                32,
+                "wall_docks_gatehouse01.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 9,
+        "vertices": 46,
+        "triangles": 32,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/5/original-read-model'",
+          "binary_sha256": "802fa6168b9270da7512d0917d13dee162b1e9d6ba8711df08468b297c0f16dc",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "b5655416e5f8e3f646399724b2ac98bcf39ff2a2798d1420b50f03b50e273d6c",
+        "binary_sha256": "802fa6168b9270da7512d0917d13dee162b1e9d6ba8711df08468b297c0f16dc",
+        "expected_facts_sha256": "13678c890792a92262919f72a046029a9653df94400b6516ad1a37279a62618b",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 102
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 329
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 180
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 140
+        }
+      ],
+      "packet_bytes": 2960,
+      "packet_sha256": "d92c998ff60c9564e61ce5ce18c0cd86837b0e788686b26a26e7782c06db9ab8",
+      "original_delta_scalars": 464,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_gate_secpost_wdw2__secpostlod01",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17446,
+            "record_sha256": "796680bc850f95b3cc32a32be36d031b739ac8edb7cf8675b9725555ea4b1ab2",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 10,
+            "original_id": 10,
+            "definition_name": "_gate_secpost_wdw2",
+            "sorted_runtime_model_row": 17,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                3,
+                52,
+                "wall_docks_gatehouse01.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 10,
+        "vertices": 75,
+        "triangles": 52,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/6/original-read-model'",
+          "binary_sha256": "7c1fafaa8c0ef4934c0777b68e66e7911321c462413e63a4da80861701ef8b50",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "8daef97441fffcde2f1f625ae3073910770c4b3b89861b84dad10aaa7e49772e",
+        "binary_sha256": "7c1fafaa8c0ef4934c0777b68e66e7911321c462413e63a4da80861701ef8b50",
+        "expected_facts_sha256": "d5dbe81fa7eb69028814429e10a6f06f47d344bee38ae5b6a0bf4fc68632408c",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 114,
+          "delta_bytes": 164
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 541
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 309
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 226
+        }
+      ],
+      "packet_bytes": 4824,
+      "packet_sha256": "fa715c6238db402422df8c54755349d7f59630d999c071dc18dec8b1302d5cd9",
+      "original_delta_scalars": 756,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_gate_secpost_wdw2pane__secpostwdwlod2",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17447,
+            "record_sha256": "20c34f93fa16a6f8427bda71bd9cfe2ff29237f7a55879967c825380308437f1",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 11,
+            "original_id": 11,
+            "definition_name": "_gate_secpost_wdw2pane",
+            "sorted_runtime_model_row": 18,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                10,
+                4,
+                "deco_reflect1.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 11,
+        "vertices": 8,
+        "triangles": 4,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/7/original-read-model'",
+          "binary_sha256": "574275137602466bd44bf083042e7333d22ddd94f0e7074c351365a107fee6ec",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "3864e34937edc66ff3e7925352b17b7b76b1cfd974f45fd5173b8c9ca3aee5a2",
+        "binary_sha256": "574275137602466bd44bf083042e7333d22ddd94f0e7074c351365a107fee6ec",
+        "expected_facts_sha256": "6a17e1846f837d803430b3bf14c7e7a3f4e82cc16c69fadac10c0efb18fdc439",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 11
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 65
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 9
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 33
+        }
+      ],
+      "packet_bytes": 496,
+      "packet_sha256": "a36e79fdc5b5b4cee08e39283ea1c0eb3815168329bae9482e483b69270de8fc",
+      "original_delta_scalars": 76,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_gate_fence_secpost2_LOD__docksecpostLOD1",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17450,
+            "record_sha256": "4224128f13e5197a88a1943d810af3c24842d609774bbe8f9fe6c6f416b8de1c",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 14,
+            "original_id": 14,
+            "definition_name": "_gate_fence_secpost2_LOD",
+            "sorted_runtime_model_row": 11,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                3,
+                7,
+                "wall_docks_gatehouse01.tga"
+              ],
+              [
+                9,
+                7,
+                "wall_docks_gatehouse_walls.tga"
+              ],
+              [
+                2,
+                6,
+                "ind_ware12_roof01.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 14,
+        "vertices": 36,
+        "triangles": 20,
+        "parts": 3
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/8/original-read-model'",
+          "binary_sha256": "ca5327e2345afe9c3e6ddcbb5edf6affaaac46a5797dd8a9410c21d276ec9479",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "46adb497676705d9c763a3d45682bea31d22e066246335a8da49f235166a6dea",
+        "binary_sha256": "ca5327e2345afe9c3e6ddcbb5edf6affaaac46a5797dd8a9410c21d276ec9479",
+        "expected_facts_sha256": "bf24bf4c53ec84e2a9e794175b689f7ff06241c28b8e6158f23be100f8b536fa",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 53,
+          "delta_bytes": 74
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 138,
+          "delta_bytes": 228
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 57
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 112
+        }
+      ],
+      "packet_bytes": 6288,
+      "packet_sha256": "aafcf08aab3c476a8251ab6e6573f4261c0e13fb0a9c17bbe439ea4aacf4611e",
+      "original_delta_scalars": 348,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_gate_fence_secpost_trim2__secpostlod02",
+        "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+        "asset_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+        "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+        "bytes": 11071,
+        "source_observations": [
+          {
+            "resource_ordinal": 17452,
+            "record_sha256": "ae096266e9838fcef7f2117dbb5133d7875fc51b3cb5ad1edc3f8f2562bf14bd",
+            "owner_kind": 1,
+            "file": 133,
+            "slot": 16,
+            "original_id": 16,
+            "definition_name": "_gate_fence_secpost_trim2",
+            "sorted_runtime_model_row": 14,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                3,
+                28,
+                "wall_docks_gatehouse01.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 16,
+        "vertices": 50,
+        "triangles": 28,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/9/original-read-model'",
+          "binary_sha256": "7ac3dc5d3610e1ea734f94c821945820ff88e759efee1474e131fc429b1874ae",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "a1c3776575246385626cb7cdf044703b8ed3175198c499d597b0d8434b0d6fc4",
+        "binary_sha256": "7ac3dc5d3610e1ea734f94c821945820ff88e759efee1474e131fc429b1874ae",
+        "expected_facts_sha256": "d26c72a80c6f6e50fb68d66c3468f4943f039e886dd6ed963ea3c6131de01ccb",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 68,
+          "delta_bytes": 95
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 207,
+          "delta_bytes": 274
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 111
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 153
+        }
+      ],
+      "packet_bytes": 3136,
+      "packet_sha256": "5e51bd0044f15082577c40d5186270b7dc451f2850c11bdc57c3efef2dfc5b3b",
+      "original_delta_scalars": 484,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_Swr_Light_1_Cone__swr_coneglow",
+        "source_geo_name": "object_library/Villain_Lairs/sewers/elements/lights/lights.geo",
+        "asset_path": "data/object_library/villain_lairs/sewers/elements/lights/lights.geo",
+        "sha256": "3af513441091b352808a704c9b2f7c3de9b24b2e58a73437e3609fa2c2938ae1",
+        "bytes": 5995,
+        "source_observations": [
+          {
+            "resource_ordinal": 17569,
+            "record_sha256": "10d1ab1b020bbca15d16c0d7c5321641567f10857c6d7821da5927e3f2f1cb49",
+            "owner_kind": 1,
+            "file": 137,
+            "slot": 3,
+            "original_id": 3,
+            "definition_name": "_Swr_Light_1_Cone",
+            "sorted_runtime_model_row": 1,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                22,
+                24,
+                "sewer_light_shaft.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 3,
+        "vertices": 26,
+        "triangles": 24,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/10/original-read-model'",
+          "binary_sha256": "8d4913a8b00597edfde5f89e4483bd7be45d0ca065f1ad5a5f13596d35bef566",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "4ceec4f977fbc37bf81121e2855cd5e19f9cc6b93c1b10073e7443a9e1a979f9",
+        "binary_sha256": "8d4913a8b00597edfde5f89e4483bd7be45d0ca065f1ad5a5f13596d35bef566",
+        "expected_facts_sha256": "303ca4f72543ac20fe26dccde419887e390b4cd8d70d7aa5ce41546f5281793b",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 36,
+          "delta_bytes": 69
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 220,
+          "delta_bytes": 307
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 50
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 103
+        }
+      ],
+      "packet_bytes": 1744,
+      "packet_sha256": "0a958e0f60742f9dde81557a858bc6add9e3f97b4af64456156b4817dbffbc67",
+      "original_delta_scalars": 280,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_Swr_Light_1_Glow__sewer_lights2",
+        "source_geo_name": "object_library/Villain_Lairs/sewers/elements/lights/lights.geo",
+        "asset_path": "data/object_library/villain_lairs/sewers/elements/lights/lights.geo",
+        "sha256": "3af513441091b352808a704c9b2f7c3de9b24b2e58a73437e3609fa2c2938ae1",
+        "bytes": 5995,
+        "source_observations": [
+          {
+            "resource_ordinal": 17571,
+            "record_sha256": "9194b56eb7b0dab1bb386399eea2929d83abe2e53ef94087413487626cfbe71b",
+            "owner_kind": 1,
+            "file": 137,
+            "slot": 5,
+            "original_id": 5,
+            "definition_name": "_Swr_Light_1_Glow",
+            "sorted_runtime_model_row": 2,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                23,
+                138,
+                "sewer_lights_1.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 5,
+        "vertices": 169,
+        "triangles": 138,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/11/original-read-model'",
+          "binary_sha256": "28f142dc8a6034d4efe8fc5e1979e29ef14e37c286d886a314695dab8f54231f",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "3ed0b309251103d3e24f755ceef6e37155f05d7d1ab1d03e66d7bd04c7844acd",
+        "binary_sha256": "28f142dc8a6034d4efe8fc5e1979e29ef14e37c286d886a314695dab8f54231f",
+        "expected_facts_sha256": "8d74effbc3c5bd7bf30277453d4fc5f1b1462ded4f591b61f8b74db5ef475271",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 226,
+          "delta_bytes": 394
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 761,
+          "delta_bytes": 1026
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 382
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 596
+        }
+      ],
+      "packet_bytes": 11120,
+      "packet_sha256": "453a9b945f8540d884aff4be47d5547a6d2f9ecb47dacd51f1810d4fc439dc66",
+      "original_delta_scalars": 1766,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_Graffiti_2to1_med__Graflg",
+        "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+        "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+        "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+        "bytes": 1439,
+        "source_observations": [
+          {
+            "resource_ordinal": 19465,
+            "record_sha256": "17fa6ca19debf05baf4b99951cbbbeba04be8774bb77fc0b38d7746ac3e78dc4",
+            "owner_kind": 1,
+            "file": 184,
+            "slot": 0,
+            "original_id": 0,
+            "definition_name": "_Graffiti_2to1_med",
+            "sorted_runtime_model_row": 7,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                1,
+                2,
+                "Graf_2to1_a.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 0,
+        "vertices": 4,
+        "triangles": 2,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/12/original-read-model'",
+          "binary_sha256": "4ed61771a3ba55cb6ab785da0b867ad8093edec9eaf4e804496a5ba88822510c",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "946dcf0597e23942c7e8c2ebd6056e005168f9d4db91c9b7a611d4b4e0d109fb",
+        "binary_sha256": "4ed61771a3ba55cb6ab785da0b867ad8093edec9eaf4e804496a5ba88822510c",
+        "expected_facts_sha256": "4fd78c8e1bc8eec3e9624e81d906d6637e6566aa297c97e4305fec45b0f09d96",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 8
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 24
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 11
+        }
+      ],
+      "packet_bytes": 248,
+      "packet_sha256": "c384793ae77470b128c553f04fa5587395733a2578affe44e52fe05e789ae6d9",
+      "original_delta_scalars": 38,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_Graffiti_2to1_lg__Graflg",
+        "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+        "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+        "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+        "bytes": 1439,
+        "source_observations": [
+          {
+            "resource_ordinal": 19466,
+            "record_sha256": "7ce5cc7c9ae8d6d74ad6fb78f9985af1ba358c80208d7908315777159ad61d17",
+            "owner_kind": 1,
+            "file": 184,
+            "slot": 1,
+            "original_id": 1,
+            "definition_name": "_Graffiti_2to1_lg",
+            "sorted_runtime_model_row": 5,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                1,
+                2,
+                "Graf_2to1_a.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 1,
+        "vertices": 4,
+        "triangles": 2,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/13/original-read-model'",
+          "binary_sha256": "e40cafa045bf87f5f9b1da4dba19c1c6b8aeebc9c3d52699525377fc6d2995f8",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "9ffb358b065a17b9fbcba5e0cb4c95b814077129c2894a5724e55d34ca086f1e",
+        "binary_sha256": "e40cafa045bf87f5f9b1da4dba19c1c6b8aeebc9c3d52699525377fc6d2995f8",
+        "expected_facts_sha256": "43cd537bbd19e5bea7a5877ca0e176024cf8ed996e26b19eaf504f2e640c8bb5",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 8
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 24
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 11
+        }
+      ],
+      "packet_bytes": 248,
+      "packet_sha256": "3881101301f0bd07c45ff92e34fae5f43d1f3ab624aacc16941083b995908589",
+      "original_delta_scalars": 38,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_Graffiti_2to1_xlg__Graflg",
+        "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+        "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+        "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+        "bytes": 1439,
+        "source_observations": [
+          {
+            "resource_ordinal": 19467,
+            "record_sha256": "258c319a15b3921a54df969d7e3a7a45c739feabf18b7e01a8736b38c7f25c16",
+            "owner_kind": 1,
+            "file": 184,
+            "slot": 2,
+            "original_id": 2,
+            "definition_name": "_Graffiti_2to1_xlg",
+            "sorted_runtime_model_row": 9,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                1,
+                2,
+                "Graf_2to1_a.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 2,
+        "vertices": 4,
+        "triangles": 2,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/14/original-read-model'",
+          "binary_sha256": "0f7ea447b48837e0ed78edcb27577c2643c8dff755553c5a047d1140aac3d34e",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "90cbf76db2f32c4cb3db9e5f8d462899045bfe3a6a9e6f50198983acbda9f693",
+        "binary_sha256": "0f7ea447b48837e0ed78edcb27577c2643c8dff755553c5a047d1140aac3d34e",
+        "expected_facts_sha256": "86fb674fc1bd98de645e1a6a2612c21ceec41e9c83b69f5c36ef2d42de837e83",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 8
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 24
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 11
+        }
+      ],
+      "packet_bytes": 248,
+      "packet_sha256": "e42f0ba1c0ed601077dbebe8861074ee3eaeada9ec7704b13a29fecbea5e585b",
+      "original_delta_scalars": 38,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_Graffiti_1to1_lg__Graflg",
+        "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+        "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+        "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+        "bytes": 1439,
+        "source_observations": [
+          {
+            "resource_ordinal": 19468,
+            "record_sha256": "495915e4df1e8d3267136a6114a158b54b156e1d506fbeb3d7055a22abd96572",
+            "owner_kind": 1,
+            "file": 184,
+            "slot": 3,
+            "original_id": 3,
+            "definition_name": "_Graffiti_1to1_lg",
+            "sorted_runtime_model_row": 0,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                1,
+                2,
+                "Graf_2to1_a.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 3,
+        "vertices": 4,
+        "triangles": 2,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/15/original-read-model'",
+          "binary_sha256": "91a12e653803500d40462510f0d9bd3f2fbc3a1a7be6ab8c482f3a4b5129c55a",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "0b6b4ae6b851fc469f51d2c112df3c809650df3a4da665f3d243ecf4fd69a198",
+        "binary_sha256": "91a12e653803500d40462510f0d9bd3f2fbc3a1a7be6ab8c482f3a4b5129c55a",
+        "expected_facts_sha256": "c61e6dd527d5b88b5fcaab912f2a88889c64314bb273ac32f56acdf82acce351",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 8
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 24
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 11
+        }
+      ],
+      "packet_bytes": 248,
+      "packet_sha256": "087b1d27707100523137c4443af48b478678ae92c57f83477c1e6d389f1bc69b",
+      "original_delta_scalars": 38,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_Graffiti_1to1_xlg__Graflg",
+        "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+        "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+        "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+        "bytes": 1439,
+        "source_observations": [
+          {
+            "resource_ordinal": 19469,
+            "record_sha256": "868956f15d902f6a0956f18cea3e7ebfd91f605502253c593428a65c32f234e5",
+            "owner_kind": 1,
+            "file": 184,
+            "slot": 4,
+            "original_id": 4,
+            "definition_name": "_Graffiti_1to1_xlg",
+            "sorted_runtime_model_row": 4,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                1,
+                2,
+                "Graf_2to1_a.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 4,
+        "vertices": 4,
+        "triangles": 2,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/16/original-read-model'",
+          "binary_sha256": "449e7f11945dd07d687c33403812037fc615560cb6775a48f815c4a16968e63f",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "3bf4ffa6870144873c02c7a7801afb709866e4ea2a86bc2f64ba0c94823f4838",
+        "binary_sha256": "449e7f11945dd07d687c33403812037fc615560cb6775a48f815c4a16968e63f",
+        "expected_facts_sha256": "1c1e5ae4fd15db2a8c704ca7dc1ec793637d0ed896a5cda8d01093d6342fa42e",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 8
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 24
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 11
+        }
+      ],
+      "packet_bytes": 248,
+      "packet_sha256": "f8ea9d4b4af44fce5b7dfbcce9dfa1fcca69e8228f3e79fc3beee6ea55f9c4f3",
+      "original_delta_scalars": 38,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "_Graffiti_1to1_med__Graflg",
+        "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+        "asset_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+        "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+        "bytes": 1439,
+        "source_observations": [
+          {
+            "resource_ordinal": 19470,
+            "record_sha256": "7111c5c0f2f7e5ff1d2037351e09de817dc94e15de20a2063fda0157ab813359",
+            "owner_kind": 1,
+            "file": 184,
+            "slot": 5,
+            "original_id": 5,
+            "definition_name": "_Graffiti_1to1_med",
+            "sorted_runtime_model_row": 2,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                1,
+                2,
+                "Graf_2to1_a.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 5,
+        "vertices": 4,
+        "triangles": 2,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/17/original-read-model'",
+          "binary_sha256": "f4d75c3e08ab548fc8f6f03fa067fd532910b544ceb20245638abd8be785f3a5",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "c873b79d3ea653683807cf240fab98b87ae60208d7743bd696ffef817c2b8104",
+        "binary_sha256": "f4d75c3e08ab548fc8f6f03fa067fd532910b544ceb20245638abd8be785f3a5",
+        "expected_facts_sha256": "24ea97e2015c5d1ff155f088b9d2fe949042d1a3f8fcf1eb7bab0a580bc65e82",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 8
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 24
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 11
+        }
+      ],
+      "packet_bytes": 248,
+      "packet_sha256": "b42a5ffb1a56d37095062e13a36fe1597ec24274bb4a329351101006753d6111",
+      "original_delta_scalars": 38,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "arac_crate_ammo",
+        "source_geo_name": "object_library/V_COV/Villian_Lairs/Arachnos/elements/interior/interior.geo",
+        "asset_path": "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo",
+        "sha256": "435ac148edc5a3eb8e89786276126dffe1ca3a720953f72b40fab44c92957679",
+        "bytes": 37314,
+        "source_observations": [
+          {
+            "resource_ordinal": 30869,
+            "record_sha256": "6b79416f6e4f9d8ae479c20d7cf2f507f5908499d03b33353fa6bc4a8392dc8e",
+            "owner_kind": 1,
+            "file": 405,
+            "slot": 11,
+            "original_id": 11,
+            "definition_name": "arac_crate_ammo",
+            "sorted_runtime_model_row": 20,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                20,
+                28,
+                "crates.tga"
+              ],
+              [
+                22,
+                32,
+                "crates_b.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 11,
+        "vertices": 70,
+        "triangles": 60,
+        "parts": 2
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/18/original-read-model'",
+          "binary_sha256": "649dd250ede2332e6ad797d602bd128ac46c6c6211880eea52a0b508d979ccd2",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "e982bf750d2de2d5d3fca6126289105090581bf18d82cd0806ab180d5d38e0d7",
+        "binary_sha256": "649dd250ede2332e6ad797d602bd128ac46c6c6211880eea52a0b508d979ccd2",
+        "expected_facts_sha256": "1889d1c6b4bdededb02f8b9f89d18c493cf78a1e6742da084db7356bdfb1caa1",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 207
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 285,
+          "delta_bytes": 408
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 287
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 192
+        }
+      ],
+      "packet_bytes": 8560,
+      "packet_sha256": "0e00ddda06fe11f16d31b4b8aa25eb67c40f596f8ec04b7aa67e9bee0a5b05ae",
+      "original_delta_scalars": 740,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "arac_barrel_01",
+        "source_geo_name": "object_library/V_COV/Villian_Lairs/Arachnos/elements/interior/interior.geo",
+        "asset_path": "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo",
+        "sha256": "435ac148edc5a3eb8e89786276126dffe1ca3a720953f72b40fab44c92957679",
+        "bytes": 37314,
+        "source_observations": [
+          {
+            "resource_ordinal": 30872,
+            "record_sha256": "e571e60d27ab3d541708c258df5579ff67c9e5111b2c6c995aa3a3ca6598eab4",
+            "owner_kind": 1,
+            "file": 405,
+            "slot": 14,
+            "original_id": 14,
+            "definition_name": "arac_barrel_01",
+            "sorted_runtime_model_row": 14,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                2,
+                20,
+                "plate_c.tga"
+              ],
+              [
+                23,
+                16,
+                "arac_machinery_t_01.tga"
+              ],
+              [
+                7,
+                20,
+                "plate_a.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 14,
+        "vertices": 64,
+        "triangles": 56,
+        "parts": 3
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/19/original-read-model'",
+          "binary_sha256": "54f6d527d302f625b7056cd21aeecac5a0894620df95299fd02cd12711b85ac3",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "2eb10e8ee6b5419c3889168fa7d78f6dec20421508b0ff12bdedf4301b13cffa",
+        "binary_sha256": "54f6d527d302f625b7056cd21aeecac5a0894620df95299fd02cd12711b85ac3",
+        "expected_facts_sha256": "9872da7e92f0727b2ff1452020f87ae5499609f47c915ccd26f82a61f7c1fc79",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 89,
+          "delta_bytes": 183
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 371
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 113
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 168,
+          "delta_bytes": 215
+        }
+      ],
+      "packet_bytes": 11424,
+      "packet_sha256": "bb276daf9077b08b5bea909878b1a20652f5e0d3dc486fd442a3e3a66352fb88",
+      "original_delta_scalars": 680,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 2,
+        "model": "Truck_Frame__Editorprop",
+        "source_geo_name": "object_library/Doors/Truck_door/truck_door.geo",
+        "asset_path": "data/object_library/doors/truck_door/truck_door.geo",
+        "sha256": "f26e938389cfe699421b42b75aa306427278b4e6d88d2885965009c2e61879df",
+        "bytes": 2025,
+        "source_observations": [
+          {
+            "resource_ordinal": 37790,
+            "record_sha256": "c595f33823a3b18f17c46a2c407387034e13c2b4a6601c8702ee9e3b2863d869",
+            "owner_kind": 1,
+            "file": 472,
+            "slot": 0,
+            "original_id": 0,
+            "definition_name": "Truck_Frame",
+            "sorted_runtime_model_row": 0,
+            "geo_version": 2,
+            "texture_partitions": [
+              [
+                1,
+                92,
+                "blue.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 0,
+        "vertices": 134,
+        "triangles": 92,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/20/original-read-model'",
+          "binary_sha256": "dc8685db875fb368a5a25888db868788d2d144078b76fef7b916ebbaeb36be5c",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 216,
+        "source_version": 2,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "db5a02d974c58a389ee1942f1202cfa7091575ab628a03ff8105fefce1823d46",
+        "binary_sha256": "dc8685db875fb368a5a25888db868788d2d144078b76fef7b916ebbaeb36be5c",
+        "expected_facts_sha256": "d1f8cc4dba01d509cb14efa0a7324cc3d5c11bd9fe5c56f3362afaf9fdd81dff",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 105,
+          "delta_bytes": 302
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 582,
+          "delta_bytes": 900
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 232,
+          "delta_bytes": 304
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 168,
+          "delta_bytes": 355
+        }
+      ],
+      "packet_bytes": 8608,
+      "packet_sha256": "ff978cef480aff1e01c0eb4a90d2afc8d48f8da9e6c26efe51ce99ff15de3f6a",
+      "original_delta_scalars": 1348,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 3,
+        "model": "_BNK_HALLWAY_01__bankTray",
+        "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Bank/Bus_Bank_trays/bus_bank_trays.geo",
+        "asset_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+        "sha256": "418de08e35dccfddc1dca001cccaa10ad9b632c1a7e16569dc41d7581590cfd1",
+        "bytes": 8367,
+        "source_observations": [
+          {
+            "resource_ordinal": 690,
+            "record_sha256": "ec06a3c27e669aa9651b3435292db0f1e56b160c94cad8c7d254b7660dfee03f",
+            "owner_kind": 1,
+            "file": 0,
+            "slot": 690,
+            "original_id": 690,
+            "definition_name": "grp141231",
+            "sorted_runtime_model_row": 2,
+            "geo_version": 3,
+            "texture_partitions": [
+              [
+                2,
+                2,
+                "PORTAL_door6.tga"
+              ],
+              [
+                3,
+                2,
+                "PORTAL_door2.tga"
+              ],
+              [
+                4,
+                2,
+                "PORTAL_door5.tga"
+              ],
+              [
+                5,
+                2,
+                "PORTAL_door4.tga"
+              ],
+              [
+                6,
+                2,
+                "PORTAL_door3.tga"
+              ],
+              [
+                1,
+                42,
+                "blackbox.tga"
+              ]
+            ]
+          },
+          {
+            "resource_ordinal": 710,
+            "record_sha256": "04d1a314d8e3f182bddd0ba3b4ce48e0c34d196a03db88e1048c7308cad2cd05",
+            "owner_kind": 1,
+            "file": 0,
+            "slot": 710,
+            "original_id": 710,
+            "definition_name": "grp1113960",
+            "sorted_runtime_model_row": 2,
+            "geo_version": 3,
+            "texture_partitions": [
+              [
+                2,
+                2,
+                "PORTAL_door6.tga"
+              ],
+              [
+                3,
+                2,
+                "PORTAL_door2.tga"
+              ],
+              [
+                4,
+                2,
+                "PORTAL_door5.tga"
+              ],
+              [
+                5,
+                2,
+                "PORTAL_door4.tga"
+              ],
+              [
+                6,
+                2,
+                "PORTAL_door3.tga"
+              ],
+              [
+                1,
+                42,
+                "blackbox.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 1,
+        "vertices": 84,
+        "triangles": 52,
+        "parts": 6
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/21/original-read-model'",
+          "binary_sha256": "27a7b9f5185198ee14d14e59fc6b06be03260f09b2c3dff30e48c377f2de6f58",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 208,
+        "source_version": 3,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "87e2c72a123d80216b27bdd3445d7439087b9e3af247658c33f464e5d70b8ceb",
+        "binary_sha256": "27a7b9f5185198ee14d14e59fc6b06be03260f09b2c3dff30e48c377f2de6f58",
+        "expected_facts_sha256": "bc3a05dba185095729f7aeffb572a235a7967d33d22ef117fe41bf53fc27bdaf",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 89,
+          "delta_bytes": 175
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 222,
+          "delta_bytes": 520
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 46,
+          "delta_bytes": 104
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 146,
+          "delta_bytes": 255
+        }
+      ],
+      "packet_bytes": 28848,
+      "packet_sha256": "8ecda26503450aaaf450ff78a8597f48a0f29c73daf7194c4123d14c29878cc1",
+      "original_delta_scalars": 828,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 3,
+        "model": "_BNK_BANKLOBBY_01__bankTray",
+        "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Bank/Bus_Bank_trays/bus_bank_trays.geo",
+        "asset_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+        "sha256": "418de08e35dccfddc1dca001cccaa10ad9b632c1a7e16569dc41d7581590cfd1",
+        "bytes": 8367,
+        "source_observations": [
+          {
+            "resource_ordinal": 968,
+            "record_sha256": "6af7de69e93b8b77d7e27a7af7700152a09393f8c30a6523a8efcfd54aa41592",
+            "owner_kind": 1,
+            "file": 0,
+            "slot": 968,
+            "original_id": 968,
+            "definition_name": "grp142074",
+            "sorted_runtime_model_row": 0,
+            "geo_version": 3,
+            "texture_partitions": [
+              [
+                2,
+                2,
+                "PORTAL_door6.tga"
+              ],
+              [
+                3,
+                2,
+                "PORTAL_door2.tga"
+              ],
+              [
+                4,
+                2,
+                "PORTAL_door5.tga"
+              ],
+              [
+                5,
+                2,
+                "PORTAL_door4.tga"
+              ],
+              [
+                6,
+                2,
+                "PORTAL_door3.tga"
+              ],
+              [
+                7,
+                2,
+                "PORTAL_door1.tga"
+              ],
+              [
+                1,
+                52,
+                "blackbox.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 0,
+        "vertices": 96,
+        "triangles": 64,
+        "parts": 7
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/22/original-read-model'",
+          "binary_sha256": "59d7ef3656e9bc5c3c01b65ded7aa8d0e986834705a91ab03ca3ac3ea5c49082",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 208,
+        "source_version": 3,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "9b14a8554a68410cfe79c08a19d14f8e42cde4f969f1ae83a77c3c4062071329",
+        "binary_sha256": "59d7ef3656e9bc5c3c01b65ded7aa8d0e986834705a91ab03ca3ac3ea5c49082",
+        "expected_facts_sha256": "7bb991b7787ad219879c06515e5ff6377fa40eac7a464f49f737864b22cb6a42",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 129,
+          "delta_bytes": 206
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 231,
+          "delta_bytes": 609
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 51,
+          "delta_bytes": 117
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 154,
+          "delta_bytes": 297
+        }
+      ],
+      "packet_bytes": 38400,
+      "packet_sha256": "3b349ae430e039157838bc82300d66a916a7a10b4805be7490ffc69a7ba40456",
+      "original_delta_scalars": 960,
+      "v4_obsolete_slots": null
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_baseportaldoor_outside__baseportalLO",
+        "source_geo_name": "object_library/Doors/Playerbase_Doors/playerbase_doors.geo",
+        "asset_path": "data/object_library/doors/playerbase_doors/playerbase_doors.geo",
+        "sha256": "390c9297e4cc0483c5a540b20d40509f09d4d11a8e239d1bf13f238db685cdaf",
+        "bytes": 2000,
+        "source_observations": [
+          {
+            "resource_ordinal": 8290,
+            "record_sha256": "40ee0b7d58fe8597c3e9ab7b5db911e367ea7bd690c802ce7a60edc953ec0489",
+            "owner_kind": 1,
+            "file": 20,
+            "slot": 1,
+            "original_id": 1,
+            "definition_name": "_baseportaldoor_outside",
+            "sorted_runtime_model_row": 2,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                1,
+                22,
+                "blue.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 1,
+        "vertices": 26,
+        "triangles": 22,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/23/original-read-model'",
+          "binary_sha256": "df348d8cc1cca1338289707bca874a8e3dfafffb613575c63b498ed7cb30f8bc",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "7e82f3ece6f640bddbfc3bcf880b90359187a8a6442ef3ca0c3329dc33ceb560",
+        "binary_sha256": "df348d8cc1cca1338289707bca874a8e3dfafffb613575c63b498ed7cb30f8bc",
+        "expected_facts_sha256": "3f28c8c36156de81385b29911e0e835c82ad4cf27437c62098a2935f9c1c6498",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 73
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 117,
+          "delta_bytes": 209
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 57
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 52,
+          "delta_bytes": 78
+        }
+      ],
+      "packet_bytes": 1720,
+      "packet_sha256": "b0960bfaf36fdef1f05ce8d76f1dc1cd631d901144673dc761675908d48cfc41",
+      "original_delta_scalars": 274,
+      "v4_obsolete_slots": [
+        12,
+        18,
+        829,
+        12,
+        18,
+        841
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_Fifthcol_liteanchor",
+        "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+        "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+        "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+        "bytes": 7086,
+        "source_observations": [
+          {
+            "resource_ordinal": 28829,
+            "record_sha256": "20b00926743b40175ef8c5f54113bd3d342bf12e718b172434468d166f7f645c",
+            "owner_kind": 1,
+            "file": 369,
+            "slot": 0,
+            "original_id": 0,
+            "definition_name": "_Fifthcol_liteanchor",
+            "sorted_runtime_model_row": 3,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                1,
+                8,
+                "5th_pipe01.tga"
+              ],
+              [
+                2,
+                18,
+                "5th_bandedcement.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 0,
+        "vertices": 52,
+        "triangles": 26,
+        "parts": 2
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/24/original-read-model'",
+          "binary_sha256": "e686258750493f595c13acbaad965b8bd7587c0090d92129cf60f46f8157272e",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "267945d8047d0bf1f05f0b3d00dd0cda0009fc1948e72b4294bb8d92897a1359",
+        "binary_sha256": "e686258750493f595c13acbaad965b8bd7587c0090d92129cf60f46f8157272e",
+        "expected_facts_sha256": "d2981b7c1d4073faba71e3410a72b142950b953565c901e7c7421276b93cb590",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 35,
+          "delta_bytes": 80
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 202,
+          "delta_bytes": 270
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 57,
+          "delta_bytes": 91
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 115,
+          "delta_bytes": 182
+        }
+      ],
+      "packet_bytes": 6136,
+      "packet_sha256": "e4ba5ffc904995d5dd8878e80c88ee25b63bfe12655c1dddfb9e63519116dd51",
+      "original_delta_scalars": 494,
+      "v4_obsolete_slots": [
+        12,
+        21,
+        409,
+        12,
+        21,
+        421
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_FiFthcol_litebrace",
+        "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+        "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+        "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+        "bytes": 7086,
+        "source_observations": [
+          {
+            "resource_ordinal": 28830,
+            "record_sha256": "51747e5032746cc6095a47329e0a5cad83346ebe4d46de4e6af50ddd68cb5861",
+            "owner_kind": 1,
+            "file": 369,
+            "slot": 1,
+            "original_id": 1,
+            "definition_name": "_FiFthcol_litebrace",
+            "sorted_runtime_model_row": 4,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                1,
+                48,
+                "5th_pipe01.tga"
+              ],
+              [
+                4,
+                32,
+                "5th_roundtrim.tga"
+              ],
+              [
+                3,
+                32,
+                "5th_metalstrap.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 1,
+        "vertices": 154,
+        "triangles": 112,
+        "parts": 3
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/25/original-read-model'",
+          "binary_sha256": "44e4db03875d7e5f52bf63b2060bccc4a8eb4449c09879bcb4743de4b98857bf",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "8de1ec709c95eeae241115ad2b4707e30865752a6deff1fe6beedec169e9be18",
+        "binary_sha256": "44e4db03875d7e5f52bf63b2060bccc4a8eb4449c09879bcb4743de4b98857bf",
+        "expected_facts_sha256": "00963dfe145b0c93b08bc4602f80539f02c2f94e9c33ec240d9759546339ded5",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 94,
+          "delta_bytes": 334
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 508,
+          "delta_bytes": 820
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 140,
+          "delta_bytes": 299
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 296,
+          "delta_bytes": 535
+        }
+      ],
+      "packet_bytes": 27216,
+      "packet_sha256": "c6e5c3ad9447603660cc05d6ffc64aa34b799e3953d257d53e8629222f2a0d18",
+      "original_delta_scalars": 1568,
+      "v4_obsolete_slots": [
+        13,
+        85,
+        1524,
+        13,
+        85,
+        1537
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_fifthcol_neon1__5thneon",
+        "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+        "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+        "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+        "bytes": 7086,
+        "source_observations": [
+          {
+            "resource_ordinal": 28831,
+            "record_sha256": "ffaffd5e3ede276e3f7b55d8dc8046ab1bd7d1fc01614e8533450644147a69d1",
+            "owner_kind": 1,
+            "file": 369,
+            "slot": 2,
+            "original_id": 2,
+            "definition_name": "_fifthcol_neon1",
+            "sorted_runtime_model_row": 6,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                5,
+                2,
+                "5th_lightface1.tga"
+              ],
+              [
+                6,
+                40,
+                "5th_lightrim1.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 2,
+        "vertices": 84,
+        "triangles": 42,
+        "parts": 2
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/26/original-read-model'",
+          "binary_sha256": "48d30ee3146e4d3eb929ddde9f1429a7a6d668019374671e6da2fabbe8ce67d7",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "2b52da06e3e5a32e27633786aee30e2369831a30ceecd31ee48d7902f5823827",
+        "binary_sha256": "48d30ee3146e4d3eb929ddde9f1429a7a6d668019374671e6da2fabbe8ce67d7",
+        "expected_facts_sha256": "1a54abdafca640269baf9d2bf1642ef4521f54f8a4ecbbccbc8b427a079cf4ec",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 29,
+          "delta_bytes": 156
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 438
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 97,
+          "delta_bytes": 139
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 294
+        }
+      ],
+      "packet_bytes": 9912,
+      "packet_sha256": "c35b187cb03da35c2ff9c2863df2ca4cdb9a0705d5efb0b43f2b981840b4ffc2",
+      "original_delta_scalars": 798,
+      "v4_obsolete_slots": [
+        12,
+        33,
+        2575,
+        12,
+        33,
+        2587
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_fifthcol_lightglass__5thglass",
+        "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+        "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+        "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+        "bytes": 7086,
+        "source_observations": [
+          {
+            "resource_ordinal": 28832,
+            "record_sha256": "46e37e3b83a59fedd660be7424b15984d6b7c4861801b1109314d853a2f716fb",
+            "owner_kind": 1,
+            "file": 369,
+            "slot": 3,
+            "original_id": 3,
+            "definition_name": "_fifthcol_lightglass",
+            "sorted_runtime_model_row": 2,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                7,
+                2,
+                "5th_glassreflect1.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 3,
+        "vertices": 4,
+        "triangles": 2,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/27/original-read-model'",
+          "binary_sha256": "551c4a1833a9f60938f18cdb6a66f7b99acfa52ec8d6ddd549b31962155cc376",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "b15bc859a9c8b0451fa00428af6473c81976c4293c606fe20c449cbeb8d6b0e8",
+        "binary_sha256": "551c4a1833a9f60938f18cdb6a66f7b99acfa52ec8d6ddd549b31962155cc376",
+        "expected_facts_sha256": "d255d2ec50644651a620a366c4d513517c7c33ccf63078fc73b78172bd75b07c",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 32
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 6
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 17
+        }
+      ],
+      "packet_bytes": 248,
+      "packet_sha256": "dbc32fff34d1e421a7a7d84ffb999d840675b0d045632a413ef5f948e4275c00",
+      "original_delta_scalars": 38,
+      "v4_obsolete_slots": [
+        0,
+        3,
+        2735,
+        0,
+        3,
+        2738
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_FiFthcol_liteglow__5thglow",
+        "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+        "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+        "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+        "bytes": 7086,
+        "source_observations": [
+          {
+            "resource_ordinal": 28833,
+            "record_sha256": "73bf78b743afe592de96842a02b94ba1b407ceda70ba88594e063383cae364a3",
+            "owner_kind": 1,
+            "file": 369,
+            "slot": 4,
+            "original_id": 4,
+            "definition_name": "_FiFthcol_liteglow",
+            "sorted_runtime_model_row": 5,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                8,
+                32,
+                "bblightshaft.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 4,
+        "vertices": 64,
+        "triangles": 32,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/28/original-read-model'",
+          "binary_sha256": "1041141f23944daacb6c62f6f6347c10dacfc7b1b39b4a901a8ebd7228c6803b",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "0f88dae1f49c961bdadb50833ab1a840503a63d8d09485466ae8236eeec49371",
+        "binary_sha256": "1041141f23944daacb6c62f6f6347c10dacfc7b1b39b4a901a8ebd7228c6803b",
+        "expected_facts_sha256": "2341b43cc6918b1a9ccc8b1b30a5ac4913ae090331e7d59ac913eec3bf7d80e4",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 33,
+          "delta_bytes": 104
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 278,
+          "delta_bytes": 487
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 84,
+          "delta_bytes": 116
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 75,
+          "delta_bytes": 195
+        }
+      ],
+      "packet_bytes": 3968,
+      "packet_sha256": "678c62fb1a2bd6c348b699a1574234d81978d9673b3a430f00a21db81d2788d7",
+      "original_delta_scalars": 608,
+      "v4_obsolete_slots": [
+        12,
+        25,
+        3231,
+        12,
+        25,
+        3243
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_fifthcol_lightback",
+        "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+        "asset_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+        "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+        "bytes": 7086,
+        "source_observations": [
+          {
+            "resource_ordinal": 28834,
+            "record_sha256": "b16e40138b86c15825c7d131d8f80a55953a4670e4a014faad2b6cde2f4b463a",
+            "owner_kind": 1,
+            "file": 369,
+            "slot": 5,
+            "original_id": 5,
+            "definition_name": "_fifthcol_lightback",
+            "sorted_runtime_model_row": 1,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                9,
+                16,
+                "5th_lightedge.tga"
+              ],
+              [
+                6,
+                32,
+                "5th_lightrim1.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 5,
+        "vertices": 92,
+        "triangles": 48,
+        "parts": 2
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/29/original-read-model'",
+          "binary_sha256": "33349b1a9c706ccd2e58a233c24cca593871ff474af494eb1ac9669972beefd7",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "af1bc630bb47dc31584cb43f7b611ddf7baf49463b146636f7d5acbe526066f5",
+        "binary_sha256": "33349b1a9c706ccd2e58a233c24cca593871ff474af494eb1ac9669972beefd7",
+        "expected_facts_sha256": "6a1070019331d7d720a76ce273465e65cb8a346e49de989309c61d88c09258ab",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 58,
+          "delta_bytes": 153
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 344,
+          "delta_bytes": 538
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 92,
+          "delta_bytes": 133
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 231,
+          "delta_bytes": 324
+        }
+      ],
+      "packet_bytes": 10880,
+      "packet_sha256": "d749466414e5c04fb96c95a72f1e4efab94df177f39af2d937ccfae13c76455f",
+      "original_delta_scalars": 880,
+      "v4_obsolete_slots": [
+        12,
+        37,
+        4042,
+        12,
+        37,
+        4054
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_freeway_sign_xlg_02__fsignglow",
+        "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+        "asset_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+        "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+        "bytes": 14425,
+        "source_observations": [
+          {
+            "resource_ordinal": 30754,
+            "record_sha256": "232a50aba50db6f82f5a9498430308cb9f7d1883978e70d064d8053fed37d021",
+            "owner_kind": 1,
+            "file": 399,
+            "slot": 14,
+            "original_id": 14,
+            "definition_name": "_freeway_sign_xlg_02",
+            "sorted_runtime_model_row": 10,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                5,
+                2,
+                "sign_green01.tga"
+              ],
+              [
+                4,
+                20,
+                "sign_freeway.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 14,
+        "vertices": 40,
+        "triangles": 22,
+        "parts": 2
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/30/original-read-model'",
+          "binary_sha256": "582ef63c1279c01884f1a2a11d6057c9a8797a484b89a3af973f4b7eb4799ee7",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "3ab0880ca798962d5dde141c1b4b3a473079105c492a18a7db9207a3f8c12799",
+        "binary_sha256": "582ef63c1279c01884f1a2a11d6057c9a8797a484b89a3af973f4b7eb4799ee7",
+        "expected_facts_sha256": "3cdfd1c73207812cce038cae99ea6e6766cebbf40491ab06732ba70228e44e40",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 42,
+          "delta_bytes": 57
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 243
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 15,
+          "delta_bytes": 33
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 87,
+          "delta_bytes": 132
+        }
+      ],
+      "packet_bytes": 4744,
+      "packet_sha256": "0da09a91a833a8e175bf0faf406f3e024bc3764f5e8789f67ab00d2c828b1509",
+      "original_delta_scalars": 386,
+      "v4_obsolete_slots": [
+        12,
+        18,
+        9913,
+        12,
+        18,
+        9925
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "freeway_sign_xlgframe_02__fsign",
+        "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+        "asset_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+        "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+        "bytes": 14425,
+        "source_observations": [
+          {
+            "resource_ordinal": 30755,
+            "record_sha256": "5e105fa33eed87be803d5ea1c97a280be52ef7a723bcbf8811af03dae35221cd",
+            "owner_kind": 1,
+            "file": 399,
+            "slot": 15,
+            "original_id": 15,
+            "definition_name": "freeway_sign_xlgframe_02",
+            "sorted_runtime_model_row": 18,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                3,
+                16,
+                "helipad_xbeams.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 15,
+        "vertices": 32,
+        "triangles": 16,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/31/original-read-model'",
+          "binary_sha256": "0044ea35c6cc907611901a20044528bdd205dc1c319447546ecc8e4eed20cc5e",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "2853164fa5198cc5fc020811ded11250a5bc5557647a4717a476a593d1fab0dc",
+        "binary_sha256": "0044ea35c6cc907611901a20044528bdd205dc1c319447546ecc8e4eed20cc5e",
+        "expected_facts_sha256": "d06a43237e928af4da0166ec7c4b17d8e81dc673b139c5cd6e65fa59914ad4c2",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 32,
+          "delta_bytes": 52
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 111,
+          "delta_bytes": 218
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 26,
+          "delta_bytes": 55
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 73,
+          "delta_bytes": 122
+        }
+      ],
+      "packet_bytes": 1984,
+      "packet_sha256": "724f16455f20305c0c9e658ff185a4e09dd58a600093c02701c5ee1df16e5e4a",
+      "original_delta_scalars": 304,
+      "v4_obsolete_slots": [
+        0,
+        13,
+        10403,
+        0,
+        13,
+        10416
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_freeway_sign_xlg_02_back__fsign",
+        "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+        "asset_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+        "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+        "bytes": 14425,
+        "source_observations": [
+          {
+            "resource_ordinal": 30756,
+            "record_sha256": "56d780c1d92af3762634121c5c6de576460714ca608f12b7958646f24039f2e1",
+            "owner_kind": 1,
+            "file": 399,
+            "slot": 16,
+            "original_id": 16,
+            "definition_name": "_freeway_sign_xlg_02_back",
+            "sorted_runtime_model_row": 11,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                6,
+                22,
+                "billboard_backing.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 16,
+        "vertices": 21,
+        "triangles": 22,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/32/original-read-model'",
+          "binary_sha256": "7e5210637d343900c91f357ea9bad36c4593aa2d15516478498ea6385ea7babb",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "a258df12efa4ceb9ff3441ececc36f1b8a9aa650711f474eee184be080f42ec8",
+        "binary_sha256": "7e5210637d343900c91f357ea9bad36c4593aa2d15516478498ea6385ea7babb",
+        "expected_facts_sha256": "bdb88ccf60c474575cbba21a840d651f56a777e4ef4b4714e1cb1a5706cb85c9",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 70
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 112
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 14,
+          "delta_bytes": 19
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 71
+        }
+      ],
+      "packet_bytes": 1440,
+      "packet_sha256": "a9f99a1ac11d7851199776895cb1a8e9ea53db0e9fe7a3033db7c07ee041287d",
+      "original_delta_scalars": 234,
+      "v4_obsolete_slots": [
+        12,
+        18,
+        10823,
+        12,
+        18,
+        10835
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "_freeway_sign_hzrd__fsignglow",
+        "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+        "asset_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+        "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+        "bytes": 14425,
+        "source_observations": [
+          {
+            "resource_ordinal": 30757,
+            "record_sha256": "b210aa3b0ebc9fd5182453d3058f3093557abf0f040afd8b3cf201d6ba95c68d",
+            "owner_kind": 1,
+            "file": 399,
+            "slot": 17,
+            "original_id": 17,
+            "definition_name": "_freeway_sign_hzrd",
+            "sorted_runtime_model_row": 0,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                9,
+                2,
+                "sign_blue01.tga"
+              ],
+              [
+                8,
+                28,
+                "sign_hazardwarn.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 17,
+        "vertices": 51,
+        "triangles": 30,
+        "parts": 2
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/33/original-read-model'",
+          "binary_sha256": "13f05c48ac0e68d0d75603ac714bdb17eb3f61688ac053086af31cc268f7cfa9",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "52a7ebb46dc6cca1809221e45108be0a7af3abcfc634d6858afe85f9c3647ca1",
+        "binary_sha256": "13f05c48ac0e68d0d75603ac714bdb17eb3f61688ac053086af31cc268f7cfa9",
+        "expected_facts_sha256": "8049a21e28b6830bc00292c00e63334db6f18d89d05cd50e4dbf29c50dd8b1e9",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 0,
+          "delta_bytes": 103
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 0,
+          "delta_bytes": 268
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 91
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 0,
+          "delta_bytes": 148
+        }
+      ],
+      "packet_bytes": 6072,
+      "packet_sha256": "31afe7774fdb0f21ce7b30d4d4634d1c88e4041b2c5093f4fb38159476e024cf",
+      "original_delta_scalars": 498,
+      "v4_obsolete_slots": [
+        12,
+        24,
+        11684,
+        12,
+        24,
+        11696
+      ]
+    },
+    {
+      "fixture": {
+        "version": 4,
+        "model": "Hatch_Frame__EditorVisible",
+        "source_geo_name": "object_library/Doors/Hatch_door/hatch_door.geo",
+        "asset_path": "data/object_library/doors/hatch_door/hatch_door.geo",
+        "sha256": "162b5659a5435edc0dba4875b75f37b437b12ea730b1b94a214ca97835eada87",
+        "bytes": 6658,
+        "source_observations": [
+          {
+            "resource_ordinal": 36698,
+            "record_sha256": "92acbd446a28504b4aa511f4e34d1977220a6f4d71a18f71a5ec35d6bfb4275d",
+            "owner_kind": 1,
+            "file": 465,
+            "slot": 0,
+            "original_id": 0,
+            "definition_name": "Hatch_Frame",
+            "sorted_runtime_model_row": 0,
+            "geo_version": 4,
+            "texture_partitions": [
+              [
+                1,
+                484,
+                "blue8x8.tga"
+              ]
+            ]
+          }
+        ],
+        "disk_row": 0,
+        "vertices": 501,
+        "triangles": 484,
+        "parts": 1
+      },
+      "original_readModel": {
+        "source_layout_passed": true,
+        "original_consumer_executed": false,
+        "true32bit_freestanding_linux_execution": false,
+        "execution_refusal": {
+          "errno": 8,
+          "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-original-all35/34/original-read-model'",
+          "binary_sha256": "6407e0c089815d509df1225439f9cde76ae65248552e766de71ad163ae6f1e32",
+          "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+        },
+        "source_layout_offsets": [
+          216,
+          0,
+          4,
+          12,
+          20,
+          28,
+          32,
+          36,
+          40,
+          80,
+          84,
+          88,
+          92,
+          132
+        ],
+        "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+        "source_model_record_bytes": 232,
+        "source_version": 4,
+        "metadata_and_pack_scalars_compared": 0,
+        "original_grid_pack_declarations_unchanged": true,
+        "generated_oracle_sha256": "ddee924f046c5f95175663d02c459138037413c0f2e5097f874ce835aa06b9cc",
+        "binary_sha256": "6407e0c089815d509df1225439f9cde76ae65248552e766de71ad163ae6f1e32",
+        "expected_facts_sha256": "fd667d31cac3d0d11d68b7bff2f9998c52b3756d00914a3c2df0d09cf314e7a2",
+        "expected_bytes": 220,
+        "scope": "Original readModel+original32 disk declarations unchanged; exact version and55expected source facts incl autolod values. Refused ELF32 execution remains false."
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "packed_bytes": 335,
+          "delta_bytes": 1513
+        },
+        {
+          "channel": 1,
+          "packed_bytes": 2457,
+          "delta_bytes": 3140
+        },
+        {
+          "channel": 2,
+          "packed_bytes": 0,
+          "delta_bytes": 2264
+        },
+        {
+          "channel": 3,
+          "packed_bytes": 515,
+          "delta_bytes": 1473
+        }
+      ],
+      "packet_bytes": 33864,
+      "packet_sha256": "328404f049d9dd9964557ed655544bb639ca96c632f908a89295f3213dd9d9aa",
+      "original_delta_scalars": 5460,
+      "v4_obsolete_slots": [
+        14,
+        364,
+        5571,
+        14,
+        364,
+        5585
+      ]
+    }
+  ],
+  "original_legacy_lod": {
+    "data/object_library/streets/elements/fence/gate/gate.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "fea9757313089d876c8cca15a8e37eb079c725d7cc44eacf401ef99e9146adaa",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 19,
+      "raw_bytes": 2812,
+      "active_lod_records": 19,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "ba6d01486138dd793eb51270a5a965d410744c150e0d1a59bf73092458e0ec79",
+          "output_sha256": "534afb3426f8bc0ab988b47104bd9d21903a8fca57f853c3cad71762180d2ddb"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "2aa641af808b0b82eb46c7175b603d0efa82aa5c0869cb30319198f160eb193b",
+          "output_sha256": "534afb3426f8bc0ab988b47104bd9d21903a8fca57f853c3cad71762180d2ddb"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "c1f1247c3aa842a7eb1f8e9ccc661f1945edbd399af0105b59c3e99fcff5698f",
+          "output_sha256": "534afb3426f8bc0ab988b47104bd9d21903a8fca57f853c3cad71762180d2ddb"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 2
+    },
+    "data/object_library/villain_lairs/sewers/elements/lights/lights.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "fea9757313089d876c8cca15a8e37eb079c725d7cc44eacf401ef99e9146adaa",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 6,
+      "raw_bytes": 888,
+      "active_lod_records": 6,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "e48350253648f078aa054277ebb4b0433810bb1d1a80a5810f6aa6cb6de86c86",
+          "output_sha256": "3b64ab993eb469ed48b2312427355a342054a8f2a7e73011b5349d1bbd1bca12"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "569222770ec861fbf843a52028c06ba34839ce3d2c4812bcedaa9c739d1cce83",
+          "output_sha256": "3b64ab993eb469ed48b2312427355a342054a8f2a7e73011b5349d1bbd1bca12"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "1889cfb9832f09a0c2ebfa51f7c4af3c67df3f4d822d8679b66f0d9ec27c771a",
+          "output_sha256": "3b64ab993eb469ed48b2312427355a342054a8f2a7e73011b5349d1bbd1bca12"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 2
+    },
+    "data/object_library/streets/elements/graffiti/graffiti.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "fea9757313089d876c8cca15a8e37eb079c725d7cc44eacf401ef99e9146adaa",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 10,
+      "raw_bytes": 1480,
+      "active_lod_records": 10,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "bbd9527aa259972cad412903c9c382bf6a8d08531bfd4748f519d0f9e9340085",
+          "output_sha256": "3f83e638679486230b33ee38d7f433158d5815723c57e74c97372758819112b9"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "fd3752efefe8e014c70615af43e7b29106a9f63087f2c7fd8d8f5780e1171dec",
+          "output_sha256": "3f83e638679486230b33ee38d7f433158d5815723c57e74c97372758819112b9"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "14dd7b69e690c377009b5b578d7d3effe348d215fa17c1f22696800a5b47e7e5",
+          "output_sha256": "3f83e638679486230b33ee38d7f433158d5815723c57e74c97372758819112b9"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 2
+    },
+    "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "fea9757313089d876c8cca15a8e37eb079c725d7cc44eacf401ef99e9146adaa",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 25,
+      "raw_bytes": 3700,
+      "active_lod_records": 25,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "74e9b6a07a90f340e97674a24a2c2cccfab5c95739e481693e5dee2a271e4522",
+          "output_sha256": "6857150f5bee0c7414649f5970ab78ceeb44c33f1a9c73eee53acb9631132f2a"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "845f79403319401cd072d4c4fd1757dc350144f8300356f0f56b1735dd6c66e4",
+          "output_sha256": "6857150f5bee0c7414649f5970ab78ceeb44c33f1a9c73eee53acb9631132f2a"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "022c51ea0b79a06e2b9a54ab83670f93b2b7a015b846df08e7059c43ebc10872",
+          "output_sha256": "6857150f5bee0c7414649f5970ab78ceeb44c33f1a9c73eee53acb9631132f2a"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 2
+    },
+    "data/object_library/doors/truck_door/truck_door.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "fea9757313089d876c8cca15a8e37eb079c725d7cc44eacf401ef99e9146adaa",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 1,
+      "raw_bytes": 148,
+      "active_lod_records": 1,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "e99fdb6dcb93776273b7de67d1314b95dc78dfc18348cf87f9adf4e72f7e4457",
+          "output_sha256": "05f59b926e8bafda66b3e6171013769487596fac6d5be6c27a59f490bdc3bebf"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "d99d0a1bfd4b07454fa339a548f721942cbdd2f51a6dbd820c6f11045a442140",
+          "output_sha256": "05f59b926e8bafda66b3e6171013769487596fac6d5be6c27a59f490bdc3bebf"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "4b82419a59ba12ce26bd36b04d23aca84e4963a48982088b313fd5f883065a75",
+          "output_sha256": "05f59b926e8bafda66b3e6171013769487596fac6d5be6c27a59f490bdc3bebf"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 2
+    },
+    "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "d12a770d7faddea8a2acaf3ef723243cc3c1935e820202650515d9de5a3d7282",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 6,
+      "raw_bytes": 888,
+      "active_lod_records": 6,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "622c754547ecffbca0e8e859e737d6000cb070c02e36546b0c1f49d25a81add6",
+          "output_sha256": "c671449ff878f4b6e035447f4324d306abdad4db210cc035c19df61f743d85dd"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "9ecca5c35f3af821cc633426ce6a65845ae6bfa5a6b2dd87a4e8e62f039cf511",
+          "output_sha256": "c671449ff878f4b6e035447f4324d306abdad4db210cc035c19df61f743d85dd"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "8d076a310714a51d7052cc0b418ab2ea235a8310bb40b3f5cae34442222c1cad",
+          "output_sha256": "c671449ff878f4b6e035447f4324d306abdad4db210cc035c19df61f743d85dd"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 3
+    },
+    "data/object_library/doors/playerbase_doors/playerbase_doors.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "ec67341d6136455b2f01d4b73ddce5d3c9221ff689638815eb4e6adadc9a58a2",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 3,
+      "raw_bytes": 444,
+      "active_lod_records": 3,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "49995117e0bff082ac8e57e4b1f3fa82bbe10b50a25717810cd0927a27fc64b6",
+          "output_sha256": "b926bf0ea1a1a7a262f52427015544404b3594058e7fc57d8d5150c3ebef8173"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "187d774c5eaaea734b3b9fa1db090089e33242aa7b1229abd82e52060d4e7050",
+          "output_sha256": "b926bf0ea1a1a7a262f52427015544404b3594058e7fc57d8d5150c3ebef8173"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "6a4f9013ee1f2127c3bffbaf39f2091c2ba12a6a6a9b9be2b00db06c84f3472a",
+          "output_sha256": "b926bf0ea1a1a7a262f52427015544404b3594058e7fc57d8d5150c3ebef8173"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 4
+    },
+    "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "ec67341d6136455b2f01d4b73ddce5d3c9221ff689638815eb4e6adadc9a58a2",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 11,
+      "raw_bytes": 1628,
+      "active_lod_records": 11,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "a5f3b923d795e8f613821cbcfabdc922d633fc054209566a6aea51056a24b95a",
+          "output_sha256": "60694cae9d491cbe03baa2b02889b593ed78b48a58902cdb0887b45c392c97b3"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "3e28fe2821d21333f39123060ae1d37226401016fd914af5724766025b4f31f6",
+          "output_sha256": "60694cae9d491cbe03baa2b02889b593ed78b48a58902cdb0887b45c392c97b3"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "182194208fe2a75479afb84fff8c5cdb21031260b1b84386579d37f4d64b6015",
+          "output_sha256": "60694cae9d491cbe03baa2b02889b593ed78b48a58902cdb0887b45c392c97b3"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 4
+    },
+    "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "ec67341d6136455b2f01d4b73ddce5d3c9221ff689638815eb4e6adadc9a58a2",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 19,
+      "raw_bytes": 2812,
+      "active_lod_records": 19,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "a02985581a23149a5b3e3c702a39ba5ae7c5e987c032ec647ac459693edd2dcf",
+          "output_sha256": "b66926c2a0dfbbd9776437731c17785317fe2a085aa7830d7895c26d05c04a80"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "6b579c0ded3d921482459aac1303ead4539a28a020881585944ffb165587de74",
+          "output_sha256": "b66926c2a0dfbbd9776437731c17785317fe2a085aa7830d7895c26d05c04a80"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "7b116a3a111f4b28eec93b557d0b2c1bf70c1296780342b2c3ee003d7edeed41",
+          "output_sha256": "b66926c2a0dfbbd9776437731c17785317fe2a085aa7830d7895c26d05c04a80"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 4
+    },
+    "data/object_library/doors/hatch_door/hatch_door.geo": {
+      "unchanged_function_sha256_lf": "f7e819ad49183122df889cccdce3411884ffe11ca5d2bd21ab56c9ac42bbc92f",
+      "unchanged_disk_declarations_sha256_lf": "07b4ad7f4824984ae88ca67b4462c9c0504322818e9f68b3fd7a240e4b58310d",
+      "generated_harness_sha256": "ec67341d6136455b2f01d4b73ddce5d3c9221ff689638815eb4e6adadc9a58a2",
+      "scope": "Unchanged original unpackLODInfo v5 function+fixed disk declarations; toy runtime destination/allocation helpers only. Raw inputs validated before use.",
+      "model_rows": 1,
+      "raw_bytes": 148,
+      "active_lod_records": 1,
+      "modes": {
+        "release": {
+          "passed": true,
+          "binary_sha256": "b2f9206c1767b95aaf3b1860eaf2a528ea387a5d4a5ec7e0df46b977903dfe07",
+          "output_sha256": "5ca7dc51cbdc43dae16b4beac239f9f59b458922c8d5a67f5abe9375f70e26ca"
+        },
+        "address": {
+          "passed": true,
+          "binary_sha256": "6dd81306aa913dc1a43a484fd0576fe626367fb9c10aac8ef62d6907bec51b38",
+          "output_sha256": "5ca7dc51cbdc43dae16b4beac239f9f59b458922c8d5a67f5abe9375f70e26ca"
+        },
+        "undefined": {
+          "passed": true,
+          "binary_sha256": "a35d30b81e0a05c8935f5bdcb5880723d647dfcc5cce3be850b61c6348f25a24",
+          "output_sha256": "5ca7dc51cbdc43dae16b4beac239f9f59b458922c8d5a67f5abe9375f70e26ca"
+        }
+      },
+      "client_lod_applied": false,
+      "invoked_source_version": 4
+    }
+  },
+  "original_delta_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "source_body_bridge_extended": false,
+  "client_lod_applied": false,
+  "client_materials_available": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_executed": false,
+  "leak_sanitizer": false
+}

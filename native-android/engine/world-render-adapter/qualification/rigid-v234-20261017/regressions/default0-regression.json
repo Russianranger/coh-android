@@ -1,0 +1,202 @@
+{
+  "passed": true,
+  "original32_required": false,
+  "source_revision": "6c8142003d75f3d4cccdba6577bd906055945c14",
+  "source_inputs_unchanged": true,
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/tests/test_rigid_legacy.c": "cac42169449ee718c2eae7cf45d7686724797b2512d6cf148eca2a2ad512ecaf",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.c": "7124e339ecac9d0fb0c0b8d43eca1a784d6d52b7d18600452b646965be279ee4",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_internal.h": "484295680436f84675ba4f87449c9cec6ff306285818387ec1aec062854f3278",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.h": "01f60ed231e19dd8570740c9ebe90dae3209e055f1fc2bbc5c19bafb4b955ddb",
+    "native-android/engine/world-render-adapter/tests/rigid_legacy_fixture.py": "62411674170c1703aa6d789ada71132fd378841d335dd6fb26ad3802bed80ed4",
+    "native-android/engine/world-render-adapter/tests/rigid_fixture.py": "4e03db7dbc235c210f466a6635d6e5fd9bfa322bec36c9cc5ea5147da82fee66",
+    "native-android/engine/world-render-adapter/rigid-atlas-v0-pins.json": "8840d236e2b3218289699c8bb4f0671bf7f9738bd56ca098efc265c37aeb117f",
+    "native-android/engine/world-render-adapter/rigid-source-pins.json": "246dd1893b5d3d7c9be9b087f8eab42a31272499331e9fb1bf1a270284cdc5ab",
+    "native-android/engine/world-render-adapter/check_rigid_legacy.py": "60e6ce50e4c80680c0c5038a7ed9b9323d72c60b7e7d80e8b20ec339ecaf9cfa",
+    "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e"
+  },
+  "actual_body": {
+    "schema": 1,
+    "asset_path": "data/object_library/buildings/elements/signs/neon/neon.geo",
+    "source_geo_name": "object_library/Buildings/Elements/signs/Neon/neon.geo",
+    "sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+    "bytes": 3684,
+    "model": "_sign_Neon_BarVERT",
+    "original_disk_model_row": 3,
+    "sorted_runtime_model_row": 0,
+    "vertices": 90,
+    "triangles": 56,
+    "partition": [
+      2,
+      56,
+      "Bar_vert_sign.tga"
+    ],
+    "source_observation": {
+      "resource_ordinal": 35283,
+      "record_sha256": "ed64d6b265b4a8ef688dd43d4df5db29c0b1fdca1cd70f4c9be15b78fc30d0b2",
+      "owner_kind": 1,
+      "file": 457,
+      "slot": 3,
+      "original_id": 3,
+      "definition_name": "_sign_Neon_BarVERT",
+      "sorted_runtime_model_row": 0,
+      "geo_version": 0,
+      "texture_partitions": [
+        [
+          2,
+          56,
+          "Bar_vert_sign.tga"
+        ]
+      ]
+    },
+    "candidate_report_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+    "capture_sha256": {
+      "catalog.cohcat": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+      "source-identity.json": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+      "run-identity.json": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+      "resource-binding.json": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c",
+      "runtime.cohrts": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+      "resources.cohres": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+    },
+    "manifest_sha256": {
+      "client-visual-manifest.json": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+      "atlas-world-supplement-manifest.json": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+    },
+    "original_provenance": {
+      "manifest": "atlas-world-supplement-manifest.json",
+      "manifest_asset_path": "data/object_library/buildings/elements/signs/neon/neon.geo",
+      "original_pigg_path": "object_library/Buildings/Elements/signs/Neon/Neon.geo",
+      "comparison": "ascii_casefold_provenance_path",
+      "bytes": 3684,
+      "sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+      "source_archive": "stage3c.pigg",
+      "source_metadata_sha256": "68d1492e9add5a4237fa96c8ed4e6cc52ec14af20404755ba933450c58cb3bdb",
+      "source_url": "https://dists.thunderspy.org/piggs/stage3c.pigg",
+      "source_etag": "\"2f71c55dbc18d7ccd3f2d97714a544bc\"",
+      "source_member_range": "bytes 1595287-2173824/120989824",
+      "md5_table": "84bfbc4c12ab6615fe613d10908de99f",
+      "cached_header_sha256": null,
+      "cached_header_id": 7,
+      "geometry_header": {
+        "baseline_loader_accepts_version": true,
+        "data_block_bounds_verified": true,
+        "header_decompression_verified": true,
+        "header_uncompressed_bytes": 2516,
+        "runtime_compatibility": "unverified",
+        "version": 0
+      },
+      "observed_header_version_equal": true,
+      "body_bytes_acquired": false,
+      "source_generation_proven": false,
+      "status": "lookup_candidate_not_resource_pin"
+    },
+    "raw_body_sha_verified_locally": true,
+    "root_reachable_source_observation": true,
+    "source_generation_established": false,
+    "direct_opened_geo_hash_available": false,
+    "material_authority": false,
+    "world_authority": false
+  },
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 243,
+      "legacy_version": 0,
+      "malformed_legacy_cases": 15,
+      "authentic_vertices": 90,
+      "authentic_triangles": 56,
+      "pins_balanced": true,
+      "material_fixture_only": true,
+      "loaded_generation_fixture_only": true,
+      "same_source_generation_established": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 243,
+      "legacy_version": 0,
+      "malformed_legacy_cases": 15,
+      "authentic_vertices": 90,
+      "authentic_triangles": 56,
+      "pins_balanced": true,
+      "material_fixture_only": true,
+      "loaded_generation_fixture_only": true,
+      "same_source_generation_established": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 243,
+      "legacy_version": 0,
+      "malformed_legacy_cases": 15,
+      "authentic_vertices": 90,
+      "authentic_triangles": 56,
+      "pins_balanced": true,
+      "material_fixture_only": true,
+      "loaded_generation_fixture_only": true,
+      "same_source_generation_established": false,
+      "world_authority": false
+    }
+  },
+  "original_readModel": {
+    "source_layout_passed": true,
+    "original_consumer_executed": false,
+    "true32bit_freestanding_linux_execution": false,
+    "execution_refusal": {
+      "errno": 8,
+      "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v234-v0-original/original-read-model'",
+      "binary_sha256": "c419ec27d63632d307eda70f056929a075a79cadaf5e59a936a48180780c717e",
+      "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+    },
+    "source_layout_offsets": [
+      216,
+      0,
+      4,
+      12,
+      20,
+      28,
+      32,
+      36,
+      40,
+      80,
+      84,
+      88,
+      92,
+      132
+    ],
+    "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+    "source_model_record_bytes": 216,
+    "metadata_and_pack_scalars_compared": 0,
+    "original_grid_pack_declarations_unchanged": true,
+    "generated_oracle_sha256": "c9b21045159a38521812ec3cdf48699db867d60791db6cd77b9b7da8952f44a2",
+    "binary_sha256": "c419ec27d63632d307eda70f056929a075a79cadaf5e59a936a48180780c717e"
+  },
+  "original_delta_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "packets_sha256": {
+    "actual": "1ae8e759135cd9ce299df21af5010c8418b11a603c1ba947f5f6df8cee431baf",
+    "authored": "c9b549f90e04b5b578059e4f6b2db21dd66a05b28a9cf53f6064059c91d4bcb9"
+  },
+  "android_build": false,
+  "android_execution": false,
+  "physical_thor": false,
+  "source_generation_established": false,
+  "material_fixture_only": true,
+  "world_authority": false
+}

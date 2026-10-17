@@ -1,0 +1,12 @@
+typedef struct{uint32_t ordinal,kinds,quads,pivots;const char*path,*model,*points_sha,*pivots_sha;} SpecialRoute;
+static const SpecialRoute special_routes[]={
+{23835,1,33,0,"data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_01.geo","_deco_skyscraper_01","4fee765fd174723f3b3df073114ca7e2a8103ee38b8028e771d6c743a2e3fd0f","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+{23839,1,20,0,"data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_02.geo","_deco_skyscraper_02","a4c65d6b2cabb950104397755135461bef99896fa2e928a1f6893557dfe5f03f","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+{23855,1,62,0,"data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_05.geo","_deco_skyscraper_05","dbbc0859c0cb70f54d9a2a180068d6aef619a15f0f58f0e245e6b6b665e64771","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+{23848,1,68,0,"data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_06.geo","_deco_skyscaper_06","e8b5afa292c26a6818dd687001fa332a946551e4f114e45a82c3c699343e06b6","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+{23676,1,126,0,"data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_07.geo","_deco_skyscraper_07","406b7893605e720597ab3d6c9998dc375c4281210ae25003d70df616c3bc7c75","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+{23856,1,29,0,"data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_13.geo","_deco_skyscraper_13","bb888aaa5ec602966ed15a02c77965ea8440e31f2af87b709fe87bc657e642da","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+{35044,2,0,0,"data/object_library/nature/trees/conifers/conifers.geo","_conifer_shadow_sml1__ffshadowlg","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+{25926,1,20,0,"data/object_library/special_buildings/architect_entertainment/architect_entertainment_exterior.geo","_ArchEnt_Bldg_Exterior","8772a8748b506fe234bef8a0ea8def46d1f5c93d41c296041107d95c20b2628b","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+{39692,4,0,3,"data/object_library/temp/pivot_test/pivot_test.geo","masterpivot","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","9635bf7ba4b2e008d4a74434043eba19052e6c528af22ef1f541783fbb785631"},
+};
