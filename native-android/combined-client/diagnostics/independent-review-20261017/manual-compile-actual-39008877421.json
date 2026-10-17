@@ -1,0 +1,53 @@
+{
+  "passed": true,
+  "run_id": 39008877421,
+  "source_commit": "365bc28e0433112e2292e44f6338da9fbc5c270e",
+  "control_source_inputs_raw_git_verified": 72,
+  "compile_helper_raw_git_verified": 63,
+  "controls": 15,
+  "control_skips": 0,
+  "source_files": 6007,
+  "generated_files": 30,
+  "dependencies": 3,
+  "successful_commands": 15,
+  "compile_receipt_sha256": "0650684df71a74e51b57ff262ce85e6d7c4802657186a4971b7e4f57ff78bb25",
+  "controls_receipt_sha256": "2ab02e594270ec75af7ea92635e1f12f6daf4e0e8bf96dbfd1f38c0859499a0e",
+  "dbserver_pe_sha256": "9144727b021526b3777cba53e4935c0ab9c35a76a51d6f00aa50678b7590ea63",
+  "crashrpt_sha256": "055c5e42e43fc19f29eea88dbd6854448989ccb2fc2f7e8a928f8cecc04ed5b3",
+  "admission": {
+    "admitted": true,
+    "scope": "Caller-pinned full manual PG/Wine compile only; ordinary PE import inventory, no execution or runtime dependency admission.",
+    "binary_sha256": "9144727b021526b3777cba53e4935c0ab9c35a76a51d6f00aa50678b7590ea63",
+    "service_executed": false,
+    "shipping_runtime_replacement_permit": false,
+    "live_authenticated_db_login_verified": false,
+    "actual_persistence_verified": false,
+    "nondevelopment_version_observed": false,
+    "manual_wait_skip_permitted_for_real_auth": false
+  },
+  "scope": "Exact archived compile-only evidence; no binary/compiler/service execution by this verifier; no persistence/Wine/runtime replacement admission.",
+  "independent_source_verifier_sha256": "ccc5028e5b92094b4d91f8af8226a0eea6203fe0c0c053366e224d79d476b1f8",
+  "independent_replay": true,
+  "verifier_source_commit": "b7a1b5ebf1b02b4573252b53fe58383b9c2b5f52",
+  "review": [
+    "Exact frozen b7 verifier source bytes admitted against Git before execution in fresh -B interpreter; only pure historical driver.admit ran from newly created exact Git helper source tree. No compiler/PE/service execution.",
+    "Independently replayed strict archive CRC/wholeZIP SHA/file identity, raw Git source/control/helper identities and caller-pinned historical source/toolchain/PE admission. Exact6007 staged source plus30generated sidecars and all3patched dependency maps are retained;15recorded commands returnedzero.",
+    "Actual Windows15controls passed withoutskips, including real CMake interpreter path regression and pre/post exact11tool/SDK/PATHcmake guards. Earlier failing configure receipt remains historical; newsuccess does not erase it.",
+    "Win32PE/import parsing establishes binary format only. CrashRpt replacement SHA differs accepted donor; ordinary DLL names do not qualify Wine exports, VC runtimes, loader compatibility, persistence/version/checksum/authenticated DB/Map. No runtimeprofile replacement permit."
+  ],
+  "raw_archives": {
+    "compile.zip": {
+      "bytes": 2086456,
+      "sha256": "641c7f1eb7637c2c81ac0dc8861a5597654ea8bcc17c70f917ac1a79c25b38e9"
+    },
+    "controls.zip": {
+      "bytes": 4630,
+      "sha256": "c934e2eea66bf701d83c74426c2517253a8a0aec91d5106c0145bbecce5826a4"
+    }
+  },
+  "binary_reexecuted": false,
+  "runtime_dependency_admission": false,
+  "persistence_qualified": false,
+  "world_authority": false,
+  "android_executed": false
+}

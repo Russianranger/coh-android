@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "run": 39008877491,
+  "artifact": 12091812003,
+  "artifact_bytes": 19183,
+  "artifact_sha256": "a3254d830cb02378cf115ce94b3416578f6cce6662e4abcd01c42d31e5215b0d",
+  "receipt_sha256": "0e18fb1bafe86a2030922394e025337675fc90a8be6e2ae3e2c307d16e435a4b",
+  "source_revision": "365bc28e0433112e2292e44f6338da9fbc5c270e",
+  "source_inputs_verified": 4,
+  "retained_members_verified": 325,
+  "actual_cases": 35,
+  "versions": {
+    "2": 21,
+    "3": 2,
+    "4": 12
+  },
+  "stdout_bytes_each": 220,
+  "all_stderr_empty": true,
+  "all_expected55facts_equal": true,
+  "binary_reexecuted_by_verifier": false,
+  "compiler_executed": false,
+  "Win32_engine_executed": false,
+  "android_executed": false,
+  "live_world": false
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "coh-actual-manual-compile-evidence-seal-v1",
+  "inputs": {
+    "compile.zip": {
+      "bytes": 2086456,
+      "sha256": "641c7f1eb7637c2c81ac0dc8861a5597654ea8bcc17c70f917ac1a79c25b38e9"
+    },
+    "verify.py": {
+      "bytes": 4197,
+      "sha256": "ccc5028e5b92094b4d91f8af8226a0eea6203fe0c0c053366e224d79d476b1f8"
+    },
+    "controls.zip": {
+      "bytes": 4630,
+      "sha256": "c934e2eea66bf701d83c74426c2517253a8a0aec91d5106c0145bbecce5826a4"
+    },
+    "admission.json": {
+      "bytes": 1416,
+      "sha256": "4f54edd9c72a96869b1079f860549a235ec446820ff61d746f00bb812df3a03b"
+    },
+    "README.md": {
+      "bytes": 3251,
+      "sha256": "15cb4fded35a693ea34c415df71135c464c1dd06fe10e3a8ec2ac5873a483594"
+    }
+  },
+  "source_commit": "365bc28e0433112e2292e44f6338da9fbc5c270e",
+  "scope": "Read-only artifact admission; compile-only, no runtime replacement or service execution."
+}

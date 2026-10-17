@@ -1,0 +1,38 @@
+{
+  "schema": "coh-independent-full-trick-inputs-review-v1",
+  "source_commit": "3d2d20b99b2c978b266b34d5f69353632a4adfba",
+  "evidence_commit": "978b09b1c9d0285b3f00f69d10818d0d77b1e7f0",
+  "association_source_commit": "995875e9497e7b3c5016825b9217d6e7fb9836e7",
+  "association_evidence_commit": "1b685b0ded33c73579219ba9f7b940592e55e8cb",
+  "verdict": "approved_historical_wire_and_name_correlation_scope",
+  "receipts": [
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/client-trick-cache-20261017/host.json",
+      "sha256": "b393880118a5a6a1c9187c244c3a6c8eb1c801700cf7a0fa7e5f27a8078edb00",
+      "sources_checked_git_and_current": 53
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/client-trick-cache-20261017/captured-name-associations.json",
+      "sha256": "3116f9d80c8b985649f9f073704ee75ec5fb7d2de3da45cbaa81714b5b2e94f3",
+      "sources_checked_git_and_current": 6
+    }
+  ],
+  "review": [
+    "Complete persisted28/4/7-field Trick/StAnim/AutoLOD tables retained unchanged. Typed storage observer distinct from original EArray/Win32 runtime; CRC observed not recomputed. Bounded one-level arrays and finite scalar validation; raw child ordering retained.",
+    "Exact cacheSHA/path/importlabel checked against opaque TexOpt owner. Independent pin allows TexOpt retirement; loader remains borrowed and outlives owner. Only fixed208600-byte metadata, no eager runtime child tree.",
+    "32KiB own/static and whole loader reservation charged before acquisition/calloc. External accounting must cover TexOpt metadata/loader/static, providers/other owners; explicit conservative shared-loader double charge. Candidate failures free metadata/release pin, late output publication, known owner/blob aliases rejected.",
+    "Lazy getters publish value after full bounded parse; original numeric prefix and independent group flag statement only. Local backpointer never escapes. Animation tracks, geometry AutoLOD, active dictionary registration and currentgeneration all unresolved.",
+    "Heapsort plus equal-key highest original ordinal reproduces reverse nonoverwriting name ownership without silently dropping any row.",
+    "Checked-source helpers frozen before execution and revalidated. Native production compiled standalone/export closure checked. Correlation fixed hashes+bounded input extents prove5994name/source-file matches only, including1959rootmodel and4035other observations; other does not mean unreachable."
+  ],
+  "reported_checks_each_mode": 84839,
+  "wire_rows": 3644,
+  "stanim_children": 106,
+  "autolod_children": 273,
+  "independent_expensive_rerun": false,
+  "active_client_generation": false,
+  "animation_binding_executed": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_executed": false
+}

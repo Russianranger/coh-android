@@ -1,0 +1,36 @@
+#include "coh_initial_suffix_attributes.h"
+#include <openssl/sha.h>
+#define main original_suffix_component_main
+#include "test_suffix.c"
+#undef main
+typedef struct{const uint8_t*data;size_t bytes,start,bits;unsigned mode,mods;size_t attribute_begin,attribute_end,suffix_end;}FullFixture;
+#include "attribute-suffix-fixtures.h"
+typedef struct{unsigned calls,cancel_at;}CancelOwner;
+static int cancel(void*opaque){CancelOwner*c=opaque;c->calls++;return c->calls==c->cancel_at;}
+static CohStatus digest(void*opaque,CohBytes b,uint8_t hash[32]){(void)opaque;SHA256(b.data,b.size,hash);return COH_OK;}
+typedef struct{Owner base;size_t attribute_maximum;unsigned attribute_requests,oversized_attribute;}AttributeOwner;
+static CohStatus tracked_acquire(void*opaque,size_t minimum,size_t maximum,CohSuffixLoan*loan){AttributeOwner*o=opaque;if(minimum==coh_initial_suffix_attributes_stage_bytes(COH_SUFFIX_ATTRIBUTES)){o->attribute_requests++;o->attribute_maximum=maximum;if(o->oversized_attribute){CHECK(coh_initial_suffix_stage_bytes(COH_SUFFIX_CHARACTER)>maximum);CHECK(!o->base.active&&!loan->data&&!loan->bytes&&!loan->charged_bytes);return COH_LIMIT;}}return acquire(&o->base,minimum,maximum,loan);}
+static void tracked_release(void*opaque,CohSuffixLoan*loan){AttributeOwner*o=opaque;release(&o->base,loan);}
+static CohStatus attributed_parse(CohRepReader*r,const CohSuffixAttributesContext*c,AttributeOwner*owner,size_t budget,size_t retained){CohRepReader before=*r;CohSuffixMemory memory={owner,sizeof(*owner),tracked_acquire,tracked_release};memset(&out,0xa5,sizeof(out));prior=out;CohStatus s=coh_initial_suffix_attributes_diagnostic(r,c,&memory,&out,&report,budget,retained);CHECK(s!=COH_OK);CHECK(!memcmp(r,&before,sizeof(*r))&&!memcmp(&out,&prior,sizeof(out)));CHECK(!owner->base.active);if(owner->attribute_requests){size_t base=sizeof(*r)+sizeof(*c)+sizeof(memory)+sizeof(out)+sizeof(report)+COH_SUFFIX_STACK_RESERVE+sizeof(*owner)+retained;if(c->attribute_schema)base+=sizeof(*c->attribute_schema)+c->attribute_schema->input.size;if(c->attribute_control)base+=sizeof(*c->attribute_control)+c->attribute_control->context_bytes+c->attribute_control->scratch_reserve;CHECK(base<=COH_ATTRIB_DESCRIPTION_RAM_MAX&&r->bytes.size<=COH_ATTRIB_DESCRIPTION_RAM_MAX-base);CHECK(owner->attribute_maximum<=COH_ATTRIB_DESCRIPTION_RAM_MAX-base-r->bytes.size);}CHECK(!report.validated.complete_initial_update&&!report.validated.actor_publication&&!report.validated.ack_permitted&&!report.validated.dictionary_authority);return s;}
+int main(int argc,char**argv){if(argc!=2)return 2;FILE*f=fopen(argv[1],"rb");if(!f)return 2;uint8_t input[5892];CHECK(fread(input,1,sizeof(input),f)==sizeof(input)&&fgetc(f)==EOF);fclose(f);CohAttributeDictionary*schema=malloc(sizeof(*schema));CohAttributeDictionaryWorkspace*work=malloc(sizeof(*work));CHECK(schema&&work);uint8_t hash[32];SHA256(input,sizeof(input),hash);CohCostumeImportDigest di={digest,NULL,0,0};CHECK(coh_attribute_dictionary_read((CohBytes){input,sizeof(input)},123,hash,&di,schema,work,COH_ATTRIBUTE_DICTIONARY_RAM_MAX,0)==COH_OK);unsigned full=0,monitor=0;
+ for(unsigned i=0;i<sizeof(fixtures)/sizeof(fixtures[0]);i++){
+  const Fixture*v=&fixtures[i];CohSuffixAttributesContext c={0};c.base=context(v);c.attribute_schema=schema;c.attribute_lease=123;memcpy(c.expected_attribute_sha256,hash,32);AttributeOwner o={0};CohRepReader r=reader(v,v->data,v->bytes,v->bits);CohStatus s=attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0);
+  if(!v->control){CHECK(s==COH_UNSUPPORTED&&report.validated.raw_suffix_syntax_validated&&report.validated.end_bit==v->bits&&report.validated.stage_count==10);monitor++;}
+  else CHECK(!report.validated.raw_suffix_syntax_validated&&report.stage==(v->control==1?COH_SUFFIX_INVENTORY:v->control==2?COH_SUFFIX_ATTRIBUTES:COH_SUFFIX_SOCIAL));
+ }
+ for(unsigned i=0;i<sizeof(full_fixtures)/sizeof(full_fixtures[0]);i++){
+  const FullFixture*v=&full_fixtures[i];Fixture original={v->data,v->bytes,v->start,v->bits,v->mode,0,0,0,{{0}}};CohSuffixAttributesContext c={0};c.base=context(&original);c.attribute_schema=schema;c.attribute_lease=123;memcpy(c.expected_attribute_sha256,hash,32);CancelOwner cancel_owner={0};CohAttribReadControl control={{cancel,&cancel_owner},sizeof(cancel_owner),0};c.attribute_control=&control;AttributeOwner o={0};CohRepReader r=reader(&original,v->data,v->bytes,v->bits);CohStatus s=attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0);CHECK(s==COH_UNSUPPORTED&&report.validated.raw_suffix_syntax_validated&&report.validated.stage_count==10&&report.validated.end_bit==v->bits);CHECK(report.validated.stages[7].begin_bit==v->attribute_begin&&report.validated.stages[7].end_bit==v->attribute_end&&report.validated.stages[7].observations[0]==1&&report.validated.stages[7].observations[2]==1&&report.validated.stages[7].observations[3]==69&&report.validated.stages[7].observations[4]==v->mods);full++;
+  if(i%16==0){
+   unsigned polls=cancel_owner.calls;
+   r=reader(&original,v->data,v->bytes,v->bits);o=(AttributeOwner){0};o.oversized_attribute=1;CHECK(attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0)==COH_LIMIT&&report.stage==COH_SUFFIX_ATTRIBUTES&&o.attribute_requests==1);
+   for(unsigned bit=0;bit<3;bit++){size_t cut=bit==0?v->attribute_begin:bit==1?v->attribute_end:v->bits;r=reader(&original,v->data,v->bytes,cut-1);o=(AttributeOwner){0};cancel_owner=(CancelOwner){0};CHECK(attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0)!=COH_OK&&!report.validated.raw_suffix_syntax_validated);cuts++;}
+   for(unsigned at=1;at<=polls;at++){r=reader(&original,v->data,v->bytes,v->bits);o=(AttributeOwner){0};cancel_owner=(CancelOwner){0,at};CHECK(attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0)==COH_CANCELLED&&report.stage==COH_SUFFIX_ATTRIBUTES&&!report.validated.raw_suffix_syntax_validated);}
+   cancel_owner=(CancelOwner){0};
+   for(unsigned fail=1;fail<=10;fail++){r=reader(&original,v->data,v->bytes,v->bits);o=(AttributeOwner){0};o.base.fail_at=fail;CHECK(attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0)==COH_LIMIT&&report.stage==fail);}
+   const void*aliases[]={&c,schema,input,&control,&cancel_owner};for(unsigned j=0;j<5;j++){r=reader(&original,v->data,v->bytes,v->bits);o=(AttributeOwner){0};o.base.kind=3;o.base.packet=aliases[j];CHECK(attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0)==COH_INVALID);}
+   for(unsigned kind=1;kind<=6;kind++){r=reader(&original,v->data,v->bytes,v->bits);o=(AttributeOwner){0};o.base.kind=kind;o.base.packet=v->data;CHECK(attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0)==((kind==1||kind==6)?COH_LIMIT:COH_INVALID));}
+   r=reader(&original,v->data,v->bytes,v->bits);o=(AttributeOwner){0};c.expected_attribute_sha256[0]^=1;CHECK(attributed_parse(&r,&c,&o,COH_SUFFIX_RAM_MAX,0)==COH_STATE&&report.stage==COH_SUFFIX_ATTRIBUTES);c.expected_attribute_sha256[0]^=1;
+   r=reader(&original,v->data,v->bytes,v->bits);o=(AttributeOwner){0};CHECK(attributed_parse(&r,&c,&o,1024,0)==COH_LIMIT&&o.base.ordinal==0);
+  }
+ }
+ CHECK(acquisitions==releases);free(work);free(schema);printf("{\"checks\":%llu,\"monitor_profiles\":%u,\"full_profiles\":%u,\"cuts\":%llu,\"loans\":%llu,\"peak_loan\":%llu,\"world_authority\":false,\"actor_publication\":false,\"ack_permitted\":false}\n",(unsigned long long)checks,monitor,full,(unsigned long long)cuts,(unsigned long long)acquisitions,(unsigned long long)peak);return 0;}

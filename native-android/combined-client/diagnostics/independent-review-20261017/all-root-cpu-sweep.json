@@ -1,0 +1,56 @@
+{
+  "schema": "coh-independent-all-root-cpu-sweep-review-v1",
+  "native_source_commit": "469eb4e996ef55d049c8bbddbbbb885d672823d0",
+  "required_helper_source_fix_commit": "4dbdc6415d3ce43960de513adec00b0c0963864a",
+  "verdict": "approved_host_geometry_diagnostic_and_new_helper_replay_scope",
+  "receipts": [
+    {
+      "path": "native-android/engine/scenecatalog/evidence/source-cpu-sweep-final-host.json",
+      "sha256": "d4227d4c974c270c83c8df130dc4d76ee47503cf6df879514bf0a1744f3e9a5c",
+      "source_count": 58,
+      "git_matched": true,
+      "current_also_matched": false
+    },
+    {
+      "path": "native-android/engine/scenecatalog/evidence/source-cpu-checked-source-host.json",
+      "sha256": "3c4e93f64bda41cf05bb083f9f35e2ad34c1a73724c208f24d4215895196c4e1",
+      "source_count": 61,
+      "git_matched": true,
+      "current_also_matched": true
+    },
+    {
+      "path": "native-android/engine/scenecatalog/evidence/source-cpu-checked-source-controls.json",
+      "sha256": "ec68dfa636476a714b08cbd9928d62b54155aa74a0c41caf5d5eca7c79a85c0f",
+      "source_count": 5,
+      "git_matched": true,
+      "current_also_matched": true
+    },
+    {
+      "path": "native-android/engine/scenecatalog/evidence/source-cpu-checked-consistency-host.json",
+      "sha256": "567175727b0f6e3da3508176b54c3b03693a6b98e9a849d491064d7aebc4b059",
+      "source_count": 3,
+      "git_matched": true,
+      "current_also_matched": true
+    }
+  ],
+  "review": [
+    "Native sequential sweep derives all source labels/model rows/digests from actual SourceBody leases. Resource retires before per-file Body, Body before loader/file; all391cleanupspinned0. Graph/catalog/snapshot/source owners retained through last use. No transfer bridge API exercised.",
+    "All2916root-unique geometry pairs/3083owners covered:2907ordinary CPU preparations,9explicit supplemental cases. Exact materials are checked but fixturetextures/materialgen19 do not grant CLIENT/material/portal/LOD/visibility/GPU/world authority.",
+    "Complete namedmodule maximum94484170B below96MiB. Whole32MiB loader plus retained ownership, fixed256KiB diagnostic stack/provider reserve+actual plan/pair heap charged. CPU and supplemental resource phases not simultaneous. Host allocator/Python/sanitizer/driver RSS remain outside component budget.",
+    "Historical469 native compiled modes preserved. Initial Python import-before-freeze/PYC gap explicitly acknowledged; required4db checked-source bootstrap snapshots all project inputs before first helper, executes copied admitted source bytes, verifies before/after every load and ignores sys.modules/PYC.",
+    "17guardcontrols include3timestamp-valid poisonedPYC proving oldloaderpoison and checked-source correction. New checked helper independently reexecutes unchanged original delta over all2907retained successful packets, reconciles everypair/owner/cleanup with1positive+18negative consistency controls. Does not retroactively claim old helper-byte execution; native sweep not repeated."
+  ],
+  "cpu_successes": 2907,
+  "special_cases": 9,
+  "pairs": 2916,
+  "owners": 3083,
+  "files": 391,
+  "original_delta_scalars": 9180745,
+  "original_delta_packet_bytes": 267273196,
+  "independent_expensive_rerun": false,
+  "world_authority": false,
+  "client_materials_available": false,
+  "direct_open_observed": false,
+  "android_executed": false,
+  "original32_readModel_executed_by_sweep": false
+}

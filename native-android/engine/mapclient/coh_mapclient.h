@@ -100,7 +100,7 @@ CohStatus coh_map_client_service(CohMapClient *, uint64_t now_ms, CohCancel);
  * reader starts immediately after the normalized command in the exact owned
  * decoded message; cursor/bits/alignment retain their original representation.
  * All pointers, including the event, expire when the callback returns. The
- * callback must not modify input, retain pointers or reenter any client method.
+ * callback must not modify input, retain pointers or reenter any client method except the lease getter below.
  * It may copy/prepare under its own explicit aggregate memory/work budget;
  * callback allocations and retained copies are NOT charged by this controller.
  * Called at most message_budget times per service, never for a failed parse.
@@ -119,6 +119,28 @@ typedef struct {
 typedef void (*CohMapSceneObserver)(void *, const CohMapSceneObservation *);
 CohStatus coh_map_client_service_observed(CohMapClient *, uint64_t now_ms,
     CohCancel, CohMapSceneObserver, void *context);
+/* Actual-current receive loan, never a durable session or source-generation
+ * certificate. Getter succeeds only inside this client's current scene callback
+ * for its EXACT event address and original reader representation. It derives all
+ * fields from the opaque client and actual decoded network loan; caller supplies
+ * no replacement labels. Output is a value copy; reader bytes still expire on
+ * callback return. Copy bytes under an explicit budget before returning.
+ * Only this getter may be called from the callback; all other client reentry
+ * remains forbidden. Known client/event/message/payload spans must be disjoint
+ * from output. Failure leaves output unchanged. Selected DBID provenance remains
+ * unbound for legacy raw begin authorization, even when positive. Connection ID
+ * and message generations are local correlation observations, not secrets or
+ * durable identity tokens. No ACK, authentication, actor or world permit. */
+typedef struct {
+ CohRepReader reader;CohGroupsInspection inspection;
+ uint64_t message_generation;
+ uint32_t message_id,ordered_id,connection_id,transport_version;
+ uint32_t map_generation,selection_generation,selected_slot,selected_dbid,map_id,map_link_id;
+ unsigned ordered,local_development_authorized;
+ unsigned selected_dbid_owner_bound,source_generation_admitted,world_authority;
+} CohMapSceneLease;
+CohStatus coh_map_client_scene_lease(const CohMapClient *,const CohMapSceneObservation *,
+ CohMapSceneLease *);
 CohStatus coh_map_client_disconnect(CohMapClient *, uint64_t now_ms);
 void coh_map_client_suspend(CohMapClient *);
 void coh_map_client_close(CohMapClient *);

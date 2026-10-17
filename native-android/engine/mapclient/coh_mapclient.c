@@ -40,6 +40,9 @@ struct CohMapClient {
     CohRepSession inspector;CohRepSchema schema;
     uint32_t cookie,last_connect_id;uint64_t last_ms,phase_ms;
     unsigned authorized;
+    const CohMapSceneObservation *active_scene;
+    const CohNetOwnedMessage *active_message;
+    CohRepReader active_reader;
 };
 CohStatus coh_map_config_validate(const CohMapConfig *c) {
     if(!c||!c->application_timeout_ms||!c->message_budget||c->message_budget>16||c->cod>1)return COH_INVALID;
@@ -189,7 +192,9 @@ static CohStatus inspect(CohMapClient *m,const CohNetOwnedMessage *message,uint6
                 m->diag.generation,m->diag.selection_generation,m->diag.selected_slot,
                 m->diag.selected_dbid,m->diag.map_id,m->diag.map_link_id,
                 m->diag.local_development_authorized};
+            m->active_scene=&event;m->active_message=message;m->active_reader=observed_reader;
             observer(context,&event);
+            m->active_scene=NULL;m->active_message=NULL;memset(&m->active_reader,0,sizeof(m->active_reader));
         }
         /* Complete normal grammar is not an imported/resolved scene graph.
          * No CRC or authoritative character acceptance is inferred here. */
@@ -263,6 +268,17 @@ CohStatus coh_map_client_service_observed(CohMapClient *m,uint64_t now,CohCancel
         coh_map_client_close(m);m->diag.phase=COH_MAP_TIMED_OUT;m->diag.timeouts++;return COH_STATE;
     }
     return result;
+}
+static int scene_disjoint(const void*a,size_t an,const void*b,size_t bn){uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;if(!an||!bn)return 1;if(!a||!b||an>UINTPTR_MAX-x||bn>UINTPTR_MAX-y)return 0;return x+an<=y||y+bn<=x;}
+CohStatus coh_map_client_scene_lease(const CohMapClient*m,const CohMapSceneObservation*event,CohMapSceneLease*out){
+ if(!m||!event||!out)return COH_INVALID;
+ if(!m->active_scene||event!=m->active_scene||!m->active_message)return COH_STATE;
+ const CohNetOwnedMessage*n=m->active_message;const CohRepReader*r=&m->active_reader;
+ if(!scene_disjoint(out,sizeof(*out),m,sizeof(*m))||!scene_disjoint(out,sizeof(*out),event,sizeof(*event))||!scene_disjoint(out,sizeof(*out),n,sizeof(*n))||!scene_disjoint(out,sizeof(*out),n->payload,n->payload_bytes))return COH_INVALID;
+ if(!m->authorized||!n->generation||!n->payload||r->bytes.data!=n->payload||r->bytes.size!=n->payload_bytes||r->bits!=n->payload_bits||r->compressed!=n->compressed||r->cursor>r->bits||event->reader.bytes.data!=r->bytes.data||event->reader.bytes.size!=r->bytes.size||event->reader.bits!=r->bits||event->reader.cursor!=r->cursor||event->reader.compressed!=r->compressed||event->reader.max_bytes!=r->max_bytes)return COH_STATE;
+ CohMapSceneLease v;memset(&v,0,sizeof(v));v.reader=*r;v.inspection=m->diag.scene_inspection;v.message_generation=n->generation;v.message_id=n->id;v.ordered_id=n->ordered_id;v.ordered=n->ordered;v.connection_id=m->last_connect_id;v.transport_version=m->config.udp.link.version;
+ v.map_generation=m->diag.generation;v.selection_generation=m->diag.selection_generation;v.selected_slot=m->diag.selected_slot;v.selected_dbid=m->diag.selected_dbid;v.map_id=m->diag.map_id;v.map_link_id=m->diag.map_link_id;v.local_development_authorized=m->diag.local_development_authorized;
+ *out=v;return COH_OK;
 }
 CohStatus coh_map_client_disconnect(CohMapClient *m,uint64_t now) {
     if(!m||now<m->last_ms)return COH_INVALID;

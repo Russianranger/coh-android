@@ -367,8 +367,9 @@ Initial full_update forces both team and league upToDate flags to zero; existing
 full social bodies are complete. A true flag is an impossible source initial
 profile, not missing social grammar. Attributes are sent only at the owner/tick
 modulo8 schedule. Their full branch additionally requires the saved combat
-numbers window displaying; full ordered attribute values and modifier list
-remain unsupported until the exact description schema is admitted. The monitor
+numbers window displaying; full ordered attribute values and modifier list now have a bounded schema-bound
+raw decoder and additive enclosing profile; matching runtime generation and
+semantic application remain unqualified. The monitor
 branch already reads all11 source slots. Active invention raw producer data are
 completely decoded in `coh_invention_update_read`, but the combined phase refuses
 nonzero statusChange because the original invention_Receive is a no-op. Any
@@ -407,5 +408,65 @@ consumer fixtures and120 original monitor cases pass release/ASan/UBSan;
 boundaries,181 mutations and13 explicit local modifier/text-cap/nonfinite/tag
 controls. The latter are synthetic exact-original-leaf joins, not additional
 original gameplay object executions. No complete initial update, actor or ACK
-is accepted; the frozen initial suffix/composer still uses its previous monitor
-profile until an explicit schema-bound additive profile is integrated/qualified.
+is accepted; the frozen original suffix/composer retains its previous monitor
+profile. New additive schema-bound profiles preserve that API and behavior.
+
+The additive `coh_initial_suffix_attributes_diagnostic` now composes that full/
+monitor attribute transaction into the ten-stage source-ordered suffix. Original
+suffix API and all native monitor/social implementations remain unchanged; nine
+other dispatcher stage bodies are byte-identical to the frozen implementation.
+80 exact-bit-offset full joins and55 existing source profiles qualify in the new
+profile, with18,994 release/ASan/UBSan assertions/mode and4,675 balanced loans.
+Schema/cache/control storage and parent aliases are checked/charged before loans;
+peak active loan is5,993,424 bytes. Attribute-stage allowance is capped before
+provider allocation by its standalone2MiB aggregate budget minus retained
+parent/input charges, including explicit oversized-provider refusal. Whole suffix syntax still returns UNSUPPORTED
+for world/dictionary ownership and never permits actor or ACK. The new additive `coh_initial_update_attributes_diagnostic` composes the same
+optional grammar across header/list/control/deletes/suffix/commands with compact
+packet-backed observations and sequential charged loans. The original enclosing
+API remains unchanged. Its explicit source-leaf joins cover288 cases,96 raw
+syntax/end candidates,42 truncations,138 mutations and108 loan controls. Exact
+command-end framing retains its independent original-source qualification. All
+whole-message failures preserve the public reader; runtime dictionary/current
+selected owner/world authority, actor application and ACK remain false.
+
+## Compact authentic origin/class cache prerequisites (2026-10-17)
+
+`character-dictionary/coh_origins` now owns all five strings per original row,
+preserves array indices/duplicate rows and source reverse ASCII name lookup.
+The exact504B normal and124B villain cache bodies roundtrip through whole
+original binary schemas and reproduce original ParseTableCRC0x6d177c17.
+Fourteen original writer/consumer cases include unknown/empty names, duplicate
+names, empty arrays and128/129 local-cap controls.80,864 assertions/mode pass
+release/ASan/UBSan with19,668 truncations,19,680 mutations, C++ linkage and a
+bounded copied owner. Qualifier project helper execution uses admitted source
+bytes with stale-PYC and changed-source controls. Runtime shared-cache and
+SERVERONLY generation association remain unobserved.
+
+`character-dictionary/coh_classes` completes the raw nested class binary schema:
+39 class fields,115 scalar attributes,115 attribute-array fields, named tables
+and four final raw-pointer payloads. Exact normal1,219,292B/14-row and villain
+4,228,088B/45-row bodies roundtrip through whole original readers/writers and
+lookup functions; eight original writer variants and independent every-string/
+root-field/modtable-span projections qualify with323,932 assertions/mode,
+17,801 cuts,1,009 sampled mutations and recomputed-digest local-cap refusals.
+The463,208B native owner copies linkage/name strings and leases immutable raw
+attribute arrays rather than materializing a nested tree. The authentic villain
+name Class_Minion_Henchman occupies indices23 and26; original reverse lookup
+returns26. Both original rows/indices remain intact.
+
+Class header CRC0x7ff68aaf is observed, not recomputed: original ParseTableCRC
+includes g_pParsePowerDefines and its static wrapper, defined by s_PowerEnums,
+AddSequencerDefines, AddAttributeDefines and AddAttribNames in original stash
+iteration order. The exact dynamic define context remains a concrete prerequisite.
+classes_Repack resolves real power categories/fallback arrays and creates final
+attribute tables; classes_Finalize builds namedStash. Neither executes in this
+raw importer. The retained cache has zero final-pointer payload sizes. No
+class/origin semantic application or runtime/current-server identity is inferred.
+
+Create wire selection uses normal arrays only for a player not being a critter,
+otherwise villain arrays; character-name receive lookup has its distinct
+normal-then-villain fallback. Actor composition must preserve those original
+contexts, actual owned DB-to-Map selected identity and entity generation, and
+must close power identifiers/current cache/world ownership. These copied raw
+prerequisites do not publish an actor or authorize READY/RECEIVED_CHARACTER/ACK.

@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "checks_each_mode": 1189,
+  "modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "source_inputs": 1556,
+  "all_recorded_inputs_still_equal": true,
+  "new_unrelated_modules_not_enumerated_at_test_start": true,
+  "largest_local_measured_stack": 5456,
+  "reserved_local_stack": 65536,
+  "scripted_os_udp_peer_only": true,
+  "source_world_generation": false,
+  "selected_dbid_owner_bound": false,
+  "real_server": false,
+  "android": false,
+  "thor": false
+}

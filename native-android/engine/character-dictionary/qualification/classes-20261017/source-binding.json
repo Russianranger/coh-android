@@ -1,0 +1,52 @@
+{
+  "schema": "coh-class-compact-source-binding-v1",
+  "source_commit": "31e63af1ba0167d2bd39ffff9178a5bb1cc1fc01",
+  "tested_git_blobs_match": true,
+  "tested_source_count": 43,
+  "host_proof_sha256": "899daf960d3a5d78ca744018fb9e2f7fdf2960465b013059454590e6bc83a4ae",
+  "checks": {
+    "release": {
+      "checks": 323932,
+      "cases": 8,
+      "cuts": 17801,
+      "mutations": 1009,
+      "native_owner_bytes": 463208,
+      "source_crc_verified": false,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 323932,
+      "cases": 8,
+      "cuts": 17801,
+      "mutations": 1009,
+      "native_owner_bytes": 463208,
+      "source_crc_verified": false,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 323932,
+      "cases": 8,
+      "cuts": 17801,
+      "mutations": 1009,
+      "native_owner_bytes": 463208,
+      "source_crc_verified": false,
+      "runtime_generation": false,
+      "actor_authority": false
+    }
+  },
+  "native_stack_sum_bytes": 624,
+  "maximum_recursive_frames": 4,
+  "native_stack_reserve_bytes": 16384,
+  "original_full_tables_binary_read_write_exact": true,
+  "original_lookup_functions_executed": true,
+  "helper_loader_controls": {
+    "stale_pyc_ignored": true,
+    "changed_source_refused_before_execution": true
+  },
+  "global_define_source_crc_executed": false,
+  "original_runtime_callbacks_cache_branch_executed": false,
+  "serveronly_cache_association": false,
+  "actor_authority": false
+}

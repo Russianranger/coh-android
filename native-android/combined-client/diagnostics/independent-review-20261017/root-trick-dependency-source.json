@@ -1,0 +1,44 @@
+{
+  "schema": "coh-independent-root-trick-dependencies-v1",
+  "source_commit": "853c3834980182181423c43bea31f1facca57469",
+  "evidence_commit": "a4b2955012a25cc1ac3b04d143d53f28dc0a1deb",
+  "verdict": "approved_exact_subset_and_source_function_observer_scope",
+  "source_inputs_git_and_current": 19,
+  "proof_sha256": "f6f0dbb5ee72b823f10756ab70ee832b12c03a998aa55883120d40e6af4b565c",
+  "counts": {
+    "root_model_named": 1959,
+    "unique_historical_root_tricks": 528,
+    "root_models_with_stanim": 32,
+    "unique_root_tricks_with_stanim": 13,
+    "root_models_with_autolod": 50,
+    "unique_root_tricks_with_autolod": 3
+  },
+  "review": [
+    "Fixed actual cache/resources/rootledger hashes and bounded extents reused; all16historical rows and82root owner occurrences retain complete StAnim/AutoLOD children and exact captured model/owner/name fields. Historical correlation is not source generation equality.",
+    "Unchanged animFindTrackInSkeleton/setStAnim bodies execute CLIENT and SERVER variants with explicit skeleton/load/string/sharedheap observers. First persisted StAnim child drives source branch; either matching texture track suffices. Requested tscroll keys and source loadtypes retained; no actual animation file loaded.",
+    "Exact conditional AutoLOD-copy branch only: original force_auto/no_lod/prior dictionary/default geometry/LOD/radius selection remains external. Shallow dup/storage observer cannot prove runtime string ownership or fullLOD processing.",
+    "All executed helper bytes admitted before compile/exec; source/body readmission after qualification. Three semantic mutations rejected; six source/binary hashes retained. Frozen production fullTrick reader unmodified."
+  ],
+  "reported_checks_each_variant_mode": 1682,
+  "variants": [
+    "CLIENT",
+    "SERVER"
+  ],
+  "modes": [
+    "release",
+    "address",
+    "undefined"
+  ],
+  "semantic_mutations_refused": [
+    "requires_both_tracks",
+    "uses_second_child",
+    "fills_later_LODs"
+  ],
+  "independent_expensive_rerun": false,
+  "actual_animation_or_LOD_asset_loaded": false,
+  "full_LOD_selection_executed": false,
+  "generation_equality_proven": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_executed": false
+}

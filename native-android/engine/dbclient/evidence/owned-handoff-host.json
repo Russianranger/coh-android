@@ -1,0 +1,61 @@
+{
+  "actual_server_interoperability_verified": false,
+  "android_arm64_built": false,
+  "checks": {
+    "asan": {
+      "checks": 95949,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false,
+      "session": {
+        "actual_os_udp": true,
+        "checks": 1857,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 17,
+        "source_layout_peer": true
+      }
+    },
+    "release": {
+      "checks": 95949,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false,
+      "session": {
+        "actual_os_udp": true,
+        "checks": 1857,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 17,
+        "source_layout_peer": true
+      }
+    },
+    "ubsan": {
+      "checks": 95949,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false,
+      "session": {
+        "actual_os_udp": true,
+        "checks": 1857,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 17,
+        "source_layout_peer": true
+      }
+    }
+  },
+  "emulator_qualified": false,
+  "fixtures": 36,
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_limitation": "Disabled for executor /proc task-walk compatibility; ASan address checks and explicit socket descriptor before/after cleanup checks remain enabled.",
+  "passed": true,
+  "physical_thor_accepted": false,
+  "schema": 1,
+  "scope": "pinned original login/choose producer blocks and bit writer; synthetic full source-layout player lists and actual OS UDP session peer; no real authenticated server or capture",
+  "source_files": 10,
+  "source_producer_profiles": 4
+}

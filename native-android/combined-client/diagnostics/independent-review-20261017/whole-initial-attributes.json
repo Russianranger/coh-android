@@ -1,0 +1,29 @@
+{
+  "schema": "coh-independent-whole-initial-attributes-review-v1",
+  "source_commit": "c6284a6b6ded1ea7015baebe22beafb2fe9bec19",
+  "evidence_commit": "ea7d0db03ee5990ac39523614b9be6688935ee22",
+  "verdict": "approved_source_diagnostic_scope",
+  "files_sha256": {
+    "native-android/engine/initial-update/coh_initial_update_attributes.c": "cf07f9af24ce8cd141b4791147380374cdd126d29a71ea1a59f4f3b1fc63142d",
+    "native-android/engine/initial-update/coh_initial_update_attributes.h": "e5c456c30d97551cf5da65d21bce6b8eb08f61955543da7102cefcc87d303062",
+    "native-android/engine/initial-update/check_update_attributes.py": "985de248cf1abded920bfde22c2ac923c92cbab4b7554f02e9d5470a878b754c",
+    "native-android/engine/initial-update/qualification/attributes-20261017/host-proof.json.gz": "1f03f4df63c7ac985e5462acafb60d1ae19405416e86a3bc786797296f19f9c9",
+    "native-android/engine/initial-update/qualification/attributes-20261017/source-binding.json": "47905f38f37bbd3adc7fb9ea0231e577b04950e18fa4a09515dd130898fdbfc8"
+  },
+  "independent_source_map_checks": 325,
+  "source_map_git_and_current_equal": true,
+  "review": [
+    "Original command/header/list/control/deletes/suffix/tail order retained. Public reader never committed; completed raw syntax still UNSUPPORTED.",
+    "Parent charges all thirteen known spans, retained bytes, native128KiB and callback scratch once. Child fixed subtraction recharges only exact child spans; schema-bound suffix includes corrected preacquire2MiB attribute cap.",
+    "Allocator adapters preserve populated partial-error loans for child release; all enclosing spans included in loan alias checks. Borrowed profile/schema/cache/packet and opaque providers require documented caller leases.",
+    "Qualifier executes no project imports; child/frozen fixture identities checked before composition,325 tested inputs stable after execution. Native72248-byte sum fits131072 reserve; external zlib/crypto/callback closure remains false."
+  ],
+  "reported_host_checks_each_mode": 5537,
+  "joined_cases": 288,
+  "independent_expensive_rerun": false,
+  "android_executed": false,
+  "runtime_dictionary_generation": false,
+  "world_authority": false,
+  "actor_publication": false,
+  "ack_permitted": false
+}

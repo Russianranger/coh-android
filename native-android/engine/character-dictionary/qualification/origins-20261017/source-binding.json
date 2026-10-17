@@ -1,0 +1,45 @@
+{
+  "schema": "coh-origin-compact-source-binding-v1",
+  "source_commit": "da322a5b0a10e55f92cfb448ef54a629ff9397bd",
+  "tested_git_blobs_match": true,
+  "tested_source_count": 38,
+  "host_proof_sha256": "a03e18061939d2886b0d931cdcce5b78f4a1f0024dee9283d0da7687bcd8839e",
+  "checks": {
+    "release": {
+      "checks": 80864,
+      "fixtures": 14,
+      "cuts": 19668,
+      "mutations": 19680,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 80864,
+      "fixtures": 14,
+      "cuts": 19668,
+      "mutations": 19680,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 80864,
+      "fixtures": 14,
+      "cuts": 19668,
+      "mutations": 19680,
+      "runtime_generation": false,
+      "actor_authority": false
+    }
+  },
+  "native_stack_sum_bytes": 424,
+  "native_stack_reserve_bytes": 8192,
+  "original_schema_crc": "0x6d177c17",
+  "original_full_tables_binary_read_write_exact": true,
+  "original_lookup_functions_executed": true,
+  "original_runtime_callbacks_cache_branch_executed": false,
+  "serveronly_cache_association": false,
+  "actor_authority": false,
+  "helper_loader_controls": {
+    "stale_pyc_ignored": true,
+    "changed_source_refused_before_execution": true
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "coh-independent-compact-origins-review-v1",
+  "source_commit": "711dd62e87c4944aefd991fc66c8a6d57310bdc9",
+  "required_helper_fix": "da322a5b0a10e55f92cfb448ef54a629ff9397bd",
+  "latest_evidence_commit": "08578d06a158ebf0c97d0c3dd5ba47eb08d50219",
+  "verdict": "approved_complete_raw_input_and_original_lookup_scope",
+  "tested_inputs_git_and_current": 38,
+  "proof_sha256": "a03e18061939d2886b0d931cdcce5b78f4a1f0024dee9283d0da7687bcd8839e",
+  "review": [
+    "Complete bounded original five-string origins schema, exactParse6/framing/EOF and originalCRC0x6d177c17; authentic504/124-byte inputs and whole reader/writer/reverse lookup observer qualification.",
+    "Rows/empty strings/duplicates preserved in original array order; all strings copied into candidate pool, so input may retire after success. Lookup reverse order preserves last duplicate with explicit ASCII locale domain.",
+    "Overflow-safe input/output/work/digest/expected/context disjoint spans and256KiB aggregate including8KiB reserve/scratch/retained before callback; full syntax precedes digest; only final copy publishes immutable output. No dynamic allocation.",
+    "Initial qualifier PYC gap corrected: admitted byte compile/exec and recursive oracle override use same guard, original upstream inputs staged from Git bytes. Stale-validPYC ignored and changed-source-before-execution refused controls passed; frozen earlier providers unchanged."
+  ],
+  "reported_checks_each_mode": 80864,
+  "original_fixtures": 14,
+  "native_stack_sum_bytes": 424,
+  "native_stack_reserve_bytes": 8192,
+  "independent_expensive_rerun": false,
+  "runtime_shared_cache_selection": false,
+  "serveronly_cache_association": false,
+  "actor_authority": false,
+  "android_executed": false
+}

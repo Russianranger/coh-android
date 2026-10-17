@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "negative_controls": [
+    "native-android/combined-client/tools/run_retained_legacy35.py",
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/all35-host.json",
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/all35-original-source-checksums.json",
+    "native-android/engine/world-render-adapter/qualification/rigid-v234-20261017/all35-original-source-diagnostics.zip",
+    "corrupt actual ZIP"
+  ],
+  "verifier_sha256": "ed25600e307099d39a5f7b2ee7569b2064473ddd6373d278c02a3f925acb9164",
+  "actual_elf_reexecuted": false
+}

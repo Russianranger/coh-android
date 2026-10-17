@@ -39,6 +39,7 @@ typedef struct {
     CohNetUdpDiagnostics transport;
 } CohDbSessionDiagnostics;
 typedef struct CohDbSession CohDbSession;
+typedef struct CohDbHandoffOwner CohDbHandoffOwner;
 /* All methods are single-owner-thread and nonblocking. All error outputs
  * remain unchanged. Secret buffers are cleared on every terminal transition. */
 CohDbSession *coh_db_session_create(const CohDbSessionConfig *);
@@ -64,6 +65,8 @@ CohStatus coh_db_session_choose(CohDbSession *, uint32_t wire_slot,
  * binds source DB selection, not cryptographic authentication or a complete
  * Map self/character transaction; local development auth remains provisional. */
 CohStatus coh_db_session_take_handoff(CohDbSession *, CohDbSessionHandoff *);
+/* Additive opaque provenance owner. See coh_db_handoff_owner.h for lifecycle. */
+CohStatus coh_db_session_take_handoff_owner(CohDbSession *, CohDbHandoffOwner **);
 CohStatus coh_db_session_disconnect(CohDbSession *, uint64_t now_ms);
 void coh_db_session_suspend(CohDbSession *);
 void coh_db_session_cancel(CohDbSession *);

@@ -1,0 +1,68 @@
+{
+  "approved": true,
+  "original_profile_source": "41dea9342126152091be67f6b8a76fda52333eb1",
+  "required_preallocation_fix_source": "a695f37ba",
+  "latest_evidence": "640d2dfcc",
+  "tested_sources_git_and_current_equal": 228,
+  "proof_gzip_sha256": "ab9b21f50cc8044cc9c19d2f4b9167c04060ed49647603f4568957fe4091a32c",
+  "source_binding_sha256": "8f55ccffca82bc46e4c2ab62560201a6bb9376306c517adb9a4dbda22a6007fe",
+  "unchanged_original_nonattribute_stage_bodies": [
+    "CHARACTER",
+    "POWER_INFO",
+    "POWER_MODES",
+    "BADGES",
+    "BADGE_MONITOR",
+    "INVENTORY",
+    "SOCIAL",
+    "DYNAMIC",
+    "VIEW"
+  ],
+  "checks": {
+    "release": {
+      "checks": 18994,
+      "monitor_profiles": 40,
+      "full_profiles": 80,
+      "cuts": 15,
+      "loans": 4675,
+      "peak_loan": 5993424,
+      "world_authority": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    },
+    "asan": {
+      "checks": 18994,
+      "monitor_profiles": 40,
+      "full_profiles": 80,
+      "cuts": 15,
+      "loans": 4675,
+      "peak_loan": 5993424,
+      "world_authority": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    },
+    "ubsan": {
+      "checks": 18994,
+      "monitor_profiles": 40,
+      "full_profiles": 80,
+      "cuts": 15,
+      "loans": 4675,
+      "peak_loan": 5993424,
+      "world_authority": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    }
+  },
+  "review": [
+    "Newprofile only, frozen originalsuffixC/H/API unchanged",
+    "Schema/meta/cache/profile/control/context/scratch spans pairwise disjoint and charged once; all enclosingloan aliases checked",
+    "Actualattribute stage child_fixed subtracts exactly recharged structs/schema/inputSHA/control/callback reservations; all inputspans remaincallerleased",
+    "Requiredfix clamps2MiB attribute cap BEFORE acquire, callback sees exact remainingbudget; oversizedloan refused beforeallocation",
+    "Partialerror loans released once; all success/error loans balanced; publicreader/output unchanged, report/workspace provisional",
+    "Afterrawtenstages validation still returnsUNSUPPORTED for unowned dynamic/world state"
+  ],
+  "limits": {
+    "runtime_dictionary_sourcegeneration_world_actor_ack": false,
+    "externalzlib_crypto_callback_stack_sanitizer_closure": false,
+    "corpus_replayed_by_review": false
+  }
+}

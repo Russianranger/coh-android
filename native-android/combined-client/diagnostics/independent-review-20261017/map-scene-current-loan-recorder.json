@@ -1,0 +1,38 @@
+{
+  "schema": "coh-independent-map-scene-loan-recorder-review-v1",
+  "source_commit": "c5c4bd1577cb4b765c46128d6d4a323ad1064a23",
+  "final_commit": "79c0a8eb99b44ff09d24383f7656a8a367319fb8",
+  "verdict": "approved_source_and_scripted_receive_scope",
+  "receipt_checks": [
+    {
+      "path": "native-android/engine/mapclient/evidence/scene-lease-source-load-host.json",
+      "sha256": "b930609a41a11796c3f211833e3d68b0312622aef4d6096a74a5006ba74bfc5e",
+      "source_count": 1382,
+      "mismatches": []
+    },
+    {
+      "path": "native-android/engine/scenegraph/evidence/map-scene-record-host.json",
+      "sha256": "3d0546b6e59d1097885b5b94ab7a25f08794b0be9215383523798c538cb1af88",
+      "source_count": 1382,
+      "mismatches": []
+    }
+  ],
+  "review": [
+    "Getter requires actual synchronous event address and active owned message, validates payload/reader/generation and derives metadata from opaque client. Cleared after callback; fabricated/copied/expired events refuse.",
+    "Recorder copies exact current decoded payload and immutable bit extent before hashing; no durable session/client retained. Raw selected DBID labels remain unbound to opaque DB owner.",
+    "Known controls/output/payload spans disjoint, bounded payload sizes prevent owned arithmetic overflow, out mustNULL, allocation/digest/cancel faults clean both candidate allocations with late publish only.",
+    "Budget charges copied object/payload, borrowed payload extent and64KiB local reservation. Remaining client/network descriptor/slack/provider allocations and external stack are caller-retained reservations, not introspected.",
+    "Fresh source-load qualifier uses new per-run pycache prefix and checked-source bootstrap; broad helper/header/original inputs frozen before execution and revalidated after."
+  ],
+  "reported_getter_checks_each_mode": 31960,
+  "reported_recorder_checks_each_mode": 1189,
+  "reported_native_stack_bound": 5456,
+  "independent_expensive_rerun": false,
+  "actual_os_udp_scripted": true,
+  "real_server_capture": false,
+  "session_owner_retained": false,
+  "selected_dbid_owner_bound": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_executed": false
+}

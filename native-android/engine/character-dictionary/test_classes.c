@@ -1,0 +1,29 @@
+#include "coh_classes.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <openssl/sha.h>
+#include "class-controls.h"
+static unsigned long long checks,cuts,mutations;
+#define CHECK(x) do{checks++;if(!(x)){fprintf(stderr,"classes check %d: %s\n",__LINE__,#x);exit(1);}}while(0)
+static CohClassDictionary out,before;static CohClassWorkspace work;
+typedef struct{unsigned calls;CohStatus status;}Digest;
+static CohStatus digest(void*ctx,CohBytes b,uint8_t hash[32]){Digest*d=ctx;d->calls++;SHA256(b.data,b.size,hash);return d->status;}
+static CohStatus parse(CohBytes input,const uint8_t hash[32],CohCostumeImportDigest*d,size_t budget,size_t retained){memset(&out,0xa5,sizeof(out));before=out;CohStatus s=coh_classes_read(input,1,hash,d,&out,&work,budget,retained);if(s!=COH_OK)CHECK(!memcmp(&out,&before,sizeof(out)));return s;}
+static uint32_t u32(FILE*f){uint8_t b[4];CHECK(fread(b,1,4,f)==4);return(uint32_t)b[0]|(uint32_t)b[1]<<8|(uint32_t)b[2]<<16|(uint32_t)b[3]<<24;}
+static uint64_t u64(FILE*f){uint64_t lo=u32(f);return lo|((uint64_t)u32(f)<<32);}
+static void span(FILE*f,CohClassSpan s){CHECK(u32(f)==s.begin&&u32(f)==s.end);}
+int main(int argc,char**argv){if(argc!=2)return 2;FILE*f=fopen(argv[1],"rb");CHECK(f);unsigned cases=u32(f);for(unsigned case_index=0;case_index<cases;case_index++){uint32_t size=u32(f);CHECK(size>0&&size<=COH_CLASS_INPUT_MAX);uint8_t*data=malloc(size),*changed=malloc(size);CHECK(data&&changed&&fread(data,1,size,f)==size);uint8_t hash[32];SHA256(data,size,hash);Digest ctx={0,COH_OK};CohCostumeImportDigest d={digest,&ctx,sizeof(ctx),0};CHECK(parse((CohBytes){data,size},hash,&d,COH_CLASS_RAM_MAX,0)==COH_OK&&ctx.calls==1);CHECK(out.raw_schema_validated&&!out.source_crc_verified&&!out.runtime_generation&&!out.actor_authority&&out.input.data==data&&out.input.size==size&&out.input_lease==1&&!memcmp(out.input_sha256,hash,32));CHECK(u32(f)==out.count&&u32(f)==out.text_count&&u32(f)==out.modtable_count&&u32(f)==out.dependency_count);CHECK(u64(f)==out.scalar_words&&u64(f)==out.array_words);
+ for(unsigned i=0;i<out.count;i++){CohClassEntry*e=&out.entries[i];span(f,e->record);CHECK(u32(f)==e->name_text);for(unsigned j=0;j<COH_CLASS_FIELDS;j++)span(f,e->fields[j]);}
+ for(unsigned i=0;i<out.text_count;i++){CohClassText*t=&out.texts[i];CHECK(u32(f)==t->owner&&u32(f)==t->table&&u32(f)==t->row&&u32(f)==t->field&&u32(f)==t->element&&u32(f)==t->size);char text[260];CHECK(t->size<sizeof(text)&&fread(text,1,t->size,f)==t->size&&!memcmp(text,out.text+t->offset,t->size)&&out.text[t->offset+t->size]==0);}
+ for(unsigned i=0;i<out.modtable_count;i++){CohClassModTable*m=&out.modtables[i];span(f,m->record);CHECK(u32(f)==m->owner&&u32(f)==m->row&&u32(f)==m->name_text);}
+ for(unsigned i=0;i<out.count;i++){uint32_t expected=u32(f),idx=999;CohClassText*t=&out.texts[out.entries[i].name_text];char lower[260];for(unsigned j=0;j<t->size;j++){unsigned c=(unsigned char)out.text[t->offset+j];lower[j]=(char)(c>='A'&&c<='Z'?c+32:c);}CHECK(coh_classes_find(&out,(CohBytes){(const uint8_t*)lower,t->size},&idx)==COH_OK&&idx==expected);}
+ /* Keep complete successful observations separately while output is poisoned. */
+ CohClassDictionary*good=malloc(sizeof(*good));CHECK(good);*good=out;
+ for(unsigned i=0;i<good->count;i++)for(unsigned j=0;j<COH_CLASS_FIELDS;j++){size_t points[]={good->entries[i].fields[j].begin,good->entries[i].fields[j].end};for(unsigned k=0;k<2;k++)if(points[k]){ctx.calls=0;CHECK(parse((CohBytes){data,points[k]-1},hash,&d,COH_CLASS_RAM_MAX,0)!=COH_OK&&ctx.calls==0);cuts++;}}
+ for(size_t cut=1;cut<size;cut+=4096){ctx.calls=0;CHECK(parse((CohBytes){data,cut},hash,&d,COH_CLASS_RAM_MAX,0)!=COH_OK&&ctx.calls==0);cuts++;}
+ for(size_t n=0;n<size;n+=size/127+1){memcpy(changed,data,size);changed[n]^=255;CHECK(parse((CohBytes){changed,size},hash,&d,COH_CLASS_RAM_MAX,0)!=COH_OK);mutations++;}
+ if(good->count&&good->modtable_count){CohClassModTable*m=&good->modtables[0];size_t name_at=m->record.begin+4;unsigned text_size=(unsigned)data[name_at]|(unsigned)data[name_at+1]<<8;size_t value_at=name_at+text_size+2+(4-(text_size+2)%4)%4;size_t points[]={good->entries[0].record.begin-4,good->entries[0].fields[CLASS_ORIGINS_FIELD].begin,good->entries[0].fields[CLASS_MOD_FIELD].begin,value_at};uint32_t values[]={COH_CLASS_MAX+1,129,COH_CLASS_TABLES_MAX+1,4097};for(unsigned k=0;k<4;k++){memcpy(changed,data,size);for(unsigned b=0;b<4;b++)changed[points[k]+b]=(uint8_t)(values[k]>>(8*b));uint8_t malformed_hash[32];SHA256(changed,size,malformed_hash);ctx.calls=0;CHECK(parse((CohBytes){changed,size},malformed_hash,&d,COH_CLASS_RAM_MAX,0)==COH_LIMIT&&ctx.calls==0);}}
+ ctx.status=COH_CANCELLED;CHECK(parse((CohBytes){data,size},hash,&d,COH_CLASS_RAM_MAX,0)==COH_CANCELLED);ctx.status=COH_OK;CHECK(parse((CohBytes){data,size},hash,&d,1024,0)==COH_LIMIT);CHECK(parse((CohBytes){data,size},hash,&d,COH_CLASS_RAM_MAX,SIZE_MAX)==COH_LIMIT);d.scratch_reserve=SIZE_MAX;CHECK(parse((CohBytes){data,size},hash,&d,COH_CLASS_RAM_MAX,0)==COH_LIMIT);d.scratch_reserve=0;
+ CHECK(coh_classes_read((CohBytes){data,size},1,hash,&d,&out,(CohClassWorkspace*)&out,COH_CLASS_RAM_MAX,0)==COH_INVALID);d.context=&out;d.context_bytes=1;CHECK(coh_classes_read((CohBytes){data,size},1,hash,&d,&out,&work,COH_CLASS_RAM_MAX,0)==COH_INVALID);uint32_t idx=999;out=*good;CHECK(coh_classes_find(&out,(CohBytes){(const uint8_t*)"\xff",1},&idx)==COH_UNSUPPORTED&&idx==999);CHECK(coh_classes_find(&out,(CohBytes){(const uint8_t*)"unknown_missing_class",21},&idx)==COH_NOT_FOUND&&idx==999);CHECK(coh_classes_find(&out,(CohBytes){(const uint8_t*)"a",1},&out.count)==COH_INVALID);free(good);free(changed);free(data);
+ }CHECK(fgetc(f)==EOF);fclose(f);printf("{\"checks\":%llu,\"cases\":%u,\"cuts\":%llu,\"mutations\":%llu,\"native_owner_bytes\":%zu,\"source_crc_verified\":false,\"runtime_generation\":false,\"actor_authority\":false}\n",checks,cases,cuts,mutations,sizeof(out));return 0;}

@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "controls": 17,
+  "cases": [
+    "valid_poisoned_pyc_bypassed_inspect_root_partitions.py",
+    "direct_pyc_refused_inspect_root_partitions.py",
+    "changed_helper_before_load_inspect_root_partitions.py",
+    "changed_nonpython_dep_inspect_root_partitions.py",
+    "copied_snapshot_and_modulecache_inspect_root_partitions.py",
+    "valid_poisoned_pyc_bypassed_original_delta_check.py",
+    "direct_pyc_refused_original_delta_check.py",
+    "changed_helper_before_load_original_delta_check.py",
+    "changed_nonpython_dep_original_delta_check.py",
+    "copied_snapshot_and_modulecache_original_delta_check.py",
+    "valid_poisoned_pyc_bypassed_coh_source_cpu_oracle.py",
+    "direct_pyc_refused_coh_source_cpu_oracle.py",
+    "changed_helper_before_load_coh_source_cpu_oracle.py",
+    "changed_nonpython_dep_coh_source_cpu_oracle.py",
+    "copied_snapshot_and_modulecache_coh_source_cpu_oracle.py",
+    "unfrozen_project_module",
+    "changed_during_execution"
+  ],
+  "poisoned_pyc_controls": [
+    {
+      "helper": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/inspect_root_partitions.py",
+      "source_sha256": "eac1ac1ce1e357a3b6944b63309371ee5740f3b3a13363a43d8aa954e765b846",
+      "poison_pyc_sha256": "6f9ff358b96ac1ca23444b62d4301692880c493d7ad958e6fc9cb3decd97d038",
+      "old_loader_executed_poison": true,
+      "checked_loader_executed_source": true
+    },
+    {
+      "helper": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/tools/material_fixture/original_delta_check.py",
+      "source_sha256": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+      "poison_pyc_sha256": "1392348ce2b3a2a5df534f3abaa17b0079a8709c18ed46487939d8b3c98542ef",
+      "old_loader_executed_poison": true,
+      "checked_loader_executed_source": true
+    },
+    {
+      "helper": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_cpu_oracle.py",
+      "source_sha256": "63449a90fbdcc8a538088d9d49df6310d3ea1a9db389b5fd792976ff4d4f44bb",
+      "poison_pyc_sha256": "d217578af3b2309e63e8b74d5762b78910ce313a650de786f8514efcb01832dd",
+      "old_loader_executed_poison": true,
+      "checked_loader_executed_source": true
+    }
+  ],
+  "source_sha256": {
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/test_checked_sources.py": "6548a68b9e9a9da4fca02fc30079f6d5d065995dd00761a81e593fe56bfc5247",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_checked_sources.py": "d77404c79a0f873f17c66703ea33e8dc88660e20718eeb7e9eedf0036232809e",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/inspect_root_partitions.py": "eac1ac1ce1e357a3b6944b63309371ee5740f3b3a13363a43d8aa954e765b846",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_cpu_oracle.py": "63449a90fbdcc8a538088d9d49df6310d3ea1a9db389b5fd792976ff4d4f44bb"
+  },
+  "scope": "Project helpers compiled directly from frozen bytes; trusted stdlib/interpreter outside project closure; no native/asset/material authority",
+  "native_sweep_reexecuted": false
+}

@@ -1,0 +1,29 @@
+{
+  "admission": {
+    "actual_persistence_verified": false,
+    "admitted": true,
+    "binary_sha256": "9144727b021526b3777cba53e4935c0ab9c35a76a51d6f00aa50678b7590ea63",
+    "live_authenticated_db_login_verified": false,
+    "manual_wait_skip_permitted_for_real_auth": false,
+    "nondevelopment_version_observed": false,
+    "scope": "Caller-pinned full manual PG/Wine compile only; ordinary PE import inventory, no execution or runtime dependency admission.",
+    "service_executed": false,
+    "shipping_runtime_replacement_permit": false
+  },
+  "compile_helper_raw_git_verified": 63,
+  "compile_receipt_sha256": "0650684df71a74e51b57ff262ce85e6d7c4802657186a4971b7e4f57ff78bb25",
+  "control_skips": 0,
+  "control_source_inputs_raw_git_verified": 72,
+  "controls": 15,
+  "controls_receipt_sha256": "2ab02e594270ec75af7ea92635e1f12f6daf4e0e8bf96dbfd1f38c0859499a0e",
+  "crashrpt_sha256": "055c5e42e43fc19f29eea88dbd6854448989ccb2fc2f7e8a928f8cecc04ed5b3",
+  "dbserver_pe_sha256": "9144727b021526b3777cba53e4935c0ab9c35a76a51d6f00aa50678b7590ea63",
+  "dependencies": 3,
+  "generated_files": 30,
+  "passed": true,
+  "run_id": 39008877421,
+  "scope": "Exact archived compile-only evidence; no binary/compiler/service execution by this verifier; no persistence/Wine/runtime replacement admission.",
+  "source_commit": "365bc28e0433112e2292e44f6338da9fbc5c270e",
+  "source_files": 6007,
+  "successful_commands": 15
+}

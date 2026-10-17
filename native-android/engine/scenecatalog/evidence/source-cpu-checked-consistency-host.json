@@ -1,0 +1,45 @@
+{
+  "checked_source_execution": [
+    {
+      "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/inspect_source_cpu_sweep.py",
+      "sha256": "8498e190b287c7fa97879709e87f21e1b5a605f34bec12705ac954c862ad45ca",
+      "execution": "compile_frozen_source_bytes",
+      "pyc_used": false
+    }
+  ],
+  "passed": true,
+  "positive_controls": 1,
+  "negative_controls": 18,
+  "cases": [
+    "missing_pair",
+    "wrong_owner_identity",
+    "altered_model",
+    "ordinary_refusal",
+    "special_promoted",
+    "lost_reflection_points",
+    "lost_pivot_points",
+    "pinned_cleanup",
+    "duplicate_file",
+    "raised_peak",
+    "dropped_cpu_indices",
+    "world_scope_promoted",
+    "material_scope_promoted",
+    "original32_claimed",
+    "lost_scalar_comparison",
+    "missing_ubsan",
+    "trailing_zlib",
+    "truncated_zlib"
+  ],
+  "source_sha256": {
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/test_inspect_source_cpu_sweep.py": "a3cdbfe193026b5fa4b2205abde02d39a5f847a11f101f2c9c9defc0a7567d0f",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/inspect_source_cpu_sweep.py": "8498e190b287c7fa97879709e87f21e1b5a605f34bec12705ac954c862ad45ca",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_checked_sources.py": "d77404c79a0f873f17c66703ea33e8dc88660e20718eeb7e9eedf0036232809e"
+  },
+  "input_sha256": {
+    "native-android/engine/scenecatalog/evidence/source-cpu-sweep-final-host.json": "d4227d4c974c270c83c8df130dc4d76ee47503cf6df879514bf0a1744f3e9a5c",
+    "native-android/engine/scenecatalog/evidence/source-cpu-sweep-final-ledger.zlib": "6e6d39e3b8bd9fae9bd7f9b7213cdce4569ee7856ae6c7d9f199d5c26ca89fd1",
+    "/workspace/scratch/9174d12e2a11/body-coverage/native-android/engine/scenecatalog/evidence/actual-rigid-metadata-coverage-final-38994607354.json": "5df9bc58cb49c9a177a8315a841701bd300dbdf6641d27ef0b81345f1f6be197",
+    "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/tests/source_special_routes.json": "7b44d90e8c84c05572ea8a08ab4878b128b48217a8587a740111be83b60d93bd"
+  },
+  "authority_admission": false
+}

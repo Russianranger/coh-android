@@ -1,0 +1,56 @@
+{
+  "schema": "coh-suffix-full-attribute-binding-v1",
+  "source_commit": "a695f37ba28c4dc737a396660487b3758309937f",
+  "tested_source_count": 228,
+  "tested_source_git_blobs_match": true,
+  "host_proof_sha256": "ab9b21f50cc8044cc9c19d2f4b9167c04060ed49647603f4568957fe4091a32c",
+  "checks": {
+    "release": {
+      "checks": 18994,
+      "monitor_profiles": 40,
+      "full_profiles": 80,
+      "cuts": 15,
+      "loans": 4675,
+      "peak_loan": 5993424,
+      "world_authority": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    },
+    "asan": {
+      "checks": 18994,
+      "monitor_profiles": 40,
+      "full_profiles": 80,
+      "cuts": 15,
+      "loans": 4675,
+      "peak_loan": 5993424,
+      "world_authority": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    },
+    "ubsan": {
+      "checks": 18994,
+      "monitor_profiles": 40,
+      "full_profiles": 80,
+      "cuts": 15,
+      "loans": 4675,
+      "peak_loan": 5993424,
+      "world_authority": false,
+      "actor_publication": false,
+      "ack_permitted": false
+    }
+  },
+  "native_stack_sum_bytes": 48744,
+  "native_stack_reserve_bytes": 65536,
+  "nonattribute_source_stage_byte_equality": true,
+  "original_suffix_api_unchanged": true,
+  "whole_initial_owner_integrated": false,
+  "runtime_cache_generation": false,
+  "dynamic_world_authority": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "android_executed": false,
+  "thor_accepted": false,
+  "attribute_allocation_capped_before_acquire": true,
+  "attribute_aggregate_cap_bytes": 2097152,
+  "oversized_attribute_provider_refused_before_allocation": true
+}

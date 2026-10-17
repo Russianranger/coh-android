@@ -1,4 +1,5 @@
 #include "coh_db_session.h"
+#include "coh_db_handoff_private.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -11,7 +12,7 @@ struct CohDbSession {
     uint8_t login[COH_DB_LOGIN_MAX];
     size_t login_bits;
     uint64_t clock_ms,phase_start_ms;
-    uint32_t receipt_generation,user_id,selected_slot;
+    uint32_t receipt_generation,user_id,selected_slot,connect_id;
     int begun,local_development;
 };
 static void forget(CohDbSession *s) {
@@ -56,7 +57,7 @@ CohStatus coh_db_session_begin(CohDbSession *s,const CohDbLogin *login,const Coh
     forget(s);memcpy(s->login,encoded,(bits+7)/8);coh_db_wipe(encoded,sizeof(encoded));
     s->login_bits=bits;s->receipt_generation=auth->generation;s->user_id=auth->user_id;
     s->local_development=0;s->diagnostics.local_development_auth=0;s->diagnostics.server_identity_bound=1;
-    s->clock_ms=s->phase_start_ms=now;s->begun=1;s->diagnostics.generation++;
+    s->connect_id=id;s->clock_ms=s->phase_start_ms=now;s->begun=1;s->diagnostics.generation++;
     s->diagnostics.queue_position=s->diagnostics.queue_count=0;s->diagnostics.phase=COH_DB_CONNECTING;return COH_OK;
 }
 static int loopback(CohNetEndpoint e) {return e.address[0]==127;}
@@ -78,7 +79,7 @@ CohStatus coh_db_session_begin_local(CohDbSession *s,const CohDbLogin *login,uin
     forget(s);memcpy(s->login,encoded,(bits+7)/8);coh_db_wipe(encoded,sizeof(encoded));
     s->login_bits=bits;s->receipt_generation=generation;s->local_development=1;
     s->diagnostics.local_development_auth=1;s->clock_ms=s->phase_start_ms=now;
-    s->begun=1;s->diagnostics.generation++;s->diagnostics.queue_position=s->diagnostics.queue_count=0;
+    s->connect_id=id;s->begun=1;s->diagnostics.generation++;s->diagnostics.queue_position=s->diagnostics.queue_count=0;
     s->diagnostics.phase=COH_DB_CONNECTING;return COH_OK;
 }
 static CohStatus message_command(const CohNetMessage *m,int legacy,uint32_t *command) {
@@ -214,4 +215,80 @@ CohStatus coh_db_session_local_endpoint(const CohDbSession *s,CohNetEndpoint *ou
 CohDbSessionPhase coh_db_session_phase(const CohDbSession *s){return s?s->diagnostics.phase:COH_DB_FAILED;}
 void coh_db_session_diagnostics(const CohDbSession *s,CohDbSessionDiagnostics *out) {
     if(s&&out){*out=s->diagnostics;coh_net_udp_diagnostics(s->udp,&out->transport);}
+}
+
+/* This detached one-shot owner survives graceful DB close; callers explicitly
+ * retire it on Map cancellation/lifecycle loss. No pointer to a dead session. */
+struct CohDbHandoffOwner {
+    CohDbHandoffMetadata metadata;
+    CohDbSessionHandoff secret;
+    CohDbHandoffAllocator allocator;
+    uint32_t references;
+};
+static int owner_overlap(const void *a,size_t an,const void *b,size_t bn) {
+    uintptr_t ap=(uintptr_t)a,bp=(uintptr_t)b;
+    if(an>UINTPTR_MAX-ap||bn>UINTPTR_MAX-bp)return 1;
+    return ap<bp+bn&&bp<ap+an;
+}
+static void *owner_allocate(void *context,size_t bytes) {(void)context;return malloc(bytes);}
+static void owner_deallocate(void *context,void *p,size_t bytes) {(void)context;(void)bytes;free(p);}
+CohStatus coh_db_handoff_owner_retain(CohDbHandoffOwner *owner) {
+    if(!owner)return COH_INVALID;
+    if(owner->references==UINT32_MAX)return COH_LIMIT;
+    owner->references++;return COH_OK;
+}
+void coh_db_handoff_owner_retire(CohDbHandoffOwner *owner) {
+    if(owner){coh_db_wipe(&owner->secret,sizeof(owner->secret));owner->metadata.retired=1;}
+}
+void coh_db_handoff_owner_release(CohDbHandoffOwner *owner) {
+    if(owner&&!--owner->references){
+        CohDbHandoffAllocator allocator=owner->allocator;
+        coh_db_wipe(owner,sizeof(*owner));
+        allocator.deallocate(allocator.context,owner,sizeof(*owner));
+    }
+}
+CohStatus coh_db_handoff_owner_metadata(const CohDbHandoffOwner *owner,CohDbHandoffMetadata *out) {
+    if(!owner||!out||owner_overlap(owner,sizeof(*owner),out,sizeof(*out)))return COH_INVALID;
+    *out=owner->metadata;return COH_OK;
+}
+CohStatus coh_db_handoff_owner_claim(CohDbHandoffOwner *owner,uint32_t generation,
+    uint32_t selection,CohDbSessionHandoff *out) {
+    if(!owner||!out||owner_overlap(owner,sizeof(*owner),out,sizeof(*out)))return COH_INVALID;
+    if(owner->metadata.retired||owner->metadata.claimed||
+       owner->metadata.session_generation!=generation||
+       owner->metadata.selection_generation!=selection)return COH_STATE;
+    *out=owner->secret;coh_db_wipe(&owner->secret,sizeof(owner->secret));
+    owner->metadata.claimed=1;return COH_OK;
+}
+CohStatus coh_db_session_take_handoff_owner_alloc(CohDbSession *s,
+    const CohDbHandoffAllocator *allocator,CohDbHandoffOwner **out) {
+    if(!s||!out||!allocator)return COH_INVALID;
+    if(owner_overlap(s,sizeof(*s),out,sizeof(*out))||
+       owner_overlap(s,sizeof(*s),allocator,sizeof(*allocator))||
+       owner_overlap(allocator,sizeof(*allocator),out,sizeof(*out)))return COH_INVALID;
+    if(*out||!allocator->allocate||!allocator->deallocate)return COH_INVALID;
+    if(s->diagnostics.phase!=COH_DB_HANDOFF_READY||!s->user_id||
+       !s->diagnostics.server_identity_bound||!s->diagnostics.generation||
+       !s->receipt_generation||!s->handoff.selection_generation||
+       s->handoff.selection_generation!=s->diagnostics.selection_generation||
+       !s->handoff.selected_dbid||s->handoff.selected_dbid>INT32_MAX||
+       s->handoff.selected_dbid!=s->handoff.map.link_id)return COH_STATE;
+    CohDbHandoffOwner *owner=allocator->allocate(allocator->context,sizeof(*owner));
+    if(!owner)return COH_LIMIT;
+    memset(owner,0,sizeof(*owner));owner->allocator=*allocator;owner->references=1;
+    owner->metadata.user_id=s->user_id;owner->metadata.selected_dbid=s->handoff.selected_dbid;
+    owner->metadata.selected_slot=s->handoff.selected_slot;
+    owner->metadata.selection_generation=s->handoff.selection_generation;
+    owner->metadata.session_generation=s->diagnostics.generation;
+    owner->metadata.receipt_generation=s->receipt_generation;owner->metadata.connect_id=s->connect_id;
+    owner->metadata.db_peer=s->config.transport.peer;
+    owner->metadata.local_development_auth=(unsigned)s->local_development;
+    owner->metadata.selected_dbid_owner_bound=1;
+    CohStatus result=coh_db_session_take_handoff(s,&owner->secret);
+    if(result!=COH_OK){coh_db_handoff_owner_release(owner);return result;}
+    *out=owner;return COH_OK;
+}
+CohStatus coh_db_session_take_handoff_owner(CohDbSession *s,CohDbHandoffOwner **out) {
+    const CohDbHandoffAllocator allocator={NULL,owner_allocate,owner_deallocate};
+    return coh_db_session_take_handoff_owner_alloc(s,&allocator,out);
 }

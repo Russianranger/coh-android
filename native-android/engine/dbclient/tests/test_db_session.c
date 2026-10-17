@@ -1,5 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 #include "../coh_db_session.h"
+#include "../coh_db_handoff_private.h"
 #include "fixtures.h"
 #include <arpa/inet.h>
 #include <dirent.h>
@@ -93,7 +94,58 @@ static void peer_message(Peer *p,CohNetEndpoint target,unsigned version,const ui
     }
 }
 static void drain_ack(Peer *peer,unsigned version){CohNetPacket ack=frame_read(peer,version,0);CHECK(command(&ack,version,1)==0);}
-static void happy(unsigned version,int compressed) {
+typedef struct {int fail;unsigned allocated,freed;} OwnerMemory;
+static void *owner_test_allocate(void *context,size_t bytes) {
+    OwnerMemory *m=context;if(m->fail)return NULL;m->allocated++;return malloc(bytes);
+}
+static void owner_test_free(void *context,void *p,size_t bytes) {
+    OwnerMemory *m=context;for(size_t i=0;i<bytes;i++)CHECK(!((unsigned char *)p)[i]);m->freed++;free(p);
+}
+static CohDbHandoffOwner *held_owner;
+static CohDbHandoffOwner *owned_take(CohDbSession *s,OwnerMemory *memory,unsigned development) {
+    CohDbHandoffAllocator allocator={memory,owner_test_allocate,owner_test_free};
+    CohDbHandoffOwner *owner=NULL,*unchanged=NULL;
+    if(held_owner){
+        CohDbHandoffOwner *existing=held_owner;CohDbHandoffMetadata before,after;
+        CHECK(coh_db_handoff_owner_metadata(existing,&before)==COH_OK&&!before.claimed&&!before.retired);
+        unsigned allocated=memory->allocated,freed=memory->freed;
+        CHECK(coh_db_session_take_handoff_owner_alloc(s,&allocator,&existing)==COH_INVALID);
+        CHECK(existing==held_owner&&coh_db_session_phase(s)==COH_DB_HANDOFF_READY);
+        CHECK(memory->allocated==allocated&&memory->freed==freed);
+        CHECK(coh_db_handoff_owner_metadata(existing,&after)==COH_OK&&!memcmp(&before,&after,sizeof(before)));
+        CHECK(coh_db_handoff_owner_retain(existing)==COH_OK);coh_db_handoff_owner_release(existing);
+        CohDbSessionHandoff secret;CHECK(coh_db_handoff_owner_claim(existing,1,1,&secret)==COH_OK&&secret.map.cookie==123456&&secret.selected_dbid==17);
+        coh_db_wipe(&secret,sizeof(secret));coh_db_handoff_owner_release(existing);held_owner=NULL;
+    }
+    CHECK(coh_db_session_take_handoff_owner_alloc(s,&allocator,(CohDbHandoffOwner **)(void *)&allocator)==COH_INVALID);
+    CHECK(coh_db_session_take_handoff_owner_alloc(s,&allocator,(CohDbHandoffOwner **)(void *)s)==COH_INVALID);
+    memory->fail=1;CHECK(coh_db_session_take_handoff_owner_alloc(s,&allocator,&unchanged)==COH_LIMIT);
+    CHECK(!unchanged&&coh_db_session_phase(s)==COH_DB_HANDOFF_READY);
+    memory->fail=0;CHECK(coh_db_session_take_handoff_owner_alloc(s,&allocator,&owner)==COH_OK&&owner);
+    CHECK(memory->allocated==1&&!memory->freed);
+    CHECK(coh_db_session_take_handoff_owner(s,&unchanged)==COH_STATE&&!unchanged);
+    CHECK(coh_db_handoff_owner_metadata(owner,(CohDbHandoffMetadata *)(void *)owner)==COH_INVALID);
+    CHECK(coh_db_handoff_owner_claim(owner,1,1,(CohDbSessionHandoff *)(void *)owner)==COH_INVALID);
+    CohDbHandoffMetadata m;CHECK(coh_db_handoff_owner_metadata(owner,&m)==COH_OK);
+    CHECK(m.user_id==12345&&m.selected_dbid==17&&m.selected_slot==0&&m.selection_generation==1);
+    CHECK(m.session_generation==1&&m.receipt_generation==1&&m.connect_id);
+    CHECK(m.selected_dbid_owner_bound==1&&m.local_development_auth==development&&!m.claimed&&!m.retired);
+    CohDbSessionHandoff untouched,copy;memset(&untouched,0x5a,sizeof(untouched));copy=untouched;
+    CHECK(coh_db_handoff_owner_claim(owner,2,1,&untouched)==COH_STATE&&!memcmp(&copy,&untouched,sizeof(copy)));
+    CHECK(coh_db_handoff_owner_claim(owner,1,2,&untouched)==COH_STATE&&!memcmp(&copy,&untouched,sizeof(copy)));
+    CHECK(coh_db_handoff_owner_retain(owner)==COH_OK);coh_db_handoff_owner_release(owner);
+    return owner;
+}
+static void owned_claim(CohDbHandoffOwner *owner,CohDbSessionHandoff *h) {
+    CHECK(coh_db_handoff_owner_claim(owner,1,1,h)==COH_OK);
+    CHECK(h->map.cookie==123456&&h->selected_dbid==17&&h->selection_generation==1);
+    CohDbSessionHandoff copy=*h;
+    CHECK(coh_db_handoff_owner_claim(owner,1,1,h)==COH_STATE&&!memcmp(h,&copy,sizeof(copy)));
+    CohDbHandoffMetadata m;CHECK(coh_db_handoff_owner_metadata(owner,&m)==COH_OK&&m.claimed&&!m.retired);
+    coh_db_handoff_owner_retire(owner);CHECK(coh_db_handoff_owner_metadata(owner,&m)==COH_OK&&m.retired);
+    CHECK(coh_db_handoff_owner_claim(owner,1,1,h)==COH_STATE);coh_db_handoff_owner_release(owner);
+}
+static void happy(unsigned version,int compressed,int owned) {
     Peer peer=peer_open();CohDbSessionConfig c=configuration(&peer,version,compressed);CohDbSession *s=coh_db_session_create(&c);CHECK(s);
     CohNetPacket request=handshake(s,&peer,version,1001,100);CohNetEndpoint target=local(s);
     if(version>=4){peer_message(&peer,target,version,compressed?queue1:queue0,compressed?queue1_bits:queue0_bits,compressed,request.id);
@@ -107,14 +159,15 @@ static void happy(unsigned version,int compressed) {
     CHECK(command(&request,version,0)==COH_DB_CHOOSE_PLAYER+(version<4?5:0));
     const uint8_t *map=version<4?map_old0:(compressed?map1:map0);size_t map_bits=version<4?map_old0_bits:(compressed?map1_bits:map0_bits);
     peer_message(&peer,target,version,map,map_bits,compressed,request.id);CHECK(coh_db_session_service(s,107,(CohCancel){0})==COH_OK);drain_ack(&peer,version);
-    CHECK(coh_db_session_phase(s)==COH_DB_HANDOFF_READY);CohDbSessionHandoff h;CHECK(coh_db_session_take_handoff(s,&h)==COH_OK);
-    CHECK(h.map.cookie==123456&&h.map.udp_port==7002&&h.map.address[0]==0x0100007f&&h.selected_slot==0&&h.selection_generation==1&&h.selected_dbid==17);
+    CHECK(coh_db_session_phase(s)==COH_DB_HANDOFF_READY);CohDbSessionHandoff h;CohDbHandoffOwner *owner=NULL;static OwnerMemory memories[3];unsigned memory_index=version?1u+(unsigned)compressed:0;OwnerMemory *memory=&memories[memory_index];
+    if(owned)owner=owned_take(s,memory,0);else CHECK(coh_db_session_take_handoff(s,&h)==COH_OK);
+    if(!owned)CHECK(h.map.cookie==123456&&h.map.udp_port==7002&&h.map.address[0]==0x0100007f&&h.selected_slot==0&&h.selection_generation==1&&h.selected_dbid==17);
     CHECK(coh_db_session_take_handoff(s,&h)==COH_STATE);CHECK(coh_db_session_service(s,108,(CohCancel){0})==COH_OK);request=frame_read(&peer,version,0);
     CHECK(command(&request,version,1)==5);CohNetPacket ack=control(version,++peer.id,6,0,0);ack.ack_count=1;ack.acks[0]=request.id;frame_send(&peer,target,version,&ack);
     CHECK(coh_db_session_service(s,109,(CohCancel){0})==COH_OK&&coh_db_session_phase(s)==COH_DB_CLOSED);
     CohDbSessionDiagnostics d;coh_db_session_diagnostics(s,&d);CHECK(d.login_requests==1&&d.player_lists==1&&d.choices==1&&d.handoffs==1&&d.disconnects==1);
     CHECK(d.transport.sockets_opened==d.transport.sockets_closed);
-    coh_db_session_destroy(s);peer_close(&peer);scenarios++;
+    coh_db_session_destroy(s);if(owned){if(!version)held_owner=owner;else {owned_claim(owner,&h);CHECK(memory->freed==1);coh_db_wipe(&h,sizeof(h));}}peer_close(&peer);scenarios++;
 }
 static int cancelled(void *context){(void)context;return 1;}
 static void receipt_and_lifecycle(void) {
@@ -176,7 +229,10 @@ static void local_development(unsigned which) {
             peer_message(&peer,target,5,players0,players0_bits,0,0);CHECK(coh_db_session_service(s,105,(CohCancel){0})==COH_OK);drain_ack(&peer,5);
             CHECK(coh_db_session_choose(s,0,0,0,106)==COH_OK);CHECK(coh_db_session_service(s,106,(CohCancel){0})==COH_OK);request=frame_read(&peer,5,0);
             peer_message(&peer,target,5,map0,map0_bits,0,request.id);CHECK(coh_db_session_service(s,107,(CohCancel){0})==COH_OK);drain_ack(&peer,5);
-            CohDbSessionHandoff h;CHECK(coh_db_session_take_handoff(s,&h)==COH_OK&&h.map.cookie==123456&&h.selected_slot==0&&h.selected_dbid==17);
+            OwnerMemory memory={0};CohDbHandoffOwner *owner=owned_take(s,&memory,1);
+            CHECK(coh_db_handoff_owner_retain(owner)==COH_OK);coh_db_handoff_owner_retire(owner);
+            CohDbSessionHandoff h;memset(&h,0,sizeof(h));CHECK(coh_db_handoff_owner_claim(owner,1,1,&h)==COH_STATE&&!h.map.cookie);
+            coh_db_handoff_owner_release(owner);CHECK(!memory.freed);coh_db_handoff_owner_release(owner);CHECK(memory.freed==1);
         }
     }
     coh_db_session_suspend(s);CohDbLogin login;CohDbAuthReceipt auth;login_configuration(&login,&auth,1);login.user_id=login.cookie=0;
@@ -201,6 +257,6 @@ static unsigned descriptors(void) {
     DIR *d=opendir("/proc/self/fd");CHECK(d);unsigned n=0;struct dirent *e;while((e=readdir(d)))if(e->d_name[0]!='.')n++;CHECK(!closedir(d));return n;
 }
 int main(void) {
-    unsigned before=descriptors();local_development(0);local_development(1);local_development(2);local_policy_rejections();happy(0,0);happy(5,0);happy(5,1);receipt_and_lifecycle();rejection(0);rejection(1);rejection(2);rejection(3);encryption_policy();reliable_retry();CHECK(before==descriptors());
+    unsigned before=descriptors();local_development(0);local_development(1);local_development(2);local_policy_rejections();happy(0,0,0);happy(5,0,0);happy(5,1,0);happy(0,0,1);happy(5,0,1);happy(5,1,1);receipt_and_lifecycle();rejection(0);rejection(1);rejection(2);rejection(3);encryption_policy();reliable_retry();CHECK(before==descriptors());
     printf("{\"passed\":true,\"checks\":%u,\"socket_scenarios\":%u,\"actual_os_udp\":true,\"source_layout_peer\":true,\"real_authenticated_server\":false,\"socket_leak_check\":true}\n",checks,scenarios);return 0;
 }

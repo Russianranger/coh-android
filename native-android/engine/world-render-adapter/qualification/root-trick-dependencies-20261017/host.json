@@ -1,0 +1,2049 @@
+{
+  "passed": true,
+  "source_revision": "853c3834980182181423c43bea31f1facca57469",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/check_trick_dependencies.py": "e90b06c65878c2217b62bc972d929dc15c1fcea4b4d6fda0772562812e8fc259",
+    "native-android/engine/world-render-adapter/trick_dependencies_oracle.py": "c59bad72b3f9403d94a47e901474c643729e46f7b954c37e49e34f6a134da701",
+    "native-android/engine/world-render-adapter/tests/test_trick_dependencies.c": "d17cab5c4e3bb18e3ff74b35428d22e8ec97e9249e021f71a22851deaa001184",
+    "native-android/engine/world-render-adapter/inspect_trick_associations.py": "7a0acf8e7b83506e10bd029ba9e88fb7f3544d87a59ac20279d5f59fb5fec35d",
+    "native-android/engine/world-render-adapter/texopt_cache_contract.py": "a193a583ddffde758d4e6877114852b3d419bae9548a77ddc1d2b631a1497734",
+    "native-android/engine/world-render-adapter/trick_cache_contract.py": "a849a6591ff5cf1c102a80fdc11f1f22d329f43338fa1d370740d51b42554b6e",
+    "native-android/engine/world-render-adapter/check_texname.py": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+    "native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h": "56a022958f4d6ff3a79104c4bd3c81bd674b58a445fb1123283d054ddbdde7e4",
+    "native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h": "10cbd1b1ea3a42dfed7c7920aac0b1e78d01a536b5b6ee8b71cea2fcd5f6ce77",
+    "native-android/engine/world-render-adapter/ROOT_TRICK_DEPENDENCIES.md": "cddd36d678092b231cd3e64c4c1d5ba8c4d838e5cbc7a2f3943fad492538bc11",
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+    "upstream/ouroboros/Common/seq/AutoLOD.c": "f34c46abac3e6e95bd5829d1d72a203756a7764872f6a9483c4377a05a546722",
+    "upstream/ouroboros/Common/seq/AutoLOD.h": "22fcff5c7eb9887057a8d6fa2b64dcb8a72c69cf585e208995205be5912865e5",
+    "upstream/ouroboros/Common/seq/animtrackanimate.c": "ad976409823db61d1610e3cece2ba323ffc7623af8be1c2c1ac8b38abdcebf21",
+    "upstream/ouroboros/Common/seq/animtrackanimate.h": "1c3292e5938562e6d4c093cd52d5ef0d92f58cabf0e18048f926df5e7d71e273",
+    "upstream/ouroboros/Common/seq/animtrack.h": "ff3e83448d6ce7ccc03e60564d5d9d4d0916b1b77289c220557f0c1fbc657ef2",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "native-android/engine/scenecatalog-server/resource_oracle.py": "b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7"
+  },
+  "input_sha256": {
+    "cache": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+    "resources": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6",
+    "roots": "46df6643795c3d06aa5b52b3c2fadeed1eac00a3693f33ac611bb5d990109e2a"
+  },
+  "counts": {
+    "root_model_named": 1959,
+    "unique_historical_root_tricks": 528,
+    "root_models_with_stanim": 32,
+    "unique_root_tricks_with_stanim": 13,
+    "root_models_with_autolod": 50,
+    "unique_root_tricks_with_autolod": 3
+  },
+  "dependencies": [
+    {
+      "historical_ordinal": 564,
+      "historical_name": "buildingxl",
+      "historical_source_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 19743,
+          "owner_kind": 1,
+          "file": 201,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind_ware02_main",
+          "model": "_ind_ware02_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_02/ind_ware_02.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 19747,
+          "owner_kind": 1,
+          "file": 201,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_ware02_roof",
+          "model": "_ware02_roof__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_02/ind_ware_02.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 19748,
+          "owner_kind": 1,
+          "file": 201,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_ware02_roof02",
+          "model": "_ware02_roof02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_02/ind_ware_02.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 19774,
+          "owner_kind": 1,
+          "file": 202,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_ind_ware_01_main",
+          "model": "_ind_ware_01_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_01/ind_ware_01.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 19791,
+          "owner_kind": 1,
+          "file": 202,
+          "slot": 18,
+          "original_id": 18,
+          "definition_name": "_ware01_roof01",
+          "model": "_ware01_roof01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_01/ind_ware_01.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20682,
+          "owner_kind": 1,
+          "file": 208,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind_ware_06_main",
+          "model": "_ind_ware_06_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_06/ind_ware_06.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20684,
+          "owner_kind": 1,
+          "file": 208,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_ware06_roof01",
+          "model": "_ware06_roof01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_06/ind_ware_06.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20687,
+          "owner_kind": 1,
+          "file": 208,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_ware06_roof02",
+          "model": "_ware06_roof02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_06/ind_ware_06.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20752,
+          "owner_kind": 1,
+          "file": 209,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind04_main",
+          "model": "_ind04_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_04/ind_ware_04.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20761,
+          "owner_kind": 1,
+          "file": 209,
+          "slot": 9,
+          "original_id": 9,
+          "definition_name": "_ware04_roof",
+          "model": "_ware04_roof__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_04/ind_ware_04.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20763,
+          "owner_kind": 1,
+          "file": 209,
+          "slot": 11,
+          "original_id": 11,
+          "definition_name": "_ware04_roof02",
+          "model": "_ware04_roof02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_04/ind_ware_04.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20956,
+          "owner_kind": 1,
+          "file": 210,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind_ware_03_main",
+          "model": "_ind_ware_03_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_03/ind_ware_03.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20967,
+          "owner_kind": 1,
+          "file": 210,
+          "slot": 11,
+          "original_id": 11,
+          "definition_name": "_ware03_roof01",
+          "model": "_ware03_roof01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_03/ind_ware_03.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20969,
+          "owner_kind": 1,
+          "file": 210,
+          "slot": 13,
+          "original_id": 13,
+          "definition_name": "_ware03_dock01",
+          "model": "_ware03_dock01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_03/ind_ware_03.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20970,
+          "owner_kind": 1,
+          "file": 210,
+          "slot": 14,
+          "original_id": 14,
+          "definition_name": "_ware03_roof02",
+          "model": "_ware03_roof02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_03/ind_ware_03.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20971,
+          "owner_kind": 1,
+          "file": 210,
+          "slot": 15,
+          "original_id": 15,
+          "definition_name": "_ware03_roof03",
+          "model": "_ware03_roof03__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_03/ind_ware_03.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 20972,
+          "owner_kind": 1,
+          "file": 210,
+          "slot": 16,
+          "original_id": 16,
+          "definition_name": "_ware03_roof04",
+          "model": "_ware03_roof04__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_03/ind_ware_03.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21028,
+          "owner_kind": 1,
+          "file": 211,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_ware07_roof",
+          "model": "_ware07_roof__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_07/ind_ware_07.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21029,
+          "owner_kind": 1,
+          "file": 211,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_ind07_main",
+          "model": "_ind07_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_07/ind_ware_07.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21045,
+          "owner_kind": 1,
+          "file": 212,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind_ware_08_main01",
+          "model": "_ind_ware_08_main01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_08/ind_ware_08.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21046,
+          "owner_kind": 1,
+          "file": 212,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_ware08_roof1",
+          "model": "_ware08_roof1__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_08/ind_ware_08.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21047,
+          "owner_kind": 1,
+          "file": 212,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_ware08_roof2",
+          "model": "_ware08_roof2__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_08/ind_ware_08.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21051,
+          "owner_kind": 1,
+          "file": 212,
+          "slot": 6,
+          "original_id": 6,
+          "definition_name": "_ware08_roof3",
+          "model": "_ware08_roof3__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_08/ind_ware_08.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21124,
+          "owner_kind": 1,
+          "file": 213,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind_ware12_main02",
+          "model": "_ind_ware12_main02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_12/ind_ware_12.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21127,
+          "owner_kind": 1,
+          "file": 213,
+          "slot": 3,
+          "original_id": 3,
+          "definition_name": "_ware12_roof01",
+          "model": "_ware12_roof01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_12/ind_ware_12.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21128,
+          "owner_kind": 1,
+          "file": 213,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_ware12_roof02",
+          "model": "_ware12_roof02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_12/ind_ware_12.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21199,
+          "owner_kind": 1,
+          "file": 215,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind_ware_14_main",
+          "model": "_ind_ware_14_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_14/ind_ware_14.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21200,
+          "owner_kind": 1,
+          "file": 215,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_ware14_roof01",
+          "model": "_ware14_roof01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_14/ind_ware_14.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21201,
+          "owner_kind": 1,
+          "file": 215,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_ware14_roof2",
+          "model": "_ware14_roof2__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_14/ind_ware_14.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21202,
+          "owner_kind": 1,
+          "file": 215,
+          "slot": 3,
+          "original_id": 3,
+          "definition_name": "_ware14_roof3",
+          "model": "_ware14_roof3__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_14/ind_ware_14.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21203,
+          "owner_kind": 1,
+          "file": 215,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_ware14_overhang01",
+          "model": "_ware14_overhang01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_14/ind_ware_14.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 21204,
+          "owner_kind": 1,
+          "file": 215,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_ware14_dock",
+          "model": "_ware14_dock__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_14/ind_ware_14.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22545,
+          "owner_kind": 1,
+          "file": 258,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind_ware_10_main",
+          "model": "_ind_ware_10_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_10/ind_ware_10.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22550,
+          "owner_kind": 1,
+          "file": 258,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_ware10_dock01",
+          "model": "_ware10_dock01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_10/ind_ware_10.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22551,
+          "owner_kind": 1,
+          "file": 258,
+          "slot": 6,
+          "original_id": 6,
+          "definition_name": "_ware10_roof01",
+          "model": "_ware10_roof01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_10/ind_ware_10.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22552,
+          "owner_kind": 1,
+          "file": 258,
+          "slot": 7,
+          "original_id": 7,
+          "definition_name": "_ware10_roof02",
+          "model": "_ware10_roof02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_10/ind_ware_10.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22554,
+          "owner_kind": 1,
+          "file": 258,
+          "slot": 9,
+          "original_id": 9,
+          "definition_name": "_ware10_roof04",
+          "model": "_ware10_roof04__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_10/ind_ware_10.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22601,
+          "owner_kind": 1,
+          "file": 259,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_ind_ware_09_main",
+          "model": "_ind_ware_09_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_09/ind_ware_09.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22603,
+          "owner_kind": 1,
+          "file": 259,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_ware09_roof02",
+          "model": "_ware09_roof02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_09/ind_ware_09.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22604,
+          "owner_kind": 1,
+          "file": 259,
+          "slot": 3,
+          "original_id": 3,
+          "definition_name": "_ware09_roof01",
+          "model": "_ware09_roof01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_09/ind_ware_09.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22605,
+          "owner_kind": 1,
+          "file": 259,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_ware09_roof03",
+          "model": "_ware09_roof03__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_09/ind_ware_09.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 22627,
+          "owner_kind": 1,
+          "file": 259,
+          "slot": 26,
+          "original_id": 26,
+          "definition_name": "_ware09_dock01",
+          "model": "_ware09_dock01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_09/ind_ware_09.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 24247,
+          "owner_kind": 1,
+          "file": 295,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_ind_ware11_main",
+          "model": "_ind_ware11_main__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_11/ind_ware_11.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 24251,
+          "owner_kind": 1,
+          "file": 295,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_ware11_dock01",
+          "model": "_ware11_dock01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_11/ind_ware_11.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 24252,
+          "owner_kind": 1,
+          "file": 295,
+          "slot": 6,
+          "original_id": 6,
+          "definition_name": "_ware11_roof01",
+          "model": "_ware11_roof01__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_11/ind_ware_11.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 24253,
+          "owner_kind": 1,
+          "file": 295,
+          "slot": 7,
+          "original_id": 7,
+          "definition_name": "_ware11_roof02",
+          "model": "_ware11_roof02__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_11/ind_ware_11.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        },
+        {
+          "source_ordinal": 24255,
+          "owner_kind": 1,
+          "file": 295,
+          "slot": 9,
+          "original_id": 9,
+          "definition_name": "_ware11_roof03",
+          "model": "_ware11_roof03__buildingXL",
+          "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_11/ind_ware_11.geo",
+          "captured_trick_name": "buildingxl",
+          "captured_trick_file": "TRICKS/BUILDINGS/GLOBAL_BUILDING_LODS.TXT"
+        }
+      ],
+      "stanim_children": [],
+      "autolod_children": [
+        [
+          {
+            "name": "AllowedError",
+            "kind": "float",
+            "wire_offset": 12886232,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodNearFade",
+            "kind": "float",
+            "wire_offset": 12886236,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodNear",
+            "kind": "float",
+            "wire_offset": 12886240,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFar",
+            "kind": "float",
+            "wire_offset": 12886244,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFarFade",
+            "kind": "float",
+            "wire_offset": 12886248,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFlags",
+            "kind": "u32",
+            "wire_offset": 12886252,
+            "wire_size": 4,
+            "value": 0
+          },
+          {
+            "name": "ModelName",
+            "kind": "string",
+            "wire_offset": 12886256,
+            "wire_size": 4,
+            "value": ""
+          }
+        ]
+      ],
+      "autolod_obligation": {
+        "selection_not_proven": true,
+        "requires_original_existing_LOD_dictionary_precedence": true,
+        "requires_force_auto_no_lod_legacy_cape_tray_inputs": true,
+        "requires_default_GEO_LOD_reductions_model_radius_distances": true,
+        "conditional_trick_branch_preserves_child_order": true,
+        "model_names_and_object_library_resolution_unresolved": true,
+        "runtime_modelname_specified_and_filename_not_persisted": true
+      }
+    },
+    {
+      "historical_ordinal": 1641,
+      "historical_name": "5thwhirl",
+      "historical_source_file": "TRICKS/LAIRS/5TH_COLUMN.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 11629,
+          "owner_kind": 1,
+          "file": 85,
+          "slot": 9,
+          "original_id": 9,
+          "definition_name": "_fifthclmn_techbox02whirl",
+          "model": "_fifthclmn_techbox02whirl__5thwhirl",
+          "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/machines_etc/machines_etc.geo",
+          "captured_trick_name": "5thwhirl",
+          "captured_trick_file": "TRICKS/LAIRS/5TH_COLUMN.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13109216,
+            "wire_size": 4,
+            "value": 2.0
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13109220,
+            "wire_size": 4,
+            "value": 1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13109224,
+            "wire_size": 16,
+            "value": "spin_counter"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13109240,
+            "wire_size": 4,
+            "value": 0
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/spin_counter",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/spin_counter.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1819,
+      "historical_name": "sewer_sewage_floor",
+      "historical_source_file": "TRICKS/LAIRS/SEWERS.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 17127,
+          "owner_kind": 1,
+          "file": 119,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_SWR_mr_sewage_floor",
+          "model": "_SWR_mr_sewage_floor__sewer_sewage_floor",
+          "source_geo_name": "object_library/Villain_Lairs/sewers/trays/Rooms/room_water/room_water.geo",
+          "captured_trick_name": "sewer_sewage_floor",
+          "captured_trick_file": "TRICKS/LAIRS/SEWERS.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13145204,
+            "wire_size": 4,
+            "value": 0.004999999888241291
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13145208,
+            "wire_size": 4,
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13145212,
+            "wire_size": 8,
+            "value": "aqua"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13145220,
+            "wire_size": 4,
+            "value": 0
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/aqua",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/aqua.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1820,
+      "historical_name": "sewage_foam",
+      "historical_source_file": "TRICKS/LAIRS/SEWERS.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 17128,
+          "owner_kind": 1,
+          "file": 119,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_SWR_mr_sewage_foam",
+          "model": "_SWR_mr_sewage_foam__sewage_foam",
+          "source_geo_name": "object_library/Villain_Lairs/sewers/trays/Rooms/room_water/room_water.geo",
+          "captured_trick_name": "sewage_foam",
+          "captured_trick_file": "TRICKS/LAIRS/SEWERS.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13145424,
+            "wire_size": 4,
+            "value": 0.006000000052154064
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13145428,
+            "wire_size": 4,
+            "value": 0.05999999865889549
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13145432,
+            "wire_size": 8,
+            "value": "aqua"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13145440,
+            "wire_size": 4,
+            "value": 0
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/aqua",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/aqua.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1858,
+      "historical_name": "tekfan",
+      "historical_source_file": "TRICKS/LAIRS/TECH.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 11933,
+          "owner_kind": 1,
+          "file": 95,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_tek1_fanblades",
+          "model": "_tek1_fanblades__tekfan",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/machines/machines.geo",
+          "captured_trick_name": "tekfan",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13152920,
+            "wire_size": 4,
+            "value": 1.5
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13152924,
+            "wire_size": 4,
+            "value": 1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13152928,
+            "wire_size": 16,
+            "value": "spin_counter"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13152944,
+            "wire_size": 4,
+            "value": 0
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/spin_counter",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/spin_counter.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1863,
+      "historical_name": "tektexanim1",
+      "historical_source_file": "TRICKS/LAIRS/TECH.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 11416,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 8,
+          "original_id": 8,
+          "definition_name": "_tek1_comp2_blip2",
+          "model": "_tek1_comp2_blip2__tektexanim1",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tektexanim1",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        },
+        {
+          "source_ordinal": 11424,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 16,
+          "original_id": 16,
+          "definition_name": "_tek1_comp1_blip4",
+          "model": "_tek1_comp1_blip4__tektexanim1",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tektexanim1",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        },
+        {
+          "source_ordinal": 11426,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 18,
+          "original_id": 18,
+          "definition_name": "_tek1_MF3_blip1",
+          "model": "_tek1_MF3_blip1__tektexanim1",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tektexanim1",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13153900,
+            "wire_size": 4,
+            "value": 0.6000000238418579
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13153904,
+            "wire_size": 4,
+            "value": 1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13153908,
+            "wire_size": 16,
+            "value": "light_pulse2"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13153924,
+            "wire_size": 4,
+            "value": 1
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/light_pulse2",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/light_pulse2.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1864,
+      "historical_name": "tektexanim2",
+      "historical_source_file": "TRICKS/LAIRS/TECH.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 11411,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 3,
+          "original_id": 3,
+          "definition_name": "_tek1_comp3_blip3",
+          "model": "_tek1_comp3_blip3__tektexanim2",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tektexanim2",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13154124,
+            "wire_size": 4,
+            "value": 0.4000000059604645
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13154128,
+            "wire_size": 4,
+            "value": 1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13154132,
+            "wire_size": 16,
+            "value": "light_pulse2"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13154148,
+            "wire_size": 4,
+            "value": 1
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/light_pulse2",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/light_pulse2.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1865,
+      "historical_name": "tektexanim3",
+      "historical_source_file": "TRICKS/LAIRS/TECH.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 11409,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_tek1_comp3_blip1",
+          "model": "_tek1_comp3_blip1__tektexanim3",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tektexanim3",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13154348,
+            "wire_size": 4,
+            "value": 0.10000000149011612
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13154352,
+            "wire_size": 4,
+            "value": 1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13154356,
+            "wire_size": 16,
+            "value": "light_pulse2"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13154372,
+            "wire_size": 4,
+            "value": 1
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/light_pulse2",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/light_pulse2.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1866,
+      "historical_name": "tektexanim4",
+      "historical_source_file": "TRICKS/LAIRS/TECH.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 11418,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 10,
+          "original_id": 10,
+          "definition_name": "_tek1_comp2_blip4",
+          "model": "_tek1_comp2_blip4__tektexanim4",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tektexanim4",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13154572,
+            "wire_size": 4,
+            "value": 0.029999999329447746
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13154576,
+            "wire_size": 4,
+            "value": 1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13154580,
+            "wire_size": 16,
+            "value": "light_pulse2"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13154596,
+            "wire_size": 4,
+            "value": 1
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/light_pulse2",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/light_pulse2.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1867,
+      "historical_name": "tekspinlight",
+      "historical_source_file": "TRICKS/LAIRS/TECH.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 11417,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 9,
+          "original_id": 9,
+          "definition_name": "_tek1_comp2_blip3",
+          "model": "_tek1_comp2_blip3__tekspinlight",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tekspinlight",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        },
+        {
+          "source_ordinal": 11429,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 21,
+          "original_id": 21,
+          "definition_name": "_tek1_MF3_blip4",
+          "model": "_tek1_MF3_blip4__tekspinlight",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tekspinlight",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        },
+        {
+          "source_ordinal": 11437,
+          "owner_kind": 1,
+          "file": 80,
+          "slot": 29,
+          "original_id": 29,
+          "definition_name": "_tek1_MF4_blip3",
+          "model": "_tek1_MF4_blip3__tekspinlight",
+          "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+          "captured_trick_name": "tekspinlight",
+          "captured_trick_file": "TRICKS/LAIRS/TECH.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13154796,
+            "wire_size": 4,
+            "value": 3.0
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13154800,
+            "wire_size": 4,
+            "value": -1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13154804,
+            "wire_size": 16,
+            "value": "spin_counter"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13154820,
+            "wire_size": 4,
+            "value": 0
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/spin_counter",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/spin_counter.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 1961,
+      "historical_name": "noautolod",
+      "historical_source_file": "TRICKS/LOD.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 31366,
+          "owner_kind": 1,
+          "file": 413,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "wrhs_crate_wall_A_Med",
+          "model": "wrhs_crate_wall_A_Med__noautolod",
+          "source_geo_name": "object_library/Common_Decor/WareHouse/cargo_cont/cargo_cont.geo",
+          "captured_trick_name": "noautolod",
+          "captured_trick_file": "TRICKS/LOD.TXT"
+        }
+      ],
+      "stanim_children": [],
+      "autolod_children": [
+        [
+          {
+            "name": "AllowedError",
+            "kind": "float",
+            "wire_offset": 13172668,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodNearFade",
+            "kind": "float",
+            "wire_offset": 13172672,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodNear",
+            "kind": "float",
+            "wire_offset": 13172676,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFar",
+            "kind": "float",
+            "wire_offset": 13172680,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFarFade",
+            "kind": "float",
+            "wire_offset": 13172684,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFlags",
+            "kind": "u32",
+            "wire_offset": 13172688,
+            "wire_size": 4,
+            "value": 0
+          },
+          {
+            "name": "ModelName",
+            "kind": "string",
+            "wire_offset": 13172692,
+            "wire_size": 4,
+            "value": ""
+          }
+        ]
+      ],
+      "autolod_obligation": {
+        "selection_not_proven": true,
+        "requires_original_existing_LOD_dictionary_precedence": true,
+        "requires_force_auto_no_lod_legacy_cape_tray_inputs": true,
+        "requires_default_GEO_LOD_reductions_model_radius_distances": true,
+        "conditional_trick_branch_preserves_child_order": true,
+        "model_names_and_object_library_resolution_unresolved": true,
+        "runtime_modelname_specified_and_filename_not_persisted": true
+      }
+    },
+    {
+      "historical_ordinal": 2494,
+      "historical_name": "kioskmapscrnA",
+      "historical_source_file": "TRICKS/STREETS/ELEMENTS/KIOSKS.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 8264,
+          "owner_kind": 1,
+          "file": 19,
+          "slot": 10,
+          "original_id": 10,
+          "definition_name": "_kiosk_screen01",
+          "model": "_kiosk_screen01__kioskmapscrnA",
+          "source_geo_name": "object_library/Streets/elements/kiosks/kiosks.geo",
+          "captured_trick_name": "kioskmapscrnA",
+          "captured_trick_file": "TRICKS/STREETS/ELEMENTS/KIOSKS.TXT"
+        },
+        {
+          "source_ordinal": 8266,
+          "owner_kind": 1,
+          "file": 19,
+          "slot": 12,
+          "original_id": 12,
+          "definition_name": "_kiosk_screen02",
+          "model": "_kiosk_screen02__kioskmapscrnA",
+          "source_geo_name": "object_library/Streets/elements/kiosks/kiosks.geo",
+          "captured_trick_name": "kioskmapscrnA",
+          "captured_trick_file": "TRICKS/STREETS/ELEMENTS/KIOSKS.TXT"
+        },
+        {
+          "source_ordinal": 8267,
+          "owner_kind": 1,
+          "file": 19,
+          "slot": 13,
+          "original_id": 13,
+          "definition_name": "_kiosk_screen03",
+          "model": "_kiosk_screen03__kioskmapscrnA",
+          "source_geo_name": "object_library/Streets/elements/kiosks/kiosks.geo",
+          "captured_trick_name": "kioskmapscrnA",
+          "captured_trick_file": "TRICKS/STREETS/ELEMENTS/KIOSKS.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13281212,
+            "wire_size": 4,
+            "value": 0.019999999552965164
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13281216,
+            "wire_size": 4,
+            "value": 1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13281220,
+            "wire_size": 16,
+            "value": "light_pulse2"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13281236,
+            "wire_size": 4,
+            "value": 1
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/light_pulse2",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/light_pulse2.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 2618,
+      "historical_name": "nbrhoodwallpnl",
+      "historical_source_file": "TRICKS/STREETS/WARZONEWALLFX.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 30721,
+          "owner_kind": 1,
+          "file": 398,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_nbrhood_wall_panel_32",
+          "model": "_nbrhood_wall_panel_32__nbrhoodwallpnl",
+          "source_geo_name": "object_library/walls/neighborhood_walls/neighborhood_walls.geo",
+          "captured_trick_name": "nbrhoodwallpnl",
+          "captured_trick_file": "TRICKS/STREETS/WARZONEWALLFX.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13306696,
+            "wire_size": 4,
+            "value": 0.6000000238418579
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13306700,
+            "wire_size": 4,
+            "value": 1.0
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13306704,
+            "wire_size": 16,
+            "value": "light_pulse2"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13306720,
+            "wire_size": 4,
+            "value": 1
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/light_pulse2",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/light_pulse2.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 3087,
+      "historical_name": "gothbuildingxl",
+      "historical_source_file": "TRICKS/V_COV/BUILDINGS/GOTH_BUILDINGS.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 9775,
+          "owner_kind": 1,
+          "file": 60,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_bus_elevator_outside_front_cover",
+          "model": "_bus_elevator_outside_front_cover__gothbuildingxl",
+          "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Elements/Bus_Interior_Doors/bus_interior_doors.geo",
+          "captured_trick_name": "gothbuildingxl",
+          "captured_trick_file": "TRICKS/V_COV/BUILDINGS/GOTH_BUILDINGS.TXT"
+        },
+        {
+          "source_ordinal": 9783,
+          "owner_kind": 1,
+          "file": 60,
+          "slot": 13,
+          "original_id": 13,
+          "definition_name": "_bus_elevator_outside_back_cover",
+          "model": "_bus_elevator_outside_back_cover__gothbuildingxl",
+          "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Elements/Bus_Interior_Doors/bus_interior_doors.geo",
+          "captured_trick_name": "gothbuildingxl",
+          "captured_trick_file": "TRICKS/V_COV/BUILDINGS/GOTH_BUILDINGS.TXT"
+        }
+      ],
+      "stanim_children": [],
+      "autolod_children": [
+        [
+          {
+            "name": "AllowedError",
+            "kind": "float",
+            "wire_offset": 13406372,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodNearFade",
+            "kind": "float",
+            "wire_offset": 13406376,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodNear",
+            "kind": "float",
+            "wire_offset": 13406380,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFar",
+            "kind": "float",
+            "wire_offset": 13406384,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFarFade",
+            "kind": "float",
+            "wire_offset": 13406388,
+            "wire_size": 4,
+            "value": 0.0
+          },
+          {
+            "name": "LodFlags",
+            "kind": "u32",
+            "wire_offset": 13406392,
+            "wire_size": 4,
+            "value": 0
+          },
+          {
+            "name": "ModelName",
+            "kind": "string",
+            "wire_offset": 13406396,
+            "wire_size": 4,
+            "value": ""
+          }
+        ]
+      ],
+      "autolod_obligation": {
+        "selection_not_proven": true,
+        "requires_original_existing_LOD_dictionary_precedence": true,
+        "requires_force_auto_no_lod_legacy_cape_tray_inputs": true,
+        "requires_default_GEO_LOD_reductions_model_radius_distances": true,
+        "conditional_trick_branch_preserves_child_order": true,
+        "model_names_and_object_library_resolution_unresolved": true,
+        "runtime_modelname_specified_and_filename_not_persisted": true
+      }
+    },
+    {
+      "historical_ordinal": 3627,
+      "historical_name": "calmwater1",
+      "historical_source_file": "TRICKS/WATER.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 21753,
+          "owner_kind": 1,
+          "file": 238,
+          "slot": 10,
+          "original_id": 10,
+          "definition_name": "_p_fountain_04_plane",
+          "model": "_p_fountain_04_plane__calmwater1",
+          "source_geo_name": "object_library/city_zones/Praetoria/Plaza/fountains/fountains.geo",
+          "captured_trick_name": "calmwater1",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 21760,
+          "owner_kind": 1,
+          "file": 238,
+          "slot": 17,
+          "original_id": 17,
+          "definition_name": "_p_fountain_06_plane",
+          "model": "_p_fountain_06_plane__calmwater1",
+          "source_geo_name": "object_library/city_zones/Praetoria/Plaza/fountains/fountains.geo",
+          "captured_trick_name": "calmwater1",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 22252,
+          "owner_kind": 1,
+          "file": 242,
+          "slot": 0,
+          "original_id": 0,
+          "definition_name": "_calmwater_32",
+          "model": "_calmwater_32__calmwater1",
+          "source_geo_name": "object_library/Nature/Water/calm_water/calm_water.geo",
+          "captured_trick_name": "calmwater1",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 22255,
+          "owner_kind": 1,
+          "file": 242,
+          "slot": 3,
+          "original_id": 3,
+          "definition_name": "_calmwater_64",
+          "model": "_calmwater_64__calmwater1",
+          "source_geo_name": "object_library/Nature/Water/calm_water/calm_water.geo",
+          "captured_trick_name": "calmwater1",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 22258,
+          "owner_kind": 1,
+          "file": 242,
+          "slot": 6,
+          "original_id": 6,
+          "definition_name": "_calmwater_128",
+          "model": "_calmwater_128__calmwater1",
+          "source_geo_name": "object_library/Nature/Water/calm_water/calm_water.geo",
+          "captured_trick_name": "calmwater1",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 26085,
+          "owner_kind": 1,
+          "file": 320,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_fountain1_16x16_water",
+          "model": "_fountain1_16x16_water__calmwater1",
+          "source_geo_name": "object_library/Streets/elements/fountains/fountains.geo",
+          "captured_trick_name": "calmwater1",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 31798,
+          "owner_kind": 1,
+          "file": 421,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_fountain16_calmwater_32",
+          "model": "_fountain16_calmwater_32__calmwater1",
+          "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_16.geo",
+          "captured_trick_name": "calmwater1",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13533856,
+            "wire_size": 4,
+            "value": 0.004999999888241291
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13533860,
+            "wire_size": 4,
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13533864,
+            "wire_size": 8,
+            "value": "aqua"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13533872,
+            "wire_size": 4,
+            "value": 0
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/aqua",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/aqua.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    },
+    {
+      "historical_ordinal": 3628,
+      "historical_name": "calmwater2",
+      "historical_source_file": "TRICKS/WATER.TXT",
+      "historical_source_age": 1767225600,
+      "root_model_owners": [
+        {
+          "source_ordinal": 21757,
+          "owner_kind": 1,
+          "file": 238,
+          "slot": 14,
+          "original_id": 14,
+          "definition_name": "_p_fountain_04_caustics",
+          "model": "_p_fountain_04_caustics__calmwater2",
+          "source_geo_name": "object_library/city_zones/Praetoria/Plaza/fountains/fountains.geo",
+          "captured_trick_name": "calmwater2",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 21761,
+          "owner_kind": 1,
+          "file": 238,
+          "slot": 18,
+          "original_id": 18,
+          "definition_name": "_p_fountain_06_caustics",
+          "model": "_p_fountain_06_caustics__calmwater2",
+          "source_geo_name": "object_library/city_zones/Praetoria/Plaza/fountains/fountains.geo",
+          "captured_trick_name": "calmwater2",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 22253,
+          "owner_kind": 1,
+          "file": 242,
+          "slot": 1,
+          "original_id": 1,
+          "definition_name": "_calmwater_caustics_32",
+          "model": "_calmwater_caustics_32__calmwater2",
+          "source_geo_name": "object_library/Nature/Water/calm_water/calm_water.geo",
+          "captured_trick_name": "calmwater2",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 22256,
+          "owner_kind": 1,
+          "file": 242,
+          "slot": 4,
+          "original_id": 4,
+          "definition_name": "_calmwater_caustics_64",
+          "model": "_calmwater_caustics_64__calmwater2",
+          "source_geo_name": "object_library/Nature/Water/calm_water/calm_water.geo",
+          "captured_trick_name": "calmwater2",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 22257,
+          "owner_kind": 1,
+          "file": 242,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_calmwater_caustics_128",
+          "model": "_calmwater_caustics_128__calmwater2",
+          "source_geo_name": "object_library/Nature/Water/calm_water/calm_water.geo",
+          "captured_trick_name": "calmwater2",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 26060,
+          "owner_kind": 1,
+          "file": 317,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_fountain13_calmwater_caustics_32",
+          "model": "_fountain13_calmwater_caustics_32__calmwater2",
+          "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_13.geo",
+          "captured_trick_name": "calmwater2",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 26086,
+          "owner_kind": 1,
+          "file": 320,
+          "slot": 5,
+          "original_id": 5,
+          "definition_name": "_fountain1_16x16_caustics",
+          "model": "_fountain1_16x16_caustics__calmwater2",
+          "source_geo_name": "object_library/Streets/elements/fountains/fountains.geo",
+          "captured_trick_name": "calmwater2",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        },
+        {
+          "source_ordinal": 31799,
+          "owner_kind": 1,
+          "file": 421,
+          "slot": 2,
+          "original_id": 2,
+          "definition_name": "_fountain16_calmwater_caustics_32",
+          "model": "_fountain16_calmwater_caustics_32__calmwater2",
+          "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_16.geo",
+          "captured_trick_name": "calmwater2",
+          "captured_trick_file": "TRICKS/WATER.TXT"
+        }
+      ],
+      "stanim_children": [
+        [
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13534064,
+            "wire_size": 4,
+            "value": 0.004999999888241291
+          },
+          {
+            "name": "",
+            "kind": "float",
+            "wire_offset": 13534068,
+            "wire_size": 4,
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "",
+            "kind": "string",
+            "wire_offset": 13534072,
+            "wire_size": 8,
+            "value": "aqua"
+          },
+          {
+            "name": "",
+            "kind": "u32",
+            "wire_offset": 13534080,
+            "wire_size": 4,
+            "value": 0
+          }
+        ]
+      ],
+      "autolod_children": [],
+      "stanim_obligation": {
+        "source_consumes_first_child_only": true,
+        "all_persisted_children_retained": true,
+        "requested_anim_key": "tscroll/aqua",
+        "diagnostic_asset_candidate": "player_library/animations/tscroll/aqua.anim",
+        "client_load_type": 2,
+        "server_load_type": 4,
+        "bone_ids": [
+          0,
+          1
+        ],
+        "requires_at_least_one_matching_track": true,
+        "track_binding_qualified": false,
+        "STANIMATE_bit_requires_success": true
+      }
+    }
+  ],
+  "modes": {
+    "release": {
+      "CLIENT": {
+        "passed": true,
+        "checks": 1682,
+        "actual_stanim_keys": 13,
+        "actual_autolod_rows": 3,
+        "storage_loader_observers": true,
+        "actual_animation_resource_loaded": false
+      },
+      "SERVER": {
+        "passed": true,
+        "checks": 1682,
+        "actual_stanim_keys": 13,
+        "actual_autolod_rows": 3,
+        "storage_loader_observers": true,
+        "actual_animation_resource_loaded": false
+      }
+    },
+    "address": {
+      "CLIENT": {
+        "passed": true,
+        "checks": 1682,
+        "actual_stanim_keys": 13,
+        "actual_autolod_rows": 3,
+        "storage_loader_observers": true,
+        "actual_animation_resource_loaded": false
+      },
+      "SERVER": {
+        "passed": true,
+        "checks": 1682,
+        "actual_stanim_keys": 13,
+        "actual_autolod_rows": 3,
+        "storage_loader_observers": true,
+        "actual_animation_resource_loaded": false
+      }
+    },
+    "undefined": {
+      "CLIENT": {
+        "passed": true,
+        "checks": 1682,
+        "actual_stanim_keys": 13,
+        "actual_autolod_rows": 3,
+        "storage_loader_observers": true,
+        "actual_animation_resource_loaded": false
+      },
+      "SERVER": {
+        "passed": true,
+        "checks": 1682,
+        "actual_stanim_keys": 13,
+        "actual_autolod_rows": 3,
+        "storage_loader_observers": true,
+        "actual_animation_resource_loaded": false
+      }
+    }
+  },
+  "binary_sha256": {
+    "release-CLIENT": "f3a094b109e40131e947768545c1039755c584e51239cf247bfa8dafb02d0cae",
+    "release-SERVER": "e27f4fe4ec9daa299075927d3429d3271b2b747b8265036831f7717c8a671186",
+    "address-CLIENT": "c83440263596a27dff8d0c66194a65908b4c6892256b96716832aeb46bb4d242",
+    "address-SERVER": "0e9194f8a25938fa644f3b772dc29bad012e1a6595a79683dda74281f66647c2",
+    "undefined-CLIENT": "3b335079c0abbcd2759f55e2a8f55f2512836f6ac433c1afd401e39147b6681a",
+    "undefined-SERVER": "2bb0b86cca5fe11b3f6fe37bb0e87bc2d9f46ec2b90d0fe8faacd5d3c2713bba"
+  },
+  "source_semantic_mutations_refused": [
+    "requires_both_tracks",
+    "uses_second_child",
+    "fills_later_LODs"
+  ],
+  "generated_source_sha256": "f3481425495d5b08bfa28a2058950861d94415520109fd1da2a5c5f47de9359a",
+  "original_source_blocks_sha256": {
+    "animFindTrackInSkeleton": "742589c83e9436969b465d44956e15e9902f88f499aca80fa6b45c74200fdeda",
+    "setStAnim": "6537ae7c7464e6655e9fdd17c5dbc921c652e68f44b8021944f09485fecb2c22",
+    "conditional_AutoLOD_copy_branch": "c3cb4a1c40112e1456b1701d1448216886aaa1cc2938ab933fe3f651c4145a4c"
+  },
+  "original_setStAnim_and_track_search_executed": true,
+  "isolated_original_AutoLOD_conditional_branch_executed": true,
+  "fixture_loader_storage_and_bounded_string_observers": true,
+  "full_LOD_selection_executed": false,
+  "actual_animation_or_LOD_asset_loaded": false,
+  "generation_equality_proven": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_execution": false
+}

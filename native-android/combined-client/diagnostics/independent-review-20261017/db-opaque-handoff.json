@@ -1,0 +1,26 @@
+{
+  "schema": "coh-independent-db-opaque-handoff-review-v1",
+  "source_commit": "37f1b7d0336fdbb3f6a07b1c7619785de8f18d35",
+  "required_fix_commit": "c5abe0c8cc01e2c94e48237a51345c2f44e1774d",
+  "verdict": "approved_opaque_session_owner_scope",
+  "source_inputs_checked": 9,
+  "git_and_current_equal": true,
+  "source_receipt_sha256": "e51f2884d2fdc10cb188d510d275e775832a545a3a69cb67568bf67e269a4dc1",
+  "host_receipt_sha256": "1ba05466422821eec5b2da5ea245698ab0dee4f6617bb22b670b2e6614aabf53",
+  "review": [
+    "Fixed occupied-output leak/one-shot consumption finding: pairwise session/allocator/out and endpoint checks precede dereference; nonNULL*out refuses before allocation or session take. Actual surviving prior-owner regression preserves metadata/ref/cookie/DBID and next HANDOFF_READY phase.",
+    "Factory derives positive signed32 selectedDBID from actual opaque WAIT_MAP handoff, exact source map.link_id, selection generation and serverUID-bound session. Raw DTO never mints this owner.",
+    "Allocate before consuming old one-shot take; failure frees candidate. Detached owner survives DB close/destroy, serialized refs protect lifetime, retire/claim wipe secret, last release wipes entire object before allocator callback.",
+    "Claim private consumer must match session/selection labels, once only, and wipe returned secret after Map begin. Receipt generation is caller attestation, not cryptographic Auth proof. Caller retires on lifecycle changes."
+  ],
+  "reported_session_checks_each_mode": 1857,
+  "scripted_os_udp_scenarios": 17,
+  "wire_checks_each_mode": 95949,
+  "independent_expensive_rerun": false,
+  "actual_server_accepted": false,
+  "map_integration": false,
+  "cryptographic_authentication_added": false,
+  "android_executed": false,
+  "actor_publication": false,
+  "ack_permitted": false
+}

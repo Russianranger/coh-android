@@ -1,0 +1,26 @@
+{
+  "schema": "coh-independent-complete-raw-class-schema-review-v1",
+  "source_commit": "31e63af1ba0167d2bd39ffff9178a5bb1cc1fc01",
+  "evidence_commit": "dfebc2d6d9365235f37c7f585a9ec99511311c77",
+  "verdict": "approved_complete_persisted_schema_scope",
+  "proof_sha256": "899daf960d3a5d78ca744018fb9e2f7fdf2960465b013059454590e6bc83a4ae",
+  "tested_inputs_git_and_current": 43,
+  "review": [
+    "Complete39rootfields and nested attribute/attribute-table/named-table/pointer payload grammar mechanically generated from pinned original tables. Actual normal/villain caches roundtrip whole original readers/writers under explicit extended host TokenStore/layout/allocation adapters. Native preserves raw scalarwords, not semantic finite/runtime attribute values.",
+    "Copied strings retain ordered class/table/row/field/element identity; raw scalar arrays and exact root/modtable spans borrow immutable leased input. Exact villain duplicate23/26 preserved, reverse lookup chooses26 without deleting pointer identities.",
+    "No allocation; disjoint known input/out/work/expected/digest/context spans,8MiB aggregate and16KiB stack plusprovider scratch/retained precharged. Boundeddepth3/counts and everybranch consumes input; lateSHA callback and final output copy preserve rollback.",
+    "HeaderCRC0x7ff68aaf matched as observed historical input, source_crc_verified remainsfalse. PowerDefine stash/globaldefinitions, classes_Repack/classes_Finalize/cache/SERVERONLY/current generation and semantic class/power association unexecuted.",
+    "Checked-source recursive helper graph bypasses projectPYC, stale-validPYC/changeafteradmission controls pass. Frozen prior origin/small input providers remain unchanged."
+  ],
+  "reported_checks_each_mode": 323932,
+  "original_variants": 8,
+  "native_owner_bytes": 463208,
+  "recursive_native_stack_bound_bytes": 2496,
+  "native_stack_reserve_bytes": 16384,
+  "independent_expensive_rerun": false,
+  "source_crc_recomputed": false,
+  "runtime_callbacks_executed": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false
+}
