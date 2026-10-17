@@ -1,0 +1,78 @@
+name: Native texture dependencies and fresh power constructors
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-source-constructors.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-source-constructors-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-constructors:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name
+      == 'workflow_dispatch' || contains(github.event.head_commit.message, '[source-constructors]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - name: Install only source oracle dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev
+    - name: Reuse exact accepted cache bytes without resource or GEO retrieval
+      id: inputs
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        python3 - <<'PY'
+        import hashlib,os,pathlib,stat,subprocess,zipfile
+        out=pathlib.Path(os.environ['RUNNER_TEMP'])/'source-constructor-inputs';out.mkdir()
+        specs=[(11092897979, 26476333, '51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae', 'client-caches.zip', 'client-caches.zip', 27071659, '5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051')]
+        for ident,size,digest,member,name,raw_size,raw_digest in specs:
+            archive=out/(str(ident)+'.zip')
+            with archive.open('xb') as output:
+                subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=180)
+            assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==digest
+            with zipfile.ZipFile(archive) as z:
+                infos=z.infolist()
+                assert len(infos)<=128 and len({i.filename for i in infos})==len(infos)
+                assert sum(i.file_size for i in infos)<=128*1024**2 and z.testzip() is None
+                info=z.getinfo(member)
+                assert not info.flag_bits&1 and stat.S_IFMT(info.external_attr>>16) in (0,stat.S_IFREG)
+                assert info.file_size==raw_size
+                raw=z.read(info);assert hashlib.sha256(raw).hexdigest()==raw_digest
+                (out/name).write_bytes(raw)
+            archive.unlink()
+        with zipfile.ZipFile(out/'client-caches.zip') as z:
+            for member,name,size,digest in (
+                ('data/bin/tricks.bin','tricks.bin',13537052,'cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1'),
+                ('data/bin/seqstatebits.bin','seqstatebits.bin',15380,'9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac')):
+                info=z.getinfo(member)
+                assert info.file_size==size and not info.flag_bits&1
+                assert stat.S_IFMT(info.external_attr>>16) in (0,stat.S_IFREG)
+                raw=z.read(info);assert hashlib.sha256(raw).hexdigest()==digest
+                (out/name).write_bytes(raw)
+        print('Exact retained inputs reused; no server startup or GEO download')
+        PY
+    - name: Qualify only original TexOpt dependency and creation eligibility
+      if: always() && steps.inputs.conclusion == 'success'
+      run: |
+        python3 native-android/engine/world-render-adapter/check_tex_seed.py --actual-cache "$RUNNER_TEMP/source-constructor-inputs/tricks.bin" --actual-states "$RUNNER_TEMP/source-constructor-inputs/seqstatebits.bin" --avatar-zip assets/character-avatar-defaults.zip --output out/source-constructors/tex-seed.json
+    - name: Qualify only original fresh power-slot construction
+      if: always() && steps.inputs.conclusion == 'success'
+      run: |
+        python3 native-android/engine/character-dictionary/check_initial_power_slots.py --cache-zip "$RUNNER_TEMP/source-constructor-inputs/client-caches.zip" --sanitize --output out/source-constructors/initial-power-slots.json.gz
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: source-constructor-contracts-${{ github.sha }}
+        path: out/source-constructors/
+        if-no-files-found: error
+        retention-days: 90

@@ -10,7 +10,7 @@ extern "C" {
 #define COH_POWER_SLOT_STACK_RESERVE 16384u
 typedef struct{
  const CohPowerStreamDictionary*powers;const CohSchedules*schedules;
- uint32_t power_row,power_crc,wire_boost_count,free_schedule_count;
+ uint32_t power_row,power_crc,wire_boost_count,free_schedule_count,boosts_allowed_count;
  int32_t character_level,level_bought,max_boosts,free_allowed,boosts_bought;
  uint8_t historical_state_projection,runtime_generation,actor_authority;
 }CohPowerBoostSlots;
@@ -19,6 +19,8 @@ typedef struct{uint8_t record[COH_POWER_SLOT_RECORD_MAX];}CohPowerBoostSlotsWork
  * actual selected BasePower.iMaxBoosts from the borrowed immutable full cache.
  * Validates the complete selected record through the existing source descriptor
  * (including every nested field) and exact record end, reading <=4KiB at a time.
+ * Retains the complete persisted field80 BoostsAllowed element count alongside
+ * field93 MaxBoosts; array values are not converted into eligibility authority.
  * No eager power graph, digest lifecycle, allocation or gameplay mutation.
  *
  * All powers/provider/file and schedules leases outlive this projection. Budget

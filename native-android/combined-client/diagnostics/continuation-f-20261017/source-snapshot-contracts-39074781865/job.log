@@ -1,0 +1,308 @@
+﻿2026-10-17T22:22:13.3504983Z Current runner version: '2.337.0'
+2026-10-17T22:22:13.3520269Z ##[group]Runner Image Provisioner
+2026-10-17T22:22:13.3520804Z Hosted Compute Agent
+2026-10-17T22:22:13.3521137Z Version: 20261012.601
+2026-10-17T22:22:13.3521534Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+2026-10-17T22:22:13.3521974Z Build Date: 2026-10-12T17:48:21Z
+2026-10-17T22:22:13.3522346Z Worker ID: {6cf32c4e-8e75-4664-b079-9b445458fe71}
+2026-10-17T22:22:13.3522793Z Region: southcentralus
+2026-10-17T22:22:13.3523142Z Cloud: Azure
+2026-10-17T22:22:13.3523476Z ##[endgroup]
+2026-10-17T22:22:13.3524291Z ##[group]Operating System
+2026-10-17T22:22:13.3524642Z Ubuntu
+2026-10-17T22:22:13.3524991Z 24.04.5
+2026-10-17T22:22:13.3525291Z LTS
+2026-10-17T22:22:13.3525607Z ##[endgroup]
+2026-10-17T22:22:13.3525961Z ##[group]Runner Image
+2026-10-17T22:22:13.3526309Z Image: ubuntu-24.04
+2026-10-17T22:22:13.3526671Z Version: 20261012.334.1
+2026-10-17T22:22:13.3527462Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-17T22:22:13.3528357Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-17T22:22:13.3528990Z ##[endgroup]
+2026-10-17T22:22:13.3529878Z ##[group]GITHUB_TOKEN Permissions
+2026-10-17T22:22:13.3531098Z Contents: read
+2026-10-17T22:22:13.3531511Z Metadata: read
+2026-10-17T22:22:13.3531857Z ##[endgroup]
+2026-10-17T22:22:13.3533104Z Secret source: Actions
+2026-10-17T22:22:13.3533612Z Cache mode: write
+2026-10-17T22:22:13.3533988Z Prepare workflow directory
+2026-10-17T22:22:13.3724182Z Prepare all required actions
+2026-10-17T22:22:13.3754306Z Getting action download info
+2026-10-17T22:22:13.6189349Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-17T22:22:13.7379157Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-17T22:22:13.9194347Z Complete job name: source-snapshot-contracts
+2026-10-17T22:22:13.9670690Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-17T22:22:13.9671167Z with:
+2026-10-17T22:22:13.9671402Z   persist-credentials: false
+2026-10-17T22:22:13.9671687Z   repository: Russianranger/coh-android
+2026-10-17T22:22:13.9673630Z   token: ***
+2026-10-17T22:22:13.9673855Z   ssh-strict: true
+2026-10-17T22:22:13.9674084Z   ssh-user: git
+2026-10-17T22:22:13.9674303Z   clean: true
+2026-10-17T22:22:13.9674537Z   sparse-checkout-cone-mode: true
+2026-10-17T22:22:13.9674809Z   fetch-depth: 1
+2026-10-17T22:22:13.9675033Z   fetch-tags: false
+2026-10-17T22:22:13.9675265Z   show-progress: true
+2026-10-17T22:22:13.9675494Z   lfs: false
+2026-10-17T22:22:13.9675806Z   submodules: false
+2026-10-17T22:22:13.9676040Z   set-safe-directory: true
+2026-10-17T22:22:13.9676304Z   allow-unsafe-pr-checkout: false
+2026-10-17T22:22:13.9676642Z ##[endgroup]
+2026-10-17T22:22:14.0293801Z Syncing repository: Russianranger/coh-android
+2026-10-17T22:22:14.0295317Z ##[group]Getting Git version info
+2026-10-17T22:22:14.0295951Z Working directory is '/home/runner/work/coh-android/coh-android'
+2026-10-17T22:22:14.0296820Z [command]/usr/bin/git version
+2026-10-17T22:22:14.0382530Z git version 2.55.0
+2026-10-17T22:22:14.0396122Z ##[endgroup]
+2026-10-17T22:22:14.0407135Z Temporarily overriding HOME='/home/runner/work/_temp/76c51e15-20cc-4ab1-b88e-156c7c3d2e08' before making global git config changes
+2026-10-17T22:22:14.0408396Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-17T22:22:14.0410991Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-10-17T22:22:14.0452678Z Deleting the contents of '/home/runner/work/coh-android/coh-android'
+2026-10-17T22:22:14.0455247Z ##[group]Initializing the repository
+2026-10-17T22:22:14.0457637Z [command]/usr/bin/git init /home/runner/work/coh-android/coh-android
+2026-10-17T22:22:14.0541186Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-17T22:22:14.0542364Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-17T22:22:14.0543184Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-17T22:22:14.0543785Z hint: call:
+2026-10-17T22:22:14.0544380Z hint:
+2026-10-17T22:22:14.0544813Z hint: 	git config --global init.defaultBranch <name>
+2026-10-17T22:22:14.0545329Z hint:
+2026-10-17T22:22:14.0545807Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-17T22:22:14.0546577Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-17T22:22:14.0547229Z hint:
+2026-10-17T22:22:14.0547570Z hint: 	git branch -m <name>
+2026-10-17T22:22:14.0547962Z hint:
+2026-10-17T22:22:14.0548476Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-17T22:22:14.0549500Z Initialized empty Git repository in /home/runner/work/coh-android/coh-android/.git/
+2026-10-17T22:22:14.0553328Z [command]/usr/bin/git remote add origin https://github.com/Russianranger/coh-android
+2026-10-17T22:22:14.0594794Z ##[endgroup]
+2026-10-17T22:22:14.0595394Z ##[group]Disabling automatic garbage collection
+2026-10-17T22:22:14.0603763Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-17T22:22:14.0626911Z ##[endgroup]
+2026-10-17T22:22:14.0627466Z ##[group]Setting up auth
+2026-10-17T22:22:14.0632168Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-17T22:22:14.0678825Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-17T22:22:14.0961266Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-17T22:22:14.0988378Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-17T22:22:14.1152546Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-17T22:22:14.1178533Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-17T22:22:14.1341296Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-17T22:22:14.1372080Z ##[endgroup]
+2026-10-17T22:22:14.1372669Z ##[group]Fetching the repository
+2026-10-17T22:22:14.1377823Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +fd213266f1b6665acece877dabb7dab6663e647c:refs/remotes/origin/native-android
+2026-10-17T22:22:26.2119448Z From https://github.com/Russianranger/coh-android
+2026-10-17T22:22:26.2119987Z  * [new ref]             fd213266f1b6665acece877dabb7dab6663e647c -> origin/native-android
+2026-10-17T22:22:26.2126675Z ##[endgroup]
+2026-10-17T22:22:26.2127083Z ##[group]Determining the checkout info
+2026-10-17T22:22:26.2127399Z ##[endgroup]
+2026-10-17T22:22:26.2129607Z [command]/usr/bin/git sparse-checkout disable
+2026-10-17T22:22:26.2174979Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-17T22:22:26.2202902Z ##[group]Checking out the ref
+2026-10-17T22:22:26.2203278Z [command]/usr/bin/git checkout --progress --force -B native-android refs/remotes/origin/native-android
+2026-10-17T22:22:27.3735855Z Updating files:   8% (13598/169280)
+2026-10-17T22:22:27.4633350Z Updating files:   9% (15236/169280)
+2026-10-17T22:22:27.5090549Z Updating files:  10% (16928/169280)
+2026-10-17T22:22:27.5507534Z Updating files:  11% (18621/169280)
+2026-10-17T22:22:27.5882158Z Updating files:  12% (20314/169280)
+2026-10-17T22:22:27.6279030Z Updating files:  13% (22007/169280)
+2026-10-17T22:22:27.6710297Z Updating files:  14% (23700/169280)
+2026-10-17T22:22:27.7141208Z Updating files:  15% (25392/169280)
+2026-10-17T22:22:27.7602419Z Updating files:  16% (27085/169280)
+2026-10-17T22:22:27.8057646Z Updating files:  17% (28778/169280)
+2026-10-17T22:22:27.8495007Z Updating files:  18% (30471/169280)
+2026-10-17T22:22:27.8908417Z Updating files:  19% (32164/169280)
+2026-10-17T22:22:27.9310478Z Updating files:  20% (33856/169280)
+2026-10-17T22:22:27.9720997Z Updating files:  21% (35549/169280)
+2026-10-17T22:22:28.0147693Z Updating files:  22% (37242/169280)
+2026-10-17T22:22:28.0551412Z Updating files:  23% (38935/169280)
+2026-10-17T22:22:28.0966976Z Updating files:  24% (40628/169280)
+2026-10-17T22:22:28.1391039Z Updating files:  25% (42320/169280)
+2026-10-17T22:22:28.1826449Z Updating files:  26% (44013/169280)
+2026-10-17T22:22:28.2254671Z Updating files:  27% (45706/169280)
+2026-10-17T22:22:28.3272615Z Updating files:  28% (47399/169280)
+2026-10-17T22:22:28.3342946Z Updating files:  28% (48834/169280)
+2026-10-17T22:22:28.3767076Z Updating files:  29% (49092/169280)
+2026-10-17T22:22:28.4183448Z Updating files:  30% (50784/169280)
+2026-10-17T22:22:28.4625045Z Updating files:  31% (52477/169280)
+2026-10-17T22:22:28.5076282Z Updating files:  32% (54170/169280)
+2026-10-17T22:22:28.5507322Z Updating files:  33% (55863/169280)
+2026-10-17T22:22:28.5925399Z Updating files:  34% (57556/169280)
+2026-10-17T22:22:28.6377054Z Updating files:  35% (59248/169280)
+2026-10-17T22:22:28.6801221Z Updating files:  36% (60941/169280)
+2026-10-17T22:22:28.7244958Z Updating files:  37% (62634/169280)
+2026-10-17T22:22:28.7663690Z Updating files:  38% (64327/169280)
+2026-10-17T22:22:28.8115968Z Updating files:  39% (66020/169280)
+2026-10-17T22:22:28.8538575Z Updating files:  40% (67712/169280)
+2026-10-17T22:22:28.8965322Z Updating files:  41% (69405/169280)
+2026-10-17T22:22:28.9392474Z Updating files:  42% (71098/169280)
+2026-10-17T22:22:28.9821476Z Updating files:  43% (72791/169280)
+2026-10-17T22:22:29.0217266Z Updating files:  44% (74484/169280)
+2026-10-17T22:22:29.0643097Z Updating files:  45% (76176/169280)
+2026-10-17T22:22:29.1083147Z Updating files:  46% (77869/169280)
+2026-10-17T22:22:29.2989567Z Updating files:  47% (79562/169280)
+2026-10-17T22:22:29.3270626Z Updating files:  47% (81162/169280)
+2026-10-17T22:22:29.7245418Z Updating files:  48% (81255/169280)
+2026-10-17T22:22:29.9140040Z Updating files:  49% (82948/169280)
+2026-10-17T22:22:30.3082092Z Updating files:  50% (84640/169280)
+2026-10-17T22:22:30.7232460Z Updating files:  50% (85226/169280)
+2026-10-17T22:22:31.0646865Z Updating files:  51% (86333/169280)
+2026-10-17T22:22:31.2983224Z Updating files:  52% (88026/169280)
+2026-10-17T22:22:31.4791306Z Updating files:  52% (89079/169280)
+2026-10-17T22:22:31.6117746Z Updating files:  53% (89719/169280)
+2026-10-17T22:22:31.6739166Z Updating files:  54% (91412/169280)
+2026-10-17T22:22:31.7259752Z Updating files:  55% (93104/169280)
+2026-10-17T22:22:31.7679809Z Updating files:  56% (94797/169280)
+2026-10-17T22:22:31.8110249Z Updating files:  57% (96490/169280)
+2026-10-17T22:22:31.8602589Z Updating files:  58% (98183/169280)
+2026-10-17T22:22:32.2707150Z Updating files:  59% (99876/169280)
+2026-10-17T22:22:32.2984471Z Updating files:  60% (101568/169280)
+2026-10-17T22:22:32.4803221Z Updating files:  60% (101849/169280)
+2026-10-17T22:22:32.5525219Z Updating files:  61% (103261/169280)
+2026-10-17T22:22:32.6198974Z Updating files:  62% (104954/169280)
+2026-10-17T22:22:32.7438301Z Updating files:  63% (106647/169280)
+2026-10-17T22:22:32.8000531Z Updating files:  64% (108340/169280)
+2026-10-17T22:22:32.8499177Z Updating files:  65% (110032/169280)
+2026-10-17T22:22:32.9023468Z Updating files:  66% (111725/169280)
+2026-10-17T22:22:32.9546442Z Updating files:  67% (113418/169280)
+2026-10-17T22:22:33.0101406Z Updating files:  68% (115111/169280)
+2026-10-17T22:22:33.0602761Z Updating files:  69% (116804/169280)
+2026-10-17T22:22:33.1159191Z Updating files:  70% (118496/169280)
+2026-10-17T22:22:33.1661347Z Updating files:  71% (120189/169280)
+2026-10-17T22:22:33.2153563Z Updating files:  72% (121882/169280)
+2026-10-17T22:22:33.2645538Z Updating files:  73% (123575/169280)
+2026-10-17T22:22:33.2980933Z Updating files:  74% (125268/169280)
+2026-10-17T22:22:33.3125237Z Updating files:  74% (126453/169280)
+2026-10-17T22:22:33.3614503Z Updating files:  75% (126960/169280)
+2026-10-17T22:22:33.4098027Z Updating files:  76% (128653/169280)
+2026-10-17T22:22:33.4567389Z Updating files:  77% (130346/169280)
+2026-10-17T22:22:33.5054850Z Updating files:  78% (132039/169280)
+2026-10-17T22:22:33.5541093Z Updating files:  79% (133732/169280)
+2026-10-17T22:22:33.6615264Z Updating files:  80% (135424/169280)
+2026-10-17T22:22:33.7070438Z Updating files:  81% (137117/169280)
+2026-10-17T22:22:33.7522535Z Updating files:  82% (138810/169280)
+2026-10-17T22:22:33.7985143Z Updating files:  83% (140503/169280)
+2026-10-17T22:22:33.8465607Z Updating files:  84% (142196/169280)
+2026-10-17T22:22:33.8943686Z Updating files:  85% (143888/169280)
+2026-10-17T22:22:33.9426822Z Updating files:  86% (145581/169280)
+2026-10-17T22:22:33.9924153Z Updating files:  87% (147274/169280)
+2026-10-17T22:22:34.0404032Z Updating files:  88% (148967/169280)
+2026-10-17T22:22:34.0879860Z Updating files:  89% (150660/169280)
+2026-10-17T22:22:34.1343854Z Updating files:  90% (152352/169280)
+2026-10-17T22:22:34.1843531Z Updating files:  91% (154045/169280)
+2026-10-17T22:22:34.2520537Z Updating files:  92% (155738/169280)
+2026-10-17T22:22:34.3293490Z Updating files:  93% (157431/169280)
+2026-10-17T22:22:34.3735767Z Updating files:  93% (158410/169280)
+2026-10-17T22:22:34.5177738Z Updating files:  94% (159124/169280)
+2026-10-17T22:22:34.6197183Z Updating files:  95% (160816/169280)
+2026-10-17T22:22:34.7762718Z Updating files:  96% (162509/169280)
+2026-10-17T22:22:35.0313737Z Updating files:  97% (164202/169280)
+2026-10-17T22:22:35.1409464Z Updating files:  98% (165895/169280)
+2026-10-17T22:22:35.2597998Z Updating files:  99% (167588/169280)
+2026-10-17T22:22:35.2598487Z Updating files: 100% (169280/169280)
+2026-10-17T22:22:35.2599040Z Updating files: 100% (169280/169280), done.
+2026-10-17T22:22:35.3668201Z Switched to a new branch 'native-android'
+2026-10-17T22:22:35.3670169Z branch 'native-android' set up to track 'origin/native-android'.
+2026-10-17T22:22:35.3791733Z ##[endgroup]
+2026-10-17T22:22:35.3832743Z [command]/usr/bin/git log -1 --format=%H
+2026-10-17T22:22:35.3855812Z fd213266f1b6665acece877dabb7dab6663e647c
+2026-10-17T22:22:35.3866299Z ##[group]Removing auth
+2026-10-17T22:22:35.3869593Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-17T22:22:35.3898024Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-17T22:22:35.4147472Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-17T22:22:35.4175591Z http.https://github.com/.extraheader
+2026-10-17T22:22:35.4180193Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-17T22:22:35.4221294Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-17T22:22:35.4475225Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-17T22:22:35.4503389Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-17T22:22:35.4749187Z ##[endgroup]
+2026-10-17T22:22:35.5018388Z ##[group]Run sudo apt-get update -qq
+2026-10-17T22:22:35.5018631Z [36;1msudo apt-get update -qq[0m
+2026-10-17T22:22:35.5019074Z [36;1msudo apt-get install -y --no-install-recommends gcc libssl-dev zlib1g-dev[0m
+2026-10-17T22:22:35.5235647Z shell: /usr/bin/bash -e {0}
+2026-10-17T22:22:35.5235805Z ##[endgroup]
+2026-10-17T22:22:42.1108192Z Reading package lists...
+2026-10-17T22:22:42.2423515Z Building dependency tree...
+2026-10-17T22:22:42.2429251Z Reading state information...
+2026-10-17T22:22:42.3556630Z gcc is already the newest version (4:13.2.0-7ubuntu1).
+2026-10-17T22:22:42.3557001Z libssl-dev is already the newest version (3.0.13-0ubuntu3.16).
+2026-10-17T22:22:42.3557339Z zlib1g-dev is already the newest version (1:1.3.dfsg-3.1ubuntu2.2).
+2026-10-17T22:22:42.3557682Z 0 upgraded, 0 newly installed, 0 to remove and 44 not upgraded.
+2026-10-17T22:22:42.3649486Z ##[group]Run python3 native-android/engine/scenecatalog-server/test_source_snapshot_admission.py
+2026-10-17T22:22:42.3650061Z [36;1mpython3 native-android/engine/scenecatalog-server/test_source_snapshot_admission.py[0m
+2026-10-17T22:22:42.3650559Z [36;1mpython3 native-android/engine/scenecatalog-server/test_fresh_source_retention.py[0m
+2026-10-17T22:22:42.3705980Z shell: /usr/bin/bash -e {0}
+2026-10-17T22:22:42.3706119Z ##[endgroup]
+2026-10-17T22:22:42.4828851Z test_actual_host_gate_refuses_before_any_token_or_file_work (__main__.Controls.test_actual_host_gate_refuses_before_any_token_or_file_work) ... ok
+2026-10-17T22:22:42.5541476Z test_cli_refusal_exposes_no_private_input_or_exception (__main__.Controls.test_cli_refusal_exposes_no_private_input_or_exception) ... ok
+2026-10-17T22:22:42.5573241Z test_fixture_character_identity_comes_from_exact_pinned_backup (__main__.Controls.test_fixture_character_identity_comes_from_exact_pinned_backup) ... ok
+2026-10-17T22:22:42.5798405Z test_imported_helper_must_match_committed_bytes_before_and_after (__main__.Controls.test_imported_helper_must_match_committed_bytes_before_and_after) ... ok
+2026-10-17T22:22:42.5799331Z test_independent_pins_and_strict_numeric_identities (__main__.Controls.test_independent_pins_and_strict_numeric_identities) ... ok
+2026-10-17T22:22:42.5799996Z test_pure_protocol_closure_never_mints_authority (__main__.Controls.test_pure_protocol_closure_never_mints_authority) ... ok
+2026-10-17T22:22:42.6046549Z test_receipt_publication_refuses_late_io_without_a_final_file (__main__.Controls.test_receipt_publication_refuses_late_io_without_a_final_file) ... ok
+2026-10-17T22:22:42.6172037Z test_release_shape_and_every_counter_refuse_boolean_omitted_or_added_fields (__main__.Controls.test_release_shape_and_every_counter_refuse_boolean_omitted_or_added_fields) ... ok
+2026-10-17T22:22:42.6178313Z test_run_ownership_source_input_and_cleanup_refusals (__main__.Controls.test_run_ownership_source_input_and_cleanup_refusals) ... ok
+2026-10-17T22:22:42.6241761Z test_verifier_executable_build_and_source_ownership (__main__.Controls.test_verifier_executable_build_and_source_ownership) ... ok
+2026-10-17T22:22:42.6259718Z test_whole_verifier_input_closure_only (__main__.Controls.test_whole_verifier_input_closure_only) ... ok
+2026-10-17T22:22:42.6260299Z 
+2026-10-17T22:22:42.6260580Z ----------------------------------------------------------------------
+2026-10-17T22:22:42.6261090Z Ran 11 tests in 0.143s
+2026-10-17T22:22:42.6261236Z 
+2026-10-17T22:22:42.6261301Z OK
+2026-10-17T22:22:42.7437611Z test_exact_four_byte_bodies_and_commit_last_only (__main__.Controls.test_exact_four_byte_bodies_and_commit_last_only) ... ok
+2026-10-17T22:22:42.7447723Z test_fixed_destination_and_existing_tree_never_replaced (__main__.Controls.test_fixed_destination_and_existing_tree_never_replaced) ... ok
+2026-10-17T22:22:42.8082322Z test_host_refusal_precedes_inputs_and_cli_never_exports_private_canary (__main__.Controls.test_host_refusal_precedes_inputs_and_cli_never_exports_private_canary) ... ok
+2026-10-17T22:22:42.8835373Z test_late_copy_flush_close_and_fsync_roll_back_preserving_primary (__main__.Controls.test_late_copy_flush_close_and_fsync_roll_back_preserving_primary) ... ok
+2026-10-17T22:22:43.1037468Z test_later_copy_and_before_publish_failures_remove_every_owned_file (__main__.Controls.test_later_copy_and_before_publish_failures_remove_every_owned_file) ... ok
+2026-10-17T22:22:43.1045588Z test_manifest_uses_fixed_names_and_no_private_object_serialization (__main__.Controls.test_manifest_uses_fixed_names_and_no_private_object_serialization) ... ok
+2026-10-17T22:22:43.2416900Z test_payload_change_during_final_callback_refuses_without_manifest (__main__.Controls.test_payload_change_during_final_callback_refuses_without_manifest) ... ok
+2026-10-17T22:22:43.2586120Z test_readmission_owns_real_child_group_and_discards_private_output (__main__.Controls.test_readmission_owns_real_child_group_and_discards_private_output) ... ok
+2026-10-17T22:22:43.2605391Z test_readmission_timeout_closes_both_pipes_and_preserves_primary (__main__.Controls.test_readmission_timeout_closes_both_pipes_and_preserves_primary) ... ok
+2026-10-17T22:22:43.2624591Z test_wrong_hash_whole_envelope_and_boolean_length_refuse (__main__.Controls.test_wrong_hash_whole_envelope_and_boolean_length_refuse) ... ok
+2026-10-17T22:22:43.2624963Z 
+2026-10-17T22:22:43.2625189Z ----------------------------------------------------------------------
+2026-10-17T22:22:43.2625496Z Ran 10 tests in 0.549s
+2026-10-17T22:22:43.2625609Z 
+2026-10-17T22:22:43.2625703Z OK
+2026-10-17T22:22:43.2816351Z ##[group]Run python3 native-android/engine/scenecatalog-server/test_source_snapshot_verifier.py --fixture native-android/combined-client/diagnostics/primary-authority-20261017/unit-groups-fixture.cohgtx --output out/source-snapshot-contracts/native-verifier.json
+2026-10-17T22:22:43.2817861Z [36;1mpython3 native-android/engine/scenecatalog-server/test_source_snapshot_verifier.py --fixture native-android/combined-client/diagnostics/primary-authority-20261017/unit-groups-fixture.cohgtx --output out/source-snapshot-contracts/native-verifier.json[0m
+2026-10-17T22:22:43.2870383Z shell: /usr/bin/bash -e {0}
+2026-10-17T22:22:43.2870519Z ##[endgroup]
+2026-10-17T22:23:05.7251189Z {"passed": true, "checks": 328, "refusals_per_mode": 26, "fixtures_synthetic_only": true}
+2026-10-17T22:23:05.7360966Z ##[group]Run actions/upload-artifact@v4
+2026-10-17T22:23:05.7361127Z with:
+2026-10-17T22:23:05.7361304Z   name: source-snapshot-contracts-fd213266f1b6665acece877dabb7dab6663e647c
+2026-10-17T22:23:05.7361539Z   path: out/source-snapshot-contracts/
+2026-10-17T22:23:05.7361690Z   if-no-files-found: error
+2026-10-17T22:23:05.7361828Z   retention-days: 90
+2026-10-17T22:23:05.7361943Z   compression-level: 6
+2026-10-17T22:23:05.7362061Z   overwrite: false
+2026-10-17T22:23:05.7362176Z   include-hidden-files: false
+2026-10-17T22:23:05.7362305Z ##[endgroup]
+2026-10-17T22:23:05.8346670Z (node:3428) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-17T22:23:05.8347169Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-17T22:23:05.8382863Z With the provided path, there will be 1 file uploaded
+2026-10-17T22:23:05.8398256Z Artifact name is valid!
+2026-10-17T22:23:05.8398591Z Root directory input is valid!
+2026-10-17T22:23:06.1523950Z Beginning upload of artifact content to blob storage
+2026-10-17T22:23:06.1623945Z (node:3428) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-17T22:23:06.3353976Z Uploaded bytes 2794
+2026-10-17T22:23:06.3777342Z Finished uploading artifact content to blob storage!
+2026-10-17T22:23:06.3777770Z SHA256 digest of uploaded artifact zip is dffcbfc3569cd12cb5e4ebc4b3bc9be6aaffa67d6cfb5c6b41e5d4a5af20b7e8
+2026-10-17T22:23:06.3779064Z Finalizing artifact upload
+2026-10-17T22:23:06.6123454Z Artifact source-snapshot-contracts-fd213266f1b6665acece877dabb7dab6663e647c.zip successfully finalized. Artifact ID 12117045136
+2026-10-17T22:23:06.6124363Z Artifact source-snapshot-contracts-fd213266f1b6665acece877dabb7dab6663e647c has been successfully uploaded! Final size is 2794 bytes. Artifact ID is 12117045136
+2026-10-17T22:23:06.6127655Z Artifact download URL: https://github.com/Russianranger/coh-android/actions/runs/39074781865/artifacts/12117045136
+2026-10-17T22:23:06.6273146Z Post job cleanup.
+2026-10-17T22:23:06.6779229Z [command]/usr/bin/git version
+2026-10-17T22:23:06.6808875Z git version 2.55.0
+2026-10-17T22:23:06.6831921Z Temporarily overriding HOME='/home/runner/work/_temp/b3b0e97f-aede-492b-918b-ab65918ca5a1' before making global git config changes
+2026-10-17T22:23:06.6832935Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-17T22:23:06.6836992Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-10-17T22:23:06.6864758Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-17T22:23:06.6890647Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-17T22:23:06.7162281Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-17T22:23:06.7198523Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-17T22:23:06.7458168Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-17T22:23:06.7488983Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-17T22:23:06.7847506Z Cleaning up orphan processes
+2026-10-17T22:23:06.8075892Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

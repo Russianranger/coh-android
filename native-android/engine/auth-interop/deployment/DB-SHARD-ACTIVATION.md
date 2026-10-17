@@ -226,11 +226,52 @@ Booleans, verified call-site enum, source-expression match and compiled-variant
 match. A location alone remains `source_assertion_unknown` with no full assertion
 match. Unknown filenames, line values, expressions, titles and body text never
 leave private storage. The receipt records the fixed 78-site index hash, ten
-original source hashes and the retained PE/archive hashes. This follow-up has
-eight portable modal methods passing and one Windows-only smoke skipped locally,
-plus six affected activation methods passing, including late diagnostic failure
-cleanup. The next actual Windows observation is still pending; no root cause,
-registration, selected play or Db/Map handoff is qualified by this preparation.
+original source hashes and the retained PE/archive hashes.
+
+Run `39074781897` at `fd213266f1b6665acece877dabb7dab6663e647c` passed
+all 17 Windows pre-service methods, including the new index and actual API smoke,
+then reached the same readiness deadline. Its artifact `12115784171` is 7,350
+bytes, SHA256
+`e8d30407df395ec575e831bd1498180eb7a3364b2dd27d723821a95be20b0bb5`.
+The complete unchanged-generation modal observation had unique File/Line/
+Expression fields and a numeric line shape, but unknown rendered file, site and
+predicate. All 12 reads succeeded and all cleanup checks passed. Exact artifact,
+member hashes and a fixed test-count/result log projection are retained in the
+failure history. No assertion predicate or root cause is identified.
+
+The original SuperAssert.c formatter at lines 1571–1618 shortens File fields to
+fit its 60-character line policy and can abbreviate a long basename. A bare
+basename lookup can therefore miss an indexed source file. The new policy reads
+only exact `__FILE__` candidates from the same pinned PE, requires one candidate
+per source file with call sites and verifies its complete original repository
+suffix after separator/case normalization. There are eight candidates; the
+ninth pinned file, ringchain.cpp, has no call sites or PE candidate. It then
+applies the original formatter, including `sizeof(FILEINTRO)=7`, `ffn=52`, strict
+branch thresholds and the separator-inclusive suffix count. Only the immutable
+exact rendered field can select a source file. Case, path, whitespace or ellipsis
+variations do not match; duplicate candidates or alias collisions refuse the
+policy. This replaces the earlier basename approximation.
+
+A portable test shell lifts the actual original formatting block and compares
+its C99/O2 output against the Python model across 62 inputs, including all eight
+retained PE paths, every branch, basename lengths 15/16/17, the 35-character
+path boundary, slash/backslash/no-separator forms and the 52/53 and 98/99 length
+boundaries. When the original unsigned copy-count arithmetic would underflow,
+the bounded model explicitly refuses the candidate; 100/101/1024-character
+no-separator controls cover that frontier. This is a model-domain refusal, not
+an observed original runtime defect. The eight actual candidates are unaffected.
+The C shell builds no server code and is skipped on Windows; the existing owned
+Windows Add-Type/API smoke still runs there. Hashes of the fixed formatter block
+and compiled-path/rendered-alias index bind the policy without hashing or
+exporting any observed GUI field.
+
+All 78 sites are covered by exact rendered-field positives and modified-field
+refusals. Location and source/compiled-expression flags remain independent.
+Eleven portable modal methods pass with the Windows-only smoke skipped locally;
+six affected activation methods also pass, including late diagnostic failure
+cleanup. The rendered-file policy has not run against actual services yet. No
+root cause, registration, selected play or Db/Map handoff is qualified by this
+preparation; binaries, profiles and readiness limits remain unchanged.
 
 ```sh
 python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v

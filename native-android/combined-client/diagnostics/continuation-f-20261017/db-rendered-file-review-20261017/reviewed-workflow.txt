@@ -1,0 +1,79 @@
+name: Original DbServer assertion path diagnosis
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-original-db-startup.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-original-db-startup-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  assertion-file-format:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[db-startup-diagnostic]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with: {persist-credentials: false}
+    - name: Check only new original C formatting and exact PE alias controls
+      working-directory: native-android/engine/auth-interop/deployment
+      run: |
+        python3 -m unittest -v test_db_modal_diagnostic.DbModalDiagnosticTests.test_original_c_formatter_oracle_all_branches_and_boundaries test_db_modal_diagnostic.DbModalDiagnosticTests.test_exact_rendered_file_aliases_and_ambiguous_or_modified_fields test_db_modal_diagnostic.DbModalDiagnosticTests.test_compiled_filename_candidates_suffix_and_alias_collisions_refuse
+  original-db-startup:
+    needs: assertion-file-format
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 20
+    steps:
+    - name: Preserve exact original source bytes
+      run: git config --global core.autocrlf false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Check exact assertion paths and owned API smoke before services
+      run: |
+        python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_modal_diagnostic.py -v
+        if ($LASTEXITCODE -ne 0) { throw 'Owned modal observer tests failed' }
+        python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_startup_diagnostic.py -v
+        if ($LASTEXITCODE -ne 0) { throw 'Numeric diagnostic tests failed' }
+        python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v
+        if ($LASTEXITCODE -ne 0) { throw 'Activation regression tests failed' }
+    - name: Reuse exact accepted corrected AuthServer without recompilation or account tests
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        python - <<'PY'
+        import hashlib,os,pathlib,stat,subprocess,zipfile
+        root=pathlib.Path(os.environ['RUNNER_TEMP']);archive=root/'exact-auth-candidate.zip'
+        with archive.open('xb') as stream:subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/12085517046/zip'],stdout=stream,check=True,timeout=180)
+        assert archive.stat().st_size==427525 and hashlib.sha256(archive.read_bytes()).hexdigest()=='da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d'
+        out=root/'auth-candidate';out.mkdir()
+        with zipfile.ZipFile(archive) as z:
+            infos=z.infolist();assert len(infos)<=128 and len({i.filename for i in infos})==len(infos) and sum(i.file_size for i in infos)<=8*1024**2 and z.testzip() is None
+            for info in infos:
+                path=pathlib.PurePosixPath(info.filename)
+                assert not path.is_absolute() and '..' not in path.parts and '\\' not in info.filename and ':' not in info.filename and not stat.S_ISLNK(info.external_attr>>16)
+            z.extractall(out)
+        archive.unlink()
+        PY
+    - name: Observe original AuthServer DbServer registration in owned disposable SQL namespace
+      run: |
+        python native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py --source-root . --expected-commit $env:GITHUB_SHA --auth-success-archive native-android/engine/auth-interop/evidence/auth-success-38996587760/artifact.zip --auth-candidate-stage "$env:RUNNER_TEMP/auth-candidate" --output "$env:RUNNER_TEMP/db-shard-activation"
+        if ($LASTEXITCODE -ne 0) { throw 'Original interserver activation did not qualify; retain refusal and cleanup receipts' }
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: original-db-startup-diagnostic-${{ github.sha }}
+        path: ${{ runner.temp }}/db-shard-activation/
+        if-no-files-found: error
+        retention-days: 90
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[db-startup-diagnostic]'))

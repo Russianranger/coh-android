@@ -2,6 +2,7 @@ import copy
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -17,6 +18,11 @@ class DbModalDiagnosticTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):cls.policy=stage.policy(ROOT)
 
+    def rendered(self,basename):
+        aliases=[key for key,files in self.policy['rendered_files'].items() if basename.casefold() in files]
+        self.assertEqual(len(aliases),1)
+        return aliases[0]
+
     def raw(self,text,status='ok'):
         return {'pid':5256,'rows':[{'pid':5256,'top_level':True,'class_name':'#32770','control_id':0,
             'text':'City of Heroes','text_status':'ok'}, {'pid':5256,'top_level':False,'class_name':'Static',
@@ -28,7 +34,7 @@ class DbModalDiagnosticTests(unittest.TestCase):
         point=self.policy['points']['ring_buffer_unset']
         private=('private-user secret-password cookie=395634 uid=900001 SQL SELECT account '
                  'D:\\private\\host-name 0x7a222222 stack frames')
-        body=('Assertion failed\n\nProgram: '+private+'\nFile: D:\\private\\ring.hpp\nLine: '
+        body=('Assertion failed\n\nProgram: '+private+'\nFile: '+self.rendered('ring.hpp')+'\nLine: '
             +str(point['lines'][0])+'\nExpression: !m_base\n\nError Message: '+private+'\n'+private)
         result=stage.admit(self.raw(body),5256,self.policy)
         match=result['source_matches'][0]
@@ -47,7 +53,8 @@ class DbModalDiagnosticTests(unittest.TestCase):
         point=self.policy['points']['ring_buffer_unset']
         for filename,expression,line in (('foreign.hpp','!m_base',point['lines'][0]),
                 ('ring.hpp','arbitrary-private-expression',point['lines'][0]),('ring.hpp','!m_base',99999)):
-            text=f'Assertion failed\nFile: D:\\private\\{filename}\nLine: {line}\nExpression: {expression}\n'
+            rendered=self.rendered(filename) if filename!='foreign.hpp' else 'D:\\private\\foreign.hpp'
+            text=f'Assertion failed\nFile: {rendered}\nLine: {line}\nExpression: {expression}\n'
             result=stage.admit(self.raw(text),5256,self.policy)
             self.assertEqual(result['source_matches'][0]['kind'],'source_assertion_unknown')
             self.assertNotIn(expression,json.dumps(result))
@@ -137,13 +144,13 @@ class DbModalDiagnosticTests(unittest.TestCase):
         self.assertEqual(len(self.policy['sites']),78);self.assertEqual(len(self.policy['variants']),4)
         for key,variant in self.policy['variants'].items():
             point=self.policy['points'][key]
-            text='Assertion failed\nFile: D:\\private\\'+point['file']+'\nLine: '+str(point['lines'][0])+'\nExpression: '+variant+'\n'
+            text='Assertion failed\nFile: '+self.rendered(point['file'])+'\nLine: '+str(point['lines'][0])+'\nExpression: '+variant+'\n'
             match=stage.admit(self.raw(text),5256,self.policy)['source_matches'][0]
             self.assertEqual(match['assertion_enum'],key)
             self.assertTrue(match['source_call_site_verified']);self.assertTrue(match['compiled_expression_variant_match'])
             self.assertFalse(match['source_expression_match'])
         key,site=next((key,site) for key,site in self.policy['sites'].items() if site['legacy'] is None)
-        prefix='Assertion failed\nFile: D:\\private\\'+site['file']+'\nLine: '+str(site['line'])+'\n'
+        prefix='Assertion failed\nFile: '+self.rendered(site['file'])+'\nLine: '+str(site['line'])+'\n'
         for suffix in ('Expression: private-unknown-expression\n',''):
             match=stage.admit(self.raw(prefix+suffix),5256,self.policy)['source_matches'][0]
             self.assertEqual(match['source_site_enum'],key);self.assertTrue(match['source_call_site_verified'])
@@ -180,7 +187,7 @@ assert(a); assert(b);
                 (709,'!"This has already been freed!"','!"This has already be en freed!"'),
                 (726,'!"Trying to free a chunk of memory that is not part of this pool!"',
                     '!"Trying to free a chunk of memory that is not pa rt of this pool!"')):
-            prefix='Assertion failed\nFile: D:\\private\\MemoryPool.c\nLine: '+str(line)+'\nExpression: '
+            prefix='Assertion failed\nFile: '+self.rendered('MemoryPool.c')+'\nLine: '+str(line)+'\nExpression: '
             good=stage.admit(self.raw(prefix+original),5256,self.policy)['source_matches'][0]
             self.assertEqual(good['kind'],'source_assertion');self.assertTrue(good['source_expression_match'])
             bad=stage.admit(self.raw(prefix+changed),5256,self.policy)['source_matches'][0]
@@ -202,6 +209,92 @@ assert(a); assert(b);
                 with self.assertRaisesRegex(ValueError,message):stage.policy(ROOT)
         with mock.patch.object(stage,'PE_VARIANTS',dict(stage.PE_VARIANTS,unretained='private-unretained-expression')):
             with self.assertRaisesRegex(ValueError,'compiled_variant_not_present'):stage.policy(ROOT)
+
+    @unittest.skipIf(os.name=='nt','Portable original C formatter oracle; Windows runs the owned API smoke')
+    def test_original_c_formatter_oracle_all_branches_and_boundaries(self):
+        compiler=shutil.which('cc');self.assertIsNotNone(compiler)
+        original=(ROOT/'upstream/ouroboros/libs/UtilitiesLib/src/utils/SuperAssert.c').read_text()
+        block=stage.filename_formatter_source(original)
+        shell='''#include <stdio.h>
+#include <string.h>
+#define FILEINTRO "File: "
+#define NEWLINESZ 1
+#define MAXLINELEN 60
+#define DOTDOTDOTSZ 3
+#define Strncatt strcat
+static char *dotdotdot="...";
+static void format(const char *filename, char *assertbuf) {
+ char *pch; assertbuf[0]=0;
+'''+block+'''}
+int main(int argc,char **argv) {
+ int i; for(i=1;i<argc;i++) { char out[4096]; format(argv[i],out); puts(out); } return 0;
+}
+'''
+        cases=['plain.c','a'*52,'a'*53,'a'*80,'a'*98,'a'*99]
+        for separator in ('/','\\'):
+            for base in (15,16,17,24):
+                for prefix in (0,20,34,35,36,80):cases.append('p'*prefix+separator+'b'*base)
+        # Recover only exact admitted PE candidates, not text from any dialog.
+        for name in stage.SOURCE_PINS:
+            basename=Path(name).name
+            if basename.casefold()=='ringchain.cpp':continue
+            rendered=self.rendered(basename)
+            self.assertLessEqual(len(rendered),52)
+        import re,zipfile
+        with zipfile.ZipFile(ROOT/stage.PE_ARCHIVE) as archive:binary=archive.read('DbServer-checksum-candidate.exe')
+        cases.extend(value.decode('ascii') for value in re.findall(rb'[\x20-\x7e]{3,}',binary)
+            if any(value.decode('ascii').replace('\\','/').casefold().endswith('/upstream/ouroboros/'+name.casefold()) for name in stage.SOURCE_PINS))
+        with tempfile.TemporaryDirectory(prefix='coh-formatter-oracle-') as name:
+            directory=Path(name);source=directory/'oracle.c';binary=directory/'oracle'
+            source.write_text(shell)
+            subprocess.run([compiler,'-std=c99','-O2',str(source),'-o',str(binary)],check=True,capture_output=True,timeout=30)
+            result=subprocess.run([str(binary),*cases],check=True,capture_output=True,text=True,timeout=10)
+        self.assertEqual(result.stdout.splitlines(),['File: '+stage.render_source_filename(value) for value in cases])
+
+    def test_exact_rendered_file_aliases_and_ambiguous_or_modified_fields(self):
+        self.assertEqual(len(self.policy['rendered_files']),8)
+        for key,site in self.policy['sites'].items():
+            rendered=self.rendered(site['file'])
+            text='Assertion failed\nFile: '+rendered+'\nLine: '+str(site['line'])+'\nExpression: '+site['expression']
+            good=stage.admit(self.raw(text),5256,self.policy)['source_matches'][0]
+            self.assertEqual(good['source_site_enum'],key);self.assertTrue(good['source_expression_match'])
+            for other in (rendered+' ',rendered.upper(),'D:\\private\\'+site['file'],rendered.replace('...','..',1)):
+                if other==rendered:continue
+                bad=stage.admit(self.raw(text.replace('File: '+rendered+'\n','File: '+other+'\n')),5256,self.policy)['source_matches'][0]
+                self.assertEqual(bad['source_file_enum'],'unknown');self.assertFalse(bad['source_call_site_verified'])
+                self.assertFalse(bad['source_expression_match']);self.assertFalse(bad['compiled_expression_variant_match'])
+                self.assertNotIn(other,json.dumps(bad))
+        rendered=self.rendered('ring.hpp');ambiguous=copy.deepcopy(self.policy)
+        ambiguous['rendered_files'][rendered].append('sqltask.cpp')
+        point=self.policy['points']['ring_buffer_unset']
+        text='Assertion failed\nFile: '+rendered+'\nLine: '+str(point['lines'][0])+'\nExpression: !m_base'
+        match=stage.admit(self.raw(text),5256,ambiguous)['source_matches'][0]
+        self.assertEqual(match['source_file_enum'],'ambiguous_source_file')
+        self.assertFalse(match['source_call_site_verified']);self.assertFalse(match['source_expression_match'])
+
+    def test_compiled_filename_candidates_suffix_and_alias_collisions_refuse(self):
+        for filename in (None,'','a'*1025,'bad\nname.c','non-ascii-\u00e9.c'):
+            with self.subTest(filename_shape=type(filename).__name__),self.assertRaisesRegex(ValueError,'filename_shape'):
+                stage.render_source_filename(filename)
+        for size in (100,101,1024):
+            with self.subTest(out_of_domain_basename_size=size),self.assertRaisesRegex(ValueError,'copy_underflow'):
+                stage.render_source_filename('a'*size)
+        paths={Path(name).name:name for name in stage.SOURCE_PINS}
+        calls={name:([{}] if name!='ringchain.cpp' else []) for name in paths}
+        candidates={'D:/source/upstream/ouroboros/'+path for name,path in paths.items() if calls[name]}
+        aliases,index=stage.compiled_filename_policy(candidates,calls)
+        self.assertEqual(len(aliases),8);self.assertEqual(len(index),64)
+        # Separator/case normalization admits source ownership, while the field
+        # itself must still match the immutable original rendering exactly.
+        altered={value.upper().replace('/','\\') for value in candidates}
+        self.assertEqual(len(stage.compiled_filename_policy(altered,calls)[0]),8)
+        chosen=next(value for value in candidates if value.endswith('/ring.hpp'))
+        for values,error in ((candidates-{chosen},'filename_candidates'),
+                (candidates|{chosen.replace('D:','E:')},'filename_candidates'),
+                ((candidates-{chosen})|{'D:/foreign/ring.hpp'},'filename_source_suffix')):
+            with self.subTest(error=error),self.assertRaisesRegex(ValueError,error):stage.compiled_filename_policy(values,calls)
+        with mock.patch.object(stage,'render_source_filename',return_value='fixed-collision'):
+            with self.assertRaisesRegex(ValueError,'alias_collision'):stage.compiled_filename_policy(candidates,calls)
 
 
 if __name__=='__main__':unittest.main()

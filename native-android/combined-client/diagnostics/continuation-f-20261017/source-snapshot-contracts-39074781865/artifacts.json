@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "id": 12117045136,
+      "name": "source-snapshot-contracts-fd213266f1b6665acece877dabb7dab6663e647c",
+      "size_in_bytes": 2794,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12117045136",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12117045136/zip",
+      "expired": false,
+      "created_at": "2026-10-17T22:23:06Z",
+      "expires_at": "2027-01-15T22:22:09Z",
+      "updated_at": "2026-10-17T22:23:06Z",
+      "digest": "sha256:dffcbfc3569cd12cb5e4ebc4b3bc9be6aaffa67d6cfb5c6b41e5d4a5af20b7e8",
+      "workflow_run": {
+        "id": 39074781865,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "fd213266f1b6665acece877dabb7dab6663e647c"
+      }
+    }
+  ]
+}

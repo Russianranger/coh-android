@@ -158,7 +158,56 @@ def assertion_calls(text):
     return calls
 
 
-def compiled_variant_policy(root):
+def filename_formatter_source(original):
+    for definition in ('#define FILEINTRO   "File: "','#define MAXLINELEN 60',
+            '#define DOTDOTDOTSZ 3','#define NEWLINESZ   1'):
+        if original.count(definition)!=1:raise ValueError('db_modal_original_filename_formatter')
+    start='    Strncatt( assertbuf, FILEINTRO );'
+    end='    Strncatt( assertbuf, newline );'
+    if original.count(start)!=1:raise ValueError('db_modal_original_filename_formatter')
+    block=original[original.index(start):]
+    if end not in block:raise ValueError('db_modal_original_filename_formatter')
+    return block[:block.index(end)]
+
+
+def render_source_filename(filename):
+    """Exact pinned SuperAssert.c File formatter, including separator in p."""
+    if type(filename) is not str or not 1<=len(filename)<=1024 or any(not 32<=ord(char)<=126 for char in filename):
+        raise ValueError('db_modal_compiled_filename_shape')
+    size=len(filename)
+    if 7+size+1<=60:return filename
+    ffn=52;p=1
+    while filename[size-p] not in '\\/' and p<size:p+=1
+    if (ffn-ffn//3)<(size-p) and ffn//3>p:
+        return filename[:ffn-3-p]+'...'+filename[size-p:]
+    if ffn-ffn//3>size-p:
+        p//=2
+        # Original size_t subtraction underflows for an overlong basename.
+        # Such a candidate cannot be safely modeled as a bounded alias.
+        if ffn-3-p<0:raise ValueError('db_modal_original_filename_copy_underflow')
+        return filename[:ffn-3-p]+'...'+filename[size-p:]
+    return filename[:ffn-ffn//3-3]+'...'+filename[size-p:size-p+ffn//6-1]+'...'+filename[size-(ffn//3-ffn//6-2):]
+
+
+def compiled_filename_policy(strings,calls_by_file):
+    aliases={};index={}
+    for name in SOURCE_PINS:
+        basename=Path(name).name
+        candidates=[value for value in strings if ntpath.basename(value).casefold()==basename.casefold()]
+        if len(candidates)!=(1 if calls_by_file[basename] else 0):
+            raise ValueError('db_modal_compiled_filename_candidates')
+        for candidate in candidates:
+            if not candidate.replace('\\','/').casefold().endswith('/upstream/ouroboros/'+name.casefold()):
+                raise ValueError('db_modal_compiled_filename_source_suffix')
+            rendered=render_source_filename(candidate)
+            if rendered in aliases:raise ValueError('db_modal_rendered_file_alias_collision')
+            aliases[rendered]=[basename.casefold()]
+            index[FILE_ENUMS[basename]]={'compiled_filename_sha256':hashlib.sha256(candidate.encode()).hexdigest(),
+                'rendered_filename_sha256':hashlib.sha256(rendered.encode()).hexdigest()}
+    return aliases,hashlib.sha256(json.dumps(index,sort_keys=True).encode()).hexdigest()
+
+
+def compiled_variant_policy(root,calls_by_file):
     archive=root/PE_ARCHIVE
     if archive.is_symlink() or archive.stat().st_size!=1088820 or prior.sha(archive)!=PE_ARCHIVE_SHA:
         raise ValueError('db_modal_compiled_archive_identity')
@@ -170,7 +219,8 @@ def compiled_variant_policy(root):
     strings={v.decode('ascii') for v in re.findall(rb'[\x20-\x7e]{3,}',binary)}
     if any(v not in strings for v in PE_VARIANTS.values()):
         raise ValueError('db_modal_compiled_variant_not_present')
-    return {key:normalized(value) for key,value in PE_VARIANTS.items()}
+    aliases,alias_index=compiled_filename_policy(strings,calls_by_file)
+    return {key:normalized(value) for key,value in PE_VARIANTS.items()},aliases,alias_index
 
 
 def policy(root):
@@ -180,6 +230,7 @@ def policy(root):
         if path.is_symlink() or prior.sha(path)!=pin:raise ValueError('db_modal_original_source_identity')
         sources[Path(name).name]=path.read_text(encoding='utf-8')
     original=sources['SuperAssert.c']
+    formatter=filename_formatter_source(original)
     forward=root/'upstream/ouroboros'/MACRO_FORWARD_PATH
     if forward.is_symlink() or prior.sha(forward)!=MACRO_FORWARD_SHA:
         raise ValueError('db_modal_macro_forward_source_identity')
@@ -201,7 +252,7 @@ def policy(root):
         lines=[call['line'] for call in calls_by_file[basename] if call['expression']==expr]
         if not lines:raise ValueError('db_modal_original_assertion_policy')
         points[key]={'file':basename.casefold(),'expression':expr,'lines':lines}
-    variants=compiled_variant_policy(root)
+    variants,aliases,alias_index=compiled_variant_policy(root,calls_by_file)
     sites={};public_index={}
     for basename,calls in calls_by_file.items():
         for ordinal,call in enumerate(calls,1):
@@ -213,8 +264,9 @@ def policy(root):
             public_index[key]={'file_enum':FILE_ENUMS[basename],'source_line':call['line'],
                 'source_expression_sha256':hashlib.sha256(call['expression'].encode()).hexdigest()}
     if len(sites)!=78:raise ValueError('db_modal_source_index_count')
-    return {'exceptions':exceptions,'points':points,'sites':sites,'variants':variants,
+    return {'exceptions':exceptions,'points':points,'sites':sites,'variants':variants,'rendered_files':aliases,
         'file_enums':{name.casefold():value for name,value in FILE_ENUMS.items()},
+        'filename_alias_index_sha256':alias_index,'filename_formatter_sha256':hashlib.sha256(formatter.encode()).hexdigest(),
         'site_index_sha256':hashlib.sha256(json.dumps(public_index,sort_keys=True).encode()).hexdigest()}
 
 
@@ -238,11 +290,12 @@ def classify_text(text,source_policy):
             if len(values)==1:fields[prefix]=values[0]
         for prefix,key in (('File: ','file_field_unique'),('Line: ','line_field_unique'),('Expression: ','expression_field_unique')):
             result['structure_flags'][key]=prefix in fields
-        if 'File: ' in fields:
-            result['source_file_enum']=source_policy['file_enums'].get(ntpath.basename(fields['File: ']).casefold(),'unknown')
+        files=source_policy['rendered_files'].get(fields.get('File: '),[])
+        if len(files)==1:result['source_file_enum']=source_policy['file_enums'][files[0]]
+        elif len(files)>1:result['source_file_enum']='ambiguous_source_file'
         if 'Line: ' in fields:result['structure_flags']['line_shape_known']=bool(re.fullmatch('[0-9]{1,5}',fields['Line: ']))
-        if 'File: ' in fields and 'Line: ' in fields and re.fullmatch('[0-9]{1,5}',fields['Line: ']):
-            basename=ntpath.basename(fields['File: ']).casefold()
+        if len(files)==1 and 'Line: ' in fields and re.fullmatch('[0-9]{1,5}',fields['Line: ']):
+            basename=files[0]
             expr=normalized(fields.get('Expression: ',''));line=int(fields['Line: '])
             matches=[key for key,site in source_policy['sites'].items() if site['file']==basename and site['line']==line]
             if len(matches)>1:result['source_site_enum']='ambiguous_source_site'
@@ -303,7 +356,10 @@ def policy_identity(source_policy):
     return {'original_source_sha256':dict(SOURCE_PINS,**{MACRO_FORWARD_PATH:MACRO_FORWARD_SHA}),
         'source_call_site_count':len(source_policy['sites']),'source_call_site_index_sha256':source_policy['site_index_sha256'],
         'compiled_variant_count':len(source_policy['variants']),'compiled_variant_pe_sha256':PE_SHA,
-        'compiled_variant_archive_sha256':PE_ARCHIVE_SHA}
+        'compiled_variant_archive_sha256':PE_ARCHIVE_SHA,
+        'rendered_filename_alias_count':len(source_policy['rendered_files']),
+        'rendered_filename_alias_index_sha256':source_policy['filename_alias_index_sha256'],
+        'filename_formatter_block_sha256':source_policy['filename_formatter_sha256']}
 
 
 def helper_sources(root):

@@ -1,0 +1,92 @@
+{
+  "actual_root_cause_identified": false,
+  "concrete_blockers": [],
+  "findings": [
+    "Exact retained PE identity and unique full original source suffixes yield8 permitted compiled filenames; zero ringchain.cpp paths agree with its zero indexed sites.",
+    "Pinned original SuperAssert formatter constants and unchanged C block agree with the bounded Python model on all3 branches, separators/no separator and boundary cases, including all8 actual retained PE paths.",
+    "A candidate is admitted only by exact rendered field equality. Arbitrary basename/prefix/ellipsis/case/space changes and multiple candidate/rendered-alias collisions refuse.",
+    "Safe original98/99-byte basename domains remain modeled; source unsigned-copy-count underflow domains100/101/1024 refuse rather than invent bounded aliases.",
+    "Location verification and exact original/retained macro-expression matching remain independent. Fixed enums/counts/source hashes are exported; no raw observed field or its hash is exported.",
+    "Only private policy computation and classifier matching changed. Existing owned Static IDC10 reader, read-only APIs, generation/PE rechecks, process/network/SQL cleanup and readiness deadline are unchanged.",
+    "No actual new-policy assertion predicate/root cause or readiness is claimed; the prior actual observation remains an owned cleanup-complete refusal."
+  ],
+  "independent_test_execution": {
+    "command": "python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_modal_diagnostic.py -v",
+    "compiled_unchanged_original_C_formatter_cases": 62,
+    "exact_rendered_source_site_positive_and_modified_field_controls": 78,
+    "methods": 12,
+    "passed": 11,
+    "skip_scope": "Actual Windows API preflight, unavailable on Linux",
+    "skipped": 1
+  },
+  "independently_recomputed_policy_identity": {
+    "compiled_variant_archive_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+    "compiled_variant_count": 4,
+    "compiled_variant_pe_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "filename_formatter_block_sha256": "6e83cc5f49770ae4444ada27af14958bbd66b97b1337772bf16577434502cd62",
+    "original_source_sha256": {
+      "Common/sql/sqltask.cpp": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02",
+      "DBServer/src/sql_fifo.c": "345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879",
+      "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp": "ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7",
+      "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp": "eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81",
+      "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de",
+      "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h": "105305fab92cb2dc8651c4a4d102a8f5428ecb378f8cde46b3c409970845227b",
+      "libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp": "e7ce6ebd9c14097d65830fd1390408b9a1c9c2a46ee992a47d8d483478a46d0e",
+      "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110",
+      "libs/UtilitiesLib/src/components/MemoryPool.c": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83",
+      "libs/UtilitiesLib/src/utils/SuperAssert.c": "9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6"
+    },
+    "rendered_filename_alias_count": 8,
+    "rendered_filename_alias_index_sha256": "ad1bf4b1a62ac1bc1f689069a36c808f8629f9502bef572582e6d514bb6919b1",
+    "source_call_site_count": 78,
+    "source_call_site_index_sha256": "dadd8a99290d442f9a3f729843df590415970b308a9e267858a7bd53bb2f1144"
+  },
+  "method": "Read-only new formatter/alias/decoder/oracle/test/source diff review; execute only affected modal suite; exact receipt and dependency comparisons. No service, PE, config, API smoke or former qualifier execution.",
+  "new_policy_actual_windows_observation_executed_by_reviewer": false,
+  "original_source_sha256": {
+    "Common/sql/sqltask.cpp": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02",
+    "DBServer/src/sql_fifo.c": "345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879",
+    "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp": "ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7",
+    "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp": "eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81",
+    "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de",
+    "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h": "105305fab92cb2dc8651c4a4d102a8f5428ecb378f8cde46b3c409970845227b",
+    "libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp": "e7ce6ebd9c14097d65830fd1390408b9a1c9c2a46ee992a47d8d483478a46d0e",
+    "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110",
+    "libs/UtilitiesLib/src/components/MemoryPool.c": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83",
+    "libs/UtilitiesLib/src/utils/SuperAssert.c": "9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6"
+  },
+  "passed": true,
+  "project_source_sha256": {
+    "native-android/engine/auth-interop/deployment/DB-SHARD-ACTIVATION.md": "fd78ba02781408b5f3346db8d0a2f681e82bafb6d8c12824192a8a17cddc6d73",
+    "native-android/engine/auth-interop/deployment/db_modal_diagnostic.py": "fea8726372615b3b636ecaf53ad3894004c55454bdfb245f6797c1b6294108f6",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "247b5c0ec6e926bc9385aff02210495076295f835c89e8cdfe4e4ae9180961a7",
+    "native-android/engine/auth-interop/deployment/test_db_modal_diagnostic.py": "0b7963aa5170073aadcd71ce0116abab4adb32e5db6b74a8765951e90f37b00f",
+    "native-android/engine/auth-interop/deployment/test_db_shard_activation.py": "8abd552a38541187993bf96725acb03d686763409cf5de21add496dddb5105f9",
+    "native-android/engine/auth-interop/deployment/windows/db_modal_observer.cs": "3359269a277aa9c50aac8ea74cca7bcdaabb8ff098f224a1f16df63379e8efd6"
+  },
+  "readiness_deadline_changed": false,
+  "receipt_bytes_match_exact_commit": true,
+  "receipt_path": "native-android/engine/auth-interop/evidence/db-modal-rendered-file-preparation-20261017/qualification.json",
+  "receipt_sha256": "7cf4a11c289404b5dc4d6dee18d54c5a9564c061724824fa0b79a73198843fa3",
+  "recorded_hashes_match_worktree_and_exact_commit": true,
+  "reviewer": "Worker F",
+  "runtime_profile_modified": false,
+  "schema": "coh-independent-db-rendered-file-review-v1",
+  "selected_shard_play_verified": false,
+  "server_pe_rebuilt": false,
+  "source_commit": "a62a75bde353bd940d0d56e33b38e17bc1a38f51",
+  "workflow": {
+    "findings": [
+      "New Ubuntu5-minute job runs only the3 formatter/alias controls under the same repository/ref/marker gate.",
+      "Windows service job needs the successful Linux gate and retains its existing owned API preflight, exact retained Auth/Db inputs, timeouts and cleanup/public receipt scope.",
+      "Pinned checkout keeps no credentials; no PE/server/client/crypto rebuild or broader runtime profile is introduced."
+    ],
+    "linux_gate_required_by_windows_needs": true,
+    "new_linux_methods": 3,
+    "path": ".github/workflows/native-original-db-startup.yml",
+    "reviewed_before_publication": true,
+    "sha256": "44d1b8ee1759431e8de33ad223ae2fab2b54f1d3561b0606c171917079f448db",
+    "snapshot": "reviewed-workflow.txt"
+  },
+  "world_authority": false
+}

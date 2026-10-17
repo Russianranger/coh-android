@@ -1,0 +1,29 @@
+{
+  "schema": "coh-preserved-source-constructors-history-v1",
+  "workers": {
+    "B": {
+      "ref": "refs/recovery/source-constructors-20261017/b",
+      "tip": "55d1d6efeffc80e0cceb033978057a80649b6ab3",
+      "prerequisite": "dd50243b2546896f9a3570897cf7e8749e749d0b"
+    },
+    "C": {
+      "ref": "refs/recovery/source-constructors-20261017/c",
+      "tip": "f0e2e72451deea9d8523684b375780a7cce7ea47",
+      "prerequisite": "a84995b16f5fd197a1e5c9f8b64a0cc6e1068149"
+    },
+    "D": {
+      "ref": "refs/recovery/source-constructors-20261017/d",
+      "tip": "a62a75bde353bd940d0d56e33b38e17bc1a38f51",
+      "prerequisite": "eaf55b4451fd008faa949d30cc739a8c476caf1a"
+    },
+    "F": {
+      "ref": "refs/recovery/source-constructors-20261017/f",
+      "tip": "0227723160e0e5169741592eda45d8e1d0fbedc6",
+      "prerequisite": "5367ea2ec83042bfdbb3a0042a8158652a07e33b"
+    }
+  },
+  "bundle": "worker-source-constructors-history.bundle",
+  "bytes": 119127,
+  "sha256": "d5490095359a2da2a50452434fc45e37bf5c3ef90d59a51e87a8f2d38500f3ac",
+  "scope": "Reviewed source texture eligibility, fresh power construction, exact assertion File rendering, actual source-contract CI evidence and prior original Db refusal evidence. No world/actor/ACK/current-generation or new Android qualification."
+}

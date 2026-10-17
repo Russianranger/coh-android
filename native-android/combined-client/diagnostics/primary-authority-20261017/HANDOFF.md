@@ -7,31 +7,26 @@ Git links, existing bundles, accepted APKs and user profiles were preserved.
 
 ## Current qualification checkpoint
 
-Published source checkpoint before the modal diagnostic tranche is `08e6a96f2af9cb317eecd6629e99db4200df177f`
-(tree `85d78f01307c5f0644eb8c4fc58fc5d34b4c9e78`). The chronological sections
-below retain earlier checkpoints; pending statements in those sections describe
-their then-current state. The following table supersedes those pending fields.
+Current reviewed publication: `fd213266f1b6665acece877dabb7dab6663e647c`
+(tree `ff86ef76821a5aace6d4ffb53671cc37aaa2247e`). The chronological sections
+below retain earlier checkpoints; pending statements there describe their
+then-current state. This table supersedes those older pending fields.
 
 | Scope | Established result | Still required |
 |---|---|---|
-| Live scene | Exact original Win32 observer compiled; actual CI native receiver and all 37 current dependencies admitted; restore-only same-packet source/native supervisor passes host controls | A real full character backup and executed matching GROUPS transaction; no source-generation/world admission yet |
-| Graphical backup | Run39071130820 created and ordinarily saved the fresh character; cleanup passed; backup observer failed | Repair PRoot publication, retain fixed failure stages, then obtain the required full PG18 dump |
-| Geometry/materials | Historical LOD cache and original model-level alpha/blend policy qualified; model-policy CI39070610444 passed with all44 source hashes checked | Actual current CLIENT model/TexBind/trick/texture selection, current generations, supported draw ownership and aggregate/GPU budgets |
-| Gameplay dictionaries | Source-sorted IDs, compact forward/reverse joins and shared-set layout qualified; shared-layout CI39069499391 passed | Current runtime/cache branch, semantic character application and complete initial update; no actor/ACK |
-| Encrypted authentication | Original shard/UserData x86 SQL-to-wire prerequisite executed successfully; selected-shard probe has16 host outcomes per mode including wrong nonzero UID refusal | Original DbServer readiness, actual AC_PLAY_OK and authenticated DB/Map; nondevelopment version/checksum inputs |
-| Presentation | Both Android ABI libraries built and Android13 x86_64 CPU consumer executed34,465 checks | Actual GLES/application/world/actor integration and Thor acceptance |
-| Memory/startup | Named reservation replay and source owner sizes documented | Actual source-backed aggregate admission, provider retirement, process/GPU overlap and timing; accepted startup remains387,340ms |
+| Live scene | Exact original Win32 observer compiled; actual CI native receiver and all 37 dependencies admitted; same-packet supervisor, complete native source verifier, provenance and fresh-only retention qualified against controlled inputs; focused CI39074781865 passed | Full original character backup, executed matching GROUPS transaction and actual source token; point-in-time snapshot would still not establish current client/world lifetime |
+| Graphical backup | Run39071130820 created and ordinarily saved a fresh character, then refused backup; real-file publication fix passed 22 controls and independent E/F review | ARM retry39074781817 is running; actual retained-PRoot preflight and full PG18 dump not yet admitted |
+| Geometry/materials | Historical LOD and original model alpha/blend policy qualified; actual model-name trick selection passed CI39073157441, with 149 composed B/C/F source and receipt pins checked | Complete CLIENT texture/material/LOD/reduction selection, current resource generation, draw ownership and GPU budgets |
+| Gameplay dictionaries | Sorted IDs, compact forward/reverse joins, shared sets, source boost schedules and level arithmetic qualified; new boost-slot CI39073157441 passed | Current runtime/cache branch, source constructor/state application and complete initial update; no actor/ACK |
+| Encrypted authentication | Real Auth-only login and original x86 shard/UserData prerequisite executed; selected-shard probe has 16 host outcomes per mode | Original DbServer readiness, actual AC_PLAY_OK and authenticated DB/Map; authentic nondevelopment version/checksum inputs |
+| Presentation | Both Android ABI libraries built and Android 13 x86_64 CPU consumer executed 34,465 checks | Actual GLES/application/world/actor integration and Thor acceptance |
+| Memory/startup | CI39073157441 optional B/C owner sizes total 3,824,536 B; historical baseline plus these is 103,899,217 B, already 3,235,921 B over 96 MiB before later constructor lifetimes and omitted integration costs | Actual source-backed aggregate admission, provider retirement, process/GPU overlap and timing; accepted startup remains 387,340 ms |
 
-The actual Windows diagnostic39070610385 refused at the unchanged300second
-readiness deadline. Its exact6148B artifact SHA256 is
-`f9d3b02dbd3f3661044312fc29ba8c06c46c26e6d21bb769ff6e355e2a5c4889`.
-The same owned DbServer generation had 65 sleeping SQL sessions, zero user or
-attribute tables, zero active/waiting/blocked SQL requests,1047ms CPU and nine
-waiting threads. All owned cleanup checks passed. This localizes the stall
-before expected worker population; it does not identify an assertion or justify
-a binary repair. A failure-only modal/assertion classifier is independently reviewed
-for the next focused service attempt. The intervening39069981922 unit failure
-occurred before services and is not a second runtime stall.
+Windows run39072189359 observed an actual assertion dialog owned by the original
+DbServer generation, but its first policy could not identify the source predicate.
+All cleanup passed. Expanded source/PE-bound diagnosis is running as39074781897
+against unchanged binaries/profile/SQL and the same 300 second deadline. No
+specific assertion cause, repair, readiness or play success is inferred yet.
 
 Gates 25–27 are open. No new APK, authoritative world/player, source-generation
 admission, complete initial update, application ACK or Thor result is claimed.
@@ -480,3 +475,78 @@ The reviewed publication starts only these two missing runtime observations and
 the new source-snapshot contract suite. Actual results are pending. Complete
 source binding, current CLIENT resources, complete initial update, actor/ACK,
 GLES world, full encrypted handoff, Gates 25–27 and Thor acceptance remain open.
+
+
+## Actual hosted immutable source contract qualification
+
+Focused run39074781865 at fd213266f passed its single job117519562485: all
+21 provenance/retention controls and the native synthetic verifier qualification.
+Artifact12117045136 is exactly 2,794 B, SHA256
+dffcbfc3569cd12cb5e4ebc4b3bc9be6aaffa67d6cfb5c6b41e5d4a5af20b7e8.
+Its sole native-verifier.json is 8,276 B, SHA256
+c5a16359e01758c92073b931d64a0aad2f2b42fdf23781deb28907c5884edd84.
+The receipt has 328 synthetic checks, 26 malformed-input and 77 allocation-failure
+refusals per build mode, and zero final tracked native allocations. Root reran
+F939af4689's read-only artifact verifier and independently confirmed all 37
+source/dependency entries. The original archive, proof, metadata, log and
+reproducer are preserved under continuation-f-20261017/source-snapshot-contracts-39074781865.
+This result has no live source, Android, world, actor or gate acceptance.
+
+
+## Original texture dependency and fresh power construction closures
+
+B55d1d6efe adds exact original trickCreateTextures classification and ordered
+layer/fallback dependency eligibility. Each release/ASan/UBSan mode passed
+211,909 checks and 32,166 original comparisons; six mutations refuse. Exact
+14,715 historical cache rows are accounted for, including one previously scoped
+source-domain refusal. The 15 authentic avatar headers yield zero complete
+creation candidates; missing subset dependencies remain unknown. Controlled
+complete-header cases are explicitly separate. No TexBind/default/current-world
+resource is created. Seven genuinely missing default bodies total 16,514 B; exact
+original paths and hashes are recorded without fetching any new body or GEO.
+The copied result is 2,816 B, with no new persistent owner.
+
+C0df0504c2 with proof f0e2e7245 implements only fresh power construction using
+the actual pBoostsAllowed count and original empty-slot/finalizer ordering. Each
+release/ASan/UBSan mode passed 537,556 checks over 13 scenarios, executing
+20,241 original constructors and 24,732 slot appends. Owner/workspace are
+16,464/82,000 B, including the now-64 B scalar; this embedded scalar must not
+be charged twice. Old standalone scalar size was 56 B. These are bounded source
+owners, not actual global admission or RAM headroom. Regular-power reuse, temp
+duplicate selection, boost objects, current dictionaries/full character, actor
+and ACK remain refused.
+
+Root verified all 36 B and 65 C source hashes against the composed files and
+exact implementation blobs. E/F independently reviewed both modules; the next
+focused workflow runs only these new qualifiers, reusing the exact accepted
+cache ZIP and tracked avatar data. No resource/GEO download, server or APK is
+part of that job. Hosted qualification remains pending.
+
+Windows run39074781897 passed all 17 pre-service controls, then refused the
+unchanged readiness deadline. Exact artifact12115784171 is 7,350 B, SHA256
+e8d30407df395ec575e831bd1498180eb7a3364b2dd27d723821a95be20b0bb5.
+Root independently checked archive/CRC/receipt/logs: the same owned assertion
+body still had an unknown file/site, while all 12 reads and cleanup passed.
+No predicate or repair is established. D e3af5aff0 preserves this evidence.
+The original formatter demonstrably abbreviates long File paths; D is preparing
+exact PE-derived original rendering recognition, with no loose ellipsis aliases
+or expression relaxation. This is a concrete observation defect, not a claim
+about the unseen actual assertion location.
+
+
+## Exact original assertion path rendering integrated
+
+D a62a75bde now binds eight exact retained-PE filename strings to unique pinned
+source suffixes and reproduces the original File formatter exactly. Generic
+basename/ellipsis approximations are removed. All 78 indexed-site controls
+preserve independent line/predicate flags; modified/ambiguous/colliding fields
+refuse. The original-C 62-case oracle covers all branches and boundaries; an
+original size_t copy-count underflow domain explicitly refuses. Root passed the
+three new targeted controls and checked six project plus ten original hashes
+against the composed files and exact worker blobs. E/F independently reviewed.
+The new Linux three-method CI gate must pass before the unchanged Windows
+service attempt can run. C#, binaries, owned API/lifecycle, SQL/profile and
+readiness deadline are unchanged. Actual site/predicate and repair remain open.
+
+Worker B/C/D/F histories, including exact CI/failure evidence and final independent
+reviews, are retained in worker-source-constructors-history.bundle with its index.

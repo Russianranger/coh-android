@@ -1,0 +1,94 @@
+{
+  "scope": "Historical manifest/source identities for future narrowly scoped admission only; bodies neither downloaded nor admitted here",
+  "source_manifest_path": "assets/reference-inputs-manifest.json",
+  "source_manifest_bytes": 3832869,
+  "source_manifest_sha256": "cf96742b1b65306356df69d065fcfb5bda0986ec8700d47ae1422452a1c0db7f",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "text_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "original_tex_c_sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+  "original_texFindNeededBinds_sha256_lf": "f7d89a0f7c86b025a7c9c3cf285735be676a1d1f30e1c3764a47877f860ac3bc",
+  "required_defaults": [
+    {
+      "original_texFind_name": "white",
+      "required_virtual_asset_path": "data/texture_library/world/filler/white.texture",
+      "whole_body_bytes": 327,
+      "whole_body_sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9",
+      "donor_archive": "stage1b.pigg",
+      "body_materialized_for_this_qualification": false
+    },
+    {
+      "original_texFind_name": "grey",
+      "required_virtual_asset_path": "data/texture_library/world/filler/grey.texture",
+      "whole_body_bytes": 894,
+      "whole_body_sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+      "donor_archive": "stage1b.pigg",
+      "body_materialized_for_this_qualification": false
+    },
+    {
+      "original_texFind_name": "invisible",
+      "required_virtual_asset_path": "data/texture_library/world/world_fx/portal/invisible.texture",
+      "whole_body_bytes": 5828,
+      "whole_body_sha256": "7a0e37f76eba451debca99f50f2907e556dba55dbb45468a415d55b480b103df",
+      "donor_archive": "stage1b.pigg",
+      "body_materialized_for_this_qualification": false
+    },
+    {
+      "original_texFind_name": "black",
+      "required_virtual_asset_path": "data/texture_library/world/filler/black.texture",
+      "whole_body_bytes": 327,
+      "whole_body_sha256": "62c947f06b7ca5c08e0e9bda98d4ae3d72aa5c7dab4557ae87ff4b48f1764f5a",
+      "donor_archive": "stage1b.pigg",
+      "body_materialized_for_this_qualification": false
+    },
+    {
+      "original_texFind_name": "dummy_bump",
+      "required_virtual_asset_path": "data/texture_library/btest/dummy_bump.texture",
+      "whole_body_bytes": 437,
+      "whole_body_sha256": "021f8a4ccfdb334f9ec336a8275b336890440bf8700ef593b7cd9d4ca374ee3d",
+      "donor_archive": "stage1f.pigg",
+      "body_materialized_for_this_qualification": false
+    },
+    {
+      "original_texFind_name": "dummy_dynamic_cubemap_face0",
+      "required_virtual_asset_path": "data/texture_library/static_cubemaps/dummy_dynamic/dummy_dynamic_cubemap_face0.texture",
+      "whole_body_bytes": 302,
+      "whole_body_sha256": "cd06cf02ffa62c7e5a35d39e5d5d06632c970382640645304584c19ddb70b4f6",
+      "donor_archive": "stage1f.pigg",
+      "body_materialized_for_this_qualification": false
+    },
+    {
+      "original_texFind_name": "buildingLightPattern",
+      "required_virtual_asset_path": "data/texture_library/btest/buildinglightpattern.texture",
+      "whole_body_bytes": 8399,
+      "whole_body_sha256": "c2996a5d0b402dba4ee2722797fdc486e48bc773e99761b659b0c1219aecaa06",
+      "donor_archive": "stage1f.pigg",
+      "body_materialized_for_this_qualification": false
+    }
+  ],
+  "donor_archives": [
+    {
+      "archive": "stage1b.pigg",
+      "bytes": 144033704,
+      "sha256": "8729ef0596885674876551a8b2db0f80be1ebac9d18417007a92224381aea3e5"
+    },
+    {
+      "archive": "stage1f.pigg",
+      "bytes": 124587057,
+      "sha256": "5cf9e3827c76d8c978e99c06c7cea08675bed521f197131f1ceb18d46dea24bd"
+    }
+  ],
+  "contract_requirements": [
+    "Whole exact texture body/path identity is required before original header parsing; the historical manifest is not an active provider binding.",
+    "Existing imported-header owner is a non-colliding subset, preserves caller order and a declared historical label only; missing keys do not prove original Basic table absence.",
+    "Current source must establish actual original scan/LWC/overlay enumeration and duplicate precedence, active logical resource identities and same still-live owner before treating ordinals or identities as current.",
+    "Actual white/default equality must identify the same selected Basic object or equivalent admitted logical identity; a name/hash alone cannot establish pointer equality across owners/generations.",
+    "Original texFindNeededBinds clears TEX_ALPHA on selected invisible Basic; raw cached flags alone are not effective default flags.",
+    "white/grey/black bare names enter the original unsafe short-key domain; strict refusal and the separately qualified explicit guard correction remain distinct policies.",
+    "Basic defaults and texMakeWhite composite defaults are distinct; this gate creates neither, performs no load and establishes no TexWord/capability/GPU state."
+  ],
+  "current_generation": false,
+  "namespace_complete": false,
+  "default_identity_admitted": false,
+  "current_material_selection": false,
+  "world_authority": false
+}

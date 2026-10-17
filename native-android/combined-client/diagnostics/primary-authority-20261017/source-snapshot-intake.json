@@ -27,5 +27,14 @@
     "independent_E_review": "clear",
     "independent_F_review_commit": "5367ea2ec83042bfdbb3a0042a8158652a07e33b",
     "actual_new_arm_run": false
+  },
+  "actual_source_contract_ci": {
+    "run": 39074781865,
+    "artifact": 12117045136,
+    "artifact_bytes": 2794,
+    "artifact_sha256": "dffcbfc3569cd12cb5e4ebc4b3bc9be6aaffa67d6cfb5c6b41e5d4a5af20b7e8",
+    "root_reverified_source_entries": 37,
+    "root_review_sha256": "a6f164b71030aad2fc503994c84379a625ebbcbd378045bf89af85efa3a44a55",
+    "source_generation_admitted": false
   }
 }

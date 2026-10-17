@@ -417,3 +417,57 @@ the same schedule plus selected BasePower.pBoostsAllowed and prior owned boost
 slots; authentic raw data is available, but prior slots must belong to the
 eventual complete character owner rather than a caller assertion. The live
 initial packet/current generation remain separate required evidence.
+
+## Fresh power empty-slot construction — 2026-10-17 continuation
+
+`coh_initial_power_slots_create` now constructs the NEW power boost-slot vector
+from original power_Create's empty ppBoosts, canonical initial ReceivePowers
+purchased-slot arithmetic, and immediate power_LevelFinalize growth. The full
+selected-record parser retains persisted field80 BoostsAllowed count alongside
+field93 MaxBoosts during its existing complete record walk, with no extra
+provider pass. Every constructed slot is an explicit EMPTY marker. No prior
+Power, prior-slot count or caller-populated scalar projection is accepted.
+
+Whole original power_Create, character_GetLevel, power_LevelFinalize and
+power_AddBoostSlot execute on explicit host allocation/clock/earray/Power/
+Character fixtures. All20,241 authentic definitions match the independent
+descriptor projection and native constructor;7,080 have nonempty BoostsAllowed.
+The authentic constructor run makes24,732 source power_AddBoostSlot calls.
+Signed addition overflow refuses BEFORE the MaxBoosts cap and BoostsAllowed
+condition, including the otherwise empty-eligibility branch. Source negative
+maxima retain a negative target with no growth when signed arithmetic is safe.
+
+The positive4096-slot bound is derived from canonical coupling: for F=free<=4096,
+W=wire<=2048 and M=MaxBoosts, M>=F gives purchased=max(W-F,0) and target<=max(W,F).
+For0<=M<F the final cap gives target<=M<F; M<0 gives negative target or an earlier
+overflow refusal. No independent prior purchased count can bypass this bound.
+
+Owner16,464B/workspace82,000B, extended scalar64B (previous56B) on this host.
+The literal4MiB nested budget charges complete borrowed stream/schedules/context/
+scratch, output/workspace/retained and BOTH outer/child16KiB stack reserves before
+callbacks. Nested retained admission accounts for outer live bytes without
+double-charging its source/record workspace subobjects. Exact provider read
+counts prove one pass in at most4096B requests. Output commits only after final
+cancellation; aliases, exact-budget, I/O, syntax, identity and overflow failures
+preserve the complete old output. Borrowed immutable owners/file leases persist.
+
+Final source `0df0504c2ea75d89f4a983a569a17733707f775e`, receipt
+`qualification/initial-power-slots-20261017-final.json.gz`, SHA256
+`ede04085e64b6f3aaa47139bf25863fb17eb70deb9ff51465f4e9e2f99729397`.
+It binds65exact source/helper/header inputs before/after execution. Thirteen
+release/ASan/UBSan cases pass537,556checks per mode, including source-written
+Allowed0/1/3 arrays with signed elements, negative/zero/large maxima,4096-slot
+growth, prefix/empty schedules, early and post-scalar signed overflow, full
+output rollback and final cancellation. C++link passes; conservative complete
+new/callee measured stack sum times4 is4,064B. E and F reviewed independently
+with no remaining blocker. No previous qualifier entrypoint was rerun.
+
+Source CLIENT ReceivePowers destroys the received sets and regrants empty shared
+sets before its first power. CLIENT BuyPowerSet excludes SERVER-only free-power
+grants. First-seen powers take this fresh branch; repeated regular powers reuse
+their instance and temporary powers always create fresh instances. Selecting
+those branches, owning shared sets/unique IDs and applying boost/global objects
+still belong to the future complete source-ordered character transaction owner.
+This module does not establish full power initialization, whole ReceivePowers,
+current dictionary/packet generation, actor publication or any ACK. Previous
+boost-slot source/receipt remain historical and unchanged in git history.

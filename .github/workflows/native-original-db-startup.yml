@@ -1,4 +1,4 @@
-name: Original DbServer owned assertion-site diagnosis
+name: Original DbServer assertion path diagnosis
 'on':
   push:
     branches:
@@ -13,7 +13,19 @@ concurrency:
   group: native-original-db-startup-${{ github.ref }}
   cancel-in-progress: false
 jobs:
+  assertion-file-format:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[db-startup-diagnostic]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with: {persist-credentials: false}
+    - name: Check only new original C formatting and exact PE alias controls
+      working-directory: native-android/engine/auth-interop/deployment
+      run: |
+        python3 -m unittest -v test_db_modal_diagnostic.DbModalDiagnosticTests.test_original_c_formatter_oracle_all_branches_and_boundaries test_db_modal_diagnostic.DbModalDiagnosticTests.test_exact_rendered_file_aliases_and_ambiguous_or_modified_fields test_db_modal_diagnostic.DbModalDiagnosticTests.test_compiled_filename_candidates_suffix_and_alias_collisions_refuse
   original-db-startup:
+    needs: assertion-file-format
     runs-on: windows-2025-vs2026
     timeout-minutes: 20
     steps:
@@ -26,7 +38,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    - name: Check source and PE site index plus owned API smoke before services
+    - name: Check exact assertion paths and owned API smoke before services
       run: |
         python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_modal_diagnostic.py -v
         if ($LASTEXITCODE -ne 0) { throw 'Owned modal observer tests failed' }

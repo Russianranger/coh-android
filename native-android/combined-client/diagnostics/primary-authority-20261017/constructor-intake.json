@@ -1,0 +1,27 @@
+{
+  "B": {
+    "implementation": "55d1d6efeffc80e0cceb033978057a80649b6ab3",
+    "receipt": "native-android/engine/world-render-adapter/qualification/texture-seed-eligibility-20261017/host.json",
+    "receipt_sha256": "4ee743d49b406866a07de03dc5d351f90a64adc5abce64f4f5d86d4590deec6c",
+    "composed_and_exact_worker_blob_hashes": 36
+  },
+  "C": {
+    "implementation": "0df0504c2ea75d89f4a983a569a17733707f775e",
+    "receipt": "native-android/engine/character-dictionary/qualification/initial-power-slots-20261017-final.json.gz",
+    "receipt_sha256": "ede04085e64b6f3aaa47139bf25863fb17eb70deb9ff51465f4e9e2f99729397",
+    "composed_and_exact_worker_blob_hashes": 65
+  },
+  "schema": "coh-primary-source-constructor-intake-v1",
+  "verified_composed_source_entries": 101,
+  "hosted_constructor_qualification": false,
+  "world_authority": false,
+  "actor_or_ACK": false,
+  "Android_or_Thor_acceptance": false,
+  "D": {
+    "commit": "a62a75bde353bd940d0d56e33b38e17bc1a38f51",
+    "source_and_original_hashes_verified": 16,
+    "root_targeted_formatter_methods_passed": 3,
+    "qualification_sha256": "7cf4a11c289404b5dc4d6dee18d54c5a9564c061724824fa0b79a73198843fa3",
+    "actual_new_policy_service_observation": false
+  }
+}

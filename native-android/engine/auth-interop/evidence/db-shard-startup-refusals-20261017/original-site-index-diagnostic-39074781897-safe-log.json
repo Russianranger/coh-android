@@ -1,0 +1,12 @@
+{
+  "scope": "Fixed test-count/sanitized-result lines only; raw job log not retained.",
+  "lines": [
+    "2026-10-17T22:23:03.5423184Z Ran 9 tests in 4.539s",
+    "2026-10-17T22:23:03.5423319Z OK",
+    "2026-10-17T22:23:03.6567445Z Ran 2 tests in 0.001s",
+    "2026-10-17T22:23:03.6567627Z OK",
+    "2026-10-17T22:23:05.2488789Z Ran 6 tests in 1.484s",
+    "2026-10-17T22:23:05.2488975Z OK",
+    "2026-10-17T22:28:52.0350496Z {\"passed\": false, \"failure\": \"shard_db_ready_deadline\", \"original_interserver_shard_activation_verified\": false, \"selected_shard_play_verified\": false, \"authenticated_db_map_handoff_verified\": false}"
+  ]
+}
