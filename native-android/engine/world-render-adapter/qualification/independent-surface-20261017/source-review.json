@@ -1,0 +1,57 @@
+{
+  "schema": "coh-independent-historical-surface-states-review-v1",
+  "approved_source_only": true,
+  "source_commit": "2cdaf2e35",
+  "initial_evidence_commit": "33781616e",
+  "qualifier_fix_commit": "721b5143f6d6be0368d3df7395a255dc06c815e8",
+  "final_evidence_commit": "bf3616dca",
+  "receipt_sha256": "efb30ae18af2fa66b3a3519d4cc33f1ee80ca4a8053d7fc15acfff85bf5eea9e",
+  "verified_source_count": 12,
+  "production_unchanged_by_qualifier_fix": true,
+  "independently_verified_retained_gzip_equals_unique_actual_archive_member": true,
+  "cache_bytes": 15380,
+  "cache_sha256": "9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac",
+  "qualification": {
+    "release": {
+      "passed": true,
+      "checks": 3422,
+      "historical_states": 875,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 3422,
+      "historical_states": 875,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 3422,
+      "historical_states": 875,
+      "material_authority": false,
+      "world_authority": false
+    }
+  },
+  "review": [
+    "Exact SHA/schema/cached framing and boundedASCII fields admitted before publication; fixed111sourcecore plus764cachedorderedstates yields875states under876capacity. Original uppercasing/firstduplicate retention/appendindices match pinned original seqLoadStateBits; missing name remains NOT_FOUND rather than inventing default0.",
+    "Fixed immutable owner copies all retained names and rawflags. Fullinput+owned+external+16KiB preparation/native control and16KiBstaticcore reserved before digest/calloc; finalfailure freespartial allocation, output unchanged. Callback/digest/runtime externalpeak accounting remains caller contract.",
+    "Known output/input/limit and getter owner/name spans protected against overlap/endpoint overflow. Bounded linear lookup belongs to material preparation; no per-frame visibility/load work implied.",
+    "Original CLIENT seqLoadStateBits/comparator/lookup execute with explicit ParserLoadFiles cached-input observer and exactstaticcore declarations; this is historical source construction, not actual cache-selection/CLIENTruntime execution. Manual flag constants match original1/2/4/8 definitions.",
+    "Reviewer found qualifier helper imports/row parsing before hashfreeze. Narrow721fix removes project top-level import, freezes12dependency bytes at module entry before any project helper import, validates again before parsing and after; final3422controls/mode receipt/sourceGitmaps verified, production unchanged."
+  ],
+  "rerun_by_reviewer": false,
+  "scope": {
+    "historical_source_dictionary": true,
+    "actual_client_runtime": false,
+    "active_entity_animation": false,
+    "active_generation": false,
+    "compiled_schema_crc": false,
+    "effective_material": false,
+    "GPU": false,
+    "world": false,
+    "android": false,
+    "thor": false
+  }
+}

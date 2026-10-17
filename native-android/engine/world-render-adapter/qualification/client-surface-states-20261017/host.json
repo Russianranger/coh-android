@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "source_revision": "2cdaf2e3566bdc06c698b6d6831fa685a544c145",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/CLIENT_SURFACE_STATES.md": "452631cba0649ebc626e7042f21f8cacc1b006e02396e22a8e9f19557378d41c",
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.c": "5bf9528bbf1fb78e400e904b87af7d3fbdb0ea5263944e9d3d564f5f4cef363c",
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.h": "20ff6b2c6478fb44197433de4e34c9685c3e01af6a400a87986b610411d191c8",
+    "native-android/engine/world-render-adapter/coh_wr_surface_core.inc": "e20a99603a20e6f58c2c57c1fb8954c93583368eb2d22a35dad9653787a48fee",
+    "native-android/engine/world-render-adapter/check_surface_states.py": "a392bd540079491fde92d59e209306bfd00959f182ef9420c9d7c3d86345dd4d",
+    "native-android/engine/world-render-adapter/tests/test_surface_states.c": "915a6227609c4ff1f50f2ee440228f6970172d1236b22e706be3c1b84f941cbe",
+    "native-android/engine/world-render-adapter/check_texopt_cache.py": "e89da3e91acee48710812cc636278dcc6ab80a6b2a7bde27eb83f3514c067e4e",
+    "native-android/engine/world-render-adapter/texopt_cache_contract.py": "a193a583ddffde758d4e6877114852b3d419bae9548a77ddc1d2b631a1497734",
+    "native-android/engine/world-render-adapter/check_texname.py": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+    "upstream/ouroboros/Common/seq/seqstate.c": "750079414254758fa3e0e478403f68416687475cdb5f852f2472ef30ef4b460e",
+    "upstream/ouroboros/Common/seq/seqstate.h": "56c692d96a91b753bbeb456f214e2a7d3b91912210334268303b373b874d2dab",
+    "upstream/ouroboros/Common/seq/TriggeredMove.h": "82499d5298f2da605a1efc64d2281cc6ccaf48fba0fdc1feb5ad5e35b7bdc175",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "actual_cache_bytes": 15380,
+  "actual_cache_sha256": "9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac",
+  "original_CLIENT_seqLoadStateBits_executed": true,
+  "original_state_lookup_executed": true,
+  "original_parser_input_observer": true,
+  "actual_client_runtime_executed": false,
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 3422,
+      "historical_states": 875,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 3422,
+      "historical_states": 875,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 3422,
+      "historical_states": 875,
+      "material_authority": false,
+      "world_authority": false
+    }
+  },
+  "active_generation": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_execution": false
+}

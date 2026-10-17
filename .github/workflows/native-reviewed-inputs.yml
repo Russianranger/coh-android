@@ -1,0 +1,44 @@
+name: Minimal original32 witnesses and read-only Windows tool inventory
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-reviewed-inputs.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-reviewed-inputs-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  original32-v5-v7:
+    if: github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message, '[reviewed-inputs-check]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Execute exact retained original32 v5 and v7 witnesses without rebuilding
+        run: python3 native-android/combined-client/tools/run_retained_original32.py --source-root . --expected-commit "$GITHUB_SHA" --output "$RUNNER_TEMP/coh-original32-v5-v7"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: retained-original32-v5-v7-execution
+          path: ${{ runner.temp }}/coh-original32-v5-v7/
+          if-no-files-found: error
+          retention-days: 90
+  windows-tool-inventory:
+    if: github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message, '[reviewed-inputs-check]')
+    runs-on: windows-2025
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Observe exact tool and SDK identities without invoking build tools
+        shell: pwsh
+        run: python native-android/engine/auth-interop/deployment/windows_tool_inventory.py --source-root $PWD --expected-commit $env:GITHUB_SHA --output "$env:RUNNER_TEMP/coh-reviewed-tool-inventory"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: read-only-windows-tool-inventory
+          path: ${{ runner.temp }}/coh-reviewed-tool-inventory/
+          if-no-files-found: error
+          retention-days: 90

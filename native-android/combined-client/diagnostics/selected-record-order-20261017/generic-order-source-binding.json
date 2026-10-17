@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "source_commit": "84c02967301b76e65181edc035f39541a9c95646",
+  "source_inputs": 20,
+  "controls": 28964,
+  "profiles": 720,
+  "compressed_bytes": 48188,
+  "compressed_sha256": "50bea87337721ba81c6c3395f5c9cf6469b032788b04e1b0e2d736c56bcb3942",
+  "raw_sha256": "eac266fab959341ac0633b3a7895682d34375710e1acf918c8d9fa42d0ed401e",
+  "marker_children_only": true,
+  "whole_engine": false,
+  "actor": false,
+  "ACK": false
+}

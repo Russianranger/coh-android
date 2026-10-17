@@ -1,0 +1,51 @@
+{
+  "schema": "coh-independent-groups-preproducer-observer-review-v1",
+  "approved_private_source_only": true,
+  "source_commit": "8ef98197468688e6e574098e157086baa471c0e1",
+  "host_receipt_sha256": "a1b2e0b42358f1db8c8001f4efd612af04a25003f346d0c6c301cc8d5b5e82fe",
+  "verified_local_source_inputs": 11,
+  "verified_original_source_files": 16,
+  "staged_original_sha256_lf": "979c072f202b4b15cb02b15eff209cb16cc7a268e460073f421c18fb62325d11",
+  "qualification": {
+    "release": {
+      "checks": 10390,
+      "producer_cases": 1728,
+      "shipping_changed": false,
+      "live_groups_captured": false
+    },
+    "asan": {
+      "checks": 10390,
+      "producer_cases": 1728,
+      "shipping_changed": false,
+      "live_groups_captured": false
+    },
+    "ubsan": {
+      "checks": 10390,
+      "producer_cases": 1728,
+      "shipping_changed": false,
+      "live_groups_captured": false
+    }
+  },
+  "review": [
+    "Normal original file/definition predicates match source exactly: fullupdate bypasses time but not saved+nonzero-file_idx+unmodified-on-disk omission;force_reload bypasses both. Inactive definitions still emitted when eligible. Fileorder1..N-1then0 andallallocatedslots preserved; no file0 all-def exception invented.",
+    "Preflight bounded4096files/65536slots/65536roots before output; base/raid/null/special storage fail closed. Fixed64byteLErecords no nativepointer/layout/padding; sourceRoot active state independent from root-time emission (including null deletion body). Record callback receives provisional stackbytes and failure leavespublicreport unchanged.",
+    "Private staging verifies completeoriginalLFpin, inserts read-onlybegin afterlocals and finish before originalpktSend; originalproducer bodies unchanged. Reconstructedstagehash independentlymatchesreceipt. Originalsource mutates force_reload/linktime only afterbegin, so correct PREstate retained.",
+    "Disabled static hooks requireallcallbacks. Finish exposes exact logicalcommand-inclusive originalpacketbitlength/aligned/compress before ownershiptransfer. Error/oversize/sinkrefusal aborts onlydiagnostic whileoriginalproduction continues. No extra originalCRC accumulator call added; exactfooterremains in packet.",
+    "Owner thread exclusivity, quiescence, nonreentrant callbacks andimmutablehook/context remain explicit caller preconditions (activeguard does not itself prove nonreentry during begin/record). No sink/caller installed. Synchronousvaliddisjoint source/report/callbackspans required; no allocations.",
+    "Host1728producercases/10390controls perreleaseASanUBSan verifiedsource/receipt, no rerun. Legacy original functions explicitly excluded fromUBSan, newobserver sanitized. Future capture must bind SAMEboundarycatalog/runtime/resource/actualpacket/link/source/run identity and CLIENT saveddefinition import; old detached captures/checksums alone cannot grantgeneration."
+  ],
+  "reviewer_reran_oracle": false,
+  "scope": {
+    "source_eligibility_schema": true,
+    "actual_capture": false,
+    "sink_installed": false,
+    "quiescent_caller_installed": false,
+    "source_generation": false,
+    "CLIENT_import": false,
+    "live_groups": false,
+    "shipping_source_changed": false,
+    "world": false,
+    "android": false,
+    "ACK": false
+  }
+}

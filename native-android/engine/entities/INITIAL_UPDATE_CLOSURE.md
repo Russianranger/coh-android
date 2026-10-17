@@ -27,14 +27,14 @@ complete initial transaction and authoritative actor acceptance are not implied.
 | Step | Boundary | Status / remaining work |
 |---|---|---|
 | 1 | Delta index and `checkEntCreate` | Supported create metadata including pet power CRC; dictionary references unresolved |
-| 2 | rare / medium / very-rare flags | Read; very-rare continuation still rejects |
+| 2 | rare / medium / very-rare flags | Complete selected SELF/CREATE composition now in `engine/selected-record/`; existing general `coh_ent_record` still refuses very-rare continuation |
 | 3 | state mode | Supported |
 | 4 | position and quaternion | Supported absolute/accepted position kernel; non-instant interpolated offsets still reject |
 | 5 | sequence movement | Supported numeric sequence/tick/bits; no resolved animation resource |
 | 6 | triggered moves and AI animation list | Bounded metadata; no FX execution |
 | 7 | pchar flag and NetFX flag | Complete bounded NetFX event grammar supported; event handles/resources remain unresolved, list inspection does not retain events |
-| 8 | costume and translucency | NPC index and sequence-name references supported. Complete appearance wire envelope and raw full/owned/custom bodies source-qualified standalone, including rewards/multiple/super/FX/NPC fallthrough. Entity records still reject these variants pending dictionary capture, complete transaction ownership and semantic state composition |
-| 9 | power customization and titles if very rare | Complete power-customization envelope and complete bounded titles update source-qualified standalone. Titles use the unchanged inline sender block and full original consumer, not complete sendEntity. Unresolved power CRCs and entity-record composition remain open |
+| 8 | costume and translucency | NPC index and sequence-name references supported. Complete appearance wire envelope and raw full/owned/custom bodies source-qualified standalone, including rewards/multiple/super/FX/NPC fallthrough. Selected raw SELF/CREATE composition validates these conditional variants using the supplied immutable dictionary and exact manifest; authentic runtime generation, semantic state application and general entity-list composition remain open |
+| 9 | power customization and titles if very rare | Complete power-customization envelope and complete bounded titles update source-qualified standalone. Titles use the unchanged inline sender block and full original consumer, not complete sendEntity. Selected raw SELF/CREATE composition includes both; unresolved power CRCs, general records and authoritative application remain open |
 | 10 | ragdoll | Bounded scalar consumption; not skeleton-qualified publication |
 | 11 | basic character stats if pchar | Complete pinned basic absolute non-debug schema supported |
 | 12 | vision phases, exclusive phase, yellow con | Supported numeric values |
@@ -42,13 +42,13 @@ complete initial transaction and authoritative actor acceptance are not implied.
 | 14 | target/assist/taunter/placaters | Supported bounded metadata |
 | 15 | status effects | Supported mask/vision/status-string metadata |
 | 16 | self inventory sizes | Supported pinned five-type schema; does not contain inventory contents |
-| 17 | self taskforce architect information and parameters if very rare | Complete bounded consecutive wire substructures qualified standalone, with cached/full/custom contact events and raw relative clock words. Prior-state application, retained contact resource identity and complete entity composition remain open |
-| 18 | odd-send, ally ID, ignore-combat flags/offset level | Complete bounded raw prefix qualified standalone; no state application or record composition |
+| 17 | self taskforce architect information and parameters if very rare | Complete bounded consecutive wire substructures qualified standalone, with cached/full/custom contact events and raw relative clock words. Selected raw SELF/CREATE owner composes both; prior-state application, retained contact resource identity and enclosing entity-list transaction remain open |
+| 18 | odd-send, ally ID, ignore-combat flags/offset level | Complete bounded raw prefix is composed in the selected SELF/CREATE owner; no authoritative state application or general record admission |
 | 19 | player type/subtype/praetorian/location | Complete bounded raw prefix qualified standalone; source self/player application remains separate |
 | 20 | PvP, collision, selectable, no-draw, map visibility, contact/PNPC, con/walls | Complete bounded raw prefix qualified standalone; control/player/stale application remains separate |
 | 21 | name, pet metadata, AFK | Complete bounded raw prefix qualified standalone; unresolved entity/power references and exact retain/clear/stale application remain separate |
-| 22 | supergroup mission/tokens/recipes/details, leveling pact, logout | Complete bounded consecutive raw wire bodies source/host/sanitizer qualified standalone in `coh_very_rare_tail.*`; original stale-pact cursor mismatch retained as evidence; exact prior-state application and full entity composition remain open |
-| 23 | teammate buff stream | Complete bounded `appendTeammatePacket`/`character_SendBuffs` raw grammar source/host/sanitizer qualified standalone in `coh_teammate_buffs.*`; power CRC/attribute dictionary authority, stale/prior-state application and enclosing entity composition remain open |
+| 22 | supergroup mission/tokens/recipes/details, leveling pact, logout | Complete bounded consecutive raw wire bodies source/host/sanitizer qualified standalone in `coh_very_rare_tail.*`; original stale-pact cursor mismatch retained as evidence; selected SELF/CREATE raw composition now includes this suffix; exact prior-state application and full entity-list composition remain open |
+| 23 | teammate buff stream | Complete bounded `appendTeammatePacket`/`character_SendBuffs` raw grammar source/host/sanitizer qualified standalone in `coh_teammate_buffs.*`; power CRC/attribute dictionary authority, selected SELF/CREATE raw composition now includes the final buff body; stale/prior-state application and enclosing entity-list composition remain open |
 | 24 | canonical list sentinel; global unique self ownership | Supported across caller's complete supplied staging table |
 
 ## ALLENTS outer tail, original `entReceiveUpdate` order
@@ -71,7 +71,7 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
 | 10 | optional attribute descriptions | Monitor-only11-slot body qualified against whole original producer/consumer with explicit description/value/UI fixture shells. Full mode refuses until the exact ordered category/attribute/contribution dictionaries are admitted. Outer present flag is composed in the diagnostic suffix |
 | 11 | dynamic groups and sky fade | Dynamic full-zlib/delta wire diagnostic qualified against whole original producer and independent model; numeric expected count does not authenticate original tracker occurrence order, generation or graph ownership. External zlib stack/sanitizer closure remains open. Whole original sky sender/consumer qualified; actual sky resources unresolved |
 | 12 | optional slave pitch/yaw/roll | Exact original conditional producer/consumer blocks and finite3F32 raw staging qualified. Outer master/slave/control-client ownership selection is not executed by those fixtures. Camera PYR is not selected-character orientation |
-| 13 | exact packet end and complete transactional admission | Source-ordered initial GLOBAL suffix through sky/slave is host/ASan/UBSan qualified using released bounded scratch loans and immutable packet-backed spans (`engine/initial-suffix/`, published2cdbaf42). Syntax-complete diagnostics return UNSUPPORTED for unowned dynamic data; reader/public output remain unchanged. Supported non-debug entity prelude composition is separately qualified in `engine/entity-frame/`; authentic selected-player very-rare/appearance/taskforce/buff record closure, dictionaries and appended command framing still gate acceptance. Original server may append SERVER_BEGIN_BYTE_ALIGNED_DATA plus entityPacket commands; suffix end is not transport end. No actor or acknowledgment permitted |
+| 13 | exact packet end and complete transactional admission | Source-ordered initial GLOBAL suffix through sky/slave is host/ASan/UBSan qualified using released bounded scratch loans and immutable packet-backed spans (`engine/initial-suffix/`, published2cdbaf42). Syntax-complete diagnostics return UNSUPPORTED for unowned dynamic data; reader/public output remain unchanged. Supported non-debug entity prelude composition is separately qualified in `engine/entity-frame/`; selected-player raw record composition is separately qualified in `engine/selected-record/`; authentic runtime dictionaries, other required records, whole-list integration and appended command framing still gate acceptance. Original server may append SERVER_BEGIN_BYTE_ALIGNED_DATA plus entityPacket commands; suffix end is not transport end. No actor or acknowledgment permitted |
 
 ## Full character tail, original `receiveCharacterFromServer` order
 
@@ -222,9 +222,10 @@ This is not blocked solely on server access: the unimplemented client grammars
 remain substantial. Source substructures can continue without server access;
 final complete qualification needs authentic source/profile dictionaries and
 actual complete packets. A capture alone cannot make an incomplete parser safe.
-The remaining entity very-rare/appearance/buff composition, dictionary-bound
-character application and complete enclosing framing remain implementation
-requirements. Outer character and PowerInfoUpdate/global wire bodies already
+The selected initial SELF/CREATE record now has a bounded thirteen-stage raw
+composition in engine/selected-record; entity-list integration, other/non-create
+records, dictionary-bound character application and complete enclosing framing
+remain implementation requirements. Outer character and PowerInfoUpdate/global wire bodies already
 have qualified raw standalone/suffix owners; do not relabel those completed
 subgrammars as missing. Source semantics and authentic runtime admission are
 both required before complete publication.
@@ -245,6 +246,45 @@ normal viewed-entity profile. Original clientGetViewedEntity can select a slave;
 that alternative cannot silently replace the selected character. Complete
 self/character/dictionary/suffix/world/framing gates and actor/ACK remain open.
 Read entity-bootstrap/CONTRACT.md for atomic transaction/lifetime requirements.
+
+## Selected initial raw record composition
+
+Source3dc8f9f28 and receipt55c1db2f0 add `engine/selected-record/` without
+changing existing accepted clients or gameplay ownership. The thirteen ordered
+stages consume create/pose/sequence, triggers/AI, NetFX, appearance, power
+customization, titles, ragdoll, common character fields, taskforce, rare prefix,
+SG/pact/logout and final teammate buffs. Every conditional required child must
+validate before the reader and compact packet-backed result commit. Appearance,
+power and other large child PODs occupy one charged scratch loan at a time;
+immutable bit spans retain exact payloads under the enclosing packet lease.
+Generation alone cannot replace the supplied dictionary manifest. The named
+aggregate budget includes retained memory and pre-reserved callback charge;
+existing stricter SG/buff limits remain enforced. No scanning, skipping or
+transport-end assumption is introduced.
+
+The standalone source/component fixture qualification passes 352,228 assertions
+per release/ASan/UBSan mode, including 25,411 truncations, 12,148 byte mutations
+and 1,260 loan controls. Its historical outer/status fields remain explicit
+synthetic composition. The subsequent actual outer qualifier executes whole
+original sendEntity control with independently qualified original child spans,
+including genuine selected-self full basic stats, sequence, non-RAGDOLL and
+status writers. Its 144 profiles compare all thirteen source/native boundaries,
+inline source fields, later boundary rollback and mutations. All child payloads
+are replayed at every bit offset before permitting relocation. Child fixture
+objects remain independent of outer fixture objects; neither tranche claims
+whole-engine execution, a live source generation, authentic selected identity or
+actor. Original marker payloads alone do not qualify child grammar.
+
+The closest record gates now are source-consistent whole selected-record oracle
+inputs, admitted authentic costume/power/sequence dictionaries and runtime cache
+generation, event retain/clear/application ownership, and complete list handling
+for all other/non-create records plus selected-self uniqueness. This component
+supports only initial selected SELF/CREATE and refuses other record profiles.
+The owned positive selected DBID from the validated DB handoff must agree with
+its self create. The whole list/control/deletes, character/global suffix, viewed
+entity profile and enclosing command boundaries still need one atomic owner.
+No renderer publication, immutable authoritative actor or completion ACK follows
+from this raw record alone.
 
 ## Immutable actor boundary
 

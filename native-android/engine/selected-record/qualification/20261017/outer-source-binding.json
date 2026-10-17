@@ -1,0 +1,10 @@
+{
+  "schema": "coh-selected-record-outer-binding-v1",
+  "source_commit": "ee40d7918b928235a6d5bc497df2b5dd244b1df7",
+  "tested_inputs_match_commit": true,
+  "input_count": 91,
+  "host_outer_proof_sha256": "bca8d835f8db71f4e3a48011e8b20b2c747228bc03e1789d24ed4d5356f21160",
+  "scope": "Whole original outer function executes with separately qualified original child wire spans. Exact object-graph equivalence/runtime dictionary/selected identity is not established. All native modes cover identical inputs. No actor/ACK.",
+  "actor_publication": false,
+  "ack_permitted": false
+}

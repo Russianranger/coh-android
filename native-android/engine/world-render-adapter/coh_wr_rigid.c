@@ -56,11 +56,12 @@ CohStatus coh_wr_rigid_part(const CohWrRigidResource*r,uint32_t i,CohRenderGeome
     if(!r||!g||!m||i>=r->report.parts)return COH_INVALID;
     *g=r->parts[i].geometry;*m=r->parts[i].material;return COH_OK;
 }
-CohStatus coh_wr_rigid_acquire_using(CohAssetLoader*l,const CohWrRigidRequest*q,const CohWrRigidLimits*b,CohCancel cancel,CohWrRigidResource **out,CohWrRigidHeaderOpen open_header,CohWrRigidHeaderModel read_model){
+CohStatus coh_wr_rigid_acquire_policy(CohAssetLoader*l,const CohWrRigidRequest*q,const CohWrRigidLimits*b,CohCancel cancel,CohWrRigidResource **out,CohWrRigidHeaderOpen open_header,CohWrRigidHeaderModel read_model,CohWrRigidPolicy policy){
     const CohAssetBlob*blob=NULL;CohWrRigidResource*r=NULL;uint8_t *temp=NULL,*streams=NULL;CohStatus s;
     size_t workspace=0,max_stream=0,owned=sizeof(*r),temporary=0,peak=0;
     if(!l||!q||!b||!out||!open_header||!read_model||!q->geo.path||!q->geo.generation||!bounded_name(q->model)||
        !q->material_generation||!q->digest||!q->acquire||!q->release||!nonzero(q->geo_sha256))return COH_INVALID;
+    if(policy!=COH_WR_RIGID_DEFAULT_0_8&&policy!=COH_WR_RIGID_EXACT_SOURCE_7&&policy!=COH_WR_RIGID_EXACT_SOURCE_5)return COH_INVALID;
     if(*out)return COH_STATE;
     if(!b->loader_reservation||!b->aggregate_limit||b->aggregate_limit>COH_WR_MAX_MEMORY||b->external_bytes>b->aggregate_limit||
        !b->max_models||b->max_models>65536||!b->max_vertices||b->max_vertices>COH_WR_MAX_VERTICES||
@@ -76,7 +77,7 @@ CohStatus coh_wr_rigid_acquire_using(CohAssetLoader*l,const CohWrRigidRequest*q,
     if(workspace>b->max_workspace_bytes||!room(l,b,0,workspace,&peak)){s=COH_LIMIT;goto fail;}
     temp=malloc(workspace);if(!temp){s=COH_LIMIT;goto fail;}
     s=open_header(bytes,temp,workspace,b->max_models,&geo);if(s!=COH_OK)goto fail;
-    if(geo.version!=0&&geo.version!=8){s=COH_UNSUPPORTED;goto fail;}
+    if(policy==COH_WR_RIGID_EXACT_SOURCE_5?geo.version!=5:policy==COH_WR_RIGID_EXACT_SOURCE_7?geo.version!=7:(geo.version!=0&&geo.version!=8)){s=COH_UNSUPPORTED;goto fail;}
     uint32_t matches=0,selected_zero=0;size_t cursor=geo.records_offset,selected_record=0;
     for(uint32_t i=0;i<geo.model_count;i++){
         CohAssetGeoModel m;if(cancelled(cancel)){s=COH_CANCELLED;goto fail;}
@@ -184,4 +185,10 @@ static CohStatus protected_model(const CohAssetGeo*g,uint32_t row,CohAssetGeoMod
 CohStatus coh_wr_rigid_acquire(CohAssetLoader*l,const CohWrRigidRequest*q,
  const CohWrRigidLimits*b,CohCancel cancel,CohWrRigidResource**out){
  return coh_wr_rigid_acquire_using(l,q,b,cancel,out,coh_asset_geo_open,protected_model);
+}
+
+CohStatus coh_wr_rigid_acquire_using(CohAssetLoader*l,const CohWrRigidRequest*q,
+ const CohWrRigidLimits*b,CohCancel cancel,CohWrRigidResource**out,
+ CohWrRigidHeaderOpen open_header,CohWrRigidHeaderModel read_model){
+ return coh_wr_rigid_acquire_policy(l,q,b,cancel,out,open_header,read_model,COH_WR_RIGID_DEFAULT_0_8);
 }

@@ -1,0 +1,43 @@
+{
+  "android_executed": false,
+  "apk_rebuilt": false,
+  "compiler_executed": false,
+  "live_world": false,
+  "material_authority": false,
+  "passed": true,
+  "scope": "Two retained freestanding Linux i386 original readModel metadata witnesses only",
+  "server_executed": false,
+  "source_inputs_unchanged": true,
+  "source_revision": "71a39e29af3ff960f92c9bae50d6572ebed0d2b8",
+  "source_sha256": {
+    "native-android/combined-client/tools/run_retained_original32.py": "96988f4048e9d16915f5c7d6d8e26212ca80028dfa5be7aeb2c26e76f54200cb",
+    "native-android/engine/world-render-adapter/qualification/rigid-v5-20261017/expected-v5-facts.bin": "2633e4c5c31004f701563c12914c26558934c868b0775d8777b175b7e4667c1c",
+    "native-android/engine/world-render-adapter/qualification/rigid-v5-20261017/expected-v5-facts.json": "91cf44a2264a3113cb5a01a9db708498c24edef51400ccb9ab4e2c0e586c061b",
+    "native-android/engine/world-render-adapter/qualification/rigid-v5-20261017/original-source-diagnostics-checksums.json": "661d43ed39e80d84391565accb57ea597bc91c82a36a02b82f843c59cb393e52",
+    "native-android/engine/world-render-adapter/qualification/rigid-v5-20261017/original-source-diagnostics.zip": "cd96a1887fdccaaec71401ce576e3a773e2aaf3bdba4bc0675dac93dd1914389",
+    "native-android/engine/world-render-adapter/qualification/rigid-v7-20261017/expected-v7-facts.bin": "06e8b757e10c1fc95091d3bc9b8c318f7164c8e7d58746c01da811f6dd2da5c7",
+    "native-android/engine/world-render-adapter/qualification/rigid-v7-20261017/expected-v7-facts.json": "68445bcba2a7d93291edf1d37cd7a64410b9c7ccad876e6eb04a610ab3bd7c7c",
+    "native-android/engine/world-render-adapter/qualification/rigid-v7-20261017/sealed-original32-checksums.json": "d7254cbadf433f832041d07202bceb2fd33b3ed0db816939ded682fe03420c15",
+    "native-android/engine/world-render-adapter/qualification/rigid-v7-20261017/sealed-original32-diagnostics.zip": "d37654e587f5ba6eb83945fad14ee09a5d152c3bd9a76f7e5756cba59e83823d"
+  },
+  "thor_accepted": false,
+  "validation_only": true,
+  "versions": {
+    "5": {
+      "archive_sha256": "cd96a1887fdccaaec71401ce576e3a773e2aaf3bdba4bc0675dac93dd1914389",
+      "binary_sha256": "f4af83cbf3e752f6d95dc5c03d109d4a8f6cbc0b004d9f1ddc345acceffcd741",
+      "expected_stdout_sha256": "2633e4c5c31004f701563c12914c26558934c868b0775d8777b175b7e4667c1c",
+      "expected_words": 55,
+      "original32_executed": false,
+      "retained_inputs_validated": true
+    },
+    "7": {
+      "archive_sha256": "d37654e587f5ba6eb83945fad14ee09a5d152c3bd9a76f7e5756cba59e83823d",
+      "binary_sha256": "cc82c758ec9f2da54df42eb5d4b7769085e95e17d5aa5f64da70deceebe63a9f",
+      "expected_stdout_sha256": "06e8b757e10c1fc95091d3bc9b8c318f7164c8e7d58746c01da811f6dd2da5c7",
+      "expected_words": 52,
+      "original32_executed": false,
+      "retained_inputs_validated": true
+    }
+  }
+}

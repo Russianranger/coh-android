@@ -1,0 +1,17 @@
+test_all_existing_source_immutable_generated_domain_bounded (test_hosted_manual_atlas_compile.CompileControls.test_all_existing_source_immutable_generated_domain_bounded) ... ok
+test_cache_refuses_fixture_wrong_version_unexpected_target (test_hosted_manual_atlas_compile.CompileControls.test_cache_refuses_fixture_wrong_version_unexpected_target) ... ok
+test_compilation_admission_scope_commands_and_source_mutations (test_hosted_manual_atlas_compile.CompileControls.test_compilation_admission_scope_commands_and_source_mutations) ... ok
+test_compile_argv_offline_exact_sources_toolchain_and_only_db (test_hosted_manual_atlas_compile.CompileControls.test_compile_argv_offline_exact_sources_toolchain_and_only_db) ... ok
+test_exact_new_cmake_dependency_patch (test_hosted_manual_atlas_compile.CompileControls.test_exact_new_cmake_dependency_patch) ... ok
+test_full_file_mapping_detects_links (test_hosted_manual_atlas_compile.CompileControls.test_full_file_mapping_detects_links) ... ok
+test_generated_compiler_exact_path_abi_and_version (test_hosted_manual_atlas_compile.CompileControls.test_generated_compiler_exact_path_abi_and_version) ... ok
+test_git_path_substitution_refused (test_hosted_manual_atlas_compile.CompileControls.test_git_path_substitution_refused) ... ok
+test_linux_cannot_start_compile_driver (test_hosted_manual_atlas_compile.CompileControls.test_linux_cannot_start_compile_driver) ... ok
+test_lock_sha_image_owner_and_every_tool_byte (test_hosted_manual_atlas_compile.CompileControls.test_lock_sha_image_owner_and_every_tool_byte) ... ok
+test_pure_pe_import_ranges_and_win32 (test_hosted_manual_atlas_compile.CompileControls.test_pure_pe_import_ranges_and_win32) ... ok
+test_unreviewed_profile_and_relative_tool_refused (test_hosted_manual_atlas_compile.CompileControls.test_unreviewed_profile_and_relative_tool_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.532s
+
+OK

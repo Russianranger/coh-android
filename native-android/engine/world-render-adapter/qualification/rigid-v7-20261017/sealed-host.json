@@ -1,0 +1,289 @@
+{
+  "passed": true,
+  "original32_required": false,
+  "scope": "Explicit v7 CPU opt-in with actual five-model body streams and fixture materials; original32 readModel compile/layout and execution status recorded separately",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/tests/test_rigid_v7.c": "95abb5166ff5ad0e44676d940d7294f3543fe370a65d0ec62cd1c4f14113ee29",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.c": "1a4aaa11a29744c5c18a4ced0bae82ec6f20bba5141d5a63982620c101bb4492",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v7.c": "16e682a8b4914c5980c90255f8e087c7ada62ac7025d1ee04362ed6ae9989ddc",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.c": "8430ffd01c83e8476f9672eab63020434477206943bcb39b2007e75111fd746d",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.c": "c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_v7.h": "a4a40dba78073fab1af02100f540227bcb7a361789cbc1a819251f6f35b4eaaf",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_internal.h": "6497ac36c5cee5935403fcf0b2f84dbd20319c6a588805966e5ef62efa0c22dd",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.h": "01f60ed231e19dd8570740c9ebe90dae3209e055f1fc2bbc5c19bafb4b955ddb",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.h": "b6a5a2106455756712d258af00508801b76bb9e00ee94cc51784403f1c655a0a",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/world-render-adapter/check_rigid_v7.py": "5147234ef49f581e84b5d8573e61a16b3b31d59d87213ba53fbe2d55a1845b5c",
+    "native-android/engine/world-render-adapter/check_rigid_legacy.py": "60e6ce50e4c80680c0c5038a7ed9b9323d72c60b7e7d80e8b20ec339ecaf9cfa",
+    "native-android/engine/world-render-adapter/rigid-v7-pins.json": "b70100e0a399c9819927a14ae2b0a936aed40bb8ea8cbd67a06252e1e898686a",
+    "native-android/engine/world-render-adapter/rigid-source-pins.json": "246dd1893b5d3d7c9be9b087f8eab42a31272499331e9fb1bf1a270284cdc5ab",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.h": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+  },
+  "regression_input_sha256": {
+    "/workspace/scratch/9174d12e2a11/reachable-geo-authentic/data/object_library/buildings/elements/signs/neon/neon.geo": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+    "/workspace/scratch/9174d12e2a11/rigid-authentic/praetorianbox_open.geo": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5"
+  },
+  "actual_body": {
+    "scope": "Exact retained actual source observation/body candidate; material and query generation fixtures independent",
+    "source_geo_name": "object_library/Buildings/Elements/signs/Special_Signs/Chaser_Sign_4to1/chaser_sign_4to1.geo",
+    "asset_path": "data/object_library/buildings/elements/signs/special_signs/chaser_sign_4to1/chaser_sign_4to1.geo",
+    "bytes": 1654,
+    "sha256": "66742a3b485b7772e6ab20a4edc750a7e46d99891e35473bfc587a3b0e9fd374",
+    "version": 7,
+    "source_observations": [
+      {
+        "resource_ordinal": 35196,
+        "record_sha256": "0e00e68e7d87d337ba1dc6861e555afc4581c4d84d5568c6f7a3be0c5766c882",
+        "owner_kind": 1,
+        "file": 453,
+        "slot": 1,
+        "original_id": 1,
+        "definition_name": "_ChaserLight1",
+        "sorted_runtime_model_row": 0,
+        "geo_version": 7,
+        "texture_partitions": [
+          [
+            1,
+            2,
+            "Marq_backlight.tga"
+          ]
+        ]
+      },
+      {
+        "resource_ordinal": 35195,
+        "record_sha256": "5101a6b1980b20775ac51eb0772c45ffabd0758264596e31daf293076b60d617",
+        "owner_kind": 1,
+        "file": 453,
+        "slot": 0,
+        "original_id": 0,
+        "definition_name": "_ChaserLight2",
+        "sorted_runtime_model_row": 1,
+        "geo_version": 7,
+        "texture_partitions": [
+          [
+            1,
+            2,
+            "Marq_backlight.tga"
+          ]
+        ]
+      },
+      {
+        "resource_ordinal": 35197,
+        "record_sha256": "336b0d03c57e429aa5920c25ee3df49d6ed02c702a7ae0085531b084593f6d5d",
+        "owner_kind": 1,
+        "file": 453,
+        "slot": 2,
+        "original_id": 2,
+        "definition_name": "_ChaserLight3",
+        "sorted_runtime_model_row": 2,
+        "geo_version": 7,
+        "texture_partitions": [
+          [
+            1,
+            2,
+            "Marq_backlight.tga"
+          ]
+        ]
+      },
+      {
+        "resource_ordinal": 35198,
+        "record_sha256": "5049b73895145022d735679f7af5d2e02a2b20cddf6cce5b334bcd614d82e34a",
+        "owner_kind": 1,
+        "file": 453,
+        "slot": 3,
+        "original_id": 3,
+        "definition_name": "_ChaserLight4",
+        "sorted_runtime_model_row": 3,
+        "geo_version": 7,
+        "texture_partitions": [
+          [
+            1,
+            2,
+            "Marq_backlight.tga"
+          ]
+        ]
+      },
+      {
+        "resource_ordinal": 35199,
+        "record_sha256": "c673316c1c61fdff10783cb9d2072130dd6cc62c0a62afc320cea263743ba6de",
+        "owner_kind": 1,
+        "file": 453,
+        "slot": 4,
+        "original_id": 4,
+        "definition_name": "_ChaserlightBox_df",
+        "sorted_runtime_model_row": 4,
+        "geo_version": 7,
+        "texture_partitions": [
+          [
+            2,
+            12,
+            "Marq_front.tga"
+          ]
+        ]
+      }
+    ],
+    "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "resources_sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6",
+    "source_generation_admitted": false,
+    "material_fixture_only": true
+  },
+  "models": [
+    {
+      "row": 0,
+      "name": "_ChaserLight2__SignChaserLights",
+      "vertices": 4,
+      "triangles": 2,
+      "grid_unpack_bytes": 16,
+      "reduction_unpack_bytes": 80,
+      "autolod_f32": [
+        0.0,
+        1261.3958740234375,
+        -1.0
+      ]
+    },
+    {
+      "row": 1,
+      "name": "_ChaserLight1__SignChaserLights",
+      "vertices": 4,
+      "triangles": 2,
+      "grid_unpack_bytes": 16,
+      "reduction_unpack_bytes": 78,
+      "autolod_f32": [
+        0.0,
+        800.02099609375,
+        -1.0
+      ]
+    },
+    {
+      "row": 2,
+      "name": "_ChaserLight3__SignChaserLights",
+      "vertices": 4,
+      "triangles": 2,
+      "grid_unpack_bytes": 16,
+      "reduction_unpack_bytes": 79,
+      "autolod_f32": [
+        0.0,
+        800.02099609375,
+        -1.0
+      ]
+    },
+    {
+      "row": 3,
+      "name": "_ChaserLight4__SignChaserLights",
+      "vertices": 4,
+      "triangles": 2,
+      "grid_unpack_bytes": 16,
+      "reduction_unpack_bytes": 77,
+      "autolod_f32": [
+        0.0,
+        800.02099609375,
+        -1.0
+      ]
+    },
+    {
+      "row": 4,
+      "name": "_ChaserlightBox_df",
+      "vertices": 24,
+      "triangles": 12,
+      "grid_unpack_bytes": 468,
+      "reduction_unpack_bytes": 422,
+      "autolod_f32": [
+        0.0,
+        800.0482788085938,
+        800.0482788085938
+      ]
+    }
+  ],
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 225,
+      "actual_models": 5,
+      "allocation_failure_stages": 5,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 225,
+      "actual_models": 5,
+      "allocation_failure_stages": 5,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 225,
+      "actual_models": 5,
+      "allocation_failure_stages": 5,
+      "fixture_materials_only": true,
+      "source_generation_admitted": false,
+      "world_authority": false
+    }
+  },
+  "original_readModel": {
+    "source_layout_passed": true,
+    "original_consumer_executed": false,
+    "true32bit_freestanding_linux_execution": false,
+    "execution_refusal": {
+      "errno": 8,
+      "message": "[Errno 8] Exec format error: '/workspace/scratch/9174d12e2a11/rigid-v7-original32-sealed/original-read-model'",
+      "binary_sha256": "cc82c758ec9f2da54df42eb5d4b7769085e95e17d5aa5f64da70deceebe63a9f",
+      "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+    },
+    "source_layout_offsets": [
+      216,
+      0,
+      4,
+      12,
+      20,
+      28,
+      32,
+      36,
+      40,
+      80,
+      84,
+      88,
+      92,
+      132
+    ],
+    "unchanged_readModel_sha256_lf": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+    "source_model_record_bytes": 232,
+    "source_version": 7,
+    "metadata_and_pack_scalars_compared": 0,
+    "original_grid_pack_declarations_unchanged": true,
+    "generated_oracle_sha256": "cccd1dbe47529e90a59cca63e6736c71c53fd64421c399d66c99a1873aa3e59d",
+    "binary_sha256": "cc82c758ec9f2da54df42eb5d4b7769085e95e17d5aa5f64da70deceebe63a9f",
+    "harness_scope": "Unchanged original readModel and original32 disk declarations; invoked v7, expected facts changed only. Execution refusal is retained, never promoted to execution."
+  },
+  "original_delta_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "packet_sha256": "1b8f3da6232532094be9689763cd03d79929f0a5c81d40b313769ec5c593c149",
+  "packet_bytes": 2480,
+  "original_delta_scalar_count": 380,
+  "default_policy_unchanged": true,
+  "client_reductions_applied": false,
+  "client_materials_available": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_executed": false,
+  "leak_sanitizer": false
+}

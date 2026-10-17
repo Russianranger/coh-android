@@ -1,0 +1,31 @@
+{
+  "zip_bytes": 7302,
+  "zip_sha256": "d37654e587f5ba6eb83945fad14ee09a5d152c3bd9a76f7e5756cba59e83823d",
+  "files": {
+    "execution-refusal.json": {
+      "bytes": 324,
+      "sha256": "cb8d62f21dc17b22d9c6dc9b972bc58402601cfdeba07b03a5366d51d568e5fb"
+    },
+    "execution.stderr": {
+      "bytes": 110,
+      "sha256": "4c74c9053e9037d51a6cc97bc90c95a3e112a3edb2cce99bde255512f3a70e35"
+    },
+    "original-layout.bin": {
+      "bytes": 56,
+      "sha256": "4f50c9e1392bf26a4603f1549d8ddbd76523f8ca8609a4fc1c0342f7992eb59f"
+    },
+    "original-read-model": {
+      "bytes": 13496,
+      "sha256": "cc82c758ec9f2da54df42eb5d4b7769085e95e17d5aa5f64da70deceebe63a9f"
+    },
+    "original-read-model.c": {
+      "bytes": 9473,
+      "sha256": "cccd1dbe47529e90a59cca63e6736c71c53fd64421c399d66c99a1873aa3e59d"
+    },
+    "original-read-model.o": {
+      "bytes": 3940,
+      "sha256": "d156ac1de011f4a4d79181059e4c0a3650b5f5280da4f5227689efb9f26c2cb0"
+    }
+  },
+  "scope": "Nonshipping v7 original32 compile/layout/execution-refusal artifacts. Consumer execution remains false."
+}

@@ -1,0 +1,196 @@
+{
+  "schema": "coh-independent-runtime-source-candidates-review-v1",
+  "approved_source_only": true,
+  "source_commit": "3f0347683",
+  "reviews": [
+    {
+      "receipt": "runtime-candidates-host.json",
+      "sha256": "61799390b0f44be6000dc611fd1e6347c5e814513e0ab0a1da70cf9b3432f13c",
+      "verified_source_inputs": 196,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 9703,
+          "original_distance_fixtures": 4096,
+          "source_join_fixture_only": true,
+          "classification_allocates": false,
+          "world_authority": false
+        },
+        "asan": {
+          "passed": true,
+          "checks": 9703,
+          "original_distance_fixtures": 4096,
+          "source_join_fixture_only": true,
+          "classification_allocates": false,
+          "world_authority": false
+        },
+        "ubsan": {
+          "passed": true,
+          "checks": 9703,
+          "original_distance_fixtures": 4096,
+          "source_join_fixture_only": true,
+          "classification_allocates": false,
+          "world_authority": false
+        }
+      }
+    },
+    {
+      "receipt": "actual-runtime-candidates-38994607354.json",
+      "sha256": "eb28792dbf370d4e76eb0ede7ca518f04a646f97dd4a3ac734616fd6d95d7181",
+      "verified_source_inputs": 1274,
+      "modes": {
+        "release": {
+          "result": {
+            "candidate_passed": true,
+            "occurrences_preserved": 564559,
+            "model_candidates": 384280,
+            "no_model_candidates": 180279,
+            "source_bounds_available": 564559,
+            "client_unresolved_preserved": 564559,
+            "batches": 2206,
+            "pages": 81597,
+            "context_owned_bytes": 161496,
+            "retained_dependency_bytes": 36956417,
+            "candidate_named_reservation_bytes": 39418545,
+            "visibility_rejected": 0,
+            "client_visibility_admitted": false,
+            "source_generation_admitted": false,
+            "assets_admitted": false,
+            "world_authority": false,
+            "bounds_diagnostic": {
+              "passed": true,
+              "visited": 15353,
+              "computed": 15352,
+              "captured_future": 1,
+              "future_missing": 0,
+              "definition_missing": 0,
+              "child_blocked": 0,
+              "active_roots": 33,
+              "computed_roots": 33,
+              "blocked_roots": 0,
+              "first_visit_depth": 69,
+              "bounds_workspace_bytes": 2227284,
+              "bounds_named_reservation_bytes": 47995381,
+              "graph_generation": 1,
+              "catalog_generation": 20261016,
+              "join_import_peak_bytes": 51666433,
+              "source_observed_model_bounds_only": true,
+              "body_bounds_compared": false,
+              "source_generation_admitted": false,
+              "assets_admitted": false,
+              "world_authority": false
+            }
+          },
+          "binary_sha256": "9fc29de0ae947f32cdd0c79b973b5b13939e679467c58f3836f49a064b89f417"
+        },
+        "asan": {
+          "result": {
+            "candidate_passed": true,
+            "occurrences_preserved": 564559,
+            "model_candidates": 384280,
+            "no_model_candidates": 180279,
+            "source_bounds_available": 564559,
+            "client_unresolved_preserved": 564559,
+            "batches": 2206,
+            "pages": 81597,
+            "context_owned_bytes": 161496,
+            "retained_dependency_bytes": 36956417,
+            "candidate_named_reservation_bytes": 39418545,
+            "visibility_rejected": 0,
+            "client_visibility_admitted": false,
+            "source_generation_admitted": false,
+            "assets_admitted": false,
+            "world_authority": false,
+            "bounds_diagnostic": {
+              "passed": true,
+              "visited": 15353,
+              "computed": 15352,
+              "captured_future": 1,
+              "future_missing": 0,
+              "definition_missing": 0,
+              "child_blocked": 0,
+              "active_roots": 33,
+              "computed_roots": 33,
+              "blocked_roots": 0,
+              "first_visit_depth": 69,
+              "bounds_workspace_bytes": 2227284,
+              "bounds_named_reservation_bytes": 47995381,
+              "graph_generation": 1,
+              "catalog_generation": 20261016,
+              "join_import_peak_bytes": 51666433,
+              "source_observed_model_bounds_only": true,
+              "body_bounds_compared": false,
+              "source_generation_admitted": false,
+              "assets_admitted": false,
+              "world_authority": false
+            }
+          },
+          "binary_sha256": "3a5da16d5d40c829d73ea77f2134d50d113338c28618f009c7060bf00b1a2ea7"
+        },
+        "ubsan": {
+          "result": {
+            "candidate_passed": true,
+            "occurrences_preserved": 564559,
+            "model_candidates": 384280,
+            "no_model_candidates": 180279,
+            "source_bounds_available": 564559,
+            "client_unresolved_preserved": 564559,
+            "batches": 2206,
+            "pages": 81597,
+            "context_owned_bytes": 161496,
+            "retained_dependency_bytes": 36956417,
+            "candidate_named_reservation_bytes": 39418545,
+            "visibility_rejected": 0,
+            "client_visibility_admitted": false,
+            "source_generation_admitted": false,
+            "assets_admitted": false,
+            "world_authority": false,
+            "bounds_diagnostic": {
+              "passed": true,
+              "visited": 15353,
+              "computed": 15352,
+              "captured_future": 1,
+              "future_missing": 0,
+              "definition_missing": 0,
+              "child_blocked": 0,
+              "active_roots": 33,
+              "computed_roots": 33,
+              "blocked_roots": 0,
+              "first_visit_depth": 69,
+              "bounds_workspace_bytes": 2227284,
+              "bounds_named_reservation_bytes": 47995381,
+              "graph_generation": 1,
+              "catalog_generation": 20261016,
+              "join_import_peak_bytes": 51666433,
+              "source_observed_model_bounds_only": true,
+              "body_bounds_compared": false,
+              "source_generation_admitted": false,
+              "assets_admitted": false,
+              "world_authority": false
+            }
+          },
+          "binary_sha256": "13cdafa1aef5f79f14457b02760aca0b16eb0530c644c4d9fd446b4dba8c121b"
+        }
+      }
+    }
+  ],
+  "review": [
+    "Context retains exact opaquejoin and validates graph pointer/source-span/binding equality. Inverse sourceordinal\u2192graphnode map built boundedly; ordinal is never inferred to equal node. Catalog/snapshot/graph/join ownedbytes charged once, graph remains explicit immutable caller lease.",
+    "Create performs named32MiBowned/96MiBaggregate preallocation validation, cancel/duplicate/in-use checks and final join retain before publication. Allocation/cancel/refcount refusal leaves outputs/report unchanged; reference operations require caller serialization.",
+    "Pager retains context only after complete successful begin, borrows unchanged exactlatestwalkerbatch and optional sourcebounds array; inputs/controls/known owner spans disjoint. No allocations in begin/next; budget charges active inputs/outputcontrols/stack, caller retained includes walker and opaquecontext extents.",
+    "Next emits every occurrence incl shared-DAG repetitions/future/no-model/effects and preserves rawSERVERsource rowSHA and optional diagnostic bounds. AllCLIENTunknown mask bits remain set; observedflags/bounds/distance alone never cull or admit visibility. Report/cursor commit late; attempted outputbatch is scratch on failure.",
+    "Pure CLIENT closeEnough numerical helper uses exact original sourceflags/function macros under explicit resolved-cache shims.4096originalfixtures cannot grant actual CLIENT state. Far-exception/parentmid/zero-return preserved; unsupported nonfinite usedvalues refuse.",
+    "Actual retained capture7files rehashed. All564559 occurrences retained (384280modeled/180279nomodel), allsourcebounds present, zero visibility rejects and allCLIENTgaps remain. Historical host9703controls/mode andactualthree-mode result/source receipts verified, no reruns by reviewer."
+  ],
+  "scope": {
+    "actual_source_capture": true,
+    "historical_source_candidates": true,
+    "CLIENT_cache": false,
+    "visibility": false,
+    "assets": false,
+    "live_generation": false,
+    "world": false,
+    "android": false,
+    "thor": false
+  }
+}

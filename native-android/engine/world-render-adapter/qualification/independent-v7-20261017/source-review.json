@@ -1,0 +1,237 @@
+{
+  "schema": "coh-independent-explicit-v7-cpu-review-v1",
+  "approved_source_and_host_scope": true,
+  "source_commit": "be0fa9c6e40c3852686abf913e9cd3891b337373",
+  "expectation_commit": "06b7fe5bc",
+  "reviews": [
+    {
+      "receipt": "sealed-host.json",
+      "sha256": "0683fc8e5a52aa3945c5fa164a0358513663ce9d908c7062fc31b7a83918c108",
+      "source_count": 32,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        }
+      }
+    },
+    {
+      "receipt": "default0-regression.json",
+      "sha256": "832a4238f56bbb8e3a5ce761fa1e04ecd8a0f38e63708b1043ed2dc117c9c94e",
+      "source_count": 27,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        }
+      }
+    },
+    {
+      "receipt": "default8-regression.json",
+      "sha256": "4ffb32109de3b53c32deb2df52ec469f985c8ac523b2e6e6af7cd4a3be52e6ad",
+      "source_count": 33,
+      "modes": {
+        "release": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "4e4b25f5325adf6c6848c236ab945c675fe5f78e3a0e452bf7e453423ab7ab9f",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "42272935f267d1dfa2247ed89508124da205bea2bcda8bbfce9fa600e222bd4d"
+          }
+        },
+        "address": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "4ecdfc82b345d4d52ed7ecd945ac153f1d53e75d76a86b2af8744f28b9249adc",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "a0b6370ed61969b1b380705345aaab4428108de3fc3c1096f75628be83cba180"
+          }
+        },
+        "undefined": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "94c719226972d71fe14f8102c0d354469edfb1cda65a6137fb9e9d6edbace909",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "22efa71da11256993fa5c5869f2ed4caa62f343eca4d240cfa405aa8b4481dae"
+          }
+        }
+      }
+    },
+    {
+      "receipt": "source08-regression.json",
+      "sha256": "206d45b49b3f6f3093e3501bcfaac8880f1167f1c26a75706619ff1e5ccdf4bb",
+      "source_count": 29,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        }
+      }
+    }
+  ],
+  "original32_archive_sha256": "d37654e587f5ba6eb83945fad14ee09a5d152c3bd9a76f7e5756cba59e83823d",
+  "independent_expected52words_derived_from_actual_row1": true,
+  "original32_binary_sha256": "cc82c758ec9f2da54df42eb5d4b7769085e95e17d5aa5f64da70deceebe63a9f",
+  "actual_body_sha256": "66742a3b485b7772e6ab20a4edc750a7e46d99891e35473bfc587a3b0e9fd374",
+  "original32_executed": false,
+  "review": [
+    "Shared decoder change is fixed private policy only; existing public default/source entry selects0/8 exactly, new separateentry requires exact7. Unknown policy refuses. All existing name/hash/pin/budget/model/stream/material rollback gates remain shared.",
+    "Actualfive-model Chaser v7 CPU packet2480bytes equals unchanged original delta decoder380scalars; materials/generation explicitfixtures. GRID/reduction records remain source metadata, not appliedCLIENT behavior.",
+    "Four qualification source sets match be0 Gitblobs/currentbytes, v7 225controls/mode plus existing0/8/mixed regressions. No expensive reruns by reviewer.",
+    "Retained32bit C/object/ELF/layout/refusalZIP every memberSHA checked; original readModel calledversion7, LinuxELF32i386 only. Localerrno8 means metadata execution0, not52. Added208-byte expectedvector independently recomputed from actualrawrow1+9packs+zeroreflectionpack, not an execution receipt.",
+    "Minimal future execution may reuse exactretained ELF and compare208outputbytes; no asset/server capture needed. Active source generation, complete allv7streams/CLIENTLOD/material/GPU/world/Android/Thor remain unqualified."
+  ],
+  "world": false,
+  "android": false,
+  "thor": false
+}

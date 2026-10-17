@@ -1,0 +1,63 @@
+{
+  "zip_bytes": 41242,
+  "zip_sha256": "cd96a1887fdccaaec71401ce576e3a773e2aaf3bdba4bc0675dac93dd1914389",
+  "files": {
+    "actual-lod.bin": {
+      "bytes": 2072,
+      "sha256": "3e32b25d8dcab985346865cd8275587d73cb6005521323573a67bdf2da333751"
+    },
+    "address-lod-output.bin": {
+      "bytes": 392,
+      "sha256": "7717df2cb128e00611938a89eedd7c725005afb42a77293d6025bbe0c694543d"
+    },
+    "execution-refusal.json": {
+      "bytes": 321,
+      "sha256": "dd657c2128699f74c2729a1c2e2060e6e358817703df57af95324a93a72b49b3"
+    },
+    "execution.stderr": {
+      "bytes": 107,
+      "sha256": "5b87f35c39e7865c1c7e976f9ee875a4304024a4b48ccefbdd2ed9a237cccf34"
+    },
+    "original-layout.bin": {
+      "bytes": 56,
+      "sha256": "4f50c9e1392bf26a4603f1549d8ddbd76523f8ca8609a4fc1c0342f7992eb59f"
+    },
+    "original-lod-address": {
+      "bytes": 43248,
+      "sha256": "be844536154990b4a4a916941738ab02f2062aac84aefcf5900887de6185fb0f"
+    },
+    "original-lod-release": {
+      "bytes": 16720,
+      "sha256": "c5b32dc0b2864ddc9f7da82415cb05fd90ec3bdf8dbe40ce7f265445c8c95c44"
+    },
+    "original-lod-undefined": {
+      "bytes": 40840,
+      "sha256": "cb0d36a019d045262e0175b02dd1edafb8f4b3f238c1f097a10baa84541b54d0"
+    },
+    "original-lod.c": {
+      "bytes": 4708,
+      "sha256": "1bdfe6d0d7c99f46181f318e80ab4ac0ebc0043418ca2f27d5713c6242843168"
+    },
+    "original-read-model": {
+      "bytes": 13684,
+      "sha256": "f4af83cbf3e752f6d95dc5c03d109d4a8f6cbc0b004d9f1ddc345acceffcd741"
+    },
+    "original-read-model.c": {
+      "bytes": 10081,
+      "sha256": "ed427288ae245a4f4953f840f1dd5d74e4c129d5a3565040f7ffe2e2a1c1c5c2"
+    },
+    "original-read-model.o": {
+      "bytes": 4164,
+      "sha256": "c60ea5b75e24711454e40a5586620a5faab295be44c6c760bedf48786a7547a3"
+    },
+    "release-lod-output.bin": {
+      "bytes": 392,
+      "sha256": "7717df2cb128e00611938a89eedd7c725005afb42a77293d6025bbe0c694543d"
+    },
+    "undefined-lod-output.bin": {
+      "bytes": 392,
+      "sha256": "7717df2cb128e00611938a89eedd7c725005afb42a77293d6025bbe0c694543d"
+    }
+  },
+  "scope": "Nonshipping v5 original32 compile/layout/refusal and executed originalLOD source diagnostics; no server/APK/clientworld"
+}

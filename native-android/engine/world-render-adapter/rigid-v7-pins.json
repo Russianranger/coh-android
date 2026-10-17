@@ -1,0 +1,104 @@
+{
+  "scope": "Exact retained actual source observation/body candidate; material and query generation fixtures independent",
+  "source_geo_name": "object_library/Buildings/Elements/signs/Special_Signs/Chaser_Sign_4to1/chaser_sign_4to1.geo",
+  "asset_path": "data/object_library/buildings/elements/signs/special_signs/chaser_sign_4to1/chaser_sign_4to1.geo",
+  "bytes": 1654,
+  "sha256": "66742a3b485b7772e6ab20a4edc750a7e46d99891e35473bfc587a3b0e9fd374",
+  "version": 7,
+  "source_observations": [
+    {
+      "resource_ordinal": 35196,
+      "record_sha256": "0e00e68e7d87d337ba1dc6861e555afc4581c4d84d5568c6f7a3be0c5766c882",
+      "owner_kind": 1,
+      "file": 453,
+      "slot": 1,
+      "original_id": 1,
+      "definition_name": "_ChaserLight1",
+      "sorted_runtime_model_row": 0,
+      "geo_version": 7,
+      "texture_partitions": [
+        [
+          1,
+          2,
+          "Marq_backlight.tga"
+        ]
+      ]
+    },
+    {
+      "resource_ordinal": 35195,
+      "record_sha256": "5101a6b1980b20775ac51eb0772c45ffabd0758264596e31daf293076b60d617",
+      "owner_kind": 1,
+      "file": 453,
+      "slot": 0,
+      "original_id": 0,
+      "definition_name": "_ChaserLight2",
+      "sorted_runtime_model_row": 1,
+      "geo_version": 7,
+      "texture_partitions": [
+        [
+          1,
+          2,
+          "Marq_backlight.tga"
+        ]
+      ]
+    },
+    {
+      "resource_ordinal": 35197,
+      "record_sha256": "336b0d03c57e429aa5920c25ee3df49d6ed02c702a7ae0085531b084593f6d5d",
+      "owner_kind": 1,
+      "file": 453,
+      "slot": 2,
+      "original_id": 2,
+      "definition_name": "_ChaserLight3",
+      "sorted_runtime_model_row": 2,
+      "geo_version": 7,
+      "texture_partitions": [
+        [
+          1,
+          2,
+          "Marq_backlight.tga"
+        ]
+      ]
+    },
+    {
+      "resource_ordinal": 35198,
+      "record_sha256": "5049b73895145022d735679f7af5d2e02a2b20cddf6cce5b334bcd614d82e34a",
+      "owner_kind": 1,
+      "file": 453,
+      "slot": 3,
+      "original_id": 3,
+      "definition_name": "_ChaserLight4",
+      "sorted_runtime_model_row": 3,
+      "geo_version": 7,
+      "texture_partitions": [
+        [
+          1,
+          2,
+          "Marq_backlight.tga"
+        ]
+      ]
+    },
+    {
+      "resource_ordinal": 35199,
+      "record_sha256": "c673316c1c61fdff10783cb9d2072130dd6cc62c0a62afc320cea263743ba6de",
+      "owner_kind": 1,
+      "file": 453,
+      "slot": 4,
+      "original_id": 4,
+      "definition_name": "_ChaserlightBox_df",
+      "sorted_runtime_model_row": 4,
+      "geo_version": 7,
+      "texture_partitions": [
+        [
+          2,
+          12,
+          "Marq_front.tga"
+        ]
+      ]
+    }
+  ],
+  "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+  "resources_sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6",
+  "source_generation_admitted": false,
+  "material_fixture_only": true
+}

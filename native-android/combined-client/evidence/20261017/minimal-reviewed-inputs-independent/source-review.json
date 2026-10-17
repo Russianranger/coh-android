@@ -1,0 +1,33 @@
+{
+  "schema": "coh-independent-minimal-reviewed-inputs-workflow-v1",
+  "approved_for_narrow_new_execution": true,
+  "source_commit": "71a39e29af3ff960f92c9bae50d6572ebed0d2b8",
+  "source_sha256": {
+    ".github/workflows/native-reviewed-inputs.yml": "8b9b5b8b999760d85e65efa424c463929d50c8762403bcab068c6bf25d773403",
+    "native-android/combined-client/tools/run_retained_original32.py": "96988f4048e9d16915f5c7d6d8e26212ca80028dfa5be7aeb2c26e76f54200cb",
+    "native-android/engine/auth-interop/deployment/windows_tool_inventory.py": "aa39572cf910daaf922a83a8346f57ed45ed449fadae80f016b101408234e29e"
+  },
+  "validation_only_preflight_sha256": "abb55e6d9b7a88c90653e27328d5c7b7562271d2bd77136b4fecfff8ad3a4e29",
+  "verified_preflight_source_inputs": 9,
+  "review": [
+    "Workflow gates native-android ref and exactnewmarker, workflow-path pushfilter, read-onlycontents token, noncancelling concurrency. Two independent10minute jobs only: retainedoriginal32 execution onUbuntu24.04 andread-onlyWindowsinventory onwindows2025. Checkout persistsno credentials; alwaysupload boundedreceipt paths. No build/server/NDK/APK/package/SQL step.",
+    "Original32 runner requires exactHEAD, cleantrackedtree andfresh external output, rawinput bytes equal correspondingGitblobs. Fixed v5/v7 expectedvectors/archivechecksums source-bound. ZIPunique membership/size/memberhash/CRC checked without extraction ofpaths; only knownbinary bytes written toownedtemporary directory.",
+    "ELF must32-bitlittleendiani386EXEC, boundedprogramheaders andno interpreter. Exact binary/generatedC digests bound to earlierreviewed factwitnesses. No shell, inheritedenvironment, rebuild or freshasset acquisition. Linux32execution proves metadata onthisLinuxABI, notWin32MSVC/wholeCLIENT.",
+    "Childexecution CPU2s/address64MiB/file1MiB/openfiles16 limits and5swalltimeout, exactzeroexit/noStderr/fullstdout expected52/55LEfacts. Child output usescapturepipes; resourcefilelimit doesnotcap pipes, butthese are exactreviewedfreestandingbinary hashes with fixed52/55wordstdout, notarbitraryprogramrunner.",
+    "Ownedtemporary directories close/cleanup before successfulproof. HEAD/dirty/sourcefilehashes checked again afterbothversions. Validation-only explicitly sets executedfalse; only actualexec complete exactstdout can emit executedtrue. Artifact acceptance must require validation_only=false andbothversions executedtrue, notpassedalone.",
+    "Windows collector source is exactly approved0e helper aa39572...; no compiler/tool subprocess exceptreadonlyGitguards. Installedtools/SDKhash/versionmetadata only; observedlock schema requiresseparateactualartifactreview and cannotgrant compilepermit. RepresentativeSDK hashes do notestablish completeSDK/DLLclosure."
+  ],
+  "new_execution_performed_by_reviewer": false,
+  "scope": {
+    "actual_original32_execution_yet": false,
+    "actual_windows_inventory_yet": false,
+    "compiler": false,
+    "server": false,
+    "android": false,
+    "APK": false,
+    "runtime_replacement": false,
+    "materials": false,
+    "live_world": false,
+    "thor": false
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "source_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+  "source_member": "data/bin/seqstatebits.bin",
+  "raw_bytes": 15380,
+  "raw_sha256": "9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac",
+  "compressed_bytes": 4991,
+  "compressed_sha256": "cfce2887e406cdadc785d1859eafea3df665b8764ddbc951d098692ddb7e7520",
+  "gzip_mtime": 0,
+  "material_authority": false,
+  "world_authority": false
+}

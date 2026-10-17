@@ -1,0 +1,31 @@
+{
+  "schema": "coh-independent-windows-readonly-inventory-review-v1",
+  "approved_for_inventory_only": true,
+  "source_commit": "0e65407ff979179c482385a60d4431c84202ffdc",
+  "receipt_sha256": "85e3ee4a2a7459509d2b05505d03874fbf7b32f885355b26b241581e8c13fe82",
+  "verified_source_count": 10,
+  "native_windows_execution": false,
+  "independent_local_suites": 9,
+  "review": [
+    "Collector invokes no compiler/CMake/SDK/build/service executables. Existing Git queries are read-only exact source/HEAD guard; output is new external owned receipt directory.",
+    "Unique installedVS18/defaulttoolset and registeredSDK roots checked. Bounded version-resource length/owned pointer/signature read; no version executable command required. Seven common executables and availableSDK representatives hashed twice; missingSDK inputs retained explicitly.",
+    "Observed candidate schema differs from reviewed tool-lock schema; empty candidate list can still be a successful inventory. No toolchain review, compile or runtime permit is produced.",
+    "ObservedSHA identity covers namedtool executables, representativeSDK inputs and toolset marker, not the complete toolchain/SDK DLL/import/include closure. WindowsAPI call and real installation traversal remain unexecuted until a guarded workflow supplies actual evidence."
+  ],
+  "source_sha256": {
+    "native-android/engine/auth-interop/deployment/windows_tool_inventory.py": "aa39572cf910daaf922a83a8346f57ed45ed449fadae80f016b101408234e29e",
+    "native-android/engine/auth-interop/deployment/test_windows_tool_inventory.py": "4e123d625cc95e0187016d657878092ed3c433d92eb05ff9268ced0ea3fe5d21",
+    "native-android/engine/auth-interop/deployment/WINDOWS-TOOL-INVENTORY.md": "9dab15e54fc7e6f5b08078d9b053e4113e98a8f64e922d5dce6525b210f7f83b",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+    "native-android/engine/auth-interop/deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+    "native-android/engine/auth-interop/deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+    "native-android/engine/auth-interop/deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+    "native-android/engine/auth-interop/deployment/source-pins.json": "a49c8290d8a720c86c825e593d073733fb0cf429c4efff1337d8be8ca6226b3b",
+    "native-android/engine/auth-interop/source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+  },
+  "compiler_executed": false,
+  "service_executed": false,
+  "toolchain_reviewed": false,
+  "compile_permit": false
+}

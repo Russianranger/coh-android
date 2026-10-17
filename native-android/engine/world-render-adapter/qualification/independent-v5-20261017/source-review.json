@@ -1,0 +1,280 @@
+{
+  "schema": "coh-independent-exact-v5-cpu-review-v1",
+  "approved_source_and_host_scope": true,
+  "source_commit": "a50d6ee46",
+  "reviews": [
+    {
+      "receipt": "host.json",
+      "sha256": "144da03d04c9337d2dc70cce0c1f31f3151f15237f3df172fa41133e51236b55",
+      "verified_source_inputs": 34,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 206,
+          "actual_models": 1,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 206,
+          "actual_models": 1,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 206,
+          "actual_models": 1,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        }
+      }
+    },
+    {
+      "receipt": "default0-regression.json",
+      "sha256": "ede0e55c939d241b02ba5448a1c643e9e3170dd4fbc8c1bb70b2476211c097f9",
+      "verified_source_inputs": 27,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 243,
+          "legacy_version": 0,
+          "malformed_legacy_cases": 15,
+          "authentic_vertices": 90,
+          "authentic_triangles": 56,
+          "pins_balanced": true,
+          "material_fixture_only": true,
+          "loaded_generation_fixture_only": true,
+          "same_source_generation_established": false,
+          "world_authority": false
+        }
+      }
+    },
+    {
+      "receipt": "default8-regression.json",
+      "sha256": "be341b6c36843bc617a12f5cb9f800c4ac785d7badcfb8677da3a835895289ab",
+      "verified_source_inputs": 33,
+      "modes": {
+        "release": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "8ce33d35b3e5b40ebacbb4d31cc3ade3b9975a9042e24185f82c391f192c2f8f",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "8dd90a7dc1a4bc9a376920ac81fa0e52c1270f3ff2a190e8f545b1f44d809e00"
+          }
+        },
+        "address": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "505b0749029669cc24a8bf39a973f85118cf9a2a97dc31b400034550c17aaaaf",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "3a3aa3a58a6a2875a7c104c93ae0a1b3d3d4c4cd53d0aa1c667bb55fcc33384c"
+          }
+        },
+        "undefined": {
+          "result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "binary_sha256": "acfd2777a68e6ea2d38caa170656aad7fcdce22c41005f1672a8603b13c33220",
+          "actual": {
+            "result": {
+              "passed": true,
+              "checks": 22,
+              "geo_version": 8,
+              "vertices": 56,
+              "triangles": 28,
+              "authentic_geo_bytes": true,
+              "material_fixture_only": true,
+              "generation_fixture_only": true,
+              "world_authority": false
+            },
+            "binary_sha256": "fdfcdd729a028c9f86ddeea3296718244300e1f4476e0f7aef046669b93a24c5"
+          }
+        }
+      }
+    },
+    {
+      "receipt": "source08-regression.json",
+      "sha256": "5b0355bd65fbbf9592486a60972eb14c82b197e6ee39fb4ad991faba1ecee282",
+      "verified_source_inputs": 29,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 291,
+          "ordinary_vertices": 4,
+          "ordinary_triangles": 2,
+          "zero_rows_preserved": 4,
+          "linear_row_zero_decoder_calls": 72,
+          "selected_zero_refused_before_material": true,
+          "material_fixture_only": true,
+          "source_generation_established": false,
+          "world_authority": false
+        }
+      }
+    },
+    {
+      "receipt": "v7-regression.json",
+      "sha256": "e130118f45713d3cfe8c759e2bc8a4e1d4cbd1539ff7120c2fe82e59d557bba0",
+      "verified_source_inputs": 32,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "address": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        },
+        "undefined": {
+          "passed": true,
+          "checks": 225,
+          "actual_models": 5,
+          "allocation_failure_stages": 5,
+          "fixture_materials_only": true,
+          "source_generation_admitted": false,
+          "world_authority": false
+        }
+      }
+    }
+  ],
+  "original_source_archive_sha256": "cd96a1887fdccaaec71401ce576e3a773e2aaf3bdba4bc0675dac93dd1914389",
+  "independent55expectedwords_actualrow13_equal": true,
+  "independent14originalLODoutput_rows_equal_actualbytes": true,
+  "actual_body_sha256": "e1462116a522be747e72ddaccf353c25c17d8d510246704563affa54695ec6c5",
+  "original32_binary_sha256": "f4af83cbf3e752f6d95dc5c03d109d4a8f6cbc0b004d9f1ddc345acceffcd741",
+  "original32_executed": false,
+  "review": [
+    "New separate exact5 private policy and publicCPUentry only; existing default0/8,source0/8 andexplicit7 fixedpolicies unchanged. Unknownpolicies/otherfourversions refused. Sharedidentity/material/digest/budget/stream/rollback gates retained.",
+    "v5 privateopen firstuses qualified sourceheaderreader, then verifies five-size header/three blocks/148B-permodel legacyLODspan exactly beforeModelHeader. Counts0..6, activefivefloatsfinite; flags/inactive/trailing sourcepermittedbytes preserved withouteffectiveLODapplication. Bounded by existingmodel/header budgets, no newallocation.",
+    "Actualplatforms3162B/14models, selectedramp10vertices4triangles/twopartitions hasrealcompressedPOSITION39\u219265. Complete1168BCPU packet equals originaldelta92scalars. Fixturematerials/generation remainexternal, not opaqueSourceBody admission.",
+    "All34/27/33/29/32testedsource sets match a50Git/current,206v5controls/mode plusdefault0/8/source/v7 regressions verified; no corpus reruns.",
+    "Retainedoriginalsourcearchive everymemberSHA checked; originalunpackLODInfo sourcehostoutputs across3modes independently matchall14activeLOD rawrecords. Runtime destinations/allocation helpers explicit shells, no actualCLIENTLODselection.",
+    "RetainedELF32i386/readModel5 C/layout/refusal bytesverified; source55word expectation independentlyderivedactualrow13+8packs+2zeropacks+threeCLIENTautolod-minus1assignments. Localerrno8 remainsunexecuted; futureminimaljobcanreuseexactbinary/expected220B withoutasset/servercapture."
+  ],
+  "scope": {
+    "source_host_CPU_slice": true,
+    "original32_execution": false,
+    "CLIENT_LOD_applied": false,
+    "material": false,
+    "opaque_source_generation": false,
+    "GPU": false,
+    "world": false,
+    "android": false,
+    "thor": false
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "coh-independent-selected-record-original-outer-review-v1",
+  "approved_source_only": true,
+  "source_commit": "ee40d7918b928235a6d5bc497df2b5dd244b1df7",
+  "evidence_commit": "316b59be8",
+  "host_proof_sha256": "bca8d835f8db71f4e3a48011e8b20b2c747228bc03e1789d24ed4d5356f21160",
+  "verified_tested_commit_inputs": 91,
+  "production_unchanged_from_reviewed_component": "3dc8f9f28d44f7c7649dae7cdfee6d581367aac7",
+  "qualification": {
+    "release": {
+      "checks": 267596,
+      "source_outer_fixtures": 144,
+      "successes": 11410,
+      "refusals": 4818,
+      "boundary_cuts": 3600,
+      "byte_mutations": 12196
+    },
+    "asan": {
+      "checks": 267596,
+      "source_outer_fixtures": 144,
+      "successes": 11410,
+      "refusals": 4818,
+      "boundary_cuts": 3600,
+      "byte_mutations": 12196
+    },
+    "ubsan": {
+      "checks": 267596,
+      "source_outer_fixtures": 144,
+      "successes": 11410,
+      "refusals": 4818,
+      "boundary_cuts": 3600,
+      "byte_mutations": 12196
+    }
+  },
+  "original_child_relocation_equalities": 644,
+  "whole_outer_profiles": 144,
+  "review": [
+    "Whole original sendEntity control source executes with all23 original child writer payloads. Inline title/vision/rare fields and all13 native/source boundaries compared. Outer visibility/preparation/cache/object graph remain fixture interfaces; this is not whole engine execution.",
+    "Seven child split observers use macro symbol renaming around unchanged original function bodies and record exact cursor spans. Only synthetic wrapper prefix/read cursor initialization changes; original writer/consumer statements are unmodified.",
+    "Every injected child payload is replayed across unaligned offsets0..7 before255 relocation admission; aligned mode offset0 only. Per-child65536bit limit unchanged; full256buff profile remains qualified separately, ordinary sourcebuff7 used here rather than raising fixture cap.",
+    "Selected self/full stats now execute whole original entSendCharacterStats\u2192ParserSendEmptyDiff\u2192full schema. Sequence/noRAGDOLL/status are F frozen actual original leaves. Status class/predicate storage and source dictionaries remain explicit fixture shells.",
+    "Native reader/public output retain prior reviewed transactional/budget/lifetime contract. Historical component source unchanged; new oracle/fixture/harness files only. All91tested native/helper bytes equal sourcecommit blobs; fixed original source pins are enforced by each component provider."
+  ],
+  "reviewer_reran_large_corpus": false,
+  "scope": {
+    "whole_original_outer_control": true,
+    "separately_original_child_producers": true,
+    "original_child_object_graph_bound": false,
+    "whole_engine": false,
+    "original_oracle_sanitized": false,
+    "whole_list": false,
+    "authentic_dictionary_generation": false,
+    "full_initial_update": false,
+    "actor": false,
+    "ACK": false,
+    "real_server": false,
+    "android": false,
+    "thor": false
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "scope": "Exact retained rootreachable v5 model/body observation; material and query generation fixtures independent",
+  "source_geo_name": "object_library/Villain_Lairs/tech/structure/platforms/platforms.geo",
+  "asset_path": "data/object_library/villain_lairs/tech/structure/platforms/platforms.geo",
+  "bytes": 3162,
+  "sha256": "e1462116a522be747e72ddaccf353c25c17d8d510246704563affa54695ec6c5",
+  "version": 5,
+  "model": "tek1_pltform_ramp",
+  "disk_row": 13,
+  "source_observations": [
+    {
+      "resource_ordinal": 14026,
+      "record_sha256": "987b193fc41134cb5e7c951395baa5e7451e4d9ac287799e982f99df3ed135c8",
+      "owner_kind": 1,
+      "file": 105,
+      "slot": 13,
+      "original_id": 13,
+      "definition_name": "tek1_pltform_ramp",
+      "sorted_runtime_model_row": 7,
+      "geo_version": 5,
+      "texture_partitions": [
+        [
+          3,
+          2,
+          "tek1_main_uprwall01.tga"
+        ],
+        [
+          2,
+          2,
+          "tek1_blcny_flr_fill.tga"
+        ]
+      ]
+    }
+  ],
+  "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+  "resources_sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6",
+  "source_generation_admitted": false,
+  "material_fixture_only": true
+}

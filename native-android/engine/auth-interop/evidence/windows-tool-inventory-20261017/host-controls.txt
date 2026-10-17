@@ -1,0 +1,14 @@
+test_all_eight_tools_and_explicit_versions_no_review_permit (test_windows_tool_inventory.InventoryControls.test_all_eight_tools_and_explicit_versions_no_review_permit) ... ok
+test_ambiguous_vs_requires_explicit_instance (test_windows_tool_inventory.InventoryControls.test_ambiguous_vs_requires_explicit_instance) ... ok
+test_changed_tool_or_sdk_input_detected_by_second_observation (test_windows_tool_inventory.InventoryControls.test_changed_tool_or_sdk_input_detected_by_second_observation) ... ok
+test_collector_without_tool_process_and_no_source_writes (test_windows_tool_inventory.InventoryControls.test_collector_without_tool_process_and_no_source_writes) ... ok
+test_linux_rejected_before_receipt_or_tool_execution (test_windows_tool_inventory.InventoryControls.test_linux_rejected_before_receipt_or_tool_execution) ... ok
+test_partial_sdk_and_missing_version_produce_no_lock (test_windows_tool_inventory.InventoryControls.test_partial_sdk_and_missing_version_produce_no_lock) ... ok
+test_private_metadata_error_is_symbolic_failure_receipt (test_windows_tool_inventory.InventoryControls.test_private_metadata_error_is_symbolic_failure_receipt) ... ok
+test_source_generation_change_refuses_success (test_windows_tool_inventory.InventoryControls.test_source_generation_change_refuses_success) ... ok
+test_tool_marker_symlink_size_and_version_bounds (test_windows_tool_inventory.InventoryControls.test_tool_marker_symlink_size_and_version_bounds) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.075s
+
+OK

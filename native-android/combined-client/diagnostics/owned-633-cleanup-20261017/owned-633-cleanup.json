@@ -1,0 +1,41 @@
+{
+  "scope": "Only coordinator-owned redundant publication runs; no server, APK or other-agent state touched",
+  "runs": [
+    {
+      "id": 39004702532,
+      "name": "Native Android combined local-server client",
+      "head_sha": "633b12bd2864cc135fda6d8fa94e971005d35aa8",
+      "head_branch": "native-android",
+      "status": "in_progress",
+      "conclusion": null,
+      "cancellation_requested": true
+    },
+    {
+      "id": 39004702524,
+      "name": "Native primary protocol continuation contracts",
+      "head_sha": "633b12bd2864cc135fda6d8fa94e971005d35aa8",
+      "head_branch": "native-android",
+      "status": "in_progress",
+      "conclusion": null,
+      "cancellation_requested": true
+    },
+    {
+      "id": 39004702537,
+      "name": "Native scene catalog and entity transaction contracts",
+      "head_sha": "633b12bd2864cc135fda6d8fa94e971005d35aa8",
+      "head_branch": "native-android",
+      "status": "in_progress",
+      "conclusion": null,
+      "cancellation_requested": true
+    },
+    {
+      "id": 39004702550,
+      "name": "Native Android portable core",
+      "head_sha": "633b12bd2864cc135fda6d8fa94e971005d35aa8",
+      "head_branch": "native-android",
+      "status": "completed",
+      "conclusion": "success",
+      "cancellation_requested": false
+    }
+  ]
+}

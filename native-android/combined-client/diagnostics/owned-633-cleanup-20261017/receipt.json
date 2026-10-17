@@ -1,0 +1,23 @@
+{
+  "source_commit": "633b12bd2864cc135fda6d8fa94e971005d35aa8",
+  "cleanup_commit": "935fc52f1c1e17e74075fcca4180b9f95b4dbb99",
+  "cleanup_run": 39004808695,
+  "artifact_id": 12089524802,
+  "artifact_bytes": 530,
+  "artifact_sha256": "2bbf5d49e9b70014fce81ec7d49c245a819474220a05fde3442f1d28a25eb137",
+  "cause": "Coordinator publication omitted existing CI suppression markers. Read-only source/diagnostic changes unintentionally triggered broad jobs.",
+  "runs_cancelled": [
+    39004702532,
+    39004702524,
+    39004702537
+  ],
+  "core_run_already_completed": 39004702550,
+  "arm64_apk_build_step": "skipped",
+  "emulator_apk_build_step": "skipped",
+  "accepted_apks_rebuilt": false,
+  "other_agent_runs_modified": false,
+  "future_source_only_markers": [
+    "[compact-recovery]",
+    "[native-contracts-only]"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "snapshot_commit": "71a39e29af3ff960f92c9bae50d6572ebed0d2b8",
+  "tree": "f879ad18bf27924394343a79d3a691ef9fbebb54",
+  "base": [
+    "935fc52f1c1e17e74075fcca4180b9f95b4dbb99",
+    "a50d6ee46d1dabd182bfc02e4dabcaf946e082a3",
+    "3f0347683e647e9d5cc0e8d54a5b2ad618e58361",
+    "8ef98197468688e6e574098e157086baa471c0e1",
+    "316b59be8b53e51d273c336a051aa2c4f339fdf3",
+    "56d3c621987f105311ca9a914bb946d63b26e10b",
+    "bf3616dca91aa776e8451bf19e00fd3633d5717f",
+    "6a5948eb6887cd9d0212e251589a80472df5959b"
+  ],
+  "objects": 23,
+  "bytes": 30556,
+  "sha256": "7e3b032cd7f4f43a49f15f942b4f2f83d9a11e35d28ab339bf90c819df35bc8a",
+  "scope": "Supplemental exact source commit/tree objects for historical Git-show replay only, not complete coordinator ancestry. Import pack with git index-pack --stdin after remote935 and milestone6 worker bundle; retain pack."
+}

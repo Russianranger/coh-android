@@ -1,0 +1,37 @@
+{
+  "heads": {
+    "catalog-v5": "a50d6ee46d1dabd182bfc02e4dabcaf946e082a3",
+    "graph-candidates": "3f0347683e647e9d5cc0e8d54a5b2ad618e58361",
+    "graph-eligibility": "8ef98197468688e6e574098e157086baa471c0e1",
+    "entities-outer": "316b59be8b53e51d273c336a051aa2c4f339fdf3",
+    "auth-tools": "56d3c621987f105311ca9a914bb946d63b26e10b",
+    "renderer-surface": "bf3616dca91aa776e8451bf19e00fd3633d5717f",
+    "qualification": "6a5948eb6887cd9d0212e251589a80472df5959b"
+  },
+  "prerequisite_refs": [
+    "refs/recovery/20261017/milestone4-auth",
+    "refs/recovery/20261017/milestone4-catalog",
+    "refs/recovery/20261017/milestone4-entities",
+    "refs/recovery/20261017/milestone4-graph-bounds",
+    "refs/recovery/20261017/milestone4-graph-groups",
+    "refs/recovery/20261017/milestone4-qualification",
+    "refs/recovery/20261017/milestone4-renderer",
+    "refs/recovery/20261017/milestone4append-catalog-bridge",
+    "refs/recovery/20261017/milestone4append-entities-identity",
+    "refs/recovery/20261017/milestone4append-graph-instances",
+    "refs/recovery/20261017/milestone4append-qualification",
+    "refs/recovery/20261017/milestone5-auth-manual",
+    "refs/recovery/20261017/milestone5-catalog-coverage",
+    "refs/recovery/20261017/milestone5-qualification",
+    "refs/recovery/20261017/milestone5-renderer-inputs",
+    "refs/recovery/20261017/milestone5append-entities-selected",
+    "refs/recovery/20261017/milestone5append-qualification-selected",
+    "refs/recovery/20261017/milestone5tex-qualification-texcache",
+    "refs/recovery/20261017/milestone5tex-renderer-fulltexopt",
+    "refs/recovery/20261017/milestone5tex-renderer-texcache"
+  ],
+  "remote_prerequisite_commit": "935fc52f1c1e17e74075fcca4180b9f95b4dbb99",
+  "bytes": 392592,
+  "sha256": "c097ecc68b2e68d4f1e70e89a992a7bc3a165674245c2027fb014489d989edbe",
+  "verification": "The bundle contains these 7 refs:\na50d6ee46d1dabd182bfc02e4dabcaf946e082a3 refs/recovery/20261017/milestone6-catalog-v5\n3f0347683e647e9d5cc0e8d54a5b2ad618e58361 refs/recovery/20261017/milestone6-graph-candidates\n8ef98197468688e6e574098e157086baa471c0e1 refs/recovery/20261017/milestone6-graph-eligibility\n316b59be8b53e51d273c336a051aa2c4f339fdf3 refs/recovery/20261017/milestone6-entities-outer\n56d3c621987f105311ca9a914bb946d63b26e10b refs/recovery/20261017/milestone6-auth-tools\nbf3616dca91aa776e8451bf19e00fd3633d5717f refs/recovery/20261017/milestone6-renderer-surface\n6a5948eb6887cd9d0212e251589a80472df5959b refs/recovery/20261017/milestone6-qualification\nThe bundle requires these 5 refs:\n55c1db2f0f016a5720eb85ce921bdb679b590780 \n966b2ad0c7cbd6017968c193db935acc64c13f6e \n89fb08a6a34f188dcf9c78b4d040fdcb855388b8 \n43d0fe87bce21c417e6bb04d48f0fc48d51ed2ea \n6005bbf34376cb71bb5b3fc71058af629b19ce86 \nThe bundle uses this hash algorithm: sha1\nnative-android/combined-client/evidence/20261017/emergency-recovery/milestone6-source-history.bundle is okay\n"
+}
