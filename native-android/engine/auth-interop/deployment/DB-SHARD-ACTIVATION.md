@@ -144,6 +144,59 @@ Exit` in servers.cfg controls launched MapServer arguments; the original DB
 startup sets its own assertion mode, so this config does not prove absence of a
 blocked original assertion UI.
 
+The observed follow-up run `39070610385` (artifact `12115307153`, 6,148 bytes,
+SHA256 `f9d3b02dbd3f3661044312fc29ba8c06c46c26e6d21bb769ff6e355e2a5c4889`)
+again reached the deadline. Its complete owned diagnostic showed no user or
+attribute tables, all 65 original DB sessions sleeping, no active/waiting/blocked
+SQL requests, and only nine waiting DB threads with 1,047 CPU milliseconds. Both
+service generation observations matched and every cleanup check passed. The
+389-byte console had SQL-connected but no template-loading or later marker.
+This localizes the failure before template/DDL work and before the expected
+64-worker population; the specific assertion or exception is still unobserved.
+Both exact runtime refusal archives and the separate pre-service test refusal
+are retained under `evidence/db-shard-startup-refusals-20261017`.
+
+A subsequent **failure-only** `db_modal_diagnostic.py` observer reads current
+desktop top-level/child controls owned by that exact DB PID. The existing
+name/path/start-generation/PE observer surrounds it. Its in-memory C# reader
+checks PID before and after each bounded read, uses only WM_GETTEXTLENGTH and
+WM_GETTEXT through 100ms `SendMessageTimeout` calls, and stops at eight seconds,
+512 enumerated top-level windows, 16 owned top-level windows, 64 owned child
+controls and 65,536 total text characters. Individual reads are at most 32,768
+characters; the private PowerShell process has a 30-second outer timeout and
+1MiB output limit. It never sends a command, dismisses a dialog or modifies UI.
+
+All raw classes, titles, bodies, filenames and stack/extra-info text remain in
+private transient storage and are removed with the owned directory. Only fixed
+class/status counts and source matches are exported. Twenty-two exception names
+come from the exact pinned original SuperAssert table. Assertion matches require
+the original `Assertion failed`, `File:`, `Line:` and `Expression:` structure,
+a fixed approved source basename/expression, and a verified original source
+line. Twenty-one setup assertion IDs cover the observed FIFO/task/ring/allocator
+boundary. Unrecognized, incomplete, timed-out or ownership-changed text yields
+unknown/unmatched counts, never copied diagnostic strings. Nine original source
+hashes and exact current HEAD blobs of the classifier/reader bind this policy.
+Observer failure cannot stop cleanup or change a failed stage into success.
+This adds observability only: binaries, profile, checksum/version guards and the
+300-second readiness bound are unchanged. Absence on the current desktop does
+not prove that no assertion exists elsewhere.
+
+Source-body matching is limited to the pinned original `Static` child control
+`IDC_MAINTEXT=10`; titles, buttons, edit controls and other IDs stay unmatched.
+An unexpected unsuccessful top-level enumeration is an observer failure rather
+than evidence of an empty inventory. Bound-driven stops are explicit flags.
+
+Run the new `test_db_modal_diagnostic.py` suite in the focused Windows job before
+creating SQL or starting the services. Its Windows-only smoke compiles the exact
+C# reader in-process with Add-Type inside a fresh owned PowerShell Job Object,
+observes only that benign child's own PID, validates its unchanged process start
+ticks and exact PID against the Popen handle, privately admits its result, and
+requires Job cleanup. No other PID's text is read. An empty self inventory is
+valid. This catches compiler/PInvoke/enumeration/JSON incompatibility before the
+five-minute service wait. Host tests also cover timeout/generation/job-cleanup
+refusals. The Linux session cannot execute this Windows smoke; its four portable
+methods pass and the Windows-only method is explicitly skipped until CI.
+
 ```sh
 python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v
 ```

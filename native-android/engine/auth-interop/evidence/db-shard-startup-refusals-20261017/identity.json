@@ -1,0 +1,175 @@
+{
+  "schema": "coh-original-db-startup-refusal-history-v1",
+  "scope": "Retained failed experiments; neither record admits registration, play or DB login.",
+  "runtime_refusal": {
+    "run_id": 39068923933,
+    "job_id": 117502420363,
+    "repository_commit": "a4cc6b61443cecf6394b0500028277874be6cf82",
+    "artifact_id": 12114885725,
+    "archive": "original-registration-39068923933.zip",
+    "bytes": 5822,
+    "sha256": "b47cfea3b2af04634a1802b889010756058bf2211f2ea7ddc87a7bb2342f459e",
+    "passed": false,
+    "failure": "shard_db_ready_deadline",
+    "services_started": true,
+    "sql_readiness_healthy": true,
+    "private_console_summary": {
+      "bytes": 389,
+      "inspected_prefix_bytes": 389,
+      "content_exported": false,
+      "source_markers": {
+        "db_ready": false,
+        "auth_version_received": false,
+        "sql_connected": true,
+        "checksum_reference_missing": false,
+        "sql_connection_gave_up": false,
+        "missing_input_error": false,
+        "bind_error": false
+      }
+    },
+    "cleanup": {
+      "owned_service_cleanup_complete": true,
+      "owned_firewall_cleanup_complete": true,
+      "owned_localdb_cleanup_complete": true,
+      "private_files_removed": true,
+      "source_inputs_unchanged": true
+    }
+  },
+  "pre_service_test_refusal": {
+    "run_id": 39069981922,
+    "job_id": 117505400907,
+    "repository_commit": "824da3e9666ca5f04f5a0bee02449a8894cca2e4",
+    "passed": false,
+    "artifact_created": false,
+    "actual_services_started": false,
+    "diagnostic_host_methods_passed": 2,
+    "activation_host_methods_passed": 5,
+    "activation_host_methods_failed": 1,
+    "failed_method": "test_local_refusal_and_owned_firewall_commands",
+    "expected_refusal": "fresh_github_hosted_windows_required",
+    "observed_refusal": "new_output_directory_under_runner_temp_required",
+    "cause": "Unhosted-refusal test inherited real hosted Windows environment.",
+    "test_only_fix_commit": "b55a8f24b86c04120537d5c80aa0eaec096b8c76"
+  },
+  "original_interserver_shard_activation_verified": false,
+  "selected_shard_play_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "runtime_diagnostic_refusal": {
+    "run_id": 39070610385,
+    "job_id": 117507248178,
+    "repository_commit": "dd5c3f9a2c30ea20b0a4c714007b1de0b0409546",
+    "artifact_id": 12115307153,
+    "archive": "original-startup-diagnostic-39070610385.zip",
+    "bytes": 6148,
+    "sha256": "f9d3b02dbd3f3661044312fc29ba8c06c46c26e6d21bb769ff6e355e2a5c4889",
+    "passed": false,
+    "failure": "shard_db_ready_deadline",
+    "services_started": true,
+    "pre_service_host_methods_passed": 8,
+    "diagnostic": {
+      "read_only": true,
+      "raw_console_or_sql_exported": false,
+      "generation_before": {
+        "pid": 5256,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278690324197929,
+        "executable_path_sha256": "0081a57d1e6e85f45d762e13bf7c0dbeeeefc7f4d63a9f4f61aeafeeec7ac2aa"
+      },
+      "sql": {
+        "user_tables": 0,
+        "attribute_tables": 0,
+        "dbserver_sessions": 65,
+        "sleeping_sessions": 65,
+        "active_requests": 0,
+        "waiting_requests": 0,
+        "blocked_requests": 0,
+        "wait_lock": 0,
+        "wait_network": 0,
+        "wait_io": 0,
+        "wait_memory": 0,
+        "wait_threadpool": 0,
+        "wait_other": 0
+      },
+      "process": {
+        "pid": 5256,
+        "cpu_ms": 1047,
+        "thread_count": 9,
+        "thread_state_enum_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 9,
+          "6": 0,
+          "7": 0
+        },
+        "wait_reason_enum_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 1,
+          "5": 0,
+          "6": 5,
+          "7": 0,
+          "8": 3,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0
+        },
+        "thread_ids_or_stacks_exported": false
+      },
+      "generation_after": {
+        "pid": 5256,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278690324197929,
+        "executable_path_sha256": "0081a57d1e6e85f45d762e13bf7c0dbeeeefc7f4d63a9f4f61aeafeeec7ac2aa"
+      },
+      "complete": true
+    },
+    "private_console_summary": {
+      "bytes": 389,
+      "inspected_prefix_bytes": 389,
+      "content_exported": false,
+      "source_markers": {
+        "db_ready": false,
+        "auth_version_received": false,
+        "sql_connected": true,
+        "checksum_reference_missing": false,
+        "loading_templates": false,
+        "update_tables": false,
+        "clearing_teamups": false,
+        "waiting_for_launchers": false,
+        "sql_connection_gave_up": false,
+        "missing_input_error": false,
+        "bind_error": false
+      }
+    },
+    "cleanup": {
+      "owned_service_cleanup_complete": true,
+      "owned_firewall_cleanup_complete": true,
+      "owned_localdb_cleanup_complete": true,
+      "private_files_removed": true,
+      "source_inputs_unchanged": true
+    }
+  },
+  "source_localization": {
+    "original_next_step_after_sql_connected": "sqlFifoInit -> sql_task_init -> PointerRingChain::Initialize -> ring allocator and WorkerThread[64] construction -> worker starts -> startup barrier -> Loading templates.",
+    "observed_user_tables": 0,
+    "observed_original_dbserver_sessions": 65,
+    "observed_all_sessions_sleeping": true,
+    "observed_active_requests": 0,
+    "observed_db_threads": 9,
+    "observed_db_cpu_ms": 1047,
+    "loading_templates_marker_seen": false,
+    "inference": "Stalled before template/DDL work and before the expected SQL-worker population was established. Specific failing instruction/assertion remains unobserved.",
+    "actual_root_cause_identified": false,
+    "deadline_increased": false,
+    "additional_service_retry_authorized_by_this_record": false
+  }
+}

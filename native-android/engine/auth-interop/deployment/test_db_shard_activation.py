@@ -121,7 +121,7 @@ class DbShardActivationTests(unittest.TestCase):
         @dataclass(frozen=True)
         class Prerequisite:
             fresh_authentication_required:bool=True
-        for failure in (None,'before_db','after_db','diagnostic','close_stream','selected_success','selected_refusal'):
+        for failure in (None,'before_db','after_db','diagnostic','modal_diagnostic','close_stream','selected_success','selected_refusal'):
             with self.subTest(failure=failure),tempfile.TemporaryDirectory() as temp:
                 base=Path(temp);events=[];processes=[]
                 candidate=base/'candidate';candidate.mkdir();(candidate/stage.service.candidate.BINARY).write_bytes(b'auth')
@@ -157,7 +157,7 @@ class DbShardActivationTests(unittest.TestCase):
                 values=iter([1 if failure=='before_db' else 0,1,99])
                 def capture(argv):return 'a'*40 if argv[-1]=='HEAD' else ''
                 def channel(*args):
-                    if failure in ('after_db','diagnostic'):raise ValueError('test_after_db')
+                    if failure in ('after_db','diagnostic','modal_diagnostic'):raise ValueError('test_after_db')
                     return {'loopback_pair_verified':True}
                 def firewall(runner,name,binary,direction,add):events.append(('add-' if add else 'remove-')+name)
                 def service_snapshot(child,path,previous=None):
@@ -210,6 +210,8 @@ class DbShardActivationTests(unittest.TestCase):
                     observer=stack.enter_context(mock.patch.object(stage.db_startup_diagnostic,'observe_sql',return_value={'user_tables':0}))
                     if failure=='diagnostic':observer.side_effect=OSError('private SQL details never exported')
                     stack.enter_context(mock.patch.object(stage.db_startup_diagnostic,'observe_process',return_value={'thread_count':64}))
+                    modal_observer=stack.enter_context(mock.patch.object(stage.db_modal_diagnostic,'observe',return_value={'source_matches':[]}))
+                    if failure=='modal_diagnostic':modal_observer.side_effect=OSError('private modal dialog cookie SQL text never exported')
                     stack.enter_context(mock.patch.object(stage.login,'owned_process_snapshot',side_effect=sql_snapshot))
                     stack.enter_context(mock.patch.object(stage,'close_streams',side_effect=close_streams))
                     proof=stage.run(args,scope)
@@ -224,11 +226,14 @@ class DbShardActivationTests(unittest.TestCase):
                     self.assertLess(events.index('selected-exercise'),events.index('stop-20'))
                 self.assertFalse(proof['authenticated_db_map_handoff_verified'])
                 self.assertFalse(proof['checksum_policy_relaxed'])
-                if failure in ('after_db','diagnostic'):
+                if failure in ('after_db','diagnostic','modal_diagnostic'):
                     diagnostic=proof['owned_db_startup_diagnostic']
-                    self.assertEqual(diagnostic['complete'],failure=='after_db')
+                    self.assertEqual(diagnostic['complete'],failure!='diagnostic')
                     self.assertFalse(diagnostic['raw_console_or_sql_exported'])
                     self.assertNotIn('private SQL details',json.dumps(proof))
+                    self.assertEqual(proof['owned_db_modal_diagnostic']['complete'],failure!='modal_diagnostic')
+                    self.assertFalse(proof['owned_db_modal_diagnostic']['raw_titles_controls_or_stacks_exported'])
+                    self.assertNotIn('private modal dialog cookie SQL text',json.dumps(proof))
                 self.assertEqual(len([e for e in events if e.startswith('add-coh-shard-')]),4)
                 self.assertEqual(len([e for e in events if e.startswith('remove-coh-shard-')]),4)
                 self.assertEqual(events[-4:],['drop-owned-game-db','localdb-drop-owned-schema','localdb-stop-owned-instance','localdb-delete-owned-instance'])

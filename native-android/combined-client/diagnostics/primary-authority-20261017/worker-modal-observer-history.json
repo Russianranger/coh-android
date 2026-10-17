@@ -1,0 +1,11 @@
+{
+  "schema": "coh-preserved-worker-modal-history-v1",
+  "worker": "D",
+  "branch": "recovery-d",
+  "tip": "3b7057a54c450e1ab80002561485961662c63caf",
+  "prerequisite": "a780aa66b97ce399b5ccee03bd2bc5523d86e751",
+  "bundle": "worker-modal-observer-history.bundle",
+  "bytes": 31684,
+  "sha256": "399d363fe4aa9882c3d2d3bf3ef9669e592d5d960cfe7ed1eb58ff4297c8ad05",
+  "scope": "Retained exact runtime refusal evidence and source-only owned Db modal classifier; actual Windows API/service observation pending."
+}

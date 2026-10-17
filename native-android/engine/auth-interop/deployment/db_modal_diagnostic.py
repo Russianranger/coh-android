@@ -1,0 +1,218 @@
+"""Failure-only original Db dialog classifier; all raw control text stays private."""
+import hashlib
+import json
+import ntpath
+import os
+from pathlib import Path
+import re
+import subprocess
+import tempfile
+
+import hosted_auth_stage as prior
+
+HERE=Path(__file__).resolve().parent
+SOURCE_PINS={
+ 'libs/UtilitiesLib/src/utils/SuperAssert.c':'9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6',
+ 'DBServer/src/sql_fifo.c':'345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879',
+ 'Common/sql/sqltask.cpp':'d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02',
+ 'libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp':'ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7',
+ 'libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp':'70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de',
+ 'libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp':'eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81',
+ 'libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp':'e7ce6ebd9c14097d65830fd1390408b9a1c9c2a46ee992a47d8d483478a46d0e',
+ 'libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp':'bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110',
+ 'libs/UtilitiesLib/src/components/MemoryPool.c':'5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83'}
+# Stable output IDs, never strings copied out of a dialog. These are exact
+# assertions on the observed pre-worker source boundary, not an open parser.
+ASSERTIONS={
+ 'fifo_not_running':('sql_fifo.c','!sqlfifo.running'),
+ 'fifo_cleanup_registration':('sql_fifo.c','!atexit(s_fifo_flush)'),
+ 'task_workers_nonzero':('sqltask.cpp','workers'),
+ 'task_queue_nonzero':('sqltask.cpp','count'),
+ 'task_not_initialized':('sqltask.cpp','!sqltask.num_workers'),
+ 'ring_buffer_unset':('ring.hpp','!m_base'),
+ 'ring_size_power_of_two':('ring.hpp','!(size & (size-1))'),
+ 'ring_data_nonnull':('ring.hpp','data'),
+ 'allocator_size_nonzero':('threadedpoolallocator.cpp','structSize'),
+ 'thread_wake_event':('taskthread.hpp','m_wake != INVALID_HANDLE_VALUE'),
+ 'thread_awoke_event':('taskthread.hpp','m_awoke != INVALID_HANDLE_VALUE'),
+ 'thread_create_handle':('taskthread.hpp','m_thread != INVALID_HANDLE_VALUE'),
+ 'pool_not_initialized':('MemoryPool.c','!pool->structSize && !pool->structCount'),
+ 'pool_size_nonzero':('MemoryPool.c','structSize && structCount'),
+ 'pool_alignment_offset':('MemoryPool.c','offset < CHUNK_ALIGNMENT'),
+ 'pool_nonnull':('MemoryPool.c','pool'),
+ 'pool_address_aligned':('MemoryPool.c','!((intptr_t)address & 3)'),
+ 'pool_freelist_address':('MemoryPool.c','addr == memory'),
+ 'pool_chunk_present':('MemoryPool.c','pool->chunkTable.size'),
+ 'pool_allocations_positive':('MemoryPool.c','pool->allocationCount > 0'),
+ 'worker_no_inflight':('semaphoreworkerpool.hpp','!m_inFlight')}
+
+
+def normalized(value):return re.sub(r'\s+','',value)
+
+
+def policy(root):
+    sources={}
+    for name,pin in SOURCE_PINS.items():
+        path=root/'upstream/ouroboros'/name
+        if path.is_symlink() or prior.sha(path)!=pin:raise ValueError('db_modal_original_source_identity')
+        sources[Path(name).name]=path.read_text(encoding='utf-8')
+    original=sources['SuperAssert.c']
+    if any(value not in original for value in ('#define IDC_MAINTEXT 10','"Assertion failed"','"File: "',
+            '"Line: "','"Expression: "','"Exception caught: %s\\n"','"Assertion Failure"')):
+        raise ValueError('db_modal_original_dialog_policy')
+    exceptions=set(re.findall(r'^\s+EXCPT_NAME\((EXCEPTION_[A-Z_]+)\)',original,re.M))
+    if len(exceptions)!=22:raise ValueError('db_modal_original_exception_policy')
+    points={}
+    for key,(basename,expression) in ASSERTIONS.items():
+        expr=normalized(expression)
+        lines=[i for i,line in enumerate(sources[basename].splitlines(),1)
+            if any(macro+'('+expr+end in normalized(line) for macro in ('assert','assertmsg','assertmsgf') for end in (')',','))]
+        if not lines:raise ValueError('db_modal_original_assertion_policy')
+        points[key]={'file':basename.casefold(),'expression':expr,'lines':lines}
+    return {'exceptions':exceptions,'points':points}
+
+
+def classify_text(text,source_policy):
+    # Ignore unrelated lines, including program/IP/user/stack/extra-info fields.
+    # Never return slices, expressions, numeric codes or hashes of raw text.
+    lines=text.replace('\r\n','\n').split('\n')
+    result={'kind':'unknown','exception_enum':'none','assertion_enum':'none',
+        'source_assertion_line_verified':False}
+    if lines[0].startswith('Exception caught: '):
+        name=lines[0][len('Exception caught: '):]
+        result['kind']='source_exception'
+        result['exception_enum']=name if name in source_policy['exceptions'] else 'unknown_exception'
+    elif lines[0]=='Assertion failed':
+        result['kind']='source_assertion_unknown'
+        fields={}
+        for prefix in ('File: ','Line: ','Expression: '):
+            values=[line[len(prefix):] for line in lines if line.startswith(prefix)]
+            if len(values)==1:fields[prefix]=values[0]
+        if set(fields)=={'File: ','Line: ','Expression: '} and re.fullmatch('[0-9]{1,5}',fields['Line: ']):
+            basename=ntpath.basename(fields['File: ']).casefold()
+            expr=normalized(fields['Expression: ']);line=int(fields['Line: '])
+            matches=[key for key,point in source_policy['points'].items()
+                if point['file']==basename and point['expression']==expr and line in point['lines']]
+            if len(matches)==1:
+                result.update(kind='source_assertion',assertion_enum=matches[0],source_assertion_line_verified=True)
+    return result
+
+
+def admit(value,pid,source_policy):
+    keys={'pid','rows','enumerated_top_level','deadline_reached','inventory_bound_reached','text_bound_reached','owner_changed_count','top_level_enumeration_completed'}
+    if (type(pid) is not int or not 1<=pid<=0x7fffffff or not isinstance(value,dict) or set(value)!=keys
+            or type(value.get('pid')) is not int or value['pid']!=pid
+            or type(value.get('enumerated_top_level')) is not int or not 0<=value['enumerated_top_level']<=513
+            or type(value.get('owner_changed_count')) is not int or not 0<=value['owner_changed_count']<=80
+            or any(type(value.get(k)) is not bool for k in ('deadline_reached','inventory_bound_reached','text_bound_reached','top_level_enumeration_completed'))
+            or not isinstance(value.get('rows'),list) or len(value['rows'])>80):
+        raise ValueError('db_modal_observation_shape')
+    statuses={'ok','timeout','truncated','owner_changed'};counts={key:0 for key in sorted(statuses)}
+    classes={'#32770':'dialog','Static':'static','Button':'button','Edit':'edit','ComboBox':'combo','ListBox':'list'}
+    class_counts={key:0 for key in (*classes.values(),'unknown')}
+    matches=[];characters=0;tops=0;children=0;main_controls=0
+    for row in value['rows']:
+        if (not isinstance(row,dict) or set(row)!={'pid','top_level','class_name','control_id','text','text_status'}
+                or type(row.get('pid')) is not int or row['pid']!=pid or type(row.get('top_level')) is not bool
+                or type(row.get('class_name')) is not str or len(row['class_name'])>255
+                or type(row.get('control_id')) is not int or not -1<=row['control_id']<=0xffff
+                or type(row.get('text')) is not str or len(row['text'])>32768
+                or type(row.get('text_status')) is not str or row.get('text_status') not in statuses):
+            raise ValueError('db_modal_control_shape')
+        characters+=len(row['text']);tops+=row['top_level'];children+=not row['top_level']
+        counts[row['text_status']]+=1;class_counts[classes.get(row['class_name'],'unknown')]+=1
+        main_controls+=not row['top_level'] and row['class_name']=='Static' and row['control_id']==10
+        # Original SuperAssert's pinned resource uses Static IDC_MAINTEXT=10.
+        # An owned title/button/edit control cannot masquerade as its body.
+        if row['text_status']=='ok' and not row['top_level'] and row['class_name']=='Static' and row['control_id']==10:
+            match=classify_text(row['text'],source_policy)
+            if match['kind']!='unknown':matches.append(match)
+    if characters>65536 or tops>16 or children>64 or counts['owner_changed']!=value['owner_changed_count']:
+        raise ValueError('db_modal_observation_counts')
+    if not value['top_level_enumeration_completed'] and not (value['deadline_reached'] or value['inventory_bound_reached']):
+        raise ValueError('db_modal_native_enumeration_failed')
+    return {'schema':'coh-owned-db-modal-classifier-v1','pid':pid,'current_desktop_only':True,
+        'read_only':True,'raw_titles_controls_or_stacks_exported':False,
+        'owned_top_level_count':tops,'owned_child_count':children,'dialog_class_count':class_counts['dialog'],
+        'source_main_text_control_count':main_controls,'top_level_enumeration_completed':value['top_level_enumeration_completed'],
+        'class_enum_counts':class_counts,'text_status_counts':counts,'inspected_characters':characters,
+        'source_matches':matches,'unknown_control_count':len(value['rows'])-len(matches),
+        'deadline_reached':value['deadline_reached'],'inventory_bound_reached':value['inventory_bound_reached'],
+        'text_bound_reached':value['text_bound_reached'],'owner_changed_count':value['owner_changed_count']}
+
+
+def helper_sources(root):
+    helper_inputs={}
+    for relative in ('deployment/db_modal_diagnostic.py','deployment/windows/db_modal_observer.cs'):
+        name='native-android/engine/auth-interop/'+relative
+        raw=subprocess.check_output(['git','-C',str(root),'show','HEAD:'+name],stderr=subprocess.DEVNULL,timeout=30)
+        path=root/name
+        if path.is_symlink() or path.read_bytes()!=raw:raise ValueError('db_modal_helper_not_owned_by_head')
+        helper_inputs[name]=hashlib.sha256(raw).hexdigest()
+    if Path(__file__).resolve()!=root/'native-android/engine/auth-interop/deployment/db_modal_diagnostic.py':
+        raise ValueError('db_modal_helper_checkout_layout')
+    return helper_inputs
+
+
+def reader_script(root):
+    reader=root/'native-android/engine/auth-interop/deployment/windows/db_modal_observer.cs'
+    if "'" in str(reader):raise ValueError('db_modal_reader_path')
+    return "$ErrorActionPreference='Stop';Add-Type -TypeDefinition (Get-Content -LiteralPath '"+str(reader)+"' -Raw);"
+
+
+def observe(root,pid,directory):
+    if type(pid) is not int or not 1<=pid<=0x7fffffff:raise ValueError('db_modal_owned_pid')
+    source_policy=policy(root);helper_inputs=helper_sources(root)
+    script=reader_script(root)+"[CohDbModalReader]::Observe("+str(pid)+")|ConvertTo-Json -Compress -Depth 6"
+    with tempfile.TemporaryFile(dir=directory) as output:
+        child=subprocess.run(['pwsh','-NoProfile','-NonInteractive','-Command',script],stdout=output,
+            stderr=subprocess.DEVNULL,timeout=30,env=dict(os.environ,TEMP=str(directory),TMP=str(directory)))
+        if child.returncode or os.fstat(output.fileno()).st_size>1024*1024:
+            raise ValueError('db_modal_private_observer_failed')
+        output.seek(0);value=json.loads(output.read(1024*1024+1).decode('utf-8-sig'))
+    result=admit(value,pid,source_policy)
+    result['original_source_sha256']=SOURCE_PINS
+    result['classifier_source_sha256']=helper_inputs
+    return result
+
+
+def preflight(root,directory):
+    """Compile/read APIs against this fresh owned PowerShell child before SQL.
+
+    The benign child observes only its own PID on the current desktop. An empty
+    owned inventory is valid; this is not evidence that DB assertions are absent.
+    """
+    import hosted_auth_login as login
+    source_policy=policy(root);helper_inputs=helper_sources(root)
+    script=reader_script(root)+("$before=[long]([Diagnostics.Process]::GetCurrentProcess().StartTime.ToUniversalTime().Ticks);"
+        "$value=[CohDbModalReader]::Observe($PID);$after=[long]([Diagnostics.Process]::GetCurrentProcess().StartTime.ToUniversalTime().Ticks);"
+        "[pscustomobject]@{before=$before;after=$after;observation=$value}|ConvertTo-Json -Compress -Depth 7")
+    job=login.OwnedJob();child=None;clean=False
+    try:
+        with tempfile.TemporaryFile(dir=directory) as output:
+            child=subprocess.Popen(['pwsh','-NoProfile','-NonInteractive','-Command',script],
+                stdout=output,stderr=subprocess.DEVNULL,stdin=subprocess.DEVNULL,
+                env=dict(os.environ,TEMP=str(directory),TMP=str(directory)))
+            job.assign(child);child.wait(timeout=30)
+            if child.returncode or os.fstat(output.fileno()).st_size>1024*1024:
+                raise ValueError('db_modal_private_preflight_failed')
+            output.seek(0);value=json.loads(output.read(1024*1024+1).decode('utf-8-sig'))
+            if (not isinstance(value,dict) or set(value)!={'before','after','observation'}
+                    or type(value.get('before')) is not int or not 0<value['before']<=3155378975999999999
+                    or type(value.get('after')) is not int or value['before']!=value['after']):
+                raise ValueError('db_modal_preflight_process_generation')
+            result=admit(value['observation'],child.pid,source_policy)
+    finally:
+        if child is not None:
+            try:clean=job.stop(child)
+            finally:
+                if job.handle:
+                    try:job.kernel.CloseHandle(job.handle)
+                    finally:job.handle=None
+        elif job.handle:
+            clean=bool(job.kernel.CloseHandle(job.handle));job.handle=None
+    if not clean:raise ValueError('db_modal_preflight_cleanup_failed')
+    return {'schema':'coh-owned-db-modal-api-preflight-v1','passed':True,'owned_pid':child.pid,
+        'owned_started_utc_ticks':value['before'],'owned_cleanup_complete':True,
+        'original_source_sha256':SOURCE_PINS,'classifier_source_sha256':helper_inputs,
+        'benign_self_observation':result,'auth_or_sql_services_started':False}

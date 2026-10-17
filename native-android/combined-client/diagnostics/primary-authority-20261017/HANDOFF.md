@@ -5,6 +5,38 @@ Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical
 Git links, existing bundles, accepted APKs and user profiles were preserved.
 
+## Current qualification checkpoint
+
+Published source checkpoint before the modal diagnostic tranche is `08e6a96f2af9cb317eecd6629e99db4200df177f`
+(tree `85d78f01307c5f0644eb8c4fc58fc5d34b4c9e78`). The chronological sections
+below retain earlier checkpoints; pending statements in those sections describe
+their then-current state. The following table supersedes those pending fields.
+
+| Scope | Established result | Still required |
+|---|---|---|
+| Live scene | Exact original Win32 observer compiled; actual CI native receiver and all 37 current dependencies admitted; restore-only same-packet source/native supervisor passes host controls | A real full character backup and executed matching GROUPS transaction; no source-generation/world admission yet |
+| Graphical backup | Sixteen new offline refusal controls pass; retry39071130820 has passed exact inputs and reached original character creation/save | Actual ordinary save, full PG18 snapshot/dump, cleanup, independent artifact pin and admission |
+| Geometry/materials | Historical LOD cache and original model-level alpha/blend policy qualified; model-policy CI39070610444 passed with all44 source hashes checked | Actual current CLIENT model/TexBind/trick/texture selection, current generations, supported draw ownership and aggregate/GPU budgets |
+| Gameplay dictionaries | Source-sorted IDs, compact forward/reverse joins and shared-set layout qualified; shared-layout CI39069499391 passed | Current runtime/cache branch, semantic character application and complete initial update; no actor/ACK |
+| Encrypted authentication | Original shard/UserData x86 SQL-to-wire prerequisite executed successfully; selected-shard probe has16 host outcomes per mode including wrong nonzero UID refusal | Original DbServer readiness, actual AC_PLAY_OK and authenticated DB/Map; nondevelopment version/checksum inputs |
+| Presentation | Both Android ABI libraries built and Android13 x86_64 CPU consumer executed34,465 checks | Actual GLES/application/world/actor integration and Thor acceptance |
+| Memory/startup | Named reservation replay and source owner sizes documented | Actual source-backed aggregate admission, provider retirement, process/GPU overlap and timing; accepted startup remains387,340ms |
+
+The actual Windows diagnostic39070610385 refused at the unchanged300second
+readiness deadline. Its exact6148B artifact SHA256 is
+`f9d3b02dbd3f3661044312fc29ba8c06c46c26e6d21bb769ff6e355e2a5c4889`.
+The same owned DbServer generation had65 sleeping SQL sessions, zero user or
+attribute tables, zero active/waiting/blocked SQL requests,1047ms CPU and nine
+waiting threads. All owned cleanup checks passed. This localizes the stall
+before expected worker population; it does not identify an assertion or justify
+a binary repair. A failure-only modal/assertion classifier is independently reviewed
+for the next focused service attempt. The intervening39069981922 unit failure
+occurred before services and is not a second runtime stall.
+
+Gates25–27 are open. No new APK, authoritative world/player, source-generation
+admission, complete initial update, application ACK or Thor result is claimed.
+The accepted Session0.3.0, Combined0.1.7 and Support0.2.0/code201 are unchanged.
+
 ## Recovery and source integration
 
 F compared 24,212 accessible preserved files plus 703 historical publication
@@ -268,3 +300,28 @@ or database backup was created and the run completed failed, not canceled. The
 next focused fixture attempt also retains the small actual host launcher/receipt.
 Model-policy hosted39070610444 independently succeeded; exact archive, source
 hashes and all qualification metadata are retained under its own evidence path.
+
+
+## Owned original Db modal diagnosis
+
+Worker D3b7057a54 and retained evidence433e62991 are integrated. The new
+read-only failure observer classifies only original Static child control10
+from the exact owned DbServer generation. Nine original source hashes define
+21 assertion IDs and22 exception labels. Raw titles, control text, paths and
+stacks remain private. Fixed bounds cover windows, text, time and JSON size;
+unexpected enumeration failure refuses. Generation checks bracket observation
+and observer failure still reaches complete owned cleanup. E/F independent
+source, C# API, privacy and late-failure reviews clear these exact bytes.
+
+Four portable modal methods, two numeric methods and six affected activation
+methods pass; the actual Windows-only API test is explicitly skipped on Linux.
+The focused workflow runs that real Add-Type/API smoke against a new Job-owned
+PowerShell child before any SQL or service startup. The retained server PEs,
+configuration, checksum/version enforcement and300second deadline are unchanged.
+A completed new runtime receipt, rather than this preparation, will establish
+whether an original assertion or exception can actually be observed.
+
+`worker-modal-observer-history.bundle` preserves both new worker commits with
+its explicit prior worker prerequisite. Existing failed runs remain retained.
+The graphical fixture retry39071130820 continues independently at its pinned
+08e6a96f2 source; this source publication does not cancel or repeat it.

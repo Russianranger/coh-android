@@ -24,6 +24,7 @@ import zipfile
 import auth_readiness
 import auth_service_profile
 import db_startup_diagnostic
+import db_modal_diagnostic
 import hosted_auth_login as login
 import hosted_auth_stage as prior
 import hosted_candidate_login as service
@@ -371,6 +372,15 @@ def run(args, selected_scope=None):
             except Exception as observed:
                 diagnostic['complete']=False;diagnostic['failure']=service.safe_failure(observed)
             proof['owned_db_startup_diagnostic']=diagnostic
+            modal={'read_only':True,'raw_titles_controls_or_stacks_exported':False}
+            try:
+                modal['generation_before']=service_process_snapshot(db_child,db,db_start)
+                modal['observation']=db_modal_diagnostic.observe(root,db_child.pid,temporary)
+                modal['generation_after']=service_process_snapshot(db_child,db,db_start)
+                modal['complete']=True
+            except Exception as observed:
+                modal['complete']=False;modal['failure']=service.safe_failure(observed)
+            proof['owned_db_modal_diagnostic']=modal
     finally:
         cleanup=True
         for child,job in reversed(children):
