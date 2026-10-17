@@ -1,0 +1,78 @@
+{
+  "schema": "coh-independent-raw-seed-budget-review-v1",
+  "approved": true,
+  "source_commit": "198b8d19b",
+  "required_stack_followup": "a246d3ed879bda3c3febcd22d1abeecc7b86a4ef",
+  "receipts": {
+    "groups-stack-budget-host.json": {
+      "sha256": "d826b97d7f1876a9d11256523b969b4cc79afc5ba8274be0327de480af3526fc",
+      "source_count": 193,
+      "measured_conservative_bounds": {
+        "release": {
+          "witness_create_chain_bound": 119632,
+          "seed_visit_chain_bound": 85856,
+          "reserved_bytes": 131072
+        },
+        "asan": {
+          "witness_create_chain_bound": 129488,
+          "seed_visit_chain_bound": 94480,
+          "reserved_bytes": 131072
+        },
+        "ubsan": {
+          "witness_create_chain_bound": 120120,
+          "seed_visit_chain_bound": 86376,
+          "reserved_bytes": 131072
+        }
+      }
+    },
+    "runtime-groups-witness-budget-host.json": {
+      "sha256": "64a762912c8588c1e52b9d4cc3b2fbfa258995506bab79652e126f7aeeb2f908",
+      "source_count": 310
+    },
+    "catalog-seed-budget-host.json": {
+      "sha256": "9bab349a7907712c36e32264eed10135c601a899e999e8e0fc45e413996a0544",
+      "source_count": 315
+    },
+    "historical_actual_seed_input_audit": {
+      "sha256": "e247538bb864f37e5f4f47618b4092377dcc26e279cc36564d11cfe2c16a2a94",
+      "keys": [
+        "schema",
+        "passed",
+        "capture_pins",
+        "source_sha256",
+        "files",
+        "summary",
+        "scope",
+        "all_catalog_wire_records_retained",
+        "ordinary_raw_groupbounds_present",
+        "bounds_cache_checksums_recomputed",
+        "native_seed_transaction_executed",
+        "client_derived_state_complete",
+        "source_generation_admitted",
+        "world_authority"
+      ]
+    }
+  },
+  "source_review": {
+    "seed_preflights_full_immutable_witness_and_packet_before_callbacks": true,
+    "all_allocated_slots_and_external_futures_preserved": true,
+    "callback_staging_must_rollback_on_any_refusal": true,
+    "scratch_discardable_report_reader_transactional": true,
+    "full_hidden_snapshot_owner_and_callback_reservations_caller_charged": true,
+    "raw_bounds_adler_requires_exact_60_byte_layout_and_source_order": true,
+    "file_zero_checksum_refused": true,
+    "source_crc_name_only_not_content_authority": true
+  },
+  "qualification_limits": {
+    "earlier_64KiB_witness_reservation_superseded": true,
+    "128KiB_native_core_release_asan_ubsan_stack_audit_only": true,
+    "external_provider_and_library_runtime_stack_unmeasured": true,
+    "android_compiler_qualified": false,
+    "actual_live_groups_packet_qualified": false,
+    "ordinary_raw_bounds_images_available": false,
+    "client_derived_state_complete": false,
+    "source_generation_admitted": false,
+    "world_or_actor_ack_permit": false,
+    "no_expensive_tests_or_capture_repeated": true
+  }
+}

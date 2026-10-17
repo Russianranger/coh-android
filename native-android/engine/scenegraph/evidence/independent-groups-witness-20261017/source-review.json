@@ -1,0 +1,238 @@
+{
+  "schema": "coh-independent-native-groups-eligibility-witness-v1",
+  "approved_source_only": true,
+  "source_commits": [
+    "1a57948ff",
+    "e1fc11959e7a25ce0954cca8974570ae6560936a"
+  ],
+  "host_receipt_sha256": "c6a1f23a5c621d79270b1309ff09269ed20f08b3e280ba43c4e3f2f6dedba1c1",
+  "verified_tested_commit_inputs": 309,
+  "source_file_idx_function_pins": {
+    "autoGroupSelection": "62331b36c4dd8e8a921e3e8abba85d5ca15095fd80221b9c0d74f626f65e0ffb",
+    "addFileIdx": "9c7d2d448aeb1cb1ecb75afb6740fa393dc0c73d351bf1ec6017e910feebbc51"
+  },
+  "fixture_pins": [
+    {
+      "case": 0,
+      "sha256": {
+        ".cohcat": "7e1e095de7aab19fc415edbeaa9e087de8ea30f63978c132e3856184378ca1e6",
+        ".cohrts": "c3040d7fea9c8bfadd1c11fb106f7e605c24c441a97d40ff201e5ca5d06aea21",
+        ".groups": "7ba93acd8b0a00742caafd4e03979643fa261bbae6b7d08075a2611e09454799",
+        ".eligibility": "587ed1c0c0804404e764af43361e2156d02326f86b0741f631f6edc6094ef93d"
+      },
+      "bytes": {
+        ".cohcat": 1123,
+        ".cohrts": 470,
+        ".groups": 1242,
+        ".eligibility": 896
+      }
+    },
+    {
+      "case": 1,
+      "sha256": {
+        ".cohcat": "7e1e095de7aab19fc415edbeaa9e087de8ea30f63978c132e3856184378ca1e6",
+        ".cohrts": "c3040d7fea9c8bfadd1c11fb106f7e605c24c441a97d40ff201e5ca5d06aea21",
+        ".groups": "8d13e3340c22b66e1481acb83ad6400c7a2942969399155f739b2c86dc34f0d7",
+        ".eligibility": "f2527204c06146679da6675f3c19b399885c8b457ddd118b238f82887b2af21f"
+      },
+      "bytes": {
+        ".cohcat": 1123,
+        ".cohrts": 470,
+        ".groups": 523,
+        ".eligibility": 896
+      }
+    },
+    {
+      "case": 2,
+      "sha256": {
+        ".cohcat": "7e1e095de7aab19fc415edbeaa9e087de8ea30f63978c132e3856184378ca1e6",
+        ".cohrts": "c3040d7fea9c8bfadd1c11fb106f7e605c24c441a97d40ff201e5ca5d06aea21",
+        ".groups": "7ba93acd8b0a00742caafd4e03979643fa261bbae6b7d08075a2611e09454799",
+        ".eligibility": "6493abcb44b569c97d3c2c9ecd4bf2b886808b45f7ebd5e332ef6df100cd6c92"
+      },
+      "bytes": {
+        ".cohcat": 1123,
+        ".cohrts": 470,
+        ".groups": 1242,
+        ".eligibility": 896
+      }
+    },
+    {
+      "case": 3,
+      "sha256": {
+        ".cohcat": "7e1e095de7aab19fc415edbeaa9e087de8ea30f63978c132e3856184378ca1e6",
+        ".cohrts": "c3040d7fea9c8bfadd1c11fb106f7e605c24c441a97d40ff201e5ca5d06aea21",
+        ".groups": "7ba93acd8b0a00742caafd4e03979643fa261bbae6b7d08075a2611e09454799",
+        ".eligibility": "964aea19280eb1b0f3f1a659dc7e221b34702d3d8147ea3f3fa4925f9da51059"
+      },
+      "bytes": {
+        ".cohcat": 1123,
+        ".cohrts": 470,
+        ".groups": 1242,
+        ".eligibility": 896
+      }
+    }
+  ],
+  "qualification": {
+    "release": [
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 1,
+        "eligible_definitions": 4,
+        "owned_bytes": 1899,
+        "import_peak": 368946,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      }
+    ],
+    "asan": [
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 1,
+        "eligible_definitions": 4,
+        "owned_bytes": 1899,
+        "import_peak": 368946,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      }
+    ],
+    "ubsan": [
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 1,
+        "eligible_definitions": 4,
+        "owned_bytes": 1899,
+        "import_peak": 368946,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      },
+      {
+        "passed": true,
+        "checks": 1896,
+        "saved_omissions": 0,
+        "eligible_definitions": 5,
+        "owned_bytes": 2618,
+        "import_peak": 370384,
+        "source_generation_admitted": false,
+        "live_groups_received": false,
+        "world_authority": false
+      }
+    ]
+  },
+  "review": [
+    "Constructor copies the complete fixed-record witness and normalized packet, hashes owned bytes, retains the exact CatalogOwner, and checks actual graph/catalog/snapshot spans and generation pins. Graph and SnapshotOwner remain immutable caller leases. Full packet comparison succeeds before output publication; failed allocations, digest, ownership or grammar retire provisional storage and preserve output/report.",
+    "Initial scope is full NEW_WORLD with every normal file and all root slots. Original saved omission is rederived for every allocated definition, including inactive deletion records and file0 U16 file_idx65535. IDs, active modification times, file checksums, root activity and all record counts/order match retained source. Every eligible row must appear exactly once; omitted rows must be source-ineligible. Existing conservative comparator is unchanged.",
+    "Comparison checks immutable packet identity, prefix/map file, full structure/footer CRCs, exact definition wire bytes and root name/packed matrices. It performs no allocations and commits only its report. Known public controls and source spans are disjoint; opaque owner/context allocation validity remains an explicit caller contract.",
+    "Reviewer requested explicit accounting for SnapshotOwner metadata/index/slack beyond the automatically charged raw snapshot payload; final header and contract now require those hidden dependencies in caller retained_bytes. Constructor also now refuses selected DBID above INT32_MAX, with a dedicated control. No claim of complete hidden-owner accounting is inferred from raw span size.",
+    "All309 final native/helper/header/source inputs match committed blobs and current files. Four unchanged original world-producer fixture profiles cover normal, saved omission, force reload and modified-on-disk override. Final7584 controls per release/ASan/UBSan verified from source-bound receipt; original producer libraries remain unsanitized. No corpus rerun by reviewer.",
+    "The witness is diagnostic compatibility evidence. Session/map/selection/hash labels require external authenticated capture provenance at the SAME source boundary; hashes and caller labels do not establish it. CLIENT import of omitted saved definitions, active material/LOD resources and authoritative actor transaction remain missing. No live generation or world/ACK permission is produced."
+  ],
+  "reviewer_reran_corpus": false,
+  "scope": {
+    "source_eligibility_compatibility": true,
+    "real_capture": false,
+    "authenticated_session_provenance": false,
+    "CLIENT_saved_import": false,
+    "active_generation": false,
+    "assets": false,
+    "actor": false,
+    "world": false,
+    "ACK": false,
+    "android": false,
+    "thor": false
+  }
+}

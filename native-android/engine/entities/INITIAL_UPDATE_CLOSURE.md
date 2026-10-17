@@ -310,3 +310,37 @@ character/full true PowerInfo, enclosing exact-end transaction, actual dictionar
 DBID admission, immutable actor and completion ACK remain unqualified. Full
 receipts are retained under independent-wire-android13-38993564322; do not
 promote these standalone successes into full-update application.
+
+## Generic initial full-create list continuation
+
+`engine/initial-record/` now shares a private grammar kernel with the unchanged
+selected-only public profile. It stages the other-player/NPC initial branches,
+including pchar-less and NetFX-only cases, with decoded self controlling
+appearance/power, inventory and taskforce paths. Its compact whole-list owner
+consumes every supported full-create record and the canonical sentinel,
+preserves signed negative index deltas, enforces unique slot/server entity ID/
+player DBID/selected self, and rolls back every public output on later failure.
+Full mode/absolute position/quaternion/movement and rare groups are required;
+noncreate/interpolated profiles remain unsupported. The existing 256-record
+local bound is retained rather than replacing it with large per-entity PODs.
+This does not change the older general `coh_ent_record`/`coh_ent_list` profiles.
+
+The new source fixture tranche has 720 actual original outer-control record
+profiles and 58 explicit list compositions with original bit writers, including
+MAX-index sentinel, selected-last, negative deltas, duplicate identities,
+256-record success, 257-record refusal and appended trailer preservation.
+All 11,466 child relocation equalities pass; release, ASan and UBSan agree on
+257,296 assertions, including 898 cuts, 11,464 mutations and 576 loan controls.
+Parent/child aggregate charge is checked exactly, and the enclosing loan adapter
+rejects aliases into the whole output/table/workspace, not only child outputs.
+The selected-only component and actual outer regressions remain unchanged after
+the kernel refactor. Original child/outer fixture object graphs are independent;
+whole engine/visibility construction and actual runtime dictionaries remain
+outside these host proofs.
+
+The next implementation dependency is integrating this raw list with the
+qualified control/deletes prelude and character/global suffix under one packet,
+selection/session and dictionary generation. Exact appended command framing,
+normal viewed-entity ownership, semantic dictionary/state/resource admission
+and immutable actor publication remain open. A syntax-complete raw list alone
+cannot emit READY, RECEIVED_CHARACTER or a full-update application ACK.

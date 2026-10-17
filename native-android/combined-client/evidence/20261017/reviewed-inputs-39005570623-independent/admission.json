@@ -1,0 +1,358 @@
+{
+  "passed": true,
+  "run_id": "39005570623",
+  "source_commit": "d6ef33b3306c496e6d6a9ee2f8c9ab12ffdfbc05",
+  "source_tree": "c28a0de2a49e1612e1bfc161854ca029ae621ed2",
+  "artifacts": {
+    "12090976855": {
+      "bytes": 2020,
+      "sha256": "dcc711abdf9031570ed4161dea519b75ef2eb062cc825e85bbcf799b89961da9"
+    },
+    "12090613318": {
+      "bytes": 4986,
+      "sha256": "a9435c960839c4a4b93174d527b5d1c294ed9f964ed507ccd943cd9676e40c23"
+    }
+  },
+  "original32_receipt_sha256": "863b3974a988173df6ab4209d55524ceb8699d12468470e43b4246c5dc493d3d",
+  "inventory_receipt_sha256": "9f34ad291572a4424d17f400f05b2b9aceaabefc2d2cce23fcecbe5235a9666b",
+  "executed_original32": {
+    "5": {
+      "archive_sha256": "cd96a1887fdccaaec71401ce576e3a773e2aaf3bdba4bc0675dac93dd1914389",
+      "binary_sha256": "f4af83cbf3e752f6d95dc5c03d109d4a8f6cbc0b004d9f1ddc345acceffcd741",
+      "body_sha256": "e1462116a522be747e72ddaccf353c25c17d8d510246704563affa54695ec6c5",
+      "bytes": 220,
+      "facts_equal": true,
+      "model": "tek1_pltform_ramp",
+      "oracle_source_sha256": "ed427288ae245a4f4953f840f1dd5d74e4c129d5a3565040f7ffe2e2a1c1c5c2",
+      "original32_executed": true,
+      "row": 13,
+      "stdout_sha256": "2633e4c5c31004f701563c12914c26558934c868b0775d8777b175b7e4667c1c",
+      "words": 55
+    },
+    "7": {
+      "archive_sha256": "d37654e587f5ba6eb83945fad14ee09a5d152c3bd9a76f7e5756cba59e83823d",
+      "binary_sha256": "cc82c758ec9f2da54df42eb5d4b7769085e95e17d5aa5f64da70deceebe63a9f",
+      "body_sha256": "66742a3b485b7772e6ab20a4edc750a7e46d99891e35473bfc587a3b0e9fd374",
+      "bytes": 208,
+      "facts_equal": true,
+      "model": "_ChaserLight1__SignChaserLights",
+      "oracle_source_sha256": "cccd1dbe47529e90a59cca63e6736c71c53fd64421c399d66c99a1873aa3e59d",
+      "original32_executed": true,
+      "row": 1,
+      "stdout_sha256": "06e8b757e10c1fc95091d3bc9b8c318f7164c8e7d58746c01da811f6dd2da5c7",
+      "words": 52
+    }
+  },
+  "source_dependency_count": 9,
+  "inventory_helpers_CRLF_binding": {
+    "native-android/engine/auth-interop/deployment/admit_schema.py": {
+      "git_sha256": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+      "observed_CRLF_sha256": "54084b16b0893e135f5b34a9cbc1c474b1f2045ad32fadddaa704de0b8ef71ff"
+    },
+    "native-android/engine/auth-interop/deployment/authenticated_handoff_contract.py": {
+      "git_sha256": "46a9f73c4c0367026732cf996c91db494f2213bb33f3267fac126781bcea7989",
+      "observed_CRLF_sha256": "e3194d157b93cd3af11740b3a5f803a44ef4ea9e6ad15a359cd73411bad1cdb6"
+    },
+    "native-android/engine/auth-interop/deployment/auth_readiness.py": {
+      "git_sha256": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+      "observed_CRLF_sha256": "8cc69b491b331b68a0c2f44b6824d1474c67721d94082153cc3e454945fba208"
+    },
+    "native-android/engine/auth-interop/deployment/auth_service_profile.py": {
+      "git_sha256": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+      "observed_CRLF_sha256": "ce403787ef186c6bdb526ede0bb43fa0ba11f1ae60a929913299d2b94cffbe22"
+    },
+    "native-android/engine/auth-interop/deployment/candidate_service.py": {
+      "git_sha256": "07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe",
+      "observed_CRLF_sha256": "dc20be96ac0598f14beae52f97d81365386b8a81c2393e2889807924e4a653f9"
+    },
+    "native-android/engine/auth-interop/deployment/candidate_sql_memory.py": {
+      "git_sha256": "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde",
+      "observed_CRLF_sha256": "c24b2e1a1b4b0c5ad3c076f5a50d4a6b7a5508ea16bddeee23c2c3168d7ca1d5"
+    },
+    "native-android/engine/auth-interop/deployment/check.py": {
+      "git_sha256": "622a5d10f7b22a5fabe9a507baafe2234a3855b62fa89ab719ec9037377c705c",
+      "observed_CRLF_sha256": "9bba28d38fa70b630015f51cd61eaa239cb3e0d2a8342dfe3ca960f56146dbcc"
+    },
+    "native-android/engine/auth-interop/deployment/checksum_candidate.py": {
+      "git_sha256": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+      "observed_CRLF_sha256": "e950385cf4bc3299b530da2c0ff2eac446ae2e1a0053438b9147345173a140ed"
+    },
+    "native-android/engine/auth-interop/deployment/db_handoff_profile.py": {
+      "git_sha256": "551d9d682e83f541a8245e8f88c864e97a88acb638438979d8b1568136574ea0",
+      "observed_CRLF_sha256": "281512596c14303831b4e65e5e687d8ce46fa898c03aeacc89b25bb7d1f9567a"
+    },
+    "native-android/engine/auth-interop/deployment/generate_odbc.py": {
+      "git_sha256": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+      "observed_CRLF_sha256": "8a31c79d69f41e4fe69bbf168092abd636c94a4175fa87f25ba04abfd82de053"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_auth_login.py": {
+      "git_sha256": "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2",
+      "observed_CRLF_sha256": "79c033e97894384fdf57669b94d389a3d8c230e340c2d8c5bd40dc68e937a062"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": {
+      "git_sha256": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+      "observed_CRLF_sha256": "61a4fc674ab2614f1b532b9f5bae686dbc68c34b76cc87f965912dc4426ef5b6"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_candidate_login.py": {
+      "git_sha256": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+      "observed_CRLF_sha256": "0c57c668f7b3ad59c2cf8119bc8420bdb8baf76943c7acffa2e867312fcaa83d"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py": {
+      "git_sha256": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+      "observed_CRLF_sha256": "834b8b1cbdab7d5458f69297cbec3db744f1f69a753ad5437f89273eabeba928"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_manual_atlas_compile.py": {
+      "git_sha256": "b57a150e952a568dee5360bfa919e29b3874cc761d9a40dd635d37000787d8d2",
+      "observed_CRLF_sha256": "a0d720b640f660472bf7a39d01c4b3d5e370b3667b394e56420c8d98fcacaaf1"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_receive_candidate.py": {
+      "git_sha256": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+      "observed_CRLF_sha256": "114fe46fc974da57a38461976713f3a28aeeef18e49254b54c886f433ab7c113"
+    },
+    "native-android/engine/auth-interop/deployment/inspect_client_reference.py": {
+      "git_sha256": "43fc2bcb150d78f91b39efe5306e7510cb25714c807ec3dcab83e535064a8a67",
+      "observed_CRLF_sha256": "bbf1e50e80adb5fa72f3cf93559b9741ffe80b797d4784f99e18a85e932717e6"
+    },
+    "native-android/engine/auth-interop/deployment/manual_atlas_full_recipe.py": {
+      "git_sha256": "ee8ece73aba177100993f32e27bface62b5e054d71a3b34c7fc0c20af0c07223",
+      "observed_CRLF_sha256": "ffd99fec77efa603bc5aa28ca1a9303b8a6e4a9312f326928a6ccdc076b2e019"
+    },
+    "native-android/engine/auth-interop/deployment/monitor_channel_contract.py": {
+      "git_sha256": "627d09a46776f4026910a73d52316c498836050f361a3e6ed98aa56b48298b40",
+      "observed_CRLF_sha256": "4ae24ed9b1319b976a305e77833bd0de483479f2578fd4da33aaadff73fde29e"
+    },
+    "native-android/engine/auth-interop/deployment/password_fixture.py": {
+      "git_sha256": "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd",
+      "observed_CRLF_sha256": "7c8732cfc8c8f826eccccf81ca308e7417b5d5dcf57ee44ac1e41c4eff33128d"
+    },
+    "native-android/engine/auth-interop/deployment/pg_wine_checksum_recipe.py": {
+      "git_sha256": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
+      "observed_CRLF_sha256": "8df31cc3554458b07cf76251052aa05b76f2953be93e4b826257c27e008bd599"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_auth_bit_merge.py": {
+      "git_sha256": "42c2329635c009734dc179e153a2cb3afd234858e69637cc1e9c31502765db2e",
+      "observed_CRLF_sha256": "2be425145bbe26be34688eeae9888c348e5d3a9b7e2a5101295ea3c9d670a396"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_auth_cache_consumer.py": {
+      "git_sha256": "077cc53c2166d611c077c8cc356791692c7cf4766ac8f9e4233c71e40ad40280",
+      "observed_CRLF_sha256": "dc20da702b04d14ebee921e83787d57f93ac11ee501cb45ef685fce657636e16"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_auth_only.py": {
+      "git_sha256": "1aeb26e564a6bc1dcd7adc03cc514075c87e59e0be8a5c14cafcd7d5dd6c5400",
+      "observed_CRLF_sha256": "489f7de0cc8ba317528020badf774724039d1f9a94c32def6e5addbdf12f09d7"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_db_policy_matrix.py": {
+      "git_sha256": "f93235c1ad24c93e844c380bacd6ce124db9e8c7de2eee706d1f2be8ffc71ef6",
+      "observed_CRLF_sha256": "95d51c3d49e644aa1079b777185ada3289366317f32844332f9f03d8114087cd"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_handoff_wire.py": {
+      "git_sha256": "748d9748bad473de5ba97190f60f6c6aaedd490fba244930790bd45d5196de47",
+      "observed_CRLF_sha256": "62e2d06affa3189a7fe5b0c42b115a39a948723fb56f5130fee13ac60468448f"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_manual_atlas_full_recipe.py": {
+      "git_sha256": "b515d6a3944baef2736c5d9569e1e7e6a69b64558f4e11fe9bda810e7fe6323e",
+      "observed_CRLF_sha256": "ddc836cd402bc577a7657aca37a8acff5e79662abc692fd94e8ec46c606dcee3"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_monitor_envelope.py": {
+      "git_sha256": "1962e442e8faa8739f1b00e74edc1c6b2c8b74c61cee9f4f9223d42b76321fba",
+      "observed_CRLF_sha256": "9d9da9b6e41ec7c9e417fe368254f2db6f8c90e91014983c9b252ed24e1b5fd9"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_original_receive.py": {
+      "git_sha256": "500c417967baae54511f016f596a87ef602f4421add1be1211b041b460e98b58",
+      "observed_CRLF_sha256": "8aa32efc7999ab674f876e910867db40a8783de28e5dd3e484477362e9dc91ec"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_receive_candidate.py": {
+      "git_sha256": "ffae4b5a824e99570e39f05f89925c8e849ccb5e552c737c04a8ba51e0f2dc76",
+      "observed_CRLF_sha256": "9408988da6b2865468ac09543ad02c898e7c069b4eea846dd43621eab6f9bbb0"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_version_string_writer.py": {
+      "git_sha256": "1a394a6d23ff1051789d37435bc4616f45708f3ffe96f584c4425ad5ebe8c1e0",
+      "observed_CRLF_sha256": "13722b23ed99a1af54859a0ab9538d3c96c5e1ed22bcb8bab9d06d671cfd933b"
+    },
+    "native-android/engine/auth-interop/deployment/qualify_windows_adapter.py": {
+      "git_sha256": "d412943acb74b913d99bc93545445cd6e663241fc21f07b31b4738e1995608d8",
+      "observed_CRLF_sha256": "cb8e507de770d885065eacca08370c6c392b347faf4852660f4625371023b351"
+    },
+    "native-android/engine/auth-interop/deployment/receive_candidate.py": {
+      "git_sha256": "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78",
+      "observed_CRLF_sha256": "2a473ad2eb4e250f9f028921517471cf239b09c4978dfbb325486245e32e57f8"
+    },
+    "native-android/engine/auth-interop/deployment/source_audit.py": {
+      "git_sha256": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+      "observed_CRLF_sha256": "cb56e3d4fccc29a9f38f968185470850250042998614f25d63f991399be5e69f"
+    },
+    "native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py": {
+      "git_sha256": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+      "observed_CRLF_sha256": "4f5a7050440cf821502bd71e815165ca9b9028db5292de2a3bc03561b8f82f3d"
+    },
+    "native-android/engine/auth-interop/deployment/test_authenticated_handoff_contract.py": {
+      "git_sha256": "a45216c71b110accceb5b822bee84811b70dcd2581305c041e6e59b8bec48564",
+      "observed_CRLF_sha256": "fa79bfc1862eb2cbc0f7699df512a8cb4192424448a03d48e51af99a1c98a299"
+    },
+    "native-android/engine/auth-interop/deployment/test_auth_acceptance.py": {
+      "git_sha256": "9522d9765fbddf882992677a09c1e1fc9896587aa3b35235b237023fa12f2d7b",
+      "observed_CRLF_sha256": "6b3b8055463c60be4591b6fd01b9482c24e4ec0382c3359455e221cceb7055e2"
+    },
+    "native-android/engine/auth-interop/deployment/test_auth_login_stage.py": {
+      "git_sha256": "8b08ddf862e8ff48eb72ee0336d030935544885c738c8a8d444f881092d3efed",
+      "observed_CRLF_sha256": "5fbc68d6ea3b6fe8c2777dce4e3f0955ae51e1e9065f0ea6eaba1bc3cc986b5d"
+    },
+    "native-android/engine/auth-interop/deployment/test_auth_readiness.py": {
+      "git_sha256": "d4fcdfea9283af2fbd92052fdd063bc21e8f07fb82f795f6f73679f4e9f6b27c",
+      "observed_CRLF_sha256": "a85225628ad01455450e21704155ac7630666fcc785665d54eace013de8bf94a"
+    },
+    "native-android/engine/auth-interop/deployment/test_candidate_login.py": {
+      "git_sha256": "ddbed0d2483cdb0b4c0f605ee2b66d1a1135f94f26cdff8155ac6c56d5322333",
+      "observed_CRLF_sha256": "4350f13e9a12e753e49d9e2fecf2b1e719810ebc6f34f16963d975550948e67b"
+    },
+    "native-android/engine/auth-interop/deployment/test_candidate_service.py": {
+      "git_sha256": "df7c75440e5b775151ee8293619fe13f8e33483de784b8d98f1682ea6ee41292",
+      "observed_CRLF_sha256": "6bb84cce4a6e07545cbfc6eb130c92ef2e96a44bc71dc91f0600472d1d7a2416"
+    },
+    "native-android/engine/auth-interop/deployment/test_candidate_sql_memory.py": {
+      "git_sha256": "3e56a32850299e23474e62ad16f26e6fa852019c54ae9adc3d3affa26dfb7964",
+      "observed_CRLF_sha256": "0efadfd7be710f670bf29c70b2a3b4aa40cf6957fb03a1fbe3be5a8aac5f14de"
+    },
+    "native-android/engine/auth-interop/deployment/test_client_reference.py": {
+      "git_sha256": "7c3b4fb4102bd322c228748f5be44bd7d71010567d5e65c0803cca6b25e0dd54",
+      "observed_CRLF_sha256": "825890fa02d57bbb3a364d1f08517a8bbca457a31141e3eb4eff1b5dc8c53a15"
+    },
+    "native-android/engine/auth-interop/deployment/test_control_reuse.py": {
+      "git_sha256": "5356bfe72def5498648efbc983c73781c5d92df7924afdaeae12c0100bb57afe",
+      "observed_CRLF_sha256": "5d711f6ea63d4debad9c478edfadc3b6ed30838fa8961df9716704d02fdc7c0e"
+    },
+    "native-android/engine/auth-interop/deployment/test_db_checksum_candidate.py": {
+      "git_sha256": "809ac909defc470ba5d88b5b2df9bfdc1d3462dc28b3d7232f9a13bb928dc2c3",
+      "observed_CRLF_sha256": "ea4ac9ac1ba603176cbd85dc94064cb13a804da9017bc6d766bc63608440ec26"
+    },
+    "native-android/engine/auth-interop/deployment/test_db_handoff_profile.py": {
+      "git_sha256": "f23e2169313741b3b50dd3aa414950889b63e7e292c76061df9f264fde5fb7c8",
+      "observed_CRLF_sha256": "010b5946016127bf38d989c85c191108e27475a4d1e95725cc721b3fb4e1f5b1"
+    },
+    "native-android/engine/auth-interop/deployment/test_deployment.py": {
+      "git_sha256": "5d4270727423473b8fe64ced4041fd40f54feed56f9e438e18ebeeb9f6f22b79",
+      "observed_CRLF_sha256": "e4aa843637cb6a1ae52eefc8633e2d25f1b004746cf94fcc66787fe75ca82d87"
+    },
+    "native-android/engine/auth-interop/deployment/test_hosted_manual_atlas_compile.py": {
+      "git_sha256": "307364f66f0c63e51a5b268e237a5439ec0293bdf8e9e2872d31b625c7d92dea",
+      "observed_CRLF_sha256": "6a7b7830e8a0e60a6cb5c3803bc033e7601e45f4f60600582f80855eada95e36"
+    },
+    "native-android/engine/auth-interop/deployment/test_hosted_stage.py": {
+      "git_sha256": "6681ca7cc2e6bd2d85eea1804b34b873e6268787569cb1b77530ba14267d2f6d",
+      "observed_CRLF_sha256": "d97d3cd36637894434c2babeb8f322056ac8b2c0ae2b3c1087fa52f97e736680"
+    },
+    "native-android/engine/auth-interop/deployment/test_manual_atlas_full_recipe.py": {
+      "git_sha256": "bb96fa5ed1a162f0801ffd8d32ef9d0417b4a1feec3a29f842557ea9bbb252a8",
+      "observed_CRLF_sha256": "894c7d22156b8d826f98d8b93e18c4112e217c42ca2105a2e008e341b376752e"
+    },
+    "native-android/engine/auth-interop/deployment/test_monitor_channel_contract.py": {
+      "git_sha256": "c2242f9571a9d2142906fba8fd2c1fd283738c84b141db92faffa5da1c34922c",
+      "observed_CRLF_sha256": "ce973cdb7f316d86176c8492538f01017025c729c7dbacfc5fba8aaa702c6d55"
+    },
+    "native-android/engine/auth-interop/deployment/test_password_fixture.py": {
+      "git_sha256": "a0ee8bf388be29f7ea1337c4b36ac40228fd0316dc51f59217ac578e31bf8e2e",
+      "observed_CRLF_sha256": "b9951bd2bcff20776bac94e06b801bd2a83a024dc0a0de1dc4bee2f292a1407a"
+    },
+    "native-android/engine/auth-interop/deployment/test_pg_wine_checksum_recipe.py": {
+      "git_sha256": "8ee0d9de7414a80d0904eeb06f25da55de17a02c27b83105295f527aec6832e5",
+      "observed_CRLF_sha256": "1145397b6990ff72cd3c4bbf73c796d3854ac7444e6519479a2ebe88b8a4ad75"
+    },
+    "native-android/engine/auth-interop/deployment/test_receive_candidate_stage.py": {
+      "git_sha256": "c4c223f947b08e683c15d6e7799f8d3d94a74897f57b1058d2b85a37563cc9dc",
+      "observed_CRLF_sha256": "058297450220f58375da9f6c67a4230ba6d646d8275671ae1d43ec16772b8b94"
+    },
+    "native-android/engine/auth-interop/deployment/test_sql_readiness_diagnostic.py": {
+      "git_sha256": "15be59ecf66e7c17abf347cbf57cd9d562918ce5141328d87b1973a274c0869e",
+      "observed_CRLF_sha256": "fae05e1308f95b3219586c8811c77df9c297da999f4c3ca23b17d4e99df219b5"
+    },
+    "native-android/engine/auth-interop/deployment/test_version_observation_contract.py": {
+      "git_sha256": "4a79159f1500b6c8c2e48c706b274cbe96bfb5dc662adb21a25348024d7277ea",
+      "observed_CRLF_sha256": "44b982d8cca16fd3f025b84e42ed652e1abc8d07d4815a3cd837b3167e14bae1"
+    },
+    "native-android/engine/auth-interop/deployment/test_windows_tool_inventory.py": {
+      "git_sha256": "4e123d625cc95e0187016d657878092ed3c433d92eb05ff9268ced0ea3fe5d21",
+      "observed_CRLF_sha256": "40b857cf135bb926f9fb741ea840f6e590dd3ce5cf724f64b1984c9e437f8eed"
+    },
+    "native-android/engine/auth-interop/deployment/verify_auth_acceptance.py": {
+      "git_sha256": "67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8",
+      "observed_CRLF_sha256": "a3b00f097426083d8ce3cc153566a59197083445e522aeee3b1dfd70f505bf21"
+    },
+    "native-android/engine/auth-interop/deployment/version_observation_contract.py": {
+      "git_sha256": "ca8b13b0a11e5b7b5814143178d279c43b8374f4e028b5a6da5e21ad6c56518a",
+      "observed_CRLF_sha256": "6aaec6613e4ee7144eba57a85a7df8d455df29f5d6f2eb8d13cf3291912d8221"
+    },
+    "native-android/engine/auth-interop/deployment/windows_tool_inventory.py": {
+      "git_sha256": "aa39572cf910daaf922a83a8346f57ed45ed449fadae80f016b101408234e29e",
+      "observed_CRLF_sha256": "4cc7e7f31bec750805d3badb4a467420ab76484630c6ffd8241c1f8d7c02a8b8"
+    },
+    "native-android/engine/auth-interop/source_oracle.py": {
+      "git_sha256": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f",
+      "observed_CRLF_sha256": "5a50869f73d670e42ea188dc110fefaa795aa3d4624d4c3fd1c044e26ce9d376"
+    }
+  },
+  "inventory_candidate": {
+    "schema": "coh-observed-windows-build-tool-lock-v1",
+    "requires_independent_review": true,
+    "image_os": "win25-vs2026",
+    "image_version": "20261007.264.1",
+    "generator": "Visual Studio 18 2026",
+    "architecture": "Win32",
+    "vs_installation": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise",
+    "vc_toolset_version": "14.51.36231",
+    "windows_sdk_version": "10.0.26100.0",
+    "compiler_version": "19.51.36260.0",
+    "cmake_version": "4.4.4",
+    "tools": {
+      "cl": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\cl.exe",
+        "bytes": 891752,
+        "sha256": "58702ed8002b28348dbbd1099e9d2c2b2b092681cda024a5eaee371cc28aa881"
+      },
+      "link": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\link.exe",
+        "bytes": 3701128,
+        "sha256": "78c1de5188da927239a017b4690491be838917478a0ee91401dfcc0291a9aa48"
+      },
+      "ml": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\ml.exe",
+        "bytes": 675160,
+        "sha256": "8622fb7116bfa7ee98efb3c50f5dd8ea6be49f06a8ae9b2264bd7120eced932b"
+      },
+      "msbuild": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
+        "bytes": 377168,
+        "sha256": "951a276306a0710f6da81692784a050a4c2c6452a753fa4afa124ae35e230a1c"
+      },
+      "git": {
+        "path": "C:\\Program Files\\Git\\bin\\git.exe",
+        "bytes": 45400,
+        "sha256": "54bda91c773c6bba2b970424423cfcb80552d92dc6967d766f98931fe1251a54"
+      },
+      "patch": {
+        "path": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+        "bytes": 168973,
+        "sha256": "00d555c71e05775208a95a0ad439c00ad95d107ef8d0ae93576554e35eb9125b"
+      },
+      "cmake": {
+        "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+        "bytes": 13465160,
+        "sha256": "3a329667300846abc8dffccbdcb1c8c2d4a6cebe342d499181825205ea8c766c"
+      },
+      "rc": {
+        "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+        "bytes": 55736,
+        "sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a"
+      }
+    }
+  },
+  "actual_inventory_observation_verified": true,
+  "reviewed_tool_lock_generated": false,
+  "compiler_executed": false,
+  "server_executed": false,
+  "android_executed": false,
+  "material_authority": false,
+  "live_world": false,
+  "thor_accepted": false,
+  "scope": "Actual freestanding Linux i386 readModel metadata execution and read-only Windows tool observation; no compiler, Win32 engine, SDK DLL closure, runtime or game-world admission.",
+  "verifier_sha256": "0220e86f1f3304673c2fbd3a63948d7004d443bb1a1e74aae9633a5459c77bba"
+}

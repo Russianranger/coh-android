@@ -1,0 +1,60 @@
+{
+  "schema": "coh-independent-manual-compile-source-review-v1",
+  "approved": true,
+  "source_commit": "e8d21dffc4c2153e268aa0a89995264bbbf0f8c9",
+  "workflow_commit": "ea05a120982be5c74899d10da48fe4ac69de58ef",
+  "workflow_path": ".github/workflows/native-manual-pg-wine-compile.yml",
+  "workflow_sha256": "8ce649f708f7f9b163007d1ecea89632a392d98f5cac014569eaaa3041c07a1b",
+  "tested_inputs_git_and_current_equal": {
+    "native-android/engine/auth-interop/deployment/admit_tool_inventory.py": "6bc9e50b97db637c7643cf7869dbb72fdff5399907ea14f1b45a0cbbacfc676a",
+    "native-android/engine/auth-interop/deployment/test_admit_tool_inventory.py": "1a453c96ae92e513a0466ad890b4cf04393434b99fa237de1c4fa988fcce627f",
+    "native-android/engine/auth-interop/deployment/REVIEWED-TOOL-LOCK-39005570623.md": "aa55c8400e4b456ab2baba4ea9aabce82ff75da7f11690c99dc590920945e84b",
+    "native-android/engine/auth-interop/deployment/hosted_manual_atlas_compile.py": "04126c67c4e4eee48336b2b519a7ac4ca489a6da1afb699b7a5c0263fc148efb",
+    "native-android/engine/auth-interop/deployment/test_hosted_manual_atlas_compile.py": "47ed1030dc73bfae401c48fcf4895ed97ddadcd356d8e5d1a9d4e69a74d49b1d",
+    "native-android/engine/auth-interop/deployment/HOSTED-MANUAL-ATLAS-COMPILE.md": "8c9c777a05517b9bc29f199a35704739e7def05b3df9c9a5cacfb82531a5e479",
+    "native-android/engine/auth-interop/deployment/windows_tool_inventory.py": "aa39572cf910daaf922a83a8346f57ed45ed449fadae80f016b101408234e29e",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+    "native-android/engine/auth-interop/deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+    "native-android/engine/auth-interop/deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+    "native-android/engine/auth-interop/deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+    "native-android/engine/auth-interop/deployment/source-pins.json": "a49c8290d8a720c86c825e593d073733fb0cf429c4efff1337d8be8ca6226b3b",
+    "native-android/engine/auth-interop/source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f",
+    "native-android/engine/auth-interop/deployment/manual_atlas_full_recipe.py": "ee8ece73aba177100993f32e27bface62b5e054d71a3b34c7fc0c20af0c07223",
+    "native-android/engine/auth-interop/deployment/pg_wine_checksum_recipe.py": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
+    "native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+    "native-android/engine/auth-interop/evidence/manual-atlas-full-recipe-20261017/qualification.json": "c15813238fff23cff22984dd283981965a4fd1208932cb7e18fba6e2319568d6",
+    "native-android/engine/auth-interop/evidence/manual-atlas-full-recipe-20261017/source-recipe.source-maps.json.gz": "0cf8c44c7f3fc1f840834ab69cb5a8c3800d24a572a92a7f80d1d2a2d70fefa4",
+    "native-android/engine/auth-interop/evidence/manual-atlas-full-recipe-20261017/static-build-plan.json": "052bb95ea037ec0cf3b98342e7d2beac1a4e1a1e3228efc1ed855a6b873c4d89",
+    "native-android/engine/auth-interop/evidence/manual-atlas-full-recipe-20261017/accepted-startup-dbserver-manifest.json": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087"
+  },
+  "qualification_receipt_sha256": {
+    "native-android/engine/auth-interop/evidence/windows-tool-inventory-39005570623/qualification.json": "5d7a8cf0e863b78f6905a96171655e45f45d4a5d182b90edd7984a7bd7f0e863",
+    "native-android/engine/auth-interop/evidence/manual-atlas-compile-driver-20261017/qualification.json": "115f3911d5c9c5f6f2a9b3270b3cf7189b192db8150f249c7fe7eb5001626161"
+  },
+  "independent_replay": {
+    "local_host_suites_passed": 19,
+    "actual_inventory_admission_replayed": true,
+    "retained_admission_lock_raw_receipt_byte_equal": true,
+    "historical_lf_to_crlf_helper_bindings": 61,
+    "reviewed_toolchain_lock_sha256": "a70e878ad1f8872cc876987f6ec644f27bbf7c5ec98db528742f28ed5b098125"
+  },
+  "workflow_review": {
+    "native_branch_and_explicit_marker_required": true,
+    "job_lf_git_environment_before_checkout": true,
+    "checkout_credentials_not_persisted": true,
+    "fixed_reviewed_host_and_lock_digests": true,
+    "source_head_is_actual_github_sha": true,
+    "only_common_and_dbserver_optdebug_build_profile": true,
+    "always_upload_failure_receipts": true
+  },
+  "scope": {
+    "windows_rehash_performed_by_this_review": false,
+    "compiler_executed": false,
+    "service_executed": false,
+    "pe_executed": false,
+    "ci_dispatched": false,
+    "live_db_map_login": false,
+    "shipping_replacement_permit": false
+  }
+}

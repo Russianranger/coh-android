@@ -12,6 +12,11 @@ class CompileControls(unittest.TestCase):
   self.lock={'schema':'coh-reviewed-windows-build-tool-lock-v1','image_os':'fixture','image_version':'fixture1','generator':'Visual Studio 18 2026',
              'architecture':'Win32','tools':tools,'vs_installation':str(install),'vc_toolset_version':'14.51.36231',
              'windows_sdk_version':'10.0.26100.0','compiler_version':'19.51.36260.0','cmake_version':'4.4.4'}
+ def test_exact_checkout_lf_environment_only(self):
+  expected={'GIT_CONFIG_COUNT':'1','GIT_CONFIG_KEY_0':'core.autocrlf','GIT_CONFIG_VALUE_0':'false'}
+  self.assertEqual(d.git_config_environment(expected),expected);self.assertEqual(d.git_config_environment({}),{})
+  for bad in (dict(expected,GIT_CONFIG_VALUE_0='true'),dict(expected,GIT_CONFIG_COUNT='2'),dict(expected,GIT_CONFIG_KEY_1='core.hooksPath'),{'GIT_CONFIG_PARAMETERS':'arbitrary'}):
+   with self.assertRaises(ValueError):d.git_config_environment(bad)
  def test_lock_sha_image_owner_and_every_tool_byte(self):
   p=self.root/'lock.json';p.write_text(json.dumps(self.lock));env={'ImageOS':'fixture','ImageVersion':'fixture1'}
   with patch.object(d.shutil,'which',return_value=self.lock['tools']['git']['path']):

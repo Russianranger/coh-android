@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-static unsigned checks,bridge_completions;static size_t calls,fail_at,live;
+static unsigned checks,bridge_completions,version_completions;static size_t calls,fail_at,live;
 #define CHECK(x) do{checks++;if(!(x)){fprintf(stderr,"selection line%d check%u: %s\n",__LINE__,checks,#x);abort();}}while(0)
 void *__real_malloc(size_t);void *__real_calloc(size_t,size_t);void __real_free(void*);
 void *__wrap_malloc(size_t n){calls++;if(calls==fail_at)return NULL;void *p=__real_malloc(n);if(p)live++;return p;}
@@ -23,6 +23,10 @@ static CohStatus read_at(void*ctx,uint64_t off,void*dst,size_t n){FILE*f=ctx;if(
 static CohStatus read_bad(void*ctx,uint64_t off,void*dst,size_t n){CohStatus st=read_at(ctx,off,dst,n);if(st==COH_OK&&!off&&n)((uint8_t*)dst)[0]^=1;return st;}
 #ifdef COH_SOURCE_RIGID_BRIDGE_TEST
 #include "test_source_rigid.inc"
+#endif
+#ifdef COH_SOURCE_RIGID_VERSIONS_TEST
+#include "coh_source_rigid_versions.h"
+#include "test_source_rigid_versions.inc"
 #endif
 int main(int argc,char**argv){CHECK(argc==12);CohCancel never={NULL,NULL};CohCatalogDigest dig={NULL,digest};CohBytes input=file(argv[1],32u<<20),side=file(argv[2],1u<<20),resources=file(argv[3],32u<<20);CohSourceSelectionEvidence evidence;
  for(unsigned n=0;n<7;n++)evidence.bytes[n]=file(argv[4+n],8u<<20);
@@ -79,8 +83,14 @@ int main(int argc,char**argv){CHECK(argc==12);CohCancel never={NULL,NULL};CohCat
 #ifdef COH_SOURCE_RIGID_BRIDGE_TEST
  bridge_checks(selection,body,shopbody,neon,shop,loader,bb);
 #endif
+#ifdef COH_SOURCE_RIGID_VERSIONS_TEST
+ FILE*version_files[2]={NULL,NULL};version_checks(selection,body,shopbody,loader,bb,argv[11],version_files);
+#endif
  coh_source_selection_free(selection);selection=NULL; /* both FILE owners retain it */
  CHECK(coh_source_body_view(body,&index,&br)==COH_OK&&br.derived_origin_verified);coh_source_body_free(shopbody);coh_source_body_free(body);coh_asset_trim(loader);CHECK(coh_asset_destroy(&loader)==COH_OK);CHECK(!fclose(nf)&&!fclose(sf));
+#ifdef COH_SOURCE_RIGID_VERSIONS_TEST
+ CHECK(!fclose(version_files[0])&&!fclose(version_files[1]));
+#endif
  coh_runtime_graph_free(graph);coh_catalog_snapshot_release(snapshot);coh_catalog_owner_release(catalog);CHECK(!live);
- printf("{\"bridge_completions\":%u,\"passed\":true,\"checks\":%u,\"profile_files\":391,\"covered_model_rows\":8250,\"source_root_references\":3083,\"body_alloc_failure_cases\":%zu,\"selection_peak_bytes\":%zu,\"body_peak_bytes\":%zu,\"input_evidence_bytes\":%zu,\"procedural_file_bodies_checked\":2,\"shop_zero_model_owners\":4,\"direct_open_observed\":false,\"assets_admitted\":false,\"world_authority\":false}\n",bridge_completions,checks,allocs,selectionpeak,bodypeak,evidencebytes);return 0;
+ printf("{\"version_completions\":%u,\"bridge_completions\":%u,\"passed\":true,\"checks\":%u,\"profile_files\":391,\"covered_model_rows\":8250,\"source_root_references\":3083,\"body_alloc_failure_cases\":%zu,\"selection_peak_bytes\":%zu,\"body_peak_bytes\":%zu,\"input_evidence_bytes\":%zu,\"procedural_file_bodies_checked\":%u,\"shop_zero_model_owners\":4,\"direct_open_observed\":false,\"assets_admitted\":false,\"world_authority\":false}\n",version_completions,bridge_completions,checks,allocs,selectionpeak,bodypeak,evidencebytes,2u+version_completions);return 0;
 }

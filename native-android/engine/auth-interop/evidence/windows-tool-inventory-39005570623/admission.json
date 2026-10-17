@@ -1,0 +1,385 @@
+{
+  "source_helper_map": {
+    "deployment/admit_schema.py": {
+      "git_blob_sha256": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+      "actual_crlf_sha256": "54084b16b0893e135f5b34a9cbc1c474b1f2045ad32fadddaa704de0b8ef71ff",
+      "git_bytes": 8502,
+      "actual_bytes": 8698
+    },
+    "deployment/auth_readiness.py": {
+      "git_blob_sha256": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+      "actual_crlf_sha256": "8cc69b491b331b68a0c2f44b6824d1474c67721d94082153cc3e454945fba208",
+      "git_bytes": 6007,
+      "actual_bytes": 6125
+    },
+    "deployment/auth_service_profile.py": {
+      "git_blob_sha256": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+      "actual_crlf_sha256": "ce403787ef186c6bdb526ede0bb43fa0ba11f1ae60a929913299d2b94cffbe22",
+      "git_bytes": 5366,
+      "actual_bytes": 5456
+    },
+    "deployment/authenticated_handoff_contract.py": {
+      "git_blob_sha256": "46a9f73c4c0367026732cf996c91db494f2213bb33f3267fac126781bcea7989",
+      "actual_crlf_sha256": "e3194d157b93cd3af11740b3a5f803a44ef4ea9e6ad15a359cd73411bad1cdb6",
+      "git_bytes": 5034,
+      "actual_bytes": 5154
+    },
+    "deployment/candidate_service.py": {
+      "git_blob_sha256": "07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe",
+      "actual_crlf_sha256": "dc20be96ac0598f14beae52f97d81365386b8a81c2393e2889807924e4a653f9",
+      "git_bytes": 7170,
+      "actual_bytes": 7292
+    },
+    "deployment/candidate_sql_memory.py": {
+      "git_blob_sha256": "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde",
+      "actual_crlf_sha256": "c24b2e1a1b4b0c5ad3c076f5a50d4a6b7a5508ea16bddeee23c2c3168d7ca1d5",
+      "git_bytes": 4892,
+      "actual_bytes": 4959
+    },
+    "deployment/check.py": {
+      "git_blob_sha256": "622a5d10f7b22a5fabe9a507baafe2234a3855b62fa89ab719ec9037377c705c",
+      "actual_crlf_sha256": "9bba28d38fa70b630015f51cd61eaa239cb3e0d2a8342dfe3ca960f56146dbcc",
+      "git_bytes": 2714,
+      "actual_bytes": 2764
+    },
+    "deployment/checksum_candidate.py": {
+      "git_blob_sha256": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+      "actual_crlf_sha256": "e950385cf4bc3299b530da2c0ff2eac446ae2e1a0053438b9147345173a140ed",
+      "git_bytes": 7890,
+      "actual_bytes": 8027
+    },
+    "deployment/db_handoff_profile.py": {
+      "git_blob_sha256": "551d9d682e83f541a8245e8f88c864e97a88acb638438979d8b1568136574ea0",
+      "actual_crlf_sha256": "281512596c14303831b4e65e5e687d8ce46fa898c03aeacc89b25bb7d1f9567a",
+      "git_bytes": 7410,
+      "actual_bytes": 7550
+    },
+    "deployment/generate_odbc.py": {
+      "git_blob_sha256": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+      "actual_crlf_sha256": "8a31c79d69f41e4fe69bbf168092abd636c94a4175fa87f25ba04abfd82de053",
+      "git_bytes": 7869,
+      "actual_bytes": 7961
+    },
+    "deployment/hosted_auth_login.py": {
+      "git_blob_sha256": "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2",
+      "actual_crlf_sha256": "79c033e97894384fdf57669b94d389a3d8c230e340c2d8c5bd40dc68e937a062",
+      "git_bytes": 56036,
+      "actual_bytes": 56901
+    },
+    "deployment/hosted_auth_stage.py": {
+      "git_blob_sha256": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+      "actual_crlf_sha256": "61a4fc674ab2614f1b532b9f5bae686dbc68c34b76cc87f965912dc4426ef5b6",
+      "git_bytes": 27023,
+      "actual_bytes": 27438
+    },
+    "deployment/hosted_candidate_login.py": {
+      "git_blob_sha256": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+      "actual_crlf_sha256": "0c57c668f7b3ad59c2cf8119bc8420bdb8baf76943c7acffa2e867312fcaa83d",
+      "git_bytes": 19199,
+      "actual_bytes": 19528
+    },
+    "deployment/hosted_db_checksum_candidate.py": {
+      "git_blob_sha256": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+      "actual_crlf_sha256": "834b8b1cbdab7d5458f69297cbec3db744f1f69a753ad5437f89273eabeba928",
+      "git_bytes": 22487,
+      "actual_bytes": 22822
+    },
+    "deployment/hosted_manual_atlas_compile.py": {
+      "git_blob_sha256": "b57a150e952a568dee5360bfa919e29b3874cc761d9a40dd635d37000787d8d2",
+      "actual_crlf_sha256": "a0d720b640f660472bf7a39d01c4b3d5e370b3667b394e56420c8d98fcacaaf1",
+      "git_bytes": 31194,
+      "actual_bytes": 31589
+    },
+    "deployment/hosted_receive_candidate.py": {
+      "git_blob_sha256": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+      "actual_crlf_sha256": "114fe46fc974da57a38461976713f3a28aeeef18e49254b54c886f433ab7c113",
+      "git_bytes": 13391,
+      "actual_bytes": 13599
+    },
+    "deployment/inspect_client_reference.py": {
+      "git_blob_sha256": "43fc2bcb150d78f91b39efe5306e7510cb25714c807ec3dcab83e535064a8a67",
+      "actual_crlf_sha256": "bbf1e50e80adb5fa72f3cf93559b9741ffe80b797d4784f99e18a85e932717e6",
+      "git_bytes": 7017,
+      "actual_bytes": 7135
+    },
+    "deployment/manual_atlas_full_recipe.py": {
+      "git_blob_sha256": "ee8ece73aba177100993f32e27bface62b5e054d71a3b34c7fc0c20af0c07223",
+      "actual_crlf_sha256": "ffd99fec77efa603bc5aa28ca1a9303b8a6e4a9312f326928a6ccdc076b2e019",
+      "git_bytes": 15750,
+      "actual_bytes": 15968
+    },
+    "deployment/monitor_channel_contract.py": {
+      "git_blob_sha256": "627d09a46776f4026910a73d52316c498836050f361a3e6ed98aa56b48298b40",
+      "actual_crlf_sha256": "4ae24ed9b1319b976a305e77833bd0de483479f2578fd4da33aaadff73fde29e",
+      "git_bytes": 4757,
+      "actual_bytes": 4855
+    },
+    "deployment/password_fixture.py": {
+      "git_blob_sha256": "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd",
+      "actual_crlf_sha256": "7c8732cfc8c8f826eccccf81ca308e7417b5d5dcf57ee44ac1e41c4eff33128d",
+      "git_bytes": 9749,
+      "actual_bytes": 9929
+    },
+    "deployment/pg_wine_checksum_recipe.py": {
+      "git_blob_sha256": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
+      "actual_crlf_sha256": "8df31cc3554458b07cf76251052aa05b76f2953be93e4b826257c27e008bd599",
+      "git_bytes": 7579,
+      "actual_bytes": 7697
+    },
+    "deployment/qualify_auth_bit_merge.py": {
+      "git_blob_sha256": "42c2329635c009734dc179e153a2cb3afd234858e69637cc1e9c31502765db2e",
+      "actual_crlf_sha256": "2be425145bbe26be34688eeae9888c348e5d3a9b7e2a5101295ea3c9d670a396",
+      "git_bytes": 4595,
+      "actual_bytes": 4651
+    },
+    "deployment/qualify_auth_cache_consumer.py": {
+      "git_blob_sha256": "077cc53c2166d611c077c8cc356791692c7cf4766ac8f9e4233c71e40ad40280",
+      "actual_crlf_sha256": "dc20da702b04d14ebee921e83787d57f93ac11ee501cb45ef685fce657636e16",
+      "git_bytes": 3713,
+      "actual_bytes": 3761
+    },
+    "deployment/qualify_auth_only.py": {
+      "git_blob_sha256": "1aeb26e564a6bc1dcd7adc03cc514075c87e59e0be8a5c14cafcd7d5dd6c5400",
+      "actual_crlf_sha256": "489f7de0cc8ba317528020badf774724039d1f9a94c32def6e5addbdf12f09d7",
+      "git_bytes": 15516,
+      "actual_bytes": 15775
+    },
+    "deployment/qualify_db_policy_matrix.py": {
+      "git_blob_sha256": "f93235c1ad24c93e844c380bacd6ce124db9e8c7de2eee706d1f2be8ffc71ef6",
+      "actual_crlf_sha256": "95d51c3d49e644aa1079b777185ada3289366317f32844332f9f03d8114087cd",
+      "git_bytes": 5696,
+      "actual_bytes": 5758
+    },
+    "deployment/qualify_handoff_wire.py": {
+      "git_blob_sha256": "748d9748bad473de5ba97190f60f6c6aaedd490fba244930790bd45d5196de47",
+      "actual_crlf_sha256": "62e2d06affa3189a7fe5b0c42b115a39a948723fb56f5130fee13ac60468448f",
+      "git_bytes": 4748,
+      "actual_bytes": 4806
+    },
+    "deployment/qualify_manual_atlas_full_recipe.py": {
+      "git_blob_sha256": "b515d6a3944baef2736c5d9569e1e7e6a69b64558f4e11fe9bda810e7fe6323e",
+      "actual_crlf_sha256": "ddc836cd402bc577a7657aca37a8acff5e79662abc692fd94e8ec46c606dcee3",
+      "git_bytes": 4552,
+      "actual_bytes": 4600
+    },
+    "deployment/qualify_monitor_envelope.py": {
+      "git_blob_sha256": "1962e442e8faa8739f1b00e74edc1c6b2c8b74c61cee9f4f9223d42b76321fba",
+      "actual_crlf_sha256": "9d9da9b6e41ec7c9e417fe368254f2db6f8c90e91014983c9b252ed24e1b5fd9",
+      "git_bytes": 5165,
+      "actual_bytes": 5229
+    },
+    "deployment/qualify_original_receive.py": {
+      "git_blob_sha256": "500c417967baae54511f016f596a87ef602f4421add1be1211b041b460e98b58",
+      "actual_crlf_sha256": "8aa32efc7999ab674f876e910867db40a8783de28e5dd3e484477362e9dc91ec",
+      "git_bytes": 4331,
+      "actual_bytes": 4400
+    },
+    "deployment/qualify_receive_candidate.py": {
+      "git_blob_sha256": "ffae4b5a824e99570e39f05f89925c8e849ccb5e552c737c04a8ba51e0f2dc76",
+      "actual_crlf_sha256": "9408988da6b2865468ac09543ad02c898e7c069b4eea846dd43621eab6f9bbb0",
+      "git_bytes": 7054,
+      "actual_bytes": 7160
+    },
+    "deployment/qualify_version_string_writer.py": {
+      "git_blob_sha256": "1a394a6d23ff1051789d37435bc4616f45708f3ffe96f584c4425ad5ebe8c1e0",
+      "actual_crlf_sha256": "13722b23ed99a1af54859a0ab9538d3c96c5e1ed22bcb8bab9d06d671cfd933b",
+      "git_bytes": 4071,
+      "actual_bytes": 4126
+    },
+    "deployment/qualify_windows_adapter.py": {
+      "git_blob_sha256": "d412943acb74b913d99bc93545445cd6e663241fc21f07b31b4738e1995608d8",
+      "actual_crlf_sha256": "cb8e507de770d885065eacca08370c6c392b347faf4852660f4625371023b351",
+      "git_bytes": 2456,
+      "actual_bytes": 2499
+    },
+    "deployment/receive_candidate.py": {
+      "git_blob_sha256": "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78",
+      "actual_crlf_sha256": "2a473ad2eb4e250f9f028921517471cf239b09c4978dfbb325486245e32e57f8",
+      "git_bytes": 4848,
+      "actual_bytes": 4943
+    },
+    "deployment/source_audit.py": {
+      "git_blob_sha256": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+      "actual_crlf_sha256": "cb56e3d4fccc29a9f38f968185470850250042998614f25d63f991399be5e69f",
+      "git_bytes": 9590,
+      "actual_bytes": 9762
+    },
+    "deployment/sql_readiness_diagnostic.py": {
+      "git_blob_sha256": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+      "actual_crlf_sha256": "4f5a7050440cf821502bd71e815165ca9b9028db5292de2a3bc03561b8f82f3d",
+      "git_bytes": 14795,
+      "actual_bytes": 15025
+    },
+    "deployment/test_auth_acceptance.py": {
+      "git_blob_sha256": "9522d9765fbddf882992677a09c1e1fc9896587aa3b35235b237023fa12f2d7b",
+      "actual_crlf_sha256": "6b3b8055463c60be4591b6fd01b9482c24e4ec0382c3359455e221cceb7055e2",
+      "git_bytes": 4850,
+      "actual_bytes": 4929
+    },
+    "deployment/test_auth_login_stage.py": {
+      "git_blob_sha256": "8b08ddf862e8ff48eb72ee0336d030935544885c738c8a8d444f881092d3efed",
+      "actual_crlf_sha256": "5fbc68d6ea3b6fe8c2777dce4e3f0955ae51e1e9065f0ea6eaba1bc3cc986b5d",
+      "git_bytes": 21247,
+      "actual_bytes": 21614
+    },
+    "deployment/test_auth_readiness.py": {
+      "git_blob_sha256": "d4fcdfea9283af2fbd92052fdd063bc21e8f07fb82f795f6f73679f4e9f6b27c",
+      "actual_crlf_sha256": "a85225628ad01455450e21704155ac7630666fcc785665d54eace013de8bf94a",
+      "git_bytes": 5334,
+      "actual_bytes": 5432
+    },
+    "deployment/test_authenticated_handoff_contract.py": {
+      "git_blob_sha256": "a45216c71b110accceb5b822bee84811b70dcd2581305c041e6e59b8bec48564",
+      "actual_crlf_sha256": "fa79bfc1862eb2cbc0f7699df512a8cb4192424448a03d48e51af99a1c98a299",
+      "git_bytes": 4479,
+      "actual_bytes": 4547
+    },
+    "deployment/test_candidate_login.py": {
+      "git_blob_sha256": "ddbed0d2483cdb0b4c0f605ee2b66d1a1135f94f26cdff8155ac6c56d5322333",
+      "actual_crlf_sha256": "4350f13e9a12e753e49d9e2fecf2b1e719810ebc6f34f16963d975550948e67b",
+      "git_bytes": 8220,
+      "actual_bytes": 8348
+    },
+    "deployment/test_candidate_service.py": {
+      "git_blob_sha256": "df7c75440e5b775151ee8293619fe13f8e33483de784b8d98f1682ea6ee41292",
+      "actual_crlf_sha256": "6bb84cce4a6e07545cbfc6eb130c92ef2e96a44bc71dc91f0600472d1d7a2416",
+      "git_bytes": 7189,
+      "actual_bytes": 7297
+    },
+    "deployment/test_candidate_sql_memory.py": {
+      "git_blob_sha256": "3e56a32850299e23474e62ad16f26e6fa852019c54ae9adc3d3affa26dfb7964",
+      "actual_crlf_sha256": "0efadfd7be710f670bf29c70b2a3b4aa40cf6957fb03a1fbe3be5a8aac5f14de",
+      "git_bytes": 4126,
+      "actual_bytes": 4195
+    },
+    "deployment/test_client_reference.py": {
+      "git_blob_sha256": "7c3b4fb4102bd322c228748f5be44bd7d71010567d5e65c0803cca6b25e0dd54",
+      "actual_crlf_sha256": "825890fa02d57bbb3a364d1f08517a8bbca457a31141e3eb4eff1b5dc8c53a15",
+      "git_bytes": 1959,
+      "actual_bytes": 2000
+    },
+    "deployment/test_control_reuse.py": {
+      "git_blob_sha256": "5356bfe72def5498648efbc983c73781c5d92df7924afdaeae12c0100bb57afe",
+      "actual_crlf_sha256": "5d711f6ea63d4debad9c478edfadc3b6ed30838fa8961df9716704d02fdc7c0e",
+      "git_bytes": 6841,
+      "actual_bytes": 6980
+    },
+    "deployment/test_db_checksum_candidate.py": {
+      "git_blob_sha256": "809ac909defc470ba5d88b5b2df9bfdc1d3462dc28b3d7232f9a13bb928dc2c3",
+      "actual_crlf_sha256": "ea4ac9ac1ba603176cbd85dc94064cb13a804da9017bc6d766bc63608440ec26",
+      "git_bytes": 13196,
+      "actual_bytes": 13367
+    },
+    "deployment/test_db_handoff_profile.py": {
+      "git_blob_sha256": "f23e2169313741b3b50dd3aa414950889b63e7e292c76061df9f264fde5fb7c8",
+      "actual_crlf_sha256": "010b5946016127bf38d989c85c191108e27475a4d1e95725cc721b3fb4e1f5b1",
+      "git_bytes": 5061,
+      "actual_bytes": 5141
+    },
+    "deployment/test_deployment.py": {
+      "git_blob_sha256": "5d4270727423473b8fe64ced4041fd40f54feed56f9e438e18ebeeb9f6f22b79",
+      "actual_crlf_sha256": "e4aa843637cb6a1ae52eefc8633e2d25f1b004746cf94fcc66787fe75ca82d87",
+      "git_bytes": 7500,
+      "actual_bytes": 7647
+    },
+    "deployment/test_hosted_manual_atlas_compile.py": {
+      "git_blob_sha256": "307364f66f0c63e51a5b268e237a5439ec0293bdf8e9e2872d31b625c7d92dea",
+      "actual_crlf_sha256": "6a7b7830e8a0e60a6cb5c3803bc033e7601e45f4f60600582f80855eada95e36",
+      "git_bytes": 14491,
+      "actual_bytes": 14662
+    },
+    "deployment/test_hosted_stage.py": {
+      "git_blob_sha256": "6681ca7cc2e6bd2d85eea1804b34b873e6268787569cb1b77530ba14267d2f6d",
+      "actual_crlf_sha256": "d97d3cd36637894434c2babeb8f322056ac8b2c0ae2b3c1087fa52f97e736680",
+      "git_bytes": 16555,
+      "actual_bytes": 16849
+    },
+    "deployment/test_manual_atlas_full_recipe.py": {
+      "git_blob_sha256": "bb96fa5ed1a162f0801ffd8d32ef9d0417b4a1feec3a29f842557ea9bbb252a8",
+      "actual_crlf_sha256": "894c7d22156b8d826f98d8b93e18c4112e217c42ca2105a2e008e341b376752e",
+      "git_bytes": 3976,
+      "actual_bytes": 4034
+    },
+    "deployment/test_monitor_channel_contract.py": {
+      "git_blob_sha256": "c2242f9571a9d2142906fba8fd2c1fd283738c84b141db92faffa5da1c34922c",
+      "actual_crlf_sha256": "ce973cdb7f316d86176c8492538f01017025c729c7dbacfc5fba8aaa702c6d55",
+      "git_bytes": 2855,
+      "actual_bytes": 2889
+    },
+    "deployment/test_password_fixture.py": {
+      "git_blob_sha256": "a0ee8bf388be29f7ea1337c4b36ac40228fd0316dc51f59217ac578e31bf8e2e",
+      "actual_crlf_sha256": "b9951bd2bcff20776bac94e06b801bd2a83a024dc0a0de1dc4bee2f292a1407a",
+      "git_bytes": 1964,
+      "actual_bytes": 2006
+    },
+    "deployment/test_pg_wine_checksum_recipe.py": {
+      "git_blob_sha256": "8ee0d9de7414a80d0904eeb06f25da55de17a02c27b83105295f527aec6832e5",
+      "actual_crlf_sha256": "1145397b6990ff72cd3c4bbf73c796d3854ac7444e6519479a2ebe88b8a4ad75",
+      "git_bytes": 2082,
+      "actual_bytes": 2113
+    },
+    "deployment/test_receive_candidate_stage.py": {
+      "git_blob_sha256": "c4c223f947b08e683c15d6e7799f8d3d94a74897f57b1058d2b85a37563cc9dc",
+      "actual_crlf_sha256": "058297450220f58375da9f6c67a4230ba6d646d8275671ae1d43ec16772b8b94",
+      "git_bytes": 9227,
+      "actual_bytes": 9371
+    },
+    "deployment/test_sql_readiness_diagnostic.py": {
+      "git_blob_sha256": "15be59ecf66e7c17abf347cbf57cd9d562918ce5141328d87b1973a274c0869e",
+      "actual_crlf_sha256": "fae05e1308f95b3219586c8811c77df9c297da999f4c3ca23b17d4e99df219b5",
+      "git_bytes": 8009,
+      "actual_bytes": 8127
+    },
+    "deployment/test_version_observation_contract.py": {
+      "git_blob_sha256": "4a79159f1500b6c8c2e48c706b274cbe96bfb5dc662adb21a25348024d7277ea",
+      "actual_crlf_sha256": "44b982d8cca16fd3f025b84e42ed652e1abc8d07d4815a3cd837b3167e14bae1",
+      "git_bytes": 3025,
+      "actual_bytes": 3083
+    },
+    "deployment/test_windows_tool_inventory.py": {
+      "git_blob_sha256": "4e123d625cc95e0187016d657878092ed3c433d92eb05ff9268ced0ea3fe5d21",
+      "actual_crlf_sha256": "40b857cf135bb926f9fb741ea840f6e590dd3ce5cf724f64b1984c9e437f8eed",
+      "git_bytes": 6720,
+      "actual_bytes": 6804
+    },
+    "deployment/verify_auth_acceptance.py": {
+      "git_blob_sha256": "67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8",
+      "actual_crlf_sha256": "a3b00f097426083d8ce3cc153566a59197083445e522aeee3b1dfd70f505bf21",
+      "git_bytes": 9376,
+      "actual_bytes": 9516
+    },
+    "deployment/version_observation_contract.py": {
+      "git_blob_sha256": "ca8b13b0a11e5b7b5814143178d279c43b8374f4e028b5a6da5e21ad6c56518a",
+      "actual_crlf_sha256": "6aaec6613e4ee7144eba57a85a7df8d455df29f5d6f2eb8d13cf3291912d8221",
+      "git_bytes": 6337,
+      "actual_bytes": 6448
+    },
+    "deployment/windows_tool_inventory.py": {
+      "git_blob_sha256": "aa39572cf910daaf922a83a8346f57ed45ed449fadae80f016b101408234e29e",
+      "actual_crlf_sha256": "4cc7e7f31bec750805d3badb4a467420ab76484630c6ffd8241c1f8d7c02a8b8",
+      "git_bytes": 9352,
+      "actual_bytes": 9497
+    },
+    "source_oracle.py": {
+      "git_blob_sha256": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f",
+      "actual_crlf_sha256": "5a50869f73d670e42ea188dc110fefaa795aa3d4624d4c3fd1c044e26ce9d376",
+      "git_bytes": 3713,
+      "actual_bytes": 3791
+    }
+  },
+  "workflow_path": ".github/workflows/native-reviewed-inputs.yml",
+  "workflow_sha256": "8b9b5b8b999760d85e65efa424c463929d50c8762403bcab068c6bf25d773403",
+  "actual_raw_receipt_sha256": "9f34ad291572a4424d17f400f05b2b9aceaabefc2d2cce23fcecbe5235a9666b",
+  "source_byte_profile": "exact_git_LF_to_checkout_CRLF_all_61_helpers",
+  "windows_tools_rehashed_locally": false,
+  "compiler_executed": false,
+  "service_executed": false,
+  "shipping_runtime_replacement_permit": false,
+  "schema": "coh-actual-tool-inventory-admission-v1",
+  "passed": true,
+  "artifact_id": 12090613318,
+  "artifact_sha256": "a9435c960839c4a4b93174d527b5d1c294ed9f964ed507ccd943cd9676e40c23",
+  "run_id": "39005570623",
+  "repository_commit": "d6ef33b3306c496e6d6a9ee2f8c9ab12ffdfbc05",
+  "reviewed_lock_sha256": "a70e878ad1f8872cc876987f6ec644f27bbf7c5ec98db528742f28ed5b098125"
+}

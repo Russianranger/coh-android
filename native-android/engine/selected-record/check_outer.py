@@ -9,7 +9,7 @@ def load(n,p):
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,required=True);ap.add_argument('--sanitize',action='store_true');ap.add_argument('--fixtures-output',type=Path);a=ap.parse_args()
  if a.output.exists():ap.error('new output required')
- old=json.loads((HERE/'qualification/20261017/host-proof.json').read_text());paths={ROOT/n for n in old['source_sha256']};paths.update(HERE/n for n in('check_outer.py','outer_fixtures.py','outer_components.py','test_outer.c','qualification/20261017/host-proof.json'))
+ old=json.loads((HERE/'qualification/20261017/host-proof.json').read_text());paths={ROOT/n for n in old['source_sha256']};paths.update(HERE/n for n in('coh_record_kernel.h','check_outer.py','outer_fixtures.py','outer_components.py','test_outer.c','qualification/20261017/host-proof.json'))
  op=ROOT/'native-android/combined-client/diagnostics/selected-record-order-20261017';paths.update(op/n for n in('order_oracle.py','outer_adapters.h','outer_wrapper.h','leaf_oracle.py','leaf_adapters.h','leaf_wrapper.h','leaf-source-pins.json'));paths.add(ROOT/'native-android/engine/dbclient/check.py');hashes={str(p.resolve().relative_to(ROOT)):sha(p)for p in sorted(paths)}
  check=load('selected_record_frozen_check',HERE/'check.py');fixture=load('selected_record_outer_fixtures',HERE/'outer_fixtures.py');revision=check.run(['git','-C',ROOT,'rev-parse','HEAD']).strip()
  with tempfile.TemporaryDirectory(prefix='coh-selected-outer-')as tmp:

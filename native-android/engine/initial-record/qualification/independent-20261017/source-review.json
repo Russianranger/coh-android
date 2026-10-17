@@ -1,0 +1,135 @@
+{
+  "schema": "coh-independent-initial-generic-record-list-review-v1",
+  "approved_source_and_host_scope": true,
+  "source_commit": "08e3de8635e953ea54f5283b643246eb3ddc17cb",
+  "evidence_commit": "dab3071d6",
+  "source_binding_sha256": "0115aa0f4646fd08a2ad32fd65181b7554b6007a9a8620878f7d62b25a388f6b",
+  "reviews": [
+    {
+      "receipt": "host-proof.json.gz",
+      "sha256": "5f39be82db8a68e49f6dede5624a04f8ad57565fc8d7c77d8e00724060a5cd0a",
+      "verified_source_count": 146,
+      "checks": {
+        "release": {
+          "checks": 257296,
+          "record_cases": 720,
+          "list_cases": 58,
+          "successes": 10315,
+          "refusals": 3625,
+          "cuts": 898,
+          "mutations": 11464,
+          "loan_controls": 576
+        },
+        "asan": {
+          "checks": 257296,
+          "record_cases": 720,
+          "list_cases": 58,
+          "successes": 10315,
+          "refusals": 3625,
+          "cuts": 898,
+          "mutations": 11464,
+          "loan_controls": 576
+        },
+        "ubsan": {
+          "checks": 257296,
+          "record_cases": 720,
+          "list_cases": 58,
+          "successes": 10315,
+          "refusals": 3625,
+          "cuts": 898,
+          "mutations": 11464,
+          "loan_controls": 576
+        }
+      }
+    },
+    {
+      "receipt": "selected-regression.json",
+      "sha256": "a0919c426c7e15acb0d5592dfc49136fcf59ba83dfb4194e755c4f326f9b0e1e",
+      "verified_source_count": 79,
+      "checks": {
+        "release": {
+          "checks": 352228,
+          "fixtures": 50,
+          "successes": 9757,
+          "refusals": 29602,
+          "truncations": 25411,
+          "byte_mutations": 12148,
+          "loan_controls": 1260
+        },
+        "asan": {
+          "checks": 352228,
+          "fixtures": 50,
+          "successes": 9757,
+          "refusals": 29602,
+          "truncations": 25411,
+          "byte_mutations": 12148,
+          "loan_controls": 1260
+        },
+        "ubsan": {
+          "checks": 352228,
+          "fixtures": 50,
+          "successes": 9757,
+          "refusals": 29602,
+          "truncations": 25411,
+          "byte_mutations": 12148,
+          "loan_controls": 1260
+        }
+      }
+    },
+    {
+      "receipt": "outer-regression.json",
+      "sha256": "df528d4c7497a3c79212b65b757f35b01c33f08f500b9d620c551db7c3c49a02",
+      "verified_source_count": 92,
+      "checks": {
+        "release": {
+          "checks": 267596,
+          "source_outer_fixtures": 144,
+          "successes": 11410,
+          "refusals": 4818,
+          "boundary_cuts": 3600,
+          "byte_mutations": 12196
+        },
+        "asan": {
+          "checks": 267596,
+          "source_outer_fixtures": 144,
+          "successes": 11410,
+          "refusals": 4818,
+          "boundary_cuts": 3600,
+          "byte_mutations": 12196
+        },
+        "ubsan": {
+          "checks": 267596,
+          "source_outer_fixtures": 144,
+          "successes": 11410,
+          "refusals": 4818,
+          "boundary_cuts": 3600,
+          "byte_mutations": 12196
+        }
+      }
+    }
+  ],
+  "retained_native_fixture_bytes": 1326723,
+  "retained_native_fixture_sha256": "05b7a195c4c33afea98499d1cf3ab01b1d5a4c712cd24f6f61c2b976c6d47a21",
+  "review": [
+    "Shared private kernel admits only selected or INITIAL-create profiles. Existing selected wrapper retains its self-only semantics; new initial wrapper requires full rare/mode/position/orientation/movement fields, rejects noncreate/interpolated records, and dispatches costume/power/target/inventory/taskforce grammar using the decoded self bit. Nonself selected-DBID alias is refused by the existing creation decoder.",
+    "List consumes every record and the canonical create/end sentinel. Source U32 arithmetic preserves signed-negative index deltas; sentinel is validated before slot dereference, including MAX-index+1. Duplicate slot, server entity generation and nonzero player DBID refuse; exactly one selected self must appear. The existing256 bound is retained and larger lists fail transactionally.",
+    "Compact entries retain raw identity/pose and exact packet spans. One reusable record workspace and sequential large child loans replace per-slot appearance/power/buff PODs. Exact packet/dictionary and callback owner lifetimes remain external immutable contracts; context integers do not authenticate them.",
+    "Parent known spans are disjoint before mutable workspace/failure writes. Loan adapter checks every enclosing span; populated partial errors are released by the child transaction exactly once. Parent occupied bytes include full supplied entry capacity/input/dictionary/provider/context plus96KiB reserve; child_extra subtracts only exactly recharged child fixed spans/64KiB reserve. The stricter4MiB SG/buff aggregate remains in force. All public entries/result/reader commit only after the complete list and uniqueness checks succeed.",
+    "Final146 new/79 selected-regression/92 outer-regression source maps match08e Gitblobs and current files. Retained bounded fixture gzip/raw digests independently verified. Native257296 controls per mode,720 record profiles/58 lists,898cuts/11464mutations/576loan controls and11466 original child relocation equalities are source-bound historical results. C++ link and conservative all-native frame sum56392 bytes remain below96KiB reserve; external callback/libc stack is not closed.",
+    "Whole original outer control and separately original child functions execute with independent fixture objects. Original object graph/visibility list builder and authentic runtime dictionary generation are not established. Raw fragment uniqueness is not complete frame/control/deletes/character/global suffix or appended command qualification. No actor, READY, RECEIVED_CHARACTER or application ACK is enabled."
+  ],
+  "reviewer_reran_large_corpus": false,
+  "scope": {
+    "initial_raw_record_and_list": true,
+    "unique_selected_within_fragment": true,
+    "original_object_graph": false,
+    "original_oracle_sanitized": false,
+    "authentic_dictionary_generation": false,
+    "full_initial_transaction": false,
+    "actor": false,
+    "ACK": false,
+    "real_server": false,
+    "android": false,
+    "thor": false
+  }
+}

@@ -1,0 +1,11 @@
+test_exact_actual_receipt_sources_and_unchanged_eight_tool_candidate (test_admit_tool_inventory.InventoryAdmission.test_exact_actual_receipt_sources_and_unchanged_eight_tool_candidate) ... ok
+test_exact_lock_tool_lock_consumer_recorded_observer_compatibility (test_admit_tool_inventory.InventoryAdmission.test_exact_lock_tool_lock_consumer_recorded_observer_compatibility) ... ok
+test_executed_or_changed_generation_flags_refused (test_admit_tool_inventory.InventoryAdmission.test_executed_or_changed_generation_flags_refused) ... ok
+test_outer_archive_exact_pin (test_admit_tool_inventory.InventoryAdmission.test_outer_archive_exact_pin) ... ok
+test_sdk_or_candidate_or_post_observation_mutation_refused (test_admit_tool_inventory.InventoryAdmission.test_sdk_or_candidate_or_post_observation_mutation_refused) ... ok
+test_source_domain_and_explicit_crlf_hash_refuse_mutation (test_admit_tool_inventory.InventoryAdmission.test_source_domain_and_explicit_crlf_hash_refuse_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.819s
+
+OK

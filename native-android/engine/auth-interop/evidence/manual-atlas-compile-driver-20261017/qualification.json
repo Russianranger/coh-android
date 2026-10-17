@@ -1,12 +1,12 @@
 {
   "schema": "coh-full-manual-atlas-compile-driver-host-controls-v1",
   "passed": true,
-  "suites": 12,
+  "suites": 13,
   "skips": 0,
   "inputs": {
-    "deployment/hosted_manual_atlas_compile.py": "b57a150e952a568dee5360bfa919e29b3874cc761d9a40dd635d37000787d8d2",
-    "deployment/test_hosted_manual_atlas_compile.py": "307364f66f0c63e51a5b268e237a5439ec0293bdf8e9e2872d31b625c7d92dea",
-    "deployment/HOSTED-MANUAL-ATLAS-COMPILE.md": "ce91927acd86a6cfa84393caa86f9b192742da9ef31bf8af86c6cd6c0b734807",
+    "deployment/hosted_manual_atlas_compile.py": "04126c67c4e4eee48336b2b519a7ac4ca489a6da1afb699b7a5c0263fc148efb",
+    "deployment/test_hosted_manual_atlas_compile.py": "47ed1030dc73bfae401c48fcf4895ed97ddadcd356d8e5d1a9d4e69a74d49b1d",
+    "deployment/HOSTED-MANUAL-ATLAS-COMPILE.md": "8c9c777a05517b9bc29f199a35704739e7def05b3df9c9a5cacfb82531a5e479",
     "deployment/manual_atlas_full_recipe.py": "ee8ece73aba177100993f32e27bface62b5e054d71a3b34c7fc0c20af0c07223",
     "deployment/pg_wine_checksum_recipe.py": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
     "deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
@@ -22,7 +22,7 @@
     "evidence/manual-atlas-full-recipe-20261017/static-build-plan.json": "052bb95ea037ec0cf3b98342e7d2beac1a4e1a1e3228efc1ed855a6b873c4d89",
     "evidence/manual-atlas-full-recipe-20261017/accepted-startup-dbserver-manifest.json": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087"
   },
-  "host_controls_sha256": "6ade272ccb03f75b9d22d07c11bdeb5f536bade184f1bb62073a956f8b1e1cb1",
+  "host_controls_sha256": "506dc7526fd50a45d34c00088fd3aad56dcbab10a1e64898f11dfd652e7f785c",
   "scope": "Local synthetic control fixtures and pinned dependency patch checks; no Windows driver or compiler execution.",
   "windows_driver_executed": false,
   "compiler_executed": false,

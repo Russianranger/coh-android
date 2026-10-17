@@ -1,0 +1,34 @@
+{
+  "schema": "coh-actual-tool-inventory-derived-lock-host-qualification-v1",
+  "passed": true,
+  "suites": 6,
+  "skips": 0,
+  "inputs": {
+    "deployment/admit_tool_inventory.py": "6bc9e50b97db637c7643cf7869dbb72fdff5399907ea14f1b45a0cbbacfc676a",
+    "deployment/test_admit_tool_inventory.py": "1a453c96ae92e513a0466ad890b4cf04393434b99fa237de1c4fa988fcce627f",
+    "deployment/REVIEWED-TOOL-LOCK-39005570623.md": "aa55c8400e4b456ab2baba4ea9aabce82ff75da7f11690c99dc590920945e84b",
+    "deployment/hosted_manual_atlas_compile.py": "04126c67c4e4eee48336b2b519a7ac4ca489a6da1afb699b7a5c0263fc148efb",
+    "deployment/test_hosted_manual_atlas_compile.py": "47ed1030dc73bfae401c48fcf4895ed97ddadcd356d8e5d1a9d4e69a74d49b1d",
+    "deployment/HOSTED-MANUAL-ATLAS-COMPILE.md": "8c9c777a05517b9bc29f199a35704739e7def05b3df9c9a5cacfb82531a5e479",
+    "deployment/windows_tool_inventory.py": "aa39572cf910daaf922a83a8346f57ed45ed449fadae80f016b101408234e29e",
+    "deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+    "deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+    "deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+    "deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+    "deployment/source-pins.json": "a49c8290d8a720c86c825e593d073733fb0cf429c4efff1337d8be8ca6226b3b",
+    "source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+  },
+  "retained_evidence": {
+    "receipt.json": "9f34ad291572a4424d17f400f05b2b9aceaabefc2d2cce23fcecbe5235a9666b",
+    "artifact.zip": "a9435c960839c4a4b93174d527b5d1c294ed9f964ed507ccd943cd9676e40c23",
+    "host-controls.txt": "9da23353d404c434e623a726b90ff9316371b2ebdea71dabc2a78f614ab7695a",
+    "reviewed-toolchain-lock.json": "a70e878ad1f8872cc876987f6ec644f27bbf7c5ec98db528742f28ed5b098125",
+    "admission.json": "cf07cc5893305a74eff52cc8502e400be077bbf76f2aa7df8ca9a54591706566"
+  },
+  "consumer_compatibility": "Exact reviewed lock SHA through tool_lock using recorded-file observer; actual Windows rehash remains mandatory.",
+  "actual_windows_tool_rehash_performed_here": false,
+  "compiler_executed": false,
+  "service_executed": false,
+  "shipping_runtime_replacement_permit": false
+}

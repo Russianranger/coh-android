@@ -1,0 +1,368 @@
+{
+  "repository_commit": "d6ef33b3306c496e6d6a9ee2f8c9ab12ffdfbc05",
+  "repository_tree": "c28a0de2a49e1612e1bfc161854ca029ae621ed2",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "github_run_id": "39005570623",
+  "image_os": "win25-vs2026",
+  "image_version": "20261007.264.1",
+  "schema": "coh-readonly-windows-build-tool-inventory-v1",
+  "passed": true,
+  "input_state_before": {
+    "commit": "d6ef33b3306c496e6d6a9ee2f8c9ab12ffdfbc05",
+    "tracked_dirty": "",
+    "helper_inputs": {
+      "deployment\\admit_schema.py": "54084b16b0893e135f5b34a9cbc1c474b1f2045ad32fadddaa704de0b8ef71ff",
+      "deployment\\authenticated_handoff_contract.py": "e3194d157b93cd3af11740b3a5f803a44ef4ea9e6ad15a359cd73411bad1cdb6",
+      "deployment\\auth_readiness.py": "8cc69b491b331b68a0c2f44b6824d1474c67721d94082153cc3e454945fba208",
+      "deployment\\auth_service_profile.py": "ce403787ef186c6bdb526ede0bb43fa0ba11f1ae60a929913299d2b94cffbe22",
+      "deployment\\candidate_service.py": "dc20be96ac0598f14beae52f97d81365386b8a81c2393e2889807924e4a653f9",
+      "deployment\\candidate_sql_memory.py": "c24b2e1a1b4b0c5ad3c076f5a50d4a6b7a5508ea16bddeee23c2c3168d7ca1d5",
+      "deployment\\check.py": "9bba28d38fa70b630015f51cd61eaa239cb3e0d2a8342dfe3ca960f56146dbcc",
+      "deployment\\checksum_candidate.py": "e950385cf4bc3299b530da2c0ff2eac446ae2e1a0053438b9147345173a140ed",
+      "deployment\\db_handoff_profile.py": "281512596c14303831b4e65e5e687d8ce46fa898c03aeacc89b25bb7d1f9567a",
+      "deployment\\generate_odbc.py": "8a31c79d69f41e4fe69bbf168092abd636c94a4175fa87f25ba04abfd82de053",
+      "deployment\\hosted_auth_login.py": "79c033e97894384fdf57669b94d389a3d8c230e340c2d8c5bd40dc68e937a062",
+      "deployment\\hosted_auth_stage.py": "61a4fc674ab2614f1b532b9f5bae686dbc68c34b76cc87f965912dc4426ef5b6",
+      "deployment\\hosted_candidate_login.py": "0c57c668f7b3ad59c2cf8119bc8420bdb8baf76943c7acffa2e867312fcaa83d",
+      "deployment\\hosted_db_checksum_candidate.py": "834b8b1cbdab7d5458f69297cbec3db744f1f69a753ad5437f89273eabeba928",
+      "deployment\\hosted_manual_atlas_compile.py": "a0d720b640f660472bf7a39d01c4b3d5e370b3667b394e56420c8d98fcacaaf1",
+      "deployment\\hosted_receive_candidate.py": "114fe46fc974da57a38461976713f3a28aeeef18e49254b54c886f433ab7c113",
+      "deployment\\inspect_client_reference.py": "bbf1e50e80adb5fa72f3cf93559b9741ffe80b797d4784f99e18a85e932717e6",
+      "deployment\\manual_atlas_full_recipe.py": "ffd99fec77efa603bc5aa28ca1a9303b8a6e4a9312f326928a6ccdc076b2e019",
+      "deployment\\monitor_channel_contract.py": "4ae24ed9b1319b976a305e77833bd0de483479f2578fd4da33aaadff73fde29e",
+      "deployment\\password_fixture.py": "7c8732cfc8c8f826eccccf81ca308e7417b5d5dcf57ee44ac1e41c4eff33128d",
+      "deployment\\pg_wine_checksum_recipe.py": "8df31cc3554458b07cf76251052aa05b76f2953be93e4b826257c27e008bd599",
+      "deployment\\qualify_auth_bit_merge.py": "2be425145bbe26be34688eeae9888c348e5d3a9b7e2a5101295ea3c9d670a396",
+      "deployment\\qualify_auth_cache_consumer.py": "dc20da702b04d14ebee921e83787d57f93ac11ee501cb45ef685fce657636e16",
+      "deployment\\qualify_auth_only.py": "489f7de0cc8ba317528020badf774724039d1f9a94c32def6e5addbdf12f09d7",
+      "deployment\\qualify_db_policy_matrix.py": "95d51c3d49e644aa1079b777185ada3289366317f32844332f9f03d8114087cd",
+      "deployment\\qualify_handoff_wire.py": "62e2d06affa3189a7fe5b0c42b115a39a948723fb56f5130fee13ac60468448f",
+      "deployment\\qualify_manual_atlas_full_recipe.py": "ddc836cd402bc577a7657aca37a8acff5e79662abc692fd94e8ec46c606dcee3",
+      "deployment\\qualify_monitor_envelope.py": "9d9da9b6e41ec7c9e417fe368254f2db6f8c90e91014983c9b252ed24e1b5fd9",
+      "deployment\\qualify_original_receive.py": "8aa32efc7999ab674f876e910867db40a8783de28e5dd3e484477362e9dc91ec",
+      "deployment\\qualify_receive_candidate.py": "9408988da6b2865468ac09543ad02c898e7c069b4eea846dd43621eab6f9bbb0",
+      "deployment\\qualify_version_string_writer.py": "13722b23ed99a1af54859a0ab9538d3c96c5e1ed22bcb8bab9d06d671cfd933b",
+      "deployment\\qualify_windows_adapter.py": "cb8e507de770d885065eacca08370c6c392b347faf4852660f4625371023b351",
+      "deployment\\receive_candidate.py": "2a473ad2eb4e250f9f028921517471cf239b09c4978dfbb325486245e32e57f8",
+      "deployment\\source_audit.py": "cb56e3d4fccc29a9f38f968185470850250042998614f25d63f991399be5e69f",
+      "deployment\\sql_readiness_diagnostic.py": "4f5a7050440cf821502bd71e815165ca9b9028db5292de2a3bc03561b8f82f3d",
+      "deployment\\test_authenticated_handoff_contract.py": "fa79bfc1862eb2cbc0f7699df512a8cb4192424448a03d48e51af99a1c98a299",
+      "deployment\\test_auth_acceptance.py": "6b3b8055463c60be4591b6fd01b9482c24e4ec0382c3359455e221cceb7055e2",
+      "deployment\\test_auth_login_stage.py": "5fbc68d6ea3b6fe8c2777dce4e3f0955ae51e1e9065f0ea6eaba1bc3cc986b5d",
+      "deployment\\test_auth_readiness.py": "a85225628ad01455450e21704155ac7630666fcc785665d54eace013de8bf94a",
+      "deployment\\test_candidate_login.py": "4350f13e9a12e753e49d9e2fecf2b1e719810ebc6f34f16963d975550948e67b",
+      "deployment\\test_candidate_service.py": "6bb84cce4a6e07545cbfc6eb130c92ef2e96a44bc71dc91f0600472d1d7a2416",
+      "deployment\\test_candidate_sql_memory.py": "0efadfd7be710f670bf29c70b2a3b4aa40cf6957fb03a1fbe3be5a8aac5f14de",
+      "deployment\\test_client_reference.py": "825890fa02d57bbb3a364d1f08517a8bbca457a31141e3eb4eff1b5dc8c53a15",
+      "deployment\\test_control_reuse.py": "5d711f6ea63d4debad9c478edfadc3b6ed30838fa8961df9716704d02fdc7c0e",
+      "deployment\\test_db_checksum_candidate.py": "ea4ac9ac1ba603176cbd85dc94064cb13a804da9017bc6d766bc63608440ec26",
+      "deployment\\test_db_handoff_profile.py": "010b5946016127bf38d989c85c191108e27475a4d1e95725cc721b3fb4e1f5b1",
+      "deployment\\test_deployment.py": "e4aa843637cb6a1ae52eefc8633e2d25f1b004746cf94fcc66787fe75ca82d87",
+      "deployment\\test_hosted_manual_atlas_compile.py": "6a7b7830e8a0e60a6cb5c3803bc033e7601e45f4f60600582f80855eada95e36",
+      "deployment\\test_hosted_stage.py": "d97d3cd36637894434c2babeb8f322056ac8b2c0ae2b3c1087fa52f97e736680",
+      "deployment\\test_manual_atlas_full_recipe.py": "894c7d22156b8d826f98d8b93e18c4112e217c42ca2105a2e008e341b376752e",
+      "deployment\\test_monitor_channel_contract.py": "ce973cdb7f316d86176c8492538f01017025c729c7dbacfc5fba8aaa702c6d55",
+      "deployment\\test_password_fixture.py": "b9951bd2bcff20776bac94e06b801bd2a83a024dc0a0de1dc4bee2f292a1407a",
+      "deployment\\test_pg_wine_checksum_recipe.py": "1145397b6990ff72cd3c4bbf73c796d3854ac7444e6519479a2ebe88b8a4ad75",
+      "deployment\\test_receive_candidate_stage.py": "058297450220f58375da9f6c67a4230ba6d646d8275671ae1d43ec16772b8b94",
+      "deployment\\test_sql_readiness_diagnostic.py": "fae05e1308f95b3219586c8811c77df9c297da999f4c3ca23b17d4e99df219b5",
+      "deployment\\test_version_observation_contract.py": "44b982d8cca16fd3f025b84e42ed652e1abc8d07d4815a3cd837b3167e14bae1",
+      "deployment\\test_windows_tool_inventory.py": "40b857cf135bb926f9fb741ea840f6e590dd3ce5cf724f64b1984c9e437f8eed",
+      "deployment\\verify_auth_acceptance.py": "a3b00f097426083d8ce3cc153566a59197083445e522aeee3b1dfd70f505bf21",
+      "deployment\\version_observation_contract.py": "6aaec6613e4ee7144eba57a85a7df8d455df29f5d6f2eb8d13cf3291912d8221",
+      "deployment\\windows_tool_inventory.py": "4cc7e7f31bec750805d3badb4a467420ab76484630c6ffd8241c1f8d7c02a8b8",
+      "source_oracle.py": "5a50869f73d670e42ea188dc110fefaa795aa3d4624d4c3fd1c044e26ce9d376"
+    }
+  },
+  "compiler_executed": false,
+  "cmake_executed": false,
+  "source_patched": false,
+  "dependencies_fetched": false,
+  "service_executed": false,
+  "toolchain_reviewed": false,
+  "compile_permit": false,
+  "shipping_runtime_replacement_permit": false,
+  "observation_before": {
+    "tools": {
+      "cl": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\cl.exe",
+        "bytes": 891752,
+        "sha256": "58702ed8002b28348dbbd1099e9d2c2b2b092681cda024a5eaee371cc28aa881"
+      },
+      "link": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\link.exe",
+        "bytes": 3701128,
+        "sha256": "78c1de5188da927239a017b4690491be838917478a0ee91401dfcc0291a9aa48"
+      },
+      "ml": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\ml.exe",
+        "bytes": 675160,
+        "sha256": "8622fb7116bfa7ee98efb3c50f5dd8ea6be49f06a8ae9b2264bd7120eced932b"
+      },
+      "msbuild": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
+        "bytes": 377168,
+        "sha256": "951a276306a0710f6da81692784a050a4c2c6452a753fa4afa124ae35e230a1c"
+      },
+      "git": {
+        "path": "C:\\Program Files\\Git\\bin\\git.exe",
+        "bytes": 45400,
+        "sha256": "54bda91c773c6bba2b970424423cfcb80552d92dc6967d766f98931fe1251a54"
+      },
+      "patch": {
+        "path": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+        "bytes": 168973,
+        "sha256": "00d555c71e05775208a95a0ad439c00ad95d107ef8d0ae93576554e35eb9125b"
+      },
+      "cmake": {
+        "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+        "bytes": 13465160,
+        "sha256": "3a329667300846abc8dffccbdcb1c8c2d4a6cebe342d499181825205ea8c766c"
+      }
+    },
+    "file_versions": {
+      "cl": "19.51.36260.0",
+      "link": "14.51.36260.0",
+      "ml": "14.51.36260.0",
+      "msbuild": "18.10.1.42706",
+      "git": "2.56.0.2",
+      "patch": null,
+      "cmake": "4.4.4.0"
+    },
+    "sdks": {
+      "10.0.26100.0": {
+        "missing": [],
+        "files": {
+          "rc": {
+            "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+            "bytes": 55736,
+            "sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a"
+          },
+          "kernel32": {
+            "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x86\\kernel32.Lib",
+            "bytes": 329914,
+            "sha256": "0916cf9c90410acf8fe000b23443f54c467bdecb14078034f3c9ec086200afc7"
+          },
+          "ucrt": {
+            "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\ucrt\\x86\\ucrt.lib",
+            "bytes": 299244,
+            "sha256": "ccd3dad2a72ad555a320b855eea24eb9b6fc2d216473bd794ae7831bde00913d"
+          },
+          "windows_header": {
+            "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\Windows.h",
+            "bytes": 7511,
+            "sha256": "b337d661d03a4abefb7b86a2742ce1ad5d19b57cd8b858bd13e7bbcc1dbeeaaa"
+          }
+        }
+      }
+    }
+  },
+  "default_toolset_marker": {
+    "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt",
+    "bytes": 11,
+    "sha256": "2ca998516f8f18b39c28ce022abb90ef5ad711b468494671dd84b74618b569d9"
+  },
+  "observation_after": {
+    "tools": {
+      "cl": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\cl.exe",
+        "bytes": 891752,
+        "sha256": "58702ed8002b28348dbbd1099e9d2c2b2b092681cda024a5eaee371cc28aa881"
+      },
+      "link": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\link.exe",
+        "bytes": 3701128,
+        "sha256": "78c1de5188da927239a017b4690491be838917478a0ee91401dfcc0291a9aa48"
+      },
+      "ml": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\ml.exe",
+        "bytes": 675160,
+        "sha256": "8622fb7116bfa7ee98efb3c50f5dd8ea6be49f06a8ae9b2264bd7120eced932b"
+      },
+      "msbuild": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
+        "bytes": 377168,
+        "sha256": "951a276306a0710f6da81692784a050a4c2c6452a753fa4afa124ae35e230a1c"
+      },
+      "git": {
+        "path": "C:\\Program Files\\Git\\bin\\git.exe",
+        "bytes": 45400,
+        "sha256": "54bda91c773c6bba2b970424423cfcb80552d92dc6967d766f98931fe1251a54"
+      },
+      "patch": {
+        "path": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+        "bytes": 168973,
+        "sha256": "00d555c71e05775208a95a0ad439c00ad95d107ef8d0ae93576554e35eb9125b"
+      },
+      "cmake": {
+        "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+        "bytes": 13465160,
+        "sha256": "3a329667300846abc8dffccbdcb1c8c2d4a6cebe342d499181825205ea8c766c"
+      }
+    },
+    "file_versions": {
+      "cl": "19.51.36260.0",
+      "link": "14.51.36260.0",
+      "ml": "14.51.36260.0",
+      "msbuild": "18.10.1.42706",
+      "git": "2.56.0.2",
+      "patch": null,
+      "cmake": "4.4.4.0"
+    },
+    "sdks": {
+      "10.0.26100.0": {
+        "missing": [],
+        "files": {
+          "rc": {
+            "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+            "bytes": 55736,
+            "sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a"
+          },
+          "kernel32": {
+            "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x86\\kernel32.Lib",
+            "bytes": 329914,
+            "sha256": "0916cf9c90410acf8fe000b23443f54c467bdecb14078034f3c9ec086200afc7"
+          },
+          "ucrt": {
+            "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\ucrt\\x86\\ucrt.lib",
+            "bytes": 299244,
+            "sha256": "ccd3dad2a72ad555a320b855eea24eb9b6fc2d216473bd794ae7831bde00913d"
+          },
+          "windows_header": {
+            "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\Windows.h",
+            "bytes": 7511,
+            "sha256": "b337d661d03a4abefb7b86a2742ce1ad5d19b57cd8b858bd13e7bbcc1dbeeaaa"
+          }
+        }
+      }
+    }
+  },
+  "vs_installation": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise",
+  "vc_toolset_version": "14.51.36231",
+  "all_tool_inputs_stable": true,
+  "observed_lock_candidates": [
+    {
+      "schema": "coh-observed-windows-build-tool-lock-v1",
+      "requires_independent_review": true,
+      "image_os": "win25-vs2026",
+      "image_version": "20261007.264.1",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "Win32",
+      "vs_installation": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise",
+      "vc_toolset_version": "14.51.36231",
+      "windows_sdk_version": "10.0.26100.0",
+      "compiler_version": "19.51.36260.0",
+      "cmake_version": "4.4.4",
+      "tools": {
+        "cl": {
+          "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\cl.exe",
+          "bytes": 891752,
+          "sha256": "58702ed8002b28348dbbd1099e9d2c2b2b092681cda024a5eaee371cc28aa881"
+        },
+        "link": {
+          "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\link.exe",
+          "bytes": 3701128,
+          "sha256": "78c1de5188da927239a017b4690491be838917478a0ee91401dfcc0291a9aa48"
+        },
+        "ml": {
+          "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\ml.exe",
+          "bytes": 675160,
+          "sha256": "8622fb7116bfa7ee98efb3c50f5dd8ea6be49f06a8ae9b2264bd7120eced932b"
+        },
+        "msbuild": {
+          "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
+          "bytes": 377168,
+          "sha256": "951a276306a0710f6da81692784a050a4c2c6452a753fa4afa124ae35e230a1c"
+        },
+        "git": {
+          "path": "C:\\Program Files\\Git\\bin\\git.exe",
+          "bytes": 45400,
+          "sha256": "54bda91c773c6bba2b970424423cfcb80552d92dc6967d766f98931fe1251a54"
+        },
+        "patch": {
+          "path": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+          "bytes": 168973,
+          "sha256": "00d555c71e05775208a95a0ad439c00ad95d107ef8d0ae93576554e35eb9125b"
+        },
+        "cmake": {
+          "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+          "bytes": 13465160,
+          "sha256": "3a329667300846abc8dffccbdcb1c8c2d4a6cebe342d499181825205ea8c766c"
+        },
+        "rc": {
+          "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+          "bytes": 55736,
+          "sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a"
+        }
+      }
+    }
+  ],
+  "input_state_after": {
+    "commit": "d6ef33b3306c496e6d6a9ee2f8c9ab12ffdfbc05",
+    "tracked_dirty": "",
+    "helper_inputs": {
+      "deployment\\admit_schema.py": "54084b16b0893e135f5b34a9cbc1c474b1f2045ad32fadddaa704de0b8ef71ff",
+      "deployment\\authenticated_handoff_contract.py": "e3194d157b93cd3af11740b3a5f803a44ef4ea9e6ad15a359cd73411bad1cdb6",
+      "deployment\\auth_readiness.py": "8cc69b491b331b68a0c2f44b6824d1474c67721d94082153cc3e454945fba208",
+      "deployment\\auth_service_profile.py": "ce403787ef186c6bdb526ede0bb43fa0ba11f1ae60a929913299d2b94cffbe22",
+      "deployment\\candidate_service.py": "dc20be96ac0598f14beae52f97d81365386b8a81c2393e2889807924e4a653f9",
+      "deployment\\candidate_sql_memory.py": "c24b2e1a1b4b0c5ad3c076f5a50d4a6b7a5508ea16bddeee23c2c3168d7ca1d5",
+      "deployment\\check.py": "9bba28d38fa70b630015f51cd61eaa239cb3e0d2a8342dfe3ca960f56146dbcc",
+      "deployment\\checksum_candidate.py": "e950385cf4bc3299b530da2c0ff2eac446ae2e1a0053438b9147345173a140ed",
+      "deployment\\db_handoff_profile.py": "281512596c14303831b4e65e5e687d8ce46fa898c03aeacc89b25bb7d1f9567a",
+      "deployment\\generate_odbc.py": "8a31c79d69f41e4fe69bbf168092abd636c94a4175fa87f25ba04abfd82de053",
+      "deployment\\hosted_auth_login.py": "79c033e97894384fdf57669b94d389a3d8c230e340c2d8c5bd40dc68e937a062",
+      "deployment\\hosted_auth_stage.py": "61a4fc674ab2614f1b532b9f5bae686dbc68c34b76cc87f965912dc4426ef5b6",
+      "deployment\\hosted_candidate_login.py": "0c57c668f7b3ad59c2cf8119bc8420bdb8baf76943c7acffa2e867312fcaa83d",
+      "deployment\\hosted_db_checksum_candidate.py": "834b8b1cbdab7d5458f69297cbec3db744f1f69a753ad5437f89273eabeba928",
+      "deployment\\hosted_manual_atlas_compile.py": "a0d720b640f660472bf7a39d01c4b3d5e370b3667b394e56420c8d98fcacaaf1",
+      "deployment\\hosted_receive_candidate.py": "114fe46fc974da57a38461976713f3a28aeeef18e49254b54c886f433ab7c113",
+      "deployment\\inspect_client_reference.py": "bbf1e50e80adb5fa72f3cf93559b9741ffe80b797d4784f99e18a85e932717e6",
+      "deployment\\manual_atlas_full_recipe.py": "ffd99fec77efa603bc5aa28ca1a9303b8a6e4a9312f326928a6ccdc076b2e019",
+      "deployment\\monitor_channel_contract.py": "4ae24ed9b1319b976a305e77833bd0de483479f2578fd4da33aaadff73fde29e",
+      "deployment\\password_fixture.py": "7c8732cfc8c8f826eccccf81ca308e7417b5d5dcf57ee44ac1e41c4eff33128d",
+      "deployment\\pg_wine_checksum_recipe.py": "8df31cc3554458b07cf76251052aa05b76f2953be93e4b826257c27e008bd599",
+      "deployment\\qualify_auth_bit_merge.py": "2be425145bbe26be34688eeae9888c348e5d3a9b7e2a5101295ea3c9d670a396",
+      "deployment\\qualify_auth_cache_consumer.py": "dc20da702b04d14ebee921e83787d57f93ac11ee501cb45ef685fce657636e16",
+      "deployment\\qualify_auth_only.py": "489f7de0cc8ba317528020badf774724039d1f9a94c32def6e5addbdf12f09d7",
+      "deployment\\qualify_db_policy_matrix.py": "95d51c3d49e644aa1079b777185ada3289366317f32844332f9f03d8114087cd",
+      "deployment\\qualify_handoff_wire.py": "62e2d06affa3189a7fe5b0c42b115a39a948723fb56f5130fee13ac60468448f",
+      "deployment\\qualify_manual_atlas_full_recipe.py": "ddc836cd402bc577a7657aca37a8acff5e79662abc692fd94e8ec46c606dcee3",
+      "deployment\\qualify_monitor_envelope.py": "9d9da9b6e41ec7c9e417fe368254f2db6f8c90e91014983c9b252ed24e1b5fd9",
+      "deployment\\qualify_original_receive.py": "8aa32efc7999ab674f876e910867db40a8783de28e5dd3e484477362e9dc91ec",
+      "deployment\\qualify_receive_candidate.py": "9408988da6b2865468ac09543ad02c898e7c069b4eea846dd43621eab6f9bbb0",
+      "deployment\\qualify_version_string_writer.py": "13722b23ed99a1af54859a0ab9538d3c96c5e1ed22bcb8bab9d06d671cfd933b",
+      "deployment\\qualify_windows_adapter.py": "cb8e507de770d885065eacca08370c6c392b347faf4852660f4625371023b351",
+      "deployment\\receive_candidate.py": "2a473ad2eb4e250f9f028921517471cf239b09c4978dfbb325486245e32e57f8",
+      "deployment\\source_audit.py": "cb56e3d4fccc29a9f38f968185470850250042998614f25d63f991399be5e69f",
+      "deployment\\sql_readiness_diagnostic.py": "4f5a7050440cf821502bd71e815165ca9b9028db5292de2a3bc03561b8f82f3d",
+      "deployment\\test_authenticated_handoff_contract.py": "fa79bfc1862eb2cbc0f7699df512a8cb4192424448a03d48e51af99a1c98a299",
+      "deployment\\test_auth_acceptance.py": "6b3b8055463c60be4591b6fd01b9482c24e4ec0382c3359455e221cceb7055e2",
+      "deployment\\test_auth_login_stage.py": "5fbc68d6ea3b6fe8c2777dce4e3f0955ae51e1e9065f0ea6eaba1bc3cc986b5d",
+      "deployment\\test_auth_readiness.py": "a85225628ad01455450e21704155ac7630666fcc785665d54eace013de8bf94a",
+      "deployment\\test_candidate_login.py": "4350f13e9a12e753e49d9e2fecf2b1e719810ebc6f34f16963d975550948e67b",
+      "deployment\\test_candidate_service.py": "6bb84cce4a6e07545cbfc6eb130c92ef2e96a44bc71dc91f0600472d1d7a2416",
+      "deployment\\test_candidate_sql_memory.py": "0efadfd7be710f670bf29c70b2a3b4aa40cf6957fb03a1fbe3be5a8aac5f14de",
+      "deployment\\test_client_reference.py": "825890fa02d57bbb3a364d1f08517a8bbca457a31141e3eb4eff1b5dc8c53a15",
+      "deployment\\test_control_reuse.py": "5d711f6ea63d4debad9c478edfadc3b6ed30838fa8961df9716704d02fdc7c0e",
+      "deployment\\test_db_checksum_candidate.py": "ea4ac9ac1ba603176cbd85dc94064cb13a804da9017bc6d766bc63608440ec26",
+      "deployment\\test_db_handoff_profile.py": "010b5946016127bf38d989c85c191108e27475a4d1e95725cc721b3fb4e1f5b1",
+      "deployment\\test_deployment.py": "e4aa843637cb6a1ae52eefc8633e2d25f1b004746cf94fcc66787fe75ca82d87",
+      "deployment\\test_hosted_manual_atlas_compile.py": "6a7b7830e8a0e60a6cb5c3803bc033e7601e45f4f60600582f80855eada95e36",
+      "deployment\\test_hosted_stage.py": "d97d3cd36637894434c2babeb8f322056ac8b2c0ae2b3c1087fa52f97e736680",
+      "deployment\\test_manual_atlas_full_recipe.py": "894c7d22156b8d826f98d8b93e18c4112e217c42ca2105a2e008e341b376752e",
+      "deployment\\test_monitor_channel_contract.py": "ce973cdb7f316d86176c8492538f01017025c729c7dbacfc5fba8aaa702c6d55",
+      "deployment\\test_password_fixture.py": "b9951bd2bcff20776bac94e06b801bd2a83a024dc0a0de1dc4bee2f292a1407a",
+      "deployment\\test_pg_wine_checksum_recipe.py": "1145397b6990ff72cd3c4bbf73c796d3854ac7444e6519479a2ebe88b8a4ad75",
+      "deployment\\test_receive_candidate_stage.py": "058297450220f58375da9f6c67a4230ba6d646d8275671ae1d43ec16772b8b94",
+      "deployment\\test_sql_readiness_diagnostic.py": "fae05e1308f95b3219586c8811c77df9c297da999f4c3ca23b17d4e99df219b5",
+      "deployment\\test_version_observation_contract.py": "44b982d8cca16fd3f025b84e42ed652e1abc8d07d4815a3cd837b3167e14bae1",
+      "deployment\\test_windows_tool_inventory.py": "40b857cf135bb926f9fb741ea840f6e590dd3ce5cf724f64b1984c9e437f8eed",
+      "deployment\\verify_auth_acceptance.py": "a3b00f097426083d8ce3cc153566a59197083445e522aeee3b1dfd70f505bf21",
+      "deployment\\version_observation_contract.py": "6aaec6613e4ee7144eba57a85a7df8d455df29f5d6f2eb8d13cf3291912d8221",
+      "deployment\\windows_tool_inventory.py": "4cc7e7f31bec750805d3badb4a467420ab76484630c6ffd8241c1f8d7c02a8b8",
+      "source_oracle.py": "5a50869f73d670e42ea188dc110fefaa795aa3d4624d4c3fd1c044e26ce9d376"
+    }
+  },
+  "source_inputs_unchanged": true
+}

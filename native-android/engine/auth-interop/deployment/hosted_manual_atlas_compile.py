@@ -4,7 +4,7 @@ Requires an externally pinned exact host-tool lock. An observation alone is not
 admission. No package, persistence profile, account or shipping file is changed.
 """
 import argparse,base64,gzip,hashlib,json,os,re,shutil,struct,subprocess,tempfile,time
-from pathlib import Path,PurePosixPath
+from pathlib import Path,PurePosixPath,PureWindowsPath
 import manual_atlas_full_recipe as recipe
 import hosted_db_checksum_candidate as db
 import hosted_auth_stage as host
@@ -41,6 +41,17 @@ def tool_lock(path,expected,environ=None):
         p=Path(row.get('path',''))
         if (not p.is_absolute() or p.is_symlink() or not p.is_file() or not 0<p.stat().st_size<=256*1024*1024
                 or row!={'path':str(p),'bytes':p.stat().st_size,'sha256':host.sha(p)}):raise ValueError('manual_exact_tool_identity')
+    representatives=lock.get('sdk_representatives')
+    if representatives is not None:
+        if set(representatives)!={'kernel32','ucrt','windows_header'}:raise ValueError('manual_sdk_representative_domain')
+        kits=PureWindowsPath(lock['tools']['rc']['path']).parents[3];sdk=lock['windows_sdk_version']
+        wanted={'kernel32':kits/('Lib/'+sdk+'/um/x86/kernel32.lib'),'ucrt':kits/('Lib/'+sdk+'/ucrt/x86/ucrt.lib'),
+                'windows_header':kits/('Include/'+sdk+'/um/Windows.h')}
+        for name,row in representatives.items():
+            p=Path(row.get('path',''))
+            if (PureWindowsPath(row.get('path',''))!=wanted[name] or p.is_symlink() or not p.is_file()
+                    or not 0<p.stat().st_size<=256*1024*1024 or row!={'path':str(p),'bytes':p.stat().st_size,'sha256':host.sha(p)}):
+                raise ValueError('manual_sdk_representative_identity')
     # The VS compiler, assembler, linker and MSBuild must belong to the pinned
     # installation; SDK rc and Git/CMake may live in their own installations.
     for name in ('cl','link','ml','msbuild'):
@@ -86,10 +97,19 @@ def check_post_source(before,after):
     return additions
 
 
+def git_config_environment(environ=None):
+    env=os.environ if environ is None else environ
+    actual={k:v for k,v in env.items() if k.startswith('GIT_CONFIG_')}
+    accepted={'GIT_CONFIG_COUNT':'1','GIT_CONFIG_KEY_0':'core.autocrlf','GIT_CONFIG_VALUE_0':'false'}
+    if actual and actual!=accepted:raise ValueError('manual_git_environment_override_refused')
+    return actual
+
+
 def source_state(root):
     return {'commit':host.capture(['git','-C',root,'rev-parse','HEAD']),
             'tracked_dirty':host.capture(['git','-C',root,'status','--porcelain','--untracked-files=no']),
-            'helper_inputs':{str(p.relative_to(HERE.parent)):host.sha(p) for p in list(HERE.glob('*.py'))+[HERE.parent/'source_oracle.py']},
+            'git_config_environment':git_config_environment(),
+            'helper_inputs':{p.relative_to(HERE.parent).as_posix():host.sha(p) for p in list(HERE.glob('*.py'))+[HERE.parent/'source_oracle.py']},
             'recipe_inputs':{p.name:host.sha(p) for p in recipe.MANIFEST.parent.iterdir() if p.is_file()}}
 
 
@@ -175,7 +195,8 @@ def pe_imports(path):
 
 
 def build(args):
-    if any(os.environ.get(name) for name in UNSAFE_ENV):raise ValueError('manual_ambient_build_override_refused')
+    git_config_environment()
+    if any(os.environ.get(name) for name in UNSAFE_ENV if name!='GIT_CONFIG_COUNT'):raise ValueError('manual_ambient_build_override_refused')
     deadline=time.monotonic()+2100
     root=args.source_root.resolve();output=args.output.resolve()
     identity=host.require_hosted(root,output,args.expected_commit)
@@ -308,9 +329,12 @@ def admit(directory,receipt_sha,binary_sha,toolchain_sha,root):
         if path.is_symlink() or not path.is_file() or path.stat().st_size>128*1024*1024 or row!={'bytes':path.stat().st_size,'sha256':host.sha(path)}:raise ValueError('manual_compile_file_identity')
     state=value.get('input_state_before')
     if not isinstance(state,dict) or state!=value.get('input_state_after') or state.get('commit')!=commit or state.get('tracked_dirty')!='':raise ValueError('manual_compile_input_stability')
+    git_config_environment(state.get('git_config_environment',{}))
     for name,h in state.get('helper_inputs',{}).items():
+        name=name.replace('\\','/')
+        if PurePosixPath(name).is_absolute() or '..' in PurePosixPath(name).parts:raise ValueError('manual_compile_helper_path')
         if digest(blob(name))!=h:raise ValueError('manual_compile_historical_helper_identity')
-    if 'deployment/hosted_manual_atlas_compile.py' not in state.get('helper_inputs',{}):raise ValueError('manual_compile_driver_identity')
+    if 'deployment/hosted_manual_atlas_compile.py' not in {n.replace('\\','/') for n in state.get('helper_inputs',{})}:raise ValueError('manual_compile_driver_identity')
     for name,h in state.get('recipe_inputs',{}).items():
         if digest(blob('evidence/manual-atlas-full-recipe-20261017/'+name))!=h:raise ValueError('manual_compile_historical_recipe_identity')
     lock=checked_json(directory/'toolchain-lock.json',toolchain_sha)

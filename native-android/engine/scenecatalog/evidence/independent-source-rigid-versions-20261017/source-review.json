@@ -1,0 +1,190 @@
+{
+  "schema": "coh-independent-opaque-source-body-version-bridges-v1",
+  "approved_source_and_host_scope": true,
+  "source_commit": "6c8142003",
+  "reviews": [
+    {
+      "receipt": "source-rigid-versions-packet-final-host.json",
+      "sha256": "eb7ba5b29c5ac4a935b81653fed315b03d2d91d935f005e73fbab5d8972deb73",
+      "verified_source_inputs": 57,
+      "verified_external_inputs": 19,
+      "modes": {
+        "release": {
+          "result": {
+            "version_completions": 2,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947664,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 4,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "c603e8392f648d9ab1cf41217958db016909d18a403c738fbb5889d1f3cc7a42"
+        },
+        "asan": {
+          "result": {
+            "version_completions": 2,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947664,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 4,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "8f36a00db338f60413c5efe59046ddf974fc1d84da37fdc079c6e473316ea78b"
+        },
+        "ubsan": {
+          "result": {
+            "version_completions": 2,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947664,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 4,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "f7556f3b21e2f4f30064b28861683276ce03f935df5e5dcc043a85bd8d81bf6f"
+        }
+      }
+    },
+    {
+      "receipt": "source-rigid-default-regression-after-versions-host.json",
+      "sha256": "179b8f2d10b56654c61b775ff8ee5da87292f4720f075d3a9b76c70bdaf72d80",
+      "verified_source_inputs": 48,
+      "verified_external_inputs": 12,
+      "modes": {
+        "release": {
+          "result": {
+            "version_completions": 0,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947306,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 2,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "d4aaf8571bc4c9a240cef8e06d03950ee750cc237661044ccb3f193944092160"
+        },
+        "asan": {
+          "result": {
+            "version_completions": 0,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947306,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 2,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "6e9e07f38eaa8fc5f2f5bceb610c31f7f01e9857ac009fbce278657c69a95a89"
+        },
+        "ubsan": {
+          "result": {
+            "version_completions": 0,
+            "bridge_completions": 2,
+            "passed": true,
+            "checks": 947306,
+            "profile_files": 391,
+            "covered_model_rows": 8250,
+            "source_root_references": 3083,
+            "body_alloc_failure_cases": 15,
+            "selection_peak_bytes": 38733621,
+            "body_peak_bytes": 71063020,
+            "input_evidence_bytes": 1212085,
+            "procedural_file_bodies_checked": 2,
+            "shop_zero_model_owners": 4,
+            "direct_open_observed": false,
+            "assets_admitted": false,
+            "world_authority": false
+          },
+          "binary_sha256": "bcf1679b3c492c653638da8abf9ba339dffb23a2b56ccfc099b7ed407a31c5da"
+        }
+      }
+    }
+  ],
+  "original_delta": {
+    "unchanged_function_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+    "generated_oracle_sha256": "8013760cc165e2dbea5d6e638f2dc1142536cb800027ee9ec7de677a02abdcba",
+    "packets": {
+      "7": {
+        "body_sha256": "66742a3b485b7772e6ab20a4edc750a7e46d99891e35473bfc587a3b0e9fd374",
+        "packet_sha256": "3fb965f9418df30204ce540efbe70d2263bba4e22cfd8faec14b9eaf728fd1f5",
+        "packet_bytes": 248,
+        "original_delta_scalars": 38
+      },
+      "5": {
+        "body_sha256": "e1462116a522be747e72ddaccf353c25c17d8d510246704563affa54695ec6c5",
+        "packet_sha256": "93d7d45c4519de22024d1c36f140a444446c5df47096e076c399e8b77e0dee08",
+        "packet_bytes": 1168,
+        "original_delta_scalars": 92
+      }
+    },
+    "fixture_materials_only": true
+  },
+  "review": [
+    "Public request remains sourceordinal+externaldigest/materialcallbacks only; newexplicitv5/v7 wrappers bindfixedlowlevelCPUentries. Version/path/model/fullbodySHA/assetgeneration/rawroworigins derive from retainedactualopaqueBody, notcallerpolicy/geometrylabels. Private arbitrarycallbackplumbing is notpublicadmissionAPI.",
+    "ActualBodyversion checked afterlease/knownalias/outputstate checks andbeforeallocation/materialcallbacks. Existingdefaultfactory stillcallssource0/8 unchanged; wrongexactentry refuses. Sharedversion5/7lowlevel policies were independentlyqualified separately.",
+    "Ownershiptransfer remainslastoperation afterCPUidentity/count/body/material generation checks andcancellation. Failure keepscallerBody/output/report unchanged; retirementreleasesCPUpins beforeBody. Borrowedgraph andactual loader/callbacklifetime remainexternalimmutableleases.",
+    "Current uniqueowner bytes+private8KiBreserve andoneactual loaderreservation chargedbeforecalloc; historicalstats checkedagainstreservation ratherthansubtracted. Other oldresources/callbackmemory areexplicit callerretained accounting.",
+    "57new/48default testedsource maps strip explicit coordinator/renderer role prefixes; all bytes also match6c Gitblobs and currentintegrateddependencycopies. External19/12inputhashes andthree-mode receipts verified. New2actualCPUbridges Chaser248B/38scalars andramp1168B/92scalars matchunchangedoriginaldelta; default947306/mode remains, new947664/mode. Fouractualbodiesretained, sourceassetgeneration20261016/material19 explicitfixture.",
+    "DerivedFILEorigin remains proceduralexactcoldprofile only, directopenfalse/CLIENTunresolved. Graphnodeisdefinition notplacedinstance/pose. Printed71MB inheritedNeonBodymeasurement isnotnewbridgepeak. Original32compile/refusal evidence notpromoted bybridge."
+  ],
+  "reviewer_reran_corpus": false,
+  "scope": {
+    "scoped_procedural_FILE_body": true,
+    "actual_CPU_fixture_completions": true,
+    "direct_open": false,
+    "CLIENT_materials": false,
+    "effective_LOD": false,
+    "active_live_generation": false,
+    "GPU": false,
+    "actor": false,
+    "world": false,
+    "android": false,
+    "thor": false
+  }
+}

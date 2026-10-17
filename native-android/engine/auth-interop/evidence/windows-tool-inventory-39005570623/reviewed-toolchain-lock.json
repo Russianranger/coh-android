@@ -1,0 +1,80 @@
+{
+  "schema": "coh-reviewed-windows-build-tool-lock-v1",
+  "image_os": "win25-vs2026",
+  "image_version": "20261007.264.1",
+  "generator": "Visual Studio 18 2026",
+  "architecture": "Win32",
+  "vs_installation": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise",
+  "vc_toolset_version": "14.51.36231",
+  "windows_sdk_version": "10.0.26100.0",
+  "compiler_version": "19.51.36260.0",
+  "cmake_version": "4.4.4",
+  "tools": {
+    "cl": {
+      "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\cl.exe",
+      "bytes": 891752,
+      "sha256": "58702ed8002b28348dbbd1099e9d2c2b2b092681cda024a5eaee371cc28aa881"
+    },
+    "link": {
+      "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\link.exe",
+      "bytes": 3701128,
+      "sha256": "78c1de5188da927239a017b4690491be838917478a0ee91401dfcc0291a9aa48"
+    },
+    "ml": {
+      "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x86\\ml.exe",
+      "bytes": 675160,
+      "sha256": "8622fb7116bfa7ee98efb3c50f5dd8ea6be49f06a8ae9b2264bd7120eced932b"
+    },
+    "msbuild": {
+      "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
+      "bytes": 377168,
+      "sha256": "951a276306a0710f6da81692784a050a4c2c6452a753fa4afa124ae35e230a1c"
+    },
+    "git": {
+      "path": "C:\\Program Files\\Git\\bin\\git.exe",
+      "bytes": 45400,
+      "sha256": "54bda91c773c6bba2b970424423cfcb80552d92dc6967d766f98931fe1251a54"
+    },
+    "patch": {
+      "path": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+      "bytes": 168973,
+      "sha256": "00d555c71e05775208a95a0ad439c00ad95d107ef8d0ae93576554e35eb9125b"
+    },
+    "cmake": {
+      "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+      "bytes": 13465160,
+      "sha256": "3a329667300846abc8dffccbdcb1c8c2d4a6cebe342d499181825205ea8c766c"
+    },
+    "rc": {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+      "bytes": 55736,
+      "sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a"
+    }
+  },
+  "sdk_representatives": {
+    "kernel32": {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x86\\kernel32.Lib",
+      "bytes": 329914,
+      "sha256": "0916cf9c90410acf8fe000b23443f54c467bdecb14078034f3c9ec086200afc7"
+    },
+    "ucrt": {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\ucrt\\x86\\ucrt.lib",
+      "bytes": 299244,
+      "sha256": "ccd3dad2a72ad555a320b855eea24eb9b6fc2d216473bd794ae7831bde00913d"
+    },
+    "windows_header": {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\Windows.h",
+      "bytes": 7511,
+      "sha256": "b337d661d03a4abefb7b86a2742ce1ad5d19b57cd8b858bd13e7bbcc1dbeeaaa"
+    }
+  },
+  "inventory_binding": {
+    "run_id": "39005570623",
+    "artifact_id": 12090613318,
+    "artifact_sha256": "a9435c960839c4a4b93174d527b5d1c294ed9f964ed507ccd943cd9676e40c23",
+    "receipt_sha256": "9f34ad291572a4424d17f400f05b2b9aceaabefc2d2cce23fcecbe5235a9666b",
+    "repository_commit": "d6ef33b3306c496e6d6a9ee2f8c9ab12ffdfbc05",
+    "source_byte_profile": "exact_git_LF_to_checkout_CRLF_all_61_helpers",
+    "scope": "Eight primary executable observations; next build rehash required. No runtime or shipping permit."
+  }
+}

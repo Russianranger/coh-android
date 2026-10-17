@@ -1,0 +1,7 @@
+{
+  "commit": "ea05a120982be5c74899d10da48fe4ac69de58ef",
+  "scope": "Supplemental commit/tree/blob objects only; ancestors intentionally excluded; import worker bundle and remote prerequisites first.",
+  "objects": 25,
+  "bytes": 38206,
+  "sha256": "d053be6a9817f679f4596e6e88b01182e7b5e9c1f6d483e94c58caf7881a3ffd"
+}

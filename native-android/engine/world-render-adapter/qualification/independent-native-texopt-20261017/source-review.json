@@ -1,0 +1,66 @@
+{
+  "schema": "coh-independent-native-historical-texopt-review-v1",
+  "approved_source_and_host_scope": true,
+  "source_commit": "725070a9e0439abc237eb6e91898273abe2b43f4",
+  "evidence_commit": "c6439aded",
+  "host_receipt_sha256": "5eee268d5ab2871ee6faf63361f5e123745669cdd2637aeb05c16f80c1f763bd",
+  "verified_tested_commit_inputs": 39,
+  "additional_read_only_source_audit": {
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9"
+  },
+  "qualification": {
+    "release": {
+      "passed": true,
+      "checks": 1515598,
+      "postprocessed": 14714,
+      "unsupported_source_rows": 1,
+      "cache_owned_bytes": 319752,
+      "record_owned_bytes": 6192,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 1515598,
+      "postprocessed": 14714,
+      "unsupported_source_rows": 1,
+      "cache_owned_bytes": 319752,
+      "record_owned_bytes": 6192,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 1515598,
+      "postprocessed": 14714,
+      "unsupported_source_rows": 1,
+      "cache_owned_bytes": 319752,
+      "record_owned_bytes": 6192,
+      "material_authority": false,
+      "world_authority": false
+    }
+  },
+  "review": [
+    "Fixed immutable cache metadata pins one exact loader body and validates all14715 complete TexOpt rows, file/timestamp association, internal names, finite stored floats and bounded opaque Trick spans. Heap index preserves all source ordinals; source owner lookup is case-insensitive highest ordinal. No BasicTexture/composite resource or live generation is inferred.",
+    "Native private declarations, enum values, six parse tables and five postprocess function bodies are regenerated/checked against pinned original source. Complete typed original binary readers plus CLIENT setup execute in the independent eager oracle with explicit TokenStore/allocator/string/stash interfaces. The stash oracle uses a fixture FNV implementation, not original stash primitive execution. Additional original StashTable.c audit confirms default narrow-string case-insensitive equality and nonoverwrite semantics; original reverse setup loop proves highest-ordinal ownership.",
+    "Record construction owns parsed and postprocessed structures plus one bounded4KiB arena. The stored shallow pointer snapshot remains valid because setup clears/moves pointers and allocates duplicates without mutating old string bytes. Arena free hooks are intentionally no-ops until whole owner retirement. Surface pointer is preparation-only and cleared before publication; copied owner filename makes records survive cache/loader/Surface retirement.",
+    "Cache named budget includes whole configured loader reservation, fixed metadata and32KiB native/static reserve before acquire/calloc. Record external minimum requires cache metadata, whole loader and Surface owner/static; new record adds its owner/reserve. Caller must charge all previous records/provider/runtime peaks. No hidden eager per-record materialization or sorting allocation; full process/compiler/sanitizer/crypto closure is external.",
+    "Known outputs/owner/blob/Surface/control spans and endpoint overflow are guarded; getter views borrow only their immutable owner. Cancellation, digest/generation/allocation/alias/budget/late failure leave output unchanged and retire pins. This is serialized preparation; no shared mutable postprocess globals or arbitrary public decoder hooks.",
+    "All39 tested native/helper/source bytes match725 Gitblobs/current files and actual cache digest matches retained donor bytes. START hashes freeze before helper imports; checked-source exec avoids pyc and supplies admitted nested imports even with older Surface helper revision. Final1515598 controls per release/ASan/UBSan cover all14714 supported postprocessed rows; no corpus rerun by reviewer.",
+    "Exact high-byte source row10499 remains present and wire-validated but postprocess refuses UNSUPPORTED. Its world necessity requires resource closure; no repaired name or omitted definition is invented. Original white references/defaults are preserved names, not loaded textures or renderer fallback. Compiled parser CRC, actual CLIENT runtime/cache selection, full Trick/AutoLOD, active namespaces/capabilities/material/GPU/world remain unresolved."
+  ],
+  "reviewer_reran_large_corpus": false,
+  "scope": {
+    "historical_TexOpt_wire_and_postprocess": true,
+    "original_stash_primitives": false,
+    "compiled_schema_crc": false,
+    "actual_CLIENT_runtime": false,
+    "active_generation": false,
+    "BasicTexture_composite_factory": false,
+    "material": false,
+    "GPU": false,
+    "world": false,
+    "android": false,
+    "thor": false
+  }
+}

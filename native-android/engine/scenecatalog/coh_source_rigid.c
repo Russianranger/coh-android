@@ -1,4 +1,4 @@
-#include "coh_source_rigid.h"
+#include "coh_source_rigid_internal.h"
 #include <stdlib.h>
 #include <string.h>
 struct CohSourceRigid {CohSourceBody *body;CohWrRigidResource *rigid;CohSourceRigidReport report;};
@@ -7,7 +7,8 @@ static CohStatus add(size_t *n,size_t x,size_t cap){if(*n>cap||x>cap-*n)return C
 #define TRY(x) do{CohStatus st_=(x);if(st_!=COH_OK)return st_;}while(0)
 static CohStatus tick(CohCancel c){return c.poll&&c.poll(c.context)?COH_CANCELLED:COH_OK;}
 void coh_source_rigid_free(CohSourceRigid *r){if(!r)return;coh_wr_rigid_release(&r->rigid);coh_source_body_free(r->body);free(r);}
-CohStatus coh_source_rigid_create(CohSourceBody **body,const CohSourceRigidRequest *q,const CohSourceRigidLimits *b,CohCancel cancel,CohSourceRigid **out,CohSourceRigidReport *report){
+CohStatus coh_source_rigid_create_using(CohSourceBody **body,const CohSourceRigidRequest *q,const CohSourceRigidLimits *b,CohCancel cancel,CohSourceRigid **out,CohSourceRigidReport *report,uint32_t exact_version,CohSourceRigidAcquire acquire_cpu){
+ if(!acquire_cpu||(exact_version!=0&&exact_version!=7&&exact_version!=5))return COH_INVALID;
  if(!body||!*body||!q||!b||!out||!report||!q->digest||!q->acquire||!q->release||!q->material_generation)return COH_INVALID;
  const void *p[]={body,q,b,out,report};size_t sizes[]={sizeof(*body),sizeof(*q),sizeof(*b),sizeof(*out),sizeof(*report)};
  for(unsigned n=0;n<5;n++)for(unsigned k=n+1;k<5;k++)if(!disjoint(p[n],sizes[n],p[k],sizes[k]))return COH_INVALID;
@@ -18,13 +19,13 @@ CohStatus coh_source_rigid_create(CohSourceBody **body,const CohSourceRigidReque
  const void *sp[]={lease.model.definition_name,lease.model.model_name,lease.model.geo_name,lease.geo.id.path};
  for(unsigned k=0;k<4;k++)for(unsigned n=0;n<5;n++)if(!disjoint(p[n],sizes[n],sp[k],strlen(sp[k])+1))return COH_INVALID;
  if(*out)return COH_STATE;
- if(lease.model.zero_draw_model)return COH_UNSUPPORTED;
+ if(lease.model.zero_draw_model||(exact_version&&lease.model.geo_version!=exact_version))return COH_UNSUPPORTED;
  size_t external=b->retained_bytes;TRY(add(&external,lease.retained_owner_bytes,b->aggregate_limit));TRY(add(&external,sizeof(CohSourceRigid)+8192u,b->aggregate_limit));size_t preflight=external;TRY(add(&preflight,lease.loader_reservation,b->aggregate_limit));
  if(coh_asset_stats(lease.loader).peak_allocated_bytes>lease.loader_reservation)return COH_LIMIT;
  CohSourceRigid *r=calloc(1,sizeof(*r));if(!r)return COH_LIMIT;
  CohWrRigidRequest request={0};request.geo=lease.geo.id;request.model=lease.model.model_name;memcpy(request.geo_sha256,lease.geo.sha256,32);request.material_generation=q->material_generation;request.digest=q->digest;request.digest_context=q->digest_context;request.acquire=q->acquire;request.release=q->release;request.material_context=q->material_context;
  CohWrRigidLimits limits={b->aggregate_limit,external,lease.loader_reservation,b->max_workspace_bytes,b->max_stream_bytes,b->max_models,b->max_vertices,b->max_triangles,b->max_parts};
- CohStatus status=coh_wr_rigid_source_acquire(lease.loader,&request,&limits,cancel,&r->rigid);if(status!=COH_OK)goto fail;
+ CohStatus status=acquire_cpu(lease.loader,&request,&limits,cancel,&r->rigid);if(status!=COH_OK)goto fail;
  CohAssetId id;const char *model;status=coh_wr_rigid_identity(r->rigid,&id,&model);if(status!=COH_OK)goto fail;status=coh_wr_rigid_report(r->rigid,&r->report.rigid);if(status!=COH_OK)goto fail;
  if(id.generation!=lease.binding.asset_generation||strcmp(id.path,lease.geo.id.path)||strcmp(model,lease.model.model_name)||memcmp(r->report.rigid.geo_sha256,lease.geo.sha256,32)||r->report.rigid.material_generation!=q->material_generation||r->report.rigid.geo_version!=lease.model.geo_version||r->report.rigid.vertices!=lease.model.model.vertex_count||r->report.rigid.triangles!=lease.model.model.triangle_count||r->report.rigid.parts!=lease.model.model.material_count){status=COH_STATE;goto fail;}
  status=tick(cancel);if(status!=COH_OK)goto fail;
@@ -37,3 +38,8 @@ CohStatus coh_source_rigid_create(CohSourceBody **body,const CohSourceRigidReque
 }
 CohStatus coh_source_rigid_report(const CohSourceRigid *r,CohSourceRigidReport *out){if(!r||!out)return COH_INVALID;if(!disjoint(r,sizeof(*r),out,sizeof(*out)))return COH_INVALID;*out=r->report;return COH_OK;}
 CohStatus coh_source_rigid_part(const CohSourceRigid *r,uint32_t i,CohRenderGeometry *g,CohWrRigidMaterial *m){if(!r||!g||!m)return COH_INVALID;if(!disjoint(g,sizeof(*g),m,sizeof(*m))||!disjoint(r,sizeof(*r),g,sizeof(*g))||!disjoint(r,sizeof(*r),m,sizeof(*m)))return COH_INVALID;return coh_wr_rigid_part(r->rigid,i,g,m);}
+
+CohStatus coh_source_rigid_create(CohSourceBody **body,const CohSourceRigidRequest *q,
+ const CohSourceRigidLimits *b,CohCancel cancel,CohSourceRigid **out,CohSourceRigidReport *report){
+ return coh_source_rigid_create_using(body,q,b,cancel,out,report,0,coh_wr_rigid_source_acquire);
+}

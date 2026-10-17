@@ -12,7 +12,7 @@ SOURCES=[HERE/'coh_selected_record.c',HERE/'../entities/coh_entities.c',HERE/'..
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,required=True);ap.add_argument('--sanitize',action='store_true');a=ap.parse_args()
  if a.output.exists():ap.error('new output required')
- paths=set(SOURCES+[HERE/'test_selected_record.c',HERE/'check.py',HERE/'fixtures.py',HERE/'oracle_front.h']);paths.update((HERE/'../entities').glob('*.h'));paths.update((HERE/'../entities').glob('*.py'));paths.update((HERE/'../entities').glob('*.inc'));paths.update((HERE/'../entities').glob('*source-pins.json'));paths.update([HERE/'coh_selected_record.h',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',ROOT/'native-android/include/coh_native_core.h',ROOT/'native-android/tools/protocol_fixture/prepare.py'])
+ paths=set(SOURCES+[HERE/'test_selected_record.c',HERE/'check.py',HERE/'fixtures.py',HERE/'oracle_front.h']);paths.update((HERE/'../entities').glob('*.h'));paths.update((HERE/'../entities').glob('*.py'));paths.update((HERE/'../entities').glob('*.inc'));paths.update((HERE/'../entities').glob('*source-pins.json'));paths.update([HERE/'coh_selected_record.h',HERE/'coh_record_kernel.h',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',ROOT/'native-android/include/coh_native_core.h',ROOT/'native-android/tools/protocol_fixture/prepare.py'])
  hashes={str(p.resolve().relative_to(ROOT)):sha(p) for p in sorted(paths)}
  revision=run(['git','-C',ROOT,'rev-parse','HEAD']).strip();spec=importlib.util.spec_from_file_location('selected_fixtures',HERE/'fixtures.py');fixture=importlib.util.module_from_spec(spec);spec.loader.exec_module(fixture)
  with tempfile.TemporaryDirectory(prefix='coh-selected-record-')as name:

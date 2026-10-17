@@ -1,0 +1,40 @@
+name: Reviewed full manual PG Wine checksum candidate compile only
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-manual-pg-wine-compile.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-manual-pg-wine-compile-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  compile-only:
+    if: github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message, '[manual-pg-wine-compile]')
+    runs-on: windows-2025
+    timeout-minutes: 45
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify reviewed tools and compile the full manual checksum candidate
+        shell: pwsh
+        run: >-
+          python native-android/engine/auth-interop/deployment/hosted_manual_atlas_compile.py build
+          --source-root $PWD --expected-commit $env:GITHUB_SHA
+          --output "$env:RUNNER_TEMP/coh-full-manual-pg-wine-compile"
+          --host-qualification native-android/engine/auth-interop/evidence/manual-atlas-full-recipe-20261017/qualification.json
+          --expected-host-qualification-sha256 c15813238fff23cff22984dd283981965a4fd1208932cb7e18fba6e2319568d6
+          --toolchain-lock native-android/engine/auth-interop/evidence/windows-tool-inventory-39005570623/reviewed-toolchain-lock.json
+          --expected-toolchain-sha256 a70e878ad1f8872cc876987f6ec644f27bbf7c5ec98db528742f28ed5b098125
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-manual-pg-wine-checksum-compile-only
+          path: ${{ runner.temp }}/coh-full-manual-pg-wine-compile/
+          if-no-files-found: error
+          retention-days: 90

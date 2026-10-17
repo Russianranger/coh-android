@@ -1,0 +1,28 @@
+{
+  "schema": "coh-initial-record-list-source-binding-v1",
+  "source_commit": "08e3de8635e953ea54f5283b643246eb3ddc17cb",
+  "all_tested_inputs_match_committed_blobs": true,
+  "tested_input_counts": {
+    "host-proof.json.gz": 146,
+    "selected-regression.json": 79,
+    "outer-regression.json": 92
+  },
+  "receipt_sha256": {
+    "host-proof.json.gz": "5f39be82db8a68e49f6dede5624a04f8ad57565fc8d7c77d8e00724060a5cd0a",
+    "selected-regression.json": "a0919c426c7e15acb0d5592dfc49136fcf59ba83dfb4194e755c4f326f9b0e1e",
+    "outer-regression.json": "df528d4c7497a3c79212b65b757f35b01c33f08f500b9d620c551db7c3c49a02"
+  },
+  "fixture_sha256": "05b7a195c4c33afea98499d1cf3ab01b1d5a4c712cd24f6f61c2b976c6d47a21",
+  "fixture_gzip_sha256": "0ad84db8d6c3838acbf2a42cfe6831d2a8155c9abd9b9ebb3921c1489a364a04",
+  "fixture_bytes": 1326723,
+  "fixture_gzip_bytes": 130519,
+  "native_production_all_stack_frames_sum": 56392,
+  "qualified_host_sizes": {
+    "compact_entry": 80,
+    "list_result": 10008,
+    "workspace": 54248
+  },
+  "actor_publication": false,
+  "ack_permitted": false,
+  "scope": "New initial generic/list host and sanitizers plus unchanged selected/outer regressions. Every tested source/provider/original input equals committed bytes; no rerun of old APK/server captures. Original source engine/object graphs/Win32 ABI/runtime dictionary generation/Android execution remain outside these host proofs."
+}
