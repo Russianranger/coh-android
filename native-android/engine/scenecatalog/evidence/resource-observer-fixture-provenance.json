@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "fixture_sha256": "23c13ab4d9e84cbf3a7a29d5eeeef31f039c26b61f868cbbb24e8ea98d6cf4ce",
+  "fixture_bytes": 1579,
+  "origin": "Unchanged original-source observer fixture execution; six synthetic runtime rows, not a live server capture",
+  "source_observer_path": "native-android/engine/scenecatalog-server/source_resources.inc",
+  "source_observer_sha256": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+  "source_observer_commits": [
+    "2399faed8",
+    "082553cd9"
+  ],
+  "source_qualification_receipt_sha256": "6c8a9d148e52a4f1a51fdcadd44487281e329f0de3212865d0fd630094993636",
+  "actual_runtime_resource_capture": false
+}

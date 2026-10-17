@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_sha256": {
+    "upstream/ouroboros/Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+    "native-android/engine/scenecatalog/coh_resource_index.c": "64d4b7a2c76ad821242910b7331103b10e04764d3ce63bd29ae9b3837bd201ce",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/scenecatalog/coh_resource_index.h": "dd9b41a791ffb2b92ef81057b0bb3bad5c8136fdacb251e4b7ad9af22c60c82d",
+    "native-android/engine/scenecatalog/tests/test_resource_index.c": "43c421b5d1f38f97952cda738947a5e835d8bd1158c1fcd4180c630d7adb15f0",
+    "native-android/engine/scenecatalog/tests/resource-fixtures/observed.cohres": "23c13ab4d9e84cbf3a7a29d5eeeef31f039c26b61f868cbbb24e8ea98d6cf4ce",
+    "native-android/engine/scenecatalog/check_resource_index.py": "ce1c28c8fd621106a528fe066b3e378388b7e2f03759d90ed4f60b679ed9f68e",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "original_functions": [
+    "groupGetPublicName",
+    "groupNameIdx",
+    "compareModelNamesAndLengths",
+    "trickFromObjectName"
+  ],
+  "original_lookup_comparisons": 6942,
+  "modes": {
+    "release": {
+      "observed_source_controls": {
+        "passed": true,
+        "checks": 21840,
+        "authentic_geo": false
+      },
+      "authentic_geo_controls": {
+        "passed": true,
+        "checks": 18699,
+        "authentic_geo": true
+      },
+      "binary_sha256": "b79d835a0baf3b43f0f452b7b9b30d6b99152ae2fcf3dcdba957b39835fb15fd"
+    },
+    "asan": {
+      "observed_source_controls": {
+        "passed": true,
+        "checks": 21840,
+        "authentic_geo": false
+      },
+      "authentic_geo_controls": {
+        "passed": true,
+        "checks": 18699,
+        "authentic_geo": true
+      },
+      "binary_sha256": "d4c7671769c0c3adf6fb2fbf2ba6c03c943239c80e7f9879bdb35c6d0daf5dfa"
+    },
+    "ubsan": {
+      "observed_source_controls": {
+        "passed": true,
+        "checks": 21840,
+        "authentic_geo": false
+      },
+      "authentic_geo_controls": {
+        "passed": true,
+        "checks": 18699,
+        "authentic_geo": true
+      },
+      "binary_sha256": "ad7ed938b2be22bb279a54f0a7ae688e31ae3cc757509a3db220603aea54d624"
+    }
+  },
+  "actual_geo_sha256": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5",
+  "actual_geo_path": "data/object_library/worldnpcs/praetorian_box/g_praetorianbox_open.geo",
+  "actual_geo_model_row": 0,
+  "actual_runtime_resource_capture": false,
+  "source_fixture_only": true,
+  "client_materials_admitted": false,
+  "live_groups_admitted": false,
+  "graph_published": false,
+  "world_authority": false,
+  "android_executed": false,
+  "protected_asset_source_modified": false,
+  "leak_sanitizer": false,
+  "allocation_balance_controls": true
+}

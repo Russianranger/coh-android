@@ -77,6 +77,16 @@ static void graph_test(CohBytes catalog,CohBytes snapshot,const CohRuntimeSnapsh
     size_t initial=live;CohRuntimeGraphBinding binding={1,1,*pins};
     CohRuntimeGraph*g=NULL,*next=NULL,*retired=NULL;CohRuntimeGraphReport report;
     size_t before=calls;CHECK(coh_runtime_graph_build(NULL,catalog,snapshot,&binding,budget,NULL,&g,&report)==COH_OK);size_t allocations_count=calls-before;graph_qualified=report;
+    CohRuntimeGraphBinding recorded;CohBytes borrowed_catalog={0},borrowed_snapshot={0};
+    CHECK(coh_runtime_graph_binding(g,&recorded)==COH_OK);
+    CHECK(recorded.generation==binding.generation&&recorded.catalog_generation==binding.catalog_generation&&recorded.pins.asset_generation==pins->asset_generation);
+    CHECK(!memcmp(recorded.pins.catalog_sha256,pins->catalog_sha256,32)&&!memcmp(recorded.pins.snapshot_sha256,pins->snapshot_sha256,32));
+    CHECK(!memcmp(recorded.pins.source_sha256,pins->source_sha256,32)&&!memcmp(recorded.pins.run_sha256,pins->run_sha256,32));
+    CHECK(recorded.pins.digest==pins->digest&&recorded.pins.context==pins->context);
+    CHECK(coh_runtime_graph_sources(g,&borrowed_catalog,&borrowed_snapshot)==COH_OK);
+    CHECK(borrowed_catalog.data==catalog.data&&borrowed_catalog.size==catalog.size&&borrowed_snapshot.data==snapshot.data&&borrowed_snapshot.size==snapshot.size);
+    CHECK(coh_runtime_graph_sources(g,&borrowed_catalog,&borrowed_catalog)==COH_INVALID);
+    CHECK(coh_runtime_graph_sources(NULL,&borrowed_catalog,&borrowed_snapshot)==COH_INVALID&&borrowed_catalog.data==catalog.data&&borrowed_snapshot.data==snapshot.data);
     CHECK(report.source.complete_source_name_closure&&report.nodes==report.source.definitions+report.source.external_count);
     CHECK(!report.source.world_authority&&!report.source.assets_admitted&&!report.source.groups_received);
     CHECK(report.aggregate_peak_bytes<=budget->aggregate_limit);

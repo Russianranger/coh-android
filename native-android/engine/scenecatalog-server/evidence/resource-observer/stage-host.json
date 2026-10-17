@@ -1,0 +1,56 @@
+{
+  "schema": "coh-resource-stage-source-qualification-v1",
+  "passed": true,
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+    "native-android/engine/scenecatalog-server/source_resources_sink.inc": "3f5cbd9152f022a9d65a8baac813bf3cacc7ce41d579f4257d4c2c7bd8059a9e",
+    "native-android/engine/scenecatalog-server/test_resources_sink.c": "aca676e6d47438d537b9d231305b5410893bedc938fcc3405dfedb81b143d892",
+    "native-android/engine/scenecatalog-server/test_stage_resources.py": "58c3a0e848592b6b10b9fd48a754ef34ead89467c524c0c34ec109e4434d4ef1",
+    "native-android/engine/scenecatalog-server/stage_resources.py": "7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6",
+    "native-android/engine/scenecatalog-server/record_resource_compile.py": "90828896c2897d720f220593a98a7532e314b3928ac45922e60aab80a3c677d4",
+    "native-android/engine/scenecatalog-server/check_resources_stage.py": "a55c1ad449162afe320acdea99256a9c591b2b8bfc77a05cb0f504edc69952e7",
+    "native-android/engine/scenecatalog-server/source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d",
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "native-android/engine/scenecatalog-server/stage_snapshot.py": "ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c",
+    "native-android/engine/scenecatalog-server/stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3"
+  },
+  "stage_tests": 7,
+  "stage_test_output": "test_each_overlay_drift_refused (test_stage_resources.ResourceStageTests.test_each_overlay_drift_refused) ... ok\ntest_exact_original_preserved_and_single_owner_hook (test_stage_resources.ResourceStageTests.test_exact_original_preserved_and_single_owner_hook) ... ok\ntest_newline_identity_preserved (test_stage_resources.ResourceStageTests.test_newline_identity_preserved) ... ok\ntest_only_new_private_role_and_frozen_existing_payload (test_stage_resources.ResourceStageTests.test_only_new_private_role_and_frozen_existing_payload) ... ok\ntest_receipt_role_tamper_refused (test_stage_resources.ResourceStageTests.test_receipt_role_tamper_refused) ... ok\ntest_repeated_stage_refused_without_overwrite (test_stage_resources.ResourceStageTests.test_repeated_stage_refused_without_overwrite) ... ok\ntest_unchanged_original_input_required (test_stage_resources.ResourceStageTests.test_unchanged_original_input_required) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.069s\n\nOK\n",
+  "sink_checks": {
+    "release": {
+      "passed": true,
+      "checks": 791,
+      "actual_triple_sink": true,
+      "runtime_executed": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 791,
+      "actual_triple_sink": true,
+      "runtime_executed": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 791,
+      "actual_triple_sink": true,
+      "runtime_executed": false
+    }
+  },
+  "binary_sha256": {
+    "release": "050f5277c3258e9138ffd7deea60ee0ae2f2d6b4e84aa3ce6e6977ca7ccea7cf",
+    "asan": "bf015d771766a64ada82a82f9c9e9c9059fd93d83664cc808b49709064f5d5ec",
+    "ubsan": "42d691ca1abd0c1db658a24bcc32b2ab75333012e516cecda9ac4faa855a29bb"
+  },
+  "actual_windows_compiled": false,
+  "actual_runtime_executed": false,
+  "winapi_fixture_only": true,
+  "capture_started": false,
+  "catalog_replaced": false,
+  "shipping_changed": false,
+  "source_observer_mutation": false,
+  "client_materials_complete": false,
+  "client_lods_complete": false,
+  "sink_faults": "each create/write/flush/close/rename position; producer failures; delete leftovers; private path collisions; original outputs preserved",
+  "leak_sanitizer": false
+}

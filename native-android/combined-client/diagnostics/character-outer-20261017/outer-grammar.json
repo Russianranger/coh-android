@@ -1,0 +1,937 @@
+{
+  "schema": "coh-original-character-outer-order-v1",
+  "original_revision": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+  "source_sha256_lf": {
+    "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "Common/gameComm/wdwbase.c": "fddd0af05b1764115d3c885140b8074587d9e4cc5c762a0101dc49042e30e732",
+    "Common/gameComm/wdwbase.h": "18427c8f68e1a3ef0c3d149ab35801edbe151a16cb2bee166fb8174c8f2a6f6c",
+    "Game/src/UI/uiOptions_Type.c": "8a3704eec9b207d05f8533ad08b618edabcebe3893e196531fa882dd95bd2e5b",
+    "Game/src/UI/uiOptions_Type.h": "73ac1805bb89c0042c031af77336609eee3bab8e4d48fdbdec7aaa1551eb796c",
+    "Game/src/UI/uiNet.c": "79a36e45898f70356c762299a2ab58a0e82c4557cb7047dc505ef400741b1f01",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "Common/entity/entStrings.c": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0",
+    "MapServer/src/entity/keybinds.c": "96df4d670b377dffa4821d8c591926a6bd725c6f0b579eecb0874076bf0377f4",
+    "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+    "Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+    "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+    "Game/src/UI/uiKeybind.h": "c67d779c9870a26fc9474c061216678f5d9728daa6f418a46362ee64330f94fb",
+    "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+    "Common/gameComm/trayCommon.c": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6",
+    "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+    "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+    "Game/src/UI/uiReticle.h": "cd2afa72ef0bbd67a556074d3e307d74c4313a1d80876614ff178fda68a1cc35",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e",
+    "Common/entity/chatSettings.c": "3c45ed2d51381914fc905f9305949184206b6f19370af7d03f5acf5f0b0f2146",
+    "MapServer/src/entity/friends.c": "dad13320de15e17e8d628536432fa51c0ad65d0e64dc3fb06ba09f71fcf64bb5",
+    "Game/src/UI/uiChat.c": "b4b14caf4b726dcfa99fe05e667f86abf6313e9791119a7892a2aebef4415d6b"
+  },
+  "functions": {
+    "sendCharacterToClient": {
+      "source": "MapServer/src/entity/entserver.c",
+      "sha256_lf": "9a6b0977a9b2a35be432e6dc0dd92181d259c778b5a4a56e4e7b4e7e9aa1ebfb"
+    },
+    "receiveCharacterFromServer": {
+      "source": "Game/src/entity/entrecv.c",
+      "sha256_lf": "525d4e55690e9465f364d08336d8e8c58ba32c8876ec524e3b467fab099e1820"
+    },
+    "receiveFullPopHelp": {
+      "source": "Game/src/entity/entrecv.c",
+      "sha256_lf": "a7be94c662956693c7bc42b38b48f7c017c40e2954fd47c395fce4135fddac0b"
+    },
+    "sendChatSettings": {
+      "source": "Common/entity/chatSettings.c",
+      "sha256_lf": "ae7583fdf69ce9d94fe2dd27f54c82a44cd1099813bff8af20974ee1eec8794d"
+    },
+    "receiveChatSettings": {
+      "source": "Common/entity/chatSettings.c",
+      "sha256_lf": "eadc11b199924e035c85ef289c7bd0956255cae82c6039fb07b6233050c42ff2"
+    },
+    "sendFriendsList": {
+      "source": "MapServer/src/entity/friends.c",
+      "sha256_lf": "4cb44da7d9f466c16a61715feccfae312576b6b2a3b6c4ef6fce40f76cba1801"
+    },
+    "receiveChatSettingsFromServer": {
+      "source": "Game/src/UI/uiChat.c",
+      "sha256_lf": "95ef175346b4a3a36afdaf008906b9aa59e7e35baf080e475cff68c2835dfda3"
+    },
+    "receiveOptions": {
+      "source": "Game/src/UI/uiNet.c",
+      "sha256_lf": "1b76c2ccccf73ee23e793835e4bb7cace1657ef9b0f203ea3f88f183848e0720"
+    },
+    "receiveTitles": {
+      "source": "Game/src/UI/uiNet.c",
+      "sha256_lf": "ec17b054167a383048ddd730ca7f3e4edc323dffe13d1f2f8a664620af664895"
+    },
+    "receiveDescription": {
+      "source": "Game/src/UI/uiNet.c",
+      "sha256_lf": "51bb324183a01a1c213f9663720e48ee6ff73da124cca5493d26db56d0d49581"
+    },
+    "receiveDividers": {
+      "source": "Game/src/UI/uiNet.c",
+      "sha256_lf": "d0cd33d2a2f5437c281cefc4b469d73d5c2665f489a11cbebc6edbd9902aa3de"
+    },
+    "receiveFriendsList": {
+      "source": "Game/src/UI/uiNet.c",
+      "sha256_lf": "e201ebcacaf524e5230483fef8d616272f6b997de9291000a6448512f19c1ada"
+    },
+    "keybinds_recieve": {
+      "source": "Game/src/UI/uiNet.c",
+      "sha256_lf": "bb54fa49e45bc1eb7f0760f5318553bc4f31bac4c67ed52b5e460e547132a421"
+    },
+    "keybinds_send": {
+      "source": "MapServer/src/entity/keybinds.c",
+      "sha256_lf": "16d3af3664915df9fe746ebb9d9ac2ccd8012118282bd9d2f8c07ad72175a598"
+    },
+    "sendCombatMonitorStats": {
+      "source": "Common/entity/attrib_description.c",
+      "sha256_lf": "33f47bdb7220efeeae6bd91841b80a3d136468e4a055f8927c16df21e95f341a"
+    },
+    "receiveCombatMonitorStats": {
+      "source": "Common/entity/attrib_description.c",
+      "sha256_lf": "3acad4feabf3214523d43b2775eaf69134ac6417b20c18f2cadad21894773290"
+    }
+  },
+  "scope": "Exact original wire ordering/schema ledger. Only helper/group4 receipts establish execution; unexecuted helpers remain explicit dependencies. No native full-tail or actor admission.",
+  "group4": [
+    {
+      "field": "tray.current_trays",
+      "count": 4,
+      "wire": "U32 each"
+    },
+    {
+      "field": "tray.trayIndexes",
+      "wire": "U32"
+    },
+    {
+      "field": "tray.slots",
+      "builds": 8,
+      "trays_per_build": 9,
+      "slots_per_tray": 10,
+      "count": 720,
+      "wire": "type5; power(type1):U32 set,U32 power; inspiration(type2):Pack3 column,Pack3 row; macro(type6/17):string command[256],short[32],icon[256]; other types:no body",
+      "ordering": "build first,then flat tray/slot; null emits type0"
+    },
+    {
+      "field": "default_power",
+      "wire": "presence1; if present U32set,U32power"
+    },
+    {
+      "field": "tray_mode",
+      "wire": "mode1,mode_alt2:1"
+    },
+    {
+      "field": "entity.name",
+      "wire": "string",
+      "original_consumer_copy_bytes": 32
+    },
+    {
+      "field": "entity.strings",
+      "wire": "motto string then description string",
+      "source_array_bytes": [
+        128,
+        1024
+      ],
+      "consumer_side_effect": "receiveEntStrings changes description angle brackets to square; raw native staging must preserve wire"
+    },
+    {
+      "field": "popHelpStatus",
+      "count": 128,
+      "wire": "U32 each"
+    },
+    {
+      "field": "popHelpLatest",
+      "count": 5,
+      "wire": "U32 each"
+    },
+    {
+      "field": "windows",
+      "count": 128,
+      "wire": "Pack1idx,xp,yp,mode,locked,color,backcolor; maximized1; dimensions_present1 then Pack1wd,Pack1ht; scale_present1 then F32",
+      "source_semantics": "ALWAYS_CLOSED(2) forces WINDOW_DOCKED(4); draggable_frame or idx4 sends dimensions; absent/zero scale maps1.f in original consumer"
+    }
+  ],
+  "group5": [
+    {
+      "field": "rewardTokens",
+      "wire": "Auto count; reverse source array order each string name,Pack1value,Pack1timer"
+    },
+    {
+      "field": "activePlayerRewardTokens",
+      "wire": "Auto count; reverse source array order each string name,Pack1value,Pack1timer"
+    },
+    {
+      "field": "lfg,hidden",
+      "wire": "10bits each"
+    },
+    {
+      "field": "supergroup_mode,hide_supergroup_emblem,skillsUnlocked,teambuff_display",
+      "wire": "1bit each"
+    },
+    {
+      "field": "dock_mode,inspiration_mode,newFeaturesVersion",
+      "wire": "32bits each"
+    }
+  ],
+  "group6": [
+    {
+      "field": "chatSettings",
+      "wire": "SERVER help-added-now1; Pack1chatSendChannel,userSendChannel,options,primaryChatMinimized;5windows each Pack1selectedtop,selectedbot,tabListBF,F32divider;20tabs each stringname,64bit array,Pack1userBF,optionsBF,defaultChannel,defaultType;15channels each stringname,Pack1optionsBF,U32color1,U32color2",
+      "source_counts": {
+        "windows": 5,
+        "tabs": 20,
+        "channels": 15,
+        "system_words": 2
+      },
+      "status": "schema only; original migration/default/UI wrapper side effects not executed in this fixture"
+    },
+    {
+      "field": "titles",
+      "wire": "Pack5titleThe; stringtitleTheText,titleCommon,titleOrigin; Autocolor0,Autocolor1; U32badge; stringtitleSpecial"
+    },
+    {
+      "field": "description,motto,comment",
+      "wire": "stringdescription,stringmotto,stringcomment",
+      "note": "description/motto repeat prior group4 values; original receiveDescription copies these again without breakHTMLtags"
+    },
+    {
+      "field": "keybinds",
+      "wire": "stringprofile;256records each stringcommand,U32key,U32modifier",
+      "consumer_semantics": "copy command bound256; key&0xff and key&0xf00 secondary retained separately; development mode substitutes Dev profile",
+      "status": "schema only; full original helper remains to execute"
+    },
+    {
+      "field": "options",
+      "wire": "saved1; if saved114ordered option fields below; otherwise mouse_invert1,F32mouse_speed,F32turn_speed",
+      "status": "original producer/consumer and independent byte model executed"
+    },
+    {
+      "field": "dividers",
+      "count": 8,
+      "wire": "Pack9 each",
+      "ordering": [
+        "superName",
+        "superMap",
+        "superTitle",
+        "emailFrom",
+        "emailSubject",
+        "friendName",
+        "lfgName",
+        "lfgMap"
+      ],
+      "application_rule": "original only applies saved dividers when first nonzero"
+    },
+    {
+      "field": "control",
+      "wire": "first1,nocoll2"
+    },
+    {
+      "field": "friends",
+      "wire": "Pack1full_update,Pack1count; per index present1; if present Pack1dbid,online1,stringname,Pack1class,Pack1origin; online addsPack1mapid,stringmapname",
+      "source_semantics": "full character sender always sendsfull_update1; -1 class/origin sentinel is full unsigned packed word; original consumer resolves dictionary indices and prior packet state",
+      "status": "schema only; exact original helper remains to execute"
+    },
+    {
+      "field": "combatMonitorStats",
+      "count": 10,
+      "wire": "IfSetPack8key;IfSet4order",
+      "status": "schema only; exact original helper remains to execute"
+    },
+    {
+      "field": "rename",
+      "wire": "1bit",
+      "boundary": "end of this packet body within sendCharacterToClient; subsequent Contact/Task/Clue/Mission calls send their own separate packets"
+    }
+  ],
+  "option_fields": [
+    {
+      "id": 1,
+      "name": "kUO_MouseSpeed",
+      "bits": -1,
+      "float32": true
+    },
+    {
+      "id": 2,
+      "name": "kUO_SpeedTurn",
+      "bits": -1,
+      "float32": true
+    },
+    {
+      "id": 3,
+      "name": "kUO_MouseInvert",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 4,
+      "name": "kUO_ChatFade",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 5,
+      "name": "kUO_Chat1Fade",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 6,
+      "name": "kUO_Chat2Fade",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 7,
+      "name": "kUO_Chat3Fade",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 8,
+      "name": "kUO_Chat4Fade",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 9,
+      "name": "kUO_CompassFade",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 10,
+      "name": "kUO_UseToolTips",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 11,
+      "name": "kUO_AllowProfanity",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 12,
+      "name": "kUO_ShowBallons",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 13,
+      "name": "kUO_DeclineGifts",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 14,
+      "name": "kUO_DeclineTeamGifts",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 15,
+      "name": "kUO_PromptTeamTeleport",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 16,
+      "name": "kUO_ShowPets",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 17,
+      "name": "kUO_ShowSalvage",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 18,
+      "name": "kUO_WebHideBasics",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 19,
+      "name": "kUO_WebHideStats",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 20,
+      "name": "kUO_WebHidePowers",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 21,
+      "name": "kUO_WebHideBadges",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 22,
+      "name": "kUO_WebHideFriends",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 23,
+      "name": "kUO_WindowFade",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 24,
+      "name": "kUO_LogChat",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 25,
+      "name": "kUO_HideHeader",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 26,
+      "name": "kUO_HideButtons",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 27,
+      "name": "kUO_ClickToMove",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 28,
+      "name": "kUO_DisableDrag",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 29,
+      "name": "kUO_ShowPetBuffs",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 30,
+      "name": "kUO_PreventPetIconDrag",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 31,
+      "name": "kUO_ShowPetControls",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 32,
+      "name": "kUO_AdvancedPetControls",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 33,
+      "name": "kUO_ChatDisablePetSay",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 34,
+      "name": "kUO_ChatEnablePetTeamSay",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 35,
+      "name": "kUO_TeamComplete",
+      "bits": 2,
+      "float32": false
+    },
+    {
+      "id": 36,
+      "name": "kUO_DisablePetNames",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 37,
+      "name": "kUO_HidePlacePrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 38,
+      "name": "kUO_HideDeletePrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 39,
+      "name": "kUO_HideDeleteSalvagePrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 40,
+      "name": "kUO_HideDeleteRecipePrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 41,
+      "name": "kUO_HideInspirationFull",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 42,
+      "name": "kUO_HideSalvageFull",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 43,
+      "name": "kUO_HideRecipeFull",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 44,
+      "name": "kUO_HideEnhancementFull",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 45,
+      "name": "kUO_ShowEnemyTells",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 46,
+      "name": "kUO_ShowEnemyBroadcast",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 47,
+      "name": "kUO_HideEnemyLocal",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 48,
+      "name": "kUO_HideCoopPrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 49,
+      "name": "kUO_StaticColorsPerName",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 50,
+      "name": "kUO_ContactSort",
+      "bits": 4,
+      "float32": false
+    },
+    {
+      "id": 51,
+      "name": "kUO_RecipeHideMissingParts",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 52,
+      "name": "kUO_RecipeHideUnowned",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 53,
+      "name": "kUO_RecipeHideMissingPartsBench",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 54,
+      "name": "kUO_RecipeHideUnownedBench",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 55,
+      "name": "kUO_DeclineSuperGroupInvite",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 56,
+      "name": "kUO_DeclineTradeInvite",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 57,
+      "name": "kUO_CamFree",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 58,
+      "name": "kUO_ToolTipDelay",
+      "bits": -1,
+      "float32": true
+    },
+    {
+      "id": 59,
+      "name": "kUO_ShowArchetype",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 60,
+      "name": "kUO_ShowSupergroup",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 61,
+      "name": "kUO_ShowPlayerName",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 62,
+      "name": "kUO_ShowPlayerBars",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 63,
+      "name": "kUO_ShowVillainName",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 64,
+      "name": "kUO_ShowVillainBars",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 65,
+      "name": "kUO_ShowPlayerReticles",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 66,
+      "name": "kUO_ShowVillainReticles",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 67,
+      "name": "kUO_ShowAssistReticles",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 68,
+      "name": "kUO_ShowOwnerName",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 69,
+      "name": "kUO_MousePitchOption",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 70,
+      "name": "kUO_MapOptions",
+      "bits": 32,
+      "float32": false
+    },
+    {
+      "id": 71,
+      "name": "kUO_BuffSettings",
+      "bits": 32,
+      "float32": false
+    },
+    {
+      "id": 72,
+      "name": "kUO_ChatBubbleColor1",
+      "bits": 32,
+      "float32": false
+    },
+    {
+      "id": 73,
+      "name": "kUO_ChatBubbleColor2",
+      "bits": 32,
+      "float32": false
+    },
+    {
+      "id": 74,
+      "name": "kUO_ChatFontSize",
+      "bits": 8,
+      "float32": false
+    },
+    {
+      "id": 75,
+      "name": "kUO_ReverseMouseButtons",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 76,
+      "name": "kUO_DisableCameraShake",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 77,
+      "name": "kUO_DisableMouseScroll",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 78,
+      "name": "kUO_LogPrivateMessages",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 79,
+      "name": "kUO_ShowPlayerRating",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 80,
+      "name": "kUO_DisableLoadingTips",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 81,
+      "name": "kUO_MouseScrollSpeed",
+      "bits": -1,
+      "float32": true
+    },
+    {
+      "id": 82,
+      "name": "kUO_EnableJoystick",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 83,
+      "name": "kUO_FadeExtraTrays",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 84,
+      "name": "kUO_OptionArchitectNav",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 85,
+      "name": "kUO_ArchitectTips",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 86,
+      "name": "kUO_ArchitectAutoSave",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 87,
+      "name": "kUO_NoXP",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 88,
+      "name": "kUO_BlockArchitectComments",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 89,
+      "name": "kUO_TeamLevelAbove",
+      "bits": 6,
+      "float32": false
+    },
+    {
+      "id": 90,
+      "name": "kUO_TeamLevelBelow",
+      "bits": 6,
+      "float32": false
+    },
+    {
+      "id": 91,
+      "name": "kUO_DisableEmail",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 92,
+      "name": "kUO_FriendSGEmailOnly",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 93,
+      "name": "kUO_NoXPExemplar",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 94,
+      "name": "kUO_PopHelpDisable",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 95,
+      "name": "kUO_HideFeePrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 96,
+      "name": "kUO_HideUsefulSalvagePrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 97,
+      "name": "kUO_ForcedPopHelpDisable",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 98,
+      "name": "kUO_GMailFriendOnly",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 99,
+      "name": "kUO_UseOldTeamUI",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 100,
+      "name": "kUO_HideUnclaimableCerts",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 101,
+      "name": "kUO_BlinkCertifications",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 102,
+      "name": "kUO_VoucherPrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 103,
+      "name": "kUO_NewCertificationPrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 104,
+      "name": "kUO_HideUnslotPrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 105,
+      "name": "kUO_MapOptionRevision",
+      "bits": 16,
+      "float32": false
+    },
+    {
+      "id": 106,
+      "name": "kUO_MapOptions2",
+      "bits": 32,
+      "float32": false
+    },
+    {
+      "id": 107,
+      "name": "kUO_HideOpenSalvagePrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 108,
+      "name": "kUO_HideLoyaltyTreeAccessButton",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 109,
+      "name": "kUO_HideStoreAccessButton",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 110,
+      "name": "kUO_AutoFlipSuperPackCards",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 111,
+      "name": "kUO_HideConvertConfirmPrompt",
+      "bits": 1,
+      "float32": false
+    },
+    {
+      "id": 112,
+      "name": "kUO_HideStorePiecesState",
+      "bits": 3,
+      "float32": false
+    },
+    {
+      "id": 113,
+      "name": "kUO_CursorScale",
+      "bits": -1,
+      "float32": true
+    },
+    {
+      "id": 114,
+      "name": "kUO_ShowTimer",
+      "bits": 1,
+      "float32": false
+    }
+  ],
+  "complete_groups4to6_native_parser": false,
+  "full_update_complete": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false
+}

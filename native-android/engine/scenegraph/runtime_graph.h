@@ -47,6 +47,13 @@ CohStatus coh_runtime_graph_build(const CohRuntimeGraph *,CohBytes catalog,CohBy
 CohStatus coh_runtime_graph_publish(CohRuntimeGraph **current,CohRuntimeGraph **candidate,
     CohRuntimeGraph **retired);
 void coh_runtime_graph_free(CohRuntimeGraph *);
+/* Immutable recorded binding and the exact borrowed source allocations. These
+ * are observations of this graph, never caller-asserted replacement ownership.
+ * Spans stay borrowed until retirement; the consumer must retain their actual
+ * owners and compare both pointer and extent, plus the independently admitted
+ * binding. Outputs must be disjoint from graph storage and each other. */
+CohStatus coh_runtime_graph_binding(const CohRuntimeGraph *,CohRuntimeGraphBinding *);
+CohStatus coh_runtime_graph_sources(const CohRuntimeGraph *,CohBytes *catalog,CohBytes *snapshot);
 CohStatus coh_runtime_graph_report(const CohRuntimeGraph *,CohRuntimeGraphReport *);
 CohStatus coh_runtime_graph_node(const CohRuntimeGraph *,uint32_t,CohRuntimeGraphNode *);
 CohStatus coh_runtime_graph_child(const CohRuntimeGraph *,uint32_t,CohRuntimeGraphChild *);

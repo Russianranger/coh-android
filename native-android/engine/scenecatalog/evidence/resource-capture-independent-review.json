@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "passed": true,
+  "reviewer": "Worker A independent source resource capture review",
+  "reviewed_revision": "4751e403e7d0237e0fa00a3fd0bd750c7e68da73",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_resources.py": "fd869206105af755c7d6cd3aa68f3ac31da3a494f74da7df0e406b761ba020fc",
+    "native-android/engine/scenecatalog-server/admit_resources.py": "abeb272cd9deecaeeb7e6d5557de631d8400b343e322a2c68a6aa1eec568ed38",
+    "native-android/engine/scenecatalog-server/stage_resources.py": "34706fa188b2822c6194732c744b0ba31e887631c13b4cb77f108c2b6a389878",
+    "native-android/engine/scenecatalog-server/record_resource_compile.py": "90828896c2897d720f220593a98a7532e314b3928ac45922e60aab80a3c677d4",
+    "native-android/engine/scenecatalog-server/resource_oracle.py": "b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/source_resources_sink.inc": "5a5efa3079d6adc3432e98988ff3799b71d73734060beb7ba66f90e0cc0d95b9",
+    "native-android/engine/scenecatalog-server/test_capture_resources.py": "cefa7a8de6cf2f8e79e5f98df53c9a600cc2a86ea8c752981ae1b0a1221c89e1",
+    "native-android/engine/scenecatalog-server/check_capture_resources.py": "72d71d7a5b436818b328cbd35bf1d0fc4332d735cad5f21c284e3f108f0bd44f"
+  },
+  "review_scope": "Source qualification/candidate-only admission/future isolated hosted source capture, not runtime success",
+  "resolved_findings": [
+    "Early resource record/texture caps and printable ASCII texture names precede Python variable-record allocation",
+    "Final copied catalog/snapshot/resource hashes and source/run lineage revalidated after owned cleanup",
+    "Binding refusal sets capture receipt passed=false before receipt emission; no binding emitted",
+    "Source-only/client-false/exact Atlas map, compile-stage pins and DB-schema lineage crosschecked"
+  ],
+  "verified_boundaries": [
+    "Nonroot GitHub-hosted environment and exact orchestration revision required",
+    "Fresh private runtime copy, Wine prefix and PostgreSQL; no player profile",
+    "Copied exact-source PE and path-probe identities checked; no accepted runtime overwrite",
+    "Exact retained catalog equality and same source generation required",
+    "Source/run identity records bind source inventory, exporter, callback and compile receipts",
+    "Owned process groups/Wine prefix/PostgreSQL teardown and source immutability required before binding",
+    "Failure preserves incomplete outputs as unaccepted diagnostics and redacts credentials before truncation"
+  ],
+  "independent_controls_receipt": "native-android/engine/scenecatalog/evidence/resource-capture-independent-controls-final.json",
+  "offline_suites": 6,
+  "runtime_executed_by_review": false,
+  "service_started_by_review": false,
+  "remaining_prerequisites": [
+    "Successful exact-source nonshipping Win32 compilation and separately admitted candidate PE",
+    "Actual hosted source capture and final cleanup/artifact integrity receipts",
+    "Native strict decoder and exact regular catalog file/slot/name/model association after capture",
+    "Complete authenticated asset manifest and canonical path mapping",
+    "Client material/trick/LOD/capability resolution",
+    "Matching live GROUPS/physical generation and complete authoritative actor"
+  ],
+  "native_decode_completed": false,
+  "assets_admitted": false,
+  "client_materials_available": false,
+  "client_lods_available": false,
+  "world_authority": false
+}

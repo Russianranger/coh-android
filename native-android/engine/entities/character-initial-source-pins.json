@@ -1,0 +1,10 @@
+{
+  "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+  "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+  "Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+  "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+  "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+  "libs/UtilitiesLib/src/utils/structNet.c": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1",
+  "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+  "Common/entity/attrib_net.c": "dc634ef7f142e1f5e1ca9f49b2b99dc82a0455717b0d84250b39d309e309ce90"
+}

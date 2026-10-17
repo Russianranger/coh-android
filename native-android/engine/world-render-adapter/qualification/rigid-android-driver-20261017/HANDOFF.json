@@ -1,0 +1,50 @@
+{
+  "schema": "coh-rigid-android-driver-handoff-v1",
+  "source_commit": "f8399a71f7cd35491e514518d3cd6fa64a6acb27",
+  "python_driver_control_suites": 7,
+  "python_controls_scope": "In-process admission/refusal and simulated adb flow only, no native/Android execution",
+  "host_native_modes": {
+    "release": {
+      "authored": 259,
+      "authentic_geometry": 22
+    },
+    "address": {
+      "authored": 259,
+      "authentic_geometry": 22
+    },
+    "undefined": {
+      "authored": 259,
+      "authentic_geometry": 22
+    }
+  },
+  "host_fixture_digest_replay": {
+    "authored": 259,
+    "authentic_geometry": 22,
+    "matches_original_source_qualified_packets": true
+  },
+  "crossbuild_support": {
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "api": 26,
+    "executed_locally": false,
+    "reason": "No local Android NDK supplied; hosted coordinator owns exact NDK crossbuild and Android13 execution."
+  },
+  "receipt_driver_required_checks": [
+    "Clean exact commit/tree, complete protected/native/original/driver/helper source hashes",
+    "Real OpenSSL host release/ASan/UBSan result identity, original32-bit producer layout and original delta packet oracle",
+    "Finite exact fixture byte-equality digest replay host results match original oracles; replay never claims general cryptographic qualification",
+    "Both ABI PIE/header identities and source/fixture/hash-bound build receipts",
+    "Regenerated authored fixture inventory plus exact authentic payload SHA when present",
+    "Actual Android13 x86_64 emulator, exact transferred fixture/ELF hashes, native result maps and output packet digests",
+    "Unchanged qualified source and owned remote cleanup; failed packet/cleanup refuses emulator success"
+  ],
+  "raw_assets_committed": false,
+  "protected_apis_modified": false,
+  "android_built": false,
+  "android_executed": false,
+  "gpu_execution": false,
+  "material_semantics_qualified": false,
+  "world_authority": false
+}

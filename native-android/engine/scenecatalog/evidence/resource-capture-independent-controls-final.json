@@ -1,0 +1,28 @@
+{
+  "schema": "coh-resource-capture-offline-controls-v1",
+  "passed": true,
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_resources.py": "fd869206105af755c7d6cd3aa68f3ac31da3a494f74da7df0e406b761ba020fc",
+    "native-android/engine/scenecatalog-server/admit_resources.py": "abeb272cd9deecaeeb7e6d5557de631d8400b343e322a2c68a6aa1eec568ed38",
+    "native-android/engine/scenecatalog-server/test_capture_resources.py": "cefa7a8de6cf2f8e79e5f98df53c9a600cc2a86ea8c752981ae1b0a1221c89e1",
+    "native-android/engine/scenecatalog-server/check_capture_resources.py": "72d71d7a5b436818b328cbd35bf1d0fc4332d735cad5f21c284e3f108f0bd44f",
+    "native-android/engine/scenecatalog-server/capture_snapshot.py": "0e9c264c064acf7a5fb90bbc0c07edb7d11c0703bf13635bb6899a9f781470ed",
+    "native-android/engine/scenecatalog-server/admit_snapshot.py": "d3dc88d7d00f47a7afd980d91491c8d3bd1655c3a17b247e10fa571b19e2f548",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/stage_resources.py": "34706fa188b2822c6194732c744b0ba31e887631c13b4cb77f108c2b6a389878",
+    "native-android/engine/scenecatalog-server/resource_oracle.py": "b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7",
+    "native-android/engine/scenecatalog-server/record_resource_compile.py": "90828896c2897d720f220593a98a7532e314b3928ac45922e60aab80a3c677d4"
+  },
+  "tests": 6,
+  "test_output": "test_binding_cleanup_provenance_and_copied_bytes_fail_closed (test_capture_resources.ResourceCaptureTests.test_binding_cleanup_provenance_and_copied_bytes_fail_closed) ... ok\ntest_exact_sink_and_independent_scope_counters (test_capture_resources.ResourceCaptureTests.test_exact_sink_and_independent_scope_counters) ... ok\ntest_isolated_host_guard_never_starts_service (test_capture_resources.ResourceCaptureTests.test_isolated_host_guard_never_starts_service) ... ok\ntest_new_role_admission_and_hash_drift (test_capture_resources.ResourceCaptureTests.test_new_role_admission_and_hash_drift) ... ok\ntest_source_stream_exact_pair_generation_order_and_futures (test_capture_resources.ResourceCaptureTests.test_source_stream_exact_pair_generation_order_and_futures) ... ok\ntest_texture_work_and_printable_name_bounds (test_capture_resources.ResourceCaptureTests.test_texture_work_and_printable_name_bounds) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.024s\n\nOK\n",
+  "actual_runtime_executed": false,
+  "capture_started": false,
+  "candidate_started": false,
+  "source_snapshot_only": true,
+  "native_decode_completed": false,
+  "assets_admitted": false,
+  "client_materials_complete": false,
+  "client_lods_complete": false,
+  "fixture_only": true,
+  "binding_scope": "copiedtriple hashes/source-run lineage/cleanup guarded; ordinary regular-row catalog graph association remains separate native gate"
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "coh-world-continuation-workflow-independent-review-v1",
+  "reviewer": "worker-e",
+  "workflow": ".github/workflows/native-world-continuation.yml",
+  "workflow_sha256": "8dc8449b22e67ba7b29a7a718c7ebf240bafab730a29348d047782217d963ac3",
+  "decision": "accepted after all pending source/workflow changes committed cleanly",
+  "source_sha256_reviewed": {
+    "native-android/engine/world-render-adapter/acquire_rigid.py": "9bb3d38d42585949cac35a9a74d493d03605eb06aa8332b9b59db442eccde2d0",
+    "native-android/engine/world-render-adapter/check_rigid.py": "1d4c614286ea08e0c54e3249fef6462a7d21a364da24866fec4b0f495857a24e",
+    "native-android/engine/world-render-adapter/run_rigid_android.py": "59f3c445ef4fa2dc66d82b089861c192cab356897e6d8022a4b0c23ad20c6374",
+    "native-android/engine/world-render-adapter/rigid_android_contract.py": "d807b43d2ee3bf0376c1ead2ec49ed8813293d4ce957a196a6c48c5ec5748993",
+    "native-android/engine/world-render-adapter/rigid-authentic-pins.json": "98cfbf0a85e0cb1c0876de6a8eee78d7d3180e27a6c036cd87788d2ff531370d",
+    "native-android/engine/entities/check_character_creation.py": "9389e2d834ac29216410e5ec39da546a1539929aa83ce547fd69ca400979d32b",
+    "native-android/engine/entity-globals/check_power_info.py": "362269f25d4a0c6dae7e4961e194d4385952b9dd49cf03a6255fe66daf00559b",
+    "native-android/engine/entities/run_character_android.py": "87c83fb984ebbc8e6804b91e1c118f4dfd070b585d4009892b91e5688c572324"
+  },
+  "checks": [
+    "YAML parses, repository/native-android dispatch-or-marker guard and dedicated cancel-in-progress=false concurrency.",
+    "Source contracts precede dependent ABI/emulator job; no MapServer capture or AuthServer/service execution commands.",
+    "Ubuntu native compile dependencies cover original source, OpenSSL SHA256, zlib and32-bit compile-only producer layout. Pinned NDKitself is SHA256 checked before extraction.",
+    "Acquire authenticv8 fixture at new external/tmp directory; no raw assets written to tracked source. Exact payload SHA/CRC pinned by acquisition helper.",
+    "Rigid --actual-geo/--ndk/output qualification.json/android-output paths match checker and strict execution driver layout.",
+    "Source, helper, generated fixture/header, both ABI ELF/build receipt and packet-oracle hashes are packaged and admitted before emulator startup.",
+    "Original producer/delta and real SHA callbacks stay host-only; finite fixture digest replay has separately matched host results/packets before both ABI crossbuilds.",
+    "/out/ and __pycache__ are ignored, preserving clean exact-source admission despite generated output.",
+    "Android SDK33/x86_64, pinned emulator action, correct ordinary shell quotes around ANDROID_HOME adb path; all three exact standalone drivers execute on same checkout.",
+    "Always upload complete out/world-continuation tree, retaining build/admission/execution receipts and failure logs."
+  ],
+  "findings": [],
+  "review_scope": "Read-only workflow command/dependency/source-artifact review. F independently reviews parser/driver behavior; resource capture workflow has separate guard review.",
+  "shared_workflow_modified": false,
+  "source_modified": false,
+  "workflow_dispatched": false,
+  "android_executed": false,
+  "windows_executed": false,
+  "world_authority": false
+}

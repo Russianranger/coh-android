@@ -1,0 +1,124 @@
+{
+  "independent_model": {
+    "passed": true,
+    "producer_consumer_model_cases": 60,
+    "bounded_model_bit_cuts": 0,
+    "original_malformed_input_executed": false,
+    "native_parser_qualified": false
+  },
+  "original_functions": {
+    "resetTrayIterator": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "8f066dd5ccd3e157ac1a9a8f5e9bf1d135b7e58ff5dd32283f18a07647fdc770"
+    },
+    "isTrayIteratorValid": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "834e6ad1bc7df798612dbf2242548773f4c934569c11aef5c59d8dd683abc39f"
+    },
+    "incrementTrayIterator": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "d152042eedccab004d0ac0534597220ce493014d9c3ab951f6dfb3dc3df60d49"
+    },
+    "getCurrentTrayObjFromIterator": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "0be415aa6f3df17052d162003aef2af8b7b9cf453baede7bcdd63496a19be0cb"
+    },
+    "getNextTrayObjFromIterator": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "218617c5f6b3d12a4d2cee092589215e192a554eb45e6d3aa8182751ef701f23"
+    },
+    "getCurrentTrayIteratorIndices": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "bac96dc4d7ff3942777d42457920a93b642faa2b85f9f05bef27e90fe89b30f0"
+    },
+    "createCurrentTrayObjViaIterator": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "7674d89262e2f2d60472dbe1c416bf1bdc0aad2dbc8eb605768aacf2c21c3801"
+    },
+    "destroyCurrentTrayObjViaIterator": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "aa52be8bb1259ef91f22c5a04cebd00297e039d9066cba2d5215f6003c44fe85"
+    },
+    "sendTrayObj": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "a37badde3ac10e0b69aba752a5e7c08b01d229031f538eea37a2024dbb388652"
+    },
+    "sendTray": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "4702a3715f8eb7b7976d29ef2ab9475c817aadb11347c3cf66c356f388013cea"
+    },
+    "receiveTrayObj": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "7bddf90e640f292c8d6741fb1f3748e82df0cf2dec6b93a51e27390908f481e4"
+    },
+    "receiveTrayObjs": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "14915793b81c2f091e51568c95b3936fe2179f17cbf39778ad59131cb037bb72"
+    },
+    "receiveTray": {
+      "source": "Common/gameComm/trayCommon.c",
+      "sha256_lf": "38af88c12cb948c97f591dcadaa5fd53f701d964eef64730f8b2a0ccf6033ea2"
+    },
+    "sendWindow": {
+      "source": "Common/gameComm/wdwbase.c",
+      "sha256_lf": "25aad86d63721f4539eecf14e61e1b013ad1212cbb7694e130bea9d2759485dc"
+    },
+    "receiveWindowIdx": {
+      "source": "Common/gameComm/wdwbase.c",
+      "sha256_lf": "19d6524148eea1041d0552221357c63c39ad2df1e06ba8acdbfeceadc60d74c5"
+    },
+    "receiveWindow": {
+      "source": "Common/gameComm/wdwbase.c",
+      "sha256_lf": "887b6c4b1ecba98eaf89f030bca4366fb93a1b566f9b0d64c47a6f3c3afb99bc"
+    },
+    "breakHTMLtags": {
+      "source": "Common/entity/entStrings.c",
+      "sha256_lf": "a84b39aaf0e66e9a4b89b57225b329f667433e208fd9b4673a7ef0b748af66bf"
+    },
+    "sendEntStrings": {
+      "source": "Common/entity/entStrings.c",
+      "sha256_lf": "5a6173e2bb67536e57395030b671b203d77ff1196e158ff4c6c2d5dc85c50a3c"
+    },
+    "receiveEntStrings": {
+      "source": "Common/entity/entStrings.c",
+      "sha256_lf": "f9239c0e1037ae34ebaced0830a12546bbe150ccf2b0143412dae67c7ef918cf"
+    },
+    "receiveFullPopHelp": {
+      "source": "Game/src/entity/entrecv.c",
+      "sha256_lf": "a7be94c662956693c7bc42b38b48f7c017c40e2954fd47c395fce4135fddac0b"
+    },
+    "receiveTrayMode": {
+      "source": "Game/src/UI/uiNet.c",
+      "sha256_lf": "260f1adc690b1610814ef2c01d496bc88a11fc519f32f29752b084e57fcdcfbc"
+    }
+  },
+  "blocks": {
+    "sender_group4_sha256_lf": "09253431f717b46691f28630a0e2f616341bc4daf1187de411e59d2223725e19",
+    "receiver_group4_sha256_lf": "278bf2f0306d1554629838814f40438c4d9495ddfe6cf957fcf2515a51f18abf"
+  },
+  "original_generated_source_sha256": "0a30f7c71c56db13816aefbf181f8bb3542ffee7f24a7a79da23f8a4317564f5",
+  "counts": [
+    8,
+    9,
+    10,
+    4,
+    720,
+    128,
+    5,
+    128,
+    6,
+    17
+  ],
+  "producer_consumer_cases": 60,
+  "whole_character_complete": false,
+  "dictionary_shells": true,
+  "original_oracle_sanitized": false,
+  "ui_window_state_applied": false,
+  "fixtures": {
+    "file": "group4-fixtures.json.gz",
+    "bytes": 69107,
+    "sha256": "e7d534df7140808f840dd88a8415cb5a615ced30c0c566e7f1f7138aff282ba9",
+    "expanded_bytes": 1857239,
+    "cases": 60
+  }
+}

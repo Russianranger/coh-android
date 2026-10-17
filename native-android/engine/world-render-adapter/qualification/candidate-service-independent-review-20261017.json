@@ -1,0 +1,37 @@
+{
+  "schema": "coh-corrected-auth-service-independent-review-v1",
+  "reviewer": "worker-e",
+  "source_commit": "06bedaea5",
+  "decision": "accepted for independently triggered disposable candidate-only service qualification",
+  "source_sha256": {
+    "candidate_service.py": "07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe",
+    "hosted_auth_login.py": "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2",
+    "intact-build-reuse-pins.json": "4a348f0b135bf62c9539057691cdc5fb03ab7be890aaab6526fae63c9356edcb",
+    "test_candidate_service.py": "df7c75440e5b775151ee8293619fe13f8e33483de784b8d98f1682ea6ee41292"
+  },
+  "test_suites_passed": 7,
+  "tests_skipped": 0,
+  "actual_pinned_artifact_admission_exercised": true,
+  "reasoning": [
+    "Explicit candidate mode requires both caller-pinned compiled candidate and exact historical fragmented/intact probe artifacts; rejects crypto rebuild and intact-baseline mixing.",
+    "Compiled binary is admitted then copied and PE/hash checked again before service use. Shipping/original server identity remains distinct.",
+    "Exact historical probe build sources/functions/fixture and OpenSSL binary/source receipt pins are checked; no prior encrypted login acceptance is inherited.",
+    "Both send caps7/1024 execute valid/wrong-password/missing-account/corrupt-frame cases; owned listeners are checked before/after each. Complete suite requires all8 cases.",
+    "Independent numeric x86 ODBC observations bind owned LocalDB PID beforestartup/duringreadiness/afterlisteners/timeout, preserving symbolic failure scope without private driver text.",
+    "Owned job/listener stop, firewall/localDB cleanup, private file removal, process observations and unchanged source are required for overall success.",
+    "An earlier individual valid-case success may remain true in a failed overall suite; complete fragmentation/general-TCP acceptance does not follow."
+  ],
+  "artifact_source_paths": [
+    "/workspace/scratch/8749ec34cd9b/auth-login-38974164017/artifact.zip",
+    "/workspace/scratch/9174d12e2a11/ci-artifacts/auth.zip"
+  ],
+  "artifact_sha256": [
+    "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b",
+    "da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d"
+  ],
+  "service_started_by_reviewer": false,
+  "crypto_executed_by_reviewer": false,
+  "encrypted_authentication_accepted": false,
+  "world_authority": false,
+  "findings": []
+}

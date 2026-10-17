@@ -1,0 +1,493 @@
+{
+  "schema": "coh-allents-tail-source-ledger-v1",
+  "source_pin": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+  "original_source_sha256_lf": {
+    "MapServer/src/player/inventory_server.c": "c259417dd4fb7de3e5f9be4c9a8c9e2a6475808b126af6d9630d520d15d72975",
+    "Game/src/player/inventory_client.c": "c2dd405edcccf31c5586f11df353126fbbd2376f314d9406ccda95ea622508a0",
+    "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+    "Common/entity/character_inventory.c": "efe22c554a15a782af4f4e0175c3396f84e0ba3f2f2a63d41e2be8460224af89",
+    "Common/auction/Auction.c": "ea54ec72f46ebebe9083274071a0af8e620d3dff0060cfc7c3fe43a0bfb08a6b",
+    "Common/entity/Invention.c": "d4a7eb3384d5f6057ed520a0e16809531419397726eb84c971b4723375043322",
+    "MapServer/src/container/team.c": "49a1202d4a8467f031ca684e8cc73560a905212433674c42005dbbf9d7b44ca0",
+    "MapServer/src/entity/SgrpServer.c": "d637f94bb447e1e8e78c18cef0967a1b870eca4d644f8c80c694059750e06aa3",
+    "MapServer/src/container/league.c": "80c12cae89cad49b5d52e4f31bcc56400a27f11e519d5150789d0df07790e2fb",
+    "Game/src/UI/uiNet.c": "79a36e45898f70356c762299a2ab58a0e82c4557cb7047dc505ef400741b1f01",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+  },
+  "functions": {
+    "entity_SendInvUpdate": {
+      "path": "MapServer/src/player/inventory_server.c",
+      "sha256_lf": "0360573e5c6e0854994f2519c803447a25a027dc1aee12dceb4eb9fcb7e5318c",
+      "wire_calls_lexical_only": [
+        "pktSendBitsPack",
+        "pktSendBitsAuto"
+      ],
+      "lines": 29
+    },
+    "entity_ReceiveInvUpdate": {
+      "path": "Game/src/player/inventory_client.c",
+      "sha256_lf": "cf912714bf04a5f7528877f602df7388f386210dfa1e3efcdc09c29da95a1a30",
+      "wire_calls_lexical_only": [
+        "pktGetBitsPack",
+        "pktGetBitsAuto"
+      ],
+      "lines": 18
+    },
+    "conceptitem_Send": {
+      "path": "Common/entity/character_net.c",
+      "sha256_lf": "e7727f9ab5ef7fea46abfbfcc8a601a58d32cd0f148e9aa8f45bac420af5ff30",
+      "wire_calls_lexical_only": [
+        "pktSendBitsPack",
+        "pktSendF32"
+      ],
+      "lines": 23
+    },
+    "character_inventory_Send": {
+      "path": "Common/entity/character_net.c",
+      "sha256_lf": "90d15a2f531158d11d86c2002e9ea6a41f21800064db21668cb439c30634158a",
+      "wire_calls_lexical_only": [
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack"
+      ],
+      "lines": 27
+    },
+    "character_inventory_Receive": {
+      "path": "Common/entity/character_net.c",
+      "sha256_lf": "bf219bfa227460ca0125ce1dcca1b60494c5867b4a98eb43985b78dba3230c6a",
+      "wire_calls_lexical_only": [
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetF32"
+      ],
+      "lines": 30
+    },
+    "GetItemsByIdArrayRef": {
+      "path": "Common/entity/character_inventory.c",
+      "sha256_lf": "7849b98636efba328dfe833bcb28971fe10002240d871067b89c8fe97513f7e8",
+      "wire_calls_lexical_only": [],
+      "lines": 30
+    },
+    "character_SetInventory": {
+      "path": "Common/entity/character_inventory.c",
+      "sha256_lf": "a3f6aae8944d3ddaa88a332a1be7eb14a40fa5b8eb4116a6625d5ef5dfb71ca3",
+      "wire_calls_lexical_only": [],
+      "lines": 22
+    },
+    "character_SetConcept": {
+      "path": "Common/entity/character_inventory.c",
+      "sha256_lf": "b926b4c3aa693fec8cc7912994d609fbdb73c5674bf2b3fce45095c89ac6dbd1",
+      "wire_calls_lexical_only": [],
+      "lines": 20
+    },
+    "AuctionInventory_Send": {
+      "path": "Common/auction/Auction.c",
+      "sha256_lf": "eec7bf6467c0e3b88e8ac4354b9b2a1ccd8420f7f24f25e236d806c86e308253",
+      "wire_calls_lexical_only": [
+        "pktSendString"
+      ],
+      "lines": 7
+    },
+    "AuctionInventory_Recv": {
+      "path": "Common/auction/Auction.c",
+      "sha256_lf": "ae378421ccbf060f98e8063653e41e9d63317754d0054e91db6c26dbc6d0e9ee",
+      "wire_calls_lexical_only": [
+        "pktGetString"
+      ],
+      "lines": 12
+    },
+    "AuctionInventory_ToStr": {
+      "path": "Common/auction/Auction.c",
+      "sha256_lf": "16a1a4b456b4521ee03417f2b70d56f1d7d05965c10aa9b8dd79edcd02340362",
+      "wire_calls_lexical_only": [],
+      "lines": 6
+    },
+    "AuctionInventory_FromStr": {
+      "path": "Common/auction/Auction.c",
+      "sha256_lf": "e9ea942d55ae19386f95a507663ca951dd6537df8cad92e7a0863b6ca99b1c96",
+      "wire_calls_lexical_only": [],
+      "lines": 9
+    },
+    "invention_Send": {
+      "path": "Common/entity/Invention.c",
+      "sha256_lf": "fd33e02d93ba89209c40ff1a7d76e92842b0aa3d7067fbdbd0aa4b06d8923d65",
+      "wire_calls_lexical_only": [
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendF32",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack"
+      ],
+      "lines": 83
+    },
+    "invention_Receive": {
+      "path": "Common/entity/Invention.c",
+      "sha256_lf": "91bcb1d88264c312bdc99cfe6041e3ff5e02a349f78be1865909082c69d77791",
+      "wire_calls_lexical_only": [
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetF32",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack"
+      ],
+      "lines": 101
+    },
+    "entity_SendInventionUpdate": {
+      "path": "Common/entity/Invention.c",
+      "sha256_lf": "f00455b8e17259ead8650b1eb4afae391ef88101badddfd0b4ab3b393c370efd",
+      "wire_calls_lexical_only": [
+        "pktSendBitsPack"
+      ],
+      "lines": 19
+    },
+    "entity_ReceiveInventionUpdate": {
+      "path": "Common/entity/Invention.c",
+      "sha256_lf": "9d4ee52cb27e6dc08bd6a0ce36e06d7e3451cdb8fecd9b3e5fadbc217929825e",
+      "wire_calls_lexical_only": [
+        "pktGetBitsPack"
+      ],
+      "lines": 25
+    },
+    "sendMemberCommon": {
+      "path": "MapServer/src/container/team.c",
+      "sha256_lf": "83b29cfa1c43c6fb1af9a90e237314117b0491677911f6758d81a5e314e49f6e",
+      "wire_calls_lexical_only": [
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendString",
+        "pktSendString",
+        "pktSendBits"
+      ],
+      "lines": 30
+    },
+    "sendTeammate": {
+      "path": "MapServer/src/container/team.c",
+      "sha256_lf": "e40fbf4ece4ee75ad5b8e0a1c3c64002457716b9bc3b52037288053bdfd23620",
+      "wire_calls_lexical_only": [],
+      "lines": 4
+    },
+    "team_sendList": {
+      "path": "MapServer/src/container/team.c",
+      "sha256_lf": "6180d4054a759c1281fec6576e4ce0d8b36021b588ba7fcb5e4507350a8122f3",
+      "wire_calls_lexical_only": [
+        "pktSendIfSetBitsPack",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsAuto",
+        "pktSendBitsAuto",
+        "pktSendBitsAuto"
+      ],
+      "lines": 38
+    },
+    "sgroup_sendList": {
+      "path": "MapServer/src/entity/SgrpServer.c",
+      "sha256_lf": "b3d4bb85036c6a5cbcaac9b4169e95c6d889ba6f61a6286f44aa43e29cd3f174",
+      "wire_calls_lexical_only": [
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendString",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendString",
+        "pktSendString",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBitsPack",
+        "pktSendString",
+        "pktSendString",
+        "pktSendString",
+        "pktSendString",
+        "pktSendString",
+        "pktSendString",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBits",
+        "pktSendString",
+        "pktSendBitsArray",
+        "pktSendBitsAuto",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBitsAuto",
+        "pktSendString",
+        "pktSendBitsAuto"
+      ],
+      "lines": 96
+    },
+    "sendLeagueMate": {
+      "path": "MapServer/src/container/league.c",
+      "sha256_lf": "c6b1beb8f535c47fe3cba1c5719ab9a70326c7da22dbf64489b4897342e3fb44",
+      "wire_calls_lexical_only": [
+        "pktSendBits",
+        "pktSendBits"
+      ],
+      "lines": 7
+    },
+    "league_sendList": {
+      "path": "MapServer/src/container/league.c",
+      "sha256_lf": "dc30450da79a2ebbb0bc212b769a98f4227e7356ecbb207a8937671fe0d7015a",
+      "wire_calls_lexical_only": [
+        "pktSendIfSetBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack"
+      ],
+      "lines": 39
+    },
+    "recieveMemberCommon": {
+      "path": "Game/src/UI/uiNet.c",
+      "sha256_lf": "b1cc8006116af778e9821f79219b4aa896195f1c996f5187cbc3ea82932df58d",
+      "wire_calls_lexical_only": [
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetString",
+        "pktGetString"
+      ],
+      "lines": 27
+    },
+    "receiveTeamList": {
+      "path": "Game/src/UI/uiNet.c",
+      "sha256_lf": "2f8e763173e028efcbf80d6a48b3fc34847f622de3c708d7a1f1c93ddb7c1815",
+      "wire_calls_lexical_only": [
+        "pktGetIfSetBitsPack",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsAuto",
+        "pktGetBitsAuto",
+        "pktGetBitsAuto"
+      ],
+      "lines": 79
+    },
+    "receiveSuperStats": {
+      "path": "Game/src/UI/uiNet.c",
+      "sha256_lf": "807ccc22714700461a50f8809f1f65f53b2aedd1abfb756864b4e29d2853cddb",
+      "wire_calls_lexical_only": [
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBits",
+        "pktGetString",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetString",
+        "pktGetString",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBitsPack",
+        "pktGetString",
+        "pktGetString",
+        "pktGetString",
+        "pktGetString",
+        "pktGetString",
+        "pktGetString",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBits",
+        "pktGetString",
+        "pktGetBitsArray",
+        "pktGetBitsAuto",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBitsAuto",
+        "pktGetString",
+        "pktGetBitsAuto"
+      ],
+      "lines": 181
+    },
+    "receiveLeagueList": {
+      "path": "Game/src/UI/uiNet.c",
+      "sha256_lf": "e0c774704a5073ffa7851221c37cb6f6f5d47f3575afa8a0455aaff78fab0767",
+      "wire_calls_lexical_only": [
+        "pktGetIfSetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetBits",
+        "pktGetBits"
+      ],
+      "lines": 61
+    },
+    "entReceiveUpdate": {
+      "path": "Game/src/entity/entrecv.c",
+      "sha256_lf": "b1686fce23faabb59610270b4f1be87565323aa2c91e2a486d8f2d512a17d1ed",
+      "wire_calls_lexical_only": [
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBitsPack",
+        "pktGetBitsPack",
+        "pktGetString",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetBits",
+        "pktGetF32",
+        "pktGetF32",
+        "pktGetF32"
+      ],
+      "lines": 258
+    },
+    "entSendUpdate": {
+      "path": "MapServer/src/entity/entsend.c",
+      "sha256_lf": "ebd18115f2d4f73cfdc2daf56a9df3399e64d463dfd92c95f8cf7820e0144524",
+      "wire_calls_lexical_only": [
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBitsPack",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendBitsPack",
+        "pktSendString",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendF32",
+        "pktSendF32",
+        "pktSendF32",
+        "pktSendBits",
+        "pktSendBits",
+        "pktSendBitsArray",
+        "pktSendBitsPack",
+        "pktSendBitsArray",
+        "pktGetOrdered",
+        "pktSendBitsArray"
+      ],
+      "lines": 819
+    }
+  },
+  "order_after_badges": [
+    "entity_ReceiveInvUpdate",
+    "entity_ReceiveInventionUpdate",
+    "workshop string",
+    "team skip bit then receiveTeamList",
+    "receiveSuperStats",
+    "league skip bit then receiveLeagueList",
+    "attrib description present bit",
+    "groupDynReceive",
+    "receiveSkyFade",
+    "slave present bit then3F32"
+  ],
+  "inventory": {
+    "item": "Pack5 type,index,amount,id; type Concept adds4F32",
+    "update": "Pack1 item count; ordered items; BitsAuto auction updated; if nonzero one NUL string",
+    "dictionary_by_type": {
+      "Salvage": "g_SalvageDict.itemsById",
+      "StoredSalvage": "g_SalvageDict.itemsById",
+      "Concept": "g_ConceptDict.itemsById",
+      "Recipe": "g_DetailRecipeDict.itemsById",
+      "BaseDetail": "g_DetailDict.itemsById"
+    },
+    "raw_auction_string_is_not_parsed": "AuctionInventory_FromStr uses original escaped text parser; item dictionary semantics remain separate"
+  },
+  "invention": {
+    "status_width": "Pack1",
+    "receiver": "invention_Receive body wholly commented out",
+    "sender": "status true sends invention state Pack1 even stateNone; nonzero state has recipe/boost/powerup slots/concept slots",
+    "qualification_policy": "false status safe raw profile; true status cannot be admitted as matching original consumer without explicit source incompatibility policy"
+  },
+  "workshop": {
+    "wire": "one NUL string",
+    "original_destination_capacity": 32,
+    "policy": "bound full wire string before preserving raw; no workshop lookup/application"
+  },
+  "team": {
+    "wire": "ifset PackDBID team ID;2bit taskforce mode;10bit LFG; nonzeroID addsPack32leader,Pack1count,3BitsAuto(level,mentor,activeDBID),members",
+    "member": "32DBID,1onmap; offmap adds1changed and if changed name+translated map strings",
+    "order": "mentor first then other members in source order",
+    "max_members": 8,
+    "name_capacity": 64,
+    "state_dependencies": "unchanged offmap names require previous generation; onmap names resolved separately from entity DBID"
+  },
+  "league": {
+    "wire": "ifsetPackDBID leagueID; nonzero addsPack32leader,Pack1count,membercommon+32teamLeaderID+32lockStatus each",
+    "order": "leader first then others",
+    "max_members": 48
+  },
+  "superstats": {
+    "wire": "Pack1count;zero stops;nonzero adds7Pack1financial/playerType words then1update;false stops;true per-member records,group strings/colors/ranks/permissions/memberranks/allies",
+    "details": "Exact whole source function hashes and lexical calls retained; loop counts and byte-array sizes require original supergroup headers, not guessed caps",
+    "dictionary": "arch/origin transmitted strings; raw storage can retain without dictionary application; UI/unescape/sideeffects separate"
+  },
+  "boundary": {
+    "transport_end_not_proven": true,
+    "reason": "entSendUpdate may append SERVER_BEGIN_BYTE_ALIGNED_DATA and entityPacket bits; parser must use command framing"
+  },
+  "remaining": [
+    "auction escaped parser semantics",
+    "active invention producer/consumer incompatibility",
+    "team/league complete source fixtures",
+    "superstats rank/permission/allies header sizes and fixtures",
+    "attribute-description dictionary/full tail",
+    "dynamic group graph ownership",
+    "skyfade source grammar",
+    "slave/outer command boundary"
+  ],
+  "full_initial_update_complete": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false
+}

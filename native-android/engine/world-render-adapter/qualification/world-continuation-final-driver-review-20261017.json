@@ -1,0 +1,29 @@
+{
+  "schema": "coh-world-continuation-workflow-final-review-v1",
+  "reviewer": "worker-e",
+  "workflow": ".github/workflows/native-world-continuation.yml",
+  "workflow_sha256": "e973c258ff83bfa82770c1a245acdc2c5a2b540a1711251f21ed71d79ad15fd4",
+  "runner_sha256": "9253edc51d48e77191c135060e815fb9b2c3e87ba59e0ecfb215e078d26dab46",
+  "source_sha256": {
+    "native-android/engine/entities/check_character_outer.py": "15271706124e07e056af5c6fd90014c6cbb95d800170f2132033ef88df8922c3",
+    "native-android/engine/entities/check_character_tail.py": "697dc9eb9a03f6980682ad95831d53c151bf9756731edf9720af024918d96ea1",
+    "native-android/engine/entities/test_run_character_android.py": "a2fef3f89e15808e296053bb206cf6bee42465669d3f534dd435095c15f8049e"
+  },
+  "decision": "accepted after pending changes committed cleanly",
+  "generic_driver_suites_passed": 5,
+  "original_review_workflow_hash": "8dc8449b22e67ba7b29a7a718c7ebf240bafab730a29348d047782217d963ac3",
+  "incremental_checks": [
+    "check_character_outer replaces earlier creation stage consistently in build/admission/device/output paths.",
+    "Outer exact native count22641 and original initial/UI/tail three-fixture SHA map are bound by both ABI receipts and complete source/provider inventory.",
+    "Standalone check_character_tail --sanitize added before downstream Android job; dependency arguments/paths exist.",
+    "generic driver now records native_execution_attempted separately, sets android_executed only after successful command and JSON parse, and uses device timeout -sKILL90 with180s host bound.",
+    "Mock device success/failure preserves false execution label on refused launch/timeout and still runs owned remote cleanup.",
+    "Previously reviewed rigid/NDK/artifact/Android13 commands and ignored/out source cleanliness remain intact; no server capture added."
+  ],
+  "workflow_modified_by_reviewer": false,
+  "android_executed_by_review": false,
+  "gpu_execution": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "world_authority": false
+}

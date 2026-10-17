@@ -1,0 +1,9 @@
+{
+  "Common/entity/friendCommon.h": "2f6314653ef15db4d05602ad713046f215d076ab6481266e0e43aee36767c5e9",
+  "Common/chatdefs.h": "c6164c8e6ccd6ab11e0066b0de1d575e030871ed77a290621301c0fead7741c2",
+  "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+  "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+  "MapServer/src/entity/keybinds.h": "f2001955769e580ef2c591730830c29ebb2a3a782d1a53d496b76b4254d19e32",
+  "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+  "Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e"
+}

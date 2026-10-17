@@ -1,0 +1,21 @@
+{
+  "sha256": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+  "bytes": 48591999,
+  "range_bytes": 48643564,
+  "ranges": [
+    [
+      1630076928,
+      1630092779
+    ],
+    [
+      1453522944,
+      1453588479
+    ],
+    [
+      1453588480,
+      1502150655
+    ]
+  ],
+  "outer_full_sha_verified": false,
+  "manifest_full_sha_verified": true
+}

@@ -1,0 +1,8 @@
+{
+  "run_id": 38993564322,
+  "artifact_id": 12086321527,
+  "bytes": 238983,
+  "sha256": "2c818d0f0ca085b54d26f7386191ab5810f1b354bb0cf0a2834001f1badc3587",
+  "source_revision": "d949c59fd579bd7256445078cc6aeacc3b331c70",
+  "scope": "standalone prefix and power-range host/both ABI builds/Android13 x86_64, no full character or live actor"
+}

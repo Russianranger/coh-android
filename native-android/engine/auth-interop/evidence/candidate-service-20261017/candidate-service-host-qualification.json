@@ -1,0 +1,19 @@
+{
+  "schema": "coh-candidate-service-host-controls-v1",
+  "passed": true,
+  "suites": 7,
+  "exact_historical_intact_zip_sha256": "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b",
+  "exact_compiled_candidate_pe_sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003",
+  "exact_compiled_candidate_receipt_sha256": "25ee2415a280e7b3800808824d95d05b862acca9d4d4879f5fccb5605d6a2451",
+  "scope": "Actual compiled PE/receipt and historical normal probe admitted without executing either; every reused normal-probe artifact mutation rejected; mocked eight-case orchestration, ownership loss, partial-success refusal and numeric readiness/error suppression controls.",
+  "real_windows_execution": false,
+  "real_encrypted_account_login_verified": false,
+  "source_sha256": {
+    "hosted_auth_login.py": "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2",
+    "candidate_service.py": "07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe",
+    "intact-build-reuse-pins.json": "4a348f0b135bf62c9539057691cdc5fb03ab7be890aaab6526fae63c9356edcb",
+    "test_candidate_service.py": "df7c75440e5b775151ee8293619fe13f8e33483de784b8d98f1682ea6ee41292",
+    "auth_readiness.py": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438"
+  },
+  "independent_readiness_suites": 7
+}

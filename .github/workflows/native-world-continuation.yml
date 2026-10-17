@@ -1,0 +1,103 @@
+name: Native raw character and authentic resource continuation
+'on':
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-world-continuation.yml
+      - native-android/engine/entities/**
+      - native-android/engine/entity-globals/**
+      - native-android/engine/scenecatalog/**
+      - native-android/engine/scenecatalog-server/**
+      - native-android/engine/world-render-adapter/**
+      - native-android/combined-client/diagnostics/character-outer-20261017/**
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-world-continuation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  new-source-contracts:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[world-continuation-qualify]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Install original source oracle dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev
+      - name: Qualify source observer isolated sink and downstream index
+        run: |
+          mkdir -p out/world-continuation/source
+          python3 native-android/engine/scenecatalog-server/resource_oracle.py --source-root . --sanitize --output out/world-continuation/source/observer.json
+          python3 native-android/engine/scenecatalog-server/check_resources_stage.py --sanitize --output out/world-continuation/source/stage.json
+          python3 native-android/engine/scenecatalog-server/check_capture_resources.py --output out/world-continuation/source/capture.json
+          python3 native-android/engine/scenecatalog/check_resource_index.py --output out/world-continuation/source/index.json
+          python3 native-android/engine/entities/check_character_ui.py --sanitize --output out/world-continuation/source/character-ui.json
+          python3 native-android/engine/entities/check_character_tail.py --sanitize --output out/world-continuation/source/character-tail.json
+          python3 -m unittest discover -s native-android/engine/entities -p test_run_character_android.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: world-continuation-source-${{ github.sha }}
+          path: out/world-continuation/source/
+          if-no-files-found: error
+          retention-days: 90
+  raw-character-android13:
+    needs: new-source-contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install exact NDK for standalone ABI qualification
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/continuation-ndk
+      - name: Build composed raw character and PowerInfo for both Android ABIs
+        run: |
+          python3 native-android/engine/entities/check_character_outer.py --sanitize --ndk /tmp/continuation-ndk/android-ndk-r28c --output out/world-continuation/outer/host.json --android-output out/world-continuation/outer/android
+          python3 native-android/engine/entity-globals/check_power_info.py --sanitize --ndk /tmp/continuation-ndk/android-ndk-r28c --output out/world-continuation/power-info/host.json --android-output out/world-continuation/power-info/android
+      - name: Qualify authentic rigid resource packets and both CPU ABIs
+        run: |
+          python3 native-android/engine/world-render-adapter/acquire_rigid.py --output /tmp/continuation-rigid-corpus
+          python3 native-android/engine/world-render-adapter/check_rigid.py --actual-geo /tmp/continuation-rigid-corpus/praetorianbox_open.geo --ndk /tmp/continuation-ndk/android-ndk-r28c --output out/world-continuation/rigid/qualification.json --android-output out/world-continuation/rigid/android
+          python3 -m unittest discover -s native-android/engine/world-render-adapter/tests -p test_rigid_android.py
+          python3 native-android/engine/world-render-adapter/run_rigid_android.py --source-root . --artifacts out/world-continuation/rigid --validate-only --output out/world-continuation/rigid-admission/receipt.json
+      - name: Admit exact sources fixtures and both ABI binaries before Android startup
+        run: |
+          python3 native-android/engine/entities/run_character_android.py --kind outer --artifacts out/world-continuation/outer --validate-only --output out/world-continuation/outer-admission/receipt.json
+          python3 native-android/engine/entities/run_character_android.py --kind power-info --artifacts out/world-continuation/power-info --validate-only --output out/world-continuation/power-info-admission/receipt.json
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute new standalone raw contracts on Android13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: |
+            python3 native-android/engine/world-render-adapter/run_rigid_android.py --source-root . --artifacts out/world-continuation/rigid --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --output out/world-continuation/rigid-execution/receipt.json
+            python3 native-android/engine/entities/run_character_android.py --kind outer --artifacts out/world-continuation/outer --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --output out/world-continuation/outer-execution/receipt.json
+            python3 native-android/engine/entities/run_character_android.py --kind power-info --artifacts out/world-continuation/power-info --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --output out/world-continuation/power-info-execution/receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: world-continuation-raw-character-both-abis-android13-${{ github.sha }}
+          path: out/world-continuation/
+          if-no-files-found: error
+          retention-days: 90

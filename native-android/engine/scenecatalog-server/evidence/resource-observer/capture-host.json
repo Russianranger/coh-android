@@ -1,0 +1,29 @@
+{
+  "schema": "coh-resource-capture-offline-controls-v1",
+  "passed": true,
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_resources.py": "58174c4c37daccaca55dbb9e59dbcb2baa6f5a6c6debbb43bf65722c59aef69e",
+    "native-android/engine/scenecatalog-server/admit_resources.py": "b5d2d982588bc9f20a6fafb237e86c135b424df97c94c0af6b259b0fc8e478e7",
+    "native-android/engine/scenecatalog-server/test_capture_resources.py": "6724db731a4bd9b8899a00eff59941fc49354ec939f527d048d90b57ab626d2e",
+    "native-android/engine/scenecatalog-server/check_capture_resources.py": "67bac16d2d271fb5b25f583c8b976a67a302951b2255b962a4238a3c15cee83f",
+    "native-android/engine/scenecatalog-server/capture_snapshot.py": "0e9c264c064acf7a5fb90bbc0c07edb7d11c0703bf13635bb6899a9f781470ed",
+    "native-android/engine/scenecatalog-server/admit_snapshot.py": "d3dc88d7d00f47a7afd980d91491c8d3bd1655c3a17b247e10fa571b19e2f548",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+    "native-android/engine/scenecatalog-server/stage_resources.py": "7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6",
+    "native-android/engine/scenecatalog-server/resource_oracle.py": "b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7",
+    "native-android/engine/scenecatalog-server/record_resource_compile.py": "90828896c2897d720f220593a98a7532e314b3928ac45922e60aab80a3c677d4"
+  },
+  "tests": 6,
+  "test_output": "test_binding_cleanup_provenance_and_copied_bytes_fail_closed (test_capture_resources.ResourceCaptureTests.test_binding_cleanup_provenance_and_copied_bytes_fail_closed) ... ok\ntest_exact_sink_and_independent_scope_counters (test_capture_resources.ResourceCaptureTests.test_exact_sink_and_independent_scope_counters) ... ok\ntest_isolated_host_guard_never_starts_service (test_capture_resources.ResourceCaptureTests.test_isolated_host_guard_never_starts_service) ... ok\ntest_new_role_admission_and_hash_drift (test_capture_resources.ResourceCaptureTests.test_new_role_admission_and_hash_drift) ... ok\ntest_source_stream_exact_pair_generation_order_and_futures (test_capture_resources.ResourceCaptureTests.test_source_stream_exact_pair_generation_order_and_futures) ... ok\ntest_texture_work_and_printable_name_bounds (test_capture_resources.ResourceCaptureTests.test_texture_work_and_printable_name_bounds) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.037s\n\nOK\n",
+  "actual_runtime_executed": false,
+  "capture_started": false,
+  "candidate_started": false,
+  "source_snapshot_only": true,
+  "native_decode_completed": false,
+  "assets_admitted": false,
+  "client_materials_complete": false,
+  "client_lods_complete": false,
+  "fixture_only": true,
+  "binding_scope": "copiedtriple hashes/source-run lineage/cleanup guarded; ordinary regular-row catalog graph association remains separate native gate"
+}

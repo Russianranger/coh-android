@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "reference_commit": "bf653dd4ef5372c921b049a76f902a4a921e8c4d",
+  "sha256_lf": {
+    "Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+    "Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+    "MapServer/src/group/groupnetdb.c": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3",
+    "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+    "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8"
+  },
+  "functions": {
+    "Common/seq/anim.c": {
+      "initBackgroundLoader": "57d79ecda25114b590282c4eff9673ca80a2748f1597436d1062d5be47afc2dd",
+      "backgroundLoadingThread": "3021f609c6a9e2c3ba92cdbfd3993fa9eb630d72e979f33438c98c4598cd2c1b",
+      "heyThreadLoadAGeo": "f6ac9e82620e62976c86d390af4adc4396294936e4e45ff10cce64aaa1a930bb",
+      "geoRequestBackgroundLoad": "79207d7779b021d923e64a9f3ab74c55ac1d910fa169d2662c8690260023dda5",
+      "geoRequestForegroundLoad": "5982b1a28fdb9650c27985c9c3c4326551d5bbd3b00df03a783a33c2babac835",
+      "geoCheckThreadLoader": "1dea74fe72a646e35e7baf657b5486628e30bf3398ed6f78a4489a085e7542d5",
+      "forceGeoLoaderToComplete": "c0b85ab3203f7b368077d005665f4a0765b01677d016af23f423f7368729f24b",
+      "geoLoad": "5c4be133d9002bb15401b7346cde610f01fe9a7674afa962edb313669d2a6442",
+      "geoLoadData": "d0dbd0a764fd442e2ce69f8b98d297925a940785447e2a482d992089c919eac4",
+      "heyThreadLODAModel": "eea081f328f1ec56973f7e21f8acf5acecdb6e760cd3b32f47b94470adbf6133"
+    },
+    "libs/UtilitiesLib/src/utils/FolderCache.c": {
+      "FolderCacheUpdate": "5a3a9e4c5d7c017e85850ca3f8bc19fd9227025cc4add6c7e6e6c7d42883d044",
+      "FolderCacheEnableCallbacks": "15db53cbc801d02137fec10a4b2c12f7ceef622f269c810262645dbd9f5601e1",
+      "FolderCacheSetManualCallbackMode": "e9d7f65731e6cd16c70467b083c1212655d69c1549a849cac9762100297d6672",
+      "FolderCacheDoCallbacks": "888675a27da04c138c0f7f5580d01740ea8ef6d2e0d2cb7d25bb9d363cac6a68"
+    },
+    "Common/seq/tricks.c": {
+      "trickLoad": "f5b2f35c3dd907ac06a0d21b787abe79770abff8691ac44a92d3b01099b91d1d",
+      "reloadTrickProcessor": "1c6bbe6cbaf9d3f1012c1d3230e871fe72e683e54658d7b87e09c5f6101aee3b",
+      "reloadTrick": "1fa1666aad86f85b2c75aa14056a4a69a18437c52f2f0ebd471697a944d560ea",
+      "checkTrickReload": "ad9c8319a8a5bf589a8ecc629098e3919351b7bc221a3748905c4968097d5f10"
+    },
+    "Common/group/group.c": {
+      "groupModelFind": "2535a3e4a9ea676bcbe00bf9f568fff5bcff26bc127fb7c6e0a9736d1e548fa3"
+    },
+    "MapServer/src/group/groupnetdb.c": {
+      "groupLoadMap": "a438d9a7754a7991448566ed5f4cf25c85cf28717b5c52560b03b92ec2ca6a85"
+    }
+  }
+}

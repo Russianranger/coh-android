@@ -1,0 +1,27 @@
+{
+  "schema": "coh-f-independent-review-v1",
+  "passed": true,
+  "android_outer_runner": {
+    "source_sha256": "9253edc51d48e77191c135060e815fb9b2c3e87ba59e0ecfb215e078d26dab46",
+    "four_negative_suites_passed": true,
+    "source_closure_complete": true,
+    "three_fixture_map_exact": true,
+    "both_abi_identity_required": true,
+    "whole_initial_false_required": true,
+    "android_executed_by_reviewer": false
+  },
+  "character_outer": {
+    "implementation_commit": "e7361d8d8",
+    "evidence_commit": "3202ff18d",
+    "review": "bounded raw body only; no selected identity/dictionary/ACK",
+    "source_sha256": {
+      "coh_character_tail.c": "5e68b4494dbc7e330e014a8b5e19b4302c0285384aeb4cf469ef126f15813ec1",
+      "coh_character_tail.h": "925bc44fb27d5095f0fe2f1093bf0dc697a0debafc0e252539b6d61e887f14cf",
+      "coh_character_outer.c": "1eb46421ea071214d96b5641214849090081f0fc55064a66a5a9ecf883f47882",
+      "coh_character_outer.h": "4261a314b5757f50f2273917ee7bab495511fea61d21e9ab1409b29db84e9bd6"
+    }
+  },
+  "inventory_oracles": "700item+360update+20invention original valid producer/consumer controls;6independent suites",
+  "actor_publication": false,
+  "physical_thor_accepted": false
+}

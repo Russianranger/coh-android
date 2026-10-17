@@ -1,0 +1,82 @@
+{
+  "source_manifest_sha256": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+  "published_source": {
+    "bytes": 1289,
+    "cached_header_bytes": 209,
+    "cached_header_id": 560,
+    "cached_header_sha256": "ef00161f7613c1e3c3f6f92609e108c9fe798008b9602efe1952d23155fcafc6",
+    "cached_header_verified": true,
+    "compressed": false,
+    "geometry_header": {
+      "baseline_loader_accepts_version": true,
+      "data_block_bounds_verified": true,
+      "header_decompression_verified": true,
+      "header_uncompressed_bytes": 460,
+      "runtime_compatibility": "unverified",
+      "version": 8
+    },
+    "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+    "md5_table": "2a20e42ed14ec99dac8f8de41d107864",
+    "offset": 32162141,
+    "path": "object_library/WorldNPCS/Praetorian_Box/G_PraetorianBox_Open.geo",
+    "sha256": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5",
+    "source_archive": "stage1.pigg",
+    "source_archive_bytes": 87459151,
+    "source_content_range": "bytes 32162141-32163429/87459151",
+    "source_download_receipt": "a0006",
+    "source_etag": "\"a600c69a37213e53b6a909d4c36a3c16\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:23:40 GMT",
+    "source_member_range": "bytes 32162141-32163429/87459151",
+    "source_metadata_sha256": "f6acbebf7181775cbba7b90e07ed690b095d59071049aec384c9f524b11bff02",
+    "source_url": "https://dists.thunderspy.org/piggs/stage1.pigg",
+    "stored_bytes": 1289,
+    "stored_sha256": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5"
+  },
+  "payload": {
+    "bytes": 1289,
+    "sha256": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5"
+  },
+  "virtual": "data/object_library/worldnpcs/praetorian_box/g_praetorianbox_open.geo",
+  "zip_crc32": "38501d5c",
+  "zip_header_offset": 15123230,
+  "zip_method": 0,
+  "zip_compressed_bytes": 1289,
+  "range_bytes": 1654252,
+  "ranges": [
+    [
+      1630076928,
+      1630092779
+    ],
+    [
+      594411520,
+      594477055
+    ],
+    [
+      1453522944,
+      1453588479
+    ],
+    [
+      1452146688,
+      1453588479
+    ],
+    [
+      609550336,
+      609615871
+    ]
+  ],
+  "etag": "\"0x8DF27B1DA04C5EA\"",
+  "outer_full_sha_verified": false,
+  "inner_full_sha_verified": false,
+  "payload_sha_verified": true,
+  "original_pigg_reacquired": false,
+  "model": "FX_PraetorianBox_Open",
+  "version": 8,
+  "vertices": 56,
+  "triangles": 28,
+  "release": {
+    "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+    "outer_expected_bytes": 1630092780,
+    "inner_member": "payloads/runtime/client-visual-assets.zip",
+    "inner_expected_bytes": 859075775
+  }
+}

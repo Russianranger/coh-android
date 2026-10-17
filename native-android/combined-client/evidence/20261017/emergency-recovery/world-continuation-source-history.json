@@ -1,0 +1,15 @@
+{
+  "schema": "coh-world-continuation-source-history-v1",
+  "prerequisite": "e53ed1ec3e096600d3f2f6cb87699161498db15a",
+  "integration_head": "856c0089a768b7b22add44d88c237b566f515c8e",
+  "worker_heads": {
+    "catalog": "41f7d121d82ce29217a2a2380d5f170fb35c63ad",
+    "graph": "1bc2821443a1a93b290794ea0d4dba96b3df8aee",
+    "entities": "2f821ce55bf72177f9859938ecce62c6fe487123",
+    "qualification": "3bd01f76f91f2930e593285e9922bef4d9ec139b",
+    "renderer": "96ee8cd9b6412859176edcbc53f1b0432a7a3045",
+    "auth": "dc936b037867feb3a3f96bbc8ec733e1586a6bfb"
+  },
+  "bytes": 1293611,
+  "sha256": "1e1dff44d9cb84103bc856b32698c3a2aac015447cae03eb40c6694a01a7107c"
+}

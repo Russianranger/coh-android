@@ -1,0 +1,169 @@
+{
+  "schema": "coh-independent-next-source-review-v1",
+  "reviewer": "Worker F",
+  "reviews": [
+    {
+      "kind": "initial-character-prefix",
+      "passed": true,
+      "blocking_source_findings": [],
+      "source_sha256": {
+        "native-android/engine/entities/coh_character_initial.c": "42a9bd137e9f8c66fc75aa2439a2edbde08245ea9e8c1eee06fef1b3b65fcaea",
+        "native-android/engine/entities/coh_character_initial.h": "081204665a475a1dcc0056bf1dffcd1b9ad147f4eb780a971dfb52687535ee99"
+      },
+      "findings": [
+        "Atomic reader/output publication occurs only after all first3 groups including full self stats validate.",
+        "Pairwise span overlap and pointer overflow checks cover reader,profile,workspace,out,failure,input.",
+        "Child retained formula subtracts exactly2Data slots already charged by child from enclosing fixed storage; complete output+workspace contains3Data slots overall."
+      ],
+      "caveats": [
+        "Not a complete character; tray/UI/account/global tails,selected DBID and dictionary admission remain open."
+      ],
+      "scope": "Independent read-only source/API/budget/rollback review. Worker source tests/ASan/UBSan receipts are separate; no execution rerun by this review."
+    },
+    {
+      "kind": "resource-observer-and-staging",
+      "passed": true,
+      "blocking_source_findings": [],
+      "source_sha256": {
+        "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+        "native-android/engine/scenecatalog-server/source_resources_sink.inc": "5a5efa3079d6adc3432e98988ff3799b71d73734060beb7ba66f90e0cc0d95b9",
+        "native-android/engine/scenecatalog-server/stage_resources.py": "34706fa188b2822c6194732c744b0ba31e887631c13b4cb77f108c2b6a389878",
+        "native-android/engine/scenecatalog-server/record_resource_compile.py": "90828896c2897d720f220593a98a7532e314b3928ac45922e60aab80a3c677d4"
+      },
+      "findings": [
+        "Captures actual source owner incidence,unique Model pointer row,exact names/texture indices and finite numeric state without lazy resource load.",
+        "Original groupnetsend includes anim.h;stager appends tricks.h and observer. Original Model/GeoLoadData field names and192byte name array inspected.",
+        "F work-bound feedback implemented:64Mi model-row comparisons per observer pass,reported and compared between passes.",
+        "Triple sink uses privateC paths,CREATE_NEW,no-replace moves,tracks only owned partial/final outputs for cleanup;remaining counts explicit.",
+        "Compile receipt preserves distinct nonshipping role,exact staged overlays and artifacts;runtime_executed remains false."
+      ],
+      "caveats": [
+        "Stable exclusive group/model/library/trick ownership is a mandatory caller prerequisite,not established solely by matching record counts or CRCs.",
+        "Source/run/resource digest/runtime cleanup admission remains coordinator work. No actual Win32 resource observer execution/capture qualified here.",
+        "SERVER observations cannot certify CLIENT material/trick/LOD completeness."
+      ],
+      "scope": "Independent read-only source/API/budget/rollback review. Worker source tests/ASan/UBSan receipts are separate; no execution rerun by this review."
+    },
+    {
+      "kind": "source-resource-owner",
+      "passed": true,
+      "blocking_source_findings": [],
+      "source_sha256": {
+        "native-android/engine/scenecatalog/coh_resource_index.c": "a269958e33d3590965d592e095cfbf7949cb1f6b4888cda9bbbfb2b8b2676d88",
+        "native-android/engine/scenecatalog/coh_resource_index.h": "ee50c4da85f0ff76979d0c0e0496d2e1d0385872fe19771f9f1c2313684a50e3"
+      },
+      "findings": [
+        "Immutable copied raw records and retained loader GEO blobs;failure cleanup retires owned rows,workspaces and pins while leaving output unchanged.",
+        "Exact source owner,model row,model/material counts and texture name/index ranges compare against hash-pinned actual GEO.",
+        "F work-bound gap resolved:pin lookup,GEO dedup and model-name comparisons now share16M cap and cancellation polls.",
+        "Old/new owner,input,workspace and explicit loader reservations contribute aggregate budget;32MiB owned/96MiB aggregate remain.",
+        "Final decoder enforces actual producer128KiB record,256texture and fixed source-name caps before loops; current-sourcegen exactcanonical GEO mappings stay immutable."
+      ],
+      "caveats": [
+        "Loader configured allocation limit must independently be<=declared reservation;public API cannot introspect this configuration.",
+        "Trusted source/run/manifest and source-GEO-to-asset mapping receipts are external prerequisites,not supplied-hash authority.",
+        "No client material/trick/LOD resolution,draw readiness or live world permit follows."
+      ],
+      "scope": "Independent source/API/accounting review and exact final worker receipt/hash review; no independent owner sanitizer rerun.",
+      "reviewed_commit": "41f7d121d82ce29217a2a2380d5f170fb35c63ad",
+      "qualification_receipt_sha256": "941558b6bd8f88c4c06703c7349a0065d35a779f22720d9c6dd456cf13fed2fe"
+    },
+    {
+      "kind": "rigid-v8-converter",
+      "reviewed_commit": "4e18baa85",
+      "passed": true,
+      "blocking_source_findings": [],
+      "source_sha256": {
+        "native-android/engine/world-render-adapter/coh_wr_rigid.c": "fa3c12aca0be9026469e7bac145c48b21a07784807eed4fd6ff49ae93121c7c8",
+        "native-android/engine/world-render-adapter/coh_wr_rigid.h": "dffee6c5e68a89077d731dd21b96c5eca6c547292d75cbd97da691a83b40719f"
+      },
+      "findings": [
+        "Exact GEO SHA,modelname/single match,generation and material callback pins required before publication of CPU resource.",
+        "Rejects skeletal/lightmap/reflection/alternate-pivot/nonunit-scale channels;sourcepartitionindices preserved;single Vflip followed by qualified scales.",
+        "Disjoint scratch/decoded/owned arenas charged without reallocoverlap;full independentlyconfiguredloaderreservation andexternalcallbackpeaks mandatory.",
+        "Every transferred material pin and source blob rolls back on later failure/cancellation. Borrowed renderer material/GPU lifetime explicitly remains caller obligation."
+      ],
+      "caveats": [
+        "Public loader cannot attest configured reservation;external setup must prove limit.",
+        "Logical texture IDs/material source hashes are producer attestations,not authenticated by this converter.",
+        "No Android,GLES,physicalThor or liveauthority qualification from source review."
+      ],
+      "scope": "Independent source/API/accounting review only;worker exact original delta/math and artifact tests remain separate."
+    },
+    {
+      "kind": "character-android-qualification-runner",
+      "passed": true,
+      "blocking_source_findings": [],
+      "source_sha256": {
+        "native-android/engine/entities/run_character_android.py": "87c83fb984ebbc8e6804b91e1c118f4dfd070b585d4009892b91e5688c572324",
+        "native-android/engine/entities/test_run_character_android.py": "a6f28fd4e8d8d52cdc98dd9f0f1f459fe492b6515a1b8badaef40fc6ea4b019c"
+      },
+      "independent_tests": {
+        "suites": 4,
+        "passed": true
+      },
+      "findings": [
+        "F source/provider override finding fixed by requiring disjoint ownership maps.",
+        "Known complete transitive source/provider closure required and each exact file/driver digest verified.",
+        "Both ARM64/x86_64 ELFmachine identities,binarydigests and exact per-ABI fixture maps bound to source/host receipts.",
+        "Release/ASan/UBSan exact result equality,SDK33/x86_64/qemu1,explicit emulatorserial,transferredSHA and exact runtimeJSON checked.",
+        "Re-admits sources/artifacts afterexecution;ownedUUID temporary path cleanupandabsence checked before emulatorqualified flag."
+      ],
+      "caveats": [
+        "Independent tests exercise source/artifact admission fixtures;no emulator executed by F.",
+        "CompilationandAndroid13x86_64 execution remain distinct from ARM64execution,physicalThor,app/world rendering.",
+        "On command/cleanup errors result remainsfailed;no acceptance inherited."
+      ]
+    },
+    {
+      "kind": "complete-outer-character-raw-composition",
+      "passed": true,
+      "blocking_source_findings": [],
+      "source_sha256": {
+        "native-android/engine/entities/coh_character_ui.c": "363ea811c9506168d63a9da3b1cdc711d130517f9daf2885ff5ed8f3cffa2486",
+        "native-android/engine/entities/coh_character_ui.h": "acc7cd1a94cfd75ebccfcecd666febaf9e0733a68113c955fe63ecf1d62487ac",
+        "native-android/engine/entities/coh_character_creation.c": "cee024d66f8f1ad90c9ad6194963cfa970dde3b12d585afd3393e1615d46d0bd",
+        "native-android/engine/entities/coh_character_creation.h": "5281769a276e3853b66cefa250511e82381fe5d29845b50c33a8a057dbb5722e",
+        "native-android/engine/entities/coh_character_tail.c": "5e68b4494dbc7e330e014a8b5e19b4302c0285384aeb4cf469ef126f15813ec1",
+        "native-android/engine/entities/coh_character_tail.h": "925bc44fb27d5095f0fe2f1093bf0dc697a0debafc0e252539b6d61e887f14cf",
+        "native-android/engine/entities/coh_character_outer.c": "1eb46421ea071214d96b5641214849090081f0fc55064a66a5a9ecf883f47882",
+        "native-android/engine/entities/coh_character_outer.h": "4261a314b5757f50f2273917ee7bab495511fea61d21e9ab1409b29db84e9bd6"
+      },
+      "findings": [
+        "Source group4 raw720slots/text/help128/5/windows128 preserved without UI/dictionary application.",
+        "Group5/6 terminated strings and count/pool checks precede writes;114option fields and byte-alignedchat arrays retain source order.",
+        "Safe tag/range indexing and finite float policy;all pairwise input/control/output/workspace spans disjoint.",
+        "Nested child budget subtraction removes only child-owned allocations/reserves before child recharges;fullinput charged once per child,all enclosing storage retained.",
+        "Late child refusal leavescaller reader/outputunchanged;only complete rawbody commits."
+      ],
+      "caveats": [
+        "Final worker host/sanitizer receipts remain separate pending hashbinding.",
+        "Rawcharacterbody success is not complete ALLENTS transaction,selectedDBID/dictionary/actor orACKadmission."
+      ]
+    },
+    {
+      "kind": "source-resource-quiescence-guard",
+      "passed": true,
+      "blocking_source_findings": [],
+      "source_sha256": {
+        "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+        "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+        "native-android/engine/scenecatalog-server/source_resources_sink.inc": "3f5cbd9152f022a9d65a8baac813bf3cacc7ce41d579f4257d4c2c7bd8059a9e",
+        "native-android/engine/scenecatalog-server/stage_resources.py": "7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6"
+      },
+      "findings": [
+        "Checked exact originalanim.c callback,counter and readyqueue update order againstguard.",
+        "Try-only Geo+LODlocks pluszerooutstanding counts andemptyfinalprocessingqueue preventbackgroundcallback mutations duringlease.",
+        "Failedsecondlock releasesfirst;wrongownerend refuses;successfullease releasesboth withoutforce/load/wait/finalization."
+      ],
+      "caveats": [
+        "Caller mustbe originalmainownerafterinitBackgroundLoader fullyreturns andschedulenonewloads/callbacks.",
+        "Original initialization flag is assignedbeforeCS initialization;guard alone doesnotpermit arbitrary-thread use duringstartup.",
+        "No actual originalresourcecapture or Win32execution acceptance follows fromsource review."
+      ]
+    }
+  ],
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "world_authority": false
+}

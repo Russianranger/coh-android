@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "passed": true,
+  "reviewer": "Worker A independent resource supplier review",
+  "reviewed_revision": "cda4ad46a550f29c2ad4cefe68c772814bbc987b",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/coh_wr_rigid.c": "fa3c12aca0be9026469e7bac145c48b21a07784807eed4fd6ff49ae93121c7c8",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.h": "dffee6c5e68a89077d731dd21b96c5eca6c547292d75cbd97da691a83b40719f",
+    "native-android/engine/world-render-adapter/qualification/rigid-v8-20261017/host.json": "d6fa565e76613d4dfe7cbb2ce6b12f6f56905bbb31ccce3a85f3c2b2bcde32b7"
+  },
+  "all_recorded_dependency_git_blob_hashes_reverified": true,
+  "production_rigid_source_matches_current": true,
+  "active_android_fixture_harness_not_reviewed": true,
+  "findings_resolved": [
+    "nonNULL output now returns COH_STATE before acquisition and leaves old owner unchanged",
+    "Whole externally configured loader reservation charged before acquisition; actual historical peaks checked against reservation"
+  ],
+  "ownership": "Exact GEO blob and material pins held through geometry consumers; staged buffers and candidate pins released on refusal; material pins require separate retention across copied frame/GPU lifetime",
+  "budget_boundary": "Caller must configure opaque loader total_bytes<=loader_reservation and charge all other old/material/digest/source/GPU peak bytes. This source API cannot attest external loader configuration. Named payload reservations, not RSS.",
+  "acceptance": {
+    "host_receipt_modes": [
+      "release",
+      "address",
+      "undefined"
+    ],
+    "fixture_controls_per_mode": 259,
+    "authentic_geometry_controls_per_mode": 22,
+    "source_conversion_only": true,
+    "material_fixture_only": true,
+    "runtime_resource_capture": false,
+    "client_materials_qualified": false,
+    "world_authority": false,
+    "android_executed_by_review": false
+  },
+  "review_rebuilt_binaries": false
+}

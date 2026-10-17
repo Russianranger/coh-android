@@ -1,0 +1,315 @@
+{
+  "schema": "coh-character-tail-qualification-v1",
+  "passed": true,
+  "source_revision": "a9673536331b9f7879f99c600a2c95adaa60a410",
+  "source_sha256": {
+    "native-android/engine/entities/coh_character_tail.c": "5e68b4494dbc7e330e014a8b5e19b4302c0285384aeb4cf469ef126f15813ec1",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entities/test_character_tail.c": "99dd43678753a4678b83fed250e058feb44f56255cca37d87f53ea65629dbfaf",
+    "native-android/engine/entities/coh_character_tail.h": "925bc44fb27d5095f0fe2f1093bf0dc697a0debafc0e252539b6d61e887f14cf",
+    "native-android/engine/entities/character-tail-admission-pins.json": "df3bcb67b2debe679745094ae182f69598797ac9f628ccb49cf87c5582ccb8e0",
+    "native-android/engine/entities/coh_character_options_schema.h": "48a9c41ac2c28d5aa4de299714d39be848220ad23351e3dd451a60d7e4f4e732",
+    "native-android/engine/entities/character_tail_fixture.py": "b43da9235859f4293d365a70b67938e26cfec4f43a815e2d5c68bc22240583d9",
+    "native-android/engine/entities/character_tail_test_writer.h": "ff9aec7b36841ccec5aae219efc5926c7673a01e9cbe821364019b3cc6e16400",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check_character_tail.py": "697dc9eb9a03f6980682ad95831d53c151bf9756731edf9720af024918d96ea1",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "provider_sha256": {
+    "native-android/combined-client/diagnostics/character-outer-20261017/group56_oracle.py": "87048fbc41e758474eef1194f8b14e1e8e42dde847622a7a38359573c4a85069",
+    "native-android/combined-client/diagnostics/character-outer-20261017/group56_independent.py": "0e2bcbeb78b6615c5fe5be5755c970ba339cb6bd14db458e4dcdc414288efd8b",
+    "native-android/combined-client/diagnostics/character-outer-20261017/group56-source-pins.json": "fc4003f2fb1afe4d75760dfd09b56a91523d830d3f511d87dd9f0dbaa83f015e",
+    "native-android/combined-client/diagnostics/character-outer-20261017/qualify_outer.py": "a2d43a11a74c33709462abc5b0e4059edf774c7d6e23326d5c2330067e48a068",
+    "native-android/combined-client/diagnostics/character-outer-20261017/independent.py": "9fccb7ae9b449f8f529f4a3eabce50cfd36afb60b8b041857ff98beeb19df8d0",
+    "native-android/combined-client/diagnostics/character-outer-20261017/source-pins.json": "a4c8eeb46c960f55dde7fe954e209c73cd2b6f7f4c1116372f33c4e20b85d9a0",
+    "native-android/combined-client/diagnostics/character-outer-20261017/host-proof.json": "57d6cb6ca8f1600d1c88f5a656ce3853fbc82cfa81ef6db01d60e9eabb596f7a"
+  },
+  "original_admission_source_sha256_lf": {
+    "Common/entity/friendCommon.h": "2f6314653ef15db4d05602ad713046f215d076ab6481266e0e43aee36767c5e9",
+    "Common/chatdefs.h": "c6164c8e6ccd6ab11e0066b0de1d575e030871ed77a290621301c0fead7741c2",
+    "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+    "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+    "MapServer/src/entity/keybinds.h": "f2001955769e580ef2c591730830c29ebb2a3a782d1a53d496b76b4254d19e32",
+    "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+    "Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e"
+  },
+  "original_source_sha256_lf": {
+    "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "Common/gameComm/wdwbase.c": "fddd0af05b1764115d3c885140b8074587d9e4cc5c762a0101dc49042e30e732",
+    "Common/gameComm/wdwbase.h": "18427c8f68e1a3ef0c3d149ab35801edbe151a16cb2bee166fb8174c8f2a6f6c",
+    "Game/src/UI/uiOptions_Type.c": "8a3704eec9b207d05f8533ad08b618edabcebe3893e196531fa882dd95bd2e5b",
+    "Game/src/UI/uiOptions_Type.h": "73ac1805bb89c0042c031af77336609eee3bab8e4d48fdbdec7aaa1551eb796c",
+    "Game/src/UI/uiNet.c": "79a36e45898f70356c762299a2ab58a0e82c4557cb7047dc505ef400741b1f01",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "Common/entity/entStrings.c": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0",
+    "MapServer/src/entity/keybinds.c": "96df4d670b377dffa4821d8c591926a6bd725c6f0b579eecb0874076bf0377f4",
+    "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+    "Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+    "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+    "Game/src/UI/uiKeybind.h": "c67d779c9870a26fc9474c061216678f5d9728daa6f418a46362ee64330f94fb",
+    "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+    "Common/gameComm/trayCommon.c": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6",
+    "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+    "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+    "Game/src/UI/uiReticle.h": "cd2afa72ef0bbd67a556074d3e307d74c4313a1d80876614ff178fda68a1cc35",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e",
+    "Common/entity/chatSettings.c": "3c45ed2d51381914fc905f9305949184206b6f19370af7d03f5acf5f0b0f2146",
+    "MapServer/src/entity/friends.c": "dad13320de15e17e8d628536432fa51c0ad65d0e64dc3fb06ba09f71fcf64bb5",
+    "Game/src/UI/uiChat.c": "b4b14caf4b726dcfa99fe05e667f86abf6313e9791119a7892a2aebef4415d6b",
+    "Common/chatdefs.h": "c6164c8e6ccd6ab11e0066b0de1d575e030871ed77a290621301c0fead7741c2",
+    "MapServer/src/entity/keybinds.h": "f2001955769e580ef2c591730830c29ebb2a3a782d1a53d496b76b4254d19e32",
+    "Common/entity/RewardToken.h": "cc12ffee56d85c443d1c97331b93e48af808b7f7300e69cf96e06522fc3ba84d",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+  },
+  "original": {
+    "independent_model": {
+      "passed": true,
+      "original_per_field_comparisons": 100,
+      "original_malformed_input_executed": false,
+      "native_parser_qualified": false
+    },
+    "original_functions": {
+      "initBitStream": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+      },
+      "bsWriteBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+      },
+      "bsWriteBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+      },
+      "bsReadBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea"
+      },
+      "bsReadBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620"
+      },
+      "bsAlignByte": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+      },
+      "bsGetCursorBitPosition": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+      },
+      "bsWriteString": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81"
+      },
+      "bsReadStringAndLength": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "e7606801ddc22b76d0aeec630597a653ab025a2f501653ecdbe341a692fe0c3f"
+      },
+      "bsWriteF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "38d78cadee1f9bc73c25ef1f0dfcb6249a3e101165151abb8d0f8ca7c76462c9"
+      },
+      "bsReadF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "88adf74b188c3ce4fe4fa8076817a6735f5ec0d96f60a0d94ea2ec846d3881e4"
+      },
+      "initGameOptionStash": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "f52a6467b0e4fef6fba360b4e45f5cfe1203605628490487c1470edfe7dd0fb2"
+      },
+      "userOptionGet": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "0405658bdefaf2c5f7e5bf6dc6a739ad594326397971eac78cd09bde434db153"
+      },
+      "receiveOptions": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "1b76c2ccccf73ee23e793835e4bb7cace1657ef9b0f203ea3f88f183848e0720"
+      },
+      "sendCharacterToClient": {
+        "source": "MapServer/src/entity/entserver.c",
+        "sha256_lf": "9a6b0977a9b2a35be432e6dc0dd92181d259c778b5a4a56e4e7b4e7e9aa1ebfb"
+      },
+      "sendWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "25aad86d63721f4539eecf14e61e1b013ad1212cbb7694e130bea9d2759485dc"
+      },
+      "receiveWindowIdx": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "19d6524148eea1041d0552221357c63c39ad2df1e06ba8acdbfeceadc60d74c5"
+      },
+      "receiveWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "887b6c4b1ecba98eaf89f030bca4366fb93a1b566f9b0d64c47a6f3c3afb99bc"
+      },
+      "breakHTMLtags": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "a84b39aaf0e66e9a4b89b57225b329f667433e208fd9b4673a7ef0b748af66bf"
+      },
+      "sendEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "5a6173e2bb67536e57395030b671b203d77ff1196e158ff4c6c2d5dc85c50a3c"
+      },
+      "receiveEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "f9239c0e1037ae34ebaced0830a12546bbe150ccf2b0143412dae67c7ef918cf"
+      },
+      "bsWriteBitsArray": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "d1f563ac0460441027cdda2892d89e3612cbd13154c68a6470e3777dcac46e82"
+      },
+      "bsReadBitsArray": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "295377068f7bd338c8bbf304402326b7edd7ef6fe96eabc155fecbff8865706f"
+      },
+      "pktSendBitsAuto": {
+        "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+        "sha256_lf": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa"
+      },
+      "pktGetBitsAuto": {
+        "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+        "sha256_lf": "24d347775510cb0e5cd093758aee6967bda392c99d0baf5c46c1a19de7897cd7"
+      },
+      "sendChatSettings": {
+        "source": "Common/entity/chatSettings.c",
+        "sha256_lf": "ae7583fdf69ce9d94fe2dd27f54c82a44cd1099813bff8af20974ee1eec8794d"
+      },
+      "receiveChatSettings": {
+        "source": "Common/entity/chatSettings.c",
+        "sha256_lf": "eadc11b199924e035c85ef289c7bd0956255cae82c6039fb07b6233050c42ff2"
+      },
+      "receiveChatSettingsFromServer": {
+        "source": "Game/src/UI/uiChat.c",
+        "sha256_lf": "95ef175346b4a3a36afdaf008906b9aa59e7e35baf080e475cff68c2835dfda3"
+      },
+      "keybinds_send": {
+        "source": "MapServer/src/entity/keybinds.c",
+        "sha256_lf": "16d3af3664915df9fe746ebb9d9ac2ccd8012118282bd9d2f8c07ad72175a598"
+      },
+      "keybinds_recieve": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "bb54fa49e45bc1eb7f0760f5318553bc4f31bac4c67ed52b5e460e547132a421"
+      },
+      "receiveTeamBuffMode": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "86330ea2bfd2d43d7be3bee1375838715ba73d3d8fb1c086d14e1d37018ded7f"
+      },
+      "receiveDockMode": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "aa5fd0742e0b5b6b4e0113909e8f413863f3aaed3c3dac1df4da497486ea09a7"
+      },
+      "receiveInspirationMode": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "cd028705bda0c9452031d3a9dcf7fed47022f73a353a86579b7cc931aa9a8bbb"
+      },
+      "receiveTitles": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "ec17b054167a383048ddd730ca7f3e4edc323dffe13d1f2f8a664620af664895"
+      },
+      "receiveDescription": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "51bb324183a01a1c213f9663720e48ee6ff73da124cca5493d26db56d0d49581"
+      },
+      "receiveDividers": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "d0cd33d2a2f5437c281cefc4b469d73d5c2665f489a11cbebc6edbd9902aa3de"
+      },
+      "receiveFriendsList": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "e201ebcacaf524e5230483fef8d616272f6b997de9291000a6448512f19c1ada"
+      },
+      "sendFriendsList": {
+        "source": "MapServer/src/entity/friends.c",
+        "sha256_lf": "4cb44da7d9f466c16a61715feccfae312576b6b2a3b6c4ef6fce40f76cba1801"
+      },
+      "sendCombatMonitorStats": {
+        "source": "Common/entity/attrib_description.c",
+        "sha256_lf": "33f47bdb7220efeeae6bd91841b80a3d136468e4a055f8927c16df21e95f341a"
+      },
+      "receiveCombatMonitorStats": {
+        "source": "Common/entity/attrib_description.c",
+        "sha256_lf": "3acad4feabf3214523d43b2775eaf69134ac6417b20c18f2cadad21894773290"
+      }
+    },
+    "blocks": {
+      "sender_group56_sha256_lf": "ca43cf094c9e5844c7908458ec15215c528e5fa0d1ba078ae90f3562ffc9f703",
+      "receiver_group56_sha256_lf": "96a642f128049fb4926f9f7138dbdd4eff0e0bc572b2171e1613e6a8cf492ee6"
+    },
+    "original_generated_source_sha256": "fb3faa24eb4afbe72809690726b7707022f742d7df9c13c1b7b35fee8fc81d5f",
+    "producer_consumer_cases": 100,
+    "whole_character_complete": false,
+    "dictionary_ui_storage_shells": true,
+    "original_oracle_sanitized": false,
+    "chat_profile": "already migrated/localized; migration/default/UI callbacks are non-wire synthetic shells"
+  },
+  "fixtures_sha256": "d169fa8b22d6a34406cfcfcf9761ee9de7c72a4ac952d4013518b158be5bd397",
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 211918,
+      "fixtures": 100,
+      "truncations": 2024,
+      "mutations": 19390,
+      "randomized": 1000,
+      "output_bytes": 679280,
+      "workspace_bytes": 679280,
+      "aggregate_limit": 8388608,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 211918,
+      "fixtures": 100,
+      "truncations": 2024,
+      "mutations": 19390,
+      "randomized": 1000,
+      "output_bytes": 679280,
+      "workspace_bytes": 679280,
+      "aggregate_limit": 8388608,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 211918,
+      "fixtures": 100,
+      "truncations": 2024,
+      "mutations": 19390,
+      "randomized": 1000,
+      "output_bytes": 679280,
+      "workspace_bytes": 679280,
+      "aggregate_limit": 8388608,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    }
+  },
+  "binary_sha256": {
+    "release": "bdb7bf492473498a6d040e6cfff37501afb888cac4a4464607eaed2405cab5c5",
+    "asan": "0d6457f6c3226a588c2fa97ac19409af7ba8e803b61c5d393fa67d20bda56356",
+    "ubsan": "6912a85102f5ed9e5bd0420f882a47f7aed822659e18e269f7f70ac842a87246"
+  },
+  "production_stack_frames": [
+    "/workspace/scratch/9174d12e2a11/character-compose/native-android/engine/entities/../replication/coh_replication.c:8:12:valid\t8\tstatic",
+    "/workspace/scratch/9174d12e2a11/character-compose/native-android/engine/entities/../replication/coh_replication.c:29:11:coh_rep_read\t24\tstatic",
+    "/workspace/scratch/9174d12e2a11/character-compose/native-android/engine/entities/../replication/coh_replication.c:38:11:coh_rep_pack\t144\tstatic",
+    "/workspace/scratch/9174d12e2a11/character-compose/native-android/engine/entities/coh_character_tail.c:7:17:scalar\t48\tstatic",
+    "/workspace/scratch/9174d12e2a11/character-compose/native-android/engine/entities/coh_character_tail.c:10:17:number\t32\tstatic",
+    "/workspace/scratch/9174d12e2a11/character-compose/native-android/engine/entities/coh_character_tail.c:9:17:automatic\t32\tstatic",
+    "/workspace/scratch/9174d12e2a11/character-compose/native-android/engine/entities/coh_character_tail.c:20:11:coh_character_tail_read\t288\tstatic"
+  ],
+  "source_stable_before_after": true,
+  "whole_initial_update_complete": false,
+  "dictionary_authority": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "cpp_link_passed": true,
+  "android": {},
+  "android_executed": false
+}

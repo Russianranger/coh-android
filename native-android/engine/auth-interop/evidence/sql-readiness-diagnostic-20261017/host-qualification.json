@@ -1,0 +1,13 @@
+{
+  "schema": "coh-readiness-transport-diagnostic-host-controls-v1",
+  "passed": true,
+  "suites": 9,
+  "scope": "Owned pipe endpoint, exact observer adaptations, numeric log redaction, architecture/schema/memory guards, suppressed SQL/LocalDB console output, bounded private scalar capture, cleanup continuation, source-failure receipt and overall budget. Host Python children and mocked PowerShell only; no actual SQL, Windows or service execution.",
+  "real_windows_execution": false,
+  "sql_connectivity_qualified": false,
+  "authserver_started": false,
+  "source_sha256": {
+    "sql_readiness_diagnostic.py": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+    "test_sql_readiness_diagnostic.py": "15be59ecf66e7c17abf347cbf57cd9d562918ce5141328d87b1973a274c0869e"
+  }
+}

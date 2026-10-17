@@ -24,6 +24,7 @@ import time
 import auth_service_profile as profile
 import hosted_auth_stage as prior
 import password_fixture
+import candidate_service
 
 HERE = Path(__file__).resolve().parent
 CASES = ('valid', 'wrong-password', 'missing-account', 'corrupt-frame')
@@ -521,7 +522,18 @@ def main():
     parser.add_argument('--reuse-probe-stage', type=Path)
     parser.add_argument('--openssl-archive', type=Path)
     parser.add_argument('--intact-baseline', action='store_true')
+    parser.add_argument('--receive-candidate-stage', type=Path)
+    parser.add_argument('--candidate-receipt-sha256')
+    parser.add_argument('--candidate-binary-sha256')
+    parser.add_argument('--reuse-intact-stage', type=Path)
     args = parser.parse_args()
+    candidate_mode = args.receive_candidate_stage is not None
+    candidate_options = (args.candidate_receipt_sha256, args.candidate_binary_sha256, args.reuse_intact_stage)
+    if candidate_mode:
+        if not all(candidate_options) or not args.reuse_probe_stage or args.intact_baseline or args.openssl_archive:
+            raise ValueError('candidate_service_requires_exact_reuse_only')
+    elif any(value is not None for value in candidate_options):
+        raise ValueError('candidate_service_options_without_candidate')
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = prior.require_hosted(root, output, args.expected_commit)
     if prior.capture(['git', '-C', root, 'status', '--porcelain', '--untracked-files=no', '--', 'upstream/ouroboros', 'native-android']):
@@ -534,6 +546,10 @@ def main():
     if (not reused_probe or args.intact_baseline) and args.openssl_archive is None:
         raise ValueError('openssl_archive_required_for_probe_build')
     openssl = admit_openssl(args.openssl_archive) if not reused_probe or args.intact_baseline else reused_probe['openssl_source']
+    candidate_admission, intact_reuse = None, None
+    if candidate_mode:
+        candidate_admission = candidate_service.receive_build.admit(args.receive_candidate_stage.resolve(), args.candidate_receipt_sha256, args.candidate_binary_sha256)
+        intact_reuse = candidate_service.admit_intact(args.reuse_intact_stage.resolve(), root)
     output.mkdir(parents=True)
     runner = prior.Commands(output)
     proof = {'schema': 'coh-hosted-auth-only-login-v1', **identity, 'passed': False,
@@ -553,6 +569,15 @@ def main():
         proof['schema'] = 'coh-hosted-auth-only-intact-baseline-v1'
         proof['qualification_scope'] = 'loopback_normal_send_cap_1024_only'
         proof['forced_partial_send_calls'] = False
+    if candidate_mode:
+        proof['schema'] = 'coh-hosted-auth-receive-candidate-login-v1'
+        proof['qualification_scope'] = 'nonshipping_corrected_original_authserver_loopback_7_and_1024_send_caps'
+        proof['candidate_build_admission'] = candidate_admission
+        proof['intact_probe_build_reuse'] = intact_reuse
+        proof['candidate_authserver_launch_attempted'] = False
+        proof['candidate_authserver_started'] = False
+        proof['shipping_server_modified'] = False
+        proof['fragmented_and_normal_suite_complete'] = False
     instance = 'cohauth-ci-' + secrets.token_hex(12)
     created, firewall_attempted, child, job = False, False, None, None
     localdb, sqlcmd, sql_pid, fragment_probe = None, None, None, None
@@ -624,6 +649,11 @@ def main():
             proof['native_probe_inputs_sha256'] = {str(path.relative_to(root)): prior.sha(path) for path in inputs}
             shutil.copy2(probe, output / 'coh-auth-only.exe')
             shutil.copy2(build / 'CMakeCache.txt', output / 'native-probe-CMakeCache.txt')
+        if candidate_mode:
+            intact_probe = output / 'coh-auth-intact.exe'
+            shutil.copy2(args.reuse_intact_stage / 'coh-auth-intact.exe', intact_probe)
+            if probe_identity(intact_probe) != intact_reuse['binary']:
+                raise ValueError('candidate_intact_probe_copy_identity')
         if args.intact_baseline:
             fragment_probe = probe
             probe = build_intact_probe(root,temporary,output,args.openssl_archive,runner,proof)
@@ -638,7 +668,7 @@ def main():
             raise ValueError('qualified_localdb_version_changed')
         runner.run('localdb-memory-bound', [*sql, '-Q', "EXEC sp_configure 'show advanced options',1;RECONFIGURE;EXEC sp_configure 'max server memory (MB)',256;RECONFIGURE;"], timeout=150)
         runner.run('original-schema', [*sql, '-i', source / 'Assets/DBSchemas/cohauth.sql'], timeout=150)
-        if args.intact_baseline:
+        if args.intact_baseline or candidate_mode:
             runner.run('localdb-owned-process-id', [*sql,'-h','-1','-W','-Q',"SET NOCOUNT ON;SELECT CONVERT(int,SERVERPROPERTY('ProcessID'));"],timeout=150)
             value = (output / 'localdb-owned-process-id.log').read_text().strip()
             if not re.fullmatch(r'[1-9][0-9]{0,9}',value) or int(value)>0xffffffff:
@@ -657,9 +687,13 @@ def main():
         (runtime / 'etc').mkdir(parents=True)
         (runtime / 'logs').mkdir()
         auth = runtime / 'AuthServer.exe'
-        shutil.copy2(args.reuse_auth_stage / 'AuthServer-original.exe', auth)
-        if prior.pe_identity(auth, 2) != original['original_authserver']:
-            raise ValueError('original_authserver_changed_during_copy')
+        if candidate_mode:
+            candidate_service.copy_candidate(args.receive_candidate_stage.resolve(), args.candidate_receipt_sha256, args.candidate_binary_sha256, auth)
+            candidate_service.observe_sql(proof, 'before_authserver', instance, sql_pid)
+        else:
+            shutil.copy2(args.reuse_auth_stage / 'AuthServer-original.exe', auth)
+            if prior.pe_identity(auth, 2) != original['original_authserver']:
+                raise ValueError('original_authserver_changed_during_copy')
         ports, reservations = reserve_ports()
         try:
             (runtime / 'etc/config.txt').write_text(profile.configuration(instance, 'ODBC Driver 17 for SQL Server', ports, runtime / 'logs'), encoding='ascii')
@@ -672,29 +706,47 @@ def main():
                 reservation.close()
         # GUI AuthServer writes only private files. No raw log or credential row
         # is archived. The probe has no arbitrary credential/endpoint arguments.
-        proof['original_authserver_launch_attempted'] = True
+        proof['candidate_authserver_launch_attempted' if candidate_mode else 'original_authserver_launch_attempted'] = True
         child = subprocess.Popen([str(auth)], cwd=runtime, stdin=subprocess.DEVNULL,
                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        proof['original_authserver_started'] = True
+        proof['candidate_authserver_started' if candidate_mode else 'original_authserver_started'] = True
         proof['authserver_process_id'] = child.pid
         job.assign(child)
         deadline = time.monotonic() + 90
+        readiness_observed = False
         while True:
             private_logs_bounded(runtime / 'logs')
             if child.poll() is not None:
                 raise ValueError('original_authserver_exited_before_readiness')
             listening = inspect_listeners(child.pid)
-            if listening == set(ports):
-                break
+            if candidate_mode:
+                proof['last_owned_listener_ports'] = sorted(listening)
+                proof['listener_readiness_poll_count'] = proof.get('listener_readiness_poll_count', 0) + 1
+                if not readiness_observed:
+                    candidate_service.observe_sql(proof, 'during_readiness', instance, sql_pid)
+                    readiness_observed = True
             if listening - set(ports):
                 raise ValueError('unexpected_authserver_listener')
             if time.monotonic() >= deadline:
+                if candidate_mode:
+                    proof['listener_deadline_reached'] = True
+                    candidate_service.observe_sql(proof, 'listener_timeout', instance, sql_pid)
                 raise ValueError('original_authserver_listener_deadline')
+            if listening == set(ports):
+                break
             time.sleep(.25)
         proof['owned_listener_ports'] = ports
+        if candidate_mode:
+            candidate_service.observe_sql(proof, 'after_listeners', instance, sql_pid)
         baseline_error = None
         try:
-            for case in CASES:
+            if candidate_mode:
+                def ensure_candidate_owned():
+                    if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
+                        raise ValueError('candidate_service_lost_listener_ownership')
+                candidate_service.run_probes(proof, runner, {'fragmented_7': probe, 'normal_1024': intact_probe},
+                                             ports[1], runtime, output, ensure_candidate_owned)
+            for case in (() if candidate_mode else CASES):
                 private_logs_bounded(runtime / 'logs')
                 if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
                     raise ValueError('original_authserver_lost_listener_ownership')
@@ -740,7 +792,7 @@ def main():
     finally:
         if child is not None:
             proof['authserver_exit_code_before_owned_stop'] = child.poll()
-            if args.intact_baseline:
+            if args.intact_baseline or candidate_mode:
                 try:
                     proof['authserver_owned_job_members_before_stop'] = job.process_ids()
                     if sql_pid is not None:
@@ -765,7 +817,7 @@ def main():
             cleanup_ok = bool(job.kernel.CloseHandle(job.handle))
             job.handle = None
         proof['owned_authserver_cleanup_complete'] = cleanup_ok
-        if args.intact_baseline and sql_pid is not None:
+        if (args.intact_baseline or candidate_mode) and sql_pid is not None:
             try:
                 proof['owned_sql_process_after_authserver_stop'] = owned_process_snapshot(sql_pid)
             except Exception:
@@ -799,6 +851,8 @@ def main():
         proof['passed'] = proof['passed'] and cleanup_ok and proof['private_files_removed'] and proof['source_inputs_unchanged']
         if args.intact_baseline:
             proof['passed'] = proof['passed'] and proof.get('owned_process_diagnostics_complete',False) and proof.get('fragmented_control_completed',False)
+        if candidate_mode:
+            proof['passed'] = proof['passed'] and proof.get('owned_process_diagnostics_complete',False) and proof.get('fragmented_and_normal_suite_complete',False)
         (output / 'receipt.json').write_text(json.dumps(proof, indent=2) + '\n')
     print(json.dumps({'passed': proof['passed'], 'failure': proof.get('failure'),
                       'encrypted_account_login_verified': proof['encrypted_account_login_verified'],

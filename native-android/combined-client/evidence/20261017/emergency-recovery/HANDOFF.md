@@ -1,3 +1,5 @@
+Current continuation: [WORLD_CONTINUATION.md](WORLD_CONTINUATION.md).
+
 # Emergency primary continuation — recovered source integration
 
 Target `native-android` only. Recovered remote HEAD is

@@ -1,0 +1,122 @@
+name: Nonshipping corrected AuthServer encrypted login
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/engine/auth-interop/deployment/**
+      - .github/workflows/native-auth-candidate-service.yml
+  workflow_dispatch:
+    inputs:
+      execute_login:
+        description: Run exact original AuthServer against a disposable LocalDB account; no DbServer or MapServer
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-auth-candidate-service-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-controls:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/native-android' &&
+      ((github.event_name == 'workflow_dispatch' && inputs.execute_login) ||
+       (github.event_name == 'push' && contains(github.event.head_commit.message, '[auth-candidate-service]')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Test isolated service admission and socket cleanup
+        run: |
+          mkdir -p out/auth-login-controls
+          python3 native-android/engine/auth-interop/deployment/qualify_auth_only.py --source-root . --sanitize --output out/auth-login-controls/qualification.json
+          python3 native-android/engine/auth-interop/deployment/qualify_original_receive.py --source-root . --output out/auth-login-controls/original-receive-offset.json
+          python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_candidate_service.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-auth-candidate-source-controls
+          path: out/auth-login-controls/
+          if-no-files-found: error
+          retention-days: 90
+  candidate-authserver-login:
+    needs: source-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 35
+    steps:
+      - name: Preserve original LF source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Recover exact original AuthServer, completed ODBC evidence and compiled native probe
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, json, os, shutil, subprocess, zipfile
+          root = Path(os.environ['RUNNER_TEMP'])
+          specs = (
+              (12064402579, 428036, 'eda726ddc281b2e6b29e8c4d3c0f5e0805f505a8542c0ef80f5dad6208eb570d', 'auth-original-reuse'),
+              (12066189514, 872480, '0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b', 'auth-odbc-reuse'),
+              (12076876614, 1437572, 'b02c3f81e6c77aa2c5f48df6f0adefccb88b66fe98624bd6eeebfd631b35d3c7', 'auth-probe-reuse'),
+              (12078663003, 71999000, 'aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b', 'auth-intact-reuse'),
+          )
+          for artifact, size, sha, name in specs:
+              archive = root / (name + '.zip')
+              with archive.open('xb') as target:
+                  subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{artifact}/zip'], stdout=target, check=True, timeout=180)
+              assert archive.stat().st_size == size
+              assert hashlib.sha256(archive.read_bytes()).hexdigest() == sha
+              output = root / name
+              output.mkdir()
+              with zipfile.ZipFile(archive) as source:
+                  infos = source.infolist()
+                  assert len(infos) <= 1024 and len({x.filename for x in infos}) == len(infos)
+                  assert sum(x.file_size for x in infos) <= 128 * 1024**2
+                  assert all(not PurePosixPath(x.filename).is_absolute() and '..' not in PurePosixPath(x.filename).parts and '\\' not in x.filename and ':' not in x.filename and ((x.external_attr >> 16) & 0o170000) != 0o120000 for x in infos)
+                  selected = json.loads(Path('native-android/engine/auth-interop/deployment/intact-build-reuse-pins.json').read_text())['files'] if name == 'auth-intact-reuse' else None
+                  for item in infos:
+                      if item.is_dir() or (selected is not None and item.filename not in selected):
+                          continue
+                      target = output / item.filename
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      with source.open(item) as stream, target.open('xb') as dest:
+                          shutil.copyfileobj(stream, dest)
+                      if selected is not None:
+                          pin = selected[item.filename]
+                          assert target.stat().st_size == pin['bytes'] and hashlib.sha256(target.read_bytes()).hexdigest() == pin['sha256']
+                  if selected is not None:
+                      assert all((output / item).is_file() for item in selected)
+          archive = Path('native-android/combined-client/evidence/20261017/emergency-recovery/hosted-234d9c7/auth.zip')
+          assert archive.stat().st_size == 427525 and hashlib.sha256(archive.read_bytes()).hexdigest() == 'da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d'
+          output = root / 'auth-receive-candidate'
+          output.mkdir()
+          with zipfile.ZipFile(archive) as source:
+              infos = source.infolist()
+              assert len(infos) <= 32 and len({x.filename for x in infos}) == len(infos)
+              assert sum(x.file_size for x in infos) <= 8 * 1024**2
+              assert all(len(PurePosixPath(x.filename).parts) == 1 and not PurePosixPath(x.filename).is_absolute() and '..' not in PurePosixPath(x.filename).parts and '\\' not in x.filename and ':' not in x.filename and ((x.external_attr >> 16) & 0o170000) != 0o120000 for x in infos)
+              source.extractall(output)
+          print('Exact original server, completed ODBC evidence and native probe recovered; no binaries rebuilt')
+          PY
+      - name: Execute corrected server with existing fragmented and normal probes
+        shell: pwsh
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_auth_login.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-candidate-login" --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse" --reuse-odbc-stage "$env:RUNNER_TEMP/auth-odbc-reuse" --reuse-probe-stage "$env:RUNNER_TEMP/auth-probe-reuse" --reuse-intact-stage "$env:RUNNER_TEMP/auth-intact-reuse" --receive-candidate-stage "$env:RUNNER_TEMP/auth-receive-candidate" --candidate-receipt-sha256 25ee2415a280e7b3800808824d95d05b862acca9d4d4879f5fccb5605d6a2451 --candidate-binary-sha256 9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003
+          if ($LASTEXITCODE -ne 0) { throw 'Corrected AuthServer suite did not qualify; retain bounded sanitized diagnostics' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-corrected-authserver-encrypted-login
+          path: ${{ runner.temp }}/coh-auth-candidate-login/
+          if-no-files-found: warn
+          retention-days: 90

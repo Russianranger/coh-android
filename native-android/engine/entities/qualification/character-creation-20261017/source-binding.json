@@ -1,0 +1,83 @@
+{
+  "schema": "coh-character-creation-source-binding-v1",
+  "source_commit": "50d47c293452bace2d39e191039ecee1a6f1c702",
+  "native_receipts": [
+    {
+      "receipt": "ui-host.json",
+      "receipt_sha256": "f33af77f849f7db023774a9294fc5cb51752fa647df4ea4b4a04e00a4601cf2c",
+      "tested_source_revision": "eafecb13ce431f5c04f28e9286d3d1c166a5977d",
+      "source_commit": "50d47c293452bace2d39e191039ecee1a6f1c702",
+      "all_tested_native_helper_inputs_equal_committed_blobs": {
+        "native-android/engine/entities/coh_character_ui.c": true,
+        "native-android/engine/replication/coh_replication.c": true,
+        "native-android/engine/entities/test_character_ui.c": true,
+        "native-android/engine/entities/coh_character_ui.h": true,
+        "native-android/engine/replication/coh_replication.h": true,
+        "native-android/engine/coh_contracts.h": true,
+        "native-android/engine/entities/check_character_ui.py": true,
+        "native-android/engine/entities/check_teammate_buffs.py": true,
+        "native-android/tools/protocol_fixture/prepare.py": true,
+        "native-android/include/coh_native_core.h": true
+      },
+      "provider_sha256": {
+        "native-android/combined-client/diagnostics/character-outer-20261017/group4_oracle.py": "f7f655d87bc2e3a1e87396e2b8ced2ef55c4b45fe50032fff063a6bda813d5ca",
+        "native-android/combined-client/diagnostics/character-outer-20261017/qualify_outer.py": "a2d43a11a74c33709462abc5b0e4059edf774c7d6e23326d5c2330067e48a068",
+        "native-android/combined-client/diagnostics/character-outer-20261017/independent.py": "9fccb7ae9b449f8f529f4a3eabce50cfd36afb60b8b041857ff98beeb19df8d0",
+        "native-android/combined-client/diagnostics/character-outer-20261017/source-pins.json": "a4c8eeb46c960f55dde7fe954e209c73cd2b6f7f4c1116372f33c4e20b85d9a0"
+      },
+      "source_stable_before_after": true
+    },
+    {
+      "receipt": "composed-host.json",
+      "receipt_sha256": "36c614b7a269798076fb837d686721565666addbbc420e5145b3d3819e446eaa",
+      "tested_source_revision": "eafecb13ce431f5c04f28e9286d3d1c166a5977d",
+      "source_commit": "50d47c293452bace2d39e191039ecee1a6f1c702",
+      "all_tested_native_helper_inputs_equal_committed_blobs": {
+        "native-android/engine/entities/coh_character_creation.c": true,
+        "native-android/engine/entities/coh_character_initial.c": true,
+        "native-android/engine/entities/coh_character_prefix.c": true,
+        "native-android/engine/entities/coh_character_ui.c": true,
+        "native-android/engine/entities/coh_entities.c": true,
+        "native-android/engine/character-data/coh_character_data.c": true,
+        "native-android/engine/replication/coh_replication.c": true,
+        "native-android/engine/entities/test_character_creation.c": true,
+        "native-android/engine/entities/coh_character_creation.h": true,
+        "native-android/engine/entities/coh_character_initial.h": true,
+        "native-android/engine/entities/coh_character_prefix.h": true,
+        "native-android/engine/entities/coh_character_ui.h": true,
+        "native-android/engine/entities/coh_entities.h": true,
+        "native-android/engine/entities/coh_costume.h": true,
+        "native-android/engine/entities/coh_taskforce.h": true,
+        "native-android/engine/entities/check_character_creation.py": true,
+        "native-android/engine/entities/check_character_initial.py": true,
+        "native-android/engine/entities/check_teammate_buffs.py": true,
+        "native-android/engine/entities/stats_oracle_shim.h": true,
+        "native-android/engine/entities/character-initial-source-pins.json": true,
+        "native-android/engine/character-data/coh_character_data.h": true,
+        "native-android/engine/character-data/check.py": true,
+        "native-android/engine/character-data/oracle_shim.h": true,
+        "native-android/engine/character-data/oracle_fixture.c.inc": true,
+        "native-android/engine/character-data/source-pins.json": true,
+        "native-android/engine/replication/coh_replication.h": true,
+        "native-android/engine/coh_contracts.h": true,
+        "native-android/include/coh_native_core.h": true,
+        "native-android/tools/protocol_fixture/prepare.py": true
+      },
+      "provider_sha256": {
+        "native-android/combined-client/diagnostics/character-outer-20261017/group4_oracle.py": "f7f655d87bc2e3a1e87396e2b8ced2ef55c4b45fe50032fff063a6bda813d5ca",
+        "native-android/combined-client/diagnostics/character-outer-20261017/qualify_outer.py": "a2d43a11a74c33709462abc5b0e4059edf774c7d6e23326d5c2330067e48a068",
+        "native-android/combined-client/diagnostics/character-outer-20261017/independent.py": "9fccb7ae9b449f8f529f4a3eabce50cfd36afb60b8b041857ff98beeb19df8d0",
+        "native-android/combined-client/diagnostics/character-outer-20261017/source-pins.json": "a4c8eeb46c960f55dde7fe954e209c73cd2b6f7f4c1116372f33c4e20b85d9a0"
+      },
+      "source_stable_before_after": true
+    }
+  ],
+  "provider_source_tips": [
+    "45ff69465",
+    "3a45ae7fb"
+  ],
+  "android_executed": false,
+  "whole_character_complete": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false
+}

@@ -1,0 +1,44 @@
+name: Isolated x86 x64 SQL transport readiness diagnosis
+'on':
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-sql-readiness-only.yml
+      - native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py
+      - native-android/engine/auth-interop/deployment/test_sql_readiness_diagnostic.py
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-sql-readiness-only-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  sql-transport-only:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[sql-readiness-only]'))
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 25
+    steps:
+      - name: Preserve exact LF source
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Verify diagnostic transport and privacy controls
+        shell: pwsh
+        run: |
+          python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_sql_readiness_diagnostic.py
+          if ($LASTEXITCODE -ne 0) { throw 'SQL-only diagnostic host controls failed' }
+      - name: Compare named-instance and owned-pipe connections without AuthServer
+        shell: pwsh
+        run: |
+          python native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-sql-readiness-only" --memory-limit-mb 256
+          if ($LASTEXITCODE -ne 0) { throw 'Bounded SQL readiness diagnosis or owned cleanup did not complete' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: isolated-sql-readiness-only-${{ github.sha }}
+          path: ${{ runner.temp }}/coh-sql-readiness-only/
+          if-no-files-found: warn
+          retention-days: 90

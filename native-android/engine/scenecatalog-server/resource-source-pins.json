@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "reference_commit": "bf653dd4ef5372c921b049a76f902a4a921e8c4d",
+  "sha256_lf": {
+    "Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+    "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+    "Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+    "Game/src/render/thread/rt_model_cache.h": "cb68344bdd53130816b7cf597426a8ac1e73f65d01c9f67336f7d9d7544fde6e"
+  },
+  "functions_sha256_lf": {
+    "compareModelNamesAndLengths": "e8c770e4c00bde4d383941090120788584fe14fe777e22e3f59b1ce61b420104",
+    "compareModelBSearch": "2c3a9a110f66614ceb2eff061be88cf5a613bf1f1b398c675ef5f0f2b1d0107b",
+    "compareModelBSearchCallback": "6369c863e9cacbb4570d3c404ca294a7d3720f8b2a73b4e5d33c96c5469d42db",
+    "modelFind": "2445a1f4b4bf4d413e0f29c3da350064e9a94092372e459f9840e8db204368ae"
+  }
+}

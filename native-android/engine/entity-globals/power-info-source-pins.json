@@ -1,0 +1,16 @@
+{
+  "source_import": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "sha256_lf": {
+    "Common/entity/PowerInfo.c": "98ef9b93ec9e51623a7955aa173a5e53c24208e1b4ebca972a60753e81dda925",
+    "Common/entity/PowerInfo.h": "cc536fb80fcb6e6feac3aa4fdc764a6047d34d6a27f1ed4eea76dd32072e36ba",
+    "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+    "MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+    "Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+    "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+    "Common/entity/boost.h": "15048e49fa5e0a7673e55fbda8ca9889787a79ce60c596b06ca59731267e9fa9",
+    "Common/entity/powers.h": "9618cc4050e1002d9ea2c7d3a237ce0996f7c0036e21becf73ebdb11b75d112f",
+    "Common/entity/RewardItemType.h": "f09c948de31ac9e2a26a6445fb24fa415f14bd0dd6ae6ee6823390d6dba5b9d3",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+  }
+}

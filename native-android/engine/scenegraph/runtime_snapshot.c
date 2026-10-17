@@ -323,6 +323,11 @@ CohStatus coh_runtime_graph_publish(CohRuntimeGraph**current,CohRuntimeGraph**ca
     }else if(next->binding.generation!=1||next->report.prior_owned_bytes)return COH_STATE;
     *retired=old;*current=next;*candidate=NULL;return COH_OK;
 }
+CohStatus coh_runtime_graph_binding(const CohRuntimeGraph*g,CohRuntimeGraphBinding*out){if(!g||!out)return COH_INVALID;*out=g->binding;return COH_OK;}
+CohStatus coh_runtime_graph_sources(const CohRuntimeGraph*g,CohBytes*catalog,CohBytes*snapshot){
+    if(!g||!catalog||!snapshot||catalog==snapshot)return COH_INVALID;
+    *catalog=g->catalog;*snapshot=g->snapshot;return COH_OK;
+}
 CohStatus coh_runtime_graph_report(const CohRuntimeGraph*g,CohRuntimeGraphReport*out){if(!g||!out)return COH_INVALID;*out=g->report;return COH_OK;}
 CohStatus coh_runtime_graph_node(const CohRuntimeGraph*g,uint32_t i,CohRuntimeGraphNode*out){
     if(!g||!out)return COH_INVALID;

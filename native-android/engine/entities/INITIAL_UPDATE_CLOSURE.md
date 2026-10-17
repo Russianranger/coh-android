@@ -61,9 +61,9 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
 | 1 | optional per-entity debug and global entity debug | Unsupported; transport/debug-profile contract required |
 | 2 | `playerReceiveControlState` | Worker F's independently qualified `engine/entity-control/` supplies standalone bounded control staging (original TEST_CLIENT oracle); no outer-tail composition, physics-history execution or diagnostic recording admission |
 | 3 | `entReceiveDeletes` | Standalone parser and staging apply supported; correct outer offset not established |
-| 4 | `receiveCharacterFromServer` for full update | Unsupported composition; expanded below |
+| 4 | `receiveCharacterFromServer` for full update | Complete bounded raw outer-body groups1..6 composition source/host/sanitizer qualified in `coh_character_outer.*`; dictionary/gameplay application, required semantic presence/identity and enclosing ALLENTS composition remain open |
 | 4a | otherwise `SendCharacterToSelf` stats | Standalone complete absolute schema supported; correct outer offset not established |
-| 5 | power-info update, power-mode update | Complete bounded standalone power-range list and complete flag=false PowerInfoUpdate path source/host/sanitizer qualified in `coh_power_ranges.*`. False still carries a range list. Flag=true power-definition/boost/status/inspiration branches remain unsupported and refuse without consumption. Raw CRC/F32 events have no dictionary/state authority. Complete standalone power-mode replacement/retain wire grammar is source/Android qualified in `engine/entity-globals/`; enclosing offsets, dictionary resolution and transaction composition remain open |
+| 5 | power-info update, power-mode update | Complete standalone raw PowerInfoUpdate staging is source/host/sanitizer qualified in `engine/entity-globals/POWER_INFO_CONTRACT.md`, including both flag branches and mandatory range list. Independently qualified `coh_power_ranges.*` preserves the narrower range-only/flag=false contract and refuses flag=true. Raw CRC/F32 events have no dictionary/state authority. Complete standalone power-mode replacement/retain wire grammar is source/Android qualified in `engine/entity-globals/`; enclosing offsets, dictionary resolution and transaction composition remain open |
 | 6 | badge update and full-update badge monitor | Complete bounded standalone badge/player/supergroup/history and ten monitor-ID wire bodies source/host/sanitizer qualified in `engine/entity-globals/coh_badges.*`; both Android ABI builds and Android 13 x86_64 execution passed in run 38970381196. Dictionary/UI application, original monitor filtering/sorting and enclosing transaction remain open; no physical or authoritative actor acceptance |
 | 7 | generic inventory and invention updates | Unsupported |
 | 8 | workshop string | Unsupported in outer transaction |
@@ -99,8 +99,18 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
    mouse settings; dividers; control-first/nocoll; friends; combat-monitor stats;
    rename flag.
 
-All six groups still require a bounded transactional owner. Reuse the qualified
-standalone parsers; they do not establish whole-message admission. Apparent optional
+Groups1..6 now have a bounded atomic raw owner in `coh_character_outer.*`:
+account prefix, complete `character_Send` metadata, original powerset names,
+ally/gang/PvP/self stats, then full tray/modes/name/strings/help/windows, ordered
+reward/account/chat/title/keybind/options/control/friend/monitor/rename tails.
+The composed source fixtures preserve exact child cursor boundaries and late-
+field rollback. Original whole group5/6 sender/consumer and helper functions
+execute independently with explicit fixture shells and complete field/string
+projections. The enclosing whole original character function is not executed.
+The raw owner ends after rename. Dictionary authority, original
+`character_Receive` gameplay application, selected identity, required semantic
+presence masks and complete enclosing packet admission remain open. This raw
+wire closure does not establish whole-message admission. Apparent optional
 absence cannot be assumed; native parsing must validate the actual wire flags.
 Unknown data must never be skipped by scanning for a plausible later sentinel.
 
@@ -126,8 +136,8 @@ First close complete **selected self create**, then the global initial tail:
 3. Compose the separately qualified control-state block, retain/deduplicate its
    future-push events, and reuse the qualified complete `character_Send` wire
    metadata. Implement dictionary-bound `character_Receive` state application
-   with pinned class/origin/basepower identities and the still-missing outer
-   character UI/account grammars and post-character global tails, including
+   with pinned class/origin/basepower identities; compose the now complete raw
+   outer character owner with post-character global tails, including
    PowerInfoUpdate. Standalone wire metadata is not that whole transaction.
 4. Execute original complete initial-update producer in a disposable source
    environment; bind synthetic oracle and authentic capture identities separately.
@@ -139,7 +149,7 @@ remain substantial. Source substructures can continue without server access;
 final complete qualification needs authentic source/profile dictionaries and
 actual complete packets. A capture alone cannot make an incomplete parser safe.
 The unsupported very-rare/buff continuations, outer character fields,
-PowerInfoUpdate and later global tails are missing source implementations or
+PowerInfoUpdate now has standalone raw source-qualified staging; enclosing composition and later global tails remain incomplete or
 composition, not merely runtime-data admission failures.
 
 ## Immutable actor boundary

@@ -1,0 +1,56 @@
+{
+  "schema": "coh-rigid-v8-integration-handoff-v1",
+  "source_commit": "cda4ad46a",
+  "base": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+  "source_components": [
+    "4e18baa85",
+    "db22ff397",
+    "cda4ad46a"
+  ],
+  "auth_independent_review_commit": "69e8a6fcf",
+  "host_modes": {
+    "release": {
+      "authored_controls": 259,
+      "actual_geometry_controls": 22
+    },
+    "address": {
+      "authored_controls": 259,
+      "actual_geometry_controls": 22
+    },
+    "undefined": {
+      "authored_controls": 259,
+      "actual_geometry_controls": 22
+    }
+  },
+  "actual_source": {
+    "virtual": "data/object_library/worldnpcs/praetorian_box/g_praetorianbox_open.geo",
+    "sha256": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5",
+    "bytes": 1289,
+    "model": "FX_PraetorianBox_Open",
+    "vertices": 56,
+    "triangles": 28,
+    "original_delta_components_byte_exact": 532
+  },
+  "producer_layout_fields": 16,
+  "independent_review": {
+    "reviewer": "worker-a",
+    "findings": [
+      "nonNULL output candidate could overwrite old resource",
+      "loader acquire could exceed aggregate before room check"
+    ],
+    "resolution": "COH_STATE output guard and complete configured loader reservation charged pre-acquire with before/after actual peak checks; A confirmed supplier contract matches.",
+    "remaining_prerequisites": "Independent source semantics/material/LOD/resource admission; callback labels are attestations, not producer verification."
+  },
+  "integration": [
+    "Configure protected loader total_bytes<=loader_reservation before passing it. Aggregate caller inventory includes externally retained old resources and material/digest/source/GPU peaks.",
+    "Feed exact loaded asset path/SHA/generation and unique original model name from independently qualified identity supplier.",
+    "Material callback must acquire exact independently qualified source semantics/resources, return geometry/material identities and lifetime pin. Errors return no ownership.",
+    "Build/retain CPU geometry off-thread; do not retire material/GPU pins before binding and every renderer flush unless separately retained.",
+    "This resource owner never mints full graph/actor/live GROUPS/renderer authority."
+  ],
+  "android_built": false,
+  "android_executed": false,
+  "genuine_material_resolution_qualified": false,
+  "source_loaded_generation_qualified": false,
+  "world_authority": false
+}

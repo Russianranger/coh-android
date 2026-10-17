@@ -1,0 +1,32 @@
+{
+  "schema": "coh-sql-readiness-independent-review-v1",
+  "reviewer": "worker-e",
+  "source_commit": "dc936b037867feb3a3f96bbc8ec733e1586a6bfb",
+  "workflow": ".github/workflows/native-sql-readiness-only.yml",
+  "workflow_sha256": "eafce9dc2679ef09f776a856df206abd04dc0ca716a5538f10e23b843465fc26",
+  "reviewed_source_sha256": {
+    "sql_readiness_diagnostic.py": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+    "test_sql_readiness_diagnostic.py": "15be59ecf66e7c17abf347cbf57cd9d562918ce5141328d87b1973a274c0869e",
+    "SQL-READINESS-DIAGNOSTIC.md": "d27f12830d57d44429856742d0b23991c8780c2f752e47ba3aa415387efbff2a"
+  },
+  "decision": "accepted after corrected source commits integrated and committed cleanly",
+  "independent_host_suites_passed": 9,
+  "findings_closed": [
+    "SQL/LocalDB console incl cleanup DROP now suppressed, fixed version/PID captured in private bounded file and parsed to numeric-only values.",
+    "Final source observation failure sets false/symbolic status and still writes receipt.",
+    "Overall20min diagnostic deadline outside observer catches stops new work and fails incomplete experiment; bounded cleanup remains available."
+  ],
+  "reviewed_boundaries": [
+    "Fresh hosted Windows exact Git/original source admission, unique owned LocalDB instance and exact local named pipe only.",
+    "x86/x64 shell pointer admission and expected ownedSQLPID; per-phase process generation and numeric memory observations.",
+    "All private schema/seed SQL output suppressed; no credentials, instance-info user text, raw errorlog or driver exception text exported.",
+    "Four declared memory/schema/seed phases;16read-only connection observations; connectivity_qualified remainsfalse even if diagnostic completed.",
+    "No AuthServer/probe startup, authentication guard disable or shipping profile change.",
+    "Workflow has native-android/repository/explicit-marker guard, noncancelling concurrency, exact LF checkout, Python3.12,25min limit and always-upload owned directory."
+  ],
+  "windows_sql_executed_by_review": false,
+  "authserver_started": false,
+  "encrypted_account_login_verified": false,
+  "workflow_dispatched": false,
+  "world_authority": false
+}
