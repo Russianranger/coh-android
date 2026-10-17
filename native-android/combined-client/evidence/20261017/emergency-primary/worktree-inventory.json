@@ -1,0 +1,261 @@
+[
+  {
+    "path": "/workspace/scratch/9174d12e2a11/auth-worker",
+    "head": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+    "recent": [
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]",
+      "cacc62738 Qualify isolated original AuthServer normal-send baseline and preserve fragmentation defect [native-contracts-only] [compact-recovery] [auth-login]",
+      "194895e72 Repair original AuthServer listener inventory and reuse exact qualified probe [native-contracts-only] [compact-recovery] [auth-login]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 167004
+  },
+  {
+    "path": "/workspace/scratch/9174d12e2a11/worker-f",
+    "head": "d5696b8da2db7bd41868a1d2bacd1b90608fdece",
+    "recent": [
+      "d5696b8da Bind final owner graph and teammate reviews to exact sanitized source receipts",
+      "05a7c86fe Review corrected teammate oracle and actual mutation controls",
+      "75a385f54 Independently replay final compact source graph and verify matrix controls"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/9174d12e2a11/graph-work",
+    "head": "1d98a3c7035b7b5eacf059fe10682c2475a1f98c",
+    "recent": [
+      "1d98a3c70 Recover immutable bounded runtime source graph and qualify authentic snapshot",
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]",
+      "cacc62738 Qualify isolated original AuthServer normal-send baseline and preserve fragmentation defect [native-contracts-only] [compact-recovery] [auth-login]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/9174d12e2a11/entities-work",
+    "head": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+    "recent": [
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]",
+      "cacc62738 Qualify isolated original AuthServer normal-send baseline and preserve fragmentation defect [native-contracts-only] [compact-recovery] [auth-login]",
+      "194895e72 Repair original AuthServer listener inventory and reuse exact qualified probe [native-contracts-only] [compact-recovery] [auth-login]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/9174d12e2a11/coh-recovery",
+    "head": "4f6fe92107a10323a90123c6856de578943300e2",
+    "recent": [
+      "4f6fe9210 Bind executing frame qualification drivers and update runtime graph handoff",
+      "326fa694f Qualify AuthServer boundary bodies and stage isolated Windows receive build",
+      "86578c0e8 Review corrected teammate oracle and actual mutation controls"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/9174d12e2a11/entities-isolated",
+    "head": "ecf8c84a120b5a80a5909ed900777188c43c97ca",
+    "recent": [
+      "ecf8c84a1 Clarify buff source enum and wire-only parser boundary",
+      "2c8676af1 Record exact recovered suffix and teammate source qualification receipts",
+      "4838f74ed Qualify complete bounded original teammate-buff wire staging"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/9174d12e2a11/worker-a",
+    "head": "aefeef69911138d29e7f762cc312d492840aa07f",
+    "recent": [
+      "aefeef699 Retain immutable catalog runtime snapshot imports and qualify composed graph lifetime",
+      "3aba70357 Recover immutable bounded runtime source graph and qualify authentic snapshot",
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/9174d12e2a11/worker-e",
+    "head": "e9e4cb9c98d4664ab88a1ad69d3febd0fc5cbf4c",
+    "recent": [
+      "e9e4cb9c9 Review isolated AuthServer candidate build and receipt boundaries",
+      "014ad735e Bind executing frame qualification drivers and update runtime graph handoff",
+      "79a4a6cb1 Add exact bounded-frame Android artifact admission and execution driver"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/9174d12e2a11/auth-isolated",
+    "head": "88289a9d99126a65e6ec2164a09ac7dc9e35db5c",
+    "recent": [
+      "88289a9d9 Qualify AuthServer boundary bodies and stage isolated Windows receive build",
+      "ccda71b41 Recover isolated AuthServer receive cursor candidate and qualify segmentation",
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]"
+    ],
+    "materialized_changes": [
+      {
+        "path": "native-android/engine/auth-interop/deployment/test_receive_candidate_stage.py",
+        "status": " M",
+        "bytes": 9227,
+        "sha256": "c4c223f947b08e683c15d6e7799f8d3d94a74897f57b1058d2b85a37563cc9dc",
+        "equals_remote": false
+      }
+    ],
+    "sparse_absences_not_deletions": 1
+  },
+  {
+    "path": "/workspace/scratch/90c31237ea30/coh-primary",
+    "head": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+    "recent": [
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]",
+      "cacc62738 Qualify isolated original AuthServer normal-send baseline and preserve fragmentation defect [native-contracts-only] [compact-recovery] [auth-login]",
+      "194895e72 Repair original AuthServer listener inventory and reuse exact qualified probe [native-contracts-only] [compact-recovery] [auth-login]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/142ad4bc669b/worker-b",
+    "head": "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-b1",
+    "recent": [
+      "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-b1"
+    ]
+  },
+  {
+    "path": "/workspace/scratch/142ad4bc669b/worker-f",
+    "head": "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-f1",
+    "recent": [
+      "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-f1"
+    ]
+  },
+  {
+    "path": "/workspace/scratch/142ad4bc669b/integration",
+    "head": "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/integration",
+    "recent": [
+      "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/integration"
+    ]
+  },
+  {
+    "path": "/workspace/scratch/142ad4bc669b/worker-c",
+    "head": "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-c1",
+    "recent": [
+      "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-c1"
+    ]
+  },
+  {
+    "path": "/workspace/scratch/142ad4bc669b/worker-a",
+    "head": "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-a1",
+    "recent": [
+      "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-a1"
+    ]
+  },
+  {
+    "path": "/workspace/scratch/142ad4bc669b/worker-e",
+    "head": "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-e1",
+    "recent": [
+      "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-e1"
+    ]
+  },
+  {
+    "path": "/workspace/scratch/142ad4bc669b/worker-d",
+    "head": "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-d1",
+    "recent": [
+      "fatal: not a git repository: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-d1"
+    ]
+  },
+  {
+    "path": "/workspace/scratch/6fdfad7f0729/snapshot-admission-a",
+    "head": "faedf923a6f2aa9a9d401f3c2a9d4fa4a99622a7",
+    "recent": [
+      "faedf923a Add sealed offline admission for retained runtime snapshot evidence",
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]",
+      "cacc62738 Qualify isolated original AuthServer normal-send baseline and preserve fragmentation defect [native-contracts-only] [compact-recovery] [auth-login]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/6fdfad7f0729/coh-independent",
+    "head": "6649280710b7fdd3c7352cb48d11b5d542182276",
+    "recent": [
+      "664928071 Bind independent admission review to normalized refusal handling",
+      "8cf60d578 Independently review retained snapshot admission and scope",
+      "fe3151fdb Review renderer authority boundary with independent rollback controls"
+    ],
+    "materialized_changes": [
+      {
+        "path": ".github/workflows/native-snapshot-admission.yml",
+        "status": "??",
+        "bytes": 1883,
+        "sha256": "47535e8d3776d428a80aa207b3688b02da6e15cfcca88c896d3185b777024ea3",
+        "equals_remote": false
+      },
+      {
+        "path": "native-android/engine/snapshot-admission/qualify.py",
+        "status": "??",
+        "bytes": 4658,
+        "sha256": "22668cbec63f024f601c582f3f171e56d38fcf6d2929ccfdd39c5e216f4b6003",
+        "equals_remote": false
+      }
+    ],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/6fdfad7f0729/worker-e-review",
+    "head": "690444c752cbab4f8a8b13920a60841f3ab406b4",
+    "recent": [
+      "690444c75 Bind independent admission review to normalized refusal handling",
+      "35eb8358a Independently review retained snapshot admission and scope",
+      "7616815c8 Review renderer authority boundary with independent rollback controls"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/6fdfad7f0729/f-snapshot-review",
+    "head": "657696241fb56e74ff7593982d00483ec594f32f",
+    "recent": [
+      "657696241 Independently qualify retained snapshot archive admission and cleanup receipts",
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]",
+      "cacc62738 Qualify isolated original AuthServer normal-send baseline and preserve fragmentation defect [native-contracts-only] [compact-recovery] [auth-login]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/6fdfad7f0729/d-auth-review",
+    "head": "d331ad3d6d949db2d66f9300a343860e05a4a436",
+    "recent": [
+      "d331ad3d6 Review original AuthServer readiness and qualify empty pool startup branches",
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]",
+      "cacc62738 Qualify isolated original AuthServer normal-send baseline and preserve fragmentation defect [native-contracts-only] [compact-recovery] [auth-login]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/6fdfad7f0729/entity-review-c",
+    "head": "62f3a5357ccc5ec67c8b5828abfa757bbe37617f",
+    "recent": [
+      "62f3a5357 Review initial entity authority and guard completion command boundaries",
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]",
+      "cacc62738 Qualify isolated original AuthServer normal-send baseline and preserve fragmentation defect [native-contracts-only] [compact-recovery] [auth-login]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  },
+  {
+    "path": "/workspace/scratch/6fdfad7f0729/coh-b-review",
+    "head": "53389bbb6fcdf26de1a7ca7f69939a78d0138e55",
+    "recent": [
+      "53389bbb6 Record final reviewed compressed-input refusal handling",
+      "138bfce5b Independently replay retained runtime snapshot and document graph limits",
+      "3e8b5c9f5 Qualify bounded original runtime root and future-object snapshot [native-contracts-only] [compact-recovery] [scene-sidecar-capture]"
+    ],
+    "materialized_changes": [],
+    "sparse_absences_not_deletions": 0
+  }
+]

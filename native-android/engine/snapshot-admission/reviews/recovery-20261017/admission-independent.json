@@ -1,0 +1,14 @@
+{
+  "schema": "coh-independent-snapshot-review-v1",
+  "validator_sha256": "74a4f52ca6d3a6a0bfdbd9edcd60d25909059bce011ad0cb2c8ac6b6c0d32085",
+  "trust_sha256": "ad496a806005bb272acd1a30e54260ac46ed56c0768cb22c77161a8ee23811c5",
+  "archive_sha256": "8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d",
+  "tests_run": 17,
+  "failures": 0,
+  "errors": 0,
+  "source_stable": true,
+  "passed": true,
+  "memory_claim": "No process RSS or kernel memory-cap measurement performed.",
+  "real_server_executed": false,
+  "live_world_accepted": false
+}

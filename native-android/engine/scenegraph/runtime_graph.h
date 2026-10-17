@@ -54,4 +54,17 @@ CohStatus coh_runtime_graph_root(const CohRuntimeGraph *,uint32_t,CohRuntimeGrap
 CohStatus coh_runtime_graph_slot(const CohRuntimeGraph *,uint32_t file,uint32_t slot,uint32_t *);
 /* Exact canonical names only; no newly introduced aliases/case folding. */
 CohStatus coh_runtime_graph_name(const CohRuntimeGraph *,const char *,uint32_t *);
+typedef struct {uint32_t parent,edge,queue;} CohRuntimeGraphWitnessWork;
+typedef struct {
+    uint32_t root_slot,length;
+    uint32_t nodes[COH_SG_DEPTH_MAX+1u],edges[COH_SG_DEPTH_MAX];
+} CohRuntimeGraphWitness;
+/* Deterministic shortest source path, using root slot and child order. Edges
+ * are global graph edge indexes; compose the selected root and edge matrices
+ * in source order. This is topology evidence, never a draw/resource permit.
+ * Supply at least report.nodes workspace rows, disjoint from graph/inputs/out;
+ * charge their bytes as retained memory alongside the graph. No allocation.
+ * Work is mutable scratch; out remains unchanged on failure/cancellation. */
+CohStatus coh_runtime_graph_witness(const CohRuntimeGraph *,uint32_t node,
+    CohRuntimeGraphWitnessWork *,size_t rows,const CohCancel *,CohRuntimeGraphWitness *);
 #endif

@@ -1,0 +1,41 @@
+{
+  "schema": "coh-renderer-final-workflow-additions-review-v1",
+  "reviewed_revision": "e4b625d4fe2fe4e623c36ad7d518488482140259",
+  "workflow_sha256": "888d9a921d6294e99c7cac886e15dca9e737487a9e626e99e00a2ebe3c26d0ea",
+  "review_passed": true,
+  "reviewed_cli_source_sha256": {
+    "native-android/engine/entities/check_character_prefix.py": "40acdaafd945575909b5d5a5ae03ff01b060b1b779870e00c488e6b25db29c7f",
+    "native-android/engine/snapshot-admission/test_admit.py": "baf9f1533bf7af01019ec4e278192a971b562322d9a2632d4a751a5f095f2813",
+    "native-android/engine/snapshot-admission/test_prepare.py": "24b4f5f83fa221d70fcb5d911e23534bed5f870f1d3fed06119baafe61a070ae"
+  },
+  "executed_controls": {
+    "test_admit.py --capture-zip retained-evidence.zip": {
+      "passed": true,
+      "tests": 7
+    },
+    "test_prepare.py --capture-zip retained-evidence.zip": {
+      "passed": true,
+      "tests": 3
+    },
+    "check_character_prefix.py --help": {
+      "passed": true
+    },
+    "workflow_yaml_parse_and_scope_assertions": {
+      "passed": true
+    }
+  },
+  "verified_additions": [
+    "Both snapshot-admission direct scripts accept and exercise --capture-zip.",
+    "Character-prefix accepts paired --ndk/--android-output and required --output options.",
+    "NDK compiler paths match downloaded r28c Linux toolchain and API26 triples for both ABIs.",
+    "Prefix receipts explicitly record built=true and executed=false; host modes run independently.",
+    "Prefix artifact paths are uploaded; prefix fixture header and both receipts are retained.",
+    "Android13 command remains frame-only; prefix execution is not implied.",
+    "Full-history graph checkout still supplies historical source pins."
+  ],
+  "android_build_executed_by_reviewer": false,
+  "android_execution_claimed": false,
+  "workflow_executed_by_reviewer": false,
+  "whole_character_complete": false,
+  "world_authority": false
+}

@@ -1,0 +1,17 @@
+{
+  "android_server_overlap_measured": false,
+  "controlled_host_child_only": true,
+  "device_measurement": false,
+  "enumerated_process_pss_sum_kib": null,
+  "enumeration_may_miss_short_lived_processes": true,
+  "observation_duration_ns": 1428902,
+  "observed_processes": 1,
+  "owned_child_reaped": true,
+  "process_tree_membership_atomic": false,
+  "pss_available_processes": 0,
+  "rss_sum_counts_shared_pages_multiple_times": true,
+  "rss_sum_kib": 488,
+  "schema": "coh-owned-memory-observation-v1",
+  "scope": "same_uid_descendants_of_explicit_pid_starttime_at_sequential_read_boundaries",
+  "whole_process_tree_peak_measured": false
+}

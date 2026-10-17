@@ -605,6 +605,27 @@ static void visibility_frames(void) {
     CHECK(coh_wr_draw(bindings,2,0,ident,ident,&draw)==COH_STATE);
     CHECK(coh_wr_frame_draw(selected,bindings,2,0,&draw)==COH_OK && draw.model_view[12]==1);
     CHECK(coh_wr_frame_draw(selected,bindings,2,1,&draw)==COH_OK && draw.model_view[12]==1024);
+    /* Every cancellation boundary, including the final commit poll, must keep
+     * both the old selection mask and its texture handles. Reuse the same
+     * Surface generation: generation checks alone cannot hide a partial swap. */
+    { CohWrFrame *replacement=NULL;
+      size_t replacement_indices[2]={0,1023},point;
+      CohRenderDraw unchanged;
+      CHECK(coh_wr_frame_create(s,replacement_indices,2,ident,ident,&config,never,&replacement)==COH_OK);
+      for(point=0;point<=6;++point) {
+        int n=(int)point; CohCancel cancel={cancel_at,&n};
+        CHECK(coh_wr_frame_bind(replacement,bindings,2,resolve,&r,cancel)==COH_CANCELLED);
+        CHECK(coh_wr_frame_draw(selected,bindings,2,0,&draw)==COH_OK &&
+              draw.model_view[12]==1 && draw.material.textures[0].handle==223 &&
+              draw.material.textures[1].handle==224);
+        CHECK(coh_wr_frame_draw(selected,bindings,2,1,&draw)==COH_OK && draw.model_view[12]==1024);
+        memset(&draw,0x55,sizeof(draw)); unchanged=draw;
+        CHECK(coh_wr_frame_draw(replacement,bindings,2,0,&draw)==COH_STATE &&
+              !memcmp(&draw,&unchanged,sizeof(draw)));
+        CHECK(coh_wr_frame_draw(replacement,bindings,2,1,&draw)==COH_STATE);
+      }
+      coh_wr_frame_destroy(replacement);
+    }
     r.fail_id=24;
     CHECK(coh_wr_frame_bind(frame,bindings,3,resolve,&r,never)==COH_NOT_FOUND);
     CHECK(coh_wr_frame_draw(selected,bindings,2,1,&draw)==COH_OK);

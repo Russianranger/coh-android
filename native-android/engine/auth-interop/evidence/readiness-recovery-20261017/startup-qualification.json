@@ -1,0 +1,46 @@
+{
+  "schema": "coh-independent-auth-startup-review-v1",
+  "passed": true,
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_sha256": {
+    "upstream/ouroboros/AuthServer/src/DBConn.cpp": "9b2715d756e6b51a170fa2c544bab3bd8d84a396bd5b8e9d70a5a766cf036dd9"
+  },
+  "functions_sha256_utf8_lf": {
+    "DBEnv::Init": "fa6cd221ad5fada6fb9bdf81cf7d3adc71d4bb1035ffcf1b309a4cf3112d2de8",
+    "DBEnv::AllocSQLPool": "d0e66025ebd81f743d204a8efad98899c69973839beb537507f7724ffeb3e8d6",
+    "CDBConn::CDBConn": "43f7f7d421bf3ef9ec6e7423bb3440cf578e03af5a450d28a5ada1cb45b671ba"
+  },
+  "fixture_sha256": "854e7cd39a27cee37fdb7c329caf1a95b661cfc88cbdf822c28a094fd19c6d20",
+  "generated_oracle_sha256": "5b636fc949ddd4e964bba217a301753fb866db84ef138b35a29fe1eabdd3c54e",
+  "executions": {
+    "release": {
+      "binary_sha256": "e303563bfb4d09d9ee08739792b9d41c26e4c633af66849032ad1fcee880810a",
+      "result": {
+        "passed": true,
+        "checks": 15,
+        "empty_pool_init_returns_true": true,
+        "empty_pool_wait_observed": 3,
+        "healthy_pool_constructs": true,
+        "windows_executed": false,
+        "live_service_executed": false
+      }
+    },
+    "asan_ubsan": {
+      "binary_sha256": "af142d8141ef76443e94877e28e31e7960ef136eaa7822955e57f40969ca7f62",
+      "result": {
+        "passed": true,
+        "checks": 15,
+        "empty_pool_init_returns_true": true,
+        "empty_pool_wait_observed": 3,
+        "healthy_pool_constructs": true,
+        "windows_executed": false,
+        "live_service_executed": false
+      }
+    }
+  },
+  "scope": "Exact Init, AllocSQLPool and CDBConn constructor; fixture ODBC/lock/logger and a Sleep interceptor raising after three waits. Does not establish historical failure cause, ODBC driver behavior or real wall-clock timeout.",
+  "leak_sanitizer_enabled": false,
+  "original_source_modified": false,
+  "service_executed": false,
+  "encrypted_login_verified": false
+}

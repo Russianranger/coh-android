@@ -1,0 +1,23 @@
+{
+  "schema": "coh-renderer-independent-workflow-review-v1",
+  "reviewed_workflow": ".github/workflows/native-recovered-components.yml",
+  "sha256": "ca2fa5d31e45a317a716aa471232a6995c485a180df32011618ec9ef909e51c4",
+  "source_review_passed": true,
+  "workflow_executed": false,
+  "reviewer_capture_audit_executed": true,
+  "capture_audit_result": "passed; both retained archives checked by verify_capture.py with historical original source pins",
+  "corrected_blocker": "authentic-source-graph checkout must provide historical 3e8b5c9 source tree; final reviewed workflow sets fetch-depth:0",
+  "checks": [
+    "YAML parses and contains exactly two jobs.",
+    "Native branch-only guards and read-only repository permission retained.",
+    "No workflow cancellation, expensive server capture, accepted APK rebuild, shipping activation or GPU claim.",
+    "Actual graph uses exact retained catalog, snapshot, source and run identities; owner checks reuse pinned capture ZIP.",
+    "Frame check builds ARM64 and x86_64 exact binaries and source-bound receipts before admission.",
+    "Executing driver/source and artifact hashes are checked before Android13 startup.",
+    "Device job uses Android13 x86_64 emulator and retains exact execution/cleanup receipt.",
+    "Both jobs upload evidence on failure."
+  ],
+  "android_execution_claimed_by_review": false,
+  "physical_thor_acceptance": false,
+  "world_authority": false
+}

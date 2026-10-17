@@ -339,3 +339,44 @@ CohStatus coh_runtime_graph_name(const CohRuntimeGraph*g,const char*name,uint32_
     Audit a;memset(&a,0,sizeof(a));a.catalog=g->catalog;a.snapshot=g->snapshot;a.nodes=g->nodes;a.names=g->names;a.capacity=g->capacity;
     uint32_t n;TRY(lookup(&a,name,&n));if(strcmp(node_name(&a,n),name))return COH_NOT_FOUND;*out=n;return COH_OK;
 }
+CohStatus coh_runtime_graph_witness(const CohRuntimeGraph*g,uint32_t target,
+    CohRuntimeGraphWitnessWork*work,size_t rows,const CohCancel*cancel,CohRuntimeGraphWitness*out){
+    if(!g||!out)return COH_INVALID;
+    if(target>=g->report.nodes||g->colors[target]!=2)return COH_NOT_FOUND;
+    if(!work||rows<g->report.nodes)return COH_LIMIT;
+    uint32_t count=0;
+    for(uint32_t i=0;i<g->report.nodes;i++){
+        if(cancel&&cancel->poll&&cancel->poll(cancel->context))return COH_CANCELLED;
+        work[i].parent=NO_INDEX;work[i].edge=NO_INDEX;
+    }
+    for(uint32_t i=0;i<g->report.source.root_slots;i++){
+        const CohRuntimeGraphRoot*r=&g->roots[i];
+        if(r->active&&work[r->node].parent==NO_INDEX){
+            work[r->node].parent=r->node;work[r->node].edge=i;work[count++].queue=r->node;
+        }
+    }
+    for(uint32_t at=0;at<count;at++){
+        if(cancel&&cancel->poll&&cancel->poll(cancel->context))return COH_CANCELLED;
+        uint32_t n=work[at].queue;
+        if(n==target)break;
+        const Node*node=&g->nodes[n];
+        for(uint32_t i=0;i<node->count;i++){
+            if(cancel&&cancel->poll&&cancel->poll(cancel->context))return COH_CANCELLED;
+            uint32_t edge=node->first+i,child=g->edges[edge];
+            if(work[child].parent==NO_INDEX){work[child].parent=n;work[child].edge=edge;work[count++].queue=child;}
+        }
+    }
+    if(work[target].parent==NO_INDEX)return COH_STATE;
+    CohRuntimeGraphWitness result;memset(&result,0,sizeof(result));
+    uint32_t n=target;
+    for(;;){
+        if(result.length>COH_SG_DEPTH_MAX)return COH_STATE;
+        result.nodes[result.length++]=n;
+        if(work[n].parent==n){result.root_slot=work[n].edge;break;}
+        if(result.length>COH_SG_DEPTH_MAX)return COH_STATE;
+        result.edges[result.length-1]=work[n].edge;n=work[n].parent;
+    }
+    for(uint32_t i=0;i<result.length/2;i++){uint32_t v=result.nodes[i];result.nodes[i]=result.nodes[result.length-1-i];result.nodes[result.length-1-i]=v;}
+    for(uint32_t i=0;i<(result.length-1)/2;i++){uint32_t v=result.edges[i];result.edges[i]=result.edges[result.length-2-i];result.edges[result.length-2-i]=v;}
+    *out=result;return COH_OK;
+}

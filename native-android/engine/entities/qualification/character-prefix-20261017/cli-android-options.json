@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "ndk without Android output",
+      "exit": 2
+    },
+    {
+      "case": "Android output without ndk",
+      "exit": 2
+    },
+    {
+      "case": "both provided but ABI drivers missing",
+      "exit": 2
+    },
+    {
+      "case": "fixture output equals receipt output",
+      "exit": 2
+    }
+  ],
+  "outputs_created": false,
+  "android_built": false,
+  "android_executed": false,
+  "claim": "CLI rejection only; no simulated NDK accepted"
+}

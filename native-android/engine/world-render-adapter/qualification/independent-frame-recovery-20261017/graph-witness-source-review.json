@@ -1,0 +1,19 @@
+{
+  "schema": "coh-renderer-independent-witness-review-v1",
+  "review_type": "read-only-source-inspection",
+  "reviewed_files_sha256": {
+    "native-android/engine/scenegraph/runtime_snapshot.c": "5e7d02c6340503b8c872676a298ec8ca9c22ee4f9a2c071d2e6f4d852a4b9214",
+    "native-android/engine/scenegraph/runtime_graph.h": "8113ab00c50bab22653357f9fcd6f0b111e8969a62c808b1f8b084cc2108121c"
+  },
+  "review_passed": true,
+  "findings": [
+    "Root seeding and retained child order produce a deterministic shortest multi-root path.",
+    "Discovery marking before queue insertion bounds queue to admitted graph nodes.",
+    "Interleaved queue and parent/edge fields are distinct struct members.",
+    "Root-only path and maximum depth reconstruction use bounded output arrays.",
+    "Cancellation leaves output unchanged; workspace mutation is explicit in contract."
+  ],
+  "executed_by_reviewer": false,
+  "world_or_resource_permit": false,
+  "review_does_not_qualify_android": true
+}

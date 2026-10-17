@@ -64,6 +64,35 @@ class OfflineAdmission:
     world_authority: bool = False
 
 
+@dataclass(frozen=True)
+class OfflineCatalogBinding:
+    """Exact detached source fields for CohCatalogBinding, not session authority.
+
+    Local owner/catalog preparation sequence numbers remain caller assigned.
+    The catalog generation here is the retained asset generation. The original
+    ordered inventory digest binds captured provenance; files are not rehashed.
+    """
+    catalog_generation: int
+    asset_generation: int
+    catalog_sha256: str
+    source_sha256: str
+    inventory_sha256: str
+    map_generation: int = 0
+    map_sha256: str = '0' * 64
+
+@dataclass(frozen=True)
+class PreparedOfflineImport:
+    """Immutable bytes and pins from one successful archive read.
+
+    Keep this owner alive while native code borrows its bytes. This host-only
+    contract grants neither live generation nor assets, actor or publication.
+    """
+    admission: OfflineAdmission
+    binding: OfflineCatalogBinding
+    catalog: bytes
+    snapshot: bytes
+
+
 def _bindings(data):
     """Cross-check receipts independently of the exact-member digest seal."""
     def obj(name):
@@ -147,7 +176,7 @@ def _bindings(data):
                             result['external_count'], tuple(e['name'] for e in result['external'] if e['reachable']), len(data))
 
 
-def validate_archive(path):
+def _validate_archive(path):
     """Validate all exact retained members before returning a frozen summary.
 
     ZIP container metadata may differ; member names, sizes and bytes may not.
@@ -176,9 +205,33 @@ def validate_archive(path):
                     require(len(payload) == expected['bytes'] and digest(payload) == expected['sha256'],
                             'member digest: ' + info.filename)
                     data[info.filename] = payload
-                return _bindings(data)
+                return _bindings(data), data
     except (KeyError, TypeError, OSError, EOFError, zipfile.BadZipFile, zlib.error, RuntimeError) as exc:
         raise AdmissionError('invalid capture archive: ' + str(exc)) from exc
+
+def validate_archive(path):
+    """Return the frozen provenance summary after full sealed admission."""
+    admission, _ = _validate_archive(path)
+    return admission
+
+
+def prepare_archive(path):
+    """Prepare exactly the bytes admitted in a single read, with no reopen.
+
+    No extraction, filesystem mutation or native caller is introduced. In
+    particular map identity stays detached despite a source map name/id being
+    retained in the archive. A later live transaction must supply its identity.
+    """
+    admission, data = _validate_archive(path)
+    source = decode(data['capture/source-identity.json'])
+    inventory = source['runtime_inventory']['ordered_inventory_sha256']
+    require(type(inventory) is str and len(inventory) == 64 and
+            all(c in '0123456789abcdef' for c in inventory), 'inventory digest')
+    binding = OfflineCatalogBinding(
+        admission.asset_generation, admission.asset_generation,
+        admission.catalog_sha256, admission.source_identity_sha256, inventory)
+    return PreparedOfflineImport(admission, binding, data['capture/catalog.cohcat'],
+                                 data['capture/runtime.cohrts'])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)

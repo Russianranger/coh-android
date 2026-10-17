@@ -1,0 +1,32 @@
+{
+  "reviews": [
+    {
+      "android_or_physical_execution_by_reviewer": false,
+      "commit": "8492b1d43b5910a8ca77b2940d0489c64c850c26",
+      "independent_source_review_passed": true,
+      "live_world_admitted": false,
+      "scope": "Single-read frozen offline source payload owner; catalog/snapshot bytes retained from admitted archive read, no reopen, map identity detached, immutable nested records; three authentic preparation tests independently rerun and passed. Python archive expanded payload bound 16 MiB remains not whole-process RSS.",
+      "source_sha256": {
+        "native-android/engine/snapshot-admission/admit.py": "74a4f52ca6d3a6a0bfdbd9edcd60d25909059bce011ad0cb2c8ac6b6c0d32085",
+        "native-android/engine/snapshot-admission/test_prepare.py": "24b4f5f83fa221d70fcb5d911e23534bed5f870f1d3fed06119baafe61a070ae"
+      },
+      "worker": "a"
+    },
+    {
+      "android_or_physical_execution_by_reviewer": false,
+      "commit": "fe31a2a4e7566edf5625769122618b3265377354",
+      "independent_source_review_passed": true,
+      "live_world_admitted": false,
+      "memory_boundary_doc_commit": "88785554293e462300d942065dab3a42b70d5257",
+      "memory_boundary_doc_sha256": "c3275d351a83e6759bb10fcf430d898a19ddd0d350cd496a47a9e2b23557484a",
+      "scope": "Witness API bounded BFS and depth-limited path reconstruction reviewed; one-time visited mark bounds queue to nodes, parent/edge/queue fields disjoint, caller scratch and output disjoint contract explicit; transactional output only on success and no allocation. Native modes reused worker B receipts, not independently rerun by F. Caller must charge 12 bytes/node scratch and result stack in addition to graph build report; source-only topology authority unchanged.",
+      "source_sha256": {
+        "native-android/engine/scenegraph/runtime_graph.h": "8113ab00c50bab22653357f9fcd6f0b111e8969a62c808b1f8b084cc2108121c",
+        "native-android/engine/scenegraph/runtime_snapshot.c": "5e7d02c6340503b8c872676a298ec8ca9c22ee4f9a2c071d2e6f4d852a4b9214",
+        "native-android/engine/scenegraph/tests/test_runtime_snapshot.c": "06cc8901dd420eb21898188f0aa573de371adc710906c1bd8ef569bf1480c591"
+      },
+      "worker": "b"
+    }
+  ],
+  "schema": "coh-independent-recovery-ab-review-v1"
+}

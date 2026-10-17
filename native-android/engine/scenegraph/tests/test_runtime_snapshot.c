@@ -6,6 +6,7 @@
 #include <string.h>
 static unsigned checks;
 static CohRuntimeGraphReport graph_qualified;
+static CohRuntimeGraphWitness future_witness[COH_RUNTIME_SNAPSHOT_EXTERNAL_MAX];
 #define CHECK(x) do{checks++;if(!(x)){fprintf(stderr,"snapshot check failed %s:%d: %s\n",__FILE__,__LINE__,#x);abort();}}while(0)
 void*__real_malloc(size_t);void*__real_calloc(size_t,size_t);void __real_free(void*);
 static size_t live,calls,fail_at,live_bytes,peak_bytes;
@@ -104,6 +105,39 @@ static void graph_test(CohBytes catalog,CohBytes snapshot,const CohRuntimeSnapsh
         CHECK(coh_runtime_graph_root(g,i,&root)==COH_OK&&root.active==present);
         if(present){for(unsigned c=0;c<4;c++)for(unsigned r=0;r<3;r++){uint32_t expected=get(raw+32+name+(c*3+r)*4),actual;memcpy(&actual,&root.matrix[c][r],4);CHECK(actual==expected);}root_at+=32+name+48+bytes;}else root_at+=32;
     }
+    CohRuntimeGraphWitnessWork*work=malloc((size_t)report.nodes*sizeof(*work));CHECK(work);
+    CohRuntimeGraphWitness witness,sentinel;memset(&sentinel,0xa5,sizeof(sentinel));
+    for(uint32_t i=0;i<report.nodes;i++){
+        CohRuntimeGraphNode node;CHECK(coh_runtime_graph_node(g,i,&node)==COH_OK);
+        /* Large authentic replay needs one path per future; source fixtures
+         * exhaustively cover every node, including inactive/unreachable slots. */
+        if(!exhaustive&&!node.external)continue;
+        witness=sentinel;size_t baseline=calls;
+        CohStatus status=coh_runtime_graph_witness(g,i,work,report.nodes,NULL,&witness);
+        CHECK(calls==baseline);
+        if(!node.reachable){CHECK(status==COH_NOT_FOUND&&!memcmp(&witness,&sentinel,sizeof(witness)));continue;}
+        CHECK(status==COH_OK&&witness.length&&witness.length<=COH_SG_DEPTH_MAX+1u);
+        CohRuntimeGraphRoot root;CHECK(coh_runtime_graph_root(g,witness.root_slot,&root)==COH_OK&&root.active&&root.node==witness.nodes[0]);
+        CHECK(witness.nodes[witness.length-1]==i);
+        if(node.external)future_witness[i-report.source.definitions]=witness;
+        for(uint32_t j=1;j<witness.length;j++){
+            CohRuntimeGraphNode parent;CohRuntimeGraphChild edge;
+            CHECK(coh_runtime_graph_node(g,witness.nodes[j-1],&parent)==COH_OK);
+            CHECK(witness.edges[j-1]>=parent.child_first&&witness.edges[j-1]-parent.child_first<parent.child_count);
+            CHECK(coh_runtime_graph_child(g,witness.edges[j-1],&edge)==COH_OK&&edge.target==witness.nodes[j]);
+        }
+        CohRuntimeGraphWitness repeated;CHECK(coh_runtime_graph_witness(g,i,work,report.nodes,NULL,&repeated)==COH_OK&&!memcmp(&witness,&repeated,sizeof(witness)));
+        witness=sentinel;CHECK(coh_runtime_graph_witness(g,i,work,report.nodes-1,NULL,&witness)==COH_LIMIT&&!memcmp(&witness,&sentinel,sizeof(witness)));
+        Stop stop={0,1};CohCancel cancel={cancelled,&stop};CHECK(coh_runtime_graph_witness(g,i,work,report.nodes,&cancel,&witness)==COH_CANCELLED&&!memcmp(&witness,&sentinel,sizeof(witness)));
+        if(exhaustive){
+            stop=(Stop){0,0};CHECK(coh_runtime_graph_witness(g,i,work,report.nodes,&cancel,&witness)==COH_OK);unsigned polls=stop.calls;
+            for(unsigned k=1;k<=polls;k++){witness=sentinel;stop=(Stop){0,k};CHECK(coh_runtime_graph_witness(g,i,work,report.nodes,&cancel,&witness)==COH_CANCELLED&&!memcmp(&witness,&sentinel,sizeof(witness)));}
+        }
+    }
+    witness=sentinel;CHECK(coh_runtime_graph_witness(g,report.nodes,work,report.nodes,NULL,&witness)==COH_NOT_FOUND&&!memcmp(&witness,&sentinel,sizeof(witness)));
+    witness=sentinel;CHECK(coh_runtime_graph_witness(NULL,0,work,report.nodes,NULL,&witness)==COH_INVALID&&!memcmp(&witness,&sentinel,sizeof(witness)));
+    CHECK(coh_runtime_graph_witness(g,0,work,report.nodes,NULL,NULL)==COH_INVALID);
+    free(work);
     uint32_t found=123;CHECK(coh_runtime_graph_name(g,"__not_present__",&found)==COH_NOT_FOUND&&found==123);
     CohRuntimeGraph*current=NULL;CHECK(coh_runtime_graph_publish(&current,&g,&retired)==COH_OK&&!g&&!retired);
     binding.generation=2;CohRuntimeSnapshotBudget tight={report.aggregate_peak_bytes-1,budget->retained_bytes};
@@ -141,6 +175,12 @@ int main(int argc,char**argv){
         graph_test(catalog,snapshot,&pins,&budget,argc==10);
         printf("{\"passed\":true,\"checks\":%u,\"files\":%u,\"slots\":%u,\"definitions\":%u,\"children\":%u,\"root_slots\":%u,\"active_roots\":%u,\"external_count\":%u,\"reachable_definitions\":%u,\"reachable_external\":%u,\"reachable_edges\":%u,\"maximum_depth\":%u,\"source_defs_crc\":%u,\"source_refs_crc\":%u,\"definitions_crc_verified\":%u,\"references_crc_verified\":%u,\"root_matrices_verified\":%u,\"owned_bytes\":%zu,\"peak_record_bytes\":%zu,\"stack_reserve\":%zu,\"harness_retained_bytes\":%zu,\"aggregate_peak_bytes\":%zu,\"external\":[",checks,report.files,report.slots,report.definitions,report.children,report.root_slots,report.active_roots,report.external_count,report.reachable_definitions,report.reachable_external,report.reachable_edges,report.maximum_depth,report.source_defs_crc,report.source_refs_crc,report.definitions_crc_verified,report.references_crc_verified,report.root_matrices_verified,report.owned_bytes,report.peak_record_bytes,report.stack_reserve,report.retained_bytes,report.aggregate_peak_bytes);
         for(uint32_t i=0;i<report.external_count;i++){CohRuntimeExternalDiagnostic*e=&report.external[i];printf("%s{\"name\":",i?",":"");json_string(e->name);printf(",\"library_path\":");json_string(e->library_path);printf(",\"original_id\":%u,\"references\":%u,\"reachable\":%u,\"model_present\":%u,\"bounds_lookup_found\":%u}",e->original_id,e->referenced,e->reachable,e->model_present,e->bounds_lookup_found);}
+        printf("],\"future_path_witnesses\":[");
+        for(uint32_t i=0;i<report.external_count;i++){
+            CohRuntimeGraphWitness*w=&future_witness[i];printf("%s{\"name\":",i?",":"");json_string(report.external[i].name);
+            printf(",\"reachable\":%s",w->length?"true":"false");
+            if(w->length){printf(",\"root_slot\":%u,\"nodes\":[",w->root_slot);for(uint32_t j=0;j<w->length;j++)printf("%s%u",j?",":"",w->nodes[j]);printf("],\"edges\":[");for(uint32_t j=1;j<w->length;j++)printf("%s%u",j>1?",":"",w->edges[j-1]);printf("]");}printf("}");
+        }
         printf("],\"source_graph_checked\":true,\"graph_nodes\":%u,\"graph_edges\":%u,\"graph_owned_bytes\":%zu,\"graph_aggregate_peak_bytes\":%zu,\"measured_native_peak_bytes\":%zu,\"graph_published\":false,\"groups_received\":false,\"assets_admitted\":false,\"actor_admitted\":false,\"world_authority\":false}",graph_qualified.nodes,graph_qualified.edges,graph_qualified.owned_bytes,graph_qualified.aggregate_peak_bytes,measured_peak);
     }
     free((void*)catalog.data);free((void*)snapshot.data);CHECK(!live&&!live_bytes);puts("");return 0;

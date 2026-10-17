@@ -1,0 +1,67 @@
+{
+  "beacon_fields": [
+    "status",
+    "installed_files",
+    "input_files_checked",
+    "input_payload_bytes_hashed",
+    "input_full_byte_proof_reused_files",
+    "input_full_byte_proof_reused_bytes",
+    "input_full_byte_proof_reuse_policy",
+    "archive_decoded",
+    "fingerprint_walk",
+    "input_inventory_walk",
+    "preparation_elapsed_seconds"
+  ],
+  "currently_exported": "server_preparation_phase_seconds",
+  "definitions_fields": [
+    "status",
+    "installed_files",
+    "preserved_existing_files",
+    "reason"
+  ],
+  "does_not_establish": [
+    "native cache consumption",
+    "whole-process memory peak",
+    "physical speedup",
+    "live world authority"
+  ],
+  "drop_boundary": "native-android/combined-client/runtime/server_runtime.py:main finally owner block",
+  "existing_consumer": "native-android/combined-client/tools/analyze_startup_resources.py:projected_caches",
+  "measurement_priority": [
+    "existing receipt export, yielding cache hit/refusal, byte hashing, decode and write facts",
+    "separate native Atlas loader/cache/world preparation stage timers",
+    "opt-in one-shot owned-process memory samples at already justified boundaries"
+  ],
+  "missing_producer_metrics": [
+    "separate inventory/hash/archive decode/write elapsed times",
+    "explicit fixed warm marker refusal code",
+    "owned server process memory timeline"
+  ],
+  "producer": "android/guest/local_character_server.py:LocalCharacterServer.prepare_atlas_data",
+  "production_modified": false,
+  "retained_receipts": [
+    "prepared_server_caches",
+    "atlas_beacon_graph",
+    "private_map_data.server_data_cache"
+  ],
+  "safe_patch": "Allowlist existing numeric, boolean and fixed-enum receipt fields at this final report boundary under original receipt root names; never copy raw creation_report, paths, source roots, account data or OS errors. No new reads, hashing or archive work.",
+  "schema": "coh-startup-projection-gap-review-v1",
+  "server_data_fields": [
+    "reused",
+    "reuse_refused",
+    "immutable_directory_checks",
+    "immutable_anchor_checks",
+    "immutable_directory_metadata_queries",
+    "private_entries_checked",
+    "private_bytes",
+    "changed_parent_directory_checks",
+    "changed_parent_entry_checks"
+  ],
+  "source_revision": "4f6fe92107a10323a90123c6856de578943300e2",
+  "source_sha256": {
+    "android/guest/atlas_beacon_package.py": "37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981",
+    "android/guest/local_character_server.py": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180",
+    "native-android/combined-client/runtime/server_runtime.py": "36d4853bfd696254a326f8fd6b9595b1dbac3a9c761808b2a9654ceae91b5895",
+    "native-android/combined-client/tools/analyze_startup_resources.py": "a39fb33e9d22f809a12a1e66e00615643fc541e6f730f9a60ce4dc5b0396db76"
+  }
+}

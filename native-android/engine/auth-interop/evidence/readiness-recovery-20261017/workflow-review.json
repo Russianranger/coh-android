@@ -1,0 +1,21 @@
+{
+  "schema": "coh-auth-receive-workflow-review-v1",
+  "reviewed_workflow_path": ".github/workflows/native-auth-receive-candidate.yml",
+  "reviewed_sha256": "408ec5b9f195b4e2ab9d0bd49b3b6c18ef4acf028677a143ea648cd0d8e2791d",
+  "review": "Exact command/data-flow source review; workflow not executed by this review.",
+  "linux_qualification_bound_by_dynamic_sha256": true,
+  "windows_checkout_preserves_lf": true,
+  "exact_github_sha_admission": true,
+  "external_temporary_source_correction_only": true,
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "build_target": "AuthServer",
+  "architecture": "Win32",
+  "configuration": "OptDebug",
+  "mapserver_disabled": true,
+  "beaconserver_disabled": true,
+  "service_execution_present": false,
+  "build_logs_always_retained": true,
+  "following_required_action": "Independently review/pin Windows receipt and candidate executable SHA256 before hosted_receive_candidate.py admit. Service/login experiment remains separate.",
+  "windows_execution_claimed": false,
+  "encrypted_login_verified": false
+}

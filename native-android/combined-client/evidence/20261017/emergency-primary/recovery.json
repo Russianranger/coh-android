@@ -1,0 +1,60 @@
+{
+  "remote_at_recovery": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "recovered_primary_tip": "4f6fe92107a10323a90123c6856de578943300e2",
+  "recovered_review_tip": "6649280710b7fdd3c7352cb48d11b5d542182276",
+  "workers": {
+    "a": {
+      "path": "/workspace/scratch/90c31237ea30/worker-a",
+      "tip": "bfd7ba1552db98087f2166b3f553acb9973b4a0b",
+      "pin": "4f6fe92107a10323a90123c6856de578943300e2"
+    },
+    "b": {
+      "path": "/workspace/scratch/90c31237ea30/worker-b",
+      "tip": "88785554293e462300d942065dab3a42b70d5257",
+      "pin": "4f6fe92107a10323a90123c6856de578943300e2"
+    },
+    "c": {
+      "path": "/workspace/scratch/90c31237ea30/worker-c",
+      "tip": "2b519f727a2c276cb9c13a56a782fd0397c828e7",
+      "pin": "4f6fe92107a10323a90123c6856de578943300e2"
+    },
+    "d": {
+      "path": "/workspace/scratch/90c31237ea30/worker-d",
+      "tip": "80f0209ab3e8611d0106706518cc279d11a1fd36",
+      "pin": "4f6fe92107a10323a90123c6856de578943300e2"
+    },
+    "e": {
+      "path": "/workspace/scratch/90c31237ea30/worker-e",
+      "tip": "41c1f0491c56815d10cf6b7fd6869f86a7b35bdf",
+      "pin": "4f6fe92107a10323a90123c6856de578943300e2"
+    },
+    "f": {
+      "path": "/workspace/scratch/90c31237ea30/worker-f",
+      "tip": "3fd0d8c668177f9245e03e662af5f38f0d5632bb",
+      "pin": "4f6fe92107a10323a90123c6856de578943300e2"
+    }
+  },
+  "bundle": {
+    "bytes": 5923539,
+    "sha256": "d40a39581c8a8649b355a436df728c1dd9aeb54166412d4438c0b1761bce9518",
+    "verified": true,
+    "prerequisite": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873"
+  },
+  "old_worktrees_untouched": true,
+  "sparse_absences_not_treated_as_deletions": true,
+  "retained_artifact_sha256": {
+    "12079509924": "8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d",
+    "12079533226": "2d6444b5f7ac3a1b06cc841fe15710d298c9a913a09f0de658f8dc9b945743df"
+  },
+  "accepted_apks_rebuilt": false,
+  "new_server_capture": false,
+  "local_git_publication": "dry-run refused: no command-line credentials; GitHub plugin API publication will use guarded non-force ref update",
+  "coordinator_admission_tests": {
+    "snapshot_admit": 7,
+    "snapshot_prepare": 3,
+    "frame_driver": 6,
+    "tail_driver": 22,
+    "candidate_stage": 6,
+    "earlier_discover_attempt": "Snapshot tests require --capture-zip and do not support generic discovery; failed orchestration corrected with direct script invocations. No parser failure inferred."
+  }
+}

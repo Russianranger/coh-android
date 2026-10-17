@@ -63,3 +63,38 @@ bytes. Eight source fixtures ran 25,340 controls and the authentic corpus ran
 291774 controls per native mode. Actual-capture graph views and atomic
 replacement were tested; no application world was published. Android compilation,
 emulator execution and physical Thor acceptance remain unqualified.
+
+## Root ownership witnesses
+
+`coh_runtime_graph_witness` returns a deterministic shortest root-to-node path,
+with ties selected in original root slot and child order. It uses an explicit
+caller-owned workspace of `report.nodes * sizeof(CohRuntimeGraphWitnessWork)`
+bytes (482,784 bytes for the authentic corpus), no allocation and bounded
+O(nodes + edges) traversal. Charge this workspace in aggregate retained memory;
+it is temporary diagnostic/query state, not persistent per-instance storage.
+The query also uses one local `CohRuntimeGraphWitness` on the stack and a
+caller-owned output. These query reservations are additional to the graph
+builder's `graph_aggregate_peak_bytes`; that build-only report does not include
+a later witness call. The test harness's overall measured heap peak may instead
+be dominated by replacement graph construction, so it is not a query-specific
+memory measurement.
+Each witness names the exact root slot, graph nodes and global child edge
+indexes, so consumers can inspect original file/slot identities and compose the
+already retained original root/child matrices. Multiple instance paths may reach
+the same node; this one witness is not a world-instance enumeration.
+
+The query preserves output on cancellation, insufficient workspace, invalid
+arguments and unreachable targets. Original-source fixtures qualify every node,
+every cancellation poll, path edge ownership, deterministic replay, depth 128,
+unreachable/inactive slots and refusal controls. Authentic replay qualifies all
+seven future identities and records the sole reachable future's exact witness in
+`evidence/runtime-graph/witness-host-qualification.json`, independently under
+release, ASan and UBSan. No server was restarted. No live GROUPS generation,
+resource, actor or renderer admission is inferred from a source witness.
+
+The authentic witness for `_mmayhem_curtain_8_01c` starts at root slot 7 and
+contains nine nodes (eight ordered edges). The other six captured future objects
+return `COH_NOT_FOUND` without altering the witness output. The three native
+modes agree exactly on these results: 84,996 controls on each source fixture
+corpus and 332,053 on each authentic replay. Android build/execution and physical
+Thor qualification of this additive query remain pending.

@@ -1,0 +1,54 @@
+{
+  "schema": "coh-auth-readiness-recovery-v1",
+  "base_commit": "4f6fe92107a10323a90123c6856de578943300e2",
+  "prior_review_ref": "6649280710b7fdd3c7352cb48d11b5d542182276",
+  "prior_review_directory": "native-android/engine/snapshot-admission/reviews/d",
+  "recovered_later_worktree": "/workspace/scratch/9174d12e2a11/auth-isolated",
+  "original_worktree_modified": false,
+  "recovered_files": {
+    "hosted_receive_candidate.py": {
+      "recovered_sha256": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+      "preserved_original_sha256": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+      "byte_equal": true
+    },
+    "test_receive_candidate_stage.py": {
+      "recovered_sha256": "c4c223f947b08e683c15d6e7799f8d3d94a74897f57b1058d2b85a37563cc9dc",
+      "preserved_original_sha256": "c4c223f947b08e683c15d6e7799f8d3d94a74897f57b1058d2b85a37563cc9dc",
+      "byte_equal": true
+    }
+  },
+  "new_readiness_source_sha256": {
+    "auth_readiness.py": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+    "test_auth_readiness.py": "d4fcdfea9283af2fbd92052fdd063bc21e8f07fb82f795f6f73679f4e9f6b27c"
+  },
+  "qualification": {
+    "deployment_unittest_suites_run": 84,
+    "deployment_unittest_suites_skipped": 2,
+    "skip_reason": "Exact public donor artifact not supplied; client-reference controls do not infer qualification.",
+    "failed": 0,
+    "receive_stage_suites": 6,
+    "readiness_host_suites": 7,
+    "candidate_controls_per_mode": 5139,
+    "boundary_controls_per_mode": 206,
+    "original_startup_controls_per_mode": 15,
+    "modes": [
+      "release",
+      "asan_ubsan"
+    ],
+    "leak_sanitizer_enabled": false
+  },
+  "windows_build_executed": false,
+  "windows_x86_odbc_execution": false,
+  "service_executed": false,
+  "encrypted_login_verified": false,
+  "shipping_server_modified": false,
+  "files_sha256": {
+    "prior-startup-qualification.json": "fa8cb1061f9912e41d6636af6c5da8eb2e5ad810abaa4b142850df03a7125390",
+    "startup_fixture.cpp": "854e7cd39a27cee37fdb7c329caf1a95b661cfc88cbdf822c28a094fd19c6d20",
+    "startup-qualification.json": "1026633ac0b75f03be284323180485a076796040ceaec3ed16722216b61b9943",
+    "candidate-qualification.json": "cbdc2ed7d029c75dc437a5043e030ccc3132d81798c0f390735d429e6f0edf40",
+    "prior-README.md": "a8e0c56692a9303c00b25a473213db786cf60a800b0ead2c39aeedea637fca6f",
+    "prior-receipt-review.json": "a96794097e4edb46fe93239f6ce03a3901dd17f4bb1c3e557cf8aca3c37efc9e",
+    "qualify_startup_review.py": "5cd990fe4710d606131ded8fd5b5543f93934445232b7fc95bdf8f145ddfaca0"
+  }
+}

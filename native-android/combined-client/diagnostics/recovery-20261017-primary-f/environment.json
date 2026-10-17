@@ -1,0 +1,18 @@
+{
+  "bounded_proc_inventory": true,
+  "emulator_started": false,
+  "other_chat_process_visibility_established": false,
+  "processes_interrupted": false,
+  "same_uid_relevant_process_names_observed": [],
+  "server_started": false,
+  "toolchains_on_path": {
+    "adb": null,
+    "clang": null,
+    "cmake": null,
+    "emulator": null,
+    "gcc": "/usr/bin/gcc",
+    "java": "/usr/bin/java",
+    "ninja": null,
+    "python3": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+  }
+}

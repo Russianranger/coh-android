@@ -1,0 +1,116 @@
+name: Recovered source graph and bounded renderer contracts
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-recovered-components.yml
+      - native-android/engine/world-render-adapter/**
+      - native-android/engine/scenegraph/**
+      - native-android/engine/scenecatalog/**
+      - native-android/engine/snapshot-admission/**
+      - native-android/engine/entities/*character_prefix*
+      - native-android/engine/entities/character-prefix-source-pins.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-recovered-components-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  authentic-source-graph:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Install source oracle dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+      - name: Verify retained capture and immutable catalog graph ownership
+        run: |
+          mkdir -p native-android/results/recovered-components
+          python3 native-android/combined-client/diagnostics/recovery-20261017/verify_capture.py native-android/corpus/server-catalog/runtime-snapshot-38977202310 . > native-android/results/recovered-components/capture-audit.json
+          python3 native-android/engine/snapshot-admission/test_admit.py --capture-zip native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip
+          python3 native-android/engine/snapshot-admission/test_prepare.py --capture-zip native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip
+          python3 native-android/engine/scenecatalog/check_snapshot_owner.py --capture-zip native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip --output native-android/results/recovered-components/catalog-owner.json
+          python3 - <<'PYCODE'
+          import pathlib, zipfile
+          out = pathlib.Path('/tmp/recovered-capture-inputs')
+          out.mkdir()
+          with zipfile.ZipFile('native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip') as archive:
+              for name in ('catalog.cohcat', 'runtime.cohrts'):
+                  (out / name).write_bytes(archive.read('capture/' + name))
+          PYCODE
+          python3 native-android/engine/scenegraph/check_runtime_snapshot.py --source-root . --sanitize --catalog /tmp/recovered-capture-inputs/catalog.cohcat --snapshot /tmp/recovered-capture-inputs/runtime.cohrts --asset-generation 20261016 --catalog-sha256 61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763 --snapshot-sha256 c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02 --source-sha256 a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0 --run-sha256 2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588 --output native-android/results/recovered-components/source-graph.json
+          rm -r /tmp/recovered-capture-inputs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovered-authentic-source-graph-${{ github.sha }}
+          path: native-android/results/recovered-components/
+          if-no-files-found: error
+          retention-days: 90
+  bounded-frame-android13:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install source oracle dependencies and pinned NDK
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends curl unzip
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/recovered-ndk
+      - name: Verify renderer frame artifact and rollback controls
+        run: python3 -m unittest discover -s native-android/engine/world-render-adapter/tests -p test_frame_driver.py -v
+      - name: Qualify recovered bounded frames and build both standalone Android ABIs
+        run: >-
+          python3 native-android/engine/world-render-adapter/check.py --source-root . --sanitize
+          --ndk /tmp/recovered-ndk/android-ndk-r28c
+          --output native-android/results/recovered-frames/qualification.json
+          --android-output native-android/results/recovered-frames/android
+      - name: Qualify new character prefix and build both standalone Android ABIs
+        run: >-
+          python3 native-android/engine/entities/check_character_prefix.py
+          --ndk /tmp/recovered-ndk/android-ndk-r28c
+          --android-output native-android/results/character-prefix/android
+          --output native-android/results/character-prefix/host.json
+      - name: Admit exact frame binaries and executing drivers before device startup
+        run: >-
+          python3 native-android/engine/world-render-adapter/run_frames_android.py --source-root .
+          --artifacts native-android/results/recovered-frames --validate-only
+          --output native-android/results/recovered-frame-admission/receipt.json
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute standalone bounded frames on Android 13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/engine/world-render-adapter/run_frames_android.py --source-root . --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/recovered-frames --output native-android/results/recovered-frame-execution/receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovered-bounded-frames-host-both-abis-android13-${{ github.sha }}
+          path: |
+            native-android/results/recovered-frames/
+            native-android/results/recovered-frame-admission/
+            native-android/results/recovered-frame-execution/
+            native-android/results/character-prefix/
+          if-no-files-found: error
+          retention-days: 90

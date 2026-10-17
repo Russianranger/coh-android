@@ -53,6 +53,30 @@ ambiguous/hostile ZIP names, duplicate members and symlinks, violate compressed
 bounds, corrupt JSON, and exercise cross-receipt substitutions without relying on
 the digest seal. No Android, physical Thor or real world qualification is claimed.
 
+`prepare_archive(path)` additionally returns a frozen `PreparedOfflineImport`:
+its catalog/snapshot are immutable `bytes` retained from the same sealed archive
+read, alongside the summary and detached `OfflineCatalogBinding`. Callers do not
+validate and then reopen an archive to acquire source bytes. The preparation
+binding carries the captured source-identity digest, exact catalog digest and
+original ordered-inventory digest
+`5affc1a2f00960732f55f3d88d83af8aa60e8dbc1b5b360cc606cb8095262ba1`.
+This replaces the fixture-only inventory label for future native import callers;
+it is provenance admission of the retained source receipt, not a new inventory
+scan or proof of locally installed assets. Catalog/asset generation is 20261016;
+map generation and map digest remain zero because no live transaction is bound.
+Native owner/import sequence numbers remain caller assigned. Borrowing native
+code must retain this preparation owner until its last access completes.
+
+```
+python native-android/engine/snapshot-admission/test_prepare.py --capture-zip /path/to/evidence.zip
+```
+
+The new controls preserve the previously prepared result when replacement fails,
+refuse mutable binding replacement, verify authentic digests and detached scope,
+and replace the archive after its admission to prove that the returned bytes are
+those actually checked. Existing reviews below `reviews/` are recovered historical
+receipts for their recorded source digests, not a blanket qualification of later
+edits; the recovery review records fresh runs against the integrated module.
 The coordinator qualifier runs both the seven-group implementation suite and F's
 17 independent controls, binds their exact source hashes, refuses source or input
 drift, and creates a complete receipt without replacing an existing output.

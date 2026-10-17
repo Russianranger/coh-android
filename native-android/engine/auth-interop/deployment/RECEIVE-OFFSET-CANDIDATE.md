@@ -123,6 +123,60 @@ orchestration. The mocked PE fixture is never executed and proves no Windows
 compilation. The actual Windows build remains pending coordinator-owned CI;
 actual encrypted login remains pending a separately admitted service driver.
 
+## Strict recovered corpus admission and readiness continuation
+
+The later original `auth-isolated` files were recovered without modifying that
+worktree. Both compile-input admission and later artifact admission now require
+the complete original corpus, exact 5,139/206 control-result shapes in both
+release and ASan/UBSan, all mode/binary identities, four source-mutation refusals,
+the original-defect regression, and explicit noncrypto/nonservice scope. A
+receipt with `passed=true` and missing or altered coverage cannot inherit build
+qualification. Recovery provenance and fresh controls are retained under
+`../evidence/readiness-recovery-20261017/`.
+
+The independently recovered original startup oracle establishes two concrete
+alive-without-listeners branches: a modal database initialization error before
+`exit(0)`, and successful initial login followed by a completely empty SQL pool,
+which blocks the original `CDBConn` constructor. Fresh release and ASan/UBSan
+controls each pass 15 checks. They explain possible control flow, not the exact
+historical failed run's cause. The original 90-second readiness bound alone
+cannot distinguish these branches from slow initial connection attempts.
+
+`auth_readiness.py` prepares a read-only diagnostic for the *next* coordinator
+service experiment. It does not create or start a service/instance. With the
+existing disposable `cohauth` schema in place, it uses Windows' x86 PowerShell
+and ODBC17 to hold three simultaneous integrated-auth connections (initial login
+plus two pool-sized connections), queries only the SQL process ID, compares it
+with the owned instance's previously recorded process, and closes all three.
+The whole child has a 50-second external deadline; its query has five seconds.
+It retains only Boolean/numeric fields and bounded SQLSTATE/native error codes,
+never ODBC exception messages, connection rows, credentials or private logs.
+The observer does not inspect the actual AuthServer connection pool.
+
+```powershell
+python native-android/engine/auth-interop/deployment/auth_readiness.py `
+  --instance <owned-cohauth-ci-instance> --expected-sql-pid <previously-recorded-pid> `
+  --output <new-readiness-receipt.json>
+```
+
+The prepared diagnostic has seven host receipt/command-boundary suites; these
+use a mocked child and do **not** qualify real PowerShell, x86 ODBC or SQL
+execution. It is intentionally separate from the existing service driver until
+the coordinator incorporates observations immediately before AuthServer launch
+and at a readiness failure. A healthy observation must not be substituted for
+owned-listener readiness, actual account login, AuthServer internal pool
+inspection, or SQL schema cleanup. Preserve the original failure and cleanup
+flags if a diagnostic itself fails.
+
+The next Windows action remains the compile-only candidate command above, with
+the exact unchanged historical host-qualification receipt/hash. Review/pin the
+resulting executable and receipt before any service use. No new Windows or
+service experiment was executed in this continuation. Reuse original binaries,
+probes and OpenSSL after exact existing admission; no crypto rebuild is needed
+for this compile-only step. A future service driver must separately admit the
+patched binary and retain both ordinary-send and seven-byte-send account cases,
+wrong-password/missing-account/corruption refusals, complete cleanup, and the
+unchanged shipping-server boundary.
 Independent review tightened host-receipt admission to require exact 5,139-control
 and 206-control result maps for both release and ASan/UBSan modes, all corpus
 counts/bounds, per-execution SHA256 syntax and explicit scope flags. Every result

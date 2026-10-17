@@ -76,7 +76,11 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
 ## Full character tail, original `receiveCharacterFromServer` order
 
 1. Five packed server-state flags; auth-user-data bytes; player type/subtype,
-   praetorian progress and location.
+   praetorian progress and location. Complete bounded standalone pre-character
+   wire prefix is source/host/ASan/UBSan qualified in `coh_character_prefix.*`.
+   Original auth array is 128 bytes and always aligns to the next byte, even
+   outside byte-aligned scalar mode. Auth bytes remain un-applied account
+   entitlement metadata; no full-character or outer-update composition.
 2. `character_Receive`: class/origin **names** and dictionary lookup; packed
    level, combat-mod shift, build, location; complete power builds/sets/powers;
    inspirations; boosts; inventory contents. Numeric create class/origin indices

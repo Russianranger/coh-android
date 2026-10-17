@@ -1,0 +1,109 @@
+{
+  "reviewed_commit": "18b84506ec4a0ae02c7617ac8116b3a77e41e9fa",
+  "source_sha256": {
+    "native-android/engine/entities/coh_character_prefix.c": "d0c5870795c349be967b1d79b088a47c4718fcdad4c86e24ee9837e08087d78e",
+    "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4"
+  },
+  "review_harness_sha256": "7fa463072b3655a5f9aa57bfb462faeb81299f58a374230333b7f3ce3be4795e",
+  "review_driver_sha256": "d3d8080b9afe9bf849a8360e5de36a6bca222b546743b066f95cc68b1afb5fa3",
+  "passed": true,
+  "source_stable": true,
+  "modes": {
+    "release": {
+      "result": {
+        "passed": true,
+        "checks": 17328,
+        "independent_writer": true,
+        "whole_character_complete": false
+      },
+      "binary_sha256": "2d56008fa4ed44a3f826b4854735c6b422adfa833a1880b744667b239931bb80"
+    },
+    "asan": {
+      "result": {
+        "passed": true,
+        "checks": 17328,
+        "independent_writer": true,
+        "whole_character_complete": false
+      },
+      "binary_sha256": "99567f87db2ad2d004481978125ad6fffa59fe4338c849b608ee59bd80b4ae72"
+    },
+    "ubsan": {
+      "result": {
+        "passed": true,
+        "checks": 17328,
+        "independent_writer": true,
+        "whole_character_complete": false
+      },
+      "binary_sha256": "0bdb8d476fd4dfaa3c0230d13e731a1e70ea92d2ad20f8a43bcb1ba2d3e38a2d"
+    }
+  },
+  "android_executed": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "original_source_oracle_replay": {
+    "source_unchanged_before_after": true,
+    "production_source_sha256": {
+      "native-android/engine/entities/coh_character_prefix.c": "d0c5870795c349be967b1d79b088a47c4718fcdad4c86e24ee9837e08087d78e",
+      "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+      "native-android/engine/entities/test_character_prefix.c": "024e25e5fd958a0241a2b606e355708dd286783a01b26f0463b82a863d2cb493",
+      "native-android/engine/entities/check_character_prefix.py": "9aa44fc945d12b9ffe9bf38e944a742ffa14749413a76f73d5a56a67d966eb2c",
+      "native-android/engine/entities/character-prefix-source-pins.json": "3ccae26768381f0cce59f6a5e903a0fdf039ec5c23487293a6d6bcc0077a0f4f",
+      "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+      "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+      "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+      "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+    },
+    "passed": true,
+    "schema": "coh-character-prefix-v1",
+    "source_revision": "18b84506ec4a0ae02c7617ac8116b3a77e41e9fa",
+    "source_sha256_lf": {
+      "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+      "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+    },
+    "original_statement_blocks_sha256_lf": {
+      "send": "8e8d51a04a6099e35030242df44fd4d03cfbcd572b05f13f936cbded4854948b",
+      "receive": "5723fe13bf7159568bd015af7ef324884491016eb1cd1b55874aca0c5f9cbd18"
+    },
+    "original_generated_oracle_sha256": "0843a6eaa265be8790f96efbce29a4ea815d80eae6017e8df653d91216081a4c",
+    "fixture_sha256": "4158150872ee3c553d043699ad79d214797881c69f47a638befc4f1c375586b3",
+    "checks": {
+      "release": {
+        "fixtures": 280,
+        "checks": 646561,
+        "whole_character_complete": false
+      },
+      "asan": {
+        "fixtures": 280,
+        "checks": 646561,
+        "whole_character_complete": false
+      },
+      "ubsan": {
+        "fixtures": 280,
+        "checks": 646561,
+        "whole_character_complete": false
+      }
+    },
+    "binary_sha256": {
+      "release": "431f0a25674203f5242d303facf0397ceb21e82304759a6e67721dc74ed8a6fc",
+      "asan": "b5d14123e9642ca3685c2d26c734e57bbacdedd7ad07cf77655e2fdae31a2e34",
+      "ubsan": "7991c52188fd96020187bb171fbf8bb032dcdd3b0f37d5922acfc08f8dc657ad"
+    },
+    "production_stack": [
+      "/workspace/scratch/90c31237ea30/a-prefix-review/native-android/engine/entities/coh_character_prefix.c:12:11:coh_character_prefix\t304\tstatic"
+    ],
+    "cpp_link_passed": true,
+    "original_oracle_sanitized": false,
+    "scope": "exact pre-character original statement blocks with synthetic state; bit and byte-array writer/readers are original full functions",
+    "android_built": false,
+    "android_executed": false,
+    "thor_accepted": false,
+    "whole_character_complete": false,
+    "actor_publication": false,
+    "acknowledgments_enabled": false
+  },
+  "review_outcome": "No correctness defect found within the pinned pre-character staging boundary; original auth-array alignment and transactional refusal reviewed independently."
+}

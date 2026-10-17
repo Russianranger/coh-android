@@ -1,0 +1,33 @@
+{
+  "schema": "coh-recovered-admission-integration-v1",
+  "passed": true,
+  "recovered_from": "664928071",
+  "pinned_primary": "4f6fe92107a10323a90123c6856de578943300e2",
+  "source_sha256": {
+    "native-android/engine/snapshot-admission/admit.py": "74a4f52ca6d3a6a0bfdbd9edcd60d25909059bce011ad0cb2c8ac6b6c0d32085",
+    "native-android/engine/snapshot-admission/capture-trust.json": "ad496a806005bb272acd1a30e54260ac46ed56c0768cb22c77161a8ee23811c5",
+    "native-android/engine/snapshot-admission/test_admit.py": "baf9f1533bf7af01019ec4e278192a971b562322d9a2632d4a751a5f095f2813",
+    "native-android/engine/snapshot-admission/test_prepare.py": "24b4f5f83fa221d70fcb5d911e23534bed5f870f1d3fed06119baafe61a070ae"
+  },
+  "archive_mutation_tests": 7,
+  "independent_hostile_container_tests": 17,
+  "single_read_preparation_tests": 3,
+  "native_import_modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "native_checks_each": 1014021,
+  "source_snapshot_only": true,
+  "live_groups_transaction": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "assets_admitted": false,
+  "actor_admitted": false,
+  "world_authority": false,
+  "notes": [
+    "Recovered original module and historical independent reviews unchanged except admission API extension. Historical receipts retain their original source hashes.",
+    "Native owner/graph tests retain explicitly marked fixture inventory; preparation API now exposes authentic recorded inventory digest but is not yet consumed by production native code.",
+    "ASan detect_leaks=0 due documented environment limit; explicit allocation balances passed."
+  ]
+}
