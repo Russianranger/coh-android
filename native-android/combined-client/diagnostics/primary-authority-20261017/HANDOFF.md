@@ -216,3 +216,43 @@ Shared-layout hosted run39069499391/job117503962736 passed. Artifact12114677408
 (13,371B, SHA8ec981b5aec60b1d06b823005022ce8bf7be8c6613621743959062ecfc8fc865)
 and all68 source hash entries were independently admitted; see
 `hosted-shared-layout-review.json`.
+
+## Additional reviewed closures and next witness
+
+A f0003a3f1 supplies a new source-produced disposable graphical fixture path
+with the exact retained.10 APK/donor204615c6 and a pinned host-only OCR overlay.
+It adds no client/server build. Fourteen independently reviewed offline tests
+pass. A held exported PG18 snapshot covers all ordinary user tables and an
+unfiltered full custom dump, after the original committed save and before
+finish. Successful original guest cleanup, all-byte revalidation, secret-token
+scanning and independently pinned downstream admission gate retention. This
+flow takes no user database/character/DBID input and creates only fresh
+COHLOCAL/THORHERO. It does not relax private-existing-backup output restrictions.
+The reviewed ARM64 workflow is a necessary missing full-input witness, not a
+repeat acceptance of the old graphical milestone. Actual execution is pending.
+
+D a54f1f5e7 prepares a separate real selected-shard probe against unchanged
+retained crypto and original Auth/Db binaries. Six host methods exercise16
+native outcomes per optimized/ASan/UBSan mode, private ownership and receipt
+refusals. Optional service hooks preserve the default no-client registration
+path. The new owner wipes its actual live grant before output; no DB client
+login is linked or claimed. Actual selected-play runtime stays pending until
+the original service readiness problem is resolved. See SELECTED-SHARD-PLAY.md.
+Diagnostic run39069981922 stopped before services in an unhosted-refusal test
+whose environment assumption differed on real hosted Windows. Test-only
+b55a8f24b explicitly supplies an unhosted environment; production guards are
+unchanged. The new focused attempt reruns only affected units and startup.
+
+B4b50f8da9 supplies original model-level blend promotion/alpha policy, before
+existing rigid-material admission. Three modes each pass322,641 checks over
+79,721 whole-original comparisons and six semantic mutation refusals; actual
+C-object/C++ linkage executes successfully. All44 final source hashes were
+independently checked after integration. Historical SERVER root fields use
+explicitly derived TexBind/normals/capability test inputs, not actual current
+CLIENT selection. Shader families/bits outside the existing final rigid
+validator remain unsupported for drawing; no material/GPU owner is produced.
+
+D a780aa66b additionally checks the live returned UID privately against the
+actual fresh SQL fixture UID and refuses a different nonzero UID. Six selected
+host methods now cover16 native outcomes per mode; no identifier or grant was
+added to output and the default diagnostic path remains unchanged.

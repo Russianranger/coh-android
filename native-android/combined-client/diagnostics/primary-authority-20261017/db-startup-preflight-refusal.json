@@ -1,0 +1,15 @@
+{
+  "schema": "coh-original-startup-ci-preflight-refusal-v1",
+  "run_id": 39069981922,
+  "job_id": 117505400907,
+  "source_commit": "824da3e9666ca5f04f5a0bee02449a8894cca2e4",
+  "failed_step": "Check only changed failure diagnostics and activation regressions",
+  "diagnostic_unit_tests_passed": 2,
+  "activation_unit_tests_passed_before_failure": 5,
+  "failure": "local-refusal control assumed non-hosted environment but executed on hosted Windows",
+  "auth_server_started": false,
+  "db_server_started": false,
+  "artifact_produced": false,
+  "correction_commit": "b55a8f24b",
+  "correction_scope": "test-only explicit RUNNER_ENVIRONMENT local-test; runtime admission guard unchanged"
+}

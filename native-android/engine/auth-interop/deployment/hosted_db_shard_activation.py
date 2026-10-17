@@ -242,7 +242,7 @@ def close_streams(handles):
     return complete
 
 
-def run(args):
+def run(args, selected_scope=None):
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = prior.require_hosted(root, output, args.expected_commit)
     prerequisite = authenticated_handoff_prerequisite(root, args.auth_success_archive.resolve())
@@ -263,6 +263,8 @@ def run(args):
     created=False;localdb=sqlcmd=None;children=[];rules=[];handles=[];pending_jobs=[]
     db_child=db=db_start=sql=None
     try:
+        if selected_scope is not None:
+            proof['schema']='coh-owned-original-selected-shard-play-v1'
         schema_dir = temporary/'accepted-schema'
         schema_manifest = recover_schema(root,schema_dir)
         proof['accepted_schema'] = {'manifest_sha256':SCHEMA_SHA,'files':len(schema_manifest['files']),
@@ -282,6 +284,8 @@ def run(args):
         seed=temporary/'public-shard.sql'
         seed.write_text("USE cohauth;SET NOCOUNT ON;INSERT dbo.server(id,name,ip,inner_ip,ageLimit,pk_flag,server_group_id,client_port) VALUES(1,'Owned actual DbServer','127.0.0.1','127.0.0.1',0,0,1,7000);INSERT dbo.worldstatus(idx,status) VALUES(1,0);",encoding='ascii')
         sql_runner.run('seed-owned-shard',[*sql,'-i',seed],timeout=150)
+        if selected_scope is not None:
+            selected_scope.prepare(root,temporary,output,runner,proof,sql,sql_runner)
         sql_pid=sql_runner.numeric('localdb-pid',[*sql,'-h','-1','-W','-Q',"SET NOCOUNT ON;SELECT CONVERT(int,SERVERPROPERTY('ProcessID'));"],kind='pid')
         proof['x86_sql_readiness']=auth_readiness.observe(instance,sql_pid)
         if proof['x86_sql_readiness']['healthy'] is not True:raise ValueError('shard_x86_sql_not_ready')
@@ -340,10 +344,17 @@ def run(args):
         tables=scalar(sql,"SET NOCOUNT ON;SELECT COUNT(*) FROM "+database+".sys.tables WHERE is_ms_shipped=0;",temporary)
         proof['actual_game_database_user_tables']=tables
         if tables!=99:raise ValueError('shard_game_database_table_count')
+        selected_result=None
+        if selected_scope is not None:
+            selected_result=selected_scope.exercise(temporary,proof,sql,ports,
+                auth_child,db_child,auth,db,auth_start,db_start,sql_pid,sql_start)
         proof['owned_processes_before_stop']={'auth':service_process_snapshot(auth_child,auth,auth_start),
             'db':service_process_snapshot(db_child,db,db_start),'sql':login.owned_process_snapshot(sql_pid)}
         if proof['owned_processes_before_stop']['sql']!=sql_start:raise ValueError('shard_sql_process_generation_changed')
         proof['original_interserver_shard_activation_verified']=True
+        if selected_scope is not None:
+            if selected_result is not True:raise ValueError('shard_selected_scope_not_complete')
+            proof['selected_shard_play_verified']=True
         proof['passed']=True
     except Exception as error:
         proof['failure']=service.safe_failure(error)

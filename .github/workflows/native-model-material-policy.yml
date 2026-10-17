@@ -1,0 +1,75 @@
+name: Original CLIENT model-level material policy
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-model-material-policy.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-model-material-policy-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  original-model-policy:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[model-material-policy]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - name: Install source oracle dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev
+    - name: Reuse exact accepted cache and source-resource artifacts
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        python3 - <<'PY'
+        import hashlib, os, pathlib, stat, subprocess, zipfile
+        out = pathlib.Path(os.environ['RUNNER_TEMP']) / 'coh-retained-authority-inputs'
+        out.mkdir()
+        specs = [
+          (11092897979,26476333,'51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae','client-caches.zip','client-caches.zip',27071659,'5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051'),
+          (12086339123,2945220,'572d5cde08f698173cce4c9a0860902a2da91841b22dbdd124501e1e601e192d','capture/resources.cohres','resources.cohres',12596422,'8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6')]
+        for ident,size,sha,member,name,raw_size,raw_sha in specs:
+            archive=out/(str(ident)+'.zip')
+            with archive.open('xb') as stream:
+                subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=stream,check=True,timeout=180)
+            assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==sha
+            with zipfile.ZipFile(archive) as z:
+                infos=z.infolist()
+                assert len(infos)<=128 and len({x.filename for x in infos})==len(infos)
+                assert sum(x.file_size for x in infos)<=128*1024**2
+                assert z.testzip() is None
+                info=z.getinfo(member)
+                assert not stat.S_ISLNK(info.external_attr>>16) and info.file_size==raw_size
+                raw=z.read(member)
+                assert hashlib.sha256(raw).hexdigest()==raw_sha
+                (out/name).write_bytes(raw)
+            archive.unlink()
+        print('Exact accepted caches and source resource body reused; no donor/server capture repeated')
+        PY
+    - name: Qualify only new original model material policy
+      run: |
+        python3 - <<'PYCODE'
+        import os,pathlib,zipfile,hashlib
+        root=pathlib.Path(os.environ['RUNNER_TEMP'])/'coh-retained-authority-inputs'
+        with zipfile.ZipFile(root/'client-caches.zip') as z:
+            for member,name,size,digest in [('data/bin/tricks.bin','tricks.bin',13537052,'cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1'),('data/bin/seqstatebits.bin','seqstatebits.bin',15380,'9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac')]:
+                assert z.getinfo(member).file_size==size
+                raw=z.read(member);assert hashlib.sha256(raw).hexdigest()==digest
+                (root/name).write_bytes(raw)
+        PYCODE
+        python3 native-android/engine/world-render-adapter/check_model_material.py --actual-cache "$RUNNER_TEMP/coh-retained-authority-inputs/tricks.bin" --actual-states "$RUNNER_TEMP/coh-retained-authority-inputs/seqstatebits.bin" --resources "$RUNNER_TEMP/coh-retained-authority-inputs/resources.cohres" --output out/model-material-policy/qualification.json
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: source-model-material-policy-${{ github.sha }}
+        path: out/model-material-policy/
+        if-no-files-found: error
+        retention-days: 90

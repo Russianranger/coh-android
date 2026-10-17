@@ -1,0 +1,45 @@
+{
+  "schema": "coh-graphical-fixture-offline-qualification-v1",
+  "passed": true,
+  "test_methods": 14,
+  "source_files": {
+    "capture_graphical_fixture.py": {
+      "bytes": 25910,
+      "sha256": "92e5aeb4170d97c167296e74f0a39973cd0c12cd5701ac220eca7a0afe5cd068"
+    },
+    "graphical_fixture_backup_guest.py": {
+      "bytes": 13593,
+      "sha256": "05317f2574145eeadcf06d8ee4bd6c495ed3067e6e11a8189c10b2e43d53e714"
+    },
+    "admit_graphical_fixture.py": {
+      "bytes": 6391,
+      "sha256": "8d0e32f1d3a3848522e60590ac184b6492a4367cc5c144c8ac02d89e8db02889"
+    },
+    "test_graphical_fixture.py": {
+      "bytes": 22206,
+      "sha256": "c4324432a8023f79747d074a86cbbd983d16dee8cd29ad0f63d30337fba37e2f"
+    },
+    "GRAPHICAL_FIXTURE.md": {
+      "bytes": 11588,
+      "sha256": "75e56550e45790965e860dd1b5329d6384ab47e7f29cef41b5b87f4714c55a2b"
+    }
+  },
+  "test_output_sha256": "6249eb46e28fbec2ff6c334872e3e1a38ba0d0e74f0a34ac82b331d743014029",
+  "scope": [
+    "actual inherited original finish-hook ordering",
+    "strict malformed request/receipt and retained artifact byte closure",
+    "exact donor/host OCR and original source launcher identity controls",
+    "mocked all-table exported snapshot full custom dump",
+    "combined primary dump and cleanup failure rollback",
+    "real Linux owned child process group cleanup",
+    "real line-oriented JSON pipe lifecycle"
+  ],
+  "runtime_executed": false,
+  "postgresql_executed": false,
+  "wine_executed": false,
+  "graphical_creation_executed": false,
+  "full_real_database_backup_created": false,
+  "source_native_transaction_captured": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

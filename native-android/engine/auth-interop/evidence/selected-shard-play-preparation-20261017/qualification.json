@@ -1,0 +1,59 @@
+{
+  "schema": "coh-selected-shard-play-preparation-qualification-v1",
+  "passed": true,
+  "scope": "New native selected-shard owner and hosted driver preparation; no live selected-shard qualification.",
+  "source_files_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py": "6fec8957936a50351878ba7069d7d2441400aa5ef0e1f34a80951f86ab5a423b",
+    "native-android/engine/auth-interop/deployment/windows/shard_play_probe.c": "b648dd10915fd081bef49e8521519da5f0bf1d96c75299b072e03e0a67d9d615",
+    "native-android/engine/auth-interop/deployment/windows/test_shard_play_probe.c": "e65727d7222321082a035d04a263e3641ab61249e672ff18f3cdc205c3857d92",
+    "native-android/engine/auth-interop/deployment/test_selected_shard_play.py": "9d9d7630c433833105958babab216d64c8543ddaecbf2ced1c83ca74209cfeb7",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "909f7689d9bb0b3ec0ca7f9e895f4ad18231af7a25bc174536f240822df0ecfa",
+    "native-android/engine/auth-interop/deployment/test_db_shard_activation.py": "e80c29caa7d460adfb3d975d74240b7a04f7a986c964ffeee3178cebed29f29f",
+    "native-android/engine/auth-interop/deployment/SELECTED-SHARD-PLAY.md": "4d0e13266d5024811c53ad94673d6fd8134392a3f0cf5a4041b39325538c74a9"
+  },
+  "retained_crypto_read_only_admission": {
+    "manifest_sha256": "1c1c05eb10132e4d1d172d29a04d36311981e6c7023c7ee388348339c460896b",
+    "static_library_sha256": "95aec97b796992a58f8745e1bbbc6eac634931420f13b0763d2db57537543698",
+    "qualified_archive_sha256_reference": "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b",
+    "artifact_id": 12078663003,
+    "files_revalidated": 384,
+    "bytes_revalidated": 105629748,
+    "crypto_rebuilt": false,
+    "prior_auth_only_probe_executed": false
+  },
+  "coordinator_archive_measured": {
+    "artifact_id": 12078663003,
+    "bytes": 71999000,
+    "sha256": "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b"
+  },
+  "host_validation": {
+    "new_selected_methods": 6,
+    "native_synthetic_owner_scenarios_per_mode": 16,
+    "native_modes": [
+      "optimized",
+      "asan_ubsan"
+    ],
+    "leak_sanitizer_enabled": false,
+    "affected_activation_methods": 6,
+    "all_passed": true,
+    "wrong_nonzero_fixture_uid_rejected": true
+  },
+  "prior_windows_registration": {
+    "run_id": 39068923933,
+    "passed": false,
+    "failure": "shard_db_ready_deadline",
+    "artifact_id": 12114885725,
+    "all_cleanup_verified": true
+  },
+  "actual_services_executed_for_this_scope": false,
+  "actual_encrypted_selected_play_verified": false,
+  "grant_values_exported": false,
+  "old_auth_only_negative_cases_repeated": false,
+  "crypto_rebuilt": false,
+  "original_servers_rebuilt": false,
+  "db_login_attempted": false,
+  "authenticated_db_map_handoff_verified": false,
+  "nondevelopment_version_admitted": false,
+  "checksum_policy_relaxed": false,
+  "shipping_profiles_modified": false
+}

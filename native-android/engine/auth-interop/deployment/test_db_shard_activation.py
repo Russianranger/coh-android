@@ -56,7 +56,11 @@ class DbShardActivationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             output=Path(temp)/'not-created'
             args=type('Args',(),dict(source_root=ROOT,output=output,expected_commit='a'*40))()
-            with self.assertRaisesRegex(ValueError,'fresh_github_hosted_windows_required'):stage.run(args)
+            # Explicitly model an unhosted call even when this regression suite
+            # itself runs on the authorized hosted Windows service runner.
+            with mock.patch.dict(os.environ,RUNNER_ENVIRONMENT='local-test'), \
+                 self.assertRaisesRegex(ValueError,'fresh_github_hosted_windows_required'):
+                stage.run(args)
             self.assertFalse(output.exists())
         runner=mock.Mock()
         for suffix,direction in (('in','Inbound'),('out','Outbound')):
@@ -117,7 +121,7 @@ class DbShardActivationTests(unittest.TestCase):
         @dataclass(frozen=True)
         class Prerequisite:
             fresh_authentication_required:bool=True
-        for failure in (None,'before_db','after_db','diagnostic','close_stream'):
+        for failure in (None,'before_db','after_db','diagnostic','close_stream','selected_success','selected_refusal'):
             with self.subTest(failure=failure),tempfile.TemporaryDirectory() as temp:
                 base=Path(temp);events=[];processes=[]
                 candidate=base/'candidate';candidate.mkdir();(candidate/stage.service.candidate.BINARY).write_bytes(b'auth')
@@ -171,6 +175,16 @@ class DbShardActivationTests(unittest.TestCase):
                 def close_streams(handles):
                     complete=original_close(handles)
                     return complete and failure!='close_stream'
+                scope=None
+                if failure in ('selected_success','selected_refusal'):
+                    scope=mock.Mock()
+                    def prepare(*values):
+                        self.assertFalse(processes);events.append('selected-prepare')
+                    def exercise(*values):
+                        self.assertEqual(len(processes),2);events.append('selected-exercise')
+                        values[1]['client_login_attempted']=True
+                        return failure=='selected_success'
+                    scope.prepare.side_effect=prepare;scope.exercise.side_effect=exercise
                 with ExitStack() as stack:
                     stack.enter_context(mock.patch.dict(os.environ,RUNNER_TEMP=temp))
                     stack.enter_context(mock.patch.object(stage.prior,'require_hosted',return_value={}))
@@ -198,11 +212,16 @@ class DbShardActivationTests(unittest.TestCase):
                     stack.enter_context(mock.patch.object(stage.db_startup_diagnostic,'observe_process',return_value={'thread_count':64}))
                     stack.enter_context(mock.patch.object(stage.login,'owned_process_snapshot',side_effect=sql_snapshot))
                     stack.enter_context(mock.patch.object(stage,'close_streams',side_effect=close_streams))
-                    proof=stage.run(args)
-                self.assertEqual(proof['passed'],failure is None)
+                    proof=stage.run(args,scope)
+                self.assertEqual(proof['passed'],failure in (None,'selected_success'))
                 for key in ('owned_service_cleanup_complete','owned_firewall_cleanup_complete','owned_localdb_cleanup_complete','private_files_removed','source_inputs_unchanged'):
                     self.assertEqual(proof[key],not(failure=='close_stream' and key=='owned_service_cleanup_complete'),key)
-                self.assertFalse(proof['client_login_attempted'])
+                self.assertEqual(proof['client_login_attempted'],scope is not None)
+                self.assertEqual(proof['selected_shard_play_verified'],failure=='selected_success')
+                if scope is not None:
+                    scope.prepare.assert_called_once();scope.exercise.assert_called_once()
+                    self.assertLess(events.index('selected-prepare'),events.index('assign-10'))
+                    self.assertLess(events.index('selected-exercise'),events.index('stop-20'))
                 self.assertFalse(proof['authenticated_db_map_handoff_verified'])
                 self.assertFalse(proof['checksum_policy_relaxed'])
                 if failure in ('after_db','diagnostic'):

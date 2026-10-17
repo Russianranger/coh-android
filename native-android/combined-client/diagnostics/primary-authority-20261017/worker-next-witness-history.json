@@ -1,0 +1,19 @@
+{
+  "schema": "coh-worker-next-witness-history-v1",
+  "bundle_sha256": "35e4fa0ae2cf4020a15954ba2f9ccef0597484d54c8f14c6d9817a179d2dccf3",
+  "heads": {
+    "recovery-a": "f0003a3f188d2a26eb5c27fe653616e1c018dee1",
+    "recovery-b": "4b50f8da9cace737d8fb5771adbae5ccce87ff37",
+    "recovery-d": "a780aa66b97ce399b5ccee03bd2bc5523d86e751"
+  },
+  "prerequisites": [
+    "8613045c22d9faa76ba5b6b4635ea5dcce9138c7",
+    "fd9ea649322aff5dd952878b6a00d9d813a50ba7",
+    "e12a7e842658010017f2f2c6a728128af342a16e"
+  ],
+  "prior_bundles": [
+    "worker-history.bundle",
+    "worker-followup-history.bundle",
+    "worker-db-diagnostic-history.bundle"
+  ]
+}
