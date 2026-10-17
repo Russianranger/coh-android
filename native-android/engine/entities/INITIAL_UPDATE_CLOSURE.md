@@ -566,3 +566,32 @@ frozen raw class owner flags. Full authentic set/base-power grammar/ID ownership
 actual SERVERONLY/shared/cache-generation association, selected Map/DB/entity
 generation, world/resource closure and atomic actor/application ACK remain gates.
 No runtime class identity is inferred merely from a matching historical CRC.
+
+## Historical complete power-set schema and compact index (2026-10-17)
+
+Source06eef892f/receipt38467ddaf, independently sealed Ffc8568d2a, qualifies
+the exact3,179,276B historical powersets cache SHA256
+afadc5f3ae6fc9c9c413924cec75bb911ff5cd4ce37388c6737cdb5786d9d547.
+Unchanged original schemas/readers/writers and actual static definitions yield
+ParseTableCRC0x2fe0d52d and byte-identical roundtrip. All30 fields/6,547 allocated
+sets/20,351 ordered power-name refs/zero persisted pointer indices remain.
+Whole original set-only CreateDictHashes/GetFullName executes; every16,384 hash
+slot and first-winner index agrees with native. Raw duplicate rows persist and
+constructor rejection is explicit. Eight original writer variants,4,754,836
+assertions per release/ASan/UBSan,344 cuts248 mutations, C++ and native stack
+controls pass.
+
+The immutable metadata owner196,704B borrows the3,179,276B input; the equally
+sized workspace retires after import. A bounded field getter preserves all
+encoded fields without dense per-row field metadata or base-power objects.
+Historical category-name audit resolves6,527 refs and preserves all20 additional
+allocated sets not named by those refs. This is not world reachability or active
+generation: full forward-pointer/basepower construction and matching current
+SERVERONLY/shared/cache association remain gates. No actor or application ACK.
+
+Standalone dictionary caps require phased pre-world imports or a future explicit
+qualified parent/child aggregate-budget adapter. Live world bytes cannot silently
+be omitted from retained_bytes; mathematical96MiB sums do not admit the running
+global pipeline. Full62,047,164B power-cache streaming descriptor is currently
+recovery-only work: observed0xb553b8ff is not original schemaCRC qualification,
+and no unqualified native/full dictionary/runtime ID is substituted.

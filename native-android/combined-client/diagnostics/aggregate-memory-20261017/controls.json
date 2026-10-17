@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "verifier_sha256": "cf412c92ecb551744fd39763ba07c547a80e34b3e2fd1ebbbb9a1dcc2042a1bc",
+  "controls": [
+    {
+      "proof": "world",
+      "refused": true,
+      "reason": "proof identity world"
+    },
+    {
+      "proof": "classes",
+      "refused": true,
+      "reason": "proof identity classes"
+    },
+    {
+      "proof": "origins",
+      "refused": true,
+      "reason": "proof identity origins"
+    },
+    {
+      "proof": "categories",
+      "refused": true,
+      "reason": "proof identity categories"
+    },
+    {
+      "proof": "level",
+      "refused": true,
+      "reason": "proof identity level"
+    },
+    {
+      "proof": "named",
+      "refused": true,
+      "reason": "proof identity named"
+    },
+    {
+      "proof": "power_sets",
+      "refused": true,
+      "reason": "proof identity power_sets"
+    },
+    {
+      "proof": "sealed",
+      "refused": true,
+      "reason": "proof identity sealed"
+    },
+    {
+      "proof": "parent_foundation",
+      "refused": true,
+      "reason": "proof identity parent_foundation"
+    },
+    {
+      "fabricated_footprint_or_scope": "world",
+      "refused": true,
+      "reason": "world equal mode results"
+    },
+    {
+      "fabricated_footprint_or_scope": "classes",
+      "refused": true,
+      "reason": "class owner"
+    },
+    {
+      "fabricated_footprint_or_scope": "categories",
+      "refused": true,
+      "reason": "retained compact owners"
+    },
+    {
+      "fabricated_footprint_or_scope": "missing_actual_loader_cleanup",
+      "refused": true,
+      "reason": "sealed equal mode results"
+    },
+    {
+      "fabricated_footprint_or_scope": "forged_smaller_sealed_owner",
+      "refused": true,
+      "reason": "sealed equal mode results"
+    },
+    {
+      "fabricated_footprint_or_scope": "parent_falsely_claims_module_adapters",
+      "refused": true,
+      "reason": "generic parent scope"
+    }
+  ],
+  "native_binaries_executed": false,
+  "compiler_executed": false
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "coh-wine-retained-platform-inventory-source-seal-v1",
+  "inputs": {
+    "deployment/inventory_wine_platform_inputs.py": {
+      "bytes": 5247,
+      "sha256": "158bb86dd788a3c2efbb6f0cbe16d90d6b5d2c75eac745b8ea74492301ceb6d2"
+    },
+    "deployment/test_inventory_wine_platform_inputs.py": {
+      "bytes": 1160,
+      "sha256": "2a6f421220267ba45e72feb99e6daac9a768f2da67b05e795e3600f1d07f3009"
+    },
+    "evidence/wine-platform-input-inventory-20261017/host-controls.txt": {
+      "bytes": 534,
+      "sha256": "2367a99d2afd8c885821b288abd5de5fccf4c75909fa7865fe2cd850559a9cc8"
+    },
+    "evidence/wine-platform-input-inventory-20261017/inventory.json": {
+      "bytes": 4410,
+      "sha256": "50128f0f70b9853e28b971c3981942e61fc8d83a293dcd0727f1d5f6836676b6"
+    },
+    "evidence/wine-platform-input-inventory-20261017/README.md": {
+      "bytes": 4383,
+      "sha256": "4bbd5923f2dcf61d158c08d44e3ea33e794fd4a35ee633425ade2ce09b6c6269"
+    }
+  },
+  "unit_contracts": 3,
+  "cold_unit_pyc_prefix": true,
+  "actual_wine_module_bytes_admitted": false,
+  "static_closure_admitted": false,
+  "runtime_execution": false
+}

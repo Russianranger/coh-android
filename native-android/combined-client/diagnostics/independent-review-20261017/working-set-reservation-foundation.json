@@ -1,0 +1,23 @@
+{
+  "schema": "coh-independent-working-set-accounting-foundation-review-v1",
+  "source_commit": "1e8e02b68d4f17bc2ea3f50a918a3e964c4b40b5",
+  "evidence_commit": "5842a4817",
+  "verdict": "approved_uninstalled_generic_reservation_accounting_only",
+  "raw_proof_sha256": "12e631c82e58b3058931ae8c32773875fb8428f288bbcc971dfb881e608786b6",
+  "compressed_proof_sha256": "c78a9cabdf45a9e2c20a5d501fae2cbd018b2fc9110081eca3c10696aecd6cb8",
+  "tested_git_source_matches": 6,
+  "reported_checks_per_mode": 5323,
+  "review": [
+    "Creation prechecks limit<=96MiB and includes actual fixed parent metadata plus16KiB call reserve before single calloc. Atomic process-local parent serial increment prevents parent-address reuse from matching old ticket; it is accounting correlation, not global source/session/capability identity. Parent operations and borrowed tickets require caller serialization. No callbacks or module allocation occur in reservation operations.",
+    "Prepare requires zero output ticket, disjoint known parent/plan/ticket spans, nonzero persistent size, policy child ceiling and overflow-safe complete persistent+temporary+call booking under both child ceiling and global remaining budget. Slot exhaustion/global/child/overflow failures preserve slots/report/peak/serial/output. Commit only shrinks to positive actual<=bookedpersistent, rejects duplicate live billing pointer keys and transitions counts. It cannot observe actual owner size or temporary cleanup.",
+    "Abort/release require exact parent/slot/serial/reserved/phase, committed owner key match where applicable, and zero ticket only after actual reservation retirement. Copied stale tickets cannot retire a newer slot reservation; a valid copied ticket remains a correlation alias to the same reservation, not a security credential. Destroy refuses while reservations remain, never frees module owners; source/provider liveness and actual cleanup are future adapter obligations.",
+    "Six frozen Git inputs copied to fresh compile directory before allC compilation, zero project helper imports/caches; source/HEAD rechecked afterward. Recorded5323 per release/ASan/UBSan, realC++11 linkage to actualCobject, actualparent calloc/free wrappers exactly2/2 and fixedmetadata+16KiB charge assertion. Allreservation scenarios use explicit synthetic billing keys/byteplans. Native summedframes96/472/312B within reserve; no independent native replay.",
+    "Does not alter current dictionary/coexistence contracts or raise caps. No actual origin/category/class/graph/renderer constructor consumes tickets. Concrete future wrappers must accept actual parent reservation, derive actual owner/dependency/provider/input footprints, maintain real leases and account external slack before partitioning child work. Passing only child bytes to an unchanged all-retained standalone API is still unauthorized. No malloc census, actual integrated owner graph, processRSS, Android/sourcegeneration/world+actor/GPU acceptance. Earlier394 include-compile failure remains unqualified history."
+  ],
+  "module_adapters_qualified": false,
+  "actual_malloc_census": false,
+  "global_pipeline_qualified": false,
+  "android_build": false,
+  "android_executed": false,
+  "world_authority": false
+}

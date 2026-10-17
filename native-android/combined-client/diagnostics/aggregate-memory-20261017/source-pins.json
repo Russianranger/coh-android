@@ -1,0 +1,68 @@
+{
+  "schema": "coh-aggregate-memory-proof-inputs-v1",
+  "proofs": {
+    "world": {
+      "commit": "2aafc7bd64b69d77ac04dd38e3545db98e592130",
+      "path": "native-android/engine/scenecatalog/evidence/source-mesh-batch-preflight-host.json",
+      "sha256": "ec739c5b2ca0a919af80423652d9f9321606d63af1eac8b0844fd6f5d791cada",
+      "bytes": 60395,
+      "independent_source_review_admitted": true
+    },
+    "classes": {
+      "commit": "dfebc2d6d9365235f37c7f585a9ec99511311c77",
+      "path": "native-android/engine/character-dictionary/qualification/classes-20261017/host-proof.json.gz",
+      "sha256": "899daf960d3a5d78ca744018fb9e2f7fdf2960465b013059454590e6bc83a4ae",
+      "bytes": 8373,
+      "independent_source_review_admitted": true
+    },
+    "origins": {
+      "commit": "08578d06a158ebf0c97d0c3dd5ba47eb08d50219",
+      "path": "native-android/engine/character-dictionary/qualification/origins-20261017/host-proof.json.gz",
+      "sha256": "a03e18061939d2886b0d931cdcce5b78f4a1f0024dee9283d0da7687bcd8839e",
+      "bytes": 9663,
+      "independent_source_review_admitted": true
+    },
+    "categories": {
+      "commit": "81739adf639ab34d53af78be81955f26e8c43554",
+      "path": "native-android/engine/character-dictionary/qualification/power-categories-20261017/host-proof.json.gz",
+      "sha256": "cf90af87851d61b7c2a00e7ca6515d8e90886e90e2f90b31e595893750358f4c",
+      "bytes": 10803,
+      "independent_source_review_admitted": true
+    },
+    "level": {
+      "commit": "3c4dbac9e73fc146cf64b06299748e931a1fd41d",
+      "path": "native-android/engine/character-dictionary/qualification/class-level-20261017/host-proof.json.gz",
+      "sha256": "8d4bfdce9973071b4847f3e8fa8ffdf6c4f6880258db12bdd75b6788db5cf7ff",
+      "bytes": 15923,
+      "independent_source_review_admitted": true
+    },
+    "named": {
+      "commit": "cf73aa246dfa5e97a8f99677639524e47c21471b",
+      "path": "native-android/engine/character-dictionary/qualification/class-named-20261017/host-proof-work-bound.json.gz",
+      "sha256": "609b5d5f02c8c9ddf43aeb531b1dc5497f75abeb6246fac2585a2eec9b2de1c4",
+      "bytes": 10667,
+      "independent_source_review_admitted": true
+    },
+    "power_sets": {
+      "commit": "38467ddaf8cb7da9a89470288d2f6a9a8aec9866",
+      "path": "native-android/engine/character-dictionary/qualification/power-sets-20261017/host-proof.json.gz",
+      "sha256": "4efdaf761528ac9b743d47e4bc339a3c92d63b388ffe0f8c03d809fef88cc7fc",
+      "bytes": 11643,
+      "independent_source_review_admitted": true
+    },
+    "sealed": {
+      "commit": "c48e57126d8213b071235cdd8456fe27939868a0",
+      "path": "native-android/engine/scenecatalog/evidence/source-sealed-complete-host.json",
+      "sha256": "6f97ad07c831957df4ed2cb783cb4de79c50a6225f045d3e59ec9797fe285e38",
+      "bytes": 67960,
+      "independent_source_review_admitted": true
+    },
+    "parent_foundation": {
+      "commit": "d00b9f7ac7025398dcaca5c7d3a91753ae9a7813",
+      "path": "native-android/engine/working-set/evidence/measured-host.json.gz",
+      "sha256": "8cdf39a94d2cde0fe420e2409e37adcd64c7b10120c1e1889720cbfe60a6d19f",
+      "bytes": 743,
+      "independent_source_review_admitted": true
+    }
+  }
+}

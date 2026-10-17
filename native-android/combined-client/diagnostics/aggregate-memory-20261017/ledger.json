@@ -1,0 +1,225 @@
+{
+  "schema": "coh-independent-cross-module-named-budget-v1",
+  "passed": true,
+  "cap_bytes": 100663296,
+  "world_batch_preparation": 90851310,
+  "world_named_retained_baseline": 90834926,
+  "world_earlier_decode_preparation": 91075118,
+  "baseline_is_named_reservations_not_process_rss": true,
+  "known_dictionary_retained": 6827548,
+  "power_sets_retained": 3375980,
+  "normal_class_input": 1219292,
+  "villain_class_input": 4228088,
+  "class_owner_each": 463208,
+  "origin_owner_each": 37952,
+  "category_owner": 374856,
+  "selected_level": 2880,
+  "named_owner_each": 56,
+  "class_workspace_transient": 463208,
+  "origin_workspace_transient": 37952,
+  "category_workspace_transient": 374856,
+  "selected_level_workspace_transient": 2880,
+  "sets_workspace_transient": 196704,
+  "scenarios": [
+    {
+      "scenario": "both_class_families_qualified_dictionary_components",
+      "retained_dictionary_bytes": 6827548,
+      "includes_source_admitted_power_sets": false,
+      "world_named_retained_total": 97662474,
+      "world_named_retained_allowance": 3000822,
+      "batch_preparation_total": 97678858,
+      "batch_preparation_allowance": 2984438,
+      "earlier_decode_preparation_total": 97902666,
+      "earlier_decode_preparation_allowance": 2760630,
+      "integrated_execution_qualified": false,
+      "actor_or_gpu_fit_proved": false
+    },
+    {
+      "scenario": "both_class_families_plus_include_sets",
+      "retained_dictionary_bytes": 10203528,
+      "includes_source_admitted_power_sets": true,
+      "world_named_retained_total": 101038454,
+      "world_named_retained_allowance": -375158,
+      "batch_preparation_total": 101054838,
+      "batch_preparation_allowance": -391542,
+      "earlier_decode_preparation_total": 101278646,
+      "earlier_decode_preparation_allowance": -615350,
+      "integrated_execution_qualified": false,
+      "actor_or_gpu_fit_proved": false
+    },
+    {
+      "scenario": "only_normal_class_family_plus_include_sets",
+      "retained_dictionary_bytes": 5512176,
+      "includes_source_admitted_power_sets": true,
+      "world_named_retained_total": 96347102,
+      "world_named_retained_allowance": 4316194,
+      "batch_preparation_total": 96363486,
+      "batch_preparation_allowance": 4299810,
+      "earlier_decode_preparation_total": 96587294,
+      "earlier_decode_preparation_allowance": 4076002,
+      "integrated_execution_qualified": false,
+      "actor_or_gpu_fit_proved": false
+    },
+    {
+      "scenario": "only_villain_class_family_plus_include_sets",
+      "retained_dictionary_bytes": 8520972,
+      "includes_source_admitted_power_sets": true,
+      "world_named_retained_total": 99355898,
+      "world_named_retained_allowance": 1307398,
+      "batch_preparation_total": 99372282,
+      "batch_preparation_allowance": 1291014,
+      "earlier_decode_preparation_total": 99596090,
+      "earlier_decode_preparation_allowance": 1067206,
+      "integrated_execution_qualified": false,
+      "actor_or_gpu_fit_proved": false
+    }
+  ],
+  "standalone_cap_conflicts": [
+    {
+      "operation": "category_import_with_two_origin_owners",
+      "minimum_bytes": 1073176,
+      "standalone_cap": 1048576
+    },
+    {
+      "operation": "origin_import_with_category_owner",
+      "minimum_bytes": 459520,
+      "standalone_cap": 262144
+    },
+    {
+      "operation": "class_level_call_with_world_named_reservation",
+      "minimum_bytes": 97681738,
+      "standalone_cap": 8388608
+    }
+  ],
+  "duplicate_symbolic_identity_refused": true,
+  "parent_global_child_budget_adapter_qualified": false,
+  "integrated_pipeline_qualified": false,
+  "actual_device_memory_measured": false,
+  "actor_fit_proved": false,
+  "gpu_fit_proved": false,
+  "world_authority": false,
+  "sealed_fixture_actual_external_geo_retirement_verified": true,
+  "current_application_cleanup_observed": false,
+  "sealed_world_comparison_baseline": 57138703,
+  "seal_transition_baseline": 93228133,
+  "measured_parent_metadata_bytes": 2616,
+  "measured_parent_metadata_and_reserve_bytes": 19000,
+  "parent_footprint_is_actual_frozen_host_observation": true,
+  "retirement_scenarios": [
+    {
+      "scenario": "sealed_before_additional_C_dictionaries",
+      "world_named_bytes": 57138703,
+      "additional_dictionary_bytes": 0,
+      "total": 57138703,
+      "allowance": 43524593,
+      "plus_measured_parent_reservation_total": 57157703,
+      "plus_measured_parent_allowance": 43505593,
+      "module_adapters_qualified": false,
+      "integrated_execution_qualified": false,
+      "actor_or_gpu_fit_proved": false
+    },
+    {
+      "scenario": "sealed_all_C_dictionaries_and_sets",
+      "world_named_bytes": 57138703,
+      "additional_dictionary_bytes": 10203528,
+      "total": 67342231,
+      "allowance": 33321065,
+      "plus_measured_parent_reservation_total": 67361231,
+      "plus_measured_parent_allowance": 33302065,
+      "module_adapters_qualified": false,
+      "integrated_execution_qualified": false,
+      "actor_or_gpu_fit_proved": false
+    },
+    {
+      "scenario": "seal_transition_with_qualified_C_dictionaries_no_sets",
+      "world_named_bytes": 93228133,
+      "additional_dictionary_bytes": 6827548,
+      "total": 100055681,
+      "allowance": 607615,
+      "plus_measured_parent_reservation_total": 100074681,
+      "plus_measured_parent_allowance": 588615,
+      "module_adapters_qualified": false,
+      "integrated_execution_qualified": false,
+      "actor_or_gpu_fit_proved": false
+    },
+    {
+      "scenario": "seal_transition_with_all_C_and_sets",
+      "world_named_bytes": 93228133,
+      "additional_dictionary_bytes": 10203528,
+      "total": 103431661,
+      "allowance": -2768365,
+      "plus_measured_parent_reservation_total": 103450661,
+      "plus_measured_parent_allowance": -2787365,
+      "module_adapters_qualified": false,
+      "integrated_execution_qualified": false,
+      "actor_or_gpu_fit_proved": false
+    }
+  ],
+  "retirement_order_required_for_all_families_and_sets": "seal and actually retire GEO pins/cache/loader/provider before adding retained powersets",
+  "parent_foundation_is_module_adapter": false,
+  "proofs": {
+    "world": {
+      "commit": "2aafc7bd64b69d77ac04dd38e3545db98e592130",
+      "path": "native-android/engine/scenecatalog/evidence/source-mesh-batch-preflight-host.json",
+      "sha256": "ec739c5b2ca0a919af80423652d9f9321606d63af1eac8b0844fd6f5d791cada",
+      "bytes": 60395,
+      "independent_source_review_admitted": true
+    },
+    "classes": {
+      "commit": "dfebc2d6d9365235f37c7f585a9ec99511311c77",
+      "path": "native-android/engine/character-dictionary/qualification/classes-20261017/host-proof.json.gz",
+      "sha256": "899daf960d3a5d78ca744018fb9e2f7fdf2960465b013059454590e6bc83a4ae",
+      "bytes": 8373,
+      "independent_source_review_admitted": true
+    },
+    "origins": {
+      "commit": "08578d06a158ebf0c97d0c3dd5ba47eb08d50219",
+      "path": "native-android/engine/character-dictionary/qualification/origins-20261017/host-proof.json.gz",
+      "sha256": "a03e18061939d2886b0d931cdcce5b78f4a1f0024dee9283d0da7687bcd8839e",
+      "bytes": 9663,
+      "independent_source_review_admitted": true
+    },
+    "categories": {
+      "commit": "81739adf639ab34d53af78be81955f26e8c43554",
+      "path": "native-android/engine/character-dictionary/qualification/power-categories-20261017/host-proof.json.gz",
+      "sha256": "cf90af87851d61b7c2a00e7ca6515d8e90886e90e2f90b31e595893750358f4c",
+      "bytes": 10803,
+      "independent_source_review_admitted": true
+    },
+    "level": {
+      "commit": "3c4dbac9e73fc146cf64b06299748e931a1fd41d",
+      "path": "native-android/engine/character-dictionary/qualification/class-level-20261017/host-proof.json.gz",
+      "sha256": "8d4bfdce9973071b4847f3e8fa8ffdf6c4f6880258db12bdd75b6788db5cf7ff",
+      "bytes": 15923,
+      "independent_source_review_admitted": true
+    },
+    "named": {
+      "commit": "cf73aa246dfa5e97a8f99677639524e47c21471b",
+      "path": "native-android/engine/character-dictionary/qualification/class-named-20261017/host-proof-work-bound.json.gz",
+      "sha256": "609b5d5f02c8c9ddf43aeb531b1dc5497f75abeb6246fac2585a2eec9b2de1c4",
+      "bytes": 10667,
+      "independent_source_review_admitted": true
+    },
+    "power_sets": {
+      "commit": "38467ddaf8cb7da9a89470288d2f6a9a8aec9866",
+      "path": "native-android/engine/character-dictionary/qualification/power-sets-20261017/host-proof.json.gz",
+      "sha256": "4efdaf761528ac9b743d47e4bc339a3c92d63b388ffe0f8c03d809fef88cc7fc",
+      "bytes": 11643,
+      "independent_source_review_admitted": true
+    },
+    "sealed": {
+      "commit": "c48e57126d8213b071235cdd8456fe27939868a0",
+      "path": "native-android/engine/scenecatalog/evidence/source-sealed-complete-host.json",
+      "sha256": "6f97ad07c831957df4ed2cb783cb4de79c50a6225f045d3e59ec9797fe285e38",
+      "bytes": 67960,
+      "independent_source_review_admitted": true
+    },
+    "parent_foundation": {
+      "commit": "d00b9f7ac7025398dcaca5c7d3a91753ae9a7813",
+      "path": "native-android/engine/working-set/evidence/measured-host.json.gz",
+      "sha256": "8cdf39a94d2cde0fe420e2409e37adcd64c7b10120c1e1889720cbfe60a6d19f",
+      "bytes": 743,
+      "independent_source_review_admitted": true
+    }
+  }
+}

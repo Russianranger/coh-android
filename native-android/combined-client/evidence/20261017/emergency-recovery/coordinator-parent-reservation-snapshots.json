@@ -1,0 +1,22 @@
+{
+  "commits": [
+    "394efded721dd904c302e5f5c1cdf8bdb5c57f24",
+    "1e8e02b68d4f17bc2ea3f50a918a3e964c4b40b5",
+    "5842a4817ad1c1fee7700b38863a05fd6c7c4df6",
+    "cafaf853d455337c907e82cedbdea4214e1d2b7c",
+    "d00b9f7ac7025398dcaca5c7d3a91753ae9a7813"
+  ],
+  "prerequisites": [
+    "c7e9ed02d2eb015338180b169d593b38cb8c99ba",
+    "c48e57126d8213b071235cdd8456fe27939868a0",
+    "545296bf33dcd84e55c1329d4bb8a40fbafabeba",
+    "f52729292bc1991eec722cd29c75aee57cb0a4fd",
+    "04bfd7d8d49d8bc83e5104621fc600290e60182e",
+    "f5cbc1d3a64ea5e11ccf479394221007d3c94454",
+    "b2602a5442a88f7299b989ef50cf0138ec751ac9"
+  ],
+  "scope": "Exact full commit/tree/blob snapshots only; parents deliberately excluded. Import remote and worker recovery prerequisites first.",
+  "objects": 59,
+  "bytes": 52381,
+  "sha256": "44a113e9cb9533de1a5a51f91f24ad862c8cbc2d0f9ef5109c4f51f07db6b00d"
+}

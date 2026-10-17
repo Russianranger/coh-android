@@ -1,0 +1,142 @@
+{
+  "schema": "coh-power-set-source-binding-v1",
+  "source_commit": "06eef892fc1e9b42e4cf658be4cf7285efae4db8",
+  "tested_git_blobs_match": true,
+  "tested_source_count": 61,
+  "host_proof_sha256": "4efdaf761528ac9b743d47e4bc339a3c92d63b388ffe0f8c03d809fef88cc7fc",
+  "checks": {
+    "release": {
+      "checks": 4754836,
+      "cases": 8,
+      "cuts": 344,
+      "mutations": 248,
+      "owner_bytes": 196704,
+      "full_power_dictionary": false,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 4754836,
+      "cases": 8,
+      "cuts": 344,
+      "mutations": 248,
+      "owner_bytes": 196704,
+      "full_power_dictionary": false,
+      "runtime_generation": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 4754836,
+      "cases": 8,
+      "cuts": 344,
+      "mutations": 248,
+      "owner_bytes": 196704,
+      "full_power_dictionary": false,
+      "runtime_generation": false,
+      "actor_authority": false
+    }
+  },
+  "original_schema_crc": "0x2fe0d52d",
+  "exact_input_bytes": 3179276,
+  "exact_input_sha256": "afadc5f3ae6fc9c9c413924cec75bb911ff5cd4ce37388c6737cdb5786d9d547",
+  "complete_original_set_schema": true,
+  "all_original_set_hash_slots_compared": true,
+  "source_set_dictionary_only": true,
+  "source_base_power_dictionary_loaded": false,
+  "category_reference_audit": {
+    "profile": "historical-name-audit-only",
+    "category_input_sha256": "67b46915b9bf4440de8f5cf8bf7dd4a9047daee7dc5cb96f2c2be3999f8fc5e7",
+    "category_rows": 186,
+    "ordered_references": 6527,
+    "missing": [],
+    "unreferenced_allocated_sets": [
+      {
+        "index": 2980,
+        "name": "Clockwork_Praetorian.Clockwork_Android_Powers"
+      },
+      {
+        "index": 2981,
+        "name": "Clockwork_Praetorian.Defense_Turret_Powers"
+      },
+      {
+        "index": 3278,
+        "name": "DevouringEarthPraetorian.Moss_Bat"
+      },
+      {
+        "index": 3279,
+        "name": "DevouringEarthPraetorian.Fungoid_Minion"
+      },
+      {
+        "index": 3280,
+        "name": "DevouringEarthPraetorian.Fungoid_Lt"
+      },
+      {
+        "index": 3281,
+        "name": "DevouringEarthPraetorian.Fungoid_Spore_Cloud"
+      },
+      {
+        "index": 3282,
+        "name": "DevouringEarthPraetorian.Rotters_Minion"
+      },
+      {
+        "index": 3283,
+        "name": "DevouringEarthPraetorian.Rotters_Lt"
+      },
+      {
+        "index": 3284,
+        "name": "DevouringEarthPraetorian.Rotters_Boss"
+      },
+      {
+        "index": 3285,
+        "name": "DevouringEarthPraetorian.Rotvine_Minion"
+      },
+      {
+        "index": 3286,
+        "name": "DevouringEarthPraetorian.Rotvine_Lt"
+      },
+      {
+        "index": 3287,
+        "name": "DevouringEarthPraetorian.Rotvine_Boss"
+      },
+      {
+        "index": 3288,
+        "name": "DevouringEarthPraetorian.Foulbriar_Minion"
+      },
+      {
+        "index": 3289,
+        "name": "DevouringEarthPraetorian.Foulbriar_Lt"
+      },
+      {
+        "index": 3290,
+        "name": "DevouringEarthPraetorian.Foulbriar_Boss"
+      },
+      {
+        "index": 3291,
+        "name": "DevouringEarthPraetorian.Mirebark_Lt"
+      },
+      {
+        "index": 3292,
+        "name": "DevouringEarthPraetorian.Mirebark_Boss"
+      },
+      {
+        "index": 3293,
+        "name": "DevouringEarthPraetorian.Greater_Devoured_Boss"
+      },
+      {
+        "index": 3294,
+        "name": "DevouringEarthPraetorian.Thorn_Spitter"
+      },
+      {
+        "index": 4378,
+        "name": "N_Tutorial_Powers.Atlas_Normal_VisionPhase"
+      }
+    ],
+    "original_forward_pointer_function_executed": false,
+    "generation_association_accepted": false,
+    "complete_dictionary_join": false
+  },
+  "global_96MiB_owner_composition_qualified": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false
+}

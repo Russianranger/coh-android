@@ -1,0 +1,19 @@
+{
+  "schema": "coh-independent-wine-platform-inventory-review-v1",
+  "source_commit": "04bfd7d8d49d8bc83e5104621fc600290e60182e",
+  "verdict": "approved_bounded_retained_copy_negative_inventory_only",
+  "inventory_sha256": "50128f0f70b9853e28b971c3981942e61fc8d83a293dcd0727f1d5f6836676b6",
+  "helper_sha256": "158bb86dd788a3c2efbb6f0cbe16d90d6b5d2c75eac745b8ea74492301ceb6d2",
+  "source_seal_inputs_git_matches": 5,
+  "review": [
+    "Exact donor outer SHA checked before APK/nested archive inspection; member metadata only for six known nested runtime ZIP/tars, actual native library names/hashes and existing PostgreSQL/MSI payload hashes. Expected base/Wine external runtime locks are preserved as expectations, not admitted bytes. No member extraction/execution, replacement, service or new download.",
+    "Target basenames exactly cover eight ordinary DLLs plus eleven CRT APIset families from previous nineteen unresolved imports, with casefold and slash normalization. Presence search is not PE/ELF validity, export closure or loader qualification. Actual nested/direct match sets empty. Known donor archives themselves are trusted exact inputs; this is not a hard global memory/CPU admission API for arbitrary-size untrusted archives/roots.",
+    "Local rg default visible/nonignored archive-name inventory is explicitly limited to selected/workspace and tmp roots; ZIP/APK central directories only, inode dedup, no arbitrary tar recursion.1119paths1117inodes978directories22424entries/no errors/no exact external-lock-size candidates. An absent match does not prove historical work never existed or device/remote/hidden storage absent. Inventory digest records observed path/size list only; actual reader reachability still bounded to that snapshot.",
+    "All five frozen seal files and actual helper SHA match exact committed blobs. Three unit suites independently executed frozen source copies in fresh owned tmpfs (0.001s), pass module-name matching/central-directory only/wrongdonor-beforeparse. No archive scan repeat or binary launched. Actual runtime modules/native dependencies/APIset resolution/WineODBCPG persistence/authentication remain unqualified."
+  ],
+  "independent_unit_suites": 3,
+  "actual_wine_module_bytes_admitted": false,
+  "static_platform_closure_admitted": false,
+  "runtime_profile_admitted": false,
+  "downloads_or_binary_execution": false
+}

@@ -1,0 +1,113 @@
+{
+  "schema": "coh-retained-wine-platform-input-inventory-v1",
+  "donor_sha256": "6d6312b3ef4f7b9d25252ced724cbbdb36a4712a011647a8339b5a3207857911",
+  "apk_sha256": "482481fd14357f56a0c77069124fdce42712a06180ead8cb4c0cca2a671d4fc2",
+  "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+  "external_runtime_locks": {
+    "base": {
+      "url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-probe-v1/runtime-arm64.tar.gz",
+      "bytes": 353710639,
+      "sha256": "08c639c26506dc6fbd15464bec475337087bb23cb7c0c5ace2db5240ee36424f",
+      "source_url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-probe-v1/runtime-sources.tar.gz",
+      "source_sha256": "343281a472e87e31df724605af40c14557270a597c5fc9ec08e8848a8f2d7753"
+    },
+    "wine": {
+      "url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-fex-v3/runtime-fex-arm64.tar.gz",
+      "bytes": 318095727,
+      "sha256": "030f38066af7b786c142e199cb84adec037840b0f029338849e43f99203a93e1",
+      "source_url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-fex-v3/runtime-fex-sources.tar.gz",
+      "source_sha256": "2da85c45a42b87463739edef39d76d005e3fae2cd70b283a931e37e4837290e7",
+      "wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+      "fex_commit": "320c5f18475b0c8a7e99c51a5fdc5b5e35b147ab",
+      "manifest_sha256": "c186367efab62f9981586623f84644d3ae002fc678d3c167a8b0efad13522b89"
+    }
+  },
+  "apk_direct_module_members": [],
+  "apk_native_libraries": [
+    {
+      "name": "lib/arm64-v8a/libproot-loader.so",
+      "bytes": 17624,
+      "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+    },
+    {
+      "name": "lib/arm64-v8a/libproot.so",
+      "bytes": 263648,
+      "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+    }
+  ],
+  "apk_nested_archives": [
+    {
+      "name": "client-runtime.zip",
+      "bytes": 8702383,
+      "sha256": "5636fe9b3d45c313b062ac83ba954bfb3b1b160af4aec1b34f046c8c2b421509",
+      "members": 22,
+      "matching_module_members": []
+    },
+    {
+      "name": "client-prerequisites.zip",
+      "bytes": 18757,
+      "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+      "members": 4,
+      "matching_module_members": []
+    },
+    {
+      "name": "hardware-renderer.zip",
+      "bytes": 2865215,
+      "sha256": "55f50f8434375cb6587bbfc81b7e9829bdbc8f7ba9a8403eb705315e17ce6f38",
+      "members": 6,
+      "matching_module_members": []
+    },
+    {
+      "name": "dbserver-package.tar.gz",
+      "bytes": 2133821,
+      "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+      "members": 9,
+      "matching_module_members": []
+    },
+    {
+      "name": "game-package.tar.gz",
+      "bytes": 11231995,
+      "sha256": "20445586ef4271b5f1ce34dd105d4131b8ec1a73fbd88f21c23b700a6913bfe6",
+      "members": 26,
+      "matching_module_members": []
+    },
+    {
+      "name": "postgresql-runtime.tar.gz",
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155",
+      "members": 736,
+      "matching_module_members": []
+    }
+  ],
+  "apk_nested_matching_modules": [],
+  "available_other_payloads": {
+    "psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "postgresql-runtime.tar.gz": {
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+    }
+  },
+  "bounded_local_search": {
+    "roots": [
+      "/workspace/scratch",
+      "/tmp"
+    ],
+    "policy": "rg default visible/nonignored archive names only; ZIP central directories; no other tar recursion",
+    "archive_path_count": 1119,
+    "unique_archive_inodes": 1117,
+    "zip_central_directories": 978,
+    "central_entries": 22424,
+    "observed_path_size_map_sha256": "770faf93eec8ed1bb182267b62b1588b6a8ba88cc0b45787ef53ece2e6c400e6",
+    "matching_direct_members": [],
+    "exact_locked_archive_size_candidates": [],
+    "errors": []
+  },
+  "actual_wine_modules_recovered": false,
+  "static_platform_closure_admitted": false,
+  "runtime_profile_admitted": false,
+  "downloads_or_binary_execution": false,
+  "helper_sha256": "158bb86dd788a3c2efbb6f0cbe16d90d6b5d2c75eac745b8ea74492301ceb6d2"
+}

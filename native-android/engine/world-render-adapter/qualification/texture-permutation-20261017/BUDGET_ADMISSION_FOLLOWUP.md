@@ -1,0 +1,7 @@
+# Complete budget admission before callbacks
+
+Corrected source `ba9921622`; fresh host receipt SHA256 `324328f0f7cbf4193977b7800bab7971aeee8d1ab3e9eba319c2a97d291b74f0` (`budget-followup-host.json`). Previous e550/source/receipt are preserved as historical evidence and are superseded for publication by this correction. Independent review held the old planner because external cancellation could run during input-byte measurement before complete named-budget admission.
+
+The bounded read-only measurement (maximum256scene rows/two127-byte names each) now invokes no cancellation/provider callback. It validates/counts complete input storage first, requires external+input+own32KiB+nestedBasic16KiB budget, then performs the first external cancellation poll. No allocations or resource mutation occur during measurement. A request exactly one byte below required aggregate capacity arms a cancel-on-first-poll callback and must returnCOH_LIMIT with pollcount0 and byte-identical output. The positive/cancellation transaction cases retain source ordering and atomicity.
+
+Release, ASan and UBSan each again pass1,783controls/184plans (92originalfixture completions/92UNKNOWNprefix stops), all three semantic mutations remain refused. Whole authentic-body/source closure is rechecked; only these source/test/doc changes were made. No native/Android/world/material qualification expansion. The previous strict/guarded and observer/currentgeneration boundaries remain unchanged. Final independent review is requested against this exact source+receipt.

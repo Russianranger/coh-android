@@ -1,0 +1,42 @@
+#ifndef COH_POWER_SETS_H
+#define COH_POWER_SETS_H
+#include "coh_origins.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+#define COH_POWER_SET_MAX 8192u
+#define COH_POWER_SET_FIELDS 30u
+#define COH_POWER_SET_INDEX_SLOTS 16384u
+#define COH_POWER_SET_INPUT_MAX (4u*1024u*1024u)
+#define COH_POWER_SET_RAM_MAX (8u*1024u*1024u)
+#define COH_POWER_SET_STACK_RESERVE 16384u
+#define COH_POWER_SET_WORK_MAX (64u*1024u*1024u)
+typedef struct{uint32_t begin,end;}CohPowerSetSpan;
+typedef struct{CohPowerSetSpan record,full_name;}CohPowerSetEntry;
+typedef struct{
+ CohBytes input;uint64_t input_lease;uint8_t input_sha256[32];
+ uint32_t schema_crc,count,dependency_count,power_name_count,pointer_index_count;
+ uint32_t index_slots,unique_count,duplicate_count;
+ uint8_t raw_schema_validated,historical_schema_crc_matched,source_constructor_accepted;
+ uint8_t full_power_dictionary,runtime_generation,actor_authority;
+ CohPowerSetEntry entries[COH_POWER_SET_MAX];uint32_t slots[COH_POWER_SET_INDEX_SLOTS];
+}CohPowerSetDictionary;
+typedef struct{CohPowerSetDictionary candidate;}CohPowerSetWorkspace;
+/* Complete original30-field schema, no eager powers graph. Retains immutable
+ * input lease and every source record/field span, name-array ordering, raw
+ * availability/rank/difficulty and donor32bit pointer indices. Original forward
+ * first-name-wins hash semantics retain duplicate rows and report constructor
+ * failure separately; raw syntax admission never grants dictionary authority.
+ * All spans/provider scratch/retained charges precede callbacks; output atomic.
+ * Historical schema/header equality is not active cache/generation association.
+ * Full power dictionary/category join, semantic actor and ACK remain gated. */
+CohStatus coh_power_sets_read(CohBytes,uint64_t,const uint8_t[32],const CohCostumeImportDigest*,
+ CohPowerSetDictionary*,CohPowerSetWorkspace*,size_t,size_t);
+CohStatus coh_power_sets_find(const CohPowerSetDictionary*,CohBytes,uint32_t*);
+/* Returns the original encoded field span borrowed from immutable input. Every
+ * field was validated on import; bounded rescanning avoids30spans per row. */
+CohStatus coh_power_sets_field(const CohPowerSetDictionary*,uint32_t,uint32_t,CohBytes*);
+#ifdef __cplusplus
+}
+#endif
+#endif

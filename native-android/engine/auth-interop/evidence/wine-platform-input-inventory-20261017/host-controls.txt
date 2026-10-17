@@ -1,0 +1,8 @@
+test_central_inventory_only_no_member_execution (test_inventory_wine_platform_inputs.InventoryContracts.test_central_inventory_only_no_member_execution) ... ok
+test_donor_identity_before_parse (test_inventory_wine_platform_inputs.InventoryContracts.test_donor_identity_before_parse) ... ok
+test_exact_module_names_case_and_api_set (test_inventory_wine_platform_inputs.InventoryContracts.test_exact_module_names_case_and_api_set) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+OK

@@ -1,0 +1,28 @@
+{
+  "schema": "coh-independent-raw-public-bounds-source-owner-review-v1",
+  "source_commit": "545296bf33dcd84e55c1329d4bb8a40fbafabeba",
+  "verdict": "approved_uninstalled_supplier_and_source_only_immutable_import",
+  "proof_sha256": "c4d29208f7dfef6bd1e4047d481ca43f0840f78ddf7354b38fe6855a3053015d",
+  "git_source_matches": {
+    "native_helper_and_transitive_headers": 215,
+    "distinct_whole_original_lf_sources": 18
+  },
+  "reported_native_checks_per_mode": 5503,
+  "source_fixtures": 8,
+  "review": [
+    "Source supplier requires actual original declarations with compile-time60B GroupBounds/F32/int widths and named prefix offsets in both GroupBounds/GroupDef; endian guard refuses bigendian. Complete file/slot ledger preserves hole/tombstone/activity/actual originalpublic decisions/name/checksum tokens and directly copies raw60B from public prefix without canonicalizing NaNs/bitfields/padding. Two passes size/count preflight before emission,32MiB/65536slots/1024files caps; exclusive stable actual engine ownership and private disjoint report/sink buffers remain actual caller prerequisites. Two-pass equality alone cannot prove byte-state quiescence.",
+    "Native immutable owner retains actual CatalogOwner, copies SHA-verified wire and validates exact embedded48B catalog header/actual file-slot identity/name/activity/public predicate/observedtoken, preserving all opaque rawbits. Index counts/header/extents/strings/boolean/reserved constraints reject malformed/late data. Refcounts and getters preserve borrowed lifetimes; output known raw/catalog/owner/index aliases refuse. Old/new catalogue identity/generation checks and known-control endpoint guards precede work.",
+    "Named aggregate<=96MiB and owned<=32MiB precharges fullinput/new/old owner/catalog(s)/64KiB reserve/retained before allocations/digest. Digestcontext/scratch/opaque allocation/slack/otherprovider charges remain caller retained obligations. Late digest/catalogretain/parse failure frees partial allocations and leaves old/out/report unchanged. Successful parsed catalog retain is balanced on finalrelease. No current parent-child partition protocol or integrated actor memory permit is inferred.",
+    "Token helper follows original rawprefix then non-NUL publicname Adler32/digest byte order. File0 refuses because original writer skips it; mismatched token leavesoutputunchanged; zero tokens are never replaced/normalized. Matching current bytes DOES NOT establish original cached token computation generation/equality, and allABI/cache/sourcegeneration/world flags remainzero.",
+    "Qualifier freezes215 complete local/native/header bytes beforeprojecthelpers, directly source-executes admitted top-level helpers; nested knownoriginal helpers run with newempty pycacheprefix andbytecode writesdisabled, followedby complete readmission. All215 maps+18 unique whole originalLFsources independentlymatchGit545. Eight sourceproducer/writer fixtures exercise padding/private/GRP/mixedprefix/hole/tombstone/changedzero tokens;5503nativecontrols perrelease/ASan/UBSan, source supplier sanitized and oldlegacy original UBSan excluded honestly. Boundednative10456/supplier8704<64KiB recorded; no corpus rerun.",
+    "UNINSTALLED: noactualWin32layout/runtimebytecapture or boundarycaller/sink integration.14346 authentic publicrawrows stillnotcaptured. This prepares missing data transport/import, not closure of originalCLIENT bounds-cache checksum equivalence. Actual layout/build/source/run/exclusiveowner+quiet/eligibility/packet/nativeopaque-receive provenance remain separate required gates."
+  ],
+  "hook_installed": false,
+  "boundary_caller_integrated": false,
+  "actual_win32_layout_verified": false,
+  "actual_authentic_raw_rows_captured": 0,
+  "cache_equivalence_verified": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_executed": false
+}

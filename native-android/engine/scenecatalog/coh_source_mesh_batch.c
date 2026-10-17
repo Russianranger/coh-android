@@ -51,3 +51,5 @@ CohStatus coh_source_mesh_batch_create(CohSourceMesh**meshes,uint32_t count,cons
  uint32_t first=0;for(uint32_t i=0;i<count;i++){CohStatus s=tick(cancel);if(s==COH_OK)s=coh_source_mesh_report(meshes[i],&candidate->entries[i].report);if(s!=COH_OK){free(candidate);return s;}candidate->entries[i].mesh=meshes[i];candidate->entries[i].first_part=first;first+=candidate->entries[i].report.parts;}
  CohStatus final=tick(cancel);if(final!=COH_OK){free(candidate);return final;}candidate->report=r;for(uint32_t i=0;i<count;i++)meshes[i]=NULL;*report=r;*out=candidate;return COH_OK;
 }
+
+CohStatus coh_source_mesh_batch_dependencies(const CohSourceMeshBatch*b,uint32_t slot,CohSourceMeshDependencies*out){TRY(safe(b,out,sizeof(*out)));if(slot>=b->report.meshes)return COH_NOT_FOUND;return coh_source_mesh_dependencies(b->entries[slot].mesh,out);}

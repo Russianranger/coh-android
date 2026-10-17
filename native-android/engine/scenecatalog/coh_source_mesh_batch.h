@@ -35,4 +35,6 @@ CohStatus coh_source_mesh_batch_report(const CohSourceMeshBatch*,CohSourceMeshBa
 CohStatus coh_source_mesh_batch_find(const CohSourceMeshBatch*,uint32_t ordinal,uint32_t*slot);
 CohStatus coh_source_mesh_batch_entry(const CohSourceMeshBatch*,uint32_t slot,CohSourceMeshReport*,uint32_t*first_part);
 CohStatus coh_source_mesh_batch_part(const CohSourceMeshBatch*,uint32_t slot,uint32_t part,CohSourceMeshPart*);
+/* Actual borrowed entry dependencies, no references or authority added. */
+CohStatus coh_source_mesh_batch_dependencies(const CohSourceMeshBatch*,uint32_t slot,CohSourceMeshDependencies*);
 #endif

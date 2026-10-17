@@ -1,0 +1,23 @@
+{
+  "schema": "coh-independent-raw-power-set-cache-review-v1",
+  "source_commit": "06eef892fc1e9b42e4cf658be4cf7285efae4db8",
+  "evidence_commit": "38467ddaf",
+  "verdict": "approved_standalone_historical_raw_sets_and_index_only",
+  "proof_sha256": "4efdaf761528ac9b743d47e4bc339a3c92d63b388ffe0f8c03d809fef88cc7fc",
+  "tested_git_source_matches": 61,
+  "reported_checks_per_mode": 4754836,
+  "review": [
+    "Complete30-field source schema retains all6547 allocated records/20351 ordered power-name references/raw donor32bit pointer indices. Exact3179276B sourceSHAafadc5f3... and whole original schemaCRC0x2fe0d52d/readwrite roundtrip are bound; original unknown enum/empty/duplicate/indices variants preserved. Compact196704B metadata plusleasedinput3375980B; no eager basepower cache graph.",
+    "Import known input/expectedSHA/digestdescriptor/context/out/workspace spans are overflow/alias checked and precharged with16KiB native reserve/scratch/retained under8MiB before callback. Fixed owner/workspace allocate nothing. Parser counts/record/end/string budgets validate before indexing; immutable validated key extraction avoids repeated full-key checks. Output commits only after complete syntax/index and actual digest. Raw input must remain immutable/leased throughout views/lookups; source label does not establish current runtime generation.",
+    "Native byte-safe qualified stash32 hash and original square probes preserve source forward first-name-wins order, including duplicates. Index capacity bounded16384;64Mi work counter precharges collision slot/length/equality work before excess. Hashing has additional fixed8192rows*259byte domain; lookup probes bounded by stash slot cap, getter rescans only bounded original record prefix. Raw duplicate rows remain present and source_constructor_accepted becomesfalse rather than fabricating complete dictionary authority.",
+    "Whole original powerdict_CreateDictHashes/GetBasePowerSetByFullName and stash bodies execute with explicit host earray/parser/storage and Win32-width hash adapter. Only actual sets loaded; category/basepower dictionaries genuinely empty and absent basepower callbacks trap. Original unsafe hash is not sanitizer/Win32 ABI qualified. Native all30 field spans/every16384 source slot/firstwinner ordinals compare against independent source projections.",
+    "Historical category reference audit resolves6527 references, preserves20 other allocated sets and explicitly does not infer world reachability/current generation/complete dictionary join.61 tested dependency blobs matched exactGit06eef; checked preexecution helper sources and stale-PYC/changed-source controls recorded. Eight source variants,4754836 checks per release/ASan/UBSan,C++link,native summedframes944B under16KiB. No native corpus replay.",
+    "Standalone8MiB retained budget semantics are unchanged. Global96MiB parent/child adapter, class/origin/category coexistence and eventual power/actor semantics remain unqualified; the separate arithmetic ledger is not an executable pipeline permit."
+  ],
+  "full_power_dictionary": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "global_parent_child_composition_qualified": false,
+  "android_executed": false,
+  "world_authority": false
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "coh-independent-texture-permutation-frontier-review-v1",
+  "source_commits": [
+    "81744fcf9",
+    "e1e7940d6",
+    "8c27444c942ba1015016e2ac7f0952bd637c392f",
+    "ba9921622ea243cc687db4e9fdc9c3ce929b8428"
+  ],
+  "evidence_commits": [
+    "e550c7c7e",
+    "f5cbc1d3a"
+  ],
+  "verdict": "approved_bounded_source_frontier_after_complete_precharge_fix",
+  "proof_sha256": "324328f0f7cbf4193977b7800bab7971aeee8d1ab3e9eba319c2a97d291b74f0",
+  "tested_git_source_matches": 28,
+  "reported_checks_per_mode": 1783,
+  "review": [
+    "Initial NOT_LOADED source profile only. Scene names normalize positional texFixName rules without Basic texFind leading-bang removal; last/highest matching scene row wins. Source strtok delimiters and leading-hash removal preserve locale order/empty-after-hash tokens. Native lookup stops at first subset-UNKNOWN candidate rather than assuming absence or skipping to later locales. Observed locale candidate stops at unproved actual white identity; candidate stays UINTMAX. Completed source plan still carries unresolvedCLIENT semantics.",
+    "At most256 swaps/16locale tokens/1024search chars/127name chars, at mosttwo Basic subset queries, bounded ASCII/input alias checks and scalar/string output only. No allocations, Basic mutation/loading, default/fallback material, active namespace/generation or actor/world permit. Caller configurationlabel is correlation only. Immutable input owner/loader and callback context/external live owners remain caller prerequisites.",
+    "Review identified cancellation callback before full input/control budget. Requiredba992 correction makes first bounded name measurement callback-free; admits all input bytes plus32KiB own+16KiB nested Basic and oldowner/wholeloader/oldcontrol minimum before first externalpoll. Exact-one-short limit with cancel-on-first-poll returnsLIMIT,polls0,unchangedoutput. All later cancellations preserve output. Old e550 proof preserved historical; correctedf5 receipt authoritative.",
+    "Oracle executes unchanged three original scene/locale functions and Basic find/fix source or explicit guarded repair with bounded string/storage/table/white observers.92 fixture paths complete original source;92 UNKNOWN paths longjmp before original missing-return/default fallback. White identity in complete fixtures is only observer data, not actual runtime white. Two authentic Box/Bar bodies plus two clearly derived locale bodies; no fabricated authentic namespace. Three semantic mutations highestscene/bang/firstlocale rejected.",
+    "All28 dependencies frozen before direct helper source execution and readmitted afterward match exactGitba992 blobs.1783checks per release/ASan/UBSan,184plans recorded. No independent native corpus replay, no Android/C++/active original namespace or material qualification."
+  ],
+  "namespace_absence_proven": false,
+  "actual_white_identity_verified": false,
+  "default_or_white_resource_created": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_executed": false
+}

@@ -1,0 +1,58 @@
+"""Recovery-only unchanged full BasePower table codec; no CRC/runtime admission."""
+import ctypes as C,hashlib,re,subprocess,types
+from pathlib import Path
+HERE=Path(__file__).resolve().parent
+EXTRA=['Common/entity/powers.h','Common/entity/powers_load.c','Common/entity/attribmod.h','Common/entity/power_system.h','Common/entity/powers.c','libs/UtilitiesLib/include/utilitieslib/utils/Color.h','libs/UtilitiesLib/src/network/crc32c.cpp']
+def sha(b):return hashlib.sha256(b).hexdigest()
+def module(n,p):
+ m=types.ModuleType(n);m.__file__=str(p);exec(compile(p.read_bytes(),str(p),'exec'),m.__dict__);return m
+def build(root,work):
+ classes=module('p_record_classes',HERE/'classes_oracle.py');classes.module=module;small=module('p_record_extract',HERE/'../costume-inputs/oracle.py');cw=work/'classes';cw.mkdir();_,prior=classes.build(root,cw);code=(cw/'original-classes.c').read_text().replace('void*items[256]','void*items[]').replace('assert(n<260)','assert(n<12000)');cap=small.extract(code,'TokenStoreSetCapacity');code=code.replace(cap,'static void TokenStoreSetCapacity(ParseTable*t,int c,void*p,int n){assert(n>=0&&n<=65536);Vec*v=alloc(sizeof(*v)+(size_t)n*sizeof(void*));v->size=n;*(void**)field(t,c,p)=v;}');src={p:(root/'upstream/ouroboros'/p).read_text().replace('\r\n','\n')for p in EXTRA};powers=src[EXTRA[0]];mods=src[EXTRA[2]];color=src[EXTRA[5]];declarations={};tables={};functions={}
+ def decl(text,kind,name):
+  body=re.search(r'typedef '+kind+' '+name+r'\s*\{.*?} '+name+';',text,re.S).group();declarations[name]=sha(body.encode());return body
+ code+='\ntypedef struct BasePower BasePower;typedef struct BasePowerSet BasePowerSet;typedef struct AttribModTemplate AttribModTemplate;typedef struct DimReturn DimReturn;typedef struct BoostSet BoostSet;typedef struct BoostSetBonus BoostSetBonus;typedef struct AtlasTex AtlasTex;typedef int BoostType;typedef int GroupType;\n#define MAX_ATTRIBMOD_FX 4\n#define CHAR_ATTRIB_COUNT (sizeof(CharacterAttributes)/sizeof(float))\n'
+ for text,name in[(color,'Color'),(color,'ColorPair')]:code+='\n'+decl(text,'union'if name=='Color'else'struct',name)
+ for text in (src[EXTRA[3]],powers,mods):
+  for body in re.findall(r'typedef enum \w+\s*\{.*?} \w+;',text,re.S):code+='\n'+body
+ for name in ('BasePowerID','PowerStats','PowerVar','PowerFX','PowerCustomFX'):code+='\n'+decl(powers,'struct',name)
+ for name in ('SuppressPair','AttribModTemplate'):
+  body=decl(mods,'struct',name).replace('size_t offAttrib;','U32 offAttrib;').replace('size_t offAspect;','U32 offAspect;');code+='\n'+body
+ code+='\n'+decl(powers,'struct','BasePower')
+ # Exact original tables with source-32bit field storage; scalar default and
+ # enum context are not used by binary read/write. Discarded defaults/placeholder
+ # enum arrays are explicit shells: original ParseTableCRC is NOT executed.
+ code+='''
+#ifndef true
+#define true 1
+#define false 0
+#endif
+#undef TOK_INT
+#undef TOK_BOOL
+#undef TOK_AUTOINT
+#undef TOK_F32
+#define TOK_INT(s,m,d) TOK_INT_X,offsetof(s,m),0
+#define TOK_BOOL(s,m,d) TOK_BOOL_X,offsetof(s,m),(U8)d
+#define TOK_AUTOINT(s,m,d) TOK_INT_X,offsetof(s,m),0
+#define TOK_F32(s,m,d) TOK_F32_X,offsetof(s,m),0
+#define TOK_FILENAME(s,m,d) TOK_INDIRECT|TOK_FILENAME_X,offsetof(s,m),0
+#define TOK_VEC3(s,m) TOK_FIXED_ARRAY|TOK_F32_X,offsetof(s,m),3
+#define TOK_RGBA(s,m) TOK_FIXED_ARRAY|TOK_U8_X,offsetof(s,m),4
+#define TOK_CONDRGB(s,m) TOK_FIXED_ARRAY|TOK_CONDRGB_X,offsetof(s,m),4
+'''
+ source=src[EXTRA[1]];fx=re.search(r'#define ParsePowerFX\(type, fx\).*?(?=\nstatic TokenizerParseInfo ParseColor)',source,re.S).group();code+='\n'+fx;macro_bodies=[]
+ for text,name in [(mods,'ParseSuppressPair'),(mods,'ParseAttribModTemplate'),(source,'ParsePowerVar'),(source,'ParsePowerCustomFX'),(source,'ParseBasePower')]:
+  body=re.search(r'TokenizerParseInfo '+name+r'\[\]\s*=.*?\n};',text,re.S).group();tables[name]=sha(body.encode());macro_bodies.append(body)
+ enums=set(re.findall(r'\b\w+Enum\b','\n'.join(macro_bodies)+fx))-{'BoolEnum'}
+ for name in sorted(enums):code+='\nstatic ParseTable*'+name+'[1];'
+ code+='\n'+''.join(macro_bodies)
+ code=code.replace('case TOK_CURRENTFILE_X:case TOK_STRING_X:return(Handler)','case TOK_FILENAME_X:case TOK_CURRENTFILE_X:case TOK_STRING_X:return(Handler)').replace('case TOK_BOOLFLAG_X:return(Handler)','case TOK_CONDRGB_X:case TOK_U8_X:case TOK_BOOLFLAG_X:return(Handler)').replace('case TOK_START:case TOK_END:return(Handler)','case TOK_IGNORE:case TOK_START:case TOK_END:return(Handler)')
+ crc=src[EXTRA[6]];code+='\n#include <ctype.h>\n#include <alloca.h>\n#define _alloca alloca\n'+re.search(r'static const U32 s_crc32c\[0x100\].*?\n};',crc,re.S).group()
+ for text,name in [(crc,'Crc32c_cpu'),(crc,'Crc32c'),(crc,'Crc32cLowerStringHash'),(src[EXTRA[4]],'powerdict_GetCRCOfBasePower')]:
+  body=small.extract(text,name);functions[name]=sha(body.encode());code+='\n'+body
+ code+='''
+static SimpleBuffer*in,*wr;
+void original_power_records_close(void){free(in);free(wr);in=wr=NULL;reset();}
+unsigned original_power_record(const unsigned char*bytes,unsigned size,unsigned char*out,unsigned*meta){assert(size<=8388608);if(!in){in=calloc(1,sizeof(*in));wr=calloc(1,sizeof(*wr));assert(in&&wr);}reset();memcpy(in->data,bytes,size);in->filesize=size;in->curposition=0;BasePower power={0};int sum=0;assert(ParserReadBinaryTable(in,ParseBasePower,&power,&sum)&&in->curposition==(int)size);meta[0]=(U32)power.crcFullName;meta[1]=(U32)powerdict_GetCRCOfBasePower(&power);meta[2]=(unsigned)strlen(power.pchFullName);meta[3]=power.ppTemplates?((Vec*)power.ppTemplates)->size:0;meta[4]=power.customfx?((Vec*)power.customfx)->size:0;meta[5]=power.ppVars?((Vec*)power.ppVars)->size:0;wr->filesize=wr->curposition=0;sum=0;assert(ParserWriteBinaryTable(wr,ParseBasePower,&power,&sum,0,0));unsigned n=wr->filesize;memcpy(out,wr->data,n);reset();return n;}
+'''
+ (work/'power-record.c').write_text(code);subprocess.run(['cc','-std=gnu99','-O0','-shared','-fPIC','-w','-I'+str(HERE/'../costume-inputs'),work/'power-record.c','-lz','-o',work/'power-record.so'],check=True);lib=C.CDLL(str(work/'power-record.so'));lib.original_power_record.argtypes=[C.c_void_p,C.c_uint,C.c_void_p,C.c_void_p]
+ return lib,{'class_provider':prior,'declarations_sha256_lf':declarations,'tables_sha256_lf':tables,'function_sha256_lf':functions,'flat_fx_macro_sha256_lf':sha(fx.encode()),'generated_c_sha256':sha(code.encode()),'source_crc_recomputed':False,'enum_defaults_shells':True,'runtime_generation':False}

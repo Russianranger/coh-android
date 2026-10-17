@@ -1,0 +1,19 @@
+{
+  "schema": "coh-independent-parent-measured-footprint-review-v1",
+  "base_review": "dad6fc2bd",
+  "source_commit": "cafaf853d455337c907e82cedbdea4214e1d2b7c",
+  "evidence_commit": "d00b9f7ac",
+  "verdict": "approved_test_output_only_actual_metadata_followup",
+  "raw_proof_sha256": "f7f7aa18fe47f8e49a1af3fe88591cad231587a33d2fb087fcf5f9bd5ddf8634",
+  "tested_git_source_matches": 6,
+  "actual_metadata_bytes": 2616,
+  "actual_metadata_plus_call_reserve_bytes": 19000,
+  "review": [
+    "Only existing testprintf adds actual allocation-counter metadata/base/allocations/frees fields; C implementation/header/qualifier unchanged from1e8 approved source. Six new measured proof source maps match exact cafafGit blobs. Actual frozen host5323checks/mode+CPP reports2616B allocated metadata+16384 reserve=19000, exactly2calloc/2free. No independent native rerun.",
+    "Adds a real footprint to receipt-only ledger; no actual child adapter/source identity/liveness/global pipeline permit. Parent bytes must remain an additional charge unless a concrete adapter proves they were already included in an actual existing reservation."
+  ],
+  "module_adapters_qualified": false,
+  "integrated_pipeline_qualified": false,
+  "android_executed": false,
+  "world_authority": false
+}

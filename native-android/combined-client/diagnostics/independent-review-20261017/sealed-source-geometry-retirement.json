@@ -1,0 +1,34 @@
+{
+  "schema": "coh-independent-sealed-source-geometry-review-v1",
+  "source_commit": "c48e57126d8213b071235cdd8456fe27939868a0",
+  "base_batch_review": "95e7ad2d4",
+  "verdict": "approved_source_deepcopy_with_actual_geo_retirement_fixture_only",
+  "proof_sha256": "6f97ad07c831957df4ed2cb783cb4de79c50a6225f045d3e59ec9797fe285e38",
+  "tested_git_bindings": {
+    "c48e57126d8213b071235cdd8456fe27939868a0": 43,
+    "d4e7614ef1f6a2aae1e9814b61b74772589d6a6c": 16
+  },
+  "reported_checks_per_mode": 605,
+  "review": [
+    "New immutable owner copies all canonical vertices/indices/material descriptors, exact COHRES record, whole decompressed GEO header and canonical asset path per source-ordered mesh. All six ResourceView record-name pointers, native model/header name and every material texture-name pointer are range/NUL checked and rebased into new allocation. Original metadata/rows/order/bodySHA/sourceSHA/counters remain observations. No payload stream or fake BodyLease; header pack offsets remain metadata requiring later independently validated exact-body reacquire for GRID/reduction stream use.",
+    "Retains actual Selection before consuming oldbatch, thus strong actual join/catalog/snapshot association survives Body/index destruction. External graph lease remains caller-owned and must outlive new owner. Structure stores no Body/index/loader/payload spans. Actual pointer types checked for nested pointer completeness; only GeoModel name needs header rebasing, GeoPin path copied/source_geo_name rebased record. Callers serialize owners and provide disjoint opaque allocation/control context.",
+    "Full oldbatch/mesh/Body/index/shared-source ownership and all old loader reservations plus newcopies/16KiB frames/caller peaks are admitted before external poll/calloc. Owned<=32MiB/aggregate<=96MiB, fixed bounded rows/parts and aligned allocation-region arithmetic. Any copy/rebase/cancel/allocation/late Selection-retain refusal frees candidate only and preserves old batch/out/report. Final successful retain precedes freeing old batch and pointer/output publication. No independent native replay.",
+    "Sealing does NOT itself retire external loaders. The fixture actually trims GEO loader to zero pins/resident, destroys it and closes FILE provider; then releases external Selection and later old dictionary loader/owners before reading all copied names/records/headers/partitions. Both full CityHall and Plaza packets match prior frozen original-delta-qualified results after frees, plus exact records/headers.605 controls each release/ASan/UBSan,25 cancellation points/late retain failure/aliases covered.59 source hashes verified as43A+16externalE committed blobs.",
+    "Old+new transition93,228,133B includes full live32MiB GEOreservation; only after actual GEO cleanup can newowner2,376,823 +actualsource37,128,632 be charged39,505,455B. Conservative prior dictionary/caller allowance17,633,248 stays in comparison57,138,703B, with43,524,593 unassigned allowance. It is not integrated actor/material/GPU/RSS acceptance, and dictionary ownership/budget adapters still required. Sourcecompiler file maxima and reviewed bounded native call chain fit16KiB; external library/provider/system/compiler instrumentation stack separate."
+  ],
+  "transition_peak_bytes": 93228133,
+  "new_owned_bytes": 2376823,
+  "shared_source_bytes": 37128632,
+  "after_actual_geo_retirement_with_prior_dictionary_allowance": 57138703,
+  "external_loader_cleanup_required": true,
+  "external_graph_lease_required": true,
+  "body_dependencies": 0,
+  "index_dependencies": 0,
+  "loader_dependencies": 0,
+  "payload_streams_retained": 0,
+  "renderer_ready": false,
+  "client_materials_available": false,
+  "actor_available": false,
+  "world_authority": false,
+  "android_executed": false
+}

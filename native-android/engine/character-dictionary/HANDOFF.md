@@ -12,6 +12,7 @@ none publishes an actor or permits an initial-update application ACK.
 | Authentic compact raw categories |c92e1fdf5|81739adf6|F e55bb842b|
 | Selected class level projection |534b6a9b6|3c4dbac9e|F5d1bf63a8|
 | Named-table source finalization/lookup |18892c8e1,9e337a4d6,588b0f698|ee8882023,5088b9e89,cf73aa246|Fca42|
+| Complete compact historical power-set schema/index |06eef892f|38467ddaf|Ffc8568d2a|
 
 Origins preserve five normal rows and one villain row; all five strings are
 copied in original order. Original schema CRC0x6d177c17 and exact whole original
@@ -119,10 +120,44 @@ executing original negative-index underflow. All historical receipts are retaine
 The original unsafe stash hash remains unsanitized and Win32/live/shared-memory
 startup is not executed. Runtime generation and actor flags stay false.
 
-Next exact input work: powersets.bin3,179,276B/header0x2fe0d52d and
-powers.bin62,047,164B/header0xb553b8ff in the same retained donor ZIP. Power-set
-schema has30 persisted fields including ordered power names/raw32bit pointer
-indices and availability/rank/difficulty arrays. Full base-power grammar also
-includes AttribMod/PowerVar/CustomFX and flat ParsePowerFX fields; record-length
-skipping is not complete grammar. Preserve source order and current-vs-historical
-association. No62MB eager native object graph or invented runtime identifiers.
+Power-set source06eef892f/receipt38467ddaf is independently sealed Ffc8568d2a.
+Exact powersets.bin3,179,276B SHA256
+ afadc5f3ae6fc9c9c413924cec75bb911ff5cd4ce37388c6737cdb5786d9d547
+has source ParseTableCRC0x2fe0d52d and unchanged whole binary roundtrip. All30
+persisted fields,6,547 source-ordered rows,20,351 power-name references and zero
+persisted pointer indices survive. Whole source set-only CreateDictHashes and
+GetFullName execute with original stash constructor/hash/probe/find; native
+compares every16,384 source slot and first-winner ordinal. Raw duplicate rows
+remain; source_constructor_accepted is false separately. Eight source-writer
+variants cover unknown/empty/duplicate names, empty root, unknown system and
+raw donor32bit pointer indices. Each release/ASan/UBSan passes4,754,836 checks,
+344 cuts248 mutations; C++/native16KiB reserve pass. All61 Git inputs bind proof
+SHA4efdaf761528ac9b743d47e4bc339a3c92d63b388ffe0f8c03d809fef88cc7fc.
+
+Compact metadata owner196,704B plus immutable leased input3,179,276B retains
+3,375,980B; transient workspace196,704B retires. Each record/key span stays in
+source order; a bounded getter returns every encoded field without30 redundant
+spans per row or any base-power object graph. Index collision/length/byte work
+precharges under64MiB work units; names validate once. Historical name audit
+finds all6,527 category refs in6,547 sets. The20 allocated rows not named by that
+reference array are retained with exact identities in proof; no world/entity
+reachability or current generation is inferred. Original forward-pointer and
+basepower construction remain unexecuted; complete_dictionary_join=false.
+
+All dictionary API budgets are standalone bounds (8MiB classes/sets/levels/
+named,1MiB categories,256KiB origins). Passing an already retained~90MiB world
+literally in retained_bytes refuses. No implicit omission/partition of live
+owners is qualified. Pre-world/phased imports or an explicit separately qualified
+parent/child budget adapter is needed; even retaining both full class families
+plus sets can exceed a late standalone import. Footprint sums are not executable
+96MiB global/actor admission. Preserve every actual input lease until consumers
+retire; do not treat selected-level/named borrowers as freed full class inputs.
+
+Next exact input is powers.bin62,047,164B/header0xb553b8ff. Current unqualified
+power_stream_schema.py prototype and recovery archive traverse the complete
+projected descriptor in bounded reads, observing20,241 basepowers/113,046
+AttribMod/7,165SuppressPair/0PowerVar/7,103CustomFX. It reads every field/segment
+without eager tree allocation, but full original producer/consumer, original
+schema CRC, native stream/index/rollback/budgets and F seal remain required.
+The observed header is not ParseTableCRC admission. No donor body is committed;
+no invented runtime IDs or actor/READY/ACK flags are permitted.

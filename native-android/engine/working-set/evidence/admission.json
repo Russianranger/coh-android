@@ -1,0 +1,18 @@
+{
+  "source_revision": "1e8e02b68d4f17bc2ea3f50a918a3e964c4b40b5",
+  "host_sha256": "12e631c82e58b3058931ae8c32773875fb8428f288bbcc971dfb881e608786b6",
+  "modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "checks_per_mode": 5323,
+  "source_files": 6,
+  "cpp_c_linkage": true,
+  "reservation_ledger_only": true,
+  "module_adapters": false,
+  "actual_global_pipeline": false,
+  "android_build": false,
+  "world_authority": false,
+  "initial_unqualified_compile": "394efded7 used incorrect status include, corrected by1e8; no tests executed at394"
+}
