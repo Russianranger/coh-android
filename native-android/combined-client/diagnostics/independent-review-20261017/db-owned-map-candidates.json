@@ -1,0 +1,21 @@
+{
+  "schema": "coh-independent-db-owned-map-candidates-v1",
+  "source_commit": "567cc3dbd8b5c8776ac81785cb8c2dcf426dcc4d",
+  "verdict": "approved_nonsecret_readonly_getter",
+  "source_inputs_git_and_current": 9,
+  "source_receipt_sha256": "5bc38ba16c91ea2be332f740c3c8be39c9c54502d51c4e532a9595deaf3bd4b6",
+  "host_receipt_sha256": "a3a8a89d553821a6377955d42897478b076950888c0afccd92b86f25439305cb",
+  "review": [
+    "Getter requires actual unclaimed/unretired opaque owner and disjoint complete two-endpoint output. Endpointoverflow/owner overlap refuse before writes; failure preserves caller output.",
+    "Returns original two source address slots in unchanged order/includingzero andduplicates with exactdecodedUDPport. Byteprojection matches existing Map address conversion. No endpoint selection or automatic authorization, no cookie exported or ownership consumed.",
+    "Repeated getter leaves metadata/one-shot claim intact. Tests preserve actual ownedDB session provenance then later claim original cookie/DBID, zero secondslot and claimed/retired refusals. Public declaration remains within existing extern-C guards."
+  ],
+  "session_checks_each_mode": 1884,
+  "scripted_os_udp_scenarios_each_mode": 17,
+  "independent_expensive_rerun": false,
+  "actual_server_acceptance": false,
+  "cryptographic_authentication_added": false,
+  "actor_authority": false,
+  "world_authority": false,
+  "android_executed": false
+}

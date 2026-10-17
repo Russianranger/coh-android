@@ -17,7 +17,9 @@ typedef struct {
  * cursor. Report's reader points into immutable owned storage until last release.
  * Provider hashes actual bytes; callback/provider contexts are caller-charged.
  * Client is NOT retained; derived IDs are local correlation observations, not
- * durable session tokens. selectedDBID provenance/source/world stay unbound.
+ * durable session tokens. Raw begin leaves selectedDBID provenance unbound;
+ * a genuine owned begin may record source DB handoff ownership only. Neither
+ * records complete actor identity nor grants source-generation/world authority.
  * 32MiB owned/96MiB aggregate maximum. Automatically charges actual borrowed
  * network loan + complete copied owner +64KiB local reservation; retained_bytes
  * adds every other live owner/allocation/slack/provider stack. No live/source

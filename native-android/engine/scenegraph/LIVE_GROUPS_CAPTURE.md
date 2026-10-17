@@ -54,13 +54,17 @@ must refuse until its exact transformation is source-qualified.
 ## Remaining minimal owner and source association
 
 A recorded actual receive is NOT a same-generation world witness. The legacy
-Map begin consumes a raw authorization DTO, so its selectedDBID is unbound even
-when positive. An opaque DBSession handoff must be consumed INSIDE a Map owner
-begin path, deriving only what the actual source transaction proves. If the
-original handoff lacks a selected DBID, keep it0/unbound until the complete Map
-entity transaction supplies the actual identity. Neither caller labels nor a
-positive source field automatically prove character identity. Encryption/dev-auth
-scope remains explicit and separate.
+raw Map begin consumes an authorization DTO, so its selectedDBID remains unbound
+when positive. The optional `coh_map_client_begin_owned` bridge now consumes the
+actual opaque DBSession handoff once inside the Map begin path, retains that owner
+through Map lifecycle and derives the source-qualified positive EntCon.id rather
+than accepting replacement identity labels. An actual-current receive lease may
+then carry selected_dbid_owner_bound1 for that expected source selection. This is
+not complete Map entity identity or cryptographic AuthServer evidence. The receive
+record copies the observed scope but retains NO session/handoff owner; historical
+receive provenance does not become ongoing session authorization after retirement.
+The complete Map entity/character transaction still must validate self identity.
+Encryption/dev-auth scope remains explicit and separate.
 
 The future private original-server caller must select the actual owned link,
 record its nonsecret actual connection/profile and source-established entity

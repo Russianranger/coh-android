@@ -1,0 +1,28 @@
+{
+  "schema": "coh-class-dynamic-defines-source-binding-v1",
+  "source_commit": "7ab4da86425eda84f5ca7111dc89aa8a3dd91c25",
+  "tested_git_blobs_match": true,
+  "tested_source_count": 54,
+  "supplier_source_count": 12,
+  "supplier_git_blobs_match": true,
+  "host_proof_sha256": "1330a4c7fdf299ae104013eeadf06971191060575b60e82192ec43b819627db2",
+  "original_class_crc": "0x7ff68aaf",
+  "original_attrib_names_crc": "0x1f5ae0b6",
+  "independent_checks": 32051,
+  "profiles": 8,
+  "baseline_slots_sha256": "8d2a69914b3941e4917a9f6e42081f448727531a57d9a08d52d559b6d331af9f",
+  "baseline_trace_sha256": "dc31061abc6d7b3c004bf5aafb7fee424b499736b030a85fb80e04d01b0c08c5",
+  "helper_loader_controls": {
+    "stale_pyc_ignored": true,
+    "changed_source_refused_before_execution": true
+  },
+  "original_hash_sanitized": false,
+  "original_abi_win32_executed": false,
+  "runtime_cache_generation": false,
+  "actor_authority": false,
+  "every_original_state_row_name_and_bitnum_checked_each_profile": true,
+  "both_actual_class_cache_headers_read_and_equal": true,
+  "observed_supplier_revision": "7685666d66c63327c5fd1bc0054127613e5e5f8c",
+  "admitted_supplier_source_commit": "716f319a13b00ee1402c0b67793ff14186bafd4d",
+  "observed_and_admitted_supplier_file_bytes_identical": true
+}

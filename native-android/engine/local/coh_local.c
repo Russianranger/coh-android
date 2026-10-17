@@ -1,4 +1,5 @@
 #include "coh_local.h"
+#include "../mapclient/coh_mapclient_owned.h"
 #include <stdlib.h>
 #include <string.h>
 struct CohLocal {
@@ -18,6 +19,9 @@ static void snapshot(CohLocal *s){
     if(s->map)coh_map_client_diagnostics(s->map,&m);
     s->diagnostics.db_phase=d.phase;s->diagnostics.map_phase=m.phase;
     s->diagnostics.map_protocol=m;
+    CohDbHandoffMetadata owner;
+    s->diagnostics.selected_dbid_owner_bound=s->map&&
+        coh_map_client_handoff_metadata(s->map,&owner)==COH_OK&&owner.selected_dbid_owner_bound;
     if(d.server_identity_bound)s->diagnostics.server_identity_bound=1;
     s->diagnostics.character_lists+=d.player_lists-s->observed_lists;s->observed_lists=d.player_lists;
     s->diagnostics.opened_sockets=s->retired_opened+d.transport.sockets_opened+m.udp.sockets_opened;
@@ -112,26 +116,34 @@ CohStatus coh_local_choose_character(CohLocal *s,uint32_t slot,uint64_t now){
         s->diagnostics.phase=COH_LOCAL_DB_CONNECTING;}return status;
 }
 static CohStatus begin_map(CohLocal *s,uint64_t now){
-    CohDbSessionHandoff h;memset(&h,0,sizeof(h));
-    CohStatus status=coh_db_session_take_handoff(s->db,&h);if(status!=COH_OK)return status;
-    if(!s->selected||h.selected_slot!=s->selected_slot||!h.selection_generation||
-       !h.selected_dbid||h.selected_dbid>INT32_MAX||h.selected_dbid!=h.map.link_id){coh_db_wipe(&h,sizeof(h));return COH_INVALID;}
-    unsigned index=2;CohNetEndpoint peer={0};
-    for(unsigned i=0;i<2;i++){
-        CohNetEndpoint e;for(unsigned n=0;n<4;n++)e.address[n]=(uint8_t)(h.map.address[i]>>(8*n));e.port=h.map.udp_port;
-        if(loopback(e)&&e.port){peer=e;index=i;break;}
+    CohDbHandoffOwner *owner=NULL;CohDbHandoffMetadata metadata;
+    CohDbSessionDiagnostics db;CohNetEndpoint candidates[2];
+    coh_db_session_diagnostics(s->db,&db);
+    CohStatus status=coh_db_session_take_handoff_owner(s->db,&owner);
+    if(status!=COH_OK)return status;
+    status=coh_db_handoff_owner_metadata(owner,&metadata);
+    if(status==COH_OK&&(!s->selected||metadata.selected_slot!=s->selected_slot||
+       metadata.session_generation!=db.generation||metadata.selection_generation!=db.selection_generation||
+       !metadata.local_development_auth||!metadata.selected_dbid_owner_bound))status=COH_INVALID;
+    if(status==COH_OK)status=coh_db_handoff_owner_map_candidates(owner,candidates);
+    unsigned index=2;
+    if(status==COH_OK){
+        for(unsigned i=0;i<2;i++)if(loopback(candidates[i])&&candidates[i].port){index=i;break;}
+        if(index>1){s->diagnostics.policy_rejections++;status=COH_INVALID;}
     }
-    if(index>1){s->diagnostics.policy_rejections++;coh_db_wipe(&h,sizeof(h));return COH_INVALID;}
-    CohMapConfig c=s->config.map;c.udp.peer=peer;s->map=coh_map_client_create(&c);
-    if(!s->map){coh_db_wipe(&h,sizeof(h));return COH_LIMIT;}
-    /* Map authentication is the actual one-use local DB cookie. This does
-     * not represent encrypted AuthServer authentication or Gate26 acceptance. */
-    CohMapAuthorization a;memset(&a,0,sizeof(a));a.authenticated=0;a.local_development_authorized=1;a.endpoint_authorized=1;
-    a.selected_slot=h.selected_slot;a.selection_generation=s->diagnostics.selection_generation;
-    a.selected_dbid=h.selected_dbid;
-    a.handoff=h.map;a.address_index=index;
-    status=coh_map_client_begin(s->map,&a,s->map_id,now);
-    coh_db_wipe(&a,sizeof(a));coh_db_wipe(&h,sizeof(h));
+    if(status==COH_OK){
+        CohMapConfig c=s->config.map;c.udp.peer=candidates[index];s->map=coh_map_client_create(&c);
+        if(!s->map)status=COH_LIMIT;
+        else{
+            CohMapOwnedBegin options={metadata.session_generation,metadata.selection_generation,
+                s->map_id,index,now,1};
+            status=coh_map_client_begin_owned(s->map,owner,&options,NULL);
+        }
+    }
+    /* The successful Map client retains the actual owner. Failures retire every
+     * shared reference; no controller copy of the one-use cookie exists. */
+    if(status!=COH_OK)coh_db_handoff_owner_retire(owner);
+    coh_db_handoff_owner_release(owner);
     if(status==COH_OK){s->diagnostics.map_handoffs++;s->diagnostics.phase=COH_LOCAL_MAP_CONNECTING;}
     return status;
 }

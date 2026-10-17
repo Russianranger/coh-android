@@ -1,0 +1,11 @@
+test_exact_corpus_admission_and_every_field_mutation (test_controlled_completions.ControlledCompletionContracts.test_exact_corpus_admission_and_every_field_mutation) ... ok
+test_native_or_original_source_pin_mutation_refused (test_controlled_completions.ControlledCompletionContracts.test_native_or_original_source_pin_mutation_refused) ... ok
+test_original_buffer_size_unsigned_shape_and_opcode_domain_required (test_controlled_completions.ControlledCompletionContracts.test_original_buffer_size_unsigned_shape_and_opcode_domain_required) ... ok
+test_original_global_key_and_insertion_boundary_refused (test_controlled_completions.ControlledCompletionContracts.test_original_global_key_and_insertion_boundary_refused) ... ok
+test_real_auth_baseline_remains_capped_sends_not_controlled_receiver (test_controlled_completions.ControlledCompletionContracts.test_real_auth_baseline_remains_capped_sends_not_controlled_receiver) ... ok
+test_ten_pinned_sources_seven_functions_only_offset_diff (test_controlled_completions.ControlledCompletionContracts.test_ten_pinned_sources_seven_functions_only_offset_diff) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.419s
+
+OK

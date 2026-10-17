@@ -1,0 +1,16 @@
+{
+  "input_commit": "d6ef33b3306c496e6d6a9ee2f8c9ab12ffdfbc05",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "sha256": {
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb",
+    "upstream/ouroboros/AuthServer/src/IOSocket.cpp": "bdf40132e33e1280b9a7f3cce32eb33a8ebcede2838673959fc317c78097d319",
+    "upstream/ouroboros/AuthServer/src/util.cpp": "d87b7b47cfb52490a27fdf3ec8e5179c96c803058dd4b98204f8e644f631c59a",
+    "upstream/ouroboros/AuthServer/src/PacketServerEx.cpp": "1d47b18d4a841c2a50bc142a9f16a982c6da40374445e6fdfb4fbf8eca5f9bfe",
+    "upstream/ouroboros/AuthServer/src/GlobalAuth.cpp": "8c3c991057d15f690490cfd5df4717a78f579107ebbecaef4b852842b55d70f7",
+    "upstream/ouroboros/AuthServer/src/Protocol.h": "0b863fe331643ec30f5f103b18711dc91d1783a9da98cd215c22278ccac80d46",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "upstream/ouroboros/AuthServer/src/IOBuffer.h": "f4c7f77d6d1966e68078bed125d1677fede097314958f63815cdd028ae6c5458"
+  }
+}

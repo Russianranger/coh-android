@@ -25,12 +25,13 @@ def main():
  pins={f:normalized(repo/f) for f in PINNED}
  if pins!=json.loads((HERE/'source-pins.json').read_text())['sha256_lf']:raise ValueError('local login source pin mismatch')
  spec=importlib.util.spec_from_file_location('qualified_db_oracle',native/'engine/dbclient/check.py');db=importlib.util.module_from_spec(spec);spec.loader.exec_module(db)
- relative=['engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c','engine/mapclient/coh_mapclient.c','engine/replication/coh_replication.c','engine/replication/coh_groups.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/auth/coh_auth.c','protocol/coh_protocol.c','src/coh_blowfish.c']
+ relative=['engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c','engine/mapclient/coh_mapclient.c','engine/mapclient/coh_mapclient_owned.c','engine/replication/coh_replication.c','engine/replication/coh_groups.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/auth/coh_auth.c','protocol/coh_protocol.c','src/coh_blowfish.c']
  sources=[HERE/'coh_local.c',*[native/f for f in relative]]
  with tempfile.TemporaryDirectory(prefix='coh-native-local-') as tmp:
   d=Path(tmp);oracle,_=db.oracle(repo,d);fixtures=db.fixtures(oracle,d)
   spec=importlib.util.spec_from_file_location('qualified_map_commands',native/'engine/mapclient/check.py')
   maps=importlib.util.module_from_spec(spec);spec.loader.exec_module(maps);maps.command_fixtures(repo,d);groups_receipt=maps.groups_fixtures(repo,d)
+  fixture_sha256={name:sha(d/name) for name in ('fixtures.h','groups-fixtures.h','server-command-fixtures.h')}
   flags=['-std=c11','-Wall','-Wextra','-Werror','-I'+str(native/'include'),'-I'+str(d)]
   checks={};peer_checks={};modes=[('release',['-O2'])]
   if a.sanitize:modes += [('asan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=address','-no-pie']),('ubsan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=undefined','-fno-sanitize-recover=all'])]
@@ -69,14 +70,15 @@ def main():
     a.android_output.mkdir(parents=True,exist_ok=True);artifacts=[];peer_artifacts=[]
     for abi,triple in [('arm64-v8a','aarch64-linux-android26-clang'),('x86_64','x86_64-linux-android26-clang')]:
      cc=a.ndk/'toolchains/llvm/prebuilt/linux-x86_64/bin'/triple;exe=a.android_output/('coh-local-'+abi)
-     run([cc,*flags,'-O2',*sources,HERE/'test_local.c','-lz','-lm','-o',exe]);artifacts.append({'abi':abi,'file':exe.name,'sha256':sha(exe),'built':True,'executed':False})
+     run([cc,*flags,'-O2',*sources,HERE/'test_local.c','-lz','-lm','-o',exe]);artifacts.append({'abi':abi,'file':exe.name,'sha256':sha(exe),'built':True,'executed':False,'fixture_sha256':fixture_sha256})
      peer=a.android_output/('coh-local-peer-'+abi)
      run([cc,*flags,'-O2',*sources,HERE/'test_ui_peer.c','-lz','-lm','-o',peer])
      peer_artifacts.append({'abi':abi,'file':peer.name,'sha256':sha(peer),'built':True,'executed':False,'role':'scripted-ui-peer','real_server_interoperability':False})
 
     receipt={'schema':1,'module':'local','artifacts':artifacts,'scripted_ui_peer_artifacts':peer_artifacts,'android_execution_qualified':False,'actual_server_interoperability_verified':False}
     (a.android_output/'android-build.json').write_text(json.dumps(receipt,indent=2)+'\n');android['artifacts']=artifacts;android['scripted_ui_peer_artifacts']=peer_artifacts
-  proof={'schema':'coh-native-local-owner-v1','passed':True,'checks':checks,'scripted_ui_peer_checks':peer_checks,'source_files':len(pins),'source_sha256_lf':pins,'source_fixture_count':fixtures,'implementation_sha256':{str(v.relative_to(native)):sha(v) for v in [*sources,HERE/'coh_local.h',HERE/'test_local.c',HERE/'test_ui_peer.c',HERE/'test_ui_peer_client.c',HERE/'check.py',native/'engine/dbclient/coh_db_session.h',native/'engine/dbclient/coh_dbclient.h',native/'engine/dbclient/tests/test_db_session.c',native/'engine/mapclient/coh_mapclient.h']},'android':android,'sanitizers':'ASan+UBSan' if a.sanitize else 'not requested','leak_sanitizer_enabled':False,'leak_sanitizer_limitation':'Executor /proc task-walk compatibility; explicit before/after FD checks remain enabled.','actual_server_interoperability_verified':False,'authserver_authenticated_session':False,'native_live_world':False,'physical_thor_accepted':False,'credentials_logged':False}
+  if fixture_sha256!={name:sha(d/name) for name in fixture_sha256}:raise ValueError('generated source fixtures changed')
+  proof={'schema':'coh-native-local-owner-v1','passed':True,'fixture_sha256':fixture_sha256,'checks':checks,'scripted_ui_peer_checks':peer_checks,'source_files':len(pins),'source_sha256_lf':pins,'source_fixture_count':fixtures,'implementation_sha256':{str(v.relative_to(native)):sha(v) for v in [*sources,HERE/'coh_local.h',HERE/'test_local.c',HERE/'test_ui_peer.c',HERE/'test_ui_peer_client.c',HERE/'check.py',native/'engine/dbclient/coh_db_session.h',native/'engine/dbclient/coh_dbclient.h',native/'engine/dbclient/tests/test_db_session.c',native/'engine/mapclient/coh_mapclient.h']},'android':android,'sanitizers':'ASan+UBSan' if a.sanitize else 'not requested','leak_sanitizer_enabled':False,'leak_sanitizer_limitation':'Executor /proc task-walk compatibility; explicit before/after FD checks remain enabled.','actual_server_interoperability_verified':False,'authserver_authenticated_session':False,'native_live_world':False,'physical_thor_accepted':False,'credentials_logged':False}
   proof['implementation_sha256']['engine/mapclient/tests/large_scene_fixture.h']=sha(native/'engine/mapclient/tests/large_scene_fixture.h')
   proof['implementation_sha256']['engine/replication/coh_groups.h']=sha(native/'engine/replication/coh_groups.h')
   proof['server_command_fixtures_sha256']=sha(d/'server-command-fixtures.h')

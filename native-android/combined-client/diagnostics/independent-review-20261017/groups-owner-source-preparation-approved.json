@@ -1,0 +1,25 @@
+{
+  "schema": "coh-independent-groups-owner-source-review-v2",
+  "source_commits": [
+    "a65c5801b3214beb8dc6eae2a1540ee063e8c740",
+    "67efb30af3769e40de8c4b3fe100a220a9f588b0"
+  ],
+  "verdict": "approved_source_preparation_only_after_required_admission_fix",
+  "supersedes_hold_review": "7c22430d7",
+  "proof_sha256": "195cc701cb5a913b30a59c78a0d6d0b10f6ad2c3829858a20aeaee6aaa7c1a7b",
+  "local_git_source_matches": 7,
+  "whole_original_lf_source_matches": 14,
+  "reported_checks_per_mode": 1809,
+  "source_guard_controls": 5,
+  "review": [
+    "Complete seven-file local bytes admitted before any project helper execution. Whole original Git source hashes are checked against admitted source-pin bytes first. Helper executes stored admitted bytes with complete source revalidation before/after; final revalidation covers native compilation and execution. Direct source compilation consumes no project bytecode. Five owned temporary-file controls cover unchanged/prehelper/predependency/duringexec/final mutation. Historical a65 receipt preserved without retroactive helper-admission claim.",
+    "Observer uses bounded actual registered-link incidence and reciprocal link/client/entity/character plus entity-table associations, final-only output commit and known-span aliases. Caller must provide valid/stable engine pointers, exclusive ownership thread and disjoint opaque engine storage; this is not an arbitrary-pointer parser or thread/quiescence guard.",
+    "Required scope correction now explicitly says initialized owned client.entity, not a PLAYER entity-type/subobject attestation, and never client.slave/viewed target. No native observer logic changed by this correction.",
+    "Original producer/type host fixtures execute with declared member-subset storage and external callbacks; no original Win32 layout qualification. Receipt records 120 unchanged constructor cases and five original assertion controls each release/ASan/UBSan. Independent review hashes matched exact frozen Git sources; no redundant corpus replay."
+  ],
+  "hook_installed": false,
+  "sink_installed": false,
+  "actual_server_executed": false,
+  "same_boundary_capture_verified": false,
+  "world_authority": false
+}

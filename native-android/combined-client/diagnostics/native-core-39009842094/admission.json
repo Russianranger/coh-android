@@ -1,0 +1,201 @@
+{
+  "passed": true,
+  "run": 39009842094,
+  "source_revision": "187c9358bdf198f3d00f22576e140572210b4461",
+  "archives": {
+    "host": [
+      24786279,
+      "4aa61816f36327f0b73f6e2f62e34abed506fff82d473c23561b340e3703cd68"
+    ],
+    "android": [
+      3293,
+      "1bc7d295eea04090f6f893545aa7d8d5448a5b1be9bdbbcbe7cf74b328cf2f78"
+    ]
+  },
+  "manifest_sha256": "c188f260d4c8d33633f1ec9dabcd3900f3b2029cc81adf2105df7c8ade076d16",
+  "source_sha256_checked": {
+    "native-android/engine/session/qualify_live.py": "17297960500f23b1852a50dda5d8a2798ea1edae67b200750dd417a1acd0ec20",
+    "native-android/engine/session/run_live_android.py": "19f489e877531ce912b52d0c4741f08a67f3ccd54f13aa3f473ccfd9d7ad1e56",
+    "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "native-android/engine/auth/tests/test_auth.c": "db2193b84cb703ef5f2be9ed744d60775c874911f15cbbebf782310c4093772c",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+    "native-android/engine/login/test_login.c": "1e7babe5a78ebc732aea3182d7ec7ffe93d3f4c19c7b3202643bef712767c091",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "native-android/engine/dbclient/coh_db_session.c": "57830dd2f34a9fb69568c21e943b3413baa645c2575086abb276e466bf5858e9",
+    "native-android/engine/live/coh_live.c": "7854150bb6a5fbad6324d5a0ee4befca4cda37c65bb420625e97b53e9ba52f46",
+    "native-android/engine/mapclient/coh_mapclient.c": "f2fef81cb17db6cd06a1c9e17beae374b333dc57f7d5c7367dbd2ca001f8563e",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_groups.c": "b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd",
+    "native-android/engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+    "native-android/engine/sequencer/coh_sequencer.c": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91",
+    "native-android/engine/ui/coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "native-android/engine/audio/coh_mixer.c": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/animation/coh_animation.c": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb",
+    "native-android/audio/coh_audio.c": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3",
+    "native-android/engine/renderer/coh_renderer_gles.c": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c",
+    "native-android/engine/audio/coh_mixer_aaudio.c": "bddfdbcbb0564be3a99ec893cfa72ee6f1896dc71f08f0eb392369fce7bdd8ae",
+    "native-android/engine/audio/coh_audio_session.c": "646e388250ec4d9954fb019bf9d4f6ce780643e73b8ddd870c77125a41a87b9b",
+    "native-android/engine/mapclient/check.py": "21b9f9f57bc56417f060f45fd812caca2de6cd7a50417c1577033987d483f391",
+    "native-android/engine/mapclient/coh_mapclient.h": "09d3065d8ba3266e25a5eb6d05b9715fcd2b477db55f62f29cfab2fa3474c7ae",
+    "native-android/engine/mapclient/tests/large_scene_fixture.h": "ea7442265481b84cf7f01ac7d4a0add3f0d060a88cf39c9e2905f5d0cd1ae5a2",
+    "native-android/engine/mapclient/tests/test_mapclient.c": "74e1145bb10190c541da628c5818621e2e5606e9d00eebe94a7c7be90a0f8200",
+    "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+    "native-android/engine/live/check.py": "8ca0f36ea0a47e850f22d2747c5ab25725ea6661353daf24319aeeba1e2ce5b5",
+    "native-android/engine/live/coh_live.h": "48f1d50c4c91f685ef9e13e2ae04de4e3c4b55abbc542c5444545b029121d519",
+    "native-android/engine/live/test_live.c": "d5c668a67fe915a8f605360ee951c8af60ba95df3eb1b75eda514f119f913587",
+    "native-android/engine/session/server-oracle/native_client.c": "ec76712e2d027da666afb4909b7e7b0809b318eb6c2d026f0ff7b65522116964",
+    "native-android/engine/session/server-oracle/check.py": "5db3842d2f79e43c73368903bd957d6ddf226f696f75e3d4328e829df7ab728c",
+    "native-android/engine/session/server-oracle/oracle_adapter.c.inc": "10ac7e7b45dd4fec484da33d89b1ad2d2435475685e0a6b47c159a162bc8c89c",
+    "native-android/engine/session/server-oracle/oracle_shims.h": "d2e345c8ff0b927492a58f606702ee1ba0942604513fc2863aee2bafcd87247f",
+    "native-android/engine/session/server-oracle/server_main.c.inc": "2853675fd38f130ff0092df0468d112a4302374416d7fcecb10682e13ada043c"
+  },
+  "actual_binaries": [
+    {
+      "suite": "crypto",
+      "abi": "arm64-v8a",
+      "bytes": 5574840,
+      "sha256": "8f1884bcbf290e7a4626551e3b9484adfd0e132fb6a6c4a82986fef988cf8217",
+      "receipt_sha256": "d8e3421fab4bb55c3c70f3c9ca56ddae7cd9a67ba37e980184235c7d8c366084"
+    },
+    {
+      "suite": "crypto",
+      "abi": "x86_64",
+      "bytes": 5827936,
+      "sha256": "5a3f7f0547afe9a71ec9c58eec277b1547a97be194ea1ae27cd56b7342d5dbdc",
+      "receipt_sha256": "3d15aa486551e8ad2172d8c58290464907081ec769a673d1691a06ee8df4f402"
+    },
+    {
+      "suite": "db_session",
+      "abi": "arm64-v8a",
+      "bytes": 110224,
+      "sha256": "19296c22ed499a434ddc47e284ca21fdf09c580c3462e28f3c47d76124f1306d",
+      "receipt_sha256": "c2a17cc5dbede8b58f7f8d518a3ea6c529969f07234fd2fd1572d0366090e6b7"
+    },
+    {
+      "suite": "db_session",
+      "abi": "x86_64",
+      "bytes": 114576,
+      "sha256": "c4054f4c2ec553756b282779262af4f5f8bfbbedbcdd58f0611daf006ce6e466",
+      "receipt_sha256": "c2a17cc5dbede8b58f7f8d518a3ea6c529969f07234fd2fd1572d0366090e6b7"
+    },
+    {
+      "suite": "db_wire",
+      "abi": "arm64-v8a",
+      "bytes": 81184,
+      "sha256": "e13c8c33930a12e79c3a0af04a427dce31e5ab1db84c20163add7254e652c9c1",
+      "receipt_sha256": "c2a17cc5dbede8b58f7f8d518a3ea6c529969f07234fd2fd1572d0366090e6b7"
+    },
+    {
+      "suite": "db_wire",
+      "abi": "x86_64",
+      "bytes": 83344,
+      "sha256": "fb2e974ce770a732736b00efb58d8cac38a624de81b32e8b48ef46ed8fe9a909",
+      "receipt_sha256": "c2a17cc5dbede8b58f7f8d518a3ea6c529969f07234fd2fd1572d0366090e6b7"
+    },
+    {
+      "suite": "login",
+      "abi": "arm64-v8a",
+      "bytes": 5588720,
+      "sha256": "1882da26dd1f02d72178ad651f3fc00df1e46b29b4fc0fa13bd79271e571581d",
+      "receipt_sha256": "0fb89afd879b0f6213e809430ed5e1f701fae1968022750542c3a338031bce9a"
+    },
+    {
+      "suite": "login",
+      "abi": "x86_64",
+      "bytes": 5837768,
+      "sha256": "a057574ca499fed46d5302b4ed4d8e96948458b5f88c36825d49c2160ed89dfd",
+      "receipt_sha256": "2061fbecb94a4772b2e474516c9bac97bdf1ae986e02b0ff5260b1e22666e4e4"
+    },
+    {
+      "suite": "mapclient",
+      "abi": "arm64-v8a",
+      "bytes": 333976,
+      "sha256": "4d912c539ad8b57d9c2dd563df553644d714864d9a6694017e70aa2254dcb06a",
+      "receipt_sha256": "415a878e44f72c351008b40cd270aad0b3ef6f1ee8f39d6e33eeb20da5c1d4ed"
+    },
+    {
+      "suite": "mapclient",
+      "abi": "x86_64",
+      "bytes": 335656,
+      "sha256": "add87378cf60ad8730298dc43e7817403e83a1eb5e92c88450d4c6c93e9362b3",
+      "receipt_sha256": "d924d753e3ea72b647c23661efd30f1a8728d30de65bcaad732383489b02f67c"
+    }
+  ],
+  "actual_android_sdk": 33,
+  "actual_android_abi": "x86_64",
+  "suite_results": {
+    "crypto": {
+      "authenticated_server_session": false,
+      "checks": 1920,
+      "malformed_inputs": 10000
+    },
+    "db_session": {
+      "actual_os_udp": true,
+      "checks": 1857,
+      "passed": true,
+      "real_authenticated_server": false,
+      "socket_leak_check": true,
+      "socket_scenarios": 17,
+      "source_layout_peer": true
+    },
+    "db_wire": {
+      "checks": 95949,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false
+    },
+    "login": {
+      "actual_os_tcp": true,
+      "checks": 523,
+      "descriptor_cleanup": true,
+      "passed": true,
+      "passwords_logged": false,
+      "real_account_login_verified": false,
+      "socket_scenarios": 11,
+      "synthetic_authserver": true
+    },
+    "mapclient": {
+      "actual_authentication": false,
+      "actual_os_udp": true,
+      "checks": 31960,
+      "decoded_budget_bytes": 4194304,
+      "expanded_scene_fixture": true,
+      "large_scene_decoded_bytes": 139794,
+      "large_scene_max_wire_bytes": 3575,
+      "live_world": false,
+      "negative_cases": 10665,
+      "scenarios": 33,
+      "scene_assets_resolved": false,
+      "scene_crc_verified": false,
+      "scene_tail_parsed": true,
+      "scripted_peer_only": true,
+      "socket_leak_check": true
+    }
+  },
+  "actual_arm64_build": true,
+  "actual_x86_64_build": true,
+  "owned_temp_removal_command_completed": true,
+  "device_temp_absence_separately_verified": false,
+  "native_socket_cleanup_checks": true,
+  "binaries_reexecuted": false,
+  "compiler_reexecuted": false,
+  "accepted_apks_rebuilt": false,
+  "real_server_accepted": false,
+  "live_world": false,
+  "physical_thor_accepted": false,
+  "later_owned_map_bridge_qualified": false,
+  "later_owned_local_qualified": false
+}

@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "source_revision": "d72e7139c4a26ec8491a0bdc8a58435b70ebbe04",
+  "source_tree": "29b17b8685ef6015a6c030098ea9105d213a1a60",
+  "inputs": 1389,
+  "all_inputs_still_match": true,
+  "checked_helper_loads": 8,
+  "source_loader_controls": 5,
+  "native_checks_each_mode": 1088,
+  "os_udp_scenarios_each_mode": 9,
+  "fixture_sha256": {
+    "fixtures.h": "0e6aae45f26274265ae8d498904064dd8f86ea3db33b501cb78006bd09cc1484",
+    "groups-fixtures.h": "727a31288a648a8e7d3276aa4ce085be76a5144366713da0911645aef635910f",
+    "server-command-fixtures.h": "d3f3a2a67e0354cf0c369caa310ed4cf9b514e545881467a880950a9f03b2a35"
+  },
+  "android_artifacts_built": false,
+  "native_Android_runner_synthetic_negatives": 19,
+  "actual_server": false,
+  "world": false
+}

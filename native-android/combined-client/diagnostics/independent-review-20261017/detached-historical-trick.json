@@ -1,0 +1,26 @@
+{
+  "schema": "coh-independent-detached-trick-review-v1",
+  "source_commit": "035357a0dc2c0f06d769b1e15188a0a4fa4c3236",
+  "evidence_commit": "bcb65359ece4815c842ab52b7bf00c518575baad",
+  "verdict": "approved_immutable_historical_subtree_lifetime_scope",
+  "proof_sha256": "55b11b9b3093ad72d8cfdc2858bafba876fe8369a1f3b56e68e571715e098ff5",
+  "tested_source_inputs_git_and_current": 61,
+  "review": [
+    "Copies exact767172-byte suffix at12769880 with wholecacheSHA plusindependent copiedsuffixSHA. Rebuilds all3644row/name/child offsets against newownbytes, checks everyrow against admitted oldowner source/name/age/childcounts, preserves reverse winner/order without reencoding.",
+    "Private decoder/getter/numericprojection slices mechanically matched to frozen fullreader via checked generator; only ownership/storage andpublicsymbol namespace changed. Sourcepostprocess remains numeric/group only, animation/LOD/material unresolved.",
+    "One956892-byte allocation owns allmetadata andsuffix. No oldowner/loader/provider/blob lifetime remains on success; original admission report is historical scalarmetadata, allview strings/child spans point into detached bytes. Independent tests retireTexOpt/trim/destroyloader before remaining views.",
+    "Late success alone releases consumedoldsource and temporaryacquiredpin and publishes newowner. Digest1/2/allocation/cancel/source-identity failures preserve oldsource/out and release candidates; immutableborrowed source/control preconditions maintained.",
+    "Preparation charges oldowner metadata/wholeloader+32KiB inexternalminimum, newwholeloader+owned+32KiB before acquire/calloc. Same-loader conservative doublecharge explicit. TexOpt canstillpin entirecache untilretired;84,875,740B fixturestaging below96MiB is notwholeworld/material guarantee.",
+    "Checked source dependency closure frozen before any helperexec, direct admittedcompile/exec bypassesPYC; source transforms and standalone9exports checked. No prior fullreader behavior edited."
+  ],
+  "reported_checks_each_mode": 70060,
+  "owned_bytes": 956892,
+  "staging_named_peak_bytes": 84875740,
+  "independent_expensive_rerun": false,
+  "compiled_schema_crc_recomputed": false,
+  "animation_binding_executed": false,
+  "active_client_generation": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_executed": false
+}

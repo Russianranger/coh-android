@@ -1,0 +1,32 @@
+{
+  "schema": "coh-independent-class-dynamic-defines-review-v1",
+  "source_commit": "93135aa0f",
+  "required_checker_followup": "7ab4da864",
+  "evidence_commit": "f9f3730a6",
+  "binding_clarification_commit": "2ae2387f0",
+  "verdict": "approved_original_host_schema_crc_reconstruction_scope",
+  "own_tested_source_inputs_git_and_current": 54,
+  "supplier_inputs_against_both_commits": 12,
+  "observed_supplier_revision": "7685666d66c63327c5fd1bc0054127613e5e5f8c",
+  "admitted_supplier_source_commit": "716f319a13b00ee1402c0b67793ff14186bafd4d",
+  "supplier_file_bytes_identical": true,
+  "proof_sha256": "1330a4c7fdf299ae104013eeadf06971191060575b60e82192ec43b819627db2",
+  "review": [
+    "Whole original define/stash constructor/add/find/probe/resize/iteration and AddSequencerDefines/AddAttributeDefines/AddAttribNames plus ParseTableCRC/static/dynamic traversal execute. Deep StringTable adapter only copies byte storage; no slot/insertion decisions substituted. Original Win32-width ub4 and TOK_AUTOINT size_t modeled32bit, original numeric TOK_F32 default1 retained, no Win32 ABI/source hash sanitizer claim.",
+    "Actual875ordered E core/cache state names/bitnums directly compared each8profiles, exact normalorigins and10592B attrib_names input used; original attribname schemaCRC0x1f5ae0b6 and whole byte roundtrip independent. Both exact donor class member headerCRCs0x7ff68aaf match reconstructed baseline.",
+    "Every constructor trace key/value and2048fullslots/holes/value compared independently using qualified byte-safe nativehash plus independent probe/resize model. Baseline1317attempts1315valid/4resizes; actual firstwins kEvade468/320 and kCombatPet_Group21/24 preserved. Changedphase/order/origin/name/default profile must alter classCRC; latercasefoldduplicate preserves originalfirstvalue.",
+    "Helpers admitted by checkedsource compile/exec with recursive override and stalePYC/sourcechange controls. Explicit source cleanup retires final key/value/table/context/parser/state fixture allocations; original StringTable allocator/destructor and whole startup unexecuted.",
+    "Observed supplierHEAD and prioradmitted12file closure labels differ but all12Git blobs independently equal across both commits; binding now explicitly preserves both labels. Native class API/source_crc_verified remains unchanged/false; no runtime generation inferred."
+  ],
+  "independent_checks": 32051,
+  "profiles": 8,
+  "baseline_class_schema_crc": "0x7ff68aaf",
+  "attrib_names_schema_crc": "0x1f5ae0b6",
+  "independent_expensive_rerun": false,
+  "original_abi_win32_executed": false,
+  "original_hash_sanitized": false,
+  "original_repack_finalize_executed": false,
+  "runtime_cache_generation": false,
+  "actor_authority": false,
+  "android_executed": false
+}

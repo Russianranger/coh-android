@@ -1,0 +1,72 @@
+{
+  "schema": "coh-controlled-source-8192-input-seal-v1",
+  "inputs": {
+    "deployment/controlled_completion_fixture.cpp": {
+      "bytes": 12017,
+      "sha256": "c69ecd70daea3124ec11d2b742921f68a2e407478106c36badc7c81d7fc4f5b3"
+    },
+    "deployment/qualify_controlled_completions.py": {
+      "bytes": 10113,
+      "sha256": "a8e8f5935c821a0aed8747de203822fdf1d6b65929ab4158d758ee8d701e9bf9"
+    },
+    "deployment/test_controlled_completions.py": {
+      "bytes": 3537,
+      "sha256": "d5db777bbdc9245ca298f5bd390e593b48ffdc492755d371f29f6f6836ca7ce1"
+    },
+    "deployment/controlled-completion-source-pins.json": {
+      "bytes": 1346,
+      "sha256": "bb6e7f6a6ee6aaf80922d099805a6d97fe80813a0e67da26c92cb4cf43ef9130"
+    },
+    "deployment/receive_candidate.py": {
+      "bytes": 4848,
+      "sha256": "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78"
+    },
+    "deployment/source_audit.py": {
+      "bytes": 9590,
+      "sha256": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f"
+    },
+    "source_oracle.py": {
+      "bytes": 3713,
+      "sha256": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+    },
+    "deployment/verify_auth_acceptance.py": {
+      "bytes": 9376,
+      "sha256": "67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8"
+    },
+    "deployment/admit_schema.py": {
+      "bytes": 8502,
+      "sha256": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686"
+    },
+    "evidence/auth-success-38996587760/receipt.json": {
+      "bytes": 29765,
+      "sha256": "1b1bea257b8e29f73543cffc4c2148071f738036ee2cd5adc122417160106c94"
+    },
+    "evidence/auth-success-38996587760/artifact.zip": {
+      "bytes": 6854,
+      "sha256": "bd04a2baaee03e3d736e3419686849d4e3551770a020c0e321fe49e4d1151d3e"
+    },
+    "evidence/auth-success-38996587760/source-binder.json": {
+      "bytes": 6641,
+      "sha256": "8226b673b4143a1525296abc5d879f8a948f0cd57a5c6ccc5f5297452e51af40"
+    },
+    "evidence/controlled-source-completions-8192-20261017/qualification.json": {
+      "bytes": 6555,
+      "sha256": "3801811700c4e0586ebdc34643978203d7c2ad982bbf79dacc3e79aa4a9939bb"
+    },
+    "evidence/controlled-source-completions-8192-20261017/host-controls.txt": {
+      "bytes": 1210,
+      "sha256": "c13fec233f9d59207b3f55c5afa315182afe8433aae00069b0bd3a0e6614ca54"
+    },
+    "evidence/controlled-source-completions-8192-20261017/README.md": {
+      "bytes": 4019,
+      "sha256": "9dfb5351b78a695cc574dc60be8e5c5bdfd51f7c9b3fd07c0ab4ddc39a7c5287"
+    }
+  },
+  "python_control_suites": 6,
+  "python_control_skips": 0,
+  "source_only": true,
+  "authserver_or_probe_rebuilt": false,
+  "services_executed": false,
+  "live_receiver_segmentation_controlled": false,
+  "general_tcp_segmentation_accepted": false
+}

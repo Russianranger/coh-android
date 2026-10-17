@@ -1,0 +1,22 @@
+{
+  "schema": "coh-independent-power-category-cache-review-v1",
+  "source_commit": "c92e1fdf5517eb3466c560f7f191cbb10a4aa909",
+  "evidence_commit": "81739adf6",
+  "verdict": "approved_compact_raw_category_dictionary_only",
+  "proof_sha256": "cf90af87851d61b7c2a00e7ca6515d8e90886e90e2f90b31e595893750358f4c",
+  "tested_git_source_matches": 53,
+  "reported_checks_per_mode": 80281,
+  "source_variants": 8,
+  "review": [
+    "Exact retained donor member239304B/SHA67b46915b9bf4440de8f5cf8bf7dd4a9047daee7dc5cb96f2c2be3999f8fc5e7 and original ParseTableCRC0x59248ecb, complete table reader/writer roundtrip and independent field projection are bound in source proof. Authentic186categories preserve6527 ordered set-name references and zero persisted pointer-index rows. Explicit donor32 packed indices are data, not host pointers.",
+    "Native parser copies all five string fields, ordered set references and packed index values into fixed owner/workspace. Parse extents/count/text caps and full-input end reject before publication; valid-digest mutations cannot bypass syntax/limits. Names require bounded nonempty ASCII, duplicate casefold keys refuse complete import consistently with original category constructor; unresolved references stay raw. Find validates output aliases and every traversed name extent before access.",
+    "All known input/output/workspace/digest descriptor/expectedSHA/context spans are pairwise overflow-checked before workspace writes. Input+both374856B fixed owners+8192 native reserve+context/scratch/retained are precharged under1MiB before digest callback. No allocation; late digest/cancellation failure leaves caller output unchanged. Source can retire after successful copied import. External callback stack/crypto dependency qualification is not inferred from native sanitizer result.",
+    "Whole original category-branch CreateDictHashes/lookup run with genuine parsed categories and original stash insertion/probing; dictionary-level sets/powers remain genuinely empty, absent power services trap. No complete power dictionary/hash CRC association is fabricated. Unsafe original hash host translation uses explicit Win32-width ub4, without original Win32 ABI or sanitizer closure claim.",
+    "Project helpers are individually frozen before first source compilation/execution; recursive helper loaders inherit guarded module function. Full53-file source map matched frozen committed Git bytes. Recorded release/ASan/UBSan80281 checks each,8 source variants,297 cuts581 mutations,C++link and bounded native frame receipt; no independent expensive replay."
+  ],
+  "complete_power_dictionary": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false,
+  "world_authority": false
+}

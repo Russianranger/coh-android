@@ -9,7 +9,7 @@
       "real_server_login": false,
       "session": {
         "actual_os_udp": true,
-        "checks": 1857,
+        "checks": 1884,
         "passed": true,
         "real_authenticated_server": false,
         "socket_leak_check": true,
@@ -24,7 +24,7 @@
       "real_server_login": false,
       "session": {
         "actual_os_udp": true,
-        "checks": 1857,
+        "checks": 1884,
         "passed": true,
         "real_authenticated_server": false,
         "socket_leak_check": true,
@@ -39,7 +39,7 @@
       "real_server_login": false,
       "session": {
         "actual_os_udp": true,
-        "checks": 1857,
+        "checks": 1884,
         "passed": true,
         "real_authenticated_server": false,
         "socket_leak_check": true,

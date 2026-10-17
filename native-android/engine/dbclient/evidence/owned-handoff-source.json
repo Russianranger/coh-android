@@ -2,15 +2,15 @@
   "schema": "coh-db-opaque-handoff-source-qualification-v1",
   "base_commit": "8cf325f4dc78eab451f23382ac8a13f8fa9ffe5c",
   "inputs": {
-    "coh_db_session.c": "57830dd2f34a9fb69568c21e943b3413baa645c2575086abb276e466bf5858e9",
+    "coh_db_session.c": "ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9",
     "coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
-    "coh_db_handoff_owner.h": "f0eced61f4ccf256be268032ceae072cdaf3853cba2eb716a9f37368bd3286e2",
+    "coh_db_handoff_owner.h": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45",
     "coh_db_handoff_private.h": "6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd",
-    "OWNED-HANDOFF.md": "24c12bf3a1161860634da44b3db0facd16a39239ccf2a7b08008850225ce03f1",
-    "tests/test_db_session.c": "3bd58628d4a279d94b8f71e21f7278deedbfd7abc9717b56f3a5e5b11c1540dc",
+    "OWNED-HANDOFF.md": "bf975231365a790d3aca5414bb74066eb7facab10c9dbcbe343c3fb5b6e87212",
+    "tests/test_db_session.c": "a0bd0ae34b67d2058c099c06cb5345fe3dc398a8e2d03149ced41af5a8aa3cd4",
     "check.py": "2cd5e8b80b593584e71f63cab21d774c00d39ec4056ae846d4698da68faac410",
     "source-pins.json": "a8c82a4c35eb73325ab4c7e0727645e40899330e7d7450b2c5976b26a89dbeb1",
-    "evidence/owned-handoff-host.json": "1ba05466422821eec5b2da5ea245698ab0dee4f6617bb22b670b2e6614aabf53"
+    "evidence/owned-handoff-host.json": "a3a8a89d553821a6377955d42897478b076950888c0afccd92b86f25439305cb"
   },
   "original_producer_context": "Current8cf WAIT_MAP EntCon.id positive signed32; Queue7field relay; no slot inference",
   "source_oracle_root": "/workspace/scratch/9174d12e2a11/next-integration",
@@ -19,7 +19,7 @@
     "asan",
     "ubsan"
   ],
-  "session_checks_per_mode": 1857,
+  "session_checks_per_mode": 1884,
   "session_scenarios_per_mode": 17,
   "actual_os_udp_scripted_peer": true,
   "cryptographic_authentication_added": false,
@@ -27,5 +27,6 @@
   "actual_server_accepted": false,
   "android_arm64_built": false,
   "emulator_or_thor_executed": false,
-  "occupied_output_control": "Actual previous live owner retained across DB session destruction; refused against next HANDOFF_READY before allocation/take; original metadata/ref/cookie remain valid."
+  "occupied_output_control": "Actual previous live owner retained across DB session destruction; refused against next HANDOFF_READY before allocation/take; original metadata/ref/cookie remain valid.",
+  "map_candidates_scope": "Exact unclaimed opaque-owner source addresses/UDPport only; zero/duplicate/order preserved; no cookie/consumption; claimed/retired/owner-span aliases refused."
 }

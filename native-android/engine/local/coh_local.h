@@ -33,6 +33,8 @@ typedef struct {
     CohMapDiagnostics map_protocol;
     uint32_t generation, selection_generation;
     unsigned local_development_auth, server_identity_bound;
+    /* Actual retained DBSession handoff owner only; no entity/world authority. */
+    unsigned selected_dbid_owner_bound;
     uint64_t attempts, character_lists, character_choices, map_handoffs,
         policy_rejections, failures, suspends, cancellations, opened_sockets,
         closed_sockets;

@@ -1,0 +1,43 @@
+{
+  "schema": "coh-independent-default-local-owned-qualification-preparation-v1",
+  "initial_integration_commit": "85161c5bd",
+  "workflow_and_initial_driver_commit": "ca8dcb1e0",
+  "required_source_fixture_binding_commit": "d72e7139c",
+  "required_complete_domain_commit": "f62e58a90578657292657ec2888287a99aa5f931",
+  "evidence_commit": "74177b67e",
+  "verdict": "approved_guarded_new_native_android_qualification_preparation",
+  "host_proof_source_revision": "f62e58a90578657292657ec2888287a99aa5f931",
+  "host_proof_sha256": "8ef32312820e0c72e913ed9cbe5adb6dc9c27de097371fd4136efd3505530a89",
+  "source_git_and_current_count": 1389,
+  "shared_role_sha256": {
+    ".github/workflows/native-live-session.yml": "89fc030e7e78b9199b0064b10f7ab6d392e5e1fc1d75b0a038622a70d1a1c228",
+    "native-android/engine/local/coh_local.c": "5b0041af8015a92828ea28d1a18d30805401219bd706e651a0950c912e077250",
+    "native-android/engine/local/coh_local.h": "7584cf87bc1944e35e826ad1c01aa03b88ec8a456c48b33637c0e6e0ebfbf4ca",
+    "native-android/engine/local/check.py": "90d0d6cc00913ec062e24973f45b77a2c3fc81ef21c4bfae3c716c1c9b054f74",
+    "native-android/engine/local/check_owned_local.py": "e5fc98026d2d6b7e95d18cc711db110f98c89f6c55652fb5d748d5f5c4cc287d",
+    "native-android/engine/local/run_owned_android.py": "89d7e2c5345dce0095744947f4de1efa78f27e6d9b1cf99fbc704c04a1cb981e",
+    "native-android/engine/local/test_owned_android_driver.py": "6041f208fc1d17e0737a2477c2ee6b806270d40b29a0d08b65fde609903ec1b9",
+    "native-android/engine/mapclient/CMakeLists.txt": "2eae98535600dc54d78683085dda024cfe2225e27386a2d30e7b700ae9056ec3",
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt": "b7dff94e3131736d7f272af332f2bed4ff0f54ff00cb53c126c6f6ad87ecacf0"
+  },
+  "review": [
+    "Default development-only LOCAL consumes actual opaqueDB owner, compares slot andsource session/selection against sameDB diagnostics, readsnonsecret candidates then loopbackpolicy, uses strongownedMapbegin, retires/releases candidates on everyfailure. No controllerrawcookiecopy; Map retainsowner through lifecycle.",
+    "Cumulative UIchoice counter remains separate from actualDB selection generation. Newownerbound diagnostic derivesactualretainedMapowner and clears onretire. RawencryptedLIVE coordinator scope untouched; SCENE_INCOMPLETE/noACK remains.",
+    "Bothmodule/CombinedsourceCMake add optionalstrongTU; noAPKbuilt. Nativeboundhost1088checks/9actualOSUDPscenarios eachrelease/ASan/UBSan and largeUIpeer source915command catalog139794B GROUPS/cleanup passed; helper8checkedloads+5stalePYC/source controls.",
+    "Runner now requires currentGit revision/tree/completecodehash domain, missingtrackedsource refusal,5guardcontrols/frozenbeforeimports/cachefalse/requiredactualhelpers, positivepassedthreeidenticalsanitizer modes, completecritical compiledimplementation map entries matchingGit map. Earlier minimalforgedhost and contradictorysource findings closed.",
+    "Three generatedfixtureheaders captured/rechecked after compilation; exactmap in hostandBOTHABIrows mandatory. ExactbinarySHA/ELFABI/receiptassociation plusAndroid13x86_64emulator required. Actualtransferhash thenresult equality; ownedmktemp pathscope, rm followedby explicitabsencecheck, proofpassedfalse oncleanupfailure.",
+    "Readonly branch/marker gated existingnativefoundationworkflow reuses alreadyinstalled pinnedNDK, buildsARM64+x86_64native tests andemulator executes newlocalonly withoptin. Alwaysupload/noAPK/server/service/account touches. NewcommonDB/Map/native integration justifies this newtargetedqualification; noactualCIresult claimed here."
+  ],
+  "independent_driver_unittest_suites_passed": 1,
+  "declared_synthetic_negative_controls": 26,
+  "independent_native_corpus_rerun": false,
+  "host_native_checks_each_mode": 1088,
+  "host_udp_scenarios_each_mode": 9,
+  "arm64_build_qualified_by_this_receipt": false,
+  "android_executed": false,
+  "real_server_accepted": false,
+  "encrypted_authentication": false,
+  "actor_identity": false,
+  "world_authority": false,
+  "apk_rebuilt": false
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "coh-power-category-source-binding-v1",
+  "source_commit": "c92e1fdf5517eb3466c560f7f191cbb10a4aa909",
+  "tested_git_blobs_match": true,
+  "tested_source_count": 53,
+  "host_proof_sha256": "cf90af87851d61b7c2a00e7ca6515d8e90886e90e2f90b31e595893750358f4c",
+  "checks": {
+    "release": {
+      "checks": 80281,
+      "cases": 8,
+      "cuts": 297,
+      "mutations": 581,
+      "owner_bytes": 374856,
+      "complete_power_dictionary": false,
+      "actor_authority": false
+    },
+    "asan": {
+      "checks": 80281,
+      "cases": 8,
+      "cuts": 297,
+      "mutations": 581,
+      "owner_bytes": 374856,
+      "complete_power_dictionary": false,
+      "actor_authority": false
+    },
+    "ubsan": {
+      "checks": 80281,
+      "cases": 8,
+      "cuts": 297,
+      "mutations": 581,
+      "owner_bytes": 374856,
+      "complete_power_dictionary": false,
+      "actor_authority": false
+    }
+  },
+  "original_schema_crc": "0x59248ecb",
+  "exact_input_bytes": 239304,
+  "exact_input_sha256": "67b46915b9bf4440de8f5cf8bf7dd4a9047daee7dc5cb96f2c2be3999f8fc5e7",
+  "source_category_dictionary_only": true,
+  "source_set_power_dictionaries_loaded": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false
+}

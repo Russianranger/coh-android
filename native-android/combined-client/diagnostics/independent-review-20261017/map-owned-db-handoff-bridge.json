@@ -1,0 +1,30 @@
+{
+  "schema": "coh-independent-map-owned-db-handoff-bridge-v1",
+  "source_commit": "3c207d58bcfc03e22aed4b18cf1dafb70475f64c",
+  "verdict": "approved_optional_source_owned_handoff_bridge",
+  "source_inputs_git_and_current": 1393,
+  "proof_sha256": "bc9bc95fcb4620acd78a7d2e1707514042a2d4a15e1eb8015fcffc360a21214f",
+  "review": [
+    "Optional strong bridge TU retains actual opaque DB owner, checks generations/positive signed32 DBID and unclaimed state, privately claims once, derives raw authorization internally, wipes both temporary DTOs through volatile stores, attaches only actual owner after successful just-begun Map client. Controls/callbacks serialized and caller-disjoint opaque ownership are explicit.",
+    "Terminal close/disconnect/suspend/timeout/failure/destroy retire/wipe/release retained owner and clear owner-bound DB generations. External retirement causes service/getter refusal. Stale/preflight failure does not claim; cancellation consumes/retire path rather than exposing retryable credentials.",
+    "Current actual scene lease validates live attached owner metadata before reporting selectedDBID owner bound and DB generations. This is DB owner provenance only, not actor identity/cryptographicAuth/source/world. Recorder copies historical observation and does not retain the owner.",
+    "Raw Map API remains standalone: typed weak guards require complete metadata/retire/release function set. Strong separate bridge references extract actual DBSession from static archive; no void callback table or caller-supplied provenance DTO. Private attach is trusted-only internal API, not an untrusted process boundary.",
+    "GCC/Clang ELF weak form targets Android/Linux, nonELF preflight refuses. Actual host direct/archive/raw/incompleteweak/disabledELF/missingbridge link tests pass; NDK/compiler/runtime/shipping build remain unqualified and unchanged.",
+    "Qualifier freezes broad1393 sources before checked-source DB/Map helper execution; nested helper imports use fresh temporary pycache prefix and disabledbytecodewrites, before/after source map stable. Native bridge bound excludes explicitly external network allocator/cancel stacks."
+  ],
+  "reported_owned_checks_each_mode_and_linkage": 2978,
+  "reported_raw_checks_each_mode": 31960,
+  "owned_linkages": [
+    "direct",
+    "archive"
+  ],
+  "native_bridge_stack_bound": 5248,
+  "independent_expensive_rerun": false,
+  "actual_os_udp_scripted": true,
+  "crypto_auth_verified": false,
+  "character_identity_verified": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_executed": false,
+  "real_server_acceptance": false
+}

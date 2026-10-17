@@ -1,0 +1,33 @@
+{
+  "schema": "coh-independent-auth-receiver-8192-review-v1",
+  "initial_source_commit": "8ace7a70ad8261f81caa6c62945245d4c3558991",
+  "required_checked_source_commit": "7709f1c627120a0bd097a0adea24ed2ec53b1b53",
+  "qualification_source_commit": "c86e281a3d8a9937478e4263de8b037bc97a3562",
+  "evidence_commit": "a1295f34b894c15b0d0028ed83506da116ca8ded",
+  "verdict": "approved_controlled_synthetic_source_completion_scope",
+  "checked_receipt_sha256": "46828ad273514146a3a421886c0a8e1348a1aed377078dbffbd2321983f7afd5",
+  "checked_inputs_git_and_current": 70,
+  "actual_executed_helper_hashes_checked": 16,
+  "source_seal_inputs_checked": 73,
+  "raw_original_and_native_pins_checked": 10,
+  "review": [
+    "Actual original IOBuffer.h8192-byte buffer/DWORD and opcode domain/global20Bkey are pinned and generator-asserted. Five receiver/dispatch functions plus two packetcrypto functions unchanged except isolated offsetcandidate inBuf+pi. Unchanged offset reproduces failure.",
+    "Fixture DWORD/WSABUFlen32-bit; actualsource Read/OnIOCallback/OnReadCallback/OnRead/Packetcallback bodies run through controlled immediate/deferred IOCP/socket/pool/account-handler seams, with original packetcrypto and explicitly aligned scratch/nativeBlowfish primitive adapter. No realTCP/Windows/account handler or fullIOCPinterleaving proof.",
+    "Everyfirstcompletion1..8192,170-byte splits,full8194wireframe/compaction,everypropermaxprefix0..8193,coalescedmin+max,4K/8Kedges,malformedlen/opcode/checksum/error/closed paths tested. Fixture refs/pools cleanup explicit.",
+    "Original top-levelproject-import/PYC gap was blocker. Required770guard nowfreezes70exactGitworkinginputs including self before firsthelper; custommeta loaderexecs frozen source directly, refuses preimportedhelper modules, no PYC/readfallback for admittedprojecthelpergraph.16executedmodulesmap backto frozenGitbytes; HEAD/domain/inputbytes revalidated after fresh3mode replay.",
+    "EightPythoncontracts include poisoned disk/PYCsentinel,wrongcommit and postmutation refusal. Earlier unguarded qualification preserved historical, NOTusedas finalhelperexecution proof. Existing real8caseAuthPE/probes/receipts only readmitted, notexecuted/rebuilt here."
+  ],
+  "reported_checks_each_mode": 811226,
+  "completion_schedules": 16776,
+  "incomplete_prefix_cases": 16728,
+  "malformed_cases": 28,
+  "completion_callbacks": 129420,
+  "source_buffer_bytes": 8192,
+  "python_control_suites": 8,
+  "independent_expensive_rerun": false,
+  "live_receiver_segmentation_controlled": false,
+  "general_tcp_segmentation_accepted": false,
+  "encrypted_account_login_verified_by_this_oracle": false,
+  "windows_service_executed": false,
+  "android_executed": false
+}

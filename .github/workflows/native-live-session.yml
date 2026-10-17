@@ -6,6 +6,7 @@ on:
       - native-android/engine/auth/**
       - native-android/engine/login/**
       - native-android/engine/live/**
+      - native-android/engine/local/**
       - native-android/engine/dbclient/**
       - native-android/engine/mapclient/**
       - native-android/engine/network/**
@@ -21,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   host-and-arm64:
-    if: github.ref == 'refs/heads/native-android'
+    if: github.ref == 'refs/heads/native-android' && (!contains(github.event.head_commit.message, '[compact-recovery]') || contains(github.event.head_commit.message, '[owned-local-requalify]') || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
@@ -39,6 +40,12 @@ jobs:
       - name: Run independent sanitized host contracts and build public crypto and full Android test binaries
         run: |
           python3 native-android/engine/session/qualify_live.py --source-root . --sanitize --ndk /tmp/native-live-ndk/android-ndk-r28c --output native-android/results/live-session --jobs 2 --workers 3 --require-clean
+      - name: Qualify new opaque local DB handoff with the already installed NDK
+        if: contains(github.event.head_commit.message, '[owned-local-requalify]')
+        run: |
+          python3 -B native-android/engine/local/test_owned_android_driver.py
+          python3 -B native-android/engine/local/check_owned_local.py --source-root . --sanitize --ndk /tmp/native-live-ndk/android-ndk-r28c --android-output native-android/results/live-session/local-owned/android --output native-android/results/live-session/local-owned/host.json
+          python3 -B native-android/engine/local/run_owned_android.py --validate-only --artifacts native-android/results/live-session/local-owned --output native-android/results/live-session/local-owned/preflight.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -50,7 +57,7 @@ jobs:
           retention-days: 90
   android-contract-execution:
     needs: host-and-arm64
-    if: github.ref == 'refs/heads/native-android'
+    if: github.ref == 'refs/heads/native-android' && (!contains(github.event.head_commit.message, '[compact-recovery]') || contains(github.event.head_commit.message, '[owned-local-requalify]') || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -81,7 +88,9 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: python3 native-android/engine/session/run_live_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/live-session --output native-android/results/live-session/android-execution/receipt.json
+          script: |
+            python3 native-android/engine/session/run_live_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/live-session --output native-android/results/live-session/android-execution/receipt.json
+            if test -f native-android/results/live-session/local-owned/host.json; then python3 -B native-android/engine/local/run_owned_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/live-session/local-owned --output native-android/results/live-session/android-execution/owned-local.json; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:

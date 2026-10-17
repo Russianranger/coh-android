@@ -1,0 +1,25 @@
+{
+  "schema": "coh-independent-map-owned-cpp-linkage-review-v1",
+  "source_commit": "390e91583da1857a9ea9e12ac3f97b57d985316f",
+  "base_c_review": "b9a151f91",
+  "verdict": "approved_required_cpp_header_fix",
+  "proof_sha256": "ee927130eb3ab84935800c3f7caf341ed95ee37a67f02e5c717ac1295df479f8",
+  "source_inputs_git_and_current": 1400,
+  "review": [
+    "Coordinator caught missing extern-C guards in new public/private owned headers. Required followup encloses all new C function declarations; nested included C headers and POD declarations compatible. Native C behavior untouched.",
+    "CPP11caller compiles with strict warnings, links/runs against actual C core/bridge/DB objects both directly and through staticarchives in allthree modes. It exercises symbol resolution, null guards, actual C client creation/destruction and metadataNOTFOUND; no C++fake symbols or ownership/world claim.",
+    "CPPsource explicitly added to complete frozen source map. Original2978owned and31960raw C controls per mode unchanged. This extends host C++linkage qualification only, not NDK/Android/JNI/shipping execution."
+  ],
+  "cpp_linkages": [
+    "direct",
+    "archive"
+  ],
+  "modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "independent_expensive_rerun": false,
+  "android_executed": false,
+  "world_authority": false
+}

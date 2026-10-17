@@ -1,0 +1,24 @@
+{
+  "schema": "coh-independent-source-shared-mesh-v1",
+  "source_commit": "469b7b42b21d294ae0910adfd50be8b6fc42b46e",
+  "verdict": "approved_exact_v8_source_geometry_and_named_budget_scope",
+  "proof_sha256": "09c5d6355835f6a05c1a5c89dba80b07c40dd72382d071158f3de201f85413df",
+  "source_inputs_committed_and_current": 55,
+  "review": [
+    "Actual opaque SourceBody derives ordinal/model/version/diskrow/fullbodySHA and source resource descriptors. Exactv8 only, existing special/scale/skinning/lightmap/missingchannel refusals remain; no arbitrary labels or material supplier accepted. Wholebody rehash before decode.",
+    "Canonical base positions/normals and flipped unscaled UV shared across allparts, neutralcarriercolor1; source partitions/indices contiguous and bounded. Does not claim equivalent output under arbitrary CLIENT material UV/scales/lighting or draw readiness.",
+    "One contiguous persistent allocation plus bounded encoded/scratch/float temporary arrays; counts65536/512 and stream2MiB unchanged. All known control/source aliases refuse; late commit alone transfers Body and publishes outputs. Partial allocations free with originalBody/output/report unchanged. Graph+loader remain explicit borrowed dependencies until mesh retires.",
+    "Native16KiB reserve measured helperfile maxima6896/7288/7288, provider/zlib/OpenSSL/OS stacks remain caller allowances. Named actual CityHall aggregate includes real fullTexOpt+Trick owners and16/32MiB loaders:91075118B under96MiB; not same retained set as oldisolated94484170baseline. Remaining9588178B is futureallowance, not an invented actor or wholeworld resident guarantee.",
+    "Complete21771948-byte fixtureUV1 streamed packetSHA equals independently source-qualified469 originaldelta output without broad sweep replay. Transitive quote-include Cclosure frozen before compilation; no projectPython imports. All390controls/mode and zero finalpins recorded."
+  ],
+  "named_aggregate_peak_bytes": 91075118,
+  "remaining_capacity_bytes": 9588178,
+  "native_controls_each_mode": 390,
+  "independent_expensive_rerun": false,
+  "cpp_or_ndk_qualified": false,
+  "actor_owner_qualified": false,
+  "client_materials_available": false,
+  "render_ready": false,
+  "world_authority": false,
+  "android_executed": false
+}

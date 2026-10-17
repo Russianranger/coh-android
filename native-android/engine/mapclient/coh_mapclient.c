@@ -1,4 +1,13 @@
 #include "coh_mapclient.h"
+#include "coh_mapclient_owned_private.h"
+#if defined(__GNUC__) && defined(__ELF__)
+extern CohStatus coh_db_handoff_owner_metadata(const CohDbHandoffOwner *,CohDbHandoffMetadata *) __attribute__((weak));
+extern void coh_db_handoff_owner_retire(CohDbHandoffOwner *) __attribute__((weak));
+extern void coh_db_handoff_owner_release(CohDbHandoffOwner *) __attribute__((weak));
+#define COH_MAP_TYPED_WEAK 1
+#else
+#define COH_MAP_TYPED_WEAK 0
+#endif
 #include <stdlib.h>
 #include <string.h>
 
@@ -40,6 +49,7 @@ struct CohMapClient {
     CohRepSession inspector;CohRepSchema schema;
     uint32_t cookie,last_connect_id;uint64_t last_ms,phase_ms;
     unsigned authorized;
+    CohDbHandoffOwner *handoff_owner;
     const CohMapSceneObservation *active_scene;
     const CohNetOwnedMessage *active_message;
     CohRepReader active_reader;
@@ -54,6 +64,10 @@ CohMapClient *coh_map_client_create(const CohMapConfig *c) {
     m->config=*c;coh_rep_session_init(&m->inspector);return m;
 }
 static void clear_authorization(CohMapClient *m) {
+#if COH_MAP_TYPED_WEAK
+    if(m->handoff_owner){coh_db_handoff_owner_retire(m->handoff_owner);coh_db_handoff_owner_release(m->handoff_owner);m->handoff_owner=NULL;}
+#endif
+    m->diag.selected_dbid_owner_bound=0;m->diag.db_session_generation=0;m->diag.db_receipt_generation=0;
     m->cookie=0;m->authorized=0;coh_rep_session_disconnect(&m->inspector);
     memset(&m->schema,0,sizeof(m->schema));m->diag.selected_dbid=0;
     m->diag.selected_slot=0;m->diag.selection_generation=0;m->diag.character_identity_verified=0;
@@ -65,7 +79,7 @@ void coh_map_client_close(CohMapClient *m) {
     clear_authorization(m);m->diag.phase=COH_MAP_CLOSED;
 }
 void coh_map_client_destroy(CohMapClient *m) {
-    if(m){coh_net_udp_destroy(m->udp);wipe(m,sizeof(*m));free(m);}
+    if(m){coh_net_udp_destroy(m->udp);clear_authorization(m);wipe(m,sizeof(*m));free(m);}
 }
 static CohStatus authorization(const CohMapClient *m,const CohMapAuthorization *a) {
     if(!a||(a->authenticated!=0&&a->authenticated!=1)||(a->endpoint_authorized!=0&&a->endpoint_authorized!=1)||
@@ -220,6 +234,44 @@ rejected:
     if(s==COH_UNSUPPORTED)m->diag.unsupported++;
     return s;
 }
+static int scene_disjoint(const void*,size_t,const void*,size_t);
+static CohStatus owned_metadata(const CohMapClient*m,CohDbHandoffMetadata*out){
+#if COH_MAP_TYPED_WEAK
+ if(!coh_db_handoff_owner_metadata||!coh_db_handoff_owner_retire||!coh_db_handoff_owner_release)return COH_UNSUPPORTED;
+ if(!m->handoff_owner)return COH_NOT_FOUND;
+ CohDbHandoffMetadata v;CohStatus s=coh_db_handoff_owner_metadata(m->handoff_owner,&v);if(s!=COH_OK)return s;
+ if(v.retired||!v.claimed||!v.selected_dbid_owner_bound||v.selected_dbid!=m->diag.selected_dbid||v.selected_slot!=m->diag.selected_slot||v.selection_generation!=m->diag.selection_generation||v.local_development_auth!=m->diag.local_development_authorized||v.session_generation!=m->diag.db_session_generation||v.receipt_generation!=m->diag.db_receipt_generation)return COH_STATE;
+ *out=v;return COH_OK;
+#else
+ (void)m;(void)out;return COH_UNSUPPORTED;
+#endif
+}
+CohStatus coh_map_client_handoff_metadata(const CohMapClient*m,CohDbHandoffMetadata*out){if(!m||!out)return COH_INVALID;if(!scene_disjoint(out,sizeof(*out),m,sizeof(*m)))return COH_INVALID;return owned_metadata(m,out);}
+CohStatus coh_map_client_owned_preflight(const CohMapClient*m,const CohMapOwnedBegin*o,const CohCancel*c){
+ if(!m||!o||!scene_disjoint(m,sizeof(*m),o,sizeof(*o))||(c&&(!scene_disjoint(m,sizeof(*m),c,sizeof(*c))||!scene_disjoint(o,sizeof(*o),c,sizeof(*c)))))return COH_INVALID;
+#if COH_MAP_TYPED_WEAK
+ if(!coh_db_handoff_owner_metadata||!coh_db_handoff_owner_retire||!coh_db_handoff_owner_release)return COH_UNSUPPORTED;
+#else
+ return COH_UNSUPPORTED;
+#endif
+ if(m->active_scene||(m->diag.phase!=COH_MAP_IDLE&&m->diag.phase!=COH_MAP_CLOSED&&m->diag.phase!=COH_MAP_SUSPENDED&&m->diag.phase!=COH_MAP_TIMED_OUT&&m->diag.phase!=COH_MAP_FAILED))return COH_STATE;
+ if(o->endpoint_authorized>1||o->address_index>1||!o->expected_db_session_generation||!o->expected_selection_generation||!o->connect_id||o->connect_id==m->last_connect_id||o->now_ms<m->last_ms)return COH_INVALID;
+ if(!o->endpoint_authorized)return COH_STATE;
+ if(m->diag.generation==UINT32_MAX)return COH_LIMIT;
+ return COH_OK;
+}
+CohStatus coh_map_client_owned_attach(CohMapClient*m,CohDbHandoffOwner*owner){
+ if(!m||!owner)return COH_INVALID;
+#if COH_MAP_TYPED_WEAK
+ if(!coh_db_handoff_owner_metadata||!coh_db_handoff_owner_retire||!coh_db_handoff_owner_release)return COH_UNSUPPORTED;
+ if(m->handoff_owner||m->diag.phase!=COH_MAP_NET_CONNECTING||!m->authorized)return COH_STATE;
+ CohDbHandoffMetadata v;CohStatus s=coh_db_handoff_owner_metadata(owner,&v);if(s!=COH_OK)return s;
+ if(v.retired||!v.claimed||!v.selected_dbid_owner_bound||!v.session_generation||!v.receipt_generation||v.selected_dbid!=m->diag.selected_dbid||v.selected_slot!=m->diag.selected_slot||v.selection_generation!=m->diag.selection_generation||v.local_development_auth!=m->diag.local_development_authorized)return COH_STATE;
+ m->handoff_owner=owner;m->diag.selected_dbid_owner_bound=1;m->diag.db_session_generation=v.session_generation;m->diag.db_receipt_generation=v.receipt_generation;return COH_OK;
+#else
+ return COH_UNSUPPORTED;
+#endif
+}
 CohStatus coh_map_client_service(CohMapClient *m,uint64_t now,CohCancel cancel) {
     return coh_map_client_service_observed(m,now,cancel,NULL,NULL);
 }
@@ -228,6 +280,7 @@ CohStatus coh_map_client_service_observed(CohMapClient *m,uint64_t now,CohCancel
     if(!m||now<m->last_ms)return COH_INVALID;
     if(!m->udp||m->diag.phase==COH_MAP_IDLE||m->diag.phase==COH_MAP_CLOSED||m->diag.phase==COH_MAP_SUSPENDED||
        m->diag.phase==COH_MAP_TIMED_OUT||m->diag.phase==COH_MAP_FAILED)return COH_STATE;
+    if(m->handoff_owner){CohDbHandoffMetadata metadata;if(owned_metadata(m,&metadata)!=COH_OK){coh_map_client_close(m);m->diag.phase=COH_MAP_FAILED;m->diag.last_status=COH_STATE;return COH_STATE;}}
     m->last_ms=now;CohStatus s=coh_net_udp_service(m->udp,now,cancel);CohNetUdpDiagnostics udp;
     coh_net_udp_diagnostics(m->udp,&udp);
     if(udp.state!=COH_UDP_ACTIVE) {
@@ -278,6 +331,7 @@ CohStatus coh_map_client_scene_lease(const CohMapClient*m,const CohMapSceneObser
  if(!m->authorized||!n->generation||!n->payload||r->bytes.data!=n->payload||r->bytes.size!=n->payload_bytes||r->bits!=n->payload_bits||r->compressed!=n->compressed||r->cursor>r->bits||event->reader.bytes.data!=r->bytes.data||event->reader.bytes.size!=r->bytes.size||event->reader.bits!=r->bits||event->reader.cursor!=r->cursor||event->reader.compressed!=r->compressed||event->reader.max_bytes!=r->max_bytes)return COH_STATE;
  CohMapSceneLease v;memset(&v,0,sizeof(v));v.reader=*r;v.inspection=m->diag.scene_inspection;v.message_generation=n->generation;v.message_id=n->id;v.ordered_id=n->ordered_id;v.ordered=n->ordered;v.connection_id=m->last_connect_id;v.transport_version=m->config.udp.link.version;
  v.map_generation=m->diag.generation;v.selection_generation=m->diag.selection_generation;v.selected_slot=m->diag.selected_slot;v.selected_dbid=m->diag.selected_dbid;v.map_id=m->diag.map_id;v.map_link_id=m->diag.map_link_id;v.local_development_authorized=m->diag.local_development_authorized;
+ if(m->handoff_owner){CohDbHandoffMetadata metadata;CohStatus status=owned_metadata(m,&metadata);if(status!=COH_OK)return status;v.selected_dbid_owner_bound=1;v.db_session_generation=metadata.session_generation;v.db_receipt_generation=metadata.receipt_generation;}
  *out=v;return COH_OK;
 }
 CohStatus coh_map_client_disconnect(CohMapClient *m,uint64_t now) {
@@ -297,5 +351,6 @@ CohStatus coh_map_client_local_endpoint(const CohMapClient *m,CohNetEndpoint *ou
 void coh_map_client_diagnostics(const CohMapClient *m,CohMapDiagnostics *out) {
     if(!m||!out)return;
     *out=m->diag;out->inspector_phase=m->inspector.phase;
+    if(m->handoff_owner){CohDbHandoffMetadata metadata;if(owned_metadata(m,&metadata)!=COH_OK){out->selected_dbid_owner_bound=0;out->db_session_generation=0;out->db_receipt_generation=0;}}
     if(m->udp)coh_net_udp_diagnostics(m->udp,&out->udp);
 }

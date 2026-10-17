@@ -130,6 +130,14 @@ static CohDbHandoffOwner *owned_take(CohDbSession *s,OwnerMemory *memory,unsigne
     CHECK(m.user_id==12345&&m.selected_dbid==17&&m.selected_slot==0&&m.selection_generation==1);
     CHECK(m.session_generation==1&&m.receipt_generation==1&&m.connect_id);
     CHECK(m.selected_dbid_owner_bound==1&&m.local_development_auth==development&&!m.claimed&&!m.retired);
+    CohNetEndpoint endpoints[2],again[2];memset(endpoints,0xa5,sizeof(endpoints));
+    CHECK(coh_db_handoff_owner_map_candidates(owner,endpoints)==COH_OK);
+    CHECK(endpoints[0].address[0]==127&&!endpoints[0].address[1]&&!endpoints[0].address[2]&&endpoints[0].address[3]==1&&endpoints[0].port==7002);
+    CHECK(!endpoints[1].address[0]&&!endpoints[1].address[1]&&!endpoints[1].address[2]&&!endpoints[1].address[3]&&endpoints[1].port==7002);
+    CHECK(coh_db_handoff_owner_map_candidates(owner,again)==COH_OK&&!memcmp(endpoints,again,sizeof(endpoints)));
+    CHECK(coh_db_handoff_owner_map_candidates(owner,(CohNetEndpoint *)(void *)owner)==COH_INVALID);
+    CohDbHandoffMetadata same;CHECK(coh_db_handoff_owner_metadata(owner,&same)==COH_OK&&!memcmp(&same,&m,sizeof(m)));
+
     CohDbSessionHandoff untouched,copy;memset(&untouched,0x5a,sizeof(untouched));copy=untouched;
     CHECK(coh_db_handoff_owner_claim(owner,2,1,&untouched)==COH_STATE&&!memcmp(&copy,&untouched,sizeof(copy)));
     CHECK(coh_db_handoff_owner_claim(owner,1,2,&untouched)==COH_STATE&&!memcmp(&copy,&untouched,sizeof(copy)));
@@ -138,6 +146,9 @@ static CohDbHandoffOwner *owned_take(CohDbSession *s,OwnerMemory *memory,unsigne
 }
 static void owned_claim(CohDbHandoffOwner *owner,CohDbSessionHandoff *h) {
     CHECK(coh_db_handoff_owner_claim(owner,1,1,h)==COH_OK);
+    CohNetEndpoint endpoints[2],before[2];memset(endpoints,0xa5,sizeof(endpoints));memcpy(before,endpoints,sizeof(before));
+    CHECK(coh_db_handoff_owner_map_candidates(owner,endpoints)==COH_STATE&&!memcmp(endpoints,before,sizeof(before)));
+
     CHECK(h->map.cookie==123456&&h->selected_dbid==17&&h->selection_generation==1);
     CohDbSessionHandoff copy=*h;
     CHECK(coh_db_handoff_owner_claim(owner,1,1,h)==COH_STATE&&!memcmp(h,&copy,sizeof(copy)));
@@ -231,6 +242,9 @@ static void local_development(unsigned which) {
             peer_message(&peer,target,5,map0,map0_bits,0,request.id);CHECK(coh_db_session_service(s,107,(CohCancel){0})==COH_OK);drain_ack(&peer,5);
             OwnerMemory memory={0};CohDbHandoffOwner *owner=owned_take(s,&memory,1);
             CHECK(coh_db_handoff_owner_retain(owner)==COH_OK);coh_db_handoff_owner_retire(owner);
+            CohNetEndpoint endpoints[2],before[2];memset(endpoints,0xa5,sizeof(endpoints));memcpy(before,endpoints,sizeof(before));
+            CHECK(coh_db_handoff_owner_map_candidates(owner,endpoints)==COH_STATE&&!memcmp(endpoints,before,sizeof(before)));
+
             CohDbSessionHandoff h;memset(&h,0,sizeof(h));CHECK(coh_db_handoff_owner_claim(owner,1,1,&h)==COH_STATE&&!h.map.cookie);
             coh_db_handoff_owner_release(owner);CHECK(!memory.freed);coh_db_handoff_owner_release(owner);CHECK(memory.freed==1);
         }

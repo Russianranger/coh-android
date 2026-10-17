@@ -1,0 +1,18 @@
+{
+  "schema": "coh-independent-groups-owner-source-review-v1",
+  "source_commit": "a65c5801b3214beb8dc6eae2a1540ee063e8c740",
+  "verdict": "qualification_held_pending_preexecution_source_freeze",
+  "receipt_sha256": "ff9832a78feb5a9fbc6c55451ac96700bc1d04bdf0e6a14b4ae1c11c469f8ac6",
+  "source_maps_git_matches": 7,
+  "reported_checks_per_mode": 1809,
+  "review": [
+    "Read complete native observer, source qualifier, source fixture and scope contract. Bounded registered-link scan, reciprocal client/entity/character/table identity and final-only output publication are consistent with a source-only preparation helper under valid/stable engine pointer and exclusive caller ownership prerequisites. No installed hook, sink, server execution or world permit.",
+    "Qualifier directly source-compiles replication/groups_oracle.py before building its frozen local dependency map. Direct compile avoids project bytecode, but a postexecution hash map cannot establish the helper bytes admitted before execution. Require a frozen dependency snapshot before first project exec, execution from stored bytes and revalidation. No expensive independent native replay performed.",
+    "Owned client.entity is correctly distinguished from client.slave/viewed targets. Positive DBID and initialized Character plus backlinks do not explicitly attest ENTTYPE_PLAYER; narrow wording or add source-defined player-type guard and controls."
+  ],
+  "hold_blocks_owned_local_ci": false,
+  "native_runtime_safety_defect_demonstrated": false,
+  "hook_installed": false,
+  "actual_server_executed": false,
+  "world_authority": false
+}

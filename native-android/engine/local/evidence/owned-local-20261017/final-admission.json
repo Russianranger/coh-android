@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "source_revision": "f62e58a90578657292657ec2888287a99aa5f931",
+  "source_tree": "7352f88a1c0a2fa55152d2b03e89cf630854122f",
+  "inputs": 1389,
+  "all_recorded_source_inputs_still_match": true,
+  "source_loader_controls": 5,
+  "checked_helpers": 8,
+  "strict_driver_admission_negatives": 26,
+  "native_checks_per_mode": 1088,
+  "udp_scenarios_per_mode": 9,
+  "modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "fixture_sha256": {
+    "fixtures.h": "0e6aae45f26274265ae8d498904064dd8f86ea3db33b501cb78006bd09cc1484",
+    "groups-fixtures.h": "727a31288a648a8e7d3276aa4ce085be76a5144366713da0911645aef635910f",
+    "server-command-fixtures.h": "d3f3a2a67e0354cf0c369caa310ed4cf9b514e545881467a880950a9f03b2a35"
+  },
+  "NDK_available_locally": false,
+  "Android_executed": false,
+  "actual_server": false,
+  "actor_world": false
+}

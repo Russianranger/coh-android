@@ -455,10 +455,13 @@ attribute arrays rather than materializing a nested tree. The authentic villain
 name Class_Minion_Henchman occupies indices23 and26; original reverse lookup
 returns26. Both original rows/indices remain intact.
 
-Class header CRC0x7ff68aaf is observed, not recomputed: original ParseTableCRC
+The frozen native class raw importer leaves source_crc_verified false. Its
+original header observation is now supplemented by the separate nonshipping
+exact dynamic-context reconstruction below. Original ParseTableCRC
 includes g_pParsePowerDefines and its static wrapper, defined by s_PowerEnums,
 AddSequencerDefines, AddAttributeDefines and AddAttribNames in original stash
-iteration order. The exact dynamic define context remains a concrete prerequisite.
+iteration order. The new source-only provider reconstructs that historical
+context; native runtime/cache-generation admission remains a separate prerequisite.
 classes_Repack resolves real power categories/fallback arrays and creates final
 attribute tables; classes_Finalize builds namedStash. Neither executes in this
 raw importer. The retained cache has zero final-pointer payload sizes. No
@@ -470,3 +473,34 @@ normal-then-villain fallback. Actor composition must preserve those original
 contexts, actual owned DB-to-Map selected identity and entity generation, and
 must close power identifiers/current cache/world ownership. These copied raw
 prerequisites do not publish an actor or authorize READY/RECEIVED_CHARACTER/ACK.
+
+## Original dynamic define context and class schema CRC (2026-10-17)
+
+The nonshipping `character-dictionary/class_defines_oracle` reconstructs the
+actual historical dynamic context from all source s_PowerEnums, original E875
+state rows, full source attribute offsets/aliases, exact10592B attrib_names and
+normal origins. Whole original stash constructor/add/probe/resize/slot iteration,
+DefineCreate/FromIntList/AddIntList/Add, all three Add*Defines/Names functions and
+original ParseTableCRC/static/dynamic traversal execute. Original donor32-bit
+ub4 and size_t AUTOINT behavior are explicit; whole source F32/AUTOINT macros
+are retained with the donor field-width binding. The deep-string storage adapter
+copies keys without choosing slots. No Win32 ABI/original unsafe-hash sanitizer
+closure or actual StringTable engine startup is claimed.
+
+The result matches exact historical class header0x7ff68aaf.1317 attempted
+pairs produce1315 valid defines/2048 slots/four resizes. Independent source
+construction compares all pairs and each slot/hole/value using independently
+qualified byte-safe hash and probe/resize model:32051 comparisons across8
+profiles. Omitted/reordered phases, changed parsed-name fixtures, an early
+duplicate and wrong float default alter the CRC; a later case-insensitive
+duplicate retains first value and CRC. Actual collisions are kEvade468 refusing
+320 and kCombatPet_Group21 refusing24. All baseline trace/slot bytes are retained
+with source/helper/input hashes; source-only helper/PYC controls qualify the
+executed source graph. Original attrib_names schema also reproduces its
+0x1f5ae0b6 header and exact whole-body roundtrip.
+
+This closes an offline source-schema/constructor prerequisite, not native current
+MapServer cache or entity-generation admission. Native class raw owner flags
+remain unchanged. Actual power categories, classes_Repack/Finalize, SERVERONLY/
+shared cache branch and current-server generation are still required before
+semantic class/actor application. No actor or READY/RECEIVED_CHARACTER/ACK.

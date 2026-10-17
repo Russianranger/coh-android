@@ -20,6 +20,11 @@ CohStatus coh_db_handoff_owner_retain(CohDbHandoffOwner *);
 void coh_db_handoff_owner_release(CohDbHandoffOwner *);
 /* Immediate irreversible secret wipe shared by all retained references. */
 void coh_db_handoff_owner_retire(CohDbHandoffOwner *);
+/* Both source address slots, in original order, with the exact UDP port.
+ * Zero/duplicate addresses are preserved; caller authorizes a usable peer.
+ * Unclaimed, unretired owners only. No secret/cookie export or consumption.
+ * Output must span two endpoints, disjoint from owner; failure unchanged. */
+CohStatus coh_db_handoff_owner_map_candidates(const CohDbHandoffOwner *, CohNetEndpoint out[2]);
 CohStatus coh_db_handoff_owner_metadata(const CohDbHandoffOwner *, CohDbHandoffMetadata *);
 #ifdef __cplusplus
 }

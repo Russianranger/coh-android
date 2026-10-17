@@ -67,6 +67,7 @@ static void send_handoff(Peer *db,CohNetEndpoint target,Peer *map,int remote){
 static void happy_chain(unsigned malformed_catalog){
     Peer db=peer_open(),map=peer_open();CohLocal *s=start(&db,101,102,100);CohNetEndpoint db_target=list_characters(s,&db,100);
     send_handoff(&db,db_target,&map,0);service_ok(s,106);drain_ack(&db,5);CHECK(diag(s).phase==COH_LOCAL_MAP_CONNECTING&&diag(s).map_handoffs==1&&diag(s).server_identity_bound);
+    CHECK(diag(s).selected_dbid_owner_bound);
     CHECK(diag(s).map_protocol.selected_dbid==17&&diag(s).map_protocol.map_link_id==17&&!diag(s).map_protocol.character_identity_verified);
     /* Finish genuine DB graceful disconnect while Map connects. */
     CohNetEndpoint map_target;CohNetPacket first=read_target(&map,&map_target,1);CHECK(first.connect);
@@ -117,7 +118,7 @@ static void happy_chain(unsigned malformed_catalog){
     else CHECK(diag(s).map_protocol.scene_structures==1&&diag(s).map_protocol.scene_inspection.consumed_bits==source_groups_minimal_world_packed_bits&&!diag(s).map_protocol.scene_failure.status);
     CHECK(!diag(s).map_protocol.udp.link.owned_retained_bytes&&!diag(s).map_protocol.character_identity_verified);
     struct pollfd f={map.fd,POLLIN,0};CHECK(poll(&f,1,0)==0); /* no READY/full entities/spawn */
-    coh_local_suspend(s);CHECK(diag(s).phase==COH_LOCAL_SUSPENDED&&diag(s).opened_sockets==2&&diag(s).closed_sockets==2&&!diag(s).server_identity_bound);
+    coh_local_suspend(s);CHECK(!diag(s).selected_dbid_owner_bound);CHECK(diag(s).phase==COH_LOCAL_SUSPENDED&&diag(s).opened_sockets==2&&diag(s).closed_sockets==2&&!diag(s).server_identity_bound);
     CohDbLogin p;coh_local_login_policy(&p);CHECK(coh_local_begin(s,&p,"Fixture",101,102,116)==COH_INVALID);
     CHECK(coh_local_begin(s,&p,"Fixture",103,104,116)==COH_OK);coh_local_close(s);CHECK(diag(s).opened_sockets==3&&diag(s).closed_sockets==3);
     CHECK(coh_local_begin(s,&p,"Fixture",101,102,117)==COH_INVALID);coh_local_destroy(s);peer_close(&map);peer_close(&db);scenarios++;

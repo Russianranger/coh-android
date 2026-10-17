@@ -1,0 +1,114 @@
+{
+  "schema": "coh-controlled-source-receive-completion-qualification-v1",
+  "passed": true,
+  "input_commit": "d6ef33b3306c496e6d6a9ee2f8c9ab12ffdfbc05",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_sha256": {
+    "upstream/ouroboros/AuthServer/src/IOBuffer.h": "f4c7f77d6d1966e68078bed125d1677fede097314958f63815cdd028ae6c5458",
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb",
+    "upstream/ouroboros/AuthServer/src/IOSocket.cpp": "bdf40132e33e1280b9a7f3cce32eb33a8ebcede2838673959fc317c78097d319",
+    "upstream/ouroboros/AuthServer/src/util.cpp": "d87b7b47cfb52490a27fdf3ec8e5179c96c803058dd4b98204f8e644f631c59a",
+    "upstream/ouroboros/AuthServer/src/PacketServerEx.cpp": "1d47b18d4a841c2a50bc142a9f16a982c6da40374445e6fdfb4fbf8eca5f9bfe",
+    "upstream/ouroboros/AuthServer/src/GlobalAuth.cpp": "8c3c991057d15f690490cfd5df4717a78f579107ebbecaef4b852842b55d70f7",
+    "upstream/ouroboros/AuthServer/src/Protocol.h": "0b863fe331643ec30f5f103b18711dc91d1783a9da98cd215c22278ccac80d46",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "function_sha256": {
+    "CIOSocket::Read": "09c5f914e7571b64a54b6cbb30bd054c9875e35149d114f8e14dc347fddf4b75",
+    "CIOSocket::OnIOCallback": "7d38f8b0353bb9a37e177a58c381ece97131a77e6b53398bda188fb687bb2234",
+    "CIOSocket::OnReadCallback": "d18abf64abf4569d1f0f3bdcfbe1a053b6c90bf432f38e5aca86709210f3d4f0",
+    "CSocketServerEx::OnRead": "3201b02f2062b9b2a9c10a0d52a8ed20ed2d7e670e1770007fbf7adcc61d313f",
+    "CPacketServerEx::OnIOCallback": "81696b658cfe5587390d13e95d8c673bbb71a27c8f31b1242a4e370923aea48c",
+    "BlowFishEncryptPacket": "f1683cf3f9ec03335ce1fefd8e9be782e75c156d5dedaf03d52a99dc2b4ceac4",
+    "BlowFishDecryptPacket": "71f6d3da6df67604fc1facb72fa270bfdd625e93602fd5b362ce91e8ee28194b"
+  },
+  "fixture_sha256": "c69ecd70daea3124ec11d2b742921f68a2e407478106c36badc7c81d7fc4f5b3",
+  "qualifier_sha256": "a8e8f5935c821a0aed8747de203822fdf1d6b65929ab4158d758ee8d701e9bf9",
+  "source_pins_sha256": "bb6e7f6a6ee6aaf80922d099805a6d97fe80813a0e67da26c92cb4cf43ef9130",
+  "generated_oracle_sha256": "6c3dd5b66d7c252f957791dad43584c8955da72cab7e25a40acd597584788239",
+  "executions": {
+    "release": {
+      "result": {
+        "passed": true,
+        "checks": 811226,
+        "controlled_completion_schedules": 16776,
+        "incomplete_prefix_cases": 16728,
+        "malformed_cases": 28,
+        "completion_callbacks": 129420,
+        "maximum_ciphertext_bytes": 8192,
+        "real_cipher_checksum": true,
+        "aligned_crypto_adapter": true,
+        "original_packet_callback": true,
+        "live_receiver_controlled": false,
+        "general_tcp_segmentation_accepted": false
+      },
+      "binary_sha256": "c674bf04ec25eee92c0621199c444d6cb3341d985bc267c94dd17fa2f2221822",
+      "cipher_object_sha256": "9b84b33ab09f5f61098e495deec5514abd85115a948a296d7de609ab65b5c4a6"
+    },
+    "asan": {
+      "result": {
+        "passed": true,
+        "checks": 811226,
+        "controlled_completion_schedules": 16776,
+        "incomplete_prefix_cases": 16728,
+        "malformed_cases": 28,
+        "completion_callbacks": 129420,
+        "maximum_ciphertext_bytes": 8192,
+        "real_cipher_checksum": true,
+        "aligned_crypto_adapter": true,
+        "original_packet_callback": true,
+        "live_receiver_controlled": false,
+        "general_tcp_segmentation_accepted": false
+      },
+      "binary_sha256": "7b665e8612dbef8190688868ef8f0682304f3737f023bbcab480ec385e7476bf",
+      "cipher_object_sha256": "5110aa1d3dc14200eea134abe0b24a421722ab7997e5d595b308c2ce8875f1cd"
+    },
+    "ubsan": {
+      "result": {
+        "passed": true,
+        "checks": 811226,
+        "controlled_completion_schedules": 16776,
+        "incomplete_prefix_cases": 16728,
+        "malformed_cases": 28,
+        "completion_callbacks": 129420,
+        "maximum_ciphertext_bytes": 8192,
+        "real_cipher_checksum": true,
+        "aligned_crypto_adapter": true,
+        "original_packet_callback": true,
+        "live_receiver_controlled": false,
+        "general_tcp_segmentation_accepted": false
+      },
+      "binary_sha256": "25031947c036428310d192088bdc9a1f650f9366407cf5f8acee7773d21bdc1a",
+      "cipher_object_sha256": "86026659228f7288e80537c33e807eb07865548e1dfe1396c48c3b30c811ab13"
+    }
+  },
+  "original_offset_regression_reproduced": true,
+  "source_receiver_completion_sizes_controlled": true,
+  "crypto_alignment_adapter": "Copy bounded ciphertext to aligned scratch before exact original packet decrypt, then copy accepted plaintext back.",
+  "platform_boundary": "Fixture WSARecv/IOCP/pool/socket refs; original Read/callback/OnRead/packet callback functions execute. Native qualified Blowfish kernel replaces Windows global Blowfish primitive.",
+  "source_buffer_bytes": 8192,
+  "win32_dword_and_wsabuf_length_bytes": 4,
+  "scope": "Synthetic global-frame payloads, immediate/deferred capture handlers. No RSA/password/account handler, real socket, Windows IOCP or server execution.",
+  "existing_auth_runtime_baseline": {
+    "run_id": 38996587760,
+    "receipt_sha256": "1b1bea257b8e29f73543cffc4c2148071f738036ee2cd5adc122417160106c94",
+    "archive_sha256": "bd04a2baaee03e3d736e3419686849d4e3551770a020c0e321fe49e4d1151d3e",
+    "cases": 8,
+    "authserver_binary_sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003",
+    "normal_probe_binary_sha256": "7cb5672c32c1d304efea9590366250437687e3b0c8c1fafae5e4ec7cf536f29c",
+    "capped_probe_binary_sha256": "454814a2659944cf7958d10d89f2bdf49a7e5a778ad75d941077ef8d17d672ec",
+    "source_binder_sha256": "8226b673b4143a1525296abc5d879f8a948f0cd57a5c6ccc5f5297452e51af40",
+    "receipt_verifier_sha256": "67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8",
+    "receiver_segmentation_controlled": false,
+    "general_tcp_segmentation_accepted": false,
+    "existing_binary_or_service_reexecuted": false
+  },
+  "existing_authserver_or_probe_rebuilt": false,
+  "windows_service_executed": false,
+  "live_receiver_segmentation_controlled": false,
+  "general_tcp_segmentation_accepted": false,
+  "encrypted_account_login_verified_by_this_oracle": false,
+  "leak_sanitizer_enabled": false
+}

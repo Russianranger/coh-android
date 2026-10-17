@@ -73,6 +73,8 @@ typedef struct {
     uint32_t selected_slot, selection_generation, selected_dbid;
     uint32_t map_id, map_link_id, generation;
     unsigned local_development_authorized;
+    unsigned selected_dbid_owner_bound; /* actual retained source DB handoff only */
+    uint32_t db_session_generation,db_receipt_generation;
     unsigned character_identity_verified; /* always0 until complete own-entity decode */
     uint64_t accepted_messages, rejected_messages, malformed, unsupported;
     uint64_t scene_prefixes, entity_prefixes, disconnects, suspends, timeouts;
@@ -136,6 +138,7 @@ typedef struct {
  uint64_t message_generation;
  uint32_t message_id,ordered_id,connection_id,transport_version;
  uint32_t map_generation,selection_generation,selected_slot,selected_dbid,map_id,map_link_id;
+ uint32_t db_session_generation,db_receipt_generation;
  unsigned ordered,local_development_authorized;
  unsigned selected_dbid_owner_bound,source_generation_admitted,world_authority;
 } CohMapSceneLease;

@@ -1,0 +1,56 @@
+{
+  "schema": "coh-source-owner-pins-v1",
+  "original_sha256_lf": {
+    "MapServer/src/player/clientEntityLink.c": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b",
+    "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "MapServer/src/svr/svr_base.h": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64",
+    "MapServer/src/svr/svr_base.c": "7d7379d255c8bbd6e45663499d70dad2672455704d25716d0adb6e3694d4de40",
+    "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "MapServer/src/entity/entIncludeServer.h": "bebba4c2ab7102debd043817a9d30abf4699f3af9d0d8dca612700df1fb52029",
+    "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/entity/entity.c": "07b6666d673757cd8e9f4d377ec58fb2988fc09db8abc2e212e29788b84fbd8f",
+    "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+    "libs/UtilitiesLib/include/utilitieslib/components/ArrayOld.h": "52f889750b03c07f52896ca9a569ed4acfeb93f0b5bdbb09072de9d2a343da30"
+  },
+  "original_functions": {
+    "clientSetEntity": {
+      "source": "MapServer/src/player/clientEntityLink.c",
+      "sha256_lf": "3481158a62f35b7703a5761a03ddb9ed8c2524dbdf5391da1b42b2d8caa44bed"
+    },
+    "svrHandleClientMsg": {
+      "source": "MapServer/src/svr/svr_tick.c",
+      "sha256_lf": "86594bc3221a06b8954d25eb5c42d35e88a5dbd6dabb4e2a030ae471b39ab8fb"
+    },
+    "worldSendUpdate": {
+      "source": "MapServer/src/group/groupnetsend.c",
+      "sha256_lf": "7659b6de769a01956efd4b138ff4341c100f209c656c9d121b4649f2cb2b21c1"
+    },
+    "character_IsInitialized": {
+      "source": "Common/entity/character_base.h",
+      "sha256_lf": "12d2c5aacff9aa5d7fb5c479225c3f46f128fb3ffb05e2c6b6b3628aeb84aebf"
+    },
+    "entInUse": {
+      "source": "Common/entity/entity.c",
+      "sha256_lf": "79b222d48664201dba35ea8c3917b41be0e76762b6834a70cd0475a1e1299a26"
+    },
+    "applyNetworkVersionToLink": {
+      "source": "libs/UtilitiesLib/src/network/net_version.c",
+      "sha256_lf": "772cdd06fcda026abf7400f0dc25f44f41681d355a3787a2defd372eeaa2fdaa"
+    }
+  },
+  "original_types_sha256_lf": {
+    "Array": "e25606c74a667a751d37eb5c47f5ff5c7972495494c38a6c1a19ce330ad6557a",
+    "ClientReadyState": "d21eae53daaa4b91abee537fe24cce3e58935373ac784081c42b3cacece9185b",
+    "ClientLink": "21745068bbe75040e1d4f0d8e136117c44ace6f253a70f6faf5bd6c00b023af8",
+    "NetLinkType": "38cbc1b6bf607e89e99863cfd5c66eab68b3f8f878908e675153e8e5e41e9f30",
+    "NetLinkOperationType": "0d94b3202bb97cb9ab56a2aad6fa33cbfc45de35f5e9b9388ecbc363af30f890",
+    "DbFlag": "0ec7d2d737e197b40db969cd1461df725babee68c3c09b559a2a652c2b4d93fb"
+  },
+  "reqscene_membership_sha256_lf": "82813f45ef2b87fa0f530fe8387ebf54db4ca3e6162df4167890097e6464c74c",
+  "reqscene_character_guard_sha256_lf": "5920801a6a7808619e6aceac55584a25d04c1e4e4b925d4679838874090908df",
+  "source_max_entities_macro": "#define MAX_ENTITIES_PRIVATE 10240 // must be multiple of 32 (some wacky networking bitfields)"
+}

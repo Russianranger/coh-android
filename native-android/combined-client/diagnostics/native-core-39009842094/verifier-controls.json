@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "source_mutation_refusals": [
+    "native-android/engine/session/qualify_live.py",
+    "native-android/engine/dbclient/coh_db_session.c",
+    "native-android/engine/mapclient/coh_mapclient.c",
+    "native-android/engine/login/coh_login.c"
+  ],
+  "verifier_sha256": "fc9f375fb6a66b2a0ae2c4e3d2f67487ab8e7d14623cb10617744745c5b2b4d1",
+  "native_binaries_executed": false
+}

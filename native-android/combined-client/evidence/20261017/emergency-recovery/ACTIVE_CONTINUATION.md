@@ -1,6 +1,6 @@
 # Authoritative world continuation — 2026-10-17
 
-Latest detailed checkpoint: [MILESTONE9.md](MILESTONE9.md). Published floor365bc28e0433112e2292e44f6338da9fbc5c270e; the guarded source publication and actual retained35/manual compile admissions belong to that checkpoint. Earlier sections below retain their historical source boundaries.
+Latest detailed checkpoint: [MILESTONE10.md](MILESTONE10.md). Published floor187c9358bdf198f3d00f22576e140572210b4461; actual187 native/Android admissions and the new owned-local qualification boundary are recorded there. Earlier sections below retain their historical source scopes.
 
 Target branch remains native-android. Remote guarded component publication:
 2cdbaf42fcd51e32a420ece3e609111a4e2725aa (tree565a9193660bb4a482a262df3c617d820d307346).

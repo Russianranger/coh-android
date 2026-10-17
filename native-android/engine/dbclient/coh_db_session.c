@@ -251,6 +251,16 @@ CohStatus coh_db_handoff_owner_metadata(const CohDbHandoffOwner *owner,CohDbHand
     if(!owner||!out||owner_overlap(owner,sizeof(*owner),out,sizeof(*out)))return COH_INVALID;
     *out=owner->metadata;return COH_OK;
 }
+CohStatus coh_db_handoff_owner_map_candidates(const CohDbHandoffOwner *owner,CohNetEndpoint out[2]) {
+    if(!owner||!out||owner_overlap(owner,sizeof(*owner),out,2*sizeof(*out)))return COH_INVALID;
+    if(owner->metadata.retired||owner->metadata.claimed)return COH_STATE;
+    CohNetEndpoint endpoints[2];memset(endpoints,0,sizeof(endpoints));
+    for(unsigned i=0;i<2;i++){
+        for(unsigned j=0;j<4;j++)endpoints[i].address[j]=(uint8_t)(owner->secret.map.address[i]>>(8*j));
+        endpoints[i].port=owner->secret.map.udp_port;
+    }
+    memcpy(out,endpoints,sizeof(endpoints));return COH_OK;
+}
 CohStatus coh_db_handoff_owner_claim(CohDbHandoffOwner *owner,uint32_t generation,
     uint32_t selection,CohDbSessionHandoff *out) {
     if(!owner||!out||owner_overlap(owner,sizeof(*owner),out,sizeof(*out)))return COH_INVALID;
