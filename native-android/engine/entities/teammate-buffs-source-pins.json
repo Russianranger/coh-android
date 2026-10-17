@@ -1,0 +1,12 @@
+{
+  "sha256_lf": {
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+    "Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+    "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12"
+  }
+}

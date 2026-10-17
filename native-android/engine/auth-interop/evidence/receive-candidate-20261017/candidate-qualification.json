@@ -1,0 +1,108 @@
+{
+  "schema": "coh-authserver-receive-candidate-qualification-v1",
+  "passed": true,
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "original_source_sha256": {
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb",
+    "upstream/ouroboros/AuthServer/src/IOSocket.cpp": "bdf40132e33e1280b9a7f3cce32eb33a8ebcede2838673959fc317c78097d319"
+  },
+  "candidate_source_sha256": "16d4a59c4a2eaae20e6901ef34ffe4ee0465e4dbf170ade877ef243c7944631f",
+  "candidate_manifest": {
+    "schema": "coh-authserver-receive-offset-candidate-v1",
+    "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+    "original_source_sha256": {
+      "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb",
+      "upstream/ouroboros/AuthServer/src/IOSocket.cpp": "bdf40132e33e1280b9a7f3cce32eb33a8ebcede2838673959fc317c78097d319"
+    },
+    "candidate_source_sha256": "16d4a59c4a2eaae20e6901ef34ffe4ee0465e4dbf170ade877ef243c7944631f",
+    "original_onread_sha256_utf8_lf": "683333c4a6130db7ff34ec318b5c0a57f436936bbf14bfc18743c8ba7e9799d1",
+    "candidate_onread_sha256_utf8_lf": "3201b02f2062b9b2a9c10a0d52a8ed20ed2d7e670e1770007fbf7adcc61d313f",
+    "unchanged_read_sha256_utf8_lf": "09c5f914e7571b64a54b6cbb30bd054c9875e35149d114f8e14dc347fddf4b75",
+    "patch_sha256_utf8_lf": "6d9f7579bdbdac440eea2fa7fac41e6b6303f1f8f400ce541e602ec23fe96ad3",
+    "declared_changes": [
+      "Pass the current body cursor pi to the original DecPacket function."
+    ],
+    "buffer_compaction_unchanged": true,
+    "length_validation_unchanged": true,
+    "encryption_unchanged": true,
+    "dispatch_unchanged": true,
+    "account_policy_unchanged": true,
+    "upstream_worktree_modified": false,
+    "nonshipping_only": true,
+    "patched_authserver_windows_built": false,
+    "patched_authserver_executed": false,
+    "encrypted_account_login_verified": false,
+    "general_tcp_segmentation_accepted": false,
+    "authenticated_db_map_handoff_verified": false
+  },
+  "executions": {
+    "release": {
+      "binary_sha256": "b3420d289719e976f8daa4f10f37def046e1a2d8e7bd69828353c097be5ca698",
+      "result": {
+        "passed": true,
+        "checks": 5139,
+        "all_body_splits": 169,
+        "send_caps": 170,
+        "random_schedules": 100,
+        "coalesced_frames": 3,
+        "cryptography_executed": false,
+        "live_service_executed": false
+      }
+    },
+    "asan_ubsan": {
+      "binary_sha256": "21672c03c234e12c8d4bf2105473c2c805f70987ddb9601a2b24f9b01928a415",
+      "result": {
+        "passed": true,
+        "checks": 5139,
+        "all_body_splits": 169,
+        "send_caps": 170,
+        "random_schedules": 100,
+        "coalesced_frames": 3,
+        "cryptography_executed": false,
+        "live_service_executed": false
+      }
+    }
+  },
+  "boundary_executions": {
+    "release": {
+      "binary_sha256": "e339fdb25ffd7c9a3d1c2528e7cba3554b6a4bdc6850c527e3a1cb0e1e3b503f",
+      "result": {
+        "passed": true,
+        "checks": 206,
+        "boundary_schedules": 134,
+        "minimum_body": 1,
+        "maximum_body": 4096,
+        "stateful_decoder_observer": true,
+        "cryptography_executed": false,
+        "live_service_executed": false
+      }
+    },
+    "asan_ubsan": {
+      "binary_sha256": "ebd3110b8a11bd7f38f1260c9d3641ea00cde43c6b6216529dee8be13e44bc4c",
+      "result": {
+        "passed": true,
+        "checks": 206,
+        "boundary_schedules": 134,
+        "minimum_body": 1,
+        "maximum_body": 4096,
+        "stateful_decoder_observer": true,
+        "cryptography_executed": false,
+        "live_service_executed": false
+      }
+    }
+  },
+  "boundary_fixture_sha256": "06f7e6fdfed8b6045c6140a5d5cc21d588529c896321032a58f0a3fa6da549e7",
+  "qualifier_sha256": "ffae4b5a824e99570e39f05f89925c8e849ccb5e552c737c04a8ba51e0f2dc76",
+  "fixture_sha256": "89c12e47dee55673fd8cca13b756d4563634edefa311b7c461a053c71f0cdc43",
+  "generated_oracle_sha256": "1afbe2fc51f1e1130f6e08a6fa8ba3a078c11fd4140e83ada3122307d917be92",
+  "source_mutation_rejections": 4,
+  "original_defect_regression_reproduced": true,
+  "scope": "Exact candidate OnRead and unchanged original Read, opaque byte-boundary decoder and platform fixtures. Includes arbitrary partial and coalesced delivery, incomplete input, invalid lengths, corrupt body and invalid opcode refusal. No account/password or cryptographic execution.",
+  "original_service_changed": false,
+  "patched_authserver_windows_built": false,
+  "encrypted_account_login_verified": false,
+  "wrong_password_service_verified": false,
+  "missing_account_service_verified": false,
+  "general_tcp_segmentation_accepted": false,
+  "leak_sanitizer_enabled": false
+}

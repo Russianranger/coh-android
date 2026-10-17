@@ -1,0 +1,53 @@
+{
+  "schema": "coh-retained-runtime-snapshot-artifact-v1",
+  "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "workflow_run": 38977202310,
+  "runtime_artifact": {
+    "artifact_id": 12079509924,
+    "run_id": 38977202310,
+    "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+    "bytes": 2024961,
+    "sha256": "8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d",
+    "all_zip_crc_verified": true,
+    "members": 34,
+    "expanded_bytes": 12324476
+  },
+  "win32_compile_artifact": {
+    "artifact_id": 12079533226,
+    "run_id": 38977202310,
+    "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+    "bytes": 3298274,
+    "sha256": "2d6444b5f7ac3a1b06cc841fe15710d298c9a913a09f0de658f8dc9b945743df",
+    "all_zip_crc_verified": true,
+    "members": 12,
+    "expanded_bytes": 7774302
+  },
+  "binding": {
+    "asset_generation": 20261016,
+    "catalog": {
+      "bytes": 12179670,
+      "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+    },
+    "cleanup_verified": true,
+    "live_groups_transaction": false,
+    "run_identity": {
+      "file": "run-identity.json",
+      "sha256": "2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588"
+    },
+    "schema": "coh-runtime-snapshot-binding-v1",
+    "snapshot": {
+      "bytes": 6585,
+      "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+    },
+    "source_identity": {
+      "file": "source-identity.json",
+      "sha256": "a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0"
+    },
+    "source_snapshot_only": true
+  },
+  "developer_corpus_only": true,
+  "apk_asset": false,
+  "source_snapshot_only": true,
+  "live_groups_transaction": false,
+  "physical_thor_generation_verified": false
+}

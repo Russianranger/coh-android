@@ -1,0 +1,240 @@
+{
+  "schema": "coh-worker-bundle-prerequisite-chain-v1",
+  "public_base": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "public_ancestor_commits": 30,
+  "ordered_resolvable_bundles": [
+    {
+      "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-next-history.bundle",
+      "bytes": 297118,
+      "sha256": "9ec460f80f9d51aae85bff317877d5103d472d3eb15ce5920745d265d3a100c9",
+      "prerequisites": [
+        "66146bbee161304ba4e4e14cbb53cba6958fb03b"
+      ],
+      "heads": [
+        "07d378a3108735f258cdd3b45953dd9498f587ce",
+        "5f992900466555f2e562858a6e4395058327c12a",
+        "e50407d48f8561cd28aec100bf6daf01e693099c",
+        "2db7ebe42eb02083a5168656563c7f19782ab0f1",
+        "d20690056b9dd9bf4724090225cf81a7c05363c5",
+        "f4b415871f22cb73030a3026766d21a42d847c89",
+        "baf7fb1af8d9d60a3669c2db553be3cf02ac9e98"
+      ],
+      "commits_in_bundle_range": 39
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/six-source-history.bundle",
+      "bytes": 658496,
+      "sha256": "32da5c492d67c84dd9dc45f002f9244abdebdbf47647224ba14eab791f2a727b",
+      "prerequisites": [
+        "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+      ],
+      "heads": [
+        "edb7c1413b2eff4c8ac97d39775d7956de723305",
+        "232d0f2371f6be978fae264c6652fb45cb4b3a99",
+        "aa842acb1c5ebb1bf1e98c94b11248f17cf86218",
+        "06c256f771d0b2b794e53b444839f99e455ae397",
+        "78c9c2ffa0f9c11c38d2084c9777fd88fe4054ee",
+        "bc3cb4ca2954ff8fc02a843d9ec9b173b5ef6643"
+      ],
+      "commits_in_bundle_range": 44
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-control-history.bundle",
+      "bytes": 168450,
+      "sha256": "b14e7e9beef2a621c6f61a55c629e19390c2f9e99a7ed2396dc9f77a2c8c556b",
+      "prerequisites": [
+        "fe3cd7b52cde3ab029bec55a698f0d1348b35ed5",
+        "afba82d12cb226c71865d6abb3c13940f41b29f5",
+        "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+        "3124352f20f06d979f51dc94d20277a19848f26f",
+        "d841d3bddb08d3c15cb6dc7fe0cef4be593e283d",
+        "81f0533dae6d9e364f6f60dcb4bced856d8290b5"
+      ],
+      "heads": [
+        "839b0c42f65505a82c36f9eb3fc49b0415932cb0"
+      ],
+      "commits_in_bundle_range": 9
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-deployment-history.bundle",
+      "bytes": 89145,
+      "sha256": "092160212f481cb2f98314fc8d67c67d68c173eb53a5f8cde260a145aeaa959f",
+      "prerequisites": [
+        "4c1cd8153b32fafad6bc52a1e37188e5a4257316",
+        "b01db2e82772450379f28632a3a6468d2d7beeb4",
+        "fd86ff196f172bf62cd24c7e0f807df39c33e0a5",
+        "b24874e6a7a21fec86911d8218bffdb5584300aa",
+        "c068e3321c2bb52c6b65686caceb0f5e0d02ae96"
+      ],
+      "heads": [
+        "184752f9573693f2d88c1043218f9c7497d12c5f"
+      ],
+      "commits_in_bundle_range": 6
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-expanded-contract-history.bundle",
+      "bytes": 210494,
+      "sha256": "8998247915ff8d8a66a41326b637196a5b84875df502537469a7537a5adcb029",
+      "prerequisites": [
+        "ccc77e1e86f7be723ca5c9e391b76310df63234a",
+        "01fc46d78611ec9b55d086a2ac55166e13949c82",
+        "e630b9a60a0e30bb7bc2588adf0c05c7f7401df0",
+        "c0ac22609a8d0af440375d6062fd59c1a939ddae",
+        "8e19b9e1316b75af00ff88a993f63f464fe0df99",
+        "c0d71e0e999e8d4c943d84ba58d51fee164f9bca"
+      ],
+      "heads": [
+        "70942e5428963216287e1960c10c4b440b8215bb"
+      ],
+      "commits_in_bundle_range": 8
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-followup-history.bundle",
+      "bytes": 215346,
+      "sha256": "0589fe44266c245896418f78a163bfa1f703fb6fd09aa22847d488656c97f096",
+      "prerequisites": [
+        "c147e36ace2c40cd4d632a1841488f661386ea31",
+        "732f118cf2299c64ac509d6402e5b5448b754867",
+        "2d94aad69ed303d3587c509321eb7e79cb44f0b7",
+        "121400b57a7402b5bdb68d5a9c7d5e257e80bcf1",
+        "8c742201412316acd0fa0e325596fde676ca48bc",
+        "1286ec2cff8c1a420e92ba74f2ef0d56ced4e023",
+        "c305d55bd72e990f97f1651c4ca2606583ad87ae"
+      ],
+      "heads": [
+        "d748974ac740811cc019441e0f02269a60b6ca13"
+      ],
+      "commits_in_bundle_range": 15
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-history.bundle",
+      "bytes": 179282,
+      "sha256": "ebe728f3018caa60a0f1a32250f18dd574414946a0d9f22ea47ee99d2125ed32",
+      "prerequisites": [
+        "cda93d96f8696e6a0f2ec6940a0c96e5b852f281"
+      ],
+      "heads": [
+        "becbff99e52dc197c787bfeaf2583da081d3d2e1"
+      ],
+      "commits_in_bundle_range": 13
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-stream-history.bundle",
+      "bytes": 154757,
+      "sha256": "dffae8a14c7fb87abde91695943f7c7f82d99b56f98b3cd39dca96927a0324cc",
+      "prerequisites": [
+        "edb7c1413b2eff4c8ac97d39775d7956de723305",
+        "78c9c2ffa0f9c11c38d2084c9777fd88fe4054ee"
+      ],
+      "heads": [
+        "f0d3eb93e119a26bbd0398d352378f73eb4e5a51",
+        "b8c10ab5db31c38cfd39c03f6ba040c10137c273"
+      ],
+      "commits_in_bundle_range": 4
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-recovery-history.bundle",
+      "bytes": 35575,
+      "sha256": "808e166571c0c0c019c5658fcb556ed2c19f41de9617f38caefd3ead1a8ba7a5",
+      "prerequisites": [
+        "d20690056b9dd9bf4724090225cf81a7c05363c5",
+        "2db7ebe42eb02083a5168656563c7f19782ab0f1"
+      ],
+      "heads": [
+        "263007090af37fac4d578e26618616cb3240da5c",
+        "e76df614ad1693a6afa575f99d12900e0bde1af4"
+      ],
+      "commits_in_bundle_range": 3
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-followup-history.bundle",
+      "bytes": 10625,
+      "sha256": "460999675a10aee4ae987e13775009dc6e54f780a23ce12ea3c02ac24c6ab99a",
+      "prerequisites": [
+        "5f992900466555f2e562858a6e4395058327c12a",
+        "07d378a3108735f258cdd3b45953dd9498f587ce"
+      ],
+      "heads": [
+        "eb360d71fcb3b3d0fd22efef7619b6d60f21d770",
+        "0dbb0ffc03266e298eade859985040390ea32fb0"
+      ],
+      "commits_in_bundle_range": 2
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-baseline-history.bundle",
+      "bytes": 38555,
+      "sha256": "a9f24355c7f098b96f573bdf2cb58b670e9c7d628a71b6539b9ffbcf88436f21",
+      "prerequisites": [
+        "e50407d48f8561cd28aec100bf6daf01e693099c",
+        "263007090af37fac4d578e26618616cb3240da5c",
+        "e76df614ad1693a6afa575f99d12900e0bde1af4"
+      ],
+      "heads": [
+        "d862000843e30cf9fc8c9deb78ca3a06a72a57aa",
+        "7d569a51452a0de07bb3a14fac417386544738b6",
+        "a78b8eebb6a36aa37b2aff907df07fc3b47ef7a1"
+      ],
+      "commits_in_bundle_range": 4
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-history.bundle",
+      "bytes": 96401,
+      "sha256": "63a10ad44931edf1350fe0d9169977d6ab153773e12644487bf913bb618b2c1b",
+      "prerequisites": [
+        "cacc6273834142cf8c8f902018eb13cb8f9b5271",
+        "a78b8eebb6a36aa37b2aff907df07fc3b47ef7a1",
+        "f4b415871f22cb73030a3026766d21a42d847c89",
+        "d862000843e30cf9fc8c9deb78ca3a06a72a57aa"
+      ],
+      "heads": [
+        "4de229ddc0ab9dade1c700b71d00056f7109d18d",
+        "341ebdd2258a5f13f20e3732d076b39ec35e44a2",
+        "4f12f9d6d17af19ba148323fbbcde9acf8d6dd3c",
+        "2856112e7f9e227919174f707a32825ea73cc62e",
+        "a71351494bc987a5c12d51767ba6b081aa787588"
+      ],
+      "commits_in_bundle_range": 10
+    }
+  ],
+  "historical_blocked_bundles": [
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-memory-history.bundle",
+      "bytes": 8186,
+      "sha256": "ae195500099fcce4d07beb266bd6fb1c5486ec4e4e1f0a731381d1ec209d02c4",
+      "prerequisites": [
+        "f2829915b8ff8a18bb50d95451c045f7f1927b69",
+        "98bc9b09cd04adbf6020dbf2d3ca88c5b9303222"
+      ],
+      "heads": [
+        "bc8cd37f5eecade17687cd31a30a9b4c7d23f536"
+      ],
+      "missing_prerequisites": [
+        "98bc9b09cd04adbf6020dbf2d3ca88c5b9303222"
+      ],
+      "original_bundle_preserved": true
+    },
+    {
+      "file": "native-android/combined-client/evidence/20261016/six-worker-continuation/worker-taskforce-history.bundle",
+      "bytes": 60676,
+      "sha256": "bb1ca5a2ff0beb6c4bcfe7922ac455b0dfaa294c695b4870131e658ee89b4b88",
+      "prerequisites": [
+        "f9e8df44c8946f95e0b87d377a60c64006437478",
+        "b764d79e921851982263426e3d46df23680f72b1",
+        "2bde7b1b1691045a4867b794af6ac8d53e58ce7a"
+      ],
+      "heads": [
+        "8773353454daa43f0780d0d3c4e1dcb02f364e3d"
+      ],
+      "missing_prerequisites": [
+        "b764d79e921851982263426e3d46df23680f72b1"
+      ],
+      "original_bundle_preserved": true
+    }
+  ],
+  "all_current_session_bundles_resolvable": true,
+  "scope": "Git bundle verification and commit ancestry closure. Independent E review confirms two historical coordinator ancestry fragments remain incomplete; all original worker source tips and all current-session bundles are complete.",
+  "independent_review": "native-android/engine/world-render-adapter/qualification/shared-geometry-20261016/original-worker-bundle-ancestry-review.json",
+  "missing_delta_bases": 11,
+  "unresolved_delta_records": 18,
+  "original_worker_source_histories_complete": true
+}

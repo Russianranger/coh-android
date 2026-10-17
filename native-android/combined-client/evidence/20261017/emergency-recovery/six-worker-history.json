@@ -1,0 +1,14 @@
+{
+  "tips": {
+    "a": "aefeef69911138d29e7f762cc312d492840aa07f",
+    "b": "1d98a3c7035b7b5eacf059fe10682c2475a1f98c",
+    "c": "ecf8c84a120b5a80a5909ed900777188c43c97ca",
+    "d": "7ac2ddd3e6de65c735bda1645314ed0c340a1f0d",
+    "e": "7c8e067c1a32a36476f96f4e760b631d64f124e6",
+    "f": "d5696b8da2db7bd41868a1d2bacd1b90608fdece"
+  },
+  "prerequisite": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "bytes": 229822,
+  "sha256": "911f6f19312b9370f69e5f3e55da5dbe591ddf9293dfa39d140773476363e781",
+  "verification": "The bundle contains these 6 refs:\naefeef69911138d29e7f762cc312d492840aa07f refs/recovery-20261017/a\n1d98a3c7035b7b5eacf059fe10682c2475a1f98c refs/recovery-20261017/b\necf8c84a120b5a80a5909ed900777188c43c97ca refs/recovery-20261017/c\n7ac2ddd3e6de65c735bda1645314ed0c340a1f0d refs/recovery-20261017/d\n7c8e067c1a32a36476f96f4e760b631d64f124e6 refs/recovery-20261017/e\nd5696b8da2db7bd41868a1d2bacd1b90608fdece refs/recovery-20261017/f\nThe bundle requires this ref:\n3e8b5c9f5b794b58a66c6d8c62a593b926a10873 \nThe bundle uses this hash algorithm: sha1\nnative-android/combined-client/evidence/20261017/emergency-recovery/six-worker-history.bundle is okay\n"
+}

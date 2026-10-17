@@ -1,0 +1,1695 @@
+{
+  "schema": "coh-captured-runtime-snapshot-inspection-v1",
+  "passed": true,
+  "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "run_id": 38977202310,
+  "artifact_id": 12079509924,
+  "artifact_sha256": "8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d",
+  "artifact_bytes": 2024961,
+  "zip_members_verified": 34,
+  "expanded_bytes": 12324476,
+  "source_hash_counts": {
+    "native_source_sha256": 14,
+    "producer_source_sha256": 4,
+    "original_helper_sha256": 5,
+    "orchestration_source_sha256": 33
+  },
+  "original_full_file_lf_hashes_verified": 17,
+  "binding": {
+    "asset_generation": 20261016,
+    "catalog": {
+      "bytes": 12179670,
+      "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+    },
+    "cleanup_verified": true,
+    "live_groups_transaction": false,
+    "run_identity": {
+      "file": "run-identity.json",
+      "sha256": "2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588"
+    },
+    "schema": "coh-runtime-snapshot-binding-v1",
+    "snapshot": {
+      "bytes": 6585,
+      "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+    },
+    "source_identity": {
+      "file": "source-identity.json",
+      "sha256": "a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0"
+    },
+    "source_snapshot_only": true
+  },
+  "hosted_diagnostic_sha256": "cfaa86f3977bda91f9018b69d32fb2c83202b34206b75dd194d028ee7a42cb1e",
+  "qualified_native_result": {
+    "passed": true,
+    "checks": 17,
+    "files": 508,
+    "slots": 40225,
+    "definitions": 40225,
+    "children": 130314,
+    "root_slots": 33,
+    "active_roots": 33,
+    "external_count": 7,
+    "reachable_definitions": 15352,
+    "reachable_external": 1,
+    "reachable_edges": 57710,
+    "maximum_depth": 69,
+    "source_defs_crc": 3173822562,
+    "source_refs_crc": 3649375123,
+    "definitions_crc_verified": 1,
+    "references_crc_verified": 1,
+    "root_matrices_verified": 33,
+    "owned_bytes": 2457700,
+    "peak_record_bytes": 1654842,
+    "stack_reserve": 196608,
+    "harness_retained_bytes": 262144,
+    "aggregate_peak_bytes": 16791741,
+    "external": [
+      {
+        "name": "_cot_warpgate_base",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_cot_warpgate_glow",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_8_01c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 1,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_8_02c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_8_03c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_16_01c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_16_02c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      }
+    ],
+    "measured_native_peak_bytes": 16298797,
+    "graph_published": false,
+    "groups_received": false,
+    "assets_admitted": false,
+    "actor_admitted": false,
+    "world_authority": false
+  },
+  "roots": [
+    {
+      "root_slot": 0,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 108,
+      "name": "grp_GC_Shutdown_Atmo",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -71.0,
+          15.931458473205566,
+          -474.5
+        ]
+      ],
+      "source_matrix_sha256": "ac421d0fcff1205aeef730c850e021f24c1225d1fdd511ef5d3f91742730c3a6",
+      "wire_bytes": 49,
+      "source_wire_sha256": "9072171660c4df9beddc591aec56c6cc153f884a933a8667d87e4fada267faa1",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 1,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 157,
+      "name": "grp_audiogroup",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          186.380859375,
+          67.989501953125,
+          -938.831298828125
+        ]
+      ],
+      "source_matrix_sha256": "4ab80c78e14e99f8403b1f57e5a2618b307e5ea49d16b03c1fb8e7147055f03c",
+      "wire_bytes": 49,
+      "source_wire_sha256": "62a1537d007efb5adf2e33501bbce4366ed67717be4250bb59b01e7f4e3e9131",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 2,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 172,
+      "name": "grp_Badge_tourism",
+      "matrix_columns": [
+        [
+          0.9969173073768616,
+          0.0,
+          -0.07845909893512726
+        ],
+        [
+          -0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.07845909893512726,
+          0.0,
+          0.9969173073768616
+        ],
+        [
+          721.3763427734375,
+          164.83200073242188,
+          -699.31494140625
+        ]
+      ],
+      "source_matrix_sha256": "2af18d4cce25ee693b4714ef6f419ad68e4d8557528e735d38bef2735a815f99",
+      "wire_bytes": 49,
+      "source_wire_sha256": "5b187c52d882db51b3a3dfc4cda12642e85dd1d2e1b6b8416d0571e83f39f861",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 3,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 591,
+      "name": "grp_beacons",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          522.87060546875,
+          262.0234375,
+          -574.75
+        ]
+      ],
+      "source_matrix_sha256": "21a07da6cafcc274ea802f133fa541b8346ecf1acea1ed767f3627daa5d2a2bf",
+      "wire_bytes": 49,
+      "source_wire_sha256": "9221abbb18e002eb1d707ffa77b673067be9a2338ea09f3bd99e4eed7857e294",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 4,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 592,
+      "name": "grp_blackmap",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          512.0,
+          -128.0000457763672,
+          -763.474609375
+        ]
+      ],
+      "source_matrix_sha256": "78477734bcf7f0f1261eb5d45a606d3e0326bd90883d523be24e8edc1bd76601",
+      "wire_bytes": 49,
+      "source_wire_sha256": "38e6940a9b599a888ad17f6c59316fd02bf29be6c2aede7f5f253580a6a4f5be",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 5,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 613,
+      "name": "grp_blimp",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          176.0,
+          707.0,
+          -1040.0
+        ]
+      ],
+      "source_matrix_sha256": "50fb6d0895df6aeb8736fcb5a5efb70c26dd326d685611b58013ea5d5c155a05",
+      "wire_bytes": 49,
+      "source_wire_sha256": "53ffacdee55fcbbaf5358d6ef92f77e725dcc8dcec53a91fe9008cf5f5609af3",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 6,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 619,
+      "name": "grp_Day_Job_Volumes",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -59.5,
+          -867.0,
+          -914.0
+        ]
+      ],
+      "source_matrix_sha256": "ec783604531a9ab6cd58152a5461c54309aa93ed588818e6d46ec15220a8f4a0",
+      "wire_bytes": 49,
+      "source_wire_sha256": "6939612b0a01798df7e68126ed6bcc8c1bb2c8921273e2eef39a0b7eedf28c89",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 7,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 5469,
+      "name": "grp_Geometry",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          511.38037109375,
+          426.0,
+          -703.999755859375
+        ]
+      ],
+      "source_matrix_sha256": "095ce55d3a2077ae29df5d6e1fcd35fcd0588ff2cf33be389160196195d401df",
+      "wire_bytes": 49,
+      "source_wire_sha256": "e83ec6c65b3193cafb02323b0eaae2ef3fd80a47092ab77ebbc1a81b9a2c9bc1",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 8,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 5510,
+      "name": "grp_Halloween_Event_06",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -68.01048278808594,
+          4.472891807556152,
+          -10.75
+        ]
+      ],
+      "source_matrix_sha256": "62ae0bc205872a07a7f3dd80a209ee668b806c0d9d4165883090045563fa4c76",
+      "wire_bytes": 49,
+      "source_wire_sha256": "8c9afbd1159decb13a25b819f37b87b2c5ec9c451378383d99469265616b8f86",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 9,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 5715,
+      "name": "grp_Holiday_Event_06",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          511.4013671875,
+          409.2863464355469,
+          -812.486572265625
+        ]
+      ],
+      "source_matrix_sha256": "9d063cf5d55754a66b93657b71fc7f8c74cad3b1435b985b040a0feaa70c517d",
+      "wire_bytes": 49,
+      "source_wire_sha256": "bcb5a0bf18617aa20c2e2531238645388261c5726dfffc4a5d71cf631a9dfa25",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 10,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 5723,
+      "name": "grp_HollowsBeacons",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          189.818359375,
+          245.71826171875,
+          -2069.03076171875
+        ]
+      ],
+      "source_matrix_sha256": "ac7156ee28cc3e08901c434004494b88cbe6ec546b349502291446eb917f09b0",
+      "wire_bytes": 49,
+      "source_wire_sha256": "d5e3a836962733758231714d0886519361b53eb78018229c2d320277e990a892",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 11,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 5909,
+      "name": "grp_Makeover_Spawndefs",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          642.7833251953125,
+          7.882775783538818,
+          -797.4718017578125
+        ]
+      ],
+      "source_matrix_sha256": "a2367814c7d335ce8dc314f85389b2ec5caa9c5225dc50f09a93da9616a370e7",
+      "wire_bytes": 49,
+      "source_wire_sha256": "c97227647322120e6336972be81d781fa665f3bd53d66d824f5c53e68b2cbb0f",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 12,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 5910,
+      "name": "grp_Manholes",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          1235.75,
+          156.25277709960938,
+          -242.75
+        ]
+      ],
+      "source_matrix_sha256": "c63c70b78fc1536f7d0fe3f6819680ec73af27729a8ed0adff219ca6772a1074",
+      "wire_bytes": 49,
+      "source_wire_sha256": "69f0e4c6172651c95876da1e06b60003d881a12160a6d3171218c1ee61eb5edc",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 13,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6055,
+      "name": "grp_mission_doors",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          120.030517578125,
+          465.505859375,
+          -748.54931640625
+        ]
+      ],
+      "source_matrix_sha256": "a6a09d052cbe9f7a92eb1773272f9af8b05a133c08dc071f97c385afb126e2ea",
+      "wire_bytes": 49,
+      "source_wire_sha256": "6eb2edeef0441267bb04c5e75ca93a51fce1611690c3ebad57281fe786c3f5ae",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 14,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6080,
+      "name": "grp_neighborhoods",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -32.0,
+          0.0,
+          -351.9999694824219
+        ]
+      ],
+      "source_matrix_sha256": "a671933ac957398c53fe5b4a85758802641ff2bce39b24d35589452b4f7217e1",
+      "wire_bytes": 49,
+      "source_wire_sha256": "5dd850bc6d19ce1f1a458e6b874b2392373b8ae7fca69f4c459e24a05de3105a",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 15,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6098,
+      "name": "grp_patrol_box",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -5.161986827850342,
+          18.90635108947754,
+          -706.25
+        ]
+      ],
+      "source_matrix_sha256": "3249c660e82bd2caebf79befa86cdb20ecbf2494fe6b49977b253f55c35347c4",
+      "wire_bytes": 49,
+      "source_wire_sha256": "5d65e1f0cc1bccb9105fd4fe80d8b32beb93e347299f15116558803266e1ce05",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 16,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6206,
+      "name": "grp_PersistentNPC",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -25.9998779296875,
+          -159.36572265625,
+          -899.901611328125
+        ]
+      ],
+      "source_matrix_sha256": "2338e5e7869e889b7f59f22b601310bb3ccc3a2fa12afe4d791cdcccbfb9d0eb",
+      "wire_bytes": 49,
+      "source_wire_sha256": "84fcd3081065db526c08cbe8c21152e18ca00b95596a97b867a01a69b11e0924",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 17,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6216,
+      "name": "grp_Plaques",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          206.2913818359375,
+          24.575931549072266,
+          -414.63629150390625
+        ]
+      ],
+      "source_matrix_sha256": "d478f1c689da0a1bb60163ada73a3af6def938eba45f0e459bbbc1bca53959fc",
+      "wire_bytes": 49,
+      "source_wire_sha256": "57d23708cc7ffe5aef0bcbb3726af0c5051a3d806974bcc442090b53c8a3762c",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 18,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6224,
+      "name": "grp_PVP_Scripts",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          140.43020629882812,
+          20.40468406677246,
+          -241.53944396972656
+        ]
+      ],
+      "source_matrix_sha256": "a8d9ddb4655e04ad7c9a345a60fce05402ca26dc960f7d20374c637be7dcd137",
+      "wire_bytes": 49,
+      "source_wire_sha256": "67a8e52890b6796090032086cde078148574af10361c238d1d3e913eb60e814f",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 19,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6273,
+      "name": "grp_Rikti_Invasion_Event",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          2260.0,
+          0.0,
+          3388.0
+        ]
+      ],
+      "source_matrix_sha256": "1e01ff0106065883deaec1a6ebceb2248382e0d06172486f4a9911619271aa8e",
+      "wire_bytes": 49,
+      "source_wire_sha256": "28bbd002b1ad29ecf384d5eb3dc7fe3f100125bc54e09be7318baaf4922581b6",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 20,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6274,
+      "name": "grp_RiktiBetaEvent",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -83.82254028320312,
+          841.516357421875,
+          -643.6749877929688
+        ]
+      ],
+      "source_matrix_sha256": "51cf9b3c8c24525d165c6de4c64f0df3fe176957fcee105d371d651fd9fd0f87",
+      "wire_bytes": 49,
+      "source_wire_sha256": "77d1fa9b6aff1c9411088493a69398ff6cee1f5baf10db1a128e0a831dca4772",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 21,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6281,
+      "name": "grp_ShadowShardInvasion",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          511.4013671875,
+          409.1253356933594,
+          -812.486572265625
+        ]
+      ],
+      "source_matrix_sha256": "c5a9da71f9c1721d5ffa62bd2a1546813378a20c3ef3251ace59719693869485",
+      "wire_bytes": 49,
+      "source_wire_sha256": "2ebdeabfa1516fd73e9644619748ef7cd9ee30e8d0d7cc4951cf46e740460bc4",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 22,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6282,
+      "name": "grp_Truck_Door",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          340.6702880859375,
+          135.29078674316406,
+          -1199.5
+        ]
+      ],
+      "source_matrix_sha256": "35b9b4d0f2d072536441460d2bd35bd2aec9449508ac276b8cfacb68d809b31a",
+      "wire_bytes": 49,
+      "source_wire_sha256": "8bc670297026f583f449cffbe5f99b956cbcc4453e53d2541e8e8269f5914e87",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 23,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6284,
+      "name": "grp_warpvolumes",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -1664.0,
+          -896.0,
+          1408.0
+        ]
+      ],
+      "source_matrix_sha256": "7ec441c43e1d92146178c9259f685e2968591cc6626e74d24751ab4aa03098b5",
+      "wire_bytes": 49,
+      "source_wire_sha256": "e9fbc27f57b8634b738a3b199ec681ec5dc331cdbdc8baeac7fb32acce58f37b",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 24,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6291,
+      "name": "grp_Winter_Event",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          511.4013671875,
+          409.2863464355469,
+          -812.486572265625
+        ]
+      ],
+      "source_matrix_sha256": "9d063cf5d55754a66b93657b71fc7f8c74cad3b1435b985b040a0feaa70c517d",
+      "wire_bytes": 49,
+      "source_wire_sha256": "bcb5a0bf18617aa20c2e2531238645388261c5726dfffc4a5d71cf631a9dfa25",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 25,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6352,
+      "name": "grp_HalloweenEvent_09",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          1199.0,
+          41.59211349487305,
+          -1189.7000732421875
+        ]
+      ],
+      "source_matrix_sha256": "c88bf8da8757560d7f9701d02f7b7bf552c91d8531dacd2615036772e9f37a1c",
+      "wire_bytes": 49,
+      "source_wire_sha256": "2297546acbfcfe9b404fe952176efee48ea54b485c8ce25db231fe7277476cef",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 26,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6354,
+      "name": "grp_ParagonCityTeleport",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -33.21428680419922,
+          0.0,
+          -171.35714721679688
+        ]
+      ],
+      "source_matrix_sha256": "b8984d8c1c98d3f991829344b01b536e28cc0d2ab40cfb7c43c8b006f2ab760d",
+      "wire_bytes": 49,
+      "source_wire_sha256": "9d0cb137a0bca70674958bc7e54f93097e5ed93a309a23b99517430e1419c291",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 27,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6374,
+      "name": "grp_Mission_Phase",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          637.5,
+          -0.4998469948768616,
+          67.0
+        ]
+      ],
+      "source_matrix_sha256": "419ebec19533eba06b90e8652fc4a409b43de749a34ee92774ebdfa648a9d1ea",
+      "wire_bytes": 49,
+      "source_wire_sha256": "b482341f8fc19965e096b0742663e5703d66cfe47b075af7f233804f81f8e9e8",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 28,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 6751,
+      "name": "grp_Mission_Trays",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          2450.0,
+          56.017494201660156,
+          -1372.5
+        ]
+      ],
+      "source_matrix_sha256": "0dabb0d8fcaa38a116bf4ebe467493fef35459169e9473f61ea0b9b3282df880",
+      "wire_bytes": 49,
+      "source_wire_sha256": "cf89dc800416c5b24df071cb7d70652f9256a55c4e33766c22ce77bed3abb31c",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 29,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 7212,
+      "name": "grp_spawndefs",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          772.814208984375,
+          -16.52880859375,
+          -699.10009765625
+        ]
+      ],
+      "source_matrix_sha256": "a511132d387915448e0fb64386cc161af1b15caa8687f93f6578621bac354386",
+      "wire_bytes": 49,
+      "source_wire_sha256": "8a0cc2d8e2546595aced662eadd0e446f21543d6731e23d04a9bf9627274299e",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 30,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 7220,
+      "name": "grp_Zowies",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          2442.5,
+          57.2479248046875,
+          -1374.5
+        ]
+      ],
+      "source_matrix_sha256": "306a4451d16876a31bcdfde383f0d54b1d263a3914bbee372578d4649d006625",
+      "wire_bytes": 49,
+      "source_wire_sha256": "a64a63156bcbd188a741160162db9b425513b898d4f887925279f72ebba3286c",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 31,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 7236,
+      "name": "grp_GalCty_PerstntNPC",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          391.30340576171875,
+          68.48408508300781,
+          -864.0
+        ]
+      ],
+      "source_matrix_sha256": "ed49de5c269810de7c18532fe507fe9fb2e67b9e23c010233f889f65e07c87fb",
+      "wire_bytes": 49,
+      "source_wire_sha256": "7c3a2119299b0742c2cc5a13302ffd597503c59d04964a7105ba4a25131fe44c",
+      "native_matrix_pair_verified": true
+    },
+    {
+      "root_slot": 32,
+      "file": 0,
+      "file_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+      "definition_slot": 7238,
+      "name": "grp_Kraken_Event",
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          1354.25,
+          -32.00006103515625,
+          -736.5
+        ]
+      ],
+      "source_matrix_sha256": "d3b55c999c186067053aad1ae58706aedb80608ea6f9e423e6516931b06ebad0",
+      "wire_bytes": 49,
+      "source_wire_sha256": "449a62e8544791f6c66ed29e538ef2325bdd04fec22bb0d6652a4e36e3738270",
+      "native_matrix_pair_verified": true
+    }
+  ],
+  "external_observations": [
+    {
+      "ordinal": 0,
+      "name": "_cot_warpgate_base",
+      "original_id": 0,
+      "source_ownership_bits": 15,
+      "live_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 1.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 33554432,
+        "active_flags": [
+          "editor_visible_only"
+        ],
+        "sha256": "8b090de5406784a0ac16a3e7061d838d40929e863e3ebd255703850ebb9ab61c"
+      },
+      "scratch_lookup_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 0.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 0,
+        "active_flags": [],
+        "sha256": "5dcc1b5872dd9ff1c234501f1fefda01f664164e1583c3e1bb3dbea47588ab31"
+      },
+      "wire_bytes": 57,
+      "source_wire_sha256": "79c4dbfa67474238c1bf8fd24f7571db50d1d4300aeed82327c50387cc8fdb62",
+      "library_path": "",
+      "references": 1,
+      "reachable": 0,
+      "model_present": 0,
+      "bounds_lookup_found": 0
+    },
+    {
+      "ordinal": 1,
+      "name": "_cot_warpgate_glow",
+      "original_id": 0,
+      "source_ownership_bits": 15,
+      "live_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 1.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 33554432,
+        "active_flags": [
+          "editor_visible_only"
+        ],
+        "sha256": "8b090de5406784a0ac16a3e7061d838d40929e863e3ebd255703850ebb9ab61c"
+      },
+      "scratch_lookup_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 0.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 0,
+        "active_flags": [],
+        "sha256": "5dcc1b5872dd9ff1c234501f1fefda01f664164e1583c3e1bb3dbea47588ab31"
+      },
+      "wire_bytes": 57,
+      "source_wire_sha256": "2f7faeea184edde935001cc876ecccc84ef5c5afd96663415d32fbaa7fd6dfd7",
+      "library_path": "",
+      "references": 1,
+      "reachable": 0,
+      "model_present": 0,
+      "bounds_lookup_found": 0
+    },
+    {
+      "ordinal": 2,
+      "name": "_mmayhem_curtain_8_01c",
+      "original_id": 0,
+      "source_ownership_bits": 15,
+      "live_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 1.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 33554432,
+        "active_flags": [
+          "editor_visible_only"
+        ],
+        "sha256": "8b090de5406784a0ac16a3e7061d838d40929e863e3ebd255703850ebb9ab61c"
+      },
+      "scratch_lookup_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 0.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 0,
+        "active_flags": [],
+        "sha256": "5dcc1b5872dd9ff1c234501f1fefda01f664164e1583c3e1bb3dbea47588ab31"
+      },
+      "wire_bytes": 61,
+      "source_wire_sha256": "8bbb689d0d92b01d5119dbde371c20315545ae36c2578b631be2f72e9a6d8510",
+      "library_path": "",
+      "references": 1,
+      "reachable": 1,
+      "model_present": 0,
+      "bounds_lookup_found": 0
+    },
+    {
+      "ordinal": 3,
+      "name": "_mmayhem_curtain_8_02c",
+      "original_id": 0,
+      "source_ownership_bits": 15,
+      "live_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 1.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 33554432,
+        "active_flags": [
+          "editor_visible_only"
+        ],
+        "sha256": "8b090de5406784a0ac16a3e7061d838d40929e863e3ebd255703850ebb9ab61c"
+      },
+      "scratch_lookup_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 0.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 0,
+        "active_flags": [],
+        "sha256": "5dcc1b5872dd9ff1c234501f1fefda01f664164e1583c3e1bb3dbea47588ab31"
+      },
+      "wire_bytes": 61,
+      "source_wire_sha256": "1dc73b8732d1c2a8b417d28a9bd14f80451016cc8219a976bf41c39ed7264748",
+      "library_path": "",
+      "references": 1,
+      "reachable": 0,
+      "model_present": 0,
+      "bounds_lookup_found": 0
+    },
+    {
+      "ordinal": 4,
+      "name": "_mmayhem_curtain_8_03c",
+      "original_id": 0,
+      "source_ownership_bits": 15,
+      "live_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 1.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 33554432,
+        "active_flags": [
+          "editor_visible_only"
+        ],
+        "sha256": "8b090de5406784a0ac16a3e7061d838d40929e863e3ebd255703850ebb9ab61c"
+      },
+      "scratch_lookup_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 0.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 0,
+        "active_flags": [],
+        "sha256": "5dcc1b5872dd9ff1c234501f1fefda01f664164e1583c3e1bb3dbea47588ab31"
+      },
+      "wire_bytes": 61,
+      "source_wire_sha256": "ceb6525f637ca6b257ed5e3ee6eb76f7023ceac62b47c9c88df1bd09b49836fd",
+      "library_path": "",
+      "references": 1,
+      "reachable": 0,
+      "model_present": 0,
+      "bounds_lookup_found": 0
+    },
+    {
+      "ordinal": 5,
+      "name": "_mmayhem_curtain_16_01c",
+      "original_id": 0,
+      "source_ownership_bits": 15,
+      "live_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 1.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 33554432,
+        "active_flags": [
+          "editor_visible_only"
+        ],
+        "sha256": "8b090de5406784a0ac16a3e7061d838d40929e863e3ebd255703850ebb9ab61c"
+      },
+      "scratch_lookup_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 0.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 0,
+        "active_flags": [],
+        "sha256": "5dcc1b5872dd9ff1c234501f1fefda01f664164e1583c3e1bb3dbea47588ab31"
+      },
+      "wire_bytes": 62,
+      "source_wire_sha256": "f4c88f9b477e78d155790582bda9d16a53e8b44472f0185f10c60e387eca1b07",
+      "library_path": "",
+      "references": 1,
+      "reachable": 0,
+      "model_present": 0,
+      "bounds_lookup_found": 0
+    },
+    {
+      "ordinal": 6,
+      "name": "_mmayhem_curtain_16_02c",
+      "original_id": 0,
+      "source_ownership_bits": 15,
+      "live_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 1.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 33554432,
+        "active_flags": [
+          "editor_visible_only"
+        ],
+        "sha256": "8b090de5406784a0ac16a3e7061d838d40929e863e3ebd255703850ebb9ab61c"
+      },
+      "scratch_lookup_bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vis_dist": 0.0,
+        "radius": 0.0,
+        "lod_scale": 0.0,
+        "shadow_dist": 0.0,
+        "recursive_count": 0,
+        "flags_in_original_declaration_order": 0,
+        "active_flags": [],
+        "sha256": "5dcc1b5872dd9ff1c234501f1fefda01f664164e1583c3e1bb3dbea47588ab31"
+      },
+      "wire_bytes": 62,
+      "source_wire_sha256": "c1dfcc4cbcd087d2f48b40036833b0c77ead9f293f8b37a7ec257f79cc3146c5",
+      "library_path": "",
+      "references": 1,
+      "reachable": 0,
+      "model_present": 0,
+      "bounds_lookup_found": 0
+    }
+  ],
+  "analysis_driver_sha256": "0816442e22b06193f2899f7853cc4f9b61807b3be47f723ed1afc1c0178da4a7",
+  "new_native_test_runs": 0,
+  "server_restarts": 0,
+  "source_snapshot_only": true,
+  "graph_published": false,
+  "live_groups_transaction": false,
+  "world_authority": false,
+  "android_executed": false,
+  "physical_thor_accepted": false
+}

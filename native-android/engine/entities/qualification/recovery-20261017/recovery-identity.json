@@ -1,0 +1,12 @@
+{
+  "schema": "coh-entity-suffix-recovery-identity-v1",
+  "historical_source": "b5df39e6e8185461db544ec138a50ebbb7bac7c5",
+  "historical_evidence": "ec79428813b145f9fb5eb81c121ffafeb51b3bc7",
+  "recovery_commit": "31cff6c52",
+  "all_native_helper_inputs_exact": true,
+  "original_oracle_exact": true,
+  "fixtures_exact": true,
+  "all_mode_checks_exact": true,
+  "replay_sha256": "62b99753ce08e9d033254d806521e22c665663ac93c4768f20369737352c5947",
+  "recovery_scope": "Byte-exact files from preserved read-only worker-c; original receipt retained unchanged. Fresh replay worktree was dirty and its exact source hashes are authoritative. No Android/live/actor/ACK claim."
+}

@@ -1,0 +1,13 @@
+{
+  "artifact_id": 12078319890,
+  "run_id": 38977202310,
+  "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "name": "native-scene-runtime-snapshot-source-controls",
+  "bytes": 21689,
+  "sha256": "b891edf82b9290aec1a46f1b0218ae241cbb613b568fec1a8586f6ef409d9f09",
+  "all_zip_crc_verified": true,
+  "members": 19,
+  "expanded_bytes": 91669,
+  "hosted_source_controls_passed": true,
+  "runtime_executed": false
+}

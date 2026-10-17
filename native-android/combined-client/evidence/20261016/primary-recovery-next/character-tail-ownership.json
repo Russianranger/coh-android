@@ -1,0 +1,16 @@
+{
+  "schema": "coh-selected-self-tail-continuation-v1",
+  "pinned_source": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "worker": "C",
+  "worktree": "/workspace/scratch/8749ec34cd9b/worker-c-tail",
+  "exclusive_scope": [
+    "new engine/entities very-rare-tail module and isolated tests",
+    "engine/entities/INITIAL_UPDATE_CLOSURE.md"
+  ],
+  "target": "Original consecutive supergroup mission/token/recipe/detail, leveling-pact and logout grammar",
+  "old_worktree_preserved": true,
+  "shared_build_or_app_edits_authorized": false,
+  "ready_ack_or_actor_publication": false,
+  "host_and_sanitizer_review_required": true,
+  "android_execution_pending": true
+}

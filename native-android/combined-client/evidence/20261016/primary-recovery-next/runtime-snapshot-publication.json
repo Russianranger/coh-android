@@ -1,0 +1,16 @@
+{
+  "schema": "coh-guarded-runtime-snapshot-publication-v1",
+  "branch": "native-android",
+  "recovered_remote_head": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "parent": "cacc6273834142cf8c8f902018eb13cb8f9b5271",
+  "published_commit": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "published_tree": "f1979e5e065cdabcbed888e22ca0870c4548cbec",
+  "local_integrated_commit": "903c0f65065c623cda4227e0669503b38cbfc5cc",
+  "local_ref": "refs/coordinator/recovery-next/local-scene-snapshot",
+  "exact_tree_parity_verified": true,
+  "expected_sha_guarded": true,
+  "force": false,
+  "run_id": 38977202310,
+  "accepted_apks_rebuilt": false,
+  "world_entry_claimed": false
+}

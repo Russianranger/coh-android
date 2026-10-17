@@ -63,3 +63,30 @@ Remaining inputs are precise:
 
 The existing catalog is intact and useful; these findings do not justify another
 expensive MapServer startup merely to export the same saved files again.
+
+## Captured runtime resolution (run 38977202310)
+
+The retained successful sidecar now provides the missing original ownership
+observation. All seven names are separately observed `pre_alloc` definitions;
+each has original ID zero, no model, no library path and a failed object-library
+bounds lookup. `_mmayhem_curtain_8_01c` alone is reachable from the 33 roots.
+The other six are not root reachable in this captured source generation. Their
+regular parent slots and links remain preserved; none was deleted or converted
+into a renderable placeholder. Exact catalog SHA256 remains
+`61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763`;
+sidecar SHA256 is
+`c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02`.
+
+The native audit validates all 33 root matrices, both original CRCs and full
+name closure. The root closure has 15,352 regular definitions, one external,
+57,710 edges and maximum depth 69. These facts supersede the historical missing
+ownership/reachability statements above, within this source snapshot only.
+They do not establish a matching live GROUPS transaction, asset inventory
+admission, model/GEO/material resolution or physical Thor world authority.
+
+`coh_catalog_snapshot.[ch]` adds a preparation-only immutable owner: exact catalog
+owner/source/asset/map binding, copied byte pin, run digest, bounded diagnostic
+closure and retained catalog lifetime. Its capture receipts must be independently
+admitted before use. A caller-provided nonzero receipt label is never independent
+proof. This module is not in production CMake and does not enable completion ACKs
+or rendering. Its test driver reuses the existing test-only matrix bridge.

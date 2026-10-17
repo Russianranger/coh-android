@@ -1,0 +1,71 @@
+{
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "coordinator_base_at_review": "58d969fe726071f0edd0b38b64caf0d085ae437c",
+  "date_utc": "2026-10-16",
+  "full_live_world_verified": false,
+  "limitations": [
+    "Actual NDK builds and Android13 execution remain pending the new workflow; this review does not establish them.",
+    "Existing source-qualified suffix remains standalone raw staging; complete enclosing entity/full-update grammar, dictionary authority, stale-state application and immutable actor publication remain blocked.",
+    "Accepted APKs and runtime sources were neither rebuilt nor changed."
+  ],
+  "physical_thor_accepted": false,
+  "result": "no_blocking_findings",
+  "reused_qualification": {
+    "checks_each_release_asan_ubsan": 2701932,
+    "coordinator_admission_suite_rerun_by_reviewer": false,
+    "coordinator_admission_tests_reported_passed": 22,
+    "fixture_decoded_bytes": 3411159,
+    "fixture_sha256": "d7d1036a3219ecea667c2e95fda639dd32ceefcacd5138ac51bf6644d7481083",
+    "host_receipt_sha256": "abffe4b0baeec7b85c2cfbff18415690647d762e0d01f68d39adfac30b35bb9f",
+    "host_result": {
+      "actor_publication": false,
+      "aggregate_limit": 4194304,
+      "checks": 2701932,
+      "fixtures": 280,
+      "full_update_complete": false,
+      "mutations": 37504,
+      "output_bytes": 79184,
+      "passed": true,
+      "randomized": 10000,
+      "truncations": 299942,
+      "workspace_bytes": 79184
+    },
+    "native_suite_rerun": false
+  },
+  "review": {
+    "abi_binding": "Both arm64-v8a and x86_64 are mandatory. Each ELF64 little-endian PIE machine is checked, as are exact size, binary SHA, receipt SHA, fixture SHA, source inventory and host receipt equality. Missing/swapped ABI, path escape, source mutation and execution overclaims are refused.",
+    "android_execution": "Only x86_64 runs. Device must report emulator, API 33 and x86_64 ABI; fingerprint retained. Transferred binary SHA checked. Native JSON must exactly match every host mode; sources and full build admission are checked again afterward. ARM64 execution, physical Thor, full update, actor publication and live world are not claimed.",
+    "clean_checkout": "native-android/results/entity-tail/build.json is ignored; generated output does not dirty source. YAML parsed and all four run shell blocks passed bash -n. Python sources parsed.",
+    "deadlines_and_cleanup": "ADB operations default to 60 seconds; native device timeout is 180 seconds with a 240-second host deadline. Owned mktemp path is tightly checked. Exact owned-directory removal and nonexistence confirmation run after success and failure; cleanup failure revokes qualified/pass. An invalid path is never used for deletion.",
+    "exact_source_closure": "All 13 native/test/helper paths required by the Android driver equal the checker hash inventory, current Worker C files, retained host receipt and exact b5df39e6 Git blobs. Local quoted includes close within this inventory except the generated fixture, separately bound by SHA-256.",
+    "host_binding": "Host receipt must be clean, exact revision, full rather than prepare-only, stable before/after, C++ link qualified and contain identical release/ASan/UBSan native results. Strict JSON refuses duplicate keys, non-finite numbers and boolean-as-integer check counts.",
+    "original_source": "All 13 original producer/consumer/header LF pins match actual coordinator originals. Both checker and driver decode UTF-8 and normalize CRLF to LF identically. Eight named complete source functions and oracle_sanitized=false are required; full enclosing entity functions and original dictionary/gameplay authority remain unqualified.",
+    "publication_markers": "Use [native-contracts-only] [compact-recovery] [entity-tail-qualify]. Existing Combined, primary-continuation, scene-catalog and portable-core guards suppress broad qualified rebuilds. Compact-recovery itself is path-scoped to its own unchanged workflow.",
+    "workflow": "One native-android-scoped job, repository guard and entity-tail-qualify push marker; workflow_dispatch allowed only on target branch. Checksummed r28c NDK, both ABI standalone builds and API33 x86_64 emulator. Artifact upload uses always(), exact results tree, missing-files error and 90-day retention. No APK build or unrelated module suite."
+  },
+  "reviewed_source_sha256": {
+    ".github/workflows/native-entity-tail.yml": "21e896c320092bafa34cddec360ed052952dca065e8f2977f170da09b2d1ee05",
+    "native-android/engine/continuation/test_very_rare_tail_android.py": "ba4b74a06d88b7d7fef94ec365e9161eaf55eb078adfcd7e5812526d58c1da8e",
+    "native-android/engine/continuation/very_rare_tail_android.py": "37b1b1ea786fb347aa804b6ecdb361fe40a2ecbd12dc88d30713aabd1516363a",
+    "native-android/engine/entities/check_very_rare_tail.py": "773754a7b33763ae02011485daa3f91d5b3c2f591f20e1f8e022d3a463762d96",
+    "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e"
+  },
+  "reviewer": "worker-e",
+  "reviewer_focused_controls": {
+    "cases_passed": [
+      "success requires exact host result and cleanup",
+      "native timeout records attempted but unqualified and cleans",
+      "cleanup failure revokes otherwise successful qualification",
+      "transfer hash mismatch prevents execution and cleans",
+      "invalid temporary path prevents execution and unsafe deletion",
+      "wrong SDK prevents temporary allocation and execution"
+    ],
+    "count": 6,
+    "kind": "Mocked adb lifecycle, synthetic admission fixture only; no device or native code execution."
+  },
+  "schema": "coh-independent-entity-tail-android-review-v1",
+  "scope": "Read-only independent review of the new standalone suffix Android driver, admission tests and workflow against Worker C checker interface; no native parser, Android, AuthServer, MapServer or APK execution in this review.",
+  "worker_evidence_revision": "ec79428813b145f9fb5eb81c121ffafeb51b3bc7",
+  "worker_source_revision": "b5df39e6e8185461db544ec138a50ebbb7bac7c5"
+}

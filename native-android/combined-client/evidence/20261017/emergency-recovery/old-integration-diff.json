@@ -1,0 +1,267 @@
+[
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/character-tail-ownership.json",
+    "bytes": 662,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-publication.json",
+    "bytes": 671,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-capture-and-character-tail-history.bundle",
+    "bytes": 155490,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/HANDOFF.md",
+    "bytes": 39914,
+    "new": false
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-capture-and-character-tail-history.json",
+    "bytes": 1688,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/worker-bundle-chain.json",
+    "bytes": 9748,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/source-controls-artifact.json",
+    "bytes": 426,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/consumer.json",
+    "bytes": 41995,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/producer.json",
+    "bytes": 18672,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/source-controls.zip",
+    "bytes": 21689,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/workflow.json",
+    "bytes": 14517,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/win32/compile-only-receipt.json",
+    "bytes": 2492,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/win32/native-runtime-snapshot-server-build-input.json",
+    "bytes": 50535,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/win32/artifact-identity.json",
+    "bytes": 301,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/win32/artifact-members.json",
+    "bytes": 2318,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/runtime/snapshot-binding.json",
+    "bytes": 707,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/runtime/scope.json",
+    "bytes": 430,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/runtime/source-identity.json",
+    "bytes": 5032,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/runtime/run-identity.json",
+    "bytes": 535,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/runtime/runtime-graph-diagnostic.json",
+    "bytes": 50325,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/runtime/artifact-identity.json",
+    "bytes": 302,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/runtime/artifact-members.json",
+    "bytes": 6016,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-38977202310/runtime/capture-receipt.json",
+    "bytes": 13918,
+    "new": true
+  },
+  {
+    "file": "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/independent-very-rare-tail-review.json",
+    "bytes": 9790,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/scenegraph/inspect_runtime_snapshot_capture.py",
+    "bytes": 13899,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/continuation/very_rare_tail_android.py",
+    "bytes": 13460,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/continuation/test_very_rare_tail_android.py",
+    "bytes": 9619,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/coh_very_rare_tail.c",
+    "bytes": 6978,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/test_very_rare_tail.c",
+    "bytes": 14930,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/check_very_rare_tail.py",
+    "bytes": 13528,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/INITIAL_UPDATE_CLOSURE.md",
+    "bytes": 12376,
+    "new": false
+  },
+  {
+    "file": "native-android/engine/entities/tail_fixture.c.inc",
+    "bytes": 15614,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/very-rare-tail-source-pins.json",
+    "bytes": 1503,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/tail_oracle_shim.h",
+    "bytes": 8872,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/coh_very_rare_tail.h",
+    "bytes": 3834,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/VERY_RARE_TAIL_CONTRACT.md",
+    "bytes": 7800,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/tail_observation.h",
+    "bytes": 931,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/scenecatalog-server/evidence/runtime-snapshot-20261016/38977202310-artifact-review.json",
+    "bytes": 6788,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/scenecatalog-server/evidence/runtime-snapshot-20261016/verify_38977202310.py",
+    "bytes": 15090,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/scenecatalog-server/evidence/runtime-snapshot-20261016/38977202310-REVIEW.md",
+    "bytes": 4837,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/scenegraph/evidence/runtime-snapshot/38977202310/HANDOFF.md",
+    "bytes": 5348,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/scenegraph/evidence/runtime-snapshot/38977202310/capture-inspection.json",
+    "bytes": 40357,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/qualification/very-rare-tail-20261016/tail_fixtures.h.gz",
+    "bytes": 92566,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/qualification/very-rare-tail-20261016/host-b5df39e6.json",
+    "bytes": 10871,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/qualification/very-rare-tail-20261016/HANDOFF.md",
+    "bytes": 5654,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/entities/qualification/very-rare-tail-20261016/artifact-integrity.json",
+    "bytes": 1243,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/world-render-adapter/qualification/shared-geometry-20261016/original-worker-bundle-ancestry-review.json",
+    "bytes": 11172,
+    "new": true
+  },
+  {
+    "file": "native-android/engine/world-render-adapter/qualification/shared-geometry-20261016/independent-entity-tail-android-review.json",
+    "bytes": 6102,
+    "new": true
+  },
+  {
+    "file": "native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip",
+    "bytes": 2024961,
+    "new": true
+  },
+  {
+    "file": "native-android/corpus/server-catalog/runtime-snapshot-38977202310/win32-compile.zip",
+    "bytes": 3298274,
+    "new": true
+  },
+  {
+    "file": "native-android/corpus/server-catalog/runtime-snapshot-38977202310/manifest.json",
+    "bytes": 1781,
+    "new": true
+  },
+  {
+    "file": "native-android/corpus/server-catalog/runtime-snapshot-38977202310/README.md",
+    "bytes": 1334,
+    "new": true
+  },
+  {
+    "file": ".github/workflows/native-entity-tail.yml",
+    "bytes": 3430,
+    "new": true
+  }
+]

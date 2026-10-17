@@ -1,0 +1,77 @@
+{
+  "schema": "coh-independent-source-review-v1",
+  "reviewer": "Worker F",
+  "passed": true,
+  "blocking_source_findings": [],
+  "reviewed_source_sha256": {
+    "native-android/engine/entities/coh_teammate_buffs.c": "ee817fb457f9ae108d623241750577a2d83d5f9e7a893d91a4f7c2ae04f2d553",
+    "native-android/engine/entities/coh_teammate_buffs.h": "44df43e89339d0fec73d7dc75c728c16f8917a851f5a6cbaa9f32146a3e7f85e"
+  },
+  "findings": [
+    "Refusal preserves reader/output; caller workspace is separate and unspecified on refusal.",
+    "Overflow-aware overlap checks; per-buff,aggregate mod and4MiB reservation caps precede writes.",
+    "Raw power/attribute identifiers preserve source wire order; no dictionary,stale-state,actor or ACK authority."
+  ],
+  "recommendations": [],
+  "qualification_scope": "Independent source/fixture and exact committed-source/worker host+sanitizer receipt consistency review only. Test receipt records dirty precommit source accurately; all tested bytes match committed source blobs. No independent rerun or Android qualification.",
+  "new_android_execution": false,
+  "new_physical_acceptance": false,
+  "world_authority": false,
+  "resolved_review_feedback": [
+    "Real byte mutation loop added for every supported fixture byte, with bounded reader and transactional-refusal assertions.",
+    "Original pinned BuffSettings enum is directly extracted instead of hardcoded fixture values.",
+    "Original packet bytes restored after initBitStream(Read) before whole-consumer oracle execution.",
+    "Raw unknown power CRC, signed magnitude and reverse-diff wire-order assertions added."
+  ],
+  "reviewed_test_sha256": {
+    "native-android/engine/entities/test_teammate_buffs.c": "bf872cd667dd0e7ada35a12980f51022e67cb8b03aa35c10f0e45aa633890224",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/engine/entities/buffs_fixture.c.inc": "355ddd71a324c9bdd37d95a19b43fbd95c0ae27db9c6cf3cb2bfc63f8902ae75",
+    "native-android/engine/entities/buffs_oracle_shim.h": "f439daf190a9f9682bd1f6378b16da0682fbdff67c8a47fc75e648d078508729",
+    "native-android/engine/entities/teammate-buffs-source-pins.json": "1fac23e9fb29ebfe4578eaab9a8591b23a14fb883044dac4dc986536fd824777"
+  },
+  "reviewed_commit": "4838f74ed1728172e8fea1987883ef67583ef1e1",
+  "reviewed_qualification_receipt_sha256": "06cd3aea47cbe718c2adda0b6c8349356916d54b934f5561dbb702fb4354296c",
+  "tested_sources_bound_to_commit": 12,
+  "worker_modes_reviewed": {
+    "release": {
+      "passed": true,
+      "checks": 812687,
+      "fixtures": 280,
+      "truncations": 648,
+      "mutations": 187909,
+      "randomized": 10000,
+      "output_bytes": 24616,
+      "workspace_bytes": 24616,
+      "aggregate_limit": 4194304,
+      "full_update_complete": false,
+      "actor_publication": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 812687,
+      "fixtures": 280,
+      "truncations": 648,
+      "mutations": 187909,
+      "randomized": 10000,
+      "output_bytes": 24616,
+      "workspace_bytes": 24616,
+      "aggregate_limit": 4194304,
+      "full_update_complete": false,
+      "actor_publication": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 812687,
+      "fixtures": 280,
+      "truncations": 648,
+      "mutations": 187909,
+      "randomized": 10000,
+      "output_bytes": 24616,
+      "workspace_bytes": 24616,
+      "aggregate_limit": 4194304,
+      "full_update_complete": false,
+      "actor_publication": false
+    }
+  }
+}

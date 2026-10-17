@@ -75,7 +75,7 @@ def main():
                HERE.parent / 'scenecatalog/coh_scenecatalog.c',
                HERE.parent / 'replication/coh_replication.c',
                HERE.parent / 'replication/coh_groups.c']
-    native_files = [*sources, HERE / 'runtime_snapshot.h', HERE / 'coh_scenegraph.c',
+    native_files = [*sources, HERE / 'runtime_snapshot.h', HERE / 'runtime_graph.h', HERE / 'coh_scenegraph.c',
                     HERE / 'coh_scenegraph.h', HERE / 'check_runtime_snapshot.py',
                     HERE.parent / 'scenecatalog/coh_scenecatalog.h',
                     HERE.parent / 'replication/coh_replication.h',

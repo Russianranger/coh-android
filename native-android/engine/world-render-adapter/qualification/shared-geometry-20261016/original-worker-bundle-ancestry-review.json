@@ -1,0 +1,225 @@
+{
+  "schema": "coh-original-worker-bundle-ancestry-audit-v1",
+  "reviewer": "Worker E read-only recovery follow-up",
+  "audit_complete": true,
+  "coordinator_ancestry_fully_recovered": false,
+  "original_affected_worker_histories_complete": true,
+  "conclusion": "The two absent prerequisites are on coordinator replay chains, not on the independently preserved original worker chains. Their exact missing commit contents remain unavailable, so the audit does not claim their entire coordinator file diffs were recovered.",
+  "bundles": {
+    "worker-memory-history.bundle": {
+      "bytes": 8186,
+      "sha256": "ae195500099fcce4d07beb266bd6fb1c5486ec4e4e1f0a731381d1ec209d02c4",
+      "pack_sha1": "4d6821ae2c8393ae0eea92bb4bdafb8cbff5755b",
+      "pack_objects": 17,
+      "objects_decoded_exactly_in_memory": 8,
+      "unresolved_delta_records": 9,
+      "missing_prerequisite": "98bc9b09cd04adbf6020dbf2d3ca88c5b9303222",
+      "prerequisite_subject_from_original_bundle_header": "Preserve independent expanded protocol and lookup histories",
+      "missing_external_delta_base_oids": [
+        "b5868e1e3eef6df7a381e82ed853eaecc33eeb49",
+        "6cfa562d8bbdeb96759d24b4b0001f784c557e3a",
+        "68ed656cc30b4f97920c8415b438ba9c25a280b2",
+        "3817aa18c15588ae92c1b759b21a8924efc3497f",
+        "43d9dedb408ea2c3f61206f013dfb73d5a39e1e7"
+      ],
+      "decoded_commits": [
+        {
+          "oid": "bc8cd37f5eecade17687cd31a30a9b4c7d23f536",
+          "tree": "b9bcaf6e614b26fefa0402041167bf57d588564d",
+          "parents": [
+            "98bc9b09cd04adbf6020dbf2d3ca88c5b9303222"
+          ],
+          "subject": "Record actual captured catalog memory ledger and compact ownership estimates",
+          "already_in_shared_db": false,
+          "role": "coordinator replay"
+        },
+        {
+          "oid": "bc3cb4ca2954ff8fc02a843d9ec9b173b5ef6643",
+          "tree": "d2c5a5c6fda9d09cb22f99ed1de0edd0c5702a03",
+          "parents": [
+            "f2829915b8ff8a18bb50d95451c045f7f1927b69"
+          ],
+          "subject": "Record actual captured catalog memory ledger and compact ownership estimates",
+          "already_in_shared_db": true,
+          "role": "original worker F"
+        }
+      ],
+      "old_retained_and_current_bytes_identical": true,
+      "bundle_and_pack_checksums_verified": true,
+      "original_bundle_modified": false
+    },
+    "worker-taskforce-history.bundle": {
+      "bytes": 60676,
+      "sha256": "bb1ca5a2ff0beb6c4bcfe7922ac455b0dfaa294c695b4870131e658ee89b4b88",
+      "pack_sha1": "c36c8c5a3251c5369e78aa84a8af8c5acd24e8ee",
+      "pack_objects": 87,
+      "objects_decoded_exactly_in_memory": 78,
+      "unresolved_delta_records": 9,
+      "missing_prerequisite": "b764d79e921851982263426e3d46df23680f72b1",
+      "prerequisite_subject_from_original_bundle_header": "Preserve independent deployment and title qualification histories",
+      "missing_external_delta_base_oids": [
+        "a48e71c366b5cbc0ef39ab4b60806178c611906f",
+        "9972b6a3d4a80c6108a1df2cfd7a9414cc877e9b",
+        "4535a6c12dd296f92e4b276535cec7d6a2a23686",
+        "4afd8c5571939fe371f08b832710d8272fe2b5de",
+        "76365a3968ef066361caab6d59ad44c98c54fe31",
+        "4bd981e68666e7b842ce86089400432e1fe0f96d"
+      ],
+      "decoded_commits": [
+        {
+          "oid": "8773353454daa43f0780d0d3c4e1dcb02f364e3d",
+          "tree": "ce3cf9a126d857406d0c0acf5bc36ae7c0d27303",
+          "parents": [
+            "3a317de386fe6de1880f50a7be94973964d086ba"
+          ],
+          "subject": "Preserve verified catalog Android 13 source boundary evidence",
+          "already_in_shared_db": false,
+          "role": "coordinator replay"
+        },
+        {
+          "oid": "3a317de386fe6de1880f50a7be94973964d086ba",
+          "tree": "bd3e2e67017227bb9438a0dcd3ef75c2caa95f2e",
+          "parents": [
+            "e2e8c46f2d84b6a93b2b27758570b74191b5da16"
+          ],
+          "subject": "Admit reviewed taskforce source closure and preserve original history",
+          "already_in_shared_db": false,
+          "role": "coordinator review/history receipt"
+        },
+        {
+          "oid": "e2e8c46f2d84b6a93b2b27758570b74191b5da16",
+          "tree": "18aedcb071b69ee69232fa4b9b1736e68955c1ae",
+          "parents": [
+            "b764d79e921851982263426e3d46df23680f72b1"
+          ],
+          "subject": "Qualify bounded architect and taskforce parameter wire events",
+          "already_in_shared_db": false,
+          "role": "coordinator replay"
+        },
+        {
+          "oid": "c0ac22609a8d0af440375d6062fd59c1a939ddae",
+          "tree": "359a3f2bde2ee910b686ba2b9c06ad9673d7ba65",
+          "parents": [
+            "f9e8df44c8946f95e0b87d377a60c64006437478"
+          ],
+          "subject": "Qualify bounded architect and taskforce parameter wire events",
+          "already_in_shared_db": true,
+          "role": "original worker C"
+        },
+        {
+          "oid": "8e19b9e1316b75af00ff88a993f63f464fe0df99",
+          "tree": "44006ff3258d26d472f2cca87767f2cd4d937df7",
+          "parents": [
+            "2bde7b1b1691045a4867b794af6ac8d53e58ce7a"
+          ],
+          "subject": "Preserve verified catalog Android 13 source boundary evidence",
+          "already_in_shared_db": true,
+          "role": "original worker E"
+        }
+      ],
+      "old_retained_and_current_bytes_identical": true,
+      "bundle_and_pack_checksums_verified": true,
+      "original_bundle_modified": false
+    }
+  },
+  "original_workers": [
+    {
+      "original_worker_commit": "bc3cb4ca2954ff8fc02a843d9ec9b173b5ef6643",
+      "independent_six_source_bundle_tip": "bc3cb4ca2954ff8fc02a843d9ec9b173b5ef6643",
+      "is_ancestor": true,
+      "reachable_objects": 158094,
+      "missing_objects": []
+    },
+    {
+      "original_worker_commit": "c0ac22609a8d0af440375d6062fd59c1a939ddae",
+      "independent_six_source_bundle_tip": "aa842acb1c5ebb1bf1e98c94b11248f17cf86218",
+      "is_ancestor": true,
+      "reachable_objects": 158163,
+      "missing_objects": []
+    },
+    {
+      "original_worker_commit": "8e19b9e1316b75af00ff88a993f63f464fe0df99",
+      "independent_six_source_bundle_tip": "78c9c2ffa0f9c11c38d2084c9777fd88fe4054ee",
+      "is_ancestor": true,
+      "reachable_objects": 158103,
+      "missing_objects": []
+    }
+  ],
+  "github_read_only_checks": [
+    {
+      "commit": "98bc9b09cd04adbf6020dbf2d3ca88c5b9303222",
+      "repository": "Russianranger/coh-android",
+      "operation": "fetch_commit",
+      "http_status": 422,
+      "message": "No commit found for SHA: 98bc9b09cd04adbf6020dbf2d3ca88c5b9303222",
+      "subject_search_results": 0
+    },
+    {
+      "commit": "b764d79e921851982263426e3d46df23680f72b1",
+      "repository": "Russianranger/coh-android",
+      "operation": "fetch_commit",
+      "http_status": 422,
+      "message": "No commit found for SHA: b764d79e921851982263426e3d46df23680f72b1",
+      "subject_search_results": 0
+    }
+  ],
+  "additional_old_material": {
+    "continuation_worker_history_bytes": 179282,
+    "continuation_worker_history_sha256": "ebe728f3018caa60a0f1a32250f18dd574414946a0d9f22ea47ee99d2125ed32",
+    "identical_to_published_worker_history": true,
+    "head": "becbff99e52dc197c787bfeaf2583da081d3d2e1",
+    "prerequisite": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+    "worker_recovery_pack_bytes": 179098,
+    "worker_recovery_pack_sha256": "38dfd5cc98b032dbb13d34aac4b56698343b8722b78973acfe0af99e02b31a69",
+    "worker_recovery_pack_is_exact_same_bundle_payload": true,
+    "former_common_git_path": "/workspace/scratch/9c69943dc291/coh-next/.git",
+    "former_common_git_exists": false,
+    "old_bundle_check_object_directory_only_points_to_missing_alternate": true
+  },
+  "method": [
+    "Read original bundle headers and integrity receipts; old published copies match current files byte-for-byte.",
+    "Verified bundle SHA256 and inner pack SHA1; parsed/decompressed pack records in memory only and recomputed canonical Git object IDs. Resolved known delta bases through read-only git cat-file.",
+    "Original worker commit raw bytes decoded from pack were identical to existing shared Git objects. Whole reachable object walks and independent six-source ancestry checks found no missing worker objects.",
+    "No pack imported, object written, ref created/moved, worktree changed, original bundle altered, commit manually reconstructed, or service action performed. Only this review receipt is added to Worker E.",
+    "Read all 14 retained bundle pack payloads together and iteratively resolved cross-bundle deltas in memory: all other 12 bundles resolved completely; neither missing commit nor any of the eleven absent bases was present."
+  ],
+  "recovery_options": [
+    {
+      "recommended": true,
+      "action": "Continue from complete original worker commits and preserved public tree; retain the two unchanged dependent coordinator bundles plus this explicit limitation.",
+      "reason": "All named worker implementation and qualification histories close independently through six-source-history.bundle; no source recreation is needed."
+    },
+    {
+      "recommended": false,
+      "action": "If retaining extra coordinator object identities is useful, root may copy only fully decoded original pack objects into a separate recovery object store, verify canonical IDs before writing, and preserve them as incomplete archival objects without inventing parents, grafts or shallow ancestry.",
+      "limitation": "This can retain bc8cd37f, e2e8c46f, 3a317de3 and 87733534 metadata exactly, but cannot close either ancestry gap or reconstruct unresolved thin deltas."
+    },
+    {
+      "recommended": false,
+      "action": "Recover an authentic backup of the former common object database or another complete bundle containing both missing commits and required base objects, then run normal bundle verification/import in dependency order.",
+      "limitation": "At least the two missing commits and eleven unique external delta bases listed here are unavailable locally. Their own referenced ancestry/tree closure would also need verification. GitHub currently does not return either commit."
+    }
+  ],
+  "prohibited_shortcuts": [
+    "Do not strip prerequisite headers and claim complete bundle recovery.",
+    "Do not fabricate placeholder commits, reparent or amend old commits, mark missing ancestry shallow, or synthesize replacement trees from source folders.",
+    "Do not import unresolved thin packs as if their missing bases were present."
+  ],
+  "original_refs_or_objects_modified_by_review": false,
+  "auth_actions": false,
+  "runtime_actions": false,
+  "cross_bundle_read_only_closure": {
+    "bundles_scanned": 14,
+    "old_bundles": 9,
+    "current_session_bundles": 5,
+    "total_pack_records": 2925,
+    "unique_exact_decoded_objects": 1998,
+    "all_other_12_bundles_fully_resolved": true,
+    "missing_coordinator_commits_found": false,
+    "additional_delta_bases_recovered_from_other_bundles": false,
+    "unresolved_records_only_in_memory_and_taskforce_bundles": 18,
+    "unique_missing_external_delta_bases": 11,
+    "pack_payloads_changed": false,
+    "objects_imported": false
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "coh-authserver-receive-build-helper-host-controls-v1",
+  "passed": true,
+  "suites": 6,
+  "scope": "Staging, compile-only command policy, source/host/file/binary receipt admission and mocked compiler orchestration; synthetic PE fixture never executed. Exact release/ASan corpus maps and every result-field mutation are rejected, including bool/int substitutions.",
+  "windows_build_executed": false,
+  "service_executed": false,
+  "source_sha256": {
+    "hosted_receive_candidate.py": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+    "test_receive_candidate_stage.py": "c4c223f947b08e683c15d6e7799f8d3d94a74897f57b1058d2b85a37563cc9dc"
+  }
+}

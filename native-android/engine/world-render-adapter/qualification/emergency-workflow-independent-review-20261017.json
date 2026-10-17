@@ -1,0 +1,44 @@
+{
+  "schema": "coh-emergency-workflow-independent-review-v1",
+  "reviewer": "worker-e",
+  "workflow": ".github/workflows/native-emergency-recovery.yml",
+  "workflow_sha256": "f1f1acd9239016177aa6d1459e29be40a69eebaefe41b37f02032372e1baa5c1",
+  "decision": "accepted for bounded qualification after strict Auth helper merge",
+  "required_auth_correction": "7ac2ddd3e6de65c735bda1645314ed0c340a1f0d",
+  "auth_helper_sha256_reviewed": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+  "coordinator_source_sha256": {
+    "native-android/engine/world-render-adapter/check.py": "6c056e9194e9d4d2cae58c753815de603d2fa1b88394b73a8fdf2ebf17d69bf8",
+    "native-android/engine/world-render-adapter/run_frames_android.py": "43fe065a461165d88071f79c701aded59ebc5766f6c14131571d30b52dd76604",
+    "native-android/engine/continuation/run_adapter_android.py": "c7af8aed683e36ba567021b25504ebf94ca895cf8bf2cad9e2e328b8533c17e1",
+    "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e"
+  },
+  "committed_host_receipt_sha256": "c611112e498e3c18a8a5ebfafcfff3c09ffa75f618273e267f758ba0e7f1b90a",
+  "checks": {
+    "yaml_parsed": true,
+    "frame_driver_suites_passed": 6,
+    "strict_auth_helper_suites_passed": 6,
+    "input_paths_present": true,
+    "protected_paths_edited_by_reviewer": false,
+    "live_service_commands_present": false,
+    "expensive_capture_commands_present": false,
+    "cancel_other_runs": false
+  },
+  "findings": [],
+  "conditions": [
+    "Merge strict helper7ac2ddd3e before qualification SHA; coordinator tree was still old helper at initial read.",
+    "Commit workflow and all source before dispatch: frame driver requires exact clean matching source commit/tree.",
+    "Existing unqualified/captured/source-only and accepted APK boundaries remain separate; this workflow does not qualify authentic world entry."
+  ],
+  "review_reasoning": [
+    "Repository, branch and dispatch/message guards prevent unrelated-branch execution. Noncancelling dedicated concurrency preserves other work.",
+    "Linux consumes retained checksum-admitted capture ZIP; owner/runtime graph tests compile resolved source closures and do not start a server.",
+    "Frame check.py builds both ABI ELFs with source/fixture/runner hashes. Admission-only and Android13 driver use consistent artifact directories; runner validates its own, delegated and common helper bytes.",
+    "Windows autocrlf=false precedes checkout, preserving committed raw fixture/qualifier bytes. Pinned host receipt digest matches source artifact exactly.",
+    "Auth helper builds only isolated original Win32 OptDebug AuthServer with exact one-line cursor overlay, no listener/LocalDB/service start.",
+    "Auth correction rejects incomplete corpus maps, numeric/bool mutations and unequal execution results; independent six-test rerun passed."
+  ],
+  "android_executed_by_review": false,
+  "windows_compiled_by_review": false,
+  "encrypted_authentication_accepted": false,
+  "authoritative_world_accepted": false
+}

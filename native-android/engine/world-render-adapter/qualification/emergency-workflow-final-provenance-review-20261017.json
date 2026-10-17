@@ -1,0 +1,30 @@
+{
+  "schema": "coh-emergency-workflow-review-addendum-v1",
+  "reviewer": "worker-e",
+  "supersedes_workflow_hash": "f1f1acd9239016177aa6d1459e29be40a69eebaefe41b37f02032372e1baa5c1",
+  "workflow_sha256": "be9eed38254cd80aa685c57524ef0b21fb64794510be7531ce0a4b0548274d2d",
+  "decision": "accepted; no new blocker",
+  "new_command": "python3 native-android/engine/snapshot-admission/qualify.py --capture-zip native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip --output native-android/results/emergency-recovery/import-provenance.json",
+  "new_module_origin": "Concurrent remote0b0e1cef3 preserved via ordinary disjoint merge",
+  "reviewed_source_sha256": {
+    "native-android/engine/snapshot-admission/qualify.py": "22668cbec63f024f601c582f3f171e56d38fcf6d2929ccfdd39c5e216f4b6003",
+    "native-android/engine/snapshot-admission/admit.py": "66c33602009b4247c96c8c6d9e6a394f51852842536ae8aa2c732cad191f8bbb",
+    "native-android/engine/snapshot-admission/capture-trust.json": "ad496a806005bb272acd1a30e54260ac46ed56c0768cb22c77161a8ee23811c5",
+    "native-android/engine/snapshot-admission/test_admit.py": "baf9f1533bf7af01019ec4e278192a971b562322d9a2632d4a751a5f095f2813",
+    "native-android/engine/snapshot-admission/reviews/f/test_independent.py": "21208d7e535f1b5101a9ca123ff3b4ef741976fc36995a650304a9ab2067c9b0"
+  },
+  "reasoning": [
+    "Command path and dependent implementation, trust manifest, implementation suite and17 independent controls exist.",
+    "Command validates same retained evidence ZIP already verified by preceding capture audit, before source owner/native graph qualification.",
+    "Qualifier pins source and capture bytes, refuses drift and existing output, publishes complete exclusive receipt; no archive extraction, server capture or archive-supplied code execution.",
+    "Module returns offline admission provenance only, not graph/resource/protocol/actor authority.",
+    "Native owner/graph tests remain separate and no service/expensive recapture added. Other reviewed commands unchanged."
+  ],
+  "module_modified_by_reviewer": false,
+  "shared_workflow_modified_by_reviewer": false,
+  "tests_rerun": false,
+  "scope": "Read-only incremental workflow/source provenance review; earlier native/Python test receipts remain separate.",
+  "android_executed": false,
+  "windows_compiled": false,
+  "world_authority": false
+}

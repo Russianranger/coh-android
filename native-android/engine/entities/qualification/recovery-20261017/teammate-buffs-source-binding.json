@@ -1,0 +1,27 @@
+{
+  "schema": "coh-teammate-buffs-source-binding-v1",
+  "source_commit": "4838f74ed1728172e8fea1987883ef67583ef1e1",
+  "test_source_revision": "31cff6c52c027195ef9d75e652606bc93ac88995",
+  "test_worktree_clean": false,
+  "all_tested_native_helper_bytes_equal_committed_blobs": {
+    "native-android/engine/entities/coh_teammate_buffs.c": true,
+    "native-android/engine/replication/coh_replication.c": true,
+    "native-android/engine/entities/test_teammate_buffs.c": true,
+    "native-android/engine/entities/coh_teammate_buffs.h": true,
+    "native-android/engine/entities/buffs_oracle_shim.h": true,
+    "native-android/engine/entities/buffs_fixture.c.inc": true,
+    "native-android/engine/entities/teammate-buffs-source-pins.json": true,
+    "native-android/engine/entities/check_teammate_buffs.py": true,
+    "native-android/engine/replication/coh_replication.h": true,
+    "native-android/engine/coh_contracts.h": true,
+    "native-android/include/coh_native_core.h": true,
+    "native-android/tools/protocol_fixture/prepare.py": true
+  },
+  "host_receipt_sha256": "06cd3aea47cbe718c2adda0b6c8349356916d54b934f5561dbb702fb4354296c",
+  "source_unchanged_during_test": true,
+  "android_built": false,
+  "android_executed": false,
+  "actor_publication": false,
+  "full_update_complete": false,
+  "acknowledgments_enabled": false
+}

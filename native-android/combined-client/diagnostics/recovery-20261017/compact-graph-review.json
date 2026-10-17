@@ -1,0 +1,39 @@
+{
+  "schema": "coh-independent-source-review-v1",
+  "reviewer": "Worker F",
+  "passed": true,
+  "blocking_source_findings": [],
+  "reviewed_source_sha256": {
+    "native-android/engine/scenegraph/runtime_snapshot.c": "c90d707a72b4ce21d7f58b58d77d03376ddbfe672151bfe4dad361c35526e691",
+    "native-android/engine/scenegraph/runtime_graph.h": "198e0db99c5b476f784891cd8ab995f9a44ad994579781506ff0034538a7ebe0"
+  },
+  "findings": [
+    "Preserves external ordinal ownership independently of original ID zero; future remains explicit.",
+    "Original catalog slots, edge order and root slots survive; child matrices copied, root matrices captured raw after packed comparison.",
+    "Failure frees pool and candidate; publication guards prior/generation; caller serializes and pins borrowed input lifetimes.",
+    "Old/new input and pool ownership charged conservatively including aliased input;32MiB owned/96MiB aggregate remain."
+  ],
+  "recommendations": [],
+  "qualification_scope": "Independent source/API/accounting review and exact release replay; ASan/UBSan execution remains worker-owned evidence.",
+  "new_android_execution": false,
+  "new_physical_acceptance": false,
+  "world_authority": false,
+  "reviewed_commit": "1d98a3c70",
+  "reviewed_test_sha256": {
+    "native-android/engine/scenegraph/tests/test_runtime_snapshot.c": "bf901b06dd59a0cd5bf9380d042c9aefb5b81f5ef21b301d8c8ce1fc6dd849e6",
+    "native-android/engine/scenegraph/check_runtime_snapshot.py": "21e8e0a433e6548b664be2ccff8681ecc66848e2918cb8d58a4b67e06ebcbbb3"
+  },
+  "independent_execution": {
+    "mode": "release",
+    "passed": true,
+    "fixtures": 8,
+    "fixture_checks": 25340,
+    "actual_checks": 291774,
+    "matches_worker_exact_release_receipt": true,
+    "receipt_sha256": "ae91bc4b0c8931084ca78ba30634ba8de3769f72202e30c86ffc53f4c6248824"
+  },
+  "resolved_review_feedback": [
+    "Direct raw root12float bit comparisons added for fixtures and actual capture; decoded child matrix comparisons added for fixtures."
+  ],
+  "memory_measurement_caveat": "measured_native_peak_bytes is captured before graph_test and describes standalone snapshot audit; graph_aggregate_peak_bytes is named graph reservation, not process RSS or measured graph heap."
+}

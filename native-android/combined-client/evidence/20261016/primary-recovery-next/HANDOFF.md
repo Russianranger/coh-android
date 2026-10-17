@@ -494,7 +494,8 @@ rotation/zero scale, root-reachable cycles and the depth-128/129 boundary.
 All 21,726 checks agree in release/ASan/UBSan. Receipt SHA256:
 `5d2df90ce4bafc77afabc442bbbfc42d32985946fba56aa319490683765138f5`.
 The coordinator verified all integrated A/B/helper hashes against these receipts.
-No real runtime snapshot has passed this decoder yet.
+At that source checkpoint no actual snapshot had passed; the following successful
+run closes this diagnostic input gap without changing live-world authority.
 
 E independently reviewed the new three-job workflow at SHA256
 `478c5c194440df72fd2d11fffbe404d95f2d96506502cfc38cf4399226e904a5`.
@@ -505,3 +506,109 @@ startup then records the missing root/future inputs. Both files are preserved
 before matching checks, owned shutdown precedes offline decoding, and binding
 is emitted only after cleanup and exact original-catalog equality pass.
 This workflow neither builds an APK nor sends native completion signals.
+
+
+## Retained actual roots/futures and character-tail continuation
+
+Remote publication `3e8b5c9f5b794b58a66c6d8c62a593b926a10873` triggered
+[38977202310](https://github.com/Russianranger/coh-android/actions/runs/38977202310).
+All three jobs passed: original-source controls, nonshipping Win32 compilation,
+and one private disposable runtime capture followed by offline native diagnostics.
+The 7,495,680-byte PE SHA256 is
+`41c09bafba7e216fd62c3ec4d07f58e7947b9e811d960bb85daffa2b73d56cd3`.
+The coordinator independently downloaded, CRC-checked and admitted its complete
+source/compile receipts. No original exporter or accepted runtime was modified.
+
+The new sidecar is 6,585 bytes, SHA256
+`c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02`.
+Its paired catalog is byte-identical to the retained original 12,179,670-byte
+catalog. Source identity SHA256 is
+`a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0`;
+run identity SHA256 is
+`2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588`.
+Owned process groups and the private Wine prefix were cleaned before binding was
+emitted. The 176,613-file / 4,273,657,217-byte source runtime inventory remained
+unchanged within this run. Its inventory hash differs from the older capture;
+byte-identical catalogs do not establish identical whole runtimes or Thor generations.
+
+Exact artifact [12079509924](https://github.com/Russianranger/coh-android/actions/runs/38977202310/artifacts/12079509924)
+is 2,024,961 bytes, SHA256
+`8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d`;
+all 34 ZIP members and 12,324,476 expanded bytes passed CRC/path/size checks.
+The original archive and exact Win32 compile artifact are preserved in
+`native-android/corpus/server-catalog/runtime-snapshot-38977202310/`, with manifest
+and explicit nonshipping scope. Selected raw receipts are in this handoff's
+`runtime-snapshot-38977202310/` directory. Future offline investigation needs no
+repeat server startup or MapServer rebuild.
+
+### Seven-name and bounded graph result
+
+All seven missing catalog names identify real original-runtime `pre_alloc`
+objects outside regular file/definition slots. All have original ID zero, no
+model, no library path and no successful object-library bounds lookup. They are
+separately identified by captured ownership, never conflated by ID or fabricated
+as dummy definitions. Only `_mmayhem_curtain_8_01c` is reachable from the 33 roots;
+the other six names listed earlier are not root-reachable in this snapshot.
+
+The complete diagnostic index preserves all 508 files, 40,225 slots and 130,314
+regular child links. It resolves 15,352 reachable regular definitions, one
+reachable future, 57,710 reachable edges and maximum depth 69. Both original CRCs
+3173822562 / 3649375123 and all 33 root matrices pass release, ASan and UBSan.
+Reference CRC coverage remains original names/first-child names; matrices are
+verified separately against original sendMat4 bytes.
+
+The diagnostic pool is 2,457,700 bytes; measured peak native heap is 16,298,797
+bytes, and aggregate named peak including retained input, decoded record, output,
+stack reservations and 256 KiB caller/crypto/test reserve is 16,791,741 bytes.
+This is not total process RSS or a production render graph allocation. Complete
+assets/materials, loaded model-to-GEO authority, physical generation and live
+GROUPS admission remain unresolved; no graph or actor was published to rendering.
+A/B independent actual-artifact reviews accompany this result.
+
+### Additional initial-update grammar implemented
+
+C source `b5df39e6e8185461db544ec138a50ebbb7bac7c5`, evidence
+`ec79428813b145f9fb5eb81c121ffafeb51b3bc7`, and independent F review
+`066facd623281fab2f9dfaea026cbf770498d461` add the complete consecutive standalone
+supergroup/mission, leveling-pact and logout suffix after the very-rare AFK prefix.
+Eight whole original producer/consumer functions execute with explicit fixture
+shells, including nested TaskStatusSend/Receive. 280 fixtures cover aligned and
+unaligned forms; each native release/ASan/UBSan mode passes 2,701,932 checks,
+299,942 truncations, 37,504 byte mutations and 10,000 random bodies.
+
+Output and caller workspace are 79,184 bytes each; minimum named ownership before
+input and retained enclosing state is 166,560 bytes, with a 4 MiB aggregate cap.
+Reader/output remain unchanged on refusal. Original stale-pact under-consumption
+is documented by 150 cursor-difference controls; raw wire staging does not claim
+stale-state gameplay application parity. Whole-message composition, dictionaries,
+powers/inventory/account/team/UI tails and authoritative actor publication remain
+open in `engine/entities/INITIAL_UPDATE_CLOSURE.md`. No completion signals changed.
+
+A new narrow driver qualifies just this suffix on both Android ABIs and Android13,
+with 22 artifact/source/claim/cleanup admission controls. Existing accepted module
+and APK qualifications are reused. Hosted Android execution is pending the next
+publication; source/host implementation is already reviewed and qualified.
+
+### Historical bundle ancestry limitation
+
+Independent E review (`9d600de0f`, `4b3567825`) examined all fourteen retained
+bundles and 2,925 pack records. Twelve bundles resolve completely; all current-
+session bundles and original worker source tips have complete object ancestry.
+The two older memory/taskforce coordinator bundles require missing commits
+`98bc9b09cd04adbf6020dbf2d3ca88c5b9303222` and
+`b764d79e921851982263426e3d46df23680f72b1`, plus eleven absent delta-base objects.
+Both missing commit lookups returned GitHub 422. Surviving extra bundle/pack files
+are duplicates, and the old alternate points to the unavailable original clone.
+These exact bundles remain preserved as incomplete coordinator ancestry fragments;
+no source reconstruction or fabricated Git objects are needed or permitted.
+`worker-bundle-chain.json` and E's independent review record recoverable order and
+precise gaps. Original worktrees and archives remain untouched.
+
+E review `e0117b85df9eb741325bebcfee17cb45c950232d` approved the narrow
+entity-tail Android driver/workflow and six additional mocked lifecycle controls.
+A actual-artifact review `7562e2812de41dfcdcdc15676e5f9dd4a9c80374` and B
+inspection `7d753a21578390f14e53ece9569e79360bcb9f1d` independently bind the
+retained capture. Original A/B/C/E/F tips are preserved in the 155,490-byte
+`runtime-capture-and-character-tail-history.bundle`, SHA256
+`f86966aadfd4fe5cdcd3bc83077a477b187cf8abede3fe3255a7b158ef42a056`;
+its receipt records exact prerequisite bundle tips and successful verification.

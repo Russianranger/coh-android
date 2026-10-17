@@ -39,8 +39,8 @@ complete initial transaction and authoritative actor acceptance are not implied.
 | 19 | player type/subtype/praetorian/location | Complete bounded raw prefix qualified standalone; source self/player application remains separate |
 | 20 | PvP, collision, selectable, no-draw, map visibility, contact/PNPC, con/walls | Complete bounded raw prefix qualified standalone; control/player/stale application remains separate |
 | 21 | name, pet metadata, AFK | Complete bounded raw prefix qualified standalone; unresolved entity/power references and exact retain/clear/stale application remain separate |
-| 22 | supergroup mission/tokens/recipes/details, leveling pact, logout | Unsupported very-rare stream |
-| 23 | teammate buff stream | Unsupported |
+| 22 | supergroup mission/tokens/recipes/details, leveling pact, logout | Complete bounded consecutive raw wire bodies source/host/sanitizer qualified standalone in `coh_very_rare_tail.*`; original stale-pact cursor mismatch retained as evidence; exact prior-state application and full entity composition remain open |
+| 23 | teammate buff stream | Complete bounded `appendTeammatePacket`/`character_SendBuffs` raw grammar source/host/sanitizer qualified standalone in `coh_teammate_buffs.*`; power CRC/attribute dictionary authority, stale/prior-state application and enclosing entity composition remain open |
 | 24 | canonical list sentinel; global unique self ownership | Supported across caller's complete supplied staging table |
 
 ## ALLENTS outer tail, original `entReceiveUpdate` order
@@ -107,8 +107,9 @@ First close complete **selected self create**, then the global initial tail:
    candidate costume event across the complete record under an explicit aggregate
    budget; do not embed the large envelope in every slot. Consume through read-only additive
    contracts with gameplay appearance ownership; do not edit its internals.
-2. Retain/resolve staged NetFX events and implement the remaining supergroup/leveling-pact/logout very-rare stream, plus interpolation
-   and buffs encountered by the actual source profile. Independent original
+2. Retain/resolve staged NetFX events and compose the now standalone-qualified
+   supergroup/leveling-pact/logout suffix and teammate buffs with all earlier
+   entity fields; close interpolation encountered by the actual source profile. Independent original
    producer/consumer comparisons and later-record rollback are required.
 3. Compose the separately qualified control-state block, retain/deduplicate its
    future-push events, and reuse the qualified complete `character_Send` wire

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "reference_import": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "sha256_lf": {
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "MapServer/src/storyarc/storySend.c": "b1bc173b8328339564b23c5233599745ecc822ac0e4f2316e2e2e85de406375c",
+    "Game/src/storyarc/contactClient.c": "b5deea307fa92bb05e9b7997a5278882bfcad01c6e02fb3425d320954046caa5",
+    "Game/src/storyarc/contactClient.h": "2d3f9b2b15977d240b40ab96d801bd24204331b39b22cb10f92f1c7cdefd3080",
+    "Game/src/UI/uiCompass.h": "0446c9a9a3be3b26119d528d0eb546c11ec73993d4f94c6b99381bedfc60f963",
+    "Common/storyarc/contactCommon.h": "6a9e2dc04800ab10444d7b2fd886dfdb426e83082efb70aa20c9d2527e560fb3",
+    "Common/entity/teamCommon.h": "db0018467ae696e3cd6f6b4183e932560cc427f812850331b69987cda740a0fc",
+    "Common/entity/Supergroup.h": "507ecb84875692c585045a724c9fbec8247c7b00f940e51d2b7907ec48a995f8",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "Game/src/entity/entIncludeClient.h": "3acc9aec76e2efbcd4675dc0e42cb54fcf1df5bb8dc49f15a9fab00c5203d573",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+  }
+}

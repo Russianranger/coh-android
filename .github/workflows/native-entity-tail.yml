@@ -1,0 +1,64 @@
+name: Standalone original entity suffix Android qualification
+on:
+  workflow_dispatch:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-entity-tail.yml
+      - native-android/engine/continuation/very_rare_tail_android.py
+      - native-android/engine/continuation/test_very_rare_tail_android.py
+      - native-android/engine/entities/*very_rare_tail*
+      - native-android/engine/entities/tail_*
+      - native-android/engine/entities/very-rare-tail-source-pins.json
+permissions:
+  contents: read
+concurrency:
+  group: native-entity-tail-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  entity-tail-host-both-abis-android13:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[entity-tail-qualify]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Check exact source and artifact admission controls
+        run: python3 -m unittest discover -s native-android/engine/continuation -p test_very_rare_tail_android.py -v
+      - name: Install original-source oracle dependencies and pinned NDK
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends zlib1g-dev curl unzip
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/entity-tail-ndk
+      - name: Qualify only the new suffix on host and build both standalone Android ABIs
+        run: >-
+          python3 native-android/engine/continuation/very_rare_tail_android.py build
+          --source-root . --ndk /tmp/entity-tail-ndk/android-ndk-r28c
+          --output native-android/results/entity-tail
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute exact standalone suffix on Android 13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/engine/continuation/very_rare_tail_android.py run --source-root . --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/entity-tail --output native-android/results/entity-tail/android-execution
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-entity-tail-host-arm64-x86_64-android13
+          path: native-android/results/entity-tail/
+          if-no-files-found: error
+          retention-days: 90

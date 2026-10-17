@@ -7,6 +7,7 @@ extern "C" {
 
 #define COH_WR_ABI 1u
 #define COH_WR_MAX_DRAWS 4096u
+#define COH_WR_MAX_BATCH_DRAWS 512u
 #define COH_WR_MAX_VERTICES 65536u
 #define COH_WR_MAX_INDICES 196608u
 #define COH_WR_MAX_MEMORY (96u * 1024u * 1024u)
@@ -64,6 +65,8 @@ typedef struct CohWrBudget CohWrBudget;
 typedef struct CohWrSnapshot CohWrSnapshot;
 typedef struct CohWrMailbox CohWrMailbox;
 typedef struct CohWrBindings CohWrBindings;
+typedef struct CohWrFrame CohWrFrame;
+typedef struct { size_t first, count; } CohWrBatch;
 typedef struct { size_t limit, external_bytes, owned_bytes, peak_bytes, retired; } CohWrMemory;
 typedef struct {
     size_t draws, unique_geometries;
@@ -137,6 +140,39 @@ void coh_wr_surface_lost(CohWrBindings *);
 CohStatus coh_wr_draw(const CohWrBindings *, uint32_t surface_generation,
     size_t index, const float view[16], const float projection[16], CohRenderDraw *);
 void coh_wr_bindings_destroy(CohWrBindings *); /* control thread after flush */
+
+/* Off-thread immutable visibility/resource working set. A NULL indices pointer
+ * with count == draw_count selects all draws; otherwise indices must be strictly
+ * increasing, in range and immutable through return. An empty explicit selection
+ * is valid. The producer owns source visibility/LOD qualification: this adapter
+ * never treats an omitted draw as an absent/unresolved scene dependency.
+ *
+ * Config MUST match the actual renderer; batch capacity is 1..512. Every selected
+ * draw is preflighted against its vertex/index limits and fixed camera matrices.
+ * Selection preserves caller draw order, including translucent order, across all
+ * batches. It does not sort, infer visibility, expand graph instances or increase
+ * the 4096-draw bounded snapshot working set. View changes require a new frame.
+ * Output/budget remain unchanged on failure; frame retains the exact snapshot.
+ * The caller must reserve its selection input storage as external ownership. */
+CohStatus coh_wr_frame_create(CohWrSnapshot *, const size_t *indices, size_t count,
+    const float view[16], const float projection[16], const CohRendererConfig *,
+    CohCancel, CohWrFrame **);
+size_t coh_wr_frame_draw_count(const CohWrFrame *);
+size_t coh_wr_frame_batch_count(const CohWrFrame *);
+CohStatus coh_wr_frame_batch(const CohWrFrame *, size_t batch, CohWrBatch *);
+/* Resolve ONLY this immutable working set, on the GL owner thread. Bindings must
+ * refer to the identical CPU snapshot. Missing/cancelled resources preserve the
+ * previous complete table and Surface generation. Unselected draws then refuse
+ * coh_wr_draw until another complete bind. No decode/IO/allocation is permitted
+ * in the resolver. Even empty frames invalidate previously selected draw names.
+ * GPU names remain borrowed through all batches/flushes/explicit abandonment. */
+CohStatus coh_wr_frame_bind(const CohWrFrame *, CohWrBindings *,
+    uint32_t surface_generation, CohWrTextureFn, void *, CohCancel);
+CohStatus coh_wr_frame_draw(const CohWrFrame *, const CohWrBindings *,
+    uint32_t surface_generation, size_t ordinal, CohRenderDraw *);
+/* Destroy off-thread after all batch submissions flush or are abandoned.
+ * Mailbox replacement does not invalidate the frame's retained snapshot. */
+void coh_wr_frame_destroy(CohWrFrame *);
 
 #ifdef __cplusplus
 }

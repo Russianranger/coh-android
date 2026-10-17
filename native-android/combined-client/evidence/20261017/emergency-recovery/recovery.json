@@ -1,0 +1,59 @@
+{
+  "schema": "coh-emergency-primary-recovery-v1",
+  "remote_recovered": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "old_worktrees": [
+    {
+      "path": "/workspace/scratch/142ad4bc669b/worker-b",
+      "git_link": "gitdir: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-b1",
+      "preserved": true
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/worker-f",
+      "git_link": "gitdir: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-f1",
+      "preserved": true
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration",
+      "git_link": "gitdir: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/integration",
+      "preserved": true
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/worker-c",
+      "git_link": "gitdir: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-c1",
+      "preserved": true
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/worker-a",
+      "git_link": "gitdir: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-a1",
+      "preserved": true
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/worker-e",
+      "git_link": "gitdir: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-e1",
+      "preserved": true
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/worker-d",
+      "git_link": "gitdir: /workspace/scratch/8749ec34cd9b/coh-recovery/.git/worktrees/worker-d1",
+      "preserved": true
+    }
+  ],
+  "old_worktrees_reset_or_cleaned": false,
+  "new_root": "/workspace/scratch/9174d12e2a11/coh-recovery",
+  "fresh_sparse_clone": true,
+  "initial_full_checkout_attempts": "New isolated worker trees only; no historical files reset. Some workers used separate sparse shared clones after noninherited sparse checkout was observed.",
+  "historical_worker_tips": {
+    "a": "aefeef69911138d29e7f762cc312d492840aa07f",
+    "b": "1d98a3c70",
+    "c": "ecf8c84a1",
+    "d": "7ac2ddd3e",
+    "e": "014ad735e",
+    "f": "d5696b8da"
+  },
+  "original_tail_history_imported": "ec79428813b145f9fb5eb81c121ffafeb51b3bc7",
+  "recovery_copies_content_qualified": true,
+  "missing_older_bundles": "See bundle-recovery-attempts and preserved worker-bundle-chain; failed imports preserved, current-tail bundle imported exactly.",
+  "accepted_apks_rebuilt": false,
+  "real_world_or_actor_accepted": false,
+  "current_workflows": "New narrow source/Android and Win32-build-only qualification planned at publication. No expensive capture restarted."
+}

@@ -26,6 +26,13 @@ struct CohWrBindings {
     size_t bytes;
     uint32_t generation, valid;
     uint32_t *active, *scratch;
+    uint8_t *selected, *select_scratch;
+};
+struct CohWrFrame {
+    CohWrSnapshot *snapshot;
+    size_t bytes, count, batch_capacity;
+    float view[16], projection[16];
+    size_t *indices;
 };
 
 static int finite_n(const float *p, size_t n) {
@@ -347,18 +354,26 @@ CohStatus coh_wr_bindings_create(CohWrSnapshot *s,CohWrBindings **out) {
     CohWrBindings *b;
     size_t bytes=sizeof(*b);
     if (!s || !out) return COH_INVALID;
-    if (!add(&bytes,s->count,6*sizeof(uint32_t)) || !reserve(s->budget,bytes)) return COH_LIMIT;
+    if (!add(&bytes,s->count,6*sizeof(uint32_t)+2*sizeof(uint8_t)) || !reserve(s->budget,bytes)) return COH_LIMIT;
     b=calloc(1,bytes);
     if (!b) { unreserve(s->budget,bytes); return COH_LIMIT; }
     if (coh_wr_retain(s)!=COH_OK) { free(b); unreserve(s->budget,bytes); return COH_LIMIT; }
     b->snapshot=s; b->bytes=bytes; b->active=(uint32_t *)(b+1); b->scratch=b->active+3*s->count;
+    b->selected=(uint8_t *)(b->scratch+3*s->count); b->select_scratch=b->selected+s->count;
     *out=b; return COH_OK;
 }
-CohStatus coh_wr_bind(CohWrBindings *b,uint32_t generation,CohWrTextureFn resolve,void *context,CohCancel c) {
-    size_t i,j;
+static CohStatus bind_selected(CohWrBindings *b,const CohWrFrame *f,uint32_t generation,
+    CohWrTextureFn resolve,void *context,CohCancel c) {
+    size_t ordinal,i,j,count;
     uint32_t *swap;
+    uint8_t *select_swap;
     if (!b || !generation) return COH_INVALID;
-    for (i=0;i<b->snapshot->count;++i) for (j=0;j<3;++j) {
+    if (f && f->snapshot!=b->snapshot) return COH_STATE;
+    count=f?f->count:b->snapshot->count;
+    memset(b->select_scratch,0,b->snapshot->count);
+    for (ordinal=0;ordinal<count;++ordinal) {
+      i=f?f->indices[ordinal]:ordinal;
+      for (j=0;j<3;++j) {
         uint64_t id=b->snapshot->draws[i].texture_id[j];
         uint32_t handle=0;
         CohStatus status;
@@ -370,10 +385,16 @@ CohStatus coh_wr_bind(CohWrBindings *b,uint32_t generation,CohWrTextureFn resolv
             if (!handle) return COH_NOT_FOUND;
         }
         b->scratch[3*i+j]=handle;
+      }
+      b->select_scratch[i]=1;
     }
     if (cancelled(c)) return COH_CANCELLED;
     swap=b->active; b->active=b->scratch; b->scratch=swap;
+    select_swap=b->selected; b->selected=b->select_scratch; b->select_scratch=select_swap;
     b->generation=generation; b->valid=1; return COH_OK;
+}
+CohStatus coh_wr_bind(CohWrBindings *b,uint32_t generation,CohWrTextureFn resolve,void *context,CohCancel c) {
+    return bind_selected(b,NULL,generation,resolve,context,c);
 }
 void coh_wr_surface_lost(CohWrBindings *b) { if (b) { b->valid=0; b->generation=0; } }
 CohStatus coh_wr_draw(const CohWrBindings *b,uint32_t generation,size_t index,
@@ -382,7 +403,7 @@ CohStatus coh_wr_draw(const CohWrBindings *b,uint32_t generation,size_t index,
     const CohWrDrawInput *in;
     size_t row,col,j;
     if (!b || !view || !projection || !out || index>=b->snapshot->count || !finite_n(view,16) || !finite_n(projection,16)) return COH_INVALID;
-    if (!b->valid || !generation || b->generation!=generation) return COH_STATE;
+    if (!b->valid || !generation || b->generation!=generation || !b->selected[index]) return COH_STATE;
     in=b->snapshot->draws+index;
     memset(&d,0,sizeof(d)); d.geometry=in->geometry; d.material=in->material;
     memcpy(d.projection,projection,sizeof(d.projection));
@@ -399,4 +420,73 @@ void coh_wr_bindings_destroy(CohWrBindings *b) {
     if (!b) return;
     budget=b->snapshot->budget; bytes=b->bytes;
     coh_wr_release(b->snapshot); free(b); unreserve(budget,bytes);
+}
+
+CohStatus coh_wr_frame_create(CohWrSnapshot *s,const size_t *indices,size_t count,
+    const float view[16],const float projection[16],const CohRendererConfig *config,
+    CohCancel cancel,CohWrFrame **out) {
+    CohWrFrame *f;
+    size_t i,bytes=sizeof(*f),previous=0;
+    if (!s || !out || !view || !projection || !config ||
+        !finite_n(view,16) || !finite_n(projection,16) ||
+        (!indices && count!=s->count)) return COH_INVALID;
+    if (!config->max_draws || config->max_draws>COH_WR_MAX_BATCH_DRAWS ||
+        !config->max_vertices_per_draw || !config->max_indices_per_draw ||
+        !config->shader_capacity || config->shader_capacity>3 || count>s->count ||
+        !add(&bytes,count,sizeof(*f->indices))) return COH_LIMIT;
+    for (i=0;i<count;++i) {
+        const CohWrDrawInput *d;
+        size_t index=indices?indices[i]:i,row,col;
+        if (cancelled(cancel)) return COH_CANCELLED;
+        if (index>=s->count || (i && index<=previous)) return COH_INVALID;
+        previous=index; d=s->draws+index;
+        if (d->geometry.vertex_count>config->max_vertices_per_draw ||
+            d->geometry.index_count>config->max_indices_per_draw) return COH_LIMIT;
+        /* Match coh_wr_draw operation order before ANY renderer submission. */
+        for (col=0;col<4;++col) for (row=0;row<4;++row) {
+            float value=((view[row]*d->world[4*col]+view[4+row]*d->world[4*col+1])+
+                view[8+row]*d->world[4*col+2])+view[12+row]*d->world[4*col+3];
+            if (!isfinite(value)) return COH_INVALID;
+        }
+    }
+    if (!reserve(s->budget,bytes)) return COH_LIMIT;
+    f=calloc(1,bytes);
+    if (!f) { unreserve(s->budget,bytes); return COH_LIMIT; }
+    if (coh_wr_retain(s)!=COH_OK) { free(f); unreserve(s->budget,bytes); return COH_LIMIT; }
+    f->snapshot=s; f->bytes=bytes; f->count=count; f->batch_capacity=config->max_draws;
+    memcpy(f->view,view,sizeof(f->view)); memcpy(f->projection,projection,sizeof(f->projection));
+    f->indices=(size_t *)(f+1);
+    for (i=0;i<count;++i) f->indices[i]=indices?indices[i]:i;
+    if (cancelled(cancel)) { coh_wr_frame_destroy(f); return COH_CANCELLED; }
+    *out=f; return COH_OK;
+}
+size_t coh_wr_frame_draw_count(const CohWrFrame *f) { return f?f->count:0; }
+size_t coh_wr_frame_batch_count(const CohWrFrame *f) {
+    return f?(f->count/f->batch_capacity+(f->count%f->batch_capacity!=0)):0;
+}
+CohStatus coh_wr_frame_batch(const CohWrFrame *f,size_t batch,CohWrBatch *out) {
+    CohWrBatch value;
+    if (!f || !out || batch>=coh_wr_frame_batch_count(f)) return COH_INVALID;
+    value.first=batch*f->batch_capacity;
+    value.count=f->count-value.first;
+    if (value.count>f->batch_capacity) value.count=f->batch_capacity;
+    *out=value; return COH_OK;
+}
+CohStatus coh_wr_frame_bind(const CohWrFrame *f,CohWrBindings *b,uint32_t generation,
+    CohWrTextureFn resolve,void *context,CohCancel cancel) {
+    if (!f) return COH_INVALID;
+    return bind_selected(b,f,generation,resolve,context,cancel);
+}
+CohStatus coh_wr_frame_draw(const CohWrFrame *f,const CohWrBindings *b,
+    uint32_t generation,size_t ordinal,CohRenderDraw *out) {
+    if (!f || !b || ordinal>=f->count) return COH_INVALID;
+    if (f->snapshot!=b->snapshot) return COH_STATE;
+    return coh_wr_draw(b,generation,f->indices[ordinal],f->view,f->projection,out);
+}
+void coh_wr_frame_destroy(CohWrFrame *f) {
+    CohWrBudget *budget;
+    size_t bytes;
+    if (!f) return;
+    budget=f->snapshot->budget; bytes=f->bytes;
+    coh_wr_release(f->snapshot); free(f); unreserve(budget,bytes);
 }

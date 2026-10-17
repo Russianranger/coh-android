@@ -1,0 +1,47 @@
+{
+  "schema": "coh-independent-source-review-v1",
+  "reviewer": "Worker F",
+  "passed": true,
+  "blocking_source_findings": [],
+  "reviewed_source_sha256": {
+    "native-android/engine/scenecatalog/coh_catalog_snapshot.c": "5fc57667bf97df59ca09871a92efabdf4b1316b78b54b74b56b2a14524ed8992",
+    "native-android/engine/scenecatalog/coh_catalog_snapshot.h": "64e8f7005894708886637b1dac375d03bf67592a19f3826e21a32f9f7083c933"
+  },
+  "findings": [
+    "Immutable copied snapshot and retained exact catalog lifetime.",
+    "Exact binding fields and monotonic source/asset generation; no live authority permit.",
+    "Conservative named old/new ownership accounting, failure leaves old and output unchanged."
+  ],
+  "recommendations": [],
+  "qualification_scope": "Independent source and exact committed-source/worker qualification receipt consistency review. No independent rerun of final owner suite; no Android or physical qualification.",
+  "new_android_execution": false,
+  "new_physical_acceptance": false,
+  "world_authority": false,
+  "reviewed_commit": "aefeef69911138d29e7f762cc312d492840aa07f",
+  "reviewed_qualification_receipt_sha256": "efddcc049f1033b1a0fc8d86579f40f05dfcbcee8707045de036f122b4189e1f",
+  "tested_sources_bound_to_commit": 19,
+  "worker_modes_reviewed": {
+    "release": {
+      "passed": true,
+      "checks": 1014021
+    },
+    "asan": {
+      "passed": true,
+      "checks": 1014021
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 1014021
+    }
+  },
+  "resolved_review_feedback": [
+    "Cancellation,digest-provider failure,distinct previous catalog and generation rollback controls now present.",
+    "Actual A owner/B graph composition holds explicit retained A lease through graph retirement.",
+    "Owned-pool failure injection and live allocation balance remain asserted."
+  ],
+  "leak_sanitizer": false,
+  "leak_sanitizer_limitation": "Exact failed LSan /proc task access evidence preserved; source defect not established. ASan detect_leaks=0 is separate successful result.",
+  "reviewed_test_sha256": {
+    "native-android/engine/scenecatalog/tests/test_catalog_snapshot.c": "b30dce45b3b1506e01c62f3ceb41883f0814d95db4195d4e860b455717a465f8"
+  }
+}

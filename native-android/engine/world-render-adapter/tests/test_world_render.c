@@ -548,12 +548,128 @@ static void concurrent_publication(void) {
     coh_wr_mailbox_destroy(m); coh_wr_collect(b); CHECK(coh_wr_budget_destroy(b)==COH_OK);
 }
 
+/* Recovered frame API: bounded ordered batches and transactional working sets. */
+static void visibility_frames(void) {
+    Fixture f;
+    CohWrBudget *b=NULL;
+    CohWrSnapshot *s=NULL,*other=NULL;
+    CohWrBindings *bindings=NULL;
+    CohWrFrame *frame=NULL,*selected=NULL,*empty=NULL,*out=NULL;
+    CohWrDrawInput *draws=calloc(1025,sizeof(*draws));
+    CohRendererConfig config=coh_renderer_default_config(),bad;
+    CohRenderDraw draw;
+    CohWrBatch batch,sentinel={999,999};
+    CohWrMemory before;
+    Resolver r={0};
+    Backend backend={0};
+    CohRenderBackend functions={compile_shader,destroy_shader,bind_shader,draw_geometry,&backend};
+    CohRenderer *renderer=NULL;
+    size_t i,j,indices[2]={1,1024},zero=0;
+    unsigned aa,ff;
+    CHECK(draws);
+    fixture(&f,1);
+    for(i=0;i<1025;++i) {
+        draws[i]=f.draws[i==1024];
+        draws[i].world[12]=(float)i;
+        draws[i].material.blend=COH_BLEND_ALPHA;
+    }
+    f.input.draws=draws; f.input.draw_count=1025;
+    CHECK(coh_wr_budget_create(4*1024*1024,1025*sizeof(*draws),&b)==COH_OK);
+    CHECK(coh_wr_prepare_fixture(&f.input,b,never,&s)==COH_OK);
+    CHECK(coh_wr_bindings_create(s,&bindings)==COH_OK);
+    CHECK(coh_wr_frame_create(s,NULL,1025,ident,ident,&config,never,&frame)==COH_OK);
+    CHECK(coh_wr_frame_draw_count(frame)==1025 && coh_wr_frame_batch_count(frame)==3);
+    CHECK(coh_wr_frame_batch(frame,0,&batch)==COH_OK && batch.first==0 && batch.count==512);
+    CHECK(coh_wr_frame_batch(frame,1,&batch)==COH_OK && batch.first==512 && batch.count==512);
+    CHECK(coh_wr_frame_batch(frame,2,&batch)==COH_OK && batch.first==1024 && batch.count==1);
+    batch=sentinel;
+    CHECK(coh_wr_frame_batch(frame,3,&batch)==COH_INVALID && !memcmp(&batch,&sentinel,sizeof(batch)));
+    CHECK(coh_wr_frame_bind(frame,bindings,1,resolve,&r,never)==COH_OK && r.calls==2050);
+    CHECK(coh_renderer_create(&config,&functions,&renderer)==COH_OK);
+    coh_renderer_surface_lost(renderer,1,0);
+    aa=atomic_load(&allocations); ff=atomic_load(&frees);
+    for(i=0;i<3;++i) {
+        CHECK(coh_wr_frame_batch(frame,i,&batch)==COH_OK);
+        CHECK(coh_renderer_begin(renderer,1)==COH_OK);
+        for(j=0;j<batch.count;++j) {
+            size_t ordinal=batch.first+j;
+            CHECK(coh_wr_frame_draw(frame,bindings,1,ordinal,&draw)==COH_OK);
+            CHECK(draw.model_view[12]==(float)ordinal && draw.material.blend==COH_BLEND_ALPHA);
+            CHECK(coh_renderer_submit(renderer,&draw)==COH_OK);
+        }
+        CHECK(coh_renderer_flush(renderer,never)==COH_OK);
+    }
+    CHECK(backend.draw==1025 && atomic_load(&allocations)==aa && atomic_load(&frees)==ff);
+    CHECK(coh_wr_frame_create(s,indices,2,ident,ident,&config,never,&selected)==COH_OK);
+    CHECK(coh_wr_frame_bind(selected,bindings,2,resolve,&r,never)==COH_OK && r.calls==2054);
+    CHECK(coh_wr_draw(bindings,2,0,ident,ident,&draw)==COH_STATE);
+    CHECK(coh_wr_frame_draw(selected,bindings,2,0,&draw)==COH_OK && draw.model_view[12]==1);
+    CHECK(coh_wr_frame_draw(selected,bindings,2,1,&draw)==COH_OK && draw.model_view[12]==1024);
+    r.fail_id=24;
+    CHECK(coh_wr_frame_bind(frame,bindings,3,resolve,&r,never)==COH_NOT_FOUND);
+    CHECK(coh_wr_frame_draw(selected,bindings,2,1,&draw)==COH_OK);
+    CHECK(coh_wr_draw(bindings,2,0,ident,ident,&draw)==COH_STATE);
+    { int n=2; CohCancel cancel={cancel_at,&n}; r.fail_id=0;
+      CHECK(coh_wr_frame_bind(frame,bindings,3,resolve,&r,cancel)==COH_CANCELLED);
+      CHECK(coh_wr_frame_draw(selected,bindings,2,1,&draw)==COH_OK);
+    }
+    CHECK(coh_wr_frame_create(s,&zero,0,ident,ident,&config,never,&empty)==COH_OK);
+    CHECK(coh_wr_frame_batch_count(empty)==0);
+    CHECK(coh_wr_frame_bind(empty,bindings,3,NULL,NULL,never)==COH_OK);
+    CHECK(coh_wr_frame_draw(selected,bindings,3,0,&draw)==COH_STATE);
+    CHECK(coh_wr_frame_bind(selected,bindings,4,resolve,&r,never)==COH_OK);
+    coh_wr_surface_lost(bindings);
+    CHECK(coh_wr_frame_draw(selected,bindings,4,0,&draw)==COH_STATE);
+    CHECK(coh_wr_frame_bind(selected,bindings,5,resolve,&r,never)==COH_OK);
+    CHECK(coh_wr_frame_draw(selected,bindings,5,1,&draw)==COH_OK);
+    CHECK(coh_wr_prepare_fixture(&f.input,b,never,&other)==COH_OK);
+    CHECK(coh_wr_frame_bind(frame,NULL,1,resolve,&r,never)==COH_INVALID);
+    { CohWrBindings *other_bindings=NULL;
+      CHECK(coh_wr_bindings_create(other,&other_bindings)==COH_OK);
+      CHECK(coh_wr_frame_bind(frame,other_bindings,1,resolve,&r,never)==COH_STATE);
+      CHECK(coh_wr_frame_draw(frame,other_bindings,1,0,&draw)==COH_STATE);
+      coh_wr_bindings_destroy(other_bindings);
+    }
+    before=coh_wr_budget_memory(b);
+    indices[1]=1;
+    CHECK(coh_wr_frame_create(s,indices,2,ident,ident,&config,never,&out)==COH_INVALID && !out);
+    indices[1]=1025;
+    CHECK(coh_wr_frame_create(s,indices,2,ident,ident,&config,never,&out)==COH_INVALID && !out);
+    bad=config; bad.max_draws=513;
+    CHECK(coh_wr_frame_create(s,NULL,1025,ident,ident,&bad,never,&out)==COH_LIMIT && !out);
+    bad=config; bad.max_vertices_per_draw=2;
+    CHECK(coh_wr_frame_create(s,NULL,1025,ident,ident,&bad,never,&out)==COH_LIMIT && !out);
+    CHECK(coh_wr_frame_create(s,NULL,0,ident,ident,&config,never,&out)==COH_INVALID && !out);
+    { float overflow[16]; for(i=0;i<16;++i) overflow[i]=FLT_MAX;
+      CHECK(coh_wr_frame_create(s,NULL,1025,overflow,ident,&config,never,&out)==COH_INVALID && !out);
+    }
+    atomic_store(&fail_after,0);
+    CHECK(coh_wr_frame_create(s,NULL,1025,ident,ident,&config,never,&out)==COH_LIMIT && !out);
+    atomic_store(&fail_after,-1);
+    { int n=1025; CohCancel cancel={cancel_at,&n};
+      CHECK(coh_wr_frame_create(s,NULL,1025,ident,ident,&config,cancel,&out)==COH_CANCELLED && !out);
+    }
+    CHECK(coh_wr_budget_memory(b).owned_bytes==before.owned_bytes);
+    CHECK(coh_wr_budget_external(b,4*1024*1024-before.owned_bytes)==COH_OK);
+    CHECK(coh_wr_frame_create(s,NULL,1025,ident,ident,&config,never,&out)==COH_LIMIT && !out);
+    CHECK(coh_wr_budget_memory(b).owned_bytes==before.owned_bytes);
+    CHECK(coh_wr_budget_external(b,1025*sizeof(*draws))==COH_OK);
+    coh_wr_release(s); /* Frame/bindings leases survive producer retirement. */
+    CHECK(coh_wr_frame_bind(selected,bindings,6,resolve,&r,never)==COH_OK);
+    CHECK(coh_wr_frame_draw(selected,bindings,6,0,&draw)==COH_OK);
+    coh_renderer_destroy(renderer);
+    coh_wr_frame_destroy(empty); coh_wr_frame_destroy(selected); coh_wr_frame_destroy(frame);
+    coh_wr_bindings_destroy(bindings); coh_wr_release(other); coh_wr_collect(b);
+    CHECK(coh_wr_budget_destroy(b)==COH_OK);
+    free(draws);
+}
+
 int main(void) {
     rejection_and_lifetime(); rollback_tests(); generation_and_capacity();
-    shared_geometry_and_capacity(); renderer_and_original_matrix(); concurrent_publication();
+    shared_geometry_and_capacity(); renderer_and_original_matrix(); visibility_frames(); concurrent_publication();
     printf("{\"passed\":true,\"checks\":%u,\"original_matrix_cases\":512,\"bounded_mutations\":5000,"
         "\"published_generations\":2000,\"concurrent_readers\":3,\"max_draws_tested\":4096,"
-        "\"render_allocations\":0,\"render_frees\":0,\"fixture_only\":true,\"authentic_world_entry\":false,"
+        "\"ordered_batch_draws\":1025,\"ordered_batches\":3,\"selective_binding\":true,\"render_allocations\":0,\"render_frees\":0,\"fixture_only\":true,\"authentic_world_entry\":false,"
         "\"shared_geometry\":{\"unique_meshes\":%zu,\"unique_vertices\":%zu,\"unique_indices\":%zu,"
         "\"instanced_vertices\":%zu,\"instanced_indices\":%zu,\"geometry_bytes\":%zu,"
         "\"instanced_geometry_bytes\":%zu,\"snapshot_bytes\":%zu,\"scratch_bytes\":%zu,"

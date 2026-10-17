@@ -1,0 +1,12 @@
+{
+  "scope": "nonshipping_original_runtime_snapshot_only",
+  "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "accepted_apks_rebuilt": false,
+  "original_catalog_replaced": false,
+  "native_ready_or_character_ack": false,
+  "actual_groups_transaction": false,
+  "physical_thor_accepted": false,
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "user_device_profile_or_database_used": false
+}

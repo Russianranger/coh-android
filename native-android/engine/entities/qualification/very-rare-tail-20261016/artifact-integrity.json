@@ -1,0 +1,35 @@
+{
+  "schema": "coh-very-rare-tail-artifact-integrity-v1",
+  "source_revision": "b5df39e6e8185461db544ec138a50ebbb7bac7c5",
+  "host_receipt": {
+    "path": "host-b5df39e6.json",
+    "bytes": 10871,
+    "sha256": "abffe4b0baeec7b85c2cfbff18415690647d762e0d01f68d39adfac30b35bb9f"
+  },
+  "fixtures": {
+    "path": "tail_fixtures.h.gz",
+    "bytes": 92566,
+    "sha256": "0de80e1d262d205a715543796734844f80324bd92f571959a3297203e5259bde",
+    "decoded_name": "tail_fixtures.h",
+    "decoded_bytes": 3411159,
+    "decoded_sha256": "d7d1036a3219ecea667c2e95fda639dd32ceefcacd5138ac51bf6644d7481083"
+  },
+  "all_13_native_inputs_equal_exact_committed_blobs": true,
+  "source_stable_before_after": true,
+  "modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "checks_per_mode": 2701932,
+  "android_built": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "world_authority": false,
+  "independent_review": {
+    "commit": "066facd623281fab2f9dfaea026cbf770498d461",
+    "path": "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/independent-very-rare-tail-review.json",
+    "sha256": "1ad4f5c5080a8f6fa24aef8dbfb583353ce581bb2f83cffcc75361aafa204674",
+    "result": "no_blocking_findings"
+  }
+}

@@ -1,0 +1,103 @@
+name: Recovered source graph, renderer frames and isolated auth build
+on:
+  workflow_dispatch:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-emergency-recovery.yml
+      - native-android/engine/scenecatalog/coh_catalog_snapshot.*
+      - native-android/engine/scenegraph/runtime_*
+      - native-android/engine/entities/*teammate_buffs*
+      - native-android/engine/world-render-adapter/**
+      - native-android/engine/auth-interop/deployment/*receive_candidate*
+permissions:
+  contents: read
+concurrency:
+  group: native-emergency-recovery-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-and-android13-frames:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[recovery-qualify]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Install bounded standalone dependencies and pinned NDK
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev curl unzip
+          curl --fail --silent --show-error --location https://dl.google.com/android/repository/android-ndk-r28c-linux.zip -o /tmp/ndk.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/recovery-ndk
+      - name: Independently verify retained capture and immutable source graph ownership
+        run: |
+          mkdir -p native-android/results/emergency-recovery
+          python3 -m unittest discover -s native-android/combined-client/diagnostics/recovery-20261017 -p 'test_*.py' -v
+          python3 native-android/combined-client/diagnostics/recovery-20261017/verify_capture.py native-android/corpus/server-catalog/runtime-snapshot-38977202310 . > native-android/results/emergency-recovery/capture-audit.json
+          python3 native-android/engine/snapshot-admission/qualify.py --capture-zip native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip --output native-android/results/emergency-recovery/import-provenance.json
+          python3 native-android/engine/scenecatalog/check_snapshot_owner.py --capture-zip native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip --output native-android/results/emergency-recovery/owner-graph.json
+          python3 native-android/engine/scenegraph/check_runtime_snapshot.py --source-root . --sanitize --output native-android/results/emergency-recovery/graph-source.json
+      - name: Qualify new teammate grammar and build both Android ABIs
+        run: >-
+          python3 native-android/engine/entities/check_teammate_buffs.py --source-root . --sanitize
+          --output native-android/results/emergency-recovery/teammate/qualification.json
+          --ndk /tmp/recovery-ndk/android-ndk-r28c --android-output native-android/results/emergency-recovery/teammate/android
+      - name: Qualify corrected receive candidate and isolated stage admission
+        run: |
+          python3 native-android/engine/auth-interop/deployment/qualify_receive_candidate.py --source-root . --output native-android/results/emergency-recovery/auth-receive.json
+          python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_receive_candidate_stage.py -v
+      - name: Qualify bounded frames and build exact standalone ABI artifacts
+        run: |
+          python3 -m unittest discover -s native-android/engine/world-render-adapter/tests -p test_frame_driver.py -v
+          python3 native-android/engine/world-render-adapter/check.py --source-root . --sanitize --ndk /tmp/recovery-ndk/android-ndk-r28c --output native-android/results/emergency-recovery/frame-adapter/qualification.json --android-output native-android/results/emergency-recovery/frame-adapter/android
+          python3 native-android/engine/world-render-adapter/run_frames_android.py --source-root . --artifacts native-android/results/emergency-recovery/frame-adapter --validate-only --output native-android/results/emergency-recovery/frame-admission/receipt.json
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute exact bounded-frame contract on Android 13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/engine/world-render-adapter/run_frames_android.py --source-root . --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/emergency-recovery/frame-adapter --output native-android/results/emergency-recovery/frame-execution/receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-emergency-recovery-source-and-android13
+          path: native-android/results/emergency-recovery/
+          if-no-files-found: error
+          retention-days: 90
+  isolated-win32-receive-candidate-build:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[recovery-qualify]'))
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 30
+    steps:
+      - name: Preserve exact source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Build only private original AuthServer with reviewed receive cursor correction
+        shell: pwsh
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_receive_candidate.py build --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-receive-build" --host-qualification native-android/engine/auth-interop/evidence/receive-candidate-20261017/candidate-qualification.json --expected-host-qualification-sha256 c611112e498e3c18a8a5ebfafcfff3c09ffa75f618273e267f758ba0e7f1b90a
+          if ($LASTEXITCODE -ne 0) { throw 'Isolated receive candidate build failed' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-isolated-authserver-receive-build
+          path: ${{ runner.temp }}/coh-auth-receive-build/
+          if-no-files-found: error
+          retention-days: 90

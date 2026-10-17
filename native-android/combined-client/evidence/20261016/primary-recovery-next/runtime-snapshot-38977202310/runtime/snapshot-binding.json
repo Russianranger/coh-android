@@ -1,0 +1,23 @@
+{
+  "asset_generation": 20261016,
+  "catalog": {
+    "bytes": 12179670,
+    "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+  },
+  "cleanup_verified": true,
+  "live_groups_transaction": false,
+  "run_identity": {
+    "file": "run-identity.json",
+    "sha256": "2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588"
+  },
+  "schema": "coh-runtime-snapshot-binding-v1",
+  "snapshot": {
+    "bytes": 6585,
+    "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+  },
+  "source_identity": {
+    "file": "source-identity.json",
+    "sha256": "a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0"
+  },
+  "source_snapshot_only": true
+}

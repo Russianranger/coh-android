@@ -1,0 +1,194 @@
+{
+  "schema": "coh-runtime-snapshot-independent-artifact-review-v1",
+  "reviewer": "worker-a",
+  "passed": true,
+  "review_program_sha256": "5d133427d69315341ac55d6e2bacb94a39d49a063728d6429d2971e244036ab0",
+  "run_id": 38977202310,
+  "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "source_controls_archive": {
+    "bytes": 21689,
+    "sha256": "b891edf82b9290aec1a46f1b0218ae241cbb613b568fec1a8586f6ef409d9f09",
+    "members": 19,
+    "uncompressed_bytes": 91669,
+    "crc_verified": true,
+    "member_paths_verified": true
+  },
+  "win32_compile_archive": {
+    "bytes": 3298274,
+    "sha256": "2d6444b5f7ac3a1b06cc841fe15710d298c9a913a09f0de658f8dc9b945743df",
+    "members": 12,
+    "uncompressed_bytes": 7774302,
+    "crc_verified": true,
+    "member_paths_verified": true,
+    "artifact_id": 12079533226
+  },
+  "runtime_archive": {
+    "bytes": 2024961,
+    "sha256": "8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d",
+    "members": 34,
+    "uncompressed_bytes": 12324476,
+    "crc_verified": true,
+    "member_paths_verified": true,
+    "artifact_id": 12079509924
+  },
+  "compiled_pe": {
+    "bytes": 7495680,
+    "sha256": "41c09bafba7e216fd62c3ec4d07f58e7947b9e811d960bb85daffa2b73d56cd3",
+    "machine": "I386",
+    "format": "PE32"
+  },
+  "host_native_helper_inputs_verified": 21,
+  "host_original_lf_inputs_verified": 17,
+  "runtime_orchestration_inputs_verified": 33,
+  "host_fixture_files_verified": 17,
+  "compile_artifact_members_verified": 11,
+  "catalog": {
+    "bytes": 12179670,
+    "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+  },
+  "snapshot": {
+    "bytes": 6585,
+    "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+  },
+  "original_catalog_byte_equality_verified": true,
+  "retained_path_probe_reused": true,
+  "original_asset_payloads_client_hashes_and_atlas_preparation_equal": true,
+  "source_identity_sha256": "a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0",
+  "run_identity_sha256": "2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588",
+  "receipt_sha256": {
+    "capture/capture-receipt.json": "2a6751b4ea0526d958407932293adf6a06018b364f8dfda99cf2d18bd6f6d2f1",
+    "capture/snapshot-binding.json": "399ed6daee52c395b16d8b88b2c894399279447d44f9037fdefcbe4d9e79d862",
+    "capture/source-identity.json": "a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0",
+    "capture/run-identity.json": "2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588",
+    "runtime-graph-diagnostic.json": "cfaa86f3977bda91f9018b69d32fb2c83202b34206b75dd194d028ee7a42cb1e"
+  },
+  "same_run_runtime_inventory": {
+    "bytes": 4273657217,
+    "files": 176613,
+    "ordered_inventory_sha256": "5affc1a2f00960732f55f3d88d83af8aa60e8dbc1b5b360cc606cb8095262ba1"
+  },
+  "prior_capture_runtime_inventory": {
+    "bytes": 4273657217,
+    "files": 176613,
+    "ordered_inventory_sha256": "6ca8b1fb442b62b8dfcb22052d0520a788f09473d25272a63cbf7ffb79130430"
+  },
+  "whole_runtime_identity_matches_prior_capture": false,
+  "whole_runtime_difference_localized": false,
+  "same_run_source_runtime_unchanged": true,
+  "cleanup_receipt_verified": true,
+  "wine_prefix_kill_and_wait_zero": true,
+  "owned_process_groups_absent": true,
+  "postgres_shutdown_log_observed": true,
+  "diagnostic_file_hashes_verified": 19,
+  "cleanup_scope": "Original hosted receipts and ordered qualified driver control flow; no access to already-terminated hosted processes.",
+  "actual_native_diagnostic_reused_without_rerun": {
+    "passed": true,
+    "checks": 17,
+    "files": 508,
+    "slots": 40225,
+    "definitions": 40225,
+    "children": 130314,
+    "root_slots": 33,
+    "active_roots": 33,
+    "external_count": 7,
+    "reachable_definitions": 15352,
+    "reachable_external": 1,
+    "reachable_edges": 57710,
+    "maximum_depth": 69,
+    "source_defs_crc": 3173822562,
+    "source_refs_crc": 3649375123,
+    "definitions_crc_verified": 1,
+    "references_crc_verified": 1,
+    "root_matrices_verified": 33,
+    "owned_bytes": 2457700,
+    "peak_record_bytes": 1654842,
+    "stack_reserve": 196608,
+    "harness_retained_bytes": 262144,
+    "aggregate_peak_bytes": 16791741,
+    "external": [
+      {
+        "name": "_cot_warpgate_base",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_cot_warpgate_glow",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_8_01c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 1,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_8_02c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_8_03c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_16_01c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      },
+      {
+        "name": "_mmayhem_curtain_16_02c",
+        "library_path": "",
+        "original_id": 0,
+        "references": 1,
+        "reachable": 0,
+        "model_present": 0,
+        "bounds_lookup_found": 0
+      }
+    ],
+    "measured_native_peak_bytes": 16298797,
+    "graph_published": false,
+    "groups_received": false,
+    "assets_admitted": false,
+    "actor_admitted": false,
+    "world_authority": false
+  },
+  "source_snapshot_only": true,
+  "live_groups_transaction": false,
+  "new_runtime_started_by_review": false,
+  "tests_rebuilt_or_rerun": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "limitations": [
+    "Root/future source snapshot is not a received GROUPS transaction or a selected actor.",
+    "A reachable future still requires original client semantics and asset qualification.",
+    "Named native memory is not whole-process RSS.",
+    "Same-run inventory integrity does not assert identical full runtime to the older capture."
+  ],
+  "canonical_runtime_archive": "native-android/corpus/server-catalog/runtime-snapshot-38977202310/evidence.zip",
+  "canonical_compile_archive": "native-android/corpus/server-catalog/runtime-snapshot-38977202310/win32-compile.zip"
+}

@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "stage": "asan-leak-sanitizer",
+  "source_defect_established": false,
+  "stderr": "Can't open /proc/45/task for reading. LeakSanitizer has encountered a fatal error. LeakSanitizer does not work under ptrace (strace, gdb, etc)",
+  "followup": "Run ASan with detect_leaks=0; retain wrapped allocation balance, failure injection and final owner-release checks. Do not claim LeakSanitizer qualification."
+}

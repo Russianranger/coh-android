@@ -1,0 +1,64 @@
+{
+  "accepted_apks_rebuilt": false,
+  "artifacts": {
+    "CMakeCache.txt": {
+      "bytes": 38075,
+      "sha256": "af12f30c38090ba30ca0680faf5bd9e19bdefe5340bc471406f400faa2081209"
+    },
+    "MapServer.exe": {
+      "bytes": 7495680,
+      "sha256": "41c09bafba7e216fd62c3ec4d07f58e7947b9e811d960bb85daffa2b73d56cd3"
+    },
+    "map-startup-build-input.json": {
+      "bytes": 45593,
+      "sha256": "3b37339e2bdd94456715cff78e5093399410ede8980efa6fc51681c1a4d3fc09"
+    },
+    "map-startup-inputs.json": {
+      "bytes": 1202,
+      "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+    },
+    "native-runtime-snapshot-server-build-input.json": {
+      "bytes": 50535,
+      "sha256": "de5ca87cb86aee0b45245072e8b0601a1f9bf4acb3166f6159777b4afe10efe9"
+    },
+    "source/MapServer/src/group/coh_source_catalog_export.inc": {
+      "bytes": 18748,
+      "sha256": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b"
+    },
+    "source/MapServer/src/group/coh_source_catalog_sink.inc": {
+      "bytes": 8130,
+      "sha256": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d"
+    },
+    "source/MapServer/src/group/coh_source_runtime_snapshot.inc": {
+      "bytes": 18568,
+      "sha256": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6"
+    },
+    "source/MapServer/src/group/coh_source_runtime_snapshot_sink.inc": {
+      "bytes": 5606,
+      "sha256": "18b3bf28abb9d8a737f109bf7293a3f3d73d2b604d05fad57f4c81805f882275"
+    },
+    "source/MapServer/src/group/groupnetsend.c": {
+      "bytes": 16592,
+      "sha256": "dd80b4b904c4f39661d8bcd38f97ed41a46389a00b9030c066e1b77ff51e0eb0"
+    },
+    "source/MapServer/src/svr/svr_init.c": {
+      "bytes": 73081,
+      "sha256": "31c72c120410f21c1f5629dd5f4af8a28bcefef4a71588748101ad8e0b9213d5"
+    }
+  },
+  "build_role": "nonshipping_startup_catalog_and_runtime_snapshot",
+  "compile_only": true,
+  "configuration": "OptDebug",
+  "generator": "Visual Studio 18 2026",
+  "nonshipping": true,
+  "passed": true,
+  "pe_machine": "i386",
+  "platform": "Win32",
+  "producer_driver_sha256": "d6546647d074e11b35bbb642d64208476c5840ebb5205ea6eec57039941ed977",
+  "published_inputs_reverified": true,
+  "runtime_executed": false,
+  "schema": "coh-runtime-snapshot-compile-v1",
+  "source_git_status_porcelain": [],
+  "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "source_stage_verified": true
+}

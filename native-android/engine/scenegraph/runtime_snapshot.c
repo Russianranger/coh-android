@@ -1,4 +1,5 @@
 #include "runtime_snapshot.h"
+#include "runtime_graph.h"
 #include "../scenecatalog/coh_scenecatalog.h"
 #include <math.h>
 #include <stdlib.h>
@@ -15,6 +16,13 @@ extern CohStatus coh_runtime_matrix_read(CohRepReader *,CohSgMatrix);
 typedef struct {uint32_t first,count;} File;
 typedef struct {uint32_t name,external,file,slot,active,first,count;} Node;
 typedef struct {uint32_t name,path,wire,bytes,bits,id,model,lookup;} External;
+typedef struct {uint32_t wire,bytes,bits,aligned,model,empty_future;} Detail;
+struct CohRuntimeGraph {
+    CohBytes catalog,snapshot;CohRuntimeGraphBinding binding;CohRuntimeGraphReport report;
+    const CohRuntimeGraph *prior;void *pool;File *files;Node *nodes;uint32_t *slots,*names,*edges;
+    Detail *details;CohSgMatrix *matrices;CohRuntimeGraphRoot *roots;
+    uint8_t *colors;uint32_t capacity;
+};
 typedef struct {
     CohBytes catalog,snapshot;const CohRuntimeSnapshotPins*pins;
     const CohCancel*cancel;CohRuntimeSnapshotReport*r;
@@ -23,6 +31,7 @@ typedef struct {
     File*files;Node*nodes;uint32_t*slots,*names,*edges;uint16_t*heights;uint8_t*colors;
     uint32_t capacity,nodes_count,edges_count,file,slot,node,edge,phase,root_end;
     size_t base,available;
+    CohRuntimeGraph *graph;
 } Audit;
 typedef char RuntimeReportFits[sizeof(CohRuntimeSnapshotReport)<64u*1024u?1:-1];
 typedef char RuntimeStackReserveFits[
@@ -125,6 +134,7 @@ static CohStatus fill_edges(Audit*a,Node*n,const CohSgDefinition*d){
          * sendDef emits that target's actual name, not a caller spelling. */
         if(strcmp(node_name(a,target),d->children[j].name))return COH_STATE;
         a->edges[n->first+j]=target;
+        if(a->graph)memcpy(a->graph->matrices[n->first+j],d->children[j].matrix,sizeof(CohSgMatrix));
         if(a->nodes[target].external){uint32_t e=target-a->r->definitions;a->r->external[e].referenced++;if(!n->external)a->discovered[e]=1;}
     }
     return COH_OK;
@@ -139,6 +149,7 @@ static CohStatus slot_visit(void*context,const CohCatalogSlotView*v){
         if(d->child_count>a->r->children-a->edge)return COH_STATE;
         *n=(Node){0,0,v->file->index,v->slot,d->in_use,a->edge,d->child_count};a->slots[s]=a->node+1;
         if(d->in_use){TRY(name_offset(v,&n->name));if(strcmp(node_name(a,a->node),d->name))return COH_STATE;TRY(add_name(a,a->node));}
+        if(a->graph)a->graph->details[a->node]=(Detail){(uint32_t)v->wire_offset,(uint32_t)v->wire_bytes,(uint32_t)v->wire_bits,v->aligned,!!d->geometry[0],0};
     }else{if(n->file!=v->file->index||n->slot!=v->slot||n->active!=d->in_use||n->first!=a->edge||n->count!=d->child_count)return COH_STATE;TRY(fill_edges(a,n,d));}
     a->edge+=d->child_count;a->node++;return COH_OK;
 }
@@ -171,7 +182,7 @@ static CohStatus roots_scan(Audit*a,int resolve){
         const uint8_t*p;TRY(poll(a));TRY(span(in,&at,ROOT_BYTES,&p));
         uint32_t present=u32(p+4),kind=u32(p+8),file=u32(p+12),slot=u32(p+16),n=u32(p+20),bits=u32(p+24),bytes=u32(p+28),name;
         if(u32(p)!=i||present>1)return COH_INVALID;
-        if(!present){if(kind||file!=NO_INDEX||slot!=NO_INDEX||n||bits||bytes)return COH_INVALID;continue;}
+        if(!present){if(kind||file!=NO_INDEX||slot!=NO_INDEX||n||bits||bytes)return COH_INVALID;if(resolve&&a->graph)a->graph->roots[i]=(CohRuntimeGraphRoot){0,NO_INDEX,{{0}}};continue;}
         active++;if(kind!=1&&kind!=2)return COH_UNSUPPORTED;TRY(string(in,&at,n,&name,0));
         const uint8_t*raw,*wire;TRY(span(in,&at,48,&raw));TRY(span(in,&at,bytes,&wire));TRY(matrix_pair(raw,(CohBytes){wire,bytes},bits));
         if(resolve){
@@ -182,6 +193,8 @@ static CohStatus roots_scan(Audit*a,int resolve){
             else{if(file!=NO_INDEX||slot>=a->r->external_count||node!=a->r->definitions+slot)return COH_STATE;a->r->external[slot].referenced++;a->discovered[slot]=1;}
             crc=adler_string(crc,node_name(a,node));if(d->count)crc=adler_string(crc,node_name(a,a->edges[d->first]));
             TRY(visit(a,node,0));a->r->root_matrices_verified++;
+            if(a->graph){CohRuntimeGraphRoot*out=&a->graph->roots[i];out->active=1;out->node=node;
+                for(unsigned col=0;col<4;col++)for(unsigned row=0;row<3;row++){uint32_t value=u32(raw+(col*3+row)*4);memcpy(&out->matrix[col][row],&value,4);}}
         }
     }
     if(active!=a->r->active_roots)return COH_STATE;
@@ -201,10 +214,14 @@ static CohStatus run_audit(Audit*a,const CohRuntimeSnapshotBudget*budget){
     a->nodes_count=scan.definitions+a->r->external_count;a->edges_count=scan.children+extra_edges;
     a->capacity=1;while(a->capacity<a->nodes_count*2u)a->capacity*=2u;
     size_t owned=(size_t)scan.files*sizeof(File)+(size_t)a->nodes_count*sizeof(Node)+((size_t)scan.slots+a->capacity+a->edges_count)*sizeof(uint32_t)+(size_t)a->nodes_count*(sizeof(uint16_t)+sizeof(uint8_t));
+    if(a->graph)owned+=(size_t)a->nodes_count*sizeof(Detail)+(size_t)a->edges_count*sizeof(CohSgMatrix)+(size_t)a->r->root_slots*sizeof(CohRuntimeGraphRoot);
     if(owned>COH_SG_MEMORY_MAX||owned>a->available)return COH_LIMIT;
     void*pool=calloc(1,owned?owned:1);if(!pool)return COH_LIMIT;
     a->r->owned_bytes=owned?owned:1;a->base+=a->r->owned_bytes;a->available-=a->r->owned_bytes;
-    a->files=pool;a->nodes=(Node*)(a->files+scan.files);a->slots=(uint32_t*)(a->nodes+a->nodes_count);a->names=a->slots+scan.slots;a->edges=a->names+a->capacity;a->heights=(uint16_t*)(a->edges+a->edges_count);a->colors=(uint8_t*)(a->heights+a->nodes_count);
+    a->files=pool;a->nodes=(Node*)(a->files+scan.files);a->slots=(uint32_t*)(a->nodes+a->nodes_count);a->names=a->slots+scan.slots;a->edges=a->names+a->capacity;
+    uint8_t*tail=(uint8_t*)(a->edges+a->edges_count);
+    if(a->graph){CohRuntimeGraph*g=a->graph;g->details=(Detail*)tail;g->matrices=(CohSgMatrix*)(g->details+a->nodes_count);g->roots=(CohRuntimeGraphRoot*)(g->matrices+a->edges_count);tail=(uint8_t*)(g->roots+a->r->root_slots);}
+    a->heights=(uint16_t*)tail;a->colors=(uint8_t*)(a->heights+a->nodes_count);
     CohStatus status=COH_OK;
     for(a->phase=1;a->phase<=2;a->phase++){
         a->file=a->slot=a->node=a->edge=0;
@@ -220,6 +237,7 @@ static CohStatus run_audit(Audit*a,const CohRuntimeSnapshotBudget*budget){
             Node*n=&a->nodes[scan.definitions+i];External*e=&a->external[i];
             if(a->phase==1){
                 *n=(Node){e->name,1,NO_INDEX,e->id,1,a->edge,d.child_count};
+                if(a->graph)a->graph->details[scan.definitions+i]=(Detail){e->wire,e->bytes,e->bits,1,e->model,!e->model&&!d.child_count};
                 status=add_name(a,scan.definitions+i);
                 CohRuntimeExternalDiagnostic*out=&a->r->external[i];strcpy(out->name,d.name);if(e->path)strcpy(out->library_path,(const char*)a->snapshot.data+e->path);
                 out->original_id=e->id;out->model_present=e->model;out->bounds_lookup_found=e->lookup;
@@ -240,7 +258,7 @@ static CohStatus run_audit(Audit*a,const CohRuntimeSnapshotBudget*budget){
         if(count!=a->r->external_count){status=COH_STATE;goto done;}}
     for(uint32_t i=0;i<a->r->external_count;i++)if(!a->r->external[i].referenced){status=COH_STATE;goto done;}
     a->r->definitions_crc_verified=a->r->references_crc_verified=a->r->complete_source_name_closure=1;
-done:free(pool);return status;
+done:if(status==COH_OK&&a->graph){CohRuntimeGraph*g=a->graph;g->pool=pool;g->files=a->files;g->nodes=a->nodes;g->slots=a->slots;g->names=a->names;g->edges=a->edges;g->colors=a->colors;g->capacity=a->capacity;}else free(pool);return status;
 }
 CohStatus coh_runtime_snapshot_audit(CohBytes catalog,CohBytes snapshot,const CohRuntimeSnapshotPins*pins,
     const CohRuntimeSnapshotBudget*budget,const CohCancel*cancel,CohRuntimeSnapshotReport*out){
@@ -256,4 +274,68 @@ CohStatus coh_runtime_snapshot_audit(CohBytes catalog,CohBytes snapshot,const Co
     Audit a;memset(&a,0,sizeof(a));a.catalog=catalog;a.snapshot=snapshot;a.pins=pins;a.cancel=cancel;a.r=&candidate;a.available=available;a.base=candidate.aggregate_peak_bytes;
     CohStatus status=run_audit(&a,budget);if(status!=COH_OK)return status;
     *out=candidate;return COH_OK;
+}
+
+static int same_identity(const CohRuntimeGraphBinding*a,const CohRuntimeGraphBinding*b){
+    return a->pins.asset_generation==b->pins.asset_generation &&
+        !memcmp(a->pins.catalog_sha256,b->pins.catalog_sha256,32) &&
+        !memcmp(a->pins.snapshot_sha256,b->pins.snapshot_sha256,32) &&
+        !memcmp(a->pins.source_sha256,b->pins.source_sha256,32) &&
+        !memcmp(a->pins.run_sha256,b->pins.run_sha256,32);
+}
+void coh_runtime_graph_free(CohRuntimeGraph*g){if(g){free(g->pool);free(g);}}
+CohStatus coh_runtime_graph_build(const CohRuntimeGraph*prior,CohBytes catalog,CohBytes snapshot,
+    const CohRuntimeGraphBinding*binding,const CohRuntimeSnapshotBudget*budget,const CohCancel*cancel,
+    CohRuntimeGraph**candidate,CohRuntimeGraphReport*out){
+    if(!binding||!budget||!candidate||*candidate||!out||!binding->generation||!binding->catalog_generation)return COH_INVALID;
+    const CohRuntimeSnapshotPins*p=&binding->pins;
+    if(!p->digest||!catalog.data||!snapshot.data||!p->asset_generation||!nonzero(p->catalog_sha256)||!nonzero(p->snapshot_sha256)||!nonzero(p->source_sha256)||!nonzero(p->run_sha256))return COH_INVALID;
+    if(prior){
+        if(prior->binding.generation==UINT32_MAX||binding->generation!=prior->binding.generation+1||binding->catalog_generation<prior->binding.catalog_generation||p->asset_generation<prior->binding.pins.asset_generation)return COH_STATE;
+        if(binding->catalog_generation==prior->binding.catalog_generation&&!same_identity(binding,&prior->binding))return COH_STATE;
+    }else if(binding->generation!=1)return COH_STATE;
+    if(catalog.size>COH_CATALOG_INPUT_MAX||snapshot.size>COH_RUNTIME_SNAPSHOT_INPUT_MAX||!budget->aggregate_limit||budget->aggregate_limit>COH_SG_TRANSACTION_MAX)return COH_LIMIT;
+    size_t old_owned=prior?prior->report.owned_bytes:0,old_inputs=prior?prior->catalog.size+prior->snapshot.size:0;
+    size_t available=budget->aggregate_limit;
+    size_t charges[]={budget->retained_bytes,old_owned,old_inputs,catalog.size,snapshot.size,sizeof(CohRuntimeGraph),sizeof(*out),COH_RUNTIME_SNAPSHOT_STACK_RESERVE,COH_CATALOG_WALK_STACK_RESERVE};
+    for(unsigned i=0;i<sizeof(charges)/sizeof(*charges);i++){if(charges[i]>available)return COH_LIMIT;available-=charges[i];}
+    uint8_t digest[32];TRY(p->digest(p->context,catalog,digest));if(memcmp(digest,p->catalog_sha256,32))return COH_STATE;
+    TRY(p->digest(p->context,snapshot,digest));if(memcmp(digest,p->snapshot_sha256,32))return COH_STATE;
+    CohRuntimeGraph*g=calloc(1,sizeof(*g));if(!g)return COH_LIMIT;
+    g->catalog=catalog;g->snapshot=snapshot;g->binding=*binding;g->prior=prior;
+    CohRuntimeSnapshotReport*r=&g->report.source;r->catalog_bytes=catalog.size;r->snapshot_bytes=snapshot.size;
+    r->retained_bytes=budget->retained_bytes+old_owned+old_inputs+sizeof(*g)+sizeof(*out);
+    r->stack_reserve=COH_RUNTIME_SNAPSHOT_STACK_RESERVE+COH_CATALOG_WALK_STACK_RESERVE;r->aggregate_peak_bytes=budget->aggregate_limit-available;
+    Audit a;memset(&a,0,sizeof(a));a.catalog=catalog;a.snapshot=snapshot;a.pins=p;a.cancel=cancel;a.r=r;a.available=available;a.base=r->aggregate_peak_bytes;a.graph=g;
+    CohStatus status=run_audit(&a,budget);if(status!=COH_OK){coh_runtime_graph_free(g);return status;}
+    if(r->owned_bytes>COH_SG_MEMORY_MAX-sizeof(*g)){coh_runtime_graph_free(g);return COH_LIMIT;}
+    g->report.generation=binding->generation;g->report.catalog_generation=binding->catalog_generation;g->report.asset_generation=p->asset_generation;
+    g->report.nodes=a.nodes_count;g->report.edges=a.edges_count;g->report.owned_bytes=sizeof(*g)+r->owned_bytes;
+    g->report.prior_owned_bytes=old_owned;g->report.prior_input_bytes=old_inputs;g->report.aggregate_peak_bytes=r->aggregate_peak_bytes;
+    *out=g->report;*candidate=g;return COH_OK;
+}
+CohStatus coh_runtime_graph_publish(CohRuntimeGraph**current,CohRuntimeGraph**candidate,CohRuntimeGraph**retired){
+    if(!current||!candidate||!retired||current==candidate||current==retired||candidate==retired||!*candidate||*retired||*current==*candidate)return COH_INVALID;
+    CohRuntimeGraph*old=*current,*next=*candidate;
+    if(next->prior!=old)return COH_STATE;
+    if(old){if(old->binding.generation==UINT32_MAX||next->binding.generation!=old->binding.generation+1||next->report.prior_owned_bytes!=old->report.owned_bytes)return COH_STATE;
+        if(next->binding.catalog_generation<old->binding.catalog_generation||next->binding.pins.asset_generation<old->binding.pins.asset_generation||(next->binding.catalog_generation==old->binding.catalog_generation&&!same_identity(&next->binding,&old->binding)))return COH_STATE;
+    }else if(next->binding.generation!=1||next->report.prior_owned_bytes)return COH_STATE;
+    *retired=old;*current=next;*candidate=NULL;return COH_OK;
+}
+CohStatus coh_runtime_graph_report(const CohRuntimeGraph*g,CohRuntimeGraphReport*out){if(!g||!out)return COH_INVALID;*out=g->report;return COH_OK;}
+CohStatus coh_runtime_graph_node(const CohRuntimeGraph*g,uint32_t i,CohRuntimeGraphNode*out){
+    if(!g||!out)return COH_INVALID;
+    if(i>=g->report.nodes)return COH_NOT_FOUND;
+    const Node*n=&g->nodes[i];const Detail*d=&g->details[i];const uint8_t*base=n->external?g->snapshot.data:g->catalog.data;
+    CohRuntimeGraphNode v={n->file,n->slot,n->external,n->active,g->colors[i]==2,n->first,n->count,d->model,d->empty_future,n->active?(const char*)base+n->name:NULL,{base+d->wire,d->bytes},d->bits,d->aligned};*out=v;return COH_OK;
+}
+CohStatus coh_runtime_graph_child(const CohRuntimeGraph*g,uint32_t i,CohRuntimeGraphChild*out){if(!g||!out)return COH_INVALID;if(i>=g->report.edges)return COH_NOT_FOUND;out->target=g->edges[i];memcpy(out->matrix,g->matrices[i],sizeof(out->matrix));return COH_OK;}
+CohStatus coh_runtime_graph_root(const CohRuntimeGraph*g,uint32_t i,CohRuntimeGraphRoot*out){if(!g||!out)return COH_INVALID;if(i>=g->report.source.root_slots)return COH_NOT_FOUND;*out=g->roots[i];return COH_OK;}
+CohStatus coh_runtime_graph_slot(const CohRuntimeGraph*g,uint32_t file,uint32_t slot,uint32_t*out){if(!g||!out)return COH_INVALID;if(file>=g->report.source.files||slot>=g->files[file].count)return COH_NOT_FOUND;uint32_t n=g->slots[g->files[file].first+slot];if(!n)return COH_NOT_FOUND;*out=n-1;return COH_OK;}
+CohStatus coh_runtime_graph_name(const CohRuntimeGraph*g,const char*name,uint32_t*out){
+    if(!g||!name||!out)return COH_INVALID;
+    size_t len=0;while(len<COH_REP_NAME_MAX&&name[len]){if((unsigned char)name[len]<32||(unsigned char)name[len]>126||name[len]=='/'||name[len]=='\\')return COH_INVALID;len++;}if(!len||len==COH_REP_NAME_MAX)return COH_INVALID;
+    Audit a;memset(&a,0,sizeof(a));a.catalog=g->catalog;a.snapshot=g->snapshot;a.nodes=g->nodes;a.names=g->names;a.capacity=g->capacity;
+    uint32_t n;TRY(lookup(&a,name,&n));if(strcmp(node_name(&a,n),name))return COH_NOT_FOUND;*out=n;return COH_OK;
 }

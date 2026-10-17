@@ -1,0 +1,53 @@
+{
+  "recovery_base": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "recovered_candidate_path": "/workspace/scratch/142ad4bc669b/worker-d/native-android/engine/auth-interop/deployment/receive_candidate.py",
+  "recovered_candidate_sha256": "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78",
+  "candidate_recovered_byte_identical": true,
+  "prior_receipt_path": "/workspace/scratch/8749ec34cd9b/auth-login-38974164017/receipt.json",
+  "prior_receipt_sha256": "d857ef8fd309149e92de8a8abe6423d0a8d13c338adc64990fbf8dcccefcfe5e",
+  "prior_receipt_selected_fields": {
+    "schema": "coh-hosted-auth-only-intact-baseline-v1",
+    "repository_commit": "cacc6273834142cf8c8f902018eb13cb8f9b5271",
+    "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+    "github_run_id": "38974164017",
+    "passed": false,
+    "failure": "original_authserver_listener_deadline",
+    "authserver_process_id": 2060,
+    "authserver_exit_code_before_owned_stop": null,
+    "authserver_owned_job_members_before_stop": [
+      2060
+    ],
+    "owned_sql_process_before_authserver": {
+      "started_utc_ticks": 639277860993054815,
+      "name": "sqlservr",
+      "exists": true,
+      "pid": 4276
+    },
+    "owned_sql_process_before_authserver_stop": {
+      "started_utc_ticks": 639277860993054815,
+      "name": "sqlservr",
+      "exists": true,
+      "pid": 4276
+    },
+    "owned_sql_pid_in_authserver_job": false,
+    "owned_sql_process_after_authserver_stop": {
+      "started_utc_ticks": 639277860993054815,
+      "exists": true,
+      "pid": 4276,
+      "name": "sqlservr"
+    },
+    "owned_process_diagnostics_complete": true,
+    "owned_authserver_cleanup_complete": true,
+    "owned_localdb_cleanup_complete": false,
+    "private_service_log_summary": {
+      "files": 5,
+      "bytes": 217,
+      "content_exported": false
+    },
+    "private_files_removed": true,
+    "source_inputs_unchanged": true,
+    "encrypted_account_login_verified": false
+  },
+  "prior_worktree_modified": false,
+  "prior_windows_run_repeated": false
+}

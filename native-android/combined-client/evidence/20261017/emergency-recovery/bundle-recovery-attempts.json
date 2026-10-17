@@ -1,0 +1,53 @@
+{
+  "imported": [
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-next-history.bundle",
+      "passed": false,
+      "result": "warning: lazy fetching disabled; some objects may not be available\nfatal: could not fetch 4198f8d43bd3df66cbd1d53164523ae116faba05 from promisor remote\nerror: index-pack died\n"
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/six-source-history.bundle",
+      "passed": false,
+      "result": "warning: lazy fetching disabled; some objects may not be available\nfatal: could not fetch dc44653e3884da92818006106cc9b743a8185e7a from promisor remote\nerror: index-pack died\n"
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/worker-history.bundle",
+      "passed": false,
+      "result": "warning: lazy fetching disabled; some objects may not be available\nfatal: could not fetch 574f5a3030a1e38e3d6791e8681d982d3a4fc4d5 from promisor remote\nerror: index-pack died\n"
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/auth-recovery-history.bundle",
+      "passed": true,
+      "result": "From /workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/auth-recovery-history.bundle\n * [new ref]             refs/coordinator/recovery-next/d-listener-recovery -> refs/recovered/auth-recovery-history/0\n * [new ref]             refs/coordinator/recovery-next/e-recovery-reviews -> refs/recovered/auth-recovery-history/1\n"
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/auth-baseline-history.bundle",
+      "passed": true,
+      "result": "From /workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/auth-baseline-history.bundle\n * [new ref]             refs/recovery-next-auth-baseline/c -> refs/recovered/auth-baseline-history/0\n * [new ref]             refs/recovery-next-auth-baseline/d -> refs/recovered/auth-baseline-history/1\n * [new ref]             refs/recovery-next-auth-baseline/e -> refs/recovered/auth-baseline-history/2\n"
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-followup-history.bundle",
+      "passed": true,
+      "result": "From /workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-followup-history.bundle\n * [new ref]             refs/coordinator/recovery-next/a-composition -> refs/recovered/six-worker-followup-history/0\n * [new ref]             refs/coordinator/recovery-next/b-clang -> refs/recovered/six-worker-followup-history/1\n"
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-history.bundle",
+      "passed": true,
+      "result": "From /workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-snapshot-history.bundle\n * [new ref]             refs/recovery-next-scene/a -> refs/recovered/runtime-snapshot-history/0\n * [new ref]             refs/recovery-next-scene/b -> refs/recovered/runtime-snapshot-history/1\n * [new ref]             refs/recovery-next-scene/c -> refs/recovered/runtime-snapshot-history/2\n * [new ref]             refs/recovery-next-scene/e -> refs/recovered/runtime-snapshot-history/3\n * [new ref]             refs/recovery-next-scene/f -> refs/recovered/runtime-snapshot-history/4\n"
+    },
+    {
+      "path": "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-capture-and-character-tail-history.bundle",
+      "passed": true,
+      "result": "From /workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-capture-and-character-tail-history.bundle\n * [new ref]             refs/recovery-next-tail/a -> refs/recovered/runtime-capture-and-character-tail-history/0\n * [new ref]             refs/recovery-next-tail/b -> refs/recovered/runtime-capture-and-character-tail-history/1\n * [new ref]             refs/recovery-next-tail/c -> refs/recovered/runtime-capture-and-character-tail-history/2\n * [new ref]             refs/recovery-next-tail/e -> refs/recovered/runtime-capture-and-character-tail-history/3\n * [new ref]             refs/recovery-next-tail/f -> refs/recovered/runtime-capture-and-character-tail-history/4\n"
+    }
+  ],
+  "unresolved": [
+    "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/worker-stream-history.bundle",
+    "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/worker-memory-history.bundle",
+    "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/worker-taskforce-history.bundle",
+    "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/worker-control-history.bundle",
+    "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/worker-deployment-history.bundle",
+    "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/worker-expanded-contract-history.bundle",
+    "/workspace/scratch/142ad4bc669b/integration/native-android/combined-client/evidence/20261016/six-worker-continuation/worker-followup-history.bundle"
+  ]
+}

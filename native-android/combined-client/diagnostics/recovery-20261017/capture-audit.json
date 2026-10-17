@@ -1,0 +1,107 @@
+{
+  "captured": {
+    "active_roots": 33,
+    "actor_admitted": false,
+    "aggregate_peak_bytes": 16791741,
+    "assets_admitted": false,
+    "checks": 17,
+    "children": 130314,
+    "definitions": 40225,
+    "definitions_crc_verified": 1,
+    "external": [
+      {
+        "bounds_lookup_found": 0,
+        "library_path": "",
+        "model_present": 0,
+        "name": "_cot_warpgate_base",
+        "original_id": 0,
+        "reachable": 0,
+        "references": 1
+      },
+      {
+        "bounds_lookup_found": 0,
+        "library_path": "",
+        "model_present": 0,
+        "name": "_cot_warpgate_glow",
+        "original_id": 0,
+        "reachable": 0,
+        "references": 1
+      },
+      {
+        "bounds_lookup_found": 0,
+        "library_path": "",
+        "model_present": 0,
+        "name": "_mmayhem_curtain_8_01c",
+        "original_id": 0,
+        "reachable": 1,
+        "references": 1
+      },
+      {
+        "bounds_lookup_found": 0,
+        "library_path": "",
+        "model_present": 0,
+        "name": "_mmayhem_curtain_8_02c",
+        "original_id": 0,
+        "reachable": 0,
+        "references": 1
+      },
+      {
+        "bounds_lookup_found": 0,
+        "library_path": "",
+        "model_present": 0,
+        "name": "_mmayhem_curtain_8_03c",
+        "original_id": 0,
+        "reachable": 0,
+        "references": 1
+      },
+      {
+        "bounds_lookup_found": 0,
+        "library_path": "",
+        "model_present": 0,
+        "name": "_mmayhem_curtain_16_01c",
+        "original_id": 0,
+        "reachable": 0,
+        "references": 1
+      },
+      {
+        "bounds_lookup_found": 0,
+        "library_path": "",
+        "model_present": 0,
+        "name": "_mmayhem_curtain_16_02c",
+        "original_id": 0,
+        "reachable": 0,
+        "references": 1
+      }
+    ],
+    "external_count": 7,
+    "files": 508,
+    "graph_published": false,
+    "groups_received": false,
+    "harness_retained_bytes": 262144,
+    "maximum_depth": 69,
+    "measured_native_peak_bytes": 16298797,
+    "owned_bytes": 2457700,
+    "passed": true,
+    "peak_record_bytes": 1654842,
+    "reachable_definitions": 15352,
+    "reachable_edges": 57710,
+    "reachable_external": 1,
+    "references_crc_verified": 1,
+    "root_matrices_verified": 33,
+    "root_slots": 33,
+    "slots": 40225,
+    "source_defs_crc": 3173822562,
+    "source_refs_crc": 3649375123,
+    "stack_reserve": 196608,
+    "world_authority": false
+  },
+  "compile_members_verified": 11,
+  "diagnostic_files_verified": 19,
+  "live_world_admitted": false,
+  "memory_scope": "named native inputs, pool, decoded record, output, stack reservations and 256KiB caller/crypto/test reserve; not process RSS",
+  "new_server_execution": false,
+  "passed": true,
+  "schema": "coh-independent-retained-capture-audit-v1",
+  "source_files_verified": 33,
+  "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873"
+}

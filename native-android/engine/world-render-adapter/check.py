@@ -71,7 +71,10 @@ def main():
                  HERE / 'source-pins.json', ROOT / 'native-android/engine/renderer/coh_renderer.h',
                  ROOT / 'native-android/engine/renderer/coh_renderer_shaders.h',
                  ROOT / 'native-android/engine/coh_contracts.h',
-                 ROOT / 'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h']
+                 ROOT / 'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h',
+                 HERE / 'run_frames_android.py', HERE / 'tests/test_frame_driver.py',
+                 ROOT / 'native-android/engine/continuation/run_adapter_android.py',
+                 ROOT / 'native-android/engine/scenecatalog-qualification/common.py']
     untracked_sources = run(['git', '-C', ROOT, 'ls-files', '--others', '--exclude-standard',
                              '--', *pin_files]).strip().splitlines()
     flags = ['-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic',

@@ -1,0 +1,178 @@
+{
+  "schema": "coh-independent-very-rare-tail-review-v1",
+  "reviewer": "Worker F",
+  "source_revision": "b5df39e6e8185461db544ec138a50ebbb7bac7c5",
+  "source_tree": "643df566d71d195ae4254f64d782b162a32e29f1",
+  "result": "No blocking defect found in the standalone parser, field order, ownership, rollback or retained host qualification.",
+  "reviewed_paths": [
+    "native-android/engine/entities/coh_very_rare_tail.c",
+    "native-android/engine/entities/coh_very_rare_tail.h",
+    "native-android/engine/entities/check_very_rare_tail.py",
+    "native-android/engine/entities/tail_oracle_shim.h",
+    "native-android/engine/entities/tail_fixture.c.inc",
+    "native-android/engine/entities/tail_observation.h",
+    "native-android/engine/entities/test_very_rare_tail.c",
+    "native-android/engine/entities/very-rare-tail-source-pins.json",
+    "native-android/engine/entities/VERY_RARE_TAIL_CONTRACT.md",
+    "native-android/engine/entities/INITIAL_UPDATE_CLOSURE.md"
+  ],
+  "field_order_review": {
+    "producer_consumer_functions": [
+      "entSendOtherSupergroupInfo",
+      "entReceiveOtherSupergroupInfo",
+      "entSendLevelingpactInfo",
+      "entReceiveLevelingpactInfo",
+      "entSendLogoutUpdate",
+      "entReceiveLogoutUpdate",
+      "TaskStatusSend",
+      "TaskStatusReceive"
+    ],
+    "placement": "After AFK inside the very-rare branch; before teammate-buff presence. Outer flags and entity identity are not parsed here.",
+    "nested_mission": "Filename presence, strings, owner/task words, difficulty, alliance, state/timers, nine status flags, location versus explicit-map branch, optional zowie fields are in original order.",
+    "ordered_records": "Token, recipe, special-detail and pact events retain duplicates, empty names, name-presence and raw signed-source words.",
+    "unknown_dictionaries": "Named resources remain raw owned metadata; original dictionary filtering is a deterministic fixture shell only."
+  },
+  "ownership_review": {
+    "output_bytes_host64": 79184,
+    "workspace_bytes_host64": 79184,
+    "combined_pod_bytes": 158368,
+    "stack_reservation_bytes": 8192,
+    "minimum_named_budget_before_input_and_retained": 166560,
+    "aggregate_limit_bytes": 4194304,
+    "full_input_span_charged": true,
+    "caller_retained_ownership_charged": true,
+    "allocation_or_io": false,
+    "retained_input_pointers": false,
+    "reader_output_workspace_input_pairwise_aliases_refused": true,
+    "address_range_overflow_refused": true,
+    "budget_subtractions_guarded_before_use": true,
+    "workspace_zeroed_only_after_preflight": true,
+    "reader_and_output_commit_only_after_complete_suffix": true,
+    "workspace_unspecified_on_refusal": true,
+    "per_string_limit_including_nul": 1024,
+    "combined_strings_bytes": 65536,
+    "pact_member_count_max": 2,
+    "pact_name_limit_including_nul": 64,
+    "tokens_recipes_details_each_max": 256,
+    "limits_are_named_ownership_not_process_rss": true
+  },
+  "source_edge_cases": {
+    "stale_fixture_profile": "Supergroup and logout oo_packet guards are stale while the pact body remains fresh, reflecting independent packet-id domains; this is not full stale-pact state equivalence.",
+    "true_stale_pact": "Unchanged original receiver skips member bodies for a stale nonzero pact. 150 retained cursor-difference controls expose the source defect; native raw parsing consumes the producer body without applying stale state.",
+    "prior_state_controls": 13,
+    "null_recipe": "Original sender can advertise a null recipe slot then omit its body; ten malformed source-produced fixtures are refused without running the unsafe receiver path.",
+    "logout": "Raw quanta are retained; native parser does not multiply or claim an authoritative timer.",
+    "outer_message": "Success stages only this suffix. Whole entity, ALLENTS/UPDATE tails, dictionaries, selected identity and generation must still validate before publication or completion acknowledgment."
+  },
+  "independent_provenance": {
+    "native_helper_hashes_verified_against_worktree_and_exact_git_blobs": 13,
+    "original_file_hashes_verified_against_exact_git_blobs": 13,
+    "original_function_hashes_verified": 21,
+    "sender_and_receiver_order_block_hashes_verified": true,
+    "fixture_sha256_verified": "d7d1036a3219ecea667c2e95fda639dd32ceefcacd5138ac51bf6644d7481083",
+    "qualification_receipt_sha256": "abffe4b0baeec7b85c2cfbff18415690647d762e0d01f68d39adfac30b35bb9f",
+    "qualification_receipt_bytes": 10871,
+    "source_worktree_clean_at_qualification": true,
+    "source_unchanged_before_after": true,
+    "broad_tests_rerun_by_reviewer": false
+  },
+  "retained_host_qualification": {
+    "receipt": "native-android/engine/entities/qualification/very-rare-tail-20261016/host-b5df39e6.json",
+    "checks_each_mode": 2701932,
+    "modes": [
+      "release",
+      "asan",
+      "ubsan"
+    ],
+    "fixtures": {
+      "producer_fixtures": 270,
+      "receiver_only_cached_name_fixtures": 10,
+      "supported_fixtures": 240,
+      "source_valid_local_limit_refusals": 30,
+      "source_malformed_null_recipe_refusals": 10,
+      "original_prior_state_controls": 13,
+      "stale_pact_cursor_differences": 150,
+      "observation_bytes": 196612,
+      "sha256": "d7d1036a3219ecea667c2e95fda639dd32ceefcacd5138ac51bf6644d7481083"
+    },
+    "truncations": 299942,
+    "byte_mutations": 37504,
+    "random_inputs": 10000,
+    "cpp_public_api_link_passed": true,
+    "original_oracle_sanitized": false,
+    "native_parser_and_harness_sanitized": true,
+    "leak_sanitizer": false,
+    "host_stack_frame_measurements": [
+      {
+        "function": "scalar",
+        "bytes": 48,
+        "bound": "static"
+      },
+      {
+        "function": "text",
+        "bytes": 96,
+        "bound": "static"
+      },
+      {
+        "function": "automatic",
+        "bytes": 32,
+        "bound": "static"
+      },
+      {
+        "function": "count",
+        "bytes": 48,
+        "bound": "static"
+      },
+      {
+        "function": "coh_ent_very_rare_tail",
+        "bytes": 256,
+        "bound": "static"
+      }
+    ],
+    "stack_measurement_scope": "Per-function host compiler observations for the new module; not Android execution or a process-stack measurement."
+  },
+  "acceptance": {
+    "source_implemented": true,
+    "host_source_qualified": true,
+    "android_abi_built": false,
+    "android13_executed": false,
+    "physical_thor_accepted": false,
+    "real_server_interoperability": false,
+    "full_update_complete": false,
+    "actor_publication": false,
+    "dictionary_authority": false,
+    "stale_state_application_qualified": false,
+    "completion_acknowledgments_enabled": false,
+    "new_combined_apk": false
+  },
+  "source_sha256": {
+    "native-android/engine/entities/coh_very_rare_tail.c": "4db976052dad6e463161cbc5afe02d6d424b6c24d795e663870f9027b91241b8",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entities/test_very_rare_tail.c": "fe2324a3e37e202f7ec41ca50ded080ff22fca646685a9bb06bb0dfdb949fc36",
+    "native-android/engine/entities/coh_very_rare_tail.h": "6f1fc81912aac0690db7331a0d95f89015b0df6e34f0574aaefe82b7a32b2c36",
+    "native-android/engine/entities/tail_oracle_shim.h": "94c0cf23e01432312019c1e936e457a68c303530c5985c394c6e0c1a0910fb4e",
+    "native-android/engine/entities/tail_fixture.c.inc": "e6bc9fe0f2b2aeb9808e5354b54853db890a149a67b0148f773366b960125bd7",
+    "native-android/engine/entities/tail_observation.h": "990fa40a03879ff1a592f6f10a8bc2139c171c39727cff77536afac81e28f4eb",
+    "native-android/engine/entities/very-rare-tail-source-pins.json": "c22588fc9022427809e74e6e23c66e278afa60fd0f4bbe6a3d784b386f03bfa8",
+    "native-android/engine/entities/check_very_rare_tail.py": "773754a7b33763ae02011485daa3f91d5b3c2f591f20e1f8e022d3a463762d96",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_source_sha256_lf": {
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "MapServer/src/storyarc/storySend.c": "b1bc173b8328339564b23c5233599745ecc822ac0e4f2316e2e2e85de406375c",
+    "Game/src/storyarc/contactClient.c": "b5deea307fa92bb05e9b7997a5278882bfcad01c6e02fb3425d320954046caa5",
+    "Game/src/storyarc/contactClient.h": "2d3f9b2b15977d240b40ab96d801bd24204331b39b22cb10f92f1c7cdefd3080",
+    "Game/src/UI/uiCompass.h": "0446c9a9a3be3b26119d528d0eb546c11ec73993d4f94c6b99381bedfc60f963",
+    "Common/storyarc/contactCommon.h": "6a9e2dc04800ab10444d7b2fd886dfdb426e83082efb70aa20c9d2527e560fb3",
+    "Common/entity/teamCommon.h": "db0018467ae696e3cd6f6b4183e932560cc427f812850331b69987cda740a0fc",
+    "Common/entity/Supergroup.h": "507ecb84875692c585045a724c9fbec8247c7b00f940e51d2b7907ec48a995f8",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "Game/src/entity/entIncludeClient.h": "3acc9aec76e2efbcd4675dc0e42cb54fcf1df5bb8dc49f15a9fab00c5203d573",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+  }
+}

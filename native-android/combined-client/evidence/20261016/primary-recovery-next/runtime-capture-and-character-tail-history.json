@@ -1,0 +1,22 @@
+{
+  "schema": "coh-preserved-worker-history-v1",
+  "file": "runtime-capture-and-character-tail-history.bundle",
+  "bytes": 155490,
+  "sha256": "f86966aadfd4fe5cdcd3bc83077a477b187cf8abede3fe3255a7b158ef42a056",
+  "tips": {
+    "a": "7562e2812de41dfcdcdc15676e5f9dd4a9c80374",
+    "b": "7d753a21578390f14e53ece9569e79360bcb9f1d",
+    "c": "ec79428813b145f9fb5eb81c121ffafeb51b3bc7",
+    "e": "e0117b85df9eb741325bebcfee17cb45c950232d",
+    "f": "066facd623281fab2f9dfaea026cbf770498d461"
+  },
+  "excluded_complete_bases": [
+    "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+    "4de229ddc0ab9dade1c700b71d00056f7109d18d",
+    "341ebdd2258a5f13f20e3732d076b39ec35e44a2",
+    "2856112e7f9e227919174f707a32825ea73cc62e",
+    "a71351494bc987a5c12d51767ba6b081aa787588"
+  ],
+  "verification": "The bundle contains these 5 refs:\n7562e2812de41dfcdcdc15676e5f9dd4a9c80374 refs/recovery-next-tail/a\n7d753a21578390f14e53ece9569e79360bcb9f1d refs/recovery-next-tail/b\nec79428813b145f9fb5eb81c121ffafeb51b3bc7 refs/recovery-next-tail/c\ne0117b85df9eb741325bebcfee17cb45c950232d refs/recovery-next-tail/e\n066facd623281fab2f9dfaea026cbf770498d461 refs/recovery-next-tail/f\nThe bundle requires these 5 refs:\n3e8b5c9f5b794b58a66c6d8c62a593b926a10873 \n2856112e7f9e227919174f707a32825ea73cc62e \na71351494bc987a5c12d51767ba6b081aa787588 \n4de229ddc0ab9dade1c700b71d00056f7109d18d \n341ebdd2258a5f13f20e3732d076b39ec35e44a2 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/combined-client/evidence/20261016/primary-recovery-next/runtime-capture-and-character-tail-history.bundle is okay\n",
+  "original_worker_commit_identities_preserved": true
+}

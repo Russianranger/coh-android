@@ -172,3 +172,34 @@ Integration sequence, after upstream prerequisites are available:
 
 Rollback is additive: omit this standalone target and producer integration.
 Accepted APKs, profile/database, renderer code and support APIs are unchanged.
+
+## Recovered visibility frame tranche, 2026-10-17
+
+The preserved `/workspace/scratch/142ad4bc669b/worker-e` had unpublished frame
+APIs in `coh_world_render.c` and `.h`, absent from remote `3e8b5c9f5`.
+Those two files are recovered byte-for-byte; the original worktree remains intact.
+The former worktree's Git directory pointer was unavailable. This recovery uses
+content comparison, rather than claiming its unpublished commit identity.
+
+`coh_wr_frame_create` now pins an immutable ordered visibility selection and
+camera, charges its allocation to the aggregate budget, and preflights geometry
+and finite model-view output. It partitions that selection into at most 512 draws
+per batch, without sorting translucent draws. This does not derive visibility,
+qualify LOD, or increase the 4,096-draw snapshot bound. An explicit empty selection
+is allowed; NULL indices mean the entire snapshot only.
+
+`coh_wr_frame_bind` resolves exactly the selected working set. It atomically
+replaces both numeric texture bindings and selection mask after complete success;
+missing resources or cancellation preserve the previous complete state. A draw
+outside the committed selection refuses, including after committing an empty
+frame. The frame, binding and draw must refer to the identical retained snapshot.
+Frames require off-thread destruction after all borrowed spans flush/abandon.
+
+New qualification executes 1,025 alpha-blended CPU draws through the unchanged
+renderer in ordered 512/512/1 batches with zero allocation/free on that measured
+path. It checks selective resource calls, empty selections, failed/cancelled
+binding rollback, invalid/duplicate/out-of-range selections, per-draw/config
+limits, overflow, allocation/budget failure, cancellation after allocation,
+snapshot mismatch, Surface loss/rebind and retained snapshot leases. The mock
+backend is not GLES execution and does not qualify visual blending, real assets,
+Android lifecycle or server-authoritative world publication.
