@@ -1,3 +1,11 @@
+# Current continuation checkpoint
+
+The latest primary implementation and successful hosted qualification supersede
+this historical handoff. Read [Emergency recovery handoff](../../20261017/emergency-recovery/HANDOFF.md)
+and its `hosted-234d9c7` exact artifact/source receipts. Source is
+`234d9c71869c91ccf8453e2a0e29df2ed0f18b32`; both narrow workflows passed.
+No new Combined APK or authoritative world/actor acceptance exists.
+
 # Primary recovery and six-worker continuation
 
 Integration target is `native-android` only. Recovery fetched actual remote HEAD

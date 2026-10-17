@@ -1,0 +1,123 @@
+{
+  "repository_commit": "234d9c71869c91ccf8453e2a0e29df2ed0f18b32",
+  "repository_tree": "f419fac3d7ae31ab4b14f80c47fb4db2c996386a",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "github_run_id": "38991372131",
+  "image_os": "win25-vs2026",
+  "image_version": "20261007.264.1",
+  "schema": "coh-hosted-authserver-receive-build-v1",
+  "passed": true,
+  "build_policy": {
+    "generator": "Visual Studio 18 2026",
+    "architecture": "Win32",
+    "configuration": "OptDebug",
+    "target": "AuthServer",
+    "parallel": "2",
+    "mapserver": false,
+    "beaconserver": false,
+    "service_execution": false
+  },
+  "commands": [
+    {
+      "name": "archive-original-source",
+      "returncode": 0,
+      "elapsed_seconds": 1.203,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "configure-receive-candidate",
+      "returncode": 0,
+      "elapsed_seconds": 79.032,
+      "log_sha256": "892637d500be843f99c3032ea3cc2c7d6fe910a54122c925ec02dfbe4203b67a",
+      "log_bytes": 13248,
+      "log_original_bytes": 13248,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "build-receive-candidate",
+      "returncode": 0,
+      "elapsed_seconds": 171.093,
+      "log_sha256": "d7491989ac6555f7a63cad9b83e6674d4901c461d6123897ef92d935698a0e10",
+      "log_bytes": 4827,
+      "log_original_bytes": 4827,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    }
+  ],
+  "service_executed": false,
+  "encrypted_account_login_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "general_tcp_segmentation_accepted": false,
+  "source_archive_sha256": "7a3a9bbae74bdb9aa83c1c0ae9572134a34f8a3c9d691eb60a3ed91374671f8b",
+  "candidate_sources": {
+    "SocketServerEx.cpp": "16d4a59c4a2eaae20e6901ef34ffe4ee0465e4dbf170ade877ef243c7944631f",
+    "IOSocket.cpp": "bdf40132e33e1280b9a7f3cce32eb33a8ebcede2838673959fc317c78097d319"
+  },
+  "candidate_binary": {
+    "sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003",
+    "bytes": 864256,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 2,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "candidate_sources_unchanged_after_build": true,
+  "source_inputs_unchanged": true,
+  "files": {
+    "archive-original-source.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "AuthServer-receive-candidate.exe": {
+      "bytes": 864256,
+      "sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003"
+    },
+    "build-receive-candidate.log": {
+      "bytes": 4827,
+      "sha256": "d7491989ac6555f7a63cad9b83e6674d4901c461d6123897ef92d935698a0e10"
+    },
+    "candidate-CMakeCache.txt": {
+      "bytes": 36352,
+      "sha256": "68c6ec0663379655cb1ba23a5819236a27e0fb53dd956ee113c4596a9b77c174"
+    },
+    "candidate-host-qualification.json": {
+      "bytes": 4795,
+      "sha256": "c611112e498e3c18a8a5ebfafcfff3c09ffa75f618273e267f758ba0e7f1b90a"
+    },
+    "candidate-manifest.json": {
+      "bytes": 1518,
+      "sha256": "bdaff93352bf1a15482970b77eb7fa1248bd59dd13aaa00e268e63aec05be8a2"
+    },
+    "configure-receive-candidate.log": {
+      "bytes": 13248,
+      "sha256": "892637d500be843f99c3032ea3cc2c7d6fe910a54122c925ec02dfbe4203b67a"
+    },
+    "IOSocket.cpp": {
+      "bytes": 8907,
+      "sha256": "bdf40132e33e1280b9a7f3cce32eb33a8ebcede2838673959fc317c78097d319"
+    },
+    "receive-offset.patch": {
+      "bytes": 529,
+      "sha256": "3afa5659661159d4267298eeeb5a3f83c4a27df88c189265802ad6c989fa6b79"
+    },
+    "SocketServerEx.cpp": {
+      "bytes": 25048,
+      "sha256": "16d4a59c4a2eaae20e6901ef34ffe4ee0465e4dbf170ade877ef243c7944631f"
+    }
+  }
+}

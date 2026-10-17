@@ -1,0 +1,331 @@
+{
+  "schema": "coh-emergency-recovery-hosted-checkpoint-v1",
+  "source_revision": "234d9c71869c91ccf8453e2a0e29df2ed0f18b32",
+  "source_tree": "f419fac3d7ae31ab4b14f80c47fb4db2c996386a",
+  "runs": [
+    {
+      "id": 38991372131,
+      "jobs": [
+        {
+          "id": 117274279884,
+          "name": "isolated-win32-receive-candidate-build",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 38991372131,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Preserve exact source bytes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Build only private original AuthServer with reviewed receive cursor correction",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        },
+        {
+          "id": 117274279946,
+          "name": "source-and-android13-frames",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 38991372131,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Install bounded standalone dependencies and pinned NDK",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Independently verify retained capture and immutable source graph ownership",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Qualify new teammate grammar and build both Android ABIs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Qualify corrected receive candidate and isolated stage admission",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Qualify bounded frames and build exact standalone ABI artifacts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run android-actions/setup-android@v3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Enable emulator acceleration",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Execute exact bounded-frame contract on Android 13",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Post Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 38991372171,
+      "jobs": [
+        {
+          "id": 117274280103,
+          "name": "entity-tail-host-both-abis-android13",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 38991372171,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Check exact source and artifact admission controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install original-source oracle dependencies and pinned NDK",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Qualify only the new suffix on host and build both standalone Android ABIs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run android-actions/setup-android@v3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Enable emulator acceleration",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Execute exact standalone suffix on Android 13",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Post Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12085517046,
+      "name": "native-isolated-authserver-receive-build",
+      "size_in_bytes": 427525,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12085517046",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12085517046/zip",
+      "expired": false,
+      "created_at": "2026-10-17T01:39:12Z",
+      "expires_at": "2027-01-15T01:33:28Z",
+      "updated_at": "2026-10-17T01:39:12Z",
+      "digest": "sha256:da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d",
+      "workflow_run": {
+        "id": 38991372131,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "234d9c71869c91ccf8453e2a0e29df2ed0f18b32"
+      }
+    },
+    {
+      "id": 12085392588,
+      "name": "native-emergency-recovery-source-and-android13",
+      "size_in_bytes": 1094248,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12085392588",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12085392588/zip",
+      "expired": false,
+      "created_at": "2026-10-17T01:40:20Z",
+      "expires_at": "2027-01-15T01:33:28Z",
+      "updated_at": "2026-10-17T01:40:20Z",
+      "digest": "sha256:2a0987b52b7680853cb8940fd282c79816e3b4a609e314cfc0d2134fcdf6977c",
+      "workflow_run": {
+        "id": 38991372131,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "234d9c71869c91ccf8453e2a0e29df2ed0f18b32"
+      }
+    },
+    {
+      "id": 12085566760,
+      "name": "native-entity-tail-host-arm64-x86_64-android13",
+      "size_in_bytes": 297318,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12085566760",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12085566760/zip",
+      "expired": false,
+      "created_at": "2026-10-17T01:38:06Z",
+      "expires_at": "2027-01-15T01:33:28Z",
+      "updated_at": "2026-10-17T01:38:06Z",
+      "digest": "sha256:cda507fbd051784ed4741fd1a626cc274bb7dd1468e06a73db9fdfadfee35a9e",
+      "workflow_run": {
+        "id": 38991372171,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "234d9c71869c91ccf8453e2a0e29df2ed0f18b32"
+      }
+    }
+  ],
+  "accepted_apks_rebuilt": false,
+  "physical_thor_accepted": false,
+  "full_live_world_verified": false
+}

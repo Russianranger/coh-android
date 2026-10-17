@@ -137,3 +137,42 @@ physical ARM64 execution.
    account cases, cleanup and later DB→Map. Development auth remains provisional.
 6. Startup stays387,340ms. Obtain exact cache-refusal/decode/hash/write and concurrent
    process memory receipts before changing production caching. No speedup claimed.
+
+## Successful published qualification checkpoint
+
+Published source is `234d9c71869c91ccf8453e2a0e29df2ed0f18b32`, exact reviewed tree
+`f419fac3d7ae31ab4b14f80c47fb4db2c996386a`, guarded parent
+`9f6cd4537ad45324f7866caea6d5a732308bce8b`. Both concurrent admission commits
+0b0e1cef3 and9f6cd4537 are preserved. No force update or history reset occurred.
+
+Both [recovery38991372131](https://github.com/Russianranger/coh-android/actions/runs/38991372131)
+and [suffix38991372171](https://github.com/Russianranger/coh-android/actions/runs/38991372171)
+passed. The artifact ZIPs, all member CRCs, exact build source/fixture/ABI ELF
+identities, original source maps, scope and cleanup were independently checked in
+a clean separate checkout of that exact published source. All three original ZIPs
+are retained in `hosted-234d9c7`, with manifests and admission/review receipts.
+
+- Source provenance, original graph fixtures, actual A/B ownership composition,
+  both receive suites, teammate and renderer host/sanitizer checks passed.
+- Recovered suffix builds both ABIs and executes2,701,932 controls on Android13
+  x86_64, with exact expected result, binary identity and owned cleanup.
+- Teammate builds both ABIs and passes812,687 controls per host/sanitizer mode.
+  It has no new Android execution qualification.
+- Renderer frames build both ABIs and execute32,284 fixture controls on Android13
+  x86_64, including1025 ordered draws in three batches and selective binding.
+  This is CPU adapter fixture execution; no GLES or real world claim.
+- The isolated corrected AuthServer compiles successfully as Win32 PE32/I386,
+  864,256 bytes, SHA256
+  `9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003`.
+  Receipt SHA256`25ee2415a280e7b3800808824d95d05b862acca9d4d4879f5fccb5605d6a2451`.
+  Strict source/binary/receipt admission passed. This binary has never executed;
+  encrypted account login, listener readiness and DB/Map handoff remain pending.
+
+Artifacts: source/Android12085392588, isolated PE12085517046, suffix12085566760.
+Exact outer SHA256 values and all filenames/sizes are in `manifest.json` and
+`github-receipts.json`; future experiments must reuse these exact qualified bytes.
+A/B have host/source/sanitizer qualification here, not new Android execution.
+ARM64 build is not physical Thor execution. No accepted APK was rebuilt, no
+complete full update was acknowledged and gates25–27 remain open. Continue from
+the resource/transaction/live-generation dependencies above; no repeated0.1.7
+physical test or premature successor APK is requested.

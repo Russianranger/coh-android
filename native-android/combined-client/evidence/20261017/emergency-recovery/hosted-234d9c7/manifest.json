@@ -1,0 +1,38 @@
+{
+  "tail.zip": {
+    "bytes": 297318,
+    "sha256": "cda507fbd051784ed4741fd1a626cc274bb7dd1468e06a73db9fdfadfee35a9e"
+  },
+  "auth-admission.json": {
+    "bytes": 813,
+    "sha256": "db7a5ea50677b8de7151002694ae995f870375005a71d30c611305ca003b8822"
+  },
+  "recovery-review.json": {
+    "bytes": 2480,
+    "sha256": "263ef3571ecb8c659a37521e2a0ee76b32d66fa8b5b90177e8a3c63bf54f5e38"
+  },
+  "tail-android13-receipt.json": {
+    "bytes": 3308,
+    "sha256": "a9e1c4a1b49966ee05db2b14c51f3615335ca730cead18265fca2b6018a7d7bf"
+  },
+  "auth-build-receipt.json": {
+    "bytes": 4187,
+    "sha256": "25ee2415a280e7b3800808824d95d05b862acca9d4d4879f5fccb5605d6a2451"
+  },
+  "auth.zip": {
+    "bytes": 427525,
+    "sha256": "da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d"
+  },
+  "github-receipts.json": {
+    "bytes": 11135,
+    "sha256": "3c2799558c98509d3b5584f7e1197ff91f53c5eae42fccd7bcc7e394cd929bd3"
+  },
+  "recovery.zip": {
+    "bytes": 1094248,
+    "sha256": "2a0987b52b7680853cb8940fd282c79816e3b4a609e314cfc0d2134fcdf6977c"
+  },
+  "frames-android13-receipt.json": {
+    "bytes": 4797,
+    "sha256": "74baa75806034e51f5a0724d10861fa3304317bafa23ab1717646b3ee802794f"
+  }
+}

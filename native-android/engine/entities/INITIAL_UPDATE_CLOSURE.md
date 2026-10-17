@@ -1,3 +1,11 @@
+Qualification update: source `234d9c71869c91ccf8453e2a0e29df2ed0f18b32`
+passed standalone suffix host/sanitizers, both ABI builds and Android13x86_64
+execution in run38991372171 (2,701,932 controls). New teammate grammar passed
+host/sanitizers and both ABI builds in run38991372131 (812,687 per mode);
+teammate Android execution remains pending. Exact artifacts are retained in the
+20261017 emergency recovery handoff. Full initial-update/actor/ACK gates below
+remain open; no physical or live-world acceptance follows from these results.
+
 # Initial authoritative update closure ledger
 
 Checkpoint: additive entity continuation from remote
