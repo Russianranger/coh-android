@@ -1,5 +1,17 @@
 # Character dictionary recovery continuation — 2026-10-17
 
+Latest whole-initial input inventory: `WHOLE_INITIAL_INPUTS.md` and
+`qualification/whole-initial-input-review-20261017.json` bind42 existing native
+source/handoff files,15 original source files/18 whole functions and7 exact donor
+members to the committed C baseline `dde64626e691f228042ab3873ea196b97ba9cd61`.
+The complete historical costume slots/body inputs, taskforce costume consumer,
+ordered shared layout and whole initial/dynamic wire diagnostics already exist.
+Current server costume/shared-generation equality and actual ordered
+`dyn_groups`→tracker occurrence ownership remain missing. A definition DAG walk
+or a caller count cannot close them. This is a read-only source/data inventory;
+no protected appearance edit, old qualifier rerun, server execution or new
+authority. No independent partial semantic kernel was added.
+
 Worker C owns this additive directory. No appearance/gameplay/shared integration
 paths were modified. All components remain historical raw/source-only candidates;
 none publishes an actor or permits an initial-update application ACK.

@@ -1,0 +1,34 @@
+{
+  "accepted_runtime_replaced": false,
+  "actor_authority": false,
+  "actual_caller_stack_witness_available": false,
+  "actual_win32_compile_verified": false,
+  "all_source_pins_match_exact_commit_and_current_worktree": true,
+  "compiler_or_test_or_service_executed_by_reviewer": false,
+  "concrete_blockers": [],
+  "exact_retained_utils_patch_section_reused": true,
+  "new_composition_methods_reported_passed": 7,
+  "old_policy_or_formatter_suites_repeated": false,
+  "only_checksum_and_utils_source_changes_allowed": true,
+  "original_file_count": 5995,
+  "proof_bytes": 3686,
+  "proof_commit": "1c3959ce25e48ae445ffbd12d539ea9c597a396f",
+  "proof_path": "native-android/engine/auth-interop/qualification/threadname-composition-20261017/host.json",
+  "proof_sha256": "394a3d000fd70843e201397e99c8da0326db6f3f912669787150a935ff912364",
+  "reviewed_new_sources": {
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_candidate.py": {
+      "bytes": 22334,
+      "sha256": "630b4b46c7aa5c68bb2ac7afa44a1587e3f9289c95c49c92da3a8c062b938ec0"
+    },
+    "native-android/engine/auth-interop/deployment/test_db_threadname_candidate.py": {
+      "bytes": 14560,
+      "sha256": "aae1932d2c923244b3a001734626638b8454e84a224873b0fc8d23219b1c324b"
+    }
+  },
+  "schema": "coh-f-db-threadname-composition-source-review-v1",
+  "service_executed": false,
+  "source_commit": "1a53f9327d964466b968500912bdd8ff43b2dd75",
+  "source_pin_count": 20,
+  "source_review_passed": true,
+  "world_authority": false
+}

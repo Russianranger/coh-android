@@ -1,0 +1,425 @@
+{
+  "schema": "coh-gpu-lease-host-egl-v1",
+  "passed": true,
+  "source_revision": "827f1f1136b52f46fdcd787e7a6d31664b4d0b94",
+  "source_sha256": {
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/world-render-adapter/GPU_LEASE_OWNER.md": "9bf2706e32d536cd64ed6c3dbc8abc6d6ce02fa1ef4f7c4c21a18b087ca78c40",
+    "native-android/engine/world-render-adapter/check_gpu_lease.py": "52ffbff817fc945b38e2c989129074108732fee71f5c692dad137d7d8f0b4f04",
+    "native-android/engine/world-render-adapter/check_sampler.py": "bd9f3fc4224f7e9bd048e20658933915d1cafd6202a9d7afe32dc28766da6ef4",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_lease.c": "097a49697a915ae2becdccd4ddf859d9dc0ef4644d05b7b381c47e64bcbd65f4",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_lease.h": "5130f196fd98b60c5ef0e6fd799698423349a85842af33d82d5d5169dcb2bba4",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_texture.c": "aff25b77e123fe65801b8065d5b218e7076061f174bb1a8d3f7145a6fc213037",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_texture.h": "a281c7173ebd9a0ed218d385ba74787f2b7df1f08a0ccab008e5fa64c1c3b51a",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.h": "245966845cc87f156b6402f5f56ecc2ab2abf5ef84976efeb3d4c887a5471908",
+    "native-android/engine/world-render-adapter/coh_wr_sampler.c": "a93ccc9b3307338ff716641630cb3d74ea8d81eb71d756b73e474c717d41f844",
+    "native-android/engine/world-render-adapter/coh_wr_sampler.h": "31051b98834cf18c313994c452d85313a27a91419d27cac99babdd177fc8cfdb",
+    "native-android/engine/world-render-adapter/coh_wr_texture.c": "191ebf02dead0fa3657944c18e97d1cd6ad482fc2432d144b58d86f0efbbe844",
+    "native-android/engine/world-render-adapter/coh_wr_texture.h": "069ac1de9a4f6e7128ff779ea44d01894d48769500784c9d97056ce0eaca22d0",
+    "native-android/engine/world-render-adapter/egl-host-header-pins.json": "dd66d5737f403d859dbf1d5a863f4dd3815005facb27e7bee3a911df5bbb07cd",
+    "native-android/engine/world-render-adapter/sampler-authentic-pins.json": "a80887dacabe98deb119ac948e498fbba7d51cf97a1057c96f79e22df0d849bc",
+    "native-android/engine/world-render-adapter/tests/coh_gpu_egl_backend.c": "3cc61cd4b14dbdc6466780a833d3add3235f371b53434896ccca2fd87ff0d240",
+    "native-android/engine/world-render-adapter/tests/coh_gpu_egl_backend.h": "de6116d3a914d807684ead384857ab8d06f8080117bb2bb5a44185f47cb2692f",
+    "native-android/engine/world-render-adapter/tests/test_gpu_lease.c": "ee7ae46f42ed1381772bf4b556dfad418a90117b771304b4e354cc919413e098",
+    "native-android/engine/world-render-adapter/tests/test_gpu_lease_egl.c": "e23831f2f4d0cb69271dafd609b508c3aace2c416c1e73599d9eb904df750892",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+  },
+  "current_committed_sources_verified": true,
+  "fixture": {
+    "bytes": 43990,
+    "sha256": "c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a"
+  },
+  "host_headers": {
+    "EGL/egl.h": {
+      "url": "https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/db3425b8246136faccb5e2782b5694960bd6edf1/api/EGL/egl.h",
+      "sha256": "a7c24c828bf2e1a4dfe6511b4f4812b948a285eb54787074015896976d4da076",
+      "bytes": 19286
+    },
+    "EGL/eglplatform.h": {
+      "url": "https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/db3425b8246136faccb5e2782b5694960bd6edf1/api/EGL/eglplatform.h",
+      "sha256": "25b5391655effcf363a38fa00c3154f356a3eab3d35dc067847875513cf1e441",
+      "bytes": 5239
+    },
+    "KHR/khrplatform.h": {
+      "url": "https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/db3425b8246136faccb5e2782b5694960bd6edf1/api/KHR/khrplatform.h",
+      "sha256": "7b1e01aaa7ad8f6fc34b5c7bdf79ebf5189bb09e2c4d2e79fc5d350623d11e83",
+      "bytes": 11131
+    },
+    "GLES3/gl3.h": {
+      "url": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/6af574a14089ccfee87efe230ebcdd8742859813/api/GLES3/gl3.h",
+      "sha256": "a0e4880142bd059bd4d7446f257920b5020b8bbb0a86eb0149cbd1ea2fcf8cb0",
+      "bytes": 81600
+    },
+    "GLES3/gl3platform.h": {
+      "url": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/6af574a14089ccfee87efe230ebcdd8742859813/api/GLES3/gl3platform.h",
+      "sha256": "a9e060dae5a2b11c5a889b679692b7089a10a7e03ebfbb6cf28217f6e322fb08",
+      "bytes": 642
+    }
+  },
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "host_library_files_before": {
+    "/usr/lib/x86_64-linux-gnu/libEGL.so.1.1.0": "875ecbb2a07d60e32216c9f102965abc1e9cc1da7789558e2e9b8b9c107e231d",
+    "/usr/lib/x86_64-linux-gnu/libGLESv2.so.2.1.0": "4d410c7e883b6e4bab42fafae7ebad6ae5702883bfce07a5e6ffdf4c3fec433b"
+  },
+  "host_library_files_after": {
+    "/usr/lib/x86_64-linux-gnu/libEGL.so.1.1.0": "875ecbb2a07d60e32216c9f102965abc1e9cc1da7789558e2e9b8b9c107e231d",
+    "/usr/lib/x86_64-linux-gnu/libGLESv2.so.2.1.0": "4d410c7e883b6e4bab42fafae7ebad6ae5702883bfce07a5e6ffdf4c3fec433b"
+  },
+  "host_loaded_mapping_verified": false,
+  "results": {
+    "release-model": {
+      "binary_sha256": "4c0b1c895137f90b132be10f63d0205fee611edffe950c93763bf720123eadbb",
+      "native": {
+        "passed": true,
+        "checks": 96,
+        "model_only": true,
+        "actual_gles": false,
+        "world_authority": false,
+        "actor_authority": false,
+        "source_generation_admitted": false
+      }
+    },
+    "release-egl": {
+      "binary_sha256": "f73289b38bc2adbc3615813710130a4288a05b5266e25e73b889b05d8d232c79",
+      "native": {
+        "passed": true,
+        "checks": 602,
+        "actual_gles": true,
+        "cleanup_verified": true,
+        "uploads": 4,
+        "readbacks": 37,
+        "registry_retains": 4,
+        "registry_releases": 4,
+        "verified_deletes": 3,
+        "destroyed_context_disposals": 1,
+        "contexts_created": 2,
+        "contexts_destroyed": 2,
+        "surfaces_created": 3,
+        "surfaces_destroyed": 3,
+        "context_name_reuse_observed": true,
+        "generation_fixture_only": true,
+        "sampler_fixture_only": true,
+        "production_prepare_executed": false,
+        "world_authority": false,
+        "actor_authority": false,
+        "source_generation_admitted": false,
+        "gl_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.4",
+        "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)"
+      },
+      "readback": {
+        "bytes": 1398096,
+        "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523",
+        "chains": 4,
+        "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c"
+      }
+    },
+    "asan-model": {
+      "binary_sha256": "529a338e4094e38fd46631a290465cebbf7dde5fcb4be335d53487044d1d708f",
+      "native": {
+        "passed": true,
+        "checks": 96,
+        "model_only": true,
+        "actual_gles": false,
+        "world_authority": false,
+        "actor_authority": false,
+        "source_generation_admitted": false
+      }
+    },
+    "asan-egl": {
+      "binary_sha256": "f940b0ce31d4e9dcffc72083eda0365a565e6de5c787ffbb97cac5e9b4d2c5ab",
+      "native": {
+        "passed": true,
+        "checks": 602,
+        "actual_gles": true,
+        "cleanup_verified": true,
+        "uploads": 4,
+        "readbacks": 37,
+        "registry_retains": 4,
+        "registry_releases": 4,
+        "verified_deletes": 3,
+        "destroyed_context_disposals": 1,
+        "contexts_created": 2,
+        "contexts_destroyed": 2,
+        "surfaces_created": 3,
+        "surfaces_destroyed": 3,
+        "context_name_reuse_observed": true,
+        "generation_fixture_only": true,
+        "sampler_fixture_only": true,
+        "production_prepare_executed": false,
+        "world_authority": false,
+        "actor_authority": false,
+        "source_generation_admitted": false,
+        "gl_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.4",
+        "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)"
+      },
+      "readback": {
+        "bytes": 1398096,
+        "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523",
+        "chains": 4,
+        "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c"
+      }
+    },
+    "ubsan-model": {
+      "binary_sha256": "b99db6b0cee6f848bab3546ff119641d46644f6fad96762b6832a88104e585f6",
+      "native": {
+        "passed": true,
+        "checks": 96,
+        "model_only": true,
+        "actual_gles": false,
+        "world_authority": false,
+        "actor_authority": false,
+        "source_generation_admitted": false
+      }
+    },
+    "ubsan-egl": {
+      "binary_sha256": "37d2d5d12fda1c21ca722395da193662d74de5a52ce4ebd1f45f74bda34fc7f5",
+      "native": {
+        "passed": true,
+        "checks": 602,
+        "actual_gles": true,
+        "cleanup_verified": true,
+        "uploads": 4,
+        "readbacks": 37,
+        "registry_retains": 4,
+        "registry_releases": 4,
+        "verified_deletes": 3,
+        "destroyed_context_disposals": 1,
+        "contexts_created": 2,
+        "contexts_destroyed": 2,
+        "surfaces_created": 3,
+        "surfaces_destroyed": 3,
+        "context_name_reuse_observed": true,
+        "generation_fixture_only": true,
+        "sampler_fixture_only": true,
+        "production_prepare_executed": false,
+        "world_authority": false,
+        "actor_authority": false,
+        "source_generation_admitted": false,
+        "gl_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.4",
+        "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)"
+      },
+      "readback": {
+        "bytes": 1398096,
+        "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523",
+        "chains": 4,
+        "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c"
+      }
+    },
+    "finite-fixture-model": {
+      "binary_sha256": "c7a7d05967f0baa88666bd56dd2c837096dde7e6ce0693dc7b05359f3167a318",
+      "native": {
+        "passed": true,
+        "checks": 96,
+        "model_only": true,
+        "actual_gles": false,
+        "world_authority": false,
+        "actor_authority": false,
+        "source_generation_admitted": false
+      }
+    },
+    "finite-fixture-egl": {
+      "binary_sha256": "879a0aa2f60111cc6d7e6875e4c86a0e4e1eff298013b339939b28ee5fa93a9a",
+      "native": {
+        "passed": true,
+        "checks": 602,
+        "actual_gles": true,
+        "cleanup_verified": true,
+        "uploads": 4,
+        "readbacks": 37,
+        "registry_retains": 4,
+        "registry_releases": 4,
+        "verified_deletes": 3,
+        "destroyed_context_disposals": 1,
+        "contexts_created": 2,
+        "contexts_destroyed": 2,
+        "surfaces_created": 3,
+        "surfaces_destroyed": 3,
+        "context_name_reuse_observed": true,
+        "generation_fixture_only": true,
+        "sampler_fixture_only": true,
+        "production_prepare_executed": false,
+        "world_authority": false,
+        "actor_authority": false,
+        "source_generation_admitted": false,
+        "gl_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.4",
+        "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)"
+      },
+      "readback": {
+        "bytes": 1398096,
+        "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523",
+        "chains": 4,
+        "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c"
+      }
+    }
+  },
+  "mode_flags": {
+    "release": [
+      "-O2",
+      "-fstack-usage"
+    ],
+    "asan": [
+      "-O1",
+      "-g",
+      "-fsanitize=address",
+      "-fno-omit-frame-pointer",
+      "-no-pie"
+    ],
+    "ubsan": [
+      "-O1",
+      "-g",
+      "-fsanitize=undefined",
+      "-fno-sanitize-recover=all"
+    ],
+    "finite-fixture": [
+      "-O2",
+      "-DCOH_GPU_LEASE_FIXTURE_DIGEST",
+      "-I/home/runner/work/coh-android/coh-android/out/gpu-lease-android/host"
+    ]
+  },
+  "finite_fixture_digest_header_sha256": "e66ca5aa9d9440d0c0050fb66cb263440322cb520b7eba49e125b08f1919731b",
+  "finite_fixture_digest_is_general_sha256": false,
+  "independent_pillow": {
+    "payload_sha256": "c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a",
+    "width": 256,
+    "height": 256,
+    "cached_texopt_flags": 192,
+    "fourcc": "DXT1",
+    "levels": 9,
+    "decoded_rgba_bytes": 349524,
+    "packet_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c",
+    "pillow_all_mips_equal": true,
+    "mips": [
+      {
+        "level": 0,
+        "width": 256,
+        "height": 256,
+        "rgba_sha256": "f1922d0106bdf5c219c2ecec0d8f157de61b66e086d0df39dc4fd7ce237436ea"
+      },
+      {
+        "level": 1,
+        "width": 128,
+        "height": 128,
+        "rgba_sha256": "6f924cda5b0d703ea003123b9d7572b9f5a46592372941e18581f43148fff24b"
+      },
+      {
+        "level": 2,
+        "width": 64,
+        "height": 64,
+        "rgba_sha256": "698f80fd47650bec1fd4e40faa73bc40ba99556b495c39d775663ccbc48e25d9"
+      },
+      {
+        "level": 3,
+        "width": 32,
+        "height": 32,
+        "rgba_sha256": "b8cbb9d4acb25797484422d78b46c542e32c8274dad3279bdea052599af14bbd"
+      },
+      {
+        "level": 4,
+        "width": 16,
+        "height": 16,
+        "rgba_sha256": "deea57b56ec91794aa609770432b3f19d39e21b28fd296394cd277793930cdee"
+      },
+      {
+        "level": 5,
+        "width": 8,
+        "height": 8,
+        "rgba_sha256": "33742d5a856aea38bcc230521509c034c5e0924ff21b5a182756fd36d7ff26ad"
+      },
+      {
+        "level": 6,
+        "width": 4,
+        "height": 4,
+        "rgba_sha256": "0ba7cd22a8fa177130724295b7e7937e6e4d6ec47ae24135af5567571149d9e3"
+      },
+      {
+        "level": 7,
+        "width": 2,
+        "height": 2,
+        "rgba_sha256": "5fea705ca98ffb66a42f6da477b606e394492b98db71e6eee63e1eecb00b0655"
+      },
+      {
+        "level": 8,
+        "width": 1,
+        "height": 1,
+        "rgba_sha256": "7d4b7423c99a39a0bc735ba8148637033def5f9fea32bdf1e8ce209192ab7e60"
+      }
+    ],
+    "cached_flags_not_final_client_state": true
+  },
+  "native_stack": [
+    {
+      "function": "resolve",
+      "bytes": 128
+    },
+    {
+      "function": "hold",
+      "bytes": 32
+    },
+    {
+      "function": "drop",
+      "bytes": 16
+    },
+    {
+      "function": "coh_wr_gpu_lease_adopt",
+      "bytes": 8624
+    },
+    {
+      "function": "coh_wr_gpu_lease_resources",
+      "bytes": 48
+    },
+    {
+      "function": "coh_wr_gpu_lease_retire",
+      "bytes": 32
+    },
+    {
+      "function": "coh_wr_gpu_lease_drain",
+      "bytes": 80
+    },
+    {
+      "function": "coh_wr_gpu_lease_collect",
+      "bytes": 32
+    },
+    {
+      "function": "coh_wr_gpu_lease_report",
+      "bytes": 32
+    }
+  ],
+  "stack_sum_times_four": 36096,
+  "cpp_link_passed": true,
+  "cpp_binary_sha256": "10cdce32880d0d3e7a902739c6657779a5176593413b8a56acfb4ddc1e77eeb1",
+  "production_c_object_sha256": "2cae7ed11cce9a35ae9b03e28dbeb0d8092d7d1d29fc66ab9d22475129b21998",
+  "public_symbols": [
+    "coh_wr_gpu_lease_adopt",
+    "coh_wr_gpu_lease_collect",
+    "coh_wr_gpu_lease_drain",
+    "coh_wr_gpu_lease_report",
+    "coh_wr_gpu_lease_resources",
+    "coh_wr_gpu_lease_retire"
+  ],
+  "semantic_mutations_refused": [
+    "identity_digest",
+    "retire_while_leased",
+    "registry_pin",
+    "missing_transfer",
+    "cleanup_error_ignored"
+  ],
+  "actual_host_gles_executed": true,
+  "android_built": false,
+  "android_executed": false,
+  "system_driver_sanitized": false,
+  "asan_leak_detection": false,
+  "nine_world_prerequisites_admitted": false,
+  "production_prepare_executed": false,
+  "current_generation_admitted": false,
+  "source_generation_admitted": false,
+  "actor_authority": false,
+  "material_authority": false,
+  "world_authority": false
+}

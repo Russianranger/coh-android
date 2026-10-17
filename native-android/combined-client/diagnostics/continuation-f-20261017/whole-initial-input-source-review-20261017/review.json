@@ -1,0 +1,29 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "committed_baseline": "dde64626e691f228042ab3873ea196b97ba9cd61",
+  "committed_report_sha256": "8fcffacc21b1657ffc7af6f750e5f45310e8fcd10b2a121bca81e57ea75e6e65",
+  "costume_all_three_serialized_table_spans_hash_checked": true,
+  "costume_complete_raw_bytes": 641477,
+  "current_generation_admitted": false,
+  "donor_archive_and_members_streamed_maximum_bytes": 65536,
+  "donor_member_hashes_checked": 7,
+  "dynamic_world_owner_verified": false,
+  "exact_current_and_committed_file_counts": {
+    "existing_qualification_receipts": 7,
+    "native_and_handoff_source_sha256": 42,
+    "original_source_sha256": 15
+  },
+  "function_checks_use_reported_line_and_exact_lf_byte_span_not_new_execution": true,
+  "historical_resource_hashes_checked": 4,
+  "qualifier_or_test_or_runtime_replayed": false,
+  "reviewed_source_commit": "65e9e5c1632e7f3660c176397c85aae1e84d1dcb",
+  "schema": "coh-f-whole-initial-input-source-review-v1",
+  "source_findings": [
+    "Existing complete costume/taskforce owners do not supply same-run server cache/shared/reload association.",
+    "Shared26or52 modeling does not witness actual global list generation or pointer family.",
+    "findBreakable prunes/lazy-loads before trackerOpen; existing tracker entries persist, so ideal definition occurrence order does not witness actual dyn_groups."
+  ],
+  "source_review_concrete_blockers": [],
+  "whole_original_function_span_hashes_checked": 18
+}

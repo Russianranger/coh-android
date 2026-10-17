@@ -1,0 +1,40 @@
+{
+  "schema": "coh-preserved-runtime-evidence-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/runtime-evidence-20261017/a",
+      "tip": "cc056230c1628ed5a82da1df05d91b3a3792c888",
+      "prerequisite": "f7b15f3577a04324ef208f33b34211d1e4a0ba3a"
+    },
+    "B": {
+      "ref": "refs/recovery/runtime-evidence-20261017/b",
+      "tip": "404915b0dc2bac19e170171ccca77269e59f4f42",
+      "prerequisite": "a0ef67a7a7731c1ea77b67c5d7e66b928617a57c"
+    },
+    "C": {
+      "ref": "refs/recovery/runtime-evidence-20261017/c",
+      "tip": "65e9e5c1632e7f3660c176397c85aae1e84d1dcb",
+      "prerequisite": "dde64626e691f228042ab3873ea196b97ba9cd61"
+    },
+    "D": {
+      "ref": "refs/recovery/runtime-evidence-20261017/d",
+      "tip": "1c3959ce25e48ae445ffbd12d539ea9c597a396f",
+      "prerequisite": "76a211886308f43ce177e3f7c5c5bf9371acb932"
+    },
+    "E": {
+      "ref": "refs/recovery/runtime-evidence-20261017/e",
+      "tip": "675a82bb5d0c6b8d70446d67676736a463be70f3",
+      "prerequisite": "827f1f1136b52f46fdcd787e7a6d31664b4d0b94"
+    },
+    "F": {
+      "ref": "refs/recovery/runtime-evidence-20261017/f",
+      "tip": "8a41b8c35bcb4f2c57a69270b732be1ff139ec12",
+      "prerequisite": "bab15b320222b7d0340f054d30de4418682f2c42"
+    }
+  },
+  "bundle": "worker-runtime-evidence-history.bundle",
+  "bytes": 3152734,
+  "sha256": "632161a688d5e3f1c82c7c04023797d4cea06bd1a28b8d8cc7467bcb9b804d96",
+  "verification": "The bundle contains these 6 refs:\ncc056230c1628ed5a82da1df05d91b3a3792c888 refs/recovery/runtime-evidence-20261017/a\n404915b0dc2bac19e170171ccca77269e59f4f42 refs/recovery/runtime-evidence-20261017/b\n65e9e5c1632e7f3660c176397c85aae1e84d1dcb refs/recovery/runtime-evidence-20261017/c\n1c3959ce25e48ae445ffbd12d539ea9c597a396f refs/recovery/runtime-evidence-20261017/d\n675a82bb5d0c6b8d70446d67676736a463be70f3 refs/recovery/runtime-evidence-20261017/e\n8a41b8c35bcb4f2c57a69270b732be1ff139ec12 refs/recovery/runtime-evidence-20261017/f\nThe bundle requires these 6 refs:\nbab15b320222b7d0340f054d30de4418682f2c42 \nf7b15f3577a04324ef208f33b34211d1e4a0ba3a \ndde64626e691f228042ab3873ea196b97ba9cd61 \n827f1f1136b52f46fdcd787e7a6d31664b4d0b94 \na0ef67a7a7731c1ea77b67c5d7e66b928617a57c \n76a211886308f43ce177e3f7c5c5bf9371acb932 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-runtime-evidence-history.bundle is okay\n",
+  "scope": "Exact Android13 GPU artifacts/receipts and independent review; actual scene/native refusal and seven source texture bodies; original Db assertion/site and new existing-repair candidate source composition; complete initial input and tracker witness inventory. No authoritative world/player/ACK/current namespace/Thor acceptance."
+}

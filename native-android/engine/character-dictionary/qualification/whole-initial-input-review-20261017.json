@@ -1,0 +1,566 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "complete_initial_character": false,
+  "conclusions": {
+    "actual_dyn_groups_ordered_tracker_witness_missing": true,
+    "costume_complete_historical_primary_slots_available": true,
+    "costume_current_server_cache_shared_and_reload_join_missing": true,
+    "definition_occurrence_walk_proves_tracker_order": false,
+    "full_attribute_schema_variant_already_exists": true,
+    "same_dictionary_second_append_count": 52,
+    "shared_sets_actual_runtime_global_state_unobserved": true,
+    "shared_sets_allocated_shared_rows_not_traversal_count": 27,
+    "shared_sets_source_ordered_historical_initial_count": 26,
+    "standalone_new_semantic_owner_can_close_current_generation_from_retained_corpus_alone": false,
+    "taskforce_extra_dictionary_required": false,
+    "taskforce_uses_same_costume_dictionary": true,
+    "whole_dynamic_wire_diagnostic_already_exists": true,
+    "whole_initial_parser_already_exists": true
+  },
+  "costume_primary_slots": {
+    "all_tables_consumed_exactly": true,
+    "compressed": {
+      "bytes": 131122,
+      "equal_committed_baseline": true,
+      "sha256": "29855908f848f9d7329f413b64be637e10b79878702ee76db35799f7fa7ddfab"
+    },
+    "generation_admitted_COHCDI1": false,
+    "matching_current_server_tables_observed": false,
+    "raw": {
+      "bytes": 641477,
+      "sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81"
+    },
+    "tables": [
+      {
+        "bytes": 635385,
+        "max_size": 32768,
+        "maximum_key_bytes": 78,
+        "present": 13209,
+        "sha256": "78d47c5174aa9d0dbb739d124d2a2cd061a340c640c7a3e527a51786e3f97a1a",
+        "table": "ordinary"
+      },
+      {
+        "bytes": 3140,
+        "max_size": 256,
+        "maximum_key_bytes": 29,
+        "present": 156,
+        "sha256": "71637d731203e1a51ceb554393dfa11ec42806208c2e10a5698736cdf924ec9f",
+        "table": "extra"
+      },
+      {
+        "bytes": 2952,
+        "max_size": 512,
+        "maximum_key_bytes": 4,
+        "present": 224,
+        "sha256": "2acf1fc514dd14f09e31dfa42047405f8dc89282d84ebe17e65c4b4a23b16d1f",
+        "table": "palette"
+      }
+    ]
+  },
+  "current_source_generation_admitted": false,
+  "dynamic_world_owner_verified": false,
+  "existing_qualification_receipts": {
+    "native-android/engine/character-dictionary/qualification/power-sequence-source-review-20261017.json": {
+      "bytes": 7670,
+      "equal_committed_baseline": true,
+      "sha256": "3f45c231c91bca276bb9ee83b66ef5567dce91079571f89d2c72b71ddde4c950"
+    },
+    "native-android/engine/character-dictionary/qualification/shared-power-sets-20261017-final.json.gz": {
+      "bytes": 13238,
+      "equal_committed_baseline": true,
+      "sha256": "e850401e9db728731e35110878a8fa4edd77ac71200b341971a54cb24939f860"
+    },
+    "native-android/engine/entities/qualification/costume-builder-20261017/host-proof.json": {
+      "bytes": 25220,
+      "equal_committed_baseline": true,
+      "sha256": "53d430b2f6052b4271ae05fb56af30d90e934e06d89d2ed64877e3924b379976"
+    },
+    "native-android/engine/entities/qualification/costume-builder-20261017/source-binding.json": {
+      "bytes": 446,
+      "equal_committed_baseline": true,
+      "sha256": "036106a66942f6470003503768ea7c0ee9f8f65123bf16b2f2d304884df77d5a"
+    },
+    "native-android/engine/entities/qualification/costume-inputs-20261017/host-proof.json": {
+      "bytes": 12436,
+      "equal_committed_baseline": true,
+      "sha256": "e5665fdcd8a7b40ab7364bca370ef1cbc575d756c4e24c073f64b6d6092131a6"
+    },
+    "native-android/engine/entities/qualification/costume-inputs-20261017/source-binding.json": {
+      "bytes": 2172,
+      "equal_committed_baseline": true,
+      "sha256": "4db2bfb9460c97171707a60a4fe7badbee861b33e35a540f690e39c3256d575d"
+    },
+    "native-android/engine/initial-capture/qualification/initial-capture-d603351ff.json.gz": {
+      "bytes": 5410,
+      "equal_committed_baseline": true,
+      "sha256": "df90b5ad9570a342fbb42fda80f5cd34bc0e56c089e3a6eef68ec1323b1b9fb4"
+    }
+  },
+  "historical_resource_capture": {
+    "actual_dynamic_tracker_array_recorded": false,
+    "files": {
+      "capture/catalog.cohcat": {
+        "bytes": 12179670,
+        "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+      },
+      "capture/resources.cohres": {
+        "bytes": 12596422,
+        "sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+      },
+      "capture/runtime.cohrts": {
+        "bytes": 6585,
+        "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+      },
+      "runtime-graph-diagnostic.json": {
+        "bytes": 63437,
+        "sha256": "61c2882093173ca85fa4c6d86411d246a94617a884e806a5c71e40f2ca7ea128"
+      }
+    },
+    "matching_current_initial_transaction": false,
+    "path": "/workspace/scratch/7ed1da2a7e55/retained-inputs/resource-capture"
+  },
+  "live_initial_packet_observed_in_this_review": false,
+  "missing_dynamic_witness": [
+    "Same-run complete zero-based dyn_groups index to actual DefTracker rooted occurrence path; preserve actual entries/counts, not an ideal definition traversal.",
+    "Actual regular/external definition identity and world matrix, unambiguous rooted incidence, dyn_group index+1 consistency, exact count and reset/build/map generation.",
+    "Original sizeof/bitfield DynGroupStatus ABI with raw status bytes plus named hp/repair, bound to exact source-produced initial packet and coherent scene."
+  ],
+  "native_and_handoff_source_sha256": {
+    "native-android/engine/character-data/coh_character_data.c": {
+      "bytes": 8998,
+      "equal_committed_baseline": true,
+      "sha256": "1067bb504b0d89dcf61c82f0be42856bc8e42856660d33a3ca0d382a3ac15aaf"
+    },
+    "native-android/engine/character-data/coh_character_data.h": {
+      "bytes": 4472,
+      "equal_committed_baseline": true,
+      "sha256": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0"
+    },
+    "native-android/engine/character-dictionary/INITIAL_CHARACTER_CAPTURE_DEPENDENCIES.md": {
+      "bytes": 8529,
+      "equal_committed_baseline": true,
+      "sha256": "4dc40b2e6f69e3c1b8bf07dc3d388f2985008818a937b7243a96ab25adfb76b7"
+    },
+    "native-android/engine/character-dictionary/POWER_SEQUENCE_DEPENDENCIES.md": {
+      "bytes": 9329,
+      "equal_committed_baseline": true,
+      "sha256": "746c69e379371d13f183428c89ddedbd4382b70983ce437dc023528c7257abf6"
+    },
+    "native-android/engine/character-dictionary/SHARED_POWER_SETS.md": {
+      "bytes": 2476,
+      "equal_committed_baseline": true,
+      "sha256": "5e4af4d77d404ac8f2ff8ee10e72077eeffb10b4513b2dcf6bf2a8c9655d5577"
+    },
+    "native-android/engine/character-dictionary/coh_shared_power_sets.c": {
+      "bytes": 4999,
+      "equal_committed_baseline": true,
+      "sha256": "21a2799aec8737a61ab5b34603319af61251934140b1992d90e06662b254e24a"
+    },
+    "native-android/engine/character-dictionary/coh_shared_power_sets.h": {
+      "bytes": 2087,
+      "equal_committed_baseline": true,
+      "sha256": "1363aaaae1ae1b9a4c49e8ebb0e635e6ba60f189660e3a9cf6ca39b83ddc41bf"
+    },
+    "native-android/engine/costume-builder/CONTRACT.md": {
+      "bytes": 4089,
+      "equal_committed_baseline": true,
+      "sha256": "7a6a74c2989178c4ccccb16b9b1dab5a9723026702ad035c37c2394333d8b0fe"
+    },
+    "native-android/engine/costume-export/CONTRACT.md": {
+      "bytes": 8118,
+      "equal_committed_baseline": true,
+      "sha256": "77156fcc953e88f8b54e4f15b96e86be97b092e3978b8a1adb70d51aa524656c"
+    },
+    "native-android/engine/costume-export/source_costume_export.inc": {
+      "bytes": 3721,
+      "equal_committed_baseline": true,
+      "sha256": "55bc3ed600f1052fb953ecce1a4c28fca60249d6bd39c584d4ab987c054c9529"
+    },
+    "native-android/engine/costume-export/stage.py": {
+      "bytes": 3826,
+      "equal_committed_baseline": true,
+      "sha256": "66d5f63da01ddc551aa73128f06316efa440e36c9f31d0eda35bd74cc804adbd"
+    },
+    "native-android/engine/costume-import/CONTRACT.md": {
+      "bytes": 7996,
+      "equal_committed_baseline": true,
+      "sha256": "0d121c9a34a8d6f80f2099358e2fde3ede4e4932a3ff97ca8d2612f8f4e11c79"
+    },
+    "native-android/engine/costume-import/coh_costume_import.c": {
+      "bytes": 6718,
+      "equal_committed_baseline": true,
+      "sha256": "8b4c76b28a9c42ee0d993163d49d17d14cd4b33dd94af3c621afa73f1607e26c"
+    },
+    "native-android/engine/costume-import/coh_costume_import.h": {
+      "bytes": 2343,
+      "equal_committed_baseline": true,
+      "sha256": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01"
+    },
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": {
+      "bytes": 2320,
+      "equal_committed_baseline": true,
+      "sha256": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca"
+    },
+    "native-android/engine/entities/coh_costume.c": {
+      "bytes": 14212,
+      "equal_committed_baseline": true,
+      "sha256": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789"
+    },
+    "native-android/engine/entities/coh_costume.h": {
+      "bytes": 6305,
+      "equal_committed_baseline": true,
+      "sha256": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c"
+    },
+    "native-android/engine/entities/coh_taskforce.c": {
+      "bytes": 3738,
+      "equal_committed_baseline": true,
+      "sha256": "341a9a36b3b0ab4441f7485119e8d059be0dee7a83777ef5abb2fc5814d10704"
+    },
+    "native-android/engine/entities/coh_taskforce.h": {
+      "bytes": 2110,
+      "equal_committed_baseline": true,
+      "sha256": "0580284849d5027d27cb386ee17dc6ab27c7395c493863694bf799410755d73e"
+    },
+    "native-android/engine/entity-dynamic/coh_dynamic.c": {
+      "bytes": 3513,
+      "equal_committed_baseline": true,
+      "sha256": "7ab9ddcc5113ba896999876f1825c541102cdb97744d94b54fb513b55683b478"
+    },
+    "native-android/engine/entity-dynamic/coh_dynamic.h": {
+      "bytes": 1920,
+      "equal_committed_baseline": true,
+      "sha256": "f898510163d3c0d03849578a9a30292dba9a730029a027b1997bc9302f12c5e4"
+    },
+    "native-android/engine/initial-capture/coh_initial_capture.h": {
+      "bytes": 6163,
+      "equal_committed_baseline": true,
+      "sha256": "fe41008572a9a641217928823d95307667af4c30d382bcaa4262bbe7fa43b5a8"
+    },
+    "native-android/engine/initial-capture/coh_initial_local.c": {
+      "bytes": 6276,
+      "equal_committed_baseline": true,
+      "sha256": "031d36444e2cdcd6802c3dc5d1b2e215fd5a60741dbd572022d8076ccac55091"
+    },
+    "native-android/engine/initial-capture/coh_initial_map.c": {
+      "bytes": 14698,
+      "equal_committed_baseline": true,
+      "sha256": "d2009133d67385820dc0014ffc91574df5e03b3205e1ae96b49f8978948c0b48"
+    },
+    "native-android/engine/initial-record/coh_initial_list.c": {
+      "bytes": 6806,
+      "equal_committed_baseline": true,
+      "sha256": "bf66f1b819536dd069003e9050af9a0ab1f9e671f69f410674af0c354671158c"
+    },
+    "native-android/engine/initial-record/coh_initial_list.h": {
+      "bytes": 3443,
+      "equal_committed_baseline": true,
+      "sha256": "9ecf79d2f4e3244d09691f940c94ce8ee67aa4c1ccef155d61a99157b730c928"
+    },
+    "native-android/engine/initial-suffix/coh_initial_suffix.c": {
+      "bytes": 9495,
+      "equal_committed_baseline": true,
+      "sha256": "61d6eff6158f041e27f945ad39070d50c8f3a7d30dddbf60df45bbc6c85b31d6"
+    },
+    "native-android/engine/initial-suffix/coh_initial_suffix.h": {
+      "bytes": 4164,
+      "equal_committed_baseline": true,
+      "sha256": "8955cf9a7d756cf0853045bacd26466d57aff920029b7aff7417f816e5d6e0b8"
+    },
+    "native-android/engine/initial-suffix/coh_initial_suffix_attributes.c": {
+      "bytes": 11065,
+      "equal_committed_baseline": true,
+      "sha256": "d197b22c8e3f153db1bc5decdb67ecb3ffd6a1062d159bae50dd31542920775f"
+    },
+    "native-android/engine/initial-update/coh_initial_update.c": {
+      "bytes": 8521,
+      "equal_committed_baseline": true,
+      "sha256": "268b2bf5f4ec96e344df85cc266dedd52c54f954d48f86a88191de0a4047dc87"
+    },
+    "native-android/engine/initial-update/coh_initial_update.h": {
+      "bytes": 4277,
+      "equal_committed_baseline": true,
+      "sha256": "bfe30a309d36dbcdde96222d67016b0da82320bbe6839cb4c864bcd1f3e0bb3b"
+    },
+    "native-android/engine/initial-update/coh_initial_update_attributes.c": {
+      "bytes": 10007,
+      "equal_committed_baseline": true,
+      "sha256": "cf07f9af24ce8cd141b4791147380374cdd126d29a71ea1a59f4f3b1fc63142d"
+    },
+    "native-android/engine/initial-update/coh_initial_update_attributes.h": {
+      "bytes": 2383,
+      "equal_committed_baseline": true,
+      "sha256": "e5c456c30d97551cf5da65d21bce6b8eb08f61955543da7102cefcc87d303062"
+    },
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": {
+      "bytes": 18568,
+      "equal_committed_baseline": true,
+      "sha256": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6"
+    },
+    "native-android/engine/scenegraph/coh_public_bounds.c": {
+      "bytes": 9536,
+      "equal_committed_baseline": true,
+      "sha256": "f43ebbf8c955ccc4ca0589abcd42cc3c1852234372b02cfcc44b5736eb20e4e2"
+    },
+    "native-android/engine/scenegraph/coh_public_bounds.h": {
+      "bytes": 3301,
+      "equal_committed_baseline": true,
+      "sha256": "2a0ff329e51f97c59b1d24b2d1f683332a1d6b92afd72157fb56951133e065d7"
+    },
+    "native-android/engine/scenegraph/coh_runtime_instances.c": {
+      "bytes": 8510,
+      "equal_committed_baseline": true,
+      "sha256": "9679d44d609aca9a0348c091114ccde5483bdecaaae8767a6193011590c843ad"
+    },
+    "native-android/engine/scenegraph/coh_runtime_instances.h": {
+      "bytes": 4973,
+      "equal_committed_baseline": true,
+      "sha256": "ee299ddfeb081ca1871cae4c1727743441182e52ab491f610c59aca18d0c2ad2"
+    },
+    "native-android/engine/scenegraph/coh_scene_metadata.h": {
+      "bytes": 3307,
+      "equal_committed_baseline": true,
+      "sha256": "75557e186685443c7567d9efb89d2c4d2fff880816d5c263c40d6b4522449e81"
+    },
+    "native-android/engine/scenegraph/runtime_graph.h": {
+      "bytes": 6311,
+      "equal_committed_baseline": true,
+      "sha256": "ea635edfc31eda5e29308b85d7420cc0da242bbc291bc34221ea8d615ea93a84"
+    },
+    "native-android/engine/selected-record/coh_selected_record.c": {
+      "bytes": 15271,
+      "equal_committed_baseline": true,
+      "sha256": "d4c0199caad3afeaeab020fac32bc7a2fde43ed3dbfd4b288ff311cb025a06de"
+    },
+    "native-android/engine/selected-record/coh_selected_record.h": {
+      "bytes": 4330,
+      "equal_committed_baseline": true,
+      "sha256": "c05eb2270b3b000ce34fe23a88d6e2d8e655709003073ebb6d2ec7182f619b80"
+    }
+  },
+  "next_complete_work": [
+    "Retain genuine complete raw ALLENTS bytes/exact logical bit length and immutable owned handoff/message receipt.",
+    "Bind costume and shared-set current source/runtime generation using complete actual-state witnesses or independently proved equality, without inventing a generation or selecting guessed counts.",
+    "A audits isolated read-only actual dyn_groups/tracker observer design; C does not modify old scene sinks/PE/appearance.",
+    "Reuse whole initial diagnostic and record exact first supported-profile refusal; remaining semantic gameplay owner requirements stay in POWER_SEQUENCE_DEPENDENCIES.md."
+  ],
+  "notes": [
+    "Source functions are hashed as LF-normalized whole bodies; full-file hashes preserve original bytes.",
+    "All project/qualification hashes above were compared to exact committed baseline Git blobs before this report was written.",
+    "Retained ZIP members were hashed in 64KiB chunks, not parsed into a powers object graph.",
+    "No caller count/hash label, source-only receipt or raw captured packet grants dictionary/world/character/actor/ACK authority."
+  ],
+  "original_source_sha256": {
+    "upstream/ouroboros/Common/entity/character_net.c": {
+      "bytes": 35661,
+      "equal_committed_baseline": true,
+      "sha256": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091"
+    },
+    "upstream/ouroboros/Common/entity/powers_load.c": {
+      "bytes": 131442,
+      "equal_committed_baseline": true,
+      "sha256": "c5b7bbf32621922a36ba097d566840bdd9d4afc692d8e3baacd0e207dc1e12b8"
+    },
+    "upstream/ouroboros/Common/gameData/costume_data.c": {
+      "bytes": 65578,
+      "equal_committed_baseline": true,
+      "sha256": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11"
+    },
+    "upstream/ouroboros/Common/group/group.c": {
+      "bytes": 64194,
+      "equal_committed_baseline": true,
+      "sha256": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7"
+    },
+    "upstream/ouroboros/Common/group/group.h": {
+      "bytes": 18533,
+      "equal_committed_baseline": true,
+      "sha256": "17e9d423ef7f8e389f9ce39dc6d7f601d9aee500a7a617f0caa8bc049e994a48"
+    },
+    "upstream/ouroboros/Common/group/groupdyn.c": {
+      "bytes": 2192,
+      "equal_committed_baseline": true,
+      "sha256": "d0b60e22c3a603df165b81a27613c695fec0529a80a18b96d70a6ced4e4b9946"
+    },
+    "upstream/ouroboros/Common/group/groupdyn.h": {
+      "bytes": 776,
+      "equal_committed_baseline": true,
+      "sha256": "3beff4340a596eecb6374fff890ec3e2ebbcb4f0c1f49de3130171ec37bc8c3a"
+    },
+    "upstream/ouroboros/Common/group/groupfileload.c": {
+      "bytes": 63848,
+      "equal_committed_baseline": true,
+      "sha256": "5fc2891ed78626b9fa38b181fd5fc975b69f000bf2f79bbb3c5527c86503e8d7"
+    },
+    "upstream/ouroboros/Common/group/grouptrack.c": {
+      "bytes": 16263,
+      "equal_committed_baseline": true,
+      "sha256": "5d148a21c41fe17d20196875a7708c2b6cfa745ced0fbc85981b10d0207ad677"
+    },
+    "upstream/ouroboros/Common/group/grouputil.c": {
+      "bytes": 17844,
+      "equal_committed_baseline": true,
+      "sha256": "079bc11d4ae23b3a9c0313cb88468024220f06298c3fc9e215c17b079aee9d7a"
+    },
+    "upstream/ouroboros/Game/src/entity/entrecv.c": {
+      "bytes": 149058,
+      "equal_committed_baseline": true,
+      "sha256": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5"
+    },
+    "upstream/ouroboros/Game/src/group/groupdynrecv.c": {
+      "bytes": 1720,
+      "equal_committed_baseline": true,
+      "sha256": "fa169fec151af0c8b5f239651e623dfa54c5beeccf2ffbf3f8974f8486dec616"
+    },
+    "upstream/ouroboros/MapServer/src/group/groupdynsend.c": {
+      "bytes": 2748,
+      "equal_committed_baseline": true,
+      "sha256": "6c24d57a77196f363daf604cafd498b2d71645697c4e4877ac5a460dd263958f"
+    },
+    "upstream/ouroboros/MapServer/src/group/groupnetdb.c": {
+      "bytes": 44795,
+      "equal_committed_baseline": true,
+      "sha256": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c": {
+      "bytes": 70402,
+      "equal_committed_baseline": true,
+      "sha256": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d"
+    }
+  },
+  "protected_appearance_source_edited": false,
+  "read_only_source_review": true,
+  "retained_donor_archive": {
+    "bytes": 27071659,
+    "eager_powers_graph_materialized": false,
+    "hashing_maximum_chunk_bytes": 65536,
+    "member_sha256": {
+      "data/bin/BodyParts.bin": {
+        "bytes": 2584,
+        "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb"
+      },
+      "data/bin/costume.bin": {
+        "bytes": 17691352,
+        "sha256": "10ef7562156be60bd1ef3c437c3b46d10b36b6b265129c10f39d25c4a4df5a77"
+      },
+      "data/bin/powercats.bin": {
+        "bytes": 239304,
+        "sha256": "67b46915b9bf4440de8f5cf8bf7dd4a9047daee7dc5cb96f2c2be3999f8fc5e7"
+      },
+      "data/bin/powers.bin": {
+        "bytes": 62047164,
+        "sha256": "25641e747c60e066016fcc7d2ce0a2e72f57d7d3953f7b1ff4b18b69e2d49c6d"
+      },
+      "data/bin/powersets.bin": {
+        "bytes": 3179276,
+        "sha256": "afadc5f3ae6fc9c9c413924cec75bb911ff5cd4ce37388c6737cdb5786d9d547"
+      },
+      "data/bin/schedules.bin": {
+        "bytes": 520,
+        "sha256": "a6b344b7f37b8bade2f5fbc28906d122690791ca08b381a10e6581664a348de6"
+      },
+      "data/bin/supergroupColors.bin": {
+        "bytes": 2664,
+        "sha256": "e5676ebbccc380f9d69322ef6750332b0b7e7a46d915bdfb591322862d22cb75"
+      }
+    },
+    "path": "/workspace/scratch/7ed1da2a7e55/retained-inputs/client-caches.zip",
+    "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+  },
+  "review_date": "2026-10-17",
+  "reviewed_committed_baseline": "dde64626e691f228042ab3873ea196b97ba9cd61",
+  "runtime_executed": false,
+  "schema": "coh-whole-initial-input-source-review-v1",
+  "scope": "Read-only dependency and retained-input inventory, not execution qualification. Historical data and source functions remain separately qualified; no prior qualifier or runtime capture was rerun.",
+  "whole_original_function_sha256_lf": {
+    "Common/entity/character_net.c:character_ReceivePowers": {
+      "bytes_lf": 8468,
+      "first_line_lf": 841,
+      "sha256_lf": "5302c2b5c62f99d1dfec05d99f590c244e58158b39e743c16dcc7d6438896877"
+    },
+    "Common/entity/powers_load.c:load_PowerDictionary": {
+      "bytes_lf": 2860,
+      "first_line_lf": 2696,
+      "sha256_lf": "d40438d23f16e14a4da30ad6277603e049e3ab37117820981c21897e669080a8"
+    },
+    "Common/entity/powers_load.c:powerdict_FindSharedPowersets": {
+      "bytes_lf": 657,
+      "first_line_lf": 1580,
+      "sha256_lf": "c189107add6f5772292f35b166e9c69c714be22709f8e60e4e01c0796f8abad6"
+    },
+    "Common/gameData/costume_data.c:SERVER_TEST_CLIENT:loadCostumes": {
+      "bytes_lf": 1250,
+      "first_line_lf": 1149,
+      "sha256_lf": "815734a30b396c7dbb9dfee5e1d98ed67423ad9f4adec2a0221578b444f2e67e"
+    },
+    "Common/gameData/costume_data.c:costume_initHashTable": {
+      "bytes_lf": 7517,
+      "first_line_lf": 495,
+      "sha256_lf": "95d4d792b724a4aaf13b8992d3ff80f18045bb5bcf2db12a674fda2ab7be2056"
+    },
+    "Common/group/group.c:groupSetVisBounds": {
+      "bytes_lf": 2630,
+      "first_line_lf": 282,
+      "sha256_lf": "7e84eda850af7574054fdec8d1d4b3c7f36ae16077361bfae33a9fca9538c597"
+    },
+    "Common/group/groupdyn.c:findBreakable": {
+      "bytes_lf": 479,
+      "first_line_lf": 14,
+      "sha256_lf": "1f9ccea88e9a14104e131293dfd1e27bd4f1a17bd3e0fd961749102292181813"
+    },
+    "Common/group/groupdyn.c:groupDynBuildBreakableList": {
+      "bytes_lf": 401,
+      "first_line_lf": 34,
+      "sha256_lf": "d2e10bcf2b44c6e1d59e69586025ad9dd08b21bc9ceb82fad5647a1dccd072ec"
+    },
+    "Common/group/groupdyn.c:groupDynFromWorldId": {
+      "bytes_lf": 158,
+      "first_line_lf": 65,
+      "sha256_lf": "d2c865dcf457a4b6a86aa0762f3d3b7abcc01f251162595c62824111f07dc5af"
+    },
+    "Common/group/groupdyn.c:groupDynGetMat": {
+      "bytes_lf": 172,
+      "first_line_lf": 73,
+      "sha256_lf": "babb13f12d1129156805a139546e097e95a489481caae8fc85c72681d180ee87"
+    },
+    "Common/group/groupfileload.c:groupLoadIfPreload": {
+      "bytes_lf": 168,
+      "first_line_lf": 2174,
+      "sha256_lf": "02d0d4a5d286f0c34d7f5946637f47bae49f3a12c0899fb49dddaca8aa258282"
+    },
+    "Common/group/grouptrack.c:trackerOpen": {
+      "bytes_lf": 1410,
+      "first_line_lf": 208,
+      "sha256_lf": "50968a97979149ad1ea73146602399c329118a002a7b6c9011cccb3aec26c18b"
+    },
+    "Common/group/grouputil.c:groupProcessDefTracker": {
+      "bytes_lf": 362,
+      "first_line_lf": 535,
+      "sha256_lf": "7d8784dc6ca1b433bc676cb4d55052412c025f554f02990bf5ae209f969e0a82"
+    },
+    "Common/group/grouputil.c:groupProcessDefTrackerHelper": {
+      "bytes_lf": 311,
+      "first_line_lf": 521,
+      "sha256_lf": "9724b20e3727084ecada982de02f1234c346698da02ff98fa163f88b2610cae0"
+    },
+    "Game/src/entity/entrecv.c:entReceiveTaskforceParameters": {
+      "bytes_lf": 1400,
+      "first_line_lf": 2530,
+      "sha256_lf": "1b14922ab70b8f6b097ce918504af9a2eae005845eb32a08b3545cdad3ee73c9"
+    },
+    "Game/src/entity/entrecv.c:entRecieveTaskforceArchitectInfo": {
+      "bytes_lf": 3987,
+      "first_line_lf": 2412,
+      "sha256_lf": "0dfc8a7002156045209cba0001b9e4937b48cbdb8c16fd9cd9f73721cd1b4612"
+    },
+    "Game/src/group/groupdynrecv.c:groupDynReceive": {
+      "bytes_lf": 1425,
+      "first_line_lf": 10,
+      "sha256_lf": "8bd66a243a27e79d0bf8fc6ad63427cb2bc26abc3f988353ad320d07ab3a2710"
+    },
+    "MapServer/src/group/groupdynsend.c:groupDynSend": {
+      "bytes_lf": 703,
+      "first_line_lf": 49,
+      "sha256_lf": "1cebf069381f7c4c6a0585f01da65d29c2bff7f61c954f6f9502a0710b7556a9"
+    }
+  }
+}

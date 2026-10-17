@@ -1,0 +1,132 @@
+{
+  "abis": {
+    "arm64-v8a": {
+      "binary": {
+        "bytes": 116392,
+        "sha256": "363f08ae485d98b48d2ca331721cb715853210bd2e76105b0c9b58c6d245926b"
+      },
+      "elf_machine": 183,
+      "executed": false,
+      "needed_libraries": [
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libz.so"
+      ],
+      "project_dependencies": 22
+    },
+    "x86_64": {
+      "binary": {
+        "bytes": 113904,
+        "sha256": "1984f64410c918bffccde2aa7e01cfb077d81990824e3655ac9d7b4fc655faf3"
+      },
+      "elf_machine": 62,
+      "executed": true,
+      "needed_libraries": [
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libz.so"
+      ],
+      "project_dependencies": 22
+    }
+  },
+  "actor_authority": false,
+  "actual_android_native": {
+    "actor_authority": false,
+    "actual_gles": true,
+    "checks": 602,
+    "cleanup_verified": true,
+    "context_name_reuse_observed": true,
+    "contexts_created": 2,
+    "contexts_destroyed": 2,
+    "destroyed_context_disposals": 1,
+    "generation_fixture_only": true,
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "gl_version": "OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)",
+    "passed": true,
+    "production_prepare_executed": false,
+    "readbacks": 37,
+    "registry_releases": 4,
+    "registry_retains": 4,
+    "sampler_fixture_only": true,
+    "source_generation_admitted": false,
+    "surfaces_created": 3,
+    "surfaces_destroyed": 3,
+    "uploads": 4,
+    "verified_deletes": 3,
+    "world_authority": false
+  },
+  "all_four_mip_chains_sha256_verified": true,
+  "all_member_hashes_recorded": 193,
+  "android_receipt": {
+    "bytes": 2998,
+    "sha256": "f7e5b069ad1c4b67e414fedbd6459360d15428acc88fcc219ab3bcf3591ec130"
+  },
+  "android_sanitizers_enabled": false,
+  "application_context_adopted": false,
+  "application_or_apk_built": false,
+  "archive": {
+    "bytes": 2715767,
+    "sha256": "30cb09f882e82f7dd2e2dbb6e438d96fced96edaeb2bf5b2da06567c7eb859ce"
+  },
+  "arm64_executed": false,
+  "artifact_id": 12118162266,
+  "both_elf_headers_segments_needed_libraries_verified": true,
+  "build_receipt": {
+    "bytes": 19110,
+    "sha256": "d4bddc1a6f7d17fa302190731893eb7dd9d696c35fb99eaad35483bc3c8f0b8c"
+  },
+  "current_generation_admitted": false,
+  "declared_ndk_zip_sha256": "dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f",
+  "device_properties": {
+    "ro.build.fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+    "ro.build.version.sdk": "33",
+    "ro.kernel.qemu": "1",
+    "ro.product.cpu.abi": "x86_64"
+  },
+  "driver_matches_committed_recipe": true,
+  "host_modes": {
+    "asan-egl": 602,
+    "asan-model": 96,
+    "finite-fixture-egl": 602,
+    "finite-fixture-model": 96,
+    "release-egl": 602,
+    "release-model": 96,
+    "ubsan-egl": 602,
+    "ubsan-model": 96
+  },
+  "host_receipt": {
+    "bytes": 16645,
+    "sha256": "aebe3194a1c8177b4fe9927525d609aec759be9bb1ffc460f8ffaec798948cd7"
+  },
+  "host_source_git_blobs_compared": 27,
+  "job_id": 117531576904,
+  "material_authority": false,
+  "native_executables_rerun_during_review": false,
+  "ndk_archive_independently_reacquired": false,
+  "nine_world_prerequisites_admitted": false,
+  "old_qualifiers_replayed": false,
+  "passed": true,
+  "pillow_all_mip_receipt_matches_prior_exact_fixture": true,
+  "platform_library_files_before_after_equal": true,
+  "platform_loaded_mapping_verified": false,
+  "production_prepare_executed": false,
+  "readback": {
+    "bytes": 1398096,
+    "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523"
+  },
+  "run_id": 39078874776,
+  "schema": "coh-gpu-lease-android-independent-review-v1",
+  "source_and_device_cleanup_receipts_verified": true,
+  "source_generation_admitted": false,
+  "source_git_blobs_compared": 31,
+  "source_revision": "827f1f1136b52f46fdcd787e7a6d31664b4d0b94",
+  "system_driver_sanitized": false,
+  "workflow_sha256": "45f1ca6e36b9d4d65adf92815d8a64eb664b333a2de3b4ee4638859c97952678",
+  "world_authority": false
+}

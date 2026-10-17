@@ -1,0 +1,100 @@
+{
+  "schema": "coh-actual-seven-default-source-review-v1",
+  "run_id": 39078874753,
+  "artifact_id": 12118720382,
+  "archive_bytes": 12308,
+  "archive_sha256": "87a999e6c1c003b96a9fa169ce11637b61eb696766517e063fafce73fdc39c24",
+  "single_download_reused_from_F": true,
+  "review_method": "read_only_archive_CRC_inventory_exact_allowlist_body_hash_report_and_manifest_checks; no parser/qualifier/runtime rerun",
+  "source_admitter_commit": "a0ef67a7a7731c1ea77b67c5d7e66b928617a57c",
+  "all_14_recorded_execution_dependency_hashes_match": true,
+  "report_sha256": "ab1cf2773b540061c62fd9b42e3ca5f6d58e191805b8a35c8dbf0a06646789a5",
+  "manifest_sha256": "1fe575013883344e4ce9f04d83739356e5605f9d6caf7e8190385f420ea5e2c5",
+  "whole_source_body_bytes": 16514,
+  "files": [
+    {
+      "bytes": 327,
+      "filename": "white.texture",
+      "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9",
+      "virtual_asset_path": "data/texture_library/world/filler/white.texture"
+    },
+    {
+      "bytes": 894,
+      "filename": "grey.texture",
+      "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+      "virtual_asset_path": "data/texture_library/world/filler/grey.texture"
+    },
+    {
+      "bytes": 5828,
+      "filename": "invisible.texture",
+      "sha256": "7a0e37f76eba451debca99f50f2907e556dba55dbb45468a415d55b480b103df",
+      "virtual_asset_path": "data/texture_library/world/world_fx/portal/invisible.texture"
+    },
+    {
+      "bytes": 327,
+      "filename": "black.texture",
+      "sha256": "62c947f06b7ca5c08e0e9bda98d4ae3d72aa5c7dab4557ae87ff4b48f1764f5a",
+      "virtual_asset_path": "data/texture_library/world/filler/black.texture"
+    },
+    {
+      "bytes": 437,
+      "filename": "dummy_bump.texture",
+      "sha256": "021f8a4ccfdb334f9ec336a8275b336890440bf8700ef593b7cd9d4ca374ee3d",
+      "virtual_asset_path": "data/texture_library/btest/dummy_bump.texture"
+    },
+    {
+      "bytes": 302,
+      "filename": "dummy_dynamic_cubemap_face0.texture",
+      "sha256": "cd06cf02ffa62c7e5a35d39e5d5d06632c970382640645304584c19ddb70b4f6",
+      "virtual_asset_path": "data/texture_library/static_cubemaps/dummy_dynamic/dummy_dynamic_cubemap_face0.texture"
+    },
+    {
+      "bytes": 8399,
+      "filename": "buildinglightpattern.texture",
+      "sha256": "c2996a5d0b402dba4ee2722797fdc486e48bc773e99761b659b0c1219aecaa06",
+      "virtual_asset_path": "data/texture_library/btest/buildinglightpattern.texture"
+    }
+  ],
+  "native_parser_statuses": [
+    0,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "atomic_header_owner_attempted": false,
+  "atomic_header_owner_status": 7,
+  "atomic_header_owner_created": false,
+  "persistent_owner_bytes": 0,
+  "grey_wire_observation": {
+    "header_size": 426,
+    "declared_payload_bytes": 468,
+    "cached_width": 8,
+    "cached_height": 8,
+    "cached_TexOpt_flags": 2,
+    "alpha": 0,
+    "header_tag": "TX2",
+    "name": "texture_library/WORLD/Filler/grey.dds",
+    "DDS_pixel_format_flags": 65,
+    "DDS_FOURCC": 0,
+    "DDS_RGB_bits": 32,
+    "DDS_masks": [
+      16711680,
+      65280,
+      255,
+      4278190080
+    ],
+    "inference": "RGBA32 DDS is outside existing protected legacy DXT1/3/5 decoder domain; this is a header-wire inspection, not a new decode qualification"
+  },
+  "actual_source_input_available": true,
+  "current_provider_generation": false,
+  "namespace_complete": false,
+  "default_identity": false,
+  "material_authority": false,
+  "GPU": false,
+  "world_authority": false,
+  "GROUPS_transaction_success_implied": false,
+  "old_qualifiers_rerun": false
+}

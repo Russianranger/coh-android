@@ -1,0 +1,67 @@
+name: Isolated MSSQL DbServer thread-name candidate compilation
+'on':
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-db-threadname-build.yml]
+  workflow_dispatch: {}
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-db-threadname-build-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-controls:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[db-threadname-build]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      receipt_sha256: ${{ steps.source.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Qualify only new exact reused-hunk composition and refusal controls
+        id: source
+        run: |
+          mkdir -p "$RUNNER_TEMP/db-threadname-source"
+          python3 native-android/engine/auth-interop/deployment/test_db_threadname_candidate.py --receipt "$RUNNER_TEMP/db-threadname-source/composition.json"
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib
+          path=pathlib.Path(os.environ['RUNNER_TEMP'])/'db-threadname-source/composition.json'
+          value=json.loads(path.read_bytes());assert value['passed'] is True
+          with pathlib.Path(os.environ['GITHUB_OUTPUT']).open('a') as out:out.write('sha256='+hashlib.sha256(path.read_bytes()).hexdigest()+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: source-threadname-composition-${{ github.sha }}
+          path: ${{ runner.temp }}/db-threadname-source/composition.json
+          if-no-files-found: error
+          retention-days: 90
+  compile-only:
+    needs: source-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - name: Preserve exact source line endings
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-threadname-composition-${{ github.sha }}
+          path: ${{ runner.temp }}/db-threadname-source
+      - name: Build only changed MSSQL checksum plus existing thread-name repair candidate
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_db_threadname_candidate.py build `
+            --source-root . --expected-commit $env:GITHUB_SHA `
+            --output "$env:RUNNER_TEMP/db-threadname-build" `
+            --composition-qualification "$env:RUNNER_TEMP/db-threadname-source/composition.json" `
+            --expected-composition-qualification-sha256 '${{ needs.source-controls.outputs.receipt_sha256 }}'
+          if ($LASTEXITCODE -ne 0) { throw 'Isolated thread-name candidate build did not qualify' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-db-threadname-compile-only-${{ github.sha }}
+          path: ${{ runner.temp }}/db-threadname-build/
+          if-no-files-found: error
+          retention-days: 90

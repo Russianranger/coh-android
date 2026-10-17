@@ -1,0 +1,778 @@
+{
+  "repository_commit": "6a6809d07a130af60129f569b59a627420b6bf54",
+  "repository_tree": "a56a1f5e81beb6a13ee247429e99c8bb5599e907",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "github_run_id": "39078358178",
+  "image_os": "win25-vs2026",
+  "image_version": "20261007.264.1",
+  "schema": "coh-owned-original-db-shard-activation-v1",
+  "passed": false,
+  "prior_auth_qualification": {
+    "source_commit": "28fe37cc2432db4adbfe047bd07a1e738d6aa754",
+    "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+    "protocol": 191021,
+    "runtime_receipt_sha256": "1b1bea257b8e29f73543cffc4c2148071f738036ee2cd5adc122417160106c94",
+    "candidate_authserver_sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003",
+    "normal_probe_sha256": "7cb5672c32c1d304efea9590366250437687e3b0c8c1fafae5e4ec7cf536f29c",
+    "capped_probe_sha256": "454814a2659944cf7958d10d89f2bdf49a7e5a778ad75d941077ef8d17d672ec",
+    "source_pins": [
+      [
+        "native-android/engine/auth-interop/deployment/auth_readiness.py",
+        "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/auth_service_profile.py",
+        "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/candidate_sql_memory.py",
+        "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/hosted_auth_login.py",
+        "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/hosted_candidate_login.py",
+        "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/hosted_receive_candidate.py",
+        "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/password_fixture.py",
+        "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/receive_candidate.py",
+        "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/auth_only_probe.c",
+        "9bf261ba6cd927ba1d4923c7bbd9c5fb05129dbef9a17e80310489aac537271c"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h",
+        "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h",
+        "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/poll.h",
+        "7e7c4481497ad68233f402199758d4202c5fd995c64b33901bbae10da4c673c5"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h",
+        "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/unistd.h",
+        "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/intact_probe.c",
+        "c26859b5afb68000929759d32399520d152ff29f84c10c067104dffa43755bfe"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/test_winsock_api.h",
+        "246f32d8ffb2a04c593fcafddb64c47e127acc8e6328e567018edbd2e91fc019"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/test_winsock_compat.c",
+        "eef165af9e013c6e354d98b7d8c6ede53125e099e15b81e55bc873025fa448e9"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/winsock_compat.c",
+        "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/winsock_compat.h",
+        "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/wrapped_login.c",
+        "4163131d9f76f0a96a490820587018900a780d30738e278d1057c6afcee36e02"
+      ],
+      [
+        "native-android/engine/auth/android/openssl-source.json",
+        "f3117dc4154a95c0d1a473e7ccf488ef3e5c73e560b4415dbb63366956f66239"
+      ],
+      [
+        "native-android/engine/auth/coh_auth.c",
+        "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+      ],
+      [
+        "native-android/engine/auth/coh_auth.h",
+        "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d"
+      ],
+      [
+        "native-android/engine/auth/coh_auth_openssl.c",
+        "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1"
+      ],
+      [
+        "native-android/engine/coh_contracts.h",
+        "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+      ],
+      [
+        "native-android/engine/login/coh_login.c",
+        "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e"
+      ],
+      [
+        "native-android/engine/login/coh_login.h",
+        "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+      ],
+      [
+        "native-android/engine/network/coh_net.h",
+        "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+      ],
+      [
+        "native-android/engine/network/coh_net_udp.h",
+        "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4"
+      ],
+      [
+        "native-android/include/coh_native_core.h",
+        "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+      ],
+      [
+        "native-android/protocol/coh_protocol.c",
+        "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+      ],
+      [
+        "native-android/protocol/coh_protocol.h",
+        "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+      ],
+      [
+        "native-android/src/byte_reader.h",
+        "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1"
+      ],
+      [
+        "native-android/src/coh_blowfish.c",
+        "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+      ]
+    ],
+    "qualified_account_case_count": 8,
+    "owned_cleanup_qualified": true,
+    "fresh_authentication_required": true,
+    "historical_session_reusable": false,
+    "selected_character_dbid": null,
+    "authenticated_db_map_handoff_verified": false,
+    "shipping_server_modified": false
+  },
+  "auth_candidate_admission": {
+    "admitted": true,
+    "receipt_sha256": "25ee2415a280e7b3800808824d95d05b862acca9d4d4879f5fccb5605d6a2451",
+    "binary": {
+      "sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003",
+      "bytes": 864256,
+      "machine": "I386",
+      "format": "PE32",
+      "subsystem": 2,
+      "header_identity_only": true,
+      "executed": false
+    },
+    "scope": "Caller-pinned nonshipping candidate Windows compilation; service/login not executed.",
+    "encrypted_account_login_verified": false,
+    "general_tcp_segmentation_accepted": false
+  },
+  "commands": [
+    {
+      "name": "localdb-create",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 9327
+    },
+    {
+      "name": "localdb-start",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 781
+    },
+    {
+      "name": "localdb-version",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "numeric_result": "17.0.4025.3",
+      "elapsed_ms": 312
+    },
+    {
+      "name": "localdb-memory-bound",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 187
+    },
+    {
+      "name": "load-auth-schema",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 531
+    },
+    {
+      "name": "create-owned-game-db",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 359
+    },
+    {
+      "name": "seed-owned-shard",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 62
+    },
+    {
+      "name": "localdb-pid",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "numeric_result": 6620,
+      "elapsed_ms": 45
+    },
+    {
+      "name": "firewall--auth-in-add",
+      "returncode": 0,
+      "elapsed_seconds": 2.0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-auth-out-add",
+      "returncode": 0,
+      "elapsed_seconds": 1.407,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-b7-db-in-add",
+      "returncode": 0,
+      "elapsed_seconds": 1.203,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-7-db-out-add",
+      "returncode": 0,
+      "elapsed_seconds": 1.203,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-7-db-out-remove",
+      "returncode": 0,
+      "elapsed_seconds": 1.406,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-b7-db-in-remove",
+      "returncode": 0,
+      "elapsed_seconds": 1.406,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-auth-out-remove",
+      "returncode": 0,
+      "elapsed_seconds": 1.407,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall--auth-in-remove",
+      "returncode": 0,
+      "elapsed_seconds": 1.203,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "drop-owned-game-db",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 125
+    },
+    {
+      "name": "localdb-drop-owned-schema",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 62
+    },
+    {
+      "name": "localdb-stop-owned-instance",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 47
+    },
+    {
+      "name": "localdb-delete-owned-instance",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 15
+    }
+  ],
+  "auth_only_login_repeated": false,
+  "client_login_attempted": false,
+  "selected_shard_play_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "nondevelopment_version_admitted": false,
+  "checksum_reference_installed": false,
+  "checksum_policy_relaxed": false,
+  "shipping_profiles_modified": false,
+  "original_interserver_shard_activation_verified": false,
+  "private_console_exported": false,
+  "accepted_schema": {
+    "manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "files": 62,
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+  },
+  "db_build_admission": {
+    "admitted": true,
+    "scope": "Caller-pinned compilation only; original MSSQL target, no accepted overlays or service execution.",
+    "binary": {
+      "sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+      "bytes": 1654784,
+      "machine": "I386",
+      "format": "PE32",
+      "subsystem": 3,
+      "header_identity_only": true,
+      "executed": false
+    },
+    "receipt_sha256": "51e72ef676b3db845ec4f72d1a0e856f5f34b4470050ee388087c06e843a3334",
+    "live_authenticated_db_login_verified": false,
+    "accepted_runtime_compatibility_verified": false,
+    "nondevelopment_version_observed": false,
+    "archive_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+    "platform_imports": [
+      "advapi32.dll",
+      "gdi32.dll",
+      "iphlpapi.dll",
+      "kernel32.dll",
+      "odbc32.dll",
+      "user32.dll",
+      "winmm.dll",
+      "ws2_32.dll"
+    ],
+    "separate_runtime_dlls_required": false
+  },
+  "x86_odbc_driver": {
+    "sha256": "319b6c3b0ab08dd92dc1e5ee6daf3def82503ebbc85944fc1c614cd7a1c7b729",
+    "bytes": 1563576,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 2,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "localdb_version": "17.0.4025.3",
+  "x86_sql_readiness": {
+    "healthy": true,
+    "observation": {
+      "diagnostic_completed": true,
+      "attempted_connections": 3,
+      "opened_connections": 3,
+      "connections_closed": true,
+      "sql_process_id": 6620,
+      "errors": [],
+      "query_succeeded": true,
+      "schema": "coh-auth-x86-odbc-readiness-v1",
+      "pointer_bytes": 4
+    },
+    "expected_sql_process_id": 6620,
+    "authserver_internal_pool_observed": false,
+    "encrypted_account_login_verified": false,
+    "script_sha256": "8faa80d4df509d477d6292725c47129a4d4848c5a93f5674ec41f3c330f82e28",
+    "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568"
+  },
+  "runtime_config_sha256": {
+    "auth": "b8d677f92439e207719ab0948e17e530421473f94ea353d8d60acc55414c3cd5",
+    "db": "c5a8e8b4a1f2770031afa170b1584290be2dc356cf4c55cb4272167214950b73"
+  },
+  "owned_service_generations_start": {
+    "auth": {
+      "pid": 6172,
+      "exists": true,
+      "name": "authserver",
+      "started_utc_ticks": 639278759341428465,
+      "executable_path_sha256": "532789d4ea84d66a83b4d31653d2015db3b90524eac1ae243aef6e41522c100f"
+    },
+    "sql": {
+      "exists": true,
+      "pid": 6620,
+      "started_utc_ticks": 639278759181274534,
+      "name": "sqlservr"
+    },
+    "db": {
+      "pid": 3576,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278759352289227,
+      "executable_path_sha256": "952b09b5cebd114ece6cc59ceea9081d8e76186852f84e5967a23d5e8fd17501"
+    }
+  },
+  "shard_inactive_before_db_process": true,
+  "failure": "shard_db_ready_deadline",
+  "owned_db_startup_diagnostic": {
+    "read_only": true,
+    "raw_console_or_sql_exported": false,
+    "generation_before": {
+      "pid": 3576,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278759352289227,
+      "executable_path_sha256": "952b09b5cebd114ece6cc59ceea9081d8e76186852f84e5967a23d5e8fd17501"
+    },
+    "sql": {
+      "user_tables": 0,
+      "attribute_tables": 0,
+      "dbserver_sessions": 65,
+      "sleeping_sessions": 65,
+      "active_requests": 0,
+      "waiting_requests": 0,
+      "blocked_requests": 0,
+      "wait_lock": 0,
+      "wait_network": 0,
+      "wait_io": 0,
+      "wait_memory": 0,
+      "wait_threadpool": 0,
+      "wait_other": 0
+    },
+    "process": {
+      "pid": 3576,
+      "cpu_ms": 562,
+      "thread_count": 8,
+      "thread_state_enum_counts": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 8,
+        "6": 0,
+        "7": 0
+      },
+      "wait_reason_enum_counts": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 0,
+        "6": 5,
+        "7": 0,
+        "8": 2,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0
+      },
+      "thread_ids_or_stacks_exported": false
+    },
+    "generation_after": {
+      "pid": 3576,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278759352289227,
+      "executable_path_sha256": "952b09b5cebd114ece6cc59ceea9081d8e76186852f84e5967a23d5e8fd17501"
+    },
+    "complete": true
+  },
+  "owned_db_modal_diagnostic": {
+    "read_only": true,
+    "raw_titles_controls_or_stacks_exported": false,
+    "generation_before": {
+      "pid": 3576,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278759352289227,
+      "executable_path_sha256": "952b09b5cebd114ece6cc59ceea9081d8e76186852f84e5967a23d5e8fd17501"
+    },
+    "observation": {
+      "schema": "coh-owned-db-modal-classifier-v1",
+      "pid": 3576,
+      "current_desktop_only": true,
+      "read_only": true,
+      "raw_titles_controls_or_stacks_exported": false,
+      "owned_top_level_count": 3,
+      "owned_child_count": 9,
+      "dialog_class_count": 1,
+      "source_main_text_control_count": 1,
+      "top_level_enumeration_completed": true,
+      "class_enum_counts": {
+        "dialog": 1,
+        "static": 3,
+        "button": 6,
+        "edit": 0,
+        "combo": 0,
+        "list": 0,
+        "unknown": 2
+      },
+      "text_status_counts": {
+        "ok": 12,
+        "owner_changed": 0,
+        "timeout": 0,
+        "truncated": 0
+      },
+      "inspected_characters": 542,
+      "source_matches": [
+        {
+          "kind": "source_assertion",
+          "exception_enum": "none",
+          "assertion_enum": "pe_source_file_108_assert_001",
+          "source_assertion_line_verified": true,
+          "source_file_enum": "pe_source_file_108",
+          "source_site_enum": "pe_source_file_108_assert_001",
+          "source_file_verified": true,
+          "source_file_mapping": "upstream_source",
+          "source_call_site_verified": true,
+          "source_expression_match": true,
+          "compiled_expression_variant_match": false,
+          "structure_flags": {
+            "file_field_unique": true,
+            "line_field_unique": true,
+            "expression_field_unique": true,
+            "line_shape_known": true
+          }
+        }
+      ],
+      "unknown_control_count": 11,
+      "deadline_reached": false,
+      "inventory_bound_reached": false,
+      "text_bound_reached": false,
+      "owner_changed_count": 0,
+      "original_source_sha256": {
+        "Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+        "Common/account/AccountCatalog.c": "7db49f91412ed60af05988e5997b04689d309f3f4948ad8fc003aff249f2e0bc",
+        "Common/account/AccountData.c": "038259178820f9a78040d39b4d8810933e31a67a798676fb37a0ca658682c391",
+        "Common/account/AccountTypes.cpp": "626d7e1264a39bce5d649c38a835227f85d3fcd33011ad0d959d189027ed1d13",
+        "Common/auction/Xact.c": "a40df6f1abb9af85bdcc3e45182834cfa31f01ac6fe35cc04fe3daf0e680a55c",
+        "Common/auth/auth.c": "589ca2a4353e5725cb1aad90c2f24e9dc852e6bbdad034e5932de17635bffa49",
+        "Common/container/container_util.c": "94d4701282d3b63b205d3b793633f25dcb60d612a6b1336d4d2c6626613c087a",
+        "Common/dbserver/servercfg.c": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32",
+        "Common/mission/missionserver_meta.c": "c460f5c3d8854aaa6deee1043843b075a00732725938823afeb757c1e5cd3af6",
+        "Common/sql/sqlconn.c": "e6572cea38d08bc51fd9a8af485dad98c1defbcb0b44be57f335be16b8a693d6",
+        "Common/sql/sqltask.cpp": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02",
+        "DBServer/src/accountservercomm.c": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae",
+        "DBServer/src/arenacomm.c": "df6b5d9e69f676a04d42c2124cbc10e2c26072466451dd81e5aa02db959c8710",
+        "DBServer/src/auctionservercomm.c": "f85ceceaaf9042ac8b44cdf92ab9c9d2d49fdc335c556ff3bb63757ff6d1cf4e",
+        "DBServer/src/backup.c": "738a113bbe8e27eccc825e822fca431c6a190bde6b74fcc6d461dac67b3845d3",
+        "DBServer/src/chatrelay.c": "49e68826d235889e9947ce199c786480c8ad7aad0b8decb15a962283fa53341a",
+        "DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+        "DBServer/src/container.c": "f89743d6e5a09d04595345b14b0db0172d297346210f7cfd61fecb23710448ce",
+        "DBServer/src/container_diff.c": "46eb91cc7c07244090ad4e5c582aabfce9702b8b48387e8b4d248c9b5153b650",
+        "DBServer/src/container_merge.c": "45849f2b9c2ff92db6aadb6e6dcbcfe412b55f57971647e49dbec4ff486e307e",
+        "DBServer/src/container_sql.c": "fdb1c9d3540c0cbb0fb64b219f02fc1a852ce3c1c54255227237788f8bad078f",
+        "DBServer/src/container_tplt.c": "ba512b8d8e453823bc2b438e9a3416c6ce6a983addca6d7cf2d30ae8a376c398",
+        "DBServer/src/container_tplt_utils.c": "fe5d56103a2ab3de7da1ca39a0528578dc4f0bb15caa8b8d3f9bfcced3b3faf1",
+        "DBServer/src/dbEventHistory.c": "764bd5d19c460afa574b3ce71992831514c3a4c5a03ed44beca74db0fb306de9",
+        "DBServer/src/dbdispatch.c": "30097d295b70c5c0050f4772a1dc984479e323f21fce23e1c11370ce399683d4",
+        "DBServer/src/dbimport.c": "4d61d7cbf956eab75e6f1bbb6ef1038ee112357c08ac5959ad80b69a5c5ccb2f",
+        "DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+        "DBServer/src/dbmsg.c": "cbdb161bd8f8309ccd455b0bfb75c10a1b988993b8dba203ed944a81436b4cd4",
+        "DBServer/src/dbperf.c": "3e8959a350c806780ee8f4cd333a01308619c79456e644a0a5b3887a128279d7",
+        "DBServer/src/dbrelay.c": "80fcbd95248be65028921360cc14d9a65621a1e1be39a0f568aee41bcc6f8490",
+        "DBServer/src/doors.c": "33a1b72532be1d96631c7ceaf4fd0d213cd05a2cf57353e508d444d0ba8a9510",
+        "DBServer/src/launchercomm.c": "647746af7350adeb30a8397d592d7e4dc5fb7265604ae2668362f4d77bbc3c0c",
+        "DBServer/src/loadBalancing.c": "271bdf9fb2531ab6cedab187213dab36832c22d88015f0fb4c1c2352763a5ff8",
+        "DBServer/src/logserver.c": "fee4cd4113af5ef8225575c570a0f0d5d54564dac71dfcf2fa75eac587b3451d",
+        "DBServer/src/mapcrashreport.c": "cb1c8086cf5fe71e40340e9842395de5e89506bcf3b6f00691c22125b340845a",
+        "DBServer/src/mapxfer.c": "3eb5d5f5a157363bc39dea4545791d01032fedadfa8517cf2a2e1bb7fa54ad59",
+        "DBServer/src/missionservercomm.c": "3ee0ab67577a9b27840982710beb24db0ae9822535fb1e8f1af718739878b17d",
+        "DBServer/src/namecache.c": "3b0060f1b757c73a8400216b6d22c6f2fa0264db1d055616071b7b9c51e1ac64",
+        "DBServer/src/offline.c": "94fa7aa18b09ac37293d89080267a7163362f19fc5283e87b1e910e92955b336",
+        "DBServer/src/queueservercomm.c": "ff79a4c2117bae3fad090248cdba96780336f1f4fc9acec962f65b4bddf7dbc3",
+        "DBServer/src/serverAutoStart.c": "84be1e46daad943e3c06a02da34894f06f9a4168b3dd3745f9701492d71ab2f9",
+        "DBServer/src/sql_fifo.c": "345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879",
+        "DBServer/src/statagg.c": "70a9042b83c3aa64cfa1d062827a9498137f6667b5bf47e6bf5756e845e03fe0",
+        "DBServer/src/statservercomm.c": "6c2665f494740ebc1c50c3ece12e248d1ee0942f8e8abd5a3d35a288a6de5b4a",
+        "DBServer/src/status.c": "2856f764f8da7daeb695cc08fe35d6008957d9b1d1108d807585214faadd5174",
+        "DBServer/src/svrmoncomm.c": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1",
+        "DBServer/src/turnstileDb.c": "432f4b1f80bc6d17051e048b488b0ac3135a4ac64386388ad2aead82dce8c7cc",
+        "DBServer/src/waitingEntities.c": "854560d1fdb02d438f567387f46ce6c9278efe70a493cdb1ea759e634aa9ae07",
+        "DBServer/src/weeklyTFcfg.c": "209c9ac6584cf6f304a9267f4cf3ad23f9718724619e769cf3f30da9add4212e",
+        "MapServer/src/dbcomm/staticMapInfo.c": "bf065d7cf8d22b980e808d49e6f9733af483d7d6d893581d7c13175f73af3660",
+        "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp": "eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81",
+        "libs/UtilitiesLib/include/utilitieslib/components/earray.h": "b8a47a959058f936f1a72f8dd66fc0004c0bb07ee9ca685e284c217c99376466",
+        "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp": "ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7",
+        "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de",
+        "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110",
+        "libs/UtilitiesLib/src/UtilsNew/Array_def.c": "45d6efb61961847352df26132f22d67ebad89353086a93138af217bc391ed455",
+        "libs/UtilitiesLib/src/UtilsNew/Str.c": "6c7dbe9168d932b8a511a7e384744622bbb86973afe2a0b91183f0572f067a0d",
+        "libs/UtilitiesLib/src/UtilsNew/meta.c": "2b20d13c13920e780c7106905539e6ea083e819bf41864f4d8d936fbfeb1a812",
+        "libs/UtilitiesLib/src/components/ArrayOld.c": "4138e6f7b79c5300076edacc33f051b211b8ddf211dab129a5d588dc64aaa9c9",
+        "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+        "libs/UtilitiesLib/src/components/EString.c": "b8aed7538139a6d910d9e6f408d13a6eefdb421a6d5fb753884a3e092d739de8",
+        "libs/UtilitiesLib/src/components/MemAlloc.c": "f14d4cfe4f1550193703ce9a33e38891b171c086659a04689315e97088f1d075",
+        "libs/UtilitiesLib/src/components/MemoryBank.c": "e573086f23d2acd1f49e7b1f164300f0f4bc121121185e6b3ec51bd6de17625e",
+        "libs/UtilitiesLib/src/components/MemoryPool.c": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83",
+        "libs/UtilitiesLib/src/components/Queue.c": "ca8821c09d7cd6d4a4b91f49aebe51c5107dbf1bdfaef85e25cb6ce48d7d01bc",
+        "libs/UtilitiesLib/src/components/ReferenceList.c": "37020dd81f0850add4a748d28ec86bc7dbc8b487066d031086b9298f6bcc37c3",
+        "libs/UtilitiesLib/src/components/ReferenceSystem.c": "203b3817d16b83b012660eade3c81e6f656642d615168f38a18bf78c77b9817a",
+        "libs/UtilitiesLib/src/components/SharedHeap.c": "e862481325309978ef2ff4dbca92fe67146ee41eb7477f46df6682645c8adec4",
+        "libs/UtilitiesLib/src/components/SharedMemory.c": "0d26a5c8426eec8c26ba54d773ba5b2ef092a15a0062d48f47f72c7c24b94d47",
+        "libs/UtilitiesLib/src/components/SimpleSet.c": "7c52c571aeaaa36e683bf393b315a3be06d90fa9165e8b0ebe54243f94ebfa36",
+        "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+        "libs/UtilitiesLib/src/components/StringCache.c": "ab036da2d248ef2342b94a6b0a30680fa289904ea1d0515e690520fa5c24bad0",
+        "libs/UtilitiesLib/src/components/StringTable.c": "edb09d6f7172bfc8b92a4452d6da634c944411602a1b78ee669564a021062b39",
+        "libs/UtilitiesLib/src/components/datalist.c": "69b08640cf7c745498a182c72f51fe25fd8080cce2cc3775e9fc12a61cdd8d86",
+        "libs/UtilitiesLib/src/components/datapool.c": "c01451963321c874c0948ae2c57a1c9c9aaf59471660e52869d9a0c9cad2c953",
+        "libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+        "libs/UtilitiesLib/src/components/sharedmalloc.c": "b61c149b929d3d686c5178014ed6365df07cf21e92f77e93bad5fa379e1a3b3b",
+        "libs/UtilitiesLib/src/language/AppLocale.c": "f0de476ab766a9fd717028609fe981b9ece5f144cc47480421d820ba687c4130",
+        "libs/UtilitiesLib/src/network/net_link.c": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+        "libs/UtilitiesLib/src/network/net_linklist.c": "3f9328a0fd15c6084b25ebb90d2e5b84c3a7d4211a5d1fa8b79ad73e4c7790ce",
+        "libs/UtilitiesLib/src/network/net_masterlist.c": "5b9978793e7442a0c522d869440b3847ea87e561263dcbbd798ccd823c8d2208",
+        "libs/UtilitiesLib/src/network/net_masterlistref.c": "e318560f558abf39b576e89aa39e9d3047060dff799e2ce1816690663b6eb97c",
+        "libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+        "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+        "libs/UtilitiesLib/src/network/net_profile.c": "95c044da8970a34214494320f8d9dbb5ac1a1689308d1319bd64100b09f7190e",
+        "libs/UtilitiesLib/src/network/net_socket.c": "88071c0228cb94ea236ca29795fa903fcdf5348d75858b82ef2c4b99a81f368f",
+        "libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+        "libs/UtilitiesLib/src/network/netio_core.c": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29",
+        "libs/UtilitiesLib/src/network/netio_receive.c": "d24464295fefbb90f2a356f3ea3bfa4bbf6b47863a602d6cc63c63c46cdb1047",
+        "libs/UtilitiesLib/src/network/netio_send.c": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9",
+        "libs/UtilitiesLib/src/network/sock.c": "e8ba6fccb09af31fe805019bf383a14367057cf72f3a57882bd461b0dd39642b",
+        "libs/UtilitiesLib/src/utils/DirMonitor.c": "774cf2d284b54bb19765d29810a25e3f925d6ee5091cd70002182ee96e0c0e25",
+        "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+        "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+        "libs/UtilitiesLib/src/utils/MemoryMonitor.c": "153629caa7f9f498153cbfbb3321212c580fe296ebcae1357c97ddd6a42942ac",
+        "libs/UtilitiesLib/src/utils/PigFileWrapper.c": "e4347a4694045a559c8db4d97d4dfc60748378d272e4365508ace3e2ef90909e",
+        "libs/UtilitiesLib/src/utils/StringUtil.c": "d38139653717cdd4d2bf150954f9ee91e504e7fbd9f84d4cb05b581ef0913634",
+        "libs/UtilitiesLib/src/utils/SuperAssert.c": "9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6",
+        "libs/UtilitiesLib/src/utils/error.c": "4d038297f4aa91d5095cdd811a9e07a7f6d028e9db861120ad4c48839bf1e86d",
+        "libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+        "libs/UtilitiesLib/src/utils/fileWatch.c": "ac081fe475cd69762b40f1ea0378c8e24884a9974a27afd90c3facd0d1b651c5",
+        "libs/UtilitiesLib/src/utils/fileutil.c": "6d3991db4e8c1a1b7f55280c7ea69711d765e01009022172a2c90eccd759fdd7",
+        "libs/UtilitiesLib/src/utils/hoglib.c": "a9bf5811a4de7ce244a89d06116c73986176356c5c836f9086f89c503386d67f",
+        "libs/UtilitiesLib/src/utils/hogutil.c": "7b4bb186539a9011d8dc856c0313b24d32a1cf868eb7611a0440e35cfaf8d517",
+        "libs/UtilitiesLib/src/utils/log.c": "96eaa6c03f4a8a1a0a67d5e1bc70338e77a4cf7e2fc9108af13f10fbcac59d54",
+        "libs/UtilitiesLib/src/utils/mutex.c": "ce5ad331edb7269ba7980a89ed023742e02ad618059348d11ac353086ea5ee7c",
+        "libs/UtilitiesLib/src/utils/piglib.c": "786ea2c5e9b8cf14fe4dfd4880b9cfe85a138afbccd56759e59b30b7663ed528",
+        "libs/UtilitiesLib/src/utils/quick_sprintf.c": "3808e4e601395e94c31a67b6acb075364e1d51c0ef3f1d3599ab06ece6d81d7b",
+        "libs/UtilitiesLib/src/utils/rand.c": "9e5311f89a566fa3967cfa85aa78d3662a065667d951f728cc3090a144745737",
+        "libs/UtilitiesLib/src/utils/structDefines.c": "746909e7de5c82baef0e3c8738bc245f94e8d5b1f00af5abc4be63a2517a8320",
+        "libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+        "libs/UtilitiesLib/src/utils/structNet.c": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1",
+        "libs/UtilitiesLib/src/utils/structTokenizer.c": "349ee8a2eee6a14ae11ecf94d067d773d5f1d2e19fc958975ca6d655898f6671",
+        "libs/UtilitiesLib/src/utils/sysutil.c": "a8ab6e509ae4243726b359acb0a176d2cbb9e7047ce8d012c348b2ca019cbc97",
+        "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+        "libs/UtilitiesLib/src/utils/textparserUtils.c": "f100f475c9e896506eb3dc572c5b46d365631066e06a5d7384f0db7dc22e9239",
+        "libs/UtilitiesLib/src/utils/timing.c": "63101f3279c6df94f04b782563d0c3fa0b74a1a2344758787c0fe3b96389f913",
+        "libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+        "libs/UtilitiesLib/src/utils/utils.c": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf",
+        "libs/UtilitiesLib/src/utils/utils_opt.c": "e86e629114f213a0c13cc101f5690fd47a9f6b48eb21c1f4dc3cff62ab3ec351",
+        "libs/UtilitiesLib/src/version/AppRegCache.c": "7ebc07233bec2bdc7ff0003bc3985687f5eac0dfc3fca007d2f335d11c33e637",
+        "libs/UtilitiesLib/src/version/AppVersion.c": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23",
+        "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h": "105305fab92cb2dc8651c4a4d102a8f5428ecb378f8cde46b3c409970845227b"
+      },
+      "source_call_site_count": 1409,
+      "source_call_site_index_sha256": "9dc90168f53643b370acb9b13ec3cae478537d90540d07fb34c39f541cb4ef4b",
+      "source_verified_file_count": 122,
+      "external_unverified_file_count": 4,
+      "unverified_location_site_count": 28,
+      "unverified_location_site_index_sha256": "ce3a6dcb908a7617a6b72187a1440a8beaade7bba9355f2ad8f50bbb6f382f74",
+      "lexical_index_does_not_prove_compiled_runtime_coverage": true,
+      "pe_source_catalog_sha256": "1543a4a3c30e0272c19093a8e75ef4fa04ac5c0e07d0d9d13143c08e30f86eab",
+      "upstream_filename_literal_catalog_sha256": "94405b1e0931a6497b17715ede61fdc908aaa2c2f7cd48db47aead972165c4a3",
+      "upstream_maximal_ascii_catalog_sha256": "f08e6e36bcca6bbf73f7123439f3910ac6898fb9cf1a0001e67b34c51cc1269a",
+      "compiled_variant_count": 4,
+      "compiled_variant_pe_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+      "compiled_variant_archive_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+      "rendered_filename_alias_count": 126,
+      "rendered_filename_alias_index_sha256": "f719da8c01243d971e17c237cad3966f6723e4694dab0a60f93dc1c455e2554e",
+      "filename_formatter_block_sha256": "6e83cc5f49770ae4444ada27af14958bbd66b97b1337772bf16577434502cd62",
+      "literal_byte_bounds": {
+        "filename": 1024,
+        "filenames_total": 65536,
+        "source_file": 1048576,
+        "source_total": 8388608,
+        "expression": 4096,
+        "expressions_total": 262144
+      },
+      "classifier_source_sha256": {
+        "native-android/engine/auth-interop/deployment/db_modal_diagnostic.py": "3cfb9b5e1eacc02ba9b79cda41e8cbf505743c0e5cc7ebfefe98f0a13bdba4c7",
+        "native-android/engine/auth-interop/deployment/windows/db_modal_observer.cs": "3359269a277aa9c50aac8ea74cca7bcdaabb8ff098f224a1f16df63379e8efd6",
+        "native-android/engine/auth-interop/deployment/db_modal_pe_source_catalog.json": "1543a4a3c30e0272c19093a8e75ef4fa04ac5c0e07d0d9d13143c08e30f86eab"
+      }
+    },
+    "generation_after": {
+      "pid": 3576,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278759352289227,
+      "executable_path_sha256": "952b09b5cebd114ece6cc59ceea9081d8e76186852f84e5967a23d5e8fd17501"
+    },
+    "complete": true
+  },
+  "owned_service_cleanup_complete": true,
+  "owned_firewall_cleanup_complete": true,
+  "owned_localdb_cleanup_complete": true,
+  "private_db_console_summary": {
+    "bytes": 389,
+    "inspected_prefix_bytes": 389,
+    "content_exported": false,
+    "source_markers": {
+      "db_ready": false,
+      "auth_version_received": false,
+      "sql_connected": true,
+      "checksum_reference_missing": false,
+      "loading_templates": false,
+      "update_tables": false,
+      "clearing_teamups": false,
+      "waiting_for_launchers": false,
+      "sql_connection_gave_up": false,
+      "missing_input_error": false,
+      "bind_error": false
+    }
+  },
+  "private_files_removed": true,
+  "source_inputs_unchanged": true
+}

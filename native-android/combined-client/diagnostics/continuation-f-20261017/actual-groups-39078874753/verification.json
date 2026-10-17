@@ -1,0 +1,114 @@
+{
+  "GPU": false,
+  "actor_authority": false,
+  "admitted_initial_packet_artifact_present": false,
+  "admitted_source_snapshot_artifact_present": false,
+  "all_seven_exact_required_body_and_manifest_hashes_verified": true,
+  "artifact_members": {
+    "default-bodies": {
+      "default-headers.json": {
+        "bytes": 7280,
+        "sha256": "ab1cf2773b540061c62fd9b42e3ca5f6d58e191805b8a35c8dbf0a06646789a5"
+      },
+      "fresh-default-headers/black.texture": {
+        "bytes": 327,
+        "sha256": "62c947f06b7ca5c08e0e9bda98d4ae3d72aa5c7dab4557ae87ff4b48f1764f5a"
+      },
+      "fresh-default-headers/buildinglightpattern.texture": {
+        "bytes": 8399,
+        "sha256": "c2996a5d0b402dba4ee2722797fdc486e48bc773e99761b659b0c1219aecaa06"
+      },
+      "fresh-default-headers/dummy_bump.texture": {
+        "bytes": 437,
+        "sha256": "021f8a4ccfdb334f9ec336a8275b336890440bf8700ef593b7cd9d4ca374ee3d"
+      },
+      "fresh-default-headers/dummy_dynamic_cubemap_face0.texture": {
+        "bytes": 302,
+        "sha256": "cd06cf02ffa62c7e5a35d39e5d5d06632c970382640645304584c19ddb70b4f6"
+      },
+      "fresh-default-headers/grey.texture": {
+        "bytes": 894,
+        "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013"
+      },
+      "fresh-default-headers/invisible.texture": {
+        "bytes": 5828,
+        "sha256": "7a0e37f76eba451debca99f50f2907e556dba55dbb45468a415d55b480b103df"
+      },
+      "fresh-default-headers/manifest.json": {
+        "bytes": 1892,
+        "sha256": "1fe575013883344e4ce9f04d83739356e5605f9d6caf7e8190385f420ea5e2c5"
+      },
+      "fresh-default-headers/white.texture": {
+        "bytes": 327,
+        "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9"
+      }
+    },
+    "status": {
+      "summary.json": {
+        "bytes": 1019,
+        "sha256": "9ac46a47fb8f67e983dfc818ec41207497aa571ae387c517afff756ddb3774ab"
+      },
+      "tooling.json": {
+        "bytes": 397,
+        "sha256": "71f4dee1b197325c4828d03c79058905773b217fedf3132adbef51a556904717"
+      }
+    }
+  },
+  "artifacts": {
+    "default-bodies": {
+      "artifact_id": 12118720382,
+      "bytes": 12308,
+      "sha256": "87a999e6c1c003b96a9fa169ce11637b61eb696766517e063fafce73fdc39c24"
+    },
+    "status": {
+      "artifact_id": 12118620983,
+      "bytes": 983,
+      "sha256": "333fa68bb4c55ffd0dc2207c8e5ddc19bbcb343e489c94a0ac825d170e285e22"
+    }
+  },
+  "cleanup_and_immutable_input_gates": {
+    "cleanup_verified": true,
+    "compiled_inputs_unchanged": true,
+    "owned_process_groups_absent": true,
+    "private_input_bytes_unchanged": true,
+    "restored_private_copy_unchanged": true,
+    "source_runtime_unchanged": true
+  },
+  "default_body_bytes": 16514,
+  "default_identity": false,
+  "default_manifest_sha256": "1fe575013883344e4ce9f04d83739356e5605f9d6caf7e8190385f420ea5e2c5",
+  "default_project_source_pins_different_current_root": [],
+  "default_project_source_pins_match_exact_revision": 14,
+  "default_report_sha256": "ab1cf2773b540061c62fd9b42e3ca5f6d58e191805b8a35c8dbf0a06646789a5",
+  "failure_code": "SOURCE_CAPTURE_NOT_ACCEPTED",
+  "failure_stage": "NATIVE_CAPTURE",
+  "job_id": 117531576706,
+  "matching_groups_transaction_captured": false,
+  "namespace_complete": false,
+  "native_inspection_binary_retained_and_independently_rehashed": false,
+  "private_profile_or_generic_raw_logs_exported": false,
+  "protected_parser_statuses": [
+    0,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "qualifier_or_test_or_runtime_replayed": false,
+  "run_conclusion": "failure",
+  "run_id": 39078874753,
+  "runtime_executed": true,
+  "schema": "coh-f-actual-groups-public-review-v1",
+  "seven_header_owner_attempted": false,
+  "seven_header_owner_created": false,
+  "source_generation_admitted": false,
+  "source_revision": "827f1f1136b52f46fdcd787e7a6d31664b4d0b94",
+  "source_tree": "b9c9c57ec097c4c7dc26be40333e8c63a9572e55",
+  "summary_sha256": "9ac46a47fb8f67e983dfc818ec41207497aa571ae387c517afff756ddb3774ab",
+  "summary_source_sha256": "b527f44fb38db189ac64742d89b249f9487e5daf0021e5ddeddf34d2b17b3898",
+  "tooling_sha256": "71f4dee1b197325c4828d03c79058905773b217fedf3132adbef51a556904717",
+  "workflow_sha256": "ef1111a30228eb298b6597ebd7b461733b0c552cccca27c49edc12af36a18f14",
+  "world_authority": false
+}

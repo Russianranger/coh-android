@@ -1,0 +1,14 @@
+{
+  "schema": "coh-db-threadname-build-workflow-static-review-v1",
+  "workflow_sha256": "a027c4821bcaf334022b48d6ec0a60a65130d6841400fab1c815c7a50e0d75e9",
+  "source_commit": "1a53f9327d964466b968500912bdd8ff43b2dd75",
+  "proof_commit": "1c3959ce25e48ae445ffbd12d539ea9c597a396f",
+  "independent_source_reviewer": "F",
+  "source_proof_sha256": "394a3d000fd70843e201397e99c8da0326db6f3f912669787150a935ff912364",
+  "cli_and_cross_platform_receipt_review": "D",
+  "same_run_linux_receipt_hash_passed_to_windows": true,
+  "old_policy_formatter_auth_suites_repeated": false,
+  "existing_repair_hunk_reused": true,
+  "compiler_or_service_executed": false,
+  "accepted_runtime_replaced": false
+}

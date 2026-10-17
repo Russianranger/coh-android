@@ -1,0 +1,77 @@
+{
+  "abi": "x86_64",
+  "actor_authority": false,
+  "android_executed": true,
+  "android_sanitizers_enabled": false,
+  "application_context_adopted": false,
+  "application_or_apk_built": false,
+  "arm64_executed": false,
+  "build_receipt": {
+    "bytes": 19110,
+    "sha256": "d4bddc1a6f7d17fa302190731893eb7dd9d696c35fb99eaad35483bc3c8f0b8c"
+  },
+  "current_generation_admitted": false,
+  "device_cleanup_verified": true,
+  "device_properties": {
+    "ro.build.fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+    "ro.build.version.sdk": "33",
+    "ro.kernel.qemu": "1",
+    "ro.product.cpu.abi": "x86_64"
+  },
+  "emulator_software_graphics_requested": true,
+  "finite_fixture_digest_is_general_sha256": false,
+  "material_authority": false,
+  "native": {
+    "actor_authority": false,
+    "actual_gles": true,
+    "checks": 602,
+    "cleanup_verified": true,
+    "context_name_reuse_observed": true,
+    "contexts_created": 2,
+    "contexts_destroyed": 2,
+    "destroyed_context_disposals": 1,
+    "generation_fixture_only": true,
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "gl_version": "OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)",
+    "passed": true,
+    "production_prepare_executed": false,
+    "readbacks": 37,
+    "registry_releases": 4,
+    "registry_retains": 4,
+    "sampler_fixture_only": true,
+    "source_generation_admitted": false,
+    "surfaces_created": 3,
+    "surfaces_destroyed": 3,
+    "uploads": 4,
+    "verified_deletes": 3,
+    "world_authority": false
+  },
+  "native_execution_attempted": true,
+  "nine_world_prerequisites_admitted": false,
+  "passed": true,
+  "physical_android_device_executed": false,
+  "platform_driver_sanitized": false,
+  "platform_library_files_after": {
+    "/system/lib64/libEGL.so": "ef543c64c04a5d5bc46c9396ea7c00ca0bf9eac5d29cfd7296bf54c3541cb8f4",
+    "/system/lib64/libGLESv3.so": "75fb250bd75510807ce0769dfb4fd5607ee18b1ded5f04fd28a13d60786bceba",
+    "/system/lib64/libz.so": "cdaebada8aadf8208f457ab407f5ceda163790a7ab03d09ebc485d282301a28c"
+  },
+  "platform_library_files_before": {
+    "/system/lib64/libEGL.so": "ef543c64c04a5d5bc46c9396ea7c00ca0bf9eac5d29cfd7296bf54c3541cb8f4",
+    "/system/lib64/libGLESv3.so": "75fb250bd75510807ce0769dfb4fd5607ee18b1ded5f04fd28a13d60786bceba",
+    "/system/lib64/libz.so": "cdaebada8aadf8208f457ab407f5ceda163790a7ab03d09ebc485d282301a28c"
+  },
+  "platform_loaded_mapping_verified": false,
+  "post_source_artifact_admission_verified": true,
+  "production_prepare_executed": false,
+  "readback": {
+    "bytes": 1398096,
+    "chains": 4,
+    "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c",
+    "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523"
+  },
+  "schema": "coh-gpu-lease-android13-execution-v1",
+  "source_generation_admitted": false,
+  "source_revision": "827f1f1136b52f46fdcd787e7a6d31664b4d0b94",
+  "world_authority": false
+}

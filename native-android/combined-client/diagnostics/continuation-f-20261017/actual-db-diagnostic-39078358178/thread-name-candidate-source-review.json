@@ -1,0 +1,69 @@
+{
+  "actual_caller_identified": false,
+  "actual_caller_stack_exported": false,
+  "candidate_source_chain": [
+    "taskthread.hpp:110 CreateThread",
+    "utils.h:304 macro __FILE__/__LINE__",
+    "utils.c:2264-2266 threadname[128] / sprintf",
+    "stdtypes.h:394,402-403 quick_sprintf / real array extent",
+    "quick_sprintf.c:101 post-NUL capacity assertion"
+  ],
+  "direct_pool_initialization_formatter_edge_found": false,
+  "exact_runtime_assertion_enum": "pe_source_file_108_assert_001",
+  "line_suffix_with_nul_bytes": 6,
+  "original_service_or_qualifier_replayed": false,
+  "required_bytes_if_this_call_uses_retained_literal": 136,
+  "retained_pe_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+  "schema": "coh-f-read-only-db-thread-name-candidate-v1",
+  "source_buffer_bytes": 128,
+  "source_pins": {
+    "upstream/ouroboros/Common/sql/sqltask.cpp": {
+      "bytes": 3085,
+      "sha256": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp": {
+      "bytes": 7489,
+      "sha256": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": {
+      "bytes": 28228,
+      "sha256": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/utils.h": {
+      "bytes": 17337,
+      "sha256": "36eab864c8dfeda46f6b9f57b20abe2378db976943e04de6b5e8b461b69c56a3"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp": {
+      "bytes": 1029,
+      "sha256": "e7ce6ebd9c14097d65830fd1390408b9a1c9c2a46ee992a47d8d483478a46d0e"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp": {
+      "bytes": 3946,
+      "sha256": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/MemoryPool.c": {
+      "bytes": 35697,
+      "sha256": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/MemoryMonitor.c": {
+      "bytes": 38870,
+      "sha256": "153629caa7f9f498153cbfbb3321212c580fe296ebcae1357c97ddd6a42942ac"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/quick_sprintf.c": {
+      "bytes": 5804,
+      "sha256": "3808e4e601395e94c31a67b6acb075364e1d51c0ef3f1d3599ab06ece6d81d7b"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c": {
+      "bytes": 60404,
+      "sha256": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf"
+    }
+  },
+  "source_pins_match_exact_revision_and_current_root": true,
+  "source_revision": "6a6809d07a130af60129f569b59a627420b6bf54",
+  "speculative_repair_applied": false,
+  "taskthread_filename_literal_bytes": 130,
+  "taskthread_filename_literal_offset": 1251400,
+  "taskthread_filename_literal_rva": 1254472,
+  "taskthread_filename_literal_sha256": "def8fbf962ecbe03e585ed7cf9eb482729ad9014a89c8dd57e4ae6a17df44c2a",
+  "world_authority": false
+}

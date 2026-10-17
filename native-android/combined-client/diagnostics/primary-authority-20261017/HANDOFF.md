@@ -7,19 +7,19 @@ Git links, existing bundles, accepted APKs and user profiles were preserved.
 
 ## Current qualification checkpoint
 
-Last verified remote publication: `6a6809d07a130af60129f569b59a627420b6bf54`
-(tree `a56a1f5e81beb6a13ee247429e99c8bb5599e907`). New reviewed source below
+Last verified remote publication: `827f1f1136b52f46fdcd787e7a6d31664b4d0b94`
+(tree `b9c9c57ec097c4c7dc26be40333e8c63a9572e55`). New reviewed source below
 is integrated locally for guarded publication. Chronological sections preserve
 their original pending states; this checkpoint supersedes those fields.
 
 | Scope | Established result | Still required |
 |---|---|---|
-| Live scene | Existing original observer and native source verifier remain qualified; CI39074781865 passed. New isolated initial receiver passes release/ASan/UBSan with 4,281 public and 1,462 internal checks per mode; command-line layer passes91 checks/mode against committed431cea8bd source and42 actual production dependencies | One genuine same-job original/native GROUPS transaction, point-in-time source token and raw initial observation; no current world lifetime or actor admission |
+| Live scene | Actual39078874753 passed fixture/PE/PG/Wine/new receiver/staging gates and reached NATIVE_CAPTURE. Matching transaction was refused; all owned cleanup and source/private/compiled byte checks passed | Source-owned fixed first-failure diagnostic, then one justified narrow capture attempt; no point-in-time source token, raw initial packet or current world/player admission |
 | Graphical backup | Actual ARM run39074781817 succeeded using unchanged retained PRoot. Artifact12117765534 is580,433B SHA5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b; complete PG18 dump2,766,533B SHA2a35bd9224e32dbdbfbb5e0d4331afd780745d2a6504a783101bc6742044c4e6. A/root independently admitted fresh fixture, ordinary save, full same-snapshot TOC, cleanup and unchanged source | Use this exact fresh fixture once in the matching scene/initial transaction; fixture identity is not a live source or character authority token |
-| Geometry/materials | Historical LOD/model/trick contracts retained. CI39075900689 passed new original texture-seed eligibility and fresh power constructors; F/root checked101source entries/100distinct paths. Seven fixed default-body staging inspector implemented and independently reviewed | Actual staged body inspection, complete CLIENT namespace/default/composite/swaps/LOD selection, current resource generation and aggregate draw/GPU ownership |
+| Geometry/materials | Actual39078874753 admitted all seven exact default source bodies. Six existing parser results OK; grey is authentic8x8 RGBA32/mip DDS and explicitly unsupported. Historical LOD/trick/constructor qualifications preserved | Complete source-selected namespace/provider/default/composite/swaps/LOD semantics and supported codec families; new namespace source is still under development/unqualified |
 | Gameplay dictionaries | Compact IDs/joins/shared sets/source schedules, fresh power and boost-slot constructors qualified. Whole ReceivePowers ordering and exact pre-READY snapshot request dependencies documented | Current loader/cache/shared layout and costume/dynamic owners, whole state application and exact actual initial update; no actor/ACK |
-| Encrypted authentication | Real Auth-only milestone preserved. ActualWindows39075900631 reused original binaries/profile but still hit300s readiness deadline, with all owned cleanup. Complete retained PE filename/lexical catalog now source-qualified | One focused catalog-expanded diagnosis, actual source/site/predicate, DbServer readiness, AC_PLAY_OK and authenticated DB/Map; no fabricated repair or version/checksum weakening |
-| Presentation | Earlier both-ABI build/Android13 CPU34465checks preserved. New immutable GPU lease bridge passed96 ownership+602actual host EGL controls/mode,4uploads37readbacks,3actualdeletes+1verified deadcontext disposal | Narrow Android native EGL qualification and real production registry/gate/backend; complete world/player producers and Thor acceptance |
+| Encrypted authentication | Actual39078358178 identified quick_sprintf.c101 exact source assertion with full predicate/line/file match; all cleanup passed. Exact PE/source chain supports130-byte taskthread filename exceeding128-byte diagnostic-name buffer. Existing qualified repair recovered and source-only7-control MSSQL/checksum composition prepared | New isolated Win32 candidate compilation and real readiness test; exact caller inference is not an exported runtime stack, no AC_PLAY_OK/authenticated DB/Map/version/checksum acceptance claimed |
+| Presentation | Actual39078874776 built NDKr28c ARM64+x86_64 standalone binaries and passed Android13 x86_64 SwiftShader602 native checks:4uploads/37readbacks,3deletes+1verified dead-context disposal, all context/Surface/registry cleanup. E/F bound exact2,715,767B artifact12118162266 SHA30cb09f882e82f7dd2e2dbb6e438d96fced96edaeb2bf5b2da06567c7eb859ce | ARM64 execution/Thor, real application window/exclusive-context producer, complete current world/player prerequisites and atomic publication. Qualification uses private pbuffers; declared platform file hashes do not prove loaded driver mappings |
 | Memory/startup | Prior optional B/C owner total3,824,536B already puts historical retained estimate at103,899,217B,3,235,921B over96MiB before newer owners/omits. New initial wrapper adds2,296B plus separate1,344B callerlease; no global fit inferred | Actual source-backed aggregate/provider retirement, old/candidate/CPU/GPU/process overlap and timing. Accepted startup remains387,340ms; no measured speedup |
 
 The new hosted scene workflow reuses the exact retained original MapServer PE
@@ -31,15 +31,27 @@ initial export is restricted to the admitted fresh disposable fixture and an
 independently reviewed fixed two-file gate; generic private captures remain
 ineligible. Workflow preparation is not actual interoperability.
 
-Actual scene attempt39078358295 passed fixture and retained observer admission,
-then stopped before any runtime/staging because APT did not index the requested
-18.6-3 packaging revision. F preserved the624B public artifact12117447894 and
-fixed absent-private-receipt summary. The next retry pins all three available
-18.6-1.pgdg24.04+2 packages by full SHA256; root and D independently verified
-the official signed index and dependency stanzas. No runtime was repeated in the
-failed attempt. All four original Wine10 package hashes remain indexed and
-signature-verified. The standalone GPU workflow has E/D static review and awaits
-actual two-ABI build and Android13 native602-check execution; no APK is built.
+Actual scene attempt39078358295 failed before runtime because the requested
+PG packaging revision was absent. Signed-index correction was independently
+verified, and retry39078874753 successfully installed PG18.6/Wine10 and ran the
+original/native transaction. It refused at NATIVE_CAPTURE with all cleanup and
+unchanged-input checks true. Only fixed public status and exact seven source
+texture bodies were exported: no admitted scene/initial packet exists. The
+native first reason stayed private; new bounded fixed diagnostics are being
+prepared before any additional expensive runtime attempt.
+
+The new distinct DbServer build-only workflow reuses ONLY the existing
+thread-name repair hunk and strict checksum-policy candidate. It changes two of
+5,995 original files in a disposable external source tree, preserves the MSSQL
+profile and accepted binaries, and consumes a same-run Linux qualification
+receipt pinned by SHA256 before Windows compilation. Its source-only7controls
+and F review are complete; build/runtime results must be recorded after execution.
+
+Existing full initial parsers, costume/taskforce dictionary and attributes variant
+are retained. Current costume/cache/shared startup state and exact actual dynamic
+tracker occurrence order remain missing; definition DAG preorder cannot supply
+those values. The isolated dynamic observer design records exact actual array/path
+and final ALLENTS association rather than rebuilding hypothetical tracker state.
 
 Gates25–27 remain open. No new APK, authoritative rendered world/player,
 complete character update, application ACK or AYN Thor result is claimed.

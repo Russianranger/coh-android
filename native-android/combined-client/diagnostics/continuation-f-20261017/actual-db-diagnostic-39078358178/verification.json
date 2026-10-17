@@ -1,0 +1,94 @@
+{
+  "actor_authority": false,
+  "all_nonreceipt_members_are_empty_firewall_command_streams": true,
+  "all_prior_recomputed_policy_identity_fields_match": true,
+  "artifact_bytes": 13239,
+  "artifact_id": 12118500733,
+  "artifact_sha256": "d0af1d607cabf054a9c7fc10e58fcd3f587ad34aa3bd75ddb1b123683a3788f4",
+  "caller_or_root_cause_identified": false,
+  "cleanup": {
+    "owned_firewall_cleanup_complete": true,
+    "owned_localdb_cleanup_complete": true,
+    "owned_service_cleanup_complete": true,
+    "private_files_removed": true,
+    "source_inputs_unchanged": true
+  },
+  "exact_source_match": {
+    "assertion_enum": "pe_source_file_108_assert_001",
+    "compiled_expression_variant_match": false,
+    "exception_enum": "none",
+    "kind": "source_assertion",
+    "source_assertion_line_verified": true,
+    "source_call_site_verified": true,
+    "source_expression_match": true,
+    "source_file_enum": "pe_source_file_108",
+    "source_file_mapping": "upstream_source",
+    "source_file_verified": true,
+    "source_site_enum": "pe_source_file_108_assert_001",
+    "structure_flags": {
+      "expression_field_unique": true,
+      "file_field_unique": true,
+      "line_field_unique": true,
+      "line_shape_known": true
+    }
+  },
+  "interserver_activation_verified": false,
+  "observation_generation_matches_actual_owned_service_start_and_after": true,
+  "pinned_original_pe_archive_and_binary_rechecked": true,
+  "prior_independent_policy_review_sha256": "79f3bd74272135ca59378720a1f2e9e0f8bee01ec0d233c6cd9e79948d67a58e",
+  "public_archive_members": [
+    {
+      "bytes": 0,
+      "name": "firewall--auth-in-remove.log"
+    },
+    {
+      "bytes": 0,
+      "name": "firewall--auth-in-add.log"
+    },
+    {
+      "bytes": 0,
+      "name": "firewall-7-db-out-add.log"
+    },
+    {
+      "bytes": 0,
+      "name": "firewall-7-db-out-remove.log"
+    },
+    {
+      "bytes": 0,
+      "name": "firewall-auth-out-add.log"
+    },
+    {
+      "bytes": 0,
+      "name": "firewall-auth-out-remove.log"
+    },
+    {
+      "bytes": 0,
+      "name": "firewall-b7-db-in-add.log"
+    },
+    {
+      "bytes": 0,
+      "name": "firewall-b7-db-in-remove.log"
+    },
+    {
+      "bytes": 37369,
+      "name": "receipt.json"
+    }
+  ],
+  "qualifier_or_test_or_service_replayed": false,
+  "raw_dialog_or_console_exported": false,
+  "receipt_bytes": 37369,
+  "receipt_sha256": "e6b0bf7ac0e476ad60ad393ca3aa1a5e994b4f19f787d287e3c98fb61e4846ab",
+  "run_conclusion": "failure",
+  "run_id": 39078358178,
+  "schema": "coh-f-actual-db-diagnostic-review-v1",
+  "source_expression": "(size_t)(tail-buf+1) <= buf_size",
+  "source_line": 101,
+  "source_path": "libs/UtilitiesLib/src/utils/quick_sprintf.c",
+  "source_pin_count": 126,
+  "source_pins_different_from_current_root": [],
+  "source_pins_match_exact_run_revision": true,
+  "source_revision": "6a6809d07a130af60129f569b59a627420b6bf54",
+  "source_tree": "a56a1f5e81beb6a13ee247429e99c8bb5599e907",
+  "workflow_sha256": "55c28a76c384d68c8483d0ad42199f996e762f0285f900a407a076dce8fe2209",
+  "world_authority": false
+}
