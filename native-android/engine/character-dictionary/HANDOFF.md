@@ -160,8 +160,10 @@ through a4KiB provider buffer. All20,241 BasePower records roundtrip byte-for-by
 through original complete binary reader/writer tables; all cached fullname CRCs
 match whole original powerdict_GetCRCOfBasePower. Nested source record counts
 are113,046 AttribModTemplate/7,165 SuppressPair/0 PowerVar/7,103 PowerCustomFX.
-The observed header0xb553b8ff remains NOT recomputed original ParseTableCRC.
-Binary-only static enum/default shells are explicit, not schema CRC evidence.
+The raw codec receipt alone does not recompute ParseTableCRC. Its binary-only
+static enum/default shells remain explicit and are not schema CRC evidence.
+The separately qualified complete historical CRC tranche below closes that
+source-only prerequisite without changing any native raw importer flags.
 
 Native fixed owner1,048,744B/workspace1,052,840B retains only record/name/CRC
 metadata and original integer-hash index. All65,536 diagnostic slots compare to
@@ -184,8 +186,7 @@ failures preserve output; last-buffer, index and before/after-finish cancellatio
 have exact abort-versus-retired digest lifecycle controls. Immutable provider/file
 lease must outlive the owner; no implicit global budget partition is permitted.
 
-Remaining authentic power prerequisites are actual static/default+dynamic
-DefineContext ParseTableCRC, CLIENT/SERVERONLY/cache-path/callback association,
+Remaining authentic power prerequisites are CLIENT/SERVERONLY/cache-path/callback association,
 whole global dictionary construction, original DuplicateMissingPowers/Finalize/
 SetForwardPointers/SetBackPointers semantics, set/category/power ID generation
 joins and complete semantic class-power application. Source SetForwardPointers
@@ -194,5 +195,31 @@ resolve an alternate identity; count equality is insufficient. The20 allocated
 sets outside category refs remain retained. No invented IDs, eager62MB power
 object graph, current runtime generation, actor/world or READY/ACK permission.
 
-Next additive power_schema_crc_oracle.py is UNQUALIFIED recovery-only work;
-never execute it as an admitted helper or infer schema equality from its output.
+Complete historical power schema source7769c07d4+f9c29c81c/receipt3d98adb5e
+is independently sealed F668be029c. All20 real static enum/default definitions,
+full original ParseTableCRC and actual source dynamic DefineContext/stash builder
+with authentic875 sequence states/attribute names/origins reproduce0xb553b8ff.
+Source load_PowerDictionary passes NULL root defines; per-field wrappers still
+visit the dynamic list34times. Extra root defines would wrongly append it again
+and yield0xee12d099. Original donor32 CharacterAttribSet Aspect offsets are
+0/4/8/12/16, explicitly bound rather than LP64 pointer offsets. Original source
+loader function/call and token dispatch are pinned/read, not executed as a
+runtime cache loader.
+
+Eight source profiles plus five static/default/Aspect/token mutation controls
+per profile agree with independent Python traversal:157checks. Baseline emits
+738,621 checksum bytes over308 fields/34dynamic wrappers. The independent model
+shares compiled macro/default metadata; it is NOT an independent C parser.
+All60 local inputs and12 prior-admitted supplier roles match Git; observed
+supplier41a56d3bbb and admitted716f319a13 have exact role-byte equality before
+checked-source imports. ProofSHA256
+7eeae4ae701fd53a7712ef86c988e708ebf2a4b45a0e32e3e8d1030430cb0244.
+
+This qualifies historical source CRC only. Existing native raw stream
+source_crc_recomputed remains0; no implicit generation-bound composition,
+CLIENT/SERVERONLY/cache/shared branch, global constructor, actor or ACK follows.
+Next compact SetForwardPointers join must preserve every raw row, source
+category/set/reference order and alternate fullname semantics. Missing required
+DuplicateMissingPowers clone identities must refuse rather than be fabricated
+or silently dropped. Any unfinished join is recovery-only until source/native
+proof and independent review are complete.

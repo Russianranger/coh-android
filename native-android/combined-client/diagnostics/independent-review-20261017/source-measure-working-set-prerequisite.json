@@ -1,0 +1,27 @@
+{
+  "schema": "coh-independent-source-measure-working-set-prerequisite-review-v1",
+  "source_commit": "85741e9af88ffd17b67b26e27d771083fa9f3d4d",
+  "required_stack_supplement": "81e2bf8d04757f04517f3280252585f6f7e6995b",
+  "verdict": "approved_read_only_measurement_prerequisite_not_reservation_adapter",
+  "geometry_proof_sha256": "944665628678501da20023ebea4e3a228be4212e6cfa8a590bf0153a94d44d73",
+  "stack_proof_compressed_sha256": "a99d140ff86fa81904694f5e8b186fa57bfb4444334a08a8b8d105e84e7c65aa",
+  "tested_git_source_roles": 64,
+  "reported_geometry_checks_per_mode": 624,
+  "review": [
+    "Independently verified exact geometry/stack receipt hashes and64 source roles against candidate or admitted E/parent Git blobs. Geometry624 checks/mode preserve prior packet equality and actual loader/provider retirement controls; no geometry/native corpus replay by reviewer.",
+    "Shared coh_source_sealed_measure derives exact copy layout/old-new peak from actual immutable batch, bounded real getters, alignment/overflow and original owned/aggregate caps. It allocates/calls callbacks/retains nothing and publishes plan only after full validation. Factory calls same measurement and revalidates actual output/control/source disjointness; no caller-supplied plan becomes a capability. Existing transfer/failure/retirement semantics remain.",
+    "Probe reads actual parent report, adds ALL booked bytes to complete existing retained_bytes without suspected-duplicate subtraction, and remeasures unchanged full module contract. It does not prepare/commit/release/reserve or mutate/retain parent/source. Candidate-copy-only plan is diagnostic, admission/input-ticket/external-lifetime flags remain zero.",
+    "Known source/batch/blob/header/catalog/snapshot/resource spans and controls/endpoints are guarded. Opaque parent/source/control allocations remain explicitly caller-disjoint. separate(parent,1,out,size) is only an endpoint check, not complete opaque-parent interior alias defense; review grants no stronger claim.",
+    "Original one-maximum-per-file stack arithmetic was held because create\u2192measure\u2192source_control coexist in one translation unit. Required81e supplement supersedes that arithmetic. Independently reconstructed every raw GCC CI/SU node/edge and checked frame equality, then recomputed all root longest paths including same-TU nesting/cross-TU edges and pinned bsearch\u2192native rowcmp callback. Results O08528/O18200/O28088/ASan11856/UBSan8448 native bytes fit16384. No source/geometry binaries executed by this analysis.",
+    "Stack analysis leaves listed libc/allocator/sanitizer/indirect external callback frames unmeasured, with caller allowance required. No Android compiler/native process RSS/complete dependency stack qualification is inferred. Raw compiler evidence and supplement script hash are retained; no production source changed by supplement.",
+    "Actual ticket-to-input correlation, qualified retained source/graph/provider billing leases and retirement proof remain missing for a full parent adapter. Generic numeric parent accounting and source retirement do not permit releasing external loaders/graph/shared charges. No cap reinterpretation, partial live-byte omission, runtime generation, renderer/material/actor/world/Android admission is added."
+  ],
+  "parent_mutated": false,
+  "input_ticket_verified": false,
+  "external_lifetimes_verified": false,
+  "admission_permitted": false,
+  "full_reservation_adapter": false,
+  "external_runtime_stack_qualified": false,
+  "world_authority": false,
+  "android_executed": false
+}

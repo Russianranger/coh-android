@@ -1,0 +1,565 @@
+{
+  "schema": "coh-groups-boundary-integration-closure-v1",
+  "passed": true,
+  "integration_commit": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+  "source_root_read_only": "/workspace/scratch/9174d12e2a11/next-integration",
+  "historic_source_commit": "79e96b05db6b84b079cc771f0304c8bbe4982124",
+  "historical_receipts_preserved": true,
+  "receipt_git_verification": [
+    {
+      "receipt": "groups-boundary-raw-integration-b53-source-host.json",
+      "receipt_sha256": "b32ea07eaa9a3484511db353c14dc460f1c1c6610bcc84822c25f0e04c651285",
+      "local_mappings": 264,
+      "upstream_mappings": 33,
+      "mismatches": []
+    },
+    {
+      "receipt": "groups-boundary-raw-integration-b53-orchestration-host.json",
+      "receipt_sha256": "0ea2c0319c027bdfc4f2c801a21929eea270ba3317fd85cfe6a740a85bd8c987",
+      "local_mappings": 21,
+      "upstream_mappings": 32,
+      "mismatches": []
+    }
+  ],
+  "changed_or_added_broad_dependencies": [
+    {
+      "path": "native-android/engine/attribute-dictionary/coh_attribute_dictionary.h",
+      "historical_sha256": null,
+      "integration_sha256": "5d58dd7171bc5bd0c3579b6ac3a6328bbb168fd22c6c7adb97f0564e249ec4a3"
+    },
+    {
+      "path": "native-android/engine/character-dictionary/coh_class_level.h",
+      "historical_sha256": null,
+      "integration_sha256": "0d7c2f6e20ac699dd73b5d5c00720f75c10756ab0277e10ecdef63e9f239fadc"
+    },
+    {
+      "path": "native-android/engine/character-dictionary/coh_class_named.h",
+      "historical_sha256": null,
+      "integration_sha256": "fd19483b5daae5dfadf696cce7bacd95a41b734154cb5b63e6d914b633e8a84a"
+    },
+    {
+      "path": "native-android/engine/character-dictionary/coh_classes.h",
+      "historical_sha256": null,
+      "integration_sha256": "0eb5f0607519d320e71d0536bdddd501e7f61a6c6d957b9161e5c85b63ac7cf3"
+    },
+    {
+      "path": "native-android/engine/character-dictionary/coh_origins.h",
+      "historical_sha256": null,
+      "integration_sha256": "2260de2c5aea4b2b277f5c428e18d074ae2b2f665c468b088bada158f60724cb"
+    },
+    {
+      "path": "native-android/engine/character-dictionary/coh_power_categories.h",
+      "historical_sha256": null,
+      "integration_sha256": "60c66f0f6a04473682e55021b6d653bc556c2d4315c2f41f8ec1063f65e13a69"
+    },
+    {
+      "path": "native-android/engine/character-dictionary/coh_power_sets.h",
+      "historical_sha256": null,
+      "integration_sha256": "e7a27d21907f7147795441a6d6563217765cd382e33e755a1db77798f57604ca"
+    },
+    {
+      "path": "native-android/engine/character-dictionary/coh_power_stream.h",
+      "historical_sha256": null,
+      "integration_sha256": "7230579d8a96303aae576d4623d8be5eb086e1a6bc0cf3ac55f16b2017dd30ec"
+    },
+    {
+      "path": "native-android/engine/dbclient/coh_db_handoff_owner.h",
+      "historical_sha256": "f0eced61f4ccf256be268032ceae072cdaf3853cba2eb716a9f37368bd3286e2",
+      "integration_sha256": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45"
+    },
+    {
+      "path": "native-android/engine/entity-attributes/coh_attrib_description.h",
+      "historical_sha256": null,
+      "integration_sha256": "496cc4c939afcd36cd62a4488cd339b2f6f4ff478ebaa3a809a898204c2ac6f6"
+    },
+    {
+      "path": "native-android/engine/initial-record/coh_initial_list.h",
+      "historical_sha256": null,
+      "integration_sha256": "9ecf79d2f4e3244d09691f940c94ce8ee67aa4c1ccef155d61a99157b730c928"
+    },
+    {
+      "path": "native-android/engine/initial-record/coh_initial_record.h",
+      "historical_sha256": null,
+      "integration_sha256": "5ed8dfe44d8eaeb05704e615932c7e9f6f3ae19c46e58f6b974f44c4090e7b9a"
+    },
+    {
+      "path": "native-android/engine/initial-record/fixture_create.h",
+      "historical_sha256": null,
+      "integration_sha256": "bb64bb82560653c7dcbd1039256225267bb5bcdcb984dc16ef93452c14cbf3ee"
+    },
+    {
+      "path": "native-android/engine/initial-suffix/coh_initial_suffix_attributes.h",
+      "historical_sha256": null,
+      "integration_sha256": "e14fd56554a07db4ff1ef9a61298c2778cb6d66e1a7a877999e3596717404d73"
+    },
+    {
+      "path": "native-android/engine/initial-update/coh_initial_update.h",
+      "historical_sha256": null,
+      "integration_sha256": "bfe30a309d36dbcdde96222d67016b0da82320bbe6839cb4c864bcd1f3e0bb3b"
+    },
+    {
+      "path": "native-android/engine/initial-update/coh_initial_update_attributes.h",
+      "historical_sha256": null,
+      "integration_sha256": "e5c456c30d97551cf5da65d21bce6b8eb08f61955543da7102cefcc87d303062"
+    },
+    {
+      "path": "native-android/engine/local/coh_local.h",
+      "historical_sha256": "b75ad3a859f908e1399f42f5e72d6b60a55be13e9bef66dbaae97e1dff4a4d02",
+      "integration_sha256": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_mesh.h",
+      "historical_sha256": null,
+      "integration_sha256": "2acc6fcf6b91d7ad1f3617a66465e92ee56207377b68b4699e3f94dbeb8ef0c8"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_mesh_batch.h",
+      "historical_sha256": null,
+      "integration_sha256": "f6659cac162c73d291cfc375f8f1668a108dfe28fa3a85b70df8619b6f82e198"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_rigid_internal.h",
+      "historical_sha256": null,
+      "integration_sha256": "3f5d45b6848be8bddbdcc82c8e346c2fe103c90727e2b56d177d714d15076859"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_rigid_legacy_formats.h",
+      "historical_sha256": null,
+      "integration_sha256": "449c24988f970c63b276c2ae473ac3f6134e09c6fc44315a46b9d7eeb913e8ee"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_rigid_versions.h",
+      "historical_sha256": null,
+      "integration_sha256": "9ab54e0507e2b6f6ebd411203cd5840ac1aba7eef16317878eb6b99719675361"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_sealed.h",
+      "historical_sha256": null,
+      "integration_sha256": "e7a3a01269ab9249812658f47084d1a525d77c61da75874865e31813a3231d6d"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_selection.h",
+      "historical_sha256": "89ed5ca4e68b4574daf289e591e2eacb75a92b8c6aaaefb0c9c967fa057669bb",
+      "integration_sha256": "293ae2341f481edb01b034701aa66b38bb401bffb81a832e5f37881b9f5ffe72"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_special.h",
+      "historical_sha256": null,
+      "integration_sha256": "48fa12e2842d96069b1d5305328e52a0e62d97e52645047bef215a264fa1b831"
+    },
+    {
+      "path": "native-android/engine/scenecatalog/coh_source_ws_probe.h",
+      "historical_sha256": null,
+      "integration_sha256": "c4b01e068348bb81996bd555424c79bba91b069d5da64c1dfaed34abe6f7e14d"
+    },
+    {
+      "path": "native-android/engine/scenegraph/coh_client_distance.h",
+      "historical_sha256": null,
+      "integration_sha256": "52035318215ad252b7a10d5dd45edffda15a66202dcc7918e92c15aa272f8699"
+    },
+    {
+      "path": "native-android/engine/scenegraph/coh_runtime_candidates.h",
+      "historical_sha256": null,
+      "integration_sha256": "0451c6f117be1f4c4740212a71d0e07c637c478bb67e89e7c39fba439c49a00e"
+    },
+    {
+      "path": "native-android/engine/selected-record/coh_record_kernel.h",
+      "historical_sha256": null,
+      "integration_sha256": "f77dacf06fd00f6ea72acba5551cd46c5dfecf9a27f5842ad530101a75f51eda"
+    },
+    {
+      "path": "native-android/engine/working-set/coh_working_set.h",
+      "historical_sha256": null,
+      "integration_sha256": "807381ea2b507f382a6bf0c2e6407d567f6063aea7421332f5796b9a3abaeddc"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_rigid_internal.h",
+      "historical_sha256": "a30e248093082b871887b8245fdc3e46e930dacaebab5a14ce10c0853995957b",
+      "integration_sha256": "484295680436f84675ba4f87449c9cec6ff306285818387ec1aec062854f3278"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_rigid_legacy_formats.h",
+      "historical_sha256": null,
+      "integration_sha256": "c5a25be0bbc141d30a03c425996cf5913d29c6bed301d1cc06f8309da89884b9"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_rigid_v5.h",
+      "historical_sha256": null,
+      "integration_sha256": "991c6d021d6933259b833d414e30ec47b45ed22f280b3e315de785e3b5f113b5"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_rigid_v7.h",
+      "historical_sha256": null,
+      "integration_sha256": "a4a40dba78073fab1af02100f540227bcb7a361789cbc1a819251f6f35b4eaaf"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_surface_states.h",
+      "historical_sha256": null,
+      "integration_sha256": "20ff6b2c6478fb44197433de4e34c9685c3e01af6a400a87986b610411d191c8"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_tex_basic_lookup.h",
+      "historical_sha256": null,
+      "integration_sha256": "f46771e5012f3809550fd97b9f75f45421f8b91fc852b3449a58cf2cb19e7dc4"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_tex_dependencies.h",
+      "historical_sha256": null,
+      "integration_sha256": "428b1ba73c36e5bcef90df587cbc02ff555eae6c4a6584104504104e19ca5ef0"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_tex_permutation.h",
+      "historical_sha256": null,
+      "integration_sha256": "562086edbd216b8a1cfd0a920ac8e9b0adaac663f5120a7aea5cc665c47af265"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_tex_preload.h",
+      "historical_sha256": null,
+      "integration_sha256": "576b267d34cbb0a6781826977d402e8714f4497018711c005d58b55f865428a6"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_texopt.h",
+      "historical_sha256": null,
+      "integration_sha256": "0cc9b48deea230a5ff028c93289d6e458302ee43e8dbb1f5666744e8d706291e"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_texopt_lookup.h",
+      "historical_sha256": null,
+      "integration_sha256": "7b8228cb68b1e042227e0f9d545b948635989db579fdf62f7ddb4e5c6965eca3"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h",
+      "historical_sha256": null,
+      "integration_sha256": "10cbd1b1ea3a42dfed7c7920aac0b1e78d01a536b5b6ee8b71cea2fcd5f6ce77"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_trick.h",
+      "historical_sha256": null,
+      "integration_sha256": "c30f9735166dd2db73a801bc998cdd3f90447ff3ef3fe8ac027973f90aa015ed"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_trick_detached.h",
+      "historical_sha256": null,
+      "integration_sha256": "48160bf855ef3d83934fd53e465b6663467a15d6d72148186f37a4e03f9fe9a3"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_trick_detached_storage_internal.h",
+      "historical_sha256": null,
+      "integration_sha256": "dfef7e286e6021387ed9887b5dca6ad3b856e4a09ba8c2b7d66d85bed1142aee"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h",
+      "historical_sha256": null,
+      "integration_sha256": "56a022958f4d6ff3a79104c4bd3c81bd674b58a445fb1123283d054ddbdde7e4"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/tests/tex_permutation_fixture.h",
+      "historical_sha256": null,
+      "integration_sha256": "ba582a350ee2122e195c51b043cf556742ec6cd15c5a4c3c2f894b5da7fea37b"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/tests/tex_preload_fixture.h",
+      "historical_sha256": null,
+      "integration_sha256": "00bac1948825057161b3c860a0a78d91c5b3d64913e20aaa7d28cc78287e425d"
+    }
+  ],
+  "native_code_changed": false,
+  "ci_or_server_run": false,
+  "actual_raw_capture_count": 0,
+  "source_generation_admitted": false,
+  "cache_equivalence_verified": false,
+  "world_authority": false,
+  "published_base_commit": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+  "source_commit_mapping": {
+    "groups-boundary-raw-integration-b53-source-host.json": {
+      "native-android/engine/appearance/coh_appearance.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/appearance/coh_appearance_actor.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/appearance/coh_appearance_preview.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/appearance/coh_appearance_render.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/assets/coh_asset_audio.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/assets/coh_asset_geo.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/assets/coh_asset_loader.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/attribute-dictionary/coh_attribute_dictionary.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/audio/coh_audio_listener.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/audio/coh_audio_session.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/audio/coh_mixer.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/audio/coh_mixer_aaudio.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/audio/coh_music.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/audio/coh_resample.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/audio/host-shim/aaudio/AAudio.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth/coh_auth.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/coh_auth_interop.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/deployment/coh_monitor_envelope.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/deployment/windows/compat/poll.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/deployment/windows/compat/unistd.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/deployment/windows/test_winsock_api.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/auth-interop/deployment/windows/winsock_compat.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/bridge/coh_asset_render.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-data/coh_character_data.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-data/oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-dictionary/coh_class_level.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-dictionary/coh_class_named.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-dictionary/coh_classes.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-dictionary/coh_origins.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-dictionary/coh_power_categories.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-dictionary/coh_power_sets.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/character-dictionary/coh_power_stream.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/coh_contracts.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/costume-builder/adapters.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/costume-builder/wrapper.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/costume-import/coh_costume_import.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/costume-import/source_id.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/costume-inputs/coh_costume_inputs.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/costume-tree/projection.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/costume-tree/storage_adapters.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/costume-tree/tree_wrapper.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/dbclient/coh_db_handoff_owner.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/dbclient/coh_db_handoff_private.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/dbclient/coh_db_session.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/dbclient/coh_dbclient.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/buffs_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/character_tail_test_writer.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_character_creation.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_character_initial.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_character_options_schema.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_character_outer.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_character_prefix.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_character_tail.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_character_ui.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_costume.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_entities.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_power_ranges.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_taskforce.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_teammate_buffs.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/coh_very_rare_tail.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/costume_envelope_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/costume_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/power_custom_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/20261016/fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/appearance-envelope-20261016/costume_fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/appearance-envelope-20261016/fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/character-stats-20261016/fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/costume-20261016/costume_fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/costume-20261016/fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/list-staging-20261016/fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/netfx-20261016/fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/power-custom-20261016/coh_costume-base.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/power-custom-20261016/costume_fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/qualification/power-custom-20261016/fixtures.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/rare_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/stats_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/tail_observation.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/tail_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/taskforce_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entities/titles_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-attributes/coh_attrib_description.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-attributes/coh_attrib_monitor.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-bootstrap/producer_adapters.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-bootstrap/producer_wrapper.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-control/coh_entity_control.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-control/oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-dynamic/coh_dynamic.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-frame/coh_entity_frame.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-globals/badge_observation.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-globals/badge_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-globals/coh_badges.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-globals/coh_entity_globals.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-globals/coh_power_info.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-globals/oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-globals/power_info_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-inventory/coh_invention.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-inventory/coh_inventory.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-inventory/coh_inventory_phase.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-inventory/inventory_reader.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-social/coh_social.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-superstats/coh_superstats.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-team/coh_team.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/entity-view/coh_view.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/initial-record/coh_initial_list.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/initial-record/coh_initial_record.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/initial-record/fixture_create.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/initial-suffix/coh_initial_suffix.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/initial-suffix/coh_initial_suffix_attributes.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/initial-update/coh_initial_update.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/initial-update/coh_initial_update_attributes.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/live/coh_live.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/local/coh_local.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/login/coh_login.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/mapclient/coh_mapclient.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/mapclient/coh_mapclient_owned.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/mapclient/coh_mapclient_owned_private.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/mapclient/tests/large_scene_fixture.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/network/coh_net.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/network/coh_net_udp.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/network/coh_net_zip_internal.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/offline-world/coh_offline_world.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/perf/coh_perf.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/perf/coh_perf_bridge.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/perf/coh_process_memory.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/perf/coh_skin_cache.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/physics/coh_physics.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/physics/coh_physics_neighborhood.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/physics/coh_physics_snapshot.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/renderer/coh_renderer.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/renderer/coh_renderer_gles.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/renderer/coh_renderer_shaders.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/coh_groups.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/coh_replication.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/groups-source-pins.json": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/groups_oracle.py": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/tests/groups_oracle_harness.c": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/tests/groups_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_catalog_owner.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_catalog_snapshot.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_resource_geo_source.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_resource_index.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_resource_join.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_scenecatalog.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_mesh.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_mesh_batch.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_rigid.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_rigid_internal.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_rigid_legacy_formats.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_rigid_versions.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_sealed.h": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog/coh_source_selection.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_special.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/coh_source_ws_probe.h": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog/source_export.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/GROUPS_BOUNDARY.md": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/GROUPS_BOUNDARY_RAW_BOUNDS.md": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/PUBLIC_BOUNDS.md": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/check_groups_boundary.py": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/check_groups_boundary_raw.py": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/groups-owner-source-pins.json": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/groups_owner_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/resource-source-pins.json": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/resource_fixture_types.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/snapshot_oracle.py": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/source_groups_eligibility.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_groups_owner.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_groups_transaction.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_public_bounds.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_resources.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_snapshot.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/stage_groups_boundary.py": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/test_groups_boundary.c": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/test_groups_boundary_raw.c": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/test_snapshot.c": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_catalog_seed.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_client_distance.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_group_bounds.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_group_lod.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_map_scene_record.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_model_bounds.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_public_bounds.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_runtime_bounds.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_runtime_candidates.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_runtime_graph_owner.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_runtime_groups.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_runtime_groups_witness.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_runtime_instances.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_scene_compact.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_scene_lookup.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_scene_metadata.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_scene_protocol.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/coh_scenegraph.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/runtime_graph.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/runtime_snapshot.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/tests/bounds_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/tests/lod_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/tests/lookup_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenegraph/tests/model_bounds_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/selected-record/coh_record_kernel.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/selected-record/coh_selected_record.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/selected-record/oracle_front.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/sequencer/coh_seq_actor.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/sequencer/coh_seq_playback.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/sequencer/coh_sequencer.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/sequencer/showcase/authored_graph.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/session/coh_session_crypto.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/session/server-oracle/oracle_shims.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/stash32/coh_stash32.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/ui/coh_hud.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/ui/coh_ui.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/ui/gameplay/coh_hud_android.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/ui/gameplay/coh_hud_atlas.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/ui/gameplay/coh_hud_axis_navigation.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/ui/gameplay/coh_hud_gles.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/ui/gameplay/presentation/coh_presentation.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/working-set/coh_working_set.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world/coh_world_stream.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-capture/capture_hooks.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-capture/coh_world_capture.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_world_render.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_gpu_texture.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_lod.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_rigid.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_rigid_internal.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_rigid_legacy_formats.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_rigid_source.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_rigid_v5.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_rigid_v7.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_sampler.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_surface_states.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_tex_basic_lookup.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_tex_dependencies.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_tex_inputs.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_tex_permutation.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_tex_preload.h": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/world-render-adapter/coh_wr_texname.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_texname_guarded.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_texopt.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_texopt_lookup.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_texture.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_trick.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_trick_detached.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_trick_detached_storage_internal.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/host/world-adapter/original_matrix.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/host/world-adapter/original_matrix.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/qualification/frame-recovery-20261017/original_matrix.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/qualification/independent-frame-recovery-20261017/original_matrix.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/qualification/original_matrix.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/qualification/shared-geometry-20261016/original_matrix.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/tests/coh_gpu_egl_backend.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/tests/tex_permutation_fixture.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/world-render-adapter/tests/tex_preload_fixture.h": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/include/coh_native_core.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/protocol/coh_protocol.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/protocol/protocol_goldens.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/src/byte_reader.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/tools/protocol_fixture/prepare.py": "5d3ad2283a9278092c46b459f389fa23c01f2938"
+    },
+    "groups-boundary-raw-integration-b53-orchestration-host.json": {
+      "native-android/engine/scenecatalog-server/check_groups_boundary.py": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/stage_groups_boundary.py": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/test_groups_boundary.c": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/source_groups_owner.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_groups_eligibility.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_groups_transaction.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_snapshot.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_resources.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/GROUPS_BOUNDARY.md": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+      "native-android/engine/scenecatalog-server/stage_groups_transaction.py": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/groups-owner-source-pins.json": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/resource-source-pins.json": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog-server/source_public_bounds.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/scenecatalog/source_export.inc": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/groups_oracle.py": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/groups-source-pins.json": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/tests/groups_oracle_shim.h": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/engine/replication/tests/groups_oracle_harness.c": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "native-android/tools/protocol_fixture/prepare.py": "5d3ad2283a9278092c46b459f389fa23c01f2938"
+    }
+  },
+  "broad_header_freeze_scope": "Conservative rglob snapshot; not an assertion that every listed header is consumed by the generated source/host compiler."
+}

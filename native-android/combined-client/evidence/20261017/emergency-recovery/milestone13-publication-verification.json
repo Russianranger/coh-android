@@ -1,0 +1,12 @@
+{
+  "remote_commit": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+  "integration_commit": "41a56d3bbb1c1c2351f00b00f7bf5eab2d4cad4b",
+  "tree": "02b42cd42e525a5b53beb5ee1e13499ddff6a3ea",
+  "tracked_worktree_clean": true,
+  "diff_vs_remote_empty": true,
+  "publication_method": "Git data exact blob/tree equality then expected_sha guarded non-force update",
+  "target_branch": "native-android",
+  "proof_replayed": false,
+  "accepted_apk_changed": false,
+  "new_apk_built": false
+}

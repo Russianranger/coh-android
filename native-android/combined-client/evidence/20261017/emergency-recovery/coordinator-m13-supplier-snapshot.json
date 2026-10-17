@@ -1,0 +1,9 @@
+{
+  "commit": "41a56d3bbb1c1c2351f00b00f7bf5eab2d4cad4b",
+  "tree": "02b42cd42e525a5b53beb5ee1e13499ddff6a3ea",
+  "public_tree_prerequisite": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+  "bytes": 251,
+  "sha256": "1f62ef82f72a83cb6837330e913584e6b80a9f097501199fb266a3afbaf6015a",
+  "objects": 1,
+  "scope": "Exact observed C schema-CRC supplier commit object only. Its complete tree/blobs equal the public prerequisite. Private coordinator parents deliberately excluded; import public prerequisite before this pack. Source tree lookup is recoverable; private ancestry is not part of this cut."
+}

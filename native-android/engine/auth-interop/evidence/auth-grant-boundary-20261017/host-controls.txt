@@ -1,0 +1,9 @@
+test_actual_auth_only_receipt_cannot_be_fresh_grant (test_auth_grant_boundary.Boundary.test_actual_auth_only_receipt_cannot_be_fresh_grant) ... ok
+test_binder_corruption_and_missing_git_provenance_refused (test_auth_grant_boundary.Boundary.test_binder_corruption_and_missing_git_provenance_refused) ... fatal: cannot change to '/workspace/scratch/9174d12e2a11/auth-cmake-path-rendering/nonexistent-owned-repository': No such file or directory
+ok
+test_corrupt_missing_stale_and_injected_account_generation_refused (test_auth_grant_boundary.Boundary.test_corrupt_missing_stale_and_injected_account_generation_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.140s
+
+OK

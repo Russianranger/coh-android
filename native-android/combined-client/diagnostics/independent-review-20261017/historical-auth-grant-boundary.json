@@ -1,0 +1,20 @@
+{
+  "schema": "coh-independent-historical-auth-grant-boundary-review-v1",
+  "source_commit": "05f9c485ff89b311fb9eb5d001e8ad4303569c33",
+  "evidence_commit": "9357a3f88e2f5def168221794351331b905a69af",
+  "verdict": "approved_read_only_historical_scope_diagnostic",
+  "review": [
+    "Independently checked all seven source-seal input byte lengths/hashes against exact committed Git blobs. Executed diagnostic from those admitted source bytes using stdlib only; all34 native/helper historical Git pins and13 whole original-server pins matched historical28fe37cc treef634e21e. Three additional mutated/truncated/forged-generation receipt controls refused. No PE/socket/service/Auth or native corpus execution.",
+    "Exact historical receipt1b1bea257b8e29f73543cffc4c2148071f738036ee2cd5adc122417160106c94 and binder8226b673b4143a1525296abc5d879f8a948f0cd57a5c6ccc5f5297452e51af40 are cryptographically required before parsing/admission. Both normal/capped valid cases are SHARDS_READY with zero shards, three frames and no DB attempt. SourceUserData=false and empty-server-table guard verified; successful owned service/LocalDB/listener/private-file cleanup makes generation closed.",
+    "Preserves accepted actual encrypted account login while explicitly refusing fresh authorization grant. No UID/account/run label is promoted to session generation; no caller-built ticket/credential/grant factory is added. Existing noninjectable AUTHORIZED CohLogin-to-CohLive and subsequent opaque DB/Map owner boundaries remain unchanged.",
+    "Six recorded prerequisites separate actual selected-shard AC_PLAY_OK, full UserData=true Auth/DB channel, matching one-shot source cookie, actual normal version/full executable checksum, fresh readiness/PID and owned lifecycle transfer. Source matching cookie can be zero. Historical ODBC/1024MiB readiness cannot be reused as current readiness; current diagnostic does not authorize service startup or rebuild accepted binaries.",
+    "Stdlib-only diagnostic has no project helper import/PYC graph; CLI binds current raw script to caller-pinned Git before and after inspection and requires new output. Mutated semantic test receipts are first rejected by their fixed byte identity, which is the intended historical-only boundary, not an independent generalized receipt schema validator.",
+    "Actual controlled TCP segmentation, fresh play ticket, authenticated full DB/Map/world flow and current generation remain false. This source-only scope correction does not retrofit controlled receiver segmentation into historical capped-send evidence."
+  ],
+  "fresh_authentication_grant_available": false,
+  "grant_factory_added": false,
+  "shared_coordinator_changed": false,
+  "service_executed_by_review": false,
+  "runtime_generation": false,
+  "world_authority": false
+}

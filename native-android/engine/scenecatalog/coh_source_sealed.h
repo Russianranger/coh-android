@@ -18,6 +18,13 @@ typedef struct {
  uint32_t renderer_ready,client_materials_available,actor_available,world_authority;
 }CohSourceSealedReport;
 typedef struct {const CohSourceSelection*selection_identity;const CohResourceJoin*join_identity;CohResourceJoinIdentity join;}CohSourceSealedIdentity;
+/* Immutable read-only preallocation plan, borrowed until input batch retires.
+ * No allocation, callback, reference or ownership transition. Output/budget
+ * disjoint from actual source/opaque allocations; unchanged on every refusal.
+ * This plan is NOT accepted as a factory capability: create remeasures actual
+ * owners, sharing the same layout logic. Old source/loader lifetimes remain. */
+typedef struct {CohSourceSealedReport prepared;CohSourceMeshBatchReport input;CohSourceSealedIdentity source;}CohSourceSealedPlan;
+CohStatus coh_source_sealed_measure(const CohSourceMeshBatch*,const CohSourceSealedBudget*,CohSourceSealedPlan*);
 /* Separate SOURCE-only seal. Copies canonical arrays/indices, exact COHRES and
  * complete decompressed GEO header; rebases EVERY name/material pointer into
  * owned storage. Retains actual Selection (and its actual join/catalog/snapshot),

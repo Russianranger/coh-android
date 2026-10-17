@@ -1,5 +1,7 @@
 # Authoritative world continuation — 2026-10-17
 
+Latest integrated component checkpoint: [MILESTONE14.md](MILESTONE14.md), publication parent5d3ad2283a9278092c46b459f389fa23c01f2938. Historical power schemaCRC, disabled raw-bounds composition, corrected native-stack/exact geometry measurement, auth grant diagnostic and detached authentic low-mip owner are independently sealed. Forward-power join remains recovery-only; live world/actor/Android/Thor gates remain open. Earlier entries below remain historical.
+
 Latest component checkpoint: [MILESTONE13.md](MILESTONE13.md), publication parent70b16f73b424351a1e69eca9b21b831371e51e27. Complete raw power streaming/indexing and required late-cancellation fix are independently sealed (434,417 checks per release/ASan/UBSan); original runtime dictionary and actor gates remain open. [MILESTONE12.md](MILESTONE12.md) retains the complete world/auth/resource/memory handoff. Earlier entries below remain historical.
 
 Latest detailed checkpoint: [MILESTONE12.md](MILESTONE12.md). Publication parentc7e9ed02d2eb015338180b169d593b38cb8c99ba; actual GEO retirement, compact sets, raw-bounds preparation, corrected locale frontier, parent reservation foundation and complete recovery cuts are recorded there. All actual Android receipts retain their original source scope. Earlier sections below are historical.

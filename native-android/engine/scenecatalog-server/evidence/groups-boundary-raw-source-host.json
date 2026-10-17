@@ -1,0 +1,540 @@
+{
+  "schema": "coh-source-groups-boundary-raw-v1",
+  "passed": true,
+  "source_sha256": {
+    "native-android/engine/appearance/coh_appearance.h": "abe34751e978035bb255b08a2dd98bbf2173c21ad72d27f55aa428a366d97c18",
+    "native-android/engine/appearance/coh_appearance_actor.h": "f08908c0e4aba471cc59ba132eebb956e7683fdef87c45cf3e64e714eeea08fb",
+    "native-android/engine/appearance/coh_appearance_preview.h": "ca4d53d2221eff5a4147e78e52c0974211d797f7df950df12b0bd6bb0b114697",
+    "native-android/engine/appearance/coh_appearance_render.h": "6abaf594eef941649fec665dd4822f3cfd18bed6c03840d7ed51daa3e40720f8",
+    "native-android/engine/assets/coh_asset_audio.h": "904379620dfc0f55bd2380f98a45d36e4410efaf709e8e3bd95e58d0efe619be",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/audio/coh_audio_listener.h": "906dc38a44effe640fba2a284f599bda6fd69f22fa4701bf62e80f2426a9911d",
+    "native-android/engine/audio/coh_audio_session.h": "38f96874b0661f187f9a849503017916f80091a117b1b795ff74e9f348f0a2b8",
+    "native-android/engine/audio/coh_mixer.h": "51ad20370cc75b3edaa93997c9ff4cdb9546e5485521e65daf117522866fc389",
+    "native-android/engine/audio/coh_mixer_aaudio.h": "34cdee21c5486f53fbfd78cf8bccbf2ed7db4d6ebb0268906b77f5e25f07c489",
+    "native-android/engine/audio/coh_music.h": "28470224888716ef77901ea6383570c6e2a901bea435e4e233b0366ee8f752fc",
+    "native-android/engine/audio/coh_resample.h": "fb1cdd1880f30b409c09b8d00cd5c0fda20cd314dae8b2a9362f6dea14396aa4",
+    "native-android/engine/audio/host-shim/aaudio/AAudio.h": "5759785dce003e7539a284d6a2fabaeac1e706f5c835f6acad42aa30c0d4de99",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/auth-interop/coh_auth_interop.h": "a75ee62b3db2bca47f568b0d8733314794347e6876e773e7aeff0bbf1b29507e",
+    "native-android/engine/auth-interop/deployment/coh_monitor_envelope.h": "e488413c777423d6224e25eba862a96c7cc6c4ed48b1aec6a810bef146f13aa7",
+    "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8",
+    "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h": "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402",
+    "native-android/engine/auth-interop/deployment/windows/compat/poll.h": "7e7c4481497ad68233f402199758d4202c5fd995c64b33901bbae10da4c673c5",
+    "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8",
+    "native-android/engine/auth-interop/deployment/windows/compat/unistd.h": "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646",
+    "native-android/engine/auth-interop/deployment/windows/test_winsock_api.h": "246f32d8ffb2a04c593fcafddb64c47e127acc8e6328e567018edbd2e91fc019",
+    "native-android/engine/auth-interop/deployment/windows/winsock_compat.h": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e",
+    "native-android/engine/bridge/coh_asset_render.h": "c69090c79b78f302713834b21f0c9a59acb15722598369b0efe67f0ef4fe7f87",
+    "native-android/engine/character-data/coh_character_data.h": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0",
+    "native-android/engine/character-data/oracle_shim.h": "8f8f58527752d4302e88fab5de0db687061ee217a4cf5af9e2ef6276b6a49543",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-builder/adapters.h": "02f677412a87bf054e7e754dc79977f1f3b3b1881591541989cb05f183babc8f",
+    "native-android/engine/costume-builder/wrapper.h": "b25ff6d8832f4efb4267478305b8b0c99dd18122564e8020233e888e53306ace",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-import/source_id.h": "e7f0acdbdfb661427834da9a6c46ba270005ee8628fb944f2fbbc58ec47df38f",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/costume-tree/projection.h": "ca379be477d23ad5096aa956335ed0570cf2a0046bf04b62692d687796a0ffdd",
+    "native-android/engine/costume-tree/storage_adapters.h": "6e7b321651cd9ad8ff3673bbed6be804525472217d5926acf77eb7b5d9ba0d4a",
+    "native-android/engine/costume-tree/tree_wrapper.h": "b8fe78b233811f7c7551fcf8c022a77d4f3ea8cb33326b0b7285f5334bb7c04a",
+    "native-android/engine/dbclient/coh_db_handoff_owner.h": "f0eced61f4ccf256be268032ceae072cdaf3853cba2eb716a9f37368bd3286e2",
+    "native-android/engine/dbclient/coh_db_handoff_private.h": "6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd",
+    "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/entities/buffs_oracle_shim.h": "f439daf190a9f9682bd1f6378b16da0682fbdff67c8a47fc75e648d078508729",
+    "native-android/engine/entities/character_tail_test_writer.h": "ff9aec7b36841ccec5aae219efc5926c7673a01e9cbe821364019b3cc6e16400",
+    "native-android/engine/entities/coh_character_creation.h": "5281769a276e3853b66cefa250511e82381fe5d29845b50c33a8a057dbb5722e",
+    "native-android/engine/entities/coh_character_initial.h": "081204665a475a1dcc0056bf1dffcd1b9ad147f4eb780a971dfb52687535ee99",
+    "native-android/engine/entities/coh_character_options_schema.h": "48a9c41ac2c28d5aa4de299714d39be848220ad23351e3dd451a60d7e4f4e732",
+    "native-android/engine/entities/coh_character_outer.h": "4261a314b5757f50f2273917ee7bab495511fea61d21e9ab1409b29db84e9bd6",
+    "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+    "native-android/engine/entities/coh_character_tail.h": "925bc44fb27d5095f0fe2f1093bf0dc697a0debafc0e252539b6d61e887f14cf",
+    "native-android/engine/entities/coh_character_ui.h": "acc7cd1a94cfd75ebccfcecd666febaf9e0733a68113c955fe63ecf1d62487ac",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/coh_power_ranges.h": "199d35f40a3eac1d8882d088006bfae7c1335bf8a88721f353f202e7af081b80",
+    "native-android/engine/entities/coh_taskforce.h": "0580284849d5027d27cb386ee17dc6ab27c7395c493863694bf799410755d73e",
+    "native-android/engine/entities/coh_teammate_buffs.h": "44df43e89339d0fec73d7dc75c728c16f8917a851f5a6cbaa9f32146a3e7f85e",
+    "native-android/engine/entities/coh_very_rare_tail.h": "6f1fc81912aac0690db7331a0d95f89015b0df6e34f0574aaefe82b7a32b2c36",
+    "native-android/engine/entities/costume_envelope_oracle_shim.h": "5591deb9492e6cfecaea26d572e8a0bb290ff8a90a76b248d47668810269bd7d",
+    "native-android/engine/entities/costume_oracle_shim.h": "3e442ef49b35482e5b446efd1fa293d96f1949138d3f9a2be05f9b5bacb7aac0",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/power_custom_oracle_shim.h": "dc1c24aa7b003a1a4c8b83bc6b86c628b2a75cb3ae6ec51386d61ec72b4f99ec",
+    "native-android/engine/entities/qualification/20261016/fixtures.h": "ee4e80f3d3f42c81009b92b8e2ba46b6614aed8134312e929acc985ca5b0857d",
+    "native-android/engine/entities/qualification/appearance-envelope-20261016/costume_fixtures.h": "32fd3852ad4d290835601545a5c0f6b05e5dccdd7b22ab11d51b832da9eebfdb",
+    "native-android/engine/entities/qualification/appearance-envelope-20261016/fixtures.h": "b341d98ae738a50442ed9e6d665855e8fdc840c98db305abfc3fb680299a54ee",
+    "native-android/engine/entities/qualification/character-stats-20261016/fixtures.h": "961297e4af7aec448fd8edb7d4aa90025bacd0a707c00022df49df258a24e373",
+    "native-android/engine/entities/qualification/costume-20261016/costume_fixtures.h": "885b4ccef25aa8e555261c72640920762385f5b9aafb36636028a48379d81296",
+    "native-android/engine/entities/qualification/costume-20261016/fixtures.h": "33c01f12e604071ddf45c422136abbaccc3e4eb8f57113554a61ff3c1e5b5adf",
+    "native-android/engine/entities/qualification/list-staging-20261016/fixtures.h": "ce20d805c9d410e84432afc9dee1c1905b2ae57734337ed0262c36087e4122b3",
+    "native-android/engine/entities/qualification/netfx-20261016/fixtures.h": "ca8cee6c4ea4f4f9c93504a60d50e35785c113e8efe86358c6fc4493212d128d",
+    "native-android/engine/entities/qualification/power-custom-20261016/coh_costume-base.h": "e57791a875d3add9f7ac304209212e61c8a176496108a9a2cc11f7e7a5096e56",
+    "native-android/engine/entities/qualification/power-custom-20261016/costume_fixtures.h": "b52d31a09eb7b5b3e52cdf6b9382c3a2eb1fd6313f46ecd57e896b7683f1fdf9",
+    "native-android/engine/entities/qualification/power-custom-20261016/fixtures.h": "9e06d75c6c32443ead0509b4fcac86e7ebd8080722bc2667069329acd69769e3",
+    "native-android/engine/entities/rare_oracle_shim.h": "04fa3ec89865c7c5f1473c526e64b4329f41e4cd0b21bc0d0bff30588f70df6d",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/entities/tail_observation.h": "990fa40a03879ff1a592f6f10a8bc2139c171c39727cff77536afac81e28f4eb",
+    "native-android/engine/entities/tail_oracle_shim.h": "94c0cf23e01432312019c1e936e457a68c303530c5985c394c6e0c1a0910fb4e",
+    "native-android/engine/entities/taskforce_oracle_shim.h": "0dc37b98a6c19d333fff0d2dde98fb0da7093d499c68be1db4d2e1291cb6fa09",
+    "native-android/engine/entities/titles_oracle_shim.h": "b553a29e61060dedd35c8bdcf1ac64e4956321475a9d464b9308f56db2db565e",
+    "native-android/engine/entity-attributes/coh_attrib_monitor.h": "47ba193e0620578187d92d0f8504dfc61d1205893f1238ab81a546dca3cebe3f",
+    "native-android/engine/entity-bootstrap/producer_adapters.h": "51818a8df44f059ebf2c926ee7a8170d9de138571e2e6c263b18de228ac5d482",
+    "native-android/engine/entity-bootstrap/producer_wrapper.h": "ea31cd77a35836dc9e3741661a4d840cb2a38fa466ecebcc6748c23c1deccff9",
+    "native-android/engine/entity-control/coh_entity_control.h": "9d589bc4b2dc05351bc996d8b164e346b7717a2a1fcf5f90ee2524a894aa33ef",
+    "native-android/engine/entity-control/oracle_shim.h": "cc43269fb4299e3f55452aebfb088bffd4c98170d67efa8beb57fe74807d5984",
+    "native-android/engine/entity-dynamic/coh_dynamic.h": "f898510163d3c0d03849578a9a30292dba9a730029a027b1997bc9302f12c5e4",
+    "native-android/engine/entity-frame/coh_entity_frame.h": "287abaf440b8423a2d818451a8cee91336a4752c9dffa0421dff0ff047f0808e",
+    "native-android/engine/entity-globals/badge_observation.h": "4cf2c9efdb7fb84a9abdb818dd9eab55e24016482a9e40bd589556e28139ff86",
+    "native-android/engine/entity-globals/badge_oracle_shim.h": "7c82c14e2665c2d0455da5c3eb729ddf3b05af277cd43b8cb52d29349fdada61",
+    "native-android/engine/entity-globals/coh_badges.h": "dba64d426808c5f51850b1624a14e7ecfb2dcac1a4c6e44443ee90e5f7091a0d",
+    "native-android/engine/entity-globals/coh_entity_globals.h": "5309b04457cad416cbf72b7e65197721bdf1ed1ec086b11c77fca4f85f7c0359",
+    "native-android/engine/entity-globals/coh_power_info.h": "f19ba6dfdf954399995e3e63ee07d4269bac03a4ef15bd2d28cb35f2243a8845",
+    "native-android/engine/entity-globals/oracle_shim.h": "de0d47ac13882de9f794879392e44714cabd041a5fa0825e53805af0007ad8d2",
+    "native-android/engine/entity-globals/power_info_oracle_shim.h": "7179beac5c5893b19a5b6a056ae927ef307f5ec73907bd826f44add4e5db7650",
+    "native-android/engine/entity-inventory/coh_invention.h": "fa9257d761bb267103a47c8cccea3abfea93de4834bc29acb7aea88bad59baaa",
+    "native-android/engine/entity-inventory/coh_inventory.h": "a1c13e84e1be302d326b97353cfb9076912addbd20c0792ac434247bf52ea907",
+    "native-android/engine/entity-inventory/coh_inventory_phase.h": "ac9039c78a4b31d210cce3feb442fc500fe84626c9aa9c23f59b59554f02c417",
+    "native-android/engine/entity-inventory/inventory_reader.h": "f08668dac9b6c68a31c0950e179476d8152840e5637216b872e280b7b504642b",
+    "native-android/engine/entity-social/coh_social.h": "44e83b7172a86b904db0e4297ca965420d20f3b1f803c765d87c4bfe201ac291",
+    "native-android/engine/entity-superstats/coh_superstats.h": "81766ced2f884b709f9ad1ededb780612296f534062083edf3c32f69e2c7748d",
+    "native-android/engine/entity-team/coh_team.h": "f781bc1d71bb179573d9f9a99af23e546820060fe8fe5b90cd87aec058685862",
+    "native-android/engine/entity-view/coh_view.h": "b053caae0decf3d6bb0b11230accdc4ab1c7bc8cbd871d904e634b041088d9ba",
+    "native-android/engine/initial-suffix/coh_initial_suffix.h": "8955cf9a7d756cf0853045bacd26466d57aff920029b7aff7417f816e5d6e0b8",
+    "native-android/engine/live/coh_live.h": "48f1d50c4c91f685ef9e13e2ae04de4e3c4b55abbc542c5444545b029121d519",
+    "native-android/engine/local/coh_local.h": "b75ad3a859f908e1399f42f5e72d6b60a55be13e9bef66dbaae97e1dff4a4d02",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+    "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+    "native-android/engine/mapclient/coh_mapclient_owned.h": "1718436253c503c037f248b5c45bc037a14b582db94a90aa74fe87f6356fd8ff",
+    "native-android/engine/mapclient/coh_mapclient_owned_private.h": "be7a7dbfed758a424f81b3d6d29715c290d4156c9c4c923a57f0517198ba9e6e",
+    "native-android/engine/mapclient/tests/large_scene_fixture.h": "ea7442265481b84cf7f01ac7d4a0add3f0d060a88cf39c9e2905f5d0cd1ae5a2",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "native-android/engine/offline-world/coh_offline_world.h": "25584080115a8998f1da83dd3b3fea42950b33b75ddb47b5a1d772527d14c072",
+    "native-android/engine/perf/coh_perf.h": "0d6928135f27aaa7dd1454c2974c07314bbd818163cdeaac155875f1aa70dbdc",
+    "native-android/engine/perf/coh_perf_bridge.h": "07a2a8cdbba7a102d30deff1b8d80140a442dce620f5d1edafe33f3bc2c94f14",
+    "native-android/engine/perf/coh_process_memory.h": "2ff15db4619044067b3c61bb664baff2b1aec0b61e5001afe56fa6472e0120ec",
+    "native-android/engine/perf/coh_skin_cache.h": "c88997202da49fecf992532bc716a0b2f52855a969836f68d06a9613b6be5fdf",
+    "native-android/engine/physics/coh_physics.h": "13d8697f0a2be95bc20502a477a46317abed016e7de320c7201a10967ec730d7",
+    "native-android/engine/physics/coh_physics_neighborhood.h": "6683030f9c38b033687107bcae51b3ec33a32c49fd3d605e3c618497c0625e24",
+    "native-android/engine/physics/coh_physics_snapshot.h": "1b952bb7eba80fb3871cc4768447168d8efd7fef5e94ce0fdadbaadc39ac4fb7",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/renderer/coh_renderer_gles.h": "d8bcb8107e4f61aeaf1e6270da3ee41ec057d3be460e1dfe4a34a4c48baed9ae",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+    "native-android/engine/replication/groups_oracle.py": "23fda4a062edca54f1ea4af4d8e1d220f496a854eb68069e669f517f5c41755b",
+    "native-android/engine/replication/tests/groups_oracle_harness.c": "5cbcad7546ec127b6602d10b79419a87329ef4dbc8e72c1014b661dd06d53cb2",
+    "native-android/engine/replication/tests/groups_oracle_shim.h": "d6152d20c7ac629323cd15b4ea14fe8c65a8fadea05d5f7db02cb8cb7d0cb518",
+    "native-android/engine/scenecatalog/coh_catalog_owner.h": "4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f",
+    "native-android/engine/scenecatalog/coh_catalog_snapshot.h": "389021a429fe7c4720303fd00723de873fd18bc915d4c8aa9b4c437cd2dabb76",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.h": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769",
+    "native-android/engine/scenecatalog/coh_resource_index.h": "d4774726285d8ba6037e8c2f35d4f9647e171e06aaccf8edc07b686f4dbc3228",
+    "native-android/engine/scenecatalog/coh_resource_join.h": "dc4c3324e719ccd1b4db3fccdb4da054d6a403f7e844209cea440bec6b858a68",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c",
+    "native-android/engine/scenecatalog/coh_source_rigid.h": "65c99db929bd3166b1ad8c08fbd7946004c1e243d13ed5da5f5b030d101cf931",
+    "native-android/engine/scenecatalog/coh_source_selection.h": "89ed5ca4e68b4574daf289e591e2eacb75a92b8c6aaaefb0c9c967fa057669bb",
+    "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "native-android/engine/scenecatalog-server/GROUPS_BOUNDARY.md": "5cde8d5b8af081260a94dd9694e4d212bf8a126227f6d5a41244180a68bea4a4",
+    "native-android/engine/scenecatalog-server/GROUPS_BOUNDARY_RAW_BOUNDS.md": "2854b45baf578e68cab5ce4e96b8d40dcff18240535cf288a6cf4195e1988e31",
+    "native-android/engine/scenecatalog-server/PUBLIC_BOUNDS.md": "778c151fac5b2f005daac61952ef4855bc38ca55159586213bb03b9e24eea15d",
+    "native-android/engine/scenecatalog-server/check_groups_boundary.py": "6eee1c6f3fe7816be2ee3859d762f0447a8418522f7b8a79f4ceb372bf4dc72f",
+    "native-android/engine/scenecatalog-server/check_groups_boundary_raw.py": "0a88107197909559c0dfd73e6ea71dfad5e3ff65d47b9cf2cf11fa98c52ae1dd",
+    "native-android/engine/scenecatalog-server/groups-owner-source-pins.json": "5693a060b7a727c6bf9a7375bf2fcc860c1398e986d4d41ef314f4162f8985a2",
+    "native-android/engine/scenecatalog-server/groups_owner_oracle_shim.h": "85f7085d2853d05f439b046ddb7ab2441b6ea3b36cffc166173c4304cd152dd0",
+    "native-android/engine/scenecatalog-server/resource-source-pins.json": "6508ab2824fb83ee5a47ea3f04dc33b8f5542b9f05dd0b38c2e34ace437c90e9",
+    "native-android/engine/scenecatalog-server/resource_fixture_types.h": "11b643a213856dd4632bd5df02fcb183919c07495a4f97efc720abe1a35cbb7b",
+    "native-android/engine/scenecatalog-server/snapshot_oracle.py": "d303a5fee50c783b80353542ac0dcd98f5ae30c08513f171d6e90214b95815ad",
+    "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3",
+    "native-android/engine/scenecatalog-server/source_groups_eligibility.inc": "38338a38411745c889cc78a381e19cfafebd5a83bc00132e17b5b079023f1dbb",
+    "native-android/engine/scenecatalog-server/source_groups_owner.inc": "7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc",
+    "native-android/engine/scenecatalog-server/source_groups_transaction.inc": "a531ae0c9031c160b4f2cf99f2cba49487fba3ea7d396dcc23d0f0969ed922c6",
+    "native-android/engine/scenecatalog-server/source_public_bounds.inc": "c812642d7f3467c97b2528a9e0963a7d40a01d7f45615ec3fe49c17dbbd80723",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "native-android/engine/scenecatalog-server/stage_groups_boundary.py": "980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f",
+    "native-android/engine/scenecatalog-server/test_groups_boundary.c": "c52739416c32c1ed6e223f986fae325cf70a5c452f51d787809f71161ef1a6c8",
+    "native-android/engine/scenecatalog-server/test_groups_boundary_raw.c": "b84aed3c4f59b5fd5f407db0063e33b5398971e47ca82b171ef3b6016737b1bf",
+    "native-android/engine/scenecatalog-server/test_snapshot.c": "6b394bbc20798b5a16814560069ac2cdb02667328d19fd0ef313f149805e3148",
+    "native-android/engine/scenegraph/coh_catalog_seed.h": "b343476863e2e776d4250638c9712e19bb3e9d13fc2486db1ddc10382e146b1d",
+    "native-android/engine/scenegraph/coh_group_bounds.h": "24785de1fcf70a03c7c1debf964ec77581428911334743be73cecc2cd4cf4426",
+    "native-android/engine/scenegraph/coh_group_lod.h": "e49858fd4f142eb778e0641baf452b901e4d1d834fbeef39e7da79d7740bdc19",
+    "native-android/engine/scenegraph/coh_map_scene_record.h": "776308647f37f2f294fc35578d012cc3f08aeaa7ed1e9c57c0b95065643d455f",
+    "native-android/engine/scenegraph/coh_model_bounds.h": "dd040004cf044b410f8d004c028539f7207142be8df35f18fb6ce09347465d11",
+    "native-android/engine/scenegraph/coh_public_bounds.h": "2a0ff329e51f97c59b1d24b2d1f683332a1d6b92afd72157fb56951133e065d7",
+    "native-android/engine/scenegraph/coh_runtime_bounds.h": "1c89e0bac3136674574351071c8623e928f6f8ca6ec4619421ec13a9c59e25ec",
+    "native-android/engine/scenegraph/coh_runtime_graph_owner.h": "9d84c44c25704be044e8fd869465589c80c3b2f399b4894a44a8e772534f6587",
+    "native-android/engine/scenegraph/coh_runtime_groups.h": "ab494e26e2289d1ca6643928ef9c30dd3fa8ccad4bf40bc7634627b77f11d280",
+    "native-android/engine/scenegraph/coh_runtime_groups_witness.h": "289e339e1f8d9f728daf9ff0124df0e5ab8d688f45c847ba8d7ad7f5d9f706dd",
+    "native-android/engine/scenegraph/coh_runtime_instances.h": "ee299ddfeb081ca1871cae4c1727743441182e52ab491f610c59aca18d0c2ad2",
+    "native-android/engine/scenegraph/coh_scene_compact.h": "3c358131944a0dfa89a3dbb86cef962806cb12b00882e349eb6425e81017cd3d",
+    "native-android/engine/scenegraph/coh_scene_lookup.h": "d7287236749916277e0b8eb124b4b29594431ce817763d4989ef8d9878d26f6b",
+    "native-android/engine/scenegraph/coh_scene_metadata.h": "75557e186685443c7567d9efb89d2c4d2fff880816d5c263c40d6b4522449e81",
+    "native-android/engine/scenegraph/coh_scene_protocol.h": "a778402d0af36417e6c089be7bd2ccc3d41a76f0327d8dad3c199c4801a3dc1b",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "native-android/engine/scenegraph/runtime_graph.h": "ea635edfc31eda5e29308b85d7420cc0da242bbc291bc34221ea8d615ea93a84",
+    "native-android/engine/scenegraph/runtime_snapshot.h": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3",
+    "native-android/engine/scenegraph/tests/bounds_oracle_shim.h": "113566a9736e2307a256a833684729c731c061a494188effd6b9e168cf65142a",
+    "native-android/engine/scenegraph/tests/lod_oracle_shim.h": "68aaaa9d53db5b1998123de6aa9da771aaf08d5a4b54625f5d3e80df4ef5b14a",
+    "native-android/engine/scenegraph/tests/lookup_oracle_shim.h": "473a69fd94b236952c837d0f8fa1d99ba4f1117a2dd974f22de82ba414fbee4b",
+    "native-android/engine/scenegraph/tests/model_bounds_oracle_shim.h": "3446335da47cd2719c23bdb6df2e3cbcb4eb1601b781ce0332eff07390f99a86",
+    "native-android/engine/selected-record/coh_selected_record.h": "c05eb2270b3b000ce34fe23a88d6e2d8e655709003073ebb6d2ec7182f619b80",
+    "native-android/engine/selected-record/oracle_front.h": "bfdee7f1fc3d46c98badd5ea1ddc32034f37b9dfac55cb953f0f434b08ae044d",
+    "native-android/engine/sequencer/coh_seq_actor.h": "81220b7cb75eecaa39dda66537523fbcbea220ac0d37a185e477d1cb42bd4161",
+    "native-android/engine/sequencer/coh_seq_playback.h": "eab4ad496200cfe7e471d2b795aa06a0b4402c95da157ca86da6d15ac87672bd",
+    "native-android/engine/sequencer/coh_sequencer.h": "895b888ef2c4d8aa441c2a07b9ccaf0ac8c5b0affd548fe3dcda1ecf152c6f16",
+    "native-android/engine/sequencer/showcase/authored_graph.h": "b176c0e3937ab86fc68b74e5575731009870f66e66945f0fd65471aa88cf8d87",
+    "native-android/engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+    "native-android/engine/session/server-oracle/oracle_shims.h": "d2e345c8ff0b927492a58f606702ee1ba0942604513fc2863aee2bafcd87247f",
+    "native-android/engine/stash32/coh_stash32.h": "fedc5448fa449bd8f223105343adcab02fda2bb126b5f15b1e6fa21539275c93",
+    "native-android/engine/ui/coh_hud.h": "e36e19ecc3608ac1df81c988c64fd22f9a3a6e72999b59e0bf4e688aca0ebd7d",
+    "native-android/engine/ui/coh_ui.h": "50267d8fa4a6e3a04bc917e62bf0d24599cc30b1292cd5caa65b22ec4b6f6870",
+    "native-android/engine/ui/gameplay/coh_hud_android.h": "9358b55cb9d9775f17c01ab759551d0791c9ca922422cf3449698dde4120a562",
+    "native-android/engine/ui/gameplay/coh_hud_atlas.h": "c08ceafa1ba590f4a879d7bb0f82e6ac10c131d14fb541e110588f99529be81d",
+    "native-android/engine/ui/gameplay/coh_hud_axis_navigation.h": "f3154df8d7d7abf600d67c9a338946aa48ff566a3809a1759328a2c662261c75",
+    "native-android/engine/ui/gameplay/coh_hud_gles.h": "6078a168479024bf080f194c3ebb7e7b9c23583ebee0b5a618cd5607cfccdda0",
+    "native-android/engine/ui/gameplay/presentation/coh_presentation.h": "c70c4a9781fc733bf03dd1d5243430e5a40b3dc43ab665f74deec653ef9175a4",
+    "native-android/engine/world/coh_world_stream.h": "5489ecb86fc84699f28a24461e7fcaf30a22a2dfa935c8f857b86020682cceaa",
+    "native-android/engine/world-capture/capture_hooks.h": "70db53fd6318d26a6aedfca6e8e907e69a3051bee2e57ec2865bdf558bce78e7",
+    "native-android/engine/world-capture/coh_world_capture.h": "46e6c921b105fdfe983efc51977f01a123ac6bb46f7da9085fe0df8085520c75",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_texture.h": "a281c7173ebd9a0ed218d385ba74787f2b7df1f08a0ccab008e5fa64c1c3b51a",
+    "native-android/engine/world-render-adapter/coh_wr_lod.h": "aaee2262be11dd788418a62a6280a0adf09be5cbe8a505e72ee15e8a257c521a",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.h": "01f60ed231e19dd8570740c9ebe90dae3209e055f1fc2bbc5c19bafb4b955ddb",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_internal.h": "a30e248093082b871887b8245fdc3e46e930dacaebab5a14ce10c0853995957b",
+    "native-android/engine/world-render-adapter/coh_wr_rigid_source.h": "b6a5a2106455756712d258af00508801b76bb9e00ee94cc51784403f1c655a0a",
+    "native-android/engine/world-render-adapter/coh_wr_sampler.h": "31051b98834cf18c313994c452d85313a27a91419d27cac99babdd177fc8cfdb",
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.h": "be1e6392b45c26b2925faa3ec0de15fc3d272811af30a4fc92aeb81c7baf700b",
+    "native-android/engine/world-render-adapter/coh_wr_texname.h": "68d93c487612db16f8c784d38c227d0e94006b0c5b4d5c5ddc4089359d78d115",
+    "native-android/engine/world-render-adapter/coh_wr_texname_guarded.h": "1fcb2868680ec238fa3fcb509e839d6bee110b479d64708d200660492e0a0027",
+    "native-android/engine/world-render-adapter/coh_wr_texture.h": "069ac1de9a4f6e7128ff779ea44d01894d48769500784c9d97056ce0eaca22d0",
+    "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/host/world-adapter/original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252",
+    "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/host/world-adapter/original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252",
+    "native-android/engine/world-render-adapter/qualification/frame-recovery-20261017/original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252",
+    "native-android/engine/world-render-adapter/qualification/independent-frame-recovery-20261017/original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252",
+    "native-android/engine/world-render-adapter/qualification/original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252",
+    "native-android/engine/world-render-adapter/qualification/shared-geometry-20261016/original_matrix.h": "3991c1d4a146926e36eb4e4588c3253205369fe1d0469b3ae30c9af8a9dbb252",
+    "native-android/engine/world-render-adapter/tests/coh_gpu_egl_backend.h": "de6116d3a914d807684ead384857ab8d06f8080117bb2bb5a44185f47cb2692f",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "native-android/protocol/protocol_goldens.h": "3f80f7f9d2f40b0a7fca64b542f4a1aa3d66304459462ca42bb07dcf5beac179",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_source": {
+    "original_source": {
+      "schema": 1,
+      "repository": "Russianranger/coh-android",
+      "reference_commit": "bf653dd4ef5372c921b049a76f902a4a921e8c4d",
+      "sha256_lf": {
+        "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+        "libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+        "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+        "libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h": "822e3698ab8cf76a7344ed3effe607dcda542099382e8ed1a63c2c1d1df4257c",
+        "libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+        "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+        "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+        "Common/group/groupProperties.c": "88975a6c74122a64ded79a860d60592814cdf79579b6a39357bbca79066673a1",
+        "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+        "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+        "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+        "Common/group/groupProperties.h": "5522e0e664baab38fb369b59a8d68afd806083cb28c11bda6d58c26d475ab74e",
+        "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+        "libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+        "Game/src/group/groupnetrecv.c": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+        "libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+      },
+      "functions": {
+        "initBitStream": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+        },
+        "bsSetByteAlignment": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "c5f01d08b819d093574461b0b256c93f8c1e686e939a91e64566630acfbba965"
+        },
+        "bsWriteBits": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+        },
+        "bsWriteBitsPack": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+        },
+        "bsWriteString": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81"
+        },
+        "bsWriteF32": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "38d78cadee1f9bc73c25ef1f0dfcb6249a3e101165151abb8d0f8ca7c76462c9"
+        },
+        "bsAlignByte": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+        },
+        "bsGetCursorBitPosition": {
+          "source": "libs/UtilitiesLib/src/components/BitStream.c",
+          "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+        },
+        "pktSetByteAlignment": {
+          "source": "libs/UtilitiesLib/src/network/net_packet.c",
+          "sha256_lf": "039804cf64e15f616e2c1ba200be92d7e92cb62204d24af64a4b85a23673cb76"
+        },
+        "pktSetCompression": {
+          "source": "libs/UtilitiesLib/src/network/net_packet.c",
+          "sha256_lf": "2f10dbd25b520629828ad056c0fe23bf55521e517ddc102c4097a44d9b17defa"
+        },
+        "pktSendBits": {
+          "source": "libs/UtilitiesLib/src/network/net_packet.c",
+          "sha256_lf": "417040312877e0288d45ada572d2f2a6d7a6ca42f08f501fae315d503be1abc5"
+        },
+        "pktSendBitsPack": {
+          "source": "libs/UtilitiesLib/src/network/net_packet.c",
+          "sha256_lf": "8746bc145e72c7cfe59e4cde7081348032e11ed2275d6336bd48a7fa0a007abd"
+        },
+        "pktSendString": {
+          "source": "libs/UtilitiesLib/src/network/net_packet.c",
+          "sha256_lf": "57bf516d6b96cd2d8b7aa95da381e4a8181de9a609473086678709e3fb23d9f5"
+        },
+        "pktSendF32": {
+          "source": "libs/UtilitiesLib/src/network/net_packet.c",
+          "sha256_lf": "2c43f35b445da0c785fd3ebac6d5a2285547ad6d640cd011a082c0f872bc35b9"
+        },
+        "pktSendIfSetF32": {
+          "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+          "sha256_lf": "ddcc05bc48479b323c0c9b970cb84991ec85f4ef747a9d1776fa96e5cd82e309"
+        },
+        "pktSendBitsAuto": {
+          "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+          "sha256_lf": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa"
+        },
+        "pktSendVec3": {
+          "source": "libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h",
+          "sha256_lf": "32a46d3ae2ff7b18cf772338aaaf4a92bf629339f835fca4ec97ef4bfdac9ce8"
+        },
+        "pktSendMat4": {
+          "source": "libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h",
+          "sha256_lf": "d316f3c5f833d2c8a1f701c6427c936546f65bd5704a75c4b8c6cd0404940e80"
+        },
+        "unitZeroMat": {
+          "source": "libs/UtilitiesLib/src/network/netcomp.c",
+          "sha256_lf": "afdf4e5536a710e62e8c606ecdcbc84f6756c223eb120389cc425acc2c103cea"
+        },
+        "unpackMat": {
+          "source": "libs/UtilitiesLib/src/network/netcomp.c",
+          "sha256_lf": "192ff7aa49fba688fa9db45c936d24052f80a5f2a5fe37256e7e7a4454ed678a"
+        },
+        "packMat": {
+          "source": "libs/UtilitiesLib/src/network/netcomp.c",
+          "sha256_lf": "8f82124f6fd6ac8d27148ff64515d803cb4dceecac3c457a6e8fae9540fe51fc"
+        },
+        "pktSendF32Comp": {
+          "source": "libs/UtilitiesLib/src/network/netcomp.c",
+          "sha256_lf": "841db24bc9ee5853891e767ca11ad8e05d5a19a9acba73f5b55f8d38aa4110c8"
+        },
+        "pktSendF32Deg": {
+          "source": "libs/UtilitiesLib/src/network/netcomp.c",
+          "sha256_lf": "33a8dd5add52544d19082deaeec42ad35bc6b250347cb8e6afe4ebf383ee381b"
+        },
+        "sendMat4": {
+          "source": "libs/UtilitiesLib/src/network/netcomp.c",
+          "sha256_lf": "2e9e8503747aaf3ce81dc7452001ae1146a0fa30a1bb7903d1371a017debd44c"
+        },
+        "nearSameVec3": {
+          "source": "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+          "sha256_lf": "57b89bfd277f454f87c7a19f28edf2cab533238cc50955f7ec6583a88c95357b"
+        },
+        "nearSameVec3Tol": {
+          "source": "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+          "sha256_lf": "1b6fde1ff869de7d45ac6ea54e15bc8139bd334e01fcd5bc5e9936771e9ebd31"
+        },
+        "normalVec3": {
+          "source": "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+          "sha256_lf": "6fcf9942a270836372bdea6d52446c7d0395257f8f286641baa75c6d2377d58e"
+        },
+        "extractScale": {
+          "source": "libs/UtilitiesLib/src/utils/mathutil.c",
+          "sha256_lf": "aecbcea5b90db88c2853d33f7ee55d3bc51cffea07a596f0451b7ee3bb64eca5"
+        },
+        "scaleMat3Vec3": {
+          "source": "libs/UtilitiesLib/src/utils/mathutil.c",
+          "sha256_lf": "a25503311cdffb1c03ac89fa2019cb87e4a732f3c4e036d7ef033c3e0824ded9"
+        },
+        "createMat3YPR": {
+          "source": "libs/UtilitiesLib/src/utils/mathutil.c",
+          "sha256_lf": "1d7b221f5b829c99e55d47cd21ac928036a8fb93b5ebb09d83fea70977a392c7"
+        },
+        "getMat3YPR": {
+          "source": "libs/UtilitiesLib/src/utils/mathutil.c",
+          "sha256_lf": "ea4557cc4f5680d9983604fee09ba17a4760b636e2205ecd212c9efcf065f6c1"
+        },
+        "PropertyTablePaketWriter": {
+          "source": "Common/group/groupProperties.c",
+          "sha256_lf": "80026261195c597c7b9ec88252eaeeff1110b6255bb6f9456b23c640555d9cd3"
+        },
+        "WriteGroupPropertiesToPacket": {
+          "source": "Common/group/groupProperties.c",
+          "sha256_lf": "edbf3385f590174662fba75f5ded5bd88c88ef4e33576261696825e334e08a28"
+        },
+        "groupInfoCrcDefs": {
+          "source": "Common/group/group.c",
+          "sha256_lf": "b0fe7d99b67d25a6ef7a84963be60d7884f0f3d9c276fb71016d41439b649393"
+        },
+        "cryptAdler32UpdateString": {
+          "source": "Common/group/group.c",
+          "sha256_lf": "3c782ec3737b8a2e53d2b4ca687434c810fe8532ebe3acd47217413c4253af17"
+        },
+        "groupInfoCrcRefs": {
+          "source": "Common/group/group.c",
+          "sha256_lf": "0704521e08043d4a6a3c73b5ff4d709da12189a125b8ff3d64d3760c51f4d3ac"
+        },
+        "groupInfoRefCount": {
+          "source": "Common/group/group.c",
+          "sha256_lf": "522c36fbe8eee5025eef1d4003498aeb24b9fd09f1f0e11de116d60002c8ea69"
+        },
+        "sendDef": {
+          "source": "MapServer/src/group/groupnetsend.c",
+          "sha256_lf": "c5cf9d09f217c55c17e03f252ddd3efd957ae4cd2304efe3cc83f4878a0183ad"
+        },
+        "sendGroupFile": {
+          "source": "MapServer/src/group/groupnetsend.c",
+          "sha256_lf": "5bae1853a7397e83d073ac9ba88259415e4aaa398f6697880583b3063df68087"
+        },
+        "sendLoadScreenPages": {
+          "source": "MapServer/src/group/groupnetsend.c",
+          "sha256_lf": "34240a0ad72fb612938a9773b1869912af0ab32a0b04d6d0ee690ffd1b6e44db"
+        },
+        "worldSendUpdate": {
+          "source": "MapServer/src/group/groupnetsend.c",
+          "sha256_lf": "7659b6de769a01956efd4b138ff4341c100f209c656c9d121b4649f2cb2b21c1"
+        }
+      },
+      "checksum_adapter": "zlib Adler32 with source Crypto++ digest-byte order; original groupInfoCrcDefs/Refs/RefCount executed"
+    },
+    "original_group_header_sha256_lf": "17e9d423ef7f8e389f9ce39dc6d7f601d9aee500a7a617f0caa8bc049e994a48",
+    "original_bounds_macro_sha256": "4d4fcf3ebfbe85184faf7768019e13c83e224c6576c33c606be659b2be78ff92",
+    "fixture_shim_extended": true,
+    "original_function_bodies_unchanged": true,
+    "legacy_original_ubsan_instrumentation": false,
+    "actual_snapshot_include_sanitized": true
+  },
+  "original_owner_sha256_lf": {
+    "MapServer/src/player/clientEntityLink.c": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b",
+    "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "MapServer/src/svr/svr_base.h": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64",
+    "MapServer/src/svr/svr_base.c": "7d7379d255c8bbd6e45663499d70dad2672455704d25716d0adb6e3694d4de40",
+    "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "MapServer/src/entity/entIncludeServer.h": "bebba4c2ab7102debd043817a9d30abf4699f3af9d0d8dca612700df1fb52029",
+    "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/entity/entity.c": "07b6666d673757cd8e9f4d377ec58fb2988fc09db8abc2e212e29788b84fbd8f",
+    "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+    "libs/UtilitiesLib/include/utilitieslib/components/ArrayOld.h": "52f889750b03c07f52896ca9a569ed4acfeb93f0b5bdbb09072de9d2a343da30",
+    "Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+    "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+    "Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+    "Game/src/render/thread/rt_model_cache.h": "cb68344bdd53130816b7cf597426a8ac1e73f65d01c9f67336f7d9d7544fde6e"
+  },
+  "original_public_full_sha256_lf": {
+    "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7"
+  },
+  "original_public_function_sha256_lf": {
+    "groupInLib": "ffafe500f75d110ab1118983eb5ecc21f8f5157b359f0d689c2d7abe52dc8529",
+    "groupIsPrivate": "cde2c16174ba731591777da3cfb6f205c751aa0927978dc0d0aa9cb76443e6cb",
+    "groupIsPublic": "b657e9742cc4eba49c4a68f3292c32e85f47fd5630ee2b3984900c9fc690871c"
+  },
+  "staged_group_sha256_lf": "e39093a13ba0f11c80cbca7ccee89613d8ea5403432b02f98e1b76659ed265f9",
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 2498,
+      "raw_callback_faults": 18,
+      "original_catalog_runtime_raw_world_executed": true,
+      "quiet_owner_resource_dependencies_substituted": true,
+      "actual_capture_count": 0,
+      "win32_layout_verified": false,
+      "world_authority": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 2498,
+      "raw_callback_faults": 18,
+      "original_catalog_runtime_raw_world_executed": true,
+      "quiet_owner_resource_dependencies_substituted": true,
+      "actual_capture_count": 0,
+      "win32_layout_verified": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 2498,
+      "raw_callback_faults": 18,
+      "original_catalog_runtime_raw_world_executed": true,
+      "quiet_owner_resource_dependencies_substituted": true,
+      "actual_capture_count": 0,
+      "win32_layout_verified": false,
+      "world_authority": false
+    }
+  },
+  "stack": {
+    "release": {
+      "frames": {
+        "coh_groups_boundary_write": 16,
+        "coh_groups_boundary_record": 8,
+        "coh_groups_boundary_abort": 16,
+        "coh_groups_boundary_finish": 336,
+        "coh_groups_boundary_begin": 368
+      },
+      "conservative_boundary_raw_bytes": 8936
+    },
+    "asan": {
+      "frames": {
+        "coh_raw_bounds_u32": 16,
+        "coh_groups_boundary_write": 80,
+        "coh_groups_boundary_record": 16,
+        "coh_groups_boundary_abort": 16,
+        "coh_groups_boundary_begin": 688,
+        "coh_groups_boundary_finish": 496
+      },
+      "conservative_boundary_raw_bytes": 9504
+    },
+    "ubsan": {
+      "frames": {
+        "coh_raw_bounds_u32": 16,
+        "coh_groups_boundary_write": 48,
+        "coh_groups_boundary_record": 16,
+        "coh_groups_boundary_abort": 16,
+        "coh_groups_boundary_begin": 384,
+        "coh_groups_boundary_finish": 352
+      },
+      "conservative_boundary_raw_bytes": 9024
+    }
+  },
+  "binary_sha256": {
+    "release": "944d2f602a80a66ff107c51529315fa7d38c1cbbbbd5a37e35dea4ad7f300f85",
+    "asan": "e1f36d84d3a2b88b8c498f187112b6a7889cf14ce63c1da401a7a1a22232b7da",
+    "ubsan": "2c459b7f136e9fe48ddc72a0ab8ab2e8d2ecb47801259e3db2d6a5e1fff3b7dd"
+  },
+  "fresh_admitted_helper_execution": true,
+  "raw_output_precharged_before_sink": true,
+  "actual_raw_capture_count": 0,
+  "actual_win32_layout_verified": false,
+  "quiet_owner_resource_dependencies_substituted": true,
+  "original_legacy_ubsan": false,
+  "hook_installed": false,
+  "sink_installed": false,
+  "real_server_executed": false,
+  "live_groups_captured": false,
+  "source_generation_admitted": false,
+  "cache_equivalence_verified": false,
+  "world_authority": false,
+  "android_executed": false
+}

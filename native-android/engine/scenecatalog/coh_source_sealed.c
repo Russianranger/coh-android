@@ -19,26 +19,38 @@ CohStatus coh_source_sealed_identity(const CohSourceSealed*s,CohSourceSealedIden
 CohStatus coh_source_sealed_entry(const CohSourceSealed*s,uint32_t slot,CohSourceSealedEntry*out){TRY(safe(s,out,sizeof(*out)));if(slot>=s->report.meshes)return COH_NOT_FOUND;*out=s->entries[slot].view;return COH_OK;}
 CohStatus coh_source_sealed_find(const CohSourceSealed*s,uint32_t ordinal,uint32_t*out){TRY(safe(s,out,sizeof(*out)));uint32_t lo=0,hi=s->report.meshes;while(lo<hi){uint32_t at=lo+(hi-lo)/2,n=s->entries[at].view.source_ordinal;if(n==ordinal){*out=at;return COH_OK;}if(n<ordinal)lo=at+1;else hi=at;}return COH_NOT_FOUND;}
 CohStatus coh_source_sealed_part(const CohSourceSealed*s,uint32_t slot,uint32_t part,CohSourceMeshPart*out){TRY(safe(s,out,sizeof(*out)));if(slot>=s->report.meshes||part>=s->entries[slot].view.parts)return COH_NOT_FOUND;const Entry*e=s->entries+slot;CohAssetGeoMaterial m=e->parts[part];*out=(CohSourceMeshPart){e->vertices,e->view.vertices,e->indices+(size_t)m.first_triangle*3,m.triangle_count*3,m};return COH_OK;}
-CohStatus coh_source_sealed_create(CohSourceMeshBatch**batch,const CohSourceSealedBudget*b,CohCancel cancel,CohSourceSealed**out,CohSourceSealedReport*report){
- if(!batch||!*batch||!b||!out||!report)return COH_INVALID;
- const void*p[]={batch,b,out,report};size_t sizes[]={sizeof(*batch),sizeof(*b),sizeof(*out),sizeof(*report)};for(unsigned i=0;i<4;i++)for(unsigned j=i+1;j<4;j++)if(!separate(p[i],sizes[i],p[j],sizes[j]))return COH_INVALID;
+CohStatus coh_source_sealed_measure(const CohSourceMeshBatch*batch,const CohSourceSealedBudget*b,CohSourceSealedPlan*out){
+ if(!batch||!b||!out)return COH_INVALID;
+ if(!separate(b,sizeof(*b),out,sizeof(*out)))return COH_INVALID;
  if(!b->owned_limit||b->owned_limit>COH_RESOURCE_INPUT_MAX||!b->aggregate_limit||b->aggregate_limit>COH_SG_TRANSACTION_MAX)return COH_LIMIT;
- if(*out)return COH_STATE;
  size_t minimum=b->retained_bytes;TRY(add(&minimum,PREPARATION,b->aggregate_limit));
- CohSourceMeshBatchReport old;TRY(coh_source_mesh_batch_report(*batch,&old));
- for(unsigned k=0;k<4;k++)if(!separate(*batch,old.owned_bytes,p[k],sizes[k]))return COH_INVALID;
- CohSourceMeshDependencies base;TRY(coh_source_mesh_batch_dependencies(*batch,0,&base));
+ const void*p[]={b,out};size_t sizes[]={sizeof(*b),sizeof(*out)};
+ CohSourceMeshBatchReport old;TRY(coh_source_mesh_batch_report(batch,&old));
+ for(unsigned k=0;k<2;k++)if(!separate(batch,old.owned_bytes,p[k],sizes[k]))return COH_INVALID;
+ CohSourceMeshDependencies base;TRY(coh_source_mesh_batch_dependencies(batch,0,&base));
  CohSourceSealedReport r={0};r.meshes=old.meshes;r.parts=old.parts;r.preparation_reserve=PREPARATION;r.inherited_loader_reservations=old.loader_reservations;r.owned_bytes=sizeof(CohSourceSealed)+(size_t)old.meshes*sizeof(Entry);
  if(r.owned_bytes>b->owned_limit)return COH_LIMIT;
  for(uint32_t n=0;n<old.meshes;n++){
-  for(unsigned k=0;k<4;k++)TRY(source_control(*batch,n,p[k],sizes[k]));
-  CohSourceMeshReport m;uint32_t first;TRY(coh_source_mesh_batch_entry(*batch,n,&m,&first));size_t offset,path;
+  for(unsigned k=0;k<2;k++)TRY(source_control(batch,n,p[k],sizes[k]));
+  CohSourceMeshReport m;uint32_t first;TRY(coh_source_mesh_batch_entry(batch,n,&m,&first));size_t offset,path;
   TRY(path_size(m.source.geo.id.path,&path));
   TRY(region(&r.owned_bytes,(size_t)m.vertices*sizeof(CohRenderVertex),b->owned_limit,&offset));TRY(region(&r.owned_bytes,(size_t)m.triangles*3*sizeof(uint32_t),b->owned_limit,&offset));TRY(region(&r.owned_bytes,(size_t)m.parts*sizeof(CohAssetGeoMaterial),b->owned_limit,&offset));TRY(region(&r.owned_bytes,m.source.actual_sources.record.size,b->owned_limit,&offset));TRY(region(&r.owned_bytes,m.source.actual_sources.header.size,b->owned_limit,&offset));TRY(region(&r.owned_bytes,path,b->owned_limit,&offset));
  }
  r.shared_source_bytes=base.body.selection_owned_bytes;TRY(add(&r.shared_source_bytes,base.body.profile_bytes,b->aggregate_limit));TRY(add(&r.shared_source_bytes,base.body.join.report.owned_bytes,b->aggregate_limit));TRY(add(&r.shared_source_bytes,base.body.join.catalog_owned_bytes,b->aggregate_limit));TRY(add(&r.shared_source_bytes,base.body.join.snapshot_owned_bytes,b->aggregate_limit));TRY(add(&r.shared_source_bytes,base.body.join.graph_owned_bytes,b->aggregate_limit));
  size_t peak=b->retained_bytes;TRY(add(&peak,old.owned_bytes,b->aggregate_limit));TRY(add(&peak,old.mesh_owned_bytes,b->aggregate_limit));TRY(add(&peak,old.source_owner_bytes,b->aggregate_limit));TRY(add(&peak,old.loader_reservations,b->aggregate_limit));TRY(add(&peak,r.owned_bytes,b->aggregate_limit));TRY(add(&peak,PREPARATION,b->aggregate_limit));r.retirement_peak_bytes=peak;
  CohSourceSelection*selection=(CohSourceSelection*)base.body.selection_identity;CohSourceSelectionReport selection_report;TRY(coh_source_selection_report(selection,&selection_report));r.evidence_kind=selection_report.evidence_kind;r.profile_id=selection_report.profile_id;
+ CohSourceSealedPlan value={r,old,{selection,base.body.join_identity,base.body.join}};*out=value;return COH_OK;
+}
+CohStatus coh_source_sealed_create(CohSourceMeshBatch**batch,const CohSourceSealedBudget*b,CohCancel cancel,CohSourceSealed**out,CohSourceSealedReport*report){
+ if(!batch||!*batch||!b||!out||!report)return COH_INVALID;
+ const void*p[]={batch,b,out,report};size_t sizes[]={sizeof(*batch),sizeof(*b),sizeof(*out),sizeof(*report)};for(unsigned i=0;i<4;i++)for(unsigned j=i+1;j<4;j++)if(!separate(p[i],sizes[i],p[j],sizes[j]))return COH_INVALID;
+ if(!b->owned_limit||b->owned_limit>COH_RESOURCE_INPUT_MAX||!b->aggregate_limit||b->aggregate_limit>COH_SG_TRANSACTION_MAX)return COH_LIMIT;
+ if(*out)return COH_STATE;
+ size_t minimum=b->retained_bytes;TRY(add(&minimum,PREPARATION,b->aggregate_limit));
+ CohSourceSealedPlan plan;TRY(coh_source_sealed_measure(*batch,b,&plan));CohSourceSealedReport r=plan.prepared;CohSourceMeshBatchReport old=plan.input;
+ for(unsigned k=0;k<4;k++)if(!separate(*batch,old.owned_bytes,p[k],sizes[k]))return COH_INVALID;
+ for(uint32_t n=0;n<old.meshes;n++)for(unsigned k=0;k<4;k++)TRY(source_control(*batch,n,p[k],sizes[k]));
+ CohSourceSelection*selection=(CohSourceSelection*)plan.source.selection_identity;
  TRY(tick(cancel));CohSourceSealed*candidate=calloc(1,r.owned_bytes);if(!candidate)return COH_LIMIT;
  size_t at=sizeof(CohSourceSealed)+(size_t)old.meshes*sizeof(Entry);CohStatus status=COH_OK;
  for(uint32_t n=0;n<old.meshes;n++){
@@ -58,6 +70,6 @@ CohStatus coh_source_sealed_create(CohSourceMeshBatch**batch,const CohSourceSeal
   if(triangles!=m.triangles){status=COH_STATE;goto fail;}
  }
  if(at!=r.owned_bytes){status=COH_STATE;goto fail;}status=tick(cancel);if(status!=COH_OK)goto fail;status=coh_source_selection_retain(selection);if(status!=COH_OK)goto fail;
- candidate->selection=selection;candidate->identity=(CohSourceSealedIdentity){selection,base.body.join_identity,base.body.join};candidate->report=r;CohSourceMeshBatch*retired=*batch;*batch=NULL;coh_source_mesh_batch_free(retired);*out=candidate;*report=r;return COH_OK;
+ candidate->selection=selection;candidate->identity=plan.source;candidate->report=r;CohSourceMeshBatch*retired=*batch;*batch=NULL;coh_source_mesh_batch_free(retired);*out=candidate;*report=r;return COH_OK;
  fail:coh_source_sealed_free(candidate);return status;
 }

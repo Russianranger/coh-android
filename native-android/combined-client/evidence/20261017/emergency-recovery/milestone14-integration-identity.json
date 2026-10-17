@@ -1,0 +1,62 @@
+{
+  "schema": "coh-milestone14-integration-identity-v1",
+  "publication_parent": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+  "checks": [
+    {
+      "module": "complete_power_schema_crc",
+      "exact_inputs": 59,
+      "post_review_documentation_only": [
+        "native-android/engine/character-dictionary/POWER_SCHEMA_CRC.md"
+      ],
+      "proof_sha256": "7eeae4ae701fd53a7712ef86c988e708ebf2a4b45a0e32e3e8d1030430cb0244",
+      "native_corpus_replayed_by_coordinator": false,
+      "additional_exact_supplier_roles": 12
+    },
+    {
+      "module": "source_measure_integrated",
+      "exact_inputs": 60,
+      "post_review_documentation_only": [],
+      "proof_sha256": "70a37ba50ec949bf979388ab79a407c3c1dd5acef4c7e7a40878b8de5b45d504",
+      "native_corpus_replayed_by_coordinator": false
+    },
+    {
+      "module": "texture_preload",
+      "exact_inputs": 24,
+      "post_review_documentation_only": [],
+      "proof_sha256": "45e03c21e6b93c6f54a049c5cc18c29544d5f04c7fca3213accf8e578b089ebc",
+      "native_corpus_replayed_by_coordinator": false
+    },
+    {
+      "module": "raw_boundary_integrated",
+      "exact_inputs": 264,
+      "post_review_documentation_only": [],
+      "proof_sha256": "b32ea07eaa9a3484511db353c14dc460f1c1c6610bcc84822c25f0e04c651285",
+      "native_corpus_replayed_by_coordinator": false
+    },
+    {
+      "module": "boundary_orchestration_integrated",
+      "exact_inputs": 21,
+      "post_review_documentation_only": [],
+      "proof_sha256": "0ea2c0319c027bdfc4f2c801a21929eea270ba3317fd85cfe6a740a85bd8c987",
+      "native_corpus_replayed_by_coordinator": false
+    }
+  ],
+  "initial_dependency_drifts_not_silently_overwritten": {
+    "A": [
+      "scenegraph/runtime_graph.h",
+      "scenegraph/runtime_snapshot.c"
+    ],
+    "B_broad_header_snapshot": [
+      "dbclient/coh_db_handoff_owner.h",
+      "local/coh_local.h",
+      "scenecatalog/coh_source_selection.h",
+      "world-render-adapter/coh_wr_rigid_internal.h"
+    ]
+  },
+  "new_integration_specific_A_B_receipts": true,
+  "no_android_or_gameplay_owned_changes": true,
+  "new_apk_built": false,
+  "new_server_capture_or_service_executed": false,
+  "native_live_world": false,
+  "scope": "Exact integrated bytes compared to independently reviewed source receipts, normalizing only workspace roots. A/B workers reran focused tests for the concrete integration dependency drift; earlier receipts remain intact. No reassignment of historical source/sanitizer/Android scope. B broad snapshot is not the actual compiler dependency universe."
+}

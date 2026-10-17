@@ -1,0 +1,22 @@
+{
+  "schema": "coh-independent-boundary-integration-closure-review-v1",
+  "evidence_commit": "b8b26c0d1cf89da82c72671738ddbcba381c2a7f",
+  "integration_commit": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+  "historical_source_commit": "79e96b05db6b84b079cc771f0304c8bbe4982124",
+  "verdict": "approved_exact_integration_host_closure_uninstalled_only",
+  "closure_note_sha256": "9c3a40c208957bb7009e8500038de1892963c0fbabcc0b7513c173fb25ad9f2e",
+  "source_receipt_sha256": "b32ea07eaa9a3484511db353c14dc460f1c1c6610bcc84822c25f0e04c651285",
+  "orchestration_receipt_sha256": "0ea2c0319c027bdfc4f2c801a21929eea270ba3317fd85cfe6a740a85bd8c987",
+  "review": [
+    "Independently checked both receipt hashes and264/21 local maps against exact integrationb53 Git bytes; all whole upstream LF maps matched as well. Every separately recorded published5d3/candidateb53 per-role mapping also matched its actual Git blob. Broader header rglob inventory is not proof that every header was compiled.",
+    "Critical raw-boundary/public supplier/stager/test/qualifier bytes remain identical to historical79e. New integration-specific receipts retain2498 raw-composition and539 orchestration checks per release/ASan/UBSan, preserving historical proofs. No native/corpus/CI/server execution by reviewer.",
+    "Approval is limited to exact integrated host fixture closure. Quiet/owner/resource providers remain substituted, no boundary caller/hook/sink installed, actual raw capture count0, Win32 layout/runtime/source-generation/cache equivalence/world authority remain unqualified."
+  ],
+  "native_reexecuted_by_reviewer": false,
+  "hook_installed": false,
+  "sink_installed": false,
+  "actual_raw_capture_count": 0,
+  "source_generation_admitted": false,
+  "cache_equivalence_verified": false,
+  "world_authority": false
+}

@@ -1,0 +1,31 @@
+{
+  "schema": "coh-independent-detached-texture-preload-review-v1",
+  "source_commit": "78f6c6f769e8347d97f426bfb889e8826d3c3610",
+  "evidence_commit": "0b63e1b50fc67c95038400687d6208350a4dc86f",
+  "source_chain": [
+    "3aa94e82df8a04261bb4e9bbebb8e559112584e9",
+    "1dc65f946",
+    "569ce18db"
+  ],
+  "verdict": "approved_detached_historical_source_low_mips_only",
+  "proof_sha256": "45e03c21e6b93c6f54a049c5cc18c29544d5f04c7fca3213accf8e578b089ebc",
+  "tested_git_source_matches": 24,
+  "reported_checks_per_mode": 67302,
+  "review": [
+    "Exact proof SHA and all24 frozen tested sourceGit blobs matched78f6. Independently extracted all five original producer/consumer/default-prefix function bodies and verified recorded hashes. No native/compiler/corpus replay.",
+    "Acquisition validates path/generation/whole body digest before bounded TX2 parsing. Original cached alpha<=1 and <=1024-byte header remainder limits are enforced. Complete DDS mip count must equal original countMipMapLevels; supported DXT1/3/5 cached header is16bytes, dimensions/format and exact compressed suffix must match last min(4,fullchain) levels through exact body end. Unsupported/no-preload/unknown formats refuse without inventing pixels or a default.",
+    "Fixed5896-byte owner deep-copies path/name/raw cached record and at most four RGBA levels; no retained body/loader/provider spans survive success. Known output/request/path/limits/blob aliases and uintptr endpoints refuse. Views require only owner lifetime, getter multioutput aliases refuse. Actual trim/unpin/loader destroy/provider buffer free occur before later raw/RGBA view equality tests.",
+    "Whole declared loader reservation, actual historical loader peak, fixed owner, input and32KiB native preparation/control reserve plus all caller external bytes are admitted BEFORE external cancel/acquire/hash/calloc. Reservation0/owned/aggregate-short controls require zero polls; precharge mutation refused. Context/provider/runtime peaks remain externally reserved, and other owners may still independently pin full body. This is not global-parent partition/retirement admission.",
+    "Every acquisition/hash/allocation/cancellation failure balances candidate blob pin and frees private candidate with unchanged output. Both whole-body/raw digest failures and final-before-publication cancellation are covered. Raw and decoded buffers are privately owned; later owner destruction releases only these copies.",
+    "Whole unchanged GetTex writeMipMapHeader and CLIENT texBindLowMips/texGetFormat execute with exact source header declarations and explicit DDS124-wire/storage/aligned-copy/render-parameter/texture-copy observers. Two authentic Box/Bar bodies plus clearly synthetic DXT3/5 controls compare exact source cached/consumer packets; each RGBA lowlevel equals existing protected generic BC decode. No new original nvDXT CPU RGBA, runtime ABI or actual GPU claim.",
+    "Qualifier freezes all project/source inputs before executing checked helper source bytes, bypasses PYC, and rechecks source/body identities. Seven standalone exports and three semantic mutations are retained;67302 checks per release/ASan/UBSan. External OpenSSL/zlib/system/sanitizer stack is not newly qualified; LSan container limitation remains.",
+    "Original namespace stage order/seven default keys are audited only; executed needed-bind prefix stops UNKNOWN at white. Box/Bar subset cannot establish global absence/white identity/namespace/overlay/LWC ordering, scene/locale/TexWord/caps/composite/material/current generation. No GL handles, renderer-ready/world/Android permission."
+  ],
+  "active_namespace_or_generation": false,
+  "default_white_or_material_created": false,
+  "original_nvDXT_CPU_RGBA_claim": false,
+  "GPU_uploaded": false,
+  "world_authority": false,
+  "android_executed": false,
+  "global_parent_child_composition_qualified": false
+}

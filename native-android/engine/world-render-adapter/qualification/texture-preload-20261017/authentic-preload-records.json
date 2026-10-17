@@ -1,0 +1,40 @@
+{
+  "qualified_host_receipt_sha256": "45e03c21e6b93c6f54a049c5cc18c29544d5f04c7fca3213accf8e578b089ebc",
+  "scope": "Exact byte ranges from retained full-hash-pinned source assets; native producer/consumer equality is in host.json, not active material/world ownership",
+  "records": [
+    {
+      "asset": "Box",
+      "whole_bytes": 43990,
+      "whole_sha256": "c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a",
+      "source_header_bytes": 158,
+      "source_preload_offset": 86,
+      "preload_bytes": 72,
+      "preload_sha256": "887ea7dd74c4bd93a2258fd4aca85e83fbe45837ca2b7492a06df5d0cb049284",
+      "compressed_payload_sha256": "643f33cd4816e766c8dcb195655b421cb10c4d55ec4bb289d980d4799ffebeaf",
+      "structsize": 16,
+      "width": 8,
+      "height": 8,
+      "original_GL_format": 33777,
+      "levels": 4,
+      "generic_RGBA_bytes": 340,
+      "current_namespace_or_generation_proven": false
+    },
+    {
+      "asset": "Bar",
+      "whole_bytes": 22163,
+      "whole_sha256": "c224a6dff69716bde300bb956d7415745780ceeee249e526ad1de69cab654b58",
+      "source_header_bytes": 171,
+      "source_preload_offset": 115,
+      "preload_bytes": 56,
+      "preload_sha256": "57d7bdf19fc3c3309a6e88a597525c3a6b1bedfe81d0e797a4e9f57e78dca6e9",
+      "compressed_payload_sha256": "8902c9cb5fdd12b44a8fc642d04c4c1651f32c6fd48489e31ab2d96cf73ab175",
+      "structsize": 16,
+      "width": 4,
+      "height": 8,
+      "original_GL_format": 33777,
+      "levels": 4,
+      "generic_RGBA_bytes": 172,
+      "current_namespace_or_generation_proven": false
+    }
+  ]
+}

@@ -1,10 +1,12 @@
 # Required new raw public bounds observations
 
-The prepared same-boundary caller currently emits owner, complete catalog,
-runtime roots/futures, resource observations, eligibility and the exact original
-logical GROUPS packet. It does **not** emit ordinary GroupDef raw GroupBounds.
-Neither the existing COHCAT/COHRTS/COHRES nor those fresh outputs alone can close
-original CLIENT library-bounds-cache checksum equivalence.
+The disabled same-boundary preparation now includes owner, complete catalog,
+runtime roots/futures, resource observations, a complete raw public bounds ledger,
+eligibility and the exact original logical GROUPS packet. This is prepared source
+only: no actual caller/sink is installed, and ordinary GroupDef raw GroupBounds
+remain absent from retained authentic captures. Neither existing COHCAT/COHRTS/
+COHRES nor prepared synthetic raw outputs close original CLIENT library-bounds-
+cache checksum equivalence.
 
 The retained authentic catalog's original public-selection audit identifies
 14346 ordinary public definitions in507 library files:860760 raw bounds bytes,
@@ -14,8 +16,9 @@ normalized flags cannot substitute for the original raw60-byte prefix. The
 original observed file checksum is preserved, including file0's zero and the
 Shop magic library's zero token; no current raw-state equality is inferred.
 
-Before a future capture claiming bounds-cache equivalence, add a separately
-qualified bounded observer in this same original owner-thread/model-quiet scope.
+Before a future capture claiming bounds-cache equivalence, the prepared bounded
+observer needs original Win32 layout/build and actual caller/sink qualification in
+this same original owner-thread/model-quiet scope.
 It must preserve original file and slot order, exact canonical names, actual
 original groupIsPublic decisions (including inactive/private/nonpublic entries
 or an independently verified complete decision ledger), and actual layout/build
@@ -35,7 +38,7 @@ that cache/source generation must be independently established, or remain a
 refused cache-equivalence claim. Passing numerical source bounds or recomputing
 only the wire definition/reference CRCs does not close this requirement.
 
-No new observer is installed by this contract note. The private caller must not
+No observer is installed by this contract note or by the disabled preparation. The private caller must not
 be used to repeat existing catalog/runtime bytes without collecting the genuinely
 new same-boundary live packet/owner/eligibility, required source inventory and,
 if cache equivalence is claimed, these missing raw bounds. Original build/layout,

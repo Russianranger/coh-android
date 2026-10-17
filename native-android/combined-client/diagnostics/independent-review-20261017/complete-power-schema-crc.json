@@ -1,0 +1,30 @@
+{
+  "schema": "coh-independent-complete-power-schema-crc-review-v1",
+  "source_commit": "7769c07d4ea76e02081f5af724ce6843b1c34aae",
+  "required_followup_commit": "f9c29c81cdcea6b5597b54e26de35df6f1982d82",
+  "evidence_commit": "3d98adb5efe5ac7c36924d01033f7212bb1dd08f",
+  "verdict": "approved_historical_original_schema_crc_only",
+  "proof_compressed_sha256": "7eeae4ae701fd53a7712ef86c988e708ebf2a4b45a0e32e3e8d1030430cb0244",
+  "tested_git_source_matches": 60,
+  "supplier_git_role_matches": 12,
+  "independent_checks": 157,
+  "review": [
+    "All60 tested inputs matched exact Git f9c29c81c blobs; all12 supplier roles matched BOTH observed41a56d3b and previously admitted716f319a13 Git blobs. Prior class proof/binding and donor manifest are included. Compressed proof SHA independently verified. No original codec corpus/compiler/CI replay performed.",
+    "Original load_PowerDictionary powers ParserLoadFiles call is inspected and pinned: globaldefines argument is NULL, with NULL ParserLoadInfo and load_PreprocPowerDictionary preprocessor. ParserLoadFiles declaration confirms argument meaning. This source audit does not execute the loader or prove a current cache branch.",
+    "Whole unchanged UpdateCRCFromParseInfo/ParseTableCRC/UpdateCrcFromStaticDefines execute on complete original dictionary/BasePower/AttribModTemplate/SuppressPair/PowerVar/PowerCustomFX tables and flat PowerFX macro fields. All20 genuine static enum bodies (including BoolEnum) replace binary-only placeholders; ParsePowerDefines remains an actual dynamic wrapper. Source TOK numeric/string/array/default macros and original dispatch-handler interpretation are restored; token mask dispatch and default parameter narrowing follow original source.",
+    "Original CharacterAttribSet declaration has only its five pointer widths modeled as U32 for donor32 Aspect offsets0/4/8/12/16. AttribModTemplate AUTOINT fields use source32 storage. Runtime pointer offsets otherwise excluded by original CRC usage. This is a typed host CRC adaptation, not Win32 ABI execution or actual source runtime layout qualification.",
+    "NULL root defines produce0xb553b8ff matching exact historical powers.bin header. Per-field dynamic wrappers still traverse actual source DefineContext/stash built from875 states and exact attribute/origin inputs. Appending the same dynamic list at root produces0xee12d099; it must not be substituted for original loader semantics. Baseline308 field visits/34 dynamic wrapper visits/738621 digest bytes, eight dynamic profiles and five static/default/Aspect/token mutations are receipt-bound.",
+    "Independent Python traversal computes Adler32 input stream from exported compiled field/default/static-enum metadata and original ordered stash bytes. It does not call original CRC walker but deliberately shares C macro evaluation and typed metadata; it is not an independent C parser. Null/empty/default strings, redundant fields, recursive table suppression, four-byte parameters and static enum ordered bytes follow original walker.",
+    "Before project helper execution the checker freezes helper/supplier bytes, compares prior admitted supplier hashes and source-compiles admitted bytes; recursive module loads use the same guard. Whole original source is read from Git, staged for the diagnostic, and source/role hashes rechecked afterward. Explicit stale-PYC ignored and changed-source refusal controls remain. Original host stash/hash/storage/CRC shells remain explicit and unsanitized.",
+    "No production raw stream flag changed. Historical schema identity does not establish current CLIENT/SERVERONLY cache selection, preprocessing/shared-memory association, full global dictionary construction/finalization/forward pointers, runtime generation, actor application, Android/world or READY/ACK permission."
+  ],
+  "source_schema_crc_historical_match": true,
+  "runtime_cache_branch_admitted": false,
+  "complete_dictionary_constructor_executed": false,
+  "win32_abi_executed": false,
+  "original_oracle_sanitized": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false,
+  "world_authority": false
+}

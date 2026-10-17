@@ -15,7 +15,8 @@ catalog bytes in place of actual source objects.
 
 For a full update the callbacks acquire the real try-only model/LOD quiet lease,
 observe actual registered link/client/entity ownership, then export a fresh
-complete catalog, root/future snapshot and resource rows. The same lease remains
+complete catalog, root/future snapshot, resource rows and the complete raw public
+bounds decision ledger. The same lease remains
 held through PRE-producer eligibility and exact original logical packet output.
 Packet output is provisional; commit follows successful actual quiet release.
 Any callback/export/owner/packet refusal aborts all provisional outputs. A failed
@@ -28,7 +29,11 @@ outputs and eligibility in this process. They are not source/runtime/session
 capabilities. The sink must independently bind actual owned run/source receipts
 and all exact output hashes, including packet bit extent, alignment, compression
 and selected source owner identity. Kind1 is the fixed COHOWN01 owner record;
-kind2 COHCAT, kind3 COHRTS, kind4 COHRES and kind5 fixed eligibility records.
+kind2 COHCAT, kind3 COHRTS, kind4 COHRES, kind6 COHRBW01 raw public bounds
+and kind5 fixed eligibility records. Kind6 is emitted before kind5, preserving
+pre-producer file state. The entire raw-ledger declared size is checked against
+the remaining128MiB transaction output cap before any raw sink callback; its
+actual emitted counts/bytes must match the complete supplier report.
 All writes are provisional and synchronously copied. Packet bytes include the
 original command and preserve final-byte bit extent, never guessed normalization.
 
@@ -54,7 +59,15 @@ and sink must be independently reviewed before any new capture.
 
 Host tests use explicitly substituted quiet/export/owner dependencies to qualify
 caller orchestration, rollback and bounds, plus the unchanged original
-worldSendUpdate and packet serializer fixture where noted. Fixture lease success
+worldSendUpdate and packet serializer fixture where noted. The raw composition
+fixture additionally executes the actual catalog/runtime/raw suppliers together,
+compares exact file/slot raw prefixes and tests all18 raw callback refusals.
+Owner/quiet/resource dependencies remain explicit substitutions in that fixture. Fixture lease success
 is never evidence of original runtime quiescence. There is no Win32 build,
 Android execution, actual server capture, crypto/actor/CLIENT material/LOD or
 world-authority qualification from this preparation.
+
+The raw supplier is now included in this disabled preparation only. No real raw
+public rows have been captured. Current-byte token preservation does not establish
+original cache-computation generation; cache/ABI/source/CLIENT/world gates remain
+unchanged. See PUBLIC_BOUNDS.md and GROUPS_BOUNDARY_RAW_BOUNDS.md.

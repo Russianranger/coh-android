@@ -1,0 +1,1003 @@
+{
+  "passed": true,
+  "observed_root_head": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+  "observed_head_is_not_source_prerequisite": true,
+  "published_graph_source_commit": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+  "input_sha256": {
+    "source-measure-host.json": "944665628678501da20023ebea4e3a228be4212e6cfa8a590bf0153a94d44d73",
+    "source-measure-integrated-host.json": "70a37ba50ec949bf979388ab79a407c3c1dd5acef4c7e7a40878b8de5b45d504",
+    "source-stack-integrated.json.gz": "53eacfec2654443e87ae2ed60eba73ed2efbb5cd3f4856e8cbbc4d36a98839eb"
+  },
+  "binder_source_sha256": "a051be7a875e52fbcd6e5843c1917bfed81bab25402d8f94130100c00ca226e6",
+  "source_roles": [
+    {
+      "role": "engine/assets/coh_asset_geo.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/assets/coh_asset_geo.c",
+          "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/assets/coh_asset_geo.c",
+          "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+        }
+      ]
+    },
+    {
+      "role": "engine/assets/coh_asset_geo.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/assets/coh_asset_geo.h",
+          "sha256": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/assets/coh_asset_geo.h",
+          "sha256": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b"
+        }
+      ]
+    },
+    {
+      "role": "engine/assets/coh_asset_loader.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/assets/coh_asset_loader.c",
+          "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/assets/coh_asset_loader.c",
+          "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+        }
+      ]
+    },
+    {
+      "role": "engine/assets/coh_asset_loader.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/assets/coh_asset_loader.h",
+          "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/assets/coh_asset_loader.h",
+          "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36"
+        },
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/assets/coh_asset_loader.h",
+          "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36"
+        }
+      ]
+    },
+    {
+      "role": "engine/coh_contracts.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/coh_contracts.h",
+          "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/coh_contracts.h",
+          "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+        },
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/coh_contracts.h",
+          "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+        },
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/coh_contracts.h",
+          "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+        }
+      ]
+    },
+    {
+      "role": "engine/renderer/coh_renderer.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/renderer/coh_renderer.h",
+          "sha256": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/renderer/coh_renderer.h",
+          "sha256": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab"
+        }
+      ]
+    },
+    {
+      "role": "engine/replication/coh_groups.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/replication/coh_groups.c",
+          "sha256": "b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/replication/coh_groups.c",
+          "sha256": "b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd"
+        }
+      ]
+    },
+    {
+      "role": "engine/replication/coh_groups.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/replication/coh_groups.h",
+          "sha256": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/replication/coh_groups.h",
+          "sha256": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc"
+        }
+      ]
+    },
+    {
+      "role": "engine/replication/coh_replication.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/replication/coh_replication.c",
+          "sha256": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/replication/coh_replication.c",
+          "sha256": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4"
+        }
+      ]
+    },
+    {
+      "role": "engine/replication/coh_replication.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/replication/coh_replication.h",
+          "sha256": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/replication/coh_replication.h",
+          "sha256": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_catalog_owner.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_catalog_owner.c",
+          "sha256": "f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_catalog_owner.c",
+          "sha256": "f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_catalog_owner.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_catalog_owner.h",
+          "sha256": "4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_catalog_owner.h",
+          "sha256": "4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_catalog_snapshot.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_catalog_snapshot.c",
+          "sha256": "b2068cec02b16f357db0abafe94862103a22faf25256e282ac3b0d84bc1bf6de"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_catalog_snapshot.c",
+          "sha256": "b2068cec02b16f357db0abafe94862103a22faf25256e282ac3b0d84bc1bf6de"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_catalog_snapshot.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_catalog_snapshot.h",
+          "sha256": "389021a429fe7c4720303fd00723de873fd18bc915d4c8aa9b4c437cd2dabb76"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_catalog_snapshot.h",
+          "sha256": "389021a429fe7c4720303fd00723de873fd18bc915d4c8aa9b4c437cd2dabb76"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_resource_geo_source.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_resource_geo_source.c",
+          "sha256": "c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_geo_source.c",
+          "sha256": "c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_resource_geo_source.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_resource_geo_source.h",
+          "sha256": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_geo_source.h",
+          "sha256": "e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_resource_index.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_resource_index.c",
+          "sha256": "1966e3f13e93fa6d4b2fc50ac5088fe192df4b4a6b5d501eb3f7eb6482d000a0"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_index.c",
+          "sha256": "1966e3f13e93fa6d4b2fc50ac5088fe192df4b4a6b5d501eb3f7eb6482d000a0"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_resource_index.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_resource_index.h",
+          "sha256": "d4774726285d8ba6037e8c2f35d4f9647e171e06aaccf8edc07b686f4dbc3228"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_index.h",
+          "sha256": "d4774726285d8ba6037e8c2f35d4f9647e171e06aaccf8edc07b686f4dbc3228"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_resource_join.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_resource_join.c",
+          "sha256": "48b57f05d320e6e6319900ea5a979cf05680ff8e26ab90526946ec9d25e665fe"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_join.c",
+          "sha256": "48b57f05d320e6e6319900ea5a979cf05680ff8e26ab90526946ec9d25e665fe"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_resource_join.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_resource_join.h",
+          "sha256": "dc4c3324e719ccd1b4db3fccdb4da054d6a403f7e844209cea440bec6b858a68"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_resource_join.h",
+          "sha256": "dc4c3324e719ccd1b4db3fccdb4da054d6a403f7e844209cea440bec6b858a68"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_scenecatalog.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_scenecatalog.c",
+          "sha256": "1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_scenecatalog.c",
+          "sha256": "1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_scenecatalog.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_scenecatalog.h",
+          "sha256": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_scenecatalog.h",
+          "sha256": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_mesh.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_mesh.c",
+          "sha256": "36d40c98aaee6c38982ab3157e63e8f7bd8b5361318e12aba1cb4fc5480ed76a"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_mesh.c",
+          "sha256": "36d40c98aaee6c38982ab3157e63e8f7bd8b5361318e12aba1cb4fc5480ed76a"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_mesh.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_mesh.h",
+          "sha256": "2acc6fcf6b91d7ad1f3617a66465e92ee56207377b68b4699e3f94dbeb8ef0c8"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_mesh.h",
+          "sha256": "2acc6fcf6b91d7ad1f3617a66465e92ee56207377b68b4699e3f94dbeb8ef0c8"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_mesh_batch.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_mesh_batch.c",
+          "sha256": "ef1bcef75b208ba851726938ffc5d4e55edb959a7d7e1ea79645f7f2849fbf3d"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_mesh_batch.c",
+          "sha256": "ef1bcef75b208ba851726938ffc5d4e55edb959a7d7e1ea79645f7f2849fbf3d"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_mesh_batch.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_mesh_batch.h",
+          "sha256": "f6659cac162c73d291cfc375f8f1668a108dfe28fa3a85b70df8619b6f82e198"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_mesh_batch.h",
+          "sha256": "f6659cac162c73d291cfc375f8f1668a108dfe28fa3a85b70df8619b6f82e198"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_sealed.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_sealed.c",
+          "sha256": "740d6880d32d0b6ef94a32ce7b3e787482651aaaa021ff67622015591751be7c"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_sealed.c",
+          "sha256": "740d6880d32d0b6ef94a32ce7b3e787482651aaaa021ff67622015591751be7c"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_sealed.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_sealed.h",
+          "sha256": "e7a3a01269ab9249812658f47084d1a525d77c61da75874865e31813a3231d6d"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_sealed.h",
+          "sha256": "e7a3a01269ab9249812658f47084d1a525d77c61da75874865e31813a3231d6d"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_selection.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_selection.c",
+          "sha256": "5a30d469e6e3d9cf1992ce2b9b73a6a6e187f5595b05f6bcecfc0f6ab15b0886"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_selection.c",
+          "sha256": "5a30d469e6e3d9cf1992ce2b9b73a6a6e187f5595b05f6bcecfc0f6ab15b0886"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_selection.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_selection.h",
+          "sha256": "293ae2341f481edb01b034701aa66b38bb401bffb81a832e5f37881b9f5ffe72"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_selection.h",
+          "sha256": "293ae2341f481edb01b034701aa66b38bb401bffb81a832e5f37881b9f5ffe72"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_selection_profile.inc",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_selection_profile.inc",
+          "sha256": "3e02c49a2e6de6bbc23f691f58e82f5f43b985ffe1d66bb027c1f93a43fade72"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_selection_profile.inc",
+          "sha256": "3e02c49a2e6de6bbc23f691f58e82f5f43b985ffe1d66bb027c1f93a43fade72"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_ws_probe.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_ws_probe.c",
+          "sha256": "5074ae5cdff661bb575fceaae431ad9eb47520e390082e7b658032e14754b071"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_ws_probe.c",
+          "sha256": "5074ae5cdff661bb575fceaae431ad9eb47520e390082e7b658032e14754b071"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/coh_source_ws_probe.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/coh_source_ws_probe.h",
+          "sha256": "c4b01e068348bb81996bd555424c79bba91b069d5da64c1dfaed34abe6f7e14d"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/coh_source_ws_probe.h",
+          "sha256": "c4b01e068348bb81996bd555424c79bba91b069d5da64c1dfaed34abe6f7e14d"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenecatalog/qualify_integrated_source.py",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/qualify_integrated_source.py",
+          "sha256": "135d1ad55188162c8bd6e09c3c37b83289ff52bd6494d03d48412ae8c7ec9568"
+        }
+      ],
+      "kind": "new_directly_executed_qualification_driver"
+    },
+    {
+      "role": "engine/scenecatalog/tests/test_source_measure.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenecatalog/tests/test_source_measure.c",
+          "sha256": "e471ab67f76f9cdbba417cb09e0539b04bf71670b40dfa3b2bf6de92caee4129"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenecatalog/tests/test_source_measure.c",
+          "sha256": "e471ab67f76f9cdbba417cb09e0539b04bf71670b40dfa3b2bf6de92caee4129"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenegraph/coh_scenegraph.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenegraph/coh_scenegraph.c",
+          "sha256": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/coh_scenegraph.c",
+          "sha256": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenegraph/coh_scenegraph.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenegraph/coh_scenegraph.h",
+          "sha256": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/coh_scenegraph.h",
+          "sha256": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenegraph/runtime_graph.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenegraph/runtime_graph.h",
+          "sha256": "ea635edfc31eda5e29308b85d7420cc0da242bbc291bc34221ea8d615ea93a84"
+        }
+      ],
+      "kind": "published_graph_bytes",
+      "commit": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "git_blob": "a5e25b5c5bab2cfd68d5b6237dabd91b4dfd1531",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/runtime_graph.h",
+          "sha256": "761582b9b245dd7f49b3abb4dde9c2a9644442946bf9010a0e80a9aea9ba2a37"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenegraph/runtime_snapshot.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenegraph/runtime_snapshot.c",
+          "sha256": "116e084476e16155f20624d9a7e902dd46b1de84ef6b51f569329572da528b35"
+        }
+      ],
+      "kind": "published_graph_bytes",
+      "commit": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+      "git_blob": "74befd34f384b32ebdbb2b9bc1724dadc5269512",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/runtime_snapshot.c",
+          "sha256": "7c8d987e56f730995c9970fb83b7a528de21f8469d451a88d04c23a716b90200"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenegraph/runtime_snapshot.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenegraph/runtime_snapshot.h",
+          "sha256": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/runtime_snapshot.h",
+          "sha256": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3"
+        }
+      ]
+    },
+    {
+      "role": "engine/scenegraph/tests/runtime_matrix_bridge.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/scenegraph/tests/runtime_matrix_bridge.c",
+          "sha256": "c9f1070d61fb272716ed0b390a58da9a2715f266a661dd799b3fd85e25a0fe93"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/engine/scenegraph/tests/runtime_matrix_bridge.c",
+          "sha256": "c9f1070d61fb272716ed0b390a58da9a2715f266a661dd799b3fd85e25a0fe93"
+        }
+      ]
+    },
+    {
+      "role": "engine/working-set/coh_working_set.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/working-set/coh_working_set.c",
+          "sha256": "d792406d282e69c4c3f73847804436eb8321145f03fb6e51c0acc9614c64b7b6"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/working-set/coh_working_set.c",
+          "sha256": "d792406d282e69c4c3f73847804436eb8321145f03fb6e51c0acc9614c64b7b6"
+        }
+      ]
+    },
+    {
+      "role": "engine/working-set/coh_working_set.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/working-set/coh_working_set.h",
+          "sha256": "807381ea2b507f382a6bf0c2e6407d567f6063aea7421332f5796b9a3abaeddc"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/working-set/coh_working_set.h",
+          "sha256": "807381ea2b507f382a6bf0c2e6407d567f6063aea7421332f5796b9a3abaeddc"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_surface_core.inc",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_surface_core.inc",
+          "sha256": "e20a99603a20e6f58c2c57c1fb8954c93583368eb2d22a35dad9653787a48fee"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_surface_core.inc",
+          "sha256": "e20a99603a20e6f58c2c57c1fb8954c93583368eb2d22a35dad9653787a48fee"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_surface_states.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_surface_states.c",
+          "sha256": "5bf9528bbf1fb78e400e904b87af7d3fbdb0ea5263944e9d3d564f5f4cef363c"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_surface_states.c",
+          "sha256": "5bf9528bbf1fb78e400e904b87af7d3fbdb0ea5263944e9d3d564f5f4cef363c"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_surface_states.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_surface_states.h",
+          "sha256": "20ff6b2c6478fb44197433de4e34c9685c3e01af6a400a87986b610411d191c8"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_surface_states.h",
+          "sha256": "20ff6b2c6478fb44197433de4e34c9685c3e01af6a400a87986b610411d191c8"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_texopt.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_texopt.c",
+          "sha256": "c8232e976061fa8715f185cd5507886fc2b3755679b0f8408b35bdad87ecdb5b"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt.c",
+          "sha256": "c8232e976061fa8715f185cd5507886fc2b3755679b0f8408b35bdad87ecdb5b"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_texopt.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_texopt.h",
+          "sha256": "0cc9b48deea230a5ff028c93289d6e458302ee43e8dbb1f5666744e8d706291e"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt.h",
+          "sha256": "0cc9b48deea230a5ff028c93289d6e458302ee43e8dbb1f5666744e8d706291e"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_texopt_post_source.inc",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_texopt_post_source.inc",
+          "sha256": "3dbf81969ee634384dc71ec7fec7e2f1bc837ce19dc1f380f73a24de606f1488"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt_post_source.inc",
+          "sha256": "3dbf81969ee634384dc71ec7fec7e2f1bc837ce19dc1f380f73a24de606f1488"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_texopt_tables_internal.inc",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_texopt_tables_internal.inc",
+          "sha256": "49f71abc0405ca7aaf20164656ebd367ebc5a97bb157817203cceac2cc7a64a1"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt_tables_internal.inc",
+          "sha256": "49f71abc0405ca7aaf20164656ebd367ebc5a97bb157817203cceac2cc7a64a1"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_texopt_types_internal.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h",
+          "sha256": "10cbd1b1ea3a42dfed7c7920aac0b1e78d01a536b5b6ee8b71cea2fcd5f6ce77"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h",
+          "sha256": "10cbd1b1ea3a42dfed7c7920aac0b1e78d01a536b5b6ee8b71cea2fcd5f6ce77"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_trick.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_trick.c",
+          "sha256": "355c7b9bf156bc10bac1863742ba0d26efbc3643dd3dd84072b7c01a6317459e"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick.c",
+          "sha256": "355c7b9bf156bc10bac1863742ba0d26efbc3643dd3dd84072b7c01a6317459e"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_trick.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_trick.h",
+          "sha256": "c30f9735166dd2db73a801bc998cdd3f90447ff3ef3fe8ac027973f90aa015ed"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick.h",
+          "sha256": "c30f9735166dd2db73a801bc998cdd3f90447ff3ef3fe8ac027973f90aa015ed"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_trick_post_source.inc",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_trick_post_source.inc",
+          "sha256": "9269e084013850a5b55d36dcaab1a2e7699274b6efbadf0d8ea816505d02d621"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick_post_source.inc",
+          "sha256": "9269e084013850a5b55d36dcaab1a2e7699274b6efbadf0d8ea816505d02d621"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_trick_tables_internal.inc",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_trick_tables_internal.inc",
+          "sha256": "ae251157a486ea880259634f2682b4266be883024b9bb8c60c6d143d934188ab"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick_tables_internal.inc",
+          "sha256": "ae251157a486ea880259634f2682b4266be883024b9bb8c60c6d143d934188ab"
+        }
+      ]
+    },
+    {
+      "role": "engine/world-render-adapter/coh_wr_trick_types_internal.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h",
+          "sha256": "56a022958f4d6ff3a79104c4bd3c81bd674b58a445fb1123283d054ddbdde7e4"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h",
+          "sha256": "56a022958f4d6ff3a79104c4bd3c81bd674b58a445fb1123283d054ddbdde7e4"
+        }
+      ]
+    },
+    {
+      "role": "include/coh_native_core.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/include/coh_native_core.h",
+          "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/include/coh_native_core.h",
+          "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+        },
+        {
+          "path": "/workspace/scratch/9174d12e2a11/worker-e-dependencies/native-android/include/coh_native_core.h",
+          "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+        }
+      ]
+    },
+    {
+      "role": "src/byte_reader.h",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/src/byte_reader.h",
+          "sha256": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/src/byte_reader.h",
+          "sha256": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1"
+        }
+      ]
+    },
+    {
+      "role": "src/coh_assets.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/src/coh_assets.c",
+          "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/src/coh_assets.c",
+          "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+        }
+      ]
+    },
+    {
+      "role": "src/coh_dds.c",
+      "integrated_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/next-integration/native-android/src/coh_dds.c",
+          "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+        }
+      ],
+      "kind": "byte_identical_historical_qualified_source",
+      "historical_rows": [
+        {
+          "path": "/workspace/scratch/9174d12e2a11/source-rigid-special/native-android/src/coh_dds.c",
+          "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+        }
+      ]
+    }
+  ],
+  "changed_native_roles": [
+    "engine/scenegraph/runtime_graph.h",
+    "engine/scenegraph/runtime_snapshot.c"
+  ],
+  "all_geometry_mode_results_byte_identical_to_historical": true,
+  "stack_maxima": {
+    "O0": 8528,
+    "O1": 8200,
+    "asan": 11856,
+    "release": 8088,
+    "ubsan": 8448
+  },
+  "production_changed": false,
+  "historical_evidence_preserved": true,
+  "world_authority": false
+}

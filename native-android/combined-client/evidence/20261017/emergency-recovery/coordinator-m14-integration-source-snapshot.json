@@ -1,0 +1,17 @@
+{
+  "commit": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+  "tree": "484ab1c87f6b64aeb34bfcafa489580d8bbd9014",
+  "prerequisites": [
+    "5d3ad2283a9278092c46b459f389fa23c01f2938",
+    "81e2bf8d04757f04517f3280252585f6f7e6995b",
+    "79e96b05db6b84b079cc771f0304c8bbe4982124",
+    "fcc1a3aeb941c103661e5f22a07c99d1e4e59260",
+    "9357a3f88e2f5def168221794351331b905a69af",
+    "0b63e1b50fc67c95038400687d6208350a4dc86f",
+    "947c5f1110a07f9e1a77271767b33401055751d3"
+  ],
+  "objects": 20,
+  "bytes": 34228,
+  "sha256": "65f705b2895ff085fdd29cfd940b8b8c7ec0cac453b609e912102bf9d3347c31",
+  "scope": "Exact integrated source snapshot observed by A/B supplemental qualification; full commit/tree/blob closure relative to public and M14 worker recovery prerequisites. Private coordinator parent ancestry deliberately excluded. Import those prerequisites first."
+}

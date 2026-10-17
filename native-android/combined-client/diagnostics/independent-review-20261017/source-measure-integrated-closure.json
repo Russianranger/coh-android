@@ -1,0 +1,21 @@
+{
+  "schema": "coh-independent-source-measure-integrated-closure-review-v1",
+  "evidence_commit": "fca3fcb104147dc83623bfa4137eb5f4a84161a5",
+  "observed_integration_commit": "b53c5859560666fcbb51d795a070e0a4411c53e4",
+  "published_graph_source_commit": "5d3ad2283a9278092c46b459f389fa23c01f2938",
+  "verdict": "approved_exact_integration_read_only_prerequisite",
+  "geometry_receipt_sha256": "70a37ba50ec949bf979388ab79a407c3c1dd5acef4c7e7a40878b8de5b45d504",
+  "stack_receipt_compressed_sha256": "53eacfec2654443e87ae2ed60eba73ed2efbb5cd3f4856e8cbbc4d36a98839eb",
+  "binding_sha256": "59ab862a2cf0c214d0b2deb3808abd17e5c5b7c6a639c427b8e4a3e49a8f721a",
+  "review": [
+    "Independently verified all three receipt hashes, separately pinned direct geometry/stack/binder scripts and60 consolidated physical source Git roles. Normalized historical64 physical paths to equivalent roles: ONLY runtime_graph.h/runtime_snapshot.c native bytes changed and both equal exact published5d3ad228 Git. No B-owned source overwritten.",
+    "Focused geometry624 controls per release/ASan/UBSan have every result field equal historical receipt, including real retirement and both original-delta-qualified packet hashes. Old proof and its source bindings remain preserved; no native/geometry/CI rerun by reviewer.",
+    "Fresh integrated raw GCC CI/SU evidence independently parsed, all frame pairs checked, all same/cross-TU longest-root paths recalculated including native bsearch comparator. Exact maxima8528/8200/8088/11856/8448 remain within16384. This supersedes file maxima as stack evidence for integrated graph dependency closure; external library/runtime/callback frames remain explicitly outside native reserve measurement.",
+    "Historicalf6 measurement review applies with corrected integrated dependency closure only. Opaque-parent interior alias remains caller-disjoint precondition; probe adds full parent.booked to unchanged all-retained contract, never prepares/commits/releases/mutates. Actual ticket/input correlation/external graph/source/provider billing lifetime and complete parent adapter remain absent. No cap raise or runtime/actor/world/Android inference."
+  ],
+  "full_reservation_adapter": false,
+  "input_ticket_verified": false,
+  "external_lifetimes_verified": false,
+  "world_authority": false,
+  "android_executed": false
+}

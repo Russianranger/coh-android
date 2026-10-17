@@ -48,7 +48,9 @@ groupIsPublic and objectLibraryWriteBoundsFileIfDifferent. It compares emitted
 raw spans directly against test-owned original-type member-prefix objects,
 including high padding bits, and supplies eight cases including mixed-case/prefix library names, grp/private
 names, tombstones/holes, matching/changed/zero observed tokens. Host layout assertions and source fixtures do not substitute
-for an actual original Win32 build or runtime. This supplier is NOT yet inserted
-into the private boundary helper or any source role; future combined capture
-requires separate reviewed staging/ownership/sink integration. No capture/run is
+for an actual original Win32 build or runtime. This supplier is included in the DISABLED private boundary preparation as kind6,
+under its same quiet-lease scope and aggregate output precharge. No actual caller
+or source role installs it; future combined capture still requires separate
+reviewed original Win32 layout/build, caller scheduling, sink/run/source ownership
+and actual native receive binding. No capture/run is
 performed or authorized by this preparation.

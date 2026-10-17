@@ -4,7 +4,7 @@ from pathlib import Path
 import hashlib
 HERE=Path(__file__).resolve().parent
 SOURCE_SHA256='cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9'
-OVERLAYS=(HERE.parent/'scenecatalog/source_export.inc',HERE/'source_snapshot.inc',HERE/'source_resources.inc',HERE/'source_groups_owner.inc',HERE/'source_groups_eligibility.inc',HERE/'source_groups_transaction.inc',HERE/'source_groups_boundary.inc')
+OVERLAYS=(HERE.parent/'scenecatalog/source_export.inc',HERE/'source_snapshot.inc',HERE/'source_resources.inc',HERE/'source_groups_owner.inc',HERE/'source_groups_eligibility.inc',HERE/'source_groups_transaction.inc',HERE/'source_public_bounds.inc',HERE/'source_groups_boundary.inc')
 def stage(source):
  source=source.replace('\r\n','\n')
  if hashlib.sha256(source.encode()).hexdigest()!=SOURCE_SHA256:raise ValueError('original groupnetsend source pin differs')

@@ -1,0 +1,14 @@
+{
+  "schema": "coh-complete-original-power-schema-crc-binding-v1",
+  "source_revision": "f9c29c81cdcea6b5597b54e26de35df6f1982d82",
+  "tested_source_files": 60,
+  "supplier_source_files": 12,
+  "observed_supplier_revision": "41a56d3bbb1c1c2351f00b00f7bf5eab2d4cad4b",
+  "admitted_supplier_source_commit": "716f319a13b00ee1402c0b67793ff14186bafd4d",
+  "proof_sha256": "7eeae4ae701fd53a7712ef86c988e708ebf2a4b45a0e32e3e8d1030430cb0244",
+  "all_tested_source_and_supplier_git_blobs_match": true,
+  "historical_schema_crc": "0xb553b8ff",
+  "runtime_cache_branch_admitted": false,
+  "runtime_generation": false,
+  "actor_authority": false
+}

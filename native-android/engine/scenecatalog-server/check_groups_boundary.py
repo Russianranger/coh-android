@@ -19,7 +19,7 @@ def struct(raw,name):
  s=raw.decode();begin=s.index('typedef struct '+name);return s[begin:s.index('} '+name+';',begin)+len('} '+name+';')]
 def main():
  p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);a=p.parse_args()
- local=['check_groups_boundary.py','stage_groups_boundary.py','test_groups_boundary.c','source_groups_boundary.inc','source_groups_owner.inc','source_groups_eligibility.inc','source_groups_transaction.inc','source_snapshot.inc','source_resources.inc','source_resource_quiescence.inc','GROUPS_BOUNDARY.md','stage_groups_transaction.py','groups-owner-source-pins.json','resource-source-pins.json']
+ local=['check_groups_boundary.py','stage_groups_boundary.py','test_groups_boundary.c','source_groups_boundary.inc','source_groups_owner.inc','source_groups_eligibility.inc','source_groups_transaction.inc','source_snapshot.inc','source_resources.inc','source_resource_quiescence.inc','GROUPS_BOUNDARY.md','stage_groups_transaction.py','groups-owner-source-pins.json','resource-source-pins.json','source_public_bounds.inc']
  paths=[HERE/n for n in local]+[HERE.parent/'scenecatalog/source_export.inc']+[ROOT/n for n in ['native-android/engine/replication/groups_oracle.py','native-android/engine/replication/groups-source-pins.json','native-android/engine/replication/tests/groups_oracle_shim.h','native-android/engine/replication/tests/groups_oracle_harness.c','native-android/tools/protocol_fixture/prepare.py']]
  admitted={path:path.read_bytes() for path in paths}
  original_dependencies={**json.loads(admitted[HERE/'groups-owner-source-pins.json'])['original_sha256_lf'],**json.loads(admitted[HERE/'resource-source-pins.json'])['sha256_lf']}
@@ -50,8 +50,8 @@ def main():
     source=source.replace(body,'__attribute__((no_sanitize("undefined")))\n'+body)
   source=source.replace('__attribute__((no_sanitize("undefined")))\n'+world,'void worldSendUpdate(NetLink*,int);\n')
   defs='typedef int (*CohSourceCatalogOutputFn)(void*,const unsigned char*,unsigned);\n'
-  for path,name in [(HERE.parent/'scenecatalog/source_export.inc','CohSourceCatalogExportReport'),(HERE/'source_snapshot.inc','CohSourceSnapshotReport'),(HERE/'source_resources.inc','CohSourceResourceReport'),(HERE/'source_groups_owner.inc','CohSourceGroupsOwner')]:defs+=struct(admitted[path],name)+'\n'
-  defs='#define COH_SOURCE_GROUPS_OWNER_BYTES 192u\n'+defs+'\n#define COH_SOURCE_CATALOG_MAX_BYTES (32u*1024u*1024u)\n#define COH_SNAPSHOT_MAX_BYTES (16u*1024u*1024u)\n#define COH_RESOURCE_TOTAL_MAX (64u*1024u*1024u)\n#define COH_RESOURCE_RECORD_MAX (128u*1024u)\n'
+  for path,name in [(HERE.parent/'scenecatalog/source_export.inc','CohSourceCatalogExportReport'),(HERE/'source_snapshot.inc','CohSourceSnapshotReport'),(HERE/'source_resources.inc','CohSourceResourceReport'),(HERE/'source_groups_owner.inc','CohSourceGroupsOwner'),(HERE/'source_public_bounds.inc','CohSourcePublicBoundsReport')]:defs+=struct(admitted[path],name)+'\n'
+  defs='#define COH_SOURCE_GROUPS_OWNER_BYTES 192u\n'+defs+'\n#define COH_SOURCE_CATALOG_MAX_BYTES (32u*1024u*1024u)\n#define COH_SNAPSHOT_MAX_BYTES (16u*1024u*1024u)\n#define COH_RESOURCE_TOTAL_MAX (64u*1024u*1024u)\n#define COH_RESOURCE_RECORD_MAX (128u*1024u)\n#define COH_RAW_BOUNDS_MAX_BYTES (32u*1024u*1024u)\n'
   test=admitted[HERE/'test_groups_boundary.c'].decode().replace('BOUNDARY_REPORT_TYPES',defs).replace('BOUNDARY_ORIGINAL_WORLD','__attribute__((no_sanitize("undefined")))\n'+hooked)
   (directory/'test.c').write_text(source+'\n'+test)
   for mode,flags in [('release',['-O2']),('asan',['-O1','-g','-fsanitize=address','-no-pie']),('ubsan',['-O1','-g','-fsanitize=undefined','-fno-sanitize-recover=all'])]:

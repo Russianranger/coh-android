@@ -602,7 +602,8 @@ bounded traversal of exact62,047,164B powers.bin SHA256
 Original complete table readers/writers roundtrip all20,241 BasePower records,
 and original fullname hash matches every stored CRC. Nested source grammar keeps
 113,046 AttribModTemplate/7,165 SuppressPair/0 PowerVar/7,103 PowerCustomFX records.
-Observed0xb553b8ff remains a header, not recomputed original ParseTableCRC.
+This raw codec receipt alone does not recompute the observed0xb553b8ff header;
+the separate historical schema tranche below now qualifies its original CRC.
 
 The native1,048,744B immutable owner plus transient1,052,840B workspace uses a4KiB
 read buffer and borrowed immutable file/provider lease, without eager62MB tree.
@@ -615,8 +616,8 @@ LSAN/Win32/Android are not qualified. Before/after-finish cancellation respects
 digest retirement and preserves output.
 
 This is standalone historical raw schema/index admission. Complete original
-ParseTableCRC needs genuine static/default tables plus source dynamic defines;
-no binary enum/default shells or matching observed header can replace it.
+ParseTableCRC now has the separate source-only qualification below; raw binary
+enum/default shells or a matching observed header alone cannot replace it.
 Whole global dictionary construction, original DuplicateMissingPowers/Finalize/
 forward/back pointer semantics, CLIENT/SERVERONLY/cache branch and current
 set/category/power generation association remain gates. Source forward-pointer
@@ -624,3 +625,31 @@ resolution includes alternate setFullName+'.'+power.shortName identities; raw
 count equality is insufficient. Literal4MiB module import cap still needs phased
 pre-world ownership or an explicit qualified global budget adapter. No semantic
 class/power, selected-entity actor, world or READY/application ACK is published.
+
+
+## Complete historical original power schema CRC (2026-10-17)
+
+Source7769c07d4+f9c29c81c/receipt3d98adb5e, independently sealed F668be029c,
+executes full original ParseTableCRC with all20 real static enum/default bodies
+and source-constructed authentic dynamic DefineContext/stash order. Exact
+historical result0xb553b8ff matches the independently pinned powers cache. The
+original load_PowerDictionary call has NULL root defines; actual per-field
+wrappers still visit the dynamic list34times. Supplying an extra root defines
+list would yield0xee12d099. Donor32 Aspect offsets0/4/8/12/16 are explicit.
+
+Eight source dynamic profiles and five actual static/default/Aspect/token
+mutations per profile give157checks against an independent Python checksum
+traversal of exported compiled source metadata. It shares macro/default compiler
+inputs and is not an independent C parser. Baseline visits308fields,34dynamic
+wrappers and738,621checksum bytes. All60local/12supplier Git roles are pinned
+before checked-source imports and rechecked afterwards. Loader source/call are
+inspected, not executed; original unsafe host hash/Win32/runtime remain outside
+this qualification.
+
+Native raw importer flags remain unchanged, including source_crc_recomputed0.
+Generation-bound composition, CLIENT/SERVERONLY/cache/shared startup association,
+complete dictionary construction/DuplicateMissingPowers/Finalize/forward/back
+pointers and semantic selected actor/READY/application ACK remain gates. A
+compact historical source join must preserve all raw rows and original reference
+order and refuse unavailable clone/alternate identities rather than fabricate
+objects or silently skip source references.

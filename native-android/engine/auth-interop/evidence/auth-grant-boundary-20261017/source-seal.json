@@ -1,0 +1,39 @@
+{
+  "schema": "coh-historical-auth-grant-boundary-source-seal-v1",
+  "inputs": {
+    "deployment/auth_grant_boundary.py": {
+      "bytes": 6966,
+      "sha256": "ce07fac892699eb7ec42d8f7a8c056efd9bd5747da20097f992754cd5bb1cf60"
+    },
+    "deployment/test_auth_grant_boundary.py": {
+      "bytes": 2213,
+      "sha256": "5b58b854c8d016929113375dfa56c321696df93e6d8acfeab3a5fcf1eec7afe7"
+    },
+    "evidence/auth-success-38996587760/receipt.json": {
+      "bytes": 29765,
+      "sha256": "1b1bea257b8e29f73543cffc4c2148071f738036ee2cd5adc122417160106c94"
+    },
+    "evidence/auth-success-38996587760/source-binder.json": {
+      "bytes": 6641,
+      "sha256": "8226b673b4143a1525296abc5d879f8a948f0cd57a5c6ccc5f5297452e51af40"
+    },
+    "evidence/auth-grant-boundary-20261017/host-controls.txt": {
+      "bytes": 721,
+      "sha256": "8dcb26c8a1a6bc21e3ce9baf0f79d2c8215f8dfc63b0f0b37aa55499d8167041"
+    },
+    "evidence/auth-grant-boundary-20261017/diagnostic.json": {
+      "bytes": 3035,
+      "sha256": "3620b3dd30e597f07b3bd40cd79a387d9c515df8be57db5fc850ffdc4411e114"
+    },
+    "evidence/auth-grant-boundary-20261017/README.md": {
+      "bytes": 3995,
+      "sha256": "84db42fdbbe500562a45323cbfe0367a4d6e0ec37efe9cf5d749d375a53ff1c0"
+    }
+  },
+  "tests": 3,
+  "cold_unit_pyc_prefix": true,
+  "historical_encrypted_account_login_preserved": true,
+  "fresh_grant_minted": false,
+  "shared_coordinator_or_server_changed": false,
+  "service_executed": false
+}

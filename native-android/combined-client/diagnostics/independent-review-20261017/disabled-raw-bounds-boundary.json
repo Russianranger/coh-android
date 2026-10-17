@@ -1,0 +1,32 @@
+{
+  "schema": "coh-independent-disabled-raw-bounds-boundary-review-v1",
+  "source_commit": "79e96b05db6b84b079cc771f0304c8bbe4982124",
+  "verdict": "approved_uninstalled_source_preparation_only",
+  "source_proof_sha256": "11939a29955b5c8d1a41637a6a46191f24df1ebdd0fc97a5960916207119e0d4",
+  "orchestration_proof_sha256": "f6365fe1566d2b127b013b22a0132d112175823dda4565168f167ca6064d12d1",
+  "tested_local_git_maps": [
+    220,
+    21
+  ],
+  "reported_checks_per_mode": [
+    2498,
+    539
+  ],
+  "review": [
+    "Both exact receipt hashes and all local source map Git blobs independently verified; whole original LF-normalized source maps also matched committed upstream. Checked helper admission snapshots dependencies before project execution, compiles admitted bytes, validates around each helper and after qualification. No native source/corpus/CI/server replay.",
+    "Private stager includes raw public-bounds supplier before boundary helper. New output kind6 executes after same-boundary catalog/runtime/resource exports and before pre-producer eligibility/original world serialization. Same quiet lease and captured48-byte catalog header are passed through; raw report status/files/slots/declared total/emitted total must exactly match before progressing.",
+    "Raw supplier first96-byte header must have expected magic/version/header size and same catalog header. Its complete declared output is checked against raw cap and remaining128MiB transaction output BEFORE first raw sink callback. Subsequent chunks cannot exceed declared total; postexport equality prevents truncated or overdeclared publication. Output byte limits are not an original loader or allocator RAM bound.",
+    "Owner is reobserved before provisional packet sink; only two documented original timestamp/world-id words are normalized. Packet remains provisional until actual quiet release succeeds, then sink commit. Failure aborts owned provisional outputs; failed release blocks future begin/prepare. This does not undo original worldSendUpdate state changes; original dependencies/sinks must obey exclusive nonreentrant caller preconditions.",
+    "Actual original catalog/runtime/raw/public/world function composition is exercised with explicit host storage and substituted quiet/owner/resource dependencies.2498 controls/mode include all18 raw callback failures, precharge refusal with zero raw sink callbacks, wrong file index and packet failure; broader539 controls/mode retain failure/quarantine behavior. Static helper131584B and reported helper stack bounds exclude original/sink/provider stack.",
+    "No hook, sink, caller or capture installed. Actual raw14346 ordinary public rows, Win32 layout, exclusive thread/loader quiescence, source/session/run provenance and actual CLIENT import/cache-computation-generation equivalence remain unqualified. The prepared source path does not itself close missing raw runtime bytes or authorize a capture."
+  ],
+  "hook_installed": false,
+  "sink_installed": false,
+  "real_server_executed": false,
+  "actual_raw_capture_count": 0,
+  "actual_win32_layout_verified": false,
+  "source_generation_admitted": false,
+  "cache_equivalence_verified": false,
+  "world_authority": false,
+  "android_executed": false
+}
