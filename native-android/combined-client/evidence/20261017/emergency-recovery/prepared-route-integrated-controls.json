@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "checks": 8,
+  "body_count": 391,
+  "body_bytes": 71817182,
+  "script_sha256": "98ca4601715fee678ddd5a73e151a95c89964a643d03493a7db55c287cab95e2",
+  "control_script_sha256": "380e1282e4bdb1e70b24e81c4f312ab808f5d94d36065fac364d4d6c130fb2dd",
+  "assets_admitted": false,
+  "world_authority": false
+}

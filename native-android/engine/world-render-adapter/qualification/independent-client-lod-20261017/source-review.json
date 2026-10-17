@@ -1,0 +1,37 @@
+{
+  "schema": "coh-independent-client-lod-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "f8776e8e355d3675a7f8962cbdabeb899b0af782",
+  "evidence_commit": "c4483a97b",
+  "host_proof_sha256": "26646975577b06b70dd94ec96c82f138cd60e07ce9b240d1c118284a30989854",
+  "all_dependencies_match_committed_blobs": true,
+  "bound_inputs": 8,
+  "review": [
+    "PureboundedoriginalCLIENTalpha/stipple/fogprojection; selectedAutoLOD/tricks/radii/globals/inheritedalpha mustalreadybeindependentlyresolved",
+    "FINAl/nonFINAL originalwholemodelCalcAlpha body executed with explicitnarrowtype/global shims; DEBUGflag selectsappropriateoriginalprofile, no actualCLIENTprocessclaim",
+    "Floatoperationorder preserved withcontractionoff; originaldouble0.0001 literal retained, immediatefloatneighbors tested and floatliteralmutation rejected",
+    "Zero/inheriteddrawalpha sentinel, WINDOWearlyreturn, fog/stippleearlyoutputs and NightLight/AddGlow interactions preserved; threefunctionalmutations rejected",
+    "Finite/nonnegative/range/enumbounds andaliasendpointrefusals beforepublication; scaledunderflow/overflow/windowdivzero failatomic, near/farfadezerowindows earlyreturn beforedivision",
+    "Noheap/geometry/material/visibility/LODmodelselectionpermit; rawSERVER sixLODvalues/sourceflags insufficient to callithonestly",
+    "Azero-rowmetadata owners remainexplicit; currentrigidwholebodyreader staysfailclosed onzero-rowbodies, no quietfallback/rowdeletion/inheritedeffectskip"
+  ],
+  "host_controls_per_mode": 622713,
+  "source_combinations_per_mode": 311296,
+  "modes": [
+    "release",
+    "address",
+    "undefined"
+  ],
+  "production_mutations_rejected": [
+    "near_boundary",
+    "nightlight_addglow",
+    "stipple_threshold_precision"
+  ],
+  "blocking_findings": [],
+  "independent_expensive_replay": false,
+  "client_semantic_authority": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_executed": false,
+  "physical_thor": false
+}

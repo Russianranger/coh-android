@@ -268,17 +268,43 @@ static CohNetPacket entity_prefix(unsigned version,unsigned aligned,uint32_t id)
     scalar_value(&b,aligned,32,87654321);scalar_value(&b,aligned,1,1);
     p.payload_bits=(uint32_t)b.bit_length;return p;
 }
+typedef struct {CohBytes payload;size_t bits;CohMapDiagnostics bound;unsigned calls;} SceneObserverTest;
+static void observe_scene(void *context,const CohMapSceneObservation *event){
+    SceneObserverTest *test=context;CHECK(test&&event);test->calls++;
+    CHECK(event->reader.bits==test->bits);
+    CHECK(event->reader.bytes.size==test->payload.size);
+    CHECK(!memcmp(event->reader.bytes.data,test->payload.data,event->reader.bytes.size));
+    CHECK(event->map_generation==test->bound.generation);
+    CHECK(event->selection_generation==test->bound.selection_generation);
+    CHECK(event->selected_slot==test->bound.selected_slot&&event->selected_dbid==test->bound.selected_dbid);
+    CHECK(event->map_id==test->bound.map_id&&event->map_link_id==test->bound.map_link_id);
+    CHECK(event->local_development_authorized==test->bound.local_development_authorized);
+    CohRepReader reader;uint32_t command_id;
+    CHECK(coh_rep_reader_bounded(&reader,event->reader.bytes,event->reader.bits,
+        event->reader.compressed,event->reader.max_bytes)==COH_OK);
+    CHECK(coh_rep_pack(&reader,1,&command_id)==COH_OK);
+    CHECK(reader.cursor==event->reader.cursor);
+    CHECK(command_id==COH_REP_GROUPS||command_id==COH_REP_GROUPS+5);
+    CohGroupsInspection inspection;reader=event->reader;
+    CHECK(coh_rep_groups(&reader,&inspection,NULL)==COH_OK);
+    CHECK(!memcmp(&inspection,&event->inspection,sizeof(inspection)));
+}
 static void actual_socket_inspection(void) {
     for(unsigned profile=0;profile<12;profile++){
         unsigned version=profile<6?profile:(profile<11?profile-5:5),aligned=profile>=6;
         Peer p=peer_open();CohMapConfig c=configuration(p,version);CohMapClient *m=coh_map_client_create(&c);CHECK(m);
         uint64_t now=handshake(m,p,version,aligned,profile==11?12345:0,41,100,0);
         CohNetPacket scene=scene_prefix(version,aligned,104);send_packet(p,local(m),version,scene);
-        CHECK(coh_map_client_service(m,now++,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,version);
+        SceneObserverTest observed={{scene.payload,(scene.payload_bits+7)/8},scene.payload_bits,diagnostics(m),0};
+        CHECK(coh_map_client_service_observed(m,now++,(CohCancel){0},observe_scene,&observed)==COH_UNSUPPORTED);drain_idle(p,version);
+        CHECK(observed.calls==1);
+        CHECK(coh_map_client_service_observed(m,now++,(CohCancel){0},observe_scene,&observed)==COH_OK);
+        CHECK(observed.calls==1); /* The observer and message are not replayed. */
         CohMapDiagnostics d=diagnostics(m);CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.scene_prefixes==1&&d.scene_structures==1&&!d.character_identity_verified);
         CHECK(d.scene_inspection.consumed_bits==scene.payload_bits&&d.scene_failure.status==COH_OK);
         CohNetPacket ent=entity_prefix(version,aligned,105);send_packet(p,local(m),version,ent);
-        CHECK(coh_map_client_service(m,now++,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,version);
+        CHECK(coh_map_client_service_observed(m,now++,(CohCancel){0},observe_scene,&observed)==COH_UNSUPPORTED);drain_idle(p,version);
+        CHECK(observed.calls==1); /* Entity prefix is never a scene event. */
         d=diagnostics(m);CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.entity_prefixes==1&&d.accepted_messages==2&&!d.character_identity_verified);
         /* Every truncation is rejected and cannot create a READY/ACK/own spawn. */
         unsigned id=106;
@@ -333,7 +359,9 @@ static void expanded_scene_over_udp(void) {
         if(bytes>scene_wire_max)scene_wire_max=bytes;
         CHECK(bytes>COH_NET_PAYLOAD_MAX&&bytes<COH_NET_MESSAGE_MAX);
         send_encoded(p,local(m),5,encoded,bytes,200,ordered);
-        CHECK(coh_map_client_service(m,now++,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,5);
+        SceneObserverTest observed={{source_groups_large_world_byte_aligned,sizeof(source_groups_large_world_byte_aligned)},source_groups_large_world_byte_aligned_bits,diagnostics(m),0};
+        CHECK(coh_map_client_service_observed(m,now++,(CohCancel){0},observe_scene,&observed)==COH_UNSUPPORTED);drain_idle(p,5);
+        CHECK(observed.calls==1);
         CohMapDiagnostics d=diagnostics(m);
         CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.stage==COH_MAP_STAGE_SCENE_STRUCTURE&&d.scene_prefixes==1&&d.scene_structures==1);
         CHECK(d.scene_inspection.files==source_groups_expected_files&&d.scene_inspection.defs==source_groups_expected_defs);
@@ -423,7 +451,9 @@ static void scene_structure_failure_receipts(void) {
             writer.cursor=prefix.group_tail_bit;CHECK(coh_protocol_write(&writer,32,COH_GROUPS_FILE_MAX+1)==COH_OK);
             wanted=COH_LIMIT;stage=COH_GROUPS_STAGE_FILES;
         }
-        send_packet(p,local(m),5,bad);CHECK(coh_map_client_service(m,now++,(CohCancel){0})==wanted);drain_idle(p,5);
+        SceneObserverTest observed={{bad.payload,(bad.payload_bits+7)/8},bad.payload_bits,before,0};
+        send_packet(p,local(m),5,bad);CHECK(coh_map_client_service_observed(m,now++,(CohCancel){0},observe_scene,&observed)==wanted);drain_idle(p,5);
+        CHECK(!observed.calls); /* No event on any late grammar failure. */
         CohMapDiagnostics after=diagnostics(m);
         CHECK(after.stage==COH_MAP_STAGE_SCENE_STRUCTURE&&after.phase==COH_MAP_SCENE_INCOMPLETE);
         CHECK(after.scene_prefixes==2&&after.scene_structures==1&&after.scene_failure.stage==stage&&after.scene_failure.status==wanted);

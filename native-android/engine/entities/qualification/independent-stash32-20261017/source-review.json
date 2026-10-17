@@ -1,0 +1,32 @@
+{
+  "schema": "coh-independent-stash32-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "2c037dd0f526a3a44b67fbe9e3f120f9a8bb938d",
+  "evidence_commit": "46765f5d2",
+  "source_binding_sha256": "29cac2b3b4a2ed2f77de6359883f583def8b6875572bb3e3fb35921cfbede661",
+  "host_proof_sha256": "0c3dffbe18e3c69079694e59e9be36e797783e761d95c6c7635cdbe58dd3e4a3",
+  "all_tested_inputs_equal_committed_blobs": true,
+  "bound_inputs": 16,
+  "review": [
+    "Native32bitwrap Burtle mix/hash with definedlittle-endianbyteloads; defaultstringhash OR0x20 everybyte includingpunctuation, notstringequality/Unicode",
+    "Sourceoraclewholehashfunctions modeledWin32 unsignedlong32 viaexplicituint32ub4; originalunalignedloads onlyunsanitizedx86hostoracle, no originalWin32ABI or originalUBclosureclaim",
+    "Nativetable no-delete/no-update-keyprefix preservesoriginalquadraticcumulativeprobe, duplicate/zeroskip/75percentresize andascendingoldslot reinsertion; bounded65536probeattempts conservativehangrefusal",
+    "Fullfixedcapacities+input+16KiBstack+callerretained chargedunder1MiB beforeworkspace mutation, knownspan/end/alignmentguards; publicoutputcommitsonlywholeprefix",
+    "Wholeoriginalfind/add/resize loops execute with explicitshallowintconstructor/allocationbindings; originalconstructor itself NOTexecuted, admittedinitialpow2callerinput",
+    "Actual160superpalette values decodedviaqualifiedoriginalsmallreader thenoriginalRGBA/intstash starting128; sourcecostumeinitializer creates128table before adding thisFIRSTprefix, lateroriginpalettes/resize remainunbuilt",
+    "source_prefix_only label/complete_global_dictionary0/actor0 explicit; primitivehashes andprefix cannotadmit completecostume/extra/globalpalette dictionaries"
+  ],
+  "host_controls_per_mode": 17655,
+  "string_hash_cases": 3120,
+  "integer_hash_cases": 3072,
+  "table_sequences": 16,
+  "blocking_findings": [],
+  "independent_redundant_test_replay": false,
+  "original_oracle_sanitized": false,
+  "whole_original_win32_abi": false,
+  "complete_original_palette": false,
+  "authentic_global_stash": false,
+  "actor_authority": false,
+  "android_executed": false,
+  "physical_thor": false
+}

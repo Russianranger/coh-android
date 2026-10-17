@@ -120,7 +120,8 @@ static CohStatus send_command(CohMapClient *m,unsigned command,uint64_t now) {
     if(s==COH_OK)s=coh_net_udp_queue(m->udp,(CohBytes){packet.data,(packet.bits+7)/8},packet.bits,1,0,0,now);
     coh_map_packet_wipe(&packet);return s;
 }
-static CohStatus inspect(CohMapClient *m,const CohNetOwnedMessage *message,uint64_t now) {
+static CohStatus inspect(CohMapClient *m,const CohNetOwnedMessage *message,uint64_t now,
+    CohMapSceneObserver observer,void *context) {
     if(!m->authorized)return COH_STATE;
     m->diag.stage=COH_MAP_STAGE_COMMAND;
     m->diag.last_command_valid=0;
@@ -175,10 +176,18 @@ static CohStatus inspect(CohMapClient *m,const CohNetOwnedMessage *message,uint6
         m->diag.scene_prefixes++;m->diag.phase=COH_MAP_SCENE_INCOMPLETE;
         m->diag.stage=COH_MAP_STAGE_SCENE_STRUCTURE;
         CohGroupsInspection inspection;CohGroupsFailure failure={0};
+        const CohRepReader observed_reader=groups_reader;
         s=coh_rep_groups(&groups_reader,&inspection,&failure);
         m->diag.scene_failure=failure;
         if(s!=COH_OK)goto rejected;
         m->diag.scene_inspection=inspection;m->diag.scene_structures++;
+        if(observer){
+            const CohMapSceneObservation event={observed_reader,inspection,
+                m->diag.generation,m->diag.selection_generation,m->diag.selected_slot,
+                m->diag.selected_dbid,m->diag.map_id,m->diag.map_link_id,
+                m->diag.local_development_authorized};
+            observer(context,&event);
+        }
         /* Complete normal grammar is not an imported/resolved scene graph.
          * No CRC or authoritative character acceptance is inferred here. */
         s=COH_UNSUPPORTED;goto rejected;
@@ -204,6 +213,10 @@ rejected:
     return s;
 }
 CohStatus coh_map_client_service(CohMapClient *m,uint64_t now,CohCancel cancel) {
+    return coh_map_client_service_observed(m,now,cancel,NULL,NULL);
+}
+CohStatus coh_map_client_service_observed(CohMapClient *m,uint64_t now,CohCancel cancel,
+    CohMapSceneObserver observer,void *context) {
     if(!m||now<m->last_ms)return COH_INVALID;
     if(!m->udp||m->diag.phase==COH_MAP_IDLE||m->diag.phase==COH_MAP_CLOSED||m->diag.phase==COH_MAP_SUSPENDED||
        m->diag.phase==COH_MAP_TIMED_OUT||m->diag.phase==COH_MAP_FAILED)return COH_STATE;
@@ -228,7 +241,7 @@ CohStatus coh_map_client_service(CohMapClient *m,uint64_t now,CohCancel cancel) 
         CohNetOwnedMessage message;s=coh_net_udp_next_owned(m->udp,&message);
         if(s==COH_NOT_FOUND)break;
         if(s!=COH_OK){m->diag.stage=COH_MAP_STAGE_MESSAGE_NEXT;m->diag.last_status=s;return s;}
-        s=inspect(m,&message,now);
+        s=inspect(m,&message,now,observer,context);
         CohStatus released=coh_net_udp_owned_release(m->udp,&message);
         /* inspect may close the link on refusal; close has already destroyed
          * that lease. Preserve its original application failure checkpoint. */

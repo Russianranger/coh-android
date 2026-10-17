@@ -1,0 +1,50 @@
+{
+  "schema": "coh-independent-actual-db-checksum-build-review-v1",
+  "passed": true,
+  "source_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "staged_original_file_count": 5995,
+  "all_5994_unchanged_original_blobs_sha_match_git": true,
+  "single_original_checksum_source_blob_match_git": true,
+  "nine_build_helper_inputs_match_historical_git": true,
+  "all_retained_files_match_receipt_hash_size": true,
+  "input_state_before_equals_after": true,
+  "patch_raw_sha256": "d31341f948fc5c3fce36b46461f7348a9cc8e5e6321e8ae13a9e5bf178e50bb1",
+  "patch_normalized_lf_sha256": "752e4472220d470006730ae88fa4e0289534c288e2ce13a4244190a53d533bec",
+  "manifest_patch_sha256": "752e4472220d470006730ae88fa4e0289534c288e2ce13a4244190a53d533bec",
+  "candidate_binary": {
+    "sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "bytes": 1654784,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 3,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "receipt_sha256": "51e72ef676b3db845ec4f72d1a0e856f5f34b4470050ee388087c06e843a3334",
+  "source_file_map_sha256": "3a474fe7b3ae9a218c90405a291bc65d3056279835e14f45e56e78d6920ea878",
+  "header_identity_only": true,
+  "pe_executed": false,
+  "service_executed": false,
+  "accepted_server_runtime_compatibility": false,
+  "live_authenticated_db_login_verified": false,
+  "admission_replay_status": "PASS using exact externally pinned receipt and PE hashes, no native execution",
+  "run_id": 39000395572,
+  "artifact_id": 12088648844,
+  "artifact_bytes": 1088820,
+  "artifact_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+  "admission_fix_commits": [
+    "1fbad0f09",
+    "d872a948e"
+  ],
+  "admission_helper_sha256": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+  "admission_fix_source_equal_committed_blobs": true,
+  "review": [
+    "RawretainedpatchCRLFfilehash staysreceiptpinned; canonicalLFmustEXACTLYequal regeneratedunifieddiff frompinnedoriginalanddeclaredcandidate, notarbitrarynormalizationexception",
+    "Historical9buildhelperinputs verifiedagainst8f411Gitblobs andbefore==after, currentadmissionhelperseparatelyreviewed; avoidsrebuildingalreadycorrectPEfordiagnosticadmissionfix",
+    "All5995originalstagedfilepaths matchedactualoriginalGit tree,5994unchangedsourceSHA+singleoriginalfunctionfileSHA verified via boundedstreamGitbatch; singlecandidatecode matchedstrictknownverifierreplacementbyadmission",
+    "Exactrecordedarchive/configure/DbServerOptDebugWin32argprofile validatedbyreadmission; retainedCMakecache/buildlogs/source-map/PEhash bound",
+    "ActualWindowscompilationonly; PEheaderidentity notdisassembly ornegativepolicyexecution, originalMSSQLcandidate notacceptedPG/Wineruntime, noprocess/service/account/referencealias/nondevversionverification"
+  ],
+  "blocking_findings": []
+}

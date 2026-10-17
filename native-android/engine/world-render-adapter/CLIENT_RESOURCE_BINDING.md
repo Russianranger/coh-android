@@ -4,7 +4,9 @@ The rigid GEO adapter now has exact authentic geometry and associated cached
 texture **test inputs**. This is CPU source-resource qualification, with no
 world/material publication capability. No fallback, white texture or invented
 lighting binding is supplied. The actual Box model's ownership in the captured
-Atlas generation has not been established.
+Atlas generation has not been established. The later Neon legacy fixture is a
+root-reachable source model/body lookup candidate with exact retained bytes; it
+also does not establish matching directly opened live resource generation.
 
 ## Implemented sampling projection and authentic texture proof
 
@@ -75,20 +77,25 @@ inherited GL-state updates.
 
 | Supplier | Required retained immutable values | Current evidence boundary |
 |---|---|---|
-| SERVER resource capture + A join | Exact catalog/runtime snapshot/graph generation, COHRES bytes SHA, owner definition and original model/GEO row, GLD/model load state, model/trick/info flags, model scale/bounds and six source LOD values | A `coh_resource_join_sources` exposes raw owner observations; `match_index` proves their binding equality. Actual runtime resource capture remains required. |
+| SERVER resource capture + A join | Exact catalog/runtime snapshot/graph generation, COHRES bytes SHA, owner definition and original model/GEO row, GLD/model load state, model/trick/info flags, model scale/bounds and six source LOD values | A `coh_resource_join_sources` exposes raw owner observations; `match_index` proves their binding equality. Actual source runtime capture is retained; observed GLD/model states are NOT_LOADED/header-only. This is source ownership, not completed CLIENT asset/material resolution. |
 | CLIENT texture resolution | Model partition -> effective TexBind/BasicTexture identity after directory lookup, normalization, aliases, locale, Basic/composite and **scene** swaps; matching client data/tricks generation | Not carried by SERVER COHRES or current scene CRCs. The fixture association is not a live resolved binding. |
 | CLIENT shader/material producer | Effective TexOpt/model trick state, `texResetTrickBasedParametersComposite` / `texSetBindsSubComposite` selection, shader family/layers and fallback choice under pinned capabilities, bind scales, color/alpha/blend/depth/fog/glow semantics | Existing renderer supports a bounded subset; each unrepresented state must refuse. Source labels and nonzero SHA values are not semantic proof. |
 | CLIENT sampling producer | Final `BasicTexture.texopt_flags`, selected target, effective anisotropy and clamp mode; `ddsLoad` post-skip dimensions/count and every retained mip | Pure source projection implemented. Authentic cached bytes decoded; effective client producer has not supplied a record. |
 | CLIENT visibility/lighting producer | Selected LOD/reduction, inherited group/model tricks, visibility/fade and render ordering; appropriate baked vertex colors/lightgrid/environment lighting and effects | Source LOD floats and bounds alone do not select LOD or determine lighting. No default light/white replacement. |
-| Resource owner | Exact asset path/SHA/generation, qualified material-generation/partition identity; CPU blob+material+texture pins and aggregate reservations; GPU names valid through flush and Surface recreation | Rigid owner retains CPU/material pins; texture owner retains blob+all RGBA levels. Sampler projection owns none; GPU/Surface supplier remains separate. |
+| Resource owner | Exact asset path/SHA/generation, qualified material-generation/partition identity; CPU blob+material+texture pins and aggregate reservations; GPU names valid through flush and Surface recreation | Rigid owner retains CPU/material pins; texture owner retains blob+all RGBA levels. Sampler projection owns none. Additive GPU mip ownership and standalone EGL qualification remain separate from authentic material/Surface binding admission. |
 | World/actor admission | Fully validated source transactions, root/child closure and transforms, authentic resources, complete selected-character identity/generation and atomic generation-consistent publication | Not granted by these CPU helpers or by source-only snapshots. |
 
 A supplier may use A's raw `CohResourceSource`/binding identity to anchor the
 first row and consume immutable views. `unresolved_client_semantics==1` is a
 hard boundary: no raw SERVER observation may be relabeled as resolved CLIENT
 material/capability/LOD state. These are client-only dependencies, not additional
-fields to fabricate in the SERVER protocol. The SERVER capture is separately
-missing at present; then original CLIENT semantic resolution is still needed.
+fields to fabricate in the SERVER protocol. The retained SERVER source capture closes raw source observations; original CLIENT
+semantic resolution and matching live generation are still needed.
+
+`coh_wr_lod_project` now implements the complete numerical CLIENT
+`modelCalcAlpha` projection from separately resolved inputs. It grants no LOD
+model selection or visibility permit. See `CLIENT_LOD_AND_ZERO_ROWS.md` for exact
+inputs and the boundary for retained zero-draw header rows.
 
 ## Qualification
 

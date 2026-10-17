@@ -1,0 +1,21 @@
+{
+  "schema": "coh-independent-cachebranch-source-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "5680dc30b612deb90b168d9bddb201b1c3179252",
+  "audit_sha256": "d089f085b0fb4199f76f0c7d65faf55f1bc666f5e5a496ff9cb20d68067c319d",
+  "scope_doc_sha256": "54be9cf27435427d34bf98064f1b8ea6788bb08b59baf72b0e5a0088b2f1e025",
+  "three_original_sources_match_committed_normalized_lf_pins": true,
+  "review": [
+    "ParserLoadFiles successfulbinaryread returnsbeforetextload/preprocessor/binregeneration; do notapplypreprocessoragain onexactcachehit",
+    "bpReadBodyPartFiles passes ParseBoneNamesONLYpreprocessor withpost/finalNULL; generatedBoneIdEnummissingdoesNOTblockexactvalidatedcachehit usingstoredrawbones/indices, remainsfallback/textregenerationdependency",
+    "costumeShared firstcaller/error/no-persist DefaultAction mayusebinarycache thenouterfinalcallback; sharedDataAcquired matchingCRC reusesexistingstate anddoesnotreruncallbacks",
+    "supergrouppalettecallbackargumentsNULL, whilecostume_fillExtraDataCallback remainsseparateexactbranchdependent dictionaryprerequisite",
+    "Frozenraw47decoder/proofs andsource_prefix_onlystashsemanticsunchanged; noactualcachebranch/sharedgeneration/serverconsumptionobserved"
+  ],
+  "supersedes_wording": "Prior raw-parser review missingBoneIdEnum application prerequisite applies fallback/regeneration, not exact admitted binary cache-hit route. No claim that current MapServer selected this route.",
+  "blocking_findings": [],
+  "runtime_cache_branch_observed": false,
+  "original_callbacks_executed": false,
+  "actor_authority": false,
+  "native_test_replay": false
+}

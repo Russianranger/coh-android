@@ -1,0 +1,6339 @@
+{
+  "schema": "coh-prepared-geo-route-evidence-v1",
+  "passed": true,
+  "scope": "replay pins and bind independent source-route review; no native admission permit",
+  "source_revision": "a45c657fcc6b3bd8f3a70c59e9aa85ee19455f3f",
+  "source_identity_sha256": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+  "run_identity_sha256": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+  "control_fixture_sha256": "3be317b5cc4b24aad8b19cd93e18762f12270ad4284c31a81e7587e4e35fadc1",
+  "candidates_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+  "runtime_inventory": {
+    "bytes": 4273657217,
+    "files": 176613,
+    "ordered_inventory_sha256": "f2bd6c0bac0ea8dafbf76cdff40b33089c48318a968d3db6fbb20899e172f99f"
+  },
+  "original_source_files": [
+    {
+      "path": "upstream/ouroboros/Common/seq/anim.c",
+      "bytes": 88082,
+      "sha256": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "git_blob": "86ee0b4c9fbbb90aaf28f14a0b0664ee1098ca80"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/modelReload.c",
+      "bytes": 15782,
+      "sha256": "ba54286ef15932e9a4727160e3e022c2dd18adcb928c2835b0b85a3e24da8359",
+      "git_blob": "8e7bf5a9100aeb95b318d31dfaaf0ca0ad7f74d4"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/AutoLOD.c",
+      "bytes": 20815,
+      "sha256": "f34c46abac3e6e95bd5829d1d72a203756a7764872f6a9483c4377a05a546722",
+      "git_blob": "b16ae3abc89bb1e4814cfb1aa229667f98ba5904"
+    },
+    {
+      "path": "upstream/ouroboros/MapServer/src/svr/svr_init.c",
+      "bytes": 70402,
+      "sha256": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+      "git_blob": "916cbeef89abd534a8fb89792a170ebecfc5edda"
+    },
+    {
+      "path": "upstream/ouroboros/MapServer/src/cmdparse/cmdserver.c",
+      "bytes": 531734,
+      "sha256": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+      "git_blob": "1c02b25ac0b1daeedeea258939a31486f6186cfb"
+    },
+    {
+      "path": "upstream/ouroboros/MapServer/src/group/groupdbmodify.c",
+      "bytes": 19500,
+      "sha256": "3605cd6d3c967d15ca9cfb2c46a7748a0d494bbeec830e6e66a95d2f63a0cf84",
+      "git_blob": "9d84c2df484a6b72d14253b9f18b3268c25da346"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c",
+      "bytes": 92002,
+      "sha256": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+      "git_blob": "44e17993ec97bb8d7ed0f597b327e72161e0a5df"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c",
+      "bytes": 49055,
+      "sha256": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+      "git_blob": "12e2f7de1474db36ece02eca900c715858dae1ef"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/piglib.c",
+      "bytes": 46233,
+      "sha256": "786ea2c5e9b8cf14fe4dfd4880b9cfe85a138afbccd56759e59b30b7663ed528",
+      "git_blob": "4b3dbd5a6b42944215401b5a4c01093277df698d"
+    }
+  ],
+  "donor_source_files": [
+    {
+      "path": "android/guest/atlas_world_assets.py",
+      "bytes": 24825,
+      "sha256": "ff372738ba5954912080a3b9b6725e225bc887e2c1274bbf4a002640ed572b69"
+    },
+    {
+      "path": "android/guest/atlas_beacon_package.py",
+      "bytes": 36026,
+      "sha256": "d7523f78fa2d1c20442ec66a4ebe2611f3d5df8597db2d3e1bf039104ed82503"
+    },
+    {
+      "path": "android/guest/local_character_server.py",
+      "bytes": 150443,
+      "sha256": "0472fd103d2a90deb2a60d603aac7a39515ee6cb18ac55810820137b1c9f8689"
+    },
+    {
+      "path": "android/guest/local_login_server.py",
+      "bytes": 21351,
+      "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+    },
+    {
+      "path": "android/guest/server_animation_package.py",
+      "bytes": 12619,
+      "sha256": "a8a32b3fce31bea5d4ff9a2e9089fa2cf26303392b87f6feecfa3eaf968cedab"
+    },
+    {
+      "path": "android/guest/server_cache_package.py",
+      "bytes": 22143,
+      "sha256": "ba2c0b14f3622efe4f7a29246f096c2edb1065e69a38ea00625802f741c2f73d"
+    },
+    {
+      "path": "android/guest/character_server_data_cache.py",
+      "bytes": 32868,
+      "sha256": "d742fe7348424db7406281c1346b845ec092d2a30725e4005b63de750e041bb7"
+    }
+  ],
+  "required_geometry_inventory": {
+    "count": 406,
+    "sha256": "c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43"
+  },
+  "body_count": 391,
+  "body_bytes": 71817182,
+  "bodies": [
+    {
+      "source_geo_name": "object_library/Buildings/Elements/bldg_lights/bldg_lights.geo",
+      "prepared_logical_path": "data/object_library/buildings/elements/bldg_lights/bldg_lights.geo",
+      "bytes": 15140,
+      "sha256": "2df82340cdc1de6704004795f5737dcb8c9b96952e3330d9fce1fc935a144849",
+      "source_ordinals": [
+        20082,
+        20092,
+        20093,
+        20094,
+        20096
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Elements/roofs/vents_etc/vents_etc.geo",
+      "prepared_logical_path": "data/object_library/buildings/elements/roofs/vents_etc/vents_etc.geo",
+      "bytes": 38869,
+      "sha256": "ce14d108a926f8912a34bceebd62614e1116dc639363e78bf4b0202e32e8b59a",
+      "source_ordinals": [
+        20022,
+        20023,
+        20024,
+        20025,
+        20026,
+        20027,
+        20028,
+        20029,
+        20030,
+        20031,
+        20037,
+        20038,
+        20039,
+        20040,
+        20048,
+        20049,
+        20050
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Elements/roofs/ware_elmnts01/ware_elmnts01.geo",
+      "prepared_logical_path": "data/object_library/buildings/elements/roofs/ware_elmnts01/ware_elmnts01.geo",
+      "bytes": 65762,
+      "sha256": "71ebe7d0c4bf0c0b89f8fc8c87d39a1c7cf1f71b8ca52d5ef823e42b36e80132",
+      "source_ordinals": [
+        19922,
+        19923,
+        19924,
+        19925,
+        19926,
+        19927,
+        19928,
+        19929,
+        19930,
+        19931,
+        19932,
+        19933,
+        19934,
+        19935,
+        19936,
+        19938,
+        19939,
+        19940,
+        19941,
+        19942,
+        19943,
+        19944,
+        19945,
+        19946,
+        19947,
+        19948,
+        19949,
+        19950,
+        19951,
+        19952,
+        19953,
+        19954,
+        19955,
+        19956,
+        19957,
+        19958,
+        19960,
+        19961,
+        19964,
+        19965,
+        19966,
+        19967,
+        19968,
+        19969,
+        19970,
+        19971,
+        19972,
+        19973,
+        19974,
+        19975,
+        19976,
+        19977,
+        19978,
+        19979,
+        19986
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Elements/signs/Neon/neon.geo",
+      "prepared_logical_path": "data/object_library/buildings/elements/signs/neon/neon.geo",
+      "bytes": 3684,
+      "sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+      "source_ordinals": [
+        35283,
+        35284,
+        35285
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Elements/signs/Special_Signs/Chaser_Sign_4to1/chaser_sign_4to1.geo",
+      "prepared_logical_path": "data/object_library/buildings/elements/signs/special_signs/chaser_sign_4to1/chaser_sign_4to1.geo",
+      "bytes": 1654,
+      "sha256": "66742a3b485b7772e6ab20a4edc750a7e46d99891e35473bfc587a3b0e9fd374",
+      "source_ordinals": [
+        35195,
+        35196,
+        35197,
+        35198,
+        35199
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Filler_Buildings/Filler_Brick1/filler_brick1.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/filler_buildings/filler_brick1/filler_brick1.geo",
+      "bytes": 145576,
+      "sha256": "76e80d0469717fbd992148af8e59140f78978eac28b8d33e9399fae9655ad2cc",
+      "source_ordinals": [
+        26244,
+        26262,
+        26281,
+        26282,
+        26283,
+        26293,
+        26296,
+        26299,
+        26300,
+        26301,
+        26302,
+        26303,
+        26304,
+        26305,
+        26309
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Filler_Buildings/Filler_Ruin1/filler_ruin1.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/filler_buildings/filler_ruin1/filler_ruin1.geo",
+      "bytes": 82044,
+      "sha256": "8a131b1a30211252be6cf4b0db90c98b70374f2408291c7490911e6fee220ea1",
+      "source_ordinals": [
+        35095,
+        35096,
+        35097,
+        35098,
+        35099,
+        35100,
+        35101,
+        35102,
+        35103,
+        35104,
+        35105,
+        35119,
+        35120,
+        35121,
+        35122,
+        35123,
+        35124,
+        35126,
+        35128,
+        35129
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Filler_Shops/filler_shops.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/filler_shops/filler_shops.geo",
+      "bytes": 184987,
+      "sha256": "8e6551a9894eba871ef1a7c3f577e01f5531fe0a7f0a9f73f8dc9aaea6d7c295",
+      "source_ordinals": [
+        20299,
+        20300,
+        20301,
+        20303,
+        20304,
+        20305,
+        20306,
+        20307,
+        20308,
+        20309,
+        20310,
+        20312,
+        20313,
+        20314,
+        20315,
+        20316,
+        20317,
+        20318,
+        20319,
+        20320,
+        20321,
+        20322,
+        20323,
+        20324,
+        20326,
+        20327,
+        20328,
+        20329,
+        20330,
+        20331,
+        20332,
+        20333,
+        20334,
+        20335,
+        20336,
+        20337,
+        20338,
+        20339,
+        20340,
+        20341,
+        20342,
+        20343,
+        20344,
+        20345,
+        20346,
+        20347,
+        20348,
+        20349,
+        20350,
+        20351,
+        20353,
+        20354,
+        20355,
+        20356,
+        20357,
+        20358,
+        20359,
+        20360,
+        20361,
+        20362,
+        20363,
+        20364,
+        20365,
+        20366,
+        20367,
+        20368,
+        20370,
+        20371,
+        20372,
+        20373,
+        20374,
+        20375,
+        20376,
+        20378,
+        20379,
+        20380,
+        20382,
+        20383,
+        20384,
+        20385,
+        20387,
+        20389,
+        20390,
+        20391,
+        20392,
+        20395,
+        20396,
+        20401,
+        20403,
+        20405,
+        20409,
+        20413,
+        20414,
+        20415,
+        20421,
+        20422,
+        20423,
+        20424,
+        20425,
+        20426,
+        20427,
+        20428,
+        20429,
+        20430
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Oldtown/Oldtown_Elements/lights/ot_lights.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/oldtown/oldtown_elements/lights/ot_lights.geo",
+      "bytes": 24443,
+      "sha256": "7c65a06993f456b9f5238b0f1a06ac90c4a2707d5bdb9df45e5bf19ed73acc5a",
+      "source_ordinals": [
+        25985,
+        25986,
+        25989,
+        25990
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_01.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_01.geo",
+      "bytes": 676200,
+      "sha256": "c5048847e040e2ad2c0c160f469cde3c9eb472732128bbeaf848832b265cca68",
+      "source_ordinals": [
+        23835
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_02.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_02.geo",
+      "bytes": 379529,
+      "sha256": "a787b3633e43de8f12cbacaab7e95714b829134cafb74951b1dcef2fb3bbfb90",
+      "source_ordinals": [
+        23839,
+        23840
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_03.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_03.geo",
+      "bytes": 499440,
+      "sha256": "82cc14510e4a3d62186ceb77b33b1caee45b7b2be8fca860dbc7237bf1f8a32e",
+      "source_ordinals": [
+        23182
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_04.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_04.geo",
+      "bytes": 473836,
+      "sha256": "34600797d709205f5ee6dd0489d433d4186473da89cb585c7b62f24a107edf9f",
+      "source_ordinals": [
+        23845
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_05.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_05.geo",
+      "bytes": 433098,
+      "sha256": "f1bbe574afaa3910b440a3ec1748fd6f046da7fdf5fd8cd10f9a70b87cd91ff5",
+      "source_ordinals": [
+        23855
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_06.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_06.geo",
+      "bytes": 1041930,
+      "sha256": "604880c8b748a9dfcf90660ee8256cbfc376c53a333044bb41ec8c1cf28b6371",
+      "source_ordinals": [
+        23848
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_07.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_07.geo",
+      "bytes": 466000,
+      "sha256": "7243eb32f6e503381ff963b1a31b1039dd7c870aa35b163ef60a54c2f08bca46",
+      "source_ordinals": [
+        23675,
+        23676,
+        23677,
+        23678
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_08.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_08.geo",
+      "bytes": 406608,
+      "sha256": "e3983632ba107b5a08a025f44cf4c739e73d14b60b6eae26e4548959472e6153",
+      "source_ordinals": [
+        21671
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_09.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_09.geo",
+      "bytes": 584556,
+      "sha256": "c73702ec87a9b239377421397bcc49af6eef9f7fdd563ce18c30619e244080ec",
+      "source_ordinals": [
+        23668,
+        23669
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_10.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_10.geo",
+      "bytes": 231028,
+      "sha256": "44996110fd44cf6230ddc37da80dde94268498dbd0eb4f1c363b99f21f63ec6a",
+      "source_ordinals": [
+        23674
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_13.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_13.geo",
+      "bytes": 184210,
+      "sha256": "af31643681e48e0c9b42a1ea01481cce5a33d19b8d212d9d1c49b4673cb4db98",
+      "source_ordinals": [
+        23856,
+        23859
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_14.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_14.geo",
+      "bytes": 259664,
+      "sha256": "ce88222dedde371c0e2e22afaae03fcd486b3f92a44dccf4a6e59a735e6d2dd0",
+      "source_ordinals": [
+        23671
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/deco/Deco_elements/deco_fixtures/deco_fixtures.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/deco/deco_elements/deco_fixtures/deco_fixtures.geo",
+      "bytes": 2275,
+      "sha256": "37cb1defb263e02463a3429a898a34df7546dadb689100d1bba198adb4284009",
+      "source_ordinals": [
+        36259
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/factories/additions/additions_lrg/additions_lrg.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/factories/additions/additions_lrg/additions_lrg.geo",
+      "bytes": 11600,
+      "sha256": "27bfd09845141923ebbe6da2051755098424c91591419a627f7f1f7d7239e3c6",
+      "source_ordinals": [
+        20279,
+        20289
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/factories/additions/additions_med/additions_med.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/factories/additions/additions_med/additions_med.geo",
+      "bytes": 21490,
+      "sha256": "46961f2a80ded3a7f342c4eee4f222849102e04dfbc49c0730af5c16284c63bc",
+      "source_ordinals": [
+        19713,
+        19719,
+        19720,
+        19721,
+        19722,
+        19724,
+        19727,
+        19728,
+        19729,
+        19732,
+        19733,
+        19737,
+        19738
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/factories/fact_elements/fact_elements.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/factories/fact_elements/fact_elements.geo",
+      "bytes": 104828,
+      "sha256": "13faa14595adcd318d41a8f42b51a327752cf731f4fb40b4a59991357d769612",
+      "source_ordinals": [
+        22736,
+        22737,
+        22738,
+        22739,
+        22747,
+        22748,
+        22749,
+        22750,
+        22795,
+        22796,
+        22797,
+        22803,
+        22804,
+        22805,
+        22806,
+        22807,
+        22809,
+        22810,
+        22811,
+        22812,
+        22813,
+        22815,
+        22816
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_elements_01/ind_elements_01.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_elements_01/ind_elements_01.geo",
+      "bytes": 41498,
+      "sha256": "b40d3fe513a52f944fe0a1f0b3ba9356d7cc539b3ff840918a3774ee2d8d4601",
+      "source_ordinals": [
+        11823,
+        11835,
+        11837,
+        11840,
+        11841
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_01/ind_ware_01.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_01/ind_ware_01.geo",
+      "bytes": 39242,
+      "sha256": "9f11f2b6899c8c21fa8c2f856036411fc4e76781ca7266dffa4bd4a84df5570f",
+      "source_ordinals": [
+        19773,
+        19774,
+        19775,
+        19776,
+        19777,
+        19778,
+        19779,
+        19781,
+        19782,
+        19783,
+        19784,
+        19785,
+        19786,
+        19788,
+        19790,
+        19791
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_02/ind_ware_02.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_02/ind_ware_02.geo",
+      "bytes": 12295,
+      "sha256": "bb5da7849c0952432024f0b570e36ba7c87906ef4ca0b79aa8ac95c683b37299",
+      "source_ordinals": [
+        19743,
+        19744,
+        19745,
+        19746,
+        19747,
+        19748
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_03/ind_ware_03.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_03/ind_ware_03.geo",
+      "bytes": 24522,
+      "sha256": "2b8b2801dd34f80eb2490f4626589406bb449b89137a61529d1e985fd63d6d89",
+      "source_ordinals": [
+        20956,
+        20957,
+        20958,
+        20959,
+        20960,
+        20961,
+        20962,
+        20963,
+        20964,
+        20965,
+        20966,
+        20967,
+        20968,
+        20969,
+        20970,
+        20971,
+        20972
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_04/ind_ware_04.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_04/ind_ware_04.geo",
+      "bytes": 27252,
+      "sha256": "333e249e751df80e81f1689873877aee77fd6d2e7eed4c308f9b3f373311776f",
+      "source_ordinals": [
+        20752,
+        20753,
+        20754,
+        20755,
+        20756,
+        20757,
+        20758,
+        20759,
+        20760,
+        20761,
+        20762,
+        20763,
+        20764,
+        20765,
+        20766
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_05/ind_ware_05.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_05/ind_ware_05.geo",
+      "bytes": 52162,
+      "sha256": "64d0dbb828359fead383a49f40c06584bf60bd6e41b3c5c183f41e61a556a50d",
+      "source_ordinals": [
+        24379,
+        24380,
+        24381,
+        24382,
+        24383,
+        24384,
+        24385,
+        24386,
+        24387
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_06/ind_ware_06.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_06/ind_ware_06.geo",
+      "bytes": 18653,
+      "sha256": "c81f73160548c8da9a29c3fe25f37bd4de7889cbbd93176dccc03dad27bb0100",
+      "source_ordinals": [
+        20682,
+        20683,
+        20684,
+        20685,
+        20686,
+        20687
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_07/ind_ware_07.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_07/ind_ware_07.geo",
+      "bytes": 4610,
+      "sha256": "99eac196a554ffb93290f813d1da76da56e2c785a867eb3e92e9dae42431f417",
+      "source_ordinals": [
+        21027,
+        21028,
+        21029,
+        21030
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_08/ind_ware_08.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_08/ind_ware_08.geo",
+      "bytes": 16441,
+      "sha256": "58d4e772ccb1f0c68d16c02cdeeb189d726a4281ad99c4607c5757a8dc592ddb",
+      "source_ordinals": [
+        21045,
+        21046,
+        21047,
+        21048,
+        21049,
+        21050,
+        21051
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_09/ind_ware_09.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_09/ind_ware_09.geo",
+      "bytes": 37199,
+      "sha256": "83c72c4929c91560f77ec7feb832a8cf0d777c02439cf4cd5909482bca156154",
+      "source_ordinals": [
+        22601,
+        22602,
+        22603,
+        22604,
+        22605,
+        22606,
+        22607,
+        22609,
+        22610,
+        22611,
+        22612,
+        22613,
+        22614,
+        22615,
+        22616,
+        22617,
+        22618,
+        22619,
+        22620,
+        22621,
+        22623,
+        22624,
+        22625,
+        22626,
+        22627,
+        22628
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_10/ind_ware_10.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_10/ind_ware_10.geo",
+      "bytes": 19196,
+      "sha256": "67f038327e10f3b8032cc678077ef14e3e94ff0d24a4463919613854b78f803d",
+      "source_ordinals": [
+        22545,
+        22546,
+        22547,
+        22548,
+        22549,
+        22550,
+        22551,
+        22552,
+        22553,
+        22554
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_11/ind_ware_11.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_11/ind_ware_11.geo",
+      "bytes": 28878,
+      "sha256": "58bc3d137de15451b147caf4795b52e6807212999afec66efeceee5fb049b013",
+      "source_ordinals": [
+        24247,
+        24248,
+        24249,
+        24250,
+        24251,
+        24252,
+        24253,
+        24254,
+        24255,
+        24256,
+        24257,
+        24258,
+        24259,
+        24260,
+        24261,
+        24262
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_12/ind_ware_12.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_12/ind_ware_12.geo",
+      "bytes": 12277,
+      "sha256": "cb2f71e75e1159de313de98e2a700ac07c1e257682a53e1cf72e4a410649bf1d",
+      "source_ordinals": [
+        21124,
+        21125,
+        21126,
+        21127,
+        21128,
+        21129,
+        21130
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_14/ind_ware_14.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_14/ind_ware_14.geo",
+      "bytes": 34045,
+      "sha256": "84000804a016235ddc91f13fb143c2561750fd1e71d2d190d08745ad2c9605d1",
+      "source_ordinals": [
+        21199,
+        21200,
+        21201,
+        21202,
+        21203,
+        21204,
+        21205,
+        21206,
+        21207,
+        21208,
+        21209,
+        21210,
+        21211
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/Style/warehouses/ind_ware_addon/ind_ware_addon.geo",
+      "prepared_logical_path": "data/object_library/buildings/style/warehouses/ind_ware_addon/ind_ware_addon.geo",
+      "bytes": 24454,
+      "sha256": "869d41e78b03e9a79af72093f17d5ae4238582ff6ed21bc572c22ca4c1cc5c38",
+      "source_ordinals": [
+        21456,
+        21457,
+        21458,
+        21459,
+        21460,
+        21461
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Buildings/skyline/skyline.geo",
+      "prepared_logical_path": "data/object_library/buildings/skyline/skyline.geo",
+      "bytes": 66688,
+      "sha256": "7f85880b13cafeb923770e0675d3f1ad0d565a44790f32cb7614d4066d7643a8",
+      "source_ordinals": [
+        32992,
+        32993,
+        32994,
+        32995,
+        32998,
+        32999,
+        33000,
+        33001,
+        33002,
+        33003,
+        33004,
+        33008,
+        33009,
+        33015,
+        33016,
+        33017,
+        33018,
+        33019,
+        33020,
+        33021,
+        33022,
+        33027,
+        33028,
+        33029,
+        33030,
+        33031,
+        33032,
+        33033
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Collision/collision_walls/collision_walls.geo",
+      "prepared_logical_path": "data/object_library/collision/collision_walls/collision_walls.geo",
+      "bytes": 3668,
+      "sha256": "7bd35b4839ea2b9f26e709f8b8cc7ca958c2b4870cf1a16d02cbd8ae1cae4804",
+      "source_ordinals": [
+        24000,
+        24004
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Collision/no_teleport/no_teleport.geo",
+      "prepared_logical_path": "data/object_library/collision/no_teleport/no_teleport.geo",
+      "bytes": 408,
+      "sha256": "0123c62517abdec65bca734123ebb7398d1600564634bb759685857a7cb45633",
+      "source_ordinals": [
+        30199
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Bar/bar.geo",
+      "prepared_logical_path": "data/object_library/common_decor/bar/bar.geo",
+      "bytes": 95049,
+      "sha256": "b94bdf215e3cd3a993e5a68155751016ab056b3715d47bd6375a8feda890f051",
+      "source_ordinals": [
+        19486,
+        19499,
+        19505
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Common_Items/Chairs/chairs.geo",
+      "prepared_logical_path": "data/object_library/common_decor/common_items/chairs/chairs.geo",
+      "bytes": 39201,
+      "sha256": "86c01facdabaad7f585f5e1096575b8740ecd93f8d6602387c46c60279581720",
+      "source_ordinals": [
+        11215,
+        11216,
+        11217,
+        11219
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Common_Items/Desks_&_Tables/desks_&_tables.geo",
+      "prepared_logical_path": "data/object_library/common_decor/common_items/desks_&_tables/desks_&_tables.geo",
+      "bytes": 22728,
+      "sha256": "9bc41a89f4d21786c34c830ba8552c056c47d493a9fc59cf94e798b7866d51a6",
+      "source_ordinals": [
+        11352,
+        11353,
+        11354,
+        11355,
+        11356
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Common_Items/Lights/Ceiling_Lights/ceiling_lights.geo",
+      "prepared_logical_path": "data/object_library/common_decor/common_items/lights/ceiling_lights/ceiling_lights.geo",
+      "bytes": 120470,
+      "sha256": "3f8a31eaec884a43ebb9ab9446b16d609343ab4ff36014706b1329a874d4e329",
+      "source_ordinals": [
+        9792,
+        9793,
+        9794,
+        9795,
+        9796,
+        9798,
+        9801,
+        9802
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Common_Items/Lights/Lamps/lamps.geo",
+      "prepared_logical_path": "data/object_library/common_decor/common_items/lights/lamps/lamps.geo",
+      "bytes": 10384,
+      "sha256": "e187c9df004508434fcf29b075ad9e3f48c1da206e50fffd8372b744be5a610c",
+      "source_ordinals": [
+        14360,
+        14361,
+        14362,
+        14363,
+        14364
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Common_Items/Plants/plants.geo",
+      "prepared_logical_path": "data/object_library/common_decor/common_items/plants/plants.geo",
+      "bytes": 19374,
+      "sha256": "3ff6c7c2e4514e26af7320c3629762b5494bb2953d46feaee58838a91bc8e74a",
+      "source_ordinals": [
+        11096,
+        11097,
+        11099,
+        11101,
+        11102,
+        11103,
+        11108,
+        11110,
+        11112,
+        11113,
+        11114,
+        11115,
+        11116,
+        11118,
+        11119,
+        11121
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Common_Items/Tv_&_Electronic/tv_&_electronic.geo",
+      "prepared_logical_path": "data/object_library/common_decor/common_items/tv_&_electronic/tv_&_electronic.geo",
+      "bytes": 5642,
+      "sha256": "cbc385ede0b981c9507d753f47078f350d9b4790d0641ecba00d8cf5d957ae55",
+      "source_ordinals": [
+        11398,
+        11399,
+        11400
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Med_&_Sci/Medical_Items/medical_items.geo",
+      "prepared_logical_path": "data/object_library/common_decor/med_&_sci/medical_items/medical_items.geo",
+      "bytes": 39519,
+      "sha256": "af129e34d8c4fe032b6af6aed00525e4dcf3e2029042c27c0fed9e77e71830a8",
+      "source_ordinals": [
+        11220,
+        11221,
+        11222,
+        11223,
+        11224,
+        11225,
+        11226,
+        11227,
+        11228,
+        11229,
+        11230,
+        11231,
+        11232,
+        11234,
+        11235,
+        11236,
+        11237,
+        11238,
+        11239,
+        11240,
+        11241,
+        11242,
+        11243,
+        11244,
+        11245,
+        11246,
+        11247,
+        11249,
+        11250,
+        11251,
+        11253,
+        11254,
+        11255,
+        11256,
+        36038,
+        36039,
+        36040,
+        36041,
+        36042,
+        36045,
+        36046,
+        36047,
+        36049,
+        36050,
+        36053,
+        36057,
+        36062,
+        36063,
+        36064,
+        36065,
+        36066,
+        36069,
+        36070,
+        36071,
+        36072,
+        36073,
+        36075,
+        36080,
+        36081,
+        36082,
+        36083,
+        36084,
+        36087,
+        36089,
+        36090,
+        36091,
+        36094,
+        36096,
+        36097,
+        36098,
+        36099,
+        36100,
+        36103,
+        36104,
+        36105,
+        36109,
+        36110,
+        36114,
+        36124,
+        36125,
+        36128,
+        36129,
+        36133,
+        36134,
+        36137,
+        36138,
+        36142,
+        36143,
+        36146,
+        36147,
+        36153,
+        36154,
+        36155,
+        36156,
+        36157,
+        36160,
+        36161,
+        36163,
+        36164,
+        36165,
+        36166,
+        36167
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Med_&_Sci/Reclamation_Pad/reclamation_pad.geo",
+      "prepared_logical_path": "data/object_library/common_decor/med_&_sci/reclamation_pad/reclamation_pad.geo",
+      "bytes": 1596,
+      "sha256": "899c484eea007aabc138204f33e2532b1582b0c68c82b054e8def555cc7c90b1",
+      "source_ordinals": [
+        25905,
+        25906
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Office/Office_Tech/office_tech.geo",
+      "prepared_logical_path": "data/object_library/common_decor/office/office_tech/office_tech.geo",
+      "bytes": 8863,
+      "sha256": "7784c84ac2a8eb421fa48a3c508c36ebd9f6412d057a38639877859f9cbbad80",
+      "source_ordinals": [
+        9498,
+        9499,
+        9500,
+        9501,
+        9502,
+        9503,
+        9505,
+        9506
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Office/Office_Utility/office_utility.geo",
+      "prepared_logical_path": "data/object_library/common_decor/office/office_utility/office_utility.geo",
+      "bytes": 20001,
+      "sha256": "27a4f14e48e4503cf73ba8d311a0371c7c6f60a9334056cd5148a085e19db9a2",
+      "source_ordinals": [
+        11800,
+        11801,
+        11802,
+        11803,
+        11804,
+        11807,
+        11808
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Slums_&_Wastes/Junk_Barrels/junk_barrels.geo",
+      "prepared_logical_path": "data/object_library/common_decor/slums_&_wastes/junk_barrels/junk_barrels.geo",
+      "bytes": 4807,
+      "sha256": "c27b9babb6a7982895526aa21759801d9409c31efdad0b9ffeec3bf7a617093c",
+      "source_ordinals": [
+        14787,
+        14788,
+        14789,
+        14790,
+        14791,
+        14792
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Slums_&_Wastes/Junk_Lg_Items/junk_lg_items.geo",
+      "prepared_logical_path": "data/object_library/common_decor/slums_&_wastes/junk_lg_items/junk_lg_items.geo",
+      "bytes": 20580,
+      "sha256": "10969d47a9da2421f5dadad8aa084a89b75c99db2071f24513217c46f66ea159",
+      "source_ordinals": [
+        21344,
+        21345,
+        21348,
+        21351
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Slums_&_Wastes/Junk_Sm_Items/junk_sm_items.geo",
+      "prepared_logical_path": "data/object_library/common_decor/slums_&_wastes/junk_sm_items/junk_sm_items.geo",
+      "bytes": 31511,
+      "sha256": "cd4019bf752e88aa8a04fdf81a77686606dd9ad9b9dd026788eaef424eb79c5f",
+      "source_ordinals": [
+        19669,
+        19670,
+        19675,
+        19676,
+        19677,
+        19681,
+        19684
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Slums_&_Wastes/Ruin_Rail_Container/ruin_rail_container.geo",
+      "prepared_logical_path": "data/object_library/common_decor/slums_&_wastes/ruin_rail_container/ruin_rail_container.geo",
+      "bytes": 8076,
+      "sha256": "55117c466517c3057323294f1837567c8d1b4a45a8c6daa3cf13203422a9b4ee",
+      "source_ordinals": [
+        22457,
+        22458,
+        22459,
+        22460,
+        22461,
+        22462,
+        22463,
+        22464
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/Slums_&_Wastes/trash/trash.geo",
+      "prepared_logical_path": "data/object_library/common_decor/slums_&_wastes/trash/trash.geo",
+      "bytes": 73186,
+      "sha256": "68fb7ca6193ee3a5f600424886ba1310b056d8ca8a2cc1d55d0a4e8d10ec74e9",
+      "source_ordinals": [
+        11358,
+        11359,
+        11360,
+        11361,
+        11362,
+        11363,
+        11364,
+        11365,
+        11366,
+        11367,
+        11368,
+        11369,
+        11370,
+        11371,
+        11372,
+        11373,
+        11374,
+        11375,
+        11376,
+        11377,
+        11378,
+        11379
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/WareHouse/cargo_cont/cargo_cont.geo",
+      "prepared_logical_path": "data/object_library/common_decor/warehouse/cargo_cont/cargo_cont.geo",
+      "bytes": 84987,
+      "sha256": "9bc82afbac5959095eb63e34a204fc38ed375df61d4dcce1494279b35ae1f272",
+      "source_ordinals": [
+        31366
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/WareHouse/ware_CardBrd_Boxes/ware_cardbrd_boxes.geo",
+      "prepared_logical_path": "data/object_library/common_decor/warehouse/ware_cardbrd_boxes/ware_cardbrd_boxes.geo",
+      "bytes": 13066,
+      "sha256": "39da4f414559c07c0ee0094e4712b2a847befced6488cea7b4a4da36b2843db2",
+      "source_ordinals": [
+        14770,
+        14771,
+        14772,
+        14773,
+        14774,
+        14775,
+        14776,
+        14777,
+        14778
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/WareHouse/ware_crates_Lg/ware_crates_lg.geo",
+      "prepared_logical_path": "data/object_library/common_decor/warehouse/ware_crates_lg/ware_crates_lg.geo",
+      "bytes": 7211,
+      "sha256": "c250032852af5f9cde527cd50bb1076743e40f1b8ba243b6e7342befc51def8d",
+      "source_ordinals": [
+        19606,
+        19607,
+        19608,
+        19609,
+        19610,
+        19611
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/WareHouse/ware_crates_Med/ware_crates_med.geo",
+      "prepared_logical_path": "data/object_library/common_decor/warehouse/ware_crates_med/ware_crates_med.geo",
+      "bytes": 6833,
+      "sha256": "8fefc049a62608efdf355fbae0db51078477dc1fecb44ea31b983f8f8db75849",
+      "source_ordinals": [
+        7215,
+        19685,
+        19686,
+        19687,
+        19688,
+        19689,
+        19690,
+        19691,
+        19693,
+        19694
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/WareHouse/ware_crates_Sm/ware_crates_sm.geo",
+      "prepared_logical_path": "data/object_library/common_decor/warehouse/ware_crates_sm/ware_crates_sm.geo",
+      "bytes": 9418,
+      "sha256": "6784a3e6c28ace4315f02c00926a78f795821c3ad551670e4be27b3b56577e8d",
+      "source_ordinals": [
+        14733,
+        14734,
+        14735,
+        14736,
+        14737,
+        14739,
+        14740,
+        14741,
+        14742,
+        14743,
+        14745,
+        14747,
+        14748,
+        14751,
+        14752,
+        14753,
+        14754,
+        14755
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/WareHouse/ware_equipment/ware_equipment.geo",
+      "prepared_logical_path": "data/object_library/common_decor/warehouse/ware_equipment/ware_equipment.geo",
+      "bytes": 54590,
+      "sha256": "bad09e64827112ccd24abb8b47ba62bdfde6ba47220ce336e82f597754bd67ea",
+      "source_ordinals": [
+        21335,
+        21336,
+        21339,
+        21340,
+        21341,
+        21342,
+        21343
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Common_Decor/WareHouse/ware_sundry/ware_sundry.geo",
+      "prepared_logical_path": "data/object_library/common_decor/warehouse/ware_sundry/ware_sundry.geo",
+      "bytes": 42403,
+      "sha256": "6ace30fe788362fdef9f4264235f18fdf11682bbd2d0456a8018ebcd0edb13a7",
+      "source_ordinals": [
+        19696,
+        19700,
+        19701,
+        19702,
+        19705,
+        19706,
+        19708,
+        19709,
+        19710,
+        19712
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Cave_Doors/cave_doors.geo",
+      "prepared_logical_path": "data/object_library/doors/cave_doors/cave_doors.geo",
+      "bytes": 45089,
+      "sha256": "6a7fc373906ac00a7d00815f2899bcf0652ce48d2c156dbddb33eac149fdab69",
+      "source_ordinals": [
+        35065,
+        35066,
+        35067,
+        35068,
+        35069,
+        35070,
+        35075,
+        35076
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Cave_smooth_drs/cave_smooth_drs.geo",
+      "prepared_logical_path": "data/object_library/doors/cave_smooth_drs/cave_smooth_drs.geo",
+      "bytes": 68526,
+      "sha256": "a497f26118e7d5cc03c6a647d545ae727cae2ca74fd7f71c707d5ae71ff61dfc",
+      "source_ordinals": [
+        38375,
+        38377,
+        38378
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/City_Doors/city_doors.geo",
+      "prepared_logical_path": "data/object_library/doors/city_doors/city_doors.geo",
+      "bytes": 7580,
+      "sha256": "95d87316c0e2542dd9afc19fa528eedc7afe8354a1ec4562a8a5911c137f4413",
+      "source_ordinals": [
+        8617,
+        8619,
+        8620,
+        8621,
+        8622,
+        8625,
+        8626,
+        8627,
+        8630,
+        8632,
+        8633,
+        8636
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/City_Doors/doors_city_rooftopaccess01.geo",
+      "prepared_logical_path": "data/object_library/doors/city_doors/doors_city_rooftopaccess01.geo",
+      "bytes": 6374,
+      "sha256": "9631f534ddad9e56b36301f1f1822dd3f435975c6f5ca7b35a6bce6be4610626",
+      "source_ordinals": [
+        21663,
+        21666,
+        21670
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Hatch_door/hatch_door.geo",
+      "prepared_logical_path": "data/object_library/doors/hatch_door/hatch_door.geo",
+      "bytes": 6658,
+      "sha256": "162b5659a5435edc0dba4875b75f37b437b12ea730b1b94a214ca97835eada87",
+      "source_ordinals": [
+        36698
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Industrial_Doors/industrial_doors.geo",
+      "prepared_logical_path": "data/object_library/doors/industrial_doors/industrial_doors.geo",
+      "bytes": 5780,
+      "sha256": "8d2032b252766c102397d10162d9d883d908f47efc063c3e40e8f1c59717a09d",
+      "source_ordinals": [
+        17225,
+        17226,
+        17227,
+        17235,
+        17236
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Playerbase_Doors/playerbase_doors.geo",
+      "prepared_logical_path": "data/object_library/doors/playerbase_doors/playerbase_doors.geo",
+      "bytes": 2000,
+      "sha256": "390c9297e4cc0483c5a540b20d40509f09d4d11a8e239d1bf13f238db685cdaf",
+      "source_ordinals": [
+        8290
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Residential_Doors/residential_doors.geo",
+      "prepared_logical_path": "data/object_library/doors/residential_doors/residential_doors.geo",
+      "bytes": 3586,
+      "sha256": "280c48e8225ade32fdf358b8994a6590510a0fc7de923fc0426ce0e5d2495de8",
+      "source_ordinals": [
+        29023,
+        29028
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Sewer_Doors/sewer_doors.geo",
+      "prepared_logical_path": "data/object_library/doors/sewer_doors/sewer_doors.geo",
+      "bytes": 22688,
+      "sha256": "a01b0d865cb088c75801a029334aa60e4f46d68fbbf46b88888bf92081e4be3b",
+      "source_ordinals": [
+        17282,
+        17283,
+        17285,
+        17288,
+        17289,
+        17290
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Store_Doors/store_doors.geo",
+      "prepared_logical_path": "data/object_library/doors/store_doors/store_doors.geo",
+      "bytes": 4688,
+      "sha256": "ed47a911af6750f31f3003b1e6f6dd4f30fd42777b192b3cebec28ce1dcac891",
+      "source_ordinals": [
+        11265,
+        11266,
+        11267,
+        11268,
+        11269,
+        11270,
+        11271,
+        11272,
+        11273,
+        11274,
+        11275,
+        11276
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Truck_door/truck_door.geo",
+      "prepared_logical_path": "data/object_library/doors/truck_door/truck_door.geo",
+      "bytes": 2025,
+      "sha256": "f26e938389cfe699421b42b75aa306427278b4e6d88d2885965009c2e61879df",
+      "source_ordinals": [
+        37790
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Doors/Wharehouse_Doors/wharehouse_doors.geo",
+      "prepared_logical_path": "data/object_library/doors/wharehouse_doors/wharehouse_doors.geo",
+      "bytes": 5784,
+      "sha256": "a13bea58c1286231b6d047e68ba5d31186e2b62f075f5ba7a614d8cf1578b04b",
+      "source_ordinals": [
+        8562,
+        8563,
+        8564,
+        8565,
+        8566,
+        8567,
+        8568,
+        8569,
+        8570,
+        8572,
+        8573,
+        8574,
+        8575,
+        8576
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Industrial/caps_n_wires/caps_n_wires.geo",
+      "prepared_logical_path": "data/object_library/industrial/caps_n_wires/caps_n_wires.geo",
+      "bytes": 10941,
+      "sha256": "1f309ac023c5289c7c005b9ab5817c231c394fdb6ba8cdffa38440926667e076",
+      "source_ordinals": [
+        11569,
+        11583
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Industrial/ind_pipes_sm/ind_pipes_sm.geo",
+      "prepared_logical_path": "data/object_library/industrial/ind_pipes_sm/ind_pipes_sm.geo",
+      "bytes": 13354,
+      "sha256": "ae16ea31802044e4c8371a82e7b5a591c5b4e73e69c3e1c02f1c92fdf0e72b71",
+      "source_ordinals": [
+        11548,
+        11549,
+        11553,
+        11557,
+        11564,
+        11565
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Industrial/power_truss/power_truss.geo",
+      "prepared_logical_path": "data/object_library/industrial/power_truss/power_truss.geo",
+      "bytes": 14169,
+      "sha256": "3b4de873e0794d4ecaa7e1100e0bdd6bf727177f4b0a0d627344a213f5be3001",
+      "source_ordinals": [
+        19165,
+        19166,
+        19171,
+        19173
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Industrial/powerboxes/powerboxes.geo",
+      "prepared_logical_path": "data/object_library/industrial/powerboxes/powerboxes.geo",
+      "bytes": 11451,
+      "sha256": "e656dd3ad02c5da7846d1d258f62eb83235431c8ac32f0f915abd5a539140d57",
+      "source_ordinals": [
+        22348,
+        22349,
+        22350,
+        22356,
+        22357,
+        22358,
+        22359
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Industrial/powertubes/powertubes.geo",
+      "prepared_logical_path": "data/object_library/industrial/powertubes/powertubes.geo",
+      "bytes": 9260,
+      "sha256": "cb92589af11ed899086f43362f2310d3bef72600ef9a8de1e4005042ea4d4132",
+      "source_ordinals": [
+        24722,
+        24726,
+        24728
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Item_library/Healthkit/healthkit.geo",
+      "prepared_logical_path": "data/object_library/item_library/healthkit/healthkit.geo",
+      "bytes": 395,
+      "sha256": "34bf4a13bd41d5a0e5e4f6c976741ed4b367235c682c06ac8afc1680a9e54ab1",
+      "source_ordinals": [
+        5238,
+        5239,
+        5240,
+        5241,
+        5242,
+        5243,
+        5244,
+        5245,
+        5246,
+        5247,
+        5248,
+        5249,
+        5250,
+        5251,
+        5252,
+        5253,
+        5254,
+        5255,
+        5256,
+        5257,
+        5258,
+        5259,
+        5260,
+        5261,
+        5262,
+        5263,
+        5264,
+        5265,
+        5266,
+        5267,
+        5268,
+        5269,
+        5270,
+        5271,
+        5272,
+        5273,
+        5274,
+        5275,
+        5276,
+        5277,
+        5278,
+        5279,
+        5280,
+        5281,
+        5282,
+        5283,
+        5284,
+        5285,
+        5286,
+        5287,
+        5288,
+        5289,
+        5290,
+        5291,
+        5292,
+        5293,
+        5294,
+        5295,
+        5296,
+        5297,
+        5298,
+        5299,
+        5300,
+        5301,
+        5302,
+        5303,
+        5304,
+        5305,
+        5306,
+        5307,
+        5308,
+        5309,
+        25904
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Item_library/Mission_Items/mission_items.geo",
+      "prepared_logical_path": "data/object_library/item_library/mission_items/mission_items.geo",
+      "bytes": 1159847,
+      "sha256": "658a1062ed640f4cef6d122bdbe33f18b43b8d9f1b489bfc3cd3ca6042c7909b",
+      "source_ordinals": [
+        14370,
+        14378,
+        14382,
+        14383,
+        14389,
+        14392,
+        14424
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/Bushes/HedgeRow/hedgerow.geo",
+      "prepared_logical_path": "data/object_library/nature/bushes/hedgerow/hedgerow.geo",
+      "bytes": 161937,
+      "sha256": "f2f79e20fb4753ac66905b8ceb96eb3836c8e0ca69ed4246a5bfab397738c87f",
+      "source_ordinals": [
+        9263,
+        9266,
+        9267,
+        9274,
+        9275
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/Bushes/bushes/bushes.geo",
+      "prepared_logical_path": "data/object_library/nature/bushes/bushes/bushes.geo",
+      "bytes": 15418,
+      "sha256": "a1afbc32f8f75d0568c9915445cd6813755894511db62f223e8c9dbe4a0d9d4f",
+      "source_ordinals": [
+        9216,
+        9217,
+        9218,
+        9219,
+        9220,
+        9221,
+        9222,
+        9223,
+        9224,
+        9225,
+        9226,
+        9227,
+        9230
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/SmPlants/smplants.geo",
+      "prepared_logical_path": "data/object_library/nature/smplants/smplants.geo",
+      "bytes": 40832,
+      "sha256": "8c968d4a14f2936947bcdb21137ee9224f10bd5884eadcb1a28d773ac0f96dea",
+      "source_ordinals": [
+        9144,
+        9146,
+        9147,
+        9148,
+        9149,
+        9150,
+        9151,
+        9155,
+        9156,
+        9157,
+        9173,
+        9175,
+        9176,
+        9180,
+        9181
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/Trees/conifers/conifers.geo",
+      "prepared_logical_path": "data/object_library/nature/trees/conifers/conifers.geo",
+      "bytes": 28639,
+      "sha256": "a5001dac2091f7e552715bf04dc13ad159720587c1084a5676e347d984843b5a",
+      "source_ordinals": [
+        35043,
+        35044,
+        35045,
+        35046,
+        35047
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/Trees/maple/maple.geo",
+      "prepared_logical_path": "data/object_library/nature/trees/maple/maple.geo",
+      "bytes": 40547,
+      "sha256": "658c28f3b69269af45f3c9bc51a5b9b4f8503300506afb7dfc1d77623b7ee03e",
+      "source_ordinals": [
+        23734,
+        23735,
+        23736,
+        23737,
+        23741,
+        23744
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/Trees/oval/oval.geo",
+      "prepared_logical_path": "data/object_library/nature/trees/oval/oval.geo",
+      "bytes": 104366,
+      "sha256": "d6250bbbd4dcd831a01a96d28ec5b79a158a0bc504fb41c5656a9da9012e51d7",
+      "source_ordinals": [
+        23683,
+        23693,
+        23695,
+        23698,
+        23700
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/Water/calm_water/calm_water.geo",
+      "prepared_logical_path": "data/object_library/nature/water/calm_water/calm_water.geo",
+      "bytes": 2564,
+      "sha256": "d774d13eb400c5deca0b495c0dff428b02068ab617eb1888f34206e49a60d13f",
+      "source_ordinals": [
+        22252,
+        22253,
+        22255,
+        22256,
+        22257,
+        22258
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/Water/water.geo",
+      "prepared_logical_path": "data/object_library/nature/water/water.geo",
+      "bytes": 6893,
+      "sha256": "c1c6f50e868c67352f174a64536d3844006cc86b29c0c499ace15c90b961fb7d",
+      "source_ordinals": [
+        35216,
+        35218
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/cliffs128/cliffs128.geo",
+      "prepared_logical_path": "data/object_library/nature/cliffs128/cliffs128.geo",
+      "bytes": 40197,
+      "sha256": "84d2ab13e630c56c7490bc3d28406ee0a8e8cdd65fe2c1898ec600f50148e6a9",
+      "source_ordinals": [
+        35250,
+        35252,
+        35253,
+        35257,
+        35258
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/details/details.geo",
+      "prepared_logical_path": "data/object_library/nature/details/details.geo",
+      "bytes": 4357,
+      "sha256": "69fc9f477cc32646d09cd1f6460df78a30ad3f684a1ef33688feed0613596628",
+      "source_ordinals": [
+        26194,
+        26195
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/details/ground_cover/ground_cover.geo",
+      "prepared_logical_path": "data/object_library/nature/details/ground_cover/ground_cover.geo",
+      "bytes": 3053,
+      "sha256": "26eab64051545c3291e9b90fcdfc00a5095181e7af4db6934d9633f0f068fb6c",
+      "source_ordinals": [
+        9322,
+        9323,
+        9324
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/grass_plates/grass_plates.geo",
+      "prepared_logical_path": "data/object_library/nature/grass_plates/grass_plates.geo",
+      "bytes": 29499,
+      "sha256": "3ef012b72988074a639c47481e294df07193b8860ed15ad4de3c9d8e69231da4",
+      "source_ordinals": [
+        25935,
+        25936,
+        25937,
+        25938,
+        25939,
+        25940,
+        25941,
+        25949,
+        25951,
+        25953,
+        25954,
+        25955,
+        25956,
+        25958,
+        25960,
+        25963,
+        25968,
+        25969,
+        25973
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/hills/hills.geo",
+      "prepared_logical_path": "data/object_library/nature/hills/hills.geo",
+      "bytes": 288158,
+      "sha256": "f07962418b72be79ea09b3d0766e21971a0fa9df38f169e3dca9768090a3368e",
+      "source_ordinals": [
+        26097,
+        26098,
+        26099,
+        26100,
+        26101,
+        26115
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/rocks/forest_rocks/forest_rocks.geo",
+      "prepared_logical_path": "data/object_library/nature/rocks/forest_rocks/forest_rocks.geo",
+      "bytes": 22401,
+      "sha256": "abd0d359e454adbd812586bdf7fa69b43932e5e0fff08828605a76889f84f91e",
+      "source_ordinals": [
+        11184,
+        11186,
+        11200,
+        11201,
+        11202,
+        11204,
+        11205,
+        11206,
+        11207,
+        11208,
+        11209,
+        11210,
+        11211,
+        11212
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/rocks/nautre_rocks/nature_rocks.geo",
+      "prepared_logical_path": "data/object_library/nature/rocks/nautre_rocks/nature_rocks.geo",
+      "bytes": 159572,
+      "sha256": "3a47cf65440d80a6009257ddc735e08f4472dcabdbd9c85ab77ffca2283bf7fc",
+      "source_ordinals": [
+        9329,
+        9330,
+        9333,
+        9334,
+        9335,
+        9337,
+        9338,
+        9339,
+        9340,
+        9341,
+        9342,
+        9343
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/rocks/shore_rocks/shore_rocks.geo",
+      "prepared_logical_path": "data/object_library/nature/rocks/shore_rocks/shore_rocks.geo",
+      "bytes": 20925,
+      "sha256": "4e9b5311e4e152f27b9ec161ed3a7f305f5770ce87da04938fa2f1e681fcdbe2",
+      "source_ordinals": [
+        32811,
+        32812,
+        32813,
+        32814,
+        32815,
+        32816,
+        32817
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Nature/sm_grass_plates/sm_grass_plates.geo",
+      "prepared_logical_path": "data/object_library/nature/sm_grass_plates/sm_grass_plates.geo",
+      "bytes": 2701,
+      "sha256": "83ca08ccb182fac845830f3f3053133aa15c7e55660d62b6aff08b4327598cb0",
+      "source_ordinals": [
+        31495
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/City_Volumes/city_volumes.geo",
+      "prepared_logical_path": "data/object_library/omni/city_volumes/city_volumes.geo",
+      "bytes": 2477624,
+      "sha256": "a0a3ec184bda7782ffdf99ca4bd30a23a607e380838b03ec52121acdd2e0d297",
+      "source_ordinals": [
+        37851,
+        37852
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/CubeMap/cubemapgen.geo",
+      "prepared_logical_path": "data/object_library/omni/cubemap/cubemapgen.geo",
+      "bytes": 932,
+      "sha256": "74138957e2c1e62e56f76bd04e877fec5769f9dab73f55e7fc34f42f91853067",
+      "source_ordinals": [
+        8845
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/Door_Boxes/door_boxes.geo",
+      "prepared_logical_path": "data/object_library/omni/door_boxes/door_boxes.geo",
+      "bytes": 545,
+      "sha256": "7774574f63e5899a29dc4cc7d6afcfba6774174dfa0df3a8e55dd622a3d27dd0",
+      "source_ordinals": [
+        25995
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/EncounterSpawns/encounterspawns.geo",
+      "prepared_logical_path": "data/object_library/omni/encounterspawns/encounterspawns.geo",
+      "bytes": 253701,
+      "sha256": "91e4a3e93b7c8dee8880da1f29463b05c26b839b82d409fa560503484be7fd45",
+      "source_ordinals": [
+        7239,
+        7240,
+        7241,
+        7242,
+        7243,
+        7245,
+        7246,
+        7247,
+        7248,
+        7249,
+        7250,
+        7251,
+        7252,
+        7253,
+        7254,
+        7255,
+        7256,
+        7257,
+        7258,
+        7259,
+        7260,
+        7261,
+        7262,
+        7263,
+        7264,
+        7273,
+        7275,
+        7276,
+        7277,
+        7278,
+        7279,
+        7282
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/EnvironmentCollision/environmentcollision.geo",
+      "prepared_logical_path": "data/object_library/omni/environmentcollision/environmentcollision.geo",
+      "bytes": 15325,
+      "sha256": "34deedb513073da892e03b852cc59336f5e22a628f19f063885cc91a5ff78103",
+      "source_ordinals": [
+        17882,
+        17883,
+        17884
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/MissionBeacons/missionbeacons.geo",
+      "prepared_logical_path": "data/object_library/omni/missionbeacons/missionbeacons.geo",
+      "bytes": 528895,
+      "sha256": "4133bc08a2714ae2080a55d504ca06ecfdf2569cc83109bdd30a25f1b936ab3f",
+      "source_ordinals": [
+        514,
+        1256,
+        2476,
+        2651,
+        5347,
+        5366,
+        7355,
+        7356,
+        7359,
+        7362,
+        7363,
+        7366,
+        7369,
+        7370,
+        7371,
+        7372,
+        7374,
+        7376,
+        7377,
+        7382,
+        7384
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/MissionLabels/missionlabels.geo",
+      "prepared_logical_path": "data/object_library/omni/missionlabels/missionlabels.geo",
+      "bytes": 475806,
+      "sha256": "eea6588421cfbbae21ab31265afded11c175d4f06e06ed3248c853ef25964fca",
+      "source_ordinals": [
+        39176
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/Patrol_Beacons/patrol_beacons.geo",
+      "prepared_logical_path": "data/object_library/omni/patrol_beacons/patrol_beacons.geo",
+      "bytes": 15383,
+      "sha256": "f69f322e1225fea44cbcbd56dcad17c952f380aa4e06a1aa70a2b13b0b0a786f",
+      "source_ordinals": [
+        36262,
+        36263,
+        36264,
+        36266,
+        36267,
+        36268,
+        36269,
+        36270,
+        36271,
+        36272,
+        36273,
+        36274,
+        36275,
+        36276,
+        36277,
+        36278,
+        36279,
+        36280
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/Vol_Trigger_Gen/vol_trigger_gen.geo",
+      "prepared_logical_path": "data/object_library/omni/vol_trigger_gen/vol_trigger_gen.geo",
+      "bytes": 10043,
+      "sha256": "e62bb1438dde6452830cc088889a020b5e437ea155163412854c1700aa2f5d10",
+      "source_ordinals": [
+        8315
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/Vol_Trigger_Spawn/vol_trigger_spawn.geo",
+      "prepared_logical_path": "data/object_library/omni/vol_trigger_spawn/vol_trigger_spawn.geo",
+      "bytes": 4938,
+      "sha256": "82c5ab8d9afe858300251869f69b63af3a2953edf30758f9b2b844d8b9c0fc58",
+      "source_ordinals": [
+        36643
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/collision_box/collision_box.geo",
+      "prepared_logical_path": "data/object_library/omni/collision_box/collision_box.geo",
+      "bytes": 1750,
+      "sha256": "8384cbdde2ccc22190349a0aa579d4004c7ecb728c3acf8b34334c4f0d080289",
+      "source_ordinals": [
+        7521
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/neighborhood_markers/neighborhood_markers.geo",
+      "prepared_logical_path": "data/object_library/omni/neighborhood_markers/neighborhood_markers.geo",
+      "bytes": 6908,
+      "sha256": "228df3706b5c44b00feabf7d2db9132383545c4a8ddacd7e3f3a3716b3adb35d",
+      "source_ordinals": [
+        29947,
+        29948,
+        29949,
+        29950,
+        29951
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Omni/omni.geo",
+      "prepared_logical_path": "data/object_library/omni/omni.geo",
+      "bytes": 258442,
+      "sha256": "082c3f8162a0eb93d98a08d14220873dd1a8bc2ddb644019a666f46f9c352269",
+      "source_ordinals": [
+        580,
+        7433,
+        7434,
+        7436,
+        7437,
+        7438,
+        7439,
+        7441,
+        7442,
+        7443,
+        7444,
+        7445,
+        7446,
+        7447,
+        7448,
+        7449,
+        7450,
+        7453,
+        7454,
+        7455,
+        7457,
+        7458,
+        7467,
+        7469,
+        37849
+      ]
+    },
+    {
+      "source_geo_name": "object_library/P_Warehouse/Props/Boxes/p_warehouse_boxes.geo",
+      "prepared_logical_path": "data/object_library/p_warehouse/props/boxes/p_warehouse_boxes.geo",
+      "bytes": 232286,
+      "sha256": "94f35aef9e189fa522b1a635be26f96240679652a4ada7a1059fee9b952ffc04",
+      "source_ordinals": [
+        6542,
+        19613,
+        19614,
+        19615,
+        19616,
+        19617,
+        19618,
+        19619,
+        19620,
+        19621,
+        19622,
+        19623,
+        19625,
+        19626,
+        19627,
+        19629,
+        19631,
+        19632,
+        19633,
+        19634,
+        19635,
+        19636,
+        19637,
+        19638,
+        19639,
+        19640,
+        19641
+      ]
+    },
+    {
+      "source_geo_name": "object_library/P_Warehouse/Props/Equipment/p_warehouse_equipment.geo",
+      "prepared_logical_path": "data/object_library/p_warehouse/props/equipment/p_warehouse_equipment.geo",
+      "bytes": 634260,
+      "sha256": "66837c1c694961bec4aeb627f990fe2676473f7455074ded392e45d5fcb89d44",
+      "source_ordinals": [
+        21440
+      ]
+    },
+    {
+      "source_geo_name": "object_library/P_Warehouse/Props/Pipes/Electrical/p_warehouse_electricalboxes.geo",
+      "prepared_logical_path": "data/object_library/p_warehouse/props/pipes/electrical/p_warehouse_electricalboxes.geo",
+      "bytes": 28084,
+      "sha256": "6dc4d0f79f1763de45cc028db58779ca029da04aa60d0714a7e1e174d0bc374b",
+      "source_ordinals": [
+        38617,
+        38618,
+        38620,
+        38621
+      ]
+    },
+    {
+      "source_geo_name": "object_library/P_Warehouse/Props/Pipes/Large_Pipes/p_warehouse_largepipes.geo",
+      "prepared_logical_path": "data/object_library/p_warehouse/props/pipes/large_pipes/p_warehouse_largepipes.geo",
+      "bytes": 93645,
+      "sha256": "291aecf4956afc6516d25fade6473dcff2093cb67497540f3042334eb6f278ca",
+      "source_ordinals": [
+        38598,
+        38599,
+        38600,
+        38601,
+        38602,
+        38603,
+        38605,
+        38606,
+        38607,
+        38609,
+        38610,
+        38611,
+        38612,
+        38613,
+        38615
+      ]
+    },
+    {
+      "source_geo_name": "object_library/P_Warehouse/Props/Pipes/Small_Pipes/p_warehouse_small_pipes.geo",
+      "prepared_logical_path": "data/object_library/p_warehouse/props/pipes/small_pipes/p_warehouse_small_pipes.geo",
+      "bytes": 62051,
+      "sha256": "f862a7f631ec0ccf811dff8e9ef8772acdb5806d99f5c8cc1c25d2f66b34ff21",
+      "source_ordinals": [
+        38626,
+        38629
+      ]
+    },
+    {
+      "source_geo_name": "object_library/P_Warehouse/Props/StorageRacks/p_warehouse_racks.geo",
+      "prepared_logical_path": "data/object_library/p_warehouse/props/storageracks/p_warehouse_racks.geo",
+      "bytes": 210205,
+      "sha256": "452154b0281f27734eccbfd0c2a5b53776690536d69243c08362742ce5563d60",
+      "source_ordinals": [
+        38545,
+        38547,
+        38548,
+        38555
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Architect_Entertainment/architect_entertainment.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/architect_entertainment/architect_entertainment.geo",
+      "bytes": 710952,
+      "sha256": "c1c0989bd47ddfe2d151ae349602e0384e67772df5987e260bcbe31b2bcd7ee1",
+      "source_ordinals": [
+        24738,
+        24739,
+        24740,
+        24741,
+        24742,
+        24743,
+        24744,
+        24745,
+        24746,
+        24747,
+        24748,
+        24749,
+        24751,
+        24752,
+        24753,
+        24754,
+        24755,
+        24756,
+        24757,
+        24758,
+        24759,
+        24762,
+        24763,
+        24764,
+        24765,
+        24766,
+        24767,
+        24768,
+        24769,
+        24771,
+        24772,
+        24773,
+        24774,
+        24775,
+        24776,
+        24777,
+        24778,
+        24779,
+        24780,
+        24781,
+        24782,
+        24784,
+        24785,
+        24786,
+        24787,
+        24788,
+        24789,
+        24790,
+        24791,
+        24792,
+        24793,
+        24794,
+        24795,
+        24796,
+        24797,
+        24798,
+        24799,
+        24800,
+        24801,
+        24802,
+        24803,
+        24804,
+        24805,
+        24806,
+        24807,
+        24808,
+        25118,
+        25254
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Architect_Entertainment/architect_entertainment_doors.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/architect_entertainment/architect_entertainment_doors.geo",
+      "bytes": 10261,
+      "sha256": "fbed6f7fe714ba89b2ded1453af957b2b3ae18f50dad4ab8dbae84fbb818ff21",
+      "source_ordinals": [
+        25603,
+        25604,
+        25607,
+        25609
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Architect_Entertainment/architect_entertainment_elevs.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/architect_entertainment/architect_entertainment_elevs.geo",
+      "bytes": 34387,
+      "sha256": "0276a6428576191d34e8456b5ac1e3d88e7d05d820800b6f2952c3ab415a3965",
+      "source_ordinals": [
+        25919,
+        25920
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Architect_Entertainment/architect_entertainment_exterior.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/architect_entertainment/architect_entertainment_exterior.geo",
+      "bytes": 319598,
+      "sha256": "ed0221d33ebeb10922803b94626da6ba8fd4ec5dda392c5c776c7be94b19df71",
+      "source_ordinals": [
+        25926,
+        25927,
+        25928,
+        25929,
+        25930,
+        25931,
+        25934
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Architect_Entertainment/architect_entertainment_props.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/architect_entertainment/architect_entertainment_props.geo",
+      "bytes": 61241,
+      "sha256": "0df1c6b31ee7bb9993dfbd8638ca4738e12d54febef9729ff50b1f16a0e8905d",
+      "source_ordinals": [
+        25610,
+        25611,
+        25612,
+        25613,
+        25614,
+        25615,
+        25616,
+        25617,
+        25618,
+        25619
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Architect_Entertainment/architect_entertainment_tablet.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/architect_entertainment/architect_entertainment_tablet.geo",
+      "bytes": 6923,
+      "sha256": "4ea0db7d491994a036286828e5125b94a8f8ca483039d9786a9e9213903ba71b",
+      "source_ordinals": [
+        25620,
+        25621
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/AuctionHouse/auctionhouse.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/auctionhouse/auctionhouse.geo",
+      "bytes": 1385430,
+      "sha256": "8ded00fceb0407c11c52e508d71bbfec0cdcaa045bcdd0b65a15db6dde47afb3",
+      "source_ordinals": [
+        31397,
+        31398,
+        31400,
+        31401,
+        31402,
+        31406,
+        31407
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Freedom_Corps/Freedom_Corp_Propaganda/freedom_corp_propaganda.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/freedom_corps/freedom_corp_propaganda/freedom_corp_propaganda.geo",
+      "bytes": 3572,
+      "sha256": "1f38360de451ac09d4cf71279db85b3a5ecb152495838095ce6ddd6e799c3f72",
+      "source_ordinals": [
+        11674,
+        11796
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Freedom_Corps/freedom_corps.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/freedom_corps/freedom_corps.geo",
+      "bytes": 271007,
+      "sha256": "2f54dbd7521af7151c90259b8d61dc0e8cbc3281b963f20be136cb9a49ab592f",
+      "source_ordinals": [
+        14101
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Hospital/hospital.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/hospital/hospital.geo",
+      "bytes": 11044,
+      "sha256": "7fa4793dd81f8ddac4f16a5896e74c1fabc2eb54cc90de6c0bbd267577f766b7",
+      "source_ordinals": [
+        35292,
+        35293,
+        35296,
+        35297,
+        35298
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Medical_Clinic/medical_clinic.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/medical_clinic/medical_clinic.geo",
+      "bytes": 108669,
+      "sha256": "54a506af63ce8b691e4e883bb19786c93f3cc5539577126506242a8dcd195813",
+      "source_ordinals": [
+        25622,
+        25623,
+        25625,
+        25626,
+        25629,
+        25631,
+        25634,
+        25643,
+        25645,
+        25647,
+        25648,
+        25649,
+        25650,
+        25651,
+        25658,
+        25659,
+        25660,
+        25661,
+        25663,
+        25665,
+        25666,
+        35558,
+        35781,
+        36023,
+        36255
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Reactor_control/Rctr_elemts/rctr_elemts.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/reactor_control/rctr_elemts/rctr_elemts.geo",
+      "bytes": 62058,
+      "sha256": "d3dcd277d0786cf281e5d294bfc0a121e962af3fe7e90dcadef332b7095ce99b",
+      "source_ordinals": [
+        17906,
+        17909,
+        17910,
+        17911,
+        17919,
+        17920,
+        17950
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Shop_interiors/Shop_int_nat/shop_int_nat.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/shop_interiors/shop_int_nat/shop_int_nat.geo",
+      "bytes": 47152,
+      "sha256": "9f32f62bcf06a767a06e36a9da4b3f34630bfcffcdb4c32567d1dc6d1e7fee14",
+      "source_ordinals": [
+        9672
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/Shop_interiors/Shop_tailor/shop_tailor.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/shop_interiors/shop_tailor/shop_tailor.geo",
+      "bytes": 252088,
+      "sha256": "98f0d86d789f90fc35e5e9f5008bf987ef97ba90998cae99f5c9930036fa80d9",
+      "source_ordinals": [
+        4899,
+        32125,
+        32126,
+        32127,
+        32128,
+        32129,
+        32130,
+        32132,
+        32133,
+        32134,
+        32137,
+        32138,
+        32139,
+        32140,
+        32141,
+        32142,
+        32143,
+        32144,
+        32145,
+        32146,
+        32147,
+        32148,
+        32149,
+        32150,
+        32151,
+        32152,
+        32153,
+        32154,
+        32155,
+        32156,
+        32157,
+        32158,
+        32164,
+        32165,
+        32166,
+        32167,
+        32168,
+        32170,
+        32171,
+        32172,
+        32173,
+        32174,
+        32175,
+        32176,
+        32177,
+        32178,
+        32179,
+        32180,
+        32181,
+        32182,
+        32184,
+        32185,
+        32186,
+        32187,
+        32188,
+        32189,
+        32190,
+        32191,
+        32193,
+        32194,
+        32195,
+        32196
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/phalanx/phlx_building/phlx_building.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/phalanx/phlx_building/phlx_building.geo",
+      "bytes": 100124,
+      "sha256": "c63cf240c99574912ac17f981057b7e26e865cab6b6f027f6c8db7261aa8cd5e",
+      "source_ordinals": [
+        26521
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/phalanx/phlx_doors/phlx_doors.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/phalanx/phlx_doors/phlx_doors.geo",
+      "bytes": 1233,
+      "sha256": "0894f394781b7d991eef8a55bbdd5134c187dc0bb7f9bb815b9d45b1799da377",
+      "source_ordinals": [
+        27131
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/phalanx/phlx_elements/phlx_elements.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/phalanx/phlx_elements/phlx_elements.geo",
+      "bytes": 606156,
+      "sha256": "d72f0726826896a1397cc1d9fe6c75a4e0bc365d2292224263063cfa65621c9c",
+      "source_ordinals": [
+        3644,
+        3665,
+        3806,
+        27089,
+        27090,
+        27093,
+        27094,
+        27096,
+        27098,
+        27101,
+        27103,
+        27105,
+        27106,
+        27107,
+        27109,
+        27117,
+        27118,
+        27119,
+        27120,
+        27121,
+        27126,
+        27127
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/phalanx/phlx_interior/phlx_interior.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/phalanx/phlx_interior/phlx_interior.geo",
+      "bytes": 2749813,
+      "sha256": "68633bf74b003be64b44e52a394eccdbcc739097f8f4d74dd8cd5ed9865b602e",
+      "source_ordinals": [
+        3765,
+        18242,
+        18243,
+        18245,
+        18247,
+        18251,
+        18253,
+        18254,
+        18263,
+        18264,
+        18265,
+        18266,
+        18267,
+        18268,
+        18271,
+        18272,
+        18273,
+        18275,
+        18276,
+        18278,
+        18279,
+        18285,
+        18290,
+        18291,
+        18292,
+        18294,
+        18295,
+        18296,
+        18297,
+        18303,
+        18304,
+        18305,
+        18307,
+        18309,
+        18311,
+        18312,
+        18313,
+        18314,
+        18315,
+        18317,
+        18318,
+        18324,
+        18325,
+        18326,
+        18327,
+        18329,
+        18331,
+        18332,
+        18333,
+        18347,
+        18348,
+        18349,
+        18391,
+        18402,
+        18404,
+        18405,
+        18406,
+        18407,
+        18408,
+        18409,
+        18413,
+        18414,
+        18416,
+        18417,
+        18418,
+        18419,
+        18420,
+        18421,
+        18422,
+        18423,
+        18425,
+        18426,
+        18429,
+        18430
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/phalanx/phlx_sign/phlx_sign.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/phalanx/phlx_sign/phlx_sign.geo",
+      "bytes": 6864,
+      "sha256": "99230cd9816c526ac34c2d058c6dcdc7a4e99cade2a7c54ad61f070c5e2edbb8",
+      "source_ordinals": [
+        27080,
+        27081,
+        27082,
+        27083,
+        27084,
+        27085,
+        27086,
+        27087,
+        27088
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/elements/pipes/pipes.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/elements/pipes/pipes.geo",
+      "bytes": 33452,
+      "sha256": "ba07b1a5ae3ef75d9700c9a413bfc9fc60e9d163666dbc4002d5106d18a7c990",
+      "source_ordinals": [
+        28115,
+        28116,
+        28117,
+        28118,
+        28119,
+        28120,
+        28121,
+        28123,
+        28124,
+        28125,
+        28126,
+        28127,
+        28128,
+        28129,
+        28131,
+        28132,
+        28133,
+        28134,
+        28135,
+        28136
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/structure/balconies/balconies.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/structure/balconies/balconies.geo",
+      "bytes": 16194,
+      "sha256": "caf0e7235bfbd9ac1d96ee2cf9e92146a84a1d0921cc13d3deea86d8e603197a",
+      "source_ordinals": [
+        28147,
+        28148,
+        28149,
+        28150,
+        28151,
+        28152,
+        28153,
+        28154,
+        28155,
+        28156,
+        28157,
+        28158,
+        28159,
+        28160,
+        28161
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/structure/floor/floor.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/structure/floor/floor.geo",
+      "bytes": 763,
+      "sha256": "20e8119dd6ffe42477b3bea3afa426fa606dc2109e6c09e6c8780a51b929a734",
+      "source_ordinals": [
+        28205,
+        28206,
+        28207
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/structure/portal/portal.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/structure/portal/portal.geo",
+      "bytes": 111383,
+      "sha256": "20e7893dc8a371bf20c136b6db3cdf732d642948dd93090f01c2f989c4655f0d",
+      "source_ordinals": [
+        28162,
+        28163,
+        28164,
+        28165,
+        28166,
+        28167,
+        28168,
+        28169,
+        28170,
+        28171,
+        28172,
+        28173,
+        28174,
+        28175,
+        28176,
+        28178,
+        28179
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/structure/stairs/stairs.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/structure/stairs/stairs.geo",
+      "bytes": 19291,
+      "sha256": "046e8e56285bba64c3447b23b436eaa52fd1e5d74b9dbf0837fbb82c039725b7",
+      "source_ordinals": [
+        28180,
+        28181
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/structure/walls/walls.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/structure/walls/walls.geo",
+      "bytes": 2126,
+      "sha256": "8a9c8bd76437c54824895bbf9e03642d6a6cd793d035a8c16a3ffb4ea5a32e16",
+      "source_ordinals": [
+        28137,
+        28143,
+        28144,
+        28145
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/trays/doors/doors.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/trays/doors/doors.geo",
+      "bytes": 474,
+      "sha256": "6833784906dbfce205019b58bb0658e37fba8f175d98f7a99f70181adc31cb4b",
+      "source_ordinals": [
+        28104
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/trays/lobby/lobby.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/trays/lobby/lobby.geo",
+      "bytes": 120302,
+      "sha256": "3ff3b1a71e99556c81759ab6bccd5e491a9354b1346bad4a82d3ea2d0adf53a6",
+      "source_ordinals": [
+        11965,
+        11966
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/portal_industries/prtl_interior/trays/portal_room/portal_room.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/portal_industries/prtl_interior/trays/portal_room/portal_room.geo",
+      "bytes": 64487,
+      "sha256": "5dc6f8067396451e0ef34fd42baff7c9aface2fdff6ed1b5db03e06d4c418aff",
+      "source_ordinals": [
+        3201,
+        28210,
+        28211
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/trainstation/trainstation.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/trainstation/trainstation.geo",
+      "bytes": 66919,
+      "sha256": "e88a1246c46c634a3b95b94531697dc4f52ba3a65b95f01d41764191e05372bf",
+      "source_ordinals": [
+        31802,
+        31803,
+        31804,
+        31805,
+        31806,
+        31807,
+        31808,
+        31809,
+        31810,
+        31811,
+        31812,
+        31813,
+        31814,
+        31815,
+        31816,
+        31817,
+        31818,
+        31820,
+        31821,
+        31822,
+        31823,
+        31824,
+        31825,
+        31826,
+        31827,
+        31828,
+        31830,
+        31831,
+        31832
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Special_Buildings/vault_reserve/vault_reserve.geo",
+      "prepared_logical_path": "data/object_library/special_buildings/vault_reserve/vault_reserve.geo",
+      "bytes": 64853,
+      "sha256": "9372752dd5026b293e18b24285caf7a437e5871597aab38531e09761184fc699",
+      "source_ordinals": [
+        29054,
+        29055,
+        29056
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/blimp_paths/blimp_paths.geo",
+      "prepared_logical_path": "data/object_library/streets/blimp_paths/blimp_paths.geo",
+      "bytes": 6893,
+      "sha256": "69cf8cba0b22996d74845a129a6bc87d026b3378cdb4aad7f1967d47e17df1e7",
+      "source_ordinals": [
+        8810,
+        8811,
+        8812,
+        8813,
+        8814,
+        8815
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/dirt_roads/dirt_roads.geo",
+      "prepared_logical_path": "data/object_library/streets/dirt_roads/dirt_roads.geo",
+      "bytes": 28940,
+      "sha256": "7213c3835a36f1745e923958e3f65197bfcc516bc36aaec41a123a68e0784c5a",
+      "source_ordinals": [
+        22496,
+        22499,
+        22500,
+        22501
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Docks/dock_dirt_piles/dock_dirt_piles.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/docks/dock_dirt_piles/dock_dirt_piles.geo",
+      "bytes": 99833,
+      "sha256": "43aaa4e6803b39528ccf0e3a73d68e9ee77d3c7bcc6a939d1899f73e94484d42",
+      "source_ordinals": [
+        22418,
+        22419,
+        22420,
+        22421,
+        22422,
+        22425
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Fence/Chainlink/chainlink.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/fence/chainlink/chainlink.geo",
+      "bytes": 15792,
+      "sha256": "d3bb519ace9e116eb7666371d46f1c4539b7e360b59fb8461fb7f2e93082ddab",
+      "source_ordinals": [
+        17477,
+        17478,
+        17479,
+        17480,
+        17481,
+        17482,
+        17483,
+        17484
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Fence/Ironrod/ironrod.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/fence/ironrod/ironrod.geo",
+      "bytes": 28703,
+      "sha256": "3fa7d3cc4264ae831c9ecc65b759da0ca43d03c2204da0a5a20c7a39dd9feaf0",
+      "source_ordinals": [
+        21409,
+        21410,
+        21411,
+        21412,
+        21417,
+        21424
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Fence/barbwire/barbwire.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/fence/barbwire/barbwire.geo",
+      "bytes": 11183,
+      "sha256": "7b203c8b14378c0e7048c6ff0baae41d7f21f2fc33e1c8a5850d37021744d24c",
+      "source_ordinals": [
+        17527,
+        17528,
+        17529,
+        17530,
+        17531,
+        17533,
+        17534,
+        17544
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Fence/gate/gate.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/fence/gate/gate.geo",
+      "bytes": 11071,
+      "sha256": "284a11d94e06e5d3c3dade13b186ea7b38503efeae739890577f0e61992bddde",
+      "source_ordinals": [
+        17440,
+        17441,
+        17442,
+        17443,
+        17444,
+        17445,
+        17446,
+        17447,
+        17450,
+        17452
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Fence/slat/slat.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/fence/slat/slat.geo",
+      "bytes": 2359,
+      "sha256": "b2760d2fd8d1bae134ad9fd69d9526792d1f898c2e91844624719463dbccdb5e",
+      "source_ordinals": [
+        17506,
+        17507,
+        17508,
+        17509,
+        17510,
+        17511,
+        17512,
+        17513
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Graffiti/graffiti.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/graffiti/graffiti.geo",
+      "bytes": 1439,
+      "sha256": "348920504f2eeae293eb9de70b1db5e842b9d4a5ff16c872a6e488f59370d5bd",
+      "source_ordinals": [
+        19465,
+        19466,
+        19467,
+        19468,
+        19469,
+        19470
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Parked_Cars/Parked_Compact/parked_compact.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/parked_cars/parked_compact/parked_compact.geo",
+      "bytes": 28941,
+      "sha256": "84dc243e4c6ce31f6201a9f78d6ed5dd6bb3c79db0d482dfcb38415b5468752e",
+      "source_ordinals": [
+        21358,
+        21359,
+        21360,
+        21361
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Parked_Cars/Parked_Lux1/parked_lux1.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/parked_cars/parked_lux1/parked_lux1.geo",
+      "bytes": 71141,
+      "sha256": "51593ee217f7f2693d4f6c3c1c976826ec395e191bd13b481ff74ed1b4448fbb",
+      "source_ordinals": [
+        21352,
+        21354,
+        21355
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Parked_Cars/Parked_Lux2/parked_lux2.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/parked_cars/parked_lux2/parked_lux2.geo",
+      "bytes": 31764,
+      "sha256": "eb7f37803f2c2d1b4e7e05f781fbfc532d175a2e11757bdd617b244677f3e72e",
+      "source_ordinals": [
+        21370,
+        21371,
+        21372,
+        21373
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Parked_Cars/Parked_Semi/semi.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/parked_cars/parked_semi/semi.geo",
+      "bytes": 169067,
+      "sha256": "c8d8928a29ad2981bf559dfe2b8c7dac081a909f723dca40f73c446c3bb31450",
+      "source_ordinals": [
+        19598,
+        19599,
+        19604
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Parked_Cars/Parked_Sport1/parked_sport1.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/parked_cars/parked_sport1/parked_sport1.geo",
+      "bytes": 56407,
+      "sha256": "b317d6aad3db754d794a9eaff3c52fc3f8ef8d29957ecafea75dfb6e41437e82",
+      "source_ordinals": [
+        21364,
+        21365,
+        21366,
+        21367
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Parked_Cars/Parked_Sport2/parked_sport2.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/parked_cars/parked_sport2/parked_sport2.geo",
+      "bytes": 28753,
+      "sha256": "69b5e03a6c7435f9c292a2432a69abb98baa4398528d38c002b9e89ee749d1b3",
+      "source_ordinals": [
+        21376,
+        21377,
+        21378,
+        21379
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/Parked_Cars/Parked_Truck/parked_truck.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/parked_cars/parked_truck/parked_truck.geo",
+      "bytes": 29957,
+      "sha256": "58b74a9accafae3b34106c8670eaf20c83bf43a683172d8aa3631cfd94eaafc2",
+      "source_ordinals": [
+        21382,
+        21383,
+        21384
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/fire_escapes/fire_escapes.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/fire_escapes/fire_escapes.geo",
+      "bytes": 14326,
+      "sha256": "4f6da9786e6e3510e921fd158f466372efe43f8a6f631fb7637b6a71254d5877",
+      "source_ordinals": [
+        21178,
+        21179,
+        21180,
+        21181,
+        21182,
+        21183,
+        21184,
+        21185,
+        21186,
+        21187,
+        21188,
+        21189,
+        21190,
+        21191
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/fountains/fountains.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/fountains/fountains.geo",
+      "bytes": 3635,
+      "sha256": "12bee8599fc5c18c858ec96d0fcc856b2528385f0930272c094663c06b686192",
+      "source_ordinals": [
+        26083,
+        26084,
+        26085,
+        26086,
+        26087
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/gaurdrail/gaurdrail.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/gaurdrail/gaurdrail.geo",
+      "bytes": 6178,
+      "sha256": "54dafca6cbf4973824d00f5cc5631d0bb8b97d07ff01a4d4cc16cf5c83c7125b",
+      "source_ordinals": [
+        30183
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/information_post/information_post.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/information_post/information_post.geo",
+      "bytes": 6283,
+      "sha256": "c24e23a349aa4787fcb1b04b1d241faa12db9bff92df9627a54a989d0fd3a5dd",
+      "source_ordinals": [
+        26494,
+        26495,
+        26496,
+        26497
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/kiosks/kiosks.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/kiosks/kiosks.geo",
+      "bytes": 30687,
+      "sha256": "515e4db3990721923bdebb53c7fcf70977b860904df5a642ac3481626aa5d8c7",
+      "source_ordinals": [
+        8255,
+        8256,
+        8257,
+        8258,
+        8259,
+        8260,
+        8263,
+        8264,
+        8265,
+        8266,
+        8267,
+        8268,
+        8269,
+        8270,
+        8271,
+        8272,
+        8273,
+        8274,
+        8275
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/lights/streetlights/streetlights.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/lights/streetlights/streetlights.geo",
+      "bytes": 23836,
+      "sha256": "d59cc677fa38be92dbc719bc4d5b57e4dac2c8da883cf52ecb283e631ed63233",
+      "source_ordinals": [
+        17821,
+        17822,
+        17823,
+        17824,
+        17826,
+        17827,
+        17828,
+        17829,
+        17830,
+        17831,
+        17832
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/lights/trafficlights/trafficlights.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/lights/trafficlights/trafficlights.geo",
+      "bytes": 18374,
+      "sha256": "e68b81f44bfab3fb658993d95aeace2d041097a5e75a20254370700b631d8764",
+      "source_ordinals": [
+        19419,
+        19420,
+        19421,
+        19422,
+        19423,
+        19424,
+        19425
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/marble_benches/marble_benches.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/marble_benches/marble_benches.geo",
+      "bytes": 1819,
+      "sha256": "e48c2940aab47bb3971317af7947ea7b5ca002a53d2ca53cebf678aa91ba1e00",
+      "source_ordinals": [
+        26062,
+        26064,
+        26066
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/misc_sm/misc_sm.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/misc_sm/misc_sm.geo",
+      "bytes": 51138,
+      "sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4",
+      "source_ordinals": [
+        19040,
+        19041,
+        19042,
+        19043,
+        19044,
+        19045,
+        19046,
+        19047,
+        19048,
+        19049,
+        19050,
+        19052,
+        19053,
+        19054,
+        19055,
+        19056,
+        19058,
+        19059,
+        19060,
+        19061,
+        19062,
+        19063
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/planters/planters.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/planters/planters.geo",
+      "bytes": 12440,
+      "sha256": "942cec5b1bd559747e48689f5f5fc3953525b0c14cd494fe3ccf0ba3562de349",
+      "source_ordinals": [
+        9310,
+        9312,
+        9316,
+        9318,
+        9319,
+        9320,
+        9321
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/signs/Filler_Bldgs/filler_bldgs.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/signs/filler_bldgs/filler_bldgs.geo",
+      "bytes": 45144,
+      "sha256": "d17d7ee4efdaf41d2accf32e884b62d058a5d958bb28b7fc061b5c795268b8ba",
+      "source_ordinals": [
+        22113,
+        22114,
+        22115,
+        22116,
+        22117,
+        22118,
+        22119,
+        22158,
+        22159,
+        22160,
+        22161
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/signs/freeway/freeway_signs/freeway_signs.geo",
+      "bytes": 14425,
+      "sha256": "182d1da1f1b2dd78d8ad803e69fa555341ee7e8bc1a7013be7195d1164ac055a",
+      "source_ordinals": [
+        30754,
+        30755,
+        30756,
+        30757
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/signs/road_sm/road_sm.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/signs/road_sm/road_sm.geo",
+      "bytes": 7551,
+      "sha256": "f1a4d1047a174abbfe4f57d1f9425ddbb6c820d729b7e02b419fe20530a036e9",
+      "source_ordinals": [
+        30582,
+        30583,
+        30584,
+        30587
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/signs/xtralarge/xtralarge.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/signs/xtralarge/xtralarge.geo",
+      "bytes": 34657,
+      "sha256": "5028572dabc2bd792e4fb56b86bb8d3a8f6d59aea286ca178e3e2cd2290b5ef5",
+      "source_ordinals": [
+        32023,
+        32024,
+        32025,
+        32026,
+        32027,
+        32028,
+        32029,
+        32030,
+        32035,
+        32036,
+        32037,
+        32038,
+        32039,
+        32040,
+        32041,
+        32042,
+        32043,
+        32046,
+        32047,
+        32050,
+        32051,
+        32052,
+        32053,
+        32059,
+        32060,
+        32063
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/spotlights/spotlights.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/spotlights/spotlights.geo",
+      "bytes": 17487,
+      "sha256": "d2c213f1b3d3a99ea65e711a98711391816d29e5506719d7b4c7988f2080f307",
+      "source_ordinals": [
+        33073
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/statues/statues.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/statues/statues.geo",
+      "bytes": 315801,
+      "sha256": "06fa2d634009125897bf50c6974c49ae4273b64394f0aef357077a97d6610de8",
+      "source_ordinals": [
+        26068
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/telepole/telepole.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/telepole/telepole.geo",
+      "bytes": 15261,
+      "sha256": "06c333f88bcfba8a149a54b2948e0496777fe9e4cd7b2836f424b79872e69183",
+      "source_ordinals": [
+        22361,
+        22362,
+        22363,
+        22364,
+        22365,
+        22366,
+        22367,
+        22368,
+        22369,
+        22370,
+        22371,
+        22372,
+        22375
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/elements/walls/concrete1/concrete1.geo",
+      "prepared_logical_path": "data/object_library/streets/elements/walls/concrete1/concrete1.geo",
+      "bytes": 2731,
+      "sha256": "bdcc4641c540943dc37a536326e4c5f2b53e2c585dbfd7f3388e886f3d5c377e",
+      "source_ordinals": [
+        32115,
+        32116,
+        32117,
+        32118,
+        32119
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/eltrain/eltrain.geo",
+      "prepared_logical_path": "data/object_library/streets/eltrain/eltrain.geo",
+      "bytes": 46112,
+      "sha256": "2738b56f1caa3828b8971e9aa1dc5719bb5320b74aa8776e671c0fc6fada5e17",
+      "source_ordinals": [
+        26124,
+        26125,
+        26126,
+        26128,
+        26129,
+        26130,
+        26131,
+        26132,
+        26133,
+        26134,
+        26135,
+        26136,
+        26137,
+        26138,
+        26140,
+        26143,
+        26144,
+        26145,
+        26147,
+        26148,
+        26149,
+        26150,
+        26151,
+        26152,
+        26153,
+        26154,
+        26155
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/overpass/overpass.geo",
+      "prepared_logical_path": "data/object_library/streets/overpass/overpass.geo",
+      "bytes": 98378,
+      "sha256": "3dd055e27533f8a6815f05d62a4db62c4ff5d6f3da67dd5cef5968c85874e4c5",
+      "source_ordinals": [
+        32819,
+        32821,
+        32822,
+        32823,
+        32824,
+        32825,
+        32826,
+        32827,
+        32828,
+        32829,
+        32834,
+        32839,
+        32840,
+        32841
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/road_2lane/road_2lane.geo",
+      "prepared_logical_path": "data/object_library/streets/road_2lane/road_2lane.geo",
+      "bytes": 43148,
+      "sha256": "0e71cc406abe5759ed0e8be45d339a359d83f2e550aa5852954b5eb6a51792ae",
+      "source_ordinals": [
+        30621,
+        30622,
+        30623,
+        30625,
+        30626,
+        30632,
+        30633,
+        30635,
+        30636,
+        30637
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/road_4lane/road_4lane.geo",
+      "prepared_logical_path": "data/object_library/streets/road_4lane/road_4lane.geo",
+      "bytes": 109481,
+      "sha256": "43bd2f6f192bdfc88f44328657f5c16b042d0dea9bb34b1e5e1704befeb8bcd2",
+      "source_ordinals": [
+        30328,
+        30329,
+        30330,
+        30331,
+        30333,
+        30334,
+        30335,
+        30338,
+        30339,
+        30341,
+        30342,
+        30343,
+        30344,
+        30345
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/road_6lane/road_6lane.geo",
+      "prepared_logical_path": "data/object_library/streets/road_6lane/road_6lane.geo",
+      "bytes": 38741,
+      "sha256": "09b0f58c160346755ec35a08de87e457ba093a672988344a6710811b03fe5e89",
+      "source_ordinals": [
+        19182,
+        19183,
+        19184,
+        19185,
+        19186,
+        19187,
+        19188,
+        19189,
+        19190,
+        19191,
+        19192,
+        19193,
+        19194,
+        19195
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/road_crawlblock/road_crawlblock.geo",
+      "prepared_logical_path": "data/object_library/streets/road_crawlblock/road_crawlblock.geo",
+      "bytes": 4436,
+      "sha256": "da4b073d6265eec5c8160246bd422e16f1a996be68c1c54bac87bb9ac69bd851",
+      "source_ordinals": [
+        19413,
+        19414,
+        19415,
+        19417,
+        19418
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/road_filler/Parking_Lots/parking_lots.geo",
+      "prepared_logical_path": "data/object_library/streets/road_filler/parking_lots/parking_lots.geo",
+      "bytes": 10407,
+      "sha256": "b99d6d5b80e42b7a5a1e00645aa7800d4c34daa560955d3443247e929c95beba",
+      "source_ordinals": [
+        2670,
+        19576,
+        19577,
+        19579,
+        19581,
+        19583,
+        19584,
+        19586,
+        19587,
+        19588,
+        19590,
+        19592,
+        19593
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/road_filler/road_filler.geo",
+      "prepared_logical_path": "data/object_library/streets/road_filler/road_filler.geo",
+      "bytes": 1525,
+      "sha256": "556f02f8320b0983b28ef9220953c1c6836bb7decc423c7990ef1375b3ceaef9",
+      "source_ordinals": [
+        22408,
+        22415
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/shoreline/cliffs/cliffs.geo",
+      "prepared_logical_path": "data/object_library/streets/shoreline/cliffs/cliffs.geo",
+      "bytes": 21801,
+      "sha256": "05a7c1ca988f15e8eb9201798387105048e8c339f6e072cad43257469cce92b3",
+      "source_ordinals": [
+        32780,
+        32781,
+        32784,
+        32785,
+        32789,
+        32790,
+        32791,
+        32800
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets/shoreline/cliffs_grass/cliffs_grass.geo",
+      "prepared_logical_path": "data/object_library/streets/shoreline/cliffs_grass/cliffs_grass.geo",
+      "bytes": 17618,
+      "sha256": "ab5c20fa4679a610efd0e1d7136ade7e345349534a8fb123d3e83bb526e1cecb",
+      "source_ordinals": [
+        32760,
+        32761,
+        32762,
+        32763,
+        32764,
+        32765,
+        32767,
+        32769
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Streets_Ruined/Ruin_Elements/Ruin_Decals/ruin_decals.geo",
+      "prepared_logical_path": "data/object_library/streets_ruined/ruin_elements/ruin_decals/ruin_decals.geo",
+      "bytes": 7814,
+      "sha256": "118e7742bc2186f9ada7bd5f37c3b1d5b23a1421216120020aab58bb677efca9",
+      "source_ordinals": [
+        31997,
+        31998,
+        31999,
+        32000,
+        32001,
+        32002,
+        32006,
+        32012
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Mayhem_Signs/mayhem_signs.geo",
+      "prepared_logical_path": "data/object_library/v_cov/mayhem_signs/mayhem_signs.geo",
+      "bytes": 111208,
+      "sha256": "ebcde15ab671216df8108b79dd9021bdcc825af1a59153e7b945fc4dc55a0fd3",
+      "source_ordinals": [
+        11309,
+        11323,
+        11325,
+        11326
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Streets/Police_Cars/police_cars.geo",
+      "prepared_logical_path": "data/object_library/v_cov/streets/police_cars/police_cars.geo",
+      "bytes": 187138,
+      "sha256": "ed02e1e07f7e9a2d2642a14258738e68e70824effaac1391af22eeccc03b9512",
+      "source_ordinals": [
+        37807,
+        37808,
+        37809,
+        37813,
+        37815,
+        37820
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Streets/docks/elements/driftwood/driftwood.geo",
+      "prepared_logical_path": "data/object_library/v_cov/streets/docks/elements/driftwood/driftwood.geo",
+      "bytes": 15102,
+      "sha256": "ca68ad1af45e2a45d441e5a3c418dccbb97b3c098c50be334b98621d5cd1cbb5",
+      "source_ordinals": [
+        21582,
+        21583
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Streets/elements/decals/decals.geo",
+      "prepared_logical_path": "data/object_library/v_cov/streets/elements/decals/decals.geo",
+      "bytes": 4424,
+      "sha256": "b7b2152fe50b35b0bd7065263f0ba4fa8c74536589c9a51227baec8e5221cdb9",
+      "source_ordinals": [
+        19431,
+        19432,
+        19433,
+        19434,
+        19435,
+        19436,
+        19439
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Arachnos/elements/crates/crates.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/arachnos/elements/crates/crates.geo",
+      "bytes": 9710,
+      "sha256": "5f8ca60a4dff8c9de11b26216c8d2056064c8bb1600ed8676cd8966e857f4200",
+      "source_ordinals": [
+        30854
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Arachnos/elements/interior/interior.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/arachnos/elements/interior/interior.geo",
+      "bytes": 37314,
+      "sha256": "435ac148edc5a3eb8e89786276126dffe1ca3a720953f72b40fab44c92957679",
+      "source_ordinals": [
+        30869,
+        30872
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Elements/Bus_Bank_Elements/bus_bank_elements.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_elements/bus_bank_elements/bus_bank_elements.geo",
+      "bytes": 30179,
+      "sha256": "14df7e58a3ac70b860e972477ae04c96fcc08a1e7b2bdd5de7c755386fa9b534",
+      "source_ordinals": [
+        19147,
+        19150,
+        19154,
+        19155
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Elements/Bus_Interior_Doors/bus_interior_doors.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_elements/bus_interior_doors/bus_interior_doors.geo",
+      "bytes": 41522,
+      "sha256": "573ba37c29b7b4e38fa299ff231d8c678c8698f8a9b84f2666353a1518ea8bc3",
+      "source_ordinals": [
+        9772,
+        9773,
+        9774,
+        9775,
+        9776,
+        9777,
+        9778,
+        9779,
+        9780,
+        9781,
+        9783
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Bank/Bus_Bank_trays/bus_bank_trays.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank_trays/bus_bank_trays.geo",
+      "bytes": 8367,
+      "sha256": "418de08e35dccfddc1dca001cccaa10ad9b632c1a7e16569dc41d7581590cfd1",
+      "source_ordinals": [
+        690,
+        710,
+        968
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Bank/bus_bank.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_bank/bus_bank.geo",
+      "bytes": 163172,
+      "sha256": "ef84c2ed8b9c3d779a4bef89fe0170412c4521b67d603eb94e82239a9165dbb3",
+      "source_ordinals": [
+        9347,
+        9348,
+        9349,
+        9350,
+        9353,
+        9354,
+        9355,
+        9356,
+        9357,
+        9358,
+        9359,
+        9360,
+        9362,
+        9363,
+        9364,
+        9365,
+        9366,
+        9372,
+        9392,
+        9394,
+        9396,
+        9404
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/Bus_Interiors/Bus_Rooms/Bus_Vault/bus_vault.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/bus_interiors/bus_rooms/bus_vault/bus_vault.geo",
+      "bytes": 152602,
+      "sha256": "9b668091b2743f8a609364566707add74fce9c604f2f1ddc9f363438af1e2f9d",
+      "source_ordinals": [
+        29183,
+        29185,
+        29190,
+        29194,
+        29196,
+        29202
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/shops/V_Pawn_shop/v_pawn_shop.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/shops/v_pawn_shop/v_pawn_shop.geo",
+      "bytes": 132079,
+      "sha256": "08cc31c47c7408a6fa05ea6853e62b946f2eef36f3a481e2ad806725b1be5e4f",
+      "source_ordinals": [
+        9679,
+        9689
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/shops/V_bank/v_bank.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/shops/v_bank/v_bank.geo",
+      "bytes": 98860,
+      "sha256": "49ecbe1fca271ae5054d1c82d1b5b0803cd8867c339d48fc2abbdffcdf7df64b",
+      "source_ordinals": [
+        9408,
+        9415,
+        9422,
+        9424,
+        9427
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/shops/V_club/v_club.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/shops/v_club/v_club.geo",
+      "bytes": 291817,
+      "sha256": "c6afabdf5e5ab53c113f2a1d540fc4b0a388ae840861cf7cd4c8be1874a1c46d",
+      "source_ordinals": [
+        29727,
+        29738,
+        29748,
+        29749,
+        29754,
+        29755
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/Villian_Lairs/university/university.geo",
+      "prepared_logical_path": "data/object_library/v_cov/villian_lairs/university/university.geo",
+      "bytes": 500880,
+      "sha256": "979fc3ad7f31c4f18055af3f2ac9bdd14a291d7b7c5071e20fbda3a1c46b4daf",
+      "source_ordinals": [
+        29209,
+        29281,
+        29284,
+        29303,
+        29308
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/city_zones/Recluse/RV_AtlasMaps/rv_atlasmaps.geo",
+      "prepared_logical_path": "data/object_library/v_cov/city_zones/recluse/rv_atlasmaps/rv_atlasmaps.geo",
+      "bytes": 60872,
+      "sha256": "d607834f7d2f13a579beb35a863a0e5bf4e54406042d4ea501d6045beff4224c",
+      "source_ordinals": [
+        28388,
+        28389,
+        28390,
+        28391,
+        28392,
+        28393,
+        28394,
+        28395,
+        28399
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/city_zones/Recluse/RV_DATA_Room/rv_data_room.geo",
+      "prepared_logical_path": "data/object_library/v_cov/city_zones/recluse/rv_data_room/rv_data_room.geo",
+      "bytes": 49164,
+      "sha256": "1f6660d7c4d2e95bcdd3462c7a5dbaf97715175765e660a226304b383f7ed615",
+      "source_ordinals": [
+        27133,
+        27134,
+        27135,
+        27136,
+        27137,
+        27138,
+        27139,
+        27140,
+        27144,
+        27148
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/common_decor/art_decor/gargoyles/gargoyles.geo",
+      "prepared_logical_path": "data/object_library/v_cov/common_decor/art_decor/gargoyles/gargoyles.geo",
+      "bytes": 1563003,
+      "sha256": "abeab63b454916af0b94c26b924a2e02e513b7e8ca4fdb630414b5ed4e7c9f33",
+      "source_ordinals": [
+        31226,
+        31227,
+        31228,
+        31247,
+        31248,
+        31249
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/common_decor/art_decor/sculpt_modern/sculpt_modern.geo",
+      "prepared_logical_path": "data/object_library/v_cov/common_decor/art_decor/sculpt_modern/sculpt_modern.geo",
+      "bytes": 582608,
+      "sha256": "e8d9a35809008fa3353edc1b658de1439a5bdd8bc3fbd4301c9b9bad94b724d8",
+      "source_ordinals": [
+        31301,
+        31302,
+        31336
+      ]
+    },
+    {
+      "source_geo_name": "object_library/V_COV/common_decor/junk/junk.geo",
+      "prepared_logical_path": "data/object_library/v_cov/common_decor/junk/junk.geo",
+      "bytes": 137228,
+      "sha256": "52a29d9102d36b839dab62f0d75c46b733bd0e28115d1f427e661424e1232a00",
+      "source_ordinals": [
+        21533,
+        21534,
+        21535,
+        21536,
+        21537,
+        21538,
+        21539,
+        21540,
+        21541,
+        21542,
+        21543,
+        21544,
+        21545,
+        21546,
+        21547,
+        21548,
+        21549,
+        21550,
+        21551,
+        21552,
+        21553,
+        21554,
+        21555,
+        21556,
+        21557,
+        21558,
+        21559,
+        21560,
+        21565,
+        21566
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/crates_barrels/crates_barrels.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/5th_column/elements/crates_barrels/crates_barrels.geo",
+      "bytes": 12452,
+      "sha256": "3bcaeb6a213c464c03b129f0b4e7c4ac9f20e7b1e43f38e925e0d32479aedd88",
+      "source_ordinals": [
+        14831
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/lights/lights.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/5th_column/elements/lights/lights.geo",
+      "bytes": 7086,
+      "sha256": "a4bdadc752339c4236e21cdb54cee2080192d72358688f161c7d0ada3a2def31",
+      "source_ordinals": [
+        28829,
+        28830,
+        28831,
+        28832,
+        28833,
+        28834
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/machines_etc/machines_etc.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/5th_column/elements/machines_etc/machines_etc.geo",
+      "bytes": 894680,
+      "sha256": "178d3df3c96558f6bfdc14d99a2a34a04e4b3d244e39b4a38c5a059521d23909",
+      "source_ordinals": [
+        11625,
+        11627,
+        11628,
+        11629,
+        11630,
+        11631,
+        11632
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/misc_decor/misc_decor.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/5th_column/elements/misc_decor/misc_decor.geo",
+      "bytes": 37618,
+      "sha256": "021c6ac269f21742ca64cb5f0da4f827a8dfd8aecb2f9f527aab3f7b36354463",
+      "source_ordinals": [
+        9700,
+        9701,
+        9702,
+        9703
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/5th_column/elements/pipes/pipes.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/5th_column/elements/pipes/pipes.geo",
+      "bytes": 8306,
+      "sha256": "2d915b9c59505e66958c213fa040ca9033c01777953fc14ddbdd4ea53f2b498c",
+      "source_ordinals": [
+        18077
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Caves_smooth/caves_smth_trays/caves_smth_hall/caves_smth_hall.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/caves_smooth/caves_smth_trays/caves_smth_hall/caves_smth_hall.geo",
+      "bytes": 1054368,
+      "sha256": "7c72ccb2245a3873e161e21db854730c9d904b2edf14b6dd477fab7eb8c6d26c",
+      "source_ordinals": [
+        6383,
+        6400,
+        6411,
+        6422,
+        6433,
+        6444,
+        6455,
+        6466,
+        6471,
+        6477,
+        6483,
+        37858,
+        37859,
+        37860,
+        37861,
+        37862,
+        37863,
+        37872,
+        37890,
+        37892,
+        37901,
+        37910,
+        37911
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/First_Ward/Abandoned_Office/Elements/Decals/p_abandoned_office_decals.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/first_ward/abandoned_office/elements/decals/p_abandoned_office_decals.geo",
+      "bytes": 4515,
+      "sha256": "a5891f4c1867b19f5e0fc5f111b8055d62ba209c7447dfb057e6513fb5cbc10a",
+      "source_ordinals": [
+        21405,
+        21406,
+        21407,
+        21408
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Manticore/elements/Props/manticore_props.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/manticore/elements/props/manticore_props.geo",
+      "bytes": 212368,
+      "sha256": "3a56c55a6ef47ef3b5b6399f0539f8c26519e30c879ee9000f33670c5799ea74",
+      "source_ordinals": [
+        24219,
+        24220,
+        24222,
+        24223,
+        24224,
+        24225,
+        24226,
+        24227
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/N_Warehouse/Doors/p_warehouse_doorregular_frame.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/n_warehouse/doors/p_warehouse_doorregular_frame.geo",
+      "bytes": 2048,
+      "sha256": "e5575d86d7e6feb4b437bc43b6ade004d37cb3e1c8d665f4fc107448c3d43747",
+      "source_ordinals": [
+        38800
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/N_Warehouse/Pieces/p_warehouse_pieces.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/n_warehouse/pieces/p_warehouse_pieces.geo",
+      "bytes": 5332858,
+      "sha256": "a09dd0a36ddef50b5d8bf4cdf8bab4bab2168cf76bbb32eaa97056b667169678",
+      "source_ordinals": [
+        6492,
+        6503,
+        6507,
+        6532,
+        6537,
+        6551,
+        6568,
+        6572,
+        38410,
+        38414,
+        38416,
+        38417,
+        38421,
+        38453,
+        38454,
+        38455,
+        38459,
+        38460,
+        38465,
+        38469,
+        38474,
+        38479
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Rikti/Trays/trays.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/rikti/trays/trays.geo",
+      "bytes": 36987,
+      "sha256": "9459d3682f721fec1123161003422be9f4ac580ddad7a81ef03b239476353d62",
+      "source_ordinals": [
+        4204
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/Elements/Vanguard_FloorStripes/vanguard_floorstripes.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/elements/vanguard_floorstripes/vanguard_floorstripes.geo",
+      "bytes": 10516,
+      "sha256": "3507bb6068caf9bb3cc040d32f488f00c230cea7e93b10071af40ac644c1fc56",
+      "source_ordinals": [
+        28763,
+        28764,
+        28765,
+        28766,
+        28767
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/Elements/Vanguard_Lights/vanguard_lights.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/elements/vanguard_lights/vanguard_lights.geo",
+      "bytes": 57086,
+      "sha256": "d1d9cbedcaac67e09f972cdc32875bd3095768438ade13e8e94bbce8439396f2",
+      "source_ordinals": [
+        28943,
+        28944
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/Elements/Vanguard_Logos/vanguard_logos.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/elements/vanguard_logos/vanguard_logos.geo",
+      "bytes": 38958,
+      "sha256": "7bf8f71cda517fb675e5c2070582fc9836b3f3a1f281adcc2304aecc2534fe5b",
+      "source_ordinals": [
+        8848,
+        8851,
+        8852,
+        8853,
+        8854,
+        8864,
+        8869,
+        8871
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/Elements/Vanguard_Medical/vanguard_medical.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/elements/vanguard_medical/vanguard_medical.geo",
+      "bytes": 31081,
+      "sha256": "7bdad2adde070cba2bccdce5e7706300ce122f995c4d68e664a74fb3a7f9caa7",
+      "source_ordinals": [
+        28968,
+        28969,
+        28970,
+        28971,
+        28974,
+        28975,
+        28976
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/Elements/Vanguard_Pipes/vanguard_pipes.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/elements/vanguard_pipes/vanguard_pipes.geo",
+      "bytes": 67413,
+      "sha256": "ee19e63151870e360dd2df68ddf5e6934e79474620fffdafcbed6a7144a7b240",
+      "source_ordinals": [
+        28779,
+        28782,
+        28786,
+        28796,
+        28797,
+        28798,
+        28802,
+        28803,
+        28804,
+        28805,
+        28808,
+        28828
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/Elements/Vanguard_Stencils/vanguard_stencils.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/elements/vanguard_stencils/vanguard_stencils.geo",
+      "bytes": 2940,
+      "sha256": "44532b608386d1da26456425690d255b1297eed40f548ad2db9dbd0627458d9d",
+      "source_ordinals": [
+        28746,
+        28752
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/structure/Vanguard_Catwalks/Vanguard_Catwalks_Wide/vanguard_catwalks_wide.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/structure/vanguard_catwalks/vanguard_catwalks_wide/vanguard_catwalks_wide.geo",
+      "bytes": 116376,
+      "sha256": "38c414dc268a9e8534d335e4f7ce9c80885e1e08cc74d96ecded5077187ec958",
+      "source_ordinals": [
+        28929,
+        28930
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/structure/Vanguard_Handrails/vanguard_handrails.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/structure/vanguard_handrails/vanguard_handrails.geo",
+      "bytes": 30829,
+      "sha256": "8a1ad606b871dec34d4d06fc04e37dd97a4eb79c59aa5993732ad518054587aa",
+      "source_ordinals": [
+        28858,
+        28859
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/structure/Vanguard_Platforms/vanguard_platforms.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/structure/vanguard_platforms/vanguard_platforms.geo",
+      "bytes": 34853,
+      "sha256": "39892ad1f5b064bb8b958478d3f9973215748787bdf273fdd78ee4d253de344a",
+      "source_ordinals": [
+        28872,
+        28880
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/Vanguard/structure/vanguard_structure.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/vanguard/structure/vanguard_structure.geo",
+      "bytes": 69766,
+      "sha256": "c3149a60febfee62cd57dc4fee920db083c8ea7a997f4c9d41d454e989ebd28f",
+      "source_ordinals": [
+        28670,
+        28671,
+        28673,
+        28674,
+        28675,
+        28676,
+        28677,
+        28678,
+        28679,
+        28683,
+        28688,
+        28689,
+        28691,
+        28695,
+        28713,
+        28728,
+        28729,
+        28733,
+        28734,
+        28736,
+        28738
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/abandoned_offices/elements/decals/decals.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/abandoned_offices/elements/decals/decals.geo",
+      "bytes": 3330,
+      "sha256": "3cd614744fec39014c392040f5ad43418ef047cfb5fbf2d07c696622e23f517d",
+      "source_ordinals": [
+        26231,
+        26232,
+        26234,
+        26238,
+        26239
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/cot/elements/big_detail/big_detail.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/cot/elements/big_detail/big_detail.geo",
+      "bytes": 18614,
+      "sha256": "2dfa0fd2b6e3cd35f991e8d21f381c81dc3fcd1e9744709719a5c9fc9161b03f",
+      "source_ordinals": [
+        19030
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/cot/elements/magicrunes/magicrunes.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/cot/elements/magicrunes/magicrunes.geo",
+      "bytes": 89277,
+      "sha256": "a4ac012d53850c1cc9aaab3ec9895a88ee798c5be1e3a8118d1e0a092b4f6715",
+      "source_ordinals": [
+        14595,
+        14612,
+        14618
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/cot/elements/small_detail/small_detail.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/cot/elements/small_detail/small_detail.geo",
+      "bytes": 48548,
+      "sha256": "f2b27eddae77a992a1e335c26f9d689400e8b37dd3b199c79a33cbb389694ac4",
+      "source_ordinals": [
+        14663,
+        14666,
+        14669,
+        14672,
+        14673,
+        14674,
+        14675,
+        14676,
+        14677,
+        14678,
+        14685,
+        14686,
+        14688,
+        14689,
+        14690,
+        14691
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/art/art.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/art/art.geo",
+      "bytes": 4039,
+      "sha256": "ed8af27da1e29c967800c536a40d75cfcac253409fdc949270577bfb9659471a",
+      "source_ordinals": [
+        11158,
+        11159,
+        11160,
+        11161,
+        11164
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/computers/computers.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/computers/computers.geo",
+      "bytes": 3792,
+      "sha256": "5517890af18f7f352db8ef144f9f9bf5bd693143b5f9db714525e4ab07c25196",
+      "source_ordinals": [
+        18233,
+        18235
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/counters/counters.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/counters/counters.geo",
+      "bytes": 23046,
+      "sha256": "a9547e61a67004b07b6f691720ed459a1ee9a25487a7065919e8c339daa529f3",
+      "source_ordinals": [
+        11140,
+        11141,
+        11142,
+        11143,
+        11145,
+        11146,
+        11147,
+        11148,
+        11150,
+        11153,
+        11154,
+        11155
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/cubicles/cubicles.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/cubicles/cubicles.geo",
+      "bytes": 976,
+      "sha256": "32f77fbc4d12d1dc94017d937cda2b74277d80bcaee62cb3adab186ef324cd28",
+      "source_ordinals": [
+        29806,
+        29807
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/details/details.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/details/details.geo",
+      "bytes": 18924,
+      "sha256": "058ec17fd710a003f7a7abd6129c505320036e2608ad2b64c98317b01953f0a8",
+      "source_ordinals": [
+        9459,
+        9460,
+        9461,
+        9462,
+        9463,
+        9464,
+        9465,
+        9466,
+        9467,
+        9468,
+        9469,
+        9470,
+        9471,
+        9472,
+        9473,
+        9474,
+        9475,
+        9476,
+        9477,
+        9478,
+        9479,
+        9480,
+        9481,
+        9482,
+        9483,
+        9484,
+        9485,
+        9486,
+        9487,
+        9488,
+        9489,
+        9490
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/furniture/furniture.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/furniture/furniture.geo",
+      "bytes": 82171,
+      "sha256": "0c6885f468371f5dc38b87dc097e4495e028e6a976c76a5392915dd553c993f0",
+      "source_ordinals": [
+        9516,
+        9518,
+        9519,
+        9520,
+        9522,
+        9523,
+        9524,
+        9526,
+        9527,
+        9528,
+        9529,
+        9530,
+        9532,
+        9533,
+        9534,
+        9535,
+        9536,
+        9537,
+        9538
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/lights/lights.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/lights/lights.geo",
+      "bytes": 8201,
+      "sha256": "0b96cc6c4d89a85bf60eb486c91033ab76012356eb0989774200cb338875cdc2",
+      "source_ordinals": [
+        9718,
+        9719,
+        9720,
+        9721,
+        9722,
+        9723,
+        9724,
+        9725,
+        9726,
+        9727,
+        9728
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/misc/misc.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/misc/misc.geo",
+      "bytes": 21195,
+      "sha256": "cc19604a89be8ed38f9ee36f41a1d3b76729c9dd90b003269d10d730c3cf2781",
+      "source_ordinals": [
+        9733,
+        9734,
+        9735,
+        9736,
+        9737,
+        9738
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/planters/planters.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/planters/planters.geo",
+      "bytes": 2519,
+      "sha256": "0354282b09ce5b84133fb0b1b7f6cd342e9609cdc239dfa1c97b31b506d2967f",
+      "source_ordinals": [
+        11180,
+        11181,
+        11182
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/safes/safes.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/safes/safes.geo",
+      "bytes": 2540,
+      "sha256": "98be0038af6189f91e88bb70054365b1dc545b66adc0812545fa1e1498265875",
+      "source_ordinals": [
+        9715,
+        9716,
+        9717
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/elements/whiteboards/whiteboards.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/elements/whiteboards/whiteboards.geo",
+      "bytes": 7344,
+      "sha256": "16c3fa215c90a2885950a0679147aeebe2a352f8258dbc6fcc35971ccfd97ff4",
+      "source_ordinals": [
+        9748,
+        9749,
+        9750,
+        9751,
+        9752,
+        9753,
+        9754,
+        9755,
+        9756,
+        9757,
+        9761,
+        9763
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/structure/balconies/balconies.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/structure/balconies/balconies.geo",
+      "bytes": 5252,
+      "sha256": "39aa5c5d509e4d1da4a8c7b7b7a1be5c2418cc9f14968f4dc8853841130cf370",
+      "source_ordinals": [
+        40003,
+        40004,
+        40005
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/structure/misc/misc.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/structure/misc/misc.geo",
+      "bytes": 5529,
+      "sha256": "a84184631fbe92b08612287ee0a05d39e34e4ecefefc33eb6afb722e2212bc16",
+      "source_ordinals": [
+        11089,
+        11091,
+        11092,
+        11093,
+        11094
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/structure/stairs/stairs.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/structure/stairs/stairs.geo",
+      "bytes": 5873,
+      "sha256": "5a0f46624e255724a55d9531ecd874aaccdf7d449db3cb13e41795320adb5888",
+      "source_ordinals": [
+        28848,
+        28849
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/structure/tilefloors/tilefloors.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/structure/tilefloors/tilefloors.geo",
+      "bytes": 1141,
+      "sha256": "b1fd7f311be9cbb18599347da872c181a2046f0ae0bffd1b1504b4b8edfccc42",
+      "source_ordinals": [
+        11135
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/structure/walls/walls.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/structure/walls/walls.geo",
+      "bytes": 11487,
+      "sha256": "0d523971e78e27488c4b9351fc15e79067e68233e6f69cb4d57c6d231f824206",
+      "source_ordinals": [
+        9430,
+        9431,
+        9432,
+        9433,
+        9434,
+        9435,
+        9436,
+        9437,
+        9438,
+        9439,
+        9443,
+        9446,
+        9447,
+        9449,
+        9450,
+        9451,
+        9453,
+        9454
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/trays/doors/doors.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/trays/doors/doors.geo",
+      "bytes": 2126,
+      "sha256": "dcf72affcad5ddf2f26e80f69061fe21c77909f7f349e3212ee54af6a5be4328",
+      "source_ordinals": [
+        40021
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/trays/halls/halls.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/trays/halls/halls.geo",
+      "bytes": 175372,
+      "sha256": "ff084742892f472479d483eb4034b85c2a775318d10b96630e1c7d719cf6edb5",
+      "source_ordinals": [
+        9823,
+        9824,
+        9825,
+        9827,
+        9828,
+        9830,
+        9831,
+        9832,
+        9833,
+        9834,
+        9835,
+        9836
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/trays/rooms/dead_end/dead_end.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/trays/rooms/dead_end/dead_end.geo",
+      "bytes": 20450,
+      "sha256": "0ad76ff521f9ccd1f31c0d13a1c734d812b5c9e6acf56333ac383496fb97c412",
+      "source_ordinals": [
+        6688
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/trays/rooms/straight/straight.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/trays/rooms/straight/straight.geo",
+      "bytes": 26311,
+      "sha256": "58029b23340cc9ebef78ef9a100d064aebc557e07be8cc133a851dd9addc8c48",
+      "source_ordinals": [
+        6732
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/office01/trays/start/start.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/office01/trays/start/start.geo",
+      "bytes": 4183,
+      "sha256": "c29fee7dbfec141d3eeca2d72ecb90c7a797b217b0dae2cde4abcd9b6e721f8a",
+      "source_ordinals": [
+        6749
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/Boiler_Makers/boiler_makers.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/boiler_makers/boiler_makers.geo",
+      "bytes": 19557,
+      "sha256": "f132993b9185f5c73a15305f85f78effe84cd814c4e971919d655f315f52e32e",
+      "source_ordinals": [
+        17205,
+        17208,
+        17213
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/Churns/churns.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/churns/churns.geo",
+      "bytes": 15946,
+      "sha256": "fecbaeae382d56c9db2a9da4f5c7242dc62091d529c20acb8b0b971baf21422a",
+      "source_ordinals": [
+        17589,
+        17590,
+        17596
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/Cranks_Levers/cranks_levers.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/cranks_levers/cranks_levers.geo",
+      "bytes": 24566,
+      "sha256": "f4a98e62ed661af3fb7c059fa0b56d9357b283fad958c104ec7da9ef28795cff",
+      "source_ordinals": [
+        17168,
+        17169,
+        17170,
+        17173,
+        17174
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/box_structure/box_structure.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/box_structure/box_structure.geo",
+      "bytes": 5395,
+      "sha256": "8e723839e0dbd6e41c49a880380de2d9785ce5f2d4f46b9543af6b0d6080201b",
+      "source_ordinals": [
+        17195,
+        17197,
+        17198
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/computers/computers.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/computers/computers.geo",
+      "bytes": 13909,
+      "sha256": "f8dcfb12b6b15ca8b8a326e6dc84ac609466d0753e974de767a99a32f16af0de",
+      "source_ordinals": [
+        17182,
+        17184,
+        17185,
+        17186,
+        17187,
+        17188,
+        17189,
+        17190,
+        17191,
+        17192,
+        17193
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/cyl_structure/cyl_structure.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/cyl_structure/cyl_structure.geo",
+      "bytes": 7650,
+      "sha256": "dc0ff956d368721ec54485d27af161ada6629e495a35a8d855e98ad9f23e3454",
+      "source_ordinals": [
+        17841
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/lights/lights.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/lights/lights.geo",
+      "bytes": 5995,
+      "sha256": "3af513441091b352808a704c9b2f7c3de9b24b2e58a73437e3609fa2c2938ae1",
+      "source_ordinals": [
+        17569,
+        17571
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/misc/misc.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/misc/misc.geo",
+      "bytes": 5208,
+      "sha256": "fa610f5919833dddb136e705311f0575c5b929d5ce612644f3e4ed3db3e9e670",
+      "source_ordinals": [
+        17573,
+        17575
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/pipes/pipes.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/pipes/pipes.geo",
+      "bytes": 57139,
+      "sha256": "4265a6b306459b52cd4f85aa9db3c5223403f15d1b7dcca0f5c90bc701d75563",
+      "source_ordinals": [
+        17142,
+        17144,
+        17145,
+        17146,
+        17147,
+        17148,
+        17150,
+        17151,
+        17152,
+        17153,
+        17155,
+        17156,
+        17157,
+        17158,
+        17159,
+        17160,
+        17161,
+        17162,
+        17163,
+        17165,
+        17166
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/elements/signs/signs.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/elements/signs/signs.geo",
+      "bytes": 1942,
+      "sha256": "7cbc848bdcf99db247a00f1fcfa48a60a646c48b6383b571c02d3b234f7fc17d",
+      "source_ordinals": [
+        17608,
+        17609
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/structure/catwalks/catwalks.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/structure/catwalks/catwalks.geo",
+      "bytes": 20785,
+      "sha256": "16d3c821682e4495a2b034d99d5fc61ae20c21ebe3a7bf38620f7b5202cd8feb",
+      "source_ordinals": [
+        17610,
+        17611,
+        17613,
+        17614,
+        17615,
+        17616,
+        17623,
+        17625,
+        17626,
+        17637,
+        17638
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/structure/exit/exit.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/structure/exit/exit.geo",
+      "bytes": 7501,
+      "sha256": "7d1275655a98a52ef827d026570c8fe135cbf0466a274281bcba03badf679be7",
+      "source_ordinals": [
+        17216,
+        17217
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/structure/platforms/platforms.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/structure/platforms/platforms.geo",
+      "bytes": 8917,
+      "sha256": "8adbc85193080c6a8d1de95f613623af3283ca0b4a37696cd659c7b46025a6b7",
+      "source_ordinals": [
+        17640,
+        17641,
+        17642,
+        17643,
+        17644,
+        17645,
+        17646,
+        17647,
+        17653
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/structure/sidewalks/sidewalks.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/structure/sidewalks/sidewalks.geo",
+      "bytes": 5236,
+      "sha256": "985428f8c42e58f0ae54c386a7b55c9231ee721b55912d50b093943bd6e080be",
+      "source_ordinals": [
+        17131,
+        17132,
+        17133,
+        17134,
+        17135,
+        17136
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/structure/walls/walls.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/structure/walls/walls.geo",
+      "bytes": 2416,
+      "sha256": "a7b165b7031b0c4f91a8d88d385f1176c993330bb4cee5431ee5a6ee3d222345",
+      "source_ordinals": [
+        17179,
+        17180,
+        17181
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/trays/Rooms/3way/3way.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/trays/rooms/3way/3way.geo",
+      "bytes": 17348,
+      "sha256": "8c6396ccb5204473351979320dd15da1727d72832fc8e4a927e4021cb18b1526",
+      "source_ordinals": [
+        39441
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/trays/Rooms/dead_end/dead_end.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/trays/rooms/dead_end/dead_end.geo",
+      "bytes": 14401,
+      "sha256": "9d79ac0f5d3da93a72b299c06d8d16179081bebd4d9c76d5958ef8266b7c511d",
+      "source_ordinals": [
+        38878,
+        39917
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/trays/Rooms/room_water/room_water.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/trays/rooms/room_water/room_water.geo",
+      "bytes": 8429,
+      "sha256": "bc80a85ea1a28622437d974c1a6e1dd81240427539bc317bb9b0c267fb2c35b1",
+      "source_ordinals": [
+        17127,
+        17128,
+        17129
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/sewers/trays/doors/doors.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/sewers/trays/doors/doors.geo",
+      "bytes": 13883,
+      "sha256": "2181b96c7aa41934fceb0dfaf591c01349574dd63324512dda66b2c32a8a6e83",
+      "source_ordinals": [
+        39267
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/elements/bigdetail/bigdetail.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/elements/bigdetail/bigdetail.geo",
+      "bytes": 207562,
+      "sha256": "0d86b278e2291222b5f35c6df694c768915154cf4b5a80ee2ae567afbfaf191a",
+      "source_ordinals": [
+        11453,
+        11454,
+        11456,
+        11457,
+        11458,
+        11459,
+        11460,
+        11461,
+        11469,
+        11473,
+        11474,
+        11475,
+        11476,
+        11506,
+        11508,
+        11512,
+        11513
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/elements/computers/computers.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/elements/computers/computers.geo",
+      "bytes": 13879,
+      "sha256": "2fbe4b72d4ae141a9c6115da1948866f8a259f5336d6fa409e900b68bd5ca623",
+      "source_ordinals": [
+        11408,
+        11409,
+        11410,
+        11411,
+        11412,
+        11413,
+        11414,
+        11415,
+        11416,
+        11417,
+        11418,
+        11419,
+        11420,
+        11421,
+        11422,
+        11423,
+        11424,
+        11425,
+        11426,
+        11427,
+        11428,
+        11429,
+        11430,
+        11431,
+        11432,
+        11433,
+        11434,
+        11435,
+        11436,
+        11437,
+        11438
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/elements/lights/lights.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/elements/lights/lights.geo",
+      "bytes": 7010,
+      "sha256": "7a80b9b52f7b52d449339c7e66085950220b18ae6b5b1256065d2cf77e4d7de6",
+      "source_ordinals": [
+        14004,
+        14005,
+        14006,
+        14007,
+        14008,
+        14009
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/elements/machines/machines.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/elements/machines/machines.geo",
+      "bytes": 35933,
+      "sha256": "67aa91d8f5a17bf7302a9a5052e7309d319bbd28df2f0573151bb62db8246535",
+      "source_ordinals": [
+        11931,
+        11932,
+        11933,
+        11934,
+        11935,
+        11936,
+        11937,
+        11939,
+        11940
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/elements/pipes/pipes.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/elements/pipes/pipes.geo",
+      "bytes": 3967,
+      "sha256": "46d6b0578f2424cae6746f2f7becdcdf1b4ad93c4b4952bbf38bdbaed47d1719",
+      "source_ordinals": [
+        13922,
+        13923,
+        13924,
+        13925,
+        13926
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/elements/signs/signs.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/elements/signs/signs.geo",
+      "bytes": 2325,
+      "sha256": "7eaaebdc1f4b6fbb2eaedbda3981516803f03bb0a9af157829fa1cce05a83446",
+      "source_ordinals": [
+        11865,
+        11866
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/elements/smalldetail/smalldetail.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/elements/smalldetail/smalldetail.geo",
+      "bytes": 16606,
+      "sha256": "511a971cb5ec8c03f0f5e820b8136c62f24fd1c22b86002dabbf7a0c47d60f65",
+      "source_ordinals": [
+        11587,
+        11588,
+        11589,
+        11590,
+        11591,
+        11592,
+        11593,
+        11594,
+        11595,
+        11597,
+        11598,
+        11599
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/structure/balconies/balconies.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/structure/balconies/balconies.geo",
+      "bytes": 22859,
+      "sha256": "1404e8129f6e1f5eee1acff7af0e9d6b22e1a7e456c24b0582a186c44dab94d8",
+      "source_ordinals": [
+        13928,
+        13935
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/structure/platforms/platforms.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/structure/platforms/platforms.geo",
+      "bytes": 3162,
+      "sha256": "e1462116a522be747e72ddaccf353c25c17d8d510246704563affa54695ec6c5",
+      "source_ordinals": [
+        14022,
+        14023,
+        14024,
+        14026
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/structure/walls/walls.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/structure/walls/walls.geo",
+      "bytes": 2054,
+      "sha256": "350c83fca9221d3e23e34c0f62aa771480eb19ad43a45131447a98eb00d6518c",
+      "source_ordinals": [
+        13994,
+        13995,
+        13996,
+        13997,
+        14002,
+        14003
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/trays/doors/doors.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/trays/doors/doors.geo",
+      "bytes": 19847,
+      "sha256": "8925b5e4363d1779c837e48072da5853168a4044f2063b43e1c58de6d5cf0685",
+      "source_ordinals": [
+        2832,
+        2975,
+        2984,
+        28080,
+        28081
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/tech/trays/halls/halls.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/tech/trays/halls/halls.geo",
+      "bytes": 245453,
+      "sha256": "ad208abc839863abcb7a2c59e3925d3c50d347fc67315620b3265568f2be1bb0",
+      "source_ordinals": [
+        2966,
+        12044,
+        12045,
+        12047,
+        12049,
+        12050,
+        12051,
+        12053,
+        12055,
+        12059
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/unique/Infernal_Cave/infernal_cave.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/unique/infernal_cave/infernal_cave.geo",
+      "bytes": 16542,
+      "sha256": "8a9bedc2a40ca40f57761f84878d3ceeed68ce17f7c6f9741aa00477ff2eabf3",
+      "source_ordinals": [
+        6550,
+        38653,
+        38664,
+        38666,
+        38675,
+        38676,
+        38678
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/unique/Tsoo/tsoo.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/unique/tsoo/tsoo.geo",
+      "bytes": 74423,
+      "sha256": "14d0ad9fa383ffe9fa23e950eeda518ea10970d64049367945ab9ff35aea61b8",
+      "source_ordinals": [
+        30817,
+        30837,
+        30838,
+        30844,
+        30845
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/unique/carnival_rave/carnival_rave.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/unique/carnival_rave/carnival_rave.geo",
+      "bytes": 47983,
+      "sha256": "e74ba5940619d07373f2c5ca1c5a6fb52634e7a22063489d19fd28862db5a36e",
+      "source_ordinals": [
+        31150
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/unique/clockwork_lair/clockwork_elements/clockwork_elements.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/unique/clockwork_lair/clockwork_elements/clockwork_elements.geo",
+      "bytes": 360814,
+      "sha256": "e4ee5d674099d06a4592988df8fade58e608496d22cb9c75534048d9b4ece2b8",
+      "source_ordinals": [
+        31145
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/unique/clockwork_lair/clockwork_lair.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/unique/clockwork_lair/clockwork_lair.geo",
+      "bytes": 32983,
+      "sha256": "19e5929b015abe2730ccbf08562b145581710bc195426ba1be6e5658d7885356",
+      "source_ordinals": [
+        31088
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/unique/mother_mayhem/mmayhem_details/mmayhem_details.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/unique/mother_mayhem/mmayhem_details/mmayhem_details.geo",
+      "bytes": 371155,
+      "sha256": "a48fac224283899e61ca24bf4091f196c84cb474f25625d3017832b54c6cfe95",
+      "source_ordinals": [
+        28978,
+        28984,
+        28985
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/unique/rave/pocket_d/pocket_d.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/unique/rave/pocket_d/pocket_d.geo",
+      "bytes": 79950,
+      "sha256": "13b23d4d90189eae262ea4897b89de9bd5428bc4545d183e17d47016feaaba96",
+      "source_ordinals": [
+        38689,
+        38704,
+        38705
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/warehouse/elements/hazard_tape/hazard_tape.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/warehouse/elements/hazard_tape/hazard_tape.geo",
+      "bytes": 1043,
+      "sha256": "bead4bfff40e9abcb5d01042d4116c8ccadbf671f87c4001f52434474ea8519b",
+      "source_ordinals": [
+        30799,
+        30800,
+        30802
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/warehouse/elements/lights/lights.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/warehouse/elements/lights/lights.geo",
+      "bytes": 5539,
+      "sha256": "6c2ea9e2a5edfcd78d7313fb8c860b715e016045827c6f542b308a4f5f1c77d2",
+      "source_ordinals": [
+        30847,
+        30848,
+        30849,
+        30850,
+        30851
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/warehouse/elements/signs/signs.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/warehouse/elements/signs/signs.geo",
+      "bytes": 2570,
+      "sha256": "20b35bd11ca38d09cd5a312587918cfbb1d879415baa0846e8dd97133c51bdb8",
+      "source_ordinals": [
+        11862
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/warehouse/elements/vents/vents.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/warehouse/elements/vents/vents.geo",
+      "bytes": 2669,
+      "sha256": "1b326d41ce4fe1678b0b7240ef9ced22c8504c963f0e51849b673aa91d0f680d",
+      "source_ordinals": [
+        29017
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/warehouse/structure/floors/floors.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/warehouse/structure/floors/floors.geo",
+      "bytes": 2190,
+      "sha256": "b2d2d1656c3b4c573d68e1337dcb180436d2b0375fb1a243b8f5c9738a023c77",
+      "source_ordinals": [
+        11883
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/warehouse/structure/ramps/ramps.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/warehouse/structure/ramps/ramps.geo",
+      "bytes": 13498,
+      "sha256": "5a1216312b0d77e622826069aff4e0c9194c7a1eb22b5ff87358a6d750db883e",
+      "source_ordinals": [
+        11897
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/warehouse/structure/roofs/roofs.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/warehouse/structure/roofs/roofs.geo",
+      "bytes": 6543,
+      "sha256": "e1840d4782c199917f05290cddadf70b2d8061f94d5d61946c0f8b2bab4b2f72",
+      "source_ordinals": [
+        11923
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/warehouse/structure/windows/windows.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/warehouse/structure/windows/windows.geo",
+      "bytes": 3457,
+      "sha256": "67954c1d3787f825134193c5d2aafcba628fa734e6b7ca9d4ce0c4b11a7d561c",
+      "source_ordinals": [
+        11403,
+        11405,
+        11407
+      ]
+    },
+    {
+      "source_geo_name": "object_library/Villain_Lairs/weapons_placeable/weapons_placeable.geo",
+      "prepared_logical_path": "data/object_library/villain_lairs/weapons_placeable/weapons_placeable.geo",
+      "bytes": 453324,
+      "sha256": "96d91fd00123827b2f544b50ee32aafa4e358d3b583568f4b9ae85e9f45d0e30",
+      "source_ordinals": [
+        9548,
+        9562,
+        9570,
+        9571,
+        9603,
+        9605,
+        9638,
+        9639
+      ]
+    },
+    {
+      "source_geo_name": "object_library/WorldNPCS/Swat_Checkpoint/swat_checkpoint.geo",
+      "prepared_logical_path": "data/object_library/worldnpcs/swat_checkpoint/swat_checkpoint.geo",
+      "bytes": 567,
+      "sha256": "f33f058cfe7679d08d5cc788f494f4b0e9355a700dff2dbfd5e8b5dc33cb41a7",
+      "source_ordinals": [
+        30187
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_templates/map_2d_blackpoly/map_2d_blackpoly.geo",
+      "prepared_logical_path": "data/object_library/city_templates/map_2d_blackpoly/map_2d_blackpoly.geo",
+      "bytes": 105536,
+      "sha256": "ca896ce6d8bd3645a61fba56e3db7173cfab412f01f388da541227eaa0d2fe14",
+      "source_ordinals": [
+        8690
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_templates/mapmarkers/mapmarkers.geo",
+      "prepared_logical_path": "data/object_library/city_templates/mapmarkers/mapmarkers.geo",
+      "bytes": 23798,
+      "sha256": "a04ec3311fa2a6725304cb58aaf6d916a0ebec7bb42ec602b6a419d6c3f1b2ff",
+      "source_ordinals": [
+        17319,
+        17326,
+        17327,
+        17330,
+        17331
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_01.geo",
+      "bytes": 153491,
+      "sha256": "c44b0526d0ea72cc6c893a30e812fd076bddb4e7ff99c0ef8be521f4267d0335",
+      "source_ordinals": [
+        26218
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_02.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_02.geo",
+      "bytes": 343351,
+      "sha256": "57972fe3d1a7ef0afe15b022985cc19a67b3e2361be05dab3c65134ac4e150c6",
+      "source_ordinals": [
+        26201
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_03.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_03.geo",
+      "bytes": 196267,
+      "sha256": "33910c9b1f2a25fa7fc99162386f8492b649108ecfff964478b5638c4ac8fecc",
+      "source_ordinals": [
+        34628
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_04.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_04.geo",
+      "bytes": 52556,
+      "sha256": "23926b2ee1d4c1bef5a4b87d3f7c759265b902834e6815d6ea6fd8e7770d3388",
+      "source_ordinals": [
+        23861
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_05.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_05.geo",
+      "bytes": 326356,
+      "sha256": "ca4f7216a08e03f1934facb6901b7e2f9b7603945807095b9db11131814d4de9",
+      "source_ordinals": [
+        26123
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_06.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_06.geo",
+      "bytes": 76467,
+      "sha256": "ab33f671ef58c59b91602f118100481b17f7c45ad74206372b3a95b9ed4ba561",
+      "source_ordinals": [
+        21438
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_07.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_07.geo",
+      "bytes": 78360,
+      "sha256": "33cc71dd1212d64bb127bc182b424d6ebb739acb3b0aa1ca7d712a64b42c7618",
+      "source_ordinals": [
+        22302
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_08.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_08.geo",
+      "bytes": 758397,
+      "sha256": "61f7c86768057079d3c1a43c13b8dced46aa88daa6e7061286b68cf798019778",
+      "source_ordinals": [
+        26503
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_09.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_09.geo",
+      "bytes": 162374,
+      "sha256": "f152efb05e1b4a5c44cbd68deca89741e667fd31c2a765050802775ccba3e4aa",
+      "source_ordinals": [
+        26468
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_10.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_10.geo",
+      "bytes": 61579,
+      "sha256": "e834b28183e1d73936a2c2aeaac653fc7a5ae419d2d0240fad3b2115b82c7399",
+      "source_ordinals": [
+        26197
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_11.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_11.geo",
+      "bytes": 398067,
+      "sha256": "546fd4606415f1a928263299d2a283453ea98907a433c63a389389fe57dff521",
+      "source_ordinals": [
+        26096
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_12.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_12.geo",
+      "bytes": 37399,
+      "sha256": "04118d8ae634167ff4be060b46097f971749e231d7eb54bc5dac437905d59219",
+      "source_ordinals": [
+        24732
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_13.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_13.geo",
+      "bytes": 369287,
+      "sha256": "81290f82256ce3a03d7e280a5b080adc30a4ea1645ab9d13218011d5a8a82bcd",
+      "source_ordinals": [
+        26058,
+        26059,
+        26060
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_14.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_14.geo",
+      "bytes": 359738,
+      "sha256": "5265261075b4d86a2a013a177404d1731b943f1942c1e00392cef598248ab954",
+      "source_ordinals": [
+        22250
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_15.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_15.geo",
+      "bytes": 60871,
+      "sha256": "3eac85344e3bf614a3744b446ebab59bef7ecfc9dfbad4d66ab31be8f0434830",
+      "source_ordinals": [
+        24736
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_16.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_16.geo",
+      "bytes": 358327,
+      "sha256": "fe12ede4e79c0c656d313c7685c5d1834780e4e8d3af28b39deb1400c43907d9",
+      "source_ordinals": [
+        31798,
+        31799,
+        31800,
+        31801
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_17.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_17.geo",
+      "bytes": 74496,
+      "sha256": "1a7f69c5dea39475e2d823d47b9554e0de023ec73bb487b390ad8442e6b48f7e",
+      "source_ordinals": [
+        33078
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_18.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_18.geo",
+      "bytes": 102653,
+      "sha256": "421b341602deb0e8087be686c3f3877f2122ecb8770c67880e7213318fc9a656",
+      "source_ordinals": [
+        33080
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_19.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_19.geo",
+      "bytes": 61526,
+      "sha256": "cfcf475038e6a4c7911ca7bdeca7c03c199297582b8a2946bb15222e710531de",
+      "source_ordinals": [
+        22872
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_20.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_20.geo",
+      "bytes": 71681,
+      "sha256": "42fd6ca46103998c22b28384ab9773e3557615bd5afdf9de8b7d8f8e3df03ee2",
+      "source_ordinals": [
+        33086
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_21.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_21.geo",
+      "bytes": 174392,
+      "sha256": "5412f712e1a8e461ff1ad7ad4b7bed66b889f91eb04235f1d785c5d9be3ab4b7",
+      "source_ordinals": [
+        26505
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_22.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_22.geo",
+      "bytes": 149997,
+      "sha256": "eb307bc51d1db90601e41ddc69e7c6efe22718f8a89049584bd8f6b49b24fc14",
+      "source_ordinals": [
+        26507
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_23.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_23.geo",
+      "bytes": 119430,
+      "sha256": "c642a2ddf1d25d391bb0bf520ae7297f613593846bf25f000fc77f787d707ab4",
+      "source_ordinals": [
+        26198
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_24.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_24.geo",
+      "bytes": 89954,
+      "sha256": "7b38a9dd2119421432eca4b5a1b179b6c4e57967278fc67bfa73f8a761b940cf",
+      "source_ordinals": [
+        33084
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_25.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_25.geo",
+      "bytes": 149691,
+      "sha256": "d0e8987411c6025cd1eb51a9c38ed10da3cc300049bc99db36b3dd1bad564764",
+      "source_ordinals": [
+        33082
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_26.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_26.geo",
+      "bytes": 34764,
+      "sha256": "9e3351157dd7b772f94682547f1660d63570e58d57effb0bd4cdecc6e02489a7",
+      "source_ordinals": [
+        22406
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Decals/Auto_Marks/ap_automark_decals_01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/decals/auto_marks/ap_automark_decals_01.geo",
+      "bytes": 981,
+      "sha256": "a9ad7c07a14839afd974f880eb3fc6d9000ca80dcabe5777d8baf48b5c74f63e",
+      "source_ordinals": [
+        19545,
+        19547
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Decals/Auto_Marks/ap_oilstain_decal_01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstain_decal_01.geo",
+      "bytes": 1525,
+      "sha256": "c8f65b145aed05cfbc5a90628c54cddd4c83b76d7c8490860183786a4c615976",
+      "source_ordinals": [
+        19562,
+        19564,
+        19565
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Decals/Crack/ap_crack_decals.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/decals/crack/ap_crack_decals.geo",
+      "bytes": 2058,
+      "sha256": "b4f011915d763a4a1cf2f9d2bc37ec756eb97aaec994ee33bae83291bf81da44",
+      "source_ordinals": [
+        19548,
+        19550,
+        19551,
+        19552,
+        19553,
+        19554,
+        19555,
+        19556,
+        19558,
+        19559
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Decals/Grass/ap_grass_decals.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/decals/grass/ap_grass_decals.geo",
+      "bytes": 845,
+      "sha256": "e537c810e50eb97f8c5876b2004d37d695a0fd96d850a0c82b5f4a82d83a57df",
+      "source_ordinals": [
+        19568,
+        19569,
+        19570,
+        19571
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Decals/Grime/ap_grime_decals.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/decals/grime/ap_grime_decals.geo",
+      "bytes": 4290,
+      "sha256": "8a4164cf483252a4ed808956ae038b6119c67f32974ba8b8d4799f323b3d5286",
+      "source_ordinals": [
+        19521,
+        19522,
+        19523,
+        19524,
+        19525,
+        19526,
+        19527,
+        19528,
+        19529,
+        19530,
+        19531,
+        19532,
+        19533,
+        19534,
+        19535,
+        19536,
+        19537,
+        19538,
+        19539,
+        19540,
+        19541,
+        19542,
+        19543,
+        19544
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/Nature/bushes/ap_bushes_01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/nature/bushes/ap_bushes_01.geo",
+      "bytes": 215042,
+      "sha256": "b3439fa69c778a4b95cf9e80e8b7e35b990ba582191b6dd87347c716dce7c06e",
+      "source_ordinals": [
+        8895,
+        8896,
+        8897,
+        8898,
+        8899,
+        8900,
+        8901,
+        8902,
+        8903,
+        8904,
+        8909,
+        8910,
+        8911
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/ap_cityhall_makeover_01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/ap_cityhall_makeover_01.geo",
+      "bytes": 1104239,
+      "sha256": "80e8e7530ab9d42ad98a6ddd065a0e40ba1cc1a999558241c3aebc17eb89db9a",
+      "source_ordinals": [
+        26509,
+        26510
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/ap_pillar_01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/ap_pillar_01.geo",
+      "bytes": 2129,
+      "sha256": "086d85c15654d79e75d3e0d129372cf631a2d84dc96fe5809a4ce8dbb70628c0",
+      "source_ordinals": [
+        32989
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/ap_plaza_upgrade_01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/ap_plaza_upgrade_01.geo",
+      "bytes": 988080,
+      "sha256": "f139909f2ef4f297137325d56293bb6e8ff94355c257551fca1fbdc3a45fd9b7",
+      "source_ordinals": [
+        21597,
+        21598,
+        21599,
+        21600,
+        21601,
+        21602,
+        21603
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/details/Plazas/ap_plaza_pedestal.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/details/plazas/ap_plaza_pedestal.geo",
+      "bytes": 16451,
+      "sha256": "21365c902a535fd81ab7abe0b0ce25ab251267b833ff1db88bb1944cbc58b252",
+      "source_ordinals": [
+        33072
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/details/Street/ParkingLot/ap_details_parkinglot.geo",
+      "prepared_logical_path": "data/object_library/city_zones/atlas_park_makeover/details/street/parkinglot/ap_details_parkinglot.geo",
+      "bytes": 733,
+      "sha256": "81763ddf4237a9002e592d8150a654446eb64098377532e89f57810d703fbcf0",
+      "source_ordinals": [
+        19573
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Elements/Hero_Statues/Fem_Statue_Stone_1/fem_statue_stone_1.geo",
+      "prepared_logical_path": "data/object_library/city_zones/elements/hero_statues/fem_statue_stone_1/fem_statue_stone_1.geo",
+      "bytes": 379130,
+      "sha256": "03cf292f143fe9333b172e3afa783301469d99209ab000fe5d3fa130d12d3e49",
+      "source_ordinals": [
+        26205,
+        26209,
+        26212
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Elements/Hero_Statues/Fem_Statue_Stone_2/fem_statue_stone_2.geo",
+      "prepared_logical_path": "data/object_library/city_zones/elements/hero_statues/fem_statue_stone_2/fem_statue_stone_2.geo",
+      "bytes": 440190,
+      "sha256": "d3701ae8f3247c52ad0ad5250fa89095221501a6ee8c0c5c660138e42e3a953f",
+      "source_ordinals": [
+        28408,
+        28413,
+        28416
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Elements/Hero_Statues/Fem_Statue_Stone_3/fem_statue_stone_3.geo",
+      "prepared_logical_path": "data/object_library/city_zones/elements/hero_statues/fem_statue_stone_3/fem_statue_stone_3.geo",
+      "bytes": 378384,
+      "sha256": "1565c144effd8376c2b8d336fc4f411505185db3a260f2fb83668dec7d98ff7b",
+      "source_ordinals": [
+        28440,
+        28444,
+        28448
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Elements/Hero_Statues/Male_Statue_Atlas/male_statue_atlas.geo",
+      "prepared_logical_path": "data/object_library/city_zones/elements/hero_statues/male_statue_atlas/male_statue_atlas.geo",
+      "bytes": 316195,
+      "sha256": "cc3a946df13f1ae6fe9cf602eb44004cdb52eb03b8530dd4dcf2e52b017fd9ee",
+      "source_ordinals": [
+        28453
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Elements/Hero_Statues/Male_Statue_Stone_1/male_statue_stone_1.geo",
+      "prepared_logical_path": "data/object_library/city_zones/elements/hero_statues/male_statue_stone_1/male_statue_stone_1.geo",
+      "bytes": 191869,
+      "sha256": "7fce0895d8086e0e793f5d61dbb7ea421d73fdd17a7eab290b2f07728c5a8f07",
+      "source_ordinals": [
+        33091,
+        33094,
+        33099
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Elements/Hero_Statues/Male_Statue_Stone_2/male_statue_stone_2.geo",
+      "prepared_logical_path": "data/object_library/city_zones/elements/hero_statues/male_statue_stone_2/male_statue_stone_2.geo",
+      "bytes": 197239,
+      "sha256": "008e54ee87b31dc83342b81434d5a25cced4e54e1c4e1a59a303f70192ce3e23",
+      "source_ordinals": [
+        32947,
+        32951,
+        32955
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Elements/Hero_Statues/Male_Statue_Stone_3/male_statue_stone_3.geo",
+      "prepared_logical_path": "data/object_library/city_zones/elements/hero_statues/male_statue_stone_3/male_statue_stone_3.geo",
+      "bytes": 202154,
+      "sha256": "ed999e2e65b322675c1eaa95d13330d7680e767dcf6fd4e016a3d824ba7d530c",
+      "source_ordinals": [
+        28424,
+        28428,
+        28432
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Buildings/Special/TPN_Campus/Doors/tpn_doors.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/buildings/special/tpn_campus/doors/tpn_doors.geo",
+      "bytes": 45161,
+      "sha256": "a202208d928b70680ed75e29c5e5c5601c31f6131229ade0f6d535455832f011",
+      "source_ordinals": [
+        21723,
+        21724
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Buildings/Special/TPN_Campus/tpn_campus1.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/buildings/special/tpn_campus/tpn_campus1.geo",
+      "bytes": 975045,
+      "sha256": "3ac942f418526c2c09b08a35502e86c0171fd94c3644d3e000d87362dfb8d6e4",
+      "source_ordinals": [
+        23021,
+        23022
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Buildings/residential/Modern_MidRise/bld_res_modern_roofprops.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/buildings/residential/modern_midrise/bld_res_modern_roofprops.geo",
+      "bytes": 22403,
+      "sha256": "43ab8442b6a8f02c336d2dbb1d5f41353f98b90cc5f95376a70a76a00edd64a4",
+      "source_ordinals": [
+        22978,
+        22979,
+        22981,
+        22982
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Decals/dirty_ground.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/decals/dirty_ground.geo",
+      "bytes": 315,
+      "sha256": "29fa7d2d48f199e73adc71da3ea286e149a70d9e1a85b7048c4cf62a687fddf1",
+      "source_ordinals": [
+        22544
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/First_Ward/Buildings/Brick_MidRises/Brick_KR/p_brick_midrise_kr.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/first_ward/buildings/brick_midrises/brick_kr/p_brick_midrise_kr.geo",
+      "bytes": 8617832,
+      "sha256": "420b3addccf08220d4e7bd386a64674c3119562e561cba5b5e3e2ea55f324711",
+      "source_ordinals": [
+        24096,
+        24097,
+        24100,
+        24101,
+        24116,
+        24118,
+        24150
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/First_Ward/Buildings/Brick_MidRises/Brick_SetC/p_brick_midrise_c.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/first_ward/buildings/brick_midrises/brick_setc/p_brick_midrise_c.geo",
+      "bytes": 5523130,
+      "sha256": "16d8ddc27b8391e35994da327bc19ffa3e8ba16cb4583a3e5081aa7517dd7360",
+      "source_ordinals": [
+        23897,
+        23898,
+        23900,
+        23901,
+        23902,
+        23903,
+        23905,
+        23906,
+        23908,
+        23909
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/First_Ward/Buildings/Brick_MidRises/Brick_SetC/p_brick_midrise_c3.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/first_ward/buildings/brick_midrises/brick_setc/p_brick_midrise_c3.geo",
+      "bytes": 1369131,
+      "sha256": "7df397d148c6efcc829c4179324ce64858c2af865adcca9d695de4b12aaec63d",
+      "source_ordinals": [
+        22887,
+        22889,
+        22909,
+        22910,
+        22913,
+        22924,
+        22932
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/First_Ward/Buildings/Doors/fw_doors.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/first_ward/buildings/doors/fw_doors.geo",
+      "bytes": 15137,
+      "sha256": "4205720280cf85c9692dca9e305743ff030e9d2cad0aed2348b9ef8e0695264b",
+      "source_ordinals": [
+        23986,
+        23987,
+        23988,
+        23989,
+        23990
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/First_Ward/Buildings/RoofProps/rooftop_props.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/first_ward/buildings/roofprops/rooftop_props.geo",
+      "bytes": 118994,
+      "sha256": "08242ef3276a892352e993452b112f8eb16051c272d66d8259c2477a4bf5ac31",
+      "source_ordinals": [
+        22945,
+        22946,
+        22947,
+        22950,
+        22954,
+        22961,
+        22963,
+        22964,
+        22969,
+        22972,
+        22975
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Nature/Bushes/praet_bushes_urban01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/nature/bushes/praet_bushes_urban01.geo",
+      "bytes": 309851,
+      "sha256": "ed20e7627dc58dc737f38a08acc2d9003c1ff5ecdc9106568e7f8768d7b82ab6",
+      "source_ordinals": [
+        9075,
+        9076,
+        9079,
+        9082,
+        9083,
+        9084,
+        9085,
+        9086,
+        9087,
+        9088,
+        9089,
+        9090,
+        9091,
+        9092,
+        9093,
+        9094,
+        9095,
+        9096,
+        9097,
+        9098,
+        9099,
+        9100,
+        9101,
+        9104,
+        9105
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Nature/Park/praet_altaspark_rocks.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/nature/park/praet_altaspark_rocks.geo",
+      "bytes": 95731,
+      "sha256": "6cd93b0ce351b9981e403de8845b5557952b6dbc51c4563007ecfa8d3e4b8fe7",
+      "source_ordinals": [
+        9199,
+        9200,
+        9201,
+        9202,
+        9203,
+        9204,
+        9205,
+        9206,
+        9207
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Nature/Park/praet_altaspark_tree.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/nature/park/praet_altaspark_tree.geo",
+      "bytes": 1489274,
+      "sha256": "b93898136d6f411e13caaa2fa2619509c3d9db505c3d410d84456b482d8f636e",
+      "source_ordinals": [
+        9038,
+        9039,
+        9040,
+        9041,
+        9046,
+        9047,
+        9056,
+        9057,
+        9062,
+        9063,
+        9064,
+        9065,
+        9071,
+        9072
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Nature/Trees/praet_tree_urban01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/nature/trees/praet_tree_urban01.geo",
+      "bytes": 845469,
+      "sha256": "81f7d3470477907b13581b0ed9c4f0594932250c5b494244523a3607513945e2",
+      "source_ordinals": [
+        8939,
+        8940,
+        8941,
+        8942,
+        8943,
+        8944,
+        8945,
+        8946,
+        8947,
+        8948,
+        8949,
+        8950,
+        8951,
+        8952,
+        8953,
+        8954,
+        8955,
+        8956,
+        8957,
+        8958,
+        8959,
+        8960,
+        8961,
+        8962,
+        8963,
+        8964,
+        8965,
+        8966,
+        8967,
+        8968,
+        8969
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Neutropolis/Props/awnings.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/neutropolis/props/awnings.geo",
+      "bytes": 31439,
+      "sha256": "0ab29e7c661cace4e1bba9acbbfd9d102ea17120365cf1ab267bc48394f836b5",
+      "source_ordinals": [
+        22271
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Neutropolis/Props/prop_neutropolis_pwrstation01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/neutropolis/props/prop_neutropolis_pwrstation01.geo",
+      "bytes": 332027,
+      "sha256": "928b424efbcbf78261c8857a4ad8824dbd2b0b21eeaa70056983c33bd1c3421f",
+      "source_ordinals": [
+        24734,
+        24735
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Nova/Infrastructure/Magesterium_Plaza/magesterium_plaza_segments.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/nova/infrastructure/magesterium_plaza/magesterium_plaza_segments.geo",
+      "bytes": 1668104,
+      "sha256": "de9ba34237e7c8c1e2e5d0e1698544498ddcfe8f11b673fdf4e04a1b7e5c0eeb",
+      "source_ordinals": [
+        21629
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Plaza/Furniture/bistrofurniture.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/plaza/furniture/bistrofurniture.geo",
+      "bytes": 88733,
+      "sha256": "c13ca5a408f6e6e85004beac3904d73d330ca37790b7ebac8f4e9d2a7416d1c0",
+      "source_ordinals": [
+        22275,
+        22276,
+        22277,
+        22279,
+        22281,
+        22282,
+        22283,
+        22288,
+        22289
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Plaza/fountains/fountains.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/plaza/fountains/fountains.geo",
+      "bytes": 52182,
+      "sha256": "b7dbd9c5d5e54226cc2691130ca615ae6f2409b19b3099e2fd4e0dbebca94f54",
+      "source_ordinals": [
+        21746,
+        21748,
+        21749,
+        21752,
+        21753,
+        21754,
+        21756,
+        21757,
+        21760,
+        21761
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Propoganda_Graf/prop_torn_pages.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/propoganda_graf/prop_torn_pages.geo",
+      "bytes": 5979,
+      "sha256": "299cfd4a889189a4be53b88aaae80875dacfdc47d5d9babeaef86cf3500739a0",
+      "source_ordinals": [
+        26470,
+        26472,
+        26474,
+        26481,
+        26492
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/Praetoria/Roads/Details/praet_roaddetails_curbobjects2.geo",
+      "prepared_logical_path": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo",
+      "bytes": 209305,
+      "sha256": "434a57b8c687918b331e7bed874f70262116527843987edd73d65b71bb5f2c99",
+      "source_ordinals": [
+        2717,
+        23786,
+        23787,
+        23794,
+        23799,
+        23802
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/fountains/fountains_ornate01/fountains_ornate01.geo",
+      "prepared_logical_path": "data/object_library/city_zones/fountains/fountains_ornate01/fountains_ornate01.geo",
+      "bytes": 523574,
+      "sha256": "37776cf386ac54e2613ebc7e711d47cbfb8541d5f52d362e53261c6b8164e825",
+      "source_ordinals": [
+        21891,
+        21892,
+        21907
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/fountains_dirty/fountains_dirty.geo",
+      "prepared_logical_path": "data/object_library/city_zones/fountains_dirty/fountains_dirty.geo",
+      "bytes": 319449,
+      "sha256": "386499b5542101fe78042cdf385e5b3890d700f3d8a94f35b0497880e2c91038",
+      "source_ordinals": [
+        28518
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/hellion_house/hh_elements/hh_elements.geo",
+      "prepared_logical_path": "data/object_library/city_zones/hellion_house/hh_elements/hh_elements.geo",
+      "bytes": 5047,
+      "sha256": "c7f5f3bc384171ae02278015981d4cca37a53736760ac13cbe80ff13494ece79",
+      "source_ordinals": [
+        6530,
+        38725,
+        38726,
+        38727,
+        38749
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/plaques_clean/plaques_clean.geo",
+      "prepared_logical_path": "data/object_library/city_zones/plaques_clean/plaques_clean.geo",
+      "bytes": 11941,
+      "sha256": "d10ca307f909a4cef5b70149fa8136151db0779d43931cc716f8e33c892ea1f6",
+      "source_ordinals": [
+        8146,
+        8147,
+        8151,
+        8154,
+        8156,
+        8157,
+        8158,
+        8159,
+        8160,
+        8164
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/plaques_dirty/plaques_dirty.geo",
+      "prepared_logical_path": "data/object_library/city_zones/plaques_dirty/plaques_dirty.geo",
+      "bytes": 11896,
+      "sha256": "f8feafadab95f43a6dfa5a65a7df99baa7f07e00cdf2fb870fbdc4000c05f26d",
+      "source_ordinals": [
+        8200,
+        8202,
+        8204,
+        8207,
+        8208,
+        8209,
+        8213,
+        8219,
+        8220
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/shadow_shard/ss_mole_point/ss_mole_point.geo",
+      "prepared_logical_path": "data/object_library/city_zones/shadow_shard/ss_mole_point/ss_mole_point.geo",
+      "bytes": 34125,
+      "sha256": "516a528ad549503350f6b7269ddbdeb8d2f0e269564e49705e795e91054d2c45",
+      "source_ordinals": [
+        28182,
+        28183,
+        28184,
+        28185,
+        28186,
+        28187,
+        28188,
+        28189,
+        28190,
+        28191,
+        28192,
+        28193
+      ]
+    },
+    {
+      "source_geo_name": "object_library/city_zones/statues_clean/statues_clean_sm/statues_clean_sm.geo",
+      "prepared_logical_path": "data/object_library/city_zones/statues_clean/statues_clean_sm/statues_clean_sm.geo",
+      "bytes": 155251,
+      "sha256": "7f9053fe92a84dc34b1a656a9572ce33c17ee49a7bfacf14c2b9c70ba93bb71d",
+      "source_ordinals": [
+        32969,
+        32970
+      ]
+    },
+    {
+      "source_geo_name": "object_library/temp/pivot_test/pivot_test.geo",
+      "prepared_logical_path": "data/object_library/temp/pivot_test/pivot_test.geo",
+      "bytes": 1181,
+      "sha256": "3099705582b76eb8cf612731a9f202380e35f2f7fbbd301243c0b1c19a6f08a0",
+      "source_ordinals": [
+        39692
+      ]
+    },
+    {
+      "source_geo_name": "object_library/walls/brick_parkwall/brick_parkwall.geo",
+      "prepared_logical_path": "data/object_library/walls/brick_parkwall/brick_parkwall.geo",
+      "bytes": 6261,
+      "sha256": "6523b28839fae27507aefbcb957cea65c19dffd1b3492491f8747657fd13b858",
+      "source_ordinals": [
+        11258,
+        11259,
+        11260,
+        11263,
+        11264
+      ]
+    },
+    {
+      "source_geo_name": "object_library/walls/citystairs/citystairs.geo",
+      "prepared_logical_path": "data/object_library/walls/citystairs/citystairs.geo",
+      "bytes": 7491,
+      "sha256": "d7535e2de145effada05c0e76426d98b32b5ff5de073796372b45411bf55d474",
+      "source_ordinals": [
+        32122,
+        32123
+      ]
+    },
+    {
+      "source_geo_name": "object_library/walls/citywalls/citywalls.geo",
+      "prepared_logical_path": "data/object_library/walls/citywalls/citywalls.geo",
+      "bytes": 16380,
+      "sha256": "be758f03a62331628988f34724f86104dff05c311011348d5f492ac511a6ccb3",
+      "source_ordinals": [
+        17413,
+        17415,
+        17416,
+        17417,
+        17418,
+        17419,
+        17420,
+        17421,
+        17422,
+        17423,
+        17430,
+        17431,
+        17433
+      ]
+    },
+    {
+      "source_geo_name": "object_library/walls/neighborhood_walls/neighborhood_walls.geo",
+      "prepared_logical_path": "data/object_library/walls/neighborhood_walls/neighborhood_walls.geo",
+      "bytes": 2211,
+      "sha256": "1fec502b6d31ac9d684dd37a02cf166b318e83d6420287f169dae54888420579",
+      "source_ordinals": [
+        30720,
+        30721
+      ]
+    },
+    {
+      "source_geo_name": "object_library/walls/tunnels/tunnels.geo",
+      "prepared_logical_path": "data/object_library/walls/tunnels/tunnels.geo",
+      "bytes": 18046,
+      "sha256": "e3118cd43e8f4741471474f304fbcda764b0f371f19267b0d3a1b3ef2a7baf42",
+      "source_ordinals": [
+        30200,
+        30201,
+        30202,
+        30203,
+        30204,
+        30205,
+        30206
+      ]
+    },
+    {
+      "source_geo_name": "object_library/walls/walls_docks/walls_docks.geo",
+      "prepared_logical_path": "data/object_library/walls/walls_docks/walls_docks.geo",
+      "bytes": 15539,
+      "sha256": "ec5ad2a13b76945aa72486d1744954a9109999d5d28b9b3ec10b2bec2dbb72ce",
+      "source_ordinals": [
+        17339,
+        17345,
+        17347
+      ]
+    },
+    {
+      "source_geo_name": "object_library/walls/warzone_walls/warzone_walls.geo",
+      "prepared_logical_path": "data/object_library/walls/warzone_walls/warzone_walls.geo",
+      "bytes": 219682,
+      "sha256": "f54eadc3b39e2fe5202584efcaf9db1dcb193265b937ee8b77e53bfb9b4dba4c",
+      "source_ordinals": [
+        29993,
+        29994,
+        29996,
+        29997,
+        29998,
+        29999,
+        30000,
+        30001,
+        30002,
+        30005,
+        30006,
+        30008,
+        30009,
+        30012,
+        30013,
+        30014,
+        30016,
+        30017,
+        30018,
+        30019,
+        30020,
+        30021,
+        30023,
+        30024,
+        30037,
+        30043
+      ]
+    }
+  ],
+  "source_review": {
+    "prepared_full_body_inclusion": "proved by exact cold construction chain",
+    "runtime_selection_route": "determined by reviewed source and owned startup scope",
+    "per_leaf_open_sha_observed": false,
+    "resolved_physical_leaf_string_observed": false,
+    "proof_route": "deterministic preparation and unique source selection, not metadata agreement",
+    "independent_review_required_before_native_admission": true
+  },
+  "assets_admitted": false,
+  "live_generation_admitted": false,
+  "world_authority": false,
+  "script_sha256": "98ca4601715fee678ddd5a73e151a95c89964a643d03493a7db55c287cab95e2"
+}

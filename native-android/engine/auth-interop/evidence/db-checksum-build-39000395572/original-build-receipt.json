@@ -1,0 +1,204 @@
+{
+  "repository_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919",
+  "repository_tree": "b67969d9941c57a3368550d61f6d1e18e994f691",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "github_run_id": "39000395572",
+  "image_os": "win25-vs2026",
+  "image_version": "20261007.264.1",
+  "schema": "coh-hosted-original-dbserver-checksum-build-v1",
+  "passed": true,
+  "build_policy": {
+    "generator": "Visual Studio 18 2026",
+    "architecture": "Win32",
+    "configuration": "OptDebug",
+    "target": "DbServer",
+    "parallel": "2",
+    "source_profile": "original-MSSQL-single-checksum-change",
+    "postgresql_overlay": false,
+    "wine_overlay": false,
+    "persistence_fixture": false,
+    "mapserver": false,
+    "beaconserver": false,
+    "service_execution": false
+  },
+  "service_executed": false,
+  "live_authenticated_db_login_verified": false,
+  "accepted_runtime_compatibility_verified": false,
+  "nondevelopment_version_observed": false,
+  "input_state_before": {
+    "repository_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919",
+    "helper_inputs": {
+      "deployment/hosted_db_checksum_candidate.py": "b2be0e082ded8ef1a74b346b1f7b08794cbd22c4739eb0c8f7d5ea07e8521c37",
+      "deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+      "deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+      "deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+      "deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+      "deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+      "deployment/qualify_db_policy_matrix.py": "f93235c1ad24c93e844c380bacd6ce124db9e8c7de2eee706d1f2be8ffc71ef6",
+      "deployment/source-pins.json": "a49c8290d8a720c86c825e593d073733fb0cf429c4efff1337d8be8ca6226b3b",
+      "source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+    },
+    "host_qualification_sha256": "c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503"
+  },
+  "command_paths": {
+    "root": "D:\\a\\coh-android\\coh-android",
+    "source": "D:\\a\\_temp\\coh-db-checksum-build-n10va36w\\source\\upstream\\ouroboros",
+    "build": "D:\\a\\_temp\\coh-db-checksum-build-n10va36w\\build",
+    "patch": "C:\\Program Files\\Git\\usr\\bin\\patch.exe",
+    "archive": "D:\\a\\_temp\\coh-db-checksum-build-n10va36w\\original-source.tar"
+  },
+  "source_archive_sha256": "373c13cecb4bd746f619c1ec53715730d1bc3bd5b21d5207db9d8fbb9812e1d6",
+  "candidate_source_sha256": "3bbe098330617b1410d73c7335356c8721c10690bfcb799d1d2001a9b85a4f7d",
+  "original_archived_file_count": 5995,
+  "source_file_map_sha256": "cbef8a192595ac8c94dd76ac3a12b5f48e23dc569bf3a288f8d96a5e45e4c7bd",
+  "candidate_binary": {
+    "sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "bytes": 1654784,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 3,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "all_original_source_files_unchanged_after_build": true,
+  "candidate_source_unchanged_after_build": true,
+  "commands": [
+    {
+      "name": "archive-original-source",
+      "returncode": 0,
+      "elapsed_seconds": 1.0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "git",
+        "-C",
+        "D:\\a\\coh-android\\coh-android",
+        "archive",
+        "--format=tar",
+        "--output=D:\\a\\_temp\\coh-db-checksum-build-n10va36w\\original-source.tar",
+        "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919",
+        "upstream/ouroboros"
+      ]
+    },
+    {
+      "name": "configure-db-candidate",
+      "returncode": 0,
+      "elapsed_seconds": 90.391,
+      "log_sha256": "6278e7a3d527d755aa79d19ab91de9ab9e871623849528cb4082de64307da0b5",
+      "log_bytes": 13348,
+      "log_original_bytes": 13348,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "cmake",
+        "-S",
+        "D:\\a\\_temp\\coh-db-checksum-build-n10va36w\\source\\upstream\\ouroboros",
+        "-B",
+        "D:\\a\\_temp\\coh-db-checksum-build-n10va36w\\build",
+        "-G",
+        "Visual Studio 18 2026",
+        "-A",
+        "Win32",
+        "-DCOX_BUILD_MAPSERVER=OFF",
+        "-DCOX_BUILD_BEACONSERVER=OFF",
+        "-DPATCH_EXECUTABLE=C:\\Program Files\\Git\\usr\\bin\\patch.exe"
+      ]
+    },
+    {
+      "name": "build-db-candidate",
+      "returncode": 0,
+      "elapsed_seconds": 184.172,
+      "log_sha256": "53b8bc90cdd940c507b38fbfc14374fc6c22ca099e1e1c1fb101819c2b50ebb3",
+      "log_bytes": 13723,
+      "log_original_bytes": 13723,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      },
+      "argv": [
+        "cmake",
+        "--build",
+        "D:\\a\\_temp\\coh-db-checksum-build-n10va36w\\build",
+        "--config",
+        "OptDebug",
+        "--parallel",
+        "2",
+        "--target",
+        "DbServer"
+      ]
+    }
+  ],
+  "input_state_after": {
+    "repository_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919",
+    "helper_inputs": {
+      "deployment/hosted_db_checksum_candidate.py": "b2be0e082ded8ef1a74b346b1f7b08794cbd22c4739eb0c8f7d5ea07e8521c37",
+      "deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+      "deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+      "deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+      "deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+      "deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+      "deployment/qualify_db_policy_matrix.py": "f93235c1ad24c93e844c380bacd6ce124db9e8c7de2eee706d1f2be8ffc71ef6",
+      "deployment/source-pins.json": "a49c8290d8a720c86c825e593d073733fb0cf429c4efff1337d8be8ca6226b3b",
+      "source_oracle.py": "7f55dc905bb21dfc52c088f0fbca5e85f8a71a531422e316576e8910f489d72f"
+    },
+    "host_qualification_sha256": "c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503"
+  },
+  "helper_and_head_unchanged": true,
+  "source_inputs_unchanged": true,
+  "files": {
+    "archive-original-source.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build-db-candidate.log": {
+      "bytes": 13723,
+      "sha256": "53b8bc90cdd940c507b38fbfc14374fc6c22ca099e1e1c1fb101819c2b50ebb3"
+    },
+    "candidate-clientcommLogin.c": {
+      "bytes": 3759,
+      "sha256": "3bbe098330617b1410d73c7335356c8721c10690bfcb799d1d2001a9b85a4f7d"
+    },
+    "candidate-CMakeCache.txt": {
+      "bytes": 36552,
+      "sha256": "739d0c2b938a0c6a01a104011af740be086f28b84beb36f7769f20fb259b54dc"
+    },
+    "candidate-manifest.json": {
+      "bytes": 765,
+      "sha256": "37d630a2f92496f1b6a9f3706e96c173bf708ae07befd74964a335994ab9f4cc"
+    },
+    "checksum-failclosed.patch": {
+      "bytes": 659,
+      "sha256": "d31341f948fc5c3fce36b46461f7348a9cc8e5e6321e8ae13a9e5bf178e50bb1"
+    },
+    "configure-db-candidate.log": {
+      "bytes": 13348,
+      "sha256": "6278e7a3d527d755aa79d19ab91de9ab9e871623849528cb4082de64307da0b5"
+    },
+    "DbServer-checksum-candidate.exe": {
+      "bytes": 1654784,
+      "sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3"
+    },
+    "host-policy-matrix.json": {
+      "bytes": 12422,
+      "sha256": "c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503"
+    },
+    "original-clientcommLogin.c": {
+      "bytes": 3733,
+      "sha256": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea"
+    },
+    "source-file-map.json": {
+      "bytes": 705519,
+      "sha256": "3a474fe7b3ae9a218c90405a291bc65d3056279835e14f45e56e78d6920ea878"
+    }
+  }
+}

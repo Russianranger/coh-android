@@ -1,0 +1,32 @@
+{
+  "schema": "coh-independent-rigid-source-entry-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "2695aab730622d069f4677ebc32f667e5ef23817",
+  "source_history": [
+    "c6c8eae3a",
+    "221d70329",
+    "2695aab73",
+    "6d1309015"
+  ],
+  "host_proof_sha256": "a5521ad9a7fc7426857ec9eb52a85e4723feab7830b705e957d8ebfa03d78cd0",
+  "all_bound_dependencies_match_committed_blobs": true,
+  "review": [
+    "Newexplicitpublicentry directlyusesqualifiedA sourceheaderwrapper; defaultentry stillusesprotectedwholebodyopen/model, version0/8 gatesunchanged",
+    "Wholeblobdigest/acquisitionpin/reservations/streamdecode/materialretain rollback preserved; noforgedcallerprovidedmetadataview/publicdecodercallback",
+    "Commoncallbackplumbing confinedprivateinternalheader/moduleentrypoints, notasset/semanticadmissioninterface",
+    "Allrowsvalidatedincludingfourzeroowners; exactnameuniqueness includeszeroandordinary matches, selectedzerorefuses BEFOREmaterialsupplier noemptyfakegeometry",
+    "Ffound quadraticmodelordinalprefixwalk;2695 usesone-rowrawcursor/views row0 withboundedrecordincrements, retains selectedrecordoffset, verifieswholeend, no secondprefixwalk",
+    "Privateobservertest exact72 row-zero decoder calls/increasingoffsets, defaultv0/v8 packetregressions qualifiedfinalbytes",
+    "OrdinaryShop roof4vertices2triangles originaldeltaequal packet canbeCPUgeometry only; no inferredhierarchypruning/effectabsence/sourcegeneration/CLIENTmaterial/world permit"
+  ],
+  "reported_source_controls_per_mode": 291,
+  "reported_default_v8_controls_per_mode": 259,
+  "reported_default_v0_controls_per_mode": 243,
+  "blocking_findings": [],
+  "independent_redundant_replay": false,
+  "material_authority": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_executed": false,
+  "physical_thor": false
+}

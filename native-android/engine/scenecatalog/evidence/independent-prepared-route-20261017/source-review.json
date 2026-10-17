@@ -1,0 +1,33 @@
+{
+  "schema": "coh-independent-prepared-geo-route-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "05ea6507a9a0b8129b4b602df15d524df99caee6",
+  "source_ledger_revision": "a45c657fcc6b3bd8f3a70c59e9aa85ee19455f3f",
+  "reviewed_witness_sha256": "d977098428d2d51058a0cfe59443d3187cd07b1de518ff7172261037f868fa1c",
+  "source_ledger_sha256": "74bbba3b70d9fb0a0bc28117a69c023292af720c865d572f97f1f131f09be07d",
+  "documentation_sha256": "438c183b4e04222b31c2dcd13ef05a348253d8bf59df88155e52c6b15b00ec2d",
+  "checker_sha256": "98ca4601715fee678ddd5a73e151a95c89964a643d03493a7db55c287cab95e2",
+  "nine_original_file_sha_size_and_git_blob_verified": true,
+  "seven_donor_helpers_equal_actual_fixture_receipt_and_git_blobs": true,
+  "conclusion": "Derived full-body origin is supported within the exact retained owned fresh cold-fixture preparation and normal startup scope; physical resolved leaf and open-time leaf digest are not direct observations. No native admission permit is produced.",
+  "review": [
+    "Pinnedcoldpreparation installs fullmanifestbodies (388atlas+3requiredvisual) beforefreshmirror/copy, notmerelymatchingmetadata; caseconflictsrefuse and animation-onlyPIGG cannotshadowGEO",
+    "Focused original fileLoadDataDirs/rootselection review: actualautodiscoveryfailure leaves finite ./piggs and ./data, existingdata suppresses gamedatadir.txt; MapServer addsnoadditionalglobalassetroots in startupscope",
+    "OriginalgeoLoadInternal rb\u2192geoLoadStubs andprocess-localglds_ht/reload path support samepreparedheaderorigin; no persistentserializedGLD supplier found inreviewedroute",
+    "Normalcapturedstartup hasmanualfoldercallbacks disabledthroughgroupLoadMap/dbSetupMap/observer beforedbReadyForPlayers and callbackreenable; existingGEO/LODquiescencelocks supplement observation",
+    "Sourceproof relies on ownedfixture/noexternalwriters and reviewednormalstartup flags/calls. It doesnottransfer toarbitraryliveprocesses, differentprofiles/editor/batchflags or physicalThor",
+    "Runtimeinventory commitment notrelabeled perleaf. Source-derived selection is distinct fromdirectresolvedphysicalpath/openSHA observation",
+    "Future nativebodyadmission mustexplicitlyconsume fullsource/run/preparation/body/witnessproofchain and preserveCLIENTmaterial/LOD/matchingliveGROUPS/actor prerequisites"
+  ],
+  "body_count": 391,
+  "body_bytes": 71817182,
+  "blocking_findings_within_scoped_source_proof": [],
+  "automatic_source_assertion_proof": false,
+  "independent_expensive_391_native_replay": false,
+  "physical_resolved_leaf_observed": false,
+  "open_time_leaf_sha_observed": false,
+  "assets_admitted": false,
+  "live_generation_admitted": false,
+  "world_authority": false,
+  "physical_thor": false
+}

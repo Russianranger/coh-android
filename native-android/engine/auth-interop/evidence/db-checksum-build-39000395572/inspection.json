@@ -1,0 +1,38 @@
+{
+  "schema": "coh-db-checksum-build-artifact-inspection-v1",
+  "run_id": 39000395572,
+  "artifact_id": 12088648844,
+  "artifact_bytes": 1088820,
+  "artifact_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+  "repository_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "receipt_sha256": "51e72ef676b3db845ec4f72d1a0e856f5f34b4470050ee388087c06e843a3334",
+  "binary": {
+    "sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "bytes": 1654784,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 3,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "retained_files_verified": 11,
+  "original_archived_files_checked": 5995,
+  "changed_original_paths": [],
+  "before_after_input_maps_equal": true,
+  "helper_map_verified_against_build_commit": true,
+  "commands_successful_untruncated": true,
+  "exact_command_argv_admitted": true,
+  "host_suites_passed_after_fix": 10,
+  "local_source_sha256": {
+    "deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+    "deployment/test_db_checksum_candidate.py": "809ac909defc470ba5d88b5b2df9bfdc1d3462dc28b3d7232f9a13bb928dc2c3"
+  },
+  "standalone_original_mssql_only": true,
+  "postgresql_wine_runtime_compatibility_verified": false,
+  "candidate_pe_executed": false,
+  "service_executed": false,
+  "nondevelopment_version_observed": false,
+  "live_authenticated_db_map_verified": false,
+  "apk_rebuilt": false
+}

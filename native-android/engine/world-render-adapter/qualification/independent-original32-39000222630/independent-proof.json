@@ -1,0 +1,135 @@
+{
+  "schema": "coh-independent-actual-original32-review-v1",
+  "reviewer": "worker-f",
+  "run_id": 39000222630,
+  "artifact_id": 12089140887,
+  "artifact_sha256": "2f1a723d634f03bbcc3be08399baeb3e1ea65f43230e583ad3493ae7d3581972",
+  "artifact_bytes": 12664,
+  "source_commit": "279650a6cda9d05c04678a98459a5ba5e1e7efcf",
+  "all_source_sha_match_committed_blobs": true,
+  "bound_source_inputs": 26,
+  "unchanged_original_readModel_exactly_once_in_generated_consumer": true,
+  "artifact_zip_crc_checked": true,
+  "original32_required": true,
+  "actual_freestanding_linux_elf32_execution": true,
+  "elf_machine": 3,
+  "elf_type": 2,
+  "original32_layout_scalars_verified": 14,
+  "metadata_and_pack_scalars_independently_recomputed_and_equal_stdout": 52,
+  "execution_stderr_empty": true,
+  "source_disk_record_bytes": 216,
+  "readModel_function_sha256": "233b64c16a78e5a1cc6d741a1f4a116ffb2f3b9c6d6433d222aa63c267637469",
+  "generated_c_sha256": "c9b21045159a38521812ec3cdf48699db867d60791db6cd77b9b7da8952f44a2",
+  "executed_elf_sha256": "27f521b9cf7bdc52101cb1d3e510f6cba2a0817fe6b7655954ee582a82bd2bf6",
+  "native_controls_per_mode": 243,
+  "native_modes": [
+    "release",
+    "address",
+    "undefined"
+  ],
+  "actual_body": {
+    "schema": 1,
+    "asset_path": "data/object_library/buildings/elements/signs/neon/neon.geo",
+    "source_geo_name": "object_library/Buildings/Elements/signs/Neon/neon.geo",
+    "sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+    "bytes": 3684,
+    "model": "_sign_Neon_BarVERT",
+    "original_disk_model_row": 3,
+    "sorted_runtime_model_row": 0,
+    "vertices": 90,
+    "triangles": 56,
+    "partition": [
+      2,
+      56,
+      "Bar_vert_sign.tga"
+    ],
+    "source_observation": {
+      "resource_ordinal": 35283,
+      "record_sha256": "ed64d6b265b4a8ef688dd43d4df5db29c0b1fdca1cd70f4c9be15b78fc30d0b2",
+      "owner_kind": 1,
+      "file": 457,
+      "slot": 3,
+      "original_id": 3,
+      "definition_name": "_sign_Neon_BarVERT",
+      "sorted_runtime_model_row": 0,
+      "geo_version": 0,
+      "texture_partitions": [
+        [
+          2,
+          56,
+          "Bar_vert_sign.tga"
+        ]
+      ]
+    },
+    "candidate_report_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+    "capture_sha256": {
+      "catalog.cohcat": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+      "source-identity.json": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+      "run-identity.json": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+      "resource-binding.json": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c",
+      "runtime.cohrts": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+      "resources.cohres": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+    },
+    "manifest_sha256": {
+      "client-visual-manifest.json": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+      "atlas-world-supplement-manifest.json": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+    },
+    "original_provenance": {
+      "manifest": "atlas-world-supplement-manifest.json",
+      "manifest_asset_path": "data/object_library/buildings/elements/signs/neon/neon.geo",
+      "original_pigg_path": "object_library/Buildings/Elements/signs/Neon/Neon.geo",
+      "comparison": "ascii_casefold_provenance_path",
+      "bytes": 3684,
+      "sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+      "source_archive": "stage3c.pigg",
+      "source_metadata_sha256": "68d1492e9add5a4237fa96c8ed4e6cc52ec14af20404755ba933450c58cb3bdb",
+      "source_url": "https://dists.thunderspy.org/piggs/stage3c.pigg",
+      "source_etag": "\"2f71c55dbc18d7ccd3f2d97714a544bc\"",
+      "source_member_range": "bytes 1595287-2173824/120989824",
+      "md5_table": "84bfbc4c12ab6615fe613d10908de99f",
+      "cached_header_sha256": null,
+      "cached_header_id": 7,
+      "geometry_header": {
+        "baseline_loader_accepts_version": true,
+        "data_block_bounds_verified": true,
+        "header_decompression_verified": true,
+        "header_uncompressed_bytes": 2516,
+        "runtime_compatibility": "unverified",
+        "version": 0
+      },
+      "observed_header_version_equal": true,
+      "body_bytes_acquired": false,
+      "source_generation_proven": false,
+      "status": "lookup_candidate_not_resource_pin"
+    },
+    "raw_body_sha_verified_locally": true,
+    "root_reachable_source_observation": true,
+    "source_generation_established": false,
+    "direct_opened_geo_hash_available": false,
+    "material_authority": false,
+    "world_authority": false
+  },
+  "renderer_packet_sha256": {
+    "actual": "1ae8e759135cd9ce299df21af5010c8418b11a603c1ba947f5f6df8cee431baf",
+    "authored": "c9b549f90e04b5b578059e4f6b2db21dd66a05b28a9cf53f6064059c91d4bcb9"
+  },
+  "file_sha256": {
+    "neon-acquisition.json": "447d607fb2a9db628edb6a447ccad33ac0e6bf1ae8464ff40e05bdf8662ad771",
+    "qualification.json": "1fb571b37f2c6e937f30b87d1b4d8d21b1a094bd32412c837c9506be34b12ce7",
+    "original32/original-read-model.c": "c9b21045159a38521812ec3cdf48699db867d60791db6cd77b9b7da8952f44a2",
+    "original32/original-read-model": "27f521b9cf7bdc52101cb1d3e510f6cba2a0817fe6b7655954ee582a82bd2bf6",
+    "original32/execution.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original32/original-read-model.o": "7a003b83e78dd52aba6b92bef4c27bcbefbea0922e44c857f87ad2346133e6a2",
+    "original32/original-layout.bin": "4f50c9e1392bf26a4603f1549d8ddbd76523f8ca8609a4fc1c0342f7992eb59f",
+    "original32/execution.stdout": "5691500b6682f69e1ceac9eb4f86e47f0d3ed6b3b1df7c494a5aeb0cd82473a0"
+  },
+  "scope": "Actual original readModel on true32-bit Linux integer/pointer layout with narrow destination Model test shell; not original Win32/MSVC whole client or Android execution. Original source grid/disk/pack declarations unchanged; test destination contains assigned fields only.",
+  "compiler_binary_identity_retained": false,
+  "independent_native_reexecution": false,
+  "direct_runtime_opened_file_generation": false,
+  "material_fixture_only": true,
+  "android_execution": false,
+  "physical_thor": false,
+  "world_authority": false,
+  "blocking_findings": []
+}

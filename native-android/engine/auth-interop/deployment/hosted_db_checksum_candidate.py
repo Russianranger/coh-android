@@ -5,6 +5,7 @@ No accepted PostgreSQL/Wine overlay, persistence fixture, reference alias,
 version override, account or service is installed by this helper.
 """
 import argparse
+import difflib
 import hashlib
 import json
 import os
@@ -40,6 +41,14 @@ def input_state(root,host):
     return {'repository_commit':prior.capture(['git','-C',root,'rev-parse','HEAD']),
             'helper_inputs':{name:prior.sha(HERE.parent/name) for name in INPUTS},
             'host_qualification_sha256':prior.sha(host)}
+
+
+def committed_input_hashes(root,commit):
+    if not isinstance(commit,str) or not re.fullmatch('[a-f0-9]{40}',commit):raise ValueError('db_build_input_commit')
+    tree=subprocess.check_output(['git','-C',str(root),'rev-parse',commit+':upstream/ouroboros'],timeout=30).decode().strip()
+    if tree!=prior.ORIGINAL_TREE:raise ValueError('db_build_input_original_tree')
+    prefix='native-android/engine/auth-interop/'
+    return {name:hashlib.sha256(subprocess.check_output(['git','-C',str(root),'show',commit+':'+prefix+name],timeout=30)).hexdigest() for name in INPUTS}
 
 
 def source_map(source,names):
@@ -203,12 +212,16 @@ def admit(directory,receipt_sha256,binary_sha256):
                 or record!={'bytes':path.stat().st_size,'sha256':prior.sha(path)}):raise ValueError('db_candidate_file_identity')
     raw=(directory/'original-clientcommLogin.c').read_bytes();candidate=(directory/'candidate-clientcommLogin.c').read_bytes()
     manifest=json.loads((directory/'candidate-manifest.json').read_text())
+    canonical_patch=(directory/'checksum-failclosed.patch').read_bytes().replace(b'\r\n',b'\n')
+    expected_patch=''.join(difflib.unified_diff(raw.decode().splitlines(True),candidate.decode().splitlines(True),
+                                              fromfile='a/'+CHECKSUM,tofile='b/'+CHECKSUM)).encode()
+    if canonical_patch!=expected_patch:raise ValueError('db_candidate_exact_patch_diff')
     if (replace_checksum(raw)!=candidate or manifest.get('source_tree')!=prior.ORIGINAL_TREE
             or manifest.get('changed_paths')!=[RELATIVE] or manifest.get('source_profile')!=POLICY['source_profile']
             or manifest.get('original_source_sha256')!=hashlib.sha256(raw).hexdigest()
             or manifest.get('candidate_source_sha256')!=hashlib.sha256(candidate).hexdigest()
             or manifest.get('candidate_function_sha256')!=hashlib.sha256(checksum_candidate.CANDIDATE.encode()).hexdigest()
-            or manifest.get('patch_sha256')!=prior.sha(directory/'checksum-failclosed.patch')):
+            or manifest.get('patch_sha256')!=hashlib.sha256((directory/'checksum-failclosed.patch').read_bytes().replace(b'\r\n',b'\n')).hexdigest()):
         raise ValueError('db_candidate_source_identity')
     host=json.loads((directory/'host-policy-matrix.json').read_text());validate_corpus(host)
     if (host.get('qualifier_sha256')!=prior.sha(HERE/'qualify_db_policy_matrix.py')
@@ -218,7 +231,7 @@ def admit(directory,receipt_sha256,binary_sha256):
     state=value.get('input_state_before')
     if (not isinstance(state,dict) or state!=value.get('input_state_after')
             or state.get('repository_commit')!=value.get('repository_commit')
-            or state.get('helper_inputs')!={name:prior.sha(HERE.parent/name) for name in INPUTS}
+            or state.get('helper_inputs')!=committed_input_hashes(HERE.parents[3],value.get('repository_commit'))
             or state.get('host_qualification_sha256')!=prior.sha(directory/'host-policy-matrix.json')):
         raise ValueError('db_candidate_input_stability')
     source_record=json.loads((directory/'source-file-map.json').read_text())

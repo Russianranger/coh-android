@@ -1,0 +1,17 @@
+{
+  "admitted": true,
+  "scope": "Caller-pinned compilation only; original MSSQL target, no accepted overlays or service execution.",
+  "binary": {
+    "sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "bytes": 1654784,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 3,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "receipt_sha256": "51e72ef676b3db845ec4f72d1a0e856f5f34b4470050ee388087c06e843a3334",
+  "live_authenticated_db_login_verified": false,
+  "accepted_runtime_compatibility_verified": false,
+  "nondevelopment_version_observed": false
+}

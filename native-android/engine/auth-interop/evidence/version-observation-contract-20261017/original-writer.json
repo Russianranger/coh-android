@@ -1,0 +1,35 @@
+{
+  "schema": "coh-original-version-string-writer-qualification-v1",
+  "passed": true,
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_sha256": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+  "original_function_sha256": "03d159f8f08676231e2c48984e0e6f37f84b7869d83a45fc868fcc467af2cb88",
+  "local_source_sha256": {
+    "version_string_writer_fixture.c": "138649ae543fd5920c3542f3e2a87595d49eb997f9b2120aa7ca24690c9e3494",
+    "qualify_version_string_writer.py": "1a394a6d23ff1051789d37435bc4616f45708f3ffe96f584c4425ad5ebe8c1e0",
+    "version_observation_contract.py": "ca8b13b0a11e5b7b5814143178d279c43b8374f4e028b5a6da5e21ad6c56518a"
+  },
+  "executions": {
+    "release": {
+      "checks": 792,
+      "offsets": 8,
+      "first_lengths": 99,
+      "binary_sha256": "337c844a1125f7bf392814f288e42ad36a4f8505a9512d571d0b7af54bdba4f0",
+      "writer_output_sha256": "67ab1ce106b1bcb3dcc0998e34676f71741e7abf3b75258f3f27d33447321501"
+    },
+    "asan_ubsan": {
+      "checks": 792,
+      "offsets": 8,
+      "first_lengths": 99,
+      "binary_sha256": "dd8cf150fe124d72edb87b0b2a9d55353e928122f01c05787f19e34c5c7391ed",
+      "writer_output_sha256": "67ab1ce106b1bcb3dcc0998e34676f71741e7abf3b75258f3f27d33447321501"
+    }
+  },
+  "original_bsWriteString_executed": true,
+  "actual_version_getter_executed": false,
+  "original_packet_wrapper_executed": false,
+  "netlink_transport_executed": false,
+  "actual_process_version_verified": false,
+  "windows_service_executed": false,
+  "leak_sanitizer_enabled": false
+}

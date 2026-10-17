@@ -1,0 +1,34 @@
+{
+  "schema": "coh-independent-version-payload-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "0f6d62e70c243e370afaaa8af4587e3021bf8cca",
+  "base_source_commit": "e7dd764f2f262cee0514e2e6141d83c257370258",
+  "source_audit_sha256": "0c078e45070389bdb3e1c7ca2552655dafed58337afdc03acadd66b1bd225fa8",
+  "original_writer_proof_sha256": "09942acbe4a65c5c880f97510b5f55d5443021652220abc0393d1a9b5ecb1212",
+  "all_six_original_and_bound_local_source_pins_equal_committed_blobs": true,
+  "review": [
+    "Command10 derivedsourceenumCOMM_MAX_CMD2, listener6996 sourceaudit/requestnobody, responsecompatibleversion thenserverpatchversion",
+    "Payloadonly decoder bitoffset0..7/exactbody16..1600bits/twoASCII nonemptymax99strings, fullconsumption/truncation/debug/countboundrefusals",
+    "Caller mustfirstindependentlyqualifycommand/framing/compression/NetLink/clientownership; suppliedgenerationstrings metadataonly",
+    "Versionrequestdeclareloopbackprofile isNOTlistenerisolation; originalnetInitwildcard listener andordinaryCONNECTsubscribesfullupdates explicitlydocumented",
+    "ExactwholeoriginalbsWriteString executesunderboundedBitStream shell;792validsyntheticcases across8offsets, outputhashesequalrelease+combinedASanUBSan",
+    "Originalversiongetters/handler/pktSendStringwrapper/NetLink/TCP/Windowsprocess NOTexecuted; no socket/service/credentials or liveversionprovenance",
+    "Immutableversionbody/request metadata keeptransport/process/channel/deploymentfalse; parsedversioncannotapprove nondevelopmentprofile or mintsession"
+  ],
+  "host_python_suites_reported": 4,
+  "source_writer_cases_per_mode": 792,
+  "source_writer_modes": [
+    "release",
+    "asan_ubsan"
+  ],
+  "blocking_findings": [],
+  "independent_redundant_test_replay": false,
+  "original_bsWriteString_executed_in_worker_qualification": true,
+  "actual_version_getter_executed": false,
+  "netlink_transport_executed": false,
+  "live_channel_ownership_verified": false,
+  "actual_process_version_verified": false,
+  "windows_service_executed": false,
+  "android_executed": false,
+  "physical_thor": false
+}

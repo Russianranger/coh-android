@@ -270,3 +270,23 @@ Remote publication 279650a6cda9d05c04678a98459a5ba5e1e7efcf retains tree a737a0f
 The next additive costume-inputs module consumes exact recovered BodyParts.bin and supergroupColors.bin: complete 28 body-part and160 color records, original reader/writer roundtrips,56,786 controls per release/address/undefined mode,10,528 truncations and10,528 mutations. Generated bone callback enum, original global stash slots and authoritative actor application remain unresolved. Independent review is retained.
 
 No complete corrected DbServer PE was recovered. The independently reviewed build-only helper and guarded workflow prepare a standalone original MSSQL Win32 OptDebug checksum candidate. Eight host mock suites pass. This compilation neither starts SQL/services nor modifies the accepted server runtime; runtime version/checksum observation, PostgreSQL/Wine integration, owned registered shard activation and authenticated DB/Map session remain separate prerequisites.
+
+
+## Original consumer execution and finite source selection
+
+Targeted original32 run39000222630 passed at279650a6cda9d05c04678a98459a5ba5e1e7efcf. Artifact12089140887:12,664bytes, SHA2562f1a723d634f03bbcc3be08399baeb3e1ea65f43230e583ad3493ae7d3581972. The retained independent verifier rechecks26 Git source blobs,14 original layout fields and52 metadata/pack fields against actual208-byte original ELF32 stdout. This closes the local-kernel execution gap for this specific original Linux32 consumer; it does not qualify a whole Win32 client. Native authentic Neon controls243 per mode pass; no material or world authority.
+
+Independent review supports source-DERIVED body origin only for the exactownedfreshcold capture, through deterministic preparation/unique selection. Physical resolved leaf strings and open-time hashes were not directly logged. Integrated mutation replay passed8 controls across391 bodies/71,817,182bytes. Native immutable derived-source ownership remains under development; JSON witness booleans cannot grant permission.
+
+CLIENT modelCalcAlpha numerical projection now has311,296 unchanged-original-function combinations and622,713 controls per host mode, plus3 rejected production mutations. It requires already resolved CLIENT inputs and grants no material/resource/visibility authority. Effective CLIENT input resolution and all live-world/actor gates remain open.
+
+Second remote publication8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919 starts only guarded build-only workflow39000395572. Its source controls passed; the isolated Windows candidate was compiling at this checkpoint. No SQL/services are started.
+
+
+## Actual DbServer compilation admitted; live receive seam prepared
+
+Run39000395572 completed both source controls and isolated Win32 OptDebug compilation. Exact artifact12088648844:1,088,820bytes, SHA2562eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7. Candidate PE1,654,784bytes, SHA2569dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3; original receipt SHA25651e72ef676b3db845ec4f72d1a0e856f5f34b4470050ee388087c06e843a3334. All5,995 archived original file identities, exact single changed source,9 historical build helper inputs and exact compile commands were independently checked. The initial LF/CRLF patch admission refusal is retained; admission now requires both exact raw hashes and canonical patch equality with the regenerated exact source diff. Ten host suites and coordinator pinned admission pass. No rebuild, PE execution, SQL/service, accepted PostgreSQL/Wine runtime compatibility, live checksum/version observation or authenticated DB/Map acceptance.
+
+The new per-call GROUPS receive observer exposes the exact borrowed post-command reader only after complete grammar success, with provisional actual controller generation/selection metadata. It copies/retains nothing, preserves SCENE_INCOMPLETE and outgoing command policy, and sends no ACK. Release/ASan/UBSan31,776 checks each and33 scripted UDP scenarios pass; independent source review sealed. Exact rawThor343,112-bit scene bytes remain unavailable; no synthetic fixture is labeled that capture.
+
+Source-header rigid acquisition retains all72 Shop_tailor rows/four zero-draw rows and decodes the ordinary4-vertex/2-triangle roof. A reviewed cursor correction prevents repeated earlier-row scanning. Final291 checks per mode and defaultv8/v0 regressions259/243 pass. This is CPU geometry preparation with fixture material dependencies, not CLIENT material or world admission.

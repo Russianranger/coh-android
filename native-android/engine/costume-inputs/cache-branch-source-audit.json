@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "passed": true,
+  "classification": "static original-source control-flow audit, not runtime execution",
+  "source_sha256_lf": {
+    "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11"
+  },
+  "function_sha256_lf": {
+    "ParserLoadFiles": "baccdbc31625c793281f61b8a56c3f91741537e6f3593b0589ce611e87100ccb",
+    "ParserLoadFilesShared": "2d6db0faaf0a3fe0d7913475e7ac79039f26eb6d01da93521e1b90ec50b0201f",
+    "bpReadBodyPartFiles": "cfae2131f6a845feb6040043c30305086ed5a128c535d2e4bedc70909b8ee3a8",
+    "ParseBoneNames": "88820c6af887214608f51dd1adba3bdb8663de4fecd8f6901f0e109be62a92a7",
+    "costume_fillExtraData": "255bdbdfdec687e24dd6d01e74f385d1994477f3619243fed6b9a087ad53dceb",
+    "costume_preprocess": "1a4a33b26f316872f9d63446e3ea4a7a498ee60f8efdba66544a7a6f5c5e3264"
+  },
+  "cache_success_return_precedes_text_and_preprocessor": true,
+  "bodypart_preprocessor_on_cache_hit": false,
+  "costume_preprocessor_on_cache_hit": false,
+  "shared_first_or_error_costume_finalprocessor": true,
+  "shared_data_acquired_callbacks_reexecuted": false,
+  "runtime_cache_branch_observed": false,
+  "missing_bone_enum_blocks_exact_binary_cache_hit": false,
+  "missing_bone_enum_still_blocks_text_regeneration": true,
+  "actor_authority": false
+}

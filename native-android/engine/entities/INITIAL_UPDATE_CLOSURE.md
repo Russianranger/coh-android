@@ -114,11 +114,70 @@ wire closure does not establish whole-message admission. Apparent optional
 absence cannot be assumed; native parsing must validate the actual wire flags.
 Unknown data must never be skipped by scanning for a plausible later sentinel.
 
+## Authentic costume input and cache-branch progress
+
+Exact client donor bins are preserved and verified in
+`qualification/costume-export-20261017/`. `engine/costume-inputs/` fully decodes
+BodyParts.bin and supergroupColors.bin against original whole body table
+readers/writers:28ordered parts and160ordered RGB records, with complete original
+byte roundtrips. This does not establish current server cache consumption.
+`engine/stash32/` preserves modeled Win32 uint32 hash arithmetic, original probe
+and resize order; its source-checked160color super-palette prefix has256slots,
+not the complete global palette. Full costume.bin/tree and ordinary/extra/final
+palette dictionaries remain under development; no complete slot generation or
+actor receipt exists.
+
+Read `engine/costume-inputs/CACHE_HIT_SCOPE.md` and its source audit. Successful
+original ParserLoadFiles binary read returns BEFORE text preprocessing:
+ParseBoneNames/costume_preprocess are not rerun on that route. Missing generated
+BoneIdEnum is a text/fallback-regeneration dependency, not an invented gate for
+exact admitted binary-cache-hit consumption. Original shared first/error paths
+still run passed final costume_fillExtraData; shared data-acquired reuses existing
+state without rerunning it. Actual source/profile/cache/shared branch selection,
+complete builder semantics and generation equality must be established.
+
+## Closest selected-record composition dependencies
+
+The core `coh_ent_record` still refuses actual supported-by-standalone branches;
+its list/frame success currently covers only the restricted existing profile.
+In source order, the next bounded composition work is:
+
+1. Replace only the medium-rare appearance parser's refusal of owned/full/custom
+   variants with the standalone complete costume envelope under an admitted
+   matching dictionary and selected-self identity. Preserve translucency, stale
+   costume packet ordering, prior ownership/deferred/retain-clear events and all
+   candidate lifetimes; do not place huge costume envelopes in every entity slot.
+2. Replace the very-rare immediate POWER_CUSTOM refusal with complete standalone
+   power customization then titles, and continue into existing ragdoll/common
+   pchar/stats/vision/target/status/inventory-size fields at their real offsets.
+   Raw CRCs remain unresolved until admitted dictionaries are bound.
+3. Compose the later very-rare block: selected-self taskforce architect/parameter
+   body with the admitted costume dictionary, then qualified rare-prefix fields
+   through AFK, then qualified supergroup/leveling-pact/logout suffix. These are
+   separate source boundaries; success of the early very-rare pair does not
+   authorize skipping this later block.
+4. Compose the complete teammate/buff grammar at the FINAL per-entity flag. Core
+   parser currently consumes that flag and refuses true. Preserve raw CRC/mod
+   identities, source order and state-retain/diff/delete/timer semantics, with
+   atomic rollback if any preceding or later entity fails.
+5. Close noninstant/interpolated pose branches if the actual selected source
+   profile needs them; keep current refusal when not qualified. Retain NetFX/
+   sequence events with exact asset generations, and source control future-push/
+   record_motion semantics at their separate frame boundary.
+
+After those record branches, compose list/control/delete with the qualified raw
+character/global suffix using source flags and stable offsets. Maintain unique
+selected DBID/index/entity generation, packet/session/deletion ordering,
+aggregate scratch/retained budgets and dictionary/resource lifetimes. Neither
+standalone complete wire bodies nor a numeric source-prefix slot count can mint
+an actor or completion acknowledgment.
+
 ## Smallest next authentic closure
 
 First close complete **selected self create**, then the global initial tail:
 
-1. Capture/import the exact costume string/color stash slots and source body-part
+1. Derive with the qualified original offline builder or capture/import exact costume
+   string/color stash slots and source body-part
    metadata through the new bounded versioned dictionary contract. Raw costume
    bodies, cached/indexed string/color grammar and the complete original outer
    appearance envelope are now source-qualified standalone. Compose those wire
@@ -148,9 +207,12 @@ This is not blocked solely on server access: the unimplemented client grammars
 remain substantial. Source substructures can continue without server access;
 final complete qualification needs authentic source/profile dictionaries and
 actual complete packets. A capture alone cannot make an incomplete parser safe.
-The unsupported very-rare/buff continuations, outer character fields,
-PowerInfoUpdate now has standalone raw source-qualified staging; enclosing composition and later global tails remain incomplete or
-composition, not merely runtime-data admission failures.
+The remaining entity very-rare/appearance/buff composition, dictionary-bound
+character application and complete enclosing framing remain implementation
+requirements. Outer character and PowerInfoUpdate/global wire bodies already
+have qualified raw standalone/suffix owners; do not relabel those completed
+subgrammars as missing. Source semantics and authentic runtime admission are
+both required before complete publication.
 
 ## Immutable actor boundary
 

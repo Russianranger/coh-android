@@ -94,6 +94,29 @@ void coh_map_client_destroy(CohMapClient *);
 CohStatus coh_map_client_begin(CohMapClient *, const CohMapAuthorization *,
     uint32_t connect_id, uint64_t now_ms);
 CohStatus coh_map_client_service(CohMapClient *, uint64_t now_ms, CohCancel);
+/* Optional synchronous observation after complete normal GROUPS inspection.
+ * reader starts immediately after the normalized command in the exact owned
+ * decoded message; cursor/bits/alignment retain their original representation.
+ * All pointers, including the event, expire when the callback returns. The
+ * callback must not modify input, retain pointers or reenter any client method.
+ * It may copy/prepare under its own explicit aggregate memory/work budget;
+ * callback allocations and retained copies are NOT charged by this controller.
+ * Called at most message_budget times per service, never for a failed parse.
+ * This is a receive observation, not a catalog/CRC/actor/world permit. Numeric
+ * selection fields retain their existing provisional scope (DBID may be zero).
+ * The service result, SCENE_INCOMPLETE and outgoing command policy are unchanged.
+ * No observer is installed or retained across calls; the default service passes
+ * NULL. Neither this seam nor callback return can cause READY/application ACK. */
+typedef struct {
+    CohRepReader reader;
+    CohGroupsInspection inspection;
+    uint32_t map_generation, selection_generation, selected_slot, selected_dbid;
+    uint32_t map_id, map_link_id;
+    unsigned local_development_authorized;
+} CohMapSceneObservation;
+typedef void (*CohMapSceneObserver)(void *, const CohMapSceneObservation *);
+CohStatus coh_map_client_service_observed(CohMapClient *, uint64_t now_ms,
+    CohCancel, CohMapSceneObserver, void *context);
 CohStatus coh_map_client_disconnect(CohMapClient *, uint64_t now_ms);
 void coh_map_client_suspend(CohMapClient *);
 void coh_map_client_close(CohMapClient *);

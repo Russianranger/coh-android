@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "2c037dd0f526a3a44b67fbe9e3f120f9a8bb938d",
+  "tested_files_equal_committed_blobs": true,
+  "original_lf_pins_equal_committed_blobs": true,
+  "host_proof_sha256": "0c3dffbe18e3c69079694e59e9be36e797783e761d95c6c7635cdbe58dd3e4a3",
+  "source_sha256": {
+    "native-android/engine/stash32/coh_stash32.c": "f9ac5c11a75b48ac170646b33c59feece5660c23170f31e30a1e2178bcf06dfa",
+    "native-android/engine/stash32/test_stash.c": "a37a74ce0261c388ac4dbab67b14d081c1cea37c3196d2c75a14817c2b5d12d9",
+    "native-android/engine/stash32/coh_stash32.h": "fedc5448fa449bd8f223105343adcab02fda2bb126b5f15b1e6fa21539275c93",
+    "native-android/engine/stash32/oracle.py": "21f04ac82ca6f49d4aa7bc686041d4a97c5a613a2038fdd93f6a61619b7fcafe",
+    "native-android/engine/stash32/check.py": "c2b968b414ef723c49713f01fbd7de805289cc8824e0725cd434325e5dee2920",
+    "native-android/engine/stash32/source-pins.json": "8dd6722bf7188bea4a0bfeb9cbac7066ebfebc6998cfba835f2d4140d15dca36",
+    "native-android/engine/stash32/CONTRACT.md": "fffc897019e6b5a868120a3e4cac0ce3546099a0139be802abca5ca1bdeaf710",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+    "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241"
+  },
+  "scope": "Native Win32-width hash/int-stash recipe vs modeled original source, authenticated super-palette PREFIX only; no complete costume/global/runtime dictionary."
+}

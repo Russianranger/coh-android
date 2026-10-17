@@ -1,0 +1,64 @@
+{
+  "schema": "coh-prepared-geo-source-route-review-v1",
+  "source_revision": "a45c657fcc6b3bd8f3a70c59e9aa85ee19455f3f",
+  "scope": "read-only source review identity; not a native admission permit",
+  "files": [
+    {
+      "path": "upstream/ouroboros/Common/seq/anim.c",
+      "bytes": 88082,
+      "sha256": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "git_blob": "86ee0b4c9fbbb90aaf28f14a0b0664ee1098ca80"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/modelReload.c",
+      "bytes": 15782,
+      "sha256": "ba54286ef15932e9a4727160e3e022c2dd18adcb928c2835b0b85a3e24da8359",
+      "git_blob": "8e7bf5a9100aeb95b318d31dfaaf0ca0ad7f74d4"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/AutoLOD.c",
+      "bytes": 20815,
+      "sha256": "f34c46abac3e6e95bd5829d1d72a203756a7764872f6a9483c4377a05a546722",
+      "git_blob": "b16ae3abc89bb1e4814cfb1aa229667f98ba5904"
+    },
+    {
+      "path": "upstream/ouroboros/MapServer/src/svr/svr_init.c",
+      "bytes": 70402,
+      "sha256": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+      "git_blob": "916cbeef89abd534a8fb89792a170ebecfc5edda"
+    },
+    {
+      "path": "upstream/ouroboros/MapServer/src/cmdparse/cmdserver.c",
+      "bytes": 531734,
+      "sha256": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+      "git_blob": "1c02b25ac0b1daeedeea258939a31486f6186cfb"
+    },
+    {
+      "path": "upstream/ouroboros/MapServer/src/group/groupdbmodify.c",
+      "bytes": 19500,
+      "sha256": "3605cd6d3c967d15ca9cfb2c46a7748a0d494bbeec830e6e66a95d2f63a0cf84",
+      "git_blob": "9d84c2df484a6b72d14253b9f18b3268c25da346"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c",
+      "bytes": 92002,
+      "sha256": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+      "git_blob": "44e17993ec97bb8d7ed0f597b327e72161e0a5df"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c",
+      "bytes": 49055,
+      "sha256": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+      "git_blob": "12e2f7de1474db36ece02eca900c715858dae1ef"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/piglib.c",
+      "bytes": 46233,
+      "sha256": "786ea2c5e9b8cf14fe4dfd4880b9cfe85a138afbccd56759e59b30b7663ed528",
+      "git_blob": "4b3dbd5a6b42944215401b5a4c01093277df698d"
+    }
+  ],
+  "source_assertions_automatic": false,
+  "assets_admitted": false,
+  "world_authority": false
+}

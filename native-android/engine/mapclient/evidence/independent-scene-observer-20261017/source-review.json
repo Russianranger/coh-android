@@ -1,0 +1,30 @@
+{
+  "schema": "coh-independent-map-scene-observer-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "327ccf0bea9b2aef31e30e1c70ecc31a0ca80cc5",
+  "host_proof_sha256": "ef652fa0d9de2a2da6d7c58c4bada9a530fcb8012da54768ef53b6a4b3435bdb",
+  "implementation_inputs_match_committed_blobs": true,
+  "bound_implementation_files": 14,
+  "review": [
+    "DefaultservicedelegatesNULLobserver soexistingoutgoing/applicationpolicy unchanged",
+    "Snapshotsoriginalpostnormalizedcommandreader BEFOREcompleteGROUPSinspection, emitsonlyAFTERgrammar success; exactbytes/bitcursor/end/alignment retained",
+    "Synchronous event/readerbytesborrowowneddecodedmessageloan; expirescallbackreturn thenownedrelease; no callback/context/pointer retained",
+    "Callertrustedcallbackmustnotmutate/reenter/retain andmustbudgetownwork/allocations includingcopy+retainednetworkowners; controlleraddsno sceneallocation/permit",
+    "Numericselection/mapgenerations provisional andlocaldevauth explicit, selectedDBID mayzero; no CRC/graph/actor/world verification inferred",
+    "VoidcallbackreturncannotgrantREADY/applicationACK; SCENE_INCOMPLETE/UNSUPPORTED behaviorunchanged",
+    "Receipts compare12command/alignmentprofiles+4fragmentedcompressed139794Bbodies, noeventreplay/entityevent and4lategrammarrefusals, noextraapplicationpackets, loan/socketcleanup",
+    "No authenticThor343112bitGROUPS capturedorcorrelated; scriptedoriginalproducerfixtures overactualOSUDP only"
+  ],
+  "controls_per_mode": 31776,
+  "negative_cases_per_mode": 10665,
+  "scripted_udp_scenarios_per_mode": 33,
+  "blocking_findings": [],
+  "independent_redundant_test_replay": false,
+  "real_server_interoperability": false,
+  "android_executed": false,
+  "physical_thor": false,
+  "scene_crc_verified": false,
+  "world_authority": false,
+  "actor_publication": false,
+  "ack_permitted": false
+}

@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "source_revision": "f8776e8e355d3675a7f8962cbdabeb899b0af782",
+  "source_inputs_unchanged": true,
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/coh_wr_lod.c": "77d511ddd74f921f2272059a09b2fd821f1c43f0ed76856501ab70c5a434c3db",
+    "native-android/engine/world-render-adapter/coh_wr_lod.h": "aaee2262be11dd788418a62a6280a0adf09be5cbe8a505e72ee15e8a257c521a",
+    "native-android/engine/world-render-adapter/tests/test_lod.c": "f8518439946ca4629881e9b5643f026a3d1ef72c1eedbc77fb3a2be7193efa7b",
+    "native-android/engine/world-render-adapter/check_lod.py": "0d89a9306c5b9d74f7324e1d2310f494f26e48b147d45c8bd678fed3769f7dc0",
+    "native-android/engine/world-render-adapter/lod-source-pins.json": "c6ae95855d7400d3ad627cf721fb3b6dc1a7ff25081ce32c81a08a2548222556",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "upstream/ouroboros/Game/src/graphics/groupdrawinline.c": "894a0f0f25f56a6659b66d6419f5089cb08d041c8b10371e7a154cae3f331824",
+    "upstream/ouroboros/Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49"
+  },
+  "unchanged_original_function_sha256_lf": "fb77c138e2cc1d00bd552d0ed0bdce40d18924cf15c1683b8cca33a3caaebf53",
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 622713,
+      "source_combinations": 311296,
+      "client_semantic_authority": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 622713,
+      "source_combinations": 311296,
+      "client_semantic_authority": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 622713,
+      "source_combinations": 311296,
+      "client_semantic_authority": false,
+      "world_authority": false
+    }
+  },
+  "production_mutations_rejected": [
+    "near_boundary",
+    "nightlight_addglow",
+    "stipple_threshold_precision"
+  ],
+  "client_semantic_authority": false,
+  "android_execution": false,
+  "world_authority": false
+}

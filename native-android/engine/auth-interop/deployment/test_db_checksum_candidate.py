@@ -131,6 +131,28 @@ class BuildTests(unittest.TestCase):
             changed=copy.deepcopy(proof);changed['command_paths']['source']='unrelated/source';receipt.write_text(json.dumps(changed))
             with self.assertRaises(ValueError):stage.admit(output,stage.prior.sha(receipt),binary_sha)
 
+    def test_windows_patch_text_preserves_raw_identity(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output,proof=self.compile_fixture(Path(temp));path=output/'checksum-failclosed.patch'
+            lf=path.read_bytes();self.assertNotIn(b'\r',lf);path.write_bytes(lf.replace(b'\n',b'\r\n'))
+            proof['files']['checksum-failclosed.patch']={'bytes':path.stat().st_size,'sha256':stage.prior.sha(path)}
+            receipt=output/'receipt.json';receipt.write_text(json.dumps(proof))
+            self.assertTrue(stage.admit(output,stage.prior.sha(receipt),stage.prior.sha(output/stage.BINARY))['admitted'])
+            path.write_bytes(path.read_bytes()+b'corrupt')
+            proof['files']['checksum-failclosed.patch']={'bytes':path.stat().st_size,'sha256':stage.prior.sha(path)}
+            manifest_path=output/'candidate-manifest.json';manifest=json.loads(manifest_path.read_text())
+            manifest['patch_sha256']=stage.hashlib.sha256(path.read_bytes().replace(b'\r\n',b'\n')).hexdigest()
+            manifest_path.write_text(json.dumps(manifest));proof['files']['candidate-manifest.json']={'bytes':manifest_path.stat().st_size,'sha256':stage.prior.sha(manifest_path)}
+            receipt.write_text(json.dumps(proof))
+            with self.assertRaises(ValueError):stage.admit(output,stage.prior.sha(receipt),stage.prior.sha(output/stage.BINARY))
+
+    def test_exact_committed_build_helper_inputs(self):
+        commit=stage.prior.capture(['git','-C',ROOT,'rev-parse','HEAD'])
+        values=stage.committed_input_hashes(ROOT,commit)
+        self.assertEqual(set(values),set(stage.INPUTS))
+        self.assertEqual(values['deployment/hosted_db_checksum_candidate.py'],stage.hashlib.sha256(stage.subprocess.check_output(['git','-C',str(ROOT),'show',commit+':native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py'])).hexdigest())
+        with self.assertRaises(ValueError):stage.committed_input_hashes(ROOT,'untrusted')
+
     def test_command_recorder_preserves_argv_on_failure(self):
         with tempfile.TemporaryDirectory() as temp:
             recorder=stage.BuildCommands(Path(temp))

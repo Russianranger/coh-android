@@ -1,0 +1,11 @@
+{
+  "schema": "coh-db-build-cross-platform-admission-failure-v1",
+  "initial_admission_passed": false,
+  "failure": "db_candidate_source_identity",
+  "cause": "Manifest patch_sha256 is canonical LF while Windows Path.write_text retained CRLF patch bytes. Strict raw file identity remained correct.",
+  "raw_patch_sha256": "d31341f948fc5c3fce36b46461f7348a9cc8e5e6321e8ae13a9e5bf178e50bb1",
+  "canonical_lf_patch_sha256": "752e4472220d470006730ae88fa4e0289534c288e2ce13a4244190a53d533bec",
+  "artifact_mutated": false,
+  "binary_rebuilt": false,
+  "recovery": "Require canonical patch equals regenerated exact original/candidate diff, preserve raw SHA; bind historical helper inputs to exact committed build revision."
+}

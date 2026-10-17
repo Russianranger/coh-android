@@ -1,0 +1,45 @@
+{
+  "schema": "coh-readonly-version-body-source-audit-v1",
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_sha256": {
+    "upstream/ouroboros/DBServer/src/svrmoncomm.c": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1",
+    "upstream/ouroboros/ServerMonitor/src/serverMonitorNet.c": "e5f35b0e192c3595215e8988527f71b54719534467b37018d05c3f0b53539e31",
+    "upstream/ouroboros/Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+  },
+  "function_sha256": {
+    "svrMonHandleClientMsg": "650f6408c995c4709d0fb27b98518b314d5deae42528d5a2f00d76241e8e1ed1",
+    "svrMonHandleConnect": "790c5525c783ed11da945c72a5af595124a4c765db7a1565222d14a24dd6e9b3",
+    "svrMonInit": "1d83c561af6cb3cdabb75984513bff89b216a1c9d4efc126bd4267cc20391b12",
+    "svrMonRequest": "e33bb550b107455b6941f917ea39a152948449115d2719bff0f3b57957fc7557",
+    "pktSendString": "7293d74682ff22d861cea120671f64a76dfafee82305f356e4431edd65dae7d6",
+    "bsWriteString": "03d159f8f08676231e2c48984e0e6f37f84b7869d83a45fc868fcc467af2cb88"
+  },
+  "version_branch_sha256": "528d3397772ac9e940331dc13b00d90d9b255f26952a2d32d255fa798d338ee4",
+  "request_command": 10,
+  "server_monitor_port": 6996,
+  "application_request_body_bits": 0,
+  "response_fields": [
+    "getCompatibleGameVersion()",
+    "getExecutablePatchVersion(\"CoH Server\")"
+  ],
+  "ordinary_connect_subscribes_full_updates": true,
+  "version_branch_has_svrmon_ready_guard": false,
+  "original_functions_executed": false,
+  "transport_qualified": false,
+  "actual_process_version_verified": false,
+  "host_suites_passed": 4,
+  "synthetic_valid_offset_length_cases": 792,
+  "local_source_sha256": {
+    "deployment/version_observation_contract.py": "ca8b13b0a11e5b7b5814143178d279c43b8374f4e028b5a6da5e21ad6c56518a",
+    "deployment/test_version_observation_contract.py": "4a79159f1500b6c8c2e48c706b274cbe96bfb5dc662adb21a25348024d7277ea",
+    "deployment/VERSION-OBSERVATION-CONTRACT.md": "16e3f9f0b63bd9ac2295feb180a2350aff894d10b6fcec05c6d188ac392dc9e6"
+  },
+  "original_bitstream_functions_executed": false,
+  "windows_service_executed": false,
+  "android_build_performed": false,
+  "emulator_execution_performed": false,
+  "physical_thor_qualification_performed": false
+}

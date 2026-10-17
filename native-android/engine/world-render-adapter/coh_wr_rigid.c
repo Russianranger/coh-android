@@ -1,4 +1,4 @@
-#include "coh_wr_rigid.h"
+#include "coh_wr_rigid_internal.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,10 +56,10 @@ CohStatus coh_wr_rigid_part(const CohWrRigidResource*r,uint32_t i,CohRenderGeome
     if(!r||!g||!m||i>=r->report.parts)return COH_INVALID;
     *g=r->parts[i].geometry;*m=r->parts[i].material;return COH_OK;
 }
-CohStatus coh_wr_rigid_acquire(CohAssetLoader*l,const CohWrRigidRequest*q,const CohWrRigidLimits*b,CohCancel cancel,CohWrRigidResource **out){
+CohStatus coh_wr_rigid_acquire_using(CohAssetLoader*l,const CohWrRigidRequest*q,const CohWrRigidLimits*b,CohCancel cancel,CohWrRigidResource **out,CohWrRigidHeaderOpen open_header,CohWrRigidHeaderModel read_model){
     const CohAssetBlob*blob=NULL;CohWrRigidResource*r=NULL;uint8_t *temp=NULL,*streams=NULL;CohStatus s;
     size_t workspace=0,max_stream=0,owned=sizeof(*r),temporary=0,peak=0;
-    if(!l||!q||!b||!out||!q->geo.path||!q->geo.generation||!bounded_name(q->model)||
+    if(!l||!q||!b||!out||!open_header||!read_model||!q->geo.path||!q->geo.generation||!bounded_name(q->model)||
        !q->material_generation||!q->digest||!q->acquire||!q->release||!nonzero(q->geo_sha256))return COH_INVALID;
     if(*out)return COH_STATE;
     if(!b->loader_reservation||!b->aggregate_limit||b->aggregate_limit>COH_WR_MAX_MEMORY||b->external_bytes>b->aggregate_limit||
@@ -75,20 +75,26 @@ CohStatus coh_wr_rigid_acquire(CohAssetLoader*l,const CohWrRigidRequest*q,const 
     s=coh_asset_geo_workspace(bytes,&workspace);if(s!=COH_OK)goto fail;
     if(workspace>b->max_workspace_bytes||!room(l,b,0,workspace,&peak)){s=COH_LIMIT;goto fail;}
     temp=malloc(workspace);if(!temp){s=COH_LIMIT;goto fail;}
-    s=coh_asset_geo_open(bytes,temp,workspace,b->max_models,&geo);if(s!=COH_OK)goto fail;
+    s=open_header(bytes,temp,workspace,b->max_models,&geo);if(s!=COH_OK)goto fail;
     if(geo.version!=0&&geo.version!=8){s=COH_UNSUPPORTED;goto fail;}
-    uint32_t matches=0,selected=0;
+    uint32_t matches=0,selected_zero=0;size_t cursor=geo.records_offset,selected_record=0;
     for(uint32_t i=0;i<geo.model_count;i++){
         CohAssetGeoModel m;if(cancelled(cancel)){s=COH_CANCELLED;goto fail;}
-        s=coh_asset_geo_model(&geo,i,&m);if(s!=COH_OK)goto fail;
-        if(!strcmp(m.name,q->model)){model=m;selected=i;matches++;}
+        if(cursor>geo.header.size||geo.header.size-cursor<(geo.version==0?216u:4u)){s=COH_INVALID;goto fail;}
+        size_t record_bytes=geo.version==0?216u:u32(geo.header.data+cursor);
+        if(record_bytes<4||record_bytes>geo.header.size-cursor){s=COH_INVALID;goto fail;}
+        CohAssetGeo one=geo;one.records_offset=cursor;one.model_count=1;
+        uint32_t zero=0;s=read_model(&one,0,&m,&zero);if(s!=COH_OK)goto fail;
+        if(!strcmp(m.name,q->model)){model=m;selected_record=cursor;selected_zero=zero;matches++;}
+        cursor+=record_bytes;
     }
+    if(cursor!=geo.header.size){s=COH_INVALID;goto fail;}
     if(matches!=1){s=matches?COH_INVALID:COH_NOT_FOUND;goto fail;}
+    if(selected_zero){s=COH_UNSUPPORTED;goto fail;}
     /* Public parser validates each record; original readModel uses fixed
      *216-byte ModelFormatOnDisk_v2 for legacyv0, variable records forv8. */
-    size_t record=geo.records_offset;
+    size_t record=selected_record;
     if(geo.version==0){
-        record+=(size_t)selected*216;
         const uint8_t*p=geo.header.data+record;
         /* Original legacy source asserts these runtime-only pointers null.
          * Serialized flags remain unsupported CLIENT semantics in this slice. */
@@ -96,7 +102,6 @@ CohStatus coh_wr_rigid_acquire(CohAssetLoader*l,const CohWrRigidRequest*q,const 
         if(u32(p)){s=COH_UNSUPPORTED;goto fail;}
         if(u32(p+84)){s=COH_UNSUPPORTED;goto fail;}
     }else{
-        for(uint32_t i=0;i<selected;i++)record+=u32(geo.header.data+record);
         CohGeoModel metadata;
         if(coh_geo_model(geo.header.data+record,geo.header.size-record,geo.version,&metadata)){s=COH_INVALID;goto fail;}
         if(metadata.reflection_count||metadata.alternate_pivot_offset){s=COH_UNSUPPORTED;goto fail;}
@@ -171,4 +176,12 @@ CohStatus coh_wr_rigid_acquire(CohAssetLoader*l,const CohWrRigidRequest*q,const 
     memcpy(r->report.geo_sha256,digest,32);free(staging);free(streams);free(temp);*out=r;return COH_OK;
  staged_fail:free(staging);
  fail:free(streams);free(temp);if(r)coh_wr_rigid_release(&r);else if(blob)coh_asset_release(l,blob);return s;
+}
+
+static CohStatus protected_model(const CohAssetGeo*g,uint32_t row,CohAssetGeoModel*out,uint32_t*zero){
+ CohStatus s=coh_asset_geo_model(g,row,out);if(s==COH_OK)*zero=0;return s;
+}
+CohStatus coh_wr_rigid_acquire(CohAssetLoader*l,const CohWrRigidRequest*q,
+ const CohWrRigidLimits*b,CohCancel cancel,CohWrRigidResource**out){
+ return coh_wr_rigid_acquire_using(l,q,b,cancel,out,coh_asset_geo_open,protected_model);
 }

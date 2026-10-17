@@ -178,3 +178,6 @@ definitions, 384 children/properties/swaps, four roots, 194 raw matrices and
 194 packed matrices. Both Android ARM64 and x86_64 API26 complete Map test
 executables were cross-built; this evidence does not claim execution on
 Android or a new physical server result.
+
+
+The additive per-call validated GROUPS observer is documented in `evidence/scene-observer-20261017/BOUNDARY.md`. It preserves exact borrowed body representation for future bounded graph correlation, without changing the default controller or its SCENE_INCOMPLETE/ACK boundary.
