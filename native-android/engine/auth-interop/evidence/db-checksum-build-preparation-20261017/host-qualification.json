@@ -1,0 +1,36 @@
+{
+  "schema": "coh-db-checksum-build-preparation-host-v1",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "passed": true,
+  "host_suites_passed": 8,
+  "source_hashes": {
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+    "upstream/ouroboros/DBServer/CMakeLists.txt": "5d7009a4062205992fe99f5561132362f4b0494bd655bca66ba2571e9762269e",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppVersion.c": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23",
+    "upstream/ouroboros/DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+    "upstream/ouroboros/DBServer/src/svrmoncomm.c": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1"
+  },
+  "local_hashes": {
+    "deployment/hosted_db_checksum_candidate.py": "b2be0e082ded8ef1a74b346b1f7b08794cbd22c4739eb0c8f7d5ea07e8521c37",
+    "deployment/test_db_checksum_candidate.py": "8b20b4c781346a1af8b4418699f5be0f92a17c6a60b9f418fe06bcc2dfdaab49",
+    "deployment/DB-CHECKSUM-BUILD-ONLY.md": "8a4c2841cbafa388b1c16d18ef9af60478e7ba5813b5d4a8c2dcd69900e04c00",
+    "evidence/db-checksum-build-preparation-20261017/recovery-inventory.json": "17755b9406b333d7fb56e5b5686d39b3f3a90c0f09ccf011fd95250a94848704"
+  },
+  "reused_host_policy_receipt_sha256": "c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503",
+  "windows_compilation_executed": false,
+  "complete_corrected_dbserver_available": false,
+  "service_executed": false,
+  "live_authenticated_db_login_verified": false,
+  "android_build_performed": false,
+  "emulator_execution_performed": false,
+  "physical_thor_qualification_performed": false,
+  "accepted_server_modified": false,
+  "provenance_controls": {
+    "all_original_archived_files_checked_before_and_after": true,
+    "repository_head_and_nine_helper_inputs_checked_before_and_after": true,
+    "exact_command_argv_profile_checked": true,
+    "negative_archived_file_head_helper_changes_refused": true,
+    "negative_target_configuration_architecture_flags_refused": true,
+    "failed_command_argv_recorded": true
+  }
+}

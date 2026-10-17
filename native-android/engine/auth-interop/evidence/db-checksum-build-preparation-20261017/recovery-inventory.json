@@ -1,0 +1,66 @@
+{
+  "schema": "coh-corrected-dbserver-recovery-inventory-v1",
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "reachable_checksum_source_history": [
+    "140ee62d7b648de737fcec5e7d80b52bfbb9ae67 Qualify expanded native world contracts and isolate catalog/auth deployment experiments [native-contracts-only] [catalog-capture] [auth-stage]"
+  ],
+  "committed_top_level_stage_receipts": {
+    "evidence/hosted-failure-38943674226/receipt.json": {
+      "sha256": "dea350fb6c46904acc8e497965d86d39ab2bbd62cf888aeb90c58bb48482a099",
+      "patched_dbserver_built": false
+    },
+    "evidence/hosted-odbc-38948147656/receipt.json": {
+      "sha256": "4c03f21d428b825187d4c2869df3082046be2f763bca1dcd70cf91d8c30a11ad",
+      "patched_dbserver_built": false
+    },
+    "evidence/hosted-sql-metadata-38946462964/receipt.json": {
+      "sha256": "4b0b11c767d0adbf12b79bc03b1ff8583dd753647c081e0f38a73b8d1b15f19f",
+      "patched_dbserver_built": false
+    }
+  },
+  "retained_prior_auth_archives": {
+    "auth-login-38970381430": {
+      "bytes": 1437572,
+      "sha256": "b02c3f81e6c77aa2c5f48df6f0adefccb88b66fe98624bd6eeebfd631b35d3c7",
+      "complete_dbserver_members": []
+    },
+    "auth-login-38972290813": {
+      "bytes": 1444434,
+      "sha256": "24a1aca2216620b942e2df3baaf5ae886ed06940cf6a41beace4fcae2ee40cf5",
+      "complete_dbserver_members": []
+    },
+    "auth-login-38974164017": {
+      "bytes": 71999000,
+      "sha256": "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b",
+      "complete_dbserver_members": []
+    }
+  },
+  "existing_qualified_win32_candidate_policy": {
+    "run_id": 38946462964,
+    "artifact_id": 12066431903,
+    "archive_sha256": "c6949ac8c534ff82a3260ab9ed385dc0a34f9d4ff8b8ec9a761cfd04a65d47c3",
+    "candidate_policy_exe": {
+      "bytes": 122368,
+      "sha256": "56680e359340e29d5515a423c138120c919070f8f78b4244469329bfb324208e"
+    },
+    "role": "135-check synthetic login-policy fixture, not a DbServer executable",
+    "rebuild_needed": false
+  },
+  "filesystem_search": {
+    "roots": [
+      "/workspace/scratch/8749ec34cd9b",
+      "/workspace/scratch/142ad4bc669b",
+      "/workspace/scratch/9174d12e2a11"
+    ],
+    "names": [
+      "DbServer.exe",
+      "*checksum*.exe"
+    ],
+    "complete_corrected_dbserver_found": false,
+    "archive_payloads_not_inventoried_exhaustively": true
+  },
+  "complete_corrected_dbserver_identity_available": false,
+  "accepted_server_modified": false,
+  "new_windows_build_or_service_executed": false,
+  "scope": "Accessible reachable Git history, committed auth deployment receipts, prior auth artifacts and named executable search; absence is bounded evidence, not proof no unpublished binary ever existed."
+}

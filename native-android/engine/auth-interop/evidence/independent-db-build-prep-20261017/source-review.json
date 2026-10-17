@@ -1,0 +1,26 @@
+{
+  "schema": "coh-independent-db-build-preparation-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "49181ead030b6b65e1749521e3872b3bae497bad",
+  "base_source_commit": "4628d1c47",
+  "host_proof_sha256": "ecf223f1cf3ab3985fc40b4cbbedb9b3dd349f273e88a740167cb4c7c44cc911",
+  "all_bound_inputs_match_committed_blobs": true,
+  "independent_mock_host_suites_passed": 8,
+  "review": [
+    "Fresh hostedWindows/expectedcommit/originalsubtree guards, newoutput underRUNNER_TEMP only; originalcheckoutunchanged",
+    "Archive originalfiles hashed beforeextraction, extractedmap verified, onlydeclared checksumfunction replacement allowed, everyexisting archivedfile rehashed afterbuild; map retained",
+    "RepositoryHEAD+hostreceipt+nine direct/transitivehelper/pininputs checkedbefore/after and readmitted; trackedcheckoutstatuschecked",
+    "Actual archive/configure/buildargv captured includingfailedcommands; admission reconstructs exactsourcepaths/commit/CMakeWin32/OptDebug/DbServertarget/flags, wrongtarget/config/subtree/etc refused",
+    "Corrected checksum candidate only; noPG/Wineoverlays/map/beacon/service/SQL/accountstart; originalMSSQL OptDebug compilecandidate cannotreplace acceptedruntime",
+    "Caller-pinnedartifactreceipt/PE/source/hostmatrix/filemap/logbindings; PE32I386consoleHEADERonly, no disassembly/policyexecution/runtimeversion/referencealias/authenticationadmission",
+    "Ftwofinding fixes qualified bynewnegative unrelatedsource/HEAD/helper/commandprofile controls; no remainingblocker"
+  ],
+  "blocking_findings": [],
+  "windows_compilation_executed": false,
+  "complete_corrected_pe_recovered": false,
+  "service_executed": false,
+  "live_authenticated_db_login_verified": false,
+  "accepted_server_modified": false,
+  "android_executed": false,
+  "physical_thor": false
+}

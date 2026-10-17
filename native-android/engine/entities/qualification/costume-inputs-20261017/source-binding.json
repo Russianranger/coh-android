@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "47ef643b7cda893316a2f9dd1ae2a6ebf17ad79e",
+  "host_proof_sha256": "e5665fdcd8a7b40ab7364bca370ef1cbc575d756c4e24c073f64b6d6092131a6",
+  "source_sha256": {
+    "native-android/engine/costume-inputs/coh_costume_inputs.c": "194f3ef8a38e77db0e86ce16ed8caa18772952715ea9c13d1c26382bee7c3255",
+    "native-android/engine/costume-inputs/test_inputs.c": "48d4bcc020329f14387794ad520c544ccd7d577bc40516074d2edc4c80e59277",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+    "native-android/engine/costume-inputs/check.py": "31d9f403fca65efc75b0ae7da8efb193ea4c2d3d17b0ad787fcd9b681ea21475",
+    "native-android/engine/costume-inputs/CONTRACT.md": "dc8329613adee17bccf2c2f741ced62f04a89b96739b52e6d4ee7f7eed0057a0",
+    "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241"
+  },
+  "tested_files_equal_committed_blobs": true,
+  "original_source_lf_pins_equal_committed_blobs": true,
+  "actual_donor_members_full_original_producer_consumer_roundtrip": true,
+  "original_callbacks_applied": false,
+  "authentic_stash_slots": false,
+  "actor_authority": false
+}

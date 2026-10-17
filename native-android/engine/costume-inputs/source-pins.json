@@ -1,0 +1,15 @@
+{
+  "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+  "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+  "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+  "Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+  "Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+  "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+  "libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+  "libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+  "libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+  "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+  "libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+  "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+  "libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71"
+}

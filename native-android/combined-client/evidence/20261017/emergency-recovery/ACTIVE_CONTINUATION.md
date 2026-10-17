@@ -261,3 +261,12 @@ noEGL/suffix/server/APK repeat. Versions2–7 andallmaterials/generation/worldga
 Frozen integration revision 1cad41744185e388139799eb4676f7908f63689c passed the retained integrated-391-final.json and integrated-bounds-final.json drivers. All 391 candidate bodies matched captured metadata across 8,250 source observations, retaining four explicit zero-draw owners. Release, address sanitizer and undefined behavior sanitizer bounds runs computed all 33 roots, visiting 15,353 nodes with one captured future and no blocked nodes. Source GEO aliases are rejected before workspace mutation. Neither check admits runtime file generation, CLIENT material/LOD resources, assets or world authority.
 
 The next targeted workflow is native-atlas-legacy-qualify.yml: one already verified Neon GEO body and the original freestanding 32-bit consumer. It requires actual original execution and retains failures; it repeats no server capture, Android workflow or APK build.
+
+
+## Publication and authentic dictionary continuation
+
+Remote publication 279650a6cda9d05c04678a98459a5ba5e1e7efcf retains tree a737a0f944015adb94d2f454571d896b50587b5f. Original-32 legacy consumer workflow 39000222630 was started for the newly supported v0 format; successful Android EGL/suffix run38998532705 was not repeated.
+
+The next additive costume-inputs module consumes exact recovered BodyParts.bin and supergroupColors.bin: complete 28 body-part and160 color records, original reader/writer roundtrips,56,786 controls per release/address/undefined mode,10,528 truncations and10,528 mutations. Generated bone callback enum, original global stash slots and authoritative actor application remain unresolved. Independent review is retained.
+
+No complete corrected DbServer PE was recovered. The independently reviewed build-only helper and guarded workflow prepare a standalone original MSSQL Win32 OptDebug checksum candidate. Eight host mock suites pass. This compilation neither starts SQL/services nor modifies the accepted server runtime; runtime version/checksum observation, PostgreSQL/Wine integration, owned registered shard activation and authenticated DB/Map session remain separate prerequisites.

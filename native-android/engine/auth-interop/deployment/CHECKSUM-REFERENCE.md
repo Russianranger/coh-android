@@ -85,3 +85,7 @@ frame, stale/reused auth cookie and selected DBID binding. The native probe also
 needs a qualified Windows or WSL execution environment alongside the services.
 Only the actual encrypted account exchange and authenticated DB-to-Map handoff
 can advance the real-authentication gate.
+
+The next continuation inventories existing artifacts and prepares a compile-only
+original MSSQL candidate helper in [DB-CHECKSUM-BUILD-ONLY.md](DB-CHECKSUM-BUILD-ONLY.md).
+That helper has not yet built a complete PE or admitted a service profile.

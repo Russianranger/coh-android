@@ -1,0 +1,25 @@
+{
+  "heads": {
+    "refs/recovery/20261017/milestone3-auth": "49181ead030b6b65e1749521e3872b3bae497bad",
+    "refs/recovery/20261017/milestone3-catalog": "05ea6507a9a0b8129b4b602df15d524df99caee6",
+    "refs/recovery/20261017/milestone3-coordinator": "f1ece1f14e6e5a9c1f2bb0712a632c4e66545e26",
+    "refs/recovery/20261017/milestone3-entities": "c0a1a79e328d95239976cdff80ae93de95973e35",
+    "refs/recovery/20261017/milestone3-graph": "1acc11ca2922d34a8cc71624878b25fdd9408bea",
+    "refs/recovery/20261017/milestone3-qualification": "fb19d35e6fdafec8bf132738d40c8962c7b3cfb2",
+    "refs/recovery/20261017/milestone3-renderer": "1aaf61eff1b2ef5f894c098b86aeaa64b1994877"
+  },
+  "prerequisite_refs": [
+    "refs/recovery/20261017/milestone2-auth",
+    "refs/recovery/20261017/milestone2-catalog",
+    "refs/recovery/20261017/milestone2-coordinator",
+    "refs/recovery/20261017/milestone2-entities",
+    "refs/recovery/20261017/milestone2-graph",
+    "refs/recovery/20261017/milestone2-qualification",
+    "refs/recovery/20261017/milestone2-renderer",
+    "origin/native-android@279650a6cda9d05c04678a98459a5ba5e1e7efcf"
+  ],
+  "bytes": 153088,
+  "sha256": "4972b3b7e6ff9a97dfd28e95a58048efa20134ba9165c96eb7f76aa10d6b5c94",
+  "verification": "The bundle contains these 7 refs:\n49181ead030b6b65e1749521e3872b3bae497bad refs/recovery/20261017/milestone3-auth\n05ea6507a9a0b8129b4b602df15d524df99caee6 refs/recovery/20261017/milestone3-catalog\nf1ece1f14e6e5a9c1f2bb0712a632c4e66545e26 refs/recovery/20261017/milestone3-coordinator\nc0a1a79e328d95239976cdff80ae93de95973e35 refs/recovery/20261017/milestone3-entities\n1acc11ca2922d34a8cc71624878b25fdd9408bea refs/recovery/20261017/milestone3-graph\nfb19d35e6fdafec8bf132738d40c8962c7b3cfb2 refs/recovery/20261017/milestone3-qualification\n1aaf61eff1b2ef5f894c098b86aeaa64b1994877 refs/recovery/20261017/milestone3-renderer\nThe bundle requires these 9 refs:\na885eb7380da8bed32c335ed76162c987544d055 \n3c1b37c0df01f9f8f068ce4d6a380b43b316fb89 \n14204cbbf3b00349943e83f1c956f93559443c6c \n4ac3e8a5deba112443b01a4969c58d037d3c1c80 \n1c8aa7159f4a590a42d08753168c9ec90cd644c6 \n128e0a3b70436e420ffb695db4e76a7c903ac9a9 \nfa0f725d42fc6f970667ac6a5b63833d8bda4cce \n279650a6cda9d05c04678a98459a5ba5e1e7efcf \nc21f2c059c0045aedfd9693ff076391598b33163 \nThe bundle uses this hash algorithm: sha1",
+  "full_history_preserved_separately": true
+}

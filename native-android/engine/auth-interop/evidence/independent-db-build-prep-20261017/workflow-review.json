@@ -1,0 +1,24 @@
+{
+  "schema": "coh-independent-db-build-only-workflow-review-v1",
+  "reviewer": "worker-f",
+  "workflow_commit": "cdc71a1d12ced35851047f0f9f2e88e4a012517d",
+  "workflow_sha256": "821e906a7748857e0cab1ac17e090691a36823d483e391177bfa8457b94eb23e",
+  "pinned_host_matrix_sha256": "c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503",
+  "helper_sha256": "b2be0e082ded8ef1a74b346b1f7b08794cbd22c4739eb0c8f7d5ea07e8521c37",
+  "review": [
+    "Native-android/repository/optinmarker/manualdispatch guardedsource-controls; dependentcompilejobonlyaftercontrolsuccess, noalways bypass",
+    "Ubuntu8mocksourcecontrols only, noinstalledserver/SQL/ODBC dependencies; fullhistoryoriginalsource required and fetched",
+    "FreshWindows2025-VS2026/VS18Win32OptDebugDbServer only throughapprovedstricthelper; coreautocrlffalse BEFOREcheckout; Python3.12",
+    "ExactexpectedcommitGITHUB_SHA/newRUNNER_TEMPoutput/hostmatrixSHA arguments matchapprovedhelper; noPW/credentials/account/session/SQL/service/referencealias/versionoverride",
+    "60minutejob covers900sconfigure+1800sbuild pluscleanup/upload; boundedcommands ownedprocess termination and failedlogs retained",
+    "Alwaysupload compileoutputreceipt/PE/sourcepatch/map/CMakecache/logs, failurespreserved; callerpinned admission separate afterartifactinspection",
+    "Originalsubtreehasnosymlinkentries rejectedbyarchiveguard; bytepreservingoriginal-source staging expected",
+    "NoPEexecution/policyinbinaryverification/runtimeinterop/nondevelopmentversion/authDBMap/Android/Thor acceptance followscompile"
+  ],
+  "blocking_findings": [],
+  "workflow_executed_by_review": false,
+  "windows_compilation_executed_by_review": false,
+  "service_executed": false,
+  "accepted_server_modified": false,
+  "live_authenticated_db_login_verified": false
+}

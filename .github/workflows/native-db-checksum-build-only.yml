@@ -1,0 +1,56 @@
+name: Isolated original DbServer checksum candidate compilation
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-db-checksum-build-only.yml
+      - native-android/engine/auth-interop/**
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-db-checksum-build-only-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-controls:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[db-checksum-build-only]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify compilation provenance and refusal controls
+        run: python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_checksum_candidate.py -v
+  compile-only:
+    needs: source-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - name: Preserve exact source line endings
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile only the isolated original MSSQL DbServer candidate
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py build `
+            --source-root . --expected-commit $env:GITHUB_SHA `
+            --output "$env:RUNNER_TEMP/db-checksum-build" `
+            --host-qualification native-android/engine/auth-interop/evidence/db-handoff-profile-contract-20261017/db-policy-matrix.json `
+            --expected-host-qualification-sha256 c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-db-checksum-compile-only-${{ github.sha }}
+          path: ${{ runner.temp }}/db-checksum-build/
+          if-no-files-found: error
+          retention-days: 90
