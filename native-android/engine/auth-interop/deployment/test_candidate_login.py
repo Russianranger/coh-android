@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 import hosted_candidate_login as stage
+import sql_readiness_diagnostic
 from test_auth_login_stage import fixture
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -67,41 +68,43 @@ class CandidateLoginTests(unittest.TestCase):
         child.kill.assert_called_once();job.kernel.CloseHandle.assert_called_once_with(123)
 
     def test_readiness_failure_before_popen_preserves_sql_and_private_cleanup(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root=Path(temporary);output=root/'output'
-            args=SimpleNamespace(source_root=ROOT,output=output,expected_commit='0'*40,
-                candidate_stage=root/'candidate',reuse_odbc_stage=root/'odbc',reuse_probe_stage=root/'probe',
-                intact_stage=root/'intact',intact_receipt_sha256=stage.INTACT_RECEIPT_SHA,intact_binary_sha256=stage.INTACT_BINARY_SHA)
-            class Commands:
-                def __init__(self,target): self.output=target;self.records=[]
-                def run(self,name,command,**kwargs):
-                    self.records.append({'name':name})
-                    text='17.0.4025.3' if name=='localdb-version' else '99' if name=='localdb-owned-process-id' else ''
-                    (self.output/(name+'.log')).write_text(text)
-                    if name=='archive-original-source':
-                        path=next(str(x).split('=',1)[1]for x in command if str(x).startswith('--output='))
-                        with tarfile.open(path,'w'): pass
-            with patch.dict(stage.os.environ,{'RUNNER_TEMP':temporary}), \
-                 patch.object(stage.prior,'require_hosted',return_value={'original_source_tree':stage.prior.ORIGINAL_TREE}), \
-                 patch.object(stage.candidate,'admit',return_value={}), \
-                 patch.object(stage.login,'admit_odbc_receipt',return_value={}), \
-                 patch.object(stage.login,'admit_probe_reuse',return_value={}), \
-                 patch.object(stage,'admit_intact',return_value={}), \
-                 patch.object(stage,'tools',return_value=(Path('sql-localdb'),Path('sqlcmd'),{})), \
-                 patch.object(stage.login,'qualify_listener_projection',return_value={}), \
-                 patch.object(stage.prior,'Commands',Commands), patch.object(stage.prior,'capture',return_value=''), \
-                 patch.object(stage.login.profile,'audit',return_value={}), \
-                 patch.object(stage.login,'private_command'), \
-                 patch.object(stage.login,'owned_process_snapshot',return_value={'exists':True}), \
-                 patch.object(stage.auth_readiness,'observe',return_value={'healthy':False}), \
-                 patch.object(stage.prior,'cleanup_owned_instance',return_value=True) as cleanup, \
-                 patch.object(stage.login,'firewall_rule') as firewall, \
-                 patch.object(stage.subprocess,'Popen') as popen:
-                proof=stage.run(args)
-            popen.assert_not_called();firewall.assert_not_called();cleanup.assert_called_once()
-            self.assertEqual(proof['failure'],'candidate_x86_sql_not_ready')
-            self.assertFalse(proof['passed']);self.assertFalse(proof['candidate_started'])
-            self.assertTrue(proof['owned_localdb_cleanup_complete']);self.assertTrue(proof['private_files_removed'])
+        for memory in (256,1024):
+            with self.subTest(sql_memory_limit_mb=memory), tempfile.TemporaryDirectory() as temporary:
+                root=Path(temporary);output=root/'output'
+                args=SimpleNamespace(source_root=ROOT,output=output,expected_commit='0'*40,
+                    candidate_stage=root/'candidate',reuse_odbc_stage=root/'odbc',reuse_probe_stage=root/'probe',
+                    intact_stage=root/'intact',intact_receipt_sha256=stage.INTACT_RECEIPT_SHA,intact_binary_sha256=stage.INTACT_BINARY_SHA,sql_memory_limit_mb=memory)
+                class Commands:
+                    def __init__(self,target,private_directory=None): self.output=output;self.records=target if isinstance(target,list) else []
+                    def numeric(self,name,command,kind,**kwargs): return '17.0.4025.3' if kind=='version' else 99
+                    def run(self,name,command,**kwargs):
+                        self.records.append({'name':name})
+                        text='17.0.4025.3' if name=='localdb-version' else '99' if name=='localdb-owned-process-id' else ''
+                        (self.output/(name+'.log')).write_text(text)
+                        if name=='archive-original-source':
+                            path=next(str(x).split('=',1)[1]for x in command if str(x).startswith('--output='))
+                            with tarfile.open(path,'w'): pass
+                with patch.dict(stage.os.environ,{'RUNNER_TEMP':temporary}), \
+                     patch.object(stage.prior,'require_hosted',return_value={'original_source_tree':stage.prior.ORIGINAL_TREE}), \
+                     patch.object(stage.candidate,'admit',return_value={}), \
+                     patch.object(stage.login,'admit_odbc_receipt',return_value={}), \
+                     patch.object(stage.login,'admit_probe_reuse',return_value={}), \
+                     patch.object(stage,'admit_intact',return_value={}), \
+                     patch.object(stage,'tools',return_value=(Path('sql-localdb'),Path('sqlcmd'),{})), \
+                     patch.object(stage.login,'qualify_listener_projection',return_value={}), \
+                     patch.object(stage.prior,'Commands',Commands), patch.object(sql_readiness_diagnostic,'RedactedCommands',Commands), patch.object(stage.prior,'capture',return_value=''), \
+                     patch.object(stage.login.profile,'audit',return_value={}), \
+                     patch.object(stage.login,'private_command'), \
+                     patch.object(stage.login,'owned_process_snapshot',return_value={'exists':True}), \
+                     patch.object(stage.auth_readiness,'observe',return_value={'healthy':False}), \
+                     patch.object(stage.prior,'cleanup_owned_instance',return_value=True) as cleanup, \
+                     patch.object(stage.login,'firewall_rule') as firewall, \
+                     patch.object(stage.subprocess,'Popen') as popen:
+                    proof=stage.run(args)
+                popen.assert_not_called();firewall.assert_not_called();cleanup.assert_called_once()
+                self.assertEqual(proof['failure'],'candidate_x86_sql_not_ready')
+                self.assertFalse(proof['passed']);self.assertFalse(proof['candidate_started'])
+                self.assertTrue(proof['owned_localdb_cleanup_complete']);self.assertTrue(proof['private_files_removed'])
 
     def test_exact_intact_reviewed_pins_required(self):
         with self.assertRaisesRegex(ValueError,'intact_reviewed_hashes_required'):

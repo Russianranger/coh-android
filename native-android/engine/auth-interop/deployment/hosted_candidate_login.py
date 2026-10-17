@@ -21,6 +21,7 @@ import time
 import auth_readiness
 import hosted_auth_login as login
 import hosted_receive_candidate as candidate
+import candidate_sql_memory
 
 prior = login.prior
 RECEIPT_SHA = '25ee2415a280e7b3800808824d95d05b862acca9d4d4879f5fccb5605d6a2451'
@@ -160,6 +161,8 @@ def tools():
 def run(args):
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = prior.require_hosted(root, output, args.expected_commit)
+    memory_limit_mb=getattr(args,'sql_memory_limit_mb',256)
+    memory_profile=candidate_sql_memory.select(memory_limit_mb)
     admission = candidate.admit(args.candidate_stage.resolve(), RECEIPT_SHA, BINARY_SHA)
     odbc = login.admit_odbc_receipt(args.reuse_odbc_stage.resolve())
     fragment = login.admit_probe_reuse(args.reuse_probe_stage.resolve(), root)
@@ -176,11 +179,15 @@ def run(args):
                  shipping_server_modified=False, db_checksum_policy_modified=False,
                  general_tcp_segmentation_accepted=False, receiver_segmentation_controlled=False,
                  private_service_logs_exported=False, private_credential_files_exported=False,
-                 commands=runner.records, no_binary_rebuilt=True)
+                 commands=runner.records, no_binary_rebuilt=True,sql_memory_profile=memory_profile)
     instance = 'cohauth-ci-' + secrets.token_hex(12)
     temporary = Path(tempfile.mkdtemp(prefix='coh-candidate-login-', dir=os.environ['RUNNER_TEMP']))
     created, firewall_attempted, child, job, sql_pid = False, False, None, None, None
     localdb, sqlcmd, auth = None, None, None
+    sql_runner=runner
+    if memory_limit_mb==1024:
+        from sql_readiness_diagnostic import RedactedCommands
+        sql_runner=RedactedCommands(runner.records,temporary)
     try:
         localdb, sqlcmd, proof['x86_odbc_driver'] = tools()
         proof['listener_projection_controls'] = login.qualify_listener_projection()
@@ -194,20 +201,26 @@ def run(args):
         if instance.casefold() in {v.strip().casefold() for v in prior.capture([localdb, 'info']).splitlines()}:
             raise ValueError('generated_instance_already_exists')
         created = True
-        runner.run('localdb-create', [localdb, 'create', instance], timeout=60)
-        runner.run('localdb-start', [localdb, 'start', instance], timeout=60)
+        sql_runner.run('localdb-create', [localdb, 'create', instance], timeout=60)
+        sql_runner.run('localdb-start', [localdb, 'start', instance], timeout=60)
         sql = [sqlcmd, '-S', '(localdb)\\' + instance, '-E', '-C', '-b', '-l', '20', '-t', '120']
-        runner.run('localdb-version', [*sql, '-Q', "SET NOCOUNT ON;SELECT CONVERT(varchar(100),SERVERPROPERTY('ProductVersion'));"], timeout=150)
-        if '17.0.4025.3' not in (output / 'localdb-version.log').read_text(errors='replace'):
-            raise ValueError('qualified_localdb_version_changed')
-        runner.run('localdb-memory-bound', [*sql, '-Q', "EXEC sp_configure 'show advanced options',1;RECONFIGURE;EXEC sp_configure 'max server memory (MB)',256;RECONFIGURE;"], timeout=150)
+        if memory_limit_mb==1024:
+            proof['localdb_version']=sql_runner.numeric('localdb-version', [*sql,'-h','-1','-W','-Q',"SET NOCOUNT ON;SELECT CONVERT(varchar(100),SERVERPROPERTY('ProductVersion'));"],kind='version')
+        else:
+            runner.run('localdb-version', [*sql, '-Q', "SET NOCOUNT ON;SELECT CONVERT(varchar(100),SERVERPROPERTY('ProductVersion'));"], timeout=150)
+            if '17.0.4025.3' not in (output / 'localdb-version.log').read_text(errors='replace'):
+                raise ValueError('qualified_localdb_version_changed')
+        sql_runner.run('localdb-memory-bound', [*sql, '-Q', "EXEC sp_configure 'show advanced options',1;RECONFIGURE;EXEC sp_configure 'max server memory (MB)',"+str(memory_limit_mb)+";RECONFIGURE;"], timeout=150)
         # Schema tool errors can repeat source text; discard its output as private.
         login.private_command([*sql, '-i', source / 'Assets/DBSchemas/cohauth.sql'], timeout=150)
-        runner.run('localdb-owned-process-id', [*sql, '-h', '-1', '-W', '-Q', "SET NOCOUNT ON;SELECT CONVERT(int,SERVERPROPERTY('ProcessID'));"], timeout=150)
-        number = (output / 'localdb-owned-process-id.log').read_text().strip()
-        if not re.fullmatch('[1-9][0-9]{0,9}', number) or int(number) > 0xffffffff:
-            raise ValueError('owned_sql_process_id_shape')
-        sql_pid = int(number)
+        if memory_limit_mb==1024:
+            sql_pid=sql_runner.numeric('localdb-pid', [*sql,'-h','-1','-W','-Q',"SET NOCOUNT ON;SELECT CONVERT(int,SERVERPROPERTY('ProcessID'));"],kind='pid')
+        else:
+            runner.run('localdb-owned-process-id', [*sql, '-h', '-1', '-W', '-Q', "SET NOCOUNT ON;SELECT CONVERT(int,SERVERPROPERTY('ProcessID'));"], timeout=150)
+            number = (output / 'localdb-owned-process-id.log').read_text().strip()
+            if not re.fullmatch('[1-9][0-9]{0,9}', number) or int(number) > 0xffffffff:
+                raise ValueError('owned_sql_process_id_shape')
+            sql_pid = int(number)
         proof['owned_sql_before_start'] = login.owned_process_snapshot(sql_pid)
         if not proof['owned_sql_before_start']['exists']:
             raise ValueError('owned_sql_not_running')
@@ -287,7 +300,7 @@ def run(args):
         except Exception:
             proof['owned_firewall_cleanup_complete'] = False
         try:
-            proof['owned_localdb_cleanup_complete'] = not created or prior.cleanup_owned_instance(runner, sqlcmd, localdb, instance)
+            proof['owned_localdb_cleanup_complete'] = not created or prior.cleanup_owned_instance(sql_runner, sqlcmd, localdb, instance)
         except Exception:
             proof['owned_localdb_cleanup_complete'] = False
         try:
@@ -310,6 +323,7 @@ if __name__ == '__main__':
         parser.add_argument('--'+name, type=Path, required=True)
     for name in ('expected-commit', 'intact-receipt-sha256', 'intact-binary-sha256'):
         parser.add_argument('--'+name, required=True)
+    parser.add_argument('--sql-memory-limit-mb',type=int,choices=(256,1024),default=256)
     value = run(parser.parse_args())
     print(json.dumps({k: value.get(k) for k in ('passed', 'failure', 'encrypted_account_login_verified', 'authenticated_db_map_handoff_verified')}))
     raise SystemExit(0 if value['passed'] else 1)

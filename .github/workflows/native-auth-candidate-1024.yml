@@ -1,0 +1,125 @@
+name: Isolated corrected AuthServer with measured SQL prerequisite
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-auth-candidate-1024.yml
+      - native-android/engine/auth-interop/deployment/hosted_candidate_login.py
+      - native-android/engine/auth-interop/deployment/test_candidate_login.py
+      - native-android/engine/auth-interop/deployment/auth_readiness.py
+      - native-android/engine/auth-interop/deployment/candidate_sql_memory.py
+      - native-android/engine/auth-interop/deployment/test_candidate_sql_memory.py
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-auth-candidate-1024-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-controls:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[auth-candidate-1024]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Qualify artifact admission, refusal and mandatory cleanup orchestration
+        run: |
+          python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_candidate_login.py -v
+          python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_auth_readiness.py -v
+          python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_candidate_sql_memory.py -v
+          python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_sql_readiness_diagnostic.py -v
+  owned-candidate-account-suite:
+    needs: source-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 25
+    steps:
+      - name: Preserve exact original LF source
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Reuse exact compiled candidate, probes and original ODBC qualification
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, os, stat, subprocess, zipfile
+          temp = Path(os.environ['RUNNER_TEMP'])
+          inputs = [
+              ('candidate',12085517046,427525,'da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d',None),
+              ('odbc',12066189514,872480,'0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b',None),
+              ('capped',12076876614,1437572,'b02c3f81e6c77aa2c5f48df6f0adefccb88b66fe98624bd6eeebfd631b35d3c7',None),
+              ('intact',12078663003,71999000,'aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b',{'receipt.json','coh-auth-intact.exe'})]
+          for name, ident, size, expected, selected in inputs:
+              archive = temp / (name + '-exact.zip')
+              with archive.open('xb') as stream:
+                  subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=stream,check=True,timeout=180)
+              assert archive.stat().st_size == size
+              with archive.open('rb') as data:
+                  assert hashlib.file_digest(data,'sha256').hexdigest() == expected
+              destination = temp / name
+              destination.mkdir()
+              with zipfile.ZipFile(archive) as source:
+                  infos = source.infolist(); names = [i.filename for i in infos]
+                  assert len(infos) <= 2048 and len(set(names)) == len(names)
+                  assert sum(i.file_size for i in infos) <= 128*1024**2
+                  assert all(not PurePosixPath(n).is_absolute() and '..' not in PurePosixPath(n).parts and '\\' not in n and ':' not in n for n in names)
+                  assert all(not stat.S_ISLNK(i.external_attr >> 16) for i in infos)
+                  assert source.testzip() is None
+                  if selected is not None:
+                      assert selected <= set(names)
+                  for info in infos:
+                      if selected is None or info.filename in selected:
+                          source.extract(info,destination)
+              archive.unlink()
+          print('Exact compiled inputs admitted; no binaries rebuilt and no service started')
+          PY
+      - name: Diagnose x86 SQL then execute owned encrypted normal and fragmented account suite
+        shell: pwsh
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_candidate_login.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-candidate-login" --candidate-stage "$env:RUNNER_TEMP/candidate" --reuse-odbc-stage "$env:RUNNER_TEMP/odbc" --reuse-probe-stage "$env:RUNNER_TEMP/capped" --intact-stage "$env:RUNNER_TEMP/intact" --intact-receipt-sha256 d857ef8fd309149e92de8a8abe6423d0a8d13c338adc64990fbf8dcccefcfe5e --intact-binary-sha256 7cb5672c32c1d304efea9590366250437687e3b0c8c1fafae5e4ec7cf536f29c --sql-memory-limit-mb 1024
+          if ($LASTEXITCODE -ne 0) { throw 'Isolated candidate account suite did not qualify; retain sanitized receipts' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: isolated-candidate-account-1024-${{ github.sha }}
+          path: ${{ runner.temp }}/coh-candidate-login/
+          if-no-files-found: error
+          retention-days: 90
+  original-dynamic-layout:
+    needs: source-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 10
+    steps:
+      - name: Preserve exact original LF source
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Qualify only original dynamic status bitfield under actual MSVC x86
+        shell: pwsh
+        run: |
+          $cohVswhere = "${env:ProgramFiles(x86)}/Microsoft Visual Studio/Installer/vswhere.exe"
+          $cohVsInstall = & $cohVswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if ($LASTEXITCODE -ne 0 -or -not $cohVsInstall) { throw 'MSVC x86 environment unavailable' }
+          $cohVcvars = Join-Path $cohVsInstall 'VC/Auxiliary/Build/vcvarsall.bat'
+          if (-not (Test-Path -PathType Leaf $cohVcvars)) { throw 'MSVC setup absent' }
+          $cohLayoutOutput = "$env:RUNNER_TEMP/coh-dynamic-msvc-layout"
+          $cohLayoutCommand = 'call "' + $cohVcvars + '" x86 >nul && python native-android/combined-client/diagnostics/allents-tail-20261017/qualify_dynamic_msvc.py --source-root . --output "' + $cohLayoutOutput + '"'
+          cmd.exe /d /s /c $cohLayoutCommand
+          if ($LASTEXITCODE -ne 0) { throw 'Actual MSVC x86 dynamic status layout did not qualify' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-dynamic-msvc-x86-${{ github.sha }}
+          path: ${{ runner.temp }}/coh-dynamic-msvc-layout/
+          if-no-files-found: warn
+          retention-days: 90

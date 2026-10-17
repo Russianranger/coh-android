@@ -1,0 +1,34 @@
+{
+  "review": "Independent source review of explicit1024 disposable SQL profile for corrected AuthServer suite",
+  "source_commit": "fd6384825d4a2082ddd38b407e534855cab22b14",
+  "source_sha256": {
+    "native-android/engine/auth-interop/deployment/candidate_sql_memory.py": "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde",
+    "native-android/engine/auth-interop/deployment/hosted_candidate_login.py": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+    "native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+    "native-android/engine/auth-interop/deployment/auth_readiness.py": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+    "native-android/engine/auth-interop/deployment/test_candidate_sql_memory.py": "3e56a32850299e23474e62ad16f26e6fa852019c54ae9adc3d3affa26dfb7964",
+    "native-android/engine/auth-interop/deployment/test_candidate_login.py": "b3af1175e458733007e20e676f8412a24abc30ca03a1c9992b17f534fe55e152",
+    "native-android/engine/auth-interop/deployment/test_sql_readiness_diagnostic.py": "15be59ecf66e7c17abf347cbf57cd9d562918ce5141328d87b1973a274c0869e",
+    "native-android/engine/auth-interop/deployment/test_auth_readiness.py": "d4fcdfea9283af2fbd92052fdd063bc21e8f07fb82f795f6f73679f4e9f6b27c"
+  },
+  "verdict": "no source review blocker",
+  "host_tests": {
+    "test_candidate_sql_memory": 5,
+    "test_candidate_login": 8,
+    "test_sql_readiness_diagnostic": 9,
+    "test_auth_readiness": 7
+  },
+  "checks": [
+    "exact retained1024 prerequisite receipt SHA and all16 health records bound",
+    "phase PID/generation/error markers and original schema/public seed cleanup checked",
+    "actual current x86 ODBC driver hash and LocalDB version still pinned",
+    "fresh actual x86 SQL guard precedes AuthServer Popen",
+    "explicit1024 path reuses redacted SQL runner including owned cleanup",
+    "default256 path unchanged",
+    "same PE/probe binary pins, eight cases and authentication/checksum policy preserved"
+  ],
+  "retained_prerequisite_receipt_sha256": "4c06409b977495d9db6dc42fcd1c0148005487fd3086c97a9fc1d45bf63a5e86",
+  "authserver_execution_performed": false,
+  "authentication_inherited": false,
+  "workflow_review_included": false
+}

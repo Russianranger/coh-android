@@ -1,0 +1,19 @@
+{
+  "review": "Independent corrected AuthServer explicit1024 workflow and parallel MSVC scope review",
+  "workflow": ".github/workflows/native-auth-candidate-1024.yml",
+  "workflow_sha256": "e3f9f5d69fc7df22a57431196c6bd79d672b5de7a692a5b7205052efed27e0c0",
+  "dynamic_helper": "native-android/combined-client/diagnostics/allents-tail-20261017/qualify_dynamic_msvc.py",
+  "dynamic_helper_sha256": "8ed5a6eca4d13fd8177df6edba5397d0162320e8f54e3c1ef6df75e7c8bb0cc3",
+  "verdict": "no source review blocker",
+  "checks": [
+    "repository/native-android/explicit-marker source job guard propagates through both needs",
+    "four host suites precede jobs",
+    "service steps equal prior reviewed workflow except literal1024 argument and artifact label",
+    "same four exact pinned archives and safe extraction plus existing binary/receipt admissions",
+    "owned service/SQL/firewall/private cleanup helper reviewed separately in977cfee85",
+    "cancel-in-progress false and25minute service bound",
+    "independent10minute actual VS x86 tiny source-layout job does not gate service or rebuild Map/Auth/probe binaries",
+    "both jobs preserve output with always upload"
+  ],
+  "actual_auth_or_msvc_execution_performed": false
+}

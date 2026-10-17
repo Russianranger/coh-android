@@ -1,0 +1,650 @@
+{
+  "repository_commit": "7b2067d4685babc2afe1221c7a1a3448b8ab8068",
+  "repository_tree": "78163122dbc3abfab52a006843394153073f8ef8",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "github_run_id": "38995104446",
+  "image_os": "win25-vs2026",
+  "image_version": "20261007.264.1",
+  "schema": "coh-sql-readiness-transport-only-v1",
+  "passed": true,
+  "commands": [
+    {
+      "name": "archive-original-source",
+      "returncode": 0,
+      "elapsed_seconds": 1.204,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "localdb-create",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 12343
+    },
+    {
+      "name": "localdb-start",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 889
+    },
+    {
+      "name": "localdb-version",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "numeric_result": "17.0.4025.3",
+      "elapsed_ms": 421
+    },
+    {
+      "name": "localdb-pid",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "numeric_result": 7072,
+      "elapsed_ms": 63
+    },
+    {
+      "name": "localdb-memory-bound",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 235
+    },
+    {
+      "name": "original-schema-private",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 718
+    },
+    {
+      "name": "public-seed-private-credential",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 46
+    },
+    {
+      "name": "public-seed-private-account",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 63
+    },
+    {
+      "name": "localdb-drop-owned-schema",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 78
+    },
+    {
+      "name": "localdb-stop-owned-instance",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 46
+    },
+    {
+      "name": "localdb-delete-owned-instance",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 30
+    }
+  ],
+  "observations": [
+    {
+      "phase": "default_memory_before_schema",
+      "process_before": {
+        "name": "sqlservr",
+        "pid": 7072,
+        "started_utc_ticks": 639278010613433547,
+        "exists": true,
+        "memory": {
+          "private_bytes": 468893696,
+          "cpu_ticks": 8125000,
+          "threads": 73,
+          "working_set": 334487552
+        }
+      },
+      "transports": [
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 4
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 32,
+          "database": "master",
+          "script_sha256": "4cef7ea7482f1d6977435a55932cb031fcae25bfbac6f6771d58905f7c97e6d3",
+          "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568",
+          "transport": "named_instance",
+          "endpoint_sha256": "582373f07236118d36824f8aca590849b8bbc9f5e1c5662d09b45da2b01744e5"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 4
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 32,
+          "database": "master",
+          "script_sha256": "50e7a9cf151fd4fe0567514d43099efe946fad474533650f8d88672d38235787",
+          "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568",
+          "transport": "owned_named_pipe",
+          "endpoint_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 8
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 64,
+          "database": "master",
+          "script_sha256": "32791cc57691e38d4c9bda3d082565e1ed2debab2405e4f015603e4a3d203e64",
+          "shell_sha256": "54b68d3922699817166ae7ddc4a18f7864fbe61c65f3c12b94ece0b3614b4366",
+          "transport": "named_instance",
+          "endpoint_sha256": "582373f07236118d36824f8aca590849b8bbc9f5e1c5662d09b45da2b01744e5"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 8
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 64,
+          "database": "master",
+          "script_sha256": "34a20f5550844861f518756fb11b895b6645b9584a176edd66a77ed4a27452f0",
+          "shell_sha256": "54b68d3922699817166ae7ddc4a18f7864fbe61c65f3c12b94ece0b3614b4366",
+          "transport": "owned_named_pipe",
+          "endpoint_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c"
+        }
+      ],
+      "process_after": {
+        "name": "sqlservr",
+        "started_utc_ticks": 639278010613433547,
+        "pid": 7072,
+        "exists": true,
+        "memory": {
+          "working_set": 338542592,
+          "threads": 82,
+          "cpu_ticks": 8281250,
+          "private_bytes": 486309888
+        }
+      },
+      "sql_errorlog": {
+        "bytes": 14136,
+        "sha256": "49dc33ae0d1d5f75a697c9e99cad8dc59af59596f60009265f5dd67625487620",
+        "numeric_errors": [],
+        "ready_marker": true,
+        "termination_marker": false,
+        "insufficient_memory_marker": false,
+        "content_exported": false
+      }
+    },
+    {
+      "phase": "configured_memory_before_schema",
+      "process_before": {
+        "name": "sqlservr",
+        "exists": true,
+        "started_utc_ticks": 639278010613433547,
+        "pid": 7072,
+        "memory": {
+          "cpu_ticks": 8593750,
+          "private_bytes": 489283584,
+          "threads": 82,
+          "working_set": 344854528
+        }
+      },
+      "transports": [
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 4
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 32,
+          "database": "master",
+          "script_sha256": "4cef7ea7482f1d6977435a55932cb031fcae25bfbac6f6771d58905f7c97e6d3",
+          "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568",
+          "transport": "named_instance",
+          "endpoint_sha256": "582373f07236118d36824f8aca590849b8bbc9f5e1c5662d09b45da2b01744e5"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 4
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 32,
+          "database": "master",
+          "script_sha256": "50e7a9cf151fd4fe0567514d43099efe946fad474533650f8d88672d38235787",
+          "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568",
+          "transport": "owned_named_pipe",
+          "endpoint_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 8
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 64,
+          "database": "master",
+          "script_sha256": "32791cc57691e38d4c9bda3d082565e1ed2debab2405e4f015603e4a3d203e64",
+          "shell_sha256": "54b68d3922699817166ae7ddc4a18f7864fbe61c65f3c12b94ece0b3614b4366",
+          "transport": "named_instance",
+          "endpoint_sha256": "582373f07236118d36824f8aca590849b8bbc9f5e1c5662d09b45da2b01744e5"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 8
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 64,
+          "database": "master",
+          "script_sha256": "34a20f5550844861f518756fb11b895b6645b9584a176edd66a77ed4a27452f0",
+          "shell_sha256": "54b68d3922699817166ae7ddc4a18f7864fbe61c65f3c12b94ece0b3614b4366",
+          "transport": "owned_named_pipe",
+          "endpoint_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c"
+        }
+      ],
+      "process_after": {
+        "exists": true,
+        "pid": 7072,
+        "started_utc_ticks": 639278010613433547,
+        "name": "sqlservr",
+        "memory": {
+          "working_set": 344858624,
+          "threads": 82,
+          "private_bytes": 489283584,
+          "cpu_ticks": 8593750
+        }
+      },
+      "sql_errorlog": {
+        "bytes": 14738,
+        "sha256": "5b8846c345a0cee4702dd781a05a8e3e2e56aca08679a522e2cd1e54da6de3bf",
+        "numeric_errors": [],
+        "ready_marker": true,
+        "termination_marker": false,
+        "insufficient_memory_marker": false,
+        "content_exported": false
+      }
+    },
+    {
+      "phase": "after_original_schema",
+      "process_before": {
+        "name": "sqlservr",
+        "exists": true,
+        "started_utc_ticks": 639278010613433547,
+        "pid": 7072,
+        "memory": {
+          "cpu_ticks": 10156250,
+          "threads": 86,
+          "working_set": 352452608,
+          "private_bytes": 502710272
+        }
+      },
+      "transports": [
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 4
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 32,
+          "database": "cohauth",
+          "script_sha256": "45e4859d142ab95251452901d39e117f2e63a435585381cadf657567a465d9e1",
+          "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568",
+          "transport": "named_instance",
+          "endpoint_sha256": "582373f07236118d36824f8aca590849b8bbc9f5e1c5662d09b45da2b01744e5"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 4
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 32,
+          "database": "cohauth",
+          "script_sha256": "beb5f6f38de2047e0942211475850091d111baa7a2d59d40322f92e843d240d5",
+          "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568",
+          "transport": "owned_named_pipe",
+          "endpoint_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 8
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 64,
+          "database": "cohauth",
+          "script_sha256": "92012f9cc0babbedfd723b411f2295a7c828eb24cb734e1497f4cb0f1947c921",
+          "shell_sha256": "54b68d3922699817166ae7ddc4a18f7864fbe61c65f3c12b94ece0b3614b4366",
+          "transport": "named_instance",
+          "endpoint_sha256": "582373f07236118d36824f8aca590849b8bbc9f5e1c5662d09b45da2b01744e5"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 8
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 64,
+          "database": "cohauth",
+          "script_sha256": "72f9f68729f080d3c939a5b44b29e946381d1854b4cc6e2cd18e0f41fb266f91",
+          "shell_sha256": "54b68d3922699817166ae7ddc4a18f7864fbe61c65f3c12b94ece0b3614b4366",
+          "transport": "owned_named_pipe",
+          "endpoint_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c"
+        }
+      ],
+      "process_after": {
+        "pid": 7072,
+        "name": "sqlservr",
+        "started_utc_ticks": 639278010613433547,
+        "exists": true,
+        "memory": {
+          "threads": 86,
+          "private_bytes": 502734848,
+          "working_set": 352681984,
+          "cpu_ticks": 11406250
+        }
+      },
+      "sql_errorlog": {
+        "bytes": 21582,
+        "sha256": "c523d682e3a1027ca6f87a822051771a2030ef88ef78b99b2281dc12d4483272",
+        "numeric_errors": [],
+        "ready_marker": true,
+        "termination_marker": false,
+        "insufficient_memory_marker": false,
+        "content_exported": false
+      }
+    },
+    {
+      "phase": "after_original_public_seed",
+      "process_before": {
+        "pid": 7072,
+        "started_utc_ticks": 639278010613433547,
+        "exists": true,
+        "name": "sqlservr",
+        "memory": {
+          "working_set": 355549184,
+          "private_bytes": 503611392,
+          "threads": 86,
+          "cpu_ticks": 11562500
+        }
+      },
+      "transports": [
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 4
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 32,
+          "database": "cohauth",
+          "script_sha256": "45e4859d142ab95251452901d39e117f2e63a435585381cadf657567a465d9e1",
+          "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568",
+          "transport": "named_instance",
+          "endpoint_sha256": "582373f07236118d36824f8aca590849b8bbc9f5e1c5662d09b45da2b01744e5"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 4
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 32,
+          "database": "cohauth",
+          "script_sha256": "beb5f6f38de2047e0942211475850091d111baa7a2d59d40322f92e843d240d5",
+          "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568",
+          "transport": "owned_named_pipe",
+          "endpoint_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 8
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 64,
+          "database": "cohauth",
+          "script_sha256": "92012f9cc0babbedfd723b411f2295a7c828eb24cb734e1497f4cb0f1947c921",
+          "shell_sha256": "54b68d3922699817166ae7ddc4a18f7864fbe61c65f3c12b94ece0b3614b4366",
+          "transport": "named_instance",
+          "endpoint_sha256": "582373f07236118d36824f8aca590849b8bbc9f5e1c5662d09b45da2b01744e5"
+        },
+        {
+          "healthy": true,
+          "observation": {
+            "diagnostic_completed": true,
+            "attempted_connections": 3,
+            "opened_connections": 3,
+            "connections_closed": true,
+            "sql_process_id": 7072,
+            "errors": [],
+            "query_succeeded": true,
+            "schema": "coh-auth-x86-odbc-readiness-v1",
+            "pointer_bytes": 8
+          },
+          "expected_sql_process_id": 7072,
+          "authserver_internal_pool_observed": false,
+          "encrypted_account_login_verified": false,
+          "architecture_bits": 64,
+          "database": "cohauth",
+          "script_sha256": "72f9f68729f080d3c939a5b44b29e946381d1854b4cc6e2cd18e0f41fb266f91",
+          "shell_sha256": "54b68d3922699817166ae7ddc4a18f7864fbe61c65f3c12b94ece0b3614b4366",
+          "transport": "owned_named_pipe",
+          "endpoint_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c"
+        }
+      ],
+      "process_after": {
+        "pid": 7072,
+        "exists": true,
+        "name": "sqlservr",
+        "started_utc_ticks": 639278010613433547,
+        "memory": {
+          "private_bytes": 503611392,
+          "working_set": 355680256,
+          "cpu_ticks": 11562500,
+          "threads": 86
+        }
+      },
+      "sql_errorlog": {
+        "bytes": 21582,
+        "sha256": "c523d682e3a1027ca6f87a822051771a2030ef88ef78b99b2281dc12d4483272",
+        "numeric_errors": [],
+        "ready_marker": true,
+        "termination_marker": false,
+        "insufficient_memory_marker": false,
+        "content_exported": false
+      }
+    }
+  ],
+  "authserver_started": false,
+  "encrypted_account_login_verified": false,
+  "shipping_server_modified": false,
+  "service_guard_disabled": false,
+  "connectivity_qualified": false,
+  "memory_limit_mb": 1024,
+  "experiment_budget_seconds": 1200,
+  "cleanup_reserved_seconds": 300,
+  "x86_odbc_driver": {
+    "sha256": "319b6c3b0ab08dd92dc1e5ee6daf3def82503ebbc85944fc1c614cd7a1c7b729",
+    "bytes": 1563576,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 2,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "localdb_version": "17.0.4025.3",
+  "owned_sql_initial": {
+    "started_utc_ticks": 639278010613433547,
+    "exists": true,
+    "pid": 7072,
+    "name": "sqlservr",
+    "memory": {
+      "cpu_ticks": 8125000,
+      "private_bytes": 468893696,
+      "threads": 73,
+      "working_set": 334487552
+    }
+  },
+  "owned_pipe_sha256": "868289e776d5349f0def0872ad23f82345ed01c1b0d2c14a1fe9331aa423609c",
+  "experiment_completed": true,
+  "owned_localdb_cleanup_complete": true,
+  "private_files_removed": true,
+  "source_inputs_unchanged": true
+}

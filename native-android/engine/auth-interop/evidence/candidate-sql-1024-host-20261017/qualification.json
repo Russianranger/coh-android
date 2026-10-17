@@ -1,0 +1,18 @@
+{
+  "schema": "coh-candidate-1024-sql-profile-host-controls-v1",
+  "passed": true,
+  "suites": 29,
+  "new_memory_profile_suites": 5,
+  "existing_candidate_service_suites": 8,
+  "readiness_suites": 7,
+  "diagnostic_suites": 9,
+  "scope": "Exact actual16-observation receipt admission and mutation refusals; default256 and explicit1024 fresh-readiness failure both prevent AuthServer Popen. No actual service/crypto execution.",
+  "real_authserver_executed": false,
+  "encrypted_account_login_verified": false,
+  "source_sha256": {
+    "candidate_sql_memory.py": "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde",
+    "hosted_candidate_login.py": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+    "test_candidate_sql_memory.py": "3e56a32850299e23474e62ad16f26e6fa852019c54ae9adc3d3affa26dfb7964",
+    "test_candidate_login.py": "b3af1175e458733007e20e676f8412a24abc30ca03a1c9992b17f534fe55e152"
+  }
+}
