@@ -1,0 +1,67 @@
+{
+  "schema": "coh-independent-concurrent-recovery-v1",
+  "remote_head": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "remote_tree": "f1979e5e065cdabcbed888e22ca0870c4548cbec",
+  "observed_worktrees": [
+    {
+      "path": "/workspace/scratch/9174d12e2a11/auth-isolated",
+      "head": "88289a9d99126a65e6ec2164a09ac7dc9e35db5c",
+      "tracked_changes": "",
+      "untracked": ""
+    },
+    {
+      "path": "/workspace/scratch/9174d12e2a11/auth-worker",
+      "head": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+      "tracked_changes": "",
+      "untracked": ""
+    },
+    {
+      "path": "/workspace/scratch/9174d12e2a11/coh-recovery",
+      "head": "1d883acf776874d7d35aad230d3cf9677c421bf5",
+      "tracked_changes": "",
+      "untracked": ""
+    },
+    {
+      "path": "/workspace/scratch/9174d12e2a11/entities-isolated",
+      "head": "31cff6c52c027195ef9d75e652606bc93ac88995",
+      "tracked_changes": "native-android/engine/entities/INITIAL_UPDATE_CLOSURE.md",
+      "untracked": "native-android/engine/entities/TEAMMATE_BUFFS_CONTRACT.md\nnative-android/engine/entities/buffs_fixture.c.inc\nnative-android/engine/entities/buffs_oracle_shim.h\nnative-android/engine/entities/check_teammate_buffs.py\nnative-android/engine/entities/coh_teammate_buffs.c\nnative-android/engine/entities/coh_teammate_buffs.h\nnative-android/engine/entities/qualification/recovery-20261017/recovery-identity.json\nnative-android/engine/entities/qualification/recovery-20261017/very-rare-tail-replay.json\nnative-android/engine/entities/teammate-buffs-source-pins.json\nnative-android/engine/entities/test_teammate_buffs.c"
+    },
+    {
+      "path": "/workspace/scratch/9174d12e2a11/entities-work",
+      "head": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+      "tracked_changes": "",
+      "untracked": ""
+    },
+    {
+      "path": "/workspace/scratch/9174d12e2a11/graph-work",
+      "head": "1d98a3c7035b7b5eacf059fe10682c2475a1f98c",
+      "tracked_changes": "",
+      "untracked": ""
+    },
+    {
+      "path": "/workspace/scratch/9174d12e2a11/worker-a",
+      "head": "3aba7035741f7e4c6d2045a07be29ca9cf1ce39b",
+      "tracked_changes": "native-android/engine/scenecatalog/MISSING_SOURCE_NAMES.md",
+      "untracked": "native-android/engine/scenecatalog/SNAPSHOT_OWNER.md\nnative-android/engine/scenecatalog/check_snapshot_owner.py\nnative-android/engine/scenecatalog/coh_catalog_snapshot.c\nnative-android/engine/scenecatalog/coh_catalog_snapshot.h\nnative-android/engine/scenecatalog/evidence/snapshot-owner-20261017.json\nnative-android/engine/scenecatalog/evidence/snapshot-owner-lsan-unavailable-20261017.json\nnative-android/engine/scenecatalog/tests/test_catalog_snapshot.c"
+    },
+    {
+      "path": "/workspace/scratch/9174d12e2a11/worker-e",
+      "head": "014ad735e5b5f1127c3015efcc454f96b5d2e971",
+      "tracked_changes": "",
+      "untracked": ""
+    },
+    {
+      "path": "/workspace/scratch/9174d12e2a11/worker-f",
+      "head": "05a7c86fe947e11d17a22cc5585686968c91b24f",
+      "tracked_changes": "",
+      "untracked": ""
+    }
+  ],
+  "original_worktrees_modified": false,
+  "concurrent_recovery_and_qualification_observed": true,
+  "active_other_session_not_treated_as_stalled": true,
+  "retained_capture_sha256": "8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d",
+  "scope": "Read-only inventory. Preserve active unpublished work; no source recovery replacement, no bundles imported twice, no process termination.",
+  "world_authority": false
+}

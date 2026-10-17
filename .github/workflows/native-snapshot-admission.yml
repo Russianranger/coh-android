@@ -1,0 +1,50 @@
+name: Retained snapshot provenance admission
+
+'on':
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/engine/snapshot-admission/**
+      - .github/workflows/native-snapshot-admission.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  offline-admission:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          sparse-checkout: native-android/engine/snapshot-admission
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Recover existing successful capture without executing a server
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail --silent --show-error --location --retry 2 --max-time 120 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12079509924/zip \
+            -o "$RUNNER_TEMP/capture.zip"
+          printf '%s  %s\n' 8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d "$RUNNER_TEMP/capture.zip" | sha256sum --check --strict
+      - name: Admit retained provenance and run negative controls
+        run: |
+          python -B native-android/engine/snapshot-admission/qualify.py \
+            --capture-zip "$RUNNER_TEMP/capture.zip" \
+            --output "$RUNNER_TEMP/snapshot-admission/qualification.json"
+          git diff --exit-code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snapshot-provenance-${{ github.sha }}
+          path: ${{ runner.temp }}/snapshot-admission/
+          if-no-files-found: warn
+          retention-days: 30

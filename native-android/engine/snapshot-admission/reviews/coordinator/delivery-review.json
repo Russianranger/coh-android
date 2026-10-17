@@ -1,0 +1,12 @@
+{
+  "schema": "coh-independent-coordinator-delivery-review-v1",
+  "reviewer": "worker-e",
+  "passed": true,
+  "qualifier_sha256": "22668cbec63f024f601c582f3f171e56d38fcf6d2929ccfdd39c5e216f4b6003",
+  "workflow_sha256": "47535e8d3776d428a80aa207b3688b02da6e15cfcca88c896d3185b777024ea3",
+  "exclusive_output_publication_reviewed": true,
+  "source_and_input_drift_reviewed": true,
+  "native_branch_and_read_only_ci_credentials_reviewed": true,
+  "service_execution": false,
+  "world_authority": false
+}

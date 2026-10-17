@@ -1,0 +1,58 @@
+{
+  "schema": "coh-independent-auth-receipt-review-v1",
+  "integration_base": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "retained_inputs": {
+    "native-android/engine/auth-interop/evidence/hosted-auth-fragment-38972290813/receipt.json": {
+      "bytes": 21579,
+      "sha256": "f8d2794d757c6984d1da94b138e5a9dcb055d93fbd1e6c7d1aecf2c98391b199"
+    },
+    "native-android/engine/auth-interop/evidence/hosted-auth-fragment-38972290813/probe-valid.log": {
+      "bytes": 412,
+      "sha256": "0e40d1bb2cff83f4c24c08a5b5bc90ea14922bc4c6c4a12f1c397e35bcfdcf22"
+    },
+    "native-android/combined-client/evidence/20261016/primary-recovery-next/auth-intact-38974164017/receipt.json": {
+      "bytes": 29941,
+      "sha256": "d857ef8fd309149e92de8a8abe6423d0a8d13c338adc64990fbf8dcccefcfe5e"
+    }
+  },
+  "historical_probe_numeric_observation": {
+    "schema": "coh-auth-only-probe-v1",
+    "passed": false,
+    "case": "valid",
+    "state": 12,
+    "protocol": 191021,
+    "shards": 0,
+    "received_frames": 1,
+    "sent_bytes": 170,
+    "failure_command": 0,
+    "failure_reason": 0,
+    "system_error": 108,
+    "elapsed_ms": 375,
+    "socket_cleanup_complete": true,
+    "password_retained_after_close": false,
+    "db_handoff_attempted": false,
+    "real_server_provenance_verified_by_probe": false,
+    "openssl_runtime": "OpenSSL 3.5.9 29 Sep 2026"
+  },
+  "intact_run_review": {
+    "probes_executed": false,
+    "failure": "original_authserver_listener_deadline",
+    "same_owned_sql_process_survived_job_stop": true,
+    "sql_connection_health_established": false,
+    "sql_schema_drop_verified": false,
+    "authserver_alive_at_stop": true
+  },
+  "candidate_review": {
+    "external_read_only_location": "/workspace/scratch/9174d12e2a11/auth-isolated",
+    "reviewed_files": {
+      "receive_candidate.py": "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78",
+      "qualify_receive_candidate.py": "ffae4b5a824e99570e39f05f89925c8e849ccb5e552c737c04a8ba51e0f2dc76",
+      "candidate_receive_fixture.cpp": "89c12e47dee55673fd8cca13b756d4563634edefa311b7c461a053c71f0cdc43",
+      "boundary_receive_fixture.cpp": "06f7e6fdfed8b6045c6140a5d5cc21d588529c896321032a58f0a3fa6da549e7"
+    },
+    "decision": "Pointer correction consistent with pi cursor in unchanged OnRead and Read; source review only, not approval of external hosted driver or Windows executable.",
+    "executed_by_this_review": false
+  },
+  "encrypted_account_login_verified": false,
+  "historical_failure_cause_proven": false
+}

@@ -1,0 +1,102 @@
+{
+  "base_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/coh_world_render.c": "3c451bd42768d939f99d6938acc450763608d05f96dd9d2a9501fea3ed0fcebe",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "0d706b1e5eb6e997c40bd21ba36fb7935a64edad6f9d4b1483e443ca3b453b56",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/snapshot-admission/reviews/e/test_authority_boundary.c": "8f0baa212d6d15223d3509a9b780cb666e1200fbe25313cec14a0ca5e60a7fd2"
+  },
+  "scope": "Independent invented-receipt authority and rejected-publication rollback mechanics only",
+  "android_execution": false,
+  "live_server": false,
+  "results": {
+    "release": {
+      "command": [
+        "cc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-ffp-contract=off",
+        "-pthread",
+        "-O2",
+        "/workspace/scratch/6fdfad7f0729/worker-e-review/native-android/engine/snapshot-admission/reviews/e/test_authority_boundary.c",
+        "native-android/engine/world-render-adapter/coh_world_render.c",
+        "native-android/engine/renderer/coh_renderer.c",
+        "-lm",
+        "-o",
+        "/tmp/coh-e-review-release"
+      ],
+      "result": {
+        "checks": 29,
+        "invented_receipts_only": true,
+        "pose_relation_verified_by_adapter": false,
+        "world_authority": false
+      },
+      "stderr": "",
+      "binary_sha256": "d36e43e217f560494115377d27bdf54d3a4aff8b5ed8c3d2d443e262d0751640"
+    },
+    "asan": {
+      "command": [
+        "cc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-ffp-contract=off",
+        "-pthread",
+        "-O1",
+        "-g",
+        "-fsanitize=address",
+        "/workspace/scratch/6fdfad7f0729/worker-e-review/native-android/engine/snapshot-admission/reviews/e/test_authority_boundary.c",
+        "native-android/engine/world-render-adapter/coh_world_render.c",
+        "native-android/engine/renderer/coh_renderer.c",
+        "-lm",
+        "-o",
+        "/tmp/coh-e-review-asan"
+      ],
+      "result": {
+        "checks": 29,
+        "invented_receipts_only": true,
+        "pose_relation_verified_by_adapter": false,
+        "world_authority": false
+      },
+      "stderr": "",
+      "binary_sha256": "c86f137e7324c2c2c683545e9d19b016c0bde857ea064e8dafb4d07a7951d4ab"
+    },
+    "ubsan": {
+      "command": [
+        "cc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-ffp-contract=off",
+        "-pthread",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "/workspace/scratch/6fdfad7f0729/worker-e-review/native-android/engine/snapshot-admission/reviews/e/test_authority_boundary.c",
+        "native-android/engine/world-render-adapter/coh_world_render.c",
+        "native-android/engine/renderer/coh_renderer.c",
+        "-lm",
+        "-o",
+        "/tmp/coh-e-review-ubsan"
+      ],
+      "result": {
+        "checks": 29,
+        "invented_receipts_only": true,
+        "pose_relation_verified_by_adapter": false,
+        "world_authority": false
+      },
+      "stderr": "",
+      "binary_sha256": "6590855abd8c705db5b366282cf12943df8132d42d671ce0a918e2cbae195f78"
+    }
+  }
+}

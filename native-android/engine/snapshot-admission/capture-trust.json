@@ -1,0 +1,144 @@
+{
+  "archive_sha256": "8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d",
+  "artifact_id": 12079509924,
+  "members": {
+    "capture/capture-receipt.json": {
+      "bytes": 13918,
+      "sha256": "2a6751b4ea0526d958407932293adf6a06018b364f8dfda99cf2d18bd6f6d2f1"
+    },
+    "capture/catalog.cohcat": {
+      "bytes": 12179670,
+      "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+    },
+    "capture/diagnostic-00.txt": {
+      "bytes": 10,
+      "sha256": "2a8ab5d2748f8aa4fbfe617d173064dd1147f44b880cf388c4be1391be14aa39"
+    },
+    "capture/diagnostic-01.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-02.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-03.txt": {
+      "bytes": 88,
+      "sha256": "6cb1d5df863d22628bbb7ddb7576a514936b4249b125989fb250a1aaf37bdaac"
+    },
+    "capture/diagnostic-04.txt": {
+      "bytes": 234,
+      "sha256": "532839fb961456d2f58d000370c4d1d2f349befb2b7c537fd0c3d1604b6d84da"
+    },
+    "capture/diagnostic-05.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-06.txt": {
+      "bytes": 234,
+      "sha256": "532839fb961456d2f58d000370c4d1d2f349befb2b7c537fd0c3d1604b6d84da"
+    },
+    "capture/diagnostic-07.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-08.txt": {
+      "bytes": 424,
+      "sha256": "9541a09c56cc4d142f0ea7056398b10df4acd5643f35e1d88fef0012e8be992d"
+    },
+    "capture/diagnostic-09.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-10.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-11.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-12.txt": {
+      "bytes": 440,
+      "sha256": "8ea4b04334d67816d2c0475c533472456c6913809fe9d5052a4a826e85941f19"
+    },
+    "capture/diagnostic-13.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-14.txt": {
+      "bytes": 3115,
+      "sha256": "56f3d5b62afa80d872ac8729fe89264b1dcc07e4ca77e447fa987415acd3f031"
+    },
+    "capture/diagnostic-15.txt": {
+      "bytes": 2234,
+      "sha256": "423849ef6e34039a9b6aa4fea0d653444239d6ad90477035fe8203b1b1b325a4"
+    },
+    "capture/diagnostic-16.txt": {
+      "bytes": 36946,
+      "sha256": "4b956c9b2f05f658591bb251fb5eaca80ec35af10dddf203ae8159001f46b24a"
+    },
+    "capture/diagnostic-17.txt": {
+      "bytes": 71,
+      "sha256": "afc56d21f4e542e82e95a2ee3621eabc51206978f006648ded56e4ebe03d8293"
+    },
+    "capture/diagnostic-18.txt": {
+      "bytes": 1376,
+      "sha256": "be0f2dde7286129fbd82029630dfeb6496c77d76aa519ac2a5836226f2bc9cd5"
+    },
+    "capture/run-identity.json": {
+      "bytes": 535,
+      "sha256": "2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588"
+    },
+    "capture/runtime.cohrts": {
+      "bytes": 6585,
+      "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+    },
+    "capture/snapshot-binding.json": {
+      "bytes": 707,
+      "sha256": "399ed6daee52c395b16d8b88b2c894399279447d44f9037fdefcbe4d9e79d862"
+    },
+    "capture/source-identity.json": {
+      "bytes": 5032,
+      "sha256": "a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0"
+    },
+    "control-fixture.json": {
+      "bytes": 16113,
+      "sha256": "33c38fddf4c92bde231ef6557d2fd5a8475b1b960f370ea578b51496fbaa1493"
+    },
+    "map-startup-inputs.json": {
+      "bytes": 1166,
+      "sha256": "813b1d59d73295ec9a80766dfd5f707475e90f8813e30273ef7d0de911867ae4"
+    },
+    "path-probe-build.json": {
+      "bytes": 1017,
+      "sha256": "b58f5c5a17c913c306fbb453e0777040e0d9cb0e5c61fe2b4754f77f9d7efa03"
+    },
+    "runtime-graph-diagnostic.json": {
+      "bytes": 50325,
+      "sha256": "cfaa86f3977bda91f9018b69d32fb2c83202b34206b75dd194d028ee7a42cb1e"
+    },
+    "scope.json": {
+      "bytes": 430,
+      "sha256": "a8cdf8d1800e6c5abe780a9969e01f03fadd96313c572024ce210f687bb4cb58"
+    },
+    "wine/installed-packages.tsv": {
+      "bytes": 152,
+      "sha256": "7052f1a35d365074ec6342f944e98aed1972e646f2e310e2e57f402a05b35776"
+    },
+    "wine/packages.sha256": {
+      "bytes": 432,
+      "sha256": "f29007e146adb82c7f47dcbef95fb3d492bf0bea8d4ea1b0d31ada3709c3381f"
+    },
+    "wine/version.txt": {
+      "bytes": 10,
+      "sha256": "2a8ab5d2748f8aa4fbfe617d173064dd1147f44b880cf388c4be1391be14aa39"
+    },
+    "wine/winehq.key": {
+      "bytes": 3212,
+      "sha256": "d965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8"
+    }
+  },
+  "run_id": 38977202310,
+  "schema": "coh-retained-capture-trust-v1"
+}

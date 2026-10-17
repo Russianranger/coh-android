@@ -1,0 +1,22 @@
+{
+  "audit_passed": true,
+  "audit_scope": "source boundary review only",
+  "sha256_lf": {
+    "engine/entities/coh_entities.c": "730e09df080c26efa240844bbea707a88138ea966864006fa26487249e18d1e3",
+    "engine/mapclient/coh_mapclient.c": "89fdb30d76a1e74a946af9de166ddb34d24ebafd443bfddb171673b4282fb910",
+    "../upstream/ouroboros/Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "../upstream/ouroboros/Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+    "../upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+  },
+  "rejected_mutations": [
+    "tail_false_success",
+    "premature_ready",
+    "premature_allents",
+    "unreviewed_variable_command",
+    "missing_power_tail",
+    "missing_embedded_commands"
+  ],
+  "full_update_accepted": false,
+  "authoritative_actor_accepted": false,
+  "live_world_accepted": false
+}

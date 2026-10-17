@@ -1,0 +1,41 @@
+{
+  "reviewed_sha256": {
+    "admit.py": "66c33602009b4247c96c8c6d9e6a394f51852842536ae8aa2c732cad191f8bbb",
+    "capture-trust.json": "ad496a806005bb272acd1a30e54260ac46ed56c0768cb22c77161a8ee23811c5"
+  },
+  "archive_sha256": "8763048abd0d55070159955f02ae9d72e452aa44d1da6e6603a22637732d764d",
+  "independent_controls": 6,
+  "controls": [
+    "reordered recompressed exact members preserve result",
+    "truncated ZIP refuses",
+    "failed second candidate leaves first frozen result intact",
+    "original archive unchanged",
+    "no extraction to caller directory",
+    "all authority flags false"
+  ],
+  "result": {
+    "schema": "coh-offline-snapshot-admission-v1",
+    "source_revision": "3e8b5c9f5b794b58a66c6d8c62a593b926a10873",
+    "asset_generation": 20261016,
+    "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "snapshot_sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+    "source_identity_sha256": "a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0",
+    "run_identity_sha256": "2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588",
+    "diagnostic_sha256": "cfaa86f3977bda91f9018b69d32fb2c83202b34206b75dd194d028ee7a42cb1e",
+    "active_roots": 33,
+    "external_objects": 7,
+    "reachable_external": [
+      "_mmayhem_curtain_8_01c"
+    ],
+    "evidence_member_count": 34,
+    "offline_analysis_only": true,
+    "live_groups_transaction": false,
+    "physical_generation_verified": false,
+    "graph_publication_authorized": false,
+    "actor_publication_authorized": false,
+    "renderer_authorized": false,
+    "world_authority": false
+  },
+  "scope": "offline artifact admission only; no renderer activation, Android, live server or physical device",
+  "final_normalization_review": "import zlib; catch zlib.error and EOFError as AdmissionError; no authority or binding changes"
+}

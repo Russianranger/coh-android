@@ -1,0 +1,1071 @@
+{
+  "schema": "coh-independent-retained-envelope-review-v1",
+  "passed": true,
+  "byte_pins": {
+    "capture/catalog.cohcat": {
+      "bytes": 12179670,
+      "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+    },
+    "capture/runtime.cohrts": {
+      "bytes": 6585,
+      "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+    },
+    "capture/source-identity.json": {
+      "bytes": 5032,
+      "sha256": "a5517f1ca0c5f1ce8aa2c39bfa70f76d0c913ef9a27634c16ad361b3770ff3f0"
+    },
+    "capture/run-identity.json": {
+      "bytes": 535,
+      "sha256": "2e3b459686f769ac18519e7ec93cecff691854411c8c5dd7db70a62182868588"
+    }
+  },
+  "root_records": [
+    {
+      "index": 0,
+      "name": "grp_GC_Shutdown_Atmo",
+      "file": 0,
+      "slot": 108,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -71.0,
+          15.931458473205566,
+          -474.5
+        ]
+      ],
+      "encoded_matrix_sha256": "9072171660c4df9beddc591aec56c6cc153f884a933a8667d87e4fada267faa1"
+    },
+    {
+      "index": 1,
+      "name": "grp_audiogroup",
+      "file": 0,
+      "slot": 157,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          186.380859375,
+          67.989501953125,
+          -938.831298828125
+        ]
+      ],
+      "encoded_matrix_sha256": "62a1537d007efb5adf2e33501bbce4366ed67717be4250bb59b01e7f4e3e9131"
+    },
+    {
+      "index": 2,
+      "name": "grp_Badge_tourism",
+      "file": 0,
+      "slot": 172,
+      "matrix_columns": [
+        [
+          0.9969173073768616,
+          0.0,
+          -0.07845909893512726
+        ],
+        [
+          -0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.07845909893512726,
+          0.0,
+          0.9969173073768616
+        ],
+        [
+          721.3763427734375,
+          164.83200073242188,
+          -699.31494140625
+        ]
+      ],
+      "encoded_matrix_sha256": "5b187c52d882db51b3a3dfc4cda12642e85dd1d2e1b6b8416d0571e83f39f861"
+    },
+    {
+      "index": 3,
+      "name": "grp_beacons",
+      "file": 0,
+      "slot": 591,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          522.87060546875,
+          262.0234375,
+          -574.75
+        ]
+      ],
+      "encoded_matrix_sha256": "9221abbb18e002eb1d707ffa77b673067be9a2338ea09f3bd99e4eed7857e294"
+    },
+    {
+      "index": 4,
+      "name": "grp_blackmap",
+      "file": 0,
+      "slot": 592,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          512.0,
+          -128.0000457763672,
+          -763.474609375
+        ]
+      ],
+      "encoded_matrix_sha256": "38e6940a9b599a888ad17f6c59316fd02bf29be6c2aede7f5f253580a6a4f5be"
+    },
+    {
+      "index": 5,
+      "name": "grp_blimp",
+      "file": 0,
+      "slot": 613,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          176.0,
+          707.0,
+          -1040.0
+        ]
+      ],
+      "encoded_matrix_sha256": "53ffacdee55fcbbaf5358d6ef92f77e725dcc8dcec53a91fe9008cf5f5609af3"
+    },
+    {
+      "index": 6,
+      "name": "grp_Day_Job_Volumes",
+      "file": 0,
+      "slot": 619,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -59.5,
+          -867.0,
+          -914.0
+        ]
+      ],
+      "encoded_matrix_sha256": "6939612b0a01798df7e68126ed6bcc8c1bb2c8921273e2eef39a0b7eedf28c89"
+    },
+    {
+      "index": 7,
+      "name": "grp_Geometry",
+      "file": 0,
+      "slot": 5469,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          511.38037109375,
+          426.0,
+          -703.999755859375
+        ]
+      ],
+      "encoded_matrix_sha256": "e83ec6c65b3193cafb02323b0eaae2ef3fd80a47092ab77ebbc1a81b9a2c9bc1"
+    },
+    {
+      "index": 8,
+      "name": "grp_Halloween_Event_06",
+      "file": 0,
+      "slot": 5510,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -68.01048278808594,
+          4.472891807556152,
+          -10.75
+        ]
+      ],
+      "encoded_matrix_sha256": "8c9afbd1159decb13a25b819f37b87b2c5ec9c451378383d99469265616b8f86"
+    },
+    {
+      "index": 9,
+      "name": "grp_Holiday_Event_06",
+      "file": 0,
+      "slot": 5715,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          511.4013671875,
+          409.2863464355469,
+          -812.486572265625
+        ]
+      ],
+      "encoded_matrix_sha256": "bcb5a0bf18617aa20c2e2531238645388261c5726dfffc4a5d71cf631a9dfa25"
+    },
+    {
+      "index": 10,
+      "name": "grp_HollowsBeacons",
+      "file": 0,
+      "slot": 5723,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          189.818359375,
+          245.71826171875,
+          -2069.03076171875
+        ]
+      ],
+      "encoded_matrix_sha256": "d5e3a836962733758231714d0886519361b53eb78018229c2d320277e990a892"
+    },
+    {
+      "index": 11,
+      "name": "grp_Makeover_Spawndefs",
+      "file": 0,
+      "slot": 5909,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          642.7833251953125,
+          7.882775783538818,
+          -797.4718017578125
+        ]
+      ],
+      "encoded_matrix_sha256": "c97227647322120e6336972be81d781fa665f3bd53d66d824f5c53e68b2cbb0f"
+    },
+    {
+      "index": 12,
+      "name": "grp_Manholes",
+      "file": 0,
+      "slot": 5910,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          1235.75,
+          156.25277709960938,
+          -242.75
+        ]
+      ],
+      "encoded_matrix_sha256": "69f0e4c6172651c95876da1e06b60003d881a12160a6d3171218c1ee61eb5edc"
+    },
+    {
+      "index": 13,
+      "name": "grp_mission_doors",
+      "file": 0,
+      "slot": 6055,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          120.030517578125,
+          465.505859375,
+          -748.54931640625
+        ]
+      ],
+      "encoded_matrix_sha256": "6eb2edeef0441267bb04c5e75ca93a51fce1611690c3ebad57281fe786c3f5ae"
+    },
+    {
+      "index": 14,
+      "name": "grp_neighborhoods",
+      "file": 0,
+      "slot": 6080,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -32.0,
+          0.0,
+          -351.9999694824219
+        ]
+      ],
+      "encoded_matrix_sha256": "5dd850bc6d19ce1f1a458e6b874b2392373b8ae7fca69f4c459e24a05de3105a"
+    },
+    {
+      "index": 15,
+      "name": "grp_patrol_box",
+      "file": 0,
+      "slot": 6098,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -5.161986827850342,
+          18.90635108947754,
+          -706.25
+        ]
+      ],
+      "encoded_matrix_sha256": "5d65e1f0cc1bccb9105fd4fe80d8b32beb93e347299f15116558803266e1ce05"
+    },
+    {
+      "index": 16,
+      "name": "grp_PersistentNPC",
+      "file": 0,
+      "slot": 6206,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -25.9998779296875,
+          -159.36572265625,
+          -899.901611328125
+        ]
+      ],
+      "encoded_matrix_sha256": "84fcd3081065db526c08cbe8c21152e18ca00b95596a97b867a01a69b11e0924"
+    },
+    {
+      "index": 17,
+      "name": "grp_Plaques",
+      "file": 0,
+      "slot": 6216,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          206.2913818359375,
+          24.575931549072266,
+          -414.63629150390625
+        ]
+      ],
+      "encoded_matrix_sha256": "57d23708cc7ffe5aef0bcbb3726af0c5051a3d806974bcc442090b53c8a3762c"
+    },
+    {
+      "index": 18,
+      "name": "grp_PVP_Scripts",
+      "file": 0,
+      "slot": 6224,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          140.43020629882812,
+          20.40468406677246,
+          -241.53944396972656
+        ]
+      ],
+      "encoded_matrix_sha256": "67a8e52890b6796090032086cde078148574af10361c238d1d3e913eb60e814f"
+    },
+    {
+      "index": 19,
+      "name": "grp_Rikti_Invasion_Event",
+      "file": 0,
+      "slot": 6273,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          2260.0,
+          0.0,
+          3388.0
+        ]
+      ],
+      "encoded_matrix_sha256": "28bbd002b1ad29ecf384d5eb3dc7fe3f100125bc54e09be7318baaf4922581b6"
+    },
+    {
+      "index": 20,
+      "name": "grp_RiktiBetaEvent",
+      "file": 0,
+      "slot": 6274,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -83.82254028320312,
+          841.516357421875,
+          -643.6749877929688
+        ]
+      ],
+      "encoded_matrix_sha256": "77d1fa9b6aff1c9411088493a69398ff6cee1f5baf10db1a128e0a831dca4772"
+    },
+    {
+      "index": 21,
+      "name": "grp_ShadowShardInvasion",
+      "file": 0,
+      "slot": 6281,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          511.4013671875,
+          409.1253356933594,
+          -812.486572265625
+        ]
+      ],
+      "encoded_matrix_sha256": "2ebdeabfa1516fd73e9644619748ef7cd9ee30e8d0d7cc4951cf46e740460bc4"
+    },
+    {
+      "index": 22,
+      "name": "grp_Truck_Door",
+      "file": 0,
+      "slot": 6282,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          340.6702880859375,
+          135.29078674316406,
+          -1199.5
+        ]
+      ],
+      "encoded_matrix_sha256": "8bc670297026f583f449cffbe5f99b956cbcc4453e53d2541e8e8269f5914e87"
+    },
+    {
+      "index": 23,
+      "name": "grp_warpvolumes",
+      "file": 0,
+      "slot": 6284,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -1664.0,
+          -896.0,
+          1408.0
+        ]
+      ],
+      "encoded_matrix_sha256": "e9fbc27f57b8634b738a3b199ec681ec5dc331cdbdc8baeac7fb32acce58f37b"
+    },
+    {
+      "index": 24,
+      "name": "grp_Winter_Event",
+      "file": 0,
+      "slot": 6291,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          511.4013671875,
+          409.2863464355469,
+          -812.486572265625
+        ]
+      ],
+      "encoded_matrix_sha256": "bcb5a0bf18617aa20c2e2531238645388261c5726dfffc4a5d71cf631a9dfa25"
+    },
+    {
+      "index": 25,
+      "name": "grp_HalloweenEvent_09",
+      "file": 0,
+      "slot": 6352,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          1199.0,
+          41.59211349487305,
+          -1189.7000732421875
+        ]
+      ],
+      "encoded_matrix_sha256": "2297546acbfcfe9b404fe952176efee48ea54b485c8ce25db231fe7277476cef"
+    },
+    {
+      "index": 26,
+      "name": "grp_ParagonCityTeleport",
+      "file": 0,
+      "slot": 6354,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -33.21428680419922,
+          0.0,
+          -171.35714721679688
+        ]
+      ],
+      "encoded_matrix_sha256": "9d0cb137a0bca70674958bc7e54f93097e5ed93a309a23b99517430e1419c291"
+    },
+    {
+      "index": 27,
+      "name": "grp_Mission_Phase",
+      "file": 0,
+      "slot": 6374,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          637.5,
+          -0.4998469948768616,
+          67.0
+        ]
+      ],
+      "encoded_matrix_sha256": "b482341f8fc19965e096b0742663e5703d66cfe47b075af7f233804f81f8e9e8"
+    },
+    {
+      "index": 28,
+      "name": "grp_Mission_Trays",
+      "file": 0,
+      "slot": 6751,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          2450.0,
+          56.017494201660156,
+          -1372.5
+        ]
+      ],
+      "encoded_matrix_sha256": "cf89dc800416c5b24df071cb7d70652f9256a55c4e33766c22ce77bed3abb31c"
+    },
+    {
+      "index": 29,
+      "name": "grp_spawndefs",
+      "file": 0,
+      "slot": 7212,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          772.814208984375,
+          -16.52880859375,
+          -699.10009765625
+        ]
+      ],
+      "encoded_matrix_sha256": "8a0cc2d8e2546595aced662eadd0e446f21543d6731e23d04a9bf9627274299e"
+    },
+    {
+      "index": 30,
+      "name": "grp_Zowies",
+      "file": 0,
+      "slot": 7220,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          2442.5,
+          57.2479248046875,
+          -1374.5
+        ]
+      ],
+      "encoded_matrix_sha256": "a64a63156bcbd188a741160162db9b425513b898d4f887925279f72ebba3286c"
+    },
+    {
+      "index": 31,
+      "name": "grp_GalCty_PerstntNPC",
+      "file": 0,
+      "slot": 7236,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          391.30340576171875,
+          68.48408508300781,
+          -864.0
+        ]
+      ],
+      "encoded_matrix_sha256": "7c3a2119299b0742c2cc5a13302ffd597503c59d04964a7105ba4a25131fe44c"
+    },
+    {
+      "index": 32,
+      "name": "grp_Kraken_Event",
+      "file": 0,
+      "slot": 7238,
+      "matrix_columns": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          1354.25,
+          -32.00006103515625,
+          -736.5
+        ]
+      ],
+      "encoded_matrix_sha256": "449a62e8544791f6c66ed29e538ef2325bdd04fec22bb0d6652a4e36e3738270"
+    }
+  ],
+  "external_records": [
+    {
+      "index": 0,
+      "name": "_cot_warpgate_base",
+      "source_id": 0,
+      "flags": 15,
+      "live_bounds_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+      "cached_bounds_lookup": false,
+      "model_present": false,
+      "library_path": "",
+      "wire_bytes": 57,
+      "wire_sha256": "79c4dbfa67474238c1bf8fd24f7571db50d1d4300aeed82327c50387cc8fdb62"
+    },
+    {
+      "index": 1,
+      "name": "_cot_warpgate_glow",
+      "source_id": 0,
+      "flags": 15,
+      "live_bounds_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+      "cached_bounds_lookup": false,
+      "model_present": false,
+      "library_path": "",
+      "wire_bytes": 57,
+      "wire_sha256": "2f7faeea184edde935001cc876ecccc84ef5c5afd96663415d32fbaa7fd6dfd7"
+    },
+    {
+      "index": 2,
+      "name": "_mmayhem_curtain_8_01c",
+      "source_id": 0,
+      "flags": 15,
+      "live_bounds_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+      "cached_bounds_lookup": false,
+      "model_present": false,
+      "library_path": "",
+      "wire_bytes": 61,
+      "wire_sha256": "8bbb689d0d92b01d5119dbde371c20315545ae36c2578b631be2f72e9a6d8510"
+    },
+    {
+      "index": 3,
+      "name": "_mmayhem_curtain_8_02c",
+      "source_id": 0,
+      "flags": 15,
+      "live_bounds_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+      "cached_bounds_lookup": false,
+      "model_present": false,
+      "library_path": "",
+      "wire_bytes": 61,
+      "wire_sha256": "1dc73b8732d1c2a8b417d28a9bd14f80451016cc8219a976bf41c39ed7264748"
+    },
+    {
+      "index": 4,
+      "name": "_mmayhem_curtain_8_03c",
+      "source_id": 0,
+      "flags": 15,
+      "live_bounds_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+      "cached_bounds_lookup": false,
+      "model_present": false,
+      "library_path": "",
+      "wire_bytes": 61,
+      "wire_sha256": "ceb6525f637ca6b257ed5e3ee6eb76f7023ceac62b47c9c88df1bd09b49836fd"
+    },
+    {
+      "index": 5,
+      "name": "_mmayhem_curtain_16_01c",
+      "source_id": 0,
+      "flags": 15,
+      "live_bounds_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+      "cached_bounds_lookup": false,
+      "model_present": false,
+      "library_path": "",
+      "wire_bytes": 62,
+      "wire_sha256": "f4c88f9b477e78d155790582bda9d16a53e8b44472f0185f10c60e387eca1b07"
+    },
+    {
+      "index": 6,
+      "name": "_mmayhem_curtain_16_02c",
+      "source_id": 0,
+      "flags": 15,
+      "live_bounds_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+      "cached_bounds_lookup": false,
+      "model_present": false,
+      "library_path": "",
+      "wire_bytes": 62,
+      "wire_sha256": "c1dfcc4cbcd087d2f48b40036833b0c77ead9f293f8b37a7ec257f79cc3146c5"
+    }
+  ],
+  "scope": "byte envelope, raw finite matrices, exact names, captured ownership fields; native decoder replay separately verifies packed matrices, graph reachability and both CRCs",
+  "live_groups_transaction": false,
+  "graph_publication_authorized": false,
+  "world_authority": false
+}
