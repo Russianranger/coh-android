@@ -1,0 +1,37 @@
+{
+  "schema": "coh-renderer-independent-wire-workflow-review-v1",
+  "review_passed": true,
+  "reviewed_source_sha256": {
+    ".github/workflows/native-wire-grammar.yml": "e2b822bcd4b0c2b3692781108225ad7c937254c835b316ef1644508506cfc653",
+    ".github/workflows/native-recovered-components.yml": "030a546f7a997915db0d38c5680adfaa66e8030114a7ed31abc44419c88770d2",
+    "native-android/engine/entities/run_wire_android.py": "9ce7f3b890e3b6638b3eb631760f8ff771882c5fa0eeab451432adb8ee1f3e59",
+    "native-android/engine/entities/check_character_prefix.py": "6a0b1b72bc8ab5cf222bee505180c67907ded62fb3ef874a7c763e7df7e9ff47",
+    "native-android/engine/entities/check_power_ranges.py": "921278fa2d226535c7bd84635c2770b2b98bc071fc6fd23acb69d99a987e7352",
+    "native-android/engine/entities/test_run_wire_android.py": "ec6ec845fc34b59d37f805e5c556a0629dd537f7ad92e9a3d9ca57adb216f790"
+  },
+  "executed_host_controls": {
+    "wire_runner_tests": 9,
+    "passed": true,
+    "yaml_parse": true,
+    "exact_shell_tokenized_python_batch_compiles": true,
+    "prefix_range_cli_help": true
+  },
+  "reviewed_invariants": [
+    "Wire workflow requires native-android marker or manual dispatch.",
+    "Pinned r28c NDK archive and exact API26 compiler paths match both module optional-build CLIs.",
+    "Only prefix and power-range modules are built; no graph, frame, accepted APK or server capture command.",
+    "Both exact native artifact proofs flow to reviewed runner with source-root/artifacts/ADB/module/output arguments.",
+    "Single folded Python batch invokes both modules independently; nonzero first return code does not skip second.",
+    "Prefix/range execution use separate fresh receipt and numbered log trees under RUNNER_TEMP.",
+    "API33 x86_64 emulator, exact source/ELF/result admission and cleanup govern module qualification.",
+    "Complete both-ABI host artifacts and all execution receipts uploaded on failure.",
+    "Recovered-component job marker/dispatch guards prevent rerunning accepted graph/frame work on auth/wire publication.",
+    "Both recovered-component step arrays independently equal published767d55e; no qualification command change."
+  ],
+  "limitations": [
+    "Batch second module requires first subprocess to return; process launch exceptions remain fatal, with complete evidence upload.",
+    "Host mocks do not prove Android execution, ARM64 execution, GLES, complete character/world transaction or physical Thor acceptance."
+  ],
+  "android_executed_by_reviewer": false,
+  "world_authority": false
+}

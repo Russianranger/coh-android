@@ -1,0 +1,22 @@
+{
+  "tips": {
+    "a": "3135abc7b1caf6a4893b4b29d695ce2baef07be9",
+    "b": "88785554293e462300d942065dab3a42b70d5257",
+    "c": "26d01dba72ece234df5c6eb659658c3339f6a193",
+    "d": "0a01eac1b71c7e758d1fe57ede0dd9068066762d",
+    "e": "4895e9711932566641365ffc854f7c906302eafc",
+    "f": "3fd0d8c668177f9245e03e662af5f38f0d5632bb"
+  },
+  "prerequisites": {
+    "a": "bfd7ba1552db98087f2166b3f553acb9973b4a0b",
+    "b": "88785554293e462300d942065dab3a42b70d5257",
+    "c": "2b519f727a2c276cb9c13a56a782fd0397c828e7",
+    "d": "80f0209ab3e8611d0106706518cc279d11a1fd36",
+    "e": "41c1f0491c56815d10cf6b7fd6869f86a7b35bdf",
+    "f": "3fd0d8c668177f9245e03e662af5f38f0d5632bb"
+  },
+  "bundle_bytes": 72303,
+  "bundle_sha256": "1f27f34f9cd8efca2a25e90df47f105eaecb22cb372464d5f2592f42c0549149",
+  "verified": true,
+  "scope": "Original later parser/review/service-driver commit identities. Prerequisites retained in recovered-and-worker-history.bundle."
+}

@@ -1,0 +1,63 @@
+{
+  "schema": "coh-renderer-independent-candidate-login-workflow-review-v1",
+  "reviewed_driver_commit": "cab09fda5829d3baaed5a906fb1d58ff142c503a",
+  "workflow_sha256": "dd95aff28ff223d9c83362bf22f373d1451bacaa2ca62294524f34142ca1d791",
+  "source_review_passed": true,
+  "source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_candidate_login.py": "de18d9d5c479416e8dad006c277fad061cb56b20c2eed6fd90c5614976893230",
+    "native-android/engine/auth-interop/deployment/test_candidate_login.py": "d4bb0349edb6f5799b94519449ac22a4e3cab44537abb0cb63c41191b37bfb87",
+    "native-android/engine/auth-interop/deployment/CANDIDATE-LOGIN.md": "aa2dec4176d3678b7aea1e3d247091b87892bee7a1d71a672c2ce7887f0a1638"
+  },
+  "executed_controls": {
+    "candidate_orchestration_tests": {
+      "passed": true,
+      "tests": 8
+    },
+    "x86_readiness_schema_tests": {
+      "passed": true,
+      "tests": 7
+    },
+    "yaml_parse": true,
+    "inline_artifact_admission_python_compiles": true
+  },
+  "actual_retained_archives_independently_checked": {
+    "candidate": {
+      "bytes": 427525,
+      "members": 11,
+      "expanded_bytes": 963667
+    },
+    "capped": {
+      "bytes": 1437572,
+      "members": 18,
+      "expanded_bytes": 4835333
+    },
+    "intact": {
+      "bytes": 71999000,
+      "members": 412,
+      "expanded_bytes": 115375397
+    }
+  },
+  "archive_checks_executed": [
+    "Whole-archive SHA256 matches exact workflow pin.",
+    "Exact compressed size matches.",
+    "All member CRCs pass.",
+    "Member count, expanded byte budget, unique names, paths and symlink refusal pass.",
+    "Intact selected receipt+PE are present."
+  ],
+  "odbc_archive_checked_locally": false,
+  "odbc_pin_review": "Workflow pin matches previously qualified source documentation; driver independently admits sealed inner ODBC file set. Hosted whole-ZIP validation remains mandatory.",
+  "reviewed_invariants": [
+    "Native integration branch marker/manual guard gates Linux controls; Windows job requires controls success.",
+    "Four outer archive hashes/sizes are verified before extraction; no binary compilation or crypto build.",
+    "Large historical intact archive is entirely CRC-checked but only receipt and exact PE extracted.",
+    "No-child CloseHandle exception correction preserves subsequent SQL/private cleanup.",
+    "Windows run invokes reviewed exact-driver CLI with historical intact source/PE pins.",
+    "Fresh x86 readiness still precedes owned candidate service startup.",
+    "Only sanitized coh-candidate-login output is uploaded, including failures; private sibling tree and prior artifacts are excluded.",
+    "Neither workflow nor review claims service/login success before actual eight-case execution and cleanup."
+  ],
+  "windows_execution_by_reviewer": false,
+  "auth_success_claimed": false,
+  "db_map_handoff": false,
+  "world_authority": false
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "coh-auth-candidate-login-workflow-review-v1",
+  "reviewed_workflow_sha256": "dd95aff28ff223d9c83362bf22f373d1451bacaa2ca62294524f34142ca1d791",
+  "reviewed_workflow_path": ".github/workflows/native-auth-candidate-login.yml",
+  "actual_zip_controls": {
+    "candidate": {
+      "artifact_id": 12085517046,
+      "archive_bytes": 427525,
+      "archive_sha256": "da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d",
+      "archive_members": 11,
+      "expanded_bytes": 963667,
+      "extracted_bytes": 963667,
+      "zip_crc_passed": true,
+      "workflow_bounds_passed": true
+    },
+    "odbc": {
+      "artifact_id": 12066189514,
+      "archive_bytes": 872480,
+      "archive_sha256": "0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b",
+      "archive_members": 39,
+      "expanded_bytes": 1803594,
+      "extracted_bytes": 1803594,
+      "zip_crc_passed": true,
+      "workflow_bounds_passed": true
+    },
+    "capped": {
+      "artifact_id": 12076876614,
+      "archive_bytes": 1437572,
+      "archive_sha256": "b02c3f81e6c77aa2c5f48df6f0adefccb88b66fe98624bd6eeebfd631b35d3c7",
+      "archive_members": 18,
+      "expanded_bytes": 4835333,
+      "extracted_bytes": 4835333,
+      "zip_crc_passed": true,
+      "workflow_bounds_passed": true
+    },
+    "intact": {
+      "artifact_id": 12078663003,
+      "archive_bytes": 71999000,
+      "archive_sha256": "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b",
+      "archive_members": 412,
+      "expanded_bytes": 115375397,
+      "extracted_bytes": 3215605,
+      "zip_crc_passed": true,
+      "workflow_bounds_passed": true
+    }
+  },
+  "all_actual_inner_admissions_passed": true,
+  "candidate_receipt_sha256": "25ee2415a280e7b3800808824d95d05b862acca9d4d4879f5fccb5605d6a2451",
+  "candidate_binary_sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003",
+  "odbc_archive_sha256": "0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b",
+  "capped_binary_sha256": "454814a2659944cf7958d10d89f2bdf49a7e5a778ad75d941077ef8d17d672ec",
+  "intact_receipt_sha256": "d857ef8fd309149e92de8a8abe6423d0a8d13c338adc64990fbf8dcccefcfe5e",
+  "intact_binary_sha256": "7cb5672c32c1d304efea9590366250437687e3b0c8c1fafae5e4ec7cf536f29c",
+  "helper_cli_matches": true,
+  "no_server_or_openssl_rebuild": true,
+  "old_unchanged_service_not_executed": true,
+  "only_new_disposable_candidate_suite_prepared": true,
+  "pre_service_x86_health_gate_present": true,
+  "negative_normal_and_capped_cases": 8,
+  "workflow_run_started": false,
+  "binary_executed_by_review": false,
+  "windows_execution_claimed": false,
+  "encrypted_account_login_verified": false,
+  "notes": "Review evaluates actual four pinned archives, full CRC/path/link/count/expanded-size controls, real inner admissions against current integration source, exact helper arguments, compile-free invocation and output-only artifact path. These controls do not execute PowerShell, SQL, AuthServer or probes."
+}

@@ -162,3 +162,66 @@ coordinator ancestry fragments documented by `worker-bundle-chain.json`: commits
 98bc9b09cd04adbf6020dbf2d3ca88c5b9303222/b764d79e921851982263426e3d46df23680f72b1
 and eleven delta bases remain missing. Current source and all six current worker
 tips are complete; no historical source was fabricated.
+
+## Exact 767d55e hosted qualification and further wire source
+
+Run `38992332845` succeeded at source `767d55e48fa35261f1428bd542aa6cd3b2b9fa32`.
+Retained artifacts 12085324357 (11,011 bytes, SHA256
+a2d892698bac92b4a90a2d47831589a39e95f47ffa5f31f2a3f32e833427edbb) and
+12085178303 (154,161 bytes, SHA256
+135aeff1e0d73099540231026c2e277272e80fd5f3bfd1c140fe78d9754a1f0a) were
+independently downloaded, CRC checked and admitted against 160 original source
+blob-map entries. Exact raw ZIPs and selected receipts are in `hosted-767d55e/`.
+Graph actual-corpus release/ASan/UBSan agree at 332,053 controls; immutable owner
+and graph lifetime composition pass. Frame Android13 x86_64 executes 32,320
+checks, validates result equality and owned temporary-file removal. Both
+character-prefix ABIs build at 646,561 native host checks; prefix device execution
+is not inherited from frames. ARM64 execution and Thor/world/actor remain false.
+Provenance admission run `38992332793` also succeeds at that exact source.
+
+C now implements complete original power-range list and the complete false
+PowerInfoUpdate branch: 208 original function fixtures, 85,440 checks per host
+mode, plus A's 20,113 independent raw-word controls per mode. CRC zero/unknown,
+wire ordering, signed-zero/nonfinite payloads, sentinel and rollback remain exact.
+The full true PowerInfo branch remains refused without advancing the reader.
+Source original tips aeb74ba71/97eb7fd4f and independent review cedf24a6e are
+preserved; no complete actor or ACK follows.
+
+The separate candidate account driver cab09fda5 is source-qualified and reviewed
+by E/D. All four actual compiled-input archives and inner admissions were
+independently checked; no OpenSSL, probe or AuthServer rebuild is required. New
+`native-auth-candidate-login.yml` runs only the corrected candidate, after fresh
+x86 SQL readiness; all eight normal/capped positive/negative account cases plus
+full owned cleanup are required. It uploads sanitized output only. Its Windows
+result is pending and cannot be inferred from these host mocks or the prior build.
+The original-service failure receipts and accepted server profile stay unchanged.
+
+The recovered-components workflow now requires an explicit
+`[recovered-components-qualify]` marker or dispatch, so further wire/auth/evidence
+publication does not repeat its already successful graph/frame/ABI work. New
+candidate-service execution uses only `[auth-candidate-login]`, never the old
+service/capture/build markers. No accepted APK is rebuilt.
+
+## Narrow wire-device and candidate-service continuation
+
+C adds source-bound standalone Android execution for prefix and ranges. Nine
+runner admission/cleanup methods and A's 25 independent controls pass. Both
+checkers qualify their exact original fixtures in release/ASan/UBSan, then bind
+both ABI ELFs, source commit/tree, generated fixture and actual executing Python
+runner/helper hashes. Device execution requires Android33/qemu/x86_64, verifies
+transferred binary SHA and exact sanitized host result, and removes/verifies its
+fresh owned directory. Build, attempted execution, validated native result, actual
+Android execution and cleanup remain separate fields.
+
+New `native-wire-grammar.yml` builds and attempts only these new wire modules,
+preserving separate receipts even if one fails. The emulator action runs parsed
+script commands in separate shells; the batch is therefore one fixed Python
+command rather than cross-line shell state. E independently reviewed its YAML,
+CLI and Python plus the recovered-workflow marker-only guard. Original later
+worker histories are in `wire-and-candidate-service-history.bundle` with exact
+prerequisites, digest and verification receipt.
+
+This publication opts into `[wire-qualify]` and `[auth-candidate-login]` only.
+Successful source767 graph/frame and concurrent corrected-PE/suffix results are
+reused. New wire-device and candidate-service results remain pending until
+observed and admitted; no full actor/world or Gate26 completion follows.

@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "test_methods": 9,
+  "failures": 0,
+  "errors": 0,
+  "scope": "synthetic command-executor and ELF-header controls only",
+  "android_executed": false,
+  "emulator_qualified": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "source_revision": "d9266213d8b95d15ab32008474f53cdfe36c1db1",
+  "source_sha256": {
+    "native-android/engine/entities/run_wire_android.py": "9ce7f3b890e3b6638b3eb631760f8ff771882c5fa0eeab451432adb8ee1f3e59",
+    "native-android/engine/entities/test_run_wire_android.py": "ec6ec845fc34b59d37f805e5c556a0629dd537f7ad92e9a3d9ca57adb216f790",
+    "native-android/engine/continuation/run_adapter_android.py": "c7af8aed683e36ba567021b25504ebf94ca895cf8bf2cad9e2e328b8533c17e1",
+    "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e"
+  }
+}

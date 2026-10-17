@@ -1,0 +1,33 @@
+{
+  "source_revision": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+  "run_id": 38992332845,
+  "passed": true,
+  "archive_identity_crc_checked": true,
+  "source_blob_map_entries_verified": 160,
+  "artifacts": [
+    {
+      "artifact_id": 12085324357,
+      "bytes": 11011,
+      "sha256": "a2d892698bac92b4a90a2d47831589a39e95f47ffa5f31f2a3f32e833427edbb",
+      "members": 3,
+      "expanded_bytes": 69949
+    },
+    {
+      "artifact_id": 12085178303,
+      "bytes": 154161,
+      "sha256": "135aeff1e0d73099540231026c2e277272e80fd5f3bfd1c140fe78d9754a1f0a",
+      "members": 26,
+      "expanded_bytes": 816138
+    }
+  ],
+  "graph_host_sanitizers": true,
+  "owner_host_sanitizers": true,
+  "frame_android13_x86_64": true,
+  "prefix_both_abis_built": true,
+  "prefix_android_execution": false,
+  "arm64_execution": false,
+  "physical_thor_accepted": false,
+  "live_world_accepted": false,
+  "complete_actor_accepted": false,
+  "new_server_startup": false
+}

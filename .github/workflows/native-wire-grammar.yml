@@ -1,0 +1,71 @@
+name: New character header and power-range Android contracts
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-wire-grammar.yml
+      - native-android/engine/entities/*character_prefix*
+      - native-android/engine/entities/*power_ranges*
+      - native-android/engine/entities/*wire_android*
+      - native-android/engine/entities/*-source-pins.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-wire-grammar-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  new-wire-host-both-abis-android13:
+    if: github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[wire-qualify]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install pinned NDK and standalone source-oracle dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ curl unzip
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/wire-ndk
+      - name: Qualify wire artifact refusal and cleanup controls
+        run: python3 -m unittest discover -s native-android/engine/entities -p test_run_wire_android.py -v
+      - name: Qualify exact original header and range grammar and build both standalone ABIs
+        run: |
+          python3 native-android/engine/entities/check_character_prefix.py --output native-android/results/wire-grammar/prefix/qualification.json --ndk /tmp/wire-ndk/android-ndk-r28c --android-output native-android/results/wire-grammar/prefix/android
+          python3 native-android/engine/entities/check_power_ranges.py --output native-android/results/wire-grammar/ranges/qualification.json --ndk /tmp/wire-ndk/android-ndk-r28c --android-output native-android/results/wire-grammar/ranges/android
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute each new standalone wire module with independent cleanup receipts
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: >-
+            python3 -c 'import os,subprocess;
+            codes=[subprocess.run(["python3","native-android/engine/entities/run_wire_android.py",
+            "--module",module,"--source-root",".","--artifacts","native-android/results/wire-grammar/"+module,
+            "--adb",os.environ["ANDROID_HOME"]+"/platform-tools/adb","--serial","emulator-5554",
+            "--output",os.environ["RUNNER_TEMP"]+"/wire-execution/"+module+"/receipt.json"]).returncode
+            for module in ("prefix","ranges")];
+            raise SystemExit(1 if any(codes) else 0)'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wire-grammar-host-both-abis-android13-${{ github.sha }}
+          path: |
+            native-android/results/wire-grammar/
+            ${{ runner.temp }}/wire-execution/
+          if-no-files-found: error
+          retention-days: 90

@@ -1,0 +1,38 @@
+{
+  "schema": "coh-renderer-independent-candidate-service-review-v1",
+  "source_review_passed": true,
+  "reviewed_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_candidate_login.py": "de18d9d5c479416e8dad006c277fad061cb56b20c2eed6fd90c5614976893230",
+    "native-android/engine/auth-interop/deployment/test_candidate_login.py": "d4bb0349edb6f5799b94519449ac22a4e3cab44537abb0cb63c41191b37bfb87",
+    "native-android/engine/auth-interop/deployment/auth_readiness.py": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+    "native-android/engine/auth-interop/deployment/hosted_auth_login.py": "bc938831afd621b5018572827352c2a66aec84635859d0857885c91591f9262e",
+    "native-android/engine/auth-interop/deployment/hosted_receive_candidate.py": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+    "native-android/engine/auth-interop/deployment/auth_service_profile.py": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4"
+  },
+  "reviewer_executed": {
+    "command": "python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_candidate_login.py -v",
+    "passed": true,
+    "tests": 8,
+    "windows_executed": false,
+    "real_service_executed": false,
+    "cryptography_executed": false
+  },
+  "corrected_findings": [
+    "A successful exact probe JSON now also requires child exit status 0. Negative account cases are accepted by their own validated schema, not nonzero process exit.",
+    "Job member diagnostic failure no longer skips mandatory owned Job stop/handle cleanup; separate targeted control verifies termination is attempted."
+  ],
+  "reviewed_invariants": [
+    "Exact candidate receipt and PE, ODBC proof, capped probe and historical intact probe receipt/source/generator/PE admission all precede SQL/firewall/service effects.",
+    "Original profile retains Encrypt, DesApply, protocol 191021, ordinary fixture account and no FreeServer/PayStatOverride bypass.",
+    "Three simultaneous real x86 ODBC connections to the owned SQL PID are mandatory before AuthServer startup.",
+    "Eight normal/capped cases include valid, wrong password, missing account and corrupt frame, with original strict result admission.",
+    "Private service logs and SQL fixture outputs are not exported; failed probes retain only allowlisted bounded numeric fields.",
+    "Listener/service failure remains a failed qualification. All SQL/firewall/private-file/Job cleanup and source stability gates final passed.",
+    "No candidate/probe binary rebuild, shipping server update, DB/Map handoff or world activation occurs.",
+    "Outer ZIP admission is coordinator responsibility; driver admits exact sealed extracted artifacts and does not assert archive verification from constants."
+  ],
+  "remaining_scope": [
+    "No Windows execution, real listener readiness, encrypted account acceptance, general TCP segmentation, DB/Map handoff, Android or physical Thor claim arises from this host review.",
+    "Send caps exercise actual client writes but do not control Windows TCP receiver segmentation."
+  ]
+}
