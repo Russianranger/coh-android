@@ -41,18 +41,22 @@ needs `actions:read`. Neither permission authorizes publishing new binaries.
 The .10 and runtime source artifacts were not expired when their current GitHub
 metadata was inspected. Availability must be checked again by the workflow.
 
-Recover the exact runtime inputs and PRoot corresponding source from
+The first attempt recovered its launcher build inputs from
 run36364550345, artifacts `coh-diagnostic-runtime-inputs` (10947225941,
 13337866 bytes, ZIP SHA256
 `9853b93aa146b125d129f4491f02ff1ad6f0e5752492a3214e619775a179e107`)
 and `coh-proot-android-source-and-build` (10946592550, 1162455 bytes, ZIP
 SHA256 `ff12b5d7fca65434a5bb6d76e35dafd5f956e10d492086810cb3ca449db7baeb`).
-Run the donor's existing `extract_talloc_source.py`, then `build_proot.py
---target linux-arm64`. This builds only the small Linux host PRoot tool; the
-retained Android/Bionic PRoot binary cannot replace a Linux host launcher.
-The new driver binds actual PRoot/loader ELF64 ARM64 bytes to their receipt,
-source/tree, donor build recipe and three donor patches. Pass that build
-receipt's independently recorded SHA256 as `--proot-receipt-sha256`.
+The changed retry must reuse the now-retained Linux ARM64 launcher artifact
+12116450116 from39071130820: ZIP1177704 bytes, SHA256
+`bf4063b2d15a4cb92127df5b0cf0eabd894a0ecc855ceaa4c0acda3acb772808`,
+root `proot-build-receipt.json` SHA256
+`6b853fd6732aa57ce4d8d096152f7818f47afdc91b6926fb6492b1ab2da987b5`.
+Do not rebuild this unchanged host tool. It includes the exact corresponding
+source/license archive. The driver binds actual PRoot/loader ELF64 ARM64 bytes
+to this receipt, source/tree, donor build recipe and three donor patches. Pass
+the receipt's independently recorded SHA256 as `--proot-receipt-sha256`. The
+retained Android/Bionic PRoot binary cannot replace this Linux host launcher.
 
 Install `build-essential gawk default-jdk-headless tesseract-ocr python3-pil`.
 The Java compiler is used only for the existing exact asset importer, which
@@ -170,7 +174,7 @@ unless a separate reviewed fixture-output policy is implemented.
 ## Local qualification
 
 `python3 native-android/engine/scenecatalog-server/test_graphical_fixture.py`
-passes16 offline test methods. These cover the **actual inherited** finish-hook
+passes22 offline test methods. These cover the **actual inherited** finish-hook
 order, refused save gates and backup failures, strict malformed receipt shapes,
 source/launcher pin drift, downstream fixture artifact closure, private
 retention/secret scanning, original-error-preserving rollback, a real owned
@@ -198,3 +202,70 @@ cap, still fully hashed and bound to the clean exact donor; source bodies keep
 the8MiB cap. The16th method uses this actual unchanged donor blob and verifies
 both admission and continued refusal of oversized source bodies. No graphical
 boot, character save or database backup is claimed from the failed attempt.
+
+## Retained failed run and real-file publication correction
+
+Run39071130820 at08e6a96f2af9cb317eecd6629e99db4200df177f reached real
+fresh original graphical creation and ordinary logout. The guest reported a
+committed `character_saved` at22:02:06UTC, three post-save host frames were
+retained and original cleanup stopped PostgreSQL/Wine and reaped ownership.
+The outer result was `CHARACTER_OBSERVER_FAILED`, followed by cancellation of
+the guest's completion flow. That is a failed fixture, with no admitted PGDMP.
+The exact initial helper/observer subcode was not retained by that revision.
+
+Exact archive listings show182 outer diagnostic files and13 nested report files.
+They contain the8683-byte selected saved-character projection, screenshots,
+redacted report/log evidence, but no full database dump or cluster. The failed
+1474-byte fixture artifact contains only its2678-byte refusal receipt. The
+source-produced full input cannot be recovered from those retained artifacts.
+Small original receipt/report/projection/listings/events/diagnosis and all three
+artifact IDs/lengths/SHA256 pins are preserved under
+`evidence/graphical-fixture-retry-39071130820/`; the76MB diagnostic ZIP and1.17MB
+launcher ZIP remain external pinned inputs and are not copied into Git.
+
+Independent source review found a definite environment incompatibility even
+though the lost first subcode prevents attributing it as the first runtime
+failure. Exact retained PRoot source7266fb3e8516535682f5a9c8f3a7e70f6506eddb,
+`src/extension/link2symlink/link2symlink.c` SHA256
+e92e8878d400d0c2e27db82964e0061b7814d39f8a7b2d050cf092bf00339eb8,
+unconditionally emulates `link`/`linkat` with host symlinks under the actual
+`--link2symlink` option. Guest stat/lstat is faked regular, but the host's real
+lstat correctly refuses the dump after the old `os.link(partial,final)` publish.
+The builder's three admitted patches do not modify this extension.
+
+The guest helper now publishes via an exclusive real-file O_EXCL/O_NOFOLLOW
+bounded streamed copy. It flushes, fsyncs, closes and rehashes source and final
+before the commit-last backup receipt, preserving all host no-symlink/single-link
+checks. It independently attempts close/unlink rollback without hiding primary
+errors; a fixed rollback-complete diagnostic becomes false if cleanup fails.
+No existing target or source/profile/game input is replaced.
+
+`capture_graphical_fixture.py` automatically runs the same pinned helper's tiny
+`publication_probe` through the exact retained PRoot prefix/binds/UID/environment
+before launching the diagnostic guest, PostgreSQL, servers or graphics. The probe
+creates only a fixed41-byte marker in a fresh private state subdirectory. The
+host checks its **real outside-PRoot** lstat, single-link file and hash, then
+reaps the probe group and removes its owned files. Typed probe ownership/cleanup
+facts are combined with the full invocation's cleanup guard; failed cleanup
+cannot inherit the main guest's absent-group claim. This probe qualifies only
+this publication mechanism, never PG/Wine/graphics or the lost prior subcode.
+
+Helper stdout is now a private bounded4096-byte fixed-schema status file.
+The owner exports only strict Boolean facts and fixed source-defined stage and
+failure enums after parsing that status. Duplicate/extra/type-unsafe fields or
+unknown child codes are refused. Raw stderr, arbitrary helper text, exception
+strings, observer text and IDs are not added to the new diagnostic summary.
+Fixed observer fields retain saved-frame count and finish-request state even
+when observation fails. Input/source/cleanup failure stage is retained through
+teardown. Successful fixture admission now requires the actual regular-file
+preflight and complete helper status/host-file closure.
+
+The changed host suite has22 methods, including six new publication/status
+controls: native-host real-file/no-link and existing-target preservation, late
+write/flush/fsync/close/hash rollback and cleanup-failure reporting, strict helper
+and observer privacy, a real tiny Linux child's outside-process file admission,
+symlink-result refusal, failed probe cleanup visibility, and exact helper failure
+status propagation without raw child text. These host controls use no actual
+retained ARM64 PRoot, PG, Wine or graphical run and admit no live source token.
+The next owned hosted attempt must supply that real PRoot/runtime evidence; it
+can reuse exact launcher artifact12116450116 rather than rebuild it.

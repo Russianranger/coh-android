@@ -1,0 +1,54 @@
+[
+  {
+    "name": "latest-report.json",
+    "bytes": 156765
+  },
+  {
+    "name": "client-evidence/before-client.ppm",
+    "bytes": 1440015
+  },
+  {
+    "name": "client-evidence/character-atlas-console.txt",
+    "bytes": 393457
+  },
+  {
+    "name": "client-evidence/character-saved-snapshot.json",
+    "bytes": 8683
+  },
+  {
+    "name": "client-evidence/character-server-logs.zip",
+    "bytes": 7727
+  },
+  {
+    "name": "client-evidence/client-character-saved.ppm",
+    "bytes": 1440015
+  },
+  {
+    "name": "client-evidence/client-console.log",
+    "bytes": 38845021
+  },
+  {
+    "name": "client-evidence/client-final.ppm",
+    "bytes": 1440015
+  },
+  {
+    "name": "client-evidence/client-local-login.ppm",
+    "bytes": 1440015
+  },
+  {
+    "name": "client-evidence/client-startup.ppm",
+    "bytes": 1440015
+  },
+  {
+    "name": "client-evidence/local-dbserver-console.txt",
+    "bytes": 7192
+  },
+  {
+    "name": "client-evidence/owned-processes.json",
+    "bytes": 398485
+  },
+  {
+    "name": "client-evidence/private-cache-inventory.json",
+    "bytes": 163325
+  }
+]

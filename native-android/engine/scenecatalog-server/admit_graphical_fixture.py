@@ -18,7 +18,7 @@ def inspect(directory,receipt_sha256):
     for name in ('passed','fixture_only','inputs_unchanged','owned_process_group_absent',
                  'original_guest_cleanup_verified','committed_original_logout_verified',
                  'fresh_profile_source_creation_verified','public_fixture_dump_retention_permitted',
-                 'fresh_role_secret_export_scan_passed'):
+                 'fresh_role_secret_export_scan_passed','regular_publication_preflight_verified'):
         require(receipt.get(name) is True,'FIXTURE_SUCCESS_'+name.upper())
     for name in ('private_user_input_accepted','apk_rebuilt','client_or_server_recompiled','synthetic_character_rows',
                  'source_generation_admitted','world_authority','android_execution_validated'):
@@ -31,6 +31,16 @@ def inspect(directory,receipt_sha256):
             and receipt.get('game_archive')==capture.ARCHIVE and receipt.get('donor',{}).get('revision')==capture.DONOR
             and receipt.get('ocr_overlay_sha256')==capture.OCR_SHA,'FIXTURE_ORIGIN')
     require(type(receipt.get('fixture_wire_slot')) is int and receipt['fixture_wire_slot']==0,'FIXTURE_WIRE_SLOT')
+    probe=receipt.get('publication_preflight_observation')
+    require(receipt.get('capture_stage')=='COMPLETE' and receipt.get('failure_stage')=='NONE'
+            and type(probe) is dict and set(probe)==set(capture.publication_observation())
+            and all(value is True for value in probe.values()),
+            'FIXTURE_REAL_REGULAR_PUBLICATION')
+    helper=receipt.get('backup_observation')
+    require(type(helper) is dict and set(helper)==set(capture.backup_observation())
+            and all(helper[name] is True for name in capture.backup_observation()
+                    if name not in ('helper_stage','helper_failure_code'))
+            and helper['helper_stage']=='COMPLETE' and helper['helper_failure_code']=='NONE','FIXTURE_HELPER_CLOSURE')
     session=receipt.get('session_id');require(type(session) is str and re.fullmatch('[0-9a-f]{32}',session),'FIXTURE_SESSION')
     pins=receipt.get('retained_creation_evidence')
     names={'original-guest-report.json','external-observer.json','backup-request.json','backup-receipt.json'}

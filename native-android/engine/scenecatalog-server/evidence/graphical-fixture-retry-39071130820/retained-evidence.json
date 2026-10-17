@@ -1,0 +1,69 @@
+{
+  "artifacts": {
+    "diagnostic_evidence": {
+      "bytes": 76116107,
+      "id": 12115791898,
+      "sha256": "f7693f67f36a27794c9522231a36d398eb45ceebd8dba14951b6c8c6070bd348"
+    },
+    "failed_fixture": {
+      "bytes": 1474,
+      "id": 12115179578,
+      "sha256": "a3b7fbffaeb94c82f178b9b5d5e1a1bb79dfbb9d61c691fe3d64d8063f870fd5"
+    },
+    "host_launcher": {
+      "build_receipt_sha256": "6b853fd6732aa57ce4d8d096152f7818f47afdc91b6926fb6492b1ab2da987b5",
+      "bytes": 1177704,
+      "id": 12116450116,
+      "sha256": "bf4063b2d15a4cb92127df5b0cf0eabd894a0ecc855ceaa4c0acda3acb772808"
+    }
+  },
+  "first_observer_or_helper_subcode_known": false,
+  "full_pgdump_retained": false,
+  "job_id": 117508806726,
+  "link2symlink_source": {
+    "path": "src/extension/link2symlink/link2symlink.c",
+    "sha256": "e92e8878d400d0c2e27db82964e0061b7814d39f8a7b2d050cf092bf00339eb8",
+    "source_commit": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb"
+  },
+  "original_save_verified": true,
+  "retained_files": {
+    "character-saved-snapshot.json": {
+      "bytes": 8683,
+      "sha256": "afb2e15c36ec1508184307664f51d12f51f9276390ba71d1d7d528cd1168b017"
+    },
+    "diagnosis.json": {
+      "bytes": 1808,
+      "sha256": "92d2fba698630088255805f393937e636fd202909b2ac2e92eefe4822c3a5802"
+    },
+    "failed-fixture-artifact.zip": {
+      "bytes": 1474,
+      "sha256": "a3b7fbffaeb94c82f178b9b5d5e1a1bb79dfbb9d61c691fe3d64d8063f870fd5"
+    },
+    "fixture-capture.json": {
+      "bytes": 2678,
+      "sha256": "1a7ab8ac43c29fb12c411749a0ad6829f562daa7ca5e971da9edea764f887992"
+    },
+    "latest-report.json": {
+      "bytes": 156765,
+      "sha256": "c1f5b415f22ffd6dd74d34e81629c831a0b41094dc1eef1f52caaaf89d364738"
+    },
+    "milestone-events.json": {
+      "bytes": 773,
+      "sha256": "af9751b5b7c3cd909f331e01c11310814235619be66d239c84e5e6e5ebfc2bb2"
+    },
+    "nested-members.json": {
+      "bytes": 1071,
+      "sha256": "8fbe197168507a4601817ca47b9356503f08f3584b1444d63e28a316bd2360e6"
+    },
+    "outer-members.json": {
+      "bytes": 13787,
+      "sha256": "748e75074a4712b268d9c966f5dccc3f19bf9f2489353b3a33eb5be97409ef4e"
+    }
+  },
+  "schema": "coh-retained-fresh-fixture-failure-evidence-v1",
+  "source_generation_admitted": false,
+  "source_revision": "08e6a96f2af9cb317eecd6629e99db4200df177f",
+  "workflow_conclusion": "failure",
+  "workflow_run_id": 39071130820,
+  "world_authority": false
+}

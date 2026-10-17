@@ -1,0 +1,40 @@
+{
+  "actor_or_ack_authority": false,
+  "actual_pg_wine_capture_or_positive_source_token_executed_by_reviewer": false,
+  "client_material_lod_or_cache_generation_admitted": false,
+  "concrete_remaining_blockers": [],
+  "immutable_point_in_time_only": true,
+  "independent_new_unit_methods_passed": 11,
+  "independent_new_unit_test_command": "python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_source_snapshot_admission.py -v",
+  "late_io_rollback_controls_executed": true,
+  "passed": true,
+  "post_quiet_release_current_lifetime_admitted": false,
+  "private_canary_cli_refusal_test_executed": true,
+  "receipt_path": "native-android/engine/scenecatalog-server/evidence/source-snapshot-admission-host.json",
+  "receipt_sha256": "68d3fe184ebfe8afde4fe669d791b1af63d44ef6291b68802c660f240eba65a6",
+  "review_findings_fixed_before_final_commit": [
+    "Missing imported admission-helper committed-source closure.",
+    "Unbound second read of backup-derived character ID after fixture admission.",
+    "Late output flush/fsync/close failures could leave a valid positive final JSON."
+  ],
+  "reviewed_boundaries": [
+    "Real hosted Linux x86_64 nonroot repository/ref/HEAD policy before token or input processing. This policy is trusted-workflow origin, not cryptographic environment attestation.",
+    "Actual source-run nonce/revision, exact current committed producer/helper bytes, native and observer binary/build pins, original runtime inventory and restored genuine fixture dump are tied together.",
+    "Recomputed same-call original/native packet pair and actual fixture-created selected ID are required. ID is derived from independently pinned ordinary-save backup bytes; fixture receipt/evidence/dump/account and restore copy are frozen and revalidated.",
+    "Complete imported project admission helper closure and compiler-derived E native closure match Git blobs and are rehashed before emission.",
+    "Exact private E input set, five fixed checks, release flags/libraries, counters, scope booleans, source revision and executable bytes are admitted; private counters and hashes are never projected publicly.",
+    "Positive receipt writes a new0600 temporary file, flushes/fsyncs/closes, then exclusively links to the final name; independent cleanup preserves primary errors on late failures.",
+    "Public output is a fixed scope and opaque private-binding token; CLI exceptions expose only fixed SOURCE_SNAPSHOT_REFUSED status."
+  ],
+  "reviewer": "Worker F",
+  "schema": "coh-independent-source-snapshot-admission-review-v1",
+  "source_and_receipt_bytes_verified_against_exact_commit": true,
+  "source_commit": "ac1f40506a3b7cf625fe5e21b39a4430f3562630",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/SOURCE_SNAPSHOT_ADMISSION.md": "550a06fcee1d8c4483ae9391f2a9842352b69f113cfc3a219d11c690eac5c0a6",
+    "native-android/engine/scenecatalog-server/admit_source_snapshot.py": "38e2873ce203c790c1f8b96dc0978df4281545db1a34f604b6f8065bb459ba21",
+    "native-android/engine/scenecatalog-server/test_source_snapshot_admission.py": "c7c8a6695bc4f769a042d1c0956c903b3d40fc9ab021273399a729f6a90a6215"
+  },
+  "unchanged_qualifiers_rerun": false,
+  "world_authority": false
+}

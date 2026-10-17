@@ -1,0 +1,93 @@
+{
+  "all_recorded_source_hashes_match_exact_commits_and_reviewed_worktrees": true,
+  "android_abi_or_rss_qualified": false,
+  "db_modal_site_index": {
+    "compiled_variant_archive_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+    "compiled_variant_count": 4,
+    "compiled_variant_pe_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "concrete_remaining_blockers": [],
+    "fixed_review_finding": "Old normalization incorrectly erased whitespace inside literal expressions; corrected and regression-tested with both literal sites plus operator-boundary controls.",
+    "independent_new_unit_methods_passed": 8,
+    "independent_unit_command": "python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_modal_diagnostic.py -v",
+    "independent_windows_only_methods_skipped": 1,
+    "new_policy_actual_windows_observation_executed_by_reviewer": false,
+    "original_binary_or_runtime_profile_repaired": false,
+    "original_source_sha256": {
+      "upstream/ouroboros/Common/sql/sqltask.cpp": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02",
+      "upstream/ouroboros/DBServer/src/sql_fifo.c": "345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp": "ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp": "eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h": "105305fab92cb2dc8651c4a4d102a8f5428ecb378f8cde46b3c409970845227b",
+      "upstream/ouroboros/libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp": "e7ce6ebd9c14097d65830fd1390408b9a1c9c2a46ee992a47d8d483478a46d0e",
+      "upstream/ouroboros/libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110",
+      "upstream/ouroboros/libs/UtilitiesLib/src/components/MemoryPool.c": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/SuperAssert.c": "9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6"
+    },
+    "qualification_path": "native-android/engine/auth-interop/evidence/db-modal-site-index-preparation-20261017/qualification.json",
+    "qualification_sha256": "fd1c19872777dd7fdd6ca1a89d8481ee4fc46868c84828798d37b6514fb0c9c8",
+    "reviewed_boundaries": [
+      "Pinned full-file lexical source index preserves first-argument literal spelling, comments and balanced argument boundaries. Multiple source sites at one location remain ambiguous.",
+      "Fixed basename/site/structure enums are distinct from an exact predicate match; location-only matches remain source_assertion_unknown.",
+      "Four expanded macro spellings must exist as exact raw ASCII strings in the exact retained PE/archive and remain tied to original source/forwarding pins.",
+      "Literal spelling and operator token boundaries are preserved; changed MemoryPool literals at both actual source sites refuse predicate claims while retaining only known location.",
+      "Only fixed enums/booleans/counts and public source identities leave the private dialog parser. Static IDC10, bounded read-only C# APIs, owned service process generation/PE guards and late cleanup are unchanged."
+    ],
+    "root_cause_identified_by_this_review": false,
+    "source_call_site_count": 78,
+    "source_call_site_index_sha256": "dadd8a99290d442f9a3f729843df590415970b308a9e267858a7bd53bb2f1144",
+    "source_commit": "eaf55b4451fd008faa949d30cc739a8c476caf1a",
+    "source_files_sha256": {
+      "native-android/engine/auth-interop/deployment/DB-SHARD-ACTIVATION.md": "64755b4c5881515ecfa48b875415dddb4395683930682bba6e002a6be13bbd36",
+      "native-android/engine/auth-interop/deployment/db_modal_diagnostic.py": "f94478d42a99d44d9249997e1d0ff8893ffb4cca7639170fd0439a129e4afe78",
+      "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "247b5c0ec6e926bc9385aff02210495076295f835c89e8cdfe4e4ae9180961a7",
+      "native-android/engine/auth-interop/deployment/test_db_modal_diagnostic.py": "217e49852e850831f0e3f162a2005bd9281d91f3093654b1ce5e41bccff60bd4",
+      "native-android/engine/auth-interop/deployment/test_db_shard_activation.py": "8abd552a38541187993bf96725acb03d686763409cf5de21add496dddb5105f9",
+      "native-android/engine/auth-interop/deployment/windows/db_modal_observer.cs": "3359269a277aa9c50aac8ea74cca7bcdaabb8ff098f224a1f16df63379e8efd6"
+    }
+  },
+  "fresh_source_retention": {
+    "actual_capture_or_token_executed_by_reviewer": false,
+    "concrete_remaining_blockers": [],
+    "fixed_review_finding": "Explicit stdout/stderr pipe closure added for readmission timeout/error.",
+    "independent_new_unit_methods_passed": 10,
+    "independent_unit_command": "python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_fresh_source_retention.py -v",
+    "preserved_host_proof": {
+      "late_copy_and_manifest_rollback_controls_executed": true,
+      "offline_copy_and_protocol_controls_only": true,
+      "passed": true,
+      "pg_or_wine_runtime_executed": false,
+      "private_cli_canary_refusal_executed": true,
+      "real_trivial_linux_child_group_cleanup_executed": true,
+      "schema": "coh-fresh-source-retention-host-review-v1",
+      "source_generation_admitted": false,
+      "source_sha256": {
+        "FRESH_SOURCE_RETENTION.md": "597c278539650148e2d1e5cefffe729716e43146e6a2cc45bb27d69797835f57",
+        "retain_fresh_source_snapshot.py": "adb5392c56d719e6e9940ad160228aea43ec4cdb746920116ed414596f503933",
+        "test_fresh_source_retention.py": "b611240d5f2e555232e4d3cd2521b5dea532716504a9c272a77c7a1d31f55412"
+      },
+      "test_methods": 10,
+      "timeout_pipe_cleanup_fd_controls_executed": true,
+      "world_authority": false
+    },
+    "reviewed_boundaries": [
+      "Genuine fresh graphical fixture and exact public source admission are required; same cleaned inputs are readmitted by the original committed helper in a separate owned interpreter, then entire receipt equality is required.",
+      "Exactly catalog.cohcat/runtime.cohrts/resources.cohres/public-bounds.cohrbw are copied; native headers stay intact. Owner, packet, envelope, metadata, eligibility, private receipts, selected identities and logs are excluded.",
+      "Four fixed names, bounded lengths/hashes, verified envelope/extraction, disjoint fresh output tree and final genuine-fixture/source/import closure checks precede manifest publication.",
+      "Every payload is fully flushed/fsynced/closed/rehashed before the sanitized fixed manifest is published last; partial owned files roll back independently and existing trees are preserved.",
+      "Readmission timeout/failure explicitly stops/reaps/checks owned process group and independently closes both pipes, preserving the primary error. Real trivial-child timeout plus secondary pipe-close failure keeps FD count unchanged."
+    ],
+    "scratch_host_proof_sha256": "ec99be1b19f8e6997fc684774cb590d388df853cc747e0bf3d48d895a7cfcaed",
+    "source_commit": "12a9906bcde8a64cdcfe40d0634422ce555094a7",
+    "source_sha256": {
+      "native-android/engine/scenecatalog-server/FRESH_SOURCE_RETENTION.md": "597c278539650148e2d1e5cefffe729716e43146e6a2cc45bb27d69797835f57",
+      "native-android/engine/scenecatalog-server/retain_fresh_source_snapshot.py": "adb5392c56d719e6e9940ad160228aea43ec4cdb746920116ed414596f503933",
+      "native-android/engine/scenecatalog-server/test_fresh_source_retention.py": "b611240d5f2e555232e4d3cd2521b5dea532716504a9c272a77c7a1d31f55412"
+    }
+  },
+  "passed": true,
+  "reviewer": "Worker F",
+  "schema": "coh-independent-fresh-retention-and-modal-index-review-v1",
+  "unchanged_qualifiers_rerun": false,
+  "world_authority": false
+}

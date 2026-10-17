@@ -1,0 +1,50 @@
+{
+  "committed_save_event_utc": "2026-10-17T22:02:06.288622+00:00",
+  "committed_sql_verified": true,
+  "disconnected_before_sql": true,
+  "exact_observer_or_helper_failure_code_retained": false,
+  "failed_capture_code": "CHARACTER_OBSERVER_FAILED",
+  "forced_stop_before_save": false,
+  "fresh_profile_initialized": true,
+  "fresh_profile_reused": false,
+  "guest_cleanup": {
+    "owned_processes_reaped": true,
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true
+  },
+  "guest_cleanup_complete": true,
+  "guest_status": "cancelled",
+  "helper_start_reached_proven": false,
+  "helper_stdout_stderr_discarded_by_wrapper": true,
+  "job_id": 117508806726,
+  "local_artifacts": {
+    "fresh-fixture-retry-failed-receipt.zip": {
+      "bytes": 1474,
+      "sha256": "a3b7fbffaeb94c82f178b9b5d5e1a1bb79dfbb9d61c691fe3d64d8063f870fd5"
+    },
+    "fresh-fixture-retry-failure-evidence.zip": {
+      "bytes": 76116107,
+      "sha256": "f7693f67f36a27794c9522231a36d398eb45ceebd8dba14951b6c8c6070bd348"
+    },
+    "fresh-fixture-retry-host-launcher.zip": {
+      "bytes": 1177704,
+      "sha256": "bf4063b2d15a4cb92127df5b0cf0eabd894a0ecc855ceaa4c0acda3acb772808"
+    }
+  },
+  "logout_timer_observed": true,
+  "nested_report_members": 13,
+  "observer_failure_discarded_by_wrapper": true,
+  "ordinary_logout_requested": true,
+  "original_character_created": true,
+  "outer_evidence_members": 182,
+  "post_save_frames_retained": 3,
+  "retained_database_cluster": false,
+  "retained_full_pgdump": false,
+  "retained_selected_projection_only": true,
+  "schema": "coh-fresh-fixture-failed-run-diagnosis-v1",
+  "source_generation_admitted": false,
+  "source_revision": "08e6a96f2af9cb317eecd6629e99db4200df177f",
+  "workflow_conclusion": "failure",
+  "workflow_run_id": 39071130820,
+  "world_authority": false
+}

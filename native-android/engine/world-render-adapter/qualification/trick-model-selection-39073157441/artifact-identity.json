@@ -1,0 +1,67 @@
+{
+  "run_id": 39073157441,
+  "run_attempt": 1,
+  "job_id": 117514794401,
+  "conclusion": "success",
+  "source_revision": "91cacafa4451cf7504b5dd105f2790ae1c41739b",
+  "source_tree": "499e397a7bc3eaf0d01a8b404317b94a2b97384b",
+  "artifact_id": 12115756974,
+  "archive_bytes": 21884,
+  "archive_sha256": "54be63d80829412fb83cccf2f587f3bc8edb81d778261cd01bf1c13aa49462dd",
+  "source_review_sha256": "a33d55e2a7d6d07b6eee0616edef857ac8720606136e8a51ff044f7266eccb95",
+  "distinct_pins_verified": 149,
+  "source_review_reexecutes_qualifiers": false,
+  "current_CLIENT_generation_admitted": false,
+  "current_material_GPU_owner_created": false,
+  "complete_parent_aggregate_budget_admitted": false,
+  "actor_or_ACK_authority": false,
+  "Android_or_Thor_acceptance": false,
+  "world_authority": false,
+  "files": {
+    "REVIEW.md": {
+      "bytes": 4396,
+      "sha256": "44528dce9b0fca1907f2119f596c33e4d5b52b4913e32e45edf1896041c28481"
+    },
+    "artifact.zip": {
+      "bytes": 21884,
+      "sha256": "54be63d80829412fb83cccf2f587f3bc8edb81d778261cd01bf1c13aa49462dd"
+    },
+    "artifacts.json": {
+      "bytes": 889,
+      "sha256": "869843aead88f9e766bccc54711043303c34c05c5dbde2b75d0627da42001c1c"
+    },
+    "job.log": {
+      "bytes": 30950,
+      "sha256": "cd54078060ef954aefe9b9ed617cf616b1b951170536876ac3cbfe7b0d1a1623"
+    },
+    "jobs.json": {
+      "bytes": 2176,
+      "sha256": "736487960542f9df7c552b93dfbf2c657bc5cc3fcc93a629079108da635b41a2"
+    },
+    "latest-owner-overlap.json": {
+      "bytes": 28565,
+      "sha256": "e367e57daf7023f77fba6b1f6549f8e692dfe6ff0996c53a5c32e2060b7ff6df"
+    },
+    "power-boost-slots.json.gz": {
+      "bytes": 10630,
+      "sha256": "51b877c457de94081b9f9eda6020646afe917caa6e96bb8cff9116012fdda6c9"
+    },
+    "run.json": {
+      "bytes": 15217,
+      "sha256": "982a6da8d45fd468852b009c46bb32186fb667bffff5e36139b73a3d543290bd"
+    },
+    "source-verification.json": {
+      "bytes": 34276,
+      "sha256": "a33d55e2a7d6d07b6eee0616edef857ac8720606136e8a51ff044f7266eccb95"
+    },
+    "trick-model.json": {
+      "bytes": 14941,
+      "sha256": "7e2f7b3765ddb2b040cb48ad2f1db119281223069f6f0fdcbe6b103c1ade4fca"
+    },
+    "verify_artifact.py": {
+      "bytes": 9573,
+      "sha256": "2b12acd0d8a0cbf1ea38c938b5fd4db2e3731ecf93b01e1a2d00d320b2f000ae"
+    }
+  },
+  "decoded_job_log_trailing_whitespace_normalized": true
+}

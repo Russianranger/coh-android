@@ -1,0 +1,2791 @@
+{
+  "format": 1,
+  "status": "cancelled",
+  "started_utc": "2026-10-17T21:32:09.754667+00:00",
+  "stages": [
+    {
+      "stage": "client_inputs",
+      "started_utc": "2026-10-17T21:32:09.833637+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:32:10.023322+00:00",
+      "machine": "aarch64",
+      "guest_uid": 1000,
+      "postgres_started": false,
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+      "client_executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca"
+    },
+    {
+      "stage": "client_private_data",
+      "started_utc": "2026-10-17T21:32:10.023543+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:33:38.115685+00:00",
+      "format": 1,
+      "source_data": "/game-import/data",
+      "import": {
+        "generation": "generation-d878bbbf72ef4b7c8d8b33b674f09ae9",
+        "receipt_sha256": "d73039b060cd3ef4d673213a616ff246e3c189e1d038709247a9cda8822300d8",
+        "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+        "file_count": 173011,
+        "total_bytes": 2977730517
+      },
+      "package_sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335",
+      "cache_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+      "prerequisites_archive_sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+      "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+      "normalized_mtime_epoch": 1767225600,
+      "linked_files": 173005,
+      "copied_writable_files": 6,
+      "input_files": 173011,
+      "input_bytes": 2977730517,
+      "imported_inputs_readonly": true,
+      "imported_input_bytes_unchanged": true,
+      "imported_metadata_normalized": true,
+      "prepared_cache_files": 100,
+      "prepared_cache_bytes": 364703716,
+      "prepared_prerequisite_files": 3,
+      "prepared_prerequisite_bytes": 54948,
+      "writable_cache_roots": [
+        "bin",
+        "server/bin",
+        "geobin"
+      ],
+      "reused": false
+    },
+    {
+      "stage": "persistent_server_profile",
+      "started_utc": "2026-10-17T21:33:38.115977+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:33:41.120029+00:00",
+      "profile": "android-local-login",
+      "profile_reused": false,
+      "database_preserved_by_policy": true
+    },
+    {
+      "stage": "postgres_local_login",
+      "started_utc": "2026-10-17T21:33:41.120242+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:33:41.335161+00:00",
+      "loopback": "127.0.0.1",
+      "port": 49159,
+      "durability_verified": true,
+      "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+    },
+    {
+      "stage": "presentation_display",
+      "started_utc": "2026-10-17T21:34:10.290951+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:34:10.346309+00:00",
+      "width": 800,
+      "height": 600,
+      "rfb_tcp": false,
+      "x_tcp": false,
+      "socket_path": "/presentation-socket/view.sock",
+      "socket_mode": "0600"
+    },
+    {
+      "stage": "wine_initialization",
+      "started_utc": "2026-10-17T21:34:10.346595+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:34:50.132090+00:00",
+      "policy": "initialize_once_then_reuse",
+      "state": "initialized",
+      "ready_prefix_reused": false,
+      "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+      "update_timestamp_removed": false,
+      "timeout_seconds": 600,
+      "prior_ready_prefix": false,
+      "existing_prefix_preserved": false,
+      "installed_wine_inf": {
+        "path": "/opt/wine/share/wine/wine.inf",
+        "bytes": 143804,
+        "sha256": "b8586ae73d000f2c21a9c019636976df255c61f0168ce49d6813643ab1d47361",
+        "mtime_seconds": 1792272727,
+        "mtime_ns": 1792272727024587131,
+        "device": 2049,
+        "inode": 7342330
+      },
+      "refresh_reason": "no_current_readiness_proof",
+      "update_timestamp_content_before": null,
+      "update_timestamp_content_after": 1792272727,
+      "registration_timestamp_verified": true,
+      "registration_processes": 3,
+      "wow64_registration_processes": 1,
+      "registration_passes": 1,
+      "elapsed_seconds": 39.783
+    },
+    {
+      "stage": "local_login_odbc",
+      "started_utc": "2026-10-17T21:34:50.132311+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:34:52.557091+00:00",
+      "driver_name": "PostgreSQL Unicode",
+      "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+      "pointer_bits": 32,
+      "registry_view": 32,
+      "driver_dll_loaded": true
+    },
+    {
+      "stage": "local_dbserver_startup",
+      "started_utc": "2026-10-17T21:34:52.557313+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:39:28.594586+00:00",
+      "local_dbserver_ready": true,
+      "mapserver_started": false,
+      "catalog_sha256": {
+        "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+        "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580",
+        "constraints": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0"
+      },
+      "attribute_sha256": {
+        "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+        "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+        "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+      },
+      "attribute_counts": {
+        "attributes": 56411,
+        "badgestatsattributes": 1771,
+        "pophelpattributes": 90
+      },
+      "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+      "table_count": 99,
+      "column_count": 5935
+    },
+    {
+      "stage": "local_atlas_startup",
+      "started_utc": "2026-10-17T21:39:28.649704+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:47:32.598942+00:00",
+      "atlas_ready": true,
+      "map": {
+        "ready": true,
+        "not_started": false,
+        "map_id": 1,
+        "network_age_seconds": 5,
+        "stats_age_seconds": 5,
+        "address": "127.0.0.1",
+        "port": 7001
+      },
+      "loopback_only": true
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "started_utc": "2026-10-17T21:47:32.599367+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:47:33.059239+00:00",
+      "pointer_bits": 32,
+      "dll_export_verified": true,
+      "odbc_manager_loaded": true
+    },
+    {
+      "stage": "actual_client_startup",
+      "started_utc": "2026-10-17T21:47:34.839872+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-17T21:54:29.345585+00:00",
+      "graphics_observation": {
+        "vendor": "Mesa/X.org",
+        "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+        "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+        "renderer_classification": "software"
+      },
+      "renderer_initialized": true,
+      "all_data_loaded": true,
+      "client_main_loop_reached": true,
+      "client_window_observed": true,
+      "client_windows": [
+        {
+          "window_id": 20971523,
+          "title": "City of Heroes : PID: 656",
+          "width": 800,
+          "height": 600,
+          "mapped": true
+        }
+      ],
+      "startup_observed": true,
+      "menu_visual_validated": false,
+      "startup_elapsed_seconds": 414.041
+    },
+    {
+      "stage": "actual_client_interaction",
+      "started_utc": "2026-10-17T21:54:29.346082+00:00"
+    }
+  ],
+  "processes": [
+    {
+      "label": "local-initdb",
+      "elapsed_seconds": 2.014,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "The files belonging to this database system will be owned by user \"coh\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are enabled.\n\ncreating directory /state/diagnostic/android-local-login/init-pending-dd2ee9bdf03d3b9a ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default \"max_connections\" ... 100\nselecting default \"shared_buffers\" ... 128MB\nselecting default time zone ... UTC\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    /opt/coh/pgsql/bin/pg_ctl -D /state/diagnostic/android-local-login/init-pending-dd2ee9bdf03d3b9a -l logfile start\n\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.014
+      }
+    },
+    {
+      "label": "local-cluster-status",
+      "elapsed_seconds": 0.055,
+      "exit_code": 3,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "pg_ctl: no server running\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 3,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "127.0.0.1|49159|/state/diagnostic/android-local-login/pgdata|on|on|on\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "CREATE ROLE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "1\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.256,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "CREATE DATABASE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.256
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "REVOKE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "ALTER DATABASE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "REVOKE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "cohtest\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "BEGIN\nCREATE SCHEMA\nCREATE SCHEMA\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 1\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 1\nCOMMIT\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "cohtest|2\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "wineboot",
+      "elapsed_seconds": 39.783,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 14c starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\"\n00e8:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\" in experimental wow64 mode\n00f0:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\iexplore.exe\" in experimental wow64 mode\n002c:trace:wineboot:update_wineprefix wine: configuration in L\"/state/diagnostic/wine\" has been updated.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0158:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0158:trace:wineboot:process_run_key No commands to execute.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0158:trace:wineboot:process_run_key Done processing cmd 0.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0158:trace:wineboot:process_run_key No commands to execute.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:process_run_key No commands to execute.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:main Operation done\n",
+      "completion": {
+        "policy": "leader_exit_with_owned_background_output",
+        "leader_exit_code": 0,
+        "output_capture_open": true,
+        "elapsed_seconds": 39.783
+      }
+    },
+    {
+      "label": "local-install-x86-psqlodbc",
+      "elapsed_seconds": 1.514,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "017c:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\msiexec.exe\" in experimental wow64 mode\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.514
+      }
+    },
+    {
+      "label": "local-odbc-driver",
+      "elapsed_seconds": 0.91,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0194:err:environ:init_peb starting L\"Z:\\\\opt\\\\coh\\\\runtime-probe.exe\" in experimental wow64 mode\nCOH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode(x86) view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 NAME PostgreSQL Unicode\r\nCOH_ODBC_DRIVER_V1 DLL C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 PASS bits=32\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.91
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.054,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "56411\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.054
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.054,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "1771\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.054
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.054,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.054
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "90\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.105,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.105
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.054,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.054
+      }
+    },
+    {
+      "label": "character-atlas-baseline",
+      "elapsed_seconds": 1.263,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0224:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 21:39:29\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-10-17 21:39:29.708] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.263
+      }
+    },
+    {
+      "label": "character-atlas-ready",
+      "elapsed_seconds": 1.318,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0240:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 21:47:32\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-10-17 21:47:32.359] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n 1 City_01_01.txt         S: 5/5  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.318
+      }
+    },
+    {
+      "label": "runtime-probe",
+      "elapsed_seconds": 0.459,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "024c:err:environ:init_peb starting L\"Z:\\\\opt\\\\coh\\\\runtime-probe.exe\" in experimental wow64 mode\nCOH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.459
+      }
+    },
+    {
+      "label": "client-progress-reset",
+      "elapsed_seconds": 0.914,
+      "exit_code": 1,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "reg: Unable to find the specified registry value\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 1,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.914
+      }
+    },
+    {
+      "label": "client-progress-empty",
+      "elapsed_seconds": 0.863,
+      "exit_code": 1,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nreg: Unable to find the specified registry value\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 1,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.863
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.065,
+      "exit_code": 1,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nreg: Unable to find the specified registry value\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 1,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.065
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.017,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: After renderThreadStart\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.017
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.167,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.167
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.167,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.167
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.167,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.167
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.116,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.116
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 0.812,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.812
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.118,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.118
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.219,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.219
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.116,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.116
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.116,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.116
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.167,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.167
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.116,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.116
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.068,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.068
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.218,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.218
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.471,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.471
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.371,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.371
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.37,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.37
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.218,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    INIT: after rdrInitTopOfView()\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.218
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.141,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.141
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.033,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.033
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.065,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "1353310574|COHLOCAL\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.065
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.071,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.071
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.067,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.067
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 2.082,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.082
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.067,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.067
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.274,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.274
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.075,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.075
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.07,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.07
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 2.476,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.476
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.084,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.084
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.819,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.819
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.113,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.113
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 2.047,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.047
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.064,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.064
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.067,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.067
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.101,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.101
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 2.403,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "044c:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 21:58:07\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 21:58:07.589] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n    1 Name THORHERO         Auth COHLOCAL         Ip 127.0.0.1        MapId 1 SmapId 1  \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.403
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 1.952,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0458:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 21:58:30\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 21:58:30.953] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n    1 Name THORHERO         Auth COHLOCAL         Ip 127.0.0.1        MapId 1 SmapId 1  \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.952
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.349,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.349
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 2.412,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0474:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 21:58:55\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 21:58:55.905] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n    1 Name THORHERO         Auth COHLOCAL         Ip 127.0.0.1        MapId 1 SmapId 1  \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.412
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 1.425,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0484:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 21:59:17\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 21:59:17.306] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n    1 Name THORHERO         Auth COHLOCAL         Ip 127.0.0.1        MapId 1 SmapId 1  \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.425
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.038,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.038
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.056,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.056
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 2.168,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "04a0:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 21:59:41\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 21:59:41.994] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n    1 Name THORHERO         Auth COHLOCAL         Ip 127.0.0.1        MapId 1 SmapId 1  \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.168
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.077,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.077
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 2.01,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "04ac:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 22:00:08\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 22:00:08.349] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n    1 Name THORHERO         Auth COHLOCAL         Ip 127.0.0.1        MapId 1 SmapId 1  \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.01
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.225,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.225
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.058,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.057
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 2.043,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "04c8:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 22:00:35\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 22:00:35.537] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\n    1 Name THORHERO         Auth COHLOCAL         Ip 127.0.0.1        MapId 1 SmapId 1  \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.043
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.061,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.061
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 1.815,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "04d4:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 22:00:59\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 22:00:59.910] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\ninvalid container request\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.815
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.01,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.01
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.06,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.06
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 1.753,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "04f0:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 22:01:24\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 22:01:24.953] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\ninvalid container request\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.752
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.073,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\"}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.073
+      }
+    },
+    {
+      "label": "character-player-status",
+      "elapsed_seconds": 1.793,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "04fc:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-10-17 22:01:48\r\nQuitting: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 3 1 \r\n[2026-10-17 22:01:48.771] [INFO] Initialized error log Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/logs/mapserver/errorLogLastRun.log\r\ninvalid container request\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.793
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.057,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"authid\":1353310574,\"authname\":\"COHLOCAL\",\"name\":\"THORHERO\",\"class\":252,\"origin\":257,\"level\":null,\"experiencepoints\":null,\"influencepoints\":null,\"description\":null,\"motto\":null,\"datecreated\":\"2026-10-17T21:57:49\",\"logincount\":1}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.057
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.06,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"subid\":0,\"curbuild\":null,\"originalprimary\":\"Archery\",\"originalsecondary\":\"Gadgets\",\"praetorianprogress\":null,\"playersubtype\":null,\"influencetype\":null}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.06
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.06,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"subid\":0,\"powerid\":1,\"categoryname\":2312,\"powersetname\":2312,\"powername\":3117,\"powerlevelbought\":null,\"powernumboostsbought\":null,\"powersetlevelbought\":null,\"buildnum\":null,\"uniqueid\":2084110085}, \n {\"containerid\":1,\"subid\":1,\"powerid\":2,\"categoryname\":1367,\"powersetname\":1367,\"powername\":408,\"powerlevelbought\":null,\"powernumboostsbought\":null,\"powersetlevelbought\":null,\"buildnum\":null,\"uniqueid\":1649555836}, \n {\"containerid\":1,\"subid\":2,\"powerid\":3,\"categoryname\":1367,\"powersetname\":1367,\"powername\":6759,\"powerlevelbought\":null,\"powernumboostsbought\":null,\"powersetlevelbought\":null,\"buildnum\":null,\"uniqueid\":1311144360}, \n {\"containerid\":1,\"subid\":3,\"powerid\":4,\"categoryname\":1367,\"powersetname\":1367,\"powername\":6756,\"powerlevelbought\":null,\"powernumboostsbought\":null,\"powersetlevelbought\":null,\"buildnum\":null,\"uniqueid\":1758889093}, \n {\"containerid\":1,\"subid\":4,\"powerid\":5,\"categoryname\":1367,\"powersetname\":1367,\"powername\":6748,\"powerlevelbought\":null,\"powernumboostsbought\":null,\"powersetlevelbought\":null,\"buildnum\":null,\"uniqueid\":421988681}, \n {\"containerid\":1,\"subid\":5,\"powerid\":6,\"categoryname\":11427,\"powersetname\":6153,\"powername\":981,\"powerlevelbought\":null,\"powernumboostsbought\":null,\"powersetlevelbought\":null,\"buildnum\":null,\"uniqueid\":200599676}, \n {\"containerid\":1,\"subid\":6,\"powerid\":7,\"categoryname\":11419,\"powersetname\":6142,\"powername\":1219,\"powerlevelbought\":null,\"powernumboostsbought\":null,\"powersetlevelbought\":null,\"buildnum\":null,\"uniqueid\":143244143}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.06
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.062,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "[{\"containerid\":1,\"subid\":0,\"name\":null,\"geom\":16296,\"tex1\":18023,\"tex2\":null,\"displayname\":null,\"region\":17890,\"bodyset\":16296,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":1,\"name\":null,\"geom\":16296,\"tex1\":18023,\"tex2\":null,\"displayname\":null,\"region\":18669,\"bodyset\":16296,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":2,\"name\":null,\"geom\":26184,\"tex1\":16560,\"tex2\":null,\"displayname\":null,\"region\":11808,\"bodyset\":14589,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":3,\"name\":null,\"geom\":16294,\"tex1\":18309,\"tex2\":null,\"displayname\":null,\"region\":18669,\"bodyset\":16296,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":4,\"name\":null,\"geom\":16294,\"tex1\":18309,\"tex2\":null,\"displayname\":null,\"region\":17890,\"bodyset\":16296,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":5,\"name\":null,\"geom\":null,\"tex1\":null,\"tex2\":null,\"displayname\":null,\"region\":18669,\"bodyset\":16296,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":6,\"name\":null,\"geom\":16709,\"tex1\":16681,\"tex2\":16682,\"displayname\":null,\"region\":11808,\"bodyset\":14589,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":8,\"name\":null,\"geom\":null,\"tex1\":null,\"tex2\":null,\"displayname\":null,\"region\":11808,\"bodyset\":14589,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":9,\"name\":null,\"geom\":null,\"tex1\":null,\"tex2\":null,\"displayname\":null,\"region\":18669,\"bodyset\":16296,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":10,\"name\":null,\"geom\":null,\"tex1\":null,\"tex2\":null,\"displayname\":null,\"region\":18669,\"bodyset\":16296,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":13,\"name\":null,\"geom\":null,\"tex1\":null,\"tex2\":null,\"displayname\":null,\"region\":11808,\"bodyset\":14589,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":22,\"name\":null,\"geom\":null,\"tex1\":null,\"tex2\":null,\"displayname\":null,\"region\":11808,\"bodyset\":14589,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}, \n {\"containerid\":1,\"subid\":24,\"name\":null,\"geom\":null,\"tex1\":null,\"tex2\":null,\"displayname\":null,\"region\":15800,\"bodyset\":15800,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":26073,\"color3\":2039583,\"color4\":14935011}, \n {\"containerid\":1,\"subid\":27,\"name\":null,\"geom\":null,\"tex1\":null,\"tex2\":null,\"displayname\":null,\"region\":17890,\"bodyset\":16296,\"color1\":2039583,\"color2\":14935011,\"costumenum\":null,\"fxname\":null,\"color3\":null,\"color4\":null}]\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.062
+      }
+    },
+    {
+      "label": "client-progress-registry",
+      "elapsed_seconds": 1.074,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "\r\nHKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop\r\n\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.074
+      }
+    },
+    {
+      "label": "owned-wine-stop",
+      "elapsed_seconds": 2.28,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.28
+      }
+    },
+    {
+      "label": "owned-wine-wait",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "postgres-graceful-stop",
+      "elapsed_seconds": 0.155,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "waiting for server to shut down.... done\nserver stopped\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.155
+      }
+    },
+    {
+      "label": "postgres_local_login",
+      "elapsed_seconds": 1729.816,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "2026-10-17 21:33:41.205 UTC [6284] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-10-17 21:33:41.205 UTC [6284] LOG:  listening on IPv4 address \"127.0.0.1\", port 49159\n2026-10-17 21:33:41.207 UTC [6284] LOG:  listening on Unix socket \"/state/diagnostic/android-local-login/socket/.s.PGSQL.49159\"\n2026-10-17 21:33:41.214 UTC [6292] LOG:  database system was shut down at 2026-10-17 21:33:40 UTC\n2026-10-17 21:33:41.224 UTC [6284] LOG:  database system is ready to accept connections\n2026-10-17 21:38:41.313 UTC [6290] LOG:  checkpoint starting: time\n2026-10-17 21:40:18.977 UTC [6290] LOG:  checkpoint complete: wrote 970 buffers (23.7%), wrote 3 SLRU buffers; 1 WAL file(s) added, 0 removed, 0 recycled; write=97.436 s, sync=0.148 s, total=97.665 s; sync files=626, longest=0.008 s, average=0.001 s; distance=4460 kB, estimate=4460 kB; lsn=0/2C44B08, redo lsn=0/1B4A818\n2026-10-17 21:43:41.026 UTC [6290] LOG:  checkpoint starting: time\n2026-10-17 21:45:44.603 UTC [6290] LOG:  checkpoint complete: wrote 1230 buffers (30.0%), wrote 2 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=123.550 s, sync=0.010 s, total=123.577 s; sync files=78, longest=0.004 s, average=0.001 s; distance=17389 kB, estimate=17389 kB; lsn=0/2C46088, redo lsn=0/2C45FE0\n2026-10-17 21:48:41.678 UTC [6290] LOG:  checkpoint starting: time\n2026-10-17 21:48:42.803 UTC [6290] LOG:  checkpoint complete: wrote 11 buffers (0.3%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=1.114 s, sync=0.003 s, total=1.126 s; sync files=8, longest=0.001 s, average=0.001 s; distance=48 kB, estimate=15655 kB; lsn=0/2C523C8, redo lsn=0/2C52370\n2026-10-17 21:58:41.892 UTC [6290] LOG:  checkpoint starting: time\n2026-10-17 21:58:53.777 UTC [6290] LOG:  checkpoint complete: wrote 109 buffers (2.7%), wrote 2 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=11.830 s, sync=0.018 s, total=11.886 s; sync files=43, longest=0.007 s, average=0.001 s; distance=509 kB, estimate=14141 kB; lsn=0/2CD1A50, redo lsn=0/2CD19C0\n2026-10-17 22:02:30.787 UTC [6284] LOG:  received fast shutdown request\n2026-10-17 22:02:30.788 UTC [6284] LOG:  aborting any active transactions\n2026-10-17 22:02:30.790 UTC [6284] LOG:  background worker \"logical replication launcher\" (PID 6296) exited with exit code 1\n2026-10-17 22:02:30.790 UTC [6290] LOG:  shutting down\n2026-10-17 22:02:30.791 UTC [6290] LOG:  checkpoint starting: shutdown immediate\n2026-10-17 22:02:30.806 UTC [6290] LOG:  checkpoint complete: wrote 62 buffers (1.5%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.009 s, sync=0.003 s, total=0.016 s; sync files=41, longest=0.001 s, average=0.001 s; distance=152 kB, estimate=12742 kB; lsn=0/2CF7B40, redo lsn=0/2CF7B40\n2026-10-17 22:02:30.820 UTC [6284] LOG:  database system is shut down\n"
+    },
+    {
+      "label": "private-presentation-x",
+      "elapsed_seconds": 1700.661,
+      "exit_code": 0,
+      "forced_stop": true,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "_XSERVTransmkdir: ERROR: euid != 0,directory /tmp/.X11-unix will not be created.\n\nXvnc TigerVNC 1.12.0 - built 2023-01-06 16:01\nCopyright (C) 1999-2021 TigerVNC Team and many others (see README.rst)\nSee https://www.tigervnc.org for information on TigerVNC.\nUnderlying X server release 12101006, X.Org\n\n\nSat Oct 17 21:34:10 2026\n vncext:      VNC extension running!\n vncext:      Listening for VNC connections on /presentation-socket/view.sock\n              (mode 0600)\n vncext:      created VNC server for screen 0\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 2\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 3\n Connections: accepted: /presentation-socket/view.sock\n SConnection: Client needs protocol version 3.8\n SConnection: Client requests security type None(1)\n VNCSConnST:  Server default pixel format depth 24 (32bpp) little-endian rgb888\n VNCSConnST:  Client pixel format depth 24 (32bpp) little-endian rgb888\n\nSat Oct 17 21:47:58 2026\n ComparingUpdateTracker: 1.1727 Mpixels in / 318.008 kpixels out\n ComparingUpdateTracker: (1:3.68764 ratio)\n ComparingUpdateTracker: 0 pixels in / 0 pixels out\n ComparingUpdateTracker: (1:nan ratio)\n\nSat Oct 17 21:49:45 2026\n ComparingUpdateTracker: 960 kpixels in / 0 pixels out\n ComparingUpdateTracker: (1:inf ratio)\n\nSat Oct 17 22:02:11 2026\n VNCSConnST:  closing /presentation-socket/view.sock: Clean disconnection\n EncodeManager: Framebuffer updates: 3159\n EncodeManager:   Raw:\n EncodeManager:     Solid: 20.066 krects, 934.462 Mpixels\n EncodeManager:            3.48137 GiB (1:1 ratio)\n EncodeManager:     Bitmap RLE: 1.553 krects, 660.88 kpixels\n EncodeManager:                 2.53883 MiB (1:1 ratio)\n EncodeManager:     Indexed RLE: 1.057 krects, 31.0888 Mpixels\n EncodeManager:                  118.606 MiB (1:1 ratio)\n EncodeManager:     Full Colour: 12.161 krects, 550.108 Mpixels\n EncodeManager:                  2.04945 GiB (1:1 ratio)\n EncodeManager:   Total: 34.837 krects, 1.51632 Gpixels\n EncodeManager:          5.64912 GiB (1:1 ratio)\n Connections: closed: /presentation-socket/view.sock\n ComparingUpdateTracker: 1.70446 Gpixels in / 62.3787 Mpixels out\n ComparingUpdateTracker: (1:27.3244 ratio)\n\nSat Oct 17 22:02:30 2026\n ComparingUpdateTracker: 0 pixels in / 0 pixels out\n ComparingUpdateTracker: (1:nan ratio)\n"
+    },
+    {
+      "label": "local-dbserver",
+      "elapsed_seconds": 1431.498,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done processing cmd 0.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0024:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\local-login-server-16b02a635830dc046d2da6704782816d\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nCOH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved\r\n(32) Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/DbServer.exe Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\\DbServer.exe -start 0 \r\nworking dir: Z:\\state\\diagnostic\\local-login-server-16b02a635830dc046d2da6704782816d\r\nSVN Revision: Unknown\r\nWarning: couldn't find window named TempConsoleTitle: 32\r\nLoading Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/data/server/db/servers.cfg\r\n  Loading Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/data/server/db/servers.cfg done\r\nLoading server/db/weeklyTF.cfg\r\n[2026-10-17 21:38:44.497] [DEBUG] \tSet folder cache callback for server/db/WeeklyTF.cfg\r\nLoading Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/data/server/db/loadBalanceDefault.cfg... done.\r\nLoading Z:/state/diagnostic/local-login-server-16b02a635830dc046d2da6704782816d/data/server/db/loadBalanceShardSpecific.cfg... done.\r\nLoaded load balancing config: 1 roles specified.\r\nWarning: No launcher specified to start the following server applications:\r\n     StatServer, ArenaServer, RaidServer\r\n[2026-10-17 21:38:44.520] [DEBUG] \tSet folder cache callback for server/db/loadBalance*.cfg\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6989\r\nstarted 2026-10-17 21:38:44\r\ndbserver starting\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6997\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6971\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6996\r\nNo auth server specified in servers.cfg - allowing all logins\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6992\r\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\n2026-10-17 21:38:48 SQL server 180006 connected\r\nLoading templates...                                                  (2.36)\r\nUpdate tables...COMMAND: ALTER TABLE IF EXISTS dbo.Ents DROP CONSTRAINT IF EXISTS FK_Ents_TeamupsId_Teamups;\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents2 DROP CONSTRAINT IF EXISTS FK_Ents2_LeaguesId_Leagues;\r\nSQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping\r\nSQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents2 DROP CONSTRAINT IF EXISTS FK_Ents2_LeaguesId_Leagues;\r\nSQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents DROP CONSTRAINT IF EXISTS FK_Ents_TeamupsId_Teamups;\r\nSQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping\r\n                                                      (17.40)\r\nClearing teamups and invalid characters...                            (3.83)\r\nMoving old characters to offline (non-sql) storage...                 (0.00)\r\nReading Backup Files...                                               (0.08)\r\nReading stats...\r\n  Reading player names...                                             (0.01)\r\n  Reading last 30 days of event history records...\r\n\tLoaded 0 records  (0.00)\r\n[2026-10-17 21:39:12.797] [DEBUG] \tParsing defs/account/LoyaltyRewardTree.def from LoyaltyReward.bin\r\ndefs/account/LoyaltyRewardTree.def in bin file has different date than defs/account/LoyaltyRewardTree.def scanned for\r\nParserLoadFiles: LoyaltyReward.bin outdated, loading text files instead\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6998\r\n2026-10-17 21:39:12 Waiting for launchers to link up...\r\n2026-10-17 21:39:27 No zone launchers connected.\r\nWould start map 1 maps/City_Zones/City_01_01/City_01_01.txt\r\nWould start map 9 maps/City_Zones/City_03_02/City_03_02.txt\r\nWould start map 12 maps/City_Zones/Hazard_01_01/Hazard_01_01.txt\r\nWould start map 13 maps/City_Zones/Hazard_02_01/Hazard_02_01.txt\r\nWould start map 24 maps/City_Zones/City_00_01/City_00_01.txt\r\nWould start map 36 maps/City_Zones/P_City_00_01/P_City_00_01.txt\r\nWould start map 40 maps/City_Zones/P_City_00_05/P_City_00_05.txt\r\nWould start map 41 maps/City_Zones/N_City_00_01/N_City_00_01.txt\r\nWould start map 49 maps/City_Zones/P_City_00_04/P_City_00_04.txt\r\nWould start map 70 maps/City_Zones/V_City_00_01/V_City_00_01.txt\r\nWould start map 71 maps/City_Zones/V_City_01_01/V_City_01_01.txt\r\nWould start map 73 maps/City_Zones/V_City_02_01/V_City_02_01.txt\r\nWould start map 74 maps/City_Zones/V_City_03_01/V_City_03_01.txt\r\nWould start map 82 maps/City_Zones/City_03_03/City_03_03.txt\r\nWould start 14 maps at startup on live\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6984\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6982\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6980\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6979\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6977\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6976\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6974\r\n[2026-10-17 21:39:27.890] [DEBUG] \tParsing defs/account/product_catalog.def from product_catalog.bin\r\ndefs/account/product_catalog.def in bin file has different date than defs/account/product_catalog.def scanned for\r\nParserLoadFiles: product_catalog.bin outdated, loading text files instead\r\ngame checksum = 0, assuming dev mode\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=udp address=127.0.0.1 port=7000\r\n2026-10-17 21:39:27 DbServer Ready.\r\n0x3000dad820:1: Token id=0.1028 primary=1 impersonation level=-1\n0x3000dad270:1: Process id=0270 handles=(nil)\n0x3000ca0600:1: Token id=0.1016 primary=1 impersonation level=-1\n0x3000c96590:1: Process id=022c handles=(nil)\n0x3000bf0e80:1: Token id=0.1001 primary=1 impersonation level=-1\n0x3000bf0ad0:1: Process id=0020 handles=(nil)\n"
+    },
+    {
+      "label": "local-character-atlas",
+      "elapsed_seconds": 1381.04,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": ".237] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:40.239] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.240] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:40.242] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:40.242] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:40.243] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:40.243] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.244] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.246] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:40.247] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:40.247] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:40.248] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.249] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:40.249] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.250] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:40.251] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:40.251] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.252] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:40.271] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:40.283] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.286] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.286] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:40.289] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.291] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:40.291] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:40.292] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.292] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.292] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:40.293] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:40.293] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:40.294] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:40.295] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:40.295] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.296] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:40.297] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.298] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:40.298] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:40.299] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:40.300] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:40.300] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:40.301] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:40.302] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:40.302] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.506] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.509] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.513] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:41.525] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.532] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.535] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:41.538] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.539] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.539] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.540] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.540] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.541] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:41.542] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.545] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:41.546] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.547] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:41.548] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.548] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.550] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.551] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.555] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.555] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.561] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:41.561] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.561] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.562] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.562] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:41.563] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:41.563] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.564] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.564] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.565] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.566] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.566] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.566] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.567] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.567] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:41.568] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.568] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.569] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.571] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:41.571] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.572] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:41.572] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.581] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.582] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.583] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.587] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.587] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:41.597] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.598] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.608] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.609] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.610] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:41.610] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:41.617] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.617] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.618] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.622] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.556] [DEBUG] \tReading player.txt\r\n[2026-10-17 22:00:42.557] [DEBUG] \tReading player.txt\r\n[2026-10-17 22:00:42.608] [DEBUG] \tReading player.txt\r\n[2026-10-17 22:00:42.644] [DEBUG] \tReading player.txt\r\n[2026-10-17 22:00:42.672] [DEBUG] \tReading player.txt\r\n[2026-10-17 22:00:42.700] [DEBUG] \tReading player.txt\r\n[2026-10-17 22:00:42.836] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.838] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.839] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.842] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.843] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.845] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.846] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.849] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.849] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.850] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.852] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.856] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.858] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.859] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.861] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.863] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.865] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.868] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.870] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.872] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.872] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.873] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.873] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.875] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.876] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:42.877] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.878] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.879] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.880] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.881] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.882] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.882] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.883] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:42.883] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.884] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.885] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.886] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.887] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.887] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.888] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.889] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.890] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.890] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.891] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.892] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.893] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.893] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.894] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.895] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.896] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.896] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.897] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.897] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.898] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.898] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.899] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.900] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.900] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.901] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.901] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.902] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.902] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.903] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.904] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:44.068] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.069] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:44.070] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:44.071] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.071] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.072] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.079] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:44.079] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.079] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.079] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.081] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.082] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.088] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:44.089] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.092] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.092] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.092] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:44.093] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.094] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:44.096] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.101] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.102] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.102] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.105] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.106] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:44.106] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.107] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.108] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.108] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.109] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.110] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.110] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.111] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.112] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.113] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.114] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.123] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.123] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.125] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:44.134] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:44.134] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.135] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:44.135] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.137] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.146] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:44.147] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:44.148] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.148] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.149] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.149] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:44.150] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.150] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.150] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.151] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:44.152] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.152] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.153] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.154] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.154] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.155] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.156] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.156] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:44.157] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:45.278] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:45.279] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.280] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:45.287] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.294] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.297] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.300] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.306] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:45.309] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.320] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:45.330] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.346] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.354] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.359] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:45.362] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:45.370] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.376] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.384] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.392] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:45.398] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:45.400] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.401] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:45.401] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.404] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.406] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.417] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:45.423] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.428] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.433] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.442] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:45.454] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:45.460] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.469] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:45.470] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:45.475] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.482] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:45.496] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.504] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:45.511] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.519] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.523] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.525] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.527] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:45.530] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.531] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 "
+    },
+    {
+      "label": "actual-coh-client",
+      "elapsed_seconds": 895.887,
+      "exit_code": 1,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": ".txt\r\n[2026-10-17 22:00:28.915] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:28.917] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:28.918] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:28.919] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:28.921] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:28.922] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:28.925] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:29.877] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:29.878] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:29.879] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:29.880] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:29.881] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:29.882] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:29.891] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:29.913] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:29.929] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:29.943] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:29.949] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:29.954] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:29.955] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:29.956] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:29.958] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:30.841] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:30.842] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:30.843] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:30.844] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:30.845] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:30.846] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:30.847] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:30.850] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:30.857] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:30.861] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:30.865] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:30.869] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:30.871] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:30.872] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:30.875] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:30.877] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:30.878] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:30.880] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:30.881] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:31.819] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:31.821] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:31.822] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:31.823] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:31.826] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:31.827] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:31.830] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:31.831] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:31.834] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:31.840] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:31.844] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:31.849] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:31.852] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:31.855] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:31.858] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:31.865] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:31.870] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:33.318] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:33.321] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:33.322] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:33.323] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:33.324] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:33.325] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:33.330] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:33.331] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:33.333] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:33.335] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:33.338] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:33.341] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:33.342] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:33.344] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:33.346] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:33.347] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:33.348] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:33.351] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:33.353] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:33.354] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:34.387] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:34.392] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:34.397] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:34.400] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:34.401] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:34.407] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:34.410] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:34.412] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:34.418] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:34.427] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:34.433] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:34.439] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:34.447] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:34.451] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:34.454] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:35.490] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:35.491] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:35.493] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:35.496] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:35.497] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:35.498] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:35.500] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:35.501] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:35.502] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:35.511] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:35.512] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:35.516] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:35.520] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:35.522] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:36.606] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:36.615] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:36.625] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:36.638] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:36.643] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:36.661] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:36.682] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:36.689] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:36.692] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:36.693] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:36.695] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:36.697] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:36.699] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:36.700] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:36.702] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:36.704] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:36.706] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:36.707] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:36.709] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:36.711] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:37.033] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:37.048] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:37.061] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:37.063] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:37.064] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:37.066] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:37.068] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:37.070] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:37.072] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:37.076] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:37.077] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:37.084] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:37.096] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:37.109] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:37.122] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:37.151] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:37.165] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:37.181] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:37.715] [DEBUG] \tReading HelicopterBlade.txt\r\n[2026-10-17 22:00:37.736] [DEBUG] \tReading HelicopterBlade.txt\r\n[2026-10-17 22:00:38.328] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:38.330] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:38.332] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:38.334] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:38.336] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:38.338] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:38.340] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:38.342] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:38.344] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:38.346] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:38.348] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:38.350] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:38.353] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:38.354] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:38.356] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:38.357] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:38.359] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:38.361] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:38.364] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:38.366] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.055] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.059] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.062] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.068] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:40.072] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:40.077] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.081] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.087] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:40.089] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.091] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.092] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:40.094] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:40.095] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:40.097] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:40.099] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:40.100] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:40.102] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:41.216] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.218] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:41.220] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.223] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.225] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.228] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:41.230] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.233] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.236] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.238] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:41.241] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:41.243] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:41.246] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.248] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:41.250] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:41.252] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:41.255] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:41.257] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.173] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.186] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.198] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.208] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.219] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.236] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.249] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.262] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:42.271] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:42.287] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:42.293] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.295] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.305] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:42.307] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:42.309] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:42.310] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:42.313] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:43.114] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:43.126] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:43.138] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:43.143] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:43.159] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:43.173] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:43.187] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:43.189] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:43.190] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:43.192] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:43.194] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:43.197] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:43.206] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:43.210] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:43.219] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:43.232] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:43.242] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:43.247] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:43.260] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:44.923] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:44.926] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.928] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.932] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:44.935] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.939] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.941] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.943] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.946] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.949] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:44.954] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.957] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.967] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:44.980] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:44.983] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.986] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.989] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:44.992] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.824] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.826] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.827] [DEBUG] \tReading Car_Lux2.txt\r\n[2026-10-17 22:00:45.828] [DEBUG] \tReading Car_Sport1.txt\r\n[2026-10-17 22:00:45.829] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.835] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.839] [DEBUG] \tReading Car_Sport2.txt\r\n[2026-10-17 22:00:45.844] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.847] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.856] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.863] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.874] [DEBUG] \tReading Car_Compact.txt\r\n[2026-10-17 22:00:45.886] [DEBUG] \tReading Car_Truck.txt\r\n[2026-10-17 22:00:45.906] [DEBUG] \tReading Helicopter.txt\r\n[2026-10-17 22:00:45.909] [DEBUG] \tReading Car_Lux1.txt\r\n[2026-10-17 22:00:49.029] [VERBOSE] ParserLoadFiles: couldn't find any files in directory customwindows\r\n[2026-10-17 22:00:49.060] [DEBUG] Deinitializing PhysX\r\n[2026-10-17 22:00:49.062] [DEBUG] Deinitializing actor spore grid\r\n[2026-10-17 22:00:49.067] [INFO] Deinitialized 10232 actor spore grids\r\n[2026-10-17 22:00:49.070] [DEBUG] Releasing all PhysX objects\r\n[2026-10-17 22:00:49.081] [INFO] Released 2265 PhysX objects\r\n[2026-10-17 22:00:49.153] [INFO] Deinitialized PhysX\r\n"
+    }
+  ],
+  "failures": [
+    "Cancellation requested"
+  ],
+  "scope": "actual_character_creation_guest",
+  "passed": false,
+  "gameplay_validated": false,
+  "android_execution_validated": false,
+  "diagnostic_mode": "actual_character_creation",
+  "session_id": "16b02a635830dc046d2da6704782816d",
+  "execution_platform_requested": "host",
+  "postgres_started": true,
+  "server_started": true,
+  "mapserver_started": true,
+  "game_validated": false,
+  "menu_visual_validated": false,
+  "android_surface_validated": false,
+  "hardware_acceleration_validated": false,
+  "client_process_started": true,
+  "startup_observed": true,
+  "interaction_session_completed": false,
+  "input_effect_verified": false,
+  "interaction_timeout_seconds": 1200,
+  "local_login": {
+    "profile": "android-local-login",
+    "account": "COHLOCAL",
+    "database": "coh_local_android",
+    "session_id": "16b02a635830dc046d2da6704782816d",
+    "database_preserved": true,
+    "character_list_sent": true,
+    "character_selection_visual_validated": false,
+    "mapserver_started": true,
+    "server_listener_policy": "loopback_only",
+    "version_policy": {
+      "mode": "explicit_dev_stamp_comparison_skipped",
+      "native_launcher_mode": "--character-creation",
+      "client_option": "-noversioncheck 1",
+      "protocol_version_check_retained": true,
+      "protocol_check_basis": "reviewed_pinned_DbServer_handleLogin_source",
+      "source_binary_pin_verified": true,
+      "scope": "private_loopback_fake_auth_only"
+    },
+    "inputs": {
+      "run_id": 36460867428,
+      "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+      "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+    },
+    "profile_reused": false,
+    "cluster_path": "/state/diagnostic/android-local-login/pgdata",
+    "profile_initialized": true,
+    "server_ready": true,
+    "fixed_inputs": {
+      "requested": true,
+      "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+    },
+    "loopback_only": {
+      "requested": true,
+      "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+      "endpoints": [
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6971
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6974
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6976
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6977
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6979
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6980
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6982
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6984
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6989
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6992
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6996
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6997
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6998
+        },
+        {
+          "protocol": "udp",
+          "address": "127.0.0.1",
+          "port": 7000
+        }
+      ]
+    },
+    "dispatch_progress": {
+      "available": true,
+      "sampled_utc": "2026-10-17T21:39:27.973646+00:00",
+      "format": 1,
+      "windows_pid": 32,
+      "main_thread_id": 36,
+      "sequence": 140,
+      "stage_id": 13,
+      "stage": "NM_MONITOR",
+      "loop_count": 3,
+      "flags": 0,
+      "stage_count": 37,
+      "file_identity": {
+        "device": 2049,
+        "inode": 7696554
+      },
+      "raw_record_hex": "434f484442503100010000008000000020000000240000008c0000000d000000030000000000000025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "797c7b0c537bc3bbe0e45adeff29af0e4c1e2ce95dc8d3f6d04596eeebcaa178",
+      "source": "opt-in DbServer main-thread publication",
+      "is_success_proof": false
+    },
+    "schema": {
+      "catalog_sha256": {
+        "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+        "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580",
+        "constraints": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0"
+      },
+      "attribute_sha256": {
+        "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+        "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+        "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+      },
+      "attribute_counts": {
+        "attributes": 56411,
+        "badgestatsattributes": 1771,
+        "pophelpattributes": 90
+      },
+      "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+      "table_count": 99,
+      "column_count": 5935
+    },
+    "auth_id": 1353310574,
+    "character_count": 0,
+    "local_login_verified": true,
+    "local_account_verified": true,
+    "character_list_response_sent": true,
+    "character_selection_visual_pending": true,
+    "evidence_scope": "current_owned_dbserver_successful_login_and_post_send_system_specs_plus_sql",
+    "log_paths": [
+      "logs/dbserver/SystemSpecs_2026-10-17-21-00-00.log",
+      "logs/dbserver/debug_2026-10-17-21-00-00.log"
+    ],
+    "client_pid": 656,
+    "verified_utc": "2026-10-17T21:55:38.861795+00:00",
+    "client_capture": {
+      "path": "client-local-login.ppm",
+      "bytes": 1440015,
+      "sha256": "f278ccdf47a83019f8a97053cd9f47f67aa55f50908ce55414d3202cbc095ae8",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "16b02a635830dc046d2da6704782816d",
+      "captured_utc": "2026-10-17T21:55:38.861773+00:00"
+    }
+  },
+  "character_creation": {
+    "session_id": "16b02a635830dc046d2da6704782816d",
+    "account": "COHLOCAL",
+    "name": "THORHERO",
+    "map_id": 1,
+    "verified": true,
+    "connected_on_atlas": true,
+    "committed_sql_verified": true,
+    "requested_logout_observed": true,
+    "logout_timer_observed": true,
+    "disconnected_before_sql": true,
+    "forced_stop_before_save": false,
+    "reopen_verified": false,
+    "gameplay_verified": false,
+    "map_samples": [
+      {
+        "ready": true,
+        "not_started": false,
+        "map_id": 1,
+        "network_age_seconds": 5,
+        "stats_age_seconds": 5,
+        "address": "127.0.0.1",
+        "port": 7001
+      }
+    ],
+    "character_samples": [
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false
+      },
+      {
+        "loaded": false,
+        "connected": false,
+        "in_map_transfer": false
+      }
+    ],
+    "mapserver_producer": {
+      "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+      "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+      "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+    },
+    "private_map_data": {
+      "source_worktree": "client-work-9b2cd8a0a0767d45d6b4765e",
+      "imported_inputs_readonly": true,
+      "private_server_config": true,
+      "private_cache_roots": [
+        "bin",
+        "geobin",
+        "server/bin"
+      ],
+      "directory_layout": "real_directories_with_individual_immutable_file_links",
+      "files": 176012,
+      "bytes": 3655125243,
+      "directories": 8921,
+      "linked_immutable_files": 175673,
+      "copied_private_files": 325,
+      "preserved_schema_files": 14
+    },
+    "baseline_character_count": 0,
+    "baseline_identity_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "map_autogroup_policy": {
+      "native_option": "-donotautogroup",
+      "configured_do_not_auto_group": true,
+      "policy_basis": "native_production_default"
+    },
+    "map_progress_latest": {
+      "format": 1,
+      "windows_pid": 556,
+      "main_thread_id": 560,
+      "sequence": 758620,
+      "stage_id": 36,
+      "stage": "SLEEP",
+      "tick_started": 25286,
+      "tick_completed": 25286,
+      "flags": 0,
+      "stage_count": 37,
+      "raw_record_hex": "434f484d4150310001000000800000002c020000300200005c930b0024000000c6620000c662000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "5ae738e278c00d5ba164d45c358ad3217547ccab4cf2ab70ec85c30032916497",
+      "available": true,
+      "sampled_utc": "2026-10-17T22:02:05.981697+00:00",
+      "observed_monotonic": 2293.706804426,
+      "file_identity": {
+        "device": 2049,
+        "inode": 7696859
+      },
+      "source": "opt-in MapServer main-thread publication",
+      "is_success_proof": false,
+      "freshness": "advanced",
+      "last_advance_monotonic": 2293.706804426,
+      "unchanged_seconds": 0.0
+    },
+    "map_startup_guard": {
+      "before": {
+        "format": 1,
+        "windows_pid": 556,
+        "main_thread_id": 560,
+        "sequence": 3040,
+        "stage_id": 36,
+        "stage": "SLEEP",
+        "tick_started": 100,
+        "tick_completed": 100,
+        "flags": 0,
+        "stage_count": 37,
+        "raw_record_hex": "434f484d4150310001000000800000002c02000030020000e00b000024000000640000006400000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "raw_record_sha256": "984a70d5d78db891a0fb20ba7ce698956c52413a8cfbe891ea84ec5412cbc554",
+        "available": true,
+        "sampled_utc": "2026-10-17T21:47:31.279533+00:00",
+        "observed_monotonic": 1419.004633505,
+        "file_identity": {
+          "device": 2049,
+          "inode": 7696859
+        },
+        "source": "opt-in MapServer main-thread publication",
+        "is_success_proof": false,
+        "freshness": "unchanged",
+        "last_advance_monotonic": 1419.00416898,
+        "unchanged_seconds": 0.0
+      },
+      "after": {
+        "format": 1,
+        "windows_pid": 556,
+        "main_thread_id": 560,
+        "sequence": 4180,
+        "stage_id": 36,
+        "stage": "SLEEP",
+        "tick_started": 138,
+        "tick_completed": 138,
+        "flags": 0,
+        "stage_count": 37,
+        "raw_record_hex": "434f484d4150310001000000800000002c0200003002000054100000240000008a0000008a00000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "raw_record_sha256": "4f5549dffed5804c8cc00f43f630d3c7a28861b3d00a7489d17283a52e91acee",
+        "available": true,
+        "sampled_utc": "2026-10-17T21:47:32.598833+00:00",
+        "observed_monotonic": 1420.323934868,
+        "file_identity": {
+          "device": 2049,
+          "inode": 7696859
+        },
+        "source": "opt-in MapServer main-thread publication",
+        "is_success_proof": false,
+        "freshness": "advanced",
+        "last_advance_monotonic": 1420.323934868,
+        "unchanged_seconds": 0.0
+      },
+      "protocol": {
+        "ready": true,
+        "not_started": false,
+        "map_id": 1,
+        "network_age_seconds": 5,
+        "stats_age_seconds": 5,
+        "address": "127.0.0.1",
+        "port": 7001
+      },
+      "requires_completed_tick_before_protocol": true,
+      "passed": true
+    },
+    "map_ready": true,
+    "map_listener": {
+      "requested": true,
+      "startup_acknowledgement": "COH_GAME_LOOPBACK_ONLY=1 active: IPv4 loopback binding policy",
+      "endpoints": [
+        {
+          "protocol": "udp",
+          "address": "127.0.0.1",
+          "port": 7001
+        }
+      ]
+    },
+    "character_progress_guard": {
+      "before": {
+        "format": 1,
+        "windows_pid": 556,
+        "main_thread_id": 560,
+        "sequence": 742252,
+        "stage_id": 27,
+        "stage": "DB_COMM_DONE",
+        "tick_started": 24741,
+        "tick_completed": 24740,
+        "flags": 0,
+        "stage_count": 37,
+        "raw_record_hex": "434f484d4150310001000000800000002c020000300200006c530b001b000000a5600000a460000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "raw_record_sha256": "31046307d9eb775b6c0b7bd5c6241987a4b03751ea01cc420abc5456a16e6d83",
+        "available": true,
+        "sampled_utc": "2026-10-17T22:01:47.177593+00:00",
+        "observed_monotonic": 2274.902688369,
+        "file_identity": {
+          "device": 2049,
+          "inode": 7696859
+        },
+        "source": "opt-in MapServer main-thread publication",
+        "is_success_proof": false,
+        "freshness": "unchanged",
+        "last_advance_monotonic": 2274.902343195,
+        "unchanged_seconds": 0.0
+      },
+      "after": {
+        "format": 1,
+        "windows_pid": 556,
+        "main_thread_id": 560,
+        "sequence": 743890,
+        "stage_id": 36,
+        "stage": "SLEEP",
+        "tick_started": 24795,
+        "tick_completed": 24795,
+        "flags": 0,
+        "stage_count": 37,
+        "raw_record_hex": "434f484d4150310001000000800000002c02000030020000d2590b0024000000db600000db60000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "raw_record_sha256": "698f23ba9bbb885563617f564a096998e9186d6d4c2cd13c0a382525614a8b7c",
+        "available": true,
+        "sampled_utc": "2026-10-17T22:01:49.047125+00:00",
+        "observed_monotonic": 2276.77222089,
+        "file_identity": {
+          "device": 2049,
+          "inode": 7696859
+        },
+        "source": "opt-in MapServer main-thread publication",
+        "is_success_proof": false,
+        "freshness": "advanced",
+        "last_advance_monotonic": 2276.77222089,
+        "unchanged_seconds": 0.0
+      },
+      "passed": true
+    },
+    "character_id": 1,
+    "auth_id": 1353310574,
+    "db_map_assignment_observed": true,
+    "client_ready_evidence": {
+      "path": "logs/dbserver/entity_2026-10-17-21-00-00.log",
+      "line_sha256": "0db37f9c55ebe4e5a934b571659fa6c6c9005c4fa40b0d73840d54caf4afabf7",
+      "log_timestamp": "261017 21:59:19",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_mapserver_CLIENT_READY_resumeCharacter_success",
+      "loaded_world_assets": true
+    },
+    "client_ready_observed_utc": "2026-10-17T22:00:26.919300+00:00",
+    "client_ready_observed_utc_ms": 1792274426919,
+    "client_pid": 656,
+    "logout_delivery": {
+      "action": "quittologin",
+      "character_id": 1,
+      "client_pid": 656,
+      "format": 1,
+      "sent_utc_ms": 1792274444943,
+      "session_id": "16b02a635830dc046d2da6704782816d"
+    },
+    "logout_timer_evidence": {
+      "path": "logs/dbserver/entity_2026-10-17-22-00-00.log",
+      "line_sha256": "1f5c0008f69f54235211b7138b191998cc5e675441c6f05e44bc2a63925ca2e8",
+      "log_timestamp": "261017 22:00:46",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "reason": "Logout timer expired",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_server_entity_log_live_client_logout_timer"
+    },
+    "map_progress_at_save": {
+      "format": 1,
+      "windows_pid": 556,
+      "main_thread_id": 560,
+      "sequence": 758620,
+      "stage_id": 36,
+      "stage": "SLEEP",
+      "tick_started": 25286,
+      "tick_completed": 25286,
+      "flags": 0,
+      "stage_count": 37,
+      "raw_record_hex": "434f484d4150310001000000800000002c020000300200005c930b0024000000c6620000c662000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "5ae738e278c00d5ba164d45c358ad3217547ccab4cf2ab70ec85c30032916497",
+      "available": true,
+      "sampled_utc": "2026-10-17T22:02:05.981697+00:00",
+      "observed_monotonic": 2293.706804426,
+      "file_identity": {
+        "device": 2049,
+        "inode": 7696859
+      },
+      "source": "opt-in MapServer main-thread publication",
+      "is_success_proof": false,
+      "freshness": "advanced",
+      "last_advance_monotonic": 2293.706804426,
+      "unchanged_seconds": 0.0
+    },
+    "saved_utc": "2026-10-17T22:02:05.982281+00:00",
+    "snapshot_sha256": "f11dc25cc195d008db9c68bb0926a3a8675c89350bd50a6508158fd12fdc3b48",
+    "table_sha256": {
+      "ents": "14eb829d7ca43ff8623e1ebd05fed4a811fd64f88d8090d1a76c0ebe14cfab63",
+      "ents2": "36dd26e88ac48da0adda2a83b5f72bf8c291d9ac5032b49fafe5fd5990f3d1ff",
+      "powers": "af099e360d2dce3f646474917eb39c2c2f6c05e7afc2d93c065a2c1f93419b02",
+      "costumeparts": "1dbc429e682d91bdbd9d719b2ad769698901b9b3319a9ed671a402bb3309b7f2"
+    },
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "evidence_scope": "fresh_graphical_character_ready_on_atlas_then_requested_logout_timer_and_committed_full_character_rows",
+    "verified_utc": "2026-10-17T22:02:06.288570+00:00",
+    "client_capture": {
+      "path": "client-character-saved.ppm",
+      "bytes": 1440015,
+      "sha256": "3f34e43c32c335e5a56ef30ac03c9bf75ca7a6504f88b906b65e8fcb67142d32",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "16b02a635830dc046d2da6704782816d",
+      "captured_utc": "2026-10-17T22:02:06.288546+00:00"
+    }
+  },
+  "asset_sha256": {
+    "001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+    "atlas-world-supplement-manifest.json": "2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203",
+    "atlas-world-supplement.zip": "499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60",
+    "atlas_world_assets.py": "c9df9ce34e50c79fb35bd18c11fddc527afd0fbda3912b37c76c2ba00e6c79e5",
+    "character-avatar-defaults-manifest.json": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+    "character-avatar-defaults.zip": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+    "character_avatar_assets.py": "2cd97c629ae5d82cd278fc74078e797c72fea20c0061f16b5a307be6a9741ef3",
+    "character_creation_diagnostic.py": "169ddad093517209bc972b14f12d0c1c92df1435ff019e6a72b8d1d4e4fc2d9a",
+    "character_reopen_diagnostic.py": "d818c3d499648e060ec4f1ea3af64786df1953f5f52844ab7af7fca45bdc6b6e",
+    "client-caches.zip": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "client-launcher.exe": "c0c84ea38e3da27168ec23988228bd3c55f463904b446139843dc3fd65d8c662",
+    "client-prerequisites.zip": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+    "client-runtime.zip": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335",
+    "client_interactive_diagnostic.py": "07f7a7d541659bd44be8f1f7c996c5164bbb70423479a66f9398ec9bd2f156e7",
+    "client_login_diagnostic.py": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf",
+    "client_startup_diagnostic.py": "60b2e64d7d06e83faeb4cc5744ec3d8d6f09cb93ed18f0ededfbf60b73de3686",
+    "dbserver-package.tar.gz": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+    "dbserver-schema.tar.gz": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792",
+    "dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+    "diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+    "game-package.tar.gz": "5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864",
+    "game_device_diagnostic.py": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca",
+    "game_diagnostic.py": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539",
+    "game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d",
+    "game_hang_evidence.py": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef",
+    "game_map_progress.py": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec",
+    "local_character_server.py": "e1bf584623824fc559b15cfe8b3eb1add53240610001b455e0b371152b2112df",
+    "local_login_server.py": "b3704d9d60f513198fa4b5198ba474ffeeb5aca099d51aa30c318f8b044a4e7f",
+    "presentation_diagnostic.py": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df",
+    "probe.dll": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b",
+    "psqlodbc_x86.msi": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+    "runtime-lock.json": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+    "runtime-probe.exe": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+  },
+  "import_identity": {
+    "generation": "generation-d878bbbf72ef4b7c8d8b33b674f09ae9",
+    "receipt_sha256": "d73039b060cd3ef4d673213a616ff246e3c189e1d038709247a9cda8822300d8",
+    "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+    "file_count": 173011,
+    "total_bytes": 2977730517
+  },
+  "client_worktree": {
+    "format": 1,
+    "source_data": "/game-import/data",
+    "import": {
+      "generation": "generation-d878bbbf72ef4b7c8d8b33b674f09ae9",
+      "receipt_sha256": "d73039b060cd3ef4d673213a616ff246e3c189e1d038709247a9cda8822300d8",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "file_count": 173011,
+      "total_bytes": 2977730517
+    },
+    "package_sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335",
+    "cache_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "prerequisites_archive_sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+    "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+    "normalized_mtime_epoch": 1767225600,
+    "linked_files": 173005,
+    "copied_writable_files": 6,
+    "input_files": 173011,
+    "input_bytes": 2977730517,
+    "imported_inputs_readonly": true,
+    "imported_input_bytes_unchanged": true,
+    "imported_metadata_normalized": true,
+    "prepared_cache_files": 100,
+    "prepared_cache_bytes": 364703716,
+    "prepared_prerequisite_files": 3,
+    "prepared_prerequisite_bytes": 54948,
+    "writable_cache_roots": [
+      "bin",
+      "server/bin",
+      "geobin"
+    ],
+    "reused": false
+  },
+  "character_avatar_supplement": {
+    "format": 1,
+    "scope": "default_male_avatar_supplement",
+    "manifest_sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+    "archive_sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+    "file_count": 21,
+    "payload_bytes": 2980122,
+    "installed_files": 21,
+    "reused_files": 0,
+    "worktree": "client-work-9b2cd8a0a0767d45d6b4765e",
+    "files": {
+      "data/player_library/male_boot.geo": {
+        "bytes": 156354,
+        "sha256": "40c0b72e845bb44e1b875044c8e5bb53819f428b248fa7d620bb1077c46e0e39"
+      },
+      "data/player_library/male_glove.geo": {
+        "bytes": 242558,
+        "sha256": "e88c4f3e340766329b04b2a6544b277e4de312427fbf77badc828acbbfd3a16f"
+      },
+      "data/player_library/male_hair.geo": {
+        "bytes": 478622,
+        "sha256": "48cd27799ffe17cfc0276c7bb0add6d469a03dba5ec1d6d6f74723ee4f98f121"
+      },
+      "data/player_library/male_pants.geo": {
+        "bytes": 126338,
+        "sha256": "e13b9a7f7daec0d025a8cd38cd1f9a24c9ba97920abddc13859fc5b8a68e0c2a"
+      },
+      "data/player_library/male_shirt.geo": {
+        "bytes": 222813,
+        "sha256": "269eb585d6000fb0c05e0fc27b3de1af8fb9a91ef8e0df2819d3a6ede11ec4f6"
+      },
+      "data/player_library/v_male_head.geo": {
+        "bytes": 426283,
+        "sha256": "8a2b28f948d4cfbee83e75a1ac9cd11f6cf7a32770a5b9fac559431ca6b738de"
+      },
+      "data/texture_library/players/avatar/male/chest/leather/chest_leather_03.texture": {
+        "bytes": 175127,
+        "sha256": "7e2bb5c59107528291ff3831e0cff9525e610ea72ef3b16de749cad7a78de7f4"
+      },
+      "data/texture_library/players/avatar/male/chest/leather/chest_leather_03_mask.texture": {
+        "bytes": 175132,
+        "sha256": "8ee6bb5d97e1b4cc5b01b5c3c26ba19092102fb7c63d1014f13db3ce30e49524"
+      },
+      "data/texture_library/players/avatar/male/chest/tights/chest_tights.texture": {
+        "bytes": 175122,
+        "sha256": "ef660db028f4bf7138ad43701190ef8ece8937cc57d8573efcab262a96070cb4"
+      },
+      "data/texture_library/players/avatar/male/hips/leather/hips_leather_03.texture": {
+        "bytes": 87765,
+        "sha256": "fad0d3d62bfbf6082628ecebc69efd6c70dc4eb660391f433a32c5811adbc6e8"
+      },
+      "data/texture_library/players/avatar/male/hips/leather/hips_leather_03_mask.texture": {
+        "bytes": 44010,
+        "sha256": "de99856a5548e19fb498f0de0869e2ed5f84c623e72beb099536d8f42cbbfc18"
+      },
+      "data/texture_library/players/avatar/male/hips/tights/hips_tights.texture": {
+        "bytes": 87760,
+        "sha256": "cf440577f6fd90e9ea287dab99ff0dc48e438d86203d45bf8844be5aa8cb950f"
+      },
+      "data/texture_library/players/avatar/super_shared/boots/boot_leather_03.texture": {
+        "bytes": 87766,
+        "sha256": "b6a43115b54051ca52e410c9e7126254fce3da8cb2d8e6fd9003cf1c9c741862"
+      },
+      "data/texture_library/players/avatar/super_shared/boots/boot_leather_03_mask.texture": {
+        "bytes": 87771,
+        "sha256": "e5bf27a331ca60864a5a71c877c534e5b85a1ba5c0a35e972d344d8e11bb87a2"
+      },
+      "data/texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture": {
+        "bytes": 87765,
+        "sha256": "7916525785ffb2bd8c49fcf594031a1b98b114fbefe848772f35e082b3d1e5e6"
+      },
+      "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03.texture": {
+        "bytes": 87768,
+        "sha256": "5faea4292552aef8b8d3a41ac9f09663ae21ad05c1dc88a8e6fddaa8b9a44fd7"
+      },
+      "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03_mask.texture": {
+        "bytes": 87773,
+        "sha256": "b8df4147c6d62a006fcd0e5020da7de0b3b44c4eb16b414ed4d6bf92a06c261b"
+      },
+      "data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture": {
+        "bytes": 87767,
+        "sha256": "f202b49d35c92c943d1a9852985e68d6d762f49cec87cdbd7170c3ba8cd88363"
+      },
+      "data/texture_library/players/avatar/super_shared/hair/hair_style_01a.texture": {
+        "bytes": 22228,
+        "sha256": "b6321e1a282ec99986e21e83af49167d67b5a831fdff0ccbd2627d1ec8f0989d"
+      },
+      "data/texture_library/players/avatar/super_shared/hair/hair_style_01b.texture": {
+        "bytes": 11236,
+        "sha256": "fd7786d3379b51ad11c5aeb40f23bc9db60472f7ca2bfeb4fda61ef279d8bba6"
+      },
+      "data/texture_library/v_players/avatar/super_shared/patterns/face/face_v_asym_eyes_01.texture": {
+        "bytes": 22164,
+        "sha256": "650274105f4b980b762053f49ad9434dd67baef0012d4ec42f96ea1786e66cf9"
+      }
+    },
+    "normalized_mtime_epoch": 1767225600,
+    "imported_files_modified": false,
+    "worktree_identity_modified": false,
+    "cache_files_modified": false,
+    "runtime_visual_validated": false,
+    "visual_scope": "Male Clear/reset tights costume with smooth boots and gloves plus martial-arts hair, and retained leather costume assets only; other bodies and costume choices remain incomplete"
+  },
+  "atlas_world_supplement": {
+    "format": 1,
+    "scope": "atlas_world_geometry_texture_supplement",
+    "manifest_sha256": "2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203",
+    "archive_sha256": "499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60",
+    "file_count": 2877,
+    "verified_file_count": 2877,
+    "payload_bytes": 309655940,
+    "files_sha256": "c21ea231a2cd280faef2ae915c9c21776548718421031d4c1382604183eaf19d",
+    "installed_files": 2877,
+    "reused_files": 0,
+    "worktree": "client-work-9b2cd8a0a0767d45d6b4765e",
+    "normalized_mtime_epoch": 1767225600,
+    "imported_files_modified": false,
+    "worktree_identity_modified": false,
+    "accepted_cache_archive_modified": false,
+    "cache_refresh": {
+      "policy": "once_per_world_manifest_private_atlas_geobin_and_supplemented_object_library_only",
+      "performed": true,
+      "removed_files": 0,
+      "removed_bytes": 0,
+      "removed_inventory_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "accepted_cache_archive_modified": false
+    },
+    "runtime_visual_validated": false,
+    "visual_scope": "Atlas geometry and resolved direct/composite texture dependencies; ground, collision, rendering and gameplay require runtime qualification"
+  },
+  "wine_initialization": {
+    "policy": "initialize_once_then_reuse",
+    "state": "ready",
+    "ready_prefix_reused": false,
+    "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+    "update_timestamp_removed": false,
+    "timeout_seconds": 600,
+    "prior_ready_prefix": false,
+    "existing_prefix_preserved": false,
+    "installed_wine_inf": {
+      "path": "/opt/wine/share/wine/wine.inf",
+      "bytes": 143804,
+      "sha256": "b8586ae73d000f2c21a9c019636976df255c61f0168ce49d6813643ab1d47361",
+      "mtime_seconds": 1792272727,
+      "mtime_ns": 1792272727024587131,
+      "device": 2049,
+      "inode": 7342330
+    },
+    "refresh_reason": "no_current_readiness_proof",
+    "update_timestamp_content_before": null,
+    "update_timestamp_content_after": 1792272727,
+    "registration_timestamp_verified": true,
+    "registration_processes": 3,
+    "wow64_registration_processes": 1,
+    "registration_passes": 1,
+    "elapsed_seconds": 39.783
+  },
+  "odbc_driver": {
+    "driver_name": "PostgreSQL Unicode",
+    "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+    "pointer_bits": 32,
+    "registry_view": 32,
+    "driver_dll_loaded": true
+  },
+  "screenshots": [
+    {
+      "path": "before-client.ppm",
+      "bytes": 1440015,
+      "sha256": "c3b3d73f6bbb08ab3fa3dfa65d01f89916ba25d37a4f5fbd8cd2202edaa58077",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 1,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "16b02a635830dc046d2da6704782816d",
+      "captured_utc": "2026-10-17T21:47:35.070832+00:00"
+    },
+    {
+      "path": "client-startup.ppm",
+      "bytes": 1440015,
+      "sha256": "cd1c7c31ed9acf433d4fccfcb1063080182b83b852498eb309d74791b54d049a",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "16b02a635830dc046d2da6704782816d",
+      "captured_utc": "2026-10-17T21:54:29.345398+00:00"
+    },
+    {
+      "path": "client-final.ppm",
+      "bytes": 1440015,
+      "sha256": "c99bf09982b0cb240c136f248f997e1e94f80b35afb5a760b8a5527b61173143",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "16b02a635830dc046d2da6704782816d",
+      "captured_utc": "2026-10-17T22:02:11.399748+00:00"
+    }
+  ],
+  "client_console_observation": {
+    "session_id": "16b02a635830dc046d2da6704782816d",
+    "pid": 656,
+    "attached": true
+  },
+  "observed_windows": [
+    {
+      "window_id": 20971523,
+      "title": "City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 656",
+      "width": 800,
+      "height": 600,
+      "mapped": true
+    },
+    {
+      "window_id": 16777219,
+      "title": "Z:\\opt\\coh\\client-launcher.exe",
+      "width": 657,
+      "height": 400,
+      "mapped": true
+    },
+    {
+      "window_id": 20971524,
+      "title": "Default IME",
+      "width": 1,
+      "height": 1,
+      "mapped": false
+    },
+    {
+      "window_id": 16777220,
+      "title": "Default IME",
+      "width": 1,
+      "height": 1,
+      "mapped": false
+    },
+    {
+      "window_id": 4194309,
+      "title": "Default IME",
+      "width": 1,
+      "height": 1,
+      "mapped": false
+    }
+  ],
+  "graphics_observation": {
+    "vendor": "Mesa/X.org",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "renderer_classification": "software"
+  },
+  "renderer_initialized": true,
+  "all_data_loaded": true,
+  "client_main_loop_reached": true,
+  "client_window_observed": true,
+  "client_windows": [
+    {
+      "window_id": 20971523,
+      "title": "City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 656",
+      "width": 800,
+      "height": 600,
+      "mapped": true
+    }
+  ],
+  "client_launch": {
+    "session_id": "16b02a635830dc046d2da6704782816d",
+    "pid": 656
+  },
+  "startup_elapsed_seconds": 414.041,
+  "client_console": {
+    "path": "client-console.log",
+    "bytes": 38845021,
+    "sha256": "f2f032e5c1aeb464f16669cfa6965459af949dedaee8de714a66a9d54779477a"
+  },
+  "private_cache_inventory": {
+    "path": "private-cache-inventory.json",
+    "files": 985,
+    "truncated": false
+  },
+  "owned_process_snapshot": {
+    "path": "owned-processes.json",
+    "owned_process_count": 13
+  },
+  "character_server_logs": {
+    "path": "character-server-logs.zip",
+    "bytes": 7727,
+    "sha256": "483c3b11706d8a6421e829d4218f548b6f37e378b9bc816aedce546059867be1",
+    "manifest_sha256": "4096b1543a5cf9dc12ae2db213faa44ea0de782673dd9996d7b1a187d1357e30",
+    "file_count": 9,
+    "source_bytes": 58687,
+    "exported_bytes": 58687,
+    "source_bytes_after_read": 58687,
+    "collection_phase": "closed_server_logs",
+    "truncated": false,
+    "redacted_files": 0
+  },
+  "wine_shutdown": {
+    "stop_exit_code": 0,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 528,
+    "scanned_tasks": 6,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "presentation_socket_removed": true,
+  "finished_utc": "2026-10-17T22:02:46.342606+00:00",
+  "cleanup_complete": true,
+  "cleanup_execution": {
+    "diagnostic_initialized": true,
+    "wine_started": true,
+    "owned_child_count": 108
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  }
+}

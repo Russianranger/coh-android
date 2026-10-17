@@ -1,0 +1,1018 @@
+{
+  "schema": "coh-focused-source-selection-artifact-review-v1",
+  "passed": true,
+  "run_id": 39073157441,
+  "run_attempt": 1,
+  "job_id": 117514794401,
+  "source_revision": "91cacafa4451cf7504b5dd105f2790ae1c41739b",
+  "source_tree": "499e397a7bc3eaf0d01a8b404317b94a2b97384b",
+  "artifact_id": 12115756974,
+  "artifact_zip_bytes": 21884,
+  "artifact_zip_sha256": "54be63d80829412fb83cccf2f587f3bc8edb81d778261cd01bf1c13aa49462dd",
+  "review_method": "Downloaded completed artifact; verified ZIP size/digest/CRC/member types, three proof revisions, every current source hash and eight historical receipt/difference maps against exact published git bytes; no qualifiers reexecuted.",
+  "verification_script_sha256": "2b12acd0d8a0cbf1ea38c938b5fd4db2e3731ecf93b01e1a2d00d320b2f000ae",
+  "distinct_source_receipt_workflow_pins_verified": 149,
+  "source_role_counts": {
+    "B": 45,
+    "C": 59,
+    "F": 48
+  },
+  "source_pins": {
+    ".github/workflows/native-source-selection.yml": {
+      "sha256": "fdb2608445073e9e7006bafc6ecb778d5ee3d0c6b7dd65dacf47c1fb22a50c67",
+      "roles": [
+        "workflow"
+      ]
+    },
+    "native-android/combined-client/diagnostics/continuation-f-20261017/latest-owner-overlap/HANDOFF.md": {
+      "sha256": "7262c1b35b15d7dcdeeccda5c0614e7b0734c4ed3d6e367a17b4af76ec263320",
+      "roles": [
+        "F_audit_handoff"
+      ]
+    },
+    "native-android/combined-client/diagnostics/continuation-f-20261017/latest-owner-overlap/qualify.py": {
+      "sha256": "75a6066023540b024675fc7295e466745d115e7aab0e0e97ce2979db203e8b48",
+      "roles": [
+        "F_audit_script"
+      ]
+    },
+    "native-android/combined-client/diagnostics/continuation-f-20261017/parent-phase-replay.json": {
+      "sha256": "44a78980d37f057d74e9f4d5c283057a124d1d9b6225d11493e1d3d1d958e499",
+      "roles": [
+        "F_historical_receipt_parent_reference"
+      ]
+    },
+    "native-android/engine/assets/coh_asset_geo.h": {
+      "sha256": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/assets/coh_asset_loader.c": {
+      "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/assets/coh_asset_loader.h": {
+      "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+      "roles": [
+        "B",
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/POWER_BOOST_SLOTS.md": {
+      "sha256": "102c4ef37820b4e97ef74ce543f3e0a3c547cc8fc42ea43183656388bd75d099",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/boost_slots_oracle.py": {
+      "sha256": "d9f7072eeec5ade0f5db7350304b061edbf282353744eb4173a083c464b1bdae",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/check_power_boost_slots.py": {
+      "sha256": "56ca049353631007345906171022895bd247da0f7ed9fc13c75e14cff155f721",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/classes_oracle.py": {
+      "sha256": "755407b7444de22f9018966f29be972f93fa332bc9ac30ff0386dd3299e84e9d",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_origins.h": {
+      "sha256": "2260de2c5aea4b2b277f5c428e18d074ae2b2f665c468b088bada158f60724cb",
+      "roles": [
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_power_boost_slots.c": {
+      "sha256": "f7bae22f2375001ff97efc1282671a76b97c082efa4a500044ee597a91a1c127",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_power_boost_slots.h": {
+      "sha256": "20baafabebd5ac7cac61f6ddbf49d95b6a19c49785cb761d7fb78194b9860fce",
+      "roles": [
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_power_categories.h": {
+      "sha256": "60c66f0f6a04473682e55021b6d653bc556c2d4315c2f41f8ec1063f65e13a69",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_power_ids.h": {
+      "sha256": "60ad9653181aabd9198fa8aa5fe8ef5d6615b9c4c98d8603842e11932a4d2c95",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_power_join.h": {
+      "sha256": "293f603ec426af79e79081d0fc58f423bd9f8b58426ef8f0e5b8193a8ac9b259",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_power_sets.h": {
+      "sha256": "e7a27d21907f7147795441a6d6563217765cd382e33e755a1db77798f57604ca",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_power_stream.c": {
+      "sha256": "f7c1581f794eec8003616893314ab5753eb8135ad703649e699065fc549e3268",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_power_stream.h": {
+      "sha256": "7230579d8a96303aae576d4623d8be5eb086e1a6bc0cf3ac55f16b2017dd30ec",
+      "roles": [
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_schedules.c": {
+      "sha256": "be3f96ce5dee2b4ea7b2a92eb61ad553e3562e10e902add6c4425bcc442c4e8c",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_schedules.h": {
+      "sha256": "1cfc71995eabffec1118773346557f1e352533c81ce577b7eacc121c8f071310",
+      "roles": [
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/coh_shared_power_sets.h": {
+      "sha256": "1363aaaae1ae1b9a4c49e8ebb0e635e6ba60f189660e3a9cf6ca39b83ddc41bf",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/character-dictionary/origins_oracle.py": {
+      "sha256": "595ff848b78a2490137edec59c1262617dd6530eaee21308562df3873e09a8f0",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/power_record_oracle.py": {
+      "sha256": "589f813e7c75c17a50c9b3463c0a81321a68e1839cd9bb3c47dcbd11773ea12d",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/power_stream_schema.inc": {
+      "sha256": "0139a2c498f0cd2603721fdec3687aa6b0524995fbff971cfb3fec71be70d6bd",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/power_stream_schema.py": {
+      "sha256": "94efb1a3af1e9baac07d03ed2110117452d6cd4e1546a8f2c631d0dd9748c6c9",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/character-dictionary/qualification/power-ids-20261017-final.json.gz": {
+      "sha256": "41fd57f8e9b75d1d48517482ad537c648368a985be862dbd7bf3f355b4997e22",
+      "roles": [
+        "F_historical_receipt_ids"
+      ]
+    },
+    "native-android/engine/character-dictionary/qualification/power-join-20261017-final.json.gz": {
+      "sha256": "575e9056a37c1ae25903494ed6cbb74a4ac20c8fcf5bf7e4e4728c856e77d775",
+      "roles": [
+        "F_historical_receipt_join"
+      ]
+    },
+    "native-android/engine/character-dictionary/qualification/shared-power-sets-20261017-final.json.gz": {
+      "sha256": "e850401e9db728731e35110878a8fa4edd77ac71200b341971a54cb24939f860",
+      "roles": [
+        "F_historical_receipt_shared"
+      ]
+    },
+    "native-android/engine/character-dictionary/test_power_boost_slots.c": {
+      "sha256": "a2d75e9f9a53c28d004c831c35d68135d65f8846d2268d262e78352c910c391d",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/coh_contracts.h": {
+      "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "roles": [
+        "B",
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/costume-import/coh_costume_import.h": {
+      "sha256": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+      "roles": [
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": {
+      "sha256": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/costume-inputs/oracle.py": {
+      "sha256": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/costume-inputs/source-pins.json": {
+      "sha256": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/costume-tree/crc_provider.py": {
+      "sha256": "7ee991803d9e2d303fab436d8fc4d446e9318e6c8fc60e0915d17cca18f73ff1",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/entities/coh_costume.h": {
+      "sha256": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+      "roles": [
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/entities/coh_entities.h": {
+      "sha256": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+      "roles": [
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/renderer/coh_renderer.h": {
+      "sha256": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/replication/coh_groups.h": {
+      "sha256": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/replication/coh_replication.h": {
+      "sha256": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+      "roles": [
+        "C",
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog-server/groups_capture_stages.py": {
+      "sha256": "76faf1ee5dd3b0ef0f1a725869024cd6d4c7da4f6300f2221f4b0346599b442b",
+      "roles": [
+        "A8_public_status_control_source"
+      ]
+    },
+    "native-android/engine/scenecatalog-server/resource_oracle.py": {
+      "sha256": "b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/scenecatalog-server/source_resources.inc": {
+      "sha256": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/scenecatalog-server/summarize_groups_capture.py": {
+      "sha256": "b527f44fb38db189ac64742d89b249f9487e5daf0021e5ddeddf34d2b17b3898",
+      "roles": [
+        "A8_public_status_control_source"
+      ]
+    },
+    "native-android/engine/scenecatalog-server/test_groups_public_summary.py": {
+      "sha256": "1cc90c8d6b05135eb3fa74f5a0f144e595262758af71b136302dd859f64c36ef",
+      "roles": [
+        "A8_public_status_control_source"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_catalog_owner.h": {
+      "sha256": "4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_catalog_snapshot.h": {
+      "sha256": "389021a429fe7c4720303fd00723de873fd18bc915d4c8aa9b4c437cd2dabb76",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_resource_index.h": {
+      "sha256": "d4774726285d8ba6037e8c2f35d4f9647e171e06aaccf8edc07b686f4dbc3228",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_resource_join.h": {
+      "sha256": "dc4c3324e719ccd1b4db3fccdb4da054d6a403f7e844209cea440bec6b858a68",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": {
+      "sha256": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_source_mesh.h": {
+      "sha256": "2acc6fcf6b91d7ad1f3617a66465e92ee56207377b68b4699e3f94dbeb8ef0c8",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_source_mesh_batch.h": {
+      "sha256": "f6659cac162c73d291cfc375f8f1668a108dfe28fa3a85b70df8619b6f82e198",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_source_sealed.c": {
+      "sha256": "740d6880d32d0b6ef94a32ce7b3e787482651aaaa021ff67622015591751be7c",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_source_sealed.h": {
+      "sha256": "e7a3a01269ab9249812658f47084d1a525d77c61da75874865e31813a3231d6d",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/coh_source_selection.h": {
+      "sha256": "293ae2341f481edb01b034701aa66b38bb401bffb81a832e5f37881b9f5ffe72",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenecatalog/evidence/root-model-texture-partitions-38994607354.json": {
+      "sha256": "46df6643795c3d06aa5b52b3c2fadeed1eac00a3693f33ac611bb5d990109e2a",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/scenecatalog/evidence/source-sealed-complete-host.json": {
+      "sha256": "6f97ad07c831957df4ed2cb783cb4de79c50a6225f045d3e59ec9797fe285e38",
+      "roles": [
+        "F_historical_receipt_sealed_source"
+      ]
+    },
+    "native-android/engine/scenecatalog/tests/test_source_sealed.c": {
+      "sha256": "60c9152d63ce4b543f62e93380f934eccca21cf432b3d6d4467f620d80d62667",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenegraph/coh_scenegraph.h": {
+      "sha256": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenegraph/runtime_graph.h": {
+      "sha256": "ea635edfc31eda5e29308b85d7420cc0da242bbc291bc34221ea8d615ea93a84",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/scenegraph/runtime_snapshot.h": {
+      "sha256": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/stash32/coh_stash32.c": {
+      "sha256": "f9ac5c11a75b48ac170646b33c59feece5660c23170f31e30a1e2178bcf06dfa",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/stash32/coh_stash32.h": {
+      "sha256": "fedc5448fa449bd8f223105343adcab02fda2bb126b5f15b1e6fa21539275c93",
+      "roles": [
+        "C"
+      ]
+    },
+    "native-android/engine/world-render-adapter/check_texname.py": {
+      "sha256": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/check_trick_cache.py": {
+      "sha256": "f2ab9bfffa02e8bc756635225911c507c48f51182f6c75db7d8856bec3b95d3a",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/check_trick_detached.py": {
+      "sha256": "0e41a5f1f7eb7c515b95cda29ac0e674718b6962213fefdd9d0a6d855a03502f",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/check_trick_model.py": {
+      "sha256": "53a4fb635731e9f8a53df70131231dd42acfd83606182e092fd98e7a6a1a600f",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_world_render.c": {
+      "sha256": "36541b0561cc236dcf323598f50329414a8eed4876f58d2ec451b7b3cafc94d7",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_world_render.h": {
+      "sha256": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_lod_cache.c": {
+      "sha256": "fce01bf14d05ac5c5a45924e84712f322679b8e66683e29d58f9e32758ee7787",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_lod_cache.h": {
+      "sha256": "e60faf067b187d093b98d383d276ca8122adb09caae164a26455089b001a8316",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_model_material.h": {
+      "sha256": "5d2deab90fa8740193520945eb33eafb75b3df6258e17cec7e73cd01789e67f6",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_presentation.h": {
+      "sha256": "245966845cc87f156b6402f5f56ecc2ab2abf5ef84976efeb3d4c887a5471908",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_presentation.inc": {
+      "sha256": "07bcb8a215402961fdbb98f7ce5f93a6238147265d37d8827e5022ed4751f11b",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_surface_core.inc": {
+      "sha256": "e20a99603a20e6f58c2c57c1fb8954c93583368eb2d22a35dad9653787a48fee",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.c": {
+      "sha256": "5bf9528bbf1fb78e400e904b87af7d3fbdb0ea5263944e9d3d564f5f4cef363c",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.h": {
+      "sha256": "20ff6b2c6478fb44197433de4e34c9685c3e01af6a400a87986b610411d191c8",
+      "roles": [
+        "B",
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_tex_dependencies.h": {
+      "sha256": "428b1ba73c36e5bcef90df587cbc02ff555eae6c4a6584104504104e19ca5ef0",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.h": {
+      "sha256": "be1e6392b45c26b2925faa3ec0de15fc3d272811af30a4fc92aeb81c7baf700b",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_texopt.c": {
+      "sha256": "c8232e976061fa8715f185cd5507886fc2b3755679b0f8408b35bdad87ecdb5b",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_texopt.h": {
+      "sha256": "0cc9b48deea230a5ff028c93289d6e458302ee43e8dbb1f5666744e8d706291e",
+      "roles": [
+        "B",
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_texopt_lookup.h": {
+      "sha256": "7b8228cb68b1e042227e0f9d545b948635989db579fdf62f7ddb4e5c6965eca3",
+      "roles": [
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_texopt_post_source.inc": {
+      "sha256": "3dbf81969ee634384dc71ec7fec7e2f1bc837ce19dc1f380f73a24de606f1488",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_texopt_tables_internal.inc": {
+      "sha256": "49f71abc0405ca7aaf20164656ebd367ebc5a97bb157817203cceac2cc7a64a1",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h": {
+      "sha256": "10cbd1b1ea3a42dfed7c7920aac0b1e78d01a536b5b6ee8b71cea2fcd5f6ce77",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick.c": {
+      "sha256": "636b41a9da8501816bd9bbdb9b6a5bd5997baa13d52b465a19e4b66e61bc246c",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick.h": {
+      "sha256": "c30f9735166dd2db73a801bc998cdd3f90447ff3ef3fe8ac027973f90aa015ed",
+      "roles": [
+        "B",
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached.c": {
+      "sha256": "9f74f39e668120b926343a76d1e7021ba9828c62df06149613003a1eac2097cd",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached.h": {
+      "sha256": "48160bf855ef3d83934fd53e465b6663467a15d6d72148186f37a4e03f9fe9a3",
+      "roles": [
+        "B",
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached_core.inc": {
+      "sha256": "06d6cc6e765542b1853e1b2de5bb28f1f4a503f897bdc006d5b5976b8e2139b3",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_detached_storage_internal.h": {
+      "sha256": "dfef7e286e6021387ed9887b5dca6ad3b856e4a09ba8c2b7d66d85bed1142aee",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_model.h": {
+      "sha256": "80a252beffff4e6be159758732f347ffac996a46f1cdb019a7590a48fa27ef82",
+      "roles": [
+        "B",
+        "F"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_model_internal.inc": {
+      "sha256": "5c322333e8418ea62b907418c5b0a1c2553f250b8ed253420bda75dbbd293fe7",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_post_source.inc": {
+      "sha256": "9269e084013850a5b55d36dcaab1a2e7699274b6efbadf0d8ea816505d02d621",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_tables_internal.inc": {
+      "sha256": "ae251157a486ea880259634f2682b4266be883024b9bb8c60c6d143d934188ab",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/coh_wr_trick_types_internal.h": {
+      "sha256": "56a022958f4d6ff3a79104c4bd3c81bd674b58a445fb1123283d054ddbdde7e4",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/qualification/lod-cache-20261017/host.json": {
+      "sha256": "ca1803fe5e3b2669c89afe8534119a0a90f85b4f27cfb1911ea709c0a1b9cd36",
+      "roles": [
+        "F_historical_receipt_lod"
+      ]
+    },
+    "native-android/engine/world-render-adapter/qualification/model-material-policy-20261017/host.json": {
+      "sha256": "f8547d09ddc0701b5230b5ae95c3412c1d87ee98e1758af2e36ad513efb43eeb",
+      "roles": [
+        "F_historical_receipt_model_policy"
+      ]
+    },
+    "native-android/engine/world-render-adapter/qualification/presentation-e1b844b88-host.json": {
+      "sha256": "77cbecd8fd55dca47b1768dbd0e703e59bd37b269e72fdd8b47d478078e65d18",
+      "roles": [
+        "F_historical_receipt_presentation"
+      ]
+    },
+    "native-android/engine/world-render-adapter/tests/test_trick_model.c": {
+      "sha256": "179f39ae24b6c40ae9a92a5a8431eb9af0b7485e3f8b799d9d03697d6271d773",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/tests/test_trick_model_cpp.cpp": {
+      "sha256": "45135c6ccab7f681da0c1d60894e5cb2dec409e978da5973e96e437e98ba5dea",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/tests/trick_model_oracle.h": {
+      "sha256": "fb0dcd53b0853ccc2cfadd1e2fa98c6ed20b7dc24956ba30940184240c21d957",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/texopt_cache_contract.py": {
+      "sha256": "a193a583ddffde758d4e6877114852b3d419bae9548a77ddc1d2b631a1497734",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/trick_cache_contract.py": {
+      "sha256": "a849a6591ff5cf1c102a80fdc11f1f22d329f43338fa1d370740d51b42554b6e",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/engine/world-render-adapter/trick_model_oracle.py": {
+      "sha256": "fcd71c445fb48a7886dbfd0cc89b7e52b75f6773e7a645ce7b1df21b36ddb320",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/include/coh_native_core.h": {
+      "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+      "roles": [
+        "B",
+        "F"
+      ]
+    },
+    "native-android/src/byte_reader.h": {
+      "sha256": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/src/coh_assets.c": {
+      "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+      "roles": [
+        "B"
+      ]
+    },
+    "native-android/src/coh_dds.c": {
+      "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+      "roles": [
+        "B"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/attribmod.h": {
+      "sha256": "29bfbedcb5b98abfc17abaf4984b58e1906296f3a9a7a3da19a72f911c320858",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/character_attribs.h": {
+      "sha256": "4ce5921ef9dcd69d6d11b10f4e99e95a1da3cfe3265bc0276376aa2b5795a90a",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/character_net.c": {
+      "sha256": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/classes.c": {
+      "sha256": "d62fdde685bc4a647ed9b8d0a7d25550dd39fb1107648aa2cc6bcc95288652da",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/classes.h": {
+      "sha256": "029f3931ce1c1041cb461d845659e559b94fbe5fd432799b5b16b8713512e80e",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/load_def.c": {
+      "sha256": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/origins.c": {
+      "sha256": "6791eb358399b34cb15134b733f0a1a376d4ea7304cc1a216e41d9b2aeb6e661",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/origins.h": {
+      "sha256": "28ffbef40ed4d7d4908f9fb45fc28325e132c7ef2c80475708bda1938c89f3af",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/power_system.c": {
+      "sha256": "f0829566abadc69cdc38f527b0b21cf8e04a73a2ae40b48447054798b76cd7ea",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/power_system.h": {
+      "sha256": "d582a95c594305158e1df522a86ddc2e73ba6cd8622cc1463cb2782b65e28099",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/powers.c": {
+      "sha256": "6d5c9ad363b29f35f866516d253a05edb8ced653576e4c4b31b83322bbe69330",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/powers.h": {
+      "sha256": "9618cc4050e1002d9ea2c7d3a237ce0996f7c0036e21becf73ebdb11b75d112f",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/entity/powers_load.c": {
+      "sha256": "c5b7bbf32621922a36ba097d566840bdd9d4afc692d8e3baacd0e207dc1e12b8",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/gameData/BodyPart.c": {
+      "sha256": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/gameData/BodyPart.h": {
+      "sha256": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/gameData/costume_data.c": {
+      "sha256": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/gameData/costume_data.h": {
+      "sha256": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/seq/AutoLOD.c": {
+      "sha256": "f34c46abac3e6e95bd5829d1d72a203756a7764872f6a9483c4377a05a546722",
+      "roles": [
+        "B"
+      ]
+    },
+    "upstream/ouroboros/Common/seq/anim.c": {
+      "sha256": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "roles": [
+        "B"
+      ]
+    },
+    "upstream/ouroboros/Common/seq/bones.h": {
+      "sha256": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/Common/seq/tricks.c": {
+      "sha256": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+      "roles": [
+        "B"
+      ]
+    },
+    "upstream/ouroboros/Game/src/entity/entrecv.c": {
+      "sha256": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": {
+      "sha256": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+      "roles": [
+        "B"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/Color.h": {
+      "sha256": "8461618cd85c90887ad48eefff06cd1b645ee22685946aebfbfae51b3b7fb9be",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": {
+      "sha256": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": {
+      "sha256": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": {
+      "sha256": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": {
+      "sha256": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": {
+      "sha256": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/StashTable.c": {
+      "sha256": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+      "roles": [
+        "B"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crc32c.cpp": {
+      "sha256": "edf2a942f3462d786c0bf3f5ef3382d64dc72c4cacff83871b4309e295039c2a",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": {
+      "sha256": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": {
+      "sha256": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": {
+      "sha256": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": {
+      "sha256": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": {
+      "sha256": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+      "roles": [
+        "C"
+      ]
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/utils_opt.c": {
+      "sha256": "e86e629114f213a0c13cc101f5690fd47a9f6b48eb21c1f4dc3cff62ab3ec351",
+      "roles": [
+        "B"
+      ]
+    }
+  },
+  "F_historical_receipt_reference_verification": {
+    "parent_reference": {
+      "receipt_sha256": "44a78980d37f057d74e9f4d5c283057a124d1d9b6225d11493e1d3d1d958e499",
+      "source_entries_compared": 7,
+      "historical_source_changes": 0
+    },
+    "sealed_source": {
+      "receipt_sha256": "6f97ad07c831957df4ed2cb783cb4de79c50a6225f045d3e59ec9797fe285e38",
+      "source_entries_compared": 59,
+      "historical_source_changes": 5
+    },
+    "lod": {
+      "receipt_sha256": "ca1803fe5e3b2669c89afe8534119a0a90f85b4f27cfb1911ea709c0a1b9cd36",
+      "source_entries_compared": 39,
+      "historical_source_changes": 0
+    },
+    "model_policy": {
+      "receipt_sha256": "f8547d09ddc0701b5230b5ae95c3412c1d87ee98e1758af2e36ad513efb43eeb",
+      "source_entries_compared": 44,
+      "historical_source_changes": 1
+    },
+    "join": {
+      "receipt_sha256": "575e9056a37c1ae25903494ed6cbb74a4ac20c8fcf5bf7e4e4728c856e77d775",
+      "source_entries_compared": 62,
+      "historical_source_changes": 0
+    },
+    "ids": {
+      "receipt_sha256": "41fd57f8e9b75d1d48517482ad537c648368a985be862dbd7bf3f355b4997e22",
+      "source_entries_compared": 65,
+      "historical_source_changes": 0
+    },
+    "shared": {
+      "receipt_sha256": "e850401e9db728731e35110878a8fa4edd77ac71200b341971a54cb24939f860",
+      "source_entries_compared": 68,
+      "historical_source_changes": 0
+    },
+    "presentation": {
+      "receipt_sha256": "77cbecd8fd55dca47b1768dbd0e703e59bd37b269e72fdd8b47d478078e65d18",
+      "source_entries_compared": 17,
+      "historical_source_changes": 0
+    }
+  },
+  "B_actual_root_models_per_owner": 3083,
+  "B_historical_matches": 1959,
+  "B_historical_misses": 1124,
+  "B_distinct_selected_rows": 528,
+  "B_actual_name_file_disagreements": 0,
+  "B_checks_per_mode": 301210,
+  "B_original_comparisons_per_mode": 28046,
+  "B_semantic_mutations_refused": [
+    "whole_name_instead_of_suffix",
+    "last_suffix_instead_of_first",
+    "base_fallback_after_suffix_miss",
+    "source_path_as_lookup_key",
+    "diagnostic_on_whole_name_miss",
+    "aggregate_limit_bypass"
+  ],
+  "B_actual_C_CPP_object_binding_verified": true,
+  "C_checks_per_mode": 375012,
+  "C_profiles": 11,
+  "C_actual_C_CPP_link_reported": true,
+  "F_C_CPP_layout_match": true,
+  "F_new_named_owners_bytes": 3824536,
+  "F_historical_reference_old_candidate_named_overage_bytes": 3235921,
+  "F_historical_reference_only_not_current_fit": true,
+  "A8_tests_passed": [
+    "test_absent_malformed_and_exception_fixed_failures",
+    "test_every_status_is_strict_bool",
+    "test_failed_partial_receipt",
+    "test_fixed_stage_names_only",
+    "test_links_shared_mode_and_duplicate_keys_refused",
+    "test_passed_exact_allowlist",
+    "test_private_canaries_never_serialized",
+    "test_wrong_schema_or_authority_refused"
+  ],
+  "A8_result_is_log_bound_no_separate_artifact_member": true,
+  "A8_public_status_control_only_not_capture": true,
+  "current_CLIENT_generation_admitted": false,
+  "SERVER_CLIENT_generation_equality": false,
+  "current_material_or_GPU_owner_created": false,
+  "actor_or_ACK_authority": false,
+  "complete_parent_aggregate_budget_admitted": false,
+  "Android_or_Thor_acceptance": false,
+  "world_authority": false,
+  "qualifiers_rerun_for_review": false
+}

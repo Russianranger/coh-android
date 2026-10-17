@@ -7,10 +7,24 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
+import zipfile
 
 import hosted_auth_stage as prior
 
 HERE=Path(__file__).resolve().parent
+MACRO_FORWARD_PATH='libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h'
+MACRO_FORWARD_SHA='105305fab92cb2dc8651c4a4d102a8f5428ecb378f8cde46b3c409970845227b'
+PE_ARCHIVE='native-android/engine/auth-interop/evidence/independent-db-build-39000395572/artifact.zip'
+PE_ARCHIVE_SHA='2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7'
+PE_SHA='9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3'
+PE_VARIANTS={
+ 'thread_wake_event':'m_wake != ((HANDLE)(LONG_PTR)-1)',
+ 'thread_awoke_event':'m_awoke != ((HANDLE)(LONG_PTR)-1)',
+ 'thread_create_handle':'m_thread != ((HANDLE)(LONG_PTR)-1)',
+ 'pool_alignment_offset':'offset < (16)'}
+FILE_ENUMS={'SuperAssert.c':'super_assert','sql_fifo.c':'sql_fifo','sqltask.cpp':'sql_task',
+ 'ring.hpp':'ring','taskthread.hpp':'task_thread','semaphoreworkerpool.hpp':'semaphore_pool',
+ 'ringchain.cpp':'ring_chain','threadedpoolallocator.cpp':'threaded_allocator','MemoryPool.c':'memory_pool'}
 SOURCE_PINS={
  'libs/UtilitiesLib/src/utils/SuperAssert.c':'9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6',
  'DBServer/src/sql_fifo.c':'345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879',
@@ -47,7 +61,116 @@ ASSERTIONS={
  'worker_no_inflight':('semaphoreworkerpool.hpp','!m_inFlight')}
 
 
-def normalized(value):return re.sub(r'\s+','',value)
+def normalized(value):
+    # Compiler #expression semantics collapse code whitespace, while literal
+    # spelling/escapes/raw contents remain exact. Never erase literal spaces.
+    regions=[]
+    masked=lexical_mask(value,mask_strings=False,regions=regions)
+    if masked is None:return None
+    chunks=[];at=0;pending=False
+    def code(value):
+        nonlocal pending
+        for char in value:
+            if char.isspace():pending=True
+            else:
+                if pending and chunks:chunks.append(' ')
+                chunks.append(char);pending=False
+    for start,end,comment in regions:
+        code(masked[at:start])
+        if comment:pending=True
+        else:
+            if pending and chunks:chunks.append(' ')
+            chunks.append(value[start:end]);pending=False
+        at=end
+    code(masked[at:])
+    return ''.join(chunks)
+
+
+def lexical_mask(text,mask_strings=True,regions=None):
+    """Keep offsets/newlines; hide C/C++ comments and escaped/ordinary/raw strings."""
+    out=list(text);i=0
+    def hide(start,end):
+        for at in range(start,end):
+            if out[at]!='\n':out[at]=' '
+    while i<len(text):
+        start=i;comment=False
+        if text.startswith('//',i):
+            comment=True;end=text.find('\n',i+2)
+            while end>=0 and text[:end].rstrip('\r').endswith('\\'):
+                end=text.find('\n',end+1)
+            end=len(text) if end<0 else end
+        elif text.startswith('/*',i):
+            comment=True
+            end=text.find('*/',i+2)
+            if end<0:return None
+            end+=2
+        elif text.startswith('R"',i):
+            match=re.match(r'R"([^\s()\\]{0,16})\(',text[i:])
+            if not match:return None
+            stop=')'+match[1]+'"';end=text.find(stop,i+match.end())
+            if end<0:return None
+            end+=len(stop)
+        elif text[i] in ('"',"'"):
+            quote=text[i];end=i+1
+            while end<len(text):
+                if text[end]=='\\':end+=2;continue
+                if text[end]==quote:end+=1;break
+                if text[end]=='\n':return None
+                end+=1
+            else:return None
+        else:i+=1;continue
+        if comment or mask_strings:hide(start,min(end,len(text)))
+        if regions is not None:regions.append((start,min(end,len(text)),comment))
+        i=end
+    return ''.join(out)
+
+
+def assertion_calls(text):
+    """Return exact first-argument spans; malformed/ambiguous lexing is unknown."""
+    masked=lexical_mask(text)
+    comments_removed=lexical_mask(text,mask_strings=False)
+    if masked is None or comments_removed is None:return None
+    calls=[]
+    for match in re.finditer(r'\b(?:dev)?assert(?:msgf?)?\s*\(',masked):
+        at=match.end();start=at;rounds=1;braces=squares=0;argument_end=None
+        while at<len(masked):
+            c=masked[at]
+            if c=='(':rounds+=1
+            elif c==')':
+                rounds-=1
+                if rounds==0:
+                    if braces or squares:return None
+                    argument_end=at if argument_end is None else argument_end
+                    break
+            elif c=='{':braces+=1
+            elif c=='}':braces-=1
+            elif c=='[':squares+=1
+            elif c==']':squares-=1
+            elif c==',' and rounds==1 and braces==0 and squares==0 and argument_end is None:argument_end=at
+            if min(rounds,braces,squares)<0:return None
+            at+=1
+        else:return None
+        expression=comments_removed[start:argument_end].strip()
+        if not expression or len(expression)>4096:return None
+        expression=normalized(expression)
+        if expression is None:return None
+        calls.append({'line':masked.count('\n',0,match.start())+1,'expression':expression})
+    return calls
+
+
+def compiled_variant_policy(root):
+    archive=root/PE_ARCHIVE
+    if archive.is_symlink() or archive.stat().st_size!=1088820 or prior.sha(archive)!=PE_ARCHIVE_SHA:
+        raise ValueError('db_modal_compiled_archive_identity')
+    with zipfile.ZipFile(archive) as value:
+        info=value.getinfo('DbServer-checksum-candidate.exe')
+        if info.file_size>32*1024*1024:raise ValueError('db_modal_compiled_binary_bound')
+        binary=value.read(info)
+    if hashlib.sha256(binary).hexdigest()!=PE_SHA:raise ValueError('db_modal_compiled_binary_identity')
+    strings={v.decode('ascii') for v in re.findall(rb'[\x20-\x7e]{3,}',binary)}
+    if any(v not in strings for v in PE_VARIANTS.values()):
+        raise ValueError('db_modal_compiled_variant_not_present')
+    return {key:normalized(value) for key,value in PE_VARIANTS.items()}
 
 
 def policy(root):
@@ -57,19 +180,42 @@ def policy(root):
         if path.is_symlink() or prior.sha(path)!=pin:raise ValueError('db_modal_original_source_identity')
         sources[Path(name).name]=path.read_text(encoding='utf-8')
     original=sources['SuperAssert.c']
+    forward=root/'upstream/ouroboros'/MACRO_FORWARD_PATH
+    if forward.is_symlink() or prior.sha(forward)!=MACRO_FORWARD_SHA:
+        raise ValueError('db_modal_macro_forward_source_identity')
+    forwarding=forward.read_text(encoding='utf-8')
+    if any(v not in forwarding for v in ('superassertf(#exp, msg, __FILE__, __LINE__',
+            '#define assert(exp)    assertmsg(exp, 0)','#define assertmsg(exp, msg)    assertmsgf(exp, msg)')):
+        raise ValueError('db_modal_macro_forward_policy')
     if any(value not in original for value in ('#define IDC_MAINTEXT 10','"Assertion failed"','"File: "',
             '"Line: "','"Expression: "','"Exception caught: %s\\n"','"Assertion Failure"')):
         raise ValueError('db_modal_original_dialog_policy')
     exceptions=set(re.findall(r'^\s+EXCPT_NAME\((EXCEPTION_[A-Z_]+)\)',original,re.M))
     if len(exceptions)!=22:raise ValueError('db_modal_original_exception_policy')
+    calls_by_file={name:assertion_calls(source) for name,source in sources.items()}
+    if any(calls is None for calls in calls_by_file.values()):
+        raise ValueError('db_modal_source_index_lexically_ambiguous')
     points={}
     for key,(basename,expression) in ASSERTIONS.items():
         expr=normalized(expression)
-        lines=[i for i,line in enumerate(sources[basename].splitlines(),1)
-            if any(macro+'('+expr+end in normalized(line) for macro in ('assert','assertmsg','assertmsgf') for end in (')',','))]
+        lines=[call['line'] for call in calls_by_file[basename] if call['expression']==expr]
         if not lines:raise ValueError('db_modal_original_assertion_policy')
         points[key]={'file':basename.casefold(),'expression':expr,'lines':lines}
-    return {'exceptions':exceptions,'points':points}
+    variants=compiled_variant_policy(root)
+    sites={};public_index={}
+    for basename,calls in calls_by_file.items():
+        for ordinal,call in enumerate(calls,1):
+            key=FILE_ENUMS[basename]+'_assert_'+str(ordinal).zfill(3)
+            legacy=[name for name,point in points.items() if point['file']==basename.casefold()
+                and call['line'] in point['lines'] and call['expression']==point['expression']]
+            if len(legacy)>1:raise ValueError('db_modal_source_index_legacy_ambiguity')
+            sites[key]=dict(call,file=basename.casefold(),file_enum=FILE_ENUMS[basename],legacy=legacy[0] if legacy else None)
+            public_index[key]={'file_enum':FILE_ENUMS[basename],'source_line':call['line'],
+                'source_expression_sha256':hashlib.sha256(call['expression'].encode()).hexdigest()}
+    if len(sites)!=78:raise ValueError('db_modal_source_index_count')
+    return {'exceptions':exceptions,'points':points,'sites':sites,'variants':variants,
+        'file_enums':{name.casefold():value for name,value in FILE_ENUMS.items()},
+        'site_index_sha256':hashlib.sha256(json.dumps(public_index,sort_keys=True).encode()).hexdigest()}
 
 
 def classify_text(text,source_policy):
@@ -77,7 +223,9 @@ def classify_text(text,source_policy):
     # Never return slices, expressions, numeric codes or hashes of raw text.
     lines=text.replace('\r\n','\n').split('\n')
     result={'kind':'unknown','exception_enum':'none','assertion_enum':'none',
-        'source_assertion_line_verified':False}
+        'source_assertion_line_verified':False,'source_file_enum':'unknown','source_site_enum':'unknown',
+        'source_call_site_verified':False,'source_expression_match':False,'compiled_expression_variant_match':False,
+        'structure_flags':{'file_field_unique':False,'line_field_unique':False,'expression_field_unique':False,'line_shape_known':False}}
     if lines[0].startswith('Exception caught: '):
         name=lines[0][len('Exception caught: '):]
         result['kind']='source_exception'
@@ -88,13 +236,23 @@ def classify_text(text,source_policy):
         for prefix in ('File: ','Line: ','Expression: '):
             values=[line[len(prefix):] for line in lines if line.startswith(prefix)]
             if len(values)==1:fields[prefix]=values[0]
-        if set(fields)=={'File: ','Line: ','Expression: '} and re.fullmatch('[0-9]{1,5}',fields['Line: ']):
+        for prefix,key in (('File: ','file_field_unique'),('Line: ','line_field_unique'),('Expression: ','expression_field_unique')):
+            result['structure_flags'][key]=prefix in fields
+        if 'File: ' in fields:
+            result['source_file_enum']=source_policy['file_enums'].get(ntpath.basename(fields['File: ']).casefold(),'unknown')
+        if 'Line: ' in fields:result['structure_flags']['line_shape_known']=bool(re.fullmatch('[0-9]{1,5}',fields['Line: ']))
+        if 'File: ' in fields and 'Line: ' in fields and re.fullmatch('[0-9]{1,5}',fields['Line: ']):
             basename=ntpath.basename(fields['File: ']).casefold()
-            expr=normalized(fields['Expression: ']);line=int(fields['Line: '])
-            matches=[key for key,point in source_policy['points'].items()
-                if point['file']==basename and point['expression']==expr and line in point['lines']]
-            if len(matches)==1:
-                result.update(kind='source_assertion',assertion_enum=matches[0],source_assertion_line_verified=True)
+            expr=normalized(fields.get('Expression: ',''));line=int(fields['Line: '])
+            matches=[key for key,site in source_policy['sites'].items() if site['file']==basename and site['line']==line]
+            if len(matches)>1:result['source_site_enum']='ambiguous_source_site'
+            elif len(matches)==1:
+                key=matches[0];site=source_policy['sites'][key]
+                result.update(source_site_enum=key,source_call_site_verified=True,
+                    source_expression_match=expr==site['expression'],
+                    compiled_expression_variant_match=site['legacy'] in source_policy['variants'] and expr==source_policy['variants'][site['legacy']])
+                if result['source_expression_match'] or result['compiled_expression_variant_match']:
+                    result.update(kind='source_assertion',assertion_enum=site['legacy'] or key,source_assertion_line_verified=True)
     return result
 
 
@@ -141,6 +299,13 @@ def admit(value,pid,source_policy):
         'text_bound_reached':value['text_bound_reached'],'owner_changed_count':value['owner_changed_count']}
 
 
+def policy_identity(source_policy):
+    return {'original_source_sha256':dict(SOURCE_PINS,**{MACRO_FORWARD_PATH:MACRO_FORWARD_SHA}),
+        'source_call_site_count':len(source_policy['sites']),'source_call_site_index_sha256':source_policy['site_index_sha256'],
+        'compiled_variant_count':len(source_policy['variants']),'compiled_variant_pe_sha256':PE_SHA,
+        'compiled_variant_archive_sha256':PE_ARCHIVE_SHA}
+
+
 def helper_sources(root):
     helper_inputs={}
     for relative in ('deployment/db_modal_diagnostic.py','deployment/windows/db_modal_observer.cs'):
@@ -171,7 +336,7 @@ def observe(root,pid,directory):
             raise ValueError('db_modal_private_observer_failed')
         output.seek(0);value=json.loads(output.read(1024*1024+1).decode('utf-8-sig'))
     result=admit(value,pid,source_policy)
-    result['original_source_sha256']=SOURCE_PINS
+    result.update(policy_identity(source_policy))
     result['classifier_source_sha256']=helper_inputs
     return result
 
@@ -214,5 +379,5 @@ def preflight(root,directory):
     if not clean:raise ValueError('db_modal_preflight_cleanup_failed')
     return {'schema':'coh-owned-db-modal-api-preflight-v1','passed':True,'owned_pid':child.pid,
         'owned_started_utc_ticks':value['before'],'owned_cleanup_complete':True,
-        'original_source_sha256':SOURCE_PINS,'classifier_source_sha256':helper_inputs,
+        **policy_identity(source_policy),'classifier_source_sha256':helper_inputs,
         'benign_self_observation':result,'auth_or_sql_services_started':False}

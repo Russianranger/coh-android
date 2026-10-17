@@ -1,0 +1,39 @@
+name: Native immutable source snapshot contracts
+'on':
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-source-snapshot-contracts.yml]
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-source-snapshot-contracts-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-snapshot-contracts:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[source-snapshot-contracts]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install only new native verifier dependencies
+        id: tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc libssl-dev zlib1g-dev
+      - name: Check only new provenance and fresh-only retention controls
+        run: |
+          python3 native-android/engine/scenecatalog-server/test_source_snapshot_admission.py
+          python3 native-android/engine/scenecatalog-server/test_fresh_source_retention.py
+      - name: Qualify only the new native verifier against explicit synthetic bytes
+        if: always() && steps.tooling.conclusion == 'success'
+        run: |
+          python3 native-android/engine/scenecatalog-server/test_source_snapshot_verifier.py --fixture native-android/combined-client/diagnostics/primary-authority-20261017/unit-groups-fixture.cohgtx --output out/source-snapshot-contracts/native-verifier.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-snapshot-contracts-${{ github.sha }}
+          path: out/source-snapshot-contracts/
+          if-no-files-found: error
+          retention-days: 90

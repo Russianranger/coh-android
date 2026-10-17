@@ -15,7 +15,7 @@ their then-current state. The following table supersedes those pending fields.
 | Scope | Established result | Still required |
 |---|---|---|
 | Live scene | Exact original Win32 observer compiled; actual CI native receiver and all 37 current dependencies admitted; restore-only same-packet source/native supervisor passes host controls | A real full character backup and executed matching GROUPS transaction; no source-generation/world admission yet |
-| Graphical backup | Sixteen new offline refusal controls pass; retry39071130820 has passed exact inputs and reached original character creation/save | Actual ordinary save, full PG18 snapshot/dump, cleanup, independent artifact pin and admission |
+| Graphical backup | Run39071130820 created and ordinarily saved the fresh character; cleanup passed; backup observer failed | Repair PRoot publication, retain fixed failure stages, then obtain the required full PG18 dump |
 | Geometry/materials | Historical LOD cache and original model-level alpha/blend policy qualified; model-policy CI39070610444 passed with all44 source hashes checked | Actual current CLIENT model/TexBind/trick/texture selection, current generations, supported draw ownership and aggregate/GPU budgets |
 | Gameplay dictionaries | Source-sorted IDs, compact forward/reverse joins and shared-set layout qualified; shared-layout CI39069499391 passed | Current runtime/cache branch, semantic character application and complete initial update; no actor/ACK |
 | Encrypted authentication | Original shard/UserData x86 SQL-to-wire prerequisite executed successfully; selected-shard probe has16 host outcomes per mode including wrong nonzero UID refusal | Original DbServer readiness, actual AC_PLAY_OK and authenticated DB/Map; nondevelopment version/checksum inputs |
@@ -385,3 +385,98 @@ tables or active requests. All cleanup checks passed. This establishes an
 actual assertion stall, but no specific source assertion/root cause or repair.
 D is preparing a source/PE-bound expanded observation policy; no binary change,
 profile change, version/checksum relaxation or readiness success is inferred.
+
+
+## Immutable source admission and expanded original assertion diagnosis
+
+Published base91cacafa4 has actual successful new-source CI39073157441. Root
+reran its read-only artifact verifier: all149 distinct source/receipt/workflow
+pins, all three original members and eight A status tests agree with the exact
+published tree. Exact21884B archive SHA256 is
+54be63d80829412fb83cccf2f587f3bc8edb81d778261cd01bf1c13aa49462dd.
+Worker Bdd50243b2 preserves the original archive, metadata, log and review.
+
+New reviewed E db885e1c3 verifies same-envelope complete GROUPS scalars,
+catalog/runtime/resource/eligibility/raw-bounds associations through existing
+parsers. Its328-check synthetic suite covers26 malformed-association refusals
+and77 actual native allocation failures in each release/ASan/UBSan mode, with
+zero retained tracked native allocations. Independent review fixed raw bounds
+metadata joins and repeated tail scanning; helper source/HEAD binding and Python
+optimization refusal are included. Root verified all37 source hashes against
+composed files and exact worker blobs. `source-snapshot-native-host.json` is the
+exact original8276B proof, SHA256
+4b9b1524dd33c4f2132a59ca8f220fbe2ef2a18bb04f84822d6e4af8b22a8349.
+LeakSanitizer, live source, Android and world acceptance remain false.
+
+A ac1f40506 adds independent run/fixture/source/native/cleanup closure before
+issuing an immutable observed source-snapshot token. A12a9906bc separately
+permits exactly four source bodies only after repeating that complete admission
+against the same genuine fresh fixture. Generic private captures remain private;
+owner/header/packet/eligibility/log/ID fields are excluded. Commit-last receipt
+publication and partial-file/late-I/O/child/pipe cleanup refuse. Root independently
+ran11 provenance and10 retention methods; all pass. No actual live token or four
+fresh source payloads have been admitted. A point-in-time token would still not
+admit post-release lifetime, incremental updates, CLIENT caches/materials/LOD,
+actor, renderer, ACK or world. The first future x86 capture must execute these
+checks and permitted retention inside the same owned job.
+
+D eaf55b445 expands the unchanged original assertion observer to78 exact call
+sites in pinned source and four exact retained-PE macro spellings. Fixed source
+location and complete predicate match are reported separately; changed literal
+contents or operator boundaries refuse predicate match. Eight changed portable
+methods pass and one actual Windows API method is skipped locally. The focused
+Windows workflow will run all17 controls before the next unchanged original
+service attempt. This is new observability, not a binary repair or identified
+startup cause. C#, original PEs, configuration, checksum/version policy and the
+300second deadline remain unchanged. F5c20e23cb preserves independent reviews.
+
+The new focused source-snapshot contract workflow runs only21 Python controls
+and the new native synthetic verifier qualification. It starts no server and
+does not repeat earlier dictionary/LOD/material/Android qualifications. Current
+Gates25–27 and the accepted APK scopes are unchanged.
+
+## Fresh save succeeded; full-input witness still blocked
+
+ARM64 run39071130820 at08e6a96f2 completed original fresh character creation
+and ordinary committed logout, including all three post-save frames. It then
+refused CHARACTER_OBSERVER_FAILED. Original PG/Wine/child cleanup passed, but
+only the8683B projection survives among182 outer/13 nested evidence members;
+there is no complete profile or PGDMP input to reuse. The failure observer
+subcode was not retained by the first wrapper, so its first nested cause is
+unobserved. No source snapshot/native pair is admitted from that failed receipt.
+
+Independent E source inspection establishes a definite publication incompatibility:
+the retained PRoot --link2symlink implementation makes guest hard links host
+symlinks. The new guest backup's hard-link publication therefore cannot satisfy
+the unchanged host lstat regular-file/no-extra-link gate even if dumping succeeds.
+A is replacing only that publication with a bounded exclusive real-file copy,
+strict rehash/flush/fsync/close and rollback, plus a tiny retained-PRoot preflight
+and fixed helper/stage failure evidence before any graphical retry. This source
+blocker does not establish which nested check failed first in the prior run.
+The exact successful small host launcher can be reused without rebuilding.
+
+
+## Reviewed retry and focused qualification publication
+
+A f9d1aecdf replaces the incompatible backup hard link with exclusive regular-file
+copy, bounded rehash/flush/fsync/close, rollback and commit-last backup receipt.
+The actual retained-PRoot tiny publication preflight now runs before any original
+PG/server/graphical launch. Failure stage/helper enums and cleanup observations
+survive refusal. Root, E and F independently passed all 22 fixture controls; F
+5367ea2ec records exact byte/proof review. No ARM execution is claimed by these
+host controls. Small original failed-run evidence is preserved in the owned scene
+evidence directory; the 76 MB diagnostic archive stays referenced by exact hash.
+
+The narrow ARM retry reuses artifact 12116450116, exact 1,177,704 B ZIP SHA256
+bf4063b2d15a4cb92127df5b0cf0eabd894a0ecc855ceaa4c0acda3acb772808.
+All seven members, including executable, loader, corresponding source, licenses
+and original build receipt, are independently pinned. No launcher/APK/server
+rebuild is introduced. Failed fixture uploads contain only the fixed public
+receipt, with diagnostic evidence separate; successful full fixtures retain all
+seven required payload/receipt files. The next Windows attempt adds exact source
+site classification while preserving binaries, SQL/profile and deadline.
+
+The reviewed publication starts only these two missing runtime observations and
+the new source-snapshot contract suite. Actual results are pending. Complete
+source binding, current CLIENT resources, complete initial update, actor/ACK,
+GLES world, full encrypted handoff, Gates 25–27 and Thor acceptance remain open.

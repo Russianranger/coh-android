@@ -1,0 +1,52 @@
+{
+  "actual_arm64_proot_probe_executed_by_reviewer": false,
+  "actual_postgresql_graphics_or_full_backup_executed_by_reviewer": false,
+  "concrete_remaining_blockers": [],
+  "host_proof_path": "native-android/engine/scenecatalog-server/evidence/live-groups-capture-20261017/graphical-fixture-host.json",
+  "host_proof_sha256": "3e0379cc21c25a36977b56edf0189aca2c9db93a65bac5dc3871bc4a4b07afda",
+  "independent_affected_unit_command": "python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_graphical_fixture.py -v",
+  "independent_affected_unit_methods_passed": 22,
+  "no_launcher_client_server_or_proot_rebuild_performed_by_reviewer": true,
+  "original_backup_os_link_incompatible_with_actual_link2symlink_source_verified": true,
+  "passed": true,
+  "prior_failed_runtime_has_no_admitted_full_backup": true,
+  "prior_first_helper_or_observer_failure_subcode_proven_by_this_review": false,
+  "reviewed_boundaries": [
+    "Guest publication copies only the exact validated bounded partial dump into an O_EXCL/O_NOFOLLOW0600 final regular file; it never calls link(). Output is flushed/fsynced/closed and both complete identities are checked before receipt commit.",
+    "Write/flush/fsync/close/hash failures preserve the primary failure, independently attempt owned final removal and expose rollback failure as a fixed Boolean. Preexisting files/symlinks remain untouched.",
+    "Before guest boot, actual orchestration invokes only pinned publication_probe code through the same admitted PRoot command prefix, bindings and environment; it creates no database, profile, server, character or game process.",
+    "Probe acceptance uses real host lstat single-link regular-file type, exact length/hash and owned process-group/temporary-file cleanup. Host symlink and cleanup refusals are covered using real trivial Linux children with an explicit PRoot stand-in.",
+    "Backup child output is bounded and parsed with duplicate rejection, exact keys, strict Boolean types and fixed source-enumerated stage/failure codes; arbitrary child text is never projected. Completed helper refusals retain their safe status after child cleanup.",
+    "Actual fixture admission now requires successful publication preflight and strict helper/cleanup success fields, plus all existing fresh source save/full-dump/evidence/cleanup guards.",
+    "Source-controlled observer stage/frame-count/finish booleans improve refusal evidence while retaining the original save-before-finish ordering and private input boundary."
+  ],
+  "reviewer": "Worker F",
+  "schema": "coh-independent-arm-regular-publication-review-v1",
+  "source_and_proof_bytes_verified_against_exact_commit": true,
+  "source_commit": "f9d1aecdf6e331a54f3eb77b075156446f454d4e",
+  "source_files": {
+    "native-android/engine/scenecatalog-server/GRAPHICAL_FIXTURE.md": {
+      "bytes": 17636,
+      "sha256": "b6a389ab0c2cef531159a71e86e423e30359c5f60d9ae04ab8bedc67d45a9543"
+    },
+    "native-android/engine/scenecatalog-server/admit_graphical_fixture.py": {
+      "bytes": 7193,
+      "sha256": "d1c137cdbbaba87b175d166eed494e819f9ddf33601295d31f8270c6ead881db"
+    },
+    "native-android/engine/scenecatalog-server/capture_graphical_fixture.py": {
+      "bytes": 36267,
+      "sha256": "558e9b462064cfd49170c5e5e42d71ddeba85f708ffc2ed65d57a9d3be86a3ef"
+    },
+    "native-android/engine/scenecatalog-server/graphical_fixture_backup_guest.py": {
+      "bytes": 17920,
+      "sha256": "554dac2fb50f7f95e508895ba6c45c86365d325856c80c3d97caa7dd52b8e89c"
+    },
+    "native-android/engine/scenecatalog-server/test_graphical_fixture.py": {
+      "bytes": 35709,
+      "sha256": "f82fdc2989a23c6c28b47f73a19b7a2c73e4dccee4e201fed857569114a8547a"
+    }
+  },
+  "source_generation_admitted": false,
+  "unchanged_full_qualifiers_rerun": false,
+  "world_authority": false
+}

@@ -1,0 +1,18 @@
+{
+  "fresh_graphical_capture_executed_by_this_suite": false,
+  "late_io_rollback_controls_executed": true,
+  "offline_protocol_controls_only": true,
+  "passed": true,
+  "pg_or_wine_runtime_executed": false,
+  "real_cli_private_canary_refusal_executed": true,
+  "schema": "coh-source-snapshot-admission-host-review-v1",
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "SOURCE_SNAPSHOT_ADMISSION.md": "550a06fcee1d8c4483ae9391f2a9842352b69f113cfc3a219d11c690eac5c0a6",
+    "admit_source_snapshot.py": "38e2873ce203c790c1f8b96dc0978df4281545db1a34f604b6f8065bb459ba21",
+    "test_source_snapshot_admission.py": "c7c8a6695bc4f769a042d1c0956c903b3d40fc9ab021273399a729f6a90a6215"
+  },
+  "temporary_git_ownership_controls_executed": true,
+  "test_methods": 11,
+  "world_authority": false
+}

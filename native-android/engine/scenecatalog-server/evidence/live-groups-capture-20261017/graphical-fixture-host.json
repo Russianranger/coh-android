@@ -1,30 +1,30 @@
 {
   "schema": "coh-graphical-fixture-offline-qualification-v1",
   "passed": true,
-  "test_methods": 16,
+  "test_methods": 22,
   "source_files": {
     "capture_graphical_fixture.py": {
-      "bytes": 26183,
-      "sha256": "b034a9c9f5f8960c70484792668b663dfb1095e828a453068c70e3e5513fbab5"
+      "bytes": 36267,
+      "sha256": "558e9b462064cfd49170c5e5e42d71ddeba85f708ffc2ed65d57a9d3be86a3ef"
     },
     "graphical_fixture_backup_guest.py": {
-      "bytes": 13855,
-      "sha256": "c1823e91931ad056476bfca4148143a023e24e5912fcb3a3507531f050b52a61"
+      "bytes": 17920,
+      "sha256": "554dac2fb50f7f95e508895ba6c45c86365d325856c80c3d97caa7dd52b8e89c"
     },
     "admit_graphical_fixture.py": {
-      "bytes": 6391,
-      "sha256": "8d0e32f1d3a3848522e60590ac184b6492a4367cc5c144c8ac02d89e8db02889"
+      "bytes": 7193,
+      "sha256": "d1c137cdbbaba87b175d166eed494e819f9ddf33601295d31f8270c6ead881db"
     },
     "test_graphical_fixture.py": {
-      "bytes": 24160,
-      "sha256": "1de165bb627b114c6bec547a1dce4b8f5f1a8041267bfd7dd57b94211bae3fd1"
+      "bytes": 35709,
+      "sha256": "f82fdc2989a23c6c28b47f73a19b7a2c73e4dccee4e201fed857569114a8547a"
     },
     "GRAPHICAL_FIXTURE.md": {
-      "bytes": 12921,
-      "sha256": "420ae85cf76c2e2eb7e20f5dce6137d2afdd7d6aed7a128c60ae9da137f4eb39"
+      "bytes": 17636,
+      "sha256": "b6a389ab0c2cef531159a71e86e423e30359c5f60d9ae04ab8bedc67d45a9543"
     }
   },
-  "test_output_sha256": "53e15c9c2e63078450367f6019325a6cf58affba8a888b338569cc295cbff3be",
+  "test_output_sha256": "a3811e66029f8590d447b5b196bb3668d8d1974aab847ba1ac3fa78b12ecc6e1",
   "scope": [
     "actual inherited original finish-hook ordering",
     "strict malformed request/receipt and retained artifact byte closure",
@@ -34,7 +34,12 @@
     "real Linux owned child process group cleanup",
     "real line-oriented JSON pipe lifecycle",
     "exact upstream fixed-width padded postmaster READY status and incorrect-state refusal",
-    "actual unchanged44476275-byte donor data manifest admission with source-body cap preserved"
+    "actual unchanged44476275-byte donor data manifest admission with source-body cap preserved",
+    "host real lstat single-link regular copy without os.link",
+    "late publication I/O/hash and rollback-failure visibility",
+    "same-prefix tiny publication preflight host simulation and symlink refusal",
+    "strict fixed helper/observer status enums with private-canary refusal",
+    "failed probe and helper child cleanup/status propagation"
   ],
   "runtime_executed": false,
   "postgresql_executed": false,
@@ -74,5 +79,27 @@
     "source_files": 660,
     "revision_adapter_for_offline_guard_check_only": true,
     "exact_donor_runtime_execution_qualified": false
+  },
+  "related_new_admission_suite_methods": 11,
+  "related_fresh_retention_suite_methods": 10,
+  "actual_retained_arm64_proot_publication_preflight_executed": false,
+  "second_hosted_attempt": {
+    "run_id": 39071130820,
+    "job_id": 117508806726,
+    "result": "failed",
+    "source_revision": "08e6a96f2af9cb317eecd6629e99db4200df177f",
+    "failure_code": "CHARACTER_OBSERVER_FAILED",
+    "fresh_character_created_and_ordinary_save_verified": true,
+    "full_database_backup_admitted": false,
+    "exact_first_helper_or_observer_failure_code_known": false,
+    "retained_evidence": "evidence/graphical-fixture-retry-39071130820/retained-evidence.json"
+  },
+  "publication_correction": {
+    "actual_proot_link2symlink_host_symlink_incompatibility_source_verified": true,
+    "first_failure_attribution_proven": false,
+    "host_symlink_and_nlink_refusal_preserved": true,
+    "bounded_exclusive_real_file_copy": true,
+    "tiny_same_prefix_preflight_before_pg_or_graphics": true,
+    "actual_arm64_probe_runtime_qualified": false
   }
 }

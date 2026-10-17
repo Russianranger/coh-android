@@ -1,0 +1,81 @@
+{
+  "schema": "coh-owned-db-modal-site-index-preparation-v1",
+  "passed": true,
+  "scope": "Failure-only fixed location and expression classification preparation after an observed original assertion dialog; no predicate, repair or readiness qualified.",
+  "source_files_sha256": {
+    "native-android/engine/auth-interop/deployment/db_modal_diagnostic.py": "f94478d42a99d44d9249997e1d0ff8893ffb4cca7639170fd0439a129e4afe78",
+    "native-android/engine/auth-interop/deployment/windows/db_modal_observer.cs": "3359269a277aa9c50aac8ea74cca7bcdaabb8ff098f224a1f16df63379e8efd6",
+    "native-android/engine/auth-interop/deployment/test_db_modal_diagnostic.py": "217e49852e850831f0e3f162a2005bd9281d91f3093654b1ce5e41bccff60bd4",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "247b5c0ec6e926bc9385aff02210495076295f835c89e8cdfe4e4ae9180961a7",
+    "native-android/engine/auth-interop/deployment/test_db_shard_activation.py": "8abd552a38541187993bf96725acb03d686763409cf5de21add496dddb5105f9",
+    "native-android/engine/auth-interop/deployment/DB-SHARD-ACTIVATION.md": "64755b4c5881515ecfa48b875415dddb4395683930682bba6e002a6be13bbd36"
+  },
+  "original_source_sha256": {
+    "libs/UtilitiesLib/src/utils/SuperAssert.c": "9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6",
+    "DBServer/src/sql_fifo.c": "345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879",
+    "Common/sql/sqltask.cpp": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02",
+    "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp": "ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7",
+    "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de",
+    "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp": "eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81",
+    "libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp": "e7ce6ebd9c14097d65830fd1390408b9a1c9c2a46ee992a47d8d483478a46d0e",
+    "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110",
+    "libs/UtilitiesLib/src/components/MemoryPool.c": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83",
+    "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h": "105305fab92cb2dc8651c4a4d102a8f5428ecb378f8cde46b3c409970845227b"
+  },
+  "source_call_site_count": 78,
+  "source_call_site_index_sha256": "dadd8a99290d442f9a3f729843df590415970b308a9e267858a7bd53bb2f1144",
+  "compiled_variant_count": 4,
+  "compiled_variant_pe_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+  "compiled_variant_archive_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+  "source_call_site_count_by_file_enum": {
+    "memory_pool": 22,
+    "ring": 4,
+    "ring_chain": 0,
+    "semaphore_pool": 1,
+    "sql_fifo": 22,
+    "sql_task": 3,
+    "super_assert": 7,
+    "task_thread": 17,
+    "threaded_allocator": 2
+  },
+  "fixed_exception_name_count": 22,
+  "retained_setup_assertion_id_count": 21,
+  "compiled_variant_ids": [
+    "pool_alignment_offset",
+    "thread_awoke_event",
+    "thread_create_handle",
+    "thread_wake_event"
+  ],
+  "outside_literal_whitespace_collapsed": true,
+  "literal_spelling_and_operator_boundaries_preserved": true,
+  "verified_site_does_not_imply_expression_match": true,
+  "portable_modal_test_methods_passed": 8,
+  "affected_activation_methods_passed": 6,
+  "windows_only_method_skipped_in_this_session": true,
+  "python_compile_and_git_diff_check_passed": true,
+  "prior_windows_api_smoke": {
+    "run_id": 39072189359,
+    "source_commit": "81568446e43f56eb1a8aaf0970ab1ede13103f41",
+    "passed": true,
+    "observer_cs_unchanged": true
+  },
+  "prior_observed_assertion": {
+    "run_id": 39072189359,
+    "artifact_id": 12115752164,
+    "artifact_bytes": 7122,
+    "artifact_sha256": "8acbbeac960d073574a1a902c1b6ba7f1d769d25da167557adb08f4eef730f11",
+    "exact_source_predicate_matched": false
+  },
+  "new_policy_actual_windows_observation_executed": false,
+  "raw_titles_controls_or_stacks_exported": false,
+  "current_desktop_only": true,
+  "read_only": true,
+  "original_server_pe_rebuilt": false,
+  "crypto_rebuilt": false,
+  "readiness_deadline_changed": false,
+  "runtime_profile_modified": false,
+  "checksum_policy_relaxed": false,
+  "selected_shard_play_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "actual_root_cause_identified": false
+}

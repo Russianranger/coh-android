@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Offline controls only: no Wine, PostgreSQL or graphical run is qualified."""
-import copy, importlib.util, json, os, struct, subprocess, sys, tempfile, time, types, unittest
+import contextlib,copy, importlib.util, io,json, os, struct, subprocess, sys, tempfile, time, types, unittest
 from pathlib import Path
 from unittest.mock import patch
 HERE=Path(__file__).resolve().parent
@@ -127,6 +127,134 @@ class Controls(unittest.TestCase):
             with self.assertRaises(driver.Refused):driver.fresh(directory)
             parent_link=directory/'parent';parent_link.symlink_to(directory,target_is_directory=True)
             with self.assertRaises(driver.Refused):driver.fresh(parent_link/'new')
+    def test_regular_copy_is_real_outside_guest_and_never_calls_link(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root=Path(raw);partial=root/'partial';final=root/'final'
+            partial.write_bytes(b'PGDMPoffline-copy');partial.chmod(0o600);expected=guest.file_pin(partial)
+            with patch.object(guest.os,'link',side_effect=AssertionError('must not link')):
+                guest.publish_regular(partial,final,expected)
+            self.assertEqual(driver.pin(final),expected);self.assertEqual(final.lstat().st_nlink,1)
+            self.assertFalse(final.is_symlink());self.assertEqual(final.stat().st_mode&0o777,0o600)
+            with self.assertRaises(FileExistsError):guest.publish_regular(partial,final,expected)
+            self.assertEqual(driver.pin(final),expected)
+            final.unlink();backing=root/'backing';backing.write_bytes(b'preserve');final.symlink_to(backing)
+            with self.assertRaises(FileExistsError):guest.publish_regular(partial,final,expected)
+            self.assertTrue(final.is_symlink());self.assertEqual(backing.read_bytes(),b'preserve')
+    def test_regular_copy_late_io_hash_and_rollback_failures_refuse(self):
+        real_fdopen=os.fdopen
+        class Stream:
+            def __init__(self,stream,phase):self.stream=stream;self.phase=phase
+            def write(self,data):
+                if self.phase=='write':raise OSError('primary-write')
+                return self.stream.write(data)
+            def fileno(self):return self.stream.fileno()
+            def flush(self):
+                self.stream.flush()
+                if self.phase=='flush':raise OSError('primary-flush')
+            def close(self):
+                self.stream.close()
+                if self.phase in ('flush','close'):raise OSError('secondary-close' if self.phase=='flush' else 'primary-close')
+        with tempfile.TemporaryDirectory() as raw:
+            root=Path(raw);partial=root/'partial';partial.write_bytes(b'PGDMPoffline-copy');partial.chmod(0o600)
+            final=root/'final';expected=guest.file_pin(partial)
+            for phase in ('write','flush','close'):
+                diagnostic={'rollback_complete':True}
+                with self.subTest(phase=phase),patch.object(guest.os,'fdopen',
+                    side_effect=lambda *a,**kw:Stream(real_fdopen(*a,**kw),phase)):
+                    with self.assertRaisesRegex(OSError,'primary-'+phase):guest.publish_regular(partial,final,expected,diagnostic)
+                self.assertFalse(final.exists())
+                if phase in ('flush','close'):self.assertFalse(diagnostic['rollback_complete'])
+            with patch.object(guest.os,'fsync',side_effect=OSError('primary-fsync')):
+                with self.assertRaisesRegex(OSError,'primary-fsync'):guest.publish_regular(partial,final,expected)
+            self.assertFalse(final.exists())
+            actual_pin=guest.file_pin
+            with patch.object(guest,'file_pin',side_effect=lambda path: {'bytes':1,'sha256':'a'*64} if path==final else actual_pin(path)):
+                with self.assertRaisesRegex(guest.Refused,'DUMP_COPY_IDENTITY'):guest.publish_regular(partial,final,expected)
+            self.assertFalse(final.exists())
+            real_unlink=Path.unlink;diagnostic={'rollback_complete':True}
+            def refuse_unlink(path,*a,**kw):
+                if path==final:raise OSError('secondary-unlink')
+                return real_unlink(path,*a,**kw)
+            with patch.object(guest.os,'fsync',side_effect=OSError('primary-fsync')),patch.object(Path,'unlink',refuse_unlink):
+                with self.assertRaisesRegex(OSError,'primary-fsync'):guest.publish_regular(partial,final,expected,diagnostic)
+            self.assertFalse(diagnostic['rollback_complete']);self.assertTrue(final.exists());final.unlink()
+    def test_fixed_helper_status_and_observer_failure_privacy(self):
+        self.assertEqual(guest.STAGES,driver.BACKUP_STAGES);self.assertEqual(guest.FAILURES,driver.BACKUP_FAILURES)
+        baseline={'passed':False,'stage':'PUBLISH','failure_code':'DUMP_COPY_IDENTITY','rollback_complete':True}
+        self.assertEqual(driver.helper_status(json.dumps(baseline).encode()),baseline)
+        for field,bad in [('passed',0),('stage',[]),('stage','PRIVATE_CANARY'),
+                          ('failure_code','PRIVATE_CANARY'),('rollback_complete',1)]:
+            changed={**baseline,field:bad}
+            with self.subTest(field=field,bad=bad),self.assertRaises(driver.Refused):driver.helper_status(json.dumps(changed).encode())
+        for raw in (b'{"passed":false,"passed":true}',b'PRIVATE_CANARY',json.dumps({**baseline,'private':'PRIVATE_CANARY'}).encode()):
+            with self.assertRaises(driver.Refused):driver.helper_status(raw)
+        observed=driver.observer_observation({'failure':'PRIVATE_CANARY /raw/identity',
+            'terminal_event_observed':False,'interaction_script':{'post_save_captures':[{}, {}, {}]}})
+        self.assertEqual(observed['failure_code'],'OBSERVER_PROTOCOL_FAILURE')
+        self.assertEqual(observed['post_save_frames'],3);self.assertNotIn('PRIVATE_CANARY',json.dumps(observed))
+        stream=io.StringIO()
+        with patch.object(guest,'capture',side_effect=guest.Refused('PRIVATE_CANARY /raw/secret')),contextlib.redirect_stdout(stream):
+            self.assertEqual(guest.main(),2)
+        self.assertNotIn('PRIVATE_CANARY',stream.getvalue());self.assertEqual(json.loads(stream.getvalue())['failure_code'],'BACKUP_DEPENDENCY_FAILED')
+    def test_publication_preflight_observes_host_regular_and_cleanup_outside_child(self):
+        # Real tiny Linux child; no PRoot/PG/Wine runtime is qualified here.
+        real=subprocess.Popen;helper=driver.pin(HERE/'graphical_fixture_backup_guest.py')
+        with tempfile.TemporaryDirectory() as raw:
+            work=Path(raw);(work/'state').mkdir();seen=[]
+            command=['/retained/proot','/usr/bin/python3','/opt/coh/character_creation_diagnostic.py']
+            def child(argv,**kwargs):
+                seen.append(argv)
+                script='import runpy;from pathlib import Path;m=runpy.run_path('+repr(str(HERE/'graphical_fixture_backup_guest.py'))+');m["publication_probe"](Path('+repr(str(work/'state'))+'))'
+                return real([sys.executable,'-c',script],**kwargs)
+            observation=driver.publication_observation()
+            with patch.object(driver.subprocess,'Popen',side_effect=child):
+                self.assertTrue(driver.publication_preflight(command,os.environ.copy(),work,helper,observation))
+            self.assertEqual(observation,dict.fromkeys(observation,True));self.assertEqual(len(seen),1)
+            self.assertEqual(seen[0][:3],['/retained/proot','/usr/bin/python3','-c'])
+            self.assertFalse((work/'state/graphical-fixture-publication-probe').exists())
+            # A guest-faked regular symlink is rejected by the actual host lstat.
+            def symlink(argv,**kwargs):
+                script='from pathlib import Path;p=Path('+repr(str(work/'state/graphical-fixture-publication-probe'))+');p.mkdir();(p/"backing").write_bytes(b"data");(p/"fixture.pgdump").symlink_to(p/"backing")'
+                return real([sys.executable,'-c',script],**kwargs)
+            observation=driver.publication_observation()
+            with patch.object(driver.subprocess,'Popen',side_effect=symlink):
+                with self.assertRaisesRegex(driver.Refused,'REGULAR_INPUT'):
+                    driver.publication_preflight(command,os.environ.copy(),work,helper,observation)
+            self.assertFalse(observation['host_regular_verified']);self.assertTrue(observation['group_absent'])
+            self.assertFalse(observation['cleanup_complete'])
+    def test_preflight_cleanup_failure_is_visible_and_never_positive(self):
+        real=subprocess.Popen;helper=driver.pin(HERE/'graphical_fixture_backup_guest.py')
+        with tempfile.TemporaryDirectory() as raw:
+            work=Path(raw);(work/'state').mkdir()
+            command=['/retained/proot','/usr/bin/python3','/opt/coh/character_creation_diagnostic.py']
+            def child(argv,**kwargs):
+                script='import runpy;from pathlib import Path;m=runpy.run_path('+repr(str(HERE/'graphical_fixture_backup_guest.py'))+');m["publication_probe"](Path('+repr(str(work/'state'))+'))'
+                return real([sys.executable,'-c',script],**kwargs)
+            observation=driver.publication_observation()
+            with patch.object(driver.subprocess,'Popen',side_effect=child),patch.object(driver,'stop_group',side_effect=OSError('cleanup')):
+                with self.assertRaisesRegex(driver.Refused,'PUBLICATION_PROBE_CLEANUP'):
+                    driver.publication_preflight(command,os.environ.copy(),work,helper,observation)
+            self.assertTrue(observation['process_reaped']);self.assertTrue(observation['group_absent'])
+            self.assertFalse(observation['cleanup_complete'])
+    def test_failed_helper_status_survives_without_raw_child_text(self):
+        real=subprocess.Popen;helper=driver.pin(HERE/'graphical_fixture_backup_guest.py')
+        for code in ('PG_TOOL_FAILED','PRIVATE_HELPER_CANARY'):
+            with self.subTest(code=code),tempfile.TemporaryDirectory() as raw:
+                work=Path(raw);(work/'state').mkdir();status={'passed':False,'stage':'DUMP','failure_code':code,'rollback_complete':True}
+                command=['/retained/proot','/usr/bin/python3','/opt/coh/character_creation_diagnostic.py']
+                def child(argv,**kwargs):return real([sys.executable,'-c','import sys;print('+repr(json.dumps(status))+');sys.exit(2)'],**kwargs)
+                observation=driver.backup_observation();events=types.SimpleNamespace(client_pid=321,character_id=1)
+                with patch.object(driver.subprocess,'Popen',side_effect=child):
+                    with self.assertRaisesRegex(driver.Refused,'BACKUP_HELPER_REFUSED' if code=='PG_TOOL_FAILED' else 'BACKUP_STATUS_INVALID'):
+                        driver.run_backup(command,os.environ.copy(),types.SimpleNamespace(poll=lambda:None),work,
+                            'a'*32,events,time.monotonic()+10,helper,observation)
+                self.assertTrue(observation['request_written']);self.assertTrue(observation['helper_started'])
+                self.assertTrue(observation['helper_reaped']);self.assertFalse(observation['helper_exit_zero'])
+                self.assertNotIn('PRIVATE_HELPER_CANARY',json.dumps(observation))
+                if code=='PG_TOOL_FAILED':
+                    self.assertTrue(observation['helper_status_valid']);self.assertEqual(observation['helper_stage'],'DUMP')
+                    self.assertEqual(observation['helper_failure_code'],'PG_TOOL_FAILED')
+                else:self.assertEqual(observation['helper_failure_code'],'HELPER_STATUS_INVALID')
 
     def test_committed_source_rejects_untracked_and_changed(self):
         with tempfile.TemporaryDirectory() as raw:
@@ -292,10 +420,13 @@ class Controls(unittest.TestCase):
                    'workflow_run_id':1,'workflow_run_attempt':1,'apk':driver.APK,'build_report':driver.BUILD,
                    'game_archive':driver.ARCHIVE,'donor':{'revision':driver.DONOR},'ocr_overlay_sha256':driver.OCR_SHA,
                    'fixture_wire_slot':0,'session_id':'a'*32,'retained_creation_evidence':evidence,'full_backup':backup,
-                   'original_guest_report':evidence['original-guest-report.json']}
+                   'original_guest_report':evidence['original-guest-report.json'],'capture_stage':'COMPLETE','failure_stage':'NONE',
+                   'publication_preflight_observation':dict.fromkeys(driver.publication_observation(),True),
+                   'backup_observation':{name:True if name not in ('helper_stage','helper_failure_code')
+                       else 'COMPLETE' if name=='helper_stage' else 'NONE' for name in driver.backup_observation()}}
             trues=('passed','fixture_only','inputs_unchanged','owned_process_group_absent','original_guest_cleanup_verified',
                    'committed_original_logout_verified','fresh_profile_source_creation_verified',
-                   'public_fixture_dump_retention_permitted','fresh_role_secret_export_scan_passed')
+                   'public_fixture_dump_retention_permitted','fresh_role_secret_export_scan_passed','regular_publication_preflight_verified')
             falses=('private_user_input_accepted','apk_rebuilt','client_or_server_recompiled','synthetic_character_rows',
                     'source_generation_admitted','world_authority','android_execution_validated')
             value.update({name:True for name in trues});value.update({name:False for name in falses})
@@ -305,6 +436,9 @@ class Controls(unittest.TestCase):
             for name in (*trues,*falses,'fixture_wire_slot','workflow_run_id'):
                 altered=copy.deepcopy(value);altered[name]=int(altered[name]) if type(altered[name]) is bool else False
                 with self.subTest(key=name),self.assertRaises(driver.Refused):admit(altered)
+            for name in value['publication_preflight_observation']:
+                altered=copy.deepcopy(value);altered['publication_preflight_observation'][name]=1
+                with self.subTest(probe_boolean=name),self.assertRaises(driver.Refused):admit(altered)
             for name in objects:
                 path=directory/name;original=path.read_bytes();path.write_bytes(original+b' ')
                 with self.subTest(file=name),self.assertRaises(driver.Refused):admit(value)

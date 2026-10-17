@@ -25,19 +25,26 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless tesseract-ocr python3-pil
           df -h "$RUNNER_TEMP"
-      - name: Check exact donor manifest bounds and source-padded PostgreSQL status
+      - name: Check fixture publication, cleanup and source-padded PostgreSQL status
         run: python3 native-android/engine/scenecatalog-server/test_graphical_fixture.py
-      - name: Retrieve exact retained APK and small corresponding launcher sources
+      - name: Retrieve exact retained APK and previously executed ARM64 launcher
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          import hashlib,pathlib,stat,subprocess,zipfile
+          import hashlib,os,pathlib,stat,subprocess,zipfile
+          launcher={
+            'licenses/PRoot-COPYING':(19106,'0ffa6454acbe7e410ac6f0007df83b9b3161fe55484c1f4b87487c0f2d228a6d'),
+            'licenses/talloc-talloc.h':(65526,'e01fb092aaed2b431be26674e2b791c77fb5984537c29b514e957582c6b31465'),
+            'licenses/talloc-LICENSE':(7651,'da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768'),
+            'proot':(287720,'a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb'),
+            'proot-build-receipt.json':(3048,'6b853fd6732aa57ce4d8d096152f7818f47afdc91b6926fb6492b1ab2da987b5'),
+            'proot-corresponding-sources.tar.gz':(1014945,'721b011aabba1b82c47713eb91c54e7395325f650882060b52448a3bd264221d'),
+            'proot-loader':(17672,'c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5')}
           specs=[
-            (11192425448,553313601,'82a769943a7237465c26d42e419fa54e39ec6ab6010376f566a752a1c47f6a90','out/client',1024*1024**2),
-            (10947225941,13337866,'9853b93aa146b125d129f4491f02ff1ad6f0e5752492a3214e619775a179e107','out/client-base-runtime',128*1024**2),
-            (10946592550,1162455,'ff12b5d7fca65434a5bb6d76e35dafd5f956e10d492086810cb3ca449db7baeb','out/client-accepted-proot',32*1024**2)]
-          for ident,size,digest,directory,limit in specs:
+            (11192425448,553313601,'82a769943a7237465c26d42e419fa54e39ec6ab6010376f566a752a1c47f6a90','out/client',1024*1024**2,None),
+            (12116450116,1177704,'bf4063b2d15a4cb92127df5b0cf0eabd894a0ecc855ceaa4c0acda3acb772808',os.environ['RUNNER_TEMP']+'/coh-fixture-native/linux-arm64',32*1024**2,launcher)]
+          for ident,size,digest,directory,limit,members in specs:
               target=pathlib.Path(directory);target.mkdir(parents=True)
               archive=target.parent/(str(ident)+'.zip')
               with archive.open('xb') as output:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=600)
@@ -48,28 +55,41 @@ jobs:
                   for item in infos:
                       path=pathlib.PurePosixPath(item.filename)
                       assert not path.is_absolute() and '..' not in path.parts and '\\' not in item.filename and ':' not in item.filename and not stat.S_ISLNK(item.external_attr>>16)
+                  if members is not None:
+                      assert {i.filename for i in infos}==set(members)
+                      for item in infos:
+                          payload=z.read(item)
+                          assert not item.is_dir() and (item.file_size,hashlib.sha256(payload).hexdigest())==members[item.filename]
                   z.extractall(target)
+              if members is not None:
+                  for executable in ('proot','proot-loader'):(target/executable).chmod(0o755)
               archive.unlink()
           PY
-      - name: Prepare exact donor checkout and only the Linux ARM64 PRoot launcher
+      - name: Prepare exact donor checkout without rebuilding retained launcher
         run: |
           git worktree add --detach "$RUNNER_TEMP/coh-fixture-donor" 204615c6c4a809d6b814c7174b81448cffea3f7a
-          python3 "$RUNNER_TEMP/coh-fixture-donor/tools/android/extract_talloc_source.py" --assets "$GITHUB_WORKSPACE/out/client-base-runtime" --bundle "$GITHUB_WORKSPACE/out/client-accepted-proot/proot-corresponding-sources.tar.gz" --output "$RUNNER_TEMP/coh-fixture-talloc-2.4.3.tar.gz"
-          python3 "$RUNNER_TEMP/coh-fixture-donor/tools/android/build_proot.py" --target linux-arm64 --output "$RUNNER_TEMP/coh-fixture-native" --talloc-archive "$RUNNER_TEMP/coh-fixture-talloc-2.4.3.tar.gz"
       - name: Read the same reviewed original game ZIP without recapture
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 "$RUNNER_TEMP/coh-fixture-donor/tools/fetch_runtime_asset_bundle.py" --receipt "$RUNNER_TEMP/coh-fixture-donor/assets/reference-inputs-receipt.json" --output "$GITHUB_WORKSPACE/out/client-assets.zip" --release-asset-id 588984151
       - name: Create and ordinarily save one fresh original character then capture its whole database
+        id: capture
         run: |
-          PROOT_RECEIPT_SHA=$(sha256sum "$RUNNER_TEMP/coh-fixture-native/linux-arm64/proot-build-receipt.json" | cut -d' ' -f1)
+          PROOT_RECEIPT_SHA=6b853fd6732aa57ce4d8d096152f7818f47afdc91b6926fb6492b1ab2da987b5
           python3 native-android/engine/scenecatalog-server/capture_graphical_fixture.py --donor "$RUNNER_TEMP/coh-fixture-donor" --ocr-overlay "$GITHUB_WORKSPACE/tools/android/interactive/character_host_smoke.py" --apk "$GITHUB_WORKSPACE/out/client/COH-Character-Reopen-0.10.0.apk" --build-report "$GITHUB_WORKSPACE/out/client/interactive-apk-build-report.json" --archive "$GITHUB_WORKSPACE/out/client-assets.zip" --proot "$RUNNER_TEMP/coh-fixture-native/linux-arm64" --proot-receipt-sha256 "$PROOT_RECEIPT_SHA" --work "$RUNNER_TEMP/coh-fixture-work" --evidence "$GITHUB_WORKSPACE/out/fixture-evidence" --output "$GITHUB_WORKSPACE/out/fresh-fixture"
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.capture.outcome == 'success'
         with:
           name: source-created-graphical-fixture-${{ github.sha }}
           path: out/fresh-fixture/
+          if-no-files-found: warn
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.capture.outcome != 'success'
+        with:
+          name: source-created-graphical-fixture-${{ github.sha }}
+          path: out/fresh-fixture/fixture-capture.json
           if-no-files-found: warn
           retention-days: 90
       - uses: actions/upload-artifact@v4

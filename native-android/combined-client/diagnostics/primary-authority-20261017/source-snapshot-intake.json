@@ -1,0 +1,31 @@
+{
+  "schema": "coh-primary-source-snapshot-intake-v1",
+  "reviewed_publication_base": "91cacafa4451cf7504b5dd105f2790ae1c41739b",
+  "native_verifier_worker_commit": "db885e1c3138638a1dc8a743f0d429233cd6befb",
+  "native_verifier_receipt_sha256": "4b9b1524dd33c4f2132a59ca8f220fbe2ef2a18bb04f84822d6e4af8b22a8349",
+  "native_verifier_current_and_worker_blob_hashes_checked": 37,
+  "native_verifier_synthetic_suite_checks": 328,
+  "native_verifier_source_generation_admitted": false,
+  "provenance_control_methods_passed": 11,
+  "fresh_retention_control_methods_passed": 10,
+  "expanded_modal_portable_methods_passed": 8,
+  "expanded_modal_windows_method_skipped_locally": true,
+  "actual_source_selection_run_id": 39073157441,
+  "actual_source_selection_artifact_id": 12115756974,
+  "actual_source_selection_archive_bytes": 21884,
+  "actual_source_selection_archive_sha256": "54be63d80829412fb83cccf2f587f3bc8edb81d778261cd01bf1c13aa49462dd",
+  "actual_source_selection_review_sha256": "a33d55e2a7d6d07b6eee0616edef857ac8720606136e8a51ff044f7266eccb95",
+  "actual_source_selection_root_reverified_pins": 149,
+  "actual_graphical_dump_created": false,
+  "actual_matching_groups_captured": false,
+  "world_authority": false,
+  "Android_or_Thor_acceptance": false,
+  "arm_fixture_retry_fix": {
+    "commit": "f9d1aecdf6e331a54f3eb77b075156446f454d4e",
+    "proof_sha256": "3e0379cc21c25a36977b56edf0189aca2c9db93a65bac5dc3871bc4a4b07afda",
+    "root_targeted_tests": 22,
+    "independent_E_review": "clear",
+    "independent_F_review_commit": "5367ea2ec83042bfdbb3a0042a8158652a07e33b",
+    "actual_new_arm_run": false
+  }
+}

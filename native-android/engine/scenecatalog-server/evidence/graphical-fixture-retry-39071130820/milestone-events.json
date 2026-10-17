@@ -1,0 +1,29 @@
+[
+  {
+    "type": "client_interaction_ready",
+    "time_utc": "2026-10-17T21:54:29.346175+00:00",
+    "session_id": "16b02a635830dc046d2da6704782816d",
+    "client_pid": 656
+  },
+  {
+    "type": "client_login_ready",
+    "time_utc": "2026-10-17T21:55:38.861844+00:00",
+    "session_id": "16b02a635830dc046d2da6704782816d",
+    "client_pid": 656
+  },
+  {
+    "type": "character_connected",
+    "time_utc": "2026-10-17T22:00:26.919379+00:00",
+    "session_id": "16b02a635830dc046d2da6704782816d",
+    "client_pid": 656,
+    "character_id": 1
+  },
+  {
+    "type": "character_saved",
+    "time_utc": "2026-10-17T22:02:06.288622+00:00",
+    "session_id": "16b02a635830dc046d2da6704782816d",
+    "client_pid": 656,
+    "character_id": 1,
+    "committed_sql_verified": true
+  }
+]

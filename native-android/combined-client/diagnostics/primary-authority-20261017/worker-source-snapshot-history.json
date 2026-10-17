@@ -1,0 +1,34 @@
+{
+  "schema": "coh-preserved-source-snapshot-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/source-snapshot-final-20261017/a",
+      "tip": "f9d1aecdf6e331a54f3eb77b075156446f454d4e",
+      "prerequisite": "f6ee1243756a686002843549093eb8cb0c606be1"
+    },
+    "B": {
+      "ref": "refs/recovery/source-snapshot-20261017/b",
+      "tip": "dd50243b2546896f9a3570897cf7e8749e749d0b",
+      "prerequisite": "6b0ab48cc582b0967ca642a5a7896e5f2ff749af"
+    },
+    "D": {
+      "ref": "refs/recovery/source-snapshot-20261017/d",
+      "tip": "eaf55b4451fd008faa949d30cc739a8c476caf1a",
+      "prerequisite": "93bfd2347625ef53c6589a05d63f1f351be58aa7"
+    },
+    "E": {
+      "ref": "refs/recovery/source-snapshot-20261017/e",
+      "tip": "db885e1c3138638a1dc8a743f0d429233cd6befb",
+      "prerequisite": "2917fbfbfc4906f32a476cb548ef8abc1406f20a"
+    },
+    "F": {
+      "ref": "refs/recovery/source-snapshot-final-20261017/f",
+      "tip": "5367ea2ec83042bfdbb3a0042a8158652a07e33b",
+      "prerequisite": "7066d39c4b267f1cef3c59050eb2f30194084350"
+    }
+  },
+  "bundle": "worker-source-snapshot-history.bundle",
+  "bytes": 920648,
+  "sha256": "f2f0a29c68a7ac038e942745f56b2605ab992a466527d92284119068e2a8dbf7",
+  "scope": "Reviewed immutable source verification/provenance/fresh-only retention, exact successful new-source CI evidence, expanded Db assertion observation, real-file ARM fixture publication fix and prior failure evidence. No actual new source token, full fixture, world or Android acceptance."
+}

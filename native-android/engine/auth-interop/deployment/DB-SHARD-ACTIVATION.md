@@ -172,9 +172,8 @@ class/status counts and source matches are exported. Twenty-two exception names
 come from the exact pinned original SuperAssert table. Assertion matches require
 the original `Assertion failed`, `File:`, `Line:` and `Expression:` structure,
 a fixed approved source basename/expression, and a verified original source
-line. Twenty-one setup assertion IDs cover the observed FIFO/task/ring/allocator
-boundary. Unrecognized, incomplete, timed-out or ownership-changed text yields
-unknown/unmatched counts, never copied diagnostic strings. Nine original source
+line. Unrecognized, incomplete, timed-out or ownership-changed text yields
+unknown/unmatched counts, never copied diagnostic strings. Original source
 hashes and exact current HEAD blobs of the classifier/reader bind this policy.
 Observer failure cannot stop cleanup or change a failed stage into success.
 This adds observability only: binaries, profile, checksum/version guards and the
@@ -194,8 +193,44 @@ ticks and exact PID against the Popen handle, privately admits its result, and
 requires Job cleanup. No other PID's text is read. An empty self inventory is
 valid. This catches compiler/PInvoke/enumeration/JSON incompatibility before the
 five-minute service wait. Host tests also cover timeout/generation/job-cleanup
-refusals. The Linux session cannot execute this Windows smoke; its four portable
-methods pass and the Windows-only method is explicitly skipped until CI.
+refusals. Run `39072189359` at `81568446e43f56eb1a8aaf0970ab1ede13103f41`
+passed that actual Windows smoke and all other 12 pre-service methods. Its
+subsequent service attempt still reached the unchanged readiness deadline.
+Artifact `12115752164` (7,122 bytes, SHA256
+`8acbbeac960d073574a1a902c1b6ba7f1d769d25da167557adb08f4eef730f11`)
+confirmed one original assertion body in an owned Static IDC10 control, with
+all 12 bounded reads successful and matching service generations. The original
+21-expression matcher returned unknown; this identifies an assertion dialog,
+not a predicate or repair. Numeric SQL observations again showed no tables or
+active requests, and all cleanup checks passed. The exact archive is retained
+alongside the earlier failures.
+
+The classifier now indexes all 78 runtime assert call sites in the same nine
+pinned original source files. A lexical scan excludes comments and literals,
+balances call parentheses/brackets/braces, and extracts the complete first
+argument across lines. Invalid or ambiguous lexing refuses the policy; multiple
+sites at the same file/line yield a fixed ambiguity enum. A tenth source pin,
+SuperAssert.h, binds the original forwarding to `#exp`, `__FILE__` and `__LINE__`.
+The original 21 setup IDs remain stable. Other sites use fixed file/ordinal IDs.
+
+The retained exact DbServer PE also contains four macro-expanded expression
+spellings: three `INVALID_HANDLE_VALUE` comparisons and `CHUNK_ALIGNMENT`.
+Before admission the helper verifies the exact 1,088,820-byte archive, its PE
+SHA256 and the presence of every allowed compiled spelling. It builds neither
+the PE nor the original server. Source expression matching uses compiler-style
+whitespace collapsing outside literals, preserving literal bytes, escapes and
+operator boundaries; altered MemoryPool string contents do not match.
+
+Each result independently reports a known file enum, unique-field/line-shape
+Booleans, verified call-site enum, source-expression match and compiled-variant
+match. A location alone remains `source_assertion_unknown` with no full assertion
+match. Unknown filenames, line values, expressions, titles and body text never
+leave private storage. The receipt records the fixed 78-site index hash, ten
+original source hashes and the retained PE/archive hashes. This follow-up has
+eight portable modal methods passing and one Windows-only smoke skipped locally,
+plus six affected activation methods passing, including late diagnostic failure
+cleanup. The next actual Windows observation is still pending; no root cause,
+registration, selected play or Db/Map handoff is qualified by this preparation.
 
 ```sh
 python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v

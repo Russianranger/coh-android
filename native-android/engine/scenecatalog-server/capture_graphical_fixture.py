@@ -19,6 +19,16 @@ ARCHIVE={'bytes':615541018,'sha256':'28b4aa8f0b3a71287e9a596df23097722bd71db9ddb
 MAX_DUMP=512*1024**2
 MIN_FREE=16*1024**3
 BACKUP_SECONDS=300
+CAPTURE_STAGES=('EXTRACT','IMPORT','PUBLICATION_PREFLIGHT','GUEST_START','DISPLAY_WAIT',
+                'CHARACTER_OBSERVE','GUEST_REPORT','CLEANUP','RETAIN','COMPLETE')
+BACKUP_STAGES=('INPUTS','PROFILE','PG_TOOLS','SNAPSHOT','CHARACTER','TABLES','DUMP','ARCHIVE','PUBLISH','RECEIPT','COMPLETE')
+BACKUP_FAILURES=frozenset(('NONE','PRIVATE_REGULAR_FILE','JSON_OBJECT','SQL_IDENTIFIER','SAVE_REQUEST',
+    'OWNED_POSTMASTER','SNAPSHOT_CONNECTION_EXITED','SNAPSHOT_QUERY_TIMEOUT','SNAPSHOT_CONNECTION_EOF',
+    'SNAPSHOT_QUERY_BOUND','SNAPSHOT_CLOSE','BACKUP_DEADLINE','PG_TOOL_FAILED','PRIVATE_BACKUP_DIRECTORY',
+    'FRESH_BACKUP','PROFILE_NOT_INITIALIZED','PROFILE_CREDENTIALS','POSTGRES_MAJOR','PG_TOOL_VERSION',
+    'LIVE_DATABASE_IDENTITY','FRESH_GRAPHICAL_CHARACTER','TABLE_INVENTORY','TABLE_ROW_COUNT','CUSTOM_ARCHIVE',
+    'ARCHIVE_VERSION','FULL_ARCHIVE_LIST','ARCHIVE_IDENTIFIER_SCOPE','FULL_TABLE_DATA_COVERAGE','SNAPSHOT_LOST',
+    'DUMP_COPY_IDENTITY','DUMP_COPY_SIZE','PUBLICATION_PROBE','BACKUP_DEPENDENCY_FAILED'))
 class Refused(ValueError):pass
 def require(value,code):
     if not value:raise Refused(code)
@@ -128,6 +138,89 @@ def backup_command(command,helper):
     # A separate PRoot client reuses filesystem binds/user/environment. It has
     # its own tracing/SysV session; psql/pg_dump need only the owned Unix socket.
     return command[:index]+['/usr/bin/python3','-c',helper.decode('utf-8')]
+def backup_observation():
+    return {'gate_entered':False,'committed_save_gate_verified':False,'request_written':False,
+        'helper_started':False,'helper_reaped':False,'helper_exit_zero':False,'helper_status_valid':False,
+        'helper_rollback_complete':False,'host_regular_dump_verified':False,'backup_receipt_verified':False,
+        'helper_stage':'NOT_STARTED','helper_failure_code':'NONE'}
+def publication_observation():
+    return {'started':False,'process_reaped':False,'group_absent':False,'cleanup_complete':False,
+            'host_regular_verified':False}
+def observer_observation(value):
+    known=frozenset(('COMMITTED_SAVE_GATE','REPEATED_BACKUP','GUEST_NOT_LIVE_BEFORE_BACKUP',
+        'PROOT_EXECUTION_PIN','BACKUP_HELPER_EXECUTION_PIN','GUEST_EXITED_DURING_BACKUP','BACKUP_TIMEOUT',
+        'PREMATURE_FINISH_REQUEST','BACKUP_SIZE','BACKUP_STATUS_LIMIT','BACKUP_STATUS_INVALID',
+        'BACKUP_HELPER_CLEANUP','BACKUP_HELPER_REFUSED','REGULAR_INPUT','BACKUP_RECEIPT','FIXTURE_IDENTITY',
+        'ARCHIVE_SCOPE','TABLE_COUNTS'))
+    valid=type(value) is dict;script=value.get('interaction_script',{}) if valid else {}
+    failed=value.get('failure') if valid else None
+    def frames(name):
+        rows=script.get(name,[]) if type(script) is dict else []
+        return len(rows) if type(rows) is list and len(rows)<=3 else 0
+    return {'available':valid,'failure_present':failed is not None,
+        'failure_code':'NONE' if failed is None else failed if type(failed) is str and failed in known else 'OBSERVER_PROTOCOL_FAILURE',
+        'terminal_event_observed':valid and value.get('terminal_event_observed') is True,
+        'post_login_frames':frames('post_login_captures'),'connected_frames':frames('connected_captures'),
+        'post_save_frames':frames('post_save_captures'),
+        'script_completed':type(script) is dict and script.get('script_completed') is True,
+        'finish_requested':type(script) is dict and 'finish_request' in script}
+def helper_status(raw):
+    def pairs(items):
+        value={}
+        for key,item in items:require(key not in value,'BACKUP_STATUS_INVALID');value[key]=item
+        return value
+    require(0<len(raw)<=4096,'BACKUP_STATUS_INVALID')
+    try:value=json.loads(raw,object_pairs_hook=pairs)
+    except (UnicodeError,ValueError):raise Refused('BACKUP_STATUS_INVALID') from None
+    require(type(value) is dict and type(value.get('passed')) is bool
+            and type(value.get('stage')) is str and value['stage'] in BACKUP_STAGES
+            and type(value.get('failure_code')) is str and value['failure_code'] in BACKUP_FAILURES
+            and type(value.get('rollback_complete')) is bool,'BACKUP_STATUS_INVALID')
+    required={'passed','stage','failure_code','rollback_complete'}
+    if value['passed']:
+        require(set(value)==required|{'full_database_custom_archive'} and value['full_database_custom_archive'] is True
+                and value['stage']=='COMPLETE' and value['failure_code']=='NONE'
+                and value['rollback_complete'] is True,'BACKUP_STATUS_INVALID')
+    else:require(set(value)==required and value['failure_code']!='NONE' and value['stage']!='COMPLETE','BACKUP_STATUS_INVALID')
+    # Return only fixed, strictly source-enumerated fields, never arbitrary child text.
+    return {'passed':value['passed'],'stage':value['stage'],'failure_code':value['failure_code'],
+            'rollback_complete':value['rollback_complete']}
+def publication_preflight(command,environment,work,helper_pin,observation=None):
+    observation=publication_observation() if observation is None else observation
+    directory=work/'state/graphical-fixture-publication-probe'
+    require(not directory.exists() and not directory.is_symlink(),'PUBLICATION_PROBE_FRESH')
+    path=HERE/'graphical_fixture_backup_guest.py';helper=path.read_bytes()
+    require({'bytes':len(helper),'sha256':hashlib.sha256(helper).hexdigest()}==helper_pin,'BACKUP_HELPER_EXECUTION_PIN')
+    script=("namespace={'__name__':'coh_regular_publication_probe'}\nexec(compile("+
+            repr(helper.decode('utf-8'))+",'<coh-regular-publication-probe>','exec'),namespace)\n"+
+            "namespace['publication_probe']()\n").encode()
+    process=None;clean=False;cleanup=True
+    try:
+        process=subprocess.Popen(backup_command(command,script),env=environment,stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True)
+        observation['started']=True
+        require(process.wait(timeout=60)==0,'PUBLICATION_PROBE_CHILD')
+        # This is real host lstat/hash, outside PRoot's fake link2symlink stat.
+        expected=b'COH_FIXTURE_REGULAR_PUBLICATION_PROBE_V1\n'
+        require(pin(directory/'fixture.pgdump',4096)=={'bytes':len(expected),'sha256':hashlib.sha256(expected).hexdigest()},
+                'PUBLICATION_PROBE_HOST_REGULAR')
+        observation['host_regular_verified']=True
+    finally:
+        primary=sys.exc_info()[0] is not None
+        try:clean=stop_group(process)
+        except Exception:clean=False
+        observation['process_reaped']=process is not None and process.poll() is not None
+        try:observation['group_absent']=process is not None and group_absent(process)
+        except Exception:observation['group_absent']=False
+        for name in ('fixture.pgdump.partial','fixture.pgdump'):
+            try:(directory/name).unlink(missing_ok=True)
+            except OSError:cleanup=False
+        if directory.exists():
+            try:directory.rmdir()
+            except OSError:cleanup=False
+        observation['cleanup_complete']=clean and cleanup and not directory.exists()
+        if not primary:require(clean and cleanup and not directory.exists(),'PUBLICATION_PROBE_CLEANUP')
+    return True
 def group_absent(process):
     if process is None:return True
     try:os.killpg(process.pid,0);return False
@@ -149,18 +242,22 @@ def stop_group(process):
     end=time.monotonic()+5
     while not group_absent(process) and time.monotonic()<end:time.sleep(.05)
     return group_absent(process)
-def run_backup(command,environment,guest,work,session,events,deadline,helper_pin):
+def run_backup(command,environment,guest,work,session,events,deadline,helper_pin,observation=None):
+    observation=backup_observation() if observation is None else observation
     require(guest.poll() is None and not (work/'state/interaction-finish.json').exists(),'GUEST_NOT_LIVE_BEFORE_BACKUP')
     request={'schema':'coh-graphical-fixture-backup-request-v1','session_id':session,'client_pid':events.client_pid,
              'character_id':events.character_id,'account':'COHLOCAL','character_name':'THORHERO'}
     directory=work/'state/graphical-fixture-backup';directory.mkdir(mode=0o700)
     write_json(directory/'request.json',request)
+    observation['request_written']=True
     path=HERE/'graphical_fixture_backup_guest.py';helper=path.read_bytes()
     require({'bytes':len(helper),'sha256':hashlib.sha256(helper).hexdigest()}==helper_pin,'BACKUP_HELPER_EXECUTION_PIN')
-    process=None;code=None;clean=False
+    process=None;code=None;clean=False;status_output=None
     try:
+        status_path=directory/'helper-status.json';status_output=status_path.open('xb');os.chmod(status_path,0o600)
         process=subprocess.Popen(backup_command(command,helper),env=environment,stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True)
+            stdout=status_output,stderr=subprocess.DEVNULL,start_new_session=True)
+        observation['helper_started']=True
         end=min(deadline,time.monotonic()+BACKUP_SECONDS)
         while process.poll() is None:
             require(guest.poll() is None,'GUEST_EXITED_DURING_BACKUP')
@@ -168,12 +265,30 @@ def run_backup(command,environment,guest,work,session,events,deadline,helper_pin
             require(not (work/'state/interaction-finish.json').exists(),'PREMATURE_FINISH_REQUEST')
             require(not (directory/'fixture.pgdump.partial').exists() or
                     (directory/'fixture.pgdump.partial').stat().st_size<=MAX_DUMP,'BACKUP_SIZE')
+            require(status_path.stat().st_size<=4096,'BACKUP_STATUS_LIMIT')
             time.sleep(.1)
         code=process.returncode
-    finally:clean=stop_group(process)
-    require(clean and code==0 and guest.poll() is None,'BACKUP_HELPER_OR_CLEANUP_FAILED')
+    finally:
+        primary=sys.exc_info()[0] is not None;errors=[]
+        try:clean=stop_group(process)
+        except Exception as error:errors.append(error)
+        observation['helper_reaped']=process is not None and process.poll() is not None and clean
+        observation['helper_exit_zero']=code==0
+        if status_output is not None:
+            try:status_output.close()
+            except OSError as error:errors.append(error)
+        if errors and not primary:raise Refused('BACKUP_HELPER_CLEANUP')
+    try:
+        status=helper_status(regular(status_path,4096).read_bytes())
+        observation.update(helper_status_valid=True,helper_stage=status['stage'],
+            helper_failure_code=status['failure_code'],helper_rollback_complete=status['rollback_complete'])
+    except Exception:
+        observation['helper_failure_code']='HELPER_STATUS_INVALID';raise Refused('BACKUP_STATUS_INVALID') from None
+    require(clean and guest.poll() is None,'BACKUP_HELPER_CLEANUP')
+    require(code==0 and status['passed'] is True,'BACKUP_HELPER_REFUSED')
+    dump=pin(directory/'fixture.pgdump',MAX_DUMP);observation['host_regular_dump_verified']=True
     receipt=json.loads(regular(directory/'backup.json',4*1024**2).read_bytes())
-    validate_backup(receipt,request,pin(directory/'fixture.pgdump',MAX_DUMP))
+    validate_backup(receipt,request,dump);observation['backup_receipt_verified']=True
     return receipt
 def validate_backup(value,request,dump):
     shape=lambda row: type(row) is dict and set(row)=={'schema','session_id','client_pid','character_id','account','character_name'} and row.get('schema')=='coh-graphical-fixture-backup-request-v1' and type(row.get('session_id')) is str and re.fullmatch('[0-9a-f]{32}',row['session_id']) is not None and all(type(row.get(key)) is int and 0<row[key]<=2147483647 for key in ('client_pid','character_id')) and row.get('account')=='COHLOCAL' and row.get('character_name')=='THORHERO'
@@ -204,16 +319,18 @@ def validate_backup(value,request,dump):
     require(names==sorted(set(names)) and type(value.get('table_count')) is int and value['table_count']==len(counts)
             and type(value.get('rows')) is int and value['rows']==sum(row['rows'] for row in counts)
             and all(('dbo',name) in names for name in ('ents','ents2','powers','costumeparts')),'TABLE_COUNTS')
-def interaction_type(character,backup):
+def interaction_type(character,backup,observation=None):
     class BackedCharacter(character.CharacterInteraction):
         def on_frame(self,connection,frame,events,sequence,captures,now):
             if self.action==len(self.ACTIONS) and 'full_backup' not in self.result:
+                if observation is not None:observation['gate_entered']=True
                 require(events.session==self.session and events.active and events.saved_generation==1
                         and events.connected_generation==1 and events.login_generation==1
                         and type(events.client_pid) is int and events.client_pid>0
                         and type(events.character_id) is int and events.character_id>0
                         and 'finish_request' not in self.result and not self.finish_path.exists()
                         and len(self.result.get('post_save_captures',[]))==3,'COMMITTED_SAVE_GATE')
+                if observation is not None:observation['committed_save_gate_verified']=True
                 self.result['full_backup']=backup(events)
             super().on_frame(connection,frame,events,sequence,captures,now)
     return BackedCharacter
@@ -240,31 +357,46 @@ def capture(args):
             'proot_files':proot_pins,'session_id':session,'apk_rebuilt':False,'client_or_server_recompiled':False,
             'synthetic_character_rows':False,'source_generation_admitted':False,'world_authority':False,
             'android_execution_validated':False,'public_fixture_dump_retention_permitted':False}
+    result.update(capture_stage='EXTRACT',failure_stage='NONE',regular_publication_preflight_verified=False,
+                  backup_observation=backup_observation(),observer_observation=observer_observation(None),
+                  publication_preflight_observation=publication_observation())
+    def advance(value):
+        require(value in CAPTURE_STAGES,'FIXTURE_STAGE');result['capture_stage']=value
     process=observer=backup=None;failure=None;guest_report=None;start=time.monotonic()
     try:
         manifest,assets,imports=host.extract_apk_assets(args.apk,work/'apk-assets',args.build_report,DONOR)
+        advance('IMPORT')
         data=host.import_game_data(imports,args.archive.resolve(),work,evidence)
         command,environment=character.make_command(work,assets,args.proot.resolve(),session,data,900)
         require(not (work/'state/diagnostic/android-local-login').exists(),'PROFILE_NOT_FRESH')
         deadline=time.monotonic()+character.OVERALL_SECONDS+60
+        advance('PUBLICATION_PREFLIGHT')
+        require(all(pin(args.proot/name,16*1024**2)==value for name,value in proot_pins.items()),'PROOT_EXECUTION_PIN')
+        result['regular_publication_preflight_verified']=publication_preflight(command,environment,work,
+            orchestration[str(HERE.relative_to(ROOT)/'graphical_fixture_backup_guest.py')],result['publication_preflight_observation'])
         def saved_backup(events):
             nonlocal backup
             require(backup is None,'REPEATED_BACKUP')
             require(all(pin(args.proot/name,16*1024**2)==value for name,value in proot_pins.items()),'PROOT_EXECUTION_PIN')
             backup=run_backup(command,environment,process,work,session,events,deadline,
-                orchestration[str(HERE.relative_to(ROOT)/'graphical_fixture_backup_guest.py')]);return backup
+                orchestration[str(HERE.relative_to(ROOT)/'graphical_fixture_backup_guest.py')],result['backup_observation']);return backup
         with (evidence/'host-client.log').open('x') as log:
+            advance('GUEST_START')
             require(all(pin(args.proot/name,16*1024**2)==value for name,value in proot_pins.items()),'PROOT_EXECUTION_PIN')
             process=subprocess.Popen(command,env=environment,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
             socket_path=work/'socket/view.sock'
+            advance('DISPLAY_WAIT')
             while not socket_path.exists():
                 require(process.poll() is None and time.monotonic()<deadline,'GUEST_BEFORE_DISPLAY');time.sleep(.1)
             with socket.socket(socket.AF_UNIX,socket.SOCK_STREAM) as connection:
+                advance('CHARACTER_OBSERVE')
                 connection.settimeout(90);connection.connect(str(socket_path))
                 observer=character.observe_rfb(connection,session,process,deadline,evidence,evidence/'host-client.log',
-                    work/'state/interaction-finish.json',interaction_factory=interaction_type(character,saved_backup))
+                    work/'state/interaction-finish.json',interaction_factory=interaction_type(character,saved_backup,result['backup_observation']))
+            result['observer_observation']=observer_observation(observer)
             require(observer.get('failure') is None,'CHARACTER_OBSERVER_FAILED')
             require(process.wait(timeout=max(1,deadline-time.monotonic()))==0,'GUEST_EXIT_FAILED')
+            advance('GUEST_REPORT')
             guest_report=json.loads(regular(work/'state/latest-report.json',2*1024**2).read_bytes())
             character.validate_report(guest_report,session,manifest);character.validate_observer(observer,guest_report)
             require(not socket_path.exists() and backup is not None,'BACKUP_OR_SOCKET_CLOSURE')
@@ -275,9 +407,13 @@ def capture(args):
                     and saved['auth_id']==backup['fixture_identity']['auth_id'],'FRESH_SOURCE_CREATION')
             result['passed']=True
     except Exception as error:
+        result['failure_stage']=result['capture_stage']
         failure={'type':type(error).__name__,'code':str(error) if isinstance(error,Refused) else 'GRAPHICAL_DEPENDENCY_OR_VALIDATION_FAILED'}
     finally:
+        advance('CLEANUP')
         cleanup=character.stop_guest(process,work/'state');groups=stop_group(process)
+        probe=result['publication_preflight_observation'];helper=result['backup_observation']
+        groups=groups and (not probe['started'] or probe['group_absent']) and (not helper['helper_started'] or helper['helper_reaped'])
         result.update(failure=failure,host_cleanup=cleanup,owned_process_group_absent=groups,
                       elapsed_seconds=round(time.monotonic()-start,3))
         try:
@@ -287,8 +423,10 @@ def capture(args):
             unchanged=unchanged and all(pin(path)==expected for path,expected in ((args.apk,APK),(args.build_report,BUILD),(args.archive,ARCHIVE)))
             result['inputs_unchanged']=unchanged
             require(unchanged and groups and cleanup.get('process_reaped') is True and not cleanup.get('errors')
+                    and (not probe['started'] or probe['cleanup_complete'])
                     and cleanup.get('forced_quit') is False and cleanup.get('forced_kill') is False,'OWNED_CLEANUP_OR_INPUTS')
             require(result['passed'] and guest_report is not None,'GRAPHICAL_FIXTURE_FAILED')
+            advance('RETAIN')
             original=work/'state/graphical-fixture-backup/fixture.pgdump'
             require(pin(original,MAX_DUMP)==backup['dump'],'DUMP_CHANGED_AFTER_CLEANUP')
             credentials=json.loads(regular(work/'state/diagnostic/android-local-login/credentials.json',4096).read_bytes())
@@ -317,11 +455,13 @@ def capture(args):
                     'client_pid':guest_report['client_launch']['pid']})
         except Exception as error:
             result['passed']=False
+            if result['failure_stage']=='NONE':result['failure_stage']=result['capture_stage']
             if failure is None:result['failure']={'type':type(error).__name__,'code':str(error) if isinstance(error,Refused) else 'FINAL_FIXTURE_VALIDATION_FAILED'}
             result['public_fixture_dump_retention_permitted']=False
             for name in ('fixture.pgdump','account.txt','original-guest-report.json','backup-request.json','backup-receipt.json','external-observer.json'):
                 try:(output/name).unlink(missing_ok=True)
                 except OSError:result['failed_output_cleanup_complete']=False
+        if result['passed']:advance('COMPLETE')
         # Commit-last: a backup without this successful receipt is inadmissible.
         write_json(output/'fixture-capture.json',result)
         character.export_guest_evidence(work/'state',evidence,session)
