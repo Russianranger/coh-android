@@ -1,0 +1,20 @@
+{
+  "review": "Independent read-only targeted raw Android retry workflow source review",
+  "workflow": ".github/workflows/native-world-android-only.yml",
+  "workflow_sha256": "59bf1670454cbd767a51bd498498f36264f78c8510a3c383b49e9ba514928f6e",
+  "verdict": "no source review blocker",
+  "checks": [
+    "parsed raw job steps equal prior reviewed continuation job except full history checkout and precreated partial-output directories",
+    "fetch-depth0 enables pinned historical767d55 source resolution",
+    "new explicit world-android-only marker and repository/native-android guards",
+    "needs removed to avoid repeating completed unrelated source contracts",
+    "same exact NDKr28c archive checksum",
+    "both ABI build and source/binary/fixture admission precede emulator",
+    "Android13 x86_64 execution",
+    "30minute job bound; cancel-in-progress false",
+    "always artifact preservation",
+    "no Map/Auth/runtime-capture steps"
+  ],
+  "execution_performed": false,
+  "reason": "Previous run38994607348 failed before NDK compilation because historical source767d55 was unavailable in shallow checkout."
+}

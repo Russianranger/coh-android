@@ -1,0 +1,11 @@
+{
+  "run_id": 38994607348,
+  "source_revision": "a45c657fcc6b3bd8f3a70c59e9aa85ee19455f3f",
+  "failed_job": 117284659258,
+  "source_contracts_passed": true,
+  "failure": "historical_oracle_source_commit_absent_from_depth1_checkout",
+  "native_ndk_compile_started": false,
+  "android_executed": false,
+  "apk_built": false,
+  "correction": "targeted Android-only workflow with fetch-depth0; preserve successful independent source controls"
+}
