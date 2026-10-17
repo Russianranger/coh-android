@@ -1,0 +1,44 @@
+{
+  "schema": "coh-original-auth-cache-consumer-v1",
+  "passed": true,
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_path": "upstream/ouroboros/DBServer/src/authcomm.c",
+  "source_sha256": "a3a4349047e08fc3285c22d231fe9d467ee26f6360e125db3845ede50f1fc1b2",
+  "function_sha256": {
+    "trimTrailingWhitespace": "90a6757cb3ea0bfe0b531e41c314555b3fdd5e93279f2d8a61563fc8f739ccc8",
+    "authValidLogin": "6ed3c5dfb0bde7021d02581bf9caa5481a5740b3507ea62b4fd39ec44c2093d5"
+  },
+  "fixture_sha256": "74a13fc03401ae6656c0f5de8a4d469f15d1eb7ae6d5c3eddee4d77861661a65",
+  "qualifier_sha256": "077cc53c2166d611c077c8cc356791692c7cf4766ac8f9e4233c71e40ad40280",
+  "generated_sha256": "c796021d9e4c9800d78e4ddd2582d11810bb6c555467899b98305c363e7ff2dd",
+  "executions": {
+    "release": {
+      "binary_sha256": "2a316963690dfba443a4d21ea6b3197971205538f9cad83ee72dfb0601e2cc36",
+      "result": {
+        "passed": true,
+        "checks": 544839,
+        "cache_slots": 4096,
+        "one_shot_consumer": true,
+        "zero_cookie_source_semantics": true,
+        "cookie_generator_executed": false,
+        "live_service_executed": false
+      }
+    },
+    "asan_ubsan": {
+      "binary_sha256": "59d8623b07144ef516f17bd5ce89751ccd694a2eb750ed1f3c49bc0894764da0",
+      "result": {
+        "passed": true,
+        "checks": 544839,
+        "cache_slots": 4096,
+        "one_shot_consumer": true,
+        "zero_cookie_source_semantics": true,
+        "cookie_generator_executed": false,
+        "live_service_executed": false
+      }
+    }
+  },
+  "scope": "Exact original authValidLogin and trimTrailingWhitespace with fixed bounded nonempty names and in-memory AuthEntry cache; no network, cryptography, SQL or service execution.",
+  "live_authenticated_db_login_verified": false,
+  "cookie_generator_executed": false,
+  "leak_sanitizer_enabled": false
+}

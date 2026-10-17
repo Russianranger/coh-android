@@ -1,0 +1,27 @@
+{
+  "EGL/egl.h": {
+    "url": "https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/db3425b8246136faccb5e2782b5694960bd6edf1/api/EGL/egl.h",
+    "sha256": "a7c24c828bf2e1a4dfe6511b4f4812b948a285eb54787074015896976d4da076",
+    "bytes": 19286
+  },
+  "EGL/eglplatform.h": {
+    "url": "https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/db3425b8246136faccb5e2782b5694960bd6edf1/api/EGL/eglplatform.h",
+    "sha256": "25b5391655effcf363a38fa00c3154f356a3eab3d35dc067847875513cf1e441",
+    "bytes": 5239
+  },
+  "KHR/khrplatform.h": {
+    "url": "https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/db3425b8246136faccb5e2782b5694960bd6edf1/api/KHR/khrplatform.h",
+    "sha256": "7b1e01aaa7ad8f6fc34b5c7bdf79ebf5189bb09e2c4d2e79fc5d350623d11e83",
+    "bytes": 11131
+  },
+  "GLES3/gl3.h": {
+    "url": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/6af574a14089ccfee87efe230ebcdd8742859813/api/GLES3/gl3.h",
+    "sha256": "a0e4880142bd059bd4d7446f257920b5020b8bbb0a86eb0149cbd1ea2fcf8cb0",
+    "bytes": 81600
+  },
+  "GLES3/gl3platform.h": {
+    "url": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/6af574a14089ccfee87efe230ebcdd8742859813/api/GLES3/gl3platform.h",
+    "sha256": "a9e060dae5a2b11c5a889b679692b7089a10a7e03ebfbb6cf28217f6e322fb08",
+    "bytes": 642
+  }
+}

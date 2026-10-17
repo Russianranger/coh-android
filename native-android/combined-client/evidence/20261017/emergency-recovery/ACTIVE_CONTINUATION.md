@@ -153,3 +153,35 @@ all prior immutable attempt receipts are checked together, source/identity confl
 refuse, reused bodies are rehashed and existing files are never overwritten.
 Ten offline interruption controls passed independently in the integration tree.
 The first active resume retains its original source identity; no duplicate writer ran.
+
+## Actual EGL and further source transactions
+
+Guarded publicationb8df4881b9f108e10b31f91c0389d21f8b2ebbce retains the preceding
+real isolated AuthServer/body/numerical/Android-driver component batch, exact tree
+8a8429391b5ac4c6471ba0ab0b79364501560ed8. No services or accepted APKs rerun.
+
+E actual EGL source31e53f1a4 +host evidencec02c245c2 and Freviewde75cc488 are integrated.
+Fresh183controls passed release/ASan/UBSan/fixedfixture under Linux software GLES,
+27readbacks match authentic texture/Pillow, two contexts/three surfaces cleaned.
+The earlier rollback masking defect was found and fixed before qualified replay.
+All host binaries/readbacks/logs/fixture are retained in a checksum-indexed archive.
+System graphics drivers are not sanitizer-instrumented; dependency closure and
+loaded-library mapping remain false. No Android/Thor/GLES world is accepted.
+Reviewedworkflow native-world-egl-suffix.yml runs only new standalone EGL+suffix
+contracts with exactr28c NDK, bothABI builds and Android13 x86_64 execution. It does
+not build a game APK or start any server. Fworkflowseal1c8aa7159 binds exactcommands.
+
+D14204cbbf adds fulluserdata Auth→DB metadata parsers and unchanged original writer/
+one-shot authcache oracles:544839cachecontrols/mode over4096slots, five writerchecks/
+mode and five Python malformed/profile suites. Bindings/generation labels are metadata,
+not channel ownership or reusable live credentials. Original one-shot semantics and
+zero-cookie/no-TTL behavior are recorded without weakening accepted login policy.
+B independentreview57c6eb88d confirms scope. DBlogin/Map/deployment remain unexecuted.
+
+Cb905c19e2/4ac3e8a5d composes supported command/header→entitylist→nondebugcontrol→
+deletes, stopping before character data.50926controls/mode,120source joins,50supported
+preludes,11070cuts,7910mutations, C++/stack pass.89boundsourceinputs checked; Freview
+e4712e946 and coordinator source review find no blocker. Selected-wire identity must
+match supplied DBID/entity/index and valid position after source-ordered deletes.
+Actual player record branches, costumes/dictionaries and full suffix ownership remain
+required; complete actor/transport/ACK flags stayfalse. Closure ledger updated.

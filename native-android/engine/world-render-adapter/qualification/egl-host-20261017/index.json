@@ -1,0 +1,26 @@
+{
+  "source_commit": "31e53f1a40b1a30ae729fddbc81dea3862a9e59b",
+  "source_tree": "849761170e7e2cd2fc0cd44324a80b834d044337",
+  "host_receipt_sha256": "861e56c801914df31c18eedba56ecac60ae19e2876b999e7d8cd3e9c020b8caa",
+  "consumed_source_hashes_reverified": true,
+  "actual_linux_egl_gles": true,
+  "controls_per_mode": 183,
+  "modes": [
+    "release",
+    "address",
+    "undefined",
+    "finite-fixture"
+  ],
+  "actual_readbacks_per_mode": 27,
+  "readback_packet_bytes": 1048572,
+  "readback_packet_sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c",
+  "actual_contexts_destroyed_per_mode": 2,
+  "actual_surfaces_destroyed_per_mode": 3,
+  "dispatch_library_files_stable": true,
+  "loaded_mapping_verified": false,
+  "system_driver_sanitized": false,
+  "android_ndk_build": false,
+  "android_execution": false,
+  "physical_thor": false,
+  "material_or_world_authority": false
+}

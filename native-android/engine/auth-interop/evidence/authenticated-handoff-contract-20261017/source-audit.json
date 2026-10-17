@@ -1,0 +1,110 @@
+{
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_base": "1e9e3a9bf77e87b41059ce3d6ff78d24eb0efcf4",
+  "files": {
+    "AuthServer/src/AccountDB.cpp": {
+      "sha256": "b00306c11f77fdce7d02ba07202ee6bb7ca963f3ceca66731e22ae6b5c34d9bd",
+      "functions": {
+        "AccountDB::AboutToPlay": {
+          "present": true,
+          "sha256_utf8_lf": "798a1b9d692b738f4bd6dd7fe2fd956862f6ad442c16bb72a4b21e8ac1027bc4"
+        }
+      }
+    },
+    "AuthServer/src/CSocketServer.cpp": {
+      "sha256": "11673fea61c9db472146ff4371629d10b31781801dc401bb0e55e3caa9d3b1e5",
+      "functions": {
+        "ServerPlayOk": {
+          "present": true,
+          "sha256_utf8_lf": "571473ced05c46bfdbd8d034346fccab6394fa99f70385e7615768e8fd4169b3"
+        },
+        "ServerReadGameData": {
+          "present": true,
+          "sha256_utf8_lf": "08d9a4760ce74085892fb5a7d13560bd4e0ae0eae22e97f230531650b0c4665c"
+        },
+        "ServerSetActive": {
+          "present": true,
+          "sha256_utf8_lf": "d03c710e9809862d3e1d40254fee6fb207b86a5d58b08d12fdcffb52a8549cb8"
+        },
+        "SetServerId": {
+          "present": true,
+          "sha256_utf8_lf": "40449f06cc504c5ce944f3fafb98b08bc4a7d5a65e3c3b16f7a23759a0bab655"
+        }
+      }
+    },
+    "AuthServer/src/SocketServerEx.cpp": {
+      "sha256": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb",
+      "functions": {
+        "SelectServerPacket": {
+          "present": true,
+          "sha256_utf8_lf": "0a901bc16f548b4b941c3de95e7f4dee86ec056d2ba7fa2dec376064c199de5e"
+        }
+      }
+    },
+    "AuthServer/src/ServerList.cpp": {
+      "sha256": "17ec8216324d817fb38691ecbcf96fd161592a4799935ee562a5c37d590ecd7a",
+      "functions": {
+        "CServerList::Load": {
+          "present": true,
+          "sha256_utf8_lf": "6936b660a35b89e353a229668a8ea13e40f8794c2242548b840911f73fe955a0"
+        },
+        "CServerList::SetServerSocketByAddress": {
+          "present": true,
+          "sha256_utf8_lf": "dd9f23d65dac367a0caa4cb562fbcc55974ac46b8ed6bd99007a92b01053b65f"
+        }
+      }
+    },
+    "DBServer/src/authcomm.c": {
+      "sha256": "a3a4349047e08fc3285c22d231fe9d467ee26f6360e125db3845ede50f1fc1b2",
+      "functions": {
+        "authEntryAlloc": {
+          "present": true,
+          "sha256_utf8_lf": "52f2a0ab341e3375f88b58cecb2840618c464d3efdda0a71c41e3364d99c1b39"
+        },
+        "trimTrailingWhitespace": {
+          "present": true,
+          "sha256_utf8_lf": "90a6757cb3ea0bfe0b531e41c314555b3fdd5e93279f2d8a61563fc8f739ccc8"
+        },
+        "authValidLogin": {
+          "present": true,
+          "sha256_utf8_lf": "6ed3c5dfb0bde7021d02581bf9caa5481a5740b3507ea62b4fd39ec44c2093d5"
+        },
+        "handleAboutToPlay": {
+          "present": true,
+          "sha256_utf8_lf": "08c14f2ae9c0717f2b96c6a1187564900b0729d6b1ffa4245a00d93c4203fe37"
+        },
+        "handleRecvGameData": {
+          "present": true,
+          "sha256_utf8_lf": "b17b108de519a487f1bb9d39ab26f1994ea3d4d00e7a92ce87d8d3b1f9dc6b8b"
+        },
+        "authSendPlayOK": {
+          "present": true,
+          "sha256_utf8_lf": "b167ecf3d66917b86003d4b19593ed8baed7eac177c5ef8c865c6dbe68d10562"
+        },
+        "authCommInit": {
+          "present": true,
+          "sha256_utf8_lf": "c2a4c3a0bf42a26d47ea615a4406e1a31ae98737233fe4fd9b065b7ba8588d23"
+        }
+      }
+    },
+    "DBServer/src/clientcomm.c": {
+      "sha256": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+      "functions": {
+        "handleLogin": {
+          "present": true,
+          "sha256_utf8_lf": "a8807d58e5656361ebdd35083797060d6cde98b95a3d9b30749a2d26bcb944ca"
+        }
+      }
+    },
+    "Game/src/clientcomm/authclient.c": {
+      "sha256": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015",
+      "functions": {
+        "acGetPlayOK": {
+          "present": true,
+          "sha256_utf8_lf": "8a8b31467ca469057cf1beb9bb4fdf45a02db3c8f967fbb08ef25a5a0b44e371"
+        }
+      }
+    }
+  },
+  "live_deployment_admitted": false
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "coh-original-auth-handoff-wire-v1",
+  "passed": true,
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_sha256": {
+    "upstream/ouroboros/AuthServer/src/util.cpp": "d87b7b47cfb52490a27fdf3ec8e5179c96c803058dd4b98204f8e644f631c59a",
+    "upstream/ouroboros/Common/auth/auth.c": "589ca2a4353e5725cb1aad90c2f24e9dc852e6bbdad034e5932de17635bffa49"
+  },
+  "function_sha256": {
+    "Assemble": "b6a0faedea049f87568715ef72e0722c2cc67778b46bfc331aaf9ceab3a140c9",
+    "authPutU08": "666da5d8370b3da6ca72d9ef48721def8ca1d33df51e58ddcdebf9e05336d5f4",
+    "authPutU32": "d77ba1aa6bf98f98a94f1a60455d570439982070093ab7d69be0ac62b5d6def8"
+  },
+  "fixture_sha256": "76167891a0ca0401339b7df7f4a9fda997867d5ec8114417a869793fd146fdf3",
+  "qualifier_sha256": "1d380f34c2b66131ed7036665e62125c131fb3b9b670f91bcfff6ddc413a5bc4",
+  "executions": {
+    "release": {
+      "checks": 5,
+      "binary_sha256": "f9ece6ec3b1746e0fa964a63dc08f106d47561c205d4e717dd16e07153406e84",
+      "fixture_output_sha256": "195bd06837feb7ff6657d736fca2eab275d3b841232741ada17f6945a5eebcd4"
+    },
+    "asan_ubsan": {
+      "checks": 5,
+      "binary_sha256": "bae20cd969e05ae1e5cffc8873ba68b2a1a4a5f509c7dc71d96696e2e9b5d97f",
+      "fixture_output_sha256": "195bd06837feb7ff6657d736fca2eab275d3b841232741ada17f6945a5eebcd4"
+    }
+  },
+  "scope": "Exact original Assemble and authPutU08/U32 under bounded public fixture data; compares all bytes through bounded read-only parsers. No framing/encryption/socket/shard registration or live DB login.",
+  "live_authenticated_db_login_verified": false,
+  "cookie_generated": false,
+  "leak_sanitizer_enabled": false
+}

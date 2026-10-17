@@ -1,0 +1,119 @@
+{
+  "zip_bytes": 1316470,
+  "zip_sha256": "5ca5aa03dcd7fa83f7ac536aac70d9a82fcbfd8f34a428de3362929d6044f36b",
+  "files": {
+    "address.rgba": {
+      "bytes": 1048572,
+      "sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c"
+    },
+    "box-1.texture": {
+      "bytes": 43990,
+      "sha256": "c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a"
+    },
+    "compile-address.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-address.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-finite-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-finite-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-release.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-release.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-undefined.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-undefined.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "egl_fixture_digest.h": {
+      "bytes": 155759,
+      "sha256": "02aba360ab949c7315337027440ed3c38ee526c3b371b47382c36ed0ea42bd5a"
+    },
+    "execute-address.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-address.stdout": {
+      "bytes": 510,
+      "sha256": "527158bead5839f7fc941a802f9dccc06d6c3e9fcaa1619a5961748482d1df0e"
+    },
+    "execute-finite-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-finite-fixture.stdout": {
+      "bytes": 510,
+      "sha256": "527158bead5839f7fc941a802f9dccc06d6c3e9fcaa1619a5961748482d1df0e"
+    },
+    "execute-release.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-release.stdout": {
+      "bytes": 510,
+      "sha256": "527158bead5839f7fc941a802f9dccc06d6c3e9fcaa1619a5961748482d1df0e"
+    },
+    "execute-undefined.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-undefined.stdout": {
+      "bytes": 510,
+      "sha256": "527158bead5839f7fc941a802f9dccc06d6c3e9fcaa1619a5961748482d1df0e"
+    },
+    "finite-fixture.rgba": {
+      "bytes": 1048572,
+      "sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c"
+    },
+    "host-address": {
+      "bytes": 361408,
+      "sha256": "ab5fa65481b8fbc644289362b04124e969f4d3fa0969a768a9df522ea0742e12"
+    },
+    "host-finite-fixture": {
+      "bytes": 108184,
+      "sha256": "a9a334e5f92ae2bf4a78967e2d69e5bad84f6a8a1711d6db4acdaaee81699660"
+    },
+    "host-release": {
+      "bytes": 63136,
+      "sha256": "99db2834bf72ca732c24dfbcb7f2dc670d247cb9f3b5e4d16d98b385650fc7c1"
+    },
+    "host-undefined": {
+      "bytes": 455352,
+      "sha256": "9d75c093ea6cd1de84f7e80f031c67bf8a1ffa702d74654017017635c095b8c1"
+    },
+    "independent-first-chain.rgba": {
+      "bytes": 349524,
+      "sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c"
+    },
+    "qualification.json": {
+      "bytes": 12180,
+      "sha256": "861e56c801914df31c18eedba56ecac60ae19e2876b999e7d8cd3e9c020b8caa"
+    },
+    "release.rgba": {
+      "bytes": 1048572,
+      "sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c"
+    },
+    "undefined.rgba": {
+      "bytes": 1048572,
+      "sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c"
+    }
+  },
+  "scope": "Linux actual software EGL standalone fixture qualification only; no Android/Thor/world"
+}

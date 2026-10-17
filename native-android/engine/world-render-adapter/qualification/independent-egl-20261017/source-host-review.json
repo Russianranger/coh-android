@@ -1,0 +1,68 @@
+{
+  "schema": "coh-independent-actual-egl-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "31e53f1a40b1a30ae729fddbc81dea3862a9e59b",
+  "source_tree": "849761170e7e2cd2fc0cd44324a80b834d044337",
+  "qualification_sha256": "861e56c801914df31c18eedba56ecac60ae19e2876b999e7d8cd3e9c020b8caa",
+  "bound_source_files": 27,
+  "all_source_inputs_equal_committed_blobs": true,
+  "host_modes": {
+    "release": {
+      "checks": 183,
+      "binary_sha256": "99db2834bf72ca732c24dfbcb7f2dc670d247cb9f3b5e4d16d98b385650fc7c1",
+      "readback_sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c"
+    },
+    "address": {
+      "checks": 183,
+      "binary_sha256": "ab5fa65481b8fbc644289362b04124e969f4d3fa0969a768a9df522ea0742e12",
+      "readback_sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c"
+    },
+    "undefined": {
+      "checks": 183,
+      "binary_sha256": "9d75c093ea6cd1de84f7e80f031c67bf8a1ffa702d74654017017635c095b8c1",
+      "readback_sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c"
+    },
+    "finite-fixture": {
+      "checks": 183,
+      "binary_sha256": "a9a334e5f92ae2bf4a78967e2d69e5bad84f6a8a1711d6db4acdaaee81699660",
+      "readback_sha256": "261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c"
+    }
+  },
+  "independent_mock_admission_tests": {
+    "suites": 6,
+    "passed": true,
+    "actual_android_claim": false
+  },
+  "source_review": [
+    "Owned default EGL display is standalone and exclusive; exact registered context/surface/thread generations validated against actual EGL current handles",
+    "Unbind success plus actual EGL_NO_CONTEXT/NO_SURFACE/NO_DISPLAY checked before owned destruction; exclusive handles prohibit deferred destruction on another thread",
+    "All public GL operations quarantine pending journal, including unrelated owner release; private synchronous rollback cleanup mode permits uploader internal restoration/deletion",
+    "F found masked internal rollback and unused deletion-fault field; both fixed and ordinary image-error successful-cleanup control added before fresh final183-control replay",
+    "Exact PBO/unpack state restoration, actual FBO/mip readback and pack/FBO restoration, strict GL error checks, owner cleanup/Surface replacement/context recreation reviewed",
+    "Strict source/helper/header closure, fixture byte regeneration, both ABI ELF admission, own driver binding, postexecution readmission and stable qualification hash",
+    "Fresh evidence directory prevents log overwrite; UUID owned before mkdir, failure cleanup verified; Android library files observed before/after separately from loaded mappings"
+  ],
+  "coordinator_workflow_review": {
+    "observed_sha256": "4073457220760942e2334447ec237fc4faa16490ee27785b8626611863245315",
+    "uncommitted_at_review": true,
+    "native_android_guard": true,
+    "noncancelling_concurrency": true,
+    "exact_ndk_archive_sha": true,
+    "both_admission_unittests_included": true,
+    "always_receipt_upload": true,
+    "shipping_apk_or_service_changes": false
+  },
+  "blocking_findings": [],
+  "host_actual_gles": true,
+  "independent_expensive_replay": false,
+  "system_driver_sanitized": false,
+  "loaded_driver_mapping_verified": false,
+  "transitive_driver_dependency_closure": false,
+  "leak_sanitizer_enabled": false,
+  "android_arm64_build_verified": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "material_authority": false,
+  "world_authority": false,
+  "shipping_renderer_modified": false
+}

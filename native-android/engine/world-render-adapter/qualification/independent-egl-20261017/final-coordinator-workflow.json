@@ -1,0 +1,36 @@
+{
+  "schema": "coh-independent-standalone-egl-suffix-workflow-v1",
+  "reviewer": "worker-f",
+  "workflow_path": ".github/workflows/native-world-egl-suffix.yml",
+  "workflow_sha256": "e19b03cb7b35cdc1ec895ff0827a2052b032be0bb6b502d2c18265ac98e7f2e3",
+  "source_head_observed": "fa0f725d42fc6f970667ac6a5b63833d8bda4cce",
+  "workflow_uncommitted_at_review": true,
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/prepare_gpu_egl.py": "794dd4376ee00116930b3c2da50817da74edba72c903363c8fd4c70483559acd",
+    "native-android/engine/world-render-adapter/run_gpu_egl_android.py": "8cb0eaf3bd934ab97a3bbe17ebb718d0a62d9a743f0e153e7d280733dd0c1483",
+    "native-android/engine/world-render-adapter/gpu_egl_contract.py": "0a6e2c545dfbc8127b6f90d945de4afd2e30b36cabfdb3855f25120040dd0434",
+    "native-android/engine/world-render-adapter/tests/coh_gpu_egl_backend.c": "3cc61cd4b14dbdc6466780a833d3add3235f371b53434896ccca2fd87ff0d240",
+    "native-android/engine/world-render-adapter/tests/coh_gpu_egl_backend.h": "de6116d3a914d807684ead384857ab8d06f8080117bb2bb5a44185f47cb2692f",
+    "native-android/engine/world-render-adapter/tests/test_gpu_egl.c": "09fe50f853fc58ed29c06a545dbb1002065c7b2bd04fc23d2bd0bcf1fb9a7661",
+    "native-android/engine/world-render-adapter/tests/test_gpu_egl_driver.py": "1cf54f385d924a0108a4ef6683516842835571561481fbd37fffd49233e7b084",
+    "native-android/combined-client/diagnostics/initial-suffix-android-20261017/prepare.py": "cf8dfce01d4d728f836caf343cb7896fc33c1b3ac53ffd24064d1ee59aa27ff9",
+    "native-android/combined-client/diagnostics/initial-suffix-android-20261017/run.py": "1ed17c13e4749729cfbe1438a2a94a6f523bfb3c81d1e59a35713bc346e61939",
+    "native-android/combined-client/diagnostics/initial-suffix-android-20261017/test_admission.py": "d2ac7492d4ffa5d0e1ad516fbacf931fe62620412ff064f46b3577d4b9e841f0"
+  },
+  "review": [
+    "Guarded named repository and native-android branch only; opt-in commit marker or manual dispatch; no concurrent run cancellation",
+    "Read-only GitHub permissions, no persisted credentials, complete original-source history checkout",
+    "Python3.12 and exact locally-qualified Pillow12.3.0 remove apt-vs-hostedPython module path mismatch",
+    "NDKr28c archive SHA verified before extraction; separate standalone bothABI packaging and strict admission",
+    "Both suffix and EGL admission unittest suites run before qualified prepare",
+    "Only new standalone source sanitizer/ABI/Android13x86_64 actual GLES and suffix execution; no APK/server startup/rebuild/accepted-client retest",
+    "Fresh separate admission/execution directories match strict drivers, exact serial and SDK33, bounded job35min",
+    "Alwaysupload output retains failures and cleanup receipts; actual Android acceptance requires resulting artifact review"
+  ],
+  "blocking_findings": [],
+  "workflow_executed_by_review": false,
+  "android_executed_by_review": false,
+  "arm64_built_by_review": false,
+  "physical_thor_accepted": false,
+  "world_authority": false
+}

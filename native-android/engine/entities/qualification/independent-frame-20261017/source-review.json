@@ -1,0 +1,30 @@
+{
+  "schema": "coh-independent-entity-frame-source-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "b905c19e2f3a21485b69e6e9aef3e7f98166d700",
+  "receipt_commit": "4ac3e8a5d",
+  "source_binding_sha256": "2b1081d114fc94237bc7dcb10b0a6be5efb67a9db03bbf74a52ee37da1f4f12a",
+  "host_proof_sha256": "5aa185172e4bb9ea87a60cb4767e73dad84d19cdef5c62fa8cd315a9d8c721e2",
+  "all_bound_inputs_equal_committed_blobs": true,
+  "bound_inputs": 89,
+  "source_files": {
+    "native-android/engine/entity-frame/coh_entity_frame.c": "2ef112a7288a90e682964e4db03179035f67242ef6308009c1e85f4530e74128",
+    "native-android/engine/entity-frame/coh_entity_frame.h": "287abaf440b8423a2d818451a8cee91336a4752c9dffa0421dff0ff047f0808e"
+  },
+  "source_review": [
+    "ALLENTS command and original header/list/non-debug-control/deletes ordering; refuses debug/unsupported child grammar",
+    "workspace resets admitted indices; selected DBID/entity/index/position checked after same-packet deletion staging",
+    "pairwise explicit span disjointness and input/fixed workspace/64KiB reserve/retained budget; scratch may change while public output and reader commit only on whole success",
+    "context generations and packet lease labels require caller-authenticated origin, not native server authentication",
+    "memset candidate leaves suffix/dictionary/transport/actor/ACK authority false"
+  ],
+  "host_receipt_reviewed": true,
+  "independent_expensive_replay": false,
+  "blocking_findings": [],
+  "android_executed": false,
+  "live_server_accepted": false,
+  "physical_thor_accepted": false,
+  "complete_initial_update": false,
+  "actor_publication": false,
+  "ack_permitted": false
+}

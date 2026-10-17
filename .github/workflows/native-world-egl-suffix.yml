@@ -1,0 +1,80 @@
+name: Standalone actual EGL and bounded initial suffix Android qualification
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-world-egl-suffix.yml
+      - native-android/engine/world-render-adapter/**
+      - native-android/combined-client/diagnostics/initial-suffix-android-20261017/**
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-world-egl-suffix-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  standalone-android13:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[world-egl-suffix]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install standalone host dependencies and exact NDK
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev python3-pil libegl1-mesa-dev libgles2-mesa-dev
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/continuation-ndk
+          python3 -m pip install Pillow==12.3.0
+      - name: Check suffix admission and compile new standalone suffix for both ABIs
+        run: |
+          python3 -m unittest discover -s native-android/combined-client/diagnostics/initial-suffix-android-20261017 -p test_admission.py -v
+          python3 native-android/combined-client/diagnostics/initial-suffix-android-20261017/prepare.py --ndk /tmp/continuation-ndk/android-ndk-r28c --output out/egl-suffix/suffix
+          python3 native-android/combined-client/diagnostics/initial-suffix-android-20261017/run.py --artifacts out/egl-suffix/suffix --validate-only --output out/egl-suffix/suffix-admission/receipt.json
+      - name: Recover exact texture and primary host headers
+        run: |
+          python3 native-android/engine/world-render-adapter/acquire_sampler_texture.py --output /tmp/egl-texture
+          python3 native-android/engine/world-render-adapter/acquire_egl_headers.py --output /tmp/egl-headers
+      - name: Qualify actual host EGL and prepare both Android ABI binaries
+        run: |
+          python3 -m unittest discover -s native-android/engine/world-render-adapter/tests -p test_gpu_egl_driver.py -v
+          python3 native-android/engine/world-render-adapter/prepare_gpu_egl.py --source-root . --actual-texture /tmp/egl-texture/box-1.texture --host-headers /tmp/egl-headers --host-egl /usr/lib/x86_64-linux-gnu/libEGL.so.1 --host-gles /usr/lib/x86_64-linux-gnu/libGLESv2.so.2 --ndk /tmp/continuation-ndk/android-ndk-r28c --output out/egl-suffix/egl
+          python3 native-android/engine/world-render-adapter/run_gpu_egl_android.py --source-root . --artifacts out/egl-suffix/egl --validate-only --output out/egl-suffix/egl-admission/receipt.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute only new standalone EGL and suffix contracts on Android13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: |
+            python3 native-android/engine/world-render-adapter/run_gpu_egl_android.py --source-root . --artifacts out/egl-suffix/egl --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --output out/egl-suffix/egl-execution/receipt.json
+            python3 native-android/combined-client/diagnostics/initial-suffix-android-20261017/run.py --artifacts out/egl-suffix/suffix --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --output out/egl-suffix/suffix-execution/receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: standalone-egl-suffix-both-abis-android13-${{ github.sha }}
+          path: out/egl-suffix/
+          if-no-files-found: error
+          retention-days: 90

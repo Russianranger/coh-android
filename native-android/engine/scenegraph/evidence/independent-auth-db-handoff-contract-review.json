@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "reviewer": "Worker B / graph",
+  "reviewed_commit": "14204cbbf3b00349943e83f1c956f93559443c6c",
+  "approved_within_declared_standalone_scope": true,
+  "blocking_findings": [],
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "original_source_file_hashes_verified": 7,
+  "original_function_hashes_verified": 17,
+  "independent_python_suite_replay": {
+    "passed": true,
+    "suites": 5,
+    "command": "python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_authenticated_handoff_contract.py -v",
+    "network_or_service_started": false
+  },
+  "retained_native_qualification_review": {
+    "wire-qualification.json": {
+      "retained_receipt_sha256": "a759294d89bbee099875eb3927a87cef839d931b0bc65a6a9220e7310c9268b6",
+      "fixture_and_qualifier_match": true,
+      "native_oracle_rerun": false,
+      "executions": {
+        "release": {
+          "checks": 5,
+          "binary_sha256": "f9ece6ec3b1746e0fa964a63dc08f106d47561c205d4e717dd16e07153406e84",
+          "fixture_output_sha256": "195bd06837feb7ff6657d736fca2eab275d3b841232741ada17f6945a5eebcd4"
+        },
+        "asan_ubsan": {
+          "checks": 5,
+          "binary_sha256": "bae20cd969e05ae1e5cffc8873ba68b2a1a4a5f509c7dc71d96696e2e9b5d97f",
+          "fixture_output_sha256": "195bd06837feb7ff6657d736fca2eab275d3b841232741ada17f6945a5eebcd4"
+        }
+      }
+    },
+    "cache-consumer-qualification.json": {
+      "retained_receipt_sha256": "81ccb2c765a02262806f07218c5b4f2ab2c2175538ed1c9b9cb61cef45c4bd33",
+      "fixture_and_qualifier_match": true,
+      "native_oracle_rerun": false,
+      "executions": {
+        "release": {
+          "binary_sha256": "2a316963690dfba443a4d21ea6b3197971205538f9cad83ee72dfb0601e2cc36",
+          "result": {
+            "passed": true,
+            "checks": 544839,
+            "cache_slots": 4096,
+            "one_shot_consumer": true,
+            "zero_cookie_source_semantics": true,
+            "cookie_generator_executed": false,
+            "live_service_executed": false
+          }
+        },
+        "asan_ubsan": {
+          "binary_sha256": "59d8623b07144ef516f17bd5ce89751ccd694a2eb750ed1f3c49bc0894764da0",
+          "result": {
+            "passed": true,
+            "checks": 544839,
+            "cache_slots": 4096,
+            "one_shot_consumer": true,
+            "zero_cookie_source_semantics": true,
+            "cookie_generator_executed": false,
+            "live_service_executed": false
+          }
+        }
+      }
+    }
+  },
+  "review": [
+    "Already-decrypted bytes-only bodies are length/opcode/UID bounded before offset reads; AboutToPlay accounts are nonempty printableASCII of at most14 bytes with exact NUL/full128byte auth data/tails. Fixed body shapes reject truncation and extras.",
+    "Metadata is frozen and sensitive account/data/cookie fields are excluded from repr. The matcher requires explicit UInt32 auth UID and UInt8 nonzero shard expectations and equal generation labels, UID, shard and exact cookie across already observed records. Public dataclass construction and caller-supplied generation labels do not prove channel ownership; the return correctly leaves live source-channel/order/auth-bit merge/deployment/DB login authority false.",
+    "The unchanged original cache consumer checks exact occupied UID and U32 cookie (including zero) plus case-insensitive account after trimming only trailing spaces. It copies128 bytes and loyalty/pay fields, then clears the complete entry for one-shot use. Wrong identity/name/cookie does not consume a successful slot. There is no consumer TTL test; allocation reuse after30seconds is separate.",
+    "Original writer fixtures exercise full nonqueue UserData=true and the short UserData=false mismatch. The source-derived full DB prerequisite preserves UserData=true/useQueue=false/sendQueueLevel=false, actual shard registration, seeded userdata/game data, ownership-mask merge and message ordering as unfulfilled deployment gates.",
+    "Original cache fixtures supply bounded nonempty name buffers and in-memory owners; they do not qualify the original consumer for arbitrary malformed buffer inputs. Retained release and ASan/UBSan receipts are reviewed, not rerun. No original cookie generator, SQL, crypto, Windows service, authenticated DB or Map transfer is executed by this component."
+  ],
+  "authority": {
+    "profile_modified": false,
+    "cookie_generated": false,
+    "live_message_order_verified": false,
+    "auth_bit_ownership_merge_verified": false,
+    "authenticated_db_login_verified": false,
+    "selected_character_dbid": null,
+    "map_handoff_verified": false,
+    "live_deployment_admitted": false
+  },
+  "reviewed_source_sha256": {
+    "native-android/engine/auth-interop/deployment/AUTH-DB-HANDOFF-CONTRACT.md": "9c44f7150c2d11f3a65861e5c7ca6e5fe80d546755b3566ea2a10b39c2e8653f",
+    "native-android/engine/auth-interop/deployment/authenticated_handoff_contract.py": "46a9f73c4c0367026732cf996c91db494f2213bb33f3267fac126781bcea7989",
+    "native-android/engine/auth-interop/deployment/auth_cache_consumer_fixture.c": "74a13fc03401ae6656c0f5de8a4d469f15d1eb7ae6d5c3eddee4d77861661a65",
+    "native-android/engine/auth-interop/deployment/handoff_wire_fixture.cpp": "76167891a0ca0401339b7df7f4a9fda997867d5ec8114417a869793fd146fdf3",
+    "native-android/engine/auth-interop/deployment/qualify_auth_cache_consumer.py": "077cc53c2166d611c077c8cc356791692c7cf4766ac8f9e4233c71e40ad40280",
+    "native-android/engine/auth-interop/deployment/qualify_handoff_wire.py": "1d380f34c2b66131ed7036665e62125c131fb3b9b670f91bcfff6ddc413a5bc4",
+    "native-android/engine/auth-interop/deployment/test_authenticated_handoff_contract.py": "a45216c71b110accceb5b822bee84811b70dcd2581305c041e6e59b8bec48564",
+    "native-android/engine/auth-interop/evidence/authenticated-handoff-contract-20261017/source-audit.json": "154442f25291c98035ab87090e841a42a138297ba7b2bb8248e102a6807b69ab",
+    "native-android/engine/auth-interop/evidence/authenticated-handoff-contract-20261017/cache-consumer-qualification.json": "81ccb2c765a02262806f07218c5b4f2ab2c2175538ed1c9b9cb61cef45c4bd33",
+    "native-android/engine/auth-interop/evidence/authenticated-handoff-contract-20261017/wire-qualification.json": "a759294d89bbee099875eb3927a87cef839d931b0bc65a6a9220e7310c9268b6"
+  }
+}
