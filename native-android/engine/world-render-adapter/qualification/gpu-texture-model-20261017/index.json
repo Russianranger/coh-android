@@ -1,0 +1,22 @@
+{
+  "source_commit": "4ad5eb5029a6ac3555da315fe34c3bdb5c5015e2",
+  "host_receipt_sha256": "633e2d4d3edb469f6d9a76e84d6bb2dd7bc6d0c399299bdf3c31ee91e77a3c29",
+  "source_dependency_hashes_reverified": true,
+  "host_release_asan_ubsan": true,
+  "asan_leak_detection": false,
+  "gpu_model_controls_per_mode": 12841,
+  "callback_failure_positions": 33,
+  "gpu_production_mutations_rejected": [
+    "omit_last_mip",
+    "pbo_left_bound"
+  ],
+  "authentic_cpu_texture_levels": 9,
+  "context_surface_and_name_reuse": "injected host model only",
+  "backend_context_wide_pending_cleanup_quarantine": "external required; not implemented global registry",
+  "gpu_driver_execution": false,
+  "android_build": false,
+  "android_execution": false,
+  "physical_thor": false,
+  "material_or_world_authority": false,
+  "rigid_mip_linear_admission": "unchanged closed"
+}

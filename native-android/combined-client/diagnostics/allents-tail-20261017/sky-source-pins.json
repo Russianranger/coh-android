@@ -1,0 +1,23 @@
+{
+  "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+  "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+  "Common/gameComm/wdwbase.c": "fddd0af05b1764115d3c885140b8074587d9e4cc5c762a0101dc49042e30e732",
+  "Common/gameComm/wdwbase.h": "18427c8f68e1a3ef0c3d149ab35801edbe151a16cb2bee166fb8174c8f2a6f6c",
+  "Game/src/UI/uiOptions_Type.c": "8a3704eec9b207d05f8533ad08b618edabcebe3893e196531fa882dd95bd2e5b",
+  "Game/src/UI/uiOptions_Type.h": "73ac1805bb89c0042c031af77336609eee3bab8e4d48fdbdec7aaa1551eb796c",
+  "Game/src/UI/uiNet.c": "79a36e45898f70356c762299a2ab58a0e82c4557cb7047dc505ef400741b1f01",
+  "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+  "Common/entity/entStrings.c": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0",
+  "MapServer/src/entity/keybinds.c": "96df4d670b377dffa4821d8c591926a6bd725c6f0b579eecb0874076bf0377f4",
+  "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+  "Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+  "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+  "Game/src/UI/uiKeybind.h": "c67d779c9870a26fc9474c061216678f5d9728daa6f418a46362ee64330f94fb",
+  "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+  "Common/gameComm/trayCommon.c": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6",
+  "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+  "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+  "Game/src/UI/uiReticle.h": "cd2afa72ef0bbd67a556074d3e307d74c4313a1d80876614ff178fda68a1cc35",
+  "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+  "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+}

@@ -1,0 +1,71 @@
+{
+  "schema": "coh-f-row-order-view-review-v1",
+  "passed": true,
+  "modules": {
+    "geo_runtime_disk_order": {
+      "source_commit": "4ef4eed849fb2b2e47f022954e881093127821f6",
+      "receipt_sha256": "7946b19cc425806bb2b13757f8f7a2e5ac6beddef79c29cf8a54f85817821694",
+      "tested_source_sha256": {
+        "upstream/ouroboros/Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+        "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+        "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+        "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+        "native-android/engine/scenecatalog/coh_resource_index.c": "55076fc1c49f968f97a034a720653a10bd621f8cd3759454917ea44891fd142b",
+        "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+        "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+        "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+        "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+        "native-android/engine/scenecatalog/coh_resource_index.h": "953de61d633fafc866ffcc33b7238d6d509e3b81316965edc8307a2117fd648b",
+        "native-android/engine/scenecatalog/tests/test_resource_index.c": "f4e63e68d9bc1d0b94cb8838d8ce11a116612ae02be9397dddbd3324b13f60cc",
+        "native-android/engine/scenecatalog/tests/resource-fixtures/observed.cohres": "23c13ab4d9e84cbf3a7a29d5eeeef31f039c26b61f868cbbb24e8ea98d6cf4ce",
+        "native-android/engine/scenecatalog/check_resource_index.py": "14ac745f90294043607432f37d56a254120e2e41506c3694fa8429cab2c32f35",
+        "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+        "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+      },
+      "source_review_no_blocker": true
+    },
+    "sky_slave": {
+      "source_commit": "e48e2f587",
+      "receipt_sha256": "40db5e199125f23bf118723331d02d939c07f420234a06fb9425d854c727c477",
+      "tested_source_sha256": {
+        "native-android/engine/entity-view/coh_view.c": "52f2f524426e3b376abb314fb9015118ad8b9713fdb33dba71d4193aba3585b6",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/entity-view/test_view.c": "1fcd2693fe5ebaf25f9e122a39435b048d5a99a3f0178eb0c4f5cf5bb2f581eb",
+        "native-android/engine/entity-view/coh_view.h": "b053caae0decf3d6bb0b11230accdc4ab1c7bc8cbd871d904e634b041088d9ba",
+        "native-android/engine/entity-view/fixture_builder.py": "b86955dfeff125a03e9e58d08db23fe321836bdc7f108e2f4702f937b410ad64",
+        "native-android/engine/entity-view/check.py": "57d656f3aa3b4bd4efe241a92ffddffcd530b7b75d294a4391ab0a3b3bb32a6d",
+        "native-android/engine/entity-view/CONTRACT.md": "1fa13326b0703ca9355d09322f398a8fc322ecf36a17edef545cc47727bbebe7",
+        "native-android/engine/entity-view/slave_oracle.py": "4be05afd695625587ebd4b2bfbe944b44f7669bbe9febc7bd6c0ba7a15b8ed7e",
+        "native-android/engine/entity-view/slave-source-pins.json": "71f849c01d197aff9e34121a51d3149faf95a8053d413e569f2195d15cdfd4e3",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+      },
+      "source_review_no_blocker": true
+    }
+  },
+  "reviews": {
+    "geo_runtime_disk_order": [
+      "original comparator equivalence reproduces selected sorted rank by counting strictly-less base keys",
+      "selected equivalent keys/duplicates rejected;exact name identifies disk row",
+      "captured runtime model_row remains separate from additive geo_disk_row",
+      "all disk comparisons share16Mwork/cancel cap;no permutation allocation",
+      "model counts/material identities and exact geo source pins retained"
+    ],
+    "sky_slave": [
+      "source sky absent defaults0,1 preserved",
+      "allfloatwords finite;conditional slavePYR presence retained",
+      "source selection outside extracted statements remains unexecuted",
+      "reader/output/workspace/input disjoint and aggregate memory charged",
+      "atomic exact subtransaction end;no completepacket/actor/control permit"
+    ]
+  },
+  "independent_native_tests_reexecuted": false,
+  "world_authority": false,
+  "actor_publication": false,
+  "android_executed": false
+}

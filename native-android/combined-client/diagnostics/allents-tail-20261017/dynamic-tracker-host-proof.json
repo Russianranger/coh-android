@@ -1,0 +1,566 @@
+{
+  "schema": "coh-dynamic-original-traversal-qualification-v1",
+  "passed": true,
+  "source_pin": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+  "original_source_sha256_lf": {
+    "Common/group/groupdyn.c": "d0b60e22c3a603df165b81a27613c695fec0529a80a18b96d70a6ced4e4b9946",
+    "Common/group/grouputil.c": "079bc11d4ae23b3a9c0313cb88468024220f06298c3fc9e215c17b079aee9d7a",
+    "Common/group/group.c": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+    "Common/group/groupfileload.c": "5fc2891ed78626b9fa38b181fd5fc975b69f000bf2f79bbb3c5527c86503e8d7",
+    "Common/group/grouptrack.c": "5d148a21c41fe17d20196875a7708c2b6cfa745ced0fbc85981b10d0207ad677",
+    "Common/group/groupdyn.h": "3beff4340a596eecb6374fff890ec3e2ebbcb4f0c1f49de3130171ec37bc8c3a",
+    "Common/group/groupProperties.c": "88975a6c74122a64ded79a860d60592814cdf79579b6a39357bbca79066673a1",
+    "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+    "libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22"
+  },
+  "original_functions": {
+    "findBreakable": {
+      "path": "Common/group/groupdyn.c",
+      "sha256_lf": "1f9ccea88e9a14104e131293dfd1e27bd4f1a17bd3e0fd961749102292181813"
+    },
+    "groupProcessDefTrackerHelper": {
+      "path": "Common/group/grouputil.c",
+      "sha256_lf": "9724b20e3727084ecada982de02f1234c346698da02ff98fa163f88b2610cae0"
+    },
+    "groupProcessDefTracker": {
+      "path": "Common/group/grouputil.c",
+      "sha256_lf": "7d8784dc6ca1b433bc676cb4d55052412c025f554f02990bf5ae209f969e0a82"
+    },
+    "groupDynBuildBreakableList": {
+      "path": "Common/group/groupdyn.c",
+      "sha256_lf": "d2e10bcf2b44c6e1d59e69586025ad9dd08b21bc9ceb82fad5647a1dccd072ec"
+    }
+  },
+  "generated_original_source_sha256": "69e894f160d93e60c3d1046681612ca8c8f62541bef0bd8437d56777b1dcea7a",
+  "projection": {
+    "schema": "coh-dynamic-breakable-capture-observation-v1",
+    "passed": true,
+    "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "snapshot_sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+    "saved_definitions": 40225,
+    "active_names": 40232,
+    "health_definition_count": 9,
+    "health_definitions": [
+      {
+        "name": "grp_VMap-N1",
+        "file": 0,
+        "slot": 3298,
+        "properties": [
+          [
+            "Health",
+            "100-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      },
+      {
+        "name": "grp_VMap-N2",
+        "file": 0,
+        "slot": 3308,
+        "properties": [
+          [
+            "Health",
+            "75-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      },
+      {
+        "name": "grp_VMap-N3",
+        "file": 0,
+        "slot": 3318,
+        "properties": [
+          [
+            "Health",
+            "0-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      },
+      {
+        "name": "grp_VMap-N4",
+        "file": 0,
+        "slot": 3328,
+        "properties": [
+          [
+            "Health",
+            "17-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      },
+      {
+        "name": "grp_VMap-N5-B2",
+        "file": 0,
+        "slot": 3338,
+        "properties": [
+          [
+            "Health",
+            "50-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      },
+      {
+        "name": "grp_VMap-N5-B3",
+        "file": 0,
+        "slot": 3348,
+        "properties": [
+          [
+            "Health",
+            "33-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      },
+      {
+        "name": "grp_VMap-N5-B7",
+        "file": 0,
+        "slot": 3358,
+        "properties": [
+          [
+            "Health",
+            "65-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      },
+      {
+        "name": "grp_ArachMap-Sectors",
+        "file": 0,
+        "slot": 3359,
+        "properties": [
+          [
+            "Health",
+            "50-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      },
+      {
+        "name": "grp_wall_wall_shield",
+        "file": 0,
+        "slot": 4223,
+        "properties": [
+          [
+            "Health",
+            "100-",
+            0
+          ]
+        ],
+        "root_reachable": true
+      }
+    ],
+    "external": [
+      {
+        "name": "_cot_warpgate_base",
+        "flags": 33554432,
+        "breakable": false,
+        "child_breakable": false,
+        "root_reachable": false,
+        "witness": null
+      },
+      {
+        "name": "_cot_warpgate_glow",
+        "flags": 33554432,
+        "breakable": false,
+        "child_breakable": false,
+        "root_reachable": false,
+        "witness": null
+      },
+      {
+        "name": "_mmayhem_curtain_8_01c",
+        "flags": 33554432,
+        "breakable": false,
+        "child_breakable": false,
+        "root_reachable": true,
+        "witness": {
+          "root_slot": 7,
+          "names": [
+            "grp_Geometry",
+            "grp141198",
+            "grp1111559",
+            "grp1111558",
+            "grp1111557",
+            "grp1111499",
+            "grp_lab_lab",
+            "mmayhem_curtain_8_01",
+            "_mmayhem_curtain_8_01c"
+          ],
+          "child_ordinals": [
+            1,
+            2603,
+            0,
+            0,
+            0,
+            50,
+            9,
+            1
+          ]
+        }
+      },
+      {
+        "name": "_mmayhem_curtain_8_02c",
+        "flags": 33554432,
+        "breakable": false,
+        "child_breakable": false,
+        "root_reachable": false,
+        "witness": null
+      },
+      {
+        "name": "_mmayhem_curtain_8_03c",
+        "flags": 33554432,
+        "breakable": false,
+        "child_breakable": false,
+        "root_reachable": false,
+        "witness": null
+      },
+      {
+        "name": "_mmayhem_curtain_16_01c",
+        "flags": 33554432,
+        "breakable": false,
+        "child_breakable": false,
+        "root_reachable": false,
+        "witness": null
+      },
+      {
+        "name": "_mmayhem_curtain_16_02c",
+        "flags": 33554432,
+        "breakable": false,
+        "child_breakable": false,
+        "root_reachable": false,
+        "witness": null
+      }
+    ],
+    "derived_breakable_occurrence_count": 9,
+    "occurrences": [
+      {
+        "world_id": 1,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp91012",
+          "grp9112134",
+          "grp9112133",
+          "grp92915",
+          "grp92917",
+          "grp93017",
+          "grp90928",
+          "grp_RV_Map",
+          "grp_ArachMap-Sectors"
+        ],
+        "child_ordinals": [
+          1,
+          1394,
+          1,
+          1,
+          0,
+          0,
+          2,
+          10,
+          4,
+          1
+        ],
+        "file": 0,
+        "slot": 3359
+      },
+      {
+        "world_id": 2,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp91012",
+          "grp9112134",
+          "grp9112133",
+          "grp92915",
+          "grp92917",
+          "grp93017",
+          "grp90928",
+          "grp_RV_Map",
+          "grp_ArachMap-Sectors",
+          "grp_VMap-N1"
+        ],
+        "child_ordinals": [
+          1,
+          1394,
+          1,
+          1,
+          0,
+          0,
+          2,
+          10,
+          4,
+          1,
+          0
+        ],
+        "file": 0,
+        "slot": 3298
+      },
+      {
+        "world_id": 3,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp91012",
+          "grp9112134",
+          "grp9112133",
+          "grp92915",
+          "grp92917",
+          "grp93017",
+          "grp90928",
+          "grp_RV_Map",
+          "grp_ArachMap-Sectors",
+          "grp_VMap-N2"
+        ],
+        "child_ordinals": [
+          1,
+          1394,
+          1,
+          1,
+          0,
+          0,
+          2,
+          10,
+          4,
+          1,
+          1
+        ],
+        "file": 0,
+        "slot": 3308
+      },
+      {
+        "world_id": 4,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp91012",
+          "grp9112134",
+          "grp9112133",
+          "grp92915",
+          "grp92917",
+          "grp93017",
+          "grp90928",
+          "grp_RV_Map",
+          "grp_ArachMap-Sectors",
+          "grp_VMap-N3"
+        ],
+        "child_ordinals": [
+          1,
+          1394,
+          1,
+          1,
+          0,
+          0,
+          2,
+          10,
+          4,
+          1,
+          2
+        ],
+        "file": 0,
+        "slot": 3318
+      },
+      {
+        "world_id": 5,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp91012",
+          "grp9112134",
+          "grp9112133",
+          "grp92915",
+          "grp92917",
+          "grp93017",
+          "grp90928",
+          "grp_RV_Map",
+          "grp_ArachMap-Sectors",
+          "grp_VMap-N4"
+        ],
+        "child_ordinals": [
+          1,
+          1394,
+          1,
+          1,
+          0,
+          0,
+          2,
+          10,
+          4,
+          1,
+          3
+        ],
+        "file": 0,
+        "slot": 3328
+      },
+      {
+        "world_id": 6,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp91012",
+          "grp9112134",
+          "grp9112133",
+          "grp92915",
+          "grp92917",
+          "grp93017",
+          "grp90928",
+          "grp_RV_Map",
+          "grp_ArachMap-Sectors",
+          "grp_VMap-N5-B2"
+        ],
+        "child_ordinals": [
+          1,
+          1394,
+          1,
+          1,
+          0,
+          0,
+          2,
+          10,
+          4,
+          1,
+          4
+        ],
+        "file": 0,
+        "slot": 3338
+      },
+      {
+        "world_id": 7,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp91012",
+          "grp9112134",
+          "grp9112133",
+          "grp92915",
+          "grp92917",
+          "grp93017",
+          "grp90928",
+          "grp_RV_Map",
+          "grp_ArachMap-Sectors",
+          "grp_VMap-N5-B3"
+        ],
+        "child_ordinals": [
+          1,
+          1394,
+          1,
+          1,
+          0,
+          0,
+          2,
+          10,
+          4,
+          1,
+          5
+        ],
+        "file": 0,
+        "slot": 3348
+      },
+      {
+        "world_id": 8,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp91012",
+          "grp9112134",
+          "grp9112133",
+          "grp92915",
+          "grp92917",
+          "grp93017",
+          "grp90928",
+          "grp_RV_Map",
+          "grp_ArachMap-Sectors",
+          "grp_VMap-N5-B7"
+        ],
+        "child_ordinals": [
+          1,
+          1394,
+          1,
+          1,
+          0,
+          0,
+          2,
+          10,
+          4,
+          1,
+          6
+        ],
+        "file": 0,
+        "slot": 3358
+      },
+      {
+        "world_id": 9,
+        "root_slot": 7,
+        "names": [
+          "grp_Geometry",
+          "grp141198",
+          "grp_wall_wall_shield"
+        ],
+        "child_ordinals": [
+          1,
+          2606
+        ],
+        "file": 0,
+        "slot": 4223
+      }
+    ],
+    "walk_work": 4670,
+    "scope": "read-only independent raw property/topology projection using already captured source pins; original tracker occurrence oracle still required before admission",
+    "dynamic_status_admitted": false,
+    "world_authority": false,
+    "actor_publication": false
+  },
+  "original_traversal_occurrences": 9,
+  "original_tracker_definition_indexes": [
+    3359,
+    3298,
+    3308,
+    3318,
+    3328,
+    3338,
+    3348,
+    3358,
+    4223
+  ],
+  "preload_callback_calls_on_saved_nonpreload": 19,
+  "synthetic_tracker_opens": 11,
+  "status_abi_probes": {
+    "i386_gcc": {
+      "object_sha256": "3bedb6bb7ddcf27180b49e86485f0b32a0d039800eabb9fb6816b90ca217f41f",
+      "layout_bytes_sha256": "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880",
+      "size": 1,
+      "all256states_verified": true,
+      "runtime_executed": false,
+      "msvc_or_windows_compiler_executed": false
+    },
+    "i386_gcc_microsoft_bitfields": {
+      "object_sha256": "3bedb6bb7ddcf27180b49e86485f0b32a0d039800eabb9fb6816b90ca217f41f",
+      "layout_bytes_sha256": "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880",
+      "size": 1,
+      "all256states_verified": true,
+      "runtime_executed": false,
+      "msvc_or_windows_compiler_executed": false
+    }
+  },
+  "scope": "whole original callback and pre-order traversal/build; synthetic trackerOpen/arrayallocation and property-derived input flags; not original trackerOpen/lazy-load execution",
+  "original_oracle_sanitized": false,
+  "dynamic_status_admitted": false,
+  "world_authority": false,
+  "actor_publication": false
+}

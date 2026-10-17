@@ -17,7 +17,7 @@ for producer/native wire qualification and confers no digest or resource trust.
 
 For each unique GEO, the index acquires a protected `CohAssetBlob`, hashes its
 actual bytes, opens its bounded header workspace, and checks the selected exact
-model name and row, GEO version, vertex/triangle counts and every original
+model name and original sorted runtime row, GEO version, vertex/triangle counts and every original
 material partition's texture ID/name/triangle count. Equivalent case-insensitive
 base model keys within one GEO are refused as ambiguous. Header support for a
 version, including v8, is not draw/material support. Unimplemented model tricks,
@@ -74,8 +74,9 @@ them. An unchanged generation also preserves the exact selected loader identity.
 Source model min/max, scale and radius are exposed separately from the actual
 GEO row; they are not silently replaced by file values or used as qualified bounds.
 
-Final host qualification compares 6,942 original lookup cases and passes 21,840
-source/4096-row controls plus 18,699 authentic-GEO controls in each release,
+Final host qualification compares 6,942 original lookup cases, 6,548 original
+model-sort comparisons, and passes 21,849 source/4096-row controls plus 18,709
+authentic-GEO controls in each release,
 ASan and UBSan mode. The authentic GEO is the 1,289-byte v8
 `data/object_library/worldnpcs/praetorian_box/g_praetorianbox_open.geo`, SHA256
 `218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5`,
@@ -90,3 +91,19 @@ The consumer additionally enforces the exact producer limits before any variable
 record walk: 128 KiB per record and 256 material partitions, with source/trick/
 texture names bounded to 256 bytes. The final strict-record receipt binds these
 controls and the independently authenticated v8 fixture.
+
+The source observer records the pointer row after original `geoSortModels`, while
+`coh_asset_geo_model` exposes disk order. These identities are separate:
+`model_row` retains the observed runtime rank and `geo_disk_row` identifies the
+verified disk row (UINT32_MAX before asset admission). Preparation computes the
+unique case-insensitive base-key rank using unchanged original comparator
+semantics and requires exact full model-name equality. Raw model names retain
+directory bytes here; group lookup path stripping is a separate operation. A
+selected equivalent base key is refused, since original qsort does not establish
+stable identity between equal keys. No permutation allocation is needed.
+
+The original loader's zero-texture-table `white` substitution is observed source
+behavior, but the protected native GEO reader currently cannot admit that input.
+Such rows remain unsupported and fail closed; this module does not synthesize a
+texture or grant material authority. This limitation does not alter source-only
+catalog/graph/resource structural joins.

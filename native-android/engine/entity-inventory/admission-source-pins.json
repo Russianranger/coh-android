@@ -1,0 +1,8 @@
+{
+  "Common/entity/Invention.h": "ce5bfcf5d8f439e0345de8028fbe70b66c7266311b494a53cdcea279dcbe14ed",
+  "Common/entity/Concept.h": "a4044781c55262f908610de9a8e2778e7d1203f791dac51cde849b16869ac959",
+  "Common/entity/boost.h": "15048e49fa5e0a7673e55fbda8ca9889787a79ce60c596b06ca59731267e9fa9",
+  "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+  "Common/entity/RewardSlot.c": "8ff29155470cc4d7b50328ab8568f33c3359eef0f2aa759de5002514710ee8b4",
+  "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091"
+}

@@ -1,0 +1,27 @@
+{
+  "source_commit": "e48e2f587516ed995a4307e2a15dd2f27c289ab9",
+  "source_sha256": {
+    "native-android/engine/entity-view/coh_view.c": "52f2f524426e3b376abb314fb9015118ad8b9713fdb33dba71d4193aba3585b6",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-view/test_view.c": "1fcd2693fe5ebaf25f9e122a39435b048d5a99a3f0178eb0c4f5cf5bb2f581eb",
+    "native-android/engine/entity-view/coh_view.h": "b053caae0decf3d6bb0b11230accdc4ab1c7bc8cbd871d904e634b041088d9ba",
+    "native-android/engine/entity-view/fixture_builder.py": "b86955dfeff125a03e9e58d08db23fe321836bdc7f108e2f4702f937b410ad64",
+    "native-android/engine/entity-view/check.py": "57d656f3aa3b4bd4efe241a92ffddffcd530b7b75d294a4391ab0a3b3bb32a6d",
+    "native-android/engine/entity-view/CONTRACT.md": "1fa13326b0703ca9355d09322f398a8fc322ecf36a17edef545cc47727bbebe7",
+    "native-android/engine/entity-view/slave_oracle.py": "4be05afd695625587ebd4b2bfbe944b44f7669bbe9febc7bd6c0ba7a15b8ed7e",
+    "native-android/engine/entity-view/slave-source-pins.json": "71f849c01d197aff9e34121a51d3149faf95a8053d413e569f2195d15cdfd4e3",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "checked_committed_bytes_equal_tested_inputs": true,
+  "tested_worktree_head": "b1cfdb327ffa08532f19539b0f2631ca59c3bd6b",
+  "sky_provider_commit": "c0cb9f094",
+  "original_whole_outer_executed": false,
+  "slave_control_client_selection_executed": false,
+  "complete_initial_update": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false
+}

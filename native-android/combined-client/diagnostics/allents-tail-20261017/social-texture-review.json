@@ -1,0 +1,117 @@
+{
+  "schema": "coh-f-social-texture-independent-source-review-v1",
+  "passed": true,
+  "review_scope": "read-only source/lifetime/budget/rollback review and exact tested-byte receipts; no redundant sanitizer execution",
+  "modules": {
+    "team": {
+      "source_commit": "3852543cc",
+      "tested_source_sha256": {
+        "native-android/engine/entity-team/coh_team.c": "5b63f177612fa7dd3f13f0a1fdbacd2e517602234aa797c1763730a790bcb2f6",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/entity-team/test_team.c": "17d308abca91ec17befdeebcbfe851ed9163b2e1ac09e1b94c9878d72931c566",
+        "native-android/engine/entity-team/coh_team.h": "f781bc1d71bb179573d9f9a99af23e546820060fe8fe5b90cd87aec058685862",
+        "native-android/engine/entity-team/fixture_builder.py": "55fa4244a549c81cbe7d39c6cd12333948eeeafa435f6277bfdb22ff221739cc",
+        "native-android/engine/entity-team/check.py": "c11afc41cae91996bda290a129f9e68fd5ffd257c356f5aa616662298df5ee73",
+        "native-android/engine/entity-team/CONTRACT.md": "ee8389cdae31c1cde9077943ff06d06061c92b3e0a693c9602d4376117c45a19",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+      },
+      "receipt_sha256": "9330d4a5470d0bcdb12c1df37e42884eed0e8189cdbaefc0df5d9dc4fa47cd30",
+      "checks_per_reported_mode": 281427,
+      "source_review_no_blocker": true
+    },
+    "superstats": {
+      "source_commit": "b63538231",
+      "tested_source_sha256": {
+        "native-android/engine/entity-superstats/coh_superstats.c": "cdb3a4850670fd821642ba0866bd24f075db4780b57892cf85a2db22525f5471",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/entity-superstats/test_superstats.c": "2dfc22129139665272cabb4eac906db757175e722c78edf42d4da53a188e5248",
+        "native-android/engine/entity-superstats/coh_superstats.h": "81766ced2f884b709f9ad1ededb780612296f534062083edf3c32f69e2c7748d",
+        "native-android/engine/entity-superstats/fixture_builder.py": "cf4b82f84f406c1b31af27565cef66e7ba79c0380f2d4dab1bd145d34b776686",
+        "native-android/engine/entity-superstats/check.py": "e2105ec2b5568e490bf47333684efb7bf2bc8e04c66e199af501a54e4610cb92",
+        "native-android/engine/entity-superstats/CONTRACT.md": "3d3d016c74ad32db8d29e62a261bfe62f75b7343918f3d00179c5bc710ea2e56",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+      },
+      "receipt_sha256": "a812c7f82b1b75dfce60a2852ca8693543b97a7f9886015e224db9ada8be75c0",
+      "checks_per_reported_mode": 68604,
+      "source_review_no_blocker": true
+    },
+    "social": {
+      "source_commit": "bdd2abb25",
+      "tested_source_sha256": {
+        "native-android/engine/entity-social/coh_social.c": "abef1ad96a1923a5c632aac23678ee8cff4706616064c842a4bd0e043d72df01",
+        "native-android/engine/entity-team/coh_team.c": "5b63f177612fa7dd3f13f0a1fdbacd2e517602234aa797c1763730a790bcb2f6",
+        "native-android/engine/entity-superstats/coh_superstats.c": "cdb3a4850670fd821642ba0866bd24f075db4780b57892cf85a2db22525f5471",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/entity-social/test_social.c": "3a38eeec951ec2a9074c26e176f2dfc344f0fc7cb3e79d84b5faae2a52f744ec",
+        "native-android/engine/entity-team/coh_team.h": "f781bc1d71bb179573d9f9a99af23e546820060fe8fe5b90cd87aec058685862",
+        "native-android/engine/entity-team/fixture_builder.py": "55fa4244a549c81cbe7d39c6cd12333948eeeafa435f6277bfdb22ff221739cc",
+        "native-android/engine/entity-superstats/coh_superstats.h": "81766ced2f884b709f9ad1ededb780612296f534062083edf3c32f69e2c7748d",
+        "native-android/engine/entity-superstats/fixture_builder.py": "cf4b82f84f406c1b31af27565cef66e7ba79c0380f2d4dab1bd145d34b776686",
+        "native-android/engine/entity-social/coh_social.h": "44e83b7172a86b904db0e4297ca965420d20f3b1f803c765d87c4bfe201ac291",
+        "native-android/engine/entity-social/fixture_builder.py": "2e299d27f0281517d7041e7aeee0473baa1ca465946e4fa7cd78f1e95622d98c",
+        "native-android/engine/entity-social/check.py": "b1848feebc32c99deb9e5c282afa1c9015d80f38c715ec2d2372685a24384fa4",
+        "native-android/engine/entity-social/CONTRACT.md": "e2df58a76b933d0dcf80cb2c782a95bf3d3f859da4ab51b2f56a1e175aef6592",
+        "native-android/engine/entity-social/phase-order-source-pins.json": "71f849c01d197aff9e34121a51d3149faf95a8053d413e569f2195d15cdfd4e3",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+      },
+      "receipt_sha256": "ce8644fccabd10414bf7af08c4d7a52d99e788baee9dc163896444be6e5c3335",
+      "checks_per_reported_mode": 43055,
+      "source_review_no_blocker": true
+    },
+    "texture": {
+      "source_commit": "f97af99fdbd2dfe5670f999ef71d9362aa8b4910",
+      "tested_source_sha256": {
+        "native-android/engine/world-render-adapter/coh_wr_sampler.c": "a93ccc9b3307338ff716641630cb3d74ea8d81eb71d756b73e474c717d41f844",
+        "native-android/engine/world-render-adapter/coh_wr_sampler.h": "31051b98834cf18c313994c452d85313a27a91419d27cac99babdd177fc8cfdb",
+        "native-android/engine/world-render-adapter/coh_wr_texture.c": "191ebf02dead0fa3657944c18e97d1cd6ad482fc2432d144b58d86f0efbbe844",
+        "native-android/engine/world-render-adapter/coh_wr_texture.h": "069ac1de9a4f6e7128ff779ea44d01894d48769500784c9d97056ce0eaca22d0",
+        "native-android/engine/world-render-adapter/tests/test_texture_owner.c": "5c8feff016662ccfc98ad9b18bea9a61036ab8af825d916a8fdda0cdc07d85a3",
+        "native-android/engine/world-render-adapter/tests/test_sampler.c": "7c60036255e564c5c74bc6441ab5dcc6adf0710d41669afbbfc38217d31fca33",
+        "native-android/engine/world-render-adapter/tests/test_sampler_texture.c": "3706f21b0d598e2f5752bc49d54366760b0cb9682a367c2e3960f1988a4c75d4",
+        "native-android/engine/world-render-adapter/check_sampler.py": "68a4ad985d64cf8b4ec0391ae1f9e390a8074634d33112b10a95fe2aa8358dff",
+        "native-android/engine/world-render-adapter/sampler-source-pins.json": "9bbf496d118556ce692ff4641713b358eebed6e17f8c083053cf63eb327a467f",
+        "native-android/engine/world-render-adapter/sampler-authentic-pins.json": "a80887dacabe98deb119ac948e498fbba7d51cf97a1057c96f79e22df0d849bc",
+        "native-android/engine/world-render-adapter/acquire_sampler_texture.py": "b4d1a1ae94b3ba3edcaab2201b28bec2caa22cf06632d99231d2755aa88a3dd0",
+        "native-android/engine/world-render-adapter/CLIENT_RESOURCE_BINDING.md": "2aaad5b27ea1d1038c004b05445557ad3566f4c2db820322722b5b215cc899c3",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+        "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+        "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+        "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+        "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+        "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+        "native-android/tools/material_fixture/acquire.py": "12fad465c6c087fa0a2bdb6917d1c6fd619926f83378efd86e3f6ddcabcc95da"
+      },
+      "receipt_sha256": "aee136d44f1b37e0cc60bd7069afe0398fc782df1ba852e757d96aa44318b84a",
+      "checks_per_reported_mode": 146,
+      "source_review_no_blocker": true
+    }
+  },
+  "reviewed_contracts": [
+    "team raw conditional field presence,22bit DBID,8/48caps and exact order; previous/local names not applied",
+    "superstats unconditional permissionbyte alignment with truncated-padding refusal;150member/7rank/10ally and bounded text",
+    "social child retained charging once with sequential shared team workspace;skip flags preserve presence and stage atomically",
+    "texture acquiredblob path/generation/SHA precedes parse;entire loader reservation charged before acquire;single RGBA chain allocation and balanced pin cleanup;borrowed mips outlive trim until explicit retirement"
+  ],
+  "preconditions": [
+    "opaque loader configured total_bytes<=reservation; external resources/digest/GPU scratch charged by caller",
+    "single-owner serialized control access and borrow lifetimes respected",
+    "no dictionary/material/actor/world/ACK authority from raw staging or CPU resource success"
+  ],
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "world_authority": false
+}

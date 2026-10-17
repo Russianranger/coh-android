@@ -60,3 +60,5 @@ CohStatus coh_catalog_snapshot_view(const CohCatalogSnapshot *s,CohBytes *bytes,
     if(!s||!bytes||!binding||!report)return COH_INVALID;
     *bytes=(CohBytes){s->bytes,s->size};*binding=s->binding;*report=s->report;return COH_OK;
 }
+
+CohStatus coh_catalog_snapshot_catalog(const CohCatalogSnapshot *s,CohBytes *out){if(!s||!out)return COH_INVALID;return coh_catalog_owner_bytes(s->catalog,out);}

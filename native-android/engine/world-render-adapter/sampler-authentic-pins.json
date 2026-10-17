@@ -1,0 +1,54 @@
+{
+  "virtual": "data/texture_library/npcs/objects/praetorian_box/box-1.texture",
+  "payload": {
+    "bytes": 43990,
+    "sha256": "c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a"
+  },
+  "source": {
+    "bytes": 43990,
+    "cached_header_bytes": 158,
+    "cached_header_id": 804,
+    "cached_header_sha256": "20e2c79111604d8f73117bfdb09702810fa6104122ec8774cb0745819148cedc",
+    "cached_header_verified": true,
+    "compressed": true,
+    "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+    "md5_table": "49f5676040fe501fcf96d473f90f734e",
+    "offset": 41347052,
+    "path": "texture_library/NPCS/Objects/Praetorian_Box/Box-1.texture",
+    "sha256": "c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a",
+    "source_archive": "stage1c.pigg",
+    "source_archive_bytes": 201809454,
+    "source_content_range": "bytes 41347052-41368691/201809454",
+    "source_download_receipt": "a0218",
+    "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+    "source_member_range": "bytes 41347052-41368691/201809454",
+    "source_metadata_sha256": "a9056cb38da69585a29898c8b7768bf4875caa9281446b48ae29f16a9854403b",
+    "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+    "stored_bytes": 21640,
+    "stored_sha256": "a631db6019ea25cc7dfb919ef15681d1e59fc28649a4c72bbd80e2da514adf28",
+    "texture_header": {
+      "data_bounds_verified": true,
+      "header_bytes": 158,
+      "height": 256,
+      "original_name": "texture_library/NPCS/Objects/Praetorian_Box/Box-1.dds",
+      "struct_bytes": 32,
+      "width": 256
+    }
+  },
+  "manifest_sha256": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+  "zip_crc32": "6db64911",
+  "zip_header_offset": 237337817,
+  "zip_compressed_bytes": 21634,
+  "zip_method": 8,
+  "outer_full_sha_verified": false,
+  "inner_full_sha_verified": false,
+  "payload_sha_verified": true,
+  "original_pigg_reacquired": false,
+  "release": {
+    "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+    "outer_expected_bytes": 1630092780,
+    "inner_member": "payloads/runtime/client-visual-assets.zip",
+    "inner_expected_bytes": 859075775
+  }
+}

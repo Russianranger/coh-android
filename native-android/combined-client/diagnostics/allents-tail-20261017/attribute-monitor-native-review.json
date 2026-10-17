@@ -1,0 +1,66 @@
+{
+  "schema": "coh-f-attribute-monitor-source-review-v1",
+  "passed": true,
+  "source_commit": "5c89e3b46",
+  "evidence_commit": "a5865ccd3",
+  "tested_source_sha256": {
+    "native-android/engine/entity-attributes/coh_attrib_monitor.c": "0e94c3c831be1cd2917cdf2c0ea808dbab585c103810418f3eb75278d13b945a",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-attributes/test_attrib_monitor.c": "15b815c805ca486898e28557985cc5ab38e5b6c6a89600bee513ac7a915f4089",
+    "native-android/engine/entity-attributes/coh_attrib_monitor.h": "47ba193e0620578187d92d0f8504dfc61d1205893f1238ab81a546dca3cebe3f",
+    "native-android/engine/entity-attributes/fixture_builder.py": "abde515b64cf641d6efcb3ad9cb5420bf978c79c8a6f5b89e1fd4e00091e9d1a",
+    "native-android/engine/entity-attributes/check.py": "f1fc6d486ddcb51f4f0005ad0be74a1d83996059aba914f168d1e914870f8bc4",
+    "native-android/engine/entity-attributes/CONTRACT.md": "7aebec1c652f3ed8ecf3b2f7d72237e199acc3f7cfa920f2fd2d4a2862bf56c9",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "receipt_sha256": "44a8b859b19633e0321999f5d02463e13517c3d953e301042037c61e642b8c1f",
+  "checks_reported": {
+    "release": {
+      "passed": true,
+      "checks": 310902,
+      "source_fixtures": 120,
+      "truncations": 61536,
+      "mutations": 62304,
+      "output_bytes": 200,
+      "workspace_bytes": 200,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 310902,
+      "source_fixtures": 120,
+      "truncations": 61536,
+      "mutations": 62304,
+      "output_bytes": 200,
+      "workspace_bytes": 200,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 310902,
+      "source_fixtures": 120,
+      "truncations": 61536,
+      "mutations": 62304,
+      "output_bytes": 200,
+      "workspace_bytes": 200,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    }
+  },
+  "review": [
+    "exact11taggedslots,source2bitbuffwords andfiniteIEEE32rawvalues",
+    "fullmode1refusesatomically beforedictionarydependentdata",
+    "pairwisealiaschecks,aggregateinputoutputworkspacestackretainedbudget",
+    "readerandoutputcommitonlyafterentiresubtransaction",
+    "noUIpreviousstate,target,dictionary,actororACKauthority"
+  ],
+  "independent_native_tests_reexecuted": false,
+  "android_executed": false,
+  "physical_thor_accepted": false
+}

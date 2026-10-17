@@ -1,0 +1,13 @@
+{
+  "source_commit": "e036e4de3be0f40c40dd96e27c79641475fb7377",
+  "host_receipt_sha256": "132b38a1de432ed046f71f5c14fcfaa3b967d7f8d925eabcfe0bbc14f145c562",
+  "source_dependency_hashes_reverified": true,
+  "host_release_asan_ubsan": true,
+  "original_source_oracle": true,
+  "android_build": false,
+  "android_execution": false,
+  "gles_execution": false,
+  "physical_thor": false,
+  "real_server_or_client": false,
+  "material_or_world_authority": false
+}

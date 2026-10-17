@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "passed": true,
+  "build_only": true,
+  "invalid_argument_refusal_smoke_passed": true,
+  "source_sha256": {
+    "native-android/engine/scenecatalog/validate_resource_join.c": "1677055ddb9d99964a138dd53260f050cf52e672eaf1ec09b33c3b13ff4dd4f1",
+    "native-android/engine/scenecatalog/coh_resource_join.c": "81252befa2169731780ce39ab26de66f251d87a1dc4a2dcd8fa792a82949f576",
+    "native-android/engine/scenecatalog/coh_resource_index.c": "a269958e33d3590965d592e095cfbf7949cb1f6b4888cda9bbbfb2b8b2676d88",
+    "native-android/engine/scenecatalog/coh_catalog_snapshot.c": "b2068cec02b16f357db0abafe94862103a22faf25256e282ac3b0d84bc1bf6de",
+    "native-android/engine/scenecatalog/coh_catalog_owner.c": "f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7",
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66",
+    "native-android/engine/scenegraph/runtime_snapshot.c": "941ad1cb6c6bcabaf6033d9408daf3bda5624fbb80453f169b6b7e880fc443f2",
+    "native-android/engine/scenegraph/tests/runtime_matrix_bridge.c": "c9f1070d61fb272716ed0b390a58da9a2715f266a661dd799b3fd85e25a0fe93",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+  },
+  "binary_sha256": "5b0bea98ce5f5499ae99d69adf26be04a81ac5f620324cf4dbb60d07bc1dfa33",
+  "actual_resource_capture_executed": false,
+  "assets_admitted": false,
+  "world_authority": false,
+  "scope": "Host diagnostic linked and malformed invocation refused; actual new capture awaits retained trusted binding."
+}

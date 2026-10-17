@@ -6,14 +6,14 @@
 #define UNRESOLVED_CLIENT 1u
 typedef struct {const CohAssetBlob *blob;uint8_t *workspace;size_t workspace_bytes;CohAssetGeo geo;const char *path;} Geo;
 typedef struct {uint8_t *record;size_t bytes;uint32_t geo;CohResourceView view;} Row;
-struct CohResourceIndex {CohResourceBinding binding;CohAssetLoader *loader;Row *rows;Geo *geos;uint32_t count,geo_count,work;size_t owned_bytes;};
+struct CohResourceIndex {CohResourceBinding binding;CohResourceReport report;CohAssetLoader *loader;Row *rows;Geo *geos;uint32_t count,geo_count,work;size_t owned_bytes;};
 static uint32_t u32(const uint8_t *p){return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
 static int nz(const uint8_t *p){uint8_t n=0;for(unsigned i=0;i<32;i++)n|=p[i];return n!=0;}
 static unsigned fold(unsigned c){return c>='A'&&c<='Z'?c+32:c;}
 static int ascii(const char *s,size_t cap,size_t *len){if(!s)return 0;size_t n=0;while(n<cap&&s[n]){unsigned c=(unsigned char)s[n];if(c<32||c>126)return 0;n++;}if(!n||n==cap)return 0;*len=n;return 1;}
 static CohStatus key(const char *s,char out[256],unsigned kind){char b[256];size_t n;if(!out||!ascii(s,256,&n))return COH_INVALID;memcpy(b,s,n+1);
     if(kind==0&&b[n-1]=='&'){char *p=strrchr(b,'_');if(p)*p=0;}
-    char *begin=b;if(kind!=2){char *p=strrchr(b,'/');if(p)begin=p+1;}
+    char *begin=b;if(kind==0||kind==1){char *p=strrchr(b,'/');if(p)begin=p+1;}
     char *suffix=strstr(begin,"__");if(kind==2){if(suffix)begin=suffix+2;}else if(suffix)*suffix=0;
     if(!*begin)return COH_INVALID;
     size_t m=strlen(begin);char result[256];for(size_t i=0;i<=m;i++)result[i]=(char)fold((unsigned char)begin[i]);memcpy(out,result,m+1);return COH_OK;
@@ -34,7 +34,7 @@ static CohStatus strings(Row *r){const uint8_t *p=r->record;size_t at=HEADER;con
 }
 static CohStatus decode(Row *r,uint32_t generation){
     const uint8_t *p=r->record;if(r->bytes<HEADER||r->bytes>COH_RESOURCE_RECORD_MAX||memcmp(p,"COHRES01",8)||u32(p+8)!=1||u32(p+12)!=HEADER||u32(p+16)!=r->bytes||u32(p+20)!=generation||u32(p+44)!=1)return COH_INVALID;
-    r->view.owner_kind=u32(p+24);r->view.file=u32(p+28);r->view.slot=u32(p+32);r->view.original_id=u32(p+36);r->view.model_present=u32(p+40);r->view.model_row=u32(p+68);r->view.geo_version=u32(p+72);r->view.unresolved_client_semantics=UNRESOLVED_CLIENT;
+    r->view.owner_kind=u32(p+24);r->view.file=u32(p+28);r->view.slot=u32(p+32);r->view.original_id=u32(p+36);r->view.model_present=u32(p+40);r->view.model_row=u32(p+68);r->view.geo_version=u32(p+72);r->view.geo_disk_row=UINT32_MAX;r->view.unresolved_client_semantics=UNRESOLVED_CLIENT;
     r->view.gld_loadstate=u32(p+76);r->view.model_loadstate=u32(p+80);r->view.model_flags=u32(p+84);
     r->view.trick_present=u32(p+100);r->view.trick_info_present=u32(p+104);r->view.trick_flags[0]=u32(p+108);r->view.trick_flags[1]=u32(p+112);r->view.info_model_flags=u32(p+116);r->view.info_group_flags=u32(p+120);
     for(unsigned n=0;n<3;n++){uint32_t bits=u32(p+128+4*n);memcpy(&r->view.source_min[n],&bits,4);bits=u32(p+140+4*n);memcpy(&r->view.source_max[n],&bits,4);bits=u32(p+152+4*n);memcpy(&r->view.source_scale[n],&bits,4);}uint32_t radius=u32(p+164);memcpy(&r->view.source_radius,&radius,4);
@@ -51,10 +51,17 @@ static CohStatus decode(Row *r,uint32_t generation){
 }
 CohStatus coh_resource_source_view(CohBytes bytes,uint32_t generation,CohResourceView *out){if(!out||!bytes.data||!generation)return COH_INVALID;Row r;memset(&r,0,sizeof(r));r.record=(uint8_t *)bytes.data;r.bytes=bytes.size;CohStatus st=decode(&r,generation);if(st==COH_OK)*out=r.view;return st;}
 static CohStatus work(CohResourceIndex *i,CohCancel cancel){if(i->work==16777216u)return COH_LIMIT;i->work++;if(cancel.poll&&cancel.poll(cancel.context))return COH_CANCELLED;return COH_OK;}
-static CohStatus verify_model(Row *r,const Geo *g,CohResourceIndex *i,CohCancel cancel){const uint8_t *p=r->record;CohAssetGeoModel model;CohStatus st=coh_asset_geo_model(&g->geo,r->view.model_row,&model);if(st!=COH_OK)return st;
-    if(strcmp(model.name,r->view.model_name)||g->geo.version!=r->view.geo_version||model.vertex_count!=u32(p+88)||model.triangle_count!=u32(p+92)||model.material_count!=u32(p+96))return COH_STATE;
-    char selected[256];if(coh_resource_model_key(model.name,selected)!=COH_OK)return COH_INVALID;
-    for(uint32_t n=0;n<g->geo.model_count;n++){if((st=work(i,cancel))!=COH_OK)return st;CohAssetGeoModel m;char other[256];if(coh_asset_geo_model(&g->geo,n,&m)!=COH_OK||coh_resource_model_key(m.name,other)!=COH_OK)return COH_INVALID;if(n!=r->view.model_row&&!strcmp(other,selected))return COH_STATE;}
+typedef struct {char selected[256];uint32_t runtime,disk,matches;} Rank;
+static CohStatus rank_add(Rank *rank,const char *query,const char *name,uint32_t row){char other[256];CohStatus st=key(name,other,3);if(st!=COH_OK)return st;int cmp=strcmp(other,rank->selected);if(cmp<0)rank->runtime++;if(!cmp){rank->matches++;if(!strcmp(name,query))rank->disk=row;}return COH_OK;}
+CohStatus coh_resource_model_order(const char *query,const char *const *names,uint32_t count,CohCancel cancel,uint32_t *runtime,uint32_t *disk){if(!names||!count||count>COH_RESOURCE_ROWS_MAX||!runtime||!disk||runtime==disk)return COH_INVALID;Rank rank={{0},0,UINT32_MAX,0};CohStatus st=key(query,rank.selected,3);if(st!=COH_OK)return st;for(uint32_t n=0;n<count;n++){if(cancel.poll&&cancel.poll(cancel.context))return COH_CANCELLED;if((st=rank_add(&rank,query,names[n],n))!=COH_OK)return st;}if(rank.matches!=1||rank.disk==UINT32_MAX)return COH_STATE;*runtime=rank.runtime;*disk=rank.disk;return COH_OK;}
+static CohStatus verify_model(Row *r,const Geo *g,CohResourceIndex *i,CohCancel cancel){const uint8_t *p=r->record;CohAssetGeoModel model={0};CohStatus st;Rank rank={{0},0,UINT32_MAX,0};if((st=key(r->view.model_name,rank.selected,3))!=COH_OK)return st;
+    /* Runtime gld->modelheader.models has been geoSortModels-sorted. The public
+     * GEO reader exposes raw disk rows. Unique base-key rank reproduces that
+     * original permutation without allocating or trusting a caller index. */
+    for(uint32_t n=0;n<g->geo.model_count;n++){if((st=work(i,cancel))!=COH_OK)return st;CohAssetGeoModel m;if((st=coh_asset_geo_model(&g->geo,n,&m))!=COH_OK)return st;if((st=rank_add(&rank,r->view.model_name,m.name,n))!=COH_OK)return st;if(!strcmp(m.name,r->view.model_name))model=m;}
+    if(rank.matches!=1||rank.disk==UINT32_MAX||rank.runtime!=r->view.model_row)return COH_STATE;
+    if(g->geo.version!=r->view.geo_version||model.vertex_count!=u32(p+88)||model.triangle_count!=u32(p+92)||model.material_count!=u32(p+96))return COH_STATE;
+    r->view.geo_disk_row=rank.disk;
     size_t at=HEADER;unsigned offs[]={48,52,56,60,64,124};for(unsigned n=0;n<6;n++)at+=u32(p+offs[n]);
     for(uint32_t n=0;n<model.material_count;n++){CohAssetGeoMaterial part;st=coh_asset_geo_material(&g->geo,&model,n,&part);if(st!=COH_OK)return st;uint32_t id=u32(p+at),tris=u32(p+at+4),bytes=u32(p+at+8);at+=12;if(id!=part.texture_id||tris!=part.triangle_count||strcmp((const char *)p+at,part.texture_name))return COH_STATE;at+=bytes;}
     r->view.model=model;return COH_OK;
@@ -92,8 +99,11 @@ CohStatus coh_resource_index_build(const CohResourceIndex *old,CohAssetLoader *l
     }
     qsort(i->rows,i->count,sizeof(Row),rowcmp);for(uint32_t n=1;n<i->count;n++)if(!rowcmp(&i->rows[n-1],&i->rows[n])){st=COH_STATE;goto fail;}
     if(old&&binding->asset_generation==old->binding.asset_generation){if(old->count!=i->count){st=COH_STATE;goto fail;}for(uint32_t n=0;n<i->count;n++)if(old->rows[n].bytes!=i->rows[n].bytes||memcmp(old->rows[n].record,i->rows[n].record,i->rows[n].bytes)){st=COH_STATE;goto fail;}else if(i->rows[n].view.model_present){CohAssetId before=coh_asset_identity(old->geos[old->rows[n].geo].blob),after=coh_asset_identity(i->geos[i->rows[n].geo].blob);if(before.generation!=after.generation||strcmp(before.path,after.path)){st=COH_STATE;goto fail;}}}
-    *report=(CohResourceReport){i->count,i->geo_count,i->work,i->owned_bytes,fixed+i->owned_bytes};*out=i;return COH_OK;
+    i->report=(CohResourceReport){i->count,i->geo_count,i->work,i->owned_bytes,fixed+i->owned_bytes};*report=i->report;*out=i;return COH_OK;
 fail:coh_resource_index_free(i);return st;
 }
 CohStatus coh_resource_index_view(const CohResourceIndex *i,uint32_t k,uint32_t f,uint32_t s,CohResourceView *out){if(!i||!out)return COH_INVALID;const Row *r=find(i,k,f,s);if(!r)return COH_NOT_FOUND;*out=r->view;return COH_OK;}
 CohStatus coh_resource_index_material(const CohResourceIndex *i,uint32_t k,uint32_t f,uint32_t s,uint32_t part,CohAssetGeoMaterial *out){if(!i||!out)return COH_INVALID;const Row *r=find(i,k,f,s);if(!r)return COH_NOT_FOUND;if(!r->view.model_present)return COH_NOT_FOUND;return coh_asset_geo_material(&i->geos[r->geo].geo,&r->view.model,part,out);}
+
+CohStatus coh_resource_index_metadata(const CohResourceIndex *i,CohResourceBinding *binding,CohResourceReport *report){if(!i||!binding||!report)return COH_INVALID;*binding=i->binding;*report=i->report;return COH_OK;}
+CohStatus coh_resource_index_record(const CohResourceIndex *i,uint32_t ordinal,CohBytes *bytes,CohResourceView *view){if(!i||!bytes||!view)return COH_INVALID;if(ordinal>=i->count)return COH_NOT_FOUND;*bytes=(CohBytes){i->rows[ordinal].record,i->rows[ordinal].bytes};*view=i->rows[ordinal].view;return COH_OK;}

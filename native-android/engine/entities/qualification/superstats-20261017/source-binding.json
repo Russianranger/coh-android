@@ -1,0 +1,24 @@
+{
+  "source_commit": "b635382313862dfe214108045431913dbc8676e1",
+  "source_sha256": {
+    "native-android/engine/entity-superstats/coh_superstats.c": "cdb3a4850670fd821642ba0866bd24f075db4780b57892cf85a2db22525f5471",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-superstats/test_superstats.c": "2dfc22129139665272cabb4eac906db757175e722c78edf42d4da53a188e5248",
+    "native-android/engine/entity-superstats/coh_superstats.h": "81766ced2f884b709f9ad1ededb780612296f534062083edf3c32f69e2c7748d",
+    "native-android/engine/entity-superstats/fixture_builder.py": "cf4b82f84f406c1b31af27565cef66e7ba79c0380f2d4dab1bd145d34b776686",
+    "native-android/engine/entity-superstats/check.py": "e2105ec2b5568e490bf47333684efb7bf2bc8e04c66e199af501a54e4610cb92",
+    "native-android/engine/entity-superstats/CONTRACT.md": "3d3d016c74ad32db8d29e62a261bfe62f75b7343918f3d00179c5bc710ea2e56",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "checked_committed_bytes_equal_tested_inputs": true,
+  "tested_worktree_head": "a3f13d5e196200e0b08775fcfd9fdc5752895170",
+  "provider_commit": "3c1ac90fc",
+  "original_consumer_executed": false,
+  "complete_initial_update": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false
+}

@@ -1,0 +1,31 @@
+{
+  "asset_generation": 20261016,
+  "assets_admitted": false,
+  "catalog": {
+    "bytes": 12179670,
+    "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+  },
+  "cleanup_verified": true,
+  "client_lods_available": false,
+  "client_materials_available": false,
+  "live_groups_transaction": false,
+  "native_decode_completed": false,
+  "resources": {
+    "bytes": 12596422,
+    "sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+  },
+  "run_identity": {
+    "file": "run-identity.json",
+    "sha256": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced"
+  },
+  "schema": "coh-resource-snapshot-binding-v1",
+  "snapshot": {
+    "bytes": 6585,
+    "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+  },
+  "source_identity": {
+    "file": "source-identity.json",
+    "sha256": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa"
+  },
+  "source_snapshot_only": true
+}

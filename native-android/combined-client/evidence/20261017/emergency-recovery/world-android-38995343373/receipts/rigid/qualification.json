@@ -1,0 +1,449 @@
+{
+  "schema": "coh-rigid-v8-qualification-v1",
+  "passed": true,
+  "source_revision": "015cfcb7b95f791fdc9a21b5d306924c90d74e70",
+  "source_tree": "4f0b80906dbf2ed66f3f623979cda336cc87eb16",
+  "clean_source_inputs": true,
+  "source_inputs_unchanged": true,
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/tests/test_rigid.c": "0e720f171b8d7592347e96971ce3732a181829e6b7a4e2674210703d92f62b44",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.c": "fa3c12aca0be9026469e7bac145c48b21a07784807eed4fd6ff49ae93121c7c8",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/world-render-adapter/coh_wr_rigid.h": "dffee6c5e68a89077d731dd21b96c5eca6c547292d75cbd97da691a83b40719f",
+    "native-android/engine/world-render-adapter/check_rigid.py": "1d4c614286ea08e0c54e3249fef6462a7d21a364da24866fec4b0f495857a24e",
+    "native-android/engine/world-render-adapter/acquire_rigid.py": "9bb3d38d42585949cac35a9a74d493d03605eb06aa8332b9b59db442eccde2d0",
+    "native-android/engine/world-render-adapter/tests/rigid_fixture.py": "4e03db7dbc235c210f466a6635d6e5fd9bfa322bec36c9cc5ea5147da82fee66",
+    "native-android/engine/world-render-adapter/rigid-source-pins.json": "246dd1893b5d3d7c9be9b087f8eab42a31272499331e9fb1bf1a270284cdc5ab",
+    "native-android/engine/world-render-adapter/rigid-authentic-pins.json": "98cfbf0a85e0cb1c0876de6a8eee78d7d3180e27a6c036cd87788d2ff531370d",
+    "native-android/engine/world-render-adapter/tests/test_rigid_actual.c": "f1e835bcdf2b0b19150962fd870316d049a07acd7db758b5e8131112696f65b2",
+    "native-android/engine/world-render-adapter/rigid_android_contract.py": "d807b43d2ee3bf0376c1ead2ec49ed8813293d4ce957a196a6c48c5ec5748993",
+    "native-android/engine/world-render-adapter/run_rigid_android.py": "59f3c445ef4fa2dc66d82b089861c192cab356897e6d8022a4b0c23ad20c6374",
+    "native-android/engine/world-render-adapter/tests/test_rigid_android.py": "dad37d8a811bd9c702eab4b8e443af5fbccf1aecd7c5382263e510c5eaf94456",
+    "native-android/engine/continuation/run_adapter_android.py": "c7af8aed683e36ba567021b25504ebf94ca895cf8bf2cad9e2e328b8533c17e1",
+    "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+  },
+  "modes": {
+    "release": {
+      "result": {
+        "passed": true,
+        "checks": 259,
+        "version": 8,
+        "parts": 2,
+        "vertices": 4,
+        "triangles": 2,
+        "material_pins_balanced": true,
+        "fixture_only": true,
+        "world_authority": false
+      },
+      "binary_sha256": "ace063238e894597a87c8bbc05678de61ac28b04fbe7b6531335f0e903aae78d",
+      "actual": {
+        "result": {
+          "passed": true,
+          "checks": 22,
+          "geo_version": 8,
+          "vertices": 56,
+          "triangles": 28,
+          "authentic_geo_bytes": true,
+          "material_fixture_only": true,
+          "generation_fixture_only": true,
+          "world_authority": false
+        },
+        "binary_sha256": "afa7e3f620458abbe3a1f8f47bfff9d1f4ffff4bccda5a812618c9ccd8b2c492"
+      }
+    },
+    "address": {
+      "result": {
+        "passed": true,
+        "checks": 259,
+        "version": 8,
+        "parts": 2,
+        "vertices": 4,
+        "triangles": 2,
+        "material_pins_balanced": true,
+        "fixture_only": true,
+        "world_authority": false
+      },
+      "binary_sha256": "b57ceb5f26d6577192e1eefddcc65cfdf541339ab5d6c3c5377ba370100a8fa4",
+      "actual": {
+        "result": {
+          "passed": true,
+          "checks": 22,
+          "geo_version": 8,
+          "vertices": 56,
+          "triangles": 28,
+          "authentic_geo_bytes": true,
+          "material_fixture_only": true,
+          "generation_fixture_only": true,
+          "world_authority": false
+        },
+        "binary_sha256": "70855858f2e2307fc3f5d195a9b083a60139993ee5b1386c64701fda6602fcf8"
+      }
+    },
+    "undefined": {
+      "result": {
+        "passed": true,
+        "checks": 259,
+        "version": 8,
+        "parts": 2,
+        "vertices": 4,
+        "triangles": 2,
+        "material_pins_balanced": true,
+        "fixture_only": true,
+        "world_authority": false
+      },
+      "binary_sha256": "53c7a46c3e5a5d5188cdefe6416090997e8d787cab6bb44c2129db3a249904e9",
+      "actual": {
+        "result": {
+          "passed": true,
+          "checks": 22,
+          "geo_version": 8,
+          "vertices": 56,
+          "triangles": 28,
+          "authentic_geo_bytes": true,
+          "material_fixture_only": true,
+          "generation_fixture_only": true,
+          "world_authority": false
+        },
+        "binary_sha256": "14575ed0cad848a53db95cef245e28619b3be83092204f9799a0d81c697930ef"
+      }
+    }
+  },
+  "producer_layout": {
+    "source_sha256": {
+      "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+      "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+    },
+    "original_structs_unchanged": true,
+    "target_layout": "32-bit x86 object; no execution",
+    "fields": [
+      "sizeof",
+      "struct_size",
+      "radius",
+      "tex_count",
+      "boneinfo",
+      "vert_count",
+      "tri_count",
+      "reflection_quad_count",
+      "tex_idx",
+      "grid",
+      "name",
+      "api",
+      "scale",
+      "pack",
+      "lod_distances",
+      "id"
+    ],
+    "offsets": [
+      244,
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      64,
+      68,
+      72,
+      108,
+      228,
+      240
+    ],
+    "object_sha256": "738b737d1441e23b628d662921a22fd42108ce76c6794caf826bcf8bb2aa952e"
+  },
+  "delta_packet_oracle": {
+    "passed": true,
+    "original_function_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+    "encoded_channels": 4,
+    "source_decoded_elements": 38,
+    "partition_vertex_components": 112,
+    "partition_indices": 6,
+    "packet_sha256": "075ffad6764c94fccbfaf5e369790f0a444983ec4108a8f9a8fdd12f8e3ff340",
+    "source_geometry_fixture_only": true
+  },
+  "host_fixture_digest_replay_qualified": true,
+  "host_fixture_digest_replay": {
+    "authored": {
+      "binary_sha256": "cc7c71d7c8a7db2193c4b8dc9b8d1f2d0c8235d6deb4fbbb3caefa688321b1a8",
+      "result": {
+        "passed": true,
+        "checks": 259,
+        "version": 8,
+        "parts": 2,
+        "vertices": 4,
+        "triangles": 2,
+        "material_pins_balanced": true,
+        "fixture_only": true,
+        "world_authority": false
+      },
+      "packet_sha256": "075ffad6764c94fccbfaf5e369790f0a444983ec4108a8f9a8fdd12f8e3ff340"
+    },
+    "authentic": {
+      "binary_sha256": "cb7f60cb48332f9583762ca01173bc643603312ac15b8207482e798777eafd79",
+      "result": {
+        "passed": true,
+        "checks": 22,
+        "geo_version": 8,
+        "vertices": 56,
+        "triangles": 28,
+        "authentic_geo_bytes": true,
+        "material_fixture_only": true,
+        "generation_fixture_only": true,
+        "world_authority": false
+      },
+      "packet_sha256": "373c99f5ee1848ecf036f4efa7c87f7ad7e9b471f3bfd25d786e7e3eb7359656"
+    }
+  },
+  "fixtures_sha256": {
+    "valid.geo": "06205b22248536cefed60e08cc4c5375d96da82122560477a32e02d47ae237b0",
+    "bone.geo": "af8d36c0a991aecbc7a9e28f2e256eafaccb685d00cd5db8a3c797f196e33fcf",
+    "scale.geo": "8e0b8420cb0d755fe93425bae279b713b4fce55da08004562c64a7384f8c1dd9",
+    "lightmap.geo": "f58a0a935039bf7e20cd1cc2943282dfce878b21c8a0f03c9bc2c5392571a521",
+    "weights.geo": "c76e4402691219a1f1e44861a175a2d8cd991d3eaf64c57c5e70b74a1ddbd731",
+    "matidx.geo": "07acc9cf5b3e737fe82fba9b8a49d0512fc6d415fc3d0e349a269e5445c3925d",
+    "reflection.geo": "f129705982631c5957f7fe5f2af02e74022f34729ef2cc8c71f0d7f67eb747a3",
+    "missing_uv.geo": "d496e68d7b813543cd8a9e4bb73ba84e625da98e29b187c8b901e5b78124198d",
+    "reflection_count.geo": "afc72175a33a96569635efdb9ff4ff3dd1e90b67151d77a66da1c941078aebeb",
+    "pivot.geo": "3f5e864dba709be53fc30b018f5e67e4485f57118447ce5eb045ef22d6c42bc5",
+    "bad_index.geo": "9dba84403380f4a2321a7f10f546de949359b6685b841210a1fb26111a0bd4f2",
+    "duplicate_model.geo": "f66a2748865b0244d7442fff39a82ae49c5c9fd72cc7f2de1f0609a458a4a631",
+    "authentic.geo": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5"
+  },
+  "fixture_digest_header_sha256": "99a1c0bcd029355c170dbed9d1377518981f15d4f95c2f7d8741d4936e4f10e4",
+  "leak_sanitizer": false,
+  "android_built": true,
+  "android_builds": {
+    "arm64-v8a": {
+      "schema": "coh-rigid-android-build-v1",
+      "passed": true,
+      "abi": "arm64-v8a",
+      "api": 26,
+      "executed": false,
+      "source_revision": "015cfcb7b95f791fdc9a21b5d306924c90d74e70",
+      "source_tree": "4f0b80906dbf2ed66f3f623979cda336cc87eb16",
+      "source_sha256": {
+        "native-android/engine/world-render-adapter/tests/test_rigid.c": "0e720f171b8d7592347e96971ce3732a181829e6b7a4e2674210703d92f62b44",
+        "native-android/engine/world-render-adapter/coh_wr_rigid.c": "fa3c12aca0be9026469e7bac145c48b21a07784807eed4fd6ff49ae93121c7c8",
+        "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+        "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+        "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+        "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+        "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+        "native-android/engine/world-render-adapter/coh_wr_rigid.h": "dffee6c5e68a89077d731dd21b96c5eca6c547292d75cbd97da691a83b40719f",
+        "native-android/engine/world-render-adapter/check_rigid.py": "1d4c614286ea08e0c54e3249fef6462a7d21a364da24866fec4b0f495857a24e",
+        "native-android/engine/world-render-adapter/acquire_rigid.py": "9bb3d38d42585949cac35a9a74d493d03605eb06aa8332b9b59db442eccde2d0",
+        "native-android/engine/world-render-adapter/tests/rigid_fixture.py": "4e03db7dbc235c210f466a6635d6e5fd9bfa322bec36c9cc5ea5147da82fee66",
+        "native-android/engine/world-render-adapter/rigid-source-pins.json": "246dd1893b5d3d7c9be9b087f8eab42a31272499331e9fb1bf1a270284cdc5ab",
+        "native-android/engine/world-render-adapter/rigid-authentic-pins.json": "98cfbf0a85e0cb1c0876de6a8eee78d7d3180e27a6c036cd87788d2ff531370d",
+        "native-android/engine/world-render-adapter/tests/test_rigid_actual.c": "f1e835bcdf2b0b19150962fd870316d049a07acd7db758b5e8131112696f65b2",
+        "native-android/engine/world-render-adapter/rigid_android_contract.py": "d807b43d2ee3bf0376c1ead2ec49ed8813293d4ce957a196a6c48c5ec5748993",
+        "native-android/engine/world-render-adapter/run_rigid_android.py": "59f3c445ef4fa2dc66d82b089861c192cab356897e6d8022a4b0c23ad20c6374",
+        "native-android/engine/world-render-adapter/tests/test_rigid_android.py": "dad37d8a811bd9c702eab4b8e443af5fbccf1aecd7c5382263e510c5eaf94456",
+        "native-android/engine/continuation/run_adapter_android.py": "c7af8aed683e36ba567021b25504ebf94ca895cf8bf2cad9e2e328b8533c17e1",
+        "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e",
+        "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+        "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+        "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+        "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+        "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+        "native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+        "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+        "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+        "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+        "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+      },
+      "fixtures_sha256": {
+        "valid.geo": "06205b22248536cefed60e08cc4c5375d96da82122560477a32e02d47ae237b0",
+        "bone.geo": "af8d36c0a991aecbc7a9e28f2e256eafaccb685d00cd5db8a3c797f196e33fcf",
+        "scale.geo": "8e0b8420cb0d755fe93425bae279b713b4fce55da08004562c64a7384f8c1dd9",
+        "lightmap.geo": "f58a0a935039bf7e20cd1cc2943282dfce878b21c8a0f03c9bc2c5392571a521",
+        "weights.geo": "c76e4402691219a1f1e44861a175a2d8cd991d3eaf64c57c5e70b74a1ddbd731",
+        "matidx.geo": "07acc9cf5b3e737fe82fba9b8a49d0512fc6d415fc3d0e349a269e5445c3925d",
+        "reflection.geo": "f129705982631c5957f7fe5f2af02e74022f34729ef2cc8c71f0d7f67eb747a3",
+        "missing_uv.geo": "d496e68d7b813543cd8a9e4bb73ba84e625da98e29b187c8b901e5b78124198d",
+        "reflection_count.geo": "afc72175a33a96569635efdb9ff4ff3dd1e90b67151d77a66da1c941078aebeb",
+        "pivot.geo": "3f5e864dba709be53fc30b018f5e67e4485f57118447ce5eb045ef22d6c42bc5",
+        "bad_index.geo": "9dba84403380f4a2321a7f10f546de949359b6685b841210a1fb26111a0bd4f2",
+        "duplicate_model.geo": "f66a2748865b0244d7442fff39a82ae49c5c9fd72cc7f2de1f0609a458a4a631",
+        "authentic.geo": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5"
+      },
+      "fixture_digest_header_sha256": "99a1c0bcd029355c170dbed9d1377518981f15d4f95c2f7d8741d4936e4f10e4",
+      "digest_mode": "exact-fixture-byte-equality replay; not cryptographic execution",
+      "binaries": {
+        "authored": {
+          "binary": "rigid-authored-test",
+          "binary_sha256": "bf6134057149564a7345400c127e40f9a80ba750bcf82f46a2ab11d5cb0c58ae",
+          "executed": false,
+          "expected_result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "expected_packet_sha256": "075ffad6764c94fccbfaf5e369790f0a444983ec4108a8f9a8fdd12f8e3ff340"
+        },
+        "authentic": {
+          "binary": "rigid-authentic-test",
+          "binary_sha256": "f90c7bdc5b76564d819117f21edbef4f6bb1d8d7f0b6ced3d573318a9a8082f9",
+          "executed": false,
+          "expected_result": {
+            "passed": true,
+            "checks": 22,
+            "geo_version": 8,
+            "vertices": 56,
+            "triangles": 28,
+            "authentic_geo_bytes": true,
+            "material_fixture_only": true,
+            "generation_fixture_only": true,
+            "world_authority": false
+          },
+          "expected_packet_sha256": "373c99f5ee1848ecf036f4efa7c87f7ad7e9b471f3bfd25d786e7e3eb7359656"
+        }
+      },
+      "world_authority": false
+    },
+    "x86_64": {
+      "schema": "coh-rigid-android-build-v1",
+      "passed": true,
+      "abi": "x86_64",
+      "api": 26,
+      "executed": false,
+      "source_revision": "015cfcb7b95f791fdc9a21b5d306924c90d74e70",
+      "source_tree": "4f0b80906dbf2ed66f3f623979cda336cc87eb16",
+      "source_sha256": {
+        "native-android/engine/world-render-adapter/tests/test_rigid.c": "0e720f171b8d7592347e96971ce3732a181829e6b7a4e2674210703d92f62b44",
+        "native-android/engine/world-render-adapter/coh_wr_rigid.c": "fa3c12aca0be9026469e7bac145c48b21a07784807eed4fd6ff49ae93121c7c8",
+        "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+        "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+        "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+        "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+        "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+        "native-android/engine/world-render-adapter/coh_wr_rigid.h": "dffee6c5e68a89077d731dd21b96c5eca6c547292d75cbd97da691a83b40719f",
+        "native-android/engine/world-render-adapter/check_rigid.py": "1d4c614286ea08e0c54e3249fef6462a7d21a364da24866fec4b0f495857a24e",
+        "native-android/engine/world-render-adapter/acquire_rigid.py": "9bb3d38d42585949cac35a9a74d493d03605eb06aa8332b9b59db442eccde2d0",
+        "native-android/engine/world-render-adapter/tests/rigid_fixture.py": "4e03db7dbc235c210f466a6635d6e5fd9bfa322bec36c9cc5ea5147da82fee66",
+        "native-android/engine/world-render-adapter/rigid-source-pins.json": "246dd1893b5d3d7c9be9b087f8eab42a31272499331e9fb1bf1a270284cdc5ab",
+        "native-android/engine/world-render-adapter/rigid-authentic-pins.json": "98cfbf0a85e0cb1c0876de6a8eee78d7d3180e27a6c036cd87788d2ff531370d",
+        "native-android/engine/world-render-adapter/tests/test_rigid_actual.c": "f1e835bcdf2b0b19150962fd870316d049a07acd7db758b5e8131112696f65b2",
+        "native-android/engine/world-render-adapter/rigid_android_contract.py": "d807b43d2ee3bf0376c1ead2ec49ed8813293d4ce957a196a6c48c5ec5748993",
+        "native-android/engine/world-render-adapter/run_rigid_android.py": "59f3c445ef4fa2dc66d82b089861c192cab356897e6d8022a4b0c23ad20c6374",
+        "native-android/engine/world-render-adapter/tests/test_rigid_android.py": "dad37d8a811bd9c702eab4b8e443af5fbccf1aecd7c5382263e510c5eaf94456",
+        "native-android/engine/continuation/run_adapter_android.py": "c7af8aed683e36ba567021b25504ebf94ca895cf8bf2cad9e2e328b8533c17e1",
+        "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e",
+        "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+        "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+        "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+        "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+        "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+        "native-android/tools/material_fixture/original_delta_check.py": "f6e0c0baeeaa00b5483567cb579207a5d17f97d43f651f1e0f836421c078e67e",
+        "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+        "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+        "upstream/ouroboros/Utilities/GetVrml/src/output.c": "75d3746b9cefaa2efb5944ff639f076e950151e6bf65e999e0dcbc75220492e5",
+        "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+      },
+      "fixtures_sha256": {
+        "valid.geo": "06205b22248536cefed60e08cc4c5375d96da82122560477a32e02d47ae237b0",
+        "bone.geo": "af8d36c0a991aecbc7a9e28f2e256eafaccb685d00cd5db8a3c797f196e33fcf",
+        "scale.geo": "8e0b8420cb0d755fe93425bae279b713b4fce55da08004562c64a7384f8c1dd9",
+        "lightmap.geo": "f58a0a935039bf7e20cd1cc2943282dfce878b21c8a0f03c9bc2c5392571a521",
+        "weights.geo": "c76e4402691219a1f1e44861a175a2d8cd991d3eaf64c57c5e70b74a1ddbd731",
+        "matidx.geo": "07acc9cf5b3e737fe82fba9b8a49d0512fc6d415fc3d0e349a269e5445c3925d",
+        "reflection.geo": "f129705982631c5957f7fe5f2af02e74022f34729ef2cc8c71f0d7f67eb747a3",
+        "missing_uv.geo": "d496e68d7b813543cd8a9e4bb73ba84e625da98e29b187c8b901e5b78124198d",
+        "reflection_count.geo": "afc72175a33a96569635efdb9ff4ff3dd1e90b67151d77a66da1c941078aebeb",
+        "pivot.geo": "3f5e864dba709be53fc30b018f5e67e4485f57118447ce5eb045ef22d6c42bc5",
+        "bad_index.geo": "9dba84403380f4a2321a7f10f546de949359b6685b841210a1fb26111a0bd4f2",
+        "duplicate_model.geo": "f66a2748865b0244d7442fff39a82ae49c5c9fd72cc7f2de1f0609a458a4a631",
+        "authentic.geo": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5"
+      },
+      "fixture_digest_header_sha256": "99a1c0bcd029355c170dbed9d1377518981f15d4f95c2f7d8741d4936e4f10e4",
+      "digest_mode": "exact-fixture-byte-equality replay; not cryptographic execution",
+      "binaries": {
+        "authored": {
+          "binary": "rigid-authored-test",
+          "binary_sha256": "5c89c75ce46556a0c72d2ab9c5293875e03c078cc3a7eabe43d7d25022e2eead",
+          "executed": false,
+          "expected_result": {
+            "passed": true,
+            "checks": 259,
+            "version": 8,
+            "parts": 2,
+            "vertices": 4,
+            "triangles": 2,
+            "material_pins_balanced": true,
+            "fixture_only": true,
+            "world_authority": false
+          },
+          "expected_packet_sha256": "075ffad6764c94fccbfaf5e369790f0a444983ec4108a8f9a8fdd12f8e3ff340"
+        },
+        "authentic": {
+          "binary": "rigid-authentic-test",
+          "binary_sha256": "7d577352ea93ef8f5a793d000f1b09fb7de810478fe6ef8fb7f76a1a47606215",
+          "executed": false,
+          "expected_result": {
+            "passed": true,
+            "checks": 22,
+            "geo_version": 8,
+            "vertices": 56,
+            "triangles": 28,
+            "authentic_geo_bytes": true,
+            "material_fixture_only": true,
+            "generation_fixture_only": true,
+            "world_authority": false
+          },
+          "expected_packet_sha256": "373c99f5ee1848ecf036f4efa7c87f7ad7e9b471f3bfd25d786e7e3eb7359656"
+        }
+      },
+      "world_authority": false
+    }
+  },
+  "android_executed": false,
+  "authentic_geo_v8_fixture_available": true,
+  "authentic_geometry_oracle": {
+    "passed": true,
+    "payload_sha256": "218d1b2ff890678cca25b005d295aff8f76c6f551acad6b2144d1786723239b5",
+    "model": "FX_PraetorianBox_Open",
+    "vertices": 56,
+    "triangles": 28,
+    "channels": 4,
+    "scalar_components": 532,
+    "packet_sha256": "373c99f5ee1848ecf036f4efa7c87f7ad7e9b471f3bfd25d786e7e3eb7359656",
+    "material_fixture_only": true,
+    "loaded_generation_fixture_only": true,
+    "world_authority": false
+  },
+  "world_authority": false,
+  "scope": "Additive source-pinned rigid-v8 CPU conversion and lifetime only; authored malformed controls and optional authentic geometry with fixture material/generation bindings. No texture upload or graph/actor/world admission."
+}

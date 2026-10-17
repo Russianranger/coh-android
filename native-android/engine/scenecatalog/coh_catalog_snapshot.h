@@ -23,6 +23,9 @@ CohStatus coh_catalog_snapshot_create(const CohCatalogSnapshot *old,
 CohStatus coh_catalog_snapshot_retain(CohCatalogSnapshot *);
 void coh_catalog_snapshot_release(CohCatalogSnapshot *);
 size_t coh_catalog_snapshot_owned_bytes(const CohCatalogSnapshot *);
+/* Actual retained catalog span, borrowed through last snapshot release. Use
+ * pointer+extent comparison to distinguish equal labels on separate owners. */
+CohStatus coh_catalog_snapshot_catalog(const CohCatalogSnapshot *,CohBytes *);
 /* Borrowed immutable view remains valid through the last owner release. Views
  * are source topology only: no assets, actor, GROUPS, ACK or renderer authority. */
 CohStatus coh_catalog_snapshot_view(const CohCatalogSnapshot *,CohBytes *,

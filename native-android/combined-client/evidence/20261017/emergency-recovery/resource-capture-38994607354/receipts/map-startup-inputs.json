@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "status": "exact_published_inputs_staged",
+  "donor_commit": "74fe247be85173e618f1af2c8af71b1316de4cd8",
+  "donor_apk": {
+    "bytes": 41203812,
+    "sha256": "e56df1bcf2210aff131ba80189b1b2dee760f27066e3ee26e09c5fea1654ad80"
+  },
+  "asset_release": "coh-assets-v1.0.0",
+  "base_volume": {
+    "bytes": 1630092780,
+    "sha256": "6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d"
+  },
+  "files": {
+    "server-animations.pigg": {
+      "bytes": 97084456,
+      "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+    },
+    "server-animation-manifest.json": {
+      "bytes": 1005794,
+      "sha256": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f"
+    },
+    "client-caches.zip": {
+      "bytes": 27071659,
+      "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+    },
+    "fxinfo-full.bin": {
+      "bytes": 58505496,
+      "sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70"
+    }
+  },
+  "donor_rebuilt": false,
+  "assets_republished": false,
+  "native_runtime_execution_validated": false,
+  "physical_execution_validated": false
+}

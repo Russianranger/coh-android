@@ -1,0 +1,277 @@
+{
+  "schema": "coh-dynamic-diagnostic-qualification-v1",
+  "passed": true,
+  "source_revision": "a5865ccd3808b9032226f49b3e19f5520ebb56e9",
+  "source_sha256": {
+    "native-android/engine/entity-dynamic/coh_dynamic.c": "7ab9ddcc5113ba896999876f1825c541102cdb97744d94b54fb513b55683b478",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-dynamic/test_dynamic.c": "119400cc617f9550c112ff0b152246a6691c5ad7bd722fc48fceac2bf896a504",
+    "native-android/engine/entity-dynamic/coh_dynamic.h": "f898510163d3c0d03849578a9a30292dba9a730029a027b1997bc9302f12c5e4",
+    "native-android/engine/entity-dynamic/fixture_builder.py": "e0d0257ea11e68f9cc7f5eb23fe52efa6a88dc4cb80b52d2a35d4fe91f141fa0",
+    "native-android/engine/entity-dynamic/check.py": "7f716dd630968eba55e65e3ebf5e039bc678499da62303cfffe5c537f0bbedc3",
+    "native-android/engine/entity-dynamic/CONTRACT.md": "3e661d956683dde1b67e34f2a6e2c5d92fd7d2b259c6a7af1e7a935c4e356aff",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "provider_sha256": {
+    "native-android/combined-client/diagnostics/allents-tail-20261017/dynamic_wire_oracle.py": "2641ef01d1064db6be2a3e9f65f123bc48f78ab94e264756cc2b134dee0ed88c",
+    "native-android/combined-client/diagnostics/allents-tail-20261017/dynamic-wire-source-pins.json": "ec671f94d576827acae6173fa67e0edbf51e684b9697aa8b34705f9b81b19a12",
+    "native-android/combined-client/diagnostics/allents-tail-20261017/inventory_oracle.py": "5a5488baf54cd32b1b9c297ee8bad8e1f70b9c80aa62032d8ec8e908c1da8867",
+    "native-android/combined-client/diagnostics/character-outer-20261017/qualify_outer.py": "a2d43a11a74c33709462abc5b0e4059edf774c7d6e23326d5c2330067e48a068",
+    "native-android/combined-client/diagnostics/character-outer-20261017/independent.py": "9fccb7ae9b449f8f529f4a3eabce50cfd36afb60b8b041857ff98beeb19df8d0"
+  },
+  "original_dynamic_producer": {
+    "schema": "coh-dynamic-wire-source-producer-v1",
+    "passed": true,
+    "source_pin": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+    "original_source_sha256_lf": {
+      "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "Common/gameComm/wdwbase.c": "fddd0af05b1764115d3c885140b8074587d9e4cc5c762a0101dc49042e30e732",
+      "Common/gameComm/wdwbase.h": "18427c8f68e1a3ef0c3d149ab35801edbe151a16cb2bee166fb8174c8f2a6f6c",
+      "Game/src/UI/uiOptions_Type.c": "8a3704eec9b207d05f8533ad08b618edabcebe3893e196531fa882dd95bd2e5b",
+      "Game/src/UI/uiOptions_Type.h": "73ac1805bb89c0042c031af77336609eee3bab8e4d48fdbdec7aaa1551eb796c",
+      "Game/src/UI/uiNet.c": "79a36e45898f70356c762299a2ab58a0e82c4557cb7047dc505ef400741b1f01",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "Common/entity/entStrings.c": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0",
+      "MapServer/src/entity/keybinds.c": "96df4d670b377dffa4821d8c591926a6bd725c6f0b579eecb0874076bf0377f4",
+      "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+      "Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+      "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+      "Game/src/UI/uiKeybind.h": "c67d779c9870a26fc9474c061216678f5d9728daa6f418a46362ee64330f94fb",
+      "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+      "Common/gameComm/trayCommon.c": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6",
+      "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+      "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+      "Game/src/UI/uiReticle.h": "cd2afa72ef0bbd67a556074d3e307d74c4313a1d80876614ff178fda68a1cc35",
+      "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+      "MapServer/src/group/groupdynsend.c": "6c24d57a77196f363daf604cafd498b2d71645697c4e4877ac5a460dd263958f",
+      "Common/group/groupdyn.h": "3beff4340a596eecb6374fff890ec3e2ebbcb4f0c1f49de3130171ec37bc8c3a",
+      "libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370"
+    },
+    "original_functions": {
+      "initBitStream": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+      },
+      "bsWriteBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+      },
+      "bsWriteBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+      },
+      "bsReadBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea"
+      },
+      "bsReadBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620"
+      },
+      "bsAlignByte": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+      },
+      "bsGetCursorBitPosition": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+      },
+      "bsWriteString": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81"
+      },
+      "bsReadStringAndLength": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "e7606801ddc22b76d0aeec630597a653ab025a2f501653ecdbe341a692fe0c3f"
+      },
+      "bsWriteF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "38d78cadee1f9bc73c25ef1f0dfcb6249a3e101165151abb8d0f8ca7c76462c9"
+      },
+      "bsReadF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "88adf74b188c3ce4fe4fa8076817a6735f5ec0d96f60a0d94ea2ec846d3881e4"
+      },
+      "initGameOptionStash": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "f52a6467b0e4fef6fba360b4e45f5cfe1203605628490487c1470edfe7dd0fb2"
+      },
+      "userOptionGet": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "0405658bdefaf2c5f7e5bf6dc6a739ad594326397971eac78cd09bde434db153"
+      },
+      "receiveOptions": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "1b76c2ccccf73ee23e793835e4bb7cace1657ef9b0f203ea3f88f183848e0720"
+      },
+      "sendCharacterToClient": {
+        "source": "MapServer/src/entity/entserver.c",
+        "sha256_lf": "9a6b0977a9b2a35be432e6dc0dd92181d259c778b5a4a56e4e7b4e7e9aa1ebfb"
+      },
+      "sendWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "25aad86d63721f4539eecf14e61e1b013ad1212cbb7694e130bea9d2759485dc"
+      },
+      "receiveWindowIdx": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "19d6524148eea1041d0552221357c63c39ad2df1e06ba8acdbfeceadc60d74c5"
+      },
+      "receiveWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "887b6c4b1ecba98eaf89f030bca4366fb93a1b566f9b0d64c47a6f3c3afb99bc"
+      },
+      "breakHTMLtags": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "a84b39aaf0e66e9a4b89b57225b329f667433e208fd9b4673a7ef0b748af66bf"
+      },
+      "sendEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "5a6173e2bb67536e57395030b671b203d77ff1196e158ff4c6c2d5dc85c50a3c"
+      },
+      "receiveEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "f9239c0e1037ae34ebaced0830a12546bbe150ccf2b0143412dae67c7ef918cf"
+      },
+      "bsWriteBitsArray": {
+        "path": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "d1f563ac0460441027cdda2892d89e3612cbd13154c68a6470e3777dcac46e82"
+      },
+      "pktSendZippedAlready": {
+        "path": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "88a4269751c2bfa9e5001803bcb71f3736d3fc038b00f5fe48d8b558b7f6eddc"
+      },
+      "pktSendZipped": {
+        "path": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "c71e2ac3db13470430fbe1df9c96d298698d0f64adc38a0e33a90699e177cb3b"
+      },
+      "groupDynSend": {
+        "path": "MapServer/src/group/groupdynsend.c",
+        "sha256_lf": "1cebf069381f7c4c6a0585f01da65d29c2bff7f61c954f6f9502a0710b7556a9"
+      }
+    },
+    "generated_source_sha256": "393cd5d0f19af028130c1cca334a4bdb569871a789d5705b3726e01995c2e4b4",
+    "cases_count": 160,
+    "scope": "whole original groupDynSend and pktSendZipped, synthetic source status arrays; bounded independent diagnostic zlib decoder; no original gameplay consumer execution",
+    "world_count_authentication": false,
+    "original_oracle_sanitized": false,
+    "actor_publication": false,
+    "acknowledgments_enabled": false,
+    "android_executed": false
+  },
+  "fixtures_sha256": {
+    "fixtures.h": "111564e04e9bc7f804861320fdae8ac77361b0804999ee205592af60cb5c5898"
+  },
+  "source_stable_before_after": true,
+  "zlib_allocation_policy": "fixed256KiBworkspacearena; no system allocations",
+  "zlib_linkage": "host system zlib; Android platform zlib when built",
+  "host_zlib": {
+    "library_path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3",
+    "library_sha256": "9b64150b28505a33d6bc3ecf709c279f6de97a1c184dbda65d06ee4537f6d286",
+    "version": "1.3",
+    "compile_flags": 169,
+    "library_rebuilt_with_sanitizers": false,
+    "external_library_stack_measured": false,
+    "native_emitted_frames_only": true
+  },
+  "dependency_stack_and_sanitizer_closure": false,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 51132,
+      "source_fixtures": 160,
+      "truncations": 11636,
+      "mutations": 7162,
+      "output_bytes": 852008,
+      "workspace_bytes": 1114176,
+      "world_ownership_authenticated": false,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 51132,
+      "source_fixtures": 160,
+      "truncations": 11636,
+      "mutations": 7162,
+      "output_bytes": 852008,
+      "workspace_bytes": 1114176,
+      "world_ownership_authenticated": false,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 51132,
+      "source_fixtures": 160,
+      "truncations": 11636,
+      "mutations": 7162,
+      "output_bytes": 852008,
+      "workspace_bytes": 1114176,
+      "world_ownership_authenticated": false,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    }
+  },
+  "binary_sha256": {
+    "release": "ac268095149041b81abfdc8fcc52064b389e416be12dd6d99ba14d6ed38a6cf3",
+    "asan": "eea3c86e16e65fc471170b4636a980a376ffbb421b255a16025719ae1d8a2b88",
+    "ubsan": "9d23117f2cb65b50ff0feb7d9778cf852b66d8bf6801cab13667a4af0ef406e3"
+  },
+  "production_stack_frames": [
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_read",
+      "bytes": 24,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string.part.0",
+      "bytes": 384,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_pack",
+      "bytes": 144,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "arena_release",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "arena_allocate",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "coh_dynamic_diagnostic_read",
+      "bytes": 352,
+      "bound": "static"
+    }
+  ],
+  "cpp_link_passed": true,
+  "android": {},
+  "world_ownership_authenticated": false,
+  "original_gameplay_consumer_executed": false,
+  "prior_or_local_state_applied": false,
+  "whole_initial_update_complete": false,
+  "dictionary_authority": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "android_executed": false
+}

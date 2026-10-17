@@ -1,0 +1,75 @@
+{
+  "schema": "coh-resource-capture-independent-source-review-v1",
+  "passed": true,
+  "run_id": 38994607354,
+  "source_revision": "a45c657fcc6b3bd8f3a70c59e9aa85ee19455f3f",
+  "artifact": {
+    "id": 12086339123,
+    "bytes": 2945220,
+    "sha256": "572d5cde08f698173cce4c9a0860902a2da91841b22dbdd124501e1e601e192d"
+  },
+  "compile_artifact": {
+    "id": 12086528847,
+    "bytes": 3327779,
+    "sha256": "a3e53b2520480004fd88065d9df88e8f18a77866296c7da155b42ac1bc028e66"
+  },
+  "compile_pe": {
+    "bytes": 7501312,
+    "sha256": "08645133f45646d1397ba1b45e5b4db9ccd3145d2ca834e39e53cab7d809e72b"
+  },
+  "binding_replayed": true,
+  "source_identity_sha256": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+  "run_identity_sha256": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+  "files": {
+    "catalog": {
+      "bytes": 12179670,
+      "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+    },
+    "snapshot": {
+      "bytes": 6585,
+      "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+    },
+    "resources": {
+      "bytes": 12596422,
+      "sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+    }
+  },
+  "original_catalog_and_roots_exact_equality": true,
+  "rows": 40232,
+  "models": 9611,
+  "missing_models": 30621,
+  "texture_partitions": 17790,
+  "exact_geo_paths": 467,
+  "models_with_named_trick": 5994,
+  "observed_geo_versions_model_counts": {
+    "8": 4951,
+    "3": 3,
+    "7": 1438,
+    "0": 2738,
+    "5": 384,
+    "4": 34,
+    "2": 63
+  },
+  "source_quiescence": {
+    "source_quiescence_status": 1,
+    "source_quiescence_held": 1,
+    "source_quiescence_released": 1,
+    "model_row_comparisons": 486310,
+    "partial_remaining": 0,
+    "failed_final_remaining": 0
+  },
+  "cleanup_verified": true,
+  "source_runtime_unchanged": true,
+  "ordinary_catalog_owner_join_completed": false,
+  "native_decode_completed": false,
+  "assets_admitted": false,
+  "client_materials_complete": false,
+  "client_lods_complete": false,
+  "live_groups_transaction": false,
+  "world_authority": false,
+  "notes": [
+    "Original runtime model array is sorted by base key; do not assume recorded runtime row equals GEO disk row.",
+    "Original geoLoadStubs promotes empty packed texture name list to observed white; only apply after exact source qualification.",
+    "All seven future owner records remain explicit with no model, original ID0, no geometry substitution."
+  ]
+}

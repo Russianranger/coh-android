@@ -17,7 +17,7 @@ typedef struct {
 } CohResourceBinding;
 typedef struct {size_t owned_limit,aggregate_limit,retained_bytes,loader_reservation;} CohResourceBudget;
 typedef struct {
-    uint32_t owner_kind,file,slot,original_id,model_present,model_row,geo_version;
+    uint32_t owner_kind,file,slot,original_id,model_present,model_row,geo_disk_row,geo_version;
     const char *definition_name,*model_name,*geo_name,*trick_name,*trick_file,*library_name;
     uint32_t gld_loadstate,model_loadstate,model_flags,trick_present,trick_info_present;
     uint32_t trick_flags[2],info_model_flags,info_group_flags;
@@ -33,6 +33,11 @@ typedef struct {uint32_t rows,geos,lookup_work_units;size_t owned_bytes,aggregat
 CohStatus coh_resource_library_key(const char *,char out[256]);
 CohStatus coh_resource_model_key(const char *,char out[256]);
 CohStatus coh_resource_trick_key(const char *,char out[256]);
+/* Original geoSortModels rank, ignoring the first __suffix and comparing base
+ * lengths case-insensitively. Selected equivalent keys are ambiguous and fail.
+ * Names are borrowed for this call; no source/resource authority is conferred. */
+CohStatus coh_resource_model_order(const char *query,const char *const *disk_names,
+    uint32_t count,CohCancel,uint32_t *runtime_row,uint32_t *disk_row);
 /* Grammar-only borrowed observation. No digest/provenance or asset admission;
  * returned names borrow record bytes, model view remains zero. */
 CohStatus coh_resource_source_view(CohBytes,uint32_t asset_generation,CohResourceView *);
@@ -56,6 +61,10 @@ CohStatus coh_resource_index_build(const CohResourceIndex *old,CohAssetLoader *,
     const CohResourceBinding *,const CohResourceBudget *,CohResourceDigest,void *,CohCancel,
     CohResourceIndex **out,CohResourceReport *);
 void coh_resource_index_free(CohResourceIndex *);
+/* Copied immutable metadata and ordinal raw source observation. Raw bytes/names
+ * borrow index lifetime; no pin callback, digest recomputation or admission. */
+CohStatus coh_resource_index_metadata(const CohResourceIndex *,CohResourceBinding *,CohResourceReport *);
+CohStatus coh_resource_index_record(const CohResourceIndex *,uint32_t ordinal,CohBytes *,CohResourceView *);
 CohStatus coh_resource_index_view(const CohResourceIndex *,uint32_t owner_kind,
     uint32_t file,uint32_t slot,CohResourceView *);
 CohStatus coh_resource_index_material(const CohResourceIndex *,uint32_t owner_kind,

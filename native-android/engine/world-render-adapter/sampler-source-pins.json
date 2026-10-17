@@ -1,0 +1,6 @@
+{
+  "upstream/ouroboros/Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+  "upstream/ouroboros/Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+  "upstream/ouroboros/Game/src/render/texEnums.h": "6e96499b08adcfdf2a788286da086aead8e17d2b05ae8c31ee50752b7de778de",
+  "upstream/ouroboros/Game/src/render/thread/rt_tex.c": "5ce562b7184fa594eb0d678f7981fb5fb0f899b44a1e70c984949f68646fdaf5"
+}

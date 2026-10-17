@@ -1,0 +1,27 @@
+{
+  "schema": "coh-raw-character-android-v1",
+  "kind": "outer",
+  "passed": true,
+  "artifact_admitted": true,
+  "android_executed": true,
+  "native_execution_attempted": true,
+  "emulator_qualified": true,
+  "temporary_files_removed": true,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "live_server": false,
+  "physical_thor": false,
+  "gpu_execution": false,
+  "observed": {
+    "passed": true,
+    "checks": 22641,
+    "source_component_compositions": 70,
+    "truncations": 2986,
+    "mutations": 6204,
+    "output_bytes": 1555768,
+    "workspace_bytes": 4437640,
+    "aggregate_limit": 8388608,
+    "whole_initial_update_complete": false,
+    "actor_publication": false
+  }
+}

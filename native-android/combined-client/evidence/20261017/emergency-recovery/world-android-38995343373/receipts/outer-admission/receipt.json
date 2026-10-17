@@ -1,0 +1,15 @@
+{
+  "schema": "coh-raw-character-android-v1",
+  "kind": "outer",
+  "passed": true,
+  "artifact_admitted": true,
+  "android_executed": false,
+  "native_execution_attempted": false,
+  "emulator_qualified": false,
+  "temporary_files_removed": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "live_server": false,
+  "physical_thor": false,
+  "gpu_execution": false
+}

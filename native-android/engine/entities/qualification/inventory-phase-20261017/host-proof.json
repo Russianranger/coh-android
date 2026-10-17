@@ -1,0 +1,496 @@
+{
+  "schema": "coh-inventory-phase-qualification-v1",
+  "passed": true,
+  "source_revision": "2f821ce55bf72177f9859938ecce62c6fe487123",
+  "source_sha256": {
+    "native-android/engine/entity-inventory/coh_inventory.c": "4da33b9b4d6f7c9105190c982d0c94c20605f0953627a08f88b07eaf72dd4f0d",
+    "native-android/engine/entity-inventory/coh_invention.c": "152ed049ff2067dbd7eb32ec0dae299d4d091339babfe69618fba5c7ee45c0cc",
+    "native-android/engine/entity-inventory/coh_inventory_phase.c": "6634324229ee80a851caca7988e7399b13c7d6fc0e15d9f838bbefe5a9be6b9e",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-inventory/test_inventory.c": "1fb730dd86e14a550ff3c6816dab7811c4ff3b53599d6b36c8f102f9b8a3e554",
+    "native-android/engine/entity-inventory/CONTRACT.md": "b93d6af7553a0bda0c4e7597c6c43135fdf35a8689c00fafcbc8043d92260bd8",
+    "native-android/engine/entity-inventory/coh_inventory.h": "a1c13e84e1be302d326b97353cfb9076912addbd20c0792ac434247bf52ea907",
+    "native-android/engine/entity-inventory/coh_invention.h": "fa9257d761bb267103a47c8cccea3abfea93de4834bc29acb7aea88bad59baaa",
+    "native-android/engine/entity-inventory/coh_inventory_phase.h": "ac9039c78a4b31d210cce3feb442fc500fe84626c9aa9c23f59b59554f02c417",
+    "native-android/engine/entity-inventory/inventory_reader.h": "f08668dac9b6c68a31c0950e179476d8152840e5637216b872e280b7b504642b",
+    "native-android/engine/entity-inventory/check.py": "d6cd61e9020219382f7cf5d037a569cf1a23da7ab45f06172494561ab8463fcb",
+    "native-android/engine/entity-inventory/fixture_builder.py": "7b64ea85b5dd5349a86056a211bd8bffdc5dd183cf338251f65ca8b8455d150a",
+    "native-android/engine/entity-inventory/phase-order-source-pins.json": "71f849c01d197aff9e34121a51d3149faf95a8053d413e569f2195d15cdfd4e3",
+    "native-android/engine/entity-inventory/admission-source-pins.json": "4ae8f4890fed823659fe2347eb3b781ea480ed377e8e070086a5400de9b39057",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "provider_sha256": {
+    "native-android/combined-client/diagnostics/allents-tail-20261017/update_oracle.py": "ae41c17867b094919cada5f0e7368ce59846703f8f846f0194eb1fd5b78227c7",
+    "native-android/combined-client/diagnostics/allents-tail-20261017/update-source-pins.json": "760a38fc94534cb9ff31d9e03c2214ecec22d521e680820a2cf3c16cb0052cba",
+    "native-android/combined-client/diagnostics/allents-tail-20261017/inventory_oracle.py": "5a5488baf54cd32b1b9c297ee8bad8e1f70b9c80aa62032d8ec8e908c1da8867",
+    "native-android/combined-client/diagnostics/allents-tail-20261017/active_invention_oracle.py": "35822931dd3a46e93f71ebf350bbde65f9e21939201506c547e617b9ec7344be",
+    "native-android/combined-client/diagnostics/allents-tail-20261017/active-invention-source-pins.json": "e63930d6a7f8640ddadfaa80ca37b71aa0877ae13fe97a3a68046f6f449e6748",
+    "native-android/combined-client/diagnostics/character-outer-20261017/qualify_outer.py": "a2d43a11a74c33709462abc5b0e4059edf774c7d6e23326d5c2330067e48a068",
+    "native-android/combined-client/diagnostics/character-outer-20261017/independent.py": "9fccb7ae9b449f8f529f4a3eabce50cfd36afb60b8b041857ff98beeb19df8d0"
+  },
+  "admission_original_source_sha256_lf": {
+    "Common/entity/Invention.h": "ce5bfcf5d8f439e0345de8028fbe70b66c7266311b494a53cdcea279dcbe14ed",
+    "Common/entity/Concept.h": "a4044781c55262f908610de9a8e2778e7d1203f791dac51cde849b16869ac959",
+    "Common/entity/boost.h": "15048e49fa5e0a7673e55fbda8ca9889787a79ce60c596b06ca59731267e9fa9",
+    "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+    "Common/entity/RewardSlot.c": "8ff29155470cc4d7b50328ab8568f33c3359eef0f2aa759de5002514710ee8b4",
+    "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091"
+  },
+  "original_inventory": {
+    "schema": "coh-inventory-update-source-oracle-v1",
+    "passed": true,
+    "source_pin": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+    "original_source_sha256_lf": {
+      "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "Common/gameComm/wdwbase.c": "fddd0af05b1764115d3c885140b8074587d9e4cc5c762a0101dc49042e30e732",
+      "Common/gameComm/wdwbase.h": "18427c8f68e1a3ef0c3d149ab35801edbe151a16cb2bee166fb8174c8f2a6f6c",
+      "Game/src/UI/uiOptions_Type.c": "8a3704eec9b207d05f8533ad08b618edabcebe3893e196531fa882dd95bd2e5b",
+      "Game/src/UI/uiOptions_Type.h": "73ac1805bb89c0042c031af77336609eee3bab8e4d48fdbdec7aaa1551eb796c",
+      "Game/src/UI/uiNet.c": "79a36e45898f70356c762299a2ab58a0e82c4557cb7047dc505ef400741b1f01",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "Common/entity/entStrings.c": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0",
+      "MapServer/src/entity/keybinds.c": "96df4d670b377dffa4821d8c591926a6bd725c6f0b579eecb0874076bf0377f4",
+      "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+      "Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+      "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+      "Game/src/UI/uiKeybind.h": "c67d779c9870a26fc9474c061216678f5d9728daa6f418a46362ee64330f94fb",
+      "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+      "Common/gameComm/trayCommon.c": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6",
+      "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+      "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+      "Game/src/UI/uiReticle.h": "cd2afa72ef0bbd67a556074d3e307d74c4313a1d80876614ff178fda68a1cc35",
+      "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+      "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+      "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+      "Common/entity/Concept.h": "a4044781c55262f908610de9a8e2778e7d1203f791dac51cde849b16869ac959",
+      "MapServer/src/player/inventory_server.c": "c259417dd4fb7de3e5f9be4c9a8c9e2a6475808b126af6d9630d520d15d72975",
+      "Game/src/player/inventory_client.c": "c2dd405edcccf31c5586f11df353126fbbd2376f314d9406ccda95ea622508a0",
+      "Common/auction/Auction.c": "ea54ec72f46ebebe9083274071a0af8e620d3dff0060cfc7c3fe43a0bfb08a6b",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+    },
+    "original_functions": {
+      "initBitStream": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+      },
+      "bsWriteBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+      },
+      "bsWriteBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+      },
+      "bsReadBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea"
+      },
+      "bsReadBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620"
+      },
+      "bsAlignByte": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+      },
+      "bsGetCursorBitPosition": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+      },
+      "bsWriteString": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81"
+      },
+      "bsReadStringAndLength": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "e7606801ddc22b76d0aeec630597a653ab025a2f501653ecdbe341a692fe0c3f"
+      },
+      "bsWriteF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "38d78cadee1f9bc73c25ef1f0dfcb6249a3e101165151abb8d0f8ca7c76462c9"
+      },
+      "bsReadF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "88adf74b188c3ce4fe4fa8076817a6735f5ec0d96f60a0d94ea2ec846d3881e4"
+      },
+      "initGameOptionStash": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "f52a6467b0e4fef6fba360b4e45f5cfe1203605628490487c1470edfe7dd0fb2"
+      },
+      "userOptionGet": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "0405658bdefaf2c5f7e5bf6dc6a739ad594326397971eac78cd09bde434db153"
+      },
+      "receiveOptions": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "1b76c2ccccf73ee23e793835e4bb7cace1657ef9b0f203ea3f88f183848e0720"
+      },
+      "sendCharacterToClient": {
+        "source": "MapServer/src/entity/entserver.c",
+        "sha256_lf": "9a6b0977a9b2a35be432e6dc0dd92181d259c778b5a4a56e4e7b4e7e9aa1ebfb"
+      },
+      "sendWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "25aad86d63721f4539eecf14e61e1b013ad1212cbb7694e130bea9d2759485dc"
+      },
+      "receiveWindowIdx": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "19d6524148eea1041d0552221357c63c39ad2df1e06ba8acdbfeceadc60d74c5"
+      },
+      "receiveWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "887b6c4b1ecba98eaf89f030bca4366fb93a1b566f9b0d64c47a6f3c3afb99bc"
+      },
+      "breakHTMLtags": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "a84b39aaf0e66e9a4b89b57225b329f667433e208fd9b4673a7ef0b748af66bf"
+      },
+      "sendEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "5a6173e2bb67536e57395030b671b203d77ff1196e158ff4c6c2d5dc85c50a3c"
+      },
+      "receiveEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "f9239c0e1037ae34ebaced0830a12546bbe150ccf2b0143412dae67c7ef918cf"
+      },
+      "conceptitem_Send": {
+        "source": "Common/entity/character_net.c",
+        "sha256_lf": "e7727f9ab5ef7fea46abfbfcc8a601a58d32cd0f148e9aa8f45bac420af5ff30"
+      },
+      "character_inventory_Send": {
+        "source": "Common/entity/character_net.c",
+        "sha256_lf": "90d15a2f531158d11d86c2002e9ea6a41f21800064db21668cb439c30634158a"
+      },
+      "character_inventory_Receive": {
+        "source": "Common/entity/character_net.c",
+        "sha256_lf": "bf219bfa227460ca0125ce1dcca1b60494c5867b4a98eb43985b78dba3230c6a"
+      },
+      "pktSendBitsAuto": {
+        "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+        "sha256_lf": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa"
+      },
+      "pktGetBitsAuto": {
+        "source": "libs/UtilitiesLib/src/network/net_packetutil.c",
+        "sha256_lf": "24d347775510cb0e5cd093758aee6967bda392c99d0baf5c46c1a19de7897cd7"
+      },
+      "AuctionInventory_Send": {
+        "source": "Common/auction/Auction.c",
+        "sha256_lf": "eec7bf6467c0e3b88e8ac4354b9b2a1ccd8420f7f24f25e236d806c86e308253"
+      },
+      "AuctionInventory_Recv": {
+        "source": "Common/auction/Auction.c",
+        "sha256_lf": "ae378421ccbf060f98e8063653e41e9d63317754d0054e91db6c26dbc6d0e9ee"
+      },
+      "entity_SendInvUpdate": {
+        "source": "MapServer/src/player/inventory_server.c",
+        "sha256_lf": "0360573e5c6e0854994f2519c803447a25a027dc1aee12dceb4eb9fcb7e5318c"
+      },
+      "entity_ReceiveInvUpdate": {
+        "source": "Game/src/player/inventory_client.c",
+        "sha256_lf": "cf912714bf04a5f7528877f602df7388f386210dfa1e3efcdc09c29da95a1a30"
+      }
+    },
+    "generated_source_sha256": "17dc3f05e4c92b307c38fdf94c12e61d0fe244140dcb5e277bdc07ceca58fd6b",
+    "cases_count": 360,
+    "scope": "whole original sender/consumer and auction wire wrappers; explicit inventory/auction text serialization and setter callbacks, no dictionary/text-parser application",
+    "auction_parser_semantics": false,
+    "dictionary_authority": false,
+    "original_oracle_sanitized": false,
+    "actor_publication": false,
+    "acknowledgments_enabled": false,
+    "android_executed": false
+  },
+  "original_invention": {
+    "schema": "coh-active-invention-producer-source-oracle-v1",
+    "passed": true,
+    "source_pin": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+    "original_source_sha256_lf": {
+      "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "Common/gameComm/wdwbase.c": "fddd0af05b1764115d3c885140b8074587d9e4cc5c762a0101dc49042e30e732",
+      "Common/gameComm/wdwbase.h": "18427c8f68e1a3ef0c3d149ab35801edbe151a16cb2bee166fb8174c8f2a6f6c",
+      "Game/src/UI/uiOptions_Type.c": "8a3704eec9b207d05f8533ad08b618edabcebe3893e196531fa882dd95bd2e5b",
+      "Game/src/UI/uiOptions_Type.h": "73ac1805bb89c0042c031af77336609eee3bab8e4d48fdbdec7aaa1551eb796c",
+      "Game/src/UI/uiNet.c": "79a36e45898f70356c762299a2ab58a0e82c4557cb7047dc505ef400741b1f01",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "Common/entity/entStrings.c": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0",
+      "MapServer/src/entity/keybinds.c": "96df4d670b377dffa4821d8c591926a6bd725c6f0b579eecb0874076bf0377f4",
+      "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+      "Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+      "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+      "Game/src/UI/uiKeybind.h": "c67d779c9870a26fc9474c061216678f5d9728daa6f418a46362ee64330f94fb",
+      "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+      "Common/gameComm/trayCommon.c": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6",
+      "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+      "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+      "Game/src/UI/uiReticle.h": "cd2afa72ef0bbd67a556074d3e307d74c4313a1d80876614ff178fda68a1cc35",
+      "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+      "Common/entity/Invention.c": "d4a7eb3384d5f6057ed520a0e16809531419397726eb84c971b4723375043322",
+      "Common/entity/Invention.h": "ce5bfcf5d8f439e0345de8028fbe70b66c7266311b494a53cdcea279dcbe14ed",
+      "Common/entity/Concept.h": "a4044781c55262f908610de9a8e2778e7d1203f791dac51cde849b16869ac959",
+      "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+      "Common/entity/RewardSlot.c": "8ff29155470cc4d7b50328ab8568f33c3359eef0f2aa759de5002514710ee8b4",
+      "Common/entity/RewardSlot.h": "d2b17d98ba65c8fe603d2da7fefbf40105eeb32ddffae397637d7997cc359118",
+      "Common/entity/RewardItemType.h": "f09c948de31ac9e2a26a6445fb24fa415f14bd0dd6ae6ee6823390d6dba5b9d3",
+      "Common/entity/boost.h": "15048e49fa5e0a7673e55fbda8ca9889787a79ce60c596b06ca59731267e9fa9"
+    },
+    "original_functions": {
+      "initBitStream": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+      },
+      "bsWriteBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+      },
+      "bsWriteBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+      },
+      "bsReadBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea"
+      },
+      "bsReadBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620"
+      },
+      "bsAlignByte": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+      },
+      "bsGetCursorBitPosition": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+      },
+      "bsWriteString": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81"
+      },
+      "bsReadStringAndLength": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "e7606801ddc22b76d0aeec630597a653ab025a2f501653ecdbe341a692fe0c3f"
+      },
+      "bsWriteF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "38d78cadee1f9bc73c25ef1f0dfcb6249a3e101165151abb8d0f8ca7c76462c9"
+      },
+      "bsReadF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "88adf74b188c3ce4fe4fa8076817a6735f5ec0d96f60a0d94ea2ec846d3881e4"
+      },
+      "initGameOptionStash": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "f52a6467b0e4fef6fba360b4e45f5cfe1203605628490487c1470edfe7dd0fb2"
+      },
+      "userOptionGet": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "0405658bdefaf2c5f7e5bf6dc6a739ad594326397971eac78cd09bde434db153"
+      },
+      "receiveOptions": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "1b76c2ccccf73ee23e793835e4bb7cace1657ef9b0f203ea3f88f183848e0720"
+      },
+      "sendCharacterToClient": {
+        "source": "MapServer/src/entity/entserver.c",
+        "sha256_lf": "9a6b0977a9b2a35be432e6dc0dd92181d259c778b5a4a56e4e7b4e7e9aa1ebfb"
+      },
+      "sendWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "25aad86d63721f4539eecf14e61e1b013ad1212cbb7694e130bea9d2759485dc"
+      },
+      "receiveWindowIdx": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "19d6524148eea1041d0552221357c63c39ad2df1e06ba8acdbfeceadc60d74c5"
+      },
+      "receiveWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "887b6c4b1ecba98eaf89f030bca4366fb93a1b566f9b0d64c47a6f3c3afb99bc"
+      },
+      "breakHTMLtags": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "a84b39aaf0e66e9a4b89b57225b329f667433e208fd9b4673a7ef0b748af66bf"
+      },
+      "sendEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "5a6173e2bb67536e57395030b671b203d77ff1196e158ff4c6c2d5dc85c50a3c"
+      },
+      "receiveEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "f9239c0e1037ae34ebaced0830a12546bbe150ccf2b0143412dae67c7ef918cf"
+      },
+      "s_validateInventionState": {
+        "source": "Common/entity/Invention.c",
+        "sha256_lf": "05fc6c88005850893bb8ae3cc0a5ba6c7aaf0c376cdaee42dcabcd17a9d52d8e"
+      },
+      "character_IsInventing": {
+        "source": "Common/entity/Invention.c",
+        "sha256_lf": "b49a29282234102384b40270ae2e2b0fbdba450fa373e8d34430f1c74e2d9c1a"
+      },
+      "conceptitem_Send": {
+        "source": "Common/entity/character_net.c",
+        "sha256_lf": "e7727f9ab5ef7fea46abfbfcc8a601a58d32cd0f148e9aa8f45bac420af5ff30"
+      },
+      "rewardslot_Send": {
+        "source": "Common/entity/RewardSlot.c",
+        "sha256_lf": "7ed6bd44ed82f67f6946b0b972332497782b48de1d58c1d19b72af529b4b80dc"
+      },
+      "invention_Send": {
+        "source": "Common/entity/Invention.c",
+        "sha256_lf": "fd33e02d93ba89209c40ff1a7d76e92842b0aa3d7067fbdbd0aa4b06d8923d65"
+      },
+      "invention_Receive": {
+        "source": "Common/entity/Invention.c",
+        "sha256_lf": "91bcb1d88264c312bdc99cfe6041e3ff5e02a349f78be1865909082c69d77791"
+      },
+      "entity_SendInventionUpdate": {
+        "source": "Common/entity/Invention.c",
+        "sha256_lf": "f00455b8e17259ead8650b1eb4afae391ef88101badddfd0b4ab3b393c370efd"
+      },
+      "entity_ReceiveInventionUpdate": {
+        "source": "Common/entity/Invention.c",
+        "sha256_lf": "9d4ee52cb27e6dc08bd6a0ce36e06d7e3451cdb8fecd9b3e5fadbc217929825e"
+      }
+    },
+    "generated_source_sha256": "9f142dfb1919f4f33755233e000c7bddb761c93b192fa8576b57732c1dd511c1",
+    "cases_count": 420,
+    "scope": "whole unchanged invention sender+validator+consumer; concept/reward senders unchanged, dictionary lookup is numeric fixture callback",
+    "source_consumer_body_noop": true,
+    "original_consumer_compatible_for_active_status": false,
+    "reward_id_char_signedness": "host char narrowing observed; not portable Win32 char ABI qualification",
+    "dictionary_authority": false,
+    "original_oracle_sanitized": false,
+    "actor_publication": false,
+    "acknowledgments_enabled": false,
+    "android_executed": false
+  },
+  "original_workshop": {
+    "source_sha256_lf": {
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5"
+    },
+    "sender_statement_sha256": "e81ec7567ce929cc3b68772c2713073e31022d4815a5d50be491c668ccc6bff0",
+    "receiver_statement_sha256": "2eec917ac29a9b639954126384cdc45a42157bb49a168449543e3cc9cca7b7eb",
+    "generated_oracle_sha256": "b931d30b9d934740bdb78fc2a2f940d16b3d9c18171a3cf234b4e60588bb0131",
+    "fixtures_sha256": "10fbe9025ec2a6792672331e5a73df72b1e4d51028eaae4a757ca9ff1953fe1a",
+    "cases": 10,
+    "scope": "Exact workshop source statements and original bitstream functions; synthetic entity storage only. Enclosing whole update not executed."
+  },
+  "fixtures_sha256": {
+    "inventory_fixtures.h": "fe9870eb3e160977ce73312d5a85b73722267c5ca707c7565fc6b0bb30210f66",
+    "invention_fixtures.h": "057f1ebe13c51c92e5331dcebba8546ee8b779a8f1a9b1dfdedf96e0cdf272a2",
+    "workshop_fixtures.h": "10fbe9025ec2a6792672331e5a73df72b1e4d51028eaae4a757ca9ff1953fe1a"
+  },
+  "source_stable_before_after": true,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 108461,
+      "inventory_fixtures": 360,
+      "invention_fixtures": 420,
+      "phase_compositions": 360,
+      "truncations": 8116,
+      "mutations": 35580,
+      "randomized": 1000,
+      "inventory_output_bytes": 327720,
+      "invention_output_bytes": 13096,
+      "phase_output_bytes": 340880,
+      "phase_workspace_bytes": 681696,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 108461,
+      "inventory_fixtures": 360,
+      "invention_fixtures": 420,
+      "phase_compositions": 360,
+      "truncations": 8116,
+      "mutations": 35580,
+      "randomized": 1000,
+      "inventory_output_bytes": 327720,
+      "invention_output_bytes": 13096,
+      "phase_output_bytes": 340880,
+      "phase_workspace_bytes": 681696,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 108461,
+      "inventory_fixtures": 360,
+      "invention_fixtures": 420,
+      "phase_compositions": 360,
+      "truncations": 8116,
+      "mutations": 35580,
+      "randomized": 1000,
+      "inventory_output_bytes": 327720,
+      "invention_output_bytes": 13096,
+      "phase_output_bytes": 340880,
+      "phase_workspace_bytes": 681696,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    }
+  },
+  "binary_sha256": {
+    "release": "e2ce9a60ccdddc39f20f085ba9e546a29c5b3346900f644a23a2a2436aaef7de",
+    "asan": "e804893f83cc552dcc2ceddc6ff97a596d0859aee81dbca0089e75e4f16095b1",
+    "ubsan": "7ef30ce77e71b030c9e713c104f69451f07a1791e55e49de4c614db3d8ff4fac"
+  },
+  "production_stack_frames": [
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_read",
+      "bytes": 24,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string.part.0",
+      "bytes": 384,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_pack",
+      "bytes": 144,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_inventory_phase_read",
+      "bytes": 240,
+      "bound": "static"
+    },
+    {
+      "function": "coh_invention_update_read",
+      "bytes": 256,
+      "bound": "static"
+    },
+    {
+      "function": "coh_inventory_update_read",
+      "bytes": 256,
+      "bound": "static"
+    }
+  ],
+  "cpp_link_passed": true,
+  "android": {},
+  "auction_text_semantics": false,
+  "active_invention_original_consumer_compatible": false,
+  "whole_initial_update_complete": false,
+  "dictionary_authority": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "android_executed": false
+}

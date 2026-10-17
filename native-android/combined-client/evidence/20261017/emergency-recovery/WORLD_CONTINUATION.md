@@ -84,3 +84,5 @@ updates, so packet-end assumptions cannot establish transaction closure.
 Next: inspect actual targeted capture; bind every catalog/root/resource identity;
 complete inventory/invention/team/global tails using pinned original source;
 close dictionaries/selected DBID/entity generation before atomic renderer entry.
+
+Current exact capture, component and Android results: see [ACTIVE_CONTINUATION.md](ACTIVE_CONTINUATION.md).

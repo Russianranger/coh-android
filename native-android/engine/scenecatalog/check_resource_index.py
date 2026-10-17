@@ -34,12 +34,22 @@ def main():
     dependencies=paths+sources+[HERE/'coh_resource_index.h',HERE/'tests/test_resource_index.c',HERE/'tests/resource-fixtures/observed.cohres',Path(__file__),ENGINE/'assets/coh_asset_loader.h',ENGINE/'assets/coh_asset_geo.h',ENGINE/'coh_contracts.h',ROOT/'native-android/include/coh_native_core.h']
     pins={str(f.relative_to(ROOT)):sha(f) for f in dependencies}
     group,anim,trick=[f.read_text() for f in paths[:3]]
-    funcs=[function(group,'groupGetPublicName'),function(group,'groupNameIdx'),function(anim,'compareModelNamesAndLengths'),function(trick,'trickFromObjectName')]
+    funcs=[function(group,'groupGetPublicName'),function(group,'groupNameIdx'),function(anim,'compareModelNamesAndLengths'),function(trick,'trickFromObjectName'),*[function(anim,name) for name in ('compareModelNames','compareModelNamesCallback','compareModelBSearch','geoSortModels')]]
     shim='''#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
 #include <strings.h>
 #include <stdio.h>
+#include <stdlib.h>
+#define __cdecl
+#define stricmp strcasecmp
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
+#define PERFINFO_AUTO_START(...) ((void)0)
+#define PERFINFO_AUTO_STOP_START(...) ((void)0)
+#define PERFINFO_AUTO_STOP() ((void)0)
+typedef struct {char *name;int namelen_notrick;} Model;
+typedef struct {const char *name;int namelen;} ModelSearchData;
+typedef struct {struct {Model **models;int model_count;} modelheader;} GeoLoadData;
 #define MAX_PATH 1024
 #define min(a,b) ((a)<(b)?(a):(b))
 #define strnicmp strncasecmp
@@ -59,6 +69,7 @@ static void getDirectoryName(char *s){char *p=strrchr(s,'/');if(p)*p=0;}
 '''+ '\n'.join(funcs)+'''
 const char *original_library(const char *s){char public_name[1000];int index;groupNameIdx(groupGetPublicName(s,public_name,999),&index);return captured;}
 const char *original_trick(const char *s){trickFromObjectName(s,"object_library/source.geo");return captured;}
+int original_model_rank(const char *query,const char **names,unsigned count){Model values[512],*pointers[512];if(count>512)return -1;for(unsigned n=0;n<count;n++){const char *suffix=strstr(names[n],"__");values[n]=(Model){(char*)names[n],(int)(suffix?suffix-names[n]:strlen(names[n]))};pointers[n]=&values[n];}GeoLoadData gld={{pointers,(int)count}};geoSortModels(&gld);for(unsigned n=0;n<count;n++)if(!strcmp(pointers[n]->name,query))return (int)n;return -1;}
 int original_model_compare(const char *a,const char *b){const char *x=strstr(a,"__"),*y=strstr(b,"__");return compareModelNamesAndLengths(a,(int)(x?x-a:strlen(a)),(char*)b,(int)(y?y-b:strlen(b)));}
 '''
     outcomes={};env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1')
@@ -100,6 +111,24 @@ int original_model_compare(const char *a,const char *b){const char *x=strstr(a,"
             for fn in functions:
                 if text==b'/' and fn==functions[2]:continue
                 out=ctypes.create_string_buffer(b'UNCHANGED'+bytes(247));before=out.raw;assert fn(text,out)!=0 and out.raw==before;comparisons+=1
+        native.coh_resource_model_order.argtypes=[ctypes.c_char_p,ctypes.POINTER(ctypes.c_char_p),ctypes.c_uint32,ctypes.c_void_p,ctypes.POINTER(ctypes.c_uint32),ctypes.POINTER(ctypes.c_uint32)]
+        # CohCancel is passed by value; represent it explicitly.
+        class Cancel(ctypes.Structure):_fields_=[('poll',ctypes.c_void_p),('context',ctypes.c_void_p)]
+        native.coh_resource_model_order.argtypes=[ctypes.c_char_p,ctypes.POINTER(ctypes.c_char_p),ctypes.c_uint32,Cancel,ctypes.POINTER(ctypes.c_uint32),ctypes.POINTER(ctypes.c_uint32)]
+        original.original_model_rank.argtypes=[ctypes.c_char_p,ctypes.POINTER(ctypes.c_char_p),ctypes.c_uint32]
+        ordering_cases=0
+        for trial in range(500):
+            names=[('dir/' if k%3==0 else '')+rng.choice(['b','A','Z','foo','aa'])+str(k)+rng.choice(['','__Stone','__glass']) for k in range(rng.randrange(2,25))]
+            rng.shuffle(names)
+            pointers=(ctypes.c_char_p*len(names))(*[x.encode() for x in names])
+            for disk_index,query in enumerate(names):
+                runtime=ctypes.c_uint32(0xabcdef);disk=ctypes.c_uint32(0xabcdef)
+                assert native.coh_resource_model_order(query.encode(),pointers,len(names),Cancel(),ctypes.byref(runtime),ctypes.byref(disk))==0
+                assert disk.value==disk_index and runtime.value==original.original_model_rank(query.encode(),pointers,len(names));ordering_cases+=1
+        for names in [['piece__A','piece__B'],['piece','PIECE__B'],['same','same']]:
+            pointers=(ctypes.c_char_p*len(names))(*[x.encode() for x in names]);runtime=ctypes.c_uint32(0xabcdef);disk=ctypes.c_uint32(0xabcdef)
+            assert original.original_model_compare(names[0].encode(),names[1].encode())==0
+            assert native.coh_resource_model_order(names[0].encode(),pointers,len(names),Cancel(),ctypes.byref(runtime),ctypes.byref(disk))!=0 and runtime.value==disk.value==0xabcdef;ordering_cases+=1
         for mode,flags in [('release',['-O2']),('asan',['-O1','-g','-fsanitize=address','-no-pie']),('ubsan',['-O1','-g','-fsanitize=undefined','-fno-sanitize-recover=all'])]:
             binary=tmp/mode
             run([*base,*flags,HERE/'tests/test_resource_index.c',*sources,'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free','-lcrypto','-lz','-lm','-o',binary])
@@ -108,8 +137,8 @@ int original_model_compare(const char *a,const char *b){const char *x=strstr(a,"
             outcomes[mode]={'observed_source_controls':observed,'authentic_geo_controls':actual_result,'binary_sha256':sha(binary)}
     if pins!={str(f.relative_to(ROOT)):sha(f) for f in dependencies}:raise ValueError('Source changed during qualification')
     if a.geo and sha(a.geo)!=a.geo_sha256:raise ValueError('GEO changed during qualification')
-    result={'schema':1,'passed':True,'source_sha256':pins,'original_functions':[re.search(r'\b(\w+)\(',f).group(1) for f in funcs],'original_lookup_comparisons':comparisons,'modes':outcomes,'actual_geo_sha256':a.geo_sha256,'actual_geo_path':a.geo_path,'actual_geo_model_row':a.model_row,'actual_runtime_resource_capture':False,'source_fixture_only':True,'client_materials_admitted':False,'live_groups_admitted':False,'graph_published':False,'world_authority':False,'android_executed':False,'protected_asset_source_modified':False,'leak_sanitizer':False,'allocation_balance_controls':True}
+    result={'schema':1,'passed':True,'source_sha256':pins,'original_functions':[re.search(r'\b(\w+)\(',f).group(1) for f in funcs],'original_lookup_comparisons':comparisons,'original_runtime_model_order_comparisons':ordering_cases,'modes':outcomes,'actual_geo_sha256':a.geo_sha256,'actual_geo_path':a.geo_path,'actual_geo_model_row':a.model_row,'actual_runtime_resource_capture':False,'source_fixture_only':True,'client_materials_admitted':False,'live_groups_admitted':False,'graph_published':False,'world_authority':False,'android_executed':False,'protected_asset_source_modified':False,'leak_sanitizer':False,'allocation_balance_controls':True}
     a.output.parent.mkdir(parents=True,exist_ok=True)
     with a.output.open('x') as stream:json.dump(result,stream,indent=2);stream.write('\n')
-    print(json.dumps({'passed':True,'original_lookup_comparisons':comparisons,'modes':outcomes}))
+    print(json.dumps({'passed':True,'original_lookup_comparisons':comparisons,'original_runtime_model_order_comparisons':ordering_cases,'modes':outcomes}))
 if __name__=='__main__':main()

@@ -1,0 +1,78 @@
+{
+  "schema": "coh-f-gpu-callback-owner-review-v1",
+  "passed": true,
+  "source_commit": "4ad5eb5029a6ac3555da315fe34c3bdb5c5015e2",
+  "evidence_commit": "ba8900346",
+  "tested_source_sha256": {
+    "native-android/engine/world-render-adapter/coh_wr_sampler.c": "a93ccc9b3307338ff716641630cb3d74ea8d81eb71d756b73e474c717d41f844",
+    "native-android/engine/world-render-adapter/coh_wr_sampler.h": "31051b98834cf18c313994c452d85313a27a91419d27cac99babdd177fc8cfdb",
+    "native-android/engine/world-render-adapter/coh_wr_texture.c": "191ebf02dead0fa3657944c18e97d1cd6ad482fc2432d144b58d86f0efbbe844",
+    "native-android/engine/world-render-adapter/coh_wr_texture.h": "069ac1de9a4f6e7128ff779ea44d01894d48769500784c9d97056ce0eaca22d0",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_texture.c": "aff25b77e123fe65801b8065d5b218e7076061f174bb1a8d3f7145a6fc213037",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_texture.h": "a281c7173ebd9a0ed218d385ba74787f2b7df1f08a0ccab008e5fa64c1c3b51a",
+    "native-android/engine/world-render-adapter/tests/test_gpu_texture.c": "9282a9cbc27d60563f4a80256b4df79a0e3a857a736add4c8334da951eb6399e",
+    "native-android/engine/world-render-adapter/tests/test_texture_owner.c": "5c8feff016662ccfc98ad9b18bea9a61036ab8af825d916a8fdda0cdc07d85a3",
+    "native-android/engine/world-render-adapter/tests/test_sampler.c": "7c60036255e564c5c74bc6441ab5dcc6adf0710d41669afbbfc38217d31fca33",
+    "native-android/engine/world-render-adapter/tests/test_sampler_texture.c": "3706f21b0d598e2f5752bc49d54366760b0cb9682a367c2e3960f1988a4c75d4",
+    "native-android/engine/world-render-adapter/check_sampler.py": "bd9f3fc4224f7e9bd048e20658933915d1cafd6202a9d7afe32dc28766da6ef4",
+    "native-android/engine/world-render-adapter/sampler-source-pins.json": "9bbf496d118556ce692ff4641713b358eebed6e17f8c083053cf63eb327a467f",
+    "native-android/engine/world-render-adapter/sampler-authentic-pins.json": "a80887dacabe98deb119ac948e498fbba7d51cf97a1057c96f79e22df0d849bc",
+    "native-android/engine/world-render-adapter/acquire_sampler_texture.py": "b4d1a1ae94b3ba3edcaab2201b28bec2caa22cf06632d99231d2755aa88a3dd0",
+    "native-android/engine/world-render-adapter/CLIENT_RESOURCE_BINDING.md": "2aaad5b27ea1d1038c004b05445557ad3566f4c2db820322722b5b215cc899c3",
+    "native-android/engine/world-render-adapter/GPU_TEXTURE_UPLOAD.md": "9d760e92344297a17500886a1cce24488984b3b0c95a65690e274a9927e73e0f",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/tools/material_fixture/acquire.py": "12fad465c6c087fa0a2bdb6917d1c6fd619926f83378efd86e3f6ddcabcc95da"
+  },
+  "receipt_sha256": "633e2d4d3edb469f6d9a76e84d6bb2dd7bc6d0c399299bdf3c31ee91e77a3c29",
+  "reported_model_tests": {
+    "release": {
+      "passed": true,
+      "checks": 12841,
+      "callback_failure_positions": 33,
+      "uploaded_levels": 9,
+      "injected_gles_only": true,
+      "android_execution": false,
+      "material_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 12841,
+      "callback_failure_positions": 33,
+      "uploaded_levels": 9,
+      "injected_gles_only": true,
+      "android_execution": false,
+      "material_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 12841,
+      "callback_failure_positions": 33,
+      "uploaded_levels": 9,
+      "injected_gles_only": true,
+      "android_execution": false,
+      "material_authority": false
+    }
+  },
+  "source_review": [
+    "six2Dtexture/unpackbindings snapshotted before mutations and restored with checkedcallbacks",
+    "PBO unbound and four unpack pixelstore values canonicalized before every levelupload",
+    "fullCPUchain and samplercompleteness jointly checked;no hidden mippointer lifetime",
+    "partialgenerate/deletion-disposition and contextlossretain journal ownership",
+    "exactbackendcallbacks/context/thread/Surface tokens enforced;no deletewrongcontextnumericname",
+    "same survivingcontext may retireoldSurface only forcleanup;verifieddestroyedcontextdisposition avoidsnewname reuse",
+    "allocation and nominalGPUreservation charged with callerexternalremainingresources",
+    "all-context work quarantine on pendingcleanup is documented externalregistry/caller prerequisite;no globalregistry implementation claimed"
+  ],
+  "independent_native_tests_reexecuted": false,
+  "actual_gles_driver_executed": false,
+  "android_executed": false,
+  "material_authority": false,
+  "world_authority": false
+}

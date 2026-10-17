@@ -1,0 +1,39 @@
+{
+  "built": true,
+  "executed": false,
+  "binary": "coh_power_info_test",
+  "binary_sha256": "4a93c402fa827ae7ac3030ce009507ae2fc749aa19b91d0ffd3433a479b2c87a",
+  "fixtures_sha256": {
+    "power_info_fixtures.h": "35f21a8be7582d28ae081152b3219b08f13576b65c9662ec8a6210db68529af8"
+  },
+  "source_sha256": {
+    "native-android/engine/entity-globals/coh_power_info.c": "c8038bca85e1e2fa2f07f469ac0a9cb0e52b56c8be5d31ebb4406b71e8bfe732",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-globals/test_power_info.c": "5da8da9d4de8d18b47007facf47d9f2aab7a9e0cd0efa5acfa3474cb9b9545ff",
+    "native-android/engine/entity-globals/coh_power_info.h": "f19ba6dfdf954399995e3e63ee07d4269bac03a4ef15bd2d28cb35f2243a8845",
+    "native-android/engine/entity-globals/power_info_oracle_shim.h": "7179beac5c5893b19a5b6a056ae927ef307f5ec73907bd826f44add4e5db7650",
+    "native-android/engine/entity-globals/power_info_fixture.c.inc": "ec08549404117e2222b9ed4c1bf4fc805b331313cca0d100e196e369e4a54c7a",
+    "native-android/engine/entity-globals/power-info-source-pins.json": "d49f3450ece69c359fe761a3222f836a001b87bae6f1910b9980c0a244930843",
+    "native-android/engine/entity-globals/check_power_info.py": "362269f25d4a0c6dae7e4961e194d4385952b9dd49cf03a6255fe66daf00559b",
+    "native-android/engine/character-data/coh_character_data.h": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/engine/entities/run_character_android.py": "9253edc51d48e77191c135060e815fb9b2c3e87ba59e0ecfb215e078d26dab46"
+  },
+  "expected": {
+    "passed": true,
+    "checks": 380498,
+    "fixtures": 70,
+    "truncations": 61200,
+    "mutations": 7706,
+    "randomized": 2000,
+    "output_bytes": 534600,
+    "workspace_bytes": 534600,
+    "aggregate_limit": 8388608,
+    "whole_initial_update": false,
+    "actor_publication": false,
+    "acknowledgments_enabled": false
+  }
+}

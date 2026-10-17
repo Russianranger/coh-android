@@ -1,0 +1,153 @@
+{
+  "archive_sha256": "572d5cde08f698173cce4c9a0860902a2da91841b22dbdd124501e1e601e192d",
+  "files": {
+    "capture/capture-receipt.json": {
+      "bytes": 17080,
+      "sha256": "0947a6a172c083350d3229de5facebc5862fdc1bdd98e9b6c181b14cf3a715e4"
+    },
+    "capture/catalog.cohcat": {
+      "bytes": 12179670,
+      "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+    },
+    "capture/diagnostic-00.txt": {
+      "bytes": 10,
+      "sha256": "2a8ab5d2748f8aa4fbfe617d173064dd1147f44b880cf388c4be1391be14aa39"
+    },
+    "capture/diagnostic-01.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-02.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-03.txt": {
+      "bytes": 89,
+      "sha256": "cffd0eb7c6b05c023be640d63e73bcd976acf07687453424aca3c706735441bc"
+    },
+    "capture/diagnostic-04.txt": {
+      "bytes": 234,
+      "sha256": "532839fb961456d2f58d000370c4d1d2f349befb2b7c537fd0c3d1604b6d84da"
+    },
+    "capture/diagnostic-05.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-06.txt": {
+      "bytes": 234,
+      "sha256": "532839fb961456d2f58d000370c4d1d2f349befb2b7c537fd0c3d1604b6d84da"
+    },
+    "capture/diagnostic-07.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-08.txt": {
+      "bytes": 234,
+      "sha256": "532839fb961456d2f58d000370c4d1d2f349befb2b7c537fd0c3d1604b6d84da"
+    },
+    "capture/diagnostic-09.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-10.txt": {
+      "bytes": 424,
+      "sha256": "57f3d6d271635ab4380411277850b7e179146aeda313788541421e8583110a23"
+    },
+    "capture/diagnostic-11.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-12.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-13.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-14.txt": {
+      "bytes": 440,
+      "sha256": "8ea4b04334d67816d2c0475c533472456c6913809fe9d5052a4a826e85941f19"
+    },
+    "capture/diagnostic-15.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "capture/diagnostic-16.txt": {
+      "bytes": 3115,
+      "sha256": "06b24c95bdd088f55efb620d85cc47970dccbcc32937fb464c386e1d1ae88063"
+    },
+    "capture/diagnostic-17.txt": {
+      "bytes": 2237,
+      "sha256": "0337985a6d6cf9ebcb2c5f6d865c3f72dca0b3763f0b9e0c6ddd21e3a856eb79"
+    },
+    "capture/diagnostic-18.txt": {
+      "bytes": 37278,
+      "sha256": "34e0568c92294be3b9022d60a27a6c23d3562d2d2afd6d9f4fd36320ea96461f"
+    },
+    "capture/diagnostic-19.txt": {
+      "bytes": 71,
+      "sha256": "1ab2b8872ff6fa52ede6ec1a31bb8884b93508dd2865e04b0a7d7625534b210f"
+    },
+    "capture/diagnostic-20.txt": {
+      "bytes": 1377,
+      "sha256": "b8287536fdbfb62497273701ddcc9c88a669ec2db0132805cf0c2b09d7df1505"
+    },
+    "capture/resource-binding.json": {
+      "bytes": 971,
+      "sha256": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c"
+    },
+    "capture/resources.cohres": {
+      "bytes": 12596422,
+      "sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+    },
+    "capture/run-identity.json": {
+      "bytes": 626,
+      "sha256": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced"
+    },
+    "capture/runtime.cohrts": {
+      "bytes": 6585,
+      "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+    },
+    "capture/source-identity.json": {
+      "bytes": 6522,
+      "sha256": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa"
+    },
+    "control-fixture.json": {
+      "bytes": 16116,
+      "sha256": "3be317b5cc4b24aad8b19cd93e18762f12270ad4284c31a81e7587e4e35fadc1"
+    },
+    "map-startup-inputs.json": {
+      "bytes": 1166,
+      "sha256": "813b1d59d73295ec9a80766dfd5f707475e90f8813e30273ef7d0de911867ae4"
+    },
+    "path-probe-build.json": {
+      "bytes": 1017,
+      "sha256": "b58f5c5a17c913c306fbb453e0777040e0d9cb0e5c61fe2b4754f77f9d7efa03"
+    },
+    "runtime-graph-diagnostic.json": {
+      "bytes": 63437,
+      "sha256": "61c2882093173ca85fa4c6d86411d246a94617a884e806a5c71e40f2ca7ea128"
+    },
+    "scope.json": {
+      "bytes": 431,
+      "sha256": "a52cf3c2a487d32a5eeae91084cad54866f29de7b6f46b68ad610edec20b14ff"
+    },
+    "wine/installed-packages.tsv": {
+      "bytes": 152,
+      "sha256": "7052f1a35d365074ec6342f944e98aed1972e646f2e310e2e57f402a05b35776"
+    },
+    "wine/packages.sha256": {
+      "bytes": 432,
+      "sha256": "f29007e146adb82c7f47dcbef95fb3d492bf0bea8d4ea1b0d31ada3709c3381f"
+    },
+    "wine/version.txt": {
+      "bytes": 10,
+      "sha256": "2a8ab5d2748f8aa4fbfe617d173064dd1147f44b880cf388c4be1391be14aa39"
+    },
+    "wine/winehq.key": {
+      "bytes": 3212,
+      "sha256": "d965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8"
+    }
+  }
+}

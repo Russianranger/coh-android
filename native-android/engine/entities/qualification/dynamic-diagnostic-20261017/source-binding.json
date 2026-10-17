@@ -1,0 +1,26 @@
+{
+  "source_commit": "42fcf0ec59df24a6da54332bc744033a303225f9",
+  "source_sha256": {
+    "native-android/engine/entity-dynamic/coh_dynamic.c": "7ab9ddcc5113ba896999876f1825c541102cdb97744d94b54fb513b55683b478",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-dynamic/test_dynamic.c": "119400cc617f9550c112ff0b152246a6691c5ad7bd722fc48fceac2bf896a504",
+    "native-android/engine/entity-dynamic/coh_dynamic.h": "f898510163d3c0d03849578a9a30292dba9a730029a027b1997bc9302f12c5e4",
+    "native-android/engine/entity-dynamic/fixture_builder.py": "e0d0257ea11e68f9cc7f5eb23fe52efa6a88dc4cb80b52d2a35d4fe91f141fa0",
+    "native-android/engine/entity-dynamic/check.py": "7f716dd630968eba55e65e3ebf5e039bc678499da62303cfffe5c537f0bbedc3",
+    "native-android/engine/entity-dynamic/CONTRACT.md": "3e661d956683dde1b67e34f2a6e2c5d92fd7d2b259c6a7af1e7a935c4e356aff",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "checked_committed_bytes_equal_tested_inputs": true,
+  "tested_worktree_head": "a5865ccd3808b9032226f49b3e19f5520ebb56e9",
+  "provider_commit": "f42b242dd",
+  "world_count_ownership_authenticated": false,
+  "original_gameplay_consumer_executed": false,
+  "external_zlib_stack_and_sanitizer_closure": false,
+  "complete_initial_update": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false
+}

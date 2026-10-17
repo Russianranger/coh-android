@@ -1,0 +1,257 @@
+{
+  "schema": "coh-view-qualification-v1",
+  "passed": true,
+  "source_revision": "b1cfdb327ffa08532f19539b0f2631ca59c3bd6b",
+  "source_sha256": {
+    "native-android/engine/entity-view/coh_view.c": "52f2f524426e3b376abb314fb9015118ad8b9713fdb33dba71d4193aba3585b6",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-view/test_view.c": "1fcd2693fe5ebaf25f9e122a39435b048d5a99a3f0178eb0c4f5cf5bb2f581eb",
+    "native-android/engine/entity-view/coh_view.h": "b053caae0decf3d6bb0b11230accdc4ab1c7bc8cbd871d904e634b041088d9ba",
+    "native-android/engine/entity-view/fixture_builder.py": "b86955dfeff125a03e9e58d08db23fe321836bdc7f108e2f4702f937b410ad64",
+    "native-android/engine/entity-view/check.py": "57d656f3aa3b4bd4efe241a92ffddffcd530b7b75d294a4391ab0a3b3bb32a6d",
+    "native-android/engine/entity-view/CONTRACT.md": "1fa13326b0703ca9355d09322f398a8fc322ecf36a17edef545cc47727bbebe7",
+    "native-android/engine/entity-view/slave_oracle.py": "4be05afd695625587ebd4b2bfbe944b44f7669bbe9febc7bd6c0ba7a15b8ed7e",
+    "native-android/engine/entity-view/slave-source-pins.json": "71f849c01d197aff9e34121a51d3149faf95a8053d413e569f2195d15cdfd4e3",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check_teammate_buffs.py": "046c84f587102c8b1a22c9a988411edd758996e5a6e508f3a9ed8bb5b9c9b35c",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "provider_sha256": {
+    "native-android/combined-client/diagnostics/allents-tail-20261017/sky_oracle.py": "2a5fe0a73b9a789f0d8df971b83ab6de702cf8a98f595a2ac7518b2a4e48190b",
+    "native-android/combined-client/diagnostics/allents-tail-20261017/sky-source-pins.json": "19936bc0eabbf23de74a6052944e249b3658ed5f13bd79532537ac50e1190c5a",
+    "native-android/combined-client/diagnostics/allents-tail-20261017/inventory_oracle.py": "5a5488baf54cd32b1b9c297ee8bad8e1f70b9c80aa62032d8ec8e908c1da8867",
+    "native-android/combined-client/diagnostics/character-outer-20261017/qualify_outer.py": "a2d43a11a74c33709462abc5b0e4059edf774c7d6e23326d5c2330067e48a068",
+    "native-android/combined-client/diagnostics/character-outer-20261017/independent.py": "9fccb7ae9b449f8f529f4a3eabce50cfd36afb60b8b041857ff98beeb19df8d0"
+  },
+  "original_sky": {
+    "schema": "coh-sky-source-oracle-v1",
+    "passed": true,
+    "source_pin": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+    "original_source_sha256_lf": {
+      "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "Common/gameComm/wdwbase.c": "fddd0af05b1764115d3c885140b8074587d9e4cc5c762a0101dc49042e30e732",
+      "Common/gameComm/wdwbase.h": "18427c8f68e1a3ef0c3d149ab35801edbe151a16cb2bee166fb8174c8f2a6f6c",
+      "Game/src/UI/uiOptions_Type.c": "8a3704eec9b207d05f8533ad08b618edabcebe3893e196531fa882dd95bd2e5b",
+      "Game/src/UI/uiOptions_Type.h": "73ac1805bb89c0042c031af77336609eee3bab8e4d48fdbdec7aaa1551eb796c",
+      "Game/src/UI/uiNet.c": "79a36e45898f70356c762299a2ab58a0e82c4557cb7047dc505ef400741b1f01",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "Common/entity/entStrings.c": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0",
+      "MapServer/src/entity/keybinds.c": "96df4d670b377dffa4821d8c591926a6bd725c6f0b579eecb0874076bf0377f4",
+      "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+      "Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+      "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+      "Game/src/UI/uiKeybind.h": "c67d779c9870a26fc9474c061216678f5d9728daa6f418a46362ee64330f94fb",
+      "Common/entity/chatSettings.h": "2ed084470ef39fbf9e731a783d280ee59970a53939e64a92cee88f9a4209c530",
+      "Common/gameComm/trayCommon.c": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6",
+      "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+      "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+      "Game/src/UI/uiReticle.h": "cd2afa72ef0bbd67a556074d3e307d74c4313a1d80876614ff178fda68a1cc35",
+      "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    },
+    "original_functions": {
+      "initBitStream": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+      },
+      "bsWriteBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+      },
+      "bsWriteBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+      },
+      "bsReadBits": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea"
+      },
+      "bsReadBitsPack": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620"
+      },
+      "bsAlignByte": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+      },
+      "bsGetCursorBitPosition": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+      },
+      "bsWriteString": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81"
+      },
+      "bsReadStringAndLength": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "e7606801ddc22b76d0aeec630597a653ab025a2f501653ecdbe341a692fe0c3f"
+      },
+      "bsWriteF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "38d78cadee1f9bc73c25ef1f0dfcb6249a3e101165151abb8d0f8ca7c76462c9"
+      },
+      "bsReadF32": {
+        "source": "libs/UtilitiesLib/src/components/BitStream.c",
+        "sha256_lf": "88adf74b188c3ce4fe4fa8076817a6735f5ec0d96f60a0d94ea2ec846d3881e4"
+      },
+      "initGameOptionStash": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "f52a6467b0e4fef6fba360b4e45f5cfe1203605628490487c1470edfe7dd0fb2"
+      },
+      "userOptionGet": {
+        "source": "Game/src/UI/uiOptions_Type.c",
+        "sha256_lf": "0405658bdefaf2c5f7e5bf6dc6a739ad594326397971eac78cd09bde434db153"
+      },
+      "receiveOptions": {
+        "source": "Game/src/UI/uiNet.c",
+        "sha256_lf": "1b76c2ccccf73ee23e793835e4bb7cace1657ef9b0f203ea3f88f183848e0720"
+      },
+      "sendCharacterToClient": {
+        "source": "MapServer/src/entity/entserver.c",
+        "sha256_lf": "9a6b0977a9b2a35be432e6dc0dd92181d259c778b5a4a56e4e7b4e7e9aa1ebfb"
+      },
+      "sendWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "25aad86d63721f4539eecf14e61e1b013ad1212cbb7694e130bea9d2759485dc"
+      },
+      "receiveWindowIdx": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "19d6524148eea1041d0552221357c63c39ad2df1e06ba8acdbfeceadc60d74c5"
+      },
+      "receiveWindow": {
+        "source": "Common/gameComm/wdwbase.c",
+        "sha256_lf": "887b6c4b1ecba98eaf89f030bca4366fb93a1b566f9b0d64c47a6f3c3afb99bc"
+      },
+      "breakHTMLtags": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "a84b39aaf0e66e9a4b89b57225b329f667433e208fd9b4673a7ef0b748af66bf"
+      },
+      "sendEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "5a6173e2bb67536e57395030b671b203d77ff1196e158ff4c6c2d5dc85c50a3c"
+      },
+      "receiveEntStrings": {
+        "source": "Common/entity/entStrings.c",
+        "sha256_lf": "f9239c0e1037ae34ebaced0830a12546bbe150ccf2b0143412dae67c7ef918cf"
+      },
+      "sendSkyFade": {
+        "source": "MapServer/src/entity/entsend.c",
+        "sha256_lf": "4e10065e75b18e6a1be766ae7d78ef61147cd40f886e79f8048b9d7712519ade"
+      },
+      "receiveSkyFade": {
+        "source": "Game/src/entity/entrecv.c",
+        "sha256_lf": "0065eabd7c9f51ef07bc1ec54a2acad328c350136585d61255d33014b4ce8f9d"
+      }
+    },
+    "generated_source_sha256": "b1425dbddb2d6d9338bd041c2bdfcd4f49db66361e2332deca25129adef0fdd2",
+    "cases_count": 200,
+    "scope": "whole original sky sender/consumer with callback projection only; actual sky-file dictionary/resource application not executed",
+    "original_oracle_sanitized": false,
+    "dictionary_authority": false,
+    "actor_publication": false,
+    "acknowledgments_enabled": false,
+    "android_executed": false
+  },
+  "original_slave_blocks": {
+    "scope": "exact original slave conditional send/receive blocks and original bitstream functions; outer control-client selection/ownership not executed",
+    "source_sha256_lf": {
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5"
+    },
+    "send_block_sha256": "809eb3d432f85ba4584e61b04ad02a23de873f8703975e9a3d460b5151c9f2f1",
+    "receive_block_sha256": "def227515305a8dcd23477e9d673968c7a223dce9f57c987d52dbdb5e7c9f7a1",
+    "generated_source_sha256": "a0c1754b24c31a6994233cdcbb9e0ef419db165b789a7ba4b5acada4f8f6c268",
+    "cases_count": 100,
+    "original_oracle_sanitized": false,
+    "camera_or_character_authority": false
+  },
+  "fixtures_sha256": {
+    "fixtures.h": "a28917109a217f9256d75bfd03447ae2701e696f9b234a5ae02265317d7c7686"
+  },
+  "source_stable_before_after": true,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 232166,
+      "composed_source_fragments": 400,
+      "truncations": 44288,
+      "mutations": 46848,
+      "output_bytes": 56,
+      "workspace_bytes": 56,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 232166,
+      "composed_source_fragments": 400,
+      "truncations": 44288,
+      "mutations": 46848,
+      "output_bytes": 56,
+      "workspace_bytes": 56,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 232166,
+      "composed_source_fragments": 400,
+      "truncations": 44288,
+      "mutations": 46848,
+      "output_bytes": 56,
+      "workspace_bytes": 56,
+      "whole_initial_update_complete": false,
+      "actor_publication": false
+    }
+  },
+  "binary_sha256": {
+    "release": "9f2cda7e8851b36048c9a4cfb06d35e33d10945aa43fd10f4cfb0de8f11d6da6",
+    "asan": "6230ac22a2b656b49cc129aeb7f4691d5c54c4835149a45d4ee34bc41329d109",
+    "ubsan": "b32cb256276406effb65fab0941be855d684e447c7999450d63bcfa171d6ac7c"
+  },
+  "production_stack_frames": [
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_read",
+      "bytes": 24,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string.part.0",
+      "bytes": 384,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_pack",
+      "bytes": 144,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_world_view_read",
+      "bytes": 240,
+      "bound": "static"
+    }
+  ],
+  "cpp_link_passed": true,
+  "android": {},
+  "original_sky_consumer_executed": true,
+  "slave_outer_control_client_selection_executed": false,
+  "prior_or_local_state_applied": false,
+  "whole_initial_update_complete": false,
+  "dictionary_authority": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "android_executed": false
+}

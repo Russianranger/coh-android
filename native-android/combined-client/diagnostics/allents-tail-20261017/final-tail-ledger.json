@@ -1,0 +1,111 @@
+{
+  "schema": "coh-final-allents-tail-source-ledger-v1",
+  "source_pin": "767d55e48fa35261f1428bd542aa6cd3b2b9fa32",
+  "original_source_sha256_lf": {
+    "Common/entity/attrib_description.c": "f92fd5e7960b1d6ea184251e747cccb2a109e4eba149c701d07b17ae3eb5ec74",
+    "MapServer/src/group/groupdynsend.c": "6c24d57a77196f363daf604cafd498b2d71645697c4e4877ac5a460dd263958f",
+    "Game/src/group/groupdynrecv.c": "fa169fec151af0c8b5f239651e623dfa54c5beeccf2ffbf3f8974f8486dec616",
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "Common/group/groupdyn.c": "d0b60e22c3a603df165b81a27613c695fec0529a80a18b96d70a6ced4e4b9946",
+    "Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+    "Common/entity/attrib_description.h": "cac7c23ec0e921cfbd7a85c0845b430cdb24a7422912a14afe94948453b9e6b3",
+    "Common/group/groupdyn.h": "3beff4340a596eecb6374fff890ec3e2ebbcb4f0c1f49de3130171ec37bc8c3a"
+  },
+  "functions": {
+    "sendAttribDescription": {
+      "path": "Common/entity/attrib_description.c",
+      "sha256_lf": "7f3ef133301d864e5f0163f2fe3680e129258aada4e6c99e70aa75293a57e395"
+    },
+    "receiveAttribDescription": {
+      "path": "Common/entity/attrib_description.c",
+      "sha256_lf": "c3b8bd434bbdbb70c16e198fc0631f8b827a5862f2150bff414e2dd29033243f"
+    },
+    "sendAllMatchingMods": {
+      "path": "Common/entity/attrib_description.c",
+      "sha256_lf": "8314bcfb20144efd3c247378a530651aba1b4bdbd7d099a8d078b0e9888d9da3"
+    },
+    "getAllMatchingMods": {
+      "path": "Common/entity/attrib_description.c",
+      "sha256_lf": "4a76abfe49b0caecea4a59a88a387576a05935d3e6803619dd15fbcdd72caa80"
+    },
+    "attrib_GetVal": {
+      "path": "Common/entity/attrib_description.c",
+      "sha256_lf": "0035896507b9c0127d068178e50ff71f0787074c456068fbfe945448fe7007dc"
+    },
+    "attribDescriptionGet": {
+      "path": "Common/entity/attrib_description.c",
+      "sha256_lf": "baa4145ad9cbe7dfcca7ad874ed0a885c7dafb926ffcfb89dcbe6a8d9243d7dc"
+    },
+    "attribDescriptionPreprocess": {
+      "path": "Common/entity/attrib_description.c",
+      "sha256_lf": "62f6eebc57f57d552f641cc79b544311fae86e8126e39cc2349ff7e6f61ca411"
+    },
+    "attribDescriptionCreateStash": {
+      "path": "Common/entity/attrib_description.c",
+      "sha256_lf": "02a6ce12857c319619c59737d8270e4e9a26c000041169a3a73048e7c2a72852"
+    },
+    "groupDynSend": {
+      "path": "MapServer/src/group/groupdynsend.c",
+      "sha256_lf": "1cebf069381f7c4c6a0585f01da65d29c2bff7f61c954f6f9502a0710b7556a9"
+    },
+    "groupDynReceive": {
+      "path": "Game/src/group/groupdynrecv.c",
+      "sha256_lf": "8bd66a243a27e79d0bf8fc6ad63427cb2bc26abc3f988353ad320d07ab3a2710"
+    },
+    "sendSkyFade": {
+      "path": "MapServer/src/entity/entsend.c",
+      "sha256_lf": "4e10065e75b18e6a1be766ae7d78ef61147cd40f886e79f8048b9d7712519ade"
+    },
+    "receiveSkyFade": {
+      "path": "Game/src/entity/entrecv.c",
+      "sha256_lf": "0065eabd7c9f51ef07bc1ec54a2acad328c350136585d61255d33014b4ce8f9d"
+    },
+    "groupDynBuildBreakableList": {
+      "path": "Common/group/groupdyn.c",
+      "sha256_lf": "d2e10bcf2b44c6e1d59e69586025ad9dd08b21bc9ceb82fad5647a1dccd072ec"
+    },
+    "load_AttribDescriptions": {
+      "path": "Common/entity/load_def.c",
+      "sha256_lf": "e96ab6793d27b6d8f341a4bcb185e04edd60dff2b6076e472e7f0bdc365b6c33"
+    }
+  },
+  "attributes": {
+    "entry": "outer1bit present; body new-target1bit,full-mode1bit",
+    "monitor_mode": "exactMAX_COMBAT_STATS+1 (11) repetitions:1present,ifpresent32key,F32value,2buffOrDebuff",
+    "full_mode": "1targetpresent then32entityID ifset; reverse category and reverse member order withF32+2buffwords for every dictionaryentry; then contributorlist",
+    "full_mode_entry_count_on_wire": false,
+    "load_path": "defs/attrib_descriptions.def plus MakeBinFilename cache; ParserLoadFiles/Shared with attribDescriptionPreprocess",
+    "stash_key": "sizeof(CharacterAttributes)*eType+offAttrib; source predefined-name offsets are rewritten by preprocessing",
+    "full_mode_predicate": "player->pl && player->pl->winLocs && player->pl->winLocs[WDW_COMBATNUMBERS].mode==WINDOW_DISPLAYING; independent of full_update",
+    "authentic_dictionary_found": false,
+    "dictionary": "g_AttribCategoryList.ppCategories and each ppAttrib MUST be identically ordered; attribDescriptionGet key map; attrib_GetVal class/stat schemas; contributors basepower identities",
+    "contributors": "while1present:Pack10attributehash,basepower_Receive,2sourceType;ifcritter/player NULsourceName+Pack20serverID;F32chance,F32magnitude",
+    "source_hazard": "original receive full-mode consumes contributors only get_mod true; ALLENTS uses get_mod1. Do not scan to sentinel or omit dictionary-length value records."
+  },
+  "dynamic_groups": {
+    "prefix": "Pack1modifiedCount;0=none;0xffffffff=full;otherwisedelta list",
+    "delta": "modifiedCount recordsPack16index,7HP,1repair",
+    "full": "pktSendZipped of dyn_group_count*sizeof(DynGroupStatus) original native bitfieldbytes",
+    "status_abi": "original U8 hp:7;U8repair:1; exact sizeof+bitorder require original compiler/target qualification",
+    "ownership": "groupDynBuildBreakableList defines ordered dyn_group_status from world-tracker traversal; source graph generation/order must match, count alone insufficient",
+    "original_consumer": "full byte_count/sizeof integerdivision, thenrealloc/copy; native must reject partial records and enforce bounded decompression/exact sizes"
+  },
+  "sky": {
+    "wire": "1interesting;ifsetF32weight,Pack2sky1,Pack2sky2",
+    "original_absent_defaults": {
+      "weight": 0,
+      "sky1": 0,
+      "sky2": 1
+    },
+    "resources": "raw index metadata does not resolve map sky-file catalog"
+  },
+  "slave": {
+    "wire": "1slavepresent;ifset3F32PYR",
+    "scope": "source exact outer inline statements still need selected control/entity ownership"
+  },
+  "complete_initial_update": false,
+  "dictionary_authority": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false
+}

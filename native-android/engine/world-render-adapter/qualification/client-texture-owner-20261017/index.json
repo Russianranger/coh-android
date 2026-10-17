@@ -1,0 +1,18 @@
+{
+  "source_commit": "f97af99fdbd2dfe5670f999ef71d9362aa8b4910",
+  "host_receipt_sha256": "aee136d44f1b37e0cc60bd7069afe0398fc782df1ba852e757d96aa44318b84a",
+  "source_dependency_hashes_reverified": true,
+  "sampler_controls_per_mode": 6936,
+  "authentic_texture_controls_per_mode": 50,
+  "owner_controls_per_mode": 146,
+  "host_release_asan_ubsan": true,
+  "asan_leak_detection": false,
+  "original_source_oracle": true,
+  "pillow_all_mips_oracle": true,
+  "android_build": false,
+  "android_execution": false,
+  "gles_execution": false,
+  "physical_thor": false,
+  "real_server_or_client": false,
+  "material_or_world_authority": false
+}
