@@ -29,6 +29,7 @@ def main():
  p.add_argument('--candidates-sha256',required=True)
  p.add_argument('--output',type=Path,required=True)
  p.add_argument('--resume',action='store_true')
+ p.add_argument('--source-geo',action='append',default=[],help='Exact captured source GEO name; repeat for a subset')
  a=p.parse_args();root=a.source_root.resolve();out=a.output.resolve()
  if out==root or out.is_relative_to(root) or (out.exists() and not a.resume) or (a.resume and not out.is_dir()):p.error('New external output or explicit existing resume required')
  raw=a.candidates.read_bytes()
@@ -36,6 +37,9 @@ def main():
  doc=json.loads(raw)
  if not doc['passed'] or doc['assets_admitted'] or not doc['control_fixture_manifest_chain_verified']:raise ValueError('Expected source-only pinned candidates')
  if len(doc['files'])>512:raise ValueError('File count bound')
+ requested=set(a.source_geo)
+ selected=[item for item in doc['files'] if not requested or item['source_geo_name'] in requested]
+ if not selected or (requested and {item['source_geo_name'] for item in selected}!=requested):raise ValueError('Unknown exact source GEO selector')
  helper=root/'native-android/tools/material_fixture/acquire.py';helperpin=hashlib.sha256(helper.read_bytes()).hexdigest()
  spec=importlib.util.spec_from_file_location('original_bounded_zip_ranges',helper);r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
  # These exact published archive identities are recorded in the actual control
@@ -47,7 +51,7 @@ def main():
  if a.resume:
   prior=resume_records(out,a.candidates_sha256,doc['capture_sha256'])
  else:out.mkdir(parents=True)
- receipt={'schema':1,'passed':False,'candidate_report_sha256':a.candidates_sha256,'helper_sha256':helperpin,'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'source_capture_identity':doc['capture_sha256'],'manifest_sha256':doc['manifest_sha256'],'outer_asset_url':url,'outer_expected_bytes':outerbytes,'outer_full_sha_verified':False,'inner_full_sha_verified':False,'selected_payload_sha_verified':False,'same_source_generation_established':False,'assets_admitted':False,'records':[],'resume_verified_files':len(prior),'archive_expected_sha256':{k:v[2] for k,v in archives.items()}}
+ receipt={'schema':1,'passed':False,'candidate_report_sha256':a.candidates_sha256,'helper_sha256':helperpin,'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'source_capture_identity':doc['capture_sha256'],'manifest_sha256':doc['manifest_sha256'],'outer_asset_url':url,'outer_expected_bytes':outerbytes,'outer_full_sha_verified':False,'inner_full_sha_verified':False,'selected_payload_sha_verified':False,'same_source_generation_established':False,'assets_admitted':False,'records':[],'requested_source_geos':sorted(requested),'resume_verified_files':len(prior),'archive_expected_sha256':{k:v[2] for k,v in archives.items()}}
  try:
   with zipfile.ZipFile(reader) as outer:
    for manifest,(archive,size,digest) in archives.items():
@@ -55,7 +59,7 @@ def main():
     if info.file_size!=size or info.flag_bits&1:raise ValueError('Pinned inner archive envelope differs')
     streams[manifest]=r.subzip(reader,info);zips[manifest]=zipfile.ZipFile(streams[manifest])
   total=0;seen=set()
-  for ordinal,item in enumerate(doc['files']):
+  for ordinal,item in enumerate(selected):
    if len(item['candidate_matches'])!=1:raise ValueError('Missing/ambiguous candidate')
    c=item['candidate_matches'][0];name=c['manifest_asset_path'];parts=Path(name).parts
    if not name.isascii() or not name.startswith('data/object_library/') or '\\' in name or '..' in parts or name in seen or not name.endswith('.geo'):raise ValueError('Unsafe or repeated candidate path')
@@ -73,7 +77,7 @@ def main():
    target=out/name;target.parent.mkdir(parents=True,exist_ok=True)
    with target.open('xb') as f:f.write(body)
    receipt['records'].append({'source_geo_name':item['source_geo_name'],'asset_path':name,'manifest':c['manifest'],'bytes':len(body),'sha256':c['sha256'],'zip_crc32':f'{info.CRC:08x}','zip_header_offset':info.header_offset,'zip_method':info.compress_type,'zip_compressed_bytes':info.compress_size,'payload_sha_verified':True,'same_source_generation_established':False})
-   if ordinal%25==0:print(json.dumps({'completed':ordinal+1,'files':len(doc['files']),'payload_bytes':total,'range_bytes':reader.total}),flush=True)
+   if ordinal%25==0:print(json.dumps({'completed':ordinal+1,'files':len(selected),'payload_bytes':total,'range_bytes':reader.total}),flush=True)
   if a.candidates.read_bytes()!=raw or hashlib.sha256(helper.read_bytes()).hexdigest()!=helperpin:raise ValueError('Pinned inputs changed during acquisition')
   receipt.update(passed=True,selected_payload_sha_verified=True,payload_bytes=total)
  except Exception as failure:

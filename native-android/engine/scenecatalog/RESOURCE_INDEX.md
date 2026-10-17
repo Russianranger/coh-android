@@ -18,8 +18,9 @@ for producer/native wire qualification and confers no digest or resource trust.
 For each unique GEO, the index acquires a protected `CohAssetBlob`, hashes its
 actual bytes, opens its bounded header workspace, and checks the selected exact
 model name and original sorted runtime row, GEO version, vertex/triangle counts and every original
-material partition's texture ID/name/triangle count. Equivalent case-insensitive
-base model keys within one GEO are refused as ambiguous. Header support for a
+material partition's texture ID/name/triangle count. The selected full model name must be unique. Its recorded runtime row must
+fall inside the original sorted case-insensitive base-key equivalence bucket;
+no internal qsort ordering is inferred. Exact duplicate full names are refused. Header support for a
 version, including v8, is not draw/material support. Unimplemented model tricks,
 auto-LOD, client texture tables, capabilities, swaps and material semantics stay
 unresolved. A server observation cannot grant any of those permissions.
@@ -96,14 +97,24 @@ The source observer records the pointer row after original `geoSortModels`, whil
 `coh_asset_geo_model` exposes disk order. These identities are separate:
 `model_row` retains the observed runtime rank and `geo_disk_row` identifies the
 verified disk row (UINT32_MAX before asset admission). Preparation computes the
-unique case-insensitive base-key rank using unchanged original comparator
-semantics and requires exact full model-name equality. Raw model names retain
-directory bytes here; group lookup path stripping is a separate operation. A
-selected equivalent base key is refused, since original qsort does not establish
-stable identity between equal keys. No permutation allocation is needed.
+case-insensitive base-key equivalence bucket using unchanged original comparator
+semantics and requires unique exact full model-name equality. Raw model names retain
+directory bytes here; group lookup path stripping is a separate operation. The
+observed row must lie inside that bucket. The captured exact full model identity
+selects the raw disk row, while the source row is retained separately. Original
+qsort does not establish a portable ordering between equal base keys. The older
+unique-rank convenience helper still refuses comparator ties. No permutation allocation is needed.
 
 The original loader's zero-texture-table `white` substitution is observed source
 behavior, but the protected native GEO reader currently cannot admit that input.
 Such rows remain unsupported and fail closed; this module does not synthesize a
 texture or grant material authority. This limitation does not alter source-only
 catalog/graph/resource structural joins.
+
+Actual-capture follow-up found two legitimate comparator buckets: Manticore
+`cave_web06`/`cave_web06__cobweb` and Atlas foundation 13
+`_fountain13_calmwater_32__calmwater1`/`__watervol`. Admission uses the captured
+full name (unique in the authenticated body) and source row inside the unchanged
+original comparator bucket. It does not rerun a group-name query to choose a
+variant, nor assume Linux/MSVC qsort tie equality. The bucket is exposed as
+`runtime_bucket_first/count`; no asset-admission source view has count zero.

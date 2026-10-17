@@ -1,0 +1,82 @@
+{
+  "passed": true,
+  "artifact_id": 11092897979,
+  "run_id": 36707839624,
+  "artifact_sha256": "51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae",
+  "archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+  "all100cache_files_hashed": true,
+  "all101member_inventory_valid": true,
+  "exact_extracted_bins": {
+    "data/bin/BodyParts.bin": {
+      "bytes": 2584,
+      "schema_crc": "cf27aba3",
+      "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "first32_hex": "4372797074696353a3ab27cf0600506172736536060046696c65733120000000"
+    },
+    "data/bin/costume.bin": {
+      "bytes": 17691352,
+      "schema_crc": "a3374618",
+      "sha256": "10ef7562156be60bd1ef3c437c3b46d10b36b6b265129c10f39d25c4a4df5a77",
+      "first32_hex": "4372797074696353184637a30600506172736536060046696c657331d4bb0000"
+    },
+    "data/bin/supergroupColors.bin": {
+      "bytes": 2664,
+      "schema_crc": "f0095ef2",
+      "sha256": "e5676ebbccc380f9d69322ef6750332b0b7e7a46d915bdfb591322862d22cb75",
+      "first32_hex": "4372797074696353f25e09f00600506172736536060046696c6573313c000000"
+    }
+  },
+  "metadata": {
+    "android_execution_validated": false,
+    "asset_archive_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+    "cache_consumption_validated": false,
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+    "format": 1,
+    "gameplay_validated": false,
+    "generated_noncache_outputs": [],
+    "generation_report": {
+      "bytes": 49976,
+      "sha256": "19c277e8634f679a79cd05ff8edc87f6877692d66fcea6e03d5de011e1a841e1"
+    },
+    "generator_platform": "native_x86_64_linux_wine_x86_client",
+    "import_donor": {
+      "apk_bytes": 355130247,
+      "apk_sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547",
+      "build_receipt_sha256": "39f4e75aa947d5519e42d176d756c317adae21ed18ea03fcdeb155b6bb7535ea",
+      "payloads": {
+        "assets/atlas/atlas-assets-index.tsv": {
+          "bytes": 2379733,
+          "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+        },
+        "assets/atlas/atlas-import.properties": {
+          "bytes": 923,
+          "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+        },
+        "assets/atlas/atlas-text-index.tsv": {
+          "bytes": 21187391,
+          "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+        },
+        "assets/atlas/atlas-text.zip": {
+          "bytes": 312807038,
+          "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+        }
+      },
+      "repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+      "run_id": 36638344040
+    },
+    "launcher_sha256": "97e6c1cf78136279a64059683eeb1b8157e9b5cc19b024f65e2fa3f0a61fd2e1",
+    "launcher_source_sha256": "3fe4fa8509690fa546c1e9a3684b839b43e931220ff4ab07c106303dc9e88eff",
+    "nonfatal_queued_errors_reviewed": false,
+    "normalized_mtime_epoch": 1767225600,
+    "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+    "reference_run_id": 36088012664,
+    "repository_commit": "a40250b0032bd05a333514920722ddffa4427730",
+    "role": "actual_client_generated_caches",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "wine_version": "wine-9.0 (Ubuntu 9.0~repack-4build3)"
+  },
+  "runtime_executed": false,
+  "source_builder_executed": false,
+  "slot_maps_captured": false
+}

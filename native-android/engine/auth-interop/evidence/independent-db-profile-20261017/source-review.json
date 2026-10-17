@@ -1,0 +1,35 @@
+{
+  "schema": "coh-independent-db-profile-source-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "09b32f43c1818fe0383748fc967d0bdc76c0d2fe",
+  "included_commits": [
+    "d1fe5d7ec",
+    "526c8d0e8",
+    "09b32f43c"
+  ],
+  "source_binder_sha256": "aa13839c3e245a1bda4048e9e21c6aecf6adaca950022f785112d2167cf53469",
+  "original_source_inputs": 7,
+  "local_source_inputs": 5,
+  "all_bound_inputs_equal_committed_blobs": true,
+  "receipt_sha256": {
+    "auth-bit-merge.json": "3ae6063187ae803cc84caf0e416f9cc9574054964517aeab742588b52a174264",
+    "db-policy-matrix.json": "c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503"
+  },
+  "independent_python_suites_passed": 10,
+  "review": [
+    "Exact original source ownership masks and mask/OR block retained;31overlapping bits preserve OR semantics, no inventedexclusiveowner",
+    "Dataclassmaskforgery rejected by exact pairSHA;128byte input bounds, sourcereceipt and originalGitblob pins",
+    "Nondevelopment realauth policy matches full16nonzerochecksum and exact candidatefunction, normalASCIIversion; suppliedfile/versionhashes metadataonly",
+    "Originaldev/fake/skipversion/checksum candidate matrix scopes originalfirstloginblock with syntheticgetters/versionprovider; protocol and version refusal strings explicitlyasserted",
+    "Boundedloopbackshardmetadata uniqueinternaladdresses/IDs and generationlabels; actualchannelownership/activation/deploymentfalse",
+    "Source scopes remain noDBlogin/cookiemint/SQL/service/sessionorder/Android/Thor; acceptedAuthonlyUserDatafalse cannotprovidefullDBhandoff"
+  ],
+  "blocking_findings": [],
+  "independent_expensive_oracle_replay": false,
+  "live_authenticated_db_login_verified": false,
+  "runtime_order_or_channel_ownership_verified": false,
+  "credentials_minted": false,
+  "android_executed": false,
+  "physical_thor": false,
+  "shipping_server_modified": false
+}

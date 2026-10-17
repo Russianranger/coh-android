@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "74955ed7c998c1c619893749d1d065030160c4ea",
+  "exporter_source_commit": "bd6d5f6c4",
+  "host_proof_sha256": "e687dfcb00d67f7e45cb5c6e1735c74866aad63d4f8b6472c4dffba52272b0c2",
+  "source_sha256": {
+    "native-android/engine/costume-export/stage.py": "66d5f63da01ddc551aa73128f06316efa440e36c9f31d0eda35bd74cc804adbd",
+    "native-android/engine/costume-export/check.py": "bd30442d75db9e7978c164589b2a01a033ecebeab620c05eca4b89c1b1fc4472",
+    "native-android/engine/costume-export/source_costume_sink.inc": "78d61be87dee76ba3902861252e8b05df483a3691961b25ec762b6484fb6b566",
+    "native-android/engine/costume-export/source_costume_export.inc": "55bc3ed600f1052fb953ecce1a4c28fca60249d6bd39c584d4ab987c054c9529",
+    "native-android/engine/costume-export/source_id.inc": "932021b0f37689d340d20cf3e24ba76b1d7b36bd27fbc5876b5782d67cbe673c",
+    "native-android/engine/costume-export/test_export.c": "01e41fe5e5b6e7c9d206b0675d2a53e8f9f468b95a7297a576a16925e9fefa6c",
+    "native-android/engine/costume-export/source-pins.json": "cad5176eb14c4753db7cf670be1f48ef26c524b44ca4f2783074d932b2fa29b4",
+    "native-android/engine/costume-export/CONTRACT.md": "5b9bc2fd49a3ae496717e59f03170c9c005ca862c515f9f99c2ce012a533a947",
+    "native-android/engine/costume-import/source-pins.json": "74ccac29b928ca151b23013e3db222a59c1e00fc0bf10ee367dd2a9d0998b148",
+    "native-android/engine/costume-import/source_id.h": "e7f0acdbdfb661427834da9a6c46ba270005ee8628fb944f2fbbc58ec47df38f",
+    "native-android/engine/costume-import/coh_costume_import.c": "8b4c76b28a9c42ee0d993163d49d17d14cd4b33dd94af3c621afa73f1607e26c",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-import/oracle.py": "d178d3b444ab6225611f9f7544280385033052f98b3ebe8531f454fccdb01b3b",
+    "native-android/engine/entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "tested_files_equal_committed_blobs": true,
+  "recovery_script_equal_committed_blob": true,
+  "recovery_proof_sha256": "00267ecc4b041d61e9d195b1975fe8e05710e79c3c7ffca6340ab84f890e50ea",
+  "scope": "Actual host source run and separate exact donor byte recovery; not another native test execution, server compile/capture or original builder execution."
+}

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "a10778f18a32322778e377a1c6c8662ea3fa0d18",
+  "tested_inputs_equal_committed_blobs": true,
+  "host_proof_sha256": "c3032883c358a3bfbec8b9018798c71332ed0af8e1c8d67c8c6b79e7ca4f618b",
+  "source_sha256": {
+    "native-android/engine/costume-export/stage.py": "66d5f63da01ddc551aa73128f06316efa440e36c9f31d0eda35bd74cc804adbd",
+    "native-android/engine/costume-export/recover_inputs.py": "9eb0928e8b5aa47bb5b5a45a2bbecfdb1a77dd884659f68b94152820b55cfc7f",
+    "native-android/engine/costume-export/check.py": "151da615b258e8c62cd63cf8438e461bc9a0655c9c1fb2a8b8dc224833502cb7",
+    "native-android/engine/costume-export/source_costume_sink.inc": "7c419668bcb41e11112d90313f79d87e868b7c1c2fc37ff9cd4c23bbab103798",
+    "native-android/engine/costume-export/source_costume_export.inc": "55bc3ed600f1052fb953ecce1a4c28fca60249d6bd39c584d4ab987c054c9529",
+    "native-android/engine/costume-export/source_id.inc": "932021b0f37689d340d20cf3e24ba76b1d7b36bd27fbc5876b5782d67cbe673c",
+    "native-android/engine/costume-export/test_export.c": "5c53946a4f3d0f34ac74845a2f3b65d7602330372450009bb81eea087f5a2769",
+    "native-android/engine/costume-export/source-pins.json": "cad5176eb14c4753db7cf670be1f48ef26c524b44ca4f2783074d932b2fa29b4",
+    "native-android/engine/costume-export/CONTRACT.md": "77156fcc953e88f8b54e4f15b96e86be97b092e3978b8a1adb70d51aa524656c",
+    "native-android/engine/costume-import/source-pins.json": "74ccac29b928ca151b23013e3db222a59c1e00fc0bf10ee367dd2a9d0998b148",
+    "native-android/engine/costume-import/source_id.h": "e7f0acdbdfb661427834da9a6c46ba270005ee8628fb944f2fbbc58ec47df38f",
+    "native-android/engine/costume-import/coh_costume_import.c": "8b4c76b28a9c42ee0d993163d49d17d14cd4b33dd94af3c621afa73f1607e26c",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-import/oracle.py": "d178d3b444ab6225611f9f7544280385033052f98b3ebe8531f454fccdb01b3b",
+    "native-android/engine/entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "checks_per_mode": 565,
+  "scope": "Adds explicit ordinary removal success vs retained owned partial on unlink failure; no server/Win32 capture."
+}

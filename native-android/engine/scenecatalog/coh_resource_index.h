@@ -17,7 +17,7 @@ typedef struct {
 } CohResourceBinding;
 typedef struct {size_t owned_limit,aggregate_limit,retained_bytes,loader_reservation;} CohResourceBudget;
 typedef struct {
-    uint32_t owner_kind,file,slot,original_id,model_present,model_row,geo_disk_row,geo_version;
+    uint32_t owner_kind,file,slot,original_id,model_present,model_row,geo_disk_row,runtime_bucket_first,runtime_bucket_count,geo_version,zero_draw_model;
     const char *definition_name,*model_name,*geo_name,*trick_name,*trick_file,*library_name;
     uint32_t gld_loadstate,model_loadstate,model_flags,trick_present,trick_info_present;
     uint32_t trick_flags[2],info_model_flags,info_group_flags;
@@ -38,6 +38,12 @@ CohStatus coh_resource_trick_key(const char *,char out[256]);
  * Names are borrowed for this call; no source/resource authority is conferred. */
 CohStatus coh_resource_model_order(const char *query,const char *const *disk_names,
     uint32_t count,CohCancel,uint32_t *runtime_row,uint32_t *disk_row);
+typedef struct {uint32_t first,count,disk_row;} CohResourceModelBucket;
+/* Exact full-name uniqueness plus original sorted comparator bucket. Equal
+ * base keys are allowed, but this never asserts their internal qsort order.
+ * A captured runtime row is admissible only inside [first,first+count). */
+CohStatus coh_resource_model_bucket(const char *query,const char *const *disk_names,
+    uint32_t count,CohCancel,CohResourceModelBucket *);
 /* Grammar-only borrowed observation. No digest/provenance or asset admission;
  * returned names borrow record bytes, model view remains zero. */
 CohStatus coh_resource_source_view(CohBytes,uint32_t asset_generation,CohResourceView *);

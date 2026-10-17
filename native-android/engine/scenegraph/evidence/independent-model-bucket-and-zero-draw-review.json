@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "reviewer": "Worker B / graph",
+  "approved_within_declared_source_metadata_scope": true,
+  "blocking_findings": [],
+  "bucket_commit": "e3088a4a0ef3ac45a9b76e7fe0ffeeeb245ef6f6",
+  "zero_draw_adapter_commit": "a0b46c1489309b9fb60db10ff11c2d4b0213648b",
+  "bucket_review": {
+    "original_bucket_comparisons": 6399,
+    "retained_source_pins_match": true,
+    "actual_bucket_receipt_files": 391,
+    "actual_bucket_receipt_equal": 390,
+    "actual_bucket_receipt_refused": 1,
+    "review": [
+      "Original compareModelNamesAndLengths compares the case-insensitive prefix through min(base lengths), then length; native ASCII fold+lexicographic base key has the same order for admitted ASCII names, including directory bytes. First __ terminates the comparator key.",
+      "Strict-less count gives bucket start; equal-key count gives its width. The captured full exact model name must occur exactly once. Captured runtime row is checked with guarded subtraction against that bucket, independently of the exact disk row. No host qsort tie order is inferred and no group-name lookup chooses a variant.",
+      "Count/rank/exact counters are bounded by65536 rows; invalid/duplicate/cancel paths preserve helper outputs. Index failure frees candidates and leaves output/report unchanged. The old unique-rank helper continues to reject ties.",
+      "The historical388-equal/3-refused complete-acquisition receipt is retained; its two old index C/H source hashes match the parent commit. The bucket receipt is390-equal/1-refused, not a claim that all391 were already supported."
+    ]
+  },
+  "zero_draw_review": {
+    "retained_source_pins_match": true,
+    "source_oracle_controls_per_mode": 3475,
+    "ordinary_and_zero_rows": 72,
+    "zero_draw_rows": 4,
+    "retained_native_modes": [
+      "release",
+      "asan",
+      "ubsan"
+    ],
+    "all391_metadata_equal": true,
+    "captured_model_owner_observations": 8250,
+    "review": [
+      "Protected asset sources are unchanged and are tried first. Narrow v8 fallback only handles original zero-draw identities, validates all table/header/record/payload spans and bounded names, requires nonempty texture table, and consumes every original row exactly. Every ordinary row delegates to the protected model reader.",
+      "Zero-draw rows require zero vertex/triangle/material/reflection counts and no bone-info pointer. The core disk parser retains finite radius and null PolyGrid.cell checks. Adapter validates finite scale and ordered finite bounds; nonempty mesh/reflection packs refuse. GRID and reduction pack extents are preserved and bounded, with no inflate/execute/collision/LOD authority. Alternate-pivot metadata requires its bounded initial extent and is never dereferenced here.",
+      "Inflate uses a bounded caller scratch arena and exact compressed/uncompressed termination. Source/workspace owners and disjoint controls remain explicit preconditions; workspace may change on refusal while disjoint out/counter remain unchanged. No row deletion, name fabrication, white-table synthesis or record reordering occurs.",
+      "Index verification uses a cursor for each model scan, avoiding repeated ordinal walks inside that scan. Each source observation charges existing lookup/cancellation work. The inherited protected file-open behavior is unchanged; this review does not claim that every underlying protected operation has a newly proven linear bound.",
+      "Source query marks zero_draw_model and refuses material retrieval with unchanged output. Stored full body/header ownership and original row/bucket identities remain explicit. No zero-draw owner grants a mesh/draw permit.",
+      "Unchanged original readModel body runs with explicit32-bit disk PolyGrid/PackData fixture shells. Its retained3475-control results are host field-copy/source-oracle evidence, not original Win32 ABI, v2 execution or Android qualification."
+    ]
+  },
+  "independent_cached_body_and_header_checks": {
+    "cached_candidate_files_rehashed": 391,
+    "cached_candidate_total_bytes": 71817182,
+    "shop_body_sha256": "98f0d86d789f90fc35e5e9f5008bf987ef97ba90998cae99f5c9930036fa80d9",
+    "shop_uncompressed_header_sha256": "dcf0e25110ed5a5901bdff986789c5e649c451cfe6507b292c7e6b07cb7d6399",
+    "shop_disk_rows": 72,
+    "zero_draw_records": [
+      {
+        "disk_row": 34,
+        "name": "LlegR",
+        "record_sha256": "8148b0dd28f8d9fd24f53fb54b8a953ccdcb7f85b831701f68b4e23b2d7291a3",
+        "grid_pack": [
+          11,
+          12,
+          127590
+        ],
+        "reduction_pack": [
+          11,
+          24,
+          127579
+        ]
+      },
+      {
+        "disk_row": 35,
+        "name": "FootR",
+        "record_sha256": "2e7f759f1e2edfd8ea8989717a4767ee39761a20a7883c8f2fb12894eb12df2f",
+        "grid_pack": [
+          11,
+          12,
+          127612
+        ],
+        "reduction_pack": [
+          11,
+          24,
+          127601
+        ]
+      },
+      {
+        "disk_row": 36,
+        "name": "LlegL",
+        "record_sha256": "c9df7f72f34aec2adb536d88b93d9441f6307f55a581f8a840092c2d09ab83df",
+        "grid_pack": [
+          11,
+          12,
+          127634
+        ],
+        "reduction_pack": [
+          11,
+          24,
+          127623
+        ]
+      },
+      {
+        "disk_row": 37,
+        "name": "FootL",
+        "record_sha256": "633c5eb0c5b4020106f170c7368a8b983745b96ecf7a9fefb24fdd28666b854d",
+        "grid_pack": [
+          11,
+          12,
+          127656
+        ],
+        "reduction_pack": [
+          11,
+          24,
+          127645
+        ]
+      }
+    ],
+    "no_downloads_or_oracles_executed": true,
+    "runtime_opened_file_identity_proven": false
+  },
+  "retained_qualification_replayed": false,
+  "downloads_or_services_started": false,
+  "remaining": {
+    "new_link_dependency": "native-android/engine/scenecatalog/coh_resource_geo_source.c",
+    "runtime_opened_file_generation_proven": false,
+    "source_generation_admitted": false,
+    "assets_admitted": false,
+    "client_materials_or_lods_available": false,
+    "world_authority": false,
+    "actor_or_selected_character_admitted": false,
+    "android_or_physical_qualification": false
+  },
+  "reviewed_bucket_sha256": {
+    "native-android/engine/scenecatalog/coh_resource_index.c": "43e11a5ed6b0023c6666754c021cb1c938ed8090b53f538affa2d535de20a5d0",
+    "native-android/engine/scenecatalog/coh_resource_index.h": "9100d6f05002c48e37d2e352ab6488cebd123d19577b08eadbd192c875275c31",
+    "native-android/engine/scenecatalog/check_resource_index.py": "66590fb17c4411e8cd21ab9fc3c3e40f4ed5a072b17666a23358568ae99549b3",
+    "native-android/engine/scenecatalog/tests/test_resource_index.c": "053ce1f70d9f80928b344fe7328a47da2cec9b40230c2546c006bf5e9321d101",
+    "native-android/engine/scenecatalog/RESOURCE_INDEX.md": "5db89d11dc0de233b82323ee2ad6b2a6fd8e964ae3bd21be6693a588f12beff2",
+    "native-android/engine/scenecatalog/evidence/resource-index-original-model-buckets-host.json": "34c99cac24af21e50f4a45f61440b0d5e01c153b1f60617ece7381a899dc1583",
+    "native-android/engine/scenecatalog/evidence/actual-resource-bodies-model-buckets-38994607354.json": "eeda11b7d4628b1b806bda7430b8e5ccb2f1be546b1d97e394f59b59b7dcd818"
+  },
+  "reviewed_zero_draw_sha256": {
+    "native-android/engine/scenecatalog/coh_resource_geo_source.c": "1bd9bc5ea08dfdaeee5f0011c1efc86f815d5f774e0944ca3ec1ad82daf2ebf1",
+    "native-android/engine/scenecatalog/coh_resource_geo_source.h": "e2909a9edbfa9eaab34204a9ea83d5f5d00d496dd4f12083f6746c048d7a5cd5",
+    "native-android/engine/scenecatalog/coh_resource_index.c": "4ff95a5bbd766ef97de9b5e5f05bbeea42bc864c91aa303719012d3db07d0a44",
+    "native-android/engine/scenecatalog/coh_resource_index.h": "3a29c1c6accd381d0ecd3d1beee21d13b96615a890689212e85a023a30269cef",
+    "native-android/engine/scenecatalog/verify_resource_candidates.c": "61445bafc915b07832e476821e9af40931004520d0ce91259858b30fa2ccb021",
+    "native-android/engine/scenecatalog/check_resource_geo_source.py": "9082b045096bc7c5d646de5e6a5061a507e5bd8a425ac7d17e438eecc1a297b3",
+    "native-android/engine/scenecatalog/tests/test_resource_geo_source.c": "fdc7c4747b7911df7edf6ba6570d889738a2e1ee0748530b7a3eb6eb739c6875",
+    "native-android/engine/scenecatalog/RESOURCE_GEO_ZERO_MODELS.md": "b9c06b9b912773befb2fb84e9a714e539ff3fafd68563136eeb095913ff6e645",
+    "native-android/engine/scenecatalog/evidence/resource-geo-zero-model-source-final.json": "ae59f3a41dc48bca64102d29ef6c345d8cf5638ed45c48ea849459a74abd6e83",
+    "native-android/engine/scenecatalog/evidence/actual-resource-bodies-source-adapter-sealed-38994607354.json": "4c704b4bec89685c75d2e157a9fc6f9df80e0161efd22d3cc2a4d0cd3b3855fa"
+  }
+}

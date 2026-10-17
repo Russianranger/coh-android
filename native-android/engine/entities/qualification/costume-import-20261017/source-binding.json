@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "17aed4a5c1fc9815a73536a1ed6ce4bd6cd9028b",
+  "host_proof_sha256": "c709108f9ed87151d4d7c27e07f42cf5beb64ed992e74e98fcdfae03257ab094",
+  "tested_files_equal_committed_blobs": true,
+  "source_sha256": {
+    "native-android/engine/costume-import/coh_costume_import.c": "8b4c76b28a9c42ee0d993163d49d17d14cd4b33dd94af3c621afa73f1607e26c",
+    "native-android/engine/costume-import/test_import.c": "4be5d2173eb5dd29e6f4b40d265ddf9164551f1d6b299abb0da3a55584403bc5",
+    "native-android/engine/costume-import/source_id.h": "e7f0acdbdfb661427834da9a6c46ba270005ee8628fb944f2fbbc58ec47df38f",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-import/oracle.py": "d178d3b444ab6225611f9f7544280385033052f98b3ebe8531f454fccdb01b3b",
+    "native-android/engine/costume-import/check.py": "810c57d1bda4cc56126c857475833d5ecd410188cbda372b7e5d2db1454040ad",
+    "native-android/engine/costume-import/source-pins.json": "74ccac29b928ca151b23013e3db222a59c1e00fc0bf10ee367dd2a9d0998b148",
+    "native-android/engine/costume-import/CONTRACT.md": "0d121c9a34a8d6f80f2099358e2fde3ede4e4932a3ff97ca8d2612f8f4e11c79",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "original_lf_pins_equal_committed_blobs": true,
+  "scope": "Binds prior actual run of uncommitted source to exact frozen source commit; not another test execution or original runtime capture."
+}

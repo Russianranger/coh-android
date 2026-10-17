@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "passed": true,
+  "role": "exact_subset_repack_no_bin_mutation",
+  "source_artifact_id": 11092897979,
+  "source_run_id": 36707839624,
+  "bytes": 2253704,
+  "sha256": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+  "members": {
+    "data/bin/BodyParts.bin": {
+      "bytes": 2584,
+      "schema_crc": "cf27aba3",
+      "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "first32_hex": "4372797074696353a3ab27cf0600506172736536060046696c65733120000000"
+    },
+    "data/bin/costume.bin": {
+      "bytes": 17691352,
+      "schema_crc": "a3374618",
+      "sha256": "10ef7562156be60bd1ef3c437c3b46d10b36b6b265129c10f39d25c4a4df5a77",
+      "first32_hex": "4372797074696353184637a30600506172736536060046696c657331d4bb0000"
+    },
+    "data/bin/supergroupColors.bin": {
+      "bytes": 2664,
+      "schema_crc": "f0095ef2",
+      "sha256": "e5676ebbccc380f9d69322ef6750332b0b7e7a46d915bdfb591322862d22cb75",
+      "first32_hex": "4372797074696353f25e09f00600506172736536060046696c6573313c000000"
+    }
+  },
+  "all_extracted_bytes_equal_original_donor": true,
+  "source_archive_fully_hashed": true,
+  "original_builder_executed": false,
+  "authentic_stash_slots_generated": false
+}

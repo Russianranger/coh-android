@@ -16,8 +16,8 @@ if a.output.exists() or a.candidates.stat().st_size>8*1024**2 or sha(a.candidate
 doc=json.loads(a.candidates.read_bytes());cap=a.capture_directory
 for name,pin in doc['capture_sha256'].items():
  if sha(cap/name)!=pin:raise ValueError('Actual source capture identity differs')
-binding=json.loads((cap/'resource-binding.json').read_bytes());sources=[HERE/'verify_resource_candidates.c',HERE/'coh_resource_index.c',ENGINE/'assets/coh_asset_loader.c',ENGINE/'assets/coh_asset_geo.c',ROOT/'native-android/src/coh_assets.c',ROOT/'native-android/src/coh_dds.c']
-deps=sources+[ROOT/'upstream/ouroboros/Common/seq/anim.c',HERE/'coh_resource_index.h',ENGINE/'assets/coh_asset_loader.h',ENGINE/'assets/coh_asset_geo.h',ENGINE/'coh_contracts.h',ROOT/'native-android/include/coh_native_core.h',Path(__file__)]
+binding=json.loads((cap/'resource-binding.json').read_bytes());sources=[HERE/'verify_resource_candidates.c',HERE/'coh_resource_index.c',HERE/'coh_resource_geo_source.c',ENGINE/'assets/coh_asset_loader.c',ENGINE/'assets/coh_asset_geo.c',ROOT/'native-android/src/coh_assets.c',ROOT/'native-android/src/coh_dds.c']
+deps=sources+[ROOT/'upstream/ouroboros/Common/seq/anim.c',HERE/'coh_resource_index.h',HERE/'coh_resource_geo_source.h',ENGINE/'assets/coh_asset_loader.h',ENGINE/'assets/coh_asset_geo.h',ENGINE/'coh_contracts.h',ROOT/'native-android/include/coh_native_core.h',Path(__file__)]
 pins={str(x.relative_to(ROOT)):sha(x) for x in deps};table=[];selected=[];missing=[]
 def header_derivation(path):
  raw=path.read_bytes()

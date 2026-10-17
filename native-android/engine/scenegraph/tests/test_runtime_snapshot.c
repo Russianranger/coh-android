@@ -115,6 +115,26 @@ static void graph_test(CohBytes catalog,CohBytes snapshot,const CohRuntimeSnapsh
         CHECK(coh_runtime_graph_root(g,i,&root)==COH_OK&&root.active==present);
         if(present){for(unsigned c=0;c<4;c++)for(unsigned r=0;r<3;r++){uint32_t expected=get(raw+32+name+(c*3+r)*4),actual;memcpy(&actual,&root.matrix[c][r],4);CHECK(actual==expected);}root_at+=32+name+48+bytes;}else root_at+=32;
     }
+    for(uint32_t i=0;i<report.source.external_count;i++){
+        const uint8_t *head=snapshot.data+root_at,*live_wire=head+36,*lookup_wire=live_wire+60;
+        CohRuntimeExternalBounds observed;size_t allocation_calls=calls;
+        CHECK(coh_runtime_graph_external_bounds(g,report.source.definitions+i,&observed)==COH_OK&&calls==allocation_calls);
+        CHECK(observed.lookup_found==get(head+28));
+        const CohRuntimeSourceBounds *views[]={&observed.live,&observed.lookup};const uint8_t *wire[]={live_wire,lookup_wire};
+        for(unsigned k=0;k<2;k++){
+            const CohRuntimeSourceBounds *v=views[k];float numbers[13];memcpy(numbers,v->min,12);memcpy(numbers+3,v->max,12);memcpy(numbers+6,v->mid,12);numbers[9]=v->vis_dist;numbers[10]=v->radius;numbers[11]=v->lod_scale;numbers[12]=v->shadow_dist;
+            CHECK(v->wire.data==wire[k]&&v->wire.size==60);
+            for(unsigned j=0;j<13;j++){uint32_t bits;memcpy(&bits,&numbers[j],4);CHECK(bits==get(wire[k]+4*j));}
+            CHECK(v->recursive_count==get(wire[k]+52)&&v->flags==get(wire[k]+56));
+        }
+        root_at+=36+120+get(head+16)+get(head+32)+get(head+24);
+    }
+    CHECK(root_at==snapshot.size);
+    CohRuntimeExternalBounds no_bounds,before_bounds;memset(&no_bounds,0x51,sizeof(no_bounds));before_bounds=no_bounds;
+    CHECK(coh_runtime_graph_external_bounds(g,report.nodes,&no_bounds)==COH_NOT_FOUND&&!memcmp(&no_bounds,&before_bounds,sizeof(no_bounds)));
+    CHECK(coh_runtime_graph_external_bounds(g,0,&no_bounds)==COH_NOT_FOUND&&!memcmp(&no_bounds,&before_bounds,sizeof(no_bounds)));
+    CHECK(coh_runtime_graph_external_bounds(NULL,0,&no_bounds)==COH_INVALID&&!memcmp(&no_bounds,&before_bounds,sizeof(no_bounds)));
+    CHECK(coh_runtime_graph_external_bounds(g,0,NULL)==COH_INVALID);
     CohRuntimeGraphWitnessWork*work=malloc((size_t)report.nodes*sizeof(*work));CHECK(work);
     CohRuntimeGraphWitness witness,sentinel;memset(&sentinel,0xa5,sizeof(sentinel));
     for(uint32_t i=0;i<report.nodes;i++){

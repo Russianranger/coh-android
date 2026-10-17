@@ -35,7 +35,7 @@ def qualify(root,output):
             if set(fixture)!={'about','short_userdata_disabled','db_play_ok','client_play_ok'} or [r['name']for r in fixture['about']]!=['x','sourcefixture','abcdefghijklmn']:raise ValueError('wire_fixture_corpus')
             for record in fixture['about']:
                 about=contract.parse_about_to_play(bytes.fromhex(record['body']),generation)
-                if (about.auth_id,about.account,about.pay_stat,about.loyalty,about.loyalty_legacy,about.auth_data)!=(900001,record['name'],1,123,456,bytes(range(128))):raise ValueError('wire_adapter_original_producer_mismatch')
+                if (about.auth_id,about.account,about.time_remaining,about.login_flags,about.warning_flags,about.pay_stat,about.loyalty,about.loyalty_legacy,about.auth_data)!=(900001,record['name'],0,2,3,1,123,456,bytes(range(128))):raise ValueError('wire_adapter_original_producer_mismatch')
                 checks+=1
             try:contract.parse_about_to_play(bytes.fromhex(fixture['short_userdata_disabled']),generation)
             except ValueError:checks+=1

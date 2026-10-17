@@ -1,0 +1,34 @@
+{
+  "schema": "coh-independent-rigid-v0-source-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "b65f33f1dd9039f181db381076dddf9cb94741ba",
+  "evidence_commit": "1aaf61eff",
+  "host_proof_sha256": "70104f17f9e695591a17cabd62d0f1e8e0d6d12ae51f15c20999e98a814a0e85",
+  "all_source_inputs_equal_committed_blobs": true,
+  "source_inputs": 26,
+  "review": [
+    "V0 recordoffset selects originalfixed216B layout after existingwholeGEOheader/model validation; no allocation capchange",
+    "Exact originalnullruntimepointer assertions enforced, nonzeroflags/API/bones/nonunitscale/unsupportedchannels conservativelyrefused; v2..7closed",
+    "Originalpackremapping sevenchannels; full actual/authoredpacket agreement with unchanged originaldeltas/sourcepartition/Vflip; material suppliers remainfixtures",
+    "Original32bitreadModel/declarations compiledtrueELF32,14layoutscalars verified; localerrno8 means originalconsumer NOTexecuted",
+    "Host --require-original32 records passedfalse/exitsnonzero if original32execution absent; hostedcompletion required before claiming execution",
+    "Pre/post full dependencyhashes stable, bodyhash pinned, alllease/reservation/rollback semantics retained"
+  ],
+  "host_controls_per_mode": 243,
+  "host_modes": [
+    "release",
+    "address",
+    "undefined"
+  ],
+  "actual_packet_sha256": "1ae8e759135cd9ce299df21af5010c8418b11a603c1ba947f5f6df8cee431baf",
+  "original32_consumer_executed": false,
+  "original32_execution_refusal_errno": 8,
+  "blocking_findings": [],
+  "required_followup": "Execute --require-original32 on actual compatible Ubuntu kernel and review retained output before closing original consumer execution",
+  "independent_expensive_replay": false,
+  "source_generation_established": false,
+  "material_authority": false,
+  "world_authority": false,
+  "android_execution": false,
+  "physical_thor": false
+}

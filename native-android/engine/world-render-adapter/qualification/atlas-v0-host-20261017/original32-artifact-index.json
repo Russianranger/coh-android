@@ -1,0 +1,32 @@
+{
+  "external_retained_directory": "/tmp/atlas-rigid-v0-pinned-original32",
+  "files": {
+    "execution-refusal.json": {
+      "bytes": 303,
+      "sha256": "113d8bb10fdd1096c2e51121b56ae7edace7a575bb88510ddcdd3cf5624b21a4"
+    },
+    "execution.stderr": {
+      "bytes": 89,
+      "sha256": "89686c10b19c797ee5f6664f86e586a084b98fb565a50dadd09602cd44d00195"
+    },
+    "original-layout.bin": {
+      "bytes": 56,
+      "sha256": "4f50c9e1392bf26a4603f1549d8ddbd76523f8ca8609a4fc1c0342f7992eb59f"
+    },
+    "original-read-model": {
+      "bytes": 13584,
+      "sha256": "c419ec27d63632d307eda70f056929a075a79cadaf5e59a936a48180780c717e"
+    },
+    "original-read-model.c": {
+      "bytes": 9728,
+      "sha256": "c9b21045159a38521812ec3cdf48699db867d60791db6cd77b9b7da8952f44a2"
+    },
+    "original-read-model.o": {
+      "bytes": 4036,
+      "sha256": "6ebb3f254287fe28b494d11d2782c836707775e19cd5483f62705b6028abbc25"
+    }
+  },
+  "source_revision": "b65f33f1d",
+  "original_consumer_executed": false,
+  "reason": "ELF32 kernel exec format refusal; compilation/layout is not execution"
+}

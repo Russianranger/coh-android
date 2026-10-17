@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "checks": 10,
+  "network_started": false,
+  "game_asset_files_written": false,
+  "source_sha256": {
+    "acquire_resource_candidates.py": "1dbce191b1fc4e07cf5dd68f3c2d8b6fb0247f961bd9c58bc953b4a9ae6d099a",
+    "check_resource_candidate_resume.py": "7115f012424cb81f9222bc1ba24e4e4d00c615606ddfc1d3f48fcaf54db9f2f7"
+  }
+}

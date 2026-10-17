@@ -1,0 +1,5 @@
+{
+  "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+  "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+  "Common/gameComm/initCommon.c": "96b7796fa49be78144b6ff5014422dc8067c9931dcf7717e39d8d1a7008f04a8"
+}

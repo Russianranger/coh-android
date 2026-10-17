@@ -24,7 +24,7 @@ emit='''
     }
 '''
 path=temporary/'closure.c';path.write_text(source.replace(needle,emit+needle))
-sources=[path,here/'coh_resource_join.c',here/'coh_resource_index.c',here/'coh_catalog_snapshot.c',here/'coh_catalog_owner.c',here/'coh_scenecatalog.c',eng/'scenegraph/runtime_snapshot.c',eng/'scenegraph/tests/runtime_matrix_bridge.c',eng/'replication/coh_replication.c',eng/'replication/coh_groups.c',eng/'assets/coh_asset_loader.c',eng/'assets/coh_asset_geo.c',root/'native-android/src/coh_assets.c',root/'native-android/src/coh_dds.c']
+sources=[path,here/'coh_resource_join.c',here/'coh_resource_index.c',here/'coh_resource_geo_source.c',here/'coh_catalog_snapshot.c',here/'coh_catalog_owner.c',here/'coh_scenecatalog.c',eng/'scenegraph/runtime_snapshot.c',eng/'scenegraph/tests/runtime_matrix_bridge.c',eng/'replication/coh_replication.c',eng/'replication/coh_groups.c',eng/'assets/coh_asset_loader.c',eng/'assets/coh_asset_geo.c',root/'native-android/src/coh_assets.c',root/'native-android/src/coh_dds.c']
 dependency_paths=sources[1:]+[here/'validate_resource_join.c',eng/'scenecatalog-server/resource_oracle.py',eng/'scenecatalog-server/capture_resources.py',root/'upstream/ouroboros/Common/seq/anim.h']
 dependency_paths+=list(here.glob('*.h'))+list((eng/'scenegraph').glob('*.h'))+[eng/'scenegraph/coh_scenegraph.c',eng/'assets/coh_asset_geo.h',eng/'assets/coh_asset_loader.h',eng/'replication/coh_replication.h',eng/'replication/coh_groups.h',eng/'coh_contracts.h',root/'native-android/include/coh_native_core.h']
 pins={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in dependency_paths}

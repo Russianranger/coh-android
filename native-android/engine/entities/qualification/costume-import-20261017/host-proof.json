@@ -1,0 +1,344 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_head": "4ac3e8a5deba112443b01a4969c58d037d3c1c80",
+  "source_oracle": {
+    "passed": true,
+    "cases": 177,
+    "source_sha256_lf": {
+      "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+      "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8"
+    },
+    "source_id": "0b89c2c527fd801f9c2c0f0af0b079e10842164011af2a3e90d0214f423450d8",
+    "function_sha256_lf": {
+      "slotEmpty": "ec76592ff7f4b4b54e034ee95eae5c0ab9328b840aa3a8a4658435a4b5d1b90a",
+      "slotDeleted": "b83f8de42f57ace88f16c52af73023253baa4f834cfba1721f23acc04952ce6c",
+      "stashGetMaxSize": "4e137508160dab42c4f8a602bbb7c6759fa6e5c01c3764557005e7a13e33cc03",
+      "stashGetValidElementCount": "0f5fa12bba6f6f91362f863f50d196be05248b323bd3d4cf77cea8dc44ab1bf6",
+      "stashFindKeyByIndexInternal": "c7661b93d0a8f1c35235f239c1a1064466d508c66be8979ad1ae3c08e68425fa",
+      "stashFindKeyByIndex": "376eb859c591b95b0c64cf727b00dcf4ee282f3c990be4dff37c2366392e3702",
+      "stashIntFindKeyByIndex": "f644483909df1d876f78c9ff6575cf2c005098a05788e080706b7d13a581a7ff",
+      "getRGBAFromVec3": "34ae8fa705f388a1ec6add891cdff9a65e10d4f2bc321fe54d78e78ca6cfeecd",
+      "BodyType": "cebcaf7e17a52d1aaec1a47a388c7e6c295d158255262a83a80246f73a419085",
+      "BodyTypeInfo": "d3a54f991c81ee7d74278c9f8ea04f04be97d417f93b7db07710d6aaf30a53d7",
+      "g_BodyTypeInfos": "4e8861ed9a4f3ff91809adb8424cc38db1521a233c7418aaddfad462df2be462",
+      "Common/gameData/costume_data.c:costume_initHashTable": "95d4d792b724a4aaf13b8992d3ff80f18045bb5bcf2db12a674fda2ab7be2056",
+      "Common/gameData/costume_data.c:addPaletteToTables": "0ed4dc23d7f937ab5022ea0597980f43813bb39c2a5ce2bbf337b20b2a517e57",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashTableResize": "653dded9ee40f76f9ab60dfef9951b10556382ae47eaef4a5c7b46ad1f227bb6",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:defaultBitsPack": "f5ca7cef3a4e7c8cc6c2acfee869591fca30c7013bafc9fae9bc65edb073df0a",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:pktSendIndexedString": "ec43ed9a083e4781ac87f4bde24a4583e9279d24aaddc912a657d62531512ca3",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:pktGetIndexedString": "0da5abf7f138749c5018898b1044d40f1fe7b437be958dfd590efc6d9e760643",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:pktSendIndexedGeneric": "204da222224404f4f8e7583c27038437866247eef498d7a1e70d3023660673c0",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:pktGetIndexedGeneric": "708c12ebce8951ce84c4f4c8c73e9edb0944af8ebd350ca6e39c1bfaa6a266a5",
+      "Common/entity/costume.c:getBodyTypeCount": "dde77b905a38c10452542457a5ccc4ad98337bdf1366c5395bfb340b157d1746",
+      "Common/gameData/BodyPart.c:GetBodyPartCount": "7657fea302b88e54666818cd1e7302b6b167db7a35f23d5fb595f23c5df8d677",
+      "Common/gameData/BodyPart.c:ParseBoneNames": "88820c6af887214608f51dd1adba3bdb8663de4fecd8f6901f0e109be62a92a7",
+      "Common/gameData/BodyPart.c:bpReadBodyPartFiles": "cfae2131f6a845feb6040043c30305086ed5a128c535d2e4bedc70909b8ee3a8"
+    },
+    "generated_c_sha256": "dcd9419d2718448bee6b47736e542720144d21cb5ae2ea32d659e758f3b44fce",
+    "scope": "Unchanged whole original slot getters, defaultBitsPack/log2i, body type table/count and palette word function executed on synthetic storage. Struct layouts, storage contents, and body/input assets are synthetic. Original hashing, insertion, resize, full costume builder, parser loading and packet sender/consumer functions NOT executed; their source is pinned for schema audit. No captured dictionary or live costume.",
+    "original_oracle_sanitized": false
+  },
+  "native": {
+    "release": {
+      "passed": true,
+      "checks": 1695,
+      "input_bytes": 265,
+      "budget_peak": 4228085,
+      "dictionary_bytes": 412,
+      "truncations": 265,
+      "byte_mutations": 265,
+      "actor_authority": false,
+      "binary_sha256": "bbe9b67197af64328550033ed2083aa7eb4b03ed575600b93ce72bd11937248f"
+    },
+    "asan": {
+      "passed": true,
+      "checks": 1695,
+      "input_bytes": 265,
+      "budget_peak": 4228085,
+      "dictionary_bytes": 412,
+      "truncations": 265,
+      "byte_mutations": 265,
+      "actor_authority": false,
+      "binary_sha256": "f21eb8365e5893377f8d0cbca7d9105fa90972c585376367ce1493c3a405e708"
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 1695,
+      "input_bytes": 265,
+      "budget_peak": 4228085,
+      "dictionary_bytes": 412,
+      "truncations": 265,
+      "byte_mutations": 265,
+      "actor_authority": false,
+      "binary_sha256": "5ba3a21a8755282258a31e049895c0f2df783b8ce8df49c2e4a4a06d0bbb8409"
+    }
+  },
+  "source_sha256": {
+    "coh_costume_import.c": "8b4c76b28a9c42ee0d993163d49d17d14cd4b33dd94af3c621afa73f1607e26c",
+    "test_import.c": "4be5d2173eb5dd29e6f4b40d265ddf9164551f1d6b299abb0da3a55584403bc5",
+    "source_id.h": "e7f0acdbdfb661427834da9a6c46ba270005ee8628fb944f2fbbc58ec47df38f",
+    "coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "oracle.py": "d178d3b444ab6225611f9f7544280385033052f98b3ebe8531f454fccdb01b3b",
+    "check.py": "810c57d1bda4cc56126c857475833d5ecd410188cbda372b7e5d2db1454040ad",
+    "source-pins.json": "74ccac29b928ca151b23013e3db222a59c1e00fc0bf10ee367dd2a9d0998b148",
+    "CONTRACT.md": "0d121c9a34a8d6f80f2099358e2fde3ede4e4932a3ff97ca8d2612f8f4e11c79",
+    "../entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "../entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "../entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "../replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "../replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "../coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "native_stack": {
+    "conservative_sum_bytes": 1040,
+    "reserve_bytes": 16384,
+    "frames": [
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/coh_costume_import.c:26:18:palette",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/coh_costume_import.c:14:18:slots",
+        "bytes": 80,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/coh_costume_import.c:36:11:coh_costume_import",
+        "bytes": 784,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:21:11:coh_ent_costume_dictionary_load",
+        "bytes": 144,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:45:6:coh_ent_costume_dictionary_free",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:46:8:coh_ent_costume_dictionary_bytes",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:8:12:valid",
+        "bytes": 8,
+        "kind": "static"
+      }
+    ],
+    "excluded_unreachable_other_costume_wire_parsers": [
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:48:17:bits",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:11:18:string_table_size.isra",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:53:13:text",
+        "bytes": 64,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:54:13:indexed_string",
+        "bytes": 80,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:62:13:cached_string",
+        "bytes": 64,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:87:11:coh_ent_costume.part.0",
+        "bytes": 208,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:117:13:envelope_body.part.0",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:87:11:coh_ent_costume",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:108:11:coh_ent_custom_costume",
+        "bytes": 17088,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:122:11:coh_ent_costume_envelope",
+        "bytes": 240,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../entities/coh_costume.c:175:11:coh_ent_power_custom",
+        "bytes": 208,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:193:6:coh_rep_session_disconnect.part.0",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:15:11:coh_rep_reader",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:20:11:coh_rep_reader_bounded",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:29:11:coh_rep_read",
+        "bytes": 24,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:60:18:f32",
+        "bytes": 112,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:68:18:auto_bits",
+        "bytes": 112,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:65:18:boolean",
+        "bytes": 112,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:51:11:coh_rep_string.part.0",
+        "bytes": 384,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:38:11:coh_rep_pack",
+        "bytes": 144,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:89:11:coh_rep_shortcuts.part.0",
+        "bytes": 1488,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:51:11:coh_rep_string",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:107:11:coh_rep_scene_prefix.part.0",
+        "bytes": 992,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:73:11:coh_rep_connect",
+        "bytes": 384,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:89:11:coh_rep_shortcuts",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:107:11:coh_rep_scene_prefix",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:125:11:coh_rep_update_prefix",
+        "bytes": 224,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:198:18:session_message",
+        "bytes": 1232,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:148:6:coh_rep_position_init",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:152:11:coh_rep_position",
+        "bytes": 320,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:173:11:coh_rep_physics",
+        "bytes": 208,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:186:6:coh_rep_session_init",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:187:11:coh_rep_session_begin",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:193:6:coh_rep_session_disconnect",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:238:11:coh_rep_session_message",
+        "bytes": 48,
+        "kind": "dynamic,bounded"
+      },
+      {
+        "function": "/workspace/scratch/9174d12e2a11/costume-import-current/native-android/engine/costume-import/../replication/coh_replication.c:241:11:coh_rep_session_message_bounded",
+        "bytes": 48,
+        "kind": "dynamic,bounded"
+      }
+    ],
+    "external_digest_stack_included": false
+  },
+  "cpp_link_passed": true,
+  "leak_sanitizer": {
+    "executed": false,
+    "reason": "Container LeakSanitizer cannot inspect /proc/2/task and terminates with fatal ptrace/proc error; address checking uses detect_leaks=0. No leak-sanitizer qualification claimed."
+  },
+  "external_crypto": {
+    "linker_output": "\tlinux-vdso.so.1 (0x00007fb5afb9f000)\n\tlibcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007fb5af640000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fb5af42e000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007fb5afba1000)\n",
+    "headers_version": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+    "runtime_sanitizer_closure": false,
+    "callback_scratch_test_reservation": 16384,
+    "scope": "Host test SHA256_Init/Update/Final provider only; native core requires independently qualified caller digest. No allocator interposition or external library sanitizer/stack qualification.",
+    "path": "/lib/x86_64-linux-gnu/libcrypto.so.3",
+    "sha256": "c19c2cf8d7cf91c4f273b1d3bbc56a9d19c91a739bfe57ad630756ee8ede7b77"
+  },
+  "android_arm64_built": false,
+  "android13_executed": false,
+  "physical_thor_qualified": false,
+  "real_server_accepted": false,
+  "authentic_dictionary_captured": false,
+  "actor_authority": false,
+  "scope": "Bounded integrity import of synthetic source-shaped full slots into existing immutable dictionary; no original whole builder or authentic input capture, no complete entity/actor/ACK."
+}

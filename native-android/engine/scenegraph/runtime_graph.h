@@ -61,6 +61,19 @@ CohStatus coh_runtime_graph_root(const CohRuntimeGraph *,uint32_t,CohRuntimeGrap
 CohStatus coh_runtime_graph_slot(const CohRuntimeGraph *,uint32_t file,uint32_t slot,uint32_t *);
 /* Exact canonical names only; no newly introduced aliases/case folding. */
 CohStatus coh_runtime_graph_name(const CohRuntimeGraph *,const char *,uint32_t *);
+typedef struct {
+    float min[3],max[3],mid[3],vis_dist,radius,lod_scale,shadow_dist;
+    uint32_t recursive_count,flags;
+    CohBytes wire; /* Exact retained60-byte named-field serialization. */
+} CohRuntimeSourceBounds;
+typedef struct {CohRuntimeSourceBounds live,lookup;uint32_t lookup_found;} CohRuntimeExternalBounds;
+/* Exact observed pre_alloc bounds, not constructor defaults or recomputation.
+ * Live and library-lookup observations remain distinct; a lookup miss NEVER
+ * substitutes zero lookup bytes for live bounds. Raw spans borrow the exact
+ * pinned snapshot until graph retirement. No allocation or authority change.
+ * Regular/absent nodes return NOT_FOUND; outputs disjoint, unchanged on error. */
+CohStatus coh_runtime_graph_external_bounds(const CohRuntimeGraph *,uint32_t,
+    CohRuntimeExternalBounds *);
 typedef struct {uint32_t parent,edge,queue;} CohRuntimeGraphWitnessWork;
 typedef struct {
     uint32_t root_slot,length;

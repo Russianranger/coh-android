@@ -1,0 +1,35 @@
+{
+  "schema": "coh-independent-costume-import-source-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "17aed4a5c1fc9815a73536a1ed6ce4bd6cd9028b",
+  "host_proof_sha256": "c709108f9ed87151d4d7c27e07f42cf5beb64ed992e74e98fcdfae03257ab094",
+  "bound_inputs": 14,
+  "all_bound_inputs_equal_committed_blobs": true,
+  "review": [
+    "Exact wholeinput/176Bheader and full original slot maps; holes distinct emptystrings, palette zero absence and preserved indexedkeys",
+    "Source schemaID pins builder/schema, not assetorigin; requires separate expected generation/bodycount1..29/bodytypes9 and payload/inventory/profile/run digests",
+    "Pairwise caller spans/provider context disjoint; named8MiB charge includes full4MiB existing loader maximum, exact arrays/input/provider transient reserve/16KiB stack/retained BEFORE digest/calloc",
+    "Single aligned temporary arrays and copied immutable dictionary; frees scratch and candidate on refusal; publicout/receipt commit together",
+    "Unchanged original slot/width/count/palette accessors execute on synthetic storage only; hashing/insertion/resize/full costume builder and packet grammars not executed, explicit scope preserved",
+    "Native emitted1040byte reachable frame sum within16KiB reserve; external digest crypto/stack qualification external"
+  ],
+  "host_receipt": {
+    "checks_per_mode": 1695,
+    "modes": [
+      "release",
+      "asan",
+      "ubsan"
+    ],
+    "source_accessor_cases": 177,
+    "cuts": 265,
+    "byte_mutations_rehashed": 265
+  },
+  "blocking_findings": [],
+  "independent_expensive_replay": false,
+  "original_oracle_sanitized": false,
+  "external_crypto_qualified": false,
+  "authentic_dictionary_captured": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "actor_authority": false
+}

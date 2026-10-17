@@ -1,0 +1,30 @@
+{
+  "schema": "coh-independent-zero-model-source-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "afafddd718419c82456ba67808d37f27dd6286a6",
+  "base_source_commit": "a0b46c1489309b9fb60db10ff11c2d4b0213648b",
+  "alias_final_host_sha256": "7b52508e6b64569061c6c143bf3a7a9584caf90f2454ee0c167728171a624d34",
+  "historical391_metadata_receipt_sha256": "4c704b4bec89685c75d2e157a9fc6f9df80e0161efd22d3cc2a4d0cd3b3855fa",
+  "source_maps_match_exact_committed_blobs": true,
+  "historical391_receipt_bound_to_preguard_a0b_source": true,
+  "review": [
+    "ProtectedGEOopen triedfirst; narrowv8fallback validateswholeheader/all72Shoprows/table/name/payload/recordextents, ordinaryrowsdelegateprotectedAPI unchanged",
+    "Fourzero drawowners preserveexactnames/rawdiskrows/capturedruntimebuckets, requireallthree drawcountszero andnobones/reflections/meshstreams; finiteorderedbounds/scale checked",
+    "GRID/reductionpacks retainedas boundedrawmetadata, neverimplicitlydecodedcollision/LOD; zeromaterialqueryrefuses no dummytexture/table or deletedrows",
+    "Frequested knownspan guard; afaf adds overflow-safe pairwise source/workspace/output/counter checks BEFORE protectedreader and modeloutput/inputborrowedspans disjointness",
+    "Existingaggregate/work/cancel/lifetime retained; perrawrowcursor avoids quadraticindexwalk withinnamecomparison",
+    "OriginalreadModel functionunchanged hostv8fieldcopyoracle with explicit32-bitdisk shells, notWin32ABI/v2execution; originalsourcepins and receiptclosure reviewed",
+    "All6indexqualifierlinks include newCdependency; coordinatorBboundsdriver linkupdate separatelyrequired"
+  ],
+  "final_alias_host_controls_per_mode": 3492,
+  "historical_body_metadata_equal_files": 391,
+  "historical_body_metadata_refused_files": 0,
+  "blocking_findings": [],
+  "independent_expensive_391_replay": false,
+  "all_vertex_streams_decoded": false,
+  "source_generation_admitted": false,
+  "client_material_authority": false,
+  "world_authority": false,
+  "android_executed": false,
+  "physical_thor": false
+}

@@ -385,3 +385,22 @@ CohStatus coh_runtime_graph_witness(const CohRuntimeGraph*g,uint32_t target,
     for(uint32_t i=0;i<(result.length-1)/2;i++){uint32_t v=result.edges[i];result.edges[i]=result.edges[result.length-2-i];result.edges[result.length-2-i]=v;}
     *out=result;return COH_OK;
 }
+
+static void source_bounds(const uint8_t *p,CohRuntimeSourceBounds *out){
+    float values[13];for(unsigned n=0;n<13;n++){uint32_t bits=u32(p+4*n);memcpy(&values[n],&bits,4);}
+    memcpy(out->min,values,12);memcpy(out->max,values+3,12);memcpy(out->mid,values+6,12);
+    out->vis_dist=values[9];out->radius=values[10];out->lod_scale=values[11];out->shadow_dist=values[12];
+    out->recursive_count=u32(p+52);out->flags=u32(p+56);out->wire=(CohBytes){p,BOUNDS_BYTES};
+}
+CohStatus coh_runtime_graph_external_bounds(const CohRuntimeGraph *g,uint32_t i,CohRuntimeExternalBounds *out){
+    if(!g||!out)return COH_INVALID;
+    if(i>=g->report.nodes||!g->nodes[i].external)return COH_NOT_FOUND;
+    const Node *node=&g->nodes[i];size_t name=node->name;
+    if(name<EXTERNAL_BYTES+2u*BOUNDS_BYTES||name>g->snapshot.size)return COH_STATE;
+    size_t at=name-2u*BOUNDS_BYTES;const uint8_t *head=g->snapshot.data+at-EXTERNAL_BYTES;
+    if(u32(head)!=i-g->report.source.definitions||u32(head+4)!=node->slot||u32(head+8)!=15u||u32(head+28)>1)return COH_STATE;
+    const uint8_t *live=g->snapshot.data+at,*lookup=live+BOUNDS_BYTES;
+    TRY(bounds(live));TRY(bounds(lookup));CohRuntimeExternalBounds result={0};
+    source_bounds(live,&result.live);source_bounds(lookup,&result.lookup);result.lookup_found=u32(head+28);
+    *out=result;return COH_OK;
+}

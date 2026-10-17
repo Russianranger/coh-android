@@ -1,0 +1,16 @@
+{
+  "schema": "coh-initial-suffix-android-execution-v1",
+  "passed": true,
+  "artifact_admitted": true,
+  "native_execution_attempted": false,
+  "android_executed": false,
+  "temporary_files_removed": false,
+  "actor_publication": false,
+  "acknowledgments_enabled": false,
+  "whole_initial_update_complete": false,
+  "live_server": false,
+  "gpu_execution": false,
+  "physical_thor": false,
+  "loaded_zlib_mapping_verified": false,
+  "external_dependency_stack_and_sanitizer_closure": false
+}

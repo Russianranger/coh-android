@@ -76,7 +76,7 @@ CohStatus coh_wr_rigid_acquire(CohAssetLoader*l,const CohWrRigidRequest*q,const 
     if(workspace>b->max_workspace_bytes||!room(l,b,0,workspace,&peak)){s=COH_LIMIT;goto fail;}
     temp=malloc(workspace);if(!temp){s=COH_LIMIT;goto fail;}
     s=coh_asset_geo_open(bytes,temp,workspace,b->max_models,&geo);if(s!=COH_OK)goto fail;
-    if(geo.version!=8){s=COH_UNSUPPORTED;goto fail;}
+    if(geo.version!=0&&geo.version!=8){s=COH_UNSUPPORTED;goto fail;}
     uint32_t matches=0,selected=0;
     for(uint32_t i=0;i<geo.model_count;i++){
         CohAssetGeoModel m;if(cancelled(cancel)){s=COH_CANCELLED;goto fail;}
@@ -84,13 +84,23 @@ CohStatus coh_wr_rigid_acquire(CohAssetLoader*l,const CohWrRigidRequest*q,const 
         if(!strcmp(m.name,q->model)){model=m;selected=i;matches++;}
     }
     if(matches!=1){s=matches?COH_INVALID:COH_NOT_FOUND;goto fail;}
-    /* Public parser validates every variable record; inspect the selected
-     * protected low-level metadata to refuse v8 reflection/pivot tails too. */
+    /* Public parser validates each record; original readModel uses fixed
+     *216-byte ModelFormatOnDisk_v2 for legacyv0, variable records forv8. */
     size_t record=geo.records_offset;
-    for(uint32_t i=0;i<selected;i++)record+=u32(geo.header.data+record);
-    CohGeoModel metadata;
-    if(coh_geo_model(geo.header.data+record,geo.header.size-record,geo.version,&metadata)){s=COH_INVALID;goto fail;}
-    if(metadata.reflection_count||metadata.alternate_pivot_offset){s=COH_UNSUPPORTED;goto fail;}
+    if(geo.version==0){
+        record+=(size_t)selected*216;
+        const uint8_t*p=geo.header.data+record;
+        /* Original legacy source asserts these runtime-only pointers null.
+         * Serialized flags remain unsupported CLIENT semantics in this slice. */
+        if(u32(p+24)||u32(p+40)||u32(p+72)||u32(p+76)||u32(p+88)){s=COH_INVALID;goto fail;}
+        if(u32(p)){s=COH_UNSUPPORTED;goto fail;}
+        if(u32(p+84)){s=COH_UNSUPPORTED;goto fail;}
+    }else{
+        for(uint32_t i=0;i<selected;i++)record+=u32(geo.header.data+record);
+        CohGeoModel metadata;
+        if(coh_geo_model(geo.header.data+record,geo.header.size-record,geo.version,&metadata)){s=COH_INVALID;goto fail;}
+        if(metadata.reflection_count||metadata.alternate_pivot_offset){s=COH_UNSUPPORTED;goto fail;}
+    }
     if(model.vertex_count>b->max_vertices||model.triangle_count>b->max_triangles||model.material_count>b->max_parts){s=COH_LIMIT;goto fail;}
     if(model.bone_info_offset||model.scale[0]!=1.f||model.scale[1]!=1.f||model.scale[2]!=1.f||
        model.packs[4].unpacked_bytes||model.packs[5].unpacked_bytes||model.packs[6].unpacked_bytes||model.packs[9].unpacked_bytes){s=COH_UNSUPPORTED;goto fail;}

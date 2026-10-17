@@ -1,0 +1,6 @@
+{
+  "errno": 8,
+  "message": "[Errno 8] Exec format error: '/tmp/atlas-rigid-v0-pinned-original32/original-read-model'",
+  "binary_sha256": "c419ec27d63632d307eda70f056929a075a79cadaf5e59a936a48180780c717e",
+  "scope": "Local kernel refused ELF32 execution; original consumer execution NOT qualified"
+}

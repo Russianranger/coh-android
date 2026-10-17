@@ -1,0 +1,7 @@
+# Costume import qualification
+
+Source commit: `17aed4a5c1fc9815a73536a1ed6ce4bd6cd9028b`. Source and existing appearance loader remain separate; no protected files changed. Host proof binds all tested bytes to that commit. Release, ASan address checks and UBSan each pass1695checks; unchanged original source accessor/width/body-type/palette oracle177cases; C++ link passes. Native import call-graph conservative emitted stack sum1040bytes within16384reserve. Includes265truncations,265byte mutations with recalculated hashes, all65536slots for all3tables, exact budget refusal before callback, copied lifetime, malformed aliases, indexed hole refusal and present empty strings across both wire modes.
+
+No leak-sanitizer qualification (container /proc error). No external digest/OpenSSL stack or sanitizer closure. No Android ARM64 build, Android13 execution, Thor acceptance, original runtime dictionary capture, complete costume assets, enclosing live entity transaction, actor publication or ACK. The receipt fields capture_origin_verified/actor_authority stay0.
+
+The new contract defines a bounded export format; no original runtime exporter was added and no server rerun occurred. Authentic slot exports and exact asset/bin, loaded body-part, source/profile/run/generation associations are still required. Read engine/costume-import/CONTRACT.md for field order and original loader/builder provenance. Body-parts admission is stricter than the generic loader: source ParseBoneNames refuses >=30, so this contract admits1..29; pinned actual source body-type table count9.

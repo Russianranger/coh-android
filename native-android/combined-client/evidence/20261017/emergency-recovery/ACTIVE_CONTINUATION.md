@@ -185,3 +185,79 @@ e4712e946 and coordinator source review find no blocker. Selected-wire identity 
 match supplied DBID/entity/index and valid position after source-ordered deletes.
 Actual player record branches, costumes/dictionaries and full suffix ownership remain
 required; complete actor/transport/ACK flags stayfalse. Closure ledger updated.
+
+## Active Android and full-body checkpoint
+
+Current guarded remote publicationc21f2c059c0045aedfd9693ff076391598b33163 has tree
+e110b0e6ffc94d5354b8c5da0d5e378379c4fa81. Targeted workflow38998532705 passed host
+source checks, exactNDK installation, suffix and actualEGL bothABI compilation/admission.
+Android13 execution is active; no execution/cleanup acceptance is inferred until artifact
+receipts are inspected. Other source-contract trigger38998532619 had all jobs skipped.
+No accepted APK or server capture was repeated. All prior worktrees remain preserved.
+
+All391 root-reachable GEO candidate bodies were acquired with full-member SHA+ZIPCRC:
+71817182rawbytes,69942764HTTP rangebytes; full outer/inner archive hashes were not verified.
+The first complete native pass matched388files and retained three exact refusals.
+A follow-upe3088a4a0 qualifies original comparator equivalence buckets without assuming
+host qsort tie order: unique exact full names plus source-observed row within the exact
+bucket.390files now match allthree modes. Shop_tailor.geo remains refused because four
+unreachable zero-geometry rows block protected whole-file open;62reachable model identities
+share that file. Preserve those rows; no projected file or silent removal is permitted.
+Source generation/opened-path/material/LOD/world admission remains false. Exact donor
+preparation and file lookup/overwrite/PIGG precedence are being audited independently.
+
+The bounds diagnostic initially blocked one future and eight ancestors. Source review
+then found COHRTS01 already contains actual live and lookup GroupBounds bytes; the decoder
+validates but does not expose their offsets. B is adding the authenticated accessor;
+this is a native API exposure gap, not justification for another capture or invented zero.
+The pre-accessor diagnostic and blocker ledger are retained as historical evidence.
+
+Costume-import17aed4a5c/b8776f62c with Freview028b664d0 now validates serialized full
+stash-slot tables (including holes), palette keys/body counts and exact source/profile/
+inventory/run/payload bindings before immutable copy.1695checks/mode+177original getter
+oracles/C++ pass. Authentic complete dictionary bytes and builder/runtime origin remain
+absent; capture_origin_verified and actor_authority stayzero. No appearance loader changed.
+
+## Verified Android and complete source numerical bounds
+
+ActualAndroid13 run38998532705 artifact12088426347 passed and was independently
+verified against203Git source blobs, bothABI ELF/SHA records, transferreddeviceSHA logs,
+strict source/fixture re-admission, native output/readbacks and complete ownedcleanup.
+Archive2948433B SHA84916be2a7827aac487aae7677557afb79874240aca29f5ccad7300be231b4bb
+is retained under world-render-adapter/qualification/independent-android-38998532705.
+Actualx86_64 SwiftShader GLES3.0:183controls,27mipreadbacks,2contexts/3surfacescreated
+anddestroyed, readbackSHA261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c.
+Suffix9991controls,2390balancedloans,5993424-bytechargedpeak/tempcleanup. ARM64 BUILT
+only; noThor/world/actor/ACK/dependencyclosure. This qualifies sourcec21f2c05 only;
+later legacy-geometry edits do not inherit Android execution automatically.
+
+B106ee372e+48b5e56e5+Freviewf4d2adb64 expose the exact retained live/lookup60-byte
+future records and harden knownspan alias refusals before scratch mutation. All33roots
+nowhave complete source numerical local bounds:15352ordinarynodes+onecapturedfuture,
+zero missing or blocked reachable node.173traversal/aliascontrols and85272gettercontrols
+pass perhostmode; actualsourceall3modes agree. Namedboundsreservation47995373B,
+priorjoinimportpeak51666425B unchanged. Source boxes remain separate from GEO-body
+bounds and CLIENT material/LOD/generation/liveworld admission. No defaultzero inference.
+
+Cbd6d5f6c4→74955ed7c→10481d60e with a107/a6ae cleanupfix and Freview856116c94 preserve
+exactthree originalclient bins in checksum-indexed2.25MiB subset. Artifact11092897979:
+outer26476333B SHA51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae;
+innercache27071659B SHA from retained exactmanifest; all100cachepayloadshashes verified.
+OriginalBodyParts.bin, costume.bin andsupergroupColors.bin are available withoutregen.
+Source-only fullslot exporter+exclusiveownedfile sink+immutable importer565controls/mode
+pass; partialunlinkfailureexplicitlyreports retainedfile. No sourceParse6/fullbuilder/
+Win32runtime/actualdictionaryexport is claimed. C is implementing bounded offline readers.
+
+Elegacygeometryb65f33f1d/1aaf61eff+Freview55e0c390e adds conservativeGEOv0 alongsidev8.
+Exactrootreachable Neon body90vertices/56triangles passes243nativecontrols/mode and
+full originaldelta packet equality;v8regression259/mode. TrueELF32 originalreadModel
+compiles and14layoutscalarsmatch, but localhosterrno8 prevents execution. Mandatory
+--require-original32 is prepared in reviewed host-only native-atlas-legacy-qualify.yml;
+noEGL/suffix/server/APK repeat. Versions2–7 andallmaterials/generation/worldgates remainclosed.
+
+
+## Final integrated metadata checks, 2026-10-17
+
+Frozen integration revision 1cad41744185e388139799eb4676f7908f63689c passed the retained integrated-391-final.json and integrated-bounds-final.json drivers. All 391 candidate bodies matched captured metadata across 8,250 source observations, retaining four explicit zero-draw owners. Release, address sanitizer and undefined behavior sanitizer bounds runs computed all 33 roots, visiting 15,353 nodes with one captured future and no blocked nodes. Source GEO aliases are rejected before workspace mutation. Neither check admits runtime file generation, CLIENT material/LOD resources, assets or world authority.
+
+The next targeted workflow is native-atlas-legacy-qualify.yml: one already verified Neon GEO body and the original freestanding 32-bit consumer. It requires actual original execution and retains failures; it repeats no server capture, Android workflow or APK build.

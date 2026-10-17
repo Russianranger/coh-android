@@ -1,0 +1,28 @@
+{
+  "schema": "coh-independent-atlas-legacy-workflow-v1",
+  "reviewer": "worker-f",
+  "workflow_sha256": "76aa19039743c84c5c8f0fadb15b3866657c7a3ee0df8810e237f5eae4d0e99e",
+  "workflow_uncommitted_at_review": true,
+  "candidate_document_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+  "selected_source_geo": "object_library/Buildings/Elements/signs/Neon/neon.geo",
+  "canonical_output": "data/object_library/buildings/elements/signs/neon/neon.geo",
+  "selected_payload_sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+  "selected_payload_bytes": 3684,
+  "review": [
+    "Native-android/repository/optinmarker guarded; read-onlypermissions/nonpersistedcredentials/noncancellingconcurrency",
+    "ExactcandidateSHA+singleexactsourceGEOselector, selectedfullbodySHA+CRC; canonicaloutputpath confirmedcasefoldedprovenancecandidate, notnewgenerationpermit",
+    "Ubuntucompiler+binutils/OpenSSL/zlib dependencies suffice freestandingcc-m32/ldelf_i386; original32actualexecution mandatoryflag refuses unexecutedconsumer",
+    "Onlynewlegacyhostsource/sanitizer+oneNeonpayload, noNDK/emulator/EGL/suffix/server/APK rerun",
+    "Original32generatedsource/object/ELF/layout/execution artifacts retained; acquisitionreceipt alwayscopied includingfailurebeforequalifier, alwaysartifactupload",
+    "NewCIjustifiedby localerrno8 ELF32executiongap; noacceptance inferred untilactualreceiptread"
+  ],
+  "bound_helpers": {
+    "native-android/engine/world-render-adapter/check_rigid_legacy.py": "196b0a8a1c0030608aa23f15d7a5916be18a47698244eaee87fa4a5d34369052",
+    "native-android/engine/scenecatalog/acquire_resource_candidates.py": "1dbce191b1fc4e07cf5dd68f3c2d8b6fb0247f961bd9c58bc953b4a9ae6d099a",
+    "native-android/tools/material_fixture/acquire.py": "12fad465c6c087fa0a2bdb6917d1c6fd619926f83378efd86e3f6ddcabcc95da"
+  },
+  "blocking_findings": [],
+  "workflow_executed_by_review": false,
+  "original32_consumer_executed_by_review": false,
+  "world_authority": false
+}

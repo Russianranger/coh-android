@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "passed": true,
+  "artifact_id": 11092897979,
+  "run_id": 36707839624,
+  "artifact_bytes": 26476333,
+  "artifact_sha256": "51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae",
+  "archive_bytes": 27071659,
+  "archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+  "all100cache_files_hashed": true,
+  "all101member_inventory_valid": true,
+  "exact_extracted_bins": {
+    "data/bin/BodyParts.bin": {
+      "bytes": 2584,
+      "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb"
+    },
+    "data/bin/costume.bin": {
+      "bytes": 17691352,
+      "sha256": "10ef7562156be60bd1ef3c437c3b46d10b36b6b265129c10f39d25c4a4df5a77"
+    },
+    "data/bin/supergroupColors.bin": {
+      "bytes": 2664,
+      "sha256": "e5676ebbccc380f9d69322ef6750332b0b7e7a46d915bdfb591322862d22cb75"
+    }
+  },
+  "recovery_script_sha256": "9eb0928e8b5aa47bb5b5a45a2bbecfdb1a77dd884659f68b94152820b55cfc7f",
+  "runtime_executed": false,
+  "source_builder_executed": false,
+  "slot_maps_captured": false
+}

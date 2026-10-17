@@ -1,0 +1,31 @@
+{
+  "schema": "coh-db-handoff-profile-source-binder-v1",
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "original_source_sha256": {
+    "upstream/ouroboros/AuthServer/src/ServerList.cpp": "17ec8216324d817fb38691ecbcf96fd161592a4799935ee562a5c37d590ecd7a",
+    "upstream/ouroboros/AuthServer/src/CSocketServer.cpp": "11673fea61c9db472146ff4371629d10b31781801dc401bb0e55e3caa9d3b1e5",
+    "upstream/ouroboros/DBServer/src/authcomm.c": "a3a4349047e08fc3285c22d231fe9d467ee26f6360e125db3845ede50f1fc1b2",
+    "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+    "upstream/ouroboros/Common/auth/authUserData.c": "a0eb2841e7dc01e1bb6c9dc1398a205c41a5bd2e6c689faa2a3607ffe4da1b37",
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppVersion.c": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23"
+  },
+  "local_source_sha256": {
+    "deployment/auth_bit_merge_fixture.c": "030954e080df4593d55e93490244d03d2bb3c6cbde7b4339f9c9b774a15dab2f",
+    "deployment/db_handoff_profile.py": "551d9d682e83f541a8245e8f88c864e97a88acb638438979d8b1568136574ea0",
+    "deployment/qualify_auth_bit_merge.py": "42c2329635c009734dc179e153a2cb3afd234858e69637cc1e9c31502765db2e",
+    "deployment/qualify_db_policy_matrix.py": "f93235c1ad24c93e844c380bacd6ce124db9e8c7de2eee706d1f2be8ffc71ef6",
+    "deployment/test_db_handoff_profile.py": "f23e2169313741b3b50dd3aa414950889b63e7e292c76061df9f264fde5fb7c8"
+  },
+  "receipts_sha256": {
+    "auth-bit-merge.json": "3ae6063187ae803cc84caf0e416f9cc9574054964517aeab742588b52a174264",
+    "db-policy-matrix.json": "c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503"
+  },
+  "host_python_suites_passed": 5,
+  "host_prior_handoff_regression_suites_passed": 5,
+  "live_authenticated_db_login_verified": false,
+  "android_build_performed": false,
+  "emulator_execution_performed": false,
+  "physical_thor_qualification_performed": false,
+  "shipping_server_modified": false
+}

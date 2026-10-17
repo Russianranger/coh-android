@@ -1,0 +1,49 @@
+name: Original 32-bit legacy Atlas geometry consumer qualification
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-atlas-legacy-qualify.yml
+      - native-android/engine/world-render-adapter/**
+      - native-android/engine/scenecatalog/acquire_resource_candidates.py
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-atlas-legacy-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  original32-and-native:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[atlas-legacy-only]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Install only standalone host compiler dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc g++ binutils libssl-dev zlib1g-dev
+      - name: Recover only the exact root-reachable Neon GEO member
+        run: |
+          mkdir -p out/atlas-legacy
+          python3 native-android/engine/scenecatalog/acquire_resource_candidates.py --source-root . --candidates native-android/engine/scenecatalog/evidence/actual-resource-manifest-candidates-38994607354-verified.json --candidates-sha256 a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6 --source-geo 'object_library/Buildings/Elements/signs/Neon/neon.geo' --output /tmp/coh-neon-legacy
+      - name: Require actual original ELF32 consumer execution and native sanitizers
+        run: |
+          python3 native-android/engine/world-render-adapter/check_rigid_legacy.py --actual-geo /tmp/coh-neon-legacy/data/object_library/buildings/elements/signs/neon/neon.geo --output out/atlas-legacy/qualification.json --oracle-output out/atlas-legacy/original32 --require-original32
+      - name: Preserve successful or interrupted acquisition receipt
+        if: always()
+        run: |
+          if [ -f /tmp/coh-neon-legacy/acquisition.json ]; then
+            mkdir -p out/atlas-legacy
+            cp /tmp/coh-neon-legacy/acquisition.json out/atlas-legacy/neon-acquisition.json
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original32-atlas-neon-native-${{ github.sha }}
+          path: out/atlas-legacy/
+          if-no-files-found: error
+          retention-days: 90

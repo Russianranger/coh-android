@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_head": "b8776f62c87cb1dc274391f36dc72707730ccd1b",
+  "source_oracle": {
+    "passed": true,
+    "cases": 177,
+    "source_sha256_lf": {
+      "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+      "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8"
+    },
+    "source_id": "0b89c2c527fd801f9c2c0f0af0b079e10842164011af2a3e90d0214f423450d8",
+    "function_sha256_lf": {
+      "slotEmpty": "ec76592ff7f4b4b54e034ee95eae5c0ab9328b840aa3a8a4658435a4b5d1b90a",
+      "slotDeleted": "b83f8de42f57ace88f16c52af73023253baa4f834cfba1721f23acc04952ce6c",
+      "stashGetMaxSize": "4e137508160dab42c4f8a602bbb7c6759fa6e5c01c3764557005e7a13e33cc03",
+      "stashGetValidElementCount": "0f5fa12bba6f6f91362f863f50d196be05248b323bd3d4cf77cea8dc44ab1bf6",
+      "stashFindKeyByIndexInternal": "c7661b93d0a8f1c35235f239c1a1064466d508c66be8979ad1ae3c08e68425fa",
+      "stashFindKeyByIndex": "376eb859c591b95b0c64cf727b00dcf4ee282f3c990be4dff37c2366392e3702",
+      "stashIntFindKeyByIndex": "f644483909df1d876f78c9ff6575cf2c005098a05788e080706b7d13a581a7ff",
+      "getRGBAFromVec3": "34ae8fa705f388a1ec6add891cdff9a65e10d4f2bc321fe54d78e78ca6cfeecd",
+      "BodyType": "cebcaf7e17a52d1aaec1a47a388c7e6c295d158255262a83a80246f73a419085",
+      "BodyTypeInfo": "d3a54f991c81ee7d74278c9f8ea04f04be97d417f93b7db07710d6aaf30a53d7",
+      "g_BodyTypeInfos": "4e8861ed9a4f3ff91809adb8424cc38db1521a233c7418aaddfad462df2be462",
+      "Common/gameData/costume_data.c:costume_initHashTable": "95d4d792b724a4aaf13b8992d3ff80f18045bb5bcf2db12a674fda2ab7be2056",
+      "Common/gameData/costume_data.c:addPaletteToTables": "0ed4dc23d7f937ab5022ea0597980f43813bb39c2a5ce2bbf337b20b2a517e57",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashTableResize": "653dded9ee40f76f9ab60dfef9951b10556382ae47eaef4a5c7b46ad1f227bb6",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:defaultBitsPack": "f5ca7cef3a4e7c8cc6c2acfee869591fca30c7013bafc9fae9bc65edb073df0a",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:pktSendIndexedString": "ec43ed9a083e4781ac87f4bde24a4583e9279d24aaddc912a657d62531512ca3",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:pktGetIndexedString": "0da5abf7f138749c5018898b1044d40f1fe7b437be958dfd590efc6d9e760643",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:pktSendIndexedGeneric": "204da222224404f4f8e7583c27038437866247eef498d7a1e70d3023660673c0",
+      "libs/UtilitiesLib/src/network/net_packetutil.c:pktGetIndexedGeneric": "708c12ebce8951ce84c4f4c8c73e9edb0944af8ebd350ca6e39c1bfaa6a266a5",
+      "Common/entity/costume.c:getBodyTypeCount": "dde77b905a38c10452542457a5ccc4ad98337bdf1366c5395bfb340b157d1746",
+      "Common/gameData/BodyPart.c:GetBodyPartCount": "7657fea302b88e54666818cd1e7302b6b167db7a35f23d5fb595f23c5df8d677",
+      "Common/gameData/BodyPart.c:ParseBoneNames": "88820c6af887214608f51dd1adba3bdb8663de4fecd8f6901f0e109be62a92a7",
+      "Common/gameData/BodyPart.c:bpReadBodyPartFiles": "cfae2131f6a845feb6040043c30305086ed5a128c535d2e4bedc70909b8ee3a8"
+    },
+    "generated_c_sha256": "dcd9419d2718448bee6b47736e542720144d21cb5ae2ea32d659e758f3b44fce",
+    "scope": "Unchanged whole original slot getters, defaultBitsPack/log2i, body type table/count and palette word function executed on synthetic storage. Struct layouts, storage contents, and body/input assets are synthetic. Original hashing, insertion, resize, full costume builder, parser loading and packet sender/consumer functions NOT executed; their source is pinned for schema audit. No captured dictionary or live costume.",
+    "original_oracle_sanitized": false
+  },
+  "native": {
+    "release": {
+      "passed": true,
+      "checks": 560,
+      "capacity_refusals": 265,
+      "export_bytes": 265,
+      "original_builder_executed": false,
+      "actor_authority": false,
+      "binary_sha256": "2ebdd237485fcfe65b83edf95cd22073899a7d482dea8abfdb17dcfb0537071e"
+    },
+    "asan": {
+      "passed": true,
+      "checks": 560,
+      "capacity_refusals": 265,
+      "export_bytes": 265,
+      "original_builder_executed": false,
+      "actor_authority": false,
+      "binary_sha256": "1d8e78f5beaa251bb5d0327a5e8dfd7dfee251f6f5bb91e7ffd37ef22e8d2336"
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 560,
+      "capacity_refusals": 265,
+      "export_bytes": 265,
+      "original_builder_executed": false,
+      "actor_authority": false,
+      "binary_sha256": "4918143b719cc0239ecb1dacbab1decbe0510440ce08930c348413a4ddadf09b"
+    }
+  },
+  "stage": {
+    "passed": true,
+    "source_unchanged": true,
+    "overlay_sha256": {
+      "MapServer/src/svr/svr_init.c": "840516921b12e2ae59b005e3351c3e1761b710d55d40c798254f6f35a0ce724a",
+      "Common/gameData/costume_data.c": "60c4c471c288ff45912b906b1c9b7f25079152202c9414845152435a2e6d028d",
+      "Common/gameData/coh_source_costume_export.inc": "55bc3ed600f1052fb953ecce1a4c28fca60249d6bd39c584d4ab987c054c9529",
+      "Common/gameData/coh_source_costume_sink.inc": "78d61be87dee76ba3902861252e8b05df483a3691961b25ec762b6484fb6b566",
+      "Common/gameData/coh_costume_export_source_id.inc": "932021b0f37689d340d20cf3e24ba76b1d7b36bd27fbc5876b5782d67cbe673c",
+      "Common/gameData/coh_costume_export_configuration.inc": "b0539b6f90816f28397cf4c876fdcb691b2a238c3942d1a3d97f5dd70b68c4c4"
+    },
+    "hook": "svr_init.c after loadCostumes before loadPowerCustomizations",
+    "configuration_fixture": {
+      "generation": 9,
+      "inventory_sha256": "0101010101010101010101010101010101010101010101010101010101010101",
+      "profile_sha256": "0202020202020202020202020202020202020202020202020202020202020202",
+      "run_sha256": "0303030303030303030303030303030303030303030303030303030303030303"
+    }
+  },
+  "source_sha256": {
+    "stage.py": "66d5f63da01ddc551aa73128f06316efa440e36c9f31d0eda35bd74cc804adbd",
+    "check.py": "bd30442d75db9e7978c164589b2a01a033ecebeab620c05eca4b89c1b1fc4472",
+    "source_costume_sink.inc": "78d61be87dee76ba3902861252e8b05df483a3691961b25ec762b6484fb6b566",
+    "source_costume_export.inc": "55bc3ed600f1052fb953ecce1a4c28fca60249d6bd39c584d4ab987c054c9529",
+    "source_id.inc": "932021b0f37689d340d20cf3e24ba76b1d7b36bd27fbc5876b5782d67cbe673c",
+    "test_export.c": "01e41fe5e5b6e7c9d206b0675d2a53e8f9f468b95a7297a576a16925e9fefa6c",
+    "source-pins.json": "cad5176eb14c4753db7cf670be1f48ef26c524b44ca4f2783074d932b2fa29b4",
+    "CONTRACT.md": "5b9bc2fd49a3ae496717e59f03170c9c005ca862c515f9f99c2ce012a533a947",
+    "../costume-import/source-pins.json": "74ccac29b928ca151b23013e3db222a59c1e00fc0bf10ee367dd2a9d0998b148",
+    "../costume-import/source_id.h": "e7f0acdbdfb661427834da9a6c46ba270005ee8628fb944f2fbbc58ec47df38f",
+    "../costume-import/coh_costume_import.c": "8b4c76b28a9c42ee0d993163d49d17d14cd4b33dd94af3c621afa73f1607e26c",
+    "../costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "../costume-import/oracle.py": "d178d3b444ab6225611f9f7544280385033052f98b3ebe8531f454fccdb01b3b",
+    "../entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "../entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "../replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "../replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "../entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "../coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "scope": "Nonshipping original-source getter-backed serializer+host POSIX sink on synthetic storage, composed with frozen immutable importer; no full original builder/engine or actual Win32 runtime/ABI execution.",
+  "actual_bins_read_by_builder": false,
+  "win32_server_compiled": false,
+  "win32_runtime_executed": false,
+  "android_built": false,
+  "original_stash_hashing_or_insertion_executed": false,
+  "authentic_dictionary_exported": false,
+  "actor_authority": false,
+  "external_crypto_sanitizer_or_stack_closure": false,
+  "leak_sanitizer_executed": false,
+  "maximum_scratch_bytes": 4194304
+}

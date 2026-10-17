@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "files": 391,
+  "all_existing_body_sha_verified": true,
+  "network_started": false,
+  "source_sha256": "3df02300830b14ab7dcec327543c06fedc4ea35475ca87f69f7d7df222c89896",
+  "original_receipt_sha256": "42f9c953fb710d1afd085d22a68d0302088c1bf5ac3478b014a54f01eb60550b",
+  "resume1_receipt_sha256": "f10c2bbaaf0c399423a1819df23c8d07023fd6a188c6676ecf921f746733ea30"
+}

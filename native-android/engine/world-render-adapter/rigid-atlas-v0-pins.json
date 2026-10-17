@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "asset_path": "data/object_library/buildings/elements/signs/neon/neon.geo",
+  "source_geo_name": "object_library/Buildings/Elements/signs/Neon/neon.geo",
+  "sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+  "bytes": 3684,
+  "model": "_sign_Neon_BarVERT",
+  "original_disk_model_row": 3,
+  "sorted_runtime_model_row": 0,
+  "vertices": 90,
+  "triangles": 56,
+  "partition": [
+    2,
+    56,
+    "Bar_vert_sign.tga"
+  ],
+  "source_observation": {
+    "resource_ordinal": 35283,
+    "record_sha256": "ed64d6b265b4a8ef688dd43d4df5db29c0b1fdca1cd70f4c9be15b78fc30d0b2",
+    "owner_kind": 1,
+    "file": 457,
+    "slot": 3,
+    "original_id": 3,
+    "definition_name": "_sign_Neon_BarVERT",
+    "sorted_runtime_model_row": 0,
+    "geo_version": 0,
+    "texture_partitions": [
+      [
+        2,
+        56,
+        "Bar_vert_sign.tga"
+      ]
+    ]
+  },
+  "candidate_report_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+  "capture_sha256": {
+    "catalog.cohcat": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "source-identity.json": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+    "run-identity.json": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+    "resource-binding.json": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c",
+    "runtime.cohrts": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+    "resources.cohres": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+  },
+  "manifest_sha256": {
+    "client-visual-manifest.json": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+    "atlas-world-supplement-manifest.json": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+  },
+  "original_provenance": {
+    "manifest": "atlas-world-supplement-manifest.json",
+    "manifest_asset_path": "data/object_library/buildings/elements/signs/neon/neon.geo",
+    "original_pigg_path": "object_library/Buildings/Elements/signs/Neon/Neon.geo",
+    "comparison": "ascii_casefold_provenance_path",
+    "bytes": 3684,
+    "sha256": "83933b54db373bf83e0a73f128068b63b8375e00f0f288b6f6e0e0637792c9e7",
+    "source_archive": "stage3c.pigg",
+    "source_metadata_sha256": "68d1492e9add5a4237fa96c8ed4e6cc52ec14af20404755ba933450c58cb3bdb",
+    "source_url": "https://dists.thunderspy.org/piggs/stage3c.pigg",
+    "source_etag": "\"2f71c55dbc18d7ccd3f2d97714a544bc\"",
+    "source_member_range": "bytes 1595287-2173824/120989824",
+    "md5_table": "84bfbc4c12ab6615fe613d10908de99f",
+    "cached_header_sha256": null,
+    "cached_header_id": 7,
+    "geometry_header": {
+      "baseline_loader_accepts_version": true,
+      "data_block_bounds_verified": true,
+      "header_decompression_verified": true,
+      "header_uncompressed_bytes": 2516,
+      "runtime_compatibility": "unverified",
+      "version": 0
+    },
+    "observed_header_version_equal": true,
+    "body_bytes_acquired": false,
+    "source_generation_proven": false,
+    "status": "lookup_candidate_not_resource_pin"
+  },
+  "raw_body_sha_verified_locally": true,
+  "root_reachable_source_observation": true,
+  "source_generation_established": false,
+  "direct_opened_geo_hash_available": false,
+  "material_authority": false,
+  "world_authority": false
+}

@@ -1,0 +1,2941 @@
+{
+  "BodyParts.bin": {
+    "schema_crc": "cf27aba3",
+    "dependency_count": 1,
+    "body_bytes": 2516,
+    "body_offset": 68,
+    "dependencies": [
+      {
+        "path": "Defs/UI/bodyparts.bp",
+        "timestamp": 1767225600
+      }
+    ],
+    "schema_field_semantics_qualified": false
+  },
+  "costume.bin": {
+    "schema_crc": "a3374618",
+    "dependency_count": 726,
+    "body_bytes": 17643232,
+    "body_offset": 48120,
+    "dependencies": [
+      {
+        "path": "menu/costume/localized/arachnos/female/all/inc_heads_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/female/all/menu_female_bane.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/female/all/menu_female_widow_hair.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/female/all/menu_female_widow_helm.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/female/all/menu_female_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/female/all/menu_female_wolf_2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/female/soldier/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/female/widow/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/huge/all/inc_heads_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/huge/all/menu_huge_bane.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/huge/all/menu_huge_widow_hair.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/huge/all/menu_huge_widow_helm.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/huge/all/menu_huge_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/huge/all/menu_huge_wolf_2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/huge/soldier/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/huge/widow/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/male/all/inc_heads_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/male/all/menu_male_bane.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/male/all/menu_male_widow_hair.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/male/all/menu_male_widow_helm.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/male/all/menu_male_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/male/all/menu_male_wolf_2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/male/soldier/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/arachnos/male/widow/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/colorpalettes/custompowerfx_additive.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/colorpalettes/custompowerfx_default.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/colorpalettes/custompowerfx_earthtones.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/colorpalettes/custompowerfx_earthtones_extended.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/colorpalettes/custompowerfx_ice.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/colorpalettes/custompowerfx_subtractive.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/colorpalettes/defaultbody.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/colorpalettes/defaultskin.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/alpha.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/atomic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/auranone.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/bats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/battlefury.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/beastlyrage.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/binary.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/bioplasma.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/boils.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/butterflies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/celestial.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/clunker.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/cryogenic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/cyborgauras.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/darkmatter.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/electricity.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/fairydust.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/feathers.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/fire.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/fireflies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/fireworks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/fleas.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/flies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/gaseous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/ghosts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/glow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/glowingaura.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/halos.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/leaves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/magnetic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/microbial.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/omega.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/pixels.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/rockycrumble.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/runes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/slime.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/smoky.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/smolder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/snow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/sparkle01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/sparks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/starburstglow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/steamjets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/tarotcards.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/tendrils.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/thunderhead.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/toxicvapor.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/trail_auras.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/vaporous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/victoriandecor.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/volcanic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/wealthy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/female/wisps.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/alpha.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/atomic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/auranone.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/bats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/battlefury.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/beastlyrage.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/binary.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/bioplasma.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/boils.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/butterflies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/celestial.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/clunker.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/cryogenic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/cyborgauras.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/darkmatter.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/electricity.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/fairydust.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/feathers.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/fire.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/fireflies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/fireworks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/fleas.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/flies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/gaseous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/ghosts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/glow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/glowingaura.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/halos.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/leaves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/magnetic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/microbial.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/omega.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/pixels.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/rockycrumble.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/runes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/slime.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/smoky.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/smolder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/snow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/sparkle01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/sparks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/starburstglow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/steamjets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/tarotcards.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/tendrils.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/thunderhead.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/toxicvapor.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/trail_auras.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/vaporous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/victoriandecor.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/volcanic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/wealthy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/huge/wisps.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/alpha.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/atomic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/auranone.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/bats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/battlefury.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/beastlyrage.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/binary.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/bioplasma.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/boils.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/butterflies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/celestial.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/clunker.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/cryogenic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/cyborgauras.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/darkmatter.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/electricity.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/fairydust.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/feathers.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/fire.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/fireflies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/fireworks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/fleas.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/flies.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/gaseous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/ghosts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/glow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/glowingaura.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/halos.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/leaves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/magnetic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/microbial.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/omega.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/pixels.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/rockycrumble.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/runes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/slime.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/smoky.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/smolder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/snow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/sparkle01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/sparks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/starburstglow.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/steamjets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/tarotcards.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/tendrils.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/thunderhead.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/toxicvapor.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/trail_auras.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/vaporous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/victoriandecor.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/volcanic.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/wealthy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/auras/male/wisps.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/face_scale/female_faces_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/face_scale/huge_faces_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/face_scale/male_faces_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_boots.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_boots_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_boots_pants.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_boots_pantstight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_boots_tucked.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_gloves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_gloves_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_gloves_left.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/female_gloves_robe.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_boots.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_boots_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_boots_pants.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_boots_tucked.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_gloves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_gloves_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_gloves_left.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_gloves_robe.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/huge_gloves_shirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_boots.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_boots_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_boots_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_boots_pants.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_boots_tucked.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_gloves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_gloves_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_gloves_left.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_gloves_robe.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/male_gloves_shirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/patterns_boots_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/patterns_boots_pants.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/patterns_gloves_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/common/shieldmaskpatterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "Menu/Costume/Localized/costume.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/dbrown/inc_patterns_boots.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/dbrown/inc_patterns_capes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/dbrown/inc_patterns_chest.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/dbrown/inc_patterns_gloves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/dbrown/inc_patterns_hips.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/dbrown/inc_patterns_skirt.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/enemy/enemy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/enemy/enemy2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/enemy/enemy3.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/backpack.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/capeasymmetrical.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/capedevonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/capefull.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/capehalf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/capehighcollar.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/capenone.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/capeovershoulder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/capeshoulder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/crabbackpack.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/inc_asymmetricalmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/inc_capepattern.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/inc_fullmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/inc_halfmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/inc_overshouldermantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/inc_shouldermantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/capes/wings.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_ears_masked.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_hair.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_hats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_hats_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_heads_legacy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_heads_masked.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_heads_masked_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_heads_preorder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_heads_standard.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_heads_standard_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/inc_heads_standard_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_animal_bigcats_large.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_animal_bigcats_medium.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_animal_bird.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_animal_minotaur.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_animal_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_fullhelmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_fullmasks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_halfhelmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_hats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_helmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_hoods.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_medievelhelms.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_piranha.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_pointyears.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_specialhelms.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_standard.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/head/menu_thinktank.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/inc_baggy_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/inc_skirt_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/inc_tight_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_pants_all.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_pantsbaggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_pantsloose.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_pantstight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_skirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_skirts01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_tights_skin.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/lower/menu_tuckedin.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/menu_sets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/offsets_gloves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_camera_zoom.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_shields_cavalier1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_shields_heater1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_shields_kite1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_shields_ppd1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_shields_roman1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_shields_roman2_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_shields_roman4_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/inc_shields_round1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_ascendant1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_barbarian_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_bluesteel1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_elemental1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_heater1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_kite1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_knight_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_manholecover1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_postapoc_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_ppd1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_riot1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_roman1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_roman2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_roman3.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_roman4.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_romulus1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_round1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_rularuu1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_spartan1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_t9i24_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_talsorian1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_targe1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_tech1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/shields/menu_shields_tribal1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/tails/inc_tails.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_belts_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_belts_jackets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_belts_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_belts_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_belts_trenchcoat.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_camera_zoom.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chest_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chestdetail_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chestdetail_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chestdetail_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chestdetail_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chestdetail_jackets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chestdetail_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chestdetail_shirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chestdetail_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_chests_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_shoulders_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_shoulders_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_shoulders_roboticarm.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_shoulders_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/inc_shoulders_tops.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_jackets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_jackets_sleeveless.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_magic_coat.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_robes_sleeveless.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_roboticarm1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_roboticarm2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_roboticarm3.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_shirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_tights_skin.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_trench_coat.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/upper/menu_unique.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_arachnos_assaultrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_arachnosclawsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_arachnosclawsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_arachnosmaces.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_assaultrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_axes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_beamrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_bladesleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_bladesright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_bows.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_clawsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_clawsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_dualpistolsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_dualpistolsleft_alt.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_dualpistolsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_dualpistolsright_alt.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_katanas.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_longstaff.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_maces.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_pistolsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_pistolsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_pulserifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_swords.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_titanweapon.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/inc_weapons_villainbows.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/all/weapons/menu_weapons.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/female/origins.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/femalenpc/femalenpc.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/femalenpc/standardhead.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/femalenpc/standardlower.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/femalenpc/standardupper.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/backpack.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/capeasymmetrical.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/capefull.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/capehalf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/capehighcollar.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/capenone.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/capeovershoulder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/capeshoulder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/crabbackpack.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/inc_asymmetricalmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/inc_capepattern.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/inc_fullmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/inc_halfmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/inc_overshouldermantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/inc_shouldermantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/capes/wings.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_ears_masked.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_hair.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_hats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_hats_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_heads_legacy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_heads_preorder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_heads_standard.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_heads_standard_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/inc_heads_standard_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_animal_bigcats_large.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_animal_bigcats_medium.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_animal_bird.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_animal_minotaur.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_animal_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_fullhelmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_fullmasks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_halfhelmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_hats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_helmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_hoods.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_medievelhelms.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_piranha.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_pointyears.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_specialhelms.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_standard.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/head/menu_thinktank.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/inc_tight_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/inc_tucked_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_pants_all.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_pantsbaggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_pantsloose.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_pantstight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_skirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/lower/menu_tuckedin.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/menu_sets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/offsets_gloves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_camera_zoom.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_shields_cavalier1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_shields_heater1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_shields_kite1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_shields_ppd1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_shields_roman1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_shields_roman2_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_shields_roman4_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/inc_shields_round1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_ascendant1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_barbarian_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_bluesteel1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_elemental1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_heater1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_kite1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_knight_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_manholecover1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_postapoc_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_ppd1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_riot1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_roman1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_roman2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_roman3.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_roman4.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_romulus1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_round1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_rularuu1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_spartan1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_t9i24_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_talsorian1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_targe1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_tech1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/shields/menu_shields_tribal1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/tails/inc_tails.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_belts_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_belts_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_belts_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_belts_jackets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_belts_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_belts_shirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_belts_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_belts_trench.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_camera_zoom.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chest_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chestdetail_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chestdetail_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chestdetail_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chestdetail_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chestdetail_jackets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chestdetail_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chestdetail_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_chests_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_shoulders_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_shoulders_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_shoulders_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_shoulders_roboticarm.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_shoulders_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/inc_shoulders_tops.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_jacketsnew.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_jacketsnew_sleeveless.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_robes_sleeveless.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_roboticarm1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_roboticarm2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_roboticarm3.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_shirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_trench_coat.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/upper/menu_unique.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_arachnos_assaultrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_arachnosclawsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_arachnosclawsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_arachnosmaces.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_assaultrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_axes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_beamrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_bladesleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_bladesright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_bows.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_clawsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_clawsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_dualpistolsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_dualpistolsleft_alt.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_dualpistolsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_dualpistolsright_alt.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_katanas.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_longstaff.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_maces.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_pistolsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_pistolsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_pulserifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_swords.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_titanweapon.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/inc_weapons_villainbows.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/all/weapons/menu_weapons.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/huge/origins.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/backpack.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/capeasymmetrical.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/capefull.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/capehalf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/capehighcollar.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/capenone.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/capeovershoulder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/capeshoulder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/crabbackpack.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/inc_asymmetricalmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/inc_capepattern.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/inc_fullmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/inc_halfmantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/inc_overshouldermantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/inc_shouldermantlebrooch.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/capes/wings.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_camera_zoom.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_ears_masked.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_hair.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_hats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_hats_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_heads_legacy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_heads_preorder.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_heads_standard.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_heads_standard_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/inc_heads_standard_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_animal_bigcats_large.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_animal_bigcats_medium.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_animal_bird.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_animal_minotaur.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_animal_wolf.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_fullhelmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_fullmasks.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_halfhelmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_hats.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_helmets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_hoods.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_medievelhelms.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_piranha.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_pointyears.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_specialhelms.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_standard.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_thinktank.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/head/menu_zombie.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/inc_camera_zoom.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/inc_tight_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/inc_tucked_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_monstrous.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_pants_all.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_pantsbaggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_pantsloose.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_pantstight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_skirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_tuckedin.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/lower/menu_zombie.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/menu_sets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/offsets_gloves.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/regions.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_camera_zoom.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_cavalier1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_emblems_shared.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_heater1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_kite1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_ppd1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_roman1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_roman2_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_roman4_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/inc_shields_round1_emblems.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_ascendant1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_barbarian_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_bluesteel1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_elemental1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_heater1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_kite1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_knight_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_manholecover1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_postapoc_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_ppd1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_riot1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_roman1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_roman2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_roman3.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_roman4.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_romulus1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_round1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_rularuu1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_spartan1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_t9i24_01.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_talsorian1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_targe1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_tech1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/shields/menu_shields_tribal1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/tails/inc_tails.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_belts_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_belts_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_belts_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_belts_jackets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_belts_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_belts_shirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_belts_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_belts_trench.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_camera_zoom.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chest_patterns.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chestdetail_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chestdetail_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chestdetail_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chestdetail_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chestdetail_jackets.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chestdetail_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chestdetail_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_chests_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_shoulders_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_shoulders_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_shoulders_devonly.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_shoulders_roboticarm.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_shoulders_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/inc_shoulders_tops.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_armored.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_baggy.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_jacket.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_jacketsnew.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_jacketsnew_sleeveless.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_robes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_robes_sleeveless.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_roboticarm1.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_roboticarm2.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_roboticarm3.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_shirts.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_tight.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_trench_coat.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_unique.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/upper/menu_zombie.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_arachnos_assaultrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_arachnosclawsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_arachnosclawsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_arachnosmaces.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_assaultrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_axes.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_beamrifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_bladesleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_bladesright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_bows.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_clawsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_clawsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_dualpistolsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_dualpistolsleft_alt.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_dualpistolsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_dualpistolsright_alt.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_katanas.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_longstaff.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_maces.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_pistolsleft.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_pistolsright.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_pulserifles.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_swords.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_titanweapon.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/inc_weapons_villainbows.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/all/weapons/menu_weapons.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/male/origins.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/malenpc/malenpc.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/malenpc/standardhead.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/malenpc/standardlower.ctm",
+        "timestamp": 1767225600
+      },
+      {
+        "path": "menu/costume/localized/malenpc/standardupper.ctm",
+        "timestamp": 1767225600
+      }
+    ],
+    "schema_field_semantics_qualified": false
+  },
+  "supergroupColors.bin": {
+    "schema_crc": "f0095ef2",
+    "dependency_count": 1,
+    "body_bytes": 2568,
+    "body_offset": 96,
+    "dependencies": [
+      {
+        "path": "Menu/Costume/ColorPalettes/supergroupColors.ctm",
+        "timestamp": 1767225600
+      }
+    ],
+    "schema_field_semantics_qualified": false
+  }
+}

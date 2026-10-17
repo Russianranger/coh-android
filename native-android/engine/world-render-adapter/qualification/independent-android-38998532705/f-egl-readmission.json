@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "validated": true,
+  "source_commit": "c21f2c059c0045aedfd9693ff076391598b33163",
+  "qualification_sha256": "4963dadcd8d27efd4b8c78f6792f3f7d8fedfebc8f83df4f297d9686c47f7284",
+  "android_executed": false,
+  "material_authority": false,
+  "world_authority": false,
+  "post_admission_verified": true
+}

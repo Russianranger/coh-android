@@ -68,7 +68,10 @@ selected DBID remains None. The live transport owner must supply those proofs.
 
 Qualification executed exact original `Assemble` and `authPutU08/U32` writers
 against the bounded parsers in release and ASan/UBSan (five byte-comparison cases
-per mode, including refusal of the existing short UserData=false body). Exact
+per mode, including refusal of the existing short UserData=false body). Every
+parsed body field, including remaining/login/warning words, is checked. The
+writer functions execute with manually source-audited callsite arguments; full
+AccountDB SQL/control-flow side effects do not execute in this fixture. Exact
 original `trimTrailingWhitespace` and `authValidLogin` ran 544,839 controls per
 mode across all4096 slots, copied all128 data bytes, one-shot consumption,
 wrong identities, all32 cookie-bit mutations and original zero-cookie semantics.

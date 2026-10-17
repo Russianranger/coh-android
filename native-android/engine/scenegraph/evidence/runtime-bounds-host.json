@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 161,
+      "named_peak": 53518868,
+      "authority": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 161,
+      "named_peak": 53518868,
+      "authority": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 161,
+      "named_peak": 53518868,
+      "authority": false
+    }
+  },
+  "fixture_graph_api_only": true,
+  "actual_graph_execution": false,
+  "leak_sanitizer": false,
+  "world_authority": false,
+  "source_sha256": {
+    "native-android/engine/scenegraph/coh_runtime_bounds.c": "4d76361c17ce7c9f695f52cf5047eec4d9a9d7fe5519814a6c36c31969d45510",
+    "native-android/engine/scenegraph/coh_group_bounds.c": "f806ee76b023842fdfe3615473ed1ea5170499c01f4e2ed493551dbbe1efcda9",
+    "native-android/engine/scenegraph/tests/test_runtime_bounds.c": "82334661be5ce4fbe5628b54d659bc38261846e481f9718b42775318c0fe75ad",
+    "native-android/engine/scenegraph/coh_runtime_bounds.h": "50054808af3b1a2c753b042c09b14f8707c6aba4728548d1c073523b5bc9732a",
+    "native-android/engine/scenegraph/runtime_graph.h": "761582b9b245dd7f49b3abb4dde9c2a9644442946bf9010a0e80a9aea9ba2a37",
+    "native-android/engine/scenegraph/coh_group_bounds.h": "24785de1fcf70a03c7c1debf964ec77581428911334743be73cecc2cd4cf4426",
+    "native-android/engine/scenegraph/check_runtime_bounds.py": "df51ac394db1b7806c1398e8776d3b7d43ee4e887cb2710373d83656868561f5"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "coh-independent-bottomup-bounds-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "48b5e56e5a3953e5b3ace41d30d3a8d9a4c11724",
+  "included_base": "106ee372e261056bb25110dc055710edfb98e17a",
+  "receipts_sha256": {
+    "runtime-bounds-alias-host.json": "5784ca229af1aacccf01594a7ce44f17fa9a91f377eae94b1e6279e998da4e43",
+    "actual-runtime-bounds-observed-alias-38994607354.json": "d19370b483bbcc39d5aa88a2ca56f8b2eb25ab87f64d3166f7659d38d0034959",
+    "future-bounds-getter-host.json": "5cdee37e7759968f96279ffe7f85366498918f01f497ca95a98a64f0007e7b44"
+  },
+  "source_maps_equal_committed_blobs": true,
+  "actual_capture_inputs_rehashed": true,
+  "all7_future_raw_live_lookup_name_tuples_found_exactly_once": true,
+  "review": [
+    "Future getter offsets match unchanged named source_snapshot_bounds fields and externalheader; borrowed60B live and lookup spans retain sourceowner lifetime; noallocation/layoutgrowth",
+    "All7futures kept;1reachable mmayhem_curtain_8_01c and6unreachable. Capturedlive min/max/mid/radiuszeros,lodscale1,flags0x02000000; lookupmisszeros never substitute live values",
+    "Iterative root/edgeorder DFS processes sharedDAG once, boundsdepth/cycles/targets, missinginputs block ancestors; ordinarypre_alloc refused, futurepre_alloc uses existinglive observedbounds",
+    "F found missing knownspan aliaschecks;48b adds overflow-safe pairwise workspace/control/report/catalog/snapshot refusal beforewrites plusnegativecontrols. Opaquegraph/contextextents documentedcallerownershipprecondition",
+    "Namedbudget charges fullscratchcapacities+graphpayload+callerretained sourceowners/providerreserves; reportatomic whileworkspace scratchmutable; noheap",
+    "Actualall33roots reconstruction uses sourceModelboxes and exactvolume metadata only; GEO-bodyboxes/CLIENTlod/material/sourcegeneration notadmitted"
+  ],
+  "host_fixture_controls_per_mode": 173,
+  "actual": {
+    "visited": 15353,
+    "computed": 15352,
+    "captured_future": 1,
+    "computed_roots": 33,
+    "blocked_roots": 0,
+    "first_visit_depth": 69,
+    "bounds_named_reservation_bytes": 47995373,
+    "join_import_peak_bytes": 51666425
+  },
+  "blocking_findings": [],
+  "independent_expensive_replay": false,
+  "android_executed": false,
+  "physical_thor": false,
+  "source_generation_admitted": false,
+  "assets_admitted": false,
+  "world_authority": false
+}

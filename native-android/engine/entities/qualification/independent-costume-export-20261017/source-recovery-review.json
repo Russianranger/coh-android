@@ -1,0 +1,51 @@
+{
+  "schema": "coh-independent-costume-export-review-v1",
+  "reviewer": "worker-f",
+  "source_commit": "a10778f18a32322778e377a1c6c8662ea3fa0d18",
+  "source_evidence_commit": "a6ae87e6a",
+  "source_history": [
+    "bd6d5f6c4",
+    "74955ed7c",
+    "10481d60e",
+    "a10778f18"
+  ],
+  "source_binding_sha256": "67e155256723610f0e7899e033eee7095b9749f3bdad092b34dcf09add6dce3c",
+  "host_proof_sha256": "c3032883c358a3bfbec8b9018798c71332ed0af8e1c8d67c8c6b79e7ca4f618b",
+  "all_tested_source_inputs_equal_committed_blobs": true,
+  "bound_inputs": 20,
+  "donor": {
+    "artifact_id": 11092897979,
+    "run_id": 36707839624,
+    "full_artifact_bytes": 26476333,
+    "full_artifact_sha256": "51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae",
+    "full_inner_bytes": 27071659,
+    "full_inner_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "independently_rehashed_all100_cache_bodies": true,
+    "full_outer_and_inner_zip_crc_verified": true,
+    "retained_subset_sha256": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "all3_retained_raw_bin_sha_and_lengths_reverified": true
+  },
+  "review": [
+    "Read-only originalstash getters serializefullslots preservinghole/empty/palettebitpatterns, max65536slots/max259Bstrings/max4MiBoutput, commitswrittenonlywholeexport",
+    "Caller must freeze initializedoriginaltables; before/aftercounts only detect structuralchanges, do not establishthreadquiescence or originalbuilderexecution",
+    "ExclusiveO_CREAT|O_EXCL sink neveroverwrites existingoutput; absolute boundedpath, ownedscratch freed onrefusal; crashcleanup external",
+    "Ffound ignoredunlinkfailure; a107 returnsdistinct3+explicit retainedownedpartial pathdiagnostic, ordinaryfailurecleanup tested and retainedfile then cleaned bytestowner",
+    "stage onlyfresh externaloverlay, pins3originalsourceinputs, hooks exactlyafterloadCostumes/beforeloadPowerCustomizations; no checkoutmutation/fullbuild/serverrun",
+    "Exactdonorbinbytes recovered/retained; Parse6, actualcostumebuilder/hash/insertion/serverABI remain unexecuted; noauthenticserializedslotmaps"
+  ],
+  "host_controls_per_mode": 565,
+  "host_modes": [
+    "release",
+    "asan-address",
+    "ubsan"
+  ],
+  "original_synthetic_accessor_cases": 177,
+  "blocking_findings": [],
+  "independent_expensive_native_replay": false,
+  "win32_server_compiled": false,
+  "source_builder_executed": false,
+  "authentic_dictionary_exported": false,
+  "android_executed": false,
+  "actor_authority": false,
+  "world_authority": false
+}

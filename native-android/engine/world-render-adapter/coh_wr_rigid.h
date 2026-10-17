@@ -46,11 +46,14 @@ typedef struct {
     size_t owned_bytes,temporary_bytes,loader_bytes,loader_reservation,external_bytes,aggregate_peak_bytes;
     uint8_t geo_sha256[32];
 } CohWrRigidReport;
-/* Exact source digest checked before decode. Rigid GEOv8 base channels only;
+/* Exact source digest checked before decode. Rigid GEOv0/v8 base channels only;
  * rejects bone info, skin weights/indices, lightmap UV, reflection channels,
  * nonunit source scale, alternate pivots, missing/unsupported materials. Grid/reduction storage
  * is not consumed and grants no collision/LOD interpretation. Caller semantic
  * producer must refuse tricks/LOD/material states it has not qualified.
+ * Legacyv0 uses original fixed216-byte records/pack remapping; original asserted
+ * null trick/grid-cell/collision/tags/portal pointers are enforced, nonzero legacy
+ * flags refuse pending CLIENT semantics. Other versions remain unsupported.
  * Full model/partition identity and both CPU/material pins survive loader trim.
  * *out MUST be NULL; COH_STATE otherwise. Failure leaves output unchanged; every acquired pin rolls back. */
 CohStatus coh_wr_rigid_acquire(CohAssetLoader *,const CohWrRigidRequest *,

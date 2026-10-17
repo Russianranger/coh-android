@@ -1,0 +1,99 @@
+{
+  "artifacts": [
+    {
+      "id": 11093926040,
+      "name": "coh-game-client-test-arm64-evidence",
+      "size_in_bytes": 1033156,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11093926040",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11093926040/zip",
+      "expired": false,
+      "created_at": "2026-09-30T11:38:44Z",
+      "expires_at": "2026-12-29T11:19:35Z",
+      "updated_at": "2026-09-30T11:38:44Z",
+      "digest": "sha256:8731da3d544d346add6e4897194a459d9d05f602275400ff6fb44251f994043c",
+      "workflow_run": {
+        "id": 36707839624,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "a40250b0032bd05a333514920722ddffa4427730"
+      }
+    },
+    {
+      "id": 11092897979,
+      "name": "coh-client-generated-caches",
+      "size_in_bytes": 26476333,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11092897979",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11092897979/zip",
+      "expired": false,
+      "created_at": "2026-09-30T11:26:49Z",
+      "expires_at": "2026-12-29T11:19:35Z",
+      "updated_at": "2026-09-30T11:26:49Z",
+      "digest": "sha256:51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae",
+      "workflow_run": {
+        "id": 36707839624,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "a40250b0032bd05a333514920722ddffa4427730"
+      }
+    },
+    {
+      "id": 11092833552,
+      "name": "coh-game-client-test-packaging-evidence",
+      "size_in_bytes": 11805,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11092833552",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11092833552/zip",
+      "expired": false,
+      "created_at": "2026-09-30T11:28:41Z",
+      "expires_at": "2026-12-29T11:19:35Z",
+      "updated_at": "2026-09-30T11:28:41Z",
+      "digest": "sha256:ebfc737b9fb353073162e2642f8f83a5b84c59bfdf5bc351979925282fe1c07e",
+      "workflow_run": {
+        "id": 36707839624,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "a40250b0032bd05a333514920722ddffa4427730"
+      }
+    },
+    {
+      "id": 11092693778,
+      "name": "coh-client-cache-generation-evidence",
+      "size_in_bytes": 26513170,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11092693778",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11092693778/zip",
+      "expired": false,
+      "created_at": "2026-09-30T11:26:51Z",
+      "expires_at": "2026-12-29T11:19:35Z",
+      "updated_at": "2026-09-30T11:26:51Z",
+      "digest": "sha256:f1758c6b4a12eb10a282b6b90bfe9e9bda926055a094eeb16c9f3364ede0ed94",
+      "workflow_run": {
+        "id": 36707839624,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "a40250b0032bd05a333514920722ddffa4427730"
+      }
+    },
+    {
+      "id": 11092624222,
+      "name": "coh-game-client-test-apk",
+      "size_in_bytes": 336004891,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11092624222",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11092624222/zip",
+      "expired": false,
+      "created_at": "2026-09-30T11:28:40Z",
+      "expires_at": "2026-12-29T11:19:35Z",
+      "updated_at": "2026-09-30T11:28:40Z",
+      "digest": "sha256:e636d545f8ea0d4cb72251f8ba9b70e321fb7d4f99b7c16d19aa13de51d3a406",
+      "workflow_run": {
+        "id": 36707839624,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "a40250b0032bd05a333514920722ddffa4427730"
+      }
+    }
+  ]
+}

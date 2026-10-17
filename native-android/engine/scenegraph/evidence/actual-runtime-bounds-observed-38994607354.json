@@ -1,0 +1,356 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_sha256": {
+    "native-android/engine/scenegraph/diagnose_runtime_bounds.c": "c6f16e773b6dabd28163dbb78e30e263c999805854229cb9164c73ff4cf909c7",
+    "native-android/engine/scenegraph/coh_runtime_bounds.c": "4d76361c17ce7c9f695f52cf5047eec4d9a9d7fe5519814a6c36c31969d45510",
+    "native-android/engine/scenegraph/coh_group_bounds.c": "f806ee76b023842fdfe3615473ed1ea5170499c01f4e2ed493551dbbe1efcda9",
+    "native-android/engine/scenegraph/coh_scene_metadata.c": "a73e7f6ae882e67c764f873875129822b7100d47feddf7205c8fa8546b56b885",
+    "native-android/engine/scenecatalog/coh_resource_join.c": "81252befa2169731780ce39ab26de66f251d87a1dc4a2dcd8fa792a82949f576",
+    "native-android/engine/scenecatalog/coh_resource_index.c": "4baa0abf74a391d5d3a9719a09f1be235d8b31f7c42ff0659e22aa5cd3f1bf83",
+    "native-android/engine/scenecatalog/coh_catalog_snapshot.c": "b2068cec02b16f357db0abafe94862103a22faf25256e282ac3b0d84bc1bf6de",
+    "native-android/engine/scenecatalog/coh_catalog_owner.c": "f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7",
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66",
+    "native-android/engine/scenegraph/runtime_snapshot.c": "7c8d987e56f730995c9970fb83b7a528de21f8469d451a88d04c23a716b90200",
+    "native-android/engine/scenegraph/tests/runtime_matrix_bridge.c": "c9f1070d61fb272716ed0b390a58da9a2715f266a661dd799b3fd85e25a0fe93",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "upstream/ouroboros/Common/group/group.h": "17e9d423ef7f8e389f9ce39dc6d7f601d9aee500a7a617f0caa8bc049e994a48",
+    "native-android/engine/scenegraph/coh_runtime_bounds.h": "50054808af3b1a2c753b042c09b14f8707c6aba4728548d1c073523b5bc9732a",
+    "native-android/engine/scenegraph/coh_group_bounds.h": "24785de1fcf70a03c7c1debf964ec77581428911334743be73cecc2cd4cf4426",
+    "native-android/engine/scenegraph/coh_scene_metadata.h": "75557e186685443c7567d9efb89d2c4d2fff880816d5c263c40d6b4522449e81",
+    "native-android/engine/scenecatalog/coh_resource_join.h": "1967351d57dfc414bde04dc90e3a94c092e6529c5f5db736fd79eef6f12842df",
+    "native-android/engine/scenecatalog/coh_resource_index.h": "131179624f7fb194596af480ef2cd2c7e648d46e6191ef6dc7f1e11a7658aa6b",
+    "native-android/engine/scenecatalog/coh_catalog_snapshot.h": "389021a429fe7c4720303fd00723de873fd18bc915d4c8aa9b4c437cd2dabb76",
+    "native-android/engine/scenecatalog/coh_catalog_owner.h": "4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c",
+    "native-android/engine/scenegraph/runtime_graph.h": "761582b9b245dd7f49b3abb4dde9c2a9644442946bf9010a0e80a9aea9ba2a37",
+    "native-android/engine/scenegraph/runtime_snapshot.h": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3",
+    "native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/engine/scenegraph/inspect_runtime_bounds.py": "a65d60f58ac9ccf15347cc336b20c92e8f9b30471a20d06d0d393d6bf9088318",
+    "native-android/engine/scenecatalog-server/capture_resources.py": "58174c4c37daccaca55dbb9e59dbcb2baa6f5a6c6debbb43bf65722c59aef69e",
+    "native-android/engine/scenecatalog-server/resource_oracle.py": "b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7",
+    "native-android/engine/scenecatalog-server/capture_snapshot.py": "0e9c264c064acf7a5fb90bbc0c07edb7d11c0703bf13635bb6899a9f781470ed",
+    "native-android/engine/scenecatalog-server/delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "native-android/engine/scenecatalog-server/build_path_probe.py": "ed5b983f7df0026874db3218fceb1c5a990b5204571bdc4182e1ea62b3b3834e",
+    "native-android/engine/scenecatalog-server/capture_disposable.py": "cc714446fff59e712970bd4b0c4247715d837b18be4d559fbc8017a98a807d00",
+    "native-android/engine/scenecatalog-server/stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "native-android/engine/scenecatalog-server/stage_resources.py": "7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6",
+    "native-android/engine/scenecatalog-server/stage_snapshot.py": "ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c"
+  },
+  "capture_input_identity": {
+    "resource-binding.json": {
+      "bytes": 971,
+      "sha256": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c"
+    },
+    "capture-receipt.json": {
+      "bytes": 17080,
+      "sha256": "0947a6a172c083350d3229de5facebc5862fdc1bdd98e9b6c181b14cf3a715e4"
+    },
+    "source-identity.json": {
+      "bytes": 6522,
+      "sha256": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa"
+    },
+    "run-identity.json": {
+      "bytes": 626,
+      "sha256": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced"
+    },
+    "catalog.cohcat": {
+      "bytes": 12179670,
+      "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+    },
+    "runtime.cohrts": {
+      "bytes": 6585,
+      "sha256": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02"
+    },
+    "resources.cohres": {
+      "bytes": 12596422,
+      "sha256": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+    }
+  },
+  "trusted_binding_sha256": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c",
+  "modes": {
+    "release": {
+      "result": {
+        "passed": true,
+        "visited": 15353,
+        "computed": 15352,
+        "captured_future": 1,
+        "future_missing": 0,
+        "definition_missing": 0,
+        "child_blocked": 0,
+        "active_roots": 33,
+        "computed_roots": 33,
+        "blocked_roots": 0,
+        "first_visit_depth": 69,
+        "bounds_workspace_bytes": 2227284,
+        "bounds_named_reservation_bytes": 47995373,
+        "graph_generation": 1,
+        "catalog_generation": 20261016,
+        "join_import_peak_bytes": 51666425,
+        "source_observed_model_bounds_only": true,
+        "body_bounds_compared": false,
+        "source_generation_admitted": false,
+        "assets_admitted": false,
+        "world_authority": false,
+        "blocker_nodes": [],
+        "blocked_root_records": [],
+        "future_bounds": [
+          {
+            "node": 40225,
+            "reachable": 0,
+            "name": "_cot_warpgate_base",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40226,
+            "reachable": 0,
+            "name": "_cot_warpgate_glow",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40227,
+            "reachable": 1,
+            "name": "_mmayhem_curtain_8_01c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40228,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_8_02c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40229,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_8_03c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40230,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_16_01c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40231,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_16_02c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ]
+      },
+      "binary_sha256": "fe36789b7ded16cb1846a6a7d473431f8a8808e61c1f970714444940d68942f5"
+    },
+    "asan": {
+      "result": {
+        "passed": true,
+        "visited": 15353,
+        "computed": 15352,
+        "captured_future": 1,
+        "future_missing": 0,
+        "definition_missing": 0,
+        "child_blocked": 0,
+        "active_roots": 33,
+        "computed_roots": 33,
+        "blocked_roots": 0,
+        "first_visit_depth": 69,
+        "bounds_workspace_bytes": 2227284,
+        "bounds_named_reservation_bytes": 47995373,
+        "graph_generation": 1,
+        "catalog_generation": 20261016,
+        "join_import_peak_bytes": 51666425,
+        "source_observed_model_bounds_only": true,
+        "body_bounds_compared": false,
+        "source_generation_admitted": false,
+        "assets_admitted": false,
+        "world_authority": false,
+        "blocker_nodes": [],
+        "blocked_root_records": [],
+        "future_bounds": [
+          {
+            "node": 40225,
+            "reachable": 0,
+            "name": "_cot_warpgate_base",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40226,
+            "reachable": 0,
+            "name": "_cot_warpgate_glow",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40227,
+            "reachable": 1,
+            "name": "_mmayhem_curtain_8_01c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40228,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_8_02c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40229,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_8_03c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40230,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_16_01c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40231,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_16_02c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ]
+      },
+      "binary_sha256": "f44dde62adcba0822f7e27a6262fd0ad75f7afedb05f7fc1be57fb2ceeefd6c9"
+    },
+    "ubsan": {
+      "result": {
+        "passed": true,
+        "visited": 15353,
+        "computed": 15352,
+        "captured_future": 1,
+        "future_missing": 0,
+        "definition_missing": 0,
+        "child_blocked": 0,
+        "active_roots": 33,
+        "computed_roots": 33,
+        "blocked_roots": 0,
+        "first_visit_depth": 69,
+        "bounds_workspace_bytes": 2227284,
+        "bounds_named_reservation_bytes": 47995373,
+        "graph_generation": 1,
+        "catalog_generation": 20261016,
+        "join_import_peak_bytes": 51666425,
+        "source_observed_model_bounds_only": true,
+        "body_bounds_compared": false,
+        "source_generation_admitted": false,
+        "assets_admitted": false,
+        "world_authority": false,
+        "blocker_nodes": [],
+        "blocked_root_records": [],
+        "future_bounds": [
+          {
+            "node": 40225,
+            "reachable": 0,
+            "name": "_cot_warpgate_base",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40226,
+            "reachable": 0,
+            "name": "_cot_warpgate_glow",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40227,
+            "reachable": 1,
+            "name": "_mmayhem_curtain_8_01c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40228,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_8_02c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40229,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_8_03c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40230,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_16_01c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "node": 40231,
+            "reachable": 0,
+            "name": "_mmayhem_curtain_16_02c",
+            "lookup_found": 0,
+            "live_wire_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803f000000000000000000000002",
+            "lookup_wire_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ]
+      },
+      "binary_sha256": "af038cf2bf2b5a7040f0fde97353df4684faa50c76dbefed35bdea991c2f78b4"
+    }
+  },
+  "source_snapshot_only": true,
+  "actual_resource_capture": true,
+  "native_source_association_completed": true,
+  "resource_indices_built": false,
+  "assets_admitted": false,
+  "client_materials_available": false,
+  "client_lods_available": false,
+  "live_groups_transaction": false,
+  "world_authority": false,
+  "android_executed": false,
+  "leak_sanitizer": false,
+  "scope": "Root-reachable source-only bottom-up original numerical bounds using captured model boxes and exact definition volume metadata. Future bounds are exact separately retained live observations, never inferred zeros or lookup-miss substitutions. Missing observations remain explicit blockers. No GEO body box comparison, CLIENT LOD, world or opened-file generation admission. Named native reservations exclude Python RSS."
+}
