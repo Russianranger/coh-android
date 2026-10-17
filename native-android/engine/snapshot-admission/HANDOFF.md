@@ -84,6 +84,18 @@ narrow workflow reuses the existing exact capture; it starts no service and
 builds no native binary or APK. Its hosted result must be read from its own run;
 local success does not imply hosted success. An expired artifact fails closed.
 
+Hosted admission is now independently confirmed successful at public source
+`0b0e1cef3228046c0232bd49882dc4956884b844`, exact tree
+`8f3dce3bcccc6347a029df48e8cb7356c999ee37`. Run `38991132335` passed checkout,
+historical capture download/SHA validation, seven implementation test groups,
+17 independent controls, source/input stability and artifact publication.
+Artifact `12085301989` is 3,028 bytes with SHA256
+`a170971a0eef7bb6a6fef4aeaeac25f32fe70c5b25b92ecb5985cfa11fe5b069`.
+Its ZIP CRC, exact `qualification.json` member and success/authority fields were
+checked after independent download. Exact report bytes are retained as
+`evidence/hosted-38991132335.json`. This adds hosted Python qualification only;
+the new admission module has no Android execution or live publication claim.
+
 ## Actionable integration findings
 
 1. Original `clientcomm.c` processes optional embedded game commands after
