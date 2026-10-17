@@ -1,0 +1,14 @@
+{
+  "run_id": 39075900631,
+  "job_id": 117522985623,
+  "scope": "Fixed test-count and sanitized refusal result lines only; raw job log not retained.",
+  "lines": [
+    "2026-10-17T22:40:09.8313115Z Ran 12 tests in 5.528s",
+    "2026-10-17T22:40:09.8313315Z OK (skipped=1)",
+    "2026-10-17T22:40:09.9508686Z Ran 2 tests in 0.001s",
+    "2026-10-17T22:40:09.9508864Z OK",
+    "2026-10-17T22:40:11.7341809Z Ran 6 tests in 1.635s",
+    "2026-10-17T22:40:11.7341950Z OK",
+    "2026-10-17T22:45:58.8521028Z {\"passed\": false, \"failure\": \"shard_db_ready_deadline\", \"original_interserver_shard_activation_verified\": false, \"selected_shard_play_verified\": false, \"authenticated_db_map_handoff_verified\": false}"
+  ]
+}

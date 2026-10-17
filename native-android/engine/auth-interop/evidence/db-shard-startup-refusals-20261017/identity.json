@@ -653,5 +653,315 @@
       "additional_service_retry_authorized_by_this_record": false,
       "repair_supported": false
     }
+  },
+  "runtime_rendered_file_refusal": {
+    "run_id": 39075900631,
+    "linux_job_id": 117522870322,
+    "windows_job_id": 117522985623,
+    "repository_commit": "b3fbacf90626e29542e878313c2812eba1e1375b",
+    "repository_tree": "55f87f9f1b37c09d8250fcbfee473a6608e5dd01",
+    "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+    "artifact_id": 12117415396,
+    "archive": "original-rendered-file-diagnostic-39075900631.zip",
+    "bytes": 7474,
+    "sha256": "1a98ef8b4788bf2c5a6e2948d17fb9387dd94f8fc0cacaec87ef74dedd4c3a3d",
+    "archive_members": {
+      "firewall--auth-in-remove.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "firewall-0-db-out-add.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "firewall--auth-in-add.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "firewall-0-db-out-remove.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "firewall-10-db-in-add.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "firewall-10-db-in-remove.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "firewall-auth-out-add.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "firewall-auth-out-remove.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt.json": {
+        "bytes": 23029,
+        "sha256": "a7777fc3f8bdad0d0e54b0b9a3ebdb52fa0f0e4ecaf50eccb989d0fbc070fc8d"
+      }
+    },
+    "passed": false,
+    "failure": "shard_db_ready_deadline",
+    "services_started": true,
+    "linux_new_formatter_or_alias_methods_passed": 3,
+    "windows_pre_service_methods_discovered": 20,
+    "windows_pre_service_methods_passed": 19,
+    "windows_portable_c_oracle_skipped": 1,
+    "actual_windows_modal_api_smoke_passed": true,
+    "image_os": "win25-vs2026",
+    "image_version": "20261007.264.1",
+    "safe_log_projections": [
+      {
+        "file": "original-rendered-file-diagnostic-39075900631-linux-safe-log.json",
+        "sha256": "08db7ba69dcc0939e0597af70c4a441906201cd214d6309e9ea0f773acbe7adb",
+        "raw_job_log_retained": false
+      },
+      {
+        "file": "original-rendered-file-diagnostic-39075900631-windows-safe-log.json",
+        "sha256": "9240010409a89ed2d05eb6e842f6eb34d4940c3bd15bd7873157a63d288d62ce",
+        "raw_job_log_retained": false
+      }
+    ],
+    "accepted_schema": {
+      "manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+      "files": 62,
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+    },
+    "db_build_admission": {
+      "admitted": true,
+      "scope": "Caller-pinned compilation only; original MSSQL target, no accepted overlays or service execution.",
+      "binary": {
+        "sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+        "bytes": 1654784,
+        "machine": "I386",
+        "format": "PE32",
+        "subsystem": 3,
+        "header_identity_only": true,
+        "executed": false
+      },
+      "receipt_sha256": "51e72ef676b3db845ec4f72d1a0e856f5f34b4470050ee388087c06e843a3334",
+      "live_authenticated_db_login_verified": false,
+      "accepted_runtime_compatibility_verified": false,
+      "nondevelopment_version_observed": false,
+      "archive_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+      "platform_imports": [
+        "advapi32.dll",
+        "gdi32.dll",
+        "iphlpapi.dll",
+        "kernel32.dll",
+        "odbc32.dll",
+        "user32.dll",
+        "winmm.dll",
+        "ws2_32.dll"
+      ],
+      "separate_runtime_dlls_required": false
+    },
+    "runtime_config_sha256": {
+      "auth": "6c4e7b0cb8c39366dc67ea73da7eb453c820d600e88920574f8859828d1101d3",
+      "db": "3e63977efa73e1d360a82f575be884ce38cc6ebf8c89e5412368b119a4c5391d"
+    },
+    "modal_diagnostic": {
+      "read_only": true,
+      "raw_titles_controls_or_stacks_exported": false,
+      "generation_before": {
+        "pid": 6676,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278736483136343,
+        "executable_path_sha256": "234a2842750358125582afafe96dfd4651ffce25f5745a025bdb1fd6c05bd4e5"
+      },
+      "observation": {
+        "schema": "coh-owned-db-modal-classifier-v1",
+        "pid": 6676,
+        "current_desktop_only": true,
+        "read_only": true,
+        "raw_titles_controls_or_stacks_exported": false,
+        "owned_top_level_count": 3,
+        "owned_child_count": 9,
+        "dialog_class_count": 1,
+        "source_main_text_control_count": 1,
+        "top_level_enumeration_completed": true,
+        "class_enum_counts": {
+          "dialog": 1,
+          "static": 3,
+          "button": 6,
+          "edit": 0,
+          "combo": 0,
+          "list": 0,
+          "unknown": 2
+        },
+        "text_status_counts": {
+          "ok": 12,
+          "owner_changed": 0,
+          "timeout": 0,
+          "truncated": 0
+        },
+        "inspected_characters": 542,
+        "source_matches": [
+          {
+            "kind": "source_assertion_unknown",
+            "exception_enum": "none",
+            "assertion_enum": "none",
+            "source_assertion_line_verified": false,
+            "source_file_enum": "unknown",
+            "source_site_enum": "unknown",
+            "source_call_site_verified": false,
+            "source_expression_match": false,
+            "compiled_expression_variant_match": false,
+            "structure_flags": {
+              "file_field_unique": true,
+              "line_field_unique": true,
+              "expression_field_unique": true,
+              "line_shape_known": true
+            }
+          }
+        ],
+        "unknown_control_count": 11,
+        "deadline_reached": false,
+        "inventory_bound_reached": false,
+        "text_bound_reached": false,
+        "owner_changed_count": 0,
+        "original_source_sha256": {
+          "libs/UtilitiesLib/src/utils/SuperAssert.c": "9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6",
+          "DBServer/src/sql_fifo.c": "345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879",
+          "Common/sql/sqltask.cpp": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02",
+          "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp": "ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7",
+          "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de",
+          "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp": "eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81",
+          "libs/UtilitiesLib/src/UtilsCXX/ringchain.cpp": "e7ce6ebd9c14097d65830fd1390408b9a1c9c2a46ee992a47d8d483478a46d0e",
+          "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110",
+          "libs/UtilitiesLib/src/components/MemoryPool.c": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83",
+          "libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h": "105305fab92cb2dc8651c4a4d102a8f5428ecb378f8cde46b3c409970845227b"
+        },
+        "source_call_site_count": 78,
+        "source_call_site_index_sha256": "dadd8a99290d442f9a3f729843df590415970b308a9e267858a7bd53bb2f1144",
+        "compiled_variant_count": 4,
+        "compiled_variant_pe_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+        "compiled_variant_archive_sha256": "2eb66715cb8b35d82580971b60734a92b48c91e2a557cb253d39b7fdafef6ee7",
+        "rendered_filename_alias_count": 8,
+        "rendered_filename_alias_index_sha256": "ad1bf4b1a62ac1bc1f689069a36c808f8629f9502bef572582e6d514bb6919b1",
+        "filename_formatter_block_sha256": "6e83cc5f49770ae4444ada27af14958bbd66b97b1337772bf16577434502cd62",
+        "classifier_source_sha256": {
+          "native-android/engine/auth-interop/deployment/db_modal_diagnostic.py": "fea8726372615b3b636ecaf53ad3894004c55454bdfb245f6797c1b6294108f6",
+          "native-android/engine/auth-interop/deployment/windows/db_modal_observer.cs": "3359269a277aa9c50aac8ea74cca7bcdaabb8ff098f224a1f16df63379e8efd6"
+        }
+      },
+      "generation_after": {
+        "pid": 6676,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278736483136343,
+        "executable_path_sha256": "234a2842750358125582afafe96dfd4651ffce25f5745a025bdb1fd6c05bd4e5"
+      },
+      "complete": true
+    },
+    "numeric_diagnostic": {
+      "read_only": true,
+      "raw_console_or_sql_exported": false,
+      "generation_before": {
+        "pid": 6676,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278736483136343,
+        "executable_path_sha256": "234a2842750358125582afafe96dfd4651ffce25f5745a025bdb1fd6c05bd4e5"
+      },
+      "sql": {
+        "user_tables": 0,
+        "attribute_tables": 0,
+        "dbserver_sessions": 65,
+        "sleeping_sessions": 65,
+        "active_requests": 0,
+        "waiting_requests": 0,
+        "blocked_requests": 0,
+        "wait_lock": 0,
+        "wait_network": 0,
+        "wait_io": 0,
+        "wait_memory": 0,
+        "wait_threadpool": 0,
+        "wait_other": 0
+      },
+      "process": {
+        "pid": 6676,
+        "cpu_ms": 625,
+        "thread_count": 8,
+        "thread_state_enum_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 8,
+          "6": 0,
+          "7": 0
+        },
+        "wait_reason_enum_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 1,
+          "5": 0,
+          "6": 5,
+          "7": 0,
+          "8": 2,
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0,
+          "13": 0
+        },
+        "thread_ids_or_stacks_exported": false
+      },
+      "generation_after": {
+        "pid": 6676,
+        "exists": true,
+        "name": "dbserver",
+        "started_utc_ticks": 639278736483136343,
+        "executable_path_sha256": "234a2842750358125582afafe96dfd4651ffce25f5745a025bdb1fd6c05bd4e5"
+      },
+      "complete": true
+    },
+    "private_console_summary": {
+      "bytes": 389,
+      "inspected_prefix_bytes": 389,
+      "content_exported": false,
+      "source_markers": {
+        "db_ready": false,
+        "auth_version_received": false,
+        "sql_connected": true,
+        "checksum_reference_missing": false,
+        "loading_templates": false,
+        "update_tables": false,
+        "clearing_teamups": false,
+        "waiting_for_launchers": false,
+        "sql_connection_gave_up": false,
+        "missing_input_error": false,
+        "bind_error": false
+      }
+    },
+    "cleanup": {
+      "owned_service_cleanup_complete": true,
+      "owned_firewall_cleanup_complete": true,
+      "owned_localdb_cleanup_complete": true,
+      "private_files_removed": true,
+      "source_inputs_unchanged": true
+    },
+    "interpretation": {
+      "original_assertion_body_observed": true,
+      "unique_file_line_expression_fields": true,
+      "numeric_line_shape_known": true,
+      "exact_retained_pe_rendered_alias_policy_admitted": true,
+      "rendered_file_recognized": false,
+      "specific_source_call_site_identified": false,
+      "source_expression_matched": false,
+      "compiled_expression_variant_matched": false,
+      "conclusion": "Original assertion remains unidentified after exact retained-PE filename formatting admission; the fixed current receipt supports no particular source predicate or repair.",
+      "additional_service_retry_authorized_by_this_record": false,
+      "repair_supported": false
+    }
   }
 }

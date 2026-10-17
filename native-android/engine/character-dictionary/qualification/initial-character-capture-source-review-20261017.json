@@ -1,0 +1,119 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "allents_observed": false,
+  "caveats": [
+    "Original source proves send eligibility, not success for an unobserved live transaction.",
+    "Compressed source packets use byteAlignedMode; bsCompress asserts byte-multiple bitLength, and the owned decoder records decoded_bytes*8. Uncompressed payload_bits retain exact reassembled wire bit length.",
+    "A bounded raw ALLENTS capture is not complete character syntax/semantic validation or current dictionary generation admission.",
+    "A separate explicit nonshipping request/loan policy is required; existing Local/Map scene observation cannot reenter to queue commands or borrow later packets."
+  ],
+  "conclusions": {
+    "current_public_api_can_request_or_observe_allents": false,
+    "decoded_owned_message_ceiling_bytes": 4194304,
+    "existing_full_initial_diagnostic_wired_to_map_receive": false,
+    "existing_transport_preserves_bounded_decoded_message_bits": true,
+    "ordinary_non_groups_message_limit_bytes": 16384,
+    "original_reqallents_triggers_full_character_before_ready": true
+  },
+  "read_only": true,
+  "review_date": "2026-10-17",
+  "reviewed_main_revision": "777e33c4318f50eefe622d513009092af8c34bc8",
+  "runtime_executed": false,
+  "schema": "coh-initial-character-capture-source-review-v1",
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "native-android/combined-client/tools/capture_local_scene.c": {
+      "bytes": 11010,
+      "sha256": "f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec"
+    },
+    "native-android/engine/character-data/coh_character_data.h": {
+      "bytes": 4472,
+      "sha256": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0"
+    },
+    "native-android/engine/initial-update/coh_initial_update.c": {
+      "bytes": 8521,
+      "sha256": "268b2bf5f4ec96e344df85cc266dedd52c54f954d48f86a88191de0a4047dc87"
+    },
+    "native-android/engine/initial-update/coh_initial_update.h": {
+      "bytes": 4277,
+      "sha256": "bfe30a309d36dbcdde96222d67016b0da82320bbe6839cb4c864bcd1f3e0bb3b"
+    },
+    "native-android/engine/local/coh_local.c": {
+      "bytes": 11732,
+      "sha256": "7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210"
+    },
+    "native-android/engine/local/coh_local.h": {
+      "bytes": 4531,
+      "sha256": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f"
+    },
+    "native-android/engine/mapclient/coh_mapclient.c": {
+      "bytes": 23015,
+      "sha256": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199"
+    },
+    "native-android/engine/mapclient/coh_mapclient.h": {
+      "bytes": 8904,
+      "sha256": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9"
+    },
+    "native-android/engine/network/coh_net.c": {
+      "bytes": 24548,
+      "sha256": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1"
+    },
+    "native-android/engine/network/coh_net.h": {
+      "bytes": 7329,
+      "sha256": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+    },
+    "native-android/engine/network/coh_net_zip.c": {
+      "bytes": 7170,
+      "sha256": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747"
+    },
+    "native-android/engine/replication/coh_replication.c": {
+      "bytes": 12923,
+      "sha256": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4"
+    },
+    "native-android/engine/replication/coh_replication.h": {
+      "bytes": 5709,
+      "sha256": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b"
+    },
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": {
+      "bytes": 73982,
+      "sha256": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd"
+    },
+    "upstream/ouroboros/MapServer/src/entity/character_net_server.c": {
+      "bytes": 54786,
+      "sha256": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "bytes": 171294,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": {
+      "bytes": 64295,
+      "sha256": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806"
+    },
+    "upstream/ouroboros/MapServer/src/player/parseClientInput.c": {
+      "bytes": 144600,
+      "sha256": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_base.h": {
+      "bytes": 10047,
+      "sha256": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": {
+      "bytes": 71802,
+      "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": {
+      "bytes": 42997,
+      "sha256": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": {
+      "bytes": 17605,
+      "sha256": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c": {
+      "bytes": 30356,
+      "sha256": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    }
+  }
+}

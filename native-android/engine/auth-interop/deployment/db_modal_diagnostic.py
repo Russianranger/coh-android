@@ -5,6 +5,7 @@ import ntpath
 import os
 from pathlib import Path
 import re
+import struct
 import subprocess
 import tempfile
 import zipfile
@@ -12,6 +13,14 @@ import zipfile
 import hosted_auth_stage as prior
 
 HERE=Path(__file__).resolve().parent
+CATALOG_PATH='native-android/engine/auth-interop/deployment/db_modal_pe_source_catalog.json'
+CATALOG_SHA='1543a4a3c30e0272c19093a8e75ef4fa04ac5c0e07d0d9d13143c08e30f86eab'
+FILENAME_LITERAL_MAX=1024
+FILENAME_TOTAL_MAX=65536
+SOURCE_FILE_MAX=1024*1024
+SOURCE_TOTAL_MAX=8*1024*1024
+EXPRESSION_LITERAL_MAX=4096
+EXPRESSION_TOTAL_MAX=256*1024
 MACRO_FORWARD_PATH='libs/UtilitiesLib/include/utilitieslib/utils/SuperAssert.h'
 MACRO_FORWARD_SHA='105305fab92cb2dc8651c4a4d102a8f5428ecb378f8cde46b3c409970845227b'
 PE_ARCHIVE='native-android/engine/auth-interop/evidence/independent-db-build-39000395572/artifact.zip'
@@ -151,7 +160,7 @@ def assertion_calls(text):
             at+=1
         else:return None
         expression=comments_removed[start:argument_end].strip()
-        if not expression or len(expression)>4096:return None
+        if not expression or len(expression.encode())>EXPRESSION_LITERAL_MAX:return None
         expression=normalized(expression)
         if expression is None:return None
         calls.append({'line':masked.count('\n',0,match.start())+1,'expression':expression})
@@ -172,7 +181,7 @@ def filename_formatter_source(original):
 
 def render_source_filename(filename):
     """Exact pinned SuperAssert.c File formatter, including separator in p."""
-    if type(filename) is not str or not 1<=len(filename)<=1024 or any(not 32<=ord(char)<=126 for char in filename):
+    if type(filename) is not str or not 1<=len(filename)<=FILENAME_LITERAL_MAX or any(not 32<=ord(char)<=126 for char in filename):
         raise ValueError('db_modal_compiled_filename_shape')
     size=len(filename)
     if 7+size+1<=60:return filename
@@ -189,25 +198,62 @@ def render_source_filename(filename):
     return filename[:ffn-ffn//3-3]+'...'+filename[size-p:size-p+ffn//6-1]+'...'+filename[size-(ffn//3-ffn//6-2):]
 
 
-def compiled_filename_policy(strings,calls_by_file):
+def pe_filename_literals(binary):
+    # Exact retained PE32 address inventory, not maximal printable runs: a
+    # preceding printable hash byte must never become part of __FILE__.
+    pe=struct.unpack_from('<I',binary,60)[0]
+    if binary[:2]!=b'MZ' or binary[pe:pe+4]!=b'PE\0\0':raise ValueError('db_modal_filename_pe_shape')
+    count=struct.unpack_from('<H',binary,pe+6)[0];optional=struct.unpack_from('<H',binary,pe+20)[0]
+    if not 1<=count<=32 or struct.unpack_from('<H',binary,pe+24)[0]!=0x10b:
+        raise ValueError('db_modal_filename_pe_shape')
+    image=struct.unpack_from('<I',binary,pe+52)[0];sections=[]
+    for i in range(count):
+        at=pe+24+optional+40*i
+        rva,size,raw=struct.unpack_from('<III',binary,at+12)
+        if raw+size>len(binary):raise ValueError('db_modal_filename_pe_section_bound')
+        if binary[at:at+8].rstrip(b'\0')==b'.rdata':sections.append((rva,size,raw))
+    result=[]
+    for match in re.finditer(rb'[A-Za-z]:[\\/][\x20-\x7e]*\.(?:c|cpp|cxx|h|hpp|inl)\x00',binary,re.I):
+        section=[s for s in sections if s[2]<=match.start() and match.end()<=s[2]+s[1]]
+        if len(section)!=1:raise ValueError('db_modal_filename_literal_section')
+        rva=section[0][0]+match.start()-section[0][2]
+        result.append({'value':match.group()[:-1].decode('ascii'),'pe_filename_offset':match.start(),
+            'pe_filename_rva':rva,'pointer_reference_count':binary.count(struct.pack('<I',image+rva))})
+    return result
+
+
+def compiled_filename_policy(literals,catalog):
     aliases={};index={}
-    for name in SOURCE_PINS:
-        basename=Path(name).name
-        candidates=[value for value in strings if ntpath.basename(value).casefold()==basename.casefold()]
-        if len(candidates)!=(1 if calls_by_file[basename] else 0):
-            raise ValueError('db_modal_compiled_filename_candidates')
-        for candidate in candidates:
-            if not candidate.replace('\\','/').casefold().endswith('/upstream/ouroboros/'+name.casefold()):
+    candidates=sorted(item['value'] for item in literals)
+    if len(candidates)!=126 or sum(len(v) for v in candidates)>FILENAME_TOTAL_MAX or any(len(v)>FILENAME_LITERAL_MAX for v in candidates):
+        raise ValueError('db_modal_compiled_filename_inventory_bound')
+    upstream=sorted(v for v in candidates if '/upstream/ouroboros/' in v.replace('\\','/').casefold())
+    if hashlib.sha256(json.dumps(upstream).encode()).hexdigest()!=catalog['upstream_filename_catalog_sha256']:
+        raise ValueError('db_modal_compiled_filename_catalog_identity')
+    used=set()
+    for entry in catalog['upstream_files']+catalog['external_files']:
+        matches=[v for v in candidates if hashlib.sha256(v.encode()).hexdigest()==entry['pe_filename_sha256']]
+        if len(matches)!=1:raise ValueError('db_modal_compiled_filename_candidates')
+        candidate=matches[0]
+        records=[record for record in literals if record['value']==candidate]
+        if len(records)!=1 or any(records[0][key]!=entry[key] for key in ('pe_filename_offset','pe_filename_rva','pointer_reference_count')):
+            raise ValueError('db_modal_compiled_filename_literal_identity')
+        if 'source_path' in entry:
+            if entry['pointer_reference_count']<1:raise ValueError('db_modal_compiled_filename_pointer_unverified')
+            if not candidate.replace('\\','/').casefold().endswith('/upstream/ouroboros/'+entry['source_path'].casefold()):
                 raise ValueError('db_modal_compiled_filename_source_suffix')
-            rendered=render_source_filename(candidate)
-            if rendered in aliases:raise ValueError('db_modal_rendered_file_alias_collision')
-            aliases[rendered]=[basename.casefold()]
-            index[FILE_ENUMS[basename]]={'compiled_filename_sha256':hashlib.sha256(candidate.encode()).hexdigest(),
-                'rendered_filename_sha256':hashlib.sha256(rendered.encode()).hexdigest()}
+            key=Path(entry['source_path']).name.casefold()
+        else:key=entry['enum']
+        rendered=render_source_filename(candidate)
+        if rendered in aliases or candidate in used:raise ValueError('db_modal_rendered_file_alias_collision')
+        aliases[rendered]=[key];used.add(candidate)
+        index[entry['enum']]={'compiled_filename_sha256':entry['pe_filename_sha256'],
+            'rendered_filename_sha256':hashlib.sha256(rendered.encode()).hexdigest()}
+    if len(used)!=126:raise ValueError('db_modal_compiled_filename_catalog_incomplete')
     return aliases,hashlib.sha256(json.dumps(index,sort_keys=True).encode()).hexdigest()
 
 
-def compiled_variant_policy(root,calls_by_file):
+def compiled_variant_policy(root,catalog):
     archive=root/PE_ARCHIVE
     if archive.is_symlink() or archive.stat().st_size!=1088820 or prior.sha(archive)!=PE_ARCHIVE_SHA:
         raise ValueError('db_modal_compiled_archive_identity')
@@ -219,16 +265,32 @@ def compiled_variant_policy(root,calls_by_file):
     strings={v.decode('ascii') for v in re.findall(rb'[\x20-\x7e]{3,}',binary)}
     if any(v not in strings for v in PE_VARIANTS.values()):
         raise ValueError('db_modal_compiled_variant_not_present')
-    aliases,alias_index=compiled_filename_policy(strings,calls_by_file)
+    maximal=sorted(v for v in strings if '/upstream/ouroboros/' in v.replace('\\','/').casefold() and re.search(r'\.(?:c|cpp|h|hpp)$',v,re.I))
+    if hashlib.sha256(json.dumps(maximal).encode()).hexdigest()!=catalog['upstream_maximal_ascii_catalog_sha256']:
+        raise ValueError('db_modal_maximal_ascii_filename_catalog_identity')
+    aliases,alias_index=compiled_filename_policy(pe_filename_literals(binary),catalog)
     return {key:normalized(value) for key,value in PE_VARIANTS.items()},aliases,alias_index
 
 
 def policy(root):
-    sources={}
-    for name,pin in SOURCE_PINS.items():
+    catalog_path=root/CATALOG_PATH
+    if catalog_path.is_symlink() or catalog_path.stat().st_size>128*1024 or prior.sha(catalog_path)!=CATALOG_SHA:
+        raise ValueError('db_modal_source_catalog_identity')
+    catalog=json.loads(catalog_path.read_text())
+    if (catalog['pe_sha256']!=PE_SHA or len(catalog['upstream_files'])!=122 or len(catalog['external_files'])!=4):
+        raise ValueError('db_modal_source_catalog_shape')
+    sources={};source_pins={};file_enums={};total=0
+    for entry in catalog['upstream_files']:
+        name,pin=entry['source_path'],entry['source_sha256']
         path=root/'upstream/ouroboros'/name
-        if path.is_symlink() or prior.sha(path)!=pin:raise ValueError('db_modal_original_source_identity')
-        sources[Path(name).name]=path.read_text(encoding='utf-8')
+        if path.is_symlink() or path.stat().st_size>SOURCE_FILE_MAX or prior.sha(path)!=pin:raise ValueError('db_modal_original_source_identity')
+        basename=Path(name).name
+        if basename.casefold() in file_enums:raise ValueError('db_modal_source_basename_ambiguity')
+        total+=path.stat().st_size
+        if total>SOURCE_TOTAL_MAX:raise ValueError('db_modal_source_total_bound')
+        sources[basename]=path.read_text(encoding='utf-8');source_pins[name]=pin;file_enums[basename.casefold()]=entry['enum']
+    external_files={entry['enum'] for entry in catalog['external_files']}
+    for key in external_files:file_enums[key]=key
     original=sources['SuperAssert.c']
     formatter=filename_formatter_source(original)
     forward=root/'upstream/ouroboros'/MACRO_FORWARD_PATH
@@ -252,20 +314,31 @@ def policy(root):
         lines=[call['line'] for call in calls_by_file[basename] if call['expression']==expr]
         if not lines:raise ValueError('db_modal_original_assertion_policy')
         points[key]={'file':basename.casefold(),'expression':expr,'lines':lines}
-    variants,aliases,alias_index=compiled_variant_policy(root,calls_by_file)
+    variants,aliases,alias_index=compiled_variant_policy(root,catalog)
     sites={};public_index={}
     for basename,calls in calls_by_file.items():
         for ordinal,call in enumerate(calls,1):
-            key=FILE_ENUMS[basename]+'_assert_'+str(ordinal).zfill(3)
+            key=file_enums[basename.casefold()]+'_assert_'+str(ordinal).zfill(3)
             legacy=[name for name,point in points.items() if point['file']==basename.casefold()
                 and call['line'] in point['lines'] and call['expression']==point['expression']]
             if len(legacy)>1:raise ValueError('db_modal_source_index_legacy_ambiguity')
-            sites[key]=dict(call,file=basename.casefold(),file_enum=FILE_ENUMS[basename],legacy=legacy[0] if legacy else None)
-            public_index[key]={'file_enum':FILE_ENUMS[basename],'source_line':call['line'],
+            sites[key]=dict(call,file=basename.casefold(),file_enum=file_enums[basename.casefold()],legacy=legacy[0] if legacy else None,predicate_eligible=True)
+            public_index[key]={'file_enum':file_enums[basename.casefold()],'source_line':call['line'],
                 'source_expression_sha256':hashlib.sha256(call['expression'].encode()).hexdigest()}
-    if len(sites)!=78:raise ValueError('db_modal_source_index_count')
-    return {'exceptions':exceptions,'points':points,'sites':sites,'variants':variants,'rendered_files':aliases,
-        'file_enums':{name.casefold():value for name,value in FILE_ENUMS.items()},
+    if len(sites)!=1409 or sum(len(site['expression'].encode()) for site in sites.values())>EXPRESSION_TOTAL_MAX:
+        raise ValueError('db_modal_source_index_count_or_byte_bound')
+    location_sites={}
+    for basename,source in sources.items():
+        masked=lexical_mask(source)
+        for ordinal,match in enumerate(re.finditer(r'\b(?:onlydevassert|onlyfulldebugdevassert|verify)\s*\(',masked),1):
+            key=file_enums[basename.casefold()]+'_location_'+str(ordinal).zfill(3)
+            location_sites[key]={'file':basename.casefold(),'file_enum':file_enums[basename.casefold()],
+                'line':masked.count('\n',0,match.start())+1,'expression':None,'legacy':None,'predicate_eligible':False}
+    if len(location_sites)!=28:raise ValueError('db_modal_unverified_location_site_count')
+    return {'exceptions':exceptions,'points':points,'sites':sites,'location_sites':location_sites,
+        'variants':variants,'rendered_files':aliases,'file_enums':file_enums,'source_pins':source_pins,
+        'external_files':external_files,'catalog':catalog,
+        'location_index_sha256':hashlib.sha256(json.dumps(location_sites,sort_keys=True).encode()).hexdigest(),
         'filename_alias_index_sha256':alias_index,'filename_formatter_sha256':hashlib.sha256(formatter.encode()).hexdigest(),
         'site_index_sha256':hashlib.sha256(json.dumps(public_index,sort_keys=True).encode()).hexdigest()}
 
@@ -276,6 +349,7 @@ def classify_text(text,source_policy):
     lines=text.replace('\r\n','\n').split('\n')
     result={'kind':'unknown','exception_enum':'none','assertion_enum':'none',
         'source_assertion_line_verified':False,'source_file_enum':'unknown','source_site_enum':'unknown',
+        'source_file_verified':False,'source_file_mapping':'unknown',
         'source_call_site_verified':False,'source_expression_match':False,'compiled_expression_variant_match':False,
         'structure_flags':{'file_field_unique':False,'line_field_unique':False,'expression_field_unique':False,'line_shape_known':False}}
     if lines[0].startswith('Exception caught: '):
@@ -291,19 +365,23 @@ def classify_text(text,source_policy):
         for prefix,key in (('File: ','file_field_unique'),('Line: ','line_field_unique'),('Expression: ','expression_field_unique')):
             result['structure_flags'][key]=prefix in fields
         files=source_policy['rendered_files'].get(fields.get('File: '),[])
-        if len(files)==1:result['source_file_enum']=source_policy['file_enums'][files[0]]
+        if len(files)==1:
+            external=files[0] in source_policy['external_files']
+            result.update(source_file_enum=source_policy['file_enums'][files[0]],source_file_verified=not external,
+                source_file_mapping='external_source_unavailable' if external else 'upstream_source')
         elif len(files)>1:result['source_file_enum']='ambiguous_source_file'
         if 'Line: ' in fields:result['structure_flags']['line_shape_known']=bool(re.fullmatch('[0-9]{1,5}',fields['Line: ']))
         if len(files)==1 and 'Line: ' in fields and re.fullmatch('[0-9]{1,5}',fields['Line: ']):
             basename=files[0]
             expr=normalized(fields.get('Expression: ',''));line=int(fields['Line: '])
-            matches=[key for key,site in source_policy['sites'].items() if site['file']==basename and site['line']==line]
+            all_sites=dict(source_policy['sites'],**source_policy['location_sites'])
+            matches=[key for key,site in all_sites.items() if site['file']==basename and site['line']==line]
             if len(matches)>1:result['source_site_enum']='ambiguous_source_site'
             elif len(matches)==1:
-                key=matches[0];site=source_policy['sites'][key]
+                key=matches[0];site=all_sites[key]
                 result.update(source_site_enum=key,source_call_site_verified=True,
-                    source_expression_match=expr==site['expression'],
-                    compiled_expression_variant_match=site['legacy'] in source_policy['variants'] and expr==source_policy['variants'][site['legacy']])
+                    source_expression_match=site['predicate_eligible'] and expr==site['expression'],
+                    compiled_expression_variant_match=site['predicate_eligible'] and site['legacy'] in source_policy['variants'] and expr==source_policy['variants'][site['legacy']])
                 if result['source_expression_match'] or result['compiled_expression_variant_match']:
                     result.update(kind='source_assertion',assertion_enum=site['legacy'] or key,source_assertion_line_verified=True)
     return result
@@ -353,18 +431,29 @@ def admit(value,pid,source_policy):
 
 
 def policy_identity(source_policy):
-    return {'original_source_sha256':dict(SOURCE_PINS,**{MACRO_FORWARD_PATH:MACRO_FORWARD_SHA}),
+    return {'original_source_sha256':dict(source_policy['source_pins'],**{MACRO_FORWARD_PATH:MACRO_FORWARD_SHA}),
         'source_call_site_count':len(source_policy['sites']),'source_call_site_index_sha256':source_policy['site_index_sha256'],
+        'source_verified_file_count':len(source_policy['source_pins']),
+        'external_unverified_file_count':len(source_policy['external_files']),
+        'unverified_location_site_count':len(source_policy['location_sites']),
+        'unverified_location_site_index_sha256':source_policy['location_index_sha256'],
+        'lexical_index_does_not_prove_compiled_runtime_coverage':True,
+        'pe_source_catalog_sha256':CATALOG_SHA,
+        'upstream_filename_literal_catalog_sha256':source_policy['catalog']['upstream_filename_catalog_sha256'],
+        'upstream_maximal_ascii_catalog_sha256':source_policy['catalog']['upstream_maximal_ascii_catalog_sha256'],
         'compiled_variant_count':len(source_policy['variants']),'compiled_variant_pe_sha256':PE_SHA,
         'compiled_variant_archive_sha256':PE_ARCHIVE_SHA,
         'rendered_filename_alias_count':len(source_policy['rendered_files']),
         'rendered_filename_alias_index_sha256':source_policy['filename_alias_index_sha256'],
-        'filename_formatter_block_sha256':source_policy['filename_formatter_sha256']}
+        'filename_formatter_block_sha256':source_policy['filename_formatter_sha256'],
+        'literal_byte_bounds':{'filename':FILENAME_LITERAL_MAX,'filenames_total':FILENAME_TOTAL_MAX,
+            'source_file':SOURCE_FILE_MAX,'source_total':SOURCE_TOTAL_MAX,
+            'expression':EXPRESSION_LITERAL_MAX,'expressions_total':EXPRESSION_TOTAL_MAX}}
 
 
 def helper_sources(root):
     helper_inputs={}
-    for relative in ('deployment/db_modal_diagnostic.py','deployment/windows/db_modal_observer.cs'):
+    for relative in ('deployment/db_modal_diagnostic.py','deployment/windows/db_modal_observer.cs','deployment/db_modal_pe_source_catalog.json'):
         name='native-android/engine/auth-interop/'+relative
         raw=subprocess.check_output(['git','-C',str(root),'show','HEAD:'+name],stderr=subprocess.DEVNULL,timeout=30)
         path=root/name

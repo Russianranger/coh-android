@@ -273,6 +273,62 @@ cleanup. The rendered-file policy has not run against actual services yet. No
 root cause, registration, selected play or Db/Map handoff is qualified by this
 preparation; binaries, profiles and readiness limits remain unchanged.
 
+Run `39075900631` at `b3fbacf90626e29542e878313c2812eba1e1375b` passed
+the three new Linux controls and 19 Windows methods (the portable C oracle was
+skipped on Windows), then reached the same readiness deadline. Artifact
+`12117415396` is 7,474 bytes, SHA256
+`1a98ef8b4788bf2c5a6e2948d17fb9387dd94f8fc0cacaec87ef74dedd4c3a3d`.
+The assertion still had unique fields and an unknown rendered filename despite
+the eight admitted aliases. Its complete observations and cleanup checks passed.
+This exact failure and fixed log projections are retained in the history.
+
+A subsequent finite PE audit found 122 source filename candidates mapping
+uniquely to exact upstream files, compared with the eight selected aliases.
+Their maximal printable-run catalogue hash is
+`f08e6e36bcca6bbf73f7123439f3910ac6898fb9cf1a0001e67b34c51cc1269a`.
+Thirteen runs include an adjacent printable `;` byte before the drive path.
+The expanded policy binds exact NUL-terminated filename offsets and RVAs in the
+retained PE's .rdata section; the 122 upstream literals each have at least one
+encoded 32-bit address reference at that start. Their canonical filename
+catalogue hash is
+`94405b1e0931a6497b17715ede61fdc908aaa2c2f7cd48db47aead972165c4a3`.
+No observed field is stripped, case folded, hashed or copied into these indexes.
+
+`db_modal_pe_source_catalog.json` pins all 122 source hashes, literal offsets,
+RVAs and reference counts. Four further exact PE paths identify unavailable
+Crypto++ source files. They receive fixed opaque external enums and always
+remain source/predicate unverified. All 126 original rendered aliases are
+distinct and within the model domain. The manifest joins the classifier and
+reader in the exact HEAD input guard. Runtime results contain only fixed file
+and site enums plus independent verification flags; neither paths nor source
+lines are copied from a GUI body.
+
+The 122 pinned sources contain 1,409 lexical assert-family invocations. Their
+first arguments pass the existing strict literal/token handling; no two share a
+file/line. This source index does not prove which invocations survived the
+original compile or can execute in this profile. A separate hashed index records
+11 development-only wrapper locations and 17 verify locations. Those 28 can
+establish a source location only: neither source nor compiled-expression match
+can become true there. All four previously admitted PE expression variants
+remain tied to their exact legacy sites. Unknown and ambiguous locations or
+expressions remain unverified.
+
+The finite policy limits each filename to 1,024 bytes and their total to 65,536;
+each source file to 1MiB and their total to 8MiB; each first-argument literal to
+4,096 bytes and their total to 256KiB. The manifest is capped at 128KiB. Exact
+counts, pins, candidate uniqueness, source suffixes, alias collisions and model
+domain checks must pass before any private GUI observation is admitted. The
+actual source total is 3,636,554 bytes. Existing private GUI/process bounds and
+generation checks are unchanged.
+
+The C oracle now covers all 126 exact literals plus 54 branch/boundary inputs
+(180 cases). Fourteen modal methods run locally: thirteen pass and the actual
+Windows API smoke is skipped. They cover all 1,409 source sites, external and
+location-only refusal, literal starts, manifest/input identity, byte caps,
+modified fields and ambiguity. Six affected activation methods also pass. The
+full finite catalogue has not observed a real service yet and supplies no
+assertion cause, repair, registration, play or Db/Map handoff qualification.
+
 ```sh
 python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v
 ```

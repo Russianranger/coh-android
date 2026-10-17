@@ -1,0 +1,690 @@
+{
+  "schema": "coh-fresh-graphical-fixture-capture-v1",
+  "passed": true,
+  "fixture_only": true,
+  "input_scope": "new_disposable_original_graphical_COHLOCAL_THORHERO",
+  "private_user_input_accepted": false,
+  "apk": {
+    "bytes": 590725465,
+    "sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688"
+  },
+  "build_report": {
+    "bytes": 38185,
+    "sha256": "587088a83e4d70e8dab88f8362367bc532b94e86412bf372750ac060728a689f"
+  },
+  "game_archive": {
+    "bytes": 615541018,
+    "sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07"
+  },
+  "donor": {
+    "revision": "204615c6c4a809d6b814c7174b81448cffea3f7a",
+    "tree": "21f5387dfbcdf2992e529b6e084341fd427998da",
+    "source_files": 211,
+    "source_inventory_sha256": "8109f4a558d98b68b5f1b4bbac24a5beb549d589784064bcb6d2e0adc1d75434"
+  },
+  "ocr_overlay_sha256": "c9216504faf04bb4989f6affee11020a17d421cc8cda05490bb672500d6b7e6d",
+  "orchestration_revision": "fd213266f1b6665acece877dabb7dab6663e647c",
+  "orchestration_source": {
+    "native-android/engine/scenecatalog-server/capture_graphical_fixture.py": {
+      "bytes": 36267,
+      "sha256": "558e9b462064cfd49170c5e5e42d71ddeba85f708ffc2ed65d57a9d3be86a3ef"
+    },
+    "native-android/engine/scenecatalog-server/graphical_fixture_backup_guest.py": {
+      "bytes": 17920,
+      "sha256": "554dac2fb50f7f95e508895ba6c45c86365d325856c80c3d97caa7dd52b8e89c"
+    }
+  },
+  "repository": "Russianranger/coh-android",
+  "workflow_run_id": 39074781817,
+  "workflow_run_attempt": 1,
+  "runner_environment": "github-hosted",
+  "proot_files": {
+    "proot": {
+      "bytes": 287720,
+      "sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb"
+    },
+    "proot-loader": {
+      "bytes": 17672,
+      "sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5"
+    },
+    "proot-build-receipt.json": {
+      "bytes": 3048,
+      "sha256": "6b853fd6732aa57ce4d8d096152f7818f47afdc91b6926fb6492b1ab2da987b5"
+    }
+  },
+  "session_id": "b9aba36105faa8ffa11ada175333e0c5",
+  "apk_rebuilt": false,
+  "client_or_server_recompiled": false,
+  "synthetic_character_rows": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_execution_validated": false,
+  "public_fixture_dump_retention_permitted": true,
+  "capture_stage": "COMPLETE",
+  "failure_stage": "NONE",
+  "regular_publication_preflight_verified": true,
+  "backup_observation": {
+    "gate_entered": true,
+    "committed_save_gate_verified": true,
+    "request_written": true,
+    "helper_started": true,
+    "helper_reaped": true,
+    "helper_exit_zero": true,
+    "helper_status_valid": true,
+    "helper_rollback_complete": true,
+    "host_regular_dump_verified": true,
+    "backup_receipt_verified": true,
+    "helper_stage": "COMPLETE",
+    "helper_failure_code": "NONE"
+  },
+  "observer_observation": {
+    "available": true,
+    "failure_present": false,
+    "failure_code": "NONE",
+    "terminal_event_observed": true,
+    "post_login_frames": 3,
+    "connected_frames": 3,
+    "post_save_frames": 3,
+    "script_completed": true,
+    "finish_requested": true
+  },
+  "publication_preflight_observation": {
+    "started": true,
+    "process_reaped": true,
+    "group_absent": true,
+    "cleanup_complete": true,
+    "host_regular_verified": true
+  },
+  "failure": null,
+  "host_cleanup": {
+    "stop_requested": false,
+    "grace_seconds": 180,
+    "forced_quit": false,
+    "forced_kill": false,
+    "errors": [],
+    "process_reaped": true
+  },
+  "owned_process_group_absent": true,
+  "elapsed_seconds": 1818.059,
+  "inputs_unchanged": true,
+  "full_backup": {
+    "schema": "coh-graphical-fixture-full-backup-v1",
+    "passed": true,
+    "request": {
+      "schema": "coh-graphical-fixture-backup-request-v1",
+      "session_id": "b9aba36105faa8ffa11ada175333e0c5",
+      "client_pid": 656,
+      "character_id": 1,
+      "account": "COHLOCAL",
+      "character_name": "THORHERO"
+    },
+    "database": "coh_local_android",
+    "fixture_account": "COHLOCAL",
+    "fixture_character": "THORHERO",
+    "fixture_identity": {
+      "accounts": 1,
+      "account": "COHLOCAL",
+      "auth_id": 1353310574,
+      "characters": 1,
+      "character_id": 1,
+      "character_name": "THORHERO",
+      "character_account": "COHLOCAL",
+      "character_auth_id": 1353310574,
+      "map_id": 1
+    },
+    "full_database_custom_archive": true,
+    "selected_projection_only": false,
+    "dump": {
+      "bytes": 2766533,
+      "sha256": "2a35bd9224e32dbdbfbb5e0d4331afd780745d2a6504a783101bc6742044c4e6"
+    },
+    "server_version_num": 180006,
+    "pg_dump_version": "pg_dump (PostgreSQL) 18.6",
+    "pg_restore_version": "pg_restore (PostgreSQL) 18.6",
+    "archive_list_sha256": "1f88f6057703ce4f6a75fd48a242391317348de84b647e407a3d28ff30289090",
+    "archive_entries": 1053,
+    "table_counts": [
+      {
+        "schema": "coh_meta",
+        "table": "schema_version",
+        "rows": 2
+      },
+      {
+        "schema": "dbo",
+        "table": "accountinventory",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "appearance",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "arenaevents",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "arenaplayers",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "attackerparticipants",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "attribmods",
+        "rows": 4
+      },
+      {
+        "schema": "dbo",
+        "table": "attributes",
+        "rows": 56411
+      },
+      {
+        "schema": "dbo",
+        "table": "autocommands",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "badgemonitor",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "badges",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "badges01",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "badgestatsattributes",
+        "rows": 1771
+      },
+      {
+        "schema": "dbo",
+        "table": "base",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "baseraids",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "boosts",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "certificationhistory",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "chatchannels",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "chattabs",
+        "rows": 4
+      },
+      {
+        "schema": "dbo",
+        "table": "chatwindows",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "combatmonitorstat",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "completedorders",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "contacts",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "costumeparts",
+        "rows": 14
+      },
+      {
+        "schema": "dbo",
+        "table": "defeatrecord",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "defenderparticipants",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "email",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "ents",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "ents2",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "eventhistory",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "famestrings",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "friends",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "gmailclaims",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "gmailpending",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "ignore",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "inspirations",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "invbasedetail",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "invrecipe0",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "invrecipeinvention",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "invsalvage0",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "invstoredsalvage0",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "itemofpowergames",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "itemsofpower",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "keybinds",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "leagues",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "levelingpacts",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "mapdatatokens",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "mapgroups",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "maphistory",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "martytracks",
+        "rows": 2
+      },
+      {
+        "schema": "dbo",
+        "table": "mineddata",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "miningaccumulator",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "newspaperhistory",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "offline",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "participants",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "pendingorders",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "petitions",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "petnames",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "pophelpattributes",
+        "rows": 90
+      },
+      {
+        "schema": "dbo",
+        "table": "powercustomizations",
+        "rows": 345
+      },
+      {
+        "schema": "dbo",
+        "table": "powers",
+        "rows": 7
+      },
+      {
+        "schema": "dbo",
+        "table": "queuedrewardtables",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "recentbadge",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "recipes",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "recipients",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "rewardtokens",
+        "rows": 3
+      },
+      {
+        "schema": "dbo",
+        "table": "rewardtokensactive",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "seating",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "sgraidinfos",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "sgrpbadgestats",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "sgrpcustomranks",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "sgrpmembers",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "sgrppraetbonusids",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "sgrprewardtokens",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "sgtask",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "shardaccounts",
+        "rows": 1
+      },
+      {
+        "schema": "dbo",
+        "table": "souvenirclues",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "specialdetails",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "stats",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "statserver_supergroupstats",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "storyarcs",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "supercostumeparts",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "supergroupallies",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "supergroups",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "taskforcecontacts",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "taskforceparameters",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "taskforces",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "taskforcesouvenirclues",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "taskforcestoryarcs",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "taskforcetasks",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "tasks",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "teamleaderids",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "teamlockstatus",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "teamuprewardtokensactive",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "teamups",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "teamuptask",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "testdatabasetypes",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "tray",
+        "rows": 5
+      },
+      {
+        "schema": "dbo",
+        "table": "visitedmaps",
+        "rows": 0
+      },
+      {
+        "schema": "dbo",
+        "table": "windows",
+        "rows": 8
+      }
+    ],
+    "counts_share_exported_dump_snapshot": true,
+    "all_inventoried_tables_have_archive_data_entries": true,
+    "table_count": 100,
+    "rows": 58676,
+    "roles_or_role_passwords_dumped": false,
+    "source_or_game_data_modified": false
+  },
+  "fixture_wire_slot": 0,
+  "original_guest_cleanup_verified": true,
+  "committed_original_logout_verified": true,
+  "fresh_profile_source_creation_verified": true,
+  "fresh_role_secret_export_scan_passed": true,
+  "retained_creation_evidence": {
+    "original-guest-report.json": {
+      "bytes": 157656,
+      "sha256": "a223bd5965f620026f21726f57adb7f942e06635ff9d595100300d874e7e8ca9"
+    },
+    "backup-request.json": {
+      "bytes": 209,
+      "sha256": "1af702a953743afa6a8f44944cbe47a7a43495ca8d59c0ae9d9fa52af8c4c9bf"
+    },
+    "backup-receipt.json": {
+      "bytes": 9718,
+      "sha256": "4afcb16e59553aff3a97db2f3a53033cab0a52e8b33362d5190316384e061c50"
+    },
+    "external-observer.json": {
+      "bytes": 142785,
+      "sha256": "eb80d0ee671b2fb07b1a33afca7c67ee31bce55d7d1fb2e255de53d5f0288fc5"
+    }
+  },
+  "original_guest_report": {
+    "bytes": 157656,
+    "sha256": "a223bd5965f620026f21726f57adb7f942e06635ff9d595100300d874e7e8ca9"
+  },
+  "source_created_identity": {
+    "account": "COHLOCAL",
+    "character": "THORHERO",
+    "character_id": 1,
+    "auth_id": 1353310574,
+    "map_id": 1,
+    "client_pid": 656
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "coh-preserved-initial-observation-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/initial-observation-20261017/a",
+      "tip": "f7b15f3577a04324ef208f33b34211d1e4a0ba3a",
+      "prerequisite": "f9d1aecdf6e331a54f3eb77b075156446f454d4e"
+    },
+    "B": {
+      "ref": "refs/recovery/initial-observation-20261017/b",
+      "tip": "a0ef67a7a7731c1ea77b67c5d7e66b928617a57c",
+      "prerequisite": "55d1d6efeffc80e0cceb033978057a80649b6ab3"
+    },
+    "C": {
+      "ref": "refs/recovery/initial-observation-20261017/c",
+      "tip": "dde64626e691f228042ab3873ea196b97ba9cd61",
+      "prerequisite": "f0e2e72451deea9d8523684b375780a7cce7ea47"
+    },
+    "D": {
+      "ref": "refs/recovery/initial-observation-20261017/d",
+      "tip": "76a211886308f43ce177e3f7c5c5bf9371acb932",
+      "prerequisite": "a62a75bde353bd940d0d56e33b38e17bc1a38f51"
+    },
+    "E": {
+      "ref": "refs/recovery/initial-observation-20261017/e",
+      "tip": "1312257b7505b78adb85745c8ebcf9d9cabf219a",
+      "prerequisite": "b3fbacf90626e29542e878313c2812eba1e1375b"
+    },
+    "F": {
+      "ref": "refs/recovery/initial-observation-20261017/f",
+      "tip": "bab15b320222b7d0340f054d30de4418682f2c42",
+      "prerequisite": "0227723160e0e5169741592eda45d8e1d0fbedc6"
+    }
+  },
+  "bundle": "worker-initial-observation-history.bundle",
+  "bytes": 575626,
+  "sha256": "65b77ce0772730e797ff4f50df351cceb1d2d76b9f83a06a829ad16a3dbe59a2",
+  "verification": "The bundle contains these 6 refs:\nf7b15f3577a04324ef208f33b34211d1e4a0ba3a refs/recovery/initial-observation-20261017/a\na0ef67a7a7731c1ea77b67c5d7e66b928617a57c refs/recovery/initial-observation-20261017/b\ndde64626e691f228042ab3873ea196b97ba9cd61 refs/recovery/initial-observation-20261017/c\n76a211886308f43ce177e3f7c5c5bf9371acb932 refs/recovery/initial-observation-20261017/d\n1312257b7505b78adb85745c8ebcf9d9cabf219a refs/recovery/initial-observation-20261017/e\nbab15b320222b7d0340f054d30de4418682f2c42 refs/recovery/initial-observation-20261017/f\nThe bundle requires these 56 refs:\nfdde1a0f519a547ac0743fb91aafaa8bfc114a8e \nc64abd947519ea12372ab6a1b712c6fdf103663c \n1a01a468cb102e75d0738089f55a38f125961720 \nea907c176e60a45a816fdc58c71e4752eaac48e5 \n034bd09cbcd371f929d6afd64ae7f70fdcacafa7 \n8ac2a544fc05c0834acf653495a57ad03c9d2cb6 \n169d0b36e95ec1f2e51573f56023088e8643a9a9 \n7f81a58cf34bef336f66fc7c03bee8e14dc507d1 \ncf6cd4e8b0557cdd3468e03a52006560f7012dd5 \nf0003a3f188d2a26eb5c27fe653616e1c018dee1 \n8613045c22d9faa76ba5b6b4635ea5dcce9138c7 \n2ade983336192ccf492ccdc63e4c732859784a0b \nd3da923c5c500895fd831990113339ddf5541694 \na84995b16f5fd197a1e5c9f8b64a0cc6e1068149 \nb3fbacf90626e29542e878313c2812eba1e1375b \nfd213266f1b6665acece877dabb7dab6663e647c \n91cacafa4451cf7504b5dd105f2790ae1c41739b \n81568446e43f56eb1a8aaf0970ab1ede13103f41 \n08e6a96f2af9cb317eecd6629e99db4200df177f \ndd5c3f9a2c30ea20b0a4c714007b1de0b0409546 \n824da3e9666ca5f04f5a0bee02449a8894cca2e4 \n643359f11c7805a25b0a2b3a430d46f13c7c68ae \na4cc6b61443cecf6394b0500028277874be6cf82 \n996af55882219a136405b75628713d9286825df2 \n83b93ed89775feb51793df6ee3fca7ac2f0d1334 \n0227723160e0e5169741592eda45d8e1d0fbedc6 \ncea9f80da2ae7d48d4e18ae01a25e2e9b0028f18 \n939af46895429da329acab166d03612b0c5f16eb \n5367ea2ec83042bfdbb3a0042a8158652a07e33b \n5c20e23cb7c41a39546a9ac1dfc42f3f3ed58309 \n3e220e1eb99041ae40efac713a7a6bf9ba5e46b3 \n7066d39c4b267f1cef3c59050eb2f30194084350 \na62a75bde353bd940d0d56e33b38e17bc1a38f51 \ne3af5aff044335468a7a1427bad6baf1d95454cc \neaf55b4451fd008faa949d30cc739a8c476caf1a \n93bfd2347625ef53c6589a05d63f1f351be58aa7 \n3b7057a54c450e1ab80002561485961662c63caf \n433e62991e0ab4355187bec620cf70b85febb779 \na780aa66b97ce399b5ccee03bd2bc5523d86e751 \nb55a8f24b86c04120537d5c80aa0eaec096b8c76 \na54f1f5e70c2897e08a304a5de6651b4850e9bac \ne12a7e842658010017f2f2c6a728128af342a16e \na5e0c47b92ab22ad3a84b46da55417af8db1b737 \nf0e2e72451deea9d8523684b375780a7cce7ea47 \nf9d1aecdf6e331a54f3eb77b075156446f454d4e \n12a9906bcde8a64cdcfe40d0634422ce555094a7 \nac1f40506a3b7cf625fe5e21b39a4430f3562630 \nf6ee1243756a686002843549093eb8cb0c606be1 \n55d1d6efeffc80e0cceb033978057a80649b6ab3 \ndd50243b2546896f9a3570897cf7e8749e749d0b \n6b0ab48cc582b0967ca642a5a7896e5f2ff749af \n35299ada512a0a02df0c8ce738cf2cc36aa1c999 \n4b50f8da9cace737d8fb5771adbae5ccce87ff37 \nfd9ea649322aff5dd952878b6a00d9d813a50ba7 \n1c8d770284e38154efe30b4964fb9a334a89046a \nd96354411d2f69ec325b1bfe9d0e14999626ba91 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-initial-observation-history.bundle is okay\n",
+  "scope": "Reviewed initial packet observer/private and fresh-only retention, default source body inspection, PE assertion catalog, GPU lease owner, exact independent reviews and prior hosted success evidence. No actual world/player/ACK/Thor acceptance."
+}

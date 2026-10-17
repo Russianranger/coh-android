@@ -1,0 +1,545 @@
+{
+  "schema": "coh-graphical-fixture-full-backup-v1",
+  "passed": true,
+  "request": {
+    "schema": "coh-graphical-fixture-backup-request-v1",
+    "session_id": "b9aba36105faa8ffa11ada175333e0c5",
+    "client_pid": 656,
+    "character_id": 1,
+    "account": "COHLOCAL",
+    "character_name": "THORHERO"
+  },
+  "database": "coh_local_android",
+  "fixture_account": "COHLOCAL",
+  "fixture_character": "THORHERO",
+  "fixture_identity": {
+    "accounts": 1,
+    "account": "COHLOCAL",
+    "auth_id": 1353310574,
+    "characters": 1,
+    "character_id": 1,
+    "character_name": "THORHERO",
+    "character_account": "COHLOCAL",
+    "character_auth_id": 1353310574,
+    "map_id": 1
+  },
+  "full_database_custom_archive": true,
+  "selected_projection_only": false,
+  "dump": {
+    "bytes": 2766533,
+    "sha256": "2a35bd9224e32dbdbfbb5e0d4331afd780745d2a6504a783101bc6742044c4e6"
+  },
+  "server_version_num": 180006,
+  "pg_dump_version": "pg_dump (PostgreSQL) 18.6",
+  "pg_restore_version": "pg_restore (PostgreSQL) 18.6",
+  "archive_list_sha256": "1f88f6057703ce4f6a75fd48a242391317348de84b647e407a3d28ff30289090",
+  "archive_entries": 1053,
+  "table_counts": [
+    {
+      "schema": "coh_meta",
+      "table": "schema_version",
+      "rows": 2
+    },
+    {
+      "schema": "dbo",
+      "table": "accountinventory",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "appearance",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "arenaevents",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "arenaplayers",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "attackerparticipants",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "attribmods",
+      "rows": 4
+    },
+    {
+      "schema": "dbo",
+      "table": "attributes",
+      "rows": 56411
+    },
+    {
+      "schema": "dbo",
+      "table": "autocommands",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "badgemonitor",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "badges",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "badges01",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "badgestatsattributes",
+      "rows": 1771
+    },
+    {
+      "schema": "dbo",
+      "table": "base",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "baseraids",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "boosts",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "certificationhistory",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "chatchannels",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "chattabs",
+      "rows": 4
+    },
+    {
+      "schema": "dbo",
+      "table": "chatwindows",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "combatmonitorstat",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "completedorders",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "contacts",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "costumeparts",
+      "rows": 14
+    },
+    {
+      "schema": "dbo",
+      "table": "defeatrecord",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "defenderparticipants",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "email",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "ents",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "ents2",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "eventhistory",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "famestrings",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "friends",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "gmailclaims",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "gmailpending",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "ignore",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "inspirations",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "invbasedetail",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "invrecipe0",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "invrecipeinvention",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "invsalvage0",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "invstoredsalvage0",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "itemofpowergames",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "itemsofpower",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "keybinds",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "leagues",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "levelingpacts",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "mapdatatokens",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "mapgroups",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "maphistory",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "martytracks",
+      "rows": 2
+    },
+    {
+      "schema": "dbo",
+      "table": "mineddata",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "miningaccumulator",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "newspaperhistory",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "offline",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "participants",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "pendingorders",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "petitions",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "petnames",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "pophelpattributes",
+      "rows": 90
+    },
+    {
+      "schema": "dbo",
+      "table": "powercustomizations",
+      "rows": 345
+    },
+    {
+      "schema": "dbo",
+      "table": "powers",
+      "rows": 7
+    },
+    {
+      "schema": "dbo",
+      "table": "queuedrewardtables",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "recentbadge",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "recipes",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "recipients",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "rewardtokens",
+      "rows": 3
+    },
+    {
+      "schema": "dbo",
+      "table": "rewardtokensactive",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "seating",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "sgraidinfos",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "sgrpbadgestats",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "sgrpcustomranks",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "sgrpmembers",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "sgrppraetbonusids",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "sgrprewardtokens",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "sgtask",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "shardaccounts",
+      "rows": 1
+    },
+    {
+      "schema": "dbo",
+      "table": "souvenirclues",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "specialdetails",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "stats",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "statserver_supergroupstats",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "storyarcs",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "supercostumeparts",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "supergroupallies",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "supergroups",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "taskforcecontacts",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "taskforceparameters",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "taskforces",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "taskforcesouvenirclues",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "taskforcestoryarcs",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "taskforcetasks",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "tasks",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "teamleaderids",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "teamlockstatus",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "teamuprewardtokensactive",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "teamups",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "teamuptask",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "testdatabasetypes",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "tray",
+      "rows": 5
+    },
+    {
+      "schema": "dbo",
+      "table": "visitedmaps",
+      "rows": 0
+    },
+    {
+      "schema": "dbo",
+      "table": "windows",
+      "rows": 8
+    }
+  ],
+  "counts_share_exported_dump_snapshot": true,
+  "all_inventoried_tables_have_archive_data_entries": true,
+  "table_count": 100,
+  "rows": 58676,
+  "roles_or_role_passwords_dumped": false,
+  "source_or_game_data_modified": false
+}

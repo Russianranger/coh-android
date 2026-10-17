@@ -1,0 +1,18 @@
+{
+  "schema": "coh-live-groups-workflow-static-review-v1",
+  "workflow_sha256": "a56da2d4c0740f6c7fa89bcba6bfedb18a2e76f205a48d5fec0433e6a2ee3577",
+  "independent_reviewer": "D",
+  "shell_blocks_parsed": 13,
+  "embedded_python_blocks_compiled": 9,
+  "exact_fixture_artifact": 12117765534,
+  "exact_fixture_zip_sha256": "5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b",
+  "reuse_original_observer": true,
+  "new_receiver_only_build": true,
+  "dynamic_build_pin_consistent": true,
+  "independent_source_and_initial_export_gates": true,
+  "owned_subprocess_groups": true,
+  "fixed_upload_allowlists": true,
+  "actual_runtime_executed": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

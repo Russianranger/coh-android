@@ -1,0 +1,269 @@
+{
+  "actor_or_material_authority": false,
+  "all_source_hashes_match_exact_commit_and_worktree": true,
+  "android_executed": false,
+  "budget_scope": {
+    "automatic_budget_reduction_on_lease_drop_or_retirement": false,
+    "conservative_host_stack_sum_times4_bytes": 36096,
+    "input_storage_and_all_old_new_gpu_cpu_registry_provider_driver_peaks_external": true,
+    "maximum_texture_count": 4096,
+    "metadata_allocation_formula": "sizeof(CohWrGpuLease) + texture_count*sizeof(Item)",
+    "opaque_cpu_and_registry_reservations_are_minima_not_heap_measurement": true,
+    "own_control_reservation_bytes": 65536,
+    "production_provider_handoff_or_parent_global_fit_qualified": false,
+    "rss_or_android_abi_qualified": false
+  },
+  "concrete_blockers": [],
+  "current_generation_admitted": false,
+  "findings": [
+    "Only genuine opaque successful upload owners are adopted after exact full path/generation/SHA/token/operation validation. Sorted IDs, duplicate owners/slots, aliases, budgets and every cancellation refuse without changing caller takes/output.",
+    "Actual registry pin survives Surface/context lifetime changes. Control hold/drop cannot delete or free; explicit retirement stops new holds while old frame leases can finish. GL drain waits zero leases and authenticates the owning context/thread or verified dead context.",
+    "Whole-context gate quarantines other normal work through failed/partial disposition. Error-after-consumption and failed gate end retain responsibility until retry; control collect releases metadata/registry only after complete disposition.",
+    "Separate model operations and actual private EGL pbuffer controls use real uploader opaque owners. Four real uploads/37readbacks, CPU/loader/provider retirement, Surface replacement, context destruction and new-context name preservation are tested without adopting an application context.",
+    "Compiler-derived27project dependency map, C/C++ actualCobject link, five mutations, Pillow all9mips and exact finite-fixture replay are explicit. System GL driver remains unsanitized; declared dispatch library files, not loaded mappings/full driver closure, are hashed."
+  ],
+  "independent_test_or_qualifier_rerun": false,
+  "method": "Read-only production/API/test/EGL/checker/budget/lifetime review and exact committed source/proof comparison; no native qualifier or previous qualifier replay",
+  "owner_receipt_bytes": 16616,
+  "owner_receipt_sha256": "655eb3a81a7d31cba656794782ba1a62ab03f675b92e8f444aa76d03be53e026",
+  "owner_reported_cpp_link_passed": true,
+  "owner_reported_modes": {
+    "asan-egl": {
+      "binary_sha256": "fc6b0bc7d899c9d3e7288aca3f874c7fbc4b391496bfa8c1c3a3cc814ff98b43",
+      "native": {
+        "actor_authority": false,
+        "actual_gles": true,
+        "checks": 602,
+        "cleanup_verified": true,
+        "context_name_reuse_observed": true,
+        "contexts_created": 2,
+        "contexts_destroyed": 2,
+        "destroyed_context_disposals": 1,
+        "generation_fixture_only": true,
+        "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+        "gl_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+        "passed": true,
+        "production_prepare_executed": false,
+        "readbacks": 37,
+        "registry_releases": 4,
+        "registry_retains": 4,
+        "sampler_fixture_only": true,
+        "source_generation_admitted": false,
+        "surfaces_created": 3,
+        "surfaces_destroyed": 3,
+        "uploads": 4,
+        "verified_deletes": 3,
+        "world_authority": false
+      },
+      "readback": {
+        "bytes": 1398096,
+        "chains": 4,
+        "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c",
+        "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523"
+      }
+    },
+    "asan-model": {
+      "binary_sha256": "afe18f4d44eeef126d218ab22cb55ce939edbff1891881638dfed7020cecff17",
+      "native": {
+        "actor_authority": false,
+        "actual_gles": false,
+        "checks": 96,
+        "model_only": true,
+        "passed": true,
+        "source_generation_admitted": false,
+        "world_authority": false
+      },
+      "readback": null
+    },
+    "finite-fixture-egl": {
+      "binary_sha256": "6dcf9619acf1860a7d41a618810c23b81110e92c3cf54d154d45fad31aced103",
+      "native": {
+        "actor_authority": false,
+        "actual_gles": true,
+        "checks": 602,
+        "cleanup_verified": true,
+        "context_name_reuse_observed": true,
+        "contexts_created": 2,
+        "contexts_destroyed": 2,
+        "destroyed_context_disposals": 1,
+        "generation_fixture_only": true,
+        "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+        "gl_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+        "passed": true,
+        "production_prepare_executed": false,
+        "readbacks": 37,
+        "registry_releases": 4,
+        "registry_retains": 4,
+        "sampler_fixture_only": true,
+        "source_generation_admitted": false,
+        "surfaces_created": 3,
+        "surfaces_destroyed": 3,
+        "uploads": 4,
+        "verified_deletes": 3,
+        "world_authority": false
+      },
+      "readback": {
+        "bytes": 1398096,
+        "chains": 4,
+        "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c",
+        "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523"
+      }
+    },
+    "finite-fixture-model": {
+      "binary_sha256": "3e373dfe077b26e6d5c507c985666c633bef8bc896bec3ed72493b5d69ad63fa",
+      "native": {
+        "actor_authority": false,
+        "actual_gles": false,
+        "checks": 96,
+        "model_only": true,
+        "passed": true,
+        "source_generation_admitted": false,
+        "world_authority": false
+      },
+      "readback": null
+    },
+    "release-egl": {
+      "binary_sha256": "57c2d0a362bea2df14cba64494b40b6de527b0e4aafdf96c1afe0efd7e7e16d2",
+      "native": {
+        "actor_authority": false,
+        "actual_gles": true,
+        "checks": 602,
+        "cleanup_verified": true,
+        "context_name_reuse_observed": true,
+        "contexts_created": 2,
+        "contexts_destroyed": 2,
+        "destroyed_context_disposals": 1,
+        "generation_fixture_only": true,
+        "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+        "gl_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+        "passed": true,
+        "production_prepare_executed": false,
+        "readbacks": 37,
+        "registry_releases": 4,
+        "registry_retains": 4,
+        "sampler_fixture_only": true,
+        "source_generation_admitted": false,
+        "surfaces_created": 3,
+        "surfaces_destroyed": 3,
+        "uploads": 4,
+        "verified_deletes": 3,
+        "world_authority": false
+      },
+      "readback": {
+        "bytes": 1398096,
+        "chains": 4,
+        "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c",
+        "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523"
+      }
+    },
+    "release-model": {
+      "binary_sha256": "e9bb33729e500e7c593cc6c058a8e454360d1dc7b8d3eef94fd48c1f172cd855",
+      "native": {
+        "actor_authority": false,
+        "actual_gles": false,
+        "checks": 96,
+        "model_only": true,
+        "passed": true,
+        "source_generation_admitted": false,
+        "world_authority": false
+      },
+      "readback": null
+    },
+    "ubsan-egl": {
+      "binary_sha256": "0163a3be7759ceea0b0bbde929a708f2e4d7c7841bad94a952a3484ce07797ba",
+      "native": {
+        "actor_authority": false,
+        "actual_gles": true,
+        "checks": 602,
+        "cleanup_verified": true,
+        "context_name_reuse_observed": true,
+        "contexts_created": 2,
+        "contexts_destroyed": 2,
+        "destroyed_context_disposals": 1,
+        "generation_fixture_only": true,
+        "gl_renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+        "gl_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+        "passed": true,
+        "production_prepare_executed": false,
+        "readbacks": 37,
+        "registry_releases": 4,
+        "registry_retains": 4,
+        "sampler_fixture_only": true,
+        "source_generation_admitted": false,
+        "surfaces_created": 3,
+        "surfaces_destroyed": 3,
+        "uploads": 4,
+        "verified_deletes": 3,
+        "world_authority": false
+      },
+      "readback": {
+        "bytes": 1398096,
+        "chains": 4,
+        "each_chain_sha256": "93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c",
+        "sha256": "a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523"
+      }
+    },
+    "ubsan-model": {
+      "binary_sha256": "3f02b22fac347e26525a598533856ecf96554790c0b9c4490037b3499a1175d5",
+      "native": {
+        "actor_authority": false,
+        "actual_gles": false,
+        "checks": 96,
+        "model_only": true,
+        "passed": true,
+        "source_generation_admitted": false,
+        "world_authority": false
+      },
+      "readback": null
+    }
+  },
+  "owner_reported_semantic_mutations_refused": [
+    "identity_digest",
+    "retire_while_leased",
+    "registry_pin",
+    "missing_transfer",
+    "cleanup_error_ignored"
+  ],
+  "passed": true,
+  "preserved_owner_receipt": "qualification.json",
+  "production_prepare_executed": false,
+  "requested_fixes_closed": [
+    "Failed registry retain acquires no pin and failed begin_retirement acquires no gate are explicit contracts; failed end retains the acquired gate and failed-begin retry is controlled.",
+    "Every final take-slot span is disjoint from every input path. Bounded uint16 path lengths are read once, then fixed4096 squared span comparisons precede GPU report/ops callbacks.",
+    "Fixed path workspace is included in the increased64KiB control reservation; measured adopt frame8624B and conservative unique-function stack sum times4=36096B remain below it."
+  ],
+  "reviewer": "Worker F",
+  "schema": "coh-independent-gpu-resource-lease-review-v1",
+  "source_commit": "1312257b7505b78adb85745c8ebcf9d9cabf219a",
+  "source_sha256": {
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "native-android/engine/world-render-adapter/GPU_LEASE_OWNER.md": "9bf2706e32d536cd64ed6c3dbc8abc6d6ce02fa1ef4f7c4c21a18b087ca78c40",
+    "native-android/engine/world-render-adapter/check_gpu_lease.py": "52ffbff817fc945b38e2c989129074108732fee71f5c692dad137d7d8f0b4f04",
+    "native-android/engine/world-render-adapter/check_sampler.py": "bd9f3fc4224f7e9bd048e20658933915d1cafd6202a9d7afe32dc28766da6ef4",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_lease.c": "097a49697a915ae2becdccd4ddf859d9dc0ef4644d05b7b381c47e64bcbd65f4",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_lease.h": "5130f196fd98b60c5ef0e6fd799698423349a85842af33d82d5d5169dcb2bba4",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_texture.c": "aff25b77e123fe65801b8065d5b218e7076061f174bb1a8d3f7145a6fc213037",
+    "native-android/engine/world-render-adapter/coh_wr_gpu_texture.h": "a281c7173ebd9a0ed218d385ba74787f2b7df1f08a0ccab008e5fa64c1c3b51a",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.h": "245966845cc87f156b6402f5f56ecc2ab2abf5ef84976efeb3d4c887a5471908",
+    "native-android/engine/world-render-adapter/coh_wr_sampler.c": "a93ccc9b3307338ff716641630cb3d74ea8d81eb71d756b73e474c717d41f844",
+    "native-android/engine/world-render-adapter/coh_wr_sampler.h": "31051b98834cf18c313994c452d85313a27a91419d27cac99babdd177fc8cfdb",
+    "native-android/engine/world-render-adapter/coh_wr_texture.c": "191ebf02dead0fa3657944c18e97d1cd6ad482fc2432d144b58d86f0efbbe844",
+    "native-android/engine/world-render-adapter/coh_wr_texture.h": "069ac1de9a4f6e7128ff779ea44d01894d48769500784c9d97056ce0eaca22d0",
+    "native-android/engine/world-render-adapter/egl-host-header-pins.json": "dd66d5737f403d859dbf1d5a863f4dd3815005facb27e7bee3a911df5bbb07cd",
+    "native-android/engine/world-render-adapter/sampler-authentic-pins.json": "a80887dacabe98deb119ac948e498fbba7d51cf97a1057c96f79e22df0d849bc",
+    "native-android/engine/world-render-adapter/tests/coh_gpu_egl_backend.c": "3cc61cd4b14dbdc6466780a833d3add3235f371b53434896ccca2fd87ff0d240",
+    "native-android/engine/world-render-adapter/tests/coh_gpu_egl_backend.h": "de6116d3a914d807684ead384857ab8d06f8080117bb2bb5a44185f47cb2692f",
+    "native-android/engine/world-render-adapter/tests/test_gpu_lease.c": "ee7ae46f42ed1381772bf4b556dfad418a90117b771304b4e354cc919413e098",
+    "native-android/engine/world-render-adapter/tests/test_gpu_lease_egl.c": "e23831f2f4d0cb69271dafd609b508c3aace2c416c1e73599d9eb904df750892",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+  },
+  "verified_source_entries": 27,
+  "world_authority": false
+}

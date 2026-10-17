@@ -1,0 +1,92 @@
+{
+  "all_recorded_sources_match_exact_commit": true,
+  "android_or_real_server_executed": false,
+  "complete_source_map_sha256": "31d6285f9af851868e5498c880d1801e5b266b30aaf26c0a5f865f2b7cff4fd0",
+  "compressed_receipt_bytes": 83573,
+  "compressed_receipt_sha256": "58a94e876735bea742a7b97860d2533e7abb3976fd803f4410823c101c8483b2",
+  "concrete_blockers": [],
+  "consumed_source_equals_committed_head": true,
+  "current_worktree_source_differences": {},
+  "earlier_worker_checkout_attempt_is_historical_only": true,
+  "final_binary_hashes_and_owner_reported_modes": {
+    "address": {
+      "binary": "coh-capture-local-initial-address",
+      "bytes": 891064,
+      "sha256": "78a23eed681c744d40d83c6bd79fe1fdeb26da89a1e4daad712f792bd506a7f0",
+      "tests": {
+        "ack_permitted": false,
+        "actor_publication": false,
+        "actual_os_sockets": true,
+        "checks": 91,
+        "complete_initial_character": false,
+        "groups_survives_initial_refusal": true,
+        "passed": true,
+        "real_server_capture": false,
+        "scripted_peers_only": true,
+        "world_authority": false
+      }
+    },
+    "release": {
+      "binary": "coh-capture-local-initial",
+      "bytes": 171976,
+      "sha256": "3cc3f33532eca381562aab9501d95319d3ff77a72cfec3bcb7e2bc6b3dc34214",
+      "tests": {
+        "ack_permitted": false,
+        "actor_publication": false,
+        "actual_os_sockets": true,
+        "checks": 91,
+        "complete_initial_character": false,
+        "groups_survives_initial_refusal": true,
+        "passed": true,
+        "real_server_capture": false,
+        "scripted_peers_only": true,
+        "world_authority": false
+      }
+    },
+    "undefined": {
+      "binary": "coh-capture-local-initial-undefined",
+      "bytes": 795840,
+      "sha256": "e490c2646a29340e6a4ed51de136a2372f8bc73ba8779fd7dab5f2cb2eaa8073",
+      "tests": {
+        "ack_permitted": false,
+        "actor_publication": false,
+        "actual_os_sockets": true,
+        "checks": 91,
+        "complete_initial_character": false,
+        "groups_survives_initial_refusal": true,
+        "passed": true,
+        "real_server_capture": false,
+        "scripted_peers_only": true,
+        "world_authority": false
+      }
+    }
+  },
+  "findings": [
+    "Separate CLI includes the unchanged GROUPS tool for static helper reuse and substitutes only new nonshipping Local/Map TUs. Compiler -MM closure includes old included tool/newTUs/headers; all frozen helper/project/original source inputs equal committed HEAD.",
+    "Synchronous observer hashes and streams exact current GROUPS/ALLENTS loans without4MiB copy; private output names are fixed0600/O_EXCL/O_NOFOLLOW and actual source owner/generation/profile fields remain bound.",
+    "Initial packet refusal/write/timeout/command/header failure does not erase accepted GROUPS; failed initial receipts serialize zero payload fields and attempt owned raw-packet removal. A refuses any unexpected failed-packet leftover. Nonzero timeout status and post-owner-close2opened/2closed socket diagnostics are explicit.",
+    "Initial receipt construction matches the strict Aoptional schema: actual schema shortcuts/prefix, same GROUPS message generation and all false authority/forbidden-command flags.",
+    "Final committed-source qualification runs four scripted real-socket modes plus argument refusals,91checks per sanitizer mode. It executes no actual original server/producer or character semantics.",
+    "Tracked workflow dirtiness is recorded independently of consumed source equality; it does not turn the final source-bound receipt into the earlier dirty-worker historical attempt."
+  ],
+  "global_parent_budget_or_rss_fit_claimed": false,
+  "independent_test_or_qualifier_rerun": false,
+  "method": "Read-only exact CLI/build-checker/source/API/receipt review; batch Git source-byte verification and actual final binary hashes/ELF headers; no test or qualifier replay",
+  "passed": true,
+  "preserved_build_receipt": "build.json.gz",
+  "reviewer": "Worker F",
+  "schema": "coh-independent-coordinator-initial-tool-review-v1",
+  "source_checkout_state_at_start": " M .github/workflows/native-original-db-startup.yml\n",
+  "source_commit": "431cea8bd0fd1ec93ccfbe4433570b91c1d43f66",
+  "source_dirty_at_start": true,
+  "source_generation_or_actor_or_world_authority": false,
+  "source_tree": "e1c3cfb78c427b35a28dcfc469ee2d17cd9d22f9",
+  "tool_source_sha256": {
+    "native-android/combined-client/tools/capture_local_initial.c": "641543c830ca8a146d95c19847c1884a9ce5ad83c70163d3e249c5e98a0c439c",
+    "native-android/combined-client/tools/capture_local_scene.c": "f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec",
+    "native-android/combined-client/tools/check_local_initial_capture.py": "77943092faae7615ca12a8716ce9b047c82b5c79a6f5efdebc96d6fe4189bcec"
+  },
+  "uncompressed_receipt_bytes": 234882,
+  "uncompressed_receipt_sha256": "73624c7f17830c62ece141d86d1b5da7af563180396828e32d8f1fa1297593e4",
+  "verified_exact_commit_source_entries": 1738
+}

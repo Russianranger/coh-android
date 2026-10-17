@@ -1,0 +1,314 @@
+{
+  "passed": true,
+  "source_revision": "b3fbacf90626e29542e878313c2812eba1e1375b",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/coh_wr_tex_seed.c": "6be53111f06c6439c88eb7e2cf2a067a89aaa04ebdcbc02929137cecdefd2b92",
+    "native-android/engine/world-render-adapter/coh_wr_tex_seed.h": "92fae4db0fc76d7ed6d151a017e59dfb64b28a3d5fe1eaa498e8e6b5052852a5",
+    "native-android/engine/world-render-adapter/tex_seed_oracle.py": "91cb20b8e2da8ade3dc8a3d8174d58fbf8d1fb77d36429fb50e558f8cfa82d45",
+    "native-android/engine/world-render-adapter/check_tex_seed.py": "36ec54d4992c64d2da43ca1e61488708dcd57fca85983a527d60762fb4a1f604",
+    "native-android/engine/world-render-adapter/tests/test_tex_seed.c": "1eadbec707f6fec56b9e109a94c24a746e54958d2116bdbf6b224fbfe53f3c26",
+    "native-android/engine/world-render-adapter/tests/test_tex_seed_cpp.cpp": "30f2a3d528a6827ea845db79fa9c47916cedafed386477aee41995f35c9fb281",
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.c": "86245d945f660f46ed1c3ed86493f43c8d0f0e19785a84c07bfc33f6cb084194",
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.h": "be1e6392b45c26b2925faa3ec0de15fc3d272811af30a4fc92aeb81c7baf700b",
+    "native-android/engine/world-render-adapter/coh_wr_tex_basic_lookup.c": "a464e728d5cc546f01c01ca7b7bce59864419ef65357662d07315f791444b138",
+    "native-android/engine/world-render-adapter/coh_wr_tex_basic_lookup.h": "f46771e5012f3809550fd97b9f75f45421f8b91fc852b3449a58cf2cb19e7dc4",
+    "native-android/engine/world-render-adapter/coh_wr_texopt.c": "c8232e976061fa8715f185cd5507886fc2b3755679b0f8408b35bdad87ecdb5b",
+    "native-android/engine/world-render-adapter/coh_wr_texopt.h": "0cc9b48deea230a5ff028c93289d6e458302ee43e8dbb1f5666744e8d706291e",
+    "native-android/engine/world-render-adapter/coh_wr_texopt_types_internal.h": "10cbd1b1ea3a42dfed7c7920aac0b1e78d01a536b5b6ee8b71cea2fcd5f6ce77",
+    "native-android/engine/world-render-adapter/coh_wr_texopt_tables_internal.inc": "49f71abc0405ca7aaf20164656ebd367ebc5a97bb157817203cceac2cc7a64a1",
+    "native-android/engine/world-render-adapter/coh_wr_texopt_post_source.inc": "3dbf81969ee634384dc71ec7fec7e2f1bc837ce19dc1f380f73a24de606f1488",
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.c": "5bf9528bbf1fb78e400e904b87af7d3fbdb0ea5263944e9d3d564f5f4cef363c",
+    "native-android/engine/world-render-adapter/coh_wr_surface_states.h": "20ff6b2c6478fb44197433de4e34c9685c3e01af6a400a87986b610411d191c8",
+    "native-android/engine/world-render-adapter/coh_wr_surface_core.inc": "e20a99603a20e6f58c2c57c1fb8954c93583368eb2d22a35dad9653787a48fee",
+    "native-android/engine/world-render-adapter/check_texname.py": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+    "native-android/engine/world-render-adapter/texname_guard_candidate.py": "d8abe6a434c075d91e4bde7c26e9fed3eb51d0f02c120148a02939d4802badd3",
+    "upstream/ouroboros/Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+    "upstream/ouroboros/Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+    "upstream/ouroboros/Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+    "upstream/ouroboros/Common/seq/tricks.h": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+    "upstream/ouroboros/Game/src/render/texEnums.h": "6e96499b08adcfdf2a788286da086aead8e17d2b05ae8c31ee50752b7de778de",
+    "assets/character-avatar-defaults-manifest.json": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+    "assets/character-avatar-defaults.zip": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+    "assets/reference-inputs-manifest.json": "cf96742b1b65306356df69d065fcfb5bda0986ec8700d47ae1422452a1c0db7f",
+    "native-android/engine/world-render-adapter/qualification/texture-seed-eligibility-20261017/required-default-inputs.json": "21b428e876e537fff374fbd6a17baaed5ad0457f04b7ae2833fc62c9ad8bf787",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+  },
+  "input_sha256": {
+    "cache": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+    "states": "9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac",
+    "avatar": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+  },
+  "authentic_avatar_texture_members": {
+    "data/texture_library/players/avatar/male/chest/leather/chest_leather_03.texture": {
+      "bytes": 175127,
+      "sha256": "7e2bb5c59107528291ff3831e0cff9525e610ea72ef3b16de749cad7a78de7f4"
+    },
+    "data/texture_library/players/avatar/male/chest/leather/chest_leather_03_mask.texture": {
+      "bytes": 175132,
+      "sha256": "8ee6bb5d97e1b4cc5b01b5c3c26ba19092102fb7c63d1014f13db3ce30e49524"
+    },
+    "data/texture_library/players/avatar/male/chest/tights/chest_tights.texture": {
+      "bytes": 175122,
+      "sha256": "ef660db028f4bf7138ad43701190ef8ece8937cc57d8573efcab262a96070cb4"
+    },
+    "data/texture_library/players/avatar/male/hips/leather/hips_leather_03.texture": {
+      "bytes": 87765,
+      "sha256": "fad0d3d62bfbf6082628ecebc69efd6c70dc4eb660391f433a32c5811adbc6e8"
+    },
+    "data/texture_library/players/avatar/male/hips/leather/hips_leather_03_mask.texture": {
+      "bytes": 44010,
+      "sha256": "de99856a5548e19fb498f0de0869e2ed5f84c623e72beb099536d8f42cbbfc18"
+    },
+    "data/texture_library/players/avatar/male/hips/tights/hips_tights.texture": {
+      "bytes": 87760,
+      "sha256": "cf440577f6fd90e9ea287dab99ff0dc48e438d86203d45bf8844be5aa8cb950f"
+    },
+    "data/texture_library/players/avatar/super_shared/boots/boot_leather_03.texture": {
+      "bytes": 87766,
+      "sha256": "b6a43115b54051ca52e410c9e7126254fce3da8cb2d8e6fd9003cf1c9c741862"
+    },
+    "data/texture_library/players/avatar/super_shared/boots/boot_leather_03_mask.texture": {
+      "bytes": 87771,
+      "sha256": "e5bf27a331ca60864a5a71c877c534e5b85a1ba5c0a35e972d344d8e11bb87a2"
+    },
+    "data/texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture": {
+      "bytes": 87765,
+      "sha256": "7916525785ffb2bd8c49fcf594031a1b98b114fbefe848772f35e082b3d1e5e6"
+    },
+    "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03.texture": {
+      "bytes": 87768,
+      "sha256": "5faea4292552aef8b8d3a41ac9f09663ae21ad05c1dc88a8e6fddaa8b9a44fd7"
+    },
+    "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03_mask.texture": {
+      "bytes": 87773,
+      "sha256": "b8df4147c6d62a006fcd0e5020da7de0b3b44c4eb16b414ed4d6bf92a06c261b"
+    },
+    "data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture": {
+      "bytes": 87767,
+      "sha256": "f202b49d35c92c943d1a9852985e68d6d762f49cec87cdbd7170c3ba8cd88363"
+    },
+    "data/texture_library/players/avatar/super_shared/hair/hair_style_01a.texture": {
+      "bytes": 22228,
+      "sha256": "b6321e1a282ec99986e21e83af49167d67b5a831fdff0ccbd2627d1ec8f0989d"
+    },
+    "data/texture_library/players/avatar/super_shared/hair/hair_style_01b.texture": {
+      "bytes": 11236,
+      "sha256": "fd7786d3379b51ad11c5aeb40f23bc9db60472f7ca2bfeb4fda61ef279d8bba6"
+    },
+    "data/texture_library/v_players/avatar/super_shared/patterns/face/face_v_asym_eyes_01.texture": {
+      "bytes": 22164,
+      "sha256": "650274105f4b980b762053f49ad9434dd67baef0012d4ec42f96ea1786e66cf9"
+    }
+  },
+  "original_function_sha256_lf": {
+    "IsValidTexName": "3068d16807e6bee292b99258e3ab69168281dd0809a1b75dc4ef9156efea347e",
+    "trickFindAllTextures": "b9533f167756cd0e471a2ccbbc747f0712d853767d7f669a5388ff5040d75287",
+    "trickCreateTextures": "db9ae30aeca328f17c18f3e770af28f053c5d9c0c77a392674f96d7d03bff165",
+    "texFixName": "940ef057ef069227a30687807b77623708162f3dc441f6a1b7f66235a363beed",
+    "texFind": "100a856a566809ab48abe85d4ec4d19d6711e203692a67548ca11800658ea1f0",
+    "guarded_texFixName": "8711127fbaf7bb2390c53fb65f43937bbffcd051d6fb6e4334943ef1e662fe1c",
+    "TexFlags": "02cf75824a2b3a999e6a02ab7aa65aaa7030698ab69662f8d08f823ee8553998"
+  },
+  "generated_original_sha256": "b06c27988ecbae00daf25f54d77f7c1be7855d8e1eeeb100c65fa1fc34cd555b",
+  "generated_authentic_headers_fixture_sha256": "6bb03708a0e8ca6d4b2b14babc4636d0fe58e64a4759fa2ddd99aad0ff8737c3",
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 211909,
+      "original_comparisons": 32166,
+      "actual_cache_rows": 14715,
+      "actual_record_source_refusals": 1,
+      "authentic_header_bodies": 15,
+      "actual_no_base1": 14434,
+      "actual_name_prefix_skip": 3252,
+      "actual_create_candidates": 0,
+      "actual_unknown_refusals": 11002,
+      "actual_unsafe_refusals": 740,
+      "actual_policy_column_order": [
+        "no_base1",
+        "name_prefix_skip",
+        "create_candidate",
+        "subset_unknown_refusal",
+        "unsafe_key_refusal"
+      ],
+      "actual_strict_policy": [
+        7217,
+        1626,
+        0,
+        5131,
+        740
+      ],
+      "actual_guarded_policy": [
+        7217,
+        1626,
+        0,
+        5871,
+        0
+      ],
+      "controlled_create_candidates": 2252,
+      "controlled_unknown_refusals": 452,
+      "controlled_unsafe_refusals": 1,
+      "result_bytes": 2816,
+      "current_CLIENT_generation": false,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 211909,
+      "original_comparisons": 32166,
+      "actual_cache_rows": 14715,
+      "actual_record_source_refusals": 1,
+      "authentic_header_bodies": 15,
+      "actual_no_base1": 14434,
+      "actual_name_prefix_skip": 3252,
+      "actual_create_candidates": 0,
+      "actual_unknown_refusals": 11002,
+      "actual_unsafe_refusals": 740,
+      "actual_policy_column_order": [
+        "no_base1",
+        "name_prefix_skip",
+        "create_candidate",
+        "subset_unknown_refusal",
+        "unsafe_key_refusal"
+      ],
+      "actual_strict_policy": [
+        7217,
+        1626,
+        0,
+        5131,
+        740
+      ],
+      "actual_guarded_policy": [
+        7217,
+        1626,
+        0,
+        5871,
+        0
+      ],
+      "controlled_create_candidates": 2252,
+      "controlled_unknown_refusals": 452,
+      "controlled_unsafe_refusals": 1,
+      "result_bytes": 2816,
+      "current_CLIENT_generation": false,
+      "material_authority": false,
+      "world_authority": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 211909,
+      "original_comparisons": 32166,
+      "actual_cache_rows": 14715,
+      "actual_record_source_refusals": 1,
+      "authentic_header_bodies": 15,
+      "actual_no_base1": 14434,
+      "actual_name_prefix_skip": 3252,
+      "actual_create_candidates": 0,
+      "actual_unknown_refusals": 11002,
+      "actual_unsafe_refusals": 740,
+      "actual_policy_column_order": [
+        "no_base1",
+        "name_prefix_skip",
+        "create_candidate",
+        "subset_unknown_refusal",
+        "unsafe_key_refusal"
+      ],
+      "actual_strict_policy": [
+        7217,
+        1626,
+        0,
+        5131,
+        740
+      ],
+      "actual_guarded_policy": [
+        7217,
+        1626,
+        0,
+        5871,
+        0
+      ],
+      "controlled_create_candidates": 2252,
+      "controlled_unknown_refusals": 452,
+      "controlled_unsafe_refusals": 1,
+      "result_bytes": 2816,
+      "current_CLIENT_generation": false,
+      "material_authority": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "2f02e17cd162855036036a649bb60e4430ad19fdb709121ceb9cec6c85341ab3",
+    "address": "9dea7d591d5f20973956dfe96e8854f26dba40bd0302cf7b9619f94d0a42f723",
+    "undefined": "d40d80f8c12dd34b68f227d7732c9bb650e89a5baa160b6ceb71f5b79eeb92fc"
+  },
+  "standalone_public_exports": {
+    "release": {
+      "symbols": [
+        "coh_wr_tex_seed"
+      ],
+      "actual_C_object_sha256": "c7e046f23d9666daecc221113c6c8642b76f095583d4584b76d2b92997419fc5"
+    },
+    "address": {
+      "symbols": [
+        "coh_wr_tex_seed"
+      ],
+      "actual_C_object_sha256": "ab9fc5bd0f6dda4e4167ccc7ba3344817d1ad755753540f1890e1b15b75fbc97"
+    },
+    "undefined": {
+      "symbols": [
+        "coh_wr_tex_seed"
+      ],
+      "actual_C_object_sha256": "bcb0b802362f74dd704154dc2ccf803fa33ec97661a71a9aa2bf04dc6ca52d3f"
+    }
+  },
+  "actual_C_object_CPP_call_link": {
+    "passed": true,
+    "executed": true,
+    "source_sha256": "30f2a3d528a6827ea845db79fa9c47916cedafed386477aee41995f35c9fb281",
+    "actual_C_object_sha256": "c7e046f23d9666daecc221113c6c8642b76f095583d4584b76d2b92997419fc5",
+    "binary_sha256": "66af13ce6b0ea9e146ef26831cf9ee678e244d8fd9ad1ef3d959ca13ebf406ed"
+  },
+  "host_release_stack_usage": [
+    "/home/runner/work/coh-android/coh-android/native-android/engine/world-render-adapter/coh_wr_tex_seed.c:9:12:equal\t8\tstatic",
+    "/home/runner/work/coh-android/coh-android/native-android/engine/world-render-adapter/coh_wr_tex_seed.c:53:11:coh_wr_tex_seed\t4048\tstatic"
+  ],
+  "production_mutations_refused": [
+    "exact_equal_instead_of_prefix",
+    "omit_enabled_fallback",
+    "unknown_means_present",
+    "swappable_is_required",
+    "wrong_source_slot",
+    "aggregate_limit_bypass"
+  ],
+  "unchanged_original_IsValidTexName_trickFindAllTextures_trickCreateTextures_executed": true,
+  "original_Basic_lookup_and_explicit_short_key_repair": {
+    "original_function_sha256_lf": "940ef057ef069227a30687807b77623708162f3dc441f6a1b7f66235a363beed",
+    "candidate_function_sha256_lf": "8711127fbaf7bb2390c53fb65f43937bbffcd051d6fb6e4334943ef1e662fe1c",
+    "isolated_correction_only": true,
+    "unchanged_original_for_repaired_cases": false,
+    "diff": "--- original/texFixName\n+++ candidate/texFixName\n@@ -1,5 +1,6 @@\n static int texFixName(const char *s,char *res, int size)\n {\n+char *const res_start = res;\n int        type = 0;\n \n     if (s != res)\n@@ -24,7 +25,7 @@\n         res[-4] = 0;\n     }\n     //fix for files that were incorrectly named .texture instead of dds.\n-    else if(res[-8] == '.')\n+    else if(res - res_start >= 8 && res[-8] == '.')\n     {\n         if (strcmp(res-7,\"texture\")==0) {\n             // Even though we don't load .tga files anymore, this is still used (through texFind)\n"
+  },
+  "original_release_debug_poison_assertions_disabled": true,
+  "native_actual_postprocessed_cache_record_inputs": true,
+  "original_gate_compared_over_native_record_fields_not_independent_postprocess_requalification": true,
+  "controlled_TexOpt_views_are_not_actual_cache_rows": true,
+  "subset_unknown_stops_before_original_miss_branch": true,
+  "actual_retired_cache_owner_loader_provider_and_Surface": true,
+  "seed_heap_allocations": 0,
+  "new_persistent_owner_bytes": 0,
+  "historical_fixture_input_label": 17,
+  "current_CLIENT_generation": false,
+  "original_table_absence_proven": false,
+  "delayed_load_or_LWC_state_established": false,
+  "default_or_TexBind_created": false,
+  "current_material_selection": false,
+  "world_authority": false,
+  "android_execution": false,
+  "old_qualifiers_rerun": false
+}

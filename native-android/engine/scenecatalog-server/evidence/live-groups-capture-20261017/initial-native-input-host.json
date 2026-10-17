@@ -1,0 +1,22 @@
+{
+  "compiler_dependency_scans_executed": true,
+  "fixed_driver_ast_and_transitive_source_bytes_verified": true,
+  "legacy_result_shape_unchanged": true,
+  "native_capture_executed": false,
+  "new_test_methods": 8,
+  "passed": true,
+  "postgres_executed": false,
+  "related_source_admission_and_fresh_retention_methods": 21,
+  "schema": "coh-initial-native-input-host-controls-v1",
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "GROUPS_CAPTURE.md": "768f8301ee4ae08fa016fec9b4d0abdc9a2af6cc5a04f45daa6fa2ad35fe5b0b",
+    "capture_groups_transaction.py": "c20baa5bf0932ff339cd8cd0ddd9922902242eeec5baedbc72bc74d1a224220a",
+    "test_initial_native_input.py": "0f6b400c98229735ca600ab676c31dd3136ce513fc1d26ca6572029136992eed"
+  },
+  "strict_initial_build_flags_verified": true,
+  "synthetic_elf_not_executed": true,
+  "two_fixed_build_roles_verified": true,
+  "wine_executed": false,
+  "world_authority": false
+}

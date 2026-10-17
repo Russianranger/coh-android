@@ -1,0 +1,1136 @@
+{
+  "schema": "coh-retained-db-pe-source-catalog-v1",
+  "pe_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+  "upstream_maximal_ascii_catalog_sha256": "f08e6e36bcca6bbf73f7123439f3910ac6898fb9cf1a0001e67b34c51cc1269a",
+  "upstream_filename_catalog_sha256": "94405b1e0931a6497b17715ede61fdc908aaa2c2f7cd48db47aead972165c4a3",
+  "upstream_files": [
+    {
+      "enum": "pe_source_file_001",
+      "pe_filename_sha256": "76b5ab773896e46528405b17a2810d81adf65f92da1ce1c0174b6fe24be7b664",
+      "pe_filename_offset": 1242664,
+      "pe_filename_rva": 1245736,
+      "pointer_reference_count": 2,
+      "source_path": "Common/ClientLogin/clientcommLogin.c",
+      "source_sha256": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea"
+    },
+    {
+      "enum": "pe_source_file_002",
+      "pe_filename_sha256": "83ecc9b3957832cf8439c1dddb90a1d5fb7c5bb45920f40efdfd15e4a7ee26d4",
+      "pe_filename_offset": 1239704,
+      "pe_filename_rva": 1242776,
+      "pointer_reference_count": 13,
+      "source_path": "Common/account/AccountCatalog.c",
+      "source_sha256": "7db49f91412ed60af05988e5997b04689d309f3f4948ad8fc003aff249f2e0bc"
+    },
+    {
+      "enum": "pe_source_file_003",
+      "pe_filename_sha256": "6e82e5a8e3784d93ecdac38e8a384dd71c620c3dfe4d6638d53cfedd77a6367e",
+      "pe_filename_offset": 1240088,
+      "pe_filename_rva": 1243160,
+      "pointer_reference_count": 1,
+      "source_path": "Common/account/AccountData.c",
+      "source_sha256": "038259178820f9a78040d39b4d8810933e31a67a798676fb37a0ca658682c391"
+    },
+    {
+      "enum": "pe_source_file_004",
+      "pe_filename_sha256": "9e43a838b34df86224b5f185f5bf40e3e75a98bcc6eb031439f25ae88ddbe7a7",
+      "pe_filename_offset": 1240376,
+      "pe_filename_rva": 1243448,
+      "pointer_reference_count": 3,
+      "source_path": "Common/account/AccountTypes.cpp",
+      "source_sha256": "626d7e1264a39bce5d649c38a835227f85d3fcd33011ad0d959d189027ed1d13"
+    },
+    {
+      "enum": "pe_source_file_005",
+      "pe_filename_sha256": "9d4844bfc185288dd723675c47114eb4d438547303e0445fc8f3b7a76c8a49d6",
+      "pe_filename_offset": 1241176,
+      "pe_filename_rva": 1244248,
+      "pointer_reference_count": 13,
+      "source_path": "Common/auction/Xact.c",
+      "source_sha256": "a40df6f1abb9af85bdcc3e45182834cfa31f01ac6fe35cc04fe3daf0e680a55c"
+    },
+    {
+      "enum": "pe_source_file_006",
+      "pe_filename_sha256": "faada004189b11a33f9ddb85528edf3a7a517c4ed2890326580ab7acd2a38f2b",
+      "pe_filename_offset": 1241336,
+      "pe_filename_rva": 1244408,
+      "pointer_reference_count": 1,
+      "source_path": "Common/auth/auth.c",
+      "source_sha256": "589ca2a4353e5725cb1aad90c2f24e9dc852e6bbdad034e5932de17635bffa49"
+    },
+    {
+      "enum": "pe_source_file_007",
+      "pe_filename_sha256": "89a088a1b66e41c6b76c2cf30dbc142b339aefcc67752656c6087634539a2af7",
+      "pe_filename_offset": 1242864,
+      "pe_filename_rva": 1245936,
+      "pointer_reference_count": 20,
+      "source_path": "Common/container/container_util.c",
+      "source_sha256": "94d4701282d3b63b205d3b793633f25dcb60d612a6b1336d4d2c6626613c087a"
+    },
+    {
+      "enum": "pe_source_file_008",
+      "pe_filename_sha256": "ed89f0a199fc4bf277b8d238237dde990032d89c2e828b4a0b5fabb70fafe784",
+      "pe_filename_offset": 1243504,
+      "pe_filename_rva": 1246576,
+      "pointer_reference_count": 6,
+      "source_path": "Common/dbserver/servercfg.c",
+      "source_sha256": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32"
+    },
+    {
+      "enum": "pe_source_file_009",
+      "pe_filename_sha256": "79f0aaeae3af174fa80811bc18cfde8e45efe29b5ad6ec75e7ef1aa563510ec6",
+      "pe_filename_offset": 1249072,
+      "pe_filename_rva": 1252144,
+      "pointer_reference_count": 89,
+      "source_path": "Common/mission/missionserver_meta.c",
+      "source_sha256": "c460f5c3d8854aaa6deee1043843b075a00732725938823afeb757c1e5cd3af6"
+    },
+    {
+      "enum": "pe_source_file_010",
+      "pe_filename_sha256": "84a87f68f6a91f0961e406c9cfd5a7e724c860e6cc93b619a20c8b68ceb75672",
+      "pe_filename_offset": 1250336,
+      "pe_filename_rva": 1253408,
+      "pointer_reference_count": 17,
+      "source_path": "Common/sql/sqlconn.c",
+      "source_sha256": "e6572cea38d08bc51fd9a8af485dad98c1defbcb0b44be57f335be16b8a693d6"
+    },
+    {
+      "enum": "pe_source_file_011",
+      "pe_filename_sha256": "ffcbc191f082efa21a37811af04c96fd85e3b13e6bb3c93f4927efc913e84086",
+      "pe_filename_offset": 1251848,
+      "pe_filename_rva": 1254920,
+      "pointer_reference_count": 3,
+      "source_path": "Common/sql/sqltask.cpp",
+      "source_sha256": "d826eb394b9a98bd09b430c84ee84edec705c8cdffc96d0c78cff171df96ca02"
+    },
+    {
+      "enum": "pe_source_file_012",
+      "pe_filename_sha256": "d59323f0eafc035238b17e00470001ce6363f39a662cf24b92a7bba90536c20c",
+      "pe_filename_offset": 1254088,
+      "pe_filename_rva": 1257160,
+      "pointer_reference_count": 279,
+      "source_path": "DBServer/src/accountservercomm.c",
+      "source_sha256": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae"
+    },
+    {
+      "enum": "pe_source_file_013",
+      "pe_filename_sha256": "52019124b74b50a3aac6f20214f09f49b706ba086f4b054107d9b609cf54a0f0",
+      "pe_filename_offset": 1256184,
+      "pe_filename_rva": 1259256,
+      "pointer_reference_count": 3,
+      "source_path": "DBServer/src/arenacomm.c",
+      "source_sha256": "df6b5d9e69f676a04d42c2124cbc10e2c26072466451dd81e5aa02db959c8710"
+    },
+    {
+      "enum": "pe_source_file_014",
+      "pe_filename_sha256": "736d7a5d3ec773df1497257260dadd3277dd5a5e915cf39f9f32b1d02124f2e4",
+      "pe_filename_offset": 1256336,
+      "pe_filename_rva": 1259408,
+      "pointer_reference_count": 57,
+      "source_path": "DBServer/src/auctionservercomm.c",
+      "source_sha256": "f85ceceaaf9042ac8b44cdf92ab9c9d2d49fdc335c556ff3bb63757ff6d1cf4e"
+    },
+    {
+      "enum": "pe_source_file_015",
+      "pe_filename_sha256": "0ffc062b0d4f8078a050693cd403e8ca6dded4bc763700fdf9f132383d1e42e3",
+      "pe_filename_offset": 1258304,
+      "pe_filename_rva": 1261376,
+      "pointer_reference_count": 25,
+      "source_path": "DBServer/src/backup.c",
+      "source_sha256": "738a113bbe8e27eccc825e822fca431c6a190bde6b74fcc6d461dac67b3845d3"
+    },
+    {
+      "enum": "pe_source_file_016",
+      "pe_filename_sha256": "0d1459439aea149d85ebefdb673908e678033e0039fe820dc943071800842b6d",
+      "pe_filename_offset": 1259536,
+      "pe_filename_rva": 1262608,
+      "pointer_reference_count": 12,
+      "source_path": "DBServer/src/chatrelay.c",
+      "source_sha256": "49e68826d235889e9947ce199c786480c8ad7aad0b8decb15a962283fa53341a"
+    },
+    {
+      "enum": "pe_source_file_017",
+      "pe_filename_sha256": "84b8f2b6428af0be09b84241335c188b49e4da506130ec4ddb39789c89fb02b2",
+      "pe_filename_offset": 1259904,
+      "pe_filename_rva": 1262976,
+      "pointer_reference_count": 178,
+      "source_path": "DBServer/src/clientcomm.c",
+      "source_sha256": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c"
+    },
+    {
+      "enum": "pe_source_file_018",
+      "pe_filename_sha256": "ea57e1b2426a79dc048a3800ee7f8da245bc4fd1294c1e405b7573c64198a5c1",
+      "pe_filename_offset": 1264512,
+      "pe_filename_rva": 1267584,
+      "pointer_reference_count": 43,
+      "source_path": "DBServer/src/container.c",
+      "source_sha256": "f89743d6e5a09d04595345b14b0db0172d297346210f7cfd61fecb23710448ce"
+    },
+    {
+      "enum": "pe_source_file_019",
+      "pe_filename_sha256": "a9b4d2b9ed406cdc9c33c057cbed8711df5a5d103b9906d6ec624ef737d5dec1",
+      "pe_filename_offset": 1266264,
+      "pe_filename_rva": 1269336,
+      "pointer_reference_count": 2,
+      "source_path": "DBServer/src/container_diff.c",
+      "source_sha256": "46eb91cc7c07244090ad4e5c582aabfce9702b8b48387e8b4d248c9b5153b650"
+    },
+    {
+      "enum": "pe_source_file_020",
+      "pe_filename_sha256": "e4f499328901c61d4b658d4340daaeb106c88e367627d324e78353f39aa1e182",
+      "pe_filename_offset": 1266760,
+      "pe_filename_rva": 1269832,
+      "pointer_reference_count": 5,
+      "source_path": "DBServer/src/container_merge.c",
+      "source_sha256": "45849f2b9c2ff92db6aadb6e6dcbcfe412b55f57971647e49dbec4ff486e307e"
+    },
+    {
+      "enum": "pe_source_file_021",
+      "pe_filename_sha256": "4ce35cb3bc5956b136bdb2d9db49966e9e78803b25cfa73965b2ef3efbe19bb5",
+      "pe_filename_offset": 1267008,
+      "pe_filename_rva": 1270080,
+      "pointer_reference_count": 30,
+      "source_path": "DBServer/src/container_sql.c",
+      "source_sha256": "fdb1c9d3540c0cbb0fb64b219f02fc1a852ce3c1c54255227237788f8bad078f"
+    },
+    {
+      "enum": "pe_source_file_022",
+      "pe_filename_sha256": "db63c326f19998494540f21eba12ac561f7f3a860c53e01406e89dcb8dec06c8",
+      "pe_filename_offset": 1272648,
+      "pe_filename_rva": 1275720,
+      "pointer_reference_count": 34,
+      "source_path": "DBServer/src/container_tplt.c",
+      "source_sha256": "ba512b8d8e453823bc2b438e9a3416c6ce6a983addca6d7cf2d30ae8a376c398"
+    },
+    {
+      "enum": "pe_source_file_023",
+      "pe_filename_sha256": "5f14adff32c49c2921d7f362e0383f6cc795ba26106dd337e9d7f12e2db3bca0",
+      "pe_filename_offset": 1276560,
+      "pe_filename_rva": 1279632,
+      "pointer_reference_count": 4,
+      "source_path": "DBServer/src/container_tplt_utils.c",
+      "source_sha256": "fe5d56103a2ab3de7da1ca39a0528578dc4f0bb15caa8b8d3f9bfcced3b3faf1"
+    },
+    {
+      "enum": "pe_source_file_024",
+      "pe_filename_sha256": "56a39d5de91a66a5ee64dadd3aba7a6802f986fb32acf47aab8125d092017d15",
+      "pe_filename_offset": 1285480,
+      "pe_filename_rva": 1288552,
+      "pointer_reference_count": 6,
+      "source_path": "DBServer/src/dbEventHistory.c",
+      "source_sha256": "764bd5d19c460afa574b3ce71992831514c3a4c5a03ed44beca74db0fb306de9"
+    },
+    {
+      "enum": "pe_source_file_025",
+      "pe_filename_sha256": "06a0f7f021f58fa93fcf287b25fa84871fc9929d707a30a12b3263b0ad797f0e",
+      "pe_filename_offset": 1277216,
+      "pe_filename_rva": 1280288,
+      "pointer_reference_count": 176,
+      "source_path": "DBServer/src/dbdispatch.c",
+      "source_sha256": "30097d295b70c5c0050f4772a1dc984479e323f21fce23e1c11370ce399683d4"
+    },
+    {
+      "enum": "pe_source_file_026",
+      "pe_filename_sha256": "51ffff8a13f201b20b6c84ffc4d85b752a8779fe819a8b4fbc6dbe2b472aba07",
+      "pe_filename_offset": 1286264,
+      "pe_filename_rva": 1289336,
+      "pointer_reference_count": 3,
+      "source_path": "DBServer/src/dbimport.c",
+      "source_sha256": "4d61d7cbf956eab75e6f1bbb6ef1038ee112357c08ac5959ad80b69a5c5ccb2f"
+    },
+    {
+      "enum": "pe_source_file_027",
+      "pe_filename_sha256": "7acaa2c9455307055bb16b2d3e3309dde745434e58c77b552dfdcbef3e71bb36",
+      "pe_filename_offset": 1288448,
+      "pe_filename_rva": 1291520,
+      "pointer_reference_count": 23,
+      "source_path": "DBServer/src/dbinit.c",
+      "source_sha256": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007"
+    },
+    {
+      "enum": "pe_source_file_028",
+      "pe_filename_sha256": "4c217081a465de1da53aad35d99e5ea2d77767879a4992aace7e2b3eaf7a6e96",
+      "pe_filename_offset": 1294920,
+      "pe_filename_rva": 1297992,
+      "pointer_reference_count": 9,
+      "source_path": "DBServer/src/dbmsg.c",
+      "source_sha256": "cbdb161bd8f8309ccd455b0bfb75c10a1b988993b8dba203ed944a81436b4cd4"
+    },
+    {
+      "enum": "pe_source_file_029",
+      "pe_filename_sha256": "e8af6f0adaf277470e18accd223089ff62f5eb3b4e6632b6305efea19a830900",
+      "pe_filename_offset": 1295208,
+      "pe_filename_rva": 1298280,
+      "pointer_reference_count": 7,
+      "source_path": "DBServer/src/dbperf.c",
+      "source_sha256": "3e8959a350c806780ee8f4cd333a01308619c79456e644a0a5b3887a128279d7"
+    },
+    {
+      "enum": "pe_source_file_030",
+      "pe_filename_sha256": "1e9bf56406ebf3df0daf165d12b789a62cf4b31a6d9ab092f3588fb285a8ea5a",
+      "pe_filename_offset": 1295488,
+      "pe_filename_rva": 1298560,
+      "pointer_reference_count": 14,
+      "source_path": "DBServer/src/dbrelay.c",
+      "source_sha256": "80fcbd95248be65028921360cc14d9a65621a1e1be39a0f568aee41bcc6f8490"
+    },
+    {
+      "enum": "pe_source_file_031",
+      "pe_filename_sha256": "aeb093c8fc190f45be819a909bcfedd80cf52a82d42065631eb12ec426e6815d",
+      "pe_filename_offset": 1296176,
+      "pe_filename_rva": 1299248,
+      "pointer_reference_count": 2,
+      "source_path": "DBServer/src/doors.c",
+      "source_sha256": "33a1b72532be1d96631c7ceaf4fd0d213cd05a2cf57353e508d444d0ba8a9510"
+    },
+    {
+      "enum": "pe_source_file_032",
+      "pe_filename_sha256": "504320799ade2cac0195b2082e4655d1a1ae2bed83f8489541ed2cef26e917e1",
+      "pe_filename_offset": 1296272,
+      "pe_filename_rva": 1299344,
+      "pointer_reference_count": 31,
+      "source_path": "DBServer/src/launchercomm.c",
+      "source_sha256": "647746af7350adeb30a8397d592d7e4dc5fb7265604ae2668362f4d77bbc3c0c"
+    },
+    {
+      "enum": "pe_source_file_033",
+      "pe_filename_sha256": "744f11c6dd003f5c96ae58ae7cb627db2d917c20bac7072d42820c9557ebb94a",
+      "pe_filename_offset": 1301160,
+      "pe_filename_rva": 1304232,
+      "pointer_reference_count": 1,
+      "source_path": "DBServer/src/loadBalancing.c",
+      "source_sha256": "271bdf9fb2531ab6cedab187213dab36832c22d88015f0fb4c1c2352763a5ff8"
+    },
+    {
+      "enum": "pe_source_file_034",
+      "pe_filename_sha256": "b8e31688df800e15fa3fc1ff8e22de8815f154cf5640edb65e87e82d3ce72dab",
+      "pe_filename_offset": 1302208,
+      "pe_filename_rva": 1305280,
+      "pointer_reference_count": 10,
+      "source_path": "DBServer/src/logserver.c",
+      "source_sha256": "fee4cd4113af5ef8225575c570a0f0d5d54564dac71dfcf2fa75eac587b3451d"
+    },
+    {
+      "enum": "pe_source_file_035",
+      "pe_filename_sha256": "597c762037cd6040a6f170b53d030512ca9e1bdd0e2db536ed2c760a784e7f4a",
+      "pe_filename_offset": 1302944,
+      "pe_filename_rva": 1306016,
+      "pointer_reference_count": 3,
+      "source_path": "DBServer/src/mapcrashreport.c",
+      "source_sha256": "cb1c8086cf5fe71e40340e9842395de5e89506bcf3b6f00691c22125b340845a"
+    },
+    {
+      "enum": "pe_source_file_036",
+      "pe_filename_sha256": "5dd18936c68cca8b24228cbb337f3548497652f24d7e469f3959d6253d8c6f91",
+      "pe_filename_offset": 1303224,
+      "pe_filename_rva": 1306296,
+      "pointer_reference_count": 26,
+      "source_path": "DBServer/src/mapxfer.c",
+      "source_sha256": "3eb5d5f5a157363bc39dea4545791d01032fedadfa8517cf2a2e1bb7fa54ad59"
+    },
+    {
+      "enum": "pe_source_file_037",
+      "pe_filename_sha256": "2cbc2ea3c97e4a29f430f2740036839c3f67bbdb48e62a89af6b6679f596c0a5",
+      "pe_filename_offset": 1304552,
+      "pe_filename_rva": 1307624,
+      "pointer_reference_count": 184,
+      "source_path": "DBServer/src/missionservercomm.c",
+      "source_sha256": "3ee0ab67577a9b27840982710beb24db0ae9822535fb1e8f1af718739878b17d"
+    },
+    {
+      "enum": "pe_source_file_038",
+      "pe_filename_sha256": "05d74486499b313387ac5b374b8e3c7bf90b76e3226aeeb536337c1d44f48d22",
+      "pe_filename_offset": 1305216,
+      "pe_filename_rva": 1308288,
+      "pointer_reference_count": 17,
+      "source_path": "DBServer/src/namecache.c",
+      "source_sha256": "3b0060f1b757c73a8400216b6d22c6f2fa0264db1d055616071b7b9c51e1ac64"
+    },
+    {
+      "enum": "pe_source_file_039",
+      "pe_filename_sha256": "8586fe6cc394bb6775ce0646d2325a153d25f0e1ab8d2c8a86efe1eb4300d945",
+      "pe_filename_offset": 1305528,
+      "pe_filename_rva": 1308600,
+      "pointer_reference_count": 30,
+      "source_path": "DBServer/src/offline.c",
+      "source_sha256": "94fa7aa18b09ac37293d89080267a7163362f19fc5283e87b1e910e92955b336"
+    },
+    {
+      "enum": "pe_source_file_040",
+      "pe_filename_sha256": "16b441710090eb5c822bbdef39a4774d1ca3e1950080f3f54e22b029a9327bb7",
+      "pe_filename_offset": 1307992,
+      "pe_filename_rva": 1311064,
+      "pointer_reference_count": 51,
+      "source_path": "DBServer/src/queueservercomm.c",
+      "source_sha256": "ff79a4c2117bae3fad090248cdba96780336f1f4fc9acec962f65b4bddf7dbc3"
+    },
+    {
+      "enum": "pe_source_file_041",
+      "pe_filename_sha256": "998dde308e96aa8d11fc12db9fbed0cde4f516280ade1879b31c843af49dc6cd",
+      "pe_filename_offset": 1309000,
+      "pe_filename_rva": 1312072,
+      "pointer_reference_count": 3,
+      "source_path": "DBServer/src/serverAutoStart.c",
+      "source_sha256": "84be1e46daad943e3c06a02da34894f06f9a4168b3dd3745f9701492d71ab2f9"
+    },
+    {
+      "enum": "pe_source_file_042",
+      "pe_filename_sha256": "1f8ab96ac660bf7acf886b9f9db51b039b25d35a5b75c7dd1a2a13f80e3f2d06",
+      "pe_filename_offset": 1309880,
+      "pe_filename_rva": 1312952,
+      "pointer_reference_count": 67,
+      "source_path": "DBServer/src/sql_fifo.c",
+      "source_sha256": "345d23a5f8d92ac3eae7f23dc7282709ee198e62aec05938d8adff1b53e36879"
+    },
+    {
+      "enum": "pe_source_file_043",
+      "pe_filename_sha256": "6b2d4105dd776ddf2a632e43b9c21fc36994716523664ccf385ec1f43bda392c",
+      "pe_filename_offset": 1312208,
+      "pe_filename_rva": 1315280,
+      "pointer_reference_count": 23,
+      "source_path": "DBServer/src/statagg.c",
+      "source_sha256": "70a9042b83c3aa64cfa1d062827a9498137f6667b5bf47e6bf5756e845e03fe0"
+    },
+    {
+      "enum": "pe_source_file_044",
+      "pe_filename_sha256": "af02b942b4a53a3d441865ab397360491505cb9c5620783a970eda40e6a9c090",
+      "pe_filename_offset": 1312528,
+      "pe_filename_rva": 1315600,
+      "pointer_reference_count": 10,
+      "source_path": "DBServer/src/statservercomm.c",
+      "source_sha256": "6c2665f494740ebc1c50c3ece12e248d1ee0942f8e8abd5a3d35a288a6de5b4a"
+    },
+    {
+      "enum": "pe_source_file_045",
+      "pe_filename_sha256": "1631d2989a5c34137e6e8447fb4f01a61f14e673097e63bfea8f4af78f18ab5b",
+      "pe_filename_offset": 1313688,
+      "pe_filename_rva": 1316760,
+      "pointer_reference_count": 9,
+      "source_path": "DBServer/src/status.c",
+      "source_sha256": "2856f764f8da7daeb695cc08fe35d6008957d9b1d1108d807585214faadd5174"
+    },
+    {
+      "enum": "pe_source_file_046",
+      "pe_filename_sha256": "b9b47b8326a2ea0ccfc7d85afebc8fa26f42d5c9e3ca898e074bc45057242599",
+      "pe_filename_offset": 1314832,
+      "pe_filename_rva": 1317904,
+      "pointer_reference_count": 59,
+      "source_path": "DBServer/src/svrmoncomm.c",
+      "source_sha256": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1"
+    },
+    {
+      "enum": "pe_source_file_047",
+      "pe_filename_sha256": "695f3fee487db1acd5a889dabc521f48923f2bd6592f1caa6dc2808e9d584f25",
+      "pe_filename_offset": 1315528,
+      "pe_filename_rva": 1318600,
+      "pointer_reference_count": 163,
+      "source_path": "DBServer/src/turnstileDb.c",
+      "source_sha256": "432f4b1f80bc6d17051e048b488b0ac3135a4ac64386388ad2aead82dce8c7cc"
+    },
+    {
+      "enum": "pe_source_file_048",
+      "pe_filename_sha256": "886f22111969c86af3757678497838eeeeb85bc66f71ae12f48fa790ac70758a",
+      "pe_filename_offset": 1316440,
+      "pe_filename_rva": 1319512,
+      "pointer_reference_count": 8,
+      "source_path": "DBServer/src/waitingEntities.c",
+      "source_sha256": "854560d1fdb02d438f567387f46ce6c9278efe70a493cdb1ea759e634aa9ae07"
+    },
+    {
+      "enum": "pe_source_file_049",
+      "pe_filename_sha256": "7248081b928db5e10fe689e58aa2a75e352304dd79e4f8d6344f150b9541ccc8",
+      "pe_filename_offset": 1317184,
+      "pe_filename_rva": 1320256,
+      "pointer_reference_count": 13,
+      "source_path": "DBServer/src/weeklyTFcfg.c",
+      "source_sha256": "209c9ac6584cf6f304a9267f4cf3ad23f9718724619e769cf3f30da9add4212e"
+    },
+    {
+      "enum": "pe_source_file_050",
+      "pe_filename_sha256": "f4693f64144ced5c2ee6390262ea3fc1d50480812ce44b9288cd2402d3bda3f1",
+      "pe_filename_offset": 1253520,
+      "pe_filename_rva": 1256592,
+      "pointer_reference_count": 9,
+      "source_path": "MapServer/src/dbcomm/staticMapInfo.c",
+      "source_sha256": "bf065d7cf8d22b980e808d49e6f9733af483d7d6d893581d7c13175f73af3660"
+    },
+    {
+      "enum": "pe_source_file_051",
+      "pe_filename_sha256": "61fb7181d8e580a77a01f7b6f661f066b0333fa81c0f2e41dca67c5a8aff6e87",
+      "pe_filename_offset": 1251992,
+      "pe_filename_rva": 1255064,
+      "pointer_reference_count": 1,
+      "source_path": "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/semaphoreworkerpool.hpp",
+      "source_sha256": "eb198c0712120799ff9ea47bec5ca1634c3a6526acf824bee4a4380f217ebf81"
+    },
+    {
+      "enum": "pe_source_file_052",
+      "pe_filename_sha256": "99c502891e7c3597ba3db14e6487708ce9d910eae04e9b78b8863422471807fb",
+      "pe_filename_offset": 1364184,
+      "pe_filename_rva": 1367256,
+      "pointer_reference_count": 9,
+      "source_path": "libs/UtilitiesLib/include/utilitieslib/components/earray.h",
+      "source_sha256": "b8a47a959058f936f1a72f8dd66fc0004c0bb07ee9ca685e284c217c99376466"
+    },
+    {
+      "enum": "pe_source_file_053",
+      "pe_filename_sha256": "9c3976088c04efcd2de23290650d2993205abe90aad6717fcd3420b44953a4b6",
+      "pe_filename_offset": 1252144,
+      "pe_filename_rva": 1255216,
+      "pointer_reference_count": 8,
+      "source_path": "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/ring.hpp",
+      "source_sha256": "ddd91659f95b96e4b714f652e0ed7879be9498776a081df6ff287124efb091c7"
+    },
+    {
+      "enum": "pe_source_file_054",
+      "pe_filename_sha256": "def8fbf962ecbe03e585ed7cf9eb482729ad9014a89c8dd57e4ae6a17df44c2a",
+      "pe_filename_offset": 1251400,
+      "pe_filename_rva": 1254472,
+      "pointer_reference_count": 9,
+      "source_path": "libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp",
+      "source_sha256": "70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de"
+    },
+    {
+      "enum": "pe_source_file_055",
+      "pe_filename_sha256": "3fe5da7940560e6f09ebb6de306f7302fadaaae540e0f7370f1b9598125e4df0",
+      "pe_filename_offset": 1390088,
+      "pe_filename_rva": 1393160,
+      "pointer_reference_count": 6,
+      "source_path": "libs/UtilitiesLib/src/UtilsCXX/threadedpoolallocator.cpp",
+      "source_sha256": "bd7b305155d3b133973211814842e8c5260da53c76bef168410a20045a7b4110"
+    },
+    {
+      "enum": "pe_source_file_056",
+      "pe_filename_sha256": "84180e24dcfd98ae3b786f81a436220123feefb3eaf35a668b12d132316748a4",
+      "pe_filename_offset": 1389824,
+      "pe_filename_rva": 1392896,
+      "pointer_reference_count": 5,
+      "source_path": "libs/UtilitiesLib/src/UtilsNew/Array_def.c",
+      "source_sha256": "45d6efb61961847352df26132f22d67ebad89353086a93138af217bc391ed455"
+    },
+    {
+      "enum": "pe_source_file_057",
+      "pe_filename_sha256": "e6e5385f4fdf589f075c65a635d2a9e8a9fe26e0b75d2302f38318b1e79497d5",
+      "pe_filename_offset": 1389976,
+      "pe_filename_rva": 1393048,
+      "pointer_reference_count": 2,
+      "source_path": "libs/UtilitiesLib/src/UtilsNew/Str.c",
+      "source_sha256": "6c7dbe9168d932b8a511a7e384744622bbb86973afe2a0b91183f0572f067a0d"
+    },
+    {
+      "enum": "pe_source_file_058",
+      "pe_filename_sha256": "a8ac6d5fd6c6872f45dd6efbc9b6a63e97951b6bc24a961740490583259fda3f",
+      "pe_filename_offset": 1353392,
+      "pe_filename_rva": 1356464,
+      "pointer_reference_count": 12,
+      "source_path": "libs/UtilitiesLib/src/UtilsNew/meta.c",
+      "source_sha256": "2b20d13c13920e780c7106905539e6ea083e819bf41864f4d8d936fbfeb1a812"
+    },
+    {
+      "enum": "pe_source_file_059",
+      "pe_filename_sha256": "c2ae5a12b30acadef12825d6c8ce06bc2924bf94f9dce7854d24446411fff570",
+      "pe_filename_offset": 1371832,
+      "pe_filename_rva": 1374904,
+      "pointer_reference_count": 10,
+      "source_path": "libs/UtilitiesLib/src/components/ArrayOld.c",
+      "source_sha256": "4138e6f7b79c5300076edacc33f051b211b8ddf211dab129a5d588dc64aaa9c9"
+    },
+    {
+      "enum": "pe_source_file_060",
+      "pe_filename_sha256": "88dedd3f1b79fe1345f3b06b859bb3341f1b41aa2fd6c9ff86acebe31076e0b3",
+      "pe_filename_offset": 1362704,
+      "pe_filename_rva": 1365776,
+      "pointer_reference_count": 56,
+      "source_path": "libs/UtilitiesLib/src/components/BitStream.c",
+      "source_sha256": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+    },
+    {
+      "enum": "pe_source_file_061",
+      "pe_filename_sha256": "79d0884b2453214145884905e0c94483b4389bf086a6038730c0f1f06f9a9d39",
+      "pe_filename_offset": 1333016,
+      "pe_filename_rva": 1336088,
+      "pointer_reference_count": 5,
+      "source_path": "libs/UtilitiesLib/src/components/EString.c",
+      "source_sha256": "b8aed7538139a6d910d9e6f408d13a6eefdb421a6d5fb753884a3e092d739de8"
+    },
+    {
+      "enum": "pe_source_file_062",
+      "pe_filename_sha256": "ba4e1ad27c1a41247ffd5c50850118071b7cb5d9abf08fd4e2380954be7b1536",
+      "pe_filename_offset": 1375296,
+      "pe_filename_rva": 1378368,
+      "pointer_reference_count": 1,
+      "source_path": "libs/UtilitiesLib/src/components/MemAlloc.c",
+      "source_sha256": "f14d4cfe4f1550193703ce9a33e38891b171c086659a04689315e97088f1d075"
+    },
+    {
+      "enum": "pe_source_file_063",
+      "pe_filename_sha256": "a719ad2a95512ba2525ac32ebdc3195ce5f3a6bea85a6cc4164e778c48ebe399",
+      "pe_filename_offset": 1387064,
+      "pe_filename_rva": 1390136,
+      "pointer_reference_count": 4,
+      "source_path": "libs/UtilitiesLib/src/components/MemoryBank.c",
+      "source_sha256": "e573086f23d2acd1f49e7b1f164300f0f4bc121121185e6b3ec51bd6de17625e"
+    },
+    {
+      "enum": "pe_source_file_064",
+      "pe_filename_sha256": "34a18386f436525f5398e2c6c57dc0dc2b5c529448787ca5135667788e401edd",
+      "pe_filename_offset": 1333896,
+      "pe_filename_rva": 1336968,
+      "pointer_reference_count": 28,
+      "source_path": "libs/UtilitiesLib/src/components/MemoryPool.c",
+      "source_sha256": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83"
+    },
+    {
+      "enum": "pe_source_file_065",
+      "pe_filename_sha256": "1c8e43e1d144084aebdd535ec020b73b0339dbf7db1fa00fa82d12fa2c552d8a",
+      "pe_filename_offset": 1368952,
+      "pe_filename_rva": 1372024,
+      "pointer_reference_count": 10,
+      "source_path": "libs/UtilitiesLib/src/components/Queue.c",
+      "source_sha256": "ca8821c09d7cd6d4a4b91f49aebe51c5107dbf1bdfaef85e25cb6ce48d7d01bc"
+    },
+    {
+      "enum": "pe_source_file_066",
+      "pe_filename_sha256": "afb64a573082754333c5eaf839ba9697723e18c30c8b82766a424d8801b3bc63",
+      "pe_filename_offset": 1394208,
+      "pe_filename_rva": 1397280,
+      "pointer_reference_count": 11,
+      "source_path": "libs/UtilitiesLib/src/components/ReferenceList.c",
+      "source_sha256": "37020dd81f0850add4a748d28ec86bc7dbc8b487066d031086b9298f6bcc37c3"
+    },
+    {
+      "enum": "pe_source_file_067",
+      "pe_filename_sha256": "b0f5bfecc2927f36a18eae643550627a98a816109bb6e23ff8daf8dbdc3681ca",
+      "pe_filename_offset": 1379136,
+      "pe_filename_rva": 1382208,
+      "pointer_reference_count": 29,
+      "source_path": "libs/UtilitiesLib/src/components/ReferenceSystem.c",
+      "source_sha256": "203b3817d16b83b012660eade3c81e6f656642d615168f38a18bf78c77b9817a"
+    },
+    {
+      "enum": "pe_source_file_068",
+      "pe_filename_sha256": "10693de99b7d1ef5fa46d4c735ecf6fc6055dbf40e86db8df0afb8902138f877",
+      "pe_filename_offset": 1372048,
+      "pe_filename_rva": 1375120,
+      "pointer_reference_count": 24,
+      "source_path": "libs/UtilitiesLib/src/components/SharedHeap.c",
+      "source_sha256": "e862481325309978ef2ff4dbca92fe67146ee41eb7477f46df6682645c8adec4"
+    },
+    {
+      "enum": "pe_source_file_069",
+      "pe_filename_sha256": "8aefa92bb6e4d6aaff6878f6f383072b435aaa7273bf5501725a319b6dd8fb5e",
+      "pe_filename_offset": 1385312,
+      "pe_filename_rva": 1388384,
+      "pointer_reference_count": 48,
+      "source_path": "libs/UtilitiesLib/src/components/SharedMemory.c",
+      "source_sha256": "0d26a5c8426eec8c26ba54d773ba5b2ef092a15a0062d48f47f72c7c24b94d47"
+    },
+    {
+      "enum": "pe_source_file_070",
+      "pe_filename_sha256": "30b0ec359911aabef290a925187e134b40a6d745112f43beb0db4d4137511ac3",
+      "pe_filename_offset": 1387240,
+      "pe_filename_rva": 1390312,
+      "pointer_reference_count": 6,
+      "source_path": "libs/UtilitiesLib/src/components/SimpleSet.c",
+      "source_sha256": "7c52c571aeaaa36e683bf393b315a3be06d90fa9165e8b0ebe54243f94ebfa36"
+    },
+    {
+      "enum": "pe_source_file_071",
+      "pe_filename_sha256": "8b2cb0b705b7be448dde4c0a08d138ad2494b8bed5b22a70a88959c3bae8d1c4",
+      "pe_filename_offset": 1317456,
+      "pe_filename_rva": 1320528,
+      "pointer_reference_count": 166,
+      "source_path": "libs/UtilitiesLib/src/components/StashTable.c",
+      "source_sha256": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9"
+    },
+    {
+      "enum": "pe_source_file_072",
+      "pe_filename_sha256": "c43f5431422c1e8a5945bd44c088cfba465153c84e5db7639d62a1e42f3f047a",
+      "pe_filename_offset": 1333448,
+      "pe_filename_rva": 1336520,
+      "pointer_reference_count": 3,
+      "source_path": "libs/UtilitiesLib/src/components/StringCache.c",
+      "source_sha256": "ab036da2d248ef2342b94a6b0a30680fa289904ea1d0515e690520fa5c24bad0"
+    },
+    {
+      "enum": "pe_source_file_073",
+      "pe_filename_sha256": "0c4f7b40d4c18e5f17d824feb083821ce9232834a9114451f0fcee6e3fc323ea",
+      "pe_filename_offset": 1366680,
+      "pe_filename_rva": 1369752,
+      "pointer_reference_count": 26,
+      "source_path": "libs/UtilitiesLib/src/components/StringTable.c",
+      "source_sha256": "edb09d6f7172bfc8b92a4452d6da634c944411602a1b78ee669564a021062b39"
+    },
+    {
+      "enum": "pe_source_file_074",
+      "pe_filename_sha256": "16114a916ede04ad570446661f0871ea27692b15fd929bc7cfa66b6e6294efbf",
+      "pe_filename_offset": 1390656,
+      "pe_filename_rva": 1393728,
+      "pointer_reference_count": 34,
+      "source_path": "libs/UtilitiesLib/src/components/datalist.c",
+      "source_sha256": "69b08640cf7c745498a182c72f51fe25fd8080cce2cc3775e9fc12a61cdd8d86"
+    },
+    {
+      "enum": "pe_source_file_075",
+      "pe_filename_sha256": "f2889d3a4b4ab84c9fa9771e55dd7f5cb3d9fd60d96fc5d0f138fb3a9ac62ba1",
+      "pe_filename_offset": 1394048,
+      "pe_filename_rva": 1397120,
+      "pointer_reference_count": 3,
+      "source_path": "libs/UtilitiesLib/src/components/datapool.c",
+      "source_sha256": "c01451963321c874c0948ae2c57a1c9c9aaf59471660e52869d9a0c9cad2c953"
+    },
+    {
+      "enum": "pe_source_file_076",
+      "pe_filename_sha256": "6a151eecccb48b4c47b7d10f0b4625c4f6b68b3686f3a5ff3bb2b9fa9fa5e416",
+      "pe_filename_offset": 1323048,
+      "pe_filename_rva": 1326120,
+      "pointer_reference_count": 27,
+      "source_path": "libs/UtilitiesLib/src/components/earray.c",
+      "source_sha256": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739"
+    },
+    {
+      "enum": "pe_source_file_077",
+      "pe_filename_sha256": "15d0d720ed9c18636e33b236d8fbeeb38b932ca608fcbebf4f2f60f2553d38da",
+      "pe_filename_offset": 1393728,
+      "pe_filename_rva": 1396800,
+      "pointer_reference_count": 2,
+      "source_path": "libs/UtilitiesLib/src/components/sharedmalloc.c",
+      "source_sha256": "b61c149b929d3d686c5178014ed6365df07cf21e92f77e93bad5fa379e1a3b3b"
+    },
+    {
+      "enum": "pe_source_file_078",
+      "pe_filename_sha256": "5e453baf3d73042a0e2af9b95e89c49053e21a84fafca3e6160ecfaa3cb21c92",
+      "pe_filename_offset": 1349904,
+      "pe_filename_rva": 1352976,
+      "pointer_reference_count": 3,
+      "source_path": "libs/UtilitiesLib/src/language/AppLocale.c",
+      "source_sha256": "f0de476ab766a9fd717028609fe981b9ece5f144cc47480421d820ba687c4130"
+    },
+    {
+      "enum": "pe_source_file_079",
+      "pe_filename_sha256": "df47c7f353f7cc209e40db397a728d6eb837829448870dc5d5e5a1a78f5ecb6b",
+      "pe_filename_offset": 1342080,
+      "pe_filename_rva": 1345152,
+      "pointer_reference_count": 47,
+      "source_path": "libs/UtilitiesLib/src/network/net_link.c",
+      "source_sha256": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9"
+    },
+    {
+      "enum": "pe_source_file_080",
+      "pe_filename_sha256": "5b2d126813a3daa848e20fb3412e5a12c127fe3c93fcacfe647c8e7e0d3993d2",
+      "pe_filename_offset": 1342800,
+      "pe_filename_rva": 1345872,
+      "pointer_reference_count": 17,
+      "source_path": "libs/UtilitiesLib/src/network/net_linklist.c",
+      "source_sha256": "3f9328a0fd15c6084b25ebb90d2e5b84c3a7d4211a5d1fa8b79ad73e4c7790ce"
+    },
+    {
+      "enum": "pe_source_file_081",
+      "pe_filename_sha256": "a78480c713777e59a3989042d14c4d2e047046bc70d77c1e4400909dce72e95f",
+      "pe_filename_offset": 1348272,
+      "pe_filename_rva": 1351344,
+      "pointer_reference_count": 28,
+      "source_path": "libs/UtilitiesLib/src/network/net_masterlist.c",
+      "source_sha256": "5b9978793e7442a0c522d869440b3847ea87e561263dcbbd798ccd823c8d2208"
+    },
+    {
+      "enum": "pe_source_file_082",
+      "pe_filename_sha256": "5928aa4bafde09771f69dc904a86edec92fcc7ee04231b11d16ba1db7b328514",
+      "pe_filename_offset": 1389608,
+      "pe_filename_rva": 1392680,
+      "pointer_reference_count": 3,
+      "source_path": "libs/UtilitiesLib/src/network/net_masterlistref.c",
+      "source_sha256": "e318560f558abf39b576e89aa39e9d3047060dff799e2ce1816690663b6eb97c"
+    },
+    {
+      "enum": "pe_source_file_083",
+      "pe_filename_sha256": "96a246323a09f92c1094f5d1582b5f6e0f811090d11e3efae3e3cb43a38da60e",
+      "pe_filename_offset": 1330632,
+      "pe_filename_rva": 1333704,
+      "pointer_reference_count": 22,
+      "source_path": "libs/UtilitiesLib/src/network/net_packet.c",
+      "source_sha256": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039"
+    },
+    {
+      "enum": "pe_source_file_084",
+      "pe_filename_sha256": "954591cf3d62f55ac50a7ce1cdbca2454083d625bb601bf4106b49642fc0e5b6",
+      "pe_filename_offset": 1331568,
+      "pe_filename_rva": 1334640,
+      "pointer_reference_count": 2,
+      "source_path": "libs/UtilitiesLib/src/network/net_packetutil.c",
+      "source_sha256": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+    },
+    {
+      "enum": "pe_source_file_085",
+      "pe_filename_sha256": "dcbbc9965253b13f4e4130e85dd7acf3bc0b23cc5680389fde1a49ab5997176e",
+      "pe_filename_offset": 1331752,
+      "pe_filename_rva": 1334824,
+      "pointer_reference_count": 56,
+      "source_path": "libs/UtilitiesLib/src/network/net_profile.c",
+      "source_sha256": "95c044da8970a34214494320f8d9dbb5ac1a1689308d1319bd64100b09f7190e"
+    },
+    {
+      "enum": "pe_source_file_086",
+      "pe_filename_sha256": "45f669666a045027fd4c5384f2d62b9e51c5a64822d09ea9ebb67fd8b26bfbbd",
+      "pe_filename_offset": 1339512,
+      "pe_filename_rva": 1342584,
+      "pointer_reference_count": 11,
+      "source_path": "libs/UtilitiesLib/src/network/net_socket.c",
+      "source_sha256": "88071c0228cb94ea236ca29795fa903fcdf5348d75858b82ef2c4b99a81f368f"
+    },
+    {
+      "enum": "pe_source_file_087",
+      "pe_filename_sha256": "73c7d08b56c711b700c5249ca293c2107897cae333eb8eecda72e4ff06dedbe4",
+      "pe_filename_offset": 1386904,
+      "pe_filename_rva": 1389976,
+      "pointer_reference_count": 3,
+      "source_path": "libs/UtilitiesLib/src/network/net_version.c",
+      "source_sha256": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212"
+    },
+    {
+      "enum": "pe_source_file_088",
+      "pe_filename_sha256": "3ab2e4fbf969d3e01700869561de9955485ea999a68f4b9c850fa9f61b302b28",
+      "pe_filename_offset": 1369624,
+      "pe_filename_rva": 1372696,
+      "pointer_reference_count": 53,
+      "source_path": "libs/UtilitiesLib/src/network/netio_core.c",
+      "source_sha256": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29"
+    },
+    {
+      "enum": "pe_source_file_089",
+      "pe_filename_sha256": "0dbafa29f842ba8ecb8b41ee1f0c334a3b813a0fd5330fb05da6b38738fc4646",
+      "pe_filename_offset": 1387392,
+      "pe_filename_rva": 1390464,
+      "pointer_reference_count": 32,
+      "source_path": "libs/UtilitiesLib/src/network/netio_receive.c",
+      "source_sha256": "d24464295fefbb90f2a356f3ea3bfa4bbf6b47863a602d6cc63c63c46cdb1047"
+    },
+    {
+      "enum": "pe_source_file_090",
+      "pe_filename_sha256": "32038325bb3b12e0592c750471d691df4eb1c9fa7b0a615369f3495a072abaca",
+      "pe_filename_offset": 1346568,
+      "pe_filename_rva": 1349640,
+      "pointer_reference_count": 33,
+      "source_path": "libs/UtilitiesLib/src/network/netio_send.c",
+      "source_sha256": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    },
+    {
+      "enum": "pe_source_file_091",
+      "pe_filename_sha256": "b07db5c4456e84a0ecc9aff3498894a611eddd34cb87b8d012d7f2228cd6e5fd",
+      "pe_filename_offset": 1335112,
+      "pe_filename_rva": 1338184,
+      "pointer_reference_count": 8,
+      "source_path": "libs/UtilitiesLib/src/network/sock.c",
+      "source_sha256": "e8ba6fccb09af31fe805019bf383a14367057cf72f3a57882bd461b0dd39642b"
+    },
+    {
+      "enum": "pe_source_file_092",
+      "pe_filename_sha256": "ad97c97394671783d08d5c704f06ead8f9931de0ee1c18103d340aeb036051e0",
+      "pe_filename_offset": 1393336,
+      "pe_filename_rva": 1396408,
+      "pointer_reference_count": 9,
+      "source_path": "libs/UtilitiesLib/src/utils/DirMonitor.c",
+      "source_sha256": "774cf2d284b54bb19765d29810a25e3f925d6ee5091cd70002182ee96e0c0e25"
+    },
+    {
+      "enum": "pe_source_file_093",
+      "pe_filename_sha256": "b8676125dc9808381488c24a0b44d1575b377ab5367484dde7ffdc52050be3ea",
+      "pe_filename_offset": 1365528,
+      "pe_filename_rva": 1368600,
+      "pointer_reference_count": 24,
+      "source_path": "libs/UtilitiesLib/src/utils/FolderCache.c",
+      "source_sha256": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+    },
+    {
+      "enum": "pe_source_file_094",
+      "pe_filename_sha256": "5352914044cca9454fa96bf79072a7154467aea4a723bd0f59a45e76e6b1bbb0",
+      "pe_filename_offset": 1393000,
+      "pe_filename_rva": 1396072,
+      "pointer_reference_count": 12,
+      "source_path": "libs/UtilitiesLib/src/utils/FolderCacheNode.c",
+      "source_sha256": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524"
+    },
+    {
+      "enum": "pe_source_file_095",
+      "pe_filename_sha256": "049ce9dfa10c4a40810a1421adc3638b3b4f908c71e43e629da41f248cbfe1dc",
+      "pe_filename_offset": 1364312,
+      "pe_filename_rva": 1367384,
+      "pointer_reference_count": 24,
+      "source_path": "libs/UtilitiesLib/src/utils/MemoryMonitor.c",
+      "source_sha256": "153629caa7f9f498153cbfbb3321212c580fe296ebcae1357c97ddd6a42942ac"
+    },
+    {
+      "enum": "pe_source_file_096",
+      "pe_filename_sha256": "b7d3c1ac7d695e6b1456a3b8a22fa2cf1ceec81033e9ea6e3722c332122f9f1a",
+      "pe_filename_offset": 1388664,
+      "pe_filename_rva": 1391736,
+      "pointer_reference_count": 9,
+      "source_path": "libs/UtilitiesLib/src/utils/PigFileWrapper.c",
+      "source_sha256": "e4347a4694045a559c8db4d97d4dfc60748378d272e4365508ace3e2ef90909e"
+    },
+    {
+      "enum": "pe_source_file_097",
+      "pe_filename_sha256": "7899b8ba0c96ddf1b6c71317eb859240034ff619ebd29c1e7a65625677bc7f47",
+      "pe_filename_offset": 1354584,
+      "pe_filename_rva": 1357656,
+      "pointer_reference_count": 1,
+      "source_path": "libs/UtilitiesLib/src/utils/StringUtil.c",
+      "source_sha256": "d38139653717cdd4d2bf150954f9ee91e504e7fbd9f84d4cb05b581ef0913634"
+    },
+    {
+      "enum": "pe_source_file_098",
+      "pe_filename_sha256": "dde2c68f7a152f30333ad6b478973ab5192c60dc5d37f6f6f9106ce04ad7f0e4",
+      "pe_filename_offset": 1319872,
+      "pe_filename_rva": 1322944,
+      "pointer_reference_count": 16,
+      "source_path": "libs/UtilitiesLib/src/utils/SuperAssert.c",
+      "source_sha256": "9cc084d112dec11a9c2bf0b585869d069c0628594979420c4448bbcb5802fef6"
+    },
+    {
+      "enum": "pe_source_file_099",
+      "pe_filename_sha256": "56c7e6a8abc0f3bf7d96c9986f7bbdfede3b5c755c90c13db6e73758313929db",
+      "pe_filename_offset": 1323448,
+      "pe_filename_rva": 1326520,
+      "pointer_reference_count": 5,
+      "source_path": "libs/UtilitiesLib/src/utils/error.c",
+      "source_sha256": "4d038297f4aa91d5095cdd811a9e07a7f6d028e9db861120ad4c48839bf1e86d"
+    },
+    {
+      "enum": "pe_source_file_100",
+      "pe_filename_sha256": "a67d17fac7b33cea75f3ad359901abf159a6c3efb26966e0f70f3a2f517e162f",
+      "pe_filename_offset": 1344928,
+      "pe_filename_rva": 1348000,
+      "pointer_reference_count": 37,
+      "source_path": "libs/UtilitiesLib/src/utils/file.c",
+      "source_sha256": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1"
+    },
+    {
+      "enum": "pe_source_file_101",
+      "pe_filename_sha256": "d34fc8f54d66997b5f62dc75c298445b47324fc600148b99528fac8dc4dea439",
+      "pe_filename_offset": 1389280,
+      "pe_filename_rva": 1392352,
+      "pointer_reference_count": 7,
+      "source_path": "libs/UtilitiesLib/src/utils/fileWatch.c",
+      "source_sha256": "ac081fe475cd69762b40f1ea0378c8e24884a9974a27afd90c3facd0d1b651c5"
+    },
+    {
+      "enum": "pe_source_file_102",
+      "pe_filename_sha256": "e872443ea9e31d0d3565fdab06d1793ac474968bce62957ba604aeb4f0713c96",
+      "pe_filename_offset": 1373184,
+      "pe_filename_rva": 1376256,
+      "pointer_reference_count": 4,
+      "source_path": "libs/UtilitiesLib/src/utils/fileutil.c",
+      "source_sha256": "6d3991db4e8c1a1b7f55280c7ea69711d765e01009022172a2c90eccd759fdd7"
+    },
+    {
+      "enum": "pe_source_file_103",
+      "pe_filename_sha256": "a48c44793e481aeda2176e814dd7df21560a9af2efa8f3d9e66ef24c0bdca1f0",
+      "pe_filename_offset": 1355216,
+      "pe_filename_rva": 1358288,
+      "pointer_reference_count": 136,
+      "source_path": "libs/UtilitiesLib/src/utils/hoglib.c",
+      "source_sha256": "a9bf5811a4de7ce244a89d06116c73986176356c5c836f9086f89c503386d67f"
+    },
+    {
+      "enum": "pe_source_file_104",
+      "pe_filename_sha256": "7cbf9dacb4cfc40ae7c5b7790221fd27d262c64a7676e9f4f548642db02edd61",
+      "pe_filename_offset": 1390304,
+      "pe_filename_rva": 1393376,
+      "pointer_reference_count": 13,
+      "source_path": "libs/UtilitiesLib/src/utils/hogutil.c",
+      "source_sha256": "7b4bb186539a9011d8dc856c0313b24d32a1cf868eb7611a0440e35cfaf8d517"
+    },
+    {
+      "enum": "pe_source_file_105",
+      "pe_filename_sha256": "6551a0e49750f6e798c65d3271e786ded417ab6c9b5129d55578e5613c7fb81d",
+      "pe_filename_offset": 1340344,
+      "pe_filename_rva": 1343416,
+      "pointer_reference_count": 26,
+      "source_path": "libs/UtilitiesLib/src/utils/log.c",
+      "source_sha256": "96eaa6c03f4a8a1a0a67d5e1bc70338e77a4cf7e2fc9108af13f10fbcac59d54"
+    },
+    {
+      "enum": "pe_source_file_106",
+      "pe_filename_sha256": "44a32b46ef2c2eb2434f91228fc9181b593813fa9c6e831d0a9e09dfbb002068",
+      "pe_filename_offset": 1392408,
+      "pe_filename_rva": 1395480,
+      "pointer_reference_count": 15,
+      "source_path": "libs/UtilitiesLib/src/utils/mutex.c",
+      "source_sha256": "ce5ad331edb7269ba7980a89ed023742e02ad618059348d11ac353086ea5ee7c"
+    },
+    {
+      "enum": "pe_source_file_107",
+      "pe_filename_sha256": "06634ceb1c5dc6f8777ed31cdf61d825d4b3381a8bd46c2bf4364dcb8791f7cc",
+      "pe_filename_offset": 1373768,
+      "pe_filename_rva": 1376840,
+      "pointer_reference_count": 15,
+      "source_path": "libs/UtilitiesLib/src/utils/piglib.c",
+      "source_sha256": "786ea2c5e9b8cf14fe4dfd4880b9cfe85a138afbccd56759e59b30b7663ed528"
+    },
+    {
+      "enum": "pe_source_file_108",
+      "pe_filename_sha256": "97fb561aa454cc6c979b62355f4b25901978ab770947989b603b5774e838800b",
+      "pe_filename_offset": 1332576,
+      "pe_filename_rva": 1335648,
+      "pointer_reference_count": 2,
+      "source_path": "libs/UtilitiesLib/src/utils/quick_sprintf.c",
+      "source_sha256": "3808e4e601395e94c31a67b6acb075364e1d51c0ef3f1d3599ab06ece6d81d7b"
+    },
+    {
+      "enum": "pe_source_file_109",
+      "pe_filename_sha256": "0991a0901690c5ef0908668c94b633c0c8f130004009fb1615fc5061928ef3ba",
+      "pe_filename_offset": 1386656,
+      "pe_filename_rva": 1389728,
+      "pointer_reference_count": 2,
+      "source_path": "libs/UtilitiesLib/src/utils/rand.c",
+      "source_sha256": "9e5311f89a566fa3967cfa85aa78d3662a065667d951f728cc3090a144745737"
+    },
+    {
+      "enum": "pe_source_file_110",
+      "pe_filename_sha256": "7e9418b86d9f5aecebceaa7dd2dbf5a3ac284920a85cf5de0398a7e69c5bcd07",
+      "pe_filename_offset": 1332760,
+      "pe_filename_rva": 1335832,
+      "pointer_reference_count": 3,
+      "source_path": "libs/UtilitiesLib/src/utils/structDefines.c",
+      "source_sha256": "746909e7de5c82baef0e3c8738bc245f94e8d5b1f00af5abc4be63a2517a8320"
+    },
+    {
+      "enum": "pe_source_file_111",
+      "pe_filename_sha256": "4bd33318737b3f8a4cf5241108e56b60b1194ac463a54f53d20848a924c2026b",
+      "pe_filename_offset": 1377288,
+      "pe_filename_rva": 1380360,
+      "pointer_reference_count": 19,
+      "source_path": "libs/UtilitiesLib/src/utils/structInternals.c",
+      "source_sha256": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7"
+    },
+    {
+      "enum": "pe_source_file_112",
+      "pe_filename_sha256": "2b22a512b5af2fe189f1dc08f9ec5c885fa686c3537b59e3109a055a163bb407",
+      "pe_filename_offset": 1369192,
+      "pe_filename_rva": 1372264,
+      "pointer_reference_count": 29,
+      "source_path": "libs/UtilitiesLib/src/utils/structNet.c",
+      "source_sha256": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1"
+    },
+    {
+      "enum": "pe_source_file_113",
+      "pe_filename_sha256": "abeac3adcec56a098a8b20e8add9401b4a0831f3745b2a10e94a22d155b658ae",
+      "pe_filename_offset": 1375440,
+      "pe_filename_rva": 1378512,
+      "pointer_reference_count": 10,
+      "source_path": "libs/UtilitiesLib/src/utils/structTokenizer.c",
+      "source_sha256": "349ee8a2eee6a14ae11ecf94d067d773d5f1d2e19fc958975ca6d655898f6671"
+    },
+    {
+      "enum": "pe_source_file_114",
+      "pe_filename_sha256": "b83c85f876bc62da7248f1d8fa543459edc4fd42712ca61322b105e1f0805411",
+      "pe_filename_offset": 1349264,
+      "pe_filename_rva": 1352336,
+      "pointer_reference_count": 4,
+      "source_path": "libs/UtilitiesLib/src/utils/sysutil.c",
+      "source_sha256": "a8ab6e509ae4243726b359acb0a176d2cbb9e7047ce8d012c348b2ca019cbc97"
+    },
+    {
+      "enum": "pe_source_file_115",
+      "pe_filename_sha256": "84151fdaf7122f4bd20ecc684805995ee0025b497b1e84aeb8c37ff53c5429b7",
+      "pe_filename_offset": 1325752,
+      "pe_filename_rva": 1328824,
+      "pointer_reference_count": 472,
+      "source_path": "libs/UtilitiesLib/src/utils/textparser.c",
+      "source_sha256": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+    },
+    {
+      "enum": "pe_source_file_116",
+      "pe_filename_sha256": "8f9fcc8732695e577fc94446653135f37f95a8271770b23aaece33ab8a89f3bf",
+      "pe_filename_offset": 1350696,
+      "pe_filename_rva": 1353768,
+      "pointer_reference_count": 179,
+      "source_path": "libs/UtilitiesLib/src/utils/textparserUtils.c",
+      "source_sha256": "f100f475c9e896506eb3dc572c5b46d365631066e06a5d7384f0db7dc22e9239"
+    },
+    {
+      "enum": "pe_source_file_117",
+      "pe_filename_sha256": "18c130f86deac326acadab3afd1fe39b73c71f3d62eb643a1add337d66836020",
+      "pe_filename_offset": 1323848,
+      "pe_filename_rva": 1326920,
+      "pointer_reference_count": 29,
+      "source_path": "libs/UtilitiesLib/src/utils/timing.c",
+      "source_sha256": "63101f3279c6df94f04b782563d0c3fa0b74a1a2344758787c0fe3b96389f913"
+    },
+    {
+      "enum": "pe_source_file_118",
+      "pe_filename_sha256": "8d56aa063ffe7243ab918c0a42bdd11f2a1d444afe0f9e6de75a5b26474f02da",
+      "pe_filename_offset": 1367800,
+      "pe_filename_rva": 1370872,
+      "pointer_reference_count": 117,
+      "source_path": "libs/UtilitiesLib/src/utils/tokenstore.c",
+      "source_sha256": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2"
+    },
+    {
+      "enum": "pe_source_file_119",
+      "pe_filename_sha256": "2df9727a13a0f5460c03c8fc8f71cf0a5b611e0a03a4a7a5e41dbb510714b259",
+      "pe_filename_offset": 1332008,
+      "pe_filename_rva": 1335080,
+      "pointer_reference_count": 3,
+      "source_path": "libs/UtilitiesLib/src/utils/utils.c",
+      "source_sha256": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf"
+    },
+    {
+      "enum": "pe_source_file_120",
+      "pe_filename_sha256": "9cf74f079f13846bf20831e18a84fda53ee4bcc1da6001a441db7b0e3f7a21ec",
+      "pe_filename_offset": 1348872,
+      "pe_filename_rva": 1351944,
+      "pointer_reference_count": 6,
+      "source_path": "libs/UtilitiesLib/src/utils/utils_opt.c",
+      "source_sha256": "e86e629114f213a0c13cc101f5690fd47a9f6b48eb21c1f4dc3cff62ab3ec351"
+    },
+    {
+      "enum": "pe_source_file_121",
+      "pe_filename_sha256": "0e32be2face26d44b36f9afabbaaa2f8bacf2782eee7ebcbefc05151bed9c57b",
+      "pe_filename_offset": 1365264,
+      "pe_filename_rva": 1368336,
+      "pointer_reference_count": 1,
+      "source_path": "libs/UtilitiesLib/src/version/AppRegCache.c",
+      "source_sha256": "7ebc07233bec2bdc7ff0003bc3985687f5eac0dfc3fca007d2f335d11c33e637"
+    },
+    {
+      "enum": "pe_source_file_122",
+      "pe_filename_sha256": "3ea4e05f57f26de35943c776c5ded206c7e1252a9e41939c04a6fd45f0054594",
+      "pe_filename_offset": 1346248,
+      "pe_filename_rva": 1349320,
+      "pointer_reference_count": 1,
+      "source_path": "libs/UtilitiesLib/src/version/AppVersion.c",
+      "source_sha256": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23"
+    }
+  ],
+  "external_files": [
+    {
+      "enum": "pe_external_file_001",
+      "pe_filename_sha256": "0938046b89d14d8f5d83d5167bce4afaae4d4e1dbf2ad187008fe5cc07f4f8b0",
+      "pe_filename_offset": 1409272,
+      "pe_filename_rva": 1412344,
+      "pointer_reference_count": 0
+    },
+    {
+      "enum": "pe_external_file_002",
+      "pe_filename_sha256": "6ef089e80b67bdede80b886a5b8ccbe473cbd5ab30f6686a2ab033a2d573ea97",
+      "pe_filename_offset": 1401456,
+      "pe_filename_rva": 1404528,
+      "pointer_reference_count": 0
+    },
+    {
+      "enum": "pe_external_file_003",
+      "pe_filename_sha256": "6a7d1263d4d2088323985b333f6e22fcef309403875b1daa5d388167e0a160a8",
+      "pe_filename_offset": 1401368,
+      "pe_filename_rva": 1404440,
+      "pointer_reference_count": 0
+    },
+    {
+      "enum": "pe_external_file_004",
+      "pe_filename_sha256": "1e4e8b9c0404c7d88b69c4afad114938ca9c6e88a6aabbcf95054cc331922c28",
+      "pe_filename_offset": 1409192,
+      "pe_filename_rva": 1412264,
+      "pointer_reference_count": 0
+    }
+  ]
+}

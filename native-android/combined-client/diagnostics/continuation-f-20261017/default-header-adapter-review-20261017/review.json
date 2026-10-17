@@ -1,0 +1,252 @@
+{
+  "actual_031_staging_executed": false,
+  "android_abi_rss_or_parent_fit_claimed": false,
+  "authentic_default_bodies_inspected": false,
+  "concrete_blockers": [],
+  "current_provider_generation": false,
+  "default_identity": false,
+  "findings": [
+    "This adapter opens only fixed public source bodies and their source-owned staging metadata; it opens no account, SQL, capture or other profile bytes. Cold content owner is recomputed through four exact pinned original read-only helper functions/class, with explicit isolated resolver/typed-error import observers.",
+    "Exact original donor/control/helper/import-receipt identities, package/cache/prerequisite hashes, one derived cold worktree, readonly resolver roots and seven fixed whole-body hashes remain mandatory. No glob or alternate-owner fallback is admitted.",
+    "The complete173011-leaf import proof is reused from its pinned control receipt and is explicitly not independently rehashed here. Case-preserving paths come from the original bounded texture inventory.",
+    "Existing protected parser statuses are recorded per body. Seven-header owner construction is attempted only after all parses succeed; unsupported exact source bodies may still be retained independently. Numeric label1 grants no current provider identity.",
+    "Retention uses exactly seven fixed filenames plus a sanitized commit-last manifest, outside source roots, with exclusive writes, flush/fsync, readonly outputs and final source checks. Existing destinations are preserved. Secondary filesystem failures can leave owned leftovers; all removals are attempted and no success is reported.",
+    "Native temporary owner/loader cleanup succeeds before a zero-exit result is admitted. Python/compiler/archives/runtime storage is diagnostic external memory, not a new96MiB game-parent admission.",
+    "The public fixture contains only four exact original .31 helper source bodies. Controlled tests patch source-body pins and import layout, never represent an authentic default/staging run."
+  ],
+  "material_or_gpu_authority": false,
+  "method": "Read-only source/helper/API/native/parser/test/driver/rollback/privacy scope review and exact final receipt/source hash comparisons",
+  "namespace_complete": false,
+  "owner_reported_controlled_methods": 15,
+  "owner_reported_native_modes": {
+    "address": {
+      "controlled_cases": [
+        {
+          "case": "supported_seven",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": true,
+          "seven_header_owner_created": true
+        },
+        {
+          "case": "unsupported_DX10_retained_as_explicit_status",
+          "protected_parser_statuses": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": false,
+          "seven_header_owner_created": false
+        },
+        {
+          "case": "malformed_body_explicit_status",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": false,
+          "seven_header_owner_created": false
+        },
+        {
+          "case": "supported_DDS_wrong_owner_name_refuses_owner",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": true,
+          "seven_header_owner_created": false
+        }
+      ],
+      "passed": true
+    },
+    "release": {
+      "controlled_cases": [
+        {
+          "case": "supported_seven",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": true,
+          "seven_header_owner_created": true
+        },
+        {
+          "case": "unsupported_DX10_retained_as_explicit_status",
+          "protected_parser_statuses": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": false,
+          "seven_header_owner_created": false
+        },
+        {
+          "case": "malformed_body_explicit_status",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": false,
+          "seven_header_owner_created": false
+        },
+        {
+          "case": "supported_DDS_wrong_owner_name_refuses_owner",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": true,
+          "seven_header_owner_created": false
+        }
+      ],
+      "passed": true
+    },
+    "undefined": {
+      "controlled_cases": [
+        {
+          "case": "supported_seven",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": true,
+          "seven_header_owner_created": true
+        },
+        {
+          "case": "unsupported_DX10_retained_as_explicit_status",
+          "protected_parser_statuses": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": false,
+          "seven_header_owner_created": false
+        },
+        {
+          "case": "malformed_body_explicit_status",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": false,
+          "seven_header_owner_created": false
+        },
+        {
+          "case": "supported_DDS_wrong_owner_name_refuses_owner",
+          "protected_parser_statuses": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "seven_header_owner_attempted": true,
+          "seven_header_owner_created": false
+        }
+      ],
+      "passed": true
+    }
+  },
+  "owner_reported_production_parser_compile_call": {
+    "binary_sha256": "dd9a93dc117dadafdaeb4eb4df0440bea7bf78848e152956c9fb947dd3fc1c1a",
+    "passed": true
+  },
+  "passed": true,
+  "pinned_public_helper_sha256": {
+    "character_server_data_cache.py": "d742fe7348424db7406281c1346b845ec092d2a30725e4005b63de750e041bb7",
+    "client_startup_diagnostic.py": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53",
+    "diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+    "texture_header_index.py": "41adbf003f4ff481b158be09bba8393dd99f615ccb4a036470968596c93459ff"
+  },
+  "qualifier_independently_rerun": false,
+  "receipt_bytes_match_exact_commit": true,
+  "receipt_path": "native-android/engine/world-render-adapter/qualification/default-header-admission-20261017/host.json",
+  "receipt_sha256": "70c2880a646baa2e172ae68936b02de9a2148ba9567511c4e64684ca3f98966e",
+  "receipt_source_revision": "55d1d6efeffc80e0cceb033978057a80649b6ab3",
+  "requested_fixes_closed": [
+    "Every owned unlink and directory removal is attempted independently; rollback/close failures cannot mask the primary exception. Only fixed secondary-code/count notes are exposed.",
+    "Admitted execution-source bytes are rechecked immediately before compile and execute, and native ELF identity is frozen before execution and rechecked afterward.",
+    "Controlled tests cover primary write/flush+close, directory fsync+close, failed unlink with later cleanup, source changes before compile/execute and executable mutation."
+  ],
+  "reviewer": "Worker F",
+  "schema": "coh-independent-fixed-seven-header-adapter-review-v1",
+  "source_commit": "a0ef67a7a7731c1ea77b67c5d7e66b928617a57c",
+  "source_hashes_match_worktree_and_exact_commit": true,
+  "source_sha256": {
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/world-render-adapter/check_default_headers.py": "e706eae9d3bb0305f86e7cd034d655708596b5e06953cf57659859c86ec04270",
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.c": "86245d945f660f46ed1c3ed86493f43c8d0f0e19785a84c07bfc33f6cb084194",
+    "native-android/engine/world-render-adapter/coh_wr_tex_inputs.h": "be1e6392b45c26b2925faa3ec0de15fc3d272811af30a4fc92aeb81c7baf700b",
+    "native-android/engine/world-render-adapter/inspect_default_headers.c": "f0f1a8ee963b6e8e5a26b92d133ff6c51361e720cb02abbc55cf63b4227d3feb",
+    "native-android/engine/world-render-adapter/inspect_default_headers.py": "da5e7a678cb47a02f68fde6ede2dde49105103dd2444cb703eba2e6b2f3e3d91",
+    "native-android/engine/world-render-adapter/qualification/default-header-admission-20261017/pinned-031-read-only-helpers.json.gz": "8a62c21674d020ad73eed9e340a740133b9eb167ee05a0a3a45c0f15ca76e172",
+    "native-android/engine/world-render-adapter/qualification/texture-seed-eligibility-20261017/required-default-inputs.json": "21b428e876e537fff374fbd6a17baaed5ad0457f04b7ae2833fc62c9ad8bf787",
+    "native-android/engine/world-render-adapter/tests/test_default_headers.py": "4d607fbc30ad75da0069df8bea99f5418391d989037ecc81620e0eaf754bd61a",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "tools/android/atlasgame/prepare_server_fx_control_fixture.py": "dba537cde48a595e20c127b1f22fb83525205dbf6b12568ca4d3c762dbb50383",
+    "tools/android/interactive/qualify_full_startup_preflight.py": "8bded2764ef32a8f8e86ee18e49977878a8c97e12f56bda4594dd8cf6e3e8002"
+  },
+  "verified_source_entries": 17,
+  "world_authority": false
+}

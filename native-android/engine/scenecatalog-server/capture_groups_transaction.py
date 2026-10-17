@@ -19,6 +19,32 @@ import stage_groups_capture as stage
 from groups_capture_stages import advance
 ROOT=d.ROOT;HERE=Path(__file__).resolve().parent
 PRIVATE_DUMP_MAX=512*1024**2
+INITIAL_BUILD_SCHEMA='coh-local-initial-capture-build-v1'
+INITIAL_BUILD_FLAGS={'nonshipping_initial_observation':True,'groups_capture_scope':True,
+ 'application_character_acceptance':False,'sends_reqallents':True,'sends_ready':False,
+ 'sends_received_character':False,'sends_full_update_ack':False}
+# Receipt schema selects one source-owned driver/tool pair. A receipt cannot
+# provide a driver path, dependency selector, or executable basename.
+NATIVE_BUILDS={'coh-local-scene-capture-build-v1':('check_local_scene_capture.py','capture_local_scene.c',None),
+ INITIAL_BUILD_SCHEMA:('check_local_initial_capture.py','capture_local_initial.c','coh-capture-local-initial')}
+INITIAL_PACKET_MAX=4*1024**2
+INITIAL_FAILURES=frozenset(('NONE','INPUT','OWNER','PROTOCOL','GROUPS','REQUEST','COMMAND',
+ 'HEADER','OBSERVER','RELEASE','TIMEOUT','CANCELLED','MEMORY'))
+INITIAL_PREFIX=('command','full_update_id','odd_send','abs_time','db_seconds','has_debug_info',
+ 'interp_level','interp_precision','command_count','entity_tail_bit')
+INITIAL_TRUE=('diagnostic_only','groups_capture_verified','local_development_auth',
+ 'selected_dbid_owner_bound','cleanup_verified')
+INITIAL_FALSE=('authserver_authenticated','source_generation_admitted','complete_initial_character',
+ 'actor_publication','ack_permitted','world_authority','sends_ready','sends_received_character',
+ 'sends_full_update_ack')
+INITIAL_OWNER=('connection_id','transport_version','map_generation','selection_generation',
+ 'selected_slot','selected_dbid','map_id','map_link_id','db_session_generation','db_receipt_generation',
+ 'opened_sockets','closed_sockets')
+INITIAL_VALUES=('bytes','payload_bits','post_command_cursor','byte_aligned','ordered','message_id',
+ 'ordered_id','message_generation','accessible_commands')
+INITIAL_KEYS=frozenset(('schema','passed','reqallents_sent','failure_code','status',
+ 'groups_packet_sha256','groups_message_generation','groups_message_id','raw_allents_loan_verified',
+ 'packet_sha256','shortcuts','update_prefix',*INITIAL_TRUE,*INITIAL_FALSE,*INITIAL_OWNER,*INITIAL_VALUES))
 def private_file(path,maximum):
  path=d.regular(path);info=path.stat();d.require(info.st_uid==os.geteuid() and not info.st_mode&0o077 and 0<info.st_size<=maximum,'PRIVATE_INPUT');return path
 def account_input(path):
@@ -28,13 +54,17 @@ def identity(path,maximum):
  size,digest=d.hash_file(path,maximum);return {'bytes':size,'sha256':digest}
 def native_input(binary,receipt_path,receipt_pin,root=ROOT):
  binary=d.regular(binary);d.sha(receipt_pin);d.require(d.hash_file(receipt_path,16*1024**2)[1]==receipt_pin,'NATIVE_RECEIPT_PIN')
- receipt=d.json_object(d.read(receipt_path,16*1024**2));d.require(receipt.get('schema')=='coh-local-scene-capture-build-v1' and receipt.get('passed') is True and receipt.get('source_hashes_authoritative_for_build_bytes') is True,'NATIVE_SCOPE')
+ receipt=d.json_object(d.read(receipt_path,16*1024**2));build_schema=receipt.get('schema');d.require(type(build_schema) is str and build_schema in NATIVE_BUILDS and receipt.get('passed') is True and receipt.get('source_hashes_authoritative_for_build_bytes') is True,'NATIVE_SCOPE')
+ driver_name,tool_name,basename=NATIVE_BUILDS[build_schema]
+ if build_schema==INITIAL_BUILD_SCHEMA:
+  d.require(all(receipt.get(name) is value for name,value in INITIAL_BUILD_FLAGS.items()),'NATIVE_INITIAL_SCOPE')
+  d.require(binary.name==basename,'NATIVE_INITIAL_BASENAME')
  mode=receipt.get('modes',{}).get('release',{});d.require(mode.get('built') is True and mode.get('binary')==binary.name and mode.get('sha256')==d.hash_file(binary,4*1024**2)[1],'NATIVE_BINARY')
  with binary.open('rb') as stream:header=stream.read(20)
  d.require(len(header)==20 and header[:6]==b'\x7fELF\x02\x01' and struct.unpack_from('<H',header,18)[0]==62,'NATIVE_ELF')
- driver=root/'native-android/combined-client/tools/check_local_scene_capture.py';tree=ast.parse(driver.read_bytes());assignments=[node.value for node in tree.body if isinstance(node,ast.Assign) and any(isinstance(target,ast.Name) and target.id=='RELATIVE' for target in node.targets)]
+ driver=root/'native-android/combined-client/tools'/driver_name;tree=ast.parse(driver.read_bytes());assignments=[node.value for node in tree.body if isinstance(node,ast.Assign) and any(isinstance(target,ast.Name) and target.id=='RELATIVE' for target in node.targets)]
  d.require(len(assignments)==1,'NATIVE_SOURCE_LIST');relative=ast.literal_eval(assignments[0]);d.require(type(relative) is list and all(type(value) is str for value in relative),'NATIVE_SOURCE_LIST')
- sources=[root/'native-android'/value for value in relative]+[driver.with_name('capture_local_scene.c')]
+ sources=[root/'native-android'/value for value in relative]+[driver.with_name(tool_name)]
  dependencies={driver,*sources}
  for source in sources:
   result=subprocess.run(['cc','-std=c11','-MM','-I'+str(root/'native-android/include'),str(source)],capture_output=True,text=True,timeout=20)
@@ -45,7 +75,9 @@ def native_input(binary,receipt_path,receipt_pin,root=ROOT):
  hashes=receipt.get('source_sha256',{})
  for path in dependencies:
   name=path.relative_to(root).as_posix();d.require(hashes.get(name)==d.hash_file(path,8*1024**2)[1],'NATIVE_SOURCE_BYTES')
- return {'binary':identity(binary,4*1024**2),'build_receipt_sha256':receipt_pin,'source_revision':receipt.get('source_revision'),'project_dependencies':len(dependencies),'dependencies_sha256':{path.relative_to(root).as_posix():hashes[path.relative_to(root).as_posix()] for path in sorted(dependencies)}}
+ admitted={'binary':identity(binary,4*1024**2),'build_receipt_sha256':receipt_pin,'source_revision':receipt.get('source_revision'),'project_dependencies':len(dependencies),'dependencies_sha256':{path.relative_to(root).as_posix():hashes[path.relative_to(root).as_posix()] for path in sorted(dependencies)}}
+ if build_schema==INITIAL_BUILD_SCHEMA:admitted['build_schema']=build_schema
+ return admitted
 def preflight(args):
  # Missing/invalid private inputs fail before compiler, Wine, PG or server work.
  dump=private_file(args.database_dump,PRIVATE_DUMP_MAX);dump_identity=identity(dump,PRIVATE_DUMP_MAX);d.require(dump_identity['sha256']==d.sha(args.database_dump_sha256),'DATABASE_DUMP_PIN')
@@ -103,6 +135,123 @@ def pair(source,received,membership,wire_slot):
  d.require(native['footer_file_count']==catalog['files'] and native['footer_defs_crc']==snapshot['definitions_crc'] and native['footer_refs_crc']==snapshot['references_crc'] and native['footer_active_roots']==snapshot['active_roots'] and native['groups_consumed_bits']==native['payload_bits'],'COMPLETE_GROUPS_ASSOCIATION')
  d.require(native['opened_sockets']==native['closed_sockets']==2,'NATIVE_CLEANUP')
  return {'schema':'coh-original-native-groups-pair-v1','passed':True,'exact_logical_packet_verified':True,'same_source_selected_dbid_verified':True,'actual_native_owned_receive_verified':True,'source_envelope':inspection['envelope'],'native_packet':actual,'source_catalog':catalog,'source_snapshot':snapshot,'source_run_provenance_verified':False,'cache_equivalence_verified':False,'source_generation_admitted':False,'actor_identity_verified':False,'world_authority':False}
+def initial_status(value):
+ d.require(value in ('NOT_REQUESTED','ABSENT','REFUSED','GROUPS_NOT_PAIRED','CLEANUP_NOT_VERIFIED','RETENTION_FAILED'), 'INITIAL_STATUS')
+ return {'schema':'coh-private-initial-observation-binding-v1','status':value,
+  'private_only':True,'bounded_raw_allents_observed':False,'same_groups_owner_verified':False,
+  'source_generation_admitted':False,'complete_initial_character':False,
+  'actor_publication':False,'ack_permitted':False,'world_authority':False}
+def initial_input(received,paired):
+ # This is typed byte/owner closure after the ordinary GROUPS pair, not a
+ # second packet grammar or acceptance of entities/character tails.
+ d.require(paired.get('passed') is True and paired.get('exact_logical_packet_verified') is True,'INITIAL_GROUPS_PAIR')
+ receipt_path=private_file(received/'initial-observation.json',64*1024)
+ before=identity(receipt_path,64*1024);receipt=d.json_object(d.read(receipt_path,64*1024))
+ d.require(set(receipt)==INITIAL_KEYS and receipt.get('schema')=='coh-private-initial-observation-v1'
+  and type(receipt.get('passed')) is bool,'INITIAL_SCHEMA')
+ for name in INITIAL_TRUE:d.require(receipt.get(name) is True,'INITIAL_SCOPE')
+ for name in INITIAL_FALSE:d.require(receipt.get(name) is False,'INITIAL_SCOPE')
+ d.require(type(receipt.get('raw_allents_loan_verified')) is bool
+  and receipt['raw_allents_loan_verified'] is receipt['passed'],'INITIAL_LOAN_SCOPE')
+ d.uint(receipt['reqallents_sent'],1);d.uint(receipt['status'],7)
+ d.require(type(receipt['failure_code']) is str and receipt['failure_code'] in INITIAL_FAILURES,'INITIAL_FAILURE')
+ groups_path=private_file(received/'capture.json',64*1024);groups_pin=identity(groups_path,64*1024)
+ groups=d.json_object(d.read(groups_path,64*1024))
+ d.require(groups.get('schema')=='coh-local-scene-capture-v1' and groups.get('passed') is True,'INITIAL_GROUPS_RECEIPT')
+ for name in INITIAL_OWNER:
+  d.uint(receipt[name]);d.uint(groups.get(name));d.require(receipt[name]==groups[name],'INITIAL_GROUPS_OWNER')
+ d.require(receipt['opened_sockets']==receipt['closed_sockets']==2,'INITIAL_SOCKET_CLEANUP')
+ d.uint(receipt['groups_message_id']);d.uint(groups.get('message_id'))
+ d.uint(receipt['groups_message_generation'],0xffffffffffffffff,True)
+ d.sha(receipt['groups_packet_sha256'])
+ d.require(receipt['groups_message_id']==groups['message_id']
+  and receipt['groups_packet_sha256']==groups.get('packet_sha256')==paired['native_packet']['sha256']
+  and identity(private_file(received/'groups.bin',16*1024**2),16*1024**2)==paired['native_packet'],'INITIAL_GROUPS_BYTES')
+ for name in INITIAL_VALUES:d.uint(receipt[name],0xffffffffffffffff if name=='message_generation' else 0xffffffff)
+ prefix=receipt['update_prefix'];d.require(type(prefix) is dict and set(prefix)==set(INITIAL_PREFIX),'INITIAL_PREFIX')
+ for value in prefix.values():d.uint(value)
+ shortcuts=receipt['shortcuts'];d.require(type(shortcuts) is list and len(shortcuts)<=256,'INITIAL_SHORTCUTS')
+ ids=set()
+ for row in shortcuts:
+  d.require(type(row) is list and len(row)==2,'INITIAL_SHORTCUTS')
+  d.uint(row[0],65535,True);d.uint(row[1],10);d.require(row[0] not in ids,'INITIAL_SHORTCUTS');ids.add(row[0])
+ packet=None
+ if receipt['passed']:
+  d.require(receipt['failure_code']=='NONE' and receipt['status']==2 and receipt['reqallents_sent']==1,'INITIAL_PASSED_STATUS')
+  d.require(0<receipt['bytes']<=INITIAL_PACKET_MAX and 0<receipt['payload_bits']<=receipt['bytes']*8
+   and receipt['bytes']==(receipt['payload_bits']+7)//8
+   and 0<receipt['post_command_cursor']<receipt['payload_bits']
+   and receipt['byte_aligned'] in (0,1) and receipt['ordered'] in (0,1)
+   and (receipt['byte_aligned']==0 or receipt['payload_bits']%8==0)
+   and receipt['message_generation']>receipt['groups_message_generation']
+   and receipt['accessible_commands']<=1024,'INITIAL_PACKET_PROFILE')
+  d.require(prefix['command']==3 and prefix['odd_send']==1 and prefix['has_debug_info']<=1
+   and prefix['interp_level']<=3 and prefix['interp_precision']<=3 and prefix['command_count']<=256
+   and receipt['post_command_cursor']<=prefix['entity_tail_bit']<receipt['payload_bits'],'INITIAL_UPDATE_PREFIX')
+  d.sha(receipt['packet_sha256']);packet=identity(private_file(received/'initial-update.bin',INITIAL_PACKET_MAX),INITIAL_PACKET_MAX)
+  d.require(packet=={'bytes':receipt['bytes'],'sha256':receipt['packet_sha256']},'INITIAL_PACKET_BYTES')
+ else:
+  d.require(receipt['failure_code']!='NONE' and receipt['status']!=0 and all(receipt[name]==0 for name in INITIAL_VALUES)
+   and receipt['packet_sha256']=='' and shortcuts==[] and all(value==0 for value in prefix.values()),'INITIAL_FAILED_SHAPE')
+  d.require(not (received/'initial-update.bin').exists() and not (received/'initial-update.bin').is_symlink(),'INITIAL_FAILED_PACKET')
+ d.require(identity(receipt_path,64*1024)==before and identity(groups_path,64*1024)==groups_pin,'INITIAL_RECEIPT_CHANGED')
+ return {'schema':'coh-private-initial-observation-binding-v1','status':'OBSERVED' if receipt['passed'] else 'DIAGNOSTIC_REFUSED',
+  'private_only':True,'bounded_raw_allents_observed':receipt['passed'],'same_groups_owner_verified':True,
+  'receipt':before,'packet':packet,'groups_capture_receipt':groups_pin,'groups_packet':dict(paired['native_packet']),
+  'diagnostic_failure_code':receipt['failure_code'],'source_generation_admitted':False,
+  'complete_initial_character':False,'actor_publication':False,'ack_permitted':False,'world_authority':False}
+def retain_initial_observation(received,target,paired):
+ # Called only after the whole GROUPS invocation's owned cleanup succeeds.
+ # Optional diagnostic refusal or I/O must not invalidate the accepted GROUPS.
+ try:(received/'initial-observation.json').lstat()
+ except FileNotFoundError:return initial_status('ABSENT')
+ except Exception:return initial_status('REFUSED')
+ try:binding=initial_input(received,paired)
+ except Exception:return initial_status('REFUSED')
+ created=[];stream=None;descriptor=None
+ try:
+  d.require(identity(target/'capture.json',64*1024)==binding['groups_capture_receipt']
+   and identity(target/'groups.bin',16*1024**2)==binding['groups_packet'],'INITIAL_RETAINED_GROUPS')
+  expected={'initial-observation.json':binding['receipt']}
+  if binding['packet'] is not None:expected['initial-update.bin']=binding['packet']
+  for name,pin in expected.items():
+   maximum=INITIAL_PACKET_MAX if name=='initial-update.bin' else 64*1024
+   source=private_file(received/name,maximum);d.require(identity(source,maximum)==pin,'INITIAL_CHANGED_BEFORE_COPY')
+   path=target/name;descriptor=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|getattr(os,'O_NOFOLLOW',0),0o600);created.append((path,None))
+   owned=os.fstat(descriptor);created[-1]=(path,(owned.st_dev,owned.st_ino,owned.st_uid))
+   stream=os.fdopen(descriptor,'wb');descriptor=None;total=0
+   with source.open('rb') as incoming:
+    while block:=incoming.read(65536):
+     total+=len(block);d.require(total<=pin['bytes'],'INITIAL_COPY_LIMIT');stream.write(block)
+   d.require(total==pin['bytes'],'INITIAL_COPY_LENGTH');stream.flush();os.fsync(stream.fileno());stream.close();stream=None
+   d.require(identity(path,maximum)==pin and identity(source,maximum)==pin,'INITIAL_CHANGED_DURING_COPY')
+  d.require(initial_input(received,paired)==binding,'INITIAL_CHANGED_AFTER_COPY')
+  final={'capture.json':binding['groups_capture_receipt'],'groups.bin':binding['groups_packet'],**expected}
+  for name,pin in final.items():
+   maximum=16*1024**2 if name=='groups.bin' else INITIAL_PACKET_MAX if name=='initial-update.bin' else 64*1024
+   d.require(identity(private_file(target/name,maximum),maximum)==pin,'INITIAL_RETAINED_BYTES_CHANGED')
+  binding['retained_after_owned_cleanup']=True;return binding
+ except Exception:
+  clean=True
+  if stream is not None:
+   try:stream.close()
+   except Exception:clean=False
+  if descriptor is not None:
+   try:os.close(descriptor)
+   except OSError:clean=False
+  for path,owned in reversed(created):
+   try:
+    info=path.lstat();d.require(owned is not None and stat.S_ISREG(info.st_mode)
+     and (info.st_dev,info.st_ino,info.st_uid)==owned,'INITIAL_ROLLBACK_OWNERSHIP');path.unlink()
+   except OSError:clean=False
+   except d.Refused:clean=False
+  result=initial_status('RETENTION_FAILED');result['retention_rollback_complete']=clean;return result
+def finish_initial_observation(report,native,received,target):
+ if native.get('build_schema')!=INITIAL_BUILD_SCHEMA:return
+ if report.get('matching_groups_transaction_captured') is not True:result=initial_status('GROUPS_NOT_PAIRED')
+ elif report.get('cleanup_verified') is not True or report.get('passed') is not True:result=initial_status('CLEANUP_NOT_VERIFIED')
+ else:result=retain_initial_observation(received,target,report['pair'])
+ report['initial_observation']=result
 def capture(args):
  account,account_identity,dump_identity,compiled,native,modules,files,schema,dbdoc,donor,source,work,output=preflight(args);fx,db,pg,pe=modules
  source_paths=set((*base.SOURCE_PATHS,*retained.SOURCE_PATHS,*('native-android/engine/scenecatalog-server/'+name for name in ('capture_groups_transaction.py','groups_capture_stages.py','admit_groups_capture.py','inspect_groups_capture.py','stage_groups_capture.py','source_groups_capture_sink.inc'))))
@@ -207,6 +356,7 @@ def capture(args):
    cleanup.extend((report['private_input_bytes_unchanged'],report['restored_private_copy_unchanged'],report['source_runtime_unchanged'],report['compiled_inputs_unchanged'],pins=={name:d.hash_file(ROOT/name,8*1024**2)[1] for name in pins}))
   except Exception:cleanup.append(False)
   report['cleanup_verified']=bool(cleanup) and all(cleanup);report['passed']=report['passed'] and report['cleanup_verified'];report['raw_logs_exported']=False
+  finish_initial_observation(report,native,native_directory,output/'native')
   if report['passed']:advance(report,'COMPLETE')
   elif report['failure_stage']=='NONE':report['failure_stage']='CLEANUP'
   # Raw original logs can contain account/character state or SQL. They stay in

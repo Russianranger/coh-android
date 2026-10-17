@@ -1,0 +1,27 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "complete_initial_character": false,
+  "final_retained_groups_and_initial_bytes_rechecked": true,
+  "groups_result_preserved_on_diagnostic_failure": true,
+  "late_copy_and_rollback_refusals_verified": true,
+  "native_capture_executed": false,
+  "new_test_methods": 13,
+  "optional_retention_after_cleanup_only": true,
+  "passed": true,
+  "postgres_executed": false,
+  "related_test_methods": 37,
+  "rollback_preserves_replaced_file_identity": true,
+  "schema": "coh-private-initial-observation-host-controls-v1",
+  "source_generation_admitted": false,
+  "source_producer_bit_extent_and_nonempty_tail_shapes_verified": true,
+  "source_sha256": {
+    "GROUPS_CAPTURE.md": "cb98d9ffaa888d3831b64cb220302641e525e2514c718b59bb35639e7b22a627",
+    "capture_groups_transaction.py": "c7e83eafdacfedf4cc6d7263ffb85734481d53f0fefa36da3e91f22872c85368",
+    "test_initial_observation_binding.py": "a9a1f9ffd6f94b1b760ff406d03c7481719362ad869e928347076c4122683cbb"
+  },
+  "strict_receipt_owner_and_private_file_binding": true,
+  "synthetic_packets_only": true,
+  "wine_executed": false,
+  "world_authority": false
+}

@@ -1,0 +1,45 @@
+{
+  "artifacts": {
+    "fixture": {
+      "bytes": 580433,
+      "id": 12117765534,
+      "sha256": "5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b"
+    },
+    "reused_host_launcher_not_copied": {
+      "bytes": 1177704,
+      "id": 12117386973,
+      "sha256": "4b449a710cbaafb3d4b253f60349e5bdcc49032ac06e16a139f82bbb28850fdf"
+    },
+    "standard_diagnostics_not_copied": {
+      "bytes": 74782185,
+      "id": 12117750608,
+      "sha256": "8bed4401c599f401792f2742eecc03307afe208b82c5fd1c03969af1484923bb"
+    }
+  },
+  "completed_at": "2026-10-17T22:54:26Z",
+  "diagnostics_copied_to_git": false,
+  "full_database_dump_copied_to_git": false,
+  "full_database_dump_retained_in_owned_artifact_only": true,
+  "retained_files": {
+    "admission-a.json": {
+      "bytes": 2813,
+      "sha256": "b7d6fab20331d57a2a2739b186568ef18ec1bc3270419f0ce421641d8f5329a1"
+    },
+    "backup-receipt.json": {
+      "bytes": 9718,
+      "sha256": "4afcb16e59553aff3a97db2f3a53033cab0a52e8b33362d5190316384e061c50"
+    },
+    "fixture-capture.json": {
+      "bytes": 15590,
+      "sha256": "ecd51a26955f8462e6c1644b065f11fc6d018d39b96633110a36698a4cbf7b51"
+    }
+  },
+  "schema": "coh-fresh-graphical-fixture-retained-pins-v1",
+  "source_created_full_fixture_independently_admitted": true,
+  "source_generation_admitted": false,
+  "source_revision": "fd213266f1b6665acece877dabb7dab6663e647c",
+  "workflow_conclusion": "success",
+  "workflow_job_id": 117519562498,
+  "workflow_run_id": 39074781817,
+  "world_authority": false
+}

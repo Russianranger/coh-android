@@ -7,30 +7,33 @@ Git links, existing bundles, accepted APKs and user profiles were preserved.
 
 ## Current qualification checkpoint
 
-Current reviewed publication: `fd213266f1b6665acece877dabb7dab6663e647c`
-(tree `ff86ef76821a5aace6d4ffb53671cc37aaa2247e`). The chronological sections
-below retain earlier checkpoints; pending statements there describe their
-then-current state. This table supersedes those older pending fields.
+Last verified remote publication: `b3fbacf90626e29542e878313c2812eba1e1375b`
+(tree `55f87f9f1b37c09d8250fcbfee473a6608e5dd01`). New reviewed source below
+is integrated locally for guarded publication. Chronological sections preserve
+their original pending states; this checkpoint supersedes those fields.
 
 | Scope | Established result | Still required |
 |---|---|---|
-| Live scene | Exact original Win32 observer compiled; actual CI native receiver and all 37 dependencies admitted; same-packet supervisor, complete native source verifier, provenance and fresh-only retention qualified against controlled inputs; focused CI39074781865 passed | Full original character backup, executed matching GROUPS transaction and actual source token; point-in-time snapshot would still not establish current client/world lifetime |
-| Graphical backup | Run39071130820 created and ordinarily saved a fresh character, then refused backup; real-file publication fix passed 22 controls and independent E/F review | ARM retry39074781817 is running; actual retained-PRoot preflight and full PG18 dump not yet admitted |
-| Geometry/materials | Historical LOD and original model alpha/blend policy qualified; actual model-name trick selection passed CI39073157441, with 149 composed B/C/F source and receipt pins checked | Complete CLIENT texture/material/LOD/reduction selection, current resource generation, draw ownership and GPU budgets |
-| Gameplay dictionaries | Sorted IDs, compact forward/reverse joins, shared sets, source boost schedules and level arithmetic qualified; new boost-slot CI39073157441 passed | Current runtime/cache branch, source constructor/state application and complete initial update; no actor/ACK |
-| Encrypted authentication | Real Auth-only login and original x86 shard/UserData prerequisite executed; selected-shard probe has 16 host outcomes per mode | Original DbServer readiness, actual AC_PLAY_OK and authenticated DB/Map; authentic nondevelopment version/checksum inputs |
-| Presentation | Both Android ABI libraries built and Android 13 x86_64 CPU consumer executed 34,465 checks | Actual GLES/application/world/actor integration and Thor acceptance |
-| Memory/startup | CI39073157441 optional B/C owner sizes total 3,824,536 B; historical baseline plus these is 103,899,217 B, already 3,235,921 B over 96 MiB before later constructor lifetimes and omitted integration costs | Actual source-backed aggregate admission, provider retirement, process/GPU overlap and timing; accepted startup remains 387,340 ms |
+| Live scene | Existing original observer and native source verifier remain qualified; CI39074781865 passed. New isolated initial receiver passes release/ASan/UBSan with 4,281 public and 1,462 internal checks per mode; command-line layer passes91 checks/mode against committed431cea8bd source and42 actual production dependencies | One genuine same-job original/native GROUPS transaction, point-in-time source token and raw initial observation; no current world lifetime or actor admission |
+| Graphical backup | Actual ARM run39074781817 succeeded using unchanged retained PRoot. Artifact12117765534 is580,433B SHA5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b; complete PG18 dump2,766,533B SHA2a35bd9224e32dbdbfbb5e0d4331afd780745d2a6504a783101bc6742044c4e6. A/root independently admitted fresh fixture, ordinary save, full same-snapshot TOC, cleanup and unchanged source | Use this exact fresh fixture once in the matching scene/initial transaction; fixture identity is not a live source or character authority token |
+| Geometry/materials | Historical LOD/model/trick contracts retained. CI39075900689 passed new original texture-seed eligibility and fresh power constructors; F/root checked101source entries/100distinct paths. Seven fixed default-body staging inspector implemented and independently reviewed | Actual staged body inspection, complete CLIENT namespace/default/composite/swaps/LOD selection, current resource generation and aggregate draw/GPU ownership |
+| Gameplay dictionaries | Compact IDs/joins/shared sets/source schedules, fresh power and boost-slot constructors qualified. Whole ReceivePowers ordering and exact pre-READY snapshot request dependencies documented | Current loader/cache/shared layout and costume/dynamic owners, whole state application and exact actual initial update; no actor/ACK |
+| Encrypted authentication | Real Auth-only milestone preserved. ActualWindows39075900631 reused original binaries/profile but still hit300s readiness deadline, with all owned cleanup. Complete retained PE filename/lexical catalog now source-qualified | One focused catalog-expanded diagnosis, actual source/site/predicate, DbServer readiness, AC_PLAY_OK and authenticated DB/Map; no fabricated repair or version/checksum weakening |
+| Presentation | Earlier both-ABI build/Android13 CPU34465checks preserved. New immutable GPU lease bridge passed96 ownership+602actual host EGL controls/mode,4uploads37readbacks,3actualdeletes+1verified deadcontext disposal | Narrow Android native EGL qualification and real production registry/gate/backend; complete world/player producers and Thor acceptance |
+| Memory/startup | Prior optional B/C owner total3,824,536B already puts historical retained estimate at103,899,217B,3,235,921B over96MiB before newer owners/omits. New initial wrapper adds2,296B plus separate1,344B callerlease; no global fit inferred | Actual source-backed aggregate/provider retirement, old/candidate/CPU/GPU/process overlap and timing. Accepted startup remains387,340ms; no measured speedup |
 
-Windows run39072189359 observed an actual assertion dialog owned by the original
-DbServer generation, but its first policy could not identify the source predicate.
-All cleanup passed. Expanded source/PE-bound diagnosis is running as39074781897
-against unchanged binaries/profile/SQL and the same 300 second deadline. No
-specific assertion cause, repair, readiness or play success is inferred yet.
+The new hosted scene workflow reuses the exact retained original MapServer PE
+and donor. It compiles only the new nonshipping receiver, stages original inputs
+once, inspects seven approved source texture bodies and requests one raw initial
+snapshot after verified GROUPS. It sends no READY, RECEIVED_CHARACTER or full
+update ACK. Initial refusal preserves successful GROUPS/source artifacts. Raw
+initial export is restricted to the admitted fresh disposable fixture and an
+independently reviewed fixed two-file gate; generic private captures remain
+ineligible. Workflow preparation is not actual interoperability.
 
-Gates 25–27 are open. No new APK, authoritative world/player, source-generation
-admission, complete initial update, application ACK or Thor result is claimed.
-The accepted Session0.3.0, Combined0.1.7 and Support0.2.0/code201 are unchanged.
+Gates25–27 remain open. No new APK, authoritative rendered world/player,
+complete character update, application ACK or AYN Thor result is claimed.
+Accepted Session0.3.0, Combined0.1.7 and Support0.2.0/code201 remain unchanged.
 
 ## Recovery and source integration
 

@@ -1,0 +1,177 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "complete_initial_character": false,
+  "current_dictionary_generation_admitted": false,
+  "existing_impl_receipt_sha256": "ede04085e64b6f3aaa47139bf25863fb17eb70deb9ff51465f4e9e2f99729397",
+  "existing_impl_source_commit": "0df0504c2ea75d89f4a983a569a17733707f775e",
+  "live_packet_observed": false,
+  "notes": [
+    "CLIENT SelectBuildLightweight function is explicitly selected after its #if CLIENT guard; SERVER definition is not substituted.",
+    "Function hashes use the existing source extractor and normalize CRLF to LF; full file byte hashes are independent of that normalization.",
+    "Prior source-qualified fresh-slot qualification is historical and is not rerun or widened by this review."
+  ],
+  "review_date": "2026-10-17",
+  "schema": "coh-character-power-whole-sequence-source-review-v1",
+  "scope": "Read-only original-source dependency and future whole-sequence design; no implementation or execution qualification.",
+  "source_file_sha256": {
+    "Common/entity/RewardItemType.c": {
+      "bytes": 6246,
+      "sha256": "b30b444d707c3237b43e23509f343f5469a37de904ce00a85680fa0effa1f670",
+      "sha256_lf": "b30b444d707c3237b43e23509f343f5469a37de904ce00a85680fa0effa1f670"
+    },
+    "Common/entity/boost.c": {
+      "bytes": 24413,
+      "sha256": "794473c83c1877c2a507b509c88b270ecf30f082933341b48cbacc28101045ae",
+      "sha256_lf": "794473c83c1877c2a507b509c88b270ecf30f082933341b48cbacc28101045ae"
+    },
+    "Common/entity/character_base.c": {
+      "bytes": 128903,
+      "sha256": "76bcdc171ef8b2c520dd2e274cfbaeb31a320d8201ec7966993a1573ed209572",
+      "sha256_lf": "76bcdc171ef8b2c520dd2e274cfbaeb31a320d8201ec7966993a1573ed209572"
+    },
+    "Common/entity/character_net.c": {
+      "bytes": 35661,
+      "sha256": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+      "sha256_lf": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091"
+    },
+    "Common/entity/powers.c": {
+      "bytes": 85368,
+      "sha256": "6d5c9ad363b29f35f866516d253a05edb8ced653576e4c4b31b83322bbe69330",
+      "sha256_lf": "6d5c9ad363b29f35f866516d253a05edb8ced653576e4c4b31b83322bbe69330"
+    },
+    "Game/src/entity/character_net_client.c": {
+      "bytes": 11977,
+      "sha256": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+      "sha256_lf": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a"
+    },
+    "libs/UtilitiesLib/src/components/earray.c": {
+      "bytes": 38238,
+      "sha256": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+      "sha256_lf": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739"
+    }
+  },
+  "unchanged_function_sha256_lf": {
+    "Common/entity/RewardItemType.c:rewarditemtype_NameFromId": {
+      "bytes_lf": 1909,
+      "first_line_lf": 106,
+      "sha256_lf": "538ffdb6c083e6214bb437f1f0ede58f0aa1fa330cb760ad44c007b64ac00b8f"
+    },
+    "Common/entity/boost.c:boost_Create": {
+      "bytes_lf": 1106,
+      "first_line_lf": 46,
+      "sha256_lf": "dc6e6de7522cf93d7689c6b65164c4eda04707f8c94edcebfa78ce26feaec0f4"
+    },
+    "Common/entity/character_base.c:CLIENT:character_SelectBuildLightweight": {
+      "bytes_lf": 723,
+      "first_line_lf": 3645,
+      "sha256_lf": "8513aa088aa10e63e05680d642c1e19fd9cca368ac671e4859224b2efc72359f"
+    },
+    "Common/entity/character_base.c:character_AddNewPowerSet": {
+      "bytes_lf": 544,
+      "first_line_lf": 624,
+      "sha256_lf": "1e108eaefbad81a83adfb19c5b9451501b3b4c51e9bb8d9cc79988c93ec8f031"
+    },
+    "Common/entity/character_base.c:character_BuyPowerSet": {
+      "bytes_lf": 1610,
+      "first_line_lf": 815,
+      "sha256_lf": "6df8a7e7d0c25932d2bc246f30539aeedc84ed136f53e22c7b20be4b50a03162"
+    },
+    "Common/entity/character_base.c:character_CreatePartOne": {
+      "bytes_lf": 3745,
+      "first_line_lf": 96,
+      "sha256_lf": "a3d1ca61325a1e0260a081cc3c1a987c9756967b41cba3ed3d1b26ca741a18d9"
+    },
+    "Common/entity/character_base.c:character_CreatePartTwo": {
+      "bytes_lf": 94,
+      "first_line_lf": 201,
+      "sha256_lf": "fb0355aea406ef928394714fabb137f148f70596762e95b7255eba6a71cc90a2"
+    },
+    "Common/entity/character_base.c:character_GrantAutoIssueBuildSharedPowerSets": {
+      "bytes_lf": 584,
+      "first_line_lf": 1914,
+      "sha256_lf": "d87e71e5017380a8452c88bad0107877f6688e66b20ed14325dc738920de59c0"
+    },
+    "Common/entity/character_base.c:character_OwnsPower": {
+      "bytes_lf": 873,
+      "first_line_lf": 748,
+      "sha256_lf": "68f6ffa41da5becb47cda4b35ea3c67187968972c320d216f403e3abae3f2472"
+    },
+    "Common/entity/character_base.c:character_OwnsPowerSet": {
+      "bytes_lf": 349,
+      "first_line_lf": 683,
+      "sha256_lf": "6a0c6f302848aa7c50cf86601dd83cffad4e96e2f475419f949b495733a1c365"
+    },
+    "Common/entity/character_net.c:character_ReceivePowerBoost": {
+      "bytes_lf": 2272,
+      "first_line_lf": 553,
+      "sha256_lf": "071089b2fd3508af6f3cae43e17927a04631b7d73ff15b13867ec6dc124c65b3"
+    },
+    "Common/entity/character_net.c:character_ReceivePowers": {
+      "bytes_lf": 8468,
+      "first_line_lf": 841,
+      "sha256_lf": "5302c2b5c62f99d1dfec05d99f590c244e58158b39e743c16dcc7d6438896877"
+    },
+    "Common/entity/powers.c:power_AddBoostSlot": {
+      "bytes_lf": 101,
+      "first_line_lf": 1118,
+      "sha256_lf": "98d4470abef85c38ec7235da7fe96d635b9f2bba3e94d61294503b83aa3252ad"
+    },
+    "Common/entity/powers.c:power_BoostCheckRequires": {
+      "bytes_lf": 272,
+      "first_line_lf": 1143,
+      "sha256_lf": "67a236df9afc7e935d8c3f78d4eed5b2e4b0b3dff5f55544ee391659d7eabd6b"
+    },
+    "Common/entity/powers.c:power_Create": {
+      "bytes_lf": 498,
+      "first_line_lf": 1031,
+      "sha256_lf": "b69b693772b12d7aeda70cb3ebb9827d78af81e1a9bd4167253d87db4ecfb484"
+    },
+    "Common/entity/powers.c:power_DestroyBoost": {
+      "bytes_lf": 196,
+      "first_line_lf": 1253,
+      "sha256_lf": "56e83f6b625731799105fddd5702e9bf9411bf8cb351e6cf080bcac3748bba5e"
+    },
+    "Common/entity/powers.c:power_LevelFinalize": {
+      "bytes_lf": 562,
+      "first_line_lf": 1097,
+      "sha256_lf": "b60c754dfaac90bf656a3110d19ff457d9719b8f7c9dc898214658ac9bac7827"
+    },
+    "Common/entity/powers.c:power_ReplaceBoost": {
+      "bytes_lf": 845,
+      "first_line_lf": 1156,
+      "sha256_lf": "7f5041f3ca0cd0ab13a90ae73b0c29c78d42d4d094f5fa32a0f344cd5c6db94a"
+    },
+    "Common/entity/powers.c:power_SetUniqueID": {
+      "bytes_lf": 986,
+      "first_line_lf": 824,
+      "sha256_lf": "4ce985e3fbfd0f54f4b0ecb517fb7842e372ee9d9003050981fc97489a4e1e40"
+    },
+    "Common/entity/powers.c:power_sloteval_Eval": {
+      "bytes_lf": 521,
+      "first_line_lf": 2355,
+      "sha256_lf": "e18269016377379bcf63ca98236fbc48c70870177e6c6873afd7d6c76c5a0ce3"
+    },
+    "Common/entity/powers.c:powerset_AddNewPower": {
+      "bytes_lf": 824,
+      "first_line_lf": 850,
+      "sha256_lf": "fcb1a0563f80e3c942d757faf67e8b6fbdde7fc2d2ef1502bbfa738b4a4589e4"
+    },
+    "Common/entity/powers.c:powerset_Create": {
+      "bytes_lf": 252,
+      "first_line_lf": 768,
+      "sha256_lf": "7afa4839a928d5a29bb7ea220d4b4162809ca90c9b886d388264b70ac351ebc3"
+    },
+    "Game/src/entity/character_net_client.c:character_Receive": {
+      "bytes_lf": 1991,
+      "first_line_lf": 179,
+      "sha256_lf": "63c0b1f09d215fb8107f897f31f3ebbeb88b052ccfb639ce97454a3a6ea1f927"
+    },
+    "libs/UtilitiesLib/src/components/earray.c:eaInsertDbg": {
+      "bytes_lf": 830,
+      "first_line_lf": 354,
+      "sha256_lf": "46d94a1546b813a742359ca0494ac981c9add8d79fc3ef20620f2b3642261855"
+    }
+  },
+  "whole_receiver_executed": false
+}

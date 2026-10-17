@@ -1,0 +1,324 @@
+﻿2026-10-17T22:38:39.5279494Z Current runner version: '2.337.0'
+2026-10-17T22:38:39.5305763Z ##[group]Runner Image Provisioner
+2026-10-17T22:38:39.5306719Z Hosted Compute Agent
+2026-10-17T22:38:39.5307422Z Version: 20261012.601
+2026-10-17T22:38:39.5308058Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+2026-10-17T22:38:39.5308813Z Build Date: 2026-10-12T17:48:21Z
+2026-10-17T22:38:39.5309552Z Worker ID: {4008f220-3149-4c71-b723-8121d4cfc1cd}
+2026-10-17T22:38:39.5310270Z Region: westcentralus
+2026-10-17T22:38:39.5310944Z Cloud: Azure
+2026-10-17T22:38:39.5311705Z ##[endgroup]
+2026-10-17T22:38:39.5313440Z ##[group]Operating System
+2026-10-17T22:38:39.5314150Z Ubuntu
+2026-10-17T22:38:39.5314690Z 24.04.5
+2026-10-17T22:38:39.5315257Z LTS
+2026-10-17T22:38:39.5315784Z ##[endgroup]
+2026-10-17T22:38:39.5316327Z ##[group]Runner Image
+2026-10-17T22:38:39.5317061Z Image: ubuntu-24.04
+2026-10-17T22:38:39.5317643Z Version: 20261012.334.1
+2026-10-17T22:38:39.5319377Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-17T22:38:39.5320946Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-17T22:38:39.5322231Z ##[endgroup]
+2026-10-17T22:38:39.5323420Z ##[group]GITHUB_TOKEN Permissions
+2026-10-17T22:38:39.5325643Z Actions: read
+2026-10-17T22:38:39.5326297Z Contents: read
+2026-10-17T22:38:39.5326967Z Metadata: read
+2026-10-17T22:38:39.5327525Z ##[endgroup]
+2026-10-17T22:38:39.5329732Z Secret source: Actions
+2026-10-17T22:38:39.5330761Z Cache mode: write
+2026-10-17T22:38:39.5331782Z Prepare workflow directory
+2026-10-17T22:38:39.5689381Z Prepare all required actions
+2026-10-17T22:38:39.5738263Z Getting action download info
+2026-10-17T22:38:39.8811915Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-17T22:38:39.9983007Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-17T22:38:40.2123705Z Complete job name: source-constructors
+2026-10-17T22:38:40.2943365Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-17T22:38:40.2944783Z with:
+2026-10-17T22:38:40.2945257Z   persist-credentials: false
+2026-10-17T22:38:40.2945875Z   repository: Russianranger/coh-android
+2026-10-17T22:38:40.2949836Z   token: ***
+2026-10-17T22:38:40.2950272Z   ssh-strict: true
+2026-10-17T22:38:40.2950728Z   ssh-user: git
+2026-10-17T22:38:40.2951163Z   clean: true
+2026-10-17T22:38:40.2951812Z   sparse-checkout-cone-mode: true
+2026-10-17T22:38:40.2952343Z   fetch-depth: 1
+2026-10-17T22:38:40.2952783Z   fetch-tags: false
+2026-10-17T22:38:40.2953244Z   show-progress: true
+2026-10-17T22:38:40.2953715Z   lfs: false
+2026-10-17T22:38:40.2954139Z   submodules: false
+2026-10-17T22:38:40.2954594Z   set-safe-directory: true
+2026-10-17T22:38:40.2955103Z   allow-unsafe-pr-checkout: false
+2026-10-17T22:38:40.2955983Z ##[endgroup]
+2026-10-17T22:38:40.4026437Z Syncing repository: Russianranger/coh-android
+2026-10-17T22:38:40.4029169Z ##[group]Getting Git version info
+2026-10-17T22:38:40.4030319Z Working directory is '/home/runner/work/coh-android/coh-android'
+2026-10-17T22:38:40.4032261Z [command]/usr/bin/git version
+2026-10-17T22:38:40.4071778Z git version 2.55.0
+2026-10-17T22:38:40.4094677Z ##[endgroup]
+2026-10-17T22:38:40.4111104Z Temporarily overriding HOME='/home/runner/work/_temp/5110e5af-de41-467c-aa0e-532794f1b318' before making global git config changes
+2026-10-17T22:38:40.4113800Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-17T22:38:40.4117403Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-10-17T22:38:40.4172761Z Deleting the contents of '/home/runner/work/coh-android/coh-android'
+2026-10-17T22:38:40.4177673Z ##[group]Initializing the repository
+2026-10-17T22:38:40.4182120Z [command]/usr/bin/git init /home/runner/work/coh-android/coh-android
+2026-10-17T22:38:40.4297950Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-17T22:38:40.4299990Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-17T22:38:40.4301698Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-17T22:38:40.4302996Z hint: call:
+2026-10-17T22:38:40.4303667Z hint:
+2026-10-17T22:38:40.4304456Z hint: 	git config --global init.defaultBranch <name>
+2026-10-17T22:38:40.4305426Z hint:
+2026-10-17T22:38:40.4306406Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-17T22:38:40.4307999Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-17T22:38:40.4309222Z hint:
+2026-10-17T22:38:40.4309869Z hint: 	git branch -m <name>
+2026-10-17T22:38:40.4310619Z hint:
+2026-10-17T22:38:40.4311902Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-17T22:38:40.4313710Z Initialized empty Git repository in /home/runner/work/coh-android/coh-android/.git/
+2026-10-17T22:38:40.4316519Z [command]/usr/bin/git remote add origin https://github.com/Russianranger/coh-android
+2026-10-17T22:38:40.4374909Z ##[endgroup]
+2026-10-17T22:38:40.4376250Z ##[group]Disabling automatic garbage collection
+2026-10-17T22:38:40.4384868Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-17T22:38:40.4422677Z ##[endgroup]
+2026-10-17T22:38:40.4423876Z ##[group]Setting up auth
+2026-10-17T22:38:40.4430696Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-17T22:38:40.4468313Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-17T22:38:40.4862845Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-17T22:38:40.4904886Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-17T22:38:40.5152692Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-17T22:38:40.5191030Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-17T22:38:40.5423709Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-17T22:38:40.5466127Z ##[endgroup]
+2026-10-17T22:38:40.5466932Z ##[group]Fetching the repository
+2026-10-17T22:38:40.5477691Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b3fbacf90626e29542e878313c2812eba1e1375b:refs/remotes/origin/native-android
+2026-10-17T22:38:55.4941342Z From https://github.com/Russianranger/coh-android
+2026-10-17T22:38:55.4944040Z  * [new ref]             b3fbacf90626e29542e878313c2812eba1e1375b -> origin/native-android
+2026-10-17T22:38:55.4949687Z ##[endgroup]
+2026-10-17T22:38:55.4952352Z ##[group]Determining the checkout info
+2026-10-17T22:38:55.4954826Z ##[endgroup]
+2026-10-17T22:38:55.4957438Z [command]/usr/bin/git sparse-checkout disable
+2026-10-17T22:38:55.5014409Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-17T22:38:55.5047870Z ##[group]Checking out the ref
+2026-10-17T22:38:55.5054911Z [command]/usr/bin/git checkout --progress --force -B native-android refs/remotes/origin/native-android
+2026-10-17T22:38:56.6376437Z Updating files:   3% (6722/169318)
+2026-10-17T22:38:56.8040696Z Updating files:   4% (6773/169318)
+2026-10-17T22:38:56.8763053Z Updating files:   5% (8466/169318)
+2026-10-17T22:38:56.9966479Z Updating files:   6% (10160/169318)
+2026-10-17T22:38:57.0992854Z Updating files:   7% (11853/169318)
+2026-10-17T22:38:57.2219675Z Updating files:   8% (13546/169318)
+2026-10-17T22:38:57.3590817Z Updating files:   9% (15239/169318)
+2026-10-17T22:38:57.4305869Z Updating files:  10% (16932/169318)
+2026-10-17T22:38:57.4947480Z Updating files:  11% (18625/169318)
+2026-10-17T22:38:57.5517459Z Updating files:  12% (20319/169318)
+2026-10-17T22:38:57.6180901Z Updating files:  13% (22012/169318)
+2026-10-17T22:38:57.6316506Z Updating files:  14% (23705/169318)
+2026-10-17T22:38:57.6838031Z Updating files:  14% (24047/169318)
+2026-10-17T22:38:57.7529985Z Updating files:  15% (25398/169318)
+2026-10-17T22:38:57.8254711Z Updating files:  16% (27091/169318)
+2026-10-17T22:38:57.9026641Z Updating files:  17% (28785/169318)
+2026-10-17T22:38:57.9689552Z Updating files:  18% (30478/169318)
+2026-10-17T22:38:58.0352422Z Updating files:  19% (32171/169318)
+2026-10-17T22:38:58.1014099Z Updating files:  20% (33864/169318)
+2026-10-17T22:38:58.1682022Z Updating files:  21% (35557/169318)
+2026-10-17T22:38:58.2336903Z Updating files:  22% (37250/169318)
+2026-10-17T22:38:58.2956117Z Updating files:  23% (38944/169318)
+2026-10-17T22:38:58.3596006Z Updating files:  24% (40637/169318)
+2026-10-17T22:38:58.4250801Z Updating files:  25% (42330/169318)
+2026-10-17T22:38:58.4927038Z Updating files:  26% (44023/169318)
+2026-10-17T22:38:58.5588048Z Updating files:  27% (45716/169318)
+2026-10-17T22:38:58.6316427Z Updating files:  28% (47410/169318)
+2026-10-17T22:38:58.6338681Z Updating files:  28% (49050/169318)
+2026-10-17T22:38:58.6984438Z Updating files:  29% (49103/169318)
+2026-10-17T22:38:58.7612779Z Updating files:  30% (50796/169318)
+2026-10-17T22:38:58.8278396Z Updating files:  31% (52489/169318)
+2026-10-17T22:38:58.8960497Z Updating files:  32% (54182/169318)
+2026-10-17T22:38:58.9608953Z Updating files:  33% (55875/169318)
+2026-10-17T22:38:59.0238349Z Updating files:  34% (57569/169318)
+2026-10-17T22:38:59.0913894Z Updating files:  35% (59262/169318)
+2026-10-17T22:38:59.1558169Z Updating files:  36% (60955/169318)
+2026-10-17T22:38:59.2201270Z Updating files:  37% (62648/169318)
+2026-10-17T22:38:59.2836214Z Updating files:  38% (64341/169318)
+2026-10-17T22:38:59.3524615Z Updating files:  39% (66035/169318)
+2026-10-17T22:38:59.4164168Z Updating files:  40% (67728/169318)
+2026-10-17T22:38:59.4810780Z Updating files:  41% (69421/169318)
+2026-10-17T22:38:59.5455337Z Updating files:  42% (71114/169318)
+2026-10-17T22:38:59.6089091Z Updating files:  43% (72807/169318)
+2026-10-17T22:38:59.6315487Z Updating files:  44% (74500/169318)
+2026-10-17T22:38:59.6694536Z Updating files:  44% (75118/169318)
+2026-10-17T22:38:59.7342713Z Updating files:  45% (76194/169318)
+2026-10-17T22:38:59.8004124Z Updating files:  46% (77887/169318)
+2026-10-17T22:39:00.0879471Z Updating files:  47% (79580/169318)
+2026-10-17T22:39:00.6336117Z Updating files:  48% (81273/169318)
+2026-10-17T22:39:00.6594922Z Updating files:  48% (82614/169318)
+2026-10-17T22:39:00.9030339Z Updating files:  49% (82966/169318)
+2026-10-17T22:39:01.6327923Z Updating files:  50% (84659/169318)
+2026-10-17T22:39:01.9311031Z Updating files:  50% (85525/169318)
+2026-10-17T22:39:02.4305935Z Updating files:  51% (86353/169318)
+2026-10-17T22:39:02.6316024Z Updating files:  52% (88046/169318)
+2026-10-17T22:39:03.0379533Z Updating files:  52% (88631/169318)
+2026-10-17T22:39:03.2260089Z Updating files:  53% (89739/169318)
+2026-10-17T22:39:03.3660455Z Updating files:  54% (91432/169318)
+2026-10-17T22:39:03.4465559Z Updating files:  55% (93125/169318)
+2026-10-17T22:39:03.5106456Z Updating files:  56% (94819/169318)
+2026-10-17T22:39:03.5751100Z Updating files:  57% (96512/169318)
+2026-10-17T22:39:03.6315843Z Updating files:  58% (98205/169318)
+2026-10-17T22:39:03.6523833Z Updating files:  58% (99618/169318)
+2026-10-17T22:39:03.7798361Z Updating files:  59% (99898/169318)
+2026-10-17T22:39:04.1367272Z Updating files:  60% (101591/169318)
+2026-10-17T22:39:04.2423977Z Updating files:  61% (103284/169318)
+2026-10-17T22:39:04.3991634Z Updating files:  62% (104978/169318)
+2026-10-17T22:39:04.4821843Z Updating files:  63% (106671/169318)
+2026-10-17T22:39:04.5738788Z Updating files:  64% (108364/169318)
+2026-10-17T22:39:04.6316322Z Updating files:  65% (110057/169318)
+2026-10-17T22:39:04.6519639Z Updating files:  65% (111310/169318)
+2026-10-17T22:39:04.7301806Z Updating files:  66% (111750/169318)
+2026-10-17T22:39:04.8090201Z Updating files:  67% (113444/169318)
+2026-10-17T22:39:04.8929028Z Updating files:  68% (115137/169318)
+2026-10-17T22:39:04.9669040Z Updating files:  69% (116830/169318)
+2026-10-17T22:39:05.0489440Z Updating files:  70% (118523/169318)
+2026-10-17T22:39:05.1233624Z Updating files:  71% (120216/169318)
+2026-10-17T22:39:05.2001704Z Updating files:  72% (121909/169318)
+2026-10-17T22:39:05.2739719Z Updating files:  73% (123603/169318)
+2026-10-17T22:39:05.3470426Z Updating files:  74% (125296/169318)
+2026-10-17T22:39:05.4210825Z Updating files:  75% (126989/169318)
+2026-10-17T22:39:05.4944444Z Updating files:  76% (128682/169318)
+2026-10-17T22:39:05.5635432Z Updating files:  77% (130375/169318)
+2026-10-17T22:39:05.6315547Z Updating files:  78% (132069/169318)
+2026-10-17T22:39:05.6351294Z Updating files:  78% (133681/169318)
+2026-10-17T22:39:05.7062442Z Updating files:  79% (133762/169318)
+2026-10-17T22:39:05.7794223Z Updating files:  80% (135455/169318)
+2026-10-17T22:39:05.8460859Z Updating files:  81% (137148/169318)
+2026-10-17T22:39:05.9120129Z Updating files:  82% (138841/169318)
+2026-10-17T22:39:05.9796556Z Updating files:  83% (140534/169318)
+2026-10-17T22:39:06.0514706Z Updating files:  84% (142228/169318)
+2026-10-17T22:39:06.1218923Z Updating files:  85% (143921/169318)
+2026-10-17T22:39:06.1937382Z Updating files:  86% (145614/169318)
+2026-10-17T22:39:06.2652924Z Updating files:  87% (147307/169318)
+2026-10-17T22:39:06.3349277Z Updating files:  88% (149000/169318)
+2026-10-17T22:39:06.4060792Z Updating files:  89% (150694/169318)
+2026-10-17T22:39:06.4746131Z Updating files:  90% (152387/169318)
+2026-10-17T22:39:06.5484218Z Updating files:  91% (154080/169318)
+2026-10-17T22:39:06.6317031Z Updating files:  92% (155773/169318)
+2026-10-17T22:39:06.6431019Z Updating files:  92% (157341/169318)
+2026-10-17T22:39:06.7525553Z Updating files:  93% (157466/169318)
+2026-10-17T22:39:06.9427957Z Updating files:  94% (159159/169318)
+2026-10-17T22:39:07.0843945Z Updating files:  95% (160853/169318)
+2026-10-17T22:39:07.2352784Z Updating files:  96% (162546/169318)
+2026-10-17T22:39:07.5964636Z Updating files:  97% (164239/169318)
+2026-10-17T22:39:07.6316947Z Updating files:  98% (165932/169318)
+2026-10-17T22:39:07.7552803Z Updating files:  98% (166276/169318)
+2026-10-17T22:39:07.9232323Z Updating files:  99% (167625/169318)
+2026-10-17T22:39:07.9233181Z Updating files: 100% (169318/169318)
+2026-10-17T22:39:07.9233622Z Updating files: 100% (169318/169318), done.
+2026-10-17T22:39:08.0973995Z Switched to a new branch 'native-android'
+2026-10-17T22:39:08.0976276Z branch 'native-android' set up to track 'origin/native-android'.
+2026-10-17T22:39:08.1113389Z ##[endgroup]
+2026-10-17T22:39:08.1166274Z [command]/usr/bin/git log -1 --format=%H
+2026-10-17T22:39:08.1194824Z b3fbacf90626e29542e878313c2812eba1e1375b
+2026-10-17T22:39:08.1207537Z ##[group]Removing auth
+2026-10-17T22:39:08.1212920Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-17T22:39:08.1249451Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-17T22:39:08.1595310Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-17T22:39:08.1627721Z http.https://github.com/.extraheader
+2026-10-17T22:39:08.1636932Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-17T22:39:08.1675188Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-17T22:39:08.2014400Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-17T22:39:08.2051969Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-17T22:39:08.2393962Z ##[endgroup]
+2026-10-17T22:39:08.2677833Z ##[group]Run sudo apt-get update -qq
+2026-10-17T22:39:08.2678253Z [36;1msudo apt-get update -qq[0m
+2026-10-17T22:39:08.2678700Z [36;1msudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev[0m
+2026-10-17T22:39:08.2922231Z shell: /usr/bin/bash -e {0}
+2026-10-17T22:39:08.2922528Z ##[endgroup]
+2026-10-17T22:39:12.8365450Z Reading package lists...
+2026-10-17T22:39:13.0580417Z Building dependency tree...
+2026-10-17T22:39:13.0587844Z Reading state information...
+2026-10-17T22:39:13.2390434Z gcc is already the newest version (4:13.2.0-7ubuntu1).
+2026-10-17T22:39:13.2391146Z g++ is already the newest version (4:13.2.0-7ubuntu1).
+2026-10-17T22:39:13.2392043Z libssl-dev is already the newest version (3.0.13-0ubuntu3.16).
+2026-10-17T22:39:13.2392835Z zlib1g-dev is already the newest version (1:1.3.dfsg-3.1ubuntu2.2).
+2026-10-17T22:39:13.2393613Z 0 upgraded, 0 newly installed, 0 to remove and 44 not upgraded.
+2026-10-17T22:39:13.2460857Z ##[group]Run python3 - <<'PY'
+2026-10-17T22:39:13.2461205Z [36;1mpython3 - <<'PY'[0m
+2026-10-17T22:39:13.2461837Z [36;1mimport hashlib,os,pathlib,stat,subprocess,zipfile[0m
+2026-10-17T22:39:13.2462398Z [36;1mout=pathlib.Path(os.environ['RUNNER_TEMP'])/'source-constructor-inputs';out.mkdir()[0m
+2026-10-17T22:39:13.2463484Z [36;1mspecs=[(11092897979, 26476333, '51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae', 'client-caches.zip', 'client-caches.zip', 27071659, '5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051')][0m
+2026-10-17T22:39:13.2464507Z [36;1mfor ident,size,digest,member,name,raw_size,raw_digest in specs:[0m
+2026-10-17T22:39:13.2464919Z [36;1m    archive=out/(str(ident)+'.zip')[0m
+2026-10-17T22:39:13.2465232Z [36;1m    with archive.open('xb') as output:[0m
+2026-10-17T22:39:13.2465911Z [36;1m        subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=180)[0m
+2026-10-17T22:39:13.2466791Z [36;1m    assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==digest[0m
+2026-10-17T22:39:13.2467314Z [36;1m    with zipfile.ZipFile(archive) as z:[0m
+2026-10-17T22:39:13.2467619Z [36;1m        infos=z.infolist()[0m
+2026-10-17T22:39:13.2468004Z [36;1m        assert len(infos)<=128 and len({i.filename for i in infos})==len(infos)[0m
+2026-10-17T22:39:13.2468558Z [36;1m        assert sum(i.file_size for i in infos)<=128*1024**2 and z.testzip() is None[0m
+2026-10-17T22:39:13.2468978Z [36;1m        info=z.getinfo(member)[0m
+2026-10-17T22:39:13.2469436Z [36;1m        assert not info.flag_bits&1 and stat.S_IFMT(info.external_attr>>16) in (0,stat.S_IFREG)[0m
+2026-10-17T22:39:13.2469911Z [36;1m        assert info.file_size==raw_size[0m
+2026-10-17T22:39:13.2470311Z [36;1m        raw=z.read(info);assert hashlib.sha256(raw).hexdigest()==raw_digest[0m
+2026-10-17T22:39:13.2470723Z [36;1m        (out/name).write_bytes(raw)[0m
+2026-10-17T22:39:13.2471014Z [36;1m    archive.unlink()[0m
+2026-10-17T22:39:13.2471331Z [36;1mwith zipfile.ZipFile(out/'client-caches.zip') as z:[0m
+2026-10-17T22:39:13.2471902Z [36;1m    for member,name,size,digest in ([0m
+2026-10-17T22:39:13.2472496Z [36;1m        ('data/bin/tricks.bin','tricks.bin',13537052,'cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1'),[0m
+2026-10-17T22:39:13.2473370Z [36;1m        ('data/bin/seqstatebits.bin','seqstatebits.bin',15380,'9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac')):[0m
+2026-10-17T22:39:13.2473980Z [36;1m        info=z.getinfo(member)[0m
+2026-10-17T22:39:13.2474325Z [36;1m        assert info.file_size==size and not info.flag_bits&1[0m
+2026-10-17T22:39:13.2474769Z [36;1m        assert stat.S_IFMT(info.external_attr>>16) in (0,stat.S_IFREG)[0m
+2026-10-17T22:39:13.2475242Z [36;1m        raw=z.read(info);assert hashlib.sha256(raw).hexdigest()==digest[0m
+2026-10-17T22:39:13.2475642Z [36;1m        (out/name).write_bytes(raw)[0m
+2026-10-17T22:39:13.2476260Z [36;1mprint('Exact retained inputs reused; no server startup or GEO download')[0m
+2026-10-17T22:39:13.2476659Z [36;1mPY[0m
+2026-10-17T22:39:13.2543150Z shell: /usr/bin/bash -e {0}
+2026-10-17T22:39:13.2543405Z env:
+2026-10-17T22:39:13.2546176Z   GH_TOKEN: ***
+2026-10-17T22:39:13.2546399Z ##[endgroup]
+2026-10-17T22:39:15.7340979Z Exact retained inputs reused; no server startup or GEO download
+2026-10-17T22:39:15.7464621Z ##[group]Run python3 native-android/engine/world-render-adapter/check_tex_seed.py --actual-cache "$RUNNER_TEMP/source-constructor-inputs/tricks.bin" --actual-states "$RUNNER_TEMP/source-constructor-inputs/seqstatebits.bin" --avatar-zip assets/character-avatar-defaults.zip --output out/source-constructors/tex-seed.json
+2026-10-17T22:39:15.7466993Z [36;1mpython3 native-android/engine/world-render-adapter/check_tex_seed.py --actual-cache "$RUNNER_TEMP/source-constructor-inputs/tricks.bin" --actual-states "$RUNNER_TEMP/source-constructor-inputs/seqstatebits.bin" --avatar-zip assets/character-avatar-defaults.zip --output out/source-constructors/tex-seed.json[0m
+2026-10-17T22:39:15.7530912Z shell: /usr/bin/bash -e {0}
+2026-10-17T22:39:15.7531181Z ##[endgroup]
+2026-10-17T22:39:32.0886834Z {"passed": true, "modes": {"release": {"passed": true, "checks": 211909, "original_comparisons": 32166, "actual_cache_rows": 14715, "actual_record_source_refusals": 1, "authentic_header_bodies": 15, "actual_no_base1": 14434, "actual_name_prefix_skip": 3252, "actual_create_candidates": 0, "actual_unknown_refusals": 11002, "actual_unsafe_refusals": 740, "actual_policy_column_order": ["no_base1", "name_prefix_skip", "create_candidate", "subset_unknown_refusal", "unsafe_key_refusal"], "actual_strict_policy": [7217, 1626, 0, 5131, 740], "actual_guarded_policy": [7217, 1626, 0, 5871, 0], "controlled_create_candidates": 2252, "controlled_unknown_refusals": 452, "controlled_unsafe_refusals": 1, "result_bytes": 2816, "current_CLIENT_generation": false, "material_authority": false, "world_authority": false}, "address": {"passed": true, "checks": 211909, "original_comparisons": 32166, "actual_cache_rows": 14715, "actual_record_source_refusals": 1, "authentic_header_bodies": 15, "actual_no_base1": 14434, "actual_name_prefix_skip": 3252, "actual_create_candidates": 0, "actual_unknown_refusals": 11002, "actual_unsafe_refusals": 740, "actual_policy_column_order": ["no_base1", "name_prefix_skip", "create_candidate", "subset_unknown_refusal", "unsafe_key_refusal"], "actual_strict_policy": [7217, 1626, 0, 5131, 740], "actual_guarded_policy": [7217, 1626, 0, 5871, 0], "controlled_create_candidates": 2252, "controlled_unknown_refusals": 452, "controlled_unsafe_refusals": 1, "result_bytes": 2816, "current_CLIENT_generation": false, "material_authority": false, "world_authority": false}, "undefined": {"passed": true, "checks": 211909, "original_comparisons": 32166, "actual_cache_rows": 14715, "actual_record_source_refusals": 1, "authentic_header_bodies": 15, "actual_no_base1": 14434, "actual_name_prefix_skip": 3252, "actual_create_candidates": 0, "actual_unknown_refusals": 11002, "actual_unsafe_refusals": 740, "actual_policy_column_order": ["no_base1", "name_prefix_skip", "create_candidate", "subset_unknown_refusal", "unsafe_key_refusal"], "actual_strict_policy": [7217, 1626, 0, 5131, 740], "actual_guarded_policy": [7217, 1626, 0, 5871, 0], "controlled_create_candidates": 2252, "controlled_unknown_refusals": 452, "controlled_unsafe_refusals": 1, "result_bytes": 2816, "current_CLIENT_generation": false, "material_authority": false, "world_authority": false}}, "mutations": ["exact_equal_instead_of_prefix", "omit_enabled_fallback", "unknown_means_present", "swappable_is_required", "wrong_source_slot", "aggregate_limit_bypass"]}
+2026-10-17T22:39:32.1092313Z ##[group]Run python3 native-android/engine/character-dictionary/check_initial_power_slots.py --cache-zip "$RUNNER_TEMP/source-constructor-inputs/client-caches.zip" --sanitize --output out/source-constructors/initial-power-slots.json.gz
+2026-10-17T22:39:32.1095249Z [36;1mpython3 native-android/engine/character-dictionary/check_initial_power_slots.py --cache-zip "$RUNNER_TEMP/source-constructor-inputs/client-caches.zip" --sanitize --output out/source-constructors/initial-power-slots.json.gz[0m
+2026-10-17T22:39:32.1187244Z shell: /usr/bin/bash -e {0}
+2026-10-17T22:39:32.1187687Z ##[endgroup]
+2026-10-17T22:39:56.8594428Z {"passed": true, "cases": 13, "checks_per_mode": 537556, "original_constructors": 20241}
+2026-10-17T22:39:56.8771931Z ##[group]Run actions/upload-artifact@v4
+2026-10-17T22:39:56.8772268Z with:
+2026-10-17T22:39:56.8772644Z   name: source-constructor-contracts-b3fbacf90626e29542e878313c2812eba1e1375b
+2026-10-17T22:39:56.8773116Z   path: out/source-constructors/
+2026-10-17T22:39:56.8773399Z   if-no-files-found: error
+2026-10-17T22:39:56.8773642Z   retention-days: 90
+2026-10-17T22:39:56.8773862Z   compression-level: 6
+2026-10-17T22:39:56.8774078Z   overwrite: false
+2026-10-17T22:39:56.8774308Z   include-hidden-files: false
+2026-10-17T22:39:56.8774565Z ##[endgroup]
+2026-10-17T22:39:57.0446598Z (node:3978) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-17T22:39:57.0447500Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-17T22:39:57.0511916Z With the provided path, there will be 2 files uploaded
+2026-10-17T22:39:57.0513065Z Artifact name is valid!
+2026-10-17T22:39:57.0513688Z Root directory input is valid!
+2026-10-17T22:39:57.3738770Z Beginning upload of artifact content to blob storage
+2026-10-17T22:39:57.3959270Z (node:3978) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-17T22:39:57.6428778Z Uploaded bytes 16877
+2026-10-17T22:39:57.6995086Z Finished uploading artifact content to blob storage!
+2026-10-17T22:39:57.6996526Z SHA256 digest of uploaded artifact zip is 0c34fc5263eac57905de7baa7fa1fc46771d60a725d1b15255b052b657a66ca0
+2026-10-17T22:39:57.6997509Z Finalizing artifact upload
+2026-10-17T22:39:57.9403261Z Artifact source-constructor-contracts-b3fbacf90626e29542e878313c2812eba1e1375b.zip successfully finalized. Artifact ID 12115829917
+2026-10-17T22:39:57.9413943Z Artifact source-constructor-contracts-b3fbacf90626e29542e878313c2812eba1e1375b has been successfully uploaded! Final size is 16877 bytes. Artifact ID is 12115829917
+2026-10-17T22:39:57.9416040Z Artifact download URL: https://github.com/Russianranger/coh-android/actions/runs/39075900689/artifacts/12115829917
+2026-10-17T22:39:57.9603143Z Post job cleanup.
+2026-10-17T22:39:58.0498295Z [command]/usr/bin/git version
+2026-10-17T22:39:58.0542424Z git version 2.55.0
+2026-10-17T22:39:58.0581211Z Temporarily overriding HOME='/home/runner/work/_temp/0342c004-3406-4c87-96e0-946baabec177' before making global git config changes
+2026-10-17T22:39:58.0582972Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-17T22:39:58.0587663Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-10-17T22:39:58.0630109Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-17T22:39:58.0668497Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-17T22:39:58.1045150Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-17T22:39:58.1087771Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-17T22:39:58.1468933Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-17T22:39:58.1514854Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-17T22:39:58.2046330Z Cleaning up orphan processes
+2026-10-17T22:39:58.2367082Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

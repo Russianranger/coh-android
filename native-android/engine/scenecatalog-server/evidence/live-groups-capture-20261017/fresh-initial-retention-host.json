@@ -1,0 +1,28 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "actual_source_admission_reexecuted": false,
+  "both_final_files_and_provenance_rechecked_after_manifest_io": true,
+  "commit_last_and_late_io_rollback_verified": true,
+  "complete_initial_character": false,
+  "exact_two_export_files_verified": true,
+  "existing_four_source_body_gate_unchanged": true,
+  "manifest_private_owner_canaries_absent": true,
+  "native_capture_executed": false,
+  "new_test_methods": 11,
+  "passed": true,
+  "postgres_executed": false,
+  "related_test_methods": 50,
+  "replaced_file_preserved": true,
+  "same_original_and_retained_initial_bytes_required": true,
+  "schema": "coh-fresh-initial-retention-host-controls-v1",
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "FRESH_INITIAL_RETENTION.md": "437e3a7f566a90f169c5c45dd88a34b5eacb3bb05e17dd0d4a25707d60cf0683",
+    "retain_fresh_initial_observation.py": "d52c974320ec20442aeacfc009614d310bab9c1d31466e21d68976b029a04d8f",
+    "test_fresh_initial_retention.py": "3002e52cd1b014038579c819222557f77a0b2960c51ab7c60e67de1abea0c42a"
+  },
+  "synthetic_packet_copy_and_protocol_controls_only": true,
+  "wine_executed": false,
+  "world_authority": false
+}

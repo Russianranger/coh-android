@@ -1,0 +1,63 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "all_changed_source_hashes_match_exact_commit_and_current_worktree": true,
+  "complete_initial_character": false,
+  "concrete_blockers": [],
+  "findings": [
+    "Exact strict receipt keys/booleans/numeric owner/profile/shortcuts/prefix match the nonshipping native schema and same accepted GROUPS source/native packet owner. Diagnostic receipt absence/refusal does not alter accepted GROUPS passed state.",
+    "Private optional receipt and <=4MiB raw packet copy can occur only after matching GROUPS pair, reportpassed and aggregate owned cleanup are all true. Unsupported/failed observation retains no raw packet and preserves fixed false-authority diagnostics.",
+    "Only two fixed private filenames are copied0600 through O_EXCL/O_NOFOLLOW with bounded streaming, hash/fsync/close/source checks. Existing outputs/replaced rollback paths are preserved; secondary cleanup failure returns fixed RETENTION_FAILED/rollbackfalse, no raw exception text.",
+    "Raw packet and hashes/IDs remain private with the existing whole-run public-upload prohibition. No tail semantics, character transaction, actor, full-update ACK or world authority is granted.",
+    "Separate fresh-only publication gate is outside this commit/review."
+  ],
+  "independent_E_read_only_review_clear": true,
+  "live_initial_packet_captured_by_reviewer": false,
+  "method": "Read-only optional private schema/copy/owner/cleanup integration/test review and exact three changed-file byte binding; no test/native/service execution by reviewer",
+  "owner_reported_controls": {
+    "ack_permitted": false,
+    "actor_publication": false,
+    "complete_initial_character": false,
+    "final_retained_groups_and_initial_bytes_rechecked": true,
+    "groups_result_preserved_on_diagnostic_failure": true,
+    "late_copy_and_rollback_refusals_verified": true,
+    "native_capture_executed": false,
+    "new_test_methods": 13,
+    "optional_retention_after_cleanup_only": true,
+    "passed": true,
+    "postgres_executed": false,
+    "related_test_methods": 37,
+    "rollback_preserves_replaced_file_identity": true,
+    "schema": "coh-private-initial-observation-host-controls-v1",
+    "source_generation_admitted": false,
+    "source_producer_bit_extent_and_nonempty_tail_shapes_verified": true,
+    "source_sha256": {
+      "GROUPS_CAPTURE.md": "cb98d9ffaa888d3831b64cb220302641e525e2514c718b59bb35639e7b22a627",
+      "capture_groups_transaction.py": "c7e83eafdacfedf4cc6d7263ffb85734481d53f0fefa36da3e91f22872c85368",
+      "test_initial_observation_binding.py": "a9a1f9ffd6f94b1b760ff406d03c7481719362ad869e928347076c4122683cbb"
+    },
+    "strict_receipt_owner_and_private_file_binding": true,
+    "synthetic_packets_only": true,
+    "wine_executed": false,
+    "world_authority": false
+  },
+  "passed": true,
+  "proof_path": "native-android/engine/scenecatalog-server/evidence/live-groups-capture-20261017/private-initial-observation-host.json",
+  "proof_sha256": "389ac71de5a279af2c3c42b888b8845509166457862b75032def49a121af0a44",
+  "proof_source_sha256": {
+    "native-android/engine/scenecatalog-server/GROUPS_CAPTURE.md": "cb98d9ffaa888d3831b64cb220302641e525e2514c718b59bb35639e7b22a627",
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "c7e83eafdacfedf4cc6d7263ffb85734481d53f0fefa36da3e91f22872c85368",
+    "native-android/engine/scenecatalog-server/test_initial_observation_binding.py": "a9a1f9ffd6f94b1b760ff406d03c7481719362ad869e928347076c4122683cbb"
+  },
+  "qualifier_or_test_rerun_by_reviewer": false,
+  "requested_fixes_closed": [
+    "Final private-file/hash validation rechecks retained GROUPS receipt/packet and every newly retained initial target after all copies, in addition to source re-admission.",
+    "Created target dev/inode/uid identities come from exclusive output FDs. Rollback preserves replacements and continues independent removals; failure truthfully records incomplete rollback.",
+    "Producer profile requires exact ceil(payload_bits/8), aligned-bit consistency, odd_send1, nonempty entity tail and nonzero failed status; failure receipts have zero payload fields and no packet."
+  ],
+  "reviewer": "Worker F",
+  "schema": "coh-independent-private-initial-binding-review-v1",
+  "source_commit": "cf828fff4ddb82d56eddef67440289f633c52f70",
+  "source_generation_admitted": false,
+  "world_authority": false
+}

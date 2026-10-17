@@ -1,0 +1,12 @@
+{
+  "run_id": 39075900631,
+  "job_id": 117522870322,
+  "scope": "Fixed three-method test results only; raw job log not retained.",
+  "lines": [
+    "2026-10-17T22:39:07.6824746Z test_original_c_formatter_oracle_all_branches_and_boundaries (test_db_modal_diagnostic.DbModalDiagnosticTests.test_original_c_formatter_oracle_all_branches_and_boundaries) ... ok",
+    "2026-10-17T22:39:07.6889049Z test_exact_rendered_file_aliases_and_ambiguous_or_modified_fields (test_db_modal_diagnostic.DbModalDiagnosticTests.test_exact_rendered_file_aliases_and_ambiguous_or_modified_fields) ... ok",
+    "2026-10-17T22:39:07.6904771Z test_compiled_filename_candidates_suffix_and_alias_collisions_refuse (test_db_modal_diagnostic.DbModalDiagnosticTests.test_compiled_filename_candidates_suffix_and_alias_collisions_refuse) ... ok",
+    "2026-10-17T22:39:07.6906165Z Ran 3 tests in 0.836s",
+    "2026-10-17T22:39:07.6906466Z OK"
+  ]
+}

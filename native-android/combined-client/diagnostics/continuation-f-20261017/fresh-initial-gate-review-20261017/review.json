@@ -1,0 +1,60 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "actual_source_admission_or_live_capture_executed_by_reviewer": false,
+  "all_changed_source_hashes_match_exact_commit_and_worktree": true,
+  "changed_source_sha256": {
+    "native-android/engine/scenecatalog-server/FRESH_INITIAL_RETENTION.md": "437e3a7f566a90f169c5c45dd88a34b5eacb3bb05e17dd0d4a25707d60cf0683",
+    "native-android/engine/scenecatalog-server/retain_fresh_initial_observation.py": "d52c974320ec20442aeacfc009614d310bab9c1d31466e21d68976b029a04d8f",
+    "native-android/engine/scenecatalog-server/test_fresh_initial_retention.py": "3002e52cd1b014038579c819222557f77a0b2960c51ab7c60e67de1abea0c42a"
+  },
+  "complete_initial_character": false,
+  "concrete_blockers": [],
+  "entity_or_character_tail_semantics_admitted": false,
+  "findings": [
+    "Only an independently pinned genuinefresh graphical COHLOCAL/THORHERO fixture qualifies; no private user dump/profile branch is accepted. Complete A source admission actually repeats in its existing separate owned interpreter and entire immutable receipt equals the earlier pinned source receipt.",
+    "The cleaned successful source run must name the new initial role, same exact retained and original GROUPS/initial packet/receipt owner, native/compile/PE/verifier source/binary closure, genuinefixture/restorecopy and current committed helper closure.",
+    "Only fixed fresh-initial-observation/initial-update.bin and sanitized commit-last manifest can export. The packet itself intentionally contains approved disposable fixture state; its metadata constructor excludes owner/account/session/message IDs, rawreceipts, GROUPS, logs and arbitrarykeys.",
+    "Exclusive0600 bounded copies/hash/fsync/close and dev/inode/uid-safe independent rollback preserve existing/replaced files and primary errors. Upload must require CLI success and exact two paths; no directory upload on failure.",
+    "This is raw point-in-time initial packet engineering input only, not entity/character-tail semantics or post-release/current generation. Existing four-body gate remains unchanged."
+  ],
+  "independent_E_read_only_review_clear": true,
+  "independent_test_or_qualifier_rerun": false,
+  "method": "Read-only new export/provenance/privacy/I/O/test scope review and exact committed byte/proof binding; no tests/source-admission/native/server execution",
+  "owner_reported_offline_controls": {
+    "ack_permitted": false,
+    "actor_publication": false,
+    "actual_source_admission_reexecuted": false,
+    "both_final_files_and_provenance_rechecked_after_manifest_io": true,
+    "commit_last_and_late_io_rollback_verified": true,
+    "complete_initial_character": false,
+    "exact_two_export_files_verified": true,
+    "existing_four_source_body_gate_unchanged": true,
+    "manifest_private_owner_canaries_absent": true,
+    "native_capture_executed": false,
+    "new_test_methods": 11,
+    "passed": true,
+    "postgres_executed": false,
+    "related_test_methods": 50,
+    "replaced_file_preserved": true,
+    "same_original_and_retained_initial_bytes_required": true,
+    "schema": "coh-fresh-initial-retention-host-controls-v1",
+    "source_generation_admitted": false,
+    "source_sha256": {
+      "FRESH_INITIAL_RETENTION.md": "437e3a7f566a90f169c5c45dd88a34b5eacb3bb05e17dd0d4a25707d60cf0683",
+      "retain_fresh_initial_observation.py": "d52c974320ec20442aeacfc009614d310bab9c1d31466e21d68976b029a04d8f",
+      "test_fresh_initial_retention.py": "3002e52cd1b014038579c819222557f77a0b2960c51ab7c60e67de1abea0c42a"
+    },
+    "synthetic_packet_copy_and_protocol_controls_only": true,
+    "wine_executed": false,
+    "world_authority": false
+  },
+  "passed": true,
+  "proof_path": "native-android/engine/scenecatalog-server/evidence/live-groups-capture-20261017/fresh-initial-retention-host.json",
+  "proof_sha256": "6a6210d82dfd6029fbb5d6204c82a90e13dc1d46f093a6f05ba7dc7f07ec51a1",
+  "requested_fix_closed": "After manifest I/O, full provenance admission and final packet+manifest bytepins plus exact2file inventory are rechecked; late mutation/refusal rolls back rather than reporting success.",
+  "reviewer": "Worker F",
+  "schema": "coh-independent-fresh-initial-export-gate-review-v1",
+  "source_commit": "f7b15f3577a04324ef208f33b34211d1e4a0ba3a",
+  "world_authority": false
+}

@@ -128,3 +128,38 @@ transport-command normalization/comparison. No previously retained startup
 catalog/resource capture is relabeled as this witness. Only a specifically new
 same-boundary capture may close it. Original CLIENT imported-cache/material/LOD
 semantics and complete authoritative player publication remain separate gates.
+
+The restore supervisor admits two fixed native build roles. The existing
+`coh-local-scene-capture-build-v1` driver and return shape are unchanged. The
+new `coh-local-initial-capture-build-v1` role selects only
+`check_local_initial_capture.py`, `capture_local_initial.c`, and the executable
+basename `coh-capture-local-initial`. Its receipt must declare the seven strict
+Boolean flags for a nonshipping initial observation, GROUPS scope and one
+REQALLENTS send, with application character acceptance, READY, received-character
+and full-update ACK sends all false. Both roles require authoritative build
+hashes, the selected fixed driver's literal `RELATIVE` list, the C tool source,
+all compiler-derived project headers, and the exact ELF bytes. Receipt-supplied
+driver selectors have no effect. The eight `test_initial_native_input.py`
+controls use synthetic source/ELF shapes and real compiler dependency scans;
+they execute no native capture, PG, Wine or server and grant no authority.
+
+Only the new role records an optional `initial_observation` in the private run
+receipt. After the ordinary GROUPS pair and complete owned cleanup both pass,
+the supervisor checks the fixed `coh-private-initial-observation-v1` receipt
+against the unchanged GROUPS receipt, packet SHA, selected owner, connection,
+DB/Map generations and closed socket counts. A successful raw ALLENTS loan must
+follow that GROUPS message generation, report one REQALLENTS, and retain at most
+4 MiB with exact packet SHA, bit/cursor/profile, bounded shortcut and update
+prefix metadata. This binds the native tool's observation; Python does not
+interpret the entity or character tails.
+
+The two optional files remain under the private `native` output. An absent or
+malformed observation yields a fixed private status. A well-formed diagnostic
+refusal may retain only its zero-payload receipt. None of these outcomes changes
+a valid GROUPS result or the immutable source-snapshot token's scope. Exclusive
+copies recheck exact bytes before/after flush, fsync and close; any refusal rolls
+back only the newly owned optional files and records whether rollback completed.
+Thirteen `test_initial_observation_binding.py` methods cover strict receipt/owner
+binding, private real-file policy, failure shapes, cleanup ordering and late I/O
+rollback with synthetic packets. No initial character, actor publication,
+READY, received-character, full-update ACK or world authority is admitted.

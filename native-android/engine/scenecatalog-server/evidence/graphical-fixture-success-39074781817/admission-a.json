@@ -1,0 +1,84 @@
+{
+  "actual_retained_proot_regular_publication_preflight_verified": true,
+  "all_table_data_entries_verified": true,
+  "artifact_id": 12117765534,
+  "artifact_zip": {
+    "bytes": 580433,
+    "sha256": "5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b"
+  },
+  "backup_observation": {
+    "backup_receipt_verified": true,
+    "committed_save_gate_verified": true,
+    "gate_entered": true,
+    "helper_exit_zero": true,
+    "helper_failure_code": "NONE",
+    "helper_reaped": true,
+    "helper_rollback_complete": true,
+    "helper_stage": "COMPLETE",
+    "helper_started": true,
+    "helper_status_valid": true,
+    "host_regular_dump_verified": true,
+    "request_written": true
+  },
+  "counts_share_exported_dump_snapshot": true,
+  "fixture_capture_receipt_sha256": "ecd51a26955f8462e6c1644b065f11fc6d018d39b96633110a36698a4cbf7b51",
+  "fixture_only": true,
+  "fresh_profile_reused": false,
+  "full_database_dump": {
+    "bytes": 2766533,
+    "sha256": "2a35bd9224e32dbdbfbb5e0d4331afd780745d2a6504a783101bc6742044c4e6"
+  },
+  "full_snapshot_rows": 58676,
+  "full_snapshot_table_count": 100,
+  "job_id": 117519562498,
+  "member_count": 7,
+  "members": {
+    "account.txt": {
+      "bytes": 9,
+      "sha256": "95d866850fac1e026cc30942cfaaecfeebf74f59a9ab60d593425bcf4da012ff"
+    },
+    "backup-receipt.json": {
+      "bytes": 9718,
+      "sha256": "4afcb16e59553aff3a97db2f3a53033cab0a52e8b33362d5190316384e061c50"
+    },
+    "backup-request.json": {
+      "bytes": 209,
+      "sha256": "1af702a953743afa6a8f44944cbe47a7a43495ca8d59c0ae9d9fa52af8c4c9bf"
+    },
+    "external-observer.json": {
+      "bytes": 142785,
+      "sha256": "eb80d0ee671b2fb07b1a33afca7c67ee31bce55d7d1fb2e255de53d5f0288fc5"
+    },
+    "fixture-capture.json": {
+      "bytes": 15590,
+      "sha256": "ecd51a26955f8462e6c1644b065f11fc6d018d39b96633110a36698a4cbf7b51"
+    },
+    "fixture.pgdump": {
+      "bytes": 2766533,
+      "sha256": "2a35bd9224e32dbdbfbb5e0d4331afd780745d2a6504a783101bc6742044c4e6"
+    },
+    "original-guest-report.json": {
+      "bytes": 157656,
+      "sha256": "a223bd5965f620026f21726f57adb7f942e06635ff9d595100300d874e7e8ca9"
+    }
+  },
+  "original_source_creation_and_ordinary_save_verified": true,
+  "owned_cleanup_verified": true,
+  "passed": true,
+  "postgresql_version_num": 180006,
+  "publication_preflight": {
+    "cleanup_complete": true,
+    "group_absent": true,
+    "host_regular_verified": true,
+    "process_reaped": true,
+    "started": true
+  },
+  "role_secret_export_scan_passed": true,
+  "schema": "coh-fresh-graphical-fixture-independent-admission-a-v1",
+  "source_bytes_unchanged": true,
+  "source_generation_admitted": false,
+  "source_revision": "fd213266f1b6665acece877dabb7dab6663e647c",
+  "wire_slot": 0,
+  "workflow_run_id": 39074781817,
+  "world_authority": false
+}

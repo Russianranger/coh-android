@@ -471,3 +471,55 @@ still belong to the future complete source-ordered character transaction owner.
 This module does not establish full power initialization, whole ReceivePowers,
 current dictionary/packet generation, actor publication or any ACK. Previous
 boost-slot source/receipt remain historical and unchanged in git history.
+
+## Whole power-sequence source review — 2026-10-17 continuation
+
+[POWER_SEQUENCE_DEPENDENCIES.md](POWER_SEQUENCE_DEPENDENCIES.md) preserves the
+complete next phase design and hard gates. Exact seven-file / 24-function source
+pins are retained in `qualification/power-sequence-source-review-20261017.json`
+(SHA256 `3f45c231c91bca276bb9ee83b66ef5567dce91079571f89d2c72b71ddde4c950`).
+This read-only review adds no runtime qualification. In particular, CLIENT build
+selection retains build 0 iLevel except for temporary per-build Boost requires;
+reverse owned-set/Power identity, regular reuse/temp-new UID behavior, grow-only
+slots and complete regular/global Boost objects must compose in one transaction.
+Actual slot-requires evaluation and nonzero typed reward joins remain source
+code dependencies. A new partial reuse kernel is deliberately not implemented.
+The next concrete input dependency is an authentic complete initial ALLENTS
+payload with exact bit length/profile and owned session/selection lineage.
+
+[INITIAL_CHARACTER_CAPTURE_DEPENDENCIES.md](INITIAL_CHARACTER_CAPTURE_DEPENDENCIES.md)
+records the separate read-only capture result. Original REQALLENTS triggers a
+full character-containing ALLENTS before READY / RECEIVED_CHARACTER / full-update ACK.
+The current tool terminates at GROUPS; opaque Local/Map lacks the explicit
+nonshipping one-shot request and ALLENTS loan, and ordinary prefix handling
+retains its 16 KiB cap/refusal. Exact 23-file main/original pins at 777e33c4318 are in
+`qualification/initial-character-capture-source-review-20261017.json` (SHA256
+`9047efe94530f231b2b66f58c0c02544170f2b1bb8b1c786a4c772612bc3f42b`).
+No tool/common edits, runtime retry, earlier qualifier rerun or authority change.
+
+## Isolated nonshipping initial packet seam — 2026-10-17 continuation
+
+The source-dependent pre-READY evidence path is now implemented separately in
+`../initial-capture`, source `d603351ff5db02a6377ca323aaf2046edb041265`. Its new
+translation units include unchanged ordinary Map/Local sources and replace
+those objects only in a separately compiled diagnostic executable. Default
+builds, common Map/Local/replication bytes, ACKs and actor gates are unchanged.
+
+An opaque owner retains the actual Local/DB/Map flow. Complete owned GROUPS
+inspection, successful synchronous I/O, loan release and cancellation precede
+one REQALLENTS queue. A later same-owner raw ALLENTS has its exact profile/header
+checked before the ordinary 16 KiB semantic refusal, under the existing 4 MiB
+decoder cap. It is borrowed synchronously then released and closed. Numeric
+GROUPS evidence remains intact if the later raw initial observation fails. The
+raw packet is input for the future complete power-sequence analysis; it does
+not implement character parsing/joins, current dictionaries, actor or ACKs.
+
+The focused receipt is
+`../initial-capture/qualification/initial-capture-d603351ff.json.gz`, SHA256
+`df90b5ad9570a342fbb42fda80f5cd34bc0e56c089e3a6eef68ec1323b1b9fb4`.
+All 68 exact committed inputs are bound; release/ASan/UBSan each pass 13 public
+UDP scenarios / 4,281 checks and five direct owner faults / 1,462 checks, with
+native allocation and FD balance. Additional wrappers are 1,048 + 1,248 bytes
+(2,296 bytes); caller lease is 1,344 bytes. No global aggregate/RSS admission is
+claimed. E/F/D source reviews are clear. Root owns separate CLI/receipt tests,
+build wiring and the actual forthcoming server transaction.
