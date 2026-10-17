@@ -153,11 +153,46 @@ plus sets can exceed a late standalone import. Footprint sums are not executable
 96MiB global/actor admission. Preserve every actual input lease until consumers
 retire; do not treat selected-level/named borrowers as freed full class inputs.
 
-Next exact input is powers.bin62,047,164B/header0xb553b8ff. Current unqualified
-power_stream_schema.py prototype and recovery archive traverse the complete
-projected descriptor in bounded reads, observing20,241 basepowers/113,046
-AttribMod/7,165SuppressPair/0PowerVar/7,103CustomFX. It reads every field/segment
-without eager tree allocation, but full original producer/consumer, original
-schema CRC, native stream/index/rollback/budgets and F seal remain required.
-The observed header is not ParseTableCRC admission. No donor body is committed;
-no invented runtime IDs or actor/READY/ACK flags are permitted.
+Raw full-power source9f7362cbf/receipt9d5c8dd83, independently sealed
+F43ed6d67d, now traverses the complete62,047,164B powers.bin historical input
+SHA25625641e747c60e066016fcc7d2ce0a2e72f57d7d3953f7b1ff4b18b69e2d49c6d
+through a4KiB provider buffer. All20,241 BasePower records roundtrip byte-for-byte
+through original complete binary reader/writer tables; all cached fullname CRCs
+match whole original powerdict_GetCRCOfBasePower. Nested source record counts
+are113,046 AttribModTemplate/7,165 SuppressPair/0 PowerVar/7,103 PowerCustomFX.
+The observed header0xb553b8ff remains NOT recomputed original ParseTableCRC.
+Binary-only static enum/default shells are explicit, not schema CRC evidence.
+
+Native fixed owner1,048,744B/workspace1,052,840B retains only record/name/CRC
+metadata and original integer-hash index. All65,536 diagnostic slots compare to
+the original source integer-stash prefix; the full global dictionary constructor
+is not executed. Source order/raw duplicate rows survive and CRC lookup returns
+the first winner. Six original-written record container variants cover unknown
+identifier/backslash fullname, positive PowerVar, invalid stored CRC and duplicate
+records. Every release/ASan/UBSan mode passes434,417 assertions plus C++ and native
+stack checks. Final proofSHA256
+f55992b31591bf4ce9e96a341cf0fb59f283adea2ff117940d6627c429c96513 binds60 Git inputs.
+Original unsafe hash/codec host oracle is unsanitized; Win32 and Android are not
+executed. LSAN cannot inspect traced host tasks and remains explicitly false.
+
+The provider owns a pre-reserved FD/read/digest context and callback scratch;
+file bytes are borrowed, not a62MB retained heap. Literal4MiB import cap charges
+both fixed objects, descriptors/digest/context/scratch/native16KiB reserve and
+retained owners before callbacks. Source-host fixture aggregate2,134,652B is not
+a global96MiB pipeline admission. All parse/provider/budget/alias/digest/cancel
+failures preserve output; last-buffer, index and before/after-finish cancellation
+have exact abort-versus-retired digest lifecycle controls. Immutable provider/file
+lease must outlive the owner; no implicit global budget partition is permitted.
+
+Remaining authentic power prerequisites are actual static/default+dynamic
+DefineContext ParseTableCRC, CLIENT/SERVERONLY/cache-path/callback association,
+whole global dictionary construction, original DuplicateMissingPowers/Finalize/
+SetForwardPointers/SetBackPointers semantics, set/category/power ID generation
+joins and complete semantic class-power application. Source SetForwardPointers
+can resolve a declared power then construct setFullName+'.'+power.shortName and
+resolve an alternate identity; count equality is insufficient. The20 allocated
+sets outside category refs remain retained. No invented IDs, eager62MB power
+object graph, current runtime generation, actor/world or READY/ACK permission.
+
+Next additive power_schema_crc_oracle.py is UNQUALIFIED recovery-only work;
+never execute it as an admitted helper or infer schema equality from its output.

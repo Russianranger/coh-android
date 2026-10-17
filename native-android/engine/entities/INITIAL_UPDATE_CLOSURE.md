@@ -592,6 +592,35 @@ SERVERONLY/shared/cache association remain gates. No actor or application ACK.
 Standalone dictionary caps require phased pre-world imports or a future explicit
 qualified parent/child aggregate-budget adapter. Live world bytes cannot silently
 be omitted from retained_bytes; mathematical96MiB sums do not admit the running
-global pipeline. Full62,047,164B power-cache streaming descriptor is currently
-recovery-only work: observed0xb553b8ff is not original schemaCRC qualification,
-and no unqualified native/full dictionary/runtime ID is substituted.
+global pipeline.
+
+## Historical full-power stream and raw CRC index (2026-10-17)
+
+Source9f7362cbf/receipt9d5c8dd83, independently sealed F43ed6d67d, qualifies
+bounded traversal of exact62,047,164B powers.bin SHA256
+25641e747c60e066016fcc7d2ce0a2e72f57d7d3953f7b1ff4b18b69e2d49c6d.
+Original complete table readers/writers roundtrip all20,241 BasePower records,
+and original fullname hash matches every stored CRC. Nested source grammar keeps
+113,046 AttribModTemplate/7,165 SuppressPair/0 PowerVar/7,103 PowerCustomFX records.
+Observed0xb553b8ff remains a header, not recomputed original ParseTableCRC.
+
+The native1,048,744B immutable owner plus transient1,052,840B workspace uses a4KiB
+read buffer and borrowed immutable file/provider lease, without eager62MB tree.
+Every65,536 source integer-stash diagnostic slot agrees, with duplicate rows
+preserved/first CRC winner returned. Six original-written record fixtures,
+434,417 assertions per release/ASan/UBSan, source helper/Git binding, sampled
+truncation/mutation/provider error/digest/cancellation rollback, exact budget,
+C++ and native stack checks pass. The original host oracle remains unsanitized;
+LSAN/Win32/Android are not qualified. Before/after-finish cancellation respects
+digest retirement and preserves output.
+
+This is standalone historical raw schema/index admission. Complete original
+ParseTableCRC needs genuine static/default tables plus source dynamic defines;
+no binary enum/default shells or matching observed header can replace it.
+Whole global dictionary construction, original DuplicateMissingPowers/Finalize/
+forward/back pointer semantics, CLIENT/SERVERONLY/cache branch and current
+set/category/power generation association remain gates. Source forward-pointer
+resolution includes alternate setFullName+'.'+power.shortName identities; raw
+count equality is insufficient. Literal4MiB module import cap still needs phased
+pre-world ownership or an explicit qualified global budget adapter. No semantic
+class/power, selected-entity actor, world or READY/application ACK is published.

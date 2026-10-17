@@ -1,0 +1,34 @@
+{
+  "schema": "coh-independent-raw-power-stream-review-v1",
+  "source_commit": "9f7362cbf3fe12d2a6d4870c71f357061df94bcf",
+  "required_production_fix": "3630447e179f11ef956315836b11158bd9d47da8",
+  "evidence_commit": "9d5c8dd8399c26e9ec3e13f20509940b39b0fa06",
+  "historical_source_chain": [
+    "905b2cbef",
+    "55bc9c392",
+    "a47baea37",
+    "53aaceb4f975d72e873af3a4a94fbf1d42a86915"
+  ],
+  "verdict": "approved_standalone_historical_raw_stream_and_crc_index_only",
+  "proof_compressed_sha256": "f55992b31591bf4ce9e96a341cf0fb59f283adea2ff117940d6627c429c96513",
+  "proof_uncompressed_sha256": "9ede3f41a4b97ecad9c3b55cbe3886163789065bd0fa2d86bd98f35707bf4ace",
+  "tested_git_source_matches": 60,
+  "reported_checks_per_mode": 434417,
+  "review": [
+    "Independently compared all60 receipt source hashes to exact source Git blobs and verified compressed/uncompressed proof hashes. Release/ASan/UBSan counts and footprint results agree. No native corpus/compiler/CI replay performed.",
+    "Bounded 4KiB exact-read streaming parses the entire62047164-byte historical cache without materializing its full body. Complete record extents, recursive table depth, strings/counts and exact EOF are checked before publication. Actual20241 records have whole-original codec roundtrips and individual name CRC comparisons; positive PowerVar and duplicate-first-winner original-written variants are included. Raw unknown numeric fields remain raw. Observed schema CRC is not a recomputed source schema CRC.",
+    "Output/workspace/provider/expected-digest/context spans are overflow-safe and mutually disjoint before writes/callbacks. Fixed owner1048744B + workspace1052840B + concrete provider180B + stack/scratch reservations total2134652B in the fixture, below the literal4MiB module cap. Complete caller retained bytes remain charged; no global parent partition or cap reinterpretation is admitted. Provider context, immutable file descriptor/input identity and callbacks must outlive the borrowed owner.",
+    "Digest begin/update/finish/abort lifecycle is transactional. Every pre-successful-finish failure aborts once; successful finish retires digest state even if digest mismatch or subsequent cancellation prevents output commit. Found and held prior code because cancellation raised on final buffered refill could escape observation. Required3630447e1 now polls after full parse, first/every256 index probes, before finish and after successful finish. Targeted last-refill/before-finish/after-finish controls assert unchanged output and exact abort-versus-retired finish behavior.",
+    "Native byte-safe stash32 integer hash and bounded square probing preserve original forward first-CRC-winner and raw duplicate records.64Mi index-work units bound collision work, fixed65536 slot domain bounds lookup. Actual32768-slot populated index compares against whole original intstash prefix across all65536 diagnostic slots. This is not the complete original global power dictionary constructor.",
+    "Qualification helper sources are frozen and source-compiled before execution, including recursive provider loads; stale-PYC ignored and changed-after-admission source refusal are explicit. Original binary codec uses declared enum/default/storage host shells and the source hash uses explicit Win32-width arithmetic. Original unsafe hash/oracle, Win32 ABI, external OpenSSL sanitizer/stack and LSan closure are not claimed. Host external digest library identity is retained.",
+    "No whole source ParseTableCRC, global constructor, cache-hit association, SERVERONLY/runtime generation, forward pointer resolution, actor, Android or world authority is granted. Existing whole-input stream provider remains externally leased. The separate96MiB arithmetic ledger has not been extended into an executable module adapter by this review."
+  ],
+  "source_schema_crc_recomputed": false,
+  "full_original_dictionary_constructor_executed": false,
+  "historical_cache_branch_admitted": false,
+  "runtime_generation": false,
+  "actor_authority": false,
+  "android_executed": false,
+  "world_authority": false,
+  "global_parent_child_composition_qualified": false
+}

@@ -1,0 +1,8 @@
+{
+  "head": "153a14ff20e22b9b30fd0fee0d1cdd0437191269",
+  "prerequisite": "4f14384c6b1278d2aa996de3576c1eb42f0d2492",
+  "bytes": 869,
+  "sha256": "c4e1bb54dd6e8708a0f86500e69571351a8101d2052f3bec4e87a778c5259602",
+  "verification": "The bundle contains this ref:\n153a14ff20e22b9b30fd0fee0d1cdd0437191269 refs/recovery/20261017/milestone13-entities-doc\nThe bundle requires this ref:\n4f14384c6b1278d2aa996de3576c1eb42f0d2492 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/9174d12e2a11/next-integration/native-android/combined-client/evidence/20261017/emergency-recovery/milestone13-doc-append.bundle is okay\n",
+  "scope": "Post-review documentation only; historical tested POWER_STREAM.md remains available at9f7362cbf. Production parser/oracle/test blobs unchanged."
+}

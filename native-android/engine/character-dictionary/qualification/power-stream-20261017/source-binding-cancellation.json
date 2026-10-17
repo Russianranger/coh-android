@@ -1,0 +1,9 @@
+{
+  "schema": "coh-raw-power-stream-source-binding-v1",
+  "source_revision": "9f7362cbf3fe12d2a6d4870c71f357061df94bcf",
+  "tested_source_files": 60,
+  "proof_sha256": "f55992b31591bf4ce9e96a341cf0fb59f283adea2ff117940d6627c429c96513",
+  "all_tested_sources_match_git": true,
+  "runtime_generation": false,
+  "actor_authority": false
+}

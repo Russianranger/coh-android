@@ -1,0 +1,66 @@
+"""Complete source descriptor/independent stream projection; no runtime admission."""
+import hashlib,re,struct
+PATHS=['Common/entity/powers_load.c','Common/entity/attribmod.h','libs/UtilitiesLib/include/utilitieslib/utils/textparser.h','libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h']
+TABLES=[('Common/entity/powers_load.c','ParseBasePower'),('Common/entity/attribmod.h','ParseAttribModTemplate'),('Common/entity/attribmod.h','ParseSuppressPair'),('Common/entity/powers_load.c','ParsePowerVar'),('Common/entity/powers_load.c','ParsePowerCustomFX')]
+KINDS={'STRING':1,'CURRENTFILE':1,'FILENAME':1,'STRINGARRAY':2,'INT':3,'BOOL':9,'AUTOINT':3,'INTARRAY':4,'F32':5,'STRUCT':6,'VEC3':7,'RGBA':8,'CONDRGB':8,'IGNORE':0}
+def schema(texts):
+ fx=re.search(r'#define ParsePowerFX\(type, fx\).*?(?=\nstatic TokenizerParseInfo ParseColor)',texts[PATHS[0]],re.S).group();fx=fx.split('\n',1)[1].replace('\\\n','\n');tables=[];pins={'ParsePowerFX':hashlib.sha256(fx.encode()).hexdigest()}
+ for path,name in TABLES:
+  body=re.search(r'TokenizerParseInfo '+name+r'\[\]\s*=.*?\n};',texts[path],re.S).group();pins[name]=hashlib.sha256(body.encode()).hexdigest();body=re.sub(r'ParsePowerFX\([^\n]+?\)',lambda m:fx,body);fields=[]
+  for key,value in re.findall(r'\{\s*"([^"]*)"\s*,\s*(.*?)\}',body,re.S):
+   if'TOK_REDUNDANTNAME'in value:continue
+   macro=re.search(r'\bTOK_(\w+)\(',value)
+   if not macro:
+    assert not key or any('TOK_'+k in value for k in ('START','END','IGNORE')),(name,key,value)
+    continue
+   token=macro.group(1)
+   if token in('START','END'):continue
+   if not key and not token:continue
+   assert token in KINDS,(name,key,token)
+   kind=KINDS[token]
+   if not kind:continue
+   sub=0
+   if kind==6:
+    target=re.search(r',\s*(Parse\w+)\s*\)',value).group(1);sub=next(i for i,(_,n)in enumerate(TABLES)if n==target)
+   fields.append({'name':key,'kind':kind,'sub':sub,'source_token':token})
+  tables.append(fields)
+ return tables,pins
+class Reader:
+ def __init__(self,stream,size):self.stream=stream;self.size=size;self.at=0;self.sha=hashlib.sha256();self.max_read=0;self.max_text=0;self.records=[0]*5
+ def read(self,n):
+  assert 0<=n<=self.size-self.at;assert n<=12000
+  b=self.stream.read(n);assert len(b)==n;self.at+=n;self.sha.update(b);self.max_read=max(self.max_read,n);return b
+ def word(self):return struct.unpack('<I',self.read(4))[0]
+ def skip_words(self,n):
+  assert n<=1048576
+  for i in range(0,n,1024):self.read(min(1024,n-i)*4)
+ def text(self):
+  n=struct.unpack('<H',self.read(2))[0];assert n<12000;b=self.read(n);assert b'\0'not in b;self.read((4-(n+2)%4)%4);self.max_text=max(self.max_text,n);return b
+ def record(self,tables,table,depth=0):
+  assert depth<=3;begin=self.at;size=self.word();end=self.at+size;assert end<=self.size;self.records[table]+=1;name=crc=None
+  for i,f in enumerate(tables[table]):
+   kind=f['kind']
+   if kind==1:
+    value=self.text()
+    if table==0 and i==0:name=value
+   elif kind in(3,5,9):
+    value=self.word()
+    if table==0 and i==1:crc=value
+   elif kind==2:
+    n=self.word();assert n<=65536,(table,f['name'],begin,self.at,n,end)
+    for _ in range(n):self.text()
+   elif kind==4:self.skip_words(self.word())
+   elif kind==6:
+    n=self.word();assert n<=65536,(table,f['name'],begin,self.at,n,end)
+    for _ in range(n):self.record(tables,f['sub'],depth+1)
+   elif kind==7:self.skip_words(3)
+   elif kind==8:self.skip_words(4)
+   else:assert False
+   assert self.at<=end,(table,f['name'],begin,self.at,end)
+  assert self.at==end,(table,begin,self.at,end)
+  return {'begin':begin,'end':end,'name':name.decode('ascii')if name is not None else None,'stored_crc':crc}
+def inspect(stream,size,tables):
+ r=Reader(stream,size);assert r.read(8)==b'CrypticS';crc=r.word();assert r.text()==b'Parse6'and r.text()==b'Files1';files_end=r.at+4+struct.unpack('<I',r.read(4))[0];deps=r.word()
+ for _ in range(deps):r.text();r.word()
+ assert r.at==files_end;begin=r.at;end=r.at+4+struct.unpack('<I',r.read(4))[0];count=r.word();assert count<=65536 and end==size;rows=[r.record(tables,0)for _ in range(count)];assert r.at==size and not stream.read(1)
+ return {'schema_crc':crc,'begin':begin,'count':count,'rows':rows,'records_by_table':r.records,'exact_sha256':r.sha.hexdigest(),'max_read':r.max_read,'max_text':r.max_text,'runtime_generation':False,'dictionary_admission':False,'source_crc_recomputed':False}
