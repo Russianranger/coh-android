@@ -156,3 +156,18 @@ Follow-up workflow `native-authority-followup.yml` runs only new source tests an
 actual original Auth/Db activation. It reuses retained binaries and does not
 repeat accepted account-only cases, renderer/Android qualification, server
 compilation or captures. Its exact result must be appended after execution.
+
+## Narrow follow-up checkout repair
+
+Published follow-up source is `996af55882219a136405b75628713d9286825df2`,
+exact tree `751963b8b8f1c5e21fc05b628b214fe1ebf4a1ec`. Run39068530726
+passed every LOD-cache and gameplay-ID qualifier before its enclosing Linux job
+failed: a shallow checkout lacked historical source object8f4117e, required
+for retained DbServer binary admission. The Windows service job was skipped;
+no service execution failed or succeeded. `followup-ci-recovery.json` records
+the exact artifact12113568787 (16,349B, SHA
+04a42b9b430b8adab280f2a7a14090c1ca0c5c3b836890727b8ddff668377311).
+Both passing receipts and all104 source hashes were independently rechecked
+against current bytes. The workflow repair fetches only the required historical
+identities, reuses these results, and executes remaining admission tests plus
+the original service stage. It does not repeat either successful qualifier.

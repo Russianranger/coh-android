@@ -22,34 +22,33 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends gcc g++ libssl-dev zlib1g-dev
-      - name: Reuse exact historical input bytes without building donors or running a server
+      - name: Fetch only historical source identities required by retained binary admission
+        run: git fetch --depth=1 --no-tags origin 8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919 28fe37cc2432db4adbfe047bd07a1e738d6aa754
+      - name: Reuse exact successful LOD and gameplay-ID receipts from the failed enclosing job
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          python3 - <<'PY'
-          import hashlib,os,pathlib,subprocess,zipfile
-          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'coh-followup-inputs';out.mkdir()
-          for ident,size,sha,member,name,raw_size,raw_sha in [
-            (11092897979,26476333,'51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae','client-caches.zip','client-caches.zip',27071659,'5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051'),
-            (12086339123,2945220,'572d5cde08f698173cce4c9a0860902a2da91841b22dbdd124501e1e601e192d','capture/resources.cohres','resources.cohres',12596422,'8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6')]:
-              archive=out/(str(ident)+'.zip')
-              with archive.open('xb') as stream:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=stream,check=True,timeout=180)
-              assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==sha
-              with zipfile.ZipFile(archive) as z:
-                  assert len(z.infolist())<=128 and sum(i.file_size for i in z.infolist())<=128*1024**2 and z.testzip() is None
-                  assert z.getinfo(member).file_size==raw_size
-                  raw=z.read(member);assert hashlib.sha256(raw).hexdigest()==raw_sha
-                  (out/name).write_bytes(raw)
-              archive.unlink()
-          with zipfile.ZipFile(out/'client-caches.zip') as z:raw=z.read('data/bin/lods.bin')
-          assert len(raw)==1059016 and hashlib.sha256(raw).hexdigest()=='13800255781138248226340be316cd628e98800d9ba889fe1aecc902e483b66a'
-          (out/'lods.bin').write_bytes(raw)
-          PY
-      - name: Qualify only new LOD cache, sorted power IDs and owned supervisor changes
+          python3 - <<'PYCODE'
+          import gzip,hashlib,json,pathlib,posixpath,subprocess
+          import zipfile
+          output=pathlib.Path('out/authority-followup/source');output.mkdir(parents=True)
+          archive=output/'retained-source.zip'
+          with archive.open('xb') as stream:subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/12113568787/zip'],stdout=stream,check=True,timeout=120)
+          assert archive.stat().st_size==16349 and hashlib.sha256(archive.read_bytes()).hexdigest()=='04a42b9b430b8adab280f2a7a14090c1ca0c5c3b836890727b8ddff668377311'
+          with zipfile.ZipFile(archive) as z:
+              assert set(z.namelist())=={'lod-cache.json','power-ids.json.gz'} and z.testzip() is None
+              for name in z.namelist():
+                  raw=z.read(name);proof=json.loads(gzip.decompress(raw) if name.endswith('.gz') else raw)
+                  assert proof['passed'] is True
+                  for path,sha in proof['source_sha256'].items():
+                      normalized=posixpath.normpath(path);assert not normalized.startswith(('/','../'))
+                      body=pathlib.Path(normalized).read_bytes();assert hashlib.sha256(body).hexdigest()==sha
+                  (output/name).write_bytes(raw)
+          archive.unlink()
+          print('Retained exact successful LOD and ID results; unchanged source verified without repeating either qualifier')
+          PYCODE
+      - name: Execute only remaining service and private-supervisor admission tests
         run: |
-          mkdir -p out/authority-followup/source
-          python3 native-android/engine/world-render-adapter/check_lod_cache.py --actual-cache "$RUNNER_TEMP/coh-followup-inputs/lods.bin" --resources "$RUNNER_TEMP/coh-followup-inputs/resources.cohres" --output out/authority-followup/source/lod-cache.json
-          python3 native-android/engine/character-dictionary/check_power_ids.py --cache-zip "$RUNNER_TEMP/coh-followup-inputs/client-caches.zip" --output out/authority-followup/source/power-ids.json.gz --sanitize
           python3 -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_shard_activation.py -v
           python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_admit_groups_capture.py -v
           python3 native-android/engine/scenecatalog-server/test_capture_groups_transaction.py --fixture native-android/combined-client/diagnostics/primary-authority-20261017/unit-groups-fixture.cohgtx --output out/authority-followup/source/private-supervisor.json

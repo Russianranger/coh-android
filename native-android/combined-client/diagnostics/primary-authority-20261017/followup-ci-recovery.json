@@ -1,0 +1,31 @@
+{
+  "schema": "coh-authority-followup-ci-recovery-v1",
+  "failed_run": 39068530726,
+  "source_commit": "996af55882219a136405b75628713d9286825df2",
+  "failed_job": 117501115955,
+  "failure_kind": "missing historical source object in shallow checkout",
+  "required_commits": [
+    "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919",
+    "28fe37cc2432db4adbfe047bd07a1e738d6aa754"
+  ],
+  "windows_service_stage_started": false,
+  "retained_artifact": {
+    "id": 12113568787,
+    "bytes": 16349,
+    "sha256": "04a42b9b430b8adab280f2a7a14090c1ca0c5c3b836890727b8ddff668377311",
+    "members": {
+      "lod-cache.json": {
+        "passed": true,
+        "source_hash_entries_verified": 39,
+        "receipt_sha256": "68f3bbda383cd183938e2ebf5dfa80987bd507d3c21aa9c314b6318671a83574"
+      },
+      "power-ids.json.gz": {
+        "passed": true,
+        "source_hash_entries_verified": 65,
+        "receipt_sha256": "7a60df8c140a00f27f6615211fd10a966e22ace2b17fa1e64e71403ce455d948"
+      }
+    }
+  },
+  "retry_policy": "Fetch exact historical source identities, reuse successful receipts after current-byte verification, execute only remaining admission tests then actual original service registration",
+  "authority_claim": false
+}
