@@ -1,0 +1,9 @@
+# Owned DB selection identity continuation
+
+Source-qualified entity-bootstrap f6c18cbd8/e8f5ff5da/41f6e7167 proves that the selected entity container ID is the first MAP_CONNECT field; the queue forwards all seven fields unchanged. The existing generic wire field is called link_id. Only the opaque DBSession WAIT_MAP/selected-generation/full-message path promotes that value to selected_dbid. Neither the character slot nor arbitrary raw link_id creates this identity.
+
+The local and authenticated coordinators now require the owned positive INT32 ID to agree with its handoff field and carry it into Map authorization. Local development remains loopback/provisional; nonzero expected ID requires matching handoff data. The optional zero-ID standalone Map profile remains unknown, and authentication alone does not admit an entity. Map self/create, complete character grammar/dictionaries, world ownership and all application acknowledgments remain unchanged and gated.
+
+Qualification: local complete scripted DB→Map OS-UDP chain1,082 controls/9 scenarios each release/ASan/UBSan; Map31,780 controls/33 scenarios per mode; integrated authenticated-owner contract277 controls/11 synthetic adapter scenarios and41 actual OS-TCP boundary controls/3 scenarios with combinedASan+UBSan. The TCP cases do not perform successful AuthServer login. Tests explicitly retain the selected positive ID through the local owner, reject zero/high/mismatching poisoned handoffs, and preserve socket cleanup, SCENE_INCOMPLETE and no READY/REQALLENTS/actor application ACK. Source C384 whole producer/queue fixtures and207,896 wire controls remain independently retained.
+
+This supersedes the prior current README assumption that the handoff could never supply DBID. Historical accepted APKs/receipts remain unchanged. No Android build, emulator or Thor qualification is claimed for this source change.

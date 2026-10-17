@@ -1,0 +1,8 @@
+{
+  "source_commit": "e81ab9ed3597b491549a3137207dd77f6e463001",
+  "host_proof_sha256": "53d430b2f6052b4271ae05fb56af30d90e934e06d89d2ed64877e3924b379976",
+  "all_tested_source_inputs_equal_committed_blobs": true,
+  "compressed_payload_sha256": "29855908f848f9d7329f413b64be637e10b79878702ee76db35799f7fa7ddfab",
+  "raw_payload_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+  "runtime_generation_admitted": false
+}

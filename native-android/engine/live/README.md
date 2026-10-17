@@ -25,9 +25,13 @@ The owner follows this sequence:
    account login**. The serialized DB request and temporary receipt are wiped.
    Character lists expose only UI records, never the trailing auth arrays.
 5. `CHARACTERS_READY` requires an explicit valid existing wire-slot choice.
-   The DB handoff must match that slot and a valid selection generation. A DBID
-   is not present in the source list/handoff: the owner keeps it zero and rejects
-   invented identity. The owner keeps a separate monotonic selection generation.
+   The owned DB handoff must match that slot and a valid selection generation.
+   The source-qualified MAP_CONNECT producer supplies EntCon.id in the first
+   wire field; DBSession promotes it only after whole-message/selection checks.
+   The owner carries this positive ID to Map without treating a generic raw
+   link_id as proof. The list itself has no DBID. See the entity-bootstrap
+   contract and combined-client/diagnostics/owned-handoff-identity-20261017.
+   The owner keeps a separate monotonic selection generation.
 6. `MAP_APPROVAL` exposes only two public numeric endpoint candidates. The
    caller explicitly selects an address and the configured policy callback must
    approve its exact bytes/port for this authentication generation. The packed

@@ -248,8 +248,13 @@ static void local_authorization_tests(void) {
     CohNetPacket first=receive_packet(p,5,1);CHECK(first.connect&&command(first,0)==1);
     coh_map_client_suspend(m);CHECK(!diagnostics(m).local_development_authorized);
     coh_map_client_destroy(m);
+    m=coh_map_client_create(&c);CHECK(m);a=authorized(p);a.authenticated=0;a.local_development_authorized=1;
+    a.selected_dbid=a.handoff.link_id; /* Explicit source-qualified owned handoff fixture. */
+    CHECK(coh_map_client_begin(m,&a,62,1)==COH_OK);
+    CHECK(diagnostics(m).selected_dbid==23&&diagnostics(m).local_development_authorized&&!diagnostics(m).character_identity_verified);
+    coh_map_client_close(m);CHECK(diagnostics(m).udp.sockets_opened==diagnostics(m).udp.sockets_closed);coh_map_client_destroy(m);
     c.udp.peer.address[0]=192;a.handoff.address[0]=(a.handoff.address[0]&~255u)|192u;
-    m=coh_map_client_create(&c);CHECK(m);CHECK(coh_map_client_begin(m,&a,62,1)==COH_INVALID);negative++;
+    m=coh_map_client_create(&c);CHECK(m);CHECK(coh_map_client_begin(m,&a,63,2)==COH_INVALID);negative++;
     CHECK(!diagnostics(m).udp.sockets_opened);coh_map_client_destroy(m);peer_close(p);scenarios++;
 }
 static CohNetPacket scene_prefix(unsigned version,unsigned aligned,uint32_t id) {

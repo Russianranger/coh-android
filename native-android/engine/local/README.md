@@ -130,3 +130,6 @@ duplicate request IDs, writes atomic numeric lifecycle reports, responds to
 SIGTERM/SIGINT, and exits after at most 180 seconds. No READY or entity spawn
 is manufactured. The host checker runs a separate real native client through
 this peer under release, ASan and UBSan, including socket closure.
+
+
+The source-qualified owned DBSession MAP_CONNECT handoff now supplies the selected positive DBID. The local owner carries that expected ID through its loopback-only provisional Map authorization; generic raw link_id is not independently promoted. Entity/character acceptance and all application ACKs remain gated. Qualification is retained in combined-client/diagnostics/owned-handoff-identity-20261017.

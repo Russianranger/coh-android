@@ -1,0 +1,51 @@
+{
+  "schema": "coh-groups-visitor-independent-source-review-v1",
+  "reviewed_commit": "0ecb84df0d210b5186a337f0cd67449d647c2a0f",
+  "approved_for_standalone_observation_scope": true,
+  "source_sha256": {
+    "native-android/engine/replication/coh_groups.c": "b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd",
+    "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+    "native-android/engine/replication/check_groups_visit.py": "dc7d5ce5959bf57a5102c954fdddba830876c73812f5d9788daff7d9796bab82",
+    "native-android/engine/replication/tests/test_groups_visit.c": "45c375515dadce3e18071748423d19aba97685768c68ac24e22641c8d7bb5df2",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/replication/groups_oracle.py": "23fda4a062edca54f1ea4af4d8e1d220f496a854eb68069e669f517f5c41755b",
+    "native-android/engine/replication/groups_check.py": "a51402188250e940c3eaed0fedaa857594d83fa4df68b059149b7bfdd094140c",
+    "native-android/engine/replication/tests/test_groups.c": "19122e1592bbf80b5d6283b5f4669953de96999062ec0a292be3c1005aeea85c",
+    "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+    "native-android/engine/replication/tests/groups_oracle_harness.c": "5cbcad7546ec127b6602d10b79419a87329ef4dbc8e72c1014b661dd06d53cb2",
+    "native-android/engine/replication/tests/groups_oracle_shim.h": "d6152d20c7ac629323cd15b4ea14fe8c65a8fadea05d5f7db02cb8cb7d0cb518"
+  },
+  "receipt_sha256": {
+    "evidence/groups-visitor-host.json": "c935f8c4e44e8c727afe4d435136d8cf3b589126a92565d9321ae26ad2b55d1c",
+    "evidence/groups-visitor-inspector-regression.json": "01b9366ec7c5433cd9873c8b0fb0e690662cb284ad87e7c720225825517c7315"
+  },
+  "original_source_blobs_verified": 16,
+  "original_function_pins_verified": 41,
+  "prior_inspector_function_body_unchanged": true,
+  "prior_inspector_dependencies_unchanged": true,
+  "source_oracle_receipts_equal_prior_standalone": true,
+  "reported_visitor_checks_per_mode": 147088,
+  "reported_inspector_checks_per_mode": 2473492,
+  "test_modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "tests_rerun_by_reviewer": false,
+  "expensive_corpus_rerun": false,
+  "manual_findings": [
+    "Complete structural preflight finishes before any event; malformed/unsupported/truncated input produces no callbacks.",
+    "Second walk uses the same bounded grammar; event spans retain exact input and representation with exclusive bit end. File order1..N-1,0 and original definition/root slots preserved.",
+    "Pairwise control/input overlap and uintptr range overflow rejected; finite source count/string/work limits still apply to each pass. Caller must account both passes and callback scratch.",
+    "Callback refusal stops immediately and preserves reader/inspection; external staged callback data must be discarded by owner on any error.",
+    "Callback-local event/span views cannot be retained; input must remain immutable and callback context/opaque allocations must not mutate controls/input. These are trusted caller obligations, not a callback sandbox.",
+    "No allocation, graph ownership, generation binding, CRC verification, asset resolution, READY or authoritative publication is introduced."
+  ],
+  "remaining_scope": [
+    "Live GROUPS/source generation binder is outside this review.",
+    "No Android/emulator/Thor or authentic live-server acceptance inferred."
+  ],
+  "blocking_findings": [],
+  "reviewer_script_sha256": "0a0cd7069cb6750aa6d98f0fde9501fe2c3cbb27a3e75446c08a8c103279dfaa"
+}

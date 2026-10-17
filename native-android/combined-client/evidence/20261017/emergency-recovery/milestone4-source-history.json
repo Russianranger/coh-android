@@ -1,0 +1,25 @@
+{
+  "heads": {
+    "refs/recovery/20261017/milestone4-auth": "1b225a89101f953df0dee4958c049eb19230c4cd",
+    "refs/recovery/20261017/milestone4-catalog": "d21150a087c112e0a804a9c1267943c4f2aa1d32",
+    "refs/recovery/20261017/milestone4-entities": "370da779951cece3fcbfb68901ee93626c0ec0c3",
+    "refs/recovery/20261017/milestone4-graph-bounds": "a590e7827a02d7431471f7f9b0a3fea9eeb942e5",
+    "refs/recovery/20261017/milestone4-graph-groups": "0f0371fe8cea136b0d397075b6a76d073544162c",
+    "refs/recovery/20261017/milestone4-qualification": "143c89dcf26be31363d141e795cc25048c3a0c41",
+    "refs/recovery/20261017/milestone4-renderer": "8c0f4925cfd1590ca0da74ff5916f30bc2683628"
+  },
+  "prerequisite_refs": [
+    "refs/recovery/20261017/milestone3-auth",
+    "refs/recovery/20261017/milestone3-catalog",
+    "refs/recovery/20261017/milestone3-coordinator",
+    "refs/recovery/20261017/milestone3-entities",
+    "refs/recovery/20261017/milestone3-graph",
+    "refs/recovery/20261017/milestone3-qualification",
+    "refs/recovery/20261017/milestone3-renderer"
+  ],
+  "remote_prerequisite_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc",
+  "bytes": 1796343,
+  "sha256": "5784ac663d54e907b59617e0dc8f429a8e963241ab9bd2bca4d16c52fe944247",
+  "verification": "The bundle contains these 7 refs:\n1b225a89101f953df0dee4958c049eb19230c4cd refs/recovery/20261017/milestone4-auth\nd21150a087c112e0a804a9c1267943c4f2aa1d32 refs/recovery/20261017/milestone4-catalog\n370da779951cece3fcbfb68901ee93626c0ec0c3 refs/recovery/20261017/milestone4-entities\na590e7827a02d7431471f7f9b0a3fea9eeb942e5 refs/recovery/20261017/milestone4-graph-bounds\n0f0371fe8cea136b0d397075b6a76d073544162c refs/recovery/20261017/milestone4-graph-groups\n143c89dcf26be31363d141e795cc25048c3a0c41 refs/recovery/20261017/milestone4-qualification\n8c0f4925cfd1590ca0da74ff5916f30bc2683628 refs/recovery/20261017/milestone4-renderer\nThe bundle requires these 5 refs:\n05ea6507a9a0b8129b4b602df15d524df99caee6 \nc0a1a79e328d95239976cdff80ae93de95973e35 \nfb19d35e6fdafec8bf132738d40c8962c7b3cfb2 \n49181ead030b6b65e1749521e3872b3bae497bad \n26e02eb70c4ffc4a9f202b255b744e279dc1cc77 \nThe bundle uses this hash algorithm: sha1",
+  "scope": "Original worker source ancestry. Coordinator source/tests use guarded exact-tree GitHub publications. Redundant oversized private aggregate history bundles retained separately, not duplicated here."
+}

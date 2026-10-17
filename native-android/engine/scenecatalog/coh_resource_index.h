@@ -80,4 +80,10 @@ CohStatus coh_resource_index_material(const CohResourceIndex *,uint32_t owner_ki
  * output unchanged for absent/no-model owners. Output must be disjoint. */
 CohStatus coh_resource_index_header(const CohResourceIndex *,uint32_t owner_kind,
     uint32_t file,uint32_t slot,CohBytes *);
+typedef struct {CohBytes record,header,blob;} CohResourceOwnerSources;
+/* Exact borrowed immutable source spans of a model owner; no allocation,
+ * lookup aliasing, parsing or new authority. O(log rows), output disjoint from
+ * index/private owners and returned source storage; unchanged on refusal. */
+CohStatus coh_resource_index_owner_sources(const CohResourceIndex *,uint32_t owner_kind,
+ uint32_t file,uint32_t slot,CohResourceOwnerSources *);
 #endif

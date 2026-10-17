@@ -1,0 +1,11 @@
+/* Diagnostic projection of actual loaded source fields through original getters.
+ * Hashes compact ordered records; no engine mutation, dictionary or actor. */
+#include <openssl/sha.h>
+static ParseTable*all_tables[]={COH_TABLE_POINTERS};
+static unsigned project_counts[8];
+static SHA256_CTX project_hash;
+static unsigned table_id(ParseTable*t){for(unsigned i=0;i<sizeof(all_tables)/sizeof(all_tables[0]);i++)if(all_tables[i]==t)return i;assert(0);return 0;}
+unsigned original_schema_count(void){return sizeof(all_tables)/sizeof(all_tables[0]);}
+unsigned original_schema_field(unsigned table,unsigned column,unsigned*out){assert(table<original_schema_count());ParseTable*t=all_tables[table];unsigned n=0;while((t[n].name&&t[n].name[0])||t[n].type)n++;if(column>=n)return 0;out[0]=t[column].type;out[1]=(unsigned)t[column].param;out[2]=t[column].subtable?table_id(t[column].subtable):0xffffffffu;return 1;}
+static void project_word(U32 v){unsigned char b[4]={(unsigned char)v,(unsigned char)(v>>8),(unsigned char)(v>>16),(unsigned char)(v>>24)};SHA256_Update(&project_hash,b,4);}
+static void project_tree(ParseTable*t,const void*p,unsigned depth){assert(depth<=32);project_counts[0]++;if(depth>project_counts[7])project_counts[7]=depth;project_word(table_id(t));int c;FORALL_PARSEINFO(t,c){unsigned type=t[c].type,base=TOK_GET_TYPE(type);if((type&TOK_REDUNDANTNAME)||base==TOK_END)continue;unsigned count=TokenStoreGetNumElems(t,c,p);assert(count<=65536);project_counts[1]++;project_word(c);project_word(type);project_word(count);for(unsigned i=0;i<count;i++){if(base==TOK_STRUCT_X){project_tree(t[c].subtable,TokenStoreGetPointerConst(t,c,p,i),depth+1);}else if(base==TOK_STRING_X||base==TOK_CURRENTFILE_X){const char*s=TokenStoreGetStringConst(t,c,p,i);unsigned n=s?(unsigned)strlen(s):0xffffffffu;project_word(n);if(s)SHA256_Update(&project_hash,s,n);project_counts[2]++;if(!s)project_counts[3]++;else if(!n)project_counts[4]++;}else{U32 word=0;switch(base){case TOK_INT_X:word=(U32)TokenStoreGetInt(t,c,p,i);break;case TOK_BOOLFLAG_X:word=TokenStoreGetU8(t,c,p,i);break;case TOK_F32_X:{F32 f=TokenStoreGetF32(t,c,p,i);memcpy(&word,&f,4);break;}default:assert(0);}project_word(word);project_counts[5]++;}}if(type&TOK_EARRAY)project_counts[6]+=count;}}

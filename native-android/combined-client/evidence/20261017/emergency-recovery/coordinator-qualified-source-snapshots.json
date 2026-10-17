@@ -1,0 +1,12 @@
+{
+  "snapshots": {
+    "1cad41744185e388139799eb4676f7908f63689c": "cd5629fbe1dbfdb59554c43c4513e1360d591dc0",
+    "327ccf0bea9b2aef31e30e1c70ecc31a0ca80cc5": "3007309452196bf693982f6d709bd3f2f996e7e1",
+    "ea705ab2a78a5c6a2826fc485df4b526978591cb": "6c10b40ac2e2bfc3de0cce4b2f1d9a3803d011b8"
+  },
+  "source_object_count": 54,
+  "sha256": "ea80fef1b02483722fb13aed5d81ff0ff9cb935861f412b07102ff89f7e463ce",
+  "bytes": 1894590,
+  "base": "milestone4 worker bundle and appendix plus remote parent71fb0ef2ecacfbff7de7e02a3996adefec9961fc",
+  "scope": "Supplemental exact commit/tree source objects for historical git-show verification only; not complete coordinator ancestry. Import with git index-pack --stdin; retain this pack for later verification replay."
+}

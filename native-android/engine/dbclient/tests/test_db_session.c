@@ -108,7 +108,7 @@ static void happy(unsigned version,int compressed) {
     const uint8_t *map=version<4?map_old0:(compressed?map1:map0);size_t map_bits=version<4?map_old0_bits:(compressed?map1_bits:map0_bits);
     peer_message(&peer,target,version,map,map_bits,compressed,request.id);CHECK(coh_db_session_service(s,107,(CohCancel){0})==COH_OK);drain_ack(&peer,version);
     CHECK(coh_db_session_phase(s)==COH_DB_HANDOFF_READY);CohDbSessionHandoff h;CHECK(coh_db_session_take_handoff(s,&h)==COH_OK);
-    CHECK(h.map.cookie==123456&&h.map.udp_port==7002&&h.map.address[0]==0x0100007f&&h.selected_slot==0&&h.selection_generation==1&&!h.selected_dbid);
+    CHECK(h.map.cookie==123456&&h.map.udp_port==7002&&h.map.address[0]==0x0100007f&&h.selected_slot==0&&h.selection_generation==1&&h.selected_dbid==17);
     CHECK(coh_db_session_take_handoff(s,&h)==COH_STATE);CHECK(coh_db_session_service(s,108,(CohCancel){0})==COH_OK);request=frame_read(&peer,version,0);
     CHECK(command(&request,version,1)==5);CohNetPacket ack=control(version,++peer.id,6,0,0);ack.ack_count=1;ack.acks[0]=request.id;frame_send(&peer,target,version,&ack);
     CHECK(coh_db_session_service(s,109,(CohCancel){0})==COH_OK&&coh_db_session_phase(s)==COH_DB_CLOSED);
@@ -176,7 +176,7 @@ static void local_development(unsigned which) {
             peer_message(&peer,target,5,players0,players0_bits,0,0);CHECK(coh_db_session_service(s,105,(CohCancel){0})==COH_OK);drain_ack(&peer,5);
             CHECK(coh_db_session_choose(s,0,0,0,106)==COH_OK);CHECK(coh_db_session_service(s,106,(CohCancel){0})==COH_OK);request=frame_read(&peer,5,0);
             peer_message(&peer,target,5,map0,map0_bits,0,request.id);CHECK(coh_db_session_service(s,107,(CohCancel){0})==COH_OK);drain_ack(&peer,5);
-            CohDbSessionHandoff h;CHECK(coh_db_session_take_handoff(s,&h)==COH_OK&&h.map.cookie==123456&&h.selected_slot==0&&!h.selected_dbid);
+            CohDbSessionHandoff h;CHECK(coh_db_session_take_handoff(s,&h)==COH_OK&&h.map.cookie==123456&&h.selected_slot==0&&h.selected_dbid==17);
         }
     }
     coh_db_session_suspend(s);CohDbLogin login;CohDbAuthReceipt auth;login_configuration(&login,&auth,1);login.user_id=login.cookie=0;

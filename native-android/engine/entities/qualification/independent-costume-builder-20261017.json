@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "reviewed_source_revision": "e81ab9ed3597b491549a3137207dd77f6e463001",
+  "reviewed_evidence_revision": "370da779951cece3fcbfb68901ee93626c0ec0c3",
+  "review_kind": "Independent read-only complete original source builder/ancillary boundary and retained source/blob/slot audit; no corpus replay",
+  "source_sha256": {
+    "native-android/engine/costume-builder/oracle.py": "b39094d6582767dd2b00f6ce05f1f86d5f69712617ed179c36ddcadf71630632",
+    "native-android/engine/costume-builder/independent.py": "6ffef2ff4b86dcc7f91cc2b23594afe879b1463314b352156cbf338a58913481",
+    "native-android/engine/costume-builder/check.py": "12138c24cda66b11ffdf3861c75346264e639951146a128ddf674a226d5046ab",
+    "native-android/engine/costume-builder/adapters.h": "02f677412a87bf054e7e754dc79977f1f3b3b1881591541989cb05f183babc8f",
+    "native-android/engine/costume-builder/wrapper.h": "b25ff6d8832f4efb4267478305b8b0c99dd18122564e8020233e888e53306ace",
+    "native-android/engine/costume-builder/source-pins.json": "3659146e91eb3ad29c802bdb0e09d4e718b75a9b373305991a261af8c3877698",
+    "native-android/engine/costume-builder/CONTRACT.md": "7a6a74c2989178c4ccccb16b9b1dab5a9723026702ad035c37c2394333d8b0fe",
+    "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "native-android/engine/costume-tree/tree_oracle.py": "0d5f9fcb4a58ffd3a2af07381ac1f0afbf753f29b43279fdf4f8f7816e69ad32",
+    "native-android/engine/costume-tree/independent.py": "70f60f9fa0a0dcfd9b77463214ab89811c837118f471f1f939b83295ff0f0bd4",
+    "native-android/engine/costume-tree/crc_provider.py": "7ee991803d9e2d303fab436d8fc4d446e9318e6c8fc60e0915d17cca18f73ff1",
+    "native-android/engine/costume-tree/check.py": "a35ead24775e4b4cb7505283c252ff6066cfc4fcfbece5f3ebd7d9745d117a3d",
+    "native-android/engine/costume-tree/storage_adapters.h": "6e7b321651cd9ad8ff3673bbed6be804525472217d5926acf77eb7b5d9ba0d4a",
+    "native-android/engine/costume-tree/projection.h": "ca379be477d23ad5096aa956335ed0570cf2a0046bf04b62692d687796a0ffdd",
+    "native-android/engine/costume-tree/tree_wrapper.h": "b8fe78b233811f7c7551fcf8c022a77d4f3ea8cb33326b0b7285f5334bb7c04a",
+    "native-android/engine/costume-tree/source-pins.json": "dfed59e7e6112565a78563ce4b8cfce051b88d8be970c896d10fc39a60ef25d4",
+    "native-android/engine/stash32/oracle.py": "21f04ac82ca6f49d4aa7bc686041d4a97c5a613a2038fdd93f6a61619b7fcafe",
+    "native-android/engine/stash32/check.py": "c2b968b414ef723c49713f01fbd7de805289cc8824e0725cd434325e5dee2920",
+    "native-android/engine/stash32/coh_stash32.h": "fedc5448fa449bd8f223105343adcab02fda2bb126b5f15b1e6fa21539275c93",
+    "native-android/engine/stash32/coh_stash32.c": "f9ac5c11a75b48ac170646b33c59feece5660c23170f31e30a1e2178bcf06dfa",
+    "native-android/engine/stash32/test_stash.c": "a37a74ce0261c388ac4dbab67b14d081c1cea37c3196d2c75a14817c2b5d12d9",
+    "native-android/engine/stash32/source-pins.json": "8dd6722bf7188bea4a0bfeb9cbac7066ebfebc6998cfba835f2d4140d15dca36",
+    "native-android/engine/costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+    "native-android/engine/costume-inputs/check.py": "31d9f403fca65efc75b0ae7da8efb193ea4c2d3d17b0ad787fcd9b681ea21475",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/costume-inputs/coh_costume_inputs.c": "194f3ef8a38e77db0e86ce16ed8caa18772952715ea9c13d1c26382bee7c3255",
+    "native-android/engine/costume-inputs/test_inputs.c": "48d4bcc020329f14387794ad520c544ccd7d577bc40516074d2edc4c80e59277",
+    "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f"
+  },
+  "original_source_sha256_lf": {
+    "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+    "upstream/ouroboros/Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+    "upstream/ouroboros/Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/HashFunctions.c": "8a1aba492f2d3154390f2d6361c4cc21d6eccab15487554f70bac0e9dbc136ea",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/HashFunctions.h": "0ef6610576ad251850282ec4c90714084b888a2c7cd32516f1ea424b71cbcfa9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+    "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34"
+  },
+  "host_proof_sha256": "53d430b2f6052b4271ae05fb56af30d90e934e06d89d2ed64877e3924b379976",
+  "blocking_findings": [],
+  "review": [
+    "Whole original primary table constructors/mode/key-length/add/find/hash/probe/resize execute under explicit uint32 hash-word and host layout/allocator shells. Original unsafe unaligned/punning hash executes unsanitized only; no Win32 ABI claim.",
+    "Exact complete cache-derived schemas feed original builder; independent lazy reader reproduces reverse body/origin/region/bone/geo/info/mask order, first-dot texture truncation, original first spelling, NULL versus present-empty and palette-first order.",
+    "Ancillary reward/tagged/geometry shells do not receive primary tables; tagged writes isolated from source primary keys. Original SERVER final callback restriction/index/backref changes do not gate primary insertion. Four controlled callback profiles produce equal complete trace/slots; account policy remains unqualified.",
+    "Integer/string duplicates and original resize ascending-slot reinsertion retain exact all-slot IDs and holes. Payload is full raw slot projection, not a generation-admitted import or runtime dictionary witness.",
+    "Offline fixed buffers, tree heap/registry, per-allocation slot caps and explicit named256MiB C storage bound remain separate from Python RSS/external library stack. Expanded tree+trace must retire before mobile world construction. No production memory caps raised."
+  ],
+  "scope": {
+    "whole_original_primary_builder_and_stash_loops": true,
+    "independent_complete_trace_and_fullholes_equal": true,
+    "original_source_ub4_bound_uint32": true,
+    "original_unsafe_hash_oracle_sanitized": false,
+    "new_native_full_dictionary_owner": false,
+    "ancillary_reward_tagged_geometry_semantics_qualified": false,
+    "account_policy_qualified": false,
+    "runtime_cache_or_shared_generation_observed": false,
+    "Win32_ABI_executed": false,
+    "authentic_runtime_dictionary_admitted": false,
+    "actor_or_ACK_authority": false,
+    "android_built": false,
+    "server_executed": false
+  },
+  "independent_source_order": {
+    "attempts": [
+      357030,
+      829,
+      3380
+    ],
+    "visited_nodes": 129120,
+    "palette_nodes": 161
+  },
+  "independent_slot_replay": [
+    {
+      "max_size": 32768,
+      "valid": 13209,
+      "duplicates": 343821,
+      "resizes": 3,
+      "attempts": 357030
+    },
+    {
+      "max_size": 256,
+      "valid": 156,
+      "duplicates": 673,
+      "resizes": 0,
+      "attempts": 829
+    },
+    {
+      "max_size": 512,
+      "valid": 224,
+      "duplicates": 3156,
+      "resizes": 2,
+      "attempts": 3380
+    }
+  ],
+  "memory": {
+    "source_tree_heap_peak_bytes": 29060754,
+    "source_owned_aggregate_cap": 268435456,
+    "expanded_tree_offline_only": true,
+    "driver_Python_RSS_or_external_dependency_stack_included": false
+  },
+  "independent_payload_audit": {
+    "compressed_bytes": 131122,
+    "compressed_sha256": "29855908f848f9d7329f413b64be637e10b79878702ee76db35799f7fa7ddfab",
+    "raw_bytes": 641477,
+    "raw_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+    "all_slots_and_headers_consumed": true,
+    "tables": [
+      {
+        "max_slots": 32768,
+        "valid_slots": 13209,
+        "holes": 19559,
+        "largest_string_bytes": 78
+      },
+      {
+        "max_slots": 256,
+        "valid_slots": 156,
+        "holes": 100,
+        "largest_string_bytes": 29
+      },
+      {
+        "max_slots": 512,
+        "valid_slots": 224,
+        "holes": 288,
+        "largest_string_bytes": 0
+      }
+    ]
+  },
+  "four_profile_slots_and_trace_equal": true,
+  "trace_bytes": 8688928,
+  "trace_sha256": "21f83d2ddca9ffe3950631c9aa25c72dd4a38c1b512162d3c9e9048db8bc7237"
+}

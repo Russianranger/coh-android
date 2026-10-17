@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 5749,
+      "original_copy_and_trick_checks": 126,
+      "versions": 7,
+      "world_authority": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 5749,
+      "original_copy_and_trick_checks": 126,
+      "versions": 7,
+      "world_authority": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 5749,
+      "original_copy_and_trick_checks": 126,
+      "versions": 7,
+      "world_authority": false
+    }
+  },
+  "source_sha256": {
+    "native-android/engine/scenegraph/coh_model_bounds.c": "becef541b749b5cc646e89948cb1549159ad559c46164137fbe6d09fd29c3887",
+    "native-android/engine/scenegraph/tests/test_model_bounds.c": "a06e3e579e5030e59fcfba43632da1416c9aba75fa73ab927ae943dc4d3939a9",
+    "native-android/engine/scenegraph/coh_model_bounds.h": "dd040004cf044b410f8d004c028539f7207142be8df35f18fb6ce09347465d11",
+    "native-android/engine/scenegraph/tests/model_bounds_oracle_shim.h": "3446335da47cd2719c23bdb6df2e3cbcb4eb1601b781ce0332eff07390f99a86",
+    "native-android/engine/scenegraph/check_model_bounds.py": "db4c7c2d4f0109a73afb3f3109b43d5211a46571c8c018fd9e2cc48c9e9ed3d5",
+    "native-android/engine/scenegraph/check_group_bounds.py": "eb9d4c64ad2459f80674e9eb976cf2532944a028eea7fcbf7a42b292c5ed1f30",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/Common/seq/anim.h": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9"
+  },
+  "original_function_sha256": [
+    "e61170f78f5e3185f3daf391fecf65fa175b8e91aa89ebb016ccdb9ed93add2c",
+    "1e9a4b67a7148e39cb5b2609d423287f3cca015bc932411daa49d9186f40adc5"
+  ],
+  "oracle_sha256": "c43d9d86b4f1ded08ae7dfa948c6cbc0ce1b0e5f07be89fa2ccd34667a0f0cb0",
+  "fixture_scope": "unchanged readModel and modelInitTrickNodeFromName with explicit32-bit disk-layout shells, not originalWin32ABI",
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "android_execution": false,
+  "leak_sanitizer": false
+}

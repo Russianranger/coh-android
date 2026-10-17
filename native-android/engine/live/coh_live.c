@@ -166,7 +166,7 @@ CohStatus coh_live_choose_map(CohLive *s,unsigned i,uint64_t now){
  CohMapConfig config=s->config.map;config.udp.peer=endpoint;
  s->map=coh_map_client_create(&config);
  if(!s->map)return stop(s,COH_LIVE_FAILED,COH_LIMIT);
- CohMapAuthorization auth;memset(&auth,0,sizeof(auth));auth.authenticated=auth.endpoint_authorized=1;auth.selected_slot=s->pending.selected_slot;auth.selection_generation=s->diagnostics.selection_generation;auth.selected_dbid=0;auth.handoff=s->pending.map;auth.address_index=i;
+ CohMapAuthorization auth;memset(&auth,0,sizeof(auth));auth.authenticated=auth.endpoint_authorized=1;auth.selected_slot=s->pending.selected_slot;auth.selection_generation=s->diagnostics.selection_generation;auth.selected_dbid=s->pending.selected_dbid;auth.handoff=s->pending.map;auth.address_index=i;
  status=coh_map_client_begin(s->map,&auth,s->map_id,now);coh_auth_wipe(&auth,sizeof(auth));coh_db_wipe(&s->pending,sizeof(s->pending));
  if(status!=COH_OK)return stop(s,COH_LIVE_FAILED,status);
  s->clock_ms=now;
@@ -199,7 +199,8 @@ CohStatus coh_live_service(CohLive *s,uint64_t now,CohCancel cancel){
   if(phase==COH_DB_CHARACTERS)s->diagnostics.phase=COH_LIVE_CHARACTERS_READY;
   if(phase==COH_DB_HANDOFF_READY){if(!s->selected||!s->auth_consumed)return stop(s,COH_LIVE_FAILED,COH_STATE);status=coh_db_session_take_handoff(s->db,&s->pending);
  if(status!=COH_OK)return stop(s,COH_LIVE_FAILED,status);
- if(s->pending.selected_slot!=s->selected_slot||!s->pending.selection_generation||s->pending.selected_dbid)return stop(s,COH_LIVE_FAILED,COH_INVALID);
+ if(s->pending.selected_slot!=s->selected_slot||!s->pending.selection_generation||!s->pending.selected_dbid||
+    s->pending.selected_dbid>INT32_MAX||s->pending.selected_dbid!=s->pending.map.link_id)return stop(s,COH_LIVE_FAILED,COH_INVALID);
  s->diagnostics.phase=COH_LIVE_MAP_APPROVAL;}
  }
  if(s->map){status=coh_map_client_service(s->map,now,(CohCancel){0});

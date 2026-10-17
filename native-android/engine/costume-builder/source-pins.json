@@ -1,0 +1,6 @@
+{
+  "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+  "libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+  "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+  "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34"
+}

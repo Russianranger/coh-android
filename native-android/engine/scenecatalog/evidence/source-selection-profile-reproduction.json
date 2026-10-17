@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "wire_bytes": 89471,
+  "wire_sha256": "66788e58cbe86451fbc63e52ee2742eb59bf66a90776f6cddba307b42dd03310",
+  "profile_files": 391,
+  "root_reference_ordinals": 3083,
+  "native_admission": false,
+  "script_sha256": "ead1589f81e6074c5df1983e15991bfcd289e2e3fa32322c878bd81ac6c64eea",
+  "compiled_profile_sha256": "3e02c49a2e6de6bbc23f691f58e82f5f43b985ffe1d66bb027c1f93a43fade72"
+}

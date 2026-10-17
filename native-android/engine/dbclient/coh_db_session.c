@@ -121,7 +121,13 @@ static CohStatus application_message(CohDbSession *s,const CohNetMessage *m) {
         CohAuthMapHandoff map;
         result=coh_db_map_handoff_parse(body,m->payload_bits,aligned,legacy,&map);
         if(result!=COH_OK)return result;
-        s->handoff=(CohDbSessionHandoff){map,s->selected_slot,s->diagnostics.selection_generation,0};
+        /* Exact DBGAMESERVER_MAP_CONNECT producer writes EntCon.id first.
+         * QueueServer forwards all seven fields unchanged. Only this opaque
+         * WAIT_MAP owner can associate that field with its validated choice;
+         * the generic CohAuthMapHandoff.link_id remains a raw wire field. */
+        if(!s->diagnostics.selection_generation||!s->diagnostics.server_identity_bound||
+           !map.link_id||map.link_id>INT32_MAX){coh_db_wipe(&map,sizeof(map));return COH_STATE;}
+        s->handoff=(CohDbSessionHandoff){map,s->selected_slot,s->diagnostics.selection_generation,map.link_id};
         coh_db_wipe(&map,sizeof(map));s->diagnostics.handoffs++;s->diagnostics.phase=COH_DB_HANDOFF_READY;return COH_OK;
     }
     /* Other valid DB services (inventory/catalog, etc.) are independent. They

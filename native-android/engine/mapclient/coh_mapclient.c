@@ -70,8 +70,10 @@ static CohStatus authorization(const CohMapClient *m,const CohMapAuthorization *
     if(a->authenticated&&a->local_development_authorized)return COH_INVALID;
     if((!a->authenticated&&!a->local_development_authorized)||!a->endpoint_authorized)return COH_STATE;
     if(!a->selection_generation||a->selected_slot>=64||a->handoff.cookie<2||a->address_index>1)return COH_INVALID;
+    if(a->selected_dbid>INT32_MAX)return COH_INVALID;
     uint32_t ip=a->handoff.address[a->address_index];
-    if(a->local_development_authorized&&(m->config.udp.peer.address[0]!=127||(ip&255u)!=127||a->selected_dbid))return COH_INVALID;
+    if(a->local_development_authorized&&(m->config.udp.peer.address[0]!=127||(ip&255u)!=127||
+       (a->selected_dbid&&a->selected_dbid!=a->handoff.link_id)))return COH_INVALID;
     for(unsigned i=0;i<4;i++)if(m->config.udp.peer.address[i]!=(uint8_t)(ip>>(8*i)))return COH_INVALID;
     if(m->config.udp.peer.port!=a->handoff.udp_port)return COH_INVALID;
     return COH_OK;
@@ -91,9 +93,10 @@ CohStatus coh_map_client_begin(CohMapClient *m,const CohMapAuthorization *a,uint
     s=coh_net_udp_begin(udp,id,now);if(s!=COH_OK){coh_net_udp_destroy(udp);return s;}
     coh_net_udp_destroy(m->udp);m->udp=udp;
     clear_authorization(m);
-    /* The DB character list does NOT contain a DBID. Never seed the inspector
-     * with the slot, link_id, cookie or a dummy DBID. Its standalone decoders
-     * are used until authentic identity is supplied by a complete decoder. */
+    /* The list has no DBID. The owned DBSession MAP_CONNECT handoff can supply
+     * the original producer's EntCon.id after full parse and selection checks.
+     * Generic raw link_id, slot or cookie alone never establishes that identity.
+     * This expected ID still grants no entity/full-character acceptance. */
     if(a->selected_dbid) {
         s=coh_rep_session_begin(&m->inspector,a->selected_dbid);
         if(s!=COH_OK){coh_map_client_close(m);return s;}

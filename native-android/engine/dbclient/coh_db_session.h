@@ -57,7 +57,12 @@ CohStatus coh_db_session_choose(CohDbSession *, uint32_t wire_slot,
     uint32_t local_map_ip, uint32_t create_location, uint64_t now_ms);
 /* Exactly one successful take. Starts graceful DB disconnect. Continue
  * service() until CLOSED. Caller owns/erases output and authorizes map peer.
- * selected_dbid is always zero: no DBID is present in the source handoff. */
+ * selected_dbid comes from the exact DBGAMESERVER_MAP_CONNECT producer's
+ * first field (EntCon.id), after this opaque owner validated DB list/choice and
+ * WAIT_MAP command/transport context. Direct and Queue7-field relay profiles are
+ * source qualified. Generic map.link_id alone is NOT a DBID authority. This
+ * binds source DB selection, not cryptographic authentication or a complete
+ * Map self/character transaction; local development auth remains provisional. */
 CohStatus coh_db_session_take_handoff(CohDbSession *, CohDbSessionHandoff *);
 CohStatus coh_db_session_disconnect(CohDbSession *, uint64_t now_ms);
 void coh_db_session_suspend(CohDbSession *);

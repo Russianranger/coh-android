@@ -1,0 +1,81 @@
+{
+  "schema": "coh-pg-wine-checksum-inventory-v1",
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "reference_files_sha256": {
+    "docs/android-evidence/dbserver-package-36460867428.json": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+    "docs/android-evidence/accepted-dbserver-hosted-36460867428.json": "754c2a2aece7fb901cfcfeefb5f4873e5189455c7c076fccd19c1cc993f48ba0",
+    "docs/android-evidence/accepted-dbserver-thor-20260928.json": "b2358e5f105c3aa196b3d5cd7479601a4cb670eb00a9562a58445c5f6d6efae4",
+    "docs/android-evidence/dbserver-build-input-36460867428.json": "fd7cb9a92ede77446c2d85ae5412b19ca13a7ab7ce2893477deb9324a004f80d",
+    "docs/android-evidence/client-profile-recovery-0.13.31-publication.json": "330de287602de44f711a1608f0e14007a58c41869fa7c0a8c16cf86e37fc6464",
+    "patches/postgresql/0001-dbserver-postgresql.patch": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+    "patches/wine-dbserver/0001-wine-odbc.patch": "48e5433350017c0d050709c37c5f41b34b1be8ed7628ab510fdd477a57c1b673",
+    "patches/startup-dbserver/0001-manual-atlas-launcher-wait.patch": "ab1b7a6bc627aebf817acbde49e4c5659ec1aa98722f64c4aa61e0a9d6ec97b7",
+    "patches/startup-bundle/0001-pg-cancelled-child-insert.patch": "36ee0b86fad6207166b6a46a6334b0e9846f90d81140fec49dc187d2fb45a600",
+    "patches/levelup-ui-repair/0001-pg-empty-row-witness.patch": "66653e01f415ba00f8e65655b8e9db1e1bbb21d76dd54b3bb4741ea13032671b",
+    "database/startup-dbserver/overlay/DBServer/src/wine_manual_atlas.c": "21e8b6e5f83aa8e44ddd63379fac49bd180bb88b80f0ee356b75b3d242946192",
+    "tools/prepare_wine_dbserver_source.py": "59b8a8518cdc0d2a6c2e9a5c73cebe8724932a26d3eeba6cb887597eb9d793f9",
+    "tools/android/interactive/package_startup_dbserver.py": "ed3756c3c56c5482b32dd92ec4bd7f6c52e173fec92df3b80ac96237bf940185",
+    "tools/android/interactive/package_startup_bundle_dbserver.py": "941d76efe78b980309bad47b716ae5992cf692f0c71cb132118433d0b2c30825",
+    "tools/android/interactive/package_levelup_ui_repair_dbserver.py": "48bf06d780ec0de60fdf7ffc1259d742ef908b56af587d700e5aab1ebf8b8deb"
+  },
+  "accepted_pg_wine": {
+    "run_id": 36460867428,
+    "repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+    "package_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+    "normal_binary": {
+      "bytes": 1661440,
+      "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "ODBC32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    },
+    "fixture_binary": {
+      "bytes": 1674240,
+      "sha256": "77d4677904d967dfdeffa3c6b2609ae0620ccc28177655c6f5f975a7ec4c2212",
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "ODBC32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    }
+  },
+  "later_manual_atlas": {
+    "binary_bytes": 1664512,
+    "binary_sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba",
+    "manifest_sha256": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+    "scope": "Retained manual Atlas ancestor from physical.13/.31 evidence; actual current Combined package must independently match before integration.",
+    "extra_layers": [
+      "launcher-wait",
+      "cancelled-child-insert",
+      "empty-row-read/thread-name"
+    ],
+    "full_extra_layer_source_composition_qualified_by_this_recipe": false,
+    "manual_wait_skip_requires_fake_auth_and_absent_authserver": true
+  },
+  "new_mssql_candidate": {
+    "run_id": 39000395572,
+    "source_commit": "8f4117e154fa7d9d9a8eb3f4f6b11bd50ab1c919",
+    "bytes": 1654784,
+    "sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "pg_wine_overlay_present": false,
+    "accepted_runtime_replacement_permitted": false
+  },
+  "binary_bytes_downloaded_or_executed_by_this_inventory": false,
+  "new_windows_build_or_service": false
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "coh-native-integrated-owner-v1",
+  "passed": true,
+  "owner_contract": {
+    "passed": true,
+    "checks": 277,
+    "scenarios": 11,
+    "synthetic_component_adapters": true,
+    "real_authenticated_session": false,
+    "live_world": false
+  },
+  "actual_tcp_boundary": {
+    "passed": true,
+    "checks": 41,
+    "scenarios": 3,
+    "actual_os_tcp": true,
+    "full_auth_db_map_chain": false,
+    "real_authenticated_session": false,
+    "descriptor_cleanup": true
+  },
+  "android": {
+    "built": false,
+    "executed": false
+  },
+  "sanitizers": "ASan+UBSan; LeakSanitizer disabled",
+  "source_sha256": {
+    "engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+    "engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "engine/dbclient/coh_db_session.c": "7a991e2bfaf4f28049c80f726c49c276138b63bfeb75d497903d684990076d33",
+    "engine/mapclient/coh_mapclient.c": "1b89a53f973f00496add56948fc2f976238dc8befb0d7b8621cbfdf9219cbb72",
+    "engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "engine/replication/coh_groups.c": "b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd",
+    "engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+    "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "engine/live/coh_live.c": "7854150bb6a5fbad6324d5a0ee4befca4cda37c65bb420625e97b53e9ba52f46",
+    "engine/live/coh_live.h": "48f1d50c4c91f685ef9e13e2ae04de4e3c4b55abbc542c5444545b029121d519",
+    "engine/live/test_live.c": "d5c668a67fe915a8f605360ee951c8af60ba95df3eb1b75eda514f119f913587",
+    "engine/live/check.py": "8ca0f36ea0a47e850f22d2747c5ab25725ea6661353daf24319aeeba1e2ce5b5"
+  },
+  "full_scripted_auth_db_map_socket_chain": false,
+  "real_authenticated_server_session": false,
+  "native_live_world": false,
+  "physical_thor_accepted": false,
+  "credentials_logged": false
+}

@@ -1,9 +1,11 @@
-# Immutable source-selection contract — design pending sufficiency review
+# Immutable source-selection contract
 
-This is a proposed preparation contract, not an implemented admission API. The
-independent review of `05ea6507a` must agree that its exact procedural route is
-sufficient before implementation. Existing index/join APIs and authority flags
-remain unchanged.
+The procedural source argument was independently reviewed in `2996e7591`.
+The additive implementation is `coh_source_selection.[ch]`: immutable exact
+profile association and a separate FILE-scoped actual-body lease. The original
+index body-validation grammar remains in force. No CLIENT/live/world authority
+is granted. Native factory qualification and source review are recorded separately
+from that earlier source-argument review.
 
 ## Trust root and evidence classes
 
@@ -134,3 +136,31 @@ another server generation merely because their full body bytes agree.
 The existing offline checker verifies evidence pins and leaf bodies; it does not
 implement this proposed native factory. Its eight negative controls are not a
 substitute for the owner/lifetime/generation controls above.
+
+## Implemented boundary and host qualification
+
+The selector retains its exact join using the additive bounded join reference
+API and copied dependency/pin getter. The join still borrows its graph: callers
+must retain that actual graph until all selector/body/join references retire.
+The registered 89,471-byte read-only binary table retains all391library identities
+and3083root-ownerordinals; all8250matching joined model owners are derived by
+exact name lookup and checked against the fixed complete resource-stream digest.
+An independently valid equal-byte second import remains a distinct budgeted
+catalog/snapshot/graph/join tree rather than being deduplicated by digest label.
+
+Seven complete raw evidence documents are pinned by compiled sizes/SHA256 values.
+The historical391body/header witness remains pinned to its original source; a
+FILE lease additionally rechecks the currently acquired actual body with current
+native parsing. The selector reports only profile_association_verified. The FILE
+lease reports derived_origin_verified with PROCEDURAL_EXACT_COLD_CAPTURE and
+explicit direct_open_observed=0. Its immutable index retains all matching owners,
+including four Shop zero-draw owners. Clients cannot substitute expected hashes,
+canonical paths, source ordinals or JSON success booleans.
+
+Whole current-loader reservation and historical peak statistics are checked
+before allocating descriptor/body scratch. Old/new loader reservations are
+charged once by actual loader identity. Actual file acquisitions and source
+records remain copied/pinned through index retirement; source order is preserved.
+Qualification is host release/ASan/UBSan only. Android and physical-device
+qualification have not occurred for this module, and there is no shipping client
+integration or renderer publication implied by these APIs.

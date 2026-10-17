@@ -113,3 +113,13 @@ CohStatus coh_resource_index_material(const CohResourceIndex *i,uint32_t k,uint3
 CohStatus coh_resource_index_metadata(const CohResourceIndex *i,CohResourceBinding *binding,CohResourceReport *report){if(!i||!binding||!report)return COH_INVALID;*binding=i->binding;*report=i->report;return COH_OK;}
 CohStatus coh_resource_index_record(const CohResourceIndex *i,uint32_t ordinal,CohBytes *bytes,CohResourceView *view){if(!i||!bytes||!view)return COH_INVALID;if(ordinal>=i->count)return COH_NOT_FOUND;*bytes=(CohBytes){i->rows[ordinal].record,i->rows[ordinal].bytes};*view=i->rows[ordinal].view;return COH_OK;}
 CohStatus coh_resource_index_header(const CohResourceIndex *i,uint32_t k,uint32_t f,uint32_t s,CohBytes *out){if(!i||!out)return COH_INVALID;const Row *r=find(i,k,f,s);if(!r||!r->view.model_present)return COH_NOT_FOUND;*out=i->geos[r->geo].geo.header;return COH_OK;}
+
+static int owner_sources_disjoint(const void *a,size_t an,const void *b,size_t bn){uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;if(!an||!bn)return 1;if(!a||!b||an>UINTPTR_MAX-x||bn>UINTPTR_MAX-y)return 0;return x+an<=y||y+bn<=x;}
+CohStatus coh_resource_index_owner_sources(const CohResourceIndex *i,uint32_t kind,uint32_t file,uint32_t slot,CohResourceOwnerSources *out){
+ if(!i||!out)return COH_INVALID;
+ const Row *r=find(i,kind,file,slot);if(!r||r->geo>=i->geo_count)return COH_NOT_FOUND;
+ const Geo *g=&i->geos[r->geo];CohResourceOwnerSources v={{r->record,r->bytes},g->geo.header,coh_asset_bytes(g->blob)};
+ const void *starts[]={i,i->rows,i->geos,r->record,g->workspace,v.blob.data};size_t sizes[]={sizeof(*i),(size_t)i->count*sizeof(*i->rows),(size_t)i->geo_count*sizeof(*i->geos),r->bytes,g->workspace_bytes,v.blob.size};
+ for(unsigned n=0;n<6;n++)if(!owner_sources_disjoint(out,sizeof(*out),starts[n],sizes[n]))return COH_INVALID;
+ *out=v;return COH_OK;
+}

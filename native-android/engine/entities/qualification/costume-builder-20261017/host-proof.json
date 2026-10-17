@@ -1,0 +1,369 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_oracle": {
+    "tree": {
+      "small_original_provider": {
+        "source_sha256_lf": {
+          "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+          "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+          "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+          "Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+          "Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+          "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+          "libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+          "libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+          "libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+          "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+          "libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+          "libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71"
+        },
+        "function_sha256_lf": {
+          "libs/UtilitiesLib/src/utils/serialize.c:SimpleBufRead": "fcbb82d64aa901e21d62fae5a7f8d3c59428fa536e442fd41d7b3ec67e407285",
+          "libs/UtilitiesLib/src/utils/serialize.c:SimpleBufWrite": "6e3c4716f4cb1d9076784bb3261a9c320ba39290e202902b72a484e4140fe070",
+          "libs/UtilitiesLib/src/utils/serialize.c:SimpleBufSeek": "ff8f9b9ec22564f3320544e003ca57a4320966d9f2d804e7d50f7c5cfa998cc8",
+          "libs/UtilitiesLib/src/utils/serialize.c:SimpleBufTell": "5de14603768abbe12b42b49f2c01057afa14401d1eaae9674f4655d58318afbb",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufReadU16": "7c4979e99d2eec352c91d4ef60a82149888177dd15d687ba717df735be40be25",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufReadU32": "36c44bff8f70a85d5267ca766d4e44d8801b9e51e44dee33718f7786739d01f7",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufReadF32": "dafa260f6259785ead60adf5bc72b689c4e173cf52a0bf62bcf42a1e954d84b5",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufWriteU16": "56452c2a0ab25823bfff81849196c76eaf80e9aaccf8fa5c1c135639153273eb",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufWriteU32": "8c40baafb7631bcfd3960afb5a1621e5fd0b1ee0c938bfe4c0c1cf96a2d62747",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufWriteF32": "0a5be9edba1752087c8010f7245fe68de61464fd8db8ed1928996e32f345971d",
+          "libs/UtilitiesLib/src/utils/serialize.c:ReadPascalString": "8e5c06d8977d22c4c32cace64f5f474f09b2b2a6ff05a6355418ee9ee7dbef0b",
+          "libs/UtilitiesLib/src/utils/serialize.c:WritePascalString": "87bf36a7f5f4c1445adc51c13d98598870f074a3f04ea9080efe692875c64926",
+          "libs/UtilitiesLib/src/utils/tokenstore.c:TokenStoreGetStorageType": "b644e9d3853ca77ef350f09c300a94ebfc7d92d6f0be00d9b7e93750d0778e7e",
+          "libs/UtilitiesLib/src/utils/textparser.c:int_readbin": "c238a40328a4038c7dd6fc3c514a1995e4d2d28448d79b23b2cb0fc027da0309",
+          "libs/UtilitiesLib/src/utils/textparser.c:int_writebin": "c4bbb6bc74c8bac5910693e15d46d21438de2797ec0daca7723b6158938f5c64",
+          "libs/UtilitiesLib/src/utils/textparser.c:u8_readbin": "f6e207203b154a10bf6e58af4932b54595f6801073bfcd266e87a0e0531b41c9",
+          "libs/UtilitiesLib/src/utils/textparser.c:u8_writebin": "71fe55d724a2449a2fe28d7455aebcbe6a817f7ecc7438210b3f2b0ee73f04a3",
+          "libs/UtilitiesLib/src/utils/textparser.c:float_readbin": "5397e32fba462aa1fd30be033324efa969da80c00d8ae066cebfc1333a3b9888",
+          "libs/UtilitiesLib/src/utils/textparser.c:float_writebin": "aac8070c6d09b4cda88646d2713d0c26d250763b2eaa9adb8eeff216369282fc",
+          "libs/UtilitiesLib/src/utils/textparser.c:string_readbin": "76ffbd052edf28541cd46033f3f7504e2200da68dce3b37d824c916074f900e7",
+          "libs/UtilitiesLib/src/utils/textparser.c:string_writebin": "3f19eaec3279a3bf01152000189731e1d437827cdab60aaf6384f7a8b9210e55",
+          "libs/UtilitiesLib/src/utils/textparser.c:struct_readbin": "1b947073cc930213e1bb4e626df52b6bebed738c0f14aa9d1a3be2fa04b8e4fb",
+          "libs/UtilitiesLib/src/utils/textparser.c:struct_writebin": "d91bf37916fd020281a8c7bf404d55650476419f18f18afdf0da7560c5ff8ed2",
+          "libs/UtilitiesLib/src/utils/textparser.c:nonarray_readbin": "c1a3f4bebf449519c366f2c121967ceee34720feae238b69fd84314be19fc691",
+          "libs/UtilitiesLib/src/utils/textparser.c:nonarray_writebin": "99505bea28a20eb6880879cab02354014f755df28b6fac28cad294ea99f0933c",
+          "libs/UtilitiesLib/src/utils/textparser.c:fixedarray_readbin": "8e133001d44c30abd5d474fac1b42d91ec1f588f9e0f3ffc2310f6ea98f7380b",
+          "libs/UtilitiesLib/src/utils/textparser.c:fixedarray_writebin": "0439ce07627982984b96f40adeb863ebcf59e54a33bfdf52983804085b63bdc6",
+          "libs/UtilitiesLib/src/utils/textparser.c:earray_readbin": "fc956669f78356b5bd26580bb099c69492e5f9a0837c66d5840ff51178a14c7c",
+          "libs/UtilitiesLib/src/utils/textparser.c:earray_writebin": "da5a08eeee1e534d63372c2f19f2dbf7048b780e145fd999cfbfb9104b7bf398",
+          "libs/UtilitiesLib/src/utils/textparser.c:ParserReadBinaryTable": "29ed6e9a69228519dcc65a14a577045978dc5f4ee3959d796381b3302f001deb",
+          "libs/UtilitiesLib/src/utils/textparser.c:ParserWriteBinaryTable": "bb839d4c7451aeaee4de1b8dd147153074cccbc013b89d03584bde72d25cf226"
+        },
+        "table_sha256_lf": {
+          "ParseBodyPart": "917ea73873135a786ef3697485878c23414061596a7235aa1efd1bc83d027d91",
+          "ParseBodyPartBegin": "9960f419f158a95589f7795558c13333f8bd452728e73c92e29f98f8df0a41fc",
+          "ParseColor": "465c412c22fcc174129b25d1660d123c56d7c65214596b9f5c567754528d651e",
+          "ParseColorPalette": "0a6390f9f7c611fbdfbb93c2b991f32bd8f87b5920c89473d7b05df95194795d"
+        },
+        "generated_c_sha256": "d6dbc6fb5c4e8bc0379778ce112b56ad02ffab085849f0354e94244f579440c3",
+        "scope": "Unchanged whole original binary table readers/writers, primitive/array/struct handlers, Pascal serialization and exact two schemas execute on real recovered bodies. Host layout/tokenstore/handler dispatch/bounded SimpleBuf allocation adapters explicit; no whole engine ParseTableCRC/callbacks/32bit ABI or stash builder execution.",
+        "original_oracle_sanitized": false
+      },
+      "crc_provider": {
+        "whole_function_sha256_lf": {
+          "ignore_interpretfield": "05447cd715742cbb4ccc77f0294f81ab57fc4f520c5f528ee75e8ab72ee9f73e",
+          "number_interpretfield": "679b0e1c8919f35a2f3c62d467ba748dc56d9f31c5c6651315d114209850069d",
+          "string_interpretfield": "eba3d0e0fe711fc687a4b749209a52bae594db1caf656b2740a4affcdcb85ff7",
+          "struct_interpretfield": "f1321b8b246205ea80948f24b57ba7954740a2377cde3a68b0358f96a02e2edd",
+          "UpdateCRCFromParseInfo": "c0cc8bfac9270cc0ac939b0c6504d22f9ab999e38cdb1954ea6672a5b257942f",
+          "ParseTableCRC": "7b630b5ff49eaa5096875b7ad96926bfbd9667b0eaa49c97a611224ff1157019"
+        },
+        "source_sha256_lf": {
+          "libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+          "libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+        },
+        "original_crypto_wrapper_sha256_lf": {
+          "cryptAdler32Init": "783a36e63cd9b012a7fa836c1171e0d00bde822935372c399006fcc0d7acdf4c",
+          "cryptAdler32Update": "cc44951ab4db2017a94c1ca751814d071a7c2c4f54d6103aab9b3b668a8a5464",
+          "cryptAdler32Final": "44b88328e772a0c46770e25174d05f26032d91ce671b0b423f0439a20cf82481"
+        },
+        "crypto_implementation": "zlib Adler32 adapted to original Crypto++ big-endian digest bytes; original Crypto++ engine not executed",
+        "whole_original_runtime_cache_selection": false
+      },
+      "extra_tokenstore_function_sha256_lf": {
+        "TokenStoreSetString": "aa5cdf510fcfc00ea2ef078c57e3eebf61122b353a896319f881ce1486f27914",
+        "TokenStoreGetString": "e5ba9ff78514273fd72dd62dbb027d267bbe221cc9fcdae3b111791eaf277499",
+        "TokenStoreGetStringConst": "21ce540cdab312e04ec1e99b4416d7227926e88da90df17e418cc5b34278640a",
+        "TokenStoreSetCapacity": "98739cb7111cb32e6322faa6db5bee52dfd5a4c3da30b7fc46f9b1c7ff763d18",
+        "TokenStoreAlloc": "0420b3971cf068a8937f78a0cb8456a08fa62903bf8a771055d5be823a29abef",
+        "TokenStoreGetPointer": "f7e45c3ac88a862c4efd6404a31364deb5830b793919794347005b3e94f4fd89",
+        "TokenStoreGetPointerConst": "be46bf148f5dba1842023e281a8d62633ba51fc7d8b349e8237a2ff1d1a69908",
+        "TokenStoreGetNumElems": "f28488eaf436636d0065bbb74c3ff228163932ad97e81793d1966a83f23b498c"
+      },
+      "full_actual_table_sha256_lf": {
+        "ParseMaskSet": "b6436cac2a33842efb87cd9a253fff9bf9bc3946a745397076151797ec2402ab",
+        "ParseColor": "465c412c22fcc174129b25d1660d123c56d7c65214596b9f5c567754528d651e",
+        "ParseColorPalette": "0a6390f9f7c611fbdfbb93c2b991f32bd8f87b5920c89473d7b05df95194795d",
+        "ParseCostumeCostumeTexSet": "8a823d07362ddeb7c1e0ba407c1eac4a7e211c84186ec59fc5835a3a62b19ce2",
+        "ParseCostumeFaceScaleSet": "29f7bdf8e2161eb87e1d7588415c20edc94ca0b0aa75fe3279c70e2167650a8e",
+        "ParseCostumeCostumeGeoSet": "872c97f88bd8163521e96023336a69175eeaa479c2161a18da95626b1a11f915",
+        "ParseCostumeBone": "0a1b8abc8dd090f404d3d4cd6086deb46d3d86754b5eb5882d68bbf485906643",
+        "ParseCostumeRegion": "e7a146399ac92e43c31ae2435d8528b802ea0629b6bd486ba85270648318b22f",
+        "ParseCostumeSetSet": "aefd8d6b7f2390049b8b38d0dc2401f23ec5286a9fa2d175f84bb80f17c52735",
+        "ParseCostumeGeoData": "ce296fe859fa766bab58d507c7e2af004626981e997b84f4ca1f3b0020d78a20",
+        "ParseCostumeOrigin": "8c676fb7a17093ca2248deee1c4d4bec372a8469488ba23a7bc94812b439e40d",
+        "ParseCostumeBodySet": "5f39a12971fef33854b05a265d60b1fa892d351561ced21d4a359e18eba45eb8",
+        "ParseCostumeSet": "3228b73a1483296870506abb33ca6a84d644d3be1cf79c60a1b18d7d0bb02afd"
+      },
+      "full_actual_declarations_sha256_lf": "4bf8f5fab82bffe1131e6936bd19e7331875903626e077f52b54e587cd747e1e",
+      "generated_c_sha256": "5b747ef3659d8e0915b8319e7de30f70176274147f0ec18b5e1d638d49d5c4cc",
+      "whole_original_engine_or_win32_abi": false,
+      "preprocessor_or_shared_final_callbacks_executed": false
+    },
+    "stash": {
+      "source_sha256_lf": {
+        "libs/UtilitiesLib/src/components/HashFunctions.c": "8a1aba492f2d3154390f2d6361c4cc21d6eccab15487554f70bac0e9dbc136ea",
+        "libs/UtilitiesLib/include/utilitieslib/components/HashFunctions.h": "0ef6610576ad251850282ec4c90714084b888a2c7cd32516f1ea424b71cbcfa9",
+        "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+        "libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+        "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+        "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11"
+      },
+      "functions_sha256_lf": {
+        "mix_macro": "a4b798066c674c5cf99db0f8603f2375a0bc206b314a5b159935bd70db9d03cd",
+        "libs/UtilitiesLib/src/components/HashFunctions.c:burtlehash2": "7d0bc5ad90a686dfd009315c5a518c899ad153324a4a649c363c85ca4f13bde4",
+        "libs/UtilitiesLib/src/components/HashFunctions.c:burtlehash3": "dd93a21bbecec5575da6731369ef8485df569399d1791c99e55c4d5945331c7b",
+        "libs/UtilitiesLib/src/components/HashFunctions.c:burtlehash3StashDefault": "759890292cb87b405e945bc0348744993f9078e25814778315d6185d18d0e126",
+        "StashKey": "00422a39c1fe6eb4d21f2b2d6c59d5e80114e6f6614e1480df05d499ba11439b",
+        "StashValue": "fe4fcc817ba661ac4e3af5b84661cc7ab22c31fadf1da691c45b980a05681145",
+        "StashElementImp": "6d6fc91e98e65b0cb4b1896ba4817cd7bb944fc329c390027668d0be865fc2c0",
+        "StashTableImp": "9c068f49c1157b35671c2cc8250e8504e2a48eb4e6d6c289e2d5f0481b753164",
+        "libs/UtilitiesLib/src/utils/mathutil.c:log2i": "38a335660e4b9e2355c0ae036af92e2b43b0f29269b57dfbe1e12bd8c801a8eb",
+        "libs/UtilitiesLib/src/utils/mathutil.c:pow2": "ff38b9733823f6be6be983c2bd73b4d8abe6ce4f233c1a6fa7c7576fc638b978",
+        "libs/UtilitiesLib/src/components/StashTable.c:stashMaskTableIndex": "7f64b1143b4ac5035fbff147bf3c56caaaa26111dbf70eb8d6fb844d90c81005",
+        "libs/UtilitiesLib/src/components/StashTable.c:slotEmpty": "ec76592ff7f4b4b54e034ee95eae5c0ab9328b840aa3a8a4658435a4b5d1b90a",
+        "libs/UtilitiesLib/src/components/StashTable.c:slotDeleted": "b83f8de42f57ace88f16c52af73023253baa4f834cfba1721f23acc04952ce6c",
+        "libs/UtilitiesLib/src/components/StashTable.c:usesStringKeys": "8a5c9bd743c93dd2b5b961546d2756e1ef5f9b75f38bf0d1fa11b7970fbdcf7b",
+        "libs/UtilitiesLib/src/components/StashTable.c:stashFindIndexByKeyInternal": "169b4015d60a29cf51158046eba2e6b9f4f2e49af158387f6cb663475922737c",
+        "libs/UtilitiesLib/src/components/StashTable.c:stashTableResize": "653dded9ee40f76f9ab60dfef9951b10556382ae47eaef4a5c7b46ad1f227bb6",
+        "libs/UtilitiesLib/src/components/StashTable.c:stashAddValueInternal": "9545a71c6df1ae05b9088c49f69c0a458ff8b8b8c836fc61adf6c1416afad08a",
+        "Common/gameData/costume_data.c:getRGBAFromVec3": "34ae8fa705f388a1ec6add891cdff9a65e10d4f2bc321fe54d78e78ca6cfeecd"
+      },
+      "generated_c_sha256": "aa6067b319d372c230914a186fabaaaee23076e70533bffc61a4a317986f77ca",
+      "source_ub4_binding": "uint32_t models Win32 unsigned-long32; native host unsigned-long64 is deliberately NOT source arithmetic",
+      "hash_load_profile": "Unchanged original raw ub4 pointer loads execute in unsanitized x86_64 oracle, including unaligned fixture addresses. Native function uses defined byte loads; no original alignment/aliasing sanitizer closure claimed.",
+      "stash_profile": "Whole original find/quadraticprobe/add/resize loops; explicit zeroed shallow int-table constructor/layout/allocation stubs, no deletes/sharedheap/deepstrings. Not whole original Win32 ABI/engine.",
+      "original_oracle_sanitized": false
+    },
+    "additional_whole_function_sha256_lf": {
+      "libs/UtilitiesLib/src/components/StashTable.c:stashSetMode": "b6f244a1ad5d7d69f3c83d09a4f5fe213750fae5414093335374d8f79827f560",
+      "libs/UtilitiesLib/src/components/StashTable.c:getKeyLength": "45656340f80b7b04ee4f957d3d87f5c6468c27fd78ab84f51104fbeda863f22a",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashTableCreateEx": "9b9b3811cf59672a13ab389a8c7e6721d2ca090f250d8ee1dce9c6f11d9c9ea8",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashTableCreateWithStringKeysEx": "63c8e654fb8d908aed3dd288eec72830bd2cc086f657f1ebcab9f649b07253b8",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashTableCreateIntEx": "f4d0e0344e06b84f182b964b63b0d52081be231cac574701a04794220966fdd1",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashAddPointer": "a5d80a4981ae260fa537ebcf932bbfc4a2406bae87d327b078ce59056a265c0e",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashAddPointerConst": "ea3a8ed58fa96cdb511eaf358f7ac96f1ad83d55781e2306a2e02f6f1bb7872e",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashIntAddInt": "8df3065cb4d6b645b9b6a245bcb99eb847a748b5c394541f0dc7596b50ad10a6",
+      "libs/UtilitiesLib/src/components/StashTable.c:stashIntAddIntConst": "52e522286e446660e3d020ce55dd6ee5dbde1febadb660bad3d2364f3aa4b218",
+      "Common/gameData/costume_data.c:costumePrefixFromGender": "3cc9b9a5b371b689bdfc15358dc39f8acf905954a6907d41f3eaddbeb4763be1",
+      "Common/gameData/costume_data.c:costumeBodyTypeFromGender": "aa8b417e3b6f32797f675de627ed4918d16ed812622ffac62edbeaeb803fbeb5",
+      "Common/gameData/costume_data.c:addPaletteToTables": "0ed4dc23d7f937ab5022ea0597980f43813bb39c2a5ce2bbf337b20b2a517e57",
+      "Common/gameData/costume_data.c:s_addKeys": "318157c0ff47d31e3f31b6f84a84471682bead7e791429cacafb327ac901d447",
+      "Common/gameData/costume_data.c:isRestrictedPart": "870ea2259d15069d01688158c9cd4d5638a68c424ae331824f535d623058077d",
+      "Common/gameData/costume_data.c:costume_fillExtraData": "255bdbdfdec687e24dd6d01e74f385d1994477f3619243fed6b9a087ad53dceb",
+      "Common/gameData/costume_data.c:costume_initHashTable": "95d4d792b724a4aaf13b8992d3ff80f18045bb5bcf2db12a674fda2ab7be2056"
+    },
+    "source_sha256_lf": {
+      "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+      "libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+      "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+      "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34"
+    },
+    "declarations_sha256": "a330c78434135aa0340c64eb60a2ea60b541255dad3b1016399259b05f026fb8",
+    "generated_c_sha256": "8a950e5f8e6dbb7971137589b0cf5a4b9dcedba34bc8c958b62c798cb2724ae7",
+    "ancillary_interfaces": "reward/tagged/geodata effects stubbed and explicitly excluded; primary constructor/add/find/hash/resize are original whole functions",
+    "Win32_ABI_executed": false,
+    "source_ub4": "uint32_t",
+    "original_hash_sanitized": false
+  },
+  "source_sha256": {
+    "oracle.py": "b39094d6582767dd2b00f6ce05f1f86d5f69712617ed179c36ddcadf71630632",
+    "independent.py": "6ffef2ff4b86dcc7f91cc2b23594afe879b1463314b352156cbf338a58913481",
+    "check.py": "12138c24cda66b11ffdf3861c75346264e639951146a128ddf674a226d5046ab",
+    "adapters.h": "02f677412a87bf054e7e754dc79977f1f3b3b1881591541989cb05f183babc8f",
+    "wrapper.h": "b25ff6d8832f4efb4267478305b8b0c99dd18122564e8020233e888e53306ace",
+    "source-pins.json": "3659146e91eb3ad29c802bdb0e09d4e718b75a9b373305991a261af8c3877698",
+    "CONTRACT.md": "7a6a74c2989178c4ccccb16b9b1dab5a9723026702ad035c37c2394333d8b0fe",
+    "../entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "../costume-tree/tree_oracle.py": "0d5f9fcb4a58ffd3a2af07381ac1f0afbf753f29b43279fdf4f8f7816e69ad32",
+    "../costume-tree/independent.py": "70f60f9fa0a0dcfd9b77463214ab89811c837118f471f1f939b83295ff0f0bd4",
+    "../costume-tree/crc_provider.py": "7ee991803d9e2d303fab436d8fc4d446e9318e6c8fc60e0915d17cca18f73ff1",
+    "../costume-tree/check.py": "a35ead24775e4b4cb7505283c252ff6066cfc4fcfbece5f3ebd7d9745d117a3d",
+    "../costume-tree/storage_adapters.h": "6e7b321651cd9ad8ff3673bbed6be804525472217d5926acf77eb7b5d9ba0d4a",
+    "../costume-tree/projection.h": "ca379be477d23ad5096aa956335ed0570cf2a0046bf04b62692d687796a0ffdd",
+    "../costume-tree/tree_wrapper.h": "b8fe78b233811f7c7551fcf8c022a77d4f3ea8cb33326b0b7285f5334bb7c04a",
+    "../costume-tree/source-pins.json": "dfed59e7e6112565a78563ce4b8cfce051b88d8be970c896d10fc39a60ef25d4",
+    "../stash32/oracle.py": "21f04ac82ca6f49d4aa7bc686041d4a97c5a613a2038fdd93f6a61619b7fcafe",
+    "../stash32/check.py": "c2b968b414ef723c49713f01fbd7de805289cc8824e0725cd434325e5dee2920",
+    "../stash32/coh_stash32.h": "fedc5448fa449bd8f223105343adcab02fda2bb126b5f15b1e6fa21539275c93",
+    "../stash32/coh_stash32.c": "f9ac5c11a75b48ac170646b33c59feece5660c23170f31e30a1e2178bcf06dfa",
+    "../stash32/test_stash.c": "a37a74ce0261c388ac4dbab67b14d081c1cea37c3196d2c75a14817c2b5d12d9",
+    "../stash32/source-pins.json": "8dd6722bf7188bea4a0bfeb9cbac7066ebfebc6998cfba835f2d4140d15dca36",
+    "../costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+    "../costume-inputs/check.py": "31d9f403fca65efc75b0ae7da8efb193ea4c2d3d17b0ad787fcd9b681ea21475",
+    "../costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "../costume-inputs/coh_costume_inputs.c": "194f3ef8a38e77db0e86ce16ed8caa18772952715ea9c13d1c26382bee7c3255",
+    "../costume-inputs/test_inputs.c": "48d4bcc020329f14387794ad520c544ccd7d577bc40516074d2edc4c80e59277",
+    "../costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f"
+  },
+  "source_head": "3f536586295d3aba61b7d0a7225f74836b59e7df",
+  "cases": [
+    {
+      "scenario": 0,
+      "final_callback_executed": false,
+      "account_published_policy": "callback not executed",
+      "source_stats": [
+        641477,
+        8688928,
+        32768,
+        13209,
+        256,
+        156,
+        512,
+        224,
+        11,
+        288,
+        62,
+        29060754,
+        0,
+        0
+      ],
+      "slots_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+      "trace_sha256": "21f83d2ddca9ffe3950631c9aa25c72dd4a38c1b512162d3c9e9048db8bc7237"
+    },
+    {
+      "scenario": 1,
+      "final_callback_executed": true,
+      "account_published_policy": "all true",
+      "source_stats": [
+        641477,
+        8688928,
+        32768,
+        13209,
+        256,
+        156,
+        512,
+        224,
+        11,
+        288,
+        62,
+        29060754,
+        23039,
+        0
+      ],
+      "slots_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+      "trace_sha256": "21f83d2ddca9ffe3950631c9aa25c72dd4a38c1b512162d3c9e9048db8bc7237"
+    },
+    {
+      "scenario": 2,
+      "final_callback_executed": true,
+      "account_published_policy": "all false",
+      "source_stats": [
+        641477,
+        8688928,
+        32768,
+        13209,
+        256,
+        156,
+        512,
+        224,
+        11,
+        288,
+        62,
+        29060754,
+        23039,
+        0
+      ],
+      "slots_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+      "trace_sha256": "21f83d2ddca9ffe3950631c9aa25c72dd4a38c1b512162d3c9e9048db8bc7237"
+    },
+    {
+      "scenario": 3,
+      "final_callback_executed": true,
+      "account_published_policy": "alternating",
+      "source_stats": [
+        641477,
+        8688928,
+        32768,
+        13209,
+        256,
+        156,
+        512,
+        224,
+        11,
+        288,
+        62,
+        29060754,
+        23039,
+        0
+      ],
+      "slots_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+      "trace_sha256": "21f83d2ddca9ffe3950631c9aa25c72dd4a38c1b512162d3c9e9048db8bc7237"
+    }
+  ],
+  "independent_source_order": {
+    "attempts": [
+      357030,
+      829,
+      3380
+    ],
+    "visited_nodes": 129120,
+    "palette_nodes": 161
+  },
+  "independent_slot_replay": [
+    {
+      "max_size": 32768,
+      "valid": 13209,
+      "duplicates": 343821,
+      "resizes": 3,
+      "attempts": 357030
+    },
+    {
+      "max_size": 256,
+      "valid": 156,
+      "duplicates": 673,
+      "resizes": 0,
+      "attempts": 829
+    },
+    {
+      "max_size": 512,
+      "valid": 224,
+      "duplicates": 3156,
+      "resizes": 2,
+      "attempts": 3380
+    }
+  ],
+  "slot_bytes": 641477,
+  "slots_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
+  "compressed_slots_bytes": 131122,
+  "compressed_slots_sha256": "29855908f848f9d7329f413b64be637e10b79878702ee76db35799f7fa7ddfab",
+  "trace_bytes": 8688928,
+  "trace_sha256": "21f83d2ddca9ffe3950631c9aa25c72dd4a38c1b512162d3c9e9048db8bc7237",
+  "largest_primary_string_bytes": 78,
+  "negative_controls": 4,
+  "native_byte_safe_hash_binary_sha256": "86ae987d7e59aceb21756e2683bf3c4079d4ca97d6f1add68a48594ec40101ca",
+  "memory": {
+    "source_tree_heap_peak_bytes": 29060754,
+    "source_owned_aggregate_cap": 268435456,
+    "expanded_tree_offline_only": true,
+    "driver_Python_RSS_or_external_dependency_stack_included": false
+  },
+  "scope": {
+    "whole_original_primary_builder_and_stash_loops": true,
+    "independent_complete_trace_and_fullholes_equal": true,
+    "original_source_ub4_bound_uint32": true,
+    "original_unsafe_hash_oracle_sanitized": false,
+    "new_native_full_dictionary_owner": false,
+    "ancillary_reward_tagged_geometry_semantics_qualified": false,
+    "account_policy_qualified": false,
+    "runtime_cache_or_shared_generation_observed": false,
+    "Win32_ABI_executed": false,
+    "authentic_runtime_dictionary_admitted": false,
+    "actor_or_ACK_authority": false,
+    "android_built": false,
+    "server_executed": false
+  }
+}

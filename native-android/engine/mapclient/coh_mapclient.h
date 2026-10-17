@@ -44,10 +44,12 @@ typedef struct {
      * loopback development path below. Neither field creates acceptance evidence. */
     int authenticated, endpoint_authorized;
     /* Explicit source UseFakeAuth mode: never evidence of AuthServer login.
-     * Mutually exclusive with authenticated; loopback-only, unknown DBID. */
+     * Mutually exclusive with authenticated; loopback-only. An expected DBID
+     * may come from a source-qualified owned DBSession handoff, independently
+     * of encrypted authentication. Generic raw link_id is not that proof. */
     int local_development_authorized;
     uint32_t selected_slot, selection_generation;
-    uint32_t selected_dbid; /* optional: 0 when DB protocol did not supply one */
+    uint32_t selected_dbid; /* optional positive INT32; 0 when unestablished */
     CohAuthMapHandoff handoff;
     unsigned address_index; /* 0 or 1, must match config UDP peer */
 } CohMapAuthorization;

@@ -1,0 +1,11 @@
+{
+  "source_commit": "b3122754a86e54ed572a01972356832268ea77a4",
+  "proof_sha256": "af7f3fabc5cd482133a83b4bddde51645e3860963d5d26f9b833f08d5091c421",
+  "all_tested_inputs_match_committed_source": true,
+  "original_compile_profiles": [
+    "host release",
+    "host ASan address with LSan disabled",
+    "host UBSan"
+  ],
+  "server_android_runtime": false
+}

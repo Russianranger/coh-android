@@ -66,3 +66,13 @@ cryptographic authentication proof.
 Actual OS socket tests use original-source-layout fixture packets and a
 controlled synthetic UDP peer. They demonstrate bounded session behavior,
 reliability and cleanup, not an authenticated session with a real DBServer.
+
+## MAP_CONNECT identity correction
+
+See ../entity-bootstrap/CONTRACT.md and its pinned whole original producer/queue
+oracle. DBServer mapxfer.sendLoginInfoToGameClient writes EntCon.id in the first
+MAP_CONNECT field; queue relays it unchanged. Game dbOrMapConnect misleadingly
+names the ignored local field link_id. The opaque DB session now exports that
+positive signed32 ID as selected_dbid only in its validated WAIT_MAP selection
+flow; generic raw handoff parsing is unchanged. This supersedes earlier unknown-
+DBID claims for this exact command/producer context and confers no actor/ACK.

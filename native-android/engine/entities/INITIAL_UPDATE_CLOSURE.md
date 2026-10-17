@@ -123,9 +123,24 @@ readers/writers:28ordered parts and160ordered RGB records, with complete origina
 byte roundtrips. This does not establish current server cache consumption.
 `engine/stash32/` preserves modeled Win32 uint32 hash arithmetic, original probe
 and resize order; its source-checked160color super-palette prefix has256slots,
-not the complete global palette. Full costume.bin/tree and ordinary/extra/final
-palette dictionaries remain under development; no complete slot generation or
-actor receipt exists.
+not the complete global palette. `engine/costume-tree/` now decodes the entire
+17,691,352-byte exact costume.bin offline with all13 actual source schemas.
+Original reader/writer preserves every byte; independent streaming decoder and
+original getters agree on138,760 nodes,2,030,156 fields and844,161 strings.
+Original ParseTableCRC traversal/field handlers yield matching costume a3374618,
+BodyParts cf27aba3 and superpalette f0095ef2 with explicit digest backing. This
+proves schema CRC equality, not the runtime load branch. `engine/costume-builder/`
+now executes complete original primary insertion order and modeled Win32-width
+stash construction on those exact bins. Independent complete trace and slot replay
+match every source slot/hole: ordinary13209/32768, extra156/256, palette224/512.
+The source primary-slot projection SHA256 is
+2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81.
+Whole original SERVER finalprocessor with controlled account predicates preserves
+all primary slots; ancillary dictionaries/account policy are explicitly excluded.
+These are offline source-generation results, not an observed runtime generation.
+Runtime cache/shared association and final immutable import admission still gate
+actor publication; no actor receipt exists. The expanded29MiB source tree is offline preparer storage,
+not qualified concurrently with Android world ownership under96MiB.
 
 Read `engine/costume-inputs/CACHE_HIT_SCOPE.md` and its source audit. Successful
 original ParserLoadFiles binary read returns BEFORE text preprocessing:
@@ -213,6 +228,23 @@ requirements. Outer character and PowerInfoUpdate/global wire bodies already
 have qualified raw standalone/suffix owners; do not relabel those completed
 subgrammars as missing. Source semantics and authentic runtime admission are
 both required before complete publication.
+
+## Source DB selection identity bootstrap
+
+`engine/entity-bootstrap/` supersedes earlier claims that MAP_CONNECT has no
+DBID. DB character lists/choose requests omit DBID, but the exact original DB
+producer writes EntCon.id as the handoff first scalar. Queue forwards all7fields
+unchanged. Generic raw `link_id` remains untrusted/command-context dependent.
+Only the opaque validated DB session's WAIT_MAP owner associates that positive
+signed32 field with its selected slot/generation and returns selected_dbid in the
+one-shot handoff. Original whole producer/queue fixtures, complete native parse,
+source-context and actual UDP owner refusal/lifecycle controls qualify this
+boundary. This is not observed live Map identity or encrypted authentication.
+The selected Map create must still agree on unique self DBID/entity/index and
+normal viewed-entity profile. Original clientGetViewedEntity can select a slave;
+that alternative cannot silently replace the selected character. Complete
+self/character/dictionary/suffix/world/framing gates and actor/ACK remain open.
+Read entity-bootstrap/CONTRACT.md for atomic transaction/lifetime requirements.
 
 ## Immutable actor boundary
 

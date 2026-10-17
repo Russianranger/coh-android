@@ -1,0 +1,17 @@
+{
+  "report_path": "native-android/engine/scenecatalog/evidence/actual-resource-manifest-candidates-38994607354-verified.json",
+  "report_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+  "captured_name_count": 1769,
+  "qualified_manifest_examples": [
+    "Box-1.tga",
+    "Bar_vert_sign.tga",
+    "asphalt_squaremask.tga"
+  ],
+  "manifest_example_proof_paths": [
+    "native-android/engine/world-render-adapter/sampler-authentic-pins.json",
+    "native-android/engine/world-render-adapter/rigid-atlas-v0-pins.json",
+    "native-android/engine/world-render-adapter/rigid-source-zero-pins.json"
+  ],
+  "asset_generation_permit": false,
+  "material_authority": false
+}

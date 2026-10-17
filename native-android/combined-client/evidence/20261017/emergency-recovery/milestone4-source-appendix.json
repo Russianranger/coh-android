@@ -1,0 +1,21 @@
+{
+  "heads": {
+    "catalog-bridge": "58abf96984b55bb100e22f13d9d35a14bbffee10",
+    "graph-instances": "5288c20979ba2f89985aa73dbc17b2d517f9ac85",
+    "entities-identity": "41f6e7167e6c8438fa48f85eb2695a0c16a59e22",
+    "qualification": "953126aaa341e14177f77a173bdda8ea1450493d"
+  },
+  "prerequisite_refs": [
+    "refs/recovery/20261017/milestone4-auth",
+    "refs/recovery/20261017/milestone4-catalog",
+    "refs/recovery/20261017/milestone4-entities",
+    "refs/recovery/20261017/milestone4-graph-bounds",
+    "refs/recovery/20261017/milestone4-graph-groups",
+    "refs/recovery/20261017/milestone4-qualification",
+    "refs/recovery/20261017/milestone4-renderer"
+  ],
+  "remote_prerequisite_commit": "71fb0ef2ecacfbff7de7e02a3996adefec9961fc",
+  "bytes": 101524,
+  "sha256": "4278ddd217978bc2771021a3530609e060e08145b6a36f470096246106e9fbb2",
+  "verification": "The bundle contains these 4 refs:\n58abf96984b55bb100e22f13d9d35a14bbffee10 refs/recovery/20261017/milestone4append-catalog-bridge\n5288c20979ba2f89985aa73dbc17b2d517f9ac85 refs/recovery/20261017/milestone4append-graph-instances\n41f6e7167e6c8438fa48f85eb2695a0c16a59e22 refs/recovery/20261017/milestone4append-entities-identity\n953126aaa341e14177f77a173bdda8ea1450493d refs/recovery/20261017/milestone4append-qualification\nThe bundle requires these 4 refs:\n143c89dcf26be31363d141e795cc25048c3a0c41 \n370da779951cece3fcbfb68901ee93626c0ec0c3 \nd21150a087c112e0a804a9c1267943c4f2aa1d32 \n0f0371fe8cea136b0d397075b6a76d073544162c \nThe bundle uses this hash algorithm: sha1"
+}

@@ -1,0 +1,8 @@
+{
+  "production_source_commit": "f6c18cbd8",
+  "source_and_final_tests_commit": "e8f5ff5da0209d8616c65470e876c4172d163bee",
+  "host_proof_sha256": "b200c11e1b7d66455cfa3eea5bf71fc44ff5c5af74b0dbbc002bfb740d25366b",
+  "all_32_tested_source_inputs_match_committed_blobs": true,
+  "source_producer_queue_fixture_count": 384,
+  "real_server_android_actor_ack_qualified": false
+}

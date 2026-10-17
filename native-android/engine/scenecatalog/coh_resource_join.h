@@ -34,7 +34,21 @@ CohStatus coh_resource_join_build(const CohResourceJoin *old,CohCatalogOwner *,
     CohCatalogSnapshot *,const CohRuntimeGraph *,CohBytes resources,const CohResourceJoinPins *,
     const CohResourceJoinBudget *,CohResourceDigest,void *,CohCancel,
     CohResourceJoin **out,CohResourceJoinReport *);
-void coh_resource_join_free(CohResourceJoin *);
+/* Serialized bounded references. Graph remains a BORROWED lease: it must stay
+ * alive and immutable until the last join reference (including source-selection
+ * owners) retires. Retaining a join does not retain a graph. */
+CohStatus coh_resource_join_retain(CohResourceJoin *);
+void coh_resource_join_free(CohResourceJoin *); /* release one reference */
+typedef struct {
+    CohResourceJoinPins pins;CohResourceJoinReport report;
+    const void *catalog_identity,*snapshot_identity,*graph_identity;
+    size_t catalog_owned_bytes,snapshot_owned_bytes,graph_owned_bytes;
+    CohBytes catalog_bytes,snapshot_bytes,resource_bytes;
+} CohResourceJoinIdentity;
+/* Copied immutable binding/dependency identities and actual borrowed byte
+ * spans. Used for exact cross-object pins and unique-owner budgeting. Output
+ * disjoint from actual join/control/source storage; unchanged on refusal. */
+CohStatus coh_resource_join_identity(const CohResourceJoin *,CohResourceJoinIdentity *);
 /* Returned descriptors/raw bytes borrow join lifetime. Source order preserved. */
 CohStatus coh_resource_join_sources(const CohResourceJoin *,const CohResourceSource **,
     size_t *count,CohResourceBinding *);

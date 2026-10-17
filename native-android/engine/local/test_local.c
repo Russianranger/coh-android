@@ -67,6 +67,7 @@ static void send_handoff(Peer *db,CohNetEndpoint target,Peer *map,int remote){
 static void happy_chain(unsigned malformed_catalog){
     Peer db=peer_open(),map=peer_open();CohLocal *s=start(&db,101,102,100);CohNetEndpoint db_target=list_characters(s,&db,100);
     send_handoff(&db,db_target,&map,0);service_ok(s,106);drain_ack(&db,5);CHECK(diag(s).phase==COH_LOCAL_MAP_CONNECTING&&diag(s).map_handoffs==1&&diag(s).server_identity_bound);
+    CHECK(diag(s).map_protocol.selected_dbid==17&&diag(s).map_protocol.map_link_id==17&&!diag(s).map_protocol.character_identity_verified);
     /* Finish genuine DB graceful disconnect while Map connects. */
     CohNetEndpoint map_target;CohNetPacket first=read_target(&map,&map_target,1);CHECK(first.connect);
     service_ok(s,107);CohNetPacket bye=frame_read(&db,5,0);CHECK(command(&bye,5,1)==5);

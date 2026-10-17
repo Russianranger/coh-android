@@ -1,0 +1,19 @@
+--- a/upstream/ouroboros/Game/src/render/tex.c
++++ b/upstream/ouroboros/Game/src/render/tex.c
+@@ -588,6 +588,7 @@
+ s = input name, res = chopped name (can be same ptr) */
+ static int texFixName(const char *s,char *res, int size)
+ {
++char *const res_start = res;
+ int        type = 0;
+ 
+     if (s != res)
+@@ -612,7 +613,7 @@
+         res[-4] = 0;
+     }
+     //fix for files that were incorrectly named .texture instead of dds.
+-    else if(res[-8] == '.')
++    else if(res - res_start >= 8 && res[-8] == '.')
+     {
+         if (strcmp(res-7,"texture")==0) {
+             // Even though we don't load .tga files anymore, this is still used (through texFind)

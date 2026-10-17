@@ -1,0 +1,19 @@
+{
+  "schema": "coh-pg-wine-checksum-source-host-v1",
+  "passed": true,
+  "host_suites_passed": 3,
+  "local_source_sha256": {
+    "deployment/pg_wine_checksum_recipe.py": "b503db7c0be81e1041060ccc9cca3e0cccc25538de64adfb8db77576c46ba95a",
+    "deployment/test_pg_wine_checksum_recipe.py": "8ee0d9de7414a80d0904eeb06f25da55de17a02c27b83105295f527aec6832e5",
+    "deployment/PG-WINE-CHECKSUM-RECIPE.md": "02da381bfaf0435291ebfa036d99ce0862a2974ab289a2ad67fe7566b06ffbe0",
+    "evidence/pg-wine-checksum-recipe-20261017/source-recipe.json": "bde8622b5ea635d1faa48571d26df2ae145631ecd76e161ad193681946cddba0",
+    "evidence/pg-wine-checksum-recipe-20261017/inventory.json": "c5d728826400c148174484a03f4b86a6e28d1601572efbeb2eeea86b1c820509"
+  },
+  "reduced_closure_files": 36,
+  "additional_changed_source_paths": 1,
+  "new_windows_build_or_service": false,
+  "persistence_test_rerun": false,
+  "historical_binary_freshly_executed": false,
+  "accepted_runtime_replacement_permitted": false,
+  "android_or_thor_qualified": false
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "coh-monitor-channel-metadata-host-v1",
+  "passed": true,
+  "host_python_suites_passed": 3,
+  "local_source_sha256": {
+    "deployment/monitor_channel_contract.py": "627d09a46776f4026910a73d52316c498836050f361a3e6ed98aa56b48298b40",
+    "deployment/test_monitor_channel_contract.py": "c2242f9571a9d2142906fba8fd2c1fd283738c84b141db92faffa5da1c34922c",
+    "deployment/MONITOR-ENVELOPE-CONTRACT.md": "fbe5952d6cd4bdff3e75573858905c9025db6ad491b0a85532c8eb05a1280af0",
+    "evidence/monitor-envelope-contract-20261017/native-host.json": "172f44d1fae80703d1f17bd9cd05be8eb36ed3d360a49d48111cf7b743516a5f"
+  },
+  "actual_os_process_ownership_verified": false,
+  "actual_tcp_channel_verified": false,
+  "actual_netlink_handshake_verified": false,
+  "live_request_permit_created": false,
+  "sockets_opened": 0,
+  "windows_service_executed": false,
+  "android_build_performed": false,
+  "emulator_execution_performed": false,
+  "physical_thor_qualification_performed": false,
+  "native_span_alias_and_pointer_overflow_controls_passed": true
+}

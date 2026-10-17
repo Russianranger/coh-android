@@ -114,7 +114,8 @@ CohStatus coh_local_choose_character(CohLocal *s,uint32_t slot,uint64_t now){
 static CohStatus begin_map(CohLocal *s,uint64_t now){
     CohDbSessionHandoff h;memset(&h,0,sizeof(h));
     CohStatus status=coh_db_session_take_handoff(s->db,&h);if(status!=COH_OK)return status;
-    if(!s->selected||h.selected_slot!=s->selected_slot||!h.selection_generation||h.selected_dbid){coh_db_wipe(&h,sizeof(h));return COH_INVALID;}
+    if(!s->selected||h.selected_slot!=s->selected_slot||!h.selection_generation||
+       !h.selected_dbid||h.selected_dbid>INT32_MAX||h.selected_dbid!=h.map.link_id){coh_db_wipe(&h,sizeof(h));return COH_INVALID;}
     unsigned index=2;CohNetEndpoint peer={0};
     for(unsigned i=0;i<2;i++){
         CohNetEndpoint e;for(unsigned n=0;n<4;n++)e.address[n]=(uint8_t)(h.map.address[i]>>(8*n));e.port=h.map.udp_port;
@@ -127,6 +128,7 @@ static CohStatus begin_map(CohLocal *s,uint64_t now){
      * not represent encrypted AuthServer authentication or Gate26 acceptance. */
     CohMapAuthorization a;memset(&a,0,sizeof(a));a.authenticated=0;a.local_development_authorized=1;a.endpoint_authorized=1;
     a.selected_slot=h.selected_slot;a.selection_generation=s->diagnostics.selection_generation;
+    a.selected_dbid=h.selected_dbid;
     a.handoff=h.map;a.address_index=index;
     status=coh_map_client_begin(s->map,&a,s->map_id,now);
     coh_db_wipe(&a,sizeof(a));coh_db_wipe(&h,sizeof(h));

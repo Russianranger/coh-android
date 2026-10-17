@@ -1,0 +1,51 @@
+{
+  "schema": "coh-full-costume-offline-independent-source-review-v1",
+  "source_commit": "b3122754a86e54ed572a01972356832268ea77a4",
+  "receipt_commit": "3f536586295d3aba61b7d0a7225f74836b59e7df",
+  "approved_for_offline_source_preparer_scope": true,
+  "host_proof_sha256": "af7f3fabc5cd482133a83b4bddde51645e3860963d5d26f9b833f08d5091c421",
+  "source_binding_sha256": "5927d7974085d8ac8e0ec54ba92033a8e68799118b09a1d45a8126f7ea5bf241",
+  "local_source_and_archive_sha256": {
+    "native-android/engine/costume-tree/tree_oracle.py": "0d5f9fcb4a58ffd3a2af07381ac1f0afbf753f29b43279fdf4f8f7816e69ad32",
+    "native-android/engine/costume-tree/independent.py": "70f60f9fa0a0dcfd9b77463214ab89811c837118f471f1f939b83295ff0f0bd4",
+    "native-android/engine/costume-tree/crc_provider.py": "7ee991803d9e2d303fab436d8fc4d446e9318e6c8fc60e0915d17cca18f73ff1",
+    "native-android/engine/costume-tree/check.py": "a35ead24775e4b4cb7505283c252ff6066cfc4fcfbece5f3ebd7d9745d117a3d",
+    "native-android/engine/costume-tree/storage_adapters.h": "6e7b321651cd9ad8ff3673bbed6be804525472217d5926acf77eb7b5d9ba0d4a",
+    "native-android/engine/costume-tree/projection.h": "ca379be477d23ad5096aa956335ed0570cf2a0046bf04b62692d687796a0ffdd",
+    "native-android/engine/costume-tree/tree_wrapper.h": "b8fe78b233811f7c7551fcf8c022a77d4f3ea8cb33326b0b7285f5334bb7c04a",
+    "native-android/engine/costume-tree/CONTRACT.md": "7bc6167502a3af3e936d0d85b4010493025e42559dabd27d8fbff318336dacd0",
+    "native-android/engine/costume-tree/source-pins.json": "dfed59e7e6112565a78563ce4b8cfce051b88d8be970c896d10fc39a60ef25d4",
+    "native-android/engine/costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+    "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241"
+  },
+  "original_small_source_files_verified": 13,
+  "original_small_function_hashes_verified": 31,
+  "extra_original_tokenstore_functions_verified": 8,
+  "original_crc_functions_verified": 6,
+  "full_actual_table_hashes_verified": 13,
+  "all13_schema_descriptors_and_unique_root_reviewed": true,
+  "all3_exact_donor_header_crc_words_verified": true,
+  "original_crypto_wrapper_function_hashes_verified": 3,
+  "reported_cases": 2,
+  "reported_negative_controls": 73,
+  "reported_modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "huge_decode_or_compilation_rerun_by_reviewer": false,
+  "findings": [
+    "Complete source reader/writer functions remain hash-pinned; explicit host storage adapters are not an original Win32 ABI claim.",
+    "Independent all-field digest traversal uses bounded segments/arrays/nodes/fields/strings/depth; raw reads stay within input and failed decode publishes no result.",
+    "Whole original ParseTableCRC and field interpreters are hashed; source ignores layout offset and substructure size. Explicit zlib-to-Crypto++ digest-byte adapter preserves donor little-endian numeric CRC scope.",
+    "Tracked source allocations have requested-byte and count bounds and reset frees owned entries on success or failed read; modified fixture borrows a constant name while original allocation remains tracked for cleanup.",
+    "Input/output and allocation tracking storage are separately bounded; named256MiB offline C-owned budget excludes driver/external-library/RSS and cannot be imported into96MiB live world owner.",
+    "Envelope prefix is retained rather than regenerated. Original oracle consumes verified or original-produced data only; assert adapters do not qualify malformed input safety.",
+    "No preprocessing/final callbacks, original stash construction, cache/shared branch, runtime generation, dictionary permit or actor authority admitted."
+  ],
+  "blocking_findings": [],
+  "runtime_or_android_acceptance_inferred": false,
+  "reviewer_script_sha256": "dda7c60d42bcad17dcbf7ec2582344f966a982f6ea8de5c43dc2757bb9bc12d8"
+}

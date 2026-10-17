@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "reviewed_revision": "dedfed5c4e9c469d83077b153769d0e64e5299cd",
+  "original_component_revision": "10cce604645bbe720d69e5167eaf880ccdfb7e4f",
+  "review_kind": "Independent native request/TCP framing and immutable metadata source review; retained byte qualification hash audit, no sockets/replay",
+  "blocking_findings": [],
+  "source_sha256": {
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_receive.c": "d24464295fefbb90f2a356f3ea3bfa4bbf6b47863a602d6cc63c63c46cdb1047",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/engine/auth-interop/deployment/coh_monitor_envelope.c": "541af5e6bff32146cf36bfa40c037c27fb6e0385d9b55e69384e95f105f49789",
+    "native-android/engine/auth-interop/deployment/coh_monitor_envelope.h": "e488413c777423d6224e25eba862a96c7cc6c4ed48b1aec6a810bef146f13aa7",
+    "native-android/engine/auth-interop/deployment/monitor_envelope_fixture.c": "a9af749eae59e0133df446f9ef53472bf64d98c5215fae11608f404ffda75d12",
+    "native-android/engine/auth-interop/deployment/qualify_monitor_envelope.py": "1962e442e8faa8739f1b00e74edc1c6b2c8b74c61cee9f4f9223d42b76321fba",
+    "native-android/engine/auth-interop/deployment/monitor_channel_contract.py": "627d09a46776f4026910a73d52316c498836050f361a3e6ed98aa56b48298b40",
+    "native-android/engine/auth-interop/deployment/test_monitor_channel_contract.py": "c2242f9571a9d2142906fba8fd2c1fd283738c84b141db92faffa5da1c34922c",
+    "native-android/engine/auth-interop/deployment/MONITOR-ENVELOPE-CONTRACT.md": "fbe5952d6cd4bdff3e75573858905c9025db6ad491b0a85532c8eb05a1280af0",
+    "native-android/engine/auth-interop/evidence/monitor-envelope-contract-20261017/native-host.json": "172f44d1fae80703d1f17bd9cd05be8eb36ed3d360a49d48111cf7b743516a5f"
+  },
+  "receipts": {
+    "native-host.json": "172f44d1fae80703d1f17bd9cd05be8eb36ed3d360a49d48111cf7b743516a5f",
+    "channel-host.json": "9557656a0f1dad6bae3d630a7c0ef83c87d107fbe8078e6482594c2d0eb549b2"
+  },
+  "resolved_findings": [
+    "Pairwise state/input/consumed/frame and request output/bitcount known spans now reject overlap and uintptr endpoint overflow before every write. Six stream pair negatives plus request/overflow controls preserve prior output/state/count."
+  ],
+  "review": [
+    "At most1472bytes owned state; source clear logical-bit length to padded-byte convention checked in uint64 before bounded conversion, source exact blowfishPad compared. Assembly returns at most one frame and consumed retains coalesced remainder.",
+    "Malformed state/length poison until explicit reset; partial input never publishes frame, complete output copied before assembler reset. CRC/decrypt/command validity remain separate existing-kernel operations.",
+    "Request only explicit packedcommand10 or legacy15, no monitorCONNECT or cookie body. No implicit protocol downgrade/encryption defaults.",
+    "Process/channel/handshake typed immutable records match only supplied labels, PID/start/binary/generation, server-side loopback tuple, exactfour timed controls and explicitnetwork5/encryption policy. All actual ownership/handshake/live permits stayfalse.",
+    "Original unorderedTCP compression persistent dictionary differs from qualifiedUDP; no reuse admission, sockets, originalsocket path or actual TCPdelivery acceptance claimed."
+  ],
+  "actual_sockets_opened": 0,
+  "actual_tcp_delivery": false,
+  "actual_process_channel_verified": false,
+  "live_request_permit": false,
+  "tcp_streaming_compression_qualified": false,
+  "android_execution": false,
+  "native_executions": {
+    "release": {
+      "binary_sha256": "8c11957b0d94be361138ad14a60ced66bf18bcd236777df03597ab4e3240ed9c",
+      "result": {
+        "passed": true,
+        "checks": 35338,
+        "send_caps": 20,
+        "coalesced_frames": 3,
+        "sockets_opened": 0
+      }
+    },
+    "asan_ubsan": {
+      "binary_sha256": "8affa11fb17196757c4398e744bec02a5e2bffaaaeb4780a1ecb9bfc82767084",
+      "result": {
+        "passed": true,
+        "checks": 35338,
+        "send_caps": 20,
+        "coalesced_frames": 3,
+        "sockets_opened": 0
+      }
+    }
+  },
+  "original_function_sha256": {
+    "pktGetTcp": "6ac948c4d7bab4f574d1dc1b821c3ee9719c41a12c8774af2e183acd5151f74e",
+    "pktGetTcpAsync": "c5c45daa4998ac033bbffbb7173110559b8d615e72864093b37dd02fa651aeaf",
+    "blowfishPad": "1670dedc8a7d0307e0b1a3c22d60aa64cfce1afdc384e15bca43e395fb57f42a",
+    "pktSendCmd": "2a76a3d54d389cacb873bcced4b642cab2053b3cd70671630c6aee809dfc4edb",
+    "netConnectEx": "3d5147becb0cb61209d0fa4d310dbe1abd7992a779b174bb64ef4d18e425dafb",
+    "handleControlCommand": "6d39974e965d3e2ea3178b09e3f4b0818cafdb8dd7d416343503dab5bd41d1b0",
+    "applyNetworkVersionToLink": "1c64c24d3a4de8e918fe72345c2967bdb62f5ec964b6aa8767486aecd95a00ed"
+  },
+  "metadata_python_suites": 3
+}

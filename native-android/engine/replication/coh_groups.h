@@ -53,6 +53,29 @@ typedef struct { CohGroupsStage stage; size_t bit_offset; CohStatus status; } Co
  * This grants no asset resolution, live scene, selected identity, ACK or READY.
  */
 CohStatus coh_rep_groups(CohRepReader *, CohGroupsInspection *, CohGroupsFailure *);
+/* Allocation-free second walk after a complete successful structural preflight.
+ * FILE_HEADER covers presence/name/checksum/base flag (or absence bit only),
+ * DEFINITION includes id+1 and its entire body, ROOT includes index/name/matrix.
+ * File IDs use original implicit 1..N-1,0 order; definition IDs are original
+ * slots, root IDs are original slots. Each span retains exact input bytes,
+ * representation and start cursor, with bits narrowed to its exclusive end.
+ * Views expire on callback return; caller keeps bytes immutable for both walks.
+ * Callbacks must stage externally and discard all staged work on ANY error;
+ * a successful earlier callback never proves whole-transaction publication.
+ * No callback is invoked for malformed/unsupported preflight input. A callback
+ * refusal stops immediately; reader/inspection remain unchanged, failure is
+ * numeric only. Callback contexts/opaque allocations must be disjoint from
+ * controls/input and cannot mutate reader/visitor/inspection/failure storage.
+ * Known control/input span overlap is rejected before any callback. The caller
+ * accounts callback scratch and both bounded passes, and serializes input life.
+ * This is observation only: no retained graph, source identity, ACK or authority.
+ */
+typedef enum { COH_GROUPS_FILE_HEADER=1,COH_GROUPS_DEFINITION=2,COH_GROUPS_ROOT=3 } CohGroupsEventKind;
+typedef struct { CohGroupsEventKind kind;uint32_t file,slot;CohRepReader span; } CohGroupsEvent;
+typedef CohStatus (*CohGroupsVisitFn)(void *,const CohGroupsEvent *);
+typedef struct {void *context;CohGroupsVisitFn event;} CohGroupsVisitor;
+CohStatus coh_rep_groups_visit(CohRepReader *,const CohGroupsVisitor *,
+    CohGroupsInspection *,CohGroupsFailure *);
 #ifdef __cplusplus
 }
 #endif

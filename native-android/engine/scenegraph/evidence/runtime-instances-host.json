@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "modes": {
+    "release": {
+      "allocations": 0,
+      "deallocations": 0,
+      "passed": true,
+      "checks": 7908,
+      "source_matrix_fixtures": 2048,
+      "dag_occurrences": 10,
+      "dag_unique_reachable": 4,
+      "world_authority": false
+    },
+    "asan": {
+      "allocations": 0,
+      "deallocations": 0,
+      "passed": true,
+      "checks": 7908,
+      "source_matrix_fixtures": 2048,
+      "dag_occurrences": 10,
+      "dag_unique_reachable": 4,
+      "world_authority": false
+    },
+    "ubsan": {
+      "allocations": 0,
+      "deallocations": 0,
+      "passed": true,
+      "checks": 7908,
+      "source_matrix_fixtures": 2048,
+      "dag_occurrences": 10,
+      "dag_unique_reachable": 4,
+      "world_authority": false
+    }
+  },
+  "source_sha256": {
+    "native-android/engine/scenegraph/coh_runtime_instances.c": "9679d44d609aca9a0348c091114ccde5483bdecaaae8767a6193011590c843ad",
+    "native-android/engine/scenegraph/tests/test_runtime_instances.c": "df311f6353b1b20642cf95b32240c43a64321e55186ef9aebc0dea4472f50a5c",
+    "native-android/engine/scenegraph/coh_runtime_instances.h": "ee299ddfeb081ca1871cae4c1727743441182e52ab491f610c59aca18d0c2ad2",
+    "native-android/engine/scenegraph/runtime_graph.h": "761582b9b245dd7f49b3abb4dde9c2a9644442946bf9010a0e80a9aea9ba2a37",
+    "native-android/engine/scenegraph/runtime_snapshot.h": "95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "native-android/engine/scenegraph/coh_runtime_bounds.h": "1c89e0bac3136674574351071c8623e928f6f8ca6ec4619421ec13a9c59e25ec",
+    "native-android/engine/scenegraph/coh_group_bounds.h": "24785de1fcf70a03c7c1debf964ec77581428911334743be73cecc2cd4cf4426",
+    "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/scenegraph/check_group_bounds.py": "eb9d4c64ad2459f80674e9eb976cf2532944a028eea7fcbf7a42b292c5ed1f30",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+    "upstream/ouroboros/Common/group/grouputil.c": "079bc11d4ae23b3a9c0313cb88468024220f06298c3fc9e215c17b079aee9d7a",
+    "upstream/ouroboros/Common/group/grouptrack.c": "5d148a21c41fe17d20196875a7708c2b6cfa745ced0fbc85981b10d0207ad677",
+    "native-android/engine/scenegraph/check_runtime_instances.py": "b3e230b88cca5341fc9f467f7d75c7f3e55fb57f1efd9f0dcd2fd7da0b2e8be0"
+  },
+  "original_matrix_function_sha256": "31b591763c44c575540a15c2d15cafa7f28fa8e769a39f887eed5fb9f6ac8a3e",
+  "original_traversal_function_sha256": [
+    "1f87c1ac9e5fbc88274766f4ab8892a1d1e8b151c1cf95b31d19b9d61bc94c67",
+    "815eab427790eb27bd9d59186160979206547eb99f932f924e752002bfc59b25"
+  ],
+  "original_oracle_sha256": "1dd8531a810784f09a18768b1251bfe17479d4f4c4c40518cd7a85ff72bd0577",
+  "release_stack_bytes": {
+    "separate": 40,
+    "same_binding": 8,
+    "coh_runtime_instances_begin": 45488,
+    "coh_runtime_instances_next": 11584,
+    "coh_runtime_instance_selection_input": 192
+  },
+  "fixture_graph_api_only": true,
+  "actual_Atlas_occurrences_counted": false,
+  "world_authority": false,
+  "android_executed": false,
+  "leak_sanitizer": false
+}

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "reviewed_revision": "5dd7b0dc1156ca571125508b684e8a8d2360b059",
+  "review_kind": "Native source-only compatibility comparator review, independent of pending full qualification-helper closure follow-up",
+  "source_sha256": {
+    "native-android/engine/scenegraph/coh_runtime_groups.c": "fec220d8fd9a02a253aac83b34da9be0e1a6540e8c56cb76b90460d7d74fa585",
+    "native-android/engine/scenegraph/coh_runtime_groups.h": "ab494e26e2289d1ca6643928ef9c30dd3fa8ccad4bf40bc7634627b77f11d280",
+    "native-android/engine/scenegraph/GROUPS_CORRELATION.md": "f03a91469dea4e0f7337971b5b0bdea8ef5c5b2d5ab23847f92d7d0ede5f2e59",
+    "native-android/engine/scenegraph/tests/test_runtime_groups.c": "9d64cf40bcfe227c173943aaa19dab6ea25fd0409f11b29a373ce4f4e24c6094"
+  },
+  "production_blocking_findings": [],
+  "qualification_followup_required": [
+    "Freeze executed dynamic source oracle/helper/shim files and all compiled transitive headers in both standalone and scriptedUDP qualifier pre/post manifests; bind refreshed receipts. Existing historical receipt retained, not called full source closure."
+  ],
+  "review": [
+    "Exact retained catalog pointer+extent and source/catalog generation commitments; equal-byte foreign owners refused.",
+    "Complete structural preflight; compressed aligned new-world subset only; original file order/names/bounds checksums, file0 complete emitted records, emitted definition bytes, root slot/name/packed matrix bytes and complete footer checked.",
+    "Reader unchanged; report staged and committed only on complete success; noheap, bounded scans and checked aggregate memory reservation; known control/source spans disjoint with explicit opaque-owner precondition.",
+    "Saved/modified_on_disk/force_reload omission eligibility is uncaptured and explicitly unqualified; retained omitted catalog definitions remain preserved.",
+    "Packed matrix equality is compatibility with qualified snapshot wires, not raw native-trig identity or matching live source generation."
+  ],
+  "actual_thor_body_available": false,
+  "source_generation_admitted": false,
+  "assets_admitted": false,
+  "actor_authority": false,
+  "world_authority": false,
+  "application_ack_permitted": false
+}

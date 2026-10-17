@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "reviewed_revision": "41f6e7167e6c8438fa48f85eb2695a0c16a59e22",
+  "production_revision": "f6c18cbd8bf81e99651beb01de6c65f1787f531c",
+  "final_tests_revision": "e8f5ff5da0209d8616c65470e876c4172d163bee",
+  "review_kind": "Independent selected DBID producer/container/queue source chain and opaque session state review; retained exact source/fixture hashes, no replay",
+  "blocking_findings": [],
+  "source_sha256": {
+    "native-android/engine/entity-bootstrap/oracle.py": "3207ddd3d9cd23086ae7dba181476226f4ecfdba09d23c4fd38dd639188b01e8",
+    "native-android/engine/entity-bootstrap/check.py": "5576139c7594b107a2bc9807e651e3e76570824cde0c6afbd1600f03d47f8e8b",
+    "native-android/engine/entity-bootstrap/producer_adapters.h": "51818a8df44f059ebf2c926ee7a8170d9de138571e2e6c263b18de228ac5d482",
+    "native-android/engine/entity-bootstrap/producer_wrapper.h": "ea31cd77a35836dc9e3741661a4d840cb2a38fa466ecebcc6748c23c1deccff9",
+    "native-android/engine/entity-bootstrap/test_handoff.c": "2c8c053c47bb9420752dc62b4af403b592afc1e309c5e7a44f647614341414b3",
+    "native-android/engine/entity-bootstrap/test_identity.c": "96787f45dfc7b82174fe041d6773fbe53a3850c9476629d2d96016530efcc5c6",
+    "native-android/engine/entity-bootstrap/source-pins.json": "32250bbb4f57e8297db79919756d3878992ba401ab591a549989e79a8b4d9747",
+    "native-android/engine/entity-bootstrap/CONTRACT.md": "3557620be95dc05752078efb3fbcf64e17f7e077d9f1fa57e44168582463ac26",
+    "native-android/engine/dbclient/check.py": "2cd5e8b80b593584e71f63cab21d774c00d39ec4056ae846d4698da68faac410",
+    "native-android/engine/dbclient/source-pins.json": "a8c82a4c35eb73325ab4c7e0727645e40899330e7d7450b2c5976b26a89dbeb1",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "native-android/engine/costume-tree/tree_oracle.py": "0d5f9fcb4a58ffd3a2af07381ac1f0afbf753f29b43279fdf4f8f7816e69ad32",
+    "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "native-android/engine/dbclient/coh_db_session.c": "7a991e2bfaf4f28049c80f726c49c276138b63bfeb75d497903d684990076d33",
+    "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/dbclient/coh_db_session.h": "c230034079d7ee8fa5356b356f0f617ea35575d739acef7a95d29b2f69b6fcaf",
+    "native-android/engine/dbclient/tests/test_db_session.c": "68f4de94149b958d4113021fe77ed3cf2b1ec6183bd71f155cf0385dcd23457b",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd"
+  },
+  "original_source_sha256_lf": {
+    "upstream/ouroboros/DBServer/src/mapxfer.c": "3eb5d5f5a157363bc39dea4545791d01032fedadfa8517cf2a2e1bb7fa54ad59",
+    "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+    "upstream/ouroboros/DBServer/src/dbdispatch.c": "30097d295b70c5c0050f4772a1dc984479e323f21fce23e1c11370ce399683d4",
+    "upstream/ouroboros/QueueServer/src/QueueServer_Passthrough.c": "49f71c51e7d4a95e616455359752b7cca8d37c15f8bc0ddf86bbccdb70408d5c",
+    "upstream/ouroboros/QueueServer/src/QueueServer.c": "4dea43faea37e8b22ed287964055b972db16a5c753172a4dffd14e23b5fd9078",
+    "upstream/ouroboros/Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+    "upstream/ouroboros/MapServer/src/container/containercallbacks.c": "56b484eded5a1ac2148369c4fac51084cad6ad9c55de6cfec4cbcb2dda90fb73",
+    "upstream/ouroboros/MapServer/src/dbcomm/dbcontainer.c": "3d9d1f552e84cd0451306db8653b2ad3f7bc478348357937c473f31978c0d956",
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "upstream/ouroboros/MapServer/src/player/clientEntityLink.c": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b",
+    "upstream/ouroboros/MapServer/src/player/parseClientInput.c": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313",
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+    "upstream/ouroboros/Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h": "822e3698ab8cf76a7344ed3effe607dcda542099382e8ed1a63c2c1d1df4257c"
+  },
+  "host_proof_sha256": "b200c11e1b7d66455cfa3eea5bf71fc44ff5c5af74b0dbbc002bfb740d25366b",
+  "review": [
+    "Original sendPlayers server-owned slot container IDs \u2192 chosen EntCon/container \u2192 MapACK matching container ID \u2192 sendLoginInfoToGameClient first EntCon.id verified. Queue passdbOrMapConnect forwards all7Pack1 fields unchanged despite stale local link_id label.",
+    "Opaque session alone associates first field with validated existing/unlocked choice. WAIT_MAP phase checked before parse; full7field/end validation precedes positiveINT32 and nonzero owned selectiongen/serverUIDbound gates. Generic CohAuthMapHandoff.link_id remains raw unprivileged wire field.",
+    "Successful handoff copy staged together with selectedslot/generation/DBID, then HANDOFF_READY. One-shot take begins graceful disconnect. Failure/refusal cannot publish identity; no standalone POD-to-DBID authority helper.",
+    "Current+legacy and aligned+unaligned direct/queue/advertised profiles qualified with whole original producer/relay and explicit account/container/IP/packet factory shells. Source original read/write bit kernel unsanitized oracle; no original Win32/server acceptance.",
+    "Normal non-slave Map self DBID must later match this owned value together with entity identity/generation and complete required full-update grammar. Local development auth remains provisional; no actor/fullcharacter/world/READY/RECEIVED_CHARACTER/ACK permit follows this correction."
+  ],
+  "native": {
+    "release": {
+      "wire": {
+        "passed": true,
+        "checks": 207896,
+        "source_fixtures": 384,
+        "truncations": 101040,
+        "byte_mutations": 12688,
+        "generic_field_not_identity_authority": true,
+        "binary_sha256": "e26ad36ce84d7357b997966d7d96aad8d7e44e3d320a1eb71de52f7c8dec62cd"
+      },
+      "owner": {
+        "passed": true,
+        "checks": 1332,
+        "socket_scenarios": 19,
+        "new_identity_refusals": 3,
+        "boundary_identity_successes": 2,
+        "opaque_owner_selected_dbid": true,
+        "real_server": false,
+        "actor_or_ack": false,
+        "binary_sha256": "824f84d29891cae3717a3d5d357a87a4e9ab3500c0a84c8df9647ab4b4c430d6"
+      }
+    },
+    "asan": {
+      "wire": {
+        "passed": true,
+        "checks": 207896,
+        "source_fixtures": 384,
+        "truncations": 101040,
+        "byte_mutations": 12688,
+        "generic_field_not_identity_authority": true,
+        "binary_sha256": "19c1e585af548d3e25d1a9056abf837e9be28c3b5459f9c36e90e658f8596e18"
+      },
+      "owner": {
+        "passed": true,
+        "checks": 1332,
+        "socket_scenarios": 19,
+        "new_identity_refusals": 3,
+        "boundary_identity_successes": 2,
+        "opaque_owner_selected_dbid": true,
+        "real_server": false,
+        "actor_or_ack": false,
+        "binary_sha256": "bbc5ec3c0b283df92c03595dff1d7e42968e491ce5f260122f67211cf6e90f14"
+      }
+    },
+    "ubsan": {
+      "wire": {
+        "passed": true,
+        "checks": 207896,
+        "source_fixtures": 384,
+        "truncations": 101040,
+        "byte_mutations": 12688,
+        "generic_field_not_identity_authority": true,
+        "binary_sha256": "9ac91050b459d3c6bfc92ca04bb8c4133f7b9a18c6af9c7c24e795fe1bdd4b77"
+      },
+      "owner": {
+        "passed": true,
+        "checks": 1332,
+        "socket_scenarios": 19,
+        "new_identity_refusals": 3,
+        "boundary_identity_successes": 2,
+        "opaque_owner_selected_dbid": true,
+        "real_server": false,
+        "actor_or_ack": false,
+        "binary_sha256": "420ff1e558482452d78345c6054156e1a2fcc2373043fa84dbf66bc94f43ea75"
+      }
+    }
+  },
+  "scope": {
+    "exact_MAP_CONNECT_opaque_owner_DBID": true,
+    "generic_link_id_reinterpreted": false,
+    "DB_list_contains_DBID": false,
+    "original_host_oracle_sanitized": false,
+    "local_auth_promoted_to_encrypted_auth": false,
+    "complete_entity_actor_or_ACK": false,
+    "real_DB_Map_Auth_run": false,
+    "android_built": false,
+    "Win32_ABI": false,
+    "leak_sanitizer": false
+  },
+  "durable_384_wire_hashes_verified": true,
+  "source_fixtures_sha256": "c2a1254fafc5ca06277852916728070ce7c81210624e487d591a2ee0ab52f71d",
+  "owner_fixtures_sha256": "f0e34e8ca53fba5a1937ba427c02a082da518f2cb4d0d1b32ff81d0225272021"
+}

@@ -7,8 +7,15 @@ typedef struct {
     CohRepReader reader;
     CohGroupsInspection value;
     CohGroupsStage stage;
+    const CohGroupsVisitor *visitor;uint32_t file_index;
 } Groups;
 #define TRY(e) do { CohStatus status_=(e); if(status_!=COH_OK)return status_; } while(0)
+static CohStatus event(Groups *g,CohGroupsEventKind kind,uint32_t slot,size_t start) {
+    if(!g->visitor)return COH_OK;
+    CohGroupsEvent e={kind,g->file_index,slot,g->reader};
+    e.span.cursor=start;e.span.bits=g->reader.cursor;
+    return g->visitor->event(g->visitor->context,&e);
+}
 static CohStatus work(Groups *g) {
     if(g->value.work_units==COH_GROUPS_WORK_MAX)return COH_LIMIT;
     g->value.work_units++;return COH_OK;
@@ -120,18 +127,20 @@ static CohStatus definition(Groups *g) {
     TRY(flag(g,&u));return COH_OK;
 }
 static CohStatus file(Groups *g) {
-    uint32_t present,u,last=0;g->stage=COH_GROUPS_STAGE_FILE;TRY(flag(g,&present));
-    if(!present)return COH_OK;
+    size_t start=g->reader.cursor;uint32_t present,u,last=0;g->stage=COH_GROUPS_STAGE_FILE;TRY(flag(g,&present));
+    if(!present)return event(g,COH_GROUPS_FILE_HEADER,0,start);
     g->value.present_files++;TRY(string(g,COH_REP_NAME_MAX,NULL));TRY(bits(g,32,&u));
     TRY(flag(g,&u));if(u)return COH_UNSUPPORTED;
+    TRY(event(g,COH_GROUPS_FILE_HEADER,0,start));
     for(;;) {
-        g->stage=COH_GROUPS_STAGE_DEF;TRY(pack(g,1,&u));if(!u)break;
+        start=g->reader.cursor;g->stage=COH_GROUPS_STAGE_DEF;TRY(pack(g,1,&u));if(!u)break;
         if(u>INT32_MAX)return COH_INVALID;
         if(u>COH_GROUPS_DEF_ID_MAX+1u)return COH_LIMIT;
         if(u<=last)return COH_INVALID;
         last=u;
         if(u-1>g->value.max_def_id)g->value.max_def_id=u-1;
-        TRY(count(&g->value.defs,1,COH_GROUPS_DEF_MAX));TRY(definition(g));
+        TRY(count(&g->value.defs,1,COH_GROUPS_DEF_MAX));uint32_t slot=u-1;TRY(definition(g));
+        TRY(event(g,COH_GROUPS_DEFINITION,slot,start));
     }
     return COH_OK;
 }
@@ -143,10 +152,10 @@ static CohStatus inspect(Groups *g) {
     g->stage=COH_GROUPS_STAGE_FILES;TRY(pack(g,1,&g->value.files));
     if(g->value.files>COH_GROUPS_FILE_MAX)return COH_LIMIT;
     /* Wire order 1..N-1,0 is implicit, not a separate transmitted ID. */
-    for(uint32_t i=0;i<g->value.files;i++)TRY(file(g));
+    for(uint32_t i=0;i<g->value.files;i++){g->file_index=i+1==g->value.files?0:i+1;TRY(file(g));}
     uint32_t previous=0;int have_previous=0;
     for(;;) {
-        uint32_t index;int present;g->stage=COH_GROUPS_STAGE_ROOT;TRY(pack(g,1,&index));
+        size_t start=g->reader.cursor;uint32_t index;int present;g->stage=COH_GROUPS_STAGE_ROOT;TRY(pack(g,1,&index));
         if(index==UINT32_MAX)break;
         if(index>INT32_MAX)return COH_INVALID;
         if(index>COH_GROUPS_ROOT_ID_MAX)return COH_LIMIT;
@@ -155,6 +164,7 @@ static CohStatus inspect(Groups *g) {
         TRY(count(&g->value.roots,1,COH_GROUPS_ROOT_MAX));
         TRY(string(g,COH_REP_NAME_MAX,&present));
         if(present)TRY(matrix(g));else g->value.removed_roots++;
+        g->file_index=UINT32_MAX;TRY(event(g,COH_GROUPS_ROOT,index,start));
     }
     g->stage=COH_GROUPS_STAGE_FOOTER;TRY(pack(g,1,&g->value.footer_file_count));
     if(g->value.footer_file_count!=g->value.files)return COH_INVALID;
@@ -176,6 +186,30 @@ CohStatus coh_rep_groups(CohRepReader *reader,CohGroupsInspection *out,CohGroups
         if(failure)*failure=(CohGroupsFailure){g.stage,g.reader.cursor,status};
         return status;
     }
+    *reader=g.reader;*out=g.value;
+    if(failure)*failure=(CohGroupsFailure){COH_GROUPS_STAGE_NONE,0,COH_OK};
+    return COH_OK;
+}
+
+static int visit_disjoint(const void *a,size_t an,const void *b,size_t bn) {
+    uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;
+    if(!an||!bn)return 1;
+    if(!a||!b||an>UINTPTR_MAX-x||bn>UINTPTR_MAX-y)return 0;
+    return x+an<=y||y+bn<=x;
+}
+CohStatus coh_rep_groups_visit(CohRepReader *reader,const CohGroupsVisitor *visitor,
+    CohGroupsInspection *out,CohGroupsFailure *failure) {
+    if(!reader||!visitor||!visitor->event||!out)return COH_INVALID;
+    const void *p[]={reader,visitor,out,failure,reader->bytes.data};
+    size_t n[]={sizeof(*reader),sizeof(*visitor),sizeof(*out),failure?sizeof(*failure):0,reader->bytes.size};
+    for(unsigned i=0;i<5;i++)for(unsigned j=i+1;j<5;j++)
+        if(!visit_disjoint(p[i],n[i],p[j],n[j]))return COH_INVALID;
+    CohRepReader pre=*reader;CohGroupsInspection check;CohGroupsFailure f;
+    CohStatus status=coh_rep_groups(&pre,&check,&f);
+    if(status!=COH_OK){if(failure)*failure=f;return status;}
+    Groups g;memset(&g,0,sizeof(g));g.reader=*reader;g.visitor=visitor;
+    status=inspect(&g);
+    if(status!=COH_OK){if(failure)*failure=(CohGroupsFailure){g.stage,g.reader.cursor,status};return status;}
     *reader=g.reader;*out=g.value;
     if(failure)*failure=(CohGroupsFailure){COH_GROUPS_STAGE_NONE,0,COH_OK};
     return COH_OK;

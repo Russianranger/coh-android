@@ -3,7 +3,7 @@
 #include <string.h>
 #define STACK_RESERVE (128u*1024u)
 struct CohResourceJoin {
-    CohResourceJoinPins pins;CohResourceJoinReport report;
+    uint32_t refs;CohResourceJoinPins pins;CohResourceJoinReport report;
     CohCatalogOwner *catalog;CohCatalogSnapshot *snapshot;const CohRuntimeGraph *graph;
     uint8_t *bytes;size_t size;CohResourceSource *sources;uint32_t *nodes;
 };
@@ -13,7 +13,8 @@ static int nz(const uint8_t *p){uint8_t n=0;for(unsigned i=0;i<32;i++)n|=p[i];re
 static int catalog_equal(const CohCatalogBinding *a,const CohCatalogBinding *b){return a->owner_generation==b->owner_generation&&a->catalog_generation==b->catalog_generation&&a->asset_generation==b->asset_generation&&a->map_generation==b->map_generation&&!memcmp(a->catalog_sha256,b->catalog_sha256,32)&&!memcmp(a->source_sha256,b->source_sha256,32)&&!memcmp(a->inventory_sha256,b->inventory_sha256,32)&&!memcmp(a->map_sha256,b->map_sha256,32);}
 static int resources_equal(const CohResourceBinding *a,const CohResourceBinding *b){return a->generation==b->generation&&a->asset_generation==b->asset_generation&&!memcmp(a->source_sha256,b->source_sha256,32)&&!memcmp(a->run_sha256,b->run_sha256,32)&&!memcmp(a->manifest_sha256,b->manifest_sha256,32);}
 static int graph_equal(const CohRuntimeGraphBinding *g,const CohCatalogSnapshotBinding *s){return g->catalog_generation==s->catalog.catalog_generation&&g->pins.asset_generation==s->catalog.asset_generation&&!memcmp(g->pins.catalog_sha256,s->catalog.catalog_sha256,32)&&!memcmp(g->pins.snapshot_sha256,s->snapshot_sha256,32)&&!memcmp(g->pins.source_sha256,s->catalog.source_sha256,32)&&!memcmp(g->pins.run_sha256,s->run_sha256,32);}
-void coh_resource_join_free(CohResourceJoin *j){if(!j)return;coh_catalog_snapshot_release(j->snapshot);coh_catalog_owner_release(j->catalog);free(j->nodes);free(j->sources);free(j->bytes);free(j);}
+CohStatus coh_resource_join_retain(CohResourceJoin *j){if(!j)return COH_INVALID;if(!j->refs||j->refs==UINT32_MAX)return COH_LIMIT;j->refs++;return COH_OK;}
+void coh_resource_join_free(CohResourceJoin *j){if(!j)return;if(j->refs>1){j->refs--;return;}coh_catalog_snapshot_release(j->snapshot);coh_catalog_owner_release(j->catalog);free(j->nodes);free(j->sources);free(j->bytes);free(j);}
 static CohStatus next(Match *m,uint32_t node,uint32_t kind,uint32_t file,uint32_t slot,uint32_t id,const char *name,const char *geometry){
     if(m->cancel.poll&&m->cancel.poll(m->cancel.context))return COH_CANCELLED;
     CohResourceJoin *j=m->join;if(m->ordinal>=j->report.rows||j->size-m->at<192)return COH_INVALID;
@@ -61,7 +62,7 @@ CohStatus coh_resource_join_build(const CohResourceJoin *old,CohCatalogOwner *ca
     for(unsigned n=0;n<sizeof(charges)/sizeof(charges[0]);n++)if((st=add(&fixed,charges[n],budget->aggregate_limit))!=COH_OK)return st;
     if(old){if(old->catalog!=catalog&&(st=add(&fixed,coh_catalog_owner_owned_bytes(old->catalog),budget->aggregate_limit))!=COH_OK)return st;if(old->snapshot!=snapshot&&(st=add(&fixed,coh_catalog_snapshot_owned_bytes(old->snapshot),budget->aggregate_limit))!=COH_OK)return st;if(old->graph!=graph){CohRuntimeGraphReport prior;if(coh_runtime_graph_report(old->graph,&prior)!=COH_OK)return COH_STATE;if((st=add(&fixed,prior.owned_bytes,budget->aggregate_limit))!=COH_OK)return st;}}
     if(COH_CATALOG_WALK_STACK_RESERVE>budget->aggregate_limit-fixed)return COH_LIMIT;
-    CohResourceJoin *j=calloc(1,sizeof(*j));if(!j)return COH_LIMIT;j->pins=*pins;j->size=input.size;j->graph=graph;j->report.rows=active;j->report.owned_bytes=owned;j->report.graph_generation=gr.generation;j->report.catalog_generation=cb.catalog_generation;
+    CohResourceJoin *j=calloc(1,sizeof(*j));if(!j)return COH_LIMIT;j->refs=1;j->pins=*pins;j->size=input.size;j->graph=graph;j->report.rows=active;j->report.owned_bytes=owned;j->report.graph_generation=gr.generation;j->report.catalog_generation=cb.catalog_generation;
     j->bytes=malloc(input.size);j->sources=calloc(active,sizeof(*j->sources));j->nodes=calloc(active,sizeof(*j->nodes));st=COH_LIMIT;if(!j->bytes||!j->sources||!j->nodes)goto fail;
     memcpy(j->bytes,input.data,input.size);uint8_t hash[32];st=digest(context,(CohBytes){j->bytes,j->size},hash);if(st!=COH_OK)goto fail;if(memcmp(hash,pins->resources_sha256,32)){st=COH_STATE;goto fail;}
     /* Store borrowed catalog for callbacks; acquire real references only after
@@ -93,3 +94,21 @@ fail:coh_resource_join_free(j);return st;
 CohStatus coh_resource_join_sources(const CohResourceJoin *j,const CohResourceSource **sources,size_t *count,CohResourceBinding *binding){if(!j||!sources||!count||!binding)return COH_INVALID;*sources=j->sources;*count=j->report.rows;*binding=j->pins.resource;return COH_OK;}
 CohStatus coh_resource_join_node(const CohResourceJoin *j,uint32_t ordinal,uint32_t *out){if(!j||!out)return COH_INVALID;if(ordinal>=j->report.rows)return COH_NOT_FOUND;*out=j->nodes[ordinal];return COH_OK;}
 CohStatus coh_resource_join_match_index(const CohResourceJoin *j,const CohResourceIndex *index,CohCancel cancel){if(!j||!index)return COH_INVALID;CohResourceBinding binding;CohResourceReport report;CohStatus st=coh_resource_index_metadata(index,&binding,&report);if(st!=COH_OK)return st;if(!resources_equal(&binding,&j->pins.resource)||report.rows!=j->report.rows)return COH_STATE;for(uint32_t n=0;n<j->report.rows;n++){if(cancel.poll&&cancel.poll(cancel.context))return COH_CANCELLED;CohBytes bytes;CohResourceView view;st=coh_resource_index_record(index,n,&bytes,&view);if(st!=COH_OK)return st;if(bytes.size!=j->sources[n].record.size||memcmp(bytes.data,j->sources[n].record.data,bytes.size))return COH_STATE;}return COH_OK;}
+
+static int identity_disjoint(const void *a,size_t an,const void *b,size_t bn){
+ uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;
+ if(!an||!bn)return 1;
+ if(!a||!b||an>UINTPTR_MAX-x||bn>UINTPTR_MAX-y)return 0;
+ return x+an<=y||y+bn<=x;
+}
+CohStatus coh_resource_join_identity(const CohResourceJoin *j,CohResourceJoinIdentity *out){
+ if(!j||!out)return COH_INVALID;
+ CohResourceJoinIdentity v={0};CohRuntimeGraphReport graph;CohCatalogSnapshotBinding sb;CohRuntimeSnapshotReport sr;
+ if(!j->refs||!j->catalog||!j->snapshot||!j->graph||!j->report.source_association_verified)return COH_STATE;
+ if(coh_catalog_owner_bytes(j->catalog,&v.catalog_bytes)!=COH_OK||coh_catalog_snapshot_view(j->snapshot,&v.snapshot_bytes,&sb,&sr)!=COH_OK||coh_runtime_graph_report(j->graph,&graph)!=COH_OK)return COH_STATE;
+ const void *starts[]={j,j->bytes,j->sources,j->nodes,v.catalog_bytes.data,v.snapshot_bytes.data};
+ size_t sizes[]={sizeof(*j),j->size,(size_t)j->report.rows*sizeof(*j->sources),(size_t)j->report.rows*sizeof(*j->nodes),v.catalog_bytes.size,v.snapshot_bytes.size};
+ for(unsigned k=0;k<6;k++)if(!identity_disjoint(out,sizeof(*out),starts[k],sizes[k]))return COH_INVALID;
+ v.pins=j->pins;v.report=j->report;v.catalog_identity=j->catalog;v.snapshot_identity=j->snapshot;v.graph_identity=j->graph;
+ v.catalog_owned_bytes=coh_catalog_owner_owned_bytes(j->catalog);v.snapshot_owned_bytes=coh_catalog_snapshot_owned_bytes(j->snapshot);v.graph_owned_bytes=graph.owned_bytes;v.resource_bytes=(CohBytes){j->bytes,j->size};*out=v;return COH_OK;
+}
