@@ -47,6 +47,15 @@ CAUSES = frozenset('''NONE CALLER FILES ACCOUNT PROFILE DESKTOP JOB LAUNCH IDENT
 RESUME TIMEOUT PROBE CLEANUP INTERNAL ALREADY_USED'''.split())
 TIMEOUT_SECONDS = 180
 OUTPUT_LIMIT = 8192
+FILE_PHASES = frozenset('''NONE PARENT_CHAIN PARENT_ACL PROBE_CHAIN PROBE_OPEN PROBE_LENGTH
+PROBE_BYTES_HASH ROOT_NONCE ROOT_CREATE ROOT_PIN JOURNAL_CREATE JOURNAL_PIN
+JOURNAL_ACL JOURNAL_WRITE'''.split())
+FILE_OPERATIONS = frozenset('''NONE CHAIN_ATTRIBUTES ACL_READ ACL_PROTECTION ACL_OWNER ACL_RULE ACL_SET
+DIRECTORY_ABSENCE DIRECTORY_SDDL DIRECTORY_CREATE DIRECTORY_ACL OPEN_HANDLE OPEN_INFO
+SAME_HANDLE SAME_IDENTITY PATH_REOPEN PATH_IDENTITY_COMPARE SOURCE_HASH
+BYTES_SIZE BYTES_STREAM BYTES_PROGRESS BYTES_END BYTES_POST
+JOURNAL_IDENTITY JOURNAL_SERIALIZE JOURNAL_BYTES JOURNAL_WRITE JOURNAL_RECHECK'''.split())
+DIAGNOSTIC_SOURCE_SHA256 = '3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514'
 
 
 class Refusal(ValueError):
@@ -72,14 +81,20 @@ def decode_json(raw):
                       parse_constant=lambda _: need(False, 'JSON_CONSTANT'))
 
 
-def parse_receipt(raw):
+def parse_receipt(raw, *, file_diagnostic=False):
     """Strict fixed field/type projection; never promote a failed native receipt."""
     need(type(raw) is bytes and 0 < len(raw) <= OUTPUT_LIMIT, 'RECEIPT_SIZE')
     need(re.fullmatch(rb'[\x20-\x7e]+\r?\n', raw) is not None, 'RECEIPT_ENCODING')
     value = decode_json(raw)
+    diagnostic_fields = {'file_phase', 'file_operation'} if file_diagnostic else set()
     need(type(value) is dict and set(value) == BOOL_FIELDS | {
-        'schema', 'first_failure', 'first_cleanup_failure'}, 'RECEIPT_FIELDS')
-    need(value['schema'] == 'coh-owned-profile-inert-process-v1', 'RECEIPT_SCHEMA')
+        'schema', 'first_failure', 'first_cleanup_failure'} | diagnostic_fields, 'RECEIPT_FIELDS')
+    expected_schema = ('coh-owned-profile-inert-process-file-diagnostic-v1' if file_diagnostic
+                       else 'coh-owned-profile-inert-process-v1')
+    need(value['schema'] == expected_schema, 'RECEIPT_SCHEMA')
+    if file_diagnostic:
+        need(value['file_phase'] in FILE_PHASES and value['file_operation'] in FILE_OPERATIONS,
+             'RECEIPT_OPERATION')
     need(all(type(value[key]) is bool for key in BOOL_FIELDS), 'RECEIPT_TYPE')
     need(value['first_failure'] in CAUSES and value['first_cleanup_failure'] in CAUSES,
          'RECEIPT_CAUSE')
@@ -91,8 +106,11 @@ def parse_receipt(raw):
         need(all(value[name] is (name not in FALSE_ON_SUCCESS) for name in BOOL_FIELDS)
              and value['first_failure'] == value['first_cleanup_failure'] == 'NONE',
              'RECEIPT_CONJUNCTION')
+        if file_diagnostic:
+            need(value['file_phase'] == value['file_operation'] == 'NONE', 'RECEIPT_SUCCESS_OPERATION')
     # Reconstruct with fixed known keys, including on a native failure.
     return {'schema': value['schema'], **{key: value[key] for key in sorted(BOOL_FIELDS)},
+            **{key: value[key] for key in sorted(diagnostic_fields)},
             'first_failure': value['first_failure'],
             'first_cleanup_failure': value['first_cleanup_failure']}
 
@@ -152,6 +170,27 @@ def admit_artifact(directory, source=None):
              sha(path) == expected['sha256'], 'ARTIFACT_IMAGE')
         images[name] = (path, expected['sha256'])
     return images
+
+
+def admit_file_diagnostic(directory):
+    directory = Path(directory)/'file-diagnostic'
+    receipt = decode_json(regular(directory/'diagnostic-build.json', 65536).read_bytes())
+    need(receipt.get('schema') == 'coh-wpp-file-diagnostic-build-v1' and
+         receipt.get('passed') is True and receipt.get('compiler_invocations') == 1 and
+         receipt.get('original_source_sha256') == SOURCE_PINS['OwnedProfileProcess.cs'] and
+         receipt.get('generated_source_sha256') == DIAGNOSTIC_SOURCE_SHA256 and
+         receipt.get('generated_source_bytes') == 47405 and
+         all(receipt.get(name) is True for name in ('exact_reverse_verified',
+             'selected_compiler_files_match_accepted_build')) and
+         all(receipt.get(name) is False for name in ('accepted_inert_probe_recompiled',
+             'accepted_model_recompiled_or_executed', 'helper_executed',
+             'source_generation_admitted', 'world_authority')), 'DIAGNOSTIC_BUILD')
+    image = regular(directory/'OwnedProfileProcess.exe', 16*1024*1024)
+    expected = receipt.get('helper_image', {})
+    need(type(expected.get('bytes')) is int and image.stat().st_size == expected['bytes'] and
+         re.fullmatch('[0-9a-f]{64}', expected.get('sha256', '')) is not None and
+         sha(image) == expected['sha256'], 'DIAGNOSTIC_IMAGE')
+    return image, expected['sha256']
 
 
 class Native:
@@ -286,7 +325,7 @@ class BoundedPipe:
             self.failed = True
 
 
-def execute(artifact, parent):
+def execute(artifact, parent, *, file_diagnostic=False):
     status = dict(schema='coh-owned-profile-inert-supervision-v1', passed=False,
                   first_failure='NONE', first_cleanup_failure='NONE',
                   accepted_build_reused=False, compiler_or_model_reexecuted=False,
@@ -298,7 +337,11 @@ def execute(artifact, parent):
                   image_pins_closed=False, parent_absent=False, timeout=False,
                   inner_cleanup_observed=False, private_journal_may_remain=True,
                   raw_output_exported=False, service_readiness_qualified=False,
-                  source_generation_admitted=False, world_authority=False)
+                  source_generation_admitted=False, world_authority=False,
+                  file_diagnostic_requested=file_diagnostic,
+                  changed_helper_compiled_only=False,
+                  accepted_probe_or_model_reexecuted=False,
+                  new_helper_compiler_invocations=0)
     native_receipt = None
     native = None
     images = {}
@@ -310,6 +353,12 @@ def execute(artifact, parent):
     try:
         images = admit_artifact(artifact)
         status['accepted_build_reused'] = True
+        if file_diagnostic:
+            stage = 'DIAGNOSTIC_ADMISSION'
+            images['OwnedProfileProcess.exe'] = admit_file_diagnostic(artifact)
+            status['changed_helper_compiled_only'] = True
+            status['compiler_or_model_reexecuted'] = True
+            status['new_helper_compiler_invocations'] = 1
         stage = 'PLATFORM'
         native = Native()
         stage = 'IMAGE_PIN'
@@ -354,7 +403,7 @@ def execute(artifact, parent):
             time.sleep(0.02)
         status['outer_process_exit_observed'] = True
         stage = 'HELPER_RECEIPT'
-        native_receipt = parse_receipt(bytes(pipes[0].data))
+        native_receipt = parse_receipt(bytes(pipes[0].data), file_diagnostic=file_diagnostic)
         status['helper_receipt_valid'] = True
         status['inner_cleanup_observed'] = native_receipt['cleanup_complete']
         status['private_journal_may_remain'] = not native_receipt['cleanup_complete']
@@ -442,6 +491,7 @@ def main():
     parser.add_argument('--artifact-dir', type=Path, required=True)
     parser.add_argument('--private-parent', type=Path, required=True)
     parser.add_argument('--public-out', type=Path, required=True)
+    parser.add_argument('--file-diagnostic', action='store_true')
     args = parser.parse_args()
     # Before mutation, require the explicit disposable CI host and a fresh
     # public directory. No username/SID/profile/packet/log selector is accepted.
@@ -450,7 +500,8 @@ def main():
          os.environ.get('GITHUB_REPOSITORY') == 'Russianranger/coh-android' and
          os.environ.get('GITHUB_REF') == 'refs/heads/native-android', 'HOST')
     args.public_out.mkdir(parents=False, exist_ok=False)
-    status, native_receipt = execute(args.artifact_dir, args.private_parent)
+    status, native_receipt = execute(args.artifact_dir, args.private_parent,
+                                     file_diagnostic=args.file_diagnostic)
     (args.public_out/'supervision.json').write_text(json.dumps(status, indent=2)+'\n', encoding='utf-8')
     if native_receipt is not None:
         (args.public_out/'inert-result.json').write_text(json.dumps(native_receipt, indent=2)+'\n', encoding='utf-8')

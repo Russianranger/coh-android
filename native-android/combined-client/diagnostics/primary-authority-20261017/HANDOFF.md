@@ -1,5 +1,15 @@
 # Primary native authority continuation — 2026-10-17
 
+## Focused Windows file-operation observation prepared — 2026-10-18
+
+Integrated resource/character/renderer source is360f8f6a75683b2405a0a67e2a89190d36f3e9b1;86a5fa0719bd9a91e788298a6245b306dbb545e3 restores the exact CRLF bytes of the two extracted Windows fixed receipts beside their unchanged exact ZIP. No test/binary behavior changed in that byte-preservation followup.
+
+Actual helper39123610452 failed FILES before account creation, with complete observed cleanup. New D/E-reviewed preparation mechanically derives a47405B helper (SHA2563f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514) using32 exact reversible source diagnostics only. Original helper/probe/model/build source stays byte-identical. Fixed phase/operation enums latch the first failure before cleanup; no path/SID/credential/error text escapes.15 focused new controls and E independent4 methods pass. Edit-race failed proof is retained explicitly; it was not a Windows/compiler failure.
+
+The new Windows observation workflow retains exact accepted39106023132 artifact/probe/model and checks installed compiler inputs against its receipt, compiling ONLY the changed diagnostic helper once. It executes that helper through the existing owned supervisor with explicit diagnostic mode; the original inert role stays separate. Static generated source/helper/build receipts are a distinct compile artifact, and runtime upload has only two fixed receipts. The specific FILES operation, successful inert profile execution and actual service readiness remain pending. This is justified missing diagnostic execution, not a retry of unchanged compiler/model acceptance.
+
+Scene39123610374 has completed its original capture transaction and is executing the current diagnostic verifier at its immutable source. No operation result, source token or world authority is inferred here. Gates25–27 remain open; no new APK.
+
 ## Reviewed resource / character adapter / renderer integration — 2026-10-18
 
 Focused original scene39123610374 and actual Windows inert39123610452 were launched from4f189f980189cf3b5750b6efa52f2f23fa3b9d1a. Windows source and exact artifact admission passed; the real helper then refused FILES before account creation. Fixed receipt validates actual native API execution, full inner cleanup and observed outer process/job/parent cleanup. Its sole1129B ZIP12135640309 SHA2564cdc63d62a440233969a57a7a33142530088d21204cdc3fb55603b92a180ddf0 and F independentAPI/proof are retained once under windows-profile-inert-20261018/run-39123610452. The specific file operation is unobserved. D/E are adding narrow diagnostics; no ACL/path relaxation or service success is inferred. Scene diagnostic remains active at its immutable source.

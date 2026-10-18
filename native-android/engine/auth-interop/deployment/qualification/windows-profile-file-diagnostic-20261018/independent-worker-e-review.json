@@ -1,0 +1,49 @@
+{
+  "schema": "coh-wpp-file-diagnostic-independent-review-v1",
+  "reviewer": "worker-e",
+  "passed": true,
+  "base_revision": "86a5fa0719bd9a91e788298a6245b306dbb545e3",
+  "source_sha256": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/prepare_file_diagnostic.py": "825ef01636c34f87b4350a861b343a8be12a6a6cbc03da5be5eff9b5a3a3a3bc",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-file-diagnostic.ps1": "e9a944bc72ff1c68b67f486cb368d941567034a58a132bc2618beab45092fdb5",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py": "b402d1ee6455c345ca5aa5e26ec551d66aa7d76315c059def041a66096e669bf",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/test_file_diagnostic.py": "e425cecd5a6a54607ae74317e281032f79151b4ce92f2aeb57025b0e95cd4440"
+  },
+  "accepted_source_pins_independently_verified": {
+    "OwnedProfileProcess.cs": "6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474",
+    "InertProfileProbe.cs": "339aa91a99fc3099e421d8a70d16d350c97d1df94728e83c2f1fab367e85a52c",
+    "TestOwnedProfileProcess.cs": "b68929efac7fa145a706524dc4d84e3b6afb6bd29258e636b9902297ca38a378",
+    "as-invoker.manifest": "3a462ffbbe724bd1c520e85696599d057e3d2a8f0bb0270d5ec712be20e27331",
+    "build-only.ps1": "cb011af152d2c502b1dfe956cb2704ed0715d8ad4bf75fc3f8b77e88f8278447"
+  },
+  "generated_source_sha256": "3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514",
+  "generated_source_bytes": 47405,
+  "replacements": 32,
+  "independent_exact_reverse_to_accepted_original_verified": true,
+  "fixed_phase_count": 14,
+  "fixed_operation_count": 28,
+  "independent_new_focused_test_methods": 4,
+  "independent_new_focused_test_exit_code": 0,
+  "review_findings": {
+    "original_auth_version_checksum_file_ownership_and_readiness_predicates_unchanged": true,
+    "original_forward_and_cleanup_call_order_preserved": true,
+    "new_Result_helper_evaluates_original_bool_once_before_fixed_enum_assignment": true,
+    "forward_failure_diagnostic_latched_before_cleanup": true,
+    "enum_output_contains_no_private_path_identity_error_or_journal": true,
+    "diagnostic_parser_refuses_unexpected_schema_fields_enum_and_success_with_non_NONE_markers": true,
+    "ordinary_inert_role_keeps_original_schema_and_artifact_source_admission": true,
+    "compile_recipe_pins_generated_source_and_original_manifest_and_selected_accepted_framework_files": true,
+    "compile_recipe_invokes_compiler_once_for_changed_helper_only": true,
+    "accepted_probe_and_accepted_model_sources_unchanged_and_not_recompiled_by_new_recipe": true,
+    "outer_process_job_deadline_cleanup_and_scope_guards_preserved": true
+  },
+  "new_focused_controls_are_model_only": true,
+  "accepted_model_suite_independently_reexecuted": false,
+  "new_helper_compiled_in_this_review": false,
+  "new_helper_executed_in_this_review": false,
+  "same_realm_service_readiness_qualified": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "blocking_findings": [],
+  "actual_FILES_failure_cause_identified": false
+}

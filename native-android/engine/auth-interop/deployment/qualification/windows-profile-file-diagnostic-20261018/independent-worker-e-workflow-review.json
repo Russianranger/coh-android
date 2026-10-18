@@ -1,0 +1,33 @@
+{
+  "schema": "coh-wpp-file-observation-workflow-independent-review-v1",
+  "reviewer": "worker-e",
+  "passed": true,
+  "workflow_path": ".github/workflows/native-owned-profile-file-observation.yml",
+  "workflow_sha256": "feb47140abd91015384f819b6f4a7e99ab7efe5709c66d2e25523978e84f0d31",
+  "exact_current_source_pins_verified": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py": "b402d1ee6455c345ca5aa5e26ec551d66aa7d76315c059def041a66096e669bf",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/prepare_file_diagnostic.py": "825ef01636c34f87b4350a861b343a8be12a6a6cbc03da5be5eff9b5a3a3a3bc",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-file-diagnostic.ps1": "e9a944bc72ff1c68b67f486cb368d941567034a58a132bc2618beab45092fdb5",
+    "native-android/engine/auth-interop/deployment/windows_suspended_thread.py": "5c5306850d5c1abeab5f70682ce54f35240127f67a54f90393598421caef5a11"
+  },
+  "inline_python_blocks_independently_parsed": 2,
+  "review_findings": {
+    "repository_branch_disposable_host_and_HEAD_guards_fixed": true,
+    "accepted_artifact_run_zip_digest_size_and_flat_members_pinned": true,
+    "cross_origin_redirect_strips_GitHub_authorization": true,
+    "accepted_inert_probe_and_model_not_recompiled_or_executed": true,
+    "changed_diagnostic_helper_only_compiler_role": true,
+    "raw_compiler_and_build_driver_output_remain_private": true,
+    "execution_uses_fixed_diagnostic_flag_and_supervisor_owned_process_cleanup": true,
+    "source_build_and_runtime_guard_proofs_remain_separate": true,
+    "public_runtime_uploads_only_two_fixed_receipts": true,
+    "successful_compile_artifact_upload_contains_only_generic_source_image_and_fixed_build_receipts": true,
+    "no_profile_journal_raw_process_output_account_identity_or_original_service_data_uploaded": true,
+    "concurrency_does_not_cancel_in_progress_owned_helpers": true
+  },
+  "new_helper_or_Windows_API_executed_during_review": false,
+  "same_realm_services_qualified": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "blocking_findings": []
+}

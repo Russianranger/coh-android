@@ -1,0 +1,12 @@
+{
+  "schema": "coh-wpp-file-diagnostic-review-edit-race-v1",
+  "qualification_passed": false,
+  "test_methods": 4,
+  "passed_methods": 3,
+  "failed_methods": 1,
+  "failure": "Generated source pin changed while worker was synchronizing final transformer and consumer pins",
+  "observed_generated_sha256": "3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514",
+  "then_consumer_expected_sha256": "f3ad00eff24f58fbc96667ff9fb610a547070c250dff7253c308c4094e63004f",
+  "subsequent_frozen_new_controls_passed": true,
+  "windows_or_compiler_executed": false
+}

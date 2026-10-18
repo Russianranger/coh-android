@@ -1,0 +1,32 @@
+{
+  "schema": "coh-wpp-file-diagnostic-host-qualification-v1",
+  "passed": true,
+  "new_diagnostic_controls": 4,
+  "supervisor_dependency_controls": 11,
+  "original_source_sha256": "6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474",
+  "generated_source_sha256": "3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514",
+  "generated_source_bytes": 47405,
+  "reversible_observation_edits": 32,
+  "exact_reversal_to_accepted_source_verified": true,
+  "source_sha256": {
+    "supervise_inert.py": "b402d1ee6455c345ca5aa5e26ec551d66aa7d76315c059def041a66096e669bf",
+    "prepare_file_diagnostic.py": "825ef01636c34f87b4350a861b343a8be12a6a6cbc03da5be5eff9b5a3a3a3bc",
+    "build-file-diagnostic.ps1": "e9a944bc72ff1c68b67f486cb368d941567034a58a132bc2618beab45092fdb5",
+    "test_file_diagnostic.py": "e425cecd5a6a54607ae74317e281032f79151b4ce92f2aeb57025b0e95cd4440",
+    "test_supervise_inert.py": "7e09ec3f321f3013ab8a2fdb3b19a65a61788187bf766072e38ea9aacd0c8de6"
+  },
+  "local_compiler_or_helper_or_windows_api_executed": false,
+  "prior_actual_failure": {
+    "run": 39123610452,
+    "artifact": 12135640309,
+    "zip_bytes": 1129,
+    "zip_sha256": "4cdc63d62a440233969a57a7a33142530088d21204cdc3fb55603b92a180ddf0",
+    "native_first_failure": "FILES",
+    "account_acquired": false,
+    "inner_and_outer_cleanup_observed": true,
+    "exact_failing_operation_observed": false
+  },
+  "service_readiness_qualified": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}
