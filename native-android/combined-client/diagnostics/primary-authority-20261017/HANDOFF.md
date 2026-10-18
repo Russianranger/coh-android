@@ -7,19 +7,60 @@ Git links, existing bundles, accepted APKs and user profiles were preserved.
 
 ## Current continuation checkpoint — 2026-10-18
 
-Last verified remote is `1ca1d1db3f33891062f570ea19f9c036715e823c`, tree
-`a690ddb89446e03444d1b3ba20d29e5bd2b466d6`. The source changes below are
+Last verified remote is `fe5efb4bb211a15791149f75822791be17a3677f`, tree
+`8d6b8a1c2cd08d16f003b8252e8dc72bd5297de2`. The source changes below are
 integrated locally for guarded publication. Historical sections retain their
 original pending states; this checkpoint supersedes them.
 
 | Owner | Newly established scope | Remaining critical input |
 |---|---|---|
-| A — scene | New separate callback-sealed observer source profile: release1425/ASan1426/UBSan1426 checks,36 scenarios each,26 Python methods. Sticky invalid accounting, whole callback depth and atomic restore preserve refusal. LSAN unavailable HOST_PROC_TASK_ACCESS. Stager original-FolderCache digest correction and optional owned-Map diagnostic wiring are separately reviewed;43 focused Python methods bind their followup | New MapServer-only Windows compile and exact PE/source receipt, then one matching disposable source/native transaction. Existing83b observer remains immutable and is not declared equivalent. Actual initial refused enum/current scene token remain absent |
-| B — resources | Existing immutable namespace/RGBA32 codec and exact seven source default bodies retained. Exact Chromium zlib cf333892 source recovered:306531B archive SHA2f776d3abe636e302a98216fc81410622feb1be958315223d0d3442496365938;111 regular files,1216944B,32 headers,21 recipe translation units;14 recursive Git trees recomputed to62224db151a2af4f2c66110d634ef8dc3607a155 | No static library or Windows zlib execution yet. Full source-selected CLIENT namespace/material/current world remains open; zlib is only the new DB-probe build dependency |
+| A — scene | New separate callback-sealed observer source profile: release1425/ASan1426/UBSan1426 checks,36 scenarios each,26 Python methods. Sticky invalid accounting, whole callback depth and atomic restore preserve refusal. LSAN unavailable HOST_PROC_TASK_ACCESS. Stager original-FolderCache digest correction and optional owned-Map diagnostic wiring are separately reviewed;43 focused Python methods bind their followup | New MapServer-only Windows compile and exact PE/source receipt are independently admitted; matching disposable source/native transaction is next. Existing83b observer remains immutable and is not declared equivalent. Actual initial refused enum/current scene token remain absent |
+| B — resources | Existing immutable namespace/RGBA32 codec and exact seven source default bodies retained. Exact Chromium zlib cf333892 source recovered:306531B archive SHA2f776d3abe636e302a98216fc81410622feb1be958315223d0d3442496365938;111 regular files,1216944B,32 headers,21 recipe translation units;14 recursive Git trees recomputed to62224db151a2af4f2c66110d634ef8dc3607a155 | New nonce-empty registry lease480304901 passes22 mock-only methods, with exact ownership/disposition and cleanup controls; it changes the original getter branch while preserving missing-value NULL. No actual registry, static library or Windows zlib execution yet. Full source-selected CLIENT namespace/material/current world remains open; zlib is only the new DB-probe build dependency |
 | C — character / private auth bridge | One-shot opaque Auth-to-DB development owner1642051b3/cec08c5b5:6715 checks/86 scenarios per release/ASan/UBSan,3 allocation failures,0 live allocations.36 exact source pins and independent review. Real native13-TU linkage compile-only. No caller grant setter or credential getter, one attempt, real AUTHORIZED191021 required, original DB20110614/encryption/development policy | Actual Windows/provider/network exchange and complete UID-matching empty-slot list unexecuted. Whole character update/current dictionaries/costume/actor remain open. Close-before-success ends DB CANCELLED11/Auth CLOSED8, not peer graceful-close ACK. No READY/RECEIVED_CHARACTER/full-update ACK |
-| D — auth | Actual39085257785 fixed diagnostic reached SHARDS_READY/EXPECTED191021 with0 shards,3 frames,196 bytes sent,203ms; selection/grant false. Postprobe Auth980/Db1964/SQL5868/channel/UDP stable and all cleanup/source checks true. Exact7336B artifact12120745825 SHAd21069bccb2831d28cfee7f1a9e2bc52dfa21bf1a579a1d1d84998247f1068a4;34091B CRLF receipt SHAf2d2f0d706d77721b748fda235c19438fac5dcece2ed309a1f667e686828927c. New Windows UDP shim67d6a66c7/7321db908 passes65 synthetic platform controls | Exact fresh fixture has shard group1 and no selected UID membership. Original get_server_groups/account fallback/filter source explains empty list, but runtime filter causality is inferred. Narrow ordinary membership fixture correction passes5 new host methods and independent byte review; a new Linux same-run5-only gate precedes both caps1024/7 retry. AC_PLAY_OK/DB/Map still unverified. UDP Win32 APIs/actual sockets not executed |
+| D — auth | Actual39085257785 fixed diagnostic reached SHARDS_READY/EXPECTED191021 with0 shards,3 frames,196 bytes sent,203ms; selection/grant false. Postprobe Auth980/Db1964/SQL5868/channel/UDP stable and all cleanup/source checks true. Exact7336B artifact12120745825 SHAd21069bccb2831d28cfee7f1a9e2bc52dfa21bf1a579a1d1d84998247f1068a4;34091B CRLF receipt SHAf2d2f0d706d77721b748fda235c19438fac5dcece2ed309a1f667e686828927c. New Windows UDP shim67d6a66c7/7321db908 passes65 synthetic platform controls | Exact fresh fixture has shard group1 and no selected UID membership. Original get_server_groups/account fallback/filter source explains empty list, but runtime filter causality is inferred. Narrow ordinary membership fixture correction passes5 new host methods and independent byte review; the Linux same-run5-only gate and both caps1024/7 actual retries now pass. Actual selected-shard39086864885 now succeeds in both caps; exact evidence below. DB/Map still unverified. UDP Win32 APIs/actual sockets not executed |
 | E — renderer | Actual39083677877 Android13x86 SwiftShader367 checks/18 readbacks plus both-ABI NDK builds retained.154504B artifact12119502992 SHA55eb2466fc7701c6bc49d736677321c29b2672754e673aabdb4f88c952413bea. Independent optional source-probe/runtime review clear; provider/CPU retirement and standalone Surface/context cleanup retain exact scope | ARM64 execution, app-owned EGL/window integration, current scene/material/player producers and AYN Thor remain open. No new APK justified |
 | F — qualification | Independently bound new A/C/D source proofs, exact zlib primary tree and actual selected diagnostic. Source/source-shaped harness execution is distinguished from original Windows/runtime execution; current-helper supplements preserve historical qualification without replaying unchanged C | No global memory fit/RSS/driver overlap or speedup measured. Startup remains387340ms.96MiB is named working-set policy; historical namespace projection already exceeds it before new owners/borrowed inputs |
+
+Actual selected-shard run [39086864885](https://github.com/Russianranger/coh-android/actions/runs/39086864885)
+at `fe5efb4bb211a15791149f75822791be17a3677f` succeeded: same-run Linux gate
+passed exactly5 new methods, then fresh Windows caps1024 and7 each reached real
+AUTHORIZED7/protocol191021 with1 shard,4 frames,222 bytes sent,47/125ms. Both
+live grants were retained then wiped; authorization was invalid after close.
+The original Auth/Db/SQL generations, channel/listener and membership checks were
+identical before/after;99 game tables and all owned cleanup/source/candidate
+checks passed. This is real selected-shard AC_PLAY_OK, not DB login or Map.
+The native probe itself does not assert server provenance; the outer fresh
+hosted service-generation, binary, registration and channel owner checks supply
+that association. Caps measure application/syscall fragmentation, not wire TCP
+segmentation. Normal version/checksum, authenticated DB/Map and Gate26 remain open.
+
+Exact artifacts: cap1024 [12121351916](https://github.com/Russianranger/coh-android/actions/runs/39086864885/artifacts/12121351916)
+6951B SHA`a42048844ca3944f4add0ead89517ba4e8a7474b333680e00618159f3cd059b8`,
+original CRLF receipt32512B SHA`e55dfb00518e8f96e819bb5794bc6d2590591afd3ed82585fc1b85d45037f6b0`;
+cap7 [12120769580](https://github.com/Russianranger/coh-android/actions/runs/39086864885/artifacts/12120769580)
+6957B SHA`bdbe425393bebb41011f43969129baee655cbf14e304439f636788dddef22ca7`,
+receipt32507B SHA`40410357bdf6f83dd01eeb8613180444d8a4a69e2354482c001d07c4215b9512`.
+New-controls artifact12121221551 is1674B SHA`06286ace1c8150d46429efee3aa9c9fb732d11c8cbb5b2f4ace8ccf009e98af2`.
+No grant value is exported or reused by the next experiment.
+
+The separate MapServer-only build39086864926 succeeded. Exact artifact12121407168
+is6776028B SHA`5898dcb8b4cb6e0fd435e53c4865c942dada4c8aadeb58351666d0845b35a2b4`;
+PE7504384B SHA`879398db8111e3c2ecc4448def78dbb972b2112ac8fe900c15b69122a7df0dda`;
+compile receipt3794B SHA`0daf56e8dcae5d40ab9d5ef08bc09d022eba0a9a609170ce6d1ce867b2ca18c5`.
+Strict source/PE/cache admission passed independently on Linux without byte
+normalization.216 actual build pins,166 helper pins,LOCAL6,45-member inventory,
+before/after input metadata and raw/admitted PE equality are verified. The new
+role is compile-only; accepted-observer equivalence/runtime/source authority
+remain false. One exact ZIP is retained, with no separate PE duplicate.
+The retained native receiver release180424B SHA`eeb5e9a3c29bfb223c23a5b465378ce90b800f517396c2c04502a703d8874ea5`
+still matches all43 compiled/helper sources and is preserved for checked transfer.
+Its old151-check receipt/statuses remain historical and unchanged. New receiver
+transfer helper source passes10 mock-only methods/64 cases and independent review.
+No actual native/loader/compiler or source-orchestration import ran in those controls.
+A fresh runner loader/no-argument smoke must pass before reuse without rebuild/replay.
+The new live workflow freezes278 helper/source/artifact pins, uses the separately
+admitted PE and same original fixture, and does not repeat seven-texture capture.
+Preparation is not execution of the matching source/native transaction.
 
 The selected fixture correction must use ordinary `dbo.user_server_group`
 membership for UID900001 and registered group1, plus strict original-procedure

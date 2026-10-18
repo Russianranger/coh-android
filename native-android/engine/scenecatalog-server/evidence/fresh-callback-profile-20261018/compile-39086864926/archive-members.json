@@ -1,0 +1,328 @@
+{
+  "all_members_regular": true,
+  "archive": {
+    "bytes": 6776028,
+    "sha256": "5898dcb8b4cb6e0fd435e53c4865c942dada4c8aadeb58351666d0845b35a2b4"
+  },
+  "crc_verified": true,
+  "member_count": 45,
+  "members": [
+    {
+      "bytes": 37004,
+      "crc32": "1ac44ddf",
+      "kind": "regular",
+      "name": "fresh-groups-compile/CMakeCache.txt",
+      "sha256": "a875c61c6fcbf11410d91c540da3808eb24ee3f5f04b9f6928dfdb292d241092"
+    },
+    {
+      "bytes": 3794,
+      "crc32": "a04c200d",
+      "kind": "regular",
+      "name": "fresh-groups-compile/compile-only-receipt.json",
+      "sha256": "0daf56e8dcae5d40ab9d5ef08bc09d022eba0a9a609170ce6d1ce867b2ca18c5"
+    },
+    {
+      "bytes": 45593,
+      "crc32": "8e342640",
+      "kind": "regular",
+      "name": "fresh-groups-compile/map-startup-build-input.json",
+      "sha256": "3b37339e2bdd94456715cff78e5093399410ede8980efa6fc51681c1a4d3fc09"
+    },
+    {
+      "bytes": 1202,
+      "crc32": "72bbee6b",
+      "kind": "regular",
+      "name": "fresh-groups-compile/map-startup-inputs.json",
+      "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+    },
+    {
+      "bytes": 7504384,
+      "crc32": "bd183a6d",
+      "kind": "regular",
+      "name": "fresh-groups-compile/MapServer.exe",
+      "sha256": "879398db8111e3c2ecc4448def78dbb972b2112ac8fe900c15b69122a7df0dda"
+    },
+    {
+      "bytes": 56990,
+      "crc32": "ce2ebc8f",
+      "kind": "regular",
+      "name": "fresh-groups-compile/native-fresh-groups-server-build-input.json",
+      "sha256": "c5804bc597191979d184f3b65267e52d984f27c6030d3fe5af0da35b945952f7"
+    },
+    {
+      "bytes": 51771,
+      "crc32": "be7c48dc",
+      "kind": "regular",
+      "name": "fresh-groups-compile/native-groups-transaction-server-build-input.json",
+      "sha256": "7459d640a80cad767a278820f2271ce4fde0954d470b6c2a35463a6433930c7f"
+    },
+    {
+      "bytes": 88180,
+      "crc32": "da29abfa",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/Common/seq/anim.c",
+      "sha256": "1c0dcb572bdd4b74c0b73b2cf28e45433b4078b4721723270012aa4a14e93439"
+    },
+    {
+      "bytes": 1837,
+      "crc32": "c3dc9dc8",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/Common/seq/coh_fresh_folder_profile_api.h",
+      "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+    },
+    {
+      "bytes": 1825,
+      "crc32": "0b728b7e",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/Common/seq/coh_fresh_original_resource_quiescence.inc",
+      "sha256": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824"
+    },
+    {
+      "bytes": 1507,
+      "crc32": "52779e84",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/Common/seq/coh_resource_quiescence.inc",
+      "sha256": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd"
+    },
+    {
+      "bytes": 11481,
+      "crc32": "4d1c2bc9",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile.inc",
+      "sha256": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52"
+    },
+    {
+      "bytes": 1837,
+      "crc32": "c3dc9dc8",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile_api.h",
+      "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+    },
+    {
+      "bytes": 781,
+      "crc32": "e7f36ab7",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h",
+      "sha256": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17"
+    },
+    {
+      "bytes": 49410,
+      "crc32": "5889d0fc",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/libs/UtilitiesLib/src/utils/FolderCache.c",
+      "sha256": "5ccc8942728a19b7d2a4b07ab20c83c66d3f0d879c561ff6f3ccf669429c8690"
+    },
+    {
+      "bytes": 9224,
+      "crc32": "c9a8d2a7",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/MapServer/src/group/coh_fresh_source_profile.inc",
+      "sha256": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c"
+    },
+    {
+      "bytes": 8130,
+      "crc32": "4ee5232a",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/MapServer/src/group/coh_source_catalog_sink.inc",
+      "sha256": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d"
+    },
+    {
+      "bytes": 9309,
+      "crc32": "104aa40c",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/MapServer/src/group/coh_source_groups_capture_sink.inc",
+      "sha256": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7"
+    },
+    {
+      "bytes": 92831,
+      "crc32": "94b1a715",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/MapServer/src/group/groupnetsend.c",
+      "sha256": "f50f92c6e7116d990c9fbdad8653dfea192f74d62218c9228981824a3d84f206"
+    },
+    {
+      "bytes": 73194,
+      "crc32": "e10417e4",
+      "kind": "regular",
+      "name": "fresh-groups-compile/source/MapServer/src/svr/svr_init.c",
+      "sha256": "9962b3d718db223fcae663e8f8c4fab44f1da5b9db6be94f1cc5c9fe92582195"
+    },
+    {
+      "bytes": 28404,
+      "crc32": "dda59534",
+      "kind": "regular",
+      "name": "fresh-groups-build-logs/build.log",
+      "sha256": "db33b58a98c3faf2390541f4c9da58039e84d0645621544307bdb1cf0d7c7145"
+    },
+    {
+      "bytes": 13956,
+      "crc32": "5f085a78",
+      "kind": "regular",
+      "name": "fresh-groups-build-logs/configure.log",
+      "sha256": "baa472635766381ff6fd6742074d1e6c0c40e89c2b093f76ee344fa5340a4521"
+    },
+    {
+      "bytes": 28992,
+      "crc32": "511bbf6b",
+      "kind": "regular",
+      "name": "fresh-groups-source-admission.json",
+      "sha256": "5ccae04694ce5919fcb4ade854ea7557516ea03c4f95153cfce867b280b24486"
+    },
+    {
+      "bytes": 1073,
+      "crc32": "884c33bf",
+      "kind": "regular",
+      "name": "fresh-groups-inputs-before.json",
+      "sha256": "d2d410db4f6b73f0a447d78fbadbaabb7d8e38243a43412d8d7362fe2c85abc5"
+    },
+    {
+      "bytes": 1073,
+      "crc32": "884c33bf",
+      "kind": "regular",
+      "name": "fresh-groups-inputs-after.json",
+      "sha256": "d2d410db4f6b73f0a447d78fbadbaabb7d8e38243a43412d8d7362fe2c85abc5"
+    },
+    {
+      "bytes": 37004,
+      "crc32": "1ac44ddf",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/CMakeCache.txt",
+      "sha256": "a875c61c6fcbf11410d91c540da3808eb24ee3f5f04b9f6928dfdb292d241092"
+    },
+    {
+      "bytes": 45593,
+      "crc32": "8e342640",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/map-startup-build-input.json",
+      "sha256": "3b37339e2bdd94456715cff78e5093399410ede8980efa6fc51681c1a4d3fc09"
+    },
+    {
+      "bytes": 1202,
+      "crc32": "72bbee6b",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/map-startup-inputs.json",
+      "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+    },
+    {
+      "bytes": 7504384,
+      "crc32": "bd183a6d",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/MapServer.exe",
+      "sha256": "879398db8111e3c2ecc4448def78dbb972b2112ac8fe900c15b69122a7df0dda"
+    },
+    {
+      "bytes": 56990,
+      "crc32": "ce2ebc8f",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/native-fresh-groups-server-build-input.json",
+      "sha256": "c5804bc597191979d184f3b65267e52d984f27c6030d3fe5af0da35b945952f7"
+    },
+    {
+      "bytes": 51771,
+      "crc32": "be7c48dc",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/native-groups-transaction-server-build-input.json",
+      "sha256": "7459d640a80cad767a278820f2271ce4fde0954d470b6c2a35463a6433930c7f"
+    },
+    {
+      "bytes": 88180,
+      "crc32": "da29abfa",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/Common/seq/anim.c",
+      "sha256": "1c0dcb572bdd4b74c0b73b2cf28e45433b4078b4721723270012aa4a14e93439"
+    },
+    {
+      "bytes": 1837,
+      "crc32": "c3dc9dc8",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/Common/seq/coh_fresh_folder_profile_api.h",
+      "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+    },
+    {
+      "bytes": 1825,
+      "crc32": "0b728b7e",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/Common/seq/coh_fresh_original_resource_quiescence.inc",
+      "sha256": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824"
+    },
+    {
+      "bytes": 1507,
+      "crc32": "52779e84",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/Common/seq/coh_resource_quiescence.inc",
+      "sha256": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd"
+    },
+    {
+      "bytes": 11481,
+      "crc32": "4d1c2bc9",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile.inc",
+      "sha256": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52"
+    },
+    {
+      "bytes": 1837,
+      "crc32": "c3dc9dc8",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile_api.h",
+      "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+    },
+    {
+      "bytes": 781,
+      "crc32": "e7f36ab7",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h",
+      "sha256": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17"
+    },
+    {
+      "bytes": 49410,
+      "crc32": "5889d0fc",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/libs/UtilitiesLib/src/utils/FolderCache.c",
+      "sha256": "5ccc8942728a19b7d2a4b07ab20c83c66d3f0d879c561ff6f3ccf669429c8690"
+    },
+    {
+      "bytes": 9224,
+      "crc32": "c9a8d2a7",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/MapServer/src/group/coh_fresh_source_profile.inc",
+      "sha256": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c"
+    },
+    {
+      "bytes": 8130,
+      "crc32": "4ee5232a",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/MapServer/src/group/coh_source_catalog_sink.inc",
+      "sha256": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d"
+    },
+    {
+      "bytes": 9309,
+      "crc32": "104aa40c",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/MapServer/src/group/coh_source_groups_capture_sink.inc",
+      "sha256": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7"
+    },
+    {
+      "bytes": 92831,
+      "crc32": "94b1a715",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/MapServer/src/group/groupnetsend.c",
+      "sha256": "f50f92c6e7116d990c9fbdad8653dfea192f74d62218c9228981824a3d84f206"
+    },
+    {
+      "bytes": 73194,
+      "crc32": "e10417e4",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/source/MapServer/src/svr/svr_init.c",
+      "sha256": "9962b3d718db223fcae663e8f8c4fab44f1da5b9db6be94f1cc5c9fe92582195"
+    },
+    {
+      "bytes": 3577,
+      "crc32": "2f76493b",
+      "kind": "regular",
+      "name": "fresh-groups-UNADMITTED-recovery/UNADMITTED-recovery.json",
+      "sha256": "5e3132df4d49dfdee4e0c3ce77d893c5407b2be8fc8e58fd1ad87a26fe29b4b0"
+    }
+  ],
+  "schema": "coh-fresh-groups-compile-archive-members-v1",
+  "uncompressed_bytes": 16173849
+}

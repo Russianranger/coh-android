@@ -1,0 +1,35 @@
+{
+  "schema": "coh-preserved-qualified-scene-live-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/qualified-scene-live-20261018/a",
+      "tip": "e030936abd7247b635387552748c8d93723d0a94",
+      "prerequisite": "8c12cd3ac8c8e23a9b17b8227729c03ba46cfbc7"
+    },
+    "B": {
+      "ref": "refs/recovery/qualified-scene-live-20261018/b",
+      "tip": "480304901088922b3b7c13428e89735ea6449c57",
+      "prerequisite": "f90b9ae5e2c0bc809ff4fb59034821834cf29493"
+    },
+    "D": {
+      "ref": "refs/recovery/qualified-scene-live-20261018/d",
+      "tip": "a4bb173a9899d9f2d0a4fac358e2625d034f3a1a",
+      "prerequisite": "e37476572b69bb96770c16e66e1991b273821f53"
+    },
+    "F": {
+      "ref": "refs/recovery/qualified-scene-live-20261018/f",
+      "tip": "d3eb48833b1b0036cfbf94732243ed6cff5d0fb0",
+      "prerequisite": "89abde1361c23994ca9ab530c27a2f8beeb757ee"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/qualified-scene-live-20261018/coordinator",
+      "tip": "1a849d5a296c3409c734359784096437f7d4339a",
+      "prerequisite": "fe5efb4bb211a15791149f75822791be17a3677f"
+    }
+  },
+  "bundle": "worker-qualified-scene-live-history.bundle",
+  "bytes": 7261660,
+  "sha256": "cacfb86e20cc66223e9ca07209e50c92459cfb2d5a2330de7e911d48660356f8",
+  "verification": "The bundle contains these 5 refs:\ne030936abd7247b635387552748c8d93723d0a94 refs/recovery/qualified-scene-live-20261018/a\n480304901088922b3b7c13428e89735ea6449c57 refs/recovery/qualified-scene-live-20261018/b\na4bb173a9899d9f2d0a4fac358e2625d034f3a1a refs/recovery/qualified-scene-live-20261018/d\nd3eb48833b1b0036cfbf94732243ed6cff5d0fb0 refs/recovery/qualified-scene-live-20261018/f\n1a849d5a296c3409c734359784096437f7d4339a refs/recovery/qualified-scene-live-20261018/coordinator\nThe bundle requires these 64 refs:\nfdde1a0f519a547ac0743fb91aafaa8bfc114a8e \nea907c176e60a45a816fdc58c71e4752eaac48e5 \n034bd09cbcd371f929d6afd64ae7f70fdcacafa7 \n8ac2a544fc05c0834acf653495a57ad03c9d2cb6 \n169d0b36e95ec1f2e51573f56023088e8643a9a9 \n7f81a58cf34bef336f66fc7c03bee8e14dc507d1 \nf0003a3f188d2a26eb5c27fe653616e1c018dee1 \n8613045c22d9faa76ba5b6b4635ea5dcce9138c7 \n2ade983336192ccf492ccdc63e4c732859784a0b \nd3da923c5c500895fd831990113339ddf5541694 \nf9d1aecdf6e331a54f3eb77b075156446f454d4e \n12a9906bcde8a64cdcfe40d0634422ce555094a7 \nac1f40506a3b7cf625fe5e21b39a4430f3562630 \nf6ee1243756a686002843549093eb8cb0c606be1 \n55d1d6efeffc80e0cceb033978057a80649b6ab3 \ndd50243b2546896f9a3570897cf7e8749e749d0b \n6b0ab48cc582b0967ca642a5a7896e5f2ff749af \n35299ada512a0a02df0c8ce738cf2cc36aa1c999 \n4b50f8da9cace737d8fb5771adbae5ccce87ff37 \nfd9ea649322aff5dd952878b6a00d9d813a50ba7 \n1c8d770284e38154efe30b4964fb9a334a89046a \na62a75bde353bd940d0d56e33b38e17bc1a38f51 \ne3af5aff044335468a7a1427bad6baf1d95454cc \neaf55b4451fd008faa949d30cc739a8c476caf1a \n93bfd2347625ef53c6589a05d63f1f351be58aa7 \n3b7057a54c450e1ab80002561485961662c63caf \n433e62991e0ab4355187bec620cf70b85febb779 \na780aa66b97ce399b5ccee03bd2bc5523d86e751 \nb55a8f24b86c04120537d5c80aa0eaec096b8c76 \na54f1f5e70c2897e08a304a5de6651b4850e9bac \ne12a7e842658010017f2f2c6a728128af342a16e \na5e0c47b92ab22ad3a84b46da55417af8db1b737 \na17ea916f79978922c92ed02351b8f2900374764 \n0227723160e0e5169741592eda45d8e1d0fbedc6 \ncea9f80da2ae7d48d4e18ae01a25e2e9b0028f18 \n939af46895429da329acab166d03612b0c5f16eb \n5367ea2ec83042bfdbb3a0042a8158652a07e33b \n5c20e23cb7c41a39546a9ac1dfc42f3f3ed58309 \n3e220e1eb99041ae40efac713a7a6bf9ba5e46b3 \n7066d39c4b267f1cef3c59050eb2f30194084350 \ne37476572b69bb96770c16e66e1991b273821f53 \n89abde1361c23994ca9ab530c27a2f8beeb757ee \nfe5efb4bb211a15791149f75822791be17a3677f \n1ca1d1db3f33891062f570ea19f9c036715e823c \nc98bb60fe187458f328a15882089ea742ce6e853 \n3b6bd0de1b728c6e2e8bc8f11e5af2b92908dfbc \nbd7b16b6ae188f9e8e1aa90542eb86287f38c312 \n2729bfc16c9f757fd850c24a0bc6df366a2e40ab \n827f1f1136b52f46fdcd787e7a6d31664b4d0b94 \n6a6809d07a130af60129f569b59a627420b6bf54 \nb3fbacf90626e29542e878313c2812eba1e1375b \nfd213266f1b6665acece877dabb7dab6663e647c \n91cacafa4451cf7504b5dd105f2790ae1c41739b \n81568446e43f56eb1a8aaf0970ab1ede13103f41 \n08e6a96f2af9cb317eecd6629e99db4200df177f \ndd5c3f9a2c30ea20b0a4c714007b1de0b0409546 \n824da3e9666ca5f04f5a0bee02449a8894cca2e4 \n643359f11c7805a25b0a2b3a430d46f13c7c68ae \na4cc6b61443cecf6394b0500028277874be6cf82 \n996af55882219a136405b75628713d9286825df2 \n83b93ed89775feb51793df6ee3fca7ac2f0d1334 \nd96354411d2f69ec325b1bfe9d0e14999626ba91 \nf90b9ae5e2c0bc809ff4fb59034821834cf29493 \n8c12cd3ac8c8e23a9b17b8227729c03ba46cfbc7 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-qualified-scene-live-history.bundle is okay\n",
+  "scope": "Actual real selected-shard authorization in both send caps, original CRLF receipts and same-run five controls; separate callback-sealed MapServer Win32 build/strict source admission/exact archive; qualified nonce-empty registry lease and private DB probe source; retained151-qualified native release with new destination-preflight source and10mock64controls; final278-pin live scene workflow. C/E worker history is unchanged in earlier bundles; new C proposal contribution is preserved in coordinator production helper and F exact source snapshots, E independent reviews make no source commit. No new matching scene runtime, DB/Map development runtime, world/player/ACK/APK/Thor acceptance follows."
+}

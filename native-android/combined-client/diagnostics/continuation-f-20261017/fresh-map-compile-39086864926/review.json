@@ -1,0 +1,287 @@
+{
+  "A_independent_strict_admission": {
+    "all_166_admission_closure_pins_rehashed_against_recorded_Git_and_build_fe5": true,
+    "all_6_compiled_local_profile_source_pins_equal_recorded_Git": true,
+    "bytes": 25640,
+    "commit": "e030936abd7247b635387552748c8d93723d0a94",
+    "fresh_source_reconstruction_and_strict_admitter_not_replayed_by_F": true,
+    "no_retroactive_original_gate_or_execution_claim_for_two_extra_sources": true,
+    "overlap_with_original_216_source_gate": 164,
+    "path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-39086864926/admission.json",
+    "review_time_validator_checkout_reference": "a47f5c5bfb50f81f5d25e72a78ef1ca4f5ed5264",
+    "sha256": "576eed1d27d9e250b73e29bfe49533b80b45c4c3b8ac4d45f32add2fe38b3f02",
+    "strict_pass": true,
+    "two_additional_review_time_pins_outside_original_gate": {
+      "native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py": "6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d",
+      "native-android/engine/scenecatalog-server/test_source_snapshot_verifier.py": "ec88d764e9f5e5c3ceb6dc3094c1ca360307df817ecb71e7bc06274bef714874"
+    }
+  },
+  "F_did_not_reexecute_project_admitter": true,
+  "PE": {
+    "bytes": 7504384,
+    "sha256": "879398db8111e3c2ecc4448def78dbb972b2112ac8fe900c15b69122a7df0dda"
+  },
+  "PE_basic_headers_data_only_verified": true,
+  "actor_world_ACK_or_RSS_authority": false,
+  "actual_runtime_capture_source_generation_or_accepted_observer_equivalence": false,
+  "archive": {
+    "Git_path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-39086864926/fresh-map-build-39086864926.zip",
+    "bytes": 6776028,
+    "copied_by_F": false,
+    "member_inventory": {
+      "fresh-groups-UNADMITTED-recovery/CMakeCache.txt": {
+        "bytes": 37004,
+        "sha256": "a875c61c6fcbf11410d91c540da3808eb24ee3f5f04b9f6928dfdb292d241092"
+      },
+      "fresh-groups-UNADMITTED-recovery/MapServer.exe": {
+        "bytes": 7504384,
+        "sha256": "879398db8111e3c2ecc4448def78dbb972b2112ac8fe900c15b69122a7df0dda"
+      },
+      "fresh-groups-UNADMITTED-recovery/UNADMITTED-recovery.json": {
+        "bytes": 3577,
+        "sha256": "5e3132df4d49dfdee4e0c3ce77d893c5407b2be8fc8e58fd1ad87a26fe29b4b0"
+      },
+      "fresh-groups-UNADMITTED-recovery/map-startup-build-input.json": {
+        "bytes": 45593,
+        "sha256": "3b37339e2bdd94456715cff78e5093399410ede8980efa6fc51681c1a4d3fc09"
+      },
+      "fresh-groups-UNADMITTED-recovery/map-startup-inputs.json": {
+        "bytes": 1202,
+        "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+      },
+      "fresh-groups-UNADMITTED-recovery/native-fresh-groups-server-build-input.json": {
+        "bytes": 56990,
+        "sha256": "c5804bc597191979d184f3b65267e52d984f27c6030d3fe5af0da35b945952f7"
+      },
+      "fresh-groups-UNADMITTED-recovery/native-groups-transaction-server-build-input.json": {
+        "bytes": 51771,
+        "sha256": "7459d640a80cad767a278820f2271ce4fde0954d470b6c2a35463a6433930c7f"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/Common/seq/anim.c": {
+        "bytes": 88180,
+        "sha256": "1c0dcb572bdd4b74c0b73b2cf28e45433b4078b4721723270012aa4a14e93439"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/Common/seq/coh_fresh_folder_profile_api.h": {
+        "bytes": 1837,
+        "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/Common/seq/coh_fresh_original_resource_quiescence.inc": {
+        "bytes": 1825,
+        "sha256": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/Common/seq/coh_resource_quiescence.inc": {
+        "bytes": 1507,
+        "sha256": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/MapServer/src/group/coh_fresh_source_profile.inc": {
+        "bytes": 9224,
+        "sha256": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/MapServer/src/group/coh_source_catalog_sink.inc": {
+        "bytes": 8130,
+        "sha256": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/MapServer/src/group/coh_source_groups_capture_sink.inc": {
+        "bytes": 9309,
+        "sha256": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/MapServer/src/group/groupnetsend.c": {
+        "bytes": 92831,
+        "sha256": "f50f92c6e7116d990c9fbdad8653dfea192f74d62218c9228981824a3d84f206"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/MapServer/src/svr/svr_init.c": {
+        "bytes": 73194,
+        "sha256": "9962b3d718db223fcae663e8f8c4fab44f1da5b9db6be94f1cc5c9fe92582195"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/libs/UtilitiesLib/src/utils/FolderCache.c": {
+        "bytes": 49410,
+        "sha256": "5ccc8942728a19b7d2a4b07ab20c83c66d3f0d879c561ff6f3ccf669429c8690"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile.inc": {
+        "bytes": 11481,
+        "sha256": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile_api.h": {
+        "bytes": 1837,
+        "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+      },
+      "fresh-groups-UNADMITTED-recovery/source/libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h": {
+        "bytes": 781,
+        "sha256": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17"
+      },
+      "fresh-groups-build-logs/build.log": {
+        "bytes": 28404,
+        "sha256": "db33b58a98c3faf2390541f4c9da58039e84d0645621544307bdb1cf0d7c7145"
+      },
+      "fresh-groups-build-logs/configure.log": {
+        "bytes": 13956,
+        "sha256": "baa472635766381ff6fd6742074d1e6c0c40e89c2b093f76ee344fa5340a4521"
+      },
+      "fresh-groups-compile/CMakeCache.txt": {
+        "bytes": 37004,
+        "sha256": "a875c61c6fcbf11410d91c540da3808eb24ee3f5f04b9f6928dfdb292d241092"
+      },
+      "fresh-groups-compile/MapServer.exe": {
+        "bytes": 7504384,
+        "sha256": "879398db8111e3c2ecc4448def78dbb972b2112ac8fe900c15b69122a7df0dda"
+      },
+      "fresh-groups-compile/compile-only-receipt.json": {
+        "bytes": 3794,
+        "sha256": "0daf56e8dcae5d40ab9d5ef08bc09d022eba0a9a609170ce6d1ce867b2ca18c5"
+      },
+      "fresh-groups-compile/map-startup-build-input.json": {
+        "bytes": 45593,
+        "sha256": "3b37339e2bdd94456715cff78e5093399410ede8980efa6fc51681c1a4d3fc09"
+      },
+      "fresh-groups-compile/map-startup-inputs.json": {
+        "bytes": 1202,
+        "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+      },
+      "fresh-groups-compile/native-fresh-groups-server-build-input.json": {
+        "bytes": 56990,
+        "sha256": "c5804bc597191979d184f3b65267e52d984f27c6030d3fe5af0da35b945952f7"
+      },
+      "fresh-groups-compile/native-groups-transaction-server-build-input.json": {
+        "bytes": 51771,
+        "sha256": "7459d640a80cad767a278820f2271ce4fde0954d470b6c2a35463a6433930c7f"
+      },
+      "fresh-groups-compile/source/Common/seq/anim.c": {
+        "bytes": 88180,
+        "sha256": "1c0dcb572bdd4b74c0b73b2cf28e45433b4078b4721723270012aa4a14e93439"
+      },
+      "fresh-groups-compile/source/Common/seq/coh_fresh_folder_profile_api.h": {
+        "bytes": 1837,
+        "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+      },
+      "fresh-groups-compile/source/Common/seq/coh_fresh_original_resource_quiescence.inc": {
+        "bytes": 1825,
+        "sha256": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824"
+      },
+      "fresh-groups-compile/source/Common/seq/coh_resource_quiescence.inc": {
+        "bytes": 1507,
+        "sha256": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd"
+      },
+      "fresh-groups-compile/source/MapServer/src/group/coh_fresh_source_profile.inc": {
+        "bytes": 9224,
+        "sha256": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c"
+      },
+      "fresh-groups-compile/source/MapServer/src/group/coh_source_catalog_sink.inc": {
+        "bytes": 8130,
+        "sha256": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d"
+      },
+      "fresh-groups-compile/source/MapServer/src/group/coh_source_groups_capture_sink.inc": {
+        "bytes": 9309,
+        "sha256": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7"
+      },
+      "fresh-groups-compile/source/MapServer/src/group/groupnetsend.c": {
+        "bytes": 92831,
+        "sha256": "f50f92c6e7116d990c9fbdad8653dfea192f74d62218c9228981824a3d84f206"
+      },
+      "fresh-groups-compile/source/MapServer/src/svr/svr_init.c": {
+        "bytes": 73194,
+        "sha256": "9962b3d718db223fcae663e8f8c4fab44f1da5b9db6be94f1cc5c9fe92582195"
+      },
+      "fresh-groups-compile/source/libs/UtilitiesLib/src/utils/FolderCache.c": {
+        "bytes": 49410,
+        "sha256": "5ccc8942728a19b7d2a4b07ab20c83c66d3f0d879c561ff6f3ccf669429c8690"
+      },
+      "fresh-groups-compile/source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile.inc": {
+        "bytes": 11481,
+        "sha256": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52"
+      },
+      "fresh-groups-compile/source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile_api.h": {
+        "bytes": 1837,
+        "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+      },
+      "fresh-groups-compile/source/libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h": {
+        "bytes": 781,
+        "sha256": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17"
+      },
+      "fresh-groups-inputs-after.json": {
+        "bytes": 1073,
+        "sha256": "d2d410db4f6b73f0a447d78fbadbaabb7d8e38243a43412d8d7362fe2c85abc5"
+      },
+      "fresh-groups-inputs-before.json": {
+        "bytes": 1073,
+        "sha256": "d2d410db4f6b73f0a447d78fbadbaabb7d8e38243a43412d8d7362fe2c85abc5"
+      },
+      "fresh-groups-source-admission.json": {
+        "bytes": 28992,
+        "sha256": "5ccae04694ce5919fcb4ade854ea7557516ea03c4f95153cfce867b280b24486"
+      }
+    },
+    "members": 45,
+    "preservation_commit": "e030936abd7247b635387552748c8d93723d0a94",
+    "preserved_by_worker": "A",
+    "recorded_git_blob_sha1": "02dd5f10cf406e68d2480959b5ccd97bfbf379e4",
+    "sha256": "5898dcb8b4cb6e0fd435e53c4865c942dada4c8aadeb58351666d0845b35a2b4",
+    "uncompressed_bytes": 16173849,
+    "unique_safe_regular_members_CRC_and_hashes_verified": true
+  },
+  "artifact_id": 12121407168,
+  "compile_receipt": {
+    "PE_machine": "i386",
+    "bytes": 3794,
+    "clean_source_checkout_recorded": true,
+    "configuration": "OptDebug",
+    "fixed_artifacts": 19,
+    "generator": "Visual Studio 18 2026",
+    "platform": "Win32",
+    "role": "nonshipping_fresh_callback_sealed_groups_observer",
+    "sha256": "0daf56e8dcae5d40ab9d5ef08bc09d022eba0a9a609170ce6d1ce867b2ca18c5",
+    "source_and_inherited_stage_verified": true,
+    "staged_source_root": "C:/fgsrc"
+  },
+  "independent_API_run_job_every_step_artifact_digest_verified": true,
+  "job_id": 117555147382,
+  "original_inputs": {
+    "donor_rebuilt": false,
+    "files": {
+      "COH-Atlas-Gameplay-0.13.31.apk": {
+        "bytes": 41203812,
+        "sha256": "e56df1bcf2210aff131ba80189b1b2dee760f27066e3ee26e09c5fea1654ad80"
+      },
+      "client-caches.zip": {
+        "bytes": 27071659,
+        "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+      },
+      "fxinfo-full.bin": {
+        "bytes": 58505496,
+        "sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70"
+      },
+      "map-startup-inputs.json": {
+        "bytes": 1202,
+        "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+      },
+      "server-animation-manifest.json": {
+        "bytes": 1005794,
+        "sha256": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f"
+      },
+      "server-animations.pigg": {
+        "bytes": 97084456,
+        "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+      }
+    },
+    "native_F_independent_original_large_input_payload_admission_repeated": false,
+    "whole_six_input_identity_records_before_after_byte_equal": true
+  },
+  "passed": true,
+  "raw_recovery": {
+    "all_19_fixed_members_byte_equal_to_strict_artifacts": true,
+    "explicitly_unadmitted": true,
+    "not_used_as_substitute_for_strict_receipt": true
+  },
+  "reviewer_downloaded_compiled_or_executed_server_or_old_qualifier": false,
+  "run_id": 39086864926,
+  "schema": "coh-f-actual-fresh-map-compile-review-v1",
+  "source_gate": {
+    "all_216_pins_verified_against_actual_fe5_Git": true,
+    "bytes": 28992,
+    "effective_173_helper_followup_gate_and_exact_8_supersessions_preserved": true,
+    "historical_C_controls_not_replayed": true,
+    "sha256": "5ccae04694ce5919fcb4ade854ea7557516ea03c4f95153cfce867b280b24486"
+  },
+  "source_revision": "fe5efb4bb211a15791149f75822791be17a3677f",
+  "source_tree": "8d6b8a1c2cd08d16f003b8252e8dc72bd5297de2",
+  "strict_admit_compile_pass_reported_independently_by_coordinator_and_A": true
+}

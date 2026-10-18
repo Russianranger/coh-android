@@ -1,0 +1,16 @@
+{
+  "DB_Map_version_reference_checksum_actor_or_world_authority": false,
+  "F_additional_data_only_ZIP_CRC_strict_duplicate_nonfinite_JSON_native20typed_controls_passed": true,
+  "actual_Db_udp_bind_address": "0.0.0.0",
+  "advertised_route_and_interserver_channel_loopback": true,
+  "download_test_compiler_service_protocol_replay": false,
+  "independent_E_read_only_admission_agrees": true,
+  "loopback_only_listener_bind_claim": false,
+  "original_receipts_modified": false,
+  "owned_firewall_blocks_nonloopback_IPv4": true,
+  "passed": true,
+  "prior_F_artifact_review_sha256": "5be63486e039449428e1db888fc45edf0ba51e2a61469c4da72e3d3103c3d45a",
+  "schema": "coh-f-actual-selected-membership-complementary-review-v1",
+  "source_revision": "fe5efb4bb211a15791149f75822791be17a3677f",
+  "union_current47_historical34_source_pins": 53
+}

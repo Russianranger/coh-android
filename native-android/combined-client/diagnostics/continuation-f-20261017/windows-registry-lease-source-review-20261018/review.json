@@ -1,0 +1,75 @@
+{
+  "actual_Windows_registry_behavior_or_development_activation_admitted": false,
+  "all_eight_current_and_git_pins_match": true,
+  "all_five_prior_inputs_unchanged": true,
+  "atomicity_against_unrelated_same_user_writers": false,
+  "five_new_paths": {
+    "native-android/engine/auth-interop/deployment/WINDOWS-REGISTRY-LEASE.md": {
+      "bytes": 8067,
+      "sha256": "82a8bc88031c8d628aa92616a6470c2fb43bf3117c3894260a784b24afa2d299"
+    },
+    "native-android/engine/auth-interop/deployment/qualification/windows-registry-lease-20261018/HANDOFF.md": {
+      "bytes": 2706,
+      "sha256": "c23003e4d7da8f95fdc84e2a7a60b391289d714514d1ecd7bd8fe403967b182f"
+    },
+    "native-android/engine/auth-interop/deployment/qualification/windows-registry-lease-20261018/mock.json": {
+      "bytes": 1753,
+      "sha256": "4203c0c138b11424cab0bfcf012ce41fe997459a190673af1f12d626709af58d"
+    },
+    "native-android/engine/auth-interop/deployment/test_windows_registry_lease.py": {
+      "bytes": 32282,
+      "sha256": "976e882f453fdd459de7cb23241d45460a8a2b77a641e8e3a8f2c20254e31a5c"
+    },
+    "native-android/engine/auth-interop/deployment/windows_registry_lease.py": {
+      "bytes": 18749,
+      "sha256": "4f7bcbdb79dc3dc8cbe0d4744810bea0b18a56655b26a89b9e6bb32701f5636b"
+    }
+  },
+  "mock_controls_owner_reported": {
+    "api_calls": 1885,
+    "failure_sites": {
+      "cleanup": 22,
+      "prepare": 14
+    },
+    "maximum_live_handles": 7,
+    "methods": 22,
+    "native_binding_double_calls": 18
+  },
+  "passed": true,
+  "previous_commit": "f90b9ae5e2c0bc809ff4fb59034821834cf29493",
+  "primary_references": [
+    "https://learn.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regopenkeyexw",
+    "https://learn.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regcreatekeyexw",
+    "https://learn.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regqueryinfokeyw",
+    "https://learn.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regqueryvalueexw",
+    "https://learn.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regdeletekeyexw",
+    "https://learn.microsoft.com/en-us/windows/win32/winprog64/shared-registry-keys"
+  ],
+  "receipt_bytes": 1753,
+  "receipt_sha256": "4203c0c138b11424cab0bfcf012ce41fe997459a190673af1f12d626709af58d",
+  "recorded_source_sha256": {
+    "native-android/engine/auth-interop/deployment/WINDOWS-REGISTRY-LEASE.md": "82a8bc88031c8d628aa92616a6470c2fb43bf3117c3894260a784b24afa2d299",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/test_windows_registry_lease.py": "976e882f453fdd459de7cb23241d45460a8a2b77a641e8e3a8f2c20254e31a5c",
+    "native-android/engine/auth-interop/deployment/windows_registry_lease.py": "4f7bcbdb79dc3dc8cbe0d4744810bea0b18a56655b26a89b9e6bb32701f5636b",
+    "upstream/ouroboros/Common/dbserver/servercfg.c": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32",
+    "upstream/ouroboros/DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppRegCache.c": "7ebc07233bec2bdc7ff0003bc3985687f5eac0dfc3fca007d2f335d11c33e637",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppVersion.c": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23"
+  },
+  "review_conclusions": [
+    "Exact owned LocalDB nonce derives a fixed safe client-project name; import/construction performs no Windows access",
+    "Both explicit WOW64 views must be absent for the nonce; disposition NEW alone assigns creation ownership",
+    "Successful handle recorded before inspection; existing Cryptic parent and any unexpected content preserved",
+    "Cleanup requires strict services-stopped True and actual driver process-exit proof remains external",
+    "Empty check, one-key delete, independent closes, post-delete both-view absence and retry retain conservative ownership",
+    "Win64 pointer-sized native signatures, fixed options and metadata-only queries match primary documentation",
+    "Original getter unclosed HKEY means service exit is prerequisite to final absence; model does not prove Windows behavior",
+    "Final snapshot omits client-project nonce; getter branch is explicitly source-inferred; false stopped invocation clears its confirmation",
+    "Query-empty/delete is not atomic against unrelated same-user writers; approved exclusive fresh-host nonce/token/ancestor lifetime preconditions are essential"
+  ],
+  "reviewer_executed_mock_tests_registry_APIs_original_C_or_services": false,
+  "schema": "coh-f-empty-nonce-registry-lease-source-review-v1",
+  "source_proof_commit": "480304901088922b3b7c13428e89735ea6449c57",
+  "version_reference_DB_Map_or_world_authority": false
+}

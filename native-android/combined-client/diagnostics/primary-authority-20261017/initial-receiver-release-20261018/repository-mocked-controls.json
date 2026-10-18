@@ -1,0 +1,20 @@
+{
+  "actual_native_or_loader_executed": false,
+  "actual_subprocess_executed": false,
+  "cases": 64,
+  "compiler_executed": false,
+  "fixed_retained_artifact_bytes_read_without_execution": true,
+  "helper_sha256": "ea4a34bca0610c52ca7bc00184b59aac2cbbaafdc3422a09927521cb115ce897",
+  "methods": 10,
+  "mocked_only": true,
+  "old_151_controls_reexecuted": false,
+  "passed": true,
+  "project_capture_import_executed": false,
+  "qualification_scope": "repository fixtures with mocked platform/process/project interfaces; no workflow or destination execution",
+  "required_destination_branch": "refs/heads/native-android",
+  "schema": "coh-retained-initial-receiver-new-mocked-controls-v1",
+  "services_executed": false,
+  "source_generation_admitted": false,
+  "test_sha256": "cf81eeea15ea5fad33eb89d68a0b6a9b9cbb5ba97c150f16d296a83249c6ff96",
+  "world_authority": false
+}

@@ -1,0 +1,52 @@
+{
+  "integration_requirements": [
+    "Coordinator copies exact reviewed helper bytes and binds helper/artifact/current43 inputs in initial source gate",
+    "Use only intended fresh hosted x86_64 Linux destination and existing private RunnerTemp output layout",
+    "Keep original build receipt immutable and preserve separate same-run destination reuse evidence",
+    "Gate all Map startup on successful destination admission; report actual destination result without promoting historical controls"
+  ],
+  "mock_controls_owner_reported": {
+    "all_native_loader_compiler_and_project_subprocess_interfaces_mocked": true,
+    "cases": 64,
+    "fixed_retained_artifact_bytes_read_only": true,
+    "methods": 10
+  },
+  "origin": "coordinator-owned scratch proposal, reviewed before main integration",
+  "passed": true,
+  "review_conclusions": [
+    "Fixed original release ELF, build receipt, F reuse review and all12 historical status pins are read byte-for-byte; original151 controls are not replayed",
+    "Actual committed source gate with exact173 base and explicit8 supersessions admits own helper/artifact pins before normal capture module import",
+    "Independent fixed43 consumed source map is merged, current/Git rehashed before import/dependency preprocessing and compared to actual native_input result",
+    "Normal current capture module and every observed project module must come from own checkout and admitted source map; no AST shim",
+    "Exact ELF64 x86_64 PIE/interpreter/three NEEDED/version/noRPATH checks precede clean-environment bounded verify/list/noargs smoke",
+    "Resolved root-owned nonwritable system libraries and loader are pinned before/after; no loaded-mapping/full-system/toolchain or crypto/RNG/protocol claim",
+    "Private copied binary/build/receipt have exclusive creation, tracked inode/mode and exact3-name/content checks, with safe replacement-preserving rollback",
+    "Receipt-write/flush/fsync/close/fstat and late source/system/copy/gate/result mutations refuse and preserve first fixed failure; diagnostic I/O cannot mask it",
+    "Child group cleanup does not depend on leader liveness; independent kill/reap/both-pipe closes/group-absence check retain truthful cleanup state",
+    "Environment append exports only the original build SHA after admission; partial/fsync/close failure rolls back exact owned append and preserves foreign data"
+  ],
+  "schema": "coh-f-retained-initial-preflight-proposal-review-v1",
+  "scope": {
+    "F_executed_native_loader_compiler_or_subprocess_controls": false,
+    "F_reran_mock_tests_or_imported_project_helper": false,
+    "actual_Map_services_or_runtime_capture_executed": false,
+    "actual_hosted_destination_loader_smoke_executed": false,
+    "old_151_suite_replayed": false,
+    "proposal_source_read_and_Python_AST_parsed_by_F": true,
+    "source_generation_actor_world_ACK_or_RSS_authority": false
+  },
+  "source_and_mock_receipt": {
+    "admit_retained_initial_receiver.py": {
+      "bytes": 25818,
+      "sha256": "ea4a34bca0610c52ca7bc00184b59aac2cbbaafdc3422a09927521cb115ce897"
+    },
+    "retained-initial-receiver-mocked-controls.json": {
+      "bytes": 868,
+      "sha256": "3fe5326dc93baba0746140d1fe7f0d6fcfdbfd4bb95417e48ed8fde73a756167"
+    },
+    "test_admit_retained_initial_receiver.py": {
+      "bytes": 23874,
+      "sha256": "44cad371af6c7fed952f8e2b7ca02f841924813fbff58a98c9ba052461a0a9d6"
+    }
+  }
+}

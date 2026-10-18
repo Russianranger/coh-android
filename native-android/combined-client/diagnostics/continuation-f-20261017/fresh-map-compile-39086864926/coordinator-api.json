@@ -1,0 +1,140 @@
+{
+  "run": {
+    "id": 39086864926,
+    "head_sha": "fe5efb4bb211a15791149f75822791be17a3677f",
+    "head_branch": "native-android",
+    "path": ".github/workflows/native-fresh-groups-build.yml",
+    "status": "completed",
+    "conclusion": "success",
+    "repository_id": 1368730125,
+    "head_repository_id": 1368730125,
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39086864926"
+  },
+  "jobs": {
+    "jobs": [
+      {
+        "id": 117555147382,
+        "name": "fresh-original-observer-compile",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39086864926,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Preserve exact original source bytes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Admit frozen independently reviewed profile source proof without replay",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Independently admit exact original inputs and stage the separate callback-sealed role",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Reverify whole original input files before compiler work",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Build only the changed nonshipping MapServer observer",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Reverify original inputs and source stability after compiler work",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Record and strictly admit only the new source role and compiled PE",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Preserve bounded raw build outputs for recovery without admission",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25
+          }
+        ]
+      }
+    ]
+  },
+  "artifacts": {
+    "artifacts": [
+      {
+        "id": 12121407168,
+        "name": "original-fresh-groups-observer-compile-fe5efb4bb211a15791149f75822791be17a3677f",
+        "size_in_bytes": 6776028,
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12121407168",
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12121407168/zip",
+        "expired": false,
+        "created_at": "2026-10-18T01:41:42Z",
+        "expires_at": "2027-01-16T01:32:26Z",
+        "updated_at": "2026-10-18T01:41:42Z",
+        "digest": "sha256:5898dcb8b4cb6e0fd435e53c4865c942dada4c8aadeb58351666d0845b35a2b4",
+        "workflow_run": {
+          "id": 39086864926,
+          "repository_id": 1368730125,
+          "head_repository_id": 1368730125,
+          "head_branch": "native-android",
+          "head_sha": "fe5efb4bb211a15791149f75822791be17a3677f"
+        }
+      }
+    ]
+  }
+}

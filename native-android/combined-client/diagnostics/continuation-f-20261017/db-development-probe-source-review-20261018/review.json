@@ -1,0 +1,113 @@
+{
+  "DB_login_character_creation_selection_Map_or_world_authority": false,
+  "actual_entropy_checksum_owner_or_crypto_qualified_by_this_receipt": false,
+  "all_current_and_recorded_git_bytes_equal": true,
+  "controls_owner_reported": {
+    "asan_ubsan_synthetic_scenarios": 48,
+    "new_methods": 2,
+    "private_input_and_port_refusals": 12,
+    "release_synthetic_scenarios": 48,
+    "separate_no_socket_preflight": true
+  },
+  "global_budget_or_RSS_admission": false,
+  "new_source_files": 5,
+  "passed": true,
+  "pending": [
+    "Actual Windows headers/compiler/SDK and exact x64 zlib link",
+    "Actual no-socket Windows entropy/self-file/WSA API preflight",
+    "Exact owned host driver schema/PE/source/process-generation admission",
+    "Real encrypted Auth-to-DB empty-list experiment"
+  ],
+  "prior_owner_qualifier_replayed": false,
+  "prior_owner_source_and_receipt_unchanged": true,
+  "proof_commit": "a4bb173a9899d9f2d0a4fac358e2625d034f3a1a",
+  "receipt_bytes": 6774,
+  "receipt_sha256": "6325c41dd124f5c97ba91897ab33117ed347aeb1c8545f25e80f04336ef25223",
+  "review_findings": {
+    "actual_final_auth_closed_and_DB_cancelled_required": true,
+    "actual_self_file_digest_is_not_loaded_mapping_or_reference_checksum": true,
+    "distinct_platform_preflight_has_no_owner_or_socket_creation": true,
+    "explicit_development_policy_and_no_normal_version_or_reference_admission": true,
+    "owner_before_transport_cleanup_and_late_failure_refusal": true,
+    "private_credentials_config_nonce_path_digest_not_serialized": true,
+    "self_file_handle_reparse_rejected_and_bounded_read": true
+  },
+  "reviewer_executed_tests_compiler_native_platform_or_network": false,
+  "schema": "coh-f-db-development-probe-source-review-v1",
+  "source_commit": "c0785ee29714b2b117d7c2158fc8b3fd8c992d31",
+  "source_files": {
+    "native-android/engine/auth-interop/deployment/DB-DEVELOPMENT-PROBE.md": {
+      "bytes": 3796,
+      "sha256": "d0785247746207a187cca7c4612524f7177f5795f430631b3e338475705d5ddb"
+    },
+    "native-android/engine/auth-interop/deployment/test_db_development_probe.py": {
+      "bytes": 5476,
+      "sha256": "72f4c499b25fe3731b5f260c7a1fbaa336c47bdde5305b11022634c43d0661f5"
+    },
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c": {
+      "bytes": 13642,
+      "sha256": "36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6"
+    },
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h": {
+      "bytes": 5680,
+      "sha256": "2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20"
+    },
+    "native-android/engine/auth-interop/deployment/windows/db_development_probe.c": {
+      "bytes": 9937,
+      "sha256": "fab9f9bbf4d79d6fdf00982d8f516e40d8b0ed85fe30190bca2879ed8dbd4354"
+    },
+    "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h": {
+      "bytes": 2592,
+      "sha256": "ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb"
+    },
+    "native-android/engine/auth-interop/deployment/windows/test_db_development_probe.c": {
+      "bytes": 7851,
+      "sha256": "83e470934604b5d1ddf9e3e6e234bbde9cf10a79a56151d713b95ae974c2301a"
+    },
+    "native-android/engine/auth-interop/deployment/windows/test_db_development_probe_api.h": {
+      "bytes": 547,
+      "sha256": "cea1dc2ab4c5dae38bc20d7fb86587ac44c20f57a571ca56e4c7397445dbecbf"
+    },
+    "native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock_api.h": {
+      "bytes": 1648,
+      "sha256": "a1b19b67b9b7ab96bb800c368d6c5cd064d1466f27e4c6666c299ae1fa1bc15c"
+    },
+    "native-android/engine/auth/coh_auth.h": {
+      "bytes": 5385,
+      "sha256": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d"
+    },
+    "native-android/engine/coh_contracts.h": {
+      "bytes": 1044,
+      "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+    },
+    "native-android/engine/dbclient/coh_db_session.h": {
+      "bytes": 4143,
+      "sha256": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4"
+    },
+    "native-android/engine/dbclient/coh_dbclient.h": {
+      "bytes": 4045,
+      "sha256": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb"
+    },
+    "native-android/engine/login/coh_login.h": {
+      "bytes": 3293,
+      "sha256": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+    },
+    "native-android/engine/network/coh_net.h": {
+      "bytes": 7329,
+      "sha256": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+    },
+    "native-android/engine/network/coh_net_udp.h": {
+      "bytes": 3771,
+      "sha256": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4"
+    },
+    "native-android/include/coh_native_core.h": {
+      "bytes": 2613,
+      "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+    },
+    "native-android/protocol/coh_protocol.h": {
+      "bytes": 1923,
+      "sha256": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+    }
+  },
+  "synthetic_compile_project_closure_files": 15
+}

@@ -1,0 +1,288 @@
+{
+  "run": {
+    "id": 39086864885,
+    "head_sha": "fe5efb4bb211a15791149f75822791be17a3677f",
+    "head_branch": "native-android",
+    "path": ".github/workflows/native-db-threadname-selected-play.yml",
+    "status": "completed",
+    "conclusion": "success",
+    "repository_id": 1368730125,
+    "head_repository_id": 1368730125,
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39086864885"
+  },
+  "jobs": {
+    "jobs": [
+      {
+        "id": 117555147090,
+        "name": "new-membership-controls",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39086864885,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Admit frozen source and run only five new group membership controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          }
+        ]
+      },
+      {
+        "id": 117555260310,
+        "name": "selected-shard-grant (1024)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39086864885,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Preserve exact source line endings",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Recover exact accepted AuthServer and independently admitted new DbServer build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Recover only exact immutable x64 crypto headers library and ownership manifest",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Observe live selected-shard grant then wipe and close before DB login",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17
+          }
+        ]
+      },
+      {
+        "id": 117555260337,
+        "name": "selected-shard-grant (7)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39086864885,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Preserve exact source line endings",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Recover exact accepted AuthServer and independently admitted new DbServer build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Recover only exact immutable x64 crypto headers library and ownership manifest",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Observe live selected-shard grant then wipe and close before DB login",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17
+          }
+        ]
+      }
+    ]
+  },
+  "artifacts": {
+    "artifacts": [
+      {
+        "id": 12121351916,
+        "name": "db-threadname-selected-play-cap1024-fe5efb4bb211a15791149f75822791be17a3677f",
+        "size_in_bytes": 6951,
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12121351916",
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12121351916/zip",
+        "expired": false,
+        "created_at": "2026-10-18T01:36:55Z",
+        "expires_at": "2027-01-16T01:32:26Z",
+        "updated_at": "2026-10-18T01:36:55Z",
+        "digest": "sha256:a42048844ca3944f4add0ead89517ba4e8a7474b333680e00618159f3cd059b8",
+        "workflow_run": {
+          "id": 39086864885,
+          "repository_id": 1368730125,
+          "head_repository_id": 1368730125,
+          "head_branch": "native-android",
+          "head_sha": "fe5efb4bb211a15791149f75822791be17a3677f"
+        }
+      },
+      {
+        "id": 12121221551,
+        "name": "new-selected-membership-controls-fe5efb4bb211a15791149f75822791be17a3677f",
+        "size_in_bytes": 1674,
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12121221551",
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12121221551/zip",
+        "expired": false,
+        "created_at": "2026-10-18T01:33:01Z",
+        "expires_at": "2027-01-16T01:32:26Z",
+        "updated_at": "2026-10-18T01:33:01Z",
+        "digest": "sha256:06286ace1c8150d46429efee3aa9c9fb732d11c8cbb5b2f4ace8ccf009e98af2",
+        "workflow_run": {
+          "id": 39086864885,
+          "repository_id": 1368730125,
+          "head_repository_id": 1368730125,
+          "head_branch": "native-android",
+          "head_sha": "fe5efb4bb211a15791149f75822791be17a3677f"
+        }
+      },
+      {
+        "id": 12120769580,
+        "name": "db-threadname-selected-play-cap7-fe5efb4bb211a15791149f75822791be17a3677f",
+        "size_in_bytes": 6957,
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12120769580",
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12120769580/zip",
+        "expired": false,
+        "created_at": "2026-10-18T01:37:02Z",
+        "expires_at": "2027-01-16T01:32:26Z",
+        "updated_at": "2026-10-18T01:37:02Z",
+        "digest": "sha256:bdbe425393bebb41011f43969129baee655cbf14e304439f636788dddef22ca7",
+        "workflow_run": {
+          "id": 39086864885,
+          "repository_id": 1368730125,
+          "head_repository_id": 1368730125,
+          "head_branch": "native-android",
+          "head_sha": "fe5efb4bb211a15791149f75822791be17a3677f"
+        }
+      }
+    ]
+  }
+}

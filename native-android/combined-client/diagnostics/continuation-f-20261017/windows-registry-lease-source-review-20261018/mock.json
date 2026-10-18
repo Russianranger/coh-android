@@ -1,0 +1,32 @@
+{
+  "actual_windows_registry_executed": false,
+  "atomicity_against_unrelated_same_user_writers": false,
+  "controlled_api_calls": 1885,
+  "controlled_failure_sites": {
+    "cleanup": 22,
+    "prepare": 14
+  },
+  "controlled_max_live_handles": 7,
+  "controlled_native_binding_double_calls": 18,
+  "development_activation_qualified": false,
+  "errors": 0,
+  "failures": 0,
+  "host_platform": "linux",
+  "original_c_compiled_or_executed": false,
+  "passed": true,
+  "python_version": "3.12.14",
+  "schema": 1,
+  "scope": "source_and_controlled_mock_registry_only",
+  "services_compiled_or_started": false,
+  "source_sha256": {
+    "native-android/engine/auth-interop/deployment/WINDOWS-REGISTRY-LEASE.md": "82a8bc88031c8d628aa92616a6470c2fb43bf3117c3894260a784b24afa2d299",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/test_windows_registry_lease.py": "976e882f453fdd459de7cb23241d45460a8a2b77a641e8e3a8f2c20254e31a5c",
+    "native-android/engine/auth-interop/deployment/windows_registry_lease.py": "4f7bcbdb79dc3dc8cbe0d4744810bea0b18a56655b26a89b9e6bb32701f5636b",
+    "upstream/ouroboros/Common/dbserver/servercfg.c": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32",
+    "upstream/ouroboros/DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppRegCache.c": "7ebc07233bec2bdc7ff0003bc3985687f5eac0dfc3fca007d2f335d11c33e637",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppVersion.c": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23"
+  },
+  "test_methods": 22
+}

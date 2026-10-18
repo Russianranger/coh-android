@@ -1,0 +1,221 @@
+{
+  "binary": {
+    "bytes": 180424,
+    "copied_into_this_review": false,
+    "executed_by_reviewer": false,
+    "file": "coh-capture-local-initial",
+    "sha256": "eeb5e9a3c29bfb223c23a5b465378ce90b800f517396c2c04502a703d8874ea5"
+  },
+  "current_checked_revision": "76249a445503eb5f39be8501d7deb0d77789828a",
+  "current_project_consumer_dependencies": {
+    "discovered_by_read_only_cc_MM_preprocessing": true,
+    "equal_current_Git_and_worktree": true,
+    "equal_historical_receipt_source_map_and_dfc_git": true,
+    "files": 43,
+    "map_sha256_compact_sorted_json": "2ad1cbe6b04817a21e4db1e514d3199a87b8b1720f31ec2ba4a28272790ec9c5",
+    "sha256": {
+      "native-android/combined-client/tools/capture_local_initial.c": "0b44989efcd3a43fee832ebecd7d8b840e9fdc16ee3d0cfe42c4d9e51b16db82",
+      "native-android/combined-client/tools/capture_local_scene.c": "f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec",
+      "native-android/combined-client/tools/check_local_initial_capture.py": "cb7a80bad926998da0580892082b1c3a115288428a1152e88de99ef2ca70443f",
+      "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+      "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+      "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+      "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "native-android/engine/dbclient/coh_db_handoff_owner.h": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45",
+      "native-android/engine/dbclient/coh_db_handoff_private.h": "6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd",
+      "native-android/engine/dbclient/coh_db_session.c": "ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9",
+      "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+      "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+      "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+      "native-android/engine/initial-capture/coh_initial_capture.h": "962b81274acbbcabbba6accb00ce46f54d802dc028355e35af140a334820be55",
+      "native-android/engine/initial-capture/coh_initial_capture_private.h": "6638a085be28d42648a075b4aa5e6389408d1ec63d5577f9faf74d64c608188a",
+      "native-android/engine/initial-capture/coh_initial_command_kinds.inc": "1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e",
+      "native-android/engine/initial-capture/coh_initial_local.c": "c10545b32441b1ad0c90c845e023b6d178271d5062554aa3a8035b723e1e4ea8",
+      "native-android/engine/initial-capture/coh_initial_map.c": "0fe03ce430d55f8d38f20ac5a8bee36e7e9a439a01231b9ca148be7226d41d5f",
+      "native-android/engine/local/coh_local.c": "7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210",
+      "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+      "native-android/engine/mapclient/coh_mapclient.c": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199",
+      "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+      "native-android/engine/mapclient/coh_mapclient_owned.c": "555e85aa83b382e120097de793c59ba67c7b3566043f42889d9bd9aa9e666af5",
+      "native-android/engine/mapclient/coh_mapclient_owned.h": "1718436253c503c037f248b5c45bc037a14b582db94a90aa74fe87f6356fd8ff",
+      "native-android/engine/mapclient/coh_mapclient_owned_private.h": "be7a7dbfed758a424f81b3d6d29715c290d4156c9c4c923a57f0517198ba9e6e",
+      "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+      "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+      "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+      "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+      "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+      "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+      "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+      "native-android/engine/replication/coh_groups.c": "b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd",
+      "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+      "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+      "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+      "native-android/engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+      "native-android/engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+      "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+      "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+      "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+      "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+      "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+    }
+  },
+  "destination_prerequisites": [
+    "Preserve exact release binary basename, byte SHA and original receipt/statuses; append separate reuse evidence",
+    "Require unchanged current project dependency map and exact committed source bytes before execution and after cleanup",
+    "On intended fresh x86_64 Linux runner admit exact ELF interpreter, direct needed libraries and version requirements, and no RPATH/RUNPATH",
+    "Before any original service/Map startup, bounded clean-environment loader resolution plus exact noargs exit2/empty stdout/stderr; refuse failures",
+    "Rehash executable/receipt/source closure across preflight, actual native launch, and final cleanup; existing orchestration admission still required"
+  ],
+  "historical_build_source_revision": "dfc843bb2f538956df843e7b117d60cd38bdfd90",
+  "historical_controls": {
+    "checks_each": 151,
+    "modes": [
+      "release",
+      "address",
+      "undefined"
+    ],
+    "rerun_for_this_review": false,
+    "safe_status_files_verified": {
+      "status-address/badheader.json": {
+        "bytes": 518,
+        "file": "status-address/badheader.json",
+        "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967"
+      },
+      "status-address/captured.json": {
+        "bytes": 507,
+        "file": "status-address/captured.json",
+        "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+      },
+      "status-address/none.json": {
+        "bytes": 510,
+        "file": "status-address/none.json",
+        "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be"
+      },
+      "status-address/unknown.json": {
+        "bytes": 521,
+        "file": "status-address/unknown.json",
+        "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982"
+      },
+      "status-release/badheader.json": {
+        "bytes": 518,
+        "file": "status-release/badheader.json",
+        "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967"
+      },
+      "status-release/captured.json": {
+        "bytes": 507,
+        "file": "status-release/captured.json",
+        "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+      },
+      "status-release/none.json": {
+        "bytes": 510,
+        "file": "status-release/none.json",
+        "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be"
+      },
+      "status-release/unknown.json": {
+        "bytes": 521,
+        "file": "status-release/unknown.json",
+        "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982"
+      },
+      "status-undefined/badheader.json": {
+        "bytes": 518,
+        "file": "status-undefined/badheader.json",
+        "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967"
+      },
+      "status-undefined/captured.json": {
+        "bytes": 507,
+        "file": "status-undefined/captured.json",
+        "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+      },
+      "status-undefined/none.json": {
+        "bytes": 510,
+        "file": "status-undefined/none.json",
+        "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be"
+      },
+      "status-undefined/unknown.json": {
+        "bytes": 521,
+        "file": "status-undefined/unknown.json",
+        "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982"
+      }
+    },
+    "scripted_peers_only": true
+  },
+  "limits": {
+    "Android_or_RSS_or_aggregate_budget_admitted": false,
+    "current_all_1762_audit_inputs_not_admitted": true,
+    "no_crypto_RNG_or_protocol_functionality_claim_from_noargs": true,
+    "no_destination_loader_or_runtime_test_executed": true,
+    "no_reproducible_toolchain_or_full_system_provenance_claim": true,
+    "original_151_controls_not_replayed": true,
+    "original_compiler_system_headers_and_shared_libraries_not_identified_by_build_receipt": true,
+    "source_generation_actor_world_or_ack_authority": false
+  },
+  "noargs_source_path": {
+    "argc_not_9_returns": 2,
+    "before_signal_account_output_owner_socket_work": true,
+    "expected_stderr_bytes": 0,
+    "expected_stdout_bytes": 0,
+    "smoke_executed_by_reviewer": false
+  },
+  "original_receipt": {
+    "bytes": 240894,
+    "must_remain_unchanged": true,
+    "preserved_byte_equal_in_prior_F_gzip": "native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/build.json.gz",
+    "sha256": "59dbf8b59779efa513265bb78fce50f07019f6d730e8bdb7b3380c5be4d6c2cc"
+  },
+  "passed": true,
+  "schema": "coh-f-retained-local-initial-release-reuse-review-v1",
+  "static_ELF": {
+    "RPATH": false,
+    "RUNPATH": false,
+    "binding": "NOW",
+    "class": "ELF64",
+    "endianness": "little",
+    "interpreter": "/lib64/ld-linux-x86-64.so.2",
+    "machine": "x86-64",
+    "needed": [
+      "libz.so.1",
+      "libcrypto.so.3",
+      "libc.so.6"
+    ],
+    "readelf_outputs": {
+      "dynamic": {
+        "bytes": 1594,
+        "file": "readelf-dynamic.txt",
+        "sha256": "296894abcf85dcdcfee5b3814fc0b4c9d15ac564158264c1790b4433ea96c886"
+      },
+      "header": {
+        "bytes": 980,
+        "file": "readelf-header.txt",
+        "sha256": "9456e2740594ce6f6bcdfc58a57a64338e26cdd95baed062fc4c1a6e47d291af"
+      },
+      "segments": {
+        "bytes": 2814,
+        "file": "readelf-segments.txt",
+        "sha256": "82edc95a0ec8cdd2fc322dc1d2b598449d0608119236a4ce30dd6e51da541e5f"
+      },
+      "versions": {
+        "bytes": 2976,
+        "file": "readelf-versions.txt",
+        "sha256": "6b00957314707faa1fa06dfa2313468cec470c39060ec19e73b11a68417f1dd9"
+      }
+    },
+    "required_versions": {
+      "libc.so.6": [
+        "GLIBC_2.14",
+        "GLIBC_2.17",
+        "GLIBC_2.2.5",
+        "GLIBC_2.3.4",
+        "GLIBC_2.33",
+        "GLIBC_2.34",
+        "GLIBC_2.4"
+      ],
+      "libcrypto.so.3": [
+        "OPENSSL_3.0.0"
+      ],
+      "libz.so.1": [
+        "ZLIB_1.2.0"
+      ]
+    },
+    "type": "PIE"
+  }
+}
