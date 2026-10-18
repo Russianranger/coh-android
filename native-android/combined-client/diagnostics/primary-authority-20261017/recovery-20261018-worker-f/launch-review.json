@@ -1,0 +1,49 @@
+{
+  "schema": "coh-independent-f-launch-review-v1",
+  "passed": true,
+  "predecessor_revision": "b26e829a104a017d5533f16b8a2315be1c04025e",
+  "scene": {
+    "workflow_sha256": "d941c611b550f2f70a1dd6c2963348aee71bb359387c0acb4d5b90baab41f710",
+    "workflow_bytes": 123554,
+    "fixed_source_pins_checked": 46,
+    "dynamic_workflow_self_pin_additional": true,
+    "changed_zero_based_steps": [
+      1,
+      13
+    ],
+    "historical_original_runtime_artifact_receiver_capture_cleanup_steps_identical": true,
+    "diagnostic_execution_unchanged_except_label": true,
+    "stages_3_to_7_byte_exact": true,
+    "current_verifier_sha256": "05ec0b5bfe0edc9aa0bf1d3653e16453609294899596dbc39d9324ad8de6b38f",
+    "exact_five_eager_compatibility_predicates_preserved_after_full_owner_walk": true,
+    "child_owned_working_bytes": 33554432,
+    "aggregate_limit_bytes": 100663296,
+    "retained_actual_failed_operation": "EAGER_LOAD",
+    "internal_eager_subreason_known": false
+  },
+  "windows": {
+    "workflow_sha256": "5e86a64c43c72f211b882a0a9b891934a05d4ecbd845e09bd0f99275a96fd9d8",
+    "workflow_bytes": 8096,
+    "fixed_executable_source_pins_checked": 5,
+    "transitive_observation_generator_pinned": true,
+    "accepted_original_artifact_gate_parsed_object_identical": true,
+    "source_controls_receipt_sha256": "86a49167236b95c8831141561d555825778a713b0bddd28fe01b8876a5b399f2",
+    "source_controls_method_count": 6,
+    "source_controls_original_stdout_retained": false,
+    "source_controls_source_pins_checked": 5,
+    "atomic_create_new_supplies_existing_explicit_sddl": true,
+    "four_existing_private_file_creations_only": true,
+    "existing_owner_acl_identity_launch_cleanup_guards_preserved": true,
+    "original_source_unchanged": true,
+    "accepted_probe_model_rebuild_or_reexecution_requested": false,
+    "new_changed_helper_compiles_requested": 1,
+    "original_failed_operation": "ACL_OWNER",
+    "original_failed_phase": "JOURNAL_ACL"
+  },
+  "review_method": "Read exact changed source, new tests/proofs and complete parsed workflow; raw SHA checks and historical Git comparisons. No native/historical qualifier replay or original-runtime execution by independent reviewer. Initial static review script expected one-based step14 as zero-based14 and was corrected to13; no source failure or mutation occurred.",
+  "actual_new_scene_success_qualified": false,
+  "actual_new_windows_helper_execution_qualified": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "rss_or_gpu_fit_established": false
+}

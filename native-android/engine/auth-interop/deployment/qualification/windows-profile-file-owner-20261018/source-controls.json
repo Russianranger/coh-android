@@ -1,0 +1,46 @@
+{
+  "schema": "coh-wpp-file-owner-source-controls-v1",
+  "passed": true,
+  "command": "python native-android/engine/auth-interop/deployment/windows-profile-process/test_file_owner.py -v",
+  "test_methods": 6,
+  "exit_code": 0,
+  "exact_stdout_retained": false,
+  "source": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/prepare_file_owner.py": {
+      "bytes": 4408,
+      "sha256": "7e98a8ced01d6b68774a9ff8f6b636b2236df74114718ea4cba9eb75a01738ad"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-file-owner.ps1": {
+      "bytes": 4258,
+      "sha256": "5521e27f9193755aea6771a4238c590d877d0d4f2c8215cdb4562e8347d0c5a3"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py": {
+      "bytes": 29483,
+      "sha256": "2adfe19cc004248503dc1512b9d51d1575d6e2fb7ca7376068bfebf24c8721c7"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/test_file_owner.py": {
+      "bytes": 7476,
+      "sha256": "4244e2598f1668634f9087968e2fd6546c548e58aeb6767ad389de6f299b59cf"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/FILE-OWNER.md": {
+      "bytes": 3732,
+      "sha256": "c9a7ba6d08d80fa1d82d536cb608b2fb1099cd6745576aef8bbce153432e9851"
+    }
+  },
+  "generated_source": {
+    "schema": "coh-wpp-file-owner-preparation-v1",
+    "passed": true,
+    "observed_source_sha256": "3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514",
+    "generated_source_sha256": "53add195056ce87c445de347bd6d0fa8996ff3c5842a59a69172587b649ec933",
+    "generated_source_bytes": 47790,
+    "replacements": 5,
+    "exact_reverse_verified": true,
+    "explicit_file_security_at_create": true,
+    "existing_owner_acl_identity_guards_preserved": true,
+    "compiler_or_helper_or_model_executed": false
+  },
+  "old_suites_or_model_or_compiler_or_helper_or_services_executed": false,
+  "actual_successor_windows_execution_qualified": false,
+  "service_readiness_qualified": false,
+  "world_authority": false
+}

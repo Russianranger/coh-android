@@ -23,23 +23,18 @@ HARNESS=r'''
 #define main operation_verifier_main
 #include "VERIFY_SOURCE"
 #undef main
-typedef char t_eager_reservation_bound[(V_RESERVE+384u+COH_REP_BOUNDED_MESSAGE_MAX+COH_CATALOG_INPUT_MAX+COH_CATALOG_MEMORY_MAX<V_LIMIT)?1:-1];
 static const char *t_target;
 static unsigned t_digests;
 #define TARGET(name) (!strcmp(t_target,name))
-CohStatus __real_coh_scenecatalog_load(CohSceneCatalog **,CohBytes,uint32_t,CohCatalogReport *);
-CohStatus __wrap_coh_scenecatalog_load(CohSceneCatalog **o,CohBytes b,uint32_t g,CohCatalogReport *r){if(TARGET("EAGER_LOAD"))return COH_LIMIT;return __real_coh_scenecatalog_load(o,b,g,r);}
-CohStatus __real_coh_scenecatalog_match(const CohSceneCatalog *,const CohGroupsInspection *);
-CohStatus __wrap_coh_scenecatalog_match(const CohSceneCatalog *o,const CohGroupsInspection *g){if(TARGET("GROUPS_MATCH"))return COH_STATE;return __real_coh_scenecatalog_match(o,g);}
 unsigned char *__real_SHA256(const unsigned char *,size_t,unsigned char *);
 unsigned char *__wrap_SHA256(const unsigned char *b,size_t n,unsigned char *out){t_digests++;if((TARGET("CATALOG_DIGEST")&&t_digests==1)||(TARGET("OWNER_DIGEST")&&t_digests==2)||(TARGET("METADATA_DIGEST")&&t_digests==3))return NULL;return __real_SHA256(b,n,out);}
 CohStatus __real_coh_catalog_owner_create(const CohCatalogOwner *,CohBytes,const CohCatalogBinding *,const CohCatalogOwnerBudget *,const CohCatalogDigest *,CohCatalogOwner **,CohCatalogOwnerReport *);
-CohStatus __wrap_coh_catalog_owner_create(const CohCatalogOwner *old,CohBytes b,const CohCatalogBinding *binding,const CohCatalogOwnerBudget *budget,const CohCatalogDigest *digest,CohCatalogOwner **o,CohCatalogOwnerReport *r){if(TARGET("CATALOG_OWNER_CREATE"))return COH_LIMIT;CohStatus s=__real_coh_catalog_owner_create(old,b,binding,budget,digest,o,r);if(s==COH_OK&&TARGET("CATALOG_OWNER_RESERVATION"))r->peak_aggregate_bytes=V_LIMIT+1u;return s;}
+CohStatus __wrap_coh_catalog_owner_create(const CohCatalogOwner *old,CohBytes b,const CohCatalogBinding *binding,const CohCatalogOwnerBudget *budget,const CohCatalogDigest *digest,CohCatalogOwner **o,CohCatalogOwnerReport *r){if(TARGET("CATALOG_OWNER_CREATE"))return COH_LIMIT;CohStatus s=__real_coh_catalog_owner_create(old,b,binding,budget,digest,o,r);if(s==COH_OK&&TARGET("GROUPS_MATCH"))r->walk.catalog.files++;if(s==COH_OK&&TARGET("CATALOG_OWNER_RESERVATION"))r->peak_aggregate_bytes=V_LIMIT+1u;return s;}
 CohStatus __real_coh_catalog_owner_bytes(const CohCatalogOwner *,CohBytes *);
 CohStatus __wrap_coh_catalog_owner_bytes(const CohCatalogOwner *o,CohBytes *b){if(TARGET("CATALOG_OWNER_VIEW"))return COH_STATE;return __real_coh_catalog_owner_bytes(o,b);}
 int main(int argc,char **argv){if(argc!=3)return 3;t_target=argv[2];return operation_verifier_main(2,argv);}
 '''
-WRAPS=('coh_scenecatalog_load','coh_scenecatalog_match','SHA256','coh_catalog_owner_create','coh_catalog_owner_bytes')
+WRAPS=('SHA256','coh_catalog_owner_create','coh_catalog_owner_bytes')
 BASE_FIELDS={'schema','passed','status','stage','source_generation_admitted','world_authority'}
 PRIVATE='CONTROLLED_PRIVATE_PACKET_RECORD_NAME_729c'
 
@@ -92,19 +87,17 @@ def qualify(fixture,output):
    binary=private/mode
    core.run(['cc',*flags,'-I'+str(root/'native-android/include'),harness,*[root/'native-android'/s for s in core.SOURCES[1:]],*[f'-Wl,--wrap={name}' for name in WRAPS],'-lcrypto','-lz','-lm','-o',binary])
    run(binary,'NONE',None,7);cases=1
-   for target,status in (('EAGER_LOAD',4),('GROUPS_MATCH',7),('CATALOG_DIGEST',6),('OWNER_DIGEST',6),('METADATA_DIGEST',6),('CATALOG_OWNER_CREATE',4),('CATALOG_OWNER_RESERVATION',4),('CATALOG_OWNER_VIEW',7)):
+   for target,status in (('GROUPS_MATCH',7),('CATALOG_DIGEST',6),('OWNER_DIGEST',6),('METADATA_DIGEST',6),('CATALOG_OWNER_CREATE',4),('CATALOG_OWNER_RESERVATION',4),('CATALOG_OWNER_VIEW',7)):
     run(binary,target,target,status);cases+=1
    (data/'catalog.cohcat').unlink();run(binary,'NONE','CATALOG_INPUT',6);cases+=1;(data/'catalog.cohcat').write_bytes(catalog)
    for at,value,target,status in ((20,0,'CATALOG_HEADER',7),(16,0,'CATALOG_PREFLIGHT',1)):
     raw=bytearray(catalog);struct.pack_into('<I',raw,at,value);(data/'catalog.cohcat').write_bytes(raw);run(binary,'NONE',target,status);cases+=1;(data/'catalog.cohcat').write_bytes(catalog)
    modes[mode]={'cases':cases,'baseline_passed_stage2_then_refused_synthetic_ledger':True,'forced_stage2_refusals':cases-1,'original_service_executed':False}
- # This operation cannot refuse for any permitted stage1/catalog inputs: 512KiB
- # reserve+2x192B headers+4MiB packet+32MiB input+32MiB eager <96MiB.
- # The harness typedef checks the actual current native macros at compile time.
- checks+=1
+ # Historical eager labels remain accepted by the adapter for retained fixed
+ # receipts, but the current verifier no longer executes either eager operation.
  need(before=={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in before},'SOURCE_CHANGED')
- proof={'schema':'coh-stage2-operation-focused-v1','passed':True,'source_sha256':before,'projection_checks':checks,'modes':modes,'stage2_operation_names':sorted(adapter.STAGE2_OPERATIONS),'eager_reservation_bound_checked_not_forced':True,'fixture':{'sha256':hashlib.sha256(fixture.read_bytes()).hexdigest(),'synthetic_source_layout_only':True},'old_verifier_or_adapter_suites_reexecuted':False,'original_capture_replayed':False,'source_generation_admitted':False,'world_authority':False,'limits_or_authority_predicates_changed':False}
- output.write_text(json.dumps(proof,indent=2)+'\n');print(json.dumps({'passed':True,'projection_checks':checks,'native_cases_per_mode':12,'modes':list(modes)}))
+ proof={'schema':'coh-stage2-operation-focused-v1','passed':True,'source_sha256':before,'projection_checks':checks,'modes':modes,'stage2_operation_names':sorted(adapter.STAGE2_OPERATIONS),'historical_eager_operations_not_executed':True,'fixture':{'sha256':hashlib.sha256(fixture.read_bytes()).hexdigest(),'synthetic_source_layout_only':True},'old_verifier_or_adapter_suites_reexecuted':False,'original_capture_replayed':False,'source_generation_admitted':False,'world_authority':False,'limits_or_authority_predicates_changed':False}
+ output.write_text(json.dumps(proof,indent=2)+'\n');print(json.dumps({'passed':True,'projection_checks':checks,'native_cases_per_mode':11,'modes':list(modes)}))
 
 if __name__=='__main__':
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--fixture',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();qualify(a.fixture,a.output)

@@ -1,4 +1,4 @@
-name: Focused original scene stage2 operation observation
+name: Focused original scene with streaming catalog ownership
 'on':
   push:
     branches:
@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   matching-original-stage2-diagnostic:
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name
-      == 'workflow_dispatch' || contains(github.event.head_commit.message, '[fresh-stage2-operation]'))
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+      && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[fresh-stage2-operation]'))
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -42,13 +42,13 @@ jobs:
           .github/workflows
 
           '
-    - name: Admit current diagnostic-only source transition
+    - name: Admit exact streaming-verifier transition with unchanged original runtime
       working-directory: current
-      run: "python3 - <<'PYADMIT'\nimport hashlib,json,os,pathlib,subprocess\nassert __debug__ and not os.environ.get('PYTHONOPTIMIZE')\n\
-        assert os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.environ['RUNNER_OS']=='Linux' and os.environ['RUNNER_ARCH']=='X64'\n\
-        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android'\n\
-        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip();assert head==os.environ['GITHUB_SHA']\n\
-        pins={'native-android/engine/assets/coh_asset_geo.c': '0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71',\
+      run: "python3 - <<'PYADMIT'\nimport hashlib,json,os,pathlib,subprocess\nassert __debug__ and not\
+        \ os.environ.get('PYTHONOPTIMIZE')\nassert os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and\
+        \ os.environ['RUNNER_OS']=='Linux' and os.environ['RUNNER_ARCH']=='X64'\nassert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
+        \ and os.environ['GITHUB_REF']=='refs/heads/native-android'\nhead=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip();assert\
+        \ head==os.environ['GITHUB_SHA']\npins={'native-android/engine/assets/coh_asset_geo.c': '0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71',\
         \ 'native-android/engine/assets/coh_asset_geo.h': 'aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b',\
         \ 'native-android/engine/assets/coh_asset_loader.c': 'c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b',\
         \ 'native-android/engine/assets/coh_asset_loader.h': '54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36',\
@@ -59,7 +59,7 @@ jobs:
         \ 'native-android/engine/replication/coh_replication.h': '85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b',\
         \ 'native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py': '6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d',\
         \ 'native-android/engine/scenecatalog-server/inspect_groups_capture.py': '01b622e95bef513e637bcff62be7d78af4bf83fca00e0eb3269f7385937a6c4e',\
-        \ 'native-android/engine/scenecatalog-server/verify_source_snapshot.c': '8a67c97216c4551283a994272704c13e3ae69ee724b45b27110c4f0ea219b2bc',\
+        \ 'native-android/engine/scenecatalog-server/verify_source_snapshot.c': '05ec0b5bfe0edc9aa0bf1d3653e16453609294899596dbc39d9324ad8de6b38f',\
         \ 'native-android/engine/scenecatalog/coh_catalog_owner.c': 'f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7',\
         \ 'native-android/engine/scenecatalog/coh_catalog_owner.h': '4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f',\
         \ 'native-android/engine/scenecatalog/coh_catalog_snapshot.c': 'b2068cec02b16f357db0abafe94862103a22faf25256e282ac3b0d84bc1bf6de',\
@@ -83,18 +83,35 @@ jobs:
         \ 'native-android/include/coh_native_core.h': '48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106',\
         \ 'native-android/src/byte_reader.h': 'c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1',\
         \ 'native-android/src/coh_assets.c': 'dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483',\
-        \ 'native-android/src/coh_dds.c': '9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c', 'native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py':\
-        \ '0dc272d4e3ced120600bf4a33f6f61a77803ec960171c824fba9f08dd8344457', 'native-android/engine/scenecatalog-server/test_stage2_operation.py':\
-        \ 'c5aae1e4a6c4c4aeeec6f713c3020a00858e708a0e5be697a8b83c94bef03e82', 'native-android/engine/scenecatalog-server/evidence/stage2-operation-20261018/transition.json':\
+        \ 'native-android/src/coh_dds.c': '9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c',\
+        \ 'native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py': '0dc272d4e3ced120600bf4a33f6f61a77803ec960171c824fba9f08dd8344457',\
+        \ 'native-android/engine/scenecatalog-server/test_stage2_operation.py': 'c9e58041bb9e2a0f80df94ba5a004b66506c8044b3bac79b122a17f089c6a349',\
+        \ 'native-android/engine/scenecatalog-server/evidence/stage2-operation-20261018/transition.json':\
         \ '0131ee31252dc717ec5675746d012a7a6d7035ebed8813f6de57484a40c786e9', 'native-android/engine/scenecatalog-server/evidence/stage2-operation-20261018/focused-host.json':\
         \ '12f55ecb065891d96f6c81bdd18a08e08b312b4ea0b49d5a728e21613674bb05', 'native-android/engine/scenecatalog-server/evidence/stage2-operation-20261018/statement-preservation.json':\
-        \ '4e7b9a7680177499d1b40acc7e2a0b6b3c63ba00e11b550295d782bb6e07ea43'}\nworkflow='.github/workflows/native-scene-stage2-operation.yml'\n\
+        \ '4e7b9a7680177499d1b40acc7e2a0b6b3c63ba00e11b550295d782bb6e07ea43', 'native-android/engine/scenecatalog-server/test_streaming_verifier.py':\
+        \ 'f9050591aac825598b4927194197830b2c466044706a7f988ba1d5d4e63ae553', 'native-android/engine/scenecatalog-server/evidence/streaming-verifier-20261018/focused-host.json':\
+        \ '0b0c64871d6a3966dcf8d92e3ac7d26adb7ed90013c2c61cdbdfe6c1300d5756', 'native-android/engine/scenecatalog-server/evidence/streaming-verifier-20261018/source-transition.json':\
+        \ '03fe182874e52a9c98bd15f27492f67160d8b7d89428550dfc5c2bb5941ef80d', 'native-android/engine/scenecatalog-server/evidence/streaming-verifier-20261018/README.md':\
+        \ '5b668a709be7a2811a36a8a6f2c1b1bfb9b4e83c2fcbd2436c22e3a8711a5f6e', 'native-android/engine/scenecatalog-server/evidence/streaming-verifier-20261018/maintained-harness-compile.json':\
+        \ 'a45ddf0675d8754382e164cb326a6c05e9acdb658d9fb73b7b47d9d75121d541'}\nworkflow='.github/workflows/native-scene-stage2-operation.yml'\n\
         raw=pathlib.Path(workflow).read_bytes();pins[workflow]=hashlib.sha256(raw).hexdigest()\nfor name,digest\
         \ in pins.items():\n p=pathlib.Path(name);raw=p.read_bytes();assert not p.is_symlink() and p.resolve()==p.absolute()\
         \ and 0<len(raw)<8*1024**2\n assert hashlib.sha256(raw).hexdigest()==digest and subprocess.check_output(['git','show',head+':'+name])==raw\n\
         transition=json.loads(pathlib.Path('native-android/engine/scenecatalog-server/evidence/stage2-operation-20261018/transition.json').read_bytes())\n\
-        assert len(transition['changed_runtime_sources'])==2\nfor name,row in transition['changed_runtime_sources'].items():\n\
-        \ assert pins[name]==row['current_sha256']\n historical=subprocess.check_output(['git','show','9c29e08c8d7e0ab38cff00f2997c39738a56ad07'+':'+name]);assert\
+        assert len(transition['changed_runtime_sources'])==2\nstreaming=json.loads(pathlib.Path('native-android/engine/scenecatalog-server/evidence/streaming-verifier-20261018/source-transition.json').read_bytes())\n\
+        assert streaming['schema']=='coh-streaming-verifier-source-transition-v1' and streaming['passed']\
+        \ is True\nverifier='native-android/engine/scenecatalog-server/verify_source_snapshot.c'\nassert\
+        \ streaming['predecessor_revision']=='b26e829a104a017d5533f16b8a2315be1c04025e'\nassert streaming['compiler_dependency_changes']==[verifier]\
+        \ and streaming['unchanged_compiler_dependencies']==35\nassert streaming['predecessor_verifier_sha256']==transition['changed_runtime_sources'][verifier]['current_sha256']\n\
+        assert hashlib.sha256(subprocess.check_output(['git','show',streaming['predecessor_revision']+':'+verifier])).hexdigest()==streaming['predecessor_verifier_sha256']\n\
+        assert streaming['current_verifier_sha256']==pins[verifier]\nassert streaming['exact_reversible_edits_only']\
+        \ and streaming['predicate_applied_only_after_successful_streaming_owner_create'] and streaming['stages_3_to_7_unchanged']\n\
+        assert (streaming['child_owned_limit_bytes'],streaming['child_working_limit_bytes'],streaming['aggregate_limit_bytes'])==(32<<20,32<<20,96<<20)\n\
+        for name,digest in streaming['current_sources_and_evidence'].items():assert pins[name]==digest\n\
+        assert streaming['source_generation_admitted'] is False and streaming['world_authority'] is False\n\
+        for name,row in transition['changed_runtime_sources'].items():\n assert pins[name]==(streaming['current_verifier_sha256']\
+        \ if name==verifier else row['current_sha256'])\n historical=subprocess.check_output(['git','show','9c29e08c8d7e0ab38cff00f2997c39738a56ad07'+':'+name]);assert\
         \ hashlib.sha256(historical).hexdigest()==row['previous_sha256']\nassert pins['native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py']==transition['unchanged_frozen_core_sha256']\n\
         print(json.dumps({'current_diagnostic_sources_admitted':True,'historical_runtime_revision':'9c29e08c8d7e0ab38cff00f2997c39738a56ad07','historical_receiver_rebuilt':False,'source_generation_admitted':False,'world_authority':False}))\n\
         PYADMIT\n"
@@ -108,9 +125,10 @@ jobs:
       name: Admit unchanged original Map and receiver plus separate fixed-status adapter
       shell: bash
       run: "export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07\npython3 - <<'PYINVENTORYINITIALSOURCE'\n\
-        import hashlib,json,os,pathlib,subprocess\ndef need(ok,code):\n    if not ok:raise ValueError(code)\nneed(__debug__\
-        \ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')\nneed(os.name=='posix' and os.environ['RUNNER_ENVIRONMENT']=='github-hosted'\
-        \ and os.environ['RUNNER_OS']=='Linux' and os.environ['RUNNER_ARCH']=='X64','HOSTED_LINUX_X64_ONLY')\nneed(os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
+        import hashlib,json,os,pathlib,subprocess\ndef need(ok,code):\n    if not ok:raise ValueError(code)\n\
+        need(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')\nneed(os.name=='posix'\
+        \ and os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.environ['RUNNER_OS']=='Linux' and\
+        \ os.environ['RUNNER_ARCH']=='X64','HOSTED_LINUX_X64_ONLY')\nneed(os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
         \ and os.environ['GITHUB_REF']=='refs/heads/native-android','OWNED_NATIVE_BRANCH_ONLY')\nroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\n\
         need(head==os.environ['GITHUB_SHA'],'EXACT_HEAD')\nHELPER='native-android/combined-client/tools/admit_initial_inventory_receiver.py'\n\
         TEST='native-android/combined-client/tools/test_admit_initial_inventory_receiver.py'\nBINDING='native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/binding.json'\n\
@@ -118,27 +136,28 @@ jobs:
         HELPER_REVIEW='native-android/combined-client/diagnostics/continuation-f-20261017/inventory-initial-owner-preflight-actual-binding-review-20261018/review.json'\n\
         MAP_METADATA='native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/map-input.json'\n\
         GATE_KEYS=set(['accepted_observer_equivalence', 'historical_worker_commit_replayed_in_CI', 'host_controls_reexecuted',\
-        \ 'observer_compile_receipt_sha256', 'passed', 'receiver_build_receipt_sha256', 'runtime_executed', 'schema',\
-        \ 'source_generation_admitted', 'source_preflight_only', 'source_profile_proof_sha256', 'source_revision',\
-        \ 'source_sha256', 'world_authority'])\npins={'.github/workflows/native-fresh-groups-build.yml': 'fb80fc0e14001056888e951eb378d71d56efa24058439e832076234bbed9b7b3',\n\
-        \ 'android/guest/atlas_beacon_package.py': '37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981',\n\
-        \ 'android/guest/atlas_world_assets.py': 'b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3',\n\
-        \ 'android/guest/character_avatar_assets.py': 'e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1',\n\
-        \ 'android/guest/character_creation_diagnostic.py': '540c375996164a54e47eeecc5dff141f00772eb790a3131617d8d850a07d21b0',\n\
-        \ 'android/guest/character_reopen_diagnostic.py': '97a9e2e84b7f53546d38437a651d0adfe743edb1bbfcb69651c48263b212f7b5',\n\
-        \ 'android/guest/character_server_data_cache.py': '1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3',\n\
-        \ 'android/guest/character_session_budget.py': '78fc86437be60fa32930f771256e9f59eedb52844aa8699f74e5d0450b279b79',\n\
-        \ 'android/guest/character_zoning.py': '716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f',\n\
-        \ 'android/guest/character_zoning_scheduler.py': 'dc76a478d6fefe83a9c298079bd9a199208fbebd28f189478ebe4a13143ab254',\n\
-        \ 'android/guest/client_animation_package.py': 'c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64',\n\
-        \ 'android/guest/client_attempt_retry.py': 'afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380',\n\
-        \ 'android/guest/client_gpu_profile.py': 'c6039fbbf339783faa9a7cdb967d579bae2356e452878af322fcca79a1babd0e',\n\
-        \ 'android/guest/client_interactive_diagnostic.py': 'f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c',\n\
-        \ 'android/guest/client_login_diagnostic.py': '7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf',\n\
-        \ 'android/guest/client_startup_diagnostic.py': '8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53',\n\
-        \ 'android/guest/client_visual_assets.py': 'b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb',\n\
-        \ 'android/guest/dbserver_diagnostic.py': '6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2',\n\
-        \ 'android/guest/diagnostic.py': '748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf',\n 'android/guest/game_device_diagnostic.py':\
+        \ 'observer_compile_receipt_sha256', 'passed', 'receiver_build_receipt_sha256', 'runtime_executed',\
+        \ 'schema', 'source_generation_admitted', 'source_preflight_only', 'source_profile_proof_sha256',\
+        \ 'source_revision', 'source_sha256', 'world_authority'])\npins={'.github/workflows/native-fresh-groups-build.yml':\
+        \ 'fb80fc0e14001056888e951eb378d71d56efa24058439e832076234bbed9b7b3',\n 'android/guest/atlas_beacon_package.py':\
+        \ '37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981',\n 'android/guest/atlas_world_assets.py':\
+        \ 'b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3',\n 'android/guest/character_avatar_assets.py':\
+        \ 'e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1',\n 'android/guest/character_creation_diagnostic.py':\
+        \ '540c375996164a54e47eeecc5dff141f00772eb790a3131617d8d850a07d21b0',\n 'android/guest/character_reopen_diagnostic.py':\
+        \ '97a9e2e84b7f53546d38437a651d0adfe743edb1bbfcb69651c48263b212f7b5',\n 'android/guest/character_server_data_cache.py':\
+        \ '1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3',\n 'android/guest/character_session_budget.py':\
+        \ '78fc86437be60fa32930f771256e9f59eedb52844aa8699f74e5d0450b279b79',\n 'android/guest/character_zoning.py':\
+        \ '716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f',\n 'android/guest/character_zoning_scheduler.py':\
+        \ 'dc76a478d6fefe83a9c298079bd9a199208fbebd28f189478ebe4a13143ab254',\n 'android/guest/client_animation_package.py':\
+        \ 'c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64',\n 'android/guest/client_attempt_retry.py':\
+        \ 'afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380',\n 'android/guest/client_gpu_profile.py':\
+        \ 'c6039fbbf339783faa9a7cdb967d579bae2356e452878af322fcca79a1babd0e',\n 'android/guest/client_interactive_diagnostic.py':\
+        \ 'f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c',\n 'android/guest/client_login_diagnostic.py':\
+        \ '7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf',\n 'android/guest/client_startup_diagnostic.py':\
+        \ '8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53',\n 'android/guest/client_visual_assets.py':\
+        \ 'b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb',\n 'android/guest/dbserver_diagnostic.py':\
+        \ '6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2',\n 'android/guest/diagnostic.py':\
+        \ '748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf',\n 'android/guest/game_device_diagnostic.py':\
         \ '1a4441f0b7c0e7d4954ac8e486ce148bae0f49035dd8597dff5c900844886d60',\n 'android/guest/game_diagnostic.py':\
         \ 'f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737',\n 'android/guest/game_evidence.py':\
         \ '12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d',\n 'android/guest/game_hang_evidence.py':\
@@ -499,46 +518,50 @@ jobs:
         \ 'ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470',\n 'native-android/src/coh_dds.c':\
         \ '9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c',\n 'native-android/tools/protocol_fixture/prepare.py':\
         \ '3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a',\n 'tools/android/interactive/map_startup_inputs.py':\
-        \ '4569c16039b12abce7613c9805eaec21dbaa70d3c3f1f1ccfef0b2d4731b7b85',\n 'tools/animation_format.py': 'b834d26a4bac4690ac0d5ff1a1ab5dac672efd15c8b855631e4821bc31c794dc',\n\
-        \ 'tools/compare_reference_templates.py': 'cbfb8c6d3ea3d7b45d768bd56a782fccf6d74c4e6a216df3af0926743944db7b',\n\
-        \ 'tools/content_assets.py': '58fced9b354b5f52e22f9c81c64f11f7c7812923f7e56014cb0cf01dc149cf98',\n 'tools/fetch_runtime_asset_bundle.py':\
+        \ '4569c16039b12abce7613c9805eaec21dbaa70d3c3f1f1ccfef0b2d4731b7b85',\n 'tools/animation_format.py':\
+        \ 'b834d26a4bac4690ac0d5ff1a1ab5dac672efd15c8b855631e4821bc31c794dc',\n 'tools/compare_reference_templates.py':\
+        \ 'cbfb8c6d3ea3d7b45d768bd56a782fccf6d74c4e6a216df3af0926743944db7b',\n 'tools/content_assets.py':\
+        \ '58fced9b354b5f52e22f9c81c64f11f7c7812923f7e56014cb0cf01dc149cf98',\n 'tools/fetch_runtime_asset_bundle.py':\
         \ '49257b8f19109e30074628e9510c070549150c976cbfe747e9463cff7ef833d4',\n 'tools/generate_runtime_data.py':\
-        \ '7569e384c24802403d5085675789cf3ada1c4e972e6126a8da3753b997297acd',\n 'tools/import_source.py': 'b4af8399f4b1c383237af4f4a1babad5bff5ffc325ead4d009b55ccbbb0b749b',\n\
-        \ 'tools/index_piggs.py': '057150f703e8f81f860ce7d3fe578e52058b7dfeda10bd6b92e8180367721a4d',\n 'tools/inspect_asset_formats.py':\
-        \ '74979934ed24394c4f54ab8bc3a397a238d9e363f5391b1b48b4aeedb005ea9b',\n 'tools/inspect_piggs.py': 'a58ea3723d1255c7615bf25cb1de8d74729b6122e28f879ea554f7cbf0e1a2fd',\n\
-        \ 'tools/map_startup_animation_certificate.py': 'aa4f1da667f708c23aea62d5049d295cfce16a2a3d7457a5b605ce48b2b20b19',\n\
-        \ 'tools/map_startup_monorail_budget.py': 'fca79790f74fec16a051957909d9ebd31897f9148a1e55a8f08de90d12168236',\n\
-        \ 'tools/map_startup_namespace_certificate.py': 'de2bd2f9e02aaae71aec9a9ab244cad22315be4b798e968c257ecc42baa725e7',\n\
-        \ 'tools/package_native_startup_profile.py': 'eec6709e10b047b1293ba45ee68a01de4d84d1e2041f1885c0138c74efd2148b',\n\
-        \ 'tools/package_reference_runtime.py': '53de7076e7798b527e8d6cb823d877693668c3474b32cad810ac4fe752f3dd59',\n\
-        \ 'tools/package_resume_client.py': '5671fa7db9f6dcbbdde727738df71da76f40dd828898c8514e639eea5ce65c5f',\n\
-        \ 'tools/prepare_atlas_beacon_generator_source.py': '34836711f431f7e7a74e7226a791ed462a2add65cfaa36d956b59c0838ffe10a',\n\
-        \ 'tools/prepare_character_events_source.py': 'd96220ff645670066c7f329262f017d0b78d7e88c7a51dbc307982f518f54ef2',\n\
-        \ 'tools/prepare_client_graphics_source.py': 'a5fc624f5a314871283399d43e323445c1216b61a849f3e17b2cd758e0fcdc55',\n\
-        \ 'tools/prepare_client_texture_source.py': '7ee73b6340e5779b7169120b7f0aa96b19f5e85ff1bc16729e6c20c4d7789cd6',\n\
-        \ 'tools/prepare_game_loopback_source.py': '9e87a894bc0fa9cc65f1dafb0c43c441d7f1cbd39de895ba883018cbd48a2b26',\n\
-        \ 'tools/prepare_kings_row_beacon_generator_source.py': '65952a362e70a6ccc53efea870b8274792b9ce6428e874d922b8adb0541676cb',\n\
-        \ 'tools/prepare_map_startup_observer_source.py': 'e0e3bd7eb44e7949eca473f5611ae5def3a86a24b37aa6ab04ebbda9eb9bc88d',\n\
-        \ 'tools/prepare_map_startup_source.py': '87ddbe3bfdbd2c951102386e6c074736671ccf674c865eefb81503636dde8b23',\n\
-        \ 'tools/prepare_mapserver_progress_source.py': 'b832acb6a12db70e6f8a29d2d86fb990f1ef5fd5b11fd8c1f0149151942c2f5f',\n\
-        \ 'tools/prepare_monorail_source.py': '3c45235024690fe970b820af827aa2606bc5bea2329b1821a2d46dcb67f20c6d',\n\
-        \ 'tools/prepare_native_cg_profile_source.py': 'c9d7f045aa9ab47371b1bafab7633dd7c46004deea10e1d02edcac36f59f9b15',\n\
-        \ 'tools/prepare_native_startup_profile_source.py': '67f6a161a340c070a36f7b31dbb9dc63bdfeb115c310096c882ff24d568643f9',\n\
-        \ 'tools/prepare_pg_source.py': '6462aa2aa19c2c9019e5c6d9473892a54150bca82a917e782458f8e3587f9f69',\n 'tools/prepare_resume_client_source.py':\
-        \ '95c59a12085d2dcffa16396d923f9baad3e3bd53a0ac48edc2453a4ddb5cfc7b',\n 'tools/prepare_runtime.py': '20f97eddb239bda51ab7fee816407069daa74fd6122f6b2612e5269f5cfc7433',\n\
-        \ 'tools/prepare_schema_source.py': 'b4874d063c4f69e98120bc52a5611b213ed5d54af3926fca7fa9ab93a3e39b91',\n\
-        \ 'tools/prepare_server_fx_catalog_observer_source.py': '2a678d0624be0da893186a601247ba3ecac990dcbebcb8eedc0586991cabbe65',\n\
-        \ 'tools/prepare_wine_dbserver_source.py': '59b8a8518cdc0d2a6c2e9a5c73cebe8724932a26d3eeba6cb887597eb9d793f9',\n\
-        \ 'tools/qualify_map_startup_prerequisites.py': 'c5d168244b7699b36335384d8c4c13cebeb0b73202fa333a15cc344889b37228',\n\
-        \ 'tools/qualify_native_startup_profile.py': '60e265372e5a21d90a2b429d362123c0f8e42c0a6be7e88b8af2666bec8232d4',\n\
-        \ 'tools/run_schema_generation.py': '42724e7b53a9f476307f19f2faf9fd171c0d1047ab64870c30ede2b0ec42d638',\n\
-        \ 'tools/runtime_asset_bundle.py': 'd87817154581a2a92db2a4dded914a6f63b4811d962b0283b278bc72757a3d3e',\n\
-        \ 'tools/test_animation_format.py': '900bce6107fd1c1157d08eaac80f4b77d1a4f5d2649aed3264b9188ab9ccc76b',\n\
-        \ 'tools/test_compare_reference_templates.py': 'fbea6de596ae531a7ab99bd2ea93d0dab21b6b3b13094e0e46eb3335c4718b55',\n\
-        \ 'tools/test_fetch_runtime_asset_bundle.py': '59e52ed33970eccfca0213bef7c96ff7e677052c1db53582a5cdeca1ab1caf27',\n\
-        \ 'tools/test_generate_runtime_data.py': 'e7a8d2761b2ea8b489ecda6973fcfdd394be359cf31d34f2616f6a609c6289bb',\n\
-        \ 'tools/test_inspect_asset_formats.py': 'cd4c60ab4e4f56ad1728935b4a8bcf327669453c5527c8cd31cb799a2f443509',\n\
-        \ 'tools/test_inspect_piggs.py': 'c30236879562eacfda6e16f3f55d3f51dd5d9a51a2385d060aa1110142fc6698',\n 'tools/test_map_startup_animation_certificate.py':\
+        \ '7569e384c24802403d5085675789cf3ada1c4e972e6126a8da3753b997297acd',\n 'tools/import_source.py':\
+        \ 'b4af8399f4b1c383237af4f4a1babad5bff5ffc325ead4d009b55ccbbb0b749b',\n 'tools/index_piggs.py':\
+        \ '057150f703e8f81f860ce7d3fe578e52058b7dfeda10bd6b92e8180367721a4d',\n 'tools/inspect_asset_formats.py':\
+        \ '74979934ed24394c4f54ab8bc3a397a238d9e363f5391b1b48b4aeedb005ea9b',\n 'tools/inspect_piggs.py':\
+        \ 'a58ea3723d1255c7615bf25cb1de8d74729b6122e28f879ea554f7cbf0e1a2fd',\n 'tools/map_startup_animation_certificate.py':\
+        \ 'aa4f1da667f708c23aea62d5049d295cfce16a2a3d7457a5b605ce48b2b20b19',\n 'tools/map_startup_monorail_budget.py':\
+        \ 'fca79790f74fec16a051957909d9ebd31897f9148a1e55a8f08de90d12168236',\n 'tools/map_startup_namespace_certificate.py':\
+        \ 'de2bd2f9e02aaae71aec9a9ab244cad22315be4b798e968c257ecc42baa725e7',\n 'tools/package_native_startup_profile.py':\
+        \ 'eec6709e10b047b1293ba45ee68a01de4d84d1e2041f1885c0138c74efd2148b',\n 'tools/package_reference_runtime.py':\
+        \ '53de7076e7798b527e8d6cb823d877693668c3474b32cad810ac4fe752f3dd59',\n 'tools/package_resume_client.py':\
+        \ '5671fa7db9f6dcbbdde727738df71da76f40dd828898c8514e639eea5ce65c5f',\n 'tools/prepare_atlas_beacon_generator_source.py':\
+        \ '34836711f431f7e7a74e7226a791ed462a2add65cfaa36d956b59c0838ffe10a',\n 'tools/prepare_character_events_source.py':\
+        \ 'd96220ff645670066c7f329262f017d0b78d7e88c7a51dbc307982f518f54ef2',\n 'tools/prepare_client_graphics_source.py':\
+        \ 'a5fc624f5a314871283399d43e323445c1216b61a849f3e17b2cd758e0fcdc55',\n 'tools/prepare_client_texture_source.py':\
+        \ '7ee73b6340e5779b7169120b7f0aa96b19f5e85ff1bc16729e6c20c4d7789cd6',\n 'tools/prepare_game_loopback_source.py':\
+        \ '9e87a894bc0fa9cc65f1dafb0c43c441d7f1cbd39de895ba883018cbd48a2b26',\n 'tools/prepare_kings_row_beacon_generator_source.py':\
+        \ '65952a362e70a6ccc53efea870b8274792b9ce6428e874d922b8adb0541676cb',\n 'tools/prepare_map_startup_observer_source.py':\
+        \ 'e0e3bd7eb44e7949eca473f5611ae5def3a86a24b37aa6ab04ebbda9eb9bc88d',\n 'tools/prepare_map_startup_source.py':\
+        \ '87ddbe3bfdbd2c951102386e6c074736671ccf674c865eefb81503636dde8b23',\n 'tools/prepare_mapserver_progress_source.py':\
+        \ 'b832acb6a12db70e6f8a29d2d86fb990f1ef5fd5b11fd8c1f0149151942c2f5f',\n 'tools/prepare_monorail_source.py':\
+        \ '3c45235024690fe970b820af827aa2606bc5bea2329b1821a2d46dcb67f20c6d',\n 'tools/prepare_native_cg_profile_source.py':\
+        \ 'c9d7f045aa9ab47371b1bafab7633dd7c46004deea10e1d02edcac36f59f9b15',\n 'tools/prepare_native_startup_profile_source.py':\
+        \ '67f6a161a340c070a36f7b31dbb9dc63bdfeb115c310096c882ff24d568643f9',\n 'tools/prepare_pg_source.py':\
+        \ '6462aa2aa19c2c9019e5c6d9473892a54150bca82a917e782458f8e3587f9f69',\n 'tools/prepare_resume_client_source.py':\
+        \ '95c59a12085d2dcffa16396d923f9baad3e3bd53a0ac48edc2453a4ddb5cfc7b',\n 'tools/prepare_runtime.py':\
+        \ '20f97eddb239bda51ab7fee816407069daa74fd6122f6b2612e5269f5cfc7433',\n 'tools/prepare_schema_source.py':\
+        \ 'b4874d063c4f69e98120bc52a5611b213ed5d54af3926fca7fa9ab93a3e39b91',\n 'tools/prepare_server_fx_catalog_observer_source.py':\
+        \ '2a678d0624be0da893186a601247ba3ecac990dcbebcb8eedc0586991cabbe65',\n 'tools/prepare_wine_dbserver_source.py':\
+        \ '59b8a8518cdc0d2a6c2e9a5c73cebe8724932a26d3eeba6cb887597eb9d793f9',\n 'tools/qualify_map_startup_prerequisites.py':\
+        \ 'c5d168244b7699b36335384d8c4c13cebeb0b73202fa333a15cc344889b37228',\n 'tools/qualify_native_startup_profile.py':\
+        \ '60e265372e5a21d90a2b429d362123c0f8e42c0a6be7e88b8af2666bec8232d4',\n 'tools/run_schema_generation.py':\
+        \ '42724e7b53a9f476307f19f2faf9fd171c0d1047ab64870c30ede2b0ec42d638',\n 'tools/runtime_asset_bundle.py':\
+        \ 'd87817154581a2a92db2a4dded914a6f63b4811d962b0283b278bc72757a3d3e',\n 'tools/test_animation_format.py':\
+        \ '900bce6107fd1c1157d08eaac80f4b77d1a4f5d2649aed3264b9188ab9ccc76b',\n 'tools/test_compare_reference_templates.py':\
+        \ 'fbea6de596ae531a7ab99bd2ea93d0dab21b6b3b13094e0e46eb3335c4718b55',\n 'tools/test_fetch_runtime_asset_bundle.py':\
+        \ '59e52ed33970eccfca0213bef7c96ff7e677052c1db53582a5cdeca1ab1caf27',\n 'tools/test_generate_runtime_data.py':\
+        \ 'e7a8d2761b2ea8b489ecda6973fcfdd394be359cf31d34f2616f6a609c6289bb',\n 'tools/test_inspect_asset_formats.py':\
+        \ 'cd4c60ab4e4f56ad1728935b4a8bcf327669453c5527c8cd31cb799a2f443509',\n 'tools/test_inspect_piggs.py':\
+        \ 'c30236879562eacfda6e16f3f55d3f51dd5d9a51a2385d060aa1110142fc6698',\n 'tools/test_map_startup_animation_certificate.py':\
         \ '3e049a1aaf4de92e9fdb16f70ea25273378cc82a87b7dd3fd69cb1bbbc239ded',\n 'tools/test_map_startup_bounded_stream.py':\
         \ 'c35256b60867233737bed7653076d97aab76eacfdc7efd6e9bab45b51ce58fb4',\n 'tools/test_map_startup_monorail_budget.py':\
         \ '49f10f459a5e85592cd5c98ddf149c683ab32377b1810d544328abd050e34483',\n 'tools/test_map_startup_namespace_certificate.py':\
@@ -563,8 +586,9 @@ jobs:
         \ '02908263525c56f9578ae12f6459e0cd7988edf250d0eb14cc4c558fe7fa7685',\n 'tools/test_run_schema_generation.py':\
         \ 'ea134ee9781877ccdb26a1108f877453011c3027b943e75086de8fd8ca7fd21a',\n 'tools/test_runtime_asset_bundle.py':\
         \ '5f92d6a13153446ce9be70836306e49bdfaffb948d850e1fa5669b9c800ac207',\n 'tools/test_texture_format.py':\
-        \ '8f79f7c7d205b997effd28b31573d32f1a5a27edf07586b082d6644563d023aa',\n 'tools/texture_format.py': 'bdb6d5a4eb8681ed956e38c21a4173c9cca711aaf48ceb7a4f7bc1f95b966a78',\n\
-        \ 'tools/verify_source.py': '81c658f88a8aef1eba5c4b17b14fcef415f83808cd38e4edc898c245fd42e5c4',\n 'upstream/ouroboros/AccountServer/src/AccountDb.cpp':\
+        \ '8f79f7c7d205b997effd28b31573d32f1a5a27edf07586b082d6644563d023aa',\n 'tools/texture_format.py':\
+        \ 'bdb6d5a4eb8681ed956e38c21a4173c9cca711aaf48ceb7a4f7bc1f95b966a78',\n 'tools/verify_source.py':\
+        \ '81c658f88a8aef1eba5c4b17b14fcef415f83808cd38e4edc898c245fd42e5c4',\n 'upstream/ouroboros/AccountServer/src/AccountDb.cpp':\
         \ '743193935f25a5c466aaaf11cb36a6972b6700374dfa273bfd44ee06495d9585',\n 'upstream/ouroboros/AccountServer/src/AccountServer.cpp':\
         \ '91070c652c6796f2dc38fd50b3985febc627e7e96201ad6f71fe2de3888847d7',\n 'upstream/ouroboros/Common/account/AccountCatalog.c':\
         \ '7db49f91412ed60af05988e5997b04689d309f3f4948ad8fc003aff249f2e0bc',\n 'upstream/ouroboros/Common/account/AccountCatalog.h':\
@@ -622,42 +646,47 @@ jobs:
         \ '77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f'}\n\nworkflow='.github/workflows/native-fresh-groups-observation.yml'\n\
         p=root/workflow\nneed(p.resolve()==p and p.is_file() and not p.is_symlink() and p.stat().st_size<1024**2,'WORKFLOW_REGULAR_SOURCE')\n\
         pins[workflow]=hashlib.sha256(p.read_bytes()).hexdigest()\nneed(0<len(pins)<=512,'BOUNDED_SOURCE_CLOSURE')\n\
-        tree=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)]);blobs={}\nfor row in\
-        \ tree.split(b'\\0'):\n    if not row:continue\n    meta,name=row.split(b'\\t',1);mode,kind,digest=meta.split()\n\
+        tree=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)]);blobs={}\n\
+        for row in tree.split(b'\\0'):\n    if not row:continue\n    meta,name=row.split(b'\\t',1);mode,kind,digest=meta.split()\n\
         \    need(kind==b'blob' and mode in (b'100644',b'100755'),'TRACKED_SOURCE_MODE');blobs[name.decode()]=digest.decode()\n\
-        need(set(blobs)==set(pins),'ALL_FROZEN_SOURCES_COMMITTED')\nfor name,digest in pins.items():\n    rel=pathlib.PurePosixPath(name)\n\
-        \    need(not rel.is_absolute() and all(part not in ('','.','..') for part in rel.parts) and chr(92) not\
-        \ in name and ':' not in name,'RELATIVE_SOURCE_NAME')\n    p=root/name\n    need(p.resolve()==p and p.is_file()\
-        \ and not p.is_symlink() and 0<p.stat().st_size<8*1024**2,'BOUNDED_CANONICAL_SOURCE')\n    raw=p.read_bytes()\n\
-        \    need(hashlib.sha256(raw).hexdigest()==digest and hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\\\
-        0'+raw).hexdigest()==blobs[name],'EXACT_REVIEWED_SOURCE_AND_ARTIFACT')\nbinding=json.loads((root/BINDING).read_bytes());mock=json.loads((root/MOCK).read_bytes());meta=json.loads((root/MAP_METADATA).read_bytes())\n\
-        need(binding['schema']=='coh-inventory-initial-owner-destination-preflight-actual-metadata-binding-v1' and\
-        \ binding['passed'] is True and binding['final_helper_sha256']==pins[HELPER] and binding['test_sha256']==pins[TEST]\
+        need(set(blobs)==set(pins),'ALL_FROZEN_SOURCES_COMMITTED')\nfor name,digest in pins.items():\n\
+        \    rel=pathlib.PurePosixPath(name)\n    need(not rel.is_absolute() and all(part not in ('','.','..')\
+        \ for part in rel.parts) and chr(92) not in name and ':' not in name,'RELATIVE_SOURCE_NAME')\n\
+        \    p=root/name\n    need(p.resolve()==p and p.is_file() and not p.is_symlink() and 0<p.stat().st_size<8*1024**2,'BOUNDED_CANONICAL_SOURCE')\n\
+        \    raw=p.read_bytes()\n    need(hashlib.sha256(raw).hexdigest()==digest and hashlib.sha1(b'blob\
+        \ '+str(len(raw)).encode()+b'\\0'+raw).hexdigest()==blobs[name],'EXACT_REVIEWED_SOURCE_AND_ARTIFACT')\n\
+        binding=json.loads((root/BINDING).read_bytes());mock=json.loads((root/MOCK).read_bytes());meta=json.loads((root/MAP_METADATA).read_bytes())\n\
+        need(binding['schema']=='coh-inventory-initial-owner-destination-preflight-actual-metadata-binding-v1'\
+        \ and binding['passed'] is True and binding['final_helper_sha256']==pins[HELPER] and binding['test_sha256']==pins[TEST]\
         \ and binding['mocked_proof_sha256']==pins[MOCK] and binding['other_AST_equal'] is True and binding['pending_helper_sha256']=='99f47dd7d3e6e9a0475a83d498a7c3318bcfc1e40c9140d89948c28942e4c553'\
         \ and binding['exact_AST_changes']==['OBSERVER_BUILD_SHA','OBSERVER_BUILD_BYTES'] and binding['final_helper']==HELPER\
-        \ and binding['test_file']==TEST,'ACTUAL_METADATA_BINDING')\nneed(all(binding[k] is False for k in ('destination_platform_qualified','destination_helper_or_loader_or_native_executed','mock_controls_reexecuted','runtime_executed','source_generation_admitted','world_authority')),'SOURCE_ONLY_TWO_CONSTANT_BINDING')\n\
+        \ and binding['test_file']==TEST,'ACTUAL_METADATA_BINDING')\nneed(all(binding[k] is False for\
+        \ k in ('destination_platform_qualified','destination_helper_or_loader_or_native_executed','mock_controls_reexecuted','runtime_executed','source_generation_admitted','world_authority')),'SOURCE_ONLY_TWO_CONSTANT_BINDING')\n\
         need(binding['Git_read_only_subprocesses_executed'] is True,'READ_ONLY_GIT_BINDING_SCOPE')\nneed(type(binding['current_receiver_dependency_count'])\
         \ is int and binding['current_receiver_dependency_count']==46 and len(binding['current_receiver_dependencies_sha256'])==46\
-        \ and all(pins.get(k)==v for k,v in binding['current_receiver_dependencies_sha256'].items()) and type(binding['evidence_artifact_pin_count'])\
-        \ is int and binding['evidence_artifact_pin_count']==len(binding['evidence_artifact_sha256'])==143 and all(pins.get(k)==v\
-        \ for k,v in binding['evidence_artifact_sha256'].items()),'CURRENT46_AND_QUALIFIED_EVIDENCE')\nneed(mock['schema']=='coh-inventory-initial-owner-receiver-focused-mocks-v1'\
-        \ and mock['passed'] is True and mock['helper_sha256']==binding['pending_helper_sha256'] and mock['test_sha256']==pins[TEST]\
+        \ and all(pins.get(k)==v for k,v in binding['current_receiver_dependencies_sha256'].items()) and\
+        \ type(binding['evidence_artifact_pin_count']) is int and binding['evidence_artifact_pin_count']==len(binding['evidence_artifact_sha256'])==143\
+        \ and all(pins.get(k)==v for k,v in binding['evidence_artifact_sha256'].items()),'CURRENT46_AND_QUALIFIED_EVIDENCE')\n\
+        need(mock['schema']=='coh-inventory-initial-owner-receiver-focused-mocks-v1' and mock['passed']\
+        \ is True and mock['helper_sha256']==binding['pending_helper_sha256'] and mock['test_sha256']==pins[TEST]\
         \ and type(mock['methods']) is int and mock['methods']==5 and type(mock['cases']) is int and mock['cases']==73\
         \ and isinstance(mock['case_names'],list) and len(mock['case_names'])==len(set(mock['case_names']))==73\
-        \ and all(type(k) is str for k in mock['case_names']) and all(type(mock[k]) is int and mock[k]==0 for k\
-        \ in ('errors','failures','skipped')) and mock['source_inputs_unchanged'] is True and mock['retained_elf_read_for_hash_only']\
+        \ and all(type(k) is str for k in mock['case_names']) and all(type(mock[k]) is int and mock[k]==0\
+        \ for k in ('errors','failures','skipped')) and mock['source_inputs_unchanged'] is True and mock['retained_elf_read_for_hash_only']\
         \ is True and mock['new_inventory_a13_metadata_controls_only'] is True and mock['old49_or54_mock_suites_reexecuted']\
         \ is False and mock['observer_receipt_is_explicit_mock'] is True and mock['actual_new_map_receipt_admitted']\
         \ is False and mock['actual_destination_preflight_executed'] is False and mock['project_imports_compiler_loader_native_registry_services_or_network_executed']\
-        \ is False and mock['source_generation_admitted'] is False and mock['actor_publication'] is False and mock['world_authority']\
-        \ is False,'NEW_MOCK_CONTROLS_ONLY')\nactual=json.loads((root/meta['source_admission_path']).read_bytes())\n\
-        need(meta['schema']=='coh-inventory-initial-owner-scene-map-input-v1' and meta['passed'] is True and meta['actual_source_and_PE_admitted']\
-        \ is True and meta['runtime_executed'] is False and all(meta[k] is False for k in ('actor_authority','actual_sleeping_state_established','source_generation_admitted','world_authority'))\
-        \ and actual['schema']=='coh-fresh-initial-owner-build-source-admission-v1' and actual['passed'] is True\
-        \ and actual['source_revision']==meta['source_revision'] and actual['compile_only'] is True and actual['runtime_executed']\
-        \ is False and len(actual['source_sha256'])==255 and all(pins.get(k)==v for k,v in actual['source_sha256'].items()),'ACTUAL_NEW_MAP255_SUBSET')\n\
-        review=json.loads((root/HELPER_REVIEW).read_bytes())\nneed(review['schema']=='coh-f-inventory-initial-owner-receiver-actual-binding-review-v1'\
-        \ and review['passed'] is True and review['helper_sha256']==pins[HELPER] and review['binding_sha256']==pins[BINDING]\
+        \ is False and mock['source_generation_admitted'] is False and mock['actor_publication'] is False\
+        \ and mock['world_authority'] is False,'NEW_MOCK_CONTROLS_ONLY')\nactual=json.loads((root/meta['source_admission_path']).read_bytes())\n\
+        need(meta['schema']=='coh-inventory-initial-owner-scene-map-input-v1' and meta['passed'] is True\
+        \ and meta['actual_source_and_PE_admitted'] is True and meta['runtime_executed'] is False and\
+        \ all(meta[k] is False for k in ('actor_authority','actual_sleeping_state_established','source_generation_admitted','world_authority'))\
+        \ and actual['schema']=='coh-fresh-initial-owner-build-source-admission-v1' and actual['passed']\
+        \ is True and actual['source_revision']==meta['source_revision'] and actual['compile_only'] is\
+        \ True and actual['runtime_executed'] is False and len(actual['source_sha256'])==255 and all(pins.get(k)==v\
+        \ for k,v in actual['source_sha256'].items()),'ACTUAL_NEW_MAP255_SUBSET')\nreview=json.loads((root/HELPER_REVIEW).read_bytes())\n\
+        need(review['schema']=='coh-f-inventory-initial-owner-receiver-actual-binding-review-v1' and review['passed']\
+        \ is True and review['helper_sha256']==pins[HELPER] and review['binding_sha256']==pins[BINDING]\
         \ and review['test_sha256']==pins[TEST] and review['current_receiver_dependencies_sha256']==binding['current_receiver_dependencies_sha256']\
         \ and review['evidence_artifact_sha256']==binding['evidence_artifact_sha256'],'INDEPENDENT_HELPER_REVIEW')\n\
         \nadapter_binding=json.loads((root/'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/adapter-mocks-binding.json').read_bytes())\n\
@@ -665,23 +694,26 @@ jobs:
         adapter_reuse=json.loads((root/'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/projection-reuse.json').read_bytes())\n\
         adapter_review=json.loads((root/'native-android/combined-client/diagnostics/continuation-f-20261017/snapshot-status-adapter-review-20261018/review.json').read_bytes())\n\
         need(adapter_binding['schema']=='coh-snapshot-status-adapter-mock-binding-v1' and adapter_binding['passed']\
-        \ is True and adapter_binding['attempt_count']==2 and adapter_binding['segmented_qualification'] is True\
-        \ and adapter_binding['reused_unchanged_methods']==25 and adapter_binding['corrected_method_cases']==3 and\
-        \ adapter_binding['returncode']==0 and adapter_binding['source_inputs_unchanged'] is True and all(pins.get(k)==v\
-        \ for k,v in adapter_binding['source_sha256'].items()),'SEGMENTED_NEW_ADAPTER_MOCK_BINDING')\nneed(adapter_counts=={'compiler_or_native_executed':\
-        \ False, 'controlled_subtest_cases': 93, 'corrected_method_cases': 3, 'execution_invocations': 2, 'first_invocation_test_oracle_errors':\
-        \ 1, 'followup_is_only_corrected_method': True, 'mock_only': True, 'old_projection_tests_reexecuted': False,\
-        \ 'passed': True, 'reused_unchanged_methods': 25, 'schema': 'coh-snapshot-status-adapter-mocks-v1', 'segmented_qualification':\
-        \ True, 'test_methods': 26},'EXACT_NEW_ADAPTER_MOCK_COUNTS')\nneed(adapter_reuse['schema']=='coh-snapshot-status-adapter-projection-reuse-v1'\
+        \ is True and adapter_binding['attempt_count']==2 and adapter_binding['segmented_qualification']\
+        \ is True and adapter_binding['reused_unchanged_methods']==25 and adapter_binding['corrected_method_cases']==3\
+        \ and adapter_binding['returncode']==0 and adapter_binding['source_inputs_unchanged'] is True\
+        \ and all(pins.get(k)==v for k,v in adapter_binding['source_sha256'].items()),'SEGMENTED_NEW_ADAPTER_MOCK_BINDING')\n\
+        need(adapter_counts=={'compiler_or_native_executed': False, 'controlled_subtest_cases': 93, 'corrected_method_cases':\
+        \ 3, 'execution_invocations': 2, 'first_invocation_test_oracle_errors': 1, 'followup_is_only_corrected_method':\
+        \ True, 'mock_only': True, 'old_projection_tests_reexecuted': False, 'passed': True, 'reused_unchanged_methods':\
+        \ 25, 'schema': 'coh-snapshot-status-adapter-mocks-v1', 'segmented_qualification': True, 'test_methods':\
+        \ 26},'EXACT_NEW_ADAPTER_MOCK_COUNTS')\nneed(adapter_reuse['schema']=='coh-snapshot-status-adapter-projection-reuse-v1'\
         \ and adapter_reuse['passed'] is True and adapter_reuse['original_core_sha256']==pins['native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py']\
         \ and adapter_reuse['wrapper_sha256']==pins['native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py']\
         \ and adapter_reuse['five_projection_helpers_AST_identical'] is True and adapter_reuse['old_projection_tests_reexecuted']\
-        \ is False and all(pins.get(k)==v for k,v in adapter_reuse['qualified_historical_inputs'].items()) and all(pins.get(k)==v\
-        \ for k,v in adapter_binding['retained_execution_and_derivation_inputs'].items()) and len(adapter_reuse['recorded_native_source_sha256'])==36\
-        \ and all(pins.get(k)==v for k,v in adapter_reuse['recorded_native_source_sha256'].items()),'QUALIFIED_PROJECTION_REUSE_ORIGINAL_CORE_UNCHANGED')\n\
+        \ is False and all(pins.get(k)==v for k,v in adapter_reuse['qualified_historical_inputs'].items())\
+        \ and all(pins.get(k)==v for k,v in adapter_binding['retained_execution_and_derivation_inputs'].items())\
+        \ and len(adapter_reuse['recorded_native_source_sha256'])==36 and all(pins.get(k)==v for k,v in\
+        \ adapter_reuse['recorded_native_source_sha256'].items()),'QUALIFIED_PROJECTION_REUSE_ORIGINAL_CORE_UNCHANGED')\n\
         need(adapter_review['passed'] is True and adapter_review['wrapper_sha256']==pins['native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py']\
         \ and adapter_review['test_sha256']==pins['native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py']\
-        \ and adapter_review['reviewer_reexecuted_controls'] is False,'INDEPENDENT_STATUS_ADAPTER_REVIEW')\n\nneed(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')\n\
+        \ and adapter_review['reviewer_reexecuted_controls'] is False,'INDEPENDENT_STATUS_ADAPTER_REVIEW')\n\
+        \nneed(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')\n\
         receipt={'schema':'coh-inventory-initial-owner-fresh-groups-live-source-admission-v1','passed':True,'source_revision':head,'source_sha256':pins,'host_controls_reexecuted':False,'historical_worker_commit_replayed_in_CI':False,'source_preflight_only':True,'runtime_executed':False,'accepted_observer_equivalence':False,'source_generation_admitted':False,'world_authority':False,'observer_compile_receipt_sha256':meta['receipt_sha256'],'receiver_build_receipt_sha256':'09320ce3c78ccbf9af46de9b09c7bd1f551375fad39dc4e2b44eb3e962779216','source_profile_proof_sha256':'550d600596e2939f73de076fac5fce859ce18248a0866e1b1d19795393dc03fb'}\n\
         need(set(receipt)==GATE_KEYS,'EXACT_FOURTEEN_KEY_GATE')\npath=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json'\n\
         with path.open('xb') as stream:stream.write((json.dumps(receipt,indent=2,sort_keys=True)+'\\n').encode())\n\
@@ -699,16 +731,17 @@ jobs:
         base=pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs';base.mkdir(mode=0o700)\ndef api(suffix):\n\
         \    return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))\n\
         run=api('actions/runs/'+os.environ['FIXTURE_RUN_ID'])\nassert run['status']=='completed' and run['conclusion']=='success'\n\
-        assert run['head_sha']==os.environ['FIXTURE_REVISION'] and run['head_branch']=='native-android'\nassert\
-        \ run['path']=='.github/workflows/native-graphical-fixture.yml'\nassert run['repository']['id']==run['head_repository']['id']==1368730125\n\
+        assert run['head_sha']==os.environ['FIXTURE_REVISION'] and run['head_branch']=='native-android'\n\
+        assert run['path']=='.github/workflows/native-graphical-fixture.yml'\nassert run['repository']['id']==run['head_repository']['id']==1368730125\n\
         remote=api('actions/artifacts/'+os.environ['FIXTURE_ARTIFACT_ID'])\nassert remote['id']==int(os.environ['FIXTURE_ARTIFACT_ID'])\
         \ and remote['expired'] is False\nassert remote['name']=='source-created-graphical-fixture-'+os.environ['FIXTURE_REVISION']\n\
         assert remote['size_in_bytes']==size and remote['digest']=='sha256:'+os.environ['FIXTURE_ZIP_SHA256']\n\
         origin=remote['workflow_run'];assert origin['id']==int(os.environ['FIXTURE_RUN_ID'])\nassert origin['head_sha']==os.environ['FIXTURE_REVISION']\n\
-        assert origin['repository_id']==origin['head_repository_id']==1368730125\narchive=base/'fixture.zip'\nwith\
-        \ archive.open('xb') as output:\n    subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/'+os.environ['FIXTURE_ARTIFACT_ID']+'/zip'],stdout=output,check=True,timeout=600)\n\
-        with archive.open('rb') as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()\nassert archive.stat().st_size==size\
-        \ and actual==os.environ['FIXTURE_ZIP_SHA256']\ntarget=base/'fixture';target.mkdir(mode=0o700)\nexpected={'fixture.pgdump','account.txt','original-guest-report.json','external-observer.json',\n\
+        assert origin['repository_id']==origin['head_repository_id']==1368730125\narchive=base/'fixture.zip'\n\
+        with archive.open('xb') as output:\n    subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/'+os.environ['FIXTURE_ARTIFACT_ID']+'/zip'],stdout=output,check=True,timeout=600)\n\
+        with archive.open('rb') as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()\nassert\
+        \ archive.stat().st_size==size and actual==os.environ['FIXTURE_ZIP_SHA256']\ntarget=base/'fixture';target.mkdir(mode=0o700)\n\
+        expected={'fixture.pgdump','account.txt','original-guest-report.json','external-observer.json',\n\
         \          'backup-request.json','backup-receipt.json','fixture-capture.json'}\nwith zipfile.ZipFile(archive)\
         \ as z:\n    infos=z.infolist();assert len(infos)==len(expected) and {i.filename for i in infos}==expected\n\
         \    assert sum(i.file_size for i in infos)<=maximum\n    for item in infos:\n        assert item.filename\
@@ -716,12 +749,13 @@ jobs:
         \ in (0,stat.S_IFREG)\n        assert 0<item.file_size<=(512*1024**2 if item.filename=='fixture.pgdump'\
         \ else 16*1024**2)\n    for item in infos:\n        with z.open(item) as source,(target/item.filename).open('xb')\
         \ as output:\n            shutil.copyfileobj(source,output,1024**2)\n        assert (target/item.filename).stat().st_size==item.file_size\n\
-        archive.unlink()\n# Only exact fixture test data is retained; no caller supplies a user DB.\nprint('Exact\
-        \ successful source fixture artifact admitted for byte-level receipt checks')\nPY\n"
+        archive.unlink()\n# Only exact fixture test data is retained; no caller supplies a user DB.\n\
+        print('Exact successful source fixture artifact admitted for byte-level receipt checks')\nPY\n"
     - name: Admit exact source-created fixture receipt before installing or launching runtime
       run: "export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07\npython3 native-android/engine/scenecatalog-server/admit_graphical_fixture.py\
-        \ --fixture \"$RUNNER_TEMP/groups-inputs/fixture\" --receipt-sha256 \"$FIXTURE_RECEIPT_SHA256\" > \"$RUNNER_TEMP/groups-inputs/fixture-admission.json\"\
-        \npython3 - <<'PY'\nimport json,os,pathlib,re\nbase=pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs';value=json.loads((base/'fixture-admission.json').read_bytes())\n\
+        \ --fixture \"$RUNNER_TEMP/groups-inputs/fixture\" --receipt-sha256 \"$FIXTURE_RECEIPT_SHA256\"\
+        \ > \"$RUNNER_TEMP/groups-inputs/fixture-admission.json\"\npython3 - <<'PY'\nimport json,os,pathlib,re\n\
+        base=pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs';value=json.loads((base/'fixture-admission.json').read_bytes())\n\
         assert value['passed'] is True and value['fixture_only'] is True\nassert value['source_generation_admitted']\
         \ is False and value['world_authority'] is False\nassert type(value['wire_slot']) is int and value['wire_slot']==0\n\
         assert re.fullmatch('[0-9a-f]{64}',value['database_dump_sha256'])\nassert pathlib.Path(value['database_dump'])==base/'fixture/fixture.pgdump'\n\
@@ -737,95 +771,102 @@ jobs:
         \   os.environ['FRESH_OBSERVER_ZIP_SHA256'],'observer',64*1024**2),\n  (11772107531,38302653186,'46904ced3d7efb6218ecf92d9e44ad597d3146d0',\n\
         \   None,50269915,'9c4ba6faafb1a62cbdd0cda45b435de1ee8358b25dc65ef4842bfa2189b70d3b','donor',64*1024**2)]\n\
         def api(suffix):return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))\n\
-        for ident,run,revision,name,size,digest,directory,limit in specs:\n    if directory=='observer':\n     \
-        \   actual=api('actions/runs/'+str(run));assert actual['status']=='completed' and actual['conclusion']=='success'\n\
-        \        assert actual['head_sha']==revision and actual['head_branch']=='native-android'\n        assert\
-        \ actual['path']=='.github/workflows/native-fresh-groups-build.yml'\n        assert actual['repository']['id']==actual['head_repository']['id']==1368730125\n\
-        \    remote=api('actions/artifacts/'+str(ident));origin=remote['workflow_run']\n    assert remote['id']==ident\
-        \ and remote['expired'] is False and remote['size_in_bytes']==size\n    assert remote['digest']=='sha256:'+digest\
-        \ and (name is None or remote['name']==name)\n    assert origin['id']==run and origin['head_sha']==revision\n\
-        \    assert origin['repository_id']==origin['head_repository_id']==1368730125\n    archive=base/(str(ident)+'.zip')\n\
-        \    if directory=='observer':\n        retained=pathlib.Path('native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip').absolute()\n\
-        \        assert retained.resolve()==retained and retained.is_file() and not retained.is_symlink() and retained.stat().st_size==size\n\
-        \        with retained.open('rb') as source,archive.open('xb') as output:shutil.copyfileobj(source,output,1024**2)\n\
-        \    else:\n        with archive.open('xb') as output:\n            subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=600)\n\
-        \    with archive.open('rb') as source:actual=hashlib.file_digest(source,'sha256').hexdigest()\n    assert\
-        \ archive.stat().st_size==size and actual==digest\n    target=base/directory;target.mkdir(mode=0o700)\n\
-        \    with zipfile.ZipFile(archive) as z:\n        infos=z.infolist();assert 0<len(infos)<=256 and len({i.filename\
-        \ for i in infos})==len(infos)\n        assert sum(i.file_size for i in infos)<=limit\n        for item\
-        \ in infos:\n            path=pathlib.PurePosixPath(item.filename)\n            assert path.as_posix()==item.filename\
-        \ and not path.is_absolute()\n            assert path.parts and all(p not in ('','.','..') for p in path.parts)\n\
-        \            assert '\\\\' not in item.filename and ':' not in item.filename\n            assert not item.flag_bits&1\
-        \ and stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG,stat.S_IFDIR)\n        for item in infos:\n\
-        \            target_path=target/item.filename\n            if item.is_dir():target_path.mkdir(mode=0o700,parents=True,exist_ok=True);continue\n\
-        \            target_path.parent.mkdir(mode=0o700,parents=True,exist_ok=True)\n            with z.open(item)\
-        \ as source,target_path.open('xb') as output:shutil.copyfileobj(source,output,1024**2)\n            assert\
-        \ target_path.stat().st_size==item.file_size\n    archive.unlink()\nPY\n"
+        for ident,run,revision,name,size,digest,directory,limit in specs:\n    if directory=='observer':\n\
+        \        actual=api('actions/runs/'+str(run));assert actual['status']=='completed' and actual['conclusion']=='success'\n\
+        \        assert actual['head_sha']==revision and actual['head_branch']=='native-android'\n   \
+        \     assert actual['path']=='.github/workflows/native-fresh-groups-build.yml'\n        assert\
+        \ actual['repository']['id']==actual['head_repository']['id']==1368730125\n    remote=api('actions/artifacts/'+str(ident));origin=remote['workflow_run']\n\
+        \    assert remote['id']==ident and remote['expired'] is False and remote['size_in_bytes']==size\n\
+        \    assert remote['digest']=='sha256:'+digest and (name is None or remote['name']==name)\n  \
+        \  assert origin['id']==run and origin['head_sha']==revision\n    assert origin['repository_id']==origin['head_repository_id']==1368730125\n\
+        \    archive=base/(str(ident)+'.zip')\n    if directory=='observer':\n        retained=pathlib.Path('native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip').absolute()\n\
+        \        assert retained.resolve()==retained and retained.is_file() and not retained.is_symlink()\
+        \ and retained.stat().st_size==size\n        with retained.open('rb') as source,archive.open('xb')\
+        \ as output:shutil.copyfileobj(source,output,1024**2)\n    else:\n        with archive.open('xb')\
+        \ as output:\n            subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=600)\n\
+        \    with archive.open('rb') as source:actual=hashlib.file_digest(source,'sha256').hexdigest()\n\
+        \    assert archive.stat().st_size==size and actual==digest\n    target=base/directory;target.mkdir(mode=0o700)\n\
+        \    with zipfile.ZipFile(archive) as z:\n        infos=z.infolist();assert 0<len(infos)<=256\
+        \ and len({i.filename for i in infos})==len(infos)\n        assert sum(i.file_size for i in infos)<=limit\n\
+        \        for item in infos:\n            path=pathlib.PurePosixPath(item.filename)\n         \
+        \   assert path.as_posix()==item.filename and not path.is_absolute()\n            assert path.parts\
+        \ and all(p not in ('','.','..') for p in path.parts)\n            assert '\\\\' not in item.filename\
+        \ and ':' not in item.filename\n            assert not item.flag_bits&1 and stat.S_IFMT(item.external_attr>>16)\
+        \ in (0,stat.S_IFREG,stat.S_IFDIR)\n        for item in infos:\n            target_path=target/item.filename\n\
+        \            if item.is_dir():target_path.mkdir(mode=0o700,parents=True,exist_ok=True);continue\n\
+        \            target_path.parent.mkdir(mode=0o700,parents=True,exist_ok=True)\n            with\
+        \ z.open(item) as source,target_path.open('xb') as output:shutil.copyfileobj(source,output,1024**2)\n\
+        \            assert target_path.stat().st_size==item.file_size\n    archive.unlink()\nPY\n"
     - name: Admit exact new observer source role and PE before runtime
       run: 'export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
 
-        python3 native-android/engine/scenecatalog-server/admit_groups_capture.py --compile-directory "$RUNNER_TEMP/groups-inputs/observer/fresh-groups-compile"
-        --source-root . --compile-receipt-sha256 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91
+        python3 native-android/engine/scenecatalog-server/admit_groups_capture.py --compile-directory
+        "$RUNNER_TEMP/groups-inputs/observer/fresh-groups-compile" --source-root . --compile-receipt-sha256
+        28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91
 
         '
     - name: Install x86 hosted runtime with PG18 and source-qualified classic Wine10
-      run: "export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07\ntest \"${RUNNER_ENVIRONMENT:-}\" = github-hosted\n\
-        test \"$(id -u)\" != 0\nsudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL\n\
-        sudo dpkg --add-architecture i386\nsudo apt-get update -qq\nsudo apt-get install -y --no-install-recommends\
-        \ ca-certificates curl gnupg xvfb xauth gcc g++ libssl-dev zlib1g-dev postgresql-common\n# Prevent creation/startup\
-        \ of an unrelated default main cluster.\necho 'create_main_cluster = false' | sudo tee -a /etc/postgresql-common/createcluster.conf\n\
+      run: "export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07\ntest \"${RUNNER_ENVIRONMENT:-}\"\
+        \ = github-hosted\ntest \"$(id -u)\" != 0\nsudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup\
+        \ /opt/ghc /opt/hostedtoolcache/CodeQL\nsudo dpkg --add-architecture i386\nsudo apt-get update\
+        \ -qq\nsudo apt-get install -y --no-install-recommends ca-certificates curl gnupg xvfb xauth gcc\
+        \ g++ libssl-dev zlib1g-dev postgresql-common\n# Prevent creation/startup of an unrelated default\
+        \ main cluster.\necho 'create_main_cluster = false' | sudo tee -a /etc/postgresql-common/createcluster.conf\n\
         sudo install -d /usr/share/postgresql-common/pgdg\nsudo curl --fail --silent --show-error https://www.postgresql.org/media/keys/ACCC4CF8.asc\
-        \ -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc\ntest \"$(gpg --show-keys --with-colons /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc\
-        \ | awk -F: '$1==\"fpr\" {print $10; exit}')\" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8\nprintf '%s\\\
-        n' 'Types: deb' 'URIs: https://apt.postgresql.org/pub/repos/apt' 'Suites: noble-pgdg' 'Architectures: amd64'\
-        \ 'Components: main' 'Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc' | sudo tee /etc/apt/sources.list.d/coh-groups-pgdg.sources\n\
-        sudo apt-get update -qq\n# Exact signed noble-pgdg index exposes this18.6 packaging revision.\n# Pin server,\
-        \ matching client and libpq together, then verify full bytes.\nmkdir -p \"$RUNNER_TEMP/groups-pg-packages\"\
-        \n(\n  cd \"$RUNNER_TEMP/groups-pg-packages\"\n  apt-get download postgresql-18:amd64=18.6-1.pgdg24.04+2\
+        \ -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc\ntest \"$(gpg --show-keys --with-colons\
+        \ /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc | awk -F: '$1==\"fpr\" {print $10;\
+        \ exit}')\" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8\nprintf '%s\\n' 'Types: deb' 'URIs: https://apt.postgresql.org/pub/repos/apt'\
+        \ 'Suites: noble-pgdg' 'Architectures: amd64' 'Components: main' 'Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc'\
+        \ | sudo tee /etc/apt/sources.list.d/coh-groups-pgdg.sources\nsudo apt-get update -qq\n# Exact\
+        \ signed noble-pgdg index exposes this18.6 packaging revision.\n# Pin server, matching client\
+        \ and libpq together, then verify full bytes.\nmkdir -p \"$RUNNER_TEMP/groups-pg-packages\"\n\
+        (\n  cd \"$RUNNER_TEMP/groups-pg-packages\"\n  apt-get download postgresql-18:amd64=18.6-1.pgdg24.04+2\
         \ postgresql-client-18:amd64=18.6-1.pgdg24.04+2 libpq5:amd64=18.6-1.pgdg24.04+2\n  cat > packages.sha256\
         \ <<'EOF'\nc0773357df8769abb70e92722196d9b53422d71c0f29a4f39c834b94276cfa3d  postgresql-18_18.6-1.pgdg24.04+2_amd64.deb\n\
         b9d10d99a73bf7aa375be2fe36626c40499cfdf553d0ad174674a88a1b256b43  postgresql-client-18_18.6-1.pgdg24.04+2_amd64.deb\n\
         b487c5ed2ceb9244c6a9d6ae65818ed6707c3c44a2e14488394ae4194c52c53b  libpq5_18.6-1.pgdg24.04+2_amd64.deb\n\
-        EOF\n  sha256sum -c packages.sha256\n  sudo apt-get install -y --no-install-recommends ./*.deb\n)\ntest\
-        \ \"$(/usr/lib/postgresql/18/bin/postgres --version)\" = 'postgres (PostgreSQL) 18.6 (Ubuntu 18.6-1.pgdg24.04+2)'\n\
-        mkdir -p \"$RUNNER_TEMP/groups-wine-packages\"\ncurl --fail --silent --show-error --location https://dl.winehq.org/wine-builds/winehq.key\
-        \ -o \"$RUNNER_TEMP/groups-wine-packages/winehq.key\"\necho \"d965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8\
-        \  $RUNNER_TEMP/groups-wine-packages/winehq.key\" | sha256sum -c -\ntest \"$(gpg --show-keys --with-colons\
-        \ \"$RUNNER_TEMP/groups-wine-packages/winehq.key\" | awk -F: '$1==\"fpr\" {print $10; exit}')\" = D43F640145369C51D786DDEA76F1A20FF987672F\n\
-        gpg --dearmor --output \"$RUNNER_TEMP/groups-wine-packages/winehq.gpg\" \"$RUNNER_TEMP/groups-wine-packages/winehq.key\"\
+        EOF\n  sha256sum -c packages.sha256\n  sudo apt-get install -y --no-install-recommends ./*.deb\n\
+        )\ntest \"$(/usr/lib/postgresql/18/bin/postgres --version)\" = 'postgres (PostgreSQL) 18.6 (Ubuntu\
+        \ 18.6-1.pgdg24.04+2)'\nmkdir -p \"$RUNNER_TEMP/groups-wine-packages\"\ncurl --fail --silent --show-error\
+        \ --location https://dl.winehq.org/wine-builds/winehq.key -o \"$RUNNER_TEMP/groups-wine-packages/winehq.key\"\
+        \necho \"d965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8  $RUNNER_TEMP/groups-wine-packages/winehq.key\"\
+        \ | sha256sum -c -\ntest \"$(gpg --show-keys --with-colons \"$RUNNER_TEMP/groups-wine-packages/winehq.key\"\
+        \ | awk -F: '$1==\"fpr\" {print $10; exit}')\" = D43F640145369C51D786DDEA76F1A20FF987672F\ngpg\
+        \ --dearmor --output \"$RUNNER_TEMP/groups-wine-packages/winehq.gpg\" \"$RUNNER_TEMP/groups-wine-packages/winehq.key\"\
         \nsudo install -d -m 0755 /etc/apt/keyrings\nsudo install -m 0644 \"$RUNNER_TEMP/groups-wine-packages/winehq.gpg\"\
         \ /etc/apt/keyrings/coh-groups-winehq.gpg\necho 'deb [arch=amd64,i386 signed-by=/etc/apt/keyrings/coh-groups-winehq.gpg]\
         \ https://dl.winehq.org/wine-builds/ubuntu noble main' | sudo tee /etc/apt/sources.list.d/coh-groups-winehq.list\n\
         sudo apt-get update -qq\ncd \"$RUNNER_TEMP/groups-wine-packages\"\napt-get download winehq-stable:amd64=10.0.0.0~noble-1\
         \ wine-stable:amd64=10.0.0.0~noble-1 wine-stable-amd64:amd64=10.0.0.0~noble-1 wine-stable-i386:i386=10.0.0.0~noble-1\n\
-        cat > packages.sha256 <<'EOF'\n794ed19f7fc8319d005c10da60833fd0925e2cd2587355b3b97fafdb9e95d368  winehq-stable_10.0.0.0~noble-1_amd64.deb\n\
-        31e6eb2e15ae2e38ef72c9865c0d01da4bc587e554e7db46fe1a75b4420878e1  wine-stable_10.0.0.0~noble-1_amd64.deb\n\
-        393d545040fe5c029eadeb31fcea52126714473e6c11b3cd851447b2dcbf1f72  wine-stable-amd64_10.0.0.0~noble-1_amd64.deb\n\
-        5ba523409f013b12953f577bc3322aeae599bb16afac66c59ebe2dde7b337bfa  wine-stable-i386_10.0.0.0~noble-1_i386.deb\n\
-        EOF\nsha256sum -c packages.sha256\nsudo apt-get install -y --install-recommends ./*.deb\ndf -h \"$RUNNER_TEMP\"\
-        \n"
+        cat > packages.sha256 <<'EOF'\n794ed19f7fc8319d005c10da60833fd0925e2cd2587355b3b97fafdb9e95d368\
+        \  winehq-stable_10.0.0.0~noble-1_amd64.deb\n31e6eb2e15ae2e38ef72c9865c0d01da4bc587e554e7db46fe1a75b4420878e1\
+        \  wine-stable_10.0.0.0~noble-1_amd64.deb\n393d545040fe5c029eadeb31fcea52126714473e6c11b3cd851447b2dcbf1f72\
+        \  wine-stable-amd64_10.0.0.0~noble-1_amd64.deb\n5ba523409f013b12953f577bc3322aeae599bb16afac66c59ebe2dde7b337bfa\
+        \  wine-stable-i386_10.0.0.0~noble-1_i386.deb\nEOF\nsha256sum -c packages.sha256\nsudo apt-get\
+        \ install -y --install-recommends ./*.deb\ndf -h \"$RUNNER_TEMP\"\n"
     - name: Record only fixed public pre-runtime tooling facts
-      run: "export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07\nmkdir -p out/groups-public\npython3 - <<'PY'\n\
-        import hashlib,json,os,pathlib,platform,re,subprocess\ndef version(command,expression):\n    value=subprocess.check_output(command,text=True,timeout=15).strip()\n\
-        \    assert re.fullmatch(expression,value);return value\npg=pathlib.Path('/usr/lib/postgresql/18/bin')\n\
-        value={'schema':'coh-groups-public-tooling-v1','orchestration_revision':os.environ['GITHUB_SHA'],\n    \
-        \   'machine':platform.machine(),'wine_version':version(['/opt/wine-stable/bin/wine','--version'],r'wine-10\\\
+      run: "export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07\nmkdir -p out/groups-public\npython3\
+        \ - <<'PY'\nimport hashlib,json,os,pathlib,platform,re,subprocess\ndef version(command,expression):\n\
+        \    value=subprocess.check_output(command,text=True,timeout=15).strip()\n    assert re.fullmatch(expression,value);return\
+        \ value\npg=pathlib.Path('/usr/lib/postgresql/18/bin')\nvalue={'schema':'coh-groups-public-tooling-v1','orchestration_revision':os.environ['GITHUB_SHA'],\n\
+        \       'machine':platform.machine(),'wine_version':version(['/opt/wine-stable/bin/wine','--version'],r'wine-10\\\
         .0(?: \\([^\\r\\n]{1,120}\\))?'),\n       'postgres_version':version([str(pg/'postgres'),'--version'],r'postgres\
         \ \\(PostgreSQL\\) 18\\.[0-9]+(?: \\([^\\r\\n]{1,120}\\))?'),\n       'restore_version':version([str(pg/'pg_restore'),'--version'],r'pg_restore\
         \ \\(PostgreSQL\\) 18\\.[0-9]+(?: \\([^\\r\\n]{1,120}\\))?'),\n       'runtime_started':False,'private_state_included':False}\n\
-        assert value['machine']=='x86_64'\nwith pathlib.Path('out/groups-public/tooling.json').open('x') as output:json.dump(value,output,indent=2);output.write('\\\
-        n')\nPY\n"
+        assert value['machine']=='x86_64'\nwith pathlib.Path('out/groups-public/tooling.json').open('x')\
+        \ as output:json.dump(value,output,indent=2);output.write('\\n')\nPY\n"
     - name: Admit exact Inventory receiver without rebuild or historical test replay
       run: 'export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
 
-        python3 native-android/combined-client/tools/admit_initial_inventory_receiver.py --source-root . --output
-        "$RUNNER_TEMP/groups-inputs/initial-capture"
+        python3 native-android/combined-client/tools/admit_initial_inventory_receiver.py --source-root
+        . --output "$RUNNER_TEMP/groups-inputs/initial-capture"
 
         '
     - name: Prepare original control runtime files without SQL or any capture startup
       run: 'export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
 
-        python3 tools/android/interactive/map_startup_inputs.py --output out/groups-native-inputs --cache out/groups-asset-cache
+        python3 tools/android/interactive/map_startup_inputs.py --output out/groups-native-inputs --cache
+        out/groups-asset-cache
 
         PYTHONPATH=tools/android/interactive python3 -c "import qualify_runtime_asset_preflight as p;p.ensure_assets(''out/groups-asset-cache'')"
 
@@ -842,25 +883,28 @@ jobs:
 
         '
     - name: Observe one actual original GROUPS and native raw initial transaction in owned private runtime
-      run: "export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07\nCONTROL_RUNTIME=$(python3 -c \"import json;print(json.load(open('out/groups-control/control-fixture.json'))['runtime_host_path'])\"\
-        )\nxvfb-run -a python3 native-android/engine/scenecatalog-server/capture_groups_transaction.py \\\n  --runtime\
-        \ \"$CONTROL_RUNTIME\" --control-fixture out/groups-control/control-fixture.json \\\n  --db-donor-apk \"\
-        $RUNNER_TEMP/groups-inputs/donor/COH-Atlas-Gameplay-0.13.34.apk\" \\\n  --compile-directory \"$RUNNER_TEMP/groups-inputs/observer/fresh-groups-compile\"\
-        \ \\\n  --compile-receipt-sha256 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91 \\\n \
-        \ --database-dump \"$RUNNER_TEMP/groups-inputs/fixture/fixture.pgdump\" --database-dump-sha256 \"$GROUPS_DUMP_SHA256\"\
-        \ \\\n  --account-file \"$RUNNER_TEMP/groups-inputs/fixture/account.txt\" --wire-slot 0 \\\n  --native-capture\
-        \ \"$RUNNER_TEMP/groups-inputs/initial-capture/coh-capture-local-initial\" \\\n  --native-build-receipt\
-        \ \"$RUNNER_TEMP/groups-inputs/initial-capture/build.json\" \\\n  --native-build-receipt-sha256 \"$INITIAL_BUILD_SHA256\"\
-        \ \\\n  --pg-bin /usr/lib/postgresql/18/bin --wine /opt/wine-stable/bin/wine --wineserver /opt/wine-stable/bin/wineserver\
-        \ \\\n  --work \"$RUNNER_TEMP/groups-private-work\" --output \"$RUNNER_TEMP/groups-private-result\" --timeout-seconds\
+      run: "export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07\nCONTROL_RUNTIME=$(python3 -c \"\
+        import json;print(json.load(open('out/groups-control/control-fixture.json'))['runtime_host_path'])\"\
+        )\nxvfb-run -a python3 native-android/engine/scenecatalog-server/capture_groups_transaction.py\
+        \ \\\n  --runtime \"$CONTROL_RUNTIME\" --control-fixture out/groups-control/control-fixture.json\
+        \ \\\n  --db-donor-apk \"$RUNNER_TEMP/groups-inputs/donor/COH-Atlas-Gameplay-0.13.34.apk\" \\\n\
+        \  --compile-directory \"$RUNNER_TEMP/groups-inputs/observer/fresh-groups-compile\" \\\n  --compile-receipt-sha256\
+        \ 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91 \\\n  --database-dump \"$RUNNER_TEMP/groups-inputs/fixture/fixture.pgdump\"\
+        \ --database-dump-sha256 \"$GROUPS_DUMP_SHA256\" \\\n  --account-file \"$RUNNER_TEMP/groups-inputs/fixture/account.txt\"\
+        \ --wire-slot 0 \\\n  --native-capture \"$RUNNER_TEMP/groups-inputs/initial-capture/coh-capture-local-initial\"\
+        \ \\\n  --native-build-receipt \"$RUNNER_TEMP/groups-inputs/initial-capture/build.json\" \\\n\
+        \  --native-build-receipt-sha256 \"$INITIAL_BUILD_SHA256\" \\\n  --pg-bin /usr/lib/postgresql/18/bin\
+        \ --wine /opt/wine-stable/bin/wine --wineserver /opt/wine-stable/bin/wineserver \\\n  --work \"\
+        $RUNNER_TEMP/groups-private-work\" --output \"$RUNNER_TEMP/groups-private-result\" --timeout-seconds\
         \ 1200\n"
-    - name: Identify the exact native refusal using current diagnostics and the same fresh original envelope
+    - name: Verify the same fresh original envelope with bounded streaming catalog ownership
       id: source_snapshot
-      run: "set +e\npython3 native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py \\\
-        \n --capture \"$RUNNER_TEMP/groups-private-result/source.cohgtx\" \\\n --native-packet \"$RUNNER_TEMP/groups-private-result/native/groups.bin\"\
-        \ \\\n --work \"$RUNNER_TEMP/groups-private-verification\" \\\n --output \"$RUNNER_TEMP/groups-private-verification/verification.json\"\
-        \ >\"$GITHUB_WORKSPACE/runtime/out/groups-public/verifier-status.json\"\nresult=$?\nset -e\ncat \"$GITHUB_WORKSPACE/runtime/out/groups-public/verifier-status.json\"\
-        \nexit \"$result\"\n"
+      run: "set +e\npython3 native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py\
+        \ \\\n --capture \"$RUNNER_TEMP/groups-private-result/source.cohgtx\" \\\n --native-packet \"\
+        $RUNNER_TEMP/groups-private-result/native/groups.bin\" \\\n --work \"$RUNNER_TEMP/groups-private-verification\"\
+        \ \\\n --output \"$RUNNER_TEMP/groups-private-verification/verification.json\" >\"$GITHUB_WORKSPACE/runtime/out/groups-public/verifier-status.json\"\
+        \nresult=$?\nset -e\ncat \"$GITHUB_WORKSPACE/runtime/out/groups-public/verifier-status.json\"\n\
+        exit \"$result\"\n"
       working-directory: current
     - name: Extract only fixed public booleans and coarse source-defined failure enum
       if: always() && steps.source_admission.outcome == 'success'
@@ -868,8 +912,8 @@ jobs:
 
         mkdir -p out/groups-public
 
-        python3 native-android/engine/scenecatalog-server/summarize_groups_capture.py --private-output "$RUNNER_TEMP/groups-private-result"
-        --output out/groups-public/summary.json
+        python3 native-android/engine/scenecatalog-server/summarize_groups_capture.py --private-output
+        "$RUNNER_TEMP/groups-private-result" --output out/groups-public/summary.json
 
         '
     - uses: actions/upload-artifact@v4

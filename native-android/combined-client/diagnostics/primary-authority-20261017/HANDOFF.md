@@ -1,5 +1,15 @@
 # Primary native authority continuation — 2026-10-17
 
+## Eager scene representation removed; atomic Windows file ownership prepared — 2026-10-18
+
+Recovery begins at actual remote `b26e829a104a017d5533f16b8a2315be1c04025e`, superseding the attachment checkpoint. No prior CoH checkout/object store is accessible in this environment; existing committed recovery/history and the untracked temporary bundle are preserved. Exact public failure ZIPs and independent admission are retained in `recovery-20261018-continuation/` and the Windows qualification directory.
+
+Actual scene [39123610374](https://github.com/Russianranger/coh-android/actions/runs/39123610374) observed `EAGER_LOAD / COH_LIMIT`, with complete original GROUPS capture/cleanup and initial-packet timeout. Its internal eager subreason is unknown. The verifier now uses the existing fully decoding streaming CatalogOwner and applies exactly the same five GROUPS matching predicates to its successful report. Every source/digest/full-record/cursor check, stages 3–7, 32 MiB child and 96 MiB aggregate limits remain. New release/ASan/UBSan each pass 25 focused cases, 34 predicate comparisons and 40,000 complete synthetic record decodes; five mismatches, malformed body/tail and 11 sampled allocation failures refuse. The maintained operation harness compiles only. A fresh original transaction is requested through the exact updated scene workflow; no real-scene success is inferred from host cases.
+
+Actual Windows [39124469057](https://github.com/Russianranger/coh-android/actions/runs/39124469057) failed `JOURNAL_ACL / ACL_OWNER` before account creation, with full cleanup. The new reversible helper successor supplies explicit intended ownership/DACL atomically at file creation; it does not weaken the owner predicate or identify the unpublished other SID. Six source controls and the relevant 11 supervisor plus four diagnostic regressions pass. The new focused file-owner workflow reuses the exact accepted compiler inputs/probe/model artifact, compiles only one changed helper and executes it once. Actual successor execution, inert profile success and service readiness remain pending at publication.
+
+B authentic BaseDetail resource projection, C concrete Windows private backend and E renderer lifecycle identity work continue independently. Gates 25–27 remain OPEN: normal checksum/version admission, genuine character allocation/full state, Map handoff, initial actor/ACK/subsequent updates and Android world authority are not qualified. Accepted APKs and Gates 1–24 retain their existing scopes; no new APK.
+
 ## Focused Windows file-operation observation prepared — 2026-10-18
 
 Integrated resource/character/renderer source is360f8f6a75683b2405a0a67e2a89190d36f3e9b1;86a5fa0719bd9a91e788298a6245b306dbb545e3 restores the exact CRLF bytes of the two extracted Windows fixed receipts beside their unchanged exact ZIP. No test/binary behavior changed in that byte-preservation followup.

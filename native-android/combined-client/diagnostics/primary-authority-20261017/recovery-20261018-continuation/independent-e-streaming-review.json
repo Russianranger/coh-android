@@ -1,0 +1,46 @@
+{
+  "schema": "coh-streaming-verifier-independent-e-review-v1",
+  "passed": true,
+  "review_scope": "read-only source/test/proof and exact pin review; no native/capture/suite rerun",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": "05ec0b5bfe0edc9aa0bf1d3653e16453609294899596dbc39d9324ad8de6b38f",
+    "native-android/engine/scenecatalog-server/test_streaming_verifier.py": "f9050591aac825598b4927194197830b2c466044706a7f988ba1d5d4e63ae553",
+    "native-android/engine/scenecatalog-server/test_stage2_operation.py": "c9e58041bb9e2a0f80df94ba5a004b66506c8044b3bac79b122a17f089c6a349",
+    "native-android/engine/scenecatalog-server/evidence/streaming-verifier-20261018/focused-host.json": "0b0c64871d6a3966dcf8d92e3ac7d26adb7ed90013c2c61cdbdfe6c1300d5756"
+  },
+  "compiler_dependencies_verified": 36,
+  "only_compiled_dependency_changed": [
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c"
+  ],
+  "original_fixed_status_sha256": "8176e12e043845616b08c3acc72d8421a7fb9a5da36d37ddeaa97f32b50c420f",
+  "original_zip_sha256": "42c2020d128260ad950eca7724b865ddc7a83f765d4e81d90ffd4f29308dea8b",
+  "original_failing_operation": "EAGER_LOAD",
+  "original_eager_internal_subreason_known": false,
+  "five_original_match_predicates_equal": true,
+  "successful_streaming_owner_precedes_match": true,
+  "full_shared_decoder_cursor_checks_preserved": true,
+  "child_and_aggregate_limits_unchanged": true,
+  "map_bound_compare_authority_not_substituted": true,
+  "stages3_to7_unchanged": true,
+  "focused_proof_modes": {
+    "release": {
+      "cases": 25,
+      "predicate_checks": 34,
+      "record_decodes": 40000
+    },
+    "asan": {
+      "cases": 25,
+      "predicate_checks": 34,
+      "record_decodes": 40000
+    },
+    "ubsan": {
+      "cases": 25,
+      "predicate_checks": 34,
+      "record_decodes": 40000
+    }
+  },
+  "original_service_reexecuted": false,
+  "android_executed": false,
+  "world_authority": false,
+  "review_tooling_correction": "Initial read-only pin script used operation instead of native_operation for fixed adapter status and raised KeyError; corrected against exact observed schema. No native execution or source mutation occurred."
+}

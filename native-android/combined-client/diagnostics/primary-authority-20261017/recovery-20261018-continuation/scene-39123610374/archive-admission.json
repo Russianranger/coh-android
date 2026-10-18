@@ -1,0 +1,27 @@
+{
+  "zip": "worker-f-12135422117.zip",
+  "bytes": 1817,
+  "sha256": "42c2020d128260ad950eca7724b865ddc7a83f765d4e81d90ffd4f29308dea8b",
+  "exact_known_members": true,
+  "crc_valid": true,
+  "entries": [
+    {
+      "name": "tooling.json",
+      "bytes": 397,
+      "sha256": "87deae49942ac434a58433b495b193a0e3cdfb0fc95162beefcded05170321d3",
+      "crc32": 1934490500
+    },
+    {
+      "name": "summary.json",
+      "bytes": 3107,
+      "sha256": "40242045b4a762282c6af29decc04de59f61a369c73372b8a32adadf0d65863d",
+      "crc32": 3065370339
+    },
+    {
+      "name": "verifier-status.json",
+      "bytes": 274,
+      "sha256": "8176e12e043845616b08c3acc72d8421a7fb9a5da36d37ddeaa97f32b50c420f",
+      "crc32": 773356156
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "coh-streaming-verifier-source-transition-v1",
+  "passed": true,
+  "predecessor_revision": "b26e829a104a017d5533f16b8a2315be1c04025e",
+  "predecessor_verifier_sha256": "8a67c97216c4551283a994272704c13e3ae69ee724b45b27110c4f0ea219b2bc",
+  "current_verifier_sha256": "05ec0b5bfe0edc9aa0bf1d3653e16453609294899596dbc39d9324ad8de6b38f",
+  "exact_reversible_edits_only": true,
+  "compiler_dependency_changes": [
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c"
+  ],
+  "unchanged_compiler_dependencies": 35,
+  "child_owned_limit_bytes": 33554432,
+  "child_working_limit_bytes": 33554432,
+  "aggregate_limit_bytes": 100663296,
+  "group_predicates": [
+    "new_world",
+    "files",
+    "footer_defs_crc",
+    "footer_refs_crc",
+    "footer_active_roots"
+  ],
+  "predicate_applied_only_after_successful_streaming_owner_create": true,
+  "stages_3_to_7_unchanged": true,
+  "original_failing_operation_observed": "EAGER_LOAD",
+  "original_internal_eager_subreason_known": false,
+  "original_runtime_reexecuted": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "current_sources_and_evidence": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": "05ec0b5bfe0edc9aa0bf1d3653e16453609294899596dbc39d9324ad8de6b38f",
+    "native-android/engine/scenecatalog-server/test_streaming_verifier.py": "f9050591aac825598b4927194197830b2c466044706a7f988ba1d5d4e63ae553",
+    "native-android/engine/scenecatalog-server/test_stage2_operation.py": "c9e58041bb9e2a0f80df94ba5a004b66506c8044b3bac79b122a17f089c6a349",
+    "native-android/engine/scenecatalog-server/evidence/streaming-verifier-20261018/focused-host.json": "0b0c64871d6a3966dcf8d92e3ac7d26adb7ed90013c2c61cdbdfe6c1300d5756"
+  }
+}

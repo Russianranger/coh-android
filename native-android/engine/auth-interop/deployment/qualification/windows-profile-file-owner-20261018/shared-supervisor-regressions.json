@@ -1,0 +1,21 @@
+{
+  "schema": "coh-wpp-file-owner-shared-supervisor-regressions-v1",
+  "passed": true,
+  "reason": "shared execute mode selection/status extension and unchanged diagnostic admission/parser",
+  "results": [
+    {
+      "test": "test_supervise_inert.py",
+      "exit_code": 0,
+      "stdout_bytes": 0,
+      "stderr_bytes": 1655
+    },
+    {
+      "test": "test_file_diagnostic.py",
+      "exit_code": 0,
+      "stdout_bytes": 0,
+      "stderr_bytes": 706
+    }
+  ],
+  "supervisor_sha256": "2adfe19cc004248503dc1512b9d51d1575d6e2fb7ca7376068bfebf24c8721c7",
+  "compiler_or_model_or_helper_or_services_executed": false
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "coh-primary-recovery-continuation-v1",
+  "remote_head": "b26e829a104a017d5533f16b8a2315be1c04025e",
+  "attachment_checkpoint": "362f10cc71148c32b3b84e6c6cbe7ce59ac94480",
+  "prior_coh_checkout_accessible": false,
+  "prior_coh_stashes_or_reflogs_accessible": false,
+  "current_clone_worktrees": 1,
+  "current_clone_stashes": 0,
+  "prior_recovery_and_history_preserved": true,
+  "untracked_bundle_preserved_without_integration": ".worker-qualified-scene-live-history.bundle.cDOfWk",
+  "scene_observation": {
+    "run": 39123610374,
+    "native_stage": 2,
+    "native_status": "COH_LIMIT",
+    "native_operation": "EAGER_LOAD",
+    "specific_eager_subreason_observed": false,
+    "original_capture_complete": true,
+    "cleanup_complete": true,
+    "initial_packet": "TIMEOUT",
+    "source_generation_admitted": false
+  },
+  "windows_observation": {
+    "run": 39124469057,
+    "first_failure": "FILES",
+    "file_phase": "JOURNAL_ACL",
+    "file_operation": "ACL_OWNER",
+    "account_created": false,
+    "cleanup_complete": true
+  },
+  "gates_25_26_27": "OPEN",
+  "new_apk": false
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "coh-independent-f-public-failure-review-v1",
+  "passed": true,
+  "observed_remote_head": "b26e829a104a017d5533f16b8a2315be1c04025e",
+  "scope": "Exact GitHub API metadata, downloaded public ZIPs, CRC/member/raw-byte admission, fixed receipt predicates and current source inspection only",
+  "receipts": {
+    "scene": {
+      "zip": "worker-f-12135422117.zip",
+      "bytes": 1817,
+      "sha256": "42c2020d128260ad950eca7724b865ddc7a83f765d4e81d90ffd4f29308dea8b",
+      "exact_known_members": true,
+      "crc_valid": true,
+      "entries": [
+        {
+          "name": "tooling.json",
+          "bytes": 397,
+          "sha256": "87deae49942ac434a58433b495b193a0e3cdfb0fc95162beefcded05170321d3",
+          "crc32": 1934490500
+        },
+        {
+          "name": "summary.json",
+          "bytes": 3107,
+          "sha256": "40242045b4a762282c6af29decc04de59f61a369c73372b8a32adadf0d65863d",
+          "crc32": 3065370339
+        },
+        {
+          "name": "verifier-status.json",
+          "bytes": 274,
+          "sha256": "8176e12e043845616b08c3acc72d8421a7fb9a5da36d37ddeaa97f32b50c420f",
+          "crc32": 773356156
+        }
+      ]
+    },
+    "windows": {
+      "zip": "worker-f-12135816304.zip",
+      "bytes": 1230,
+      "sha256": "a38f0ff4035625b8103e27106df9cbf21b5de1b0cf8294cd4676620fdb565022",
+      "exact_known_members": true,
+      "crc_valid": true,
+      "entries": [
+        {
+          "name": "supervision.json",
+          "bytes": 1056,
+          "sha256": "c295c07ac5184f33abe88b57de519805731c341fa9773b35523a38df10857365",
+          "crc32": 3068653476
+        },
+        {
+          "name": "inert-result.json",
+          "bytes": 1437,
+          "sha256": "22b24bb1a4c7710a2dd8ae629aa5fc6aee90ed5164c55f8951066961156262b8",
+          "crc32": 4089850653
+        }
+      ]
+    }
+  },
+  "findings": {
+    "scene_actual_failed_operation": "EAGER_LOAD",
+    "scene_status": "COH_LIMIT",
+    "scene_original_envelope_complete": true,
+    "scene_native_initial_received": false,
+    "scene_source_generation_admitted": false,
+    "windows_actual_failed_phase": "JOURNAL_ACL",
+    "windows_actual_failed_operation": "ACL_OWNER",
+    "windows_account_creation_attempted": false,
+    "windows_inner_and_outer_cleanup_observed": true,
+    "windows_accepted_probe_or_model_reexecuted": false,
+    "windows_new_helper_compiler_invocations": 1
+  },
+  "review_limits": {
+    "specific_eager_subreason_known": false,
+    "specific_windows_owner_sid_known": false,
+    "source_private_packets_exported": false,
+    "real_auth_db_map_qualified": false,
+    "source_generation_admitted": false,
+    "world_authority": false,
+    "rss_measured": false,
+    "gpu_measured": false,
+    "native_or_historical_qualifier_executed": false
+  },
+  "candidate_repairs": {
+    "scene": "Use successfully created fully walked CatalogOwner metadata for the exact existing five-field GROUPS match, removing duplicate eager full materialization; retain all original budgets/digest/provenance/full-definition checks. Real scene success must be separately observed.",
+    "windows": "Create new helper-owned files with explicit intended runner ownership and protected ACL atomically. Retain existing owner/chain guards; do not retrofit arbitrary existing files."
+  }
+}

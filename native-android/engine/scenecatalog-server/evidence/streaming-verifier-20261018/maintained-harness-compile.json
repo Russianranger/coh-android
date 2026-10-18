@@ -1,0 +1,27 @@
+{
+  "schema": "coh-maintained-stage2-harness-compile-v1",
+  "passed": true,
+  "compile_only": true,
+  "native_harness_executed": false,
+  "old_suite_replayed": false,
+  "harness_source_sha256": "1f20765e96a3933591dc6250da81a216dad6d46eec19ecd17483da315b18425e",
+  "test_source_sha256": "c9e58041bb9e2a0f80df94ba5a004b66506c8044b3bac79b122a17f089c6a349",
+  "verifier_source_sha256": "05ec0b5bfe0edc9aa0bf1d3653e16453609294899596dbc39d9324ad8de6b38f",
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "flags": [
+    "-std=c99",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-pedantic",
+    "-O2",
+    "-fstack-usage"
+  ],
+  "link_wraps": [
+    "SHA256",
+    "coh_catalog_owner_create",
+    "coh_catalog_owner_bytes"
+  ],
+  "temporary_binary_sha256": "2ba74d1bd8584baddf3e31b25fca7549211d681b132a758ca5ce0261b53fb4d6",
+  "temporary_binary_retained": false
+}

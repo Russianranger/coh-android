@@ -38,6 +38,15 @@ static uint32_t v_u32(const uint8_t*p){return(uint32_t)p[0]|(uint32_t)p[1]<<8|(u
 static uint32_t v_word(CohBytes b,size_t n){return v_u32(b.data+n*4u);}
 static int v_zero(const uint8_t*p,size_t n){for(size_t i=0;i<n;i++)if(p[i])return 0;return 1;}
 static CohStatus v_digest(void *context,CohBytes b,uint8_t out[32]){(void)context;return SHA256(b.data,b.size,out)?COH_OK:COH_IO;}
+/* The retained owner validates every complete definition through the same
+ * decoder while retaining one record at a time. Match only its successful
+ * report: these are exactly the five eager-catalog compatibility predicates,
+ * without requiring a second fully materialized definition graph. This is a
+ * private observation comparison, not the map-bound live admission API. */
+static CohStatus v_catalog_match(const CohCatalogReport *c,const CohGroupsInspection *g){
+    if(!c||!g)return COH_INVALID;
+    return g->new_world&&g->files==c->files&&g->footer_defs_crc==c->source_defs_crc&&g->footer_refs_crc==c->source_refs_crc&&g->footer_active_roots==c->source_active_roots?COH_OK:COH_STATE;
+}
 static size_t v_peak;
 static CohStatus v_charge(size_t n){if(n>V_LIMIT)return COH_LIMIT;if(n>v_peak)v_peak=n;return COH_OK;}
 static CohStatus v_file(const char *directory,const char *name,size_t cap,size_t retained,CohBytes *out){
@@ -133,7 +142,7 @@ static CohStatus v_event(void *opaque,const CohGroupsEvent*e){
 
 int main(int argc,char **argv){
     CohStatus status=COH_INVALID;unsigned stage=0;const char *operation=NULL;CohBytes meta={0},owner={0},packet={0},input={0},side={0},resources={0},raw={0},eligibility={0},cat={0},snapshot_bytes={0};
-    CohSceneCatalog *eager=NULL;CohCatalogOwner *catalog=NULL;CohCatalogSnapshot *snapshot=NULL;CohRuntimeGraph *graph=NULL;CohResourceJoin *join=NULL;CohPublicBounds *bounds=NULL;
+    CohCatalogOwner *catalog=NULL;CohCatalogSnapshot *snapshot=NULL;CohRuntimeGraph *graph=NULL;CohResourceJoin *join=NULL;CohPublicBounds *bounds=NULL;
     CohCatalogBinding cb={0};CohCatalogSnapshotBinding sb={0};CohCatalogDigest digest_={NULL,v_digest};CohCatalogOwnerReport cr={0};CohCatalogReport er={0};CohRuntimeSnapshotReport sr={0};CohRuntimeGraphReport gr={0};CohResourceJoinReport jr={0};CohPublicBoundsReport br={0};CohGroupsInspection groups={0};CohGroupsFailure failure={0};VContext c={0};size_t retained=V_RESERVE;
 #define DO(x) do{status=(x);if(status!=COH_OK)goto done;}while(0)
 #define NEED(x) do{if(!(x)){status=COH_STATE;goto done;}}while(0)
@@ -149,9 +158,6 @@ int main(int argc,char **argv){
     stage=2;operation="CATALOG_INPUT";DO(v_file(argv[1],"catalog.cohcat",COH_CATALOG_INPUT_MAX,retained,&input));
     operation="CATALOG_HEADER";NEED(input.size>=48&&v_u32(input.data+20)==v_word(meta,4));
     operation="CATALOG_PREFLIGHT";DO(coh_scenecatalog_preflight(input,v_word(meta,4),&er));
-    operation="EAGER_RESERVATION";DO(v_charge(retained+input.size+COH_CATALOG_MEMORY_MAX));
-    operation="EAGER_LOAD";DO(coh_scenecatalog_load(&eager,input,v_word(meta,4),&er));
-    operation="GROUPS_MATCH";DO(coh_scenecatalog_match(eager,&groups));coh_scenecatalog_free(eager);eager=NULL;
     /* These private join labels distinguish the exact observed byte sets only.
      * They do not admit a source provenance/run/asset manifest. The external
      * source-pinned supervisor/admitter must independently establish that chain
@@ -162,6 +168,7 @@ int main(int argc,char **argv){
     operation="METADATA_DIGEST";DO(v_digest(NULL,meta,cb.inventory_sha256));
     CohCatalogOwnerBudget cbudget={32u<<20,32u<<20,V_LIMIT,retained};
     operation="CATALOG_OWNER_CREATE";DO(coh_catalog_owner_create(NULL,input,&cb,&cbudget,&digest_,&catalog,&cr));
+    operation="GROUPS_MATCH";DO(v_catalog_match(&cr.walk.catalog,&groups));
     operation="CATALOG_OWNER_RESERVATION";DO(v_charge(cr.peak_aggregate_bytes));v_drop(&input);
     operation="CATALOG_OWNER_VIEW";DO(coh_catalog_owner_bytes(catalog,&cat));
     stage=3;DO(v_file(argv[1],"runtime.cohrts",COH_RUNTIME_SNAPSHOT_INPUT_MAX,retained+coh_catalog_owner_owned_bytes(catalog),&side));sb.generation=1;sb.catalog=cb;DO(v_digest(NULL,side,sb.snapshot_sha256));DO(v_digest(NULL,meta,sb.run_sha256));CohRuntimeSnapshotBudget sbudget={V_LIMIT,retained};DO(coh_catalog_snapshot_create(NULL,catalog,side,&sb,&sbudget,&digest_,NULL,&snapshot));v_drop(&side);DO(coh_catalog_snapshot_view(snapshot,&snapshot_bytes,&sb,&sr));DO(v_charge(sr.aggregate_peak_bytes));
@@ -181,5 +188,5 @@ done:
     printf("{\"schema\":\"coh-source-snapshot-native-result-v1\",\"passed\":%s,\"status\":%d,\"stage\":%u,\"source_generation_admitted\":false,\"world_authority\":false",status==COH_OK?"true":"false",status,stage);
     if(status!=COH_OK&&stage==2&&operation)printf(",\"operation\":\"%s\"",operation);
     if(status==COH_OK)printf(",\"checks\":{\"catalog_groups_match\":true,\"runtime_catalog_associations\":true,\"resource_catalog_associations\":true,\"raw_bounds_catalog_associations\":true,\"eligibility_groups_associations\":true},\"counts\":{\"files\":%u,\"slots\":%u,\"definitions\":%u,\"children\":%u,\"root_slots\":%u,\"active_roots\":%u,\"external_owners\":%u,\"resource_rows\":%u,\"model_rows\":%u,\"public_bounds_rows\":%u,\"emitted_definitions\":%u,\"emitted_roots\":%u,\"definition_scalars_compared\":%zu,\"named_peak_reservation_bytes\":%zu,\"named_aggregate_limit_bytes\":%u}",sr.files,sr.slots,sr.definitions,sr.children,sr.root_slots,sr.active_roots,sr.external_count,jr.rows,jr.models,br.public_rows,c.visit_definitions,c.visit_roots,v_scalars,v_peak,V_LIMIT);
-    puts("}");coh_public_bounds_release(bounds);coh_resource_join_free(join);coh_runtime_graph_free(graph);coh_catalog_snapshot_release(snapshot);coh_catalog_owner_release(catalog);coh_scenecatalog_free(eager);v_drop(&raw);v_drop(&resources);v_drop(&eligibility);v_drop(&side);v_drop(&input);v_drop(&packet);v_drop(&owner);v_drop(&meta);return status==COH_OK?0:2;
+    puts("}");coh_public_bounds_release(bounds);coh_resource_join_free(join);coh_runtime_graph_free(graph);coh_catalog_snapshot_release(snapshot);coh_catalog_owner_release(catalog);v_drop(&raw);v_drop(&resources);v_drop(&eligibility);v_drop(&side);v_drop(&input);v_drop(&packet);v_drop(&owner);v_drop(&meta);return status==COH_OK?0:2;
 }

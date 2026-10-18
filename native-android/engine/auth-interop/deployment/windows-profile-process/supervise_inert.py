@@ -56,6 +56,7 @@ SAME_HANDLE SAME_IDENTITY PATH_REOPEN PATH_IDENTITY_COMPARE SOURCE_HASH
 BYTES_SIZE BYTES_STREAM BYTES_PROGRESS BYTES_END BYTES_POST
 JOURNAL_IDENTITY JOURNAL_SERIALIZE JOURNAL_BYTES JOURNAL_WRITE JOURNAL_RECHECK'''.split())
 DIAGNOSTIC_SOURCE_SHA256 = '3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514'
+FILE_OWNER_SOURCE_SHA256 = '53add195056ce87c445de347bd6d0fa8996ff3c5842a59a69172587b649ec933'
 
 
 class Refusal(ValueError):
@@ -193,6 +194,29 @@ def admit_file_diagnostic(directory):
     return image, expected['sha256']
 
 
+def admit_file_owner(directory):
+    directory = Path(directory)/'file-owner'
+    receipt = decode_json(regular(directory/'owner-build.json', 65536).read_bytes())
+    need(receipt.get('schema') == 'coh-wpp-file-owner-build-v1' and
+         receipt.get('passed') is True and receipt.get('compiler_invocations') == 1 and
+         receipt.get('original_source_sha256') == SOURCE_PINS['OwnedProfileProcess.cs'] and
+         receipt.get('observed_source_sha256') == DIAGNOSTIC_SOURCE_SHA256 and
+         receipt.get('generated_source_sha256') == FILE_OWNER_SOURCE_SHA256 and
+         receipt.get('generated_source_bytes') == 47790 and
+         all(receipt.get(name) is True for name in ('exact_reverse_verified',
+             'selected_compiler_files_match_accepted_build', 'explicit_file_security_at_create',
+             'existing_owner_acl_identity_guards_preserved')) and
+         all(receipt.get(name) is False for name in ('accepted_inert_probe_recompiled',
+             'accepted_model_recompiled_or_executed', 'helper_executed',
+             'source_generation_admitted', 'world_authority')), 'FILE_OWNER_BUILD')
+    image = regular(directory/'OwnedProfileProcess.exe', 16*1024*1024)
+    expected = receipt.get('helper_image', {})
+    need(type(expected.get('bytes')) is int and image.stat().st_size == expected['bytes'] and
+         re.fullmatch('[0-9a-f]{64}', expected.get('sha256', '')) is not None and
+         sha(image) == expected['sha256'], 'FILE_OWNER_IMAGE')
+    return image, expected['sha256']
+
+
 class Native:
     """New outer supervisor, System32 APIs only; no account/profile operations."""
     def __init__(self):
@@ -325,7 +349,7 @@ class BoundedPipe:
             self.failed = True
 
 
-def execute(artifact, parent, *, file_diagnostic=False):
+def execute(artifact, parent, *, file_diagnostic=False, file_owner=False):
     status = dict(schema='coh-owned-profile-inert-supervision-v1', passed=False,
                   first_failure='NONE', first_cleanup_failure='NONE',
                   accepted_build_reused=False, compiler_or_model_reexecuted=False,
@@ -339,6 +363,7 @@ def execute(artifact, parent, *, file_diagnostic=False):
                   raw_output_exported=False, service_readiness_qualified=False,
                   source_generation_admitted=False, world_authority=False,
                   file_diagnostic_requested=file_diagnostic,
+                  explicit_file_owner_requested=file_owner,
                   changed_helper_compiled_only=False,
                   accepted_probe_or_model_reexecuted=False,
                   new_helper_compiler_invocations=0)
@@ -351,8 +376,15 @@ def execute(artifact, parent, *, file_diagnostic=False):
     parent_created = False
     stage = 'ARTIFACT_ADMISSION'
     try:
+        need(not (file_diagnostic and file_owner), 'HELPER_MODE')
         images = admit_artifact(artifact)
         status['accepted_build_reused'] = True
+        if file_owner:
+            stage = 'FILE_OWNER_ADMISSION'
+            images['OwnedProfileProcess.exe'] = admit_file_owner(artifact)
+            status['changed_helper_compiled_only'] = True
+            status['compiler_or_model_reexecuted'] = True
+            status['new_helper_compiler_invocations'] = 1
         if file_diagnostic:
             stage = 'DIAGNOSTIC_ADMISSION'
             images['OwnedProfileProcess.exe'] = admit_file_diagnostic(artifact)
@@ -403,7 +435,7 @@ def execute(artifact, parent, *, file_diagnostic=False):
             time.sleep(0.02)
         status['outer_process_exit_observed'] = True
         stage = 'HELPER_RECEIPT'
-        native_receipt = parse_receipt(bytes(pipes[0].data), file_diagnostic=file_diagnostic)
+        native_receipt = parse_receipt(bytes(pipes[0].data), file_diagnostic=file_diagnostic or file_owner)
         status['helper_receipt_valid'] = True
         status['inner_cleanup_observed'] = native_receipt['cleanup_complete']
         status['private_journal_may_remain'] = not native_receipt['cleanup_complete']
@@ -491,7 +523,9 @@ def main():
     parser.add_argument('--artifact-dir', type=Path, required=True)
     parser.add_argument('--private-parent', type=Path, required=True)
     parser.add_argument('--public-out', type=Path, required=True)
-    parser.add_argument('--file-diagnostic', action='store_true')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--file-diagnostic', action='store_true')
+    mode.add_argument('--file-owner', action='store_true')
     args = parser.parse_args()
     # Before mutation, require the explicit disposable CI host and a fresh
     # public directory. No username/SID/profile/packet/log selector is accepted.
@@ -501,7 +535,7 @@ def main():
          os.environ.get('GITHUB_REF') == 'refs/heads/native-android', 'HOST')
     args.public_out.mkdir(parents=False, exist_ok=False)
     status, native_receipt = execute(args.artifact_dir, args.private_parent,
-                                     file_diagnostic=args.file_diagnostic)
+                                     file_diagnostic=args.file_diagnostic, file_owner=args.file_owner)
     (args.public_out/'supervision.json').write_text(json.dumps(status, indent=2)+'\n', encoding='utf-8')
     if native_receipt is not None:
         (args.public_out/'inert-result.json').write_text(json.dumps(native_receipt, indent=2)+'\n', encoding='utf-8')
