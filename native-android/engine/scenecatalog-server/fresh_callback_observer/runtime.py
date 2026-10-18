@@ -1,4 +1,5 @@
 """Optional source-profile wiring only; no process startup or authority gates."""
+from pathlib import Path
 from . import probe,stage
 ROLE=stage.ROLE
 
@@ -13,6 +14,23 @@ def source_paths(root):
 def precreate(compiled,path):
  if not enabled(compiled):return None
  try:return probe.precreate(path)
+ except Exception:return None
+
+def probe_windows_path(owner,catalog,catalog_windows):
+ """Use the existing admitted C-drive destination for the same owned sidecar.
+
+ The generic Unix-to-Wine helper uses Z:, whose reparse drive root is refused
+ by the unchanged source sink path policy. This function creates no mapping,
+ file or directory and never weakens that policy.
+ """
+ try:
+  probe.require(type(owner) is probe.ProbeOwner)
+  catalog=Path(catalog)
+  probe.require(catalog_windows==r'C:\coh-native-catalog\catalog.cohcat'
+   and catalog.is_absolute() and catalog.name=='catalog.cohcat'
+   and owner.path==catalog.parent/'source-profile-probe.json')
+  probe.require(probe._path_info(owner).st_size==0)
+  return r'C:\coh-native-catalog\source-profile-probe.json'
  except Exception:return None
 
 def bind(owner,child,streams,children,handles):

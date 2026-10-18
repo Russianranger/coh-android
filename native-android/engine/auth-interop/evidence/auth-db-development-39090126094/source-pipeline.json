@@ -1,0 +1,304 @@
+{
+  "files": {
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c": {
+      "bytes": 13642,
+      "functions": [
+        {
+          "bytes": 1678,
+          "line": 175,
+          "name": "db_service",
+          "offset": 9013,
+          "sha256": "70c1e060ea1c406298d185806107ac5f4731aa242627645a20f9cecddd618940"
+        }
+      ],
+      "sha256": "36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6"
+    },
+    "native-android/engine/dbclient/coh_db_session.c": {
+      "bytes": 18827,
+      "functions": [
+        {
+          "bytes": 565,
+          "line": 85,
+          "name": "message_command",
+          "offset": 5067,
+          "sha256": "389994ca84d5166da707cdf15e295d9fce5542a80babedff2acbaf4fc3379303"
+        },
+        {
+          "bytes": 3002,
+          "line": 94,
+          "name": "application_message",
+          "offset": 5633,
+          "sha256": "f4f451d01e659370897d1d1643b911412b7f355c10366bd2c1d28ee9d6e57bba"
+        },
+        {
+          "bytes": 2155,
+          "line": 138,
+          "name": "coh_db_session_service",
+          "offset": 8636,
+          "sha256": "e7d81733678de55659918014e5eac62e07760842f546932a1adeb02975a13c61"
+        }
+      ],
+      "sha256": "ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9"
+    },
+    "native-android/engine/dbclient/coh_dbclient.c": {
+      "bytes": 10892,
+      "sha256": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd"
+    },
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": {
+      "bytes": 3733,
+      "sha256": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea"
+    },
+    "upstream/ouroboros/Common/comm_backend.h": {
+      "bytes": 34962,
+      "sha256": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c"
+    },
+    "upstream/ouroboros/DBServer/src/accountservercomm.c": {
+      "bytes": 91219,
+      "functions": [
+        {
+          "bytes": 287,
+          "line": 95,
+          "name": "accountLink",
+          "offset": 3227,
+          "sha256": "28c2a370464c766ae7ce70e5e3e148a34f33c31103ea1ed64e59faa98e64009c"
+        },
+        {
+          "bytes": 415,
+          "line": 526,
+          "name": "account_clientCountFailure",
+          "offset": 18407,
+          "sha256": "10c94d7b9190d6867f668064dae9e5162d30e317a4a1730b7269488deb937167"
+        },
+        {
+          "bytes": 319,
+          "line": 551,
+          "name": "account_clientAccountServerUnavailable",
+          "offset": 19183,
+          "sha256": "f39f8a840cecbdf9cd798147b38855a987e93a31bb0ac8a330328a9ce689d275"
+        },
+        {
+          "bytes": 588,
+          "line": 2128,
+          "name": "account_handleProductCatalog",
+          "offset": 75149,
+          "sha256": "aa528c2657745d1563796f7aae63134100f6432f115c477aa696f2bde61c2b9e"
+        },
+        {
+          "bytes": 440,
+          "line": 2080,
+          "name": "account_handleAccountRegister",
+          "offset": 73906,
+          "sha256": "40d5ae1114782dfaf847e193837d3749b41d6e3d507b72eaa44e11bbb5437443"
+        },
+        {
+          "bytes": 644,
+          "line": 2251,
+          "name": "account_handleLoyaltyAuthUpdate",
+          "offset": 79125,
+          "sha256": "a5ab40dd46115272dcf03e081b0481e198e1b8d313d033b514472029c17a9092"
+        },
+        {
+          "bytes": 1369,
+          "line": 2357,
+          "name": "account_handleAccountInventoryRequest",
+          "offset": 82467,
+          "sha256": "59c32272bdbf0cadd2b4f40fddbfe8d6e3ba274aad7d33e39ca9887a23a341d7"
+        },
+        {
+          "bytes": 1294,
+          "line": 193,
+          "name": "accountInventoryRelayToClient",
+          "offset": 6694,
+          "sha256": "8746b10d88237044551d46d724e52169d22836eb4d39dbb9c5b468d5ffc28eaf"
+        }
+      ],
+      "sha256": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae"
+    },
+    "upstream/ouroboros/DBServer/src/clientcomm.c": {
+      "bytes": 106417,
+      "functions": [
+        {
+          "bytes": 7714,
+          "line": 865,
+          "name": "handleLogin",
+          "offset": 30594,
+          "sha256": "a8807d58e5656361ebdd35083797060d6cde98b95a3d9b30749a2d26bcb944ca"
+        },
+        {
+          "bytes": 1155,
+          "line": 1039,
+          "name": "clientcomm_PlayerLogin",
+          "offset": 38310,
+          "sha256": "9a9918237e76b24905f3f2d537756edd19e97d1a32e5a22889859bec3377b6f6"
+        },
+        {
+          "bytes": 306,
+          "line": 531,
+          "name": "sendPlayers",
+          "offset": 18875,
+          "sha256": "6b27f98ee138d812adbf7ec86a4f5ba9dde3f0aac69e3932b49dd9c2ac9b294c"
+        },
+        {
+          "bytes": 479,
+          "line": 517,
+          "name": "finishSendingPlayers",
+          "offset": 18394,
+          "sha256": "5f25345143cd4c5692f25413f46cdc8af312da1a05e6a8d86125bb65c03e9ade"
+        },
+        {
+          "bytes": 807,
+          "line": 475,
+          "name": "getEnts_sendPlayers",
+          "offset": 16826,
+          "sha256": "cc549d32c5098deaac2abb2109f81d09f96fde2ab12ed876d69599789ee296ff"
+        },
+        {
+          "bytes": 10253,
+          "line": 144,
+          "name": "sqlGetPlayersCallback",
+          "offset": 3985,
+          "sha256": "ffd08f2eb64c9a2de335d5bcebad42efbe8dafa39ba57fbe665856fc31e57481"
+        },
+        {
+          "bytes": 1051,
+          "line": 2112,
+          "name": "handleShardAccountContainerLoaded",
+          "offset": 76568,
+          "sha256": "7a4dbbf3726bca68d2c815afecd17377f13ed81185573dda048bc3d2da792380"
+        }
+      ],
+      "sha256": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c"
+    },
+    "upstream/ouroboros/DBServer/src/queueservercomm.c": {
+      "bytes": 16211,
+      "functions": [
+        {
+          "bytes": 556,
+          "line": 445,
+          "name": "dbClient_createPacket",
+          "offset": 14774,
+          "sha256": "32302b5ad2ce736510d78a70eae138acebd5882449e7377a1a312d3a9b9e0d65"
+        }
+      ],
+      "sha256": "ff79a4c2117bae3fad090248cdba96780336f1f4fc9acec962f65b4bddf7dbc3"
+    },
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": {
+      "bytes": 37577,
+      "functions": [
+        {
+          "bytes": 3812,
+          "line": 1052,
+          "name": "dbConnect",
+          "offset": 31041,
+          "sha256": "32df763d39b7c9403fb4bdad4f666eb3334fa4a015f1886bc8776900b3f3897e"
+        },
+        {
+          "bytes": 2591,
+          "line": 591,
+          "name": "dbHandleMessage",
+          "offset": 18716,
+          "sha256": "9c8fc5cbb7c89196e8ff6a6711f3262c57409fe22141b79ff7cf139fa5a2ac59"
+        }
+      ],
+      "sha256": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": {
+      "bytes": 21748,
+      "sha256": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+    }
+  },
+  "normalized_enum": {
+    "base": 2,
+    "base_definition_path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h",
+    "bytes": 1202,
+    "catalogue": [
+      {
+        "normalized_id": 2,
+        "symbol": "DBGAMESERVER_SEND_PLAYERS"
+      },
+      {
+        "normalized_id": 3,
+        "symbol": "DBGAMESERVER_MSG"
+      },
+      {
+        "normalized_id": 4,
+        "symbol": "DBGAMESERVER_MAP_CONNECT"
+      },
+      {
+        "normalized_id": 5,
+        "symbol": "DBGAMESERVER_DELETE_OK"
+      },
+      {
+        "normalized_id": 6,
+        "symbol": "DBGAMESERVER_SEND_COSTUME"
+      },
+      {
+        "normalized_id": 7,
+        "symbol": "DBGAMESERVER_SEND_POWERSET_NAMES"
+      },
+      {
+        "normalized_id": 8,
+        "symbol": "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT"
+      },
+      {
+        "normalized_id": 9,
+        "symbol": "DBGAMESERVER_ACCOUNTSERVER_CATALOG"
+      },
+      {
+        "normalized_id": 10,
+        "symbol": "DBGAMESERVER_ACCOUNTSERVER_CLIENTAUTH"
+      },
+      {
+        "normalized_id": 11,
+        "symbol": "DBGAMESERVER_ACCOUNTSERVER_PLAYNC_AUTH_KEY"
+      },
+      {
+        "normalized_id": 12,
+        "symbol": "DBGAMESERVER_ACCOUNTSERVER_NOTIFYREQUEST"
+      },
+      {
+        "normalized_id": 13,
+        "symbol": "DBGAMESERVER_ACCOUNTSERVER_INVENTORY"
+      },
+      {
+        "normalized_id": 14,
+        "symbol": "DBGAMESERVER_ACCOUNTSERVER_UNAVAILABLE"
+      },
+      {
+        "normalized_id": 15,
+        "symbol": "DBGAMESERVER_CONPRINT"
+      },
+      {
+        "normalized_id": 16,
+        "symbol": "DBGAMESERVER_RENAME_RESPONSE"
+      },
+      {
+        "normalized_id": 17,
+        "symbol": "DBGAMESERVER_UNLOCK_CHARACTER_RESPONSE"
+      },
+      {
+        "normalized_id": 18,
+        "symbol": "DBGAMESERVER_CHECK_NAME_RESPONSE"
+      },
+      {
+        "normalized_id": 19,
+        "symbol": "DBGAMESERVER_LOGIN_DIALOG_RESPONSE"
+      },
+      {
+        "normalized_id": 20,
+        "symbol": "DBGAMESERVER_QUEUE_POSITION"
+      },
+      {
+        "normalized_id": 21,
+        "symbol": "DBGAMESERVER_CAN_START_STATIC_MAP_RESPONSE"
+      }
+    ],
+    "is_actual_received_command_witness": false,
+    "legacy_wire_offset": 5,
+    "offset": 20424,
+    "path": "upstream/ouroboros/Common/comm_backend.h",
+    "protocol": 20110614,
+    "sha256": "78382f5b5680e3ca0757f607b5649aa85cbeff38a022d2475579dbfa7f82fe56"
+  },
+  "source_commit": "ed77036d1b7f7e47588d74408506d738293643a9"
+}

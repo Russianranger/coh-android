@@ -1,0 +1,3 @@
+Source-only follow-up: preserve the admitted C-drive spelling returned by capture_destination for the same exact precreated probe sidecar. The new optional alias function checks the catalog contract and original owned host path/file/parent identity; refusal adds no probe environment setting. GROUPS/source predicates, cleanup, LOCAL6 overlays and the retained PE remain unchanged.
+
+The proof records three targeted Python methods only; F replayed no tests or runtime. The actual39088537547 probe was UNAVAILABLE, so installer execution, quiescence and first source-envelope cause remain unestablished. Its exact ZIP is referenced in the prior F evidence directory rather than duplicated here.

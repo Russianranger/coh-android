@@ -1,0 +1,18 @@
+{
+  "actual_capture_module_import_executed": false,
+  "actual_native_loader_compiler_services_executed": false,
+  "actual_subprocess_executed": false,
+  "cases": 54,
+  "helper_sha256": "7bcafe470fde547f497fced3605704eaf277715866045824b5407ef56da641d4",
+  "historical_64_mocks_replayed": false,
+  "methods": 5,
+  "missing_evidence_metadata_fails_closed": true,
+  "mocked_only": true,
+  "old_151_or_new_123_CLI_controls_reexecuted": false,
+  "passed": true,
+  "retained_bytes_read_without_execution": true,
+  "schema": "coh-editmsg-receiver-specialization-mocked-controls-v1",
+  "source_generation_admitted": false,
+  "test_sha256": "12f014de25ba81fe73cec2deff9394477be293738826fbee79e472abea4e5f22",
+  "world_authority": false
+}

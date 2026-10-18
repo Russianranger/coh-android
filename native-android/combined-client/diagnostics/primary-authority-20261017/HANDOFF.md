@@ -5,7 +5,86 @@ Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical
 Git links, existing bundles, accepted APKs and user profiles were preserved.
 
-## Development-driver checkpoint — 2026-10-18
+## EDITMSG scene checkpoint — 2026-10-18
+
+Publication parent is independently verified remote
+`ed77036d1b7f7e47588d74408506d738293643a9`, tree
+`04d74f572784c3762856267c3ab1b1c32ff888c0`. The source below is integrated for
+one newly justified matching scene/initial transaction; its outcome is pending.
+Historical checkpoints preserve their original states.
+
+| Worker | Integrated result | Current limit |
+|---|---|---|
+| A | Exact owned C-drive source-probe alias;3 focused methods and E/F source proof. Existing observer PE/LOCAL6 remain byte-identical | New actual source envelope/generation still required; old UNAVAILABLE diagnostic cannot establish installer execution or first envelope cause |
+| B | Actual Windows development artifact and98-source pipeline/registry/job review preserved once; nonce registry lifecycle now exercised successfully | Full current CLIENT namespace/material/composite/swaps/LOD/world-resource authority remains open |
+| C | Source-fixed complete bounded standalone SERVER_EDITMSG body;22 transactions plus17058 parser cases per release/ASan/UBSan; explicit handled-control result, release/cancel rollback and unchanged deadline | No complete initial character/current dictionary/costume/actor state or ACK. Actual EDITMSG subtype/text/producer remain unknown |
+| D | New actual Win64 probe/zlib build, native platform preflight, fresh AuthAUTHORIZED and one DB LOGIN queued, strict cleanup all passed | Overall real Auth-to-DB player-list experiment failed UNSUPPORTED with3 unsupported messages and0 admitted lists; command identities/cause remain unobserved. New isolated received-header-prefix observation is in progress separately |
+| E | Independent C/A/new-preflight/workflow gate reviews clear; retained actual typed Android13 x86 GLES and both-ABI NDK evidence unchanged | Current world/player producers, app-owned window/context interface, ARM64 execution and physical Thor remain open |
+| F | Exact C79/source-function and new receiver43/binary/build/status bindings, current351-pin workflow and new destination specialization reviewed | No global memory/RSS/driver overlap fit or startup speedup measured |
+
+Root's new executable controls run only five EDITMSG scenarios plus no-argument
+entry:123 checks in each release/ASan/UBSan mode. Original source sender fixtures
+cover both bit layouts/all four source types; all eight original input files are
+in the final1813-entry raw/Git before/after audit. An initial audit omitted three
+original fixture files, was retained as v1, then corrected and only the new
+controls repeated. All three ELF files and15 fixed stdout files remain byte
+identical; no duplicate release ELF is stored. Final build source is
+`ff619af0d85a63935f00634625941dce8749497b`; raw receipt253380B SHA
+`9a98f3eaa315f6a00c7588bcee33fc5829b10ca8784975e6c05d6fe8255691f1`,
+canonical gzip88717B SHA`31f0d65c33e9e9725ee019d911300a59e26ccaf8a21db6f10d9a45178938c4d6`.
+The exact180424B release SHA is
+`096f0c1845c4ddf74d0b55afe772da1b19e8bf116811fe5d23a66964978c5db9`.
+Its43 compiler/helper inputs are current; the broader1813 audit is historical
+qualification input provenance, not a promise that every unrelated future file
+remains globally current. Old151-qualified bytes/proofs/helper are unchanged.
+
+The distinct new destination helper preserves16 old core AST definitions and
+copy/import/rollback flow, with a separately fixed evidence profile and current
+workflow handling. Five new methods/54 mock cases pass at repository paths;
+no native/loader/compiler/project-capture import/service executes in those mocks.
+The new workflow freezes350 nonself source/artifact/proof pins plus its current
+Git workflow as351st, before project imports or runtime. The old278 map changes
+only A's4 qualified source files, C/header/map/checker's3 qualified files and
+the workflow itself. It uses the same admitted graphical fixture/observer PE,
+reuses the already tracked exact observer ZIP, recovers only the missing unchanged
+DbServer donor, and performs real loader/noargs admission on the fresh destination.
+No old151/6120/43/26 suites, source default-body capture or MapServer build repeats.
+Summary execution is conditional on source admission even on failure. Public
+exports remain only the fixed status/tooling, four approved source payloads and
+manifest, and optional fresh-fixture-only two-file raw initial observation.
+
+Actual Windows run [39090126094](https://github.com/Russianranger/coh-android/actions/runs/39090126094)
+at the publication parent passed new source admission/recovery, new Win64 native
+probe+zlib compilation, real primary-thread identity/resume and job-empty cleanup,
+no-socket RAND/self-MD5/WSA preflight, ordinary registry/service/UserData/membership
+setup and original DbReady. Its failed native transaction observed AuthAUTHORIZED,
+4 Auth frames,1 DB LOGIN queued, WAIT_PLAYERS/UNSUPPORTED,3 unsupported messages,
+0 admitted complete lists,0 choices/handoffs and one UDP socket created/closed.
+Before/after generations/channel/listener/99 tables remained stable; native,
+registry, service, firewall, LocalDB, source/candidate/private cleanup passed.
+Unsupported count alone identifies neither actual headers nor a terminal producer;
+a supported body refusal and the new owner's strict unsupported-count gate must
+remain distinct. No complete DB login/list, normal version/checksum, server skip
+branch or Map handoff is accepted.
+
+Exact artifact12122124306 is16275B SHA
+`4b96a2fe31f1612ab90b47a6371584010f3d862be8a456e6537bbd6f6c732ee3`;
+original CRLF receipt70557B SHA
+`d3d8382330622f4dfc19ae105b5cb87674ce79411f284f6935a159eac33f8889`.
+It is retained under `engine/auth-interop/evidence/auth-db-development-39090126094`
+with fixed API/source/strict-scope review. No grant or credential is exported or
+reused. Earlier selected-shard caps1024/7 real AC_PLAY_OK evidence remains accepted
+within its own scope; those grants were wiped and no wire-segmentation claim follows.
+
+Initial owner wrappers total2400B (+16); diagnostics1032B and borrowed lease1344B.
+No text heap/copy was added. These sizes do not establish aggregate policy/RSS fit.
+Accepted warm startup remains387340ms;96MiB remains a named working-set policy.
+All Gates25–27 stay open. No new Android initial-receiver build/execution, integrated
+world/player, meaningful APK, AYN Thor test or application ACK is claimed. Accepted
+Session0.3.0/Combined0.1.7/Support0.2.0 code201 and all protected gameplay source,
+profiles, imports, characters, signatures and old evidence are preserved.
+
+## Prior development-driver checkpoint — ed770 (historical)
 
 Publication parent is independently verified remote
 `77af974e93324fadc61b4d3fb3f5b4ca15636ba7` (tree

@@ -7,9 +7,22 @@
 #include "../local/test_ui_peer.c"
 #pragma GCC diagnostic pop
 #undef main
+#ifdef COH_INITIAL_EDITMSG_PEER
+#include "editmsg-fixtures.h"
+#endif
 static const char *initial_mode;
 static unsigned initial_requests,initial_responses,initial_replays,forbidden_commands;
 static uint8_t initial_bytes[65536];
+#ifdef COH_INITIAL_EDITMSG_PEER
+static void initial_editmsg(Peer*p,CohNetEndpoint target,uint32_t ack,unsigned malformed,unsigned overlong){
+ /* Fixture 17: packed type3,257 bytes, from whole original sendEditMessage. */
+ unsigned index=overlong?39:17;
+ if(editmsg_fixtures[index].aligned){
+  uint8_t encoded[COH_NET_MESSAGE_MAX];size_t raw=(editmsg_fixtures[index].bits+7)/8;uint32_t tail=(uint32_t)raw-4;memcpy(encoded,editmsg_fixtures[index].data,4);for(unsigned i=0;i<4;i++)encoded[4+i]=(uint8_t)(tail>>(8*i));uLongf count=sizeof(encoded)-8;CHECK(compress2(encoded+8,&count,editmsg_fixtures[index].data+4,tail,9)==Z_OK);ui_message(p,target,encoded,(count+8)*8,ack,1);
+ }else ui_message(p,target,editmsg_fixtures[index].data,editmsg_fixtures[index].bits-malformed,ack,0);
+ initial_responses++;
+}
+#endif
 static void initial_packet(Peer*p,CohNetEndpoint target,uint32_t ack){
  memset(initial_bytes,0,sizeof(initial_bytes));
  /* Explicit synthetic byte-aligned ALLENTS header plus opaque raw tail.
@@ -37,6 +50,13 @@ static void initial_handle(UiPeer*u,unsigned map){
  for(unsigned i=0;i<16;i++)if(reply_cache[1][i].request_id==packet.id){ReplyCache*saved=&reply_cache[1][i];CHECK(packet.payload_bits==saved->input.payload_bits&&!memcmp(packet.payload,saved->input.payload,(packet.payload_bits+7)/8));for(unsigned j=0;j<saved->count;j++)frame_send(p,u->map_target,5,&saved->replies[j]);initial_replays++;initial_report(u);return;}
  if(u->map_phase!=5||initial_requests){u->failed=1;forbidden_commands++;stopped=1;initial_report(u);return;}
  initial_requests++;u->map_phase=6;recording=&reply_cache[1][reply_cursor[1]++%16];memset(recording,0,sizeof(*recording));recording->request_id=packet.id;recording->input=packet;
+ #ifdef COH_INITIAL_EDITMSG_PEER
+ if(!strncmp(initial_mode,"editmsg-",8)){
+  initial_editmsg(p,u->map_target,packet.id,!strcmp(initial_mode,"editmsg-malformed"),!strcmp(initial_mode,"editmsg-limit"));
+  if(!strcmp(initial_mode,"editmsg-captured"))initial_packet(p,u->map_target,packet.id);
+  else if(!strcmp(initial_mode,"editmsg-unknown")){CohNetPacket reply;CohProtocolBits out;response(p,15,&reply,&out);reply.payload_bits=(uint32_t)out.bit_length;reply.ack_count=1;reply.acks[0]=packet.id;ui_frame_send(p,u->map_target,5,&reply);initial_responses++;}
+ }else
+ #endif
  if(!strcmp(initial_mode,"none")){CohNetPacket ack=control(5,++p->id,0,0,0);ack.ack_count=1;ack.acks[0]=packet.id;ui_frame_send(p,u->map_target,5,&ack);}
  else if(!strcmp(initial_mode,"unknown")){CohNetPacket reply;CohProtocolBits out;response(p,15,&reply,&out);reply.payload_bits=(uint32_t)out.bit_length;reply.ack_count=1;reply.acks[0]=packet.id;ui_frame_send(p,u->map_target,5,&reply);initial_responses++;}
  else initial_packet(p,u->map_target,packet.id);
@@ -44,7 +64,11 @@ static void initial_handle(UiPeer*u,unsigned map){
 }
 int main(int argc,char**argv){
  if(argc!=6||strcmp(argv[1],"--serve")||strcmp(argv[2],"--report")||strcmp(argv[4],"--mode"))return 2;
- initial_mode=argv[5];if(strcmp(initial_mode,"captured")&&strcmp(initial_mode,"unknown")&&strcmp(initial_mode,"badheader")&&strcmp(initial_mode,"none"))return 2;
+ initial_mode=argv[5];if(strcmp(initial_mode,"captured")&&strcmp(initial_mode,"unknown")&&strcmp(initial_mode,"badheader")&&strcmp(initial_mode,"none")
+ #ifdef COH_INITIAL_EDITMSG_PEER
+ &&strcmp(initial_mode,"editmsg-captured")&&strcmp(initial_mode,"editmsg-unknown")&&strcmp(initial_mode,"editmsg-malformed")&&strcmp(initial_mode,"editmsg-limit")&&strcmp(initial_mode,"editmsg-none")
+ #endif
+ )return 2;
  UiPeer u={0};u.report=argv[3];u.selected_slot=UINT32_MAX;u.db=peer_open();u.map=peer_open();signal(SIGTERM,stop_peer);signal(SIGINT,stop_peer);uint64_t deadline=milliseconds()+180000;initial_report(&u);
  printf("{\"pid\":%ld,\"db_port\":%u,\"map_port\":%u,\"scripted_source_layout\":true,\"real_server_interoperability\":false}\n",(long)getpid(),u.db.endpoint.port,u.map.endpoint.port);fflush(stdout);
  while(!stopped&&milliseconds()<deadline){struct pollfd fds[2]={{u.db.fd,POLLIN,0},{u.map.fd,POLLIN,0}};int status=poll(fds,2,100);if(status<0){if(stopped)break;u.failed=1;break;}for(unsigned i=0;i<2;i++)if(fds[i].revents&POLLIN)initial_handle(&u,i);}

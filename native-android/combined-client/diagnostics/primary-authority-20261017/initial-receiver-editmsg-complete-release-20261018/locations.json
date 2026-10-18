@@ -1,0 +1,20 @@
+{
+  "schema": "coh-editmsg-complete-receiver-evidence-location-v1",
+  "build_source_revision": "ff619af0d85a63935f00634625941dce8749497b",
+  "build_receipt_bytes": 253380,
+  "build_receipt_sha256": "9a98f3eaa315f6a00c7588bcee33fc5829b10ca8784975e6c05d6fe8255691f1",
+  "gzip_bytes": 88717,
+  "gzip_sha256": "31f0d65c33e9e9725ee019d911300a59e26ccaf8a21db6f10d9a45178938c4d6",
+  "ELF_reused_exact_path": "native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-editmsg-release-20261018/coh-capture-local-initial",
+  "ELF_bytes": 180424,
+  "ELF_sha256": "096f0c1845c4ddf74d0b55afe772da1b19e8bf116811fe5d23a66964978c5db9",
+  "fixed_status_stdout_reused_exact_directory": "native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-editmsg-release-20261018",
+  "all_three_ELF_files_and_fifteen_stdout_bytes_identical_to_v1": true,
+  "v1_outer_audit_omitted_three_original_fixture_files": true,
+  "v2_all_eight_original_fixture_raw_Git_bytes_in_outer_bracket": true,
+  "source_pins": 1813,
+  "new_checks_each_mode": 123,
+  "old151_reexecuted": false,
+  "genuine_server_interoperability": false,
+  "world_authority": false
+}

@@ -1,0 +1,5 @@
+Complete v2 EDITMSG receiver reuse review. The final receipt binds1813 raw/Git input files, including all eight original EDITMSG source files, and reports123 focused controls in each of release, ASan and UBSan. F verified every recorded raw SHA and Git blob/mode, then independently derived42 compiler project dependencies plus the checker as the43-file runtime source map.
+
+The v2 production executables and all15 fixed stdout files are byte-identical to v1. The canonical release executable and statuses remain in the existing primary evidence directory; this review duplicates neither. The earlier v1 receipt remains an audit-incomplete historical record; the v2 gzip is the authoritative complete receipt.
+
+Static ELF inspection confirms x86_64 PIE, the fixed loader, libz1/libcrypto3/libc6, required symbol versions up to GLIBC2.34, no RPATH/RUNPATH, NOW binding and a nonexecuting stack. F performed dependency preprocessing and readelf inspection only, with no object build, tests, loader smoke or native execution. Destination loader/noargs admission remains separate, and normal version/reference checksum, actor/world/ACK/RSS claims remain blocked.

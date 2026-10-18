@@ -294,7 +294,7 @@ def capture(args):
   advance(report,'WINE_VERSION')
   out,_=run('wine-version',[args.wine,'--version'],work,os.environ.copy(),15);report['wine_version']=base.wine_version(d.read(out,1024))
   environment={key:value for key,value in os.environ.items() if not key.startswith(('PG','COH_'))};environment.update(WINEARCH='win32',WINEPREFIX=str(work/'wine-prefix'),WINEDEBUG='-all',WINEDLLOVERRIDES='winemenubuilder.exe=d;mscoree=d;mshtml=d',TZ='UTC',LANG='C.UTF-8')
-  advance(report,'WINE_BOOT');run('wineboot',[args.wine,'wineboot','--init'],work,environment,180);catalog,_=base.capture_destination(work);source_capture=catalog.parent/'live.cohgtx';source_capture_windows=r'C:\coh-native-catalog\live.cohgtx'
+  advance(report,'WINE_BOOT');run('wineboot',[args.wine,'wineboot','--init'],work,environment,180);catalog,catalog_windows=base.capture_destination(work);source_capture=catalog.parent/'live.cohgtx';source_capture_windows=r'C:\coh-native-catalog\live.cohgtx'
   advance(report,'RUNTIME_STAGE')
   runtime=work/'map-runtime';source_inventory=base.inventory(source,runtime);report['runtime_inventory']=source_inventory
   db_runtime=work/'db-runtime';db_runtime.mkdir(mode=0o700)
@@ -325,7 +325,8 @@ def capture(args):
   map_env=dict(environment,COH_GAME_LOOPBACK_ONLY='1',COH_NATIVE_GROUPS_TRANSACTION_OUTPUT=source_capture_windows)
   if fresh_runtime is not None:
    source_probe_owner=fresh_runtime.precreate(compiled,source_capture.parent/'source-profile-probe.json')
-   if source_probe_owner is not None:map_env['COH_NATIVE_GROUPS_PROFILE_PROBE_OUTPUT']=base.windows_path(source_probe_owner.path)
+   source_probe_windows=fresh_runtime.probe_windows_path(source_probe_owner,catalog,catalog_windows)
+   if source_probe_windows is not None:map_env['COH_NATIVE_GROUPS_PROFILE_PROBE_OUTPUT']=source_probe_windows
   advance(report,'MAPSERVER_START');map_process,map_out,map_err=start('map',[args.wine,base.windows_path(runtime/'MapServer.exe'),'-nogui','-db','127.0.0.1','-nosharedmemory','-nostats','-udp','7001','-tcp','0','-map_id','1','-donotautogroup'],runtime,map_env)
   if fresh_runtime is not None:fresh_runtime.bind(source_probe_owner,map_process,handles[-2:],children,handles)
   policy=importlib.import_module('game_evidence')

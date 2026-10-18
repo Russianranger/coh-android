@@ -1,0 +1,164 @@
+{
+  "actor_publication": false,
+  "actual_loaded_mappings_verified": false,
+  "admit_AST_equals_old_after_only_schema_and_123_to_151_15_to_12_normalization": true,
+  "application_ACK_permitted": false,
+  "artifact_review": {
+    "canonical_ELF_or_statuses_duplicated": false,
+    "fixed_inputs_raw_bytes_and_hashes_verified": true,
+    "native_original_sender_source_files_checked": 8,
+    "native_project_dependencies": 43,
+    "native_source_revision": "ff619af0d85a63935f00634625941dce8749497b",
+    "new_original_build_receipt_bytes": 253380,
+    "new_original_build_receipt_sha256": "9a98f3eaa315f6a00c7588bcee33fc5829b10ca8784975e6c05d6fe8255691f1",
+    "readelf_text_files_checked": 4,
+    "safe_status_files_checked": 15
+  },
+  "changed_existing_definitions": [
+    "admit",
+    "admit_gate",
+    "evidence"
+  ],
+  "closed_review_findings": [
+    "Historical workflow self hash is replaced only by current workflow required in live gate and Git admission.",
+    "A follow-up fix qualification runtime flags are checked separately from historical actual failed observation.",
+    "Fixed metadata accepts existing engine evidence paths as well as diagnostics paths.",
+    "Portable test resolves repository ancestry and reads native43 from canonical retained F review; no external scratch-map file."
+  ],
+  "compiler_or_loader_or_ELF_executed_by_reviewer": false,
+  "complementary_review": "E independently read exact 7bcafe470 helper gate/metadata and reported clear; no execution.",
+  "copy_requirement": "Bind the production copy to the exact reviewed helper hash. A repository-only mock-test output-path adjustment may be separately recorded without changing production helper.",
+  "crypto_RNG_or_protocol_functionality_verified": false,
+  "current_review_checkout_revision": "10d429cb163bc9bd6e1de6862998a89b447a4fd8",
+  "fixed_evidence_inputs": {
+    "native-android/combined-client/diagnostics/continuation-f-20261017/initial-editmsg-20261018/review.json": {
+      "bytes": 17912,
+      "sha256": "8f963e9330dd9768f5586d72e1f9af2971902125d47a999c1d57b150b65c7947"
+    },
+    "native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-editmsg-release-reuse-review-20261018/review.json": {
+      "bytes": 23851,
+      "sha256": "c9d2c3d7c48d644d5afd4eeb18090c27afe52464ffc04ed81ef883ea278e7588"
+    },
+    "native-android/combined-client/diagnostics/continuation-f-20261017/workflow-fresh-groups-observation-20261018/review.json": {
+      "bytes": 43347,
+      "sha256": "ba53d4ef8070bf7d642fe6424d0c6dce7fcc808382b66a77103407616cd0e0bb"
+    },
+    "native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-editmsg-complete-release-20261018/build.json.gz": {
+      "bytes": 88717,
+      "sha256": "31f0d65c33e9e9725ee019d911300a59e26ccaf8a21db6f10d9a45178938c4d6"
+    },
+    "native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-editmsg-release-20261018/coh-capture-local-initial": {
+      "bytes": 180424,
+      "sha256": "096f0c1845c4ddf74d0b55afe772da1b19e8bf116811fe5d23a66964978c5db9"
+    },
+    "native-android/combined-client/tools/admit_retained_initial_receiver.py": {
+      "bytes": 25818,
+      "sha256": "ea4a34bca0610c52ca7bc00184b59aac2cbbaafdc3422a09927521cb115ce897"
+    },
+    "native-android/engine/initial-capture/qualification/initial-editmsg-2f8337277-binding.json": {
+      "bytes": 8576,
+      "sha256": "7bda85486ab4ff6934701ee9fa9022fc6a24ddc57c8a03bc334722231bbdb9f4"
+    },
+    "native-android/engine/initial-capture/qualification/initial-editmsg-2f8337277.json.gz": {
+      "bytes": 6750,
+      "sha256": "38285e20e89f909bdb8aa4a5eb07fa782e6f6bfd44d21cc7d25220c23ac1e88d"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-39086864926/compile-only-receipt.json": {
+      "bytes": 3794,
+      "sha256": "0daf56e8dcae5d40ab9d5ef08bc09d022eba0a9a609170ce6d1ce867b2ca18c5"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/probe-drive-alias-followup.json": {
+      "bytes": 6860,
+      "sha256": "1ac05fa9145d63c218c389c88263ba26eb67a3a80139d587671ac79eea6591e3"
+    }
+  },
+  "full_system_or_toolchain_closure_verified": false,
+  "future_destination_loader_verify_list_and_noargs_smoke_already_executed": false,
+  "immutable_old_helper": {
+    "bytes": 25818,
+    "sha256": "ea4a34bca0610c52ca7bc00184b59aac2cbbaafdc3422a09927521cb115ce897"
+  },
+  "new_5_mock_methods_reexecuted_by_reviewer": false,
+  "new_definition": [
+    "frozen_metadata"
+  ],
+  "old_151_or_new_123_controls_reexecuted": false,
+  "owner_mock_qualification": {
+    "cases": 54,
+    "independently_reexecuted_by_reviewer": false,
+    "methods": 5,
+    "proof": {
+      "bytes": 728,
+      "preserved_path": "native-android/combined-client/diagnostics/continuation-f-20261017/editmsg-initial-receiver-preflight-source-review-20261018/editmsg-receiver-mocked-controls.json",
+      "sha256": "837429154ef68a386605437543635721c75def3778fc479c3d3adcb989161cb7"
+    },
+    "proof_source_hashes_equal_snapshots": true,
+    "recorded_passed": true
+  },
+  "passed": true,
+  "project_helpers_imported_by_reviewer": false,
+  "review_kind": "read-only static source, artifact bytes, AST and Git admission",
+  "runtime_executed_by_reviewer": false,
+  "schema": "coh-f-editmsg-initial-receiver-preflight-source-review-v1",
+  "source_gate": {
+    "A_overrides_exactly": [
+      "native-android/engine/scenecatalog-server/SOURCE_PROFILE_RUNTIME.md",
+      "native-android/engine/scenecatalog-server/capture_groups_transaction.py",
+      "native-android/engine/scenecatalog-server/fresh_callback_observer/runtime.py",
+      "native-android/engine/scenecatalog-server/fresh_callback_observer/test_runtime.py"
+    ],
+    "all_277_current_bytes_and_recorded_current_Git_blobs_verified": true,
+    "checks_current_workflow_raw_sha_Git_blob_and_HEAD": true,
+    "effective_historical_compact_sorted_json_sha256": "eab21315f9b92b318db79e3b8c789fd339296401ed7b88da54ad9dcca48dfa4c",
+    "effective_historical_source_count": 277,
+    "exact_top_level_keys": 14,
+    "fixed_observer_build_receiver_build_profile_receipts_required": true,
+    "historical_pin_count": 278,
+    "native_43_overrides_exactly": [
+      "native-android/combined-client/tools/check_local_initial_capture.py",
+      "native-android/engine/initial-capture/coh_initial_capture.h",
+      "native-android/engine/initial-capture/coh_initial_map.c"
+    ],
+    "normal_project_import_after_exact_current_Git_admission": true,
+    "only_removed_historical_path": ".github/workflows/native-fresh-groups-observation.yml",
+    "requires_current_workflow_pin_and_own_helper_pin": true,
+    "schema": "coh-editmsg-fresh-groups-live-source-admission-v1"
+  },
+  "source_generation_admitted": false,
+  "source_snapshots": {
+    "admit_editmsg_initial_receiver.py": {
+      "bytes": 31919,
+      "preserved_path": "native-android/combined-client/diagnostics/continuation-f-20261017/editmsg-initial-receiver-preflight-source-review-20261018/admit_editmsg_initial_receiver.py",
+      "sha256": "7bcafe470fde547f497fced3605704eaf277715866045824b5407ef56da641d4"
+    },
+    "editmsg-receiver-mocked-controls.json": {
+      "bytes": 728,
+      "preserved_path": "native-android/combined-client/diagnostics/continuation-f-20261017/editmsg-initial-receiver-preflight-source-review-20261018/editmsg-receiver-mocked-controls.json",
+      "sha256": "837429154ef68a386605437543635721c75def3778fc479c3d3adcb989161cb7"
+    },
+    "test_admit_editmsg_initial_receiver.py": {
+      "bytes": 14958,
+      "preserved_path": "native-android/combined-client/diagnostics/continuation-f-20261017/editmsg-initial-receiver-preflight-source-review-20261018/test_admit_editmsg_initial_receiver.py",
+      "sha256": "12f014de25ba81fe73cec2deff9394477be293738826fbee79e472abea4e5f22"
+    }
+  },
+  "unchanged_core_definitions_ast_sha256": {
+    "Refused": "4483960ffb38e0dbf14e65458cc33d191c885581395b85752f98ca339e8903bc",
+    "child": "594b0450d630421d13a853114d07fbda496254d5b17acc825574fbfaf85c4b16",
+    "committed": "f8f2dda0943d49effff1cabae13fe1ab92c6ee8abe75ca8dec0e2264a0c34ca1",
+    "digest": "7e2b61bdb800307ce234842ec7d11f79d199671c8e9c3ff5ef97957790c0a087",
+    "export_env": "efadbcff57e98e6f2299ad803ed0821d1e43d4d6e553d9abbe7d272282274e36",
+    "fixed": "a3fd5d5c6ae7c2e5822b111c07f681ed2320ac5660325a4667feb8948343a9ae",
+    "git": "06a7416a9a34ef4172a9ad354fa3a7462f67a1a9ee902162a7c98bf570da3b7f",
+    "imported_sources": "f6e70e5366c8a6b922dccfec2fc639d739b970229763cba5e496cc50e18e20fc",
+    "loader_checks": "65c3024f91fc267785b2436038618cb1510f01170fb6022c3e020b62cff52332",
+    "main": "846c2027bab8bdceea30247b9a8654b2c600e4c36d002d87826d5479f7f5c181",
+    "need": "552aa61df2c900512fb25ce3c613c7a1fccd1c0a569cc341f2ac0ef469ccccc7",
+    "raw": "c466d42e28bb3e66f851f36c4fb733ea171b1365b56b63964c51769a739d5931",
+    "static_elf": "734dbb5ac2c45cc3a34bb2c44c41effb74c512a5f3e71df78b0079573f84674a",
+    "system_files": "44e0e99881e3a7d67c10f8fe57a57fc698380c3dfe7f3502bc0de7b3f857557d",
+    "unlink_owned": "d1426dc9ed07eeca286d8955dad8464a8f7a29fd53400ad185b1dbda6303538d",
+    "write_new": "98e290f3f929974c373bf07babd8104d963926383d54291f3becf4b7318f26bd"
+  },
+  "world_authority": false
+}

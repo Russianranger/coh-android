@@ -92,7 +92,22 @@ CohStatus coh_initial_map_lease(const CohInitialMap*x,const CohInitialCaptureEve
  if(!n->generation||reader.bytes.data!=n->payload||reader.bytes.size!=n->payload_bytes||reader.bits!=n->payload_bits||reader.compressed!=n->compressed||reader.cursor>reader.bits||reader.max_bytes!=COH_NET_DECODED_MAX)return COH_STATE;
  CohInitialCaptureLease v;memset(&v,0,sizeof(v));v.kind=event->kind;v.reader=reader;v.schema=m->schema;v.groups=x->d.groups;v.update=x->update;v.message_generation=n->generation;v.groups_message_generation=x->d.groups_message_generation;v.message_id=n->id;v.ordered_id=n->ordered_id;v.ordered=n->ordered;v.connection_id=x->connection_id;v.transport_version=x->version;v.map_generation=x->d.map_generation;v.selection_generation=x->d.selection_generation;v.selected_slot=x->d.selected_slot;v.selected_dbid=x->d.selected_dbid;v.map_id=x->d.map_id;v.map_link_id=x->d.map_link_id;v.db_session_generation=x->d.db_session_generation;v.db_receipt_generation=x->d.db_receipt_generation;v.local_development_authorized=1;v.selected_dbid_owner_bound=1;*out=v;return COH_OK;
 }
-static CohStatus ic_initial(CohInitialMap*x,const CohNetOwnedMessage*n){
+typedef enum { IC_POST_NONE,IC_POST_EDITMSG,IC_POST_ALLENTS } IcPostKind;
+typedef struct {IcPostKind kind;CohInitialCaptureEditMessageType type;uint32_t bytes;} IcPost;
+/* Parse every source byte, without a text buffer. Commit no candidate until
+ * both the NUL and exact logical packet end have been verified. */
+static CohStatus ic_editmsg(CohRepReader reader,CohCancel cancel,IcPost*out){
+ uint32_t type,c;CohStatus s=coh_rep_read(&reader,2,&type);
+ if(s!=COH_OK)return s;
+ if(type>COH_INITIAL_EDIT_ERROR_SERVER_WRITE)return COH_INVALID;
+ for(uint32_t i=0;i<COH_INITIAL_EDIT_MESSAGE_BYTES_MAX;i++){
+  if(!(i&255u)&&ic_cancel(cancel))return COH_CANCELLED;
+  s=coh_rep_read(&reader,8,&c);if(s!=COH_OK)return s;
+  if(!c){if(reader.cursor!=reader.bits)return COH_INVALID;*out=(IcPost){IC_POST_EDITMSG,(CohInitialCaptureEditMessageType)type,i};return COH_OK;}
+ }
+ return COH_LIMIT;
+}
+static CohStatus ic_initial(CohInitialMap*x,const CohNetOwnedMessage*n,CohCancel cancel,IcPost*out){
  CohMapClient*m=x->map;CohRepReader reader;uint32_t command;
  ic_command_clear(x);
  m->diag.stage=COH_MAP_STAGE_COMMAND;m->diag.last_command_valid=0;m->diag.last_payload_bits=n->payload_bits;m->diag.last_decoded_bytes=(uint32_t)n->payload_bytes;m->diag.last_byte_aligned=n->compressed;
@@ -101,13 +116,18 @@ static CohStatus ic_initial(CohInitialMap*x,const CohNetOwnedMessage*n){
  if(s!=COH_OK){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_COMMAND;return s;}
  ic_command_decoded(x,command);
  x->d.last_command=command;m->diag.last_command=command;m->diag.last_command_valid=1;
- if(command!=COH_REP_ALLENTS){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_COMMAND;return COH_UNSUPPORTED;}
- if(ic_owner(x)!=COH_OK||m->diag.phase!=COH_MAP_SCENE_INCOMPLETE||m->inspector.phase!=COH_REP_SCENE_PREFIX_SEEN||m->inspector.schema_generation!=m->inspector.generation||n->generation<=x->d.groups_message_generation){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_OWNER;return COH_STATE;}
+ if(command!=COH_REP_ALLENTS&&x->command_kind!=COH_INITIAL_CAPTURE_COMMAND_SERVER_EDITMSG){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_COMMAND;return COH_UNSUPPORTED;}
+ if(ic_owner(x)!=COH_OK||x->d.phase!=COH_INITIAL_CAPTURE_WAIT_ALLENTS||x->d.reqallents_sent!=1||!x->d.groups_observed||m->diag.phase!=COH_MAP_SCENE_INCOMPLETE||m->inspector.phase!=COH_REP_SCENE_PREFIX_SEEN||m->inspector.schema_generation!=m->inspector.generation||n->generation<=x->d.groups_message_generation){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_OWNER;return COH_STATE;}
+ if(x->command_kind==COH_INITIAL_CAPTURE_COMMAND_SERVER_EDITMSG){
+  s=x->d.edit_messages_handled==COH_INITIAL_EDIT_MESSAGES_MAX?COH_LIMIT:ic_editmsg(reader,cancel,out);
+  if(s!=COH_OK)x->d.failure=s==COH_CANCELLED?COH_INITIAL_CAPTURE_FAILURE_CANCELLED:COH_INITIAL_CAPTURE_FAILURE_PROTOCOL;
+  return s;
+ }
  x->reader=reader;m->diag.stage=COH_MAP_STAGE_ENTITY_PREFIX;
  CohRepUpdatePrefix prefix;s=coh_rep_update_prefix(&reader,&m->schema,command,&prefix);
  if(s!=COH_OK||!prefix.odd_send||reader.cursor>=reader.bits){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_HEADER;return s==COH_OK?COH_INVALID:s;}
  x->update=prefix;s=ic_observe(x,COH_INITIAL_CAPTURE_ALLENTS);if(s!=COH_OK)x->d.failure=COH_INITIAL_CAPTURE_FAILURE_OBSERVER;
- memset(&x->reader,0,sizeof(x->reader));memset(&x->update,0,sizeof(x->update));return s;
+ memset(&x->reader,0,sizeof(x->reader));memset(&x->update,0,sizeof(x->update));if(s==COH_OK)*out=(IcPost){IC_POST_ALLENTS,0,0};return s;
 }
 CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
  CohInitialMapObserver observer,void*observer_context,const void*owner,size_t owner_bytes,
@@ -127,10 +147,12 @@ CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
  if(m->diag.phase==COH_MAP_NET_CONNECTING&&udp.link_state==COH_NET_CONNECTED){m->diag.stage=COH_MAP_STAGE_SEND_COMMAND;result=send_command(m,COH_MAP_CONNECT,now);m->cookie=0;if(result!=COH_OK)goto done;m->diag.phase=COH_MAP_WAIT_CONNECT;m->phase_ms=now;}
  for(unsigned i=0;i<m->config.message_budget;i++){
   ic_command_clear(x);
+  why=COH_INITIAL_CAPTURE_FAILURE_PROTOCOL;
+  IcPost post={0};
   CohNetOwnedMessage n;result=coh_net_udp_next_owned(m->udp,&n);if(result==COH_NOT_FOUND){result=COH_OK;break;}if(result!=COH_OK)goto done;
   x->message=&n;ic_message_diag(x,&n);x->observer_status=COH_OK;
   if(ic_cancel(cancel)){result=COH_CANCELLED;why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;}
-  else if(x->d.reqallents_sent){result=ic_initial(x,&n);why=x->d.failure;}
+  else if(x->d.reqallents_sent){result=ic_initial(x,&n,cancel,&post);why=x->d.failure;}
   else {result=inspect(m,&n,now,ic_groups,x);x->d.last_command=m->diag.last_command;if(m->diag.last_command_valid)ic_command_decoded(x,m->diag.last_command);
    if(result==COH_UNSUPPORTED&&x->d.groups_observed&&x->observer_status==COH_OK){result=COH_OK;}
    else if(x->observer_status!=COH_OK){result=x->observer_status;why=COH_INITIAL_CAPTURE_FAILURE_OBSERVER;}
@@ -140,7 +162,8 @@ CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
   if(result==COH_OK&&released!=COH_OK){result=released;why=COH_INITIAL_CAPTURE_FAILURE_RELEASE;}
   if(result!=COH_OK)goto done;
   if(ic_cancel(cancel)){result=COH_CANCELLED;why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;goto done;}
-  if(x->d.reqallents_sent){x->d.raw_allents_observed=1;x->d.allents_observations=1;x->d.allents_message_generation=observed_generation;x->d.phase=COH_INITIAL_CAPTURED;x->d.status=COH_UNSUPPORTED;m->diag.last_status=COH_UNSUPPORTED;coh_map_client_close(m);result=COH_UNSUPPORTED;why=COH_INITIAL_CAPTURE_FAILURE_NONE;goto done;}
+  if(post.kind==IC_POST_EDITMSG){x->d.edit_messages_handled++;x->d.edit_message_last_type=post.type;x->d.edit_message_last_bytes=post.bytes;continue;}
+  if(post.kind==IC_POST_ALLENTS){x->d.raw_allents_observed=1;x->d.allents_observations=1;x->d.allents_message_generation=observed_generation;x->d.phase=COH_INITIAL_CAPTURED;x->d.status=COH_UNSUPPORTED;m->diag.last_status=COH_UNSUPPORTED;coh_map_client_close(m);result=COH_UNSUPPORTED;why=COH_INITIAL_CAPTURE_FAILURE_NONE;goto done;}
   if(x->d.groups_observed){
    if(ic_owner(x)!=COH_OK||m->diag.scene_structures!=1){result=COH_STATE;why=COH_INITIAL_CAPTURE_FAILURE_OWNER;goto done;}
    result=send_command(m,COH_MAP_REQALLENTS,now);if(result!=COH_OK){why=COH_INITIAL_CAPTURE_FAILURE_REQUEST;goto done;}

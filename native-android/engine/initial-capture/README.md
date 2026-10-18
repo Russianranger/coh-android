@@ -37,6 +37,13 @@ classification. Later close/cancel/timeout preserve that first observation.
 These fields contain no packet text or raw numeric command identifier and do
 not authorize a body parser, command skipping or a protocol response.
 
+The separately witnessed SERVER_EDITMSG branch now has a complete bounded body
+parser during WAIT_ALLENTS. It reads type and NUL-terminated text to the exact
+logical packet end, retains only count/type/length, releases the loan, polls
+cancellation and continues with the original deadline. It does not invoke UI
+services or send a response. See [EDITMSG.md](EDITMSG.md) for original source
+ordering, explicit domain limits, new focused qualification and CLI peer cases.
+
 Original source does not guarantee ALLENTS is the next application packet after
 GROUPS: REQSCENE sends the world and leaves the client NOT_READY; REQALLENTS later
 sets its source state, while `entFinishUpdate` also flushes already pending game
@@ -139,8 +146,9 @@ snapshot24, private Map phase8, ordinary Local/Map1,040/2,536 and lease1,344 byt
 are unchanged. No native heap allocation path was added. Static known names
 contain5,604 bytes including their NULs (maximum38 characters); code/static data,
 transitive owners and external stacks still prevent a global RAM/RSS admission.
-Only synthetic qualification runs here; the actual live refused command remains
-unobserved until a separately authorized new transaction supplies that witness.
+Only synthetic qualification ran for that historical classifier scope; the
+separate run39088537547 later supplied the actual SERVER_EDITMSG command witness
+described in EDITMSG.md, without its body/subtype/text/length.
 
 The explicit enclosing-deadline follow-up is source
 `30f9a3a6282d771c907d26d418aca22a0c9c1917`. Release/ASan/UBSan each passed19

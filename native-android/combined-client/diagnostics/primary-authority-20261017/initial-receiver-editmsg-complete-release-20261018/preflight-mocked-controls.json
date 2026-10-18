@@ -1,0 +1,18 @@
+{
+  "actual_native_subprocess_loader_compiler_capture_import_or_services_executed": false,
+  "controlled_cases": 54,
+  "elapsed_seconds": 0.2167319430009229,
+  "old_controls_reexecuted": false,
+  "old_core_AST_definitions_unchanged": 16,
+  "passed": true,
+  "production_path_tested": true,
+  "schema": "coh-editmsg-destination-preflight-new-source-controls-v1",
+  "source_generation_admitted": false,
+  "source_revision": "76a940c2f0199748e8eef5099b4fc7c2acd14ef6",
+  "source_sha256": {
+    "native-android/combined-client/tools/admit_editmsg_initial_receiver.py": "7bcafe470fde547f497fced3605704eaf277715866045824b5407ef56da641d4",
+    "native-android/combined-client/tools/test_admit_editmsg_initial_receiver.py": "12f014de25ba81fe73cec2deff9394477be293738826fbee79e472abea4e5f22"
+  },
+  "test_methods": 5,
+  "world_authority": false
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "coh-preserved-editmsg-scene-worker-history-v1",
+  "workers": {
+    "B": {
+      "ref": "refs/recovery/editmsg-scene-20261018/b",
+      "tip": "ca7e7e1d4d61374e65faa77f1a5ad47728fbd686",
+      "prerequisite": "2840c3a4d842162e0032aae42780e74b9292ef36"
+    },
+    "C": {
+      "ref": "refs/recovery/editmsg-scene-20261018/c",
+      "tip": "7a15b20d455864f30a29034ec12a63922deb73f8",
+      "prerequisite": "2f8337277b25b10a43b6d9b2001c68e7860b8340"
+    },
+    "F": {
+      "ref": "refs/recovery/editmsg-scene-20261018/f",
+      "tip": "7febf6119fc9aa8db948f8c8b4df65b3b5bfa819",
+      "prerequisite": "48a8e3d0531118efcad2b712f918c61e6b2b5fd0"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/editmsg-scene-20261018/coordinator",
+      "tip": "09d48fb1fd5e88809630029a6b7b4dd3ffb2567c",
+      "prerequisite": "ed77036d1b7f7e47588d74408506d738293643a9"
+    }
+  },
+  "bundle": "worker-editmsg-scene-history.bundle",
+  "bytes": 710395,
+  "sha256": "67b471b0c59380a4c5648a78bec9aa41f430ac71c5ffedc10ef88bf8f3852144",
+  "verification": "The bundle contains these 4 refs:\nca7e7e1d4d61374e65faa77f1a5ad47728fbd686 refs/recovery/editmsg-scene-20261018/b\n7a15b20d455864f30a29034ec12a63922deb73f8 refs/recovery/editmsg-scene-20261018/c\n7febf6119fc9aa8db948f8c8b4df65b3b5bfa819 refs/recovery/editmsg-scene-20261018/f\n09d48fb1fd5e88809630029a6b7b4dd3ffb2567c refs/recovery/editmsg-scene-20261018/coordinator\nThe bundle requires these 50 refs:\nc64abd947519ea12372ab6a1b712c6fdf103663c \n1a01a468cb102e75d0738089f55a38f125961720 \nea907c176e60a45a816fdc58c71e4752eaac48e5 \n034bd09cbcd371f929d6afd64ae7f70fdcacafa7 \n8ac2a544fc05c0834acf653495a57ad03c9d2cb6 \n169d0b36e95ec1f2e51573f56023088e8643a9a9 \n7f81a58cf34bef336f66fc7c03bee8e14dc507d1 \ncf6cd4e8b0557cdd3468e03a52006560f7012dd5 \na84995b16f5fd197a1e5c9f8b64a0cc6e1068149 \n55d1d6efeffc80e0cceb033978057a80649b6ab3 \ndd50243b2546896f9a3570897cf7e8749e749d0b \n6b0ab48cc582b0967ca642a5a7896e5f2ff749af \n35299ada512a0a02df0c8ce738cf2cc36aa1c999 \n4b50f8da9cace737d8fb5771adbae5ccce87ff37 \nfd9ea649322aff5dd952878b6a00d9d813a50ba7 \n1c8d770284e38154efe30b4964fb9a334a89046a \nf0e2e72451deea9d8523684b375780a7cce7ea47 \na17ea916f79978922c92ed02351b8f2900374764 \n0227723160e0e5169741592eda45d8e1d0fbedc6 \ncea9f80da2ae7d48d4e18ae01a25e2e9b0028f18 \n939af46895429da329acab166d03612b0c5f16eb \n5367ea2ec83042bfdbb3a0042a8158652a07e33b \n5c20e23cb7c41a39546a9ac1dfc42f3f3ed58309 \n3e220e1eb99041ae40efac713a7a6bf9ba5e46b3 \n7066d39c4b267f1cef3c59050eb2f30194084350 \n2f8337277b25b10a43b6d9b2001c68e7860b8340 \ned77036d1b7f7e47588d74408506d738293643a9 \n77af974e93324fadc61b4d3fb3f5b4ca15636ba7 \nfe5efb4bb211a15791149f75822791be17a3677f \n1ca1d1db3f33891062f570ea19f9c036715e823c \nc98bb60fe187458f328a15882089ea742ce6e853 \n3b6bd0de1b728c6e2e8bc8f11e5af2b92908dfbc \nbd7b16b6ae188f9e8e1aa90542eb86287f38c312 \n2729bfc16c9f757fd850c24a0bc6df366a2e40ab \n827f1f1136b52f46fdcd787e7a6d31664b4d0b94 \n6a6809d07a130af60129f569b59a627420b6bf54 \nb3fbacf90626e29542e878313c2812eba1e1375b \nfd213266f1b6665acece877dabb7dab6663e647c \n91cacafa4451cf7504b5dd105f2790ae1c41739b \n81568446e43f56eb1a8aaf0970ab1ede13103f41 \n08e6a96f2af9cb317eecd6629e99db4200df177f \ndd5c3f9a2c30ea20b0a4c714007b1de0b0409546 \n824da3e9666ca5f04f5a0bee02449a8894cca2e4 \n643359f11c7805a25b0a2b3a430d46f13c7c68ae \na4cc6b61443cecf6394b0500028277874be6cf82 \n996af55882219a136405b75628713d9286825df2 \n83b93ed89775feb51793df6ee3fca7ac2f0d1334 \nd96354411d2f69ec325b1bfe9d0e14999626ba91 \n48a8e3d0531118efcad2b712f918c61e6b2b5fd0 \n2840c3a4d842162e0032aae42780e74b9292ef36 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-editmsg-scene-history.bundle is okay\n",
+  "previously_preserved_unchanged_worker_tips": {
+    "A": "61c6d15b6585963c2c1cda2afd55ad6da805328c",
+    "D": "4ce8e8b420d3efc2047b3be24257c7671fd0f979",
+    "E": "4d6ba1733"
+  },
+  "scope": "Integrated qualified A probe-drive fix and C complete EDITMSG control-message diagnostic; original-sender source proof, only new123 CLI checks per release/ASan/UBSan, v1 audit omission preserved and corrected v2 all-eight raw-Git source audit with exact reused ELF/statuses; new destination specialization and five-method54-mock repository proof, final351-pin matching scene workflow; actual failed Windows Auth-to-DB experiment with successful compile/platform/registry/owned-job component evidence. A history already fully retained in previous development-driver bundle; unchanged D source tip fully retained there, newer additive DB received-prefix work remains independently in progress in existing worker paths and is not admitted here; E unchanged source history is in earlier bundles and read-only reviews make no new commit. No new matching source generation/initial packet, complete DB player list, normal version/checksum, world/actor/ACK/APK/Thor result is inferred."
+}

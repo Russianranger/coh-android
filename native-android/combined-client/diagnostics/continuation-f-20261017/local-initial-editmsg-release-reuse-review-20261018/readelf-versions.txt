@@ -1,0 +1,44 @@
+
+Version symbols section '.gnu.version' contains 101 entries:
+ Addr: 0x000000000000129c  Offset: 0x0000129c  Link: 6 (.dynsym)
+  000:   0 (*local*)       2 (GLIBC_2.3.4)   1 (*global*)      3 (GLIBC_2.2.5)
+  004:   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)
+  008:   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)
+  00c:   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)
+  010:   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)
+  014:   3 (GLIBC_2.2.5)   1 (*global*)      3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)
+  018:   1 (*global*)      3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)
+  01c:   1 (*global*)      2 (GLIBC_2.3.4)   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)
+  020:   4 (OPENSSL_3.0.0)   5 (GLIBC_2.4)     3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)
+  024:   3 (GLIBC_2.2.5)   6 (GLIBC_2.34)    4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)
+  028:   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)   1 (*global*)      7 (GLIBC_2.14) 
+  02c:   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)   1 (*global*)   
+  030:   8 (GLIBC_2.17)    4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)
+  034:   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)   1 (*global*)      4 (OPENSSL_3.0.0)
+  038:   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)
+  03c:   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   5 (GLIBC_2.4)     4 (OPENSSL_3.0.0)
+  040:   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)
+  044:   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)
+  048:   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)
+  04c:   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)
+  050:   4 (OPENSSL_3.0.0)   9 (ZLIB_1.2.0)    4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)
+  054:   2 (GLIBC_2.3.4)   a (GLIBC_2.33)    2 (GLIBC_2.3.4)   4 (OPENSSL_3.0.0)
+  058:   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)   1 (*global*)   
+  05c:   4 (OPENSSL_3.0.0)   4 (OPENSSL_3.0.0)   3 (GLIBC_2.2.5)   1 (*global*)   
+  060:   5 (GLIBC_2.4)     3 (GLIBC_2.2.5)   1 (*global*)      3 (GLIBC_2.2.5)
+  064:   3 (GLIBC_2.2.5)
+
+Version needs section '.gnu.version_r' contains 3 entries:
+ Addr: 0x0000000000001368  Offset: 0x00001368  Link: 7 (.dynstr)
+  000000: Version: 1  File: libz.so.1  Cnt: 1
+  0x0010:   Name: ZLIB_1.2.0  Flags: none  Version: 9
+  0x0020: Version: 1  File: libcrypto.so.3  Cnt: 1
+  0x0030:   Name: OPENSSL_3.0.0  Flags: none  Version: 4
+  0x0040: Version: 1  File: libc.so.6  Cnt: 7
+  0x0050:   Name: GLIBC_2.33  Flags: none  Version: 10
+  0x0060:   Name: GLIBC_2.17  Flags: none  Version: 8
+  0x0070:   Name: GLIBC_2.14  Flags: none  Version: 7
+  0x0080:   Name: GLIBC_2.34  Flags: none  Version: 6
+  0x0090:   Name: GLIBC_2.4  Flags: none  Version: 5
+  0x00a0:   Name: GLIBC_2.2.5  Flags: none  Version: 3
+  0x00b0:   Name: GLIBC_2.3.4  Flags: none  Version: 2

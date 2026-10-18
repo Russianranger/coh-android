@@ -1,0 +1,7 @@
+This final workflow is clear for publication at the exact preserved hash. Its first source gate admits 350 frozen nonself inputs plus the current workflow's Git identity, before any project helper or runtime recovery. All 350 raw files equal the recorded current Git blobs. The historical map has only seven qualified source overrides and a new workflow self identity.
+
+The production receiver helper equals the reviewed proposal. Its repository test changes only explicit fresh output handling; the test Controls AST is unchanged and its preserved five-method/54-case proof binds exact helper/test bytes. No controls were replayed by this reviewer.
+
+The same source fixture and compiled observer PE are used. The observer ZIP is copied from its exact tracked canonical archive after original API provenance checks; only the unchanged missing DbServer donor is downloaded. The new receiver is admitted with destination loader checks and no-argument smoke before the one authorized capture. No receiver or observer rebuild and no old qualification replay is scheduled.
+
+The always-run project summary now requires source-admission success. Existing source-body and optional initial-packet exports remain success gated and unchanged. Bash syntax and eight embedded Python AST blocks were checked without execution; no project import, native program, loader, server, or capture was run. This review is not an actual source or initial-packet witness.

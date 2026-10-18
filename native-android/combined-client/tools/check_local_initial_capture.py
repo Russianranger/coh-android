@@ -148,16 +148,114 @@ def tool_tests(binary, peer, work, environment, evidence):
             'actor_publication': False, 'ack_permitted': False, 'world_authority': False}
 
 
+def editmsg_tool_tests(binary, peer, work, environment, evidence):
+    """Only the newly supported control-message path, with real local sockets."""
+    account = work / 'account'
+    account.write_text('Fixture\n')
+    account.chmod(0o600)
+    evidence.mkdir(mode=0o700)
+    checks, stdout_files = 0, {}
+    def need(ok):
+        nonlocal checks
+        assert ok
+        checks += 1
+    cases = {
+        'editmsg-captured': ('NONE', 2, False, 'NONE'),
+        'editmsg-unknown': ('COMMAND', 2, True, 'SERVER_GAME_CMDS'),
+        'editmsg-malformed': ('PROTOCOL', 1, True, 'SERVER_EDITMSG'),
+        'editmsg-limit': ('PROTOCOL', 4, True, 'SERVER_EDITMSG'),
+        'editmsg-none': ('TIMEOUT', 7, False, 'NONE'),
+    }
+    keys = {'schema', 'passed', 'initial_packet_observed', 'status',
+        'opened_sockets', 'closed_sockets', 'source_generation_admitted', 'complete_initial_character',
+        'actor_publication', 'ack_permitted', 'world_authority', 'diagnostic_failure_code',
+        'groups_observed', 'reqallents_sent', 'local_phase', 'terminal_failure',
+        'terminal_db_phase', 'terminal_map_phase', 'refused_command_valid', 'refused_command_kind'}
+    for mode, (failure, status, refused, kind) in cases.items():
+        report = work / (mode + '-peer.json')
+        child = subprocess.Popen([str(peer), '--serve', '--report', str(report), '--mode', mode],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=environment)
+        try:
+            with selectors.DefaultSelector() as ready:
+                ready.register(child.stdout, selectors.EVENT_READ)
+                if not ready.select(10):
+                    raise TimeoutError('new EDITMSG peer did not become ready')
+                port = json.loads(child.stdout.readline())['db_port']
+            target = work / mode
+            completed = subprocess.run(list(map(str, [binary, port, 0, account, target, 1000, 5, 0, 0])),
+                capture_output=True, timeout=120, env=environment)
+            need(completed.returncode == 0 and completed.stderr == b'')
+            public = json.loads(completed.stdout)
+            groups = json.loads((target / 'capture.json').read_bytes())
+            initial = json.loads((target / 'initial-observation.json').read_bytes())
+            captured = mode == 'editmsg-captured'
+            need(set(public) == keys and public['schema'] == 'coh-local-initial-capture-status-v2')
+            need(public['passed'] is True and public['groups_observed'] is True)
+            need(public['reqallents_sent'] == 1 and type(public['reqallents_sent']) is int)
+            need(public['initial_packet_observed'] is captured and public['terminal_failure'] is (not captured))
+            need(public['diagnostic_failure_code'] == failure and type(public['status']) is int and public['status'] == status)
+            need(public['refused_command_valid'] is refused and public['refused_command_kind'] == kind)
+            need(public['terminal_db_phase'] == (0 if captured else 9))
+            need(public['terminal_map_phase'] == (0 if captured else 5))
+            need(public['opened_sockets'] == public['closed_sockets'] == 2)
+            need(all(public[k] is False for k in ('source_generation_admitted', 'complete_initial_character',
+                'actor_publication', 'ack_permitted', 'world_authority')))
+            need(groups['passed'] is True and groups['cleanup_verified'] is True)
+            need(groups['packet_sha256'] == digest(target / 'groups.bin'))
+            need(initial['groups_packet_sha256'] == groups['packet_sha256'])
+            need(initial['selected_dbid'] == groups['selected_dbid'] == 17)
+            need(initial['opened_sockets'] == initial['closed_sockets'] == 2 and initial['reqallents_sent'] == 1)
+            need(initial['passed'] is captured and initial['failure_code'] == failure)
+            need(all(initial[k] is False for k in ('source_generation_admitted', 'complete_initial_character',
+                'actor_publication', 'ack_permitted', 'world_authority', 'sends_ready',
+                'sends_received_character', 'sends_full_update_ack')))
+            if captured:
+                need(initial['raw_allents_loan_verified'] is True)
+                need(initial['packet_sha256'] == digest(target / 'initial-update.bin'))
+                need(initial['message_generation'] > initial['groups_message_generation'])
+                need(initial['payload_bits'] <= initial['bytes'] * 8 and initial['update_prefix']['command'] == 3)
+            else:
+                need(not (target / 'initial-update.bin').exists())
+                need(initial['bytes'] == initial['payload_bits'] == 0 and initial['packet_sha256'] == '')
+            need((target.stat().st_mode & 0o777) == 0o700)
+            need(all((p.stat().st_mode & 0o777) == 0o600 for p in target.iterdir()))
+            stdout_path = evidence / (mode + '.json')
+            stdout_path.write_bytes(completed.stdout)
+            stdout_path.chmod(0o600)
+            stdout_files[mode] = {'file': str(Path(evidence.name) / stdout_path.name),
+                'bytes': stdout_path.stat().st_size, 'sha256': digest(stdout_path)}
+        finally:
+            if child.poll() is None:
+                child.send_signal(signal.SIGTERM)
+            stdout, stderr = child.communicate(timeout=10)
+            if child.returncode:
+                raise RuntimeError('new EDITMSG peer refused cleanup\n' + stdout + stderr)
+        peer_report = json.loads(report.read_bytes())
+        need(peer_report['failed'] is False and peer_report['reqallents_unique'] == 1)
+        need(all(peer_report[k] == 0 for k in ('forbidden_application_commands', 'ready_commands',
+            'received_character_commands', 'full_update_ack_commands')))
+    noargs = run([binary], env=environment)
+    need(noargs.returncode == 2 and noargs.stdout == '' and noargs.stderr == '')
+    return {'passed': True, 'checks': checks, 'cases': list(cases), 'fixed_status_stdout': stdout_files,
+        'actual_os_sockets': True, 'scripted_peers_only': True, 'groups_survives_initial_refusal': True,
+        'handled_status_is_not_initial_capture': True, 'new_editmsg_controls_only': True,
+        'old151_controls_reexecuted': False, 'real_server_capture': False,
+        'complete_initial_character': False, 'actor_publication': False, 'ack_permitted': False,
+        'world_authority': False}
+
+
 def main():
     if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):
         raise SystemExit('qualification requires Python assertions enabled')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--test', action='store_true')
+    controls = parser.add_mutually_exclusive_group(required=True)
+    controls.add_argument('--test', action='store_true')
+    controls.add_argument('--editmsg-only', action='store_true')
     parser.add_argument('--sanitize', action='store_true')
     args = parser.parse_args()
-    if not args.test or args.output.exists():
-        parser.error('fresh output and --test required')
+    if args.output.exists():
+        parser.error('fresh output required')
     args.output.mkdir(parents=True)
     sys.dont_write_bytecode = True
     sources = [NATIVE / p for p in RELATIVE]
@@ -176,7 +274,7 @@ def main():
                   and not any(part in ('evidence', 'qualification', 'diagnostics') for part in Path(path).parts))
     for relative in ('local/source-pins.json', 'dbclient/source-pins.json', 'mapclient/source-pins.json',
                      'replication/source-pins.json', 'replication/groups-source-pins.json',
-                     'initial-capture/command-source-pins.json'):
+                     'initial-capture/command-source-pins.json', 'initial-capture/editmsg-source-pins.json'):
         manifest = NATIVE / 'engine' / relative
         inputs.add(manifest)
         inputs.update(ROOT / path if path.startswith(('upstream/', 'android/')) else ROOT / 'upstream/ouroboros' / path
@@ -208,6 +306,10 @@ def main():
         maps = source_module(NATIVE / 'engine/mapclient/check.py')
         maps.command_fixtures(ROOT, work)
         maps.groups_fixtures(ROOT, work)
+        editmsg_proof = None
+        if args.editmsg_only:
+            editmsg = source_module(NATIVE / 'engine/initial-capture/editmsg_fixtures.py')
+            editmsg_proof = editmsg.produce_fixtures(ROOT, work)
         # The unchanged UI peer undefines its DB-test main rename before this
         # generated header. Rename only its qualification entry point here.
         with (work / 'server-command-fixtures.h').open('a') as fixture:
@@ -226,12 +328,13 @@ def main():
             binary = args.output.resolve() / ('coh-capture-local-initial' + ('' if label == 'release' else '-' + label))
             require(['cc', *flags, observer, *objects, '-lz', '-lm', '-lcrypto', '-o', binary])
             peer = work / ('peer-' + label)
-            require(['cc', *flags, NATIVE / 'engine/initial-capture/test_initial_peer.c', *objects,
+            peer_source = 'test_initial_editmsg_peer.c' if args.editmsg_only else 'test_initial_peer.c'
+            require(['cc', *flags, NATIVE / 'engine/initial-capture' / peer_source, *objects,
                      '-lz', '-lm', '-lcrypto', '-o', peer])
             mode_work = work / label
             mode_work.mkdir()
             results[label] = {'binary': binary.name, 'sha256': digest(binary), 'built': True,
-                              'tests': tool_tests(binary, peer, mode_work, environment,
+                              'tests': (editmsg_tool_tests if args.editmsg_only else tool_tests)(binary, peer, mode_work, environment,
                                   args.output.resolve() / ('status-' + label))}
     assert pins == {str(p.relative_to(ROOT)): digest(p) for p in inputs}
     assert require(['git', '-C', ROOT, 'rev-parse', 'HEAD']).stdout.strip() == revision
@@ -240,6 +343,8 @@ def main():
         'consumed_source_equals_committed_head': True,
         'source_checkout_state_at_start': dirty, 'source_hashes_authoritative_for_build_bytes': True,
         'source_sha256': pins, 'modes': results, 'nonshipping_initial_observation': True,
+        'new_editmsg_controls_only': args.editmsg_only, 'old151_controls_reexecuted': not args.editmsg_only,
+        'original_editmsg_fixtures': editmsg_proof,
         'groups_capture_scope': True, 'application_character_acceptance': False,
         'sends_reqallents': True, 'sends_ready': False, 'sends_received_character': False,
         'sends_full_update_ack': False, 'android_built': False, 'android_executed': False,

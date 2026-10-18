@@ -13,6 +13,12 @@ typedef enum { COH_INITIAL_CAPTURE_IDLE,COH_INITIAL_CAPTURE_CONNECTING,
  COH_INITIAL_CAPTURE_CLOSED } CohInitialCapturePhase;
 typedef enum { COH_INITIAL_CAPTURE_NONE,COH_INITIAL_CAPTURE_GROUPS,
  COH_INITIAL_CAPTURE_ALLENTS } CohInitialCaptureKind;
+/* Explicit diagnostic domain, not limits asserted by the original sender. */
+#define COH_INITIAL_EDIT_MESSAGE_BYTES_MAX 16384u /* includes terminating NUL */
+#define COH_INITIAL_EDIT_MESSAGES_MAX 16u
+typedef enum { COH_INITIAL_EDIT_LOW_PRIORITY=0,COH_INITIAL_EDIT_ERROR=1,
+ COH_INITIAL_EDIT_HIGH_PRIORITY=2,COH_INITIAL_EDIT_ERROR_SERVER_WRITE=3
+} CohInitialCaptureEditMessageType;
 typedef enum { COH_INITIAL_CAPTURE_FAILURE_NONE,COH_INITIAL_CAPTURE_FAILURE_INPUT,
  COH_INITIAL_CAPTURE_FAILURE_OWNER,COH_INITIAL_CAPTURE_FAILURE_PROTOCOL,
  COH_INITIAL_CAPTURE_FAILURE_GROUPS,COH_INITIAL_CAPTURE_FAILURE_REQUEST,
@@ -65,6 +71,11 @@ typedef struct {
   selected_dbid,map_id,map_link_id,db_session_generation,db_receipt_generation;
  CohGroupsInspection groups;
  unsigned groups_observed,raw_allents_observed;
+ /* Complete source-layout EDITMSG packets handled only while WAIT_ALLENTS.
+  * Length excludes NUL; last type/length are valid iff count is nonzero.
+  * No message text is copied, retained, logged or passed to UI services. */
+ uint32_t edit_messages_handled,edit_message_last_bytes;
+ CohInitialCaptureEditMessageType edit_message_last_type;
  unsigned refused_command_valid;CohInitialCaptureCommandKind refused_command_kind;
  unsigned source_generation_admitted,complete_initial_character,actor_publication,
   ack_permitted,world_authority; /* always zero */
@@ -90,8 +101,10 @@ CohStatus coh_initial_capture_choose_character(CohInitialCapture *,uint32_t slot
 /* Bounded synchronous service. observer/context required; context_bytes names
  * its COMPLETE live span (nonzero), disjoint from the owner and current loan.
  * Original complete GROUPS inspection and actual claimed DB handoff precede
- * one automatic REQALLENTS, after the GROUPS observer returns COH_OK. Unknown
- * intervening commands/failed parses terminate; no skip/scan/retry. Raw ALLENTS
+ * one automatic REQALLENTS, after the GROUPS observer returns COH_OK. Only fully
+ * parsed bounded SERVER_EDITMSG packets may continue WAIT_ALLENTS, without
+ * changing its original deadline or sending a response. Unknown intervening
+ * commands/failed parses terminate; no skip/scan/retry. Raw ALLENTS
  * has its source header checked under the existing4MiB decoded cap, before the
  * ordinary16KiB semantic gate. It is observed once then closed. No READY,
  * RECEIVED_CHARACTER, full-update ACK, LIVE state or character acceptance.

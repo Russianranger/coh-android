@@ -89,6 +89,40 @@ class Controls(unittest.TestCase):
   self.assertLess(text.index('source_probe_owner=fresh_runtime.precreate'),text.index("advance(report,'MAPSERVER_START')"))
   self.assertLess(text.index("advance(report,'MAPSERVER_START')"),text.index('fresh_runtime.bind(source_probe_owner,map_process,handles[-2:],children,handles)'))
   self.assertLess(text.index('for handle in handles:'),text.index('record_source_profile(report,fresh_runtime,source_probe_owner,map_process)'))
-  self.assertIn("map_env['COH_NATIVE_GROUPS_PROFILE_PROBE_OUTPUT']=base.windows_path(source_probe_owner.path)",text)
+  self.assertIn('catalog,catalog_windows=base.capture_destination(work)',text)
+  self.assertIn('source_probe_windows=fresh_runtime.probe_windows_path(source_probe_owner,catalog,catalog_windows)',text)
+  self.assertIn("map_env['COH_NATIVE_GROUPS_PROFILE_PROBE_OUTPUT']=source_probe_windows",text)
+  self.assertNotIn("map_env['COH_NATIVE_GROUPS_PROFILE_PROBE_OUTPUT']=base.windows_path",text)
+
+ def test_probe_alias_uses_existing_c_destination_and_exact_owned_sidecar(self):
+  with tempfile.TemporaryDirectory() as t:
+   parent=Path(t);parent.chmod(0o700)
+   catalog=parent/'catalog.cohcat';owner=probe.precreate(parent/'source-profile-probe.json')
+   before=owner.path.read_bytes();key=probe._key(owner.path.lstat())
+   self.assertEqual(runtime.probe_windows_path(owner,catalog,r'C:\coh-native-catalog\catalog.cohcat'),r'C:\coh-native-catalog\source-profile-probe.json')
+   for alias in (r'Z:\coh-native-catalog\catalog.cohcat',r'C:\another-parent\catalog.cohcat',r'C:\coh-native-catalog\other.cohcat',None):
+    self.assertIsNone(runtime.probe_windows_path(owner,catalog,alias))
+   for wrong in (parent/'other.cohcat',parent/'different'/'catalog.cohcat',Path('catalog.cohcat')):
+    self.assertIsNone(runtime.probe_windows_path(owner,wrong,r'C:\coh-native-catalog\catalog.cohcat'))
+   self.assertIsNone(runtime.probe_windows_path(None,catalog,r'C:\coh-native-catalog\catalog.cohcat'))
+   self.assertEqual(owner.path.read_bytes(),before);self.assertEqual(probe._key(owner.path.lstat()),key)
+   self.assertEqual(set(parent.iterdir()),{owner.path})
+   owner.path.write_bytes(b'UNEXPECTED_PRELAUNCH_BYTES')
+   self.assertIsNone(runtime.probe_windows_path(owner,catalog,r'C:\coh-native-catalog\catalog.cohcat'))
+   self.assertEqual(owner.path.read_bytes(),b'UNEXPECTED_PRELAUNCH_BYTES')
+
+ def test_probe_alias_refuses_replacement_and_linked_owned_targets(self):
+  with tempfile.TemporaryDirectory() as t:
+   parent=Path(t);parent.chmod(0o700);catalog=parent/'catalog.cohcat'
+   owner=probe.precreate(parent/'source-profile-probe.json');original=parent/'original';owner.path.rename(original)
+   owner.path.write_bytes(b'REPLACEMENT');owner.path.chmod(0o600)
+   self.assertIsNone(runtime.probe_windows_path(owner,catalog,r'C:\coh-native-catalog\catalog.cohcat'))
+   self.assertEqual(owner.path.read_bytes(),b'REPLACEMENT');owner.path.unlink()
+   owner.path.symlink_to(original)
+   self.assertIsNone(runtime.probe_windows_path(owner,catalog,r'C:\coh-native-catalog\catalog.cohcat'))
+   self.assertTrue(owner.path.is_symlink());self.assertEqual(original.read_bytes(),b'');owner.path.unlink()
+   original.rename(owner.path);other=parent/'hardlink';other.hardlink_to(owner.path)
+   self.assertIsNone(runtime.probe_windows_path(owner,catalog,r'C:\coh-native-catalog\catalog.cohcat'))
+   self.assertEqual(owner.path.read_bytes(),b'');self.assertEqual(other.read_bytes(),b'')
 
 if __name__=='__main__':unittest.main()

@@ -1,0 +1,126 @@
+{
+  "schema": "coh-coordinator-auth-db-development-public-api-v1",
+  "run": {
+    "id": 39090126094,
+    "head_sha": "ed77036d1b7f7e47588d74408506d738293643a9",
+    "head_branch": "native-android",
+    "path": ".github/workflows/native-auth-db-development.yml",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "repository_id": 1368730125,
+    "head_repository_id": 1368730125,
+    "created_at": "2026-10-18T02:27:06Z",
+    "updated_at": "2026-10-18T02:31:33Z",
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39090126094"
+  },
+  "jobs": {
+    "jobs": [
+      {
+        "id": 117564918546,
+        "name": "fresh-real-auth-db-development",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_id": 39090126094,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Preserve exact source line endings",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Admit final independently reviewed source closure before repository imports or runtime recovery",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Recover exact accepted AuthServer and independently admitted new DbServer build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Recover only exact immutable x64 crypto headers library and ownership manifest",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Observe one fresh real Auth grant and complete original provisional DB empty list, then cancel and destroy",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 8
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 17
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 18
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19
+          }
+        ]
+      }
+    ]
+  },
+  "artifacts": {
+    "artifacts": [
+      {
+        "id": 12122124306,
+        "name": "auth-db-development-ed77036d1b7f7e47588d74408506d738293643a9",
+        "size_in_bytes": 16275,
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12122124306",
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12122124306/zip",
+        "expired": false,
+        "created_at": "2026-10-18T02:31:28Z",
+        "expires_at": "2027-01-16T02:27:06Z",
+        "updated_at": "2026-10-18T02:31:28Z",
+        "digest": "sha256:4b96a2fe31f1612ab90b47a6371584010f3d862be8a456e6537bbd6f6c732ee3",
+        "workflow_run": {
+          "id": 39090126094,
+          "repository_id": 1368730125,
+          "head_repository_id": 1368730125,
+          "head_branch": "native-android",
+          "head_sha": "ed77036d1b7f7e47588d74408506d738293643a9"
+        }
+      }
+    ]
+  }
+}

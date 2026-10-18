@@ -1,0 +1,60 @@
+{
+  "actual_runtime_or_source_cause_established": false,
+  "actual_status_reference": {
+    "bytes": 1568,
+    "path": "native-android/combined-client/diagnostics/continuation-f-20261017/fresh-scene-39088537547/fresh-scene-status-39088537547.zip",
+    "sha256": "e9c61d5ce7aee72626facfb2808664ccca3f20e602244f8c334efa655224fbf9"
+  },
+  "actual_status_scope": {
+    "SERVER_EDITMSG_unsupported_observed": true,
+    "actual_installer_execution_or_source_envelope_first_failure_unknown": true,
+    "probe_UNAVAILABLE_not_validated": true,
+    "zero_values_are_placeholders": true
+  },
+  "all_four_current_source_and_proof_Git_blobs_match": true,
+  "all_four_previous_source_hashes_match_actual77_Git": true,
+  "all_six_related_sources_and_all_six_LOCAL6_current_and_Git_unchanged": true,
+  "compiled_observer_reference": {
+    "build_run_id": 39086864926,
+    "bytes": 7504384,
+    "compile_receipt_sha256": "0daf56e8dcae5d40ab9d5ef08bc09d022eba0a9a609170ce6d1ce867b2ca18c5",
+    "sha256": "879398db8111e3c2ecc4448def78dbb972b2112ac8fe900c15b69122a7df0dda"
+  },
+  "complementary_E_read_only_review_clear_at_exact_a78_and_61c": true,
+  "limitations": {
+    "no_actor_world_or_ACK_authority": true,
+    "no_live_profile_or_quiescence_or_source_generation_admission": true,
+    "no_native_PE_or_runtime_rebuild_or_execution": true,
+    "no_old_43_or_26_test_suite_replay": true
+  },
+  "passed": true,
+  "proof_bytes": 6860,
+  "proof_commit": "61c6d15b6585963c2c1cda2afd55ad6da805328c",
+  "proof_path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/probe-drive-alias-followup.json",
+  "proof_sha256": "1ac05fa9145d63c218c389c88263ba26eb67a3a80139d587671ac79eea6591e3",
+  "schema": "coh-f-probe-drive-alias-source-review-v1",
+  "scope": "read_only_source_Git_and_targeted_host_proof_binding",
+  "source_commit": "a78f1c2a18faae737bbf5808ed330e8cc30bac61",
+  "source_review": {
+    "exact_original_catalog_windows_contract_and_owned_host_sidecar_required": true,
+    "existing_capture_destination_C_drive_alias_retained": true,
+    "optional_error_refuses_probe_environment_without_changing_GROUPS_source_or_cleanup": true,
+    "original_precreated_file_parent_and_inode_link_mode_empty_checks_reused": true,
+    "source_sink_and_PE_policy_unchanged": true,
+    "supervisor_precreate_before_Map_bind_after_actual_Popen_and_collect_after_cleanup_order_preserved": true
+  },
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/SOURCE_PROFILE_RUNTIME.md": "afb0d106e601f9dc05a41ece77a9334ff809aca19115102f5702e73d62207c53",
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "78a18536289ad03ed77c314c4bcd889a6dd7002faa735d923f39f059263d2639",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/runtime.py": "1aad8c3b8b2ae2fdc593f7b95a0751201c71f258b36b6928388d5d5c0117be41",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_runtime.py": "4f16a90e3dab56458ce32d7313dc0d30ee60dbe8699352ebaa870dca9d9ed40e"
+  },
+  "targeted_host_qualification": {
+    "existing_order_guard_method": 1,
+    "methods": 3,
+    "new_path_methods": 2,
+    "owner_reported_pass": true,
+    "real_private_host_files_only": true,
+    "replayed_by_F": false
+  }
+}

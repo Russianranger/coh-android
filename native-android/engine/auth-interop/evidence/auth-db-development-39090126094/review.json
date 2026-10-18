@@ -1,0 +1,119 @@
+{
+  "actual_component_observations": {
+    "actual_game_database_user_tables": 99,
+    "actual_original_db_ready": true,
+    "auth_frames": 4,
+    "build_snapshot_entries_examined": [
+      3014,
+      2992
+    ],
+    "complete_player_lists": 0,
+    "db_login_requests_queued": 1,
+    "db_phase": "WAIT_PLAYERS",
+    "db_request_state": "QUEUED",
+    "detailed_strict_resume_records": 4,
+    "empty_registry_cleanup_and_both_view_absence": true,
+    "empty_registry_preparation_admitted": true,
+    "failure_stage": "OWNER_SERVICE",
+    "fresh_auth_authorized": true,
+    "native_child_resumed_assigned_empty_observations": 2,
+    "native_failure": "DB",
+    "native_phase": "FAILED",
+    "native_status": "UNSUPPORTED",
+    "platform_preflight_passed": true,
+    "probe_build_complete": true,
+    "service_snapshot_entries_examined": [
+      2798,
+      2842
+    ],
+    "unsupported_counter": 3
+  },
+  "actual_experiment_passed": false,
+  "all_zip_crcs_verified": true,
+  "api_metadata_bytes": 4183,
+  "api_metadata_sha256": "5b04359ef60a2aa8265a9efc76e26a7a8d774701ce4c385f46a3e9129f4a5ced",
+  "archive_members": [
+    "receipt.json"
+  ],
+  "artifact_bytes": 16275,
+  "artifact_id": 12122124306,
+  "artifact_sha256": "4b96a2fe31f1612ab90b47a6371584010f3d862be8a456e6537bbd6f6c732ee3",
+  "blocked_authority_flags": {
+    "accepted_runtime_replaced": false,
+    "authenticated_db_map_handoff_verified": false,
+    "character_selected": false,
+    "checksum_policy_relaxed": false,
+    "checksum_reference_admitted": false,
+    "checksum_reference_installed": false,
+    "current_world_verified": false,
+    "grant_values_exported": false,
+    "map_handoff_verified": false,
+    "nondevelopment_version_admitted": false,
+    "normal_version_admitted": false,
+    "private_console_exported": false,
+    "private_credentials_exported": false,
+    "provisional_development_db_player_list_verified": false,
+    "selected_shard_play_verified": false,
+    "server_development_skip_observed": false,
+    "shipping_profiles_modified": false,
+    "source_inferred_development_exception_used": false
+  },
+  "cleanup_and_stability": {
+    "development_all_owned_service_jobs_empty_before_close": true,
+    "development_candidate_and_source_inputs_unchanged": true,
+    "development_runtime_after_probe_verified": true,
+    "owned_firewall_cleanup_complete": true,
+    "owned_localdb_cleanup_complete": true,
+    "owned_registry_cleanup_complete": true,
+    "owned_service_cleanup_complete": true,
+    "private_files_removed": true,
+    "private_probe_build_removed": true,
+    "source_inputs_unchanged": true
+  },
+  "duplicate_json_keys_refused": true,
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "passed": true,
+  "qualified": {
+    "actual_db_command_ids_or_names": false,
+    "actual_server_development_skip_branch": false,
+    "completed_db_player_list": false,
+    "current_client_resource_namespace_or_world": false,
+    "full_process_module_or_export_mapping": false,
+    "global_memory_budget": false
+  },
+  "receipt_bytes": 70557,
+  "receipt_crlf_lines": 1565,
+  "receipt_sha256": "d3d8382330622f4dfc19ae105b5cb87674ce79411f284f6935a159eac33f8889",
+  "repository_tree": "04d74f572784c3762856267c3ab1b1c32ff888c0",
+  "review_actions": {
+    "application_source_or_runtime_helpers_executed": 0,
+    "network_downloads": 0,
+    "runtime_or_capture_replays": 0,
+    "tests_or_compilers_run": 0,
+    "windows_native_or_registry_calls": 0
+  },
+  "run_id": 39090126094,
+  "schema": 1,
+  "scope": "data_only_review_of_failed_single_actual_windows_development_experiment",
+  "source_binding": {
+    "current_runtime_generation_claimed": false,
+    "git_input_blob_bytes": 1441703,
+    "matched_exact_git_blobs": 98,
+    "receipt_pins": 98
+  },
+  "source_commit": "ed77036d1b7f7e47588d74408506d738293643a9",
+  "source_interpretation": {
+    "actual_development_owner_rejects_any_unsupported_counter": true,
+    "conditional_no_account_link_notifications": [
+      14,
+      8,
+      8
+    ],
+    "conditional_sequence_is_actual_command_witness": false,
+    "known_command_body_can_also_be_unsupported": true,
+    "ordinary_unknown_command_returns": "COH_OK",
+    "send_players_envelope_absence_proven": false
+  },
+  "source_pipeline_file": "source-pipeline.json",
+  "source_pipeline_sha256": "0c9d3bcf50aace8cb57e5e9a690488d5e9d5b4d79ba07d0c2bf5a57fe142f38d"
+}
