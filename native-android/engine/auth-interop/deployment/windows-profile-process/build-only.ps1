@@ -10,7 +10,7 @@ $csc = Join-Path $framework 'csc.exe'
 $refs = @('mscorlib.dll','System.dll','System.Core.dll','System.Security.dll')
 $inputs = [ordered]@{}
 $expected = [ordered]@{
-  'OwnedProfileProcess.cs' = 'f23a4c57bf82043a586cebd400d5f9feecc4d94bfa1ce895cf722ca8b3244121'
+  'OwnedProfileProcess.cs' = '6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474'
   'InertProfileProbe.cs' = '339aa91a99fc3099e421d8a70d16d350c97d1df94728e83c2f1fab367e85a52c'
   'TestOwnedProfileProcess.cs' = 'b68929efac7fa145a706524dc4d84e3b6afb6bd29258e636b9902297ca38a378'
 }

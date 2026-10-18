@@ -1,0 +1,273 @@
+{
+  "schema": "coh-fresh-character-owner-source-proof-binding-v1",
+  "passed": true,
+  "source_revision": "43bb0484bbd11e9da37287e2a19fe423caeb9663",
+  "production_source_revision": "a2b00b8c4c2d6fcf0f2066f930f952b20b8ef1b3",
+  "source_sha256": {
+    "native-android/engine/auth-interop/fresh-character-owner/OWNER-PLAN.md": "a7058a6ea0bbd569d1969c974e1e04e5d5c7ac0f93ca3af20f41613a3ef0d772",
+    "native-android/engine/auth-interop/fresh-character-owner/check_fresh_character_owner.py": "17655d8f7e4b2b2493d02b9634d72ae814a9c167a99e7f40434ae29a9dd4fc92",
+    "native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.c": "b8e58922dc9b31b46408a9ec0a27093adef5ce5988308428508200ef63eb8ceb",
+    "native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.h": "d6782335567105f9179fe3684acc900afecf2299ea4b520c1bafad57913d5abf",
+    "native-android/engine/auth-interop/fresh-character-owner/fresh_character_wire_oracle.py": "9f2dbb4d6f2f9501dfdcafdf90ac43e2b14034d39380add22b54e27d0f296515",
+    "native-android/engine/auth-interop/fresh-character-owner/test_fresh_character_owner.c": "6098fea582ec78e4d51da06d40c51ba54dc3fbfa42a045166227eb61bd667868",
+    "native-android/engine/auth-interop/fresh-character-owner/test_fresh_character_wire.c": "fc96aaf707a287cae97afc9e20622a13c338324a3dd6632a13f8226e57ad64e9",
+    "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/check.py": "2cd5e8b80b593584e71f63cab21d774c00d39ec4056ae846d4698da68faac410",
+    "native-android/engine/dbclient/coh_db_account_controls.c": "9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2",
+    "native-android/engine/dbclient/coh_db_account_controls.h": "9ac6ab90576973ecfac43a4cba8ea8a7e5805c230312645d85cffe5a778f63db",
+    "native-android/engine/dbclient/coh_db_account_inventory.h": "e21189e8df3f65e0a9095625f5a0da7a496dc279928ccb7b081d0708a10fdb3e",
+    "native-android/engine/dbclient/coh_db_handoff_owner.h": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45",
+    "native-android/engine/dbclient/coh_db_handoff_private.h": "6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd",
+    "native-android/engine/dbclient/coh_db_session.c": "6a36786b0bdaf86d27c16793b42fd311779bd24f5e0580fea6319377492dbc1d",
+    "native-android/engine/dbclient/coh_db_session.h": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711",
+    "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/dbclient/source-pins.json": "a8c82a4c35eb73325ab4c7e0727645e40899330e7d7450b2c5976b26a89dbeb1",
+    "native-android/engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+    "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "native-android/engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+    "native-android/engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "upstream/ouroboros/Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+    "upstream/ouroboros/Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+    "upstream/ouroboros/Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.h": "8ea7ca9abf646f290278e68292d00ef13520de6a9b80768566332780f624f58b",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370"
+  },
+  "source_union_count": 49,
+  "all_inputs_current_and_equal_committed_source": true,
+  "qualifications": {
+    "doubles": {
+      "file": "doubles.json.gz",
+      "bytes": 4318,
+      "sha256": "4d62148e9e8384d71f0b1c2d7115130bc48004ef6b3dfd9632976ee7286677db",
+      "raw_bytes": 47205,
+      "raw_sha256": "d78590ccde094e0fdec214eba0e157e0832c2f3f42fdcb82f904fabafcfd8000",
+      "source_revision": "43bb0484bbd11e9da37287e2a19fe423caeb9663",
+      "current_source_inputs": 22,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 43771,
+          "scenarios": 127,
+          "component_fault_cases": 72,
+          "input_refusals": 14,
+          "busy_reentry_probes": 100,
+          "owner_wiped_frees": 117,
+          "controlled_component_doubles": true,
+          "ordinary_controllers_executed": false,
+          "actual_servers": false,
+          "persistent_rollback_claimed": false
+        },
+        "asan": {
+          "passed": true,
+          "checks": 43771,
+          "scenarios": 127,
+          "component_fault_cases": 72,
+          "input_refusals": 14,
+          "busy_reentry_probes": 100,
+          "owner_wiped_frees": 117,
+          "controlled_component_doubles": true,
+          "ordinary_controllers_executed": false,
+          "actual_servers": false,
+          "persistent_rollback_claimed": false
+        },
+        "ubsan": {
+          "passed": true,
+          "checks": 43771,
+          "scenarios": 127,
+          "component_fault_cases": 72,
+          "input_refusals": 14,
+          "busy_reentry_probes": 100,
+          "owner_wiped_frees": 117,
+          "controlled_component_doubles": true,
+          "ordinary_controllers_executed": false,
+          "actual_servers": false,
+          "persistent_rollback_claimed": false
+        }
+      },
+      "retained_child_outputs": [
+        {
+          "file": "doubles-005-stdout",
+          "bytes": 277,
+          "sha256": "b60ad9e71264aa76d1efa9f45ba916f767a7677fcd5a19dc793f5f8c299d5a44"
+        },
+        {
+          "file": "doubles-005-stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "doubles-008-stdout",
+          "bytes": 277,
+          "sha256": "b60ad9e71264aa76d1efa9f45ba916f767a7677fcd5a19dc793f5f8c299d5a44"
+        },
+        {
+          "file": "doubles-008-stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "doubles-011-stdout",
+          "bytes": 277,
+          "sha256": "b60ad9e71264aa76d1efa9f45ba916f767a7677fcd5a19dc793f5f8c299d5a44"
+        },
+        {
+          "file": "doubles-011-stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "external_directory": "/workspace/scratch/7ed1da2a7e55/fresh-character-doubles-attempt2",
+      "old_test_entrypoints_executed": false
+    },
+    "wire": {
+      "file": "wire.json.gz",
+      "bytes": 7454,
+      "sha256": "dcb5a2adb80bc22b814852ec28ea82dacc71448145e68e79fcbcfc97e5853db3",
+      "raw_bytes": 85552,
+      "raw_sha256": "0813fab029037401e47d4c34891e2be4518a7b5efcd5b9bd934231dad6a2160d",
+      "source_revision": "43bb0484bbd11e9da37287e2a19fe423caeb9663",
+      "current_source_inputs": 48,
+      "modes": {
+        "release": {
+          "passed": true,
+          "checks": 173,
+          "transactions": 1,
+          "real_public_Login_DBSession_owner": true,
+          "actual_OS_TCP_UDP": true,
+          "OpenSSL_RSA_DH_and_Blowfish": true,
+          "auth_reply_frames": 4,
+          "DB_frames_observed": 7,
+          "encrypted_DB_frames_observed": 5,
+          "source_choose_wire_compared": true,
+          "parsed_offer_retired": true,
+          "descriptors_balanced": true,
+          "synthetic_peers_only": true,
+          "actual_server_or_SQL": false,
+          "persistent_rollback_claimed": false,
+          "Map_socket_or_character_ACK": false,
+          "world_authority": false
+        },
+        "asan": {
+          "passed": true,
+          "checks": 173,
+          "transactions": 1,
+          "real_public_Login_DBSession_owner": true,
+          "actual_OS_TCP_UDP": true,
+          "OpenSSL_RSA_DH_and_Blowfish": true,
+          "auth_reply_frames": 4,
+          "DB_frames_observed": 7,
+          "encrypted_DB_frames_observed": 5,
+          "source_choose_wire_compared": true,
+          "parsed_offer_retired": true,
+          "descriptors_balanced": true,
+          "synthetic_peers_only": true,
+          "actual_server_or_SQL": false,
+          "persistent_rollback_claimed": false,
+          "Map_socket_or_character_ACK": false,
+          "world_authority": false
+        },
+        "ubsan": {
+          "passed": true,
+          "checks": 173,
+          "transactions": 1,
+          "real_public_Login_DBSession_owner": true,
+          "actual_OS_TCP_UDP": true,
+          "OpenSSL_RSA_DH_and_Blowfish": true,
+          "auth_reply_frames": 4,
+          "DB_frames_observed": 7,
+          "encrypted_DB_frames_observed": 5,
+          "source_choose_wire_compared": true,
+          "parsed_offer_retired": true,
+          "descriptors_balanced": true,
+          "synthetic_peers_only": true,
+          "actual_server_or_SQL": false,
+          "persistent_rollback_claimed": false,
+          "Map_socket_or_character_ACK": false,
+          "world_authority": false
+        }
+      },
+      "retained_child_outputs": [
+        {
+          "file": "wire-031-stdout",
+          "bytes": 469,
+          "sha256": "c2645136c46a9c982feff8b9553b8bff103b5879e75ca7558f879f60ab3296f3"
+        },
+        {
+          "file": "wire-031-stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "wire-047-stdout",
+          "bytes": 469,
+          "sha256": "c2645136c46a9c982feff8b9553b8bff103b5879e75ca7558f879f60ab3296f3"
+        },
+        {
+          "file": "wire-047-stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "wire-063-stdout",
+          "bytes": 469,
+          "sha256": "c2645136c46a9c982feff8b9553b8bff103b5879e75ca7558f879f60ab3296f3"
+        },
+        {
+          "file": "wire-063-stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "external_directory": "/workspace/scratch/7ed1da2a7e55/fresh-character-wire-43bb0484b-attempt1",
+      "old_test_entrypoints_executed": false
+    }
+  },
+  "first_attempt": {
+    "source_revision": "bc45d98c478838e3b24c0c03533dbb41d9301fd4",
+    "scope": "doubles",
+    "result": "TEST_COMPILE_WARNING_REFUSAL",
+    "native_child_executed": false,
+    "file": "initial-test-compile-refusal.stderr",
+    "bytes": 985,
+    "sha256": "5e57bf17a7d07bf7262157fda4d377782d8627f0546d4a2a40ad61c88d4b3efc",
+    "successor_change": "test-only statement line boundary; production source unchanged"
+  },
+  "scope": {
+    "new_owner_source_executed": true,
+    "controlled_doubles": true,
+    "real_public_controllers_synthetic_loopback_transaction": true,
+    "actual_OpenSSL_RSA_DH_and_Blowfish_in_wire": true,
+    "source_choose_writer_reused": true,
+    "private_core_access_or_include_C": false,
+    "completed_empty_list_owner_called_or_changed": false,
+    "old_Auth_list_C50_primitive_qualifier_or_main_replayed": false,
+    "actual_Auth_DB_Map_SQL_server": false,
+    "actual_container_allocation_or_persistent_rollback_observed": false,
+    "Map_socket_or_creation_body_or_READY_or_ACK": false,
+    "normal_version_or_reference_checksum_admitted": false,
+    "Windows_or_Android_execution": false
+  },
+  "retained_external_objects_or_binaries_in_git": false
+}

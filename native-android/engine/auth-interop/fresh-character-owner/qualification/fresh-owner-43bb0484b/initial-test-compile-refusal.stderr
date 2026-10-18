@@ -1,0 +1,8 @@
+/workspace/scratch/7ed1da2a7e55/worker-d/native-android/engine/auth-interop/fresh-character-owner/test_fresh_character_owner.c: In function ‘coh_db_session_create_empty’:
+/workspace/scratch/7ed1da2a7e55/worker-d/native-android/engine/auth-interop/fresh-character-owner/test_fresh_character_owner.c:171:5: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+  171 |     if(fault==58)return COH_LIMIT;row_model=1;s->d.phase=COH_DB_WAIT_MAP;s->d.choices=1;s->d.selection_generation=1;
+      |     ^~
+/workspace/scratch/7ed1da2a7e55/worker-d/native-android/engine/auth-interop/fresh-character-owner/test_fresh_character_owner.c:171:35: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  171 |     if(fault==58)return COH_LIMIT;row_model=1;s->d.phase=COH_DB_WAIT_MAP;s->d.choices=1;s->d.selection_generation=1;
+      |                                   ^~~~~~~~~
+cc1: all warnings being treated as errors

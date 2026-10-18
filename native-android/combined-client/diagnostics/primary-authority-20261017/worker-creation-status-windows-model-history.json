@@ -1,0 +1,55 @@
+{
+  "schema": "coh-preserved-creation-status-windows-model-history-v1",
+  "bundle": "worker-creation-status-windows-model-history.bundle",
+  "bytes": 260902,
+  "sha256": "dde8e775f26dcbbcb4daf2a6ef2ac0be6144b5baa8dfdb2a8558f584c22d5617",
+  "prior_history_index": "worker-base-defaults-verifier-history.json",
+  "public_and_prior_bundle_tips_excluded_to_avoid_duplicate_payloads": [
+    "9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+    "7228b935dbcb8858b94908cefedec38a38e42f73",
+    "566df2ad9030078a34f4826c1866cf8bb26b12ad",
+    "bce91e75c3893c51a4509be7cbefcd2e55f83996",
+    "da4d9ff674fd28ab236ec6d282d0da5d0c76ae96",
+    "cfca6d1ee08789b53136c84d8891b0161a080a0b",
+    "c8287d3d39304743a18379db17f65de53612f006"
+  ],
+  "workers": {
+    "A": {
+      "tip": "84adae99333f63a5fa2862bdb94c471b333cdfd8",
+      "ref": "refs/recovery/creation-status-windows-model-20261018/a",
+      "scope": "Actual391041 fixed receipt; historical-only catalog probe SOURCE freeze, its later execution/proof excluded"
+    },
+    "B": {
+      "tip": "2dca8fce08e9c55b0087d4d5a7b9f13f0e75e3e4",
+      "ref": "refs/recovery/creation-status-windows-model-20261018/b",
+      "scope": "Qualified older TexDefaults original history plus NEW Basic source freeze; Basic first focused result excluded"
+    },
+    "C": {
+      "tip": "6b7fac8e80e375b7a1435fec2743d873580a8955",
+      "ref": "refs/recovery/creation-status-windows-model-20261018/c",
+      "scope": "Qualified empty creation primitive and first proof; new outbound witness scratch is still separate"
+    },
+    "D": {
+      "tip": "da9ab31f03bfe407b343a37afb1595cd0f4d6451",
+      "ref": "refs/recovery/creation-status-windows-model-20261018/d",
+      "scope": "Qualified owner/doubles/real-public-controller controlled-wire proof; CLI/Map status proposals/source audits only"
+    },
+    "E": {
+      "tip": "35a610baa3ba6850bc9d8046e96e8e02fce2349b",
+      "ref": "refs/recovery/creation-status-windows-model-20261018/e",
+      "scope": "Published uncompiled original Windows helper source freeze; reviewed precompile successor is in coordinator commits; new supervisor scratch excluded"
+    },
+    "F": {
+      "tip": "8fbdc7aeac20944d1d6a914217d0461af690f01a",
+      "ref": "refs/recovery/creation-status-windows-model-20261018/f",
+      "scope": "Independent creation/owner/helper integration/status-adapter/Windows workflow source and proof reviews"
+    },
+    "coordinator": {
+      "tip": "5ce145df34d7415212009b5057212b02abf38da0",
+      "ref": "refs/recovery/creation-status-windows-model-20261018/coordinator",
+      "scope": "Integrated qualified creation/owner and safe actual capture evidence; precompile successor and first Windows compiler/Fake-model workflow, source-only at this tip"
+    }
+  },
+  "verification": "The bundle contains these 7 refs:\n84adae99333f63a5fa2862bdb94c471b333cdfd8 refs/recovery/creation-status-windows-model-20261018/a\n2dca8fce08e9c55b0087d4d5a7b9f13f0e75e3e4 refs/recovery/creation-status-windows-model-20261018/b\n6b7fac8e80e375b7a1435fec2743d873580a8955 refs/recovery/creation-status-windows-model-20261018/c\nda9ab31f03bfe407b343a37afb1595cd0f4d6451 refs/recovery/creation-status-windows-model-20261018/d\n35a610baa3ba6850bc9d8046e96e8e02fce2349b refs/recovery/creation-status-windows-model-20261018/e\n8fbdc7aeac20944d1d6a914217d0461af690f01a refs/recovery/creation-status-windows-model-20261018/f\n5ce145df34d7415212009b5057212b02abf38da0 refs/recovery/creation-status-windows-model-20261018/coordinator\nThe bundle requires these 8 refs:\ne54ceb26cf5dbd6ca74442d2de196827c82265fe \nbce91e75c3893c51a4509be7cbefcd2e55f83996 \nda4d9ff674fd28ab236ec6d282d0da5d0c76ae96 \n7228b935dbcb8858b94908cefedec38a38e42f73 \nc8287d3d39304743a18379db17f65de53612f006 \ncfca6d1ee08789b53136c84d8891b0161a080a0b \n9c29e08c8d7e0ab38cff00f2997c39738a56ad07 \n566df2ad9030078a34f4826c1866cf8bb26b12ad \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-creation-status-windows-model-history.bundle is okay\n",
+  "scope": "Preserves original source/proof/review commits, explicit pre-run source freezes and coordinator source-preparation refusals. Source-only tips are not qualified by inclusion. New Basic/historical-probe execution results, outbound-request witness and supervisor remain in active independent workstreams and are excluded from this checkpoint. No actual profile helper, Auth/Db/Map transaction, original fresh character allocation, ARM64 execution, APK, emulator, Thor, whole initial/player/world or normal-version authority is created by this bundle."
+}

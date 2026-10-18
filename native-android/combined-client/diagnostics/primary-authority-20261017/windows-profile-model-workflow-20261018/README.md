@@ -1,0 +1,5 @@
+The new workflow admits seven successor producer/build inputs and two new source-review records, then dynamically binds its own committed bytes. It invokes the immutable three-target recipe once, then only the new Fake-platform model executable. No helper/probe/profile backend or service runs in this role.
+
+The first source-only draft is archived as gzip. Read-only review found coercive model parsing, unbounded pipe accumulation/EOF, and cleanup status ambiguity before any compiler/model run. The corrected workflow uses a fixed byte capture, exact producer-line parsing and separate primary/cleanup outcomes. Its selected installed PowerShell build driver is bounded by the fifteen-minute workflow limit; it does not claim a shorter strict driver timeout or full loaded-runtime closure. Two coordinator data-preparation refusals are retained as parsed tool observations without invented raw-stderr byte identities.
+
+All nine nonself source bytes matched current committed Git in the data-only guard. The planned first hosted build/model remains unexecuted at this source freeze.

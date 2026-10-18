@@ -1,0 +1,1 @@
+{"passed":true,"checks":43771,"scenarios":127,"component_fault_cases":72,"input_refusals":14,"busy_reentry_probes":100,"owner_wiped_frees":117,"controlled_component_doubles":true,"ordinary_controllers_executed":false,"actual_servers":false,"persistent_rollback_claimed":false}

@@ -1,0 +1,281 @@
+{
+  "artifacts": [
+    {
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12126849925/zip",
+      "created_at": "2026-10-18T06:38:11Z",
+      "digest": "sha256:e7564f1b82aea981bc83ca2c9cdb8bed0677602729e19bb9560411cd9ba4170c",
+      "expired": false,
+      "expires_at": "2027-01-16T06:27:56Z",
+      "id": 12126849925,
+      "name": "fresh-status-adapter-groups-public-9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+      "size_in_bytes": 1798,
+      "updated_at": "2026-10-18T06:38:11Z",
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12126849925",
+      "workflow_run": {
+        "head_branch": "native-android",
+        "head_repository_id": 1368730125,
+        "head_sha": "9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+        "id": 39104124073,
+        "repository_id": 1368730125
+      }
+    }
+  ],
+  "job_id": 117606253056,
+  "jobs": [
+    {
+      "conclusion": "failure",
+      "id": 117606253056,
+      "logs_url": null,
+      "name": "matching-original-status-adapter-observation",
+      "run_id": 39104124073,
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Admit unchanged original Map and receiver plus separate fixed-status adapter",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify successful original fixture provenance and exact ZIP before extraction",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Admit exact source-created fixture receipt before installing or launching runtime",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Reuse exact retained observer ZIP and recover only the missing unchanged DbServer donor",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Admit exact new observer source role and PE before runtime",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install x86 hosted runtime with PG18 and source-qualified classic Wine10",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Record only fixed public pre-runtime tooling facts",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Admit exact Inventory receiver without rebuild or historical test replay",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Prepare original control runtime files without SQL or any capture startup",
+          "number": 11,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Observe one actual original GROUPS and native raw initial transaction in owned private runtime",
+          "number": 12,
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Verify complete same-envelope associations, admit snapshot and retain only fresh test bodies",
+          "number": 13,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Retain optional initial packet only through the fresh fixture export gate",
+          "number": 14,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Extract only fixed public booleans and coarse source-defined failure enum",
+          "number": 15,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 16,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 17,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 18,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 36,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 37,
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "private_logs_fetched": false,
+  "run_id": 39104124073,
+  "schema": "coh-scene-safe-api-metadata-v1",
+  "steps": [
+    {
+      "conclusion": "success",
+      "name": "Set up job",
+      "number": 1,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "number": 2,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Admit unchanged original Map and receiver plus separate fixed-status adapter",
+      "number": 3,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Verify successful original fixture provenance and exact ZIP before extraction",
+      "number": 4,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Admit exact source-created fixture receipt before installing or launching runtime",
+      "number": 5,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Reuse exact retained observer ZIP and recover only the missing unchanged DbServer donor",
+      "number": 6,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Admit exact new observer source role and PE before runtime",
+      "number": 7,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Install x86 hosted runtime with PG18 and source-qualified classic Wine10",
+      "number": 8,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Record only fixed public pre-runtime tooling facts",
+      "number": 9,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Admit exact Inventory receiver without rebuild or historical test replay",
+      "number": 10,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Prepare original control runtime files without SQL or any capture startup",
+      "number": 11,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Observe one actual original GROUPS and native raw initial transaction in owned private runtime",
+      "number": 12,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Verify complete same-envelope associations, admit snapshot and retain only fresh test bodies",
+      "number": 13,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Retain optional initial packet only through the fresh fixture export gate",
+      "number": 14,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Extract only fixed public booleans and coarse source-defined failure enum",
+      "number": 15,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Run actions/upload-artifact@v4",
+      "number": 16,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Run actions/upload-artifact@v4",
+      "number": 17,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Run actions/upload-artifact@v4",
+      "number": 18,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "number": 36,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Complete job",
+      "number": 37,
+      "status": "completed"
+    }
+  ]
+}

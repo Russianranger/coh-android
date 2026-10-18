@@ -1,0 +1,226 @@
+{
+  "schema": "coh-db-empty-creation-proof-binding-v1",
+  "passed": true,
+  "qualified_source_revision": "c684178120693c19b255713ca62b595d2113a3b4",
+  "production_patch_revision": "90513eb3dcf3f0fc7c867d01f7c6308278c543a1",
+  "source_sha256": {
+    "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c": "36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6",
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h": "2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/ACCOUNT_INVENTORY.md": "94ec5fff1a536fee17e7057e29d5cdea3ad49e8194c80bddec968f39180b36f3",
+    "native-android/engine/dbclient/EMPTY_CREATION.md": "c309150acfe499365f86763ea5c359f4511174558294c7575b63f748ddf96c30",
+    "native-android/engine/dbclient/check.py": "2cd5e8b80b593584e71f63cab21d774c00d39ec4056ae846d4698da68faac410",
+    "native-android/engine/dbclient/check_account_inventory.py": "42b9839fba5c7f66a264de606940e509ca99983fa74ae76a2035975137db437b",
+    "native-android/engine/dbclient/check_empty_creation.py": "b7a5b75a7f4cf74286aafca687323da372fcce959723ada3ec35f2bba1efeb68",
+    "native-android/engine/dbclient/coh_db_account_controls.c": "9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2",
+    "native-android/engine/dbclient/coh_db_account_controls.h": "9ac6ab90576973ecfac43a4cba8ea8a7e5805c230312645d85cffe5a778f63db",
+    "native-android/engine/dbclient/coh_db_account_inventory.h": "e21189e8df3f65e0a9095625f5a0da7a496dc279928ccb7b081d0708a10fdb3e",
+    "native-android/engine/dbclient/coh_db_handoff_owner.h": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45",
+    "native-android/engine/dbclient/coh_db_handoff_private.h": "6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd",
+    "native-android/engine/dbclient/coh_db_session.c": "6a36786b0bdaf86d27c16793b42fd311779bd24f5e0580fea6319377492dbc1d",
+    "native-android/engine/dbclient/coh_db_session.h": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711",
+    "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/dbclient/empty_creation_oracle.py": "3957b6a04c8f7d1b39269e48adcb65d073c5b43912a2e4c8b42652532c840af2",
+    "native-android/engine/dbclient/qualification/account-inventory-396621362.json.gz": "53d6b32dd97f2ff9bd0489097640193a6d66211b9fd1d50b7808c472ed9d219f",
+    "native-android/engine/dbclient/source-pins.json": "a8c82a4c35eb73325ab4c7e0727645e40899330e7d7450b2c5976b26a89dbeb1",
+    "native-android/engine/dbclient/tests/account-controls-source-pins.json": "df398a95e9e8c9e0c697a7c2c9422ee0980311e6f6d3e7b3f26fbc38f7c3fdc8",
+    "native-android/engine/dbclient/tests/account_controls_oracle.py": "6a53e2f26a87149f274a9e6b93a03410352964985e0a5da5d3ba1cbf993b11f3",
+    "native-android/engine/dbclient/tests/inventory-source-pins.json": "1bc8367d34c6596560c0708ccaaffbafb2f55f696d90c9683ec680aab1c2a526",
+    "native-android/engine/dbclient/tests/inventory_oracle.py": "4d0549b9a9e1ca3ff035685c44ea2c20335d92e12150721dae33746359fa5b36",
+    "native-android/engine/dbclient/tests/test_account_controls.c": "441cdbbfc20434331ccd3d90a63f149c322ce806f51915c21324f0143d5d0e13",
+    "native-android/engine/dbclient/tests/test_account_inventory.c": "0a380b6b174a4c3131368d7e20c15bee7d99c2f5f95969bf74f9e669eace7ef3",
+    "native-android/engine/dbclient/tests/test_empty_creation.c": "5012b755f3735093085143374481e080f706ea0198732a6e15f137aa10c1e5ad",
+    "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "upstream/ouroboros/AccountServer/src/AccountDb.cpp": "743193935f25a5c466aaaf11cb36a6972b6700374dfa273bfd44ee06495d9585",
+    "upstream/ouroboros/AccountServer/src/AccountServer.cpp": "91070c652c6796f2dc38fd50b3985febc627e7e96201ad6f71fe2de3888847d7",
+    "upstream/ouroboros/Common/account/AccountCatalog.c": "7db49f91412ed60af05988e5997b04689d309f3f4948ad8fc003aff249f2e0bc",
+    "upstream/ouroboros/Common/account/AccountCatalog.h": "1af30fae332485099feeeb02ee218b14eda4bc5815f51e9353d2918674cfff75",
+    "upstream/ouroboros/Common/account/AccountData.c": "038259178820f9a78040d39b4d8810933e31a67a798676fb37a0ca658682c391",
+    "upstream/ouroboros/Common/account/AccountData.h": "f1c82f2f428cf4e2ddeb8fe856bc5b76ca74fd55d72738bd7bff8ea6a89ed3b3",
+    "upstream/ouroboros/Common/account/AccountTypes.cpp": "626d7e1264a39bce5d649c38a835227f85d3fcd33011ad0d959d189027ed1d13",
+    "upstream/ouroboros/Common/account/AccountTypes.h": "5f0ab67fc6405d28cb1e5c0649a4d72fbbef81dae7ebfc2adae0f276c12e6bdd",
+    "upstream/ouroboros/Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+    "upstream/ouroboros/Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+    "upstream/ouroboros/Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+    "upstream/ouroboros/Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+    "upstream/ouroboros/Common/entity/entStrings.c": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0",
+    "upstream/ouroboros/Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "upstream/ouroboros/Common/entity/power_customization.c": "7cad6c8e8184fc45b2457b35da0cc71a3fbb47c92ba003954cb423816baf8883",
+    "upstream/ouroboros/Common/gameComm/trayCommon.c": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6",
+    "upstream/ouroboros/DBServer/src/accountservercomm.c": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae",
+    "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+    "upstream/ouroboros/DBServer/src/container.h": "7c7ec25139a9923864081c6a399eae7d22ec3cc28bebd7ea61c734fac0ea2c86",
+    "upstream/ouroboros/DBServer/src/dbdispatch.c": "30097d295b70c5c0050f4772a1dc984479e323f21fce23e1c11370ce399683d4",
+    "upstream/ouroboros/DBServer/src/mapxfer.c": "3eb5d5f5a157363bc39dea4545791d01032fedadfa8517cf2a2e1bb7fa54ad59",
+    "upstream/ouroboros/Game/src/UI/uiServerTransfer.c": "b2f4e5667b519b511ee9dfb6780f299f5489266470ec904d9f53a8f1c847da3b",
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.h": "8ea7ca9abf646f290278e68292d00ef13520de6a9b80768566332780f624f58b",
+    "upstream/ouroboros/Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+    "upstream/ouroboros/Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "upstream/ouroboros/Game/src/gameComm/initClient.c": "2a6da67369d4f1506ebc112b7bfe3485c741920f8ec12f3229e4c10dbe608d38",
+    "upstream/ouroboros/MapServer/src/container/containercallbacks.c": "56b484eded5a1ac2148369c4fac51084cad6ad9c55de6cfec4cbcb2dda90fb73",
+    "upstream/ouroboros/MapServer/src/dbcomm/dbcomm.c": "cfca70ab79291ba327857530490ddf8293b73a666f2939597d66103f8d08b761",
+    "upstream/ouroboros/MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "upstream/ouroboros/MapServer/src/player/parseClientInput.c": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313",
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "upstream/ouroboros/QueueServer/src/QueueServer_Passthrough.c": "49f71c51e7d4a95e616455359752b7cca8d37c15f8bc0ddf86bbccdb70408d5c",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h": "822e3698ab8cf76a7344ed3effe607dcda542099382e8ed1a63c2c1d1df4257c",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370"
+  },
+  "proof": {
+    "path": "native-android/engine/dbclient/qualification/empty-creation-c68417812.json.gz",
+    "gzip_bytes": 8667,
+    "gzip_sha256": "c81fadfa75f60bb9fe458dfce542a8d8db05b2ee61a23914af1963e5a9f98948",
+    "raw_bytes": 37873,
+    "raw_sha256": "b642ae53cb0f162aaca2e77b7035cc28b7503180869b067d19b52ee521c5f182"
+  },
+  "qualification_attempts": [
+    {
+      "ordinal": 1,
+      "source_revision": "c684178120693c19b255713ca62b595d2113a3b4",
+      "mode_sequence": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "all_modes_passed": true,
+      "development_failures": 0,
+      "reruns": 0,
+      "log_path": "native-android/engine/dbclient/qualification/empty-creation-c68417812-attempt.log",
+      "log_bytes": 1427,
+      "log_sha256": "267ddb6e0ea3749530ea0d175077859da6ff5ac1bfaaa70c568020315b24d8b7"
+    }
+  ],
+  "entry_guard_controls": [
+    {
+      "case": "optimize",
+      "returncode": 1,
+      "empty_stdout": true,
+      "fixed_refusal_observed": true,
+      "no_output_created": true,
+      "stderr_sha256": "61632918700b9f898b2b2c56056c3bcbf525b9781a23d34b86c4086961c3b6dc",
+      "native_compiler_fixture_or_project_import_executed": false
+    },
+    {
+      "case": "optimize2",
+      "returncode": 1,
+      "empty_stdout": true,
+      "fixed_refusal_observed": true,
+      "no_output_created": true,
+      "stderr_sha256": "61632918700b9f898b2b2c56056c3bcbf525b9781a23d34b86c4086961c3b6dc",
+      "native_compiler_fixture_or_project_import_executed": false
+    },
+    {
+      "case": "environment",
+      "returncode": 1,
+      "empty_stdout": true,
+      "fixed_refusal_observed": true,
+      "no_output_created": true,
+      "stderr_sha256": "61632918700b9f898b2b2c56056c3bcbf525b9781a23d34b86c4086961c3b6dc",
+      "native_compiler_fixture_or_project_import_executed": false
+    }
+  ],
+  "measured_host_layout": {
+    "session_bytes": 46568,
+    "previous_C50_session_bytes": 46560,
+    "delta_bytes": 8,
+    "public_diagnostics_changed": false,
+    "new_heap_owners": 0,
+    "creation_request_local_encode_buffer_bytes": 160
+  },
+  "new_function_stack_rows": {
+    "release": [
+      "/workspace/scratch/7ed1da2a7e55/worker-c/native-android/engine/dbclient/coh_db_session.c:222:11:coh_db_session_create_empty\t352\tdynamic,bounded",
+      "/workspace/scratch/7ed1da2a7e55/worker-c/native-android/engine/dbclient/coh_db_session.c:271:11:coh_db_session_retire_created_offer\t80\tstatic"
+    ],
+    "asan": [
+      "/workspace/scratch/7ed1da2a7e55/worker-c/native-android/engine/dbclient/coh_db_session.c:222:11:coh_db_session_create_empty\t608\tdynamic,bounded",
+      "/workspace/scratch/7ed1da2a7e55/worker-c/native-android/engine/dbclient/coh_db_session.c:271:11:coh_db_session_retire_created_offer\t80\tstatic"
+    ],
+    "ubsan": [
+      "/workspace/scratch/7ed1da2a7e55/worker-c/native-android/engine/dbclient/coh_db_session.c:222:11:coh_db_session_create_empty\t384\tdynamic,bounded",
+      "/workspace/scratch/7ed1da2a7e55/worker-c/native-android/engine/dbclient/coh_db_session.c:271:11:coh_db_session_retire_created_offer\t80\tstatic"
+    ]
+  },
+  "evidence_scope": {
+    "modes_identical": true,
+    "transactions_per_mode": 98,
+    "checks_per_mode": 4526605,
+    "most_checks_are_full_session_wipe_bytes": true,
+    "wire_profiles": 4,
+    "synthetic_source_written_wires": 48,
+    "allocation_refusals_per_mode": 15,
+    "actual_queue_capacity_refusals_per_mode": 4,
+    "cancel_guard_probes_per_mode": 3,
+    "close_guard_probes_per_mode": 4,
+    "project_live_allocations_final": 0,
+    "socket_FD_balance_verified": true,
+    "stack_rows_are_individual_not_callchain_or_global_admission": true,
+    "source_compilation_units": 11,
+    "actual_compiler_project_dependencies": 25,
+    "C50_core_changes_only": 2,
+    "C50_other_source_pins_unchanged": 48,
+    "unchanged_prior_function_bodies": 29,
+    "changed_prior_function_bodies": [
+      "forget",
+      "coh_db_session_take_handoff",
+      "coh_db_session_take_handoff_owner_alloc"
+    ],
+    "new_functions": [
+      "coh_db_session_create_empty",
+      "coh_db_session_retire_created_offer"
+    ],
+    "old_suite_entrypoints_executed": false,
+    "actual_server_Auth_DH_SQL_Map": false,
+    "persistent_SQL_rollback_observed": false,
+    "private_struct_setter_used": false,
+    "physical_device_or_Windows_ABI_admitted": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "retained_external_artifacts": {
+    "directory": "/workspace/scratch/7ed1da2a7e55/empty-creation-c68417812-attempt1",
+    "binaries": {
+      "release": {
+        "bytes": 144512,
+        "sha256": "684efaf5226957b198312983bf3d65b31c0ce12d57d4bff3719c2abcedf82674",
+        "file": "empty-creation-release"
+      },
+      "asan": {
+        "bytes": 664744,
+        "sha256": "9cc21edd46c83b2b7f62f7375b5dd06af955bc6f566f247c662b64b5a9e00a57",
+        "file": "empty-creation-asan"
+      },
+      "ubsan": {
+        "bytes": 635584,
+        "sha256": "7c7b580423d41eb4d10869d662fc24657ff8b1dd347c4869712f49a9c1b48485",
+        "file": "empty-creation-ubsan"
+      }
+    },
+    "original_fixture_directory": "fixture",
+    "source_and_executable_pre_post_byte_equality": true,
+    "unchanged_original_source_audit_executed_as_code": false
+  }
+}

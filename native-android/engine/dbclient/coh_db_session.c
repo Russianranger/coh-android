@@ -16,11 +16,12 @@ struct CohDbSession {
     uint64_t clock_ms,phase_start_ms;
     uint32_t receipt_generation,user_id,selected_slot,connect_id;
     int begun,local_development;
+    unsigned creation_attempted,creation_mode;
 };
 static void forget(CohDbSession *s) {
     coh_db_wipe(s->login,sizeof(s->login));s->login_bits=0;
     coh_db_wipe(&s->players,sizeof(s->players));coh_db_wipe(&s->handoff,sizeof(s->handoff));
-    s->user_id=0;s->selected_slot=0;
+    s->user_id=0;s->selected_slot=0;s->creation_mode=0;
     s->diagnostics.server_identity_bound=0;
 }
 static CohStatus stop(CohDbSession *s,CohDbSessionPhase phase,CohStatus result) {
@@ -214,9 +215,111 @@ CohStatus coh_db_session_choose(CohDbSession *s,uint32_t slot,uint32_t ip,uint32
     coh_db_wipe(&s->players,sizeof(s->players));s->selected_slot=slot;s->clock_ms=s->phase_start_ms=now;
     s->diagnostics.selection_generation++;s->diagnostics.choices++;s->diagnostics.phase=COH_DB_WAIT_MAP;return COH_OK;
 }
+/* The attempt is an object-lifetime latch, intentionally not cleared by
+ * forget()/cancel/begin. creation_mode:0 ordinary,1 queued creation,2 retiring.
+ * These operations retain the existing single-owner/nonreentrant contract. */
+static int owner_overlap(const void *,size_t,const void *,size_t);
+CohStatus coh_db_session_create_empty(CohDbSession *s,
+    const CohDbEmptyCreationRequest *request,uint64_t now) {
+    if(!s)return COH_INVALID;
+    /* Admit only PRIVATE current ordinary-auth/list context before consuming.
+     * No request pointer or field has been consulted at this point. */
+    if(s->creation_attempted||!s->begun||s->local_development||
+       s->diagnostics.phase!=COH_DB_CHARACTERS||
+       !s->diagnostics.generation||!s->receipt_generation||!s->user_id||
+       s->diagnostics.server_identity_bound!=1||
+       s->players.user_id!=s->user_id||!s->players.max_slots||
+       s->players.max_slots>COH_DB_SLOTS_MAX||
+       s->diagnostics.player_lists!=1||s->diagnostics.queue_updates||
+       s->diagnostics.unsupported||s->diagnostics.choices||s->diagnostics.handoffs)
+        return COH_STATE;
+    s->creation_attempted=1;
+    if(!request||(uintptr_t)request%offsetof(struct {char c;CohDbEmptyCreationRequest v;},v)||
+       owner_overlap(s,sizeof(*s),request,sizeof(*request)))return COH_INVALID;
+    if(request->expected_session_generation!=s->diagnostics.generation||
+       request->expected_receipt_generation!=s->receipt_generation||
+       request->expected_list_generation!=s->diagnostics.player_lists)return COH_STATE;
+    if(now<s->clock_ms)return COH_INVALID;
+    if(s->diagnostics.selection_generation==UINT32_MAX)return COH_LIMIT;
+    if(request->location!=COH_DB_CREATE_PRIMAL_HERO||
+       request->wire_slot>=s->players.max_slots)return COH_INVALID;
+    const CohDbPlayer *p=&s->players.players[request->wire_slot];
+    if(p->wire_slot!=request->wire_slot||p->empty!=1||p->visitor||
+       p->invalid||p->slot_lock)return COH_STATE;
+    if(!request->name.data||!request->name.size||request->name.size>=64||
+       owner_overlap(s,sizeof(*s),request->name.data,request->name.size)||
+       owner_overlap(request,sizeof(*request),request->name.data,request->name.size))
+        return COH_INVALID;
+    for(size_t i=0;i<request->name.size;i++)
+        if(request->name.data[i]<32||request->name.data[i]>126)return COH_INVALID;
+    CohDbChoose choose={0};choose.slot=request->wire_slot;
+    choose.create_location=COH_DB_CREATE_PRIMAL_HERO;
+    memcpy(choose.name,request->name.data,request->name.size);
+    uint8_t data[160]={0};size_t bits=0;
+    CohStatus result=coh_db_choose_encode(&choose,s->config.outbound_compressed,
+        s->config.transport.link.version<4,data,sizeof(data),&bits);
+    coh_db_wipe(&choose,sizeof(choose));
+    if(result==COH_OK)result=coh_net_udp_queue(s->udp,(CohBytes){data,(bits+7)/8},
+        (uint32_t)bits,1,0,s->config.outbound_compressed,now);
+    coh_db_wipe(data,sizeof(data));
+    if(result!=COH_OK)return result;
+    coh_db_wipe(&s->players,sizeof(s->players));s->selected_slot=request->wire_slot;
+    s->clock_ms=s->phase_start_ms=now;s->diagnostics.selection_generation++;
+    s->diagnostics.choices++;s->creation_mode=1;s->diagnostics.phase=COH_DB_WAIT_MAP;
+    return COH_OK;
+}
+CohStatus coh_db_session_retire_created_offer(CohDbSession *s,
+    const CohDbCreatedOfferPolicy *policy,CohDbCreatedOfferSummary *out) {
+    if(!s||!policy||!out)return COH_INVALID;
+    if((uintptr_t)policy%offsetof(struct {char c;CohDbCreatedOfferPolicy v;},v)||
+       (uintptr_t)out%offsetof(struct {char c;CohDbCreatedOfferSummary v;},v)||
+       owner_overlap(s,sizeof(*s),policy,sizeof(*policy))||
+       owner_overlap(s,sizeof(*s),out,sizeof(*out))||
+       owner_overlap(policy,sizeof(*policy),out,sizeof(*out)))return COH_INVALID;
+    if(s->creation_mode!=1||s->diagnostics.phase!=COH_DB_HANDOFF_READY)return COH_STATE;
+    /* Consume BEFORE untrusted policy fields. Both ordinary take paths refuse
+     * every nonzero mode, including reentry while cancellation closes sockets. */
+    s->creation_mode=2;
+    CohDbCreatedOfferSummary summary={0};
+    CohStatus result=COH_STATE;
+    if(s->creation_attempted&&s->begun&&!s->local_development&&s->user_id&&
+       s->diagnostics.server_identity_bound==1&&s->diagnostics.generation&&
+       s->receipt_generation&&s->diagnostics.player_lists==1&&
+       s->diagnostics.choices==1&&s->diagnostics.handoffs==1&&
+       !s->diagnostics.queue_updates&&!s->diagnostics.unsupported&&
+       s->handoff.selected_slot==s->selected_slot&&s->selected_slot<COH_DB_SLOTS_MAX&&
+       s->handoff.selection_generation==s->diagnostics.selection_generation&&
+       s->handoff.selection_generation&&s->handoff.selected_dbid&&
+       s->handoff.selected_dbid<=INT32_MAX&&
+       s->handoff.selected_dbid==s->handoff.map.link_id&&s->handoff.map.cookie>=2&&
+       policy->expected_session_generation==s->diagnostics.generation&&
+       policy->expected_receipt_generation==s->receipt_generation&&
+       policy->expected_selection_generation==s->diagnostics.selection_generation&&
+       policy->owned_map_id&&policy->owned_map_id==s->handoff.map.map_id&&
+       policy->owned_map_endpoint.port&&
+       policy->owned_map_endpoint.port==s->handoff.map.udp_port) {
+        uint32_t address=0;
+        for(unsigned i=0;i<4;i++)address|=(uint32_t)policy->owned_map_endpoint.address[i]<<(8*i);
+        if(address&&(address==s->handoff.map.address[0]||address==s->handoff.map.address[1])) {
+            summary.server_allocated_offer_observed=1;
+            /* Source create-empty route, not an independent SQL content read. */
+            summary.container_uninitialized=1;
+            summary.session_generation=s->diagnostics.generation;
+            summary.receipt_generation=s->receipt_generation;
+            summary.selection_generation=s->diagnostics.selection_generation;
+            result=COH_OK;
+        }
+    }
+    /* A valid retirement attempt is terminal even on policy mismatch. Existing
+     * cancel synchronously forgets retained secrets; it does NOT roll back SQL. */
+    coh_db_session_cancel(s);
+    if(result!=COH_OK)return result;
+    summary.private_offer_retired=1;*out=summary;return COH_OK;
+}
+
 CohStatus coh_db_session_take_handoff(CohDbSession *s,CohDbSessionHandoff *out) {
     if(!s||!out)return COH_INVALID;
-    if(s->diagnostics.phase!=COH_DB_HANDOFF_READY)return COH_STATE;
+    if(s->creation_mode||s->diagnostics.phase!=COH_DB_HANDOFF_READY)return COH_STATE;
     CohStatus result=coh_net_udp_disconnect(s->udp,s->clock_ms);if(result!=COH_OK)return result;
     *out=s->handoff;forget(s);s->diagnostics.disconnects++;s->diagnostics.phase=COH_DB_DISCONNECTING;return COH_OK;
 }
@@ -300,6 +403,7 @@ CohStatus coh_db_handoff_owner_claim(CohDbHandoffOwner *owner,uint32_t generatio
 CohStatus coh_db_session_take_handoff_owner_alloc(CohDbSession *s,
     const CohDbHandoffAllocator *allocator,CohDbHandoffOwner **out) {
     if(!s||!out||!allocator)return COH_INVALID;
+    if(s->creation_mode)return COH_STATE;
     if(owner_overlap(s,sizeof(*s),out,sizeof(*out))||
        owner_overlap(s,sizeof(*s),allocator,sizeof(*allocator))||
        owner_overlap(allocator,sizeof(*allocator),out,sizeof(*out)))return COH_INVALID;

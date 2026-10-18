@@ -1,0 +1,108 @@
+{
+  "PowerShell_or_project_generator_or_compiler_or_model_or_API_executed_by_reviewer": false,
+  "all9_current_raw_equal_review_Git": true,
+  "artifact_scope": {
+    "new_three_managed_images_and_build_receipt_hashes_checked_before_copy": true,
+    "no_actual_profile_runtime_permission_from_model_result": true,
+    "no_raw_compiler_process_output_private_journal_SID_username_profile_or_args_export": true,
+    "only_fixed_public_paths": [
+      "source-admission.json",
+      "build.json",
+      "compiler-status.json",
+      "model-status.json",
+      "model-execution.json",
+      "summary.json",
+      "OwnedProfileProcess.exe",
+      "InertProfileProbe.exe",
+      "TestOwnedProfileProcess.exe"
+    ],
+    "partial_or_failed_build_artifacts_require_passed_receipt_for_admission": true
+  },
+  "compiler_scope": {
+    "actual_helper_or_inert_probe_executed": false,
+    "build_recipe_sha256": "cb011af152d2c502b1dfe956cb2704ed0715d8ad4bf75fc3f8b77e88f8278447",
+    "compile_status_fixed_first_stage_and_no_raw_exception_text": true,
+    "driver_wait_bound": "workflow job15min only; no strict individual compiler/native API deadline",
+    "exact_targets": [
+      [
+        "OwnedProfileProcess.exe",
+        "CohWpp.Program"
+      ],
+      [
+        "InertProfileProbe.exe",
+        "CohWpp.InertProfileProbe"
+      ],
+      [
+        "TestOwnedProfileProcess.exe",
+        "CohWpp.Tests"
+      ]
+    ],
+    "exact_three_new_compiler_invocations": true,
+    "installed_Framework64_CSharp5_x64_only_no_install_restore_fallback": true,
+    "noconfig_nostdlib_four_absolute_framework_references_and_asInvoker_manifest": true,
+    "raw_compiler_logs_private_fixed_max32_CS_codes_roles_line_columns_only": true,
+    "source_manifest_recipe_selected_compiler_refs_optional_config_outputs_bracketed_by_recipe": true
+  },
+  "correction_history": {
+    "helper_precompile2hunk_successor_separate_F17dcc_review": true,
+    "initial_ReadToEndAsync_postlimit_and_unbounded_EOF_wait_replaced_before_any_CI": true,
+    "root_data_guard_refusals_are_not_compiler_or_model_execution": true
+  },
+  "first_actual_build_or_model_pass_claimed": false,
+  "generator": {
+    "Python_AST_parsed_only": true,
+    "bytes": 16622,
+    "sha256": "6cb261421595eccff0b496f7b4aaa0b3c7cfa92af74861fdfb0e17fb9935b3d3"
+  },
+  "model_scope": {
+    "30second_loop_requires_both_EOF_and_process_exit": true,
+    "30second_watch_starts_after_Start_and_read_task_setup_not_absolute_OS_launch_deadline": true,
+    "GetResult_only_on_completed_read_tasks": true,
+    "ReadToEnd_or_unbounded_post_exit_GetResult": false,
+    "clean4key_SystemRoot_WINDIR_TEMP_TMP_environment": true,
+    "cleanup_process_wait_bound_ms": 5000,
+    "first_operation_and_cleanup_causes_separate_fixed_enums": true,
+    "new_model_executable_hash_before_after_and_final_source_hashes": true,
+    "only_TestOwnedProfileProcess_exe_no_arguments_CohWpp_Tests_Fake36": true,
+    "process_job_profile_native_API_or_loaded_CLR_mapping_qualified": false,
+    "process_stop_then_Dispose_independently_attempted": true,
+    "result_valid_and_outer_pass_distinct_on_cleanup_refusal": true,
+    "strict_anchored_ASCII_producer_line_fixed7keys_bool_false_scope_scenarios36_integer_checks1to1000000": true,
+    "two_fixed1024_byte_stream_read_buffers_stdout_capture16384": true
+  },
+  "passed": true,
+  "read_only_Git_subprocesses_executed": true,
+  "review_kind": "static_source_and_fixed_data_only_before_first_compiler_model_CI",
+  "review_time_revision": "375b18537cd77940e99245dc25f3835f0e31760e",
+  "schema": "coh-f-owned-profile-build-model-workflow-source-review-v1",
+  "source_gate_nonself_pins": 9,
+  "source_gate_with_dynamic_workflow_Git_blob_identity": 10,
+  "source_generation_admitted": false,
+  "source_inputs_sha256": {
+    "native-android/engine/auth-interop/deployment/qualification/windows-profile-process-precompile-successor-20261018/REVIEW.md": "93c444290263925cc4d97fbf801359942f74cec9d2baabf160794a70911b2b0d",
+    "native-android/engine/auth-interop/deployment/qualification/windows-profile-process-precompile-successor-20261018/source-freeze.json": "240dc6f19fabae3d7395e9570db1070f6cecbdea7a25300d2a8fcb0a165ddd46",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/BUILD.md": "7eefb47b66142d0fb29d76407bbd8bd92bb6e46bdbf390791a04dd7fdc166221",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/CONTRACT.md": "aa62e5cb058caf707a0cfcdee21aa26119e53be611bd158e24f80ff67d63430c",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/InertProfileProbe.cs": "339aa91a99fc3099e421d8a70d16d350c97d1df94728e83c2f1fab367e85a52c",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/OwnedProfileProcess.cs": "6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/TestOwnedProfileProcess.cs": "b68929efac7fa145a706524dc4d84e3b6afb6bd29258e636b9902297ca38a378",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/as-invoker.manifest": "3a462ffbbe724bd1c520e85696599d057e3d2a8f0bb0270d5ec712be20e27331",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-only.ps1": "cb011af152d2c502b1dfe956cb2704ed0715d8ad4bf75fc3f8b77e88f8278447"
+  },
+  "workflow": {
+    "bytes": 18484,
+    "path": ".github/workflows/native-owned-profile-model.yml",
+    "sha256": "ac2bf964a349bb238aa2a01e2eef5e513c90b8596cd8cf99e81f1056c6fbd6f1"
+  },
+  "workflow_scope": {
+    "Git_blob_computed_from_raw_bytes_and_mode_regular_file_parents_no_reparse": true,
+    "HEAD_before_after_source_gate": true,
+    "always_summary_is_fixed_inline_no_project_import_on_failed_gate": true,
+    "build_and_model_default_success_gating": true,
+    "correct_repository_native_branch_marker_or_manual_dispatch": true,
+    "one_windows2025_X64_hosted_job_steps7_read_only_contents": true,
+    "source_admission_before_project_build_script_or_model": true,
+    "workflow_file_current_Git_blob_checked_dynamically": true
+  },
+  "world_authority": false
+}

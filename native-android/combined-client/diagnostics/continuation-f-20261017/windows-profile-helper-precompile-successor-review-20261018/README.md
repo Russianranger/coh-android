@@ -1,0 +1,3 @@
+Static review only of the helper successor before any compiler/model/API run. The C# diff has exactly two hunks: independently allocated/freed JobIsEmpty buffers, and sequential same-cause process/thread time queries so all thread-time out values are definitely assigned. The build recipe changes exactly one expected helper hash. The other five producer inputs and the historical source-freeze metadata remain unchanged.
+
+This is a full seven-input composition, not a standalone two-file build directory. It does not establish compilation, model success, actual profile APIs or a completed workflow review. No PowerShell, compiler, model or project helper was executed.

@@ -1,0 +1,95 @@
+{
+  "API_result": {
+    "job": "failure",
+    "step13": "failure",
+    "step14": "skipped",
+    "step15_summary": "success",
+    "step16_public_upload": "success",
+    "steps17_18_source_initial_export": "skipped",
+    "steps_3_through_12": "success"
+  },
+  "actor_authority": false,
+  "actual_owner_active_or_sleeping_branch_observed": false,
+  "all_actual_506_source_pins_verified_against_published_Git": true,
+  "api": {
+    "bytes": 8593,
+    "sha256": "29e40b37c325b6fe96823c3e8fda52c9f3b25d0495f97e0e72eaa8c9cbbb2850"
+  },
+  "artifact": {
+    "CRC_checked": true,
+    "bytes": 1798,
+    "regular_members": 3,
+    "sha256": "e7564f1b82aea981bc83ca2c9cdb8bed0677602729e19bb9560411cd9ba4170c"
+  },
+  "artifact_id": 12126849925,
+  "capture_matching_same_logical_native_packet_and_selected_owner_verified": true,
+  "failing_stage2_subcall_size_count_allocation_or_budget_known": false,
+  "first_fixed_verifier_failure": {
+    "failure": "verification_refused",
+    "native_stage": 2,
+    "native_status": 4,
+    "passed": false,
+    "phase": "NATIVE_EXECUTION",
+    "schema": "coh-source-snapshot-native-verification-v1",
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "initial_packet_export_observed": false,
+  "inspected_source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py": "6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d",
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py": "2938d7a13ba7f3365dcbc68be3033891f1f304e7b5f46892c650e2d7783d6b09",
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": "fc693b6fdde6b943a307583be35e16045e86dd907feed4cc96fd895ee7610dc4",
+    "native-android/engine/scenecatalog/coh_catalog_owner.c": "f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7",
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66"
+  },
+  "job_id": 117606253056,
+  "members": {
+    "summary.json": {
+      "bytes": 3107,
+      "sha256": "40242045b4a762282c6af29decc04de59f61a369c73372b8a32adadf0d65863d"
+    },
+    "tooling.json": {
+      "bytes": 397,
+      "sha256": "87deae49942ac434a58433b495b193a0e3cdfb0fc95162beefcded05170321d3"
+    },
+    "verifier-status.json": {
+      "bytes": 240,
+      "sha256": "c486489ff2186e0dce6d0dcd8b5ea05a17a4e02d5b8994b957b638b52604d1db"
+    }
+  },
+  "native_initial_diagnostic": {
+    "GROUPS_received": true,
+    "REQALLENTS_queued_count": 1,
+    "coh_status": 7,
+    "coh_status_name": "COH_STATE",
+    "failure_code": "TIMEOUT",
+    "initial_packet_observed": false,
+    "refused_command_kind": "NONE",
+    "refused_command_valid": false,
+    "server_REQ_receipt_or_timeout_cause_established": false
+  },
+  "native_stage_scope": "Stage2 begins before catalog.cohcat read and includes header-generation guard, catalog preflight, aggregate charge, eager load, exact GROUPS match, digest/bindings, catalog-owner creation, peak charge and catalog-owner byte view; stage3 begins only before runtime.cohrts.",
+  "native_status_name": "COH_LIMIT",
+  "passed": true,
+  "post_release_sealed_false_is_normal_restored_observation": true,
+  "private_logs_or_capture_retrieved": false,
+  "profile_COMMIT_complete_boundary_envelope_accepted_ownerNONE_cleanup_true": true,
+  "project_helpers_imported_or_executed": false,
+  "read_only_Git_subprocesses_executed": true,
+  "review_scope": "Public fixed artifacts, API metadata and exact original source only; no verifier admission or runtime replay.",
+  "run_id": 39104124073,
+  "schema": "coh-scene-fixed-native-limit-status-review-v1",
+  "source_generation_admitted": false,
+  "source_pin_map_canonical_sha256": "282857a9c7d667046accc2f68a084b43f04501bd77f58354e3e4291320ea46dc",
+  "source_revision": "9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+  "source_snapshot_token_or_body_export_observed": false,
+  "stage1_completed": "Packet/header/owner transport4or5 and full original GROUPS grammar returned success.",
+  "state_header_or_match_only_refusal_would_be_status7_not_this_status4": true,
+  "tests_compiler_verifier_services_or_runtime_reexecuted": false,
+  "workflow": {
+    "bytes": 119404,
+    "sha256": "622b115ee563a1f99e7b5888b92fcac42bf6b9bc772d176f3f135335d267f810"
+  },
+  "world_authority": false
+}

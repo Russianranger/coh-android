@@ -413,15 +413,19 @@ namespace CohWpp {
    ObjectAcl(station,0xF037F);ObjectAcl(desktop,0xF01FF);
   }
   bool JobIsEmpty() {
-   IntPtr list=Marshal.AllocHGlobal(8+64*8),acct=Marshal.AllocHGlobal(48);
+   IntPtr list=IntPtr.Zero,acct=IntPtr.Zero;
    try {
+    list=Marshal.AllocHGlobal(8+64*8);acct=Marshal.AllocHGlobal(48);
     uint returned;Need(N.QueryInformationJobObject(job,3,list,520,out returned)&&returned>=8&&returned<=520,Cause.JOB);
     uint assignedCount=(uint)Marshal.ReadInt32(list),listed=(uint)Marshal.ReadInt32(list,4);
     Need(assignedCount==listed&&listed<=64&&8+listed*8<=returned,Cause.JOB);
     Need(N.QueryInformationJobObject(job,1,acct,48,out returned)&&returned==48,Cause.JOB);
     N.Accounting a=(N.Accounting)Marshal.PtrToStructure(acct,typeof(N.Accounting));
     return assignedCount==0&&listed==0&&a.active==0;
-   } finally {Marshal.FreeHGlobal(list);Marshal.FreeHGlobal(acct);}
+   } finally {
+    try {if(list!=IntPtr.Zero)Marshal.FreeHGlobal(list);}
+    finally {if(acct!=IntPtr.Zero)Marshal.FreeHGlobal(acct);}
+   }
   }
   public void Job(Receipt r) {
    job=N.CreateJobObjectW(IntPtr.Zero,null);Need(job!=IntPtr.Zero,Cause.JOB);
@@ -448,7 +452,8 @@ namespace CohWpp {
     N.GetProcessIdOfThread(child.thread)==child.pid&&N.WaitForSingleObject(child.process,0)==N.Timeout&&
     N.WaitForSingleObject(child.thread,0)==N.Timeout,Cause.IDENTITY);
    N.FT pc,pe,pk,pu,tc,te,tk,tu;
-   Need(N.GetProcessTimes(child.process,out pc,out pe,out pk,out pu)&&N.GetThreadTimes(child.thread,out tc,out te,out tk,out tu),Cause.IDENTITY);
+   Need(N.GetProcessTimes(child.process,out pc,out pe,out pk,out pu),Cause.IDENTITY);
+   Need(N.GetThreadTimes(child.thread,out tc,out te,out tk,out tu),Cause.IDENTITY);
    Need(pc.Value>0&&tc.Value>=pc.Value,Cause.IDENTITY);
    if(first){processBirth=pc.Value;threadBirth=tc.Value;}
    Need(pc.Value==processBirth&&tc.Value==threadBirth,Cause.IDENTITY);

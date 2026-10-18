@@ -1,0 +1,31 @@
+{
+  "schema": "coh-windows-model-workflow-source-preparation-refusals-v1",
+  "origin": "coordinator_observed_tool_results_no_raw_stderr_identity_claim",
+  "compiler_or_model_or_profile_api_executed": false,
+  "refusals": [
+    {
+      "order": 1,
+      "operation": "copy_successor_source_and_metadata",
+      "kind": "AssertionError",
+      "stage": "prewrite_review_state_guard",
+      "root_source_writes_occurred": false,
+      "interpretation": "an exact-string review-state assertion refused before any source copy; that invocation's metadata read was not preserved, so no stronger cause is claimed",
+      "guard_expected_literal": "SOURCE_ONLY_CLEAR",
+      "final_admitted_metadata_field": "SOURCE_ONLY_CLEAR; independent review commit17dcced30"
+    },
+    {
+      "order": 2,
+      "operation": "generate_revised_workflow",
+      "kind": "FileNotFoundError",
+      "stage": "read_new_successor_metadata",
+      "output_created_or_replaced": false,
+      "interpretation": "previous guarded copy had refused before creating the new metadata directory"
+    }
+  ],
+  "corrected_successor_metadata_sha256": {
+    "source-freeze.json": "240dc6f19fabae3d7395e9570db1070f6cecbdea7a25300d2a8fcb0a165ddd46",
+    "REVIEW.md": "93c444290263925cc4d97fbf801359942f74cec9d2baabf160794a70911b2b0d"
+  },
+  "first_workflow_source_only_draft_sha256": "40e4bd4ed0c4c776e225de5f658b939fe180d4d3dafd93bbd85734831d4e9e24",
+  "correction": "The initial fixed-fact interpretation overattributed the assertion to an unfinished review state. Preserve it as an initial coordinator statement; final scope is only the observed guard refusal."
+}

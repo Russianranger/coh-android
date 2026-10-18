@@ -1,0 +1,594 @@
+{
+  "schema": "coh-map-ready-observer-source-contract-audit-v2",
+  "passed": true,
+  "immutable_original_source_revision": "9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+  "source_files": {
+    "upstream/ouroboros/Common/comm_backend.h": {
+      "bytes": 34962,
+      "sha256": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c"
+    },
+    "upstream/ouroboros/DBServer/src/container.h": {
+      "bytes": 17888,
+      "sha256": "7c7ec25139a9923864081c6a399eae7d22ec3cc28bebd7ea61c734fac0ea2c86"
+    },
+    "upstream/ouroboros/DBServer/src/dbdispatch.c": {
+      "bytes": 114632,
+      "sha256": "30097d295b70c5c0050f4772a1dc984479e323f21fce23e1c11370ce399683d4"
+    },
+    "upstream/ouroboros/DBServer/src/dbinit.c": {
+      "bytes": 79450,
+      "sha256": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007"
+    },
+    "upstream/ouroboros/DBServer/src/dbmission.c": {
+      "bytes": 3207,
+      "sha256": "82550f4e2a032bcd53348e37c366b3058c07284bbb10f34f30eb757906778ee6"
+    },
+    "upstream/ouroboros/DBServer/src/logserver.c": {
+      "bytes": 10974,
+      "sha256": "fee4cd4113af5ef8225575c570a0f0d5d54564dac71dfcf2fa75eac587b3451d"
+    },
+    "upstream/ouroboros/DBServer/src/svrmoncomm.c": {
+      "bytes": 20909,
+      "sha256": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1"
+    },
+    "upstream/ouroboros/DBServer/src/svrmoncomm.h": {
+      "bytes": 16303,
+      "sha256": "0912581554a64ecd2a00d7fea92b61e7a9b932a85a732c8a57a16a41a8b98d21"
+    },
+    "upstream/ouroboros/MapServer/src/dbcomm/dbcomm.c": {
+      "bytes": 78580,
+      "sha256": "cfca70ab79291ba327857530490ddf8293b73a666f2939597d66103f8d08b761"
+    },
+    "upstream/ouroboros/MapServer/src/dbcomm/logcomm.c": {
+      "bytes": 12704,
+      "sha256": "fb18f0a290ff6cc99d2f546ddd8e13f1bc20062865dff30414fcb738f22d95a0"
+    },
+    "upstream/ouroboros/ServerMonitor/src/serverMonitorNet.c": {
+      "bytes": 44164,
+      "sha256": "e5f35b0e192c3595215e8988527f71b54719534467b37018d05c3f0b53539e31"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": {
+      "bytes": 21748,
+      "sha256": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structNet.h": {
+      "bytes": 1962,
+      "sha256": "45927e66664852cd6da53fd5d4be25408192ba421fae6efad680cd468bcc95ea"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structoldnames.h": {
+      "bytes": 3857,
+      "sha256": "00a8a969e854ffd8b195e5e3860a1fed87e874065895cac2fcca5ed9f739bfb1"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c": {
+      "bytes": 56509,
+      "sha256": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c": {
+      "bytes": 3657,
+      "sha256": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_receive.c": {
+      "bytes": 37317,
+      "sha256": "d24464295fefbb90f2a356f3ea3bfa4bbf6b47863a602d6cc63c63c46cdb1047"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structNet.c": {
+      "bytes": 12613,
+      "sha256": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1"
+    }
+  },
+  "schema_inventory_correction": {
+    "previous_commit": "a63c1098c27e26c7af8e49e7d704243c889deed9",
+    "previous_audit_bytes": 18172,
+    "previous_audit_sha256": "198238259368ef418194f1db8f057691332c41b93ba81d6e666f6ceed4e6b3bb",
+    "raw_schema_hashes_and_whole_functions_unchanged": true,
+    "commented_NetLink_names_not_serialized": true,
+    "previous_names": 7,
+    "current_names": 2
+  },
+  "whole_function_spans_lf": {
+    "upstream/ouroboros/DBServer/src/dbdispatch.c": {
+      "dbHandleClientMsg": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 98245,
+            "bytes": 16194,
+            "line": 2917,
+            "sha256": "2b80f8d0207bb355a3f3eeb28ced243c8d336e22dd3b7bfee75ee9aa7e3686f5"
+          }
+        ]
+      },
+      "handleInitialConnect": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 96770,
+            "bytes": 1470,
+            "line": 2862,
+            "sha256": "ec6748b8de28f2ad7143be10cf219c774ff09a4c3ffedd4c87001e389aa64002"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/DBServer/src/dbinit.c": {
+      "dbInit": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 38934,
+            "bytes": 21157,
+            "line": 1054,
+            "sha256": "b5c72dbe02e678c0af0552200fb09b07bc57317afdd1a4a20180e305cbfb74a1"
+          }
+        ]
+      },
+      "registerDbClient": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 12850,
+            "bytes": 3843,
+            "line": 462,
+            "sha256": "260b7096989e243dea0d3b79776c39e5d7cfb171c87d9da67aca1c94f3df1261"
+          }
+        ]
+      },
+      "freeMapContainer": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 4998,
+            "bytes": 849,
+            "line": 167,
+            "sha256": "b466983eb6f6d84718c6be1967cd75d835db13500df53ef0b72a17bf1386025b"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/DBServer/src/dbmission.c": {
+      "dbClientReadyForPlayers": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 2551,
+            "bytes": 654,
+            "line": 78,
+            "sha256": "18f3002bd96d92d871bdb10db15cbf706ca88595a7092255bc93a4c5236f417c"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/DBServer/src/logserver.c": {
+      "logNetInit": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 5007,
+            "bytes": 396,
+            "line": 176,
+            "sha256": "2f61219c72ac4b076ce6beed53ed0594b78bde11684971481376eddd64992daa"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/DBServer/src/svrmoncomm.c": {
+      "svrMonConnectCallback": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 2369,
+            "bytes": 392,
+            "line": 58,
+            "sha256": "99ec47052c1e386f9c2e904563202df6acaa383f402859c803bd907e16995f31"
+          }
+        ]
+      },
+      "svrMonDelCallback": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 3029,
+            "bytes": 788,
+            "line": 86,
+            "sha256": "0992f9664f1206a5c5fe8983d0bcb31aaf1f732e7e1364e978a26aed491989eb"
+          }
+        ]
+      },
+      "svrMonSendList": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 4039,
+            "bytes": 2780,
+            "line": 121,
+            "sha256": "3c99daa13ef7e57c7cb10f6ca09be15c10c8e4b0f00ff19c77bfb6e781567f3b"
+          }
+        ]
+      },
+      "svrMonSendFullUpdate": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 6821,
+            "bytes": 707,
+            "line": 204,
+            "sha256": "e6a65de4017a5e851c85cce727989ad8808926b9c97ede67bf31505aeddeed71"
+          }
+        ]
+      },
+      "svrMonHandleConnect": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 8350,
+            "bytes": 1419,
+            "line": 254,
+            "sha256": "790c5525c783ed11da945c72a5af595124a4c765db7a1565222d14a24dd6e9b3"
+          }
+        ]
+      },
+      "svrMonHandleClientMsg": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 12914,
+            "bytes": 1504,
+            "line": 384,
+            "sha256": "650f6408c995c4709d0fb27b98518b314d5deae42528d5a2f00d76241e8e1ed1"
+          }
+        ]
+      },
+      "svrMonInit": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 14420,
+            "bytes": 274,
+            "line": 436,
+            "sha256": "1d83c561af6cb3cdabb75984513bff89b216a1c9d4efc126bd4267cc20391b12"
+          }
+        ]
+      },
+      "svrMonSendUpdates": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 18134,
+            "bytes": 2774,
+            "line": 538,
+            "sha256": "ec0dfea939f209f70079e1cc34e56ebb897fbbd0760408a5ae8f54c4b1ce9ea5"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/MapServer/src/dbcomm/dbcomm.c": {
+      "dbTryConnect": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 8595,
+            "bytes": 1280,
+            "line": 309,
+            "sha256": "a992fbd5fb7f641d1943e5c3d61edb08f3eee5dbb1609af2b58f48966df942bd"
+          }
+        ]
+      },
+      "dbRegister": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 7139,
+            "bytes": 1050,
+            "line": 250,
+            "sha256": "5615c7350135445e60cdc46b61c90cb8aa465d5caf7ebbd6ed8d57ecd8dcd320"
+          }
+        ]
+      },
+      "dbReadyForPlayers": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 6913,
+            "bytes": 224,
+            "line": 240,
+            "sha256": "a5fae0f3567deb06fde6d14db1f9c4a07bc7ea55386440d1d5a72a3d91905710"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/MapServer/src/dbcomm/logcomm.c": {
+      "logNetInit": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 7279,
+            "bytes": 611,
+            "line": 256,
+            "sha256": "ae213dd29f8e0bfd50434b79c683bcef2537fa49f456c50abc2cb21614fbc4f0"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/ServerMonitor/src/serverMonitorNet.c": {
+      "svrMonConnect": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 5236,
+            "bytes": 1560,
+            "line": 174,
+            "sha256": "6ab08a252ed1300d51dec1345258b11bdd72ad1ba24e390f6553b64e08aae18d"
+          }
+        ]
+      },
+      "handleRecvList": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 9232,
+            "bytes": 5891,
+            "line": 315,
+            "sha256": "d5195a06279ece1c9ce999fbacd8ef3c67deb99a5f00960703df1f4be171d9c0"
+          }
+        ]
+      },
+      "svrMonHandleMsg": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 23395,
+            "bytes": 3301,
+            "line": 731,
+            "sha256": "c67dbf817d68cab658d0559937eb2878fc6d994480cb965f83e53829569876f9"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c": {
+      "netConnectEx": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 9751,
+            "bytes": 3961,
+            "line": 266,
+            "sha256": "3d5147becb0cb61209d0fa4d310dbe1abd7992a779b174bb64ef4d18e425dafb"
+          }
+        ]
+      },
+      "netConnect": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 13714,
+            "bytes": 223,
+            "line": 392,
+            "sha256": "acb4a00516f968d9d8199855bd0017fb5275b43de1083dc3ce04827d9e280f69"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c": {
+      "getDefaultNetworkVersion": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 349,
+            "bytes": 83,
+            "line": 13,
+            "sha256": "fab585121ee48c1cd9473f5a8c3298e7a707cd0c43ce10856cb20db5f7cdf30b"
+          }
+        ]
+      },
+      "applyNetworkVersionToLink": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 695,
+            "bytes": 2382,
+            "line": 30,
+            "sha256": "1c64c24d3a4de8e918fe72345c2967bdb62f5ec964b6aa8767486aecd95a00ed"
+          }
+        ]
+      }
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structNet.c": {
+      "sdPackStruct": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 2713,
+            "bytes": 1734,
+            "line": 105,
+            "sha256": "9c2cfb84e7194a01f5c0412c4b454d53064aaa5f66c5209711eb54267445bf9e"
+          }
+        ]
+      },
+      "ParserSend": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 5303,
+            "bytes": 711,
+            "line": 179,
+            "sha256": "900089c512afbe93ecea213918cde08285847cb3e293a6b7c21e84dfc2200f1f"
+          }
+        ]
+      },
+      "ParserRecv": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 7295,
+            "bytes": 442,
+            "line": 228,
+            "sha256": "2ace7ef9543d7eb390db2c146bb8978ed5a08ff91737781e47afc0f581295f8a"
+          }
+        ]
+      },
+      "sdUnpackStruct": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 6016,
+            "bytes": 1277,
+            "line": 193,
+            "sha256": "77c9fee90103e5d1196659ff1ac519390ddda4ec672ff860ae737c7820d09173"
+          }
+        ]
+      },
+      "sdPackParseInfo": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 9831,
+            "bytes": 756,
+            "line": 309,
+            "sha256": "8820f398f5888a19be39d852470e860c2ee65bda191a1f13f44225743d676455"
+          }
+        ]
+      },
+      "sdUnpackParseInfo": {
+        "desktop_definition_index": 0,
+        "definitions": [
+          {
+            "offset": 10589,
+            "bytes": 2023,
+            "line": 331,
+            "sha256": "f65a4034eb709d3df304f4014665c066b9ca756aeb6d033ee50e2baa562d1888"
+          }
+        ]
+      }
+    }
+  },
+  "source_file_count": 18,
+  "whole_function_names": 32,
+  "whole_function_definitions": 32,
+  "exact_schema_tables_lf": {
+    "BaseConNetInfo": {
+      "offset": 2223,
+      "bytes": 286,
+      "line": 61,
+      "sha256": "138ed82e0a8eccdd7a7025903bae931c20bfd9a159d74f0da60776dbcae4921a",
+      "ordered_names": [
+        "ID",
+        "OnSince"
+      ]
+    },
+    "NetLinkInfo": {
+      "offset": 1521,
+      "bytes": 698,
+      "line": 48,
+      "sha256": "c165b8a920a203e925d31ab6caf837395241933e9fc59ab8575c78e4baee6448",
+      "ordered_names": [
+        "LastRecvTime",
+        "IP"
+      ]
+    },
+    "MapConNetInfo": {
+      "offset": 2512,
+      "bytes": 3539,
+      "line": 68,
+      "sha256": "f9d77891356cfd5b2189c5d53197fa5f1f53b020f0e3662d79f0917c6fe3996e",
+      "ordered_names": [
+        "BaseConNetInfo",
+        "PatchVersion",
+        "MapName",
+        "#Players",
+        "#Connecting",
+        "HostName",
+        "PID",
+        "PhysUsed",
+        "PhysPeak",
+        "PrivCommit",
+        "PeakCommit",
+        "CpuUsage",
+        "Cpu-60",
+        "Ticks/Sec",
+        "LongTick",
+        "RelayCmds",
+        "AvgPing",
+        "MinPing",
+        "MaxPing",
+        "SecondsSinceUpdate",
+        "#Monsters",
+        "#Ents",
+        "#Heroes",
+        "#Villains",
+        "IP0",
+        "IP1",
+        "UDPPort",
+        "NetLink",
+        "LauncherSecondsSinceUpdate",
+        "#Threads",
+        "Starting"
+      ]
+    }
+  },
+  "CLI_draft_revision": "2b63ae778d17f85ad42c668b2a896cbe51fb8077",
+  "CLI_draft_source": {
+    "native-android/engine/auth-interop/fresh-character-owner/probe/INTERFACE-PROPOSAL.md": {
+      "bytes": 5940,
+      "sha256": "0f17359d1bd7d282d0ee6027a3f88f4a795c6f0834c78b179c88cf84a30c034b"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_platform.proposed.h": {
+      "bytes": 1874,
+      "sha256": "b9681f941e8b0b380225f42a1caad5b1f566fdc531ffa8efab1786e16cd5a79d"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_character_probe.proposed.c": {
+      "bytes": 6751,
+      "sha256": "517160f1b8773cc13564737e3597f15ca2a2db78ba1a6904605ca3bfe9b83038"
+    }
+  },
+  "frozen_inert_helper_source": {
+    "OwnedProfileProcess.cs": {
+      "bytes": 44034,
+      "sha256": "f23a4c57bf82043a586cebd400d5f9feecc4d94bfa1ce895cf722ca8b3244121",
+      "origin": "frozen scratch source; not executed or imported"
+    },
+    "InertProfileProbe.cs": {
+      "bytes": 4171,
+      "sha256": "339aa91a99fc3099e421d8a70d16d350c97d1df94728e83c2f1fab367e85a52c",
+      "origin": "frozen scratch source; not executed or imported"
+    },
+    "TestOwnedProfileProcess.cs": {
+      "bytes": 9248,
+      "sha256": "b68929efac7fa145a706524dc4d84e3b6afb6bd29258e636b9902297ca38a378",
+      "origin": "frozen scratch source; not executed or imported"
+    },
+    "CONTRACT.md": {
+      "bytes": 9714,
+      "sha256": "aa62e5cb058caf707a0cfcdee21aa26119e53be611bd158e24f80ff67d63430c",
+      "origin": "frozen scratch source; not executed or imported"
+    }
+  },
+  "findings": {
+    "original_log_listener_is_Db_owned_6989": true,
+    "original_monitor_listener_is_Db_owned_6996": true,
+    "Map_service_listener_is_Db_owned_6997": true,
+    "monitor_major_and_minor": 20110804,
+    "network_default_profile": 5,
+    "active_field_is_serialized": false,
+    "Starting_field_is_serialized": true,
+    "producer_contains_active_or_starting_only": true,
+    "manual_positive_Map1_cookie0_branch_exists": true,
+    "ready_handler_checks_map_id_matches_link": false,
+    "ready_command_sender_attributed": false,
+    "remote_monitor_PID_is_retained_handle_identity": false,
+    "maps_only_request_exists": false,
+    "full_update_first_family_is_MAPSERVERS": true,
+    "schema_receiver_compatibility_fallback_exists": true,
+    "CLI_policy_file_alone_is_readiness_proof": false,
+    "frozen_inert_helper_returns_live_Map_lease": false
+  },
+  "execution": {
+    "stdlib_Git_source_data_audit_only": true,
+    "project_imports": false,
+    "compiler_or_old_qualifier_or_test": false,
+    "native_or_Windows_API": false,
+    "network_or_service": false,
+    "registry_account_or_profile_actions": false,
+    "actual_ready_received": false,
+    "world_authority": false
+  }
+}

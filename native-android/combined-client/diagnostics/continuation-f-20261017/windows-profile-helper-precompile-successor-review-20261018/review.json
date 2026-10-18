@@ -1,0 +1,71 @@
+{
+  "build_recipe": {
+    "bytes": 4790,
+    "sha256": "cb011af152d2c502b1dfe956cb2704ed0715d8ad4bf75fc3f8b77e88f8278447"
+  },
+  "exact_source_delta": {
+    "Identity_GetProcessTimes_and_GetThreadTimes_split_same_cause_same_order": true,
+    "JobIsEmpty_zero_locals_before_try_allocations_inside_try": true,
+    "all_other_CSharp_bytes_equal_historical_f23a": true,
+    "guarded_nested_finally_attempts_both_owned_unmanaged_frees": true,
+    "only_build_recipe_delta_is_one_helper_SHA_literal": true,
+    "only_two_CSharp_hunks": true,
+    "thread_times_definitely_assigned_before_later_read": true
+  },
+  "helper": {
+    "bytes": 44169,
+    "sha256": "6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474"
+  },
+  "historical7_inputs_sha256": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/BUILD.md": "7eefb47b66142d0fb29d76407bbd8bd92bb6e46bdbf390791a04dd7fdc166221",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/CONTRACT.md": "aa62e5cb058caf707a0cfcdee21aa26119e53be611bd158e24f80ff67d63430c",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/InertProfileProbe.cs": "339aa91a99fc3099e421d8a70d16d350c97d1df94728e83c2f1fab367e85a52c",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/OwnedProfileProcess.cs": "f23a4c57bf82043a586cebd400d5f9feecc4d94bfa1ce895cf722ca8b3244121",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/TestOwnedProfileProcess.cs": "b68929efac7fa145a706524dc4d84e3b6afb6bd29258e636b9902297ca38a378",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/as-invoker.manifest": "3a462ffbbe724bd1c520e85696599d057e3d2a8f0bb0270d5ec712be20e27331",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-only.ps1": "286effab8c33c91064b3bdf62dde3e74f183daa6c66d48c5bc11c27cc918c90f"
+  },
+  "historical_source_freeze_unchanged": {
+    "bytes": 3321,
+    "path": "native-android/engine/auth-interop/deployment/qualification/windows-profile-process-source-20261018/source-freeze.json",
+    "sha256": "a973e47495640bbcf31fca99cb0916b9533ff3db4cab58cfc8683115cead7196"
+  },
+  "historical_source_revision": "9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+  "passed": true,
+  "read_only_fixed_bytes_and_Git": true,
+  "review_kind": "source_only_before_first_compilation",
+  "review_time_root_revision": "d025d60debb4d6834229780789a49904f0f7cebc",
+  "reviewer_executed_PowerShell_compiler_model_project_helper_or_API": false,
+  "schema": "coh-f-windows-profile-helper-precompile-successor-review-v1",
+  "scope": {
+    "actual_profile_inert_child_or_native_API_qualified": false,
+    "first_cause_independent_cleanup_secret_and_quarantine_prior_source_clear_preserved": true,
+    "first_compilation_or_model_result_established": false,
+    "full_workflow_bounded_pipe_and_artifact_review_completed": false,
+    "original7_published_inputs_not_overwritten_by_review": true,
+    "proposed_successor_is_full7_input_composition_with5_original_files_not_a2_file_standalone_build_directory": true,
+    "three_existing_build_targets_or_model_behavior_changed": false
+  },
+  "source_generation_admitted": false,
+  "successor7_inputs_sha256": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/BUILD.md": "7eefb47b66142d0fb29d76407bbd8bd92bb6e46bdbf390791a04dd7fdc166221",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/CONTRACT.md": "aa62e5cb058caf707a0cfcdee21aa26119e53be611bd158e24f80ff67d63430c",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/InertProfileProbe.cs": "339aa91a99fc3099e421d8a70d16d350c97d1df94728e83c2f1fab367e85a52c",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/OwnedProfileProcess.cs": "6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/TestOwnedProfileProcess.cs": "b68929efac7fa145a706524dc4d84e3b6afb6bd29258e636b9902297ca38a378",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/as-invoker.manifest": "3a462ffbbe724bd1c520e85696599d057e3d2a8f0bb0270d5ec712be20e27331",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-only.ps1": "cb011af152d2c502b1dfe956cb2704ed0715d8ad4bf75fc3f8b77e88f8278447"
+  },
+  "successor_changed_paths": [
+    "native-android/engine/auth-interop/deployment/windows-profile-process/OwnedProfileProcess.cs",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-only.ps1"
+  ],
+  "unchanged_paths": [
+    "native-android/engine/auth-interop/deployment/windows-profile-process/BUILD.md",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/CONTRACT.md",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/InertProfileProbe.cs",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/TestOwnedProfileProcess.cs",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/as-invoker.manifest"
+  ],
+  "world_authority": false
+}

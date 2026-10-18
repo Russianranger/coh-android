@@ -1,0 +1,5 @@
+Static review of the first Windows installed-compiler and new Fake-model workflow. Nine source/metadata pins match current raw/Git bytes; the workflow adds its own current Git-blob identity. The admitted recipe compiles exactly the three explicit C#5/x64 targets, and only the new36-scenario Fake-model executable runs. The real profile helper and inert probe are compiled artifacts only.
+
+The corrected model wrapper uses fixed byte buffers and a16KiB stdout capture, with one30s read/EOF/process-exit loop, an exact producer-line grammar, executable/source hash checks and separate fixed operation/cleanup causes. The30s watch begins after process start/read setup; the build driver has only the job15min outer bound. Full compiler/CLR mapping and profile API cleanup are not qualified. Public artifacts contain only the fixed receipts and three new managed images; raw compiler/process logs and profile/private identities remain excluded.
+
+No PowerShell, project generator, compiler, model, API, helper or old test was executed by this review. Actual first build/model outcomes remain to be observed.

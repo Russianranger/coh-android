@@ -1,0 +1,33 @@
+{
+  "schema": "coh-new-windows-model-workflow-data-guards-v1",
+  "passed": true,
+  "workflow": {
+    "bytes": 18484,
+    "sha256": "ac2bf964a349bb238aa2a01e2eef5e513c90b8596cd8cf99e81f1056c6fbd6f1"
+  },
+  "producer_and_metadata_sources": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/OwnedProfileProcess.cs": "6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/InertProfileProbe.cs": "339aa91a99fc3099e421d8a70d16d350c97d1df94728e83c2f1fab367e85a52c",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/TestOwnedProfileProcess.cs": "b68929efac7fa145a706524dc4d84e3b6afb6bd29258e636b9902297ca38a378",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/CONTRACT.md": "aa62e5cb058caf707a0cfcdee21aa26119e53be611bd158e24f80ff67d63430c",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/BUILD.md": "7eefb47b66142d0fb29d76407bbd8bd92bb6e46bdbf390791a04dd7fdc166221",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/as-invoker.manifest": "3a462ffbbe724bd1c520e85696599d057e3d2a8f0bb0270d5ec712be20e27331",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-only.ps1": "cb011af152d2c502b1dfe956cb2704ed0715d8ad4bf75fc3f8b77e88f8278447",
+    "native-android/engine/auth-interop/deployment/qualification/windows-profile-process-precompile-successor-20261018/source-freeze.json": "240dc6f19fabae3d7395e9570db1070f6cecbdea7a25300d2a8fcb0a165ddd46",
+    "native-android/engine/auth-interop/deployment/qualification/windows-profile-process-precompile-successor-20261018/REVIEW.md": "93c444290263925cc4d97fbf801359942f74cec9d2baabf160794a70911b2b0d"
+  },
+  "nonself_pins": 9,
+  "dynamic_self_pin": true,
+  "steps": 7,
+  "exact_new_build_targets": 3,
+  "model_only_first_execution_planned": true,
+  "model_source_scenarios": 36,
+  "bounded_raw_stdout_capture_bytes": 16384,
+  "per_pipe_read_buffer_bytes": 1024,
+  "model_post_start_exit_and_eof_deadline_ms": 30000,
+  "model_cleanup_wait_ms": 5000,
+  "installed_driver_wait_bound": "workflow15min_only",
+  "compiler_or_model_or_profile_api_executed": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

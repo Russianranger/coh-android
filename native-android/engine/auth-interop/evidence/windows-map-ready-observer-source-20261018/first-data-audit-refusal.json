@@ -1,0 +1,12 @@
+{
+  "schema": "coh-map-ready-source-audit-first-refusal-v1",
+  "passed": false,
+  "reason": "SCHEMA_EXTERN_AND_DEFINITION_MARKER_AMBIGUITY",
+  "observed_exception": "ValueError: unique schema table",
+  "source_bytes": 8380,
+  "source_sha256": "89f1748a7b6c898c7ef60d20fc4033c02fcab8b9b387d571122cd9fc674ed101",
+  "source_gzip_bytes": 3422,
+  "source_gzip_sha256": "451dcde3ce66dd226c0a1126d6d92f7452c8aa546459380ed0ee0f20ef4662f2",
+  "project_or_native_or_API_execution": false,
+  "output_audit_created": false
+}
