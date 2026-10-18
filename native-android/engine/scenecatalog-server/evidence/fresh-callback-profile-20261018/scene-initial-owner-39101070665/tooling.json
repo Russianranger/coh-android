@@ -1,0 +1,10 @@
+{
+  "schema": "coh-groups-public-tooling-v1",
+  "orchestration_revision": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+  "machine": "x86_64",
+  "wine_version": "wine-10.0",
+  "postgres_version": "postgres (PostgreSQL) 18.6 (Ubuntu 18.6-1.pgdg24.04+2)",
+  "restore_version": "pg_restore (PostgreSQL) 18.6 (Ubuntu 18.6-1.pgdg24.04+2)",
+  "runtime_started": false,
+  "private_state_included": false
+}

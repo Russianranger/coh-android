@@ -1,0 +1,26 @@
+{
+  "native_compiler_loader_runtime_or_old_qualifiers_executed": false,
+  "old_projection_tests_reexecuted": false,
+  "only_corrected_method_executed": true,
+  "other_25_methods_reexecuted": false,
+  "outputs": {
+    "stderr": {
+      "bytes": 98,
+      "sha256": "d10ffbd9f0faa72cd6837063279524e199b59fbc3d035051302a1e8dbc4b36ad"
+    },
+    "stdout": {
+      "bytes": 216,
+      "sha256": "6b4bf479b4dbe39c0540bd630311d8906bcaae763edc555bec5cbaec30322d1b"
+    }
+  },
+  "passed": true,
+  "returncode": 0,
+  "schema": "coh-snapshot-status-adapter-corrected-method-binding-v1",
+  "source_inputs_unchanged": true,
+  "source_revision": "8e980827db49737dc8e6a3d7f30aceba678e5756",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py": "2938d7a13ba7f3365dcbc68be3033891f1f304e7b5f46892c650e2d7783d6b09",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/run_corrected_method.py": "1c681eee3b7eace6195973b3ca473e711cb7df59a77de8efc18083978a9b599c",
+    "native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py": "b9602e64f21ef633bbff26f7aaa23353a4c0d3ecb99ff151167f074c6e969a07"
+  }
+}

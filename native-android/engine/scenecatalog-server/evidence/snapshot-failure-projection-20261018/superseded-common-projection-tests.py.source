@@ -1,0 +1,327 @@
+"""New mock-only tests of the fixed public snapshot refusal projection.
+
+No compiler, native verifier, capture, fixture extractor or old test entrypoint
+is executed. The parent freezes and admits the checker before running this file.
+All private-looking strings below are controlled inert sentinels.
+"""
+import json
+from pathlib import Path
+import subprocess
+import unittest
+from unittest import mock
+
+import check_source_snapshot_verifier as checker
+
+
+SCHEMA = 'coh-source-snapshot-native-verification-v1'
+NATIVE_SCHEMA = 'coh-source-snapshot-native-result-v1'
+PHASES = (
+    'INPUTS', 'BUILD', 'EXTRACTION', 'PACKET_IDENTITY', 'NATIVE_EXECUTION',
+    'NATIVE_RESULT', 'FINAL_IDENTITIES', 'RECEIPT', 'UNKNOWN',
+)
+KEYS = {
+    'schema', 'passed', 'failure', 'phase', 'native_stage', 'native_status',
+    'source_generation_admitted', 'world_authority',
+}
+PRIVATE = 'CONTROLLED_PRIVATE_SENTINEL_path_account_packet_9f3c'
+BINARY = Path('/__controlled_private__/snapshot-verifier')
+EXTRACTED = Path('/__controlled_private__/extracted')
+LIMIT = 1024 ** 2
+
+
+def native_result(**changes):
+    result = {
+        'schema': NATIVE_SCHEMA, 'passed': False, 'stage': 3, 'status': 4,
+        'source_generation_admitted': False, 'world_authority': False,
+    }
+    result.update(changes)
+    return result
+
+
+def encoded(result):
+    return json.dumps(result, separators=(',', ':')).encode('utf-8')
+
+
+class SnapshotFailureProjection(unittest.TestCase):
+    public_projection_checks = 0
+    native_mock_invocations = 0
+
+    def projection(self, error, phase='UNKNOWN', pair=(None, None)):
+        type(self).public_projection_checks += 1
+        result = checker.public_failure(error)
+        self.assertIs(type(result), dict)
+        self.assertEqual(set(result), KEYS)
+        self.assertEqual(result['schema'], SCHEMA)
+        self.assertIs(type(result['schema']), str)
+        self.assertIs(result['passed'], False)
+        self.assertEqual(result['failure'], 'verification_refused')
+        self.assertIs(type(result['failure']), str)
+        self.assertIs(type(result['phase']), str)
+        self.assertEqual(result['phase'], phase)
+        self.assertIn(result['phase'], PHASES)
+        self.assertIs(result['source_generation_admitted'], False)
+        self.assertIs(result['world_authority'], False)
+        self.assertEqual((result['native_stage'], result['native_status']), pair)
+        for key, value in zip(('native_stage', 'native_status'), pair):
+            if value is None:
+                self.assertIsNone(result[key])
+            else:
+                self.assertIs(type(result[key]), int)
+        self.assertNotIn(PRIVATE, json.dumps(result, sort_keys=True))
+        return result
+
+    def refusal(self, stdout=b'', stderr=b'', returncode=2, pair=(None, None)):
+        completed = subprocess.CompletedProcess(
+            [str(BINARY), str(EXTRACTED)], returncode, stdout, stderr)
+        with mock.patch.object(checker.subprocess, 'run', return_value=completed) as run:
+            with self.assertRaises(checker.SnapshotFailure) as caught:
+                type(self).native_mock_invocations += 1
+                checker.run_native(BINARY, EXTRACTED)
+        self.assertIs(type(caught.exception), checker.SnapshotFailure)
+        self.assertNotIn(PRIVATE, str(caught.exception))
+        self.projection(caught.exception, 'NATIVE_EXECUTION', pair)
+        self.assertEqual(run.call_count, 1)
+        return caught.exception
+
+    def test_exact_public_schema_and_fixed_phase_vocabulary(self):
+        self.assertEqual(checker.SCHEMA, SCHEMA)
+        self.assertEqual(checker.FAILURE_PHASES, frozenset(PHASES))
+        for phase in PHASES:
+            with self.subTest(phase=phase):
+                error = checker.SnapshotFailure(phase)
+                error.args = (PRIVATE,)
+                self.projection(error, phase)
+        # Numeric details are scoped solely to the native-execution phase.
+        for phase in PHASES:
+            if phase != 'NATIVE_EXECUTION':
+                self.projection(checker.SnapshotFailure(phase, 1, 2), phase)
+
+    def test_public_native_pair_requires_exact_nonbool_nonzero_status(self):
+        for stage in range(8):
+            for status in range(1, 8):
+                with self.subTest(stage=stage, status=status):
+                    self.projection(checker.SnapshotFailure(
+                        'NATIVE_EXECUTION', stage, status),
+                        'NATIVE_EXECUTION', (stage, status))
+        invalid = (None, True, False, -1, 8, 2 ** 64, 1.0, '1', PRIVATE, [], {})
+        for value in invalid:
+            with self.subTest(field='stage', value=repr(value)):
+                self.projection(checker.SnapshotFailure(
+                    'NATIVE_EXECUTION', value, 1), 'NATIVE_EXECUTION')
+            with self.subTest(field='status', value=repr(value)):
+                self.projection(checker.SnapshotFailure(
+                    'NATIVE_EXECUTION', 1, value), 'NATIVE_EXECUTION')
+        self.projection(checker.SnapshotFailure(
+            'NATIVE_EXECUTION', 0, 0), 'NATIVE_EXECUTION')
+
+    def test_malformed_missing_and_private_exception_fields_are_coarse(self):
+        for phase in (PRIVATE, '', 'BUILD\x00' + PRIVATE, ' build ', 'build',
+                      None, 1, True, b'BUILD', ['BUILD'], {'phase': 'BUILD'}):
+            with self.subTest(phase=repr(phase)):
+                self.projection(checker.SnapshotFailure(phase, 1, 2))
+        for missing in ('phase', 'native_stage', 'native_status'):
+            error = checker.SnapshotFailure('NATIVE_EXECUTION', 1, 2)
+            del vars(error)[missing]
+            self.projection(error, 'UNKNOWN' if missing == 'phase' else 'NATIVE_EXECUTION')
+        error = checker.SnapshotFailure('NATIVE_EXECUTION', 1, 2)
+        vars(error).clear()
+        self.projection(error)
+        ordinary = RuntimeError(PRIVATE)
+        ordinary.phase = 'NATIVE_EXECUTION'
+        ordinary.native_stage = ordinary.native_status = 1
+        self.projection(ordinary)
+
+    def test_subclasses_and_foreign_properties_are_not_observed(self):
+        class Foreign(Exception):
+            @property
+            def phase(self):
+                raise AssertionError(PRIVATE)
+
+            def __str__(self):
+                raise AssertionError(PRIVATE)
+
+        class Derived(checker.SnapshotFailure):
+            @property
+            def phase(self):
+                raise AssertionError(PRIVATE)
+
+        error = Exception.__new__(Derived)
+        Exception.__init__(error, PRIVATE)
+        self.projection(error)
+        self.projection(Foreign(PRIVATE))
+        self.projection(object())
+
+    def test_native_exact_six_keys_all_enum_pairs_and_no_private_text(self):
+        for stage in range(8):
+            for status in range(1, 8):
+                with self.subTest(stage=stage, status=status):
+                    self.refusal(encoded(native_result(stage=stage, status=status)),
+                                 pair=(stage, status))
+
+    def test_native_missing_extra_and_duplicate_keys_refuse_promotion(self):
+        result = native_result()
+        for key in result:
+            altered = dict(result)
+            del altered[key]
+            with self.subTest(missing=key):
+                self.refusal(encoded(altered))
+        for key in ('private_path', 'counts', 'error', 'phase'):
+            with self.subTest(extra=key):
+                self.refusal(encoded(native_result(**{key: PRIVATE})))
+        raw = encoded(result)
+        for key, value in result.items():
+            # Even a duplicate with the SAME value must not be normalized away.
+            duplicate = raw[:-1] + b',' + encoded({key: value})[1:]
+            with self.subTest(duplicate=key):
+                self.refusal(duplicate)
+        contradictory = raw[:-1] + b',"status":0}'
+        self.refusal(contradictory)
+
+    def test_native_strict_types_scopes_and_nonzero_status(self):
+        replacements = {
+            'schema': (PRIVATE, '', None, True, 1, [NATIVE_SCHEMA]),
+            'passed': (True, 0, 1, None, 'false', PRIVATE),
+            'source_generation_admitted': (True, 0, None, 'false'),
+            'world_authority': (True, 0, None, 'false'),
+            'stage': (None, True, False, -1, 8, 2 ** 64, 1.0, '1', [], {}),
+            'status': (None, True, False, -1, 0, 8, 2 ** 64, 1.0, '1', [], {}),
+        }
+        for field, values in replacements.items():
+            for value in values:
+                with self.subTest(field=field, value=repr(value)):
+                    self.refusal(encoded(native_result(**{field: value})))
+
+    def test_native_malformed_truncated_nonobject_and_nonfinite_json(self):
+        raw = encoded(native_result())
+        malformed = (
+            b'', b'not-json ' + PRIVATE.encode(), b'null', b'true', b'1',
+            b'[]', b'[{}]', b'"' + PRIVATE.encode() + b'"', b'\xff',
+            b'{}\n{}', raw + b'\n' + raw, raw + PRIVATE.encode(),
+            b'[' * 2048 + b'0' + b']' * 2048,
+        )
+        for body in malformed:
+            with self.subTest(bytes=len(body), prefix=repr(body[:20])):
+                self.refusal(body)
+        for cut in (1, 2, 7, len(raw) // 2, len(raw) - 1):
+            self.refusal(raw[:cut])
+        for field in ('stage', 'status', 'passed', 'source_generation_admitted',
+                      'world_authority', 'schema'):
+            for token in (b'NaN', b'Infinity', b'-Infinity', b'1e9999'):
+                pairs = [(key, encoded(value)) for key, value in native_result().items()]
+                body = b'{' + b','.join(encoded(key) + b':' +
+                        (token if key == field else value) for key, value in pairs) + b'}'
+                self.refusal(body)
+        # Large integer conversion may itself refuse; either way no pair escapes.
+        huge_integer = raw.replace(b'"status":4', b'"status":' + b'9' * 5000)
+        self.refusal(huge_integer)
+
+    def test_native_returncode_and_stderr_must_match_fixed_failure(self):
+        raw = encoded(native_result())
+        for code in (-9, -1, 1, 3, 7, 255):
+            with self.subTest(returncode=code):
+                self.refusal(raw, returncode=code)
+        for stderr in (b'\n', b' ', PRIVATE.encode(), b'{}'):
+            with self.subTest(stderr=repr(stderr)):
+                self.refusal(raw, stderr=stderr)
+
+    def test_combined_output_limit_before_json_and_exact_boundary(self):
+        raw = encoded(native_result())
+        self.assertLess(len(raw), LIMIT)
+        self.refusal(raw + b' ' * (LIMIT - len(raw)), pair=(3, 4))
+        for stdout, stderr in (
+                (raw + b' ' * (LIMIT + 1 - len(raw)), b''),
+                (raw, b'x' * (LIMIT + 1 - len(raw))),
+                (b'', b'x' * (LIMIT + 1))):
+            with self.subTest(stdout=len(stdout), stderr=len(stderr)):
+                with mock.patch.object(checker.json, 'loads') as parse:
+                    self.refusal(stdout, stderr)
+                parse.assert_not_called()
+        self.refusal(encoded(native_result(schema=PRIVATE * 20000)))
+
+    def test_subprocess_failures_and_timeouts_are_fixed_coarse(self):
+        failures = (
+            subprocess.TimeoutExpired([PRIVATE], 180, output=PRIVATE.encode(),
+                                      stderr=PRIVATE.encode()),
+            subprocess.CalledProcessError(2, [PRIVATE], output=PRIVATE.encode(),
+                                          stderr=PRIVATE.encode()),
+            OSError(PRIVATE), RuntimeError(PRIVATE),
+        )
+        for failure in failures:
+            with self.subTest(kind=type(failure).__name__):
+                with mock.patch.object(checker.subprocess, 'run', side_effect=failure):
+                    with self.assertRaises(checker.SnapshotFailure) as caught:
+                        type(self).native_mock_invocations += 1
+                        checker.run_native(BINARY, EXTRACTED)
+                self.assertIs(type(caught.exception), checker.SnapshotFailure)
+                self.assertNotIn(PRIVATE, str(caught.exception))
+                self.assertIsNone(caught.exception.__cause__)
+                self.projection(caught.exception, 'NATIVE_EXECUTION')
+        for stdout, stderr in ((None, b''), (b'', None)):
+            self.refusal(stdout, stderr)
+
+    def test_zero_exit_returns_exact_stdout_without_public_parsing(self):
+        # This is private output transport; later native-result checks own parsing.
+        for stdout, stderr in (
+                (b'not-json ' + PRIVATE.encode(), PRIVATE.encode()),
+                (encoded(native_result()), b''),
+                (b'x' * LIMIT, b''),
+                (b'', b'')):
+            result = subprocess.CompletedProcess([], 0, stdout, stderr)
+            with self.subTest(bytes=len(stdout)):
+                with mock.patch.object(checker.subprocess, 'run', return_value=result):
+                    with mock.patch.object(checker.json, 'loads') as parse:
+                        type(self).native_mock_invocations += 1
+                        self.assertIs(checker.run_native(BINARY, EXTRACTED), stdout)
+                    parse.assert_not_called()
+        self.refusal(b'x' * LIMIT, b'y', returncode=0)
+
+    def test_subprocess_contract_has_fixed_timeout_environment_and_argv(self):
+        result = subprocess.CompletedProcess([], 0, b'private-success', b'')
+        environment = {'CONTROLLED_SENTINEL': PRIVATE,
+                       'ASAN_OPTIONS': PRIVATE, 'UBSAN_OPTIONS': PRIVATE}
+        with mock.patch.dict(checker.os.environ, environment, clear=True):
+            with mock.patch.object(checker.subprocess, 'run', return_value=result) as run:
+                type(self).native_mock_invocations += 1
+                self.assertEqual(checker.run_native(BINARY, EXTRACTED), b'private-success')
+        run.assert_called_once_with(
+            [str(BINARY), str(EXTRACTED)], cwd=checker.ROOT,
+            capture_output=True, timeout=180,
+            env={'CONTROLLED_SENTINEL': PRIVATE,
+                 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1',
+                 'UBSAN_OPTIONS': 'halt_on_error=1'})
+
+
+class ControlledResult(unittest.TextTestResult):
+    """Expose actual successful AND failed subtest callbacks to the root runner."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.controlled_subtest_cases = 0
+
+    def addSubTest(self, test, subtest, outcome):
+        self.controlled_subtest_cases += 1
+        super().addSubTest(test, subtest, outcome)
+
+
+class ControlledRunner(unittest.TextTestRunner):
+    resultclass = ControlledResult
+
+
+def case_counts(result):
+    """Fixed count-only projection; no subprocess output or exception text."""
+    return {
+        'schema': 'coh-snapshot-failure-mock-controls-v1',
+        'passed': result.wasSuccessful(),
+        'test_methods': result.testsRun,
+        'controlled_subtest_cases': result.controlled_subtest_cases,
+        'public_projection_checks': SnapshotFailureProjection.public_projection_checks,
+        'native_mock_invocations': SnapshotFailureProjection.native_mock_invocations,
+        'mock_only': True,
+        'compiler_or_native_executed': False,
+        'old_qualifier_executed': False,
+    }
+
+
+if __name__ == '__main__':
+    program = unittest.main(testRunner=ControlledRunner, exit=False)
+    print(json.dumps(case_counts(program.result), sort_keys=True))
+    raise SystemExit(0 if program.result.wasSuccessful() else 1)

@@ -1,0 +1,15 @@
+{
+  "compiler_or_native_executed": false,
+  "controlled_subtest_cases": 93,
+  "corrected_method_cases": 3,
+  "execution_invocations": 2,
+  "first_invocation_test_oracle_errors": 1,
+  "followup_is_only_corrected_method": true,
+  "mock_only": true,
+  "old_projection_tests_reexecuted": false,
+  "passed": true,
+  "reused_unchanged_methods": 25,
+  "schema": "coh-snapshot-status-adapter-mocks-v1",
+  "segmented_qualification": true,
+  "test_methods": 26
+}

@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+"""Data-only successor: preserve the observer/receiver and expose fixed refusal."""
+import argparse
+import ast
+import copy
+import hashlib
+import json
+from pathlib import Path
+import pprint
+import subprocess
+import yaml
+
+BASE='18c9c4e1acee319e5bebc4fdc206f429ab6156cc'
+WORKFLOW='.github/workflows/native-fresh-groups-observation.yml'
+BASE_SHA='f0bbc00c9287e052763f9a9d9e71742b47900433d8e17c10052abe19ac1cd974'
+CHECKER='native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py'
+OLD_CHECKER='6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d'
+CHECKER_SHA='775bdd216bcef351dc9d0a34a1536592c28fafa096c893e6051a49d372c97d4d'
+EVIDENCE='native-android/engine/scenecatalog-server/evidence/snapshot-failure-projection-20261018/'
+TEST='native-android/engine/scenecatalog-server/test_snapshot_failure_projection.py'
+TEST_SHA='81cba02499623983dfe0ce87b2b8af14738b2b1acc7b5dafa15909a35110b357'
+F_REVIEW='native-android/combined-client/diagnostics/continuation-f-20261017/snapshot-failure-projection-review-20261018/review.json'
+
+def need(ok,code):
+    if not ok:raise ValueError(code)
+
+def sha(raw):return hashlib.sha256(raw).hexdigest()
+
+def git(root,revision,name):return subprocess.check_output(['git','show',revision+':'+name],cwd=root)
+
+def committed(root,name):
+    raw=(root/name).read_bytes();need(raw==git(root,'HEAD',name),'COMMITTED:'+name);return raw
+
+def main():
+    ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,required=True);ap.add_argument('--a-review',required=True);ap.add_argument('--output',type=Path,required=True);args=ap.parse_args()
+    root=args.root.resolve(strict=True);need(not args.output.exists() and not args.output.with_suffix('.draft.json').exists(),'FRESH_OUTPUT')
+    baseline=git(root,BASE,WORKFLOW);need(sha(baseline)==BASE_SHA and committed(root,WORKFLOW)==baseline,'EXACT_18C_BASELINE')
+    before=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
+    workflow=yaml.safe_load(baseline);job=next(iter(workflow['jobs'].values()));steps=job['steps'];need(len(steps)==17,'SAME_17_STEPS')
+    original=copy.deepcopy(steps)
+    gate=steps[1]['run'];prefix,body=gate.split('\n',1);body,suffix=body.rsplit('PYINVENTORYINITIALSOURCE',1)
+    tree=ast.parse(body);assignment=next(n for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='pins' for t in n.targets))
+    pins=ast.literal_eval(assignment.value);need(len(pins)==455 and pins[CHECKER]==OLD_CHECKER,'EXACT_455_PREDECESSOR')
+    old_pins=dict(pins);need(sha(committed(root,CHECKER))==CHECKER_SHA and sha(committed(root,TEST))==TEST_SHA,'QUALIFIED_NEW_SOURCE')
+    pins[CHECKER]=CHECKER_SHA
+    proof=json.loads(committed(root,EVIDENCE+'mock-controls-binding.json'));counts=json.loads(committed(root,EVIDENCE+'mock-controls.json'));equivalence=json.loads(committed(root,EVIDENCE+'source-equivalence.json'))
+    need(proof['schema']=='coh-snapshot-failure-projection-mock-binding-v1' and proof['passed'] is True and proof['attempt_count']==1 and proof['returncode']==0 and proof['source_inputs_unchanged'] is True and proof['source_sha256']=={CHECKER:CHECKER_SHA,TEST:TEST_SHA},'EXACT_SINGLE_MOCK_PROOF')
+    need(counts=={'compiler_or_native_executed':False,'controlled_subtest_cases':245,'mock_only':True,'native_mock_invocations':184,'old_qualifier_executed':False,'passed':True,'public_projection_checks':294,'schema':'coh-snapshot-failure-mock-controls-v1','test_methods':13},'EXACT_NEW_CONTROL_COUNTS')
+    need(equivalence['schema']=='coh-snapshot-failure-projection-source-equivalence-v1' and equivalence['passed'] is True and equivalence['baseline_revision']==BASE and equivalence['current_checker_sha256']==CHECKER_SHA and equivalence['normalized_inspect_acceptance_and_private_receipt_AST_identical'] is True and len(equivalence['unchanged_old_functions'])==9 and len(equivalence['native_validator_sources_unchanged'])==15,'EXACT_ACCEPTANCE_EQUIVALENCE')
+    files=[TEST,EVIDENCE+'verify_source_equivalence.py',EVIDENCE+'source-equivalence.json',EVIDENCE+'mock-controls-binding.json',EVIDENCE+'mock-controls.json',EVIDENCE+'mock-controls.stderr.txt',args.a_review,F_REVIEW]
+    native=equivalence['native_validator_sources_unchanged']
+    for name in files+list(native):
+        digest=sha(committed(root,name));need(name not in pins or pins[name]==digest,'NO_OTHER_PIN_SUPERSESSION:'+name);pins[name]=digest
+    need(all(pins[name]==digest for name,digest in native.items()),'UNCHANGED_NATIVE_SOURCES')
+    for name,digest in pins.items():need(sha(committed(root,name))==digest,'ALL_CURRENT:'+name)
+    need(len(pins)<512 and {n for n in old_pins if pins[n]!=old_pins[n]}=={CHECKER},'ONLY_CHECKER_SUPERSEDED')
+    lines=body.splitlines(keepends=True);lines[assignment.lineno-1:assignment.end_lineno]=['pins='+pprint.pformat(dict(sorted(pins.items())),sort_dicts=True,width=120)+'\n'];body=''.join(lines)
+    extra="""
+failure_proof=json.loads((root/'EVIDENCE_mock-controls-binding.json').read_bytes())
+failure_counts=json.loads((root/'EVIDENCE_mock-controls.json').read_bytes())
+failure_equivalence=json.loads((root/'EVIDENCE_source-equivalence.json').read_bytes())
+failure_review=json.loads((root/'F_REVIEW').read_bytes())
+need(failure_proof['schema']=='coh-snapshot-failure-projection-mock-binding-v1' and failure_proof['passed'] is True and failure_proof['attempt_count']==1 and failure_proof['returncode']==0 and failure_proof['source_inputs_unchanged'] is True and all(pins.get(k)==v for k,v in failure_proof['source_sha256'].items()),'NEW_FIXED_FAILURE_MOCK_BINDING')
+need(failure_counts==FIXED_COUNTS,'NEW_FIXED_FAILURE_COUNTS')
+need(failure_equivalence['schema']=='coh-snapshot-failure-projection-source-equivalence-v1' and failure_equivalence['passed'] is True and failure_equivalence['current_checker_sha256']==pins['CHECKER'] and failure_equivalence['normalized_inspect_acceptance_and_private_receipt_AST_identical'] is True and len(failure_equivalence['unchanged_old_functions'])==9 and len(failure_equivalence['native_validator_sources_unchanged'])==15 and all(pins.get(k)==v for k,v in failure_equivalence['native_validator_sources_unchanged'].items()),'UNCHANGED_NATIVE_ACCEPTANCE_LOGIC')
+need(failure_review['passed'] is True and failure_review['checker_sha256']==pins['CHECKER'] and failure_review['test_sha256']==pins['TEST'] and failure_review['reviewer_reexecuted_controls'] is False,'INDEPENDENT_FIXED_FAILURE_REVIEW')
+""".replace('EVIDENCE_',EVIDENCE).replace('F_REVIEW',F_REVIEW).replace('FIXED_COUNTS',repr(counts)).replace("'CHECKER'",repr(CHECKER)).replace("'TEST'",repr(TEST))
+    needle="need(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')"
+    need(body.count(needle)==1,'ONE_INSERTION_BOUNDARY');body=body.replace(needle,extra+'\n'+needle)
+    ast.parse(body);steps[1]['run']=prefix+'\n'+body+'PYINVENTORYINITIALSOURCE'+suffix
+    steps[1]['name']='Admit unchanged Map and Inventory receiver plus qualified fixed verifier diagnostics'
+    command=steps[11]['run'];boundary="python3 - <<'PYCODE'";need(command.count(boundary)==1,'ONE_DIRECT_CHECKER_BOUNDARY')
+    direct,remaining=command.split(boundary,1);need(direct.rstrip().endswith('verification.json"'),'EXACT_DIRECT_CHECKER_COMMAND')
+    steps[11]['run']='set +e\n'+direct.rstrip()+' >out/groups-public/verifier-status.json\nverification_exit=$?\nset -e\ncat out/groups-public/verifier-status.json\nif [ "$verification_exit" -ne 0 ]; then exit "$verification_exit"; fi\n'+boundary+remaining
+    steps[14]['with']['path']+='out/groups-public/verifier-status.json\n'
+    steps[14]['with']['name']='fresh-fixed-verifier-status-groups-public-${{ github.sha }}'
+    job['if']=job['if'].replace('[fresh-groups-inventory-initial-owner]','[fresh-groups-fixed-verifier-status]')
+    workflow['name']='Fresh original GROUPS with fixed native verifier refusal status'
+    workflow['jobs']={'matching-original-fixed-verifier-status-observation':job}
+    for index in range(17):
+        if index not in {1,11,14}:need(steps[index]==original[index],'UNCHANGED_RUNTIME_OR_EXPORT_STEP:'+str(index))
+    need(subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()==before,'HEAD_UNCHANGED')
+    rendered=yaml.safe_dump(workflow,sort_keys=False,width=120).encode();args.output.write_bytes(rendered)
+    report={'schema':'coh-fixed-verifier-status-scene-workflow-draft-v1','passed':True,'source_revision':before,'workflow_sha256':sha(rendered),'workflow_bytes':len(rendered),'baseline_revision':BASE,'baseline_workflow_sha256':BASE_SHA,'baseline_nonself_pins':455,'current_nonself_pins':len(pins),'only_superseded_pin':CHECKER,'changed_step_indices':[1,11,14],'unchanged_observer_PE_receiver_fixture_runtime_admitter_and_retention':True,'added_public_file_is_only_fixed_verifier_CLI_status':True,'native_compiler_loader_tests_private_capture_runtime_or_project_imports_executed':False,'read_only_Git_subprocesses_executed':True,'source_generation_admitted':False,'world_authority':False}
+    args.output.with_suffix('.draft.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n');print(json.dumps(report,sort_keys=True))
+
+if __name__=='__main__':main()

@@ -1,0 +1,24 @@
+{
+  "duplicate_creation_cause_established": false,
+  "duplicate_first_files_already_preserved": {
+    "adapter-mocks-binding.json": {
+      "bytes": 1063,
+      "sha256": "19c7dc87db32d6a13c1be0ee2d454a847762883f0fe01429dc3abb81924a98aa"
+    },
+    "adapter-mocks.json": {
+      "bytes": 219,
+      "sha256": "27cd306c928cf1af1e0b6a7aaa30b5192e3d3423edd161801dab1ac28411704d"
+    },
+    "adapter-mocks.stderr.txt": {
+      "bytes": 3048,
+      "sha256": "94ef6eaf271aa589facf12110c8361ef1b8003cdd90add3e91e8fabae4a12e05"
+    }
+  },
+  "duplicate_parent_paths_removed_only_after_exact_comparison": true,
+  "failure": "FRESH_DERIVED_OUTPUTS",
+  "observation": "The tool observed the fixed fresh-output refusal; this is a parsed fact, not a raw stderr byte-identity claim.",
+  "raw_stderr_file_retained": false,
+  "schema": "coh-status-adapter-data-derivation-refusal-v1",
+  "source_or_tests_or_compiler_or_native_or_runtime_executed": false,
+  "stage": "initial fresh-output guard before any input reading"
+}

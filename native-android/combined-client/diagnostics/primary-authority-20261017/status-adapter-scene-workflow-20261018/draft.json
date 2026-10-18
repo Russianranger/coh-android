@@ -1,0 +1,24 @@
+{
+  "added_public_file_is_only_fixed_adapter_CLI_status": true,
+  "baseline_nonself_pins": 455,
+  "baseline_revision": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+  "baseline_workflow_sha256": "f0bbc00c9287e052763f9a9d9e71742b47900433d8e17c10052abe19ac1cd974",
+  "changed_step_indices": [
+    1,
+    11,
+    14
+  ],
+  "current_nonself_pins": 505,
+  "native_compiler_loader_tests_private_capture_runtime_or_project_imports_executed": false,
+  "old_pins_superseded": [],
+  "passed": true,
+  "read_only_Git_subprocesses_executed": true,
+  "recorded_native_production_pins": 36,
+  "schema": "coh-status-adapter-scene-workflow-draft-v1",
+  "source_generation_admitted": false,
+  "source_revision": "ef9f28b5eeffd7510d27b5013c571a520b7be9d6",
+  "unchanged_original_checker_Map_PE_receiver_fixture_runtime_admitter_and_retention": true,
+  "workflow_bytes": 119404,
+  "workflow_sha256": "622b115ee563a1f99e7b5888b92fcac42bf6b9bc772d176f3f135335d267f810",
+  "world_authority": false
+}

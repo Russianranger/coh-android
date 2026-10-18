@@ -1,0 +1,80 @@
+{
+  "schema": "coh-basedetail-development-history-v1",
+  "source_revision": "1051e1b23a6189614b7ab05b66fbad30a222853b",
+  "old_qualifier_entrypoints_executed": false,
+  "events": [
+    {
+      "stage": "initial-native-C99-compile",
+      "result": "passed",
+      "source_revision": "e0fbd4188",
+      "scope": "NewproductionC only; no executable or oldtest."
+    },
+    {
+      "stage": "original-library-load-1",
+      "result": "failed",
+      "source_revision": "e0fbd4188",
+      "log": "basedetail-development-1.log",
+      "cause": "Undefinedassertmsg innewfullinventoryswitch adapter; addedexplicitassert adaptered7350b50."
+    },
+    {
+      "stage": "complete-release-2",
+      "result": "passed",
+      "source_revision": "ed7350b50",
+      "log": "basedetail-development-2.log",
+      "checks": 30119,
+      "fixtures": 17
+    },
+    {
+      "stage": "first-complete-three-mode-3",
+      "result": "passed",
+      "source_revision": "1eeb06038fb2b2b3f30d941ede0ea52d59b2bbcd",
+      "log": "basedetail-development-3.log",
+      "checks_per_mode": 38350,
+      "fixtures": 19,
+      "receipt": {
+        "path": "native-android/engine/character-dictionary/qualification/basedetail-inventory-1eeb06038-development.json.gz",
+        "bytes": 11774,
+        "sha256": "70f58f771485edca389c99169962b477881e0ea8906ff37108aaedc143536fbe"
+      },
+      "limit": "InheritedSalvagebuilder execution-capabilityflags were not scoped as compiled-only; those oldentrypoint functions were NOTexecuted by this new qualifier."
+    },
+    {
+      "stage": "metadata-scoped-three-mode-4",
+      "result": "passed",
+      "source_revision": "1051e1b23a6189614b7ab05b66fbad30a222853b",
+      "log": "basedetail-development-4.log",
+      "checks_per_mode": 38350,
+      "fixtures": 19,
+      "reason": "Repeat completed to bind corrected newPythonmetadata; generatedC,all native sources/checker/test,fixtures andresults identical. Root later requested pure-data derivation for metadata-only changes; this repeat had already completed. No further execution."
+    }
+  ],
+  "retained_logs": {
+    "path": "native-android/engine/character-dictionary/qualification/basedetail-inventory-development-logs.json.gz",
+    "bytes": 1162,
+    "sha256": "b279ba0cac28b261a3012fc2692242f69f9e108a4535189919960be62c3fb401"
+  },
+  "log_raw_bytes": 5747,
+  "log_raw_sha256": "0ca519f81e5e347b1ac88d30d89858dbcdb912960e0b666191919054d90254f1",
+  "log_entries": {
+    "basedetail-development-1.log": {
+      "bytes": 1541,
+      "sha256": "e173ab9765ced7d02180757ae157c50386c559232b028374b91ab6a92cc5c929"
+    },
+    "basedetail-development-2.log": {
+      "bytes": 483,
+      "sha256": "515dbaaea416b4c20d8e3fb34bdb3f97dbfcdeda9b4430c2d42625c7c0a15336"
+    },
+    "basedetail-development-3.log": {
+      "bytes": 1346,
+      "sha256": "38d3bd0816a0980e3acb38c18200ac921059c4b448e1e257a1473125bb4a5f86"
+    },
+    "basedetail-development-4.log": {
+      "bytes": 1346,
+      "sha256": "38d3bd0816a0980e3acb38c18200ac921059c4b448e1e257a1473125bb4a5f86"
+    }
+  },
+  "no_replay_free_claim": true,
+  "repeated_native_modes_scope": "Only new BaseDetail focused qualifier; no priorSalvage/Inventory/receiver test entrypoints",
+  "old_source_owner_coh_salvage_read_composition": true,
+  "actual_captures_or_services_executed": false
+}

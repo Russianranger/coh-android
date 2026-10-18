@@ -1,0 +1,14 @@
+{
+  "schema": "coh-initial-send-coordinator-data-review-v1",
+  "passed": true,
+  "source_revision": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+  "raw_and_LF_Git_file_pins": 20,
+  "Git_function_span_hashes": 27,
+  "project_helpers_imported": false,
+  "compiler_tests_native_or_runtime_executed": false,
+  "actual_request_wire_or_server_receipt_or_timeout_cause_established": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "original_worker_report_sha256": "ee2e99c4c442dcd8ef5e5ac4d141168a3f4e03a1429baff6c3b145b2a835b6aa",
+  "report_only_correction": "20 actual source-file entries, rather than the original prose count21; all27 function spans unchanged."
+}

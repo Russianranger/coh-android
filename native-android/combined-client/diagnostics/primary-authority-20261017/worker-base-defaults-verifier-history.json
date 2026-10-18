@@ -1,0 +1,43 @@
+{
+  "E_scope": "Existing accepted renderer evidence unchanged; new Windows profile/process helper is in progress in its owned worktree and is excluded from qualification/publication here.",
+  "bundle": "worker-base-defaults-verifier-history.bundle",
+  "bytes": 695334,
+  "prior_history_index": "worker-salvage-inventory-preflight-history.json",
+  "public_source_excluded_to_avoid_duplicate_artifact_payloads": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+  "schema": "coh-preserved-base-defaults-verifier-history-v1",
+  "scope": "Preserve original source/proof commits and coordinator failures without rerunning qualification. Actual391010 matching GROUPS capture succeeded; direct scene verification refused before admission. New diagnostics have only mock/source qualification. No creation API integration, actual server creation, new Map compilation, runtime replay, world/player authority, APK, emulator, or Thor qualification is created by this history.",
+  "sha256": "3175412388f65102673c79e567c886095a1dc52ee8fc81cc4a3dbb02a2bfdf93",
+  "verification": "The bundle contains these 6 refs:\n7228b935dbcb8858b94908cefedec38a38e42f73 refs/recovery/base-defaults-verifier-20261018/a\n566df2ad9030078a34f4826c1866cf8bb26b12ad refs/recovery/base-defaults-verifier-20261018/b\nbce91e75c3893c51a4509be7cbefcd2e55f83996 refs/recovery/base-defaults-verifier-20261018/c\nda4d9ff674fd28ab236ec6d282d0da5d0c76ae96 refs/recovery/base-defaults-verifier-20261018/d\ncfca6d1ee08789b53136c84d8891b0161a080a0b refs/recovery/base-defaults-verifier-20261018/f\nc8287d3d39304743a18379db17f65de53612f006 refs/recovery/base-defaults-verifier-20261018/coordinator\nThe bundle requires these 31 refs:\n18c9c4e1acee319e5bebc4fdc206f429ab6156cc \n271b70d935eea41d7243d941fa9adfe04949d7fd \nd9adf2b431a039357f8bfe878d3d0da991a81b19 \nf3ee9db6bc8a323c896769f0952dd242fc79e2f4 \n2b5dac5ac81d49359b47fd7027747b2c86f2d0db \n2e0c775fd6278c9c66d34a3cefaf38a3c9ef9b06 \n6e96fe22a567a3e252449feb37483cfea1566d8a \nb321a3dd883031072f26c63d4f2d9f4866b63d9d \n5b9aef227c36c82b3f2bdca800037e33b5fd98af \ned77036d1b7f7e47588d74408506d738293643a9 \n77af974e93324fadc61b4d3fb3f5b4ca15636ba7 \nfe5efb4bb211a15791149f75822791be17a3677f \n1ca1d1db3f33891062f570ea19f9c036715e823c \nc98bb60fe187458f328a15882089ea742ce6e853 \n3b6bd0de1b728c6e2e8bc8f11e5af2b92908dfbc \nbd7b16b6ae188f9e8e1aa90542eb86287f38c312 \n2729bfc16c9f757fd850c24a0bc6df366a2e40ab \n827f1f1136b52f46fdcd787e7a6d31664b4d0b94 \n6a6809d07a130af60129f569b59a627420b6bf54 \nb3fbacf90626e29542e878313c2812eba1e1375b \nfd213266f1b6665acece877dabb7dab6663e647c \n91cacafa4451cf7504b5dd105f2790ae1c41739b \n81568446e43f56eb1a8aaf0970ab1ede13103f41 \n08e6a96f2af9cb317eecd6629e99db4200df177f \ndd5c3f9a2c30ea20b0a4c714007b1de0b0409546 \n824da3e9666ca5f04f5a0bee02449a8894cca2e4 \n643359f11c7805a25b0a2b3a430d46f13c7c68ae \na4cc6b61443cecf6394b0500028277874be6cf82 \n996af55882219a136405b75628713d9286825df2 \n83b93ed89775feb51793df6ee3fca7ac2f0d1334 \nd96354411d2f69ec325b1bfe9d0e14999626ba91 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-base-defaults-verifier-history.bundle is okay\n",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/base-defaults-verifier-20261018/a",
+      "scope": "actual391010 fixed evidence and diagnostic static review",
+      "tip": "7228b935dbcb8858b94908cefedec38a38e42f73"
+    },
+    "B": {
+      "ref": "refs/recovery/base-defaults-verifier-20261018/b",
+      "scope": "TexDefaults and Windows proposal review; new projection test qualified once by coordinator",
+      "tip": "566df2ad9030078a34f4826c1866cf8bb26b12ad"
+    },
+    "C": {
+      "ref": "refs/recovery/base-defaults-verifier-20261018/c",
+      "scope": "qualified BaseDetail only; later creation API excluded from this source integration",
+      "tip": "bce91e75c3893c51a4509be7cbefcd2e55f83996"
+    },
+    "D": {
+      "ref": "refs/recovery/base-defaults-verifier-20261018/d",
+      "scope": "Windows Map source/API proposal only; unimplemented deployment",
+      "tip": "da4d9ff674fd28ab236ec6d282d0da5d0c76ae96"
+    },
+    "F": {
+      "ref": "refs/recovery/base-defaults-verifier-20261018/f",
+      "scope": "BaseDetail/TexDefaults independent reviews and actual391010 fixed evidence review",
+      "tip": "cfca6d1ee08789b53136c84d8891b0161a080a0b"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/base-defaults-verifier-20261018/coordinator",
+      "scope": "qualified additive sources, one-run mock diagnostics and original failure preservation",
+      "tip": "c8287d3d39304743a18379db17f65de53612f006"
+    }
+  }
+}

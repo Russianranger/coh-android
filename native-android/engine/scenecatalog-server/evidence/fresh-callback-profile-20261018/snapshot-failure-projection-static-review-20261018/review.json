@@ -1,0 +1,100 @@
+{
+  "acceptance": {
+    "native_child_command_cwd_capture_timeout_environment_unchanged": true,
+    "native_source_map_sha256": "1b27c1d5285557a7d288a16e4d44043ef3634ca73c7090a0aec7f318220f4459",
+    "native_sources_current_equal_actual_18c_Git": true,
+    "native_validator_source_files_unchanged": 15,
+    "normalization": "Flatten only failure_scope wrappers; remove only native_result=run_native(binary,extracted); substitute native_result with the original run([binary,extracted]) expression.",
+    "normalized_inspect_acceptance_and_private_receipt_AST_identical": true,
+    "old_constants_AST_identical": true,
+    "unchanged_old_functions": [
+      "build",
+      "identity",
+      "load_inspector",
+      "path",
+      "require",
+      "run",
+      "source_files",
+      "source_pins",
+      "verify_pins"
+    ]
+  },
+  "actor_authority": false,
+  "actual_391010_attribution": {
+    "first_direct_checker_refusal_established": true,
+    "inner_phase_status_or_cause_known": false,
+    "native_build_test_count_is_not_a_direct_checker_input": true,
+    "source_profile_sealed_false_does_not_name_first_refusal": true,
+    "specific_owner_state_branch_observed": false
+  },
+  "baseline_revision": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+  "checker": {
+    "baseline_sha256": "6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d",
+    "bytes": 12653,
+    "path": "native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py",
+    "sha256": "775bdd216bcef351dc9d0a34a1536592c28fafa096c893e6051a49d372c97d4d",
+    "working_bytes_reviewed": true
+  },
+  "compiler_or_native_verifier_executed": false,
+  "fixed_failure_projection": {
+    "duplicate_keys_refused": true,
+    "first_failure_scope_preserved": true,
+    "malformed_native_failure_projects_null_stage_status": true,
+    "native_failure_requires_exact_six_keys": true,
+    "native_failure_requires_exit_2_and_empty_stderr": true,
+    "native_stage_range": [
+      0,
+      7
+    ],
+    "native_status_range": [
+      1,
+      7
+    ],
+    "phases": [
+      "INPUTS",
+      "BUILD",
+      "EXTRACTION",
+      "PACKET_IDENTITY",
+      "NATIVE_EXECUTION",
+      "NATIVE_RESULT",
+      "FINAL_IDENTITIES",
+      "RECEIPT",
+      "UNKNOWN"
+    ],
+    "post_read_output_cap_not_live_memory_bound": true,
+    "raw_exception_stderr_paths_hashes_counts_or_identity_exported": false,
+    "strict_integer_excludes_boolean": true
+  },
+  "passed": true,
+  "private_capture_or_log_read_or_exported": false,
+  "project_helpers_imported_or_executed": false,
+  "read_only_Git_subprocesses_executed": true,
+  "review_kind": "static_source_and_recorded_data_only",
+  "root_source_equivalence": {
+    "bytes": 2890,
+    "passed": true,
+    "path": "native-android/engine/scenecatalog-server/evidence/snapshot-failure-projection-20261018/source-equivalence.json",
+    "schema": "coh-snapshot-failure-projection-source-equivalence-v1",
+    "sha256": "0b1676a65100e66b2f391b2baf746621417e8125d880632fdc1681cfc55e347e"
+  },
+  "schema": "coh-snapshot-failure-projection-static-review-v1",
+  "services_or_capture_executed": false,
+  "source_generation_admitted": false,
+  "tests_or_mock_suites_executed": false,
+  "transport_source_observation": {
+    "actual_transport_word_or_inner_refusal_observed": false,
+    "current_equals_actual_18c_Git": true,
+    "original_GROUPS_producer": "worldSendUpdate creates a Packet with pktCreate and writes SERVER_GROUPS directly with pktSendBitsPack(1); this function does not use pktCreateEx.",
+    "original_transaction_timing": "Observer finish runs immediately before original pktSend, after the full original logical packet has been constructed.",
+    "original_version_4_5": "applyNetworkVersionToLink sets controlCommandsSeparate=1 for4/5; version5 additionally enables orderedAllowed.",
+    "owner_absolute_word_12": "COHOWN01 offset48; relative U32 word10; actual link protocolVersion, not client ready",
+    "source_sha256": {
+      "native-android/engine/scenecatalog-server/source_groups_owner.inc": "7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc",
+      "native-android/engine/scenecatalog-server/source_groups_transaction.inc": "a531ae0c9031c160b4f2cf99f2cba49487fba3ea7d396dcc23d0f0969ed922c6",
+      "upstream/ouroboros/MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+      "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212"
+    },
+    "verifier_gate": "Requires this transport version to equal4 or5 before parsing GROUPS."
+  },
+  "world_authority": false
+}

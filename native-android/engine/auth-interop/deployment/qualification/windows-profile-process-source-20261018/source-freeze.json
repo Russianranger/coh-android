@@ -1,0 +1,47 @@
+{
+  "schema": "coh-windows-profile-process-source-freeze-v1",
+  "date_utc": "2026-10-18",
+  "source_review_passed": true,
+  "qualification_passed": false,
+  "source_role": "new dedicated helper and fixed inert probe only",
+  "proposed_destination": "native-android/engine/auth-interop/deployment/windows-profile-process",
+  "source_inputs": {
+    "OwnedProfileProcess.cs": {"bytes": 44034, "sha256": "f23a4c57bf82043a586cebd400d5f9feecc4d94bfa1ce895cf722ca8b3244121"},
+    "InertProfileProbe.cs": {"bytes": 4171, "sha256": "339aa91a99fc3099e421d8a70d16d350c97d1df94728e83c2f1fab367e85a52c"},
+    "TestOwnedProfileProcess.cs": {"bytes": 9248, "sha256": "b68929efac7fa145a706524dc4d84e3b6afb6bd29258e636b9902297ca38a378"},
+    "CONTRACT.md": {"bytes": 9714, "sha256": "aa62e5cb058caf707a0cfcdee21aa26119e53be611bd158e24f80ff67d63430c"}
+  },
+  "proposed_build_inputs": {
+    "build-only.ps1": {"bytes": 4790, "sha256": "286effab8c33c91064b3bdf62dde3e74f183daa6c66d48c5bc11c27cc918c90f"},
+    "as-invoker.manifest": {"bytes": 446, "sha256": "3a462ffbbe724bd1c520e85696599d057e3d2a8f0bb0270d5ec712be20e27331"},
+    "BUILD.md": {"bytes": 3647, "sha256": "7eefb47b66142d0fb29d76407bbd8bd92bb6e46bdbf390791a04dd7fdc166221"}
+  },
+  "review_statements": [
+    {"reviewer_task": "/root/auth", "scope": "Win32 marshalling, x64 layouts, process/thread/token and private GUI/profile/account gates", "result": "SOURCE_ONLY_CLEAR"},
+    {"reviewer_task": "/root/qualification", "scope": "first cause, independent cleanup, native password lifetime, unbound account and journal quarantine", "result": "SOURCE_ONLY_CLEAR"}
+  ],
+  "review_evidence_kind": "task mailbox statements; not execution receipts",
+  "prior_source_freeze": {
+    "OwnedProfileProcess.cs": {"bytes": 43502, "sha256": "3e97f891d476dc00ea51714339371577f4f5b05c41c129ddef4b2ede6b70f802"},
+    "TestOwnedProfileProcess.cs": {"bytes": 8538, "sha256": "c1f8c365590da89184fe56274a505d34f6b08fac57826bc013779fc852a9ed28"},
+    "CONTRACT.md": {"bytes": 9314, "sha256": "4b608e0e1eee6a09e60209dcf2c0f9d50923f0e63d80d270996d4169d3d9f159"},
+    "prior_source_copy_retained_by_E": false,
+    "runtime_or_compiler_evidence": false,
+    "successor_fixes": ["read-only exact-name absence after attempted but unbound NetUserAdd; otherwise quarantine and retain intent", "no-launch precondition before unbound account/profile clean claim", "do not retire attempted-account intent without observed absence or bound deletion", "GetDriveTypeW fixed-drive gate", "two new unexecuted model source cases"]
+  },
+  "executed_checks": ["source lexical delimiter and fixed-token inspection", "manifest XML data parse", "source byte lengths and SHA256 reads", "Git status reads and local metadata-only commit"],
+  "PowerShell_executed": false,
+  "compiler_executed": false,
+  "model_tests_executed": false,
+  "actual_windows_api_executed": false,
+  "inert_probe_executed": false,
+  "account_profile_or_desktop_created": false,
+  "Auth_Db_Map_services_or_network_executed": false,
+  "accepted17_or_old_qualifiers_executed": false,
+  "external_packages_or_installers_used": false,
+  "build_definitions_approved_for_execution": false,
+  "full_compiler_or_CLR_mapping_verified": false,
+  "strict_native_api_deadline_claimed": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

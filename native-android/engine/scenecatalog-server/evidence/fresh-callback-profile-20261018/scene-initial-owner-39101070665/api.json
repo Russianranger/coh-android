@@ -1,0 +1,167 @@
+{
+  "schema": "coh-fixed-inventory-initial-owner-scene-api-v1",
+  "repository": "Russianranger/coh-android",
+  "branch": "native-android",
+  "run": {
+    "id": 39101070665,
+    "head_sha": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-10-18T05:35:24Z",
+    "updated_at": "2026-10-18T05:44:33Z"
+  },
+  "source_tree": "47d4a1e63cdde9b2304e34c46461a96bccca5b8b",
+  "jobs": [
+    {
+      "id": 117597273736,
+      "name": "matching-original-inventory-initial-owner-observation",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 39101070665,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Admit exact current Inventory receiver and initial-owner Map before project imports or runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify successful original fixture provenance and exact ZIP before extraction",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Admit exact source-created fixture receipt before installing or launching runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Reuse exact retained observer ZIP and recover only the missing unchanged DbServer donor",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Admit exact new observer source role and PE before runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Install x86 hosted runtime with PG18 and source-qualified classic Wine10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Record only fixed public pre-runtime tooling facts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Admit exact Inventory receiver without rebuild or historical test replay",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Prepare original control runtime files without SQL or any capture startup",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Observe one actual original GROUPS and native raw initial transaction in owned private runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Verify complete same-envelope associations, admit snapshot and retain only fresh test bodies",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 13
+        },
+        {
+          "name": "Retain optional initial packet only through the fresh fixture export gate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 14
+        },
+        {
+          "name": "Extract only fixed public booleans and coarse source-defined failure enum",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 18
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 36
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 37
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12125719924,
+      "name": "fresh-inventory-initial-owner-groups-public-status-18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+      "size_in_bytes": 1499,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12125719924",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12125719924/zip",
+      "expired": false,
+      "created_at": "2026-10-18T05:44:23Z",
+      "expires_at": "2027-01-16T05:35:24Z",
+      "updated_at": "2026-10-18T05:44:23Z",
+      "digest": "sha256:3ba5f5b2c8b4e3a80451729fd43c06e29653fcf0ea638e65fdfc844eab1ae7ec",
+      "workflow_run": {
+        "id": 39101070665,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc"
+      }
+    }
+  ]
+}

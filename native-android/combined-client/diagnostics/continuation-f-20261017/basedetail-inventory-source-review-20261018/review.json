@@ -1,0 +1,268 @@
+{
+  "B_complementary_native_bounds_lifetime_budget_read_clear": true,
+  "Salvage47_and_Inventory50_source_inputs_unchanged": true,
+  "all52_current_raw_equal_qualified_Git": true,
+  "development_history": {
+    "all_four_lossless_logs_rehashed": true,
+    "binary_hashes_of_separate_runs_not_claimed_equal": true,
+    "events": [
+      {
+        "result": "passed",
+        "scope": "NewproductionC only; no executable or oldtest.",
+        "source_revision": "e0fbd4188",
+        "stage": "initial-native-C99-compile"
+      },
+      {
+        "cause": "Undefinedassertmsg innewfullinventoryswitch adapter; addedexplicitassert adaptered7350b50.",
+        "log": "basedetail-development-1.log",
+        "result": "failed",
+        "source_revision": "e0fbd4188",
+        "stage": "original-library-load-1"
+      },
+      {
+        "checks": 30119,
+        "fixtures": 17,
+        "log": "basedetail-development-2.log",
+        "result": "passed",
+        "source_revision": "ed7350b50",
+        "stage": "complete-release-2"
+      },
+      {
+        "checks_per_mode": 38350,
+        "fixtures": 19,
+        "limit": "InheritedSalvagebuilder execution-capabilityflags were not scoped as compiled-only; those oldentrypoint functions were NOTexecuted by this new qualifier.",
+        "log": "basedetail-development-3.log",
+        "receipt": {
+          "bytes": 11774,
+          "path": "native-android/engine/character-dictionary/qualification/basedetail-inventory-1eeb06038-development.json.gz",
+          "sha256": "70f58f771485edca389c99169962b477881e0ea8906ff37108aaedc143536fbe"
+        },
+        "result": "passed",
+        "source_revision": "1eeb06038fb2b2b3f30d941ede0ea52d59b2bbcd",
+        "stage": "first-complete-three-mode-3"
+      },
+      {
+        "checks_per_mode": 38350,
+        "fixtures": 19,
+        "log": "basedetail-development-4.log",
+        "reason": "Repeat completed to bind corrected newPythonmetadata; generatedC,all native sources/checker/test,fixtures andresults identical. Root later requested pure-data derivation for metadata-only changes; this repeat had already completed. No further execution.",
+        "result": "passed",
+        "source_revision": "1051e1b23a6189614b7ab05b66fbad30a222853b",
+        "stage": "metadata-scoped-three-mode-4"
+      }
+    ],
+    "metadata_only_successor_repeated_new_three_modes_honestly_recorded": true,
+    "no_replay_free_claim": true,
+    "old_new_generated_original_C_fixture_cases_and_result_records_equal": true,
+    "only_oracle_metadata_source_pin_changed_from_prior_success": true,
+    "prior1eeb_success_preserved": true
+  },
+  "evidence": {
+    "native-android/engine/character-dictionary/qualification/basedetail-inventory-1051e1b23-binding.json": {
+      "bytes": 13407,
+      "sha256": "e8754d8f3d5ba7b71a3e6489f89c62b014f3eb57943f7db78b69c1a3acc143f6"
+    },
+    "native-android/engine/character-dictionary/qualification/basedetail-inventory-1051e1b23.json.gz": {
+      "bytes": 11819,
+      "sha256": "61773919fec0cad4a2c3defd03a099f6a097103f05c74d14f592f6474c474e3a"
+    },
+    "native-android/engine/character-dictionary/qualification/basedetail-inventory-1eeb06038-development.json.gz": {
+      "bytes": 11774,
+      "sha256": "70f58f771485edca389c99169962b477881e0ea8906ff37108aaedc143536fbe"
+    },
+    "native-android/engine/character-dictionary/qualification/basedetail-inventory-development-history.json": {
+      "bytes": 3301,
+      "sha256": "e91e927354e304f16f211aaa5700a3d3fb36f038dc4efcc23bb650dbc62209a4"
+    },
+    "native-android/engine/character-dictionary/qualification/basedetail-inventory-development-logs.json.gz": {
+      "bytes": 1162,
+      "sha256": "b279ba0cac28b261a3012fc2692242f69f9e108a4535189919960be62c3fb401"
+    }
+  },
+  "independent_authentic_data_walk": {
+    "Details_names": 1045,
+    "ID_name_bytes_with_NUL": 55184,
+    "ID_rows": 2157,
+    "InvBaseDetail_bytes": 77652,
+    "all47_Details_fields_traversed": true,
+    "all_record_spans_ledgers_and_ends_consumed": true,
+    "archive_or_body_copied_into_review": false,
+    "existing_archive_and_four_members_rehashed_in_place": true,
+    "fallback_ID_assignments": 0,
+    "first_case_insensitive_live_names": 1045,
+    "first_positive_CI_ID_name_then_forward_last_definition_reverse_ID_slots": true,
+    "matching_definition_ID_rows": 1045,
+    "maximum_ID": 2157,
+    "maximum_ID_name_bytes": 40,
+    "unique_positive_IDs": 2157
+  },
+  "lifetime_and_budget": {
+    "authentic_minimum_configured_budget": 1516316,
+    "borrowed_source_owner_bytes": 598192,
+    "commit_after_digest_and_final_cancellation": true,
+    "complete_source_owner_charged_before_callbacks": true,
+    "copied_output_queries_after_raw_ID_free_source_owner_and_provider_zero": true,
+    "no_reader_heap_allocations": true,
+    "own_stack_reserve": 16384,
+    "own_stack_rows_sum": 680,
+    "owner_bytes": 409784,
+    "pairwise_disjoint_immutable_spans_and_declared_callback_reserves": true,
+    "retained_old_bookkeeping": 7227140,
+    "retained_old_not_allocated_predecessor_or_global_RSS_proof": true,
+    "scaffolding_and_whole_process_RSS_or_Android_fit_admitted": false,
+    "workspace_bytes": 409784
+  },
+  "original_source_review": {
+    "Details_prepost_gameplay_and_geometry_not_executed": true,
+    "bounded_prefix_storage_earray_stash_crypto_adapters_explicit": true,
+    "exact_original_ID_and_Details_schema_CRCs_executed_by_qualification": [
+      "6f0830ea",
+      "326ad4e9"
+    ],
+    "fresh_full_Details_and_ID_readers_writers_and_generic_finalizers_compared": true,
+    "label_limitation_acknowledged_by_author_no_source_proof_rewrite_or_replay": true,
+    "one_receipt_label_overreach": "attribfiledict_FinalProcess is included in unexecuted_receive_source_witnesses_sha256_lf but is actually executed by original_basedetail; the other six listed receive witnesses are unexecuted",
+    "original_oracle_sanitized": false,
+    "original_raw_source_files": 31,
+    "original_stash_allocator_shared_memory_Win32_layout_and_packet_dispatcher_not_executed": true,
+    "whole_function_spans_independently_rehashed": 65
+  },
+  "passed": true,
+  "proof_commit": "bce91e75c3893c51a4509be7cbefcd2e55f83996",
+  "qualification": {
+    "LeakSanitizer_enabled": false,
+    "fixtures": 19,
+    "fixtures_with_original_projection": 13,
+    "modes": {
+      "asan": {
+        "actor_authority": false,
+        "authentic_minimum_budget": 1516316,
+        "authentic_poll_count": 6408,
+        "borrowed_source_owner_bytes": 598192,
+        "cancellations": 28,
+        "checks": 38350,
+        "configured_old_reservation": 7227140,
+        "control_bytes": 32,
+        "cuts": 32,
+        "fixtures": 19,
+        "mutations": 32,
+        "owner_bytes": 409784,
+        "passed": true,
+        "reader_heap_allocations": 0,
+        "runtime_generation": false,
+        "sources_bytes": 88,
+        "workspace_bytes": 409784
+      },
+      "release": {
+        "actor_authority": false,
+        "authentic_minimum_budget": 1516316,
+        "authentic_poll_count": 6408,
+        "borrowed_source_owner_bytes": 598192,
+        "cancellations": 28,
+        "checks": 38350,
+        "configured_old_reservation": 7227140,
+        "control_bytes": 32,
+        "cuts": 32,
+        "fixtures": 19,
+        "mutations": 32,
+        "owner_bytes": 409784,
+        "passed": true,
+        "reader_heap_allocations": 0,
+        "runtime_generation": false,
+        "sources_bytes": 88,
+        "workspace_bytes": 409784
+      },
+      "ubsan": {
+        "actor_authority": false,
+        "authentic_minimum_budget": 1516316,
+        "authentic_poll_count": 6408,
+        "borrowed_source_owner_bytes": 598192,
+        "cancellations": 28,
+        "checks": 38350,
+        "configured_old_reservation": 7227140,
+        "control_bytes": 32,
+        "cuts": 32,
+        "fixtures": 19,
+        "mutations": 32,
+        "owner_bytes": 409784,
+        "passed": true,
+        "reader_heap_allocations": 0,
+        "runtime_generation": false,
+        "sources_bytes": 88,
+        "workspace_bytes": 409784
+      }
+    },
+    "native_strict_policy_projection_omissions_explicit": true,
+    "old_qualifier_entrypoints_executed": false,
+    "sampled_cuts_mutations_and_poll_stages_not_all_input_positions": true,
+    "source_fixture_and_binary_prepost_bracketed_by_qualifier": true,
+    "three_optimization_refusals": true
+  },
+  "raw_receipt": {
+    "bytes": 55045,
+    "sha256": "536bab496c6bb317480be09e0517c55b3f8c287f75506827c62bedb4586b6ea3"
+  },
+  "schema": "coh-f-complete-basedetail-inventory-source-review-v1",
+  "scope": {
+    "Details_NAME_identity_only": true,
+    "F_project_import_tests_compiler_native_or_download_executed": false,
+    "current_cache_generation_character_inventory_actor_world_ACK_or_rendering_authority": false,
+    "historical_fresh_BaseDetail_ID_membership": true,
+    "read_only_Git_and_data_only": true
+  },
+  "source_inputs_sha256": {
+    "native-android/engine/character-dictionary/BASEDETAIL_INVENTORY.md": "81a03d7b0111de058a0c9dc306be994cb23f32c39afb5c9b751281ad2ef30ec1",
+    "native-android/engine/character-dictionary/basedetail-inventory-source-pins.json": "76e339341587099e4c4f3127b515634ab7b2fd3c3c9b680ad760754093f32cfa",
+    "native-android/engine/character-dictionary/basedetail_inventory_oracle.py": "44540d8af4e93e2ef64d616d3291452c55f19131d9208ff40e900a8aab10908a",
+    "native-android/engine/character-dictionary/check_basedetail_inventory.py": "a9a63eccb6bc6f6657483087600fa6daecbf1d5e69463c34c17b1f622779f26a",
+    "native-android/engine/character-dictionary/coh_basedetail_inventory.c": "2b47486090b8a772429c44dc3d8e4afcbe67146c0045b2e0d5880d54fdccb37e",
+    "native-android/engine/character-dictionary/coh_basedetail_inventory.h": "661525756ed1022d7830ecf234b87779f39d033da4416fb58f7d63c9aff39d86",
+    "native-android/engine/character-dictionary/coh_salvage.c": "a8f3cd9853e19d72a17ab340ffac4052f5a9ff886a58a69655a0fc696ed690e0",
+    "native-android/engine/character-dictionary/coh_salvage.h": "3f1ad1e0443187015bab716f44b7412a52e1fb2741565fa2739a31ef9ff02c0d",
+    "native-android/engine/character-dictionary/salvage-source-pins.json": "88cbb9f6fabc48855cbee8c3c2a6823bd48d06beb1d2052671cadac23a7b18ba",
+    "native-android/engine/character-dictionary/salvage_details_schema.inc": "dcfb4729d0c15c7a5029f89ee383bcefe45376b675dc8e6952f580b630fcdbd0",
+    "native-android/engine/character-dictionary/salvage_oracle.py": "ab55e4bfe7b821214299468569e1372fd7ceeebc2edd069934220046a1703ecc",
+    "native-android/engine/character-dictionary/test_basedetail_inventory.c": "76e2d8efffd3d0fcf7e7bfaec7114ad3f89b081c74aad206346a6db473c4814a",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+    "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+    "native-android/engine/costume-tree/crc_provider.py": "7ee991803d9e2d303fab436d8fc4d446e9318e6c8fc60e0915d17cca18f73ff1",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "upstream/ouroboros/Common/bases/basedata.c": "5ed4a51d3936a194b8c03d46768184e94d38a827e681c683c43fbb9712785709",
+    "upstream/ouroboros/Common/bases/basedata.h": "0cf3b228ae74e27d467d564cbe4faca820c2902cff787d4d0ba7770238fa7799",
+    "upstream/ouroboros/Common/bases/baseparse.c": "623d916d5a00fac854218db0d632ccab9790c5da10e8ae0043df0f34197f6695",
+    "upstream/ouroboros/Common/entity/RewardItemType.c": "b30b444d707c3237b43e23509f343f5469a37de904ce00a85680fa0effa1f670",
+    "upstream/ouroboros/Common/entity/TokenizerUiWidget.h": "9ce16cdbc2956023565252409599cc97f8e5b769a66eaafc63fd2772035ab35f",
+    "upstream/ouroboros/Common/entity/character_eval.c": "7c3fc628c90378f1466ce9f7a4fd6426b2ff003c92dad2801bf4b9e0c60d8c39",
+    "upstream/ouroboros/Common/entity/character_inventory.c": "efe22c554a15a782af4f4e0175c3396f84e0ba3f2f2a63d41e2be8460224af89",
+    "upstream/ouroboros/Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+    "upstream/ouroboros/Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+    "upstream/ouroboros/Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+    "upstream/ouroboros/Common/entity/salvage.c": "88b6d66c051aebf85ac5397525047f1073045d6fc7cafe7a00f69cf20407cc7f",
+    "upstream/ouroboros/Common/entity/salvage.h": "5609a8ec2eb62e4cdec5a51408f3db0d6944c1239185cc36bfc8667ded1e1d21",
+    "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+    "upstream/ouroboros/Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+    "upstream/ouroboros/Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2"
+  },
+  "source_revision": "1051e1b23a6189614b7ab05b66fbad30a222853b"
+}

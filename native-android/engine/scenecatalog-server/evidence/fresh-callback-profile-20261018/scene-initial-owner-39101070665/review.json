@@ -1,0 +1,101 @@
+{
+  "READY_or_ACK_permission": false,
+  "actor_identity_verified": false,
+  "actual_sleeping_state_or_live_slot_branch_established": false,
+  "actual_source_gate_pin_count": 456,
+  "actual_source_gate_pin_map_canonical_sha256": "9af77e6e9174abc1316f2d8c8ae77238f4dcfbbcbf175cbdf861c09a6c329679",
+  "all_456_pins_equal_actual_published_Git": true,
+  "all_direct_verifier_failure_causes_collapse_to_fixed_verification_refused": true,
+  "archive_crc_verified": true,
+  "archive_only_two_allowlisted_regular_members": true,
+  "artifact_id": 12125719924,
+  "capture_native_input_has_hardcoded_28_test_count": false,
+  "direct_verifier_reads_native_build_28_or_29_counter": false,
+  "direct_verifier_reads_profile_diagnostic_or_sealed": false,
+  "direct_verifier_runs_before_admit_and_retention_wrapper": true,
+  "files": {
+    "api.json": {
+      "bytes": 5517,
+      "sha256": "180fcb21379bf1408a65672ff3203efa9e7a1b5e15f87b1814a5a443b33c8cee"
+    },
+    "artifact.zip": {
+      "bytes": 1499,
+      "sha256": "3ba5f5b2c8b4e3a80451729fd43c06e29653fcf0ea638e65fdfc844eab1ae7ec"
+    },
+    "summary.json": {
+      "bytes": 3107,
+      "sha256": "152f9fdfa766bd5ffd9a0e8466be3edfd2e51da6fd2e0f5f0bdb34ce32681679"
+    },
+    "tooling.json": {
+      "bytes": 397,
+      "sha256": "af2f39cf37aaba15ed46320fd026cb8c7ed44fc22f6795478f8af5efe3729fca"
+    }
+  },
+  "first_refusing_component": "DIRECT_CHECK_SOURCE_SNAPSHOT_VERIFIER",
+  "inner_failure_stage_or_reason_established": false,
+  "inspected_sources_outside_actual_456_preflight_gate": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": "fc693b6fdde6b943a307583be35e16045e86dd907feed4cc96fd895ee7610dc4"
+  },
+  "job_id": 117597273736,
+  "later_current_checkout_differences": [
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py"
+  ],
+  "members": {
+    "summary.json": {
+      "bytes": 3107,
+      "crc32": "22d68c9b",
+      "sha256": "152f9fdfa766bd5ffd9a0e8466be3edfd2e51da6fd2e0f5f0bdb34ce32681679"
+    },
+    "tooling.json": {
+      "bytes": 397,
+      "crc32": "5ce8f0b5",
+      "sha256": "af2f39cf37aaba15ed46320fd026cb8c7ed44fc22f6795478f8af5efe3729fca"
+    }
+  },
+  "observed_capture_failure_code": "NONE",
+  "observed_capture_stage": "COMPLETE",
+  "observed_cleanup_verified": true,
+  "observed_initial_packet": false,
+  "observed_local_reqallents_count": 1,
+  "observed_matching_groups_and_exact_packet_and_selected_owner": true,
+  "observed_native_coh_status": 7,
+  "observed_native_coh_status_name": "COH_STATE",
+  "observed_native_failure_code": "TIMEOUT",
+  "observed_post_release_sealed": false,
+  "observed_profile_boundary_accepted": true,
+  "observed_profile_diagnostic_only": true,
+  "observed_profile_envelope_committed": true,
+  "observed_profile_owner_failure": "NONE",
+  "observed_profile_restored": true,
+  "observed_profile_stage": "COMMIT",
+  "outside_preflight_sources_are_review_time_binding_not_an_execution_claim": true,
+  "owner_absolute_word_12_is_transport_protocol_version_not_client_state": true,
+  "passed": true,
+  "public_capture_summary_is_not_step13_failure_diagnostic": true,
+  "raw_private_capture_or_owner_or_packet_or_verification_receipt_exported": false,
+  "reviewer_executed_verifier_or_admitter_or_tests_or_native": false,
+  "reviewer_rebuilt_Map_or_replayed_runtime": false,
+  "root_observed_fixed_log_fact": {
+    "bytes": 699,
+    "file": "fixed-direct-verifier-status.json",
+    "sha256": "11f3a287baeb6a8085400b7d5e24ba154ea82c464e0f985225ea4dfcc64420ac"
+  },
+  "run_id": 39101070665,
+  "runtime_step_12_passed": true,
+  "schema": "coh-a-initial-owner-scene-fixed-evidence-review-v1",
+  "server_reqallents_receipt_or_timeout_cause_established": false,
+  "source_generation_admitted": false,
+  "source_inspected_sha256_actual_Git": {
+    "native-android/engine/scenecatalog-server/admit_source_snapshot.py": "e4d6c1c28b989f3aa3534d790c2020468fe19a3551db18248c49baf29dcfe078",
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "78a18536289ad03ed77c314c4bcd889a6dd7002faa735d923f39f059263d2639",
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py": "6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": "67452123026a1efe04c1605d638b8f329a93e4d200ea03283683f163caaece93",
+    "native-android/engine/scenecatalog-server/inspect_groups_capture.py": "01b622e95bef513e637bcff62be7d78af4bf83fca00e0eb3269f7385937a6c4e",
+    "native-android/engine/scenecatalog-server/summarize_groups_capture.py": "7b026f1291a5b1c69ee32415693e7c507f52125e76c5e41e45766fed4863681f",
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": "fc693b6fdde6b943a307583be35e16045e86dd907feed4cc96fd895ee7610dc4"
+  },
+  "source_revision": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+  "source_snapshot_step_13_failed": true,
+  "source_tree": "47d4a1e63cdde9b2304e34c46461a96bccca5b8b",
+  "world_authority": false
+}

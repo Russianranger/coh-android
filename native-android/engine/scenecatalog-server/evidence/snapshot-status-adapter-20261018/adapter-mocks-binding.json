@@ -1,0 +1,33 @@
+{
+  "attempt_count": 2,
+  "corrected_method_cases": 3,
+  "entire_module_AST_equal_after_only_corrected_method_body_replacement": true,
+  "first_error_scope": "test expected original ValueError instead of required coarse SnapshotFailure",
+  "first_invocation_test_oracle_errors": 1,
+  "old_projection_tests_reexecuted": false,
+  "other_25_methods_reexecuted": false,
+  "passed": true,
+  "retained_execution_and_derivation_inputs": {
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/corrected-method-binding.json": "7ef84402698e1c78eea347aec07b79b64ac2aec7c3fa364be50026fe60d8f606",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/corrected-method.json": "6b4bf479b4dbe39c0540bd630311d8906bcaae763edc555bec5cbaec30322d1b",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/corrected-method.stderr.txt": "d10ffbd9f0faa72cd6837063279524e199b59fbc3d035051302a1e8dbc4b36ad",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/derive_proofs.py": "3478e36e859622713c8c35542be2661766faa09978ead610009d1627ac3a99ee",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/failed-first/adapter-mocks-binding.json": "19c7dc87db32d6a13c1be0ee2d454a847762883f0fe01429dc3abb81924a98aa",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/failed-first/adapter-mocks.json": "27cd306c928cf1af1e0b6a7aaa30b5192e3d3423edd161801dab1ac28411704d",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/failed-first/adapter-mocks.stderr.txt": "94ef6eaf271aa589facf12110c8361ef1b8003cdd90add3e91e8fabae4a12e05",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/failed-first/test.py.source": "b5d61e383139569eb8a98f52d68c60f94df0d47825a14b3040fbade5032d27df",
+    "native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/run_corrected_method.py": "1c681eee3b7eace6195973b3ca473e711cb7df59a77de8efc18083978a9b599c"
+  },
+  "returncode": 0,
+  "reused_unchanged_methods": 25,
+  "schema": "coh-snapshot-status-adapter-mock-binding-v1",
+  "segmented_qualification": true,
+  "source_generation_admitted": false,
+  "source_inputs_unchanged": true,
+  "source_revision": "b294137f0149b0c9588c3e785ac68a4c640441b0",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py": "2938d7a13ba7f3365dcbc68be3033891f1f304e7b5f46892c650e2d7783d6b09",
+    "native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py": "b9602e64f21ef633bbff26f7aaa23353a4c0d3ecb99ff151167f074c6e969a07"
+  },
+  "world_authority": false
+}

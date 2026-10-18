@@ -1,0 +1,27 @@
+{
+  "attempt_count": 1,
+  "native_compiler_loader_runtime_or_old_qualifiers_executed": false,
+  "old_projection_tests_reexecuted": false,
+  "only_new_adapter_mock_controls_executed": true,
+  "output_files": {
+    "stderr": {
+      "bytes": 3048,
+      "sha256": "94ef6eaf271aa589facf12110c8361ef1b8003cdd90add3e91e8fabae4a12e05"
+    },
+    "stdout": {
+      "bytes": 219,
+      "sha256": "27cd306c928cf1af1e0b6a7aaa30b5192e3d3423edd161801dab1ac28411704d"
+    }
+  },
+  "passed": false,
+  "returncode": 1,
+  "schema": "coh-snapshot-status-adapter-mock-binding-v1",
+  "source_generation_admitted": false,
+  "source_inputs_unchanged": true,
+  "source_revision": "b5329b4413acd72dd5eaade75414ed16af0a32d6",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py": "2938d7a13ba7f3365dcbc68be3033891f1f304e7b5f46892c650e2d7783d6b09",
+    "native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py": "b5d61e383139569eb8a98f52d68c60f94df0d47825a14b3040fbade5032d27df"
+  },
+  "world_authority": false
+}

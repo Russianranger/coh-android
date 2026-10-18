@@ -1,0 +1,140 @@
+{
+  "schema": "coh-b-windows-map-proposal-read-review-v1",
+  "review_date": "2026-10-18",
+  "reviewed_commit": "da4d9ff674fd28ab236ec6d282d0da5d0c76ae96",
+  "immutable_audit_revision": "d9adf2b431a039357f8bfe878d3d0da991a81b19",
+  "reviewed_files": {
+    "native-android/engine/auth-interop/deployment/WINDOWS-MAP-READY-PROPOSAL.md": {
+      "bytes": 14737,
+      "sha256": "b55f7663e007741b3201cfbb837bea1c21d20fbd58f66504d13e15d1f5e4df85"
+    },
+    "native-android/engine/auth-interop/evidence/windows-map-deployment-source-20261018/audit.json": {
+      "bytes": 28905,
+      "sha256": "8dd9493150604709f4842f8ada03f1cd5d28822b4b3879f41c59022415d603c5"
+    },
+    "native-android/engine/auth-interop/evidence/windows-map-deployment-source-20261018/audit.py": {
+      "bytes": 9530,
+      "sha256": "190954af67bdba8cdc0f8678e1e5a31da2e5915231533c2767229f53f52d7081"
+    }
+  },
+  "source_files_verified": 31,
+  "named_functions_verified": 59,
+  "raw_definition_spans_verified": 66,
+  "source_files_and_spans_zero_mismatch": true,
+  "audit_helper_imported_or_executed": false,
+  "project_import_test_compiler_registry_account_service_or_target_process_executed": false,
+  "official_API_documentation_read_only": true,
+  "primary_sources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithlogonw",
+      "constraint": "Profile load completes before return under LOGON_WITH_PROFILE, but process initialization may still fail. Requires local-logon permission and non-LocalSystem caller. Mutable command line <=1024 characters, explicit full application path, target-user image/CWD/desktop access and valid standard handles remain gates. Current-host unload timing cannot be inferred from XP/Server2003 notes."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-assignprocesstojobobject",
+      "constraint": "Assignment needs job assignment and process quota/terminate rights. Existing-job nesting and UI-limit compatibility, same session and inherited limits must be qualified before resume; assignment may fail and cannot count as ownership success."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_process_id_list",
+      "constraint": "Nested job process lists include child jobs. Empty completion requires a successful complete observation with both assigned and listed counts zero while the job handle remains owned."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-loaduserprofilew",
+      "constraint": "Explicit loading needs suitable token rights, backup/restore privileges and administrator/LocalSystem caller. hProfile is closed by UnloadUserProfile, not CloseHandle; registry handles must retire first."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-unloaduserprofile",
+      "constraint": "This unload API applies to an explicit LoadUserProfile hProfile. All opened hive keys must close. Implicit LOGON_WITH_PROFILE supplies no such returned hProfile."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-deleteprofilew",
+      "constraint": "Profile deletion requires administrative privileges and the exact SID; local computer parameter must be NULL on current Windows. It is separate from account deletion."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/lmaccess/nf-lmaccess-netuseradd",
+      "constraint": "Fresh local creation uses NULL server name, checks exact native NERR_Success, and uses a name <=20 characters. Existing-user result does not transfer ownership."
+    }
+  ],
+  "retained_old_map_compile_verified": {
+    "archive": {
+      "bytes": 6781758,
+      "path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-map-owner-build-39094808520.zip",
+      "sha256": "b3a82a5265322685e035e3b86f44862a59d8fc561852288e3d3ea8bb8371eed6"
+    },
+    "binary": {
+      "bytes": 7507456,
+      "delay_imports": [],
+      "imports": [
+        "PhysXLoader.dll",
+        "PhysXCooking.dll",
+        "IPHLPAPI.DLL",
+        "WS2_32.dll",
+        "WINMM.dll",
+        "SHELL32.dll",
+        "ADVAPI32.dll",
+        "USER32.dll",
+        "GDI32.dll",
+        "COMDLG32.dll",
+        "KERNEL32.dll"
+      ],
+      "machine": "i386",
+      "sha256": "fa4eedf702e14c9c79e0bf72abf6a4b0fd2f3bca9b14e3c911ee3974d7e99b14"
+    },
+    "build_only": true,
+    "new_A13_binary_admitted_by_this_audit": false,
+    "receipt": {
+      "bytes": 3796,
+      "sha256": "478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034"
+    },
+    "staged_svr_init": {
+      "TestClient_call_count": 1,
+      "bytes": 73194,
+      "hardcoded_CoH_count": 1,
+      "sha256": "9962b3d718db223fcae663e8f8c4fab44f1da5b9db6be94f1cc5c9fe92582195"
+    },
+    "startup_inputs": {
+      "bytes": 1202,
+      "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+    }
+  },
+  "old_PE_import_directory_independently_parsed": true,
+  "historical_compile_evidence_not_current_Map": true,
+  "findings": {
+    "Map_direct_ODBC_or_PG_imports_in_old_PE": false,
+    "beacon_install_write_requires_excluded_beacon_role": true,
+    "current_English_locale_guard_takes_no_registry_write": true,
+    "db_map_protocol": 20110503,
+    "db_ready_handler_clears_starting": true,
+    "fixed_TestClient_CS_write_on_ordinary_startup": true,
+    "hardcoded_CoH_installation_getter_can_create_key": true,
+    "in_main_override_proves_preentry_DLL_HKCU_isolation": false,
+    "manual_positive_map_registration_requires_existing_map_container": true,
+    "map_to_db_tcp_port": 6997,
+    "map_to_log_tcp_port": 6989,
+    "private_CWD_or_parent_job_isolates_HKCU": false,
+    "ready_sent_after_groupLoadMap_dbSetupMap": true,
+    "same_Db_process_serves_log_when_UseLogServer_zero": true,
+    "zero_launcher_cookie_is_original_manual_registration_branch": true
+  },
+  "verdict": "CLEAR_FOR_SOURCE_API_RESEARCH_PUBLICATION",
+  "actual_windows_launch_profile_registry_or_ready_admitted": false,
+  "profile_scope_is_not_HKLM_filesystem_kernel_object_or_network_isolation": true,
+  "unimplemented_future_launcher_not_reviewed": true,
+  "concrete_proposal_blockers": [],
+  "required_future_admissions": [
+    "exact new Map build and complete DLL/data closure",
+    "fresh account/SID and profile ownership",
+    "suitable caller/logon rights and environment",
+    "target-user image/CWD/desktop ACLs and valid private log capture",
+    "compatible same-session owned job and verified returned process/primary-thread handles before resume",
+    "complete job/direct-process exit before bounded current-host hive-unloaded observation",
+    "exact owned SID/profile/account cleanup",
+    "actual current Map/Db endpoint and registered/not-starting readiness observation"
+  ],
+  "scope_precision": [
+    "The 59 named functions cover 66 pinned definitions because seven utility functions also have alternate platform stubs; Windows selects definition index0.",
+    "Original regGetInstallationDir retains an HKEY on NULL-return branches; teardown must prove process/job retirement, not only root termination.",
+    "CreateProcessWithLogonW success/profile loaded is not successful DLL initialization or Map readiness.",
+    "Old direct imports omit dynamically preloaded PhysXCore and never prove its transitive runtime closure.",
+    "A client ready-send is not a Db-received transition; the future observer must bind actual current channel and container."
+  ]
+}

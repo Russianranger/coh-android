@@ -1,0 +1,299 @@
+{
+  "schema": "coh-initial-send-readonly-source-audit-v1",
+  "source_revision": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+  "source_files": {
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": {
+      "bytes": 71802,
+      "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+      "sha256_lf": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "bytes": 171294,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "sha256_lf": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": {
+      "bytes": 64295,
+      "sha256": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "sha256_lf": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806"
+    },
+    "upstream/ouroboros/MapServer/src/player/parseClientInput.c": {
+      "bytes": 144600,
+      "sha256": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313",
+      "sha256_lf": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313"
+    },
+    "upstream/ouroboros/MapServer/src/player/clientEntityLink.c": {
+      "bytes": 5416,
+      "sha256": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b",
+      "sha256_lf": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b"
+    },
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": {
+      "bytes": 73982,
+      "sha256": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+      "sha256_lf": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c": {
+      "bytes": 56509,
+      "sha256": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+      "sha256_lf": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c": {
+      "bytes": 30356,
+      "sha256": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9",
+      "sha256_lf": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    },
+    "native-android/engine/initial-capture/coh_initial_map.c": {
+      "bytes": 17989,
+      "sha256": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4",
+      "sha256_lf": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4"
+    },
+    "native-android/engine/mapclient/coh_mapclient.c": {
+      "bytes": 23015,
+      "sha256": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199",
+      "sha256_lf": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199"
+    },
+    "native-android/engine/network/coh_net.c": {
+      "bytes": 24548,
+      "sha256": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+      "sha256_lf": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1"
+    },
+    "native-android/engine/network/coh_net_udp.c": {
+      "bytes": 11496,
+      "sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+      "sha256_lf": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_base.h": {
+      "bytes": 10047,
+      "sha256": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64",
+      "sha256_lf": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64"
+    },
+    "upstream/ouroboros/MapServer/src/group/groupnetsend.c": {
+      "bytes": 16285,
+      "sha256": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+      "sha256_lf": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9"
+    },
+    "native-android/combined-client/tools/capture_local_initial.c": {
+      "bytes": 15392,
+      "sha256": "0b44989efcd3a43fee832ebecd7d8b840e9fdc16ee3d0cfe42c4d9e51b16db82",
+      "sha256_lf": "0b44989efcd3a43fee832ebecd7d8b840e9fdc16ee3d0cfe42c4d9e51b16db82"
+    },
+    "native-android/combined-client/tools/capture_local_scene.c": {
+      "bytes": 11010,
+      "sha256": "f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec",
+      "sha256_lf": "f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec"
+    },
+    "native-android/engine/scenecatalog-server/groups_native_status.py": {
+      "bytes": 15048,
+      "sha256": "b066a1482db551472c2e7125cf59a1edbf82e269ad55699188fc903b66985781",
+      "sha256_lf": "b066a1482db551472c2e7125cf59a1edbf82e269ad55699188fc903b66985781"
+    },
+    "native-android/engine/scenecatalog-server/stage_groups_boundary.py": {
+      "bytes": 1460,
+      "sha256": "980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f",
+      "sha256_lf": "980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f"
+    },
+    "native-android/engine/scenecatalog-server/source_groups_boundary.inc": {
+      "bytes": 8471,
+      "sha256": "5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3",
+      "sha256_lf": "5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": {
+      "bytes": 18856,
+      "sha256": "e0425174bd380cb7e97b98e46532af97c0ab3621e2fefa19c1ad82e5f6c57138",
+      "sha256_lf": "e0425174bd380cb7e97b98e46532af97c0ab3621e2fefa19c1ad82e5f6c57138"
+    }
+  },
+  "whole_functions": {
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": {
+      "svrHandleClientConnect": {
+        "line": 153,
+        "offset_lf": 4792,
+        "bytes_lf": 1006,
+        "sha256_lf": "366e1b8354708c59bc2474c4f7bf3e6d95621ee7756429a808af8c9b2513e744"
+      },
+      "svrHandleClientMsg": {
+        "line": 183,
+        "offset_lf": 5964,
+        "bytes_lf": 20963,
+        "sha256_lf": "86594bc3221a06b8954d25eb5c42d35e88a5dbd6dabb4e2a030ae471b39ab8fb"
+      },
+      "svrTickUpdateNetSend": {
+        "line": 1348,
+        "offset_lf": 47613,
+        "bytes_lf": 1468,
+        "sha256_lf": "e63ddc4b5fbd847c903f2f48fafa82c9ba16bf58971d8e0b81055b649eb370dc"
+      },
+      "svrTickDoNetSend": {
+        "line": 1593,
+        "offset_lf": 54884,
+        "bytes_lf": 7035,
+        "sha256_lf": "fe03a22046e4b08ee033fc8070adf68f91eed76c8a5aeff0f021107611a5d153"
+      },
+      "svrTickCheckNetSend": {
+        "line": 1791,
+        "offset_lf": 61920,
+        "bytes_lf": 532,
+        "sha256_lf": "8a8d50dfac30207d98b7b77e9507dcd0037c71575756f0f483611021c65afee5"
+      },
+      "svrTickTop": {
+        "line": 1934,
+        "offset_lf": 66327,
+        "bytes_lf": 2580,
+        "sha256_lf": "5a94f10b160ec761686340b6c92e586b49a00dd63f3771502317c2a995508af0"
+      },
+      "svrTick": {
+        "line": 2031,
+        "offset_lf": 68908,
+        "bytes_lf": 2893,
+        "sha256_lf": "9f2ae7f2dba596b603b25b53071ad809889d03ec02c23d1aadb8dad13827d4f9"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "entPrepareUpdate": {
+        "line": 1626,
+        "offset_lf": 50155,
+        "bytes_lf": 707,
+        "sha256_lf": "f7b70c003a57743128f46fc5436086f472643fb5d039168a59a9b399961aee42"
+      },
+      "entFinishUpdate": {
+        "line": 1656,
+        "offset_lf": 50863,
+        "bytes_lf": 7222,
+        "sha256_lf": "043259c9a6cfd91b4e89f80dfe08ab607433c84d14d3bf4ea080acfd212e0c98"
+      },
+      "entSendUpdate": {
+        "line": 3824,
+        "offset_lf": 125038,
+        "bytes_lf": 28705,
+        "sha256_lf": "ebd18115f2d4f73cfdc2daf56a9df3399e64d463dfd92c95f8cf7820e0144524"
+      },
+      "sendEntity": {
+        "line": 3310,
+        "offset_lf": 107552,
+        "bytes_lf": 16847,
+        "sha256_lf": "80d1b5a7fe7def0c933a87dd2817802e7cca8133c049bdb9cea1790e89330c53"
+      },
+      "determineNeedToSend": {
+        "line": 1932,
+        "offset_lf": 60416,
+        "bytes_lf": 2078,
+        "sha256_lf": "5e890d20ca57f1f7c4a2ca21956f52dac2842a5d0c989e0a23f3e20b9c683bbe"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": {
+      "sendCharacterToClient": {
+        "line": 1219,
+        "offset_lf": 35709,
+        "bytes_lf": 12583,
+        "sha256_lf": "9a6b0977a9b2a35be432e6dc0dd92181d259c778b5a4a56e4e7b4e7e9aa1ebfb"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/player/parseClientInput.c": {
+      "clientReceivedCharacter": {
+        "line": 448,
+        "offset_lf": 15300,
+        "bytes_lf": 1080,
+        "sha256_lf": "dfa4f64e621684943b60663f2adbfac77140cf510ff35a8adf17be86027aa7f5"
+      },
+      "parseClientInput": {
+        "line": 1135,
+        "offset_lf": 41626,
+        "bytes_lf": 102955,
+        "sha256_lf": "c5aa1b2465d79f530c854f80a8d6f88e6b66ec273a7d194f4d81dc14f4286163"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/player/clientEntityLink.c": {
+      "clientGetViewedEntity": {
+        "line": 50,
+        "offset_lf": 1383,
+        "bytes_lf": 227,
+        "sha256_lf": "25d36722736e733eb7af0ab83a1300b26cdfc2e1101bde166ee006f4d3964cd4"
+      }
+    },
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": {
+      "commReqScene": {
+        "line": 1843,
+        "offset_lf": 64209,
+        "bytes_lf": 3724,
+        "sha256_lf": "ace5f7da2f6ccff25ef384f0542de4b5756041cbacfddeb46b20c10cd58d48eb"
+      }
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c": {
+      "netMessageScan": {
+        "line": 1113,
+        "offset_lf": 39336,
+        "bytes_lf": 6169,
+        "sha256_lf": "bc43cb531dfe240f1158f59bd697a99b5565e1e295457e369502242aec2df2a3"
+      }
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c": {
+      "pktSendDbg": {
+        "line": 450,
+        "offset_lf": 17249,
+        "bytes_lf": 5477,
+        "sha256_lf": "fb844fa63210a18376756f8dfb64bb915bfbd36303bf055b59f2c56af0ff65cf"
+      },
+      "lnkBatchSend": {
+        "line": 34,
+        "offset_lf": 1436,
+        "bytes_lf": 197,
+        "sha256_lf": "1b99fa596a80288c9ee509ee5668d9a7e408df940073628e04bacb4fc5c3308d"
+      },
+      "pktSendRaw": {
+        "line": 598,
+        "offset_lf": 22983,
+        "bytes_lf": 6507,
+        "sha256_lf": "7694b22e8b44d49892ffbf96bd13d528e1d7b12c61cd7d7f0ee89ac9fd7f6960"
+      }
+    },
+    "native-android/engine/initial-capture/coh_initial_map.c": {
+      "coh_initial_map_service": {
+        "line": 132,
+        "offset_lf": 12586,
+        "bytes_lf": 4569,
+        "sha256_lf": "c75b5c8a94929f0d723576ee461872f2f6203d2df781a562c7a8d47cac3f766d"
+      }
+    },
+    "native-android/engine/mapclient/coh_mapclient.c": {
+      "send_command": {
+        "line": 134,
+        "offset_lf": 7902,
+        "bytes_lf": 581,
+        "sha256_lf": "f5abcfc184086dd8b2df8204a89aa7c52f407ac6812fbcc6d99c143f35973240"
+      }
+    },
+    "native-android/engine/network/coh_net.c": {
+      "queue_raw": {
+        "line": 66,
+        "offset_lf": 3722,
+        "bytes_lf": 2271,
+        "sha256_lf": "7d3b255dd05edb0bf20f30beae4d979cb20c8c297838a8ed349b81bb695f86ff"
+      },
+      "coh_net_pump": {
+        "line": 135,
+        "offset_lf": 8391,
+        "bytes_lf": 3329,
+        "sha256_lf": "72b39c23403a9bd74b91902191c3c53c68a45a56ba71f7357c19fecf63dc35d4"
+      }
+    },
+    "native-android/engine/network/coh_net_udp.c": {
+      "send_frame": {
+        "line": 89,
+        "offset_lf": 4673,
+        "bytes_lf": 537,
+        "sha256_lf": "248c71cdd381de6126ff5adeccbd571cced3580f4bccacfef0f021450419c952"
+      },
+      "coh_net_udp_service": {
+        "line": 109,
+        "offset_lf": 5895,
+        "bytes_lf": 2401,
+        "sha256_lf": "d7be642e4044646c8ab785517f2da4a3b8a0bf29b6936ed186bfac8736d0aa07"
+      }
+    }
+  },
+  "whole_function_span_includes_one_final_LF_if_present": true,
+  "project_imports_compilers_tests_servers_or_network_executed": false,
+  "original_source_bytes_modified": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

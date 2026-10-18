@@ -1,0 +1,18 @@
+{
+  "admit_or_retention_fixed_JSON_observed": false,
+  "direct_checker_refused_before_admit_or_retention": true,
+  "inner_failure_stage_or_reason_established": false,
+  "job_id": 117597273736,
+  "observed_fixed_JSON": {
+    "failure": "verification_refused",
+    "passed": false,
+    "schema": "coh-source-snapshot-native-verification-v1",
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "origin": "Root inspected the private job log in memory and reported only this fixed parsed JSON; no raw log retained or byte-identity claim.",
+  "private_log_exported": false,
+  "run_id": 39101070665,
+  "schema": "coh-root-fixed-direct-verifier-log-fact-v1",
+  "step_number": 13
+}

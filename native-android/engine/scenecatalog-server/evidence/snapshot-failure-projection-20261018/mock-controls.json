@@ -1,0 +1,1 @@
+{"compiler_or_native_executed": false, "controlled_subtest_cases": 245, "mock_only": true, "native_mock_invocations": 184, "old_qualifier_executed": false, "passed": true, "public_projection_checks": 294, "schema": "coh-snapshot-failure-mock-controls-v1", "test_methods": 13}

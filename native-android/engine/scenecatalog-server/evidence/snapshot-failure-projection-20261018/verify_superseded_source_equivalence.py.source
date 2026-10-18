@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""Read only committed source/AST identities; never import a project helper."""
+import ast
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT=Path(__file__).resolve().parents[5]
+BASE='18c9c4e1acee319e5bebc4fdc206f429ab6156cc'
+NAME='native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py'
+
+def need(value,code):
+    if not value:raise ValueError(code)
+
+def git(revision,name):
+    return subprocess.check_output(['git','show',revision+':'+name],cwd=ROOT)
+
+def dump(node):
+    return ast.dump(node,include_attributes=False)
+
+def flatten(body):
+    result=[]
+    for node in body:
+        if isinstance(node,ast.With) and any(isinstance(item.context_expr,ast.Call) and isinstance(item.context_expr.func,ast.Name) and item.context_expr.func.id=='failure_scope' for item in node.items):
+            need(len(node.items)==1 and node.items[0].optional_vars is None,'ONLY_SCOPE_WRAPPER')
+            call=node.items[0].context_expr
+            need(isinstance(call,ast.Call) and isinstance(call.func,ast.Name) and call.func.id=='failure_scope' and len(call.args)==1 and not call.keywords,'ONLY_FAILURE_SCOPE')
+            need(ast.literal_eval(call.args[0]) in {'INPUTS','BUILD','EXTRACTION','PACKET_IDENTITY','NATIVE_RESULT','FINAL_IDENTITIES','RECEIPT'},'FIXED_PHASE')
+            result.extend(flatten(node.body))
+        else:result.append(node)
+    return result
+
+def main():
+    need(len(sys.argv)==2,'OUTPUT_REQUIRED')
+    output=Path(sys.argv[1]);need(not output.exists(),'FRESH_OUTPUT')
+    before=git(BASE,NAME);after=git('HEAD',NAME)
+    need((ROOT/NAME).read_bytes()==after,'CURRENT_COMMITTED_CHECKER')
+    old=ast.parse(before);new=ast.parse(after)
+    functions=lambda tree:{n.name:n for n in tree.body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+    left,right=functions(old),functions(new)
+    unchanged=[]
+    for name,node in left.items():
+        if name in {'inspect','main'}:continue
+        need(name in right and dump(node)==dump(right[name]),'OLD_FUNCTION_UNCHANGED:'+name);unchanged.append(name)
+    old_inspect=left['inspect'];new_inspect=right['inspect']
+    need(dump(old_inspect.args)==dump(new_inspect.args),'SAME_INSPECT_API')
+    body=flatten(new_inspect.body);normalized=[];replaced=0;removed=0
+    for node in body:
+        if isinstance(node,ast.Assign) and len(node.targets)==1 and isinstance(node.targets[0],ast.Name):
+            if node.targets[0].id=='native_result':
+                need(dump(node.value)==dump(ast.parse('run_native(binary,extracted)',mode='eval').body),'EXACT_NEW_NATIVE_CHILD_CALL');removed+=1;continue
+            if node.targets[0].id=='result':
+                need(dump(node.value)==dump(ast.parse('json.loads(native_result)',mode='eval').body),'EXACT_EXISTING_RESULT_PARSE')
+                node=ast.parse('result=json.loads(run([binary,extracted]))').body[0];replaced+=1
+        normalized.append(node)
+    need(removed==replaced==1 and dump(ast.Module(body=normalized,type_ignores=[]))==dump(ast.Module(body=old_inspect.body,type_ignores=[])),'ALL_ACCEPTANCE_AND_PRIVATE_RECEIPT_STATEMENTS_IDENTICAL')
+    old_constants={n.targets[0].id:n.value for n in old.body if isinstance(n,ast.Assign) and len(n.targets)==1 and isinstance(n.targets[0],ast.Name)}
+    new_constants={n.targets[0].id:n.value for n in new.body if isinstance(n,ast.Assign) and len(n.targets)==1 and isinstance(n.targets[0],ast.Name)}
+    for name,value in old_constants.items():need(name in new_constants and dump(value)==dump(new_constants[name]),'OLD_CONSTANT_UNCHANGED:'+name)
+    sources=ast.literal_eval(old_constants['SOURCES']);source_pins={}
+    for name in sources:
+        name='native-android/'+name;original=git(BASE,name);current=git('HEAD',name)
+        need(original==current==(ROOT/name).read_bytes(),'NATIVE_VALIDATOR_UNCHANGED:'+name);source_pins[name]=hashlib.sha256(current).hexdigest()
+    # The native child invocation retains the former run() subprocess options;
+    # only the exact two-element command replaces its generic command argument.
+    find_run=lambda node:next(n for n in ast.walk(node) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and isinstance(n.func.value,ast.Name) and n.func.value.id=='subprocess' and n.func.attr=='run')
+    old_call=find_run(left['run']);new_call=find_run(right['run_native'])
+    need([dump(n) for n in old_call.keywords if n.arg!='timeout']==[dump(n) for n in new_call.keywords if n.arg!='timeout'],'CHILD_CWD_CAPTURE_AND_ENV_IDENTICAL')
+    need(next(n.value.value for n in new_call.keywords if n.arg=='timeout')==180,'SAME_180_SECOND_CHILD_TIMEOUT')
+    result={'schema':'coh-snapshot-failure-projection-source-equivalence-v1','passed':True,'baseline_revision':BASE,'baseline_checker_sha256':hashlib.sha256(before).hexdigest(),'current_checker_sha256':hashlib.sha256(after).hexdigest(),'unchanged_old_functions':sorted(unchanged),'all_old_constants_unchanged':True,'normalized_inspect_acceptance_and_private_receipt_AST_identical':True,'native_validator_sources_unchanged':source_pins,'child_command_cwd_capture_environment_and_timeout_equivalent':True,'project_helper_imported':False,'compiler_native_tests_services_or_private_capture_executed':False,'read_only_Git_subprocesses_executed':True,'source_generation_admitted':False,'world_authority':False}
+    output.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n');print(json.dumps({'passed':True,'unchanged_old_functions':len(unchanged),'unchanged_native_sources':len(source_pins)}))
+
+if __name__=='__main__':main()

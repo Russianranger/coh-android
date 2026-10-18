@@ -1,0 +1,79 @@
+{
+  "actor_authority": false,
+  "all_505_current_raw_equal_rendered_source_Git": true,
+  "all_baseline_pins_unchanged": true,
+  "baseline_nonself_pins": 455,
+  "baseline_revision": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+  "baseline_workflow_sha256": "f0bbc00c9287e052763f9a9d9e71742b47900433d8e17c10052abe19ac1cd974",
+  "changed_step_indices": [
+    1,
+    11,
+    14
+  ],
+  "checker_exit_saved_immediately_and_nonzero_exits_before_admit_retain": true,
+  "compiler_native_loader_services_or_capture_executed": false,
+  "current_nonself_pins": 505,
+  "draft_receipt": {
+    "bytes": 976,
+    "sha256": "11d91025c5bb578bbfe58d93b86d511e02fb4d19560becca2892d3531c1a72b9"
+  },
+  "early_refusal_facts_are_parsed_not_raw_stderr_identity": true,
+  "embedded_Python_bodies_parsed_not_executed": 8,
+  "entire_admit_retain_Python_tail_unchanged": true,
+  "expected_dynamic_self_plus_source_entries": 506,
+  "explicit_recorded_native_production_pins": 36,
+  "four_source_and_two_initial_file_exports_and_success_gates_unchanged": true,
+  "generator": {
+    "bytes": 10385,
+    "sha256": "b2d9cef7454e5b1c72d31b71799539c4e982a50b898904ea13d0675cb3059245"
+  },
+  "generic_private_output_or_capture_or_log_export_added": false,
+  "guard_generator_project_helper_or_tests_executed": false,
+  "old_source_gate_AST_identical_after_removing_only_new_eight_statements_and_restoring_pins_literal": true,
+  "only_direct_CLI_target_is_separate_wrapper": true,
+  "only_direct_fixed_stdout_redirected": true,
+  "passed": true,
+  "private_capture_or_log_read": false,
+  "public_status_allowlist": [
+    "out/groups-public/summary.json",
+    "out/groups-public/tooling.json",
+    "out/groups-public/source-snapshot.json",
+    "out/groups-public/verifier-status.json"
+  ],
+  "read_only_Git_subprocesses_executed": true,
+  "rendered_draft_source_revision": "ef9f28b5eeffd7510d27b5013c571a520b7be9d6",
+  "retained_Map": {
+    "PE": {
+      "bytes": 7508480,
+      "sha256": "73e6c724fcdd9b1caaa03bd675d38d075cc452575539cb99b19b6d1124113aba"
+    },
+    "receipt_sha256": "28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91",
+    "recompiled_or_readmitted_by_reviewer": false
+  },
+  "retained_receiver": {
+    "executed_or_readmitted_by_reviewer": false,
+    "path": "native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/coh-capture-local-initial",
+    "sha256": "66f92ff8574c538ad221e1bcbbff834b80eddb54aa270b95ed607e7049a6dccc"
+  },
+  "review_data_only_early_refusals": [
+    {
+      "failure": "REVIEW_HEAD_ADVANCED",
+      "scope": "First data writer expected ef9 as current HEAD; later independent commit had advanced HEAD. No review output created."
+    },
+    {
+      "failure": "HISTORICAL_BINARY_BASENAME_NOT_UNIQUE",
+      "scope": "Data reader found three intentionally retained historical binary paths; final review selects exact inventory66f path instead of basename alone. No review output created."
+    }
+  ],
+  "review_time_root_revision": "4462586555eacb1c0851c42fa92497a3b26d167e",
+  "runtime_fixture_env_and_all_other_steps_identical": true,
+  "schema": "coh-status-adapter-rendered-workflow-static-review-v1",
+  "source_generation_admitted": false,
+  "total_steps": 17,
+  "workflow": {
+    "bytes": 119404,
+    "scratch_path": "proposals/fresh-groups-status-adapter.yml",
+    "sha256": "622b115ee563a1f99e7b5888b92fcac42bf6b9bc772d176f3f135335d267f810"
+  },
+  "world_authority": false
+}

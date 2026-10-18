@@ -1,0 +1,48 @@
+{
+  "baseline": {
+    "bytes": 107835,
+    "nonself_pins": 455,
+    "revision": "18c9c4e1acee319e5bebc4fdc206f429ab6156cc",
+    "sha256": "f0bbc00c9287e052763f9a9d9e71742b47900433d8e17c10052abe19ac1cd974",
+    "steps": 17,
+    "workflow": ".github/workflows/native-fresh-groups-observation.yml"
+  },
+  "compiler_loader_native_services_or_capture_executed": false,
+  "generator": {
+    "bytes": 9228,
+    "scratch_path": "proposals/build_fresh_groups_fixed_verifier_workflow.py",
+    "sha256": "c55e5143e7b48e9419372612b1dcd8c480ca657712638002cf187bfe516c40d1"
+  },
+  "generator_or_project_helpers_executed": false,
+  "passed": true,
+  "private_capture_or_log_read": false,
+  "review_limit": "Generator source and exact baseline YAML parsed/read only; no rendered successor was generated or claimed validated. F review integration remains required.",
+  "reviewer_tests_or_controls_executed": false,
+  "schema": "coh-fixed-verifier-status-workflow-generator-static-review-v1",
+  "source_generation_admitted": false,
+  "static_checks": {
+    "F_review_required_fields": [
+      "passed",
+      "checker_sha256",
+      "test_sha256",
+      "reviewer_reexecuted_controls"
+    ],
+    "all_current_pins_require_current_equals_HEAD": true,
+    "checker_exit_saved_immediately_and_nonzero_preserved_before_admit_or_retain": true,
+    "native_success_private_counts_do_not_reach_CLI_stdout": true,
+    "new_proofs_reviewer_and_15_native_files_require_committed_bytes": true,
+    "only_changed_step_indices": [
+      1,
+      11,
+      14
+    ],
+    "only_checker_CLI_stdout_redirected_to_fixed_public_status": true,
+    "only_old_pin_supersession_is_exact_checker": true,
+    "pending_F_file_blocks_generation": true,
+    "private_directory_glob_log_or_receipt_upload_added": false,
+    "public_upload_adds_only_explicit_verifier_status_file": true,
+    "quoted_on_key_is_preserved_as_string": true,
+    "unchanged_retained_PE_receiver_fixture_runtime_admitter_and_retention": true
+  },
+  "world_authority": false
+}

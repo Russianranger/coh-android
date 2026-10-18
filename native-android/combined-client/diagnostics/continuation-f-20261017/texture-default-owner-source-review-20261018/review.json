@@ -1,0 +1,277 @@
+{
+  "actual_retained_inputs": {
+    "archive_bytes": 12308,
+    "archive_sha256": "87a999e6c1c003b96a9fa169ce11637b61eb696766517e063fafce73fdc39c24",
+    "exact_seven_body_pins": [
+      {
+        "bytes": 327,
+        "path": "texture_library/world/filler/white.texture",
+        "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9"
+      },
+      {
+        "bytes": 894,
+        "path": "texture_library/world/filler/grey.texture",
+        "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013"
+      },
+      {
+        "bytes": 5828,
+        "path": "texture_library/world/world_fx/portal/invisible.texture",
+        "sha256": "7a0e37f76eba451debca99f50f2907e556dba55dbb45468a415d55b480b103df"
+      },
+      {
+        "bytes": 327,
+        "path": "texture_library/world/filler/black.texture",
+        "sha256": "62c947f06b7ca5c08e0e9bda98d4ae3d72aa5c7dab4557ae87ff4b48f1764f5a"
+      },
+      {
+        "bytes": 437,
+        "path": "texture_library/btest/dummy_bump.texture",
+        "sha256": "021f8a4ccfdb334f9ec336a8275b336890440bf8700ef593b7cd9d4ca374ee3d"
+      },
+      {
+        "bytes": 302,
+        "path": "texture_library/static_cubemaps/dummy_dynamic/dummy_dynamic_cubemap_face0.texture",
+        "sha256": "cd06cf02ffa62c7e5a35d39e5d5d06632c970382640645304584c19ddb70b4f6"
+      },
+      {
+        "bytes": 8399,
+        "path": "texture_library/btest/buildinglightpattern.texture",
+        "sha256": "c2996a5d0b402dba4ee2722797fdc486e48bc773e99761b659b0c1219aecaa06"
+      }
+    ],
+    "existing_F_retained_archive_reused_no_duplicate": true,
+    "original_complete_provider_inventory_or_current_CLIENT_namespace_claimed": false,
+    "seven_total_bytes": 16514
+  },
+  "all19_current_raw_equal_qualified_Git": true,
+  "binding_sha256": "c8b46db37acebbb476df470aa10cadf746a32adfccf8804dda2766c879944bbc",
+  "compiler_derived_project_dependencies_bound": 13,
+  "evidence_files": {
+    "HANDOFF.md": {
+      "bytes": 5122,
+      "sha256": "c8c2c4a16e486fc0964bee314aadb1c542a17d594ac53038c403ff51610e3959"
+    },
+    "command-logs.json.gz": {
+      "bytes": 5451,
+      "sha256": "de78e77904cd79e776255831695eb3d3a80af0e9e8e49fa255de854fca11e883"
+    },
+    "development-failures.json": {
+      "bytes": 14579,
+      "sha256": "4229ab87a2a19cd6de5c31de755732d283832641e06f166df02c3656a722ac0d"
+    },
+    "failed-first/016.stderr": {
+      "bytes": 35,
+      "sha256": "e34c757c7896897dadb5824c877cecf96ad219291a6cfe47254bd9c606f539e7"
+    },
+    "failed-first/016.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "failed-first/FAILED.json": {
+      "bytes": 103,
+      "sha256": "0d87e531c43f0297766df307c3d35d66293b3d0e9aee43b8a53476246e6ee82e"
+    },
+    "failed-first/commands.jsonl": {
+      "bytes": 7918,
+      "sha256": "50ae10b67bab59552c7d9a0be8c2cc7329bffdc8b7cd116e166e232bef2fe047"
+    },
+    "failed-second/016.stderr": {
+      "bytes": 77,
+      "sha256": "55c5bcc62cb3249eea2f5476a3e33244d2412d74fef7da964275397287739649"
+    },
+    "failed-second/016.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "failed-second/FAILED.json": {
+      "bytes": 103,
+      "sha256": "0d87e531c43f0297766df307c3d35d66293b3d0e9aee43b8a53476246e6ee82e"
+    },
+    "failed-second/commands.jsonl": {
+      "bytes": 8188,
+      "sha256": "d746d7dae20d6123ca3b5d84d1fbaa645f89343524b03d88f1fc02f6297aa69b"
+    },
+    "host.json.gz": {
+      "bytes": 4038,
+      "sha256": "aea50d92c3bb503188e0896872e56e03d3acd5c36f5f710cba7508574028bd1d"
+    },
+    "original.c": {
+      "bytes": 4586,
+      "sha256": "3b8fa90f49893ed2f3e9b66697af2cd26161c703a030b8b5f0022a7ba7bbd2bb"
+    },
+    "prior-b550-host.json.gz": {
+      "bytes": 4001,
+      "sha256": "4110bdbde9d28478cb46fb3e4463726eadb02359daa4b9a60a0e3e574ec70025"
+    }
+  },
+  "history": {
+    "final_poll_old_owner_retirement_precision_successor_explicit": true,
+    "lossless_command_log_entries_rehashed": 109,
+    "prior_b550_three_mode_success_preserved": true,
+    "two_test_only_development_failures_preserved": true,
+    "untracked_expanded_logs_not_written_or_consumed_for_review": true
+  },
+  "lifetime_budget": {
+    "actual_old_and_candidate_reservation": 1478707,
+    "actual_simultaneous_old_owner_bytes": 144,
+    "authentic_defaults_reservation": 1478563,
+    "authentic_namespace_full_reservation": 1461979,
+    "authentic_owner_bytes": 144,
+    "constructor_release_has_no_external_callback_and_is_total_under_contract": true,
+    "final_direct_poll_allows_independent_old_owner_retirement_not_rolled_back": true,
+    "global_RSS_platform_fit_or_complete_runtime_peaks_admitted": false,
+    "known_provider_fixture_external_policy": 301700,
+    "one_real_namespace_body_pin_per_selected_role_no_extra_provider_hold": true,
+    "own_output_rollback_and_partial_lease_release_under_source_owner_thread_immutability_contract": true,
+    "public_destroy_attempts_all_releases_retains_owner_on_refusal": true,
+    "source_full_aggregate_minimum_required": true
+  },
+  "oracle_bytes_unchanged_from_initial_new_source": true,
+  "passed": true,
+  "production_C_H_only_comments_changed_from_initial_new_source": true,
+  "proof_commit": "17faf8387d194dffd8fffde92f928d6044dc1983",
+  "qualification": {
+    "CPP_executable_hash_post_execution_only": true,
+    "C_object_and_CPP_actual_call_link": true,
+    "LeakSanitizer_executed": false,
+    "modes": {
+      "address": {
+        "actual_old_and_candidate_aggregate_reserved_bytes": 1478707,
+        "actual_simultaneous_old_defaults_owned_bytes": 144,
+        "all_freed_provider_body_bytes": 174294,
+        "allocation_failure_points": 1,
+        "authentic_defaults_aggregate_reserved_bytes": 1478563,
+        "authentic_defaults_owned_bytes": 144,
+        "authentic_known_provider_and_fixture_external_policy_bytes": 301700,
+        "authentic_namespace_full_aggregate_reserved_bytes": 1461979,
+        "authentic_seven_body_bytes": 16514,
+        "cancellation_failure_points": 15,
+        "checks": 10290,
+        "digest_failure_positions": 7,
+        "digest_mismatch_positions": 7,
+        "finite_provider_cases": 130,
+        "independent_old_owner_actually_retired_in_final_poll_not_restored": true,
+        "invisible_same_row_alias_clear_and_cold_namespace_preserved": true,
+        "last_actual_selection_cancellation_preserves_own_output": true,
+        "old_qualifier_replayed": false,
+        "partial_lease_capacity_refusals": 6,
+        "provider_contexts_and_bodies_actually_freed": 137,
+        "provider_drops": 137,
+        "provider_holds": 137,
+        "tracked_calloc_blocks_live": 0,
+        "whole_original_row_and_role_comparisons": 250
+      },
+      "release": {
+        "actual_old_and_candidate_aggregate_reserved_bytes": 1478707,
+        "actual_simultaneous_old_defaults_owned_bytes": 144,
+        "all_freed_provider_body_bytes": 174294,
+        "allocation_failure_points": 1,
+        "authentic_defaults_aggregate_reserved_bytes": 1478563,
+        "authentic_defaults_owned_bytes": 144,
+        "authentic_known_provider_and_fixture_external_policy_bytes": 301700,
+        "authentic_namespace_full_aggregate_reserved_bytes": 1461979,
+        "authentic_seven_body_bytes": 16514,
+        "cancellation_failure_points": 15,
+        "checks": 10290,
+        "digest_failure_positions": 7,
+        "digest_mismatch_positions": 7,
+        "finite_provider_cases": 130,
+        "independent_old_owner_actually_retired_in_final_poll_not_restored": true,
+        "invisible_same_row_alias_clear_and_cold_namespace_preserved": true,
+        "last_actual_selection_cancellation_preserves_own_output": true,
+        "old_qualifier_replayed": false,
+        "partial_lease_capacity_refusals": 6,
+        "provider_contexts_and_bodies_actually_freed": 137,
+        "provider_drops": 137,
+        "provider_holds": 137,
+        "tracked_calloc_blocks_live": 0,
+        "whole_original_row_and_role_comparisons": 250
+      },
+      "undefined": {
+        "actual_old_and_candidate_aggregate_reserved_bytes": 1478707,
+        "actual_simultaneous_old_defaults_owned_bytes": 144,
+        "all_freed_provider_body_bytes": 174294,
+        "allocation_failure_points": 1,
+        "authentic_defaults_aggregate_reserved_bytes": 1478563,
+        "authentic_defaults_owned_bytes": 144,
+        "authentic_known_provider_and_fixture_external_policy_bytes": 301700,
+        "authentic_namespace_full_aggregate_reserved_bytes": 1461979,
+        "authentic_seven_body_bytes": 16514,
+        "cancellation_failure_points": 15,
+        "checks": 10290,
+        "digest_failure_positions": 7,
+        "digest_mismatch_positions": 7,
+        "finite_provider_cases": 130,
+        "independent_old_owner_actually_retired_in_final_poll_not_restored": true,
+        "invisible_same_row_alias_clear_and_cold_namespace_preserved": true,
+        "last_actual_selection_cancellation_preserves_own_output": true,
+        "old_qualifier_replayed": false,
+        "partial_lease_capacity_refusals": 6,
+        "provider_contexts_and_bodies_actually_freed": 137,
+        "provider_drops": 137,
+        "provider_holds": 137,
+        "tracked_calloc_blocks_live": 0,
+        "whole_original_row_and_role_comparisons": 250
+      }
+    },
+    "native_modes_executable_prepost_bracketed": true,
+    "old_qualifiers_reexecuted": false,
+    "own_module_unique_frame_sum": 1040,
+    "own_preparation_reserve": 16384,
+    "semantic_mutations_refused": [
+      "wrong_white_key",
+      "omit_invisible_alpha_clear",
+      "clear_alpha_on_other_rows",
+      "allow_required_misses",
+      "drop_real_body_acquisition",
+      "leak_first_real_lease",
+      "ignore_final_selection_cancel",
+      "ignore_source_full_reservation",
+      "ignore_new_owner_limit"
+    ],
+    "stack_excludes_namespace_loader_provider_libc": true
+  },
+  "raw_receipt_sha256": "285f6f231699fdb3315212b51d6a31bd05e424a440b836c75911a21071d18848",
+  "schema": "coh-f-cold-texture-default-owner-source-review-v1",
+  "scope": {
+    "F_helpers_tests_compiler_native_download_or_replay_executed": false,
+    "conditional_cold_guarded_default_identity_effective_flag_view": true,
+    "read_only_Git_and_data_only": true,
+    "texSetBinds_sampler_reset_permutations_composites_material_GPU_world_Android_or_current_authority": false
+  },
+  "source8_and_proof15_existing_paths_unchanged": true,
+  "source_and_proof_tranche_only23_new_paths": true,
+  "source_inputs_sha256": {
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/world-render-adapter/TEX_DEFAULTS.md": "e97e2201bb3d1db8976edd503c9b62eecef0293ff6f7429a54bae195ed37c115",
+    "native-android/engine/world-render-adapter/check_tex_defaults.py": "50f2185efb0eb222d588b27c1bb83215a29d553aad24072f5d83a5a092dcf230",
+    "native-android/engine/world-render-adapter/coh_wr_tex_defaults.c": "21e2afd3dd5e3030ecb0f4e16ed12363dc28102b7c38c93bfe8d24edeef0b96c",
+    "native-android/engine/world-render-adapter/coh_wr_tex_defaults.h": "672f9d0157e87b1b5753dade0d1687f12e11f76e359055a30e9df24e5fc59297",
+    "native-android/engine/world-render-adapter/coh_wr_tex_namespace.c": "067bb8c1e3794ff86bf36e3b3ea90fd0cbda4c5cad3ece2f88c3b08435dd5a37",
+    "native-android/engine/world-render-adapter/coh_wr_tex_namespace.h": "aa9cf127384f18f96f3a0ebb0938ed403c2884a2630101824716a71cbcfb7e1c",
+    "native-android/engine/world-render-adapter/tests/test_tex_defaults.c": "fa960346fb918fdc241633ae1764ff775781e9e3e4504f7e7a74e74ee3aeff3f",
+    "native-android/engine/world-render-adapter/tests/test_tex_defaults_cpp.cpp": "73fe57dfcfe08e01a0557c8b75af0bb80166bf244399551560c09fc3ae8eaaae",
+    "native-android/engine/world-render-adapter/tests/tex_defaults_fixture.h": "fb7fae97fb1052730c6cbe763f01f6581f680327fd7be27f0ae64f25f23e9d83",
+    "native-android/engine/world-render-adapter/tex_defaults_oracle.py": "b6723b3ab894aefbc2bb84a21920314e1e547bf67e6dc7bb1ad56a572c8fa8bf",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "upstream/ouroboros/Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+    "upstream/ouroboros/Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552"
+  },
+  "source_revision": "4534b29598416be7d0e1e66f31d3573c73e11d53",
+  "whole_original_source_review": {
+    "E_complementary_original_oracle_lifetime_read_clear": true,
+    "cold_first_CI_basename_stash_adapter_explicit": true,
+    "effective_invisible_row_ALPHA_clear_applies_all_aliases_source_immutable": true,
+    "five_function_spans_and_TexFlags_independently_rehashed": true,
+    "guarded_texFixName_two_location_repair_exact": true,
+    "original_debug_sentinel_asserts_disabled_required_default_assertion_observed": true,
+    "seven_key_order_and_required_mask35": true,
+    "short_keys_not_claimed_unchanged_legacy_semantics": true,
+    "whole_texFindNeededBinds_texFind_preserved_in_retained_generated_oracle": true
+  }
+}

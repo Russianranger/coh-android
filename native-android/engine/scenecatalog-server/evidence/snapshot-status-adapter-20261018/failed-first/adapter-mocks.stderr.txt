@@ -1,0 +1,39 @@
+.................E........
+======================================================================
+ERROR: test_native_exception_restores_original_before_final_binding (__main__.SnapshotStatusAdapter.test_native_exception_restores_original_before_final_binding) (error_type='ValueError')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7ed1da2a7e55/coh-android/native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py", line 219, in test_native_exception_restores_original_before_final_binding
+    self.inspect_once()
+  File "/workspace/scratch/7ed1da2a7e55/coh-android/native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py", line 79, in inspect_once
+    return adapter.run_inspection(CAPTURE, PACKET, WORK, OUTPUT)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/7ed1da2a7e55/coh-android/native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py", line 133, in run_inspection
+    result=core.inspect(capture,native_packet,work,output)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/7ed1da2a7e55/coh-android/native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py", line 207, in <lambda>
+    core.inspect.side_effect = lambda *args: core.run([BINARY, SOURCE], timeout=180)
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/7ed1da2a7e55/coh-android/native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py", line 126, in proxy
+    with failure_scope('NATIVE_EXECUTION'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/workspace/scratch/7ed1da2a7e55/coh-android/native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py", line 38, in failure_scope
+    except Exception:raise SnapshotFailure(phase) from None
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+check_source_snapshot_verifier_status.SnapshotFailure: COH_SOURCE_SNAPSHOT_VERIFICATION_REFUSED
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.047s
+
+FAILED (errors=1)
