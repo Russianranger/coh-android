@@ -1,5 +1,6 @@
 #include "coh_db_session.h"
 #include "coh_db_account_controls.h"
+#include "coh_db_account_inventory.h"
 #include "coh_db_handoff_private.h"
 #include <stdlib.h>
 #include <string.h>
@@ -96,6 +97,16 @@ static CohStatus application_message(CohDbSession *s,const CohNetMessage *m) {
     int legacy=s->config.transport.link.version<4;uint32_t command;
     CohStatus result=message_command(m,legacy,&command);if(result!=COH_OK)return result;
     CohBytes body={m->payload,(m->payload_bits+7)/8};int aligned=m->compressed;
+    if(command==COH_DB_ACCOUNT_INVENTORY) {
+        if(s->diagnostics.phase!=COH_DB_WAIT_PLAYERS)return COH_STATE;
+        if(m->payload_bits>sizeof(m->payload)*8)return COH_INVALID;
+        CohDbAccountInventory inventory;
+        result=coh_db_account_inventory_parse(body,m->payload_bits,aligned,legacy,&inventory);
+        if(result!=COH_OK)return result;
+        if(s->diagnostics.account_inventories==UINT64_MAX)return COH_LIMIT;
+        s->diagnostics.account_last_inventory_items=inventory.items;
+        ++s->diagnostics.account_inventories;return COH_OK;
+    }
     if(command==COH_DB_ACCOUNT_UNAVAILABLE||command==COH_DB_ACCOUNT_CHARCOUNT) {
         if(s->diagnostics.phase!=COH_DB_WAIT_PLAYERS)return COH_STATE;
         if(m->payload_bits>sizeof(m->payload)*8)return COH_INVALID;

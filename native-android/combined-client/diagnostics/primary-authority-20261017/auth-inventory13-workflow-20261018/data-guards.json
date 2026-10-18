@@ -1,0 +1,32 @@
+{
+  "fixed_nonself_pins": 156,
+  "guard_calls": 35,
+  "host_guards_project_imports_qualifiers_compiler_native_or_services_executed": false,
+  "only_exact_pure_data_and_Git_history_guards_evaluated": true,
+  "passed": true,
+  "schema": "coh-auth-inventory13-workflow-frozen-data-guards-v1",
+  "source_and_workflow_pins": 157,
+  "source_generation_admitted": false,
+  "source_revision": "dd5099927eef54c6bf7391b6fadeb01ebd222a76",
+  "unique_guard_codes": [
+    "C50_AND_UNCHANGED_LINK_POLICY",
+    "C50_SOURCE_FIXTURE_ONLY",
+    "CURRENT_C50_SUBSET",
+    "CURRENT_D148",
+    "EXACT_ACCEPTED_HISTORICAL_BYTES",
+    "EXACT_C50_RAW_PROOF",
+    "EXACT_HISTORICAL_C36",
+    "EXACT_NEW_THREE_CONTROLS",
+    "EXACT_THREE_C36_PREDECESSORS_ONLY",
+    "EXPLICIT_HISTORICAL_AND_CURRENT_ROLES",
+    "INDEPENDENT_C50_REVIEW_SUBSET_ONLY",
+    "INDEPENDENT_CURRENT_D148_REVIEW",
+    "NEW_INVENTORY_FOCUSED_CONTROLS",
+    "SOURCE_CONTROLS_NOT_RUNTIME_OR_AUTHORITY",
+    "SOURCE_HEAD_CHANGED",
+    "UNCHANGED_OWNER_AND_NO_NEW_TU"
+  ],
+  "workflow_bytes": 66358,
+  "workflow_sha256": "c16f7ac6ee655e811e8fe3650aacd961af898bd4ad329490a6283f9bfe9bd89c",
+  "world_authority": false
+}

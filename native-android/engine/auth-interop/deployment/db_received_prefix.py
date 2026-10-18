@@ -15,8 +15,8 @@ ENTRY_KEYS={'command','header_decoded','phase','legacy','compressed'}
 SOURCE_PINS={
     'upstream/ouroboros/Common/comm_backend.h':'9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c',
     'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h':'116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9',
-    'native-android/engine/dbclient/coh_db_session.c':'394a94e436d52963fbe2667b0b3cf977554d3b6ffe69c8c858da42ded697bc06',
-    'native-android/engine/dbclient/coh_db_session.h':'d9993e341349cac614fe862481b1a3fb21e7239900ca1d3d6c8c1e8043b92c87',
+    'native-android/engine/dbclient/coh_db_session.c':'3fe33ca4ff8c48c1291cffb18f9fecb706e215bcc2fc2dda62dd9aa4fa24cc81',
+    'native-android/engine/dbclient/coh_db_session.h':'afade1cad71cd5f8b1e5c6655ab157e404cf6ef0956b750697b6902d0c32a94f',
     'native-android/engine/auth-interop/deployment/windows/db_development_probe.c':'fab9f9bbf4d79d6fdf00982d8f516e40d8b0ed85fe30190bca2879ed8dbd4354',
 }
 

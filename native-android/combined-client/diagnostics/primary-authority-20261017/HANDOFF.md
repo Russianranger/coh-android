@@ -5,6 +5,52 @@ Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical
 Git links, existing bundles, accepted APKs and user profiles were preserved.
 
+## Preserved source history for scene and Inventory continuation
+
+The new five-reference worker/coordinator history bundle is87331B SHA256
+`1bccea5bb89f599cc9c58da54d37111a665329d3f84486e29ff11da96e445f31`;
+`worker-owner-scene-inventory-history.json` records exact prerequisites and
+verification. It excludes public2b5dac5 source objects, so the large actual Map
+and unintended host artifacts are retained once. B's Inventory oracle history
+is in C's source commit; B/E unchanged branch tips remain preserved in prior
+bundles. Active new TexWord/Proficiency work is not admitted by this bundle.
+The scene39096463127 has now entered its original Map transaction; outcomes
+remain pending. The next publication requests only `[auth-db-inventory13]`.
+
+## Inventory13 integrated after immutable scene launch — 2026-10-18
+
+Latest verified remote is `2b5dac5ac81d49359b47fd7027747b2c86f2d0db`,
+tree `26e40e0556e7020d0bd3545ad4b158304383f0b5`. Scene39096463127
+(job117583842449) passed395-source admission, strict new Map admission and
+actual retained6115b9 destination loader/no-argument preflight. Runtime staging
+is active; no first owner reason or world generation is inferred.
+
+After its immutable job started, root integrated C396621362/proof2621fb84e
+and D5359a72d/proof7e43c47d, independently reviewed by E/F. Complete bounded
+command13 parsing precedes diagnostic count/last-item commit in WAIT_PLAYERS.
+No inventory/product/catalog/loyalty/UI publication, phase/deadline/list/handoff
+policy or ACK changes. No new TU. Three focused C modes each passed38748
+checks,37060 parser cases and52 synthetic transactions across72 original
+source fixtures; old8822 main never ran. Source50 preserves old8/14 and scalar
+helpers. Session/diag46560/504B grows16B each; embedded storage counts once.
+Direct64KiB, runtime copied16KiB and1024-item caps have separate scopes.
+
+D148's three new Python/Git controls passed once. C36 allows exactly3 old
+compiled predecessors and33 unchanged current inputs. Original two-core/tool
+exceptions stay separate. F's supplementary common2 metadata was corrected
+from workerD to unchanged root790 Git before recipe generation. New Auth
+workflow66358B SHA256
+`c16f7ac6ee655e811e8fe3650aacd961af898bd4ad329490a6283f9bfe9bd89c`
+freezes156 nonself+workflow157;35 frozen JSON/Git checks passed. Actual new
+Windows build and Inventory/player-list/handoff outcomes remain pending.
+
+Current root Inventory code differs from the frozen6115b9 receiver; that ELF
+remains valid for published2b5dac5 inputs. Future root-current scenes require
+a matching receiver. The ARM64 engine compile at6e96 remains historical to
+8/14, not current Inventory build/execution. TypedRGBA32 Android evidence is
+unchanged. Gates25–27, full character/world/actor authority, normal version/
+checksum and physical Thor acceptance remain open.
+
 ## Frozen next scene transaction — 2026-10-18
 
 The new scene workflow95062B SHA256

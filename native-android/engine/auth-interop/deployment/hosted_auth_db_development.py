@@ -45,10 +45,24 @@ ACCOUNT_HISTORICAL_REVISION='b321a3dd883031072f26c63d4f2d9f4866b63d9d'
 ACCOUNT_OLD_CORE={
     'native-android/engine/dbclient/coh_db_session.c':'ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9',
     'native-android/engine/dbclient/coh_db_session.h':'9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4'}
-ACCOUNT_CURRENT_CORE={
+ACCOUNT_C99_CORE={
     'native-android/engine/dbclient/coh_db_session.c':'394a94e436d52963fbe2667b0b3cf977554d3b6ffe69c8c858da42ded697bc06',
     'native-android/engine/dbclient/coh_db_session.h':'d9993e341349cac614fe862481b1a3fb21e7239900ca1d3d6c8c1e8043b92c87'}
 
+INVENTORY_BASE='native-android/engine/dbclient/qualification/account-inventory-396621362'
+INVENTORY_REVISION='396621362fb55ef5a424f86d8d0e4fad549e58a2'
+INVENTORY_GZIP_SHA='53d6b32dd97f2ff9bd0489097640193a6d66211b9fd1d50b7808c472ed9d219f'
+INVENTORY_RAW_SHA='bf6c7a0730dd912cbb6fa1c18e61d6fcc1c34689a121aa18cf3fa3745c523376'
+INVENTORY_BINDING_SHA='eeadd942e687e00c7967e73968dc02d60618fce6c9ded6bf4a585da6ce84c475'
+INVENTORY_HISTORICAL_REVISION='6e96fe22a567a3e252449feb37483cfea1566d8a'
+INVENTORY_PREVIOUS_DELTA={
+    'native-android/engine/dbclient/coh_db_account_controls.c':'4fc8d2ed60f7593905e4c5484204779a0eaa8f360f318a44c5a97dbd568a83b8',
+    **ACCOUNT_C99_CORE}
+INVENTORY_CURRENT_DELTA={
+    'native-android/engine/dbclient/coh_db_account_controls.c':'9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2',
+    'native-android/engine/dbclient/coh_db_session.c':'3fe33ca4ff8c48c1291cffb18f9fecb706e215bcc2fc2dda62dd9aa4fa24cc81',
+    'native-android/engine/dbclient/coh_db_session.h':'afade1cad71cd5f8b1e5c6655ab157e404cf6ef0956b750697b6902d0c32a94f'}
+ACCOUNT_CURRENT_CORE={name:INVENTORY_CURRENT_DELTA[name] for name in ACCOUNT_OLD_CORE}
 ACCOUNT_TOOL=PREFIX+'deployment/qualify_auth_db_development_owner.py'
 ACCOUNT_TOOL_OLD_SHA='aa58020f335e60553e06941c7adb9a0b905c81c5ba84c5f0c3207b295e738637'
 ACCOUNT_TOOL_NEW_SHA='3ac893e35650c89a59273bac096bc60053a1bfc1d3e036501170b102e7185a18'
@@ -210,8 +224,59 @@ def deployment_import_inputs(root,starts):
     return pins
 
 
-def account_controls_inputs(root):
-    """Current typed-parser admission, separately from immutable old proofs."""
+def account_inventory_inputs(root):
+    """Current C50 qualification; prior C36 evidence remains historical."""
+    compressed=_committed_file(root,INVENTORY_BASE+'.json.gz',INVENTORY_GZIP_SHA)
+    binding=json.loads(_committed_file(root,INVENTORY_BASE+'-binding.json',INVENTORY_BINDING_SHA))
+    if len(compressed)!=7923:raise ValueError('development_inventory_source_proof_extent')
+    raw=gzip.decompress(compressed)
+    if len(raw)!=35544 or hashlib.sha256(raw).hexdigest()!=INVENTORY_RAW_SHA:
+        raise ValueError('development_inventory_source_proof_identity')
+    proof=json.loads(raw)
+    if (proof.get('schema')!='coh-db-account-inventory-focused-tests-v1' or proof.get('passed') is not True
+            or proof.get('source_revision')!=INVENTORY_REVISION or proof.get('all_inputs_equal_committed_HEAD') is not True
+            or binding.get('schema')!='coh-db-account-inventory-source-proof-binding-v1' or binding.get('passed') is not True
+            or binding.get('qualified_source_revision')!=INVENTORY_REVISION or binding.get('proof')!=INVENTORY_BASE+'.json.gz'
+            or binding.get('proof_sha256')!=INVENTORY_RAW_SHA or binding.get('gzip_sha256')!=INVENTORY_GZIP_SHA
+            or binding.get('source_sha256')!=proof.get('source_sha256')
+            or binding.get('previous_account_control_source_revision')!=ACCOUNT_REVISION
+            or binding.get('previous_changed_source_sha256')!=INVENTORY_PREVIOUS_DELTA
+            or binding.get('unchanged_previous_account_function_sha256')!=proof.get('unchanged_previous_account_function_sha256')
+            or len(binding.get('unchanged_previous_account_function_sha256',{}))!=5):
+        raise ValueError('development_inventory_source_proof_scope')
+    for name in ('historical_suites_executed','old8822_main_executed','real_auth_or_db','sockets_executed',
+            'actual_witness_body_inferred','source_generation_admitted','world_authority','global_aggregate_budget_admitted'):
+        if proof.get(name) is not False:raise ValueError('development_inventory_source_proof_authority')
+    for name in ('owner_implementation_changed','strict_owner_success_predicate_changed','new_translation_unit_required',
+            'actual_packet_body_values_inferred','old8822_main_executed','actual_auth_db_capture_executed',
+            'source_generation_admitted','world_authority','global_aggregate_budget_admitted'):
+        if binding.get(name) is not False:raise ValueError('development_inventory_source_binding_authority')
+    if (type(proof.get('source_sha256')) is not dict or len(proof['source_sha256'])!=50
+            or any(proof['source_sha256'].get(name)!=sha for name,sha in INVENTORY_CURRENT_DELTA.items())
+            or set(proof.get('modes',{}))!={'release','asan','ubsan'}
+            or any(row.get('passed') is not True or row.get('checks')!=38748 or row.get('inventory_parser_cases')!=37060
+                or row.get('session_transactions')!=52 for row in proof['modes'].values())):
+        raise ValueError('development_inventory_source_qualification')
+    pins={INVENTORY_BASE+'.json.gz':INVENTORY_GZIP_SHA,INVENTORY_BASE+'-binding.json':INVENTORY_BINDING_SHA}
+    for name,sha in proof['source_sha256'].items():pins[name]=hashlib.sha256(_committed_file(root,name,sha)).hexdigest()
+    return pins
+
+
+def qualified_account_previous_input(root,path,expected,inventory):
+    """Only the exact three C36 predecessor inputs may resolve historically."""
+    if path not in INVENTORY_PREVIOUS_DELTA:return _committed_file(root,path,expected)
+    if expected!=INVENTORY_PREVIOUS_DELTA[path] or inventory.get(path)!=INVENTORY_CURRENT_DELTA[path]:
+        raise ValueError('development_inventory_previous_transition_refused')
+    try:old=subprocess.check_output(['git','-C',str(root),'show',INVENTORY_HISTORICAL_REVISION+':'+path],
+        stderr=subprocess.DEVNULL,timeout=30)
+    except subprocess.SubprocessError:raise ValueError('development_inventory_previous_unavailable') from None
+    if len(old)>2*1024*1024 or hashlib.sha256(old).hexdigest()!=expected:
+        raise ValueError('development_inventory_previous_identity')
+    return _committed_file(root,path,INVENTORY_CURRENT_DELTA[path])
+
+
+def account_controls_inputs(root,*,inventory=None):
+    """Historical C36 proof with strictly scoped current C50 transitions."""
     compressed=_committed_file(root,ACCOUNT_BASE+'.json.gz',ACCOUNT_GZIP_SHA)
     binding_raw=_committed_file(root,ACCOUNT_BASE+'-binding.json',ACCOUNT_BINDING_SHA)
     if len(compressed)!=5180:raise ValueError('development_account_source_proof_extent')
@@ -234,14 +299,16 @@ def account_controls_inputs(root):
             'actual_header_witness_body_inferred','current_generation_or_world_authority'):
         if binding.get(name) is not False:raise ValueError('development_account_source_binding_authority')
     if (type(proof.get('source_sha256')) is not dict or len(proof['source_sha256'])!=36
-            or any(proof['source_sha256'].get(name)!=sha for name,sha in ACCOUNT_CURRENT_CORE.items())
+            or any(proof['source_sha256'].get(name)!=sha for name,sha in ACCOUNT_C99_CORE.items())
             or set(proof.get('modes',{}))!={'release','asan','ubsan'}
             or any(row.get('passed') is not True or row.get('checks')!=8822 or row.get('parser_cases')!=7226
                 or row.get('session_transactions')!=52 for row in proof['modes'].values())):
         raise ValueError('development_account_source_qualification')
     pins={ACCOUNT_BASE+'.json.gz':ACCOUNT_GZIP_SHA,ACCOUNT_BASE+'-binding.json':ACCOUNT_BINDING_SHA}
     for name,sha in proof['source_sha256'].items():
-        pins[name]=hashlib.sha256(_committed_file(root,name,sha)).hexdigest()
+        raw=(_committed_file(root,name,sha) if inventory is None else
+            qualified_account_previous_input(root,name,sha,inventory))
+        pins[name]=hashlib.sha256(raw).hexdigest()
     return pins
 
 
@@ -304,6 +371,11 @@ def qualified_prior_input(root,path,expected,account):
 def account_controls_summary():
     return {'schema':'coh-development-account-controls-source-composition-v1',
         'source_proof':ACCOUNT_BASE+'.json.gz','source_proof_sha256':ACCOUNT_GZIP_SHA,
+        'source_proof_role':'historical C36 precursor; unchanged current inputs revalidated',
+        'current_inventory_source_proof':INVENTORY_BASE+'.json.gz','current_inventory_source_proof_sha256':INVENTORY_GZIP_SHA,
+        'current_inventory_source_binding':INVENTORY_BASE+'-binding.json','current_inventory_source_binding_sha256':INVENTORY_BINDING_SHA,
+        'inventory_predecessor_revision':INVENTORY_HISTORICAL_REVISION,
+        'inventory_previous_sha256':INVENTORY_PREVIOUS_DELTA,'inventory_current_sha256':INVENTORY_CURRENT_DELTA,
         'source_binding':ACCOUNT_BASE+'-binding.json','source_binding_sha256':ACCOUNT_BINDING_SHA,
         'historical_qualifier_dependency_transition':{'path':ACCOUNT_TOOL,'before_sha256':ACCOUNT_TOOL_OLD_SHA,
             'after_sha256':ACCOUNT_TOOL_NEW_SHA,'review':ACCOUNT_TOOL_REVIEW,'review_sha256':ACCOUNT_TOOL_REVIEW_SHA,
@@ -320,7 +392,11 @@ def committed_inputs(root,commit):
             or subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()!=commit):
         raise ValueError('development_executed_source_identity')
     result=readiness.committed_runtime_inputs(root,commit)
-    account=account_controls_inputs(root)
+    inventory=account_inventory_inputs(root)
+    account=account_controls_inputs(root,inventory=inventory)
+    for name,sha in inventory.items():
+        if name in account and account[name]!=sha:raise ValueError('development_inventory_source_pin_conflict')
+        account[name]=sha
     account.update(account_controls_tool_inputs(root))
     proofs=[
         ('native-android/engine/auth-interop/evidence/auth-db-development-owner-20261018/host-1642051b3.json.gz',
@@ -347,7 +423,7 @@ def committed_inputs(root,commit):
         result[name]=sha
     own=['hosted_auth_db_development.py','hosted_auth_db_development_stage.py','test_auth_db_development_driver.py',
         'AUTH-DB-DEVELOPMENT-DRIVER.md','db_received_prefix.py','test_db_received_prefix.py',
-        'DB-RECEIVED-PREFIX.md','test_account_controls_tool_admission.py','test_account_controls_admission.py','ACCOUNT-CONTROLS-ADMISSION.md','windows/db_received_prefix.h','windows/wrapped_db_received_prefix.c',
+        'DB-RECEIVED-PREFIX.md','test_account_inventory_admission.py','ACCOUNT-INVENTORY-ADMISSION.md','test_account_controls_tool_admission.py','test_account_controls_admission.py','ACCOUNT-CONTROLS-ADMISSION.md','windows/db_received_prefix.h','windows/wrapped_db_received_prefix.c',
         'windows/db_development_received_probe.c','windows/test_db_received_prefix.c','windows_registry_lease.py','test_windows_registry_lease.py',
         'hosted_selected_shard_play.py','password_fixture.py','auth_service_profile.py']
     for name in own:
@@ -1028,6 +1104,7 @@ def run(args):
         except Exception:stable=False
         value['development_candidate_and_source_inputs_unchanged']=stable
         value['development_source_sha256']=inputs
+        value['account_controls_source_qualification']=account_controls_summary()
         try:shutil.rmtree(temporary);removed=not temporary.exists()
         except Exception:removed=False
         value['private_probe_build_removed']=removed

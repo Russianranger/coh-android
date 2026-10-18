@@ -1,0 +1,41 @@
+{
+  "schema": "coh-preserved-owner-scene-inventory-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/owner-scene-inventory-20261018/a",
+      "tip": "a97a8c78000fc0e597ccaf9bffdf394e998de415",
+      "prerequisite": "13a2f5a268fac643eba7d02f02bf608af72178df"
+    },
+    "C": {
+      "ref": "refs/recovery/owner-scene-inventory-20261018/c",
+      "tip": "2621fb84e2eb2c074bdb6d78b311b5c1699ed895",
+      "prerequisite": "3b09d40847542698b538452d586bc3bd990aa320"
+    },
+    "D": {
+      "ref": "refs/recovery/owner-scene-inventory-20261018/d",
+      "tip": "7e43c47d6ecca01f8e64ed3033c7a411ef8d117c",
+      "prerequisite": "14ddf30a07e7cf517425199d645baeabde470be1"
+    },
+    "F": {
+      "ref": "refs/recovery/owner-scene-inventory-20261018/f",
+      "tip": "98aff746216ecb145d79e7a96583694db5329743",
+      "prerequisite": "718190ce97055eb8a9c6837c717c7892a6a0da97"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/owner-scene-inventory-20261018/coordinator",
+      "tip": "79d6f56124edeb4d740956baa493a7ce732beada",
+      "prerequisite": "647c916eee6cb244c9b69c75b9b2ce7698d7f5db"
+    }
+  },
+  "public_source_excluded_to_avoid_duplicate_artifact_payloads": "2b5dac5ac81d49359b47fd7027747b2c86f2d0db",
+  "bundle": "worker-owner-scene-inventory-history.bundle",
+  "bytes": 87331,
+  "sha256": "1bccea5bb89f599cc9c58da54d37111a665329d3f84486e29ff11da96e445f31",
+  "verification": "The bundle contains these 5 refs:\na97a8c78000fc0e597ccaf9bffdf394e998de415 refs/recovery/owner-scene-inventory-20261018/a\n2621fb84e2eb2c074bdb6d78b311b5c1699ed895 refs/recovery/owner-scene-inventory-20261018/c\n7e43c47d6ecca01f8e64ed3033c7a411ef8d117c refs/recovery/owner-scene-inventory-20261018/d\n98aff746216ecb145d79e7a96583694db5329743 refs/recovery/owner-scene-inventory-20261018/f\n79d6f56124edeb4d740956baa493a7ce732beada refs/recovery/owner-scene-inventory-20261018/coordinator\nThe bundle requires these 8 refs:\n647c916eee6cb244c9b69c75b9b2ce7698d7f5db \n14ddf30a07e7cf517425199d645baeabde470be1 \n718190ce97055eb8a9c6837c717c7892a6a0da97 \n3b09d40847542698b538452d586bc3bd990aa320 \n13a2f5a268fac643eba7d02f02bf608af72178df \n2b5dac5ac81d49359b47fd7027747b2c86f2d0db \n2e0c775fd6278c9c66d34a3cefaf38a3c9ef9b06 \n6e96fe22a567a3e252449feb37483cfea1566d8a \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-owner-scene-inventory-history.bundle is okay\n",
+  "prior_history_index": "worker-account-controls-owner-reason-history.json",
+  "unchanged_already_preserved_worker_tips": {
+    "B": "ca7e7e1d4d61374e65faa77f1a5ad47728fbd686",
+    "E": "4d6ba1733a3a32fca96beb844507cddd407d2b90"
+  },
+  "scope": "Preserves A new actual Map artifact admission/helper binding; C and B complete Inventory13 source/proof; D actual unsupported13 receipt and exact new C50 admission; F all actual/source/workflow reviews plus stale supplementary CMake metadata and its correction; coordinator frozen current611 scene and new Inventory Auth workflow. Actual Map ZIP and unintended host ZIP are already public in excluded2b5 and are not duplicated in this bundle. Scene39096463127 runtime remains pending at this checkpoint. C Proficiency and B TexWord work is independently active and unadmitted here. No complete player list, normal version/checksum, current-world/player/ACK/APK/Thor or aggregate memory acceptance follows."
+}

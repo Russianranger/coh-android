@@ -1,0 +1,5 @@
+The current Inventory admission is clear at5359a72d with its retained three-control proof. All148 current source inputs match qualified Git bytes. Current C50 is independently required; only three exact C36 predecessor files may resolve through accepted6e96 bytes, while the other33 remain current. The original two-core and dependency-only qualifier transitions stay separate.
+
+Fifteen policy/private-child/job/build definitions match6e96 ASTs. The project stays at17 TUs and the final receipt adds static source-composition metadata only. The new driver guard and received-prefix source pins do not infer body values or change protocol, positive owner policy, suspended launch, registry or cleanup. This review runs no imports, tests, compiler, native code or services. C50/C36/older deployment suites were not replayed by the recorded composition controls. No Windows or runtime qualification follows.
+
+The two additional common CMake inputs are bound to root integration790229b7f and current main Git. A review-only follow-up corrects earlier hashes read from the development checkout before that integration; the148 driver map and qualification remain unchanged.

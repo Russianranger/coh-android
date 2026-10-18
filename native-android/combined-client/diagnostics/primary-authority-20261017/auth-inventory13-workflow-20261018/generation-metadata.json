@@ -1,0 +1,10 @@
+{
+  "dynamic_workflow_self_pin": true,
+  "generator_sha256": "d63ab313f9ee746c669d21cdf0f5ee7c375573ae9e983f8deaa30361e172f759",
+  "nonself_pins": 156,
+  "project_imports_qualifiers_compiler_native_or_services_executed": false,
+  "reported_generation_source_revision": "dd5099927eef54c6bf7391b6fadeb01ebd222a76",
+  "schema": "coh-auth-inventory13-workflow-generation-metadata-v1",
+  "workflow_bytes": 66358,
+  "workflow_sha256": "c16f7ac6ee655e811e8fe3650aacd961af898bd4ad329490a6283f9bfe9bd89c"
+}

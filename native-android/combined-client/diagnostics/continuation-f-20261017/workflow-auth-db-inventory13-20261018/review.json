@@ -1,0 +1,95 @@
+{
+  "frozen_sources": {
+    "additional_common_CMake_count": 2,
+    "all_current_raw_equals_reviewed_Git": true,
+    "compact_sorted_map_sha256": "a065a66dd9f7ab13b7e6e2aa0d3520914f485c221b2ad63e8ec4e789c1f5bb5a",
+    "corrected_common_CMake_pins_equal_root790_and_current": true,
+    "current_C50_subset": 50,
+    "current_driver_source_count": 148,
+    "historical_C36_exact_predecessor_paths": 3,
+    "historical_C36_other_current_inputs": 33,
+    "historical_predecessor_revision": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+    "nonself_count": 156,
+    "old_D128_D126_prefix106_not_used_as_globally_current_maps": true,
+    "original_b321_two_core_and_qualifier_exceptions_separate": true,
+    "with_dynamic_workflow": 157
+  },
+  "independent_data_checks": {
+    "Bash_run_blocks_parsed": 3,
+    "embedded_Python_ASTs_parsed": 3,
+    "false_scope_flag_checks": 19,
+    "fixed_JSON_predicates_evaluated": 12,
+    "historical_Git_blobs_rehashed": 3,
+    "host_environment_guards_executed": false,
+    "root_data_guard_proof_bytes": 1161,
+    "root_data_guard_proof_sha256": "a215c8d3a353bc680cd51b80dfd9a4cdd15c000d6a3ff8d7d18a8bc1c880b6d8"
+  },
+  "limits": {
+    "actual_windows_or_runtime_qualified_by_review": false,
+    "body_values_inferred": false,
+    "db_or_map_interoperability_verified": false,
+    "first_unsupported_command_attributed": false,
+    "new_download": false,
+    "normal_version_or_checksum_reference_admitted": false,
+    "old_C_or_deployment_qualifiers_reexecuted": false,
+    "review_executed_compiler_loader_native_services": false,
+    "review_executed_project_imports_or_tests": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "ongoing_scene": {
+    "current_Inventory_integration_does_not_rewrite_running_scene_checkout": true,
+    "immutable_source_receipt_pins": 395,
+    "published_revision": "2b5dac5ac81d49359b47fd7027747b2c86f2d0db"
+  },
+  "passed": true,
+  "reviewed_source_revision": "dd5099927eef54c6bf7391b6fadeb01ebd222a76",
+  "schema": "coh-f-auth-db-inventory13-workflow-review-v1",
+  "scope_comparison": {
+    "baseline_workflow_sha256": "b2c8b2078237120dd2f42b0e421208f722182d8ab2feeaf4e39bc4e7ae26a539",
+    "cancel_in_progress": false,
+    "fixed_public_upload": "${{ runner.temp }}/auth-db-development-public/receipt.json",
+    "job_count": 1,
+    "marker": "[auth-db-inventory13]",
+    "matrix_or_strategy_added": false,
+    "permissions": {
+      "actions": "read",
+      "contents": "read"
+    },
+    "positive_privatechild_registry_job_cleanup_unchanged": true,
+    "project_TUs": 17,
+    "raw_logs_private_stdin_builds_probe_accounts_exported": false,
+    "recovery_immutable_Auth_Db_crypto_arguments_unchanged": true,
+    "runner": "windows-2025-vs2026",
+    "runtime_provisional_policy_flag_required": true,
+    "runtime_run_bytes": 813,
+    "static_zlib_TUs": 21,
+    "step3_change": "current Inventory C50/D148 source admission only",
+    "step6_change": "name only; run/shell/env identical",
+    "step7_change": "artifact name only; fixed receipt path and policy identical",
+    "step_count": 8,
+    "timeout_minutes": 30,
+    "unchanged_step_indices": [
+      0,
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  "source_evidence": {
+    "driver_proof_path": "native-android/engine/auth-interop/deployment/qualification/account-inventory-admission-20261018/host.json",
+    "driver_proof_sha256": "e5e7839cbe99100d6cf4e25e1fd4bc83bbb908923d401d7a6b795a8e628147e6",
+    "driver_review_path": "native-android/combined-client/diagnostics/continuation-f-20261017/development-account-inventory-admission-review-20261018/review.json",
+    "driver_review_sha256": "c2431661a06d3bfbc5770aad0394dc08327fc57e7d74dc28916e072c9d906366",
+    "kernel_review_path": "native-android/combined-client/diagnostics/continuation-f-20261017/db-account-inventory-source-review-20261018/review.json",
+    "kernel_review_sha256": "ab73697e81d9e368423d43ed1071e5c828e5b69b0e9dd77addc45c82e72802d8"
+  },
+  "workflow": {
+    "bytes": 66358,
+    "current_workflow_self_identity_required_after_root_commit": true,
+    "path": ".github/workflows/native-auth-db-development.yml",
+    "reviewed_scratch_equals_root_frozen_proposal": true,
+    "sha256": "c16f7ac6ee655e811e8fe3650aacd961af898bd4ad329490a6283f9bfe9bd89c"
+  }
+}

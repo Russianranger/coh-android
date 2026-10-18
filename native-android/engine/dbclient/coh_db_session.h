@@ -40,6 +40,9 @@ typedef struct {
      * Counters are lifetime diagnostics; no request deadline is reset. */
     uint64_t account_unavailable, account_charcounts;
     uint32_t account_last_shards, account_last_error_branch;
+    /* Complete envelope count only; no retained inventory/account state. */
+    uint64_t account_inventories;
+    uint32_t account_last_inventory_items;
     CohNetUdpDiagnostics transport;
 } CohDbSessionDiagnostics;
 typedef struct CohDbSession CohDbSession;
