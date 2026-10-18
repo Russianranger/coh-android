@@ -32,7 +32,13 @@ typedef struct {
  * receipt/authority minting, ACK or network completion exists here. Fixture
  * owners permanently refuse production snapshots, and production owners refuse
  * fixture snapshots. The immutable config MUST match the exclusively owned
- * renderer. All adapter allocations share the snapshot's budget. */
+ * renderer. All adapter allocations share the snapshot's budget. The first
+ * successful resume, pause or Surface-loss call binds its actual renderer
+ * pointer. Every subsequent GL call must use that same live renderer; a
+ * mismatch refuses before renderer, binding or publication mutation. This is a
+ * borrowed identity check: caller must keep that renderer alive through stop,
+ * and must not destroy/recreate it at a reused address. No renderer, EGL
+ * context, Surface or thread lifetime is acquired or authenticated here. */
 CohStatus coh_wr_presentation_create(CohWrBudget *, const CohRendererConfig *, CohWrPresentation **);
 CohStatus coh_wr_presentation_create_fixture(CohWrBudget *, const CohRendererConfig *, CohWrPresentation **);
 /* Control-thread only. Immutable snapshot + source-selected visibility/camera

@@ -1,0 +1,20 @@
+{
+  "schema": "coh-independent-f-fresh-platform-compile-workflow-review-v1",
+  "passed": true,
+  "workflow_sha256": "4d8333820e686f7fb3f619d3d9b97af1a2996afbddb1b3731838ce88f8c30f62",
+  "workflow_bytes": 10315,
+  "fixed_intended_source_pins_checked": 18,
+  "production_driver_closure": 17,
+  "additional_unit_source_pinned_not_executed": true,
+  "exact_crypto_artifact_and_manifest_identity_guards_preserved": true,
+  "crypto_source_group_only_extracted_no_old_Auth_outcome_reused": true,
+  "driver_expected_commit_and_crypto_path_correct": true,
+  "real_production_windows_source_branch_only_no_test_macros": true,
+  "codegen_exactly2_COs_then_static_library_no_executable_link_or_runtime": true,
+  "always_upload_known2_objects_library_receipt_failure_and_build_logs_commands_only": true,
+  "private_session_policy_or_credentials_never_input_or_output": true,
+  "accepted_crypto_server_zlib_or_model_rebuild_requested": false,
+  "actual_MSVC_compile_result_pending": true,
+  "source_generation_or_world_authority": false,
+  "tests_or_native_execution_by_independent_reviewer": false
+}

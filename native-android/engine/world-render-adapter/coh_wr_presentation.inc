@@ -13,6 +13,7 @@ struct CohWrPresentation {
     pthread_mutex_t mutex;
     CohWrBudget *budget;
     CohWrMailbox *source;
+    CohRenderer *renderer; /* borrowed, fixed by first successful GL lifecycle use */
     CohRendererConfig config;
     CohWrPreparedFrame *pending, *active, *retired;
     uint64_t publication;
@@ -120,25 +121,28 @@ done:
 CohStatus coh_wr_presentation_resume(CohWrPresentation *p,CohRenderer *r,uint32_t surface) {
     CohRendererStats stats;
     if (!p || !r || !surface) return COH_INVALID;
+    if (p->renderer && p->renderer!=r) return COH_STATE;
     stats=coh_renderer_stats(r);
     if (p->stopped || stats.queued || stats.surface_generation!=surface ||
         (p->surface && p->surface!=surface)) return COH_STATE;
-    p->surface=surface; p->paused=0; return COH_OK;
+    p->renderer=r; p->surface=surface; p->paused=0; return COH_OK;
 }
 CohStatus coh_wr_presentation_pause(CohWrPresentation *p,CohRenderer *r) {
     if (!p || !r) return COH_INVALID;
+    if (p->renderer && p->renderer!=r) return COH_STATE;
     if (p->stopped || coh_renderer_stats(r).queued) return COH_STATE;
-    p->paused=1; return COH_OK;
+    p->renderer=r; p->paused=1; return COH_OK;
 }
 CohStatus coh_wr_presentation_surface_lost(CohWrPresentation *p,CohRenderer *r,
     uint32_t surface,int alive) {
     if (!p || !r || !surface || (alive!=0 && alive!=1)) return COH_INVALID;
+    if (p->renderer && p->renderer!=r) return COH_STATE;
     if (p->stopped || surface<=p->surface ||
         surface<=coh_renderer_stats(r).surface_generation) return COH_STATE;
     /* Abandon borrowed spans BEFORE invalidating their binding/owner lifetimes. */
     coh_renderer_surface_lost(r,surface,alive);
     if (p->active) coh_wr_surface_lost(p->active->bindings);
-    p->surface=surface; p->paused=1; return COH_OK;
+    p->renderer=r; p->surface=surface; p->paused=1; return COH_OK;
 }
 static int presentation_cancel(void *v) { (void)v; return 1; }
 static CohStatus presentation_draw(CohWrPreparedFrame *f,CohRenderer *r,
@@ -178,6 +182,7 @@ CohStatus coh_wr_presentation_render(CohWrPresentation *p,CohRenderer *r,
     CohWrPresentationResult result={0};
     CohStatus status;
     if (!p || !r || !out) return COH_INVALID;
+    if (p->renderer && p->renderer!=r) return COH_STATE;
     if (p->paused || p->stopped || !p->surface || coh_renderer_stats(r).queued ||
         coh_renderer_stats(r).surface_generation!=p->surface) return COH_STATE;
     pthread_mutex_lock(&p->mutex);
@@ -223,6 +228,7 @@ CohStatus coh_wr_presentation_render(CohWrPresentation *p,CohRenderer *r,
 CohStatus coh_wr_presentation_stop(CohWrPresentation *p,CohRenderer *r,int alive) {
     CohWrPreparedFrame *pending,*active;
     if (!p || !r || (alive!=0 && alive!=1)) return COH_INVALID;
+    if (p->renderer && p->renderer!=r) return COH_STATE;
     if (p->stopped) return COH_STATE;
     coh_renderer_surface_lost(r,p->surface,alive);
     pthread_mutex_lock(&p->mutex);

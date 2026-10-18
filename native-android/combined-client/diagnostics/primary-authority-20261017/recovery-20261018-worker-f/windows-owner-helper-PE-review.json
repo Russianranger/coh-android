@@ -1,0 +1,19 @@
+{
+  "schema": "coh-independent-f-atomic-owner-helper-PE-review-v1",
+  "passed": true,
+  "artifact_id": 12145452316,
+  "workflow_run": 39152328268,
+  "source_revision": "0551b50305d9f64288a0989eb56488be6d575427",
+  "zip_bytes": 31948,
+  "zip_sha256": "1b1004f63449ecdf3c648a9cd121da883687fbf02dccc5783da19b21db1ba857",
+  "exact_safe_members_crc_valid": true,
+  "image_bytes": 36864,
+  "image_sha256": "cc8c67b4409820a866e163f6209a2ac6dbe434a0582758b7695a3b05176d82c0",
+  "PE_machine": "0x8664",
+  "PE_optional_magic": "0x20b",
+  "actual_compiled_source_bytes": 47790,
+  "actual_compiled_source_sha256": "53add195056ce87c445de347bd6d0fa8996ff3c5842a59a69172587b649ec933",
+  "build_receipt_matches_actual_image": true,
+  "executed_by_reviewer": false,
+  "service_or_world_authority": false
+}

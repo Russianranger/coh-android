@@ -1,0 +1,56 @@
+{
+  "schema": "coh-bd-resources-independent-worker-a-v1",
+  "passed": true,
+  "qualification_sha256": "32d6fb38051889b0ee2bd1a98229891d0f602662bcfc57ee746e30886c0a3cf1",
+  "source_pins_verified": 50,
+  "whole_cache_consumer_witness_hashes_independently_verified": {
+    "ParserLoadFiles": "baccdbc31625c793281f61b8a56c3f91741537e6f3593b0589ce611e87100ccb",
+    "ParserLoadFilesShared": "2d6db0faaf0a3fe0d7913475e7ac79039f26eb6d01da93521e1b90ec50b0201f",
+    "ParserReadBinaryFile": "68b58811cc075da60b4f458e67d72499259ce32e9f4a104f05a7cd509772a23f",
+    "basedata_Load": "f037881f32e95a4eef3573fd99595bbd513aa1bd0399a9f60a5b361fbd2a5589"
+  },
+  "persisted_schema_fields_in_source_order": 47,
+  "geometry_groups_in_source_order": 6,
+  "surface_and_U8_fields_indices_verified": true,
+  "cache_success_returns_before_text_preprocess_and_write": true,
+  "native_projection_has_no_text_preprocessing_or_suffix_generation": true,
+  "original_empty_indirect_NULL_policy_and_U8_adapter_source_reviewed": true,
+  "copied_owner_output_preservation_pairwise_disjoint_provider_reservations_cancellation_and_bounded_work_reviewed": true,
+  "executed_elf_archive_sha256": "b49068734dc4c6163ee59cc4febec0a26cccd47419846d49e36d496069366b73",
+  "actual_retained_elfs": {
+    "release": {
+      "bytes": 435832,
+      "sha256": "a74354acee395a9688618f805a3053f78c65db00d0a4425b39e6f4572e216295",
+      "elf_class": 64,
+      "machine": "x86_64"
+    },
+    "address": {
+      "bytes": 524672,
+      "sha256": "b277c58fde632568e87c2d58a12d0cc069ea48059151d9006e006360de71d1c8",
+      "elf_class": 64,
+      "machine": "x86_64"
+    },
+    "undefined": {
+      "bytes": 520296,
+      "sha256": "9e68b95a6f7a389a50abf0e7da493b77f4ff43fd7d2eebc43565925e886125c8",
+      "elf_class": 64,
+      "machine": "x86_64"
+    }
+  },
+  "native_stdout_exact_to_proof_verified": true,
+  "modes_native_checks_each": 30949,
+  "authentic_rows": 1045,
+  "fixtures": 18,
+  "successes": 15,
+  "mutations": 6,
+  "all_native_and_original_qualification_suites_reexecuted": false,
+  "review_ran_only_read_only_data_and_source_checks": true,
+  "review_development_failure": {
+    "first_read_only_hash_check_refused": true,
+    "reason": "independent extractor initially omitted final LF retained in witness spans; source and fixture were unchanged"
+  },
+  "prior_preprocess_experiment_not_accepted_for_BIN_integration": true,
+  "world_authority": false,
+  "android_qualification": false,
+  "global_memory_or_process_RSS_fit": false
+}

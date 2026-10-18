@@ -2,7 +2,10 @@
 
 The new `fresh_probe_policy.c` and `fresh_character_probe.c` implement the next
 source boundary after the already qualified fresh-character owner. The old
-`.proposed` files remain historical. There is no Windows backend or shipping
+`.proposed` files remain historical. The qualification below predates the new
+Windows backend source and its separately scoped
+[host API controls](windows/QUALIFICATION.md). Actual Windows compilation and
+execution of that backend remain separate obligations; there is no shipping
 build target for this new CLI. Neither the ordinary owner/session sources nor
 the original writers, services, profiles, accepted APKs or workflow are changed.
 
@@ -82,7 +85,8 @@ python native-android/engine/auth-interop/fresh-character-owner/probe/check_fres
 ## Next actual original-server transaction
 
 The next executable deployment step is still the fresh Windows profile/service
-readiness qualification, followed by a new Windows backend for this API. The
+readiness qualification, together with actual Windows admission of the new
+backend source for this API. The
 accepted compiler/model helper artifact is insufficient to launch and hold the
 original Map process. The backend/driver must not accept a policy nonce or an
 open UDP endpoint as a substitute for independently observed same-realm readiness.

@@ -1,0 +1,90 @@
+{
+  "schema": "coh-fresh-windows-backend-independent-e-review-v1",
+  "passed": true,
+  "review_scope": "read-only code, platform/CLI contracts, test-double fidelity and final04 pin/proof review; no test replay",
+  "reviewed_source_sha256": {
+    "native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.h": "d6782335567105f9179fe3684acc900afecf2299ea4b520c1bafad57913d5abf",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_platform.h": "7ddffff6edb69506917a19446e041b453014fc80dce3ed7f13aeb3b86b2179ba",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.c": "1048e1156dae2bf94b20808fb8ca47905f6a02135565bb21ec87aff4af6b9cbc",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.h": "b89809c03c1bb64bd0d697433d6fdee632b6c3a424e1fafc1c1698e6f1cac7e2",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/windows/check_fresh_probe_windows.py": "e032f20c110a44999c0c601e93a2d77ae87ce4009929bd2404e65a87aa7bd5fe",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/windows/fresh_probe_windows.c": "4c8c20e69f02563a78ea52be7bb1ede9a6bf19e8524eeb36a0ae1ccef6c8c47c",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/windows/test_fresh_probe_windows.c": "faeb07d31f095f853cbc828a2c39b226d998712726eb60bf559caf317610ad9c",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/windows/test_fresh_windows_api.h": "ccd8fb75ae7babf062be9021db13e68280cf21b4ac254baceb45656b2b194c14",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_session.h": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+  },
+  "final04_compressed_sha256": "956aad4ffa2b5954935bab0cc8e04afe5187bb5b3f2e9442fd874cf44f5839d4",
+  "final04_modes": {
+    "asan": {
+      "Map_READY_or_world_authority": false,
+      "Windows_execution": false,
+      "checks": 14808,
+      "original_owner_or_server": false,
+      "preflight_fallible_operations": 23,
+      "quarantined_child_leases": 8,
+      "real_host_EVP_file_digests": true,
+      "runtime_fallible_operations": 77,
+      "scenarios": 170,
+      "schema": "coh-fresh-windows-backend-api-controls-v1",
+      "synthetic_file_process_transport_entropy_APIs": true,
+      "wiped_lease_frees": 163
+    },
+    "release": {
+      "Map_READY_or_world_authority": false,
+      "Windows_execution": false,
+      "checks": 14808,
+      "original_owner_or_server": false,
+      "preflight_fallible_operations": 23,
+      "quarantined_child_leases": 8,
+      "real_host_EVP_file_digests": true,
+      "runtime_fallible_operations": 77,
+      "scenarios": 170,
+      "schema": "coh-fresh-windows-backend-api-controls-v1",
+      "synthetic_file_process_transport_entropy_APIs": true,
+      "wiped_lease_frees": 163
+    },
+    "ubsan": {
+      "Map_READY_or_world_authority": false,
+      "Windows_execution": false,
+      "checks": 14808,
+      "original_owner_or_server": false,
+      "preflight_fallible_operations": 23,
+      "quarantined_child_leases": 8,
+      "real_host_EVP_file_digests": true,
+      "runtime_fallible_operations": 77,
+      "scenarios": 170,
+      "schema": "coh-fresh-windows-backend-api-controls-v1",
+      "synthetic_file_process_transport_entropy_APIs": true,
+      "wiped_lease_frees": 163
+    }
+  },
+  "resolved_findings": [
+    "Frozen real TCP finish clears initialized after WSACleanup failure; final backend permanently latches failed initialize/finish cleanup uncertainty, preventing later no-op cleanup assertion and preserving lease until process exit. Final tests model forgotten state in isolated child processes."
+  ],
+  "provider_lifetime_preserved_through_controller_destruction": true,
+  "fixed_public_output_no_policy_hash_path_credentials": true,
+  "private_policy_digest_path_buffer_wipes_present": true,
+  "independent_cleanup_attempts_preserved": true,
+  "retained_file_process_checks_are_not_loaded_image_or_READY_authority": true,
+  "requires_dedicated_process_with_no_other_adapter_users": true,
+  "actual_Windows_prototypes_not_qualified_by_doubles": true,
+  "local_compiler_inventory": {
+    "cc": "/usr/bin/cc",
+    "gcc": "/usr/bin/gcc",
+    "clang": false,
+    "clang_cl_or_MSVC": false,
+    "Mingw": false,
+    "Windows_SDK_headers": false,
+    "Wine": false
+  },
+  "tests_or_Windows_APIs_reexecuted": false,
+  "world_authority": false
+}

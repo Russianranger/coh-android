@@ -1,0 +1,38 @@
+{
+  "final": "qualification.json",
+  "scope": "Complete original Details BIN persisted geometry-group fields; NO text preprocessing",
+  "historical_experiment": "pre-cache-branch-experiment.tar.gz",
+  "historical_experiment_scope_correction": "Whole original preprocessing algorithm comparisons passed, but applying those transformations to BIN is wrong: successful original ParserLoadFiles BIN load returns before text preprocessing. Experimental output changes33authentic roots and is not admitted as cache integration. Includes all earlier source/proof/log predecessors.",
+  "development_failure": "cache-guard-mutation-compile-development.tar.gz",
+  "development_failure_scope": "All3native production modes passed; new mutation source had a test-only stray semicolon and did not compile. Corrected checker succeeds in final.",
+  "original_artifact": {
+    "artifact_id": 11092897979,
+    "bytes": 26476333,
+    "sha256": "51b5519f86896a846eebd6a20de15c935d788af70d9986083df361af57fdcfae"
+  },
+  "complete_client_cache_archive": {
+    "bytes": 27071659,
+    "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+  },
+  "complete_details_member": {
+    "name": "data/bin/details.bin",
+    "bytes": 401216,
+    "sha256": "11e5104e0210fa5cbbc910932e5df461a34853e9a30d43f890d31510cdf2ce28"
+  },
+  "source_receipt_includes_50_raw_project_inputs": true,
+  "no_prior_qualifiers_or_APK_replayed": true,
+  "archives": {
+    "pre-cache-branch-experiment.tar.gz": {
+      "bytes": 527658,
+      "sha256": "86e407388d803b177a3a43fafcf0acb8afea0fbc4b5da756f989c952ba74bf79"
+    },
+    "cache-guard-mutation-compile-development.tar.gz": {
+      "bytes": 6263,
+      "sha256": "d3d0b81b68c7af7bdce3ea6cf2d1681af44c00890a5d181b3c11bfac41c17be6"
+    },
+    "executed-native-artifacts.tar.gz": {
+      "bytes": 224966,
+      "sha256": "b49068734dc4c6163ee59cc4febec0a26cccd47419846d49e36d496069366b73"
+    }
+  }
+}

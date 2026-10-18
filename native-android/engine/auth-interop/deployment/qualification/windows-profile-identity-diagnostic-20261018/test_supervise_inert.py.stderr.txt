@@ -1,0 +1,16 @@
+test_exact_source_artifact_identity_then_image_mutation_refused (__main__.AdmissionControls.test_exact_source_artifact_identity_then_image_mutation_refused) ... ok
+test_platform_refusal_does_not_launch_or_invent_cleanup (__main__.AdmissionControls.test_platform_refusal_does_not_launch_or_invent_cleanup) ... ok
+test_prior_api_execution_or_wrong_revision_refused (__main__.AdmissionControls.test_prior_api_execution_or_wrong_revision_refused) ... ok
+test_inner_failure_preserves_journal_and_never_claims_rollback (__main__.ExecutionControls.test_inner_failure_preserves_journal_and_never_claims_rollback) ... ok
+test_new_orchestration_success_requires_outer_cleanup (__main__.ExecutionControls.test_new_orchestration_success_requires_outer_cleanup) ... ok
+test_outer_timeout_retains_unobserved_inner_cleanup (__main__.ExecutionControls.test_outer_timeout_retains_unobserved_inner_cleanup) ... ok
+test_extra_missing_duplicate_and_nonbool_refused (__main__.ReceiptControls.test_extra_missing_duplicate_and_nonbool_refused) ... ok
+test_false_cleanup_or_absence_never_pass (__main__.ReceiptControls.test_false_cleanup_or_absence_never_pass) ... ok
+test_fixed_success_and_failed_native_result_preserved (__main__.ReceiptControls.test_fixed_success_and_failed_native_result_preserved) ... ok
+test_output_boundary_refuses_extra_lines_unicode_or_size (__main__.ReceiptControls.test_output_boundary_refuses_extra_lines_unicode_or_size) ... ok
+test_scope_and_failure_cause_never_promoted (__main__.ReceiptControls.test_scope_and_failure_cause_never_promoted) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.016s
+
+OK

@@ -1,0 +1,40 @@
+{
+  "schema": "coh-wpp-identity-observation-source-freeze-v1",
+  "source": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/prepare_identity_diagnostic.py": {
+      "bytes": 8231,
+      "sha256": "4ee58db014ee8f602534cd0be0b97afed4fca34890ca8e6c09a74dcd150ca113"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-file-identity.ps1": {
+      "bytes": 4396,
+      "sha256": "86df9b28297911dc8d9a7a5e3589da28c006e326857d8e50a8a08fcf8c2e64ea"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py": {
+      "bytes": 32814,
+      "sha256": "cbc21cb9d3a44a373342790e7bd090a3a9e687e5884efe71414f64cc89341861"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/test_identity_diagnostic.py": {
+      "bytes": 8556,
+      "sha256": "49efdb7a12dc0fc9af7f024e4f40a2350c366c345bd73445f96407f7edef02db"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/IDENTITY-DIAGNOSTIC.md": {
+      "bytes": 3256,
+      "sha256": "8e53be579b131341094f32fb5b947ccfa6a03ce01ae167cc174158cb1ca30752"
+    }
+  },
+  "preparation": {
+    "schema": "coh-wpp-file-identity-preparation-v1",
+    "passed": true,
+    "owner_source_sha256": "53add195056ce87c445de347bd6d0fa8996ff3c5842a59a69172587b649ec933",
+    "generated_source_sha256": "5420ba944a4b933d1067f0997ebd2f96b0c8581768cd885976e7042b415ff48e",
+    "generated_source_bytes": 49689,
+    "replacements": 25,
+    "exact_reverse_verified": true,
+    "identity_observation_only": true,
+    "existing_owner_acl_identity_guards_preserved": true,
+    "compiler_or_helper_or_model_executed": false
+  },
+  "actual_successor_windows_execution": false,
+  "service_readiness_qualified": false,
+  "world_authority": false
+}

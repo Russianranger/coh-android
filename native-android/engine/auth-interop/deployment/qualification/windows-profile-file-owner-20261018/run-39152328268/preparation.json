@@ -1,0 +1,12 @@
+{
+  "schema": "coh-wpp-file-owner-preparation-v1",
+  "passed": true,
+  "observed_source_sha256": "3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514",
+  "generated_source_sha256": "53add195056ce87c445de347bd6d0fa8996ff3c5842a59a69172587b649ec933",
+  "generated_source_bytes": 47790,
+  "replacements": 5,
+  "exact_reverse_verified": true,
+  "explicit_file_security_at_create": true,
+  "existing_owner_acl_identity_guards_preserved": true,
+  "compiler_or_helper_or_model_executed": false
+}

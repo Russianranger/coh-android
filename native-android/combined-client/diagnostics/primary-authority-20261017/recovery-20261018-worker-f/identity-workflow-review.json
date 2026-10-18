@@ -1,0 +1,19 @@
+{
+  "schema": "coh-independent-f-identity-workflow-review-v1",
+  "passed": true,
+  "workflow_sha256": "9a9a667fa6873266230ebd5dbd796b461592eed70f94129ae283cd821673ce59",
+  "workflow_bytes": 8344,
+  "executable_source_pins_match": 6,
+  "transitive_identity_owner_observation_generators_all_pinned": true,
+  "original_accepted_compiler_model_artifact_gate_parsed_object_identical": true,
+  "qualified_branch_only_and_explicit_push_marker": true,
+  "new_changed_identity_helper_compile_only": true,
+  "accepted_probe_model_rebuild_or_reexecution_requested": false,
+  "explicit_identity_role_selected": true,
+  "public_runtime_upload_exactly_two_fixed_receipts": true,
+  "static_compile_upload_exactly_four_known_members": true,
+  "no_private_paths_credentials_metadata_or_raw_outputs_uploaded": true,
+  "review_checker_initial_token_split_did_not_account_for_spaces_inside_GitHub_expression_corrected_without_source_change": true,
+  "actual_new_identity_runtime_result_pending": true,
+  "service_or_world_authority": false
+}

@@ -1,0 +1,22 @@
+{
+  "reviewer": "B authentic resources",
+  "reviewed_sha256": {
+    "native-android/engine/world-render-adapter/coh_wr_presentation.inc": "f34fd5a3e9d80071597de16d84294f8eb252c28f5bdd63fbef8b82241317beda",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.h": "d7a74752cbff13a19825064fbc797ab48b66c35bc7165e1c45e2c32727d7518d",
+    "native-android/engine/world-render-adapter/tests/test_presentation_renderer_identity.c": "81927cd8d7303b45a059e63aff21d8e4c06c2bfda6675182ad20285cbdee877d",
+    "native-android/engine/world-render-adapter/check_presentation_renderer_identity.py": "9d1e12bed9e650f34710b389962917d623b4037f0463c2292232bc870781bcf0",
+    "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/qualification.json": "a4284cd575bb715d346b6ca5bfff5aac3e0cc3534a3d17b6ccc69fc4b836c1a5"
+  },
+  "findings": [],
+  "source_contract_and_fixture_review_passed": true,
+  "checks": [
+    "All five renderer-facing operations refuse identity mismatch before backend, binding, retirement or output mutation",
+    "Only successful initial lifecycle operations bind borrowed renderer; failed initial resume remains unbound",
+    "Existing sizeof reservation charges additional pointer",
+    "Fixtures cover equal Surface generations, active leases, unchanged second backend and recovery on correct renderer",
+    "Five independent guard removals are recorded as rejected",
+    "Borrowed lifetime and reused-address limitation explicit"
+  ],
+  "tests_rerun": false,
+  "EGL_Android_or_world_acceptance": false
+}

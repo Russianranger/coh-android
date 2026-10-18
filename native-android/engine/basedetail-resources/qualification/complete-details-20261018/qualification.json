@@ -1,0 +1,585 @@
+{
+  "scope": "complete original Details BIN persisted resource projection, copied owner only",
+  "source_revision": "0551b50305d9f64288a0989eb56488be6d575427",
+  "source_sha256_raw": {
+    "native-android/engine/basedetail-resources/CONTRACT.md": "31ab464633fc6cc6a2f661a50ab45a25faede9e6477d3600ce1a34555f4c09e3",
+    "native-android/engine/basedetail-resources/check_resources.py": "44681e2795434d2f662dce5f038f8563f4a85b2b6c78bbf136a3df0fbde65ac0",
+    "native-android/engine/basedetail-resources/coh_bd_resources.c": "b758a2c4acf060fb505d9ca31ada6d9f3c207112288df4695dd5b78a9dc9fc9e",
+    "native-android/engine/basedetail-resources/coh_bd_resources.h": "67d3f8a78d2fdb9a6f7b913413dc781f7149ceb808acbb47f9cdc2e42624201a",
+    "native-android/engine/basedetail-resources/resource_oracle.py": "ddd912c287246f6a8a392c255c32261ab9c8dcf82b753a9273b7ee536ad0c394",
+    "native-android/engine/basedetail-resources/source-pins.json": "a809a6355f3283191b41d043f22c5058f1e83f00b5a9e52366ab72c8146d68a1",
+    "native-android/engine/basedetail-resources/test_resources.c": "c1a542700107cfd0bd205fd5e7f186404f2e72a623511d2779be2ebb7bdca8a5",
+    "native-android/engine/character-dictionary/salvage-source-pins.json": "88cbb9f6fabc48855cbee8c3c2a6823bd48d06beb1d2052671cadac23a7b18ba",
+    "native-android/engine/character-dictionary/salvage_details_schema.inc": "dcfb4729d0c15c7a5029f89ee383bcefe45376b675dc8e6952f580b630fcdbd0",
+    "native-android/engine/character-dictionary/salvage_oracle.py": "ab55e4bfe7b821214299468569e1372fd7ceeebc2edd069934220046a1703ecc",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+    "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+    "native-android/engine/costume-tree/crc_provider.py": "7ee991803d9e2d303fab436d8fc4d446e9318e6c8fc60e0915d17cca18f73ff1",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "upstream/ouroboros/Common/bases/basedata.c": "5ed4a51d3936a194b8c03d46768184e94d38a827e681c683c43fbb9712785709",
+    "upstream/ouroboros/Common/bases/basedata.h": "0cf3b228ae74e27d467d564cbe4faca820c2902cff787d4d0ba7770238fa7799",
+    "upstream/ouroboros/Common/bases/baseparse.c": "623d916d5a00fac854218db0d632ccab9790c5da10e8ae0043df0f34197f6695",
+    "upstream/ouroboros/Common/entity/RewardItemType.c": "b30b444d707c3237b43e23509f343f5469a37de904ce00a85680fa0effa1f670",
+    "upstream/ouroboros/Common/entity/TokenizerUiWidget.h": "9ce16cdbc2956023565252409599cc97f8e5b769a66eaafc63fd2772035ab35f",
+    "upstream/ouroboros/Common/entity/character_eval.c": "7c3fc628c90378f1466ce9f7a4fd6426b2ff003c92dad2801bf4b9e0c60d8c39",
+    "upstream/ouroboros/Common/entity/character_inventory.c": "efe22c554a15a782af4f4e0175c3396f84e0ba3f2f2a63d41e2be8460224af89",
+    "upstream/ouroboros/Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+    "upstream/ouroboros/Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+    "upstream/ouroboros/Common/entity/salvage.c": "88b6d66c051aebf85ac5397525047f1073045d6fc7cafe7a00f69cf20407cc7f",
+    "upstream/ouroboros/Common/entity/salvage.h": "5609a8ec2eb62e4cdec5a51408f3db0d6944c1239185cc36bfc8667ded1e1d21",
+    "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+    "upstream/ouroboros/Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+    "upstream/ouroboros/Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf"
+  },
+  "authentic_details": {
+    "bytes": 401216,
+    "sha256": "11e5104e0210fa5cbbc910932e5df461a34853e9a30d43f890d31510cdf2ce28"
+  },
+  "original": {
+    "provider": {
+      "source_sha256_lf": {
+        "Common/entity/salvage.c": "88b6d66c051aebf85ac5397525047f1073045d6fc7cafe7a00f69cf20407cc7f",
+        "Common/entity/salvage.h": "5609a8ec2eb62e4cdec5a51408f3db0d6944c1239185cc36bfc8667ded1e1d21",
+        "Common/entity/TokenizerUiWidget.h": "9ce16cdbc2956023565252409599cc97f8e5b769a66eaafc63fd2772035ab35f",
+        "Common/entity/character_inventory.c": "efe22c554a15a782af4f4e0175c3396f84e0ba3f2f2a63d41e2be8460224af89",
+        "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+        "Common/bases/basedata.c": "5ed4a51d3936a194b8c03d46768184e94d38a827e681c683c43fbb9712785709",
+        "Common/bases/basedata.h": "0cf3b228ae74e27d467d564cbe4faca820c2902cff787d4d0ba7770238fa7799",
+        "Common/bases/baseparse.c": "623d916d5a00fac854218db0d632ccab9790c5da10e8ae0043df0f34197f6695",
+        "Common/entity/character_eval.c": "7c3fc628c90378f1466ce9f7a4fd6426b2ff003c92dad2801bf4b9e0c60d8c39",
+        "Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+        "Common/entity/RewardItemType.c": "b30b444d707c3237b43e23509f343f5469a37de904ce00a85680fa0effa1f670",
+        "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+        "libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+        "libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+        "libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34"
+      },
+      "whole_function_sha256_lf": {
+        "libs/UtilitiesLib/src/utils/textparser.c:makeLinkStringRecur": "cc5d97acdbdde75fbf40b7f8c4d492b51ff704849a7fef164330aa647f8285ea",
+        "libs/UtilitiesLib/src/utils/textparser.c:findLinkFromStringRecur": "051438d275a37634e55cb3aae3e145195238a6fd021e7dc326cb79732465420b",
+        "libs/UtilitiesLib/src/utils/textparser.c:StructLinkToString": "da9b7757610e23f59b0c1cb6253d59e37132de4f57ae20da07da2de4aa426114",
+        "libs/UtilitiesLib/src/utils/textparser.c:StructLinkFromString": "8a7f1729bb91af09188b013382d5efb12db5088a547e63169fe0d7ff5e66394a",
+        "libs/UtilitiesLib/src/utils/textparser.c:link_readbin": "99ba7431d097881a9f967aff1af4f1eef93fe51c748831ee0105d24ce6e0f7ef",
+        "libs/UtilitiesLib/src/utils/textparser.c:link_writebin": "286b7024e7134e8c1956393888c0543e18ccc3bb51a09cefd14f5d0c68527fd6",
+        "Common/entity/character_inventory.c:attribfiledict_FinalProcess": "27b57d4d92e61ccf731da59e39d543d6e1e9682f6b888ed0070346f3a4d23797",
+        "Common/entity/character_eval.c:chareval_Validate": "3c4703a85f26662653effc15f1d4d8f6f935eb546570ce55cf59b064a4526025",
+        "Common/entity/salvage.c:salvage_CreateTabNameHash": "de3d0ff175267d899a60105ecf76977b37032cd058548ec9aafbdc1aaeb9f79f",
+        "Common/entity/salvage.c:salvage_FinalProcess": "f8f8255776d7782f23a0a95430275b90b26c7c8c90cb5208f890b295b02c0737",
+        "Common/entity/salvage.c:salvage_GetItem": "ab47a3f2592833676433ee35765edfcb45d46149a9c29b264d3ffefd61aefd2d",
+        "Common/entity/salvage.c:salvage_GetItemById": "366e6f6dcc0d43c587974efa1567c1132690553bd1e4bae84305b19b6e089cb0",
+        "libs/UtilitiesLib/src/utils/textparser.c:link_interpretfield": "ba86f83a265357078d5a6a078679775f2975a20d614911be61b0e00f87f9b810",
+        "libs/UtilitiesLib/src/utils/textparser.c:UpdateCrcFromStaticDefines": "e67f9d15157be0fe00ac80b283db148483e8cd7f8db9f638a04f0775f9946a82"
+      },
+      "table_sha256_lf": {
+        "ParseSalvageDef": "8d2ff29a73c3b932940adc55b295316f2988cd9e1711452c16a840631d51be5b",
+        "ParseSalvageDictionary": "de670ef2f1be72e0553afc2aa8b4ecb53c719416d3ad35c8de40705da0066760",
+        "ParseAttributeItem": "28d65f422e6f4197d586db305159f255bf05508f8e34e83670b9e9eb5295f921",
+        "ParseAttributeItems": "f96e8baef8290db72a78fc4003a0198abd19751a9539b7305210365a067551c6",
+        "ParseDetail": "de8d59da0de1f96d28055605c1f8e7fa85466fa0355a8b4c8a03a64d5f84b0b6",
+        "ParseDetailDict": "cec29f68e8640aef716ffaff6d28fa9dfbde8478caf6d7f8e8052ae87d44e132"
+      },
+      "binary_provider": {
+        "source_sha256_lf": {
+          "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+          "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+          "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+          "Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+          "Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+          "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+          "libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+          "libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+          "libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+          "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+          "libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+          "libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71"
+        },
+        "function_sha256_lf": {
+          "libs/UtilitiesLib/src/utils/serialize.c:SimpleBufRead": "fcbb82d64aa901e21d62fae5a7f8d3c59428fa536e442fd41d7b3ec67e407285",
+          "libs/UtilitiesLib/src/utils/serialize.c:SimpleBufWrite": "6e3c4716f4cb1d9076784bb3261a9c320ba39290e202902b72a484e4140fe070",
+          "libs/UtilitiesLib/src/utils/serialize.c:SimpleBufSeek": "ff8f9b9ec22564f3320544e003ca57a4320966d9f2d804e7d50f7c5cfa998cc8",
+          "libs/UtilitiesLib/src/utils/serialize.c:SimpleBufTell": "5de14603768abbe12b42b49f2c01057afa14401d1eaae9674f4655d58318afbb",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufReadU16": "7c4979e99d2eec352c91d4ef60a82149888177dd15d687ba717df735be40be25",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufReadU32": "36c44bff8f70a85d5267ca766d4e44d8801b9e51e44dee33718f7786739d01f7",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufReadF32": "dafa260f6259785ead60adf5bc72b689c4e173cf52a0bf62bcf42a1e954d84b5",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufWriteU16": "56452c2a0ab25823bfff81849196c76eaf80e9aaccf8fa5c1c135639153273eb",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufWriteU32": "8c40baafb7631bcfd3960afb5a1621e5fd0b1ee0c938bfe4c0c1cf96a2d62747",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h:SimpleBufWriteF32": "0a5be9edba1752087c8010f7245fe68de61464fd8db8ed1928996e32f345971d",
+          "libs/UtilitiesLib/src/utils/serialize.c:ReadPascalString": "8e5c06d8977d22c4c32cace64f5f474f09b2b2a6ff05a6355418ee9ee7dbef0b",
+          "libs/UtilitiesLib/src/utils/serialize.c:WritePascalString": "87bf36a7f5f4c1445adc51c13d98598870f074a3f04ea9080efe692875c64926",
+          "libs/UtilitiesLib/src/utils/tokenstore.c:TokenStoreGetStorageType": "b644e9d3853ca77ef350f09c300a94ebfc7d92d6f0be00d9b7e93750d0778e7e",
+          "libs/UtilitiesLib/src/utils/textparser.c:int_readbin": "c238a40328a4038c7dd6fc3c514a1995e4d2d28448d79b23b2cb0fc027da0309",
+          "libs/UtilitiesLib/src/utils/textparser.c:int_writebin": "c4bbb6bc74c8bac5910693e15d46d21438de2797ec0daca7723b6158938f5c64",
+          "libs/UtilitiesLib/src/utils/textparser.c:u8_readbin": "f6e207203b154a10bf6e58af4932b54595f6801073bfcd266e87a0e0531b41c9",
+          "libs/UtilitiesLib/src/utils/textparser.c:u8_writebin": "71fe55d724a2449a2fe28d7455aebcbe6a817f7ecc7438210b3f2b0ee73f04a3",
+          "libs/UtilitiesLib/src/utils/textparser.c:float_readbin": "5397e32fba462aa1fd30be033324efa969da80c00d8ae066cebfc1333a3b9888",
+          "libs/UtilitiesLib/src/utils/textparser.c:float_writebin": "aac8070c6d09b4cda88646d2713d0c26d250763b2eaa9adb8eeff216369282fc",
+          "libs/UtilitiesLib/src/utils/textparser.c:string_readbin": "76ffbd052edf28541cd46033f3f7504e2200da68dce3b37d824c916074f900e7",
+          "libs/UtilitiesLib/src/utils/textparser.c:string_writebin": "3f19eaec3279a3bf01152000189731e1d437827cdab60aaf6384f7a8b9210e55",
+          "libs/UtilitiesLib/src/utils/textparser.c:struct_readbin": "1b947073cc930213e1bb4e626df52b6bebed738c0f14aa9d1a3be2fa04b8e4fb",
+          "libs/UtilitiesLib/src/utils/textparser.c:struct_writebin": "d91bf37916fd020281a8c7bf404d55650476419f18f18afdf0da7560c5ff8ed2",
+          "libs/UtilitiesLib/src/utils/textparser.c:nonarray_readbin": "c1a3f4bebf449519c366f2c121967ceee34720feae238b69fd84314be19fc691",
+          "libs/UtilitiesLib/src/utils/textparser.c:nonarray_writebin": "99505bea28a20eb6880879cab02354014f755df28b6fac28cad294ea99f0933c",
+          "libs/UtilitiesLib/src/utils/textparser.c:fixedarray_readbin": "8e133001d44c30abd5d474fac1b42d91ec1f588f9e0f3ffc2310f6ea98f7380b",
+          "libs/UtilitiesLib/src/utils/textparser.c:fixedarray_writebin": "0439ce07627982984b96f40adeb863ebcf59e54a33bfdf52983804085b63bdc6",
+          "libs/UtilitiesLib/src/utils/textparser.c:earray_readbin": "fc956669f78356b5bd26580bb099c69492e5f9a0837c66d5840ff51178a14c7c",
+          "libs/UtilitiesLib/src/utils/textparser.c:earray_writebin": "da5a08eeee1e534d63372c2f19f2dbf7048b780e145fd999cfbfb9104b7bf398",
+          "libs/UtilitiesLib/src/utils/textparser.c:ParserReadBinaryTable": "29ed6e9a69228519dcc65a14a577045978dc5f4ee3959d796381b3302f001deb",
+          "libs/UtilitiesLib/src/utils/textparser.c:ParserWriteBinaryTable": "bb839d4c7451aeaee4de1b8dd147153074cccbc013b89d03584bde72d25cf226"
+        },
+        "table_sha256_lf": {
+          "ParseBodyPart": "917ea73873135a786ef3697485878c23414061596a7235aa1efd1bc83d027d91",
+          "ParseBodyPartBegin": "9960f419f158a95589f7795558c13333f8bd452728e73c92e29f98f8df0a41fc",
+          "ParseColor": "465c412c22fcc174129b25d1660d123c56d7c65214596b9f5c567754528d651e",
+          "ParseColorPalette": "0a6390f9f7c611fbdfbb93c2b991f32bd8f87b5920c89473d7b05df95194795d"
+        },
+        "generated_c_sha256": "d6dbc6fb5c4e8bc0379778ce112b56ad02ffab085849f0354e94244f579440c3",
+        "scope": "Unchanged whole original binary table readers/writers, primitive/array/struct handlers, Pascal serialization and exact two schemas execute on real recovered bodies. Host layout/tokenstore/handler dispatch/bounded SimpleBuf allocation adapters explicit; no whole engine ParseTableCRC/callbacks/32bit ABI or stash builder execution.",
+        "original_oracle_sanitized": false
+      },
+      "crc": {
+        "whole_function_sha256_lf": {
+          "ignore_interpretfield": "05447cd715742cbb4ccc77f0294f81ab57fc4f520c5f528ee75e8ab72ee9f73e",
+          "number_interpretfield": "679b0e1c8919f35a2f3c62d467ba748dc56d9f31c5c6651315d114209850069d",
+          "string_interpretfield": "eba3d0e0fe711fc687a4b749209a52bae594db1caf656b2740a4affcdcb85ff7",
+          "struct_interpretfield": "f1321b8b246205ea80948f24b57ba7954740a2377cde3a68b0358f96a02e2edd",
+          "UpdateCRCFromParseInfo": "c0cc8bfac9270cc0ac939b0c6504d22f9ab999e38cdb1954ea6672a5b257942f",
+          "ParseTableCRC": "7b630b5ff49eaa5096875b7ad96926bfbd9667b0eaa49c97a611224ff1157019"
+        },
+        "source_sha256_lf": {
+          "libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+          "libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+        },
+        "original_crypto_wrapper_sha256_lf": {
+          "cryptAdler32Init": "783a36e63cd9b012a7fa836c1171e0d00bde822935372c399006fcc0d7acdf4c",
+          "cryptAdler32Update": "cc44951ab4db2017a94c1ca751814d071a7c2c4f54d6103aab9b3b668a8a5464",
+          "cryptAdler32Final": "44b88328e772a0c46770e25174d05f26032d91ce671b0b423f0439a20cf82481"
+        },
+        "crypto_implementation": "zlib Adler32 adapted to original Crypto++ big-endian digest bytes; original Crypto++ engine not executed",
+        "whole_original_runtime_cache_selection": false
+      },
+      "generated_source_sha256": "27b5560886bef8c281d2a622d2b14cfbd6ad5673d42b3e1e73b029f4cf62491d",
+      "original_stash_hash_allocator": false,
+      "Details_gameplay_finalizers": false,
+      "shared_memory_branch": false,
+      "original_oracle_sanitized": false,
+      "source_admission_manifest": {
+        "source_sha256_raw": {
+          "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+          "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+          "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+          "Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+          "Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+          "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+          "libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+          "libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+          "libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+          "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+          "libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+          "libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+          "Common/entity/salvage.c": "88b6d66c051aebf85ac5397525047f1073045d6fc7cafe7a00f69cf20407cc7f",
+          "Common/entity/salvage.h": "5609a8ec2eb62e4cdec5a51408f3db0d6944c1239185cc36bfc8667ded1e1d21",
+          "Common/entity/TokenizerUiWidget.h": "9ce16cdbc2956023565252409599cc97f8e5b769a66eaafc63fd2772035ab35f",
+          "Common/entity/character_inventory.c": "efe22c554a15a782af4f4e0175c3396f84e0ba3f2f2a63d41e2be8460224af89",
+          "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+          "Common/bases/basedata.c": "5ed4a51d3936a194b8c03d46768184e94d38a827e681c683c43fbb9712785709",
+          "Common/bases/basedata.h": "0cf3b228ae74e27d467d564cbe4faca820c2902cff787d4d0ba7770238fa7799",
+          "Common/bases/baseparse.c": "623d916d5a00fac854218db0d632ccab9790c5da10e8ae0043df0f34197f6695",
+          "Common/entity/character_eval.c": "7c3fc628c90378f1466ce9f7a4fd6426b2ff003c92dad2801bf4b9e0c60d8c39",
+          "Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+          "Common/entity/RewardItemType.c": "b30b444d707c3237b43e23509f343f5469a37de904ce00a85680fa0effa1f670",
+          "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+          "libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+          "libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+          "libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+          "libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+          "libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+        },
+        "source_sha256_lf": {
+          "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+          "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+          "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+          "Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+          "Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+          "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+          "libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+          "libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+          "libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+          "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+          "libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+          "libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+          "libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+          "Common/entity/salvage.c": "88b6d66c051aebf85ac5397525047f1073045d6fc7cafe7a00f69cf20407cc7f",
+          "Common/entity/salvage.h": "5609a8ec2eb62e4cdec5a51408f3db0d6944c1239185cc36bfc8667ded1e1d21",
+          "Common/entity/TokenizerUiWidget.h": "9ce16cdbc2956023565252409599cc97f8e5b769a66eaafc63fd2772035ab35f",
+          "Common/entity/character_inventory.c": "efe22c554a15a782af4f4e0175c3396f84e0ba3f2f2a63d41e2be8460224af89",
+          "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+          "Common/bases/basedata.c": "5ed4a51d3936a194b8c03d46768184e94d38a827e681c683c43fbb9712785709",
+          "Common/bases/basedata.h": "0cf3b228ae74e27d467d564cbe4faca820c2902cff787d4d0ba7770238fa7799",
+          "Common/bases/baseparse.c": "623d916d5a00fac854218db0d632ccab9790c5da10e8ae0043df0f34197f6695",
+          "Common/entity/character_eval.c": "7c3fc628c90378f1466ce9f7a4fd6426b2ff003c92dad2801bf4b9e0c60d8c39",
+          "Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+          "Common/entity/RewardItemType.c": "b30b444d707c3237b43e23509f343f5469a37de904ce00a85680fa0effa1f670",
+          "libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+          "libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+          "libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+          "libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+          "libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+          "libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+        },
+        "helper_sha256_raw": {
+          "native-android/engine/costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+          "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+          "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+          "native-android/engine/costume-tree/crc_provider.py": "7ee991803d9e2d303fab436d8fc4d446e9318e6c8fc60e0915d17cca18f73ff1"
+        },
+        "scope": {
+          "whole_original_binary_readers_and_writers": true,
+          "three_complete_original_schema_tables": true,
+          "whole_original_ParserReadBinaryTable_and_ParseTableCRC": true,
+          "whole_original_CLIENT_Salvage_and_ID_finalizers_and_tab_builder": true,
+          "whole_original_StructLink_leaf_read_write_and_reverse_name_lookup": true,
+          "whole_original_Salvage_getters": true,
+          "Details_NAME_identity_only": true,
+          "CLIENT_SERVER_define": 0,
+          "original_map_hash_allocator": false,
+          "shared_memory": false,
+          "Details_gameplay_finalizers": false,
+          "current_generation_or_actor_or_world": false,
+          "old_qualifier_entrypoints": false
+        }
+      },
+      "bounded_storage": "parsed vectors exact count; tab vectors grow by doubling to8192 with former buffers retained until reset; slot vectors support8192 elements",
+      "compiled_provider_capabilities_NOT_executed_here": {
+        "CLIENT_chareval_body_executed_as_noop": true,
+        "ordinary_source_getters_executed": true,
+        "serialized_workshop_text_observed_at_original_link_ReadPascalString_boundary": true
+      },
+      "prior_original_salvage_wrapper_executed": false
+    },
+    "generated_source_sha256": "d470d1786397d940cab0f4ef5269b3d60209d6d8ac8f52199fd01b4dbd15fd14",
+    "unexecuted_whole_consumer_source_witnesses_sha256_lf": {
+      "ParserLoadFiles": "baccdbc31625c793281f61b8a56c3f91741537e6f3593b0589ce611e87100ccb",
+      "ParserLoadFilesShared": "2d6db0faaf0a3fe0d7913475e7ac79039f26eb6d01da93521e1b90ec50b0201f",
+      "ParserReadBinaryFile": "68b58811cc075da60b4f458e67d72499259ce32e9f4a104f05a7cd509772a23f",
+      "basedata_Load": "f037881f32e95a4eef3573fd99595bbd513aa1bd0399a9f60a5b361fbd2a5589"
+    },
+    "original_BIN_cache_hit_bypasses_text_preprocessor_source_guard": true,
+    "indirect_empty_string_source_policy": true,
+    "CLIENT_unused_field_pruning_executed": false,
+    "Details_preprocessing_executed": false,
+    "original_geometry_loader_executed": false,
+    "prior_qualifier_entrypoints_executed": false
+  },
+  "cases": [
+    {
+      "name": "authentic",
+      "bytes": 401216,
+      "sha256": "11e5104e0210fa5cbbc910932e5df461a34853e9a30d43f890d31510cdf2ce28",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "d8bea61a287b99a2867383873036a28e660a8b93da66dc855a1607b91372ee27"
+    },
+    {
+      "name": "normal-floor",
+      "bytes": 248,
+      "sha256": "68d31ceb1ddb808684540541be6bdb646ad787fa742590c3e8dc13f9f33f05bb",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "57f6e425086f4fd6c455fab7f23ae95df065111259b477bbab331dfe8439ca92"
+    },
+    {
+      "name": "mounted-animated",
+      "bytes": 248,
+      "sha256": "fe2eadf687383f8a87782d24fcc83a3e1f33c294978e25675c2a9d90747aee40",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "44258d1a94e96b55d9b55e86e412b3f99725e537291c121834d3e9a9db9b06ab"
+    },
+    {
+      "name": "upper-suffix",
+      "bytes": 248,
+      "sha256": "c5f7bfb71cddbaceefcd4538204c8040c24b1f5cc10d258122cb2faede16682c",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "14ab1b22a4614173e3319c6b784b6de47747b04dc0f0bbcf3d93e4ef22357889"
+    },
+    {
+      "name": "explicit-overrides",
+      "bytes": 280,
+      "sha256": "f481c8f5343ebf766298bb13d28ad24fa546447fd197ea4793d53ab1ce0b316f",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "6f2cb5e0452642d0459d127e71e8a057528f7e223d6b3216258164738f7d2492"
+    },
+    {
+      "name": "literal-root",
+      "bytes": 244,
+      "sha256": "aa3dcc8e5e0fde5e9a377ed889522d59a5c77a87ee7f6bde88625c12c0783294",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "f182b5b79ec67828372ac6e25ef25ec28c409d77977d705fd1057dfd8946b2d9"
+    },
+    {
+      "name": "no-suffix",
+      "bytes": 244,
+      "sha256": "0960279f490d7bb0c5cf7743c11e25eca0c763647fa08a1ef9d09a346f44a6ef",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "062833ceaf74fb6064d002e71c354e2f8d77b5b157a36619094f0d8f75655420"
+    },
+    {
+      "name": "u8-source-truncation",
+      "bytes": 248,
+      "sha256": "2b95103c4b92a76d3dfb40df144ea40bb78c2a19bfbcf1bf2e826d54c1ad7384",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "d893e7c27f675b0740beea2e35e23c4d3d0cfa21360f7ada4ed42b2b257000c2"
+    },
+    {
+      "name": "short-suffix",
+      "bytes": 240,
+      "sha256": "b3ba70ebaaf8d7b480d00a9a9b680cf3bd801628c6eb785ec4f7a73a3aa24302",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "fead07be5c9aa6a1d6037ddc2c13ab6ebdb7daf11d59b083fb14cce573d10a7d"
+    },
+    {
+      "name": "star-only",
+      "bytes": 248,
+      "sha256": "915bb024926ca54c43a1adc6abfc423d43b4579524b88f3c93d3878f527743de",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "955cca6a0121d6345c3372004f0fd73bc59bb7b85a4cf3592905f729cc5f2e87"
+    },
+    {
+      "name": "empty-root-explicit-surface",
+      "bytes": 240,
+      "sha256": "359a9524447383c73dca5941f7a2b01d6ebc5197d0424675dbf12288601f216d",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "8a8183478151b8bc71ffe298b6dd2892d17eb4a8500cbb2c8a6d56e3dbc324d8"
+    },
+    {
+      "name": "complete-opaque-arrays",
+      "bytes": 268,
+      "sha256": "f8b75898a6a34d09288af40bd4b011702a016b68df28d5ac1d43952d960471e6",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "57f6e425086f4fd6c455fab7f23ae95df065111259b477bbab331dfe8439ca92"
+    },
+    {
+      "name": "ordered-duplicate-names",
+      "bytes": 452,
+      "sha256": "fd4ba4d6854d588109001c7866cc5b52724b18d2fd2df4bbb7cebcbb7f275bc0",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "88cff89347e178f1c315fb54fd7cef233533af418152d8d5d43482748842289c"
+    },
+    {
+      "name": "missing-root-stays-persisted",
+      "bytes": 244,
+      "sha256": "be7e0cce6874d7d21ac858816f7e951b664d694ec608743cd117ebbb4a62bff6",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "36f876a4c0ec981d2509c978c4c469d95617925a5fb6e74f71bf5e8e7de25d3a"
+    },
+    {
+      "name": "name-limit",
+      "bytes": 368,
+      "sha256": "858edf5481389e9a6416f4d45fee76b6781bf38cf51003baeb6e4ba08eb73b97",
+      "status": 2,
+      "original_complete_BIN_table_reader_executed": false,
+      "projection_sha256": null
+    },
+    {
+      "name": "resource-limit",
+      "bytes": 1260,
+      "sha256": "adf615fbd42a922889a64f7b98bdebe48019b87dc9c62cf627ea7fa418881174",
+      "status": 2,
+      "original_complete_BIN_table_reader_executed": false,
+      "projection_sha256": null
+    },
+    {
+      "name": "long-cache-root-no-expansion",
+      "bytes": 1256,
+      "sha256": "5b95c9f4ef80b37a5997a8b8a1dd030373bf45a17548ff309d6744ec3c200809",
+      "status": 0,
+      "original_complete_BIN_table_reader_executed": true,
+      "projection_sha256": "ed973e784511715c7af0d17a5010698f34432984041896305d3b0c447a0dee4f"
+    },
+    {
+      "name": "nonascii-resource",
+      "bytes": 236,
+      "sha256": "59eff9719612e659134009268ad60e8e008afc780d66dc12690ab859f6416050",
+      "status": 2,
+      "original_complete_BIN_table_reader_executed": false,
+      "projection_sha256": null
+    }
+  ],
+  "modes": {
+    "release": {
+      "binary_sha256_pre_post": "a74354acee395a9688618f805a3053f78c65db00d0a4425b39e6f4572e216295",
+      "result": {
+        "checks": 30949,
+        "fixtures": 18,
+        "successes": 15,
+        "authentic_rows": 1045,
+        "owner_bytes": 802888,
+        "workspace_bytes": 802888,
+        "small_fixture_minimum_budget": 1628688,
+        "world_authority": false
+      }
+    },
+    "address": {
+      "binary_sha256_pre_post": "b277c58fde632568e87c2d58a12d0cc069ea48059151d9006e006360de71d1c8",
+      "result": {
+        "checks": 30949,
+        "fixtures": 18,
+        "successes": 15,
+        "authentic_rows": 1045,
+        "owner_bytes": 802888,
+        "workspace_bytes": 802888,
+        "small_fixture_minimum_budget": 1628688,
+        "world_authority": false
+      }
+    },
+    "undefined": {
+      "binary_sha256_pre_post": "9e68b95a6f7a389a50abf0e7da493b77f4ff43fd7d2eebc43565925e886125c8",
+      "result": {
+        "checks": 30949,
+        "fixtures": 18,
+        "successes": 15,
+        "authentic_rows": 1045,
+        "owner_bytes": 802888,
+        "workspace_bytes": 802888,
+        "small_fixture_minimum_budget": 1628688,
+        "world_authority": false
+      }
+    }
+  },
+  "mutations": {
+    "unnormalized-provider-status": {
+      "rejected": true,
+      "returncode": 1,
+      "mutant_source_sha256": "ac5d343f456159a9884c6f3cb63af84a484e2a5f707e02357c0d1069191077ec"
+    },
+    "skip-source-hash": {
+      "rejected": true,
+      "returncode": 1,
+      "mutant_source_sha256": "66e14a4354d3692833fba73b77e3bef0d4e41b5649d8625f5d869496d70fbcc4"
+    },
+    "wrong-group-slot": {
+      "rejected": true,
+      "returncode": 1,
+      "mutant_source_sha256": "78398da45c3dac0fee6344a0eceb5c0fa7cb0618bdcabd2079005c7bf8c0f301"
+    },
+    "wrong-U8-copy": {
+      "rejected": true,
+      "returncode": 1,
+      "mutant_source_sha256": "9ca6dbb274b0c91513dee362383bfb70bde7addebee221bb1391ef3293b2859c"
+    },
+    "invent-surface": {
+      "rejected": true,
+      "returncode": 1,
+      "mutant_source_sha256": "4d477e5e258a937cb510d663f05d93cac2208756fa010fc075f5e855808b8d97"
+    },
+    "strip-cache-root-escape": {
+      "rejected": true,
+      "returncode": 1,
+      "mutant_source_sha256": "3cfb6f81a65be13f8afe0fb01d3aaca364426c7944ddfe9380d7c0f7ecc862ae"
+    }
+  },
+  "world_authority": false,
+  "current_CLIENT_cache_family": false,
+  "geometry_loaded": false,
+  "android_executed": false,
+  "global_memory_or_RSS_fit": false,
+  "old_qualifiers_executed": false,
+  "native_module_stack": [
+    {
+      "function": "literal",
+      "bytes": 48,
+      "kind": "static"
+    },
+    {
+      "function": "copy",
+      "bytes": 48,
+      "kind": "static"
+    },
+    {
+      "function": "poll.part.0",
+      "bytes": 16,
+      "kind": "static"
+    },
+    {
+      "function": "word",
+      "bytes": 8,
+      "kind": "static"
+    },
+    {
+      "function": "segment",
+      "bytes": 8,
+      "kind": "static"
+    },
+    {
+      "function": "string",
+      "bytes": 8,
+      "kind": "static"
+    },
+    {
+      "function": "coh_bd_resources_read",
+      "bytes": 368,
+      "kind": "static"
+    },
+    {
+      "function": "coh_bd_resources_group",
+      "bytes": 8,
+      "kind": "static"
+    }
+  ],
+  "fixture_header_sha256": "b8cd644f0be4472513634917c8354a77034b5cab7ccc429fb10e3b733d63c16a",
+  "retained_native_artifacts": {
+    "archive_sha256": "b49068734dc4c6163ee59cc4febec0a26cccd47419846d49e36d496069366b73",
+    "members": {
+      "release": {
+        "bytes": 435832,
+        "sha256": "a74354acee395a9688618f805a3053f78c65db00d0a4425b39e6f4572e216295"
+      },
+      "address": {
+        "bytes": 524672,
+        "sha256": "b277c58fde632568e87c2d58a12d0cc069ea48059151d9006e006360de71d1c8"
+      },
+      "undefined": {
+        "bytes": 520296,
+        "sha256": "9e68b95a6f7a389a50abf0e7da493b77f4ff43fd7d2eebc43565925e886125c8"
+      }
+    }
+  },
+  "source_bytes_unchanged": true,
+  "passed": true,
+  "asan_leak_detector_enabled": false
+}

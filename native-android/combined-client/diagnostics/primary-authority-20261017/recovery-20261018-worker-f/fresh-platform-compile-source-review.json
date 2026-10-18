@@ -1,0 +1,23 @@
+{
+  "schema": "coh-independent-f-fresh-platform-compile-source-review-v1",
+  "passed": true,
+  "generator_controls_sha256": "9fdbc6dd7763d4ef029ab6517bea1a2ea2ec5f03f7e73cd98ad03a120aea5eba",
+  "driver_sha256": "bcd240d538dca8cde373c8273db9dd97307c064bf190093e6f5962614c3c8363",
+  "exact_current_source_pins_checked": 18,
+  "five_new_generator_control_outputs_reviewed": true,
+  "production_compile_inputs": 17,
+  "production_translation_units": 2,
+  "test_doubles_or_wrappers_not_in_production_closure": true,
+  "safe_batch_arguments_refuse_shell_metacharacters": true,
+  "immutable_crypto_manifest384_files105629748_bytes_revalidated": true,
+  "no_crypto_rebuild_requested": true,
+  "MSVC_sdk_headers_discovered_by_syntax_only_then_pinned_before_codegen": true,
+  "each_production_source_single_codegen_pass": true,
+  "COFF_machine_x64_two_object_archive_exactness_checked": true,
+  "source_tools_headers_crypto_bracketed_pre_post": true,
+  "CLI_link_or_native_backend_API_or_original_services_executed": false,
+  "actual_MSVCorSDK_compile_result_pending": true,
+  "external_workflow_expected_source_gate_still_to_be_reviewed": true,
+  "code_or_control_suites_executed_by_reviewer": false,
+  "world_authority": false
+}

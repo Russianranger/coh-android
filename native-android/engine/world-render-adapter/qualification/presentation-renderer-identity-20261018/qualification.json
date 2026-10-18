@@ -1,0 +1,93 @@
+{
+  "scope": "borrowed renderer identity and CPU publication/resource lifecycle",
+  "source_revision": "b26e829a104a017d5533f16b8a2315be1c04025e",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/coh_world_render.c": "36541b0561cc236dcf323598f50329414a8eed4876f58d2ec451b7b3cafc94d7",
+    "native-android/engine/world-render-adapter/tests/test_presentation_renderer_identity.c": "81927cd8d7303b45a059e63aff21d8e4c06c2bfda6675182ad20285cbdee877d",
+    "native-android/engine/renderer/coh_renderer.c": "74937e66a91e30f9405800f4014648c33a7a3640474f20edef3cca736d3427e1",
+    "native-android/engine/world-render-adapter/coh_world_render.h": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.h": "d7a74752cbff13a19825064fbc797ab48b66c35bc7165e1c45e2c32727d7518d",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.inc": "f34fd5a3e9d80071597de16d84294f8eb252c28f5bdd63fbef8b82241317beda",
+    "native-android/engine/world-render-adapter/check_presentation_renderer_identity.py": "9d1e12bed9e650f34710b389962917d623b4037f0463c2292232bc870781bcf0",
+    "native-android/engine/renderer/coh_renderer.h": "c88bf809b2379f7909f87090edea90b5ac898774055c1307e377983cdf62eb46",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "fixture_only": true,
+  "gles_executed": false,
+  "android_executed": false,
+  "world_authority": false,
+  "modes": {
+    "release": {
+      "result": {
+        "checks": 58,
+        "renderer_identity": true,
+        "draws": 6,
+        "resource_holds": 1,
+        "resource_drops": 1,
+        "fixture_only": true,
+        "gles_executed": false
+      },
+      "binary_sha256": "08bb7c26aaf111f8c680b982051173cee80369221dd9f6532aeabd50774aedc7"
+    },
+    "address": {
+      "result": {
+        "checks": 58,
+        "renderer_identity": true,
+        "draws": 6,
+        "resource_holds": 1,
+        "resource_drops": 1,
+        "fixture_only": true,
+        "gles_executed": false
+      },
+      "binary_sha256": "ddded5f82d3711785546b724a705d29d7da8f4179f068524b0afa7201ab56a44"
+    },
+    "undefined": {
+      "result": {
+        "checks": 58,
+        "renderer_identity": true,
+        "draws": 6,
+        "resource_holds": 1,
+        "resource_drops": 1,
+        "fixture_only": true,
+        "gles_executed": false
+      },
+      "binary_sha256": "a5b17410dad2c187646ddd893a204b47cb71c592efce48060347a84bcb46335e"
+    }
+  },
+  "mutations": {
+    "coh_wr_presentation_resume": {
+      "removed": "if (p->renderer && p->renderer!=r) return COH_STATE;",
+      "rejected": true,
+      "returncode": 1,
+      "modified_include_sha256": "3ff93f589b6e6ffbbea5ebcfb52e222f753102438c78d312d63298392382dcba"
+    },
+    "coh_wr_presentation_pause": {
+      "removed": "if (p->renderer && p->renderer!=r) return COH_STATE;",
+      "rejected": true,
+      "returncode": 1,
+      "modified_include_sha256": "1a2909c10e3a6e6affec7805bb8a3637dd0efe15065f8c4788d742cb0d9a2491"
+    },
+    "coh_wr_presentation_surface_lost": {
+      "removed": "if (p->renderer && p->renderer!=r) return COH_STATE;",
+      "rejected": true,
+      "returncode": 1,
+      "modified_include_sha256": "007b1ffd56af6fd24259a86a8c4ec0382db4068c54c3112b5fa51a5f17733032"
+    },
+    "coh_wr_presentation_render": {
+      "removed": "if (p->renderer && p->renderer!=r) return COH_STATE;",
+      "rejected": true,
+      "returncode": 1,
+      "modified_include_sha256": "25d1b3278ac7bf3f38dce53b346fb30548322f098e62345019ca25975860de88"
+    },
+    "coh_wr_presentation_stop": {
+      "removed": "if (p->renderer && p->renderer!=r) return COH_STATE;",
+      "rejected": true,
+      "returncode": 1,
+      "modified_include_sha256": "bae4b0b9fabb60f431defd3797aed1ae12f4a1e2315d86d77ac1b80f8642ed7d"
+    }
+  },
+  "source_inputs_unchanged": true,
+  "leak_sanitizer_executed": false,
+  "passed": true
+}

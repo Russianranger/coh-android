@@ -1,0 +1,128 @@
+name: Compile concrete fresh-character Windows platform only
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-fresh-platform-compile.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-fresh-platform-compile-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  compile-production-windows-platform:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+      && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[fresh-platform-compile-only]'))
+    runs-on: windows-2025
+    timeout-minutes: 15
+    steps:
+    - name: Preserve exact checkout bytes
+      shell: pwsh
+      run: git config --global core.autocrlf false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - name: Admit exact production platform and generator sources
+      shell: pwsh
+      run: "@'\nimport hashlib,json,os,pathlib,subprocess\nassert __debug__ and not os.environ.get('PYTHONOPTIMIZE')\n\
+        assert os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.environ['RUNNER_OS']=='Windows'\
+        \ and os.environ['RUNNER_ARCH']=='X64'\nassert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
+        \ and os.environ['GITHUB_REF']=='refs/heads/native-android'\nhead=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip();assert\
+        \ head==os.environ['GITHUB_SHA']\npins={'native-android/engine/auth-interop/fresh-character-owner/probe/windows/fresh_probe_windows.c':\
+        \ '4c8c20e69f02563a78ea52be7bb1ede9a6bf19e8524eeb36a0ae1ccef6c8c47c', 'native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.c':\
+        \ '1048e1156dae2bf94b20808fb8ca47905f6a02135565bb21ec87aff4af6b9cbc', 'native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.h':\
+        \ 'd6782335567105f9179fe3684acc900afecf2299ea4b520c1bafad57913d5abf', 'native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_platform.h':\
+        \ '7ddffff6edb69506917a19446e041b453014fc80dce3ed7f13aeb3b86b2179ba', 'native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.h':\
+        \ 'b89809c03c1bb64bd0d697433d6fdee632b6c3a424e1fafc1c1698e6f1cac7e2', 'native-android/engine/auth-interop/deployment/windows/winsock_compat.h':\
+        \ '27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e', 'native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h':\
+        \ 'ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb', 'native-android/engine/auth/coh_auth.h':\
+        \ '0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d', 'native-android/engine/coh_contracts.h':\
+        \ '2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832', 'native-android/engine/dbclient/coh_db_session.h':\
+        \ 'ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711', 'native-android/engine/dbclient/coh_dbclient.h':\
+        \ 'ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb', 'native-android/engine/login/coh_login.h':\
+        \ '2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f', 'native-android/engine/network/coh_net.h':\
+        \ 'fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb', 'native-android/engine/network/coh_net_udp.h':\
+        \ '7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4', 'native-android/include/coh_native_core.h':\
+        \ '48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106', 'native-android/protocol/coh_protocol.h':\
+        \ '61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4', 'native-android/engine/auth-interop/deployment/compile_fresh_platform.py':\
+        \ 'bcd240d538dca8cde373c8273db9dd97307c064bf190093e6f5962614c3c8363', 'native-android/engine/auth-interop/deployment/test_compile_fresh_platform.py':\
+        \ '88d4be6ddf4c65755b5f9797fedc186c2cd0016860fe278296a5cbeeb51741b2'}\nfor name,digest in pins.items():\n\
+        \ p=pathlib.Path(name);raw=p.read_bytes();assert not p.is_symlink() and 0<len(raw)<8*1024**2\n\
+        \ assert hashlib.sha256(raw).hexdigest()==digest and subprocess.check_output(['git','show',head+':'+name])==raw\n\
+        print(json.dumps({'current_production_sources_admitted':True,'probe_executed':False,'world_authority':False}))\n\
+        '@ | python -\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\n"
+    - name: Recover only exact immutable x64 crypto headers library and ownership manifest
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: "python - <<'PYCRYPTO'\nimport hashlib,json,os,pathlib,re,shutil,stat,subprocess,zipfile\n\
+        base=pathlib.Path(os.environ['RUNNER_TEMP'])\ndef api(suffix):return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))\n\
+        ident=12078663003;revision='cacc6273834142cf8c8f902018eb13cb8f9b5271'\nremote=api('actions/artifacts/'+str(ident));origin=remote['workflow_run']\n\
+        assert remote['id']==ident and remote['expired'] is False and remote['size_in_bytes']==71999000\n\
+        assert remote['name']=='native-original-authserver-encrypted-login'\nassert remote['digest']=='sha256:aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b'\n\
+        assert origin['id']==38974164017 and origin['head_sha']==revision\nassert origin['repository_id']==origin['head_repository_id']==1368730125\n\
+        run=api('actions/runs/38974164017')\nassert run['status']=='completed' and run['head_sha']==revision\
+        \ and run['head_branch']=='native-android'\nassert run['path']=='.github/workflows/native-auth-login.yml'\n\
+        assert run['repository']['id']==run['head_repository']['id']==1368730125\n# Only the immutable\
+        \ crypto subgroup is reused, not the old Auth outcome.\narchive=base/'retained-intact.zip'\nwith\
+        \ archive.open('xb') as output:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=300)\n\
+        with archive.open('rb') as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest()\nassert\
+        \ archive.stat().st_size==71999000 and digest=='aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b'\n\
+        target=base/'retained-intact';target.mkdir()\nwith zipfile.ZipFile(archive) as z:\n    infos=z.infolist();assert\
+        \ 0<len(infos)<=2048 and len({i.filename for i in infos})==len(infos)\n    assert sum(i.file_size\
+        \ for i in infos)<=128*1024**2 and z.testzip() is None\n    for item in infos:\n        name=item.filename[:-1]\
+        \ if item.is_dir() else item.filename\n        path=pathlib.PurePosixPath(name)\n        assert\
+        \ path.as_posix()==name and not path.is_absolute() and path.parts\n        assert all(p not in\
+        \ ('','.','..') for p in path.parts)\n        assert chr(92) not in name and ':' not in name and\
+        \ not item.flag_bits&1\n        assert stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG,stat.S_IFDIR)\n\
+        \        assert 0<=item.file_size<=64*1024**2\n    prefix='intact-openssl-reuse/'\n    name=prefix+'manifest.json';manifest=z.read(name)\n\
+        \    assert len(manifest)==58665 and hashlib.sha256(manifest).hexdigest()=='1c1c05eb10132e4d1d172d29a04d36311981e6c7023c7ee388348339c460896b'\n\
+        \    value=json.loads(manifest)\n    assert value['schema']=='coh-intact-openssl-build-ownership-v1'\n\
+        \    assert len(value['files'])==384 and value['total_bytes']==105629748\n    assert value['files']['libcrypto.lib']['sha256']=='95aec97b796992a58f8745e1bbbc6eac634931420f13b0763d2db57537543698'\n\
+        \    selected={name:{'bytes':len(manifest),'sha256':hashlib.sha256(manifest).hexdigest()}}\n \
+        \   for relative,pin in value['files'].items():\n        path=pathlib.PurePosixPath(relative)\n\
+        \        assert path.as_posix()==relative and not path.is_absolute() and path.parts\n        assert\
+        \ all(p not in ('','.','..') for p in path.parts) and chr(92) not in relative and ':' not in relative\n\
+        \        assert set(pin)=={'bytes','sha256'} and type(pin['bytes']) is int and 0<=pin['bytes']<=64*1024**2\n\
+        \        assert re.fullmatch('[a-f0-9]{64}',pin['sha256'])\n        selected[prefix+relative]=pin\n\
+        \    assert sum(x['bytes'] for x in value['files'].values())==105629748\n    members={i.filename:i\
+        \ for i in infos}\n    for name,pin in selected.items():\n        item=members[name];assert not\
+        \ item.is_dir() and item.file_size==pin['bytes']\n        destination=target/name;destination.parent.mkdir(parents=True,exist_ok=True)\n\
+        \        with z.open(item) as source,destination.open('xb') as output:shutil.copyfileobj(source,output,1024**2)\n\
+        \        with destination.open('rb') as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()\n\
+        \        assert destination.stat().st_size==pin['bytes'] and actual==pin['sha256']\nassert {p.relative_to(target).as_posix()\
+        \ for p in target.rglob('*') if p.is_file()}==set(selected)\narchive.unlink()\nPYCRYPTO\n"
+    - name: Compile two production Windows objects and archive with real SDK headers
+      shell: pwsh
+      run: 'python native-android/engine/auth-interop/deployment/compile_fresh_platform.py --source-root
+        . --crypto-dir "$env:RUNNER_TEMP/retained-intact/intact-openssl-reuse" --output out/fresh-platform
+        --expected-commit "$env:GITHUB_SHA"
+
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+        '
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: fresh-platform-msvc-x64-compile-${{ github.sha }}
+        path: 'out/fresh-platform/fresh_probe_windows.obj
+
+          out/fresh-platform/fresh_probe_policy.obj
+
+          out/fresh-platform/coh-fresh-platform.lib
+
+          out/fresh-platform/receipt.json
+
+          out/fresh-platform/failure.json
+
+          out/fresh-platform/*.log
+
+          out/fresh-platform/*.cmd
+
+          '
+        if-no-files-found: warn
+        retention-days: 90

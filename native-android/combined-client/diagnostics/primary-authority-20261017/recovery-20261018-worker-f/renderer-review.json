@@ -1,0 +1,24 @@
+{
+  "schema": "coh-independent-f-renderer-identity-review-v1",
+  "passed": true,
+  "qualification_sha256": "a4284cd575bb715d346b6ca5bfff5aac3e0cc3534a3d17b6ccc69fc4b836c1a5",
+  "source_pins_match": 10,
+  "guards_reviewed": [
+    "resume",
+    "pause",
+    "surface_lost",
+    "render",
+    "stop"
+  ],
+  "guard_precedes_renderer_stats_and_mutation": true,
+  "borrowed_identity_contract_explicit": true,
+  "first_successful_lifecycle_call_binds_only": true,
+  "failed_first_admission_does_not_bind": true,
+  "new_pointer_charged_via_existing_sizeof_owner_allocation": true,
+  "retained_host_fixture_checks_each_mode": 58,
+  "retained_guard_mutations_rejected": 5,
+  "test_scope": "Actual generic renderer/backend doubles with CPU publication and source lifetime; neither GLES nor Android nor current world",
+  "old_test_suite_reexecuted_by_reviewer": false,
+  "actual_new_tests_reexecuted_by_reviewer": false,
+  "rss_gpu_or_world_authority": false
+}

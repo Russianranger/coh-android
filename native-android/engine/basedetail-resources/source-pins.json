@@ -1,0 +1,12 @@
+{
+  "source_sha256_raw": {
+    "upstream/ouroboros/Common/bases/basedata.c": "5ed4a51d3936a194b8c03d46768184e94d38a827e681c683c43fbb9712785709",
+    "upstream/ouroboros/Common/bases/basedata.h": "0cf3b228ae74e27d467d564cbe4faca820c2902cff787d4d0ba7770238fa7799",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "native-android/engine/character-dictionary/salvage_oracle.py": "ab55e4bfe7b821214299468569e1372fd7ceeebc2edd069934220046a1703ecc",
+    "native-android/engine/character-dictionary/salvage-source-pins.json": "88cbb9f6fabc48855cbee8c3c2a6823bd48d06beb1d2052671cadac23a7b18ba",
+    "native-android/engine/character-dictionary/salvage_details_schema.inc": "dcfb4729d0c15c7a5029f89ee383bcefe45376b675dc8e6952f580b630fcdbd0"
+  }
+}
