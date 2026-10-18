@@ -1,0 +1,236 @@
+{
+  "schema": "coh-gates25-27-physical-thor-report-review-v1",
+  "source_commit": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "review_basis": "Read-only JSON/ZIP data admission; no device execution, screenshots or tests replayed by reviewer",
+  "uploads": [
+    {
+      "name": "COH-NativeCombined-1792362568832.zip",
+      "bytes": 43012,
+      "sha256": "52ce62bd5600445cfa767e9c2d5628dcac117554ae1259f332f1d1302fb139fc"
+    },
+    {
+      "name": "COH-NativeCombined-20261018-172816.json",
+      "bytes": 39362,
+      "sha256": "a4a30c65281a2e111fb464dd927ae64f8b3d230ae30a8c11b4bcd2c586c668c4"
+    }
+  ],
+  "zip_members": [
+    {
+      "name": "combined-report.json",
+      "bytes": 39111,
+      "sha256": "ae036e8dac46ce3bbd971a1c0fd202e6c7efbc18f70c8a9d50b4b96eab4e446a"
+    },
+    {
+      "name": "native-client-report.json",
+      "bytes": 233030,
+      "sha256": "de4bb66a2cab1fca8f2d8cb80b977f2f6b73da7e7cad8f039982be06b5b8aa01"
+    },
+    {
+      "name": "previous-session-combined-server-latest-report.json",
+      "bytes": 30283,
+      "sha256": "a5a1526dcefdb308d303953e8484069f61e66acfbcdb8ed3253b6df1ba7447bb"
+    },
+    {
+      "name": "combined-server-previous-attempts.json",
+      "bytes": 272605,
+      "sha256": "e9e7e025254b2dee7f76058b61902e626364023aad270552b24da581258dfc26"
+    }
+  ],
+  "zip_crc_pass": true,
+  "app": {
+    "package": "org.coh.nativecombined",
+    "version_name": "0.1.8-gates25-27-test",
+    "version_code": 9,
+    "installed_apk": {
+      "bytes": 13880861,
+      "sha256": "9659570e1470d2fa1f3c3f13c7f9fd6795a4f0410326520a6fe4463ec273ed63"
+    }
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "standalone_scope": {
+    "connection_mode": "LOCAL",
+    "world_handoff_phase": "IDLE",
+    "server_protocol_phase": "SCENE_INCOMPLETE",
+    "separate_earlier_local_session": true
+  },
+  "zip_scope": {
+    "connection_mode": "WORLD_HANDOFF",
+    "updated_at": "2026-10-18T17:29:27.631-05:00",
+    "world_handoff_requested_events": 2,
+    "character_choice_requested_events": 2,
+    "scope": "Final snapshot describes latest attempt; event counts are not two fully captured attempt outcomes"
+  },
+  "world_handoff": {
+    "schema": "coh-native-initial-interop-numeric-v1",
+    "diagnostic_only": true,
+    "phase": "CLOSED",
+    "capture_phase": 5,
+    "status": 7,
+    "last_status": 7,
+    "failure_code": "TIMEOUT",
+    "failure": 10,
+    "local_development_auth": true,
+    "server_identity_bound": false,
+    "selected_owner_bound": false,
+    "groups_observed": true,
+    "raw_allents_observed": false,
+    "groups_observations": 1,
+    "allents_observations": 0,
+    "reqallents_sent": 1,
+    "groups_lease_callbacks": 1,
+    "initial_lease_callbacks": 0,
+    "observer_status": 0,
+    "groups_bytes": 42889,
+    "groups_bits": 343112,
+    "initial_bytes": 0,
+    "initial_bits": 0,
+    "initial_post_command_cursor": 0,
+    "db_phase": 11,
+    "map_phase": 7,
+    "attempts": 1,
+    "character_lists": 1,
+    "character_choices": 1,
+    "map_handoffs": 1,
+    "opened_sockets": 2,
+    "closed_sockets": 2,
+    "cleanup_verified": true,
+    "cleanup_scope": "owned_transport_counters",
+    "suspend_requested": true,
+    "disconnect_requested": true,
+    "packet_copy_retained": false,
+    "first_failure": {
+      "valid": true,
+      "local_phase": 3,
+      "db_phase": 9,
+      "map_phase": 5,
+      "status": 7,
+      "failure": 10
+    },
+    "edit_messages_handled": 0,
+    "edit_message_last_type": 0,
+    "edit_message_last_bytes": 0,
+    "refused_command_valid": false,
+    "refused_command_kind": "NONE",
+    "map_protocol": {
+      "phase": 7,
+      "stage": 10,
+      "last_status": 7,
+      "scene_structures": 1,
+      "udp": {
+        "state": 3,
+        "datagrams_sent": 12,
+        "datagrams_received": 45,
+        "send_would_block": 0,
+        "interrupted": 0,
+        "io_errors": 0,
+        "link": {
+          "sent": 12,
+          "received": 25,
+          "retransmits": 0,
+          "acknowledged": 6,
+          "tx_pending": 0
+        }
+      }
+    },
+    "authserver_authenticated": false,
+    "normal_version_admitted": false,
+    "checksum_reference_admitted": false,
+    "source_generation_admitted": false,
+    "complete_initial_character": false,
+    "actor_publication": false,
+    "ack_permitted": false,
+    "sends_ready": false,
+    "sends_received_character": false,
+    "sends_full_update_ack": false,
+    "world_authority": false,
+    "live_world_rendered": false,
+    "request_tx_available": true,
+    "request_tx": {
+      "diagnostic_only": true,
+      "valid": true,
+      "witness_retired": true,
+      "queue_attempted": true,
+      "queue_succeeded": true,
+      "queue_status": 0,
+      "first_send_accepted": true,
+      "peer_transport_ack_observed": true,
+      "refusal": 0,
+      "retirement": 1,
+      "first_send_attempts": 1,
+      "retry_send_attempts": 0,
+      "successful_retries": 0,
+      "deferred_send_callbacks": 0,
+      "failed_send_callbacks": 0,
+      "queue_offset_ms": 4556,
+      "first_send_offset_ms": 4581,
+      "last_send_offset_ms": 4581,
+      "retirement_offset_ms": 4683,
+      "command_specific_emission_proved": false,
+      "server_receipt_proved": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "identity_binding_interpretation": "Final CLOSED snapshot has retired binding flags; false final flags alone do not diagnose a pre-close admission failure",
+  "preview": {
+    "valid": true,
+    "failed": false,
+    "running": false,
+    "live_server": false,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "objects_released": true,
+    "contexts_started": 3,
+    "contexts_completed": 3
+  },
+  "export": {
+    "report_write_failed": false,
+    "return_to_launcher_ready_observed": true
+  },
+  "server_at_export": {
+    "phase": "ready",
+    "ready": true,
+    "owned_process_alive": true,
+    "failure_code": "",
+    "last_stage": "server_running_manual_native_client",
+    "elapsed_ms": 477691,
+    "stage_elapsed_ms": 99469
+  },
+  "server_memory": {
+    "status": "running",
+    "admitted": true,
+    "stop_requested": false,
+    "samples": 471,
+    "invalid_samples": 0,
+    "pressure_samples": 0,
+    "minimum_system_headroom_bytes": 8443846656,
+    "minimum_java_heap_headroom_bytes": 149255984
+  },
+  "limits": [
+    "Current server remains alive at export; current-session server shutdown is not established",
+    "Historical process exits are not current-session crash evidence",
+    "Specific queued Tx send callback and peer transport ACK do not prove server command dispatch or application full-update ACK",
+    "No raw initial entity packet was observed; no complete character/world authority",
+    "No dedicated Home/reconnect test success is inferred from document-picker pauses",
+    "Whole-process/RSS/GPU fit and normal AuthServer/version/checksum admission remain unqualified"
+  ],
+  "next_work": "Bounded original same-session Map dispatch/send-tick/character-sender/pktSend observation; preserve policy and timing; no timeout increase justified by this result",
+  "gates": {
+    "25": "OPEN; real Thor diagnostic transport exercised within local-development scope",
+    "26": "OPEN; existing-character DB/Map handoff observed, normal AuthServer/version/checksum/full-character acceptance pending",
+    "27": "OPEN; initial authoritative entity response not observed"
+  },
+  "retention": "Only this numeric review and handoff are added to Git; full user uploads remain unchanged and are not duplicated into repository"
+}
