@@ -147,32 +147,114 @@ def admit_probe(value,send_cap):
     return value
 
 
-def run_probe(binary,port,send_cap,temporary):
+PROBE_STATES=('IDLE','CONNECTING','WAIT_HELLO','WAIT_LOGIN','WAIT_SHARDS','SHARDS_READY',
+    'WAIT_PLAY','AUTHORIZED','CLOSED','SUSPENDED','CANCELLED','TIMED_OUT','FAILED','UNSUPPORTED')
+
+
+def probe_observation(child,output,send_cap):
+    """Fixed failure evidence from this child's private, completed stdout only."""
+    result={'schema':'coh-selected-probe-failure-observation-v1','child_state':'NOT_STARTED',
+        'json_state':'UNAVAILABLE','stdout_bytes_bounded':0,'probe_state':'UNAVAILABLE',
+        'protocol_class':'UNAVAILABLE','probe_passed':False,'shards':0,'received_frames':0,
+        'sent_bytes':0,'elapsed_ms':0,'send_cap':send_cap,'selected_shard_verified':False,
+        'live_grant_retained_then_wiped':False,'local_sensitive_buffers_wiped':False,
+        'authorization_invalid_after_close':False,'socket_cleanup_complete':False,
+        'owned_probe_cleanup_complete':False,'owned_probe_cleanup_outcome':'NOT_COMPLETED',
+        'raw_private_output_exported':False}
+    if child is None:return result
+    try:
+        code=child.poll()
+        result['child_state']='RUNNING' if code is None else 'EXIT_ZERO' if type(code) is int and code==0 else 'EXIT_ONE' if type(code) is int and code==1 else 'OTHER_EXIT'
+        size=os.fstat(output.fileno()).st_size
+        result['stdout_bytes_bounded']=min(size,8193)
+        if size>8192:result['json_state']='OVERSIZE';return result
+        if code is None:return result
+        result['json_state']='REFUSED'
+        if type(code) is not int or code not in (0,1) or size==0:return result
+        def pairs(rows):
+            value={}
+            for key,item in rows:
+                if key in value:raise ValueError('selected_probe_duplicate_field')
+                value[key]=item
+            return value
+        output.seek(0)
+        value=json.loads(output.read(8193),object_pairs_hook=pairs,
+            parse_constant=lambda _:(_ for _ in ()).throw(ValueError('selected_probe_nonfinite')))
+        counters={'state':13,'protocol':0xffffffff,'shards':32,'received_frames':64,
+                  'sent_bytes':4096,'elapsed_ms':30000,'send_cap':1024}
+        flags={'passed','selected_shard_verified','live_grant_retained_then_wiped',
+            'local_sensitive_buffers_wiped','authorization_invalid_after_close','socket_cleanup_complete'}
+        negative={'password_retained_after_close','db_login_attempted','authenticated_db_map_handoff_verified',
+            'checksum_policy_relaxed','nondevelopment_version_admitted','real_server_provenance_verified_by_probe'}
+        if (type(value) is not dict or set(value)!=set(counters)|flags|negative|{'schema'}
+                or value['schema']!='coh-selected-shard-play-probe-v1'
+                or any(type(value[k]) is not int or not 0<=value[k]<=maximum for k,maximum in counters.items())
+                or any(type(value[k]) is not bool for k in flags)
+                or any(value[k] is not False for k in negative)
+                or value['send_cap']!=send_cap or value['passed']!=(code==0)):
+            return result
+        result.update(json_state='VALID',probe_state=PROBE_STATES[value['state']],
+            protocol_class='EXPECTED' if value['protocol']==191021 else 'ZERO' if value['protocol']==0 else 'OTHER',
+            probe_passed=value['passed'])
+        for key in ('shards','received_frames','sent_bytes','elapsed_ms','selected_shard_verified',
+                    'live_grant_retained_then_wiped','local_sensitive_buffers_wiped',
+                    'authorization_invalid_after_close','socket_cleanup_complete'):
+            result[key]=value[key]
+    except Exception:
+        # Never export decoder/OS exception text or any part of refused stdout.
+        result['json_state']='REFUSED'
+    return result
+
+
+def run_probe(binary,port,send_cap,temporary,failure_observation=None):
     if type(port) is not int or not 20000<=port<=59999 or type(send_cap) is not int or send_cap not in (7,1024):
         raise ValueError('selected_probe_owned_input')
-    job=login.OwnedJob();child=None;clean=False
+    if failure_observation is not None and (type(failure_observation) is not dict or failure_observation):
+        raise ValueError('selected_probe_observation_sink')
+    if failure_observation is not None:
+        failure_observation.update(probe_observation(None,None,send_cap))
+    job=login.OwnedJob();child=None;clean=False;primary=None
     credentials=bytearray((password_fixture.ACCOUNT+'\n'+password_fixture.PASSWORD+'\n').encode('ascii'))
     try:
         with tempfile.TemporaryFile(dir=temporary) as output:
             child=subprocess.Popen([str(binary),str(port),str(send_cap)],cwd=temporary,
                 stdin=subprocess.PIPE,stdout=output,stderr=subprocess.DEVNULL)
-            job.assign(child)
-            child.communicate(input=credentials,timeout=25)
-            if child.returncode!=0 or os.fstat(output.fileno()).st_size>8192:
-                raise ValueError('selected_private_probe_failed')
-            output.seek(0)
-            result=admit_probe(json.loads(output.read(8193)),send_cap)
+            try:
+                job.assign(child)
+                child.communicate(input=credentials,timeout=25)
+                if child.returncode!=0 or os.fstat(output.fileno()).st_size>8192:
+                    raise ValueError('selected_private_probe_failed')
+                output.seek(0)
+                result=admit_probe(json.loads(output.read(8193)),send_cap)
+            finally:
+                if failure_observation is not None:
+                    failure_observation.update(probe_observation(child,output,send_cap))
+    except BaseException as error:
+        primary=error
+        raise
     finally:
         for i in range(len(credentials)):credentials[i]=0
-        if child is not None:
-            pipe_clean=activation.close_streams([child.stdin]) if child.stdin is not None else True
-            try:clean=job.stop(child) and pipe_clean
-            finally:
-                if job.handle:
-                    try:job.kernel.CloseHandle(job.handle)
-                    finally:job.handle=None
-        elif job.handle:
-            clean=bool(job.kernel.CloseHandle(job.handle));job.handle=None
+        cleanup_exception=False
+        try:
+            if child is not None:
+                pipe_clean=activation.close_streams([child.stdin]) if child.stdin is not None else True
+                try:clean=job.stop(child) and pipe_clean
+                finally:
+                    if job.handle:
+                        try:clean=bool(job.kernel.CloseHandle(job.handle)) and clean
+                        finally:job.handle=None
+            elif job.handle:
+                clean=bool(job.kernel.CloseHandle(job.handle));job.handle=None
+        except BaseException:
+            clean=False;cleanup_exception=True
+            if primary is None:raise
+        finally:
+            if failure_observation is not None:
+                if not failure_observation:
+                    failure_observation.update(probe_observation(None,None,send_cap))
+                failure_observation['owned_probe_cleanup_complete']=clean
+                failure_observation['owned_probe_cleanup_outcome']=('EXCEPTION' if cleanup_exception
+                    else 'COMPLETE' if clean else 'REFUSED')
     if not clean:raise ValueError('selected_probe_owned_cleanup')
     return result
 
@@ -218,8 +300,24 @@ class SelectedScope:
         if login.probe_identity(self.binary)!=proof['selected_probe_build']['binary']:
             raise ValueError('selected_probe_binary_changed')
         proof['client_login_attempted']=True
-        proof['selected_probe_result']=run_probe(self.binary,ports[1],self.send_cap,temporary)
-        proof['selected_runtime_after_probe']=observe()
+        failed=False;observation={}
+        try:
+            proof['selected_probe_result']=run_probe(self.binary,ports[1],self.send_cap,temporary,observation)
+        except Exception:
+            if not observation:observation.update(probe_observation(None,None,self.send_cap))
+            failed=True;proof['selected_probe_failure_observation']=observation
+            raise
+        finally:
+            try:
+                proof['selected_runtime_after_probe']=observe()
+                proof['selected_runtime_after_probe_verified']=True
+            except Exception:
+                proof['selected_runtime_after_probe_verified']=False
+                proof['selected_runtime_after_probe_failure']='OWNED_RUNTIME_OBSERVER_REFUSED'
+                if not failed:
+                    if not observation:observation.update(probe_observation(None,None,self.send_cap))
+                    proof['selected_probe_failure_observation']=observation
+                    raise
         return True
 
 

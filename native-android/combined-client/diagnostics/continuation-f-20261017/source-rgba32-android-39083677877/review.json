@@ -1,0 +1,145 @@
+{
+  "ELFs_independently_parsed": {
+    "arm64-v8a": {
+      "ELF64_little_endian_PIE": true,
+      "bytes": 113760,
+      "interpreter": "/system/bin/linker64",
+      "machine": 183,
+      "needed": [
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libz.so"
+      ],
+      "program_headers": 11,
+      "sha256": "d2d54526f8cc2a0281cb7a659c7c09413637e1f51d8d99f2fcf81e0a7004f8d9"
+    },
+    "x86_64": {
+      "ELF64_little_endian_PIE": true,
+      "bytes": 115296,
+      "interpreter": "/system/bin/linker64",
+      "machine": 62,
+      "needed": [
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libz.so"
+      ],
+      "program_headers": 11,
+      "sha256": "e16c0a27ee53d31e28e2a875bd75380d9ee441f97a5c4a10a011cdbae4824a19"
+    }
+  },
+  "actual_execution": {
+    "ABI": "x86_64",
+    "Android_API": 33,
+    "CPU_owners_retired_before_GPU_lease_readback": true,
+    "RGBA32_uploads": 2,
+    "cancelled_uploads": 6,
+    "checks": 367,
+    "contexts_created_destroyed": [
+      1,
+      1
+    ],
+    "device_path_cleanup_verified": true,
+    "generated_deleted": [
+      9,
+      9
+    ],
+    "images": 20,
+    "legacy_smoke_uploads": 1,
+    "native_process_completion_and_cleanup_verified": true,
+    "pending_journal_recovered": true,
+    "post_source_artifact_admission_verified": true,
+    "provider_holds_drops": [
+      2,
+      2
+    ],
+    "readbacks": 18,
+    "registry_retains_releases": [
+      1,
+      1
+    ],
+    "software_emulator_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "source_retired_before_RGBA32_upload": true,
+    "surfaces_created_destroyed": [
+      1,
+      1
+    ],
+    "tracked_module_calloc_blocks_live": 0
+  },
+  "all_members_safe_unique_CRC_and_SHA_verified": true,
+  "archive": {
+    "bytes": 154504,
+    "sha256": "55eb2466fc7701c6bc49d736677321c29b2672754e673aabdb4f88c952413bea"
+  },
+  "archive_members": 92,
+  "artifact_id": 12119502992,
+  "build_receipt": {
+    "bytes": 26068,
+    "sha256": "f4c74a88874f02c3724134b1d2a55dce762c6296d22aca9d7cc83186cfc296b1"
+  },
+  "compiler_dependency_paths_canonicalized_and_equal_recorded_map": true,
+  "compiler_recorded_project_dependencies_per_ABI": {
+    "arm64-v8a": 25,
+    "x86_64": 25
+  },
+  "execution_receipt": {
+    "bytes": 3949,
+    "sha256": "1af2fe3876e2fa53ae35c42392b42d5824d4d4b8105eaccc0bb0f210890b93e1"
+  },
+  "independent_readback": {
+    "bytes": 1488,
+    "method": "Decode actual retained BGRA32 DDS bytes to RGBA plus finite red DXT1 control, then concatenate the declared two-epoch legacy/grey/pattern order. No native binary or original source function executed.",
+    "mips_and_epochs": 18,
+    "sha256": "91bd157f743e7c25d2b43ba36b93144318f5d885c975e25ac9b19790b912163b"
+  },
+  "job_id": 117545684612,
+  "measured_executed_Android_x86_64_sizes": {
+    "GPU_CPU_owner_bytes": 1328,
+    "declared_GPU_external_bytes": 33554432,
+    "declared_lease_external_bytes": 50331648,
+    "embedded_report_bytes": 176,
+    "global_RSS_or_budget_fit": false,
+    "growth_per_GPU_owner_bytes": 32,
+    "new_adapter_control_reserve_bytes": 16384,
+    "prior_layout_probe_bytes": 1296
+  },
+  "passed": true,
+  "reviewer_actions": {
+    "API_read_only_identity_checked": true,
+    "Android_or_server_executed_by_reviewer": false,
+    "ELF_and_readback_parsed_without_execution": true,
+    "compiler_or_native_qualifier_replayed": false,
+    "single_parent_download_reused": true,
+    "source_Git_and_artifact_byte_admission": true
+  },
+  "run_id": 39083677877,
+  "schema": "coh-f-source-rgba32-android-review-v1",
+  "scope": {
+    "Android_sanitizers_enabled": false,
+    "MM_recorded_system_dependency_files": 0,
+    "NDK_recorded_selected_files": 26,
+    "actor_authority": false,
+    "application_context_adopted": false,
+    "arm64_built_only": true,
+    "complete_NDK_standard_header_toolchain_closure_independently_verified": false,
+    "current_namespace_admitted": false,
+    "default_identity_admitted": false,
+    "loaded_platform_mapping_verified": false,
+    "material_authority": false,
+    "old602_or_host_qualifier_replayed": false,
+    "physical_device_executed": false,
+    "platform_library_files_before_after_equal": true,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "source_Git_hashes_verified": 28,
+  "source_driver_matches_separately_reviewed_Android_cleanup_delta": true,
+  "source_revision": "c98bb60fe187458f328a15882089ea742ce6e853",
+  "source_tree": "48c3c041a591e736ef5a8e2f9091f4cf1a6aad67",
+  "total_member_bytes": 304156
+}

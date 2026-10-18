@@ -1,0 +1,32 @@
+{
+  "artifacts": [
+    {
+      "id": 12120186041,
+      "name": "db-threadname-selected-play-cap7-c98bb60fe187458f328a15882089ea742ce6e853",
+      "size_in_bytes": 7038,
+      "expired": false,
+      "digest": "sha256:2eba7edfcf58d2c7b85d78c8404be9dac5d0852420724637fe4457824e69ddd1",
+      "workflow_run": {
+        "id": 39083677928,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "c98bb60fe187458f328a15882089ea742ce6e853"
+      }
+    },
+    {
+      "id": 12119813208,
+      "name": "db-threadname-selected-play-cap1024-c98bb60fe187458f328a15882089ea742ce6e853",
+      "size_in_bytes": 7040,
+      "expired": false,
+      "digest": "sha256:15ab8bcaf5120c7da0974811e6142387e23b2b136a3962f1d6f9c94f3f745fc4",
+      "workflow_run": {
+        "id": 39083677928,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "c98bb60fe187458f328a15882089ea742ce6e853"
+      }
+    }
+  ]
+}

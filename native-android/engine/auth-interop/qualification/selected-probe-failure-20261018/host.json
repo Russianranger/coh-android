@@ -1,0 +1,72 @@
+{
+  "schema": "coh-selected-probe-failure-source-qualification-v1",
+  "passed": true,
+  "source_commit": "3ba4338e5456567479544e5ffd29138ec88256e6",
+  "runtime_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py": "7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py": "103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "f2322608ef47bd549ed8207ab8094f1d7f1227857dcfdb96fec76816e7aeef39",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_selected_play.py": "0c63ca42c97464abb7c4df651ea622efcd3aabecb8f73a317505379854f5796a",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_selected_play.py": "273d6e4b403e4d8b2c2d6fddf50d0c3aa81a8d024f3512ae2bcb1684b2451108",
+    "native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py": "40a83e3a93fb1481a4ad2e0d0978e9a84aa7e7fc1dbeea9dac1ab5afe9ff2527",
+    "native-android/engine/auth-interop/deployment/windows/shard_play_probe.c": "b648dd10915fd081bef49e8521519da5f0bf1d96c75299b072e03e0a67d9d615"
+  },
+  "additional_source_sha256": {
+    "native-android/engine/auth-interop/deployment/test_selected_probe_failure.py": "243a630542cbc69d3b013386b7cd7ab93d82c73437c3b76c67e6caf2b0bd64b3",
+    "native-android/engine/auth-interop/deployment/SELECTED-PROBE-FAILURE-OBSERVATION.md": "8f9f6913ea2aa6a5ffea6111f42c4e47c4db6caa2b8df37077063e048a2d8f61",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+  },
+  "host_validation": {
+    "command": "python -m unittest -v test_selected_probe_failure",
+    "methods": [
+      "test_fixed_state_enum_and_failure_projection_are_source_bound",
+      "test_malformed_extra_duplicate_types_bounds_and_live_child_are_refused_privately",
+      "test_actual_owned_child_projection_is_latched_before_stop_even_on_late_cleanup_error",
+      "test_primary_probe_exception_survives_stop_and_handle_close_exceptions",
+      "test_success_validation_is_unchanged_and_does_not_publish_failure_field",
+      "test_postprobe_runtime_check_runs_on_all_outcomes_and_preserves_first_failure"
+    ],
+    "passed_methods": 6,
+    "elapsed_seconds": 0.021,
+    "compiler_SQL_network_or_original_service_executed": false
+  },
+  "unchanged_positive_admit_probe_function_sha256": "dff78231119ceab6fea3a44f3804c74caf6e66477d437e0ee01ed46a139ef61f",
+  "unchanged_native_probe_sha256": "b648dd10915fd081bef49e8521519da5f0bf1d96c75299b072e03e0a67d9d615",
+  "native_failure_input_schema_exact_keys": 20,
+  "prior_actual_cases": {
+    "run_id": 39083677928,
+    "cases": [
+      {
+        "send_cap": 1024,
+        "artifact_id": 12119813208,
+        "artifact_bytes": 7040,
+        "artifact_sha256": "15ab8bcaf5120c7da0974811e6142387e23b2b136a3962f1d6f9c94f3f745fc4",
+        "receipt_bytes": 32252,
+        "receipt_sha256": "175650c6bfe1cdf2a064f58f320a73cb2f0ebc70ed58005ee581461ca7fc9a07",
+        "fixed_failure": "selected_private_probe_failed",
+        "native_return_or_stdout_size_not_retained": true,
+        "native_inner_cause_unknown": true
+      },
+      {
+        "send_cap": 7,
+        "artifact_id": 12120186041,
+        "artifact_bytes": 7038,
+        "artifact_sha256": "2eba7edfcf58d2c7b85d78c8404be9dac5d0852420724637fe4457824e69ddd1",
+        "receipt_bytes": 32252,
+        "receipt_sha256": "830dd9933529f4ec8c028d802f7da29f6afd842db38ede5086f5221f29d679d1",
+        "fixed_failure": "selected_private_probe_failed",
+        "native_return_or_stdout_size_not_retained": true,
+        "native_inner_cause_unknown": true
+      }
+    ],
+    "single_root_download_copy_reused": true
+  },
+  "first_probe_error_preserved_when_job_cleanup_or_after_observer_also_fails": true,
+  "owned_service_observation_runs_after_every_attempted_probe_outcome": true,
+  "raw_stdout_hash_text_identifiers_or_exception_messages_exported": false,
+  "native_protocol_crypto_server_PE_profile_or_timeout_changed": false,
+  "old_Auth_native_or_composition_qualifier_reexecuted": false,
+  "new_actual_selected_runtime_executed": false,
+  "actual_live_selected_grant_verified": false,
+  "DB_or_Map_login_attempted": false
+}

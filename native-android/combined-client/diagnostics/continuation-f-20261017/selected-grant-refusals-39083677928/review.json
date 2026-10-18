@@ -1,0 +1,119 @@
+{
+  "API_outcome": "Both fresh send-cap jobs fail actual step8 after all new host controls and exact artifact recovery steps pass. Fixed receipt uploads succeed.",
+  "actor_publication": false,
+  "authenticated_DB_Map_handoff_verified": false,
+  "cases": {
+    "1024": {
+      "DB_Map_handoff_attempted_or_verified": false,
+      "archive": {
+        "bytes": 7040,
+        "sha256": "15ab8bcaf5120c7da0974811e6142387e23b2b136a3962f1d6f9c94f3f745fc4"
+      },
+      "artifact_id": 12119813208,
+      "failure": "selected_private_probe_failed",
+      "historical_Auth_pins_also_equal_original_28fe_revision": 34,
+      "post_failure": {
+        "Auth_and_SQL_post_probe_generations_observed": false,
+        "Db_generation_equal_around_numeric_diagnostic": true,
+        "full_runtime_after_probe_snapshot_retained": false,
+        "inner_probe_failure_JSON_or_returncode_retained": false,
+        "owned_service_firewall_LocalDB_private_cleanup_recorded_true": true,
+        "source_and_candidate_stability_recorded_true": true
+      },
+      "pre_probe": {
+        "Auth_Db_SQL_start_generations_equal_before_probe": true,
+        "Auth_Db_loopback_channel": true,
+        "Auth_pid": 8984,
+        "Db_pid": 9212,
+        "ODBC_3_connections_opened_closed": true,
+        "SQL_pid": 3300,
+        "actual_Ready_marker": true,
+        "actual_game_user_tables": 99,
+        "owned_UDP7000_and_IPv4_firewall": true
+      },
+      "receipt": {
+        "bytes": 32252,
+        "sha256": "175650c6bfe1cdf2a064f58f320a73cb2f0ebc70ed58005ee581461ca7fc9a07"
+      },
+      "selected_grant_verified": false,
+      "source_hash_groups_verified_Git": {
+        "crypto_core": 28,
+        "historical_Auth": 34,
+        "native_probe": 7,
+        "selected_candidate": 7,
+        "selected_scope": 2
+      },
+      "source_revision": "c98bb60fe187458f328a15882089ea742ce6e853",
+      "unique_current_source_Git_pins": 41
+    },
+    "7": {
+      "DB_Map_handoff_attempted_or_verified": false,
+      "archive": {
+        "bytes": 7038,
+        "sha256": "2eba7edfcf58d2c7b85d78c8404be9dac5d0852420724637fe4457824e69ddd1"
+      },
+      "artifact_id": 12120186041,
+      "failure": "selected_private_probe_failed",
+      "historical_Auth_pins_also_equal_original_28fe_revision": 34,
+      "post_failure": {
+        "Auth_and_SQL_post_probe_generations_observed": false,
+        "Db_generation_equal_around_numeric_diagnostic": true,
+        "full_runtime_after_probe_snapshot_retained": false,
+        "inner_probe_failure_JSON_or_returncode_retained": false,
+        "owned_service_firewall_LocalDB_private_cleanup_recorded_true": true,
+        "source_and_candidate_stability_recorded_true": true
+      },
+      "pre_probe": {
+        "Auth_Db_SQL_start_generations_equal_before_probe": true,
+        "Auth_Db_loopback_channel": true,
+        "Auth_pid": 7972,
+        "Db_pid": 3864,
+        "ODBC_3_connections_opened_closed": true,
+        "SQL_pid": 9108,
+        "actual_Ready_marker": true,
+        "actual_game_user_tables": 99,
+        "owned_UDP7000_and_IPv4_firewall": true
+      },
+      "receipt": {
+        "bytes": 32252,
+        "sha256": "830dd9933529f4ec8c028d802f7da29f6afd842db38ede5086f5221f29d679d1"
+      },
+      "selected_grant_verified": false,
+      "source_hash_groups_verified_Git": {
+        "crypto_core": 28,
+        "historical_Auth": 34,
+        "native_probe": 7,
+        "selected_candidate": 7,
+        "selected_scope": 2
+      },
+      "source_revision": "c98bb60fe187458f328a15882089ea742ce6e853",
+      "unique_current_source_Git_pins": 41
+    }
+  },
+  "findings": [
+    "Observed service preparation is retained separately: Ready,99tables, owned channel/listener, ODBC and start-to-preprobe generations. Top final activation and selected-grant flags remain false.",
+    "Only the Db generation is bracketed again around the failure-time numeric observer. No Auth/SQL full runtime-after-probe snapshot is retained; cleanup truth does not retroactively supply that missing association.",
+    "The admitted source run_probe checks child nonzero OR stdout larger than8192 before reading/parsing stdout. The fixed parent failure establishes that branch, not an exact return code, Auth phase, typed failure enum or protocol cause. No native JSON is retained here.",
+    "Private stderr/logs/profile/credential/grant values are not exported. Old PE modal policy is intentionally not run for this derivative, so no assertion absence or source site is inferred.",
+    "No protocol, timeout, crypto, schema, profile or PE repair follows from these receipts. A source-only bounded fixed failure projection and failure-path generation observation need qualification before a further actual attempt."
+  ],
+  "normal_version_or_checksum_reference_admitted": false,
+  "retained_receipt_line_endings": "Original whole-file Windows CRLF bytes preserved in both Git blobs and ZIP members. Whitespace admission uses cr-at-eol; no content normalization.",
+  "reviewer_actions": {
+    "all41_unique_source_hashes_equal_run_Git_each_case": true,
+    "compiler_or_qualifier_replayed": false,
+    "exact_ZIP_member_and_receipt_byte_admission": true,
+    "private_or_raw_log_accessed": false,
+    "read_only_API_jobs_and_artifacts_checked": true,
+    "same_two_parent_downloads_reused": true,
+    "services_Auth_or_native_probe_replayed": false,
+    "workflow_dispatched": false
+  },
+  "run_id": 39083677928,
+  "schema": "coh-f-selected-grant-refusals-review-v1",
+  "selected_shard_play_verified": false,
+  "source_revision": "c98bb60fe187458f328a15882089ea742ce6e853",
+  "source_tree": "48c3c041a591e736ef5a8e2f9091f4cf1a6aad67",
+  "workflow": ".github/workflows/native-db-threadname-selected-play.yml",
+  "world_authority": false
+}

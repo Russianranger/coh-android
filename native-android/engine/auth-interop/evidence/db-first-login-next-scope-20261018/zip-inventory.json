@@ -1,0 +1,17 @@
+{
+  "schema": "coh-retained-zip-dependency-central-directory-audit-v1",
+  "roots": [
+    "/workspace/scratch/7ed1da2a7e55",
+    "/workspace/scratch/78494e933b7f"
+  ],
+  "files_seen": 1379,
+  "unique_inode_archives_scanned": 1379,
+  "central_directory_members": 27275,
+  "archive_bytes_total": 912655981,
+  "exact_basename_matches": [],
+  "unreadable_or_truncated_archives": [],
+  "payloads_extracted": false,
+  "new_download_performed": false,
+  "nested_member_archives_not_opened": true,
+  "whole_artifact_identity_admission_performed": false
+}

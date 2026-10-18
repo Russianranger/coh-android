@@ -1,0 +1,35 @@
+{
+  "schema": "coh-preserved-observed-android-history-v1",
+  "workers": {
+    "C": {
+      "ref": "refs/recovery/observed-android-20261018/c",
+      "tip": "f61dcdfe253e4e7a68d0a0f2c8c041af46cd1288",
+      "prerequisite": "cff73c9b8a49366c03fdfc544ee3ee7e288e89cb"
+    },
+    "D": {
+      "ref": "refs/recovery/observed-android-20261018/d",
+      "tip": "b5eea30274460c4bf61c7a640374af1729666e2f",
+      "prerequisite": "29682df9d84d47f78dcb93ccec2db687308c4eef"
+    },
+    "E": {
+      "ref": "refs/recovery/observed-android-20261018/e",
+      "tip": "4d6ba1733a3a32fca96beb844507cddd407d2b90",
+      "prerequisite": "2c8acfb8498dd496d342e314e634f02719ac868d"
+    },
+    "F": {
+      "ref": "refs/recovery/observed-android-20261018/f",
+      "tip": "2ac73b10bc6a548a73dd160192ed2aadaf908974",
+      "prerequisite": "36d4f25ccb9d73ba0b4cc7e0ca9664a429f4125e"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/observed-android-20261018/coordinator",
+      "tip": "a6330d00cbc8bfe93c37dc0db3f5b2ca5c379a2a",
+      "prerequisite": "c98bb60fe187458f328a15882089ea742ce6e853"
+    }
+  },
+  "bundle": "worker-observed-android-history.bundle",
+  "bytes": 369099,
+  "sha256": "d262b4f9d536e0b614c2dff508ac71e053acf351a3d42ebf6a841fb46415c965",
+  "verification": "The bundle contains these 5 refs:\nf61dcdfe253e4e7a68d0a0f2c8c041af46cd1288 refs/recovery/observed-android-20261018/c\nb5eea30274460c4bf61c7a640374af1729666e2f refs/recovery/observed-android-20261018/d\n4d6ba1733a3a32fca96beb844507cddd407d2b90 refs/recovery/observed-android-20261018/e\n2ac73b10bc6a548a73dd160192ed2aadaf908974 refs/recovery/observed-android-20261018/f\na6330d00cbc8bfe93c37dc0db3f5b2ca5c379a2a refs/recovery/observed-android-20261018/coordinator\nThe bundle requires these 6 refs:\ne54ceb26cf5dbd6ca74442d2de196827c82265fe \n29682df9d84d47f78dcb93ccec2db687308c4eef \nc98bb60fe187458f328a15882089ea742ce6e853 \ncff73c9b8a49366c03fdfc544ee3ee7e288e89cb \n36d4f25ccb9d73ba0b4cc7e0ca9664a429f4125e \n2c8acfb8498dd496d342e314e634f02719ac868d \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-observed-android-history.bundle is okay\n",
+  "scope": "Actual typed RGBA32 Android13x86 execution with bothABI builds and independent byte admission; both real selected-grant refusal receipts with healthy preprobe readiness but unknown inner cause; new fixed failure projection/always-run postprobe generation source and six controls; exact conditional next-command source contract and original version/reference/development-owner design. A/B unchanged qualified histories remain in earlier seven-ref bundle; new callback profile and new Auth-to-DB owner are still unqualified separate worktree source. No world/player/ACK/APK/Thor or normal version/checksum authority."
+}

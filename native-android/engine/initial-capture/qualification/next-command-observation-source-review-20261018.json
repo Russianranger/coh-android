@@ -1,0 +1,244 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "complete_initial_character": false,
+  "conditional_next_steps": {
+    "NONE": "Resolve existing first failure/loan stage; no body parser without decoded name.",
+    "SERVER_ALLENTS_HEADER": "Source-qualify exact header/schema/profile stage; do not guess failed scalar from status.",
+    "SERVER_GAME_CMDS": "Only after genuine name, source-qualify a single first-inner Pack1 enum or zero-end observation in the same loan, then close before body; no scan/marker loop/skip/continuation.",
+    "SERVER_UPDATE": "Observe same-source finalpacket full_update argument/ready/sent_self/viewedEntity association; do not reinterpret delta as initial ALLENTS.",
+    "UNKNOWN": "Resolve producing source/enum/profile association; no guessed mapping or fallback dispatcher.",
+    "other_known": "Identify complete original producer/consumer/bounded body/end and history/dictionary dependencies after the actual name is known.",
+    "raw_ALLENTS_observed": "Reuse existing whole initial diagnostic with exact bytes/bits and authentic required costume/shared/dynamic/etc owners."
+  },
+  "current_diagnostic": {
+    "actual_run_39081284657_enum_available": false,
+    "actual_run_statement_source": "Parent reports the verified historical18-key COMMAND/UNSUPPORTED result; no new artifact/runtime inspected in this read-only task.",
+    "different_unknown_values_distinguished": false,
+    "known_source_names": 231,
+    "nested_game_command_observed": false,
+    "normalized_outer_command_2_name": "SERVER_UPDATE",
+    "numeric_status_2_name": "COH_UNSUPPORTED",
+    "numeric_status_identifies_opcode": false,
+    "successful_raw_ALLENTS_is_a_refusal": false
+  },
+  "current_dictionary_semantics_admitted": false,
+  "existing_proof_preserved": {
+    "bytes": 6000,
+    "path": "native-android/engine/initial-capture/qualification/initial-capture-command-classification-f7d69537f.json.gz",
+    "rerun": false,
+    "sha256": "fe7a63e2fa2d629d5cbcd868da26325e14509876a1f3861d3e9d888b315b5c1a"
+  },
+  "function_extraction": "Lexical brace walk ignores comments, string/character literal braces and escapes; original LF-normalized whole bodies unchanged.",
+  "new_parser": false,
+  "new_runtime_or_capture": false,
+  "new_source_hook": false,
+  "protocol_behavior_changed": false,
+  "review_date": "2026-10-18",
+  "reviewed_C_revision": "cff73c9b8a49366c03fdfc544ee3ee7e288e89cb",
+  "reviewed_root_tool": {
+    "bytes": 15392,
+    "path": "native-android/combined-client/tools/capture_local_initial.c",
+    "read_from_exact_Git_blob": true,
+    "revision": "dfc843bb2f538956df843e7b117d60cd38bdfd90",
+    "sha256": "0b44989efcd3a43fee832ebecd7d8b840e9fdc16ee3d0cfe42c4d9e51b16db82"
+  },
+  "schema": "coh-next-command-observation-source-review-v1",
+  "scope": "Read-only original source/diagnostic dependency contract. No opcode inferred for actual39081284657, no implementation, qualifier/runtime/capture replay.",
+  "source_findings": {
+    "ALLENTS_dispatcher_sends_ACK_before_entReceiveUpdate": true,
+    "ALLENTS_writes_full_update_ID_UPDATE_does_not": true,
+    "GROUPS_then_next_application_ALLENTS_guaranteed": false,
+    "dynamic_definition_send_requires_IN_GAME_in_sendWorldChanges": true,
+    "entNetUpdate_is_later_simulation_not_packet_parser": true,
+    "existing_source_native_whole_initial_diagnostic_already_present": true,
+    "final_entFinishUpdate_terminator_pre_pktSend_binding_required": true
+  },
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "native-android/engine/character-data/coh_character_data.h": {
+      "bytes": 4472,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0"
+    },
+    "native-android/engine/character-dictionary/POWER_SEQUENCE_DEPENDENCIES.md": {
+      "bytes": 9329,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "746c69e379371d13f183428c89ddedbd4382b70983ce437dc023528c7257abf6"
+    },
+    "native-android/engine/character-dictionary/SHARED_WIRE_OBSERVATION_PROPOSAL.md": {
+      "bytes": 10848,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "07522bf71913a4c2d0cc4cb46b9601eb70641869e626e83cf41c86cacbc12d10"
+    },
+    "native-android/engine/character-dictionary/WHOLE_INITIAL_INPUTS.md": {
+      "bytes": 9978,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "bb17a552fc10a21f4c214171402a16fea1ee265d0d48531af6452688988ac558"
+    },
+    "native-android/engine/initial-capture/coh_initial_capture.h": {
+      "bytes": 7837,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "962b81274acbbcabbba6accb00ce46f54d802dc028355e35af140a334820be55"
+    },
+    "native-android/engine/initial-capture/coh_initial_command_kinds.inc": {
+      "bytes": 13562,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e"
+    },
+    "native-android/engine/initial-capture/coh_initial_local.c": {
+      "bytes": 7223,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "c10545b32441b1ad0c90c845e023b6d178271d5062554aa3a8035b723e1e4ea8"
+    },
+    "native-android/engine/initial-capture/coh_initial_map.c": {
+      "bytes": 16338,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "0fe03ce430d55f8d38f20ac5a8bee36e7e9a439a01231b9ca148be7226d41d5f"
+    },
+    "native-android/engine/initial-capture/command-source-pins.json": {
+      "bytes": 272,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "3e99ac30e5448fb756728a742ffd48ada3920b78c6b9f7099635cd17634c4496"
+    },
+    "native-android/engine/initial-update/coh_initial_update.c": {
+      "bytes": 8521,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "268b2bf5f4ec96e344df85cc266dedd52c54f954d48f86a88191de0a4047dc87"
+    },
+    "native-android/engine/initial-update/coh_initial_update.h": {
+      "bytes": 4277,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "bfe30a309d36dbcdde96222d67016b0da82320bbe6839cb4c864bcd1f3e0bb3b"
+    },
+    "native-android/engine/initial-update/coh_initial_update_attributes.c": {
+      "bytes": 10007,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "cf07f9af24ce8cd141b4791147380374cdd126d29a71ea1a59f4f3b1fc63142d"
+    },
+    "native-android/engine/initial-update/coh_initial_update_attributes.h": {
+      "bytes": 2383,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "e5c456c30d97551cf5da65d21bce6b8eb08f61955543da7102cefcc87d303062"
+    },
+    "upstream/ouroboros/Common/comm_game.h": {
+      "bytes": 24649,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12"
+    },
+    "upstream/ouroboros/Common/entity/character_net.c": {
+      "bytes": 35661,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091"
+    },
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": {
+      "bytes": 73982,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd"
+    },
+    "upstream/ouroboros/Game/src/entity/entrecv.c": {
+      "bytes": 149058,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "bytes": 171294,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    },
+    "upstream/ouroboros/MapServer/src/group/groupnetsend.c": {
+      "bytes": 16285,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_base.h": {
+      "bytes": 10047,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": {
+      "bytes": 71802,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": {
+      "bytes": 21748,
+      "equal_reviewed_Git_blob": true,
+      "sha256": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+    }
+  },
+  "whole_original_function_sha256_lf": {
+    "Common/entity/character_net.c:character_SendPowers": {
+      "bytes_lf": 4301,
+      "end_line_lf": 737,
+      "first_line_lf": 614,
+      "sha256_lf": "09180c33c2458de745e770fe71c6f8aee09ffcbb76bd304eed0b7f4361297585"
+    },
+    "Game/src/clientcomm/clientcomm.c:commHandleMessage": {
+      "bytes_lf": 7873,
+      "end_line_lf": 1633,
+      "first_line_lf": 1437,
+      "sha256_lf": "7131ab3de5297b91234ba888480caaaeef78b24af2bfe83ab82394c4e3c2281d"
+    },
+    "Game/src/clientcomm/clientcomm.c:handleGameCmd": {
+      "bytes_lf": 20680,
+      "end_line_lf": 1435,
+      "first_line_lf": 1082,
+      "sha256_lf": "9961725c1fa29f40742affb812389f19082b7026e4b5fd85cda00f034e8817c3"
+    },
+    "Game/src/clientcomm/clientcomm.c:receiveByteAlignmentTag": {
+      "bytes_lf": 81,
+      "end_line_lf": 1069,
+      "first_line_lf": 1066,
+      "sha256_lf": "a5a2c9e94229beb1800cc294728da9dd299cb47c746de555758f5c5ea5a51623"
+    },
+    "Game/src/entity/entrecv.c:entNetUpdate": {
+      "bytes_lf": 3117,
+      "end_line_lf": 4161,
+      "first_line_lf": 4063,
+      "sha256_lf": "00f9c3b97768d107eae655b00b5adcffbade38731114f9ddf9dcf7f14fdc00d0"
+    },
+    "Game/src/entity/entrecv.c:entReceiveUpdate": {
+      "bytes_lf": 8375,
+      "end_line_lf": 3883,
+      "first_line_lf": 3626,
+      "sha256_lf": "b1686fce23faabb59610270b4f1be87565323aa2c91e2a486d8f2d512a17d1ed"
+    },
+    "MapServer/src/entity/entsend.c:entFinishUpdate": {
+      "bytes_lf": 7222,
+      "end_line_lf": 1845,
+      "first_line_lf": 1656,
+      "sha256_lf": "043259c9a6cfd91b4e89f80dfe08ab607433c84d14d3bf4ea080acfd212e0c98"
+    },
+    "MapServer/src/entity/entsend.c:entSendUpdate": {
+      "bytes_lf": 28705,
+      "end_line_lf": 4642,
+      "first_line_lf": 3824,
+      "sha256_lf": "ebd18115f2d4f73cfdc2daf56a9df3399e64d463dfd92c95f8cf7820e0144524"
+    },
+    "MapServer/src/group/groupnetsend.c:sendDynamicDefChanges": {
+      "bytes_lf": 475,
+      "end_line_lf": 506,
+      "first_line_lf": 491,
+      "sha256_lf": "9ce8a2336ead33578978d5d18e354b82abbf3997f7a672f7e22550f16dd6bf5b"
+    },
+    "MapServer/src/group/groupnetsend.c:worldSendUpdate": {
+      "bytes_lf": 4181,
+      "end_line_lf": 466,
+      "first_line_lf": 325,
+      "sha256_lf": "7659b6de769a01956efd4b138ff4341c100f209c656c9d121b4649f2cb2b21c1"
+    },
+    "MapServer/src/svr/svr_tick.c:sendWorldChanges": {
+      "bytes_lf": 649,
+      "end_line_lf": 1591,
+      "first_line_lf": 1575,
+      "sha256_lf": "4a957618d9e68efe459489062249f29fbfde401d570673697c7962baa52157f8"
+    },
+    "MapServer/src/svr/svr_tick.c:svrTickDoNetSend": {
+      "bytes_lf": 7035,
+      "end_line_lf": 1789,
+      "first_line_lf": 1593,
+      "sha256_lf": "fe03a22046e4b08ee033fc8070adf68f91eed76c8a5aeff0f021107611a5d153"
+    }
+  }
+}

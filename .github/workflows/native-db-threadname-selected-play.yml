@@ -1,4 +1,4 @@
-name: Live selected-shard grant with normal and capped writes
+name: Selected-shard grant with bounded failure diagnostics
 'on':
   push:
     branches:
@@ -28,10 +28,10 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    - name: Check only new typed selected-candidate composition controls
+    - name: Check only new bounded native failure and after-probe controls
       run: |
-        python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_threadname_selected_play.py -v
-        if ($LASTEXITCODE -ne 0) { throw 'New selected-candidate controls failed' }
+        python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_selected_probe_failure.py -v
+        if ($LASTEXITCODE -ne 0) { throw 'New failure-observation controls failed' }
     - name: Recover exact accepted AuthServer and independently admitted new DbServer build
       shell: bash
       env:
@@ -158,4 +158,3 @@ jobs:
       matrix:
         send_cap:
         - 1024
-        - 7

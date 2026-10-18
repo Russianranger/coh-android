@@ -7,8 +7,8 @@ Git links, existing bundles, accepted APKs and user profiles were preserved.
 
 ## Current qualification checkpoint
 
-Last verified remote publication: `3b6bd0de1b728c6e2e8bc8f11e5af2b92908dfbc`
-(tree `a64cca6d69ac366b8daa62f33a452de343de14b1`). Reviewed source below
+Last verified remote publication: `c98bb60fe187458f328a15882089ea742ce6e853`
+(tree `48c3c041a591e736ef5a8e2f9091f4cf1a6aad67`). Reviewed source below
 is integrated locally for guarded publication. Chronological sections retain
 their original pending states; this checkpoint supersedes them.
 
@@ -18,17 +18,31 @@ their original pending states; this checkpoint supersedes them.
 | Graphical backup | Actual39074781817 succeeded; exact artifact12117765534 is580433B SHA5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b; complete same-snapshot PG18 dump2766533B SHA2a35bd9224e32dbdbfbb5e0d4331afd780745d2a6504a783101bc6742044c4e6 | This admitted disposable fixture was reused by39081284657. Fixture identity is not a live scene/player authority token; no unchanged capture rerun |
 | B — resources | Authentic seven default bodies retained. New RGBA32 codec c9c3de4b handles real grey without editing protected DXT loader:37904 checks/3584 original mip comparisons per release/ASan/UBSan. Immutable namespace28b has202426 checks/mode and real provider hold/drop controls | Complete source-selected ordered CLIENT namespace/provider/default/composite/swaps/LOD semantics and current generation. Controlled8936 path projection and22 authentic bodies do not establish complete current namespace or material authority |
 | C — initial player | New classifier f7d69537f derives231 fixed command names from two pinned original headers.22 public UDP scenarios/6120 checks plus5 owner scenarios/1797 checks per mode. Root tool dfc843bb2 passes151 checks/mode;12 exact20-field/v2 stdout files independently parsed and preserved | Actual refused enum remains unknown; synthetic GAME_CMDS/ALLENTS controls do not identify39081284657. Whole initial state, current dictionary/cache/costume/dynamic bindings and immutable actor publication remain open; no READY/RECEIVED_CHARACTER/full-update ACK |
-| D — encrypted auth | Actual readiness39081746280 at3b6 succeeded with exact new DbServer e14a11d8...185d3c: original DbReady, active shard,99 game tables, owned Auth/Db/SQL generations, reverse TCP/UDP, ODBC3/3,20 commands0 and complete cleanup. Artifact12119695553 is5288B SHAfc4fb3b97615afc29baa99ea08a06b6abb89ce4f222b1091ee636dff2f5525a3 | New typed selected-candidate composition13c36321e +6 source-only controls reviewed; narrow new normal/capped-write grant matrix prepared. No actual AC_PLAY_OK with this candidate, DB/Map login, nondevelopment version/checksum-reference or shipping replacement claim |
-| E — typed GPU | New genuine CohWrTexRgba32 upload166fdb04f, real provider/source retirement and CPU-owner retirement before lease readbacks:367 checks/18 GLES readbacks in each host release/ASan/UBSan;5 semantic mutations refused. Exact host21518B SHAe7d609502b1cfc45d1e1e876de2652087b14e1a9e490606560252af126b90ca8. Prior actual39078874776 built both Android ABIs and passed old standalone602/37 suite | New typed-source Android workflow builds both ABIs and executes only new controls on Android13x86; not yet run. Actual app window/context producer, current world/material/player, ARM64 execution and Thor remain open. No APK/app integration follows from standalone GLES |
+| D — encrypted auth | Actual readiness39081746280 succeeded with new DbServer e14a11d8...185d3c, original DbReady/active shard/99 tables, owned generations/channel/ODBC and cleanup. New selected-grant39083677928 atc98 passed all6 composition methods, exact Auth/Db/384-member crypto recovery and preprobe readiness in both caps1024/7; both then refused selected_private_probe_failed. Both exact32252B receipts/source/candidate/cleanup are preserved; inner failure and postprobe generation observations were absent | New fixed failure projection3ba4338e5 passes6 source-only controls; original native/parse/timeout error survives simultaneous cleanup failures, and after-probe Auth/Db/SQL/channel checks now always run. One cap1024 diagnostic retry prepared; no protocol/profile/timeout/crypto/server-PE change. AC_PLAY_OK/DB/Map/nondevelopment version/checksum remain unaccepted |
+| E — typed GPU | Actual39083677877 atc98 succeeded: NDKr28c/API26 builds ARM64+x86_64; Android13x86 SwiftShader executes367checks/18readbacks,2 source RGBA32+1 legacy upload,9 deletes, provider/CPU retirement and complete process/path/context/Surface cleanup. Exact154504B artifact12119502992 SHA55eb2466fc7701c6bc49d736677321c29b2672754e673aabdb4f88c952413bea,28 Git source pins/both ELF files/1488B readback independently admitted | ARM64 execution, actual app window/context producer, current world/material/player generation and Thor remain open. Qualification is standalone finite-provider pbuffer GLES; loaded driver mappings and full toolchain/RSS are unproved. No APK or app integration follows |
 | F — memory/startup | Independent source/receipt/ELF/readback reviews preserve all scopes. C initial owners now2384B (+32 classifier); GPU CPU owner1328B (+32) for both source kinds, report176B. Full recorded source aggregate remains charged through upload; new adapter16KiB reserve versus4x measured adapter stack8448B | No global fit/RSS/driver overlap proof. Namespace body payloads alone exceed declared fixture external budget295092B; controlled projection baseline100728832B already exceeds96MiB before inputs/new heap. Accepted startup remains387340ms with no speedup claim |
 
-New typed Android recipe reuses the exact tracked12308B default-body archive;
-no source body is downloaded again and no old602/sampler/host367 suite is replayed.
-The new selected-shard matrix reuses accepted AuthServer, independently admitted
-DbServer and only the384 immutable crypto members from retained old artifact
-12078663003. The old Auth-only workflow outcome is not reused as success. Matrix
-send caps7/1024 and receive11 concern application/syscall fragmentation, not
-proved wire TCP segmentation. The grant probe wipes/closes before DB login.
+The actual typed Android run reused the exact tracked12308B default-body archive;
+no source body was downloaded again and no old602/sampler/host367 suite replayed.
+The selected matrix reused accepted AuthServer, independently admitted DbServer
+and only the384 immutable crypto members from artifact12078663003; the old
+Auth-only workflow outcome was not reused as success. Send caps7/1024 and receive11
+concern application/syscall fragmentation, not proved wire TCP segmentation.
+The probe stops and wipes/closes before DB login. Its original failure detail
+was discarded on nonzero exit; this is an observation gap, not evidence of a
+specific protocol fault. The new narrow retry changes only bounded failure
+collection and always-run postprobe generation checks.
+
+Normal DB login additionally lacks genuine installed-version/provider and
+Ouroboros.exe checksum-reference inputs. The exact retained22-member runtime
+and1379 preexisting ZIP direct-member inventories yielded no exact named inputs;
+nested ZIPs were not recursively opened unless separately retained.
+A separately retained8642301B supplied coh.zip (SHA186a9787a6ed5fab2164829b2cc6bcc62a88fc9398e25cb3e01463b731eabb66)
+contains only Production_Client.exe, Cityofheroes.exe and a shortcut; no exact
+version.ini/Ouroboros.exe/texts.pigg. No file was renamed into a reference,
+version invented or profile changed. A new source-only one-shot real Auth grant
+to DB-list development-policy owner is in progress in separate worker paths;
+its code/runtime and normal-version/checksum acceptance are not established.
 
 All new worker histories are preserved in a separate bundle before publication.
 Gates25–27 remain open. Accepted Session0.3.0, Combined0.1.7 and Support0.2.0/code201,

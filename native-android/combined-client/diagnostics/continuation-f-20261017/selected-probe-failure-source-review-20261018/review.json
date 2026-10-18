@@ -1,0 +1,62 @@
+{
+  "DB_Map_login_attempted": false,
+  "actual_selected_grant_verified": false,
+  "all_recorded_source_pins_equal_implementation_Git_and_worker": true,
+  "evidence_commit": "b5eea30274460c4bf61c7a640374af1729666e2f",
+  "implementation_commit": "3ba4338e5456567479544e5ffd29138ec88256e6",
+  "old_qualifiers_or_new_tests_reexecuted_by_F": false,
+  "owner_reported_only": {
+    "compiler_SQL_network_original_service_executed": false,
+    "elapsed_seconds": 0.021,
+    "new_host_methods_passed": 6
+  },
+  "passed": true,
+  "positive_admit_probe_function_unchanged_from": "c98bb60fe187458f328a15882089ea742ce6e853",
+  "publication_authority": false,
+  "receipt": {
+    "bytes": 4345,
+    "path": "native-android/engine/auth-interop/qualification/selected-probe-failure-20261018/host.json",
+    "sha256": "7b80756e4f38269dbe64db40e623659a565a4290f2ff9ef23ecb5c80d12b79c2"
+  },
+  "review_findings": {
+    "cleanup_exception_remains_explicit_and_cannot_qualify_success": true,
+    "exact_20_native_keys_types_bounds_and_negative_flags_required": true,
+    "first_probe_error_preserved_if_post_observer_refuses": true,
+    "fixed_projection_from_same_completed_child_before_job_teardown": true,
+    "native_core_crypto_PE_profile_timeout_unchanged": true,
+    "no_raw_stdout_hash_identifiers_paths_or_exception_text_exported": true,
+    "only_fixed_state_names_protocol_classes_bounded_counts_booleans_exported": true,
+    "post_probe_owned_generation_channel_listener_shard_observation_runs_in_finally": true,
+    "primary_native_parse_timeout_exception_preserved_through_late_cleanup_error": true
+  },
+  "review_mode": "read-only source, Git blob, receipt byte, YAML and Python AST inspection; no qualifier or runtime replay",
+  "schema": "coh-f-selected-probe-failure-source-review-v1",
+  "verified_source_count": 10,
+  "verified_source_sha256": {
+    "native-android/engine/auth-interop/deployment/SELECTED-PROBE-FAILURE-OBSERVATION.md": "8f9f6913ea2aa6a5ffea6111f42c4e47c4db6caa2b8df37077063e048a2d8f61",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "f2322608ef47bd549ed8207ab8094f1d7f1227857dcfdb96fec76816e7aeef39",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py": "7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_selected_play.py": "0c63ca42c97464abb7c4df651ea622efcd3aabecb8f73a317505379854f5796a",
+    "native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py": "40a83e3a93fb1481a4ad2e0d0978e9a84aa7e7fc1dbeea9dac1ab5afe9ff2527",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py": "103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_selected_play.py": "273d6e4b403e4d8b2c2d6fddf50d0c3aa81a8d024f3512ae2bcb1684b2451108",
+    "native-android/engine/auth-interop/deployment/test_selected_probe_failure.py": "243a630542cbc69d3b013386b7cd7ab93d82c73437c3b76c67e6caf2b0bd64b3",
+    "native-android/engine/auth-interop/deployment/windows/shard_play_probe.c": "b648dd10915fd081bef49e8521519da5f0bf1d96c75299b072e03e0a67d9d615",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+  },
+  "workflow": {
+    "artifact_identity_download_extraction_crypto_recovery_native_runtime_and_receipt_only_upload_steps_unchanged": true,
+    "baseline": "c98bb60fe187458f328a15882089ea742ce6e853",
+    "bytes": 10889,
+    "changes": [
+      "workflow and test-step names",
+      "test_selected_probe_failure.py selection",
+      "send_cap matrix [1024]"
+    ],
+    "entire_delta_exactly_reconstructed": true,
+    "new_actual_runtime_dispatched_by_F": false,
+    "path": ".github/workflows/native-db-threadname-selected-play.yml",
+    "sha256": "1856df7cba16e83e44b9adb5ad428ab259413525d9bbdcbed9e09f72e498cf6b",
+    "two_embedded_Python_blocks_AST_parsed": true
+  }
+}

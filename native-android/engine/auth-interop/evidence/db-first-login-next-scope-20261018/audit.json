@@ -1,0 +1,110 @@
+{
+  "schema": "coh-db-first-login-next-scope-source-review-v1",
+  "source_only": true,
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "original_source_sha256": {
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppVersion.c": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppRegCache.c": "7ebc07233bec2bdc7ff0003bc3985687f5eac0dfc3fca007d2f335d11c33e637",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+    "upstream/ouroboros/DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+    "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+    "upstream/ouroboros/Common/account/AccountData.c": "038259178820f9a78040d39b4d8810933e31a67a798676fb37a0ca658682c391",
+    "upstream/ouroboros/Common/account/AccountData.h": "f1c82f2f428cf4e2ddeb8fe856bc5b76ca74fd55d72738bd7bff8ea6a89ed3b3",
+    "upstream/ouroboros/Common/dbserver/servercfg.c": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32",
+    "upstream/ouroboros/Common/dbserver/servercfg.h": "70976ce92de1669de6e345fc0b25b84e29b5ea59e220037f16774bf2b59925da",
+    "upstream/ouroboros/DBServer/src/mapxfer.c": "3eb5d5f5a157363bc39dea4545791d01032fedadfa8517cf2a2e1bb7fa54ad59",
+    "upstream/ouroboros/DBServer/src/svrmoncomm.c": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1"
+  },
+  "original_function_utf8_lf_sha256": {
+    "libs/UtilitiesLib/src/version/AppVersion.c::isExecutableInInstallDir": "11b3a64e77d16903c0137fef25221c5f59535838c3bb510953dcdc13b7bb7766",
+    "libs/UtilitiesLib/src/version/AppVersion.c::getDevVersion": "b605209ee97158d5eda20516819b12b6f710214973381839abe0b23544fd81a8",
+    "libs/UtilitiesLib/src/version/AppVersion.c::getVersionIniInternal": "cf364d94a190495f8130a464200d13fbf80e869da1d603f2711e931d50e2a6cf",
+    "libs/UtilitiesLib/src/version/AppVersion.c::getExecutablePatchVersionInternal": "d69a876529cd9e1ceb31283e772fb78606113ced5e015834410c2cd2eef54bdb",
+    "libs/UtilitiesLib/src/version/AppVersion.c::getCompatibleGameVersion": "2ca06c519b17eb5d8942d7434e83d6a741aa9715ecbe2f19759bfe725785622e",
+    "libs/UtilitiesLib/src/version/AppRegCache.c::regGetInstallationDir": "7b741c31f1c4aa42d40be6b15d856c946559ad06676078291cff6b7f91f9507c",
+    "libs/UtilitiesLib/src/version/AppRegCache.c::regSetInstallationDir": "1087ef930c2b0eb592c89a1eaae894b342a837fb2f3757c878b40a6bd5513df2",
+    "libs/UtilitiesLib/src/utils/file.c::fileIsUsingDevDataInternal": "e81f23175c6b432c73dd0ce9f3b84a892820f56d7e34a03116d16c39dcfdb757",
+    "libs/UtilitiesLib/src/utils/file.c::fileIsUsingDevData": "c75e70d664b32a93f7a3a63bbe8e0cbb1409ff5394663d3412dca35b3e2f0741",
+    "libs/UtilitiesLib/src/utils/file.c::isProductionMode": "65def8b4c2d84289dbe9a4dbb4c7fa98bf66ff4e69f1057e970015ae3b375c40",
+    "libs/UtilitiesLib/src/utils/FolderCache.c::FolderCacheChooseMode": "470e593a06c1c9aa8641407164966930f991b47a865eafcc728ff22be6ec76b3",
+    "DBServer/src/dbinit.c::startupInfo": "78e949a0fe12b4770112ef4731905ec2ac7bfb9d5c59fe7c9494469847d0b895",
+    "Common/ClientLogin/clientcommLogin.c::initGameChecksum": "6bcb77013c99a038f4d0b684a190776fdba82d6ca87b0d5a5f4796196f9517c4",
+    "DBServer/src/clientcomm.c::handleLogin": "a8807d58e5656361ebdd35083797060d6cde98b95a3d9b30749a2d26bcb944ca",
+    "DBServer/src/clientcomm.c::getNumPlayerSlotsVIP": "b34f199c5ed825f902efb2345573e5642f8bc47a0829e0fdcccb68c4e7519b77",
+    "DBServer/src/clientcomm.c::handleChoosePlayer": "b53d0877e08b1d0d40800bbb4d57af6c8d213ae56cf132df722b73421cecdd14",
+    "DBServer/src/clientcomm.c::s_finishHandleChoosePlayer": "3a99614389d48905d789c35d7b3322b03c212fb9feab5d95f8bf6b9dcb2514bd",
+    "DBServer/src/clientcomm.c::handlePlayerContainerLoaded": "bc0d1b2f6763f62be6b0412d77dd1be3cabebfdd386b6b7925342fd763300ef5",
+    "DBServer/src/clientcomm.c::doneWaitingChoosePlayerFailed": "23fc8b147450114d032413eb69f1d3a343d1178593d3ca2932e86644a9998afc",
+    "Common/account/AccountData.c::AccountIsVIPByPayStat": "8d4c37d9bf6c0ba1bbb0c2e999091f6d854e8c1e5bf7fedbd54742371f59e7e7",
+    "DBServer/src/mapxfer.c::sendLoginInfoToGameClient": "0e39c5b0922d1603889b70235d981c0d5a37d920aed3507331955e8a3d5ef07a",
+    "DBServer/src/mapxfer.c::setNewMap": "c4c1f3e10a2ce28d2a390f3d925427d81f7d72dd6b6b110cfafb943ed2b1da6b"
+  },
+  "native_source_sha256": {
+    "native-android/engine/dbclient/coh_db_session.c": "ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9",
+    "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+    "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+  },
+  "inventory_source_sha256": {
+    "docs/thor-asset-index.json": "8748d312ed2889e7e28f00ab1a3fa3a83b8c4a4d67f2b8514dc78da53bb77700",
+    "docs/asset-availability.json": "30bd660b7b9e488b66798181d56f4521c258550cb4e7b7c1788de4f49ae43981",
+    "docs/android-evidence/kings-row-foundation-20261011.json": "31c4137f2f769afb64db201c06e7259f794f1bc15d69663e65e098ceb620a943",
+    "docs/CONTENT_ACQUISITION.md": "c3b4f6db1ed9ceb2c15cdaffd172e88c670a7511a77dbcc8e761ab6a05024317"
+  },
+  "facts": {
+    "version_predicate_calls_fileIsUsingDevData_directly": true,
+    "dev_data_predicate_uses_cached_stat_of_cwd_piggs_texts_pigg": true,
+    "FolderCacheChooseMode_precedes_productionmode_argument_parse": true,
+    "productionmode_flag_does_not_change_direct_version_predicate": true,
+    "owned_installation_directory_matching_can_avoid_dev_return_without_global_override": true,
+    "version_ini_loaded_once_from_cwd_after_installation_dev_branch": true,
+    "current_profile_has_no_installed_version_or_checksum_reference": true,
+    "checksum_reference_filename_hardcoded_to_Ouroboros_exe": true,
+    "real_auth_cookie_consumption_follows_protocol_checksum_and_version_policy": true,
+    "paid_normal_fixture_maps_to_original_VIP_and_12_default_base_slots": true,
+    "empty_slot_creation_uses_original_CHOOSE_PLAYER_branch": true,
+    "server_alone_allocates_created_DBID": true,
+    "existing_native_session_choose_refuses_empty_slots": true,
+    "current_owned_registration_scope_starts_no_Launcher_or_Map_process": true,
+    "actual_Map_cookie_response_requires_real_MapServer_handoff": true
+  },
+  "retained_inputs": {
+    "client_runtime_archive": {
+      "bytes": 8702383,
+      "sha256": "5636fe9b3d45c313b062ac83ba954bfb3b1b160af4aec1b34f046c8c2b421509",
+      "members": 22,
+      "required_names_absent": {
+        "texts.pigg": true,
+        "version.ini": true,
+        "Ouroboros.exe": true
+      }
+    },
+    "local_APK_copy": {
+      "observed_bytes": 25021440,
+      "observed_sha256": "ab280a8b615cf24e3324afe9735f424d6b413ecf43e70d3933a12d27636ff008",
+      "expected_qualified_bytes": 42048020,
+      "exact_qualified_artifact_admitted": false,
+      "archive_not_opened_or_rehydrated": true
+    },
+    "texts_pigg_catalog": {
+      "bytes": 683463,
+      "entry_count": 745,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "whole_file_sha256_available_in_reviewed_catalog": false,
+      "retained_metadata_bytes": 101842,
+      "retained_metadata_sha256": "a1fd262090db30a3b6b12aa42221fb24543888298176dc291641b03518e27d6b"
+    }
+  },
+  "source_functions_executed": false,
+  "compiler_or_runtime_executed": false,
+  "new_download_performed": false,
+  "registry_or_profile_mutated": false,
+  "native_API_implemented": false,
+  "normal_version_admitted": false,
+  "native_reference_compatibility_approved": false,
+  "actual_DB_login_or_creation_or_Map_handoff_verified": false
+}

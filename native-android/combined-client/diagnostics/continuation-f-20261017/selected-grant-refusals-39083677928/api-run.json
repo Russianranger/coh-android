@@ -1,0 +1,12 @@
+{
+  "id": 39083677928,
+  "head_sha": "c98bb60fe187458f328a15882089ea742ce6e853",
+  "head_branch": "native-android",
+  "path": ".github/workflows/native-db-threadname-selected-play.yml",
+  "status": "completed",
+  "conclusion": "failure",
+  "event": "push",
+  "tree": "48c3c041a591e736ef5a8e2f9091f4cf1a6aad67",
+  "repository_id": 1368730125,
+  "head_repository_id": 1368730125
+}

@@ -1,0 +1,89 @@
+{
+  "NDK_files_independently_rehashed_after_download": false,
+  "abis": {
+    "arm64-v8a": {
+      "ELF64_little_endian_PIE_linker64": true,
+      "actual_needed_libraries": [
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libz.so"
+      ],
+      "binary": {
+        "bytes": 113760,
+        "sha256": "d2d54526f8cc2a0281cb7a659c7c09413637e1f51d8d99f2fcf81e0a7004f8d9"
+      },
+      "elf_machine": 183,
+      "executed": false,
+      "project_dependencies": 25
+    },
+    "x86_64": {
+      "ELF64_little_endian_PIE_linker64": true,
+      "actual_needed_libraries": [
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libz.so"
+      ],
+      "binary": {
+        "bytes": 115296,
+        "sha256": "e16c0a27ee53d31e28e2a875bd75380d9ee441f97a5c4a10a011cdbae4824a19"
+      },
+      "elf_machine": 62,
+      "executed": true,
+      "project_dependencies": 25
+    }
+  },
+  "actor_authority": false,
+  "android_sanitizers_enabled": false,
+  "application_context_adopted": false,
+  "application_or_apk_built": false,
+  "archive_members_verified": 92,
+  "artifact": {
+    "bytes": 154504,
+    "sha256": "55eb2466fc7701c6bc49d736677321c29b2672754e673aabdb4f88c952413bea"
+  },
+  "artifact_downloaded_by_this_audit": false,
+  "artifact_id": 12119502992,
+  "audit_script": {
+    "bytes": 12022,
+    "sha256": "b91d2e28f9b3cdb8480f09e16eac6b3412185461fac5bd417502da14928cd17b"
+  },
+  "current_and_committed_source_pins_verified": 28,
+  "current_namespace_admitted": false,
+  "declared_NDK_file_pins_retained": 26,
+  "default_identity_admitted": false,
+  "fixture_regeneration_data_only": true,
+  "job_id": 117545684612,
+  "material_authority": false,
+  "native_checks": 367,
+  "native_cleanup": true,
+  "native_executables_replayed": false,
+  "old_qualifiers_replayed": false,
+  "passed": true,
+  "path_cleanup_verified": true,
+  "physical_android_device_executed": false,
+  "platform_driver_sanitized": false,
+  "platform_loaded_mapping_verified": false,
+  "post_source_admission_verified": true,
+  "process_completion_verified": true,
+  "readback": {
+    "bytes": 1488,
+    "sha256": "91bd157f743e7c25d2b43ba36b93144318f5d885c975e25ac9b19790b912163b"
+  },
+  "readbacks": 18,
+  "schema": "coh-source-rgba32-android-retained-audit-v1",
+  "source_revision": "c98bb60fe187458f328a15882089ea742ce6e853",
+  "source_tree": "48c3c041a591e736ef5a8e2f9091f4cf1a6aad67",
+  "workflow": {
+    "bytes": 3145,
+    "path": ".github/workflows/native-source-rgba32-android.yml",
+    "sha256": "9426a222a246778105f07530ecd4456591003a99758a82734d365f8471a0eefd"
+  },
+  "workflow_run_id": 39083677877,
+  "world_authority": false
+}
