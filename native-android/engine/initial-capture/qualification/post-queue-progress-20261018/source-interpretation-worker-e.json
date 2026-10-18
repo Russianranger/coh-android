@@ -1,0 +1,221 @@
+{
+  "associated_pending_run_id": 39155991172,
+  "claims": {
+    "actor_publication": false,
+    "application_ack_permitted": false,
+    "initial_source_generation_admitted": false,
+    "server_receipt_proved": false,
+    "specific_request_emission_proved": false,
+    "world_authority": false
+  },
+  "date_utc": "2026-10-18",
+  "execution": {
+    "capture_repeated": false,
+    "compiler_or_native_execution": false,
+    "source_changes": false,
+    "tests_repeated": false
+  },
+  "kind": "read-only conditional source interpretation; no actual progress result admitted here",
+  "native_sequence": [
+    {
+      "fact": "UDP receive/pump runs at line145 before owned application-message inspection. After successful GROUPS inspection and owned-message release, lines169-170 queue REQALLENTS, set reqallents_sent and WAIT_ALLENTS, reset request_ms, then break. No second UDP service runs in this call.",
+      "location": "native-android/engine/initial-capture/coh_initial_map.c:132-174, coh_initial_map_service"
+    },
+    {
+      "fact": "send_command serializes then queues reliable, unordered, uncompressed data. Queue copies into Tx entries and assigns packet IDs. Successful queueing contains no sendto call and proves no datagram emission.",
+      "location": "native-android/engine/mapclient/coh_mapclient.c:134-141; engine/network/coh_net_udp.c:148-153; engine/network/coh_net.c:66-95,114-118"
+    },
+    {
+      "fact": "A later progress_service samples the same owner before entering the real owner API. Post-queue service count requires the retained queue identity, WAIT_ALLENTS, and DB_CLOSED. Count is service entry, not proof UDP pump or send was reached. Queue-observing service itself is excluded from post-queue sends.",
+      "location": "native-android/engine/initial-capture/coh_initial_local.c:48-74; engine/initial-capture/coh_initial_progress.h:34-65"
+    },
+    {
+      "fact": "UDP receive/cancel/terminal checks precede pump. Pump checks link/idle/fragment timeouts, iterates Tx in packet-ID order, may queue pure ACK/control, and may retry earlier reliable packets before the new request. Frame-encode or an earlier Tx timeout can return before the request send callback.",
+      "location": "native-android/engine/network/coh_net_udp.c:89-146; engine/network/coh_net.c:135-186"
+    },
+    {
+      "fact": "__wrap_sendto invokes the real syscall exactly once with unchanged arguments and preserves result/errno. It classifies full return, would-block, interrupted, partial, or other error while an eligible owner service is active. No classification binds a datagram to an application command.",
+      "location": "native-android/combined-client/tools/capture_local_initial_progress.c:252-266; engine/initial-capture/coh_initial_progress.h:48-54"
+    }
+  ],
+  "original_source_comparison": [
+    {
+      "fact": "Original client pktSendDbg enqueues reliable CLIENT_REQALLENTS. commReqScene then repeatedly commCheck(SERVER_ALLENTS); commCheck monitors receive then lnkBatchSend. Batch send drains retransmission queue before normal send queue. Original source also separates queueing and flushing.",
+      "location": "upstream/ouroboros/Game/src/clientcomm/clientcomm.c:1820-1833,1903-1915; upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c:439-525,74-153"
+    },
+    {
+      "fact": "netIdleEx conditionally creates a control idle and batch sends for idle/ACK needs. It may sleep/return under threshold or when disconnected/send queue nonempty. It is not an unconditional request flush contract.",
+      "location": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c:1317-1361"
+    },
+    {
+      "fact": "REQALLENTS handler sets REQALLENTS readiness and clears sent_self; later tick may call entSendUpdate(full_update=true), which selects SERVER_ALLENTS, before CLIENT_READY. Original client sends CLIENT_READY only after its ALLENTS wait. READY is therefore not a prerequisite to add in this diagnostic capture. This static original-source path does not prove actual server branch execution or current source association.",
+      "location": "upstream/ouroboros/MapServer/src/svr/svr_tick.c:357-367,1653-1668,1708; upstream/ouroboros/MapServer/src/entity/entsend.c:4051-4064; upstream/ouroboros/Game/src/clientcomm/clientcomm.c:1903-1941"
+    },
+    {
+      "fact": "SERVER_UPDATE and SERVER_ALLENTS framing remain distinct. Original ALLENTS dispatcher emits a later application full-update ACK before simulation parsing; do not execute it or add that ACK to discover grammar.",
+      "location": "native-android/engine/initial-capture/NEXT_COMMAND_OBSERVATION.md:42-60"
+    }
+  ],
+  "receipt_interpretation": {
+    "cases": [
+      {
+        "condition": "queue_observed=false",
+        "next": "Read existing GROUPS/request/terminal status before considering a post-queue send question.",
+        "supported": "No successful queue identity was observed."
+      },
+      {
+        "condition": "queue_observed=true; post_queue_services=0",
+        "next": "Compare queue_service_offset_ms with the original total caller deadline and terminal/signal witness. A queue very near the total deadline may have no later service window; this does not establish a missing flush bug.",
+        "supported": "No later eligible same-owner WAIT_ALLENTS service entry was counted. Queueing alone is not send."
+      },
+      {
+        "condition": "post_queue_services>0; post_queue_send_callbacks=0",
+        "next": "Use first-failure/UDP/link phase to isolate pre-pump, terminal, timeout, encode, or absent-ready-Tx path. A bounded pump-entry/pre-send-result witness may be justified if existing status cannot discriminate.",
+        "supported": "Owner service was entered after queueing; no actual sendto call was observed in that service scope."
+      },
+      {
+        "condition": "post_queue_datagrams_emitted>0",
+        "next": "Specific request emission remains unproved: datagrams may be control/ACK, earlier reliable data/retransmissions, or REQALLENTS. Use a packet-specific queue-to-send binding if this is the remaining uncertainty.",
+        "supported": "Kernel accepted one or more complete, command-unattributed Map datagrams."
+      },
+      {
+        "condition": "post_queue_would_block>0 or post_queue_interrupted>0",
+        "next": "Check later service/callback outcomes and available time. Do not queue a duplicate application request to compensate.",
+        "supported": "At least one real sendto call could not complete for that reason. UDP adapter maps these outcomes to retryable service success and retains frame plus ACKs."
+      },
+      {
+        "condition": "post_queue_send_errors>0 or post_queue_partial_sends>0",
+        "next": "Interpret existing first-failure/terminal state; add only a bounded fixed error class if needed. Do not emit raw packet, endpoint, or credential data.",
+        "supported": "Existing UDP adapter treats these as COH_IO and closes/fails the transport."
+      }
+    ],
+    "counter_invariant": "post_queue_send_callbacks = datagrams_emitted + would_block + interrupted + send_errors + partial_sends, using the corresponding post_queue_* field names.",
+    "precondition": "Require exact schema and successful existing private/public admission, valid=true, refusal=NONE, and retired owner. Invalid/refused observation can contain incomplete counters and is not itself a protocol refusal. Pair with existing first-failure/command/status witness."
+  },
+  "reviewer": "worker_e_renderer",
+  "schema": "coh-initial-progress-source-interpretation-worker-e-v1",
+  "smallest_conditional_followup": {
+    "limits": "A full return tied to this Tx would prove kernel emission of that encoded request packet. A validated link ACK tied to that Tx would prove transport acknowledgment only, not application dispatch, initial payload grammar/source authority, or character publication. If services=0 or send errors already explain the result, follow that earlier seam instead.",
+    "proposal_only": "Bind the exact Tx packet ID(s) assigned by the successful REQALLENTS queue to internal pump first-send/retry/full-return state and the existing peer-ACK removal branch (coh_net.c:316-317). Export only fixed scalar/enum outcomes under the same owner/generation lifecycle. Keep queue/pump/deadline/ACK behavior unchanged; no raw payloads, peer addresses, IDs, credentials, or actor publication.",
+    "trigger": "Actual admitted progress has later services and complete sends, but command-specific REQALLENTS send/ACK state remains the blocker."
+  },
+  "source_commit": "538fc0453fe5dbac205e4bbfef70ae22152e03d3",
+  "source_pins": [
+    {
+      "bytes": 20023,
+      "git_blob": "20b056ebe9ccd8a68fedcf19111735fec05fdb96",
+      "path": "native-android/combined-client/tools/capture_local_initial_progress.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "63e758aae692fef0631035220a357a49fca5ce2ee2abce5b1d1972d426a04ba0"
+    },
+    {
+      "bytes": 4926,
+      "git_blob": "cf0589fa5c4e2ef391945cb06b582b631c367232",
+      "path": "native-android/engine/initial-capture/coh_initial_progress.h",
+      "raw_equals_pinned_git": true,
+      "sha256": "099e4aa7e8cd7b648f85095b5b52ef859dbf135d8c263046f9424f27f46ae940"
+    },
+    {
+      "bytes": 7223,
+      "git_blob": "91df28a36b04de3fd12e7d0e0243f1322ff19266",
+      "path": "native-android/engine/initial-capture/coh_initial_local.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "c10545b32441b1ad0c90c845e023b6d178271d5062554aa3a8035b723e1e4ea8"
+    },
+    {
+      "bytes": 17989,
+      "git_blob": "377951295f97a826ca39ef374f2055ea5d405897",
+      "path": "native-android/engine/initial-capture/coh_initial_map.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4"
+    },
+    {
+      "bytes": 23015,
+      "git_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+      "path": "native-android/engine/mapclient/coh_mapclient.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199"
+    },
+    {
+      "bytes": 11496,
+      "git_blob": "fd542af572852d306c6e3390393363685c8e1cee",
+      "path": "native-android/engine/network/coh_net_udp.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d"
+    },
+    {
+      "bytes": 24548,
+      "git_blob": "452eeb525a4535c84baf9a48da6c2b93b889df03",
+      "path": "native-android/engine/network/coh_net.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1"
+    },
+    {
+      "bytes": 5136,
+      "git_blob": "1a92d3e458733ac807470224c8fd39112c7a18b6",
+      "path": "native-android/engine/network/coh_net_frame.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+    },
+    {
+      "bytes": 11732,
+      "git_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+      "path": "native-android/engine/local/coh_local.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210"
+    },
+    {
+      "bytes": 73982,
+      "git_blob": "fef73cbfd9daffbb8e831cd49ecef3e4434380ac",
+      "path": "upstream/ouroboros/Game/src/clientcomm/clientcomm.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd"
+    },
+    {
+      "bytes": 30356,
+      "git_blob": "99567f28ff15811232c93d1382af822a706eb3ea",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    },
+    {
+      "bytes": 56509,
+      "git_blob": "c944d588f7dd5872ee4b2630e27273f293b3af8f",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9"
+    },
+    {
+      "bytes": 71802,
+      "git_blob": "071826fd463d95a1b01d6fe6bd7c68625d7cd1d4",
+      "path": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    {
+      "bytes": 171294,
+      "git_blob": "d7548a8f4902bd3755e3ab0d4f00773313611bc1",
+      "path": "upstream/ouroboros/MapServer/src/entity/entsend.c",
+      "raw_equals_pinned_git": true,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    },
+    {
+      "bytes": 9698,
+      "git_blob": "9c9bb0c79b887cbfff3ef6bff34a4e87e8241ef8",
+      "path": "native-android/engine/initial-capture/NEXT_COMMAND_OBSERVATION.md",
+      "raw_equals_pinned_git": true,
+      "sha256": "73cd563e08cf3860287627429ed298a4c1390665951acfbc2af5d86995964781"
+    }
+  ],
+  "timeout_semantics": [
+    {
+      "fact": "Caller deadline covers the complete attempt starting before DB/selection/Map work. Map application timeout resets when REQALLENTS queues, but caller deadline does not. Queue and last-service offsets are sampled service times, not precise syscall timestamps.",
+      "location": "native-android/combined-client/tools/capture_local_initial_progress.c:169,183-203; engine/initial-capture/coh_initial_map.c:170,173"
+    },
+    {
+      "fact": "Role overrides DB/application timeout only. Default link configuration has ping100ms, max_retries8, connect10s, idle30s, fragment10s. Pump checks timeouts before sends; retry exhaustion can terminate before the larger application timeout. Increasing application timeout alone is not a demonstrated repair.",
+      "location": "native-android/engine/local/coh_local.c:42-49; engine/network/coh_net.c:39-40,135-162; engine/network/coh_net_frame.c:97-99"
+    }
+  ],
+  "verification": "All 15 cited raw files were byte-equal to their Git blobs at source_commit. No tests, compiler, native receiver, original service, or capture was rerun for this interpretation."
+}

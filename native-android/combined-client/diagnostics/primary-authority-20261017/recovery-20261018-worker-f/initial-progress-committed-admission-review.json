@@ -1,0 +1,13 @@
+{
+  "schema": "coh-independent-f-progress-committed-admission-review-v1",
+  "passed": true,
+  "primary_source": "538fc0453fe5dbac205e4bbfef70ae22152e03d3",
+  "A_source_owned_admission_receipt_sha256": "dd349b2fbd147118cb17d9474e6c18a7533a908ff8e304d1d050e54a0ef5aecb",
+  "all245_current_raw_SHA256_and_actual_committed_Git_blob_SHA1_rechecked": true,
+  "all51_native_dependencies_subset_and_retained193216B_identity_match": true,
+  "source_owned_native_input_closure_and_verify_orchestration_execution_attested_by_A": true,
+  "Map_PE_readmission_not_performed_by_this_local_receipt": true,
+  "actual_CI_current_Map_and_runtime_outcome_pending_separate_artifact": true,
+  "historical_receiver_equivalence_or_world_authority_claimed": false,
+  "reviewer_executed_cc_queries_test_qualifiers_or_runtime": false
+}

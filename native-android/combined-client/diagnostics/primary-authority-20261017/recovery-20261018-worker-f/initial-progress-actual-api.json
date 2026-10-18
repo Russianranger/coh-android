@@ -1,0 +1,168 @@
+{
+  "schema": "coh-independent-f-initial-progress-actual-api-v1",
+  "repo": "Russianranger/coh-android",
+  "run": {
+    "id": 39155991172,
+    "head_sha": "538fc0453fe5dbac205e4bbfef70ae22152e03d3",
+    "head_branch": "native-android",
+    "path": ".github/workflows/native-initial-progress-observation.yml",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "run_attempt": 1,
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39155991172"
+  },
+  "artifacts": [
+    {
+      "id": 12146829688,
+      "name": "fresh-initial-progress-public-538fc0453fe5dbac205e4bbfef70ae22152e03d3",
+      "size_in_bytes": 2155,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12146829688",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12146829688/zip",
+      "expired": false,
+      "created_at": "2026-10-18T18:59:59Z",
+      "expires_at": "2027-01-16T18:50:16Z",
+      "updated_at": "2026-10-18T18:59:59Z",
+      "digest": "sha256:cb9cf353c2c66186a943785f7d79b4db3e95c6effc4a14a173a456f195a52146",
+      "workflow_run": {
+        "id": 39155991172,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "538fc0453fe5dbac205e4bbfef70ae22152e03d3"
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "id": 117759210119,
+      "name": "matching-original-initial-progress",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39155991172,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Admit current raw committed orchestration and explicit new native evidence before any current imports",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Admit historical505 runtime Map and fixture source guards without consuming its native receiver",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify successful original fixture provenance and exact ZIP before extraction",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Admit exact source-created fixture receipt before installing or launching runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Reuse exact retained observer ZIP and recover only the missing unchanged DbServer donor",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Admit exact new observer source role and PE before runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Install x86 hosted runtime with PG18 and source-qualified classic Wine10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Record only fixed public pre-runtime tooling facts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Admit retained193216B progress ELF and actual current51 plus245 Git source closure without rebuild or execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Prepare original control runtime files without SQL or any capture startup",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Observe exactly one fresh original transaction with current native progress role and unchanged prepared runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Extract only fixed public booleans and coarse source-defined failure enum",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "Export only new fixed command-unattributed progress projection after matching pair and owned cleanup",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 34
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 35
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "coh-wpp-job-drain-preparation-v1",
+  "passed": true,
+  "profile_source_sha256": "ad25eb3dc6202df2bf4b1a271770e3c6555796c32174a083f90568af4a3c5b6b",
+  "generated_source_sha256": "c233058cffa60584f7bd8dccaee7add700ba1a8c9480ab775289edbaad52d820",
+  "generated_source_bytes": 50561,
+  "replacements": 1,
+  "exact_reverse_verified": true,
+  "bounded_job_drain_repair": true,
+  "existing_owner_acl_identity_guards_preserved": true,
+  "compiler_or_helper_or_model_executed": false
+}

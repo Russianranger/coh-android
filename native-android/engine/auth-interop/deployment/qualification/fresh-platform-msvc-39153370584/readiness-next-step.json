@@ -1,0 +1,230 @@
+{
+  "allocation_readiness_track": {
+    "allocation_limits": "Provisional development policy remains explicit; normal client version/reference-checksum acceptance, initialized character, Map client body, READY/character/full-update ACK and world authority stay false. Cancellation/cleanup cannot undo a possible persistent allocation.",
+    "attribution_limit": "Original ready handler does not match packet map ID to link. Monitor reports Db readiness-state; ready-command sender attribution remains false, with exclusive realm/channel ownership required.",
+    "missing_actual_execution_or_admission": [
+      "Exact admitted current Map PE plus complete transitive DLL/assets staged under the new target user; current original PG/Wine fixture is separate evidence and not a fresh MSSQL realm.",
+      "Ordinary positive Map1/manual cookie0 startup and registration into the same current Db, with Db-owned6997/6989/6996 listeners and Map-owned6997/6989 TCP channels.",
+      "New monitor controls/original-writer oracle and then actual before/after full-snapshot observations with all retained process/generation/channel checks.",
+      "Only after the above: one actual fresh Auth grant into encrypted Db, matching empty list, ordinary original choose writer, source-parsed allocation offer and terminal retirement; retire the whole disposable SQL database only after services stop."
+    ],
+    "missing_implementation": [
+      "A separately fixed Map role with opaque live profile/job/process/thread lease retained across readiness observation and one creation attempt; the inert helper intentionally waits, closes and deletes everything before return.",
+      "Private Map stdout/stderr capture with proven target-user handles or a separately owned same-user bootstrap. No shell-string fallback or assumption that parent logon handle values are valid.",
+      "A bounded source-qualified read-only TCP6996 NetLink profile5 monitor transport/codec using exact20110804 schema/full MAPSERVERS grammar; this is not Auth TCP framing or the existing UDP adapter.",
+      "An actual FreshRealmMapLease coordinator binding fresh Auth/Db/SQL generations, retained Db/Map process/file identities, current profile/job, exact staged assets and socket ownership; it alone authors the96-byte native policy after READY and brackets the single attempt."
+    ],
+    "no_user_payload_request_justified": "Existing original asset/source/runtime identities and published payload recovery paths exist. No newly observed missing filename or unavailable user input was identified by this read-only assessment.",
+    "ready_predicate": "Require exactly expected current Map1 row, explicit Starting=0 and full pinned schema, exact registered loopback UDP7001/IP candidates/present link, same current owned processes and no unowned service client. Absent/default0, listener, Map log marker or policy nonce is insufficient."
+  },
+  "historical_document_limits": "WINDOWS-MAP-READY proposals predate the implemented backend and successful inert runtime. Their statements that the backend has no implementation or inert APIs are wholly unexecuted are historical. The separate live Map, logging, monitor and coordinator obligations remain unimplemented.",
+  "independent_next_build_track": {
+    "build_scope": "Nineteen declared current production TUs; full actual compiler dependency closure still must be discovered/admitted. The retained platform library can supply two TUs if exact object/archive/source/tool/runtime identity admission is preserved, leaving seventeen current TUs to compile.",
+    "declared_translation_units": [
+      "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_character_probe.c",
+      "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.c",
+      "native-android/engine/auth-interop/fresh-character-owner/probe/windows/fresh_probe_windows.c",
+      "native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.c",
+      "native-android/engine/auth-interop/deployment/windows/winsock_compat.c",
+      "native-android/engine/auth-interop/deployment/windows/wrapped_login.c",
+      "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.c",
+      "native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c",
+      "native-android/engine/dbclient/coh_db_session.c",
+      "native-android/engine/dbclient/coh_dbclient.c",
+      "native-android/engine/dbclient/coh_db_account_controls.c",
+      "native-android/engine/auth/coh_auth.c",
+      "native-android/engine/auth/coh_auth_openssl.c",
+      "native-android/engine/session/coh_session_crypto.c",
+      "native-android/engine/network/coh_net.c",
+      "native-android/engine/network/coh_net_frame.c",
+      "native-android/engine/network/coh_net_zip.c",
+      "native-android/protocol/coh_protocol.c",
+      "native-android/src/coh_blowfish.c"
+    ],
+    "frozen_adapters": "Compile wrapped_login.c and wrapped_db_udp.c, not separate ordinary coh_login.c/coh_net_udp.c copies; direct current coh_db_session.c, not the development received-prefix wrapper or old list owner/main.",
+    "goal": "Admit and link actual fresh-character CLI, then run only its distinct --platform-preflight mode in one dedicated owned child process.",
+    "inputs_available": [
+      "Retained platform two-object archive from39153370584.",
+      "Retained static OpenSSL artifact12078663003 and its384-file admission; no crypto rebuild is needed.",
+      "Exact cf333892 Chromium zlib source archive,111-file admission and existing recipe/patch are present."
+    ],
+    "memory_scope": "Backend stack/provider and full-process memory remain unqualified; old16KiB caller reserve does not cover32768 wchar_t path plus nested16KiB digest buffer.",
+    "missing_implementation": [
+      "A source/ABI/header/object/link-input admission recipe for the actual CLI and fresh owner/current ordinary core; the two-TU archive is not a CLI build.",
+      "A distinct fixed-output parser/owned launcher for coh-fresh-character-platform-preflight-v1; the old development-list parser accepts a different schema.",
+      "Exact PE import/loader admission and bounded owned execution/cleanup for the new executable."
+    ],
+    "preflight_scope": "No Map policy file, account credentials, owner begin, Auth/Db transaction, Map handle or TCP/UDP socket. Actual OS entropy/self-file digest and Winsock initialization/finalization are the qualified target. This can advance independently of Map readiness.",
+    "process_precondition": "No prior/concurrent users of the process-global transport adapters. Preserve sticky TCP cleanup uncertainty: later no-op cleanup cannot convert failure to success.",
+    "zlib_link_input_gap": {
+      "implication": "Do not call the recorded library hash an available link input. Recover another exact admitted binary if available; otherwise a newly admitted build of the retained21-TU source is a genuine missing-input build, not replay of old Auth/list tests.",
+      "prior_build_run": 39097070843,
+      "prior_static_library": {
+        "bytes": 227166,
+        "sha256": "b7075e549338957da423b9fe3114839310ae2c4173fc33401650030bc728880e"
+      },
+      "retained_runtime_artifact_contains": "Only receipt.json; private_probe_build_removed=true. No zlib library/object payload is retained in that artifact."
+    }
+  },
+  "new_network_or_workflow_execution": false,
+  "older_pinned_proposals_modified": false,
+  "project_imports_compiler_tests_native_or_original_service_executed": false,
+  "qualified_now": [
+    {
+      "does_not_establish": "No live Map lease, Map logging, original-service readiness or character allocation.",
+      "run": 39155990941,
+      "scope": "Actual inert child under fresh OS account/profile/private GUI/job, HKCU identity result and complete owned cleanup. Source/fixed runtime receipts read, not replayed."
+    },
+    {
+      "does_not_establish": "No current CLI/owner/core Windows compilation/link, loader/API execution, original services or allocation.",
+      "run": 39153370584,
+      "scope": "Real production Windows/SDK/OpenSSL declarations compiled for platform and policy into exactly two x64 COFF objects and a 22476-byte archive."
+    }
+  ],
+  "schema": "coh-fresh-platform-readiness-next-step-source-map-v1",
+  "scope": "Read-only source/retained fixed receipt assessment after actual inert-profile success; no new implementation or execution.",
+  "source_and_retained_receipt_pins": {
+    "native-android/engine/auth-interop/deployment/WINDOWS-MAP-READY-OBSERVER-CONTRACT.md": {
+      "bytes": 11894,
+      "sha256": "75a9eb1518c735c2004f20a72852eb74deed5be0845a86de74cf2cad4ee236d7"
+    },
+    "native-android/engine/auth-interop/deployment/WINDOWS-MAP-READY-PROPOSAL.md": {
+      "bytes": 14737,
+      "sha256": "b55f7663e007741b3201cfbb837bea1c21d20fbd58f66504d13e15d1f5e4df85"
+    },
+    "native-android/engine/auth-interop/deployment/compile_fresh_platform.py": {
+      "bytes": 13338,
+      "sha256": "bcd240d538dca8cde373c8273db9dd97307c064bf190093e6f5962614c3c8363"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_auth_db_development.py": {
+      "bytes": 74716,
+      "sha256": "a813adb1bbd9d91bbbbc011508bdcead3fdc1b664d5648b8be2ccd6be37648ee"
+    },
+    "native-android/engine/auth-interop/deployment/qualification/fresh-platform-msvc-39153370584/admission.json": {
+      "bytes": 4138,
+      "sha256": "9a59c7a5437da103eac439ec61c2ece93dc0ef9ae71b0c2605dccbd74471f1ae"
+    },
+    "native-android/engine/auth-interop/deployment/qualification/fresh-platform-msvc-39153370584/receipt.json": {
+      "bytes": 43463,
+      "sha256": "4cc4cfd9f7a469265a1b4e0615397f35b8df35c5af406fa8504df91916d3b53a"
+    },
+    "native-android/engine/auth-interop/deployment/qualification/windows-profile-job-drain-20261018/run-39155990941/inert-result.json": {
+      "bytes": 1421,
+      "sha256": "bc34f9066984286911206977e9972330a9494f51c653211b78f5bc171198c446"
+    },
+    "native-android/engine/auth-interop/deployment/qualification/windows-profile-job-drain-20261018/run-39155990941/supervision.json": {
+      "bytes": 1485,
+      "sha256": "a97b14488ff1e65d3ef93a87966584ca5af40a5cfa808d0e82b7e73a1ca4367f"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/OwnedProfileProcess.cs": {
+      "bytes": 44169,
+      "sha256": "6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474"
+    },
+    "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.c": {
+      "bytes": 6407,
+      "sha256": "abfede788fe3f7c566a028178e05caeb21a2db24fb7c233b90bd64fc5fa0e8aa"
+    },
+    "native-android/engine/auth-interop/deployment/windows/winsock_compat.c": {
+      "bytes": 5866,
+      "sha256": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad"
+    },
+    "native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c": {
+      "bytes": 177,
+      "sha256": "14b125f2649babdc9a310bf757676f551279214d4a7e4e65869129d10ad9d651"
+    },
+    "native-android/engine/auth-interop/deployment/windows/wrapped_login.c": {
+      "bytes": 250,
+      "sha256": "4163131d9f76f0a96a490820587018900a780d30738e278d1057c6afcee36e02"
+    },
+    "native-android/engine/auth-interop/evidence/auth-db-inventory13-success-39097070843/receipt.json": {
+      "bytes": 82930,
+      "sha256": "3741c777e645b38b97e9ee87df8a9b7e26db4b038dd97f2290d5f81bea722a24"
+    },
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/admission.json": {
+      "bytes": 51645,
+      "sha256": "d104eafafe30e26d63072adef5a454e86d83d7280513c1add3d8478b1feebfd6"
+    },
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/chromium-zlib-cmake.patch": {
+      "bytes": 2337,
+      "sha256": "55273bf390fd1093718d28f1141979fa97d23d1f071a1d90653f801cd425a107"
+    },
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/source.tar.gz": {
+      "bytes": 306531,
+      "sha256": "2f776d3abe636e302a98216fc81410622feb1be958315223d0d3442496365938"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.c": {
+      "bytes": 22292,
+      "sha256": "b8e58922dc9b31b46408a9ec0a27093adef5ce5988308428508200ef63eb8ceb"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.h": {
+      "bytes": 6864,
+      "sha256": "d6782335567105f9179fe3684acc900afecf2299ea4b520c1bafad57913d5abf"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_character_probe.c": {
+      "bytes": 8097,
+      "sha256": "650f56b482a2c933a8e4ac9ecbcf2bd4995590ec0d5670f5f4480f963e78d8d7"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_platform.h": {
+      "bytes": 1759,
+      "sha256": "7ddffff6edb69506917a19446e041b453014fc80dce3ed7f13aeb3b86b2179ba"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.c": {
+      "bytes": 1735,
+      "sha256": "1048e1156dae2bf94b20808fb8ca47905f6a02135565bb21ec87aff4af6b9cbc"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.h": {
+      "bytes": 743,
+      "sha256": "b89809c03c1bb64bd0d697433d6fdee632b6c3a424e1fafc1c1698e6f1cac7e2"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/windows/fresh_probe_windows.c": {
+      "bytes": 14640,
+      "sha256": "4c8c20e69f02563a78ea52be7bb1ede9a6bf19e8524eeb36a0ae1ccef6c8c47c"
+    },
+    "native-android/engine/auth/coh_auth.c": {
+      "bytes": 13914,
+      "sha256": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+    },
+    "native-android/engine/auth/coh_auth_openssl.c": {
+      "bytes": 5307,
+      "sha256": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1"
+    },
+    "native-android/engine/dbclient/coh_db_account_controls.c": {
+      "bytes": 5413,
+      "sha256": "9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2"
+    },
+    "native-android/engine/dbclient/coh_db_session.c": {
+      "bytes": 26636,
+      "sha256": "6a36786b0bdaf86d27c16793b42fd311779bd24f5e0580fea6319377492dbc1d"
+    },
+    "native-android/engine/dbclient/coh_dbclient.c": {
+      "bytes": 10892,
+      "sha256": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd"
+    },
+    "native-android/engine/network/coh_net.c": {
+      "bytes": 24548,
+      "sha256": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1"
+    },
+    "native-android/engine/network/coh_net_frame.c": {
+      "bytes": 5136,
+      "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+    },
+    "native-android/engine/network/coh_net_zip.c": {
+      "bytes": 7170,
+      "sha256": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747"
+    },
+    "native-android/engine/session/coh_session_crypto.c": {
+      "bytes": 791,
+      "sha256": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1"
+    },
+    "native-android/protocol/coh_protocol.c": {
+      "bytes": 5507,
+      "sha256": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+    },
+    "native-android/src/coh_blowfish.c": {
+      "bytes": 19656,
+      "sha256": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+    }
+  },
+  "source_revision_read": "538fc0453fe5dbac205e4bbfef70ae22152e03d3",
+  "world_authority": false
+}

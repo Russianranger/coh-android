@@ -1,0 +1,23 @@
+{
+  "schema": "coh-independent-f-current-source-next-steps-review-v1",
+  "passed": true,
+  "readiness_map_sha256": "6fae5bfeeb33939110ffb7314b769b4e933d88f3120bb46e764d7f09418912d2",
+  "readiness_map_source_and_retained_receipt_raw_pins_verified": 35,
+  "request_interpretation_sha256": "85a073ef155993699cfd771321ebc5c907abfeff6722d15b50e057292aeee495",
+  "request_interpretation_raw_and_actual538fc_Git_pins_verified": 15,
+  "readiness_map_distinguishes_actual_inert_HKCU_success_from_missing_live_Map_profile_and_SameRealmReady_coordinator": true,
+  "real_two_object_MSVC_archive_separate_from_missing_current_CLI_link_loader_and_platform_runtime": true,
+  "retained_crypto_and_zlib_sources_separate_from_unretained_zlib_link_binary": true,
+  "memory_stack_provider_full_process_and96MiB_fit_still_unqualified": true,
+  "request_interpretation_conditional_on_future_admitted_valid_owned_receipt": true,
+  "queue_later_owner_service_complete_send_transport_ACK_and_application_dispatch_kept_distinct": true,
+  "queue_service_exclusion_caller_vs_application_deadline_and_transport_retry_limits_explicit": true,
+  "original_ALLENTS_precedes_READY_and_no_application_ACK_probe_added": true,
+  "candidate_packet_specific_followup_is_proposal_only_with_no_protocol_change_authorized": true,
+  "current_HANDOFF_top_Windows_actual_success_scope_and_remaining_gates_match_reviewed_evidence": true,
+  "lower_HANDOFF_observer_from0c8_lineage_correction_recommended_to_307build_receipt_538fc_current_admission": true,
+  "no_current_native_progress_outcome_admitted_by_these_readonly_documents": true,
+  "project_imports_tests_compiler_runtime_or_original_service_executed_by_reviewer": false,
+  "lower_HANDOFF_lineage_clarification_applied_and_verified": true,
+  "retained_observer_gzip_published_at0c8d7e0_Git_blob_independently_verified": true
+}

@@ -1,0 +1,23 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "command_specific_emission_proved": false,
+  "diagnostic_only": true,
+  "last_post_queue_service_offset_ms": 21975,
+  "post_queue_datagrams_emitted": 3,
+  "post_queue_interrupted": 0,
+  "post_queue_partial_sends": 0,
+  "post_queue_send_callbacks": 3,
+  "post_queue_send_errors": 0,
+  "post_queue_services": 9587,
+  "post_queue_would_block": 0,
+  "queue_observed": true,
+  "queue_service_offset_ms": 11803,
+  "refusal": "NONE",
+  "schema": "coh-initial-post-queue-progress-v1",
+  "server_receipt_proved": false,
+  "source_generation_admitted": false,
+  "valid": true,
+  "witness_owner_retired": true,
+  "world_authority": false
+}
