@@ -1,0 +1,237 @@
+{
+  "schema": "coh-server-initial-run-independent-worker-f-api-v1",
+  "run": {
+    "id": 39176566626,
+    "head_sha": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+    "head_branch": "native-android",
+    "path": ".github/workflows/native-server-initial-observer.yml",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "event": "push"
+  },
+  "repository_id": 1368730125,
+  "artifacts": [
+    {
+      "id": 12154413482,
+      "name": "server-initial-android-compile-a6b20f8bb7aca2d19c7bee217bb961ce60427418-attempt-1",
+      "size_in_bytes": 16098,
+      "digest": "sha256:7aba67f7da3bcdfc3b47496ec0732b9c6ad6af57d61da18932960562b52b5013",
+      "expired": false,
+      "workflow_run": {
+        "id": 39176566626,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "a6b20f8bb7aca2d19c7bee217bb961ce60427418"
+      }
+    },
+    {
+      "id": 12153928682,
+      "name": "server-initial-build-diagnostics-a6b20f8bb7aca2d19c7bee217bb961ce60427418-attempt-1",
+      "size_in_bytes": 28800,
+      "digest": "sha256:05a04d980ac56a9a4d9626f19975029c387aee752f1ce120706437121d5ce401",
+      "expired": false,
+      "workflow_run": {
+        "id": 39176566626,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "a6b20f8bb7aca2d19c7bee217bb961ce60427418"
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "id": 117820349362,
+      "name": "android_receive",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39176566626,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Admit the changed receive-report source before Android compilation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-java@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run android-actions/setup-android@v3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Install the existing pinned Android build components",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Reuse qualified crypto and exact accepted scene/runtime metadata",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Compile, lint and audit the additive ARM64 receive report without publishing a release",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/setup-java@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        }
+      ]
+    },
+    {
+      "id": 117820349562,
+      "name": "compile",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 39176566626,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Preserve exact original source bytes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Admit reviewed raw and committed source closure before project imports",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Independently admit exact original inputs and stage the separate callback-sealed role",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6
+        },
+        {
+          "name": "Reverify whole original input files before compiler work",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7
+        },
+        {
+          "name": "Build only the changed nonshipping MapServer observer",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Reverify original inputs and source stability after compiler work",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9
+        },
+        {
+          "name": "Record and strictly admit the changed Map PE and exact source role",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 23
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        }
+      ]
+    },
+    {
+      "id": 117820903834,
+      "name": "original_transaction",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 39176566626,
+      "logs_url": null,
+      "steps": null
+    }
+  ]
+}

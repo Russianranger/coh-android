@@ -1,0 +1,51 @@
+{
+  "Map_compile_qualification_passed": false,
+  "archive_members": {
+    "fresh-groups-source-admission.json": {
+      "bytes": 120043,
+      "sha256": "9187d44bae2000824bc5b4be74026694157de4dd547e87d824c874837d0116e0"
+    }
+  },
+  "artifact": {
+    "digest": "sha256:05a04d980ac56a9a4d9626f19975029c387aee752f1ce120706437121d5ce401",
+    "expired": false,
+    "id": 12153928682,
+    "name": "server-initial-build-diagnostics-a6b20f8bb7aca2d19c7bee217bb961ce60427418-attempt-1",
+    "size_in_bytes": 28800,
+    "workflow_run": {
+      "head_branch": "native-android",
+      "head_repository_id": 1368730125,
+      "head_sha": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+      "id": 39176566626,
+      "repository_id": 1368730125
+    }
+  },
+  "compile_job_id": 117820349562,
+  "failed_step": 6,
+  "failed_step_name": "Independently admit exact original inputs and stage the separate callback-sealed role",
+  "interpretation": [
+    "Actual current-source gate passed on Windows before staging refused. The diagnostic artifact contains only that source gate receipt; it contains no build log, staged TICK source or changedMap PE. Compiler/record/upload and dependent original transaction were skipped, so no server dispatch/send/native receive observation exists in this run.",
+    "D reports the actual stack reached new sourcehooks.transform whole-baseline SHA guard after inherited fresh staging/verification. Its concrete source-chain review found raw upstream svr_tick baseline omits inherited progress/character-events/monorail patches. This identifies a supplier/integration discrepancy to correct; exact stagedTICK bytes are not retained in this artifact. Final corrected composition must be admitted separately before actual new build.",
+    "Prior host/source controls explicitly did not execute full private staging, Windows kernel/compiler or original Map. Their source-only five-file integration used rawTICK and did not exercise the full inherited pipeline; those passing controls cannot substitute for this failed actual staging boundary.",
+    "Independent ARM64 build/lint/audit succeeded and is retained in android-review.json. It does not change this refusal, publish an APK, establish a Thor receive cause or qualify initial-character/actor/applicationACK/world authority. Gates25\u201327 remainOPEN."
+  ],
+  "job_conclusion": "failure",
+  "observation_admitted": true,
+  "original_transaction_conclusion": "skipped",
+  "original_transaction_job_id": 117820903834,
+  "review_method": "Independent GitHub run/jobs/artifact APIs and D sole retained diagnostic ZIP; raw CRC/JSON/hash and exact source gate comparison only. No duplicate download, compiler, tests, original server or accepted qualifier replay.",
+  "run_attempt": 1,
+  "run_id": 39176566626,
+  "schema": "coh-server-initial-actual-staging-refusal-independent-worker-f-v1",
+  "source_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "verified": {
+    "Map_record_or_upload_step_executed": false,
+    "Windows_compiler_step_executed": false,
+    "changed_Map_PE_available": false,
+    "current_raw_Git_gate_receipt_passed": true,
+    "gate_source_hashes_match_current_exact_manifest_plus_self": 751,
+    "original_private_transaction_executed": false,
+    "shared_archive_size_and_sha_match_API": true,
+    "single_fixed_member_and_CRC_match": true
+  }
+}

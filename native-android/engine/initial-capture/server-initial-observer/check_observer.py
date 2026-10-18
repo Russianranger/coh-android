@@ -14,7 +14,8 @@ def need(ok):
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,required=True);args=ap.parse_args();out=args.output.resolve();out.mkdir(parents=True,exist_ok=False)
  local=('coh_server_initial_ledger.h','coh_server_initial_ledger.c','coh_server_initial_api.h','source_adapter.inc','sourcehooks.py','schema.py','fixtures.py','test_ledger.c','test_adapter.c','check_observer.py','CONTRACT.md')
- paths=[*(HERE/n for n in local),ARCHIVE,*(ROOT/'upstream/ouroboros'/n for n in ('MapServer/src/svr/svr_tick.c','MapServer/src/entity/entsend.c','MapServer/src/entity/entserver.c'))]
+ prepared_path=ROOT/'native-android/tools/server-initial-observer-20261018/prepared_inputs.py';prepared_module=module('focused_sio_prepared',prepared_path)
+ paths=[*(HERE/n for n in local),*(ROOT/n for n in prepared_module.source_paths(ROOT)),ARCHIVE,*(ROOT/'upstream/ouroboros'/n for n in ('MapServer/src/svr/svr_tick.c','MapServer/src/entity/entsend.c','MapServer/src/entity/entserver.c'))]
  raw={p:p.read_bytes()for p in paths};need(sha(raw[ARCHIVE])==ARCHIVE_SHA)
  hooks=module('focused_sio_hooks',HERE/'sourcehooks.py');schema=module('focused_sio_schema',HERE/'schema.py');controls=0
  def check(ok):
@@ -23,8 +24,9 @@ def main():
   try:fn()
   except (ValueError,TypeError,UnicodeError):return True
   return False
+ prepared=prepared_module.reconstruct(ROOT)
  with zipfile.ZipFile(io.BytesIO(raw[ARCHIVE]))as z:
-  inputs={n:z.read('fresh-groups-compile/source/'+n)if n in(hooks.GROUP,hooks.PROFILE)else raw[ROOT/'upstream/ouroboros'/n]for n in hooks.PATCHED}
+  inputs={n:z.read('fresh-groups-compile/source/'+n)if n in(hooks.GROUP,hooks.PROFILE)else prepared[n]for n in hooks.PATCHED}
  patched=hooks.transform(inputs);check(hooks.reverse(patched)==inputs);check(len(hooks.overlays(ROOT))==4)
  crlf={n:hooks.lf(v).replace(b'\n',b'\r\n')for n,v in inputs.items()};pcr=hooks.transform(crlf);check(hooks.reverse(pcr)==crlf)
  for n in hooks.PATCHED:

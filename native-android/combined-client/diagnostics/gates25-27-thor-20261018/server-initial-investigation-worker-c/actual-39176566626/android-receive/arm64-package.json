@@ -1,0 +1,45 @@
+{
+  "abi": "arm64-v8a",
+  "accepted_scene_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+  "actual_server_interoperability_verified": false,
+  "apk": {
+    "bytes": 13882109,
+    "name": "CoH-Native-Combined-0.1.8-gates25-27-arm64.apk",
+    "sha256": "cd7803f59ffb62cac87d8d873a1fa2456afad4fceda0c04019486ba06b89bf17"
+  },
+  "donor_apk_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+  "embedded_asset_bytes": 9540457,
+  "embedded_asset_files": 74,
+  "format": 1,
+  "large_runtime_game_payloads_embedded": false,
+  "native_libraries": {
+    "lib/arm64-v8a/libcoh_combined_interop.so": {
+      "bytes": 4960448,
+      "sha256": "b985e52bf07fc1d6568e93409a592c20948761cfd6153d00e7a6a2b678b6c286"
+    },
+    "lib/arm64-v8a/libcoh_combined_network.so": {
+      "bytes": 5501256,
+      "sha256": "09fd81b28c6f1c8f652c1b2dc481c912f366806090715918b7160ef8943924a6"
+    },
+    "lib/arm64-v8a/libcoh_session_client.so": {
+      "bytes": 369544,
+      "sha256": "f567758294eb8ccf1bc0d950599df15281358a912f762e8c4d5d03ab4a02fda2"
+    },
+    "lib/arm64-v8a/libproot-loader.so": {
+      "bytes": 17624,
+      "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+    },
+    "lib/arm64-v8a/libproot.so": {
+      "bytes": 263648,
+      "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+    }
+  },
+  "package": "org.coh.nativecombined",
+  "scope": "Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.",
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "source_commit": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "status": "passed",
+  "tracked_source_clean": true,
+  "version_code": "9",
+  "version_name": "0.1.8-gates25-27-test"
+}

@@ -120,6 +120,23 @@ class AdmissionControls(unittest.TestCase):
             with self.subTest(extra=extra), self.assertRaises(ValueError):
                 r.cmake_identity(cache() + extra, 'C:/isrc')
 
+    def test_hooked_inherited_baseline_control_and_drift_refusal(self):
+        fresh = types.SimpleNamespace(old=types.SimpleNamespace(PRIOR='prior.json'),
+                base=types.SimpleNamespace(inherited_hashes=lambda _: {'tick.c': r.sha(b'prepared')}))
+        getter = lambda _: b'{}'
+        self.assertEqual(r.inherited_hook_sources(fresh, getter, {'tick.c': b'prepared'}),
+                         {'tick.c': r.sha(b'prepared')})
+        with self.assertRaisesRegex(ValueError, 'INITIAL_HOOK_INHERITED_BASELINE'):
+            r.inherited_hook_sources(fresh, getter, {'tick.c': b'raw upstream'})
+
+    def test_all_hooked_inherited_baselines_are_checked(self):
+        hashes = {name: r.sha(name.encode()) for name in ('first.c', 'second.c')}
+        fresh = types.SimpleNamespace(old=types.SimpleNamespace(PRIOR='prior.json'),
+                base=types.SimpleNamespace(inherited_hashes=lambda _: hashes))
+        with self.assertRaisesRegex(ValueError, 'INITIAL_HOOK_INHERITED_BASELINE'):
+            r.inherited_hook_sources(fresh, lambda _: b'{}',
+                                     {'first.c': b'first.c', 'second.c': b'changed'})
+
     def fixture(self):
         # Only the new recipe's admission envelope is under test. The actual
         # inherited source/reversal checker is an explicit test double here.

@@ -1,0 +1,264 @@
+{
+  "actual_server_interoperability_verified": false,
+  "combined_helpers": {
+    "check.py": {
+      "bytes": 4856,
+      "sha256": "9635f9c1aad364b08238789dc1ca04b8fd1f7fc8fbf4f48e7d431513b9bf5290"
+    },
+    "server_runtime.py": {
+      "bytes": 60813,
+      "sha256": "36d4853bfd696254a326f8fd6b9595b1dbac3a9c761808b2a9654ceae91b5895"
+    },
+    "test_runtime.py": {
+      "bytes": 47714,
+      "sha256": "c75c477a6e92ce6b1514db75ed1089e59e740c813bea8a7b263b1cc6a6eac471"
+    }
+  },
+  "donor_apk": {
+    "bytes": 42076692,
+    "name": "COH-Atlas-Gameplay-0.13.36.apk",
+    "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+  },
+  "format": 1,
+  "import_contract": {
+    "bytes": 20232,
+    "sha256": "6a85249a48f394fbcb63c548d4bb10ae3e3eb6eb3ebe02196fa5f9afa41cf4a8"
+  },
+  "large_runtime_payloads_bundled": false,
+  "proot_cores": {
+    "libproot-loader.so": {
+      "bytes": 17624,
+      "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+    },
+    "libproot.so": {
+      "bytes": 263648,
+      "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+    }
+  },
+  "public_crypto": {
+    "license": {
+      "bytes": 10175,
+      "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+    },
+    "source_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+    "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "version": "3.5.9"
+  },
+  "runtime_helpers": {
+    "runtime/atlas_beacon_package.py": {
+      "bytes": 49259,
+      "sha256": "37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981"
+    },
+    "runtime/atlas_world_assets.py": {
+      "bytes": 25852,
+      "sha256": "b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3"
+    },
+    "runtime/character_avatar_assets.py": {
+      "bytes": 15496,
+      "sha256": "e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1"
+    },
+    "runtime/character_creation_diagnostic.py": {
+      "bytes": 27634,
+      "sha256": "540c375996164a54e47eeecc5dff141f00772eb790a3131617d8d850a07d21b0"
+    },
+    "runtime/character_reopen_diagnostic.py": {
+      "bytes": 15440,
+      "sha256": "97a9e2e84b7f53546d38437a651d0adfe743edb1bbfcb69651c48263b212f7b5"
+    },
+    "runtime/character_server_data_cache.py": {
+      "bytes": 34788,
+      "sha256": "1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3"
+    },
+    "runtime/character_session_budget.py": {
+      "bytes": 9526,
+      "sha256": "78fc86437be60fa32930f771256e9f59eedb52844aa8699f74e5d0450b279b79"
+    },
+    "runtime/character_zoning.py": {
+      "bytes": 80879,
+      "sha256": "716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f"
+    },
+    "runtime/character_zoning_scheduler.py": {
+      "bytes": 20419,
+      "sha256": "dc76a478d6fefe83a9c298079bd9a199208fbebd28f189478ebe4a13143ab254"
+    },
+    "runtime/client_animation_package.py": {
+      "bytes": 13921,
+      "sha256": "c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64"
+    },
+    "runtime/client_attempt_retry.py": {
+      "bytes": 12707,
+      "sha256": "afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380"
+    },
+    "runtime/client_gpu_profile.py": {
+      "bytes": 65441,
+      "sha256": "c6039fbbf339783faa9a7cdb967d579bae2356e452878af322fcca79a1babd0e"
+    },
+    "runtime/client_interactive_diagnostic.py": {
+      "bytes": 33958,
+      "sha256": "f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c"
+    },
+    "runtime/client_login_diagnostic.py": {
+      "bytes": 15316,
+      "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+    },
+    "runtime/client_startup_diagnostic.py": {
+      "bytes": 91242,
+      "sha256": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53"
+    },
+    "runtime/client_visual_assets.py": {
+      "bytes": 27639,
+      "sha256": "b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb"
+    },
+    "runtime/dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    },
+    "runtime/diagnostic.py": {
+      "bytes": 69529,
+      "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+    },
+    "runtime/game_device_diagnostic.py": {
+      "bytes": 69019,
+      "sha256": "1a4441f0b7c0e7d4954ac8e486ce148bae0f49035dd8597dff5c900844886d60"
+    },
+    "runtime/game_diagnostic.py": {
+      "bytes": 80208,
+      "sha256": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737"
+    },
+    "runtime/game_evidence.py": {
+      "bytes": 25884,
+      "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "runtime/game_hang_evidence.py": {
+      "bytes": 22400,
+      "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+    },
+    "runtime/game_map_progress.py": {
+      "bytes": 14789,
+      "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+    },
+    "runtime/kings_row_beacon_package.py": {
+      "bytes": 10771,
+      "sha256": "a3e2120f5ffb5f307b41ec2670ca4926d1b0cc6df896db2b0db2dbf7dc67c8b5"
+    },
+    "runtime/local_character_server.py": {
+      "bytes": 207503,
+      "sha256": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180"
+    },
+    "runtime/local_login_server.py": {
+      "bytes": 21351,
+      "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+    },
+    "runtime/native_character_events.py": {
+      "bytes": 6484,
+      "sha256": "2f9813e29530497e6834b21cfbcfc5fd9dd33fc8c64f49502eafab99f25b65b6"
+    },
+    "runtime/native_map_startup_contract.py": {
+      "bytes": 13590,
+      "sha256": "525cd51cd35be0f1c30ef64b8a268124d1128b333832dde15e9dc8a42706944d"
+    },
+    "runtime/native_monorail_contract.py": {
+      "bytes": 4552,
+      "sha256": "d6a879cd5c55059c239ab535af0df3e8369de5b60df6356385fae6df03a72df0"
+    },
+    "runtime/native_monorail_events.py": {
+      "bytes": 5877,
+      "sha256": "c40c96c4701582220dfee722c5315b9e565ace165278baedcc140ae3000572fd"
+    },
+    "runtime/native_responsiveness_contract.py": {
+      "bytes": 78410,
+      "sha256": "7523e2a32f9db8cbe308c8d8bceaa59bd490168cf6886791598810ef86910f85"
+    },
+    "runtime/native_training_save.py": {
+      "bytes": 17455,
+      "sha256": "a1bc4641eb96fed662274d742cea8ad51f47ab44fc0a35dec155da8a0e486fdc"
+    },
+    "runtime/presentation_diagnostic.py": {
+      "bytes": 17396,
+      "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+    },
+    "runtime/server_animation_package.py": {
+      "bytes": 13418,
+      "sha256": "a8911500947ce99714b38a1fec913159fc42c0e10398b6ccdcb9161e9cfa4d4a"
+    },
+    "runtime/server_cache_package.py": {
+      "bytes": 22652,
+      "sha256": "8a923225b1f9cbd7fe0ac13a700be6a1c372235cf7703db9b87cf80268b53e54"
+    },
+    "runtime/server_fx_catalog.py": {
+      "bytes": 15400,
+      "sha256": "e0f347e156548b6a78e4f5cb6beba48d053e244e508cfb5d105c316e0fa7148a"
+    },
+    "runtime/server_message_cache_format.py": {
+      "bytes": 4921,
+      "sha256": "e70fa5aa8c591c866f0c72f3840495cd93024031936f92944c813a9901d3d6ec"
+    },
+    "runtime/stationary_contact_evidence.py": {
+      "bytes": 11472,
+      "sha256": "40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d"
+    },
+    "runtime/task_gate_evidence.py": {
+      "bytes": 30825,
+      "sha256": "2b0f8f324401c01cbb1954616d288ff3fc6f10bc8ab8c444ae123e2a2763ef04"
+    },
+    "runtime/texture_header_index.py": {
+      "bytes": 18204,
+      "sha256": "5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5"
+    },
+    "runtime/zone_asset_package.py": {
+      "bytes": 15364,
+      "sha256": "eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6"
+    }
+  },
+  "scene_apk": {
+    "bytes": 1931361,
+    "name": "CoH-Native-Session-Client-0.3.0-arm64.apk",
+    "sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639"
+  },
+  "scene_files": {
+    "asset-manifest.json": {
+      "bytes": 966,
+      "sha256": "c6917aba1add141130d4f26ef980a8b7984b6054c10b152c517c3349c4d5990e"
+    },
+    "character.bin": {
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    "locomotion.bin": {
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    },
+    "map-fixture.json": {
+      "bytes": 260148,
+      "sha256": "37df8a6df3ba3963d21a30db0c6a1079517db70cdaaa967e3b613a7620e512fa"
+    },
+    "map.bin": {
+      "bytes": 161654,
+      "sha256": "1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f"
+    },
+    "morph.bin": {
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    "rig.bin": {
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    "session-fixture.json": {
+      "bytes": 3139,
+      "sha256": "79b50c74077bff6745b78c953d28e6550c06210f5ddea81db0c06a8fb90d3c78"
+    },
+    "walkable-fixture.json": {
+      "bytes": 108986,
+      "sha256": "5cc3f2de3c36d9b539a22e76f3164e966f1584f48a499a4171bd9946d9652ede"
+    },
+    "walkable.bin": {
+      "bytes": 605048,
+      "sha256": "e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357"
+    },
+    "world.bin": {
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  }
+}

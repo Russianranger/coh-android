@@ -1,0 +1,22 @@
+{
+  "job_id": 117820349362,
+  "raw_job_log_retained": false,
+  "raw_job_log_utf8_sha256": "b273f3bc7c3cad724375ea0d9e5f90765d2510e64d127905e9e063135f7633e8",
+  "selected_exact_lines": [
+    "2026-10-18T23:27:33.1757680Z \u001b[36;1mprint(json.dumps({'raw_and_Git_sources_admitted':len(pins),'old_qualifiers_replayed':False,'runtime_executed':False}))\u001b[0m",
+    "2026-10-18T23:27:33.4667151Z {\"raw_and_Git_sources_admitted\": 751, \"old_qualifiers_replayed\": false, \"runtime_executed\": false}",
+    "2026-10-18T23:28:08.0008065Z {\"status\": \"passed\", \"qualified_crypto_reused\": [\"arm64-v8a\", \"x86_64\"]}",
+    "2026-10-18T23:28:10.0669895Z ##[group]Run python3 native-android/combined-client/gradle.py -PcohCryptoRoot=/tmp/gates-crypto :app:assembleDebug :app:lintDebug",
+    "2026-10-18T23:28:10.0670936Z \u001b[36;1mpython3 native-android/combined-client/gradle.py -PcohCryptoRoot=/tmp/gates-crypto :app:assembleDebug :app:lintDebug\u001b[0m",
+    "2026-10-18T23:28:36.8823575Z > Task :app:configureCMakeDebug[arm64-v8a]",
+    "2026-10-18T23:28:38.8863623Z > Task :app:compileDebugJavaWithJavac",
+    "2026-10-18T23:28:43.1832358Z > Task :app:buildCMakeDebug[arm64-v8a]",
+    "2026-10-18T23:28:55.7932003Z > Task :app:lintDebug",
+    "2026-10-18T23:28:55.8042013Z BUILD SUCCESSFUL in 44s",
+    "2026-10-18T23:28:56.7967949Z {\"status\": \"passed\", \"apk\": {\"name\": \"CoH-Native-Combined-0.1.8-gates25-27-arm64.apk\", \"bytes\": 13882109, \"sha256\": \"cd7803f59ffb62cac87d8d873a1fa2456afad4fceda0c04019486ba06b89bf17\"}, \"abi\": \"arm64-v8a\", \"embedded_asset_bytes\": 9540457}",
+    "2026-10-18T23:28:57.2979871Z {\"passed\": true, \"abi\": \"arm64-v8a\", \"interop_library\": {\"bytes\": 4960448, \"sha256\": \"b985e52bf07fc1d6568e93409a592c20948761cfd6153d00e7a6a2b678b6c286\"}}",
+    "2026-10-18T23:28:57.9014021Z SHA256 digest of uploaded artifact zip is 7aba67f7da3bcdfc3b47496ec0732b9c6ad6af57d61da18932960562b52b5013",
+    "2026-10-18T23:28:58.1194561Z Artifact server-initial-android-compile-a6b20f8bb7aca2d19c7bee217bb961ce60427418-attempt-1.zip successfully finalized. Artifact ID 12154413482",
+    "2026-10-18T23:28:58.1195338Z Artifact server-initial-android-compile-a6b20f8bb7aca2d19c7bee217bb961ce60427418-attempt-1 has been successfully uploaded! Final size is 16098 bytes. Artifact ID is 12154413482"
+  ]
+}

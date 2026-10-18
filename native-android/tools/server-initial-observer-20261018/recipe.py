@@ -185,6 +185,17 @@ def stage_expected(root, prior, originals, output, overlay):
             'normal_authentication_qualified': False, 'world_authority': False}
 
 
+def inherited_hook_sources(fresh, getter, originals):
+    """Every newly hooked inherited file retains its actual prepared baseline."""
+    inherited = fresh.base.inherited_hashes(decode(getter(fresh.old.PRIOR)))
+    matched = {}
+    for name, raw in originals.items():
+        if name in inherited:
+            require(sha(raw) == inherited[name], 'INITIAL_HOOK_INHERITED_BASELINE')
+            matched[name] = inherited[name]
+    return matched
+
+
 def verify_bytes(root, getter, all_inherited=False):
     root, fresh, hooks = context(root)
     actual = {n: getter(n) for n in hooks.PATCHED}
@@ -194,6 +205,7 @@ def verify_bytes(root, getter, all_inherited=False):
     require(type(output) is dict and output == actual, 'INITIAL_HOOK_REVERSAL')
     prior = fresh.verify_bytes(root, lambda n: original[n] if n in original else getter(n),
                                all_inherited=all_inherited)
+    inherited_hook_sources(fresh, getter, original)
     overlay = hook_overlay(root, hooks)
     require(all(getter(n) == raw for n, raw in overlay.items()), 'INITIAL_OVERLAY_CHANGED')
     result = stage_expected(root, prior, original, output, overlay)

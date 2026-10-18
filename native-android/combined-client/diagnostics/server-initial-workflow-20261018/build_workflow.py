@@ -168,7 +168,7 @@ def main():
     steps[15]['with']['name'] = 'server-initial-public-${{ github.sha }}-attempt-${{ github.run_attempt }}'
     steps[15]['with']['path'] = 'current/out/groups-public/summary.json\ncurrent/out/groups-public/tooling.json\ncurrent/out/groups-public/observer.json\n'
     execute['steps'] = steps
-    android['if'] = condition
+    android['if'] = condition + " && !contains(github.event.head_commit.message, '[server-initial-map-only]')"
     android['steps'] = android['steps'][:6]
     android['steps'].insert(1, {'name': 'Admit the changed receive-report source before Android compilation', 'shell': 'bash', 'run': gate})
     android['steps'][-1]['name'] = 'Compile, lint and audit the additive ARM64 receive report without publishing a release'

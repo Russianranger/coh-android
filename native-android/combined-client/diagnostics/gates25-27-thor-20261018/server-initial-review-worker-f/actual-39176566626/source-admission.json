@@ -1,0 +1,14 @@
+{
+  "manifest_sha256": "4ffd3a0d541f618c0c5631641d0d28d064cf0d00c24361b99140adeb2bf31ffc",
+  "passed": true,
+  "raw_and_Git_file_pins": 751,
+  "review_method": "Read-only local raw SHA256 and Git blob SHA1 comparison to published current HEAD; no source imports, compiler/tests/runtime/qualifier execution.",
+  "run_attempt": 1,
+  "run_id": 39176566626,
+  "runtime_executed_by_review": false,
+  "schema": "coh-server-initial-actual-source-independent-worker-f-v1",
+  "source_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "source_tree": "bec1cb1aca6bcfa672fd7e31372028ed25f2f370",
+  "workflow_sha256": "782717b72b387771fc85a13992134e5b333ca06b2f68ceef6ddd4a2291229c34",
+  "world_authority": false
+}

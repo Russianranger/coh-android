@@ -1,0 +1,324 @@
+{
+  "all_23_raw_inputs_equal_git_at_review_head": true,
+  "confirmed_gaps": [
+    {
+      "change_needs_larger_limits": false,
+      "effect": "An original later ordered child with ordered_id0 is rejected before retention/ACK by frame validation. Relaxing only framing still encounters group equality rejection, and merged ordering must still come from part0.",
+      "id": "ORDERED_LATER_ZERO",
+      "native_locations": [
+        "valid(): ordered&&!ordered_id is always rejected.",
+        "retain(): all sibling ordered_id values must be equal.",
+        "retain(): merged ordered_id currently starts from the arriving completion child, rather than explicitly part0."
+      ],
+      "native_paths": [
+        "native-android/engine/network/coh_net_frame.c",
+        "native-android/engine/network/coh_net.c",
+        "native-android/engine/initial-capture/coh_request_tx_net.c"
+      ]
+    },
+    {
+      "change_needs_larger_limits": false,
+      "effect": "Original exact split-boundary count1 group is rejected even though existing reassembly arrays/mask and payload cap can hold it.",
+      "id": "COUNT_ONE_BOUNDARY",
+      "native_locations": [
+        "valid(): nonzero sibling_count<2 is rejected."
+      ],
+      "native_paths": [
+        "native-android/engine/network/coh_net_frame.c"
+      ]
+    }
+  ],
+  "evidence_limits": [
+    "Current receive counters expose aggregate malformed, unsupported, queue limits and last decode; they have no sibling-count or ordered-zero rejection subtype. A datagram/link-count gap cannot uniquely attribute these source gaps.",
+    "Server ledger final_packet_bits describe the constructed pre-compression packet. pktSend may compress and fragment later; that field and raw return0 do not establish compressed wire size, child count, complete queue acceptance or socket transmission.",
+    "Any next runtime discrimination should remain fixed numeric/categorical: checksum-valid header rejection kind and bounded aggregate sibling count/part/order-shape counts. No packet IDs, group IDs, entity IDs, payloads, endpoint or account export is needed.",
+    "Neither source compatibility correction establishes initial character semantics, application acknowledgment permission, source authority or world acceptance."
+  ],
+  "findings_status": "Two source compatibility gaps confirmed; actual transaction cause remains unproved.",
+  "larger_limit_alternative_constraints": {
+    "bounded_design_option": "If typed evidence later establishes a larger compressed wire body, use an IDLE opt-in receive-only wire/part limit and opaque bounded group/RX storage under one explicit combined retained-byte quota. Preserve default16KiB legacy/TX/public message APIs; publish only through existing owned receive. A bounded frame-decode entry must enforce the selected receive cap without relaxing default framing globally.",
+    "default_original_inequality": "At1228-byte nonfinal parts, count>16 implies wire size>19648 bytes, already above16384. A count-only increase cannot admit such a default original message. Conversely count15 or16 can fit the header cap yet exceed the wire cap.",
+    "downstream_boundaries": "Owned zlib decoder currently rejects compressed input>COH_NET_MESSAGE_MAX, and the receive projection refuses decode_compressed_bytes above that value. Both would need an explicitly admitted wire-cap contract if a future expanded wire role is implemented.",
+    "existing_failure_distinction": {
+      "advertised_siblings_over16": "Frame valid() returns COH_INVALID, increments malformed, does not retain/ACK this frame; link may later time out.",
+      "missing_parts": "Existing group timeout retires the link; initial application deadline is separate and unchanged.",
+      "retained_wire_over16384": "retain() increments queue_limits, clears queues/keys and fails the link because earlier reliable parts may already have been ACKed."
+    },
+    "independent_limits": "The16-part header admission limit and16KiB merged compressed-wire limit precede the existing4MiB decoded allocation. Raising decoded budget cannot fix either earlier refusal.",
+    "no_arbitrary_cap_selected": true,
+    "public_abi_hazard": "Global COH_NET_MESSAGE_MAX changes public CohNetMessage size and multiplies16 RX buffers plus TX/control/legacy codec stack buffers; it is not a receive-only fix.",
+    "quota_requirements": "Reserve/check combined retained fragments, queued wire bodies and one decoded loan before ACK/publication; account the retained compressed body concurrently with up-to4MiB decoded output and separate zlib allocation ceiling. Free/erase/rescind on every close/cancel/timeout/disconnect/error. No aggregate allocator/quota currently exists in CohNet; high_water_retained_bytes is accounting, not enforcement.",
+    "status": "Conditional preparation only. No larger size is recommended without typed runtime evidence and an explicit total retention budget.",
+    "uint32_mask_hazard": "Current1u<<part and (1u<<count)-1 expressions are safe only below32. Simply setting fragment max32 creates undefined shifts; larger support requires an explicit bounded bitmap/received-count implementation."
+  },
+  "limit_changes": false,
+  "narrow_safe_fix_contract": {
+    "abi_and_memory": "Keep all public structs, macro limits, Group.parts[16], uint32_t mask, RX slot payloads, allocation sizes, stack buffers and zlib memory bounds unchanged. No new packet copy or persistent buffer is needed.",
+    "focused_future_controls_not_executed": [
+      "Actual source-shaped ordered siblings: first K, later0; forward, reverse and mixed arrival; complete message receives effective K and original part0 packet ID.",
+      "One-part sibling boundary with ordered and unordered frames; nonzero group and part0.",
+      "Previously accepted repeated-K siblings if retained by the chosen compatibility contract.",
+      "Refuse missing/zero canonical first order, conflicting later nonzero order, mismatched flags/count, duplicate part, malformed framing and over-cap bits.",
+      "Preserve incomplete-group timeout, RX-full final-fragment retry, streaming dictionary sequence and exact request-Tx witness retirement behavior."
+    ],
+    "framing_rules": [
+      "Permit nonzero sibling_count=1 with existing nonzero group, in-range part and bounded payload rules.",
+      "Unfragmented ordered packets and part0 of an ordered sibling group must retain a nonzero ordered_id.",
+      "Permit ordered_id=0 only for a nonfirst child in a valid sibling group. Keep the version5 ordered gate, connect restrictions, checksum, bit/payload/ACK validation and fragment count cap unchanged."
+    ],
+    "integration_boundaries": [
+      "The interop DSO currently compiles coh_request_tx_net.c plus shared coh_net_frame.c/coh_net_zip.c. Changing only ordinary coh_net.c would not fix this diagnostic role.",
+      "The request-Tx net copy has a source-preservation proof against ordinary coh_net.c. A separately qualified replacement/copy or refreshed exact source transition is required; do not silently invalidate frozen role receipts.",
+      "No Java/JNI mode/API/schema change is required for this shape-only correction. The numeric receive projection remains within its existing count/byte domains."
+    ],
+    "reassembly_rules": [
+      "Retain out-of-order children without using a later zero as the effective message order. Require all siblings to agree on group count, ordered/compressed flags and original alignment constraints.",
+      "When complete, derive merged packet ID and effective ordered_id explicitly from part0, then enforce existing monotonic ordered delivery and dictionary order.",
+      "For compatibility with the already accepted adapter shape, a later nonzero ordered_id may be retained only if it agrees with the canonical nonzero part0 ID; conflicting IDs must refuse. A stricter original-only policy would deliberately change previously accepted native-peer frames and should be an explicit decision.",
+      "Never treat all-zero ordered IDs as a valid ordered message, never infer a missing part0 ID, and do not release an incomplete group or advance a zlib dictionary early.",
+      "Keep unACKed capacity refusals retryable. After previously ACKed pieces exceed the wire cap or expire, preserve current link failure/cleanup semantics rather than silently dropping them."
+    ],
+    "status": "Proposed separate qualification only; no source was changed.",
+    "unchanged_limits": {
+      "datagram_bytes": 1472,
+      "decoded_bytes": 4194304,
+      "dedup_slots": 16384,
+      "fragment_parts": 16,
+      "fragment_payload_bytes": 1440,
+      "group_slots": 4,
+      "rx_slots": 16,
+      "tx_slots": 32,
+      "wire_message_bytes": 16384
+    }
+  },
+  "original_sender_chain": [
+    {
+      "function": "entSendUpdate",
+      "locations": [
+        4051,
+        4057,
+        4066,
+        4067
+      ],
+      "observation": "First full update writes SERVER_ALLENTS, increments lastSentFullUpdateID and marks the packet ordered while that ID is unacknowledged. This ordering does not require a prior client application acknowledgment.",
+      "path": "upstream/ouroboros/MapServer/src/entity/entsend.c"
+    },
+    {
+      "function": "pktSendDbg",
+      "locations": [
+        469,
+        503,
+        506,
+        536,
+        540,
+        547,
+        569
+      ],
+      "observation": "Compression occurs before sibling splitting. Default payload split is sendPacketBufferSize minus housekeeping allowance. A child is created per part, assigned the common sibling group/count and its part index, made compatible, and enqueued with sibling_packet=(part!=0).",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c"
+    },
+    {
+      "function": "packetStartup / pktCreateImp / pktMakeCompatible",
+      "locations": [
+        77,
+        138,
+        572
+      ],
+      "observation": "PacketMemoryPool uses default zeroed allocation; only the separate bitstream buffer pool disables zeroing. pktMakeCompatible copies reliable/debug/compress/ordered flags, not ordered_id.",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c"
+    },
+    {
+      "function": "initMemoryPool / mpAlloc_nolock",
+      "locations": [
+        302,
+        586
+      ],
+      "observation": "Initialization selects Default; allocation zeroes the entire record when zeroMemory is enabled. MemoryPool.h defines Default=ZERO_MEMORY_BIT.",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/components/MemoryPool.c"
+    },
+    {
+      "function": "lnkAddToSendQueue",
+      "locations": [
+        106,
+        113,
+        114
+      ],
+      "observation": "Every queued child receives its own packet ID. Only an ordered UDP first child (!sibling_packet) receives a new ordered_id. The later zero-initialized children retain ordered_id=0.",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c"
+    },
+    {
+      "function": "pktWrap / pktUnwrap / mergeSibs",
+      "locations": [
+        666,
+        671,
+        672,
+        734,
+        737,
+        814,
+        818,
+        820,
+        945,
+        948,
+        275,
+        298,
+        305
+      ],
+      "observation": "The wrapper serializes sibling count and part as BitsPack(1), group as 32 bits, and ordered flag plus BitsAuto(ordered_id) for every ordered child. Zero is encodable/readable. Siblings are sorted by part; merged ID, flags and ordered_id are taken from part0.",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c"
+    }
+  ],
+  "production_source_changes": false,
+  "review_date_utc": "2026-10-18",
+  "review_head": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "reviewer": "worker_e_renderer",
+  "runtime_cause_inferred": false,
+  "runtime_context": {
+    "actual_fragment_rejection_cause_established": false,
+    "new_runtime_evidence_admitted_by_reviewer": false,
+    "run_id": 39176566626,
+    "status_source": "Parent report: staging failed before compiler/original transaction."
+  },
+  "schema": "coh-original-ordered-siblings-source-review-worker-e-v1",
+  "scope": "Read-only source interpretation and conditional fix contract. No implementation, limit increase, compiler, tests, service, packet capture or transaction was run.",
+  "source_derived_wire_expectations": {
+    "applicability": "Version5 negotiated ordered UDP, non-debug path, after any applicable compression; no claim about the active transaction.",
+    "common_fields": {
+      "compressed": "Copied original compress flag on all children.",
+      "ordered": "1 on all children when original packet was ordered.",
+      "packet_id": "A different incremented link packet ID per committed child.",
+      "sibling_count": "Same positive count C on all children.",
+      "sibling_id": "Same newly incremented sibling-group ID."
+    },
+    "default_split_bytes": 1228,
+    "default_split_derivation": "Map svr_init.c calls packetStartup(0,...), preserving DEFAULT_SEND_PACKET_BUFFER_SIZE=1264. Non-debug housekeeping is36, hence1228 payload bytes per nonfinal child. Last child carries the remaining logical bits.",
+    "first_child": {
+      "ordered_id": "New nonzero ordered sequence K.",
+      "sibling_part": 0
+    },
+    "later_children": {
+      "ordered_id": 0,
+      "sibling_part": "1 through C-1"
+    },
+    "merge": "Sort by sibling_part; payload concatenation follows part order. Use part0 packet ID and part0 ordered_id K. Apply ordered delivery and persistent decompression once to the whole assembled payload.",
+    "original_max_configured_split_bytes": 1436,
+    "single_sibling_boundary": "Original nonfragment branch uses stream.size < maxPacketDataSize. Equality therefore enters splitting and computes count=1, part0, a nonzero sibling_id, and an ordinary first-child ordered_id if ordered. This is a legal source-generated one-part group."
+  },
+  "source_pins": {
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt": {
+      "bytes": 4246,
+      "raw_equals_git": true,
+      "sha256": "80c01d49af00ea306af339880db0131b427ea8be0cecc2e4205644ac109e045f"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h": {
+      "bytes": 4230,
+      "raw_equals_git": true,
+      "sha256": "232cf9ac21de2afaaaff8825f627f1a9219c9d08de4c5a0b8538ab7641a43c05"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_map.c": {
+      "bytes": 18258,
+      "raw_equals_git": true,
+      "sha256": "400b58f478de5774222d95520fc6a990306022bd5f79ab9ccd50108b1629fc70"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_net.c": {
+      "bytes": 25858,
+      "raw_equals_git": true,
+      "sha256": "7c0358aea98c913333b443d88642260270b7bab81b145577fca5f5f06eb24d7e"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_udp.c": {
+      "bytes": 11684,
+      "raw_equals_git": true,
+      "sha256": "b70ea47358423fe504541d2a890b3cedcd80c6ba5f788537dba6bb78c7516318"
+    },
+    "native-android/engine/mapclient/coh_mapclient.c": {
+      "bytes": 23015,
+      "raw_equals_git": true,
+      "sha256": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199"
+    },
+    "native-android/engine/network/coh_net.c": {
+      "bytes": 24548,
+      "raw_equals_git": true,
+      "sha256": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1"
+    },
+    "native-android/engine/network/coh_net.h": {
+      "bytes": 7329,
+      "raw_equals_git": true,
+      "sha256": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+    },
+    "native-android/engine/network/coh_net_frame.c": {
+      "bytes": 5136,
+      "raw_equals_git": true,
+      "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+    },
+    "native-android/engine/network/coh_net_udp.c": {
+      "bytes": 11496,
+      "raw_equals_git": true,
+      "sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d"
+    },
+    "native-android/engine/network/coh_net_zip.c": {
+      "bytes": 7170,
+      "raw_equals_git": true,
+      "sha256": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747"
+    },
+    "native-android/engine/network/coh_net_zip_internal.h": {
+      "bytes": 477,
+      "raw_equals_git": true,
+      "sha256": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd"
+    },
+    "native-android/protocol/coh_protocol.h": {
+      "bytes": 1923,
+      "raw_equals_git": true,
+      "sha256": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "bytes": 171294,
+      "raw_equals_git": true,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c": {
+      "bytes": 70402,
+      "raw_equals_git": true,
+      "sha256": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/BitStream.h": {
+      "bytes": 4825,
+      "raw_equals_git": true,
+      "sha256": "31802c763370b7bf74908c99f7f17cae021375d4c2dc6a8445359cdaa7d74b06"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/MemoryPool.h": {
+      "bytes": 6320,
+      "raw_equals_git": true,
+      "sha256": "e3843eb8eb213dfcf8c6f6c81e6632a6b3144b20afb78e56a9626d62f856c0a1"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_packet.h": {
+      "bytes": 2770,
+      "raw_equals_git": true,
+      "sha256": "80a772528a6b273b4b9c4bc8985b0988edb49a8a2591cf63094610fdf23aa36f"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": {
+      "bytes": 21748,
+      "raw_equals_git": true,
+      "sha256": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/MemoryPool.c": {
+      "bytes": 35697,
+      "raw_equals_git": true,
+      "sha256": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": {
+      "bytes": 17605,
+      "raw_equals_git": true,
+      "sha256": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c": {
+      "bytes": 46672,
+      "raw_equals_git": true,
+      "sha256": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c": {
+      "bytes": 30356,
+      "raw_equals_git": true,
+      "sha256": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    }
+  },
+  "test_or_compiler_replay": false
+}

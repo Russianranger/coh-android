@@ -29,3 +29,15 @@ whole fragmented-queue acceptance or socket delivery. An ACTIVE receipt is a
 last successfully persisted checkpoint; later progress, final counters and sink
 health remain unknown. All queue/socket/application/world authority flags remain
 false, including after FINAL_RETURN.
+
+`prepared-successor-02/qualification.json` is the current source-only successor.
+The actual first Windows attempt refused before compilation because the tick
+baseline expected raw upstream rather than the inherited prepared tick. The
+successor changes only that production baseline constant, reconstructs all
+three TUs through the five accepted patches, and runs 13 source controls. It
+explicitly reuses unchanged ledger/adapter/header/test execution from host-03;
+no host ELF, compiler or original service was replayed. The maintained checker
+now uses the same complete prepared-input reconstruction for future execution.
+Host-03 remains historical evidence of its original raw-input recipe scope.
+`prepared-successor-01` records a receipt-assembly checker type error after
+source controls, without host/compiler execution.

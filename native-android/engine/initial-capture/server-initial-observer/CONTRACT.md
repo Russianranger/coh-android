@@ -7,8 +7,10 @@ return. It does not publish an actor, permit an application ACK, admit a source
 generation or grant world authority.
 
 `sourcehooks.py` accepts five entire LF-normalized, hash-pinned baseline files:
-the accepted fresh group TU and its profile, plus original `svr_tick.c`,
-`entsend.c`, and `entserver.c`. Four new overlays live in the group directory;
+the accepted fresh group TU and its profile, the inherited prepared
+`svr_tick.c`, and original `entsend.c` and `entserver.c`. The tick input includes
+the accepted progress, character-event and monorail patches from the complete
+startup source preparation chain; it is not raw upstream. Four new overlays live in the group directory;
 the adapter includes the portable implementation exactly once. Both LF and
 uniform CRLF reverse byte-exactly. Every baseline mutation is refused. No
 upstream file is changed by the supplier.

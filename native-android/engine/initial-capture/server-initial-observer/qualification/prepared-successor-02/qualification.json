@@ -1,0 +1,161 @@
+{
+  "actual_failed_run_reclassified": false,
+  "compiler_executed": false,
+  "exact_reverse_files": 5,
+  "host_execution_replayed": false,
+  "new_overlays_unchanged": true,
+  "old_tick_sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+  "only_production_hook_change": "exact TICK baseline constant raw upstream -> inherited prepared source",
+  "original_map_executed": false,
+  "passed": true,
+  "patched_sha256": {
+    "MapServer/src/entity/entsend.c": "13856a4c2a16bfb7023df959e8cc35068c5c932319796391baeea8f473c90de8",
+    "MapServer/src/entity/entserver.c": "5892c15694a0575868ce22ae0d49d620b7413e2af02ef8ac375459b36a604a9c",
+    "MapServer/src/group/coh_fresh_source_profile.inc": "bd70baaf7680049fea491f01afdeb98c97184f1805d0e0926781039106a6776e",
+    "MapServer/src/group/groupnetsend.c": "7c861893ecb15a21c9e7fe8d6392a40a7f164cb283a655dfbf43939514b888a5",
+    "MapServer/src/svr/svr_tick.c": "862d78132f380736d7cccc7ac002bb4686c10d845900795382ef28888ef4a1f5"
+  },
+  "predecessor_host_proof_sha256": "694ec7667e531a932656242fe45c5748d3c0dcbb26ba9f8cc5385e65f47d33b4",
+  "predecessor_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "prepared_input_reconstruction": {
+    "accepted_preparer_entrypoints_reexecuted": false,
+    "compiler_executed": false,
+    "ordered_patch_transitions": [
+      {
+        "patch": "patches/postgresql/0001-dbserver-postgresql.patch",
+        "patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+        "post_patch_sha256": {
+          "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+          "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+          "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+        },
+        "selected_tus": []
+      },
+      {
+        "patch": "patches/game-loopback/0001-game-loopback-bindings.patch",
+        "patch_sha256": "7c4f4b25ab134a0dac2f4501f7cf2a5cccbfcd9482775350e3be0e1df532b8a6",
+        "post_patch_sha256": {
+          "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+          "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+          "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+        },
+        "selected_tus": []
+      },
+      {
+        "patch": "patches/mapserver-progress/0001-mapserver-progress.patch",
+        "patch_sha256": "0fc278d0f04c979b5153421278156978f11fc58584c3413645937ecd83021b2c",
+        "post_patch_sha256": {
+          "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+          "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+          "MapServer/src/svr/svr_tick.c": "c1039e69e811cc84ff4e974119974702a0bc69bf0d5f0da751fb7e8d4856902c"
+        },
+        "selected_tus": [
+          "MapServer/src/svr/svr_tick.c"
+        ]
+      },
+      {
+        "patch": "patches/character-events/0001-character-events.patch",
+        "patch_sha256": "79db1abc8538d4fcdbc7e544639e11f809a1527de8a5dbfb258c051235fd49b7",
+        "post_patch_sha256": {
+          "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+          "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+          "MapServer/src/svr/svr_tick.c": "aeb963558a1ebaeda7c79aacb860658df2e12f7ada74e1ca772554a3562310d4"
+        },
+        "selected_tus": [
+          "MapServer/src/svr/svr_tick.c"
+        ]
+      },
+      {
+        "patch": "patches/monorail/0001-monorail.patch",
+        "patch_sha256": "47e524db02d80bb9be0b1c834f8c0d3b808abff1591f440aa04a24367ac5b026",
+        "post_patch_sha256": {
+          "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+          "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+          "MapServer/src/svr/svr_tick.c": "a3810c112556b258ee2456a51eb28d6afeefd14b81c2fa97ed431659ae42a3d5"
+        },
+        "selected_tus": [
+          "MapServer/src/svr/svr_tick.c"
+        ]
+      }
+    ],
+    "prepared": {
+      "MapServer/src/entity/entsend.c": {
+        "bytes": 171294,
+        "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+      },
+      "MapServer/src/entity/entserver.c": {
+        "bytes": 64295,
+        "sha256": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806"
+      },
+      "MapServer/src/svr/svr_tick.c": {
+        "bytes": 73504,
+        "sha256": "a3810c112556b258ee2456a51eb28d6afeefd14b81c2fa97ed431659ae42a3d5"
+      }
+    },
+    "schema": "coh-server-initial-inherited-three-tu-v1",
+    "services_executed": false,
+    "source_sha256_lf": {
+      "native-android/tools/server-initial-observer-20261018/prepared_inputs.py": "c9454c92e210d992c96374ffe6e6d4e22fb209e2cd1a1de09d5d093e08e6428b",
+      "patches/character-events/0001-character-events.patch": "79db1abc8538d4fcdbc7e544639e11f809a1527de8a5dbfb258c051235fd49b7",
+      "patches/game-loopback/0001-game-loopback-bindings.patch": "7c4f4b25ab134a0dac2f4501f7cf2a5cccbfcd9482775350e3be0e1df532b8a6",
+      "patches/mapserver-progress/0001-mapserver-progress.patch": "0fc278d0f04c979b5153421278156978f11fc58584c3413645937ecd83021b2c",
+      "patches/monorail/0001-monorail.patch": "47e524db02d80bb9be0b1c834f8c0d3b808abff1591f440aa04a24367ac5b026",
+      "patches/postgresql/0001-dbserver-postgresql.patch": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+      "tools/map_startup_monorail_budget.py": "fca79790f74fec16a051957909d9ebd31897f9148a1e55a8f08de90d12168236",
+      "tools/prepare_character_events_source.py": "d96220ff645670066c7f329262f017d0b78d7e88c7a51dbc307982f518f54ef2",
+      "tools/prepare_game_loopback_source.py": "9e87a894bc0fa9cc65f1dafb0c43c441d7f1cbd39de895ba883018cbd48a2b26",
+      "tools/prepare_map_startup_source.py": "87ddbe3bfdbd2c951102386e6c074736671ccf674c865eefb81503636dde8b23",
+      "tools/prepare_mapserver_progress_source.py": "b832acb6a12db70e6f8a29d2d86fb990f1ef5fd5b11fd8c1f0149151942c2f5f",
+      "tools/prepare_monorail_source.py": "3c45235024690fe970b820af827aa2606bc5bea2329b1821a2d46dcb67f20c6d",
+      "tools/prepare_runtime.py": "20f97eddb239bda51ab7fee816407069daa74fd6122f6b2612e5269f5cfc7433",
+      "upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "upstream/ouroboros/MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    "world_authority": false
+  },
+  "prepared_tick_bytes": 73504,
+  "prepared_tick_sha256": "a3810c112556b258ee2456a51eb28d6afeefd14b81c2fa97ed431659ae42a3d5",
+  "reused_unchanged_host_checks_per_mode": 5135,
+  "schema": "coh-server-initial-prepared-source-successor-v1",
+  "source_recipe_controls": 13,
+  "source_sha256": {
+    "native-android/engine/initial-capture/server-initial-observer/CONTRACT.md": "66bc648a5f7dff8128597e7e6e0975e2da2223255bb1694e1374387025eafd23",
+    "native-android/engine/initial-capture/server-initial-observer/check_observer.py": "0917e0e0ab9b176d1517d95d301885642914e9fe8aaa2c2af32b2a44df33e6db",
+    "native-android/engine/initial-capture/server-initial-observer/check_staged_successor.py": "8dcc3c851450055a1eabe10154cf5c3b83ce98537859fbbcaf1c7acf6d1deec9",
+    "native-android/engine/initial-capture/server-initial-observer/qualification/host-03/executed-host-elfs.tar.gz": "f7de31f951cead103407087f6824d9873451b18a6a1d98c47cad69629deaf8a2",
+    "native-android/engine/initial-capture/server-initial-observer/qualification/host-03/qualification.json": "694ec7667e531a932656242fe45c5748d3c0dcbb26ba9f8cc5385e65f47d33b4",
+    "native-android/engine/initial-capture/server-initial-observer/sourcehooks.py": "838a0c53daccfd1c83a6f56e4d1e997c156b8c339055b67162162d419ac5d348",
+    "native-android/tools/server-initial-observer-20261018/prepared_inputs.py": "c9454c92e210d992c96374ffe6e6d4e22fb209e2cd1a1de09d5d093e08e6428b",
+    "patches/character-events/0001-character-events.patch": "79db1abc8538d4fcdbc7e544639e11f809a1527de8a5dbfb258c051235fd49b7",
+    "patches/game-loopback/0001-game-loopback-bindings.patch": "7c4f4b25ab134a0dac2f4501f7cf2a5cccbfcd9482775350e3be0e1df532b8a6",
+    "patches/mapserver-progress/0001-mapserver-progress.patch": "0fc278d0f04c979b5153421278156978f11fc58584c3413645937ecd83021b2c",
+    "patches/monorail/0001-monorail.patch": "47e524db02d80bb9be0b1c834f8c0d3b808abff1591f440aa04a24367ac5b026",
+    "patches/postgresql/0001-dbserver-postgresql.patch": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+    "tools/map_startup_monorail_budget.py": "fca79790f74fec16a051957909d9ebd31897f9148a1e55a8f08de90d12168236",
+    "tools/prepare_character_events_source.py": "d96220ff645670066c7f329262f017d0b78d7e88c7a51dbc307982f518f54ef2",
+    "tools/prepare_game_loopback_source.py": "9e87a894bc0fa9cc65f1dafb0c43c441d7f1cbd39de895ba883018cbd48a2b26",
+    "tools/prepare_map_startup_source.py": "87ddbe3bfdbd2c951102386e6c074736671ccf674c865eefb81503636dde8b23",
+    "tools/prepare_mapserver_progress_source.py": "b832acb6a12db70e6f8a29d2d86fb990f1ef5fd5b11fd8c1f0149151942c2f5f",
+    "tools/prepare_monorail_source.py": "3c45235024690fe970b820af827aa2606bc5bea2329b1821a2d46dcb67f20c6d",
+    "tools/prepare_runtime.py": "20f97eddb239bda51ab7fee816407069daa74fd6122f6b2612e5269f5cfc7433",
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+  },
+  "unchanged_host_consumed_inputs": {
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_api.h": "e4a4305902afb242c90a6b257157b21420a2d916609dc39e87e1594919670874",
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.c": "aad2b973fc4826aac5d3c511a73b0bd84db7badf819f99bdb6126f4b58d61a90",
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.h": "ccd911e409dffa3849fac45473178b88aaee26c37fbf2b9ad85aa700b5d90953",
+    "native-android/engine/initial-capture/server-initial-observer/fixtures.py": "973178998a5835ecee89e02bdbbe7b1aeed9ea4395d488ba65bf3a85ae127421",
+    "native-android/engine/initial-capture/server-initial-observer/schema.py": "b4e855c580af98131a57ba40769e0fd0b38f27690c5bead537e6905e9f9215a6",
+    "native-android/engine/initial-capture/server-initial-observer/source_adapter.inc": "9aa51f7de8c53bdccb8097851984c1a8aabf580b00ccde0b8da90df9f6f431be",
+    "native-android/engine/initial-capture/server-initial-observer/test_adapter.c": "621be2fc11d7ed4fc91d2f6b14e3d47b09c5ca26466b7eda536b6b42d34b0ff2",
+    "native-android/engine/initial-capture/server-initial-observer/test_ledger.c": "39b7f1c4b35f3e449980d0ce03407fdf93f9ac165121cc286949655d5e616076",
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip": "cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b",
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+  },
+  "world_authority": false
+}

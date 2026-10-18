@@ -96,3 +96,39 @@ server equivalence.
 Its synthetic PE and explicit inherited-checker doubles are labeled controls,
 not real Windows compilation or original source/runtime qualification. A owns
 the separate real-source hook-reversal and portable ledger controls.
+
+## Prepared-baseline correction after the first actual attempt
+
+Run39176566626 admitted the published source and passed the inherited fresh
+source stages, then refused the new hook supplier's full-file baseline guard.
+No compiler or original service transaction ran. The trace did not name the
+failed file or retain its actual staged bytes. Exact source reconstruction
+shows that the old hook constant incorrectly selected raw `svr_tick.c` SHA256
+`790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0`.
+The accepted preparation chain produces73504 bytes with SHA256
+`a3810c112556b258ee2456a51eb28d6afeefd14b81c2fa97ed431659ae42a3d5`,
+also recorded in the accepted nested monorail receipt. The other two newly
+hooked TUs retain their exact raw upstream hashes through that chain.
+
+`prepared_inputs.py` reconstructs all three files through the fixed ordered
+PostgreSQL, game-loopback, mapserver-progress, character-events and monorail
+patches. It applies only selected TU hunks in a new private temporary directory,
+checks original/patch/final hashes and records each transition. No old preparer,
+compiler, service or host qualifier entrypoint runs. The new recipe also checks
+every reversed hook file present in the inherited startup hash closure against
+that prepared hash before artifact admission.
+
+The corrected source integration is run with an explicit new output:
+
+```sh
+python native-android/tools/server-initial-observer-20261018/check_integration.py --output native-android/tools/server-initial-observer-20261018/qualification/baseline-repair-01/source-integration.json
+```
+
+The earlier raw-input source proofs remain historical. The new local check
+materializes the selected28-member composition and all three prepared hook
+inputs; it does not materialize every one of the47 inherited startup files,
+including the unretained generated animation-certificate table. The actual
+workflow's full private `stage` and `verify-stage` checks still require
+`all_inherited=True` before compilation and recording. The corrected baseline
+constant leaves the hook edits and all four compiled overlays unchanged; their
+retained portable host execution evidence is reused without replay.

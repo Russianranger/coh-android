@@ -1,0 +1,24 @@
+{
+  "schema": "coh-server-initial-staging-failure-v1",
+  "repository": "Russianranger/coh-android",
+  "run_id": 39176566626,
+  "source_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "compile_job_id": 117820349562,
+  "failed_step": 6,
+  "actual_refusal": "SERVER_INITIAL_SOURCE_REFUSED",
+  "actual_operation": "hooks.transform full-file BASELINES SHA256 guard",
+  "actual_failed_file_name_observed": false,
+  "compiler_executed": false,
+  "map_PE_created": false,
+  "original_transaction_executed": false,
+  "diagnostic_artifact": {
+    "id": 12153928682,
+    "bytes": 28800,
+    "sha256": "05a04d980ac56a9a4d9626f19975029c387aee752f1ce120706437121d5ce401",
+    "fixed_member": "fresh-groups-source-admission.json"
+  },
+  "fixed_trace_excerpt": "{\"passed\": true, \"build_role\": \"nonshipping_fresh_callback_sealed_groups_observer\", \"runtime_executed\": false, \"receipt\": \"native-fresh-groups-server-build-input.json\"}\r\n{\"passed\": true, \"build_role\": \"nonshipping_fresh_callback_sealed_groups_observer\", \"runtime_executed\": false, \"receipt\": \"native-fresh-groups-server-build-input.json\"}\r\nTraceback (most recent call last):\r\nFile \"<checkout>\", line 444, in <module>\r\nmain()\r\nFile \"<checkout>\", line 432, in main\r\nvalue = stage(args.source_root, args.already_staged)\r\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nFile \"<checkout>\", line 219, in stage\r\noutput = hooks.transform(originals)\r\n^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nFile \"<checkout>\", line 51, in transform\r\nraw=lf(originals[name]);need(hashlib.sha256(raw).hexdigest()==BASELINES[name])\r\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nFile \"<checkout>\", line 17, in need\r\nif not ok:raise ValueError('SERVER_INITIAL_SOURCE_REFUSED')\r\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nValueError: SERVER_INITIAL_SOURCE_REFUSED\r",
+  "static_followup": "The accepted inherited monorail receipt and exact ordered patch reconstruction require svr_tick.c SHA256 a3810c112556b258ee2456a51eb28d6afeefd14b81c2fa97ed431659ae42a3d5; the failed sourcehook constant required raw upstream SHA256 790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0.",
+  "actual_staged_tick_bytes_retained": false,
+  "world_authority": false
+}

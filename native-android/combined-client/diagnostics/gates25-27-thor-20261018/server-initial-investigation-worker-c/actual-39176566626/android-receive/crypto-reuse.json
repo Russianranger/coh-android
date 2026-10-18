@@ -1,0 +1,42 @@
+{
+  "abis": {
+    "arm64-v8a": {
+      "artifacts_sha256": {
+        "lib/libcoh_auth_android_check.so": "117e7d8ddeb4123840a9ec5812424a2723417073d00326a8aa8451c3c09876df",
+        "lib/libcoh_auth_android_crypto.a": "d41cb452c49317da7c6135e52cb3b3be2e758e641452122c8e1684742cdc1aea",
+        "lib/libcrypto.a": "3f8092d19c265a48ac7f5137f458a268c9edf6ecbfd346f814bc84a4847f577c",
+        "test_auth_android": "8f1884bcbf290e7a4626551e3b9484adfd0e132fb6a6c4a82986fef988cf8217"
+      },
+      "native_source_sha256": {
+        "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+        "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+        "engine/auth/tests/test_auth.c": "db2193b84cb703ef5f2be9ed744d60775c874911f15cbbebf782310c4093772c",
+        "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+        "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+      },
+      "receipt_sha256": "d8e3421fab4bb55c3c70f3c9ca56ddae7cd9a67ba37e980184235c7d8c366084"
+    },
+    "x86_64": {
+      "artifacts_sha256": {
+        "lib/libcoh_auth_android_check.so": "97660c75fe40000a22fc50f8410135fdc0e76d34c8e6b417ace891dde3798394",
+        "lib/libcoh_auth_android_crypto.a": "80f8325e407862323cceb02ed6d832dec209feafd6b83945b1519f96551984b8",
+        "lib/libcrypto.a": "5ac081d85889ba579b388b66084fc9a8464158430bf5e0ece076cce27b4e8717",
+        "test_auth_android": "5a3f7f0547afe9a71ec9c58eec277b1547a97be194ea1ae27cd56b7342d5dbdc"
+      },
+      "native_source_sha256": {
+        "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+        "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+        "engine/auth/tests/test_auth.c": "db2193b84cb703ef5f2be9ed744d60775c874911f15cbbebf782310c4093772c",
+        "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+        "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+      },
+      "receipt_sha256": "3d15aa486551e8ad2172d8c58290464907081ec769a673d1691a06ee8df4f402"
+    }
+  },
+  "archive_sha256": "99516e8cc5ea602e2596e4c6dd5e5e965c1dcd5979523e317f5e87698f38f30d",
+  "format": 1,
+  "reused_artifact_id": "11980774730",
+  "reused_workflow_run": "38752076829",
+  "scope": "Exact public crypto libraries reused after source and output hash verification; no new execution claim.",
+  "status": "passed"
+}

@@ -1,77 +1,39 @@
 {
-  "files": {
-    ".github/workflows/native-server-initial-observer.yml": {
-      "bytes": 134808,
-      "sha256": "782717b72b387771fc85a13992134e5b333ca06b2f68ceef6ddd4a2291229c34"
-    },
-    "native-android/combined-client/diagnostics/server-initial-workflow-20261018/admit_workflow_artifact.py": {
-      "bytes": 6247,
-      "sha256": "bb91d24fabb858ee706e1d007168bd25eeec2075cba360d31dc5950d35d7e04f"
-    },
-    "native-android/combined-client/diagnostics/server-initial-workflow-20261018/artifact-independent-worker-f-review.json": {
-      "bytes": 2440,
-      "sha256": "f3e20ce1b2f705b22e2e43912708706b77c20aa29b46128679ac1390c179d57d"
-    },
-    "native-android/combined-client/diagnostics/server-initial-workflow-20261018/build_workflow.py": {
-      "bytes": 17284,
-      "sha256": "a62ad50b87d2f229aab0f551a282e7a6ef8eaad2e3a115135774d46df61cd955"
-    },
-    "native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json": {
-      "bytes": 120059,
-      "sha256": "4ffd3a0d541f618c0c5631641d0d28d064cf0d00c24361b99140adeb2bf31ffc"
-    },
-    "native-android/combined-client/diagnostics/server-initial-workflow-20261018/workflow-review.json": {
-      "bytes": 1492,
-      "sha256": "9119aad8976e47d17ca26f7862290d2222dfde4aa278a105310efc56e3daeb79"
-    }
-  },
   "limitations": {
-    "actual_changed_Map_build_run_admitted_yet": false,
-    "actual_original_transaction_or_new_Android_compile_admitted_yet": false,
-    "complete_initial_character_or_world_authority": false,
-    "new_sources_Git_admitted_at_destination_before_publication": false,
-    "physical_Thor_retest_or_timeout_cause": false
+    "actual_Thor_timeout_cause_or_world_authority": false,
+    "corrected_actual_Windows_build_or_original_transaction_admitted": false,
+    "current_new_sources_Git_admitted_before_publication": false
+  },
+  "manifest": {
+    "all_raw_pins_match": 775,
+    "bytes": 125396,
+    "dynamic_self_and_manifest_Git_pins": 2,
+    "sha256": "a74966b21aa044d87bd1ffd73e017295a0521e65a4088edac354779c47d244fa"
   },
   "passed": true,
-  "required_next_admission": "After primary commits exact manifest/workflow/suppliers, require actual destination raw/Git gate, same-run/attempt artifact+source/PE verifier, independent cleanup and exact fixed numeric outcomes. Build, Android compile and original-runtime observations retain separate scopes.",
-  "review_method": "Read-only final YAML/generator/source manifest, all declared raw hashes, embedded Python AST parse and accepted-recipe byte comparison. No generator execution, source-module import, compiler, tests, original runtime or qualifier replay.",
-  "schema": "coh-server-initial-workflow-independent-worker-f-review-v1",
-  "source_and_recipe_findings": [
-    "Three focused jobs retain repository/branch and explicit commit marker or workflow_dispatch conditions, read-only contents/actions permissions, attempt-specific artifacts and non-cancelling concurrency. Compile only builds changed staged MapServer target. Original transaction requires successful compile dependency; independent Android job compiles/lints/audits additive ARM64 JNI report and uploads four metadata JSONs only. No release, x86/emulator suite, old qualifier or unrelated gate is requested.",
-    "All749 manifest raw hashes match current files. Current gate rejects optimized Python, checks exact GitHEAD==GITHUB_SHA, manifest hard hash, raw bytes and tracked regular blob SHA1 before project imports, and brackets HEAD. It reads a bounded full ls-tree to avoid Windows command-line overflow, selecting exactly wanted paths. Manifest and workflow acquire dynamic exactGit pins; generated output reviews are explicitly excluded to avoid hash circularity.",
-    "Only Windows current compile gate also writes legacy fresh-groups-source-admission.json required by inherited pre/post input checks. Current Linux and Android gates create only server-initial-source-admission.json, so historical Linux exclusive creation of fresh-groups-source-admission.json remains disjoint. Historical505 guard, original private fixture admission, toolchain/control preparation and fixed summary bodies remain exact.",
-    "Windows source staging preserves accepted fresh stage then applies A exact five-baseline/four-overlay role and D verification. Actual compiler command remains Win32 VS2026 OptDebug MapServer target only. Whole original inputs/supplier bytes are rechecked before and after compiler; D record strictly re-admits exact source/PE/cache and emits receipt before artifact upload.",
-    "Compile job outputs the actual upload action artifact ID/digest plus exact record receipt SHA. Original job passes all three to fixed current admission helper, binding repository/workflow/current run/current SHA/successful unique compile job/explicit positive attempt and exact attempt-named artifact, then mandatory D artifact verifier before install/start. No older artifact fallback supplies changed Map.",
-    "Historical runtime checkout and current checkout have explicit distinct working directories. Only unchanged Db donor is recovered. Current new receive ELF is decompressed within1MiB, private/executable file mode set, and strict current C native_input admission precedes one current wrapper capture with exact new Map/native receipt pins, original fixture and current source revision. No accepted receiver or verifier is rerun.",
-    "Core transaction status/summary may survive optional observer refusal. New observer projection runs only after successful owned capture and uploads fixed summary/tooling/observer paths only. Private work/result/log/account/DB/packet/owner paths are absent from public upload. Compile artifact separately contains only D exact28 source/build/PE members; Android artifact contains four metadata JSONs, not an APK.",
-    "Two source supersessions are explicit: qualified current capture supervisor versus prior Map build pin, and additive JNI receive projection versus accepted APK source. Neither is historical artifact equivalence. Ancillary acceptedZIP, originalentserver baseline and oldJNI host-double proof inputs are not newly executed workflow suppliers; their source qualification/exact baseline guards remain separate from the749 workflow manifest.",
-    "Top HANDOFF correctly distinguishes host/source checks, pending actual Windows/Android builds and original fixture observation, physical Thor prior observations, ambiguous receive-gap alternative, pre-call/return semantics and ACTIVE checkpoints. Gates25\u201327 remainOPEN; no timeout/protocol/policy/budget changes or initial-character/actor/applicationACK/world/RSS/GPU acceptance are claimed."
+  "prior_workflow_review_preserved_at_Git_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "review_method": "Read-only final YAML/manifest/generator and exact Git predecessor structure comparison; all775 raw hashes and13 Python AST heredocs checked. No generator, source import, old qualifier, tests, compiler or runtime replay.",
+  "reviewed_predecessor_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "schema": "coh-server-initial-workflow-independent-worker-f-review-v2",
+  "scope": [
+    "Final YAML differs from exact published predecessor only by current manifest hash in three source gates and Android-only Map marker skip suffix. All compile/stage/input checks, D record/receipt output, same-run-attempt artifact gate and full D verifier, newnative admission, original transaction arguments and fixed private/public upload boundaries remain identical.",
+    "Explicit [server-initial-map-only] commit marker skips only accepted Android job; compile and dependent original transaction still require original role marker or dispatch plus exact repository/branch. Dispatch without Map-only marker retains original Android behavior. Existing Androida6b20 success is preserved as prior build evidence, not relabelled.",
+    "Of prior broad Android audit subset200,198 are unchanged and the two changed serverobserver Python helpers are uncompiled/unimported by Android build. All selected compiledAndroidC/H/Java/CMake inputs and receive header remain unchanged. No Android replay, newrelease/emulator/Thor qualification is requested.",
+    "Current775 manifest pins include source-only preparedbaseline repair/helper/proofs, independent correction review and actual refused staging plus Android metadata. Prior actual failed Map stage remains failure; no compiler/transaction result exists yet. New destination raw/Git source and mandatory actual all_inherited=True stage must pass before new compiler/runtime evidence.",
+    "Gates25\u201327 remainOPEN. No source change raises protocol/memory limits, changes timer/ACK/policy or establishes initial-character/actor/world/RSS/GPU acceptance."
   ],
-  "verified_evidence": {
-    "F_A_B_C_D_reviews_are_pinned_manifest_inputs": true,
-    "all_declared_raw_source_hashes_current": 749,
-    "dynamic_manifest_and_workflow_Git_pins": 2,
-    "exact_reviewed_supersessions": {
-      "native-android/combined-client/app/src/main/cpp/interop_network.c": {
-        "accepted_apk_source_hash": "392e5360e81a5b5032d1355f2ec3d44004ad06e2941828aae1f675a07b643b95",
-        "new_receive_projection_hash": "4475c85955f998f58a52aa5c1c67da7674e2259482a99558fd49044ace1dbb63"
-      },
-      "native-android/engine/scenecatalog-server/capture_groups_transaction.py": {
-        "prior_map_build_hash": "78a18536289ad03ed77c314c4bcd889a6dd7002faa735d923f39f059263d2639",
-        "qualified_current_progress_hash": "35d840f2ca04b320c462cc016f44910c4100e1210e203845df62ffc8de0527a4"
-      }
-    },
-    "final_workflow_review_is_explicitly_excluded_derived_output": true,
-    "historical_Linux_run_bodies_byte_identical_at_step_indices": [
-      3,
-      4,
-      5,
-      8,
-      9,
-      11,
-      13
-    ],
-    "independently_AST_parsed_Python_heredocs": 13,
-    "parent_Bash_syntax_checks_attested": true
+  "verified": {
+    "Windows_only_legacy_alias_no_Linux_collision_retained": true,
+    "combined_source_correction_review_is_manifest_input": true,
+    "compile_outputs_same_run_attempt_ID_digest_receipt_binding_retained": true,
+    "exact_YAML_predecessor_parity_after_manifest_hash_and_Android_only_if_delta_reversal": true,
+    "mandatory_actual_all_inherited_stage_verification_retained": true,
+    "one_original_transaction_and_fixed_public_paths_retained": true,
+    "parsed_Python_heredocs": 13,
+    "root_Bash_syntax_checks_attested": 21
+  },
+  "workflow": {
+    "bytes": 134890,
+    "sha256": "5f52ec8ffef966eb0d7c9eba1a6a03ac68df5b8079613cffb92ddfc576e13e07"
   }
 }

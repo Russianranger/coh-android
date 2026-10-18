@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "phase": "receipt_pin_assembly",
+  "reason": "helper source_paths returns relative strings; checker treated them as Path objects",
+  "source_reconstruction_and_controls_completed": true,
+  "host_execution_replayed": false,
+  "compiler_executed": false,
+  "corrected_new_output_required": true
+}

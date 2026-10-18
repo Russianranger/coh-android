@@ -1,0 +1,92 @@
+{
+  "A_source_only_successor": {
+    "path": "native-android/engine/initial-capture/server-initial-observer/qualification/prepared-successor-02/qualification.json",
+    "sha256": "dc9b4bc5778bff293a2fed38966f891ef8e5cee71773e3af6e40f329e2328849"
+  },
+  "actual_failed_run_id": 39176566626,
+  "actual_failure_evidence": {
+    "compile-api-failure.json": {
+      "bytes": 3378,
+      "sha256": "582a82bb82a7bc6d0db0055358cc16ad971b5420c9da638bb3872e0df3d14d27"
+    },
+    "staging-failure.json": {
+      "bytes": 2260,
+      "sha256": "2bfaec7f70ce67da4fe48ccfd223f4737b1657f2bf2d390288804d598356bf46"
+    }
+  },
+  "all_three_new_hook_TUs_reconstructed_through_fixed_five_patch_chain": true,
+  "compiler_executed": false,
+  "exact_five_hook_original_baselines_and_reversal_checked": true,
+  "inherited_hook_baseline_guard_applies_to_every_matching_original": true,
+  "local_full_47_file_stage_claimed": false,
+  "mandatory_actual_CI_full_stage_all_inherited": true,
+  "new_recipe_test_methods": 22,
+  "new_supplier_Git_admission": "prospective_only_pending_primary_commit",
+  "old_source_proofs_retained_historical": true,
+  "outputs": {
+    "recipe-controls.stderr.txt": {
+      "bytes": 2793,
+      "sha256": "429a198588d31659cc78c0cc51b53bf4d76fb60f287deb78c9d9fe6c8dd56773"
+    },
+    "recipe-controls.stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-integration.json": {
+      "bytes": 13361,
+      "sha256": "89ca5f65b7c8233022f591b2f5410c606d78d9dd6070d7c7b96bcddc32515469"
+    },
+    "source-integration.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-integration.stdout.txt": {
+      "bytes": 223,
+      "sha256": "25c87310416c17285173caff479993339bb91ef31db987f5201fe6296c534808"
+    }
+  },
+  "passed": true,
+  "predecessor_source_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "protocol_or_default_core_changed": false,
+  "raw_upstream_tick_substitution_refused": true,
+  "schema": "coh-server-initial-prepared-baseline-repair-v1",
+  "selected_compile_artifact_members": 28,
+  "services_executed": false,
+  "single_diagnostics_archive_in_scratch": {
+    "artifact_id": 12153928682,
+    "bytes": 28800,
+    "sha256": "05a04d980ac56a9a4d9626f19975029c387aee752f1ce120706437121d5ce401"
+  },
+  "source": {
+    ".gitattributes": {
+      "bytes": 14,
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    "README.md": {
+      "bytes": 8141,
+      "sha256": "2987fa500801d3bdeb35986b68b7d3f9536a759645444a7c778bce717c4d291b"
+    },
+    "build-feasibility.json": {
+      "bytes": 1095,
+      "sha256": "130a98076a27d5ecb5588aebc01ae47e9e577c4b764813dd91f1198b559fadaa"
+    },
+    "check_integration.py": {
+      "bytes": 6997,
+      "sha256": "707b0375b762fdf249103b33c1355abe514357da9c1756b86dfa4be90a15b087"
+    },
+    "prepared_inputs.py": {
+      "bytes": 5271,
+      "sha256": "c9454c92e210d992c96374ffe6e6d4e22fb209e2cd1a1de09d5d093e08e6428b"
+    },
+    "recipe.py": {
+      "bytes": 21612,
+      "sha256": "c4173c0e7f092c97a9af39b2b1600076a982d36e3e3cc4a23d7ba8d01e599f43"
+    },
+    "test_recipe.py": {
+      "bytes": 10855,
+      "sha256": "6e189ec4290cc26cfdec5ff44fd422dc05f23f75a5354e167ce4402bf5253a12"
+    }
+  },
+  "unchanged_ledger_adapter_native_host_loops_reexecuted": false,
+  "world_authority": false
+}

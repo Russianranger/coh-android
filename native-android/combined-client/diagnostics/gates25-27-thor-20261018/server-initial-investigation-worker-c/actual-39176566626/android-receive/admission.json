@@ -1,0 +1,96 @@
+{
+  "APK_DSO_or_peer_payloads_downloaded": false,
+  "APK_identity_from_successful_hosted_audit": {
+    "bytes": 13882109,
+    "name": "CoH-Native-Combined-0.1.8-gates25-27-arm64.apk",
+    "sha256": "cd7803f59ffb62cac87d8d873a1fa2456afad4fceda0c04019486ba06b89bf17"
+  },
+  "APK_or_ELF_bytes_available_for_local_independent_hashing": false,
+  "accepted_018_APK_sha256": "9659570e1470d2fa1f3c3f13c7f9fd6795a4f0410326520a6fe4463ec273ed63",
+  "accepted_018_release_modified_by_this_task": false,
+  "actual_ARM64_NDK_and_Java_build_lint_package_DSO_audit_succeeded": true,
+  "actual_new_JNI_invocation_or_Android_runtime_qualified": false,
+  "archive": {
+    "bytes": 16098,
+    "sha256": "7aba67f7da3bcdfc3b47496ec0732b9c6ad6af57d61da18932960562b52b5013"
+  },
+  "archive_exact_four_safe_members_and_CRC": true,
+  "artifact_id": 12154413482,
+  "complete_compiler_dependency_closure_claimed": false,
+  "connector_artifact_download_calls": 1,
+  "crypto_and_asset_metadata_byte_identical_to_accepted_39165446220": true,
+  "diagnostic_header_separately_bound_by_successful_prior_source_gate": {
+    "bytes": 4230,
+    "path": "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h",
+    "sha256": "232cf9ac21de2afaaaff8825f627f1a9219c9d08de4c5a0b8538ab7641a43c05"
+  },
+  "exact_JNI_exports_from_successful_hosted_audit": [
+    "Java_org_coh_nativecombined_InteropNative_begin",
+    "Java_org_coh_nativecombined_InteropNative_characters",
+    "Java_org_coh_nativecombined_InteropNative_choose",
+    "Java_org_coh_nativecombined_InteropNative_close",
+    "Java_org_coh_nativecombined_InteropNative_disconnect",
+    "Java_org_coh_nativecombined_InteropNative_report",
+    "Java_org_coh_nativecombined_InteropNative_service",
+    "Java_org_coh_nativecombined_InteropNative_suspend"
+  ],
+  "interop_DSO_identity_from_successful_hosted_audit": {
+    "bytes": 4960448,
+    "sha256": "b985e52bf07fc1d6568e93409a592c20948761cfd6153d00e7a6a2b678b6c286"
+  },
+  "job_id": 117820349362,
+  "new_release_created_by_this_job": false,
+  "ordinary_default_library_metadata_hashes_unchanged": true,
+  "original_server_interoperability_qualified": false,
+  "passed": true,
+  "physical_Thor_compatibility_qualified": false,
+  "retained_metadata": {
+    "api-artifact.json": {
+      "bytes": 926,
+      "sha256": "73d54b3e457acffbb266c5c590a670b51d859d4bc3e2647668d4e9f678d2db0a"
+    },
+    "api-job.json": {
+      "bytes": 2262,
+      "sha256": "e509edd3f1b7ca80aa883ea12d7555dd4e4388d2de579cff69f4ccef575ce584"
+    },
+    "arm64-interop-dso.json": {
+      "bytes": 28066,
+      "sha256": "d8aced926d875639f2069cf47817215f7b5e9cf1a7a90405307b988589fae66d"
+    },
+    "arm64-package.json": {
+      "bytes": 1874,
+      "sha256": "04ca165776dced0c5e690bcdc28c58487cad41008baf0632aff929209d3d748a"
+    },
+    "build-inputs.json": {
+      "bytes": 9581,
+      "sha256": "b59a8cca6d3334a40fcfd641682ad81256eaf8faaefa0ab9b9fecc12c0fe3b17"
+    },
+    "crypto-reuse.json": {
+      "bytes": 2600,
+      "sha256": "3c85c908dc21bca7f7e86c5eff67a8c80a8b358f4b9121ba4524e38a03f17f46"
+    },
+    "job-log-evidence.json": {
+      "bytes": 2348,
+      "sha256": "b9478de9a471e6b5e09d83ad8f4d12b8ce9013e307d67ace8ae8130b5c1a47fe"
+    }
+  },
+  "reviewer_correction": "Initial read-only admission stopped on obsolete prepublication manifest7be287; published a6b20f8b workflow and committed manifest explicitly bind4ffd3a. Exact published source/API admission used; no input, artifact, source or runtime changed and no second download. Initial raw stderr remains in tool transcript, not a retained file.",
+  "schema": "coh-actual-android-receive-metadata-admission-v1",
+  "scope": "Actual successful hosted ARM64 NDK/Javac/lint/package/JNI-export audit corroborated by four exact downloaded metadata receipts and source pins. Local admission inspected metadata bytes only; no binary/runtime/release claim.",
+  "signed_blob_downloads": 1,
+  "source_gate_manifest": {
+    "bytes": 120059,
+    "path": "native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json",
+    "sha256": "4ffd3a0d541f618c0c5631641d0d28d064cf0d00c24361b99140adeb2bf31ffc"
+  },
+  "source_reviewed_subset_count": 200,
+  "source_reviewed_subset_raw_and_committed_Git_verified": true,
+  "source_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+  "workflow": {
+    "bytes": 134808,
+    "path": ".github/workflows/native-server-initial-observer.yml",
+    "sha256": "782717b72b387771fc85a13992134e5b333ca06b2f68ceef6ddd4a2291229c34"
+  },
+  "workflow_run_id": 39176566626,
+  "world_authority": false
+}

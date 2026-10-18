@@ -1,0 +1,82 @@
+{
+  "admitted_metadata": {
+    "ABI": "arm64-v8a",
+    "apk": {
+      "bytes": 13882109,
+      "sha256": "cd7803f59ffb62cac87d8d873a1fa2456afad4fceda0c04019486ba06b89bf17"
+    },
+    "exact_JNI_exports": 8,
+    "interop_library": {
+      "bytes": 4960448,
+      "sha256": "b985e52bf07fc1d6568e93409a592c20948761cfd6153d00e7a6a2b678b6c286"
+    },
+    "package": "org.coh.nativecombined",
+    "receive_projection_header_bound_by_current_751_file_gate": {
+      "path": "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h",
+      "sha256": "232cf9ac21de2afaaaff8825f627f1a9219c9d08de4c5a0b8538ab7641a43c05"
+    },
+    "selected_source_raw_and_Git_pins": 200,
+    "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "version_code": "9",
+    "version_name": "0.1.8-gates25-27-test"
+  },
+  "archive_member_bytes_and_hashes": {
+    "arm64-interop-dso.json": {
+      "bytes": 28066,
+      "sha256": "d8aced926d875639f2069cf47817215f7b5e9cf1a7a90405307b988589fae66d"
+    },
+    "arm64-package.json": {
+      "bytes": 1874,
+      "sha256": "04ca165776dced0c5e690bcdc28c58487cad41008baf0632aff929209d3d748a"
+    },
+    "build-inputs.json": {
+      "bytes": 9581,
+      "sha256": "b59a8cca6d3334a40fcfd641682ad81256eaf8faaefa0ab9b9fecc12c0fe3b17"
+    },
+    "crypto-reuse.json": {
+      "bytes": 2600,
+      "sha256": "3c85c908dc21bca7f7e86c5eff67a8c80a8b358f4b9121ba4524e38a03f17f46"
+    }
+  },
+  "artifact": {
+    "digest": "sha256:7aba67f7da3bcdfc3b47496ec0732b9c6ad6af57d61da18932960562b52b5013",
+    "expired": false,
+    "id": 12154413482,
+    "name": "server-initial-android-compile-a6b20f8bb7aca2d19c7bee217bb961ce60427418-attempt-1",
+    "size_in_bytes": 16098,
+    "workflow_run": {
+      "head_branch": "native-android",
+      "head_repository_id": 1368730125,
+      "head_sha": "a6b20f8bb7aca2d19c7bee217bb961ce60427418",
+      "id": 39176566626,
+      "repository_id": 1368730125
+    }
+  },
+  "findings": [
+    "Actual raw/Git source gate, Android SDK/toolchain reuse, ARM64 Gradle/JNI/Java compilation, lint, package identity and exact8JNI export audit steps completed successfully in this dedicated job. Receipts bind exact current changed JNI4475c859 and new receive sources; selected200source subset is not a full compiler/header/toolchain closure.",
+    "Only four metadata JSONs are uploaded. APK13882109B/cd7803f5 and interop4960448B/b985e52b identities agree across package/audit receipts; successful source-pinned audit reports hidden internal/static exports and actual expected signer/version. Payload bytes were not retained or independently parsed by F, so payload-level signature/ELF checks are attributed to CI audit.",
+    "Qualified crypto artifact11980774730 is reused under exact accepted99516e8c archive identity without old crypto qualifier execution. Existing scene/donor/import/helper identities remain bounded metadata; no large game payload bundling or original server interoperability is claimed.",
+    "This is build/lint/package/audit evidence only: no emulator, physical Thor, JNI receive runtime, actual original server transaction, new release or user retest. Previously published0.1.8 Thor APK remains separate unchanged9659570e payload; this ephemeral compile-only APK was not published.",
+    "The overall run failed because separate Windows source staging failed before compiler; original transaction was skipped. Independent Android success does not promote absent Map/initial-world outcomes. Gates25\u201327 remainOPEN."
+  ],
+  "job_conclusion": "success",
+  "job_id": 117820349362,
+  "job_name": "android_receive",
+  "limitations": {
+    "APK_or_DSO_payload_independently_reverified_by_F": false,
+    "JNI_or_APP_runtime_qualified": false,
+    "complete_initial_character_actor_ACK_world_or_RSS_GPU_fit": false,
+    "new_release_published": false,
+    "physical_Thor_or_original_server_interoperability_qualified": false
+  },
+  "passed": true,
+  "review_method": "Independent GitHub run/jobs/artifact API metadata; reused C sole shared16098B archive, no duplicate download. Exact archive SHA/size, four regular unencrypted unique fixed filenames, CRC, selected JSON bytes, package/audit identity consistency, all200 selected current raw+committed Git source pins verified. No APK/ELF payload download, execution, compiler/test/qualifier replay.",
+  "run_attempt": 1,
+  "run_id": 39176566626,
+  "schema": "coh-server-initial-actual-android-independent-worker-f-review-v1",
+  "selected_receipt_retention": {
+    "all_four_selected_files_byte_exact_against_shared_ZIP": true,
+    "directory": "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/actual-39176566626/android-receive"
+  },
+  "source_revision": "a6b20f8bb7aca2d19c7bee217bb961ce60427418"
+}

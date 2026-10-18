@@ -1,6 +1,16 @@
 {
-  "schema": "coh-server-initial-workflow-final-static-review-v1",
+  "bash_steps_syntax_checked": 21,
+  "current_and_historical_linux_gate_files_disjoint": true,
+  "jobs": [
+    "compile",
+    "original_transaction",
+    "android_receive"
+  ],
+  "map_only_marker_skips_unchanged_Android_compilation_only": true,
+  "old_qualifiers_compiler_or_runtime_executed": false,
+  "one_original_transaction_requested": true,
   "passed": true,
+  "prior_Android_run": 39176566626,
   "python_heredocs": [
     [
       "compile",
@@ -68,18 +78,12 @@
       "PYSOURCE"
     ]
   ],
-  "source_pins": 749,
-  "jobs": [
-    "compile",
-    "original_transaction",
-    "android_receive"
-  ],
   "same_run_attempt_artifact_name": true,
-  "current_and_historical_linux_gate_files_disjoint": true,
-  "one_original_transaction_requested": true,
-  "old_qualifiers_compiler_or_runtime_executed": false,
-  "world_authority": false,
-  "workflow_bytes": 134808,
-  "workflow_sha256": "782717b72b387771fc85a13992134e5b333ca06b2f68ceef6ddd4a2291229c34",
-  "source_manifest_sha256": "4ffd3a0d541f618c0c5631641d0d28d064cf0d00c24361b99140adeb2bf31ffc"
+  "schema": "coh-server-initial-workflow-final-static-review-v1",
+  "source_manifest_sha256": "a74966b21aa044d87bd1ffd73e017295a0521e65a4088edac354779c47d244fa",
+  "source_only_baseline_repair": true,
+  "source_pins": 775,
+  "workflow_bytes": 134890,
+  "workflow_sha256": "5f52ec8ffef966eb0d7c9eba1a6a03ac68df5b8079613cffb92ddfc576e13e07",
+  "world_authority": false
 }

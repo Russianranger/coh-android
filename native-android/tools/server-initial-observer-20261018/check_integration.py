@@ -4,6 +4,7 @@
 New uncommitted suppliers receive an explicitly prospective raw-byte closure.
 The production recipe still requires actual committed Git admission in CI.
 """
+import argparse
 import importlib.util
 import json
 from pathlib import Path
@@ -15,6 +16,9 @@ ROOT = HERE.parents[2]
 SPEC = importlib.util.spec_from_file_location('coh_new_initial_integration_recipe', HERE / 'recipe.py')
 r = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(r)
+PREPARED_SPEC = importlib.util.spec_from_file_location('coh_new_initial_prepared_inputs', HERE / 'prepared_inputs.py')
+prepared_inputs = importlib.util.module_from_spec(PREPARED_SPEC)
+PREPARED_SPEC.loader.exec_module(prepared_inputs)
 ARCHIVE = ('native-android/engine/scenecatalog-server/evidence/'
            'fresh-callback-profile-20261018/compile-initial-owner-20261018/'
            'fresh-map-initial-owner-build-39099315295.zip')
@@ -22,7 +26,7 @@ ARCHIVE_BYTES = 6784966
 ARCHIVE_SHA256 = 'cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b'
 
 
-def check():
+def check(destination):
     _, fresh, hooks = r.context(ROOT)
 
     def prospective(_):
@@ -47,10 +51,11 @@ def check():
         store = {n: bundle.read(prefix + n) for n in old['artifacts'] if n != 'MapServer.exe'}
     for name, value in store.items():
         r.require(r.pin(value) == old['artifacts'][name], 'INTEGRATION_ACCEPTED_SOURCE_PIN')
+    prepared, preparation = prepared_inputs.reconstruct(ROOT, with_proof=True)
     originals = {}
     for name in hooks.PATCHED:
         originals[name] = (store['source/' + name] if 'source/' + name in store
-                           else r.read(ROOT / 'upstream/ouroboros' / name))
+                           else prepared[name])
     output = hooks.transform(originals)
     r.require(hooks.reverse(output) == originals, 'INTEGRATION_EXACT_REVERSAL')
     overlay = hooks.overlays(ROOT)
@@ -67,6 +72,15 @@ def check():
 
         actual = r.verify_bytes(ROOT, get)
         r.require(fresh.base.json_equal(actual, declared), 'INTEGRATION_NEW_ROLE_RECEIPT')
+        matched = r.inherited_hook_sources(fresh, get, originals)
+        wrong = dict(originals)
+        wrong[prepared_inputs.TICK] = r.read(ROOT / 'upstream/ouroboros' / prepared_inputs.TICK)
+        try:
+            r.inherited_hook_sources(fresh, get, wrong)
+        except ValueError as error:
+            r.require(str(error) == 'INITIAL_HOOK_INHERITED_BASELINE', 'INTEGRATION_RAW_BASE_REFUSAL')
+        else:
+            raise ValueError('INTEGRATION_RAW_BASE_NOT_REFUSED')
         names = r.artifact_names(ROOT)
         invalid = dict(declared)
         invalid['world_authority'] = 0
@@ -82,6 +96,9 @@ def check():
               'accepted_archive': {'bytes': ARCHIVE_BYTES, 'sha256': ARCHIVE_SHA256},
               'accepted_compile_source_revision': old['source_revision'],
               'actual_accepted_source_subset_hashes_reverified': True,
+              'new_tu_actual_preparation': preparation,
+              'hooked_inherited_baseline_hashes_verified': matched,
+              'raw_upstream_tick_in_place_of_prepared_tick_rejected': True,
               'patched_files': {n: {'original': r.pin(originals[n]), 'patched': r.pin(output[n])}
                                 for n in hooks.PATCHED},
               'overlay': {n: r.pin(value) for n, value in overlay.items()},
@@ -93,9 +110,12 @@ def check():
               'new_supplier_raw_bytes_bracketed': True,
               'new_supplier_Git_admission': 'prospective_only_pending_primary_commit',
               'actual_full_private_stage_executed': False,
+              'all_47_inherited_startup_files_locally_materialized': False,
+              'actual_predecessor_full_inherited_stage_passed_before_baseline_refusal': 39176566626,
               'accepted_test_or_qualifier_entrypoints_reexecuted': False,
               'compiler_executed': False, 'services_executed': False, 'world_authority': False}
-    destination = HERE / 'qualification/source-integration.json'
+    destination = Path(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
     with destination.open('xb') as stream:
         stream.write(r.encoded(result))
     print(json.dumps({'passed': True, 'patched_existing_files': len(hooks.PATCHED),
@@ -104,4 +124,6 @@ def check():
 
 
 if __name__ == '__main__':
-    check()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, required=True)
+    check(parser.parse_args().output)
