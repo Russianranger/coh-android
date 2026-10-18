@@ -1,0 +1,41 @@
+{
+  "schema": "coh-profile-path-observation-independent-e-review-v1",
+  "passed": true,
+  "review_scope": "read-only source, fixed diagnostic/privacy/predicate order, exact reversal and receipt/build/supervisor contract; no helper/compiler/API/test replay",
+  "reviewed_source": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/prepare_profile_diagnostic.py": {
+      "bytes": 5334,
+      "sha256": "80e0e561954a9350c2926543ac0018eae6cee139b7936fa2067ad7b9bd3316a8"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-profile-path.ps1": {
+      "bytes": 4494,
+      "sha256": "5503135a50b00d1f7c6abd6e5386eb3c660b81ae90a2be230b9bdbd40b2168e9"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py": {
+      "bytes": 35877,
+      "sha256": "f563922f79d72fad0905027309b9357e48b0e52274595f4e9edf8a847b866d63"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/test_profile_diagnostic.py": {
+      "bytes": 7536,
+      "sha256": "608ae1f8b08268f97314163fca2e67307a6450f780ad1cdedd3e4b9a7451800a"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/PROFILE-PATH-DIAGNOSTIC.md": {
+      "bytes": 2461,
+      "sha256": "55d5572a63efd9398b9e85a5e2e2943aaa5638d30cd6ec086bfb3a9cc72e0087"
+    }
+  },
+  "generated_source": {
+    "bytes": 50395,
+    "sha256": "ad25eb3dc6202df2bf4b1a271770e3c6555796c32174a083f90568af4a3c5b6b"
+  },
+  "twelve_exact_reversible_observations": true,
+  "original_security_identity_cleanup_guards_preserved": true,
+  "original_predicates_once_same_short_circuit_order": true,
+  "GetLastWin32Error_read_before_new_diagnostic_write": true,
+  "supervisor_environment_AST_unchanged_from_28d": true,
+  "distinct_mode_and_fixed_receipt_schema": true,
+  "no_raw_paths_SID_metadata_error_exception_text_exported": true,
+  "observed_ACCOUNT_SID_JOURNAL_SAME_IDENTITY_is_stale_context_not_proven_equality_mismatch": true,
+  "host_controls_receipt_admitted_tests_reexecuted": false,
+  "actual_Windows_helper_or_service_readiness_or_world_accepted": false
+}

@@ -1,0 +1,11 @@
+test_actual_owner_result_preserves_new_account_cleanup_and_unknown_atom (__main__.IdentityDiagnosticControls.test_actual_owner_result_preserves_new_account_cleanup_and_unknown_atom) ... ok
+test_exact_reversal_retains_actual_owner_successor_and_new_enums (__main__.IdentityDiagnosticControls.test_exact_reversal_retains_actual_owner_successor_and_new_enums) ... ok
+test_identity_mode_conflicts_refuse_before_artifact_or_windows_calls (__main__.IdentityDiagnosticControls.test_identity_mode_conflicts_refuse_before_artifact_or_windows_calls) ... ok
+test_identity_scope_requires_new_schema_and_only_fixed_atoms (__main__.IdentityDiagnosticControls.test_identity_scope_requires_new_schema_and_only_fixed_atoms) ... ok
+test_new_compilation_artifact_requires_exact_identity_observation (__main__.IdentityDiagnosticControls.test_new_compilation_artifact_requires_exact_identity_observation) ... ok
+test_whole_equal_predicates_and_short_circuit_order_remain (__main__.IdentityDiagnosticControls.test_whole_equal_predicates_and_short_circuit_order_remain) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.014s
+
+OK

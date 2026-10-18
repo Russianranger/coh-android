@@ -1,0 +1,113 @@
+{
+  "schema": "coh-fresh-platform-msvc-artifact-admission-v1",
+  "passed": true,
+  "run_id": 39153370584,
+  "job_id": 117751430637,
+  "artifact_id": 12145709083,
+  "revision": "28d4e4a0bd210c4bae850c515b7770b4f8e764ab",
+  "archive": {
+    "bytes": 35656,
+    "sha256": "824f4046a2e326a31db9109a9b6bdf5a6e2436c39c733306b3053213ecb9f113"
+  },
+  "safe_unique_crc_checked_members": 14,
+  "receipt": {
+    "bytes": 43463,
+    "sha256": "4cc4cfd9f7a469265a1b4e0615397f35b8df35c5af406fa8504df91916d3b53a"
+  },
+  "project_sources_raw_and_git_verified": 17,
+  "actual_header_trace_categories": {
+    "project": 14,
+    "crypto": 29,
+    "MSVC": 9,
+    "SDK": 103
+  },
+  "actual_tool_records": 9,
+  "syntax_and_codegen_header_traces_identical": true,
+  "objects": {
+    "fresh_probe_policy.obj": {
+      "bytes": 2891,
+      "sha256": "b11456de904e2f2294913a9280273906fba31cec5707d9b7c30cccf764fd43aa",
+      "machine": 34404,
+      "sections": 10
+    },
+    "fresh_probe_windows.obj": {
+      "bytes": 18561,
+      "sha256": "f608a5052f1812e9f64b778f631e12cb8b77f72dd0cfad99b111e459b0f6edc6",
+      "machine": 34404,
+      "sections": 71
+    }
+  },
+  "static_library": {
+    "bytes": 22476,
+    "sha256": "cb6a27981cf699a907c8103892c6bd2f192746cd8d9144c21185a481fd7813a7"
+  },
+  "exact_archive_member_payloads_verified": 2,
+  "real_Windows_header_compile_passed": true,
+  "remote_header_and_tool_hash_records_admitted_from_executed_receipt": true,
+  "Windows_headers_or_tools_rehashed_locally": false,
+  "retained_crypto_body_rehash_executed_on_runner_only": true,
+  "all384_crypto_files_revalidated_by_compiler_driver": true,
+  "full_loaded_compiler_DLL_closure_attested": false,
+  "CLI_linked": false,
+  "probe_or_backend_APIs_or_original_services_executed": false,
+  "world_authority": false,
+  "review_tooling_correction": "Initial Linux data-only review compared unresolved PureWindowsPath include paths against Windows-resolved receipt and refused; ntpath.normpath correctly mirrors Windows parent-component normalization. No compiler/source/runtime replay or repair.",
+  "artifact_member_identities": {
+    "archive.cmd": {
+      "bytes": 500,
+      "sha256": "3afc2b7a8de83a01812ea9e759ede2c6e3659cbd1bf733ef270582f54cd54b55"
+    },
+    "archive.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "coh-fresh-platform.lib": {
+      "bytes": 22476,
+      "sha256": "cb6a27981cf699a907c8103892c6bd2f192746cd8d9144c21185a481fd7813a7"
+    },
+    "compile-fresh_probe_policy.cmd": {
+      "bytes": 711,
+      "sha256": "f30b6322f1cb41291f1eb423eb5592543b910ecb76aafa4e6cfb9ba5a1b3b80a"
+    },
+    "compile-fresh_probe_policy.log": {
+      "bytes": 2828,
+      "sha256": "5c14b3711f3962f8119feb822d2be665f071e358dd9a4f3c1c48bccef638b2ff"
+    },
+    "compile-fresh_probe_windows.cmd": {
+      "bytes": 721,
+      "sha256": "a369b208271f995effcc0e7be5a105a48ea37c499cc782040c337232e04e6861"
+    },
+    "compile-fresh_probe_windows.log": {
+      "bytes": 20050,
+      "sha256": "e13a9b2b2b3292c557a68ae82c4fe0dbbda60e21dccf722bcb5ec29bc1b22d44"
+    },
+    "fresh_probe_policy.obj": {
+      "bytes": 2891,
+      "sha256": "b11456de904e2f2294913a9280273906fba31cec5707d9b7c30cccf764fd43aa"
+    },
+    "fresh_probe_windows.obj": {
+      "bytes": 18561,
+      "sha256": "f608a5052f1812e9f64b778f631e12cb8b77f72dd0cfad99b111e459b0f6edc6"
+    },
+    "receipt.json": {
+      "bytes": 43463,
+      "sha256": "4cc4cfd9f7a469265a1b4e0615397f35b8df35c5af406fa8504df91916d3b53a"
+    },
+    "syntax-fresh_probe_policy.cmd": {
+      "bytes": 634,
+      "sha256": "ddbc105650d8bfd9dc65d2fb3fc51e6799c157ac2bffdb47d590cc1b88717030"
+    },
+    "syntax-fresh_probe_policy.log": {
+      "bytes": 2828,
+      "sha256": "5c14b3711f3962f8119feb822d2be665f071e358dd9a4f3c1c48bccef638b2ff"
+    },
+    "syntax-fresh_probe_windows.cmd": {
+      "bytes": 643,
+      "sha256": "f3a244f82f65466ada2493d9676b0d10ead15c77174300864ff028f9138bef25"
+    },
+    "syntax-fresh_probe_windows.log": {
+      "bytes": 20050,
+      "sha256": "e13a9b2b2b3292c557a68ae82c4fe0dbbda60e21dccf722bcb5ec29bc1b22d44"
+    }
+  }
+}

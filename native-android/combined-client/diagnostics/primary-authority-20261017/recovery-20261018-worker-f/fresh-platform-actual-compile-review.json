@@ -1,0 +1,40 @@
+{
+  "schema": "coh-independent-f-actual-fresh-platform-compile-review-v1",
+  "passed": true,
+  "run_id": 39153370584,
+  "artifact_id": 12145709083,
+  "revision": "28d4e4a0bd210c4bae850c515b7770b4f8e764ab",
+  "zip_bytes": 35656,
+  "zip_sha256": "824f4046a2e326a31db9109a9b6bdf5a6e2436c39c733306b3053213ecb9f113",
+  "API_run_artifact_source_digest_verified": true,
+  "exact14_safe_members_crc_and_local_raw_bytes_verified": true,
+  "project17_raw_and_committed_source_inputs_match": true,
+  "real_WindowsSDK_headers_compile_qualified": true,
+  "receipt_header_identities": 155,
+  "receipt_tool_identities": 9,
+  "remote_compiler_tools_and_system_headers_not_locally_rehashed": true,
+  "two_actual_x64_COFF_objects": {
+    "fresh_probe_policy.obj": {
+      "bytes": 2891,
+      "machine": 34404,
+      "sections": 10,
+      "sha256": "b11456de904e2f2294913a9280273906fba31cec5707d9b7c30cccf764fd43aa"
+    },
+    "fresh_probe_windows.obj": {
+      "bytes": 18561,
+      "machine": 34404,
+      "sections": 71,
+      "sha256": "f608a5052f1812e9f64b778f631e12cb8b77f72dd0cfad99b111e459b0f6edc6"
+    }
+  },
+  "COFF_symbol_tables_well_formed_and_real_WindowsAPI_imports_present": true,
+  "static_library_bytes": 22476,
+  "static_library_sha256": "cb6a27981cf699a907c8103892c6bd2f192746cd8d9144c21185a481fd7813a7",
+  "archive_contains_exact_actual_two_object_hashes": true,
+  "production_source_branch_no_test_macros": true,
+  "CLI_linked": false,
+  "Windows_backend_APIs_executed": false,
+  "original_services_executed": false,
+  "actual_character_allocation_or_Map_ready_or_world_authority": false,
+  "old_qualifiers_or_compilers_reexecuted_by_reviewer": false
+}

@@ -1,0 +1,882 @@
+{
+  "CLI_linked": false,
+  "Windows_backend_APIs_executed": false,
+  "actual_compiler_tools": {
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe": {
+      "bytes": 469456,
+      "sha256": "c54f3b7c9164ea9a0db8641e81ecdda80c2664ef5a47c4191406f848cc07c662"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt": {
+      "bytes": 11,
+      "sha256": "2ca998516f8f18b39c28ce022abb90ef5ad711b468494671dd84b74618b569d9"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Auxiliary\\Build\\vcvarsall.bat": {
+      "bytes": 10163,
+      "sha256": "693b4a30c7379e84d2675101a8d47178cf62f45df2e2f09be5c206107e9c9ca2"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\1033\\clui.dll": {
+      "bytes": 630072,
+      "sha256": "5271e867c8fd4f87a8c74de583ea90e81773334db1769ff7f9dcf8917ec603cf"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\c1.dll": {
+      "bytes": 3623736,
+      "sha256": "49bd8b0b1c3d814b6b39cf0d649ac8a7ffc8fea021b0c5fd363f787b158d39a5"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\c2.dll": {
+      "bytes": 11492664,
+      "sha256": "1477c03a2a267effe4a40d8debb846f3e4ab42547c5b966d7d5187bb2823e2f5"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe": {
+      "bytes": 893288,
+      "sha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\lib.exe": {
+      "bytes": 23384,
+      "sha256": "d8dae02a50c7571c6c0ea5cd7a853830aaca8fad13f8f4be147828d51dd4adec"
+    },
+    "C:\\Windows\\System32\\cmd.exe": {
+      "bytes": 339968,
+      "sha256": "64afc6db3aad1289533662e2d79e27dd55c7dcdb8cd918b08e145ad82ad5acb4"
+    }
+  },
+  "actual_included_headers": {
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\apiset.h": {
+      "bytes": 6423,
+      "sha256": "e984e20681fd3de73ce14ab09d759d5b4faf03f7d66a78602da2ac9234b24df4"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\apisetcconv.h": {
+      "bytes": 2162,
+      "sha256": "1093683104f97c8c9725bb2e7539dca22722dc8c5618cd846287e9458698abfe"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\basetsd.h": {
+      "bytes": 11448,
+      "sha256": "d35b73f885d7ef7dfd27fce3762c190c1c952a21e10a3945bcb3d1860c673b12"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\driverspecs.h": {
+      "bytes": 41698,
+      "sha256": "9cf7e9e1c9b55c7c351e87ff5a98e362b6ffdb511c3309ab9cf46b62b0dace42"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\guiddef.h": {
+      "bytes": 5083,
+      "sha256": "0c08463fbc5a23a8862e57699e2f30dd14cd3db4a40903e4fca9392a57942dae"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\inaddr.h": {
+      "bytes": 1115,
+      "sha256": "a2ae281be066b6a2164ae5639dca411d8b03842ff91b216396203b1e62038572"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\kernelspecs.h": {
+      "bytes": 11879,
+      "sha256": "e844c7726c42736df74445b36351dc01e29bccee7d57ea208f77f61aa4c2b191"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\ktmtypes.h": {
+      "bytes": 7849,
+      "sha256": "68d2848d00ae33282fb265880f8166f2b5dc60cd7a26db652450a5b44d44ee11"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\minwindef.h": {
+      "bytes": 6876,
+      "sha256": "a9cf08be8407a196104124d5ade2308e204e47d3252bcd2ad20d0f2137843d62"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\poppack.h": {
+      "bytes": 1021,
+      "sha256": "a50d0ef5cfe96d634a41ee9a97749c147165f8656cdfed5df53bc24c8adb1210"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\pshpack1.h": {
+      "bytes": 918,
+      "sha256": "dee27f2712b9e72ca78a404834735303d16bdb21c8aa3addaca7dbca22664529"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\pshpack2.h": {
+      "bytes": 918,
+      "sha256": "971d19074639cb36134bb40776cb2f817c53cbd05d748b52468f571932bbcc49"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\pshpack4.h": {
+      "bytes": 918,
+      "sha256": "1cb4d07a218ec43c7935b431b16146fc0f3d29d43bd192f12959051d62c48d57"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\pshpack8.h": {
+      "bytes": 918,
+      "sha256": "47f3972a1211e3a5ac32b18fae1a824db087dc7dc562d152e9ccab9b297faef0"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\qos.h": {
+      "bytes": 7631,
+      "sha256": "e1dda564159bb080003a051a939278cd20aff626c06815e9bcae04607931165d"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\sdkddkver.h": {
+      "bytes": 11565,
+      "sha256": "2472140e0a4d56595743bb74002a51aee9b58667bd178fc43742e19debfeb774"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\sdv_driverspecs.h": {
+      "bytes": 554,
+      "sha256": "99fd81f9464150f56963c3bbafaa95f93b837c221c4237e6e399a85e00ea9f39"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\specstrings.h": {
+      "bytes": 48804,
+      "sha256": "3b83b1cd3b4f9bf46009bfdccf01d5c3a6fa6eed3f823d1ef497ed6d1b9bce0e"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\specstrings_strict.h": {
+      "bytes": 67448,
+      "sha256": "49b12898b42bcf53e5f8fb75e6db1a5d3ffb7a9f394e50df3351e0824d4a8b42"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\specstrings_undef.h": {
+      "bytes": 13106,
+      "sha256": "6aba76eabbec627edadba5ab29304d9e2ff4eb9da165fd81a9095c851f405a01"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\stralign.h": {
+      "bytes": 16784,
+      "sha256": "f7d2f48b6a9154937ad907e91b70faf6c68044fbe9d4042c392ac3c0eb1a82ef"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\tvout.h": {
+      "bytes": 4128,
+      "sha256": "8c359d2dff894d546f3eced2fe9463dfa4824bffc6c8c71ecd8feef02e7eae21"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\winapifamily.h": {
+      "bytes": 11292,
+      "sha256": "bda507d14f2e40023d344cb943cbd98af26de8a47f3b0f5fac694d2025711af1"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\windef.h": {
+      "bytes": 7362,
+      "sha256": "040535b19a60264e5fe6971f7cb13cbf24be17abeeaa8acd21e44f5d7dfe8d22"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\winerror.h": {
+      "bytes": 1622697,
+      "sha256": "607a0b5fb2ce91048147796f618cd1d408ffc603cfc3a34dc710be087e7d1a5c"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\winpackagefamily.h": {
+      "bytes": 3699,
+      "sha256": "8f74e254896094a3884e6975fd24b3493846514065f47d2666df53cdea45b8ea"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\wnnc.h": {
+      "bytes": 4001,
+      "sha256": "fb3aaeef324b5d00ce0a6ae11702dcc3c1de65fa0a10caaab4336b97d3adf493"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\ws2def.h": {
+      "bytes": 46352,
+      "sha256": "57c53a7faa53bb1acfec935eb8e562b1f2d51069a7f30ac3dfa2e046dd6c304f"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt.h": {
+      "bytes": 127273,
+      "sha256": "822e503b81dd7b3d7df93ca22fced3672a5154484fd42054d5941e619bcf6cbc"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_malloc.h": {
+      "bytes": 7405,
+      "sha256": "44bd1bb518e730ba0be045f44a4735869e08f7d54ab85c298270770812fcff80"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_memcpy_s.h": {
+      "bytes": 3692,
+      "sha256": "359f3ce9e84bc00c983f01d9c3375d0ca9e0ef6a42e797d16e119c62b2ef333b"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_memory.h": {
+      "bytes": 3527,
+      "sha256": "18ca520416579183bc369c0a8e555914db5c7577075b9359173fc6bc45595560"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_search.h": {
+      "bytes": 10959,
+      "sha256": "fe06c4dd27c3df5ca6bed52a433b8848f32e14ed0f3712d00f7e602416471c1b"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_stdio_config.h": {
+      "bytes": 5009,
+      "sha256": "a7e100624320a8e0123890c5008bcb2281c1273ca7ce5bb1d297f987fdbe79a0"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_wctype.h": {
+      "bytes": 10605,
+      "sha256": "b622b24cbda842a1736987f38c9deb5076e51af018630842a127bebd9104076e"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_wstdio.h": {
+      "bytes": 75265,
+      "sha256": "a10bbf4667b3aada380a6b80df853f9fbddc3cc691ca57389b3b6759f119e515"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_wstdlib.h": {
+      "bytes": 16790,
+      "sha256": "98b62ac5fb4291961c19ecf5c1b2e641b437f9042054f1a56ebdfd0deb71eca1"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_wstring.h": {
+      "bytes": 20015,
+      "sha256": "c485f918d43f0f846d77a36eaee9e111f57bf2eec32db7d9719ff924771744c6"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\corecrt_wtime.h": {
+      "bytes": 7205,
+      "sha256": "4e487fddafbc724cf4e6df45feb920bc46dae80f54ffe5d983bf742a1fd9a12f"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\ctype.h": {
+      "bytes": 12981,
+      "sha256": "6a10e9f0505b896d356d986d671c939b7fb0602012e463314ff7bfd0182a861f"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\errno.h": {
+      "bytes": 3835,
+      "sha256": "c64e8df96f057fdebc0474bd765cee3ae17de34a2b1fc9d197597321f2d1e447"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\inttypes.h": {
+      "bytes": 8790,
+      "sha256": "615bcc64d5945d41c67608ad674e4ade389d90d4d68268370cf8b914f13dabac"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\stddef.h": {
+      "bytes": 1413,
+      "sha256": "3f1f7eeefad270928749c89a2a2094ccc3f38829b1d8c197f6ce7483ead2284c"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\stdio.h": {
+      "bytes": 81489,
+      "sha256": "06cbab3a501306fdd9176a00a83e5bb92ea4d7863cfd666355743527cf99edc6"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\stdlib.h": {
+      "bytes": 43968,
+      "sha256": "1576fdb40eb225dff53489db2fd52e41c7bb24f1e621e4a95c2c7f4a7216949c"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\string.h": {
+      "bytes": 17395,
+      "sha256": "39767b2e1963b8ef679b62d5e27cb2d0ca1de6a6173b75389b79c9d575da92fc"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\time.h": {
+      "bytes": 19166,
+      "sha256": "b775fe03a3288dfcd68a72caad43e8198283164eae94b665fdd3375a3baea44c"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\WinBase.h": {
+      "bytes": 271704,
+      "sha256": "ec538199f5ebe8cec2dfd4f1ba48316ef776c82d37277aed3a677965e494f192"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\WinNls.h": {
+      "bytes": 129219,
+      "sha256": "e47861762a4b51a2689c8a99798a1a7e68335573e03c857e545172b095c5c829"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\WinSock2.h": {
+      "bytes": 125831,
+      "sha256": "15098cbb8780bf917b155e2a7df9201f9768717a26544ec3912fd32addcea2c7"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\WinUser.h": {
+      "bytes": 428754,
+      "sha256": "89910113eb8dfc9fad16e3b12abf5f52a5df70cc9ead30ba1be095462bb880b3"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\Windows.h": {
+      "bytes": 7511,
+      "sha256": "b337d661d03a4abefb7b86a2742ce1ad5d19b57cd8b858bd13e7bbcc1dbeeaaa"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\apiquery2.h": {
+      "bytes": 1549,
+      "sha256": "56c61c2ee306428d38037a578b66a49ef347a14a3760936416035b0d45da2b11"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\consoleapi.h": {
+      "bytes": 8161,
+      "sha256": "a0e727e696f3599ef0b570942f28646dbd94374e62c812659eba5ebe2a42a99f"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\consoleapi2.h": {
+      "bytes": 11697,
+      "sha256": "f2134e1d2c01611e60ff939ccd45561884aa0ccbce590136ffd1d95161892d17"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\consoleapi3.h": {
+      "bytes": 8574,
+      "sha256": "0a00bf6ca901d0d980fe8c2b9bb91a39fb84c3a99e9c87498149a04cf7cf5925"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\datetimeapi.h": {
+      "bytes": 3964,
+      "sha256": "a4325c76b9bc900c22ef3d766c739ccd3a71894e81833ad637d50f9e45417117"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\debugapi.h": {
+      "bytes": 3591,
+      "sha256": "d63f6c4aad9787bb8ff2e54966c8db156b0ef1570be58201d74dff12cd6f1e22"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\enclaveapi.h": {
+      "bytes": 3502,
+      "sha256": "9467c4bc6400057c3d3205d53667000be525cad64a381552291e869430af6a76"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\errhandlingapi.h": {
+      "bytes": 6566,
+      "sha256": "b73cccce6dac8ce02c6a399862ec2a6e22fe27a4d09874d86ec2be3bd5d17fbf"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\fibersapi.h": {
+      "bytes": 2582,
+      "sha256": "f8eeadc28f8e3e4c7bfd1217d55315eb31d63f3d86c66a3948d74ceb8e7a00d0"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\fileapi.h": {
+      "bytes": 40460,
+      "sha256": "f8927178c75de487c0e57f044a215e455522bf6eaa0b660421be09cd06ae05a1"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\fileapifromapp.h": {
+      "bytes": 4111,
+      "sha256": "d07110e7f7989aeef7eed77d5f584f3ee60ff2ce58bc1a374d70151a18b4a664"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\handleapi.h": {
+      "bytes": 2578,
+      "sha256": "c967fdf1a98e4ce8d501dae26b905f6452173b2be1c25e6aa2e5eeae415369cc"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\heapapi.h": {
+      "bytes": 5317,
+      "sha256": "22b606b0a4096295272bcae6fc353c4f159f0cdfc90b5f1a9a712b2fff50b53f"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\ime_cmodes.h": {
+      "bytes": 833,
+      "sha256": "27904e900938749c12a4d1e741afd564198a57a24724c1ddd36cd3302224df26"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\imm.h": {
+      "bytes": 28873,
+      "sha256": "942d0b80eb7d186ee935fce8064ccdcdea3a49b39bcc03f55208b7c37e289779"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\interlockedapi.h": {
+      "bytes": 2604,
+      "sha256": "4b0d3bc138eaab8dc9dd40bfb109f5fea4cbd2caaf92d63a4cf60a8edcfb0e3a"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\ioapiset.h": {
+      "bytes": 4791,
+      "sha256": "7c3f659f98b3f1748a314bd64106583d01649333e0419b66232b4f64b3f85b0c"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\jobapi.h": {
+      "bytes": 1307,
+      "sha256": "08ddff85ec80f12b156837bbce4f969480fea0e32a08dade7cc16acecb0892d1"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\jobapi2.h": {
+      "bytes": 2976,
+      "sha256": "a8f9591dc2b0bd249d03150b70abd47c0068c6eda2a1d74d24bc8964bcd68549"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\libloaderapi.h": {
+      "bytes": 15518,
+      "sha256": "8ad0ba5600d6c2e9aed318ca9d2f48f2bdf9f47ed3cd5d9f243e6f779c8e04c4"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\mcx.h": {
+      "bytes": 24640,
+      "sha256": "4ee416b2d24e45cfc5d35ce5b34833b64b34fd9a39957c66d75509f6d3b8f972"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\memoryapi.h": {
+      "bytes": 33539,
+      "sha256": "58edcc2090c411a1821e04a6a2954c258fd59ded44440bdd671984027e0a852f"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\minwinbase.h": {
+      "bytes": 13973,
+      "sha256": "7d1408f4b8eeba96ae45892209132258cde80cab6dab192b4cceea591972c78b"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\namedpipeapi.h": {
+      "bytes": 5539,
+      "sha256": "37062eba19e35b391cf050519c9403e19c6782663ea644ff38b2b5eb71dfce6b"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\namespaceapi.h": {
+      "bytes": 1974,
+      "sha256": "3257ad8af53c5809be4d5d17ed0ffd8b49451d3f27c1fd747ffde3e0a7a81583"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\processenv.h": {
+      "bytes": 7427,
+      "sha256": "c10dd3bd48a2416e0aece2259ea57cc47d6c8b9fdbae085a4c7a5b29c71a85dd"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\processthreadsapi.h": {
+      "bytes": 37180,
+      "sha256": "436ae4cbb017d1cdb381aaf2119a3f89b04bae257fd4c881ef251daa02533540"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\processtopologyapi.h": {
+      "bytes": 2081,
+      "sha256": "4507a5e0c4f41d19a80d1543833f1a9d90277bc376441b277884bb043be24ba5"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\profileapi.h": {
+      "bytes": 1413,
+      "sha256": "cfa8e3626dba11689997d8fcd65b5dfbf4bcef8de09dd7e4e881769d48d165a2"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\realtimeapiset.h": {
+      "bytes": 3149,
+      "sha256": "00c874b981a1242ee4ebc21e6ae96a69d7aa70662d820ceffbabcfea859b03e4"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\reason.h": {
+      "bytes": 5042,
+      "sha256": "30540eb35daa79c7a5cb98059430df480e86b549b7980247288da8a2801add1d"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\securityappcontainer.h": {
+      "bytes": 1470,
+      "sha256": "85cc13ed7028960bd7f97c91f98b96825b46f4b8bc386aed2f2a6a9bccbe4083"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\securitybaseapi.h": {
+      "bytes": 36514,
+      "sha256": "a443b4183d3ec5b8e1ae40db5824f002a34eb0415f38227fa1dddbbf02a448d4"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\stringapiset.h": {
+      "bytes": 3941,
+      "sha256": "624c82fb73517a3829f3766a50a0235e2f9a51cb4bda95a0c39981e39fa4d42d"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\synchapi.h": {
+      "bytes": 15696,
+      "sha256": "d962588974e5e100205f683160b351dee70ea100aa736e14d878b7a74577a9c5"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\sysinfoapi.h": {
+      "bytes": 19345,
+      "sha256": "077088cb53ec69d454916aac5f00e45dda79e09da64054acc141120eb67a5700"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\systemtopologyapi.h": {
+      "bytes": 2319,
+      "sha256": "8bfd1a78cc30b6d33c88e3f61ae2ac6468cee0607352ee8d096ba5375b4d401c"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\threadpoolapiset.h": {
+      "bytes": 7148,
+      "sha256": "e91d7dee4d22ca848e3110a4c55f32e1918dc865479343896aec9ab653ee5110"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\threadpoollegacyapiset.h": {
+      "bytes": 2824,
+      "sha256": "87c1630abf7dc4ed7978f2c4dbacf418f6bcf94cb946e277cb7250770bd44200"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\timezoneapi.h": {
+      "bytes": 5462,
+      "sha256": "621c0252a8a831813592c4a95e183a2e7ae55efbbd7b8ad886af7d8871fc4d50"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\utilapiset.h": {
+      "bytes": 2482,
+      "sha256": "a8e0f6001c784b3ad9feb44c61d96b58c57366c473832ca8b2ea5de05877b470"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\verrsrc.h": {
+      "bytes": 6705,
+      "sha256": "ff9bee8ee5b7aa81eaf79a1eab0e93bd307601e87d3b80a73f24984e9c951c61"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\wincon.h": {
+      "bytes": 1129,
+      "sha256": "98e33720f9ec8fded808ab94f111b8335d0ba2fd2246a5adab3aab2ce05503d9"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\wincontypes.h": {
+      "bytes": 4610,
+      "sha256": "209e79fdbbb30971740e59b2da2d6c86e27c0e9dd02bee9cbc21736fbd2426ad"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\wingdi.h": {
+      "bytes": 244023,
+      "sha256": "96f3528cabc7e5fe30e2f2c51daa01c018dd6cedb3768121202434758629b8a2"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\winnetwk.h": {
+      "bytes": 27073,
+      "sha256": "7c7412df502fb6ea390c96d7c9f805a2a211609b95b8fdb4740540f789d9c4ce"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\winnt.h": {
+      "bytes": 876258,
+      "sha256": "bc603675b330e624fd6f3de9ed3497ed6101e4c56e12cf819a9ef7c41f1c78d8"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\winreg.h": {
+      "bytes": 42295,
+      "sha256": "bff833e8d092a0cb657837e3162b8bb0cf35b43105203f4ce880972a501d61d6"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\winsvc.h": {
+      "bytes": 59863,
+      "sha256": "8108fe3f099960014f36d1b2da425a8382e9d839de3477eb06f181289a0685c8"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\winver.h": {
+      "bytes": 8809,
+      "sha256": "c60e137e7ff88582f72e50fe74904f5773502d229f78234ea83abb2688f6e8ae"
+    },
+    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\wow64apiset.h": {
+      "bytes": 5421,
+      "sha256": "6b14e2b59ae5b9f22bfd9a1e989a5589adf5790832ff24cb9d8828d4e8d45cda"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\concurrencysal.h": {
+      "bytes": 17273,
+      "sha256": "1ea9a2e32a6ff298ad7904610cc71028caa9b172399a579ca90a120d1b1aec12"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\excpt.h": {
+      "bytes": 2493,
+      "sha256": "9532b07eff7b34c062401b7155fe77494068e82bb7c2bef34cec5937e948cefc"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\limits.h": {
+      "bytes": 1919,
+      "sha256": "2ed583abdb8a052b919d4652b10839e28a6fadbe63674108dcc65f719c9ff51c"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\sal.h": {
+      "bytes": 213957,
+      "sha256": "cda06459ca38681800ce5e98703c66534c74a803aa652bd4bc2b3407dd45ed46"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\stdarg.h": {
+      "bytes": 554,
+      "sha256": "5d61d0b6734ef0832c30064800e8d01b3f12d29d24c8b1bd07b3ece3b72a9330"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\stdint.h": {
+      "bytes": 4114,
+      "sha256": "29fb6d4ba5e311e06877609c20a1bc49c6cdfb730f56dd0f9c53a6241c40ab5c"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\vadefs.h": {
+      "bytes": 7668,
+      "sha256": "282dcb4af7cdbbf34095235b069474621fdd82e28eec698b467f553df4759f01"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\vcruntime.h": {
+      "bytes": 11444,
+      "sha256": "8a6e89fe85c66162d62c772d02367ae2e6530f1faaaa8d099427698a689bac7f"
+    },
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\include\\vcruntime_string.h": {
+      "bytes": 2959,
+      "sha256": "b05204f6814d1d7b7ca729b41d4192d0e47722f162c0b1d322f994bf9650af63"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\asn1.h": {
+      "bytes": 58861,
+      "sha256": "84287ccfea942a07bc282358599db548e01f960b713e25b0c9c35274a70aa840"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\asn1err.h": {
+      "bytes": 5169,
+      "sha256": "9d60638b3d0c52170d390fe566c0b96a6381590590cc3dd71339eb85140fe1d6"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\bio.h": {
+      "bytes": 42432,
+      "sha256": "4159097a34b97badc8bdbacdf056791023118a01e7df661017c150d58b6c2b92"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\bioerr.h": {
+      "bytes": 2355,
+      "sha256": "fe1bf57251e4eaab30d2a6aa2048ee93deb1f0f15ef6634f61093b4d405586c6"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\bn.h": {
+      "bytes": 22309,
+      "sha256": "da179e5d98e8351e3e29f148bd88b42cba84fe60c7927a584f213bf2d09c38ed"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\bnerr.h": {
+      "bytes": 1329,
+      "sha256": "beeb78746fbcc2c09e1f833f4c2ea72e845e757390aad7dc8699f7787b580204"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\configuration.h": {
+      "bytes": 5067,
+      "sha256": "7c39a783c9346404e76ced85e9eb94630d0eb7ec9e8d2949f1217cdec3f0230f"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\core.h": {
+      "bytes": 7820,
+      "sha256": "4d4e63e2e01d06530515adbbe3c93601c5f0f5e1a96754d34d3470bccfcbdbc3"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\core_dispatch.h": {
+      "bytes": 46932,
+      "sha256": "877d786bd366e80baa763d2c6c0b94e1d91c92cb0b6fa26d4004e6b0c3e6dd81"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\crypto.h": {
+      "bytes": 23707,
+      "sha256": "d0e2ec0bc1b2a987de7ffb469b7497c3c18eab3c7ffd0fb387e21b245b7c74c8"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\cryptoerr.h": {
+      "bytes": 1986,
+      "sha256": "c457c0591449551657a69ff9727784a79cc1afd899ac733c682c1a41fefdaa19"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\cryptoerr_legacy.h": {
+      "bytes": 48019,
+      "sha256": "985664cb71a62441b2822028340bb4ad5e3f98d6c74ba4c1bc7c997e188b97d3"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\e_os2.h": {
+      "bytes": 8445,
+      "sha256": "d7300e16ec04f764e8fd45ae5288c37ab5af09dd1ea204d17c54c0155c69921c"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\evp.h": {
+      "bytes": 94953,
+      "sha256": "41b42c68adfd98b9d8a80fb2d78bbdaf1094f43dd02be045c7d8605edf36a706"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\evperr.h": {
+      "bytes": 5528,
+      "sha256": "ee0a462f1985667434a2b8a91d5df67ce2ee74e4ad9246f660dece5fafcf4474"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\indicator.h": {
+      "bytes": 818,
+      "sha256": "4be987d4fe4a4b39feac27c2ee85000e1b6ca7188d8ca9f75689a8205c2b4563"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\macros.h": {
+      "bytes": 10751,
+      "sha256": "dc27bc9e94abbb9e49bbcb604da5c061a65145586ac388c3fb4fc311daaccf96"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\obj_mac.h": {
+      "bytes": 289525,
+      "sha256": "d51cb3f619888a0485ba46ad886f76ac605ce78a3cfbc080460947ab2dbb3a02"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\objects.h": {
+      "bytes": 7567,
+      "sha256": "b6227db488aa39ed20a29e67d48fe8fefb2f649a1afcc3149cba22ac26510057"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\objectserr.h": {
+      "bytes": 686,
+      "sha256": "fc14e6c9e71fb550363394f912cb72e6078dd11e300bdddfdd17ec118c88dc4b"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\opensslconf.h": {
+      "bytes": 510,
+      "sha256": "7f4b522c049d0bd0d651e6f6ebe71d6df0c37231a94e32524da3f4642ebda3be"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\opensslv.h": {
+      "bytes": 3580,
+      "sha256": "dfd0ec688fe70c910984451361e325744a939ace239f5619ec4e27868db975ee"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\params.h": {
+      "bytes": 7060,
+      "sha256": "b76d73449d8d44d14a7da9918caf3d1feee85b384e2d62ace73a8a1126152702"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\rand.h": {
+      "bytes": 4058,
+      "sha256": "cb240ffedfd9516ec7a8cd0796951d46a4707c0460f940371620c83f7bafd037"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\randerr.h": {
+      "bytes": 2486,
+      "sha256": "a6acbb47da2f26fe5e572f232eb9d9ebcd65bb7c01d5984ab26229e5bf0bd45e"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\safestack.h": {
+      "bytes": 29457,
+      "sha256": "749f9c59a6aa84955803ef9afd0ae8512bbae954b406d8aaf88361a44ea213a9"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\stack.h": {
+      "bytes": 3122,
+      "sha256": "c81fbb17b5476dca609b96eb11372d1d246a49096838c2cf7e81ad6b25f69316"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\symhacks.h": {
+      "bytes": 1102,
+      "sha256": "2b54552189bfbf4204c28c6a421b21702a3cd3dba37570dbcdadb7ee648f155b"
+    },
+    "D:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include\\openssl\\types.h": {
+      "bytes": 7354,
+      "sha256": "de5422d2e621df11c17ab18473ea4f2368ecc64b1e45311c4890cc62b31f81c5"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\deployment\\windows\\db_udp_winsock.h": {
+      "bytes": 2592,
+      "sha256": "ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\deployment\\windows\\winsock_compat.h": {
+      "bytes": 2194,
+      "sha256": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\fresh-character-owner\\fresh_character_owner.h": {
+      "bytes": 6864,
+      "sha256": "d6782335567105f9179fe3684acc900afecf2299ea4b520c1bafad57913d5abf"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\fresh-character-owner\\probe\\fresh_probe_platform.h": {
+      "bytes": 1759,
+      "sha256": "7ddffff6edb69506917a19446e041b453014fc80dce3ed7f13aeb3b86b2179ba"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\fresh-character-owner\\probe\\fresh_probe_policy.h": {
+      "bytes": 743,
+      "sha256": "b89809c03c1bb64bd0d697433d6fdee632b6c3a424e1fafc1c1698e6f1cac7e2"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth\\coh_auth.h": {
+      "bytes": 5385,
+      "sha256": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\coh_contracts.h": {
+      "bytes": 1044,
+      "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\dbclient\\coh_db_session.h": {
+      "bytes": 8368,
+      "sha256": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\dbclient\\coh_dbclient.h": {
+      "bytes": 4045,
+      "sha256": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\login\\coh_login.h": {
+      "bytes": 3293,
+      "sha256": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\network\\coh_net.h": {
+      "bytes": 7329,
+      "sha256": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\engine\\network\\coh_net_udp.h": {
+      "bytes": 3771,
+      "sha256": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\include\\coh_native_core.h": {
+      "bytes": 2613,
+      "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+    },
+    "D:\\a\\coh-android\\coh-android\\native-android\\protocol\\coh_protocol.h": {
+      "bytes": 1923,
+      "sha256": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+    }
+  },
+  "commands": [
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+        "/nologo",
+        "/TC",
+        "/std:c11",
+        "/W4",
+        "/WX",
+        "/MT",
+        "/showIncludes",
+        "/D_CRT_SECURE_NO_WARNINGS",
+        "/DWIN32_LEAN_AND_MEAN",
+        "/D_WIN32_WINNT=0x0601",
+        "/DWINVER=0x0601",
+        "/ID:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include",
+        "/ID:\\a\\coh-android\\coh-android\\native-android\\include",
+        "/Zs",
+        "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\fresh-character-owner\\probe\\windows\\fresh_probe_windows.c"
+      ],
+      "label": "syntax-fresh_probe_windows",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+        "/nologo",
+        "/TC",
+        "/std:c11",
+        "/W4",
+        "/WX",
+        "/MT",
+        "/showIncludes",
+        "/D_CRT_SECURE_NO_WARNINGS",
+        "/DWIN32_LEAN_AND_MEAN",
+        "/D_WIN32_WINNT=0x0601",
+        "/DWINVER=0x0601",
+        "/ID:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include",
+        "/ID:\\a\\coh-android\\coh-android\\native-android\\include",
+        "/Zs",
+        "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\fresh-character-owner\\probe\\fresh_probe_policy.c"
+      ],
+      "label": "syntax-fresh_probe_policy",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+        "/nologo",
+        "/TC",
+        "/std:c11",
+        "/W4",
+        "/WX",
+        "/MT",
+        "/showIncludes",
+        "/D_CRT_SECURE_NO_WARNINGS",
+        "/DWIN32_LEAN_AND_MEAN",
+        "/D_WIN32_WINNT=0x0601",
+        "/DWINVER=0x0601",
+        "/ID:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include",
+        "/ID:\\a\\coh-android\\coh-android\\native-android\\include",
+        "/O2",
+        "/c",
+        "/FoD:\\a\\coh-android\\coh-android\\out\\fresh-platform\\fresh_probe_windows.obj",
+        "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\fresh-character-owner\\probe\\windows\\fresh_probe_windows.c"
+      ],
+      "label": "compile-fresh_probe_windows",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+        "/nologo",
+        "/TC",
+        "/std:c11",
+        "/W4",
+        "/WX",
+        "/MT",
+        "/showIncludes",
+        "/D_CRT_SECURE_NO_WARNINGS",
+        "/DWIN32_LEAN_AND_MEAN",
+        "/D_WIN32_WINNT=0x0601",
+        "/DWINVER=0x0601",
+        "/ID:\\a\\_temp\\retained-intact\\intact-openssl-reuse\\include",
+        "/ID:\\a\\coh-android\\coh-android\\native-android\\include",
+        "/O2",
+        "/c",
+        "/FoD:\\a\\coh-android\\coh-android\\out\\fresh-platform\\fresh_probe_policy.obj",
+        "D:\\a\\coh-android\\coh-android\\native-android\\engine\\auth-interop\\fresh-character-owner\\probe\\fresh_probe_policy.c"
+      ],
+      "label": "compile-fresh_probe_policy",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\lib.exe",
+        "/nologo",
+        "/OUT:D:\\a\\coh-android\\coh-android\\out\\fresh-platform\\coh-fresh-platform.lib",
+        "D:\\a\\coh-android\\coh-android\\out\\fresh-platform\\fresh_probe_windows.obj",
+        "D:\\a\\coh-android\\coh-android\\out\\fresh-platform\\fresh_probe_policy.obj"
+      ],
+      "label": "archive",
+      "returncode": 0
+    }
+  ],
+  "crypto_or_server_or_zlib_or_model_rebuilt": false,
+  "exact_two_x64_objects_archived": true,
+  "inputs_unchanged_after_compile": true,
+  "objects": {
+    "fresh_probe_policy.obj": {
+      "bytes": 2891,
+      "machine": 34404,
+      "sections": 10,
+      "sha256": "b11456de904e2f2294913a9280273906fba31cec5707d9b7c30cccf764fd43aa"
+    },
+    "fresh_probe_windows.obj": {
+      "bytes": 18561,
+      "machine": 34404,
+      "sections": 71,
+      "sha256": "f608a5052f1812e9f64b778f631e12cb8b77f72dd0cfad99b111e459b0f6edc6"
+    }
+  },
+  "original_services_executed": false,
+  "passed": true,
+  "probe_executed": false,
+  "production_Windows_headers_compiled": true,
+  "production_defines": [
+    "_CRT_SECURE_NO_WARNINGS",
+    "WIN32_LEAN_AND_MEAN",
+    "_WIN32_WINNT=0x0601",
+    "WINVER=0x0601"
+  ],
+  "project_source_inputs": {
+    "native-android/engine/auth-interop/deployment/compile_fresh_platform.py": {
+      "bytes": 13338,
+      "sha256": "bcd240d538dca8cde373c8273db9dd97307c064bf190093e6f5962614c3c8363"
+    },
+    "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h": {
+      "bytes": 2592,
+      "sha256": "ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb"
+    },
+    "native-android/engine/auth-interop/deployment/windows/winsock_compat.h": {
+      "bytes": 2194,
+      "sha256": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.h": {
+      "bytes": 6864,
+      "sha256": "d6782335567105f9179fe3684acc900afecf2299ea4b520c1bafad57913d5abf"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_platform.h": {
+      "bytes": 1759,
+      "sha256": "7ddffff6edb69506917a19446e041b453014fc80dce3ed7f13aeb3b86b2179ba"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.c": {
+      "bytes": 1735,
+      "sha256": "1048e1156dae2bf94b20808fb8ca47905f6a02135565bb21ec87aff4af6b9cbc"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.h": {
+      "bytes": 743,
+      "sha256": "b89809c03c1bb64bd0d697433d6fdee632b6c3a424e1fafc1c1698e6f1cac7e2"
+    },
+    "native-android/engine/auth-interop/fresh-character-owner/probe/windows/fresh_probe_windows.c": {
+      "bytes": 14640,
+      "sha256": "4c8c20e69f02563a78ea52be7bb1ede9a6bf19e8524eeb36a0ae1ccef6c8c47c"
+    },
+    "native-android/engine/auth/coh_auth.h": {
+      "bytes": 5385,
+      "sha256": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d"
+    },
+    "native-android/engine/coh_contracts.h": {
+      "bytes": 1044,
+      "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+    },
+    "native-android/engine/dbclient/coh_db_session.h": {
+      "bytes": 8368,
+      "sha256": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711"
+    },
+    "native-android/engine/dbclient/coh_dbclient.h": {
+      "bytes": 4045,
+      "sha256": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb"
+    },
+    "native-android/engine/login/coh_login.h": {
+      "bytes": 3293,
+      "sha256": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+    },
+    "native-android/engine/network/coh_net.h": {
+      "bytes": 7329,
+      "sha256": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+    },
+    "native-android/engine/network/coh_net_udp.h": {
+      "bytes": 3771,
+      "sha256": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4"
+    },
+    "native-android/include/coh_native_core.h": {
+      "bytes": 2613,
+      "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+    },
+    "native-android/protocol/coh_protocol.h": {
+      "bytes": 1923,
+      "sha256": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+    }
+  },
+  "retained_crypto": {
+    "archive_sha256_reference": "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b",
+    "artifact_id": 12078663003,
+    "bytes_revalidated": 105629748,
+    "files_revalidated": 384,
+    "library_sha256": "95aec97b796992a58f8745e1bbbc6eac634931420f13b0763d2db57537543698",
+    "manifest_sha256": "1c1c05eb10132e4d1d172d29a04d36311981e6c7023c7ee388348339c460896b"
+  },
+  "revision": "28d4e4a0bd210c4bae850c515b7770b4f8e764ab",
+  "schema": "coh-fresh-platform-msvc-x64-compile-v1",
+  "static_library": {
+    "bytes": 22476,
+    "sha256": "cb6a27981cf699a907c8103892c6bd2f192746cd8d9144c21185a481fd7813a7"
+  },
+  "syntax_only_header_discovery_pass": true,
+  "world_authority": false
+}

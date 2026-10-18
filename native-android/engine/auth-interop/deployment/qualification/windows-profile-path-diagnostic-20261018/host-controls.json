@@ -1,0 +1,27 @@
+{
+  "schema": "coh-wpp-profile-path-host-controls-v1",
+  "passed": true,
+  "results": [
+    {
+      "test": "test_profile_diagnostic.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_identity_diagnostic.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_file_owner.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_supervise_inert.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_file_diagnostic.py",
+      "exit_code": 0
+    }
+  ],
+  "compiler_or_model_or_Windows_API_or_services_executed": false
+}

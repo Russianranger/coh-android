@@ -1,0 +1,46 @@
+{
+  "schema": "coh-actual-streaming-verifier-observation-v1",
+  "passed": true,
+  "workflow_run_id": 39152328226,
+  "job_id": 117748332998,
+  "head_revision": "0551b50305d9f64288a0989eb56488be6d575427",
+  "orchestration_revision": "9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+  "artifact_id": 12146185748,
+  "artifact_bytes": 1757,
+  "artifact_sha256": "f33099e422306758062ed3b68015c3c9edf54b78947fbafc308802daefe99836",
+  "artifact_members": {
+    "summary.json": {
+      "bytes": 3107,
+      "sha256": "40242045b4a762282c6af29decc04de59f61a369c73372b8a32adadf0d65863d"
+    },
+    "tooling.json": {
+      "bytes": 397,
+      "sha256": "87deae49942ac434a58433b495b193a0e3cdfb0fc95162beefcded05170321d3"
+    },
+    "verifier-status.json": {
+      "bytes": 169,
+      "sha256": "e222b4e472ffe0e0da09077e0467c0dfa581ad70fa1bf22f5d91aedbf867f47f"
+    }
+  },
+  "artifact_CRC_verified": true,
+  "actual_original_GROUPS_capture_complete": true,
+  "matching_actual_native_verifier_passed": true,
+  "all_native_verifier_stages_accepted": true,
+  "private_receipt_written": true,
+  "original_cleanup_verified": true,
+  "initial_packet_observed": false,
+  "initial_native_failure": "TIMEOUT",
+  "reqallents_sent": 1,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "current_receiver_equivalence_established": false,
+  "source_only_snapshot_token_issued": false,
+  "gates_25_to_27_closed": false,
+  "native_or_original_tests_replayed_for_receipt": false,
+  "download_development_failure": {
+    "one_initial_script_refused": true,
+    "reason": "transient download URL was nested in connector result; wrong property produced undefined before network or file writes; corrected extraction succeeded"
+  }
+}

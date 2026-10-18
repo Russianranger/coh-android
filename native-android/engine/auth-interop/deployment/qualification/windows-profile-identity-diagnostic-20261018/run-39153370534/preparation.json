@@ -1,0 +1,12 @@
+{
+  "schema": "coh-wpp-file-identity-preparation-v1",
+  "passed": true,
+  "owner_source_sha256": "53add195056ce87c445de347bd6d0fa8996ff3c5842a59a69172587b649ec933",
+  "generated_source_sha256": "5420ba944a4b933d1067f0997ebd2f96b0c8581768cd885976e7042b415ff48e",
+  "generated_source_bytes": 49689,
+  "replacements": 25,
+  "exact_reverse_verified": true,
+  "identity_observation_only": true,
+  "existing_owner_acl_identity_guards_preserved": true,
+  "compiler_or_helper_or_model_executed": false
+}

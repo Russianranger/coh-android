@@ -58,6 +58,7 @@ JOURNAL_IDENTITY JOURNAL_SERIALIZE JOURNAL_BYTES JOURNAL_WRITE JOURNAL_RECHECK''
 DIAGNOSTIC_SOURCE_SHA256 = '3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f7a8c6cec2514'
 FILE_OWNER_SOURCE_SHA256 = '53add195056ce87c445de347bd6d0fa8996ff3c5842a59a69172587b649ec933'
 IDENTITY_SOURCE_SHA256 = '5420ba944a4b933d1067f0997ebd2f96b0c8581768cd885976e7042b415ff48e'
+PROFILE_SOURCE_SHA256 = 'ad25eb3dc6202df2bf4b1a271770e3c6555796c32174a083f90568af4a3c5b6b'
 IDENTITY_FILE_PHASES = FILE_PHASES | frozenset('''ACCOUNT_INTENT_JOURNAL ACCOUNT_CREATED_JOURNAL
 ACCOUNT_SID_JOURNAL ACCOUNT_PROFILE_JOURNAL TARGET_CREATE TARGET_PIN COPY_SOURCE COPY_IMAGE_CREATE
 COPY_IMAGE_PIN COPY_IMAGE_BYTES INPUT_CREATE INPUT_PIN RESULT_CREATE RESULT_PIN
@@ -65,6 +66,10 @@ IMAGE_ACL INPUT_ACL RESULT_ACL FILES_JOURNAL'''.split())
 IDENTITY_FILE_OPERATIONS = FILE_OPERATIONS | frozenset('''IDENTITY_QUERY IDENTITY_VOLUME
 IDENTITY_INDEX_HIGH IDENTITY_INDEX_LOW IDENTITY_CREATED IDENTITY_ATTRIBUTES IDENTITY_LINKS'''.split())
 
+PROFILE_FILE_PHASES = IDENTITY_FILE_PHASES | frozenset('''PROFILE_ROOT_QUERY PROFILE_ROOT_PATH
+PROFILE_ROOT_CHAIN PROFILE_FRESH_ABSENCE'''.split())
+PROFILE_FILE_OPERATIONS = IDENTITY_FILE_OPERATIONS | frozenset('''PATH_FORM PATH_CHARACTER
+PATH_CANONICAL CHAIN_ROOT CHAIN_DRIVE MISSING_ATTRIBUTES MISSING_ERROR'''.split())
 
 class Refusal(ValueError):
     pass
@@ -89,21 +94,22 @@ def decode_json(raw):
                       parse_constant=lambda _: need(False, 'JSON_CONSTANT'))
 
 
-def parse_receipt(raw, *, file_diagnostic=False, identity_diagnostic=False):
+def parse_receipt(raw, *, file_diagnostic=False, identity_diagnostic=False, profile_diagnostic=False):
     """Strict fixed field/type projection; never promote a failed native receipt."""
     need(type(raw) is bytes and 0 < len(raw) <= OUTPUT_LIMIT, 'RECEIPT_SIZE')
     need(re.fullmatch(rb'[\x20-\x7e]+\r?\n', raw) is not None, 'RECEIPT_ENCODING')
     value = decode_json(raw)
-    diagnostic_fields = {'file_phase', 'file_operation'} if file_diagnostic or identity_diagnostic else set()
+    diagnostic_fields = {'file_phase', 'file_operation'} if file_diagnostic or identity_diagnostic or profile_diagnostic else set()
     need(type(value) is dict and set(value) == BOOL_FIELDS | {
         'schema', 'first_failure', 'first_cleanup_failure'} | diagnostic_fields, 'RECEIPT_FIELDS')
-    expected_schema = ('coh-owned-profile-inert-process-file-identity-diagnostic-v1' if identity_diagnostic
+    expected_schema = ('coh-owned-profile-inert-process-profile-path-diagnostic-v1' if profile_diagnostic
+                       else 'coh-owned-profile-inert-process-file-identity-diagnostic-v1' if identity_diagnostic
                        else 'coh-owned-profile-inert-process-file-diagnostic-v1' if file_diagnostic
                        else 'coh-owned-profile-inert-process-v1')
     need(value['schema'] == expected_schema, 'RECEIPT_SCHEMA')
-    if file_diagnostic or identity_diagnostic:
-        phases = IDENTITY_FILE_PHASES if identity_diagnostic else FILE_PHASES
-        operations = IDENTITY_FILE_OPERATIONS if identity_diagnostic else FILE_OPERATIONS
+    if file_diagnostic or identity_diagnostic or profile_diagnostic:
+        phases = PROFILE_FILE_PHASES if profile_diagnostic else IDENTITY_FILE_PHASES if identity_diagnostic else FILE_PHASES
+        operations = PROFILE_FILE_OPERATIONS if profile_diagnostic else IDENTITY_FILE_OPERATIONS if identity_diagnostic else FILE_OPERATIONS
         need(value['file_phase'] in phases and value['file_operation'] in operations,
              'RECEIPT_OPERATION')
     need(all(type(value[key]) is bool for key in BOOL_FIELDS), 'RECEIPT_TYPE')
@@ -117,7 +123,7 @@ def parse_receipt(raw, *, file_diagnostic=False, identity_diagnostic=False):
         need(all(value[name] is (name not in FALSE_ON_SUCCESS) for name in BOOL_FIELDS)
              and value['first_failure'] == value['first_cleanup_failure'] == 'NONE',
              'RECEIPT_CONJUNCTION')
-        if file_diagnostic or identity_diagnostic:
+        if file_diagnostic or identity_diagnostic or profile_diagnostic:
             need(value['file_phase'] == value['file_operation'] == 'NONE', 'RECEIPT_SUCCESS_OPERATION')
     # Reconstruct with fixed known keys, including on a native failure.
     return {'schema': value['schema'], **{key: value[key] for key in sorted(BOOL_FIELDS)},
@@ -248,6 +254,31 @@ def admit_file_identity(directory):
     need(type(expected.get('bytes')) is int and image.stat().st_size == expected['bytes'] and
          re.fullmatch('[0-9a-f]{64}', expected.get('sha256', '')) is not None and
          sha(image) == expected['sha256'], 'FILE_IDENTITY_IMAGE')
+    return image, expected['sha256']
+
+
+def admit_profile_path(directory):
+    directory = Path(directory)/'profile-path'
+    receipt = decode_json(regular(directory/'profile-build.json', 65536).read_bytes())
+    need(receipt.get('schema') == 'coh-wpp-profile-path-build-v1' and
+         receipt.get('passed') is True and receipt.get('compiler_invocations') == 1 and
+         receipt.get('original_source_sha256') == SOURCE_PINS['OwnedProfileProcess.cs'] and
+         receipt.get('observed_source_sha256') == DIAGNOSTIC_SOURCE_SHA256 and
+         receipt.get('owner_source_sha256') == FILE_OWNER_SOURCE_SHA256 and
+         receipt.get('identity_source_sha256') == IDENTITY_SOURCE_SHA256 and
+         receipt.get('generated_source_sha256') == PROFILE_SOURCE_SHA256 and
+         receipt.get('generated_source_bytes') == 50395 and
+         all(receipt.get(name) is True for name in ('exact_reverse_verified',
+             'selected_compiler_files_match_accepted_build', 'explicit_file_security_at_create',
+             'existing_owner_acl_identity_guards_preserved', 'profile_path_observation_only')) and
+         all(receipt.get(name) is False for name in ('accepted_inert_probe_recompiled',
+             'accepted_model_recompiled_or_executed', 'helper_executed',
+             'source_generation_admitted', 'world_authority')), 'PROFILE_PATH_BUILD')
+    image = regular(directory/'OwnedProfileProcess.exe', 16*1024*1024)
+    expected = receipt.get('helper_image', {})
+    need(type(expected.get('bytes')) is int and image.stat().st_size == expected['bytes'] and
+         re.fullmatch('[0-9a-f]{64}', expected.get('sha256', '')) is not None and
+         sha(image) == expected['sha256'], 'PROFILE_PATH_IMAGE')
     return image, expected['sha256']
 
 
@@ -383,7 +414,7 @@ class BoundedPipe:
             self.failed = True
 
 
-def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identity_diagnostic=False):
+def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identity_diagnostic=False, profile_diagnostic=False):
     status = dict(schema='coh-owned-profile-inert-supervision-v1', passed=False,
                   first_failure='NONE', first_cleanup_failure='NONE',
                   accepted_build_reused=False, compiler_or_model_reexecuted=False,
@@ -399,6 +430,7 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
                   file_diagnostic_requested=file_diagnostic,
                   explicit_file_owner_requested=file_owner,
                   identity_diagnostic_requested=identity_diagnostic,
+                  profile_path_diagnostic_requested=profile_diagnostic,
                   changed_helper_compiled_only=False,
                   accepted_probe_or_model_reexecuted=False,
                   new_helper_compiler_invocations=0)
@@ -411,9 +443,15 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
     parent_created = False
     stage = 'ARTIFACT_ADMISSION'
     try:
-        need(sum(bool(mode) for mode in (file_diagnostic, file_owner, identity_diagnostic)) <= 1, 'HELPER_MODE')
+        need(sum(bool(mode) for mode in (file_diagnostic, file_owner, identity_diagnostic, profile_diagnostic)) <= 1, 'HELPER_MODE')
         images = admit_artifact(artifact)
         status['accepted_build_reused'] = True
+        if profile_diagnostic:
+            stage = 'PROFILE_PATH_ADMISSION'
+            images['OwnedProfileProcess.exe'] = admit_profile_path(artifact)
+            status['changed_helper_compiled_only'] = True
+            status['compiler_or_model_reexecuted'] = True
+            status['new_helper_compiler_invocations'] = 1
         if identity_diagnostic:
             stage = 'FILE_IDENTITY_ADMISSION'
             images['OwnedProfileProcess.exe'] = admit_file_identity(artifact)
@@ -477,7 +515,7 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
         status['outer_process_exit_observed'] = True
         stage = 'HELPER_RECEIPT'
         native_receipt = parse_receipt(bytes(pipes[0].data), file_diagnostic=file_diagnostic or file_owner,
-                                       identity_diagnostic=identity_diagnostic)
+                                       identity_diagnostic=identity_diagnostic, profile_diagnostic=profile_diagnostic)
         status['helper_receipt_valid'] = True
         status['inner_cleanup_observed'] = native_receipt['cleanup_complete']
         status['private_journal_may_remain'] = not native_receipt['cleanup_complete']
@@ -569,6 +607,7 @@ def main():
     mode.add_argument('--file-diagnostic', action='store_true')
     mode.add_argument('--file-owner', action='store_true')
     mode.add_argument('--file-identity-diagnostic', action='store_true')
+    mode.add_argument('--profile-path-diagnostic', action='store_true')
     args = parser.parse_args()
     # Before mutation, require the explicit disposable CI host and a fresh
     # public directory. No username/SID/profile/packet/log selector is accepted.
@@ -579,7 +618,8 @@ def main():
     args.public_out.mkdir(parents=False, exist_ok=False)
     status, native_receipt = execute(args.artifact_dir, args.private_parent,
                                      file_diagnostic=args.file_diagnostic, file_owner=args.file_owner,
-                                     identity_diagnostic=args.file_identity_diagnostic)
+                                     identity_diagnostic=args.file_identity_diagnostic,
+                                     profile_diagnostic=args.profile_path_diagnostic)
     (args.public_out/'supervision.json').write_text(json.dumps(status, indent=2)+'\n', encoding='utf-8')
     if native_receipt is not None:
         (args.public_out/'inert-result.json').write_text(json.dumps(native_receipt, indent=2)+'\n', encoding='utf-8')

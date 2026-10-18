@@ -1,0 +1,11 @@
+test_actual_context_is_retained_without_inventing_identity_mismatch (__main__.ProfileDiagnosticControls.test_actual_context_is_retained_without_inventing_identity_mismatch) ... ok
+test_compile_artifact_requires_exact_source_and_observation_scope (__main__.ProfileDiagnosticControls.test_compile_artifact_requires_exact_source_and_observation_scope) ... ok
+test_environment_and_existing_security_identity_lifecycle_exact (__main__.ProfileDiagnosticControls.test_environment_and_existing_security_identity_lifecycle_exact) ... ok
+test_exact_reversal_and_strict_predecessor (__main__.ProfileDiagnosticControls.test_exact_reversal_and_strict_predecessor) ... ok
+test_fixed_predicates_require_distinct_schema_and_scope (__main__.ProfileDiagnosticControls.test_fixed_predicates_require_distinct_schema_and_scope) ... ok
+test_mode_conflicts_refuse_before_artifact_and_windows_actions (__main__.ProfileDiagnosticControls.test_mode_conflicts_refuse_before_artifact_and_windows_actions) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.015s
+
+OK
