@@ -1,0 +1,5 @@
+Static review of the42,400-byte Auth-to-DB account-controls workflow, SHA b2c8b207. All136 fixed nonself inputs match checkpoint raw bytes and Git blobs; current workflow identity is input137. Current D128 plus two common CMake inputs and six immutable proofs/reviews are frozen. All17 JSON data guards evaluate true; three Python/Bash blocks parse. No host guard or project code ran.
+
+The eight-step Windows flow retains exact accepted server/crypto recovery and the exact813-character runtime command, with one explicitly provisional case. Current C36 is checked independently of historical four-method and106-input prefix proof maps, without requiring the broader52-input C review tool snapshot globally current. Permissions remain contents/actions read, concurrency unchanged. Only the fixed public receipt is uploaded.
+
+No qualifier suite, compiler, native/Windows/service runtime, download or dispatch ran for this review. A future actual transaction is still needed; source fixtures establish neither actual bodies/first-unsupported attribution nor normal version/checksum/Map/world authority.

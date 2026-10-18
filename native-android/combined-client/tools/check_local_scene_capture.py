@@ -21,7 +21,7 @@ ROOT = HERE.parents[2]
 NATIVE = ROOT / 'native-android'
 RELATIVE = [
     'engine/local/coh_local.c', 'engine/dbclient/coh_dbclient.c',
-    'engine/dbclient/coh_db_session.c', 'engine/mapclient/coh_mapclient.c',
+    'engine/dbclient/coh_db_session.c', 'engine/dbclient/coh_db_account_controls.c', 'engine/mapclient/coh_mapclient.c',
     'engine/mapclient/coh_mapclient_owned.c', 'engine/replication/coh_replication.c',
     'engine/replication/coh_groups.c', 'engine/network/coh_net.c',
     'engine/network/coh_net_frame.c', 'engine/network/coh_net_zip.c',

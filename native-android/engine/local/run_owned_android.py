@@ -79,7 +79,7 @@ def validate(root):
     checks = integrated.get('checks')
     implementation = integrated.get('implementation_sha256')
     required_implementation = {'engine/local/coh_local.c', 'engine/local/coh_local.h', 'engine/local/check.py',
-                               'engine/local/test_local.c', 'engine/dbclient/coh_db_session.c',
+                               'engine/local/test_local.c', 'engine/dbclient/coh_db_session.c', 'engine/dbclient/coh_db_account_controls.c',
                                'engine/mapclient/coh_mapclient.c', 'engine/mapclient/coh_mapclient_owned.c'}
     if (integrated.get('passed') is not True or integrated.get('sanitizers') != 'ASan+UBSan' or
         not isinstance(checks, dict) or set(checks) != {'release', 'asan', 'ubsan'} or

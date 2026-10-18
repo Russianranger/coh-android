@@ -1,0 +1,38 @@
+{
+  "sha256_lf": {
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "DBServer/src/accountservercomm.c": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae",
+    "QueueServer/src/QueueServer_Passthrough.c": "49f71c51e7d4a95e616455359752b7cca8d37c15f8bc0ddf86bbccdb70408d5c",
+    "Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+    "Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+    "AccountServer/src/AccountServer.cpp": "91070c652c6796f2dc38fd50b3985febc627e7e96201ad6f71fe2de3888847d7",
+    "Game/src/UI/uiServerTransfer.c": "b2f4e5667b519b511ee9dfb6780f299f5489266470ec904d9f53a8f1c847da3b",
+    "DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c"
+  },
+  "functions_sha256_lf": {
+    "initBitStream": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3",
+    "bsWriteBits": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0",
+    "bsReadBits": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea",
+    "bsWriteBitsPack": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb",
+    "bsReadBitsPack": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620",
+    "bsWriteString": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81",
+    "bsReadStringAndLength": "e7606801ddc22b76d0aeec630597a653ab025a2f501653ecdbe341a692fe0c3f",
+    "bsGetCursorBitPosition": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac",
+    "pktSendBits": "417040312877e0288d45ada572d2f2a6d7a6ca42f08f501fae315d503be1abc5",
+    "pktGetBits": "97e45a115f37b5e393dae68fabf8c3539682d6f15cb93257e7e87b349be80eb1",
+    "pktSendBitsPack": "8746bc145e72c7cfe59e4cde7081348032e11ed2275d6336bd48a7fa0a007abd",
+    "pktGetBitsPack": "beaeef547f7c85066be17d8c878abe86acc9068a155df977484234f51f2ee617",
+    "pktSendString": "57bf516d6b96cd2d8b7aa95da381e4a8181de9a609473086678709e3fb23d9f5",
+    "pktGetStringAndLength": "e571f3cf9526b2072193c9378939d35c1ccf31c9a0de72a2cef711a7ab75fc3a",
+    "pktSendBitsAuto": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa",
+    "pktGetBitsAuto": "24d347775510cb0e5cd093758aee6967bda392c99d0baf5c46c1a19de7897cd7",
+    "account_clientCountFailure": "a9eadd8b3b887f3ac2cf92eaf26c62dc11eb1c4c66dddbb07f68c5c307fdcfb2",
+    "account_clientAccountServerUnavailable": "b38141d8b4ba84431e62c7ce1c8f4318ffc76b2a19ee74d24277c982c674e25f",
+    "passSendCharacterCounts": "b5339db56bcdbf31e06962ca88d21fd3b6fb98cf3dda8e413011d9587e64d963",
+    "passAccountServerUnavailable": "45f175a8cff491dafb5df68b09b863c31418f96c70f75a3fdb43899e0ca21655",
+    "handleSendCharacterCounts": "99347e4970308c35dfd5fa446c80c769e052f18cd85c26e4ee41e9cf464d5c21",
+    "receiveAccountServerUnavailable": "8d5263cf7e99828be40baca9fabc53c015e1b707fd994d32ad9c7bd1046716a5"
+  }
+}

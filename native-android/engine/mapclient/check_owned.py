@@ -17,7 +17,7 @@ for manifest in [DB/'source-pins.json',HERE/'source-pins.json',HERE.parent/'repl
  paths.extend(ROOT/'upstream/ouroboros'/n for n in json.loads(manifest.read_text())['sha256_lf'])
 paths=sorted(set(paths));pins={str(x.relative_to(ROOT)):hashlib.sha256(x.read_bytes()).hexdigest() for x in paths}
 core=[HERE/'coh_mapclient.c',*[HERE.parent/'network'/n for n in ['coh_net.c','coh_net_udp.c','coh_net_frame.c','coh_net_zip.c']],*[HERE.parent/'replication'/n for n in ['coh_replication.c','coh_groups.c']],NATIVE/'protocol/coh_protocol.c',NATIVE/'src/coh_blowfish.c']
-owned=[HERE/'coh_mapclient_owned.c',DB/'coh_db_session.c',DB/'coh_dbclient.c',HERE.parent/'auth/coh_auth.c'];results={};linkage={};stack={}
+owned=[HERE/'coh_mapclient_owned.c',DB/'coh_db_session.c',DB/'coh_db_account_controls.c',DB/'coh_dbclient.c',HERE.parent/'auth/coh_auth.c'];results={};linkage={};stack={}
 probe='''#include "coh_mapclient_owned_private.h"
 #include <string.h>
 int main(void){CohMapConfig c;memset(&c,0,sizeof(c));c.udp.link=coh_net_default_config();c.udp.peer.address[0]=127;c.udp.peer.address[3]=1;c.udp.peer.port=7002;c.udp.local.address[0]=127;c.udp.local.address[3]=1;c.udp.receive_budget=1;c.application_timeout_ms=1000;c.message_budget=1;CohMapClient*m=coh_map_client_create(&c);if(!m)return1;CohMapOwnedBegin o={1,1,1,0,0,1};CohStatus s=coh_map_client_owned_preflight(m,&o,0);coh_map_client_destroy(m);return s!=COH_UNSUPPORTED;}'''.replace('return1','return 1')

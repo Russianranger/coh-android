@@ -25,7 +25,7 @@ def main():
  pins={f:normalized(repo/f) for f in PINNED}
  if pins!=json.loads((HERE/'source-pins.json').read_text())['sha256_lf']:raise ValueError('local login source pin mismatch')
  spec=importlib.util.spec_from_file_location('qualified_db_oracle',native/'engine/dbclient/check.py');db=importlib.util.module_from_spec(spec);spec.loader.exec_module(db)
- relative=['engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c','engine/mapclient/coh_mapclient.c','engine/mapclient/coh_mapclient_owned.c','engine/replication/coh_replication.c','engine/replication/coh_groups.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/auth/coh_auth.c','protocol/coh_protocol.c','src/coh_blowfish.c']
+ relative=['engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c', 'engine/dbclient/coh_db_account_controls.c','engine/mapclient/coh_mapclient.c','engine/mapclient/coh_mapclient_owned.c','engine/replication/coh_replication.c','engine/replication/coh_groups.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/auth/coh_auth.c','protocol/coh_protocol.c','src/coh_blowfish.c']
  sources=[HERE/'coh_local.c',*[native/f for f in relative]]
  with tempfile.TemporaryDirectory(prefix='coh-native-local-') as tmp:
   d=Path(tmp);oracle,_=db.oracle(repo,d);fixtures=db.fixtures(oracle,d)

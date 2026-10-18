@@ -1,0 +1,382 @@
+{
+  "actor_authority": false,
+  "actual_missing_witness": {
+    "API": {
+      "bytes": 5172,
+      "sha256": "3228036c8441e050b7fed337633daa2dd83eb73b19924364016f510461070d58"
+    },
+    "archive": {
+      "bytes": 1564,
+      "path": "native-android/combined-client/diagnostics/continuation-f-20261017/fresh-scene-39091755344/fresh-scene-status-39091755344.zip",
+      "sha256": "c0ec11b86e6aa285b2bfa9d31799f8906663c4a4d466e133e1c1f6a24afe3180"
+    },
+    "cleanup_verified": true,
+    "folder_failure": "NONE",
+    "loader_released": true,
+    "loader_status": 1,
+    "local_reqallents_send_counter": 1,
+    "native_coh_status": 7,
+    "native_coh_status_name": "COH_STATE",
+    "native_diagnostic_failure_code": "TIMEOUT",
+    "native_groups_observed": true,
+    "refused_command_kind": "NONE",
+    "refused_command_valid": false,
+    "restored": true,
+    "run_id": 39091755344,
+    "server_reqallents_receipt_established": false,
+    "source_profile_state": "VALID",
+    "source_refusal": "BOUNDARY_REFUSED",
+    "source_revision": "5b9aef227c36c82b3f2bdca800037e33b5fd98af",
+    "source_stage": "OWNER",
+    "specific_owner_failure_established": false,
+    "summary": {
+      "bytes": 3129,
+      "sha256": "42f2958a248b7b8b94c65404e3210435ea5d3d3d8660a2c195adab803664ef7c"
+    }
+  },
+  "actual_windows_pe_compiled_for_refinement": false,
+  "added_source_paths": {
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/OWNER_FAILURE_DIAGNOSTIC.md": "fb6f16a913474bfc47c794628e4d7cb86e2d4404581a2fc78def307817439ebc",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/check_owner_predicates.py": "efe2a0dba87c6fcfedac31ad25f6510b1c7f776e4e69e09f01e2ad4d65fc8016",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_owner_predicates.c": "e924c91eebb07ece43a1902d6a4604e686f0c303012d39f0ccd666c57300fcf1"
+  },
+  "compiled_source_fingerprint": {
+    "changed": {
+      "source_group_profile.inc": {
+        "previous_sha256": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c",
+        "sha256": "535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a"
+      },
+      "source_group_profile_api.h": {
+        "previous_sha256": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17",
+        "sha256": "3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce"
+      },
+      "stage.py": {
+        "previous_sha256": "c3a373e64341db45b6cdffe0fe3db35e34f727be6863758f2b0a29b0f076819c",
+        "sha256": "c827d7318849a48295396303198b41b36a845cbf7b44d244db5e5ace964ad3b2"
+      }
+    },
+    "compile_cli_changed": false,
+    "compile_schema": "coh-fresh-groups-observer-compile-v1",
+    "current": {
+      "source_folder_profile.inc": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52",
+      "source_folder_profile_api.h": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5",
+      "source_group_profile.inc": "535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a",
+      "source_group_profile_api.h": "3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce",
+      "source_sealed_quiescence.inc": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd",
+      "stage.py": "c827d7318849a48295396303198b41b36a845cbf7b44d244db5e5ace964ad3b2"
+    },
+    "declared_compile_artifact_count": 19,
+    "keys": [
+      "source_folder_profile_api.h",
+      "source_folder_profile.inc",
+      "source_group_profile_api.h",
+      "source_group_profile.inc",
+      "source_sealed_quiescence.inc",
+      "stage.py"
+    ],
+    "new_map_only_compile_required": true,
+    "previous": {
+      "source_folder_profile.inc": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52",
+      "source_folder_profile_api.h": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5",
+      "source_group_profile.inc": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c",
+      "source_group_profile_api.h": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17",
+      "source_sealed_quiescence.inc": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd",
+      "stage.py": "c3a373e64341db45b6cdffe0fe3db35e34f727be6863758f2b0a29b0f076819c"
+    },
+    "previous_map_build_run": 39086864926,
+    "previous_map_compile_receipt_sha256": "0daf56e8dcae5d40ab9d5ef08bc09d022eba0a9a609170ce6d1ce867b2ca18c5",
+    "previous_pe_reused_for_new_diagnostic": false,
+    "role": "nonshipping_fresh_callback_sealed_groups_observer"
+  },
+  "first_new_fixture_build_failure": {
+    "C_test_executed": false,
+    "corrected_only_new_test_source_revision": "7015488e36f723e683d65241508336c6220dbdb0",
+    "producer_source_changed_for_fix": false,
+    "reason": "NEW_TEST_MEMBER_ALIAS_MACRO_COLLISION",
+    "runtime_executed": false,
+    "source_revision": "cbf39ed259a998cbd33d2bcc8cc8c98e050e6aa1",
+    "stage": "BUILD_release",
+    "stderr": {
+      "bytes": 1937,
+      "sha256": "7ad628aeeba7d77dfc0de211b31fe133225e36a84d78dfa36950ab7bdccab34f"
+    }
+  },
+  "host_controls": {
+    "actual_final_emitter_object_parsed": true,
+    "actual_win32_layout_qualified": false,
+    "emitter_checks_per_mode": 3486,
+    "emitter_reason_cases_per_mode": 47,
+    "first_failure_atoms": 47,
+    "host_member_subset_storage_only": true,
+    "instrumentation_mutations_refused": 5,
+    "latch_controls": 7,
+    "leak_sanitizer_qualified": false,
+    "maximum_links_scanned": 65536,
+    "modes": [
+      "release",
+      "address",
+      "undefined"
+    ],
+    "old_36_profile_scenarios_replayed": false,
+    "old_43_or_26_method_suites_replayed": false,
+    "old_owner_qualification_replayed": false,
+    "owner_checks_per_mode": 270794,
+    "owner_scenarios_per_mode": 88,
+    "python_test_methods": 8,
+    "short_circuit_controls": 3,
+    "successful_differential_cases": 31,
+    "win32_io_and_group_hook_stubs": true
+  },
+  "native_receiver_reexecuted": false,
+  "new_protocol": {
+    "fixed_values": [
+      "NONE",
+      "INPUT_LINK",
+      "INPUT_OUTPUT",
+      "LIST_ABSENT",
+      "LIST_EMPTY",
+      "LIST_LIMIT",
+      "LIST_STORAGE",
+      "LIST_CAPACITY",
+      "OUTPUT_LINK_ALIAS",
+      "OUTPUT_LIST_ALIAS",
+      "OUTPUT_ARRAY_ALIAS",
+      "OUTPUT_STORAGE_ALIAS",
+      "OUTPUT_WORLD_ALIAS",
+      "OUTPUT_ENTITIES_MAX_ALIAS",
+      "OUTPUT_ENTITY_TABLE_ALIAS",
+      "OUTPUT_ENTITY_STATE_ALIAS",
+      "CLIENT_ABSENT",
+      "CLIENT_BACKLINK",
+      "OUTPUT_CLIENT_ALIAS",
+      "ENTITY_ABSENT",
+      "OUTPUT_ENTITY_ALIAS",
+      "ENTITY_BACKLINK",
+      "ENTITY_DBID",
+      "ENTITY_ID",
+      "ENTITY_SLOT_LOW",
+      "ENTITY_SLOT_HIGH",
+      "ENTITY_TABLE_SIZE_LOW",
+      "ENTITY_TABLE_SIZE_HIGH",
+      "ENTITY_NOT_IN_USE",
+      "ENTITY_TABLE_MISMATCH",
+      "CHARACTER_ABSENT",
+      "OUTPUT_CHARACTER_ALIAS",
+      "CHARACTER_UNINITIALIZED",
+      "CHARACTER_PARENT",
+      "LINK_TYPE",
+      "LINK_NOT_CONNECTED",
+      "LINK_PENDING",
+      "LINK_CONNECTING",
+      "LINK_DISCONNECTED",
+      "LINK_DESTROYED",
+      "LINK_REMOVED",
+      "LINK_PROTOCOL",
+      "CLIENT_STATE_LOW",
+      "CLIENT_STATE_HIGH",
+      "LIST_ENTRY_ABSENT",
+      "OUTPUT_LIST_ENTRY_ALIAS",
+      "LINK_INCIDENCE",
+      "CLIENT_INCIDENCE"
+    ],
+    "legacy_v1_admitted_by_v2": false,
+    "new_field": "owner_failure",
+    "public_key_count": 43,
+    "public_schema": "coh-fresh-source-profile-diagnostic-v2",
+    "raw_source_values_or_identifiers_exported": false,
+    "source_failure_atoms": 47,
+    "source_key_count": 36,
+    "source_schema": "coh-fresh-source-profile-probe-v2"
+  },
+  "original_sha256_lf": {
+    "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+    "Common/entity/entity.c": "07b6666d673757cd8e9f4d377ec58fb2988fc09db8abc2e212e29788b84fbd8f",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "MapServer/src/svr/svr_base.h": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64",
+    "libs/UtilitiesLib/include/utilitieslib/components/ArrayOld.h": "52f889750b03c07f52896ca9a569ed4acfeb93f0b5bdbb09072de9d2a343da30",
+    "libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+  },
+  "owner_candidate_or_outputs_changed": false,
+  "passed": true,
+  "predicate_relaxed": false,
+  "previous_live_source_revision": "5b9aef227c36c82b3f2bdca800037e33b5fd98af",
+  "qualification": {
+    "bytes": 15192,
+    "path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-qualification.json",
+    "schema": "coh-fresh-owner-predicates-host-v1",
+    "sha256": "5c8c4509f47cce31a3a025ce68c31f42e2306b38b4e436980f4f7e0c0f728158"
+  },
+  "retained_safe_host_outputs": {
+    "address.json": {
+      "bytes": 338,
+      "sha256": "9eab43474e1801e10c8e7ef81b59e36bdfab7ec27ea89e6cf05b2260cf62a4a4"
+    },
+    "emitter-address.json": {
+      "bytes": 986,
+      "sha256": "d0cfca39b63f80965d9742ba54dc6297362a3583be356eb9f225d8b5053b3ccb"
+    },
+    "emitter-release.json": {
+      "bytes": 986,
+      "sha256": "d0cfca39b63f80965d9742ba54dc6297362a3583be356eb9f225d8b5053b3ccb"
+    },
+    "emitter-undefined.json": {
+      "bytes": 986,
+      "sha256": "d0cfca39b63f80965d9742ba54dc6297362a3583be356eb9f225d8b5053b3ccb"
+    },
+    "first-fixture-build.stderr.txt": {
+      "bytes": 1937,
+      "sha256": "7ad628aeeba7d77dfc0de211b31fe133225e36a84d78dfa36950ab7bdccab34f"
+    },
+    "release.json": {
+      "bytes": 338,
+      "sha256": "9eab43474e1801e10c8e7ef81b59e36bdfab7ec27ea89e6cf05b2260cf62a4a4"
+    },
+    "targeted-parser-tests.txt": {
+      "bytes": 1400,
+      "sha256": "4591e5b830d4b2f2b2d4866a52a1e5d5befcb564690e7736ff9cefed16e79287"
+    },
+    "undefined.json": {
+      "bytes": 338,
+      "sha256": "9eab43474e1801e10c8e7ef81b59e36bdfab7ec27ea89e6cf05b2260cf62a4a4"
+    }
+  },
+  "retained_scratch_binaries": {
+    "binaries_copied_to_Git": false,
+    "directory": "/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final-fixed",
+    "entries": {
+      "address": {
+        "binary_name": "test-owner-predicates",
+        "bytes": 110480,
+        "sha256": "c3bb2903b5c036198908a95e974a9054e38a5692cc4f49f1cf56e0521eb44e85",
+        "stderr_bytes": 0
+      },
+      "emitter-address": {
+        "binary_name": "test-owner-emitter",
+        "bytes": 289808,
+        "sha256": "cbe44127be3cea0e08442901bf765118e96e889df07c2e7f389ed775eb13d9df",
+        "stderr_bytes": 0
+      },
+      "emitter-release": {
+        "binary_name": "test-owner-emitter",
+        "bytes": 315376,
+        "sha256": "4c8d5148861ae40305bb8a66d17e0e7f1d0ae849c645ae0c087783bea4cdaac2",
+        "stderr_bytes": 0
+      },
+      "emitter-undefined": {
+        "binary_name": "test-owner-emitter",
+        "bytes": 270536,
+        "sha256": "e1d2fb9477cd9e0b2559447f134e0b88b118c96c1a17b9b7740e6c58bf995b1f",
+        "stderr_bytes": 0
+      },
+      "release": {
+        "binary_name": "test-owner-predicates",
+        "bytes": 68672,
+        "sha256": "452c9d3b38307c53d21f6bd832f605bdf6fd2e05ff6e11c8f739fe220b45650e",
+        "stderr_bytes": 0
+      },
+      "undefined": {
+        "binary_name": "test-owner-predicates",
+        "bytes": 100600,
+        "sha256": "bde21eef22ba4ea4bba59f1aee2e64e0cd0faef64de2eea98f2ad52fa07075a9",
+        "stderr_bytes": 0
+      }
+    }
+  },
+  "runtime_executed_for_qualification": false,
+  "schema": "coh-fresh-owner-predicate-followup-v1",
+  "source_generation_admitted": false,
+  "source_revision": "7015488e36f723e683d65241508336c6220dbdb0",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/SOURCE_PROFILE_RUNTIME.md": "34d8169f10e23fbcf8819bf7d2f45e8b6dff6a633421a76c78e909ab337dabc2",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/OWNER_FAILURE_DIAGNOSTIC.md": "fb6f16a913474bfc47c794628e4d7cb86e2d4404581a2fc78def307817439ebc",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/README.md": "6c4b22e3e62d59d456e0491a7e42d7c97747c8780c9c4315f92e9e871ca4371f",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/check_owner_predicates.py": "efe2a0dba87c6fcfedac31ad25f6510b1c7f776e4e69e09f01e2ad4d65fc8016",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": "a6549c4c978ac2f130c4d23011166c6f185917d411cbe8781ebb0a7ab578088c",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile.inc": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile_api.h": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc": "535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h": "3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_sealed_quiescence.inc": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": "c827d7318849a48295396303198b41b36a845cbf7b44d244db5e5ace964ad3b2",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_owner_predicates.c": "e924c91eebb07ece43a1902d6a4604e686f0c303012d39f0ccd666c57300fcf1",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_probe.py": "92e398884f36be4bda832fab865d008d63b500852333254c8ed29299889250c2",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_profile.c": "c3f8bae282785f62ea69c34a7fbc3052ec0c7be988540735d71576f342652dab",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py": "55b3f890cfbbf9d7d46e475d0d5852858280dcb618be220b88fbee3803473f0f",
+    "native-android/engine/scenecatalog-server/groups-owner-source-pins.json": "5693a060b7a727c6bf9a7375bf2fcc860c1398e986d4d41ef314f4162f8985a2",
+    "native-android/engine/scenecatalog-server/groups_owner_oracle_shim.h": "85f7085d2853d05f439b046ddb7ab2441b6ea3b36cffc166173c4304cd152dd0",
+    "native-android/engine/scenecatalog-server/resource-source-pins.json": "6508ab2824fb83ee5a47ea3f04dc33b8f5542b9f05dd0b38c2e34ace437c90e9",
+    "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3",
+    "native-android/engine/scenecatalog-server/source_groups_capture_sink.inc": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7",
+    "native-android/engine/scenecatalog-server/source_groups_eligibility.inc": "38338a38411745c889cc78a381e19cfafebd5a83bc00132e17b5b079023f1dbb",
+    "native-android/engine/scenecatalog-server/source_groups_owner.inc": "7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc",
+    "native-android/engine/scenecatalog-server/source_groups_transaction.inc": "a531ae0c9031c160b4f2cf99f2cba49487fba3ea7d396dcc23d0f0969ed922c6",
+    "native-android/engine/scenecatalog-server/source_public_bounds.inc": "c812642d7f3467c97b2528a9e0963a7d40a01d7f45615ec3fe49c17dbbd80723",
+    "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/source_resources_sink.inc": "3f5cbd9152f022a9d65a8baac813bf3cacc7ce41d579f4257d4c2c7bd8059a9e",
+    "native-android/engine/scenecatalog-server/source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d",
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "native-android/engine/scenecatalog-server/source_snapshot_sink.inc": "18b3bf28abb9d8a737f109bf7293a3f3d73d2b604d05fad57f4c81805f882275",
+    "native-android/engine/scenecatalog-server/stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "native-android/engine/scenecatalog-server/stage_groups_boundary.py": "980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f",
+    "native-android/engine/scenecatalog-server/stage_groups_capture.py": "2036e1ee954d3de5db7c637add4acc281a8079b52455650efe7e58132e1fc478",
+    "native-android/engine/scenecatalog-server/stage_resources.py": "7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6",
+    "native-android/engine/scenecatalog-server/stage_snapshot.py": "ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c",
+    "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+  },
+  "superseded_source_pins": {
+    "native-android/engine/scenecatalog-server/SOURCE_PROFILE_RUNTIME.md": {
+      "previous_sha256": "afb0d106e601f9dc05a41ece77a9334ff809aca19115102f5702e73d62207c53",
+      "sha256": "34d8169f10e23fbcf8819bf7d2f45e8b6dff6a633421a76c78e909ab337dabc2"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/README.md": {
+      "previous_sha256": "1c0509cb303de1bbde15f041e8a3e3f43c2f4616f1a0d76c19d9087e2dc84c01",
+      "sha256": "6c4b22e3e62d59d456e0491a7e42d7c97747c8780c9c4315f92e9e871ca4371f"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": {
+      "previous_sha256": "a0a2a7ada32166e5fc48644879834f1fabacb08a07192116f985e1a044b450da",
+      "sha256": "a6549c4c978ac2f130c4d23011166c6f185917d411cbe8781ebb0a7ab578088c"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc": {
+      "previous_sha256": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c",
+      "sha256": "535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h": {
+      "previous_sha256": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17",
+      "sha256": "3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": {
+      "previous_sha256": "c3a373e64341db45b6cdffe0fe3db35e34f727be6863758f2b0a29b0f076819c",
+      "sha256": "c827d7318849a48295396303198b41b36a845cbf7b44d244db5e5ace964ad3b2"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_probe.py": {
+      "previous_sha256": "5fe108f333980a50012644fab0ad668cf4a7889cf75e6b8cdd17601ac32dfaf0",
+      "sha256": "92e398884f36be4bda832fab865d008d63b500852333254c8ed29299889250c2"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_profile.c": {
+      "previous_sha256": "fff749c4aee3e49165af15f9ef929937a8e883a1dc477c27ff5ffbb7f653663e",
+      "sha256": "c3f8bae282785f62ea69c34a7fbc3052ec0c7be988540735d71576f342652dab"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py": {
+      "previous_sha256": "1573e7a26c8b3a346b249531bbc655238c640a7f1e1a933fb4f41eb664887411",
+      "sha256": "55b3f890cfbbf9d7d46e475d0d5852858280dcb618be220b88fbee3803473f0f"
+    }
+  },
+  "unchanged_original_or_core_source_sha256": {
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile.inc": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile_api.h": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_sealed_quiescence.inc": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd",
+    "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3",
+    "native-android/engine/scenecatalog-server/source_groups_capture_sink.inc": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7",
+    "native-android/engine/scenecatalog-server/source_groups_owner.inc": "7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc",
+    "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+    "native-android/engine/scenecatalog-server/stage_groups_boundary.py": "980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f",
+    "native-android/engine/scenecatalog-server/stage_groups_capture.py": "2036e1ee954d3de5db7c637add4acc281a8079b52455650efe7e58132e1fc478"
+  },
+  "world_authority": false
+}

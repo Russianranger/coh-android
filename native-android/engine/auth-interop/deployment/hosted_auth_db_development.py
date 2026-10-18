@@ -36,6 +36,25 @@ ZLIB_ADMIT_SHA='acb28d1cbf5f7eb8d1484face6ea3b18925679eda6c72344a1e134c2b00c934b
 ZLIB_CMAKE_SHA='646bf5e3c3b1787daeec7334b937ad5593e4f4a69a81ad59ffc5e686c326d00b'
 SUSPENDED_HELPER_SHA='5c5306850d5c1abeab5f70682ce54f35240127f67a54f90393598421caef5a11'
 SUSPENDED_PROOF_SHA='2a94e518de3e53a55123012a73c5b7eaed4482cf9fe4cad336cfae0b4c724267'
+ACCOUNT_REVISION='02b54d43ffd2add91b32a5651aa31ebf6b170fdd'
+ACCOUNT_BASE='native-android/engine/dbclient/qualification/account-controls-02b54d43f'
+ACCOUNT_GZIP_SHA='d04dda6ac635ced869f0a86e4f4801ec732d12e69dc8ab10575056fa9c00513f'
+ACCOUNT_RAW_SHA='8b4a16f704f53095d75c822f8f4635a707b8b965f2f1938888ff2d71c2449c1a'
+ACCOUNT_BINDING_SHA='53767d18c4edd2b10964a6a2d4b8bff1ed40490789f6bb316d44c26cb3b18acb'
+ACCOUNT_HISTORICAL_REVISION='b321a3dd883031072f26c63d4f2d9f4866b63d9d'
+ACCOUNT_OLD_CORE={
+    'native-android/engine/dbclient/coh_db_session.c':'ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9',
+    'native-android/engine/dbclient/coh_db_session.h':'9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4'}
+ACCOUNT_CURRENT_CORE={
+    'native-android/engine/dbclient/coh_db_session.c':'394a94e436d52963fbe2667b0b3cf977554d3b6ffe69c8c858da42ded697bc06',
+    'native-android/engine/dbclient/coh_db_session.h':'d9993e341349cac614fe862481b1a3fb21e7239900ca1d3d6c8c1e8043b92c87'}
+
+ACCOUNT_TOOL=PREFIX+'deployment/qualify_auth_db_development_owner.py'
+ACCOUNT_TOOL_OLD_SHA='aa58020f335e60553e06941c7adb9a0b905c81c5ba84c5f0c3207b295e738637'
+ACCOUNT_TOOL_NEW_SHA='3ac893e35650c89a59273bac096bc60053a1bfc1d3e036501170b102e7185a18'
+ACCOUNT_TOOL_REVIEW='native-android/engine/dbclient/qualification/account-control-owned-link-lists.json'
+ACCOUNT_TOOL_REVIEW_SHA='67578035a171f6f0fe0d5bf549f5658b2737d6f10c16a04090fa1b70cb43c50c'
+ACCOUNT_DEPENDENCY='engine/dbclient/coh_db_account_controls.c'
 LAUNCH_STATES=('NOT_STARTED','SPAWNING_SUSPENDED','SPAWN_REFUSED','CREATED_SUSPENDED',
     'ASSIGNING','ASSIGNMENT_REFUSED','RESUMING','RESUME_REFUSED','RESUMED')
 RESUME_FLAGS={'passed','process_identity_verified','single_owned_thread_verified','thread_identity_verified',
@@ -191,11 +210,118 @@ def deployment_import_inputs(root,starts):
     return pins
 
 
+def account_controls_inputs(root):
+    """Current typed-parser admission, separately from immutable old proofs."""
+    compressed=_committed_file(root,ACCOUNT_BASE+'.json.gz',ACCOUNT_GZIP_SHA)
+    binding_raw=_committed_file(root,ACCOUNT_BASE+'-binding.json',ACCOUNT_BINDING_SHA)
+    if len(compressed)!=5180:raise ValueError('development_account_source_proof_extent')
+    raw=gzip.decompress(compressed)
+    if len(raw)!=25073 or hashlib.sha256(raw).hexdigest()!=ACCOUNT_RAW_SHA:
+        raise ValueError('development_account_source_proof_identity')
+    proof=json.loads(raw);binding=json.loads(binding_raw)
+    if (proof.get('schema')!='coh-db-account-controls-focused-tests-v1' or proof.get('passed') is not True
+            or proof.get('source_revision')!=ACCOUNT_REVISION or proof.get('all_inputs_equal_committed_HEAD') is not True
+            or binding.get('schema')!='coh-db-account-controls-source-proof-binding-v1' or binding.get('passed') is not True
+            or binding.get('qualified_source_revision')!=ACCOUNT_REVISION or binding.get('proof')!=ACCOUNT_BASE+'.json.gz'
+            or binding.get('proof_sha256')!=ACCOUNT_RAW_SHA or binding.get('gzip_sha256')!=ACCOUNT_GZIP_SHA
+            or binding.get('source_sha256')!=proof.get('source_sha256')
+            or binding.get('previous_ordinary_sha256')!=ACCOUNT_OLD_CORE):
+        raise ValueError('development_account_source_proof_scope')
+    for name in ('historical_suites_executed','real_auth_or_db','sockets_executed','actual_witness_body_inferred',
+            'source_generation_admitted','world_authority','global_aggregate_budget_admitted'):
+        if proof.get(name) is not False:raise ValueError('development_account_source_proof_authority')
+    for name in ('owner_implementation_changed','strict_owner_success_predicate_changed','historical_suites_replayed',
+            'actual_header_witness_body_inferred','current_generation_or_world_authority'):
+        if binding.get(name) is not False:raise ValueError('development_account_source_binding_authority')
+    if (type(proof.get('source_sha256')) is not dict or len(proof['source_sha256'])!=36
+            or any(proof['source_sha256'].get(name)!=sha for name,sha in ACCOUNT_CURRENT_CORE.items())
+            or set(proof.get('modes',{}))!={'release','asan','ubsan'}
+            or any(row.get('passed') is not True or row.get('checks')!=8822 or row.get('parser_cases')!=7226
+                or row.get('session_transactions')!=52 for row in proof['modes'].values())):
+        raise ValueError('development_account_source_qualification')
+    pins={ACCOUNT_BASE+'.json.gz':ACCOUNT_GZIP_SHA,ACCOUNT_BASE+'-binding.json':ACCOUNT_BINDING_SHA}
+    for name,sha in proof['source_sha256'].items():
+        pins[name]=hashlib.sha256(_committed_file(root,name,sha)).hexdigest()
+    return pins
+
+
+def dependency_only_ast(old,current):
+    """Require exactly the one parser dependency literal and no other AST edit."""
+    class RemoveDependency(ast.NodeTransformer):
+        count=0
+        def visit_Tuple(self,node):
+            self.generic_visit(node);kept=[]
+            for item in node.elts:
+                if isinstance(item,ast.Constant) and item.value==ACCOUNT_DEPENDENCY:self.count+=1
+                else:kept.append(item)
+            node.elts=kept;return node
+    try:
+        previous=ast.parse(old);current_tree=ast.parse(current);remove=RemoveDependency()
+        changed=remove.visit(current_tree)
+        if remove.count!=1 or ast.dump(previous,include_attributes=False)!=ast.dump(changed,include_attributes=False):
+            raise ValueError('development_qualifier_dependency_ast_refused')
+    except SyntaxError:raise ValueError('development_qualifier_dependency_ast_refused') from None
+
+
+def account_controls_tool_inputs(root):
+    review=json.loads(_committed_file(root,ACCOUNT_TOOL_REVIEW,ACCOUNT_TOOL_REVIEW_SHA))
+    row=review.get('files',{}).get(ACCOUNT_TOOL,{})
+    if (review.get('schema')!='coh-account-control-owned-link-list-review-v1' or review.get('passed') is not True
+            or review.get('source_only') is not True or review.get('qualifier_or_tests_executed') is not False
+            or review.get('new_parser_dependency')!=ACCOUNT_DEPENDENCY
+            or row!={'before_sha256':ACCOUNT_TOOL_OLD_SHA,'after_sha256':ACCOUNT_TOOL_NEW_SHA,
+                'ast_equals_previous_after_removing_only_new_dependency_literal':True}):
+        raise ValueError('development_qualifier_dependency_review_scope')
+    current=_committed_file(root,ACCOUNT_TOOL,ACCOUNT_TOOL_NEW_SHA)
+    try:old=subprocess.check_output(['git','-C',str(root),'show',ACCOUNT_HISTORICAL_REVISION+':'+ACCOUNT_TOOL],
+        stderr=subprocess.DEVNULL,timeout=30)
+    except subprocess.SubprocessError:raise ValueError('development_historical_qualifier_unavailable') from None
+    if len(old)>2*1024*1024 or hashlib.sha256(old).hexdigest()!=ACCOUNT_TOOL_OLD_SHA:
+        raise ValueError('development_historical_qualifier_identity')
+    dependency_only_ast(old,current)
+    return {ACCOUNT_TOOL_REVIEW:ACCOUNT_TOOL_REVIEW_SHA,ACCOUNT_TOOL:ACCOUNT_TOOL_NEW_SHA}
+
+
+def qualified_prior_input(root,path,expected,account):
+    """Two compiled core inputs and one separate qualifier dependency transition."""
+    if path==ACCOUNT_TOOL:
+        if expected!=ACCOUNT_TOOL_OLD_SHA or account.get(path)!=ACCOUNT_TOOL_NEW_SHA:
+            raise ValueError('development_historical_qualifier_transition_refused')
+        account_controls_tool_inputs(root)
+        return _committed_file(root,path,ACCOUNT_TOOL_NEW_SHA)
+    if path not in ACCOUNT_OLD_CORE:return _committed_file(root,path,expected)
+    if expected!=ACCOUNT_OLD_CORE[path] or account.get(path)!=ACCOUNT_CURRENT_CORE[path]:
+        raise ValueError('development_historical_core_transition_refused')
+    try:
+        old=subprocess.check_output(['git','-C',str(root),'show',ACCOUNT_HISTORICAL_REVISION+':'+path],
+            stderr=subprocess.DEVNULL,timeout=30)
+    except subprocess.SubprocessError:raise ValueError('development_historical_core_unavailable') from None
+    if len(old)>2*1024*1024 or hashlib.sha256(old).hexdigest()!=expected:
+        raise ValueError('development_historical_core_identity')
+    return _committed_file(root,path,ACCOUNT_CURRENT_CORE[path])
+
+
+def account_controls_summary():
+    return {'schema':'coh-development-account-controls-source-composition-v1',
+        'source_proof':ACCOUNT_BASE+'.json.gz','source_proof_sha256':ACCOUNT_GZIP_SHA,
+        'source_binding':ACCOUNT_BASE+'-binding.json','source_binding_sha256':ACCOUNT_BINDING_SHA,
+        'historical_qualifier_dependency_transition':{'path':ACCOUNT_TOOL,'before_sha256':ACCOUNT_TOOL_OLD_SHA,
+            'after_sha256':ACCOUNT_TOOL_NEW_SHA,'review':ACCOUNT_TOOL_REVIEW,'review_sha256':ACCOUNT_TOOL_REVIEW_SHA,
+            'only_parser_dependency_literal_added':True},
+        'historical_core_source_revision':ACCOUNT_HISTORICAL_REVISION,
+        'historical_core_sha256':ACCOUNT_OLD_CORE,'current_core_sha256':ACCOUNT_CURRENT_CORE,
+        'old_proofs_reused_for_unchanged_inputs_only':True,'new_parser_source_qualified':True,
+        'old_qualifiers_reexecuted':False,'actual_account_control_bodies_inferred':False,
+        'unknown_command_policy_relaxed':False,'owner_success_predicate_changed':False}
+
+
 def committed_inputs(root,commit):
     if (Path(__file__).resolve()!=root/(PREFIX+'deployment/hosted_auth_db_development.py')
             or subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()!=commit):
         raise ValueError('development_executed_source_identity')
     result=readiness.committed_runtime_inputs(root,commit)
+    account=account_controls_inputs(root)
+    account.update(account_controls_tool_inputs(root))
     proofs=[
         ('native-android/engine/auth-interop/evidence/auth-db-development-owner-20261018/host-1642051b3.json.gz',
          'b3c0b382202be509748fe5a70b289b35a02e5069f136e779f16358df5ddfe066',True),
@@ -213,12 +339,15 @@ def committed_inputs(root,commit):
                 if 'source_files' in value else ('new_source_inputs','synthetic_probe_host_compile_project_closure'))
             pins={path:row['sha256'] for group in groups for path,row in value[group].items()}
         for path,expected in pins.items():
-            raw=_committed_file(root,path,expected)
-            if path in result and result[path]!=expected:raise ValueError('development_source_pin_conflict')
-            result[path]=hashlib.sha256(raw).hexdigest()
+            raw=qualified_prior_input(root,path,expected,account);actual=hashlib.sha256(raw).hexdigest()
+            if path in result and result[path]!=actual:raise ValueError('development_source_pin_conflict')
+            result[path]=actual
+    for name,sha in account.items():
+        if name in result and result[name]!=sha:raise ValueError('development_account_source_pin_conflict')
+        result[name]=sha
     own=['hosted_auth_db_development.py','hosted_auth_db_development_stage.py','test_auth_db_development_driver.py',
         'AUTH-DB-DEVELOPMENT-DRIVER.md','db_received_prefix.py','test_db_received_prefix.py',
-        'DB-RECEIVED-PREFIX.md','windows/db_received_prefix.h','windows/wrapped_db_received_prefix.c',
+        'DB-RECEIVED-PREFIX.md','test_account_controls_tool_admission.py','test_account_controls_admission.py','ACCOUNT-CONTROLS-ADMISSION.md','windows/db_received_prefix.h','windows/wrapped_db_received_prefix.c',
         'windows/db_development_received_probe.c','windows/test_db_received_prefix.c','windows_registry_lease.py','test_windows_registry_lease.py',
         'hosted_selected_shard_play.py','password_fixture.py','auth_service_profile.py']
     for name in own:
@@ -353,7 +482,7 @@ def prepare_project(root,project,crypto,zlib):
     project.mkdir();native=root/'native-android';windows=HERE/'windows'
     sources=[windows/p for p in ('db_development_received_probe.c','auth_db_development_owner.c','winsock_compat.c',
         'wrapped_login.c','db_udp_winsock.c','wrapped_db_udp.c','wrapped_db_received_prefix.c')]
-    sources += [native/p for p in ('engine/dbclient/coh_dbclient.c',
+    sources += [native/p for p in ('engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_account_controls.c',
         'engine/auth/coh_auth.c','engine/auth/coh_auth_openssl.c','engine/session/coh_session_crypto.c',
         'engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c',
         'protocol/coh_protocol.c','src/coh_blowfish.c')]
@@ -854,7 +983,7 @@ def run(args):
     scope=DevelopmentScope(args.retained_intact_stage.resolve(),generation,provisional_development_policy=True)
     activation.admit_development_candidate(scope,db)
     temporary=Path(tempfile.mkdtemp(prefix='coh-development-client-',dir=os.environ['RUNNER_TEMP']))
-    value=dict(identity,schema='coh-owned-mssql-db-threadname-development-player-list-v1',passed=False,
+    value=dict(identity,account_controls_source_qualification=account_controls_summary(),schema='coh-owned-mssql-db-threadname-development-player-list-v1',passed=False,
         provisional_development_db_player_list_verified=False,selected_shard_play_verified=False,
         authenticated_db_map_handoff_verified=False,normal_version_admitted=False,
         checksum_reference_admitted=False,nondevelopment_version_admitted=False,

@@ -15,7 +15,7 @@ TEST = PREFIX + 'windows/test_auth_db_development_owner.c'
 SELF = PREFIX + 'qualify_auth_db_development_owner.py'
 DOC = PREFIX + 'windows/AUTH-DB-DEVELOPMENT-OWNER.md'
 REAL_SOURCES = [OWNER, *['native-android/' + p for p in (
-    'engine/login/coh_login.c', 'engine/dbclient/coh_db_session.c',
+    'engine/login/coh_login.c', 'engine/dbclient/coh_db_session.c', 'engine/dbclient/coh_db_account_controls.c',
     'engine/dbclient/coh_dbclient.c', 'engine/auth/coh_auth.c',
     'engine/auth/coh_auth_openssl.c', 'engine/session/coh_session_crypto.c',
     'engine/network/coh_net.c', 'engine/network/coh_net_frame.c',

@@ -25,6 +25,7 @@ set(ENGINE "${NATIVE_ROOT}/engine")
 add_library(coh_combined_network SHARED combined_network.c
     "${ENGINE}/local/coh_local.c"
     "${ENGINE}/dbclient/coh_dbclient.c" "${ENGINE}/dbclient/coh_db_session.c"
+    "${ENGINE}/dbclient/coh_db_account_controls.c"
     "${ENGINE}/mapclient/coh_mapclient.c" "${ENGINE}/mapclient/coh_mapclient_owned.c"
     "${ENGINE}/replication/coh_replication.c"
     "${ENGINE}/replication/coh_groups.c"

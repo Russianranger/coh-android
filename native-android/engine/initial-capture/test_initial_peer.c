@@ -10,6 +10,10 @@
 #ifdef COH_INITIAL_EDITMSG_PEER
 #include "editmsg-fixtures.h"
 #endif
+#ifdef COH_INITIAL_ACCOUNT_PEER
+static void initial_account_handle(UiPeer *);
+static unsigned initial_account_controls_sent;
+#endif
 static const char *initial_mode;
 static unsigned initial_requests,initial_responses,initial_replays,forbidden_commands;
 static uint8_t initial_bytes[65536];
@@ -38,9 +42,20 @@ static void initial_packet(Peer*p,CohNetEndpoint target,uint32_t ack){
 }
 static void initial_report(const UiPeer*u){
  char temporary[4096];int n=snprintf(temporary,sizeof(temporary),"%s.tmp",u->report);CHECK(n>0&&(size_t)n<sizeof(temporary));FILE*f=fopen(temporary,"w");CHECK(f);
- CHECK(fprintf(f,"{\"schema\":1,\"scripted_source_layout\":true,\"real_server_interoperability\":false,\"authserver_authenticated\":false,\"live_world\":false,\"failed\":%s,\"pid\":%ld,\"db_port\":%u,\"map_port\":%u,\"db_phase\":%u,\"map_phase\":%u,\"character_lists\":%u,\"character_choices\":%u,\"map_handoffs\":%u,\"map_connects\":%u,\"source_command_catalogs\":%u,\"source_command_count\":%u,\"scene_prefixes\":%u,\"large_body_fixture\":true,\"scene_tail_parsed\":true,\"scene_assets_resolved\":false,\"scene_crc_verified\":false,\"scene_decoded_bytes\":%zu,\"scene_compressed_bytes\":%zu,\"scene_payload_bits\":%zu,\"scene_compressed\":%s,\"scene_ordered\":false,\"decoded_budget_bytes\":%u,\"scene_expected_counts\":%s,\"selected_wire_slot\":%u,\"opened_sockets\":2,\"closed_sockets\":%u,\"initial_mode\":\"%s\",\"reqallents_unique\":%u,\"initial_responses\":%u,\"initial_replays\":%u,\"forbidden_application_commands\":%u,\"ready_commands\":0,\"received_character_commands\":0,\"full_update_ack_commands\":0,\"whole_original_allents_producer_executed\":false,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false}\n",u->failed?"true":"false",(long)getpid(),u->db.endpoint.port,u->map.endpoint.port,u->db_phase,u->map_phase,u->lists,u->choices,u->handoffs,u->connects,u->catalogs,SOURCE_ACCESSIBLE_COMMAND_COUNT,u->scenes,u->scene_decoded_bytes,u->scene_compressed_bytes,u->scene_decoded_bytes*8,u->scenes?"true":"false",COH_NET_DECODED_MAX,SOURCE_GROUPS_EXPECTED_JSON,u->selected_slot,u->closed,initial_mode,initial_requests,initial_responses,initial_replays,forbidden_commands)>0);CHECK(!fclose(f));CHECK(!rename(temporary,u->report));
+ CHECK(fprintf(f,"{\"schema\":1,\"scripted_source_layout\":true,\"real_server_interoperability\":false,\"authserver_authenticated\":false,\"live_world\":false,\"failed\":%s,\"pid\":%ld,\"db_port\":%u,\"map_port\":%u,\"db_phase\":%u,\"map_phase\":%u,\"character_lists\":%u,\"character_choices\":%u,\"map_handoffs\":%u,\"map_connects\":%u,\"source_command_catalogs\":%u,\"source_command_count\":%u,\"scene_prefixes\":%u,\"large_body_fixture\":true,\"scene_tail_parsed\":true,\"scene_assets_resolved\":false,\"scene_crc_verified\":false,\"scene_decoded_bytes\":%zu,\"scene_compressed_bytes\":%zu,\"scene_payload_bits\":%zu,\"scene_compressed\":%s,\"scene_ordered\":false,\"decoded_budget_bytes\":%u,\"scene_expected_counts\":%s,\"selected_wire_slot\":%u,\"opened_sockets\":2,\"closed_sockets\":%u,\"initial_mode\":\"%s\",\"reqallents_unique\":%u,\"initial_responses\":%u,\"initial_replays\":%u,\"forbidden_application_commands\":%u,\"ready_commands\":0,\"received_character_commands\":0,\"full_update_ack_commands\":0,\"whole_original_allents_producer_executed\":false,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false"
+ #ifdef COH_INITIAL_ACCOUNT_PEER
+ ",\"account_controls_sent\":%u"
+ #endif
+ "}\n",u->failed?"true":"false",(long)getpid(),u->db.endpoint.port,u->map.endpoint.port,u->db_phase,u->map_phase,u->lists,u->choices,u->handoffs,u->connects,u->catalogs,SOURCE_ACCESSIBLE_COMMAND_COUNT,u->scenes,u->scene_decoded_bytes,u->scene_compressed_bytes,u->scene_decoded_bytes*8,u->scenes?"true":"false",COH_NET_DECODED_MAX,SOURCE_GROUPS_EXPECTED_JSON,u->selected_slot,u->closed,initial_mode,initial_requests,initial_responses,initial_replays,forbidden_commands
+ #ifdef COH_INITIAL_ACCOUNT_PEER
+ ,initial_account_controls_sent
+ #endif
+ )>0);CHECK(!fclose(f));CHECK(!rename(temporary,u->report));
 }
 static void initial_handle(UiPeer*u,unsigned map){
+ #ifdef COH_INITIAL_ACCOUNT_PEER
+ if(!map){initial_account_handle(u);initial_report(u);return;}
+ #endif
  if(!map||u->map_phase<5){handle(u,map);initial_report(u);return;}
  Peer*p=&u->map;uint8_t frame[COH_PROTOCOL_FRAME_MAX];struct sockaddr_in from;socklen_t length=sizeof(from);ssize_t bytes=recvfrom(p->fd,frame,sizeof(frame),MSG_PEEK,(struct sockaddr*)&from,&length);CHECK(bytes>0&&length==sizeof(from));CohNetPacket packet;CHECK(coh_net_frame_decode(5,NULL,0,0,(CohBytes){frame,(size_t)bytes},&packet)==COH_OK);CohProtocolBits bits;unsigned cmd=read_command(&packet,&bits);
  if(!cmd){handle(u,map);initial_report(u);return;}

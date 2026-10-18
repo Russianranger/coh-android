@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Stage only the separately identified fresh callback-sealed Map observer."""
-import argparse,hashlib,json,subprocess,sys
+import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE.parent))
@@ -21,6 +21,7 @@ CALL=b'coh_fresh_source_profile_install'
 SEAL=b'    coh_fresh_source_profile_seal_after_normal_enable();\n'
 SEAL_PROTO=b'void coh_fresh_source_profile_seal_after_normal_enable(void);\n'
 GROUP_TAIL=b'\n/* NEW explicit fresh disposable callback-sealed diagnostic profile. */\n#include "coh_fresh_source_profile.inc"\n'
+OWNER_SHA='7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc'
 CONTRACT={'role':ROLE,'nonshipping':True,'fresh_disposable_fixture_only':True,
  'accepted_observer_and_shipping_profile_unchanged':True,'accepted_cache_watch_policy_equivalent':False,
  'normal_startup_enable_preserved_then_explicit_original_api_disable':True,
@@ -35,7 +36,9 @@ CONTRACT={'role':ROLE,'nonshipping':True,'fresh_disposable_fixture_only':True,
  'failed_restore_may_remain_sealed_until_owner_retry_or_process_cleanup':True,
  'source_probe_environment':'COH_NATIVE_GROUPS_PROFILE_PROBE_OUTPUT',
  'source_probe_precreated_owned_regular_file_required':True,
- 'source_probe_schema':'coh-fresh-source-profile-probe-v1',
+ 'source_probe_schema':'coh-fresh-source-profile-probe-v2',
+ 'first_owner_failure_atom_observed_once_in_original_order':True,
+ 'owner_failure_enum_only_no_original_values_or_io':True,
  'source_probe_maximum_bytes':8192,'source_probe_authority':False,
  'source_generation_admitted':False,'world_authority':False,'runtime_executed':False}
 LOCAL=('source_folder_profile_api.h','source_folder_profile.inc','source_group_profile_api.h',
@@ -76,6 +79,30 @@ def once(raw,before,after,code):
  base.require(raw.count(before)==1,code)
  return raw.replace(before,after,1)
 
+def owner_predicates():
+ """The one fixed C enum/name/atom table; never a caller-selected predicate."""
+ raw=base.lf((HERE/'source_group_profile_api.h').read_bytes())
+ rows=re.findall(rb'^ X\(([A-Z_]+),(.+)\)(?: \\)?$',raw,re.M)
+ base.require(len(rows)==47 and len({n for n,_ in rows})==47,'FRESH_OWNER_ENUM_TABLE')
+ return tuple((name.decode('ascii'),atom) for name,atom in rows)
+
+def instrument_owner(raw):
+ """Wrap original failed atoms once without changing their evaluation order."""
+ base.require(type(raw) is bytes and base.sha(raw)==OWNER_SHA,'FRESH_OWNER_SOURCE')
+ start=raw.index(b'static int coh_source_groups_prepare_owner(')
+ before,body=raw[:start],raw[start:];rows=owner_predicates();at=0
+ expressions=re.findall(rb'if\(([^\n;]+)\)return 0;',body)
+ base.require([atom for expression in expressions for atom in expression.split(b'||')]==[atom for _,atom in rows],'FRESH_OWNER_ATOMS')
+ def wrap(match):
+  nonlocal at
+  result=[]
+  for atom in match[1].split(b'||'):
+   name,expected=rows[at];at+=1;base.require(atom==expected,'FRESH_OWNER_ORDER')
+   result.append(b'coh_fresh_source_owner_failed(('+atom+b'),COH_FRESH_OWNER_'+name.encode()+b')')
+  return b'if('+b'||'.join(result)+b')return 0;'
+ body=re.sub(rb'if\(([^\n;]+)\)return 0;',wrap,body)
+ base.require(at==47,'FRESH_OWNER_COVERAGE');return before+body
+
 def overlays(root):
  return {GUARD_API:base.lf((HERE/'source_folder_profile_api.h').read_bytes()),
  API:base.lf((HERE/'source_folder_profile_api.h').read_bytes()),
@@ -107,6 +134,8 @@ def transform(original):
  init=once(init,b'    FolderCacheEnableCallbacks(1);\n',b'    FolderCacheEnableCallbacks(1);\n'+SEAL,'FRESH_NORMAL_ENABLE')
  result[base.INIT]=base.restore_newlines(init,original[base.INIT])
  group=base.lf(original[base.GROUP])
+ owner=base.lf((HERE.parent/'source_groups_owner.inc').read_bytes())
+ group=once(group,owner,instrument_owner(owner),'FRESH_OWNER_OBSERVATION')
  prefix=b'#include "../../../libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h"\n'
  # Observational calls only: each exact original predicate/call remains intact.
  for token,stage in ((b' status=coh_resource_quiescence_begin();','QUIET'),

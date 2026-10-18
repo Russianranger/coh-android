@@ -344,6 +344,7 @@ static void reset_probe(void)
  memset(&coh_fresh_original_hooks,0,sizeof(coh_fresh_original_hooks));
  coh_fp_installed=coh_fp_seal_entered=coh_fp_entered=coh_fp_accepted=coh_fp_committed=0;
  coh_fp_loader_status=coh_fp_loader_released=coh_fp_complete=coh_fp_thread=coh_fp_configured=coh_fp_refusal=0;
+ coh_fp_owner_failure=COH_FRESH_OWNER_NONE;
  coh_fp_stage=COH_FRESH_STAGE_INSTALL;coh_fp_path[0]=probe_bytes[0]=0;
  fake_sink_config=fake_probe_env=1;fake_io_fault=fake_opens=fake_closes=fake_source_opens=fake_source_commits=fake_source_aborts=fake_handle_changed=fake_path_replaced=0;replacement_bytes[0]=0;
 }
@@ -413,8 +414,50 @@ static void probe_foreign_immutability(void)
  CHECK(coh_fp_stage==COH_FRESH_STAGE_INSTALL&&!coh_fp_loader_status&&!coh_fp_loader_released&&!coh_fp_entered&&!coh_fp_seal_entered);
  CHECK(!strcmp(before,probe_bytes)&&fake_opens==opens&&!fake_source_opens&&!fake_source_commits&&!fake_source_aborts);scenarios++;
 }
+static void*foreign_owner_reason(void*unused)
+{
+ (void)unused;test_thread=2;
+ CHECK(coh_fresh_source_owner_failed(1,COH_FRESH_OWNER_LINK_PENDING)==1);return NULL;
+}
+static void owner_reason_probe(void)
+{
+ for(unsigned reason=1;reason<COH_FRESH_OWNER_COUNT;reason++){
+  pthread_t foreign;char before[8192];unsigned next=reason+1<COH_FRESH_OWNER_COUNT?reason+1:1;
+  reset_probe();coh_fresh_source_profile_install();
+  CHECK(coh_fresh_source_owner_failed(1,(CohFreshOwnerFailure)reason)==1);
+  CHECK(coh_fp_owner_failure==COH_FRESH_OWNER_NONE); /* no active observation */
+  coh_fresh_source_profile_seal_after_normal_enable();
+  CHECK(coh_groups_transaction_hooks.begin(NULL,NULL,1)==1);
+  coh_fresh_source_probe_step(COH_FRESH_STAGE_OWNER);strcpy(before,probe_bytes);
+  CHECK(!pthread_create(&foreign,NULL,foreign_owner_reason,NULL));CHECK(!pthread_join(foreign,NULL));
+  CHECK(coh_fp_owner_failure==COH_FRESH_OWNER_NONE);
+  CHECK(coh_fresh_source_owner_failed(1,COH_FRESH_OWNER_NONE)==1);
+  CHECK(coh_fresh_source_owner_failed(1,COH_FRESH_OWNER_COUNT)==1);
+  CHECK(coh_fresh_source_owner_failed(1,(CohFreshOwnerFailure)-1)==1);
+  CHECK(!coh_fresh_source_owner_failed(0,(CohFreshOwnerFailure)reason));
+  CHECK(coh_fp_owner_failure==COH_FRESH_OWNER_NONE&&!strcmp(before,probe_bytes));
+  CHECK(coh_fresh_source_owner_failed(3,(CohFreshOwnerFailure)reason)==3);
+  CHECK(coh_fp_owner_failure==(CohFreshOwnerFailure)reason&&!strcmp(before,probe_bytes));
+  CHECK(coh_fresh_source_owner_failed(1,(CohFreshOwnerFailure)next)==1);
+  CHECK(coh_fp_owner_failure==(CohFreshOwnerFailure)reason); /* first failure only */
+  coh_groups_transaction_hooks.abort(NULL,1);
+  CHECK(coh_fp_complete&&view().restored&&!coh_resource_quiet_active);
+  CHECK(coh_fp_owner_failure==(CohFreshOwnerFailure)reason);
+  CHECK(strstr(probe_bytes,coh_fp_owner_failures[reason])&&strstr(probe_bytes,"\"source_generation_admitted\":false"));
+  CHECK(coh_fresh_source_owner_failed(1,(CohFreshOwnerFailure)next)==1);
+  coh_fresh_source_profile_install();CHECK(coh_fp_owner_failure==(CohFreshOwnerFailure)reason);
+  CHECK(fake_opens==1&&fake_closes==1&&fake_source_commits==0);
+ }
+}
 int main(int argc,char**argv)
 {
+ if(argc==2&&!strcmp(argv[1],"--owner-reason")){
+  CHECK(!pthread_mutex_init(&heyThreadLoadAGeo_CriticalSection.mutex,NULL));
+  CHECK(!pthread_mutex_init(&heyThreadLODAModel_CriticalSection.mutex,NULL));owner_reason_probe();
+  CHECK(!pthread_mutex_destroy(&heyThreadLoadAGeo_CriticalSection.mutex));
+  CHECK(!pthread_mutex_destroy(&heyThreadLODAModel_CriticalSection.mutex));
+  printf("{\"passed\":true,\"checks\":%u,\"owner_reason_cases\":%u,\"old_profile_scenarios_replayed\":false,\"real_server\":false,\"world_authority\":false,\"probe\":%s}\n",checks,(unsigned)COH_FRESH_OWNER_COUNT-1,probe_bytes);return 0;
+ }
  if(argc==2&&!strcmp(argv[1],"--sync-fail")){
   test_initialize_fail=1;FolderCacheEnableCallbacks(0);CHECK(!folder_cache_update_enable);
   CHECK(!coh_fresh_folder_profile_seal());CHECK(view().failure==COH_FRESH_FOLDER_SYNC_FAILED);

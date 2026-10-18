@@ -25,6 +25,8 @@ class Controls(unittest.TestCase):
   group=group.removeprefix(prefix).removesuffix(stage.GROUP_TAIL)
   import re
   group=re.sub(rb' coh_fresh_source_probe_step\(COH_FRESH_STAGE_[A-Z_]+\);\n',b'',group)
+  owner=(HERE.parent/'source_groups_owner.inc').read_bytes()
+  group=group.replace(stage.instrument_owner(owner),owner,1)
   self.assertEqual(group,stage.base.lf(self.old_output[stage.base.GROUP]))
   self.assertEqual(out[stage.old.GUARD],self.old_output[stage.old.GUARD])
   self.assertEqual(stage.overlays(ROOT)[stage.ORIGINAL_GUARD],stage.base.lf((HERE.parent/'source_resource_quiescence.inc').read_bytes()))
@@ -94,5 +96,22 @@ class Controls(unittest.TestCase):
   self.assertNotEqual(stage.RECEIPT,stage.old.RECEIPT)
   self.assertFalse(stage.CONTRACT['accepted_cache_watch_policy_equivalent'])
   self.assertFalse(stage.CONTRACT['runtime_executed'])
+
+ def test_owner_atom_order_reversibility_and_changed_table_refusal(self):
+  owner=(HERE.parent/'source_groups_owner.inc').read_bytes();rows=stage.owner_predicates()
+  instrumented=stage.instrument_owner(owner);restored=instrumented
+  self.assertEqual(len(rows),47)
+  self.assertEqual(instrumented.count(b'coh_fresh_source_owner_failed('),47)
+  previous=-1
+  for name,atom in rows:
+   wrapper=b'coh_fresh_source_owner_failed(('+atom+b'),COH_FRESH_OWNER_'+name.encode()+b')'
+   self.assertEqual(instrumented.count(wrapper),1)
+   at=instrumented.index(wrapper);self.assertGreater(at,previous);previous=at
+   restored=restored.replace(wrapper,atom,1)
+  self.assertEqual(restored,owner)
+  self.assertIn(b'*out=candidate;return 1;',instrumented)
+  with self.assertRaises(ValueError):stage.instrument_owner(owner+b'\n')
+  with patch.object(stage,'owner_predicates',return_value=rows[::-1]),self.assertRaises(ValueError):stage.instrument_owner(owner)
+  with patch.object(stage,'owner_predicates',return_value=rows[:-1]),self.assertRaises(ValueError):stage.instrument_owner(owner)
 
 if __name__=='__main__':unittest.main()

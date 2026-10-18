@@ -1,0 +1,24 @@
+{
+  "schema": "coh-account-control-owned-link-list-review-v1",
+  "passed": true,
+  "source_only": true,
+  "qualifier_or_tests_executed": false,
+  "new_parser_dependency": "engine/dbclient/coh_db_account_controls.c",
+  "files": {
+    "native-android/engine/initial-capture/check_initial_capture.py": {
+      "before_sha256": "eb922ec174afaf89f71af8aa3a8990769f4efdad0ef871be154c8f5888fefa8c",
+      "after_sha256": "10c884d97adae1f68c3d6c2ed3b0a34b228b6867a7284dfbcee5078f32aadc3d",
+      "ast_equals_previous_after_removing_only_new_dependency_literal": true
+    },
+    "native-android/engine/initial-capture/check_initial_editmsg.py": {
+      "before_sha256": "ea8f333854a7fbc725a36e1b331ceddefe9286c74018727f8674c7d0590f215c",
+      "after_sha256": "03362343b46ece9c56a430b381c54e812319aca108b147dd26b4fb8974d465a5",
+      "ast_equals_previous_after_removing_only_new_dependency_literal": true
+    },
+    "native-android/engine/auth-interop/deployment/qualify_auth_db_development_owner.py": {
+      "before_sha256": "aa58020f335e60553e06941c7adb9a0b905c81c5ba84c5f0c3207b295e738637",
+      "after_sha256": "3ac893e35650c89a59273bac096bc60053a1bfc1d3e036501170b102e7185a18",
+      "ast_equals_previous_after_removing_only_new_dependency_literal": true
+    }
+  }
+}

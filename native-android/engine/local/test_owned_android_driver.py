@@ -41,7 +41,7 @@ class Admission(unittest.TestCase):
                         integrated=dict(passed=True, sanitizers='ASan+UBSan', fixture_sha256=fixture_map,
                             implementation_sha256={n: DRIVER.source_identity(SOURCE.resolve().parents[3])['source_sha256']['native-android/' + n]
                                 for n in ('engine/local/coh_local.c', 'engine/local/coh_local.h', 'engine/local/check.py',
-                                          'engine/local/test_local.c', 'engine/dbclient/coh_db_session.c',
+                                          'engine/local/test_local.c', 'engine/dbclient/coh_db_session.c', 'engine/dbclient/coh_db_account_controls.c',
                                           'engine/mapclient/coh_mapclient.c', 'engine/mapclient/coh_mapclient_owned.c')},
                             checks=dict(release=expected, asan=expected, ubsan=expected), android=dict(artifacts=rows)))
             build = dict(module='local', artifacts=rows)

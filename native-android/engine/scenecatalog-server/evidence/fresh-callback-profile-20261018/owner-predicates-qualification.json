@@ -1,0 +1,305 @@
+{
+  "actual_windows_executed": false,
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "exact_reverse_to_original_bytes": true,
+  "generated_host_header_sha256": "312fa5788e8e7b46d9c5a761b4911a4544fe98431a81dd455f7e88d748ab77cc",
+  "host_member_subset_storage_only": true,
+  "instrumented_owner_sha256": "14132e7fa81a719222d1e53bbe62b4dcb84e549bafca893810e5feb71bdc9c89",
+  "leak_sanitizer_qualified": false,
+  "modes": {
+    "address": {
+      "binary_bytes": 110480,
+      "binary_sha256": "c3bb2903b5c036198908a95e974a9054e38a5692cc4f49f1cf56e0521eb44e85",
+      "controls": {
+        "actual_windows_executed": false,
+        "checks": 270794,
+        "first_failure_atoms": 47,
+        "host_member_subset_storage_only": true,
+        "latch_controls": 7,
+        "maximum_links_scanned": 65536,
+        "passed": true,
+        "runtime_executed": false,
+        "scenarios": 88,
+        "short_circuit_controls": 3,
+        "source_generation_admitted": false,
+        "successful_differential_cases": 31,
+        "world_authority": false
+      },
+      "flags": [
+        "-O1",
+        "-fsanitize=address",
+        "-no-pie"
+      ],
+      "stack_frames": {
+        "coh_fresh_source_owner_failed": 16,
+        "fresh_prepare": 768,
+        "original_latch": 8,
+        "original_prepare": 752
+      }
+    },
+    "release": {
+      "binary_bytes": 68672,
+      "binary_sha256": "452c9d3b38307c53d21f6bd832f605bdf6fd2e05ff6e11c8f739fe220b45650e",
+      "controls": {
+        "actual_windows_executed": false,
+        "checks": 270794,
+        "first_failure_atoms": 47,
+        "host_member_subset_storage_only": true,
+        "latch_controls": 7,
+        "maximum_links_scanned": 65536,
+        "passed": true,
+        "runtime_executed": false,
+        "scenarios": 88,
+        "short_circuit_controls": 3,
+        "source_generation_admitted": false,
+        "successful_differential_cases": 31,
+        "world_authority": false
+      },
+      "flags": [
+        "-O2"
+      ],
+      "stack_frames": {
+        "coh_fresh_source_owner_failed": 16,
+        "fresh_prepare": 496,
+        "original_latch": 8,
+        "original_prepare": 512
+      }
+    },
+    "undefined": {
+      "binary_bytes": 100600,
+      "binary_sha256": "bde21eef22ba4ea4bba59f1aee2e64e0cd0faef64de2eea98f2ad52fa07075a9",
+      "controls": {
+        "actual_windows_executed": false,
+        "checks": 270794,
+        "first_failure_atoms": 47,
+        "host_member_subset_storage_only": true,
+        "latch_controls": 7,
+        "maximum_links_scanned": 65536,
+        "passed": true,
+        "runtime_executed": false,
+        "scenarios": 88,
+        "short_circuit_controls": 3,
+        "source_generation_admitted": false,
+        "successful_differential_cases": 31,
+        "world_authority": false
+      },
+      "flags": [
+        "-O1",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all"
+      ],
+      "stack_frames": {
+        "coh_fresh_source_owner_failed": 16,
+        "fresh_prepare": 512,
+        "original_latch": 8,
+        "original_prepare": 512
+      }
+    }
+  },
+  "mutations": {
+    "duplicate_atom_evaluation": {
+      "compiled": true,
+      "mutated_header_sha256": "8dd8e2beebff3014c2d74c334f6db20b3b0c8396603300b4d09a769fdb448b8e",
+      "refused_by_new_controls": true
+    },
+    "first_latch_overwritten": {
+      "compiled": true,
+      "mutated_header_sha256": "ab09ca597ded331bd4bfdf18babd2d7ce86bd4c98befa0a8866d180eb5810998",
+      "refused_by_new_controls": true
+    },
+    "output_written_before_validation": {
+      "compiled": true,
+      "mutated_header_sha256": "70c3071df1ff117dc273f7d899255fe9fd97ce2e46380ca0b637b6e682958fc7",
+      "refused_by_new_controls": true
+    },
+    "refusal_return_changed": {
+      "compiled": true,
+      "mutated_header_sha256": "b5736015439309a814a1d18adca4dc7a646b6273b88b1f1a9e221df00ff3a33f",
+      "refused_by_new_controls": true
+    },
+    "wrong_first_reason": {
+      "compiled": true,
+      "mutated_header_sha256": "3b6f0bd1a0c026291aee517e8ccf0b1d48d6d169b428f08614ea998f57a50146",
+      "refused_by_new_controls": true
+    }
+  },
+  "new_owner_emitter_and_parser": {
+    "actual_map_executed": false,
+    "modes": {
+      "address": {
+        "binary_bytes": 289808,
+        "binary_sha256": "cbe44127be3cea0e08442901bf765118e96e889df07c2e7f389ed775eb13d9df",
+        "controls": {
+          "checks": 3486,
+          "old_profile_scenarios_replayed": false,
+          "owner_reason_cases": 47,
+          "passed": true,
+          "real_server": false,
+          "world_authority": false
+        },
+        "exact_emitter_object_parsed": true,
+        "parsed_owner_failure": "CLIENT_INCIDENCE"
+      },
+      "release": {
+        "binary_bytes": 315376,
+        "binary_sha256": "4c8d5148861ae40305bb8a66d17e0e7f1d0ae849c645ae0c087783bea4cdaac2",
+        "controls": {
+          "checks": 3486,
+          "old_profile_scenarios_replayed": false,
+          "owner_reason_cases": 47,
+          "passed": true,
+          "real_server": false,
+          "world_authority": false
+        },
+        "exact_emitter_object_parsed": true,
+        "parsed_owner_failure": "CLIENT_INCIDENCE"
+      },
+      "undefined": {
+        "binary_bytes": 270536,
+        "binary_sha256": "e1d2fb9477cd9e0b2559447f134e0b88b118c96c1a17b9b7740e6c58bf995b1f",
+        "controls": {
+          "checks": 3486,
+          "old_profile_scenarios_replayed": false,
+          "owner_reason_cases": 47,
+          "passed": true,
+          "real_server": false,
+          "world_authority": false
+        },
+        "exact_emitter_object_parsed": true,
+        "parsed_owner_failure": "CLIENT_INCIDENCE"
+      }
+    },
+    "old_profile_scenarios_replayed": false,
+    "original_foldercache_executed": false,
+    "source_win32_io_stubs": true,
+    "targeted_probe_methods": [
+      "test_exact_source_emitter_schema_and_fixed_names",
+      "test_strict_parser_types_keys_enums_and_source_bounds",
+      "test_owner_reason_v2_fixed_vocabulary_and_no_legacy_normalization",
+      "test_actual_owned_child_owner_reason_projection_excludes_private_binding"
+    ],
+    "targeted_python_method_count": 8,
+    "targeted_stage_methods": [
+      "test_exact_hook_positions_and_preserved_old_group",
+      "test_crlf_staged_sources_preserve_raw_line_endings",
+      "test_synthetic_source_reconstruction_and_every_final_byte",
+      "test_owner_atom_order_reversibility_and_changed_table_refusal"
+    ]
+  },
+  "old_qualification_replayed": false,
+  "original_owner_sha256": "7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc",
+  "original_sha256_lf": {
+    "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+    "Common/entity/entity.c": "07b6666d673757cd8e9f4d377ec58fb2988fc09db8abc2e212e29788b84fbd8f",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "MapServer/src/svr/svr_base.h": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64",
+    "libs/UtilitiesLib/include/utilitieslib/components/ArrayOld.h": "52f889750b03c07f52896ca9a569ed4acfeb93f0b5bdbb09072de9d2a343da30",
+    "libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+  },
+  "original_win32_layout_qualified": false,
+  "owner_thread_primitive_host_stub": true,
+  "passed": true,
+  "predicate_names_in_source_order": [
+    "INPUT_LINK",
+    "INPUT_OUTPUT",
+    "LIST_ABSENT",
+    "LIST_EMPTY",
+    "LIST_LIMIT",
+    "LIST_STORAGE",
+    "LIST_CAPACITY",
+    "OUTPUT_LINK_ALIAS",
+    "OUTPUT_LIST_ALIAS",
+    "OUTPUT_ARRAY_ALIAS",
+    "OUTPUT_STORAGE_ALIAS",
+    "OUTPUT_WORLD_ALIAS",
+    "OUTPUT_ENTITIES_MAX_ALIAS",
+    "OUTPUT_ENTITY_TABLE_ALIAS",
+    "OUTPUT_ENTITY_STATE_ALIAS",
+    "CLIENT_ABSENT",
+    "CLIENT_BACKLINK",
+    "OUTPUT_CLIENT_ALIAS",
+    "ENTITY_ABSENT",
+    "OUTPUT_ENTITY_ALIAS",
+    "ENTITY_BACKLINK",
+    "ENTITY_DBID",
+    "ENTITY_ID",
+    "ENTITY_SLOT_LOW",
+    "ENTITY_SLOT_HIGH",
+    "ENTITY_TABLE_SIZE_LOW",
+    "ENTITY_TABLE_SIZE_HIGH",
+    "ENTITY_NOT_IN_USE",
+    "ENTITY_TABLE_MISMATCH",
+    "CHARACTER_ABSENT",
+    "OUTPUT_CHARACTER_ALIAS",
+    "CHARACTER_UNINITIALIZED",
+    "CHARACTER_PARENT",
+    "LINK_TYPE",
+    "LINK_NOT_CONNECTED",
+    "LINK_PENDING",
+    "LINK_CONNECTING",
+    "LINK_DISCONNECTED",
+    "LINK_DESTROYED",
+    "LINK_REMOVED",
+    "LINK_PROTOCOL",
+    "CLIENT_STATE_LOW",
+    "CLIENT_STATE_HIGH",
+    "LIST_ENTRY_ABSENT",
+    "OUTPUT_LIST_ENTRY_ALIAS",
+    "LINK_INCIDENCE",
+    "CLIENT_INCIDENCE"
+  ],
+  "production_transform_functions_executed_unchanged": true,
+  "runtime_executed": false,
+  "schema": "coh-fresh-owner-predicates-host-v1",
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/SOURCE_PROFILE_RUNTIME.md": "34d8169f10e23fbcf8819bf7d2f45e8b6dff6a633421a76c78e909ab337dabc2",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/OWNER_FAILURE_DIAGNOSTIC.md": "fb6f16a913474bfc47c794628e4d7cb86e2d4404581a2fc78def307817439ebc",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/README.md": "6c4b22e3e62d59d456e0491a7e42d7c97747c8780c9c4315f92e9e871ca4371f",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/check_owner_predicates.py": "efe2a0dba87c6fcfedac31ad25f6510b1c7f776e4e69e09f01e2ad4d65fc8016",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": "a6549c4c978ac2f130c4d23011166c6f185917d411cbe8781ebb0a7ab578088c",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile.inc": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile_api.h": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc": "535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h": "3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_sealed_quiescence.inc": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": "c827d7318849a48295396303198b41b36a845cbf7b44d244db5e5ace964ad3b2",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_owner_predicates.c": "e924c91eebb07ece43a1902d6a4604e686f0c303012d39f0ccd666c57300fcf1",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_probe.py": "92e398884f36be4bda832fab865d008d63b500852333254c8ed29299889250c2",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_profile.c": "c3f8bae282785f62ea69c34a7fbc3052ec0c7be988540735d71576f342652dab",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py": "55b3f890cfbbf9d7d46e475d0d5852858280dcb618be220b88fbee3803473f0f",
+    "native-android/engine/scenecatalog-server/groups-owner-source-pins.json": "5693a060b7a727c6bf9a7375bf2fcc860c1398e986d4d41ef314f4162f8985a2",
+    "native-android/engine/scenecatalog-server/groups_owner_oracle_shim.h": "85f7085d2853d05f439b046ddb7ab2441b6ea3b36cffc166173c4304cd152dd0",
+    "native-android/engine/scenecatalog-server/resource-source-pins.json": "6508ab2824fb83ee5a47ea3f04dc33b8f5542b9f05dd0b38c2e34ace437c90e9",
+    "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3",
+    "native-android/engine/scenecatalog-server/source_groups_capture_sink.inc": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7",
+    "native-android/engine/scenecatalog-server/source_groups_eligibility.inc": "38338a38411745c889cc78a381e19cfafebd5a83bc00132e17b5b079023f1dbb",
+    "native-android/engine/scenecatalog-server/source_groups_owner.inc": "7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc",
+    "native-android/engine/scenecatalog-server/source_groups_transaction.inc": "a531ae0c9031c160b4f2cf99f2cba49487fba3ea7d396dcc23d0f0969ed922c6",
+    "native-android/engine/scenecatalog-server/source_public_bounds.inc": "c812642d7f3467c97b2528a9e0963a7d40a01d7f45615ec3fe49c17dbbd80723",
+    "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/source_resources_sink.inc": "3f5cbd9152f022a9d65a8baac813bf3cacc7ce41d579f4257d4c2c7bd8059a9e",
+    "native-android/engine/scenecatalog-server/source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d",
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "native-android/engine/scenecatalog-server/source_snapshot_sink.inc": "18b3bf28abb9d8a737f109bf7293a3f3d73d2b604d05fad57f4c81805f882275",
+    "native-android/engine/scenecatalog-server/stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "native-android/engine/scenecatalog-server/stage_groups_boundary.py": "980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f",
+    "native-android/engine/scenecatalog-server/stage_groups_capture.py": "2036e1ee954d3de5db7c637add4acc281a8079b52455650efe7e58132e1fc478",
+    "native-android/engine/scenecatalog-server/stage_resources.py": "7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6",
+    "native-android/engine/scenecatalog-server/stage_snapshot.py": "ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c",
+    "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+  },
+  "whole_function_sha256_lf": {
+    "character_IsInitialized": "12d2c5aacff9aa5d7fb5c479225c3f46f128fb3ffb05e2c6b6b3628aeb84aebf",
+    "entInUse": "79b222d48664201dba35ea8c3917b41be0e76762b6834a70cd0475a1e1299a26",
+    "fresh_owner_latch": "83431c8ffb628cdf4b8c073a2419f8df7315b591040a28c264beca80638dd6e6",
+    "fresh_owner_thread": "8c76a35210fd111efdadbf4d13e3d8bfab2c8ffce133406d59ff6d2f4799cb2a"
+  },
+  "world_authority": false
+}

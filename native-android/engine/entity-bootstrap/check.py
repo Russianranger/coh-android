@@ -34,7 +34,7 @@ def main():
   for label,dbid in [('identity_zero',0),('identity_high',0x80000000),('identity_one',1),('identity_max',0x7fffffff)]:
    raw,bits,_=fixture(dbid,123456,0,1);header+='static const unsigned char '+label+'[]={'+','.join(map(str,raw))+'};\n#define '+label+'_bits '+str(bits)+'u\n'
   (w/'fixtures.h').write_text(header)
-  common=[HERE/'../dbclient/coh_dbclient.c',ROOT/'native-android/protocol/coh_protocol.c',ROOT/'native-android/src/coh_blowfish.c',HERE/'../auth/coh_auth.c'];sessions=[HERE/'../dbclient/coh_db_session.c']+[HERE/'../network'/f for f in('coh_net.c','coh_net_frame.c','coh_net_udp.c','coh_net_zip.c')];checks={}
+  common=[HERE/'../dbclient/coh_dbclient.c',ROOT/'native-android/protocol/coh_protocol.c',ROOT/'native-android/src/coh_blowfish.c',HERE/'../auth/coh_auth.c'];sessions=[HERE/'../dbclient/coh_db_session.c',HERE/'../dbclient/coh_db_account_controls.c']+[HERE/'../network'/f for f in('coh_net.c','coh_net_frame.c','coh_net_udp.c','coh_net_zip.c')];checks={}
   for mode,options in [('release',['-O2']),('asan',['-O1','-g','-fsanitize=address','-fno-omit-frame-pointer','-no-pie']),('ubsan',['-O1','-g','-fsanitize=undefined','-fno-sanitize-recover=all'])]:
    flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(w),'-I'+str(ROOT/'native-android/include'),*options];objects=[]
    for path in common[1:]:

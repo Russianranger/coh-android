@@ -47,8 +47,8 @@ restoration. Failure cannot publish the old streamed envelope. New fixed stage
 calls are observational; stripping them and the new prefix/tail reproduces the
 complete old boundary/exporter source exactly.
 
-The separate probe has schema coh-fresh-source-profile-probe-v1, exactly35keys,
-fixed stage/refusal/folder enums, booleans and counters0..65535. No identifier,
+The separate probe has schema coh-fresh-source-profile-probe-v2, exactly36keys,
+fixed stage/refusal/folder/owner enums, booleans and counters0..65535. No identifier,
 name, pointer, path, payload or hash is serialized. The supervisor precreates
 and latches its0600 regular single-link file in a0700 owned parent before Map
 launch. The source admits one initially empty handle using OPEN_EXISTING and
@@ -96,8 +96,8 @@ reconstructed inherited source closure; external input archive verification is
 explicitly not claimed by the helper. The root workflow independently pins and
 rechecks those original downloaded archives before and after compilation.
 
-check_profile.py --source-root ROOT --output NEW_PRIVATE_DIR performs the new
-host source qualification once after source freeze: real threaded seal/restore
+The retained check_profile.py baseline qualified the original fresh role once
+after source freeze: real threaded seal/restore
 controls and exact old loader guard in release/address/undefined modes, bounded
 Win32-I/O/group-hook stubs for the fixed emitter, deterministic LF/CRLF source
 transform/refusal controls, compile-role admission shape/late-byte controls and
@@ -109,3 +109,11 @@ The local container forbids LeakSanitizer task enumeration under /proc. The
 first new-role address run stopped with that host restriction. The checker
 explicitly disables LeakSanitizer, records HOST_PROC_TASK_ACCESS and makes no
 leak qualification claim; AddressSanitizer address checks remain enabled.
+
+The later first-owner-predicate refinement uses only
+check_owner_predicates.py --source-root ROOT --output NEW_PRIVATE_DIR. It runs
+new differential owner/latch/emitter controls in three modes and eight selected
+transform/parser/ownership methods. It does not replay the baseline scenarios
+or previous suites. OWNER_FAILURE_DIAGNOSTIC.md defines its source and runtime
+scope. Changed API/emitter/stager bytes require a new exact Map-only PE; the
+previous successful compiled observer is historical evidence for its own bytes.

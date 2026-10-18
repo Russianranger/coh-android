@@ -11,8 +11,8 @@ from dataclasses import dataclass
 import hashlib,io,json,os,stat,subprocess
 from pathlib import Path
 
-SCHEMA='coh-fresh-source-profile-probe-v1'
-PUBLIC_SCHEMA='coh-fresh-source-profile-diagnostic-v1'
+SCHEMA='coh-fresh-source-profile-probe-v2'
+PUBLIC_SCHEMA='coh-fresh-source-profile-diagnostic-v2'
 MAXIMUM=8192
 SOURCE_COUNTER_MAX=65535
 PUBLIC_COUNTER_MAX=255
@@ -23,6 +23,19 @@ REFUSALS=('NONE','NOT_CONFIGURED','WRONG_THREAD','SEAL_REFUSED','BOUNDARY_REFUSE
 FOLDER_FAILURES=('NONE','WRONG_THREAD','REENTRY','BAD_UPDATE_MODE','BAD_MANUAL_MODE',
  'QUEUE_NOT_EMPTY','ACTIVE_UPDATE','ACTIVE_CALLBACK','ACTIVE_SETTER','QUEUE_CHANGED',
  'SETTER_CHANGED','ACTIVITY_CHANGED','COUNTER_LIMIT','RESTORE_FAILED','SYNC_FAILED')
+OWNER_FAILURES=('NONE',
+ 'INPUT_LINK','INPUT_OUTPUT','LIST_ABSENT','LIST_EMPTY',
+ 'LIST_LIMIT','LIST_STORAGE','LIST_CAPACITY','OUTPUT_LINK_ALIAS',
+ 'OUTPUT_LIST_ALIAS','OUTPUT_ARRAY_ALIAS','OUTPUT_STORAGE_ALIAS','OUTPUT_WORLD_ALIAS',
+ 'OUTPUT_ENTITIES_MAX_ALIAS','OUTPUT_ENTITY_TABLE_ALIAS','OUTPUT_ENTITY_STATE_ALIAS','CLIENT_ABSENT',
+ 'CLIENT_BACKLINK','OUTPUT_CLIENT_ALIAS','ENTITY_ABSENT','OUTPUT_ENTITY_ALIAS',
+ 'ENTITY_BACKLINK','ENTITY_DBID','ENTITY_ID','ENTITY_SLOT_LOW',
+ 'ENTITY_SLOT_HIGH','ENTITY_TABLE_SIZE_LOW','ENTITY_TABLE_SIZE_HIGH','ENTITY_NOT_IN_USE',
+ 'ENTITY_TABLE_MISMATCH','CHARACTER_ABSENT','OUTPUT_CHARACTER_ALIAS','CHARACTER_UNINITIALIZED',
+ 'CHARACTER_PARENT','LINK_TYPE','LINK_NOT_CONNECTED','LINK_PENDING',
+ 'LINK_CONNECTING','LINK_DISCONNECTED','LINK_DESTROYED','LINK_REMOVED',
+ 'LINK_PROTOCOL','CLIENT_STATE_LOW','CLIENT_STATE_HIGH','LIST_ENTRY_ABSENT',
+ 'OUTPUT_LIST_ENTRY_ALIAS','LINK_INCIDENCE','CLIENT_INCIDENCE')
 SOURCE_BOOLS=('complete','loader_released','installer_entered','sink_configured',
  'installation_thread_matched','seal_hook_entered','boundary_entered','boundary_accepted',
  'envelope_committed','seal_attempted','sealed','observation_started','observation_finished',
@@ -30,7 +43,7 @@ SOURCE_BOOLS=('complete','loader_released','installer_entered','sink_configured'
  'callbacks_idle','setters_idle','epoch_unchanged','diagnostic_only',
  'source_generation_admitted','world_authority')
 COUNTERS=('queue_count','queue_write_depth','update_depth','callback_depth','setter_depth','activity_epoch')
-ENUMS={'stage':STAGES,'refusal':REFUSALS,'folder_failure':FOLDER_FAILURES}
+ENUMS={'stage':STAGES,'refusal':REFUSALS,'folder_failure':FOLDER_FAILURES,'owner_failure':OWNER_FAILURES}
 SOURCE_KEYS=frozenset(('schema','loader_status',*ENUMS,*SOURCE_BOOLS,*COUNTERS))
 CONTEXT_BOOLS=('process_started','process_closed','handles_closed','cleanup_attempted','probe_validated','counter_saturated')
 
@@ -138,7 +151,7 @@ def _pairs(rows):
  for name,item in rows:require(name not in value);value[name]=item
  return value
 def parse(raw):
- """Admit exactly the original emitter's fixed 35-key typed value."""
+ """Admit exactly the fresh v2 emitter's fixed 36-key typed value."""
  try:
   require(type(raw) is bytes and 0<len(raw)<MAXIMUM)
   value=json.loads(raw.decode('ascii'),object_pairs_hook=_pairs,

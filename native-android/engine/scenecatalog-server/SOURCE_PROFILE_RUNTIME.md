@@ -55,3 +55,13 @@ wiring contradiction consistent with an empty probe file; these outputs do not
 establish that the installer executed or explain the first envelope refusal.
 Only three focused alias/owned-file/wiring methods qualified this correction;
 they run no Wine, Map server, native receiver, compiler or prior test suites.
+
+The later first-owner-predicate refinement uses source probe v2 (36 keys) and
+public diagnostic v2 (43 keys), adding only owner_failure: NONE or one of 47
+fixed source predicate names. The v1 source/public values remain historical
+evidence; the v2 parser rejects them rather than inventing a reason. Optional
+diagnostic refusal still preserves independent GROUPS and cleanup results.
+Original owner predicates, source values and candidate output commit remain
+unchanged; the fresh-only wrapper observes each failed atom once in the
+original short-circuit position. This changes compiled profile source bytes
+and requires a new exact PE, independent of the earlier argument-only fix.

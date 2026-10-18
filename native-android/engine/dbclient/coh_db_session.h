@@ -36,6 +36,10 @@ typedef struct {
     uint64_t login_requests, player_lists, queue_updates, choices, handoffs,
         malformed, unsupported, server_rejections, receipt_rejections,
         suspends, disconnects, timeouts, cancellations;
+    /* Complete independent account controls, never a character-list grant.
+     * Counters are lifetime diagnostics; no request deadline is reset. */
+    uint64_t account_unavailable, account_charcounts;
+    uint32_t account_last_shards, account_last_error_branch;
     CohNetUdpDiagnostics transport;
 } CohDbSessionDiagnostics;
 typedef struct CohDbSession CohDbSession;

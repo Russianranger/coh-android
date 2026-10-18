@@ -5,6 +5,128 @@ Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical
 Git links, existing bundles, accepted APKs and user profiles were preserved.
 
+## Qualified complete DB controls and first owner reason — 2026-10-18
+
+Publication parent is actual verified remote
+`b321a3dd883031072f26c63d4f2d9f4866b63d9d`, tree
+`ff2d168a643b3751965caf6e67d283ceb71c3bad`. The two failed actual transactions
+below are preserved once. Their newly justified source changes are qualified
+within these scopes; fresh Windows/Map build outcomes remain pending.
+
+| Worker | New integrated contribution | Unaccepted scope |
+|---|---|---|
+| A | Fresh-role-only first failed owner condition, strict source/public v2,47 source atoms evaluated once in original short-circuit order; no predicate/output change. Three modes270794 checks/88 scenarios, emitter3486/47 reasons and8 selected Python methods | New Map-only PE and actual first-failed-condition witness required; old7504384B PE cannot represent the three changed compiled profile inputs |
+| B | Authored A's new differential oracle/checker,47 failures/31 successes including65536 links and5 mutations; independent complete DB-parser bounds/state review | Full authentic CLIENT namespace/material/composite/swaps/LOD/world-resource and aggregate RAM authority remain open |
+| C | Complete bounded command8/14 handling only in WAIT_PLAYERS; C99 parser result12B, no heap/text publication. Three modes8822 checks/7226 parser cases/52 synthetic transactions; ordinary unknown refusal and opaque owner policy unchanged. New guarded source-fixture peer and3 dependency-only tool updates | Header observation does not establish actual body values; new complete player list/normal version/checksum/character/world/ACK remain unaccepted |
+| D | Current128-source driver composition; two exact historical compiled-core transitions and a separate exact qualification-tool dependency transition. Four new source-admission controls, then one new composed-tool control; no old6/C suites. New Windows project17 native TUs plus same21 zlib | New actual Windows build/platform/body/list outcome pending; unchanged strict successful-list predicate remains required |
+| E | Complementary source, proof, receiver and both workflow scope reviews; retained actual Android13 x86 GLES and ARM64 NDK build evidence unchanged | New ARM64 execution/Thor/app-owned window/current-world producer remains unqualified; protected Support/offline rendering paths unchanged |
+| F | Exact A230 current source/proof map, C36 kernel and checkpoint52 tool composition, D128/current common2 binding, new45 receiver closure/ELF/status and both fixed workflow reviews | No global CPU/GPU/driver/RSS headroom or startup gain established |
+
+Root linked the parser in both native CMake targets and12 other source/dependency
+identity lists. Each Python AST is identical after removing only the added parser
+dependency node; C's three owned tools have a separate exact source-only receipt.
+No historical qualifier was replayed. C's initial C11 alignment guard was corrected
+to an equivalent C99 offsetof witness and only the new focused C suite repeated;
+its first proof remains historical. A's first new test build failed on test-only
+macro aliases before C execution; the corrected test and both outcomes survive.
+
+Root's new receiver qualification at
+`1d9771c4565f9312d4e6712da95c527829c9bb41` runs one NEW scripted14→8→8→ordinary
+player-list→GROUPS→initial case plus no-argument entry:28 checks per release/ASan/
+UBSan, real owned OS sockets with source-created fixtures. Old123/151 cases do
+not run; no refusal-case preservation result is claimed. All20 public stdout
+keys and ACK barriers remain. Release180616B SHA
+`6115b96942579229d765921aee8d963f1e82ef4e7cce01a9d6d78bea6d8d419f`;
+three507B status files SHA
+`ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677`.
+Canonical build gzip89874B SHA
+`95fde3f9d96b5e22edda28183d320e735488a134c2b6a4971eeb9c9fe9a99108`
+expands to254894B SHA
+`821ebfd2f84c60e8da23333476b9d1f8baadaf815c506933ee2b41572ef137d6`.
+The complete1834-entry before/after raw/Git audit is historical to that build;
+two later D helper changes are outside its current45 compiler/helper inputs.
+F's one read-only dependency query binds44 dependencies plus checker, compact
+map SHA`2276b07ad9f0a3b02d688fd1e168ace06641dcdc43169cd4bac0a33c30c424f8`.
+The old096 receiver/current43 claim is superseded, with exact old bytes retained.
+No actual Android/loader/mapped-library result follows from this host proof.
+
+The new Map-only workflow has240 fixed nonself pins plus current workflow as241st;
+all21 frozen proof-data checks passed before publication. The new Auth-to-DB
+workflow has D128+common2+six immutable proof/review files as136 nonself pins plus
+current workflow as137th; all17 proof-data checks passed. Both require current
+Git blob modes/raw SHA, canonical bounded files and exact hosted Windows/native
+branch before project imports. Recovery/build/runtime commands and approved
+upload paths are unchanged; only the new source gates, markers and artifact names
+change. No host guard, old qualifier, compiler or runtime was executed for those
+data checks. Fresh Map-only compile and one fresh complete-control DB attempt
+are justified by new source, not by a blind repeat of either failed observation.
+
+New destination specialization remains unqualified/pending the actual new Map
+compile receipt; it cannot use an invented or old observer hash. Session0.3.0,
+Combined0.1.7/SCENE_INCOMPLETE and Support0.2.0 accepted hashes remain unchanged.
+Gates25–27 stay open; no READY/RECEIVED_CHARACTER/full-update ACK, new actor/world,
+APK or Thor acceptance is inferred. Startup387340ms remains accepted unchanged;
+96MiB is a policy limit, not measured memory. Session/diagnostic host storage grows
+24B to46544/488B; embedded storage must not be counted twice. No global fit or
+old/new/driver overlap is admitted.
+
+## Actual received-header and source-owner findings — 2026-10-18
+
+Verified remote remains `b321a3dd883031072f26c63d4f2d9f4866b63d9d`, tree
+`ff2d168a643b3751965caf6e67d283ceb71c3bad`. This checkpoint preserves two new
+failed actual transactions and their successful component evidence; it does not
+accept a player list, source generation or world/player state.
+
+[Windows run39092477566](https://github.com/Russianranger/coh-android/actions/runs/39092477566)
+passed109 source/artifact/proof pins, the new Win64 received-prefix probe build,
+platform preflight, fresh AuthAUTHORIZED/4 frames and one queued DB LOGIN. Its
+complete bounded same-copy header prefix is
+DBGAMESERVER_ACCOUNTSERVER_UNAVAILABLE followed by
+DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT twice, all WAIT_PLAYERS/decoded/modern/
+uncompressed. The prefix is available/context-verified/retired, not truncated;
+instances1/servicecalls5/total3. Unsupported3 and complete player lists0 remain.
+The exact current ordinary default branch increments unsupported and returnsOK;
+the strict owner then refuses any unsupported count. That is a source-derived
+explanation, not an actual first-unsupported/body-acceptance flag: both raw flags
+remain false. No actual account body value or next SEND_PLAYERS is established.
+All retained native, service/firewall/registry/LocalDB/private/source cleanup and
+before/after generation/channel/listener/99-table checks passed.
+
+Artifact12123094046 is17000B SHA
+`dfa3341369b6659e9be3451d8b99cd6adc2d3fa7d1d1ebacd2f051894c448b8e`;
+sole original CRLF receipt73968B SHA
+`44c6eeb9eaa391c550e3534e925d0dcc05eb2954e9bdd186bb7c5526e5604ef0`.
+D's single preserved copy, fixed API and read-only pipeline verifier are under
+`engine/auth-interop/evidence/auth-db-received-prefix-39092477566`.
+
+[Scene run39091755344](https://github.com/Russianranger/coh-android/actions/runs/39091755344)
+passed351 pins, fixture/observer admission and actual destination loader/noargs
+preflight. Its new source profile is VALID: installer, sink, matching threads,
+observation, seal and boundary entry are observed. It stops at OWNER beforeOPEN;
+the exact helper returns0, with no particular failing condition yet identified.
+Quiet/loader release, callback restoration, observation finish, handles/process
+and private-input cleanup pass. No final/partial source envelope exists. Native
+GROUPS passed and REQALLENTS1 was queued; capture then reports TIMEOUT with
+COH_STATE7, not an observed command refusal. NONE/false does not prove zero
+incoming traffic or EDITMSG consumption. Source owner refusal does not establish
+the cause of this independent timeout. No READY/full-update ACK is introduced.
+
+Artifact12123023763 is1564B SHA
+`c0ec11b86e6aa285b2bfa9d31799f8906663c4a4d466e133e1c1f6a24afe3180`;
+summary3129B SHA
+`42f2958a248b7b8b94c65404e3210435ea5d3d3d8660a2c195adab803664ef7c`.
+F's single preserved copy and exact350+15-source-closure review are under
+`continuation-f-20261017/fresh-scene-39091755344`. The latter closure has14
+first-gate overlaps and one separately Git/producer-verified command manifest.
+
+Next source work is qualified separately: A/B add a fresh-role-only first failed
+owner-condition enum without changing accepted owner predicates or old83 bytes;
+C adds complete bounded handling only for the two actual DB commands, preserving
+unknown-command refusal, owner policy, phases and deadlines; D updates exact
+historical-proof/current-source admission; E/F review both. Root's two common
+CMake edits add the new parser TU only. No pending implementation/proof or new
+Map PE is accepted by this historical finding checkpoint.
+
 ## Bounded DB received-header checkpoint — 2026-10-18
 
 Publication parent is independently verified remote

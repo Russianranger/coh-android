@@ -1,0 +1,179 @@
+{
+  "actual_job_id": 117569810008,
+  "actual_observation": {
+    "Local_phase": {
+      "name": "COH_LOCAL_CLOSED",
+      "value": 5
+    },
+    "REQALLENTS_sent": 1,
+    "all_reported_outer_cleanup_and_stability_flags_true": true,
+    "capture_stage": "CLEANUP",
+    "coh_status": 7,
+    "coh_status_name": "COH_STATE",
+    "diagnostic_failure_code": "TIMEOUT",
+    "failure_code": "SOURCE_CAPTURE_NOT_ACCEPTED",
+    "failure_stage": "NATIVE_CAPTURE",
+    "initial_packet_observed": false,
+    "native_exit_code": 0,
+    "native_groups_result_passed": true,
+    "overall_passed": false,
+    "refused_command_kind": "NONE",
+    "refused_command_valid": false,
+    "runtime_executed": true,
+    "source_capture_checked": true,
+    "source_capture_present": false,
+    "source_partial_present": false,
+    "stdout_validated": true,
+    "terminal_DB_phase": {
+      "name": "COH_DB_CLOSED",
+      "value": 9
+    },
+    "terminal_Map_phase": {
+      "name": "COH_MAP_SCENE_INCOMPLETE",
+      "value": 5
+    }
+  },
+  "actual_profile_observation": {
+    "activity_epoch": 0,
+    "boundary_accepted": false,
+    "boundary_entered": true,
+    "callback_depth": 0,
+    "callbacks_idle": true,
+    "cleanup_attempted": true,
+    "complete": true,
+    "counter_saturated": false,
+    "diagnostic_only": true,
+    "envelope_committed": false,
+    "epoch_unchanged": true,
+    "folder_failure": "NONE",
+    "handles_closed": true,
+    "installation_thread_matched": true,
+    "installer_entered": true,
+    "loader_released": true,
+    "loader_status": 1,
+    "observation_finished": true,
+    "observation_started": true,
+    "owner_thread_matched": true,
+    "probe_state": "VALID",
+    "probe_validated": true,
+    "process_closed": true,
+    "process_started": true,
+    "queue_count": 0,
+    "queue_empty": true,
+    "queue_write_depth": 0,
+    "queue_writers_idle": true,
+    "refusal": "BOUNDARY_REFUSED",
+    "restored": true,
+    "schema": "coh-fresh-source-profile-diagnostic-v1",
+    "seal_attempted": true,
+    "seal_hook_entered": true,
+    "sealed": false,
+    "setter_depth": 0,
+    "setters_idle": true,
+    "sink_configured": true,
+    "source_generation_admitted": false,
+    "stage": "OWNER",
+    "update_depth": 0,
+    "update_idle": true,
+    "world_authority": false
+  },
+  "actual_run_id": 39091755344,
+  "artifact": {
+    "bytes": 1564,
+    "file": "fresh-scene-status-39091755344.zip",
+    "root_single_download_reused": true,
+    "sha256": "c0ec11b86e6aa285b2bfa9d31799f8906663c4a4d466e133e1c1f6a24afe3180"
+  },
+  "artifact_id": 12123023763,
+  "authority": {
+    "actor_identity_verified": false,
+    "actual_native_owned_receive_verified": false,
+    "exact_logical_packet_verified": false,
+    "matching_groups_transaction_captured": false,
+    "same_source_selected_dbid_verified": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "complementary_E_review": "Exact archive/strict26-25-42-8 keys,15 producer/current-Git pins and refusal scope read clear; no cause/subtype/handling inference or execution.",
+  "fixed_API": {
+    "archive_digest_run_source_steps_and_artifact_fields_verified": true,
+    "bytes": 5172,
+    "coordinator_schema": "coh-github-scene-run-fixed-api-v1",
+    "file": "api.json",
+    "fresh_network_query_by_reviewer": false,
+    "sha256": "3228036c8441e050b7fed337633daa2dd83eb73b19924364016f510461070d58",
+    "signed_download_URLs_or_private_logs_included": false
+  },
+  "interpretation": {
+    "NONE_refused_command_does_not_expose_EDITMSG_handling_count_subtype_text_or_length": true,
+    "OWNER_is_coarse_stage_not_specific_owner_gate_diagnosis": true,
+    "VALID_means_fixed_pipeline_validated_diagnostic_not_source_authority": true,
+    "epoch0_and_idle_counters_are_final_snapshot_observations_not_global_quiescence_proof": true,
+    "final_sealed_false_with_restored_true_does_not_mean_seal_was_never_attempted": true,
+    "installer_sink_seal_hook_and_boundary_entry_reported_true": true,
+    "loader_status_retained_as_numeric_fixed_field": true,
+    "native_exit0_is_GROUPS_diagnostic_success_not_overall_capture_success": true,
+    "no_initial_packet_source_envelope_or_partial_payload_retained": true,
+    "original_boundary_subpredicate_or_first_cause_not_identified": true,
+    "tooling_runtime_started_false_is_pre_runtime_scope_separate_from_summary_runtime_executed_true": true
+  },
+  "key_counts": {
+    "native": 25,
+    "profile": 42,
+    "summary": 26,
+    "tooling": 8
+  },
+  "members": {
+    "summary.json": {
+      "bytes": 3129,
+      "sha256": "42f2958a248b7b8b94c65404e3210435ea5d3d3d8660a2c195adab803664ef7c"
+    },
+    "tooling.json": {
+      "bytes": 397,
+      "sha256": "df779abf05d2aec165a3f48c3d1b1dac96adf8f8c4f8022ce639c493766c8111"
+    }
+  },
+  "passed": true,
+  "review_actions": {
+    "artifact_downloaded": false,
+    "private_profile_packet_log_account_or_receipt_exported": false,
+    "project_helper_native_loader_compiler_or_server_executed": false,
+    "runtime_dispatched_or_retried": false,
+    "tests_qualifiers_or_capture_replayed": false
+  },
+  "schema": "coh-f-fresh-scene-boundary-refusal-review-v1",
+  "scope": "read-only fixed public artifact/API and recorded Git-source admission; overall actual capture failed",
+  "source_binding": {
+    "actual_workflow_sha256": "0261d1a4404f51186986181805f16295f7b48bd732b3a0a4a138707d0935c262",
+    "additional_actual_Git_current_verified_path": [
+      "native-android/engine/initial-capture/command-source-pins.json"
+    ],
+    "additional_manifest_checked_by_summarize_committed_helper_before_emit": true,
+    "all350_executed_claimed": false,
+    "all350_frozen_source_and_artifact_pins_equal_actual_source_Git_and_current_files": true,
+    "prior_F_review_sha256": "eeac7b4ab68118937cb85f21990fffcc07a7f046867b087b6a6219170905a1f8",
+    "prior_F_workflow_review": "native-android/combined-client/diagnostics/continuation-f-20261017/workflow-fresh-groups-editmsg-observation-20261018/review.json",
+    "producer_closure_first_gate_overlap": 14,
+    "producer_enum_probe_closure_sha256": {
+      "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+      "native-android/engine/initial-capture/coh_initial_command_kinds.inc": "1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e",
+      "native-android/engine/initial-capture/command-source-pins.json": "3e99ac30e5448fb756728a742ffd48ada3920b78c6b9f7099635cd17634c4496",
+      "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+      "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+      "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": "a0a2a7ada32166e5fc48644879834f1fabacb08a07192116f985e1a044b450da",
+      "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile_api.h": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5",
+      "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c",
+      "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17",
+      "native-android/engine/scenecatalog-server/groups_capture_stages.py": "76faf1ee5dd3b0ef0f1a725869024cd6d4c7da4f6300f2221f4b0346599b442b",
+      "native-android/engine/scenecatalog-server/groups_native_status.py": "b066a1482db551472c2e7125cf59a1edbf82e269ad55699188fc903b66985781",
+      "native-android/engine/scenecatalog-server/summarize_groups_capture.py": "7b026f1291a5b1c69ee32415693e7c507f52125e76c5e41e45766fed4863681f",
+      "upstream/ouroboros/Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+    },
+    "source_preflight_and_new_receiver_reuse_actual_CI_steps_concluded_success": true
+  },
+  "source_revision": "5b9aef227c36c82b3f2bdca800037e33b5fd98af",
+  "source_tree": "e15aedb03a2dfb5586e916dd56a76806882b3fbc",
+  "strict_duplicate_nonfinite_JSON_CRC_fixed_keysets_and_types_verified": true
+}

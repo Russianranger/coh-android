@@ -1,0 +1,20 @@
+/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final/release/test.c: In function ‘reset’:
+/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final/release/test.c:28:71: error: ‘Entity’ has no member named ‘fixture’
+   28 |  entity.map_id=1;entity.static_map_id=1;entity.pchar=&character;entity.client=&client;
+      |                                                                       ^
+/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final/release/test.c:35:27: error: ‘ClientLink’ has no member named ‘fixture’
+   35 |  client.link=&owned;client.entity=&entity;client.lastSentFullUpdateID=59;client.ackedFullUpdateID=61;
+      |                           ^
+/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final/release/test.c:36:68: error: ‘Array’ has no member named ‘fixture’
+   36 |  array.size=1;array.maxSize=COH_SOURCE_GROUPS_OWNER_MAX_LINKS;array.storage=storage;
+      |                                                                    ^
+/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final/release/test.c: In function ‘fail_case’:
+/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final/release/test.c:75:14: error: ‘Array’ has no member named ‘fixture’
+   75 |  case 6:array.storage=NULL;break;case 7:array.maxSize=0;break;
+      |              ^
+/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final/release/test.c:85:68: error: ‘ClientLink’ has no member named ‘fixture’
+   85 |  case 18:output=(CohSourceGroupsOwner*)&client;break;case 19:client.entity=NULL;break;
+      |                                                                    ^
+/workspace/scratch/7ed1da2a7e55/b-owner-predicates-final/release/test.c:86:68: error: ‘Entity’ has no member named ‘fixture’
+   86 |  case 20:output=(CohSourceGroupsOwner*)&entity;break;case 21:entity.client=&foreign;break;
+      |                                                                    ^

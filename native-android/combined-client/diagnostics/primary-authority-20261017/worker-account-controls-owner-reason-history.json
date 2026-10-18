@@ -1,0 +1,40 @@
+{
+  "schema": "coh-preserved-account-controls-owner-reason-worker-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/account-controls-owner-reason-20261018/a",
+      "tip": "13a2f5a268fac643eba7d02f02bf608af72178df",
+      "prerequisite": "61c6d15b6585963c2c1cda2afd55ad6da805328c"
+    },
+    "C": {
+      "ref": "refs/recovery/account-controls-owner-reason-20261018/c",
+      "tip": "3b09d40847542698b538452d586bc3bd990aa320",
+      "prerequisite": "7a15b20d455864f30a29034ec12a63922deb73f8"
+    },
+    "D": {
+      "ref": "refs/recovery/account-controls-owner-reason-20261018/d",
+      "tip": "14ddf30a07e7cf517425199d645baeabde470be1",
+      "prerequisite": "11a4ef49177897fcbdcd5be4bd2caad463791a6d"
+    },
+    "F": {
+      "ref": "refs/recovery/account-controls-owner-reason-20261018/f",
+      "tip": "718190ce97055eb8a9c6837c717c7892a6a0da97",
+      "prerequisite": "844e482bb53bfb707c0e4e681f2b1aac71735947"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/account-controls-owner-reason-20261018/coordinator",
+      "tip": "647c916eee6cb244c9b69c75b9b2ce7698d7f5db",
+      "prerequisite": "b321a3dd883031072f26c63d4f2d9f4866b63d9d"
+    }
+  },
+  "bundle": "worker-account-controls-owner-reason-history.bundle",
+  "bytes": 718108,
+  "sha256": "b9712307d49716b17fdc9da6734ec129dfaa8f8d08a0139e664a54f2a4ee59c7",
+  "verification": "The bundle contains these 5 refs:\n13a2f5a268fac643eba7d02f02bf608af72178df refs/recovery/account-controls-owner-reason-20261018/a\n3b09d40847542698b538452d586bc3bd990aa320 refs/recovery/account-controls-owner-reason-20261018/c\n14ddf30a07e7cf517425199d645baeabde470be1 refs/recovery/account-controls-owner-reason-20261018/d\n718190ce97055eb8a9c6837c717c7892a6a0da97 refs/recovery/account-controls-owner-reason-20261018/f\n647c916eee6cb244c9b69c75b9b2ce7698d7f5db refs/recovery/account-controls-owner-reason-20261018/coordinator\nThe bundle requires these 66 refs:\nfdde1a0f519a547ac0743fb91aafaa8bfc114a8e \nc64abd947519ea12372ab6a1b712c6fdf103663c \n1a01a468cb102e75d0738089f55a38f125961720 \nea907c176e60a45a816fdc58c71e4752eaac48e5 \n034bd09cbcd371f929d6afd64ae7f70fdcacafa7 \n8ac2a544fc05c0834acf653495a57ad03c9d2cb6 \n169d0b36e95ec1f2e51573f56023088e8643a9a9 \n7f81a58cf34bef336f66fc7c03bee8e14dc507d1 \ncf6cd4e8b0557cdd3468e03a52006560f7012dd5 \nf0003a3f188d2a26eb5c27fe653616e1c018dee1 \n8613045c22d9faa76ba5b6b4635ea5dcce9138c7 \n2ade983336192ccf492ccdc63e4c732859784a0b \nd3da923c5c500895fd831990113339ddf5541694 \na84995b16f5fd197a1e5c9f8b64a0cc6e1068149 \nf9d1aecdf6e331a54f3eb77b075156446f454d4e \n12a9906bcde8a64cdcfe40d0634422ce555094a7 \nac1f40506a3b7cf625fe5e21b39a4430f3562630 \nf6ee1243756a686002843549093eb8cb0c606be1 \nf0e2e72451deea9d8523684b375780a7cce7ea47 \na62a75bde353bd940d0d56e33b38e17bc1a38f51 \ne3af5aff044335468a7a1427bad6baf1d95454cc \neaf55b4451fd008faa949d30cc739a8c476caf1a \n93bfd2347625ef53c6589a05d63f1f351be58aa7 \n3b7057a54c450e1ab80002561485961662c63caf \n433e62991e0ab4355187bec620cf70b85febb779 \na780aa66b97ce399b5ccee03bd2bc5523d86e751 \nb55a8f24b86c04120537d5c80aa0eaec096b8c76 \na54f1f5e70c2897e08a304a5de6651b4850e9bac \ne12a7e842658010017f2f2c6a728128af342a16e \na5e0c47b92ab22ad3a84b46da55417af8db1b737 \na17ea916f79978922c92ed02351b8f2900374764 \n0227723160e0e5169741592eda45d8e1d0fbedc6 \ncea9f80da2ae7d48d4e18ae01a25e2e9b0028f18 \n939af46895429da329acab166d03612b0c5f16eb \n5367ea2ec83042bfdbb3a0042a8158652a07e33b \n5c20e23cb7c41a39546a9ac1dfc42f3f3ed58309 \n3e220e1eb99041ae40efac713a7a6bf9ba5e46b3 \n7066d39c4b267f1cef3c59050eb2f30194084350 \nb321a3dd883031072f26c63d4f2d9f4866b63d9d \n5b9aef227c36c82b3f2bdca800037e33b5fd98af \ned77036d1b7f7e47588d74408506d738293643a9 \n77af974e93324fadc61b4d3fb3f5b4ca15636ba7 \nfe5efb4bb211a15791149f75822791be17a3677f \n1ca1d1db3f33891062f570ea19f9c036715e823c \nc98bb60fe187458f328a15882089ea742ce6e853 \n3b6bd0de1b728c6e2e8bc8f11e5af2b92908dfbc \nbd7b16b6ae188f9e8e1aa90542eb86287f38c312 \n2729bfc16c9f757fd850c24a0bc6df366a2e40ab \n827f1f1136b52f46fdcd787e7a6d31664b4d0b94 \n6a6809d07a130af60129f569b59a627420b6bf54 \nb3fbacf90626e29542e878313c2812eba1e1375b \nfd213266f1b6665acece877dabb7dab6663e647c \n91cacafa4451cf7504b5dd105f2790ae1c41739b \n81568446e43f56eb1a8aaf0970ab1ede13103f41 \n08e6a96f2af9cb317eecd6629e99db4200df177f \ndd5c3f9a2c30ea20b0a4c714007b1de0b0409546 \n824da3e9666ca5f04f5a0bee02449a8894cca2e4 \n643359f11c7805a25b0a2b3a430d46f13c7c68ae \na4cc6b61443cecf6394b0500028277874be6cf82 \n996af55882219a136405b75628713d9286825df2 \n83b93ed89775feb51793df6ee3fca7ac2f0d1334 \nd96354411d2f69ec325b1bfe9d0e14999626ba91 \n844e482bb53bfb707c0e4e681f2b1aac71735947 \n11a4ef49177897fcbdcd5be4bd2caad463791a6d \n61c6d15b6585963c2c1cda2afd55ad6da805328c \n7a15b20d455864f30a29034ec12a63922deb73f8 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-account-controls-owner-reason-history.bundle is okay\n",
+  "previously_preserved_unchanged_worker_tips": {
+    "B": "ca7e7e1d4d61374e65faa77f1a5ad47728fbd686",
+    "E": "4d6ba1733a3a32fca96beb844507cddd407d2b90"
+  },
+  "worker_B_new_oracle_contribution_preserved_in_A_tip": true,
+  "scope": "Qualified A/B first-owner-condition diagnostic, C complete bounded observed account-control bodies and strict C99 closure, D separately scoped historical-core and qualifier-tool admission, root two CMake and twelve dependency lists plus new28-check-per-mode native receiver composition, exact actual scene and Windows DB prefix failures, independent source/ELF/workflow review. Historical first fixture compile failure, C11/C99 proofs and driver pre-composition proof are retained. One new Map-only build and one new Auth-to-DB transaction remain pending. No actual new Windows/Map body/list/source generation/world/player/ACK/APK/ARM64-execution/Thor authority or global memory fit is inferred. New destination-helper draft is fail-closed pending actual Map receipt and not qualified by this checkpoint."
+}

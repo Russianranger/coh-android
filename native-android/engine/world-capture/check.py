@@ -21,7 +21,7 @@ def main():
  repo=a.source_root.resolve();native=repo/'native-android';checks={};peer_checks={}
  revision=run(['git','-C',repo,'rev-parse','HEAD']).strip();tree=run(['git','-C',repo,'rev-parse','HEAD^{tree}']).strip()
  clean_before=not run(['git','-C',repo,'status','--porcelain']).strip()
- relative=['engine/local/coh_local.c','engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c','engine/mapclient/coh_mapclient.c','engine/replication/coh_replication.c','engine/replication/coh_groups.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/auth/coh_auth.c','protocol/coh_protocol.c','src/coh_blowfish.c']
+ relative=['engine/local/coh_local.c','engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c', 'engine/dbclient/coh_db_account_controls.c','engine/mapclient/coh_mapclient.c','engine/replication/coh_replication.c','engine/replication/coh_groups.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/auth/coh_auth.c','protocol/coh_protocol.c','src/coh_blowfish.c']
  crypto=[native/'engine/auth/coh_auth_openssl.c',native/'engine/session/coh_session_crypto.c']
  sources=[native/f for f in relative]
  owned=[p for p in HERE.iterdir() if p.suffix in ['.c','.h','.py','.md']]

@@ -11,7 +11,7 @@ SOURCES = [
     'engine/network/coh_net.c', 'engine/network/coh_net_frame.c', 'engine/network/coh_net_zip.c',
     'engine/network/coh_net_udp.c', 'engine/auth/coh_auth.c',
     'engine/login/coh_login.c', 'engine/dbclient/coh_dbclient.c',
-    'engine/dbclient/coh_db_session.c', 'engine/live/coh_live.c',
+    'engine/dbclient/coh_db_session.c', 'engine/dbclient/coh_db_account_controls.c', 'engine/live/coh_live.c',
     'engine/mapclient/coh_mapclient.c',
     'engine/replication/coh_replication.c', 'engine/replication/coh_groups.c',
     'engine/session/coh_session_crypto.c',

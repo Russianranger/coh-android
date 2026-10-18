@@ -9,7 +9,7 @@ else:
 
 def value():
  out={'schema':p.SCHEMA,**{name:False for name in p.SOURCE_BOOLS},
-  'stage':'INSTALL','refusal':'NONE','folder_failure':'NONE','loader_status':0,
+  'stage':'INSTALL','refusal':'NONE','folder_failure':'NONE','owner_failure':'NONE','loader_status':0,
   **{name:0 for name in p.COUNTERS}}
  out.update(diagnostic_only=True,queue_empty=True,queue_writers_idle=True,
   update_idle=True,callbacks_idle=True,setters_idle=True)
@@ -49,8 +49,10 @@ class ProbeTests(unittest.TestCase):
    matches=re.findall(r'\b'+name+r'\[\]\s*=\s*\{([^}]+)\}',text)
    self.assertEqual(len(matches),1);self.assertEqual(tuple(re.findall(r'"([A-Z_]+)"',matches[0])),expected)
   fields=re.findall(r'\\"([a-z_]+)\\":',text)
-  self.assertEqual(len(fields),35);self.assertEqual(set(fields),p.SOURCE_KEYS)
+  self.assertEqual(len(fields),36);self.assertEqual(set(fields),p.SOURCE_KEYS)
   self.assertIn('COH_FRESH_PROBE_MAX 8192u',text)
+  header=Path(__file__).with_name('source_group_profile_api.h').read_text()
+  self.assertEqual(('NONE',*re.findall(r'^ X\(([A-Z_]+),',header,re.M)),p.OWNER_FAILURES)
 
  def test_strict_parser_types_keys_enums_and_source_bounds(self):
   good=value();self.assertEqual(p.parse(raw(good)),good)
@@ -74,6 +76,29 @@ class ProbeTests(unittest.TestCase):
    with self.subTest(item=item),self.assertRaisesRegex(p.ProbeRefused,'^PROBE_PARSE_REFUSED$'):p.parse(raw(item))
   for data in (b'{}',b'[]',raw()[:-2]+b',"stage":"INSTALL"}\n',b'\xff',b'x'*8192,b'{"schema":NaN}'):
    with self.subTest(data=data[:20]),self.assertRaises(p.ProbeRefused):p.parse(data)
+
+ def test_owner_reason_v2_fixed_vocabulary_and_no_legacy_normalization(self):
+  for reason in p.OWNER_FAILURES:
+   candidate=value();candidate['owner_failure']=reason
+   self.assertEqual(p.parse(raw(candidate))['owner_failure'],reason)
+  for reason in (0,True,None,{},'PRIVATE_OWNER_ID_PATH_CANARY','COH_FRESH_OWNER_LINK_PENDING'):
+   candidate=value();candidate['owner_failure']=reason
+   with self.assertRaises(p.ProbeRefused):p.parse(raw(candidate))
+  old=value();old['schema']='coh-fresh-source-profile-probe-v1';del old['owner_failure']
+  with self.assertRaises(p.ProbeRefused):p.parse(raw(old))
+  old_public=p.empty();old_public['schema']='coh-fresh-source-profile-diagnostic-v1'
+  with self.assertRaises(p.ProbeRefused):p.public(old_public)
+
+ def test_actual_owned_child_owner_reason_projection_excludes_private_binding(self):
+  candidate=value();candidate['owner_failure']='LINK_PENDING';candidate['stage']='OWNER'
+  candidate['refusal']='BOUNDARY_REFUSED';candidate['complete']=True
+  with Host(raw(candidate)) as host:
+   self.assertEqual(host.finish(),0);public,private=host.collect()
+   self.assertEqual(public['schema'],'coh-fresh-source-profile-diagnostic-v2')
+   self.assertEqual(public['probe_state'],'VALID');self.assertEqual(public['owner_failure'],'LINK_PENDING')
+   self.assertEqual(public['stage'],'OWNER');self.assertFalse(public['source_generation_admitted'] or public['world_authority'])
+   self.assertTrue(private['same_owned_closed_child_and_streams_verified'])
+   self.assertNotIn(str(host.path),json.dumps(public));self.assertNotIn('owned_child_pid',public)
 
  def test_actual_child_preexisting_file_and_private_public_separation(self):
   with Host() as host:

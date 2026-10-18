@@ -1,0 +1,13 @@
+test_exact_source_emitter_schema_and_fixed_names (coh_fresh_owner_probe_tests.ProbeTests.test_exact_source_emitter_schema_and_fixed_names) ... ok
+test_strict_parser_types_keys_enums_and_source_bounds (coh_fresh_owner_probe_tests.ProbeTests.test_strict_parser_types_keys_enums_and_source_bounds) ... ok
+test_owner_reason_v2_fixed_vocabulary_and_no_legacy_normalization (coh_fresh_owner_probe_tests.ProbeTests.test_owner_reason_v2_fixed_vocabulary_and_no_legacy_normalization) ... ok
+test_actual_owned_child_owner_reason_projection_excludes_private_binding (coh_fresh_owner_probe_tests.ProbeTests.test_actual_owned_child_owner_reason_projection_excludes_private_binding) ... ok
+test_exact_hook_positions_and_preserved_old_group (coh_fresh_owner_stage_tests.Controls.test_exact_hook_positions_and_preserved_old_group) ... ok
+test_crlf_staged_sources_preserve_raw_line_endings (coh_fresh_owner_stage_tests.Controls.test_crlf_staged_sources_preserve_raw_line_endings) ... ok
+test_synthetic_source_reconstruction_and_every_final_byte (coh_fresh_owner_stage_tests.Controls.test_synthetic_source_reconstruction_and_every_final_byte) ... ok
+test_owner_atom_order_reversibility_and_changed_table_refusal (coh_fresh_owner_stage_tests.Controls.test_owner_atom_order_reversibility_and_changed_table_refusal) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.115s
+
+OK

@@ -1,0 +1,73 @@
+{
+  "android_build_or_execution": false,
+  "changed_paths": 12,
+  "compiler_or_native_executed": false,
+  "files": {
+    "native-android/combined-client/tools/check_local_initial_capture.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "7baf06655a9fbf550379d2a50e3737ae66028929d2ceaa9f4d217ba654875b14",
+      "sha256": "2820e45729d40a5ae0289cebc088d48fe863030540b249912f25b7e70ffb7f8f"
+    },
+    "native-android/combined-client/tools/check_local_scene_capture.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "87e45e7e17352939f3747cb0998f8a82343d0b5a13b05edd33028507b764d105",
+      "sha256": "ee95c916c182cb9ec4bb235f7bdcb10441204e33fd503162a145ceac98408ee0"
+    },
+    "native-android/engine/auth-interop/check.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "41062a02db27b6dcaae56b0327672f8b0fedaa3ef1db445e0cbb42502c924a99",
+      "sha256": "cdd335d52596ffeef6f65aef130903eac677792359d77c2fe6a4aa18850da187"
+    },
+    "native-android/engine/build.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "d26d27d9c9c09b7f177f10c7eb46d42c4db5b81a7757e6040dfa1d1c60c412fe",
+      "sha256": "bc74ded0c22393a339a22292277be979b5a331a5dce4043ec1e7988cf3e011a6"
+    },
+    "native-android/engine/dbclient/check.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "2cd5e8b80b593584e71f63cab21d774c00d39ec4056ae846d4698da68faac410",
+      "sha256": "4264a6161665af11708a41d6b57fd4d3d5eb66ca153686c38a744d18f725c3d4"
+    },
+    "native-android/engine/entity-bootstrap/check.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "5576139c7594b107a2bc9807e651e3e76570824cde0c6afbd1600f03d47f8e8b",
+      "sha256": "9fd12afc716e2600d55b11b50d2d4b62123677e20330559be503ca97ed0bc155"
+    },
+    "native-android/engine/live/check.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "8ca0f36ea0a47e850f22d2747c5ab25725ea6661353daf24319aeeba1e2ce5b5",
+      "sha256": "357b56b2f1ff0c52e3ca1e1a84942b123971c4f52f21351f75a2d42f2f87d6fc"
+    },
+    "native-android/engine/local/check.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "90d0d6cc00913ec062e24973f45b77a2c3fc81ef21c4bfae3c716c1c9b054f74",
+      "sha256": "af5c16cb5b96eae3ab27bc298e233941aab980767d4850c4a08b2bd3063f5b50"
+    },
+    "native-android/engine/local/run_owned_android.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "89d7e2c5345dce0095744947f4de1efa78f27e6d9b1cf99fbc704c04a1cb981e",
+      "sha256": "0ab75fa5d548aa2367bf4d5dc5540ad556704693ef31043d22f05f593a59d661"
+    },
+    "native-android/engine/local/test_owned_android_driver.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "6041f208fc1d17e0737a2477c2ee6b806270d40b29a0d08b65fde609903ec1b9",
+      "sha256": "ff217f5fa09dc6489eacdfce06c21be718e2ba3645d33e96f6d041d47c1b4d28"
+    },
+    "native-android/engine/mapclient/check_owned.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "5e8e5ebf9f6dfa2342f66a764365b3f132d32c3dc7cf4d80d09172bdab5cc074",
+      "sha256": "8ef7f6f8121b8b9e84d94a473de42643f2b03ad2509d365c5c9ac6bbf1e68d9c"
+    },
+    "native-android/engine/world-capture/check.py": {
+      "only_new_parser_dependency_or_required_source_identity_added": true,
+      "previous_sha256": "cbe53964e24f759e355f3220de61fbd4d1e4431334a94070bb56b023010f5473",
+      "sha256": "72345d9c2cb07b60432edac70fafb213ee71bf07fc654ba0d5545d4f573292d0"
+    }
+  },
+  "old_qualifiers_reexecuted": false,
+  "passed": true,
+  "previous_revision": "3433c5c25358681b5312a585d5c20bae34045346",
+  "schema": "coh-db-account-controls-build-list-source-delta-v1",
+  "source_ast_equal_after_removing_new_parser_dependency": true,
+  "world_authority": false
+}

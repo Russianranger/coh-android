@@ -125,7 +125,7 @@ def main():
  with tempfile.TemporaryDirectory(prefix='coh-dbclient-') as d:
   tmp=Path(d);lib,pins=oracle(repo,tmp);count=fixtures(lib,tmp)
   common=[HERE/'coh_dbclient.c',repo/'native-android/protocol/coh_protocol.c',repo/'native-android/src/coh_blowfish.c',HERE.parent/'auth/coh_auth.c']
-  session_sources=[HERE/'coh_db_session.c',*[HERE.parent/'network'/f for f in ['coh_net.c','coh_net_frame.c','coh_net_udp.c','coh_net_zip.c']]]
+  session_sources=[HERE/'coh_db_session.c',HERE/'coh_db_account_controls.c',*[HERE.parent/'network'/f for f in ['coh_net.c','coh_net_frame.c','coh_net_udp.c','coh_net_zip.c']]]
   flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(tmp),'-I'+str(repo/'native-android/include')]
   modes=[('release',['-O2'])]
   if args.sanitize:modes+=[('asan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=address','-no-pie']),('ubsan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=undefined','-fno-sanitize-recover=all'])]

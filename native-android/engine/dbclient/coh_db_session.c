@@ -1,4 +1,5 @@
 #include "coh_db_session.h"
+#include "coh_db_account_controls.h"
 #include "coh_db_handoff_private.h"
 #include <stdlib.h>
 #include <string.h>
@@ -95,6 +96,21 @@ static CohStatus application_message(CohDbSession *s,const CohNetMessage *m) {
     int legacy=s->config.transport.link.version<4;uint32_t command;
     CohStatus result=message_command(m,legacy,&command);if(result!=COH_OK)return result;
     CohBytes body={m->payload,(m->payload_bits+7)/8};int aligned=m->compressed;
+    if(command==COH_DB_ACCOUNT_UNAVAILABLE||command==COH_DB_ACCOUNT_CHARCOUNT) {
+        if(s->diagnostics.phase!=COH_DB_WAIT_PLAYERS)return COH_STATE;
+        if(m->payload_bits>sizeof(m->payload)*8)return COH_INVALID;
+        CohDbAccountControl control;
+        result=coh_db_account_control_parse(body,m->payload_bits,aligned,legacy,&control);
+        if(result!=COH_OK)return result;
+        uint64_t *count=command==COH_DB_ACCOUNT_UNAVAILABLE?
+            &s->diagnostics.account_unavailable:&s->diagnostics.account_charcounts;
+        if(*count==UINT64_MAX)return COH_LIMIT;
+        if(command==COH_DB_ACCOUNT_CHARCOUNT) {
+            s->diagnostics.account_last_shards=control.shards;
+            s->diagnostics.account_last_error_branch=control.error_branch;
+        }
+        ++*count;return COH_OK;
+    }
     if(command==COH_DB_MESSAGE) {
         result=coh_db_server_error_parse(body,m->payload_bits,aligned,legacy);
         if(result!=COH_OK)return result;
