@@ -1,0 +1,126 @@
+name: Gates 25-27 Thor diagnostic APK
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-gates25-27-thor.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-gates25-27-thor-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  package:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[gates2527-thor]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Install the existing pinned Android build components
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+      - name: Reuse qualified crypto and exact accepted scene/runtime metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p native-android/results/gates25-27-thor
+          gh api repos/Russianranger/coh-android/actions/artifacts/11980774730/zip > /tmp/gates-crypto.zip
+          python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/gates-crypto.zip --crypto-root /tmp/gates-crypto --output native-android/results/gates25-27-thor/crypto-reuse.json
+          python3 native-android/combined-client/tools/prepare.py --evidence native-android/results/gates25-27-thor/build-inputs.json
+      - name: Build, lint and audit the ARM64 Thor test APK
+        run: |
+          python3 native-android/combined-client/gradle.py -PcohCryptoRoot=/tmp/gates-crypto :app:assembleDebug :app:lintDebug
+          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/gates25-27-thor/CoH-Native-Combined-0.1.8-gates25-27-arm64.apk
+          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/gates25-27-thor/CoH-Native-Combined-0.1.8-gates25-27-arm64.apk --abi arm64-v8a --require-clean --require-interop --output native-android/results/gates25-27-thor/arm64-package.json
+          python3 native-android/combined-client/tools/interop_package_audit.py --apk native-android/results/gates25-27-thor/CoH-Native-Combined-0.1.8-gates25-27-arm64.apk --abi arm64-v8a --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/gates25-27-thor/arm64-interop-dso.json
+      - name: Build and audit the separate Android 13 emulator APK and peer
+        run: |
+          python3 native-android/combined-client/gradle.py -PprobeAbis=x86_64 -PcohCryptoRoot=/tmp/gates-crypto :app:assembleDebug
+          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/gates25-27-thor/CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk
+          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/gates25-27-thor/CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk --abi x86_64 --require-clean --require-interop --output native-android/results/gates25-27-thor/x86_64-package.json
+          python3 native-android/combined-client/tools/interop_package_audit.py --apk native-android/results/gates25-27-thor/CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk --abi x86_64 --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/gates25-27-thor/x86_64-interop-dso.json
+          python3 native-android/combined-client/tools/build_interop_peer.py --ndk "$ANDROID_HOME/ndk/28.2.13676358" --crypto-root /tmp/gates-crypto/x86_64 --output native-android/results/gates25-27-thor/interop-peer
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gates25-27-thor-packages-${{ github.sha }}
+          path: native-android/results/gates25-27-thor/
+          if-no-files-found: error
+          retention-days: 90
+  android13:
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 1}
+      - uses: actions/download-artifact@v4
+        with:
+          name: gates25-27-thor-packages-${{ github.sha }}
+          path: native-android/results/gates25-27-thor
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Prepare the focused framework test
+        run: |
+          python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Test new diagnostic JNI, sockets, report and lifecycle on Android 13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/combined-client/tools/interop_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/gates25-27-thor/CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk --package-receipt native-android/results/gates25-27-thor/x86_64-package.json --peer native-android/results/gates25-27-thor/interop-peer/coh-initial-interop-peer-x86_64 --peer-receipt native-android/results/gates25-27-thor/interop-peer/build.json --output native-android/results/gates25-27-thor/android13
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gates25-27-thor-android13-${{ github.sha }}
+          path: native-android/results/gates25-27-thor/android13/
+          if-no-files-found: error
+          retention-days: 90
+  publish-test:
+    needs: [package, android13]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 1}
+      - uses: actions/download-artifact@v4
+        with:
+          name: gates25-27-thor-packages-${{ github.sha }}
+          path: package
+      - name: Publish the verified Thor test as a prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,pathlib,os
+          if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_RELEASE_ADMISSION_REFUSED')
+          root=pathlib.Path('package');p=root/'CoH-Native-Combined-0.1.8-gates25-27-arm64.apk'
+          receipt=json.loads((root/'arm64-package.json').read_bytes());dso=json.loads((root/'arm64-interop-dso.json').read_bytes())
+          assert receipt['source_commit']==dso['source_revision']==os.environ['GITHUB_SHA']
+          assert receipt['version_code']=='9' and receipt['version_name']=='0.1.8-gates25-27-test' and receipt['abi']=='arm64-v8a'
+          assert receipt['apk']['bytes']==p.stat().st_size and receipt['apk']['sha256']==hashlib.sha256(p.read_bytes()).hexdigest()
+          assert receipt['signer_certificate_sha256']=='9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522'
+          assert dso['apk']=={'bytes':receipt['apk']['bytes'],'sha256':receipt['apk']['sha256']}
+          assert dso['passed'] is True and dso['internal_core_and_static_archive_exports_hidden'] is True and dso['world_authority'] is False
+          PY
+          gh release create coh-native-combined-v0.1.8-gates25-27-test --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title 'CoH Native Combined 0.1.8 — Gates 25–27 Thor Test' --notes-file native-android/combined-client/diagnostics/gates25-27-thor-20261018/RELEASE-NOTES.md package/CoH-Native-Combined-0.1.8-gates25-27-arm64.apk package/arm64-package.json package/arm64-interop-dso.json

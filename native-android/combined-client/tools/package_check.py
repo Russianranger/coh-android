@@ -73,7 +73,10 @@ def audit(args):
                 continue
             _, abi, filename = i.filename.split('/')
             assert abi in ('arm64-v8a', 'x86_64')
-            assert filename in ('libproot.so', 'libproot-loader.so', 'libcoh_combined_network.so', 'libcoh_session_client.so', 'libc++_shared.so')
+            allowed = ('libproot.so', 'libproot-loader.so', 'libcoh_combined_network.so', 'libcoh_session_client.so', 'libc++_shared.so')
+            if args.require_interop:
+                allowed += ('libcoh_combined_interop.so',)
+            assert filename in allowed
             data = z.read(i)
             assert data[:5] == b'\x7fELF\x02', 'Native library is not ELF64'
             machine = int.from_bytes(data[18:20], 'little')
@@ -85,6 +88,8 @@ def audit(args):
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}
         assert 'lib/' + args.abi + '/libcoh_session_client.so' in libraries
+        if args.require_interop:
+            assert 'lib/' + args.abi + '/libcoh_combined_interop.so' in libraries
         if args.abi == 'arm64-v8a':
             assert all('lib/arm64-v8a/' + n in libraries for n in receipt['proot_cores'])
         # PE binaries, archives, PostgreSQL, rootfs and full game assets are never
@@ -94,10 +99,14 @@ def audit(args):
     metadata = run([tool(args, 'aapt'), 'dump', 'badging', args.apk])
     identity = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", metadata, re.M)
     assert identity and identity.group(1) == PACKAGE
+    if args.require_interop:
+        assert identity.group(2) == '9' and identity.group(3) == '0.1.8-gates25-27-test'
     assert "launchable-activity: name='org.coh.nativecombined.MainActivity'" in metadata
     signer = run([tool(args, 'apksigner'), 'verify', '--print-certs', args.apk])
     certificates = re.findall(r'Signer #\d+ certificate SHA-256 digest: (\S+)', signer)
     assert len(certificates) == 1
+    if args.require_interop:
+        assert certificates[0] == '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522', 'Test upgrade signer differs from accepted Combined builds'
     source = run(['git', '-C', args.source_root, 'rev-parse', 'HEAD']).strip()
     dirty = run(['git', '-C', args.source_root, 'status', '--porcelain', '--untracked-files=no'])
     if args.require_clean and dirty.strip():
@@ -106,12 +115,15 @@ def audit(args):
 
 
 def main():
+    if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):
+        raise ValueError('OPTIMIZED_PACKAGE_AUDIT_REFUSED')
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--apk', type=Path, required=True)
     p.add_argument('--abi', choices=['arm64-v8a', 'x86_64'], required=True)
     p.add_argument('--source-root', type=Path, default=Path(__file__).resolve().parents[3])
     p.add_argument('--build-tools', type=Path)
     p.add_argument('--require-clean', action='store_true')
+    p.add_argument('--require-interop', action='store_true', help='Require the separate Gates 25-27 diagnostic library and test version')
     p.add_argument('--output', type=Path, required=True)
     args = p.parse_args()
     value = audit(args)

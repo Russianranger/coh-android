@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "scope": "new fixture-generation recipe and host compile/readiness/cleanup ONLY; no protocol transaction or Android execution",
+  "new_helper_sha256": "a5ed5c20f2f67a8cd78a99b3cdc0076701289a3286a72f29ea961d76579fe133",
+  "fixture_sha256": {
+    "fixtures.h": "0e6aae45f26274265ae8d498904064dd8f86ea3db33b501cb78006bd09cc1484",
+    "account-fixtures.h": "357143926e92adef0c8dd3679944566fc9bc6153684250d01012ce70c9cd3c91",
+    "inventory-fixtures.h": "2bbe3755dd6da6c81ba34b0d84d95d835d08c8e4f46ad340d2ad7b93128b0916",
+    "server-command-fixtures.h": "1293dcf7d8039a943982e14729f18f2d94f82974f7528ab638e2230214d58938",
+    "groups-fixtures.h": "727a31288a648a8e7d3276aa4ce085be76a5144366713da0911645aef635910f"
+  },
+  "host_peer_bytes": 679976,
+  "host_peer_sha256": "8d417cc84fcb4a641f4bafd18c71462a20d372bc462a2ae789732ac96a4ba781",
+  "host_protocol_and_blowfish_O0_exception": "Matches existing qualifier; first all-O2 GCC diagnostic retained in build.stderr",
+  "opened_sockets": 2,
+  "closed_sockets": 2,
+  "old_qualifier_mains_executed": false,
+  "Android_built": false,
+  "actual_request_transaction": false,
+  "world_authority": false
+}

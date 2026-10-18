@@ -40,3 +40,30 @@ target_compile_features(coh_combined_network PRIVATE c_std_11)
 target_compile_options(coh_combined_network PRIVATE -Wall -Wextra -Werror -ffp-contract=off)
 target_link_options(coh_combined_network PRIVATE -Wl,--no-undefined -Wl,-z,defs)
 target_link_libraries(coh_combined_network PRIVATE "${CRYPTO_ABI_ROOT}/lib/libcrypto.a" z dl)
+
+# Explicit nonshipping Gates 25-27 observation role. Its Map/Local and transport
+# replacements keep the original production sources separate from the default
+# client; an observed initial packet grants no actor, ACK or world authority.
+add_library(coh_combined_interop SHARED interop_network.c
+    "${ENGINE}/initial-capture/coh_initial_local.c"
+    "${ENGINE}/initial-capture/coh_request_tx_map.c"
+    "${ENGINE}/initial-capture/coh_request_tx_net.c"
+    "${ENGINE}/initial-capture/coh_request_tx_udp.c"
+    "${ENGINE}/initial-capture/coh_request_tx.c"
+    "${ENGINE}/dbclient/coh_dbclient.c" "${ENGINE}/dbclient/coh_db_session.c"
+    "${ENGINE}/dbclient/coh_db_account_controls.c"
+    "${ENGINE}/mapclient/coh_mapclient_owned.c"
+    "${ENGINE}/replication/coh_replication.c" "${ENGINE}/replication/coh_groups.c"
+    "${ENGINE}/network/coh_net_frame.c" "${ENGINE}/network/coh_net_zip.c"
+    "${ENGINE}/auth/coh_auth.c" "${ENGINE}/auth/coh_auth_openssl.c"
+    "${ENGINE}/session/coh_session_crypto.c"
+    "${NATIVE_ROOT}/protocol/coh_protocol.c" "${NATIVE_ROOT}/src/coh_blowfish.c")
+set_target_properties(coh_combined_interop PROPERTIES C_VISIBILITY_PRESET hidden)
+target_include_directories(coh_combined_interop PRIVATE "${ENGINE}/initial-capture"
+    "${ENGINE}/session" "${NATIVE_ROOT}/include" "${CRYPTO_ABI_ROOT}/include")
+target_compile_features(coh_combined_interop PRIVATE c_std_11)
+target_compile_definitions(coh_combined_interop PRIVATE COH_INTEROP_REQUEST_TX=1)
+target_compile_options(coh_combined_interop PRIVATE -Wall -Wextra -Werror -ffp-contract=off)
+target_link_options(coh_combined_interop PRIVATE -Wl,--no-undefined -Wl,-z,defs
+    -Wl,--exclude-libs,ALL)
+target_link_libraries(coh_combined_interop PRIVATE "${CRYPTO_ABI_ROOT}/lib/libcrypto.a" z dl)

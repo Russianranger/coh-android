@@ -1,0 +1,54 @@
+{
+  "files": {
+    "native-android/combined-client/app/src/main/cpp/interop_network.c": {
+      "bytes": 19682,
+      "sha256": "392e5360e81a5b5032d1355f2ec3d44004ad06e2941828aae1f675a07b643b95"
+    },
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/InteropNative.java": {
+      "bytes": 1113,
+      "sha256": "0ffb0269afedc4d69cf24dcf02065be11393dccae0f790a901640efb006860d5"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/QUALIFICATION.md": {
+      "bytes": 5182,
+      "sha256": "d970c18b59eb33b9776a53602db812f8d93e5581ca14f7d189e48e7f5d925a8b"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02-binding.json": {
+      "bytes": 7197,
+      "sha256": "ed9aca0efe76dfdd4a4396aed5f5bdc81fac42d9e2fd936ed3ee92e9ff449880"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/receipt.json": {
+      "bytes": 47704,
+      "sha256": "f02e457e60d8224c7323ed7718f2d561179e47275ec7756d6e42e3ffbf6f2f2b"
+    }
+  },
+  "limitations": {
+    "actual_Android_NDK_JNI_ABI": false,
+    "actual_socket_or_original_server_transaction": false,
+    "global_memory_or_RSS_fit": false,
+    "physical_Thor_device": false,
+    "world_authority": false
+  },
+  "passed": true,
+  "review_method": "Independent read-only source, retained byte/hash/ELF and receipt review; no compilation, qualifier replay or runtime execution.",
+  "reviewer_correction": "Initial read-only local check used a wrong retained child-output filename; corrected to the exact binding member names, then all hashes/results matched. No source/test execution or evidence modification.",
+  "schema": "coh-interop-adapter-independent-worker-f-review-v1",
+  "source_findings": [
+    "Monotonic positive non-pointer handle tokens; one active owner and declared single-executor use; rejects stale tokens, busy and invalid argument paths.",
+    "All eight JNI declarations match Activity calls. Account UTF-16 length/printable range checked and native policy/config/IDs/account buffers wiped after begin or refusal.",
+    "Observer borrows synchronous lease only, validates local owner/event/generation/authority and bounds, retains scalar counts/lengths and a private generation, wipes lease before return; no packet or identity retention/export.",
+    "Private character picker JSON is separately bounded and escaped; list and output buffers wiped/freed across allocation and JNI array errors.",
+    "Active service/cancel/close use request witness scope; terminal service retires before destruction; subsequent terminal cleanup avoids reentering a valid retired witness. Optional witness allocation failure preserves original protocol operation.",
+    "Fixed numeric report has no endpoint/account/DBID/pointer/message-generation/payload fields; static phases and refusal names; all application/server/world authority flags false. Minimal CLOSED/REPORT_LIMIT fallback lacks success fields and is explicitly not sufficient for acceptance.",
+    "cleanup_verified is explicitly owned_transport_counters at terminal state and cannot establish freed owner storage, OS resource/global memory fit or server teardown."
+  ],
+  "verified_evidence": {
+    "binding_files": 31,
+    "compiler_and_header_hashes": 89,
+    "current_project_source_hashes": 21,
+    "instrumentation_scope": "JNI table, initial controller, crypto/provider and request witness are explicit doubles; ldd records resolved dependency identities, not loaded-process maps.",
+    "ldd_resolved_dependency_hashes": 7,
+    "raw_results": "Release, ASan and UBSan raw JSON each exactly match receipt: 485 checks, 14 scenarios, 26 wiped frees. Exact stderr empty; source-before equals source-after.",
+    "retained_ELFs": "All three gzip payloads match recorded raw size/SHA256 and ELF64 little-endian x86_64 machine.",
+    "retained_development_refusal": "Earlier header-change refusal retained and excluded from final02 acceptance."
+  }
+}

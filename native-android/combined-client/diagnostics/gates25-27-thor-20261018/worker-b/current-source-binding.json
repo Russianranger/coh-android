@@ -1,0 +1,9 @@
+{
+  "driver_sha256": "bacce4771827a66284cd7058461148a02116c6756b5dfc8246861c9872d0be51",
+  "peer_builder_sha256": "77c70138e3e70640d0e526541aba291ee16a8691696c342567cced2ce85e3ff3",
+  "fixture_function_sha256": "f305144cd6db88e43aa5c06e758674231e61a7462146a442c5d459484d49e5b0",
+  "host_recipe_uses_same_fixture_function_and_original_per_TU_O0_compilation": true,
+  "Android_actual_pending": true,
+  "no_old_qualifier_mains_executed": true,
+  "scope": "Read-only binding of final helper to same executed fixture producer; final main changes only per-TU recipe/receipt, pending actual NDK build"
+}

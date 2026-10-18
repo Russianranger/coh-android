@@ -1,0 +1,173 @@
+{
+  "schema": "coh-request-tx-focused-v1",
+  "passed": true,
+  "source_revision_context": "eb4f6c4bbb70b39e524ef30b3abca031b0da91db",
+  "source_sha256": {
+    "native-android/combined-client/tools/check_local_initial_capture.py": "722199b76f206fcd1c2fcfe925d99f105a69ffba6215e94d5d3dba8b8cdace4b",
+    "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_account_controls.c": "9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2",
+    "native-android/engine/dbclient/coh_db_account_controls.h": "9ac6ab90576973ecfac43a4cba8ea8a7e5805c230312645d85cffe5a778f63db",
+    "native-android/engine/dbclient/coh_db_account_inventory.h": "e21189e8df3f65e0a9095625f5a0da7a496dc279928ccb7b081d0708a10fdb3e",
+    "native-android/engine/dbclient/coh_db_handoff_owner.h": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45",
+    "native-android/engine/dbclient/coh_db_handoff_private.h": "6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd",
+    "native-android/engine/dbclient/coh_db_session.c": "6a36786b0bdaf86d27c16793b42fd311779bd24f5e0580fea6319377492dbc1d",
+    "native-android/engine/dbclient/coh_db_session.h": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711",
+    "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/initial-capture/REQUEST_TX.md": "07812b529d6b413e92a326299ffb948b4834855703b890338ef82920fe214caa",
+    "native-android/engine/initial-capture/check_request_tx.py": "0db324d71e2b7dc5a7e90a7b79b4bb35dda14ad0f6561b8bc5ed1679944ff6d4",
+    "native-android/engine/initial-capture/coh_initial_capture.h": "4e34321c6f36b8112c621b2155d031c27a091dcfad4ff3ca68fcb5a65599bf0a",
+    "native-android/engine/initial-capture/coh_initial_capture_private.h": "6638a085be28d42648a075b4aa5e6389408d1ec63d5577f9faf74d64c608188a",
+    "native-android/engine/initial-capture/coh_initial_command_kinds.inc": "1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e",
+    "native-android/engine/initial-capture/coh_initial_local.c": "c10545b32441b1ad0c90c845e023b6d178271d5062554aa3a8035b723e1e4ea8",
+    "native-android/engine/initial-capture/coh_initial_map.c": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4",
+    "native-android/engine/initial-capture/coh_request_tx.c": "47a52bd77b553fee158068f393829730be538aa9c323c624187a8071559ac3f4",
+    "native-android/engine/initial-capture/coh_request_tx.h": "72a47c0a6cb157a1f705812600f2bd0ade47095ab0b018ecba1cfd483a850c79",
+    "native-android/engine/initial-capture/coh_request_tx_internal.h": "f72430410a96589f9f8bc87a6e4f97780a4de922f95e7a33b92fe347bc39cae8",
+    "native-android/engine/initial-capture/coh_request_tx_map.c": "400b58f478de5774222d95520fc6a990306022bd5f79ab9ccd50108b1629fc70",
+    "native-android/engine/initial-capture/coh_request_tx_net.c": "7c0358aea98c913333b443d88642260270b7bab81b145577fca5f5f06eb24d7e",
+    "native-android/engine/initial-capture/coh_request_tx_udp.c": "b70ea47358423fe504541d2a890b3cedcd80c6ba5f788537dba6bb78c7516318",
+    "native-android/engine/initial-capture/test_request_tx.c": "87bebc7b0fe07056085dfd57e153ae24c323f397da8712d3322ed3d77569b9f6",
+    "native-android/engine/local/coh_local.c": "7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210",
+    "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+    "native-android/engine/mapclient/coh_mapclient.c": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199",
+    "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+    "native-android/engine/mapclient/coh_mapclient_owned.c": "555e85aa83b382e120097de793c59ba67c7b3566043f42889d9bd9aa9e666af5",
+    "native-android/engine/mapclient/coh_mapclient_owned.h": "1718436253c503c037f248b5c45bc037a14b582db94a90aa74fe87f6356fd8ff",
+    "native-android/engine/mapclient/coh_mapclient_owned_private.h": "be7a7dbfed758a424f81b3d6d29715c290d4156c9c4c923a57f0517198ba9e6e",
+    "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "native-android/engine/replication/coh_groups.c": "b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd",
+    "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+    "native-android/engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+  },
+  "transition": {
+    "map": {
+      "original_path": "native-android/engine/initial-capture/coh_initial_map.c",
+      "original_sha256": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4",
+      "replacement_sha256": "400b58f478de5774222d95520fc6a990306022bd5f79ab9ccd50108b1629fc70",
+      "marked_insertions": 3,
+      "exact_original_bytes_after_marker_and_include_reversal": true
+    },
+    "net": {
+      "original_path": "native-android/engine/network/coh_net.c",
+      "original_sha256": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+      "replacement_sha256": "7c0358aea98c913333b443d88642260270b7bab81b145577fca5f5f06eb24d7e",
+      "marked_insertions": 11,
+      "exact_original_bytes_after_marker_and_include_reversal": true
+    },
+    "udp": {
+      "original_path": "native-android/engine/network/coh_net_udp.c",
+      "original_sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+      "replacement_sha256": "b70ea47358423fe504541d2a890b3cedcd80c6ba5f788537dba6bb78c7516318",
+      "marked_insertions": 2,
+      "exact_original_bytes_after_marker_and_include_reversal": true
+    }
+  },
+  "modes": {
+    "release": {
+      "focused_unit": {
+        "passed": true,
+        "checks": 581,
+        "real_request_datagrams": 2,
+        "actual_sendto_io_failures": 1,
+        "outer_capture_and_request_bracket_doubled": true,
+        "original_server_executed": false,
+        "source_generation_admitted": false,
+        "actor_publication": false,
+        "ack_permitted": false,
+        "world_authority": false
+      },
+      "executed_unit_bytes": 75992,
+      "executed_unit_sha256": "b571c66981f3f17c38360f580d0938877bf656b280921f2c27ac339359b275b5",
+      "production_shared_role_bytes": 189672,
+      "production_shared_role_sha256": "8123d386bb2d25996e25939255f8f29eb13cf3906d43f019b1849c16e3c56257",
+      "production_shared_role_executed": false,
+      "maximum_static_frame_bytes": 83328,
+      "original_source_specific_O0": [
+        "coh_protocol.c",
+        "coh_blowfish.c"
+      ]
+    },
+    "asan": {
+      "focused_unit": {
+        "passed": true,
+        "checks": 581,
+        "real_request_datagrams": 2,
+        "actual_sendto_io_failures": 1,
+        "outer_capture_and_request_bracket_doubled": true,
+        "original_server_executed": false,
+        "source_generation_admitted": false,
+        "actor_publication": false,
+        "ack_permitted": false,
+        "world_authority": false
+      },
+      "executed_unit_bytes": 165408,
+      "executed_unit_sha256": "210506fa8f54d98b8498b920aa14cb1f380f0e167b4bd62207d220ce50a746b3",
+      "production_shared_role_bytes": 451744,
+      "production_shared_role_sha256": "3934ee35f7090b49cef4664b5176a2284acd7d1dc6ae73470324b7e0ec7656b5",
+      "production_shared_role_executed": false,
+      "maximum_static_frame_bytes": 83904,
+      "original_source_specific_O0": [
+        "coh_protocol.c",
+        "coh_blowfish.c"
+      ]
+    },
+    "ubsan": {
+      "focused_unit": {
+        "passed": true,
+        "checks": 581,
+        "real_request_datagrams": 2,
+        "actual_sendto_io_failures": 1,
+        "outer_capture_and_request_bracket_doubled": true,
+        "original_server_executed": false,
+        "source_generation_admitted": false,
+        "actor_publication": false,
+        "ack_permitted": false,
+        "world_authority": false
+      },
+      "executed_unit_bytes": 172240,
+      "executed_unit_sha256": "729a6e0b036bc9e4f421ec261e5ac93128f4cbdca6ecdfdeced1262336266dc0",
+      "production_shared_role_bytes": 354544,
+      "production_shared_role_sha256": "18cfc634b1e19cd771b4b0ac5f1081f1114b30ebf5fba611824c4a7a0b895c65",
+      "production_shared_role_executed": false,
+      "maximum_static_frame_bytes": 83312,
+      "original_source_specific_O0": [
+        "coh_protocol.c",
+        "coh_blowfish.c"
+      ]
+    }
+  },
+  "executed_unit_archive_bytes": 156915,
+  "executed_unit_archive_sha256": "ff85643cdf4c714f1d992bec57e8a38b642f328ad4f8e1b6ee05b2060c1a375d",
+  "witness_allocation_max_bytes": 256,
+  "public_output_has_no_packet_identity_or_pointer": true,
+  "outer_capture_and_request_bracket_explicit_doubles": true,
+  "actual_loopback_UDP_and_sendto_error_executed": true,
+  "original_qualifiers_or_fixtures_replayed": false,
+  "production_role_or_original_server_or_actual_source_session_executed": false,
+  "frozen_default_or_diagnostic_sources_changed": false,
+  "complete_global_aggregate_or_RSS_fit": false,
+  "leak_sanitizer_enabled": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

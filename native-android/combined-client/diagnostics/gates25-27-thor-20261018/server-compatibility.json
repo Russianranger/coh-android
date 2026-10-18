@@ -1,0 +1,106 @@
+{
+  "schema": "coh-native-combined-thor-server-compatibility-v1",
+  "source_revision": "eb4f6c4bbb70b39e524ef30b3abca031b0da91db",
+  "read_only_source_review": true,
+  "source_pins_match_raw_and_Git": true,
+  "source": {
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerService.java": {
+      "bytes": 30240,
+      "sha256": "1b29d95018a3e29fbae3771e7951d54d19aa1aa70affe9f33b166ed191308d8b"
+    },
+    "native-android/combined-client/runtime/server_runtime.py": {
+      "bytes": 60813,
+      "sha256": "36d4853bfd696254a326f8fd6b9595b1dbac3a9c761808b2a9654ceae91b5895"
+    },
+    "native-android/combined-client/imports/README.md": {
+      "bytes": 4231,
+      "sha256": "953abf6bff7d15d5d19c410eb7e3ea476477b622d4e876933f830e96535cd39f"
+    },
+    "native-android/combined-client/app/src/main/cpp/combined_network.c": {
+      "bytes": 13186,
+      "sha256": "22c8b465b0e2f722e9fd39abb2fcad2363a4212fbd77ad1c05cf641804e6e505"
+    },
+    "native-android/engine/local/coh_local.h": {
+      "bytes": 4531,
+      "sha256": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f"
+    },
+    "native-android/engine/local/coh_local.c": {
+      "bytes": 11732,
+      "sha256": "7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210"
+    },
+    "native-android/engine/mapclient/coh_mapclient.c": {
+      "bytes": 23015,
+      "sha256": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199"
+    },
+    "native-android/engine/network/coh_net_zip.c": {
+      "bytes": 7170,
+      "sha256": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747"
+    },
+    "native-android/engine/initial-capture/coh_initial_capture.h": {
+      "bytes": 8705,
+      "sha256": "4e34321c6f36b8112c621b2155d031c27a091dcfad4ff3ca68fcb5a65599bf0a"
+    },
+    "native-android/engine/initial-capture/coh_initial_map.c": {
+      "bytes": 17989,
+      "sha256": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": {
+      "bytes": 71802,
+      "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "bytes": 171294,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    }
+  },
+  "compatibility": {
+    "current_accepted_imports_sufficient_for_diagnostic_attempt": true,
+    "new_server_PE_or_assets_or_runtime_import_required_for_attempt": false,
+    "actual_new_APK_Thor_execution_performed": false,
+    "actual_new_ALLENTS_success_claimed": false,
+    "existing_server_runtime": "ARM64 PostgreSQL plus retained original PE DbServer/MapServer under Wine/FEX; no graphical game client",
+    "existing_native_client": "Native C/C++ UDP/crypto/zlib path; separate accepted offline scene preview",
+    "policy_source": "ServerService.updateLease + server_runtime.Owner.execute/ready_document",
+    "db_endpoint": "127.0.0.1:7000",
+    "transport_version": 5,
+    "encryption_required": false,
+    "outbound_compressed": false,
+    "inbound_compression_disabled_by_outbound_flag": false,
+    "map_endpoint": "Only actual owned DB handoff; IPv4 loopback required. Preserve saved Atlas map1/UDP7001 or Kings Row map5/UDP7003; do not force a map or hardcode Map port.",
+    "authentication": "Existing explicit local UseFakeAuth1 profile and coh_local_login_policy protocol/version-stamp development policy. No password or real AuthServer login.",
+    "ordinary_server_request": "MapServer svr_tick.c CLIENT_REQALLENTS requires existing entity, sets CLIENTSTATE_REQALLENTS and sent_self=0. Original tick then calls entSendUpdate; full_update emits SERVER_ALLENTS.",
+    "outbound_request_compatibility": "coh_mapclient.send_command serializes uncompressed command using actual transport profile and reliable queue. Existing explicit uncompressed packets are supported; outbound_compressed=false does not prevent decoding compressed inbound GROUPS.",
+    "diagnostic_bounds": "CohInitialCapture observes complete bounded GROUPS, queues one REQALLENTS after successful observer/release, permits only bounded parsed EDITMSG while waiting, observes at most one raw ALLENTS under existing4MiB cap, then closes. No READY, RECEIVED_CHARACTER or full-update ACK."
+  },
+  "device_procedure_existing_combined_install": [
+    "Stop server/current operation in existing Combined and wait for stopped. Stop the conventional COH launcher too; only one local owner may use shared ports7000/7001/7003.",
+    "Install the new signed APK as an update to org.coh.nativecombined. Preserve app storage, imports, existing profile and saved character; no reimport/setup/reset for this update.",
+    "Start server and wait for Server ready. Initial server startup may take several minutes; do not run another client/server owner concurrently.",
+    "Launch the native client manually. Start the new initial replication diagnostic using the current service policy and choose the existing saved test character from the actual returned DB list. Perform one attempt and wait for terminal result.",
+    "Keep the app foreground during the attempt. Home/background or explicit cancellation revokes the owner; use a new explicit attempt only after preserving the first result.",
+    "Export the native JSON. Return to launcher, export the complete launcher/server/native report ZIP, then Stop server and wait for stopped. Preserve displayed failure/counters if unsuccessful; do not clear data or create a replacement character."
+  ],
+  "scope": {
+    "Gate25_evidence_target": "Real Thor local DB/Map transport, GROUPS reception and request-specific native TX observation",
+    "Gate26_scope_limit": "Existing local-development DB selection and real claimed handoff only; normal encrypted AuthServer/version/checksum policy remains unqualified",
+    "Gate27_scope_limit": "Raw initial-replication observation only; no server-player publication, complete character, accepted world state or authoritative rendering",
+    "source_generation_admitted": false,
+    "complete_character_admitted": false,
+    "actor_publication": false,
+    "application_ACK_admitted": false,
+    "world_authority": false
+  },
+  "next_server_request_ledger_only_if_needed": {
+    "condition": "Only after actual request-specific native TX witness succeeds but original ALLENTS remains missing; queued request or unrelated post-queue datagrams alone do not establish server receipt.",
+    "receive_seam": "upstream/ouroboros/MapServer/src/svr/svr_tick.c::CLIENT_REQALLENTS decoded case, no-entity refusal and ready transition",
+    "tick_seam": "Same file: current client/entity readiness and entSendUpdate eligibility",
+    "producer_seam": "upstream/ouroboros/MapServer/src/entity/entsend.c::entSendUpdate full_update SERVER_ALLENTS construction/queue",
+    "requirements": "Fixed counters bound to same actual held link/client/entity generation; no raw IDs, packets, server strings, invented state, changed readiness/ACK behavior or full-suite replay.",
+    "implemented_or_required_before_attempt_APK": false
+  },
+  "execution": {
+    "services_or_native_programs_or_Windows_helpers_run": false,
+    "tests_or_workflows_run": false,
+    "code_or_service_settings_modified": false
+  }
+}

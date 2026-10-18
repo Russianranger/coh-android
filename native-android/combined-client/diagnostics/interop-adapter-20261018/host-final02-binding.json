@@ -1,0 +1,134 @@
+{
+  "actual_Android_or_original_server": false,
+  "files": {
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-asan-interop_network.su": {
+      "bytes": 1853,
+      "sha256": "f5544b9494f64033522cbee0a8da4faad3552ce77afccf95153feb557406d9a4"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-asan-test_interop_adapter.su": {
+      "bytes": 5173,
+      "sha256": "31ea1566fa44c7b54d551a438008cfb56d0fa4c08140d1d0e5fad5a0bd3683d7"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-asan.gz": {
+      "bytes": 78593,
+      "sha256": "2a8a1ecbfc916dc1db980020525906b3daefdc3a4b27356e437f37c1a0129614"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-release-interop_network.su": {
+      "bytes": 1397,
+      "sha256": "8b631401e0b941c3192ae8a5ccd0ca62789bef8558128896a6b0a71359047e37"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-release-test_interop_adapter.su": {
+      "bytes": 5058,
+      "sha256": "8e008a1e91e83bcb73e013c5883a733ec77c02a0ff9547ace062dae82037bdf8"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-release.gz": {
+      "bytes": 17290,
+      "sha256": "037c7d3471c3f33820644d38ace743d346b1d7a2da2cb1486449114548ad3496"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-ubsan-interop_network.su": {
+      "bytes": 1658,
+      "sha256": "c4ba23823fb000ce1474767ad80b0915df708e95064ee697600a64c2564695ea"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-ubsan-test_interop_adapter.su": {
+      "bytes": 5044,
+      "sha256": "214d887e46f0e8f5c9316f91fe1bd0dcc3c0718877d0f2f6e8766dbfdd3eea06"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/adapter-ubsan.gz": {
+      "bytes": 72458,
+      "sha256": "1a37e27c076fbadc4b8817df650e015874d7fbb6ad8edd62d8b2d1646917c631"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/asan-child.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/asan-child.stdout": {
+      "bytes": 2567,
+      "sha256": "98f09ca40a646f6ad32d71aa33818e6925a95953026e232eb65a518e0b7e124c"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/asan-compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/asan-compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/asan-ldd.txt": {
+      "bytes": 370,
+      "sha256": "eedfbbb2641c3733c026dad06e61560e62c1b6ea9caa9d2da439cc24e043a85c"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/compiler-header-before.json": {
+      "bytes": 10102,
+      "sha256": "6a5af576b8bf93d816af5e8b023c349b4137bbbd471b13f9d7a84f007d272f33"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/compiler-version.txt": {
+      "bytes": 264,
+      "sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/dependencies.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/dependencies.stdout": {
+      "bytes": 9767,
+      "sha256": "e08a8a0f372f407c1029c0922b8b12f131db01a588b0c739ee44e098dd7f9725"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/receipt.json": {
+      "bytes": 47704,
+      "sha256": "f02e457e60d8224c7323ed7718f2d561179e47275ec7756d6e42e3ffbf6f2f2b"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/release-child.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/release-child.stdout": {
+      "bytes": 2567,
+      "sha256": "98f09ca40a646f6ad32d71aa33818e6925a95953026e232eb65a518e0b7e124c"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/release-compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/release-compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/release-ldd.txt": {
+      "bytes": 155,
+      "sha256": "0dae7fdd0a06588ba149b9dc852579c9b461a01b75166273432a4d5397867445"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/source-after.json": {
+      "bytes": 2711,
+      "sha256": "cebe33a9164099454f4c7f44dc4001000b72281ca5f6c0e3eb900dc9260676d3"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/source-before.json": {
+      "bytes": 2711,
+      "sha256": "cebe33a9164099454f4c7f44dc4001000b72281ca5f6c0e3eb900dc9260676d3"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/ubsan-child.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/ubsan-child.stdout": {
+      "bytes": 2567,
+      "sha256": "98f09ca40a646f6ad32d71aa33818e6925a95953026e232eb65a518e0b7e124c"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/ubsan-compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/ubsan-compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/host-final02/ubsan-ldd.txt": {
+      "bytes": 449,
+      "sha256": "0c0802ac5f215e0891f39f09c19591215013f9f93482d6bd828747c2a037caff"
+    }
+  },
+  "passed": true,
+  "production_code_execution_with_explicit_JNI_initial_owner_crypto_request_doubles_only": true,
+  "schema": "coh-interop-adapter-host-final-binding-v1",
+  "three_retained_host_ELFs": true,
+  "world_authority": false
+}

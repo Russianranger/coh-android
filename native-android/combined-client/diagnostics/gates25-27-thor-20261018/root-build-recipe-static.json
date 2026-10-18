@@ -1,0 +1,22 @@
+{
+  "schema": "coh-gates25-27-build-recipe-static-v1",
+  "passed": true,
+  "base_revision": "eb4f6c4bbb70b39e524ef30b3abca031b0da91db",
+  "source_sha256": {
+    ".github/workflows/native-gates25-27-thor.yml": "f123492f602fb01c2998798cbc90bf3ac72a12dbd5fd51f5454e906d0101a30e",
+    "native-android/combined-client/app/build.gradle": "3330b21b53c80367c1c244249787662de649c2e727abcf5274fceeac18196273",
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt": "80c01d49af00ea306af339880db0131b427ea8be0cecc2e4205644ac109e045f",
+    "native-android/combined-client/tools/package_check.py": "482f50d47178541ddca3e1778c15b5f00e15c2188235eb1366c9b5dc28829f05",
+    "native-android/combined-client/tools/interop_package_audit.py": "b32e9e805da2eac048dd3cbf3da7a5836cf529a274af19f202a9fb38572378ab",
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/RELEASE-NOTES.md": "919057a645da237919437bafb7a6ebc5a009ebf4ad5b9a90e5afadf8a5211815"
+  },
+  "shell_steps_parsed": 6,
+  "release_Python_AST_parsed": true,
+  "publication_requires_ARM64_package_and_new_Android13_success": true,
+  "unchanged_crypto_build_reused": true,
+  "broad_host_check_or_old_framework_suite_requested": false,
+  "APK_native_or_Android_runtime_executed_locally": false,
+  "Thor_compatibility_qualified": false,
+  "original_server_interoperability_qualified": false,
+  "world_authority": false
+}

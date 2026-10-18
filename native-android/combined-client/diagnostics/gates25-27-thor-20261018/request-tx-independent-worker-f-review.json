@@ -1,0 +1,85 @@
+{
+  "files": {
+    "native-android/engine/initial-capture/REQUEST_TX.md": {
+      "bytes": 4103,
+      "sha256": "07812b529d6b413e92a326299ffb948b4834855703b890338ef82920fe214caa"
+    },
+    "native-android/engine/initial-capture/check_request_tx.py": {
+      "bytes": 7576,
+      "sha256": "0db324d71e2b7dc5a7e90a7b79b4bb35dda14ad0f6561b8bc5ed1679944ff6d4"
+    },
+    "native-android/engine/initial-capture/coh_request_tx.c": {
+      "bytes": 7335,
+      "sha256": "47a52bd77b553fee158068f393829730be538aa9c323c624187a8071559ac3f4"
+    },
+    "native-android/engine/initial-capture/coh_request_tx.h": {
+      "bytes": 3049,
+      "sha256": "72a47c0a6cb157a1f705812600f2bd0ade47095ab0b018ecba1cfd483a850c79"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_internal.h": {
+      "bytes": 821,
+      "sha256": "f72430410a96589f9f8bc87a6e4f97780a4de922f95e7a33b92fe347bc39cae8"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_map.c": {
+      "bytes": 18258,
+      "sha256": "400b58f478de5774222d95520fc6a990306022bd5f79ab9ccd50108b1629fc70"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_net.c": {
+      "bytes": 25858,
+      "sha256": "7c0358aea98c913333b443d88642260270b7bab81b145577fca5f5f06eb24d7e"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_udp.c": {
+      "bytes": 11684,
+      "sha256": "b70ea47358423fe504541d2a890b3cedcd80c6ba5f788537dba6bb78c7516318"
+    },
+    "native-android/engine/initial-capture/qualification/request-tx-20261018/development.json": {
+      "bytes": 1725,
+      "sha256": "4d0e6ba4abe42eb7195b338da37a9cf036d5b31031a0c797cd4623cc4134153a"
+    },
+    "native-android/engine/initial-capture/qualification/request-tx-20261018/executed-unit-elfs.tar.gz": {
+      "bytes": 156915,
+      "sha256": "ff85643cdf4c714f1d992bec57e8a38b642f328ad4f8e1b6ee05b2060c1a375d"
+    },
+    "native-android/engine/initial-capture/qualification/request-tx-20261018/qualification.json": {
+      "bytes": 11494,
+      "sha256": "e6d241abddeb4448cbe695fd69c0a69234a572617194aebc25083e34128004d8"
+    },
+    "native-android/engine/initial-capture/test_request_tx.c": {
+      "bytes": 12614,
+      "sha256": "87bebc7b0fe07056085dfd57e153ae24c323f397da8712d3322ed3d77569b9f6"
+    }
+  },
+  "limitations": {
+    "actual_Android_NDK_or_emulator_execution": false,
+    "full_initial_character": false,
+    "original_server_transaction": false,
+    "outer_capture_and_request_bracket_explicit_doubles": true,
+    "production_role_executed_by_host_proof": false,
+    "world_authority": false
+  },
+  "passed": true,
+  "review_method": "Independent read-only source, byte reversal, current pins and retained archive/ELF/raw-output inspection. No compile, native execution or qualifier replay.",
+  "schema": "coh-request-tx-independent-worker-f-review-v1",
+  "source_findings": [
+    "Three replacement translation units reverse exactly to unchanged original Map/Net/UDP bytes after only marked scalar hooks and relative include wiring. No hook result controls protocol decisions or returns.",
+    "Exact existing REQALLENTS call bracket binds capture to Map UDP to actual NetLink. One committed reliable unfragmented uncompressed Tx assignment supplies a private identity; unrelated queues/callbacks cannot supply it.",
+    "Pre-callback Tx ID/sent snapshots and bounded in-flight key survive synchronous UDP error close/queue clearing until the exact callback result is recorded. CohStatus 0..COH_STATE(7) accepted as typed values; unknown 8 refused.",
+    "Only original decoded used+sent+ID-matching ACK-removal branch records peer transport ACK. Generic clearing is separate; first retirement remains latched and ACK cannot arise from cleanup.",
+    "Single-caller-thread TLS scope always unwinds; absent/refused witness still delegates once to the original operation with identical arguments/result. Caller must avoid callback reentry/concurrent destruction and retire before capture destroy; JNI integration follows it.",
+    "One allocation statically at most256 bytes, no packet/identity export; private borrowed keys/Tx ID cleared at retirement and whole witness volatile-wiped before free. Global aggregate/RSS fit remains unqualified.",
+    "Public counters and offsets are bounded; callback acceptance associates this Tx but transport ACK does not establish server dispatch/application ACK/complete character/actor/world. All such authority flags remain zero."
+  ],
+  "verified_evidence": {
+    "byte_exact_original_reversals": {
+      "map_markers": 3,
+      "net_markers": 11,
+      "udp_markers": 2
+    },
+    "closure_limit": "53 project-source pins are independently current. This receipt does not establish a full compiler/system-header/shared-library identity closure.",
+    "current_source_hashes": 53,
+    "development": "Earlier failed attempts and absent failed ELF retention are explicitly disclosed.",
+    "production_role": "Receipt records 18 source translation units compiled/linked per mode, source-specific O0 protocol/Blowfish, never executed. Shared production libraries are recorded hashes, not retained/executed by this proof.",
+    "retained_archive": "156915 bytes, SHA256 ff85643cdf4c714f1d992bec57e8a38b642f328ad4f8e1b6ee05b2060c1a375d; exact three regular ELF64 x86_64 payloads match raw size/hash.",
+    "three_mode_raw_results": "Each raw release/ASan/UBSan result equals qualification: 581 checks, two actual REQALLENTS loopback datagrams and one actual sendto EBADF shape; stderr empty."
+  }
+}

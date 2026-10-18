@@ -1,0 +1,65 @@
+{
+  "files": {
+    ".github/workflows/native-gates25-27-thor.yml": {
+      "bytes": 8659,
+      "sha256": "f123492f602fb01c2998798cbc90bf3ac72a12dbd5fd51f5454e906d0101a30e"
+    },
+    "native-android/combined-client/app/build.gradle": {
+      "bytes": 2410,
+      "sha256": "3330b21b53c80367c1c244249787662de649c2e727abcf5274fceeac18196273"
+    },
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt": {
+      "bytes": 4246,
+      "sha256": "80c01d49af00ea306af339880db0131b427ea8be0cecc2e4205644ac109e045f"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/RELEASE-NOTES.md": {
+      "bytes": 2331,
+      "sha256": "919057a645da237919437bafb7a6ebc5a009ebf4ad5b9a90e5afadf8a5211815"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/root-build-recipe-static.json": {
+      "bytes": 1391,
+      "sha256": "5b6ba8525e5a3f2d39b408470669c057a160e6d89d5459299309a10c853ac01e"
+    },
+    "native-android/combined-client/tools/build_interop_peer.py": {
+      "bytes": 7258,
+      "sha256": "77c70138e3e70640d0e526541aba291ee16a8691696c342567cced2ce85e3ff3"
+    },
+    "native-android/combined-client/tools/interop_emulator_check.py": {
+      "bytes": 22381,
+      "sha256": "bacce4771827a66284cd7058461148a02116c6756b5dfc8246861c9872d0be51"
+    },
+    "native-android/combined-client/tools/interop_package_audit.py": {
+      "bytes": 4953,
+      "sha256": "b32e9e805da2eac048dd3cbf3da7a5836cf529a274af19f202a9fb38572378ab"
+    },
+    "native-android/combined-client/tools/package_check.py": {
+      "bytes": 8336,
+      "sha256": "482f50d47178541ddca3e1778c15b5f00e15c2188235eb1366c9b5dc28829f05"
+    }
+  },
+  "limitations": {
+    "Thor_compatibility_qualified": false,
+    "complete_aggregate_or_RSS_GPU_fit": false,
+    "original_server_interoperability_qualified": false,
+    "world_authority": false
+  },
+  "passed": true,
+  "pending_actual_admission": [
+    "Actual ARM64/x86_64 APK bytes, manifest/signature and each new DSO dynexports.",
+    "Actual API33 framework/NDK JNI/socket/SAF/cancellation/reconnect receipt and mapped DSO identity.",
+    "Published prerelease/asset identity only after successful job gates."
+  ],
+  "review_method": "Read-only final source/workflow/receipt inspection; six shell blocks parsed with bash -n, one inline Python and four tools AST-parsed; no build, qualifier or device/runtime execution.",
+  "schema": "coh-gates25-27-root-recipe-independent-worker-f-review-v1",
+  "verified_findings": [
+    "Current six recipe hashes exactly match regenerated root-build-recipe-static.json, including request-witness compile definition.",
+    "Existing default-network CMake prefix remains byte-exact to HEAD. Separate interop target replaces Map/Net/UDP TUs and includes capture Local owner/request witness once, keeping default target separate.",
+    "Interop C_VISIBILITY_PRESET hidden and --exclude-libs,ALL hide copied core/static-crypto symbols; JNIEXPORT keeps eight public JNI entrypoints. Actual both-ABI dynamic-export audit is required before publication.",
+    "VersionCode9/name0.1.8-gates25-27-test and original package/launcher/public-test signer are required. require-interop admits/requires only the new named DSO while preserving bounded metadata, assets and ELF architecture checks.",
+    "Both audits and release assertions hard-refuse Python optimization. Actual APK audit requires exact eight JNI exports (optional _init/_fini), no other core/static exports, ELF64 target and clean committed reviewed source subset. It explicitly does not claim complete compiler dependency closure.",
+    "Workflow reuses qualified crypto artifact and accepted scene/runtime metadata, builds/lints ARM64 debug APK, separately builds x86_64 APK and peer, then requests only the new API33 JNI/socket/export/cancel/reconnect driver. No broad host_check or prior framework qualifier is requested.",
+    "Prerelease job depends on both package and android13 success and binds current GITHUB_SHA, version, ABI, exact APK bytes/hash and original signer plus matching DSO-audit APK hash. Release is explicitly a Thor diagnostic prerelease.",
+    "Release instructions preserve existing user data and request safe stop/update/start, explicit handoff and exports; do not force endpoint, map, encryption or new character. All new diagnostic privacy, incomplete-character and authority limits are stated.",
+    "Current top HANDOFF accurately separates host doubles, actual socket witness tests, pending NDK/Android/physical Thor work and open Gates25-27. Historical outcome entries remain historical."
+  ]
+}

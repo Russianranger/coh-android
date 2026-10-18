@@ -1,0 +1,10 @@
+{
+  "host_artifact_archive": {
+    "bytes": 180217,
+    "sha256": "5a3954eaaebd98d9a413e128442b0843b0ce271d0099138de830dcca8ef6142b"
+  },
+  "scope": "New fixture preparation and host peer compile/readiness/cleanup ONLY; no host request transaction, Android or old qualifier main execution.",
+  "first_compile_failure": "first-host-O2-build.stderr records old protocol GCC-O2 warning. Corrected host object recipe preserves accepted protocol/BlowfishO0.",
+  "new_focused_driver_controls": "2valid/15refusalcontrols, numeric public privacy and bounds only",
+  "Android_build_and_emulator_pending_primary_workflow": true
+}

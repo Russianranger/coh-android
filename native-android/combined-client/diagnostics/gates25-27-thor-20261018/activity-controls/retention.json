@@ -1,0 +1,113 @@
+{
+  "activity_path": "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java",
+  "files": {
+    "0.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "0.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "1.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "1.stdout": {
+      "bytes": 118,
+      "sha256": "8473fc59f5ffbe701b35fb1a59e7798e24b8eb34d2e616d05ca3baffc5e23fc2"
+    },
+    "NativeClientActivity.java.source": {
+      "bytes": 41700,
+      "sha256": "2187f323b27818a7b6b2a8dbf04a96fa9ea055ee994efe5291a0cc2d37f7dec6"
+    },
+    "WorkerControls.java": {
+      "bytes": 15824,
+      "sha256": "8109fbf0e437fc9d8e4cd17bc146d32f730b84fa7c3dbc55c87bb75b45b57432"
+    },
+    "android/view/View.java": {
+      "bytes": 80,
+      "sha256": "e230b4e1fa21ecb4327d778506aff36f4cadd9819f31d2f1da71824edbc26324"
+    },
+    "check_worker.py": {
+      "bytes": 13443,
+      "sha256": "fb04fc55b39b3407caef9d68b1e27d2191b32541c93d600120c8a0cd34eaaa1e"
+    },
+    "classes/InteropNative.class": {
+      "bytes": 925,
+      "sha256": "d660fa647394a17dff6498e1a1f9d03efb11e8f2fa48284cd26f7bfb44aafc13"
+    },
+    "classes/JSONArray.class": {
+      "bytes": 221,
+      "sha256": "5c18f943a15d235f0828369ff6a008c1c3e954e44b05af130035b5c0092b1afd"
+    },
+    "classes/JSONObject.class": {
+      "bytes": 1686,
+      "sha256": "10e95b5719b6fcf3244d1b9e8570203ccabc3568ead2cf7c255218329500d294"
+    },
+    "classes/LocalNative.class": {
+      "bytes": 923,
+      "sha256": "5a1052d7bc133e7bc88071304d72f7c7b7fb66a9c3f6f357fa6f2e9e6a9c5021"
+    },
+    "classes/NativeDouble.class": {
+      "bytes": 2303,
+      "sha256": "fd108129eda65f3a40d7a382df05278b7d6dd6d84e4de48b3cbf4d528e134e86"
+    },
+    "classes/QueueWorker.class": {
+      "bytes": 743,
+      "sha256": "daa85595821618e2279cebbec116576c4a0b280c109e623dfc8cf521fe831d1d"
+    },
+    "classes/SystemClock.class": {
+      "bytes": 358,
+      "sha256": "3303fcf8f0db30dee5d56c9f3a626b3f6f2a300931c5b285a485f55e026de551"
+    },
+    "classes/Ui.class": {
+      "bytes": 440,
+      "sha256": "12822cd8c3af685f1d7caca9ab5e1e7f50091ce663f7acbddbc5842f830446ad"
+    },
+    "classes/WorkerControls$NetworkMode.class": {
+      "bytes": 1010,
+      "sha256": "bcacd39cedb97a2b9c3303db95b9121a9d8ee51c33bb7d6e1bb07954273fee79"
+    },
+    "classes/WorkerControls.class": {
+      "bytes": 12851,
+      "sha256": "5a6707c44f534810576be7f2dc056ae36d0b6dcdde64cbdfaf7fe060cbeb40d3"
+    },
+    "classes/android/view/View.class": {
+      "bytes": 243,
+      "sha256": "d8818571e535010ae0d04febc607c650347fe3c2a6f3845173172fd92d76ccc6"
+    },
+    "focused.json": {
+      "bytes": 3721,
+      "sha256": "0e2d40236dc044cc1fcf923dca9cc7bda315669e010120e0cbdd4700bd9adbf0"
+    },
+    "java-version.stderr": {
+      "bytes": 177,
+      "sha256": "bc035065e1316ef11781a4b1e36dc4aa58d003abc47094dc55b4f7620f15f7c8"
+    },
+    "java-version.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "java_runtime_files": {
+    "/usr/lib/jvm/java-17-openjdk-amd64/bin/java": {
+      "bytes": 14464,
+      "sha256": "4976918b29ece3fe634bdbcf1377676e42af429b5311ba234f6f95039117d4d4"
+    },
+    "/usr/lib/jvm/java-17-openjdk-amd64/lib/modules": {
+      "bytes": 128901124,
+      "sha256": "499337b57cd61a672db7e1b35a3946bfb99508187367dc886c2bcbf28c65bf3a"
+    },
+    "/usr/lib/jvm/java-17-openjdk-amd64/lib/server/libjvm.so": {
+      "bytes": 24245448,
+      "sha256": "35f86cffa7a4edf211cb342c55427e1a3d7ac5ee28aa0d239d8ad8b0b7de743f"
+    }
+  },
+  "java_version_returncode": 0,
+  "original_execution_directory": "/workspace/scratch/36381ad6133b/worker-e-handoff-activity",
+  "original_focused_receipt_unchanged": true,
+  "schema": "coh-handoff-activity-controls-retention-v1",
+  "scope": "Exact eight production Activity network-worker methods compiled/executed with explicit Android/JNI doubles. Remaining routing/export/lifecycle checks are source-only. No Android execution, server fixture, original runtime, or world authority.",
+  "tests_repeated_for_retention": false
+}

@@ -1,0 +1,14 @@
+native-android/combined-client/app/src/main/cpp/interop_network.c:46:17:owner	16	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:30:13:retire_request	16	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:37:13:close_capture	16	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:163:12:append	48	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:167:12:append_string	80	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:118:18:observe	1408	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:85:25:Java_org_coh_nativecombined_InteropNative_begin	2384	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:141:24:Java_org_coh_nativecombined_InteropNative_service	1088	dynamic,bounded
+native-android/combined-client/app/src/main/cpp/interop_network.c:156:24:Java_org_coh_nativecombined_InteropNative_choose	32	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:179:30:Java_org_coh_nativecombined_InteropNative_characters	320	dynamic,bounded
+native-android/combined-client/app/src/main/cpp/interop_network.c:203:27:Java_org_coh_nativecombined_InteropNative_report	8704	dynamic,bounded
+native-android/combined-client/app/src/main/cpp/interop_network.c:269:24:Java_org_coh_nativecombined_InteropNative_suspend	16	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:280:24:Java_org_coh_nativecombined_InteropNative_disconnect	16	static
+native-android/combined-client/app/src/main/cpp/interop_network.c:284:24:Java_org_coh_nativecombined_InteropNative_close	16	static

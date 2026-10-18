@@ -76,17 +76,21 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private boolean touching;
     private byte[] frozenExport;
     private final ScheduledExecutorService networkWorker = Executors.newSingleThreadScheduledExecutor();
+    private enum NetworkMode { LOCAL, WORLD_HANDOFF }
+    private volatile NetworkMode networkMode = NetworkMode.LOCAL;
     private volatile String networkReport = "{\"phase\":\"IDLE\"}";
+    private volatile String localNetworkReport = networkReport;
+    private volatile String interopReport = "{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"IDLE\",\"world_authority\":false}";
     private volatile boolean networkForeground, networkConnecting, networkRequested;
     private volatile long networkAttempt;
     // Transport handle and policy identity are owned exclusively by networkWorker.
     private long networkHandle, policyCheckedAt;
-    private String serverSessionId, importGeneration;
+    private JSONObject networkPolicy;
     private boolean charactersPublished;
     private TextView networkStatus;
     private LinearLayout characterButtons;
     private android.widget.ScrollView charactersScroll;
-    private Button connectButton;
+    private Button connectButton, handoffButton;
 
 
     @Override public void onCreate(Bundle bundle) {
@@ -120,15 +124,18 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         controlsLayout.addView(controls);
         LinearLayout networkButtons = new LinearLayout(this);
         connectButton = new Button(this); connectButton.setText("Connect local server");
-        connectButton.setOnClickListener(v -> connectLocalServer()); networkButtons.addView(connectButton);
+        connectButton.setOnClickListener(v -> connectLocalServer(NetworkMode.LOCAL)); networkButtons.addView(connectButton);
         Button disconnect = new Button(this); disconnect.setText("Disconnect client");
         disconnect.setOnClickListener(v -> {
             networkRequested=false;networkAttempt++;
             characterButtons.removeAllViews(); charactersScroll.setVisibility(android.view.View.GONE);
             networkWorker.execute(() -> {
-                if(networkHandle!=0){LocalNative.disconnect(networkHandle);publishNetwork();}
+                if(networkHandle!=0){disconnectNetwork();publishNetwork();}
             });
         }); networkButtons.addView(disconnect); controlsLayout.addView(networkButtons);
+        handoffButton = new Button(this); handoffButton.setText("Test world handoff");
+        handoffButton.setOnClickListener(v -> connectLocalServer(NetworkMode.WORLD_HANDOFF));
+        controlsLayout.addView(handoffButton);
         networkStatus = new TextView(this); networkStatus.setText("Server protocol: idle • Start the server in the launcher first.");
         controlsLayout.addView(networkStatus);
         characterButtons = new LinearLayout(this); characterButtons.setOrientation(LinearLayout.VERTICAL);
@@ -224,7 +231,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         // thread. Normal pause/destroy still own input/render/handle teardown.
         main.postDelayed(returnDeadline,2000);
         networkWorker.execute(() -> {
-            if(networkHandle!=0){LocalNative.suspend(networkHandle);publishNetwork();}
+            if(networkHandle!=0){suspendNetwork();publishNetwork();}
             main.post(() -> finishReturnToLauncher(false));
         });
     }
@@ -262,31 +269,65 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         // Require explicit booleans: absence never weakens encryption policy.
         p.getBoolean("encryption_required");p.getBoolean("outbound_compressed");return p;
     }
-    private void connectLocalServer() {
+    private void connectLocalServer(NetworkMode mode) {
         if(destroying||returningToLauncher||networkConnecting||!networkForeground)return;
         final long attempt=++networkAttempt;networkRequested=true;
-        networkConnecting=true;connectButton.setEnabled(false);
+        networkConnecting=true;connectButton.setEnabled(false);handoffButton.setEnabled(false);
         characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);
-        networkStatus.setText("Server protocol: connecting to the local development server…");
-        event("local_connect_requested");
+        networkStatus.setText(mode==NetworkMode.WORLD_HANDOFF
+                ? "World handoff test: connecting to the local development server… The scene remains a local preview."
+                : "Server protocol: connecting to the local development server…");
+        event(mode==NetworkMode.WORLD_HANDOFF?"world_handoff_requested":"local_connect_requested");
         networkWorker.execute(() -> {
             try {
                 if(!networkForeground||!networkRequested||attempt!=networkAttempt)return;
+                retireNetworkOwner();networkMode=mode;charactersPublished=false;
                 JSONObject policy=localPolicy();
                 if(!networkForeground||!networkRequested||attempt!=networkAttempt)return;
-                if(networkHandle!=0){LocalNative.close(networkHandle);networkHandle=0;}
-                serverSessionId=policy.getString("server_session_id");charactersPublished=false;
-                importGeneration=policy.getString("import_generation");
+                networkPolicy=policy;
                 policyCheckedAt=SystemClock.elapsedRealtime();
-                networkHandle=LocalNative.begin(policy.getInt("db_port"),policy.getString("account"),policy.getInt("net_version"),
-                        policy.getBoolean("encryption_required"),policy.getBoolean("outbound_compressed"),policyCheckedAt);
+                networkHandle=mode==NetworkMode.WORLD_HANDOFF
+                        ? InteropNative.begin(policy.getInt("db_port"),policy.getString("account"),policy.getInt("net_version"),
+                            policy.getBoolean("encryption_required"),policy.getBoolean("outbound_compressed"),policyCheckedAt)
+                        : LocalNative.begin(policy.getInt("db_port"),policy.getString("account"),policy.getInt("net_version"),
+                            policy.getBoolean("encryption_required"),policy.getBoolean("outbound_compressed"),policyCheckedAt);
                 if(networkHandle==0)throw new IllegalStateException("Local owner rejected policy");
                 publishNetwork();
             } catch(Exception problem) {
-                networkReport="{\"phase\":\"POLICY_UNAVAILABLE\",\"live_world_rendered\":false,\"authserver_authenticated\":false}";
+                storeNetworkReport("{\"phase\":\"POLICY_UNAVAILABLE\",\"live_world_rendered\":false,\"authserver_authenticated\":false,\"world_authority\":false}");
                 main.post(() -> {if(!destroying)updateNetworkUi();});
             } finally {networkConnecting=false;main.post(() -> {if(!destroying)updateNetworkUi();});}
         });
+    }
+    private boolean sameNetworkPolicy(JSONObject policy) throws Exception {
+        if(networkPolicy==null)return false;
+        for(String key:new String[]{"server_session_id","import_generation","account","db_address"})
+            if(!networkPolicy.getString(key).equals(policy.getString(key)))return false;
+        for(String key:new String[]{"db_port","net_version"})
+            if(networkPolicy.getInt(key)!=policy.getInt(key))return false;
+        for(String key:new String[]{"encryption_required","outbound_compressed"})
+            if(networkPolicy.getBoolean(key)!=policy.getBoolean(key))return false;
+        return true;
+    }
+    // Every handle operation runs on networkWorker, including mode switches.
+    private void disconnectNetwork() {
+        if(networkMode==NetworkMode.WORLD_HANDOFF)InteropNative.disconnect(networkHandle);
+        else LocalNative.disconnect(networkHandle);
+    }
+    private void suspendNetwork() {
+        if(networkMode==NetworkMode.WORLD_HANDOFF)InteropNative.suspend(networkHandle);
+        else LocalNative.suspend(networkHandle);
+    }
+    private void retireNetworkOwner() {
+        final long retiring=networkHandle;final NetworkMode mode=networkMode;
+        try {
+            if(retiring==0)return;
+            try { disconnectNetwork();publishNetwork(); }
+            finally {
+                if(mode==NetworkMode.WORLD_HANDOFF)InteropNative.close(retiring);
+                else LocalNative.close(retiring);
+            }
+        } finally {networkHandle=0;networkPolicy=null;}
     }
     private void networkTick() {
         if(destroying||!networkForeground||!networkRequested||networkHandle==0)return;
@@ -294,17 +335,18 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             long now=SystemClock.elapsedRealtime();
             if(now-policyCheckedAt>=1000) {
                 JSONObject policy=localPolicy();
-                if(!policy.getString("server_session_id").equals(serverSessionId)
-                        ||!policy.getString("import_generation").equals(importGeneration))throw new IllegalStateException("Server replaced");
+                if(!sameNetworkPolicy(policy))throw new IllegalStateException("Server policy replaced");
                 policyCheckedAt=now;
             }
             String phase=new JSONObject(networkReport).optString("phase","IDLE");
             if("SUSPENDED".equals(phase)||"CLOSED".equals(phase)||"CANCELLED".equals(phase)
                     ||"FAILED".equals(phase)||"TIMED_OUT".equals(phase)||"UNSUPPORTED".equals(phase)
-                    ||"POLICY_UNAVAILABLE".equals(phase))return;
-            LocalNative.service(networkHandle,now);publishNetwork();
+                    ||"INITIAL_OBSERVED".equals(phase)||"POLICY_UNAVAILABLE".equals(phase))return;
+            if(networkMode==NetworkMode.WORLD_HANDOFF)InteropNative.service(networkHandle,now);
+            else LocalNative.service(networkHandle,now);
+            publishNetwork();
             if(!charactersPublished&&"CHARACTERS_READY".equals(new JSONObject(networkReport).optString("phase"))) {
-                byte[] list=LocalNative.characters(networkHandle);
+                byte[] list=networkMode==NetworkMode.WORLD_HANDOFF?InteropNative.characters(networkHandle):LocalNative.characters(networkHandle);
                 if(list!=null) {
                     JSONArray characters=new JSONArray(new String(list,StandardCharsets.UTF_8));
                     charactersPublished=true;
@@ -313,15 +355,19 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 }
             }
         } catch(Exception problem) {
-            LocalNative.suspend(networkHandle);publishNetwork();
-            main.post(() -> {if(!destroying)networkStatus.setText("Server protocol suspended • Start/verify the local server, then connect again.");});
+            suspendNetwork();publishNetwork();
+            main.post(() -> {if(!destroying)networkStatus.setText("Client suspended • Start/verify the local server, then connect again.");});
         }
+    }
+    private void storeNetworkReport(String next) {
+        if(networkMode==NetworkMode.WORLD_HANDOFF)interopReport=next;else localNetworkReport=next;
+        networkReport=next;
     }
     private void publishNetwork() {
         if(networkHandle==0)return;
-        String next=LocalNative.report(networkHandle);
+        String next=networkMode==NetworkMode.WORLD_HANDOFF?InteropNative.report(networkHandle):LocalNative.report(networkHandle);
         if(!next.equals(networkReport)) {
-            networkReport=next;
+            storeNetworkReport(next);
             main.post(() -> {if(!destroying)updateNetworkUi();});
         }
     }
@@ -329,8 +375,26 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         try {
             JSONObject report=new JSONObject(networkReport);String phase=report.optString("phase","IDLE");
             boolean active="DB_CONNECTING".equals(phase)||"CHARACTERS_READY".equals(phase)
-                    ||"MAP_CONNECTING".equals(phase)||"SCENE_INCOMPLETE".equals(phase);
-            connectButton.setEnabled(!active&&!networkConnecting);
+                    ||"MAP_CONNECTING".equals(phase)||"SCENE_INCOMPLETE".equals(phase)
+                    ||"WAIT_GROUPS".equals(phase)||"WAIT_ALLENTS".equals(phase);
+            boolean available=networkForeground&&!networkConnecting&&!returningToLauncher;
+            connectButton.setEnabled(available&&(!active||networkMode!=NetworkMode.LOCAL));
+            handoffButton.setEnabled(available&&(!active||networkMode!=NetworkMode.WORLD_HANDOFF));
+            if(networkMode==NetworkMode.WORLD_HANDOFF) {
+                String detail="CHARACTERS_READY".equals(phase)?"Select an existing disposable-profile character."
+                        : "WAIT_GROUPS".equals(phase)||"MAP_CONNECTING".equals(phase)?"Waiting for Map scene data (GROUPS)."
+                        : "WAIT_ALLENTS".equals(phase)?"GROUPS received; REQALLENTS queued. Waiting for a raw initial update."
+                        : "INITIAL_OBSERVED".equals(phase)?"Raw initial update observed. Complete character decoding remains pending."
+                        : "TIMED_OUT".equals(phase)?"The handoff attempt timed out. Export the report."
+                        : "FAILED".equals(phase)||"UNSUPPORTED".equals(phase)?"The handoff attempt stopped. Export the report."
+                        : "POLICY_UNAVAILABLE".equals(phase)?"Start/verify the server in the launcher, then try again."
+                        : "SUSPENDED".equals(phase)?"Suspended; tap Test world handoff for a fresh attempt."
+                        : "CLOSED".equals(phase)||"CANCELLED".equals(phase)?"Handoff test stopped."
+                        : "Real DB/Map diagnostic progress only.";
+                networkStatus.setText("World handoff test: "+phase+" • "+detail+"\nWorld authority: false. The scene remains a local preview.");
+                if(!"CHARACTERS_READY".equals(phase)){characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);}
+                return;
+            }
             String detail="SCENE_INCOMPLETE".equals(phase)
                     ? " • Scene data received; full server world decoding is pending."
                     : "CHARACTERS_READY".equals(phase) ? " • Select an existing disposable-profile character."
@@ -377,9 +441,13 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             choose.setText(player.optString("name","Character")+" • level "+player.optInt("level")+" • "+player.optString("map",""));
             choose.setOnClickListener(v -> {
                 characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);
-                event("local_character_choice_requested");
+                event(networkMode==NetworkMode.WORLD_HANDOFF?"world_handoff_character_choice_requested":"local_character_choice_requested");
                 networkWorker.execute(() -> {
-                    if(networkHandle!=0&&networkForeground&&networkRequested&&attempt==networkAttempt){LocalNative.choose(networkHandle,slot,SystemClock.elapsedRealtime());publishNetwork();}
+                    if(networkHandle!=0&&networkForeground&&networkRequested&&attempt==networkAttempt){
+                        if(networkMode==NetworkMode.WORLD_HANDOFF)InteropNative.choose(networkHandle,slot,SystemClock.elapsedRealtime());
+                        else LocalNative.choose(networkHandle,slot,SystemClock.elapsedRealtime());
+                        publishNetwork();
+                    }
                 });
             });characterButtons.addView(choose);
         }
@@ -446,12 +514,12 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if (destroying || holder!=currentHolder) return;
         epoch++; currentSurface=null; if(handle!=0)SessionNative.state(handle,epoch,false); event("surface_destroyed");
     }
-    @Override protected void onResume() { super.onResume(); networkForeground=true; resumed=true; epoch++; if(handle!=0)SessionNative.state(handle,epoch,true); event("resume"); requestRender(); }
+    @Override protected void onResume() { super.onResume(); networkForeground=true; resumed=true; epoch++; if(handle!=0)SessionNative.state(handle,epoch,true); event("resume"); updateNetworkUi(); requestRender(); }
     @Override protected void onPause() {
         event("pause_requested");
         networkForeground=false;networkRequested=false;networkAttempt++;
         networkWorker.execute(() -> {
-            if(networkHandle!=0) { LocalNative.suspend(networkHandle); publishNetwork(); }
+            if(networkHandle!=0) { suspendNetwork(); publishNetwork(); }
         });
         resumed=false; epoch++; if(adapter!=null)adapter.clear();
         if(handle!=0)SessionNative.state(handle,epoch,false); event("pause"); saveReport(); super.onPause();
@@ -483,7 +551,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 .put("session_id",Long.toHexString(sessionStarted)).put("updated_at",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",Locale.US).format(new Date()))
                 .put("scope","Local development DB/Map protocol progress plus separate accepted offline scene preview. No AuthServer authentication, server-authoritative rendering, full map or complete entity replication")
                 .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
-                .put("server_protocol",new JSONObject(networkReport)).put("preview_is_server_world",false)
+                .put("server_protocol",new JSONObject(localNetworkReport)).put("world_handoff",new JSONObject(interopReport))
+                .put("connection_mode",networkMode.name()).put("preview_is_server_world",false)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
                 .put("input_adapter",adapter==null?JSONObject.NULL:adapter.report())
@@ -572,7 +641,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     }
     @Override protected void onDestroy() {
         networkForeground=false;networkRequested=false;networkAttempt++;
-        networkWorker.execute(() -> { if(networkHandle!=0){LocalNative.close(networkHandle);networkHandle=0;} });
+        networkWorker.execute(this::retireNetworkOwner);
         networkWorker.shutdown();
         destroying=true;resumed=false;epoch++;main.removeCallbacks(poll);main.removeCallbacks(returnDeadline);
         if(currentHolder!=null)currentHolder.removeCallback(this);

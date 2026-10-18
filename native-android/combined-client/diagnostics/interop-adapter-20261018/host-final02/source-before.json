@@ -1,0 +1,23 @@
+{
+  "native-android/combined-client/app/src/main/cpp/interop_network.c": "392e5360e81a5b5032d1355f2ec3d44004ad06e2941828aae1f675a07b643b95",
+  "native-android/combined-client/app/src/main/java/org/coh/nativecombined/InteropNative.java": "0ffb0269afedc4d69cf24dcf02065be11393dccae0f790a901640efb006860d5",
+  "native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py": "e7be8b7db0decf6e94c7cd4c7bc320952690362560cb3b351df7494557b27e85",
+  "native-android/combined-client/diagnostics/interop-adapter-20261018/test-include/jni.h": "87690d05d5b23781408b9802725cb744957d60185b46637e07070190355cdd76",
+  "native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c": "6029a0c6ae3109fecc0cba58da50531a03c11b10a25ca53c1bf7875aded813f6",
+  "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+  "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+  "native-android/engine/dbclient/coh_db_session.h": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711",
+  "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+  "native-android/engine/initial-capture/coh_initial_capture.h": "4e34321c6f36b8112c621b2155d031c27a091dcfad4ff3ca68fcb5a65599bf0a",
+  "native-android/engine/initial-capture/coh_initial_command_kinds.inc": "1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e",
+  "native-android/engine/initial-capture/coh_request_tx.h": "72a47c0a6cb157a1f705812600f2bd0ade47095ab0b018ecba1cfd483a850c79",
+  "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+  "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+  "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+  "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+  "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+  "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+  "native-android/engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+  "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+  "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+}

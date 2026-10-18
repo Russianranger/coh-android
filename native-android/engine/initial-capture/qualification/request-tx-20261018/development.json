@@ -1,0 +1,43 @@
+{
+  "schema": "coh-request-tx-development-v1",
+  "final_attempt": "04",
+  "earlier_attempts": [
+    {
+      "attempt": "01",
+      "compiled_or_executed_native_test": false,
+      "failure": "new synthetic owner-key test variable uninitialized warning before link"
+    },
+    {
+      "attempt": "02",
+      "new_release_unit_executed": true,
+      "failure": "test-only closed fd reached recvmsg error before send callback; changed fixture to call real UDP send callback through real pump"
+    },
+    {
+      "attempt": "03",
+      "new_release_unit_executed": true,
+      "failure": "actual source sendto error exposed duplicate close/clear retirement while in-flight; corrected first retirement latch in new observer"
+    }
+  ],
+  "earlier_exact_failed_ELFs_retained": false,
+  "earlier_stdout_stderr_files_retained_archive_sha256": "5ff7d4366492190e32d4c6341d3f4cb70207cf2c3d7497ba36c80985f28886f6",
+  "additional_tool_only_compile_development": [
+    {
+      "failure": "initial single observer compile omitted established native/include path",
+      "native_executed": false,
+      "raw_stdout_stderr_retained": false
+    },
+    {
+      "failure": "observer misleading indentation warnings corrected",
+      "native_executed": false,
+      "raw_stdout_stderr_retained": false
+    },
+    {
+      "failure": "draft aggregate test compile used nonexistent UDP default constructor, static snapshot name collision, and missed established protocol/Blowfish per-source O0 settings; corrected fixture and build recipe",
+      "native_executed": false,
+      "raw_stdout_stderr_retained": false
+    }
+  ],
+  "old_qualifiers_or_original_server_executed": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

@@ -1,0 +1,21 @@
+In function ‘state’,
+    inlined from ‘coh_protocol_read’ at /workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:25:9,
+    inlined from ‘coh_protocol_decode’ at /workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:99:8:
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:9:18: error: ‘stream.writing’ may be used uninitialized [-Werror=maybe-uninitialized]
+    9 |     return b && b->writing==writing && b->capacity<=COH_PROTOCOL_FRAME_MAX &&
+      |                 ~^~~~~~~~~
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c: In function ‘coh_protocol_decode’:
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:97:21: note: ‘stream’ declared here
+   97 |     CohProtocolBits stream; (void)coh_protocol_bits_init(&stream,buf,length,total,0); stream.cursor=64;
+      |                     ^~~~~~
+In function ‘state’,
+    inlined from ‘coh_protocol_read’ at /workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:25:9,
+    inlined from ‘coh_protocol_decode’ at /workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:99:8:
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:9:41: error: ‘stream.capacity’ may be used uninitialized [-Werror=maybe-uninitialized]
+    9 |     return b && b->writing==writing && b->capacity<=COH_PROTOCOL_FRAME_MAX &&
+      |                                        ~^~~~~~~~~~
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c: In function ‘coh_protocol_decode’:
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:97:21: note: ‘stream’ declared here
+   97 |     CohProtocolBits stream; (void)coh_protocol_bits_init(&stream,buf,length,total,0); stream.cursor=64;
+      |                     ^~~~~~
+cc1: all warnings being treated as errors

@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "scope": "NEW focused driver numeric-report privacy/bounds controls only; no app/device/protocol execution",
+  "driver_sha256": "bacce4771827a66284cd7058461148a02116c6756b5dfc8246861c9872d0be51",
+  "accepted_controls": 2,
+  "refusals": [
+    "new-private-key",
+    "authority",
+    "packet-retained",
+    "duplicate-request",
+    "oversized-initial",
+    "bool-status",
+    "private-first-failure",
+    "private-link",
+    "invalid-phase",
+    "invalid-first-status",
+    "private-request-key",
+    "request-authority",
+    "request-counter-limit",
+    "request-clock-limit",
+    "request-status-limit"
+  ],
+  "Android_executed": false,
+  "world_authority": false
+}
