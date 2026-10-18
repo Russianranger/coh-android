@@ -1,0 +1,21 @@
+{
+  "schema": "coh-gates25-27-test-release-admission-v1",
+  "passed": true,
+  "source_revision": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "workflow_run": 39165446220,
+  "workflow_conclusion": "success",
+  "release_id": 416712621,
+  "prerelease": true,
+  "release_assets_match_retained_package_metadata_bytes_and_SHA256": true,
+  "ARM64_APK": {
+    "bytes": 13880861,
+    "name": "CoH-Native-Combined-0.1.8-gates25-27-arm64.apk",
+    "sha256": "9659570e1470d2fa1f3c3f13c7f9fd6795a4f0410326520a6fe4463ec273ed63"
+  },
+  "public_test_signer_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "physical_Thor_qualified": false,
+  "original_server_interoperability_qualified": false,
+  "complete_initial_character": false,
+  "application_ACK_permitted": false,
+  "world_authority": false
+}

@@ -1,0 +1,229 @@
+{
+  "APK_DSO_peer_payloads_retained_in_repository": false,
+  "APK_ELF_peer_or_compiler_executed_by_this_admission": false,
+  "Android_emulator_execution_qualified_by_this_admission": false,
+  "Java_native_declaration_source": {
+    "bytes": 1113,
+    "sha256": "0ffb0269afedc4d69cf24dcf02065be11393dccae0f790a901640efb006860d5"
+  },
+  "Java_native_declarations": [
+    "long begin(int dbPort, String account, int networkVersion,\n            boolean encryptionRequired, boolean outboundCompressed, long nowMs)",
+    "int service(long handle, long nowMs)",
+    "byte[] characters(long handle)",
+    "int choose(long handle, int wireSlot, long nowMs)",
+    "String report(long handle)",
+    "void disconnect(long handle)",
+    "void suspend(long handle)",
+    "void close(long handle)"
+  ],
+  "Thor_compatibility_qualified": false,
+  "apks": {
+    "arm64-v8a": {
+      "apk": {
+        "bytes": 13880861,
+        "sha256": "9659570e1470d2fa1f3c3f13c7f9fd6795a4f0410326520a6fe4463ec273ed63"
+      },
+      "exact_visible_defined_JNI_exports": [
+        "Java_org_coh_nativecombined_InteropNative_begin",
+        "Java_org_coh_nativecombined_InteropNative_characters",
+        "Java_org_coh_nativecombined_InteropNative_choose",
+        "Java_org_coh_nativecombined_InteropNative_close",
+        "Java_org_coh_nativecombined_InteropNative_disconnect",
+        "Java_org_coh_nativecombined_InteropNative_report",
+        "Java_org_coh_nativecombined_InteropNative_service",
+        "Java_org_coh_nativecombined_InteropNative_suspend"
+      ],
+      "inner_CRC_verified": true,
+      "inner_zip_members": 88,
+      "interop_ELF_class": 64,
+      "interop_ELF_machine": 183,
+      "native_libraries": {
+        "lib/arm64-v8a/libcoh_combined_interop.so": {
+          "bytes": 4957904,
+          "sha256": "d9b1f0220b702c2d61198ec4c2f13bb77e8eea3553b88baffcf5aaa38768562a"
+        },
+        "lib/arm64-v8a/libcoh_combined_network.so": {
+          "bytes": 5501256,
+          "sha256": "09fd81b28c6f1c8f652c1b2dc481c912f366806090715918b7160ef8943924a6"
+        },
+        "lib/arm64-v8a/libcoh_session_client.so": {
+          "bytes": 369544,
+          "sha256": "f567758294eb8ccf1bc0d950599df15281358a912f762e8c4d5d03ab4a02fda2"
+        },
+        "lib/arm64-v8a/libproot-loader.so": {
+          "bytes": 17624,
+          "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+        },
+        "lib/arm64-v8a/libproot.so": {
+          "bytes": 263648,
+          "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+        }
+      },
+      "reviewed_source_subset_count": 190
+    },
+    "x86_64": {
+      "apk": {
+        "bytes": 13181231,
+        "sha256": "9fbf1dd0b95250dc92ff9e90c6448a8823594923516c51d3d92b6a2c4868a0b9"
+      },
+      "exact_visible_defined_JNI_exports": [
+        "Java_org_coh_nativecombined_InteropNative_begin",
+        "Java_org_coh_nativecombined_InteropNative_characters",
+        "Java_org_coh_nativecombined_InteropNative_choose",
+        "Java_org_coh_nativecombined_InteropNative_close",
+        "Java_org_coh_nativecombined_InteropNative_disconnect",
+        "Java_org_coh_nativecombined_InteropNative_report",
+        "Java_org_coh_nativecombined_InteropNative_service",
+        "Java_org_coh_nativecombined_InteropNative_suspend"
+      ],
+      "inner_CRC_verified": true,
+      "inner_zip_members": 86,
+      "interop_ELF_class": 64,
+      "interop_ELF_machine": 62,
+      "native_libraries": {
+        "lib/x86_64/libcoh_combined_interop.so": {
+          "bytes": 5311016,
+          "sha256": "d3c7207abfbc74d57976bd9d45ef9037da97c5a18f247c6277a79150c14d19ca"
+        },
+        "lib/x86_64/libcoh_combined_network.so": {
+          "bytes": 5865208,
+          "sha256": "b81c67b95883c77c5fdf79d26b8133c1cff042162e3ec60ccc105168b360ee08"
+        },
+        "lib/x86_64/libcoh_session_client.so": {
+          "bytes": 389776,
+          "sha256": "4f5b1d68538e23b58080e7971795259d7b40d93c9de9579f6569865a872d9137"
+        }
+      },
+      "reviewed_source_subset_count": 190
+    }
+  },
+  "artifact": {
+    "bytes": 17058556,
+    "sha256": "4a8877a9da2cc04ff599f520f24d193cecd3e97a0de35054dc4fadb2b2e401b0"
+  },
+  "artifact_connector_download_calls": 1,
+  "artifact_id": 12150019889,
+  "complete_compiler_dependency_closure_claimed": false,
+  "original_server_interoperability_qualified": false,
+  "outer_CRC_verified": true,
+  "outer_members": [
+    {
+      "bytes": 13880861,
+      "compressed_bytes": 7801680,
+      "crc32": "2a922e8a",
+      "name": "CoH-Native-Combined-0.1.8-gates25-27-arm64.apk"
+    },
+    {
+      "bytes": 26512,
+      "compressed_bytes": 9581,
+      "crc32": "66839097",
+      "name": "arm64-interop-dso.json"
+    },
+    {
+      "bytes": 13181231,
+      "compressed_bytes": 7100775,
+      "crc32": "bf56cef8",
+      "name": "CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk"
+    },
+    {
+      "bytes": 1874,
+      "compressed_bytes": 930,
+      "crc32": "e21887be",
+      "name": "arm64-package.json"
+    },
+    {
+      "bytes": 9581,
+      "compressed_bytes": 3556,
+      "crc32": "2a6a7971",
+      "name": "build-inputs.json"
+    },
+    {
+      "bytes": 2600,
+      "compressed_bytes": 996,
+      "crc32": "57808aca",
+      "name": "crypto-reuse.json"
+    },
+    {
+      "bytes": 54356,
+      "compressed_bytes": 17408,
+      "crc32": "67ec3821",
+      "name": "interop-peer/build.json"
+    },
+    {
+      "bytes": 6151776,
+      "compressed_bytes": 2111738,
+      "crc32": "5e11c781",
+      "name": "interop-peer/coh-initial-interop-peer-x86_64"
+    },
+    {
+      "bytes": 26509,
+      "compressed_bytes": 9578,
+      "crc32": "3b2e9eb4",
+      "name": "x86_64-interop-dso.json"
+    },
+    {
+      "bytes": 1561,
+      "compressed_bytes": 820,
+      "crc32": "6e352618",
+      "name": "x86_64-package.json"
+    }
+  ],
+  "outer_safe_members_exact": true,
+  "package_job_id": 117787307368,
+  "passed": true,
+  "peer_source_count": 112,
+  "repository": "Russianranger/coh-android",
+  "retained_metadata": {
+    "api-artifact.json": {
+      "bytes": 960,
+      "sha256": "42789fcbdac0b545dd8a251bf10899694da694d6587ad410757ceed9902bac8e"
+    },
+    "api-package-job.json": {
+      "bytes": 2381,
+      "sha256": "0c5bee1df110ea422471be0042d4c70b4a647999d9be3fc0b7357ac7d2a748cc"
+    },
+    "arm64-interop-dso.json": {
+      "bytes": 26512,
+      "sha256": "98d64da12f03f9e8192f39cc01d5c5d3a057adb3d7ce564552ae42ab699e422b"
+    },
+    "arm64-package.json": {
+      "bytes": 1874,
+      "sha256": "8a4eaedbb0c79986f8327e7a5e898747d88fd7a05db5dab6d9c401a686bfcbcb"
+    },
+    "build-inputs.json": {
+      "bytes": 9581,
+      "sha256": "b59a8cca6d3334a40fcfd641682ad81256eaf8faaefa0ab9b9fecc12c0fe3b17"
+    },
+    "crypto-reuse.json": {
+      "bytes": 2600,
+      "sha256": "3c85c908dc21bca7f7e86c5eff67a8c80a8b358f4b9121ba4524e38a03f17f46"
+    },
+    "interop-peer/build.json": {
+      "bytes": 54356,
+      "sha256": "1ab428381b8c168f535f5cbb07e5f54b9f27a0c6419da42601a9cbfc1b14619e"
+    },
+    "x86_64-interop-dso.json": {
+      "bytes": 26509,
+      "sha256": "80c3717855ca1a39737b81a44dc1148e45dc691728d08454728bf49b72ae1599"
+    },
+    "x86_64-package.json": {
+      "bytes": 1561,
+      "sha256": "abb138610d2f89a6d8f91ff440fe02e325055660e1c3e61f215a6924a7de2dc7"
+    }
+  },
+  "run_id": 39165446220,
+  "schema": "coh-gates25-27-retained-package-admission-v1",
+  "scope": "Read-only exact artifact, safe ZIP/CRC, inner APK/native-library/peer identities, pure byte ELF/JNI exports and current+committed reviewed source-subset verification; hosted package receipts retained byte-for-byte.",
+  "scripted_peer": {
+    "bytes": 6151776,
+    "sha256": "4716dd4e5d3570348956ce9defb07cca541b1b854841f1be4e3629ff727dc9f2"
+  },
+  "signed_blob_HTTP_downloads": 1,
+  "source_revision": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "unique_current_and_committed_raw_source_pins_verified": 248,
+  "verifier_script": {
+    "bytes": 12696,
+    "sha256": "52939608d6776f5e8f5213059223da751fe61387caaf2a3de9aef7dd2fcaf76e"
+  },
+  "world_authority": false
+}

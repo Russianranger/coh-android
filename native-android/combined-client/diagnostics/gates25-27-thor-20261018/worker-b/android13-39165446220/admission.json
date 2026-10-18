@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "scope": "Read-only admission of actual Android13x86_64 JNI/socket/SAF/lifecycle evidence against scripted peers, no engine rerun",
+  "workflow_run": 39165446220,
+  "android_job": 117787863131,
+  "source_revision": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "artifact": {
+    "id": 12151065472,
+    "bytes": 77830,
+    "sha256": "964c060d0a1f0824aac1d29b2cf907f0747aa090624d561ec343fb753019fc0c"
+  },
+  "exact_archive_in_scratch": "/workspace/scratch/36381ad6133b/worker-b/android13-39165446220/artifact.zip",
+  "selected_numeric_files": {
+    "receipt.json": {
+      "bytes": 5142,
+      "sha256": "bb6d100ed6aab7f9ca1d8cda5c257cfa0e7e2020d8c297134f74eb571d46b2e4"
+    },
+    "captured-world-handoff.json": {
+      "bytes": 2901,
+      "sha256": "09f816fbbdf0e6d99d1a100043c0e19fab2ca860a11c8d45b71b21f7b6de6af1"
+    },
+    "fresh-reconnect-world-handoff.json": {
+      "bytes": 2901,
+      "sha256": "822dfb8dd678c98f3c977d82fc4310499c668966b08d05b6cdeb65ac5355e608"
+    },
+    "waiting-world-handoff.json": {
+      "bytes": 2889,
+      "sha256": "3e64d01c894be4eca69e9c761d7ade6f66edd67844aedd8f3b3da18a03656db6"
+    },
+    "home-cancelled-world-handoff.json": {
+      "bytes": 2891,
+      "sha256": "67e36cf03bf0b52126882412d84104a2cfcf3f338122e921fa4bef8689150dbc"
+    },
+    "captured-peer.json": {
+      "bytes": 1472,
+      "sha256": "d50f9f5cc504e1243c70fbbf04d40cb5b3cf3b3ac7220bc4c0eedbf8bbef840c"
+    },
+    "fresh-reconnect-peer.json": {
+      "bytes": 1472,
+      "sha256": "aab2b142fff08c3995d7f1e6c2d46f5ad67fb679e5353aa7339ec43828b98c9d"
+    },
+    "cancelled-wait-peer.json": {
+      "bytes": 1468,
+      "sha256": "f6892a6404b7d8383cb1025f70b3c65a73152a4e1bb0fa895e85297657416987"
+    }
+  },
+  "actual_request_witnesses": [
+    {
+      "snapshot": "captured-world-handoff.json",
+      "queue_witness_observed": true,
+      "first_send_callback_accepted": true,
+      "peer_transport_ACK_observed": true,
+      "first_send_attempts": 1,
+      "retry_send_attempts": 0,
+      "queue_offset_ms": 4073,
+      "first_send_offset_ms": 4493,
+      "retirement_offset_ms": 4527,
+      "command_specific_emission_proved": false,
+      "server_receipt_proved": false,
+      "world_authority": false
+    },
+    {
+      "snapshot": "fresh-reconnect-world-handoff.json",
+      "queue_witness_observed": true,
+      "first_send_callback_accepted": true,
+      "peer_transport_ACK_observed": true,
+      "first_send_attempts": 1,
+      "retry_send_attempts": 0,
+      "queue_offset_ms": 4840,
+      "first_send_offset_ms": 4874,
+      "retirement_offset_ms": 4895,
+      "command_specific_emission_proved": false,
+      "server_receipt_proved": false,
+      "world_authority": false
+    }
+  ],
+  "whole_export_numeric_snapshot_exactly_matches_capture": true,
+  "PNG_screenshots_in_original_artifact": false,
+  "UI_XML_in_original_artifact": true,
+  "old_qualifier_rerun": false,
+  "original_Auth_Db_Map_services": false,
+  "physical_Thor_accepted": false,
+  "world_authority": false
+}

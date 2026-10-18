@@ -1,0 +1,95 @@
+{
+  "accepted_scope": {
+    "ARM64_NDK_build_and_lint": true,
+    "Android_framework_runtime": "Separate pending evidence at this package-only admission.",
+    "actual_package_and_DSO_identity": true,
+    "complete_aggregate_RSS_GPU_fit": false,
+    "complete_initial_character_or_world_authority": false,
+    "original_server_interoperability": false,
+    "physical_Thor_compatibility": false,
+    "x86_64_NDK_build_and_peer": true
+  },
+  "apk_identities": {
+    "arm64": {
+      "bytes": 13880861,
+      "name": "CoH-Native-Combined-0.1.8-gates25-27-arm64.apk",
+      "sha256": "9659570e1470d2fa1f3c3f13c7f9fd6795a4f0410326520a6fe4463ec273ed63"
+    },
+    "x86_64": {
+      "bytes": 13181231,
+      "name": "CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk",
+      "sha256": "9fbf1dd0b95250dc92ff9e90c6448a8823594923516c51d3d92b6a2c4868a0b9"
+    }
+  },
+  "archive": {
+    "bytes": 17058556,
+    "sha256": "4a8877a9da2cc04ff599f520f24d193cecd3e97a0de35054dc4fadb2b2e401b0"
+  },
+  "artifact_id": 12150019889,
+  "artifact_name": "gates25-27-thor-packages-3f050e50d6db9c16463390867691ea95f29ae560",
+  "exact_archive_members": {
+    "CoH-Native-Combined-0.1.8-gates25-27-arm64.apk": {
+      "bytes": 13880861,
+      "sha256": "9659570e1470d2fa1f3c3f13c7f9fd6795a4f0410326520a6fe4463ec273ed63"
+    },
+    "CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk": {
+      "bytes": 13181231,
+      "sha256": "9fbf1dd0b95250dc92ff9e90c6448a8823594923516c51d3d92b6a2c4868a0b9"
+    },
+    "arm64-interop-dso.json": {
+      "bytes": 26512,
+      "sha256": "98d64da12f03f9e8192f39cc01d5c5d3a057adb3d7ce564552ae42ab699e422b"
+    },
+    "arm64-package.json": {
+      "bytes": 1874,
+      "sha256": "8a4eaedbb0c79986f8327e7a5e898747d88fd7a05db5dab6d9c401a686bfcbcb"
+    },
+    "build-inputs.json": {
+      "bytes": 9581,
+      "sha256": "b59a8cca6d3334a40fcfd641682ad81256eaf8faaefa0ab9b9fecc12c0fe3b17"
+    },
+    "crypto-reuse.json": {
+      "bytes": 2600,
+      "sha256": "3c85c908dc21bca7f7e86c5eff67a8c80a8b358f4b9121ba4524e38a03f17f46"
+    },
+    "interop-peer/build.json": {
+      "bytes": 54356,
+      "sha256": "1ab428381b8c168f535f5cbb07e5f54b9f27a0c6419da42601a9cbfc1b14619e"
+    },
+    "interop-peer/coh-initial-interop-peer-x86_64": {
+      "bytes": 6151776,
+      "sha256": "4716dd4e5d3570348956ce9defb07cca541b1b854841f1be4e3629ff727dc9f2"
+    },
+    "x86_64-interop-dso.json": {
+      "bytes": 26509,
+      "sha256": "80c3717855ca1a39737b81a44dc1148e45dc691728d08454728bf49b72ae1599"
+    },
+    "x86_64-package.json": {
+      "bytes": 1561,
+      "sha256": "abb138610d2f89a6d8f91ff440fe02e325055660e1c3e61f215a6924a7de2dc7"
+    }
+  },
+  "independent_API_projection": {
+    "bytes": 3433,
+    "file": "independent-worker-f-api.json",
+    "sha256": "da0bfb832b0a1c4ff69745b2e7a139b7e88403bd43004008b17cd282db353de5"
+  },
+  "independent_checks": [
+    "GitHub run/job/artifact APIs bind attempt1 push and successful package job to exact source; artifact size/digest agrees with shared one-download ZIP.",
+    "Ten unique fixed ZIP members, CRC pass; only read in memory, no member extraction, no APK/native/qualifier execution or duplicate network download.",
+    "Both actual APK sizes/SHA256 and all five ARM64/three x86_64 native-library raw bytes/hash/ELF64 machines agree with exact retained package receipts. Each APK CRC/member uniqueness passed.",
+    "Pure ELF64 section/symbol parsing independently establishes exactly the eight expected InteropNative JNI dynexports in each actual new DSO; no coh_/static archive symbol exports.",
+    "Each actual DSO audit reviewed_source_subset has190 current raw and exact committed Git identities at3f050e50; this is a reviewed subset, not full compiler dependency closure.",
+    "Both binary Android manifests independently parsed: org.coh.nativecombined, versionCode9, versionName0.1.8-gates25-27-test. Both APKv2 signer certificate DER SHA256 independently matches accepted9aec... certificate. CI apksigner verification remains the signature-validity check; local structural parsing is not a second signature verifier.",
+    "All74 embedded assets total9540457B per APK, agreeing with package receipts; package checker in successful CI binds accepted donor/scene metadata and absence of embedded large runtime/game payloads.",
+    "Actual Android x86_64 peer ELF6151776B/SHA4716dd4e5d3570348956ce9defb07cca541b1b854841f1be4e3629ff727dc9f2 and all112 current source pins agree with peer build receipt.18 compiler commands and source-specific protocol/BlowfishO0 are recorded; peer is scripted source-layout, not original services."
+  ],
+  "package_job_id": 117787307368,
+  "passed": true,
+  "reviewer_correction": "Initial read-only binary-manifest parser used an unsupported Python encoding alias; corrected to utf-16-le and both manifests/certificates then matched. No CI input, source, artifact or runtime changed.",
+  "run_id": 39165446220,
+  "schema": "coh-gates25-27-actual-package-independent-worker-f-review-v1",
+  "selected_seven_retained_receipt_files_byte_exact": true,
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "source_revision": "3f050e50d6db9c16463390867691ea95f29ae560"
+}

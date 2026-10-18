@@ -1,0 +1,114 @@
+{
+  "schema": "coh-gates25-27-worker-f-independent-package-api-observation-v1",
+  "run": {
+    "id": 39165446220,
+    "head_sha": "3f050e50d6db9c16463390867691ea95f29ae560",
+    "path": ".github/workflows/native-gates25-27-thor.yml",
+    "event": "push",
+    "run_attempt": 1,
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39165446220",
+    "status_at_observation": "in_progress"
+  },
+  "package_job": {
+    "id": 117787307368,
+    "name": "package",
+    "status": "completed",
+    "conclusion": "success",
+    "run_id": 39165446220,
+    "logs_url": null,
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Run android-actions/setup-android@v3",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4
+      },
+      {
+        "name": "Install the existing pinned Android build components",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5
+      },
+      {
+        "name": "Reuse qualified crypto and exact accepted scene/runtime metadata",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6
+      },
+      {
+        "name": "Build, lint and audit the ARM64 Thor test APK",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7
+      },
+      {
+        "name": "Build and audit the separate Android 13 emulator APK and peer",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      {
+        "name": "Post Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17
+      },
+      {
+        "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19
+      }
+    ]
+  },
+  "artifact": {
+    "id": 12150019889,
+    "name": "gates25-27-thor-packages-3f050e50d6db9c16463390867691ea95f29ae560",
+    "size_in_bytes": 17058556,
+    "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12150019889",
+    "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12150019889/zip",
+    "expired": false,
+    "created_at": "2026-10-18T20:57:02Z",
+    "expires_at": "2027-01-16T20:54:32Z",
+    "updated_at": "2026-10-18T20:57:02Z",
+    "digest": "sha256:4a8877a9da2cc04ff599f520f24d193cecd3e97a0de35054dc4fadb2b2e401b0",
+    "workflow_run": {
+      "id": 39165446220,
+      "repository_id": 1368730125,
+      "head_repository_id": 1368730125,
+      "head_branch": "native-android",
+      "head_sha": "3f050e50d6db9c16463390867691ea95f29ae560"
+    }
+  },
+  "downloaded_by_worker_f": false
+}

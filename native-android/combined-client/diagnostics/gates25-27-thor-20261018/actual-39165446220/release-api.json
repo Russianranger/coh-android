@@ -1,0 +1,32 @@
+{
+  "id": 416712621,
+  "tag_name": "coh-native-combined-v0.1.8-gates25-27-test",
+  "target_commitish": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "prerelease": true,
+  "draft": false,
+  "html_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-native-combined-v0.1.8-gates25-27-test",
+  "published_at": "2026-10-18T21:03:15Z",
+  "assets": [
+    {
+      "id": 654484155,
+      "name": "arm64-interop-dso.json",
+      "size": 26512,
+      "digest": "sha256:98d64da12f03f9e8192f39cc01d5c5d3a057adb3d7ce564552ae42ab699e422b",
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-native-combined-v0.1.8-gates25-27-test/arm64-interop-dso.json"
+    },
+    {
+      "id": 654484159,
+      "name": "arm64-package.json",
+      "size": 1874,
+      "digest": "sha256:8a4eaedbb0c79986f8327e7a5e898747d88fd7a05db5dab6d9c401a686bfcbcb",
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-native-combined-v0.1.8-gates25-27-test/arm64-package.json"
+    },
+    {
+      "id": 654484153,
+      "name": "CoH-Native-Combined-0.1.8-gates25-27-arm64.apk",
+      "size": 13880861,
+      "digest": "sha256:9659570e1470d2fa1f3c3f13c7f9fd6795a4f0410326520a6fe4463ec273ed63",
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-native-combined-v0.1.8-gates25-27-test/CoH-Native-Combined-0.1.8-gates25-27-arm64.apk"
+    }
+  ]
+}

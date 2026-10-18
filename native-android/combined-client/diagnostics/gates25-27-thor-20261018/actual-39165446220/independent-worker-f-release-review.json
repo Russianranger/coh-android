@@ -1,0 +1,61 @@
+{
+  "all_three_job_conclusions": "success",
+  "api_observation": {
+    "bytes": 10585,
+    "file": "independent-worker-f-final-api.json",
+    "sha256": "e7eb79e1261554f405afccbdcc9a7f325f096a205281b202fdd814724b4502aa"
+  },
+  "assets": [
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-native-combined-v0.1.8-gates25-27-test/arm64-interop-dso.json",
+      "digest": "sha256:98d64da12f03f9e8192f39cc01d5c5d3a057adb3d7ce564552ae42ab699e422b",
+      "id": 654484155,
+      "name": "arm64-interop-dso.json",
+      "size": 26512,
+      "state": "uploaded"
+    },
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-native-combined-v0.1.8-gates25-27-test/arm64-package.json",
+      "digest": "sha256:8a4eaedbb0c79986f8327e7a5e898747d88fd7a05db5dab6d9c401a686bfcbcb",
+      "id": 654484159,
+      "name": "arm64-package.json",
+      "size": 1874,
+      "state": "uploaded"
+    },
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-native-combined-v0.1.8-gates25-27-test/CoH-Native-Combined-0.1.8-gates25-27-arm64.apk",
+      "digest": "sha256:9659570e1470d2fa1f3c3f13c7f9fd6795a4f0410326520a6fe4463ec273ed63",
+      "id": 654484153,
+      "name": "CoH-Native-Combined-0.1.8-gates25-27-arm64.apk",
+      "size": 13880861,
+      "state": "uploaded"
+    }
+  ],
+  "draft": false,
+  "independent_findings": [
+    "Independent GitHub final run/jobs/artifacts/release/tag API retrieval; completed SUCCESS attempt1 and all package/android13/publish-test jobs succeeded at exact3f050e50.",
+    "Published prerelease416712621 is not draft and lightweight tag resolves exact reviewed/built source commit.",
+    "All three release asset API size/SHA256 digests match actual package-archive ARM64 APK and the exact two retained ARM64 metadata byte streams. No released payload was redownloaded.",
+    "ARM64 payload had already been independently inspected in single shared package ZIP; manifest version9/name, actual signer certificate digest and exact hidden-core/eight-JNI DSO exports agree.",
+    "Release gate binds exact source/version/signer/APK/DSO receipt and needs both successful jobs. Actual x86_64 Android evidence requires its separately reviewed fixed retained receipt/export snapshots."
+  ],
+  "passed": true,
+  "payload_downloaded_or_executed_by_worker_f": false,
+  "prerelease": true,
+  "release_id": 416712621,
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-native-combined-v0.1.8-gates25-27-test",
+  "run_attempt": 1,
+  "run_id": 39165446220,
+  "schema": "coh-gates25-27-release-independent-worker-f-review-v1",
+  "scope": {
+    "ARM64_build_lint_package_and_prerelease": true,
+    "actual_original_server_interoperability_qualified": false,
+    "complete_process_RSS_GPU_fit": false,
+    "full_initial_character_or_world_authority": false,
+    "gates25_27_closed": false,
+    "physical_Thor_compatibility_qualified": false
+  },
+  "source_revision": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "tag_name": "coh-native-combined-v0.1.8-gates25-27-test",
+  "tag_object_type": "commit"
+}

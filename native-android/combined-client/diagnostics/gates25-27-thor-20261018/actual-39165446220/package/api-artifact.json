@@ -1,0 +1,25 @@
+{
+  "artifacts": [
+    {
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12150019889/zip",
+      "created_at": "2026-10-18T20:57:02Z",
+      "digest": "sha256:4a8877a9da2cc04ff599f520f24d193cecd3e97a0de35054dc4fadb2b2e401b0",
+      "expired": false,
+      "expires_at": "2027-01-16T20:54:32Z",
+      "id": 12150019889,
+      "name": "gates25-27-thor-packages-3f050e50d6db9c16463390867691ea95f29ae560",
+      "size_in_bytes": 17058556,
+      "updated_at": "2026-10-18T20:57:02Z",
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12150019889",
+      "workflow_run": {
+        "head_branch": "native-android",
+        "head_repository_id": 1368730125,
+        "head_sha": "3f050e50d6db9c16463390867691ea95f29ae560",
+        "id": 39165446220,
+        "repository_id": 1368730125
+      }
+    }
+  ],
+  "repository": "Russianranger/coh-android",
+  "run_id": 39165446220
+}

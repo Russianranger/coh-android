@@ -1,0 +1,157 @@
+{
+  "accepted_scope": {
+    "ARM64_runtime_or_physical_Thor_qualified": false,
+    "actual_Android13_x86_64_NDK_JNI_and_OS_UDP": true,
+    "full_initial_character_or_application_ACK_or_world_authority": false,
+    "gates25_27_closed": false,
+    "measured_whole_process_RSS_GPU_fit": false,
+    "normal_version_checksum_policy_qualified": false,
+    "numeric_SAF_export_Home_cancel_Return_explicit_reconnect": true,
+    "original_Auth_Db_Map_service_execution": false,
+    "scripted_source_layout_only": true,
+    "specific_Tx_witness_integrated_with_actual_Android_role": true,
+    "timeout_qualified": false
+  },
+  "android_job_id": 117787863131,
+  "artifact": {
+    "all_CRCs_pass": true,
+    "bytes": 77830,
+    "id": 12151065472,
+    "sha256": "964c060d0a1f0824aac1d29b2cf907f0747aa090624d561ec343fb753019fc0c",
+    "unique_regular_flat_members": 153
+  },
+  "independent_final_API_projection": {
+    "bytes": 10585,
+    "file": "independent-worker-f-final-api.json",
+    "sha256": "e7eb79e1261554f405afccbdcc9a7f325f096a205281b202fdd814724b4502aa"
+  },
+  "independent_findings": [
+    "Final GitHub API binds successful Android13 job and exact77830B/964c060d... artifact to same reviewed source. Shared single ZIP has153 unique flat regular members, bounded individual sizes and passing CRCs; eight selected raw JSONs are byte-exact retained copies.",
+    "Receipt has10 passing focused framework checks, exact current driverSHA, source3f050e50, accepted x86_64 APK/package receipt and peer-build receipt hash. Actual device API33/x86_64/emulator scope matches requested lane.",
+    "All four new world_handoff snapshots independently pass exact numeric/Boolean/fixed-enum whitelist and bounds; no raw packet, account, DBID, cookie, endpoint, generation or pointer field in new report. All application/server/source/actor/world authority flags remain false. Scripted peer receipts separately contain synthetic process/ports and are not real-user report data.",
+    "Both captured and fresh-reconnect snapshots satisfy stronger integration: request_tx_available=true; valid/witness_retired=true; refusal0; queue_attempted/succeeded=true/status0; first_send_accepted=true/first_send_attempts1; retries/deferred/errors0. Queue/send/retirement offsets are ordered and bounded. Peer transport ACK separately true with first retirementPEER_ACK, not an application ACK or original server dispatch.",
+    "Each raw initial capture has oneGROUPS139794B, oneREQALLENTS, one65536B/524288bit initial lease/cursor32; INITIAL_OBSERVED statusCOH_UNSUPPORTED2/failureNONE intentionally does not accept complete character/world state. Each terminal owned transport counter balance is2/2.",
+    "Actual mapped new x86_64 DSO identity is recorded by reviewed driver:5311016B/d3c7207abfbc74d57976bd9d45ef9037da97c5a18f247c6277a79150c14d19ca, exactly the already inspected APK DSO. Raw proc maps/image are not separately retained in artifact; F does not claim independent live process observation.",
+    "Complete SAF-export world_handoff object equals captured object exactly and modeWORLD_HANDOFF/preview_is_server_world=false. Retained projection binds full export79233B/35cde931032cb327051d8244dbca5c0a657decac6f97cda8cf49535dfe975537.",
+    "Home snapshot isSUSPENDED with captureCANCELLED first-failure status5/failure11, initialbytes0, GROUPS/request retained and owned sockets2/2. The Tx retirement remains earlier peerACK, separately from outer cancellation. Before retirement WAIT_ALLENTS witness valid=false/retired=false is expected.",
+    "Raw initial/returned launcher dumps preserve the same MainActivity ActivityRecord, task and ProcessRecord. Reviewed driver additionally requires same-session Home resume without automatic reconnect and fresh Activity IDLE before explicit reconnect.",
+    "All three scripted peers report one request/list/choice/handoff, socket2/2, no failure, zeroREADY/RECEIVED_CHARACTER/full-update-ACK/forbidden application commands; original services/whole original ALLENTS producer/auth/world scope all false.",
+    "Crash/event logs empty and raw lastANR says none since boot; driver reports no crash/ANR. No PNG screenshots exist in original artifact; UI evidence is XML."
+  ],
+  "passed": true,
+  "raw_initial_captures": {
+    "captured-world-handoff.json": {
+      "closed_sockets": 2,
+      "failure_code": "NONE",
+      "groups_bytes": 139794,
+      "initial_bits": 524288,
+      "initial_bytes": 65536,
+      "initial_post_command_cursor": 32,
+      "opened_sockets": 2,
+      "phase": "INITIAL_OBSERVED",
+      "request_tx": {
+        "ack_permitted": false,
+        "command_specific_emission_proved": false,
+        "deferred_send_callbacks": 0,
+        "diagnostic_only": true,
+        "failed_send_callbacks": 0,
+        "first_send_accepted": true,
+        "first_send_attempts": 1,
+        "first_send_offset_ms": 4493,
+        "last_send_offset_ms": 4493,
+        "peer_transport_ack_observed": true,
+        "queue_attempted": true,
+        "queue_offset_ms": 4073,
+        "queue_status": 0,
+        "queue_succeeded": true,
+        "refusal": 0,
+        "retirement": 1,
+        "retirement_offset_ms": 4527,
+        "retry_send_attempts": 0,
+        "server_receipt_proved": false,
+        "successful_retries": 0,
+        "valid": true,
+        "witness_retired": true,
+        "world_authority": false
+      },
+      "request_tx_available": true,
+      "status": 2
+    },
+    "fresh-reconnect-world-handoff.json": {
+      "closed_sockets": 2,
+      "failure_code": "NONE",
+      "groups_bytes": 139794,
+      "initial_bits": 524288,
+      "initial_bytes": 65536,
+      "initial_post_command_cursor": 32,
+      "opened_sockets": 2,
+      "phase": "INITIAL_OBSERVED",
+      "request_tx": {
+        "ack_permitted": false,
+        "command_specific_emission_proved": false,
+        "deferred_send_callbacks": 0,
+        "diagnostic_only": true,
+        "failed_send_callbacks": 0,
+        "first_send_accepted": true,
+        "first_send_attempts": 1,
+        "first_send_offset_ms": 4874,
+        "last_send_offset_ms": 4874,
+        "peer_transport_ack_observed": true,
+        "queue_attempted": true,
+        "queue_offset_ms": 4840,
+        "queue_status": 0,
+        "queue_succeeded": true,
+        "refusal": 0,
+        "retirement": 1,
+        "retirement_offset_ms": 4895,
+        "retry_send_attempts": 0,
+        "server_receipt_proved": false,
+        "successful_retries": 0,
+        "valid": true,
+        "witness_retired": true,
+        "world_authority": false
+      },
+      "request_tx_available": true,
+      "status": 2
+    }
+  },
+  "review_method": "Independent read-only GitHub API, exact shared artifact CRC/layout/raw JSON, source/hash/privacy/bounds and lifecycle-dump review. No download duplication, source import, build, app/native execution or qualifier replay.",
+  "run_id": 39165446220,
+  "schema": "coh-gates25-27-actual-android13-independent-worker-f-review-v1",
+  "selected_exact_byte_files": {
+    "cancelled-wait-peer.json": {
+      "bytes": 1468,
+      "sha256": "f6892a6404b7d8383cb1025f70b3c65a73152a4e1bb0fa895e85297657416987"
+    },
+    "captured-peer.json": {
+      "bytes": 1472,
+      "sha256": "d50f9f5cc504e1243c70fbbf04d40cb5b3cf3b3ac7220bc4c0eedbf8bbef840c"
+    },
+    "captured-world-handoff.json": {
+      "bytes": 2901,
+      "sha256": "09f816fbbdf0e6d99d1a100043c0e19fab2ca860a11c8d45b71b21f7b6de6af1"
+    },
+    "fresh-reconnect-peer.json": {
+      "bytes": 1472,
+      "sha256": "aab2b142fff08c3995d7f1e6c2d46f5ad67fb679e5353aa7339ec43828b98c9d"
+    },
+    "fresh-reconnect-world-handoff.json": {
+      "bytes": 2901,
+      "sha256": "822dfb8dd678c98f3c977d82fc4310499c668966b08d05b6cdeb65ac5355e608"
+    },
+    "home-cancelled-world-handoff.json": {
+      "bytes": 2891,
+      "sha256": "67e36cf03bf0b52126882412d84104a2cfcf3f338122e921fa4bef8689150dbc"
+    },
+    "receipt.json": {
+      "bytes": 5142,
+      "sha256": "bb6d100ed6aab7f9ca1d8cda5c257cfa0e7e2020d8c297134f74eb571d46b2e4"
+    },
+    "waiting-world-handoff.json": {
+      "bytes": 2889,
+      "sha256": "3e64d01c894be4eca69e9c761d7ade6f66edd67844aedd8f3b3da18a03656db6"
+    }
+  },
+  "source_revision": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "strong_witness_integration_admitted": true
+}

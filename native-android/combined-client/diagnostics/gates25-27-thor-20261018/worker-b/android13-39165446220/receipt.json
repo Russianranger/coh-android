@@ -1,0 +1,148 @@
+{
+  "schema": "coh-android-initial-interop-focused-v1",
+  "passed": true,
+  "checks": [
+    {
+      "check": "new Android JNI GROUPS then REQALLENTS then bounded raw initial observation",
+      "passed": true,
+      "scenario": "captured",
+      "initial_bytes": 65536,
+      "initial_bits": 524288,
+      "status": 2,
+      "world_authority": false
+    },
+    {
+      "check": "actual new InteropNative JNI DSO mapped in app process",
+      "passed": true,
+      "bytes": 5311016,
+      "sha256": "d3c7207abfbc74d57976bd9d45ef9037da97c5a18f247c6277a79150c14d19ca",
+      "abi": "x86_64"
+    },
+    {
+      "check": "actual framework JSON document export",
+      "passed": true,
+      "bytes": 79233,
+      "sha256": "35cde931032cb327051d8244dbca5c0a657decac6f97cda8cf49535dfe975537"
+    },
+    {
+      "check": "actual SAF export retains immutable mode-tagged numeric world handoff",
+      "passed": true,
+      "world_authority": false
+    },
+    {
+      "check": "scripted OS UDP transaction and peer cleanup",
+      "passed": true,
+      "scenario": "captured",
+      "mode": "captured",
+      "reqallents_unique": 1,
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "scripted_only": true,
+      "world_authority": false
+    },
+    {
+      "check": "Home cancellation and explicit Return preserve launcher and retained numeric evidence",
+      "passed": true,
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "automatic_reconnect": false
+    },
+    {
+      "check": "scripted OS UDP transaction and peer cleanup",
+      "passed": true,
+      "scenario": "cancelled-wait",
+      "mode": "none",
+      "reqallents_unique": 1,
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "scripted_only": true,
+      "world_authority": false
+    },
+    {
+      "check": "new Android JNI GROUPS then REQALLENTS then bounded raw initial observation",
+      "passed": true,
+      "scenario": "fresh-reconnect",
+      "initial_bytes": 65536,
+      "initial_bits": 524288,
+      "status": 2,
+      "world_authority": false
+    },
+    {
+      "check": "scripted OS UDP transaction and peer cleanup",
+      "passed": true,
+      "scenario": "fresh-reconnect",
+      "mode": "captured",
+      "reqallents_unique": 1,
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "scripted_only": true,
+      "world_authority": false
+    },
+    {
+      "check": "new-mode Android13 application has no crash or ANR",
+      "passed": true
+    }
+  ],
+  "apk": {
+    "bytes": 13181231,
+    "name": "CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk",
+    "sha256": "9fbf1dd0b95250dc92ff9e90c6448a8823594923516c51d3d92b6a2c4868a0b9"
+  },
+  "package_receipt": {
+    "abi": "x86_64",
+    "accepted_scene_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+    "actual_server_interoperability_verified": false,
+    "apk": {
+      "bytes": 13181231,
+      "name": "CoH-Native-Combined-0.1.8-gates25-27-x86_64.apk",
+      "sha256": "9fbf1dd0b95250dc92ff9e90c6448a8823594923516c51d3d92b6a2c4868a0b9"
+    },
+    "donor_apk_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+    "embedded_asset_bytes": 9540457,
+    "embedded_asset_files": 74,
+    "format": 1,
+    "large_runtime_game_payloads_embedded": false,
+    "native_libraries": {
+      "lib/x86_64/libcoh_combined_interop.so": {
+        "bytes": 5311016,
+        "sha256": "d3c7207abfbc74d57976bd9d45ef9037da97c5a18f247c6277a79150c14d19ca"
+      },
+      "lib/x86_64/libcoh_combined_network.so": {
+        "bytes": 5865208,
+        "sha256": "b81c67b95883c77c5fdf79d26b8133c1cff042162e3ec60ccc105168b360ee08"
+      },
+      "lib/x86_64/libcoh_session_client.so": {
+        "bytes": 389776,
+        "sha256": "4f5b1d68538e23b58080e7971795259d7b40d93c9de9579f6569865a872d9137"
+      }
+    },
+    "package": "org.coh.nativecombined",
+    "scope": "Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.",
+    "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "source_commit": "3f050e50d6db9c16463390867691ea95f29ae560",
+    "status": "passed",
+    "tracked_source_clean": true,
+    "version_code": "9",
+    "version_name": "0.1.8-gates25-27-test"
+  },
+  "peer_receipt_sha256": "1ab428381b8c168f535f5cbb07e5f54b9f27a0c6419da42601a9cbfc1b14619e",
+  "source_revision": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "driver_sha256": "bacce4771827a66284cd7058461148a02116c6756b5dfc8246861c9872d0be51",
+  "device": {
+    "api": 33,
+    "abi": "x86_64",
+    "emulator": true,
+    "build_fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys"
+  },
+  "actual_Android_JNI_and_OS_UDP": true,
+  "scripted_source_layout_only": true,
+  "original_Auth_Db_Map_service_execution": false,
+  "normal_version_checksum_policy_qualified": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ACK_authority": false,
+  "world_authority": false,
+  "physical_Thor_qualified": false,
+  "timeout_qualified": false,
+  "old_framework_suite_executed": false
+}
