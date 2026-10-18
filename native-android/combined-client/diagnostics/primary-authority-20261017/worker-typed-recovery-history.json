@@ -1,0 +1,45 @@
+{
+  "schema": "coh-preserved-typed-recovery-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/typed-recovery-20261018/a",
+      "tip": "1fbcda744aa32430c9b62f0e8772677762a72e67",
+      "prerequisite": "5fc7141a15cdb195eca0e41c3f52933c6da2cbfb"
+    },
+    "B": {
+      "ref": "refs/recovery/typed-recovery-20261018/b",
+      "tip": "c9c3de4b17de3bd201af28e3543523c205ecca74",
+      "prerequisite": "28b7f6d23f6dc42f3a40513b80105d0c1cd318a9"
+    },
+    "C": {
+      "ref": "refs/recovery/typed-recovery-20261018/c",
+      "tip": "cff73c9b8a49366c03fdfc544ee3ee7e288e89cb",
+      "prerequisite": "93b8d5daf372030d4f7166f17cd6247a7ef280a7"
+    },
+    "D": {
+      "ref": "refs/recovery/typed-recovery-20261018/d",
+      "tip": "29682df9d84d47f78dcb93ccec2db687308c4eef",
+      "prerequisite": "aff1daa835cbd38fce1c92911b702c5628b8c1b9"
+    },
+    "E": {
+      "ref": "refs/recovery/typed-recovery-20261018/e",
+      "tip": "2c8acfb8498dd496d342e314e634f02719ac868d",
+      "prerequisite": "e54ceb26cf5dbd6ca74442d2de196827c82265fe"
+    },
+    "F": {
+      "ref": "refs/recovery/typed-recovery-20261018/f",
+      "tip": "36d4f25ccb9d73ba0b4cc7e0ca9664a429f4125e",
+      "prerequisite": "e2d1a83c9ae5ce48535fc521da198f084204e928"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/typed-recovery-20261018/coordinator",
+      "tip": "00236572dff392a6143fd49e5aa232b71a23453e",
+      "prerequisite": "3b6bd0de1b728c6e2e8bc8f11e5af2b92908dfbc"
+    }
+  },
+  "bundle": "worker-typed-recovery-history.bundle",
+  "bytes": 254966,
+  "sha256": "dd627149e51c268e28519fa96e2829c3daa87f9698e5367e6dd5cefa31da06aa",
+  "verification": "The bundle contains these 7 refs:\n1fbcda744aa32430c9b62f0e8772677762a72e67 refs/recovery/typed-recovery-20261018/a\nc9c3de4b17de3bd201af28e3543523c205ecca74 refs/recovery/typed-recovery-20261018/b\ncff73c9b8a49366c03fdfc544ee3ee7e288e89cb refs/recovery/typed-recovery-20261018/c\n29682df9d84d47f78dcb93ccec2db687308c4eef refs/recovery/typed-recovery-20261018/d\n2c8acfb8498dd496d342e314e634f02719ac868d refs/recovery/typed-recovery-20261018/e\n36d4f25ccb9d73ba0b4cc7e0ca9664a429f4125e refs/recovery/typed-recovery-20261018/f\n00236572dff392a6143fd49e5aa232b71a23453e refs/recovery/typed-recovery-20261018/coordinator\nThe bundle requires these 6 refs:\n28b7f6d23f6dc42f3a40513b80105d0c1cd318a9 \ne2d1a83c9ae5ce48535fc521da198f084204e928 \naff1daa835cbd38fce1c92911b702c5628b8c1b9 \n5fc7141a15cdb195eca0e41c3f52933c6da2cbfb \n93b8d5daf372030d4f7166f17cd6247a7ef280a7 \ne54ceb26cf5dbd6ca74442d2de196827c82265fe \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-typed-recovery-history.bundle is okay\n",
+  "scope": "Preserved actual scene failure and guard source finding; actual repaired DbServer readiness and next selected grant composition; source-fixed refused-command classifier and20-field capture stdout; original RGBA32 codec and typed GPU upload with host evidence, separate Android driver cleanup precision; independent source/receipt reviews. New selected grant and typed-source Android workflows are prepared, not yet executed. No current scene/player, ACK, APK, Thor, global budget or app-context authority."
+}

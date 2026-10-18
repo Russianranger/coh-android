@@ -1,0 +1,43 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "archive": {
+    "artifact_id": 12119356975,
+    "bytes": 1211,
+    "sha256": "8f9850c1828e4608ef113434dbb482a733ae7dd2f4f5beaa3718d01e158fe884"
+  },
+  "fixed_enum_headers_match_recorded_source_revision": true,
+  "members": {
+    "summary.json": {
+      "bytes": 1787,
+      "sha256": "aa13b2a83087b2fc7061c71c297ea96ae3100680c6017a7d44b17c1ad8359e09",
+      "zip_compressed_bytes": 725,
+      "zip_crc32": "4cc343b5"
+    },
+    "tooling.json": {
+      "bytes": 397,
+      "sha256": "64172a94f2343cbb14c147fd9d2be564ec4dce64af4b796eee8a68f498ccc56c",
+      "zip_compressed_bytes": 232,
+      "zip_crc32": "cb051355"
+    }
+  },
+  "native_fixed_public_schema_checked": true,
+  "private_packet_or_source_artifacts_obtained": false,
+  "public_summary_schema_checked": true,
+  "runtime_reexecuted": false,
+  "schema": "coh-actual-scene-public-status-audit-v1",
+  "source_generation_admitted": false,
+  "source_revision": "bd7b16b6ae188f9e8e1aa90542eb86287f38c312",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+    "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+    "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+    "native-android/engine/scenecatalog-server/groups_capture_stages.py": "76faf1ee5dd3b0ef0f1a725869024cd6d4c7da4f6300f2221f4b0346599b442b",
+    "native-android/engine/scenecatalog-server/groups_native_status.py": "cc0e6a10144e9e0eb9bed06c04f825b2d49ffabc3697ca91b1581dc75f76eb0c",
+    "native-android/engine/scenecatalog-server/summarize_groups_capture.py": "8daa513aa8a45b905d764be7b0d658a0b4b34b117bbfac922841311fb2992beb"
+  },
+  "summary_helper_matches_recorded_source_revision": true,
+  "workflow_run": 39081284657,
+  "world_authority": false
+}

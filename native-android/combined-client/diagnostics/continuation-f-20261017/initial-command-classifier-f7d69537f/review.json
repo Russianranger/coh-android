@@ -1,0 +1,68 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "actual_live_refused_command_observed": false,
+  "complete_initial_character": false,
+  "measured_host_ownership": {
+    "additional_owner_sum_bytes": 2384,
+    "android_abi_measured": false,
+    "caller_lease_separate_bytes": 1344,
+    "capture_owner_bytes": 1080,
+    "diagnostics_embedded_bytes": 1024,
+    "embedded_fields_counted_again": false,
+    "first_failure_embedded_bytes": 24,
+    "global_aggregate_budget_admitted": false,
+    "growth_from_explicit_deadline_source_bytes": 32,
+    "map_wrapper_bytes": 1304,
+    "ordinary_local_separate_bytes": 1040,
+    "ordinary_map_separate_bytes": 2536,
+    "private_map_failure_embedded_bytes": 8,
+    "process_rss_measured": false
+  },
+  "qualification_recorded_not_replayed": {
+    "leak_sanitizer_enabled": false,
+    "modes": [
+      "release",
+      "asan",
+      "ubsan"
+    ],
+    "original_source_known_names": 231,
+    "owner_checks_per_mode": 1797,
+    "owner_fault_scenarios": 5,
+    "public_checks_per_mode": 6120,
+    "public_scenarios": 22,
+    "real_os_udp_with_synthetic_source_layout_peers": true,
+    "source_map_mutations_refused": 3
+  },
+  "receipt_files": {
+    "initial-capture-command-classification-binding-20261018.json": {
+      "bytes": 3727,
+      "sha256": "abe791ea3f7bf6bb973cdbb8d9e09c18b1865c2ca530def871045ba976f89ea6"
+    },
+    "initial-capture-command-classification-f7d69537f.json.gz": {
+      "bytes": 6000,
+      "sha256": "fe7a63e2fa2d629d5cbcd868da26325e14509876a1f3861d3e9d888b315b5c1a"
+    }
+  },
+  "review": "clear within bounded diagnostic scope",
+  "review_findings": [
+    "All231 pinned original ServerCommCmd names exclude sentinel; public getter returns only a fixed source label, NONE or UNKNOWN. Raw command IDs and packet strings are not exported.",
+    "Private classification clears before every next_owned fetch and before initial command decoding. A failed fetch cannot inherit a prior accepted CONNECT_MSG or GROUPS classification.",
+    "Legacy underflow refuses before decoded-kind latch; ordinary pre-request classification uses actual last_command_valid. First refusal classification latches before Map close and survives later diagnostic/close/cancel operations.",
+    "Source change adds diagnostic classification only; no packet body parser, command skipping, request, ACK or ordinary Map/Local/replication changes."
+  ],
+  "reviewed_proof_commit": "cff73c9b8a49366c03fdfc544ee3ee7e288e89cb",
+  "reviewed_source_revision": "f7d69537f922ff3f7996d4f2bdb320565bbfcc87",
+  "reviewer_actions": {
+    "compiler_or_qualifier_executed": false,
+    "downloads_or_dispatch": false,
+    "read_only_source_review": true,
+    "runtime_or_server_executed": false,
+    "source_and_receipt_byte_binding": true
+  },
+  "schema": "coh-f-initial-command-classifier-review-v1",
+  "source_generation_admitted": false,
+  "source_hash_mismatches": 0,
+  "source_inputs_verified_against_qualified_git_and_current_worker": 70,
+  "world_authority": false
+}

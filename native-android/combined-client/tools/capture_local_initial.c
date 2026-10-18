@@ -208,16 +208,18 @@ int main(int argc,char **argv) {
     }
     if(out.groups.directory>=0)(void)close(out.groups.directory);
     if(!success&&directory_created)(void)rmdir(argv[4]);
-    printf("{\"schema\":\"coh-local-initial-capture-status-v1\",\"passed\":%s,\"initial_packet_observed\":%s,\"status\":%u,"
+    printf("{\"schema\":\"coh-local-initial-capture-status-v2\",\"passed\":%s,\"initial_packet_observed\":%s,\"status\":%u,"
         "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"source_generation_admitted\":false,"
         "\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,"
         "\"diagnostic_failure_code\":\"%s\",\"groups_observed\":%s,\"reqallents_sent\":%u,\"local_phase\":%u,"
-        "\"terminal_failure\":%s,\"terminal_db_phase\":%u,\"terminal_map_phase\":%u}\n",
+        "\"terminal_failure\":%s,\"terminal_db_phase\":%u,\"terminal_map_phase\":%u,"
+        "\"refused_command_valid\":%s,\"refused_command_kind\":\"%s\"}\n",
         success?"true":"false",initial_passed?"true":"false",(unsigned)diagnostic_status(&d),
         (unsigned long long)d.local.opened_sockets,(unsigned long long)d.local.closed_sockets,
         failure_name(diagnostic_failure(&d)),d.groups_observed?"true":"false",d.reqallents_sent,(unsigned)d.local.phase,
         (d.first_failure.valid||d.local.terminal_failure)?"true":"false",
         (unsigned)(d.first_failure.valid?d.first_failure.db_phase:d.local.terminal_db_phase),
-        (unsigned)(d.first_failure.valid?d.first_failure.map_phase:d.local.terminal_map_phase));
+        (unsigned)(d.first_failure.valid?d.first_failure.map_phase:d.local.terminal_map_phase),
+        d.refused_command_valid?"true":"false",coh_initial_capture_command_name(d.refused_command_kind));
     return success?0:1;
 }

@@ -7,11 +7,13 @@ import groups_native_status as n
 import summarize_groups_capture as summary
 import test_groups_public_summary as public_fixture
 CANARY='PRIVATE-STDOUT-ACCOUNT-ID-PATH-LOG-CANARY'
+SOURCE_ROOT=Path(os.environ.get('COH_NATIVE_STATUS_SOURCE_ROOT',str(n.d.ROOT)))
 def status():
     return {'schema':n.SCHEMA,'passed':False,'initial_packet_observed':False,'status':1,
         'opened_sockets':2,'closed_sockets':2,**{name:False for name in n.FALSE},
         'diagnostic_failure_code':'PROTOCOL','groups_observed':False,'reqallents_sent':0,
-        'local_phase':5,'terminal_failure':True,'terminal_db_phase':9,'terminal_map_phase':3}
+        'local_phase':5,'terminal_failure':True,'terminal_db_phase':9,'terminal_map_phase':3,
+        'refused_command_valid':False,'refused_command_kind':'NONE'}
 class Controls(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory(prefix='coh-native-status-');self.addCleanup(self.temp.cleanup)
@@ -26,18 +28,18 @@ class Controls(unittest.TestCase):
         return child,owner,children,path
     def collect(self,raw,initial=True):
         child,owner,children,path=self.child(raw)
-        result,private=n.collect(child,owner,children,self.source,initial,n.d.ROOT)
+        result,private=n.collect(child,owner,children,self.source,initial,SOURCE_ROOT)
         return result,private,(child,owner,children,path)
     def test_exact_schema_and_header_enumerations(self):
-        self.assertEqual(len(n.KEYS),18);self.assertEqual(set(n.verify_enums(n.d.ROOT)),set(n.ENUM_SOURCE_PATHS))
+        self.assertEqual(len(n.KEYS),20);self.assertEqual(set(n.verify_enums(SOURCE_ROOT)),set(n.ENUM_SOURCE_PATHS))
         parsed=n.parse(json.dumps(status()).encode());self.assertEqual(parsed['stdout_state'],'VALID')
         self.assertEqual(parsed['diagnostic_failure_code'],'PROTOCOL');self.assertEqual(parsed['terminal_map_phase'],3)
         self.assertFalse(parsed['native_groups_result_passed']);self.assertEqual(parsed['coh_status'],1)
         for typename,(name,members) in n.ENUMS.items():
             self.assertEqual(len(members)-1,{'CohStatus':7,'CohLocalPhase':10,'CohDbSessionPhase':12,'CohMapPhase':10}[typename])
         for name in n.ENUM_SOURCE_PATHS:
-            target=self.root/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((n.d.ROOT/name).read_bytes())
-        self.assertEqual(n.verify_enums(self.root),n.verify_enums(n.d.ROOT))
+            target=self.root/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((SOURCE_ROOT/name).read_bytes())
+        self.assertEqual(n.verify_enums(self.root),n.verify_enums(SOURCE_ROOT))
         target=self.root/n.ENUMS['CohMapPhase'][0];target.write_bytes(target.read_bytes().replace(b'COH_MAP_FAILED',b'COH_MAP_OTHER'))
         with self.assertRaises(n.d.Refused):n.verify_enums(self.root)
     def test_every_field_strict_and_unknown_or_omitted_input_refused(self):
@@ -75,10 +77,10 @@ class Controls(unittest.TestCase):
         for changed,owned in ((None,children),(dict(owner,pid=child.pid+1),children),
             (dict(owner,key=(owner['key'][0],owner['key'][1]+1,owner['key'][2])),children),(owner,[]),
             (dict(owner,stream=types.SimpleNamespace(closed=False)),children)):
-            result,private=n.collect(child,changed,owned,self.source,True,n.d.ROOT)
+            result,private=n.collect(child,changed,owned,self.source,True,SOURCE_ROOT)
             self.assertEqual(result['stdout_state'],'REFUSED');self.assertIsNone(private)
         other=types.SimpleNamespace(pid=child.pid+1,poll=lambda:0)
-        result,private=n.collect(other,owner,[other],self.source,True,n.d.ROOT)
+        result,private=n.collect(other,owner,[other],self.source,True,SOURCE_ROOT)
         self.assertEqual(result['stdout_state'],'REFUSED');self.assertIsNone(private)
         with self.assertRaises(n.d.Refused):n.latch(child,path,types.SimpleNamespace(closed=True),children,[])
     def test_source_replacement_public_mode_link_and_hash_change_refused(self):
@@ -99,15 +101,15 @@ class Controls(unittest.TestCase):
                     if calls==2:return value[0],'0'*64
                 return value
             with mock.patch.object(n.d,'hash_file',side_effect=changed_hash) if change=='hash' else mock.patch.object(n.d,'hash_file',wraps=real):
-                result,private=n.collect(child,owner,children,self.source,True,n.d.ROOT)
+                result,private=n.collect(child,owner,children,self.source,True,SOURCE_ROOT)
             with self.subTest(change=change):self.assertEqual(result['stdout_state'],'REFUSED');self.assertIsNone(private)
     def test_exit_unavailable_legacy_and_malformed_stdout_stay_fixed(self):
         for code in (0,1,2,3,-15,None,True):
             child=types.SimpleNamespace(pid=10,poll=lambda:code)
-            result,private=n.collect(child,None,[child],None,False,n.d.ROOT)
+            result,private=n.collect(child,None,[child],None,False,SOURCE_ROOT)
             self.assertEqual(result['exit_code'],code if type(code) is int and code in (0,1,2) else 'UNEXPECTED')
             self.assertEqual(result['stdout_state'],'UNAVAILABLE');self.assertIsNone(private)
-        result,private=n.collect(None,None,[],None,True,n.d.ROOT)
+        result,private=n.collect(None,None,[],None,True,SOURCE_ROOT)
         self.assertFalse(result['process_started']);self.assertEqual(result['exit_code'],'UNEXPECTED');self.assertIsNone(private)
         for raw in (b'',b'{'+CANARY.encode(),b'a'*(n.STDOUT_MAX+1)):
             result,private,_=self.collect(raw)
@@ -143,13 +145,13 @@ class Controls(unittest.TestCase):
         for changed in (None,dict(owner,pid=child.pid+1)):
             report={'passed':True,'matching_groups_transaction_captured':True,'cleanup_verified':True,
                 'pair':{'passed':True},'private_native_stdout':{'stale':CANARY}}
-            n.record(report,child,changed,children,self.source,True,n.d.ROOT)
+            n.record(report,child,changed,children,self.source,True,SOURCE_ROOT)
             self.assertTrue(report['passed']);self.assertTrue(report['matching_groups_transaction_captured'])
             self.assertTrue(report['cleanup_verified']);self.assertEqual(report['pair'],{'passed':True})
             self.assertEqual(report['native_diagnostic']['stdout_state'],'REFUSED');self.assertNotIn('private_native_stdout',report)
         report={'passed':True,'cleanup_verified':False}
         with mock.patch.object(n,'collect',side_effect=OSError(CANARY)):
-            n.record(report,child,owner,children,self.source,True,n.d.ROOT)
+            n.record(report,child,owner,children,self.source,True,SOURCE_ROOT)
         self.assertTrue(report['passed']);self.assertFalse(report['cleanup_verified'])
         self.assertEqual(report['native_diagnostic']['stdout_state'],'REFUSED');self.assertNotIn(CANARY,json.dumps(report))
     def test_first_failure_producer_values_are_distinct_from_final_closed_phase(self):
@@ -175,5 +177,59 @@ class Controls(unittest.TestCase):
             terminal_db_phase=0,terminal_map_phase=0)
         parsed=n.parse(json.dumps(value).encode());self.assertFalse(parsed['terminal_failure'])
         self.assertEqual(parsed['terminal_db_phase'],0);self.assertEqual(parsed['terminal_map_phase'],0)
+    def test_all_source_command_names_are_fixed_classifications_only(self):
+        self.assertEqual(len(n.COMMAND_NAMES),231);self.assertNotIn('SERVER_CMD_COUNT',n.COMMAND_NAMES)
+        for name in (*n.COMMAND_NAMES,'UNKNOWN'):
+            value=status();value.update(diagnostic_failure_code='COMMAND',refused_command_valid=True,refused_command_kind=name)
+            result=n.parse(json.dumps(value).encode())
+            self.assertIs(result['refused_command_valid'],True);self.assertEqual(result['refused_command_kind'],name)
+            self.assertNotIn('raw_command',result);self.assertFalse(result['world_authority'])
+    def test_refused_command_pair_is_exact_and_never_a_runtime_name(self):
+        for valid,kind in ((True,'NONE'),(False,'UNKNOWN'),(False,'SERVER_GROUPS'),(True,'SERVER_CMD_COUNT'),
+            (True,CANARY),(1,'SERVER_GROUPS'),(False,0),(True,7),(True,'7')):
+            value=status();value.update(refused_command_valid=valid,refused_command_kind=kind)
+            with self.subTest(valid=valid,kind=kind),self.assertRaises(n.d.Refused):n.parse(json.dumps(value).encode())
+        value=n.empty();value.update(refused_command_valid=True,refused_command_kind='SERVER_GROUPS')
+        with self.assertRaises(n.d.Refused):n.public(value)
+    def test_legacy_stdout_and_projection_are_unavailable_without_changing_groups(self):
+        value=status();value['schema']=n.LEGACY_SCHEMA
+        for name in ('refused_command_valid','refused_command_kind'):del value[name]
+        raw=json.dumps(value).encode();self.assertIsNone(n.parse(raw))
+        result,private,_=self.collect(raw)
+        self.assertEqual(result['stdout_state'],'UNAVAILABLE');self.assertEqual(result['exit_code'],0)
+        self.assertIsNone(private);self.assertFalse(result['refused_command_valid']);self.assertEqual(result['refused_command_kind'],'NONE')
+        legacy=n.parse(json.dumps(status()).encode());legacy['schema']='coh-native-source-diagnostic-v1'
+        for name in ('refused_command_valid','refused_command_kind'):del legacy[name]
+        report=public_fixture.receipt();report['native_diagnostic']=legacy
+        projected=summary.summarize(report)
+        self.assertTrue(projected['passed']);self.assertTrue(projected['matching_groups_transaction_captured'])
+        self.assertEqual(projected['native_diagnostic']['schema'],n.PUBLIC_SCHEMA)
+        self.assertEqual(projected['native_diagnostic']['stdout_state'],'UNAVAILABLE')
+        for name in ('coh_status','terminal_db_phase','terminal_map_phase'):self.assertIsNone(projected['native_diagnostic'][name])
+    def test_command_source_map_manifest_and_original_enum_mutations_refused(self):
+        for name in n.ENUM_SOURCE_PATHS:
+            target=self.root/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((SOURCE_ROOT/name).read_bytes())
+        originals={name:(self.root/name).read_bytes() for name in n.COMMAND_SOURCE_PATHS}
+        self.assertEqual(len(n.verify_commands(self.root)),4)
+        changes=((n.COMMAND_MAP,originals[n.COMMAND_MAP].replace(b'SERVER_UPDATE, 2',b'SERVER_UPDATE, 3')),
+            (n.COMMAND_MAP,originals[n.COMMAND_MAP].replace(b'SERVER_UPDATE, 2',b'SERVER_UNTRUSTED, 2')),
+            (n.COMMAND_MAP,originals[n.COMMAND_MAP]+b'\nCOH_INITIAL_CAPTURE_COMMAND(SERVER_CMD_COUNT, 233)\n'),
+            (n.COMMAND_MAP,originals[n.COMMAND_MAP].replace(b'COH_INITIAL_CAPTURE_COMMAND(SERVER_ALLENTS, 3)\n',b'')),
+            (n.COMMAND_PINS,originals[n.COMMAND_PINS].replace(b'"schema": 1',b'"schema": true')),
+            ('upstream/ouroboros/Common/comm_game.h',originals['upstream/ouroboros/Common/comm_game.h'].replace(b'SERVER_ALLENTS,',b'SERVER_UNTRUSTED,')),
+            ('upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h',originals['upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h'].replace(b'COMM_MAX_CMD = 2',b'COMM_MAX_CMD = 3')))
+        for name,changed in changes:
+            (self.root/name).write_bytes(changed)
+            with self.subTest(name=name),self.assertRaises(n.d.Refused):n.verify_commands(self.root)
+            (self.root/name).write_bytes(originals[name])
+    def test_late_source_verification_cannot_change_closed_stdout_binding(self):
+        child,owner,children,path=self.child(json.dumps(status()).encode());real=n.verify_enums
+        def changed(root):
+            result=real(root);path.write_bytes(path.read_bytes()+b' ');return result
+        with mock.patch.object(n,'verify_enums',side_effect=changed):
+            report={'passed':True,'matching_groups_transaction_captured':True,'cleanup_verified':True}
+            n.record(report,child,owner,children,self.source,True,SOURCE_ROOT)
+        self.assertTrue(report['passed']);self.assertTrue(report['matching_groups_transaction_captured'])
+        self.assertEqual(report['native_diagnostic']['stdout_state'],'REFUSED');self.assertNotIn('private_native_stdout',report)
 
 if __name__=='__main__':unittest.main()

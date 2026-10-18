@@ -1,0 +1,104 @@
+{
+  "actor_authority": false,
+  "application_context_adopted": false,
+  "current_namespace": false,
+  "default_identity": false,
+  "evidence_commit": "043fb8c90502e8f635e4e9e5b83db8beadb0a251",
+  "findings": [
+    "New typed upload takes a genuine immutable RGBA32 owner through its public getter, retains synchronous pixel/source lifetime, and makes a genuine existing GPU owner/journal. It does not cast or forge a legacy source.",
+    "External minimum includes full recorded source aggregate plus known caller spans; new GPU CPU owner, declared GPU reservation and16KiB adapter control reserve are additional. Known writable/input/path/pixel aliases refuse before callbacks; opaque private/backend/provider storage remains a documented caller disjointness contract.",
+    "Kind0 legacy upload body is source-bound byte-identical after neutralizing only its final expanded report initializer. Sourcekind1 explicitly invalidates legacy-only report fields; common path/generation/hash/dimensions/levels remain valid for GPU lease identity.",
+    "Backend context/token/operations, six-state restore, partial-upload pending journal, deletion quarantine and retry semantics are preserved. The focused fixture retires source/provider after copied CPU ownership, then CPU owners after upload and before leased GPU readback. No production handoff is inferred.",
+    "Checker pins each executed mode ELF before and after execution and all retained ELF/readback/C++ artifacts again before receipt. Source Git/current, exact fixture regeneration, primary host headers and declared library files are bound; full system compiler/header/runtime mapping is explicitly outside scope.",
+    "New Android driver statically admits checker/driver committed bytes before import, exact fixture and two ABI files, and nonce-path absence after attempted creation. Android build/execution was not performed in this host receipt."
+  ],
+  "material_authority": false,
+  "measured_host_ownership": {
+    "GPU_CPU_owner_bytes": 1328,
+    "GPU_external_declared_bytes": 33554432,
+    "adapter_stack_sum_times_four_bytes": 8448,
+    "android_ABI_or_RSS_measured": false,
+    "global_aggregate_budget_admitted": false,
+    "growth_each_owner_both_source_kinds_bytes": 32,
+    "lease_external_declared_bytes": 50331648,
+    "new_adapter_control_reserve_bytes": 16384,
+    "previous_layout_probe_bytes": 1296,
+    "provider_loader_driver_old_candidate_peaks_additional": true,
+    "report_embedded_bytes": 176,
+    "source_retirement_subtracted_from_peak": false
+  },
+  "preserved_identical_readback": {
+    "bytes": 1488,
+    "file": "readback.rgba",
+    "sha256": "91bd157f743e7c25d2b43ba36b93144318f5d885c975e25ac9b19790b912163b"
+  },
+  "production_prepare_executed": false,
+  "qualification_recorded_not_replayed": {
+    "LSan_enabled": false,
+    "actual_RGBA32_uploads_each": 2,
+    "cancelled_uploads_each": 6,
+    "checks_each": 367,
+    "contexts_created_destroyed_each": [
+      1,
+      1
+    ],
+    "generated_deleted_each": [
+      9,
+      9
+    ],
+    "images_each": 20,
+    "legacy_smoke_uploads_each": 1,
+    "modes": [
+      "release",
+      "address",
+      "undefined"
+    ],
+    "provider_holds_drops_each": [
+      2,
+      2
+    ],
+    "readbacks_each": 18,
+    "registry_retains_releases_each": [
+      1,
+      1
+    ],
+    "surfaces_created_destroyed_each": [
+      1,
+      1
+    ],
+    "tracked_module_calloc_blocks_live": 0,
+    "typed_semantic_mutations_refused": [
+      "source_aggregate_minimum",
+      "missing_RGBA_mip",
+      "source_kind_erased",
+      "late_cancel_ignored",
+      "pending_journal_error_erased"
+    ]
+  },
+  "receipt": {
+    "bytes": 21518,
+    "file": "host.json",
+    "sha256": "e7d609502b1cfc45d1e1e876de2652087b14e1a9e490606560252af126b90ca8"
+  },
+  "retained_artifacts_rehashed": {
+    "CPP_binary": 1,
+    "C_objects_for_CPP_link": 9,
+    "mode_ELFs": 3,
+    "mode_readbacks": 3
+  },
+  "review": "clear within standalone source-owner/GPU scope",
+  "reviewed_source_revision": "166fdb04f30ff52d2f000af478e2dc953d7cc438",
+  "reviewer_actions": {
+    "GL_or_Android_executed": false,
+    "compiler_or_qualifier_executed": false,
+    "downloads_or_dispatch": false,
+    "read_only_source_review": true,
+    "source_Git_and_retained_byte_binding": true
+  },
+  "schema": "coh-f-source-rgba32-gpu-review-v1",
+  "separate_Android_failure_scope_note": "The driver proves nonce-path absence after an ambiguous ADB/native error; remote timeout bounds eventual native termination, but failed-path process absence is not independently observed. Success still requires native_process_completed and all native cleanup controls. This is a pending Android-only wording/observation scope item, not a host-proof blocker or request to replay host qualifiers.",
+  "source_generation_admitted": false,
+  "source_hash_mismatches": 0,
+  "source_hashes_verified_against_current_and_qualified_git": 29,
+  "world_authority": false
+}

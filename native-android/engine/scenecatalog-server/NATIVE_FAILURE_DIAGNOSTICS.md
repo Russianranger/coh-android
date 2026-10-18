@@ -4,15 +4,26 @@ private supervisor and its fixed public summary. It does not change GROUPS
 receipts, pairing, source-generation scope, initial packet acceptance or any
 actor/ACK/world gate. There is no runtime, source rebuild or retry in this change.
 
-The root-owned initial tool emits exactly 18 fields under
-`coh-local-initial-capture-status-v1`: the existing ten fixed status/socket/scope
+The root-owned initial tool emits exactly 20 fields under
+`coh-local-initial-capture-status-v2`: the existing ten fixed status/socket/scope
 fields plus schema, diagnostic failure code, GROUPS-observed flag, one-request
-count, current local phase and three preserved terminal fields. Unknown or
+count, current local phase, three preserved terminal fields, and the two fixed
+refused-message classification fields. Unknown or
 missing fields, duplicate JSON keys, extra log text, oversized output, Boolean
 integers, out-of-range values and non-false authority flags refuse the diagnostic.
 The exact source-owned failure vocabulary is NONE, INPUT, OWNER, PROTOCOL,
 GROUPS, REQUEST, COMMAND, HEADER, OBSERVER, RELEASE, TIMEOUT, CANCELLED, MEMORY.
 The native fallback UNKNOWN is refused rather than exported.
+
+`refused_command_valid:false` requires kind NONE. A decoded command in a refused
+message has valid true and either one of the 231 exact pinned original
+ServerCommCmd names (excluding SERVER_CMD_COUNT), or UNKNOWN for a decoded
+nonwhitelist value. Decode failure cannot reuse a previous GROUPS command. The
+collector never exports a raw numeric command or a runtime-supplied name.
+The original enum, COMM_MAX_CMD2, the C X-macro map and its source-pin manifest
+are checked together and included in the committed source closure. UNKNOWN here
+is a fixed command classification, separate from the refused failure-code
+fallback of the same spelling. No packet is skipped or newly accepted.
 
 The numeric maps are checked against the actual source enum members and values:
 
@@ -51,12 +62,17 @@ Python faithfully projects this producer data and never reinterprets ordinary
 Local terminal fields, infers the cause from a phase, or combines a later cancel
 status with an earlier failure's phases.
 
-The public summary gains one fixed `native_diagnostic` object. It contains only
+The public summary gains one fixed `coh-native-source-diagnostic-v2` object. It contains only
 process-started and validation/result booleans, fixed exit 0/1/2/UNEXPECTED, the
-fixed C failure enum, bounded status/local/terminal phases, request count and
+fixed C failure enum, bounded status/local/terminal phases, request count,
+fixed refused-command valid/kind pair, and
 source-capture/partial presence booleans. NOT STARTED is represented by
 process_started false and exit UNEXPECTED. Unavailable/legacy output has state
 UNAVAILABLE and null status/phases; malformed new output has state REFUSED.
+Exact historical stdout v1 and nested diagnostic v1 normalize to UNAVAILABLE;
+only validated process exit/source-entry metadata is retained. Existing GROUPS
+receipt acceptance and pairing remain unchanged. The historical compatibility
+proofs below bind their original v1 parser rather than claim v2 ownership.
 Presence flags mean only that those exact source-owned paths have entries at
 collection time; they do not assert regularity, completion or packet admission.
 
@@ -68,13 +84,16 @@ remain fixed. Latch/read/parse/collection refusal cannot alter a valid GROUPS
 result. Legacy private receipts without this object retain their old acceptance
 behavior and receive fixed unavailable public diagnostics.
 
-Eleven `test_groups_native_status.py` methods cover exact source enums, all fields,
+Sixteen `test_groups_native_status.py` methods cover exact source enums, all fields,
 strict types/ranges, fixed failure names, ownership/closure/replacement/link
 refusals, before/after hash changes, exit normalization, source-presence flags,
 privacy canaries and preservation of GROUPS on late diagnostic refusal. Tiny
 owned Python children test real Linux stdout descriptors and closure; synthetic
 JSON supplies the status values. No actual native capture, PG, Wine, MapServer,
 initial packet or authority token is executed or produced by these controls.
+The five added methods cover all fixed command names, invalid classification
+pairs, legacy normalization, command-map/source mutation, and stdout mutation
+during late source verification; eight related public-summary methods also pass.
 
 The follow-up `native-first-failure-stdout-compatibility.json` reuses all twelve
 retained release/ASan/UBSan stdout files from the root CLI qualification at

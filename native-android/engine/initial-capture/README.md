@@ -26,6 +26,25 @@ full-update ACK, actor, current dictionary generation or acceptance is granted.
 An earlier valid GROUPS observation and numeric metadata survive later initial
 failure, allowing the separate GROUPS capture scope to remain useful.
 
+Refused command diagnostics expose only `refused_command_valid` and a typed
+`refused_command_kind`, rendered by `coh_initial_capture_command_name`. The fixed
+whitelist is the231 original `ServerCommCmd` identifiers, excluding the count
+sentinel. No decoded command is false/NONE; an actually decoded unrecognized
+normalized command is true/UNKNOWN. Current classification is cleared before
+each decode and service, then the first refusal is latched before Map cleanup.
+Malformed/truncated/legacy-underflow input cannot reuse the preceding GROUPS
+classification. Later close/cancel/timeout preserve that first observation.
+These fields contain no packet text or raw numeric command identifier and do
+not authorize a body parser, command skipping or a protocol response.
+
+Original source does not guarantee ALLENTS is the next application packet after
+GROUPS: REQSCENE sends the world and leaves the client NOT_READY; REQALLENTS later
+sets its source state, while `entFinishUpdate` also flushes already pending game
+command packets independently. `START_PACKET` can create a SERVER_GAME_CMDS
+envelope. Dynamic definition sends are separately gated IN_GAME. These source
+paths explain the need to observe the actual enum; none identifies the command
+in an unclassified live refusal or justifies adding a guessed intervening parser.
+
 `diagnostics.first_failure` records the first diagnostic failure/cancellation
 with typed Local/DB/Map phases, status and failure reason before diagnostic
 cleanup closes the controller. The private Map wrapper latches its actual phase
@@ -93,6 +112,35 @@ The peer refuses READY or any other unexpected application request and reports
 all authority flags false. It is never shipped or an authentic server witness.
 
 ## First-failure snapshot qualification
+
+The command-classification follow-up is source
+`f7d69537f922ff3f7996d4f2bdb320565bbfcc87`. Release/ASan/UBSan each passed22
+public UDP scenarios /6,120 checks and five owner faults /1,797 checks. The
+unchanged whole original `ServerCommCmd` and `getServerCmdName` run in an explicit
+host fixture; all231 native names match, and three altered whitelist maps refuse.
+Known/UNKNOWN/none, truncated owned command, legacy underflow and first-refusal
+preservation controls pass. A same-service valid CONNECT_MSG followed by an
+invalid compressed stream proves the candidate is cleared **before** every
+owned-message fetch, including decode failure. The unchanged transport drops a
+malformed one-bit UDP command; its later explicit deadline correctly reports
+NONE, rather than pretending the application received that command.
+
+All70 source/header/helper hashes match the qualified committed revision and
+remained unchanged. Original name-oracle fixture runs unsanitized; the native
+classifier runs in all three modes. Receipt
+`qualification/initial-capture-command-classification-f7d69537f.json.gz` is6,000
+bytes, SHA256
+`fe7a63e2fa2d629d5cbcd868da26325e14509876a1f3861d3e9d888b315b5c1a`.
+The binding JSON records every changed isolated input and the negative controls.
+
+Measured host capture/Map wrapper sizes are1,080/1,304 bytes:2,384 bytes combined,
+32 more than the deadline baseline. Diagnostics is1,024 bytes; existing first
+snapshot24, private Map phase8, ordinary Local/Map1,040/2,536 and lease1,344 bytes
+are unchanged. No native heap allocation path was added. Static known names
+contain5,604 bytes including their NULs (maximum38 characters); code/static data,
+transitive owners and external stacks still prevent a global RAM/RSS admission.
+Only synthetic qualification runs here; the actual live refused command remains
+unobserved until a separately authorized new transaction supplies that witness.
 
 The explicit enclosing-deadline follow-up is source
 `30f9a3a6282d771c907d26d418aca22a0c9c1917`. Release/ASan/UBSan each passed19

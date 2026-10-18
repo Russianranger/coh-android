@@ -1,0 +1,36 @@
+{
+  "A_reported_consumer_dependency_count": 43,
+  "ack_permitted": false,
+  "actor_publication": false,
+  "actual_run_39081284657_command_identified": false,
+  "all_twelve_stdout_byte_pins_and_fixed_fields_equal_F_preserved_outputs": true,
+  "compiler_dependency_preprocessing_replayed_by_F": false,
+  "eight_enum_command_hashes_verified_recorded_root_Git": true,
+  "findings": [
+    "A receipt binds the same exact dfc build receipt, three native ELF pins and all12 safe20-key v2 outputs already independently preserved by F.",
+    "Only pure retained-byte parser compatibility is claimed, with no retroactive owned child/stdout lease or real source capture.",
+    "Five later world-render GPU audit-input changes are explicitly separate from the initial-capture consumer. The report denies a global-current-source match and retains the original dfc source identity.",
+    "Scripted SERVER_GAME_CMDS/SERVER_ALLENTS observations do not identify the command in historical actual run39081284657, which remains explicitly unclassified."
+  ],
+  "parser_source_revision": "393a99b302bb739d5b0baaefede7afea85ba83c7",
+  "proof_commit": "1fbcda744aa32430c9b62f0e8772677762a72e67",
+  "qualified_root_source_revision": "dfc843bb2f538956df843e7b117d60cd38bdfd90",
+  "receipt": {
+    "bytes": 12434,
+    "file": "stdout-compatibility.json",
+    "sha256": "8c5dfdf0d7e402242eaf9766e68c1dc014be09127cf157e071e2846078d7d5b1"
+  },
+  "review": "clear; pure compatibility does not retroactively establish live child ownership",
+  "reviewer_actions": {
+    "compiler_or_binary_executed": false,
+    "helper_unit_or_CLI_replayed": false,
+    "server_or_network_executed": false,
+    "source_and_receipt_byte_binding": true
+  },
+  "root_build_receipt_and_three_binary_pins_equal_independently_preserved_F_receipt": true,
+  "root_frozen_source_pins_independently_verified_in_F_root_review": 1762,
+  "schema": "coh-f-native-command-stdout-compatibility-review-v1",
+  "source_generation_admitted": false,
+  "three_A_source_hashes_verified_current_and_committed": true,
+  "world_authority": false
+}

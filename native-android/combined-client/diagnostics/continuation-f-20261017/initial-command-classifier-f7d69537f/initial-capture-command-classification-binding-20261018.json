@@ -1,0 +1,80 @@
+{
+  "schema": "coh-initial-capture-command-classification-binding-v1",
+  "qualified_source_revision": "f7d69537f922ff3f7996d4f2bdb320565bbfcc87",
+  "receipt": "initial-capture-command-classification-f7d69537f.json.gz",
+  "receipt_bytes": 6000,
+  "receipt_sha256": "fe7a63e2fa2d629d5cbcd868da26325e14509876a1f3861d3e9d888b315b5c1a",
+  "uncompressed_receipt_bytes": 17267,
+  "uncompressed_receipt_sha256": "3ffd0f22102d4bb0b664af6da1cf224364e9d469a85d28826334ef956d4274dc",
+  "source_inputs": 70,
+  "all_source_hashes_equal_committed_qualified_revision": true,
+  "changed_inputs_since_30f9a3a62": [
+    "native-android/engine/initial-capture/check_initial_capture.py",
+    "native-android/engine/initial-capture/coh_initial_capture.h",
+    "native-android/engine/initial-capture/coh_initial_command_kinds.inc",
+    "native-android/engine/initial-capture/coh_initial_map.c",
+    "native-android/engine/initial-capture/command-source-pins.json",
+    "native-android/engine/initial-capture/test_initial_capture.c",
+    "native-android/engine/initial-capture/test_initial_capture_owner.c"
+  ],
+  "ordinary_source_and_helper_bytes_unchanged_except_new_focused_checker": true,
+  "command_whitelist": {
+    "known_names": 231,
+    "source_name_bytes_including_NUL": 5604,
+    "maximum_name_bytes_excluding_NUL": 38,
+    "original_whole_enum_and_name_function_executed": true,
+    "source_map_mutation_refusals": 3,
+    "original_name_oracle_sanitized": false,
+    "native_classifier_release_asan_ubsan_exercised": true,
+    "raw_numeric_ids_or_packet_strings_publicly_exported": false
+  },
+  "controls": [
+    "Known normalized SERVER_GAME_CMDS refusal, decoded outside-whitelist UINT32_MAX UNKNOWN, successful/header-invalid ALLENTS distinctions.",
+    "No accepted prior GROUPS/CONNECT_MSG name leaks through a failed next_owned fetch or malformed next command. Clear occurs before every fetch and parse.",
+    "Same real UDP service accepts CONNECT_MSG then attempts a header-valid compressed packet with invalid zlib stream: first failure WAIT_SHORTCUTS, refused command NONE/false.",
+    "Malformed one-bit packed UDP is dropped by the unchanged transport; explicit enclosing deadline reports NONE/false. Direct owned-message grammar control separately checks truncated command and legacy-underflow clear.",
+    "All231 native known names equal whole original getServerCmdName; sentinel/control/unknown/invalid enum classes stay UNKNOWN.",
+    "First refusal classification and typed first-cause phases survive rejected service, diagnostics, timeout, close/cancel/close/cancel; no parser/skip/request/ACK behavior added."
+  ],
+  "modes": {
+    "release": {
+      "public_scenarios": 22,
+      "public_checks": 6120,
+      "owner_fault_scenarios": 5,
+      "owner_checks": 1797
+    },
+    "asan": {
+      "public_scenarios": 22,
+      "public_checks": 6120,
+      "owner_fault_scenarios": 5,
+      "owner_checks": 1797
+    },
+    "ubsan": {
+      "public_scenarios": 22,
+      "public_checks": 6120,
+      "owner_fault_scenarios": 5,
+      "owner_checks": 1797
+    }
+  },
+  "measured_host_bytes": {
+    "capture_owner": 1080,
+    "map_wrapper": 1304,
+    "owner_sum": 2384,
+    "growth_from_deadline_baseline": 32,
+    "diagnostics": 1024,
+    "first_failure_snapshot": 24,
+    "private_map_failure_phase": 8,
+    "ordinary_local": 1040,
+    "ordinary_map": 2536,
+    "borrowed_lease": 1344
+  },
+  "global_aggregate_budget_admitted": false,
+  "new_heap_allocation_path": false,
+  "synthetic_peers_only": true,
+  "actual_live_refused_enum_observed_in_qualification": false,
+  "real_server": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false
+}

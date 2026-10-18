@@ -1,0 +1,14 @@
+{
+  "all_seven_tested_source_pins_unchanged": true,
+  "commit": "29682df9d84d47f78dcb93ccec2db687308c4eef",
+  "documentation_sha256": "e70f4927d3cbf48da191c7e35ddc97eec58a9b994cc109d8ecae11e745809f9e",
+  "new_creation_API_implemented_or_runtime_executed": false,
+  "only_documentation_hash_and_followup_note_differ_in_receipt": true,
+  "ordinary_creation_is_empty_slot_CHOOSE_PLAYER_branch_with_async_callback": true,
+  "original_source_path": "upstream/ouroboros/DBServer/src/clientcomm.c",
+  "original_source_sha256": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+  "prior_source_review_and_scope_unchanged": true,
+  "proof_bytes": 4154,
+  "proof_sha256": "f269326d06185834e9d759c7d7d8bcae304450b2bdb2cf6ac107f4f98f4e6e79",
+  "schema": "coh-f-selected-source-documentation-followup-v1"
+}

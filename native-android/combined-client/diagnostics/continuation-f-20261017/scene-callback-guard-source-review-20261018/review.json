@@ -1,0 +1,30 @@
+{
+  "actual_first_source_refusal_subgate_observed": false,
+  "all_six_evidence_members_equal_exact_Git_and_manifest_pins": true,
+  "all_ten_source_pins_equal_recorded_bd7_Git": true,
+  "compiled_folder_update_guard_precedes_quiet_and_sink_open": true,
+  "compiler_qualifier_runtime_or_private_log_access_replayed": false,
+  "evidence_commit": "583dc1612d8bff295f588cf6777d015acba006af",
+  "exact_retained_PE_compile_receipt_input_and_three_compiled_source_members_verified": true,
+  "existing_compiled_archive_reused_no_download": true,
+  "finding_bytes": 5375,
+  "finding_sha256": "fa73ddaed2494adb0788580cd73e9fd0181480123a50b4a8651530e81fd7946d",
+  "folder_update_setter_is_distinct_from_nofilechangecheck_server_global": true,
+  "normal_compiled_startup_token_positions_in_order": [
+    62590,
+    62625,
+    68522,
+    68651,
+    68673,
+    68775,
+    69784
+  ],
+  "public_final_and_partial_absence_consistent_not_root_cause_proof": true,
+  "schema": "coh-f-scene-callback-guard-source-review-v1",
+  "source_generation_admitted": false,
+  "source_or_predicate_modified": false,
+  "source_review_passed": true,
+  "source_revision": "bd7b16b6ae188f9e8e1aa90542eb86287f38c312",
+  "static_guard_incompatible_with_normal_post_startup_enabled_callbacks": true,
+  "world_authority": false
+}

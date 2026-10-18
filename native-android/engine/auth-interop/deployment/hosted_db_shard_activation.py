@@ -5,7 +5,7 @@ No client login, checksum reference alias, version override or MapServer is used
 This experiment establishes the actual original interserver registration step.
 """
 import argparse
-from dataclasses import asdict
+from dataclasses import asdict, dataclass
 import hashlib
 import importlib.util
 import json
@@ -40,6 +40,32 @@ DB_RECEIPT_SHA = '51e72ef676b3db845ec4f72d1a0e856f5f34b4470050ee388087c06e843a33
 DB_BINARY_SHA = '9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3'
 SCHEMA_SHA = 'b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92'
 PLATFORM_DLLS = {'odbc32.dll','iphlpapi.dll','ws2_32.dll','winmm.dll','advapi32.dll','user32.dll','gdi32.dll','kernel32.dll'}
+
+
+@dataclass(frozen=True)
+class DbCandidateGeneration:
+    """Explicit selected-probe binding to one separately admitted derivative."""
+    binary_sha256: str
+    build_receipt_sha256: str
+
+    def __post_init__(self):
+        if (any(not isinstance(value,str) or not re.fullmatch('[a-f0-9]{64}',value)
+                for value in (self.binary_sha256,self.build_receipt_sha256))
+                or self.binary_sha256==DB_BINARY_SHA):
+            raise ValueError('shard_selected_candidate_generation_pin')
+
+
+def admit_selected_candidate(selected_scope, db_candidate):
+    # A generic/old selected scope cannot silently inherit a different PE.
+    from hosted_selected_shard_play import SelectedScope
+    from hosted_db_threadname_readiness import DbCandidate
+    generation=getattr(selected_scope,'db_candidate_generation',None)
+    if (type(db_candidate) is not DbCandidate or type(selected_scope) is not SelectedScope
+            or type(generation) is not DbCandidateGeneration
+            or generation!=DbCandidateGeneration(db_candidate.binary_sha256,
+                                                db_candidate.admission.get('receipt_sha256'))):
+        raise ValueError('shard_new_candidate_selected_scope_unqualified')
+    return generation
 
 
 def recover_schema(root, output):
@@ -278,9 +304,13 @@ def run(args, selected_scope=None, db_candidate=None):
         if db_candidate is not None:
             proof.update(schema=db_candidate.receipt_schema,accepted_runtime_replaced=False,
                          new_db_candidate_admission=db_candidate.admission)
-            if selected_scope is not None:raise ValueError('shard_new_candidate_selected_scope_unqualified')
+            if selected_scope is not None:
+                proof['selected_db_candidate_generation']=asdict(admit_selected_candidate(selected_scope,db_candidate))
+        elif selected_scope is not None and getattr(selected_scope,'db_candidate_generation',None) is not None:
+            raise ValueError('shard_selected_candidate_without_candidate')
         if selected_scope is not None:
-            proof['schema']='coh-owned-original-selected-shard-play-v1'
+            proof['schema']=('coh-owned-original-selected-shard-play-v1' if db_candidate is None
+                             else 'coh-owned-mssql-db-threadname-selected-shard-play-v1')
         schema_dir = temporary/'accepted-schema'
         schema_manifest = recover_schema(root,schema_dir)
         proof['accepted_schema'] = {'manifest_sha256':SCHEMA_SHA,'files':len(schema_manifest['files']),

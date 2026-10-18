@@ -1,0 +1,296 @@
+{
+  "a_source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "fdaf8a9c60478244d47daa7e6a6db6fac90654eeb23a7e05d3a2be36b7693569",
+    "native-android/engine/scenecatalog-server/groups_native_status.py": "b066a1482db551472c2e7125cf59a1edbf82e269ad55699188fc903b66985781",
+    "native-android/engine/scenecatalog-server/summarize_groups_capture.py": "ff0da45859657bfc139650694487acc86d8be434d49f5ed98c15420cc65bb0fd"
+  },
+  "enum_and_command_source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+    "native-android/engine/initial-capture/coh_initial_command_kinds.inc": "1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e",
+    "native-android/engine/initial-capture/command-source-pins.json": "3e99ac30e5448fb756728a742ffd48ada3920b78c6b9f7099635cd17634c4496",
+    "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+    "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+    "upstream/ouroboros/Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+  },
+  "parser_source_revision": "393a99b302bb739d5b0baaefede7afea85ba83c7",
+  "passed": true,
+  "root_qualification": {
+    "binaries": {
+      "address": {
+        "bytes": 958728,
+        "file": "coh-capture-local-initial-address",
+        "sha256": "bc2ae9b8a7813e491856cfdf7d76e3032ff6c7b0e42febebc184babe0b5d8ee4"
+      },
+      "release": {
+        "bytes": 180424,
+        "file": "coh-capture-local-initial",
+        "sha256": "eeb5e9a3c29bfb223c23a5b465378ce90b800f517396c2c04502a703d8874ea5"
+      },
+      "undefined": {
+        "bytes": 831376,
+        "file": "coh-capture-local-initial-undefined",
+        "sha256": "aa2c1879d7819b9a7422a3cc3698534e547d2b36280982c830c4bfe954ac31db"
+      }
+    },
+    "build_receipt": {
+      "bytes": 240894,
+      "sha256": "59dbf8b59779efa513265bb78fce50f07019f6d730e8bdb7b3380c5be4d6c2cc"
+    },
+    "build_source_bytes_checked": 15907462,
+    "build_source_files_checked": 1762,
+    "checks_per_mode": 151,
+    "current_project_consumer_closure_matches_recorded_build": true,
+    "current_source_bytes_match_recorded_hashes": false,
+    "later_unrelated_nonconsumer_audit_mismatches": [
+      {
+        "current_sha256": "2b89db8fadc7935a1870bdf8e4af403236ac84b8131dce224f504aaa70884512",
+        "path": "native-android/engine/world-render-adapter/check_gpu_lease.py",
+        "recorded_sha256": "52ffbff817fc945b38e2c989129074108732fee71f5c692dad137d7d8f0b4f04"
+      },
+      {
+        "current_sha256": "70228d383c5a790c8a58c647d72d49b2ecb0a2ec42955b1e46ffa51c59c2810c",
+        "path": "native-android/engine/world-render-adapter/check_sampler.py",
+        "recorded_sha256": "bd9f3fc4224f7e9bd048e20658933915d1cafd6202a9d7afe32dc28766da6ef4"
+      },
+      {
+        "current_sha256": "8537394524bad6063bf0734802a0ebd5bf05db21a071df91fc839233535572d6",
+        "path": "native-android/engine/world-render-adapter/coh_wr_gpu_texture.c",
+        "recorded_sha256": "aff25b77e123fe65801b8065d5b218e7076061f174bb1a8d3f7145a6fc213037"
+      },
+      {
+        "current_sha256": "dcb980ba25b0db3778869982f8f0e38f3161fb4fe0bf5bab96553c40112d893d",
+        "path": "native-android/engine/world-render-adapter/coh_wr_gpu_texture.h",
+        "recorded_sha256": "a281c7173ebd9a0ed218d385ba74787f2b7df1f08a0ccab008e5fa64c1c3b51a"
+      },
+      {
+        "current_sha256": "6371ce292e42cbb5e813398d6d841d61310d26ab11499d7a447b912dee700d84",
+        "path": "native-android/engine/world-render-adapter/gpu_egl_contract.py",
+        "recorded_sha256": "0a6e2c545dfbc8127b6f90d945de4afd2e30b36cabfdb3855f25120040dd0434"
+      }
+    ],
+    "project_consumer_dependencies": 43,
+    "project_consumer_dependency_map_sha256": "2ad1cbe6b04817a21e4db1e514d3199a87b8b1720f31ec2ba4a28272790ec9c5",
+    "retained_stdout_files": 12,
+    "source_blobs_match_recorded_committed_revision": true,
+    "source_checkout_dirty_at_start": false,
+    "source_revision": "dfc843bb2f538956df843e7b117d60cd38bdfd90"
+  },
+  "schema": "coh-native-command-v2-stdout-compatibility-v1",
+  "scope": {
+    "ack_permitted": false,
+    "actor_publication": false,
+    "actual_run_39081284657_command_identified": false,
+    "compiler_dependency_preprocessing_only": true,
+    "live_capture_admitted": false,
+    "native_cli_reexecuted": false,
+    "original_server_transaction_executed": false,
+    "postgres_wine_or_graphics_executed": false,
+    "pure_parser_and_source_checks_only": true,
+    "retained_scripted_stdout_only": true,
+    "retroactive_child_or_stdout_ownership_claimed": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "stdout_compatibility": {
+    "address": {
+      "badheader": {
+        "bytes": 518,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-address/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "SERVER_ALLENTS",
+        "refused_command_valid": true,
+        "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 507,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-address/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 510,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-address/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "unknown": {
+        "bytes": 521,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-address/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "SERVER_GAME_CMDS",
+        "refused_command_valid": true,
+        "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    },
+    "release": {
+      "badheader": {
+        "bytes": 518,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-release/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "SERVER_ALLENTS",
+        "refused_command_valid": true,
+        "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 507,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-release/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 510,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-release/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "unknown": {
+        "bytes": 521,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-release/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "SERVER_GAME_CMDS",
+        "refused_command_valid": true,
+        "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    },
+    "undefined": {
+      "badheader": {
+        "bytes": 518,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-undefined/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "SERVER_ALLENTS",
+        "refused_command_valid": true,
+        "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 507,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-undefined/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 510,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-undefined/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "unknown": {
+        "bytes": 521,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_20_key_schema_compatible": true,
+        "file": "status-undefined/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "refused_command_kind": "SERVER_GAME_CMDS",
+        "refused_command_valid": true,
+        "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    }
+  }
+}

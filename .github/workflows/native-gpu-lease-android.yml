@@ -58,6 +58,7 @@ jobs:
           ABI={'arm64-v8a':('aarch64-linux-android26-clang','aarch64-linux-android',183),
                'x86_64':('x86_64-linux-android26-clang','x86_64-linux-android',62)}
           BASE=('coh_wr_gpu_lease.c','coh_wr_gpu_texture.c','coh_wr_texture.c','coh_wr_sampler.c',
+                'coh_wr_tex_rgba32.c','coh_wr_tex_namespace.c',
                 '../assets/coh_asset_loader.c','../../src/coh_assets.c','../../src/coh_dds.c')
           FALSE_SCOPE={'production_prepare_executed':False,'nine_world_prerequisites_admitted':False,
               'current_generation_admitted':False,'source_generation_admitted':False,'actor_authority':False,

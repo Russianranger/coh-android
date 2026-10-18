@@ -1,0 +1,83 @@
+{
+  "Android_build_or_execution_observed": false,
+  "actor_publication": false,
+  "complete_initial_character": false,
+  "current_namespace_admitted": false,
+  "legacy_GPU_workflow": {
+    "activation_marker": "[gpu-lease-android]",
+    "diff_from_dfc843bb2": "Only append coh_wr_tex_rgba32.c and coh_wr_tex_namespace.c to embedded BASE so the existing GPU TU links after adding the genuine typed source entry.",
+    "marker_distinct_from_two_intended_new_markers": true,
+    "old_job_intended_to_run_for_this_publication": false
+  },
+  "material_authority": false,
+  "new_candidate_selected_grant": {
+    "Db_client_or_Map_join_executed": false,
+    "accepted_Auth_artifact_id": 12085517046,
+    "activation_marker": "[db-threadname-selected-play]",
+    "crypto_manifest_and_every_selected_file_byte_pinned": true,
+    "fresh_hosted_Windows_send_caps": [
+      1024,
+      7
+    ],
+    "new_Db_binary_sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c",
+    "new_Db_compile_artifact_id": 12118334160,
+    "new_Db_original_build_receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+    "new_composition_methods_only": 6,
+    "old_crypto_origin_outcome_reused_as_success": false,
+    "outer_archives_size_digest_and_safe_member_extraction_checked": true,
+    "output_upload": "Only new fixed receipt.json per fresh send-cap job; no private logs/profile or credential/grant export.",
+    "prior_accepted_Auth_only_probe_replayed": false,
+    "retained_crypto_artifact_id": 12078663003,
+    "retained_crypto_files": 384
+  },
+  "publication_or_execution_observed_by_this_review": false,
+  "review": "clear for intended focused publication",
+  "reviewed_workingtree_workflow_bytes": {
+    "legacy_GPU_dependency_list_only": {
+      "bytes": 23067,
+      "path": ".github/workflows/native-gpu-lease-android.yml",
+      "sha256": "c8cfcdb8fe22b461cd3259ec6a5492e7e75e49ec761c7c8f10f8db395222865c"
+    },
+    "new_candidate_selected_grant": {
+      "bytes": 10905,
+      "path": ".github/workflows/native-db-threadname-selected-play.yml",
+      "sha256": "d765fffc024fb716e733c533b0936db3b6eabd613a994d766b97400a68970e9a"
+    },
+    "typed_source_RGBA32_Android": {
+      "bytes": 3145,
+      "path": ".github/workflows/native-source-rgba32-android.yml",
+      "sha256": "9426a222a246778105f07530ecd4456591003a99758a82734d365f8471a0eefd"
+    }
+  },
+  "reviewer_actions": {
+    "YAML_parse": true,
+    "network_download_or_workflow_dispatch": false,
+    "read_only_scope_source_review": true,
+    "selected_embedded_Python_AST_blocks_parsed": 2,
+    "shell_or_Python_blocks_executed": false,
+    "unit_tests_or_native_qualifiers_executed": false,
+    "workflow_SHA256_verified": true
+  },
+  "schema": "coh-f-focused-workflow-static-review-v1",
+  "selected_grant_runtime_observed": false,
+  "source_generation_admitted": false,
+  "typed_source_RGBA32_Android": {
+    "APK_or_application_context_built_or_adopted": false,
+    "NDKr28c_archive_sha256": "dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f",
+    "activation_marker": "[source-rgba32-android]",
+    "build_scope": "Nine production translation units plus the new standalone source-RGBA32/GPU test; arm64-v8a and x86_64 API26 builds, Android13 x86_64 private emulator execution only.",
+    "device_path_and_native_completion_cleanup_separately_reported": true,
+    "driver_includes_committed_source_and_fixture_admission_before_execution": true,
+    "exact_source_default_artifact_driver_pin": {
+      "bytes": 12308,
+      "sha256": "87a999e6c1c003b96a9fa169ce11637b61eb696766517e063fafce73fdc39c24"
+    },
+    "old_602_or_host_qualifier_replayed": false,
+    "permissions": [
+      "contents:read"
+    ],
+    "repository_and_branch_exact": true,
+    "upload_scope": "Only the new standalone build/fixture/readback/receipt directory; no user/private source capture or application data."
+  },
+  "world_authority": false
+}

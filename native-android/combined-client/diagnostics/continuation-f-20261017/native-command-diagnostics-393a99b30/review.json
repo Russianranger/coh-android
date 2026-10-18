@@ -1,0 +1,41 @@
+{
+  "A_source_hashes_verified_current_and_committed": 4,
+  "C_fixture_source_hashes_verified_current_and_committed": 8,
+  "ack_permitted": false,
+  "actor_publication": false,
+  "command_fixture_revision": "f7d69537f922ff3f7996d4f2bdb320565bbfcc87",
+  "complete_initial_character": false,
+  "findings": [
+    "Exact20-key native stdout-v2 shape and fixed nested-v2 constructor export only typed phases/status/failure, bounded booleans, fixed source command labels and checked source-entry presence. No raw command integer or runtime packet string is copied.",
+    "All231 known command names derive from two exact normalized original source files, matching the X-macro map and manifest; sentinel excluded. False validity requires NONE, true validity requires UNKNOWN or one exact source label.",
+    "Legacy exact18-key stdout-v1 and nested public-v1 normalize to fixed v2 UNAVAILABLE; only process/exit/source-entry metadata survives. Accepted GROUPS fields remain independent and are not reinterpreted.",
+    "Owned native child/closed stdout file identity and bounded bytes remain checked. A final stdout identity/hash check follows source verification; malformed or late-mutated diagnostics remain optional refusal and cannot discard an accepted GROUPS pair.",
+    "Summary emission admits command/enum bytes against its committed HEAD. Integration must contain the reviewed C command-map and manifest before using the v2 collector; A host proof used C as a separate read-only source fixture."
+  ],
+  "hash_mismatches": 0,
+  "new_actual_refused_command_observed": false,
+  "qualification_recorded_not_replayed": {
+    "actual_native_cli_executed": false,
+    "diagnostic_methods": 16,
+    "passed": true,
+    "related_summary_methods": 8,
+    "tiny_owned_python_children_only": true
+  },
+  "receipt": {
+    "bytes": 2937,
+    "file": "host.json",
+    "sha256": "c14422887eb569ff5527c1da3b9afbb449fa1b1fe01d854173869ce84f820008"
+  },
+  "review": "clear within optional diagnostic scope",
+  "reviewed_source_revision": "393a99b302bb739d5b0baaefede7afea85ba83c7",
+  "reviewer_actions": {
+    "compiler_or_runtime_executed": false,
+    "network_or_service_replayed": false,
+    "read_only_source_review": true,
+    "receipt_and_Git_byte_binding": true,
+    "unit_or_native_qualifier_replayed": false
+  },
+  "schema": "coh-f-native-command-diagnostics-review-v1",
+  "source_generation_admitted": false,
+  "world_authority": false
+}

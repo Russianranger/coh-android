@@ -5,6 +5,8 @@ struct CohInitialMap {
  CohMapClient *map;CohDbHandoffMetadata bound;
  CohInitialCaptureDiagnostics d;
  CohInitialMapFailurePhase first_failure_phase;
+ unsigned command_valid,command_refusal_latched;
+ CohInitialCaptureCommandKind command_kind;
  const CohInitialCaptureEvent *event;const CohMapSceneObservation *scene;
  const CohNetOwnedMessage *message;CohRepReader reader;CohRepUpdatePrefix update;
  const void *owner;size_t owner_bytes;const void *context;size_t context_bytes;
@@ -14,6 +16,22 @@ struct CohInitialMap {
 };
 static int ic_span(const void *p,size_t n){return p&&n&&n<=UINTPTR_MAX-(uintptr_t)p;}
 static int ic_disjoint(const void *a,size_t an,const void *b,size_t bn){return scene_disjoint(a,an,b,bn);}
+const char *coh_initial_capture_command_name(CohInitialCaptureCommandKind kind){
+ switch(kind){case COH_INITIAL_CAPTURE_COMMAND_NONE:return "NONE";
+#define COH_INITIAL_CAPTURE_COMMAND(name,id) case COH_INITIAL_CAPTURE_COMMAND_##name:return #name;
+#include "coh_initial_command_kinds.inc"
+#undef COH_INITIAL_CAPTURE_COMMAND
+ default:return "UNKNOWN";}
+}
+static CohInitialCaptureCommandKind ic_command_kind(uint32_t normalized){
+ switch(normalized){
+#define COH_INITIAL_CAPTURE_COMMAND(name,id) case id:return COH_INITIAL_CAPTURE_COMMAND_##name;
+#include "coh_initial_command_kinds.inc"
+#undef COH_INITIAL_CAPTURE_COMMAND
+ default:return COH_INITIAL_CAPTURE_COMMAND_UNKNOWN;}
+}
+static void ic_command_clear(CohInitialMap*x){x->command_valid=0;x->command_kind=COH_INITIAL_CAPTURE_COMMAND_NONE;}
+static void ic_command_decoded(CohInitialMap*x,uint32_t normalized){x->command_kind=ic_command_kind(normalized);x->command_valid=1;}
 static int ic_meta_equal(const CohDbHandoffMetadata*a,const CohDbHandoffMetadata*b){
  return a->user_id==b->user_id&&a->selected_dbid==b->selected_dbid&&a->selected_slot==b->selected_slot&&a->selection_generation==b->selection_generation&&a->session_generation==b->session_generation&&a->receipt_generation==b->receipt_generation&&a->connect_id==b->connect_id&&a->db_peer.port==b->db_peer.port&&!memcmp(a->db_peer.address,b->db_peer.address,4)&&a->local_development_auth==b->local_development_auth&&a->selected_dbid_owner_bound==b->selected_dbid_owner_bound&&a->claimed==b->claimed&&a->retired==b->retired;
 }
@@ -35,6 +53,7 @@ CohInitialMap *coh_initial_map_create(CohMapClient*m){
 }
 void coh_initial_map_destroy(CohInitialMap*x){if(x&&!x->busy){wipe(x,sizeof(*x));free(x);}}
 static CohStatus ic_fail(CohInitialMap*x,CohStatus s,CohInitialCaptureFailure why){
+ if(!x->command_refusal_latched){x->d.refused_command_valid=x->command_valid;x->d.refused_command_kind=x->command_kind;x->command_refusal_latched=1;}
  if(!x->first_failure_phase.valid)x->first_failure_phase=(CohInitialMapFailurePhase){1,x->map->diag.phase};
  x->d.status=s;x->d.failure=why;x->d.phase=s==COH_CANCELLED?COH_INITIAL_CAPTURE_CANCELLED:COH_INITIAL_CAPTURE_FAILED;
  x->map->diag.last_status=s;coh_map_client_close(x->map);return s;
@@ -75,10 +94,12 @@ CohStatus coh_initial_map_lease(const CohInitialMap*x,const CohInitialCaptureEve
 }
 static CohStatus ic_initial(CohInitialMap*x,const CohNetOwnedMessage*n){
  CohMapClient*m=x->map;CohRepReader reader;uint32_t command;
+ ic_command_clear(x);
  m->diag.stage=COH_MAP_STAGE_COMMAND;m->diag.last_command_valid=0;m->diag.last_payload_bits=n->payload_bits;m->diag.last_decoded_bytes=(uint32_t)n->payload_bytes;m->diag.last_byte_aligned=n->compressed;
  CohStatus s=coh_rep_reader_bounded(&reader,(CohBytes){n->payload,n->payload_bytes},n->payload_bits,n->compressed,COH_NET_DECODED_MAX);if(s==COH_OK)s=coh_rep_pack(&reader,1,&command);
  if(s==COH_OK&&x->version<4){if(command<7)s=COH_UNSUPPORTED;else command-=5;}
  if(s!=COH_OK){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_COMMAND;return s;}
+ ic_command_decoded(x,command);
  x->d.last_command=command;m->diag.last_command=command;m->diag.last_command_valid=1;
  if(command!=COH_REP_ALLENTS){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_COMMAND;return COH_UNSUPPORTED;}
  if(ic_owner(x)!=COH_OK||m->diag.phase!=COH_MAP_SCENE_INCOMPLETE||m->inspector.phase!=COH_REP_SCENE_PREFIX_SEEN||m->inspector.schema_generation!=m->inspector.generation||n->generation<=x->d.groups_message_generation){x->d.failure=COH_INITIAL_CAPTURE_FAILURE_OWNER;return COH_STATE;}
@@ -97,6 +118,7 @@ CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
  if(!ic_disjoint(context,context_bytes,x,sizeof(*x))||!ic_disjoint(context,context_bytes,m,sizeof(*m))||!ic_disjoint(context,context_bytes,owner,owner_bytes)||!ic_disjoint(owner,owner_bytes,x,sizeof(*x))||!ic_disjoint(owner,owner_bytes,m,sizeof(*m)))return COH_INVALID;
  if(now<m->last_ms)return COH_INVALID;
  x->busy=1;x->owner=owner;x->owner_bytes=owner_bytes;x->context=context;x->context_bytes=context_bytes;x->observer=observer;x->observer_context=observer_context;
+ ic_command_clear(x);
  CohStatus result=COH_OK;CohInitialCaptureFailure why=COH_INITIAL_CAPTURE_FAILURE_PROTOCOL;
  if(ic_cancel(cancel)){result=COH_CANCELLED;why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;goto done;}
  if(ic_owner(x)!=COH_OK){result=COH_STATE;why=COH_INITIAL_CAPTURE_FAILURE_OWNER;goto done;}
@@ -104,11 +126,12 @@ CohStatus coh_initial_map_service(CohInitialMap*x,uint64_t now,CohCancel cancel,
  if(result!=COH_OK||udp.state!=COH_UDP_ACTIVE){if(result==COH_OK)result=COH_STATE;if(result==COH_CANCELLED)why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;else if(udp.state==COH_UDP_TIMED_OUT)why=COH_INITIAL_CAPTURE_FAILURE_TIMEOUT;goto done;}
  if(m->diag.phase==COH_MAP_NET_CONNECTING&&udp.link_state==COH_NET_CONNECTED){m->diag.stage=COH_MAP_STAGE_SEND_COMMAND;result=send_command(m,COH_MAP_CONNECT,now);m->cookie=0;if(result!=COH_OK)goto done;m->diag.phase=COH_MAP_WAIT_CONNECT;m->phase_ms=now;}
  for(unsigned i=0;i<m->config.message_budget;i++){
+  ic_command_clear(x);
   CohNetOwnedMessage n;result=coh_net_udp_next_owned(m->udp,&n);if(result==COH_NOT_FOUND){result=COH_OK;break;}if(result!=COH_OK)goto done;
   x->message=&n;ic_message_diag(x,&n);x->observer_status=COH_OK;
   if(ic_cancel(cancel)){result=COH_CANCELLED;why=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;}
   else if(x->d.reqallents_sent){result=ic_initial(x,&n);why=x->d.failure;}
-  else {result=inspect(m,&n,now,ic_groups,x);x->d.last_command=m->diag.last_command;
+  else {result=inspect(m,&n,now,ic_groups,x);x->d.last_command=m->diag.last_command;if(m->diag.last_command_valid)ic_command_decoded(x,m->diag.last_command);
    if(result==COH_UNSUPPORTED&&x->d.groups_observed&&x->observer_status==COH_OK){result=COH_OK;}
    else if(x->observer_status!=COH_OK){result=x->observer_status;why=COH_INITIAL_CAPTURE_FAILURE_OBSERVER;}
    else if(result!=COH_OK)why=m->diag.stage==COH_MAP_STAGE_SCENE_STRUCTURE?COH_INITIAL_CAPTURE_FAILURE_GROUPS:COH_INITIAL_CAPTURE_FAILURE_PROTOCOL;

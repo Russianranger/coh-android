@@ -83,8 +83,8 @@ def tool_tests(binary, peer, work, environment, evidence):
                 'opened_sockets', 'closed_sockets', 'source_generation_admitted', 'complete_initial_character',
                 'actor_publication', 'ack_permitted', 'world_authority', 'diagnostic_failure_code',
                 'groups_observed', 'reqallents_sent', 'local_phase', 'terminal_failure',
-                'terminal_db_phase', 'terminal_map_phase'}
-            assert public['schema'] == 'coh-local-initial-capture-status-v1'
+                'terminal_db_phase', 'terminal_map_phase', 'refused_command_valid', 'refused_command_kind'}
+            assert public['schema'] == 'coh-local-initial-capture-status-v2'
             assert public['groups_observed'] is True and public['reqallents_sent'] == 1
             assert type(public['terminal_failure']) is bool
             for name, maximum in (('status', 7), ('local_phase', 10), ('terminal_db_phase', 12), ('terminal_map_phase', 10)):
@@ -94,12 +94,16 @@ def tool_tests(binary, peer, work, environment, evidence):
             assert public['terminal_failure'] is (mode != 'captured')
             assert public['terminal_db_phase'] == (0 if mode == 'captured' else 9)
             assert public['terminal_map_phase'] == (0 if mode == 'captured' else 5)
+            assert type(public['refused_command_valid']) is bool and type(public['refused_command_kind']) is str
+            assert public['refused_command_valid'] is (mode in ('unknown', 'badheader'))
+            assert public['refused_command_kind'] == {'captured': 'NONE', 'unknown': 'SERVER_GAME_CMDS',
+                'badheader': 'SERVER_ALLENTS', 'none': 'NONE'}[mode]
             stdout_path = evidence / (mode + '.json')
             stdout_path.write_bytes(completed.stdout)
             stdout_path.chmod(0o600)
             stdout_files[mode] = {'file': str(Path(evidence.name) / stdout_path.name),
                 'bytes': stdout_path.stat().st_size, 'sha256': digest(stdout_path)}
-            checks += 12
+            checks += 15
             assert public['passed'] and groups['passed'] and groups['cleanup_verified']
             assert groups['packet_sha256'] == digest(target / 'groups.bin')
             assert initial['groups_packet_sha256'] == groups['packet_sha256']
@@ -171,7 +175,8 @@ def main():
     inputs.update(ROOT / path for path in tracked if path and Path(path).suffix in ('.py', '.h', '.c', '.inc', '.json')
                   and not any(part in ('evidence', 'qualification', 'diagnostics') for part in Path(path).parts))
     for relative in ('local/source-pins.json', 'dbclient/source-pins.json', 'mapclient/source-pins.json',
-                     'replication/source-pins.json', 'replication/groups-source-pins.json'):
+                     'replication/source-pins.json', 'replication/groups-source-pins.json',
+                     'initial-capture/command-source-pins.json'):
         manifest = NATIVE / 'engine' / relative
         inputs.add(manifest)
         inputs.update(ROOT / path if path.startswith(('upstream/', 'android/')) else ROOT / 'upstream/ouroboros' / path

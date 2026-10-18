@@ -20,6 +20,15 @@ typedef enum { COH_INITIAL_CAPTURE_FAILURE_NONE,COH_INITIAL_CAPTURE_FAILURE_INPU
  COH_INITIAL_CAPTURE_FAILURE_OBSERVER,COH_INITIAL_CAPTURE_FAILURE_RELEASE,
  COH_INITIAL_CAPTURE_FAILURE_TIMEOUT,COH_INITIAL_CAPTURE_FAILURE_CANCELLED,
  COH_INITIAL_CAPTURE_FAILURE_MEMORY } CohInitialCaptureFailure;
+/* Classification of an actually decoded normalized command, never a raw ID or
+ * packet string. NONE pairs with valid=0; UNKNOWN is a decoded nonwhitelist ID.
+ * All known names come from pinned original ServerCommCmd, excluding sentinel. */
+typedef enum { COH_INITIAL_CAPTURE_COMMAND_NONE,COH_INITIAL_CAPTURE_COMMAND_UNKNOWN,
+#define COH_INITIAL_CAPTURE_COMMAND(name,id) COH_INITIAL_CAPTURE_COMMAND_##name,
+#include "coh_initial_command_kinds.inc"
+#undef COH_INITIAL_CAPTURE_COMMAND
+} CohInitialCaptureCommandKind;
+const char *coh_initial_capture_command_name(CohInitialCaptureCommandKind);
 /* Exact event ADDRESS is a synchronous loan key, not caller-populated labels.
  * No pointer inside this value grants ownership or durable session authority. */
 typedef struct { CohInitialCaptureKind kind; } CohInitialCaptureEvent;
@@ -56,6 +65,7 @@ typedef struct {
   selected_dbid,map_id,map_link_id,db_session_generation,db_receipt_generation;
  CohGroupsInspection groups;
  unsigned groups_observed,raw_allents_observed;
+ unsigned refused_command_valid;CohInitialCaptureCommandKind refused_command_kind;
  unsigned source_generation_admitted,complete_initial_character,actor_publication,
   ack_permitted,world_authority; /* always zero */
  CohInitialCaptureFailureSnapshot first_failure;

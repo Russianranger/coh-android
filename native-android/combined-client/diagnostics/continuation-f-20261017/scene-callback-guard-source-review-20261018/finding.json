@@ -1,0 +1,88 @@
+{
+  "all_original_callback_enable_calls": [
+    "upstream/ouroboros/MapServer/src/beacon/beaconServer.c:3154:    FolderCacheEnableCallbacks(1);",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c:1309:void FolderCacheEnableCallbacks(int enable) { // Disables/enables checking for changes in the filesystem (turn these off when loading)",
+    "upstream/ouroboros/Game/src/demo.c:2236:    FolderCacheEnableCallbacks(1);",
+    "upstream/ouroboros/Game/src/game.c:1626:    FolderCacheEnableCallbacks(0);",
+    "upstream/ouroboros/Game/src/game.c:2137:    FolderCacheEnableCallbacks(1);",
+    "upstream/ouroboros/Game/src/render/texWordsEdit.c:3755:    FolderCacheEnableCallbacks(1);",
+    "upstream/ouroboros/MapServer/src/dbcomm/characterTransfer.c:139:    FolderCacheEnableCallbacks(1);",
+    "upstream/ouroboros/MapServer/src/dbcomm/characterInfo.c:887:        FolderCacheEnableCallbacks(1);",
+    "upstream/ouroboros/MapServer/src/dbcomm/characterInfo.c:1474:        FolderCacheEnableCallbacks(1);",
+    "upstream/ouroboros/MapServer/src/svr/dbquery_init.c:288:    FolderCacheEnableCallbacks(0);",
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c:1976:    FolderCacheEnableCallbacks(0);",
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c:2161:    FolderCacheEnableCallbacks(1);",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h:110:void FolderCacheEnableCallbacks(int enable); // Disables/enables checking for changes in the filesystem (turn these off when loading)"
+  ],
+  "compile_receipt": {
+    "bytes": 2456,
+    "sha256": "698da0508b0849f1e5c95f2ea2198f56a6664a6c893b0e33f7243c038491b235"
+  },
+  "compiled_guard_precedes_quiescence_and_sink_open": true,
+  "compiled_preopen_guard_requires_disabled_folder_updates": true,
+  "compiled_source_artifacts": {
+    "source/Common/seq/coh_resource_quiescence.inc": {
+      "bytes": 1825,
+      "sha256": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824"
+    },
+    "source/MapServer/src/group/groupnetsend.c": {
+      "bytes": 92032,
+      "sha256": "2d23e4f524b5092cac0f308394597cf7e73b72eadeaebc1343022590f5ead1eb"
+    },
+    "source/MapServer/src/svr/svr_init.c": {
+      "bytes": 73077,
+      "sha256": "393fd9a5089eed4509c2496209f1504f50e55a49dd6eda40a0cb1252b72799b4"
+    }
+  },
+  "existing_nofilechangecheck_server_controls_different_global": true,
+  "normal_map_disabled_again_after_startup_restore": false,
+  "ordered_compiled_startup_tokens": [
+    "FolderCacheEnableCallbacks(0);",
+    "FolderCacheSetManualCallbackMode(1);",
+    "groupLoadMap(db_state.map_name,0,!server_state.beaconProcessOnLoad);",
+    "dbSetupMap();",
+    "coh_source_groups_capture_install();",
+    "dbReadyForPlayers();",
+    "FolderCacheEnableCallbacks(1);"
+  ],
+  "original_direct_flag_writes": [
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c:57:int folder_cache_update_enable=1;",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c:1310:    folder_cache_update_enable = enable;"
+  ],
+  "original_flag_default": 1,
+  "original_flag_setter_is_direct_assignment": true,
+  "retained_compile_source_revision": "83b93ed89775feb51793df6ee3fca7ac2f0d1334",
+  "retained_pe": {
+    "bytes": 7504384,
+    "sha256": "646aac0bf34a114595df209747f4352d5ce5651b36be2fe52750a4ae670709a1"
+  },
+  "retained_source_input": {
+    "bytes": 51771,
+    "sha256": "7459d640a80cad767a278820f2271ce4fde0954d470b6c2a35463a6433930c7f"
+  },
+  "schema": "coh-scene-observer-callback-guard-source-finding-v1",
+  "scope": {
+    "actual_first_source_refusal_observed": false,
+    "pe_rebuilt": false,
+    "runtime_reexecuted": false,
+    "source_gate_runtime_diagnostics_retained": false,
+    "source_generation_admitted": false,
+    "source_modified": false,
+    "source_predicate_removed": false,
+    "static_exact_source_and_retained_artifact_checks_only": true,
+    "world_authority": false
+  },
+  "source_revision": "bd7b16b6ae188f9e8e1aa90542eb86287f38c312",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "fdaf8a9c60478244d47daa7e6a6db6fac90654eeb23a7e05d3a2be36b7693569",
+    "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3",
+    "native-android/engine/scenecatalog-server/source_groups_capture_sink.inc": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7",
+    "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+    "native-android/engine/scenecatalog-server/stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "native-android/engine/scenecatalog-server/stage_groups_capture.py": "2036e1ee954d3de5db7c637add4acc281a8079b52455650efe7e58132e1fc478",
+    "upstream/ouroboros/MapServer/src/cmdparse/cmdserver.c": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+  }
+}

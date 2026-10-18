@@ -1,0 +1,49 @@
+{
+  "a_source_sha256": {
+    "native-android/engine/scenecatalog-server/NATIVE_FAILURE_DIAGNOSTICS.md": "01536c3a3c1f7bf4ee9f9b87a05444d7fd56c051e2e620947148dd7bbd594539",
+    "native-android/engine/scenecatalog-server/groups_native_status.py": "b066a1482db551472c2e7125cf59a1edbf82e269ad55699188fc903b66985781",
+    "native-android/engine/scenecatalog-server/summarize_groups_capture.py": "ff0da45859657bfc139650694487acc86d8be434d49f5ed98c15420cc65bb0fd",
+    "native-android/engine/scenecatalog-server/test_groups_native_status.py": "e282d222ce974313ec5735a0f153e3294e76b5cf8e15e0d25f2f150c0d9ff19b"
+  },
+  "enum_and_command_source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+    "native-android/engine/initial-capture/coh_initial_command_kinds.inc": "1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e",
+    "native-android/engine/initial-capture/command-source-pins.json": "3e99ac30e5448fb756728a742ffd48ada3920b78c6b9f7099635cd17634c4496",
+    "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+    "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+    "upstream/ouroboros/Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+  },
+  "host_tests": {
+    "changed_diagnostic_methods": 16,
+    "command": "COH_NATIVE_STATUS_SOURCE_ROOT=worker-c python3 -m unittest -v test_groups_native_status.py test_groups_public_summary.py",
+    "methods": 24,
+    "passed": true,
+    "related_summary_methods": 8,
+    "source_root_is_readonly_fixture_only": true,
+    "tiny_owned_python_children_only": true
+  },
+  "legacy_normalized_unavailable": true,
+  "legacy_stdout_schema": "coh-local-initial-capture-status-v1",
+  "passed": true,
+  "public_schema": "coh-native-source-diagnostic-v2",
+  "schema": "coh-native-fixed-command-diagnostics-host-v1",
+  "scope": {
+    "ack_permitted": false,
+    "actor_publication": false,
+    "actual_native_cli_executed": false,
+    "groups_acceptance_changed": false,
+    "new_actual_refused_command_observed": false,
+    "postgres_wine_or_graphical_runtime_executed": false,
+    "protocol_message_skipped_or_newly_accepted": false,
+    "source_generation_admitted": false,
+    "source_pe_rebuilt": false,
+    "world_authority": false
+  },
+  "source_command_names": 231,
+  "source_command_revision": "f7d69537f922ff3f7996d4f2bdb320565bbfcc87",
+  "source_command_sentinel_excluded": true,
+  "stdout_fields": 20,
+  "stdout_schema": "coh-local-initial-capture-status-v2"
+}

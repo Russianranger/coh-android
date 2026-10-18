@@ -1,0 +1,30 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 3615,
+      "sha256": "a894277d16cb275ce37cdb638c25f6f0049af8fcb9690f69c41d2bf69d67803d"
+    },
+    "artifact-metadata.json": {
+      "bytes": 878,
+      "sha256": "62bacc99ceff516e03973f64d75cffe60e364a19d6457ddd55d8bc5cf388e42f"
+    },
+    "callback-guard-source-finding.json": {
+      "bytes": 5375,
+      "sha256": "fa73ddaed2494adb0788580cd73e9fd0181480123a50b4a8651530e81fd7946d"
+    },
+    "public-status-audit.json": {
+      "bytes": 2066,
+      "sha256": "50447304a4e069877cdf90c9378910cae0df5c9b5cd64c87d6c423cb6caaa239"
+    },
+    "summary.json": {
+      "bytes": 1787,
+      "sha256": "aa13b2a83087b2fc7061c71c297ea96ae3100680c6017a7d44b17c1ad8359e09"
+    },
+    "tooling.json": {
+      "bytes": 397,
+      "sha256": "64172a94f2343cbb14c147fd9d2be564ec4dce64af4b796eee8a68f498ccc56c"
+    }
+  },
+  "schema": "coh-public-scene-failure-evidence-pins-v1",
+  "source_revision": "bd7b16b6ae188f9e8e1aa90542eb86287f38c312"
+}

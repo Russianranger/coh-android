@@ -14,7 +14,8 @@ TEXTURE_SHA='c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a'
 CHAIN_SHA='93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c'
 PACKET_SHA='a622fe7d6e50064073704108cc5b58975fe4d4b7ba68eae4919dca72de6c8523'
 BASE=('coh_wr_gpu_lease.c','coh_wr_gpu_texture.c','coh_wr_texture.c','coh_wr_sampler.c',
-      '../assets/coh_asset_loader.c','../../src/coh_assets.c','../../src/coh_dds.c')
+      '../assets/coh_asset_loader.c','../../src/coh_assets.c','../../src/coh_dds.c',
+      'coh_wr_tex_rgba32.c','coh_wr_tex_namespace.c')
 COMMON=('-std=c11','-Wall','-Wextra','-Werror','-pedantic','-fno-fast-math','-ffp-contract=off')
 def require(value,code):
     if not value:raise ValueError('COH_GPU_LEASE_'+code)

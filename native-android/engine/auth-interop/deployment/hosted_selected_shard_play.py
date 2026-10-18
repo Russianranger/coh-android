@@ -178,8 +178,11 @@ def run_probe(binary,port,send_cap,temporary):
 
 
 class SelectedScope:
-    def __init__(self,retained,send_cap=1024):
+    def __init__(self,retained,send_cap=1024,db_candidate_generation=None):
+        if db_candidate_generation is not None and type(db_candidate_generation) is not activation.DbCandidateGeneration:
+            raise ValueError('selected_candidate_generation_type')
         self.retained,self.send_cap=retained,send_cap
+        self.db_candidate_generation=db_candidate_generation
 
     def prepare(self,root,temporary,output,runner,proof,sql,sql_runner):
         proof['selected_scope_source_sha256']=admit_scope_sources(root)
@@ -195,9 +198,14 @@ class SelectedScope:
             complete_userdata_preflight_verified=True)
 
     def exercise(self,temporary,proof,sql,ports,auth_child,db_child,auth,db,auth_start,db_start,sql_pid,sql_start):
+        def observe_db():
+            if self.db_candidate_generation is None:
+                return activation.service_process_snapshot(db_child,db,db_start)
+            return activation.service_process_snapshot(db_child,db,db_start,
+                expected_binary_sha256=self.db_candidate_generation.binary_sha256)
         def observe():
             result={'auth':activation.service_process_snapshot(auth_child,auth,auth_start),
-                'db':activation.service_process_snapshot(db_child,db,db_start),
+                'db':observe_db(),
                 'sql':login.owned_process_snapshot(sql_pid),
                 'channel':activation.owned_channel(auth_child.pid,db_child.pid,ports[0]),
                 'game_listener':activation.game_listener(db_child.pid)}

@@ -8,6 +8,18 @@
 #pragma GCC diagnostic ignored "-Wunused-function"
 #include "test_initial_capture.c"
 #pragma GCC diagnostic pop
+#include "command-fixtures.h"
+static void command_controls(void){
+ for(size_t i=0;i<sizeof(source_command_names)/sizeof(source_command_names[0]);i++)CHECK(!strcmp(coh_initial_capture_command_name(ic_command_kind(source_command_names[i].id)),source_command_names[i].name));
+ uint32_t unknown[]={0,1,UINT32_MAX,source_command_names[sizeof(source_command_names)/sizeof(source_command_names[0])-1].id+1};
+ for(unsigned i=0;i<4;i++)CHECK(ic_command_kind(unknown[i])==COH_INITIAL_CAPTURE_COMMAND_UNKNOWN);
+ CHECK(!strcmp(coh_initial_capture_command_name(COH_INITIAL_CAPTURE_COMMAND_NONE),"NONE"));CHECK(!strcmp(coh_initial_capture_command_name((CohInitialCaptureCommandKind)-1),"UNKNOWN"));
+ CohMapClient map={0};CohInitialMap x={0};x.map=&map;x.version=5;uint8_t bytes[16]={1};CohNetOwnedMessage n={0};n.payload=bytes;n.payload_bytes=sizeof(bytes);n.payload_bits=1;x.command_valid=1;x.command_kind=COH_INITIAL_CAPTURE_COMMAND_SERVER_GROUPS;
+ CHECK(ic_initial(&x,&n)==COH_INVALID&&!x.command_valid&&x.command_kind==COH_INITIAL_CAPTURE_COMMAND_NONE);
+ CohProtocolBits b;CHECK(!coh_protocol_bits_init(&b,bytes,sizeof(bytes),0,1));CHECK(!coh_protocol_write_pack(&b,1,6));n.payload_bits=(uint32_t)b.bit_length;x.version=3;x.command_valid=1;x.command_kind=COH_INITIAL_CAPTURE_COMMAND_SERVER_GROUPS;CHECK(ic_initial(&x,&n)==COH_UNSUPPORTED&&!x.command_valid&&x.command_kind==COH_INITIAL_CAPTURE_COMMAND_NONE);
+ CHECK(!coh_protocol_bits_init(&b,bytes,sizeof(bytes),0,1));CHECK(!coh_protocol_write_pack(&b,1,UINT32_MAX));n.payload_bits=(uint32_t)b.bit_length;x.version=5;CHECK(ic_initial(&x,&n)==COH_UNSUPPORTED&&x.command_valid&&x.command_kind==COH_INITIAL_CAPTURE_COMMAND_UNKNOWN);
+ CHECK(ic_fail(&x,COH_UNSUPPORTED,COH_INITIAL_CAPTURE_FAILURE_COMMAND)==COH_UNSUPPORTED);CHECK(x.d.refused_command_valid&&x.d.refused_command_kind==COH_INITIAL_CAPTURE_COMMAND_UNKNOWN);x.command_valid=0;x.command_kind=COH_INITIAL_CAPTURE_COMMAND_NONE;CHECK(ic_fail(&x,COH_INVALID,COH_INITIAL_CAPTURE_FAILURE_HEADER)==COH_INVALID);CHECK(x.d.refused_command_valid&&x.d.refused_command_kind==COH_INITIAL_CAPTURE_COMMAND_UNKNOWN);
+}
 static CohStatus never_observe(void*opaque,const CohInitialCaptureEvent*event){(void)event;(*(unsigned*)opaque)++;return COH_OK;}
 static void alias_controls(void){
  CohLocalConfig c=coh_local_default_config();c.local_development_enabled=1;c.db.transport.peer=(CohNetEndpoint){{127,0,0,1},7000};CohInitialCapture*x=coh_initial_capture_create(&c);CHECK(x);
@@ -33,4 +45,4 @@ static void owner_fault(unsigned which){
  else m->config.udp.peer.address[0]=10;
  CHECK(service(&o,116)==COH_STATE);CohInitialCaptureDiagnostics d=diagnostic(o.owner);CHECK(d.groups_observed&&!d.raw_allents_observed&&d.failure==COH_INITIAL_CAPTURE_FAILURE_OWNER&&d.reqallents_sent==1);first_failure(d,COH_STATE,COH_INITIAL_CAPTURE_FAILURE_OWNER,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);finish(&o,&db,&map);
 }
-int main(void){unsigned before=descriptors();alias_controls();for(unsigned i=0;i<5;i++)owner_fault(i);CHECK(descriptors()==before&&!live_allocations);printf("{\"passed\":true,\"checks\":%u,\"owner_fault_scenarios\":%u,\"native_allocations_balanced\":true,\"capture_owner_bytes\":%zu,\"map_wrapper_bytes\":%zu,\"diagnostics_bytes\":%zu,\"first_failure_snapshot_bytes\":%zu,\"map_failure_phase_bytes\":%zu,\"ordinary_local_bytes\":%zu,\"ordinary_map_bytes\":%zu,\"lease_bytes\":%zu,\"real_server\":false,\"actor_publication\":false,\"ack_permitted\":false}\n",checks,scenarios,sizeof(CohInitialCapture),sizeof(CohInitialMap),sizeof(CohInitialCaptureDiagnostics),sizeof(CohInitialCaptureFailureSnapshot),sizeof(CohInitialMapFailurePhase),sizeof(CohLocal),sizeof(CohMapClient),sizeof(CohInitialCaptureLease));return 0;}
+int main(void){unsigned before=descriptors();command_controls();alias_controls();for(unsigned i=0;i<5;i++)owner_fault(i);CHECK(descriptors()==before&&!live_allocations);printf("{\"passed\":true,\"checks\":%u,\"owner_fault_scenarios\":%u,\"native_allocations_balanced\":true,\"capture_owner_bytes\":%zu,\"map_wrapper_bytes\":%zu,\"diagnostics_bytes\":%zu,\"first_failure_snapshot_bytes\":%zu,\"map_failure_phase_bytes\":%zu,\"ordinary_local_bytes\":%zu,\"ordinary_map_bytes\":%zu,\"lease_bytes\":%zu,\"real_server\":false,\"actor_publication\":false,\"ack_permitted\":false}\n",checks,scenarios,sizeof(CohInitialCapture),sizeof(CohInitialMap),sizeof(CohInitialCaptureDiagnostics),sizeof(CohInitialCaptureFailureSnapshot),sizeof(CohInitialMapFailurePhase),sizeof(CohLocal),sizeof(CohMapClient),sizeof(CohInitialCaptureLease));return 0;}

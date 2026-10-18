@@ -75,6 +75,9 @@ def committed_helper():
         ['git','show',revision+':'+stages.relative_to(ROOT).as_posix()],cwd=ROOT,stderr=subprocess.DEVNULL))
     diagnostic=HERE/'groups_native_status.py';require(diagnostic.read_bytes()==subprocess.check_output(
         ['git','show',revision+':'+diagnostic.relative_to(ROOT).as_posix()],cwd=ROOT,stderr=subprocess.DEVNULL))
+    for relative in native_status.ENUM_SOURCE_PATHS:
+        require((ROOT/relative).read_bytes()==subprocess.check_output(
+            ['git','show',revision+':'+relative],cwd=ROOT,stderr=subprocess.DEVNULL))
     return revision,hashlib.sha256(actual).hexdigest()
 def emit(directory,output):
     revision,source=committed_helper()

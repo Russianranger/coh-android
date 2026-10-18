@@ -1,0 +1,67 @@
+{
+  "schema": "coh-threadname-selected-composition-qualification-v1",
+  "passed": true,
+  "source_commit": "13c36321ea72057ffd33e9e0a2863b0f449b2315",
+  "scope": "New typed candidate generation and selected driver composition; no live protocol qualification.",
+  "runtime_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py": "7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py": "103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "f2322608ef47bd549ed8207ab8094f1d7f1227857dcfdb96fec76816e7aeef39",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_selected_play.py": "0c63ca42c97464abb7c4df651ea622efcd3aabecb8f73a317505379854f5796a",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_selected_play.py": "273d6e4b403e4d8b2c2d6fddf50d0c3aa81a8d024f3512ae2bcb1684b2451108",
+    "native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py": "bc6d3ceb4b9161c5fc0a3265971ae49465fb9a9d4d0fdfebef5858be89a80898",
+    "native-android/engine/auth-interop/deployment/windows/shard_play_probe.c": "b648dd10915fd081bef49e8521519da5f0bf1d96c75299b072e03e0a67d9d615"
+  },
+  "documentation_sha256": "1df9783e3489e88f9b317cb1f88beb2514cd21d9476f66eb82e5406b2883bba4",
+  "new_host_validation": {
+    "command": "python -m unittest -v test_db_threadname_selected_play",
+    "methods": [
+      "test_only_explicit_typed_exact_candidate_binding_is_admitted",
+      "test_real_shaped_selected_observers_use_new_db_hash_and_refuse_reuse",
+      "test_common_selected_candidate_transition_and_late_failure_cleanup",
+      "test_wrapper_admits_before_scope_and_rechecks_after_owned_teardown",
+      "test_seven_runtime_inputs_require_exact_tracked_checkout_ownership",
+      "test_local_refusal_precedes_new_source_or_candidate_admission"
+    ],
+    "passed_methods": 6,
+    "elapsed_seconds": 0.14,
+    "compiler_SQL_network_or_original_service_executed": false
+  },
+  "reused_native_qualification": {
+    "receipt_sha256": "b459fe0d105efe14f271a5d2f1fac756400fd5be768426270c823639661576c7",
+    "unchanged_source_sha256": {
+      "native-android/engine/auth-interop/deployment/windows/shard_play_probe.c": "b648dd10915fd081bef49e8521519da5f0bf1d96c75299b072e03e0a67d9d615",
+      "native-android/engine/auth-interop/deployment/windows/test_shard_play_probe.c": "e65727d7222321082a035d04a263e3641ab61249e672ff18f3cdc205c3857d92",
+      "native-android/engine/auth-interop/deployment/test_selected_shard_play.py": "9d9d7630c433833105958babab216d64c8543ddaecbf2ced1c83ca74209cfeb7"
+    },
+    "synthetic_scenarios_per_mode": 16,
+    "modes": [
+      "optimized",
+      "asan_ubsan"
+    ],
+    "native_or_old_Auth_qualifier_reexecuted": false
+  },
+  "admitted_build_reference": {
+    "run_id": 39080037562,
+    "artifact_id": 12118334160,
+    "zip_sha256": "8d139b6b229742b9b1274e985c26e1847edca821bcc3836a367dd9e96be1c1c1",
+    "original_build_receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+    "binary_sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c"
+  },
+  "actual_registration_reference": {
+    "run_id": 39081746280,
+    "artifact_id": 12119695553,
+    "receipt_sha256": "979eae095c8b03548cfaac743b92fe132b3627b612c2429798a830194808012b",
+    "selected_shard_play_verified": false
+  },
+  "actual_new_selected_runtime_executed": false,
+  "actual_live_selected_grant_verified": false,
+  "db_login_attempted": false,
+  "authenticated_db_map_handoff_verified": false,
+  "normal_version_admitted": false,
+  "checksum_reference_installed": false,
+  "checksum_policy_relaxed": false,
+  "grant_values_exported": false,
+  "accepted_runtime_replaced": false,
+  "shipping_profiles_modified": false
+}

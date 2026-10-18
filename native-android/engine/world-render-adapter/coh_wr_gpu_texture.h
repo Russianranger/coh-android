@@ -2,6 +2,7 @@
 #define COH_WR_GPU_TEXTURE_H
 #include "coh_wr_texture.h"
 #include "coh_wr_sampler.h"
+#include "coh_wr_tex_rgba32.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -48,10 +49,23 @@ typedef struct {
     uint32_t max_dimension;
 } CohWrGpuLimits;
 typedef struct CohWrGpuTexture CohWrGpuTexture;
+enum {COH_WR_GPU_SOURCE_LEGACY_DXT=0,COH_WR_GPU_SOURCE_NAMESPACE_RGBA32=1};
+#define COH_WR_GPU_RGBA32_PREPARATION_RESERVE 16384u
+typedef struct {
+    uint32_t row,input_generation,source_mip_count,skipped_mips;
+    size_t aggregate_reserved_bytes;
+} CohWrGpuRgba32SourceReport;
 typedef struct {
     CohWrGpuToken token;CohWrTextureReport source;
     size_t gpu_reservation,aggregate_reserved_bytes;
     uint32_t uploaded_levels;
+    /* The shared source identity/dimensions/levels/owned/RGBA bytes/SHA and
+     * aggregate peak are valid for both kinds. For NAMESPACE_RGBA32, format,
+     * cached_texopt_flags, loader_reservation and external_bytes in source are
+     * INVALID and zero only as storage: no legacy/cache values are fabricated. */
+    uint32_t source_kind;
+    CohWrGpuRgba32SourceReport rgba32;
+    size_t owner_bytes; /* actual sizeof the opaque GPU CPU owner */
 } CohWrGpuReport;
 /* Off-thread CPU resource must stay alive for this synchronous call; not needed
  * afterward. Successful output owns one new name. Existing output unchanged;
@@ -62,6 +76,21 @@ typedef struct {
  * measured GPU heap usage. Backend scratch allocations are external too.
  * No material, effective CLIENT-state, world or actor capability is granted. */
 CohStatus coh_wr_gpu_upload(const CohWrTextureResource *,const CohWrSamplerSource *,
+    CohWrGpuToken,const CohWrGpuOps *,const CohWrGpuLimits *,CohCancel,
+    CohWrGpuTexture **out,CohWrGpuJournal *);
+/* Typed immutable namespace-decoded source, never a cast legacy owner. Source
+ * and every borrowed pixel/identity view stay live and immutable through all
+ * synchronous backend/cancel callbacks. Sampler, operations and limits also
+ * remain live and immutable through those callbacks. The same journal/context/quarantine
+ * contract applies. external_bytes must cover the source's FULL recorded
+ * aggregate reservation plus known caller input/output/journal storage and all
+ * other old/new/context/provider/driver peaks; source retirement grants no
+ * subtraction. This entry adds its own 16KiB preparation reserve and GPU owner.
+ * Known input/output/journal/source-view aliases refuse before callbacks. Opaque
+ * source/backend/provider private storage must also be disjoint from writable
+ * output/journal/input spans; callers enforce storage not exposed by getters.
+ * *out must be NULL; failure preserves it and retains any unfinished journal. */
+CohStatus coh_wr_gpu_upload_rgba32(const CohWrTexRgba32 *,const CohWrSamplerSource *,
     CohWrGpuToken,const CohWrGpuOps *,const CohWrGpuLimits *,CohCancel,
     CohWrGpuTexture **out,CohWrGpuJournal *);
 CohStatus coh_wr_gpu_retry_cleanup(CohWrGpuJournal *,const CohWrGpuOps *);

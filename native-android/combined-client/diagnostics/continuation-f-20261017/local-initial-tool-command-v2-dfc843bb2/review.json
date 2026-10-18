@@ -1,0 +1,186 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "checks_each": 151,
+  "complete_initial_character": false,
+  "exact_stdout_profiles_identical_across_modes": {
+    "badheader": {
+      "diagnostic_failure_code": "HEADER",
+      "initial_packet_observed": false,
+      "refused_command_kind": "SERVER_ALLENTS",
+      "refused_command_valid": true,
+      "status": 1,
+      "terminal_db_phase": 9,
+      "terminal_failure": true,
+      "terminal_map_phase": 5
+    },
+    "captured": {
+      "diagnostic_failure_code": "NONE",
+      "initial_packet_observed": true,
+      "refused_command_kind": "NONE",
+      "refused_command_valid": false,
+      "status": 2,
+      "terminal_db_phase": 0,
+      "terminal_failure": false,
+      "terminal_map_phase": 0
+    },
+    "none": {
+      "diagnostic_failure_code": "TIMEOUT",
+      "initial_packet_observed": false,
+      "refused_command_kind": "NONE",
+      "refused_command_valid": false,
+      "status": 7,
+      "terminal_db_phase": 9,
+      "terminal_failure": true,
+      "terminal_map_phase": 5
+    },
+    "unknown": {
+      "diagnostic_failure_code": "COMMAND",
+      "initial_packet_observed": false,
+      "refused_command_kind": "SERVER_GAME_CMDS",
+      "refused_command_valid": true,
+      "status": 2,
+      "terminal_db_phase": 9,
+      "terminal_failure": true,
+      "terminal_map_phase": 5
+    }
+  },
+  "frozen_source_input_map": {
+    "actual_compiled_and_helper_sources_equal_committed_HEAD_recorded": true,
+    "all_hashes_equal_recorded_revision_Git_blobs": true,
+    "clean_checkout_recorded_at_start": true,
+    "entries": 1762,
+    "global_current_checkout_admission_claim": false,
+    "map_includes_audit_only_sources_not_all_compiler_consumed": true,
+    "mismatches": 0
+  },
+  "modes": [
+    "release",
+    "address",
+    "undefined"
+  ],
+  "qualified_source_revision": "dfc843bb2f538956df843e7b117d60cd38bdfd90",
+  "real_server_capture": false,
+  "receipt": {
+    "compressed_bytes": 85006,
+    "compressed_sha256": "f65d849fbf89027b6cefb4a00f6f4230f04ef4d2595b98aab7a90d05ba2bb522",
+    "deterministic_gzip_filename_empty_mtime_zero": true,
+    "file": "build.json.gz",
+    "uncompressed_bytes": 240894,
+    "uncompressed_sha256": "59dbf8b59779efa513265bb78fce50f07019f6d730e8bdb7b3380c5be4d6c2cc"
+  },
+  "retained_ELFs_rehashed": {
+    "address": {
+      "ELF_magic_verified": true,
+      "binary_executed_by_reviewer": false,
+      "bytes": 958728,
+      "copied_into_F_evidence": false,
+      "filename": "coh-capture-local-initial-address",
+      "sha256": "bc2ae9b8a7813e491856cfdf7d76e3032ff6c7b0e42febebc184babe0b5d8ee4"
+    },
+    "release": {
+      "ELF_magic_verified": true,
+      "binary_executed_by_reviewer": false,
+      "bytes": 180424,
+      "copied_into_F_evidence": false,
+      "filename": "coh-capture-local-initial",
+      "sha256": "eeb5e9a3c29bfb223c23a5b465378ce90b800f517396c2c04502a703d8874ea5"
+    },
+    "undefined": {
+      "ELF_magic_verified": true,
+      "binary_executed_by_reviewer": false,
+      "bytes": 831376,
+      "copied_into_F_evidence": false,
+      "filename": "coh-capture-local-initial-undefined",
+      "sha256": "aa2c1879d7819b9a7422a3cc3698534e547d2b36280982c830c4bfe954ac31db"
+    }
+  },
+  "reviewed_root_tool_source_sha256": {
+    "native-android/combined-client/tools/capture_local_initial.c": "0b44989efcd3a43fee832ebecd7d8b840e9fdc16ee3d0cfe42c4d9e51b16db82",
+    "native-android/combined-client/tools/check_local_initial_capture.py": "cb7a80bad926998da0580892082b1c3a115288428a1152e88de99ef2ca70443f"
+  },
+  "reviewer_actions": {
+    "all_recorded_Git_hashes_recomputed": true,
+    "compiler_or_native_binary_executed": false,
+    "network_server_or_Android_executed": false,
+    "source_and_retained_byte_review": true,
+    "source_helper_or_unit_test_replayed": false
+  },
+  "safe_stdout_files": {
+    "status-address/badheader.json": {
+      "bytes": 518,
+      "file": "status-address/badheader.json",
+      "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967"
+    },
+    "status-address/captured.json": {
+      "bytes": 507,
+      "file": "status-address/captured.json",
+      "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+    },
+    "status-address/none.json": {
+      "bytes": 510,
+      "file": "status-address/none.json",
+      "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be"
+    },
+    "status-address/unknown.json": {
+      "bytes": 521,
+      "file": "status-address/unknown.json",
+      "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982"
+    },
+    "status-release/badheader.json": {
+      "bytes": 518,
+      "file": "status-release/badheader.json",
+      "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967"
+    },
+    "status-release/captured.json": {
+      "bytes": 507,
+      "file": "status-release/captured.json",
+      "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+    },
+    "status-release/none.json": {
+      "bytes": 510,
+      "file": "status-release/none.json",
+      "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be"
+    },
+    "status-release/unknown.json": {
+      "bytes": 521,
+      "file": "status-release/unknown.json",
+      "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982"
+    },
+    "status-undefined/badheader.json": {
+      "bytes": 518,
+      "file": "status-undefined/badheader.json",
+      "sha256": "ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967"
+    },
+    "status-undefined/captured.json": {
+      "bytes": 507,
+      "file": "status-undefined/captured.json",
+      "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+    },
+    "status-undefined/none.json": {
+      "bytes": 510,
+      "file": "status-undefined/none.json",
+      "sha256": "83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be"
+    },
+    "status-undefined/unknown.json": {
+      "bytes": 521,
+      "file": "status-undefined/unknown.json",
+      "sha256": "dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982"
+    }
+  },
+  "schema": "coh-f-local-initial-tool-command-v2-review-v1",
+  "scope_notes": [
+    "captured means raw ALLENTS prefix/loan observed in a scripted peer fixture; its retained COH_UNSUPPORTED status2 and all character/world authority false fields are preserved.",
+    "The receipt binds frozen dfc843bb2 Git bytes. Later unrelated source integration does not retroactively change this qualification or imply all current audit inputs remain equal.",
+    "Only receipt and fixed20-key safe stdout are copied; native executables are rehashed at their existing owner path and not duplicated."
+  ],
+  "source_generation_admitted": false,
+  "source_review": [
+    "Only two new public fields are sourced from genuine C diagnostics and the fixed-name helper; no raw command integer or runtime name is printed.",
+    "The focused checker asserts exact20-key v2 shape, strict Boolean/string types and specific NONE/GAME_CMDS/ALLENTS/NONE classifications.",
+    "Compiler-derived includes bind the new whitelist map, and the command manifest adds both exact original headers before imported qualification helpers execute.",
+    "Existing explicit deadline/cancellation and pre-close first-failure selection remain unchanged; failed/unsupported raw observation never grants character or world acceptance."
+  ],
+  "source_tree": "29d9b174a0bbee26561666a744a6b2ab68f582df",
+  "world_authority": false
+}

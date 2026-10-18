@@ -1,0 +1,30 @@
+{
+  "android_built": false,
+  "android_executed": false,
+  "driver": {
+    "bytes": 19808,
+    "path": "native-android/engine/world-render-adapter/tests/run_source_rgba32_android.py",
+    "sha256": "86f7afd87039eb6c8a7a0bfc5a520e24a57ddc9ab6766c8318fa4079a7aefb7b"
+  },
+  "exact_two_driver_hunks_only": true,
+  "host_qualified_revision": "166fdb04f30ff52d2f000af478e2dc953d7cc438",
+  "host_qualified_source_inputs_unchanged": 28,
+  "only_changed_host_receipt_source_input": "native-android/engine/world-render-adapter/tests/run_source_rgba32_android.py",
+  "parent_evidence_commit": "043fb8c90502e8f635e4e9e5b83db8beadb0a251",
+  "review": "clear; resolves the Android failure-scope note in review.json",
+  "reviewed_source_commit": "2c8acfb8498dd496d342e314e634f02719ac868d",
+  "reviewer_actions": {
+    "Android_build_or_execution": false,
+    "compiler_or_host_qualifier_executed": false,
+    "network_dispatch": false,
+    "read_only_diff_and_Git_byte_review": true
+  },
+  "schema": "coh-f-source-rgba32-android-cleanup-delta-v1",
+  "semantics": [
+    "Existing remote rm and both absence checks now set device_path_cleanup_verified only.",
+    "Native process cleanup is marked verified only if no native execution was attempted or native process completion was actually observed. Ambiguous attempted launch sets process_cleanup_unobserved true.",
+    "Full device_cleanup_verified requires both path cleanup and native process cleanup; removal of files alone cannot imply process termination.",
+    "Production API, native test, checker, fixture generation, compiler/device commands and timeouts are byte-unchanged. The exact166 host proof remains authoritative for its frozen source; a future Android build must bind this new driver/source revision."
+  ],
+  "world_authority": false
+}

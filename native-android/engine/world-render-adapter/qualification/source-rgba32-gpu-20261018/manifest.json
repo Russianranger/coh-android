@@ -1,0 +1,29 @@
+{
+  "schema": "coh-source-rgba32-gpu-evidence-v1",
+  "source_revision": "166fdb04f30ff52d2f000af478e2dc953d7cc438",
+  "files": {
+    "address-native.json": {
+      "bytes": 1177,
+      "sha256": "263d4f119b733c1247ec251fd1b8aa8adadc44c3080deebd56b6e748be16e076"
+    },
+    "host.json": {
+      "bytes": 21518,
+      "sha256": "e7d609502b1cfc45d1e1e876de2652087b14e1a9e490606560252af126b90ca8"
+    },
+    "readback.rgba": {
+      "bytes": 1488,
+      "sha256": "91bd157f743e7c25d2b43ba36b93144318f5d885c975e25ac9b19790b912163b"
+    },
+    "release-native.json": {
+      "bytes": 1177,
+      "sha256": "263d4f119b733c1247ec251fd1b8aa8adadc44c3080deebd56b6e748be16e076"
+    },
+    "undefined-native.json": {
+      "bytes": 1177,
+      "sha256": "263d4f119b733c1247ec251fd1b8aa8adadc44c3080deebd56b6e748be16e076"
+    }
+  },
+  "android_built": false,
+  "android_executed": false,
+  "old_qualifiers_replayed": false
+}

@@ -8,8 +8,8 @@ FIXTURE_SHA='c36001854f75ff7e8ef5304138537f1de4b71dcc3529a9a40f6093fde959df9a'
 WHOLE_PACKET_SHA='261155800f81fbd7645e9e34a7b4c4ed9b453e1596fe3e947162df24bf29e45c'
 PACKET_SHA='93ca8bfe6e2985b9e20c7c097038fb365199565c9eaed57f524416e456c4667c'
 ABI={'arm64-v8a':('aarch64-linux-android26-clang',183),'x86_64':('x86_64-linux-android26-clang',62)}
-SOURCES=['tests/test_gpu_egl.c','tests/coh_gpu_egl_backend.c','coh_wr_gpu_texture.c','coh_wr_texture.c','coh_wr_sampler.c','../assets/coh_asset_loader.c','../../src/coh_assets.c','../../src/coh_dds.c']
-EXTRA=['tests/coh_gpu_egl_backend.h','coh_wr_gpu_texture.h','coh_wr_texture.h','coh_wr_sampler.h','../assets/coh_asset_loader.h','../renderer/coh_renderer.h','../coh_contracts.h','../../include/coh_native_core.h','../../src/byte_reader.h','gpu_egl_contract.py','prepare_gpu_egl.py','run_gpu_egl_android.py','acquire_egl_headers.py','egl-host-header-pins.json','sampler-authentic-pins.json','qualification/gpu-texture-model-20261017/host.json','EGL_QUALIFICATION.md','check_sampler.py','tests/test_gpu_egl_driver.py']
+SOURCES=['tests/test_gpu_egl.c','tests/coh_gpu_egl_backend.c','coh_wr_gpu_texture.c','coh_wr_tex_rgba32.c','coh_wr_tex_namespace.c','coh_wr_texture.c','coh_wr_sampler.c','../assets/coh_asset_loader.c','../../src/coh_assets.c','../../src/coh_dds.c']
+EXTRA=['tests/coh_gpu_egl_backend.h','coh_wr_gpu_texture.h','coh_wr_tex_rgba32.h','coh_wr_tex_namespace.h','coh_wr_texture.h','coh_wr_sampler.h','../assets/coh_asset_loader.h','../renderer/coh_renderer.h','../coh_contracts.h','../../include/coh_native_core.h','../../src/byte_reader.h','gpu_egl_contract.py','prepare_gpu_egl.py','run_gpu_egl_android.py','acquire_egl_headers.py','egl-host-header-pins.json','sampler-authentic-pins.json','qualification/gpu-texture-model-20261017/host.json','EGL_QUALIFICATION.md','check_sampler.py','tests/test_gpu_egl_driver.py']
 
 def sha(path):
  with Path(path).open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()

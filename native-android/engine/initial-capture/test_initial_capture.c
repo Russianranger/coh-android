@@ -42,11 +42,15 @@ static CohNetPacket db_setup(Observation*o,Peer*db,CohNetEndpoint*target){
  ok(o,100);CohNetEndpoint dbto;CohNetPacket first=read_target(db,&dbto,1);CohNetPacket reply=control(5,100,2,1,0);reply.ack_count=1;reply.acks[0]=first.id;frame_send(db,dbto,5,&reply);ok(o,101);CohNetPacket ack=frame_read(db,5,0);CHECK(command(&ack,5,1)==3);reply=control(5,101,4,0,0);reply.ack_count=1;reply.acks[0]=ack.id;frame_send(db,dbto,5,&reply);ok(o,102);drain_ack(db,5);ok(o,103);CohNetPacket request=frame_read(db,5,0);CHECK(command(&request,5,0)==COH_DB_LOGIN);
  *target=dbto;CHECK(!diagnostic(o->owner).first_failure.valid);return request;
 }
-static CohNetEndpoint setup(Observation*o,Peer*db,Peer*map,unsigned bad_groups){
+static CohNetPacket setup_map_connect(Observation*o,Peer*db,Peer*map,CohNetEndpoint*target){
  CohNetEndpoint dbto;CohNetPacket request=db_setup(o,db,&dbto),reply,first,ack;CohProtocolBits b;
  peer_message(db,dbto,5,players0,players0_bits,0,request.id);ok(o,104);drain_ack(db,5);CohLocalCharacters list;CHECK(coh_initial_capture_characters(o->owner,&list)==COH_OK&&list.selectable_count==1);CHECK(coh_initial_capture_choose_character(o->owner,0,105)==COH_OK);ok(o,105);request=frame_read(db,5,0);CHECK(command(&request,5,0)==COH_DB_CHOOSE_PLAYER);
  reply=application(db,COH_DB_MAP_CONNECT);b=append(&reply);uint32_t fields[]={17,5,0x0100007fu,0,map->endpoint.port,7003,123456};for(unsigned i=0;i<7;i++)CHECK(!coh_protocol_write_pack(&b,1,fields[i]));app_send(db,dbto,reply,&b,request.id);ok(o,106);drain_ack(db,5);
  CohNetEndpoint mapto;first=read_target(map,&mapto,1);CHECK(first.connect);ok(o,107);CohNetPacket bye=frame_read(db,5,0);CHECK(command(&bye,5,1)==5);reply=control(5,++db->id,6,0,0);reply.ack_count=1;reply.acks[0]=bye.id;frame_send(db,dbto,5,&reply);reply=control(5,100,2,1,0);reply.ack_count=1;reply.acks[0]=first.id;frame_send(map,mapto,5,&reply);ok(o,108);ack=frame_read(map,5,0);CHECK(command(&ack,5,1)==3);reply=control(5,101,4,0,0);reply.ack_count=1;reply.acks[0]=ack.id;frame_send(map,mapto,5,&reply);ok(o,109);drain_ack(map,5);ok(o,110);request=frame_read(map,5,0);CHECK(command(&request,5,0)==COH_MAP_CONNECT);
+ *target=mapto;return request;
+}
+static CohNetEndpoint setup(Observation*o,Peer*db,Peer*map,unsigned bad_groups){
+ CohNetEndpoint mapto;CohNetPacket request=setup_map_connect(o,db,map,&mapto),reply;CohProtocolBits b;
  reply=application(map,COH_REP_CONNECT_MSG);b=append(&reply);CHECK(!coh_protocol_write_pack(&b,1,1));CHECK(!coh_protocol_write(&b,32,0));app_send(map,mapto,reply,&b,request.id);ok(o,111);drain_ack(map,5);ok(o,112);request=frame_read(map,5,0);CHECK(command(&request,5,0)==COH_MAP_REQSHORTCUTS);reply=application(map,COH_REP_SHORTCUTS);b=append(&reply);CHECK(!coh_protocol_write_pack(&b,1,UINT32_MAX));CHECK(!coh_protocol_write_pack(&b,1,0));app_send(map,mapto,reply,&b,request.id);ok(o,113);drain_ack(map,5);ok(o,114);request=frame_read(map,5,0);CHECK(command(&request,5,0)==COH_MAP_REQSCENE);
  peer_message(map,mapto,5,source_groups_minimal_world_packed,source_groups_minimal_world_packed_bits-bad_groups,0,request.id);return mapto;
 }
@@ -64,8 +68,9 @@ static void first_failure(CohInitialCaptureDiagnostics d,CohStatus status,CohIni
  CHECK(!d.local.terminal_failure&&d.local.terminal_db_phase==COH_DB_IDLE&&d.local.terminal_map_phase==COH_MAP_IDLE);
 }
 static void unchanged_failure(Observation*o,CohInitialCaptureFailureSnapshot expected){
+ CohInitialCaptureDiagnostics before=diagnostic(o->owner);
  CHECK(service(o,5000)==COH_STATE);coh_initial_capture_timeout(o->owner);coh_initial_capture_close(o->owner);coh_initial_capture_cancel(o->owner);coh_initial_capture_close(o->owner);coh_initial_capture_cancel(o->owner);
- CohInitialCaptureDiagnostics d=diagnostic(o->owner);CHECK(!memcmp(&d.first_failure,&expected,sizeof(expected)));
+ CohInitialCaptureDiagnostics d=diagnostic(o->owner);CHECK(!memcmp(&d.first_failure,&expected,sizeof(expected)));CHECK(d.refused_command_valid==before.refused_command_valid&&d.refused_command_kind==before.refused_command_kind);
 }
 static void finish(Observation*o,Peer*db,Peer*map){CohInitialCaptureDiagnostics d=diagnostic(o->owner);coh_initial_capture_timeout(o->owner);CohInitialCaptureDiagnostics timeout_rejected=diagnostic(o->owner);CHECK(!memcmp(&d,&timeout_rejected,sizeof(d)));CHECK(d.local.opened_sockets==2&&d.local.closed_sockets==2&&!d.source_generation_admitted&&!d.complete_initial_character&&!d.actor_publication&&!d.ack_permitted&&!d.world_authority);CHECK(!d.local.terminal_failure&&d.local.db_phase==COH_DB_CANCELLED&&d.local.map_phase==COH_MAP_CLOSED);if(d.phase==COH_INITIAL_CAPTURED)CHECK(!d.first_failure.valid);else first_failure(d,d.status,d.failure,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,d.first_failure.map_phase);CohInitialCaptureLease lease;memset(&lease,0x5a,sizeof(lease));CohInitialCaptureLease before=lease;CHECK(coh_initial_capture_lease(o->owner,&o->expired,&lease)==COH_STATE&&!memcmp(&lease,&before,sizeof(lease)));unchanged_failure(o,d.first_failure);coh_initial_capture_destroy(o->owner);peer_close(db);peer_close(map);CHECK(!live_allocations);scenarios++;}
 static void db_failure(unsigned which){
@@ -77,7 +82,7 @@ static void db_failure(unsigned which){
  else{coh_initial_capture_timeout(o.owner);s=COH_STATE;}
  CohInitialCaptureDiagnostics d=diagnostic(o.owner);CohInitialCaptureFailure why=which==0?COH_INITIAL_CAPTURE_FAILURE_PROTOCOL:(which==1||which==4)?COH_INITIAL_CAPTURE_FAILURE_TIMEOUT:COH_INITIAL_CAPTURE_FAILURE_CANCELLED;
  first_failure(d,s,why,COH_LOCAL_DB_CONNECTING,which==0?COH_DB_FAILED:which==1?COH_DB_TIMED_OUT:COH_DB_WAIT_PLAYERS,COH_MAP_IDLE);
- CHECK(!o.calls&&!d.groups_observed&&!d.reqallents_sent&&!d.raw_allents_observed&&d.local.opened_sockets==1&&d.local.closed_sockets==1&&d.local.db_phase==COH_DB_CANCELLED&&d.local.map_phase==COH_MAP_IDLE);
+ CHECK(!o.calls&&!d.groups_observed&&!d.reqallents_sent&&!d.raw_allents_observed&&d.local.opened_sockets==1&&d.local.closed_sockets==1&&d.local.db_phase==COH_DB_CANCELLED&&d.local.map_phase==COH_MAP_IDLE);CHECK(!d.refused_command_valid&&d.refused_command_kind==COH_INITIAL_CAPTURE_COMMAND_NONE);
  unchanged_failure(&o,d.first_failure);coh_initial_capture_destroy(o.owner);peer_close(&db);CHECK(!live_allocations);scenarios++;
 }
 static void scenario(unsigned which){
@@ -88,7 +93,8 @@ static void scenario(unsigned which){
  if(which==7){CHECK(service(&o,2115)==COH_STATE);d=diagnostic(o.owner);CHECK(d.failure==COH_INITIAL_CAPTURE_FAILURE_TIMEOUT&&d.groups_observed&&!d.raw_allents_observed);first_failure(d,COH_STATE,COH_INITIAL_CAPTURE_FAILURE_TIMEOUT,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);finish(&o,&db,&map);return;}
  if(which==13){coh_initial_capture_timeout(o.owner);d=diagnostic(o.owner);first_failure(d,COH_STATE,COH_INITIAL_CAPTURE_FAILURE_TIMEOUT,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);CHECK(d.groups_observed&&d.reqallents_sent==1&&!d.raw_allents_observed&&d.phase==COH_INITIAL_CAPTURE_FAILED);finish(&o,&db,&map);return;}
  if(which==8){o.cancelled=1;CHECK(service(&o,117)==COH_CANCELLED);first_failure(diagnostic(o.owner),COH_CANCELLED,COH_INITIAL_CAPTURE_FAILURE_CANCELLED,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);finish(&o,&db,&map);return;}
- if(which==2){CohNetPacket unknown=application(&map,15);app_send(&map,to,unknown,NULL,request.id);CHECK(service(&o,117)==COH_UNSUPPORTED);d=diagnostic(o.owner);CHECK(d.failure==COH_INITIAL_CAPTURE_FAILURE_COMMAND&&d.groups_observed&&!d.raw_allents_observed);first_failure(d,COH_UNSUPPORTED,COH_INITIAL_CAPTURE_FAILURE_COMMAND,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);drain_ack(&map,5);quiet(&map);finish(&o,&db,&map);return;}
+ if(which==15){uint8_t incomplete=1;peer_message(&map,to,5,&incomplete,1,0,request.id);CHECK(service(&o,117)==COH_OK);d=diagnostic(o.owner);CHECK(!d.first_failure.valid&&!d.refused_command_valid&&d.refused_command_kind==COH_INITIAL_CAPTURE_COMMAND_NONE);coh_initial_capture_timeout(o.owner);d=diagnostic(o.owner);first_failure(d,COH_STATE,COH_INITIAL_CAPTURE_FAILURE_TIMEOUT,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);CHECK(!d.refused_command_valid&&d.refused_command_kind==COH_INITIAL_CAPTURE_COMMAND_NONE);quiet(&map);finish(&o,&db,&map);return;}
+ if(which==2||which==14){CohNetPacket unknown=application(&map,which==14?UINT32_MAX:15);app_send(&map,to,unknown,NULL,request.id);CHECK(service(&o,117)==COH_UNSUPPORTED);d=diagnostic(o.owner);CHECK(d.failure==COH_INITIAL_CAPTURE_FAILURE_COMMAND&&d.groups_observed&&!d.raw_allents_observed);CHECK(d.refused_command_valid&&d.refused_command_kind==(which==14?COH_INITIAL_CAPTURE_COMMAND_UNKNOWN:COH_INITIAL_CAPTURE_COMMAND_SERVER_GAME_CMDS));first_failure(d,COH_UNSUPPORTED,COH_INITIAL_CAPTURE_FAILURE_COMMAND,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);drain_ack(&map,5);quiet(&map);finish(&o,&db,&map);return;}
  size_t bits,bytes=which==1?65536:which==9?COH_NET_DECODED_MAX:which==10?COH_NET_DECODED_MAX+1:128;unsigned aligned=which==1||which==9||which==10;uint8_t*data=body(bytes,aligned,which==11,&bits);o.expected=data;o.bits=bits;o.bytes=(bits+7)/8;o.aligned=aligned;
  if(aligned)compressed_send(&map,to,data,bytes,request.id);else peer_message(&map,to,5,data,bits,0,request.id);
  s=service(&o,117);d=diagnostic(o.owner);
@@ -97,12 +103,17 @@ static void scenario(unsigned which){
  else if(which==12){CHECK(s==COH_CANCELLED&&d.failure==COH_INITIAL_CAPTURE_FAILURE_CANCELLED&&o.allents==1&&d.groups_observed&&!d.raw_allents_observed);}
  else if(which==5){CHECK(s==COH_IO&&d.failure==COH_INITIAL_CAPTURE_FAILURE_OBSERVER&&o.allents==1&&d.groups_observed&&!d.raw_allents_observed);}
  else{CHECK(s==COH_UNSUPPORTED&&d.phase==COH_INITIAL_CAPTURED&&d.failure==COH_INITIAL_CAPTURE_FAILURE_NONE&&d.raw_allents_observed&&d.allents_observations==1&&o.allents==1&&d.allents_message_generation>d.groups_message_generation);CHECK(d.last_payload_bits==bits&&d.last_decoded_bytes==o.bytes&&d.last_byte_aligned==aligned);}
- if(d.phase!=COH_INITIAL_CAPTURED)first_failure(d,s,d.failure,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);
+ if(d.phase!=COH_INITIAL_CAPTURED){first_failure(d,s,d.failure,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_SCENE_INCOMPLETE);CHECK(d.refused_command_valid==(which!=10)&&d.refused_command_kind==(which==10?COH_INITIAL_CAPTURE_COMMAND_NONE:COH_INITIAL_CAPTURE_COMMAND_SERVER_ALLENTS));}else CHECK(!d.refused_command_valid&&d.refused_command_kind==COH_INITIAL_CAPTURE_COMMAND_NONE);
  drain_ack(&map,5);
  quiet(&map);free(data);finish(&o,&db,&map);
 }
+static void queued_decode_failure(void){
+ Peer db=peer_open(),map=peer_open();Observation o={0};CohNetEndpoint to;CohNetPacket request=setup_map_connect(&o,&db,&map,&to),reply=application(&map,COH_REP_CONNECT_MSG);CohProtocolBits b=append(&reply);CHECK(!coh_protocol_write_pack(&b,1,1));CHECK(!coh_protocol_write(&b,32,0));app_send(&map,to,reply,&b,request.id);
+ CohNetPacket broken={0};broken.id=++map.id;broken.compressed=1;broken.payload_bits=128;broken.payload[0]=COH_REP_ALLENTS;broken.payload[4]=12;broken.ack_count=1;broken.acks[0]=request.id;frame_send(&map,to,5,&broken);
+ CHECK(service(&o,111)==COH_INVALID);CohInitialCaptureDiagnostics d=diagnostic(o.owner);first_failure(d,COH_INVALID,COH_INITIAL_CAPTURE_FAILURE_PROTOCOL,COH_LOCAL_MAP_CONNECTING,COH_DB_CLOSED,COH_MAP_WAIT_SHORTCUTS);CHECK(!d.refused_command_valid&&d.refused_command_kind==COH_INITIAL_CAPTURE_COMMAND_NONE&&!o.calls&&!d.reqallents_sent);drain_ack(&map,5);quiet(&map);finish(&o,&db,&map);
+}
 static void allocation_failure(void){CohLocalConfig c=coh_local_default_config();c.local_development_enabled=1;c.db.transport.peer=(CohNetEndpoint){{127,0,0,1},7000};for(unsigned i=1;i<=2;i++){fail_allocation=allocation_calls+i;CHECK(!coh_initial_capture_create(&c));CHECK(!live_allocations);fail_allocation=0;}}
 #ifndef COH_INITIAL_CAPTURE_NO_MAIN
-int main(void){unsigned before=descriptors();allocation_failure();for(unsigned i=0;i<14;i++)scenario(i);for(unsigned i=0;i<5;i++)db_failure(i);CHECK(descriptors()==before);printf("{\"passed\":true,\"checks\":%u,\"scenarios\":%u,\"first_failure_snapshot_controls\":true,\"explicit_total_deadline_controls\":true,\"actual_os_udp\":true,\"wrapped_native_allocations_balanced\":true,\"synthetic_source_layout_peers\":true,\"whole_original_allents_producer_executed\":false,\"real_server\":false,\"actor_publication\":false,\"source_generation_admitted\":false,\"ack_permitted\":false}\n",checks,scenarios);return 0;}
+int main(void){unsigned before=descriptors();allocation_failure();for(unsigned i=0;i<16;i++)scenario(i);for(unsigned i=0;i<5;i++)db_failure(i);queued_decode_failure();CHECK(descriptors()==before);printf("{\"passed\":true,\"checks\":%u,\"scenarios\":%u,\"first_failure_snapshot_controls\":true,\"explicit_total_deadline_controls\":true,\"refused_command_controls\":true,\"actual_os_udp\":true,\"wrapped_native_allocations_balanced\":true,\"synthetic_source_layout_peers\":true,\"whole_original_allents_producer_executed\":false,\"real_server\":false,\"actor_publication\":false,\"source_generation_admitted\":false,\"ack_permitted\":false}\n",checks,scenarios);return 0;}
 
 #endif
