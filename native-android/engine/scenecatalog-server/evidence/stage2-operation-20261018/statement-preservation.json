@@ -1,0 +1,16 @@
+{
+  "schema": "coh-stage2-operation-statement-preservation-v1",
+  "passed": true,
+  "historical_parent": "362f10cc71148c32b3b84e6c6cbe7ce59ac94480",
+  "path": "native-android/engine/scenecatalog-server/verify_source_snapshot.c",
+  "previous_sha256": "fc693b6fdde6b943a307583be35e16045e86dd907feed4cc96fd895ee7610dc4",
+  "current_sha256": "8a67c97216c4551283a994272704c13e3ae69ee724b45b27110c4f0ea219b2bc",
+  "removed_only": [
+    "one local operation pointer",
+    "twelve fixed operation assignments",
+    "one guarded refusal-only operation printf",
+    "comments and whitespace"
+  ],
+  "normalized_statements_identical": true,
+  "compiled_or_original_runtime_executed": false
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "coh-independent-supervisor-source-review-v1",
+  "supervisor_sha256": "31ac4852da3a6f409b8924f45f1f095706f11e0cec7b6636877a322dc7353d40",
+  "source_pins": {
+    "OwnedProfileProcess.cs": true,
+    "InertProfileProbe.cs": true,
+    "TestOwnedProfileProcess.cs": true,
+    "as-invoker.manifest": true,
+    "build-only.ps1": true
+  },
+  "native_receipt_keys_exact": true,
+  "receipt_success_projection": true,
+  "x64_layout": {
+    "extended_bytes": 144,
+    "flags_offset": 16,
+    "accounting_bytes": 48,
+    "active_offset": 40
+  },
+  "blocking_findings": [],
+  "scope": "Independent source/data/layout review only. No Windows APIs or helper/model/compiler executed."
+}

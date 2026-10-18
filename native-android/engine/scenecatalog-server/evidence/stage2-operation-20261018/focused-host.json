@@ -1,0 +1,54 @@
+{
+  "schema": "coh-stage2-operation-focused-v1",
+  "passed": true,
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": "8a67c97216c4551283a994272704c13e3ae69ee724b45b27110c4f0ea219b2bc",
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py": "0dc272d4e3ced120600bf4a33f6f61a77803ec960171c824fba9f08dd8344457",
+    "native-android/engine/scenecatalog-server/test_stage2_operation.py": "c5aae1e4a6c4c4aeeec6f713c3020a00858e708a0e5be697a8b83c94bef03e82"
+  },
+  "projection_checks": 35,
+  "modes": {
+    "release": {
+      "cases": 12,
+      "baseline_passed_stage2_then_refused_synthetic_ledger": true,
+      "forced_stage2_refusals": 11,
+      "original_service_executed": false
+    },
+    "asan": {
+      "cases": 12,
+      "baseline_passed_stage2_then_refused_synthetic_ledger": true,
+      "forced_stage2_refusals": 11,
+      "original_service_executed": false
+    },
+    "ubsan": {
+      "cases": 12,
+      "baseline_passed_stage2_then_refused_synthetic_ledger": true,
+      "forced_stage2_refusals": 11,
+      "original_service_executed": false
+    }
+  },
+  "stage2_operation_names": [
+    "CATALOG_DIGEST",
+    "CATALOG_HEADER",
+    "CATALOG_INPUT",
+    "CATALOG_OWNER_CREATE",
+    "CATALOG_OWNER_RESERVATION",
+    "CATALOG_OWNER_VIEW",
+    "CATALOG_PREFLIGHT",
+    "EAGER_LOAD",
+    "EAGER_RESERVATION",
+    "GROUPS_MATCH",
+    "METADATA_DIGEST",
+    "OWNER_DIGEST"
+  ],
+  "eager_reservation_bound_checked_not_forced": true,
+  "fixture": {
+    "sha256": "177533419d553c2ffc2a192e5439eadcf7a9c8ab6bb555048a25b8a6ecd0cfae",
+    "synthetic_source_layout_only": true
+  },
+  "old_verifier_or_adapter_suites_reexecuted": false,
+  "original_capture_replayed": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "limits_or_authority_predicates_changed": false
+}

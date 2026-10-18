@@ -1,0 +1,49 @@
+{
+  "schema": "coh-stage2-operation-independent-review-v1",
+  "reviewer": "worker-e",
+  "passed": true,
+  "base_revision": "362f10cc71148c32b3b84e6c6cbe7ce59ac94480",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": "8a67c97216c4551283a994272704c13e3ae69ee724b45b27110c4f0ea219b2bc",
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py": "0dc272d4e3ced120600bf4a33f6f61a77803ec960171c824fba9f08dd8344457",
+    "native-android/engine/scenecatalog-server/test_stage2_operation.py": "c5aae1e4a6c4c4aeeec6f713c3020a00858e708a0e5be697a8b83c94bef03e82"
+  },
+  "predecessor_source_hashes_independently_matched": true,
+  "unchanged_frozen_core_sha256": "6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d",
+  "independently_executed_public_projection_controls": 34,
+  "reviewed_new_native_modes": {
+    "release": {
+      "cases": 12,
+      "baseline_passed_stage2_then_refused_synthetic_ledger": true,
+      "forced_stage2_refusals": 11,
+      "original_service_executed": false
+    },
+    "asan": {
+      "cases": 12,
+      "baseline_passed_stage2_then_refused_synthetic_ledger": true,
+      "forced_stage2_refusals": 11,
+      "original_service_executed": false
+    },
+    "ubsan": {
+      "cases": 12,
+      "baseline_passed_stage2_then_refused_synthetic_ledger": true,
+      "forced_stage2_refusals": 11,
+      "original_service_executed": false
+    }
+  },
+  "native_corpus_independently_reexecuted": false,
+  "review_findings": {
+    "all_12_stage2_operations_have_fixed_immediate_labels": true,
+    "call_order_and_original_predicates_and_limits_preserved": true,
+    "successful_native_output_unchanged": true,
+    "only_stage2_failure_exports_fixed_operation": true,
+    "public_failure_rejects_unknown_fields_or_private_strings_or_wrong_stage": true,
+    "failure_returns_keep_source_and_world_authority_false": true,
+    "stage2_eager_reservation_compile_bound_is_not_real_memory_measurement": true
+  },
+  "original_transaction_executed": false,
+  "exact_real_COHLIMIT_cause_observed": false,
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "blocking_findings": []
+}

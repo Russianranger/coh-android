@@ -26,10 +26,12 @@ CORE_SHA256='6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d'
 SOURCE_LIMIT=1024*1024
 FAILURE_PHASES=frozenset(('INPUTS','BUILD','EXTRACTION','PACKET_IDENTITY','NATIVE_EXECUTION','NATIVE_RESULT','FINAL_IDENTITIES','RECEIPT','UNKNOWN'))
 
+STAGE2_OPERATIONS=frozenset(('CATALOG_INPUT','CATALOG_HEADER','CATALOG_PREFLIGHT','EAGER_RESERVATION','EAGER_LOAD','GROUPS_MATCH','CATALOG_DIGEST','OWNER_DIGEST','METADATA_DIGEST','CATALOG_OWNER_CREATE','CATALOG_OWNER_RESERVATION','CATALOG_OWNER_VIEW'))
+
 class SnapshotFailure(Exception):
- def __init__(self,phase,native_stage=None,native_status=None):
+ def __init__(self,phase,native_stage=None,native_status=None,native_operation=None):
   super().__init__('COH_SOURCE_SNAPSHOT_VERIFICATION_REFUSED')
-  self.phase=phase;self.native_stage=native_stage;self.native_status=native_status
+  self.phase=phase;self.native_stage=native_stage;self.native_status=native_status;self.native_operation=native_operation
 
 @contextmanager
 def failure_scope(phase):
@@ -44,7 +46,11 @@ def public_failure(error):
   if type(candidate) is str and candidate in FAILURE_PHASES:phase=candidate
   if phase=='NATIVE_EXECUTION' and type(candidate_stage) is int and 0<=candidate_stage<=7 and type(candidate_status) is int and 1<=candidate_status<=7:
    stage=candidate_stage;status=candidate_status
- return {'schema':SCHEMA,'passed':False,'failure':'verification_refused','phase':phase,'native_stage':stage,'native_status':status,'source_generation_admitted':False,'world_authority':False}
+ result={'schema':SCHEMA,'passed':False,'failure':'verification_refused','phase':phase,'native_stage':stage,'native_status':status,'source_generation_admitted':False,'world_authority':False}
+ if type(error) is SnapshotFailure and stage==2:
+  operation=vars(error).get('native_operation')
+  if type(operation) is str and operation in STAGE2_OPERATIONS:result['native_operation']=operation
+ return result
 
 def unique_object(pairs):
  result={}
@@ -60,15 +66,19 @@ def run_native(binary,extracted):
   p=subprocess.run(list(map(str,(binary,extracted))),cwd=ROOT,capture_output=True,timeout=180,env={**os.environ,'ASAN_OPTIONS':'detect_leaks=0:halt_on_error=1','UBSAN_OPTIONS':'halt_on_error=1'})
   require(len(p.stdout)+len(p.stderr)<=1024**2,'CHILD_OUTPUT_LIMIT')
   if p.returncode:
-   stage=None;status=None
+   stage=None;status=None;operation=None
    try:
     result=json.loads(p.stdout,object_pairs_hook=unique_object)
-    require(p.returncode==2 and not p.stderr and type(result) is dict and set(result)=={'schema','passed','status','stage','source_generation_admitted','world_authority'},'FIXED_NATIVE_FAILURE')
+    original_fields={'schema','passed','status','stage','source_generation_admitted','world_authority'}
+    require(p.returncode==2 and not p.stderr and type(result) is dict and set(result) in (original_fields,original_fields|{'operation'}),'FIXED_NATIVE_FAILURE')
     require(result['schema']=='coh-source-snapshot-native-result-v1' and result['passed'] is False and result['source_generation_admitted'] is False and result['world_authority'] is False,'FIXED_NATIVE_FAILURE_SCOPE')
     require(type(result['stage']) is int and 0<=result['stage']<=7 and type(result['status']) is int and 1<=result['status']<=7,'FIXED_NATIVE_FAILURE_ENUM')
+    if 'operation' in result:
+     require(result['stage']==2 and type(result['operation']) is str and result['operation'] in STAGE2_OPERATIONS,'FIXED_NATIVE_OPERATION')
+     operation=result['operation']
     stage=result['stage'];status=result['status']
    except Exception:pass
-   raise SnapshotFailure('NATIVE_EXECUTION',stage,status)
+   raise SnapshotFailure('NATIVE_EXECUTION',stage,status,operation)
   return p.stdout
 
 def require(value,code):

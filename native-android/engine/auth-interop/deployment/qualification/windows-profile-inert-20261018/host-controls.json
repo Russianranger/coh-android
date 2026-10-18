@@ -1,0 +1,28 @@
+{
+  "schema": "coh-windows-inert-supervisor-host-controls-v1",
+  "passed": true,
+  "scope": "new supervisor source/admission/parser/lifecycle platform-double only",
+  "tests": 11,
+  "accepted_model_or_helper_reexecuted": false,
+  "actual_windows_api_executed": false,
+  "source_sha256": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py": "31ac4852da3a6f409b8924f45f1f095706f11e0cec7b6636877a322dc7353d40",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/test_supervise_inert.py": "7e09ec3f321f3013ab8a2fdb3b19a65a61788187bf766072e38ea9aacd0c8de6",
+    "native-android/engine/auth-interop/deployment/windows-profile-process/EXECUTION.md": "cc95fb176a2292e3c04d17065351777819dd6faf2fcb3924c08090277463b961",
+    "native-android/engine/auth-interop/deployment/windows_suspended_thread.py": "5c5306850d5c1abeab5f70682ce54f35240127f67a54f90393598421caef5a11"
+  },
+  "accepted_artifact_admission": {
+    "passed": true,
+    "run": 39106023132,
+    "artifact": 12128507472,
+    "zip_sha256": "8d8dfbe59ed5349e1c8468445e7b8b1c005f9e9f189a665a0a96cc67fba9bebc",
+    "zip_bytes": 43251,
+    "source_revision": "362f10cc71148c32b3b84e6c6cbe7ce59ac94480",
+    "helper_sha256": "e8662ff392e9cdb1357e153b522fb13ecb4980c397d5cdb27c85703c155fc070",
+    "probe_sha256": "0c1d47938f84cfb4d4dd76d157a7e5585f743e3daf91e8ce2e77356f5e0659d0",
+    "images_executed": false
+  },
+  "service_readiness_qualified": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

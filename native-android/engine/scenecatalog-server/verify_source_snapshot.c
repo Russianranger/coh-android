@@ -132,7 +132,7 @@ static CohStatus v_event(void *opaque,const CohGroupsEvent*e){
 }
 
 int main(int argc,char **argv){
-    CohStatus status=COH_INVALID;unsigned stage=0;CohBytes meta={0},owner={0},packet={0},input={0},side={0},resources={0},raw={0},eligibility={0},cat={0},snapshot_bytes={0};
+    CohStatus status=COH_INVALID;unsigned stage=0;const char *operation=NULL;CohBytes meta={0},owner={0},packet={0},input={0},side={0},resources={0},raw={0},eligibility={0},cat={0},snapshot_bytes={0};
     CohSceneCatalog *eager=NULL;CohCatalogOwner *catalog=NULL;CohCatalogSnapshot *snapshot=NULL;CohRuntimeGraph *graph=NULL;CohResourceJoin *join=NULL;CohPublicBounds *bounds=NULL;
     CohCatalogBinding cb={0};CohCatalogSnapshotBinding sb={0};CohCatalogDigest digest_={NULL,v_digest};CohCatalogOwnerReport cr={0};CohCatalogReport er={0};CohRuntimeSnapshotReport sr={0};CohRuntimeGraphReport gr={0};CohResourceJoinReport jr={0};CohPublicBoundsReport br={0};CohGroupsInspection groups={0};CohGroupsFailure failure={0};VContext c={0};size_t retained=V_RESERVE;
 #define DO(x) do{status=(x);if(status!=COH_OK)goto done;}while(0)
@@ -143,14 +143,27 @@ int main(int argc,char **argv){
     NEED(v_word(meta,6)<=1&&v_word(meta,7)==1&&!v_word(meta,33)&&!v_word(meta,34));DO(v_file(argv[1],"packet.bin",COH_REP_BOUNDED_MESSAGE_MAX,retained,&packet));NEED(packet.size==((uint64_t)v_word(meta,5)+7u)/8u);retained+=packet.size;
     NEED(v_word(owner,12)==4||v_word(owner,12)==5);
     CohRepReader reader;DO(coh_rep_reader_bounded(&reader,packet,v_word(meta,5),v_word(meta,6),COH_REP_BOUNDED_MESSAGE_MAX));uint32_t command;DO(coh_rep_pack(&reader,1,&command));NEED(command==COH_REP_GROUPS);CohRepReader body=reader;DO(coh_rep_groups(&reader,&groups,&failure));
-    stage=2;DO(v_file(argv[1],"catalog.cohcat",COH_CATALOG_INPUT_MAX,retained,&input));NEED(input.size>=48&&v_u32(input.data+20)==v_word(meta,4));
-    DO(coh_scenecatalog_preflight(input,v_word(meta,4),&er));DO(v_charge(retained+input.size+COH_CATALOG_MEMORY_MAX));DO(coh_scenecatalog_load(&eager,input,v_word(meta,4),&er));DO(coh_scenecatalog_match(eager,&groups));coh_scenecatalog_free(eager);eager=NULL;
+    /* Fixed source-defined operation names expose no path, record, count,
+     * allocation size or original packet data. Keep each assignment immediately
+     * before its call so a refusal identifies the actual first failed call. */
+    stage=2;operation="CATALOG_INPUT";DO(v_file(argv[1],"catalog.cohcat",COH_CATALOG_INPUT_MAX,retained,&input));
+    operation="CATALOG_HEADER";NEED(input.size>=48&&v_u32(input.data+20)==v_word(meta,4));
+    operation="CATALOG_PREFLIGHT";DO(coh_scenecatalog_preflight(input,v_word(meta,4),&er));
+    operation="EAGER_RESERVATION";DO(v_charge(retained+input.size+COH_CATALOG_MEMORY_MAX));
+    operation="EAGER_LOAD";DO(coh_scenecatalog_load(&eager,input,v_word(meta,4),&er));
+    operation="GROUPS_MATCH";DO(coh_scenecatalog_match(eager,&groups));coh_scenecatalog_free(eager);eager=NULL;
     /* These private join labels distinguish the exact observed byte sets only.
      * They do not admit a source provenance/run/asset manifest. The external
      * source-pinned supervisor/admitter must independently establish that chain
      * before deriving its separate immutable source-only snapshot token. */
-    cb.owner_generation=1;cb.catalog_generation=v_word(meta,4);cb.asset_generation=cb.catalog_generation;DO(v_digest(NULL,input,cb.catalog_sha256));DO(v_digest(NULL,owner,cb.source_sha256));DO(v_digest(NULL,meta,cb.inventory_sha256));
-    CohCatalogOwnerBudget cbudget={32u<<20,32u<<20,V_LIMIT,retained};DO(coh_catalog_owner_create(NULL,input,&cb,&cbudget,&digest_,&catalog,&cr));DO(v_charge(cr.peak_aggregate_bytes));v_drop(&input);DO(coh_catalog_owner_bytes(catalog,&cat));
+    cb.owner_generation=1;cb.catalog_generation=v_word(meta,4);cb.asset_generation=cb.catalog_generation;
+    operation="CATALOG_DIGEST";DO(v_digest(NULL,input,cb.catalog_sha256));
+    operation="OWNER_DIGEST";DO(v_digest(NULL,owner,cb.source_sha256));
+    operation="METADATA_DIGEST";DO(v_digest(NULL,meta,cb.inventory_sha256));
+    CohCatalogOwnerBudget cbudget={32u<<20,32u<<20,V_LIMIT,retained};
+    operation="CATALOG_OWNER_CREATE";DO(coh_catalog_owner_create(NULL,input,&cb,&cbudget,&digest_,&catalog,&cr));
+    operation="CATALOG_OWNER_RESERVATION";DO(v_charge(cr.peak_aggregate_bytes));v_drop(&input);
+    operation="CATALOG_OWNER_VIEW";DO(coh_catalog_owner_bytes(catalog,&cat));
     stage=3;DO(v_file(argv[1],"runtime.cohrts",COH_RUNTIME_SNAPSHOT_INPUT_MAX,retained+coh_catalog_owner_owned_bytes(catalog),&side));sb.generation=1;sb.catalog=cb;DO(v_digest(NULL,side,sb.snapshot_sha256));DO(v_digest(NULL,meta,sb.run_sha256));CohRuntimeSnapshotBudget sbudget={V_LIMIT,retained};DO(coh_catalog_snapshot_create(NULL,catalog,side,&sb,&sbudget,&digest_,NULL,&snapshot));v_drop(&side);DO(coh_catalog_snapshot_view(snapshot,&snapshot_bytes,&sb,&sr));DO(v_charge(sr.aggregate_peak_bytes));
     CohRuntimeGraphBinding gb={0};gb.generation=1;gb.catalog_generation=cb.catalog_generation;gb.pins.asset_generation=cb.asset_generation;gb.pins.digest=v_digest;memcpy(gb.pins.catalog_sha256,cb.catalog_sha256,32);memcpy(gb.pins.snapshot_sha256,sb.snapshot_sha256,32);memcpy(gb.pins.source_sha256,cb.source_sha256,32);memcpy(gb.pins.run_sha256,sb.run_sha256,32);
     CohRuntimeSnapshotBudget gbudget={V_LIMIT,retained+coh_catalog_owner_owned_bytes(catalog)-cat.size+coh_catalog_snapshot_owned_bytes(snapshot)-snapshot_bytes.size};DO(coh_runtime_graph_build(NULL,cat,snapshot_bytes,&gb,&gbudget,NULL,&graph,&gr));DO(v_charge(gr.aggregate_peak_bytes));
@@ -166,6 +179,7 @@ int main(int argc,char **argv){
     stage=7;NEED(sr.files==v_word(meta,15)&&sr.definitions==v_word(meta,16)&&sr.slots==v_word(meta,17)&&sr.children==v_word(meta,18)&&sr.root_slots==v_word(meta,20)&&sr.active_roots==v_word(meta,21)&&sr.external_count==v_word(meta,22)&&gr.edges==(uint64_t)sr.children+v_word(meta,23)&&sr.source_defs_crc==v_word(meta,24)&&sr.source_refs_crc==v_word(meta,25));
 done:
     printf("{\"schema\":\"coh-source-snapshot-native-result-v1\",\"passed\":%s,\"status\":%d,\"stage\":%u,\"source_generation_admitted\":false,\"world_authority\":false",status==COH_OK?"true":"false",status,stage);
+    if(status!=COH_OK&&stage==2&&operation)printf(",\"operation\":\"%s\"",operation);
     if(status==COH_OK)printf(",\"checks\":{\"catalog_groups_match\":true,\"runtime_catalog_associations\":true,\"resource_catalog_associations\":true,\"raw_bounds_catalog_associations\":true,\"eligibility_groups_associations\":true},\"counts\":{\"files\":%u,\"slots\":%u,\"definitions\":%u,\"children\":%u,\"root_slots\":%u,\"active_roots\":%u,\"external_owners\":%u,\"resource_rows\":%u,\"model_rows\":%u,\"public_bounds_rows\":%u,\"emitted_definitions\":%u,\"emitted_roots\":%u,\"definition_scalars_compared\":%zu,\"named_peak_reservation_bytes\":%zu,\"named_aggregate_limit_bytes\":%u}",sr.files,sr.slots,sr.definitions,sr.children,sr.root_slots,sr.active_roots,sr.external_count,jr.rows,jr.models,br.public_rows,c.visit_definitions,c.visit_roots,v_scalars,v_peak,V_LIMIT);
     puts("}");coh_public_bounds_release(bounds);coh_resource_join_free(join);coh_runtime_graph_free(graph);coh_catalog_snapshot_release(snapshot);coh_catalog_owner_release(catalog);coh_scenecatalog_free(eager);v_drop(&raw);v_drop(&resources);v_drop(&eligibility);v_drop(&side);v_drop(&input);v_drop(&packet);v_drop(&owner);v_drop(&meta);return status==COH_OK?0:2;
 }

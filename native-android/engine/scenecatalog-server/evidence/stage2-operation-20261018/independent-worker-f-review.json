@@ -1,0 +1,18 @@
+{
+  "schema": "coh-independent-stage2-diagnostics-review-v1",
+  "passed": true,
+  "checks": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c/previous": true,
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c/current": true,
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py/previous": true,
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py/current": true,
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c/proof": true,
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py/proof": true,
+    "native-android/engine/scenecatalog-server/test_stage2_operation.py/proof": true,
+    "frozen_core": true,
+    "native_operational_tokens_unchanged": true
+  },
+  "scope": "Source/data comparison only; retained focused release/ASAN/UBSAN evidence reviewed without rerunning old suites. Exact original runtime cause remains pending.",
+  "source_generation_admitted": false,
+  "world_authority": false
+}

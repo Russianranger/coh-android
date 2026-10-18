@@ -1,0 +1,19 @@
+{
+  "schema": "coh-stage2-workflow-worker-a-independent-v1",
+  "passed": true,
+  "workflow_sha256": "27e8f47b47ad7330bae768804ac3d1c618c020a208037b15065a14f8db011a29",
+  "historical_revision": "9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+  "historical_workflow_sha256": "622b115ee563a1f99e7b5888b92fcac42bf6b9bc772d176f3f135335d267f810",
+  "unchanged_runtime_runs_with_only_explicit_revision_prefix": 11,
+  "historical_source_pins_independently_checked_against_exact_Git_blobs": 505,
+  "current_diagnostic_pins_independently_checked": 41,
+  "bash_syntax_checked": true,
+  "runtime_working_directory_and_current_override_checked": true,
+  "separate_checkout_paths_checked": true,
+  "current_source_admission_is_before_original_runtime": true,
+  "only_three_fixed_public_files_uploaded": true,
+  "no_current_source_generation_admitter_or_body_retention": true,
+  "original_runtime_or_verifier_or_old_suites_executed": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

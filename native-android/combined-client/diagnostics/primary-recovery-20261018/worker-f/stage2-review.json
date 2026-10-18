@@ -1,0 +1,24 @@
+{
+  "schema": "coh-independent-stage2-diagnostics-review-v1",
+  "passed": true,
+  "checks": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c/previous": true,
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c/current": true,
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py/previous": true,
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py/current": true,
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c/proof": true,
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py/proof": true,
+    "native-android/engine/scenecatalog-server/test_stage2_operation.py/proof": true,
+    "frozen_core": true,
+    "native_operational_tokens_unchanged": true,
+    "final_focused_source_hashes": true
+  },
+  "scope": "Source/data comparison only; retained focused release/ASAN/UBSAN evidence reviewed without rerunning old suites. Exact original runtime cause remains pending.",
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "reviewed_source_sha256": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": "8a67c97216c4551283a994272704c13e3ae69ee724b45b27110c4f0ea219b2bc",
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py": "0dc272d4e3ced120600bf4a33f6f61a77803ec960171c824fba9f08dd8344457",
+    "native-android/engine/scenecatalog-server/test_stage2_operation.py": "c5aae1e4a6c4c4aeeec6f713c3020a00858e708a0e5be697a8b83c94bef03e82"
+  }
+}

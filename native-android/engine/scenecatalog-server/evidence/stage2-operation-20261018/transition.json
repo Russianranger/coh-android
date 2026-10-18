@@ -1,0 +1,20 @@
+{
+  "schema": "coh-stage2-operation-source-transition-v1",
+  "historical_parent": "362f10cc71148c32b3b84e6c6cbe7ce59ac94480",
+  "changed_runtime_sources": {
+    "native-android/engine/scenecatalog-server/verify_source_snapshot.c": {
+      "previous_sha256": "fc693b6fdde6b943a307583be35e16045e86dd907feed4cc96fd895ee7610dc4",
+      "current_sha256": "8a67c97216c4551283a994272704c13e3ae69ee724b45b27110c4f0ea219b2bc"
+    },
+    "native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py": {
+      "previous_sha256": "2938d7a13ba7f3365dcbc68be3033891f1f304e7b5f46892c650e2d7783d6b09",
+      "current_sha256": "0dc272d4e3ced120600bf4a33f6f61a77803ec960171c824fba9f08dd8344457"
+    }
+  },
+  "unchanged_frozen_core_sha256": "6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d",
+  "allowed_change": "Fixed stage2 operation diagnostics only; no authority, limit, predicate, association, call-order or successful-output changes",
+  "historical_receipts_rewritten": false,
+  "original_transaction_pending": true,
+  "source_generation_admitted": false,
+  "world_authority": false
+}
