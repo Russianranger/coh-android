@@ -1,0 +1,26 @@
+{
+  "schema": "coh-wpp-profile-system-drive-source-freeze-v1",
+  "source": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py": {
+      "bytes": 37188,
+      "sha256": "00ad6105c3f5e8b2a68dfbd6276b2f3183ee5b933f8971b6f72d72b660c092ca"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/test_profile_environment.py": {
+      "bytes": 5712,
+      "sha256": "e7e5c3774e7db1cf0bd30fd2c8cdfc7ac5b1d9de8b2de1b16e23096610b2262a"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/PROFILE-SYSTEM-DRIVE.md": {
+      "bytes": 2543,
+      "sha256": "9a409950fa783f18f1873e263fbed80a97b94b1ac13d01b5a5d71a01104368a2"
+    }
+  },
+  "reused_profile_helper_artifact_id": 12145434474,
+  "reused_profile_helper_zip_bytes": 33239,
+  "reused_profile_helper_zip_sha256": "0d9a6e2870c18f463a73df37b8c16dc27b793cafa52d7c9d941efe5551720cf5",
+  "reused_profile_helper_sha256": "c6df10d121ea73e2ed8675465593b704f2a97b35289bc00d24ac1b7ee4219069",
+  "new_compiler_invocations": 0,
+  "actual_changed_environment_execution": false,
+  "exact_returned_profile_path_or_causality_inferred": false,
+  "service_readiness_qualified": false,
+  "world_authority": false
+}

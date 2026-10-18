@@ -1,0 +1,9 @@
+{
+  "schema": "coh-wpp-local-artifact-member-order-refusal-v1",
+  "failed_stage": "local extraction member-order assertion",
+  "reason": "expected list placed profile-build before preparation; actual flat members were correct",
+  "exact_original_archives_preserved": true,
+  "later_set_members_source_PE_receipts_verified": true,
+  "Windows_workflow_or_compiler_failure": false,
+  "project_native_execution": false
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "coh-initial-progress-development-v1",
+  "first_unit_compile": {
+    "executed": false,
+    "reason": "new standalone test command omitted native include path; compilation refused before execution; original compiler stderr only in tool output, not separately retained"
+  },
+  "first_production_build": {
+    "passed": false,
+    "stderr_file": "development-initial-progress-build.stderr",
+    "reasons": [
+      "new wrapper had misleading single-line indentation; corrected",
+      "wrong aggregate compile recipe optimized unchanged protocol.c atO2; final checker uses the already accepted per-sourceO0 protocol/Blowfish policy"
+    ],
+    "native_executed": false
+  },
+  "corrected_focused_final": "qualification.json",
+  "original_or_prior_tests_replayed": false
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "coh-wpp-profile-path-preparation-v1",
+  "passed": true,
+  "identity_source_sha256": "5420ba944a4b933d1067f0997ebd2f96b0c8581768cd885976e7042b415ff48e",
+  "generated_source_sha256": "ad25eb3dc6202df2bf4b1a271770e3c6555796c32174a083f90568af4a3c5b6b",
+  "generated_source_bytes": 50395,
+  "replacements": 12,
+  "exact_reverse_verified": true,
+  "profile_path_observation_only": true,
+  "existing_owner_acl_identity_guards_preserved": true,
+  "compiler_or_helper_or_model_executed": false
+}

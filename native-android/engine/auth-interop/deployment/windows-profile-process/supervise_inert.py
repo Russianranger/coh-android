@@ -147,6 +147,22 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def helper_environment(source, *, system_drive=False):
+    environment = {name: source[name] for name in
+                   ('SystemRoot', 'WINDIR', 'TEMP', 'TMP') if name in source}
+    if system_drive:
+        drive = source.get('SystemDrive')
+        need(type(drive) is str and re.fullmatch('[A-Za-z]:', drive) is not None,
+             'SYSTEM_DRIVE_ENVIRONMENT')
+        for name in ('SystemRoot', 'WINDIR'):
+            directory = source.get(name)
+            need(type(directory) is str and len(directory) > 3 and
+                 re.match(r'^[A-Za-z]:\\', directory) is not None and
+                 directory[:2].casefold() == drive.casefold(), 'SYSTEM_DRIVE_AGREEMENT')
+        environment['SystemDrive'] = drive
+    return environment
+
+
 def admit_artifact(directory, source=None):
     """Artifact provenance is additionally bound by root's exact run download."""
     directory = Path(directory).absolute()
@@ -414,7 +430,7 @@ class BoundedPipe:
             self.failed = True
 
 
-def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identity_diagnostic=False, profile_diagnostic=False):
+def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identity_diagnostic=False, profile_diagnostic=False, profile_system_drive=False):
     status = dict(schema='coh-owned-profile-inert-supervision-v1', passed=False,
                   first_failure='NONE', first_cleanup_failure='NONE',
                   accepted_build_reused=False, compiler_or_model_reexecuted=False,
@@ -431,6 +447,8 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
                   explicit_file_owner_requested=file_owner,
                   identity_diagnostic_requested=identity_diagnostic,
                   profile_path_diagnostic_requested=profile_diagnostic,
+                  system_drive_environment_requested=profile_system_drive,
+                  retained_profile_helper_reused=False,
                   changed_helper_compiled_only=False,
                   accepted_probe_or_model_reexecuted=False,
                   new_helper_compiler_invocations=0)
@@ -443,9 +461,13 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
     parent_created = False
     stage = 'ARTIFACT_ADMISSION'
     try:
-        need(sum(bool(mode) for mode in (file_diagnostic, file_owner, identity_diagnostic, profile_diagnostic)) <= 1, 'HELPER_MODE')
+        need(sum(bool(mode) for mode in (file_diagnostic, file_owner, identity_diagnostic, profile_diagnostic, profile_system_drive)) <= 1, 'HELPER_MODE')
         images = admit_artifact(artifact)
         status['accepted_build_reused'] = True
+        if profile_system_drive:
+            stage = 'RETAINED_PROFILE_ADMISSION'
+            images['OwnedProfileProcess.exe'] = admit_profile_path(artifact)
+            status['retained_profile_helper_reused'] = True
         if profile_diagnostic:
             stage = 'PROFILE_PATH_ADMISSION'
             images['OwnedProfileProcess.exe'] = admit_profile_path(artifact)
@@ -484,8 +506,7 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
         stage = 'HELPER_LAUNCH'
         helper, _ = images['OwnedProfileProcess.exe']
         probe, probe_hash = images['InertProfileProbe.exe']
-        environment = {name: os.environ[name] for name in
-                       ('SystemRoot', 'WINDIR', 'TEMP', 'TMP') if name in os.environ}
+        environment = helper_environment(os.environ, system_drive=profile_system_drive)
         process = subprocess.Popen([str(helper), '--qualify-inert', str(probe), probe_hash,
                                     str(Path(parent).absolute())], cwd=str(helper.parent),
                                    stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
@@ -515,7 +536,8 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
         status['outer_process_exit_observed'] = True
         stage = 'HELPER_RECEIPT'
         native_receipt = parse_receipt(bytes(pipes[0].data), file_diagnostic=file_diagnostic or file_owner,
-                                       identity_diagnostic=identity_diagnostic, profile_diagnostic=profile_diagnostic)
+                                       identity_diagnostic=identity_diagnostic,
+                                       profile_diagnostic=profile_diagnostic or profile_system_drive)
         status['helper_receipt_valid'] = True
         status['inner_cleanup_observed'] = native_receipt['cleanup_complete']
         status['private_journal_may_remain'] = not native_receipt['cleanup_complete']
@@ -608,6 +630,7 @@ def main():
     mode.add_argument('--file-owner', action='store_true')
     mode.add_argument('--file-identity-diagnostic', action='store_true')
     mode.add_argument('--profile-path-diagnostic', action='store_true')
+    mode.add_argument('--profile-system-drive', action='store_true')
     args = parser.parse_args()
     # Before mutation, require the explicit disposable CI host and a fresh
     # public directory. No username/SID/profile/packet/log selector is accepted.
@@ -619,7 +642,8 @@ def main():
     status, native_receipt = execute(args.artifact_dir, args.private_parent,
                                      file_diagnostic=args.file_diagnostic, file_owner=args.file_owner,
                                      identity_diagnostic=args.file_identity_diagnostic,
-                                     profile_diagnostic=args.profile_path_diagnostic)
+                                     profile_diagnostic=args.profile_path_diagnostic,
+                                     profile_system_drive=args.profile_system_drive)
     (args.public_out/'supervision.json').write_text(json.dumps(status, indent=2)+'\n', encoding='utf-8')
     if native_receipt is not None:
         (args.public_out/'inert-result.json').write_text(json.dumps(native_receipt, indent=2)+'\n', encoding='utf-8')
