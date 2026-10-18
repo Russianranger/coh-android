@@ -59,11 +59,30 @@ typedef enum {
  X(OUTPUT_LIST_ENTRY_ALIAS,!coh_source_owner_disjoint(out,sizeof(*out),entry,sizeof(*entry))) \
  X(LINK_INCIDENCE,incidence!=1u) \
  X(CLIENT_INCIDENCE,client_incidence!=1u)
+/* Additional fresh-only alternate eligibility refusals. No original value,
+ * pointer, player name, state number or ownership identity is exported. */
+#define COH_FRESH_INITIAL_OWNER_FAILURES(X) \
+ X(INITIAL_SLOT_OUTSIDE_TABLE) \
+ X(INITIAL_STATE) \
+ X(INITIAL_OUTPUT_ENTINFO_ALIAS) \
+ X(INITIAL_NOT_PLAYER) \
+ X(INITIAL_NOT_OWNED) \
+ X(INITIAL_PLAYER_ABSENT) \
+ X(INITIAL_CLIENT_STATE) \
+ X(INITIAL_ENTITY_READY) \
+ X(INITIAL_RELAY) \
+ X(INITIAL_TRANSFER_LOGIN) \
+ X(INITIAL_TRANSFER_ACTIVE) \
+ X(INITIAL_TRANSFER_WAITING) \
+ X(INITIAL_TRANSFER_STEP)
 typedef enum {
  COH_FRESH_OWNER_NONE,
 #define COH_FRESH_OWNER_ENUM(name,expression) COH_FRESH_OWNER_##name,
  COH_FRESH_OWNER_PREDICATES(COH_FRESH_OWNER_ENUM)
 #undef COH_FRESH_OWNER_ENUM
+#define COH_FRESH_INITIAL_OWNER_ENUM(name) COH_FRESH_OWNER_##name,
+ COH_FRESH_INITIAL_OWNER_FAILURES(COH_FRESH_INITIAL_OWNER_ENUM)
+#undef COH_FRESH_INITIAL_OWNER_ENUM
  COH_FRESH_OWNER_COUNT
 } CohFreshOwnerFailure;
 int coh_fresh_source_owner_failed(int,CohFreshOwnerFailure);

@@ -1,0 +1,76 @@
+{
+  "gate_review": {
+    "LOCAL6_same_names_exact3deltas": true,
+    "actual_sleeping_state_and_timeout_cause_not_inferred": true,
+    "first_before_project_imports_or_recovery": true,
+    "new_schema_and_exact13local15original_paths": true,
+    "new_three_modes8398checks208scenarios176refusals": true,
+    "no_host_guard_or_project_predicates_executed_by_F": true,
+    "old47_Folder83_native_controls_not_reexecuted": true,
+    "raw_SHA256_Git_blob_mode_and_HEAD_identity_checks": true,
+    "six_mutations_and31pure_parser_checks": true,
+    "stdlib_only_imports": [
+      "hashlib",
+      "json",
+      "os",
+      "pathlib",
+      "subprocess"
+    ]
+  },
+  "passed": true,
+  "review_actions": {
+    "new_download": false,
+    "project_imports_or_tests_or_compiler_or_native_or_runtime": false,
+    "retained_PEs_or_archives_duplicated": false,
+    "source_proof_replayed_or_rewritten": false
+  },
+  "reviewed_draft_bytes": 95685,
+  "reviewed_draft_sha256": "fb80fc0e14001056888e951eb378d71d56efa24058439e832076234bbed9b7b3",
+  "schema": "coh-f-fresh-initial-owner-build-workflow-review-v1",
+  "scope": {
+    "Map_only_compile_role_OptDebug_Win32_VS2026": true,
+    "artifact_name": "fresh-groups-initial-owner-build-${{ github.sha }}",
+    "cancel_in_progress": false,
+    "checkout_and_stage_compiler_reverify_admit_recovery_steps_byte_equivalent_YAML_objects": [
+      0,
+      1,
+      2,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "contents_permission_read": true,
+    "fixed19_admitted_artifact_names_and_bounded_UNADMITTED_recovery_preserved": true,
+    "jobs": 1,
+    "marker": "[fresh-groups-initial-owner-build]",
+    "no_native_or_server_runtime_or_default_profile_or_gameplay_grant": true,
+    "platform": "windows-2025-vs2026",
+    "private_runtime_outputs_or_credentials_exported": false,
+    "source_admission_id_and_raw_recovery_success_guard_preserved": true,
+    "steps": 11,
+    "timeout_minutes": 45,
+    "upload_scope_unchanged_except_artifact_name": true
+  },
+  "source_checked_revision": "9004e5472631973a9683e737a8db9cd78697b5fc",
+  "source_pins": {
+    "all254_current_raw_equals_recorded_Git": true,
+    "component_effective253_equals_Freview": true,
+    "current_workflow_self_required_by_gate": true,
+    "fixed_prior240_independently_reconstructed_from_actual6e96_AST_literals": true,
+    "historical_workflow_sha256": "a2adda1b06a824fa58bf5d36335fa060e360edbf25d6860a8e2148e10a87e851",
+    "new_two_proofs_and_Freview_fixed": true,
+    "nonself_compact_sha256": "ba3ed7bda8b05d244800fbdffc397332811742894e2868bc860a75146190cdc3",
+    "nonself_count": 254,
+    "only_six_A_supersessions_plus_three_new_local_and_eight_original_paths": true,
+    "with_current_workflow_self": 255
+  },
+  "static_syntax": {
+    "bash_n_blocks": 4,
+    "embedded_Python_AST_blocks": 4,
+    "generator_or_workflow_host_commands_executed": false
+  },
+  "workflow_path": ".github/workflows/native-fresh-groups-build.yml"
+}

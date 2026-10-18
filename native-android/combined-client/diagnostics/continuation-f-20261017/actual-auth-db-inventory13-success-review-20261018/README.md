@@ -1,0 +1,5 @@
+Read-only review of actual run 39097070843 at published f3ee9db6. The original ZIP, CRLF receipt, and fixed API are preserved once in D commit 397a601da; this directory references their exact bytes.
+
+The receipt records one complete UID-matching player list with 48 empty unlocked storage slots (base 12, bonus 0), after four Auth frames and one DB LOGIN. It records stable owned Auth/Db/SQL generations, the internal channel, 99 tables, and complete cleanup. The listener was 0.0.0.0 with the owned firewall restriction.
+
+This is the explicit provisional-development policy. Normal version, reference checksum, character selection, Map/world, and graceful peer ACK remain unverified. The prefix observes headers only; no account-control body values or first unsupported attribution are inferred. All 157 published source pins and the historical-source union were bound to published Git bytes without importing helpers, rerunning tests, downloading artifacts, or executing native code. The public artifact contains no probe PE or objects, so their identities remain receipt-reported.

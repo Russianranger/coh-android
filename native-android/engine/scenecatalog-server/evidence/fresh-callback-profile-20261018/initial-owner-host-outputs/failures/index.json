@@ -1,0 +1,56 @@
+{
+  "compiler_executed": false,
+  "failures": [
+    {
+      "failed_stage": "NEW_MUTATION_BUILD",
+      "final_receipt_written": false,
+      "mutation": "missing_entinfo_alias",
+      "production_source_changed": false,
+      "recorded_compiler_stderr_matches_exact_followup_pin": true,
+      "retained_compiler_stderr": {
+        "bytes": 736,
+        "path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/initial-owner-host-outputs/failures/missing_entinfo_alias.build.stderr.txt",
+        "sha256": "334b73e0b1dc0091eda6503d40455efba59ec958deb389f3169a14eef9aeff90"
+      },
+      "runtime_executed": false,
+      "source_revision": "d606c1c07cdf72953951ad4d515d6820ccf65cc2",
+      "three_new_core_modes_passed": true,
+      "unused_test_only_parameter": "out"
+    },
+    {
+      "failed_stage": "NEW_MUTATION_BUILD",
+      "final_receipt_written": false,
+      "mutation": "missing_client_phase",
+      "production_source_changed": false,
+      "recorded_compiler_stderr_matches_exact_followup_pin": true,
+      "retained_compiler_stderr": {
+        "bytes": 739,
+        "path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/initial-owner-host-outputs/failures/missing_client_phase.build.stderr.txt",
+        "sha256": "3f39275c14202da16e0c52a590f1ef4f06ea707d1f22fb916d64405d74c21397"
+      },
+      "runtime_executed": false,
+      "source_revision": "e43c94ee0625fa773dfbbfc2d229bf4393a0cc38",
+      "three_new_core_modes_passed": true,
+      "unused_test_only_parameter": "client"
+    }
+  ],
+  "frozen_13_source_pins_unchanged": true,
+  "frozen_qualification_and_followup": {
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/initial-owner-followup.json": {
+      "bytes": 23680,
+      "sha256": "550d600596e2939f73de076fac5fce859ce18248a0866e1b1d19795393dc03fb"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/initial-owner-qualification.json": {
+      "bytes": 14859,
+      "sha256": "198176ce653c7ec267a12efd8c92bd2f890e6589fd65d1030026874d4953991c"
+    }
+  },
+  "map_build_executed": false,
+  "native_or_runtime_executed": false,
+  "passed": true,
+  "schema": "coh-fresh-initial-owner-failed-mutation-logs-v1",
+  "scope": "Exact compiler stderr from the two previously recorded new mutation fixture build failures; additive data preservation only.",
+  "source_generation_admitted": false,
+  "tests_reexecuted": false,
+  "world_authority": false
+}

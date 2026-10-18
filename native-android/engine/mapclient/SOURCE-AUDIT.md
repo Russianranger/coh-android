@@ -33,10 +33,18 @@ REQALLENTS/READY or bind a server character to the renderer.
 | `dbclient.c:dbOrMapConnect` | Handoff contains link ID, map ID, two IPv4 DWORDs, UDP/TCP ports and map cookie. Those values do not contain the selected character DBID |
 | `BitStream.c`, `net_packet.c`, `net_packetutil.c` | Source scalar rounding, packed integers, byte alignment before raw arrays and auto-bin encoding |
 
-The source `sendCharacterCreate` definition is absent from this checkout.
-The native CONNECT implementation therefore supports the narrowly complete
-existing-character branch proven by the unchanged MapServer receiver. It
-cannot create a character and does not invent a character-creation encoding.
+The earlier statement that `sendCharacterCreate` was absent is superseded by
+the read-only source audit at published
+`f3ee9db6bc8a323c896769f0952dd242fc79e2f4` confirms it is present in
+`Game/src/gameComm/initClient.c:329`, calling the complete
+`Game/src/entity/entrecv.c::sendCharacterToServer` creation sender. Exact file
+and whole-function pins, including the original Map receivers, are retained in
+[`fresh-character-source-scope-20261018/audit.json`](../auth-interop/evidence/fresh-character-source-scope-20261018/audit.json).
+This corrects the source-availability finding; the existing native CONNECT
+serializer still supports only `newCharacter=0`. A fresh server-allocated,
+uninitialized character requires a separately qualified creation sender and
+owner; this existing serializer cannot create it. No old oracle or runtime
+claim is upgraded by this source correction.
 
 Normal source `commStart` writes the command directly through `pktCreate`,
 matching the source default/current modern version5. The standalone legacy

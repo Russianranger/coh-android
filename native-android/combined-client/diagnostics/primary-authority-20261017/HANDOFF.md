@@ -1,5 +1,20 @@
 # Primary native authority continuation — 2026-10-17
 
+## Initial-owner Map build and actual Inventory account milestone — 2026-10-18
+
+Latest independently fetched remote before this publication is f3ee9db6bc8a323c896769f0952dd242fc79e2f4, tree e6495d4fd3958a65537f38e7369d36e2f852f74d. Its actual encrypted Auth→DB run39097070843/job117585620683 succeeded under explicit provisional development policy: fresh Auth grant consumed once, complete UID-matching48 empty/unlocked character slots, base12/bonus0, one DB login/list and complete owned cleanup. Probe transaction78ms starts after readiness and is not startup timing. Raw Inventory body-acceptance flag remains false; original service identity is orchestration-bound, not self-attested by probe. No named character, normal version/checksum reference, Map handoff, selected player or full Gate26 is accepted. ZIP12125401436/19695B SHA2566135be6a09d9f014c010278ab8f93168a7207800de3a25899024f675aaca854b is retained once with D/F review.
+
+Actual scene39096463127/job117583842449 passed395-source admission, old611 destination loader/noargs and original runtime preparation, then refused OWNER/ENTITY_NOT_IN_USE. Native GROUPS passed and REQSCENE was locally queued once before timeout. No complete initial/source generation was emitted. The refusal does not establish actual ENTITY_SLEEPING or native timeout causality. Original cleanup passed. The tiny actual ZIP/API and F review are retained.
+
+A new fresh-only typed owner guard follows original initial lifecycle without changing READY/ACK, original shared observer or active-owner success path. Three focused modes each passed8398 checks/208 scenarios/176 refusals; six mutations and31 parser controls passed. Two preliminary mutation compiler failures and corrected source history remain preserved. F/E reviewed source13/original15 and exact previous/current LOCAL6: three compiled inputs change, so this publication requests only [fresh-groups-initial-owner-build] to produce a new compile-only Map PE. Frozen255 gate and65 pure JSON/Git guard proof are retained in initial-owner-map-workflow-20261018. No old qualifier is scheduled.
+
+The new Inventory-only receiver qualified once at4c26dfea: three modes each29 checks with a new captured command13 transaction; old28/123/151 entrypoints did not run. Retained release ELF180688B SHA25666f92ff8574c538ad221e1bcbbff834b80eddb54aa270b95ed607e7049a6dccc has exact46 current consumer pins independently checked by F. Its1860-input build audit remains bound to historical4c26. Future destination loader/noargs and new scene remain pending and require the new Map artifact.
+
+C Proficiency and B TexWord complete bounded source owners are integrated with independent F/E reviews and preserved development histories. Proficiency:25+25 records, three modes55193 checks, unconditional optimized-Python refusal followup; no current gameplay dictionary authority. TexWord:725 complete records/12911 nested/99125 fields, three modes205331 checks, actual provider retirement and corrected typed owner slot; no complete current CLIENT material/composition/world authority. Their configured memory charges are scoped child policies, not measured RSS/global96MiB fit. Startup remains387340ms. No new APK or Thor acceptance.
+
+C/B Salvage/Details-name draft and D bounded authenticated empty-slot creation interface proposal are independent unqualified work; they do not change the frozen scene consumer/core. All Gates25–27 remain open. Older paragraphs below are historical checkpoints superseded by this entry.
+
+
 Pinned remote starting source: `d96354411d2f69ec325b1bfe9d0e14999626ba91`.
 Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical

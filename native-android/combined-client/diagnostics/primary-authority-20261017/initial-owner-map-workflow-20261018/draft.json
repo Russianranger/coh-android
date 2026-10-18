@@ -1,0 +1,53 @@
+{
+  "baseline_workflow_sha256": "a2adda1b06a824fa58bf5d36335fa060e360edbf25d6860a8e2148e10a87e851",
+  "compiler_native_or_runtime_executed": false,
+  "generator_sha256": "dc9f2041da0bc662b3f4feb38f422859e4c932e444f5524ae664d114d6c702b7",
+  "historical_241_preserved": true,
+  "new_qualifier_or_project_imports_executed": false,
+  "nonself_pins": 254,
+  "passed": true,
+  "root_repository_mutated": false,
+  "schema": "coh-fresh-initial-owner-build-workflow-draft-v1",
+  "self_inclusive_pins": 255,
+  "source_inputs": 253,
+  "source_revision": "9004e5472631973a9683e737a8db9cd78697b5fc",
+  "supersessions": {
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/README.md": {
+      "previous_sha256": "6c4b22e3e62d59d456e0491a7e42d7c97747c8780c9c4315f92e9e871ca4371f",
+      "sha256": "fd0d90eab139285aac785ffab6ba7e7305fba22eb0f019b8228296982bbde5f3"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": {
+      "previous_sha256": "a6549c4c978ac2f130c4d23011166c6f185917d411cbe8781ebb0a7ab578088c",
+      "sha256": "67452123026a1efe04c1605d638b8f329a93e4d200ea03283683f163caaece93"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc": {
+      "previous_sha256": "535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a",
+      "sha256": "65645b3798ac11c19db7be714ae0c4d77f37049b5add89a9ab5ab29c8a01e383"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h": {
+      "previous_sha256": "3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce",
+      "sha256": "1edcc4cae6a9fe915e4af9096a6372a08878fb8731df81ecfab85545c970842d"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": {
+      "previous_sha256": "c827d7318849a48295396303198b41b36a845cbf7b44d244db5e5ace964ad3b2",
+      "sha256": "e0425174bd380cb7e97b98e46532af97c0ab3621e2fefa19c1ad82e5f6c57138"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py": {
+      "previous_sha256": "55b3f890cfbbf9d7d46e475d0d5852858280dcb618be220b88fbee3803473f0f",
+      "sha256": "ff573be6edd64da64bd1e092704e92bc2a4422795a4731ea9c0acf3c5c84d3c2"
+    }
+  },
+  "unchanged_step_indices": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "workflow_bytes": 95685,
+  "workflow_sha256": "fb80fc0e14001056888e951eb378d71d56efa24058439e832076234bbed9b7b3"
+}

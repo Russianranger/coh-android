@@ -1,0 +1,89 @@
+{
+  "schema": "coh-initial-inventory-peer-source-v1",
+  "passed": true,
+  "source_revision": "a59871a623fb85ac257f878a55571d3b620dd16f",
+  "baseline_revision": "dbb1a4c6aeefe698726fc54bf79c24dd675940b3",
+  "source_sha256": {
+    "native-android/engine/initial-capture/test_initial_peer.c": "e5d91921f6ba9547680e0551be91fe63b6de69474fcebb1d9257bdaa84d8a512",
+    "native-android/engine/initial-capture/test_initial_inventory_peer.c": "6d4bf3f56aaec6428c53195bdda10335d2ba41bfe1de5d17ea5914416f1e053c",
+    "native-android/engine/initial-capture/test_initial_account_peer.c": "0e983f61f17ac900c207906818d4fbe0b6a96dc01ccc5185e357898ebac38c29",
+    "native-android/engine/dbclient/tests/inventory_oracle.py": "4d0549b9a9e1ca3ff035685c44ea2c20335d92e12150721dae33746359fa5b36",
+    "native-android/engine/dbclient/tests/inventory-source-pins.json": "1bc8367d34c6596560c0708ccaaffbafb2f55f696d90c9683ec680aab1c2a526",
+    "native-android/engine/dbclient/tests/account_controls_oracle.py": "6a53e2f26a87149f274a9e6b93a03410352964985e0a5da5d3ba1cbf993b11f3"
+  },
+  "raw_base_peer_only_four_new_ifdef_blocks": true,
+  "new_guard": "COH_INITIAL_INVENTORY_PEER",
+  "all_old_bytes_equal_after_removing_new_guard_blocks": true,
+  "preprocessor_only": {
+    "default": {
+      "old_preprocessed_sha256": "34fe6e2a7b20b971b3b8562cb5b02b12db6d7279e0b3963ed90e8f03cd5b29f4",
+      "current_preprocessed_sha256": "34fe6e2a7b20b971b3b8562cb5b02b12db6d7279e0b3963ed90e8f03cd5b29f4",
+      "preprocessed_bytes": 176641,
+      "equal": true
+    },
+    "account-controls": {
+      "old_preprocessed_sha256": "ec29344cdf180ace8b44903bac5e2cdee0a99e628e09bcaf8abbf3ee062919de",
+      "current_preprocessed_sha256": "ec29344cdf180ace8b44903bac5e2cdee0a99e628e09bcaf8abbf3ee062919de",
+      "preprocessed_bytes": 176929,
+      "equal": true
+    },
+    "editmsg": {
+      "old_preprocessed_sha256": "ac1a0fe31ae24975889b424705ab155709d066cbfa318b3360e35d13f22f5692",
+      "current_preprocessed_sha256": "ac1a0fe31ae24975889b424705ab155709d066cbfa318b3360e35d13f22f5692",
+      "preprocessed_bytes": 178199,
+      "equal": true
+    }
+  },
+  "preprocessor_limit": "__LINE__ is set to0 in both sides, normalizing only test failure line-number diagnostics. Generated headers are empty placeholders except unchanged main-rename trampoline. This is token/source equivalence, not a compiled/executed peer or fixture proof.",
+  "C50_all_50_source_hashes_unchanged": true,
+  "peer_API": [
+    "--serve",
+    "--report",
+    "PATH",
+    "--mode",
+    "captured"
+  ],
+  "synthetic_source_fixture_sequence": [
+    {
+      "header": "account-fixtures.h",
+      "index": 0,
+      "command": "DBGAMESERVER_ACCOUNTSERVER_UNAVAILABLE"
+    },
+    {
+      "header": "account-fixtures.h",
+      "index": 1,
+      "command": "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT"
+    },
+    {
+      "header": "account-fixtures.h",
+      "index": 1,
+      "command": "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT"
+    },
+    {
+      "header": "inventory-fixtures.h",
+      "index": 8,
+      "command": "DBGAMESERVER_ACCOUNTSERVER_INVENTORY",
+      "synthetic_items": 3
+    }
+  ],
+  "expected_peer_counts": {
+    "account_controls_sent": 3,
+    "account_inventory_sent": 1,
+    "character_lists": 1,
+    "character_choices": 1,
+    "map_handoffs": 1,
+    "reqallents_unique": 1,
+    "initial_responses": 1,
+    "forbidden_application_commands": 0,
+    "ready_commands": 0,
+    "received_character_commands": 0,
+    "full_update_ack_commands": 0,
+    "closed_sockets": 2
+  },
+  "native_compiled_or_executed": false,
+  "original_fixture_producer_executed": false,
+  "historical_peer_tests_executed": false,
+  "real_server_capture": false,
+  "runtime_generation": false,
+  "actor_authority": false
+}

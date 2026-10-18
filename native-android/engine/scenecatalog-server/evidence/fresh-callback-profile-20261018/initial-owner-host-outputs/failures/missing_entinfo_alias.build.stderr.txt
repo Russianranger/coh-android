@@ -1,0 +1,6 @@
+In file included from /workspace/scratch/7ed1da2a7e55/a-initial-owner-final/mutation-missing_entinfo_alias/test.c:4:
+/workspace/scratch/7ed1da2a7e55/a-initial-owner-final/mutation-missing_entinfo_alias/initial_owner_fixture.h: In function ‘coh_fresh_source_initial_owner’:
+/workspace/scratch/7ed1da2a7e55/a-initial-owner-final/mutation-missing_entinfo_alias/initial_owner_fixture.h:301:98: error: unused parameter ‘out’ [-Werror=unused-parameter]
+  301 | static int coh_fresh_source_initial_owner(const Entity*entity,const ClientLink*client,const void*out,size_t output_bytes)
+      |                                                                                       ~~~~~~~~~~~^~~
+cc1: all warnings being treated as errors

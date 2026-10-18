@@ -7,6 +7,13 @@ remain required before another live transaction. The accepted83 observer,
 shipping profile, old boundary predicate, exporter bodies and original loader
 guard are unchanged. Cache/watch-policy equivalence is explicitly false.
 
+The later fresh-only initial-owner specialization is documented in
+INITIAL_OWNER_ELIGIBILITY.md. It preserves the accepted shared owner helper and
+replaces only this role's active-state atom with the unchanged active path or a
+strict owned pre-entry sleeping PLAYER path. The deterministic reverse removes
+that separate helper/one-atom substitution before reversing the diagnostic
+wrappers. It does not change entity state, CLIENT_READY or ACK behavior.
+
 Normal Map startup enables FolderCache updates after installing the old sink;
 its live boundary requires updates disabled. This role preserves that exact
 normal enable call, then seals through the original disable API only when the

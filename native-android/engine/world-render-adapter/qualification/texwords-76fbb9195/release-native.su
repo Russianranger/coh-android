@@ -1,0 +1,10 @@
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:58:12:icmp	8	static
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:64:12:word	8	static
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:232:17:lookup	8	static
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:69:12:string	80	static
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:86:18:table	192	static
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:182:11:coh_wr_texwords_create	1120	dynamic,bounded
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:225:11:coh_wr_texwords_destroy	16	static
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:226:11:coh_wr_texwords_report	8	static
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:227:11:coh_wr_texwords_record	8	static
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_texwords.c:233:11:coh_wr_texwords_find	672	static

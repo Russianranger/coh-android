@@ -1,0 +1,1 @@
+Original source helper extraction refused ParserReadBinaryTable because its signature has trailing // returns success. No compiler or native execution reached. Extractor amended to accept the original trailing line comment, preserving the whole function bytes.

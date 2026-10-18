@@ -1,0 +1,1 @@
+texwords line67: out.matched==(original!=UINT32_MAX)&&out.source_ordinal==original&&out.namespace_queries==queries

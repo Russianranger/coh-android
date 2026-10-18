@@ -1,0 +1,96 @@
+{
+  "derivation": {
+    "all_top_level_nonfunction_AST_unchanged": true,
+    "baseline_checker_sha256": "6379d88a45ca8d244b5e415510a44256670dc39f60a4f838ada9b0555666377e",
+    "baseline_source_revision": "e039651b5af5e9814533627e2b5c5c0e524a39be",
+    "bytes": 3240,
+    "new_function": "account_inventory_tool_tests",
+    "only_changed_existing_function": "main",
+    "seven_historical_function_ASTs_unchanged": {
+      "account_controls_tool_tests": "b85c669e57dd94570ba8fe82288ffe8a5442e069f672b006484dbb1e9b6561d3",
+      "digest": "6462328ce1c18d3a9d960ed414a9744a7fa7569c68b0e76461a9cca9d70d6926",
+      "editmsg_tool_tests": "5c4ca54210f09d2554921987e8e98f8d37099109bd9ce3e57e245b7b2ea84971",
+      "require": "2cf32e69c3e5f2e4994437a12d017ed7d4c10345c5fa328f3aa88e942afcc68c",
+      "run": "70021f03e6c8fe4edd9fedbdbfcbaa170b67b145494604c30f45d9124f6e46de",
+      "source_module": "8af68b2604cf8bc0f1935e10b0c50ec459a1424360c9dc7c0efda498d5cdbbf2",
+      "tool_tests": "a6e97b15900f9ff55d1d52760d5070b38fa96321ef03f8771ce4991f6c3cf996"
+    },
+    "sha256": "2e9416a37ac86d15a64cf63da653f4677b1c09782d5b64e06dbe7ffb274c36c4"
+  },
+  "executable_identity_scope": {
+    "final_all_receiver_SHA_check_immediately_before_build_receipt": true,
+    "loaded_mapping_or_system_toolchain_closure_claim": false,
+    "newmode_receiver_and_peer_SHA_before_tests": true,
+    "same_SHA_required_after_tests": true
+  },
+  "limits": {
+    "ACK_authority": false,
+    "actor_publication": false,
+    "checker_or_project_helper_imported_by_review": false,
+    "complete_initial_character": false,
+    "destination_loader_or_services_executed": false,
+    "new_qualification_pass_claim": false,
+    "source_generation_admitted": false,
+    "source_root_mutated_by_review": false,
+    "tests_or_compiler_or_native_executed_by_review": false,
+    "world_authority": false
+  },
+  "new_control_scope": {
+    "actual_server_body_values_inferred": false,
+    "authority_and_READY_receivedCharacter_fullUpdateACK_flags_false": true,
+    "case": "account-inventory-captured",
+    "exact29_result_required": true,
+    "expected_checks_per_mode": 29,
+    "flag": "--account-inventory-only",
+    "historical_151_123_28_tool_test_functions_called": false,
+    "initial_raw_loan_and_same_GROUPS_binding_required": true,
+    "modern_unaligned_both_flags_zero": true,
+    "mutually_exclusive_historical_modes": true,
+    "noargs_exit2_empty_streams_checked": true,
+    "one_character_list_and_one_REQALLENTS_required": true,
+    "original_fixture_helpers_reused_as_setup_not_old_test_mains": true,
+    "reliable_response_cache_prefix_keeps_network_send_order": true,
+    "source_written_sequence": "14/8/8/13 then ordinary players/GROUPS/ALLENTS",
+    "synthetic_inventory_fixture_index": 8,
+    "synthetic_inventory_items": 3
+  },
+  "passed": true,
+  "proposal": {
+    "AST_parse_only": true,
+    "bytes": 39044,
+    "root_must_copy_commit_and_freeze_before_new_qualification": true,
+    "sha256": "722199b76f206fcd1c2fcfe925d99f105a69ffba6215e94d5d3dba8b8cdace4b",
+    "target_path": "native-android/combined-client/tools/check_local_initial_capture.py"
+  },
+  "schema": "coh-f-initial-inventory-cli-source-review-v1",
+  "source_composition": {
+    "CLI_observer_additional_TU": 1,
+    "RELATIVE_translation_units": 17,
+    "complete_manifests_and_raw_LF_source_bytes_independently_checked": true,
+    "default_account_editmsg_preprocessor_equivalence_retained_from_C_source_proof_only": true,
+    "four_new_ifdef_blocks_removed_raw_base_equals_previous": true,
+    "manifest_source_counts": [
+      10,
+      17
+    ],
+    "peer_source_proof": "native-android/engine/initial-capture/qualification/initial-inventory-peer-source.json",
+    "peer_source_proof_bytes": 3724,
+    "peer_source_proof_sha256": "e35751404f7fc3211a1b1f0211a6c18e925c3bf45713a43b93dc166c1199c9a9",
+    "peer_source_revision": "a59871a623fb85ac257f878a55571d3b620dd16f",
+    "peer_source_sha256": {
+      "native-android/engine/initial-capture/test_initial_inventory_peer.c": "6d4bf3f56aaec6428c53195bdda10335d2ba41bfe1de5d17ea5914416f1e053c",
+      "native-android/engine/initial-capture/test_initial_peer.c": "e5d91921f6ba9547680e0551be91fe63b6de69474fcebb1d9257bdaa84d8a512"
+    },
+    "production_RELATIVE_list_unchanged": true,
+    "source_manifests": {
+      "native-android/engine/dbclient/tests/account-controls-source-pins.json": {
+        "sha256": "df398a95e9e8c9e0c697a7c2c9422ee0980311e6f6d3e7b3f26fbc38f7c3fdc8",
+        "sources": 10
+      },
+      "native-android/engine/dbclient/tests/inventory-source-pins.json": {
+        "sha256": "1bc8367d34c6596560c0708ccaaffbafb2f55f696d90c9683ec680aab1c2a526",
+        "sources": 17
+      }
+    }
+  }
+}

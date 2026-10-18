@@ -1,0 +1,6 @@
+In file included from /workspace/scratch/7ed1da2a7e55/a-initial-owner-final-fixed/mutation-missing_client_phase/test.c:4:
+/workspace/scratch/7ed1da2a7e55/a-initial-owner-final-fixed/mutation-missing_client_phase/initial_owner_fixture.h: In function ‘coh_fresh_source_initial_owner’:
+/workspace/scratch/7ed1da2a7e55/a-initial-owner-final-fixed/mutation-missing_client_phase/initial_owner_fixture.h:301:80: error: unused parameter ‘client’ [-Werror=unused-parameter]
+  301 | static int coh_fresh_source_initial_owner(const Entity*entity,const ClientLink*client,const void*out,size_t output_bytes)
+      |                                                               ~~~~~~~~~~~~~~~~~^~~~~~
+cc1: all warnings being treated as errors

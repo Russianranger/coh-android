@@ -335,6 +335,101 @@ def account_controls_tool_tests(binary, peer, work, environment, evidence):
         'world_authority': False}
 
 
+def account_inventory_tool_tests(binary, peer, work, environment, evidence):
+    """Only complete DB controls and inventory followed by initial capture, with real local sockets."""
+    account = work / 'account'
+    account.write_text('Fixture\n')
+    account.chmod(0o600)
+    evidence.mkdir(mode=0o700)
+    checks, stdout_files = 0, {}
+    def need(ok):
+        nonlocal checks
+        assert ok
+        checks += 1
+    cases = {'account-inventory-captured': ('NONE', 2, False, 'NONE')}
+    keys = {'schema', 'passed', 'initial_packet_observed', 'status',
+        'opened_sockets', 'closed_sockets', 'source_generation_admitted', 'complete_initial_character',
+        'actor_publication', 'ack_permitted', 'world_authority', 'diagnostic_failure_code',
+        'groups_observed', 'reqallents_sent', 'local_phase', 'terminal_failure',
+        'terminal_db_phase', 'terminal_map_phase', 'refused_command_valid', 'refused_command_kind'}
+    for mode, (failure, status, refused, kind) in cases.items():
+        report = work / (mode + '-peer.json')
+        child = subprocess.Popen([str(peer), '--serve', '--report', str(report), '--mode', 'captured'],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=environment)
+        try:
+            with selectors.DefaultSelector() as ready:
+                ready.register(child.stdout, selectors.EVENT_READ)
+                if not ready.select(10):
+                    raise TimeoutError('new DB inventory peer did not become ready')
+                port = json.loads(child.stdout.readline())['db_port']
+            target = work / mode
+            completed = subprocess.run(list(map(str, [binary, port, 0, account, target, 1000, 5, 0, 0])),
+                capture_output=True, timeout=120, env=environment)
+            need(completed.returncode == 0 and completed.stderr == b'')
+            public = json.loads(completed.stdout)
+            groups = json.loads((target / 'capture.json').read_bytes())
+            initial = json.loads((target / 'initial-observation.json').read_bytes())
+            captured = mode == 'account-inventory-captured'
+            need(set(public) == keys and public['schema'] == 'coh-local-initial-capture-status-v2')
+            need(public['passed'] is True and public['groups_observed'] is True)
+            need(public['reqallents_sent'] == 1 and type(public['reqallents_sent']) is int)
+            need(public['initial_packet_observed'] is captured and public['terminal_failure'] is (not captured))
+            need(public['diagnostic_failure_code'] == failure and type(public['status']) is int and public['status'] == status)
+            need(public['refused_command_valid'] is refused and public['refused_command_kind'] == kind)
+            need(public['terminal_db_phase'] == (0 if captured else 9))
+            need(public['terminal_map_phase'] == (0 if captured else 5))
+            need(public['opened_sockets'] == public['closed_sockets'] == 2)
+            need(all(public[k] is False for k in ('source_generation_admitted', 'complete_initial_character',
+                'actor_publication', 'ack_permitted', 'world_authority')))
+            need(groups['passed'] is True and groups['cleanup_verified'] is True)
+            need(groups['packet_sha256'] == digest(target / 'groups.bin'))
+            need(initial['groups_packet_sha256'] == groups['packet_sha256'])
+            need(initial['selected_dbid'] == groups['selected_dbid'] == 17)
+            need(initial['opened_sockets'] == initial['closed_sockets'] == 2 and initial['reqallents_sent'] == 1)
+            need(initial['passed'] is captured and initial['failure_code'] == failure)
+            need(all(initial[k] is False for k in ('source_generation_admitted', 'complete_initial_character',
+                'actor_publication', 'ack_permitted', 'world_authority', 'sends_ready',
+                'sends_received_character', 'sends_full_update_ack')))
+            if captured:
+                need(initial['raw_allents_loan_verified'] is True)
+                need(initial['packet_sha256'] == digest(target / 'initial-update.bin'))
+                need(initial['message_generation'] > initial['groups_message_generation'])
+                need(initial['payload_bits'] <= initial['bytes'] * 8 and initial['update_prefix']['command'] == 3)
+            else:
+                need(not (target / 'initial-update.bin').exists())
+                need(initial['bytes'] == initial['payload_bits'] == 0 and initial['packet_sha256'] == '')
+            need((target.stat().st_mode & 0o777) == 0o700)
+            need(all((p.stat().st_mode & 0o777) == 0o600 for p in target.iterdir()))
+            stdout_path = evidence / (mode + '.json')
+            stdout_path.write_bytes(completed.stdout)
+            stdout_path.chmod(0o600)
+            stdout_files[mode] = {'file': str(Path(evidence.name) / stdout_path.name),
+                'bytes': stdout_path.stat().st_size, 'sha256': digest(stdout_path)}
+        finally:
+            if child.poll() is None:
+                child.send_signal(signal.SIGTERM)
+            stdout, stderr = child.communicate(timeout=10)
+            if child.returncode:
+                raise RuntimeError('new DB inventory peer refused cleanup\n' + stdout + stderr)
+        peer_report = json.loads(report.read_bytes())
+        need(peer_report['failed'] is False and peer_report['reqallents_unique'] == 1)
+        need(peer_report['account_controls_sent'] == 3 and peer_report['character_lists'] == 1)
+        need(peer_report['account_inventory_sent'] == 1 and type(peer_report['account_inventory_sent']) is int)
+        need(all(peer_report[k] == 0 for k in ('forbidden_application_commands', 'ready_commands',
+            'received_character_commands', 'full_update_ack_commands')))
+    noargs = run([binary], env=environment)
+    need(noargs.returncode == 2 and noargs.stdout == '' and noargs.stderr == '')
+    return {'passed': True, 'checks': checks, 'cases': list(cases), 'fixed_status_stdout': stdout_files,
+        'actual_os_sockets': True, 'scripted_peers_only': True, 'initial_refusal_case_exercised': False,
+        'account_controls_are_not_character_lists': True, 'inventory_is_not_character_list_or_character_state': True,
+        'new_account_inventory_only': True, 'new_account_controls_only': False,
+        'old28_controls_reexecuted': False,
+        'old151_controls_reexecuted': False, 'old123_controls_reexecuted': False, 'real_server_capture': False,
+        'complete_initial_character': False, 'actor_publication': False, 'ack_permitted': False,
+        'world_authority': False}
+
+
+
 def main():
     if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):
         raise SystemExit('qualification requires Python assertions enabled')
@@ -344,6 +439,7 @@ def main():
     controls.add_argument('--test', action='store_true')
     controls.add_argument('--editmsg-only', action='store_true')
     controls.add_argument('--account-controls-only', action='store_true')
+    controls.add_argument('--account-inventory-only', action='store_true')
     parser.add_argument('--sanitize', action='store_true')
     args = parser.parse_args()
     if args.output.exists():
@@ -352,7 +448,7 @@ def main():
     sys.dont_write_bytecode = True
     sources = [NATIVE / p for p in RELATIVE]
     observer = HERE / 'capture_local_initial.c'
-    selected_peer = NATIVE / 'engine/initial-capture' / ('test_initial_account_peer.c' if args.account_controls_only else 'test_initial_editmsg_peer.c' if args.editmsg_only else 'test_initial_peer.c')
+    selected_peer = NATIVE / 'engine/initial-capture' / ('test_initial_inventory_peer.c' if args.account_inventory_only else 'test_initial_account_peer.c' if args.account_controls_only else 'test_initial_editmsg_peer.c' if args.editmsg_only else 'test_initial_peer.c')
     inputs = {observer, Path(__file__), selected_peer, *sources}
     # Bind the compiler's consumed project closure, including headers and
     # implementation includes that are newly introduced in a local checkout.
@@ -372,10 +468,20 @@ def main():
         inputs.add(manifest)
         inputs.update(ROOT / path if path.startswith(('upstream/', 'android/')) else ROOT / 'upstream/ouroboros' / path
                       for path in json.loads(manifest.read_bytes())['sha256_lf'])
-    if args.account_controls_only:
+    if args.account_controls_only or args.account_inventory_only:
         account_manifest = NATIVE / 'engine/dbclient/tests/account-controls-source-pins.json'
         inputs.add(account_manifest)
-        inputs.update(ROOT / 'upstream/ouroboros' / path for path in json.loads(account_manifest.read_bytes())['sha256_lf'])
+        account_source_pins = json.loads(account_manifest.read_bytes())['sha256_lf']
+        if args.account_inventory_only and len(account_source_pins) != 10:
+            raise RuntimeError('inventory composition requires the complete ten-source account fixture manifest')
+        inputs.update(ROOT / 'upstream/ouroboros' / path for path in account_source_pins)
+    if args.account_inventory_only:
+        inventory_manifest = NATIVE / 'engine/dbclient/tests/inventory-source-pins.json'
+        inputs.add(inventory_manifest)
+        inventory_source_pins = json.loads(inventory_manifest.read_bytes())['sha256_lf']
+        if len(inventory_source_pins) != 17:
+            raise RuntimeError('inventory composition requires the complete seventeen-source inventory manifest')
+        inputs.update(ROOT / 'upstream/ouroboros' / path for path in inventory_source_pins)
     inputs = sorted(inputs)
     pins = {str(p.relative_to(ROOT)): digest(p) for p in inputs}
     revision = require(['git', '-C', ROOT, 'rev-parse', 'HEAD']).stdout.strip()
@@ -404,9 +510,16 @@ def main():
         maps.command_fixtures(ROOT, work)
         maps.groups_fixtures(ROOT, work)
         account_controls_proof = None
-        if args.account_controls_only:
+        if args.account_controls_only or args.account_inventory_only:
             account_controls = source_module(NATIVE / 'engine/dbclient/tests/account_controls_oracle.py')
             account_controls_proof = account_controls.produce(ROOT, work)
+        account_inventory_proof = None
+        if args.account_inventory_only:
+            account_inventory = source_module(NATIVE / 'engine/dbclient/tests/inventory_oracle.py')
+            account_inventory_proof = account_inventory.produce(ROOT, work)
+            if (len(account_controls_proof['whole_source_sha256_lf']) != 10 or
+                    len(account_inventory_proof['whole_source_sha256_lf']) != 17):
+                raise RuntimeError('incomplete original source fixture closure')
         editmsg_proof = None
         if args.editmsg_only:
             editmsg = source_module(NATIVE / 'engine/initial-capture/editmsg_fixtures.py')
@@ -429,16 +542,30 @@ def main():
             binary = args.output.resolve() / ('coh-capture-local-initial' + ('' if label == 'release' else '-' + label))
             require(['cc', *flags, observer, *objects, '-lz', '-lm', '-lcrypto', '-o', binary])
             peer = work / ('peer-' + label)
-            peer_source = ('test_initial_account_peer.c' if args.account_controls_only else
+            peer_source = ('test_initial_inventory_peer.c' if args.account_inventory_only else
+                           'test_initial_account_peer.c' if args.account_controls_only else
                            'test_initial_editmsg_peer.c' if args.editmsg_only else 'test_initial_peer.c')
             require(['cc', *flags, NATIVE / 'engine/initial-capture' / peer_source, *objects,
                      '-lz', '-lm', '-lcrypto', '-o', peer])
             mode_work = work / label
             mode_work.mkdir()
-            results[label] = {'binary': binary.name, 'sha256': digest(binary), 'built': True,
-                              'tests': (account_controls_tool_tests if args.account_controls_only else
-                                        editmsg_tool_tests if args.editmsg_only else tool_tests)(binary, peer, mode_work, environment,
-                                  args.output.resolve() / ('status-' + label))}
+            if args.account_inventory_only:
+                before_tests = {'receiver': digest(binary), 'peer': digest(peer)}
+                tests = account_inventory_tool_tests(binary, peer, mode_work, environment,
+                    args.output.resolve() / ('status-' + label))
+                if tests['checks'] != 29:
+                    raise RuntimeError('inventory-only qualification must run exactly twenty-nine new checks')
+                after_tests = {'receiver': digest(binary), 'peer': digest(peer)}
+                if before_tests != after_tests:
+                    raise RuntimeError('inventory-only executable bytes changed during tests')
+                results[label] = {'binary': binary.name, 'sha256': before_tests['receiver'], 'built': True,
+                    'tests': tests, 'peer_sha256': before_tests['peer'],
+                    'receiver_and_peer_bytes_unchanged_during_tests': True}
+            else:
+                results[label] = {'binary': binary.name, 'sha256': digest(binary), 'built': True,
+                                  'tests': (account_controls_tool_tests if args.account_controls_only else
+                                            editmsg_tool_tests if args.editmsg_only else tool_tests)(binary, peer, mode_work, environment,
+                                      args.output.resolve() / ('status-' + label))}
     assert pins == {str(p.relative_to(ROOT)): digest(p) for p in inputs}
     assert require(['git', '-C', ROOT, 'rev-parse', 'HEAD']).stdout.strip() == revision
     proof = {'schema': 'coh-local-initial-capture-build-v1', 'passed': True,
@@ -448,14 +575,21 @@ def main():
         'source_sha256': pins, 'modes': results, 'nonshipping_initial_observation': True,
         'new_editmsg_controls_only': args.editmsg_only,
         'new_account_controls_only': args.account_controls_only,
-        'old151_controls_reexecuted': not (args.editmsg_only or args.account_controls_only),
+        'new_account_inventory_only': args.account_inventory_only,
+        'old28_controls_reexecuted': False if args.account_inventory_only else args.account_controls_only,
+        'old151_controls_reexecuted': not (args.editmsg_only or args.account_controls_only or args.account_inventory_only),
         'old123_controls_reexecuted': args.editmsg_only,
         'original_editmsg_fixtures': editmsg_proof, 'original_account_control_fixtures': account_controls_proof,
+        'original_account_inventory_fixtures': account_inventory_proof,
         'groups_capture_scope': True, 'application_character_acceptance': False,
         'sends_reqallents': True, 'sends_ready': False, 'sends_received_character': False,
         'sends_full_update_ack': False, 'android_built': False, 'android_executed': False,
         'real_server_capture': False, 'source_generation_admitted': False,
         'actor_identity_verified': False, 'world_authority': False}
+    if args.account_inventory_only:
+        for result in results.values():
+            if digest(args.output.resolve() / result['binary']) != result['sha256']:
+                raise RuntimeError('inventory-only receiver bytes changed before final publication')
     (args.output / 'build.json').write_text(json.dumps(proof, indent=2) + '\n')
     print(json.dumps({'passed': True, 'modes': results, 'world_authority': False}))
 

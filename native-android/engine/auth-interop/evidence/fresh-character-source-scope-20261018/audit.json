@@ -1,0 +1,440 @@
+{
+  "actual_creation_or_map_handoff_executed": false,
+  "creation_map_connect_body_source_chain": [
+    "sendCharacterCreate",
+    "sendCharacterToServer",
+    "character_SendCreate",
+    "sendTray",
+    "costume_send",
+    "powerCustList_send",
+    "sendEntStrings"
+  ],
+  "existing_choose_rejects_empty_slot": true,
+  "existing_map_connect_emits_newCharacter_zero": true,
+  "fresh_allocated_container_is_not_initialized_character": true,
+  "historical_fixture_identity_or_sql_ownership_transfer_proposed": false,
+  "normal_version_checksum_reference_admitted": false,
+  "original_sendCharacterCreate_definition_present": true,
+  "project_imports_tests_compilers_servers_registry_or_network_executed": false,
+  "proposal_scope": "new opaque fresh-auth to server-allocated uninitialized-container handoff; no Map client connect",
+  "repository_commit": "f3ee9db6bc8a323c896769f0952dd242fc79e2f4",
+  "schema": "coh-original-fresh-character-source-scope-v1",
+  "server_allocates_fresh_dbid_from_authenticated_empty_slot": true,
+  "source_file_count": 27,
+  "source_files": {
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c": {
+      "bytes": 13642,
+      "sha256": "36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6"
+    },
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h": {
+      "bytes": 5680,
+      "sha256": "2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20"
+    },
+    "native-android/engine/dbclient/coh_db_handoff_owner.h": {
+      "bytes": 1636,
+      "sha256": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45"
+    },
+    "native-android/engine/dbclient/coh_db_session.c": {
+      "bytes": 20289,
+      "sha256": "3fe33ca4ff8c48c1291cffb18f9fecb706e215bcc2fc2dda62dd9aa4fa24cc81"
+    },
+    "native-android/engine/dbclient/coh_dbclient.c": {
+      "bytes": 10892,
+      "sha256": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd"
+    },
+    "native-android/engine/mapclient/coh_mapclient.c": {
+      "bytes": 23015,
+      "sha256": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199"
+    },
+    "native-android/engine/mapclient/coh_mapclient.h": {
+      "bytes": 8904,
+      "sha256": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9"
+    },
+    "upstream/ouroboros/Common/comm_backend.h": {
+      "bytes": 34962,
+      "sha256": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c"
+    },
+    "upstream/ouroboros/Common/entity/character_net.c": {
+      "bytes": 35661,
+      "sha256": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091"
+    },
+    "upstream/ouroboros/Common/entity/costume.c": {
+      "bytes": 147848,
+      "sha256": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554"
+    },
+    "upstream/ouroboros/Common/entity/entStrings.c": {
+      "bytes": 1597,
+      "sha256": "ccfb478c97cd76992379bb1cd311a5c23d7d80f377e4df2707553e3f406e5da0"
+    },
+    "upstream/ouroboros/Common/entity/power_customization.c": {
+      "bytes": 29747,
+      "sha256": "7cad6c8e8184fc45b2457b35da0cc71a3fbb47c92ba003954cb423816baf8883"
+    },
+    "upstream/ouroboros/Common/gameComm/trayCommon.c": {
+      "bytes": 26645,
+      "sha256": "d51e7dc3a6343c451ff4c9e79bcec4287d5341fd9990fb7b99d4d6adcd0baff6"
+    },
+    "upstream/ouroboros/DBServer/src/clientcomm.c": {
+      "bytes": 106417,
+      "sha256": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c"
+    },
+    "upstream/ouroboros/DBServer/src/dbdispatch.c": {
+      "bytes": 114632,
+      "sha256": "30097d295b70c5c0050f4772a1dc984479e323f21fce23e1c11370ce399683d4"
+    },
+    "upstream/ouroboros/DBServer/src/mapxfer.c": {
+      "bytes": 17208,
+      "sha256": "3eb5d5f5a157363bc39dea4545791d01032fedadfa8517cf2a2e1bb7fa54ad59"
+    },
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": {
+      "bytes": 73982,
+      "sha256": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd"
+    },
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": {
+      "bytes": 37577,
+      "sha256": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b"
+    },
+    "upstream/ouroboros/Game/src/entity/character_net_client.c": {
+      "bytes": 11977,
+      "sha256": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a"
+    },
+    "upstream/ouroboros/Game/src/entity/entrecv.c": {
+      "bytes": 149058,
+      "sha256": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5"
+    },
+    "upstream/ouroboros/Game/src/gameComm/initClient.c": {
+      "bytes": 16634,
+      "sha256": "2a6da67369d4f1506ebc112b7bfe3485c741920f8ec12f3229e4c10dbe608d38"
+    },
+    "upstream/ouroboros/MapServer/src/container/containercallbacks.c": {
+      "bytes": 39826,
+      "sha256": "56b484eded5a1ac2148369c4fac51084cad6ad9c55de6cfec4cbcb2dda90fb73"
+    },
+    "upstream/ouroboros/MapServer/src/dbcomm/dbcomm.c": {
+      "bytes": 78580,
+      "sha256": "cfca70ab79291ba327857530490ddf8293b73a666f2939597d66103f8d08b761"
+    },
+    "upstream/ouroboros/MapServer/src/entity/character_net_server.c": {
+      "bytes": 54786,
+      "sha256": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": {
+      "bytes": 64295,
+      "sha256": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806"
+    },
+    "upstream/ouroboros/MapServer/src/player/parseClientInput.c": {
+      "bytes": 144600,
+      "sha256": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": {
+      "bytes": 71802,
+      "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    }
+  },
+  "source_only": true,
+  "whole_function_count": 43,
+  "whole_function_spans": {
+    "native-android/engine/dbclient/coh_db_session.c": {
+      "coh_db_session_choose": {
+        "bytes": 1096,
+        "line": 202,
+        "offset": 12468,
+        "sha256": "8b6416a889de0f3fc303df0f2bc8945932d2f069b94db4cb64214272b7de09f5"
+      },
+      "coh_db_session_take_handoff_owner_alloc": {
+        "bytes": 1852,
+        "line": 300,
+        "offset": 18196,
+        "sha256": "55896581174c8cb6865b3ab7cddafc34dfecf435d20f20dd3b32a0d9138e08e1"
+      }
+    },
+    "native-android/engine/dbclient/coh_dbclient.c": {
+      "coh_db_choose_encode": {
+        "bytes": 665,
+        "line": 108,
+        "offset": 6162,
+        "sha256": "d653c630d5eb506f121ad72f689e437e6cf6420ccb28eeda1581e29841d73222"
+      },
+      "coh_db_player_choose": {
+        "bytes": 582,
+        "line": 172,
+        "offset": 10310,
+        "sha256": "965dac9339a6dbda8055ca4866654d283f765a9b9638704f38cddf39879be668"
+      }
+    },
+    "native-android/engine/mapclient/coh_mapclient.c": {
+      "coh_map_serialize": {
+        "bytes": 1667,
+        "line": 22,
+        "offset": 967,
+        "sha256": "fbff58a95d2535a48a0a2df555459af17546a22620f10ea7efd99d033391ab2f"
+      }
+    },
+    "upstream/ouroboros/Common/entity/character_net.c": {
+      "basepower_Receive": {
+        "bytes": 1127,
+        "line": 52,
+        "offset": 1469,
+        "sha256": "e16bc06cdcc12cb1609dbbf305eca3735c8982f2a6c086e400b5f1379f167b95"
+      },
+      "basepower_Send": {
+        "bytes": 116,
+        "line": 43,
+        "offset": 1247,
+        "sha256": "ce3f2ff7c7daee7ea15f144b7e7989742a12066fd3aa5df7b5353362f5731fe7"
+      }
+    },
+    "upstream/ouroboros/Common/entity/costume.c": {
+      "costume_receive": {
+        "bytes": 3972,
+        "line": 1419,
+        "offset": 50818,
+        "sha256": "b95b51d167699363b3f8548df9d9de5c305666400a08e2951618cbc4ab4c504d"
+      },
+      "costume_send": {
+        "bytes": 3505,
+        "line": 1520,
+        "offset": 54793,
+        "sha256": "013ab264512eb599490ad448cb3ef3f03ad306f2e8c01b4d948dbf69be281344"
+      }
+    },
+    "upstream/ouroboros/Common/entity/entStrings.c": {
+      "receiveEntStrings": {
+        "bytes": 313,
+        "line": 32,
+        "offset": 934,
+        "sha256": "f9239c0e1037ae34ebaced0830a12546bbe150ccf2b0143412dae67c7ef918cf"
+      },
+      "sendEntStrings": {
+        "bytes": 175,
+        "line": 26,
+        "offset": 758,
+        "sha256": "5a6173e2bb67536e57395030b671b203d77ff1196e158ff4c6c2d5dc85c50a3c"
+      }
+    },
+    "upstream/ouroboros/Common/entity/power_customization.c": {
+      "powerCustList_receive": {
+        "bytes": 1427,
+        "line": 275,
+        "offset": 10984,
+        "sha256": "f060814133a977af30e0c4ffbf881808448787787bbd56c2601e9fdf176a2ad4"
+      },
+      "powerCustList_send": {
+        "bytes": 667,
+        "line": 309,
+        "offset": 12411,
+        "sha256": "820ed6fc0367cc18b11eb22a80590e62b9ee22d965c9007c5132890e501acb31"
+      }
+    },
+    "upstream/ouroboros/Common/gameComm/trayCommon.c": {
+      "receiveTray": {
+        "bytes": 1306,
+        "line": 669,
+        "offset": 20161,
+        "sha256": "38af88c12cb948c97f591dcadaa5fd53f701d964eef64730f8b2a0ccf6033ea2"
+      },
+      "sendTray": {
+        "bytes": 805,
+        "line": 549,
+        "offset": 16889,
+        "sha256": "4702a3715f8eb7b7976d29ef2ab9475c817aadb11347c3cf66c356f388013cea"
+      }
+    },
+    "upstream/ouroboros/DBServer/src/clientcomm.c": {
+      "determinePlayerType": {
+        "bytes": 832,
+        "line": 1343,
+        "offset": 47783,
+        "sha256": "03135c2864c3c4bb9a92f3344e091fdec8b71becb7da8c69338d30d93c604246"
+      },
+      "determinePraetorianProgress": {
+        "bytes": 945,
+        "line": 1365,
+        "offset": 48616,
+        "sha256": "acfb9753f24bc946994f0fba3373aa55eee4540310be8f15208cd540b67f96af"
+      },
+      "determineStartMapId": {
+        "bytes": 1816,
+        "line": 1285,
+        "offset": 45966,
+        "sha256": "da5c41524b4b3ad9cd90ee0a3216d8af409097befe31cdc7e7dd205083310167"
+      },
+      "doneWaitingChoosePlayerFailed": {
+        "bytes": 1322,
+        "line": 2140,
+        "offset": 77621,
+        "sha256": "7d7f7768f9b6fb03464ff1eeed5b4fcd403fae12e5836142900e9d0a629993c6"
+      },
+      "handleChoosePlayer": {
+        "bytes": 4210,
+        "line": 1619,
+        "offset": 58894,
+        "sha256": "697400e63bbbe7b4c9e57cc583c423d3f610444883d9d855c4512f3360ce028c"
+      },
+      "handlePlayerContainerLoaded": {
+        "bytes": 5638,
+        "line": 1963,
+        "offset": 70592,
+        "sha256": "46024434f4a8e2b694d83d266ca1ece75895d800bc819aa8c0d2a98039df1c7d"
+      },
+      "s_finishHandleChoosePlayer": {
+        "bytes": 2116,
+        "line": 1519,
+        "offset": 54872,
+        "sha256": "3b0dfa520690f1b8c4e4094bac2e9eab06b6dd88c444465de8c6d248b1c23fb8"
+      }
+    },
+    "upstream/ouroboros/DBServer/src/dbdispatch.c": {
+      "handleContainerAck": {
+        "bytes": 674,
+        "line": 1199,
+        "offset": 41776,
+        "sha256": "df1a6e0f4083d32b5285b38ea8b94f0f3fee61d45f32942cd7e2843193ed0a94"
+      }
+    },
+    "upstream/ouroboros/DBServer/src/mapxfer.c": {
+      "finishSetNewMap": {
+        "bytes": 2217,
+        "line": 434,
+        "offset": 13956,
+        "sha256": "edadffec6859b08deb2085a63f5d5cd465428a47ad6fde6126a4ee5d59157f7b"
+      },
+      "sendLoginInfoToGameClient": {
+        "bytes": 3422,
+        "line": 57,
+        "offset": 1460,
+        "sha256": "8c5febb1761d8a24b74dd28f8d82cc0056a162cab6d9d408762a6a3ce3c318a5"
+      },
+      "setNewMap": {
+        "bytes": 1711,
+        "line": 384,
+        "offset": 12182,
+        "sha256": "c44ac10d83355bed10d1e948d96948b9e366618c9e27841937c6550006953588"
+      },
+      "startMapIfStatic": {
+        "bytes": 3402,
+        "line": 229,
+        "offset": 7584,
+        "sha256": "bb076da4a200f20ead2d884ac971d90264cfe968f93d2c4ba818203b19eaceed"
+      }
+    },
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": {
+      "commStart": {
+        "bytes": 1422,
+        "line": 1635,
+        "offset": 57809,
+        "sha256": "340901b06dfb222a61f0ed5fea81277ed0cd31b067a88519ab907328754e0999"
+      }
+    },
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": {
+      "dbChoosePlayer": {
+        "bytes": 1142,
+        "line": 750,
+        "offset": 23615,
+        "sha256": "51ad98c4e35a55385affdec1ffae8fe6fb969d5aeca271c9e3659594e4f16949"
+      }
+    },
+    "upstream/ouroboros/Game/src/entity/character_net_client.c": {
+      "character_SendCreate": {
+        "bytes": 1002,
+        "line": 38,
+        "offset": 1164,
+        "sha256": "9033d4e0ca5d19ddba6eac08635237f984777148280c38145de85e92da8af596"
+      }
+    },
+    "upstream/ouroboros/Game/src/entity/entrecv.c": {
+      "sendCharacterToServer": {
+        "bytes": 857,
+        "line": 3592,
+        "offset": 119822,
+        "sha256": "6c1ec82e1e7fc7175c6599617c7cbfbf93e3a127c2234b4d78df1215c3d72cce"
+      }
+    },
+    "upstream/ouroboros/Game/src/gameComm/initClient.c": {
+      "checkForCharacterCreate": {
+        "bytes": 5112,
+        "line": 339,
+        "offset": 9928,
+        "sha256": "e47ae0b45113f4b7ca8b8cc826c7d3a2a7d6c8e0f11ee29a77ee424346d68551"
+      },
+      "sendCharacterCreate": {
+        "bytes": 257,
+        "line": 329,
+        "offset": 9670,
+        "sha256": "a1370d854dfa480726cf7716163d4febca6bd35617caeab6fdcbdda9eb5d8744"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/container/containercallbacks.c": {
+      "containerHandleEntity": {
+        "bytes": 11581,
+        "line": 84,
+        "offset": 2402,
+        "sha256": "06ca363e56076de7e143ee49b32bcc373d600db8b378107a0de6be009bbcb654"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/dbcomm/dbcomm.c": {
+      "dbReadyForPlayers": {
+        "bytes": 225,
+        "line": 240,
+        "offset": 6913,
+        "sha256": "a6a2d4bbcdc418a45c59d86abbba3ac22143512f6438c433203a206573aecff4"
+      },
+      "dbRegister": {
+        "bytes": 1051,
+        "line": 250,
+        "offset": 7139,
+        "sha256": "f5be91cf04f7dcecd8a6c48f60e3864f183a310c3f165ee286a65f9a0128980f"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/entity/character_net_server.c": {
+      "character_ReceiveCreate": {
+        "bytes": 481,
+        "line": 107,
+        "offset": 3657,
+        "sha256": "84cfbd0a4bd961a1d2321c861acc1c79f2572f37e9a2f4439dad19083e6fa782"
+      },
+      "character_ReceiveCreateClassOrigin": {
+        "bytes": 2522,
+        "line": 124,
+        "offset": 4139,
+        "sha256": "da4150fcb128dab3ec1be0615c45b9dc218b4bf8fa469dccc30e0eba85d22fc9"
+      },
+      "character_ReceiveCreatePowers": {
+        "bytes": 3381,
+        "line": 188,
+        "offset": 6662,
+        "sha256": "e8048162e0f6db76b5687e2fae113a5f6b1aa67b0bb978cad7cd00bfc3eaba0f"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": {
+      "entFromLoginCookie": {
+        "bytes": 687,
+        "line": 88,
+        "offset": 2726,
+        "sha256": "b0cc1a38d087e901af3f2bcb06d8668e79bb6313c7fcee2b45c2b40eb69a4992"
+      },
+      "receiveCharacterFromClient": {
+        "bytes": 5036,
+        "line": 1518,
+        "offset": 48302,
+        "sha256": "01064395bfca888680377a59229565dd8712a76d155145df7c1da0aa7753640f"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/player/parseClientInput.c": {
+      "parseClientInput": {
+        "bytes": 102955,
+        "line": 1135,
+        "offset": 41626,
+        "sha256": "c5aa1b2465d79f530c854f80a8d6f88e6b66ec273a7d194f4d81dc14f4286163"
+      }
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": {
+      "svrHandleClientMsg": {
+        "bytes": 20963,
+        "line": 183,
+        "offset": 5964,
+        "sha256": "86594bc3221a06b8954d25eb5c42d35e88a5dbd6dabb4e2a030ae471b39ab8fb"
+      }
+    }
+  }
+}

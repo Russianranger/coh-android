@@ -1,0 +1,23 @@
+In file included from /workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/tests/texwords_fixture.h:3,
+                 from /workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c:2:
+/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/tests/../coh_wr_texwords.h:53:56: error: "/*" within comment [-Werror=comment]
+   53 |  * Root names are canonical relative TEXTS/<locale>/.../*.texword ASCII paths
+      |                                                         
+/workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c: In function ‘ReadPascalString’:
+/workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c:33:9: error: implicit declaration of function ‘SimpleBufSeek’; did you mean ‘SimpleBufTell’? [-Werror=implicit-function-declaration]
+   33 |         SimpleBufSeek(file, paddingreq + len, SEEK_CUR);
+      |         ^~~~~~~~~~~~~
+      |         SimpleBufTell
+/workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c: In function ‘original_table_read’:
+/workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c:303:10: error: variable ‘dataloc’ set but not used [-Werror=unused-but-set-variable]
+  303 |     long dataloc;
+      |          ^~~~~~~
+/workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c: In function ‘texWordFind’:
+/workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c:492:9: error: suggest parentheses around assignment used as truth value [-Werror=parentheses]
+  492 |     if (s = strchr(baseTexName, '#')) {
+      |         ^
+/workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c: In function ‘texWordsLoadInfo’:
+/workspace/scratch/7ed1da2a7e55/b-texwords-development-2/original.c:562:74: error: suggest parentheses around ‘&&’ within ‘||’ [-Werror=parentheses]
+  562 |             if (stricmp(locale, texWordsLocale)==0 || texWordsLocale2[0] && stricmp(locale, texWordsLocale2)==0) {
+      |                                                       ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors

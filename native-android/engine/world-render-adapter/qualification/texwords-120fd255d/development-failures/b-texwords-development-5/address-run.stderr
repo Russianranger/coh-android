@@ -1,0 +1,14 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==25==ERROR: AddressSanitizer: SEGV on unknown address 0x005b1fff8025 (pc 0x00000040aa69 bp 0x02d50000004d sp 0x7ffef9a3c280 T0)
+==25==The signal is caused by a READ memory access.
+    #0 0x40aa69 in output_ok /workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/tests/../coh_wr_texwords.c:181
+    #1 0x40aa69 in coh_wr_texwords_destroy /workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/tests/../coh_wr_texwords.c:225
+    #2 0x40dd3f in main /workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/tests/test_texwords.c:189
+    #3 0x7f2154ff31c9  (/lib/x86_64-linux-gnu/libc.so.6+0x2a1c9) (BuildId: 274eec488d230825a136fa9c4d85370fed7a0a5e)
+    #4 0x7f2154ff328a in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 274eec488d230825a136fa9c4d85370fed7a0a5e)
+    #5 0x4028f4 in _start (/workspace/scratch/7ed1da2a7e55/b-texwords-development-5/address+0x4028f4) (BuildId: 4f9b87cc1752175d2e16ede92c5af5713a862a8b)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV /workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/tests/../coh_wr_texwords.c:181 in output_ok
+==25==ABORTING

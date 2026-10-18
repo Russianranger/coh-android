@@ -1,0 +1,185 @@
+{
+  "actual_native_result": {
+    "UDP_close_cleanup_failures": [
+      0,
+      0
+    ],
+    "UDP_created_closed_active": [
+      1,
+      1,
+      0
+    ],
+    "auth_final_phase": 8,
+    "auth_frames": 4,
+    "base_slots": 12,
+    "bonus_slots": 0,
+    "cancel_close_and_controllers_destroyed": true,
+    "choices": 0,
+    "complete_matching_empty_unlocked_list_verified": true,
+    "db_final_phase": 11,
+    "db_login_requests": 1,
+    "db_player_lists": 1,
+    "elapsed_ms": 78,
+    "handoffs": 0,
+    "native_producer_schema": "coh-auth-db-development-list-probe-v2",
+    "normalized_policy_schema": "coh-auth-db-development-list-probe-v1",
+    "one_shot_grant_consumed": true,
+    "protocol_storage_slots": 48,
+    "queue_updates": 0,
+    "schema": "coh-auth-db-development-policy-result-projection-v2",
+    "unsupported": 0
+  },
+  "archive": {
+    "CRC_verified": true,
+    "member_equals_retained_CRLF_receipt": true,
+    "unique_regular_members": 1
+  },
+  "artifact_id": 12125401436,
+  "canonical_evidence": {
+    "api.json": {
+      "bytes": 4050,
+      "sha256": "25124e3d38ef5ba5d11ea2ed41066ca6bcc771674448a7a568fd9c77aef7f7e6"
+    },
+    "artifact.zip": {
+      "bytes": 19695,
+      "sha256": "6135be6a09d9f014c010278ab8f93168a7207800de3a25899024f675aaca854b"
+    },
+    "receipt.json": {
+      "bytes": 82930,
+      "sha256": "3741c777e645b38b97e9ee87df8a9b7e26db4b038dd97f2290d5f81bea722a24"
+    },
+    "verification.json": {
+      "bytes": 25195,
+      "sha256": "8c97aeb21de429d801f637ca65d66414945f726a3f73a9ea17706aca76d141a2"
+    },
+    "verify.py": {
+      "bytes": 17109,
+      "sha256": "e10aae2471ed31b9228744dfc02fc755a4eb52be9dbdf28c901b2cc4e2aeffb1"
+    }
+  },
+  "canonical_evidence_commit": "397a601dafa7743a0e6d2e45290367840b62e9b3",
+  "canonical_evidence_directory": "native-android/engine/auth-interop/evidence/auth-db-inventory13-success-39097070843",
+  "complementary_D_verifier_read_as_source_not_executed": true,
+  "fixed_API": {
+    "all_steps_run_and_job_success": true,
+    "artifact_digest_matches": true,
+    "private_logs_included": false
+  },
+  "job_id": 117585620683,
+  "original_upstream_subtree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "passed": true,
+  "published_source_binding": {
+    "all_rehashed_against_published_Git_blobs": true,
+    "common_build_map_count": 2,
+    "compact_sorted_map_sha256": "18d489efe9fcd0b359bd9a1ebcfac3d040429f8f07f9b224fd1f83c3e146479a",
+    "current_C50_count": 50,
+    "historical_C36_current_unchanged_count": 33,
+    "historical_C36_exact_predecessor_count": 3,
+    "historical_C36_predecessor_revision": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+    "historical_maps": {
+      "accepted_auth": 34,
+      "db_builder": 20,
+      "retained_crypto_reference": 28
+    },
+    "including_workflow_self_count": 157,
+    "later_root_or_worker_current_bytes_not_used_as_run_source": true,
+    "literal_nonself_count": 156,
+    "runtime_map_count": 148,
+    "unique_union_compact_sha256": "4e571937da097b1fb2795450fcbc2aacbad5fb82ed5b440260f77fc740b722d5",
+    "unique_union_count": 178,
+    "workflow_path": ".github/workflows/native-auth-db-development.yml",
+    "workflow_sha256": "c16f7ac6ee655e811e8fe3650aacd961af898bd4ad329490a6283f9bfe9bd89c"
+  },
+  "received_header_observation": {
+    "account_control_body_values_observed": false,
+    "body_acceptance_observed_by_prefix": false,
+    "context_verified_and_retired": true,
+    "first_unsupported_attributed": false,
+    "instances": 1,
+    "modern_uncompressed": true,
+    "ordered_fixed_names": [
+      "DBGAMESERVER_ACCOUNTSERVER_UNAVAILABLE",
+      "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT",
+      "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT",
+      "DBGAMESERVER_ACCOUNTSERVER_INVENTORY",
+      "DBGAMESERVER_SEND_PLAYERS"
+    ],
+    "phase": "WAIT_PLAYERS",
+    "service_calls": 8,
+    "total_seen": 5,
+    "truncated": false
+  },
+  "reported_build": {
+    "binary": {
+      "bytes": 3300864,
+      "delay_imports_absent": true,
+      "format": "PE32+",
+      "header_identity_only": true,
+      "machine": "AMD64",
+      "no_unadmitted_dll_imports": true,
+      "platform_imports": [
+        "advapi32.dll",
+        "crypt32.dll",
+        "kernel32.dll",
+        "user32.dll",
+        "ws2_32.dll"
+      ],
+      "platform_loader_or_export_resolution_claimed": false,
+      "sha256": "d3b649a3555e3809a6c4f1f44e9d05614dff7634d96b9cea3a01b15789c4fb35",
+      "subsystem": 3
+    },
+    "binary_or_objects_available_to_this_review": false,
+    "fresh_probe_built": true,
+    "new_AMD64_project_objects": 17,
+    "new_AMD64_zlib_objects": 21,
+    "new_project_sources": 17,
+    "server_or_retained_crypto_rebuilt": false,
+    "source_mutation_flag_does_not_mean_ordinary_core_unchanged_from_old_C36": true
+  },
+  "run_id": 39097070843,
+  "runtime_ownership": {
+    "Db_game_listener_actual_bind_address": "0.0.0.0",
+    "Db_game_listener_udp_port": 7000,
+    "actual_game_tables": 99,
+    "actual_platform_preflight_before_services": true,
+    "all_cleanup_source_candidate_and_private_build_gates_true": true,
+    "auth_db_sql_start_before_after_prestop_generations_equal": true,
+    "entire_before_after_runtime_snapshots_equal": true,
+    "four_full_suspended_assignment_resume_empty_before_close_projections": true,
+    "listener_PID_matches_owned_Db_generation": true,
+    "nonloopback_IPv4_restricted_by_owned_firewall": true,
+    "owned_interserver_loopback_pair_verified": true,
+    "owned_nonce_registry_both_views_absent_after_stop": true,
+    "platform_preflight_owner_socket_counts_zero": true,
+    "registered_group_membership_pre_before_after_verified": true,
+    "registry_atomicity_claimed": false,
+    "x86_ODBC_readiness_healthy": true
+  },
+  "schema": "coh-f-actual-provisional-auth-db-empty-list-success-review-v1",
+  "scope": {
+    "48_storage_slots_not_asserted_as_48_usable_entitlements": true,
+    "Map_handoff_or_current_world_verified": false,
+    "canonical_ZIP_or_receipt_duplicated_by_F": false,
+    "character_created_or_selected": false,
+    "checksum_reference_admitted": false,
+    "development_skip_requested": true,
+    "graceful_peer_disconnect_ACK_verified": false,
+    "native_alone_original_server_provenance_claimed": false,
+    "new_download_or_runtime_or_tests_or_project_imports": false,
+    "normal_version_admitted": false,
+    "outer_owned_original_server_source_generations_channel_supplies_binding": true,
+    "private_credentials_grants_raw_console_logs_or_packet_bodies_exported": false,
+    "provisional_development_policy_only": true,
+    "server_internal_development_skip_observed": false
+  },
+  "source_revision": "f3ee9db6bc8a323c896769f0952dd242fc79e2f4",
+  "source_tree": "e6495d4fd3958a65537f38e7369d36e2f852f74d",
+  "strict_data_validation": {
+    "duplicate_keys_and_nonfinite_numbers_refused": true,
+    "native_fixed_integer_boolean_types_checked": true,
+    "native_projection_keys": 51,
+    "outer_keys": 76,
+    "preflight_projection_keys": 51,
+    "received_prefix_keys": 11
+  }
+}

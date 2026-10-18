@@ -22,6 +22,9 @@ static const char*coh_fp_owner_failures[]={"NONE",
 #define COH_FRESH_OWNER_NAME(name,expression) #name,
  COH_FRESH_OWNER_PREDICATES(COH_FRESH_OWNER_NAME)
 #undef COH_FRESH_OWNER_NAME
+#define COH_FRESH_INITIAL_OWNER_NAME(name) #name,
+ COH_FRESH_INITIAL_OWNER_FAILURES(COH_FRESH_INITIAL_OWNER_NAME)
+#undef COH_FRESH_INITIAL_OWNER_NAME
 };
 static int coh_fp_owner(void){LONG owner=InterlockedCompareExchange(&coh_fp_thread,0,0);return owner&&GetCurrentThreadId()==(DWORD)owner;}
 int coh_fresh_source_owner_failed(int refused,CohFreshOwnerFailure reason)

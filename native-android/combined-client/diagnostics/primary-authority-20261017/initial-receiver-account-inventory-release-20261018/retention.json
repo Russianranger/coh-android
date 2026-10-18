@@ -1,0 +1,44 @@
+{
+  "android_or_real_server_executed": false,
+  "asan_ubsan_ELFs_retained_separately": false,
+  "checks_per_mode": 29,
+  "complete_initial_character": false,
+  "new_case_only": true,
+  "old28_123_151_reexecuted": false,
+  "passed": true,
+  "qualifier_invocations": 1,
+  "raw_build_receipt": {
+    "bytes": 266672,
+    "sha256": "09320ce3c78ccbf9af46de9b09c7bd1f551375fad39dc4e2b44eb3e962779216"
+  },
+  "release_retention_matches_pre_and_post_test_hash": true,
+  "retained_files": {
+    "build.json.gz": {
+      "bytes": 92985,
+      "sha256": "625fda1d3a3895eda7baed3b4e012702a6563a8af9246408c23b0b8b9637db7a"
+    },
+    "coh-capture-local-initial": {
+      "bytes": 180688,
+      "sha256": "66f92ff8574c538ad221e1bcbbff834b80eddb54aa270b95ed607e7049a6dccc"
+    }
+  },
+  "safe_status_files": {
+    "status-address/account-inventory-captured.json": {
+      "bytes": 507,
+      "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+    },
+    "status-release/account-inventory-captured.json": {
+      "bytes": 507,
+      "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+    },
+    "status-undefined/account-inventory-captured.json": {
+      "bytes": 507,
+      "sha256": "ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677"
+    }
+  },
+  "schema": "coh-retained-initial-inventory-receiver-v1",
+  "source_generation_admitted": false,
+  "source_pin_count": 1860,
+  "source_revision": "4c26dfea05951f18637f347b87e33ea1b5c49700",
+  "world_authority": false
+}

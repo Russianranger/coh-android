@@ -26,7 +26,7 @@ class Controls(unittest.TestCase):
   import re
   group=re.sub(rb' coh_fresh_source_probe_step\(COH_FRESH_STAGE_[A-Z_]+\);\n',b'',group)
   owner=(HERE.parent/'source_groups_owner.inc').read_bytes()
-  group=group.replace(stage.instrument_owner(owner),owner,1)
+  group=group.replace(stage.specialize_initial_owner(stage.instrument_owner(owner)),owner,1)
   self.assertEqual(group,stage.base.lf(self.old_output[stage.base.GROUP]))
   self.assertEqual(out[stage.old.GUARD],self.old_output[stage.old.GUARD])
   self.assertEqual(stage.overlays(ROOT)[stage.ORIGINAL_GUARD],stage.base.lf((HERE.parent/'source_resource_quiescence.inc').read_bytes()))

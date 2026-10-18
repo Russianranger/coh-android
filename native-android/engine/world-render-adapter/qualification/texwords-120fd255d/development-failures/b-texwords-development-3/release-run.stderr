@@ -1,0 +1,1 @@
+texwords line47: coh_wr_tex_namespace_build(&q,&lim,(CohCancel){0},&ns)==COH_OK

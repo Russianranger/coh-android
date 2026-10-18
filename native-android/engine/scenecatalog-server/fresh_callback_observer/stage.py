@@ -22,6 +22,30 @@ SEAL=b'    coh_fresh_source_profile_seal_after_normal_enable();\n'
 SEAL_PROTO=b'void coh_fresh_source_profile_seal_after_normal_enable(void);\n'
 GROUP_TAIL=b'\n/* NEW explicit fresh disposable callback-sealed diagnostic profile. */\n#include "coh_fresh_source_profile.inc"\n'
 OWNER_SHA='7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc'
+INITIAL_OWNER_SOURCE=b'''/* Fresh disposable observer only. Original entInUse success is unchanged.
+ * A loaded player remains SLEEPING through CLIENT_REQSCENE; CLIENT_READY's
+ * resumeCharacter wakes it later. This alternate path observes that narrowly
+ * owned pre-entry state; it never changes entity state or advances a client.
+ * Called only after original nonnull/backlink/private-table-bound checks. */
+static int coh_fresh_source_initial_owner(const Entity*entity,const ClientLink*client,const void*out,size_t output_bytes)
+{
+ if(entInUse(entity->owner))return 1;
+ if(coh_fresh_source_owner_failed(entity->owner>=entities_max,COH_FRESH_OWNER_INITIAL_SLOT_OUTSIDE_TABLE))return 0;
+ if(coh_fresh_source_owner_failed(entity_state[entity->owner]!=ENTITY_SLEEPING,COH_FRESH_OWNER_INITIAL_STATE))return 0;
+ if(coh_fresh_source_owner_failed(!coh_source_owner_disjoint(out,output_bytes,entinfo,(size_t)MAX_ENTITIES_PRIVATE*sizeof(*entinfo)),COH_FRESH_OWNER_INITIAL_OUTPUT_ENTINFO_ALIAS))return 0;
+ if(coh_fresh_source_owner_failed(ENTTYPE(entity)!=ENTTYPE_PLAYER,COH_FRESH_OWNER_INITIAL_NOT_PLAYER))return 0;
+ if(coh_fresh_source_owner_failed(!entity->owned,COH_FRESH_OWNER_INITIAL_NOT_OWNED))return 0;
+ if(coh_fresh_source_owner_failed(!entity->pl,COH_FRESH_OWNER_INITIAL_PLAYER_ABSENT))return 0;
+ if(coh_fresh_source_owner_failed(client->ready!=CLIENTSTATE_NOT_READY,COH_FRESH_OWNER_INITIAL_CLIENT_STATE))return 0;
+ if(coh_fresh_source_owner_failed(entity->ready!=0,COH_FRESH_OWNER_INITIAL_ENTITY_READY))return 0;
+ if(coh_fresh_source_owner_failed(entity->demand_loaded!=0,COH_FRESH_OWNER_INITIAL_RELAY))return 0;
+ if(coh_fresh_source_owner_failed(entity->is_map_xfer!=0,COH_FRESH_OWNER_INITIAL_TRANSFER_LOGIN))return 0;
+ if(coh_fresh_source_owner_failed(entity->dbcomm_state.in_map_xfer!=0,COH_FRESH_OWNER_INITIAL_TRANSFER_ACTIVE))return 0;
+ if(coh_fresh_source_owner_failed(entity->dbcomm_state.waiting_map_xfer!=0,COH_FRESH_OWNER_INITIAL_TRANSFER_WAITING))return 0;
+ if(coh_fresh_source_owner_failed(entity->dbcomm_state.map_xfer_step!=MAPXFER_NO_XFER,COH_FRESH_OWNER_INITIAL_TRANSFER_STEP))return 0;
+ return 1;
+}
+'''
 CONTRACT={'role':ROLE,'nonshipping':True,'fresh_disposable_fixture_only':True,
  'accepted_observer_and_shipping_profile_unchanged':True,'accepted_cache_watch_policy_equivalent':False,
  'normal_startup_enable_preserved_then_explicit_original_api_disable':True,
@@ -39,6 +63,8 @@ CONTRACT={'role':ROLE,'nonshipping':True,'fresh_disposable_fixture_only':True,
  'source_probe_schema':'coh-fresh-source-profile-probe-v2',
  'first_owner_failure_atom_observed_once_in_original_order':True,
  'owner_failure_enum_only_no_original_values_or_io':True,
+ 'fresh_only_in_use_or_exact_owned_pre_ready_initial_player':True,
+ 'initial_owner_does_not_set_state_or_send_ready':True,
  'source_probe_maximum_bytes':8192,'source_probe_authority':False,
  'source_generation_admitted':False,'world_authority':False,'runtime_executed':False}
 LOCAL=('source_folder_profile_api.h','source_folder_profile.inc','source_group_profile_api.h',
@@ -103,6 +129,16 @@ def instrument_owner(raw):
  body=re.sub(rb'if\(([^\n;]+)\)return 0;',wrap,body)
  base.require(at==47,'FRESH_OWNER_COVERAGE');return before+body
 
+def specialize_initial_owner(raw):
+ """Replace only the fresh owner's active-state atom; old helper stays intact."""
+ owner=base.lf((HERE.parent/'source_groups_owner.inc').read_bytes())
+ base.require(raw==instrument_owner(owner),'FRESH_INITIAL_OWNER_BASE')
+ entry=b'static int coh_source_groups_prepare_owner('
+ result=once(raw,entry,INITIAL_OWNER_SOURCE+entry,'FRESH_INITIAL_OWNER_ENTRY')
+ old_atom=b'coh_fresh_source_owner_failed((!entInUse(entity->owner)),COH_FRESH_OWNER_ENTITY_NOT_IN_USE)'
+ new_atom=b'coh_fresh_source_owner_failed((!coh_fresh_source_initial_owner(entity,client,out,sizeof(*out))),COH_FRESH_OWNER_ENTITY_NOT_IN_USE)'
+ return once(result,old_atom,new_atom,'FRESH_INITIAL_OWNER_ATOM')
+
 def overlays(root):
  return {GUARD_API:base.lf((HERE/'source_folder_profile_api.h').read_bytes()),
  API:base.lf((HERE/'source_folder_profile_api.h').read_bytes()),
@@ -135,7 +171,7 @@ def transform(original):
  result[base.INIT]=base.restore_newlines(init,original[base.INIT])
  group=base.lf(original[base.GROUP])
  owner=base.lf((HERE.parent/'source_groups_owner.inc').read_bytes())
- group=once(group,owner,instrument_owner(owner),'FRESH_OWNER_OBSERVATION')
+ group=once(group,owner,specialize_initial_owner(instrument_owner(owner)),'FRESH_OWNER_OBSERVATION')
  prefix=b'#include "../../../libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h"\n'
  # Observational calls only: each exact original predicate/call remains intact.
  for token,stage in ((b' status=coh_resource_quiescence_begin();','QUIET'),

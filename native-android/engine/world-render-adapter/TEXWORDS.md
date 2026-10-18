@@ -1,0 +1,50 @@
+# Immutable TexWord cache and source lookup
+
+This resource-only owner admits the entire retained `texWords.bin`, traverses every field of the original binary schema, and implements the cold `texWordsLoad` / `texWordsLoadInfo` locale dictionary and `texWordFind` selection. A positive result identifies an immutable source record. It cannot compose a TexWord, assign a BasicTexture, or admit a material, default pointer, current namespace, GPU object or world.
+
+The genuine remaining dependency was `texSetBindsSubBasic` calling `texWordFind` after the already admitted Basic reset/policy. Treating an unavailable layout dictionary as an empty dictionary would silently change that source decision. This owner supplies the complete historical dictionary rather than assuming that absence. Layout postprocessing, image/font dependencies and composition remain unresolved.
+
+## Exact input
+
+The existing accepted client cache ZIP is 27,071,659 bytes, SHA256 `5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051`. Its `client-cache-manifest.json` SHA256 is `e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352`. `data/bin/texWords.bin` is 694,324 bytes, SHA256 `4a4eac7c3464febdf11d67a9afd0e349fb4e49f3f06ea33933e258a495739b11`, CrypticS / Parse6 schema CRC `479da30a`. The complete cache contains 725 source-file entries and 725 TexWord records. The retained manifest calls these actual client-generated caches, records reference run 36088012664, source commit `0b75ade0c801735e10c5798f641948a45cc50488`, and Wine x86 Client generation. This establishes historical cache provenance, never current Game state.
+
+The focused test reuses the separately retained seven-default artifact 12118720382 from run 39078874753 (12,308 bytes, SHA256 `87a999e6c1c003b96a9fa169ce11637b61eb696766517e063fafce73fdc39c24`). Only its exact 894-byte grey source body supplies a DDS payload for two controlled complete TX2/namespace fixtures. Their admitted basenames are `ONLY#Base` and `white`; these are controlled Basic-presence cases, not actual selected defaults or production namespace witnesses. Nothing is downloaded or recaptured.
+
+## Source behavior and native admission domain
+
+`coh_wr_texwords_tables_source.inc` preserves the complete original ParseDropShadow through ParseTexWordFiles table block. The reader traverses all arrays, embedded/null records, strings, integers and floats, with exact segment lengths and no trailing data. The file ledger and root records must join uniquely. Every source row remains available through an owner-bound ordinal and copied serialized-record span.
+
+The original dictionary sorts by case-insensitive basename. The native result is independent of unspecified equal-key qsort order: a secondary UK locale wins over primary English exactly as the source requires, and same-locale basename ambiguity refuses the whole construction. The cache's full source traversal is compared against unchanged original binary token readers, followed by unchanged whole `texWordsLoad`, `texWordsLoadInfo`, `texWordsNameCmp` and `texWordFind` functions. The oracle supplies bounded storage/stash/platform adapters, an empty previous Basic array, and a cache-returning ParserLoadFiles adapter. It does not execute the layout preprocessor, composition, old texture reloads, OS watches or UI.
+
+Locale spelling, region EU, edit mode, production mode and verbose debug fallback are explicit inputs. English edit selects Base. EU English selects primary English plus secondary UK. Production+edit requires additional source files and refuses. Deferred/pending compositor and prior-override paths refuse. No caller-supplied assertion can substitute for these missing runtime inputs.
+
+Admission is intentionally narrower than the legacy parser: canonical forward-slash relative `TEXTS/<locale>/<path>/<name>.texword` ASCII root paths, no embedded NUL in Pascal strings, strings shorter than the original tokenizer's 12,000-byte bound, finite floats, at most 4,096 root/array entries, 65,536 nested records and depth16. Unsafe/truncating original Basic-name domains refuse. Query stems are 3..122 printable ASCII bytes with no dot, slash, backslash, `!` or `#`; an optional first `#suffix` preserves original Base/explicit-locale branching.
+
+The source first checks the current locale dictionary even for an explicit non-Base suffix. On a miss, Base/explicit search can check the Base key. The no-explicit-locale fallback first calls actual `texFind(stem#Base)`; this API requires a real still-live admitted namespace for that branch and performs the real namespace lookup. A partial header list or guessed missing Basic never substitutes. Other routes need no namespace. The debug DUMMYLAYOUT route is explicit and source compared. Copied selections hold no pin; resolving their ordinal requires the same live TexWord owner.
+
+## Ownership, overlap and bounded policy
+
+Construction acquires a real asset-loader pin for the exact path/generation, checks expected whole-body bytes and SHA through the supplied digest callback, copies the entire cache and derived index, and releases the real pin before committing the output. Actual fixture provider contexts and their byte allocations are freed after success; the owner is then exercised. Late cancellation, I/O/hash/allocation/schema/ambiguity refusals release the candidate and pin and preserve output. No new lease is minted.
+
+Calls use one owner thread and immutable/disjoint input spans. During external callbacks the caller must not mutate, destroy or reenter the borrowed source loader or change provider state; its opaque storage is outside the public span checks. The real held-pin refusal is separately tested. Public output must be outside opaque loader/provider/namespace storage and all known owner/input spans; malformed raw pointer extents remain caller responsibility. The owner itself has no callback or concurrent mutable state after construction.
+
+Before callbacks, construction charges the full configured candidate owned limit, full caller-supplied loader allowance, named input spans, external resources and 32KiB native control. The loader API exposes observed peak, not its configured total: configured-total <= allowance is a caller precondition, not a value this module can discover. The focused fixture sets both to exactly8MiB, candidate policy4MiB and aggregate64MiB. Its explicit16MiB external policy additionally covers simultaneously retained providers, master fixture, two namespace reservations, original-oracle workspace and the static2MiB builder. This allowance is a policy, not measured RSS or a complete application budget.
+
+The actual copied cache is694,324 bytes; the host ABI owner/index/cache allocation is1,025,196 bytes. The new proof records measured requested original-oracle workspace, both controlled namespace owners/full reservations and actual preparation reservation. A replacement test retains the old1,025,196-byte owner through new construction, adds that exact known owner to external, retires the actual new loader, then separately destroys the old owner and exercises the new one. No old-owner or loader retirement credit is taken early. A production caller must similarly charge every still-live old owner/provider and callback/library peak.
+
+Query policy charges this owner's exact allocation plus the actual namespace's full recorded reservation when that branch is needed, then16KiB native control and named input/output spans. It does not silently inherit historical/global budget qualification from another module. The old namespace functional receipt is not rerun or promoted into a full fixture/global budget proof.
+
+## Focused qualification
+
+```
+PYTHONDONTWRITEBYTECODE=1 python3 native-android/engine/world-render-adapter/check_texwords.py \
+  --actual-cache-zip /absolute/retained-inputs/client-caches.zip \
+  --actual-defaults-zip /absolute/default-bodies.zip \
+  --output /absolute/fresh-texwords-output
+```
+
+The new qualifier preserves compiler/run output, generated unchanged-function oracle, binaries and a source/input-bound JSON receipt in a fresh directory. It runs only the new test in release, AddressSanitizer and UndefinedBehaviorSanitizer modes. The legacy original oracle receives trusted complete positive fixtures and is compiled separately without sanitizer instrumentation; native code is instrumented. LeakSanitizer is off due the existing host limitation; wrapped requested calloc/free and real provider/loader lifetime balances are checked separately. An actual C object is linked and called from C++.
+
+The new differential tests cover every record/serialized span, ten authentic cache locale profiles, controlled UK precedence and Basic-present/absent selection, full controlled nested layer traversal and finite refusal, malformed/truncated/ambiguous input, budget/identity/I/O/hash/output-alias refusal, every observed construction cancellation/allocation position and independent cancellation after final dictionary completion. Nine semantic mutations must fail, including both guards for same-locale ambiguity. These are new TexWord tests; no old qualifier, capture, Windows/Android/GPU execution or world admission is performed.
+
+Development failures remain in separate scratch output directories: the first extractor refused a trailing signature comment; the first original-adapter compile exposed a missing bounded seek stub and legacy warnings; a controlled namespace path did not match its TX2 name; a test used a forged destruction handle instead of a genuine owner pointer in an aliased slot (ASan identified it); the first ambiguity mutation removed only one of two guards; and the new overlap assertion initially compared different locale-string input lengths instead of the same-profile reservation. Each fix was confined to the new helper/test/checker or header comment, apart from the additional explicit source12KiB string-domain restriction. Successful earlier modes are retained; final source/proof binds the completed new controls.

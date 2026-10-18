@@ -1,0 +1,1 @@
+texwords line202: overlap_aggregate==actual_preparation+old_owner->allocation&&old_owner!=new_owner&&old_owner->row_count==new_owner->row_count

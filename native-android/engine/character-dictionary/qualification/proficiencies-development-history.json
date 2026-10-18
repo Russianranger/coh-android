@@ -1,0 +1,76 @@
+{
+  "schema": "coh-proficiencies-development-history-v1",
+  "passed_final": true,
+  "scope": "New focused development only; repeated development executions occurred. No old dictionary qualifier entrypoint was invoked. Temporary diagnostic original C compile also executed.",
+  "attempts": [
+    {
+      "source": "pre-e57f8d1a7",
+      "stage": "native_compile",
+      "exit": 1,
+      "observed_diagnostic": "-Werror=misleading-indentation in coh_proficiencies_read reserve statements",
+      "correction": "split reserve statements onto independent lines before first source commit"
+    },
+    {
+      "source": "e57f8d1a7",
+      "output_argument": "c-proficiencies-dev.json.gz",
+      "exit": 139,
+      "observed_diagnostic": "Python process segmentation fault; no receipt created",
+      "correction": "original oracle host adapter assumed nonnull Vec for zero-length array; preserve zero-length original semantics using empty host Vec after roundtrip"
+    },
+    {
+      "source": "e57f8d1a7",
+      "stage": "temporary_standalone_original_debug",
+      "exit": 1,
+      "observed_diagnostic": "LeakSanitizer fatal process-inspection restriction; authentic original decode/finalization completed before exit",
+      "correction": "disable LeakSanitizer for final host qualification; ASan and UBSan retained"
+    },
+    {
+      "source": "20fae5628",
+      "output_argument": "c-proficiencies-dev2.json.gz",
+      "exit": 0,
+      "checks_release": 49943,
+      "scope": "release development pass only"
+    },
+    {
+      "source": "4df993733",
+      "output_argument": "c-proficiencies-dev3.json.gz",
+      "exit": 1,
+      "observed_diagnostic": "LeakSanitizer has encountered a fatal error; LeakSanitizer does not work under ptrace",
+      "correction": "ASAN_OPTIONS detect_leaks=0; no heap allocation in production reader"
+    },
+    {
+      "source": "b96e239b3",
+      "output_argument": "c-proficiencies-dev4.json.gz",
+      "exit": 1,
+      "observed_diagnostic": "OSError loading original-proficiencies.so: undefined symbol: adler32",
+      "correction": "link focused original schema CRC provider with -lz"
+    },
+    {
+      "source": "b8be05a5a",
+      "output_argument": "c-proficiencies-dev5.json.gz",
+      "exit": 0,
+      "checks_per_mode": 51243,
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ]
+    },
+    {
+      "source": "662d05a1527a0bfe6c8a17c4474d19be84d8ba40",
+      "output_argument": "c-proficiencies-final.json.gz",
+      "exit": 0,
+      "checks_per_mode": 55193,
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "new_controls": "work and aggregate-text ceilings; second-digest failure; additional overlap/membership controls"
+    }
+  ],
+  "first_failure_outputs": "Observed diagnostics preserved here from tool output; this is a structured development journal, not a claim that transient raw stderr files were retained.",
+  "runtime_capture_executed": false,
+  "old_qualifiers_executed": false,
+  "all_C50_source_bytes_unchanged": true
+}

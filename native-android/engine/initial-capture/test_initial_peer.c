@@ -14,6 +14,10 @@
 static void initial_account_handle(UiPeer *);
 static unsigned initial_account_controls_sent;
 #endif
+#ifdef COH_INITIAL_INVENTORY_PEER
+static void initial_inventory_handle(UiPeer *);
+static unsigned initial_inventory_controls_sent,initial_inventory_sent;
+#endif
 static const char *initial_mode;
 static unsigned initial_requests,initial_responses,initial_replays,forbidden_commands;
 static uint8_t initial_bytes[65536];
@@ -46,13 +50,22 @@ static void initial_report(const UiPeer*u){
  #ifdef COH_INITIAL_ACCOUNT_PEER
  ",\"account_controls_sent\":%u"
  #endif
+ #ifdef COH_INITIAL_INVENTORY_PEER
+ ",\"account_controls_sent\":%u,\"account_inventory_sent\":%u"
+ #endif
  "}\n",u->failed?"true":"false",(long)getpid(),u->db.endpoint.port,u->map.endpoint.port,u->db_phase,u->map_phase,u->lists,u->choices,u->handoffs,u->connects,u->catalogs,SOURCE_ACCESSIBLE_COMMAND_COUNT,u->scenes,u->scene_decoded_bytes,u->scene_compressed_bytes,u->scene_decoded_bytes*8,u->scenes?"true":"false",COH_NET_DECODED_MAX,SOURCE_GROUPS_EXPECTED_JSON,u->selected_slot,u->closed,initial_mode,initial_requests,initial_responses,initial_replays,forbidden_commands
  #ifdef COH_INITIAL_ACCOUNT_PEER
  ,initial_account_controls_sent
  #endif
+ #ifdef COH_INITIAL_INVENTORY_PEER
+ ,initial_inventory_controls_sent,initial_inventory_sent
+ #endif
  )>0);CHECK(!fclose(f));CHECK(!rename(temporary,u->report));
 }
 static void initial_handle(UiPeer*u,unsigned map){
+ #ifdef COH_INITIAL_INVENTORY_PEER
+ if(!map){initial_inventory_handle(u);initial_report(u);return;}
+ #endif
  #ifdef COH_INITIAL_ACCOUNT_PEER
  if(!map){initial_account_handle(u);initial_report(u);return;}
  #endif

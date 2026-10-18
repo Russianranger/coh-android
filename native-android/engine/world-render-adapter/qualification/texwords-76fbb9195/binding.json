@@ -1,0 +1,343 @@
+{
+  "passed": true,
+  "source_commit": "76fbb91955a6a9f37145002f6b909928abcecb46",
+  "receipt_raw": {
+    "bytes": 39109,
+    "sha256": "4e1dfddd56f649fb3db70ca33ff8062de484c25cda4e8a656a3489945f824e79"
+  },
+  "receipt_gzip": {
+    "bytes": 12528,
+    "sha256": "a8076cbdc8556db359a8c1dd3c1a656c92778ec658ab2ae073f8d80d7a17ec8b"
+  },
+  "source_inputs": {
+    "native-android/engine/world-render-adapter/coh_wr_texwords.c": {
+      "bytes": 16876,
+      "sha256": "267df62d64cdbe263be13e61c0ffa0d55beef641c3b073b273dcb1812942453f",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/coh_wr_texwords.h": {
+      "bytes": 4828,
+      "sha256": "cf19f5538b91d144e62d93f6bb20c97d1a6d368f8210b4499953bd0d966f4987",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/coh_wr_texwords_tables_source.inc": {
+      "bytes": 5052,
+      "sha256": "cf48451172030ab20831384d754cfa438dc939714708b0ed3d467af09ed93cbd",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/check_texwords.py": {
+      "bytes": 13855,
+      "sha256": "47e93ec2a48c33ad0a4aa53fe9351331b4f75f6d40a1bcff04b9d5e8cfe0e1c8",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/texwords_oracle.py": {
+      "bytes": 15355,
+      "sha256": "8c48e7080fe6bcba3b4b14a44972e8d626419061a25f1b2a3872dd3b86233f34",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/tests/test_texwords.c": {
+      "bytes": 22743,
+      "sha256": "be583545d13d9bdcc1bf01b6da2dee89961762249a26135602df00fbe2615021",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/tests/test_texwords_cpp.cpp": {
+      "bytes": 398,
+      "sha256": "2e1f8bef40943ca6baa09b6105601ed3792f468a3d1743720c270041234fc731",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/tests/texwords_fixture.h": {
+      "bytes": 716,
+      "sha256": "0778a1d73f1017a14624c40a1f4eff4b33027d3559db8c7d60b67618c254cdc6",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/TEXWORDS.md": {
+      "bytes": 10017,
+      "sha256": "a5110bf93b4d8d085c54947c24e0218509dcb258d4133489bafe62b70e4cac12",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/Game/src/render/texWords.c": {
+      "bytes": 95457,
+      "sha256": "81c5090c7bcf811b77bcfce76bca6ae42da6201d47a41f05c4e2bf4a7a7c9831",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/Game/src/render/tex.c": {
+      "bytes": 113372,
+      "sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": {
+      "bytes": 264080,
+      "sha256": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": {
+      "bytes": 13895,
+      "sha256": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c": {
+      "bytes": 60404,
+      "sha256": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/utils_opt.c": {
+      "bytes": 31803,
+      "sha256": "e86e629114f213a0c13cc101f5690fd47a9f6b48eb21c1f4dc3cff62ab3ec351",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/Game/src/render/tex.h": {
+      "bytes": 11002,
+      "sha256": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/Game/src/render/texWords.h": {
+      "bytes": 1484,
+      "sha256": "e3630b3bc7a8d4702a5f8bd3fca5b6765e1ca430e6f97abd8a9df47fa2031220",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": {
+      "bytes": 30934,
+      "sha256": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": {
+      "bytes": 3363,
+      "sha256": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+      "exact_current_and_Git": true
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": {
+      "bytes": 34279,
+      "sha256": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/coh_wr_tex_namespace.c": {
+      "bytes": 38461,
+      "sha256": "067bb8c1e3794ff86bf36e3b3ea90fd0cbda4c5cad3ece2f88c3b08435dd5a37",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/assets/coh_asset_loader.c": {
+      "bytes": 18935,
+      "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+      "exact_current_and_Git": true
+    },
+    "native-android/src/coh_assets.c": {
+      "bytes": 3806,
+      "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+      "exact_current_and_Git": true
+    },
+    "native-android/src/coh_dds.c": {
+      "bytes": 4055,
+      "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/world-render-adapter/coh_wr_tex_namespace.h": {
+      "bytes": 6885,
+      "sha256": "aa9cf127384f18f96f3a0ebb0938ed403c2884a2630101824716a71cbcfb7e1c",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/assets/coh_asset_loader.h": {
+      "bytes": 4499,
+      "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+      "exact_current_and_Git": true
+    },
+    "native-android/engine/coh_contracts.h": {
+      "bytes": 1044,
+      "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "exact_current_and_Git": true
+    },
+    "native-android/include/coh_native_core.h": {
+      "bytes": 2613,
+      "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+      "exact_current_and_Git": true
+    },
+    "native-android/src/byte_reader.h": {
+      "bytes": 791,
+      "sha256": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+      "exact_current_and_Git": true
+    }
+  },
+  "final_logs": {
+    "address-run.stdout": {
+      "bytes": 810,
+      "sha256": "ac4c23e30c90f658d076041c098acc09c63fb3d9e382c35c122db67f830d8f6e"
+    },
+    "address-run.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release-run.stdout": {
+      "bytes": 810,
+      "sha256": "ac4c23e30c90f658d076041c098acc09c63fb3d9e382c35c122db67f830d8f6e"
+    },
+    "release-run.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "undefined-run.stdout": {
+      "bytes": 810,
+      "sha256": "ac4c23e30c90f658d076041c098acc09c63fb3d9e382c35c122db67f830d8f6e"
+    },
+    "undefined-run.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release-native.su": {
+      "bytes": 1338,
+      "sha256": "af64be854aacc9ce6037f478d6bb71fa5a4fa19b0378cd3d1cda5610df7e1389"
+    }
+  },
+  "prior_preserved_source_proof_and_failed_development_evidence": {
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/binding.json": {
+      "bytes": 12347,
+      "sha256": "b0933dad6247c20aa2e0595ccadef9ad84e9fa7cf1d97a3c16f99e7a521132d0"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/host.json.gz": {
+      "bytes": 12467,
+      "sha256": "3ce807bd8f7361e33579223bb71b22aa841c861442db694a9d37855711f8a248"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/HANDOFF.md": {
+      "bytes": 7373,
+      "sha256": "0dfffe6f284c1e1024c941bc074e79bb4fb836907abf8d27728f8217a9acf23c"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/cpp-run.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/address-run.stdout": {
+      "bytes": 810,
+      "sha256": "1ee01cee977a193f860bbd4554a619c831c0a48be66b6499ddfb0d8affbf4abf"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/address-run.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/undefined-run.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/leak_real_source_pin-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/build-original.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/undefined-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/ignore_ambiguity-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/ignore_search-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/invert_actual_basic_presence-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/release-run.stdout": {
+      "bytes": 810,
+      "sha256": "1ee01cee977a193f860bbd4554a619c831c0a48be66b6499ddfb0d8affbf4abf"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/undefined-run.stdout": {
+      "bytes": 810,
+      "sha256": "1ee01cee977a193f860bbd4554a619c831c0a48be66b6499ddfb0d8affbf4abf"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/release-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/release-native.su": {
+      "bytes": 1338,
+      "sha256": "af64be854aacc9ce6037f478d6bb71fa5a4fa19b0378cd3d1cda5610df7e1389"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/cpp-run.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/allow_nonfinite_layers-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/ignore_final_cancel-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/ignore_primary_before_base-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/address-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/ignore_secondary_priority-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/cpp-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/skip_owned_limit-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/final-logs/release-run.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-2/build-original.stderr": {
+      "bytes": 2171,
+      "sha256": "01eb2d1529f35c04ce6858b06e90724194d83a89a23d96945ff33b7900b35179"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-3/release-run.stderr": {
+      "bytes": 80,
+      "sha256": "1fe8b0a510a50904ad8f0eff918e7814ce5af76b6ca0f71463342397676695dc"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-5/address-run.stderr": {
+      "bytes": 1347,
+      "sha256": "6cda7473b43a48223c77a126dd0029e539b41a390ceb2e725b9d2410d96fef3c"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-8/address-run.stderr": {
+      "bytes": 144,
+      "sha256": "4903a73cc483370adfa7b19a6296e43206ba587b26c6aa9559a766b9419f3333"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-1/FAILURE.txt": {
+      "bytes": 261,
+      "sha256": "14a464fa303e90a19329580f9b1841b952ca34133bc61ccb9f2d2bbfbb27d769"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-6/allow_nonfinite_layers.stderr": {
+      "bytes": 86,
+      "sha256": "13503ac3aaa591f00ceb4bf5d887c7d9e09534953ddc4ae903fe1956058fa28c"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-6/ignore_search.stderr": {
+      "bytes": 115,
+      "sha256": "5d77ecc4d7a1a8c43e3d5c8158cd74b5db4ee286a126adcd1558e6431a72a987"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-6/ignore_primary_before_base.stderr": {
+      "bytes": 115,
+      "sha256": "5d77ecc4d7a1a8c43e3d5c8158cd74b5db4ee286a126adcd1558e6431a72a987"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-6/invert_actual_basic_presence.stderr": {
+      "bytes": 74,
+      "sha256": "bbdd1d646dc97524c23b0bef2a26a46421ec3e8d1ec0baab15e376e55052c179"
+    },
+    "native-android/engine/world-render-adapter/qualification/texwords-120fd255d/development-failures/b-texwords-development-6/ignore_secondary_priority.stderr": {
+      "bytes": 115,
+      "sha256": "5d77ecc4d7a1a8c43e3d5c8158cd74b5db4ee286a126adcd1558e6431a72a987"
+    }
+  },
+  "only_successor_change": "test writes a correctly typed aligned CohWrTexWords* into allocated cache-tail storage before alias destroy refusal; checker records this fix; production/oracle unchanged",
+  "read_only_binding_imported_helpers_or_reran_native": false,
+  "old_qualifiers_replayed": false,
+  "current_generation": false,
+  "current_namespace": false,
+  "layout_composition": false,
+  "material_world_GPU_authority": false,
+  "RSS_global_budget": false
+}

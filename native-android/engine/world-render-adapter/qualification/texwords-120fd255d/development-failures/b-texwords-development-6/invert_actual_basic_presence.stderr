@@ -1,0 +1,1 @@
+texwords line65: coh_wr_texwords_find(c,ns,name,search,&lim,&out)==COH_OK
