@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/7ed1da2a7e55/proposals/evaluate_inventory_scene_data_guards.py", line 87, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/workspace/scratch/7ed1da2a7e55/proposals/evaluate_inventory_scene_data_guards.py", line 62, in main
+    require(f.attr in {'get','read_bytes','decode','strip'} or isinstance(f.value,ast.Name) and (f.value.id,f.attr) in allowed_attributes,'PURE_DATA_ATTRIBUTE')
+  File "/workspace/scratch/7ed1da2a7e55/proposals/evaluate_inventory_scene_data_guards.py", line 16, in require
+    raise ValueError(code)
+ValueError: PURE_DATA_ATTRIBUTE

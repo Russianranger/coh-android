@@ -1,0 +1,32 @@
+{
+  "schema": "coh-preserved-salvage-inventory-preflight-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/salvage-inventory-preflight-20261018/a",
+      "tip": "c592ef0416b92590ff541274149a1861a27b34f3",
+      "prerequisite": "ee86798b5ba073de4d38a732bf157d17d9c5b648"
+    },
+    "C": {
+      "ref": "refs/recovery/salvage-inventory-preflight-20261018/c",
+      "tip": "dd32d2115945f369888c24436e78197a0b6e83f4",
+      "prerequisite": "9b1b8cb71e886cc29647973846e0ca691a2ecdfa"
+    },
+    "F": {
+      "ref": "refs/recovery/salvage-inventory-preflight-20261018/f",
+      "tip": "7d826f084dc0d7266b87c73e301cd6ba1a386624",
+      "prerequisite": "c2e0d5bbae1d852fa07bdb32d9d796c4306d8d0a"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/salvage-inventory-preflight-20261018/coordinator",
+      "tip": "86d88793ea01edc979975f27b062f7681a7a6c8d",
+      "prerequisite": "050263f063dce6bf3e7cbecbc07da9d010748fce"
+    }
+  },
+  "public_source_excluded_to_avoid_duplicate_artifact_payloads": "271b70d935eea41d7243d941fa9adfe04949d7fd",
+  "bundle": "worker-salvage-inventory-preflight-history.bundle",
+  "bytes": 13830,
+  "sha256": "403e453cd5d45cf4528c585c31a351cf4d45bfd872ffe4f5fac626f1d7680dc7",
+  "verification": "/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-salvage-inventory-preflight-history.bundle is okay\nThe bundle contains these 4 refs:\nc592ef0416b92590ff541274149a1861a27b34f3 refs/recovery/salvage-inventory-preflight-20261018/a\ndd32d2115945f369888c24436e78197a0b6e83f4 refs/recovery/salvage-inventory-preflight-20261018/c\n7d826f084dc0d7266b87c73e301cd6ba1a386624 refs/recovery/salvage-inventory-preflight-20261018/f\n86d88793ea01edc979975f27b062f7681a7a6c8d refs/recovery/salvage-inventory-preflight-20261018/coordinator\nThe bundle requires these 5 refs:\n9b1b8cb71e886cc29647973846e0ca691a2ecdfa \n050263f063dce6bf3e7cbecbc07da9d010748fce \nc2e0d5bbae1d852fa07bdb32d9d796c4306d8d0a \nee86798b5ba073de4d38a732bf157d17d9c5b648 \n271b70d935eea41d7243d941fa9adfe04949d7fd \nThe bundle uses this hash algorithm: sha1\n",
+  "prior_history_index": "worker-initial-owner-source-history.json",
+  "scope": "C/B complete Salvage source, two original-oracle failures, development/final proof; A focused pendingreceiver staticreview; F complete Salvage/oracle and Inventory mock/source reviews; coordinator exact one-run pendinghelper/test/proof/supplement retention and guarded source-only publication. Public271b file contents are excluded to avoid duplicatepayloads. New BaseDetail and world-resource proposals remain unadmitted. Map39099315295 compilation remains independently active at d9ad. No native/destination/runtime/world/player/ACK/Android/Thor qualification is created by history preservation."
+}

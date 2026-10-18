@@ -1,0 +1,107 @@
+{
+  "actual_Map255_current46_evidence143_subsets_exact": true,
+  "actual_Map_canonical_ten_and_receipt_bound": true,
+  "actual_Map_run_id": 39099315295,
+  "actual_initial_owner_receipt_pin_distinct": "28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91",
+  "all455_current_raw_Git_blob_modes_exact": true,
+  "all_shell_blocks_bash_n_passed": true,
+  "baseline_revision": "2b5dac5ac81d49359b47fd7027747b2c86f2d0db",
+  "baseline_workflow_sha256": "919934db659c237f3af4e1679edc880052927fa03c70c9ec763dfb9046c4a71a",
+  "current_nonself_map_compact_sorted_json_sha256": "9a1947696b66e1e2b5433bf381061428746e1d4bed9ebdb208e1b5d9db425168",
+  "current_nonself_source_count": 455,
+  "destination_helper_hash": "db784ba8ae00b2015d3bfd5ade8c862e34c66e263933ab12d6d71dbcd03eb9ad",
+  "dynamic_workflow_self_makes_count": 456,
+  "embedded_Python_AST_blocks": 8,
+  "exact_twelve_old394_supersessions": true,
+  "failed_first_draft": {
+    "bytes": 107835,
+    "data_guard_refused_before_publication_or_CI": true,
+    "preserved_by_coordinator": true,
+    "reason": "blanket runtime receipt substitution changed one historical receipt hash inside newly generated source-gate literals",
+    "sha256": "cf13a97763837d41010a116c5cfa83704856c9aff75c7d23ca0a769a7086217b",
+    "source_production_Map_receiver_or_tests_changed": false,
+    "v2_only_decoded_step1_differs": true
+  },
+  "fixture_runtime_private_cleanup_bodies_unchanged_except_fixed_receipt_literals": true,
+  "frozen_workflow_bytes": 107835,
+  "frozen_workflow_proposal": "proposals/native-fresh-groups-inventory-initial-owner-v2.yml",
+  "frozen_workflow_sha256": "f0bbc00c9287e052763f9a9d9e71742b47900433d8e17c10052abe19ac1cd974",
+  "generator_bytes": 30595,
+  "generator_sha256": "93768a99037eca6120af8fc3b3c2b8ba90bb48fdd5c260044c0a12978bc7229c",
+  "historical_observer_receipt_pin_retained": "478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034",
+  "job_count": 1,
+  "new_marker": "[fresh-groups-inventory-initial-owner]",
+  "new_receiver_SHA256": "66f92ff8574c538ad221e1bcbbff834b80eddb54aa270b95ed607e7049a6dccc",
+  "new_source_gate_exact_key_count": 14,
+  "passed": true,
+  "public_upload_paths_guards_and_summary_guard_preserved": true,
+  "qualified_historical_supersessions": {
+    ".github/workflows/native-fresh-groups-build.yml": {
+      "previous_sha256": "a2adda1b06a824fa58bf5d36335fa060e360edbf25d6860a8e2148e10a87e851",
+      "sha256": "fb80fc0e14001056888e951eb378d71d56efa24058439e832076234bbed9b7b3"
+    },
+    "native-android/combined-client/tools/check_local_initial_capture.py": {
+      "previous_sha256": "6379d88a45ca8d244b5e415510a44256670dc39f60a4f838ada9b0555666377e",
+      "sha256": "722199b76f206fcd1c2fcfe925d99f105a69ffba6215e94d5d3dba8b8cdace4b"
+    },
+    "native-android/engine/dbclient/coh_db_account_controls.c": {
+      "previous_sha256": "4fc8d2ed60f7593905e4c5484204779a0eaa8f360f318a44c5a97dbd568a83b8",
+      "sha256": "9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2"
+    },
+    "native-android/engine/dbclient/coh_db_session.c": {
+      "previous_sha256": "394a94e436d52963fbe2667b0b3cf977554d3b6ffe69c8c858da42ded697bc06",
+      "sha256": "3fe33ca4ff8c48c1291cffb18f9fecb706e215bcc2fc2dda62dd9aa4fa24cc81"
+    },
+    "native-android/engine/dbclient/coh_db_session.h": {
+      "previous_sha256": "d9993e341349cac614fe862481b1a3fb21e7239900ca1d3d6c8c1e8043b92c87",
+      "sha256": "afade1cad71cd5f8b1e5c6655ab157e404cf6ef0956b750697b6902d0c32a94f"
+    },
+    "native-android/engine/initial-capture/test_initial_peer.c": {
+      "previous_sha256": "aa20f0e7d9cecbff6770a33905ce0768f4e32c248a29af3a9a588209f538f721",
+      "sha256": "e5d91921f6ba9547680e0551be91fe63b6de69474fcebb1d9257bdaa84d8a512"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/README.md": {
+      "previous_sha256": "6c4b22e3e62d59d456e0491a7e42d7c97747c8780c9c4315f92e9e871ca4371f",
+      "sha256": "fd0d90eab139285aac785ffab6ba7e7305fba22eb0f019b8228296982bbde5f3"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": {
+      "previous_sha256": "a6549c4c978ac2f130c4d23011166c6f185917d411cbe8781ebb0a7ab578088c",
+      "sha256": "67452123026a1efe04c1605d638b8f329a93e4d200ea03283683f163caaece93"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc": {
+      "previous_sha256": "535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a",
+      "sha256": "65645b3798ac11c19db7be714ae0c4d77f37049b5add89a9ab5ab29c8a01e383"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h": {
+      "previous_sha256": "3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce",
+      "sha256": "1edcc4cae6a9fe915e4af9096a6372a08878fb8731df81ecfab85545c970842d"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": {
+      "previous_sha256": "c827d7318849a48295396303198b41b36a845cbf7b44d244db5e5ace964ad3b2",
+      "sha256": "e0425174bd380cb7e97b98e46532af97c0ab3621e2fefa19c1ad82e5f6c57138"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py": {
+      "previous_sha256": "55b3f890cfbbf9d7d46e475d0d5852858280dcb618be220b88fbee3803473f0f",
+      "sha256": "ff573be6edd64da64bd1e092704e92bc2a4422795a4731ea9c0acf3c5c84d3c2"
+    }
+  },
+  "receiver_step_only_distinct_helper_path_and_label_changed": true,
+  "retained_Map_ZIP_copy_only_actual_metadata_changed": true,
+  "review_actions": {
+    "project_import_or_helper_function_execution": false,
+    "read_only_Git_subprocesses": true,
+    "static_AST_and_bash_n_only": true,
+    "tests_compiler_loader_native_services_download_or_replay": false
+  },
+  "same_runtime_fixture_and_donor": true,
+  "schema": "coh-f-inventory-initial-owner-scene-workflow-review-v1",
+  "scope": {
+    "actual_new_runtime_executed_for_review": false,
+    "destination_platform_qualified_for_review": false,
+    "source_generation_actor_ACK_world_authority": false
+  },
+  "source_checked_revision": "fc032bb3fc0d8ffbf5d094f2d14fbd114d4b39b8",
+  "step_count": 17,
+  "whole455_map_independently_reconstructed": true,
+  "workflow_path": ".github/workflows/native-fresh-groups-observation.yml"
+}

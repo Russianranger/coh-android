@@ -1,4 +1,4 @@
-name: Fresh original GROUPS with fixed owner reason and complete DB account controls
+name: Fresh original GROUPS with pre-entry owner and complete DB inventory controls
 'on':
   push:
     branches:
@@ -13,9 +13,9 @@ concurrency:
   group: native-fresh-groups-observation-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  matching-original-owner-reason-observation:
+  matching-original-inventory-initial-owner-observation:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name
-      == 'workflow_dispatch' || contains(github.event.head_commit.message, '[fresh-groups-owner-reason]'))
+      == 'workflow_dispatch' || contains(github.event.head_commit.message, '[fresh-groups-inventory-initial-owner]'))
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -25,31 +25,34 @@ jobs:
       FIXTURE_RECEIPT_SHA256: ecd51a26955f8462e6c1644b065f11fc6d018d39b96633110a36698a4cbf7b51
       FIXTURE_RUN_ID: '39074781817'
       FIXTURE_REVISION: fd213266f1b6665acece877dabb7dab6663e647c
-      FRESH_OBSERVER_ARTIFACT_ID: '12124306842'
-      FRESH_OBSERVER_RUN_ID: '39094808520'
-      FRESH_OBSERVER_REVISION: 6e96fe22a567a3e252449feb37483cfea1566d8a
-      FRESH_OBSERVER_ZIP_BYTES: '6781758'
-      FRESH_OBSERVER_ZIP_SHA256: b3a82a5265322685e035e3b86f44862a59d8fc561852288e3d3ea8bb8371eed6
-      FRESH_OBSERVER_RECEIPT_SHA256: 478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034
+      FRESH_OBSERVER_ARTIFACT_ID: '12125997958'
+      FRESH_OBSERVER_RUN_ID: '39099315295'
+      FRESH_OBSERVER_REVISION: d9adf2b431a039357f8bfe878d3d0da991a81b19
+      FRESH_OBSERVER_ZIP_BYTES: '6784966'
+      FRESH_OBSERVER_ZIP_SHA256: cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b
+      FRESH_OBSERVER_RECEIPT_SHA256: 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91
     steps:
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
         persist-credentials: false
         fetch-depth: 0
     - id: source_admission
-      name: Admit exact current owner-reason source and account-control receiver before project imports or runtime
+      name: Admit exact current Inventory receiver and initial-owner Map before project imports or runtime
       shell: bash
-      run: "python3 - <<'PYOWNERREASONSOURCE'\nimport hashlib,json,os,pathlib,subprocess\ndef need(ok,code):\n    if not ok:raise\
-        \ ValueError(code)\nneed(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')\nneed(os.name=='posix'\
-        \ and os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.environ['RUNNER_OS']=='Linux' and os.environ['RUNNER_ARCH']=='X64','HOSTED_LINUX_X64_ONLY')\n\
-        need(os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android','OWNED_NATIVE_BRANCH_ONLY')\n\
-        root=pathlib.Path.cwd().resolve()\nhead=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\nneed(head==os.environ['GITHUB_SHA'],'EXACT_HEAD')\n\
-        HELPER='native-android/combined-client/tools/admit_account_controls_initial_receiver.py'\nTEST='native-android/combined-client/tools/test_admit_account_controls_initial_receiver.py'\n\
-        BINDING='native-android/combined-client/diagnostics/primary-authority-20261017/account-controls-destination-preflight-20261018/binding.json'\n\
-        MOCK='native-android/combined-client/diagnostics/primary-authority-20261017/account-controls-destination-preflight-20261018/mocked-controls-pending-source.json'\n\
-        ACTUAL_MAP_GATE='native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-groups-source-admission.json'\n\
-        A_HELPER_REVIEW='native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/account-controls-preflight-binding-review.json'\n\
-        pins={'.github/workflows/native-fresh-groups-build.yml': 'a2adda1b06a824fa58bf5d36335fa060e360edbf25d6860a8e2148e10a87e851',\n\
+      run: "python3 - <<'PYINVENTORYINITIALSOURCE'\nimport hashlib,json,os,pathlib,subprocess\ndef need(ok,code):\n    if\
+        \ not ok:raise ValueError(code)\nneed(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')\n\
+        need(os.name=='posix' and os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.environ['RUNNER_OS']=='Linux' and\
+        \ os.environ['RUNNER_ARCH']=='X64','HOSTED_LINUX_X64_ONLY')\nneed(os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
+        \ and os.environ['GITHUB_REF']=='refs/heads/native-android','OWNED_NATIVE_BRANCH_ONLY')\nroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\n\
+        need(head==os.environ['GITHUB_SHA'],'EXACT_HEAD')\nHELPER='native-android/combined-client/tools/admit_initial_inventory_receiver.py'\n\
+        TEST='native-android/combined-client/tools/test_admit_initial_inventory_receiver.py'\nBINDING='native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/binding.json'\n\
+        MOCK='native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/mocked-controls-pending-source.json'\n\
+        HELPER_REVIEW='native-android/combined-client/diagnostics/continuation-f-20261017/inventory-initial-owner-preflight-actual-binding-review-20261018/review.json'\n\
+        MAP_METADATA='native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/map-input.json'\n\
+        GATE_KEYS=set(['accepted_observer_equivalence', 'historical_worker_commit_replayed_in_CI', 'host_controls_reexecuted',\
+        \ 'observer_compile_receipt_sha256', 'passed', 'receiver_build_receipt_sha256', 'runtime_executed', 'schema', 'source_generation_admitted',\
+        \ 'source_preflight_only', 'source_profile_proof_sha256', 'source_revision', 'source_sha256', 'world_authority'])\n\
+        pins={'.github/workflows/native-fresh-groups-build.yml': 'fb80fc0e14001056888e951eb378d71d56efa24058439e832076234bbed9b7b3',\n\
         \ 'android/guest/atlas_beacon_package.py': '37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981',\n 'android/guest/atlas_world_assets.py':\
         \ 'b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3',\n 'android/guest/character_avatar_assets.py':\
         \ 'e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1',\n 'android/guest/character_creation_diagnostic.py':\
@@ -85,14 +88,24 @@ jobs:
         \ '40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d',\n 'android/guest/task_gate_evidence.py': '2b0f8f324401c01cbb1954616d288ff3fc6f10bc8ab8c444ae123e2a2763ef04',\n\
         \ 'android/guest/texture_header_index.py': '5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5',\n 'android/guest/zone_asset_package.py':\
         \ 'eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/db-account-controls-source-review-20261018/review.json':\
-        \ '738f597ec02d40edbc55c603af265f5e82fce4f997ee1d9119f73fdad602bf98',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/fresh-owner-predicate-source-review-20261018/review.json':\
+        \ '738f597ec02d40edbc55c603af265f5e82fce4f997ee1d9119f73fdad602bf98',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/db-account-inventory-source-review-20261018/review.json':\
+        \ 'ab73697e81d9e368423d43ed1071e5c828e5b69b0e9dd77addc45c82e72802d8',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/fresh-initial-owner-source-review-20261018/review.json':\
+        \ 'e68610a2a511db9171572a5d0b05bca1b74f2bf3c488dee4a17ff2a2c5471f7e',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/fresh-owner-predicate-source-review-20261018/review.json':\
         \ '8634a0c047873914faffa6b2488ba0e0be47391a682f75e5dc55dc76304e4151',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/initial-editmsg-20261018/review.json':\
-        \ '8f963e9330dd9768f5586d72e1f9af2971902125d47a999c1d57b150b65c7947',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-dynamic.txt':\
+        \ '8f963e9330dd9768f5586d72e1f9af2971902125d47a999c1d57b150b65c7947',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/initial-owner-map-build-39099315295-review/README.md':\
+        \ 'c39b30b90a9917d3fd563cc80f8514b9a4fc399ad5d5c2afd75d0d246e763d4d',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/initial-owner-map-build-39099315295-review/review.json':\
+        \ '5a9349dc77fb6c64cb6f8214af1d593146332209251a13cd47e807c3e941eb76',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/inventory-initial-owner-preflight-actual-binding-review-20261018/review.json':\
+        \ '1d205b5213d8ed145aa27c5d89b4df76a04bdcceacf771d3c6fb1dfeb42e6107',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-dynamic.txt':\
         \ '7a49617e9d2f94942049ac714f6c1ef9063bac94f41e112a4f86090fa2c18083',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-header.txt':\
         \ '37dfaebabe3d115842f3b754dedc93212164a941ef59cd9bf75d8ba84ee362b4',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-segments.txt':\
         \ 'f372626ac56f39d63a694aa9164ceb89724b8532f179c2a00f7cc9ee27324619',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-versions.txt':\
         \ '6b00957314707faa1fa06dfa2313468cec470c39060ec19e73b11a68417f1dd9',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/review.json':\
-        \ 'b133df1116c5edb8426ec9a7f3b5849998e730463081fb2f15c1b7c6b46f992d',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-release-reuse-review-20261018/review.json':\
+        \ 'b133df1116c5edb8426ec9a7f3b5849998e730463081fb2f15c1b7c6b46f992d',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/readelf-dynamic.txt':\
+        \ '329e8e6f7b5e873274c87b29f84615002fc24554ec95279a3d1e5e75a360bc64',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/readelf-header.txt':\
+        \ '266d84cd1a49661b2aabb86adb0a308fae649ab6665ec2c5f5817dd32976f216',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/readelf-segments.txt':\
+        \ '5b136d6b7bf0248d6f1e97cb03243bfb593df48667a6ff7a69641e45f6133219',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/readelf-versions.txt':\
+        \ '6b00957314707faa1fa06dfa2313468cec470c39060ec19e73b11a68417f1dd9',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/review.json':\
+        \ 'ff3e2f99448ad622367e9d00ded63e7ceffb64ac4f279d059845059518bb05e3',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-release-reuse-review-20261018/review.json':\
         \ '03fd929739d8bb4b6134b9edde70190039a145612aec3421cbaedce62d180b1a',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/build.json.gz':\
         \ 'f65d849fbf89027b6cefb4a00f6f4230f04ef4d2595b98aab7a90d05ba2bb522',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-address/badheader.json':\
         \ 'ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967',\n 'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-address/captured.json':\
@@ -119,38 +132,56 @@ jobs:
         \ '6115b96942579229d765921aee8d963f1e82ef4e7cce01a9d6d78bea6d8d419f',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-controls-release-20261018/status-address/account-controls-captured.json':\
         \ 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-controls-release-20261018/status-release/account-controls-captured.json':\
         \ 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-controls-release-20261018/status-undefined/account-controls-captured.json':\
+        \ 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/build.json.gz':\
+        \ '625fda1d3a3895eda7baed3b4e012702a6563a8af9246408c23b0b8b9637db7a',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/coh-capture-local-initial':\
+        \ '66f92ff8574c538ad221e1bcbbff834b80eddb54aa270b95ed607e7049a6dccc',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/status-address/account-inventory-captured.json':\
+        \ 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/status-release/account-inventory-captured.json':\
+        \ 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/status-undefined/account-inventory-captured.json':\
         \ 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-release-20261018/coh-capture-local-initial':\
         \ 'eeb5e9a3c29bfb223c23a5b465378ce90b800f517396c2c04502a703d8874ea5',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-release-20261018/repository-mocked-controls.json':\
-        \ '5a9088ab478b80589c3804a97f032118aa1cdf8a4136759184aacc559f500971',\n 'native-android/combined-client/tools/admit_account_controls_initial_receiver.py':\
-        \ 'c5a49d446423ac76ab2977a75a5e8bcb3a817daeb55c1d2dd30092933238c01e',\n 'native-android/combined-client/tools/admit_retained_initial_receiver.py':\
+        \ '5a9088ab478b80589c3804a97f032118aa1cdf8a4136759184aacc559f500971',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/binding.json':\
+        \ 'b87fec7fc5348d862475a4fac172396c962e9dae74c41efb334e6e4d8a4e2218',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/map-input.json':\
+        \ 'c70ad27275ab115080642d84686b54b7a2369e962b19293904be4db9292a237e',\n 'native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/mocked-controls-pending-source.json':\
+        \ '26aea5a5d5177b572d33ed49eef12d7eb7d18b456b020a68faa3df93e7d59324',\n 'native-android/combined-client/tools/admit_account_controls_initial_receiver.py':\
+        \ 'c5a49d446423ac76ab2977a75a5e8bcb3a817daeb55c1d2dd30092933238c01e',\n 'native-android/combined-client/tools/admit_initial_inventory_receiver.py':\
+        \ 'db784ba8ae00b2015d3bfd5ade8c862e34c66e263933ab12d6d71dbcd03eb9ad',\n 'native-android/combined-client/tools/admit_retained_initial_receiver.py':\
         \ 'ea4a34bca0610c52ca7bc00184b59aac2cbbaafdc3422a09927521cb115ce897',\n 'native-android/combined-client/tools/capture_local_initial.c':\
         \ '0b44989efcd3a43fee832ebecd7d8b840e9fdc16ee3d0cfe42c4d9e51b16db82',\n 'native-android/combined-client/tools/capture_local_scene.c':\
         \ 'f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec',\n 'native-android/combined-client/tools/check_local_initial_capture.py':\
-        \ '6379d88a45ca8d244b5e415510a44256670dc39f60a4f838ada9b0555666377e',\n 'native-android/combined-client/tools/test_admit_account_controls_initial_receiver.py':\
-        \ '48a3de4349dee2b3f3fe3a3144197f5b39373ff273918e4dcfadf86b7a29c376',\n 'native-android/combined-client/tools/test_admit_retained_initial_receiver.py':\
+        \ '722199b76f206fcd1c2fcfe925d99f105a69ffba6215e94d5d3dba8b8cdace4b',\n 'native-android/combined-client/tools/test_admit_account_controls_initial_receiver.py':\
+        \ '48a3de4349dee2b3f3fe3a3144197f5b39373ff273918e4dcfadf86b7a29c376',\n 'native-android/combined-client/tools/test_admit_initial_inventory_receiver.py':\
+        \ '897488f2cdfbb4614966c344fb9dde562c6093dc0c9d31e8616534925d849336',\n 'native-android/combined-client/tools/test_admit_retained_initial_receiver.py':\
         \ 'cf81eeea15ea5fad33eb89d68a0b6a9b9cbb5ba97c150f16d296a83249c6ff96',\n 'native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c':\
         \ '36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6',\n 'native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h':\
         \ '2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20',\n 'native-android/engine/auth/coh_auth.c': '637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d',\n\
         \ 'native-android/engine/auth/coh_auth.h': '0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d',\n 'native-android/engine/auth/coh_auth_openssl.c':\
         \ 'f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1',\n 'native-android/engine/coh_contracts.h': '2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832',\n\
         \ 'native-android/engine/dbclient/ACCOUNT_CONTROLS.md': 'c958a7cf49ed55e2a57c3890f59c05b57d3b3f78728d3dedf411462f37c0f1a3',\n\
+        \ 'native-android/engine/dbclient/ACCOUNT_INVENTORY.md': '94ec5fff1a536fee17e7057e29d5cdea3ad49e8194c80bddec968f39180b36f3',\n\
         \ 'native-android/engine/dbclient/check.py': '4264a6161665af11708a41d6b57fd4d3d5eb66ca153686c38a744d18f725c3d4',\n\
         \ 'native-android/engine/dbclient/check_account_controls.py': '1946b84a77491146a7b8d245825d38d1ed060ed70f4ac76ddd5a8dbbd60d3967',\n\
-        \ 'native-android/engine/dbclient/coh_db_account_controls.c': '4fc8d2ed60f7593905e4c5484204779a0eaa8f360f318a44c5a97dbd568a83b8',\n\
+        \ 'native-android/engine/dbclient/check_account_inventory.py': '42b9839fba5c7f66a264de606940e509ca99983fa74ae76a2035975137db437b',\n\
+        \ 'native-android/engine/dbclient/coh_db_account_controls.c': '9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2',\n\
         \ 'native-android/engine/dbclient/coh_db_account_controls.h': '9ac6ab90576973ecfac43a4cba8ea8a7e5805c230312645d85cffe5a778f63db',\n\
+        \ 'native-android/engine/dbclient/coh_db_account_inventory.h': 'e21189e8df3f65e0a9095625f5a0da7a496dc279928ccb7b081d0708a10fdb3e',\n\
         \ 'native-android/engine/dbclient/coh_db_handoff_owner.h': 'd4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45',\n\
         \ 'native-android/engine/dbclient/coh_db_handoff_private.h': '6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd',\n\
-        \ 'native-android/engine/dbclient/coh_db_session.c': '394a94e436d52963fbe2667b0b3cf977554d3b6ffe69c8c858da42ded697bc06',\n\
-        \ 'native-android/engine/dbclient/coh_db_session.h': 'd9993e341349cac614fe862481b1a3fb21e7239900ca1d3d6c8c1e8043b92c87',\n\
+        \ 'native-android/engine/dbclient/coh_db_session.c': '3fe33ca4ff8c48c1291cffb18f9fecb706e215bcc2fc2dda62dd9aa4fa24cc81',\n\
+        \ 'native-android/engine/dbclient/coh_db_session.h': 'afade1cad71cd5f8b1e5c6655ab157e404cf6ef0956b750697b6902d0c32a94f',\n\
         \ 'native-android/engine/dbclient/coh_dbclient.c': 'f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd',\n\
         \ 'native-android/engine/dbclient/coh_dbclient.h': 'ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb',\n\
         \ 'native-android/engine/dbclient/qualification/account-control-owned-link-lists.json': '67578035a171f6f0fe0d5bf549f5658b2737d6f10c16a04090fa1b70cb43c50c',\n\
         \ 'native-android/engine/dbclient/qualification/account-controls-02b54d43f-binding.json': '53767d18c4edd2b10964a6a2d4b8bff1ed40490789f6bb316d44c26cb3b18acb',\n\
         \ 'native-android/engine/dbclient/qualification/account-controls-02b54d43f.json.gz': 'd04dda6ac635ced869f0a86e4f4801ec732d12e69dc8ab10575056fa9c00513f',\n\
+        \ 'native-android/engine/dbclient/qualification/account-inventory-396621362-binding.json': 'eeadd942e687e00c7967e73968dc02d60618fce6c9ded6bf4a585da6ce84c475',\n\
+        \ 'native-android/engine/dbclient/qualification/account-inventory-396621362.json.gz': '53d6b32dd97f2ff9bd0489097640193a6d66211b9fd1d50b7808c472ed9d219f',\n\
         \ 'native-android/engine/dbclient/source-pins.json': 'a8c82a4c35eb73325ab4c7e0727645e40899330e7d7450b2c5976b26a89dbeb1',\n\
         \ 'native-android/engine/dbclient/tests/account-controls-source-pins.json': 'df398a95e9e8c9e0c697a7c2c9422ee0980311e6f6d3e7b3f26fbc38f7c3fdc8',\n\
         \ 'native-android/engine/dbclient/tests/account_controls_oracle.py': '6a53e2f26a87149f274a9e6b93a03410352964985e0a5da5d3ba1cbf993b11f3',\n\
+        \ 'native-android/engine/dbclient/tests/inventory-source-pins.json': '1bc8367d34c6596560c0708ccaaffbafb2f55f696d90c9683ec680aab1c2a526',\n\
+        \ 'native-android/engine/dbclient/tests/inventory_oracle.py': '4d0549b9a9e1ca3ff035685c44ea2c20335d92e12150721dae33746359fa5b36',\n\
         \ 'native-android/engine/dbclient/tests/test_account_controls.c': '441cdbbfc20434331ccd3d90a63f149c322ce806f51915c21324f0143d5d0e13',\n\
+        \ 'native-android/engine/dbclient/tests/test_account_inventory.c': '0a380b6b174a4c3131368d7e20c15bee7d99c2f5f95969bf74f9e669eace7ef3',\n\
         \ 'native-android/engine/dbclient/tests/test_db_session.c': 'a0bd0ae34b67d2058c099c06cb5345fe3dc398a8e2d03149ced41af5a8aa3cd4',\n\
         \ 'native-android/engine/initial-capture/check_initial_editmsg.py': '03362343b46ece9c56a430b381c54e812319aca108b147dd26b4fb8974d465a5',\n\
         \ 'native-android/engine/initial-capture/coh_initial_capture.h': '4e34321c6f36b8112c621b2155d031c27a091dcfad4ff3ca68fcb5a65599bf0a',\n\
@@ -162,12 +193,14 @@ jobs:
         \ 'native-android/engine/initial-capture/editmsg_fixtures.py': 'd2bc467b03a9aa3cd2e4cb8199348c327ab71fe62187d8502ef39133e614c23f',\n\
         \ 'native-android/engine/initial-capture/qualification/initial-editmsg-2f8337277-binding.json': '7bda85486ab4ff6934701ee9fa9022fc6a24ddc57c8a03bc334722231bbdb9f4',\n\
         \ 'native-android/engine/initial-capture/qualification/initial-editmsg-2f8337277.json.gz': '38285e20e89f909bdb8aa4a5eb07fa782e6f6bfd44d21cc7d25220c23ac1e88d',\n\
+        \ 'native-android/engine/initial-capture/qualification/initial-inventory-peer-source.json': 'e35751404f7fc3211a1b1f0211a6c18e925c3bf45713a43b93dc166c1199c9a9',\n\
         \ 'native-android/engine/initial-capture/test_initial_account_peer.c': '0e983f61f17ac900c207906818d4fbe0b6a96dc01ccc5185e357898ebac38c29',\n\
         \ 'native-android/engine/initial-capture/test_initial_capture.c': 'e8dc15d4f7efda466b3dcccc17298a1c449a13dffe704505abfa69d614fbda25',\n\
         \ 'native-android/engine/initial-capture/test_initial_capture_owner.c': '137a17f4e702458b78b1fdd0b5dc332f48a2c222a0c7a6ad6a14b17a2c11db25',\n\
         \ 'native-android/engine/initial-capture/test_initial_editmsg.c': '04541ff404e48b6706119d6d843d34c580b6955189b41d4782541fc7dc7e2c55',\n\
         \ 'native-android/engine/initial-capture/test_initial_editmsg_peer.c': '4e713cdec6d94c988f7ddc6c4d58f7d4730817df6eadc173b53e72bd32e954a3',\n\
-        \ 'native-android/engine/initial-capture/test_initial_peer.c': 'aa20f0e7d9cecbff6770a33905ce0768f4e32c248a29af3a9a588209f538f721',\n\
+        \ 'native-android/engine/initial-capture/test_initial_inventory_peer.c': '6d4bf3f56aaec6428c53195bdda10335d2ba41bfe1de5d17ea5914416f1e053c',\n\
+        \ 'native-android/engine/initial-capture/test_initial_peer.c': 'e5d91921f6ba9547680e0551be91fe63b6de69474fcebb1d9257bdaa84d8a512',\n\
         \ 'native-android/engine/local/coh_local.c': '7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210',\n\
         \ 'native-android/engine/local/coh_local.h': 'f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f',\n\
         \ 'native-android/engine/mapclient/coh_mapclient.c': '8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199',\n\
@@ -222,7 +255,17 @@ jobs:
         \ 'native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py': '6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d',\n\
         \ 'native-android/engine/scenecatalog-server/delivery.py': 'c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8',\n\
         \ 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/account-controls-preflight-binding-review.json':\
-        \ 'e2760d964b6d530343c36ccc48de40cb1767df569ad9c8b0af7528be7c893bb6',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/README.md':\
+        \ 'e2760d964b6d530343c36ccc48de40cb1767df569ad9c8b0af7528be7c893bb6',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/README.md':\
+        \ 'c9b6d7b48a375dfa6ea67859acf7b09bddcbf59328aca9c8b53c84e0115772a7',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/admission.json':\
+        \ '2569696ad525cdf2e5eefc5b896152795a21b06145e0251aecc4aba694df9b06',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/api.json':\
+        \ '96d2226eb55da2e2fe639215d55c9d973d05725f7756215ba8c9cf7e39a2de3a',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/archive-members.json':\
+        \ '907ee62fdb3babd6f57659a1713e301b28f278dac3482f94799328c0c3f59674',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/compile-only-receipt.json':\
+        \ '28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-inputs-after.json':\
+        \ 'a92c90e54a875ff5d064931402f9b2af2fcc9ecce824a6c172dfda8403e52463',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-inputs-before.json':\
+        \ 'a92c90e54a875ff5d064931402f9b2af2fcc9ecce824a6c172dfda8403e52463',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-source-admission.json':\
+        \ 'f03d6007d20518cb5241b774ce55ba4bc1ac2ded2953471e9b81a949227ce7c0',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip':\
+        \ 'cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/strict-admission.stdout.json':\
+        \ 'ef15cc380a9afe2224719a6f6b05c38d0e61df6b16a3b8acc034adcf2bdc556e',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/README.md':\
         \ 'd36bedeec425c3cec9cd46afdc1e7d5ba80ae0bbe39dfef657c859a7ff09da0e',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/admission.json':\
         \ '918600829d03a7f2eaa4fce0bf35c0609707d6bb51008be4e472dc0807f4482a',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/api.json':\
         \ 'a3a484b14dc60669ec249c64fad264776bd791d06f7209a7fab4008d62fe51bc',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/archive-members.json':\
@@ -232,7 +275,9 @@ jobs:
         \ '80cd63fbaf10d9a025264a6937cb8a20c3deb1b4470379bb8a854d4641a34abb',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-groups-source-admission.json':\
         \ 'd675cf235fabff8fee3fd523383507e39925f43381edd73e91015aedf9295c3a',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-map-owner-build-39094808520.zip':\
         \ 'b3a82a5265322685e035e3b86f44862a59d8fc561852288e3d3ea8bb8371eed6',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/strict-admission.stdout.json':\
-        \ '12441df1bf8897d6e88d467b2fac4a3b7f1b8687d1108da4e20db9463d7bbceb',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-followup.json':\
+        \ '12441df1bf8897d6e88d467b2fac4a3b7f1b8687d1108da4e20db9463d7bbceb',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/initial-owner-followup.json':\
+        \ '550d600596e2939f73de076fac5fce859ce18248a0866e1b1d19795393dc03fb',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/initial-owner-qualification.json':\
+        \ '198176ce653c7ec267a12efd8c92bd2f890e6589fd65d1030026874d4953991c',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-followup.json':\
         \ 'd16e9260ef07a3d64e46014037e2433d96f9a2b94905a8b7fd7e1e4970d4aa22',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/address.json':\
         \ '9eab43474e1801e10c8e7ef81b59e36bdfab7ec27ea89e6cf05b2260cf62a4a4',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/emitter-address.json':\
         \ 'd0cfca39b63f80965d9742ba54dc6297362a3583be356eb9f225d8b5053b3ccb',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/emitter-release.json':\
@@ -244,26 +289,29 @@ jobs:
         \ '9eab43474e1801e10c8e7ef81b59e36bdfab7ec27ea89e6cf05b2260cf62a4a4',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-qualification.json':\
         \ '5c8c4509f47cce31a3a025ce68c31f42e2306b38b4e436980f4f7e0c0f728158',\n 'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/probe-drive-alias-followup.json':\
         \ '1ac05fa9145d63c218c389c88263ba26eb67a3a80139d587671ac79eea6591e3',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/.gitattributes':\
-        \ 'a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/OWNER_FAILURE_DIAGNOSTIC.md':\
+        \ 'a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/INITIAL_OWNER_ELIGIBILITY.md':\
+        \ 'ea48900c695fafd40ec797d092be1e4f465cdb8699efe4d6eb005a7bc45b5467',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/OWNER_FAILURE_DIAGNOSTIC.md':\
         \ 'fb6f16a913474bfc47c794628e4d7cb86e2d4404581a2fc78def307817439ebc',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/README.md':\
-        \ '6c4b22e3e62d59d456e0491a7e42d7c97747c8780c9c4315f92e9e871ca4371f',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/admit_compile.py':\
-        \ '14b5daebead652182f7155f041a951db8bfd068b0d0eaffed2835168c5be2bfd',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/check_owner_predicates.py':\
+        \ 'fd0d90eab139285aac785ffab6ba7e7305fba22eb0f019b8228296982bbde5f3',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/admit_compile.py':\
+        \ '14b5daebead652182f7155f041a951db8bfd068b0d0eaffed2835168c5be2bfd',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/check_initial_owner.py':\
+        \ '1a0785655b80df97f3fe65cae3e5ff1d34dd075c5b2e871198fad65a4aec5300',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/check_owner_predicates.py':\
         \ 'efe2a0dba87c6fcfedac31ad25f6510b1c7f776e4e69e09f01e2ad4d65fc8016',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/check_profile.py':\
         \ '677cb88399b9caf4d33deb54855ddee3d98ad3fc398e3e97fe3c830215a4902a',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py':\
-        \ 'a6549c4c978ac2f130c4d23011166c6f185917d411cbe8781ebb0a7ab578088c',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/runtime.py':\
+        \ '67452123026a1efe04c1605d638b8f329a93e4d200ea03283683f163caaece93',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/runtime.py':\
         \ '1aad8c3b8b2ae2fdc593f7b95a0751201c71f258b36b6928388d5d5c0117be41',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile.inc':\
         \ '3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile_api.h':\
         \ '261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc':\
-        \ '535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h':\
-        \ '3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/source_sealed_quiescence.inc':\
+        \ '65645b3798ac11c19db7be714ae0c4d77f37049b5add89a9ab5ab29c8a01e383',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h':\
+        \ '1edcc4cae6a9fe915e4af9096a6372a08878fb8731df81ecfab85545c970842d',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/source_sealed_quiescence.inc':\
         \ 'aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py':\
-        \ 'c827d7318849a48295396303198b41b36a845cbf7b44d244db5e5ace964ad3b2',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_admit_compile.py':\
-        \ 'cc801fab1d773c7d33ad135f4c0af0bedf19efa7c5ec7408b02b4081a4000ad9',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_owner_predicates.c':\
+        \ 'e0425174bd380cb7e97b98e46532af97c0ab3621e2fefa19c1ad82e5f6c57138',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_admit_compile.py':\
+        \ 'cc801fab1d773c7d33ad135f4c0af0bedf19efa7c5ec7408b02b4081a4000ad9',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_initial_owner.c':\
+        \ 'ccbd762af63a79de8914891851ffc407445853cbd0ef6f65acad237f2bfb439c',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_owner_predicates.c':\
         \ 'e924c91eebb07ece43a1902d6a4604e686f0c303012d39f0ccd666c57300fcf1',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_probe.py':\
         \ '92e398884f36be4bda832fab865d008d63b500852333254c8ed29299889250c2',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_profile.c':\
         \ 'c3f8bae282785f62ea69c34a7fbc3052ec0c7be988540735d71576f342652dab',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_runtime.py':\
         \ '4f16a90e3dab56458ce32d7313dc0d30ee60dbe8699352ebaa870dca9d9ed40e',\n 'native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py':\
-        \ '55b3f890cfbbf9d7d46e475d0d5852858280dcb618be220b88fbee3803473f0f',\n 'native-android/engine/scenecatalog-server/graphical_fixture_backup_guest.py':\
+        \ 'ff573be6edd64da64bd1e092704e92bc2a4422795a4731ea9c0acf3c5c84d3c2',\n 'native-android/engine/scenecatalog-server/graphical_fixture_backup_guest.py':\
         \ '554dac2fb50f7f95e508895ba6c45c86365d325856c80c3d97caa7dd52b8e89c',\n 'native-android/engine/scenecatalog-server/groups-owner-source-pins.json':\
         \ '5693a060b7a727c6bf9a7375bf2fcc860c1398e986d4d41ef314f4162f8985a2',\n 'native-android/engine/scenecatalog-server/groups_capture_stages.py':\
         \ '76faf1ee5dd3b0ef0f1a725869024cd6d4c7da4f6300f2221f4b0346599b442b',\n 'native-android/engine/scenecatalog-server/groups_native_status.py':\
@@ -382,19 +430,28 @@ jobs:
         \ '02908263525c56f9578ae12f6459e0cd7988edf250d0eb14cc4c558fe7fa7685',\n 'tools/test_run_schema_generation.py': 'ea134ee9781877ccdb26a1108f877453011c3027b943e75086de8fd8ca7fd21a',\n\
         \ 'tools/test_runtime_asset_bundle.py': '5f92d6a13153446ce9be70836306e49bdfaffb948d850e1fa5669b9c800ac207',\n 'tools/test_texture_format.py':\
         \ '8f79f7c7d205b997effd28b31573d32f1a5a27edf07586b082d6644563d023aa',\n 'tools/texture_format.py': 'bdb6d5a4eb8681ed956e38c21a4173c9cca711aaf48ceb7a4f7bc1f95b966a78',\n\
-        \ 'tools/verify_source.py': '81c658f88a8aef1eba5c4b17b14fcef415f83808cd38e4edc898c245fd42e5c4',\n 'upstream/ouroboros/AccountServer/src/AccountServer.cpp':\
-        \ '91070c652c6796f2dc38fd50b3985febc627e7e96201ad6f71fe2de3888847d7',\n 'upstream/ouroboros/Common/auth/auth.h': '6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe',\n\
+        \ 'tools/verify_source.py': '81c658f88a8aef1eba5c4b17b14fcef415f83808cd38e4edc898c245fd42e5c4',\n 'upstream/ouroboros/AccountServer/src/AccountDb.cpp':\
+        \ '743193935f25a5c466aaaf11cb36a6972b6700374dfa273bfd44ee06495d9585',\n 'upstream/ouroboros/AccountServer/src/AccountServer.cpp':\
+        \ '91070c652c6796f2dc38fd50b3985febc627e7e96201ad6f71fe2de3888847d7',\n 'upstream/ouroboros/Common/account/AccountCatalog.c':\
+        \ '7db49f91412ed60af05988e5997b04689d309f3f4948ad8fc003aff249f2e0bc',\n 'upstream/ouroboros/Common/account/AccountCatalog.h':\
+        \ '1af30fae332485099feeeb02ee218b14eda4bc5815f51e9353d2918674cfff75',\n 'upstream/ouroboros/Common/account/AccountData.c':\
+        \ '038259178820f9a78040d39b4d8810933e31a67a798676fb37a0ca658682c391',\n 'upstream/ouroboros/Common/account/AccountData.h':\
+        \ 'f1c82f2f428cf4e2ddeb8fe856bc5b76ca74fd55d72738bd7bff8ea6a89ed3b3',\n 'upstream/ouroboros/Common/account/AccountTypes.cpp':\
+        \ '626d7e1264a39bce5d649c38a835227f85d3fcd33011ad0d959d189027ed1d13',\n 'upstream/ouroboros/Common/account/AccountTypes.h':\
+        \ '5f0ab67fc6405d28cb1e5c0649a4d72fbbef81dae7ebfc2adae0f276c12e6bdd',\n 'upstream/ouroboros/Common/auth/auth.h': '6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe',\n\
         \ 'upstream/ouroboros/Common/comm_backend.h': '9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c',\n\
         \ 'upstream/ouroboros/Common/comm_game.h': 'ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12',\n 'upstream/ouroboros/Common/entity/character_base.h':\
         \ 'd14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee',\n 'upstream/ouroboros/Common/entity/entity.c':\
         \ '07b6666d673757cd8e9f4d377ec58fb2988fc09db8abc2e212e29788b84fbd8f',\n 'upstream/ouroboros/Common/entity/entity.h':\
-        \ 'cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d',\n 'upstream/ouroboros/Common/entity/gametypes.h':\
+        \ 'cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d',\n 'upstream/ouroboros/Common/entity/entity_enum.h':\
+        \ '52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d',\n 'upstream/ouroboros/Common/entity/gametypes.h':\
         \ '8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6',\n 'upstream/ouroboros/Common/group/group.c':\
         \ 'dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7',\n 'upstream/ouroboros/Common/group/groupProperties.c':\
         \ '88975a6c74122a64ded79a860d60592814cdf79579b6a39357bbca79066673a1',\n 'upstream/ouroboros/Common/group/groupProperties.h':\
         \ '5522e0e664baab38fb369b59a8d68afd806083cb28c11bda6d58c26d475ab74e',\n 'upstream/ouroboros/Common/seq/anim.c': 'adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc',\n\
         \ 'upstream/ouroboros/DBServer/src/accountservercomm.c': '17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae',\n\
         \ 'upstream/ouroboros/DBServer/src/clientcomm.c': '8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c',\n\
+        \ 'upstream/ouroboros/DBServer/src/container.h': '7c7ec25139a9923864081c6a399eae7d22ec3cc28bebd7ea61c734fac0ea2c86',\n\
         \ 'upstream/ouroboros/Game/src/UI/uiServerTransfer.c': 'b2f4e5667b519b511ee9dfb6780f299f5489266470ec904d9f53a8f1c847da3b',\n\
         \ 'upstream/ouroboros/Game/src/clientcomm/clientcomm.c': '9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd',\n\
         \ 'upstream/ouroboros/Game/src/clientcomm/dbclient.c': '81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b',\n\
@@ -402,15 +459,22 @@ jobs:
         \ 'upstream/ouroboros/Game/src/edit/edit_net.c': '66989849b4217d893404a6e9451adb3c3af7e12cf2a9a3958d8ce2ad3e12dcb2',\n\
         \ 'upstream/ouroboros/Game/src/edit/edit_select.c': 'a8913ed87fc83543d32d761247d7d45b50c8ebdd798c69f8526d8a4f69e86b55',\n\
         \ 'upstream/ouroboros/Game/src/group/groupnetrecv.c': 'f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d',\n\
+        \ 'upstream/ouroboros/MapServer/src/container/containercallbacks.c': '56b484eded5a1ac2148369c4fac51084cad6ad9c55de6cfec4cbcb2dda90fb73',\n\
+        \ 'upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c': '14799001b028608bf940b631b73ba6af02ed869915b09ec000547e3aa0106663',\n\
+        \ 'upstream/ouroboros/MapServer/src/entity/entIncludeServer.h': 'bebba4c2ab7102debd043817a9d30abf4699f3af9d0d8dca612700df1fb52029',\n\
+        \ 'upstream/ouroboros/MapServer/src/entity/entsend.c': '045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054',\n\
         \ 'upstream/ouroboros/MapServer/src/group/groupnetdb.c': 'b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3',\n\
         \ 'upstream/ouroboros/MapServer/src/group/groupnetsend.c': 'cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9',\n\
+        \ 'upstream/ouroboros/MapServer/src/player/parseClientInput.c': '6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313',\n\
         \ 'upstream/ouroboros/MapServer/src/svr/svr_base.h': 'c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64',\n\
         \ 'upstream/ouroboros/MapServer/src/svr/svr_init.c': '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d',\n\
+        \ 'upstream/ouroboros/MapServer/src/svr/svr_player.c': '82fee142cd2a0d37f2ec8cb62c91b54ee34d5bb31655d1d33961187868a667a8',\n\
         \ 'upstream/ouroboros/MapServer/src/svr/svr_tick.c': '790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0',\n\
         \ 'upstream/ouroboros/QueueServer/src/QueueServer_Passthrough.c': '49f71c51e7d4a95e616455359752b7cca8d37c15f8bc0ddf86bbccdb70408d5c',\n\
         \ 'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/ArrayOld.h': '52f889750b03c07f52896ca9a569ed4acfeb93f0b5bdbb09072de9d2a343da30',\n\
         \ 'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h': '822e3698ab8cf76a7344ed3effe607dcda542099382e8ed1a63c2c1d1df4257c',\n\
         \ 'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h': '116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9',\n\
+        \ 'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h': 'fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f',\n\
         \ 'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h': '05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111',\n\
         \ 'upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c': '69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4',\n\
         \ 'upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp': 'cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60',\n\
@@ -422,41 +486,47 @@ jobs:
         \ 'upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c': '77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f'}\n\
         \nworkflow='.github/workflows/native-fresh-groups-observation.yml'\np=root/workflow\nneed(p.resolve()==p and p.is_file()\
         \ and not p.is_symlink() and p.stat().st_size<1024**2,'WORKFLOW_REGULAR_SOURCE')\npins[workflow]=hashlib.sha256(p.read_bytes()).hexdigest()\n\
-        need(0<len(pins)<=512,'BOUNDED_SOURCE_CLOSURE')\ntree=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)])\n\
-        blobs={}\nfor row in tree.split(b'\\0'):\n    if not row:continue\n    meta,name=row.split(b'\\t',1);mode,kind,digest=meta.split()\n\
-        \    need(kind==b'blob' and mode in (b'100644',b'100755'),'TRACKED_SOURCE_MODE')\n    blobs[name.decode()]=digest.decode()\n\
+        need(0<len(pins)<=512,'BOUNDED_SOURCE_CLOSURE')\ntree=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)]);blobs={}\n\
+        for row in tree.split(b'\\0'):\n    if not row:continue\n    meta,name=row.split(b'\\t',1);mode,kind,digest=meta.split()\n\
+        \    need(kind==b'blob' and mode in (b'100644',b'100755'),'TRACKED_SOURCE_MODE');blobs[name.decode()]=digest.decode()\n\
         need(set(blobs)==set(pins),'ALL_FROZEN_SOURCES_COMMITTED')\nfor name,digest in pins.items():\n    rel=pathlib.PurePosixPath(name)\n\
         \    need(not rel.is_absolute() and all(part not in ('','.','..') for part in rel.parts) and chr(92) not in name and\
         \ ':' not in name,'RELATIVE_SOURCE_NAME')\n    p=root/name\n    need(p.resolve()==p and p.is_file() and not p.is_symlink()\
         \ and 0<p.stat().st_size<8*1024**2,'BOUNDED_CANONICAL_SOURCE')\n    raw=p.read_bytes()\n    need(hashlib.sha256(raw).hexdigest()==digest\
         \ and hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\\0'+raw).hexdigest()==blobs[name],'EXACT_REVIEWED_SOURCE_AND_ARTIFACT')\n\
-        binding=json.loads((root/BINDING).read_bytes())\nmock=json.loads((root/MOCK).read_bytes())\nneed(binding['schema']=='coh-account-controls-destination-preflight-actual-metadata-binding-v1'\
-        \ and binding['passed'] is True and binding['final_helper_sha256']==pins[HELPER] and binding['test_sha256']==pins[TEST]\
-        \ and binding['mocked_proof_sha256']==pins[MOCK] and binding['other_AST_equal'] is True,'ACTUAL_METADATA_BINDING')\n\
-        need(binding['current_receiver_dependency_count']==45 and len(binding['current_receiver_dependencies_sha256'])==45\
-        \ and all(pins.get(k)==v for k,v in binding['current_receiver_dependencies_sha256'].items()) and binding['evidence_artifact_pin_count']==115\
-        \ and all(pins.get(k)==v for k,v in binding['evidence_artifact_sha256'].items()),'CURRENT_45_AND_QUALIFIED_115')\n\
-        need(binding['destination_platform_qualified'] is False and binding['loader_or_native_or_subprocess_executed'] is\
-        \ False and binding['mock_controls_reexecuted'] is False and binding['runtime_executed'] is False and binding['source_generation_admitted']\
-        \ is False and binding['world_authority'] is False,'NO_DESTINATION_OR_RUNTIME_AUTHORITY')\nneed(mock['schema']=='coh-account-controls-receiver-mocked-controls-v1'\
+        binding=json.loads((root/BINDING).read_bytes());mock=json.loads((root/MOCK).read_bytes());meta=json.loads((root/MAP_METADATA).read_bytes())\n\
+        need(binding['schema']=='coh-inventory-initial-owner-destination-preflight-actual-metadata-binding-v1' and binding['passed']\
+        \ is True and binding['final_helper_sha256']==pins[HELPER] and binding['test_sha256']==pins[TEST] and binding['mocked_proof_sha256']==pins[MOCK]\
+        \ and binding['other_AST_equal'] is True and binding['pending_helper_sha256']=='99f47dd7d3e6e9a0475a83d498a7c3318bcfc1e40c9140d89948c28942e4c553'\
+        \ and binding['exact_AST_changes']==['OBSERVER_BUILD_SHA','OBSERVER_BUILD_BYTES'] and binding['final_helper']==HELPER\
+        \ and binding['test_file']==TEST,'ACTUAL_METADATA_BINDING')\nneed(all(binding[k] is False for k in ('destination_platform_qualified','destination_helper_or_loader_or_native_executed','mock_controls_reexecuted','runtime_executed','source_generation_admitted','world_authority')),'SOURCE_ONLY_TWO_CONSTANT_BINDING')\n\
+        need(binding['Git_read_only_subprocesses_executed'] is True,'READ_ONLY_GIT_BINDING_SCOPE')\nneed(type(binding['current_receiver_dependency_count'])\
+        \ is int and binding['current_receiver_dependency_count']==46 and len(binding['current_receiver_dependencies_sha256'])==46\
+        \ and all(pins.get(k)==v for k,v in binding['current_receiver_dependencies_sha256'].items()) and type(binding['evidence_artifact_pin_count'])\
+        \ is int and binding['evidence_artifact_pin_count']==len(binding['evidence_artifact_sha256'])==143 and all(pins.get(k)==v\
+        \ for k,v in binding['evidence_artifact_sha256'].items()),'CURRENT46_AND_QUALIFIED_EVIDENCE')\nneed(mock['schema']=='coh-inventory-initial-owner-receiver-focused-mocks-v1'\
         \ and mock['passed'] is True and mock['helper_sha256']==binding['pending_helper_sha256'] and mock['test_sha256']==pins[TEST]\
-        \ and type(mock['methods']) is int and mock['methods']==5 and mock['new_evidence_and_gate_only'] is True and mock['old_mock_suites_reexecuted']\
-        \ is False and mock['observer_receipt_is_explicit_mock'] is True and mock['actual_map_compile_receipt_admitted'] is\
-        \ False and mock['actual_destination_preflight_executed'] is False and mock['loader_native_compiler_services_executed']\
-        \ is False,'MOCKED_NEW_CONTROLS_SCOPE')\nactual_map=json.loads((root/ACTUAL_MAP_GATE).read_bytes())\nneed(actual_map['schema']=='coh-fresh-owner-reason-build-source-admission-v1'\
-        \ and actual_map['passed'] is True and actual_map['compile_only'] is True and actual_map['runtime_executed'] is False\
-        \ and actual_map['source_generation_admitted'] is False and actual_map['world_authority'] is False and len(actual_map['source_sha256'])==241\
-        \ and all(pins.get(k)==v for k,v in actual_map['source_sha256'].items()),'ACTUAL_COMPILED_MAP_241_SUBSET')\na_review=json.loads((root/A_HELPER_REVIEW).read_bytes())\n\
-        need(a_review['schema']=='coh-a-account-controls-preflight-metadata-review-v1' and a_review['passed'] is True and\
-        \ a_review['helper']['path']==HELPER and a_review['helper']['sha256']==pins[HELPER] and a_review['retained_root_binding']['sha256']==pins[BINDING]\
-        \ and a_review['unchanged_test']['sha256']==pins[TEST] and a_review['actual_Map_receipt']['sha256']=='478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034'\
-        \ and a_review['compiled_slots_verified']==6 and a_review['current_receiver_dependencies_rehashed']==45 and a_review['evidence_artifact_pins_rehashed']==115\
-        \ and a_review['other_whole_module_AST_equal'] is True and a_review['native_loader_or_ELF_executed'] is False and\
-        \ a_review['runtime_executed'] is False,'INDEPENDENT_HELPER_METADATA_REVIEW')\nneed(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')\n\
-        receipt={'schema':'coh-account-controls-fresh-groups-live-source-admission-v1','passed':True,'source_revision':head,'source_sha256':pins,'host_controls_reexecuted':False,'historical_worker_commit_replayed_in_CI':False,'source_preflight_only':True,'runtime_executed':False,'accepted_observer_equivalence':False,'source_generation_admitted':False,'world_authority':False,'observer_compile_receipt_sha256':'478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034','receiver_build_receipt_sha256':'821ebfd2f84c60e8da23333476b9d1f8baadaf815c506933ee2b41572ef137d6','source_profile_proof_sha256':'d16e9260ef07a3d64e46014037e2433d96f9a2b94905a8b7fd7e1e4970d4aa22'}\n\
-        path=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json'\nwith path.open('xb') as stream:stream.write((json.dumps(receipt,indent=2,sort_keys=True)+'\\\
-        n').encode())\nprint(json.dumps({'source_admission_passed':True,'frozen_pins':len(pins),'host_controls_reexecuted':False,'runtime_executed':False}))\n\
-        PYOWNERREASONSOURCE\n"
+        \ and type(mock['methods']) is int and mock['methods']==5 and type(mock['cases']) is int and mock['cases']==73 and\
+        \ isinstance(mock['case_names'],list) and len(mock['case_names'])==len(set(mock['case_names']))==73 and all(type(k)\
+        \ is str for k in mock['case_names']) and all(type(mock[k]) is int and mock[k]==0 for k in ('errors','failures','skipped'))\
+        \ and mock['source_inputs_unchanged'] is True and mock['retained_elf_read_for_hash_only'] is True and mock['new_inventory_a13_metadata_controls_only']\
+        \ is True and mock['old49_or54_mock_suites_reexecuted'] is False and mock['observer_receipt_is_explicit_mock'] is\
+        \ True and mock['actual_new_map_receipt_admitted'] is False and mock['actual_destination_preflight_executed'] is False\
+        \ and mock['project_imports_compiler_loader_native_registry_services_or_network_executed'] is False and mock['source_generation_admitted']\
+        \ is False and mock['actor_publication'] is False and mock['world_authority'] is False,'NEW_MOCK_CONTROLS_ONLY')\n\
+        actual=json.loads((root/meta['source_admission_path']).read_bytes())\nneed(meta['schema']=='coh-inventory-initial-owner-scene-map-input-v1'\
+        \ and meta['passed'] is True and meta['actual_source_and_PE_admitted'] is True and meta['runtime_executed'] is False\
+        \ and all(meta[k] is False for k in ('actor_authority','actual_sleeping_state_established','source_generation_admitted','world_authority'))\
+        \ and actual['schema']=='coh-fresh-initial-owner-build-source-admission-v1' and actual['passed'] is True and actual['source_revision']==meta['source_revision']\
+        \ and actual['compile_only'] is True and actual['runtime_executed'] is False and len(actual['source_sha256'])==255\
+        \ and all(pins.get(k)==v for k,v in actual['source_sha256'].items()),'ACTUAL_NEW_MAP255_SUBSET')\nreview=json.loads((root/HELPER_REVIEW).read_bytes())\n\
+        need(review['schema']=='coh-f-inventory-initial-owner-receiver-actual-binding-review-v1' and review['passed'] is True\
+        \ and review['helper_sha256']==pins[HELPER] and review['binding_sha256']==pins[BINDING] and review['test_sha256']==pins[TEST]\
+        \ and review['current_receiver_dependencies_sha256']==binding['current_receiver_dependencies_sha256'] and review['evidence_artifact_sha256']==binding['evidence_artifact_sha256'],'INDEPENDENT_HELPER_REVIEW')\n\
+        need(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')\nreceipt={'schema':'coh-inventory-initial-owner-fresh-groups-live-source-admission-v1','passed':True,'source_revision':head,'source_sha256':pins,'host_controls_reexecuted':False,'historical_worker_commit_replayed_in_CI':False,'source_preflight_only':True,'runtime_executed':False,'accepted_observer_equivalence':False,'source_generation_admitted':False,'world_authority':False,'observer_compile_receipt_sha256':meta['receipt_sha256'],'receiver_build_receipt_sha256':'09320ce3c78ccbf9af46de9b09c7bd1f551375fad39dc4e2b44eb3e962779216','source_profile_proof_sha256':'550d600596e2939f73de076fac5fce859ce18248a0866e1b1d19795393dc03fb'}\n\
+        need(set(receipt)==GATE_KEYS,'EXACT_FOURTEEN_KEY_GATE')\npath=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json'\n\
+        with path.open('xb') as stream:stream.write((json.dumps(receipt,indent=2,sort_keys=True)+'\\n').encode())\nprint(json.dumps({'source_admission_passed':True,'frozen_pins':len(pins),'host_controls_reexecuted':False,'runtime_executed':False}))\n\
+        PYINVENTORYINITIALSOURCE\n"
     - name: Verify successful original fixture provenance and exact ZIP before extraction
       env:
         GH_TOKEN: ${{ github.token }}
@@ -501,7 +571,7 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       run: "python3 - <<'PY'\nimport hashlib,json,os,pathlib,shutil,stat,subprocess,zipfile\nos.umask(0o077);base=pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs'\n\
         specs=[\n  (int(os.environ['FRESH_OBSERVER_ARTIFACT_ID']),int(os.environ['FRESH_OBSERVER_RUN_ID']),os.environ['FRESH_OBSERVER_REVISION'],\n\
-        \   'fresh-groups-owner-reason-build-'+os.environ['FRESH_OBSERVER_REVISION'],int(os.environ['FRESH_OBSERVER_ZIP_BYTES']),\n\
+        \   'fresh-groups-initial-owner-build-'+os.environ['FRESH_OBSERVER_REVISION'],int(os.environ['FRESH_OBSERVER_ZIP_BYTES']),\n\
         \   os.environ['FRESH_OBSERVER_ZIP_SHA256'],'observer',64*1024**2),\n  (11772107531,38302653186,'46904ced3d7efb6218ecf92d9e44ad597d3146d0',\n\
         \   None,50269915,'9c4ba6faafb1a62cbdd0cda45b435de1ee8358b25dc65ef4842bfa2189b70d3b','donor',64*1024**2)]\ndef api(suffix):return\
         \ json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))\nfor ident,run,revision,name,size,digest,directory,limit\
@@ -512,7 +582,7 @@ jobs:
         \ remote['expired'] is False and remote['size_in_bytes']==size\n    assert remote['digest']=='sha256:'+digest and\
         \ (name is None or remote['name']==name)\n    assert origin['id']==run and origin['head_sha']==revision\n    assert\
         \ origin['repository_id']==origin['head_repository_id']==1368730125\n    archive=base/(str(ident)+'.zip')\n    if\
-        \ directory=='observer':\n        retained=pathlib.Path('native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-map-owner-build-39094808520.zip').absolute()\n\
+        \ directory=='observer':\n        retained=pathlib.Path('native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip').absolute()\n\
         \        assert retained.resolve()==retained and retained.is_file() and not retained.is_symlink() and retained.stat().st_size==size\n\
         \        with retained.open('rb') as source,archive.open('xb') as output:shutil.copyfileobj(source,output,1024**2)\n\
         \    else:\n        with archive.open('xb') as output:\n            subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=600)\n\
@@ -529,7 +599,7 @@ jobs:
         \    archive.unlink()\nPY\n"
     - name: Admit exact new observer source role and PE before runtime
       run: 'python3 native-android/engine/scenecatalog-server/admit_groups_capture.py --compile-directory "$RUNNER_TEMP/groups-inputs/observer/fresh-groups-compile"
-        --source-root . --compile-receipt-sha256 478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034
+        --source-root . --compile-receipt-sha256 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91
 
         '
     - name: Install x86 hosted runtime with PG18 and source-qualified classic Wine10
@@ -574,9 +644,8 @@ jobs:
         \ \\(PostgreSQL\\) 18\\.[0-9]+(?: \\([^\\r\\n]{1,120}\\))?'),\n       'runtime_started':False,'private_state_included':False}\n\
         assert value['machine']=='x86_64'\nwith pathlib.Path('out/groups-public/tooling.json').open('x') as output:json.dump(value,output,indent=2);output.write('\\\
         n')\nPY\n"
-    - name: Admit exact account-control receiver without rebuild or test replay
-      run: 'python3 native-android/combined-client/tools/admit_account_controls_initial_receiver.py --source-root . --output
-        "$RUNNER_TEMP/groups-inputs/initial-capture"
+    - name: Admit exact Inventory receiver without rebuild or historical test replay
+      run: 'python3 native-android/combined-client/tools/admit_initial_inventory_receiver.py --source-root . --output "$RUNNER_TEMP/groups-inputs/initial-capture"
 
         '
     - name: Prepare original control runtime files without SQL or any capture startup
@@ -601,7 +670,7 @@ jobs:
         )\nxvfb-run -a python3 native-android/engine/scenecatalog-server/capture_groups_transaction.py \\\n  --runtime \"\
         $CONTROL_RUNTIME\" --control-fixture out/groups-control/control-fixture.json \\\n  --db-donor-apk \"$RUNNER_TEMP/groups-inputs/donor/COH-Atlas-Gameplay-0.13.34.apk\"\
         \ \\\n  --compile-directory \"$RUNNER_TEMP/groups-inputs/observer/fresh-groups-compile\" \\\n  --compile-receipt-sha256\
-        \ 478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034 \\\n  --database-dump \"$RUNNER_TEMP/groups-inputs/fixture/fixture.pgdump\"\
+        \ 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91 \\\n  --database-dump \"$RUNNER_TEMP/groups-inputs/fixture/fixture.pgdump\"\
         \ --database-dump-sha256 \"$GROUPS_DUMP_SHA256\" \\\n  --account-file \"$RUNNER_TEMP/groups-inputs/fixture/account.txt\"\
         \ --wire-slot 0 \\\n  --native-capture \"$RUNNER_TEMP/groups-inputs/initial-capture/coh-capture-local-initial\" \\\
         \n  --native-build-receipt \"$RUNNER_TEMP/groups-inputs/initial-capture/build.json\" \\\n  --native-build-receipt-sha256\
@@ -624,7 +693,7 @@ jobs:
         \    '--native-build-receipt',str(inputs/'initial-capture/build.json'),\n    '--verification',str(verification/'verification.json'),\n\
         \    '--verifier-executable',str(verification/'build/verify-source-snapshot'),\n    '--capture-receipt-sha256',sha(result/'capture-receipt.json'),\n\
         \    '--run-identity-sha256',sha(result/'run-identity.json'),\n    '--fixture-receipt-sha256',os.environ['FIXTURE_RECEIPT_SHA256'],\n\
-        \    '--compile-receipt-sha256','478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034',\n    '--native-build-receipt-sha256',os.environ['INITIAL_BUILD_SHA256'],\n\
+        \    '--compile-receipt-sha256','28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91',\n    '--native-build-receipt-sha256',os.environ['INITIAL_BUILD_SHA256'],\n\
         \    '--verification-sha256',sha(verification/'verification.json'),\n    '--output','out/groups-public/source-snapshot.json']\n\
         # Capture the tool's fixed status too: no subprocess exception may\n# serialize a fully expanded private command into\
         \ the Actions log.\ndef owned(command,timeout):\n    child=None;passed=False\n    try:\n        child=subprocess.Popen(command,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)\n\
@@ -673,7 +742,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: fresh-owner-reason-groups-public-status-${{ github.sha }}
+        name: fresh-inventory-initial-owner-groups-public-status-${{ github.sha }}
         path: 'out/groups-public/summary.json
 
           out/groups-public/tooling.json

@@ -1,8 +1,19 @@
 # Primary native authority continuation — 2026-10-17
 
+## Actual new Map admitted; current Inventory scene prepared — 2026-10-18
+
+Latest actual remote before this publication is271b70d935eea41d7243d941fa9adfe04949d7fd/tree46757f77af5d48fc802562eefcd494bbb9e0117c. New Map run39099315295/job117592138887 succeeded at d9ad/tree9e97. Sole artifact12125997958 is6784966B SHA256cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b. One independent Linux strict admission passed:45safe CRC members/19artifacts/255 exact source pins/168 helper closure subset, actual PE7508480B SHA25673e6c724fcdd9b1caaa03bd675d38d075cc452575539cb99b19b6d1124113aba. Only3 LOCAL6 compiled source inputs changed. F2b9a5a2a1/E independent actual-data reviews clear. Raw Windows metadata and exactZIP are retained once; no duplicatePE. Compile-only scope does not establish actual sleeping state or world authority.
+
+Root changed only two metadata constants in the Inventory destination helper: actual compile receipt3796B SHA25628d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91. Finalhelper51871B/db784ba8... and binding29639B/b87fec7f... preserve all other AST and reuse the one5/73 mock run. F e1d725e7e independently verifies all46consumer/143actualevidence pins and canonical10files. Read-only Git processes are explicitly distinguished from destination/helper/loader/native execution, which did not occur during binding.
+
+New scene workflow107835B SHA256f0bbc00c9287e052763f9a9d9e71742b47900433d8e17c10052abe19ac1cd974 pins455nonself+dynamicself456, exact12 baseline supersessions and original17-step runtime/cleanup/public boundaries. F03b5acfb0 final review clear; root455raw/Git+8JSONdata predicates passed. Initial failed draft had a historical receipt pin wrongly replaced; source-gate exclusion corrects it, with failed generator/YAML/draft retained. A separate local whitelist omission for dict.items is also retained. Neither ran CI/Map/native code. This publication requests ONLY [fresh-groups-inventory-initial-owner]. Actual destination preflight/scene/runtime-generation results remain pending.
+
+Count correction:1073 is each before/after manifest's BYTE SIZE; six original input files are represented. Their before/after bytes and identities are unchanged. No full donor rehash is claimed on this Linux admission. New BaseDetail/default-bindings work and Windows same-MSSQL Map profile proposal remain independently unadmitted; C50/core stays unchanged for this immutable scene launch. No new APK or Thor acceptance.
+
+
 ## Reviewed source continuation while new Map compiles — 2026-10-18
 
-Actual remote independently fetched d9adf2b431a039357f8bfe878d3d0da991a81b19/tree9e97d61d2e809bd38eceeb20dd10a12c133102f8. Its new Map-only run39099315295/job117592138887 passed255-source gate, original role staging and1073-input precompile verification; compilation is active. Unrelated APK/old qualifications are skipped. No compiled artifact is yet admitted. This source-only publication requests no new job.
+Actual remote independently fetched d9adf2b431a039357f8bfe878d3d0da991a81b19/tree9e97d61d2e809bd38eceeb20dd10a12c133102f8. Its new Map-only run39099315295/job117592138887 passed255-source gate, original role staging and precompile verification of six original input files; compilation is active. Unrelated APK/old qualifications are skipped. No compiled artifact is yet admitted. This source-only publication requests no new job.
 
 C Salvage sourceff2cadb2ae4184c7351d4c68defa05858fea585f/proofdd32d2115945f369888c24436e78197a0b6e83f4 integrates12 new paths only. Three host modes each194490checks/25fixtures,72 sampled cuts/72 sampled input-byte mutations/28 bounded cancels; complete original356 Salvage/412 ID/1045 Details records and413 workshops/7 names/6 tabs compare. Six complete tables and54 whole original function spans are pinned. Complete Details47-field grammar is consumed, but only name identity is published; no Details gameplay/evaluator/geometry/material authority. All47 source pins match integrated raw bytes and Git; C50all50 unchanged. F53863a617 independent wholeoracle/proof review and B production/lifetime review clear; no review reruns.
 
@@ -99,7 +110,7 @@ Verified remote before this continuation: `2e0c775fd6278c9c66d34a3cefaf38a3c9ef9
 tree `8495a96f7541d8ea20f4a67478141770995c78ff`.
 
 The new Map-only build39094808520 at6e96fe22 passed all241 source pins,
-strict compile admission,19 artifact identities and original1073 before/after
+strict compile admission,19 artifact identities and six-input before/after manifests (1073B each)
 inputs. Its single retained ZIP is6781758B SHA256
 `b3a82a5265322685e035e3b86f44862a59d8fc561852288e3d3ea8bb8371eed6`;
 Map PE7507456B SHA256

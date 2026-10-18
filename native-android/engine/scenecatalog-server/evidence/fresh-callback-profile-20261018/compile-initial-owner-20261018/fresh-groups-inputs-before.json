@@ -1,0 +1,32 @@
+{
+  "donor_rebuilt": false,
+  "files": {
+    "COH-Atlas-Gameplay-0.13.31.apk": {
+      "bytes": 41203812,
+      "sha256": "e56df1bcf2210aff131ba80189b1b2dee760f27066e3ee26e09c5fea1654ad80"
+    },
+    "client-caches.zip": {
+      "bytes": 27071659,
+      "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+    },
+    "fxinfo-full.bin": {
+      "bytes": 58505496,
+      "sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70"
+    },
+    "map-startup-inputs.json": {
+      "bytes": 1202,
+      "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+    },
+    "server-animation-manifest.json": {
+      "bytes": 1005794,
+      "sha256": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f"
+    },
+    "server-animations.pigg": {
+      "bytes": 97084456,
+      "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+    }
+  },
+  "runtime_executed": false,
+  "schema": "coh-fresh-groups-original-inputs-v1",
+  "source_revision": "d9adf2b431a039357f8bfe878d3d0da991a81b19"
+}

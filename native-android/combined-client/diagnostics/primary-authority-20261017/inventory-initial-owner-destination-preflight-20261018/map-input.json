@@ -1,0 +1,77 @@
+{
+  "actor_authority": false,
+  "actual_sleeping_state_established": false,
+  "actual_source_and_PE_admitted": true,
+  "archive_bytes": 6784966,
+  "archive_path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip",
+  "archive_sha256": "cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b",
+  "artifact_id": 12125997958,
+  "artifact_name": "fresh-groups-initial-owner-build-d9adf2b431a039357f8bfe878d3d0da991a81b19",
+  "canonical_directory": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/",
+  "independent_review_files": {
+    "native-android/combined-client/diagnostics/continuation-f-20261017/initial-owner-map-build-39099315295-review/README.md": {
+      "bytes": 1025,
+      "sha256": "c39b30b90a9917d3fd563cc80f8514b9a4fc399ad5d5c2afd75d0d246e763d4d"
+    },
+    "native-android/combined-client/diagnostics/continuation-f-20261017/initial-owner-map-build-39099315295-review/review.json": {
+      "bytes": 6185,
+      "sha256": "5a9349dc77fb6c64cb6f8214af1d593146332209251a13cd47e807c3e941eb76"
+    }
+  },
+  "job_id": 117592138887,
+  "passed": true,
+  "receipt_bytes": 3796,
+  "receipt_path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/compile-only-receipt.json",
+  "receipt_sha256": "28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91",
+  "retained_files": {
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/README.md": {
+      "bytes": 1357,
+      "sha256": "c9b6d7b48a375dfa6ea67859acf7b09bddcbf59328aca9c8b53c84e0115772a7"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/admission.json": {
+      "bytes": 34188,
+      "sha256": "2569696ad525cdf2e5eefc5b896152795a21b06145e0251aecc4aba694df9b06"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/api.json": {
+      "bytes": 4326,
+      "sha256": "96d2226eb55da2e2fe639215d55c9d973d05725f7756215ba8c9cf7e39a2de3a"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/archive-members.json": {
+      "bytes": 11616,
+      "sha256": "907ee62fdb3babd6f57659a1713e301b28f278dac3482f94799328c0c3f59674"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/compile-only-receipt.json": {
+      "bytes": 3796,
+      "sha256": "28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-inputs-after.json": {
+      "bytes": 1073,
+      "sha256": "a92c90e54a875ff5d064931402f9b2af2fcc9ecce824a6c172dfda8403e52463"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-inputs-before.json": {
+      "bytes": 1073,
+      "sha256": "a92c90e54a875ff5d064931402f9b2af2fcc9ecce824a6c172dfda8403e52463"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-source-admission.json": {
+      "bytes": 34712,
+      "sha256": "f03d6007d20518cb5241b774ce55ba4bc1ac2ded2953471e9b81a949227ce7c0"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip": {
+      "bytes": 6784966,
+      "sha256": "cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b"
+    },
+    "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/strict-admission.stdout.json": {
+      "bytes": 282,
+      "sha256": "ef15cc380a9afe2224719a6f6b05c38d0e61df6b16a3b8acc034adcf2bdc556e"
+    }
+  },
+  "run_id": 39099315295,
+  "runtime_executed": false,
+  "schema": "coh-inventory-initial-owner-scene-map-input-v1",
+  "source_admission_path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-source-admission.json",
+  "source_generation_admitted": false,
+  "source_revision": "d9adf2b431a039357f8bfe878d3d0da991a81b19",
+  "source_tree": "9e97d61d2e809bd38eceeb20dd10a12c133102f8",
+  "strict_admission_path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/admission.json",
+  "world_authority": false
+}

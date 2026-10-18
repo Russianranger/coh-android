@@ -1,0 +1,5 @@
+Independent data-only review of actual Map-only build39099315295. The sole archive and all ten canonical evidence files remain in Worker A's compile-initial-owner-20261018 evidence directory; this review duplicates no ZIP or PE.
+
+All255 actual source-gate pins match published d9ad Git, review-time f948 Git, and raw checkout bytes. The168-file review-time helper closure is a subset of that gate; this is not a claim that every member executed. The six qualified profile inputs match the new role, with exactly API, emitter, and stage changed from the prior Map. The19 receipt artifacts, original1073-byte before/after input records, and A's single strict admission are bound as retained data.
+
+The new Win32 OptDebug PE is compiled and the new source role is admitted. Actual sleeping state, boundary acceptance, envelope creation, runtime capture, source generation, and actor/world/ACK authority remain unestablished. No project helper, test, compiler, native binary, or runtime was executed for this independent review.

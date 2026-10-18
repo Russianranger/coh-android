@@ -1,0 +1,65 @@
+{
+  "actual_CI_workflow_started_by_these_checks": false,
+  "compiler_loader_native_services_executed": false,
+  "events": [
+    {
+      "cause": "Global receipt-hash replacement also rewrote the newly emitted source gate historical receipt pin. Corrected by excluding source gate index1 from runtime substitutions. No CI started.",
+      "code": "CURRENT_RAW_AND_GIT:compile-owner-predicates-20261018/compile-only-receipt.json",
+      "generator_sha256": "99bab732d7c7dcbac0c5814cc647215ffd284833114e2ff35f6395a3a8a62b5d",
+      "result": "refused",
+      "stage": "first-source-data-check",
+      "standalone_raw_stderr_retained": false,
+      "tool_output_observed": true,
+      "workflow_sha256": "cf13a97763837d41010a116c5cfa83704856c9aff75c7d23ca0a769a7086217b"
+    },
+    {
+      "all455_current_raw_Git_pins_passed": true,
+      "cause": "Coordinator pure-data evaluator whitelist omitted dict.items; no workflow or production code change needed.",
+      "raw_stderr": "evaluator-whitelist.stderr.txt",
+      "result": "refused-before-JSON-predicates",
+      "stage": "v2-data-evaluator",
+      "workflow_sha256": "f0bbc00c9287e052763f9a9d9e71742b47900433d8e17c10052abe19ac1cd974"
+    },
+    {
+      "all455_current_raw_Git_pins_passed": true,
+      "data_proof": "../data-guards.json",
+      "pure_JSON_Git_guards_passed": 8,
+      "result": "passed",
+      "stage": "final-data-evaluation"
+    }
+  ],
+  "files": {
+    "evaluator-whitelist.stderr.txt": {
+      "bytes": 659,
+      "sha256": "1a41f69dcfeda64148cd7b2610cd9cc6a0bdd99b5f268c7dee77667ac63f535a"
+    },
+    "first-data-guard-evaluator.py": {
+      "bytes": 5254,
+      "sha256": "da9014632cf9e4807b3b4fa15d5a9c86267832ceeff74bec2855d34685d73741"
+    },
+    "first-draft.json": {
+      "bytes": 5650,
+      "sha256": "3329fe5a7de06cb9c6c5d2dca2e612bba2fc0058ed9eba65f065c54c85c1e5a0"
+    },
+    "first-generator.py": {
+      "bytes": 30562,
+      "sha256": "99bab732d7c7dcbac0c5814cc647215ffd284833114e2ff35f6395a3a8a62b5d"
+    },
+    "first-render.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "first-render.stdout.json": {
+      "bytes": 5650,
+      "sha256": "3329fe5a7de06cb9c6c5d2dca2e612bba2fc0058ed9eba65f065c54c85c1e5a0"
+    },
+    "first-workflow.yml": {
+      "bytes": 107835,
+      "sha256": "cf13a97763837d41010a116c5cfa83704856c9aff75c7d23ca0a769a7086217b"
+    }
+  },
+  "hosted_environment_or_runtime_guards_executed": false,
+  "project_helpers_imported": false,
+  "qualifiers_or_mocks_reexecuted": false,
+  "schema": "coh-inventory-initial-owner-scene-workflow-development-history-v1"
+}
