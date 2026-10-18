@@ -1,0 +1,16 @@
+[
+  {
+    "id": 12120745825,
+    "name": "db-threadname-selected-play-cap1024-1ca1d1db3f33891062f570ea19f9c036715e823c",
+    "size_in_bytes": 7336,
+    "digest": "sha256:d21069bccb2831d28cfee7f1a9e2bc52dfa21bf1a579a1d1d84998247f1068a4",
+    "expired": false,
+    "workflow_run": {
+      "id": 39085257785,
+      "repository_id": 1368730125,
+      "head_repository_id": 1368730125,
+      "head_branch": "native-android",
+      "head_sha": "1ca1d1db3f33891062f570ea19f9c036715e823c"
+    }
+  }
+]

@@ -1,0 +1,133 @@
+{
+  "accepted_tcp_adapter_unchanged": {
+    "native-android/engine/auth-interop/deployment/windows/winsock_compat.c": {
+      "bytes": 5866,
+      "sha256": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad"
+    }
+  },
+  "independent_review": {
+    "reviewer": "Worker F",
+    "reviewer_executed_tests_or_runtime": false,
+    "source_read_clear": true
+  },
+  "native_shell_configurations": {
+    "asan_ubsan": {
+      "checks": 65,
+      "leak_sanitizer_disabled_for_traced_executor": true,
+      "passed": true
+    },
+    "release": {
+      "checks": 65,
+      "passed": true
+    }
+  },
+  "new_methods_passed": 2,
+  "passed": true,
+  "remaining_inputs": [
+    "Exact admitted x64 zlib source/static-library closure before future Windows DB probe link",
+    "Independent actual Windows header/API/link qualification",
+    "Actual fresh Auth grant before future provisional DB-list runtime"
+  ],
+  "schema": "coh-private-windows-db-udp-source-qualification-v1",
+  "scope": {
+    "accepted_auth_only_suite_replayed": false,
+    "checksum_reference_admitted": false,
+    "deterministic_syscall_shell_only": true,
+    "map_or_current_world_authority": false,
+    "normal_version_admitted": false,
+    "ordinary_udp_tu_unmodified": true,
+    "real_auth_grant_verified": false,
+    "real_db_login_verified": false,
+    "real_matching_character_list_verified": false,
+    "real_network_execution": false,
+    "real_windows_headers_or_api_qualified": false,
+    "server_binary_or_profile_changed": false
+  },
+  "source_commit": "67d6a66c7ec2bbdc8b5d4d3be378eb2a5b4b423a",
+  "source_files": {
+    "native-android/engine/auth-interop/deployment/DB-UDP-WINDOWS-ADAPTER.md": {
+      "bytes": 2312,
+      "sha256": "a0d5482ac2a621ccfb3860511fa21355b9f7969403ad8f5c0ec40d77931ae9ae"
+    },
+    "native-android/engine/auth-interop/deployment/test_db_udp_winsock.py": {
+      "bytes": 1958,
+      "sha256": "d4a7eefee1d3e7d45a0ef4cb0b03fb18c22cc719d2f95f77be2da7ab4c3d9f27"
+    },
+    "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.c": {
+      "bytes": 6407,
+      "sha256": "abfede788fe3f7c566a028178e05caeb21a2db24fb7c233b90bd64fc5fa0e8aa"
+    },
+    "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h": {
+      "bytes": 2592,
+      "sha256": "ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb"
+    },
+    "native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock.c": {
+      "bytes": 8904,
+      "sha256": "966c9026cd54281a0a597670c389634fa276a817176b2fc552a8954ff0b78174"
+    },
+    "native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock_api.h": {
+      "bytes": 1648,
+      "sha256": "a1b19b67b9b7ab96bb800c368d6c5cd064d1466f27e4c6666c299ae1fa1bc15c"
+    },
+    "native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c": {
+      "bytes": 177,
+      "sha256": "14b125f2649babdc9a310bf757676f551279214d4a7e4e65869129d10ad9d651"
+    }
+  },
+  "test_command": "python -m unittest -v test_db_udp_winsock.py",
+  "test_seconds": 0.6,
+  "unchanged_ordinary_udp_private_wrapper_host_compile_project_closure": {
+    "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h": {
+      "bytes": 75,
+      "sha256": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+    },
+    "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h": {
+      "bytes": 69,
+      "sha256": "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402"
+    },
+    "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h": {
+      "bytes": 75,
+      "sha256": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+    },
+    "native-android/engine/auth-interop/deployment/windows/compat/unistd.h": {
+      "bytes": 72,
+      "sha256": "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646"
+    },
+    "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h": {
+      "bytes": 2592,
+      "sha256": "ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb"
+    },
+    "native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock_api.h": {
+      "bytes": 1648,
+      "sha256": "a1b19b67b9b7ab96bb800c368d6c5cd064d1466f27e4c6666c299ae1fa1bc15c"
+    },
+    "native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c": {
+      "bytes": 177,
+      "sha256": "14b125f2649babdc9a310bf757676f551279214d4a7e4e65869129d10ad9d651"
+    },
+    "native-android/engine/coh_contracts.h": {
+      "bytes": 1044,
+      "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+    },
+    "native-android/engine/network/coh_net.h": {
+      "bytes": 7329,
+      "sha256": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+    },
+    "native-android/engine/network/coh_net_udp.c": {
+      "bytes": 11496,
+      "sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d"
+    },
+    "native-android/engine/network/coh_net_udp.h": {
+      "bytes": 3771,
+      "sha256": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4"
+    },
+    "native-android/include/coh_native_core.h": {
+      "bytes": 2613,
+      "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+    },
+    "native-android/protocol/coh_protocol.h": {
+      "bytes": 1923,
+      "sha256": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+    }
+  }
+}

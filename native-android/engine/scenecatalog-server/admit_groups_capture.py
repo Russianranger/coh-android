@@ -22,6 +22,11 @@ def inspect(source,root,receipt_sha256):
  source=d.path(source);root=d.path(root);d.sha(receipt_sha256)
  d.require(d.hash_file(source/'compile-only-receipt.json',8*1024**2)[1]==receipt_sha256,'COMPILE_RECEIPT_PIN')
  receipt=d.json_object(d.read(source/'compile-only-receipt.json',8*1024**2))
+ # Exactly one separately identified fresh diagnostic role is admitted by its
+ # own validator. The independently pinned old role retains its unchanged path.
+ if receipt.get('schema')=='coh-fresh-groups-observer-compile-v1':
+  from fresh_callback_observer import admit_compile as fresh
+  return fresh.inspect(source,root,receipt_sha256)
  d.require(receipt.get('schema')=='coh-groups-transaction-compile-v1' and receipt.get('passed') is True and
            receipt.get('source_git_status_porcelain')==[] and receipt.get('build_role')==stage.ROLE and
            receipt.get('compile_only') is True and receipt.get('runtime_executed') is False and

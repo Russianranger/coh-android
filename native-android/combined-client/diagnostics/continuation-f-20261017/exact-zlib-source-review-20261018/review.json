@@ -1,0 +1,72 @@
+{
+  "evidence_commit": "f90b9ae5e2c0bc809ff4fb59034821834cf29493",
+  "exact_eight_evidence_files_equal_Git_and_current_worker": {
+    "HANDOFF.md": {
+      "bytes": 3582,
+      "sha256": "5d5a6ae187cced180838dd59be7d5c3fc5f53abc394e24cebdff625310b1438e"
+    },
+    "Zlib.cmake": {
+      "bytes": 281,
+      "sha256": "dbabf749271e73e4bb5eb62c5d914ace1259520f6e8b52bbcf2600371b5d50be"
+    },
+    "admission.json": {
+      "bytes": 51645,
+      "sha256": "d104eafafe30e26d63072adef5a454e86d83d7280513c1add3d8478b1feebfd6"
+    },
+    "admit.py": {
+      "bytes": 6296,
+      "sha256": "acb28d1cbf5f7eb8d1484face6ea3b18925679eda6c72344a1e134c2b00c934b"
+    },
+    "chromium-zlib-cmake.patch": {
+      "bytes": 2337,
+      "sha256": "55273bf390fd1093718d28f1141979fa97d23d1f071a1d90653f801cd425a107"
+    },
+    "commit.json": {
+      "bytes": 1645,
+      "sha256": "f27da76043e1ffc76c0da5f07d36adc3b34b659cf98ae092ae897ef1d9317eda"
+    },
+    "source.tar.gz": {
+      "bytes": 306531,
+      "sha256": "2f776d3abe636e302a98216fc81410622feb1be958315223d0d3442496365938"
+    },
+    "tree.json": {
+      "bytes": 6025,
+      "sha256": "2b03a4e4d7edd236b5e1185b5a76013af77135355cd4342e8f347a5cbe7bb527"
+    }
+  },
+  "independent_data_only_reconstruction": {
+    "all_file_SHA256_Git_blob_SHA1_and_executable_modes_verified": true,
+    "already_materialized_source_exact_inventory_bytes_modes_verified": true,
+    "existing_recipe_patch_exact_before_after_pins_and_current_project_bytes": true,
+    "existing_x64_recipe_translation_units_present": 21,
+    "headers": 32,
+    "raw_three_primary_input_hashes_and_bytes_verified": true,
+    "recursive_Git_trees_reconstructed": 14,
+    "regular_files": 111,
+    "root_equals_retained_primary_commit_tree_and_complete_primary_root_entries": true,
+    "root_tree": "62224db151a2af4f2c66110d634ef8dc3607a155",
+    "source_bytes": 1216944,
+    "tar_members_unique_canonical_and_only_regular_or_directory": 124
+  },
+  "limits": {
+    "Git_commit_object_reconstructed_from_raw_commit_body": false,
+    "Windows_SDK_compiler_intrinsics_flags_objects_link_inputs_qualified": false,
+    "compiler_or_tests_executed": false,
+    "old_source_trees_or_profiles_modified": false,
+    "patch_applied": false,
+    "primary_Gitiles_commit_JSON_bytes_pinned_and_tree_crosschecked": true,
+    "primary_network_request_or_TLS_origin_independently_repeated_by_F": false,
+    "runtime_Auth_DB_Map_world_authority": false,
+    "static_x64_library_built": false
+  },
+  "passed": true,
+  "raw_archive_not_duplicated_in_F_paths": true,
+  "schema": "coh-f-exact-zlib-source-review-v1",
+  "single_recovery_copy_reused_no_download": true,
+  "source_commit": "cf333892c34ab6dbaed37c38a1d5aa6da7b2f99d",
+  "verifier_static_review": {
+    "bounded_pinned_inputs_duplicate_JSON_refusal_and_raw_recheck": true,
+    "no_network_extract_patch_apply_C_or_binary_execution_path": true,
+    "tree_inventory_reconstruction_and_optional_materialized_bytes_modes_closed": true
+  }
+}

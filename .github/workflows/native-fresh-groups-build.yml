@@ -1,0 +1,226 @@
+name: Build separate callback-sealed original GROUPS diagnostic observer
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-fresh-groups-build.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-fresh-groups-build-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  fresh-original-observer-compile:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 45
+    steps:
+    - name: Preserve exact original source bytes
+      run: git config --global core.autocrlf false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Admit frozen independently reviewed profile source proof without replay
+      shell: bash
+      run: "python - <<'PYPROOF'\nimport hashlib,json,os,pathlib,subprocess\nroot=pathlib.Path.cwd().resolve()\ndef need(ok,code):\n\
+        \    if not ok:raise ValueError(code)\ndef raw(path,maximum=8*1024**2):\n    need(not path.is_symlink() and path.is_file() and\
+        \ path.stat().st_size<=maximum,'REGULAR_BOUNDED_SOURCE')\n    return path.read_bytes()\ndef fixed(name,digest):\n    data=raw(root/name);need(hashlib.sha256(data).hexdigest()==digest,'FIXED_REVIEWED_EVIDENCE');return\
+        \ json.loads(data)\nneed(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')\nneed(os.name=='nt' and os.environ['RUNNER_ENVIRONMENT']=='github-hosted','HOSTED_WINDOWS_ONLY')\n\
+        need(os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android','OWNED_REPOSITORY_BRANCH')\n\
+        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip();need(head==os.environ['GITHUB_SHA'],'EXACT_CHECKOUT')\n\
+        q=fixed('native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/source-qualification.json','5c22a7d426fa38228d87355c439c545ef6506385695a644b38c9bfb792d5ffb4')\n\
+        f=fixed('native-android/combined-client/diagnostics/continuation-f-20261017/fresh-callback-profile-source-review-20261018/review.json','e8a31c85135dfe1bdc1f79527f2ee603f40d847c8ba82e41b8716fca5c90b37b')\n\
+        s=fixed('native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/stager-runtime-followup.json','a4df0e7034a8f8b88f1b1ceafcc7c718afed66c80febd1f741eb2d02a22fed70')\n\
+        f2=fixed('native-android/combined-client/diagnostics/continuation-f-20261017/fresh-callback-profile-source-review-20261018/followup/review.json','a7f6c2dfaaf3e5b7b5e343f2ded01f153df83741551423213c0ff1e7ad8ee92e')\n\
+        need(q['schema']=='coh-fresh-callback-source-qualification-v1' and q['passed'] is True and f['passed'] is True,'QUALIFIED_SOURCE_SCOPE')\n\
+        need(len(q['source_sha256'])==34 and q['source_sha256']==f['recorded_source_sha256'] and q['python_test_methods']==26,'REVIEWED_SOURCE_SET')\n\
+        need(set(q['modes'])=={'release','address','undefined'},'THREE_HOST_MODES')\nfor name,count in [('release',1425),('address',1426),('undefined',1426)]:\n\
+        \    item=q['modes'][name];need(item['controls']['passed'] is True and item['controls']['checks']==count and item['controls']['scenarios']==36\
+        \ and item['sync_initialization_refusal'] is True,'HOST_CONTROLS')\nfor name in ('runtime_executed','source_generation_admitted','world_authority','original_foldercache_executed','actual_windows_pe_compiled','leak_sanitizer_qualified'):\n\
+        \    need(q[name] is False,'HOST_ONLY_SCOPE')\nneed(q['leak_sanitizer_unavailable_reason']=='HOST_PROC_TASK_ACCESS','EXPLICIT_LSAN_LIMIT')\n\
+        pins=dict(f['additional_review_time_current_Git_closure']['sha256']);need(len(pins)==162,'REVIEW_TIME_HELPER_SET')\nfor group\
+        \ in (q['source_sha256'],{'tools/android/interactive/map_startup_inputs.py': '4569c16039b12abce7613c9805eaec21dbaa70d3c3f1f1ccfef0b2d4731b7b85',\
+        \ 'android/guest/atlas_beacon_package.py': '37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981', 'android/guest/atlas_world_assets.py':\
+        \ 'b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3', 'android/guest/character_avatar_assets.py': 'e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1',\
+        \ 'android/guest/character_creation_diagnostic.py': '540c375996164a54e47eeecc5dff141f00772eb790a3131617d8d850a07d21b0', 'android/guest/character_reopen_diagnostic.py':\
+        \ '97a9e2e84b7f53546d38437a651d0adfe743edb1bbfcb69651c48263b212f7b5', 'android/guest/character_server_data_cache.py': '1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3',\
+        \ 'android/guest/character_session_budget.py': '78fc86437be60fa32930f771256e9f59eedb52844aa8699f74e5d0450b279b79', 'android/guest/character_zoning.py':\
+        \ '716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f', 'android/guest/character_zoning_scheduler.py': 'dc76a478d6fefe83a9c298079bd9a199208fbebd28f189478ebe4a13143ab254',\
+        \ 'android/guest/client_animation_package.py': 'c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64', 'android/guest/client_attempt_retry.py':\
+        \ 'afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380', 'android/guest/client_gpu_profile.py': 'c6039fbbf339783faa9a7cdb967d579bae2356e452878af322fcca79a1babd0e',\
+        \ 'android/guest/client_interactive_diagnostic.py': 'f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c', 'android/guest/client_login_diagnostic.py':\
+        \ '7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf', 'android/guest/client_startup_diagnostic.py': '8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53',\
+        \ 'android/guest/client_visual_assets.py': 'b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb', 'android/guest/dbserver_diagnostic.py':\
+        \ '6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2', 'android/guest/diagnostic.py': '748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf',\
+        \ 'android/guest/game_device_diagnostic.py': '1a4441f0b7c0e7d4954ac8e486ce148bae0f49035dd8597dff5c900844886d60', 'android/guest/game_diagnostic.py':\
+        \ 'f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737', 'android/guest/game_evidence.py': '12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d',\
+        \ 'android/guest/game_hang_evidence.py': 'ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef', 'android/guest/game_map_progress.py':\
+        \ 'b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec', 'android/guest/kings_row_beacon_package.py': 'a3e2120f5ffb5f307b41ec2670ca4926d1b0cc6df896db2b0db2dbf7dc67c8b5',\
+        \ 'android/guest/local_character_server.py': '82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180', 'android/guest/local_login_server.py':\
+        \ '03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de', 'android/guest/native_character_events.py': '2f9813e29530497e6834b21cfbcfc5fd9dd33fc8c64f49502eafab99f25b65b6',\
+        \ 'android/guest/native_map_startup_contract.py': '525cd51cd35be0f1c30ef64b8a268124d1128b333832dde15e9dc8a42706944d', 'android/guest/native_monorail_contract.py':\
+        \ 'd6a879cd5c55059c239ab535af0df3e8369de5b60df6356385fae6df03a72df0', 'android/guest/native_monorail_events.py': 'c40c96c4701582220dfee722c5315b9e565ace165278baedcc140ae3000572fd',\
+        \ 'android/guest/native_responsiveness_contract.py': '7523e2a32f9db8cbe308c8d8bceaa59bd490168cf6886791598810ef86910f85', 'android/guest/native_training_save.py':\
+        \ 'a1bc4641eb96fed662274d742cea8ad51f47ab44fc0a35dec155da8a0e486fdc', 'android/guest/presentation_diagnostic.py': '751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df',\
+        \ 'android/guest/server_animation_package.py': 'a8911500947ce99714b38a1fec913159fc42c0e10398b6ccdcb9161e9cfa4d4a', 'android/guest/server_cache_package.py':\
+        \ '8a923225b1f9cbd7fe0ac13a700be6a1c372235cf7703db9b87cf80268b53e54', 'android/guest/server_fx_catalog.py': 'e0f347e156548b6a78e4f5cb6beba48d053e244e508cfb5d105c316e0fa7148a',\
+        \ 'android/guest/server_message_cache_format.py': 'e70fa5aa8c591c866f0c72f3840495cd93024031936f92944c813a9901d3d6ec', 'android/guest/stationary_contact_evidence.py':\
+        \ '40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d', 'android/guest/task_gate_evidence.py': '2b0f8f324401c01cbb1954616d288ff3fc6f10bc8ab8c444ae123e2a2763ef04',\
+        \ 'android/guest/texture_header_index.py': '5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5', 'android/guest/zone_asset_package.py':\
+        \ 'eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6'}):\n    for name,digest in group.items():\n        need(name\
+        \ not in pins or pins[name]==digest,'SOURCE_PIN_CONFLICT');pins[name]=digest\nneed(s['schema']=='coh-fresh-callback-stager-runtime-followup-v1'\
+        \ and s['passed'] is True,'QUALIFIED_STAGER_RUNTIME_FOLLOWUP')\nneed(s['base_qualification']=={'path':'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/source-qualification.json','bytes':8074,'sha256':'5c22a7d426fa38228d87355c439c545ef6506385695a644b38c9bfb792d5ffb4'},'EXACT_HISTORICAL_CORE_PROOF')\n\
+        need(s['python_test_methods']==43 and s['test_groups']=={'runtime_wiring':9,'stager':7,'legacy_compile':8,'public_summary':8,'source_admission':11}\
+        \ and s['matching_and_wrong_inherited_original_folder_digest_controls'] is True,'FOCUSED_FOLLOWUP_CONTROLS')\nneed(s['reused_three_mode_c_core_qualification']\
+        \ is True and s['c_qualification_replayed'] is False and s['unchanged_base_source_pins_verified']==32,'CORE_NOT_REPLAYED')\n\
+        for key in ('actual_windows_pe_compiled','runtime_executed','source_generation_admitted','world_authority'):need(s[key] is False,'FOLLOWUP_SOURCE_ONLY')\n\
+        need(s['runtime_wiring_boundaries_mocked'] is True and len(s['source_sha256'])==17,'FOLLOWUP_QUALIFIED_SCOPE')\nprefix='native-android/engine/scenecatalog-server/'\n\
+        base_changed={prefix+'fresh_callback_observer/stage.py',prefix+'fresh_callback_observer/test_stage.py'}\nneed(set(s['superseded_base_source_pins'])==base_changed,'ONLY_STAGER_CORE_PIN_SUPERSESSION')\n\
+        for name,pin in s['superseded_base_source_pins'].items():\n    need(pin=={'previous_sha256':q['source_sha256'][name],'sha256':s['source_sha256'][name]},'EXACT_PREVIOUS_AND_CURRENT_STAGER')\n\
+        for name,digest in q['source_sha256'].items():\n    if name not in base_changed:need(name not in s['source_sha256'] or s['source_sha256'][name]==digest,'UNCHANGED_C_CORE_PROOF')\n\
+        changed={name for name,digest in s['source_sha256'].items() if name in pins and pins[name]!=digest}\nneed(changed==base_changed|{prefix+x\
+        \ for x in ('admit_groups_capture.py','admit_source_snapshot.py','capture_groups_transaction.py','retain_fresh_initial_observation.py','retain_fresh_source_snapshot.py','summarize_groups_capture.py')},'EXACT_REVIEWED_HELPER_SUPERSESSION')\n\
+        pins.update(s['source_sha256'])\nneed(f2['schema']=='coh-f-fresh-callback-stager-runtime-review-v1' and f2['passed'] is True\
+        \ and f2['followup_source_sha256']==s['source_sha256'],'INDEPENDENT_FOLLOWUP_BINDING')\neffective=f2['merged_effective_current_gate'];need(effective['baseline_union_file_count']==170\
+        \ and effective['file_count']==173 and len(effective['source_sha256'])==173,'EXACT_EFFECTIVE_REVIEWED_CLOSURE')\nneed(all(pins.get(name)==digest\
+        \ for name,digest in effective['source_sha256'].items()),'INDEPENDENT_CURRENT_HELPER_PINS')\nworkflow='.github/workflows/native-fresh-groups-build.yml';pins[workflow]=hashlib.sha256(raw(root/workflow)).hexdigest()\n\
+        tree=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)])\nblobs={}\nfor row in tree.split(b'\\0'):\n\
+        \    if not row:continue\n    meta,name=row.split(b'\\t',1);mode,kind,digest=meta.split();need(kind==b'blob' and mode in (b'100644',b'100755'),'TRACKED_SOURCE_MODE');blobs[name.decode()]=digest.decode()\n\
+        need(set(blobs)==set(pins),'ALL_SOURCES_COMMITTED')\nfor name,digest in pins.items():\n    rel=pathlib.PurePosixPath(name);need(not\
+        \ rel.is_absolute() and all(x not in ('','.','..') for x in rel.parts) and chr(92) not in name and ':' not in name,'RELATIVE_SOURCE_NAME')\n\
+        \    path=root/name;need(path.resolve()==path,'CANONICAL_SOURCE');data=raw(path)\n    need(hashlib.sha256(data).hexdigest()==digest\
+        \ and hashlib.sha1(b'blob '+str(len(data)).encode()+b'\\0'+data).hexdigest()==blobs[name],'EXACT_QUALIFIED_COMMITTED_BYTES')\n\
+        need(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')\nresult={'schema':'coh-fresh-groups-build-source-admission-v1','passed':True,'source_revision':head,'historical_core_source_reference':'55f4dd46061bc378f72921ab83b51c79883a1b6e','focused_helper_source_reference':'419b61c1188acef7b208066d13b8eca42c0887d1','historical_helper_pins_superseded':sorted(changed),'source_sha256':pins,'host_controls_reexecuted':False,'historical_worker_commit_replayed_in_CI':False,'compile_only':True,'runtime_executed':False,'accepted_observer_equivalence':False,'source_generation_admitted':False,'world_authority':False}\n\
+        output=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json'\nwith output.open('xb') as stream:stream.write((json.dumps(result,indent=2,sort_keys=True)+'\\\
+        n').encode())\nprint(json.dumps({'passed':True,'frozen_source_pins':len(pins),'host_controls_reexecuted':False,'runtime_executed':False}))\n\
+        PYPROOF\n"
+      id: source_admission
+    - name: Independently admit exact original inputs and stage the separate callback-sealed role
+      run: 'python tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+
+        if ($LASTEXITCODE -ne 0) { throw ''Exact published input admission failed'' }
+
+        python tools/prepare_map_startup_source.py --output C:/fgsrc --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest
+        out/native-inputs/server-animation-manifest.json
+
+        if ($LASTEXITCODE -ne 0) { throw ''Private original source staging failed'' }
+
+        python native-android/engine/scenecatalog-server/stage_groups_capture.py --source-root . --already-staged C:/fgsrc
+
+        if ($LASTEXITCODE -ne 0) { throw ''New transaction sink source staging failed'' }
+
+        python native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py --source-root . --already-staged C:/fgsrc
+
+        if ($LASTEXITCODE -ne 0) { throw ''Fresh callback-sealed source staging failed'' }
+
+        Copy-Item -LiteralPath out/native-inputs/map-startup-inputs.json -Destination C:/fgsrc/map-startup-inputs.json
+
+        python native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py --verify --source-root . --already-staged
+        C:/fgsrc
+
+        if ($LASTEXITCODE -ne 0) { throw ''Full inherited and fresh staged source verification failed'' }
+
+        '
+    - name: Reverify whole original input files before compiler work
+      shell: bash
+      run: "python - <<'PYINPUTS'\nimport hashlib,importlib.util,json,os,pathlib,subprocess,sys\nroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\n\
+        if head!=os.environ['GITHUB_SHA']:raise ValueError('INPUT_CHECKOUT_CHANGED')\nadmission=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json').read_bytes())\n\
+        for name,digest in admission['source_sha256'].items():\n    path=root/name\n    if path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest()!=digest:raise\
+        \ ValueError('SOURCE_CHANGED_AROUND_BUILD')\npath=root/'tools/android/interactive/map_startup_inputs.py'\nspec=importlib.util.spec_from_file_location('fresh_original_map_inputs',path);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)\n\
+        sys.path.insert(0,str(root/'native-android/engine/scenecatalog-qualification'))\nfrom record_export_compile import validate_inputs\n\
+        folder=root/'out/native-inputs';receipt=validate_inputs(json.loads((folder/'map-startup-inputs.json').read_bytes()),module)\n\
+        module.checked(folder/'COH-Atlas-Gameplay-0.13.31.apk',module.DONOR)\nfor name,pin in receipt['files'].items():module.checked(folder/name,pin)\n\
+        files={name:module.pin(folder/name) for name in ('COH-Atlas-Gameplay-0.13.31.apk',*receipt['files'],'map-startup-inputs.json')}\n\
+        result={'schema':'coh-fresh-groups-original-inputs-v1','source_revision':head,'files':files,'donor_rebuilt':False,'runtime_executed':False}\n\
+        report=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-inputs-before.json'\n\noutput=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-inputs-before.json'\n\
+        with output.open('xb') as stream:stream.write((json.dumps(result,indent=2,sort_keys=True)+'\\n').encode())\nprint(json.dumps({'passed':True,'whole_input_files_reverified':len(files),'runtime_executed':False}))\n\
+        PYINPUTS\n"
+    - name: Build only the changed nonshipping MapServer observer
+      working-directory: C:/fgsrc
+      run: 'New-Item -ItemType Directory -Path "$env:RUNNER_TEMP/fresh-groups-build-logs" -Force | Out-Null
+
+        cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF 2>&1 | Tee-Object
+        "$env:RUNNER_TEMP/fresh-groups-build-logs/configure.log"
+
+        if ($LASTEXITCODE -ne 0) { throw ''Private observer configure failed'' }
+
+        cmake --build out/build/vs2026 --config OptDebug --parallel 4 --target MapServer 2>&1 | Tee-Object "$env:RUNNER_TEMP/fresh-groups-build-logs/build.log"
+
+        if ($LASTEXITCODE -ne 0) { throw ''Private observer compile failed'' }
+
+        '
+    - name: Reverify original inputs and source stability after compiler work
+      shell: bash
+      run: "python - <<'PYINPUTS'\nimport hashlib,importlib.util,json,os,pathlib,subprocess,sys\nroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\n\
+        if head!=os.environ['GITHUB_SHA']:raise ValueError('INPUT_CHECKOUT_CHANGED')\nadmission=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json').read_bytes())\n\
+        for name,digest in admission['source_sha256'].items():\n    path=root/name\n    if path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest()!=digest:raise\
+        \ ValueError('SOURCE_CHANGED_AROUND_BUILD')\npath=root/'tools/android/interactive/map_startup_inputs.py'\nspec=importlib.util.spec_from_file_location('fresh_original_map_inputs',path);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)\n\
+        sys.path.insert(0,str(root/'native-android/engine/scenecatalog-qualification'))\nfrom record_export_compile import validate_inputs\n\
+        folder=root/'out/native-inputs';receipt=validate_inputs(json.loads((folder/'map-startup-inputs.json').read_bytes()),module)\n\
+        module.checked(folder/'COH-Atlas-Gameplay-0.13.31.apk',module.DONOR)\nfor name,pin in receipt['files'].items():module.checked(folder/name,pin)\n\
+        files={name:module.pin(folder/name) for name in ('COH-Atlas-Gameplay-0.13.31.apk',*receipt['files'],'map-startup-inputs.json')}\n\
+        result={'schema':'coh-fresh-groups-original-inputs-v1','source_revision':head,'files':files,'donor_rebuilt':False,'runtime_executed':False}\n\
+        report=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-inputs-before.json'\nif json.loads(report.read_bytes())!=result:raise\
+        \ ValueError('ORIGINAL_INPUT_BYTES_CHANGED')\nif (pathlib.Path('C:/fgsrc')/'map-startup-inputs.json').read_bytes()!=(folder/'map-startup-inputs.json').read_bytes():raise\
+        \ ValueError('STAGED_INPUT_RECEIPT_CHANGED')\noutput=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-inputs-after.json'\n\
+        with output.open('xb') as stream:stream.write((json.dumps(result,indent=2,sort_keys=True)+'\\n').encode())\nprint(json.dumps({'passed':True,'whole_input_files_reverified':len(files),'runtime_executed':False}))\n\
+        PYINPUTS\n"
+    - name: Record and strictly admit only the new source role and compiled PE
+      run: 'python native-android/engine/scenecatalog-server/fresh_callback_observer/admit_compile.py --record --source-root . --already-staged
+        C:/fgsrc --binary C:/fgsrc/out/build/vs2026/bin/OptDebug/MapServer.exe --cmake-cache C:/fgsrc/out/build/vs2026/CMakeCache.txt
+        --output "$env:RUNNER_TEMP/fresh-groups-compile"
+
+        if ($LASTEXITCODE -ne 0) { throw ''Fresh observer source/PE recording refused'' }
+
+        '
+    - name: Preserve bounded raw build outputs for recovery without admission
+      if: always() && steps.source_admission.outcome == 'success'
+      continue-on-error: true
+      shell: bash
+      run: "python - <<'PYRAW'\nimport hashlib,json,os,pathlib\nroot=pathlib.Path.cwd().resolve();staged=pathlib.Path('C:/fgsrc')\n\
+        fixed_names=['CMakeCache.txt', 'MapServer.exe', 'map-startup-build-input.json', 'map-startup-inputs.json', 'native-fresh-groups-server-build-input.json',\
+        \ 'native-groups-transaction-server-build-input.json', 'source/Common/seq/anim.c', 'source/Common/seq/coh_fresh_folder_profile_api.h',\
+        \ 'source/Common/seq/coh_fresh_original_resource_quiescence.inc', 'source/Common/seq/coh_resource_quiescence.inc', 'source/MapServer/src/group/coh_fresh_source_profile.inc',\
+        \ 'source/MapServer/src/group/coh_source_catalog_sink.inc', 'source/MapServer/src/group/coh_source_groups_capture_sink.inc',\
+        \ 'source/MapServer/src/group/groupnetsend.c', 'source/MapServer/src/svr/svr_init.c', 'source/libs/UtilitiesLib/src/utils/FolderCache.c',\
+        \ 'source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile.inc', 'source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile_api.h',\
+        \ 'source/libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h']\nsources={}\nfor name in fixed_names:\n    relative='out/build/vs2026/bin/OptDebug/MapServer.exe'\
+        \ if name=='MapServer.exe' else 'out/build/vs2026/CMakeCache.txt' if name=='CMakeCache.txt' else name.removeprefix('source/')\n\
+        \    sources[name]=staged/relative\nif not 0<len(sources)<=64:raise ValueError('RAW_FIXED_INVENTORY_BOUND')\noutput=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-UNADMITTED-recovery';output.mkdir()\n\
+        files={};missing=[];total=0\nfor name,source in sorted(sources.items()):\n rel=pathlib.PurePosixPath(name)\n if rel.is_absolute()\
+        \ or any(x in ('','.','..') for x in rel.parts) or chr(92) in name or ':' in name:raise ValueError('RAW_RELATIVE_NAME')\n if\
+        \ not source.exists():missing.append(name);continue\n if source.is_symlink() or not source.is_file() or source.resolve()!=source:raise\
+        \ ValueError('RAW_REGULAR_PATH')\n before=source.stat()\n if before.st_nlink!=1 or not 0<=before.st_size<=16*1024**2:raise ValueError('RAW_FILE_BOUND')\n\
+        \ total+=before.st_size\n if total>32*1024**2:raise ValueError('RAW_TOTAL_BOUND')\n with source.open('rb') as stream:data=stream.read(16*1024**2+1)\n\
+        \ after=source.stat()\n if len(data)!=before.st_size or (before.st_dev,before.st_ino,before.st_size,before.st_mtime_ns)!=(after.st_dev,after.st_ino,after.st_size,after.st_mtime_ns):raise\
+        \ ValueError('RAW_FILE_CHANGED')\n destination=output/name;destination.parent.mkdir(parents=True,exist_ok=True)\n with destination.open('xb')\
+        \ as stream:stream.write(data)\n files[name]={'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}\nresult={'schema':'coh-fresh-groups-UNADMITTED-build-recovery-v1','source_revision':os.environ['GITHUB_SHA'],'admitted':False,'compiler_success_claimed':False,'pe_identity_validated':False,'runtime_executed':False,'accepted_observer_equivalence':False,'source_generation_admitted':False,'world_authority':False,'files':files,'missing_fixed_members':missing,'total_bytes':total}\n\
+        with (output/'UNADMITTED-recovery.json').open('xb') as stream:stream.write((json.dumps(result,indent=2,sort_keys=True)+'\\n').encode())\n\
+        print(json.dumps({'admitted':False,'retained_fixed_files':len(files),'missing_fixed_files':len(missing),'runtime_executed':False}))\n\
+        PYRAW\n"
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: original-fresh-groups-observer-compile-${{ github.sha }}
+        path: '${{ runner.temp }}/fresh-groups-compile/
+
+          ${{ runner.temp }}/fresh-groups-build-logs/
+
+          ${{ runner.temp }}/fresh-groups-source-admission.json
+
+          ${{ runner.temp }}/fresh-groups-inputs-before.json
+
+          ${{ runner.temp }}/fresh-groups-inputs-after.json
+
+          ${{ runner.temp }}/fresh-groups-UNADMITTED-recovery/
+
+          '
+        if-no-files-found: warn
+        retention-days: 90
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch'
+      || contains(github.event.head_commit.message, '[fresh-groups-build]'))

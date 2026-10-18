@@ -5,7 +5,44 @@ Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical
 Git links, existing bundles, accepted APKs and user profiles were preserved.
 
-## Current qualification checkpoint
+## Current continuation checkpoint — 2026-10-18
+
+Last verified remote is `1ca1d1db3f33891062f570ea19f9c036715e823c`, tree
+`a690ddb89446e03444d1b3ba20d29e5bd2b466d6`. The source changes below are
+integrated locally for guarded publication. Historical sections retain their
+original pending states; this checkpoint supersedes them.
+
+| Owner | Newly established scope | Remaining critical input |
+|---|---|---|
+| A — scene | New separate callback-sealed observer source profile: release1425/ASan1426/UBSan1426 checks,36 scenarios each,26 Python methods. Sticky invalid accounting, whole callback depth and atomic restore preserve refusal. LSAN unavailable HOST_PROC_TASK_ACCESS. Stager original-FolderCache digest correction and optional owned-Map diagnostic wiring are separately reviewed;43 focused Python methods bind their followup | New MapServer-only Windows compile and exact PE/source receipt, then one matching disposable source/native transaction. Existing83b observer remains immutable and is not declared equivalent. Actual initial refused enum/current scene token remain absent |
+| B — resources | Existing immutable namespace/RGBA32 codec and exact seven source default bodies retained. Exact Chromium zlib cf333892 source recovered:306531B archive SHA2f776d3abe636e302a98216fc81410622feb1be958315223d0d3442496365938;111 regular files,1216944B,32 headers,21 recipe translation units;14 recursive Git trees recomputed to62224db151a2af4f2c66110d634ef8dc3607a155 | No static library or Windows zlib execution yet. Full source-selected CLIENT namespace/material/current world remains open; zlib is only the new DB-probe build dependency |
+| C — character / private auth bridge | One-shot opaque Auth-to-DB development owner1642051b3/cec08c5b5:6715 checks/86 scenarios per release/ASan/UBSan,3 allocation failures,0 live allocations.36 exact source pins and independent review. Real native13-TU linkage compile-only. No caller grant setter or credential getter, one attempt, real AUTHORIZED191021 required, original DB20110614/encryption/development policy | Actual Windows/provider/network exchange and complete UID-matching empty-slot list unexecuted. Whole character update/current dictionaries/costume/actor remain open. Close-before-success ends DB CANCELLED11/Auth CLOSED8, not peer graceful-close ACK. No READY/RECEIVED_CHARACTER/full-update ACK |
+| D — auth | Actual39085257785 fixed diagnostic reached SHARDS_READY/EXPECTED191021 with0 shards,3 frames,196 bytes sent,203ms; selection/grant false. Postprobe Auth980/Db1964/SQL5868/channel/UDP stable and all cleanup/source checks true. Exact7336B artifact12120745825 SHAd21069bccb2831d28cfee7f1a9e2bc52dfa21bf1a579a1d1d84998247f1068a4;34091B CRLF receipt SHAf2d2f0d706d77721b748fda235c19438fac5dcece2ed309a1f667e686828927c. New Windows UDP shim67d6a66c7/7321db908 passes65 synthetic platform controls | Exact fresh fixture has shard group1 and no selected UID membership. Original get_server_groups/account fallback/filter source explains empty list, but runtime filter causality is inferred. Narrow ordinary membership fixture correction passes5 new host methods and independent byte review; a new Linux same-run5-only gate precedes both caps1024/7 retry. AC_PLAY_OK/DB/Map still unverified. UDP Win32 APIs/actual sockets not executed |
+| E — renderer | Actual39083677877 Android13x86 SwiftShader367 checks/18 readbacks plus both-ABI NDK builds retained.154504B artifact12119502992 SHA55eb2466fc7701c6bc49d736677321c29b2672754e673aabdb4f88c952413bea. Independent optional source-probe/runtime review clear; provider/CPU retirement and standalone Surface/context cleanup retain exact scope | ARM64 execution, app-owned EGL/window integration, current scene/material/player producers and AYN Thor remain open. No new APK justified |
+| F — qualification | Independently bound new A/C/D source proofs, exact zlib primary tree and actual selected diagnostic. Source/source-shaped harness execution is distinguished from original Windows/runtime execution; current-helper supplements preserve historical qualification without replaying unchanged C | No global memory fit/RSS/driver overlap or speedup measured. Startup remains387340ms.96MiB is named working-set policy; historical namespace projection already exceeds it before new owners/borrowed inputs |
+
+The selected fixture correction must use ordinary `dbo.user_server_group`
+membership for UID900001 and registered group1, plus strict original-procedure
+read-only prepare/before/after checks. It must not set public group0, broaden
+server filters, change Auth-only fixtures, alter accepted binaries/profile,
+weaken SQL scalar parsing or invent a grant. Source inference is separate from
+actual next-run evidence. Send caps7/1024 remain application/syscall fragmentation,
+not proved wire TCP segmentation.
+
+The Auth-to-DB experiment is explicitly provisional development policy and
+consumes the actual probe MD5 only as measured bytes; it is not an original
+Ouroboros checksum reference. Genuine version/provider and normal checksum
+reference inputs remain missing. No normal version/checksum acceptance follows.
+New source owner232B includes its40B configuration and152B diagnostics; its
+private whole-player stack41772B and other controller/provider costs do not
+establish aggregate fit.
+
+Gates25–27 remain open. Accepted Session0.3.0, Combined0.1.7 and Support0.2.0/code201,
+APKs/signatures/profiles/characters/protected gameplay source and historical
+failed/successful artifacts remain unchanged. No authoritative scene/player,
+DB/Map authentication, app-world rendering, new APK or physical Thor claim.
+
+## Prior qualification checkpoint — c98 (historical)
 
 Last verified remote publication: `c98bb60fe187458f328a15882089ea742ce6e853`
 (tree `48c3c041a591e736ef5a8e2f9091f4cf1a6aad67`). Reviewed source below

@@ -1,0 +1,5 @@
+Actual diagnostic run39085257785 failed at selected-probe step8 after the six new host controls and exact artifact recovery passed. The retained fixed child observation is EXIT_ONE/VALID, SHARDS_READY, expected protocol, three frames, zero decoded shard entries,196sent bytes,203ms. No shard was selected and no grant or DB login was admitted. The original source list guard exits before choose when the list is empty; the precise server filtering input/cause remains unobserved.
+
+The new after-probe ownership check passed. Exact Auth/Db/SQL process generations match start, before and after; the owned channel and Db UDP7000 listener remain the same. Ready/99tables and all final service/firewall/LocalDB/private/source/candidate cleanup gates are retained. IPv4 firewall scope remains explicit.
+
+F independently queried run/job/artifact API metadata, verified the existing7336-byte archive and34091-byte original receipt, and bound41unique source hashes to exact run Git blobs. No second download, protocol/runtime execution or qualifier replay occurred. Fixed JSON validity is diagnostic shape only, and no version/checksum/reference/Map/world authority follows.

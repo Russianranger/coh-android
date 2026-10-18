@@ -28,6 +28,25 @@ USERDATA_QUERY=("SET NOCOUNT ON;SELECT COUNT(*) FROM cohauth.dbo.user_data WHERE
     "AND user_data_new IS NOT NULL AND DATALENGTH(user_data_new)=112 "
     "AND user_game_data IS NOT NULL AND DATALENGTH(user_game_data)=16 "
     "AND user_game_data_new IS NOT NULL AND DATALENGTH(user_game_data_new)=112;")
+GROUP_QUERY=("SET NOCOUNT ON;"
+    "DECLARE @selected_groups TABLE(server_group_id int NOT NULL);"
+    "INSERT @selected_groups EXEC cohauth.dbo.get_server_groups @uid=900001;"
+    "SELECT CASE WHEN (SELECT COUNT(*) FROM cohauth.dbo.user_account)=1 "
+    "AND (SELECT COUNT(*) FROM cohauth.dbo.user_auth)=1 "
+    "AND EXISTS(SELECT 1 FROM cohauth.dbo.user_account a JOIN cohauth.dbo.user_auth p ON p.account=a.account "
+    "WHERE a.uid=900001 AND a.account='"+password_fixture.ACCOUNT+"') "
+    "AND (SELECT COUNT(*) FROM cohauth.dbo.server)=1 "
+    "AND EXISTS(SELECT 1 FROM cohauth.dbo.server WHERE id=1 AND server_group_id=1 "
+    "AND ip='127.0.0.1' AND inner_ip='127.0.0.1' AND client_port=7000) "
+    "AND (SELECT COUNT(*) FROM cohauth.dbo.user_server_group)=1 "
+    "AND EXISTS(SELECT 1 FROM cohauth.dbo.user_server_group WHERE uid=900001 AND server_group_id=1) "
+    "AND (SELECT COUNT(*) FROM @selected_groups)=1 "
+    "AND EXISTS(SELECT 1 FROM @selected_groups WHERE server_group_id=1) THEN 1 ELSE 0 END;")
+
+
+def require_group_membership(sql,temporary):
+    value=activation.scalar(sql,GROUP_QUERY,temporary)
+    if type(value) is not int or value!=1:raise ValueError('selected_group_membership_not_exact')
 
 
 def admit_crypto(directory, root):
@@ -122,7 +141,8 @@ def account_sql():
     assertion="IF (SELECT COUNT(*) FROM dbo.server)<>0 THROW 51000,'auth-only server table must remain empty',1;\n"
     if original.count(assertion)!=1:raise ValueError('selected_account_fixture_source_changed')
     account=original.replace(assertion,'')
-    return account+('INSERT dbo.user_data(uid,user_data,user_data_new,user_game_data,user_game_data_new) '
+    return account+('INSERT dbo.user_server_group(uid,server_group_id) VALUES(900001,1);\n'
+        'INSERT dbo.user_data(uid,user_data,user_data_new,user_game_data,user_game_data_new) '
         'VALUES(900001,0x'+bytes(16).hex()+',0x'+bytes(112).hex()+',0x'+bytes(16).hex()+',0x'+bytes(112).hex()+');\n'
         "IF (SELECT COUNT(*) FROM dbo.server WHERE id=1 AND ip='127.0.0.1' AND client_port=7000)<>1 "
         "OR (SELECT COUNT(*) FROM dbo.server)<>1 OR (SELECT COUNT(*) FROM dbo.user_data)<>1 "
@@ -274,10 +294,11 @@ class SelectedScope:
         sql_runner.run('seed-private-selected-password',[*sql,'-i',temporary/'private-credentials/credential.sql'],timeout=150)
         sql_runner.run('seed-private-selected-account-userdata',[*sql,'-i',account],timeout=150)
         if activation.scalar(sql,USERDATA_QUERY,temporary)!=1:raise ValueError('selected_userdata_not_complete')
+        require_group_membership(sql,temporary)
         proof.update(selected_scope='fresh_encrypted_login_shard_1_ac_play_ok_then_wipe',
             auth_only_negative_cases_repeated=False,db_login_attempted=False,
             grant_values_exported=False,private_credentials_exported=False,
-            complete_userdata_preflight_verified=True)
+            complete_userdata_preflight_verified=True,selected_group_membership_preflight_verified=True)
 
     def exercise(self,temporary,proof,sql,ports,auth_child,db_child,auth,db,auth_start,db_start,sql_pid,sql_start):
         def observe_db():
@@ -297,6 +318,8 @@ class SelectedScope:
             return result
         proof['selected_runtime_before_probe']=observe()
         if activation.scalar(sql,USERDATA_QUERY,temporary)!=1:raise ValueError('selected_userdata_not_complete')
+        require_group_membership(sql,temporary)
+        proof['selected_runtime_before_probe']['registered_group_membership_verified']=True
         if login.probe_identity(self.binary)!=proof['selected_probe_build']['binary']:
             raise ValueError('selected_probe_binary_changed')
         proof['client_login_attempted']=True
@@ -310,6 +333,8 @@ class SelectedScope:
         finally:
             try:
                 proof['selected_runtime_after_probe']=observe()
+                require_group_membership(sql,temporary)
+                proof['selected_runtime_after_probe']['registered_group_membership_verified']=True
                 proof['selected_runtime_after_probe_verified']=True
             except Exception:
                 proof['selected_runtime_after_probe_verified']=False

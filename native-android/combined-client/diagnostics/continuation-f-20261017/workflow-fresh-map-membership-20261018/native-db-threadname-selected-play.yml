@@ -1,0 +1,160 @@
+name: Selected-shard grant with exact ordinary group membership
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-db-threadname-selected-play.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-db-threadname-selected-play-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  new-membership-controls:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch'
+      || contains(github.event.head_commit.message, '[db-threadname-selected-play]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Admit frozen source and run only five new group membership controls
+      shell: bash
+      run: "python - <<'PYGROUP'\nimport hashlib,json,os,pathlib,subprocess,sys,unittest\nroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\n\
+        def need(ok,code):\n    if not ok:raise ValueError(code)\ndef fixed(name,digest):\n    p=root/name;need(p.is_file() and not\
+        \ p.is_symlink() and p.stat().st_size<1024**2,'FIXED_REGULAR_EVIDENCE');data=p.read_bytes();need(hashlib.sha256(data).hexdigest()==digest,'FIXED_EVIDENCE_PIN');return\
+        \ json.loads(data)\nneed(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')\nneed(os.name=='posix' and\
+        \ os.environ['RUNNER_ENVIRONMENT']=='github-hosted','HOSTED_LINUX_ONLY')\nneed(head==os.environ['GITHUB_SHA'] and os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
+        \ and os.environ['GITHUB_REF']=='refs/heads/native-android','OWNED_EXACT_CHECKOUT')\nq=fixed('native-android/engine/auth-interop/qualification/selected-group-membership-20261018/host.json','b4c13f9f24bf7ae10679351d80c6903ec310a46e9e0ff4032b3c0fbca9bb6f09')\n\
+        a=fixed('native-android/engine/auth-interop/evidence/selected-empty-shards-39085257785/source-audit.json','574f17644166d7c53493b5c1fa5514bea008f4412d7c5efbffb544f9e3aa99c9')\n\
+        f=fixed('native-android/combined-client/diagnostics/continuation-f-20261017/selected-group-membership-source-review-20261018/review.json','47db602d1bc3b1941c86384903668eef8295d550afbbb65c6dac1f18f10b43cf')\n\
+        need(f['schema']=='coh-f-selected-group-membership-source-review-v1' and f['passed'] is True and f['receipt_sha256']=='b4c13f9f24bf7ae10679351d80c6903ec310a46e9e0ff4032b3c0fbca9bb6f09'\
+        \ and f['selected_grant_DB_Map_version_checksum_reference_or_world_authority'] is False,'INDEPENDENT_MEMBERSHIP_REVIEW')\nneed(q['schema']=='coh-selected-owned-group-membership-source-qualification-v1'\
+        \ and q['passed'] is True and q['new_methods_passed']==5,'FROZEN_NEW_MEMBERSHIP_CONTROLS')\nneed(q['scope']['original_server_filter_unchanged']\
+        \ is True and q['scope']['server_group_remains_one'] is True and q['scope']['normal_selected_only_account_group_relation_added']\
+        \ is True,'ORDINARY_MEMBERSHIP_SCOPE')\nneed(q['scope']['live_selected_grant_verified'] is False and q['scope']['db_login_or_map_admitted']\
+        \ is False and q['scope']['normal_version_or_checksum_reference_admitted'] is False,'NO_RUNTIME_AUTHORITY')\npins=dict(q['runtime_source_sha256'])\n\
+        for group in (q['additional_inputs'],a['source_files_unchanged_from_actual_run']):\n    for name,item in group.items():\n  \
+        \      need(name not in pins or pins[name]==item['sha256'],'PIN_CONFLICT');pins[name]=item['sha256']\ndef verify():\n    tree=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)]);blobs={}\n\
+        \    for row in tree.split(b'\\0'):\n        if not row:continue\n        meta,name=row.split(b'\\t',1);mode,kind,digest=meta.split();need(kind==b'blob'\
+        \ and mode in (b'100644',b'100755'),'TRACKED_SOURCE_MODE');blobs[name.decode()]=digest.decode()\n    need(set(blobs)==set(pins),'ALL_REVIEWED_SOURCES_COMMITTED')\n\
+        \    for name,digest in pins.items():\n        p=root/name;need(p.resolve()==p and p.is_file() and not p.is_symlink() and p.stat().st_size<2*1024**2,'BOUNDED_CANONICAL_SOURCE');data=p.read_bytes()\n\
+        \        need(hashlib.sha256(data).hexdigest()==digest and hashlib.sha1(b'blob '+str(len(data)).encode()+b'\\0'+data).hexdigest()==blobs[name],'EXACT_REVIEWED_SOURCE')\n\
+        \    need(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')\nverify()\nsuite=unittest.defaultTestLoader.discover(str(root/'native-android/engine/auth-interop/deployment'),pattern='test_selected_group_membership.py')\n\
+        need(suite.countTestCases()==5,'ONLY_FIVE_NEW_METHODS')\nresult=unittest.TextTestRunner(verbosity=2).run(suite);verify()\nvalue={'schema':'coh-selected-group-membership-same-run-controls-v1','source_revision':head,'run_id':os.environ['GITHUB_RUN_ID'],'passed':result.wasSuccessful(),'test_methods':result.testsRun,'source_sha256':pins,'accepted_auth_only_suite_repeated':False,'old_failure_suite_repeated':False,'actual_services_executed':False,'live_selected_grant_verified':False,'db_login_or_map_admitted':False}\n\
+        p=pathlib.Path(os.environ['RUNNER_TEMP'])/'new-selected-membership-controls.json'\nwith p.open('xb') as stream:stream.write((json.dumps(value,indent=2,sort_keys=True)+'\\\
+        n').encode())\nneed(result.wasSuccessful() and result.testsRun==5,'NEW_MEMBERSHIP_CONTROLS_FAILED')\nPYGROUP\n"
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: new-selected-membership-controls-${{ github.sha }}
+        path: ${{ runner.temp }}/new-selected-membership-controls.json
+        if-no-files-found: error
+        retention-days: 90
+  selected-shard-grant:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch'
+      || contains(github.event.head_commit.message, '[db-threadname-selected-play]'))
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 25
+    steps:
+    - name: Preserve exact source line endings
+      run: git config --global core.autocrlf false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Recover exact accepted AuthServer and independently admitted new DbServer build
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: "python - <<'PY'\nimport hashlib,json,os,pathlib,shutil,stat,subprocess,zipfile\nassert os.environ['RUNNER_ENVIRONMENT']=='github-hosted'\n\
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\nassert os.environ['GITHUB_REF']=='refs/heads/native-android'\n\
+        base=pathlib.Path(os.environ['RUNNER_TEMP'])\ndef api(suffix):return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))\n\
+        specs=[\n  (12085517046,427525,'da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d','auth-candidate',None,None,None),\n\
+        \  (12118334160,1130748,'8d139b6b229742b9b1274e985c26e1847edca821bcc3836a367dd9e96be1c1c1','db-candidate',39080037562,'2729bfc16c9f757fd850c24a0bc6df366a2e40ab','.github/workflows/native-db-threadname-build.yml')]\n\
+        for ident,size,digest,directory,run_id,revision,workflow in specs:\n    remote=api('actions/artifacts/'+str(ident))\n    assert\
+        \ remote['id']==ident and remote['expired'] is False\n    assert remote['size_in_bytes']==size and remote['digest']=='sha256:'+digest\n\
+        \    if run_id is not None:\n        origin=remote['workflow_run'];assert origin['id']==run_id and origin['head_sha']==revision\n\
+        \        assert origin['repository_id']==origin['head_repository_id']==1368730125\n        assert remote['name']=='original-db-threadname-compile-only-'+revision\n\
+        \        run=api('actions/runs/'+str(run_id))\n        assert run['head_sha']==revision and run['head_branch']=='native-android'\n\
+        \        assert run['path']==workflow and run['status']=='completed' and run['conclusion']=='success'\n        assert run['repository']['id']==run['head_repository']['id']==1368730125\n\
+        \    archive=base/(directory+'.zip')\n    with archive.open('xb') as output:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=180)\n\
+        \    assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==digest\n    target=base/directory;target.mkdir()\n\
+        \    with zipfile.ZipFile(archive) as z:\n        infos=z.infolist();assert 0<len(infos)<=128 and len({i.filename for i in infos})==len(infos)\n\
+        \        assert sum(i.file_size for i in infos)<=32*1024**2 and z.testzip() is None\n        for item in infos:\n          \
+        \  path=pathlib.PurePosixPath(item.filename)\n            assert path.as_posix()==item.filename and not path.is_absolute() and\
+        \ path.parts\n            assert all(p not in ('','.','..') for p in path.parts)\n            assert '\\\\' not in item.filename\
+        \ and ':' not in item.filename and not item.flag_bits&1\n            assert stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG)\n\
+        \            assert 0<=item.file_size<=16*1024**2 and not item.is_dir()\n        for item in infos:\n            destination=target/item.filename;destination.parent.mkdir(parents=True,exist_ok=True)\n\
+        \            with z.open(item) as source,destination.open('xb') as output:shutil.copyfileobj(source,output,1024**2)\n      \
+        \      assert destination.stat().st_size==item.file_size\n    archive.unlink()\nPY\n"
+    - name: Recover only exact immutable x64 crypto headers library and ownership manifest
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: "python - <<'PYCRYPTO'\nimport hashlib,json,os,pathlib,re,shutil,stat,subprocess,zipfile\nbase=pathlib.Path(os.environ['RUNNER_TEMP'])\n\
+        def api(suffix):return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))\n\
+        ident=12078663003;revision='cacc6273834142cf8c8f902018eb13cb8f9b5271'\nremote=api('actions/artifacts/'+str(ident));origin=remote['workflow_run']\n\
+        assert remote['id']==ident and remote['expired'] is False and remote['size_in_bytes']==71999000\nassert remote['name']=='native-original-authserver-encrypted-login'\n\
+        assert remote['digest']=='sha256:aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b'\nassert origin['id']==38974164017\
+        \ and origin['head_sha']==revision\nassert origin['repository_id']==origin['head_repository_id']==1368730125\nrun=api('actions/runs/38974164017')\n\
+        assert run['status']=='completed' and run['head_sha']==revision and run['head_branch']=='native-android'\nassert run['path']=='.github/workflows/native-auth-login.yml'\n\
+        assert run['repository']['id']==run['head_repository']['id']==1368730125\n# Only the immutable crypto subgroup is reused, not\
+        \ the old Auth outcome.\narchive=base/'retained-intact.zip'\nwith archive.open('xb') as output:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=300)\n\
+        with archive.open('rb') as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest()\nassert archive.stat().st_size==71999000\
+        \ and digest=='aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b'\ntarget=base/'retained-intact';target.mkdir()\n\
+        with zipfile.ZipFile(archive) as z:\n    infos=z.infolist();assert 0<len(infos)<=2048 and len({i.filename for i in infos})==len(infos)\n\
+        \    assert sum(i.file_size for i in infos)<=128*1024**2 and z.testzip() is None\n    for item in infos:\n        name=item.filename[:-1]\
+        \ if item.is_dir() else item.filename\n        path=pathlib.PurePosixPath(name)\n        assert path.as_posix()==name and not\
+        \ path.is_absolute() and path.parts\n        assert all(p not in ('','.','..') for p in path.parts)\n        assert chr(92)\
+        \ not in name and ':' not in name and not item.flag_bits&1\n        assert stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG,stat.S_IFDIR)\n\
+        \        assert 0<=item.file_size<=64*1024**2\n    prefix='intact-openssl-reuse/'\n    name=prefix+'manifest.json';manifest=z.read(name)\n\
+        \    assert len(manifest)==58665 and hashlib.sha256(manifest).hexdigest()=='1c1c05eb10132e4d1d172d29a04d36311981e6c7023c7ee388348339c460896b'\n\
+        \    value=json.loads(manifest)\n    assert value['schema']=='coh-intact-openssl-build-ownership-v1'\n    assert len(value['files'])==384\
+        \ and value['total_bytes']==105629748\n    assert value['files']['libcrypto.lib']['sha256']=='95aec97b796992a58f8745e1bbbc6eac634931420f13b0763d2db57537543698'\n\
+        \    selected={name:{'bytes':len(manifest),'sha256':hashlib.sha256(manifest).hexdigest()}}\n    for relative,pin in value['files'].items():\n\
+        \        path=pathlib.PurePosixPath(relative)\n        assert path.as_posix()==relative and not path.is_absolute() and path.parts\n\
+        \        assert all(p not in ('','.','..') for p in path.parts) and chr(92) not in relative and ':' not in relative\n      \
+        \  assert set(pin)=={'bytes','sha256'} and type(pin['bytes']) is int and 0<=pin['bytes']<=64*1024**2\n        assert re.fullmatch('[a-f0-9]{64}',pin['sha256'])\n\
+        \        selected[prefix+relative]=pin\n    assert sum(x['bytes'] for x in value['files'].values())==105629748\n    members={i.filename:i\
+        \ for i in infos}\n    for name,pin in selected.items():\n        item=members[name];assert not item.is_dir() and item.file_size==pin['bytes']\n\
+        \        destination=target/name;destination.parent.mkdir(parents=True,exist_ok=True)\n        with z.open(item) as source,destination.open('xb')\
+        \ as output:shutil.copyfileobj(source,output,1024**2)\n        with destination.open('rb') as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()\n\
+        \        assert destination.stat().st_size==pin['bytes'] and actual==pin['sha256']\nassert {p.relative_to(target).as_posix()\
+        \ for p in target.rglob('*') if p.is_file()}==set(selected)\narchive.unlink()\nPYCRYPTO\n"
+    - name: Observe live selected-shard grant then wipe and close before DB login
+      run: 'python native-android/engine/auth-interop/deployment/hosted_db_threadname_selected_play.py --source-root . --expected-commit
+        $env:GITHUB_SHA --output "$env:RUNNER_TEMP/db-threadname-selected-play" --auth-success-archive native-android/engine/auth-interop/evidence/auth-success-38996587760/artifact.zip
+        --auth-candidate-stage "$env:RUNNER_TEMP/auth-candidate" --db-candidate-stage "$env:RUNNER_TEMP/db-candidate" --retained-intact-stage
+        "$env:RUNNER_TEMP/retained-intact" --send-cap ${{ matrix.send_cap }} --expected-db-receipt-sha256 6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912
+        --expected-db-binary-sha256 e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c
+
+        if ($LASTEXITCODE -ne 0) { throw ''Selected-shard grant refused; preserve fixed diagnostics and cleanup'' }
+
+        '
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: db-threadname-selected-play-cap${{ matrix.send_cap }}-${{ github.sha }}
+        path: ${{ runner.temp }}/db-threadname-selected-play/receipt.json
+        if-no-files-found: error
+        retention-days: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        send_cap:
+        - 1024
+        - 7
+    needs:
+    - new-membership-controls

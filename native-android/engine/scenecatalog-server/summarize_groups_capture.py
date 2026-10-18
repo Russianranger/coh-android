@@ -9,6 +9,7 @@ import argparse,hashlib,json,os,re,stat,subprocess
 from pathlib import Path
 from groups_capture_stages import CAPTURE_STAGES,FAILURE_STAGES
 import groups_native_status as native_status
+from fresh_callback_observer import probe as source_probe
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[2]
 STATUS=('runtime_executed','matching_groups_transaction_captured','cleanup_verified',
@@ -28,7 +29,7 @@ def empty(code):
         'failure_stage':'PREFLIGHT' if code=='PRIVATE_RECEIPT_ABSENT' else 'RECEIPT_INVALID',
         'local_development_auth':True,'authserver_authenticated':False,'source_generation_admitted':False,
         'actor_identity_verified':False,'world_authority':False,'private_source_output_exported':False,
-        'native_diagnostic':native_status.empty()}
+        'native_diagnostic':native_status.empty(),'source_profile_diagnostic':source_probe.empty()}
 def summarize(value):
     require(type(value) is dict and value.get('schema')=='coh-private-original-native-groups-run-v1'
             and value.get('private_character_state') is True and value.get('public_upload_permitted') is False
@@ -40,6 +41,10 @@ def summarize(value):
     require((value['capture_stage']=='COMPLETE' and value['failure_stage']=='NONE') if value['passed'] else value['failure_stage'] not in ('NONE','PREFLIGHT','RECEIPT_INVALID'))
     result['capture_stage']=value['capture_stage'];result['failure_stage']=value['failure_stage']
     if 'native_diagnostic' in value:result['native_diagnostic']=native_status.public(value['native_diagnostic'])
+    if 'source_profile_diagnostic' in value:
+        try:result['source_profile_diagnostic']=source_probe.public(value['source_profile_diagnostic'])
+        except Exception:
+            refused=source_probe.empty();refused['probe_state']='REFUSED';result['source_profile_diagnostic']=source_probe.public(refused)
     for name in STATUS:
         flag=value.get(name,False);require(type(flag) is bool);result[name]=flag
     if result['matching_groups_transaction_captured']:
@@ -78,6 +83,9 @@ def committed_helper():
     for relative in native_status.ENUM_SOURCE_PATHS:
         require((ROOT/relative).read_bytes()==subprocess.check_output(
             ['git','show',revision+':'+relative],cwd=ROOT,stderr=subprocess.DEVNULL))
+    for relative in ('fresh_callback_observer/probe.py','fresh_callback_observer/source_group_profile.inc','fresh_callback_observer/source_group_profile_api.h','fresh_callback_observer/source_folder_profile_api.h'):
+        path=HERE/relative;require(path.read_bytes()==subprocess.check_output(
+            ['git','show',revision+':'+path.relative_to(ROOT).as_posix()],cwd=ROOT,stderr=subprocess.DEVNULL))
     return revision,hashlib.sha256(actual).hexdigest()
 def emit(directory,output):
     revision,source=committed_helper()

@@ -1,0 +1,42 @@
+The separately admitted fresh callback-sealed observer uses the existing private
+GROUPS supervisor. Only the two fixed independently pinned compile schemas are
+accepted: the old GROUPS role follows its original validator, while
+coh-fresh-groups-observer-compile-v1 selects the new fixed validator. There is no
+caller-selected driver or alternate accepted-profile policy.
+
+For the new role, runtime.py adds the executed helper/overlay current-Git closure
+to the private run's source pins. This runtime map is separate from the explicit
+LOCAL6 compiled-source fingerprint. Adding a committed runtime-only helper does
+not change an already compiled PE's source/overlay identity. The source admitter
+and both fresh-only retention gates preload the selected fixed role before
+freezing their import/source maps and recheck the same role-specific maps before
+publication. Full snapshot/fixture/cleanup/source/native admission still applies;
+this change grants no new payload export or semantic authority.
+
+Immediately before the actual Map child launch, the supervisor precreates a
+private0600 single-link source-profile-probe.json under its owned0700 catalog
+parent. Its path is passed through COH_NATIVE_GROUPS_PROFILE_PROBE_OUTPUT only
+when creation succeeds. The actual returned Map Popen and its two registered
+stdout/stderr handles are bound after launch. Collection occurs after owned
+process stop, stream close, Wine/PG cleanup attempts and aggregate cleanup
+calculation. A valid file does not imply successful cleanup, process-group
+absence or actual Map binary admission; those remain independent gates.
+
+The raw file and source_profile_private_binding stay private. Only the fixed
+source_profile_diagnostic nested projection is included in the public summary.
+Missing output is UNAVAILABLE; malformed or refused collection is REFUSED. The
+projection admits only source-defined enums, booleans and capped counters with
+an explicit saturation flag. It contains no account, DBID, owner/session/message
+identity, pathname, payload, log text, raw failure string or hash. Public summary
+reconstructs all fields explicitly, and malformed optional diagnostics preserve
+independent GROUPS/pair results. Both the optional collector and its outer
+supervisor call isolate errors and remove stale private bindings.
+
+The runtime wiring controls use mocked role/collector boundaries and fixed
+synthetic receipt values. The separate collector qualification uses tiny real
+Linux children; the source qualification uses real host threads and source-shaped
+FolderCache/group/Win32-I/O stubs. These controls do not execute a Map server,
+Wine, PostgreSQL, native scene transaction or original FolderCache implementation.
+The source-generation token remains an immutable point-snapshot permit; all
+CLIENT cache, actor, ACK, renderer, world and current-after-release gates remain
+separate. A live source/native transaction is still required.

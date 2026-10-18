@@ -50,18 +50,15 @@ def inventory(value):
             and type(value['files']) is int and 0<value['files']<=350000
             and type(value['bytes']) is int and 0<value['bytes']<=12*1024**3,'SOURCE_RUNTIME_INVENTORY')
     d.sha(value['ordered_inventory_sha256']);return value
-def source_pins():
-    paths=set((*capture.base.SOURCE_PATHS,*capture.retained.SOURCE_PATHS,*capture.native_status.ENUM_SOURCE_PATHS,
-        *('native-android/engine/scenecatalog-server/'+name for name in (
-        'capture_groups_transaction.py','groups_capture_stages.py','groups_native_status.py','admit_groups_capture.py',
-        'inspect_groups_capture.py','stage_groups_capture.py','source_groups_capture_sink.inc'))))
-    return {name:d.hash_file(ROOT/name,8*1024**2)[1] for name in sorted(paths)}
-def admission_source_pins(root=ROOT):
+def source_pins(compiled=None):
+    return {name:d.hash_file(ROOT/name,8*1024**2)[1] for name in sorted(capture.orchestration_source_paths(compiled))}
+
+def admission_source_pins(root=ROOT,compiled=None):
     # Account for the complete project Python import closure as well as the
     # source producer and explicitly invoked native/fixture admission helpers.
     # Standard-library and installed compiler/library identities remain runner
     # dependencies, never project source hashes.
-    paths=set(source_pins())|{
+    paths=set(source_pins(compiled))|{
         'native-android/engine/scenecatalog-server/'+name for name in ADMISSION_HELPERS}
     for module in tuple(sys.modules.values()):
         filename=getattr(module,'__file__',None)
@@ -221,7 +218,10 @@ def admit(args):
     # This prevents a changed imported acceptance helper from inheriting trust
     # from the unchanged top-level admitter or producer receipt.
     fx,db,pg,pe=capture.base.fixture_modules()
-    admission_pins=committed_source_closure(ROOT,admission_source_pins(),revision)
+    compiled,_=compiled_admission.inspect(args.compile_directory,ROOT,args.compile_receipt_sha256)
+    # Load the selected fixed runtime-role helper before freezing imports.
+    capture.orchestration_source_paths(compiled)
+    admission_pins=committed_source_closure(ROOT,admission_source_pins(compiled=compiled),revision)
     output=d.path(args.output);require(output.parent.is_dir() and not output.exists(),'EXCLUSIVE_SOURCE_RECEIPT')
     private=d.path(args.private_output);work=d.path(args.private_work)
     report=pinned_json(private/'capture-receipt.json',args.capture_receipt_sha256,8*1024**2)
@@ -233,7 +233,6 @@ def admit(args):
     require(dump['sha256']==fixture['database_dump_sha256']
             and identity(work/'existing-database.dump',capture.PRIVATE_DUMP_MAX)==dump,'ACTUAL_RESTORE_COPY')
     require(capture.account_input(Path(fixture['account_file']))=='COHLOCAL','ACTUAL_FIXTURE_ACCOUNT')
-    compiled,_=compiled_admission.inspect(args.compile_directory,ROOT,args.compile_receipt_sha256)
     native=capture.native_input(args.native_capture,args.native_build_receipt,args.native_build_receipt_sha256)
     require(identity(work/'map-runtime/MapServer.exe',16*1024**2)==compiled['artifacts']['MapServer.exe'],
             'ACTUAL_SOURCE_EXECUTABLE')
@@ -244,7 +243,7 @@ def admit(args):
     require(donor==db.expected_inputs(),'ACTUAL_DB_DONOR')
     require(identity(work/'db-runtime/DbServer.exe',16*1024**2)==
             {'bytes':len(files['DbServer.exe']),'sha256':d.digest(files['DbServer.exe'])},'ACTUAL_DB_EXECUTABLE')
-    current=source_pins();capture.verify_orchestration(ROOT,current,revision)
+    current=source_pins(compiled);capture.verify_orchestration(ROOT,current,revision)
     verify_documents(report,run,revision,current,dump,compiled,native,args.compile_receipt_sha256,
                      args.native_build_receipt_sha256,actual_inventory)
     # Use the real source-created ID from the independently admitted fresh full
@@ -267,9 +266,9 @@ def admit(args):
             and identity(private/'run-identity.json',8*1024**2)['sha256']==args.run_identity_sha256
             and identity(args.verification,8*1024**2)['sha256']==args.verification_sha256
             and identity(args.verifier_executable,8*1024**2)==executable,'PROVENANCE_INPUT_CHANGED')
-    require(current==source_pins() and capture.compiled_inputs_unchanged(args,native,compiled),
+    require(current==source_pins(compiled) and capture.compiled_inputs_unchanged(args,native,compiled),
             'ADMITTED_SOURCE_CHANGED')
-    require(admission_pins==admission_source_pins(),'ADMISSION_IMPORT_CLOSURE_CHANGED')
+    require(admission_pins==admission_source_pins(compiled=compiled),'ADMISSION_IMPORT_CLOSURE_CHANGED')
     committed_source_closure(ROOT,admission_pins,revision)
     committed_source_closure(ROOT,native_sources,revision)
     require(fixture_inputs(args.fixture_directory,args.fixture_receipt_sha256)==(fixture,backup,fixture_pins)

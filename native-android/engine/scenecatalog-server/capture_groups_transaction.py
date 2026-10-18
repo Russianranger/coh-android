@@ -79,6 +79,13 @@ def native_input(binary,receipt_path,receipt_pin,root=ROOT):
  admitted={'binary':identity(binary,4*1024**2),'build_receipt_sha256':receipt_pin,'source_revision':receipt.get('source_revision'),'project_dependencies':len(dependencies),'dependencies_sha256':{path.relative_to(root).as_posix():hashes[path.relative_to(root).as_posix()] for path in sorted(dependencies)}}
  if build_schema==INITIAL_BUILD_SCHEMA:admitted['build_schema']=build_schema
  return admitted
+def orchestration_source_paths(compiled=None):
+ paths=set((*base.SOURCE_PATHS,*retained.SOURCE_PATHS,*native_status.ENUM_SOURCE_PATHS,*('native-android/engine/scenecatalog-server/'+name for name in ('capture_groups_transaction.py','groups_capture_stages.py','groups_native_status.py','admit_groups_capture.py','inspect_groups_capture.py','stage_groups_capture.py','source_groups_capture_sink.inc'))))
+ if type(compiled) is dict and compiled.get('build_role')=='nonshipping_fresh_callback_sealed_groups_observer':
+  from fresh_callback_observer import runtime as fresh_runtime
+  paths.update(fresh_runtime.source_paths(ROOT))
+ return paths
+
 def preflight(args):
  # Missing/invalid private inputs fail before compiler, Wine, PG or server work.
  dump=private_file(args.database_dump,PRIVATE_DUMP_MAX);dump_identity=identity(dump,PRIVATE_DUMP_MAX);d.require(dump_identity['sha256']==d.sha(args.database_dump_sha256),'DATABASE_DUMP_PIN')
@@ -253,14 +260,24 @@ def finish_initial_observation(report,native,received,target):
  elif report.get('cleanup_verified') is not True or report.get('passed') is not True:result=initial_status('CLEANUP_NOT_VERIFIED')
  else:result=retain_initial_observation(received,target,report['pair'])
  report['initial_observation']=result
+def record_source_profile(report,runtime,owner,child):
+ try:runtime.record(report,owner,child,cleanup_attempted=True)
+ except Exception:
+  # An optional helper failure cannot unwind cleanup or discard a valid pair.
+  report.pop('source_profile_private_binding',None)
+  report.pop('source_profile_diagnostic',None)
+
 def capture(args):
  account,account_identity,dump_identity,compiled,native,modules,files,schema,dbdoc,donor,source,work,output=preflight(args);fx,db,pg,pe=modules
- source_paths=set((*base.SOURCE_PATHS,*retained.SOURCE_PATHS,*native_status.ENUM_SOURCE_PATHS,*('native-android/engine/scenecatalog-server/'+name for name in ('capture_groups_transaction.py','groups_capture_stages.py','groups_native_status.py','admit_groups_capture.py','inspect_groups_capture.py','stage_groups_capture.py','source_groups_capture_sink.inc'))))
+ source_paths=orchestration_source_paths(compiled)
+ fresh_runtime=None
+ if compiled.get('build_role')=='nonshipping_fresh_callback_sealed_groups_observer':
+  from fresh_callback_observer import runtime as fresh_runtime
  pins={name:d.hash_file(ROOT/name,8*1024**2)[1] for name in sorted(source_paths)}
  revision=verify_orchestration(ROOT,pins,os.environ.get('GITHUB_SHA'))
  for port,kind in ((15437,socket.SOCK_STREAM),(6997,socket.SOCK_STREAM),(7000,socket.SOCK_DGRAM),(7001,socket.SOCK_DGRAM)):
   with socket.socket(socket.AF_INET,kind) as probe:probe.bind(('127.0.0.1',port))
- work.mkdir(mode=0o700);output.mkdir(mode=0o700);children=[];handles=[];logs=[];cluster=environment=None;deadline=time.monotonic()+args.timeout_seconds;source_inventory=None;source_capture=None;native_process=native_stdout_owner=None;native_directory=work/'native-received';private_dump=work/'existing-database.dump'
+ work.mkdir(mode=0o700);output.mkdir(mode=0o700);children=[];handles=[];logs=[];cluster=environment=None;deadline=time.monotonic()+args.timeout_seconds;source_inventory=None;source_capture=None;native_process=native_stdout_owner=None;native_directory=work/'native-received';private_dump=work/'existing-database.dump';map_process=source_probe_owner=None
  report={'schema':'coh-private-original-native-groups-run-v1','passed':False,'private_character_state':True,'public_upload_permitted':False,'existing_database_dump':dump_identity,'existing_character_rows_seeded':False,'new_character_created':False,'native_tool':native,'original_map_binary':compiled['artifacts']['MapServer.exe'],'compile_receipt_sha256':args.compile_receipt_sha256,'source_sha256':pins,'local_development_auth':True,'authserver_authenticated':False,'runtime_executed':False,'matching_groups_transaction_captured':False,'cleanup_verified':False,'source_generation_admitted':False,'world_authority':False,
          'capture_stage':'INPUT_COPY','failure_stage':'NONE',
          'timeout_policy':{'supervised_child_deadline_seconds':args.timeout_seconds,'strict_whole_run_deadline':False,'reused_pg_helper_timeout_seconds':180,'reused_pg_dump_restore_timeout_seconds':900,'health_polling_pauses_during_pg_helpers':True},'log_limits_polled_not_kernel_enforced':True,'hard_process_memory_cap_established':False}
@@ -306,7 +323,11 @@ def capture(args):
   run_identity={'schema':'coh-private-original-native-groups-identity-v1','nonce':os.urandom(32).hex(),'runtime_inventory':source_inventory,'database_dump':dump_identity,'compile_receipt_sha256':args.compile_receipt_sha256,'native_build_receipt_sha256':args.native_build_receipt_sha256,'source_sha256':pins,'private_fresh_wine_prefix':True,'private_fresh_pg_cluster':True,'restored_existing_database_only':True,'source_revision':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()};report['run_identity_sha256']=retained.emit_identity(output/'run-identity.json',run_identity)
   d.require(compiled_inputs_unchanged(args,native,compiled) and identity(runtime/'MapServer.exe',16*1024**2)==compiled['artifacts']['MapServer.exe'],'COMPILED_INPUTS_CHANGED');health()
   map_env=dict(environment,COH_GAME_LOOPBACK_ONLY='1',COH_NATIVE_GROUPS_TRANSACTION_OUTPUT=source_capture_windows)
+  if fresh_runtime is not None:
+   source_probe_owner=fresh_runtime.precreate(compiled,source_capture.parent/'source-profile-probe.json')
+   if source_probe_owner is not None:map_env['COH_NATIVE_GROUPS_PROFILE_PROBE_OUTPUT']=base.windows_path(source_probe_owner.path)
   advance(report,'MAPSERVER_START');map_process,map_out,map_err=start('map',[args.wine,base.windows_path(runtime/'MapServer.exe'),'-nogui','-db','127.0.0.1','-nosharedmemory','-nostats','-udp','7001','-tcp','0','-map_id','1','-donotautogroup'],runtime,map_env)
+  if fresh_runtime is not None:fresh_runtime.bind(source_probe_owner,map_process,handles[-2:],children,handles)
   policy=importlib.import_module('game_evidence')
   advance(report,'MAPSERVER_READY')
   while True:
@@ -359,6 +380,7 @@ def capture(args):
    cleanup.extend((report['private_input_bytes_unchanged'],report['restored_private_copy_unchanged'],report['source_runtime_unchanged'],report['compiled_inputs_unchanged'],pins=={name:d.hash_file(ROOT/name,8*1024**2)[1] for name in pins}))
   except Exception:cleanup.append(False)
   report['cleanup_verified']=bool(cleanup) and all(cleanup);report['passed']=report['passed'] and report['cleanup_verified'];report['raw_logs_exported']=False
+  if fresh_runtime is not None:record_source_profile(report,fresh_runtime,source_probe_owner,map_process)
   native_status.record(report,native_process,native_stdout_owner,children,source_capture,native.get('build_schema')==INITIAL_BUILD_SCHEMA,ROOT)
   finish_initial_observation(report,native,native_directory,output/'native')
   if report['passed']:advance(report,'COMPLETE')

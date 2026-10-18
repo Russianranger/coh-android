@@ -1,0 +1,18 @@
+{
+  "evidence_commit": "cec08c5b5c46d58c0501729906893ea7e2ed1f88",
+  "files_equal_exact_Git_and_current_worker": {
+    "binding.json": {
+      "bytes": 1343,
+      "sha256": "186754ba364998a8a7673d6d6c1a7b7adcbb76f29e02c71fd9ad77eda19d867d"
+    },
+    "host-1642051b3.json.gz": {
+      "bytes": 5513,
+      "sha256": "b3c0b382202be509748fe5a70b289b35a02e5069f136e779f16358df5ddfe066"
+    }
+  },
+  "gzip_equals_F_preserved_qualification": true,
+  "implementation_commit": "1642051b3553072339dd9981f3667e754dc735ba",
+  "passed": true,
+  "schema": "coh-f-auth-db-owner-evidence-binding-v1",
+  "tests_compiler_or_runtime_reexecuted": false
+}

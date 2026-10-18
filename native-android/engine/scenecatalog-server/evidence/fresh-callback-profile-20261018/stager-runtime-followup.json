@@ -1,0 +1,57 @@
+{
+  "actual_windows_pe_compiled": false,
+  "base_qualification": {
+    "bytes": 8074,
+    "path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/source-qualification.json",
+    "sha256": "5c22a7d426fa38228d87355c439c545ef6506385695a644b38c9bfb792d5ffb4"
+  },
+  "c_qualification_replayed": false,
+  "matching_and_wrong_inherited_original_folder_digest_controls": true,
+  "passed": true,
+  "python_test_methods": 43,
+  "reused_three_mode_c_core_qualification": true,
+  "runtime_executed": false,
+  "runtime_wiring_boundaries_mocked": true,
+  "schema": "coh-fresh-callback-stager-runtime-followup-v1",
+  "source_generation_admitted": false,
+  "source_revision": "419b61c1188acef7b208066d13b8eca42c0887d1",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e",
+    "native-android/engine/scenecatalog-qualification/record_export_compile.py": "62e57478f1271312997ddf72155ae9f4ff0454f88c6f2e55c8afcb2660779d78",
+    "native-android/engine/scenecatalog-server/SOURCE_PROFILE_RUNTIME.md": "4a977c6a97513af273a354e080e3d60c2559a2ce3de9d0ab1bec045944836283",
+    "native-android/engine/scenecatalog-server/admit_groups_capture.py": "3549e9c18fc53b9afc53fbdd6c6e9875bee444911897dafe0466a30f8920cf52",
+    "native-android/engine/scenecatalog-server/admit_source_snapshot.py": "e4d6c1c28b989f3aa3534d790c2020468fe19a3551db18248c49baf29dcfe078",
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "90300ce69ceb00ecacf32996e692e0a2f9269134406b15974a96d75c9ee887b0",
+    "native-android/engine/scenecatalog-server/delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/runtime.py": "c47d6613a8d1879167b66a105e06ea919bd8fe8cfa1e6c27b18252416be16069",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": "c3a373e64341db45b6cdffe0fe3db35e34f727be6863758f2b0a29b0f076819c",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_runtime.py": "a1b056c9d0b8fd31ea3f1d908ece930f4d721aa824aecde48911a18ef9011062",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py": "1573e7a26c8b3a346b249531bbc655238c640a7f1e1a933fb4f41eb664887411",
+    "native-android/engine/scenecatalog-server/retain_fresh_initial_observation.py": "62fc63a17fa7c77ce4d557f9a7b8e8840c99a03f6845cb096695adcc68dde6f3",
+    "native-android/engine/scenecatalog-server/retain_fresh_source_snapshot.py": "35fa4b60b360648d8c3e512635d9cbc4a60c9b2151750fd04bfe9ab91ba25042",
+    "native-android/engine/scenecatalog-server/summarize_groups_capture.py": "7b026f1291a5b1c69ee32415693e7c507f52125e76c5e41e45766fed4863681f",
+    "native-android/engine/scenecatalog-server/test_admit_groups_capture.py": "ea75d1a7ce59b75284d5555078eae32b110ff6b15d0412f6154c1c8cfdc64b2d",
+    "native-android/engine/scenecatalog-server/test_groups_public_summary.py": "1cc90c8d6b05135eb3fa74f5a0f144e595262758af71b136302dd859f64c36ef",
+    "native-android/engine/scenecatalog-server/test_source_snapshot_admission.py": "c7c8a6695bc4f769a042d1c0956c903b3d40fc9ab021273399a729f6a90a6215"
+  },
+  "superseded_base_source_pins": {
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": {
+      "previous_sha256": "0520a95cd62d55513bae2dbe9cafe596aab7e6fc3795201be1b9c4bd53e793a7",
+      "sha256": "c3a373e64341db45b6cdffe0fe3db35e34f727be6863758f2b0a29b0f076819c"
+    },
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py": {
+      "previous_sha256": "45b9704019baef31e932d3b9c486d2aaf60f9584da524ea61bc79aab48323f24",
+      "sha256": "1573e7a26c8b3a346b249531bbc655238c640a7f1e1a933fb4f41eb664887411"
+    }
+  },
+  "supersession_reason": "INHERITED_ORIGINAL_FOLDER_DIGEST_SUBSTITUTION",
+  "test_groups": {
+    "legacy_compile": 8,
+    "public_summary": 8,
+    "runtime_wiring": 9,
+    "source_admission": 11,
+    "stager": 7
+  },
+  "unchanged_base_source_pins_verified": 32,
+  "world_authority": false
+}

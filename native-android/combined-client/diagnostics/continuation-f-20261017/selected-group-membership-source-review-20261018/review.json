@@ -1,0 +1,109 @@
+{
+  "F_test_compiler_SQL_server_network_or_runtime_reexecuted": false,
+  "documentation_reference_for_SQLCMD_context_framing": "https://learn.microsoft.com/en-us/sql/tools/sqlcmd/sqlcmd-commands?view=sql-server-ver17",
+  "finding": {
+    "correction": "One normal disposable selected-only account-to-group1 relation; original account fixture/Auth-only scope unchanged",
+    "observed_actual_receipt": "EXIT_ONE/VALID SHARDS_READY zero decoded entries; unchanged owned runtime after probe",
+    "private_SQL_membership_itself_observed_in_actual_run": false,
+    "source_inference": "get_server_groups empty rowset ->10 account regions -1 -> LoginUser storage/FindAccount copies -> native request0 explicit regions/account fallback -> registered shard group1 omitted by unchanged original filter",
+    "source_native_crypto_server_PE_profile_timeouts_or_filter_modified": false,
+    "strict_gate": "read-only real tables; original fully qualified stored procedure into session table variable; exact account/auth/server/relation/result cardinality checked at seed, before and after probe"
+  },
+  "owner_reported_only": {
+    "SQLServer_or_actual_Auth_runtime_executed": false,
+    "SQLite_same_predicate_controls": "exact plus14 negative relationship/metadata cases, namespace/table-variable-only adapters",
+    "elapsed_seconds": 0.273,
+    "new_methods": 5,
+    "whole_unchanged_original_filter_Cpp_shell_checks": 5
+  },
+  "passed": true,
+  "proof_commit": "e37476572b69bb96770c16e66e1991b273821f53",
+  "receipt_bytes": 7742,
+  "receipt_sha256": "b4c13f9f24bf7ae10679351d80c6903ec310a46e9e0ff4032b3c0fbca9bb6f09",
+  "review_closures": {
+    "late_membership_or_owned_runtime_refusal_cannot_replace_primary_native_failure": true,
+    "malformed_scalar_refused_exact_int_one_required": true,
+    "no_USE_context_message_whole_stdout_numeric_scalar_unchanged": true,
+    "normal_user_server_group_insert_only_in_selected_fixture": true,
+    "public_result_only_verification_booleans_no_relation_UID_or_account_values": true
+  },
+  "runtime_and_additional_ten_source_pins_equal_exact_Git_and_worker": {
+    "native-android/engine/auth-interop/deployment/SELECTED-GROUP-MEMBERSHIP.md": "28f0e49df5e60e4c437ce2aeebc4f244968ed83c452659601a700b0841389dc7",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "f2322608ef47bd549ed8207ab8094f1d7f1227857dcfdb96fec76816e7aeef39",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py": "7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_selected_play.py": "0c63ca42c97464abb7c4df651ea622efcd3aabecb8f73a317505379854f5796a",
+    "native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py": "58b8f4d672e81d6f5b3aa56d2afb06dd7162efd4f9f31f4b35735cedcccb8794",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py": "103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_selected_play.py": "273d6e4b403e4d8b2c2d6fddf50d0c3aa81a8d024f3512ae2bcb1684b2451108",
+    "native-android/engine/auth-interop/deployment/test_selected_group_membership.py": "12c52fe28b47efc3d8235c2d9e6b05ad1397231fd8eb632ed7be844f2405e8e6",
+    "native-android/engine/auth-interop/deployment/windows/shard_play_probe.c": "b648dd10915fd081bef49e8521519da5f0bf1d96c75299b072e03e0a67d9d615",
+    "native-android/engine/auth-interop/evidence/selected-empty-shards-39085257785/source-audit.json": "574f17644166d7c53493b5c1fa5514bea008f4412d7c5efbffb544f9e3aa99c9"
+  },
+  "schema": "coh-f-selected-group-membership-source-review-v1",
+  "selected_grant_DB_Map_version_checksum_reference_or_world_authority": false,
+  "seven_positive_failure_build_native_scope_functions_source_AST_segments_unchanged": [
+    "admit_crypto",
+    "admit_probe",
+    "admit_scope_sources",
+    "build_probe",
+    "prepare_project",
+    "probe_observation",
+    "run_probe"
+  ],
+  "source_commit": "59a456483ee4212d608f8e875c51fbbe39a2dcab",
+  "ten_original_whole_function_hashes_independently_reproduced_with_comment_string_aware_brace_reader_and_SQL_GO_boundary": true,
+  "thirteen_cause_chain_source_files_unchanged_from_actual_run_and_current_Git": {
+    "native-android/engine/auth-interop/deployment/auth_service_profile.py": {
+      "bytes": 5366,
+      "sha256": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": {
+      "bytes": 31350,
+      "sha256": "f2322608ef47bd549ed8207ab8094f1d7f1227857dcfdb96fec76816e7aeef39"
+    },
+    "native-android/engine/auth/coh_auth.c": {
+      "bytes": 13914,
+      "sha256": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+    },
+    "native-android/engine/login/coh_login.c": {
+      "bytes": 12074,
+      "sha256": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e"
+    },
+    "upstream/ouroboros/Assets/DBSchemas/cohauth.sql": {
+      "bytes": 14866,
+      "sha256": "d18756ba04f9f16d40a5f6d55772d19ed430a6438316327aa51fde818a349cbf"
+    },
+    "upstream/ouroboros/AuthServer/src/Account.cpp": {
+      "bytes": 15352,
+      "sha256": "3e959ac3aa3fcef281fecdf8104c5da297c1b216a7c2553a3d33c4ee15c097d5"
+    },
+    "upstream/ouroboros/AuthServer/src/Account.h": {
+      "bytes": 1510,
+      "sha256": "570ad0d15ea6aa54f5f1f51b50a880a74fbda15ab25fdd2a0a75cd4c996fc84d"
+    },
+    "upstream/ouroboros/AuthServer/src/AccountDB.cpp": {
+      "bytes": 42827,
+      "sha256": "b00306c11f77fdce7d02ba07202ee6bb7ca963f3ceca66731e22ae6b5c34d9bd"
+    },
+    "upstream/ouroboros/AuthServer/src/AuthType.h": {
+      "bytes": 2413,
+      "sha256": "4eda9fb9a08f99676359588705c3108906743bc872d35f53d273e92539845fc6"
+    },
+    "upstream/ouroboros/AuthServer/src/Config.cpp": {
+      "bytes": 10420,
+      "sha256": "07e090aeab0911ecec950109c1bdfc49bda8532e818dd005f4d091fea0898ff0"
+    },
+    "upstream/ouroboros/AuthServer/src/ServerList.cpp": {
+      "bytes": 16453,
+      "sha256": "17ec8216324d817fb38691ecbcf96fd161592a4799935ee562a5c37d590ecd7a"
+    },
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": {
+      "bytes": 25047,
+      "sha256": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb"
+    },
+    "upstream/ouroboros/AuthServer/src/schema/patch_5.sql": {
+      "bytes": 524,
+      "sha256": "8081189ab4bdb908f87e3735133faeaf903bb774b1c9f37ffe86e37f8ae43138"
+    }
+  }
+}

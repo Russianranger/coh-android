@@ -1,0 +1,156 @@
+{
+  "actual_failure_reference": {
+    "all_cleanup_source_and_candidate_checks_passed": true,
+    "artifact_id": 12120745825,
+    "failure": "selected_private_probe_failed",
+    "fixed_projection": {
+      "authorization_invalid_after_close": true,
+      "child_state": "EXIT_ONE",
+      "elapsed_ms": 203,
+      "json_state": "VALID",
+      "live_grant_retained_then_wiped": false,
+      "local_sensitive_buffers_wiped": true,
+      "owned_probe_cleanup_complete": true,
+      "owned_probe_cleanup_outcome": "COMPLETE",
+      "probe_passed": false,
+      "probe_state": "SHARDS_READY",
+      "protocol_class": "EXPECTED",
+      "raw_private_output_exported": false,
+      "received_frames": 3,
+      "schema": "coh-selected-probe-failure-observation-v1",
+      "selected_shard_verified": false,
+      "send_cap": 1024,
+      "sent_bytes": 196,
+      "shards": 0,
+      "socket_cleanup_complete": true,
+      "stdout_bytes_bounded": 583
+    },
+    "post_probe_generation_and_channel_equal": true,
+    "private_sql_membership_directly_observed": false,
+    "receipt_bytes": 34091,
+    "receipt_sha256": "f2d2f0d706d77721b748fda235c19438fac5dcece2ed309a1f667e686828927c",
+    "repository_commit": "1ca1d1db3f33891062f570ea19f9c036715e823c",
+    "repository_tree": "a690ddb89446e03444d1b3ba20d29e5bd2b466d6",
+    "run_id": 39085257785,
+    "source_inferred_fixture_omission": true,
+    "zip_bytes": 7336,
+    "zip_sha256": "d21069bccb2831d28cfee7f1a9e2bc52dfa21bf1a579a1d1d84998247f1068a4"
+  },
+  "additional_inputs": {
+    "native-android/engine/auth-interop/deployment/SELECTED-GROUP-MEMBERSHIP.md": {
+      "bytes": 3287,
+      "sha256": "28f0e49df5e60e4c437ce2aeebc4f244968ed83c452659601a700b0841389dc7"
+    },
+    "native-android/engine/auth-interop/deployment/test_selected_group_membership.py": {
+      "bytes": 11237,
+      "sha256": "12c52fe28b47efc3d8235c2d9e6b05ad1397231fd8eb632ed7be844f2405e8e6"
+    },
+    "native-android/engine/auth-interop/evidence/selected-empty-shards-39085257785/source-audit.json": {
+      "bytes": 6545,
+      "sha256": "574f17644166d7c53493b5c1fa5514bea008f4412d7c5efbffb544f9e3aa99c9"
+    }
+  },
+  "native_filter_oracle": {
+    "checks": 5,
+    "optimized_cpp_shell_passed": true,
+    "real_auth_server_execution": false,
+    "unmodified_original_function": true
+  },
+  "new_methods_passed": 5,
+  "new_test_seconds": 0.273,
+  "original_whole_function_pins": {
+    "native-android/engine/auth/coh_auth.c::coh_auth_server_list": {
+      "bytes_utf8_lf": 620,
+      "sha256_utf8_lf": "edd11684e09363c57295e50259fcca33d3ea55f319438fd968885dfb58458180"
+    },
+    "native-android/engine/login/coh_login.c::dispatch": {
+      "bytes_utf8_lf": 2375,
+      "sha256_utf8_lf": "5cb59bfbb3ac10e903549e3605f04befb3f0ef314adc1917cc5f0a50c4acb176"
+    },
+    "upstream/ouroboros/Assets/DBSchemas/cohauth.sql::get_server_groups": {
+      "bytes_utf8_lf": 303,
+      "sha256_utf8_lf": "7e35ff1ba5edfbe5812b22e773ca289d6c51e92e2a12701bb63ad58907b45046"
+    },
+    "upstream/ouroboros/AuthServer/src/Account.cpp::CAccount::Load": {
+      "bytes_utf8_lf": 4563,
+      "sha256_utf8_lf": "80086b0b81a989a5f2cc369bb07afc20d73258f4866415b3c619c5533e55aaf4"
+    },
+    "upstream/ouroboros/AuthServer/src/AccountDB.cpp::AccountDB::FindAccount": {
+      "bytes_utf8_lf": 707,
+      "sha256_utf8_lf": "097a92e4623c19583648d96a32334fe12a5fe405d5d82e650baf6bc4d6e26c91"
+    },
+    "upstream/ouroboros/AuthServer/src/AccountDB.cpp::AccountDB::RegAccount": {
+      "bytes_utf8_lf": 3189,
+      "sha256_utf8_lf": "a1d09c5799bc7be0e37f27c03f338a9bfbb9c0f823c3965f6a3611f1cd276b17"
+    },
+    "upstream/ouroboros/AuthServer/src/ServerList.cpp::CServerList::Load": {
+      "bytes_utf8_lf": 2206,
+      "sha256_utf8_lf": "6936b660a35b89e353a229668a8ea13e40f8794c2242548b840911f73fe955a0"
+    },
+    "upstream/ouroboros/AuthServer/src/ServerList.cpp::CServerList::MakeServerListPacket": {
+      "bytes_utf8_lf": 1934,
+      "sha256_utf8_lf": "a725ad11a9e371449d71f875283d699fa8a695818f9569431ffed75b7f857ec8"
+    },
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp::LoginPacketSecure": {
+      "bytes_utf8_lf": 7178,
+      "sha256_utf8_lf": "3c0a5b8eae619ad1a181c8eab7c28fa2aac638016c20c22e8b4d48ae15476c1e"
+    },
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp::ServerListExtPacket": {
+      "bytes_utf8_lf": 2163,
+      "sha256_utf8_lf": "32bf21d335d049811b65267bd3d7df9e00a54fc8c032ef6978505c533aa255ed"
+    }
+  },
+  "passed": true,
+  "read_only_gate": {
+    "exact_integer_one_required": true,
+    "malformed_scalar_controls": 8,
+    "primary_native_failure_preserved": true,
+    "real_tables_modified": false,
+    "seed_preflight_and_before_after_probe": true,
+    "session_table_variable_only": true,
+    "three_part_database_names_no_use_context_message": true,
+    "uses_original_procedure": true
+  },
+  "runtime_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "f2322608ef47bd549ed8207ab8094f1d7f1227857dcfdb96fec76816e7aeef39",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py": "7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_selected_play.py": "0c63ca42c97464abb7c4df651ea622efcd3aabecb8f73a317505379854f5796a",
+    "native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py": "58b8f4d672e81d6f5b3aa56d2afb06dd7162efd4f9f31f4b35735cedcccb8794",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py": "103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_selected_play.py": "273d6e4b403e4d8b2c2d6fddf50d0c3aa81a8d024f3512ae2bcb1684b2451108",
+    "native-android/engine/auth-interop/deployment/windows/shard_play_probe.c": "b648dd10915fd081bef49e8521519da5f0bf1d96c75299b072e03e0a67d9d615"
+  },
+  "schema": "coh-selected-owned-group-membership-source-qualification-v1",
+  "scope": {
+    "accepted_auth_only_suite_repeated": false,
+    "actual_service_retry_performed": false,
+    "auth_only_account_sql_unchanged": true,
+    "db_login_or_map_admitted": false,
+    "live_selected_grant_verified": false,
+    "native_protocol_source_changed": false,
+    "normal_selected_only_account_group_relation_added": true,
+    "normal_version_or_checksum_reference_admitted": false,
+    "original_server_filter_unchanged": true,
+    "server_group_remains_one": true,
+    "server_pe_crypto_or_timeouts_changed": false,
+    "shipping_profile_modified": false
+  },
+  "source_commit": "59a456483ee4212d608f8e875c51fbbe39a2dcab",
+  "sqlite_scope": {
+    "exact_case_plus_14_negative_relationship_or_metadata_cases": true,
+    "namespace_and_table_variable_spelling_only_dialect_adaptation": true,
+    "original_procedure_select_unchanged_except_parameter_placeholder": true,
+    "same_generated_select_case_predicate": true,
+    "sql_server_execution_qualified": false
+  },
+  "test_command": "python -m unittest -v test_selected_group_membership.py",
+  "unmodified_functions_sha256": {
+    "admit_crypto": "c7b56460c2bca399fafa6f661ba3493ae1b2b173d31903472618cf5a5fdc1890",
+    "admit_probe": "dff78231119ceab6fea3a44f3804c74caf6e66477d437e0ee01ed46a139ef61f",
+    "admit_scope_sources": "d2aaa3b6b1fccab9de2700cfbfbe303a4f1ed8555a256a0002ff289307c7d56e",
+    "build_probe": "d8b6a61c5c05d99b5a53efb3f5310301133bc4b03c2ee5c134f477ef52d5e6d8",
+    "prepare_project": "eb8dd3e56382d741599f05682b546851c45b86d45212a9ebc5a861a1edc944c4",
+    "probe_observation": "74af14e114ca4be33474264360685ebcd26b4b2d5de148f00a869ebf8b9905fc",
+    "run_probe": "c8b0b3ecbeca005ab4e5ee5dacc071b9c31ffdcba96be5557f7371b07e341603"
+  }
+}

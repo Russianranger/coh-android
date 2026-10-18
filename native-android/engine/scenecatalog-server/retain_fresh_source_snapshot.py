@@ -149,7 +149,9 @@ def manifest_for(source,source_pin,fixture,fixture_pin,plan,revision,helper_pin)
 def retain(args):
     revision=admit.hosted_revision()
     admit.capture.base.fixture_modules()
-    pins=admit.committed_source_closure(ROOT,admit.admission_source_pins(),revision)
+    compiled,_=admit.compiled_admission.inspect(args.compile_directory,ROOT,args.compile_receipt_sha256)
+    admit.capture.orchestration_source_paths(compiled)
+    pins=admit.committed_source_closure(ROOT,admit.admission_source_pins(compiled=compiled),revision)
     own=Path(__file__).resolve().relative_to(ROOT).as_posix();require(own in pins,'RETENTION_COMMITTED_HELPER')
     source=scope(admit.pinned_json(args.source_admission,args.source_admission_sha256,64*1024))
     fixture,backup,fixture_pins=admit.fixture_inputs(args.fixture_directory,args.fixture_receipt_sha256)
@@ -184,7 +186,7 @@ def retain(args):
         require(admit.pinned_json(args.verification,args.verification_sha256,8*1024**2)==verification
                 and admit.envelope.inspect(args.private_output/'source.cohgtx')==inspection,'VERIFIED_SOURCE_CHANGED')
         require(payload_plan(extracted,inspection,verification)==plan,'VERIFIED_PAYLOAD_CHANGED')
-        require(admit.admission_source_pins()==pins,'RETENTION_IMPORT_CLOSURE_CHANGED')
+        require(admit.admission_source_pins(compiled=compiled)==pins,'RETENTION_IMPORT_CLOSURE_CHANGED')
         admit.committed_source_closure(ROOT,pins,revision)
     return export_owned(extracted,output,plan,manifest,unchanged)
 def main():

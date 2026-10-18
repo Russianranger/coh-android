@@ -1,0 +1,145 @@
+{
+  "actual": {
+    "all_cleanup_source_and_candidate_checks_passed": true,
+    "artifact_id": 12120745825,
+    "failure": "selected_private_probe_failed",
+    "fixed_projection": {
+      "authorization_invalid_after_close": true,
+      "child_state": "EXIT_ONE",
+      "elapsed_ms": 203,
+      "json_state": "VALID",
+      "live_grant_retained_then_wiped": false,
+      "local_sensitive_buffers_wiped": true,
+      "owned_probe_cleanup_complete": true,
+      "owned_probe_cleanup_outcome": "COMPLETE",
+      "probe_passed": false,
+      "probe_state": "SHARDS_READY",
+      "protocol_class": "EXPECTED",
+      "raw_private_output_exported": false,
+      "received_frames": 3,
+      "schema": "coh-selected-probe-failure-observation-v1",
+      "selected_shard_verified": false,
+      "send_cap": 1024,
+      "sent_bytes": 196,
+      "shards": 0,
+      "socket_cleanup_complete": true,
+      "stdout_bytes_bounded": 583
+    },
+    "post_probe_generation_and_channel_equal": true,
+    "private_sql_membership_directly_observed": false,
+    "receipt_bytes": 34091,
+    "receipt_sha256": "f2d2f0d706d77721b748fda235c19438fac5dcece2ed309a1f667e686828927c",
+    "repository_commit": "1ca1d1db3f33891062f570ea19f9c036715e823c",
+    "repository_tree": "a690ddb89446e03444d1b3ba20d29e5bd2b466d6",
+    "run_id": 39085257785,
+    "source_inferred_fixture_omission": true,
+    "zip_bytes": 7336,
+    "zip_sha256": "d21069bccb2831d28cfee7f1a9e2bc52dfa21bf1a579a1d1d84998247f1068a4"
+  },
+  "actual_selected_helper_before_correction": {
+    "bytes": 20797,
+    "path": "native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py",
+    "sha256": "40a83e3a93fb1481a4ad2e0d0978e9a84aa7e7fc1dbeea9dac1ab5afe9ff2527"
+  },
+  "finding": "Owned group1 shard plus no owned account-group relation yields account regions all -1; native count0 list request uses account fallback, original filter omits group1. Normal selected-only group1 membership is the narrow missing input.",
+  "no_live_grant_or_db_login_qualified": true,
+  "no_server_filter_or_native_protocol_changes": true,
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "schema": "coh-selected-empty-shards-source-audit-v1",
+  "source_files_unchanged_from_actual_run": {
+    "native-android/engine/auth-interop/deployment/auth_service_profile.py": {
+      "bytes": 5366,
+      "sha256": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4"
+    },
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": {
+      "bytes": 31350,
+      "sha256": "f2322608ef47bd549ed8207ab8094f1d7f1227857dcfdb96fec76816e7aeef39"
+    },
+    "native-android/engine/auth/coh_auth.c": {
+      "bytes": 13914,
+      "sha256": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+    },
+    "native-android/engine/login/coh_login.c": {
+      "bytes": 12074,
+      "sha256": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e"
+    },
+    "upstream/ouroboros/Assets/DBSchemas/cohauth.sql": {
+      "bytes": 14866,
+      "sha256": "d18756ba04f9f16d40a5f6d55772d19ed430a6438316327aa51fde818a349cbf"
+    },
+    "upstream/ouroboros/AuthServer/src/Account.cpp": {
+      "bytes": 15352,
+      "sha256": "3e959ac3aa3fcef281fecdf8104c5da297c1b216a7c2553a3d33c4ee15c097d5"
+    },
+    "upstream/ouroboros/AuthServer/src/Account.h": {
+      "bytes": 1510,
+      "sha256": "570ad0d15ea6aa54f5f1f51b50a880a74fbda15ab25fdd2a0a75cd4c996fc84d"
+    },
+    "upstream/ouroboros/AuthServer/src/AccountDB.cpp": {
+      "bytes": 42827,
+      "sha256": "b00306c11f77fdce7d02ba07202ee6bb7ca963f3ceca66731e22ae6b5c34d9bd"
+    },
+    "upstream/ouroboros/AuthServer/src/AuthType.h": {
+      "bytes": 2413,
+      "sha256": "4eda9fb9a08f99676359588705c3108906743bc872d35f53d273e92539845fc6"
+    },
+    "upstream/ouroboros/AuthServer/src/Config.cpp": {
+      "bytes": 10420,
+      "sha256": "07e090aeab0911ecec950109c1bdfc49bda8532e818dd005f4d091fea0898ff0"
+    },
+    "upstream/ouroboros/AuthServer/src/ServerList.cpp": {
+      "bytes": 16453,
+      "sha256": "17ec8216324d817fb38691ecbcf96fd161592a4799935ee562a5c37d590ecd7a"
+    },
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": {
+      "bytes": 25047,
+      "sha256": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb"
+    },
+    "upstream/ouroboros/AuthServer/src/schema/patch_5.sql": {
+      "bytes": 524,
+      "sha256": "8081189ab4bdb908f87e3735133faeaf903bb774b1c9f37ffe86e37f8ae43138"
+    }
+  },
+  "whole_functions_utf8_lf": {
+    "native-android/engine/auth/coh_auth.c::coh_auth_server_list": {
+      "bytes_utf8_lf": 620,
+      "sha256_utf8_lf": "edd11684e09363c57295e50259fcca33d3ea55f319438fd968885dfb58458180"
+    },
+    "native-android/engine/login/coh_login.c::dispatch": {
+      "bytes_utf8_lf": 2375,
+      "sha256_utf8_lf": "5cb59bfbb3ac10e903549e3605f04befb3f0ef314adc1917cc5f0a50c4acb176"
+    },
+    "upstream/ouroboros/Assets/DBSchemas/cohauth.sql::get_server_groups": {
+      "bytes_utf8_lf": 303,
+      "sha256_utf8_lf": "7e35ff1ba5edfbe5812b22e773ca289d6c51e92e2a12701bb63ad58907b45046"
+    },
+    "upstream/ouroboros/AuthServer/src/Account.cpp::CAccount::Load": {
+      "bytes_utf8_lf": 4563,
+      "sha256_utf8_lf": "80086b0b81a989a5f2cc369bb07afc20d73258f4866415b3c619c5533e55aaf4"
+    },
+    "upstream/ouroboros/AuthServer/src/AccountDB.cpp::AccountDB::FindAccount": {
+      "bytes_utf8_lf": 707,
+      "sha256_utf8_lf": "097a92e4623c19583648d96a32334fe12a5fe405d5d82e650baf6bc4d6e26c91"
+    },
+    "upstream/ouroboros/AuthServer/src/AccountDB.cpp::AccountDB::RegAccount": {
+      "bytes_utf8_lf": 3189,
+      "sha256_utf8_lf": "a1d09c5799bc7be0e37f27c03f338a9bfbb9c0f823c3965f6a3611f1cd276b17"
+    },
+    "upstream/ouroboros/AuthServer/src/ServerList.cpp::CServerList::Load": {
+      "bytes_utf8_lf": 2206,
+      "sha256_utf8_lf": "6936b660a35b89e353a229668a8ea13e40f8794c2242548b840911f73fe955a0"
+    },
+    "upstream/ouroboros/AuthServer/src/ServerList.cpp::CServerList::MakeServerListPacket": {
+      "bytes_utf8_lf": 1934,
+      "sha256_utf8_lf": "a725ad11a9e371449d71f875283d699fa8a695818f9569431ffed75b7f857ec8"
+    },
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp::LoginPacketSecure": {
+      "bytes_utf8_lf": 7178,
+      "sha256_utf8_lf": "3c0a5b8eae619ad1a181c8eab7c28fa2aac638016c20c22e8b4d48ae15476c1e"
+    },
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp::ServerListExtPacket": {
+      "bytes_utf8_lf": 2163,
+      "sha256_utf8_lf": "32bf21d335d049811b65267bd3d7df9e00a54fc8c032ef6978505c533aa255ed"
+    }
+  }
+}

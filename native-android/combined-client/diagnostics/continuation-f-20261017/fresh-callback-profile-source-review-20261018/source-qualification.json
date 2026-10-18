@@ -1,0 +1,146 @@
+{
+  "actual_windows_pe_compiled": false,
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "emitter_win32_io_and_group_hooks_stubs": true,
+  "exact_old_loader_guard_executed_in_host_harness": true,
+  "foldercache_bodies_source_shaped_stubs": true,
+  "leak_sanitizer_qualified": false,
+  "leak_sanitizer_unavailable_reason": "HOST_PROC_TASK_ACCESS",
+  "modes": {
+    "address": {
+      "binary": {
+        "bytes": 292368,
+        "sha256": "0c4fe21e01942ae771b4c7108d6794ab5a92484d569d208a9179535c86488eb5"
+      },
+      "controls": {
+        "checks": 1426,
+        "exact_original_loader_guard": true,
+        "original_foldercache_executed": false,
+        "passed": true,
+        "real_host_threads": true,
+        "real_server": false,
+        "scenarios": 36,
+        "source_generation_admitted": false,
+        "source_layout_folder_stubs": true,
+        "world_authority": false
+      },
+      "flags": [
+        "-std=c11",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-pthread",
+        "-O1",
+        "-fsanitize=address",
+        "-fno-omit-frame-pointer"
+      ],
+      "sync_initialization_refusal": true
+    },
+    "release": {
+      "binary": {
+        "bytes": 292240,
+        "sha256": "1c168c3393da160e6cd592ca04996ea55798efeb78b5e9aec8d6768bc25c11f6"
+      },
+      "controls": {
+        "checks": 1425,
+        "exact_original_loader_guard": true,
+        "original_foldercache_executed": false,
+        "passed": true,
+        "real_host_threads": true,
+        "real_server": false,
+        "scenarios": 36,
+        "source_generation_admitted": false,
+        "source_layout_folder_stubs": true,
+        "world_authority": false
+      },
+      "flags": [
+        "-std=c11",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-pthread",
+        "-O2"
+      ],
+      "sync_initialization_refusal": true
+    },
+    "undefined": {
+      "binary": {
+        "bytes": 242296,
+        "sha256": "65f79226e22a986fa7f1898170a95ddc08aeb47d02b586e7d4c7cbf78209ef96"
+      },
+      "controls": {
+        "checks": 1426,
+        "exact_original_loader_guard": true,
+        "original_foldercache_executed": false,
+        "passed": true,
+        "real_host_threads": true,
+        "real_server": false,
+        "scenarios": 36,
+        "source_generation_admitted": false,
+        "source_layout_folder_stubs": true,
+        "world_authority": false
+      },
+      "flags": [
+        "-std=c11",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-pthread",
+        "-O1",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all"
+      ],
+      "sync_initialization_refusal": true
+    }
+  },
+  "original_foldercache_executed": false,
+  "passed": true,
+  "python_test_methods": 26,
+  "real_host_threads": true,
+  "runtime_executed": false,
+  "schema": "coh-fresh-callback-source-qualification-v1",
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/.gitattributes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/README.md": "1c0509cb303de1bbde15f041e8a3e3f43c2f4616f1a0d76c19d9087e2dc84c01",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/admit_compile.py": "14b5daebead652182f7155f041a951db8bfd068b0d0eaffed2835168c5be2bfd",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/check_profile.py": "677cb88399b9caf4d33deb54855ddee3d98ad3fc398e3e97fe3c830215a4902a",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": "a0a2a7ada32166e5fc48644879834f1fabacb08a07192116f985e1a044b450da",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile.inc": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile_api.h": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc": "896312dc5bc8d76a7b2b76ad0fd7d97167116456072d6091172cd7d56912ac5c",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h": "d06d2df8a5c2af82a9bb5751077d67a94bf74f2d0a2496962297ed13e1275e17",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/source_sealed_quiescence.inc": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py": "0520a95cd62d55513bae2dbe9cafe596aab7e6fc3795201be1b9c4bd53e793a7",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_admit_compile.py": "cc801fab1d773c7d33ad135f4c0af0bedf19efa7c5ec7408b02b4081a4000ad9",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_probe.py": "5fe108f333980a50012644fab0ad668cf4a7889cf75e6b8cdd17601ac32dfaf0",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_profile.c": "fff749c4aee3e49165af15f9ef929937a8e883a1dc477c27ff5ffbb7f653663e",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py": "45b9704019baef31e932d3b9c486d2aaf60f9584da524ea61bc79aab48323f24",
+    "native-android/engine/scenecatalog-server/source_groups_boundary.inc": "5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3",
+    "native-android/engine/scenecatalog-server/source_groups_capture_sink.inc": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7",
+    "native-android/engine/scenecatalog-server/source_groups_eligibility.inc": "38338a38411745c889cc78a381e19cfafebd5a83bc00132e17b5b079023f1dbb",
+    "native-android/engine/scenecatalog-server/source_groups_owner.inc": "7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc",
+    "native-android/engine/scenecatalog-server/source_groups_transaction.inc": "a531ae0c9031c160b4f2cf99f2cba49487fba3ea7d396dcc23d0f0969ed922c6",
+    "native-android/engine/scenecatalog-server/source_public_bounds.inc": "c812642d7f3467c97b2528a9e0963a7d40a01d7f45615ec3fe49c17dbbd80723",
+    "native-android/engine/scenecatalog-server/source_resource_quiescence.inc": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824",
+    "native-android/engine/scenecatalog-server/source_resources.inc": "844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e",
+    "native-android/engine/scenecatalog-server/source_snapshot.inc": "c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6",
+    "native-android/engine/scenecatalog-server/stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "native-android/engine/scenecatalog-server/stage_groups_boundary.py": "980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f",
+    "native-android/engine/scenecatalog-server/stage_groups_capture.py": "2036e1ee954d3de5db7c637add4acc281a8079b52455650efe7e58132e1fc478",
+    "native-android/engine/scenecatalog-server/stage_resources.py": "7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6",
+    "native-android/engine/scenecatalog-server/stage_snapshot.py": "ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c",
+    "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/ouroboros/MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+  },
+  "world_authority": false
+}

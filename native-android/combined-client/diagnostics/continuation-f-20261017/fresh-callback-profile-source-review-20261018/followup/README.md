@@ -1,0 +1,3 @@
+This followup supersedes exactly stage.py/test_stage.py in the original34pin8074-byte host receipt. Its other32pins, C overlays, harness and collector remain byte-identical. A focused43-method Python followup binds the stager correction and runtime-only optional wiring; no three-mode C replay occurred.
+
+The prior F34+162 union has170 unique files: exactly eight changed entries (two stager, six existing runtime helpers) and three new runtime files yield173 effective current files. review.json records that complete union at source419b61c11 and the nine runtime paths. Only declared supersessions extend the earlier gate; old evidence remains historical. New Win32 PE compilation and independent role/source/input admission remain required. F executed no tests or runtime.

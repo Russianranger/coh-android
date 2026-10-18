@@ -1,0 +1,143 @@
+{
+  "files": {
+    "map_build": {
+      "bytes": 25484,
+      "embedded_python": [
+        {
+          "executed": false,
+          "job": "fresh-original-observer-compile",
+          "python_ast_parsed": true,
+          "step": "Admit frozen independently reviewed profile source proof without replay"
+        },
+        {
+          "executed": false,
+          "job": "fresh-original-observer-compile",
+          "python_ast_parsed": true,
+          "step": "Reverify whole original input files before compiler work"
+        },
+        {
+          "executed": false,
+          "job": "fresh-original-observer-compile",
+          "python_ast_parsed": true,
+          "step": "Reverify original inputs and source stability after compiler work"
+        },
+        {
+          "executed": false,
+          "job": "fresh-original-observer-compile",
+          "python_ast_parsed": true,
+          "step": "Preserve bounded raw build outputs for recovery without admission"
+        }
+      ],
+      "equals_main_proposal_and_recorded_git_blob": true,
+      "path": ".github/workflows/native-fresh-groups-build.yml",
+      "sha256": "9a430252b88ef8601b3f9e33ef2b734c84f6370f940b6c985dd15f578befa202",
+      "snapshot": "native-fresh-groups-build.yml",
+      "yaml_parsed": true
+    },
+    "selected_membership": {
+      "bytes": 16108,
+      "embedded_python": [
+        {
+          "executed": false,
+          "job": "new-membership-controls",
+          "python_ast_parsed": true,
+          "step": "Admit frozen source and run only five new group membership controls"
+        },
+        {
+          "executed": false,
+          "job": "selected-shard-grant",
+          "python_ast_parsed": true,
+          "step": "Recover exact accepted AuthServer and independently admitted new DbServer build"
+        },
+        {
+          "executed": false,
+          "job": "selected-shard-grant",
+          "python_ast_parsed": true,
+          "step": "Recover only exact immutable x64 crypto headers library and ownership manifest"
+        }
+      ],
+      "equals_main_proposal_and_recorded_git_blob": true,
+      "path": ".github/workflows/native-db-threadname-selected-play.yml",
+      "sha256": "8b1889b924f4e825f80af432841e15eec59978870dd2bcaa9715553f392bd387",
+      "snapshot": "native-db-threadname-selected-play.yml",
+      "yaml_parsed": true
+    }
+  },
+  "limitations": {
+    "DB_Map_version_checksum_reference_or_world_authority": false,
+    "RSS_or_aggregate_budget_admission": false,
+    "accepted_observer_equivalence": false,
+    "actual_new_Map_PE_not_yet_qualified": true,
+    "actual_selected_grant_not_yet_qualified": true,
+    "source_generation_admitted": false,
+    "workflow_success_not_yet_observed": true
+  },
+  "map_build": {
+    "compile_only": true,
+    "configuration": "OptDebug",
+    "current_followup_pins": 17,
+    "effective_followup_union_pins": 173,
+    "exact_existing_supersessions": 8,
+    "full_stage_verify_before_compiler": true,
+    "historical_core_source_pins": 34,
+    "historical_f_helper_pins": 162,
+    "host_core_replayed": false,
+    "platform": "Win32",
+    "raw_admitted": false,
+    "raw_fixed_inventory": [
+      "CMakeCache.txt",
+      "MapServer.exe",
+      "map-startup-build-input.json",
+      "map-startup-inputs.json",
+      "native-fresh-groups-server-build-input.json",
+      "native-groups-transaction-server-build-input.json",
+      "source/Common/seq/anim.c",
+      "source/Common/seq/coh_fresh_folder_profile_api.h",
+      "source/Common/seq/coh_fresh_original_resource_quiescence.inc",
+      "source/Common/seq/coh_resource_quiescence.inc",
+      "source/MapServer/src/group/coh_fresh_source_profile.inc",
+      "source/MapServer/src/group/coh_source_catalog_sink.inc",
+      "source/MapServer/src/group/coh_source_groups_capture_sink.inc",
+      "source/MapServer/src/group/groupnetsend.c",
+      "source/MapServer/src/svr/svr_init.c",
+      "source/libs/UtilitiesLib/src/utils/FolderCache.c",
+      "source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile.inc",
+      "source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile_api.h",
+      "source/libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h"
+    ],
+    "raw_initial_source_gate_required": true,
+    "raw_limits": {
+      "file_bytes": 16777216,
+      "files": 64,
+      "total_bytes": 33554432
+    },
+    "raw_project_imports": false,
+    "raw_recovery_requires_independent_strict_PE_source_admission": true,
+    "raw_stdlib_imports": [
+      "hashlib",
+      "json",
+      "os",
+      "pathlib"
+    ],
+    "runtime_executed": false,
+    "target": "MapServer",
+    "unchanged_core_pins": 32
+  },
+  "passed": true,
+  "review_scope": "exact bytes, YAML and embedded Python AST; no scripts executed",
+  "reviewed_source_revision": "f6cdc799754a8f89a9fb6b265e9a96337dbdfa4d",
+  "schema": "coh-f-final-map-membership-workflow-static-review-v1",
+  "selected_membership": {
+    "accepted_auth_only_suite_replayed": false,
+    "artifact_recovery_profile_protocol_and_receipt_upload_unchanged_from_prior_review": true,
+    "fixture_correction": "one normal account-to-group relation; original filtering and protocol unchanged",
+    "linux_gate_needed_before_windows": true,
+    "new_linux_methods": 5,
+    "old_failure_suite_replayed": false,
+    "runtime_executed_by_review": false,
+    "send_caps": [
+      1024,
+      7
+    ]
+  }
+}

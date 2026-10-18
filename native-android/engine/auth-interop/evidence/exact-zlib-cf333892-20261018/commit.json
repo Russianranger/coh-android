@@ -1,0 +1,30 @@
+)]}'
+{
+  "commit": "cf333892c34ab6dbaed37c38a1d5aa6da7b2f99d",
+  "tree": "62224db151a2af4f2c66110d634ef8dc3607a155",
+  "parents": [
+    "90fc47e6eed7bd1a59ad1603761303ef24705593"
+  ],
+  "author": {
+    "name": "Mirko Bonadei",
+    "email": "mbonadei@chromium.org",
+    "time": "Tue May 12 08:19:03 2020"
+  },
+  "committer": {
+    "name": "Commit Bot",
+    "email": "commit-bot@chromium.org",
+    "time": "Tue May 12 08:19:03 2020"
+  },
+  "message": "Make compression_utils buildable also without Chromium.\n\nStarting from https://chromium-review.googlesource.com/c/chromium/src/+/2171416\nthe target //tools/android/md5sum:md5sum_bin started to depend on\n//third_party/zlib/google:compression_utils.\n\nThe standalone WebRTC build (without Chromium) depends on\n//tools/android/md5sum:md5sum_bin, so this CL moves compression_utils out\nof the \"if (build_with_chromium)\" block.\n\nBug: None\nChange-Id: Ib9e12109398b88aad7750596cc72baf49b19658e\nReviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/2193776\nCommit-Queue: Mirko Bonadei \u003cmbonadei@chromium.org\u003e\nReviewed-by: Ilya Sherman \u003cisherman@chromium.org\u003e\nCr-Original-Commit-Position: refs/heads/master@{#767692}\nCr-Mirrored-From: https://chromium.googlesource.com/chromium/src\nCr-Mirrored-Commit: c97b5d2a57523232407705c0a1b64cf8fa3b5910\n",
+  "tree_diff": [
+    {
+      "type": "modify",
+      "old_id": "a628d2f2d0d23cffea1ec20f1ce96c225f09ce7b",
+      "old_mode": 33188,
+      "old_path": "google/BUILD.gn",
+      "new_id": "4eddc61d28365166932fa4c558f053ddd3d89cb5",
+      "new_mode": 33188,
+      "new_path": "google/BUILD.gn"
+    }
+  ]
+}

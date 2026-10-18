@@ -153,7 +153,9 @@ def readmit(args,work):
         if cleanup and not primary:raise Refused('INITIAL_READMISSION_PRIVATE_CLEANUP')
 def retain(args):
     revision=admit.hosted_revision();capture.base.fixture_modules()
-    pins=admit.committed_source_closure(ROOT,admit.admission_source_pins(),revision)
+    compiled,_=admit.compiled_admission.inspect(args.compile_directory,ROOT,args.compile_receipt_sha256)
+    admit.capture.orchestration_source_paths(compiled)
+    pins=admit.committed_source_closure(ROOT,admit.admission_source_pins(compiled=compiled),revision)
     own=Path(__file__).resolve().relative_to(ROOT).as_posix();require(own in pins,'INITIAL_RETENTION_COMMITTED_HELPER')
     source=source_retention.scope(admit.pinned_json(args.source_admission,args.source_admission_sha256,64*1024))
     fixture,backup,fixture_pins=admit.fixture_inputs(args.fixture_directory,args.fixture_receipt_sha256)
@@ -173,7 +175,6 @@ def retain(args):
     verification=admit.pinned_json(args.verification,args.verification_sha256,8*1024**2)
     verifier=admit.identity(args.verifier_executable,8*1024**2)
     require(verifier==verification.get('executable'),'INITIAL_SAME_NATIVE_VERIFIER')
-    compiled,_=admit.compiled_admission.inspect(args.compile_directory,ROOT,args.compile_receipt_sha256)
     manifest=manifest_for(source,args.source_admission_sha256,fixture,args.fixture_receipt_sha256,
         binding,receipt,revision,pins[own])
     def unchanged():
@@ -191,7 +192,7 @@ def retain(args):
             and admit.identity(private/'run-identity.json',8*1024**2)['sha256']==args.run_identity_sha256
             and admit.identity(work/'existing-database.dump',capture.PRIVATE_DUMP_MAX)==fixture_pins['fixture.pgdump']
             and capture.compiled_inputs_unchanged(args,native,compiled),'INITIAL_PROVENANCE_CHANGED')
-        require(admit.admission_source_pins()==pins,'INITIAL_RETENTION_IMPORT_CLOSURE_CHANGED')
+        require(admit.admission_source_pins(compiled=compiled)==pins,'INITIAL_RETENTION_IMPORT_CLOSURE_CHANGED')
         admit.committed_source_closure(ROOT,pins,revision)
     return export_owned(private/'native/initial-update.bin',output,binding['packet'],manifest,unchanged)
 def main():

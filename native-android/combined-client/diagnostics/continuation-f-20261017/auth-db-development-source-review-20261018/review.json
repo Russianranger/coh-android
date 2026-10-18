@@ -1,0 +1,188 @@
+{
+  "F_tests_compilers_services_or_old_qualifiers_reexecuted": false,
+  "normal_version_checksum_reference_selected_character_Map_world_actor_authority": false,
+  "owner": {
+    "deterministic_gzip_bytes": 5513,
+    "deterministic_gzip_sha256": "b3c0b382202be509748fe5a70b289b35a02e5069f136e779f16358df5ddfe066",
+    "implementation_commit": "1642051b3553072339dd9981f3667e754dc735ba",
+    "limitations": [
+      "host test execution substitutes controller/crypto APIs explicitly; link-only real controllers were not executed",
+      "existing callbacks expose no context sizes: disjoint immutable context lifetime remains caller precondition",
+      "binary hashes checked here are retained postbuild pins; no independent compiler/toolchain attestation",
+      "LeakSanitizer disabled; explicit synthetic allocation accounting does not execute transitive real allocations"
+    ],
+    "memory_host_only": {
+      "config_diagnostics_are_already_inside_owner_not_added_again": true,
+      "embedded_config_bytes": 40,
+      "embedded_diagnostics_bytes": 152,
+      "owner_bytes": 232,
+      "real_Auth_DB_UDP_Net_crypto_zlib_owners_and_callstack_additional": true,
+      "temporary_player_list_bytes": 41772,
+      "whole_callstack_global_budget_Android_ABI_or_RSS_admitted": false
+    },
+    "owner_reported_validation": {
+      "actual_production_translation_units_compiled_linked_not_executed": 13,
+      "allocation_failure_cases": 3,
+      "checks_per_mode": 6715,
+      "live_allocations": 0,
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "per_function_stack_rows": 180,
+      "scenarios_per_mode": 86
+    },
+    "receipt_bytes": 49181,
+    "receipt_sha256": "27e14702ed5f2062a8b608346d122b509da3164c8ae22e1ddd009ae8b3ef3f2a",
+    "review_findings": [
+      "one begin attempt consumed before validation/allocation; no retry or controller access API",
+      "actual private Auth authorization is checked, consumed before DB create/begin, and bridge copies wiped",
+      "ordinary encrypted real-auth DB begin; explicit development version-skip experiment, not normal version/checksum-reference admission",
+      "exact one matching positive-slot EMPTY/unlocked/nonvisitor/noninvalid list; no queue/unsupported/choice/handoff allowance",
+      "busy guards prevent callback reentry; pointer outputs reject known mutable-owner/provider-object aliases",
+      "scalar COMPLETE only after both retained controllers close/cancel and are destroyed; terminal snapshots retained"
+    ],
+    "source_pin_count": 36,
+    "source_pins_equal_exact_Git_and_current_worker": true,
+    "source_sha256": {
+      "native-android/engine/auth-interop/deployment/qualify_auth_db_development_owner.py": "aa58020f335e60553e06941c7adb9a0b905c81c5ba84c5f0c3207b295e738637",
+      "native-android/engine/auth-interop/deployment/windows/AUTH-DB-DEVELOPMENT-OWNER.md": "3ee0303492b09ff944e66826902e5b1a474e656c371fa665bf5b19c3f4c76c92",
+      "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c": "36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6",
+      "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h": "2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20",
+      "native-android/engine/auth-interop/deployment/windows/test_auth_db_development_owner.c": "efc8adb4b4db3dc2e3931f5752563386d78dc1e6b1727abe6a5084ce874e9bcd",
+      "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+      "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+      "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+      "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "native-android/engine/dbclient/coh_db_handoff_owner.h": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45",
+      "native-android/engine/dbclient/coh_db_handoff_private.h": "6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd",
+      "native-android/engine/dbclient/coh_db_session.c": "ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9",
+      "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+      "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+      "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+      "native-android/engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+      "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+      "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+      "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+      "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+      "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+      "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+      "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+      "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+      "native-android/engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+      "native-android/engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+      "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+      "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+      "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+      "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+      "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+      "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+      "upstream/ouroboros/Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+      "upstream/ouroboros/DBServer/src/authcomm.c": "a3a4349047e08fc3285c22d231fe9d467ee26f6360e125db3845ede50f1fc1b2",
+      "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+      "upstream/ouroboros/Game/src/clientcomm/authclient.c": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015"
+    },
+    "three_retained_test_binaries_and_nonexecuted_link_binary_equal_recorded_postbuild_pins": true
+  },
+  "passed": true,
+  "real_Auth_grant_DB_login_matching_list_or_server_predicate_observed": false,
+  "review_mode": "source and exact Git/receipt/retained-binary byte inspection only; no compiler/test/runtime replay",
+  "schema": "coh-f-auth-db-development-source-review-v1",
+  "udp": {
+    "actual_Windows_headers_API_link_network_qualification": false,
+    "evidence_commit": "7321db9088087bbc9d529dccd6b0797a3320cdad",
+    "implementation_commit": "67d6a66c7ec2bbdc8b5d4d3be378eb2a5b4b423a",
+    "owner_reported_only": {
+      "asan_ubsan_controls": 65,
+      "methods": 2,
+      "release_controls": 65
+    },
+    "pins_equal_exact_Git_and_current_worker": true,
+    "receipt_bytes": 5428,
+    "receipt_path": "native-android/engine/auth-interop/qualification/db-udp-windows-source-20261018/host.json",
+    "receipt_sha256": "dc3018ebc0e853ddfd8ffc2071c6d30b05f115edbfde01d3b8d9e736a0c8e419",
+    "review_findings": [
+      "full-width SOCKET retained behind integer token; tokens never reused during one initialization",
+      "failed closes remain owned after ordinary core forgets fd; finish retries all handles before WSA cleanup",
+      "finish disables new IO and retains failed WSA cleanup reference for retry",
+      "exact IPv4 nonblocking/noninherit loopback ephemeral bind and7000 destination; raw frame cap1472 and single-iovec receive",
+      "WSAEMSGSIZE maps to truncation for unchanged UDP core refusal; accepted Auth TCP adapter byte unchanged"
+    ],
+    "unique_source_pin_count": 18,
+    "verified_source_files": {
+      "native-android/engine/auth-interop/deployment/DB-UDP-WINDOWS-ADAPTER.md": {
+        "bytes": 2312,
+        "sha256": "a0d5482ac2a621ccfb3860511fa21355b9f7969403ad8f5c0ec40d77931ae9ae"
+      },
+      "native-android/engine/auth-interop/deployment/test_db_udp_winsock.py": {
+        "bytes": 1958,
+        "sha256": "d4a7eefee1d3e7d45a0ef4cb0b03fb18c22cc719d2f95f77be2da7ab4c3d9f27"
+      },
+      "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h": {
+        "bytes": 75,
+        "sha256": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+      },
+      "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h": {
+        "bytes": 69,
+        "sha256": "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402"
+      },
+      "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h": {
+        "bytes": 75,
+        "sha256": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+      },
+      "native-android/engine/auth-interop/deployment/windows/compat/unistd.h": {
+        "bytes": 72,
+        "sha256": "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646"
+      },
+      "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.c": {
+        "bytes": 6407,
+        "sha256": "abfede788fe3f7c566a028178e05caeb21a2db24fb7c233b90bd64fc5fa0e8aa"
+      },
+      "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h": {
+        "bytes": 2592,
+        "sha256": "ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb"
+      },
+      "native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock.c": {
+        "bytes": 8904,
+        "sha256": "966c9026cd54281a0a597670c389634fa276a817176b2fc552a8954ff0b78174"
+      },
+      "native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock_api.h": {
+        "bytes": 1648,
+        "sha256": "a1b19b67b9b7ab96bb800c368d6c5cd064d1466f27e4c6666c299ae1fa1bc15c"
+      },
+      "native-android/engine/auth-interop/deployment/windows/winsock_compat.c": {
+        "bytes": 5866,
+        "sha256": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad"
+      },
+      "native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c": {
+        "bytes": 177,
+        "sha256": "14b125f2649babdc9a310bf757676f551279214d4a7e4e65869129d10ad9d651"
+      },
+      "native-android/engine/coh_contracts.h": {
+        "bytes": 1044,
+        "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+      },
+      "native-android/engine/network/coh_net.h": {
+        "bytes": 7329,
+        "sha256": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+      },
+      "native-android/engine/network/coh_net_udp.c": {
+        "bytes": 11496,
+        "sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d"
+      },
+      "native-android/engine/network/coh_net_udp.h": {
+        "bytes": 3771,
+        "sha256": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4"
+      },
+      "native-android/include/coh_native_core.h": {
+        "bytes": 2613,
+        "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+      },
+      "native-android/protocol/coh_protocol.h": {
+        "bytes": 1923,
+        "sha256": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+      }
+    }
+  }
+}

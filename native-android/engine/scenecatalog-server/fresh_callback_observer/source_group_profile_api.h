@@ -1,0 +1,16 @@
+#ifndef COH_FRESH_SOURCE_PROFILE_API_H
+#define COH_FRESH_SOURCE_PROFILE_API_H
+#include "coh_fresh_folder_profile_api.h"
+typedef enum {
+ COH_FRESH_STAGE_INSTALL,COH_FRESH_STAGE_NORMAL_ENABLE,COH_FRESH_STAGE_SEAL,
+ COH_FRESH_STAGE_BOUNDARY,COH_FRESH_STAGE_QUIET,COH_FRESH_STAGE_OWNER,
+ COH_FRESH_STAGE_OPEN,COH_FRESH_STAGE_CATALOG,COH_FRESH_STAGE_RUNTIME,
+ COH_FRESH_STAGE_RESOURCES,COH_FRESH_STAGE_BOUNDS,COH_FRESH_STAGE_ELIGIBILITY,
+ COH_FRESH_STAGE_PACKET,COH_FRESH_STAGE_QUIET_RELEASE,COH_FRESH_STAGE_COMMIT,
+ COH_FRESH_STAGE_ABORT
+} CohFreshSourceStage;
+void coh_fresh_source_probe_step(CohFreshSourceStage);
+void coh_fresh_source_probe_loader(unsigned,unsigned);
+void coh_fresh_source_profile_install(void);
+void coh_fresh_source_profile_seal_after_normal_enable(void);
+#endif
