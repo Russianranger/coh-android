@@ -1,0 +1,225 @@
+{
+  "APK_source_revision": "3f050e50d6db9c16463390867691ea95f29ae560",
+  "ack_permitted": false,
+  "actor_publication": false,
+  "complete_initial_character": false,
+  "next_concrete_observations": [
+    "Preserve limits and policies; expose only existing bounded numeric receive/refusal/queue/last-decode scalars under explicit new schema.",
+    "One same-owner original ledger: normalized request entry/post-transition, send-tick visit/selection, full producer return and final original packet send association.",
+    "If raw frames are rejected or pending, use exact attributable numeric refusal/header-size evidence before changing any receive bound."
+  ],
+  "observations": {
+    "NetLink_received": 25,
+    "UDP_datagrams_received": 45,
+    "groups_bytes": 42889,
+    "groups_observations": 1,
+    "initial_observations": 0,
+    "raw_minus_accepted_counter_gap": 20,
+    "reqallents_sent": 1,
+    "specific_request_first_send_accepted": true,
+    "specific_request_peer_transport_ACK": true,
+    "typed_first_failure": "TIMEOUT"
+  },
+  "original_dispatch_and_sender": {
+    "entry": "svrHandleClientMsg CLIENT_REQALLENTS requires current client.entity; absent entity removes link. Otherwise ready=CLIENTSTATE_REQALLENTS, sent_self0 and entNetLink reset. It reads no additional request cookie/password.",
+    "prior_owner": "CLIENT_CONNECT resolves actual login cookie via entFromLoginCookie and clientSetEntity; initialized existing character check and svrHandleClientConnect add ACTIVE player before GROUPS. GROUPS source checks existing initialized entity; current native receipt alone is not a held original server-generation proof.",
+    "producer": "entSendUpdate writes SERVER_ALLENTS/fullupdate ID; unACKed fullupdate sets ordered rather than suppressing initial send. It force-sends self, marks sent_self1, invokes sendCharacterToClient for full_update; final entFinishUpdate/pktSend association still required.",
+    "runtime_unknowns": [
+      "Did normalized handler execute and retain the same client/entity/link?",
+      "Did the actual send tick select this owner after backpressure/map-transfer checks?",
+      "Did full sender and character producer return and associate the same final packet?",
+      "Was final packet compressed/fragmented/enqueued/sent, and which native receive/refusal path handled its frames?"
+    ],
+    "tick": "svrTickDoNetSend checks client entity, backpressure/disconnect and dbCheckMapXfer, then ready&&!sent_self selects entSendUpdate with full_update true; viewed entity may differ via slave."
+  },
+  "private_packet_IDs_DBIDs_names_paths_or_payload_exported": false,
+  "receive_refusal_alternative": {
+    "limits": "Aggregate malformed does not attribute a particular header field; link_queue_limits includes TX/RX scopes. Last decode receipt is sampled metadata, not a cumulative failure counter or a specific ALLENTS cause. Current exported Thor report lacks the relevant rejection/queue/decode scalars.",
+    "mechanism": "sibling_count above16 makes frame validation COH_INVALID. UDPservice counts malformed and continues. It can therefore end in TIMEOUT without initial application delivery; the4MiB setting expands decoded output only. Other peer/frame/truncation/retain/ordered conditions can also explain the raw-to-accepted gap.",
+    "no_budget_or_protocol_relaxation_justified": true,
+    "source_boundary": "coh_net_frame.c valid/decode; coh_net_udp.c service; coh_net.c retain/store_message",
+    "status": "FALSIFIABLE_HYPOTHESIS_NOT_DIAGNOSED_CAUSE",
+    "unchanged_limits": {
+      "decoded_receive_budget": 4194304,
+      "max_sibling_count": 16,
+      "wire_reassembly_bytes": 16384
+    }
+  },
+  "request_contract": {
+    "body_fields_after_command": 0,
+    "compressed": false,
+    "connect_cookie_required_only_for_CLIENT_CONNECT_and_later_READY_not_REQALLENTS": true,
+    "evidence": [
+      "Common/comm_game.h CLIENT_INPUT=COMM_MAX_CMD(2), CLIENT_REQALLENTS fourth command(5)",
+      "Game/src/clientcomm/clientcomm.c commReqScene creates CLIENT_REQALLENTS, sets reliable1, sends without further body; waits ALLENTS before READY",
+      "coh_mapclient.c send_command uses bitpacked command, reliable1 ordered0 compressed0; version<4 adds5; REQALLENTS serializes no body",
+      "net_version.c version5 compressionAllowed1/compressionDefault0 orderedAllowed1/orderedDefault0 controlCommandsSeparate1",
+      "native frame encoder and original pktWrap agree on bitlength/checksum/debug/id/sibling/ACK/compress/ordered/byte-aligned body order; padding covers bytes after first4; Adler covers offset8 and Blowfish starts offset4",
+      "native actual new Tx ID is assigned monotonically inside queue_raw; A witness binds that exact scoped owner/UDP/link allocation without exported IDs"
+    ],
+    "extra_transport_cookieSend_cookieEcho_fields_not_enabled_for_viewed_Map_game_client_link_sources": true,
+    "first_ALLENTS_before_READY_allowed_by_source": true,
+    "fragment_count_for_request": 1,
+    "legacy_command_offset_for_versions_below4": 5,
+    "normalized_version5_command": 5,
+    "ordered": false,
+    "reliable": true,
+    "static_request_wire_mismatch_found": false
+  },
+  "review_basis": "Read-only source and existing sanitized numeric review; no service, native test, packet capture, compiler or native execution for these findings",
+  "review_input": {
+    "bytes": 7713,
+    "path": "native-android/combined-client/diagnostics/gates25-27-thor-20261018/thor-20261018-user-report-review.json",
+    "sha256": "a63f5e2a73813b3140ed6446eb05650cbc3c0f22101f9d6abce2fe145c88c39f"
+  },
+  "schema": "coh-thor-initial-source-investigation-worker-c-v1",
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "native-android/engine/initial-capture/coh_initial_map.c": {
+      "bytes": 17989,
+      "equals_APK_source_revision": true,
+      "sha256": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4"
+    },
+    "native-android/engine/initial-capture/coh_request_tx.c": {
+      "bytes": 7335,
+      "equals_APK_source_revision": true,
+      "sha256": "47a52bd77b553fee158068f393829730be538aa9c323c624187a8071559ac3f4"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_map.c": {
+      "bytes": 18258,
+      "equals_APK_source_revision": true,
+      "sha256": "400b58f478de5774222d95520fc6a990306022bd5f79ab9ccd50108b1629fc70"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_net.c": {
+      "bytes": 25858,
+      "equals_APK_source_revision": true,
+      "sha256": "7c0358aea98c913333b443d88642260270b7bab81b145577fca5f5f06eb24d7e"
+    },
+    "native-android/engine/initial-capture/coh_request_tx_udp.c": {
+      "bytes": 11684,
+      "equals_APK_source_revision": true,
+      "sha256": "b70ea47358423fe504541d2a890b3cedcd80c6ba5f788537dba6bb78c7516318"
+    },
+    "native-android/engine/mapclient/coh_mapclient.c": {
+      "bytes": 23015,
+      "equals_APK_source_revision": true,
+      "sha256": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199"
+    },
+    "native-android/engine/mapclient/coh_mapclient.h": {
+      "bytes": 8904,
+      "equals_APK_source_revision": true,
+      "sha256": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9"
+    },
+    "native-android/engine/network/coh_net.c": {
+      "bytes": 24548,
+      "equals_APK_source_revision": true,
+      "sha256": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1"
+    },
+    "native-android/engine/network/coh_net.h": {
+      "bytes": 7329,
+      "equals_APK_source_revision": true,
+      "sha256": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+    },
+    "native-android/engine/network/coh_net_frame.c": {
+      "bytes": 5136,
+      "equals_APK_source_revision": true,
+      "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+    },
+    "native-android/engine/network/coh_net_udp.c": {
+      "bytes": 11496,
+      "equals_APK_source_revision": true,
+      "sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d"
+    },
+    "native-android/engine/network/coh_net_udp.h": {
+      "bytes": 3771,
+      "equals_APK_source_revision": true,
+      "sha256": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4"
+    },
+    "native-android/protocol/coh_protocol.c": {
+      "bytes": 5507,
+      "equals_APK_source_revision": true,
+      "sha256": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+    },
+    "upstream/ouroboros/Common/comm_game.h": {
+      "bytes": 24649,
+      "equals_APK_source_revision": true,
+      "sha256": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12"
+    },
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": {
+      "bytes": 73982,
+      "equals_APK_source_revision": true,
+      "sha256": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "bytes": 171294,
+      "equals_APK_source_revision": true,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entserver.c": {
+      "bytes": 64295,
+      "equals_APK_source_revision": true,
+      "sha256": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806"
+    },
+    "upstream/ouroboros/MapServer/src/player/clientEntityLink.c": {
+      "bytes": 5416,
+      "equals_APK_source_revision": true,
+      "sha256": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b"
+    },
+    "upstream/ouroboros/MapServer/src/svr/svr_tick.c": {
+      "bytes": 71802,
+      "equals_APK_source_revision": true,
+      "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_packet.h": {
+      "bytes": 2770,
+      "equals_APK_source_revision": true,
+      "sha256": "80a772528a6b273b4b9c4bc8985b0988edb49a8a2591cf63094610fdf23aa36f"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": {
+      "bytes": 21748,
+      "equals_APK_source_revision": true,
+      "sha256": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": {
+      "bytes": 42997,
+      "equals_APK_source_revision": true,
+      "sha256": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": {
+      "bytes": 8684,
+      "equals_APK_source_revision": true,
+      "sha256": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c": {
+      "bytes": 56509,
+      "equals_APK_source_revision": true,
+      "sha256": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c": {
+      "bytes": 3657,
+      "equals_APK_source_revision": true,
+      "sha256": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c": {
+      "bytes": 46672,
+      "equals_APK_source_revision": true,
+      "sha256": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_receive.c": {
+      "bytes": 37317,
+      "equals_APK_source_revision": true,
+      "sha256": "d24464295fefbb90f2a356f3ea3bfa4bbf6b47863a602d6cc63c63c46cdb1047"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c": {
+      "bytes": 30356,
+      "equals_APK_source_revision": true,
+      "sha256": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    }
+  },
+  "transport_ACK_gap": {
+    "consequence": "A specific peer transport ACK does not prove complete frame acceptance, normalized CLIENT_REQALLENTS handler entry, entity ownership, ready transition or entSendUpdate.",
+    "fact": "Original queues received packet ID for transport ACK immediately after extracting the ID, before sibling/ACK-tail parsing, duplicate-window rejection, compression/ordered flags, receive queue and normalized netMessageScan dispatch. Valid decrypt/CRC precedes this normal UDP unwrap path.",
+    "source_boundary": "netio_core.c pktUnwrap lines809-811"
+  },
+  "world_authority": false
+}

@@ -1,0 +1,71 @@
+{
+  "checks": [
+    "android_receive uses current full checkout and raw/Git source manifest gate before Android compilation; selected JNI, projection header, CMake and Java declaration pins exactly agree.",
+    "Both relative includes resolve to the intended tracked diagnostic header and accepted initial capture header in this checkout. No additional include-directory/CMake TU dependency is needed for the static-inline projection.",
+    "Existing coh_combined_interop target remains hidden C11, COH_INTEROP_REQUEST_TX=1, the same three request witness replacements, no ordinary duplicate Local/Map TUs, and --exclude-libs,ALL. Exactly eight Java native declarations/DSO entrypoints remain.",
+    "Android job defaults to pinned arm64-v8a, API26 minimum, SDK/build-tools35, NDK28.2.13676358 and CMake3.22.1; exact previous crypto artifact11980774730 and accepted asset preparation are reused.",
+    "Compile/lint/package check with --require-clean --require-interop and real NDK readelf DSO audit are present; no emulator/native/Thor transaction or release job is attached to android_receive.",
+    "Upload contains only arm64-package.json, arm64-interop-dso.json, crypto-reuse.json and build-inputs.json. Built APK bytes remain ephemeral in this job."
+  ],
+  "limits": [
+    "Read-only source/path/static formatting assessment; actual new ARM64 compiler/JNI/header/ABI result remains the new CI job responsibility.",
+    "The existing DSO audit labels its source hashes a reviewed subset and excludes diagnostics paths, including this new header; the prior raw/Git manifest gate separately includes the exact header pin. No complete compiler closure is inferred.",
+    "Metadata-only APK/DSO build proof does not establish Thor execution, original server dispatch, full character/world authority or RSS/GPU fit."
+  ],
+  "native_compiler_or_qualified_controls_or_runtime_replayed": false,
+  "passed": true,
+  "schema": "coh-server-initial-android-receive-integration-review-worker-c-v1",
+  "source_or_workflow_changed": false,
+  "source_sha256": {
+    ".github/workflows/native-server-initial-observer.yml": {
+      "bytes": 134879,
+      "sha256": "b6c274ba760a737332527e6774ec9ed1057250779033df57983427aeaa67b2a8"
+    },
+    "native-android/combined-client/app/build.gradle": {
+      "bytes": 2410,
+      "sha256": "3330b21b53c80367c1c244249787662de649c2e727abcf5274fceeac18196273"
+    },
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt": {
+      "bytes": 4246,
+      "sha256": "80c01d49af00ea306af339880db0131b427ea8be0cecc2e4205644ac109e045f"
+    },
+    "native-android/combined-client/app/src/main/cpp/interop_network.c": {
+      "bytes": 20469,
+      "sha256": "4475c85955f998f58a52aa5c1c67da7674e2259482a99558fd49044ace1dbb63"
+    },
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/InteropNative.java": {
+      "bytes": 1113,
+      "sha256": "0ffb0269afedc4d69cf24dcf02065be11393dccae0f790a901640efb006860d5"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h": {
+      "bytes": 4230,
+      "sha256": "232cf9ac21de2afaaaff8825f627f1a9219c9d08de4c5a0b8538ab7641a43c05"
+    },
+    "native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json": {
+      "bytes": 108810,
+      "sha256": "7be287b2900c87ad1f9e380ee1aa2bf3424dd3ee8d689e9f7b68f0903fe8bfac"
+    },
+    "native-android/combined-client/tools/interop_package_audit.py": {
+      "bytes": 4953,
+      "sha256": "b32e9e805da2eac048dd3cbf3da7a5836cf529a274af19f202a9fb38572378ab"
+    }
+  },
+  "static_report_capacity": {
+    "boolean_string_specifiers": 11,
+    "capacity_issue_found": false,
+    "conservative_each_numeric_decimal_digits": 20,
+    "conservative_serialized_upper_bound_bytes": 6296,
+    "failure_name_bound_bytes": 16,
+    "fixed_format_bytes": 1653,
+    "guarded_REPORT_LIMIT_fallback_retained": true,
+    "host_sample_bytes_only_not_Android_execution": 3245,
+    "longest_fixed_command_name_bytes": 38,
+    "maximum_boolean_bytes": 5,
+    "numeric_specifiers": 46,
+    "outer_buffer_bytes": 7168,
+    "phase_bound_bytes": 32,
+    "receive_buffer_max_payload_bytes": 2047,
+    "request_buffer_max_payload_bytes": 1535
+  },
+  "world_authority": false
+}

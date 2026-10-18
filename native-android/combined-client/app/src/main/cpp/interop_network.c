@@ -10,6 +10,7 @@
 #include <openssl/rand.h>
 #include "coh_initial_capture.h"
 #include "coh_session_crypto.h"
+#include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
 #ifdef COH_INTEROP_REQUEST_TX
 #include "coh_request_tx.h"
 #endif
@@ -20,6 +21,7 @@ typedef struct {
     CohStatus last_status,observer_status;
     unsigned busy,suspended,disconnected,terminal,groups_callbacks,allents_callbacks;
     size_t groups_bytes,groups_bits,initial_bytes,initial_bits,initial_cursor;
+    CohReceiveProjection receive;
 #ifdef COH_INTEROP_REQUEST_TX
     CohRequestTxWitness *request;
     unsigned request_retired;
@@ -27,6 +29,10 @@ typedef struct {
 } Interop;
 static Interop *active;
 static uint64_t next_token=1;
+static void sample_receive(Interop*h){
+    CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
+    coh_receive_sample(&h->receive,&d.local.map_protocol.udp);coh_db_wipe(&d,sizeof(d));
+}
 static void retire_request(Interop *h) {
 #ifdef COH_INTEROP_REQUEST_TX
     if(!h->request_retired){coh_request_tx_retire(h->request);h->request_retired=1;}
@@ -35,6 +41,7 @@ static void retire_request(Interop *h) {
 #endif
 }
 static void close_capture(Interop *h) {
+    sample_receive(h);
 #ifdef COH_INTEROP_REQUEST_TX
     if(!h->request_retired)coh_request_tx_close(h->request,h->capture);
     else coh_initial_capture_close(h->capture);
@@ -42,6 +49,7 @@ static void close_capture(Interop *h) {
     coh_initial_capture_close(h->capture);
 #endif
     retire_request(h);
+    sample_receive(h);
 }
 static Interop *owner(jlong value) {
     return value>0&&active&&active->token==(uint64_t)value?active:NULL;
@@ -149,6 +157,7 @@ JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_service(JNIEnv 
     h->last_status=coh_initial_capture_service(h->capture,(uint64_t)now,(CohCancel){0},observe,h,sizeof(*h));
 #endif
     CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
+    coh_receive_sample(&h->receive,&d.local.map_protocol.udp);
     h->terminal=d.phase>=COH_INITIAL_CAPTURED;coh_db_wipe(&d,sizeof(d));
     if(h->terminal)retire_request(h);
     h->busy=0;return (jint)h->last_status;
@@ -210,7 +219,9 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     CohInitialCaptureFailure failure=first->valid?first->failure:d.failure;
     unsigned terminal=h->suspended||h->disconnected||d.phase>=COH_INITIAL_CAPTURED;
     unsigned cleanup=terminal&&local->opened_sockets==local->closed_sockets;
-    char json[5120],request[1536]="null";unsigned request_available=0;
+    char json[7168],request[1536]="null",receive[COH_RECEIVE_REPORT_MAX]="null";unsigned request_available=0;
+    int receive_written=coh_receive_json(&h->receive,terminal,cleanup,receive,sizeof(receive));
+    if(receive_written<=0||(size_t)receive_written>=sizeof(receive))strcpy(receive,"null");
 #ifdef COH_INTEROP_REQUEST_TX
     if(h->request) {
         CohRequestTxDiagnostics tx;memset(&tx,0,sizeof(tx));coh_request_tx_diagnostics(h->request,&tx);
@@ -247,7 +258,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"request_tx_available\":%s,\"request_tx\":%s}",
+        "\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s}",
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
         d.groups_observed&&h->groups_callbacks==1?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
@@ -260,7 +271,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        request_available?"true":"false",request);
+        request_available?"true":"false",request,receive);
 #undef U64
     coh_db_wipe(&d,sizeof(d));
     if(written<0||(size_t)written>=sizeof(json))return (*env)->NewStringUTF(env,"{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"REPORT_LIMIT\",\"world_authority\":false}");
@@ -276,6 +287,7 @@ JNIEXPORT void JNICALL Java_org_coh_nativecombined_InteropNative_suspend(JNIEnv 
     coh_initial_capture_cancel(h->capture);
 #endif
     retire_request(h);h->terminal=1;h->busy=0;
+    sample_receive(h);
 }
 JNIEXPORT void JNICALL Java_org_coh_nativecombined_InteropNative_disconnect(JNIEnv *env,jclass cls,jlong token) {
     (void)env;(void)cls;Interop *h=owner(token);if(!h||h->busy||h->disconnected)return;

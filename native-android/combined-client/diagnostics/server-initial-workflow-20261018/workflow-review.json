@@ -1,0 +1,85 @@
+{
+  "schema": "coh-server-initial-workflow-final-static-review-v1",
+  "passed": true,
+  "python_heredocs": [
+    [
+      "compile",
+      3,
+      "PYSOURCE"
+    ],
+    [
+      "compile",
+      5,
+      "PYINPUTS"
+    ],
+    [
+      "compile",
+      7,
+      "PYINPUTS"
+    ],
+    [
+      "compile",
+      8,
+      "PYRECEIPT"
+    ],
+    [
+      "original_transaction",
+      2,
+      "PYSOURCE"
+    ],
+    [
+      "original_transaction",
+      3,
+      "PYINVENTORYINITIALSOURCE"
+    ],
+    [
+      "original_transaction",
+      4,
+      "PY"
+    ],
+    [
+      "original_transaction",
+      5,
+      "PY"
+    ],
+    [
+      "original_transaction",
+      6,
+      "PY"
+    ],
+    [
+      "original_transaction",
+      9,
+      "PY"
+    ],
+    [
+      "original_transaction",
+      10,
+      "PYNATIVE"
+    ],
+    [
+      "original_transaction",
+      11,
+      "PY"
+    ],
+    [
+      "android_receive",
+      1,
+      "PYSOURCE"
+    ]
+  ],
+  "source_pins": 749,
+  "jobs": [
+    "compile",
+    "original_transaction",
+    "android_receive"
+  ],
+  "same_run_attempt_artifact_name": true,
+  "current_and_historical_linux_gate_files_disjoint": true,
+  "one_original_transaction_requested": true,
+  "old_qualifiers_compiler_or_runtime_executed": false,
+  "world_authority": false,
+  "workflow_bytes": 134808,
+  "workflow_sha256": "782717b72b387771fc85a13992134e5b333ca06b2f68ceef6ddd4a2291229c34",
+  "source_manifest_sha256": "4ffd3a0d541f618c0c5631641d0d28d064cf0d00c24361b99140adeb2bf31ffc"
+}

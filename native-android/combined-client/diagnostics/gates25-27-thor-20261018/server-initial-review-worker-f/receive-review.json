@@ -1,0 +1,84 @@
+{
+  "files": {
+    "native-android/combined-client/app/src/main/cpp/interop_network.c": {
+      "bytes": 20469,
+      "sha256": "4475c85955f998f58a52aa5c1c67da7674e2259482a99558fd49044ace1dbb63"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/QUALIFICATION.md": {
+      "bytes": 2524,
+      "sha256": "887cf0538eb9260713aa9a4eb2fed55aa9214771ee06c0ca8604bd719f139cde"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/capture_local_initial_receive.c": {
+      "bytes": 22897,
+      "sha256": "a6d359111cd6d489a2bdf2b62841f3b18559bf175c6bab25e43d05324388531b"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/check_receive.py": {
+      "bytes": 9106,
+      "sha256": "41ac4c3571d3048b93f7376758e211a7bf61b6b10f46c2303a91cbef03d03323"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h": {
+      "bytes": 4230,
+      "sha256": "232cf9ac21de2afaaaff8825f627f1a9219c9d08de4c5a0b8538ab7641a43c05"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/findings.json": {
+      "bytes": 12403,
+      "sha256": "20d8cdcefbbc8540e7b35cd933a18bf8448dc6ec867dab7e6ebf4e4c89bd0043"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/qualified02/qualification.json": {
+      "bytes": 207920,
+      "sha256": "304860cd0fc52743c3e81f977bc7043f59e6fbff5689d41d79719b564058080b"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/qualified02/retention-binding.json": {
+      "bytes": 33001,
+      "sha256": "de980204dfd59328d24966696dd693c1534fc3894635254f1fa8c7ccaf4d138d"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/receive_admission.py": {
+      "bytes": 10896,
+      "sha256": "5e66af1f9a56ee38e0073cf6a1b5cf707d84845d1549fb1545802a104d05bb39"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/source-admission-controls.json": {
+      "bytes": 9814,
+      "sha256": "4717f3d4aad1a6cb3ee871ca72ce65257a77b6e677134bd0ef4b57679a73db14"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/test_jni_receive.c": {
+      "bytes": 1470,
+      "sha256": "489b14c6b2721d64f9955442a060747d71345c1133fbb25c3ae22ca3dcd49ba3"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/test_receive.c": {
+      "bytes": 4432,
+      "sha256": "e968b7ac76e9bf5cd65b9e4cea0e1a2768edb5219037787b9150ac1bd5fe46e1"
+    }
+  },
+  "limitations": {
+    "actual_original_server_session_executed": false,
+    "actual_socket_transaction_executed_by_new_host_controls": false,
+    "complete_global_RSS_GPU_fit": false,
+    "full_initial_character_or_world_authority": false,
+    "new_Android_NDK_compile_or_emulator_or_Thor_execution": false
+  },
+  "passed": true,
+  "review_method": "Read-only current source/diff, exact body reversal, all retained hashes and ELF/header/result inspection. No source import, compiler/dependency query, qualifier, app/native or original-server replay.",
+  "schema": "coh-server-initial-receive-independent-worker-f-review-v1",
+  "source_findings": [
+    "Projection copies only existing UDP/NetLink counters, last decode enum/lengths and sampled pending-queue maxima. Count cap1million, typed existing queue limits, declared_raw_bytes allows underlyingU32 even on budget refusal. No payload/header/sibling count/private ID/account/endpoint/pointer fields.",
+    "Begin/diagnostics/destroy wrappers preserve original operation invocation/result and retain one private owner key until cleared before destruction. Optional fixed receive-counters.json is attempted only after original capture success and owner destruction, using still-owned original directoryFD; failure does not promote or invalidate core transaction. Exclusive0600 file/fstat ownership and rollback guards preserve replacement files.",
+    "Separate strict new native build/producer schemas and readmission helper require exact source/MM closure/binary receipt, byte reversal, post-cleanup same-GROUPS initial-owner context and exact retained sidecar hash. Compatibility view delegates existing progress retention only; no historical artifact/schema equivalence is claimed.",
+    "JNI change is additive storage/sampling/report object and bounded report-buffer growth; same8entrypoints and existing transport/protocol decisions preserved. Inline projection is included in calloc(sizeof owner) and callback sizeof context; no new heap packet copy. Single executor/owned lifetime remains required.",
+    "Outer JNI schema retains prior identity with explicitly versioned receive_diagnostics child; existing strict old Android driver will refuse extra keys rather than silently accept new output. Future Android compilation/runtime must be separately qualified; published0.1.8APK and its historical reports are immutable and contain no new receive counters.",
+    "UDP datagrams_received precedes peer/trunc/empty filters; NetLink.received follows frame/retain/control processing. malformed and queue_limits are aggregates; decode receipt is last sampled decode, queue peaks sampled only. These fields cannot identify sibling16/16KiB refusal uniquely.",
+    "45UDP/25link was observed in Thor upload; new-control udp_malformed20 is explicitly a synthetic double value, not newly measured Thor evidence. No cause inferred, no protocol bound, timeout, ACK, policy or budget changed.",
+    "Terminal observation retirement and cleanup_transport_counters_equal describe scoped diagnostics/counters, not resource storage freed, complete OS/server cleanup or whole-process/RSS/GPU fit. All complete-character/source/actor/applicationACK/world flags false."
+  ],
+  "verified_evidence": {
+    "compiler_and_header_hashes": 165,
+    "current_project_source_hashes": 60,
+    "exact_progress_transition": "Five identifier substitutions at eight sites reverse embedded producer body byte-exactly to current accepted progress role; protocol/main loop/deadline/call order and previous fixed outputs remain unchanged.",
+    "ldd_resolved_file_hashes": 9,
+    "maximum_recorded_host_static_frame_bytes": 83888,
+    "production_role": "18 unchanged-core translation units linked per mode; only noargs exit2 executed, exact empty stdout/stderr. Executed old qualifier main/service/runtime=false.",
+    "retained_ELFs": "All9gzip payloads match recorded raw size/SHA256 and ELF64 little-endian x86_64 shape. Source-before map equals qualification source pins; all remain current.",
+    "retained_raw_ELF_payloads": 9,
+    "retention_binding_files": 234,
+    "three_mode_results": "Each release/ASan/UBSan raw JSON equals receipt: new projection30 checks/8scenarios and new JNI86 checks/2scenarios, empty stderr. Python3positive/99negative controls per mode are attested in exact qualified checker receipt."
+  }
+}

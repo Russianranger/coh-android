@@ -1,0 +1,75 @@
+{
+  "files": {
+    "native-android/engine/initial-capture/server-initial-observer/CONTRACT.md": {
+      "bytes": 4981,
+      "sha256": "61bfe5e55a903ae979fbeb51fabce94b33db6571d240c072c702ac2cfa5d5776"
+    },
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_api.h": {
+      "bytes": 731,
+      "sha256": "e4a4305902afb242c90a6b257157b21420a2d916609dc39e87e1594919670874"
+    },
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.c": {
+      "bytes": 8784,
+      "sha256": "aad2b973fc4826aac5d3c511a73b0bd84db7badf819f99bdb6126f4b58d61a90"
+    },
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.h": {
+      "bytes": 2819,
+      "sha256": "ccd911e409dffa3849fac45473178b88aaee26c37fbf2b9ad85aa700b5d90953"
+    },
+    "native-android/engine/initial-capture/server-initial-observer/qualification/README.md": {
+      "bytes": 1936,
+      "sha256": "f57d853f9b272d0d2d9901e553ab8c9e7d1e6191a0a516df6a5ac169bb4b5dc6"
+    },
+    "native-android/engine/initial-capture/server-initial-observer/qualification/host-03/qualification.json": {
+      "bytes": 9091,
+      "sha256": "694ec7667e531a932656242fe45c5748d3c0dcbb26ba9f8cc5385e65f47d33b4"
+    },
+    "native-android/engine/initial-capture/server-initial-observer/schema.py": {
+      "bytes": 3544,
+      "sha256": "b4e855c580af98131a57ba40769e0fd0b38f27690c5bead537e6905e9f9215a6"
+    },
+    "native-android/engine/initial-capture/server-initial-observer/source_adapter.inc": {
+      "bytes": 8513,
+      "sha256": "9aa51f7de8c53bdccb8097851984c1a8aabf580b00ccde0b8da90df9f6f431be"
+    },
+    "native-android/engine/initial-capture/server-initial-observer/sourcehooks.py": {
+      "bytes": 8607,
+      "sha256": "bda59332d491fc386aa383c0d8382bfb9f0134e251e8eab963af2a84d4c5de75"
+    }
+  },
+  "limitations": {
+    "Windows_kernel_or_NDK_runtime_qualified_by_host_proof": false,
+    "actor_ACK_world_authority": false,
+    "actual_dispatch_or_pktSend_boundary_observed_yet": false,
+    "normal_authentication_or_complete_initial_character_qualified": false,
+    "original_Map_or_packet_serializer_executed_in_host_proof": false,
+    "physical_Thor_cause_determined": false
+  },
+  "passed": true,
+  "review_method": "Read-only production adapter/core/hook/schema, original sender and ownership sources, independent AST-literal five-file reconstruction/reversal, retained ELF/raw stream/hash inspection. No supplier imports, tests, compiler/dependency query, original Map/serializer/session or accepted qualifier replay.",
+  "schema": "coh-server-initial-observer-independent-worker-f-review-v1",
+  "source_findings": [
+    "Only four original Map translation units plus accepted fresh GROUPS profile are changed in private staging. Whole LF-normalized baselines and every literal once-only insertion independently reconstruct five exact patched hashes in D integration proof and reverse to actual accepted archive/original source bytes. Four overlay bytes match current supplier. No upstream source is edited.",
+    "Ledger arms only after original successful same-owner GROUPS finish/commit. Borrowed link is captured before accepted finish clears its boundary; fresh registered link membership/backlinks, actual entity table/state, initialized character and immutable private identity values are revalidated before owner-event use. Existing same-source/native GROUPS logical pairing remains separately required by runtime.",
+    "Every exported hook captures and restores errno/GetLastError and checks immutable accepted GROUPS owner thread before mutable ledger/private-key access. Unrelated owner events do not advance the ledger; changed registered owner refuses and retires. Nullable character hooks avoid new client dereference. entFreeDbg retires matching keys before unlink/free; first terminal result/refusal latches. Serialized exclusive Map owner thread remains a precondition.",
+    "Original dispatch/state writes, backlog and map-transfer calls, viewed-entity selection, packet serializer/character calls and final pktSend each retain their original invocation/control order. Initial full update is selected by original ready/sent_self predicates; observer does not add READY/ACK prerequisites. Private packet address becomes uintptr_t before call, pending return must match exact token, and no packet pointer is read or dereferenced after potentially consuming pktSend.",
+    "pkt_send_called is the persisted pre-call hook checkpoint: alone it proves about-to-call instrumentation was reached. pkt_send_returned with FINAL_RETURN proves the synchronous original call returned. Raw0/1 is preserved; fragmentation can return0 after child enqueue, so neither flag/result establishes queue acceptance, socket send, delivery or complete character acceptance.",
+    "Core allocates no memory and performs no original-object reads/callbacks/I/O. Source adapter retains bounded global state and one held file handle, uses fixed4096B JSON stack buffer, milestone/state/power-of-two tick writes and128 ordinary-write limit. Diagnostic exhaustion retires only observer. No whole-server stack/RSS/GPU fit claim follows.",
+    "Sink opens only caller-precreated single-link regular no-reparse file with exclusive share and retained volume/index identity. Writes flush and recheck same handle; I/O failure best-effort invalidates same file then closes. ACTIVE is last successfully persisted checkpoint and cannot establish later absence, exact final counts or continued sink health. Host providers explicitly double Win32/Map state; actual kernel/serializer/full target build and transaction are separate qualifications.",
+    "Fixed46-key schema includes booleans, bounded counts/enums/bit lengths/flags only. Private link/client/entity/character keys, packet token, account, DBID/auth IDs, endpoints and file identity are not serialized. Queue/socket/source-generation/complete-character/actor/applicationACK/world flags alwaysfalse. No protocol, timeout, budget, serializer predicate or ACK behavior changed."
+  ],
+  "verified_evidence": {
+    "ELF_size_hash_and_ELF64_x86_64_shape_match": true,
+    "current_raw_proof_source_hashes": 15,
+    "empty_compile_stdout_and_stderr_streams": 12,
+    "empty_execution_stderr": 6,
+    "exact_independent_literal_reversals": 5,
+    "exact_stdout_hashes": 6,
+    "focused_checks_each_mode": 5135,
+    "full_system_header_or_compiler_closure_claimed": false,
+    "leak_sanitizer_enabled": false,
+    "overlay_files": 4,
+    "recipe_schema_controls_attested": 206,
+    "retained_host_ELFs": 6
+  }
+}

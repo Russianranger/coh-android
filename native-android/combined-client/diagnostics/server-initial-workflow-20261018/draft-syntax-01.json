@@ -1,0 +1,81 @@
+{
+  "schema": "coh-server-initial-workflow-draft-syntax-v1",
+  "passed": true,
+  "python_heredocs": [
+    [
+      "compile",
+      3,
+      "PYSOURCE"
+    ],
+    [
+      "compile",
+      5,
+      "PYINPUTS"
+    ],
+    [
+      "compile",
+      7,
+      "PYINPUTS"
+    ],
+    [
+      "compile",
+      8,
+      "PYRECEIPT"
+    ],
+    [
+      "original_transaction",
+      2,
+      "PYSOURCE"
+    ],
+    [
+      "original_transaction",
+      3,
+      "PYINVENTORYINITIALSOURCE"
+    ],
+    [
+      "original_transaction",
+      4,
+      "PY"
+    ],
+    [
+      "original_transaction",
+      5,
+      "PY"
+    ],
+    [
+      "original_transaction",
+      6,
+      "PY"
+    ],
+    [
+      "original_transaction",
+      9,
+      "PY"
+    ],
+    [
+      "original_transaction",
+      10,
+      "PYNATIVE"
+    ],
+    [
+      "original_transaction",
+      11,
+      "PY"
+    ],
+    [
+      "android_receive",
+      1,
+      "PYSOURCE"
+    ]
+  ],
+  "jobs": [
+    "compile",
+    "original_transaction",
+    "android_receive"
+  ],
+  "same_run_attempt_artifact_name": true,
+  "one_original_transaction_requested": true,
+  "old_qualifiers_compiler_or_runtime_executed": false,
+  "world_authority": false,
+  "workflow_sha256": "b6c274ba760a737332527e6774ec9ed1057250779033df57983427aeaa67b2a8"
+}

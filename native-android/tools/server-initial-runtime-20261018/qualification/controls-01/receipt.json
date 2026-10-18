@@ -1,0 +1,22 @@
+{
+  "actual_owned_synthetic_children": 2,
+  "checks": 31,
+  "file_control_states": [
+    "VALID",
+    "UNAVAILABLE"
+  ],
+  "old_qualifier_entrypoints_executed": false,
+  "original_server_executed": false,
+  "passed": true,
+  "producer_schema_callback_doubled": true,
+  "runtime_transaction_executed": false,
+  "schema": "coh-server-initial-runtime-focused-controls-v1",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "35d840f2ca04b320c462cc016f44910c4100e1210e203845df62ffc8de0527a4",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": "67452123026a1efe04c1605d638b8f329a93e4d200ea03283683f163caaece93",
+    "native-android/tools/server-initial-runtime-20261018/check_runtime.py": "61a535d61e96d48b5eac181ede3bfc9b51e7887f4a0831900eda8a495a61b8a5",
+    "native-android/tools/server-initial-runtime-20261018/ledger.py": "85bf45c6b1dbb85e09223cfa905ec10fe6f9b8b61f67fa105df175f0a6cc750c",
+    "native-android/tools/server-initial-runtime-20261018/runtime.py": "5eedf2da3dbe6431ba0c05fd852ace10ec2af2abdd1eed1f7c34b889caf28f77"
+  },
+  "world_authority": false
+}

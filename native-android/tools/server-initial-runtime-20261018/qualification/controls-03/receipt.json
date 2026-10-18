@@ -1,0 +1,26 @@
+{
+  "actual_owned_synthetic_children": 2,
+  "actual_source_schema_and_receive_projector_synthetic_integration": true,
+  "checks": 41,
+  "file_control_states": [
+    "VALID",
+    "UNAVAILABLE"
+  ],
+  "old_qualifier_entrypoints_executed": false,
+  "original_server_executed": false,
+  "passed": true,
+  "preliminary_harness_exception_catch_corrected_before_pass": true,
+  "producer_schema_callback_doubled": true,
+  "runtime_transaction_executed": false,
+  "schema": "coh-server-initial-runtime-focused-controls-v1",
+  "source_sha256": {
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/receive_admission.py": "5e66af1f9a56ee38e0073cf6a1b5cf707d84845d1549fb1545802a104d05bb39",
+    "native-android/engine/initial-capture/server-initial-observer/schema.py": "b4e855c580af98131a57ba40769e0fd0b38f27690c5bead537e6905e9f9215a6",
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "35d840f2ca04b320c462cc016f44910c4100e1210e203845df62ffc8de0527a4",
+    "native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py": "67452123026a1efe04c1605d638b8f329a93e4d200ea03283683f163caaece93",
+    "native-android/tools/server-initial-runtime-20261018/check_runtime.py": "fa91e40fb5e2a24b11c89692089e055a46c45d87510dcd5e0ff7d9fd5962ee71",
+    "native-android/tools/server-initial-runtime-20261018/ledger.py": "296e93cce85e02b4242f4205b55edb6a55a70dc33a5ed393d94d3584369e1aca",
+    "native-android/tools/server-initial-runtime-20261018/runtime.py": "2d6acb4192daf9537d7ad0440f358e26b79f130001eb35fa24b9bc7477e27b2e"
+  },
+  "world_authority": false
+}

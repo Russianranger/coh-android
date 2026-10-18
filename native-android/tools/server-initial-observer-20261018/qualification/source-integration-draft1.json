@@ -1,0 +1,134 @@
+{
+  "accepted_archive": {
+    "bytes": 6784966,
+    "sha256": "cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b"
+  },
+  "accepted_compile_source_revision": "d9adf2b431a039357f8bfe878d3d0da991a81b19",
+  "accepted_test_or_qualifier_entrypoints_reexecuted": false,
+  "actual_accepted_source_subset_hashes_reverified": true,
+  "actual_full_private_stage_executed": false,
+  "artifact_names": [
+    "CMakeCache.txt",
+    "MapServer.exe",
+    "compile-only-receipt.json",
+    "map-startup-build-input.json",
+    "map-startup-inputs.json",
+    "native-fresh-groups-server-build-input.json",
+    "native-groups-transaction-server-build-input.json",
+    "native-server-initial-observer-build-input.json",
+    "source/Common/seq/anim.c",
+    "source/Common/seq/coh_fresh_folder_profile_api.h",
+    "source/Common/seq/coh_fresh_original_resource_quiescence.inc",
+    "source/Common/seq/coh_resource_quiescence.inc",
+    "source/MapServer/src/entity/entsend.c",
+    "source/MapServer/src/entity/entserver.c",
+    "source/MapServer/src/group/coh_fresh_source_profile.inc",
+    "source/MapServer/src/group/coh_server_initial_adapter.inc",
+    "source/MapServer/src/group/coh_server_initial_api.h",
+    "source/MapServer/src/group/coh_server_initial_ledger.c",
+    "source/MapServer/src/group/coh_server_initial_ledger.h",
+    "source/MapServer/src/group/coh_source_catalog_sink.inc",
+    "source/MapServer/src/group/coh_source_groups_capture_sink.inc",
+    "source/MapServer/src/group/groupnetsend.c",
+    "source/MapServer/src/svr/svr_init.c",
+    "source/MapServer/src/svr/svr_tick.c",
+    "source/libs/UtilitiesLib/src/utils/FolderCache.c",
+    "source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile.inc",
+    "source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile_api.h",
+    "source/libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h"
+  ],
+  "compiler_executed": false,
+  "fresh_inherited_source_verifier_executed_for_new_role": true,
+  "new_supplier_Git_admission": "prospective_only_pending_primary_commit",
+  "new_supplier_closure_raw_sha256": {
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_api.h": "d44967933050a6afacfd96b32ee48faf6920c73bc8ff913bbf36cfdcf918dbda",
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.c": "c4f0828d068107b84765249f3cc3ac24dcf56206d071e2cddc145093a4e08cff",
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.h": "852a0e8632bc8f426f2ebaeab48bb545fbfde1580650a1cc838740b3e49e149c",
+    "native-android/engine/initial-capture/server-initial-observer/fixtures.py": "973178998a5835ecee89e02bdbbe7b1aeed9ea4395d488ba65bf3a85ae127421",
+    "native-android/engine/initial-capture/server-initial-observer/schema.py": "b4e855c580af98131a57ba40769e0fd0b38f27690c5bead537e6905e9f9215a6",
+    "native-android/engine/initial-capture/server-initial-observer/source_adapter.inc": "7aa590a8db41b71d4314233d9b803ef485954065fe62c79b17e69f4558b07624",
+    "native-android/engine/initial-capture/server-initial-observer/sourcehooks.py": "4233d034dce5b1d4e55d9f8ce33619f2fc6f9dd7d4201405b8223106e3d3f9a8",
+    "native-android/engine/initial-capture/server-initial-observer/test_ledger.c": "957186359e32ecfd480aa7a885f9bc59bd66e836d2b3c67060fb45696b473bbe",
+    "native-android/tools/server-initial-observer-20261018/build-feasibility.json": "130a98076a27d5ecb5588aebc01ae47e9e577c4b764813dd91f1198b559fadaa",
+    "native-android/tools/server-initial-observer-20261018/check_integration.py": "cb9a8088cc9952abd1cf1961f42744e653414444bff425fbd0e641b010422277",
+    "native-android/tools/server-initial-observer-20261018/recipe.py": "124470fcc5baff80177fd3a2615ab960c41ac72cc5c67190ea9926645548a698",
+    "native-android/tools/server-initial-observer-20261018/test_recipe.py": "00c1a8f8fb47942a05c0d85e28f8381c40c582814d8674f84c5bfcfb85b9ae46"
+  },
+  "new_supplier_raw_bytes_bracketed": true,
+  "overlay": {
+    "MapServer/src/group/coh_server_initial_adapter.inc": {
+      "bytes": 7471,
+      "sha256": "7aa590a8db41b71d4314233d9b803ef485954065fe62c79b17e69f4558b07624"
+    },
+    "MapServer/src/group/coh_server_initial_api.h": {
+      "bytes": 651,
+      "sha256": "d44967933050a6afacfd96b32ee48faf6920c73bc8ff913bbf36cfdcf918dbda"
+    },
+    "MapServer/src/group/coh_server_initial_ledger.c": {
+      "bytes": 8765,
+      "sha256": "c4f0828d068107b84765249f3cc3ac24dcf56206d071e2cddc145093a4e08cff"
+    },
+    "MapServer/src/group/coh_server_initial_ledger.h": {
+      "bytes": 2820,
+      "sha256": "852a0e8632bc8f426f2ebaeab48bb545fbfde1580650a1cc838740b3e49e149c"
+    }
+  },
+  "passed": true,
+  "patched_files": {
+    "MapServer/src/entity/entsend.c": {
+      "original": {
+        "bytes": 171294,
+        "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+      },
+      "patched": {
+        "bytes": 172422,
+        "sha256": "fb3cef5ad337406b4afe7a65c92f3cd1625e711781dc92848ab735635908a5e9"
+      }
+    },
+    "MapServer/src/entity/entserver.c": {
+      "original": {
+        "bytes": 64295,
+        "sha256": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806"
+      },
+      "patched": {
+        "bytes": 64709,
+        "sha256": "4d2ea6bd57d0dddb54c40144b29c15e4d4f67c5c0c0ba8567ecd249b4ae4fd07"
+      }
+    },
+    "MapServer/src/group/coh_fresh_source_profile.inc": {
+      "original": {
+        "bytes": 10265,
+        "sha256": "65645b3798ac11c19db7be714ae0c4d77f37049b5add89a9ab5ab29c8a01e383"
+      },
+      "patched": {
+        "bytes": 10460,
+        "sha256": "bd70baaf7680049fea491f01afdeb98c97184f1805d0e0926781039106a6776e"
+      }
+    },
+    "MapServer/src/group/groupnetsend.c": {
+      "original": {
+        "bytes": 98073,
+        "sha256": "960dce22752416c6b6955cb25d01fc870dc7b6daa58ce371f1a2cf8404f486c8"
+      },
+      "patched": {
+        "bytes": 98267,
+        "sha256": "7c861893ecb15a21c9e7fe8d6392a40a7f164cb283a655dfbf43939514b888a5"
+      }
+    },
+    "MapServer/src/svr/svr_tick.c": {
+      "original": {
+        "bytes": 71802,
+        "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+      },
+      "patched": {
+        "bytes": 72937,
+        "sha256": "b986b676fa4986941a95b54f9a1f9bb7226ce67b05a6c88d7ad3e9dd9c7bc972"
+      }
+    }
+  },
+  "schema": "coh-server-initial-source-integration-v1",
+  "selected_artifact_members": 28,
+  "services_executed": false,
+  "stage_receipt_integer_boolean_rejected": true,
+  "world_authority": false
+}

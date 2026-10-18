@@ -1,0 +1,1 @@
+{"new_Git_admission": "prospective_only", "new_overlays": 4, "passed": true, "patched_existing_files": 5, "proof_sha256": "cfb87491899046d233de59a0e89e5f5846985b9f18ea6a9d770bdd786fed4ff9", "selected_artifact_members": 28}

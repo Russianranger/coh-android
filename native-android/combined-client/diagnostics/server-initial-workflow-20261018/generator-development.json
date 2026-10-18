@@ -1,0 +1,10 @@
+{
+  "schema": "coh-server-initial-workflow-generator-development-v1",
+  "first_source_gate_syntax_check": "REFUSED_TWO_NUL_BYTES_IN_ORDINARY_TEMPLATE_LITERAL",
+  "correction": "Raw Python template literal preserves intended generated escapes",
+  "corrected_source_gate_syntax_passed": true,
+  "compiler_native_or_original_runtime_executed": false,
+  "world_authority": false,
+  "independent_draft_collision_refused": "Current and historical Linux gates both exclusively created fresh-groups-source-admission.json",
+  "collision_correction": "Only Windows current build gate writes legacy alias; Linux current gate exclusively owns new server-initial-source-admission.json"
+}

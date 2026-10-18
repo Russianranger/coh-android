@@ -1,0 +1,14 @@
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h:27:20:coh_receive_sample.part.0	56	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:126:18:observe	1408	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:172:12:append.constprop	64	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:32:13:sample_receive	1072	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:43:13:close_capture.constprop	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:176:12:append_string.constprop	64	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:93:25:Java_org_coh_nativecombined_InteropNative_begin	2384	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:149:24:Java_org_coh_nativecombined_InteropNative_service	1088	dynamic,bounded
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:165:24:Java_org_coh_nativecombined_InteropNative_choose	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:188:30:Java_org_coh_nativecombined_InteropNative_characters	320	dynamic,bounded
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:212:27:Java_org_coh_nativecombined_InteropNative_report	12848	dynamic,bounded
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:280:24:Java_org_coh_nativecombined_InteropNative_suspend	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:292:24:Java_org_coh_nativecombined_InteropNative_disconnect	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:296:24:Java_org_coh_nativecombined_InteropNative_close	16	static

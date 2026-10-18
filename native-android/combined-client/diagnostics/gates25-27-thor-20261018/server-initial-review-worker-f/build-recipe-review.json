@@ -1,0 +1,77 @@
+{
+  "files": {
+    "native-android/tools/server-initial-observer-20261018/README.md": {
+      "bytes": 5946,
+      "sha256": "7484d524cc5066f3c38231fe926726688da944fa14aeecef3bea455e40be301e"
+    },
+    "native-android/tools/server-initial-observer-20261018/build-feasibility.json": {
+      "bytes": 1095,
+      "sha256": "130a98076a27d5ecb5588aebc01ae47e9e577c4b764813dd91f1198b559fadaa"
+    },
+    "native-android/tools/server-initial-observer-20261018/check_integration.py": {
+      "bytes": 5651,
+      "sha256": "cb9a8088cc9952abd1cf1961f42744e653414444bff425fbd0e641b010422277"
+    },
+    "native-android/tools/server-initial-observer-20261018/qualification/recipe-controls.json": {
+      "bytes": 1379,
+      "sha256": "02c99a695b1ee4bb0d00f10139b822cae6335cf6e181ebee299210d00f524f0f"
+    },
+    "native-android/tools/server-initial-observer-20261018/qualification/recipe-controls.stderr.txt": {
+      "bytes": 2511,
+      "sha256": "2488cb37eb14c74394038c50cd76132c9911090c58fa7e565be87596b77f8471"
+    },
+    "native-android/tools/server-initial-observer-20261018/qualification/recipe-controls.stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/tools/server-initial-observer-20261018/qualification/source-integration-final.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-android/tools/server-initial-observer-20261018/qualification/source-integration-final.stdout.txt": {
+      "bytes": 223,
+      "sha256": "7f30f00374c25b021f33d7265f7d34b28dc6db84dc72175eb87607c90c52c8ef"
+    },
+    "native-android/tools/server-initial-observer-20261018/qualification/source-integration.json": {
+      "bytes": 6825,
+      "sha256": "cfb87491899046d233de59a0e89e5f5846985b9f18ea6a9d770bdd786fed4ff9"
+    },
+    "native-android/tools/server-initial-observer-20261018/recipe.py": {
+      "bytes": 21111,
+      "sha256": "124470fcc5baff80177fd3a2615ab960c41ac72cc5c67190ea9926645548a698"
+    },
+    "native-android/tools/server-initial-observer-20261018/test_recipe.py": {
+      "bytes": 9707,
+      "sha256": "00c1a8f8fb47942a05c0d85e28f8381c40c582814d8674f84c5bfcfb85b9ae46"
+    }
+  },
+  "limitations": {
+    "actual_changed_Windows_Map_compile_run_admitted_yet": false,
+    "actual_original_server_runtime_or_world_authority": false,
+    "compiler_SDK_system_header_closure_qualified": false,
+    "full_original_private_source_stage_executed_by_controls": false
+  },
+  "passed": true,
+  "review_method": "Read-only recipe, controls, exact accepted source archive and integration receipt inspection; independent hook data reconstruction already recorded in observer-review.json. No imports, tests, compiler, private stage, service or accepted qualifier replay.",
+  "schema": "coh-server-initial-build-recipe-independent-worker-f-review-v1",
+  "source_findings": [
+    "Accepted archive lacks obj/lib/rsp; clean Win32 OptDebug MapServer target build is separately necessary for changed observer. Recipe stages exact reversible overlay role only; recipe entrypoints do not invoke compiler or service. It does not claim object reuse, accepted artifact equivalence, external compiler/SDK closure or accepted qualifier replay.",
+    "Own checkout/root and Git source closure are checked before imports through workflow gate, then recipe verifies exact tracked same-root executable suppliers/inherited closure. Artifact admission brackets expected HEAD and all supplier hashes before/after full verification. Dynamic source directory enumeration includes all executable local Python/JSON/C/H/inc suppliers and rejects untracked/changed files.",
+    "Artifact inventory requires exact files and parent directories, no symlink or hardlink files, individual16MiB/aggregate64MiB limits, bounded stable reads and duplicate-free finite JSON. Receipt fields/boolean scope and artifact bytes/hash types are strict. PE32 I386 executable shape and VS18 2026 Win32 OptDebug cache/source root are checked; these are shape/provenance checks rather than independent full PE loader or SDK qualification.",
+    "Five patched files reverse to pinned baselines before real inherited fresh.verify_bytes; each new overlay equals current supplier and strict fresh.base.json_equal binds full derived stage receipt without Python bool/int aliasing. Exact expected inventory is28 including compile receipt. Recording brackets private staged source and exact copied source/PE/cache files, fsyncs and immediately re-admits complete artifact.",
+    "Whole original published input archives/files are separately admitted and rechecked before/after actual workflow build. New same-run/attempt API ZIP admission is a separate mandatory step before D artifact verifier and startup. New source files remain prospective until primary publication; actual Git/source gate must pass at destination.",
+    "Integration retains failed draft anchor witness and later coherent final source proof separately; final stdout names exact proof hash and stderr empty. No new build, runtime, accepted model/qualifier, original server or physical Thor result has been admitted by local source controls."
+  ],
+  "verified_evidence": {
+    "exact_artifact_inventory_including_compile_receipt": 28,
+    "exact_patched_files": 5,
+    "integration_raw_supplier_pins_current": 14,
+    "integration_uses_actual_accepted_source_subset_and_real_inherited_fresh_verify_bytes": true,
+    "new_Git_admission": "prospective_only_pending_primary_commit",
+    "new_overlays": 4,
+    "own_controls_use_synthetic_PE_and_inherited_checker_double": true,
+    "own_recipe_control_methods": 20,
+    "own_recipe_raw_stdout_stderr_hashes_current": true,
+    "stage_receipt_bool_integer_alias_refused_attested": true
+  }
+}

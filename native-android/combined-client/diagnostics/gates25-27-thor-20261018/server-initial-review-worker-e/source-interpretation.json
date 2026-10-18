@@ -1,0 +1,345 @@
+{
+  "authority": {
+    "actor_publication": false,
+    "application_ack_permitted": false,
+    "complete_initial_character": false,
+    "normal_auth_version_checksum_admitted": false,
+    "original_server_or_session_executed": false,
+    "server_request_dispatch_observed": false,
+    "server_response_emission_observed": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "coordination": {
+    "a_hook_implementation_reviewed": false,
+    "notified_worker_a": [
+      "Deferred entFinishUpdate queue after sent_self/character writer/attachment",
+      "Fragmented pktSend return0 even on successful child admission",
+      "Actual viewed/slave owner and ACTIVE/client association",
+      "Backpressure/map-transfer context and preservation of errno/WSAGetLastError"
+    ]
+  },
+  "date_utc": "2026-10-18",
+  "minimal_ledger_completeness": [
+    "Bound request-handler entry, has-entity refusal and actual ready/sent_self transition to one private original link/entity transaction.",
+    "Count scheduled tick examination, no-entity/backlog outcomes, actual map-transfer context and ready/sent_self predicate before the unchanged entSendUpdate call.",
+    "Record actual viewed-owner equality, full/delta branch, full character call entry/completion, and final packet attachment separately from serialization bytes or validation.",
+    "Follow entFinish ACTIVE/client association and actual pktSend bracket; associate each committed child queue ID privately. Account for fragment-return0 and partial admission.",
+    "Record exact target-child socket first/retry acceptance and bounded failure/pre-socket reason classes, preserving existing packetSentCallback and system error state. Queue, full return, peer transport ACK and application acceptance stay separate.",
+    "Retire borrowed pointer keys before original link/entity/packet free/reuse; refuse ambiguous extra owners, duplicate binding or event-cap exhaustion without altering game operations. Hooks cannot dereference retained packet keys after free.",
+    "Numeric/fixed enum outcomes only. No packet bytes/hash, authentication bytes, account/name/DBID, endpoint, IDs, pointers, full-update ID, command strings or source handles in public output. Existing full character packet contains sensitive auth/profile data; never copy it for this ledger."
+  ],
+  "prerequisites_not_to_invent": [
+    {
+      "name": "CLIENT_READY",
+      "reason": "Original client queues REQALLENTS and waits for ALLENTS before READY. xcase expands to break;case, so REQALLENTS does not fall through into READY handling. REQALLENTS state plus sent_self=0 already selects full update.",
+      "source": "Game/src/clientcomm/clientcomm.c:1903-1941; MapServer/src/svr/svr_tick.c:357-393; utilitieslib/stdtypes.h:264"
+    },
+    {
+      "name": "CLIENTINP_RECEIVED_CHARACTER",
+      "reason": "Called after client has received/created itself; sets entity ready, clears login cookie/freeze and enables later entity-dependent traffic. Not a gate on original initial entSendUpdate/full character construction.",
+      "source": "MapServer/src/player/parseClientInput.c:446-471,1323-1328"
+    },
+    {
+      "name": "CLIENTINP_ACK_FULL_UPDATE",
+      "reason": "Original client reads full-update ID from already received ALLENTS then sends ACK. Server records ackedFullUpdateID. Mismatch sets later packet ordered; it does not require an application ACK before first ALLENTS. Native diagnostic must not execute original dispatcher or manufacture this ACK.",
+      "source": "Game/src/clientcomm/clientcomm.c:1488-1504; MapServer/src/player/parseClientInput.c:1331-1335; MapServer/src/entity/entsend.c:4051-4068"
+    }
+  ],
+  "prior_interpretation": {
+    "all_15_pins_unchanged_and_equal_current_git": true,
+    "path": "native-android/engine/initial-capture/qualification/post-queue-progress-20261018/source-interpretation-worker-e.json",
+    "sha256": "85a073ef155993699cfd771321ebc5c907abfeff6722d15b50e057292aeee495"
+  },
+  "result": "source interpretation complete; A implementation review separate",
+  "reviewer": "worker_e_renderer",
+  "schema": "coh-server-initial-source-interpretation-worker-e-v1",
+  "scope": "Read-only original Map request\u2192initial entity/character producer\u2192queue/fragment\u2192socket path for Gates25\u201327. Selected source pins are not a compiler dependency closure, original-session execution or complete character/world qualification.",
+  "source_commit": "4a2cc4f007339fdafd3243e8ddbd9778394f649b",
+  "source_pins": [
+    {
+      "bytes": 20023,
+      "git_blob": "20b056ebe9ccd8a68fedcf19111735fec05fdb96",
+      "path": "native-android/combined-client/tools/capture_local_initial_progress.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "63e758aae692fef0631035220a357a49fca5ce2ee2abce5b1d1972d426a04ba0"
+    },
+    {
+      "bytes": 4926,
+      "git_blob": "cf0589fa5c4e2ef391945cb06b582b631c367232",
+      "path": "native-android/engine/initial-capture/coh_initial_progress.h",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "099e4aa7e8cd7b648f85095b5b52ef859dbf135d8c263046f9424f27f46ae940"
+    },
+    {
+      "bytes": 7223,
+      "git_blob": "91df28a36b04de3fd12e7d0e0243f1322ff19266",
+      "path": "native-android/engine/initial-capture/coh_initial_local.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "c10545b32441b1ad0c90c845e023b6d178271d5062554aa3a8035b723e1e4ea8"
+    },
+    {
+      "bytes": 17989,
+      "git_blob": "377951295f97a826ca39ef374f2055ea5d405897",
+      "path": "native-android/engine/initial-capture/coh_initial_map.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4"
+    },
+    {
+      "bytes": 23015,
+      "git_blob": "e2e0507408cb2b10b501bd97e378a31b2b029f86",
+      "path": "native-android/engine/mapclient/coh_mapclient.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199"
+    },
+    {
+      "bytes": 11496,
+      "git_blob": "fd542af572852d306c6e3390393363685c8e1cee",
+      "path": "native-android/engine/network/coh_net_udp.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d"
+    },
+    {
+      "bytes": 24548,
+      "git_blob": "452eeb525a4535c84baf9a48da6c2b93b889df03",
+      "path": "native-android/engine/network/coh_net.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1"
+    },
+    {
+      "bytes": 5136,
+      "git_blob": "1a92d3e458733ac807470224c8fd39112c7a18b6",
+      "path": "native-android/engine/network/coh_net_frame.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+    },
+    {
+      "bytes": 11732,
+      "git_blob": "b30755f4e6ebdf19cf5276e2d902a0e49bfd0dbd",
+      "path": "native-android/engine/local/coh_local.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210"
+    },
+    {
+      "bytes": 73982,
+      "git_blob": "fef73cbfd9daffbb8e831cd49ecef3e4434380ac",
+      "path": "upstream/ouroboros/Game/src/clientcomm/clientcomm.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd"
+    },
+    {
+      "bytes": 30356,
+      "git_blob": "99567f28ff15811232c93d1382af822a706eb3ea",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    },
+    {
+      "bytes": 56509,
+      "git_blob": "c944d588f7dd5872ee4b2630e27273f293b3af8f",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9"
+    },
+    {
+      "bytes": 71802,
+      "git_blob": "071826fd463d95a1b01d6fe6bd7c68625d7cd1d4",
+      "path": "upstream/ouroboros/MapServer/src/svr/svr_tick.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    {
+      "bytes": 171294,
+      "git_blob": "d7548a8f4902bd3755e3ab0d4f00773313611bc1",
+      "path": "upstream/ouroboros/MapServer/src/entity/entsend.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    },
+    {
+      "bytes": 9698,
+      "git_blob": "9c9bb0c79b887cbfff3ef6bff34a4e87e8241ef8",
+      "path": "native-android/engine/initial-capture/NEXT_COMMAND_OBSERVATION.md",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": true,
+      "sha256": "73cd563e08cf3860287627429ed298a4c1390665951acfbc2af5d86995964781"
+    },
+    {
+      "bytes": 10047,
+      "git_blob": "2d27589704179275cc7e6a77edf182a37af068e7",
+      "path": "upstream/ouroboros/MapServer/src/svr/svr_base.h",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64"
+    },
+    {
+      "bytes": 13987,
+      "git_blob": "128fe8108e53f2821a803f58b76e085194a10315",
+      "path": "upstream/ouroboros/MapServer/src/svr/svr_base.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "7d7379d255c8bbd6e45663499d70dad2672455704d25716d0adb6e3694d4de40"
+    },
+    {
+      "bytes": 64295,
+      "git_blob": "8ecdc136da6c16e690f316b05b96a2cfb690b3df",
+      "path": "upstream/ouroboros/MapServer/src/entity/entserver.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806"
+    },
+    {
+      "bytes": 54786,
+      "git_blob": "241b88b15668d92ae2f8bf9b63dafea8d2446271",
+      "path": "upstream/ouroboros/MapServer/src/entity/character_net_server.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2"
+    },
+    {
+      "bytes": 5416,
+      "git_blob": "8ae0a9dd8950a14d3601b5d7bab88428fc91607c",
+      "path": "upstream/ouroboros/MapServer/src/player/clientEntityLink.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "4762bfb21323f6b40433d75fbc18a1c8df314703dd6ca869802b245b3ecfca6b"
+    },
+    {
+      "bytes": 144600,
+      "git_blob": "a44a7527070f0ed46b4cc30ea7b7a930b4ab9aee",
+      "path": "upstream/ouroboros/MapServer/src/player/parseClientInput.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313"
+    },
+    {
+      "bytes": 20819,
+      "git_blob": "eb4f026e5263c99a65f76428290871c8283f1e32",
+      "path": "upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "14799001b028608bf940b631b73ba6af02ed869915b09ec000547e3aa0106663"
+    },
+    {
+      "bytes": 46672,
+      "git_blob": "efe6ea889582e03934d462f63507cde7c79a5d1a",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29"
+    },
+    {
+      "bytes": 46482,
+      "git_blob": "3c24de25d451280c9ca4625a7b0653cb603b8e93",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_masterlist.c",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "5b9978793e7442a0c522d869440b3847ea87e561263dcbbd798ccd823c8d2208"
+    },
+    {
+      "bytes": 28228,
+      "git_blob": "f398b138191f7c9d8234b93ebcb9d3f2afb84c26",
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h",
+      "raw_equals_pinned_git": true,
+      "same_as_prior_15_pin_interpretation": false,
+      "sha256": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f"
+    }
+  ],
+  "source_supported_inference": {
+    "inference_not_observed_result": "If initial packet is refused/freed after sent_self becomes1, plain REQALLENTS readiness can be ineligible on subsequent ticks until another original state transition resets it. This is why sent_self and queue result need distinct observations; it is not evidence this occurred or authorization to reset behavior."
+  },
+  "suppression_and_observer_map": [
+    {
+      "condition": "CLIENT_REQALLENTS reached but client->entity absent",
+      "effect": "Original handler removes link and breaks. Otherwise assigns REQALLENTS, clears selected entity sent_self and EntNetLink. Observe entry/has-entity and actual post-transition independently.",
+      "location": "svr/svr_tick.c:357-367",
+      "stage": "request dispatch"
+    },
+    {
+      "condition": "send_on_this_tick false and no worldModified override",
+      "effect": "svrTickDoNetSend is not called this tick. Default period initializes to four updates/second; network master monitor runs earlier. An absent per-client send event is not by itself request refusal.",
+      "location": "svr/svr_tick.c:1348-1398,1791-1816,2012-2016,2081",
+      "stage": "send cadence"
+    },
+    {
+      "condition": "Current link client has no entity, or backlog disconnect/wait triggers",
+      "effect": "No entity skips this link. Reliable backlog threshold is 400, raised to10000 for local-server or controls.notimeout. svrTickCheckDisconnect returns immediately unless ready and backlog>=threshold; nonlocal removes link, local blocks polling until drained/disconnected. This happens before entSendUpdate.",
+      "location": "svr/svr_tick.c:1623-1645",
+      "stage": "tick client eligibility"
+    },
+    {
+      "condition": "Entity has transfer state",
+      "effect": "Called before readiness evaluation; return value is ignored by this tick. TELL_CLIENT_IDLE exits while ready<ENTERING_GAME, so REQALLENTS does not require READY. Other transfer phases may send their own control packets, remove entity from OWNED and mark sleeping. A transfer flag is context, not proof of a direct send skip.",
+      "location": "dbcomm/dbmapxfer.c:78-155; svr/svr_tick.c:1649",
+      "stage": "map transfer"
+    },
+    {
+      "condition": "Not IN_GAME, not RE_REQALLENTS, and either ready==NOT_READY or sent_self!=0",
+      "effect": "entSendUpdate is not called. REQALLENTS state is1 and initially sent_self=0, so eligible. Its full_update argument is ready!=IN_GAME. RE_REQALLENTS/ENTERING_GAME are later promoted; plain REQALLENTS stays state1.",
+      "location": "svr/svr_tick.c:1653-1671; svr/svr_base.h:10-24",
+      "stage": "ready/sent_self gate"
+    },
+    {
+      "condition": "Viewed entity differs from selected entity, or player_ent null",
+      "effect": "clientGetViewedEntity chooses slave when present, otherwise selected entity. entSendUpdate returns if player_ent null. Observe equality/presence only; do not export identities or assume selected and viewed owners coincide.",
+      "location": "player/clientEntityLink.c:50-57; entity/entsend.c:3824-3869",
+      "stage": "viewed owner"
+    },
+    {
+      "condition": "full_update argument false",
+      "effect": "SERVER_UPDATE framing is selected instead of SERVER_ALLENTS and lacks the packed full-update ID. A pending full-update ACK only makes packet ordered; it does not suppress first full construction. Preserve distinction and record actual branch.",
+      "location": "entity/entsend.c:4032-4085",
+      "stage": "full-vs-delta producer"
+    },
+    {
+      "condition": "entSendUpdate reaches sent_self assignment/full character call",
+      "effect": "sent_self becomes1 at4462 before full character serialization at4505 and before queue. Full branch invokes sendCharacterToClient\u2192character_Send; ordinary branch sends stats. A completed function/call is a producer observation, not validated complete initial character or sent bytes. sendCharacterToClient also emits independent side packets via final helpers.",
+      "location": "entity/entsend.c:4445-4509; entity/entserver.c:1219-1513; entity/character_net_server.c:339-365",
+      "stage": "self latch and complete character writer"
+    },
+    {
+      "condition": "Built packet attached but entity not in ACTIVE collection or clientFromEnt(e)==NULL",
+      "effect": "entSendUpdate only assigns entityPacket. entFinishUpdate later iterates ACTIVE players and pktSends only an existing attached packet with e->client. No client leaves it attached here. entFinishUpdate runs after per-link batch send; a later master flush can send newly queued data. Original connect adds selected entity ACTIVE at svr_tick.c156.",
+      "location": "entity/entsend.c:4606-4641,1656-1662,1807-1842; svr/svr_tick.c:1709,1779; svr/svr_base.c:15-18",
+      "stage": "attachment vs queue"
+    },
+    {
+      "condition": "Invalid link/socket/type or sendQueuePacketMax limit, or fragment queue refusal",
+      "effect": "Invalid link frees packet. Queue limit can set overflow and reject. Nonfragment branch returns actual enqueueResult. Fragmented branch creates/queues children, frees original and returns0 even on all-child success. Observe committed lnkAddToSendQueue child assignments and partial admission under exact source packet bracket; do not treat pktSend return0 as uniform failure.",
+      "location": "network/netio_send.c:450-586; network/netio_core.c:47-126",
+      "stage": "queue admission and fragmentation"
+    },
+    {
+      "condition": "Link disconnected/no socket/dead or asynchronous send pending, queued backlog or send failure",
+      "effect": "Flush can return without sending. Batch prioritizes retransmits then normal queue. pktSendRaw failure stops queue draining. Queueing adds flush-list admission; master monitor flushes at start/end. A batch call alone proves no specific packet emission.",
+      "location": "network/netio_core.c:457-486; network/net_masterlist.c:760-764,820-823; network/netio_send.c:34-100,109-207",
+      "stage": "batch/flush eligibility"
+    },
+    {
+      "condition": "Simulation lag, flow-control budget, or actual socket result",
+      "effect": "Lag and flow control can return0 before socket. Actual send/sendto returns bytes; existing packetSentCallback receives exact Packet*, length and full-return boolean. Successful fragments can be retries or side packets; all committed target children must be bound privately. Preserve original return/errno/WSA error and existing callback.",
+      "location": "network/netio_send.c:598-758",
+      "stage": "actual socket outcome"
+    }
+  ],
+  "work_performed": {
+    "compiler_or_runtime_executed": false,
+    "files_written": "Only new E evidence under server-initial-review-worker-e",
+    "original_source_changes": false,
+    "renderer_changes": false,
+    "tests_replayed": false
+  }
+}

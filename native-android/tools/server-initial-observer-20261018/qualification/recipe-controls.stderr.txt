@@ -1,0 +1,25 @@
+test_admission_envelope_control (__main__.AdmissionControls.test_admission_envelope_control) ... ok
+test_admission_expected_checkout_revision_refused (__main__.AdmissionControls.test_admission_expected_checkout_revision_refused) ... ok
+test_admission_final_checkout_revision_change_refused (__main__.AdmissionControls.test_admission_final_checkout_revision_change_refused) ... ok
+test_admission_receipt_external_pin_refused (__main__.AdmissionControls.test_admission_receipt_external_pin_refused) ... ok
+test_admission_source_revision_and_role_refused (__main__.AdmissionControls.test_admission_source_revision_and_role_refused) ... ok
+test_admission_supplier_and_artifact_hash_refused (__main__.AdmissionControls.test_admission_supplier_and_artifact_hash_refused) ... ok
+test_admission_unknown_field_refused (__main__.AdmissionControls.test_admission_unknown_field_refused) ... ok
+test_cache_configuration_control_and_changed_fields_refusal (__main__.AdmissionControls.test_cache_configuration_control_and_changed_fields_refusal) ... ok
+test_cache_duplicate_or_conflicting_alias_refused (__main__.AdmissionControls.test_cache_duplicate_or_conflicting_alias_refused) ... ok
+test_exact_inventory_accepts_only_selected_files_and_parents (__main__.AdmissionControls.test_exact_inventory_accepts_only_selected_files_and_parents) ... ok
+test_extra_empty_directory_refused (__main__.AdmissionControls.test_extra_empty_directory_refused) ... ok
+test_extra_file_refused (__main__.AdmissionControls.test_extra_file_refused) ... ok
+test_hardlink_file_refused (__main__.AdmissionControls.test_hardlink_file_refused) ... ok
+test_json_duplicate_and_nonfinite_refused (__main__.AdmissionControls.test_json_duplicate_and_nonfinite_refused) ... ok
+test_member_traversal_and_alias_forms_refused (__main__.AdmissionControls.test_member_traversal_and_alias_forms_refused) ... ok
+test_missing_file_refused (__main__.AdmissionControls.test_missing_file_refused) ... ok
+test_pe_dll_and_missing_entrypoint_refused (__main__.AdmissionControls.test_pe_dll_and_missing_entrypoint_refused) ... ok
+test_symlink_directory_refused (__main__.AdmissionControls.test_symlink_directory_refused) ... ok
+test_symlink_file_refused (__main__.AdmissionControls.test_symlink_file_refused) ... ok
+test_synthetic_pe_shape_control_and_changed_machine_refusal (__main__.AdmissionControls.test_synthetic_pe_shape_control_and_changed_machine_refusal) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.018s
+
+OK

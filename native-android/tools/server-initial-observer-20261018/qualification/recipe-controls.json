@@ -1,0 +1,44 @@
+{
+  "accepted_qualifiers_reexecuted": false,
+  "actual_original_source_stage_executed": false,
+  "executed_test_methods": 20,
+  "inherited_source_checker_test_double": true,
+  "outputs": {
+    "recipe-controls.stderr.txt": {
+      "bytes": 2511,
+      "sha256": "2488cb37eb14c74394038c50cd76132c9911090c58fa7e565be87596b77f8471"
+    },
+    "recipe-controls.stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "real_Windows_compiler_executed": false,
+  "schema": "coh-server-initial-recipe-controls-v1",
+  "services_executed": false,
+  "source": {
+    ".gitattributes": {
+      "bytes": 14,
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    "README.md": {
+      "bytes": 5946,
+      "sha256": "7484d524cc5066f3c38231fe926726688da944fa14aeecef3bea455e40be301e"
+    },
+    "build-feasibility.json": {
+      "bytes": 1095,
+      "sha256": "130a98076a27d5ecb5588aebc01ae47e9e577c4b764813dd91f1198b559fadaa"
+    },
+    "recipe.py": {
+      "bytes": 21111,
+      "sha256": "124470fcc5baff80177fd3a2615ab960c41ac72cc5c67190ea9926645548a698"
+    },
+    "test_recipe.py": {
+      "bytes": 9707,
+      "sha256": "00c1a8f8fb47942a05c0d85e28f8381c40c582814d8674f84c5bfcfb85b9ae46"
+    }
+  },
+  "synthetic_PE_fixture": true,
+  "world_authority": false
+}

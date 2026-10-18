@@ -1,0 +1,30 @@
+{
+  "actual_artifact_or_network_execution_qualified_by_this_review": false,
+  "files": {
+    "admit_workflow_artifact.py": {
+      "bytes": 6247,
+      "sha256": "bb91d24fabb858ee706e1d007168bd25eeec2075cba360d31dc5950d35d7e04f"
+    },
+    "artifact-controls.json": {
+      "bytes": 1691,
+      "sha256": "2aa4e84276b29702f122a307cf89564fcb26ba662e83b76ef8e74b3316801b49"
+    },
+    "check_artifact_admission.py": {
+      "bytes": 4705,
+      "sha256": "267867402453c277014d716e240094206addf9c7326aab538e5535793d406935"
+    }
+  },
+  "findings": [
+    "Actual artifact ID, nonexpired flag, size/digest, repository IDs, current run/head/branch/workflow and one successful compile job are required.",
+    "Original attempt gap corrected: explicit positive GITHUB_RUN_ATTEMPT must equal run/job attempts and current artifact name includes revision+attempt, refusing a prior-attempt artifact under same run/SHA. Final workflow must supply matching current compile action outputs and name.",
+    "Bounded ZIP shape refuses duplicates, absolute/dot/empty-normalized/backslash/ADS/directory names, symlink/nonregular/encrypted members, zero/oversized files and excess expanded/member totals. New private destination and exclusive files prevent replacement of previous outputs.",
+    "Downloaded size and raw SHA256 must equal admitted artifact API metadata; bounded extraction checks member sizes/CRC through ZipFile reading and exact compile receipt hash before success.",
+    "D verify_artifact remains mandatory for exact member inventory, staged source reversals/closure, compile scope and PE/cache semantics. This helper establishes artifact transport identity, not compiler correctness or runtime/server/world authority.",
+    "Retained40-case pure metadata/ZipInfo-double receipt matches exact helper hash and covers changed run/job attempt and prior-attempt artifact name; these controls perform no network, extraction or native execution."
+  ],
+  "passed": true,
+  "pending_integration": "Independent final workflow source gate, matching revision/attempt artifact name/action outputs and mandatory D verifier call remain to be reviewed when generated.",
+  "review_method": "Read-only current source, AST and retained pure-control receipt review; no network/download, ZIP extraction, source import, qualifier or runtime replay.",
+  "schema": "coh-server-initial-artifact-helper-independent-worker-f-review-v1",
+  "world_authority": false
+}

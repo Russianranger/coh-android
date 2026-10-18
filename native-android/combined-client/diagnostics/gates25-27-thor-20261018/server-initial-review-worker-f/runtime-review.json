@@ -1,0 +1,57 @@
+{
+  "files": {
+    "native-android/tools/server-initial-runtime-20261018/README.md": {
+      "bytes": 6809,
+      "sha256": "31f75fc650d5dce7ee405f5e888ed94787b226f0d889c1a0eb23891731705397"
+    },
+    "native-android/tools/server-initial-runtime-20261018/check_runtime.py": {
+      "bytes": 19081,
+      "sha256": "9037b685235066d2013d0e44c14e0b16ecedd67b762d6cbe5cfe7084cdc995b2"
+    },
+    "native-android/tools/server-initial-runtime-20261018/ledger.py": {
+      "bytes": 7020,
+      "sha256": "296e93cce85e02b4242f4205b55edb6a55a70dc33a5ed393d94d3584369e1aca"
+    },
+    "native-android/tools/server-initial-runtime-20261018/qualification/controls-06/receipt.json": {
+      "bytes": 1637,
+      "sha256": "a96fc9e5222c1830f0dc88fd6026344dd257e514e478970d5723a118e3050661"
+    },
+    "native-android/tools/server-initial-runtime-20261018/runtime.py": {
+      "bytes": 21164,
+      "sha256": "7788bf2c1dd8211d387a7beae79e517477efe9eb5ffae6b1f1c804061053a601"
+    }
+  },
+  "limitations": {
+    "actual_Map_PE_or_Windows_compiler_run_admitted_yet": false,
+    "actual_new_native_original_socket_session_admitted_yet": false,
+    "actual_original_server_transaction_executed_by_review": false,
+    "complete_RSS_GPU_memory_fit": false,
+    "full_initial_character_or_world_authority": false,
+    "physical_Thor_retest": false
+  },
+  "passed": true,
+  "required_actual_admission": [
+    "Current committed source and final A producer schema/hook pins plus D strict new artifact verifier must pass before startup.",
+    "Only actual fixed numeric artifacts after independent cleanup may establish observed boundaries; inspect nested producer state rather than promoting outer VALID.",
+    "Original transaction/source exactness, Android ARM64 compilation and physical Thor/server world acceptance remain distinct evidence scopes."
+  ],
+  "review_method": "Read-only source, existing lifecycle/source contract and retained focused receipt inspection. No import, compiler, tests, original server, accepted qualifier or runtime replay.",
+  "schema": "coh-server-initial-runtime-independent-worker-f-review-v1",
+  "source_findings": [
+    "New wrapper delegates one transaction to unchanged capture_groups_transaction.py. Separate exact new Map/native artifact admission precedes existing lifecycle dispatch, and final source/artifact stability is rechecked. Internal dictionary capability views only select accepted optional hooks; final private report restores actual new build role/schema and exact receipt/PE identities. No historical artifact equivalence is claimed.",
+    "Bridge is single-call/nonreentrant, restores patched attributes in reverse even on failed installation/capture. Capture retains accepted restored-character membership, source owner, same private selected DBID/wire slot and exact source/native GROUPS logical-byte pairing predicates; original core source and protocol remain unchanged.",
+    "Ledger is precreated0600 in accepted private C-drive directory before actual Map startup. Only that actual Map child receives the fixed environment sink, then existing ProbeOwner binds the actual Popen plus its two registered streams. Collection waits for actual child/stream closure and independently completed owned cleanup, verifies exact inode/single-link/mode/unchanged bytes and strict producer schema, and additionally requires successful same-owner GROUPS commit flag and accepted pair.",
+    "Optional receive.finish, retain and ledger.public failures become fixed refusal values while preserving core transaction result and actual role metadata. Receive project refusal remains a separate fixed REFUSED child and cannot discard an independently valid ledger. Retention exclusively creates fixed private basename, flushes/fsyncs/rechecks bytes and independently attempts descriptor close and owned-inode rollback.",
+    "Public projection rebuilds fixed allowlists, caps whole ASCII JSON at16KiB and rechecks current committed wrapper/supplier/native closure. It separately binds actual compile receipt, native receipt and Map size/hash to original private capture report plus its existing pre-Map run-identity hash/source/revision/restoration flags. No new identity file, raw log, owner, packet, database/account, endpoint, file identity or exception string is exported.",
+    "Outer ledger VALID means private-file/context/schema admission. Nested ACTIVE is last successfully persisted checkpoint and cannot establish later absence, exact terminal counts or sink health after checkpoint. Producer FINAL_RETURN/refusal are preserved rather than inferred from process termination. Raw pktSend result0 is preserved without queue/socket acceptance interpretation.",
+    "No packet, timeout, READY, ACK, transport limit, authentication or character policy changed. Same-source original fixture transaction remains separate from physical Thor; new observed dispatch/send boundary will not alone establish Thor timeout cause, complete initial-character acceptance, applicationACK, actor publication or world authority."
+  ],
+  "verified_evidence": {
+    "actual_owned_synthetic_children_attested": 2,
+    "exact_execution_stdout_separately_retained": false,
+    "focused_checks_attested": 45,
+    "focused_receipt_source_hashes_current": true,
+    "production_parser_and_receive_projection_synthetic_integration_attested": true,
+    "receipt_is_reconstructed_stdout": false
+  }
+}

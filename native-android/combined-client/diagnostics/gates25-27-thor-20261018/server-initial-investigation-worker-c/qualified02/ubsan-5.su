@@ -1,0 +1,3 @@
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/mapclient/coh_mapclient_owned.c:4:13:owned_wipe	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/mapclient/coh_mapclient_owned.c:5:12:stopped	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/mapclient/coh_mapclient_owned.c:6:11:coh_map_client_begin_owned	224	static

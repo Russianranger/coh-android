@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "phase": "accepted_archive_lookup",
+  "reason": "focused checker omitted fixed fresh-groups-compile ZIP prefix",
+  "host_execution_started": false,
+  "corrected_checker_requires_new_output": true
+}

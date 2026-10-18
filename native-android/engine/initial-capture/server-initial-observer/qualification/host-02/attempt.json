@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "phase": "asan_ledger_exit",
+  "release_runs_passed": 2,
+  "reason": "LeakSanitizer proc task traversal blocked by managed host; not a source memory finding",
+  "asan_failed_raw_elf_sha256": "5d2e992bb334017d641e50abca62f6ba7ebe5365c3875ac2e11a63eb2ef9456f",
+  "raw_stdout_and_stderr_retained": true,
+  "next_run_leak_detection_disabled_explicitly": true
+}

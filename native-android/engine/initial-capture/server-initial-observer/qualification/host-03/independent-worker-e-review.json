@@ -1,0 +1,199 @@
+{
+  "blocking_findings": [],
+  "explicit_limits": [
+    "Host controls execute the production adapter with synthetic Map objects and Win32 providers, plus portable ledger logic. They do not execute the original Map, its serializers, or Windows kernel APIs.",
+    "Full system-header/compiler source closure is not claimed. LSan was unavailable; AddressSanitizer address checking ran with detect_leaks=0, while the separate UBSan run is retained.",
+    "pktSend return zero may follow successful fragment-child enqueue. Neither raw return value establishes queue acceptance, fragment children, socket transmission, transport acknowledgment, application acknowledgment, client decode, complete initial character or world authority.",
+    "ACTIVE is a last persisted checkpoint, not a complete negative observation or proof of final lifecycle cleanup. Process/file ownership, GROUPS byte pairing, source admission and actual transaction cleanup belong to separate runtime collection.",
+    "CLIENT_READY, RECEIVED_CHARACTER, and full-update acknowledgment are not added as prerequisites for the first full initial response."
+  ],
+  "interpretation_basis": {
+    "path": "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-review-worker-e/source-interpretation.json",
+    "scope": "Source map only; no original source authority or actual server outcome inferred.",
+    "sha256": "936fdfc6a3da5c3e8e64bf8b55e78b1e51b028c2bc8e9cc10dc0e794cd502378"
+  },
+  "owner_and_lifetime_review": [
+    "Only successful accepted GROUPS finish binds the owner. The actual committing link is captured before original finish clears its boundary; no pre-ready prerequisite is added to later REQALLENTS events.",
+    "Each exported hook checks the immutable accepted installation thread before reading mutable ledger/key state. Foreign threads neither inspect nor mutate that state. Core calls retain the explicit serialized-owner contract.",
+    "The source adapter verifies one current registered link occurrence before dereferencing retained link identity, then client/entity/character backlinks, current entity table/state and immutable identity values. Foreign links/entities cannot advance the target ledger.",
+    "Character hooks pass entity and packet identities directly and add no client dereference. A different viewed entity is recorded/refused by the exact owner/full-update check rather than followed through an invented client link.",
+    "The entFreeDbg hook retires matching private keys before original unlink/free. Changed registered identity also refuses and retires. A missing later event leaves only the documented historical ACTIVE checkpoint.",
+    "The packet token is converted to uintptr_t before pktSend and compared only as a private scalar after the call. Return processing requires the target send_pending association and exact token. No post-call packet dereference or unrelated-player return advance is introduced.",
+    "First refusal/terminal outcome is fixed; terminal/refused state clears private owner keys and pending packet identity. No address, entity ID, DB ID, auth ID, endpoint, name, payload or source handle is serialized."
+  ],
+  "proof": {
+    "all_15_raw_inputs_match": true,
+    "path": "native-android/engine/initial-capture/server-initial-observer/qualification/host-03/qualification.json",
+    "sha256": "694ec7667e531a932656242fe45c5748d3c0dcbb26ba9f8cc5385e65f47d33b4",
+    "source_sha256": {
+      "native-android/engine/initial-capture/server-initial-observer/CONTRACT.md": "61bfe5e55a903ae979fbeb51fabce94b33db6571d240c072c702ac2cfa5d5776",
+      "native-android/engine/initial-capture/server-initial-observer/check_observer.py": "be860f7b69589716d636f3ac8f951d9747361e8dc1268b4042fa5b6aa8521d19",
+      "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_api.h": "e4a4305902afb242c90a6b257157b21420a2d916609dc39e87e1594919670874",
+      "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.c": "aad2b973fc4826aac5d3c511a73b0bd84db7badf819f99bdb6126f4b58d61a90",
+      "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.h": "ccd911e409dffa3849fac45473178b88aaee26c37fbf2b9ad85aa700b5d90953",
+      "native-android/engine/initial-capture/server-initial-observer/fixtures.py": "973178998a5835ecee89e02bdbbe7b1aeed9ea4395d488ba65bf3a85ae127421",
+      "native-android/engine/initial-capture/server-initial-observer/schema.py": "b4e855c580af98131a57ba40769e0fd0b38f27690c5bead537e6905e9f9215a6",
+      "native-android/engine/initial-capture/server-initial-observer/source_adapter.inc": "9aa51f7de8c53bdccb8097851984c1a8aabf580b00ccde0b8da90df9f6f431be",
+      "native-android/engine/initial-capture/server-initial-observer/sourcehooks.py": "bda59332d491fc386aa383c0d8382bfb9f0134e251e8eab963af2a84d4c5de75",
+      "native-android/engine/initial-capture/server-initial-observer/test_adapter.c": "621be2fc11d7ed4fc91d2f6b14e3d47b09c5ca26466b7eda536b6b42d34b0ff2",
+      "native-android/engine/initial-capture/server-initial-observer/test_ledger.c": "39b7f1c4b35f3e449980d0ce03407fdf93f9ac165121cc286949655d5e616076",
+      "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip": "cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b",
+      "upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+      "upstream/ouroboros/MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    }
+  },
+  "resolved_draft_findings": [
+    {
+      "final_resolution": "The complete original REQALLENTS transition is the unique guarded anchor.",
+      "issue": "Ambiguous REQUEST_STATE literal matched the READY reset too."
+    },
+    {
+      "final_resolution": "Entity/packet-only hook; identity comparison precedes fresh owner lookup.",
+      "issue": "New character hook previously followed nullable e->client."
+    },
+    {
+      "final_resolution": "Pre-call uintptr_t token plus target pending association gates post-call handling.",
+      "issue": "Unrelated entFinishUpdate post-call could pollute/refuse target ledger."
+    },
+    {
+      "final_resolution": "First statement in entFreeDbg invokes target retirement.",
+      "issue": "Retained entity key needed retirement before original free."
+    },
+    {
+      "final_resolution": "Best-effort same-handle invalidation and explicit historical-checkpoint limitation.",
+      "issue": "Failed sink write could leave an apparently current earlier checkpoint."
+    }
+  ],
+  "result": "PASS_WITH_EXPLICIT_SCOPE",
+  "retained_evidence": {
+    "all_runtime_stderr_empty": true,
+    "archive_bytes": 154927,
+    "archive_sha256": "f7de31f951cead103407087f6824d9873451b18a6a1d98c47cad69629deaf8a2",
+    "compiler_system_header_closure_claimed": false,
+    "elf_execution_by_reviewer": false,
+    "leak_sanitizer_enabled": false,
+    "leak_sanitizer_limitation": "managed host refuses proc task traversal; core/adapter allocate no memory; address and undefined checks remain enabled",
+    "runs": [
+      {
+        "elf_bytes": 21096,
+        "elf_sha256": "ba71e81da3461fb553578791f7fa6a8d843a08ed84049255dcf3777b4b7408f0",
+        "name": "release-ledger",
+        "reported_checks": 105,
+        "snapshots": 4,
+        "stderr_bytes": 0,
+        "stdout_sha256": "e62bc8b3790caf6043ed534b6be97f40aa0efa3aa52c626c5fe9cb3f396c4452"
+      },
+      {
+        "elf_bytes": 26608,
+        "elf_sha256": "90ab88c0b1bdb158a4dfbb065368b4c2b39ea1079de06083e7f0fe8652bfa433",
+        "name": "release-adapter",
+        "reported_checks": 5030,
+        "snapshots": 1,
+        "stderr_bytes": 0,
+        "stdout_sha256": "960dd518260fc2e728c178f56814b0fabd32ffbb27cce9b9ec7ca1eac971560d"
+      },
+      {
+        "elf_bytes": 95800,
+        "elf_sha256": "5d2e992bb334017d641e50abca62f6ba7ebe5365c3875ac2e11a63eb2ef9456f",
+        "name": "asan-ledger",
+        "reported_checks": 105,
+        "snapshots": 4,
+        "stderr_bytes": 0,
+        "stdout_sha256": "e62bc8b3790caf6043ed534b6be97f40aa0efa3aa52c626c5fe9cb3f396c4452"
+      },
+      {
+        "elf_bytes": 109064,
+        "elf_sha256": "ec286d21e429c49f07e4691fbddfece05b8b27ad48f7ed90fff15c748719cc7c",
+        "name": "asan-adapter",
+        "reported_checks": 5030,
+        "snapshots": 1,
+        "stderr_bytes": 0,
+        "stdout_sha256": "960dd518260fc2e728c178f56814b0fabd32ffbb27cce9b9ec7ca1eac971560d"
+      },
+      {
+        "elf_bytes": 78024,
+        "elf_sha256": "4461d7a31e35571198e5a6935a8f8104091f63f8451bc270dc594d9cdf1063b1",
+        "name": "ubsan-ledger",
+        "reported_checks": 105,
+        "snapshots": 4,
+        "stderr_bytes": 0,
+        "stdout_sha256": "e62bc8b3790caf6043ed534b6be97f40aa0efa3aa52c626c5fe9cb3f396c4452"
+      },
+      {
+        "elf_bytes": 98944,
+        "elf_sha256": "0787109149bb5074c1bf1fc56066f3b6b5a638b048223f02d0d59ab76b53a33c",
+        "name": "ubsan-adapter",
+        "reported_checks": 5030,
+        "snapshots": 1,
+        "stderr_bytes": 0,
+        "stdout_sha256": "960dd518260fc2e728c178f56814b0fabd32ffbb27cce9b9ec7ca1eac971560d"
+      }
+    ],
+    "six_member_bytes_and_hashes_match": true,
+    "supplier_checks_per_mode": 5135,
+    "supplier_reported_recipe_schema_controls": 206
+  },
+  "review_date_utc": "2026-10-18",
+  "review_mode": "Read-only source, literal-byte preservation, and retained-evidence audit. No qualifier, tests, compiler, ELF, original service, native client, or transaction executed.",
+  "reviewer": "worker_e_renderer",
+  "schema": "coh-server-initial-observer-independent-worker-e-v1",
+  "sink_review": [
+    "The adapter opens only the existing empty, single-link, non-directory, non-reparse file, with sharing denied, and retains its handle and file identity. Writes do not reopen the configured path.",
+    "The fixed JSON buffer is bounded to 4096 bytes; events are capped at 1000000 and ordinary writes at 128, with milestone/state/power-of-two tick throttling.",
+    "I/O failure attempts to truncate the same held file, then retires the sink. A failed invalidation may leave an earlier ACTIVE checkpoint; the contract explicitly disallows treating it as absence of later events or continued sink health.",
+    "Exported hooks restore GetLastError and errno. Packet/character observers do not alter original ownership, queue operations, result values, protocol commands, deadlines or readiness state."
+  ],
+  "source_edits_by_reviewer": false,
+  "source_preservation": {
+    "baseline_group_and_profile_origin": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip",
+    "baseline_group_archive_sha256": "cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b",
+    "files": [
+      {
+        "baseline_lf_sha256": "960dce22752416c6b6955cb25d01fc870dc7b6daa58ce371f1a2cf8404f486c8",
+        "independent_literal_reconstruction_reversed_exactly": true,
+        "literal_edit_sites": 0,
+        "path": "MapServer/src/group/groupnetsend.c"
+      },
+      {
+        "baseline_lf_sha256": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+        "independent_literal_reconstruction_reversed_exactly": true,
+        "literal_edit_sites": 7,
+        "path": "MapServer/src/svr/svr_tick.c"
+      },
+      {
+        "baseline_lf_sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+        "independent_literal_reconstruction_reversed_exactly": true,
+        "literal_edit_sites": 6,
+        "path": "MapServer/src/entity/entsend.c"
+      },
+      {
+        "baseline_lf_sha256": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+        "independent_literal_reconstruction_reversed_exactly": true,
+        "literal_edit_sites": 3,
+        "path": "MapServer/src/entity/entserver.c"
+      },
+      {
+        "baseline_lf_sha256": "65645b3798ac11c19db7be714ae0c4d77f37049b5add89a9ab5ab29c8a01e383",
+        "independent_literal_reconstruction_reversed_exactly": true,
+        "literal_edit_sites": 1,
+        "path": "MapServer/src/group/coh_fresh_source_profile.inc"
+      }
+    ],
+    "line_ending_scope": "Independent byte reconstruction checked normalized LF. The supplier retained LF/CRLF reversal controls; those controls were read, not replayed.",
+    "method": "Read fixed literal edit definitions; independently apply each unique old/new byte replacement and undo it in reverse order against the five pinned baseline byte files. Did not invoke transform/reverse, check_observer.main, test entry points, or a compiler.",
+    "original_invocations_preserved": "The original REQALLENTS state writes, readiness/backpressure/map-transfer conditions, character_Send, sendCharacterToClient, and single pktSend invocation remain. New hooks return void and do not supply original condition or result values.",
+    "overlay_count": 4
+  },
+  "supported_scope": "The bounded diagnostic can distinguish accepted owner binding, normalized REQALLENTS/state checkpoints, target tick/backpressure/transfer/full-update/character stages, same packet attachment, and the exact synchronous pktSend call/return when an admitted actual runtime produces a valid paired receipt.",
+  "test_compiler_or_runtime_replay_by_reviewer": false,
+  "unchanged_false_claims": [
+    "packet_queue_acceptance_established",
+    "socket_send_established",
+    "source_generation_admitted",
+    "complete_initial_character",
+    "actor_publication",
+    "ack_permitted",
+    "world_authority"
+  ]
+}

@@ -1,0 +1,13 @@
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:13:18:event	240	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:23:18:bits	32	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:33:18:flag	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:48:18:floats	224	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:55:18:optional_float	144	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:60:18:color	160	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:38:18:string	192	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:30:18:pack	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:64:18:matrix	304	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:147:18:inspect	1104	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:178:11:coh_rep_groups	384	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:200:11:coh_rep_groups_visit	912	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/replication/coh_groups.c:216:1:_sub_I_00099_0	16	static

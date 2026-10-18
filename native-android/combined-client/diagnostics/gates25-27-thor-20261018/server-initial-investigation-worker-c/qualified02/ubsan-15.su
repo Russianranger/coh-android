@@ -1,0 +1,12 @@
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:4:17:le32	32	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:7:17:mask	32	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:8:12:state	32	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:12:5:coh_protocol_bits_init	128	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:16:5:coh_protocol_write	48	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:24:5:coh_protocol_read	64	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:30:5:coh_protocol_write_pack	64	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:46:5:coh_protocol_read_pack	128	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:61:13:adler_digest	64	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:67:15:padded	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:68:5:coh_protocol_encode	1632	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/protocol/coh_protocol.c:87:5:coh_protocol_decode	2848	static

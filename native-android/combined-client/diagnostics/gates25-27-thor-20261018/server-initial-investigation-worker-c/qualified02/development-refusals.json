@@ -1,0 +1,8 @@
+{
+  "accepted_result": "qualified02",
+  "exact_initial_stderr_file_retained": false,
+  "initial_draft_refused_before_compile": true,
+  "old_qualifier_or_fixture_entrypoints_executed": false,
+  "reason": "exact baseline source reversal refused changed legacy comment marker; restored exact marker before accepted focused run",
+  "terminal_tool_transcript_contains_initial_refusal": true
+}

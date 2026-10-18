@@ -1,0 +1,13 @@
+{
+  "schema": "coh-server-initial-source-integration-attempt-v1",
+  "passed": false,
+  "phase": "DRAFT_SOURCE_TRANSFORM",
+  "refusal": "SERVER_INITIAL_SOURCE_REFUSED",
+  "source_snapshot_completed": false,
+  "source_was_live_unqualified_draft": true,
+  "followup_source_author_identified": "REQUEST_STATE anchor was not unique; narrowed to the exact REQALLENTS state block before coherent integration",
+  "admission_claimed": false,
+  "compiler_executed": false,
+  "services_executed": false,
+  "world_authority": false
+}

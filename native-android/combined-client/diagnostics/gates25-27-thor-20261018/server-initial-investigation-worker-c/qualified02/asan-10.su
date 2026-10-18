@@ -1,0 +1,10 @@
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:12:15:alloc_z	32	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:19:13:free_z	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:34:6:coh_net_zip_destroy	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:25:12:coh_net_zip_create	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:40:8:coh_net_zip_memory	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:41:11:coh_net_zip_encode	17008	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:64:11:coh_net_zip_decode	17008	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:84:11:coh_net_zip_decode_owned	384	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:134:1:_sub_D_00099_0	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/engine/network/coh_net_zip.c:134:1:_sub_I_00099_1	16	static

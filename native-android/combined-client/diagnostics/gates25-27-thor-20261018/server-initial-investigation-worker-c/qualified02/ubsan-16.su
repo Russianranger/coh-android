@@ -1,0 +1,9 @@
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/byte_reader.h:9:24:u32	32	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/byte_reader.h:10:20:put32	48	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/coh_blowfish.c:4:24:endianSwapU32	16	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/coh_blowfish.c:292:24:F	64	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/coh_blowfish.c:310:13:cryptBlowfishEncryptBlock	64	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/coh_blowfish.c:357:13:cryptBlowfishDecryptBlock	64	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/coh_blowfish.c:407:13:cryptBlowfishInit	80	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/coh_blowfish.c:451:5:coh_bf_init	48	static
+/workspace/scratch/36381ad6133b/coh-android/native-android/src/coh_blowfish.c:455:5:coh_bf_crypt	80	static

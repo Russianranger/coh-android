@@ -1,0 +1,132 @@
+{
+  "authority": {
+    "actor_publication": false,
+    "application_ack_permitted": false,
+    "complete_initial_character": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "changes_made": "Only this new review JSON; no source, Activity, tests, compiler or services changed/run.",
+  "interpretation_findings": {
+    "actual_Thor_or_original_session_independently_admitted_by_this_review": false,
+    "path": "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/findings.json",
+    "reviewed_for_counter_scope": true,
+    "sha256": "20d8cdcefbbc8540e7b35cd933a18bf8448dc6ec867dab7e6ebf4e4c89bd0043"
+  },
+  "limitations": [
+    "Retained host outputs report3modes\u00d730 projection checks/8scenarios,86 new JNI checks/2scenarios and3positive/99negative Python controls. Owner/diagnostics/JNI/controller/witness are explicit doubles; production host role executed only no-argument exit2.",
+    "No Android ABI/build/emulator/Thor/original server/session/source-generation proof, full complete character/actor/world acceptance, aggregate/RSS fit or LeakSanitizer evidence is created by this review.",
+    "Selected host compiler/header/linked-file hashes and all retained ELF admission belong to the separately recorded C proof/F review; they were not replayed here."
+  ],
+  "production_source_pins": {
+    "native-android/combined-client/app/src/main/cpp/interop_network.c": "4475c85955f998f58a52aa5c1c67da7674e2259482a99558fd49044ace1dbb63",
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/QUALIFICATION.md": "887cf0538eb9260713aa9a4eb2fed55aa9214771ee06c0ca8604bd719f139cde",
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/capture_local_initial_receive.c": "a6d359111cd6d489a2bdf2b62841f3b18559bf175c6bab25e43d05324388531b",
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h": "232cf9ac21de2afaaaff8825f627f1a9219c9d08de4c5a0b8538ab7641a43c05",
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/receive_admission.py": "5e66af1f9a56ee38e0073cf6a1b5cf707d84845d1549fb1545802a104d05bb39"
+  },
+  "qualification": {
+    "all_60_raw_source_pins_match": true,
+    "bytes": 207920,
+    "canonical_source_map_sha256": "a9060e4d0683ee389b065a4d792cf665f1aec7c7c540b40ac4587da4535c6f57",
+    "path": "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/qualified02/qualification.json",
+    "sha256": "304860cd0fc52743c3e81f977bc7043f59e6fbff5689d41d79719b564058080b"
+  },
+  "resolved_draft_findings": [
+    "Reopened argv output-directory path replaced by SAME original owned FD writer seam.",
+    "Single raw read and inode-keyed rollback replace ambiguous/partial optional copy.",
+    "Consumed current receive_admission.py source pin required by project.",
+    "New output fd is finally-closed even if fstat ownership-key acquisition fails."
+  ],
+  "result": "clear",
+  "retained_outputs": {
+    "asan": {
+      "Python_projection_controls": {
+        "negative": 99,
+        "original_services_executed": false,
+        "positive": 3,
+        "retained_private_file_controls": true
+      },
+      "jni": {
+        "checks": 86,
+        "scenarios": 2,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "ffefc2ab0b211a38354336a5ae661c32ad5855d3fe9654b152014287e3556694"
+      },
+      "production_role_noargs_unchanged": true,
+      "unit": {
+        "checks": 30,
+        "scenarios": 8,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "b4540360cd1c77e3c8e27d137404b8703be75d49112471f330ab06f81da0310c"
+      }
+    },
+    "release": {
+      "Python_projection_controls": {
+        "negative": 99,
+        "original_services_executed": false,
+        "positive": 3,
+        "retained_private_file_controls": true
+      },
+      "jni": {
+        "checks": 86,
+        "scenarios": 2,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "ffefc2ab0b211a38354336a5ae661c32ad5855d3fe9654b152014287e3556694"
+      },
+      "production_role_noargs_unchanged": true,
+      "unit": {
+        "checks": 30,
+        "scenarios": 8,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "b4540360cd1c77e3c8e27d137404b8703be75d49112471f330ab06f81da0310c"
+      }
+    },
+    "ubsan": {
+      "Python_projection_controls": {
+        "negative": 99,
+        "original_services_executed": false,
+        "positive": 3,
+        "retained_private_file_controls": true
+      },
+      "jni": {
+        "checks": 86,
+        "scenarios": 2,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "ffefc2ab0b211a38354336a5ae661c32ad5855d3fe9654b152014287e3556694"
+      },
+      "production_role_noargs_unchanged": true,
+      "unit": {
+        "checks": 30,
+        "scenarios": 8,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "b4540360cd1c77e3c8e27d137404b8703be75d49112471f330ab06f81da0310c"
+      }
+    }
+  },
+  "reviewed_behavior": [
+    "JNI addition samples only existing current owner Map UDP/link diagnostics on the single executor. Eight original JNI method signatures are unchanged, terminal/request-owner lifecycle remains separate, and no Activity, protocol, timeout, budget, authentication policy or network service path changes.",
+    "Shared projection is bounded to2048 JSON bytes, typed enum/counter/byte-budget scalars and explicit sampled maxima. Counts cap at1000000; invalid/overflow input refuses only diagnostics. No packet/endpoint/ID/generation/account/character/pointer/key data is copied or exposed.",
+    "Host producer embeds exact current progress role. Independent five-name/eight-site reversal restored every baseline byte. Begin/diagnostics/destroy delegate once; additional sampling does not alter original result. Writer executes original progress_write exactly once and then optional receive write on the SAME still-owned directory FD after actual capture destruction, before the original close.",
+    "Host optional file writer uses nofollow/exclusive0600 creation on actual owned directory FD, fsync and inode-keyed failed-output rollback. Python retention uses a single admitted raw snapshot, owner/cleanup/same-GROUPS gates, before/after equality and exclusive private copy; fd ownership is protected even if fstat fails, and rollback never unlinks an unrelated inode.",
+    "Public projection enforces exact new schema/keys, numeric/boolean bounds, false authority, terminal observation and transport-counter cleanup, current new build marker, exact consumed current adapter source pin, and immutable private file/value/hash binding. Existing GROUPS/initial acceptance is not promoted by optional receive data.",
+    "Sampling validity is not command-specific receipt or a causal diagnosis. Queue-limit counters can aggregate TX/RX; decode failure is last sampled receipt, maxima are sampled only, and core close may clear pending state before observation. Findings explicitly preserve these limits and no budget/protocol relaxation."
+  ],
+  "reviewer": "worker_e_renderer",
+  "schema": "coh-initial-receive-independent-worker-e-review-v1",
+  "scope": "Complementary read-only source/privacy/ownership/projection review. F independently owns full compiler/header/linked-artifact and retained ELF review. No tests or compiler/native execution repeated.",
+  "source_admission_controls": {
+    "compiler_dependency_queries_only": true,
+    "negative_controls": 4,
+    "positive_new_role_admission": true,
+    "replayed_by_reviewer": false,
+    "sha256": "4717f3d4aad1a6cb3ee871ca72ce65257a77b6e677134bd0ef4b57679a73db14"
+  },
+  "source_reversal": {
+    "actual_owned_directory_FD_used": true,
+    "baseline_path": "native-android/combined-client/tools/capture_local_initial_progress.c",
+    "baseline_sha256": "63e758aae692fef0631035220a357a49fca5ce2ee2abce5b1d1972d426a04ba0",
+    "exact_baseline_bytes_restored": true,
+    "five_substitutions_eight_sites": true
+  }
+}

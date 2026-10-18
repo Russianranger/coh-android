@@ -1,0 +1,5 @@
+	linux-vdso.so.1 (0x00007fbd13382000)
+	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007fbd13355000)
+	libcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007fbd12e42000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fbd12c30000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fbd13384000)

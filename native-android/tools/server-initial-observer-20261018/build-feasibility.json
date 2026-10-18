@@ -1,0 +1,28 @@
+{
+  "accepted_build_run_id": 39099315295,
+  "accepted_compile_role": "nonshipping_fresh_callback_sealed_groups_observer",
+  "accepted_compile_source_revision": "d9adf2b431a039357f8bfe878d3d0da991a81b19",
+  "accepted_map": {
+    "bytes": 7508480,
+    "sha256": "73e6c724fcdd9b1caaa03bd675d38d075cc452575539cb99b19b6d1124113aba"
+  },
+  "changed_tu_only_relink_possible_from_retained_artifact": false,
+  "compiler_executed": false,
+  "configuration": "OptDebug",
+  "generator": "Visual Studio 18 2026",
+  "normal_authentication_qualified": false,
+  "old_qualifiers_or_tests_replayed": false,
+  "original_startup_input_policy_changed": false,
+  "platform": "Win32",
+  "retained_archive": {
+    "bytes": 6784966,
+    "members": 45,
+    "sha256": "cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b"
+  },
+  "retained_object_library_or_response_members": [],
+  "runtime_executed": false,
+  "schema": "coh-server-initial-observer-build-feasibility-v1",
+  "smallest_executable_route": "one_new_nonshipping_MapServer_target_build",
+  "source_review_only": true,
+  "world_authority": false
+}
