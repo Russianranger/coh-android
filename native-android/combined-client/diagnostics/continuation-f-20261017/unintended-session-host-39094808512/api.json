@@ -1,0 +1,233 @@
+{
+  "schema": "coh-unintended-session-replay-and-cancellation-fixed-api-v1",
+  "repository": "Russianranger/coh-android",
+  "run": {
+    "id": 39094808512,
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39094808512",
+    "head_sha": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+    "head_branch": "native-android",
+    "path": ".github/workflows/native-session-protocol.yml",
+    "status": "completed",
+    "conclusion": "cancelled",
+    "run_attempt": 1,
+    "created_at": "2026-10-18T03:46:42Z",
+    "updated_at": "2026-10-18T03:49:38Z"
+  },
+  "jobs": [
+    {
+      "id": 117578921955,
+      "name": "host-and-arm64",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Install host cryptographic test backend",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Install the pinned NDK",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Qualify source contracts, malformed inputs and combined native linkage",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 117579223257,
+      "name": "android-socket-boundary",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/download-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run actions/setup-java@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run android-actions/setup-android@v3",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Enable hosted Android emulator acceleration",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Qualify new socket owner on Android 13 without rebuilding accepted APKs",
+          "status": "completed",
+          "conclusion": "cancelled"
+        },
+        {
+          "number": 8,
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Post Run actions/setup-java@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 16,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12124342344,
+      "name": "native-session-protocol-contracts",
+      "size_in_bytes": 1708803,
+      "digest": "sha256:7c51c9936d9643f4a7e2b1f5d2e2bea825f7a965fe55ef3593f47a08da7717fe",
+      "head_sha": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+      "expired": false
+    },
+    {
+      "id": 12124271703,
+      "name": "native-session-android-socket-evidence",
+      "size_in_bytes": 73858,
+      "digest": "sha256:d665994fc2c26fde8b8db550526fddbe28f38af43a003ececebd652f1f891a33",
+      "head_sha": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+      "expired": false
+    }
+  ],
+  "correction": {
+    "commit": "2e0c775fd6278c9c66d34a3cefaf38a3c9ef9b06",
+    "tree": "8495a96f7541d8ea20f4a67478141770995c78ff",
+    "run": {
+      "id": 39094970726,
+      "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39094970726",
+      "head_sha": "2e0c775fd6278c9c66d34a3cefaf38a3c9ef9b06",
+      "head_branch": "native-android",
+      "path": ".github/workflows/native-session-protocol.yml",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-18T03:49:34Z",
+      "updated_at": "2026-10-18T03:49:43Z"
+    },
+    "jobs": [
+      {
+        "id": 117579418918,
+        "name": "stop-unneeded-replay",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "number": 1,
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "number": 2,
+            "name": "Stop marker only, without checkout or qualification",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "number": 3,
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 117579419599,
+        "name": "android-socket-boundary",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "id": 117579449878,
+        "name": "host-and-arm64",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      }
+    ],
+    "workflow_sha256": "edf2dfa633243c7f0296fe0e1aab18c9920f1091a01ae3d84a3f33fbad18ded5",
+    "host_qualifier_had_already_reexecuted": true,
+    "android_continuation_cancelled": true,
+    "android_artifact_admitted": false
+  },
+  "downloaded_host_artifact": {
+    "bytes": 1708803,
+    "sha256": "7c51c9936d9643f4a7e2b1f5d2e2bea825f7a965fe55ef3593f47a08da7717fe"
+  },
+  "private_logs_included": false
+}

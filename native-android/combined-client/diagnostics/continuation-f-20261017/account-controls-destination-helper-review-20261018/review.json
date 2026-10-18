@@ -1,0 +1,91 @@
+{
+  "actual_metadata_binding": {
+    "actualMap_receipt": {
+      "bytes": 3796,
+      "path": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/compile-only-receipt.json",
+      "sha256": "478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034"
+    },
+    "bytes": 23431,
+    "current_receiver_dependencies": 45,
+    "evidence_artifact_pins": 115,
+    "path": "native-android/combined-client/diagnostics/primary-authority-20261017/account-controls-destination-preflight-20261018/binding.json",
+    "sha256": "f7017b2f34fc5eb0d1827854c7c770678ecf074e6db2ef2e7867cd050535a650"
+  },
+  "current_checked_revision": "053370cefaed38bd8542a721f2d2005b664230ec",
+  "entire_remaining_AST_equal_pending_proposal": true,
+  "helper": {
+    "bytes": 41142,
+    "path": "native-android/combined-client/tools/admit_account_controls_initial_receiver.py",
+    "sha256": "c5a49d446423ac76ab2977a75a5e8bcb3a817daeb55c1d2dd30092933238c01e"
+  },
+  "immutable_loader_copy_cleanup_core16_ASTs_equal_EDITMSG_helper": [
+    "Refused",
+    "need",
+    "digest",
+    "raw",
+    "child",
+    "git",
+    "committed",
+    "fixed",
+    "static_elf",
+    "system_files",
+    "loader_checks",
+    "imported_sources",
+    "write_new",
+    "unlink_owned",
+    "export_env",
+    "main"
+  ],
+  "independent_gate_union": {
+    "actual_Map_gate_pins": 241,
+    "all377_current_raw_equal_checkpoint_Git": true,
+    "artifact_pins": 115,
+    "compact_sorted_json_sha256": "3c24914402788bb23b6afd2329a72dd483aa2f37d27eadd5341166b607f21f0a",
+    "helper_gate_maximum": 512,
+    "merge_conflicts": 0,
+    "old278_minus_self_then_A4_A40_45": 283,
+    "old_workflow_self_removed_but_current_workflow_and_own_helper_required": true,
+    "union_count_before_helper_test_extra_proofs_and_current_workflow": 377
+  },
+  "metadata_only_changes": [
+    "OBSERVER_BUILD_SHA",
+    "OBSERVER_BUILD_BYTES"
+  ],
+  "mocked_proof": {
+    "bytes": 2699,
+    "cases": 49,
+    "methods": 5,
+    "path": "native-android/combined-client/diagnostics/primary-authority-20261017/account-controls-destination-preflight-20261018/mocked-controls-pending-source.json",
+    "qualified_pending_metadata_source_only": true,
+    "reexecuted_by_F": false,
+    "sha256": "229cf650eb7672e4fd60864946bc2eba5be43d7dcadecc6d3d2fcc9e1b4d14a3"
+  },
+  "passed": true,
+  "pending_mocked_helper_sha256": "68954d8755d7c5ceb01f0f3136304d9e58880a8164688366d940a8ade0f8a699",
+  "review_actions": {
+    "AST_and_retained_data_only": true,
+    "compiler_native_loader_systemchecks_or_services_executed": false,
+    "download_or_artifact_copy": false,
+    "project_imports_metadata_function_or_mocks_executed": false
+  },
+  "runtime_executed": false,
+  "schema": "coh-f-account-controls-destination-helper-source-review-v1",
+  "source_generation_admitted": false,
+  "source_revision": "60aedc46a",
+  "specialized_evidence_scope": {
+    "A4_to_A40_exact9changes_plus4source_additions": true,
+    "C99_current36_and_fixed_tool_dependency_receipts_separate": true,
+    "actual_Map_six_slots_five_overlays_match_qualified_LOCAL6": true,
+    "actual_destination_loader_or_noargs_qualification_already_claimed": false,
+    "broad1834_C52_or_F230_maps_not_globally_current_required": true,
+    "current_C79_exact5qualified_supersessions": true,
+    "new_receiver28x3_three_statuses_and_noargs_historical_not_replayed": true,
+    "receiver_new45_exact7differences_from_old_gate": true
+  },
+  "test": {
+    "bytes": 10764,
+    "path": "native-android/combined-client/tools/test_admit_account_controls_initial_receiver.py",
+    "sha256": "48a3de4349dee2b3f3fe3a3144197f5b39373ff273918e4dcfadf86b7a29c376"
+  },
+  "world_authority": false
+}

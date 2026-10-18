@@ -5,6 +5,54 @@ Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical
 Git links, existing bundles, accepted APKs and user profiles were preserved.
 
+## Frozen next scene transaction — 2026-10-18
+
+The new scene workflow95062B SHA256
+`919934db659c237f3af4e1679edc880052927fa03c70c9ec763dfb9046c4a71a`
+uses394 fixed nonself inputs plus its current workflow395th. All241 actual
+compiled Map inputs and current45 receiver dependencies are included. Five
+new frozen JSON-scope checks passed; the five-method49-case mocked helper
+proof is bound to the final helper by exactly two metadata constants. A/F
+independent reviews preserve the unchanged16 destination/loader/cleanup ASTs.
+The marker is `[fresh-groups-owner-reason]`; only one new original scene
+observation is requested. Current C50 INVENTORY13 is deliberately held outside
+this source generation until the job has started. Actual loader/runtime and
+first-failed owner reason are pending, not inferred from compile/mocks.
+
+## Actual owner-reason build and account-control attempt — 2026-10-18
+
+Verified remote before this continuation: `2e0c775fd6278c9c66d34a3cefaf38a3c9ef9b06`,
+tree `8495a96f7541d8ea20f4a67478141770995c78ff`.
+
+The new Map-only build39094808520 at6e96fe22 passed all241 source pins,
+strict compile admission,19 artifact identities and original1073 before/after
+inputs. Its single retained ZIP is6781758B SHA256
+`b3a82a5265322685e035e3b86f44862a59d8fc561852288e3d3ea8bb8371eed6`;
+Map PE7507456B SHA256
+`fa4eedf702e14c9c79e0bf72abf6a4b0fd2f3bca9b14e3c911ee3974d7e99b14`.
+This is compile-only; the new first-failed owner reason still needs an actual
+scene transaction. The destination specialization now binds its actual receipt
+and retained6115b9 receiver without a rebuild.
+
+Auth-to-DB39094808506 built the17+21 TUs and passed platform/service admission.
+Fresh Auth authorized, DB login queued once, and the complete decoded prefix
+was14/8/8/13. Unsupported fell to1. Inventory13 was refused; no player list,
+choice, handoff, body values, version/checksum acceptance or world authority is
+admitted. All owned processes, buffers, services, SQL and firewall cleaned up.
+Source-qualified INVENTORY13 work remains held outside this frozen receiver
+generation until the new scene attempt starts.
+
+CI exception: publication6e96fe22 also unintentionally triggered the legacy
+session workflow39094808512 because it lacked the compact-publication guards.
+The old host qualifier completed; the Android continuation was cancelled by
+2e0c775fd and is unadmitted. Therefore this tranche is not replay-free. Permanent
+compact/native-contract guards now cover both jobs. The one-use cancellation
+job is removed after its completed stop run39094970726. The retained host
+artifact also contains a current API26/NDKr28c ARM64 compile/link of the engine
+with the new8/14 parser; this is not ARM64 execution, JNI/APK, emulator, Thor or
+server/world qualification. Earlier no-replay statements below describe only
+the named focused controls, not this unintended workflow.
+
 ## Qualified complete DB controls and first owner reason — 2026-10-18
 
 Publication parent is actual verified remote

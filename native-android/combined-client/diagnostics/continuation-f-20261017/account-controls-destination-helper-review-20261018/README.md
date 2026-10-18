@@ -1,0 +1,5 @@
+Read-only review of final41,142-byte helperc5a49d44. The only AST changes from its qualified pending-metadata proposal are actualMap receipt SHA/size constants:3796bytes/478bea52. Sixteen immutable loader/copy/FD/process-group/error/env-append core definitions remain exact ASTs of the earlier helper. The five/49 mocked controls qualify the pending source; neither those mocks nor loader/native/system checks were rerun here.
+
+Actual3796-byte Map metadata, new45-input receiver closure and115 artifact pins are fixed. Independent current union reconstruction gives283 base/current inputs merged without conflicts with115 evidence and actualMap241, totaling377 before small self/test/proof additions, below the512 bound. All377 raw bytes equal checkpoint Git. Historical C79 transitions, currentC36 proof/tool receipts and A4-to-A40 source changes remain explicit; broader1834/52/230 snapshots are not promoted to globally current admission.
+
+The actual destination loader/noargs smoke remains future hosted work. No project helper, mocked test, compiler, native binary, server, download or artifact copy ran for this review.

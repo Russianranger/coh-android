@@ -1,0 +1,96 @@
+{
+  "accepted_observer_equivalence": false,
+  "artifacts": {
+    "CMakeCache.txt": {
+      "bytes": 37004,
+      "sha256": "a875c61c6fcbf11410d91c540da3808eb24ee3f5f04b9f6928dfdb292d241092"
+    },
+    "MapServer.exe": {
+      "bytes": 7507456,
+      "sha256": "fa4eedf702e14c9c79e0bf72abf6a4b0fd2f3bca9b14e3c911ee3974d7e99b14"
+    },
+    "map-startup-build-input.json": {
+      "bytes": 45593,
+      "sha256": "3b37339e2bdd94456715cff78e5093399410ede8980efa6fc51681c1a4d3fc09"
+    },
+    "map-startup-inputs.json": {
+      "bytes": 1202,
+      "sha256": "baf01dd368cd9b4e6435bee3543da9afd6de2a78c97ade6b2d1049146d75565b"
+    },
+    "native-fresh-groups-server-build-input.json": {
+      "bytes": 57122,
+      "sha256": "b70476774797adbff012642219a7ff1dfff9ffa6fe1e09583d91c7f4e4f76689"
+    },
+    "native-groups-transaction-server-build-input.json": {
+      "bytes": 51771,
+      "sha256": "7459d640a80cad767a278820f2271ce4fde0954d470b6c2a35463a6433930c7f"
+    },
+    "source/Common/seq/anim.c": {
+      "bytes": 88180,
+      "sha256": "1c0dcb572bdd4b74c0b73b2cf28e45433b4078b4721723270012aa4a14e93439"
+    },
+    "source/Common/seq/coh_fresh_folder_profile_api.h": {
+      "bytes": 1837,
+      "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+    },
+    "source/Common/seq/coh_fresh_original_resource_quiescence.inc": {
+      "bytes": 1825,
+      "sha256": "272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824"
+    },
+    "source/Common/seq/coh_resource_quiescence.inc": {
+      "bytes": 1507,
+      "sha256": "aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd"
+    },
+    "source/MapServer/src/group/coh_fresh_source_profile.inc": {
+      "bytes": 10115,
+      "sha256": "535311dea7717a68af6b0cab54858c2fb8a47208dddd42a9e00d6c1e4a80772a"
+    },
+    "source/MapServer/src/group/coh_source_catalog_sink.inc": {
+      "bytes": 8130,
+      "sha256": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d"
+    },
+    "source/MapServer/src/group/coh_source_groups_capture_sink.inc": {
+      "bytes": 9309,
+      "sha256": "4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7"
+    },
+    "source/MapServer/src/group/groupnetsend.c": {
+      "bytes": 95940,
+      "sha256": "00d66f5219a447a98c7e1e51e51098cb0fc83f32cee5dd031e690e89949ae53c"
+    },
+    "source/MapServer/src/svr/svr_init.c": {
+      "bytes": 73194,
+      "sha256": "9962b3d718db223fcae663e8f8c4fab44f1da5b9db6be94f1cc5c9fe92582195"
+    },
+    "source/libs/UtilitiesLib/src/utils/FolderCache.c": {
+      "bytes": 49410,
+      "sha256": "5ccc8942728a19b7d2a4b07ab20c83c66d3f0d879c561ff6f3ccf669429c8690"
+    },
+    "source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile.inc": {
+      "bytes": 11481,
+      "sha256": "3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52"
+    },
+    "source/libs/UtilitiesLib/src/utils/coh_fresh_folder_profile_api.h": {
+      "bytes": 1837,
+      "sha256": "261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5"
+    },
+    "source/libs/UtilitiesLib/src/utils/coh_fresh_source_profile_api.h": {
+      "bytes": 4163,
+      "sha256": "3f96d787df31d54743131432e237efcabfc497a8890b500b5f827f4915bd88ce"
+    }
+  },
+  "build_role": "nonshipping_fresh_callback_sealed_groups_observer",
+  "compile_only": true,
+  "configuration": "OptDebug",
+  "external_input_archive_verification_claimed": false,
+  "generator": "Visual Studio 18 2026",
+  "inherited_source_closure_reverified": true,
+  "passed": true,
+  "pe_machine": "i386",
+  "platform": "Win32",
+  "runtime_executed": false,
+  "schema": "coh-fresh-groups-observer-compile-v1",
+  "source_git_status_porcelain": [],
+  "source_revision": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+  "source_stage_verified": true,
+  "staged_source_root": "C:/fgsrc"
+}

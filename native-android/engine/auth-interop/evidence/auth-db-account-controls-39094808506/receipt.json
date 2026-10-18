@@ -1,0 +1,1674 @@
+{
+  "repository_commit": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+  "repository_tree": "8d1fb5f8e37cfa6b277ddd9f49d903fbfc703ad6",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "github_run_id": "39094808506",
+  "image_os": "win25-vs2026",
+  "image_version": "20261007.264.1",
+  "schema": "coh-owned-mssql-db-threadname-development-player-list-v1",
+  "passed": false,
+  "prior_auth_qualification": {
+    "source_commit": "28fe37cc2432db4adbfe047bd07a1e738d6aa754",
+    "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+    "protocol": 191021,
+    "runtime_receipt_sha256": "1b1bea257b8e29f73543cffc4c2148071f738036ee2cd5adc122417160106c94",
+    "candidate_authserver_sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003",
+    "normal_probe_sha256": "7cb5672c32c1d304efea9590366250437687e3b0c8c1fafae5e4ec7cf536f29c",
+    "capped_probe_sha256": "454814a2659944cf7958d10d89f2bdf49a7e5a778ad75d941077ef8d17d672ec",
+    "source_pins": [
+      [
+        "native-android/engine/auth-interop/deployment/auth_readiness.py",
+        "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/auth_service_profile.py",
+        "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/candidate_sql_memory.py",
+        "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/hosted_auth_login.py",
+        "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/hosted_candidate_login.py",
+        "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/hosted_receive_candidate.py",
+        "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/password_fixture.py",
+        "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/receive_candidate.py",
+        "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/auth_only_probe.c",
+        "9bf261ba6cd927ba1d4923c7bbd9c5fb05129dbef9a17e80310489aac537271c"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h",
+        "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h",
+        "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/poll.h",
+        "7e7c4481497ad68233f402199758d4202c5fd995c64b33901bbae10da4c673c5"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h",
+        "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/compat/unistd.h",
+        "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/intact_probe.c",
+        "c26859b5afb68000929759d32399520d152ff29f84c10c067104dffa43755bfe"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/test_winsock_api.h",
+        "246f32d8ffb2a04c593fcafddb64c47e127acc8e6328e567018edbd2e91fc019"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/test_winsock_compat.c",
+        "eef165af9e013c6e354d98b7d8c6ede53125e099e15b81e55bc873025fa448e9"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/winsock_compat.c",
+        "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/winsock_compat.h",
+        "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e"
+      ],
+      [
+        "native-android/engine/auth-interop/deployment/windows/wrapped_login.c",
+        "4163131d9f76f0a96a490820587018900a780d30738e278d1057c6afcee36e02"
+      ],
+      [
+        "native-android/engine/auth/android/openssl-source.json",
+        "f3117dc4154a95c0d1a473e7ccf488ef3e5c73e560b4415dbb63366956f66239"
+      ],
+      [
+        "native-android/engine/auth/coh_auth.c",
+        "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+      ],
+      [
+        "native-android/engine/auth/coh_auth.h",
+        "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d"
+      ],
+      [
+        "native-android/engine/auth/coh_auth_openssl.c",
+        "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1"
+      ],
+      [
+        "native-android/engine/coh_contracts.h",
+        "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+      ],
+      [
+        "native-android/engine/login/coh_login.c",
+        "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e"
+      ],
+      [
+        "native-android/engine/login/coh_login.h",
+        "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+      ],
+      [
+        "native-android/engine/network/coh_net.h",
+        "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+      ],
+      [
+        "native-android/engine/network/coh_net_udp.h",
+        "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4"
+      ],
+      [
+        "native-android/include/coh_native_core.h",
+        "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+      ],
+      [
+        "native-android/protocol/coh_protocol.c",
+        "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+      ],
+      [
+        "native-android/protocol/coh_protocol.h",
+        "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+      ],
+      [
+        "native-android/src/byte_reader.h",
+        "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1"
+      ],
+      [
+        "native-android/src/coh_blowfish.c",
+        "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+      ]
+    ],
+    "qualified_account_case_count": 8,
+    "owned_cleanup_qualified": true,
+    "fresh_authentication_required": true,
+    "historical_session_reusable": false,
+    "selected_character_dbid": null,
+    "authenticated_db_map_handoff_verified": false,
+    "shipping_server_modified": false
+  },
+  "auth_candidate_admission": {
+    "admitted": true,
+    "receipt_sha256": "25ee2415a280e7b3800808824d95d05b862acca9d4d4879f5fccb5605d6a2451",
+    "binary": {
+      "sha256": "9cd262dd862d14bf2d696de65cb70f155f25473503d7fd0968de9969e0ac8003",
+      "bytes": 864256,
+      "machine": "I386",
+      "format": "PE32",
+      "subsystem": 2,
+      "header_identity_only": true,
+      "executed": false
+    },
+    "scope": "Caller-pinned nonshipping candidate Windows compilation; service/login not executed.",
+    "encrypted_account_login_verified": false,
+    "general_tcp_segmentation_accepted": false
+  },
+  "commands": [
+    {
+      "name": "localdb-create",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 10500
+    },
+    {
+      "name": "localdb-start",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 859
+    },
+    {
+      "name": "localdb-version",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "numeric_result": "17.0.4025.3",
+      "elapsed_ms": 375
+    },
+    {
+      "name": "localdb-memory-bound",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 233
+    },
+    {
+      "name": "load-auth-schema",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 657
+    },
+    {
+      "name": "create-owned-game-db",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 484
+    },
+    {
+      "name": "seed-owned-shard",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 46
+    },
+    {
+      "name": "seed-private-development-password",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 46
+    },
+    {
+      "name": "seed-private-development-account",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 46
+    },
+    {
+      "name": "localdb-pid",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "numeric_result": 9472,
+      "elapsed_ms": 46
+    },
+    {
+      "name": "firewall--auth-in-add",
+      "returncode": 0,
+      "elapsed_seconds": 2.015,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-auth-out-add",
+      "returncode": 0,
+      "elapsed_seconds": 1.406,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-ef-db-in-add",
+      "returncode": 0,
+      "elapsed_seconds": 1.204,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-f-db-out-add",
+      "returncode": 0,
+      "elapsed_seconds": 1.203,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-f-db-out-remove",
+      "returncode": 0,
+      "elapsed_seconds": 1.406,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-ef-db-in-remove",
+      "returncode": 0,
+      "elapsed_seconds": 1.406,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall-auth-out-remove",
+      "returncode": 0,
+      "elapsed_seconds": 1.204,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "firewall--auth-in-remove",
+      "returncode": 0,
+      "elapsed_seconds": 1.406,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_original_bytes": 0,
+      "log_truncated": false,
+      "termination": {
+        "attempted": false,
+        "observed": false
+      }
+    },
+    {
+      "name": "drop-owned-game-db",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 139
+    },
+    {
+      "name": "localdb-drop-owned-schema",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 62
+    },
+    {
+      "name": "localdb-stop-owned-instance",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 62
+    },
+    {
+      "name": "localdb-delete-owned-instance",
+      "console_output_suppressed": true,
+      "returncode": 0,
+      "elapsed_ms": 16
+    }
+  ],
+  "auth_only_login_repeated": false,
+  "client_login_attempted": true,
+  "selected_shard_play_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "nondevelopment_version_admitted": false,
+  "checksum_reference_installed": false,
+  "checksum_policy_relaxed": false,
+  "shipping_profiles_modified": false,
+  "original_interserver_shard_activation_verified": false,
+  "private_console_exported": false,
+  "accepted_runtime_replaced": false,
+  "new_db_candidate_admission": {
+    "admitted": true,
+    "schema": "coh-hosted-mssql-dbserver-threadname-build-v1-admission",
+    "binary": {
+      "sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c",
+      "bytes": 1654784,
+      "machine": "I386",
+      "format": "PE32",
+      "subsystem": 3,
+      "header_identity_only": true,
+      "executed": false
+    },
+    "receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+    "changed_source_paths": [
+      "Common/ClientLogin/clientcommLogin.c",
+      "libs/UtilitiesLib/src/utils/utils.c"
+    ],
+    "old_candidate_binary_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "service_executed": false,
+    "accepted_runtime_replaced": false,
+    "live_authenticated_db_login_verified": false,
+    "normal_version_or_checksum_acceptance_verified": false,
+    "generated_metadata_admission": {
+      "mode": "strict_native_artifact",
+      "original_receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+      "view_receipt_sha256": null,
+      "changed_files": [],
+      "original_build_receipt_replaced": false,
+      "original_pe_sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c"
+    },
+    "build_repository_commit": "2729bfc16c9f757fd850c24a0bc6df366a2e40ab",
+    "build_source_map_sha256": "582842d95a4657e6e6762cd88c792d899f110aaaec4bc956d8a3b4ef6160604e"
+  },
+  "development_db_candidate_generation": {
+    "binary_sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c",
+    "build_receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912"
+  },
+  "provisional_development_db_player_list_verified": false,
+  "source_inferred_development_exception_used": false,
+  "server_development_skip_observed": false,
+  "accepted_schema": {
+    "manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "files": 62,
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+  },
+  "db_build_admission": {
+    "admitted": true,
+    "schema": "coh-hosted-mssql-dbserver-threadname-build-v1-admission",
+    "binary": {
+      "sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c",
+      "bytes": 1654784,
+      "machine": "I386",
+      "format": "PE32",
+      "subsystem": 3,
+      "header_identity_only": true,
+      "executed": false
+    },
+    "receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+    "changed_source_paths": [
+      "Common/ClientLogin/clientcommLogin.c",
+      "libs/UtilitiesLib/src/utils/utils.c"
+    ],
+    "old_candidate_binary_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+    "service_executed": false,
+    "accepted_runtime_replaced": false,
+    "live_authenticated_db_login_verified": false,
+    "normal_version_or_checksum_acceptance_verified": false,
+    "generated_metadata_admission": {
+      "mode": "strict_native_artifact",
+      "original_receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+      "view_receipt_sha256": null,
+      "changed_files": [],
+      "original_build_receipt_replaced": false,
+      "original_pe_sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c"
+    },
+    "build_repository_commit": "2729bfc16c9f757fd850c24a0bc6df366a2e40ab",
+    "build_source_map_sha256": "582842d95a4657e6e6762cd88c792d899f110aaaec4bc956d8a3b4ef6160604e",
+    "separate_runtime_dlls_required": false,
+    "platform_imports": [
+      "advapi32.dll",
+      "gdi32.dll",
+      "iphlpapi.dll",
+      "kernel32.dll",
+      "odbc32.dll",
+      "user32.dll",
+      "winmm.dll",
+      "ws2_32.dll"
+    ]
+  },
+  "x86_odbc_driver": {
+    "sha256": "319b6c3b0ab08dd92dc1e5ee6daf3def82503ebbc85944fc1c614cd7a1c7b729",
+    "bytes": 1563576,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 2,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "localdb_version": "17.0.4025.3",
+  "development_scope": "fresh_real_auth_original_development_db_complete_empty_list_then_cancel_destroy",
+  "development_probe_build": {
+    "binary": {
+      "sha256": "1978acc1b3de864b2e658857fbdef4e427b1b58d44f2a05d269905595ea2e317",
+      "bytes": 3299840,
+      "machine": "AMD64",
+      "format": "PE32+",
+      "subsystem": 3,
+      "header_identity_only": true,
+      "platform_imports": [
+        "advapi32.dll",
+        "crypt32.dll",
+        "kernel32.dll",
+        "user32.dll",
+        "ws2_32.dll"
+      ],
+      "delay_imports_absent": true,
+      "no_unadmitted_dll_imports": true,
+      "platform_loader_or_export_resolution_claimed": false
+    },
+    "retained_crypto": {
+      "manifest_sha256": "1c1c05eb10132e4d1d172d29a04d36311981e6c7023c7ee388348339c460896b",
+      "static_library_sha256": "95aec97b796992a58f8745e1bbbc6eac634931420f13b0763d2db57537543698",
+      "qualified_archive_sha256_reference": "aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b",
+      "artifact_id": 12078663003,
+      "files_revalidated": 384,
+      "bytes_revalidated": 105629748,
+      "crypto_rebuilt": false,
+      "prior_auth_only_probe_executed": false,
+      "qualified_core_source_sha256": {
+        "native-android/engine/auth-interop/deployment/auth_service_profile.py": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+        "native-android/engine/auth-interop/deployment/password_fixture.py": "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd",
+        "native-android/engine/auth-interop/deployment/windows/auth_only_probe.c": "9bf261ba6cd927ba1d4923c7bbd9c5fb05129dbef9a17e80310489aac537271c",
+        "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8",
+        "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h": "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402",
+        "native-android/engine/auth-interop/deployment/windows/compat/poll.h": "7e7c4481497ad68233f402199758d4202c5fd995c64b33901bbae10da4c673c5",
+        "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8",
+        "native-android/engine/auth-interop/deployment/windows/compat/unistd.h": "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646",
+        "native-android/engine/auth-interop/deployment/windows/test_winsock_api.h": "246f32d8ffb2a04c593fcafddb64c47e127acc8e6328e567018edbd2e91fc019",
+        "native-android/engine/auth-interop/deployment/windows/test_winsock_compat.c": "eef165af9e013c6e354d98b7d8c6ede53125e099e15b81e55bc873025fa448e9",
+        "native-android/engine/auth-interop/deployment/windows/winsock_compat.c": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad",
+        "native-android/engine/auth-interop/deployment/windows/winsock_compat.h": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e",
+        "native-android/engine/auth-interop/deployment/windows/wrapped_login.c": "4163131d9f76f0a96a490820587018900a780d30738e278d1057c6afcee36e02",
+        "native-android/engine/auth/android/openssl-source.json": "f3117dc4154a95c0d1a473e7ccf488ef3e5c73e560b4415dbb63366956f66239",
+        "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+        "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+        "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+        "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+        "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+        "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+        "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+        "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+        "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+        "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+        "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+        "native-android/engine/auth-interop/deployment/windows/intact_probe.c": "c26859b5afb68000929759d32399520d152ff29f84c10c067104dffa43755bfe"
+      }
+    },
+    "zlib_source": {
+      "source_admission": {
+        "schema": "coh-exact-chromium-zlib-source-readmission-v1",
+        "passed": true,
+        "commit": "cf333892c34ab6dbaed37c38a1d5aa6da7b2f99d",
+        "tree": "62224db151a2af4f2c66110d634ef8dc3607a155",
+        "regular_files": 111,
+        "headers": 32,
+        "x64_translation_units": 21,
+        "source_bytes": 1216944,
+        "materialized_source_readmitted": false,
+        "patch_applied": false,
+        "compiler_executed": false,
+        "runtime_executed": false,
+        "static_x64_library_built": false,
+        "Windows_platform_closure_qualified": false
+      },
+      "existing_patch_sha256": "55273bf390fd1093718d28f1141979fa97d23d1f071a1d90653f801cd425a107",
+      "existing_patch_applied_to_private_copy": true,
+      "original_111_files_unchanged": true,
+      "derived_cmake_sha256": "646bf5e3c3b1787daeec7334b937ad5593e4f4a69a81ad59ffc5e686c326d00b",
+      "patched_source_files": 112,
+      "compiler_executed": false
+    },
+    "zlib_private_source": {
+      "original_tree": "62224db151a2af4f2c66110d634ef8dc3607a155",
+      "original_files": 111,
+      "private_files": 112,
+      "existing_cmake_sha256": "646bf5e3c3b1787daeec7334b937ad5593e4f4a69a81ad59ffc5e686c326d00b",
+      "physical_posix_modes_claimed_on_windows": false,
+      "original_git_modes_admitted_from_archive": true
+    },
+    "static_zlib": {
+      "bytes": 227166,
+      "sha256": "b5e6fb6f5352830d6e60946070358868ed24260c43444922584ba01d24652895"
+    },
+    "project_sources_sha256": {
+      "native-android/engine/auth-interop/deployment/windows/db_development_received_probe.c": "111cd61fe8bbbefeae8cf03f3e889135790d1a052b94d76efc482e7f82698ef6",
+      "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c": "36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6",
+      "native-android/engine/auth-interop/deployment/windows/winsock_compat.c": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad",
+      "native-android/engine/auth-interop/deployment/windows/wrapped_login.c": "4163131d9f76f0a96a490820587018900a780d30738e278d1057c6afcee36e02",
+      "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.c": "abfede788fe3f7c566a028178e05caeb21a2db24fb7c233b90bd64fc5fa0e8aa",
+      "native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c": "14b125f2649babdc9a310bf757676f551279214d4a7e4e65869129d10ad9d651",
+      "native-android/engine/auth-interop/deployment/windows/wrapped_db_received_prefix.c": "25e2692298fc2ae1bc45d5ee16987a4c88de4116066686b46484361b3c83e824",
+      "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+      "native-android/engine/dbclient/coh_db_account_controls.c": "4fc8d2ed60f7593905e4c5484204779a0eaa8f360f318a44c5a97dbd568a83b8",
+      "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+      "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+      "native-android/engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+      "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+      "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+      "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+      "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+      "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+    },
+    "objects": {
+      "coh-auth-db-development": {
+        "auth_db_development_owner.obj": {
+          "bytes": 19995,
+          "sha256": "2b9c52031bc357e6bcc7dd06d28bc59b03adc7784804d4b500bdb4d9759c6e5c",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_auth.obj": {
+          "bytes": 31660,
+          "sha256": "a11c7e57eba5750c5b5612c134ddef32416897b2443fa26ff6cb24d4d82adb69",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_auth_openssl.obj": {
+          "bytes": 11294,
+          "sha256": "de1308956d8ccececf9861ebd64ce62961b0d2276490668572a68307b36ab0ae",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_blowfish.obj": {
+          "bytes": 12657,
+          "sha256": "1e4f3334f11a52e843e9a30f4594ca77eb2026a6e49769950892e71e1171c0bd",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_db_account_controls.obj": {
+          "bytes": 5675,
+          "sha256": "6c414882e7c62f8487ff11613361f1dd0c84d21fb67a7ecc6cbacdf9156ea19e",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_dbclient.obj": {
+          "bytes": 27953,
+          "sha256": "70bd3b4ba36ef13381ab89680623bbf8507164ca44a48da1adb639e61bc4981e",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_net.obj": {
+          "bytes": 43357,
+          "sha256": "622548e64ccae72e17f53c4b3a63b8ff4450c5cfccea2847d4ee03ee42c0deb5",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_net_frame.obj": {
+          "bytes": 5948,
+          "sha256": "6f211339d46f0c7197dc82b49a3436159e3baa080129ae301b3a65052e7ecf2c",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_net_zip.obj": {
+          "bytes": 9858,
+          "sha256": "812a8da3aa8113ec9d63af13a777b96daff04edb94157abf4f62194741b1f1fd",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_protocol.obj": {
+          "bytes": 13469,
+          "sha256": "7a0eaba907d9fdd1f75218ff47c06c460e68db31e3019fedc874ea7a1bd353a5",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "coh_session_crypto.obj": {
+          "bytes": 2541,
+          "sha256": "bc46bf9b0bdd5880f286ff6b76997ad6586168f22caf2102c22fbcb6800a24bb",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "db_development_received_probe.obj": {
+          "bytes": 24263,
+          "sha256": "62da54169d2b1d632a8cc726a461a799d5bdb6429df173e4addbfbe055a62983",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "db_udp_winsock.obj": {
+          "bytes": 19643,
+          "sha256": "2107de4c85151144be837aceaf33284d3a198db90441234d42a764342cb80bd4",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "winsock_compat.obj": {
+          "bytes": 26347,
+          "sha256": "561c2c3f8a07dda2616ae1405dfed4657adfaceae15991122be92d86a287649c",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "wrapped_db_received_prefix.obj": {
+          "bytes": 37872,
+          "sha256": "348e77240ff991c4b48702eafbd8f2ab56f79f832adac512399899f99d76f590",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "wrapped_db_udp.obj": {
+          "bytes": 22835,
+          "sha256": "c360ad7d28de57805eb173b38d0395d3014ad3a2848b37540a4971fd565dec03",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "wrapped_login.obj": {
+          "bytes": 18598,
+          "sha256": "af1ab7bb93787459669f167e6fd8d23d77a396a69ecc043b17509999fc052015",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        }
+      },
+      "chromium_zlib": {
+        "adler32.obj": {
+          "bytes": 6531,
+          "sha256": "62f333e75b623d002da565ec1e0bdff82ba94a1c4af8bdb02465315ba186406d",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "adler32_simd.obj": {
+          "bytes": 3732,
+          "sha256": "683cdbe622529eef1ea6a0f8d967b8346b759a4dc39277e4677464afbf203802",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "compress.obj": {
+          "bytes": 2282,
+          "sha256": "32d383d501e5309cd07d8447f7f3c6273b6d2b9858e850e9558e1c4f4423a68d",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "cpu_features.obj": {
+          "bytes": 2268,
+          "sha256": "bad7129563f35ce1d48df118ab0e4ed23c905993fe61392d350e42f18207d690",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "crc32.obj": {
+          "bytes": 18680,
+          "sha256": "077df1c29723f8c41758a33efaa6302a59ec8de05f274321407570098d03e253",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "crc32_simd.obj": {
+          "bytes": 2004,
+          "sha256": "19e1c6aa651521581fc711391a7e035fa1ce0ce0259ad13bc5786c5575192d90",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "crc_folding.obj": {
+          "bytes": 5695,
+          "sha256": "8e60955eaa4077d8b2d9695ac430158965b3207d65ce8c99316753f21c65140e",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "deflate.obj": {
+          "bytes": 38609,
+          "sha256": "c7ad47c6190ce473cb31fae808bcb3d3703f5f62b0921a88eab9bf81eaf6caf3",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "fill_window_sse.obj": {
+          "bytes": 2453,
+          "sha256": "94f12717f74eecf612a649b835c7c84c20d93af02dd7fcd61e7e9b93eec20b84",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "gzclose.obj": {
+          "bytes": 746,
+          "sha256": "9621256ed496d9ee6fd83eed4da30b672a7ce12a866ac51633544a228b110ba0",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "gzlib.obj": {
+          "bytes": 12691,
+          "sha256": "515ce2dcc6f2c64feb9c6f52a53555f81304511cf9155958b7a75687905bca82",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "gzread.obj": {
+          "bytes": 13738,
+          "sha256": "ce34e65a9b0dd2c2880d28925987407e4cbd1080df0c6694afba7bf8b2f966b8",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "gzwrite.obj": {
+          "bytes": 17446,
+          "sha256": "c5931731c0c8217a0d37412c058527005032306c00fc90004a4c518c1891b46e",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "infback.obj": {
+          "bytes": 13220,
+          "sha256": "e4e3f1b227c70bd568b674add854b292a5b73d995b1400aff6a04a3e3c013635",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "inffast.obj": {
+          "bytes": 2820,
+          "sha256": "a9593f4c35020092b72ee298aa15bbdee288937bd6b6f298d671fbb7126edb8b",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "inffast_chunk.obj": {
+          "bytes": 5809,
+          "sha256": "14172bb8ac0b36fd9c3634060e612bc12147e2808461c909d930f66c78decc2a",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "inflate.obj": {
+          "bytes": 31155,
+          "sha256": "22aea9d25cadfd30bb217d526a742cac240a16f435faaefa8a088cac51f21437",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "inftrees.obj": {
+          "bytes": 5703,
+          "sha256": "38dc537b0c851a6b0efd57de99b83a24c96d2b9689360129c18b3408d6112dc7",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "trees.obj": {
+          "bytes": 23502,
+          "sha256": "00bfe56d6ad0cf79f0bdf2a92cf840be88f209b684945a982ecb1a1c1e586520",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "uncompr.obj": {
+          "bytes": 4429,
+          "sha256": "232bb63883b7e46d726f002286bacc1c76261dd82e045e09c7f62f8d3daa8cf8",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        },
+        "zutil.obj": {
+          "bytes": 2955,
+          "sha256": "734a1033e807c919f921351be864fd5c16ead92c171ae47b3a6d4920958fcc58",
+          "machine": "AMD64",
+          "admission": "header_machine_and_whole_file_hash"
+        }
+      }
+    },
+    "build_policy": {
+      "openssl_configuration": [
+        "VC-WIN64A",
+        "no-shared",
+        "no-asm",
+        "no-tests",
+        "no-module"
+      ],
+      "openssl_build": [
+        "nmake",
+        "/nologo",
+        "build_libs"
+      ],
+      "cmake_generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "configuration": "Release",
+      "parallel": "2"
+    },
+    "generated_project_sha256": "ed8effc0f451318211c57b3ac677610e2e1e86337aee296ad7e2e4f9b392d69f",
+    "commands": [
+      {
+        "name": "configure-new-db-probe",
+        "succeeded": true,
+        "owned_cleanup_complete": true,
+        "owned_job_empty_before_close": true,
+        "owned_job_assignment_verified": true,
+        "launch": {
+          "launch_state": "RESUMED",
+          "assignment_verified": true,
+          "resume_verified": true,
+          "empty_before_close": true,
+          "scope_closed_verified": true,
+          "primary_resume": {
+            "schema": "coh-owned-suspended-primary-thread-v1",
+            "single_owned_thread_verified": true,
+            "resume_attempted": true,
+            "previous_suspend_count_one": true,
+            "thread_handle_closed": true,
+            "cleanup_verified": true,
+            "process_identity_verified": true,
+            "resume_observed": true,
+            "generation_recheck_verified": true,
+            "snapshots_closed": true,
+            "thread_identity_verified": true,
+            "passed": true,
+            "snapshot_passes": 2,
+            "snapshot_entries_examined": 3192,
+            "secondary_close_failures": 0,
+            "failure": "NONE"
+          }
+        },
+        "private_log_exported": false
+      },
+      {
+        "name": "build-new-db-probe",
+        "succeeded": true,
+        "owned_cleanup_complete": true,
+        "owned_job_empty_before_close": true,
+        "owned_job_assignment_verified": true,
+        "launch": {
+          "launch_state": "RESUMED",
+          "assignment_verified": true,
+          "resume_verified": true,
+          "empty_before_close": true,
+          "scope_closed_verified": true,
+          "primary_resume": {
+            "schema": "coh-owned-suspended-primary-thread-v1",
+            "single_owned_thread_verified": true,
+            "resume_attempted": true,
+            "previous_suspend_count_one": true,
+            "thread_handle_closed": true,
+            "cleanup_verified": true,
+            "process_identity_verified": true,
+            "resume_observed": true,
+            "generation_recheck_verified": true,
+            "snapshots_closed": true,
+            "thread_identity_verified": true,
+            "passed": true,
+            "snapshot_passes": 2,
+            "snapshot_entries_examined": 3210,
+            "secondary_close_failures": 0,
+            "failure": "NONE"
+          }
+        },
+        "private_log_exported": false
+      }
+    ],
+    "server_rebuilt": false,
+    "crypto_rebuilt": false,
+    "ordinary_core_modified": false,
+    "map_client_linked": false,
+    "approved_reference_checksum_admitted": false,
+    "normal_version_admitted": false
+  },
+  "development_platform_preflight": {
+    "schema": "coh-auth-db-development-policy-result-projection-v2",
+    "passed": true,
+    "probe_stage": 10,
+    "phase": 0,
+    "failure": 0,
+    "status": 0,
+    "auth_phase": 0,
+    "db_phase": 0,
+    "auth_final_phase": 0,
+    "db_final_phase": 0,
+    "begun": 0,
+    "grant_consumed": 0,
+    "selected_shard_verified": 0,
+    "complete_matching_list": 0,
+    "all_slots_empty_unlocked": 0,
+    "cleanup_cancel_close_used": 0,
+    "controllers_destroyed": 0,
+    "slots": 0,
+    "base_slots": 0,
+    "bonus_slots": 0,
+    "auth_frames": 0,
+    "db_login_requests": 0,
+    "db_player_lists": 0,
+    "db_queue_updates": 0,
+    "db_unsupported": 0,
+    "db_choices": 0,
+    "db_handoffs": 0,
+    "elapsed_ms": 0,
+    "development_skip_requested": 0,
+    "normal_version_admitted": 0,
+    "checksum_reference_admitted": 0,
+    "character_selected": 0,
+    "map_handoff_verified": 0,
+    "current_world_verified": 0,
+    "checksum_measured_from_actual_probe": true,
+    "local_sensitive_buffers_wiped": true,
+    "owner_cleanup_complete": true,
+    "socket_cleanup_complete": true,
+    "udp_created": 0,
+    "udp_closed": 0,
+    "udp_active": 0,
+    "udp_close_failures": 0,
+    "udp_cleanup_failures": 0,
+    "udp_cleanup_complete": 1,
+    "development_skip_source_inference_only": true,
+    "server_development_skip_observed": false,
+    "graceful_peer_disconnect_acknowledged": false,
+    "real_server_provenance_verified_by_probe": false,
+    "normalized_policy_schema": "coh-auth-db-development-platform-preflight-v1",
+    "native_producer_schema": "coh-auth-db-development-platform-preflight-v2",
+    "db_received_prefix": {
+      "schema": "coh-db-received-header-prefix-v1",
+      "available": true,
+      "context_verified": false,
+      "retired": false,
+      "truncated": false,
+      "instances": 0,
+      "service_calls": 0,
+      "total_seen": 0,
+      "first_unsupported_attributed": false,
+      "body_acceptance_observed": false,
+      "entries": []
+    }
+  },
+  "development_platform_preflight_observation": {
+    "schema": "coh-auth-db-development-fixed-observation-v1",
+    "child_state": "EXIT_ZERO",
+    "json_state": "VALID",
+    "stdout_bytes_bounded": 1427,
+    "stage": "PLATFORM_READY",
+    "phase": "IDLE",
+    "failure": "NONE",
+    "status": "OK",
+    "auth_phase": "IDLE",
+    "db_phase": "IDLE",
+    "native_passed": true,
+    "db_request_state": "NOT_QUEUED",
+    "complete_matching_list": false,
+    "local_sensitive_buffers_wiped": true,
+    "socket_cleanup_complete": true,
+    "raw_private_output_exported": false,
+    "owned_child_cleanup_complete": true,
+    "owned_child_cleanup_outcome": "COMPLETE",
+    "auth_frames": 0,
+    "db_login_requests": 0,
+    "db_player_lists": 0,
+    "db_queue_updates": 0,
+    "db_unsupported": 0,
+    "db_choices": 0,
+    "db_handoffs": 0,
+    "udp_created": 0,
+    "udp_closed": 0,
+    "udp_active": 0,
+    "udp_close_failures": 0,
+    "udp_cleanup_failures": 0,
+    "native_producer_schema": "coh-auth-db-development-platform-preflight-v2",
+    "db_received_prefix": {
+      "schema": "coh-db-received-header-prefix-v1",
+      "available": true,
+      "context_verified": false,
+      "retired": false,
+      "truncated": false,
+      "instances": 0,
+      "service_calls": 0,
+      "total_seen": 0,
+      "first_unsupported_attributed": false,
+      "body_acceptance_observed": false,
+      "entries": []
+    },
+    "owned_child_job_empty_before_close": true,
+    "owned_child_job_assignment_verified": true,
+    "owned_child_launch_state": "RESUMED"
+  },
+  "auth_only_negative_cases_repeated": false,
+  "grant_values_exported": false,
+  "private_credentials_exported": false,
+  "normal_version_admitted": false,
+  "checksum_reference_admitted": false,
+  "character_selected": false,
+  "map_handoff_verified": false,
+  "current_world_verified": false,
+  "development_db_request_state": "QUEUED",
+  "owned_empty_registry_prepare": {
+    "schema": 1,
+    "scope": "empty_nonce_registry_lease",
+    "client_project_derivation": "owned_localdb_nonce",
+    "prepare_attempted": true,
+    "prepared": true,
+    "preflight_absent_both_views": true,
+    "parent_created_by_lease": true,
+    "nonce_created_by_lease": true,
+    "cleanup_attempted": false,
+    "services_stopped_confirmed": false,
+    "nonce_absent_both_views": false,
+    "owned_parent_absent_both_views": false,
+    "handles_closed": false,
+    "cleanup_verified": false,
+    "failure": null,
+    "cleanup_failure": null,
+    "secondary_close_failures": 0,
+    "source_inferred_getter_branch": "existing_key_missing_installation_value_null",
+    "registry_atomicity_claimed": false
+  },
+  "complete_userdata_preflight_verified": true,
+  "selected_group_membership_preflight_verified": true,
+  "x86_sql_readiness": {
+    "healthy": true,
+    "observation": {
+      "diagnostic_completed": true,
+      "attempted_connections": 3,
+      "opened_connections": 3,
+      "connections_closed": true,
+      "sql_process_id": 9472,
+      "errors": [],
+      "query_succeeded": true,
+      "schema": "coh-auth-x86-odbc-readiness-v1",
+      "pointer_bytes": 4
+    },
+    "expected_sql_process_id": 9472,
+    "authserver_internal_pool_observed": false,
+    "encrypted_account_login_verified": false,
+    "script_sha256": "3119e3906900c2d99ec5281534370808e6cc1a3c1d9fd79ced907e2b48ec73cf",
+    "shell_sha256": "34cbf70970c2dc19681c8d363ea4c1dae316ed0edce4db3d4849084a0dffc568"
+  },
+  "runtime_config_sha256": {
+    "auth": "19286dc7892002f27c0bd4b48f8bcd78abfdd0e0de8c58febb1c2f5ac5df9605",
+    "db": "96f2525e980122293d3f827bf22fbce21748b9fdfc9de1caccfd0af573226b8e"
+  },
+  "owned_service_generations_start": {
+    "auth": {
+      "pid": 7308,
+      "exists": true,
+      "name": "authserver",
+      "started_utc_ticks": 639278921378328341,
+      "executable_path_sha256": "102ff8febacc4334c7ea33ec67d881eaa2140e282ca29a215b75db61099b74b2"
+    },
+    "sql": {
+      "exists": true,
+      "started_utc_ticks": 639278921207144232,
+      "pid": 9472,
+      "name": "sqlservr"
+    },
+    "db": {
+      "pid": 2216,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278921389951876,
+      "executable_path_sha256": "2ec80b8d4b6cd6b9a2a3c7c02455d049a8d2337d56ed774792cb8e5f51ca374c"
+    }
+  },
+  "shard_inactive_before_db_process": true,
+  "original_db_ready_marker_seen": true,
+  "owned_interserver_channel": {
+    "loopback_pair_verified": true,
+    "auth_pid": 7308,
+    "db_pid": 2216,
+    "auth_internal_port": 42281,
+    "db_ephemeral_port": 61544
+  },
+  "owned_db_game_listener": {
+    "udp_port": 7000,
+    "owner_pid": 2216,
+    "actual_bind_address": "0.0.0.0",
+    "nonloopback_ipv4_access_blocked_by_owned_firewall": true
+  },
+  "actual_game_database_user_tables": 99,
+  "development_runtime_before_probe": {
+    "auth": {
+      "pid": 7308,
+      "exists": true,
+      "name": "authserver",
+      "started_utc_ticks": 639278921378328341,
+      "executable_path_sha256": "102ff8febacc4334c7ea33ec67d881eaa2140e282ca29a215b75db61099b74b2"
+    },
+    "db": {
+      "pid": 2216,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278921389951876,
+      "executable_path_sha256": "2ec80b8d4b6cd6b9a2a3c7c02455d049a8d2337d56ed774792cb8e5f51ca374c"
+    },
+    "sql": {
+      "pid": 9472,
+      "exists": true,
+      "name": "sqlservr",
+      "started_utc_ticks": 639278921207144232
+    },
+    "channel": {
+      "loopback_pair_verified": true,
+      "auth_pid": 7308,
+      "db_pid": 2216,
+      "auth_internal_port": 42281,
+      "db_ephemeral_port": 61544
+    },
+    "game_listener": {
+      "udp_port": 7000,
+      "owner_pid": 2216,
+      "actual_bind_address": "0.0.0.0",
+      "nonloopback_ipv4_access_blocked_by_owned_firewall": true
+    },
+    "registered_group_membership_verified": true
+  },
+  "development_probe_failure_observation": {
+    "schema": "coh-auth-db-development-fixed-observation-v1",
+    "child_state": "EXIT_ONE",
+    "json_state": "VALID",
+    "stdout_bytes_bounded": 1888,
+    "stage": "OWNER_SERVICE",
+    "phase": "FAILED",
+    "failure": "DB",
+    "status": "UNSUPPORTED",
+    "auth_phase": "AUTHORIZED",
+    "db_phase": "WAIT_PLAYERS",
+    "native_passed": false,
+    "db_request_state": "QUEUED",
+    "complete_matching_list": false,
+    "local_sensitive_buffers_wiped": true,
+    "socket_cleanup_complete": true,
+    "raw_private_output_exported": false,
+    "owned_child_cleanup_complete": true,
+    "owned_child_cleanup_outcome": "COMPLETE",
+    "auth_frames": 4,
+    "db_login_requests": 1,
+    "db_player_lists": 0,
+    "db_queue_updates": 0,
+    "db_unsupported": 1,
+    "db_choices": 0,
+    "db_handoffs": 0,
+    "udp_created": 1,
+    "udp_closed": 1,
+    "udp_active": 0,
+    "udp_close_failures": 0,
+    "udp_cleanup_failures": 0,
+    "native_producer_schema": "coh-auth-db-development-list-probe-v2",
+    "db_received_prefix": {
+      "schema": "coh-db-received-header-prefix-v1",
+      "available": true,
+      "context_verified": true,
+      "retired": true,
+      "truncated": false,
+      "instances": 1,
+      "service_calls": 6,
+      "total_seen": 4,
+      "first_unsupported_attributed": false,
+      "body_acceptance_observed": false,
+      "entries": [
+        {
+          "command": "DBGAMESERVER_ACCOUNTSERVER_UNAVAILABLE",
+          "header_decoded": true,
+          "phase": "WAIT_PLAYERS",
+          "legacy": false,
+          "compressed": false
+        },
+        {
+          "command": "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT",
+          "header_decoded": true,
+          "phase": "WAIT_PLAYERS",
+          "legacy": false,
+          "compressed": false
+        },
+        {
+          "command": "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT",
+          "header_decoded": true,
+          "phase": "WAIT_PLAYERS",
+          "legacy": false,
+          "compressed": false
+        },
+        {
+          "command": "DBGAMESERVER_ACCOUNTSERVER_INVENTORY",
+          "header_decoded": true,
+          "phase": "WAIT_PLAYERS",
+          "legacy": false,
+          "compressed": false
+        }
+      ]
+    },
+    "owned_child_job_empty_before_close": true,
+    "owned_child_job_assignment_verified": true,
+    "owned_child_launch_state": "RESUMED"
+  },
+  "db_login_attempted": true,
+  "development_runtime_after_probe": {
+    "auth": {
+      "pid": 7308,
+      "exists": true,
+      "name": "authserver",
+      "started_utc_ticks": 639278921378328341,
+      "executable_path_sha256": "102ff8febacc4334c7ea33ec67d881eaa2140e282ca29a215b75db61099b74b2"
+    },
+    "db": {
+      "pid": 2216,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278921389951876,
+      "executable_path_sha256": "2ec80b8d4b6cd6b9a2a3c7c02455d049a8d2337d56ed774792cb8e5f51ca374c"
+    },
+    "sql": {
+      "started_utc_ticks": 639278921207144232,
+      "pid": 9472,
+      "name": "sqlservr",
+      "exists": true
+    },
+    "channel": {
+      "loopback_pair_verified": true,
+      "auth_pid": 7308,
+      "db_pid": 2216,
+      "auth_internal_port": 42281,
+      "db_ephemeral_port": 61544
+    },
+    "game_listener": {
+      "udp_port": 7000,
+      "owner_pid": 2216,
+      "actual_bind_address": "0.0.0.0",
+      "nonloopback_ipv4_access_blocked_by_owned_firewall": true
+    },
+    "registered_group_membership_verified": true
+  },
+  "development_runtime_after_probe_verified": true,
+  "failure": "development_private_probe_refused",
+  "owned_db_startup_diagnostic": {
+    "read_only": true,
+    "raw_console_or_sql_exported": false,
+    "generation_before": {
+      "pid": 2216,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278921389951876,
+      "executable_path_sha256": "2ec80b8d4b6cd6b9a2a3c7c02455d049a8d2337d56ed774792cb8e5f51ca374c"
+    },
+    "sql": {
+      "user_tables": 99,
+      "attribute_tables": 3,
+      "dbserver_sessions": 65,
+      "sleeping_sessions": 65,
+      "active_requests": 0,
+      "waiting_requests": 0,
+      "blocked_requests": 0,
+      "wait_lock": 0,
+      "wait_network": 0,
+      "wait_io": 0,
+      "wait_memory": 0,
+      "wait_threadpool": 0,
+      "wait_other": 0
+    },
+    "process": {
+      "pid": 2216,
+      "cpu_ms": 1156,
+      "thread_count": 73,
+      "thread_state_enum_counts": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 73,
+        "6": 0,
+        "7": 0
+      },
+      "wait_reason_enum_counts": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 0,
+        "6": 66,
+        "7": 0,
+        "8": 6,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0
+      },
+      "thread_ids_or_stacks_exported": false
+    },
+    "generation_after": {
+      "pid": 2216,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278921389951876,
+      "executable_path_sha256": "2ec80b8d4b6cd6b9a2a3c7c02455d049a8d2337d56ed774792cb8e5f51ca374c"
+    },
+    "complete": true
+  },
+  "owned_db_modal_diagnostic": {
+    "read_only": true,
+    "raw_titles_controls_or_stacks_exported": false,
+    "generation_before": {
+      "pid": 2216,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278921389951876,
+      "executable_path_sha256": "2ec80b8d4b6cd6b9a2a3c7c02455d049a8d2337d56ed774792cb8e5f51ca374c"
+    },
+    "complete": false,
+    "not_run": "modal_policy_bound_to_prior_checksum_only_pe",
+    "generation_after": {
+      "pid": 2216,
+      "exists": true,
+      "name": "dbserver",
+      "started_utc_ticks": 639278921389951876,
+      "executable_path_sha256": "2ec80b8d4b6cd6b9a2a3c7c02455d049a8d2337d56ed774792cb8e5f51ca374c"
+    }
+  },
+  "owned_service_cleanup_complete": true,
+  "owned_firewall_cleanup_complete": true,
+  "owned_localdb_cleanup_complete": true,
+  "private_db_console_summary": {
+    "bytes": 2977,
+    "inspected_prefix_bytes": 2977,
+    "content_exported": false,
+    "source_markers": {
+      "db_ready": true,
+      "auth_version_received": false,
+      "sql_connected": true,
+      "checksum_reference_missing": false,
+      "loading_templates": true,
+      "update_tables": true,
+      "clearing_teamups": true,
+      "waiting_for_launchers": true,
+      "sql_connection_gave_up": false,
+      "missing_input_error": false,
+      "bind_error": false
+    }
+  },
+  "private_files_removed": true,
+  "source_inputs_unchanged": true,
+  "development_probe_build_observation": {
+    "stage": "COMPLETE",
+    "commands": [
+      {
+        "name": "configure-new-db-probe",
+        "succeeded": true,
+        "owned_cleanup_complete": true,
+        "owned_job_empty_before_close": true,
+        "owned_job_assignment_verified": true,
+        "launch": {
+          "launch_state": "RESUMED",
+          "assignment_verified": true,
+          "resume_verified": true,
+          "empty_before_close": true,
+          "scope_closed_verified": true,
+          "primary_resume": {
+            "schema": "coh-owned-suspended-primary-thread-v1",
+            "single_owned_thread_verified": true,
+            "resume_attempted": true,
+            "previous_suspend_count_one": true,
+            "thread_handle_closed": true,
+            "cleanup_verified": true,
+            "process_identity_verified": true,
+            "resume_observed": true,
+            "generation_recheck_verified": true,
+            "snapshots_closed": true,
+            "thread_identity_verified": true,
+            "passed": true,
+            "snapshot_passes": 2,
+            "snapshot_entries_examined": 3192,
+            "secondary_close_failures": 0,
+            "failure": "NONE"
+          }
+        },
+        "private_log_exported": false
+      },
+      {
+        "name": "build-new-db-probe",
+        "succeeded": true,
+        "owned_cleanup_complete": true,
+        "owned_job_empty_before_close": true,
+        "owned_job_assignment_verified": true,
+        "launch": {
+          "launch_state": "RESUMED",
+          "assignment_verified": true,
+          "resume_verified": true,
+          "empty_before_close": true,
+          "scope_closed_verified": true,
+          "primary_resume": {
+            "schema": "coh-owned-suspended-primary-thread-v1",
+            "single_owned_thread_verified": true,
+            "resume_attempted": true,
+            "previous_suspend_count_one": true,
+            "thread_handle_closed": true,
+            "cleanup_verified": true,
+            "process_identity_verified": true,
+            "resume_observed": true,
+            "generation_recheck_verified": true,
+            "snapshots_closed": true,
+            "thread_identity_verified": true,
+            "passed": true,
+            "snapshot_passes": 2,
+            "snapshot_entries_examined": 3210,
+            "secondary_close_failures": 0,
+            "failure": "NONE"
+          }
+        },
+        "private_log_exported": false
+      }
+    ],
+    "raw_build_logs_exported": false
+  },
+  "development_service_job_launches": [
+    {
+      "launch_state": "RESUMED",
+      "assignment_verified": true,
+      "resume_verified": true,
+      "empty_before_close": true,
+      "scope_closed_verified": true,
+      "primary_resume": {
+        "schema": "coh-owned-suspended-primary-thread-v1",
+        "single_owned_thread_verified": true,
+        "resume_attempted": true,
+        "previous_suspend_count_one": true,
+        "thread_handle_closed": true,
+        "cleanup_verified": true,
+        "process_identity_verified": true,
+        "resume_observed": true,
+        "generation_recheck_verified": true,
+        "snapshots_closed": true,
+        "thread_identity_verified": true,
+        "passed": true,
+        "snapshot_passes": 2,
+        "snapshot_entries_examined": 3272,
+        "secondary_close_failures": 0,
+        "failure": "NONE"
+      }
+    },
+    {
+      "launch_state": "RESUMED",
+      "assignment_verified": true,
+      "resume_verified": true,
+      "empty_before_close": true,
+      "scope_closed_verified": true,
+      "primary_resume": {
+        "schema": "coh-owned-suspended-primary-thread-v1",
+        "single_owned_thread_verified": true,
+        "resume_attempted": true,
+        "previous_suspend_count_one": true,
+        "thread_handle_closed": true,
+        "cleanup_verified": true,
+        "process_identity_verified": true,
+        "resume_observed": true,
+        "generation_recheck_verified": true,
+        "snapshots_closed": true,
+        "thread_identity_verified": true,
+        "passed": true,
+        "snapshot_passes": 2,
+        "snapshot_entries_examined": 3322,
+        "secondary_close_failures": 0,
+        "failure": "NONE"
+      }
+    }
+  ],
+  "development_all_owned_service_jobs_empty_before_close": true,
+  "owned_empty_registry_cleanup": {
+    "schema": 1,
+    "scope": "empty_nonce_registry_lease",
+    "client_project_derivation": "owned_localdb_nonce",
+    "prepare_attempted": true,
+    "prepared": true,
+    "preflight_absent_both_views": true,
+    "parent_created_by_lease": true,
+    "nonce_created_by_lease": true,
+    "cleanup_attempted": true,
+    "services_stopped_confirmed": true,
+    "nonce_absent_both_views": true,
+    "owned_parent_absent_both_views": true,
+    "handles_closed": true,
+    "cleanup_verified": true,
+    "failure": null,
+    "cleanup_failure": null,
+    "secondary_close_failures": 0,
+    "source_inferred_getter_branch": "existing_key_missing_installation_value_null",
+    "registry_atomicity_claimed": false
+  },
+  "owned_registry_cleanup_complete": true,
+  "development_candidate_and_source_inputs_unchanged": true,
+  "development_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py": "7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py": "103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "17e58a3fb06bb3e364e529b4a6c4992747bd34ee4f7c8beb510edbdb0d7a4d5d",
+    "native-android/engine/auth-interop/evidence/auth-db-development-owner-20261018/host-1642051b3.json.gz": "b3c0b382202be509748fe5a70b289b35a02e5069f136e779f16358df5ddfe066",
+    "native-android/engine/auth-interop/deployment/qualify_auth_db_development_owner.py": "3ac893e35650c89a59273bac096bc60053a1bfc1d3e036501170b102e7185a18",
+    "native-android/engine/auth-interop/deployment/windows/AUTH-DB-DEVELOPMENT-OWNER.md": "3ee0303492b09ff944e66826902e5b1a474e656c371fa665bf5b19c3f4c76c92",
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c": "36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6",
+    "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h": "2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20",
+    "native-android/engine/auth-interop/deployment/windows/test_auth_db_development_owner.c": "efc8adb4b4db3dc2e3931f5752563386d78dc1e6b1727abe6a5084ce874e9bcd",
+    "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_handoff_owner.h": "d4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45",
+    "native-android/engine/dbclient/coh_db_handoff_private.h": "6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd",
+    "native-android/engine/dbclient/coh_db_session.c": "394a94e436d52963fbe2667b0b3cf977554d3b6ffe69c8c858da42ded697bc06",
+    "native-android/engine/dbclient/coh_db_session.h": "d9993e341349cac614fe862481b1a3fb21e7239900ca1d3d6c8c1e8043b92c87",
+    "native-android/engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+    "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "native-android/engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+    "native-android/engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+    "upstream/ouroboros/Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+    "upstream/ouroboros/DBServer/src/authcomm.c": "a3a4349047e08fc3285c22d231fe9d467ee26f6360e125db3845ede50f1fc1b2",
+    "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+    "upstream/ouroboros/Game/src/clientcomm/authclient.c": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015",
+    "native-android/engine/auth-interop/qualification/db-udp-windows-source-20261018/host.json": "dc3018ebc0e853ddfd8ffc2071c6d30b05f115edbfde01d3b8d9e736a0c8e419",
+    "native-android/engine/auth-interop/deployment/DB-UDP-WINDOWS-ADAPTER.md": "a0d5482ac2a621ccfb3860511fa21355b9f7969403ad8f5c0ec40d77931ae9ae",
+    "native-android/engine/auth-interop/deployment/test_db_udp_winsock.py": "d4a7eefee1d3e7d45a0ef4cb0b03fb18c22cc719d2f95f77be2da7ab4c3d9f27",
+    "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.c": "abfede788fe3f7c566a028178e05caeb21a2db24fb7c233b90bd64fc5fa0e8aa",
+    "native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h": "ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb",
+    "native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock.c": "966c9026cd54281a0a597670c389634fa276a817176b2fc552a8954ff0b78174",
+    "native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock_api.h": "a1b19b67b9b7ab96bb800c368d6c5cd064d1466f27e4c6666c299ae1fa1bc15c",
+    "native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c": "14b125f2649babdc9a310bf757676f551279214d4a7e4e65869129d10ad9d651",
+    "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8",
+    "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h": "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402",
+    "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8",
+    "native-android/engine/auth-interop/deployment/windows/compat/unistd.h": "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646",
+    "native-android/engine/auth-interop/qualification/db-development-probe-source-20261018/host.json": "6325c41dd124f5c97ba91897ab33117ed347aeb1c8545f25e80f04336ef25223",
+    "native-android/engine/auth-interop/deployment/DB-DEVELOPMENT-PROBE.md": "d0785247746207a187cca7c4612524f7177f5795f430631b3e338475705d5ddb",
+    "native-android/engine/auth-interop/deployment/test_db_development_probe.py": "72f4c499b25fe3731b5f260c7a1fbaa336c47bdde5305b11022634c43d0661f5",
+    "native-android/engine/auth-interop/deployment/windows/db_development_probe.c": "fab9f9bbf4d79d6fdf00982d8f516e40d8b0ed85fe30190bca2879ed8dbd4354",
+    "native-android/engine/auth-interop/deployment/windows/test_db_development_probe.c": "83e470934604b5d1ddf9e3e6e234bbde9cf10a79a56151d713b95ae974c2301a",
+    "native-android/engine/auth-interop/deployment/windows/test_db_development_probe_api.h": "cea1dc2ab4c5dae38bc20d7fb86587ac44c20f57a571ca56e4c7397445dbecbf",
+    "native-android/engine/dbclient/qualification/account-controls-02b54d43f.json.gz": "d04dda6ac635ced869f0a86e4f4801ec732d12e69dc8ab10575056fa9c00513f",
+    "native-android/engine/dbclient/qualification/account-controls-02b54d43f-binding.json": "53767d18c4edd2b10964a6a2d4b8bff1ed40490789f6bb316d44c26cb3b18acb",
+    "native-android/engine/dbclient/ACCOUNT_CONTROLS.md": "c958a7cf49ed55e2a57c3890f59c05b57d3b3f78728d3dedf411462f37c0f1a3",
+    "native-android/engine/dbclient/check_account_controls.py": "1946b84a77491146a7b8d245825d38d1ed060ed70f4ac76ddd5a8dbbd60d3967",
+    "native-android/engine/dbclient/coh_db_account_controls.c": "4fc8d2ed60f7593905e4c5484204779a0eaa8f360f318a44c5a97dbd568a83b8",
+    "native-android/engine/dbclient/coh_db_account_controls.h": "9ac6ab90576973ecfac43a4cba8ea8a7e5805c230312645d85cffe5a778f63db",
+    "native-android/engine/dbclient/tests/account-controls-source-pins.json": "df398a95e9e8c9e0c697a7c2c9422ee0980311e6f6d3e7b3f26fbc38f7c3fdc8",
+    "native-android/engine/dbclient/tests/account_controls_oracle.py": "6a53e2f26a87149f274a9e6b93a03410352964985e0a5da5d3ba1cbf993b11f3",
+    "native-android/engine/dbclient/tests/test_account_controls.c": "441cdbbfc20434331ccd3d90a63f149c322ce806f51915c21324f0143d5d0e13",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "upstream/ouroboros/AccountServer/src/AccountServer.cpp": "91070c652c6796f2dc38fd50b3985febc627e7e96201ad6f71fe2de3888847d7",
+    "upstream/ouroboros/DBServer/src/accountservercomm.c": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae",
+    "upstream/ouroboros/Game/src/UI/uiServerTransfer.c": "b2f4e5667b519b511ee9dfb6780f299f5489266470ec904d9f53a8f1c847da3b",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+    "upstream/ouroboros/QueueServer/src/QueueServer_Passthrough.c": "49f71c51e7d4a95e616455359752b7cca8d37c15f8bc0ddf86bbccdb70408d5c",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "native-android/engine/dbclient/qualification/account-control-owned-link-lists.json": "67578035a171f6f0fe0d5bf549f5658b2737d6f10c16a04090fa1b70cb43c50c",
+    "native-android/engine/auth-interop/deployment/hosted_auth_db_development.py": "8ffa10bf55372eaf4f95ce9734892a4677d4f01f5d33c7aba3866256e1f250d3",
+    "native-android/engine/auth-interop/deployment/hosted_auth_db_development_stage.py": "e028d3368e3e34f2fd5e999391d3bbcdfe320c4445d0eee25e45310b90a05ade",
+    "native-android/engine/auth-interop/deployment/test_auth_db_development_driver.py": "2a5d6e08815f2ea1b44111920f2c2355c700f525e12b03a4e09dcb465b1b8027",
+    "native-android/engine/auth-interop/deployment/AUTH-DB-DEVELOPMENT-DRIVER.md": "d69e37a0e01b117723b80f8d33c1607dccc1be0542630ecbf6d36b0b73212d01",
+    "native-android/engine/auth-interop/deployment/db_received_prefix.py": "23827085ebcbe6534893b3e3fa20746f4e50e55e01d657686af402096dc72682",
+    "native-android/engine/auth-interop/deployment/test_db_received_prefix.py": "0563fd22a676b376fccbfb273b21c9c167d535680f01e16ee184411e4e07abe9",
+    "native-android/engine/auth-interop/deployment/DB-RECEIVED-PREFIX.md": "53707cb3f32438fd7e4b1786d8f8c1e6db76acb298c0b102bc3a46889368c075",
+    "native-android/engine/auth-interop/deployment/test_account_controls_tool_admission.py": "e8838350bb83e8ead08eacf51489198fdfa5885867dac346374646c53415ab08",
+    "native-android/engine/auth-interop/deployment/test_account_controls_admission.py": "e47d7e9f37a935f3d372b70654a627cb4815bd53c8827ef9e66677231ea2838a",
+    "native-android/engine/auth-interop/deployment/ACCOUNT-CONTROLS-ADMISSION.md": "36b2299eafc4e4dff26c351d69cff32a3923e1d304e123ef98ba79f40be35419",
+    "native-android/engine/auth-interop/deployment/windows/db_received_prefix.h": "85ddbee13d4ab98dd778f40d392031d79adf530cfc9e87062df2701e1eece316",
+    "native-android/engine/auth-interop/deployment/windows/wrapped_db_received_prefix.c": "25e2692298fc2ae1bc45d5ee16987a4c88de4116066686b46484361b3c83e824",
+    "native-android/engine/auth-interop/deployment/windows/db_development_received_probe.c": "111cd61fe8bbbefeae8cf03f3e889135790d1a052b94d76efc482e7f82698ef6",
+    "native-android/engine/auth-interop/deployment/windows/test_db_received_prefix.c": "12bcaebb15992edb7e6ee707ae2d0f450a49a05d3912a5df98ef6e471bee77a0",
+    "native-android/engine/auth-interop/deployment/windows_registry_lease.py": "4f7bcbdb79dc3dc8cbe0d4744810bea0b18a56655b26a89b9e6bb32701f5636b",
+    "native-android/engine/auth-interop/deployment/test_windows_registry_lease.py": "976e882f453fdd459de7cb23241d45460a8a2b77a641e8e3a8f2c20254e31a5c",
+    "native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py": "58b8f4d672e81d6f5b3aa56d2afb06dd7162efd4f9f31f4b35735cedcccb8794",
+    "native-android/engine/auth-interop/deployment/password_fixture.py": "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd",
+    "native-android/engine/auth-interop/deployment/auth_service_profile.py": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/admit.py": "acb28d1cbf5f7eb8d1484face6ea3b18925679eda6c72344a1e134c2b00c934b",
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/admission.json": "d104eafafe30e26d63072adef5a454e86d83d7280513c1add3d8478b1feebfd6",
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/source.tar.gz": "2f776d3abe636e302a98216fc81410622feb1be958315223d0d3442496365938",
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/commit.json": "f27da76043e1ffc76c0da5f07d36adc3b34b659cf98ae092ae897ef1d9317eda",
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/tree.json": "2b03a4e4d7edd236b5e1185b5a76013af77135355cd4342e8f347a5cbe7bb527",
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/Zlib.cmake": "dbabf749271e73e4bb5eb62c5d914ace1259520f6e8b52bbcf2600371b5d50be",
+    "native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/chromium-zlib-cmake.patch": "55273bf390fd1093718d28f1141979fa97d23d1f071a1d90653f801cd425a107",
+    "native-android/engine/auth-interop/deployment/qualification/windows-suspended-thread-20261018/mock.json": "2a94e518de3e53a55123012a73c5b7eaed4482cf9fe4cad336cfae0b4c724267",
+    "native-android/engine/auth-interop/deployment/qualification/windows-suspended-thread-20261018/HANDOFF.md": "4a4edb1c8cf50199bb2c6f16ff8e24c26df2a660cb661b52d5194e9ad68d41ba",
+    "native-android/engine/auth-interop/deployment/WINDOWS-SUSPENDED-THREAD.md": "75e3c0cf3eaccfa5e0dadffcb36e952aa2be2eba264c55d8327426045907c172",
+    "native-android/engine/auth-interop/deployment/test_windows_suspended_thread.py": "c31c5e59e10d780dcf5e68bc5739672a82bfc05a88307910989d5db04fa56e5b",
+    "native-android/engine/auth-interop/deployment/windows_suspended_thread.py": "5c5306850d5c1abeab5f70682ce54f35240127f67a54f90393598421caef5a11",
+    "native-android/engine/auth-interop/deployment/source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+    "native-android/engine/auth-interop/deployment/admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_candidate.py": "630b4b46c7aa5c68bb2ac7afa44a1587e3f9289c95c49c92da3a8c062b938ec0",
+    "native-android/engine/auth-interop/deployment/manual_runtime_preflight.py": "1755c1613430c9e43d64c151e38a94ec34fce08c99ef37c88eafdf8e0cdf4d67",
+    "native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py": "020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/generate_odbc.py": "82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424",
+    "native-android/engine/auth-interop/deployment/checksum_candidate.py": "27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86",
+    "native-android/engine/auth-interop/deployment/verify_auth_acceptance.py": "67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8",
+    "native-android/engine/auth-interop/deployment/hosted_receive_candidate.py": "581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a",
+    "native-android/engine/auth-interop/deployment/receive_candidate.py": "cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78",
+    "native-android/engine/auth-interop/deployment/hosted_candidate_login.py": "23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d",
+    "native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py": "948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2",
+    "native-android/engine/auth-interop/deployment/auth_readiness.py": "814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438",
+    "native-android/engine/auth-interop/deployment/candidate_sql_memory.py": "b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde",
+    "native-android/engine/auth-interop/deployment/hosted_auth_login.py": "0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2",
+    "native-android/engine/auth-interop/deployment/candidate_service.py": "07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe",
+    "native-android/engine/auth-interop/deployment/db_modal_diagnostic.py": "3cfb9b5e1eacc02ba9b79cda41e8cbf505743c0e5cc7ebfefe98f0a13bdba4c7",
+    "native-android/engine/auth-interop/deployment/db_startup_diagnostic.py": "585378d5241ea6b7b571e034f340b2aea3f78bf0d2856b1a63e6f840ee81600b",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+  },
+  "private_probe_build_removed": true
+}

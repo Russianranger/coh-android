@@ -1,0 +1,113 @@
+{
+  "schema": "coh-github-auth-db-account-controls-fixed-api-v1",
+  "repository": "Russianranger/coh-android",
+  "run": {
+    "id": 39094808506,
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39094808506",
+    "head_sha": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+    "head_branch": "native-android",
+    "path": ".github/workflows/native-auth-db-development.yml",
+    "status": "completed",
+    "conclusion": "failure",
+    "run_attempt": 1,
+    "created_at": "2026-10-18T03:46:42Z",
+    "updated_at": "2026-10-18T03:50:06Z"
+  },
+  "jobs": [
+    {
+      "id": 117578922139,
+      "name": "fresh-real-auth-db-account-controls",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Preserve exact source line endings",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Admit exact current account controls and separately scoped historical proofs before imports or recovery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Recover exact accepted AuthServer and independently admitted new DbServer build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Recover only exact immutable x64 crypto headers library and ownership manifest",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Observe one fresh original Auth to DB transaction after complete bounded account controls",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "number": 9,
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 18,
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 19,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12124625207,
+      "name": "auth-db-account-controls-6e96fe22a567a3e252449feb37483cfea1566d8a",
+      "size_in_bytes": 18245,
+      "digest": "sha256:8d8b2518f5420a129d097b705c50406f5cbf323d1dd697c5941bb7dfa01bd4bd",
+      "expired": false,
+      "head_sha": "6e96fe22a567a3e252449feb37483cfea1566d8a"
+    }
+  ],
+  "download": {
+    "bytes": 18245,
+    "sha256": "8d8b2518f5420a129d097b705c50406f5cbf323d1dd697c5941bb7dfa01bd4bd"
+  },
+  "private_logs_included": false
+}

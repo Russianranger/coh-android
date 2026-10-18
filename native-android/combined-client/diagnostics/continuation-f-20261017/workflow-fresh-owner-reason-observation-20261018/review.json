@@ -1,0 +1,118 @@
+{
+  "fixed_artifacts": {
+    "helper_review_path": "native-android/combined-client/diagnostics/continuation-f-20261017/account-controls-destination-helper-review-20261018/review.json",
+    "helper_review_sha256": "a9db135f05c5d4a2cefd4dd39de949bc7886f83d54265f5ffad3c3958c76a989",
+    "helper_sha256": "c5a49d446423ac76ab2977a75a5e8bcb3a817daeb55c1d2dd30092933238c01e",
+    "observer_artifact": 12124306842,
+    "observer_receipt_bytes": 3796,
+    "observer_receipt_sha256": "478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034",
+    "observer_run": 39094808520,
+    "observer_zip_bytes": 6781758,
+    "observer_zip_sha256": "b3a82a5265322685e035e3b86f44862a59d8fc561852288e3d3ea8bb8371eed6",
+    "prior_new_mocks": "5 methods / 49 cases; not reexecuted",
+    "receiver_raw_build_sha256": "821ebfd2f84c60e8da23333476b9d1f8baadaf815c506933ee2b41572ef137d6",
+    "receiver_release_bytes": 180616,
+    "receiver_release_sha256": "6115b96942579229d765921aee8d963f1e82ef4e7cce01a9d6d78bea6d8d419f"
+  },
+  "limits": {
+    "accepted_observer_equivalence": false,
+    "compiler_loader_ELF_services_executed": false,
+    "new_download": false,
+    "prior_unintended_legacy_host_replay_occurred_and_is_preserved_separately": true,
+    "project_imports_executed": false,
+    "runtime_executed": false,
+    "source_generation_admitted": false,
+    "tests_or_qualifiers_reexecuted": false,
+    "world_authority": false
+  },
+  "passed": true,
+  "public_exports": {
+    "fresh_source": [
+      "out/groups-public/fresh-source-snapshot/catalog.cohcat",
+      "out/groups-public/fresh-source-snapshot/runtime.cohrts",
+      "out/groups-public/fresh-source-snapshot/resources.cohres",
+      "out/groups-public/fresh-source-snapshot/public-bounds.cohrbw",
+      "out/groups-public/fresh-source-snapshot/manifest.json"
+    ],
+    "literal_backslash_n_paths": false,
+    "optional_initial": [
+      "out/groups-public/fresh-initial-observation/initial-update.bin",
+      "out/groups-public/fresh-initial-observation/manifest.json"
+    ],
+    "private_logs_accounts_probe_generic_captures_exported": false,
+    "source_and_initial_success_guards_retained": true,
+    "status": [
+      "out/groups-public/summary.json",
+      "out/groups-public/tooling.json",
+      "out/groups-public/source-snapshot.json"
+    ]
+  },
+  "reviewed_source_revision": "c286de9ef12099f64d5c4217bfacb55eb2315892",
+  "schema": "coh-f-fresh-owner-reason-observation-workflow-review-v1",
+  "scope_comparison": {
+    "always_summary_requires_source_admission_success": true,
+    "baseline": "5b9aef227c36c82b3f2bdca800037e33b5fd98af",
+    "cancel_in_progress": false,
+    "fixture_and_donor_arguments_unchanged": true,
+    "marker": "[fresh-groups-owner-reason]",
+    "observer_API_provenance_checks_retained": true,
+    "other_changes": {
+      "10": "observer compile receipt SHA",
+      "11": "observer compile receipt SHA",
+      "14": "public status artifact name",
+      "4": "observer artifact name and retained ZIP path",
+      "5": "observer compile receipt SHA",
+      "8": "qualified receiver helper and step name"
+    },
+    "read_permissions_only": true,
+    "retained_observer_no_redundant_download": true,
+    "runtime_timeouts_policy_unchanged": true,
+    "source_gate_index": 1,
+    "step_count": 17,
+    "unchanged_step_indices": [
+      0,
+      2,
+      3,
+      6,
+      7,
+      9,
+      12,
+      13,
+      15,
+      16
+    ]
+  },
+  "source_gate": {
+    "all_current_raw_equals_git": true,
+    "current45_evidence115_actualMap241_are_subsets": true,
+    "exact_receipt_keys": 14,
+    "fixed_json_predicates_independently_evaluated": [
+      "ACTUAL_METADATA_BINDING",
+      "CURRENT_45_AND_QUALIFIED_115",
+      "NO_DESTINATION_OR_RUNTIME_AUTHORITY",
+      "MOCKED_NEW_CONTROLS_SCOPE",
+      "ACTUAL_COMPILED_MAP_241_SUBSET",
+      "INDEPENDENT_HELPER_METADATA_REVIEW"
+    ],
+    "historical1834_not_globally_current": true,
+    "host_environment_guards_executed": false,
+    "including_dynamic_workflow": 395,
+    "map_sha256_compact_sorted_json": "76709f859522742545cfa36ae56dcf21997d978bfadccc5dd83d67a8ad0529cf",
+    "max_inputs": 512,
+    "nonself_input_count": 394,
+    "old_workflow_self_pin_replaced_by_current_git_identity": true,
+    "project_imports_follow_stdlib_source_gate": true,
+    "receipt_schema": "coh-account-controls-fresh-groups-live-source-admission-v1",
+    "source_path_mode_size_blob_checks_reviewed": true
+  },
+  "syntax": {
+    "bash_run_blocks_checked": 13,
+    "embedded_python_asts_checked": 8
+  },
+  "workflow": {
+    "bytes": 95062,
+    "current_raw_equals_committed_git": true,
+    "path": ".github/workflows/native-fresh-groups-observation.yml",
+    "sha256": "919934db659c237f3af4e1679edc880052927fa03c70c9ec763dfb9046c4a71a"
+  }
+}

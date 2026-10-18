@@ -16,16 +16,8 @@ permissions:
   contents: read
 concurrency:
   group: native-session-protocol-${{ github.ref }}
-  # A coordinator stop marker cancels only an unintended prior generic run.
-  cancel-in-progress: ${{ contains(github.event.head_commit.message, '[stop-legacy-session-replay]') }}
+  cancel-in-progress: false
 jobs:
-  stop-unneeded-replay:
-    if: github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message, '[stop-legacy-session-replay]')
-    runs-on: ubuntu-24.04
-    timeout-minutes: 2
-    steps:
-      - name: Stop marker only, without checkout or qualification
-        run: echo 'Coordinator stop marker; preserved session qualification is skipped.'
   host-and-arm64:
     if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[socket-boundary-requalify]') && !contains(github.event.head_commit.message, '[compact-recovery]') && !contains(github.event.head_commit.message, '[native-contracts-only]')
     runs-on: ubuntu-24.04

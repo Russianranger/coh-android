@@ -1,0 +1,19 @@
+{
+  "checks": [
+    "ACTUAL_METADATA_BINDING",
+    "CURRENT_45_AND_QUALIFIED_115",
+    "NO_DESTINATION_OR_RUNTIME_AUTHORITY",
+    "MOCKED_NEW_CONTROLS_SCOPE",
+    "ACTUAL_COMPILED_MAP_241_SUBSET"
+  ],
+  "host_guards_or_runtime_or_project_imports_executed": false,
+  "nonself_source_pins": 394,
+  "only_exact_pure_data_predicates_evaluated": true,
+  "passed": true,
+  "schema": "coh-owner-reason-scene-workflow-frozen-data-guards-v1",
+  "source_and_workflow_pins": 395,
+  "source_generation_admitted": false,
+  "workflow_bytes": 95062,
+  "workflow_sha256": "919934db659c237f3af4e1679edc880052927fa03c70c9ec763dfb9046c4a71a",
+  "world_authority": false
+}

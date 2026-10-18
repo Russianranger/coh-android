@@ -1,0 +1,30 @@
+{
+  "schema": "coh-owner-reason-scene-workflow-draft-v1",
+  "passed": true,
+  "source_revision": "053370cefaed38bd8542a721f2d2005b664230ec",
+  "generator_sha256": "8cab092c82639097cd116c8abafa3e2ecfd62c1c1705b17ad36c42112c2b7ca7",
+  "workflow_sha256": "919934db659c237f3af4e1679edc880052927fa03c70c9ec763dfb9046c4a71a",
+  "workflow_bytes": 95062,
+  "current_nonself_pins": 394,
+  "dynamic_workflow_self_pin": true,
+  "helper_sha256": "c5a49d446423ac76ab2977a75a5e8bcb3a817daeb55c1d2dd30092933238c01e",
+  "current_receiver_dependencies": 45,
+  "qualified_evidence_pins": 115,
+  "same_fixture_unchanged": true,
+  "actual_compiled_map_source_pins": 241,
+  "unchanged_runtime_retention_steps": [
+    3,
+    4,
+    7,
+    8,
+    10,
+    12,
+    13,
+    14,
+    16,
+    17
+  ],
+  "pure_helper_evidence_read": true,
+  "helper_cli_executed": false,
+  "qualifiers_tests_compiler_loader_native_services_or_download_executed": false
+}

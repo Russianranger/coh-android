@@ -1,0 +1,175 @@
+{
+  "API_gate_recoveries_upload_success_runtime_step8_failure": true,
+  "C99_proof36_current_subset": true,
+  "D_evidence_revision": "b7e52a8774c8e70faebcf577cd231d04e495ad78",
+  "D_preservation_time_current_worker128_fact_not_reexecuted": true,
+  "ZIP_CRC_and_retained_CRLF_receipt_exact": true,
+  "actual_run_id": 39094808506,
+  "actual_source_revision": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+  "actual_source_tree": "8d1fb5f8e37cfa6b277ddd9f49d903fbfc703ad6",
+  "all_union_hashes_equal_actual_published_Git": true,
+  "artifact_id": 12124625207,
+  "build": {
+    "PE_bytes_retained_or_parsed_by_F": false,
+    "loaded_mapping_or_export_resolution_verified": false,
+    "project_TUs": 17,
+    "reported_AMD64_objects": 38,
+    "reported_binary": {
+      "bytes": 3299840,
+      "delay_imports_absent": true,
+      "format": "PE32+",
+      "header_identity_only": true,
+      "machine": "AMD64",
+      "no_unadmitted_dll_imports": true,
+      "platform_imports": [
+        "advapi32.dll",
+        "crypt32.dll",
+        "kernel32.dll",
+        "user32.dll",
+        "ws2_32.dll"
+      ],
+      "platform_loader_or_export_resolution_claimed": false,
+      "sha256": "1978acc1b3de864b2e658857fbdef4e427b1b58d44f2a05d269905595ea2e317",
+      "subsystem": 3
+    },
+    "zero_socket_platform_preflight_passed": true,
+    "zlib_TUs": 21
+  },
+  "cleanup": {
+    "UDP_created_closed_active": [
+      1,
+      1,
+      0
+    ],
+    "all_retained_cleanup_source_candidate_flags_true": true,
+    "all_service_jobs_empty_before_close": true,
+    "full_build_service_resume_projections_verified": 4,
+    "native_child_partial_cleanup_projections": 2,
+    "raw_main_owner_cleanup_field_separately_retained": false,
+    "registry_atomicity_claimed": false,
+    "registry_bothviews_absent_after_confirmed_stop": true
+  },
+  "common_CMake_inputs": 2,
+  "evidence_files": {
+    "README.md": {
+      "bytes": 4731,
+      "sha256": "b20fe6a866820fab589cfed5f55c6980b16f7ca0f314db611589a51316136de6"
+    },
+    "api.json": {
+      "bytes": 3478,
+      "sha256": "b84645297bba4e8ba2c6c06666ef8120c287ab1b91ccf6216fe6d9dc20777c03"
+    },
+    "artifact.zip": {
+      "bytes": 18245,
+      "sha256": "8d8b2518f5420a129d097b705c50406f5cbf323d1dd697c5941bb7dfa01bd4bd"
+    },
+    "receipt.json": {
+      "bytes": 77676,
+      "sha256": "868fbad511f087d7cee898201054b3270499c94cac5328d37a1a6f570b332080"
+    },
+    "verification.json": {
+      "bytes": 23100,
+      "sha256": "af515be164342263b8c062507052fab8395cf7978672a9871da960d28842911c"
+    },
+    "verify.py": {
+      "bytes": 15204,
+      "sha256": "4609eb4deb4771b367b05156edf07de90e432c99f767b33cb128c6cfd52f4867"
+    }
+  },
+  "evidence_repository_directory": "native-android/engine/auth-interop/evidence/auth-db-account-controls-39094808506",
+  "historical_source_map_counts": {
+    "accepted_auth": 34,
+    "db_builder": 20,
+    "retained_crypto_reference": 28
+  },
+  "job_id": 117578922139,
+  "native": {
+    "Auth": "AUTHORIZED",
+    "Auth_frames": 4,
+    "Db": "WAIT_PLAYERS",
+    "JSON": "VALID",
+    "LOGIN_requests": 1,
+    "child": "EXIT_ONE",
+    "failure": "DB",
+    "header_prefix": [
+      "DBGAMESERVER_ACCOUNTSERVER_UNAVAILABLE",
+      "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT",
+      "DBGAMESERVER_ACCOUNTSERVER_CHARCOUNT",
+      "DBGAMESERVER_ACCOUNTSERVER_INVENTORY"
+    ],
+    "phase": "FAILED",
+    "player_lists": 0,
+    "prefix_modern_uncompressed": true,
+    "prefix_service_calls": 6,
+    "raw_body_values_acceptance_or_first_unsupported_observed": false,
+    "status": "UNSUPPORTED",
+    "unsupported": 1
+  },
+  "passed": true,
+  "published_gate_and_historical_union_paths": 158,
+  "published_gate_compact_sorted_json_sha256": "59072aea1bd51a4a2d63a7b69a5c5624b34a000e73265bfe0a1b5f93ad9e157d",
+  "published_source_gate137_exact_Git": true,
+  "review_actions": {
+    "D_verifier_or_project_helpers_executed": false,
+    "download_or_artifact_duplicate": false,
+    "private_or_raw_logs_exported": false,
+    "tests_native_compiler_or_runtime_executed": false
+  },
+  "runtime_inputs": 128,
+  "schema": "coh-f-actual-auth-db-account-controls-review-v1",
+  "scope": {
+    "actual_transaction_attempted": true,
+    "complete_player_list_verified": false,
+    "new_retry_or_repair_inferred": false,
+    "normal_version_checksum_Map_world_verified": false
+  },
+  "source_derived_interpretation": {
+    "Inventory13_current_default_increments_unsupported_and_returns_OK": true,
+    "earlier14_8_strict_returns_OK_before_fourth_fetch": true,
+    "not_raw_body_or_first_attribution_claim": true,
+    "unchanged_owner_rejects_nonzero_unsupported": true,
+    "whole_function_spans": {
+      "native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c:9013": {
+        "bytes": 1678,
+        "offset": 9013,
+        "sha256": "70c1e060ea1c406298d185806107ac5f4731aa242627645a20f9cecddd618940"
+      },
+      "native-android/engine/dbclient/coh_db_session.c:5104": {
+        "bytes": 566,
+        "offset": 5104,
+        "sha256": "8fa53f31f112930f1fc7ad477dd53437614dca85b0157d002cc9b20231270b47"
+      },
+      "native-android/engine/dbclient/coh_db_session.c:5670": {
+        "bytes": 3819,
+        "offset": 5670,
+        "sha256": "9e029c6efb55747905a801369c0700ca98b38dd11ed249720d4aa756d8711810"
+      },
+      "native-android/engine/dbclient/coh_db_session.c:9489": {
+        "bytes": 2156,
+        "offset": 9489,
+        "sha256": "007e2dab642e7f80b5dcc260df8b36bf7ad3e545ae136ec37a0c880a5a1ec041"
+      }
+    }
+  },
+  "stability": {
+    "Auth_Db_SQL_start_before_after_generations_equal": true,
+    "full_runtime_before_after_equal": true,
+    "listener_bind": "0.0.0.0",
+    "membership": true,
+    "owned_IPv4_firewall_restriction": true,
+    "tables": 99
+  },
+  "strict_JSON_duplicate_nonfinite_and_fixed_prefix_types_checked": true,
+  "unintended_legacy_tranche_event": {
+    "Android_canceled_not_qualified": true,
+    "legacy_Android_job": 117579223257,
+    "legacy_host_job": 117578921955,
+    "legacy_host_run": 39094808512,
+    "old_host_session_qualifier_ran_successfully": true,
+    "origin": "coordinator report; separate artifact not independently rechecked in this review",
+    "stop_commit": "2e0c775fd6278c9c66d34a3cefaf38a3c9ef9b06",
+    "stop_run": 39094970726,
+    "stop_run_no_checkout_or_qualification_reported": true,
+    "tranche_replay_free_claimed": false
+  }
+}

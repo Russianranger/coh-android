@@ -1,0 +1,176 @@
+{
+  "ARM64_library": {
+    "ELF": "ELF64LE ET_DYN AArch64",
+    "account_parser_defined_GLOBAL_DEFAULT_FUNC_bytes": 608,
+    "bytes": 253216,
+    "link_no_undefined": true,
+    "member": "combined-arm64/libcoh_native_engine.so",
+    "needed": [
+      "libz.so",
+      "libm.so",
+      "libGLESv3.so",
+      "libaaudio.so",
+      "libdl.so",
+      "libc.so"
+    ],
+    "parser_PLT_JUMP_SLOT": 1026,
+    "runtime_binding_or_mapping_observed": false,
+    "session_service_defined": true,
+    "sha256": "ffe81808ef3e31f87cf99f7ab8efd4191479385c1f5a590695a65399548a75a0"
+  },
+  "ARM64_receipt": {
+    "actual_local_NDK_or_system_headers_rehashed": false,
+    "all29_equal_published_Git_and_any_summary_overlap": true,
+    "bytes": 8127,
+    "command": [
+      "/tmp/native-session-ndk/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-I/home/runner/work/coh-android/coh-android/native-android/include",
+      "-I/home/runner/work/coh-android/coh-android/native-android/src",
+      "-shared",
+      "-fPIC",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_loader.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_geo.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/renderer/coh_renderer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_frame.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_zip.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_udp.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/auth/coh_auth.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/login/coh_login.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/dbclient/coh_dbclient.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/dbclient/coh_db_session.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/dbclient/coh_db_account_controls.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/live/coh_live.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/mapclient/coh_mapclient.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/replication/coh_replication.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/replication/coh_groups.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/session/coh_session_crypto.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/sequencer/coh_sequencer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/ui/coh_ui.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_mixer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_assets.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_dds.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+      "/home/runner/work/coh-android/coh-android/native-android/protocol/coh_protocol.c",
+      "/home/runner/work/coh-android/coh-android/native-android/animation/coh_animation.c",
+      "/home/runner/work/coh-android/coh-android/native-android/audio/coh_audio.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/renderer/coh_renderer_gles.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_mixer_aaudio.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_audio_session.c",
+      "-lz",
+      "-lm",
+      "-lGLESv3",
+      "-laaudio",
+      "-Wl,--no-undefined",
+      "-o",
+      "/home/runner/work/coh-android/coh-android/native-android/results/session-protocol/combined-arm64/libcoh_native_engine.so"
+    ],
+    "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+    "member": "combined-arm64/build-receipt.json",
+    "project_TUs": 29,
+    "sha256": "09e0c5995aa33226a85bd42d8e586daece33fcaf3b56180f01fd046b6523c80f"
+  },
+  "Android_cancelled_and_partial_artifact_unadmitted_not_retained": true,
+  "Android_job_id": 117579223257,
+  "CRC_unique_regular_paths_verified": true,
+  "actual_source_revision": "6e96fe22a567a3e252449feb37483cfea1566d8a",
+  "all1257_equal_actual_published_Git": true,
+  "complementary_E_source_and_binary_review_clear": true,
+  "correction": {
+    "android_artifact_admitted": false,
+    "android_continuation_cancelled": true,
+    "commit": "2e0c775fd6278c9c66d34a3cefaf38a3c9ef9b06",
+    "host_qualifier_had_already_reexecuted": true,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 117579418918,
+        "name": "stop-unneeded-replay",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Stop marker only, without checkout or qualification",
+            "number": 2,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 3,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "skipped",
+        "id": 117579419599,
+        "name": "android-socket-boundary",
+        "status": "completed",
+        "steps": []
+      },
+      {
+        "conclusion": "skipped",
+        "id": 117579449878,
+        "name": "host-and-arm64",
+        "status": "completed",
+        "steps": []
+      }
+    ],
+    "run": {
+      "conclusion": "success",
+      "created_at": "2026-10-18T03:49:34Z",
+      "head_branch": "native-android",
+      "head_sha": "2e0c775fd6278c9c66d34a3cefaf38a3c9ef9b06",
+      "html_url": "https://github.com/Russianranger/coh-android/actions/runs/39094970726",
+      "id": 39094970726,
+      "path": ".github/workflows/native-session-protocol.yml",
+      "run_attempt": 1,
+      "status": "completed",
+      "updated_at": "2026-10-18T03:49:43Z"
+    },
+    "tree": "8495a96f7541d8ea20f4a67478141770995c78ff",
+    "workflow_sha256": "edf2dfa633243c7f0296fe0e1aab18c9920f1091a01ae3d84a3f33fbad18ded5"
+  },
+  "fixed_API": {
+    "bytes": 6682,
+    "sha256": "0e157fbe5ef85d2f914608c138588a2e617b6d1bb8ab6271329b2499210610bb"
+  },
+  "host_job_id": 117578921955,
+  "member_uncompressed_bytes": 6519504,
+  "members": 24,
+  "old_host_qualifier_reexecuted_successfully": true,
+  "passed": true,
+  "retained_host_archive": {
+    "bytes": 1708803,
+    "sha256": "7c51c9936d9643f4a7e2b1f5d2e2bea825f7a965fe55ef3593f47a08da7717fe"
+  },
+  "review_actions": {
+    "download": false,
+    "original_public_host_artifact_preserved_whole": true,
+    "private_raw_logs_newly_exported": false,
+    "project_imports_tests_compiler_or_native_execution": false
+  },
+  "run_id": 39094808512,
+  "schema": "coh-f-unintended-session-replay-and-ARM64-compile-review-v1",
+  "scope": {
+    "ARM64_compiled_and_linked": true,
+    "ARM64_or_Android_executed": false,
+    "full_toolchain_or_Android_APK_JNI_account_world_authority": false,
+    "new_replay_for_preservation": false,
+    "tranche_replay_free_claimed": false
+  },
+  "summary_native_relative_source_pins": 1257
+}

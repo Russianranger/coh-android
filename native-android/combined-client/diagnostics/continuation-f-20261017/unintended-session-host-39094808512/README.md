@@ -1,0 +1,5 @@
+Exact preservation of the once-downloaded public host artifact and fixed API for unintended legacy run39094808512. The old host/session qualification completed before the trigger gap was caught. Android continuation was canceled; its partial artifact is not admitted or retained here. Stop commit2e0c775f/run39094970726 ran only a no-checkout/no-qualification marker job, with both legacy jobs skipped. This tranche is not replay-free.
+
+Data-only checks verified24 ZIP members/CRC,1257 native-relative source pins and29 ARM64 compilation inputs against actual6e96Git. The ARM64 ELF defines the account-control parser as a608-byte global default-visible function and session_service, with an AArch64 JUMP_SLOT relocation naming the defined parser. This supports compile/link evidence, not runtime binding or ARM64/Android execution. E independently found the same limited scope. Local NDK/system-header closure was not rehashed.
+
+No project import, test, compiler, native binary, emulator, server or replay ran for this preservation. No additional download or Android partial-artifact admission occurred. The archive is the original public artifact, not a new private log export.
