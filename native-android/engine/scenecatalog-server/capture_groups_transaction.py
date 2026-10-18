@@ -55,7 +55,11 @@ def identity(path,maximum):
  size,digest=d.hash_file(path,maximum);return {'bytes':size,'sha256':digest}
 def native_input(binary,receipt_path,receipt_pin,root=ROOT):
  binary=d.regular(binary);d.sha(receipt_pin);d.require(d.hash_file(receipt_path,16*1024**2)[1]==receipt_pin,'NATIVE_RECEIPT_PIN')
- receipt=d.json_object(d.read(receipt_path,16*1024**2));build_schema=receipt.get('schema');d.require(type(build_schema) is str and build_schema in NATIVE_BUILDS and receipt.get('passed') is True and receipt.get('source_hashes_authoritative_for_build_bytes') is True,'NATIVE_SCOPE')
+ receipt=d.json_object(d.read(receipt_path,16*1024**2));build_schema=receipt.get('schema')
+ if build_schema=='coh-initial-progress-focused-v1':
+  from initial_progress_admission import native_input as progress_input
+  return progress_input(binary,receipt_path,receipt_pin,root)
+ d.require(type(build_schema) is str and build_schema in NATIVE_BUILDS and receipt.get('passed') is True and receipt.get('source_hashes_authoritative_for_build_bytes') is True,'NATIVE_SCOPE')
  driver_name,tool_name,basename=NATIVE_BUILDS[build_schema]
  if build_schema==INITIAL_BUILD_SCHEMA:
   d.require(all(receipt.get(name) is value for name,value in INITIAL_BUILD_FLAGS.items()),'NATIVE_INITIAL_SCOPE')
@@ -79,11 +83,14 @@ def native_input(binary,receipt_path,receipt_pin,root=ROOT):
  admitted={'binary':identity(binary,4*1024**2),'build_receipt_sha256':receipt_pin,'source_revision':receipt.get('source_revision'),'project_dependencies':len(dependencies),'dependencies_sha256':{path.relative_to(root).as_posix():hashes[path.relative_to(root).as_posix()] for path in sorted(dependencies)}}
  if build_schema==INITIAL_BUILD_SCHEMA:admitted['build_schema']=build_schema
  return admitted
-def orchestration_source_paths(compiled=None):
+def orchestration_source_paths(compiled=None,native=None):
  paths=set((*base.SOURCE_PATHS,*retained.SOURCE_PATHS,*native_status.ENUM_SOURCE_PATHS,*('native-android/engine/scenecatalog-server/'+name for name in ('capture_groups_transaction.py','groups_capture_stages.py','groups_native_status.py','admit_groups_capture.py','inspect_groups_capture.py','stage_groups_capture.py','source_groups_capture_sink.inc'))))
  if type(compiled) is dict and compiled.get('build_role')=='nonshipping_fresh_callback_sealed_groups_observer':
   from fresh_callback_observer import runtime as fresh_runtime
   paths.update(fresh_runtime.source_paths(ROOT))
+ if type(native)is dict and native.get('build_schema')=='coh-initial-progress-focused-v1':
+  from initial_progress_admission import SOURCE_PATHS
+  paths.update(SOURCE_PATHS);paths.update(native['dependencies_sha256'])
  return paths
 
 def preflight(args):
@@ -255,6 +262,9 @@ def retain_initial_observation(received,target,paired):
    except d.Refused:clean=False
   result=initial_status('RETENTION_FAILED');result['retention_rollback_complete']=clean;return result
 def finish_initial_observation(report,native,received,target):
+ if native.get('build_schema')=='coh-initial-progress-focused-v1':
+  import initial_progress_admission as progress_admission
+  progress_admission.finish(sys.modules[__name__],report,native,received,target);return
  if native.get('build_schema')!=INITIAL_BUILD_SCHEMA:return
  if report.get('matching_groups_transaction_captured') is not True:result=initial_status('GROUPS_NOT_PAIRED')
  elif report.get('cleanup_verified') is not True or report.get('passed') is not True:result=initial_status('CLEANUP_NOT_VERIFIED')
@@ -269,7 +279,7 @@ def record_source_profile(report,runtime,owner,child):
 
 def capture(args):
  account,account_identity,dump_identity,compiled,native,modules,files,schema,dbdoc,donor,source,work,output=preflight(args);fx,db,pg,pe=modules
- source_paths=orchestration_source_paths(compiled)
+ source_paths=orchestration_source_paths(compiled,native)
  fresh_runtime=None
  if compiled.get('build_role')=='nonshipping_fresh_callback_sealed_groups_observer':
   from fresh_callback_observer import runtime as fresh_runtime
@@ -382,7 +392,7 @@ def capture(args):
   except Exception:cleanup.append(False)
   report['cleanup_verified']=bool(cleanup) and all(cleanup);report['passed']=report['passed'] and report['cleanup_verified'];report['raw_logs_exported']=False
   if fresh_runtime is not None:record_source_profile(report,fresh_runtime,source_probe_owner,map_process)
-  native_status.record(report,native_process,native_stdout_owner,children,source_capture,native.get('build_schema')==INITIAL_BUILD_SCHEMA,ROOT)
+  native_status.record(report,native_process,native_stdout_owner,children,source_capture,native.get('build_schema')in (INITIAL_BUILD_SCHEMA,'coh-initial-progress-focused-v1'),ROOT)
   finish_initial_observation(report,native,native_directory,output/'native')
   if report['passed']:advance(report,'COMPLETE')
   elif report['failure_stage']=='NONE':report['failure_stage']='CLEANUP'

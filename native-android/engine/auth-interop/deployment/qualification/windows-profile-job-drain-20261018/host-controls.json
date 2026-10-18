@@ -1,0 +1,36 @@
+{
+  "schema": "coh-wpp-job-drain-host-controls-v1",
+  "passed": true,
+  "results": [
+    {
+      "test": "test_job_drain.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_profile_environment.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_profile_diagnostic.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_identity_diagnostic.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_file_owner.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_supervise_inert.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_file_diagnostic.py",
+      "exit_code": 0
+    }
+  ],
+  "new_host_source_extracted_model_compiled_and_executed": true,
+  "CSharp_or_Windows_API_or_accepted_model_qualifier_or_original_inert_probe_or_services_executed": false
+}

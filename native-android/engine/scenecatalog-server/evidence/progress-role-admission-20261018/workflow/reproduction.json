@@ -1,0 +1,32 @@
+{
+  "actual_new_Git_source_admission_pending_primary_commit": true,
+  "inputs": {
+    ".github/workflows/native-initial-progress-observation.yml": {
+      "bytes": 154814,
+      "sha256": "cfc9acde5774809f877009e3b2c48597f44161410b1c3aca842bedeab0cae2b4"
+    },
+    ".github/workflows/native-scene-stage2-operation.yml": {
+      "bytes": 123554,
+      "sha256": "d941c611b550f2f70a1dd6c2963348aee71bb359387c0acb4d5b90baab41f710"
+    },
+    "native-android/engine/scenecatalog-server/evidence/progress-role-admission-20261018/workflow/derive_workflow.py": {
+      "bytes": 15444,
+      "sha256": "13c080198bccfdd4ce0968303422dfacb037fe1ea4a7371a14489adbf94d1420"
+    },
+    "native-android/engine/scenecatalog-server/evidence/progress-role-admission-20261018/workflow/static-review.json": {
+      "bytes": 33405,
+      "sha256": "b2299f54d6d5125f5662dea4643102588ad476967a7e8d923e2a9b5588a83562"
+    },
+    "native-android/engine/scenecatalog-server/evidence/progress-role-admission-20261018/workflow/verify_workflow.py": {
+      "bytes": 3737,
+      "sha256": "10ff2d9eaca7bd0eeab82821b28971c268f5f4602bbe6922801da98b52499243"
+    }
+  },
+  "job_launched": false,
+  "native_or_original_runtime_executed": false,
+  "passed": true,
+  "private_state_retained": false,
+  "schema": "coh-initial-progress-workflow-reproduction-v1",
+  "static_receipt_reproduced": true,
+  "workflow_reproduced_byte_identically": true
+}

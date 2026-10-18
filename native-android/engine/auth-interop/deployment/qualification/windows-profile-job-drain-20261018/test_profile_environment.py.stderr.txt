@@ -1,0 +1,10 @@
+test_all_other_modes_conflict_before_artifact_or_windows_actions (__main__.ProfileEnvironmentControls.test_all_other_modes_conflict_before_artifact_or_windows_actions) ... ok
+test_drive_form_and_both_root_drive_agreements_refuse (__main__.ProfileEnvironmentControls.test_drive_form_and_both_root_drive_agreements_refuse) ... ok
+test_exact_actual_retained_observer_admitted_without_compile_claim (__main__.ProfileEnvironmentControls.test_exact_actual_retained_observer_admitted_without_compile_claim) ... ok
+test_new_mode_inherits_only_validated_normal_drive_and_original_four (__main__.ProfileEnvironmentControls.test_new_mode_inherits_only_validated_normal_drive_and_original_four) ... ok
+test_observed_path_form_failure_retains_cleanup_and_no_causality_claim (__main__.ProfileEnvironmentControls.test_observed_path_form_failure_retains_cleanup_and_no_causality_claim) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+OK

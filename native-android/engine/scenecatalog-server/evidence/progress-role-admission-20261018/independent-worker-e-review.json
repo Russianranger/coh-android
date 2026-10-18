@@ -1,0 +1,32 @@
+{
+  "schema": "coh-initial-progress-admission-independent-e-review-v1",
+  "passed": true,
+  "review_scope": "read-only source, immutable old-source reversal, fixed diagnostic/private-copy/cleanup predicates and exact final proof/closure/stdout pin review; no test/native/compiler/capture replay",
+  "qualification_sha256": "1161ed11ba63278e65a14ca9823c5741d7725ad112429e0e88d14bb1a4150df0",
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "35d840f2ca04b320c462cc016f44910c4100e1210e203845df62ffc8de0527a4",
+    "native-android/engine/scenecatalog-server/initial_progress_admission.py": "c68903fc9360f6d73e6a3a59084415a1c753bce7f01fba2a46e82458ce61b0bc",
+    "native-android/engine/scenecatalog-server/test_initial_progress_admission.py": "648aec9679ba3aa653a29857f922b786ce748329e2a143056615497c142c2050",
+    "native-android/engine/scenecatalog-server/PROGRESS_ROLE_ADMISSION.md": "808e5e6dde52e8538c0d34771950cb2db61655b37a26e7368d3c2d02af90af01"
+  },
+  "six_exact_reversed_capture_edits": true,
+  "legacy_revision": "0c8d7e064a9d7360a0a4be68d7a38b975f1c1b37",
+  "legacy_capture_sha256": "78a18536289ad03ed77c314c4bcd889a6dd7002faa735d923f39f059263d2639",
+  "old_default_NATIVE_BUILDS_and_receipt_paths_unchanged": true,
+  "new_role_basenames_build_schema_ELF_current51source_admission_explicit": true,
+  "fixed21key_record_strict_types_enums_counts_false_authority": true,
+  "private_owned_file_no_link_permissions_stable_FD_path_checks": true,
+  "optional_file_failures_caught_after_cleanup_and_do_not_promote_or_change_GROUPS": true,
+  "strong_existing_initial_owner_retention_reused": true,
+  "strong_retention_test_is_explicit_double": true,
+  "public_projection_reconstructed_fixed_record_only": true,
+  "prospective_raw_source_pins_verified": 245,
+  "prospective_native_source_subset_verified": 51,
+  "prospective_closure_sha256": "f03598ae293aeabcde51bdd9dba26f4c7d611e1a24643c41decc122653d12a04",
+  "fresh_committed_orchestration_guard_still_required_after_primary_commit": true,
+  "actual_current_runtime_admission_claimed": false,
+  "focused14positive80refusal_receipt_and_exact_stdout_stderr_admitted": true,
+  "prior_stdout_gap_and_testonly_immutable_revision_fix_disclosed": true,
+  "tests_or_native_original_runtime_replayed": false,
+  "historical_receiver_equivalence_or_world_authority": false
+}

@@ -1,0 +1,1225 @@
+name: Focused original initial request progress observation
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-initial-progress-observation.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-initial-progress-observation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  matching-original-initial-progress:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name
+      == 'workflow_dispatch' || contains(github.event.head_commit.message, '[fresh-initial-progress]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      FIXTURE_ARTIFACT_ID: '12117765534'
+      FIXTURE_ZIP_BYTES: '580433'
+      FIXTURE_ZIP_SHA256: 5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b
+      FIXTURE_RECEIPT_SHA256: ecd51a26955f8462e6c1644b065f11fc6d018d39b96633110a36698a4cbf7b51
+      FIXTURE_RUN_ID: '39074781817'
+      FIXTURE_REVISION: fd213266f1b6665acece877dabb7dab6663e647c
+      FRESH_OBSERVER_ARTIFACT_ID: '12125997958'
+      FRESH_OBSERVER_RUN_ID: '39099315295'
+      FRESH_OBSERVER_REVISION: d9adf2b431a039357f8bfe878d3d0da991a81b19
+      FRESH_OBSERVER_ZIP_BYTES: '6784966'
+      FRESH_OBSERVER_ZIP_SHA256: cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b
+      FRESH_OBSERVER_RECEIPT_SHA256: 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91
+    defaults:
+      run:
+        working-directory: runtime
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+        path: current
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+        ref: 9c29e08c8d7e0ab38cff00f2997c39738a56ad07
+        path: runtime
+    - name: Admit current raw committed orchestration and explicit new native evidence before any current imports
+      id: current_source_admission
+      working-directory: current
+      run: |
+        python3 - <<'PYCURRENTPROGRESS'
+        import hashlib,json,os,pathlib,subprocess
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE_REFUSED')
+        assert os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.environ['RUNNER_OS']=='Linux' and os.environ['RUNNER_ARCH']=='X64'
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android'
+        root=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        assert head==os.environ['GITHUB_SHA']
+        pins={'android/guest/dbserver_diagnostic.py': '6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2',
+         'android/guest/diagnostic.py': '748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf',
+         'android/guest/game_diagnostic.py': 'f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737',
+         'android/guest/game_evidence.py': '12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d',
+         'android/native/runtime-probe.c': '9e7a412b02bc547624588d4d29611aa521380a886e429b8b23e32388ea3a6b07',
+         'database/postgresql/001-coh-compat.sql': '443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a',
+         'database/postgresql/pg_local.py': 'd2665940bd0f932691c8a78c8b2aceaf638fba7550257ad31a089f79672689a0',
+         'native-android/combined-client/tools/capture_local_initial.c': '0b44989efcd3a43fee832ebecd7d8b840e9fdc16ee3d0cfe42c4d9e51b16db82',
+         'native-android/combined-client/tools/capture_local_initial_progress.c': '63e758aae692fef0631035220a357a49fca5ce2ee2abce5b1d1972d426a04ba0',
+         'native-android/combined-client/tools/capture_local_scene.c': 'f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec',
+         'native-android/combined-client/tools/check_local_initial_capture.py': '722199b76f206fcd1c2fcfe925d99f105a69ffba6215e94d5d3dba8b8cdace4b',
+         'native-android/engine/auth/coh_auth.c': '637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d',
+         'native-android/engine/auth/coh_auth.h': '0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d',
+         'native-android/engine/auth/coh_auth_openssl.c': 'f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1',
+         'native-android/engine/coh_contracts.h': '2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832',
+         'native-android/engine/dbclient/coh_db_account_controls.c': '9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2',
+         'native-android/engine/dbclient/coh_db_account_controls.h': '9ac6ab90576973ecfac43a4cba8ea8a7e5805c230312645d85cffe5a778f63db',
+         'native-android/engine/dbclient/coh_db_account_inventory.h': 'e21189e8df3f65e0a9095625f5a0da7a496dc279928ccb7b081d0708a10fdb3e',
+         'native-android/engine/dbclient/coh_db_handoff_owner.h': 'd4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45',
+         'native-android/engine/dbclient/coh_db_handoff_private.h': '6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd',
+         'native-android/engine/dbclient/coh_db_session.c': '6a36786b0bdaf86d27c16793b42fd311779bd24f5e0580fea6319377492dbc1d',
+         'native-android/engine/dbclient/coh_db_session.h': 'ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711',
+         'native-android/engine/dbclient/coh_dbclient.c': 'f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd',
+         'native-android/engine/dbclient/coh_dbclient.h': 'ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb',
+         'native-android/engine/initial-capture/INITIAL_PROGRESS.md': '08a885ab9d00aa687b18600a7356f2fc6b644c0dc08783ad319179ba36a60441',
+         'native-android/engine/initial-capture/check_initial_progress.py': '3b8a7ddf1f16f9e95a46450d39412a653f866ac69647974818c123aefabed2fd',
+         'native-android/engine/initial-capture/coh_initial_capture.h': '4e34321c6f36b8112c621b2155d031c27a091dcfad4ff3ca68fcb5a65599bf0a',
+         'native-android/engine/initial-capture/coh_initial_capture_private.h': '6638a085be28d42648a075b4aa5e6389408d1ec63d5577f9faf74d64c608188a',
+         'native-android/engine/initial-capture/coh_initial_command_kinds.inc': '1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e',
+         'native-android/engine/initial-capture/coh_initial_local.c': 'c10545b32441b1ad0c90c845e023b6d178271d5062554aa3a8035b723e1e4ea8',
+         'native-android/engine/initial-capture/coh_initial_map.c': 'd41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4',
+         'native-android/engine/initial-capture/coh_initial_progress.h': '099e4aa7e8cd7b648f85095b5b52ef859dbf135d8c263046f9424f27f46ae940',
+         'native-android/engine/initial-capture/command-source-pins.json': '3e99ac30e5448fb756728a742ffd48ada3920b78c6b9f7099635cd17634c4496',
+         'native-android/engine/initial-capture/qualification/post-queue-progress-20261018/coh-capture-initial-progress.gz': '7cb322fa518041239af94b6eeb7e2017fa3cb0d440d8ffbba98d40fad92aa7c4',
+         'native-android/engine/initial-capture/qualification/post-queue-progress-20261018/qualification.json': 'f4f568e518c58f5ae3e127b07d3534c04466fba51d68d34b0657e3f2f29aed97',
+         'native-android/engine/initial-capture/test_initial_progress.c': '59e3dd3e7fe6b4be84cdb81ca909b429add48957d1b19419b49712251a5c9203',
+         'native-android/engine/local/coh_local.c': '7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210',
+         'native-android/engine/local/coh_local.h': 'f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f',
+         'native-android/engine/mapclient/coh_mapclient.c': '8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199',
+         'native-android/engine/mapclient/coh_mapclient.h': 'cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9',
+         'native-android/engine/mapclient/coh_mapclient_owned.c': '555e85aa83b382e120097de793c59ba67c7b3566043f42889d9bd9aa9e666af5',
+         'native-android/engine/mapclient/coh_mapclient_owned.h': '1718436253c503c037f248b5c45bc037a14b582db94a90aa74fe87f6356fd8ff',
+         'native-android/engine/mapclient/coh_mapclient_owned_private.h': 'be7a7dbfed758a424f81b3d6d29715c290d4156c9c4c923a57f0517198ba9e6e',
+         'native-android/engine/network/coh_net.c': 'e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1',
+         'native-android/engine/network/coh_net.h': 'fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb',
+         'native-android/engine/network/coh_net_frame.c': '44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc',
+         'native-android/engine/network/coh_net_udp.c': 'c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d',
+         'native-android/engine/network/coh_net_udp.h': '7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4',
+         'native-android/engine/network/coh_net_zip.c': '40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747',
+         'native-android/engine/network/coh_net_zip_internal.h': 'a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd',
+         'native-android/engine/replication/coh_groups.c': 'b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd',
+         'native-android/engine/replication/coh_groups.h': '7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc',
+         'native-android/engine/replication/coh_replication.c': '9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4',
+         'native-android/engine/replication/coh_replication.h': '85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b',
+         'native-android/engine/scenecatalog-qualification/capture_android.py': 'fa09333434a8304d54d62a4655994702021a66c42a6df208292702a9923f1be5',
+         'native-android/engine/scenecatalog-qualification/common.py': '4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e',
+         'native-android/engine/scenecatalog-qualification/compact_android.py': '7059f34a9fafa28daedb3a9871195cce975ac36dc089a0a96cb8fad443049784',
+         'native-android/engine/scenecatalog-qualification/qualify.py': '314d1ddf4e301f441bbe6e7cba24f58ca789f9a96a1a886be9ff2b7dccd9d344',
+         'native-android/engine/scenecatalog-qualification/record_export_compile.py': '62e57478f1271312997ddf72155ae9f4ff0454f88c6f2e55c8afcb2660779d78',
+         'native-android/engine/scenecatalog-qualification/run_android.py': 'a0b54e7013359d425b2d88d8cdbd46b8b939694187018f0618bdadc25e7b1dad',
+         'native-android/engine/scenecatalog-server/PROGRESS_ROLE_ADMISSION.md': '808e5e6dde52e8538c0d34771950cb2db61655b37a26e7368d3c2d02af90af01',
+         'native-android/engine/scenecatalog-server/admit_graphical_fixture.py': 'd1c137cdbbaba87b175d166eed494e819f9ddf33601295d31f8270c6ead881db',
+         'native-android/engine/scenecatalog-server/admit_groups_capture.py': '3549e9c18fc53b9afc53fbdd6c6e9875bee444911897dafe0466a30f8920cf52',
+         'native-android/engine/scenecatalog-server/admit_resources.py': 'b5d2d982588bc9f20a6fafb237e86c135b424df97c94c0af6b259b0fc8e478e7',
+         'native-android/engine/scenecatalog-server/admit_snapshot.py': 'd3dc88d7d00f47a7afd980d91491c8d3bd1655c3a17b247e10fa571b19e2f548',
+         'native-android/engine/scenecatalog-server/admit_source_snapshot.py': 'e4d6c1c28b989f3aa3534d790c2020468fe19a3551db18248c49baf29dcfe078',
+         'native-android/engine/scenecatalog-server/build_path_probe.py': 'ed5b983f7df0026874db3218fceb1c5a990b5204571bdc4182e1ea62b3b3834e',
+         'native-android/engine/scenecatalog-server/capture_disposable.py': 'cc714446fff59e712970bd4b0c4247715d837b18be4d559fbc8017a98a807d00',
+         'native-android/engine/scenecatalog-server/capture_graphical_fixture.py': '558e9b462064cfd49170c5e5e42d71ddeba85f708ffc2ed65d57a9d3be86a3ef',
+         'native-android/engine/scenecatalog-server/capture_groups_transaction.py': '35d840f2ca04b320c462cc016f44910c4100e1210e203845df62ffc8de0527a4',
+         'native-android/engine/scenecatalog-server/capture_resources.py': '58174c4c37daccaca55dbb9e59dbcb2baa6f5a6c6debbb43bf65722c59aef69e',
+         'native-android/engine/scenecatalog-server/capture_snapshot.py': '0e9c264c064acf7a5fb90bbc0c07edb7d11c0703bf13635bb6899a9f781470ed',
+         'native-android/engine/scenecatalog-server/check.py': '5c73613c9508233c141ee6eccc59c3443bf289b655e055bd50bbecfd0039fdd3',
+         'native-android/engine/scenecatalog-server/check_capture_resources.py': '67bac16d2d271fb5b25f583c8b976a67a302951b2255b962a4238a3c15cee83f',
+         'native-android/engine/scenecatalog-server/check_groups_boundary.py': '6eee1c6f3fe7816be2ee3859d762f0447a8418522f7b8a79f4ceb372bf4dc72f',
+         'native-android/engine/scenecatalog-server/check_groups_boundary_raw.py': '0a88107197909559c0dfd73e6ea71dfad5e3ff65d47b9cf2cf11fa98c52ae1dd',
+         'native-android/engine/scenecatalog-server/check_groups_capture.py': '651c8c43153ff9c1eca9beb0363721ef8a524a0dea4af2f25f91febf05c68b84',
+         'native-android/engine/scenecatalog-server/check_groups_eligibility.py': 'ea523b58666ef1b4fdafbf71459c9cca522f61d928a7c1458a8953da27f878c5',
+         'native-android/engine/scenecatalog-server/check_groups_owner.py': '925ce5668eeba7af81c55c2d3a3e531d4316e44a273bce596dac8b568465328a',
+         'native-android/engine/scenecatalog-server/check_public_bounds.py': '9059eac5a84d1762b6ec0fd337262145efc2646f4227dc42140e1643fed96c0b',
+         'native-android/engine/scenecatalog-server/check_resource_quiescence.py': '7f37ba6fbf0e251fa5f4a4d3b7e45f98c6be34812aaa4ba05ce9bf8bc9e407a8',
+         'native-android/engine/scenecatalog-server/check_resources_stage.py': 'a55c1ad449162afe320acdea99256a9c591b2b8bfc77a05cb0f504edc69952e7',
+         'native-android/engine/scenecatalog-server/check_snapshot.py': '97563ad61ed19d4946448565d45db9e5c6ae16552387f216ad48fee3f1e26911',
+         'native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py': '6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d',
+         'native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py': '0dc272d4e3ced120600bf4a33f6f61a77803ec960171c824fba9f08dd8344457',
+         'native-android/engine/scenecatalog-server/delivery.py': 'c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8',
+         'native-android/engine/scenecatalog-server/evidence/progress-role-admission-20261018/current-source-closure.json': 'f03598ae293aeabcde51bdd9dba26f4c7d611e1a24643c41decc122653d12a04',
+         'native-android/engine/scenecatalog-server/evidence/progress-role-admission-20261018/qualification.json': '1161ed11ba63278e65a14ca9823c5741d7725ad112429e0e88d14bb1a4150df0',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/admit_compile.py': '14b5daebead652182f7155f041a951db8bfd068b0d0eaffed2835168c5be2bfd',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/check_initial_owner.py': '1a0785655b80df97f3fe65cae3e5ff1d34dd075c5b2e871198fad65a4aec5300',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/check_owner_predicates.py': 'efe2a0dba87c6fcfedac31ad25f6510b1c7f776e4e69e09f01e2ad4d65fc8016',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/check_profile.py': '677cb88399b9caf4d33deb54855ddee3d98ad3fc398e3e97fe3c830215a4902a',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py': '67452123026a1efe04c1605d638b8f329a93e4d200ea03283683f163caaece93',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/runtime.py': '1aad8c3b8b2ae2fdc593f7b95a0751201c71f258b36b6928388d5d5c0117be41',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile.inc': '3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile_api.h': '261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc': '65645b3798ac11c19db7be714ae0c4d77f37049b5add89a9ab5ab29c8a01e383',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h': '1edcc4cae6a9fe915e4af9096a6372a08878fb8731df81ecfab85545c970842d',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_sealed_quiescence.inc': 'aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py': 'e0425174bd380cb7e97b98e46532af97c0ab3621e2fefa19c1ad82e5f6c57138',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_admit_compile.py': 'cc801fab1d773c7d33ad135f4c0af0bedf19efa7c5ec7408b02b4081a4000ad9',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_probe.py': '92e398884f36be4bda832fab865d008d63b500852333254c8ed29299889250c2',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_runtime.py': '4f16a90e3dab56458ce32d7313dc0d30ee60dbe8699352ebaa870dca9d9ed40e',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py': 'ff573be6edd64da64bd1e092704e92bc2a4422795a4731ea9c0acf3c5c84d3c2',
+         'native-android/engine/scenecatalog-server/graphical_fixture_backup_guest.py': '554dac2fb50f7f95e508895ba6c45c86365d325856c80c3d97caa7dd52b8e89c',
+         'native-android/engine/scenecatalog-server/groups-owner-source-pins.json': '5693a060b7a727c6bf9a7375bf2fcc860c1398e986d4d41ef314f4162f8985a2',
+         'native-android/engine/scenecatalog-server/groups_capture_stages.py': '76faf1ee5dd3b0ef0f1a725869024cd6d4c7da4f6300f2221f4b0346599b442b',
+         'native-android/engine/scenecatalog-server/groups_native_status.py': 'b066a1482db551472c2e7125cf59a1edbf82e269ad55699188fc903b66985781',
+         'native-android/engine/scenecatalog-server/initial_progress_admission.py': 'c68903fc9360f6d73e6a3a59084415a1c753bce7f01fba2a46e82458ce61b0bc',
+         'native-android/engine/scenecatalog-server/inspect_groups_capture.py': '01b622e95bef513e637bcff62be7d78af4bf83fca00e0eb3269f7385937a6c4e',
+         'native-android/engine/scenecatalog-server/path_probe.c': 'b5c5f0c6fa4e166ef7319b0f16e18ad64881b16e5914d93f1f146f51566e7829',
+         'native-android/engine/scenecatalog-server/record_groups_compile.py': 'b7c8051e278d1fb223996be53cbf99369f37e9fee94a0d6c9ad10def9e6c87d9',
+         'native-android/engine/scenecatalog-server/record_resource_compile.py': '90828896c2897d720f220593a98a7532e314b3928ac45922e60aab80a3c677d4',
+         'native-android/engine/scenecatalog-server/record_snapshot_compile.py': 'd6546647d074e11b35bbb642d64208476c5840ebb5205ea6eec57039941ed977',
+         'native-android/engine/scenecatalog-server/resource-quiescence-source-pins.json': '4933cea0b59502d288dab8da91a82616a8fcd1c114013f2ce289222f5595f8c7',
+         'native-android/engine/scenecatalog-server/resource-source-pins.json': '6508ab2824fb83ee5a47ea3f04dc33b8f5542b9f05dd0b38c2e34ace437c90e9',
+         'native-android/engine/scenecatalog-server/resource_oracle.py': 'b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7',
+         'native-android/engine/scenecatalog-server/retain_fresh_initial_observation.py': '62fc63a17fa7c77ce4d557f9a7b8e8840c99a03f6845cb096695adcc68dde6f3',
+         'native-android/engine/scenecatalog-server/retain_fresh_source_snapshot.py': '35fa4b60b360648d8c3e512635d9cbc4a60c9b2151750fd04bfe9ab91ba25042',
+         'native-android/engine/scenecatalog-server/snapshot_oracle.py': 'd303a5fee50c783b80353542ac0dcd98f5ae30c08513f171d6e90214b95815ad',
+         'native-android/engine/scenecatalog-server/source_groups_boundary.inc': '5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3',
+         'native-android/engine/scenecatalog-server/source_groups_capture_sink.inc': '4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7',
+         'native-android/engine/scenecatalog-server/source_groups_eligibility.inc': '38338a38411745c889cc78a381e19cfafebd5a83bc00132e17b5b079023f1dbb',
+         'native-android/engine/scenecatalog-server/source_groups_owner.inc': '7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc',
+         'native-android/engine/scenecatalog-server/source_groups_transaction.inc': 'a531ae0c9031c160b4f2cf99f2cba49487fba3ea7d396dcc23d0f0969ed922c6',
+         'native-android/engine/scenecatalog-server/source_public_bounds.inc': 'c812642d7f3467c97b2528a9e0963a7d40a01d7f45615ec3fe49c17dbbd80723',
+         'native-android/engine/scenecatalog-server/source_resource_quiescence.inc': '272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824',
+         'native-android/engine/scenecatalog-server/source_resources.inc': '844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e',
+         'native-android/engine/scenecatalog-server/source_resources_sink.inc': '3f5cbd9152f022a9d65a8baac813bf3cacc7ce41d579f4257d4c2c7bd8059a9e',
+         'native-android/engine/scenecatalog-server/source_sink.inc': '7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d',
+         'native-android/engine/scenecatalog-server/source_snapshot.inc': 'c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6',
+         'native-android/engine/scenecatalog-server/source_snapshot_sink.inc': '18b3bf28abb9d8a737f109bf7293a3f3d73d2b604d05fad57f4c81805f882275',
+         'native-android/engine/scenecatalog-server/stage_export.py': '032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3',
+         'native-android/engine/scenecatalog-server/stage_groups_boundary.py': '980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f',
+         'native-android/engine/scenecatalog-server/stage_groups_capture.py': '2036e1ee954d3de5db7c637add4acc281a8079b52455650efe7e58132e1fc478',
+         'native-android/engine/scenecatalog-server/stage_groups_transaction.py': 'a94fcd1cbc0fcd07bae5079a721e65e42faf66f3d00a672adccb10212ae611db',
+         'native-android/engine/scenecatalog-server/stage_resources.py': '7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6',
+         'native-android/engine/scenecatalog-server/stage_snapshot.py': 'ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c',
+         'native-android/engine/scenecatalog-server/summarize_groups_capture.py': '7b026f1291a5b1c69ee32415693e7c507f52125e76c5e41e45766fed4863681f',
+         'native-android/engine/scenecatalog-server/test_admit_groups_capture.py': 'ea75d1a7ce59b75284d5555078eae32b110ff6b15d0412f6154c1c8cfdc64b2d',
+         'native-android/engine/scenecatalog-server/test_capture_disposable.py': 'c2d745cedd848429c30931e295d027dc75576870e6d1c71252294d6c58549c51',
+         'native-android/engine/scenecatalog-server/test_capture_groups_transaction.py': '628452f513132e995400e495448aaf425a6c9570957bd6c36c3d69e30b00d793',
+         'native-android/engine/scenecatalog-server/test_capture_resources.py': '6724db731a4bd9b8899a00eff59941fc49354ec939f527d048d90b57ab626d2e',
+         'native-android/engine/scenecatalog-server/test_delivery.py': 'a797b3a5df180bb8ac55f83f84d08911a3bf56dd529603e7059f921a21e844e0',
+         'native-android/engine/scenecatalog-server/test_fresh_initial_retention.py': '3002e52cd1b014038579c819222557f77a0b2960c51ab7c60e67de1abea0c42a',
+         'native-android/engine/scenecatalog-server/test_fresh_source_retention.py': 'b611240d5f2e555232e4d3cd2521b5dea532716504a9c272a77c7a1d31f55412',
+         'native-android/engine/scenecatalog-server/test_graphical_fixture.py': 'f82fdc2989a23c6c28b47f73a19b7a2c73e4dccee4e201fed857569114a8547a',
+         'native-android/engine/scenecatalog-server/test_groups_capture_inspect.py': '68ff69fa6c7fe374ffe182f882cdd5bc2e77d92a0543d8aa8c6f067547b4378b',
+         'native-android/engine/scenecatalog-server/test_groups_native_status.py': 'e282d222ce974313ec5735a0f153e3294e76b5cf8e15e0d25f2f150c0d9ff19b',
+         'native-android/engine/scenecatalog-server/test_groups_public_summary.py': '1cc90c8d6b05135eb3fa74f5a0f144e595262758af71b136302dd859f64c36ef',
+         'native-android/engine/scenecatalog-server/test_initial_native_input.py': '0f6b400c98229735ca600ab676c31dd3136ce513fc1d26ca6572029136992eed',
+         'native-android/engine/scenecatalog-server/test_initial_observation_binding.py': 'a9a1f9ffd6f94b1b760ff406d03c7481719362ad869e928347076c4122683cbb',
+         'native-android/engine/scenecatalog-server/test_initial_progress_admission.py': '648aec9679ba3aa653a29857f922b786ce748329e2a143056615497c142c2050',
+         'native-android/engine/scenecatalog-server/test_snapshot_controls.py': 'fdd5eb95afb16b951de0eb58cca88769b8676f676b92f00b9f83d4a160789eeb',
+         'native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py': 'b9602e64f21ef633bbff26f7aaa23353a4c0d3ecb99ff151167f074c6e969a07',
+         'native-android/engine/scenecatalog-server/test_source_snapshot_admission.py': 'c7c8a6695bc4f769a042d1c0956c903b3d40fc9ab021273399a729f6a90a6215',
+         'native-android/engine/scenecatalog-server/test_source_snapshot_verifier.py': 'ec88d764e9f5e5c3ceb6dc3094c1ca360307df817ecb71e7bc06274bef714874',
+         'native-android/engine/scenecatalog-server/test_stage2_operation.py': 'c9e58041bb9e2a0f80df94ba5a004b66506c8044b3bac79b122a17f089c6a349',
+         'native-android/engine/scenecatalog-server/test_stage_export.py': 'a94d93ca2d17266e9a49b102244ef86637af030628b53397d7e9e83566747cc4',
+         'native-android/engine/scenecatalog-server/test_stage_groups_capture.py': '1aa749db11e73bfa1626ee1822f4c1bdc3224663a933b465f16a405aef01ba94',
+         'native-android/engine/scenecatalog-server/test_stage_resources.py': '58c3a0e848592b6b10b9fd48a754ef34ead89467c524c0c34ec109e4434d4ef1',
+         'native-android/engine/scenecatalog-server/test_streaming_verifier.py': 'f9050591aac825598b4927194197830b2c466044706a7f988ba1d5d4e63ae553',
+         'native-android/engine/scenecatalog/coh_scenecatalog.c': '1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66',
+         'native-android/engine/scenecatalog/coh_scenecatalog.h': 'e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c',
+         'native-android/engine/scenecatalog/source_export.inc': 'ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b',
+         'native-android/engine/scenecatalog/validate_file.c': '28f49cb019ed1c4247a969ccad7eddc831560046030c0f4b997a24ef83fa3f2f',
+         'native-android/engine/scenegraph/coh_scenegraph.c': '9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933',
+         'native-android/engine/scenegraph/coh_scenegraph.h': '45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc',
+         'native-android/engine/session/coh_session_crypto.c': 'c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1',
+         'native-android/engine/session/coh_session_crypto.h': '8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57',
+         'native-android/include/coh_native_core.h': '48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106',
+         'native-android/protocol/coh_protocol.c': '6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea',
+         'native-android/protocol/coh_protocol.h': '61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4',
+         'native-android/src/byte_reader.h': 'c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1',
+         'native-android/src/coh_blowfish.c': 'ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470',
+         'tools/android/atlasgame/prepare_server_fx_catalog.py': 'dfe73c626b1a1722baf001f449e6d8185eda2322335afac937b6aa98658593f3',
+         'tools/android/atlasgame/prepare_server_fx_control_fixture.py': 'dba537cde48a595e20c127b1f22fb83525205dbf6b12568ca4d3c762dbb50383',
+         'tools/android/interactive/qualify_minimal_db_runtime.py': '3830dcdd5d1cdae4506d30b6d4d46bbc79b4f950de09c1104da0dc82132eb5a9',
+         'tools/animation_format.py': 'b834d26a4bac4690ac0d5ff1a1ab5dac672efd15c8b855631e4821bc31c794dc',
+         'tools/compare_reference_templates.py': 'cbfb8c6d3ea3d7b45d768bd56a782fccf6d74c4e6a216df3af0926743944db7b',
+         'tools/content_assets.py': '58fced9b354b5f52e22f9c81c64f11f7c7812923f7e56014cb0cf01dc149cf98',
+         'tools/fetch_runtime_asset_bundle.py': '49257b8f19109e30074628e9510c070549150c976cbfe747e9463cff7ef833d4',
+         'tools/generate_runtime_data.py': '7569e384c24802403d5085675789cf3ada1c4e972e6126a8da3753b997297acd',
+         'tools/import_source.py': 'b4af8399f4b1c383237af4f4a1babad5bff5ffc325ead4d009b55ccbbb0b749b',
+         'tools/index_piggs.py': '057150f703e8f81f860ce7d3fe578e52058b7dfeda10bd6b92e8180367721a4d',
+         'tools/inspect_asset_formats.py': '74979934ed24394c4f54ab8bc3a397a238d9e363f5391b1b48b4aeedb005ea9b',
+         'tools/inspect_piggs.py': 'a58ea3723d1255c7615bf25cb1de8d74729b6122e28f879ea554f7cbf0e1a2fd',
+         'tools/map_startup_animation_certificate.py': 'aa4f1da667f708c23aea62d5049d295cfce16a2a3d7457a5b605ce48b2b20b19',
+         'tools/map_startup_monorail_budget.py': 'fca79790f74fec16a051957909d9ebd31897f9148a1e55a8f08de90d12168236',
+         'tools/map_startup_namespace_certificate.py': 'de2bd2f9e02aaae71aec9a9ab244cad22315be4b798e968c257ecc42baa725e7',
+         'tools/package_native_startup_profile.py': 'eec6709e10b047b1293ba45ee68a01de4d84d1e2041f1885c0138c74efd2148b',
+         'tools/package_reference_runtime.py': '53de7076e7798b527e8d6cb823d877693668c3474b32cad810ac4fe752f3dd59',
+         'tools/package_resume_client.py': '5671fa7db9f6dcbbdde727738df71da76f40dd828898c8514e639eea5ce65c5f',
+         'tools/prepare_atlas_beacon_generator_source.py': '34836711f431f7e7a74e7226a791ed462a2add65cfaa36d956b59c0838ffe10a',
+         'tools/prepare_character_events_source.py': 'd96220ff645670066c7f329262f017d0b78d7e88c7a51dbc307982f518f54ef2',
+         'tools/prepare_client_graphics_source.py': 'a5fc624f5a314871283399d43e323445c1216b61a849f3e17b2cd758e0fcdc55',
+         'tools/prepare_client_texture_source.py': '7ee73b6340e5779b7169120b7f0aa96b19f5e85ff1bc16729e6c20c4d7789cd6',
+         'tools/prepare_game_loopback_source.py': '9e87a894bc0fa9cc65f1dafb0c43c441d7f1cbd39de895ba883018cbd48a2b26',
+         'tools/prepare_kings_row_beacon_generator_source.py': '65952a362e70a6ccc53efea870b8274792b9ce6428e874d922b8adb0541676cb',
+         'tools/prepare_map_startup_observer_source.py': 'e0e3bd7eb44e7949eca473f5611ae5def3a86a24b37aa6ab04ebbda9eb9bc88d',
+         'tools/prepare_map_startup_source.py': '87ddbe3bfdbd2c951102386e6c074736671ccf674c865eefb81503636dde8b23',
+         'tools/prepare_mapserver_progress_source.py': 'b832acb6a12db70e6f8a29d2d86fb990f1ef5fd5b11fd8c1f0149151942c2f5f',
+         'tools/prepare_monorail_source.py': '3c45235024690fe970b820af827aa2606bc5bea2329b1821a2d46dcb67f20c6d',
+         'tools/prepare_native_cg_profile_source.py': 'c9d7f045aa9ab47371b1bafab7633dd7c46004deea10e1d02edcac36f59f9b15',
+         'tools/prepare_native_startup_profile_source.py': '67f6a161a340c070a36f7b31dbb9dc63bdfeb115c310096c882ff24d568643f9',
+         'tools/prepare_pg_source.py': '6462aa2aa19c2c9019e5c6d9473892a54150bca82a917e782458f8e3587f9f69',
+         'tools/prepare_resume_client_source.py': '95c59a12085d2dcffa16396d923f9baad3e3bd53a0ac48edc2453a4ddb5cfc7b',
+         'tools/prepare_runtime.py': '20f97eddb239bda51ab7fee816407069daa74fd6122f6b2612e5269f5cfc7433',
+         'tools/prepare_schema_source.py': 'b4874d063c4f69e98120bc52a5611b213ed5d54af3926fca7fa9ab93a3e39b91',
+         'tools/prepare_server_fx_catalog_observer_source.py': '2a678d0624be0da893186a601247ba3ecac990dcbebcb8eedc0586991cabbe65',
+         'tools/prepare_wine_dbserver_source.py': '59b8a8518cdc0d2a6c2e9a5c73cebe8724932a26d3eeba6cb887597eb9d793f9',
+         'tools/qualify_map_startup_prerequisites.py': 'c5d168244b7699b36335384d8c4c13cebeb0b73202fa333a15cc344889b37228',
+         'tools/qualify_native_startup_profile.py': '60e265372e5a21d90a2b429d362123c0f8e42c0a6be7e88b8af2666bec8232d4',
+         'tools/run_schema_generation.py': '42724e7b53a9f476307f19f2faf9fd171c0d1047ab64870c30ede2b0ec42d638',
+         'tools/runtime_asset_bundle.py': 'd87817154581a2a92db2a4dded914a6f63b4811d962b0283b278bc72757a3d3e',
+         'tools/test_animation_format.py': '900bce6107fd1c1157d08eaac80f4b77d1a4f5d2649aed3264b9188ab9ccc76b',
+         'tools/test_compare_reference_templates.py': 'fbea6de596ae531a7ab99bd2ea93d0dab21b6b3b13094e0e46eb3335c4718b55',
+         'tools/test_fetch_runtime_asset_bundle.py': '59e52ed33970eccfca0213bef7c96ff7e677052c1db53582a5cdeca1ab1caf27',
+         'tools/test_generate_runtime_data.py': 'e7a8d2761b2ea8b489ecda6973fcfdd394be359cf31d34f2616f6a609c6289bb',
+         'tools/test_inspect_asset_formats.py': 'cd4c60ab4e4f56ad1728935b4a8bcf327669453c5527c8cd31cb799a2f443509',
+         'tools/test_inspect_piggs.py': 'c30236879562eacfda6e16f3f55d3f51dd5d9a51a2385d060aa1110142fc6698',
+         'tools/test_map_startup_animation_certificate.py': '3e049a1aaf4de92e9fdb16f70ea25273378cc82a87b7dd3fd69cb1bbbc239ded',
+         'tools/test_map_startup_bounded_stream.py': 'c35256b60867233737bed7653076d97aab76eacfdc7efd6e9bab45b51ce58fb4',
+         'tools/test_map_startup_monorail_budget.py': '49f10f459a5e85592cd5c98ddf149c683ab32377b1810d544328abd050e34483',
+         'tools/test_map_startup_namespace_certificate.py': 'f7adaa0c2d35fe776acae9758aff2fbe624d128a9e62c1778c06d236e0124e93',
+         'tools/test_map_startup_observer_source.py': '2c57904476b974eea971dd23279b2d85e7b27933acdf192e5d34a771e053ae1d',
+         'tools/test_native_cg_profile_source.py': '182ed8b62da1d5e05f5d00a49531e7267f0c9dc052627df5d685e4c383eb0392',
+         'tools/test_native_startup_profile_source.py': '335b51db4699d6b27cfab2227e390d9cecee23e7d1cda6e6423cfe3062110b8e',
+         'tools/test_package_reference_runtime.py': '0c2bcbd951073a9d04aa15daca91102e36b6c449b36c6362efa18210801825a8',
+         'tools/test_package_resume_client.py': '9bf13bebfe79669936cf1cd291b4685cf327ac1c320bfb0cbc6ee7626c687ff1',
+         'tools/test_prepare_atlas_beacon_generator_source.py': 'c7720cc146ea8ab71a24e969d0c2a04331ab1aa8b3e431a428b5b7c386ab1c3c',
+         'tools/test_prepare_character_events_source.py': 'b99706eb72a6b8639d04fa857920a2b71c3ed6fc09082be99547f4f67ddf73b4',
+         'tools/test_prepare_client_texture_source.py': '3e6c92a1d3eabdb326c80e36f523f8a07b832eab3c6182bc962df9ded8a70ee4',
+         'tools/test_prepare_game_loopback_source.py': 'a553a20d55be15ac1e341e86de10cfb6deddf9136f535e1c01ba04f1638d41b9',
+         'tools/test_prepare_kings_row_beacon_generator_source.py': 'ba5aa0d0f5ccfeacb23de4b679adb4881b11cc8c4322ae834145a07af77057a4',
+         'tools/test_prepare_mapserver_progress_source.py': 'd941a03d76305c66668a2102fac215394b5b283c5918358a72b0ee3e98f8a30a',
+         'tools/test_prepare_resume_client_source.py': '83341eaf6a28e0e68819848e7825460b327360edd61a8b8a2f29fe599119b8cb',
+         'tools/test_prepare_runtime.py': 'd5350e8e2108519bb71238d501a033e6ff07e08c91d4deff2bd100ea428da82f',
+         'tools/test_prepare_schema_source.py': '3ec8db1844ddb183eee9b7fce826a2a9a0d45027ec5101a6406f48c71baeae95',
+         'tools/test_prepare_server_fx_catalog_observer_source.py': 'c1fdc130a57a1195877e06bff91eeed6ec37d108fa80bd2be6bf66fcce995df6',
+         'tools/test_prepare_wine_dbserver_source.py': '909aad04686ead5d55f35a9f9b9dd009a70bf6a2241fa15c970ee0f5ee58769a',
+         'tools/test_qualify_map_startup_prerequisites.py': '5481748f161c5ba4b2f4c7f84a99799bbd035dac52b35bd7f07bf3bf12ff4314',
+         'tools/test_qualify_native_startup_profile.py': '02908263525c56f9578ae12f6459e0cd7988edf250d0eb14cc4c558fe7fa7685',
+         'tools/test_run_schema_generation.py': 'ea134ee9781877ccdb26a1108f877453011c3027b943e75086de8fd8ca7fd21a',
+         'tools/test_runtime_asset_bundle.py': '5f92d6a13153446ce9be70836306e49bdfaffb948d850e1fa5669b9c800ac207',
+         'tools/test_texture_format.py': '8f79f7c7d205b997effd28b31573d32f1a5a27edf07586b082d6644563d023aa',
+         'tools/texture_format.py': 'bdb6d5a4eb8681ed956e38c21a4173c9cca711aaf48ceb7a4f7bc1f95b966a78',
+         'tools/verify_source.py': '81c658f88a8aef1eba5c4b17b14fcef415f83808cd38e4edc898c245fd42e5c4',
+         'upstream/ouroboros/Common/comm_game.h': 'ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12',
+         'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h': '116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9'}
+        workflow='.github/workflows/native-initial-progress-observation.yml'
+        pins[workflow]=hashlib.sha256((root/workflow).read_bytes()).hexdigest()
+        assert len(pins)==251 and len(pins)<=512
+        entries=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)]);blobs={}
+        for row in entries.split(b'\0'):
+         if not row:continue
+         meta,name=row.split(b'\t',1);mode,kind,digest=meta.split()
+         assert kind==b'blob' and mode in (b'100644',b'100755');blobs[name.decode()]=digest.decode()
+        assert set(blobs)==set(pins)
+        for name,digest in pins.items():
+         path=root/name;relative=pathlib.PurePosixPath(name)
+         assert not relative.is_absolute() and all(part not in ('','.','..') for part in relative.parts) and chr(92) not in name and ':' not in name
+         assert path.resolve()==path and path.is_file() and not path.is_symlink() and 0<path.stat().st_size<8*1024**2
+         raw=path.read_bytes();assert hashlib.sha256(raw).hexdigest()==digest
+         assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==blobs[name]
+        closure=json.loads((root/'native-android/engine/scenecatalog-server/evidence/progress-role-admission-20261018/current-source-closure.json').read_bytes());proof=json.loads((root/'native-android/engine/scenecatalog-server/evidence/progress-role-admission-20261018/qualification.json').read_bytes());build=json.loads((root/'native-android/engine/initial-capture/qualification/post-queue-progress-20261018/qualification.json').read_bytes())
+        assert closure['schema']=='coh-progress-prospective-current-source-closure-v1' and closure['passed'] is True
+        assert closure['current_orchestration_required'] is True and closure['historical9c29_or_old_receiver_equivalence_claimed'] is False
+        assert closure['native_inputs']==51 and closure['orchestration_inputs']==245 and len(closure['source_sha256'])==245
+        assert all(pins.get(name)==digest for name,digest in closure['source_sha256'].items())
+        assert proof['schema']=='coh-initial-progress-admission-focused-v1' and proof['passed'] is True and proof['checks']==14 and proof['refusals']==80
+        assert proof['native_build_receipt_sha256']==pins['native-android/engine/initial-capture/qualification/post-queue-progress-20261018/qualification.json']
+        assert all(pins.get(name)==digest for name,digest in proof['source_sha256'].items())
+        assert all(proof[key] is False for key in ('old_suites_or_native_qualifier_replayed','original_server_or_native_binary_executed','historical9c29_receiver_equivalence_claimed','source_generation_admitted','actor_publication','ack_permitted','world_authority'))
+        assert build['schema']=='coh-initial-progress-focused-v1' and build['passed'] is True and len(build['source_sha256'])==51
+        assert all(pins.get(name)==digest for name,digest in build['source_sha256'].items())
+        # The historical control file source is admitted exactly, not inferred current
+        # receiver/orchestration equivalence. Current validation still runs independently.
+        name='tools/android/atlasgame/prepare_server_fx_control_fixture.py'
+        historical=subprocess.check_output(['git','show','9c29e08c8d7e0ab38cff00f2997c39738a56ad07:'+name])
+        assert hashlib.sha256(historical).hexdigest()==pins[name]
+        assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head
+        receipt={'schema':'coh-initial-progress-current-source-gate-v1','passed':True,'source_revision':head,'source_sha256':pins,
+         'current_orchestration_required':True,'historical_runtime_revision':'9c29e08c8d7e0ab38cff00f2997c39738a56ad07',
+         'historical_receiver_equivalence_claimed':False,'strict_new_native_admission_pending':True,
+         'compiler_or_native_rebuilt':False,'runtime_executed':False,'source_generation_admitted':False,'world_authority':False}
+        path=pathlib.Path(os.environ['RUNNER_TEMP'])/'initial-progress-current-source-admission.json'
+        fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|getattr(os,'O_NOFOLLOW',0),0o600)
+        with os.fdopen(fd,'w') as stream:json.dump(receipt,stream,sort_keys=True,indent=2);stream.write('\n');stream.flush();os.fsync(stream.fileno())
+        print(json.dumps({'current_raw_committed_sources_admitted':True,'current_source_pins':len(pins),'current_orchestration_inputs':245,'native_inputs':51,'historical_receiver_equivalence_claimed':False,'runtime_executed':False}))
+        PYCURRENTPROGRESS
+    - id: historical_source_admission
+      name: Admit historical505 runtime Map and fixture source guards without consuming its native receiver
+      shell: bash
+      run: |
+        export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
+        python3 - <<'PYINVENTORYINITIALSOURCE'
+        import hashlib,json,os,pathlib,subprocess
+        def need(ok,code):
+            if not ok:raise ValueError(code)
+        need(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')
+        need(os.name=='posix' and os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.environ['RUNNER_OS']=='Linux' and os.environ['RUNNER_ARCH']=='X64','HOSTED_LINUX_X64_ONLY')
+        need(os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android','OWNED_NATIVE_BRANCH_ONLY')
+        root=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        need(head==os.environ['GITHUB_SHA'],'EXACT_HEAD')
+        HELPER='native-android/combined-client/tools/admit_initial_inventory_receiver.py'
+        TEST='native-android/combined-client/tools/test_admit_initial_inventory_receiver.py'
+        BINDING='native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/binding.json'
+        MOCK='native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/mocked-controls-pending-source.json'
+        HELPER_REVIEW='native-android/combined-client/diagnostics/continuation-f-20261017/inventory-initial-owner-preflight-actual-binding-review-20261018/review.json'
+        MAP_METADATA='native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/map-input.json'
+        GATE_KEYS=set(['accepted_observer_equivalence', 'historical_worker_commit_replayed_in_CI', 'host_controls_reexecuted', 'observer_compile_receipt_sha256', 'passed', 'receiver_build_receipt_sha256', 'runtime_executed', 'schema', 'source_generation_admitted', 'source_preflight_only', 'source_profile_proof_sha256', 'source_revision', 'source_sha256', 'world_authority'])
+        pins={'.github/workflows/native-fresh-groups-build.yml': 'fb80fc0e14001056888e951eb378d71d56efa24058439e832076234bbed9b7b3',
+         'android/guest/atlas_beacon_package.py': '37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981',
+         'android/guest/atlas_world_assets.py': 'b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3',
+         'android/guest/character_avatar_assets.py': 'e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1',
+         'android/guest/character_creation_diagnostic.py': '540c375996164a54e47eeecc5dff141f00772eb790a3131617d8d850a07d21b0',
+         'android/guest/character_reopen_diagnostic.py': '97a9e2e84b7f53546d38437a651d0adfe743edb1bbfcb69651c48263b212f7b5',
+         'android/guest/character_server_data_cache.py': '1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3',
+         'android/guest/character_session_budget.py': '78fc86437be60fa32930f771256e9f59eedb52844aa8699f74e5d0450b279b79',
+         'android/guest/character_zoning.py': '716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f',
+         'android/guest/character_zoning_scheduler.py': 'dc76a478d6fefe83a9c298079bd9a199208fbebd28f189478ebe4a13143ab254',
+         'android/guest/client_animation_package.py': 'c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64',
+         'android/guest/client_attempt_retry.py': 'afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380',
+         'android/guest/client_gpu_profile.py': 'c6039fbbf339783faa9a7cdb967d579bae2356e452878af322fcca79a1babd0e',
+         'android/guest/client_interactive_diagnostic.py': 'f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c',
+         'android/guest/client_login_diagnostic.py': '7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf',
+         'android/guest/client_startup_diagnostic.py': '8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53',
+         'android/guest/client_visual_assets.py': 'b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb',
+         'android/guest/dbserver_diagnostic.py': '6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2',
+         'android/guest/diagnostic.py': '748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf',
+         'android/guest/game_device_diagnostic.py': '1a4441f0b7c0e7d4954ac8e486ce148bae0f49035dd8597dff5c900844886d60',
+         'android/guest/game_diagnostic.py': 'f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737',
+         'android/guest/game_evidence.py': '12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d',
+         'android/guest/game_hang_evidence.py': 'ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef',
+         'android/guest/game_map_progress.py': 'b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec',
+         'android/guest/kings_row_beacon_package.py': 'a3e2120f5ffb5f307b41ec2670ca4926d1b0cc6df896db2b0db2dbf7dc67c8b5',
+         'android/guest/local_character_server.py': '82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180',
+         'android/guest/local_login_server.py': '03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de',
+         'android/guest/native_character_events.py': '2f9813e29530497e6834b21cfbcfc5fd9dd33fc8c64f49502eafab99f25b65b6',
+         'android/guest/native_map_startup_contract.py': '525cd51cd35be0f1c30ef64b8a268124d1128b333832dde15e9dc8a42706944d',
+         'android/guest/native_monorail_contract.py': 'd6a879cd5c55059c239ab535af0df3e8369de5b60df6356385fae6df03a72df0',
+         'android/guest/native_monorail_events.py': 'c40c96c4701582220dfee722c5315b9e565ace165278baedcc140ae3000572fd',
+         'android/guest/native_responsiveness_contract.py': '7523e2a32f9db8cbe308c8d8bceaa59bd490168cf6886791598810ef86910f85',
+         'android/guest/native_training_save.py': 'a1bc4641eb96fed662274d742cea8ad51f47ab44fc0a35dec155da8a0e486fdc',
+         'android/guest/presentation_diagnostic.py': '751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df',
+         'android/guest/server_animation_package.py': 'a8911500947ce99714b38a1fec913159fc42c0e10398b6ccdcb9161e9cfa4d4a',
+         'android/guest/server_cache_package.py': '8a923225b1f9cbd7fe0ac13a700be6a1c372235cf7703db9b87cf80268b53e54',
+         'android/guest/server_fx_catalog.py': 'e0f347e156548b6a78e4f5cb6beba48d053e244e508cfb5d105c316e0fa7148a',
+         'android/guest/server_message_cache_format.py': 'e70fa5aa8c591c866f0c72f3840495cd93024031936f92944c813a9901d3d6ec',
+         'android/guest/stationary_contact_evidence.py': '40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d',
+         'android/guest/task_gate_evidence.py': '2b0f8f324401c01cbb1954616d288ff3fc6f10bc8ab8c444ae123e2a2763ef04',
+         'android/guest/texture_header_index.py': '5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5',
+         'android/guest/zone_asset_package.py': 'eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/db-account-controls-source-review-20261018/review.json': '738f597ec02d40edbc55c603af265f5e82fce4f997ee1d9119f73fdad602bf98',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/db-account-inventory-source-review-20261018/review.json': 'ab73697e81d9e368423d43ed1071e5c828e5b69b0e9dd77addc45c82e72802d8',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/fresh-initial-owner-source-review-20261018/review.json': 'e68610a2a511db9171572a5d0b05bca1b74f2bf3c488dee4a17ff2a2c5471f7e',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/fresh-owner-predicate-source-review-20261018/review.json': '8634a0c047873914faffa6b2488ba0e0be47391a682f75e5dc55dc76304e4151',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/initial-editmsg-20261018/review.json': '8f963e9330dd9768f5586d72e1f9af2971902125d47a999c1d57b150b65c7947',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/initial-owner-map-build-39099315295-review/README.md': 'c39b30b90a9917d3fd563cc80f8514b9a4fc399ad5d5c2afd75d0d246e763d4d',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/initial-owner-map-build-39099315295-review/review.json': '5a9349dc77fb6c64cb6f8214af1d593146332209251a13cd47e807c3e941eb76',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/inventory-initial-owner-preflight-actual-binding-review-20261018/review.json': '1d205b5213d8ed145aa27c5d89b4df76a04bdcceacf771d3c6fb1dfeb42e6107',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-dynamic.txt': '7a49617e9d2f94942049ac714f6c1ef9063bac94f41e112a4f86090fa2c18083',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-header.txt': '37dfaebabe3d115842f3b754dedc93212164a941ef59cd9bf75d8ba84ee362b4',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-segments.txt': 'f372626ac56f39d63a694aa9164ceb89724b8532f179c2a00f7cc9ee27324619',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/readelf-versions.txt': '6b00957314707faa1fa06dfa2313468cec470c39060ec19e73b11a68417f1dd9',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-controls-release-reuse-review-20261018/review.json': 'b133df1116c5edb8426ec9a7f3b5849998e730463081fb2f15c1b7c6b46f992d',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/readelf-dynamic.txt': '329e8e6f7b5e873274c87b29f84615002fc24554ec95279a3d1e5e75a360bc64',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/readelf-header.txt': '266d84cd1a49661b2aabb86adb0a308fae649ab6665ec2c5f5817dd32976f216',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/readelf-segments.txt': '5b136d6b7bf0248d6f1e97cb03243bfb593df48667a6ff7a69641e45f6133219',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/readelf-versions.txt': '6b00957314707faa1fa06dfa2313468cec470c39060ec19e73b11a68417f1dd9',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-account-inventory-release-reuse-review-20261018/review.json': 'ff3e2f99448ad622367e9d00ded63e7ceffb64ac4f279d059845059518bb05e3',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-release-reuse-review-20261018/review.json': '03fd929739d8bb4b6134b9edde70190039a145612aec3421cbaedce62d180b1a',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/build.json.gz': 'f65d849fbf89027b6cefb4a00f6f4230f04ef4d2595b98aab7a90d05ba2bb522',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-address/badheader.json': 'ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-address/captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-address/none.json': '83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-address/unknown.json': 'dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-release/badheader.json': 'ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-release/captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-release/none.json': '83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-release/unknown.json': 'dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-undefined/badheader.json': 'ff3f09b097870d366270f81562c9810fa1e08ae1a1d53040000bf04d643b9967',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-undefined/captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-undefined/none.json': '83a48d494d9017a9270b27a029f66586c108cf488d6401f448ad4ad6d8a772be',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/local-initial-tool-command-v2-dfc843bb2/status-undefined/unknown.json': 'dc27b70d2537b2dfce1721a024eba45ccbf2fe64cbcafa61ac589ff30b573982',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/map-build-current-closure-baseline-20261018/review.json': 'eb8d7dff8c421a19b21c0b005992cc8813c70a050b00a37c833b6cd85e1234b0',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/owner-reason-map-build-39094808520-review/README.md': '88987e6ead9863ce922612789126486bee9b625ecb17efb0cddd69b6e4402e13',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/owner-reason-map-build-39094808520-review/review.json': 'f44f6dfd904213b6c1cc02b5a3e3fea621e2a8fe56ddbb556ffe1ad89a6857de',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/retained-initial-preflight-source-review-20261018/review.json': '2399eaccad688d87b05cc7dc487999a7a37106cc77a651b532e831aa97f8c76c',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/snapshot-failure-projection-review-20261018/review.json': '4df9f4e729782decaad4300d0036746417afabdbc0e9cf6141a58873f7e852f0',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/snapshot-status-adapter-review-20261018/review.json': '0a705b8ec309e61e06ca4a4920590b899d4c18a5d72a3271d8bb377bbfde4846',
+         'native-android/combined-client/diagnostics/continuation-f-20261017/workflow-fresh-groups-observation-20261018/review.json': 'ba53d4ef8070bf7d642fe6424d0c6dce7fcc808382b66a77103407616cd0e0bb',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/account-controls-destination-preflight-20261018/binding.json': 'f7017b2f34fc5eb0d1827854c7c770678ecf074e6db2ef2e7867cd050535a650',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/account-controls-destination-preflight-20261018/mocked-controls-pending-source.json': '229cf650eb7672e4fd60864946bc2eba5be43d7dcadecc6d3d2fcc9e1b4d14a3',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/db-account-build-dependency-closure-20261018/source.json': '682d1e9ea6593b128c36a15f4cfbd7a2f0b2962bc039ed66c21879027610bd4a',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-controls-release-20261018/build.json.gz': '95fde3f9d96b5e22edda28183d320e735488a134c2b6a4971eeb9c9fe9a99108',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-controls-release-20261018/coh-capture-local-initial': '6115b96942579229d765921aee8d963f1e82ef4e7cce01a9d6d78bea6d8d419f',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-controls-release-20261018/status-address/account-controls-captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-controls-release-20261018/status-release/account-controls-captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-controls-release-20261018/status-undefined/account-controls-captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/build.json.gz': '625fda1d3a3895eda7baed3b4e012702a6563a8af9246408c23b0b8b9637db7a',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/coh-capture-local-initial': '66f92ff8574c538ad221e1bcbbff834b80eddb54aa270b95ed607e7049a6dccc',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/status-address/account-inventory-captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/status-release/account-inventory-captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-account-inventory-release-20261018/status-undefined/account-inventory-captured.json': 'ba705db4b44c0445f82b4c3998a84127d2fbfbf41be996a438fe23c46f0e3677',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-release-20261018/coh-capture-local-initial': 'eeb5e9a3c29bfb223c23a5b465378ce90b800f517396c2c04502a703d8874ea5',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/initial-receiver-release-20261018/repository-mocked-controls.json': '5a9088ab478b80589c3804a97f032118aa1cdf8a4136759184aacc559f500971',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/binding.json': 'b87fec7fc5348d862475a4fac172396c962e9dae74c41efb334e6e4d8a4e2218',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/map-input.json': 'c70ad27275ab115080642d84686b54b7a2369e962b19293904be4db9292a237e',
+         'native-android/combined-client/diagnostics/primary-authority-20261017/inventory-initial-owner-destination-preflight-20261018/mocked-controls-pending-source.json': '26aea5a5d5177b572d33ed49eef12d7eb7d18b456b020a68faa3df93e7d59324',
+         'native-android/combined-client/tools/admit_account_controls_initial_receiver.py': 'c5a49d446423ac76ab2977a75a5e8bcb3a817daeb55c1d2dd30092933238c01e',
+         'native-android/combined-client/tools/admit_initial_inventory_receiver.py': 'db784ba8ae00b2015d3bfd5ade8c862e34c66e263933ab12d6d71dbcd03eb9ad',
+         'native-android/combined-client/tools/admit_retained_initial_receiver.py': 'ea4a34bca0610c52ca7bc00184b59aac2cbbaafdc3422a09927521cb115ce897',
+         'native-android/combined-client/tools/capture_local_initial.c': '0b44989efcd3a43fee832ebecd7d8b840e9fdc16ee3d0cfe42c4d9e51b16db82',
+         'native-android/combined-client/tools/capture_local_scene.c': 'f7ef50699efad93221fd03965e5de97351c045e3ee98935609b468799e8110ec',
+         'native-android/combined-client/tools/check_local_initial_capture.py': '722199b76f206fcd1c2fcfe925d99f105a69ffba6215e94d5d3dba8b8cdace4b',
+         'native-android/combined-client/tools/test_admit_account_controls_initial_receiver.py': '48a3de4349dee2b3f3fe3a3144197f5b39373ff273918e4dcfadf86b7a29c376',
+         'native-android/combined-client/tools/test_admit_initial_inventory_receiver.py': '897488f2cdfbb4614966c344fb9dde562c6093dc0c9d31e8616534925d849336',
+         'native-android/combined-client/tools/test_admit_retained_initial_receiver.py': 'cf81eeea15ea5fad33eb89d68a0b6a9b9cbb5ba97c150f16d296a83249c6ff96',
+         'native-android/engine/assets/coh_asset_geo.c': '0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71',
+         'native-android/engine/assets/coh_asset_geo.h': 'aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b',
+         'native-android/engine/assets/coh_asset_loader.c': 'c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b',
+         'native-android/engine/assets/coh_asset_loader.h': '54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36',
+         'native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c': '36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6',
+         'native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h': '2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20',
+         'native-android/engine/auth/coh_auth.c': '637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d',
+         'native-android/engine/auth/coh_auth.h': '0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d',
+         'native-android/engine/auth/coh_auth_openssl.c': 'f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1',
+         'native-android/engine/coh_contracts.h': '2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832',
+         'native-android/engine/dbclient/ACCOUNT_CONTROLS.md': 'c958a7cf49ed55e2a57c3890f59c05b57d3b3f78728d3dedf411462f37c0f1a3',
+         'native-android/engine/dbclient/ACCOUNT_INVENTORY.md': '94ec5fff1a536fee17e7057e29d5cdea3ad49e8194c80bddec968f39180b36f3',
+         'native-android/engine/dbclient/check.py': '4264a6161665af11708a41d6b57fd4d3d5eb66ca153686c38a744d18f725c3d4',
+         'native-android/engine/dbclient/check_account_controls.py': '1946b84a77491146a7b8d245825d38d1ed060ed70f4ac76ddd5a8dbbd60d3967',
+         'native-android/engine/dbclient/check_account_inventory.py': '42b9839fba5c7f66a264de606940e509ca99983fa74ae76a2035975137db437b',
+         'native-android/engine/dbclient/coh_db_account_controls.c': '9088098928111bb3721b2e3f2ba8a52c8d216bc927e8c400d25004c6e2bc90f2',
+         'native-android/engine/dbclient/coh_db_account_controls.h': '9ac6ab90576973ecfac43a4cba8ea8a7e5805c230312645d85cffe5a778f63db',
+         'native-android/engine/dbclient/coh_db_account_inventory.h': 'e21189e8df3f65e0a9095625f5a0da7a496dc279928ccb7b081d0708a10fdb3e',
+         'native-android/engine/dbclient/coh_db_handoff_owner.h': 'd4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45',
+         'native-android/engine/dbclient/coh_db_handoff_private.h': '6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd',
+         'native-android/engine/dbclient/coh_db_session.c': '3fe33ca4ff8c48c1291cffb18f9fecb706e215bcc2fc2dda62dd9aa4fa24cc81',
+         'native-android/engine/dbclient/coh_db_session.h': 'afade1cad71cd5f8b1e5c6655ab157e404cf6ef0956b750697b6902d0c32a94f',
+         'native-android/engine/dbclient/coh_dbclient.c': 'f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd',
+         'native-android/engine/dbclient/coh_dbclient.h': 'ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb',
+         'native-android/engine/dbclient/qualification/account-control-owned-link-lists.json': '67578035a171f6f0fe0d5bf549f5658b2737d6f10c16a04090fa1b70cb43c50c',
+         'native-android/engine/dbclient/qualification/account-controls-02b54d43f-binding.json': '53767d18c4edd2b10964a6a2d4b8bff1ed40490789f6bb316d44c26cb3b18acb',
+         'native-android/engine/dbclient/qualification/account-controls-02b54d43f.json.gz': 'd04dda6ac635ced869f0a86e4f4801ec732d12e69dc8ab10575056fa9c00513f',
+         'native-android/engine/dbclient/qualification/account-inventory-396621362-binding.json': 'eeadd942e687e00c7967e73968dc02d60618fce6c9ded6bf4a585da6ce84c475',
+         'native-android/engine/dbclient/qualification/account-inventory-396621362.json.gz': '53d6b32dd97f2ff9bd0489097640193a6d66211b9fd1d50b7808c472ed9d219f',
+         'native-android/engine/dbclient/source-pins.json': 'a8c82a4c35eb73325ab4c7e0727645e40899330e7d7450b2c5976b26a89dbeb1',
+         'native-android/engine/dbclient/tests/account-controls-source-pins.json': 'df398a95e9e8c9e0c697a7c2c9422ee0980311e6f6d3e7b3f26fbc38f7c3fdc8',
+         'native-android/engine/dbclient/tests/account_controls_oracle.py': '6a53e2f26a87149f274a9e6b93a03410352964985e0a5da5d3ba1cbf993b11f3',
+         'native-android/engine/dbclient/tests/inventory-source-pins.json': '1bc8367d34c6596560c0708ccaaffbafb2f55f696d90c9683ec680aab1c2a526',
+         'native-android/engine/dbclient/tests/inventory_oracle.py': '4d0549b9a9e1ca3ff035685c44ea2c20335d92e12150721dae33746359fa5b36',
+         'native-android/engine/dbclient/tests/test_account_controls.c': '441cdbbfc20434331ccd3d90a63f149c322ce806f51915c21324f0143d5d0e13',
+         'native-android/engine/dbclient/tests/test_account_inventory.c': '0a380b6b174a4c3131368d7e20c15bee7d99c2f5f95969bf74f9e669eace7ef3',
+         'native-android/engine/dbclient/tests/test_db_session.c': 'a0bd0ae34b67d2058c099c06cb5345fe3dc398a8e2d03149ced41af5a8aa3cd4',
+         'native-android/engine/initial-capture/check_initial_editmsg.py': '03362343b46ece9c56a430b381c54e812319aca108b147dd26b4fb8974d465a5',
+         'native-android/engine/initial-capture/coh_initial_capture.h': '4e34321c6f36b8112c621b2155d031c27a091dcfad4ff3ca68fcb5a65599bf0a',
+         'native-android/engine/initial-capture/coh_initial_capture_private.h': '6638a085be28d42648a075b4aa5e6389408d1ec63d5577f9faf74d64c608188a',
+         'native-android/engine/initial-capture/coh_initial_command_kinds.inc': '1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e',
+         'native-android/engine/initial-capture/coh_initial_local.c': 'c10545b32441b1ad0c90c845e023b6d178271d5062554aa3a8035b723e1e4ea8',
+         'native-android/engine/initial-capture/coh_initial_map.c': 'd41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4',
+         'native-android/engine/initial-capture/editmsg-source-pins.json': 'b6fce96c1e3f00859a9f8dcb94abed6878bd6aa7a4769a6105fc0d7b93272e1c',
+         'native-android/engine/initial-capture/editmsg_fixtures.py': 'd2bc467b03a9aa3cd2e4cb8199348c327ab71fe62187d8502ef39133e614c23f',
+         'native-android/engine/initial-capture/qualification/initial-editmsg-2f8337277-binding.json': '7bda85486ab4ff6934701ee9fa9022fc6a24ddc57c8a03bc334722231bbdb9f4',
+         'native-android/engine/initial-capture/qualification/initial-editmsg-2f8337277.json.gz': '38285e20e89f909bdb8aa4a5eb07fa782e6f6bfd44d21cc7d25220c23ac1e88d',
+         'native-android/engine/initial-capture/qualification/initial-inventory-peer-source.json': 'e35751404f7fc3211a1b1f0211a6c18e925c3bf45713a43b93dc166c1199c9a9',
+         'native-android/engine/initial-capture/test_initial_account_peer.c': '0e983f61f17ac900c207906818d4fbe0b6a96dc01ccc5185e357898ebac38c29',
+         'native-android/engine/initial-capture/test_initial_capture.c': 'e8dc15d4f7efda466b3dcccc17298a1c449a13dffe704505abfa69d614fbda25',
+         'native-android/engine/initial-capture/test_initial_capture_owner.c': '137a17f4e702458b78b1fdd0b5dc332f48a2c222a0c7a6ad6a14b17a2c11db25',
+         'native-android/engine/initial-capture/test_initial_editmsg.c': '04541ff404e48b6706119d6d843d34c580b6955189b41d4782541fc7dc7e2c55',
+         'native-android/engine/initial-capture/test_initial_editmsg_peer.c': '4e713cdec6d94c988f7ddc6c4d58f7d4730817df6eadc173b53e72bd32e954a3',
+         'native-android/engine/initial-capture/test_initial_inventory_peer.c': '6d4bf3f56aaec6428c53195bdda10335d2ba41bfe1de5d17ea5914416f1e053c',
+         'native-android/engine/initial-capture/test_initial_peer.c': 'e5d91921f6ba9547680e0551be91fe63b6de69474fcebb1d9257bdaa84d8a512',
+         'native-android/engine/local/coh_local.c': '7a644273b2006f030d55325924f2bcdf137ab86968979852a0bea4d1778c9210',
+         'native-android/engine/local/coh_local.h': 'f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f',
+         'native-android/engine/mapclient/coh_mapclient.c': '8935e630250aa5b7e522f04a068e9968641e7d3eccc5b0b4779c116312098199',
+         'native-android/engine/mapclient/coh_mapclient.h': 'cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9',
+         'native-android/engine/mapclient/coh_mapclient_owned.c': '555e85aa83b382e120097de793c59ba67c7b3566043f42889d9bd9aa9e666af5',
+         'native-android/engine/mapclient/coh_mapclient_owned.h': '1718436253c503c037f248b5c45bc037a14b582db94a90aa74fe87f6356fd8ff',
+         'native-android/engine/mapclient/coh_mapclient_owned_private.h': 'be7a7dbfed758a424f81b3d6d29715c290d4156c9c4c923a57f0517198ba9e6e',
+         'native-android/engine/network/coh_net.c': 'e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1',
+         'native-android/engine/network/coh_net.h': 'fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb',
+         'native-android/engine/network/coh_net_frame.c': '44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc',
+         'native-android/engine/network/coh_net_udp.c': 'c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d',
+         'native-android/engine/network/coh_net_udp.h': '7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4',
+         'native-android/engine/network/coh_net_zip.c': '40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747',
+         'native-android/engine/network/coh_net_zip_internal.h': 'a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd',
+         'native-android/engine/replication/coh_groups.c': 'b502e701992b403ec06a33d7da03d370dacd100ed9e1541723ecafadcbdeb9fd',
+         'native-android/engine/replication/coh_groups.h': '7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc',
+         'native-android/engine/replication/coh_replication.c': '9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4',
+         'native-android/engine/replication/coh_replication.h': '85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b',
+         'native-android/engine/replication/groups-source-pins.json': '4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c',
+         'native-android/engine/replication/groups_oracle.py': '23fda4a062edca54f1ea4af4d8e1d220f496a854eb68069e669f517f5c41755b',
+         'native-android/engine/replication/tests/groups_oracle_harness.c': '5cbcad7546ec127b6602d10b79419a87329ef4dbc8e72c1014b661dd06d53cb2',
+         'native-android/engine/replication/tests/groups_oracle_shim.h': 'd6152d20c7ac629323cd15b4ea14fe8c65a8fadea05d5f7db02cb8cb7d0cb518',
+         'native-android/engine/scenecatalog-qualification/capture_android.py': 'fa09333434a8304d54d62a4655994702021a66c42a6df208292702a9923f1be5',
+         'native-android/engine/scenecatalog-qualification/common.py': '4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e',
+         'native-android/engine/scenecatalog-qualification/compact_android.py': '7059f34a9fafa28daedb3a9871195cce975ac36dc089a0a96cb8fad443049784',
+         'native-android/engine/scenecatalog-qualification/qualify.py': '314d1ddf4e301f441bbe6e7cba24f58ca789f9a96a1a886be9ff2b7dccd9d344',
+         'native-android/engine/scenecatalog-qualification/record_export_compile.py': '62e57478f1271312997ddf72155ae9f4ff0454f88c6f2e55c8afcb2660779d78',
+         'native-android/engine/scenecatalog-qualification/run_android.py': 'a0b54e7013359d425b2d88d8cdbd46b8b939694187018f0618bdadc25e7b1dad',
+         'native-android/engine/scenecatalog-server/SOURCE_PROFILE_RUNTIME.md': '34d8169f10e23fbcf8819bf7d2f45e8b6dff6a633421a76c78e909ab337dabc2',
+         'native-android/engine/scenecatalog-server/admit_graphical_fixture.py': 'd1c137cdbbaba87b175d166eed494e819f9ddf33601295d31f8270c6ead881db',
+         'native-android/engine/scenecatalog-server/admit_groups_capture.py': '3549e9c18fc53b9afc53fbdd6c6e9875bee444911897dafe0466a30f8920cf52',
+         'native-android/engine/scenecatalog-server/admit_resources.py': 'b5d2d982588bc9f20a6fafb237e86c135b424df97c94c0af6b259b0fc8e478e7',
+         'native-android/engine/scenecatalog-server/admit_snapshot.py': 'd3dc88d7d00f47a7afd980d91491c8d3bd1655c3a17b247e10fa571b19e2f548',
+         'native-android/engine/scenecatalog-server/admit_source_snapshot.py': 'e4d6c1c28b989f3aa3534d790c2020468fe19a3551db18248c49baf29dcfe078',
+         'native-android/engine/scenecatalog-server/build_path_probe.py': 'ed5b983f7df0026874db3218fceb1c5a990b5204571bdc4182e1ea62b3b3834e',
+         'native-android/engine/scenecatalog-server/capture_disposable.py': 'cc714446fff59e712970bd4b0c4247715d837b18be4d559fbc8017a98a807d00',
+         'native-android/engine/scenecatalog-server/capture_graphical_fixture.py': '558e9b462064cfd49170c5e5e42d71ddeba85f708ffc2ed65d57a9d3be86a3ef',
+         'native-android/engine/scenecatalog-server/capture_groups_transaction.py': '78a18536289ad03ed77c314c4bcd889a6dd7002faa735d923f39f059263d2639',
+         'native-android/engine/scenecatalog-server/capture_resources.py': '58174c4c37daccaca55dbb9e59dbcb2baa6f5a6c6debbb43bf65722c59aef69e',
+         'native-android/engine/scenecatalog-server/capture_snapshot.py': '0e9c264c064acf7a5fb90bbc0c07edb7d11c0703bf13635bb6899a9f781470ed',
+         'native-android/engine/scenecatalog-server/check.py': '5c73613c9508233c141ee6eccc59c3443bf289b655e055bd50bbecfd0039fdd3',
+         'native-android/engine/scenecatalog-server/check_capture_resources.py': '67bac16d2d271fb5b25f583c8b976a67a302951b2255b962a4238a3c15cee83f',
+         'native-android/engine/scenecatalog-server/check_groups_boundary.py': '6eee1c6f3fe7816be2ee3859d762f0447a8418522f7b8a79f4ceb372bf4dc72f',
+         'native-android/engine/scenecatalog-server/check_groups_boundary_raw.py': '0a88107197909559c0dfd73e6ea71dfad5e3ff65d47b9cf2cf11fa98c52ae1dd',
+         'native-android/engine/scenecatalog-server/check_groups_capture.py': '651c8c43153ff9c1eca9beb0363721ef8a524a0dea4af2f25f91febf05c68b84',
+         'native-android/engine/scenecatalog-server/check_groups_eligibility.py': 'ea523b58666ef1b4fdafbf71459c9cca522f61d928a7c1458a8953da27f878c5',
+         'native-android/engine/scenecatalog-server/check_groups_owner.py': '925ce5668eeba7af81c55c2d3a3e531d4316e44a273bce596dac8b568465328a',
+         'native-android/engine/scenecatalog-server/check_public_bounds.py': '9059eac5a84d1762b6ec0fd337262145efc2646f4227dc42140e1643fed96c0b',
+         'native-android/engine/scenecatalog-server/check_resource_quiescence.py': '7f37ba6fbf0e251fa5f4a4d3b7e45f98c6be34812aaa4ba05ce9bf8bc9e407a8',
+         'native-android/engine/scenecatalog-server/check_resources_stage.py': 'a55c1ad449162afe320acdea99256a9c591b2b8bfc77a05cb0f504edc69952e7',
+         'native-android/engine/scenecatalog-server/check_snapshot.py': '97563ad61ed19d4946448565d45db9e5c6ae16552387f216ad48fee3f1e26911',
+         'native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py': '6285a25fb727c86d6d2b9cd1eeacc3c1f398058f4dceb4821122a30a97600d6d',
+         'native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py': '2938d7a13ba7f3365dcbc68be3033891f1f304e7b5f46892c650e2d7783d6b09',
+         'native-android/engine/scenecatalog-server/delivery.py': 'c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/account-controls-preflight-binding-review.json': 'e2760d964b6d530343c36ccc48de40cb1767df569ad9c8b0af7528be7c893bb6',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/README.md': 'c9b6d7b48a375dfa6ea67859acf7b09bddcbf59328aca9c8b53c84e0115772a7',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/admission.json': '2569696ad525cdf2e5eefc5b896152795a21b06145e0251aecc4aba694df9b06',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/api.json': '96d2226eb55da2e2fe639215d55c9d973d05725f7756215ba8c9cf7e39a2de3a',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/archive-members.json': '907ee62fdb3babd6f57659a1713e301b28f278dac3482f94799328c0c3f59674',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/compile-only-receipt.json': '28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-inputs-after.json': 'a92c90e54a875ff5d064931402f9b2af2fcc9ecce824a6c172dfda8403e52463',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-inputs-before.json': 'a92c90e54a875ff5d064931402f9b2af2fcc9ecce824a6c172dfda8403e52463',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-groups-source-admission.json': 'f03d6007d20518cb5241b774ce55ba4bc1ac2ded2953471e9b81a949227ce7c0',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip': 'cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/strict-admission.stdout.json': 'ef15cc380a9afe2224719a6f6b05c38d0e61df6b16a3b8acc034adcf2bdc556e',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/README.md': 'd36bedeec425c3cec9cd46afdc1e7d5ba80ae0bbe39dfef657c859a7ff09da0e',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/admission.json': '918600829d03a7f2eaa4fce0bf35c0609707d6bb51008be4e472dc0807f4482a',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/api.json': 'a3a484b14dc60669ec249c64fad264776bd791d06f7209a7fab4008d62fe51bc',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/archive-members.json': 'b011e99e916dcf9dda8acca2ec31b8007f0bf11c71a0dd6e0ee5fb2267e76925',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/compile-only-receipt.json': '478bea524f7d8a5ed016ae43ea54f50401bff2c714d75275002d1f8d5b6e9034',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-groups-inputs-after.json': '80cd63fbaf10d9a025264a6937cb8a20c3deb1b4470379bb8a854d4641a34abb',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-groups-inputs-before.json': '80cd63fbaf10d9a025264a6937cb8a20c3deb1b4470379bb8a854d4641a34abb',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-groups-source-admission.json': 'd675cf235fabff8fee3fd523383507e39925f43381edd73e91015aedf9295c3a',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/fresh-map-owner-build-39094808520.zip': 'b3a82a5265322685e035e3b86f44862a59d8fc561852288e3d3ea8bb8371eed6',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-owner-predicates-20261018/strict-admission.stdout.json': '12441df1bf8897d6e88d467b2fac4a3b7f1b8687d1108da4e20db9463d7bbceb',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/initial-owner-followup.json': '550d600596e2939f73de076fac5fce859ce18248a0866e1b1d19795393dc03fb',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/initial-owner-qualification.json': '198176ce653c7ec267a12efd8c92bd2f890e6589fd65d1030026874d4953991c',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-followup.json': 'd16e9260ef07a3d64e46014037e2433d96f9a2b94905a8b7fd7e1e4970d4aa22',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/address.json': '9eab43474e1801e10c8e7ef81b59e36bdfab7ec27ea89e6cf05b2260cf62a4a4',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/emitter-address.json': 'd0cfca39b63f80965d9742ba54dc6297362a3583be356eb9f225d8b5053b3ccb',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/emitter-release.json': 'd0cfca39b63f80965d9742ba54dc6297362a3583be356eb9f225d8b5053b3ccb',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/emitter-undefined.json': 'd0cfca39b63f80965d9742ba54dc6297362a3583be356eb9f225d8b5053b3ccb',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/first-fixture-build.stderr.txt': '7ad628aeeba7d77dfc0de211b31fe133225e36a84d78dfa36950ab7bdccab34f',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/release.json': '9eab43474e1801e10c8e7ef81b59e36bdfab7ec27ea89e6cf05b2260cf62a4a4',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/targeted-parser-tests.txt': '4591e5b830d4b2f2b2d4866a52a1e5d5befcb564690e7736ff9cefed16e79287',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-host-outputs/undefined.json': '9eab43474e1801e10c8e7ef81b59e36bdfab7ec27ea89e6cf05b2260cf62a4a4',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/owner-predicates-qualification.json': '5c8c4509f47cce31a3a025ce68c31f42e2306b38b4e436980f4f7e0c0f728158',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/probe-drive-alias-followup.json': '1ac05fa9145d63c218c389c88263ba26eb67a3a80139d587671ac79eea6591e3',
+         'native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/snapshot-failure-projection-static-review-20261018/recorded-native-closure.json': 'ee1bb248139eee92f344f11f8bfb37f182a43fc291280b5d3ea3e4e105cb74d1',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-failure-projection-20261018/mock-controls-binding.json': '24e3ab1aaa8534fd923f3764b01536fbade332e47488a2680575ee80ef5be1d2',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-failure-projection-20261018/mock-controls.json': 'e4a7e0fd28e8c544bf0c90c8f5999c8f4438678644e3d2c47455999583ccb77f',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-failure-projection-20261018/mock-controls.stderr.txt': '333f6160055fc5d4174795216b2bb3de4553c8732fd16f7ebc2bc619e0f5a61f',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-failure-projection-20261018/superseded-common-checker.py.source': '775bdd216bcef351dc9d0a34a1536592c28fafa096c893e6051a49d372c97d4d',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-failure-projection-20261018/superseded-common-projection-tests.py.source': '81cba02499623983dfe0ce87b2b8af14738b2b1acc7b5dafa15909a35110b357',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/adapter-mocks-binding.json': '524f8e7e530bebbe3be3adf958c22a6e2726c0facd519b6b479a82a94da20e88',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/adapter-mocks.json': '534d599c640566446bc1f4d428a4364b051c057ad0aa79cd0ce2f2da55c09a03',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/adapter-mocks.stderr.txt': 'd10ffbd9f0faa72cd6837063279524e199b59fbc3d035051302a1e8dbc4b36ad',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/corrected-method-binding.json': '7ef84402698e1c78eea347aec07b79b64ac2aec7c3fa364be50026fe60d8f606',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/corrected-method.json': '6b4bf479b4dbe39c0540bd630311d8906bcaae763edc555bec5cbaec30322d1b',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/corrected-method.stderr.txt': 'd10ffbd9f0faa72cd6837063279524e199b59fbc3d035051302a1e8dbc4b36ad',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/derive_proofs.py': '3478e36e859622713c8c35542be2661766faa09978ead610009d1627ac3a99ee',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/failed-first/adapter-mocks-binding.json': '19c7dc87db32d6a13c1be0ee2d454a847762883f0fe01429dc3abb81924a98aa',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/failed-first/adapter-mocks.json': '27cd306c928cf1af1e0b6a7aaa30b5192e3d3423edd161801dab1ac28411704d',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/failed-first/adapter-mocks.stderr.txt': '94ef6eaf271aa589facf12110c8361ef1b8003cdd90add3e91e8fabae4a12e05',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/failed-first/test.py.source': 'b5d61e383139569eb8a98f52d68c60f94df0d47825a14b3040fbade5032d27df',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/projection-reuse.json': 'a7d6e5c208374525a62d038961bae6ee087a23e25818cd913e94947a04963b31',
+         'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/run_corrected_method.py': '1c681eee3b7eace6195973b3ca473e711cb7df59a77de8efc18083978a9b599c',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/.gitattributes': 'a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/INITIAL_OWNER_ELIGIBILITY.md': 'ea48900c695fafd40ec797d092be1e4f465cdb8699efe4d6eb005a7bc45b5467',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/OWNER_FAILURE_DIAGNOSTIC.md': 'fb6f16a913474bfc47c794628e4d7cb86e2d4404581a2fc78def307817439ebc',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/README.md': 'fd0d90eab139285aac785ffab6ba7e7305fba22eb0f019b8228296982bbde5f3',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/admit_compile.py': '14b5daebead652182f7155f041a951db8bfd068b0d0eaffed2835168c5be2bfd',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/check_initial_owner.py': '1a0785655b80df97f3fe65cae3e5ff1d34dd075c5b2e871198fad65a4aec5300',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/check_owner_predicates.py': 'efe2a0dba87c6fcfedac31ad25f6510b1c7f776e4e69e09f01e2ad4d65fc8016',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/check_profile.py': '677cb88399b9caf4d33deb54855ddee3d98ad3fc398e3e97fe3c830215a4902a',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/probe.py': '67452123026a1efe04c1605d638b8f329a93e4d200ea03283683f163caaece93',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/runtime.py': '1aad8c3b8b2ae2fdc593f7b95a0751201c71f258b36b6928388d5d5c0117be41',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile.inc': '3cfd449b4c5fb37683e718a88c172f0bbe5e09929700cf2d40b70daac5635a52',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_folder_profile_api.h': '261142f25fdb942c7594c2619cfedc3a0864647988d4adcf2feae3cffd66b7d5',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile.inc': '65645b3798ac11c19db7be714ae0c4d77f37049b5add89a9ab5ab29c8a01e383',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_group_profile_api.h': '1edcc4cae6a9fe915e4af9096a6372a08878fb8731df81ecfab85545c970842d',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/source_sealed_quiescence.inc': 'aea1ee684f36c650564c06d6c4e7f733e30509c1be8fa1b721f88555b80d51bd',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py': 'e0425174bd380cb7e97b98e46532af97c0ab3621e2fefa19c1ad82e5f6c57138',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_admit_compile.py': 'cc801fab1d773c7d33ad135f4c0af0bedf19efa7c5ec7408b02b4081a4000ad9',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_initial_owner.c': 'ccbd762af63a79de8914891851ffc407445853cbd0ef6f65acad237f2bfb439c',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_owner_predicates.c': 'e924c91eebb07ece43a1902d6a4604e686f0c303012d39f0ccd666c57300fcf1',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_probe.py': '92e398884f36be4bda832fab865d008d63b500852333254c8ed29299889250c2',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_profile.c': 'c3f8bae282785f62ea69c34a7fbc3052ec0c7be988540735d71576f342652dab',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_runtime.py': '4f16a90e3dab56458ce32d7313dc0d30ee60dbe8699352ebaa870dca9d9ed40e',
+         'native-android/engine/scenecatalog-server/fresh_callback_observer/test_stage.py': 'ff573be6edd64da64bd1e092704e92bc2a4422795a4731ea9c0acf3c5c84d3c2',
+         'native-android/engine/scenecatalog-server/graphical_fixture_backup_guest.py': '554dac2fb50f7f95e508895ba6c45c86365d325856c80c3d97caa7dd52b8e89c',
+         'native-android/engine/scenecatalog-server/groups-owner-source-pins.json': '5693a060b7a727c6bf9a7375bf2fcc860c1398e986d4d41ef314f4162f8985a2',
+         'native-android/engine/scenecatalog-server/groups_capture_stages.py': '76faf1ee5dd3b0ef0f1a725869024cd6d4c7da4f6300f2221f4b0346599b442b',
+         'native-android/engine/scenecatalog-server/groups_native_status.py': 'b066a1482db551472c2e7125cf59a1edbf82e269ad55699188fc903b66985781',
+         'native-android/engine/scenecatalog-server/groups_owner_oracle_shim.h': '85f7085d2853d05f439b046ddb7ab2441b6ea3b36cffc166173c4304cd152dd0',
+         'native-android/engine/scenecatalog-server/inspect_groups_capture.py': '01b622e95bef513e637bcff62be7d78af4bf83fca00e0eb3269f7385937a6c4e',
+         'native-android/engine/scenecatalog-server/record_groups_compile.py': 'b7c8051e278d1fb223996be53cbf99369f37e9fee94a0d6c9ad10def9e6c87d9',
+         'native-android/engine/scenecatalog-server/record_resource_compile.py': '90828896c2897d720f220593a98a7532e314b3928ac45922e60aab80a3c677d4',
+         'native-android/engine/scenecatalog-server/record_snapshot_compile.py': 'd6546647d074e11b35bbb642d64208476c5840ebb5205ea6eec57039941ed977',
+         'native-android/engine/scenecatalog-server/resource-quiescence-source-pins.json': '4933cea0b59502d288dab8da91a82616a8fcd1c114013f2ce289222f5595f8c7',
+         'native-android/engine/scenecatalog-server/resource-source-pins.json': '6508ab2824fb83ee5a47ea3f04dc33b8f5542b9f05dd0b38c2e34ace437c90e9',
+         'native-android/engine/scenecatalog-server/resource_oracle.py': 'b0acd1c6ca5c1711b79a26fae9982c8fa5e27313ce389be458489112d850fdf7',
+         'native-android/engine/scenecatalog-server/retain_fresh_initial_observation.py': '62fc63a17fa7c77ce4d557f9a7b8e8840c99a03f6845cb096695adcc68dde6f3',
+         'native-android/engine/scenecatalog-server/retain_fresh_source_snapshot.py': '35fa4b60b360648d8c3e512635d9cbc4a60c9b2151750fd04bfe9ab91ba25042',
+         'native-android/engine/scenecatalog-server/snapshot_oracle.py': 'd303a5fee50c783b80353542ac0dcd98f5ae30c08513f171d6e90214b95815ad',
+         'native-android/engine/scenecatalog-server/source_groups_boundary.inc': '5942eb46a97bc34d044318a22d4d326129f86e898244033b7cecb0bcaf5dc5a3',
+         'native-android/engine/scenecatalog-server/source_groups_capture_sink.inc': '4e446e0bd73f9579003fb8ce9a48bb992246cd0a27a172d274dcacd43fff90a7',
+         'native-android/engine/scenecatalog-server/source_groups_eligibility.inc': '38338a38411745c889cc78a381e19cfafebd5a83bc00132e17b5b079023f1dbb',
+         'native-android/engine/scenecatalog-server/source_groups_owner.inc': '7c485ebe5385171f22a1ad258449cb61477d8b2598952b1f2690df3c5c31c1bc',
+         'native-android/engine/scenecatalog-server/source_groups_transaction.inc': 'a531ae0c9031c160b4f2cf99f2cba49487fba3ea7d396dcc23d0f0969ed922c6',
+         'native-android/engine/scenecatalog-server/source_public_bounds.inc': 'c812642d7f3467c97b2528a9e0963a7d40a01d7f45615ec3fe49c17dbbd80723',
+         'native-android/engine/scenecatalog-server/source_resource_quiescence.inc': '272ac8cb06593804bd387265f2203026da5bb48a6caaaf8ebb27e306047e4824',
+         'native-android/engine/scenecatalog-server/source_resources.inc': '844fc1c1d19885a4f836055d2cb8bf7a50a4c27292dad58d62a268a9bc38192e',
+         'native-android/engine/scenecatalog-server/source_resources_sink.inc': '3f5cbd9152f022a9d65a8baac813bf3cacc7ce41d579f4257d4c2c7bd8059a9e',
+         'native-android/engine/scenecatalog-server/source_sink.inc': '7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d',
+         'native-android/engine/scenecatalog-server/source_snapshot.inc': 'c9ab6b57bca1c77c3074042ece74ececda841b6d838f228f0b1c0305509f20a6',
+         'native-android/engine/scenecatalog-server/source_snapshot_sink.inc': '18b3bf28abb9d8a737f109bf7293a3f3d73d2b604d05fad57f4c81805f882275',
+         'native-android/engine/scenecatalog-server/stage_export.py': '032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3',
+         'native-android/engine/scenecatalog-server/stage_groups_boundary.py': '980de049deebb3098afb1dc3400c57c14774288c3e523bb8e9092c800eced99f',
+         'native-android/engine/scenecatalog-server/stage_groups_capture.py': '2036e1ee954d3de5db7c637add4acc281a8079b52455650efe7e58132e1fc478',
+         'native-android/engine/scenecatalog-server/stage_groups_transaction.py': 'a94fcd1cbc0fcd07bae5079a721e65e42faf66f3d00a672adccb10212ae611db',
+         'native-android/engine/scenecatalog-server/stage_resources.py': '7432889821242b47a970d2340450228d6a6146a628b570da6285831f4e9356a6',
+         'native-android/engine/scenecatalog-server/stage_snapshot.py': 'ad1ee4499d6b442e7cafec74292a2d32a6630a79a84ee0afefb10d952eff1e4c',
+         'native-android/engine/scenecatalog-server/summarize_groups_capture.py': '7b026f1291a5b1c69ee32415693e7c507f52125e76c5e41e45766fed4863681f',
+         'native-android/engine/scenecatalog-server/test_admit_groups_capture.py': 'ea75d1a7ce59b75284d5555078eae32b110ff6b15d0412f6154c1c8cfdc64b2d',
+         'native-android/engine/scenecatalog-server/test_capture_disposable.py': 'c2d745cedd848429c30931e295d027dc75576870e6d1c71252294d6c58549c51',
+         'native-android/engine/scenecatalog-server/test_capture_groups_transaction.py': '628452f513132e995400e495448aaf425a6c9570957bd6c36c3d69e30b00d793',
+         'native-android/engine/scenecatalog-server/test_capture_resources.py': '6724db731a4bd9b8899a00eff59941fc49354ec939f527d048d90b57ab626d2e',
+         'native-android/engine/scenecatalog-server/test_delivery.py': 'a797b3a5df180bb8ac55f83f84d08911a3bf56dd529603e7059f921a21e844e0',
+         'native-android/engine/scenecatalog-server/test_fresh_initial_retention.py': '3002e52cd1b014038579c819222557f77a0b2960c51ab7c60e67de1abea0c42a',
+         'native-android/engine/scenecatalog-server/test_fresh_source_retention.py': 'b611240d5f2e555232e4d3cd2521b5dea532716504a9c272a77c7a1d31f55412',
+         'native-android/engine/scenecatalog-server/test_graphical_fixture.py': 'f82fdc2989a23c6c28b47f73a19b7a2c73e4dccee4e201fed857569114a8547a',
+         'native-android/engine/scenecatalog-server/test_groups_capture_inspect.py': '68ff69fa6c7fe374ffe182f882cdd5bc2e77d92a0543d8aa8c6f067547b4378b',
+         'native-android/engine/scenecatalog-server/test_groups_native_status.py': 'e282d222ce974313ec5735a0f153e3294e76b5cf8e15e0d25f2f150c0d9ff19b',
+         'native-android/engine/scenecatalog-server/test_groups_public_summary.py': '1cc90c8d6b05135eb3fa74f5a0f144e595262758af71b136302dd859f64c36ef',
+         'native-android/engine/scenecatalog-server/test_initial_native_input.py': '0f6b400c98229735ca600ab676c31dd3136ce513fc1d26ca6572029136992eed',
+         'native-android/engine/scenecatalog-server/test_initial_observation_binding.py': 'a9a1f9ffd6f94b1b760ff406d03c7481719362ad869e928347076c4122683cbb',
+         'native-android/engine/scenecatalog-server/test_snapshot_controls.py': 'fdd5eb95afb16b951de0eb58cca88769b8676f676b92f00b9f83d4a160789eeb',
+         'native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py': 'b9602e64f21ef633bbff26f7aaa23353a4c0d3ecb99ff151167f074c6e969a07',
+         'native-android/engine/scenecatalog-server/test_source_snapshot_admission.py': 'c7c8a6695bc4f769a042d1c0956c903b3d40fc9ab021273399a729f6a90a6215',
+         'native-android/engine/scenecatalog-server/test_source_snapshot_verifier.py': 'ec88d764e9f5e5c3ceb6dc3094c1ca360307df817ecb71e7bc06274bef714874',
+         'native-android/engine/scenecatalog-server/test_stage_export.py': 'a94d93ca2d17266e9a49b102244ef86637af030628b53397d7e9e83566747cc4',
+         'native-android/engine/scenecatalog-server/test_stage_groups_capture.py': '1aa749db11e73bfa1626ee1822f4c1bdc3224663a933b465f16a405aef01ba94',
+         'native-android/engine/scenecatalog-server/test_stage_resources.py': '58c3a0e848592b6b10b9fd48a754ef34ead89467c524c0c34ec109e4434d4ef1',
+         'native-android/engine/scenecatalog-server/verify_source_snapshot.c': 'fc693b6fdde6b943a307583be35e16045e86dd907feed4cc96fd895ee7610dc4',
+         'native-android/engine/scenecatalog/coh_catalog_owner.c': 'f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7',
+         'native-android/engine/scenecatalog/coh_catalog_owner.h': '4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f',
+         'native-android/engine/scenecatalog/coh_catalog_snapshot.c': 'b2068cec02b16f357db0abafe94862103a22faf25256e282ac3b0d84bc1bf6de',
+         'native-android/engine/scenecatalog/coh_catalog_snapshot.h': '389021a429fe7c4720303fd00723de873fd18bc915d4c8aa9b4c437cd2dabb76',
+         'native-android/engine/scenecatalog/coh_resource_geo_source.c': 'c9096ba1d29ebb8942ce951c7701a0701c8e4433123c715a4ea802cbe5cd57ec',
+         'native-android/engine/scenecatalog/coh_resource_geo_source.h': 'e1028d8d9baac37bfc976cd6c6559a13d7e7f4b466c50b31fab5ac1873131769',
+         'native-android/engine/scenecatalog/coh_resource_index.c': '1966e3f13e93fa6d4b2fc50ac5088fe192df4b4a6b5d501eb3f7eb6482d000a0',
+         'native-android/engine/scenecatalog/coh_resource_index.h': 'd4774726285d8ba6037e8c2f35d4f9647e171e06aaccf8edc07b686f4dbc3228',
+         'native-android/engine/scenecatalog/coh_resource_join.c': '48b57f05d320e6e6319900ea5a979cf05680ff8e26ab90526946ec9d25e665fe',
+         'native-android/engine/scenecatalog/coh_resource_join.h': 'dc4c3324e719ccd1b4db3fccdb4da054d6a403f7e844209cea440bec6b858a68',
+         'native-android/engine/scenecatalog/coh_scenecatalog.c': '1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66',
+         'native-android/engine/scenecatalog/coh_scenecatalog.h': 'e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c',
+         'native-android/engine/scenecatalog/source_export.inc': 'ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b',
+         'native-android/engine/scenegraph/coh_public_bounds.c': 'f43ebbf8c955ccc4ca0589abcd42cc3c1852234372b02cfcc44b5736eb20e4e2',
+         'native-android/engine/scenegraph/coh_public_bounds.h': '2a0ff329e51f97c59b1d24b2d1f683332a1d6b92afd72157fb56951133e065d7',
+         'native-android/engine/scenegraph/coh_scenegraph.c': '9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933',
+         'native-android/engine/scenegraph/coh_scenegraph.h': '45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc',
+         'native-android/engine/scenegraph/runtime_graph.h': 'ea635edfc31eda5e29308b85d7420cc0da242bbc291bc34221ea8d615ea93a84',
+         'native-android/engine/scenegraph/runtime_snapshot.c': '116e084476e16155f20624d9a7e902dd46b1de84ef6b51f569329572da528b35',
+         'native-android/engine/scenegraph/runtime_snapshot.h': '95e78a57155630b8a8f5d0e69aabe20ff7d889b2f4e3feb048db8423ba3dc5c3',
+         'native-android/engine/scenegraph/tests/runtime_matrix_bridge.c': 'c9f1070d61fb272716ed0b390a58da9a2715f266a661dd799b3fd85e25a0fe93',
+         'native-android/engine/session/coh_session_crypto.c': 'c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1',
+         'native-android/engine/session/coh_session_crypto.h': '8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57',
+         'native-android/include/coh_native_core.h': '48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106',
+         'native-android/protocol/coh_protocol.c': '6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea',
+         'native-android/protocol/coh_protocol.h': '61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4',
+         'native-android/src/byte_reader.h': 'c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1',
+         'native-android/src/coh_assets.c': 'dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483',
+         'native-android/src/coh_blowfish.c': 'ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470',
+         'native-android/src/coh_dds.c': '9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c',
+         'native-android/tools/protocol_fixture/prepare.py': '3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a',
+         'tools/android/interactive/map_startup_inputs.py': '4569c16039b12abce7613c9805eaec21dbaa70d3c3f1f1ccfef0b2d4731b7b85',
+         'tools/animation_format.py': 'b834d26a4bac4690ac0d5ff1a1ab5dac672efd15c8b855631e4821bc31c794dc',
+         'tools/compare_reference_templates.py': 'cbfb8c6d3ea3d7b45d768bd56a782fccf6d74c4e6a216df3af0926743944db7b',
+         'tools/content_assets.py': '58fced9b354b5f52e22f9c81c64f11f7c7812923f7e56014cb0cf01dc149cf98',
+         'tools/fetch_runtime_asset_bundle.py': '49257b8f19109e30074628e9510c070549150c976cbfe747e9463cff7ef833d4',
+         'tools/generate_runtime_data.py': '7569e384c24802403d5085675789cf3ada1c4e972e6126a8da3753b997297acd',
+         'tools/import_source.py': 'b4af8399f4b1c383237af4f4a1babad5bff5ffc325ead4d009b55ccbbb0b749b',
+         'tools/index_piggs.py': '057150f703e8f81f860ce7d3fe578e52058b7dfeda10bd6b92e8180367721a4d',
+         'tools/inspect_asset_formats.py': '74979934ed24394c4f54ab8bc3a397a238d9e363f5391b1b48b4aeedb005ea9b',
+         'tools/inspect_piggs.py': 'a58ea3723d1255c7615bf25cb1de8d74729b6122e28f879ea554f7cbf0e1a2fd',
+         'tools/map_startup_animation_certificate.py': 'aa4f1da667f708c23aea62d5049d295cfce16a2a3d7457a5b605ce48b2b20b19',
+         'tools/map_startup_monorail_budget.py': 'fca79790f74fec16a051957909d9ebd31897f9148a1e55a8f08de90d12168236',
+         'tools/map_startup_namespace_certificate.py': 'de2bd2f9e02aaae71aec9a9ab244cad22315be4b798e968c257ecc42baa725e7',
+         'tools/package_native_startup_profile.py': 'eec6709e10b047b1293ba45ee68a01de4d84d1e2041f1885c0138c74efd2148b',
+         'tools/package_reference_runtime.py': '53de7076e7798b527e8d6cb823d877693668c3474b32cad810ac4fe752f3dd59',
+         'tools/package_resume_client.py': '5671fa7db9f6dcbbdde727738df71da76f40dd828898c8514e639eea5ce65c5f',
+         'tools/prepare_atlas_beacon_generator_source.py': '34836711f431f7e7a74e7226a791ed462a2add65cfaa36d956b59c0838ffe10a',
+         'tools/prepare_character_events_source.py': 'd96220ff645670066c7f329262f017d0b78d7e88c7a51dbc307982f518f54ef2',
+         'tools/prepare_client_graphics_source.py': 'a5fc624f5a314871283399d43e323445c1216b61a849f3e17b2cd758e0fcdc55',
+         'tools/prepare_client_texture_source.py': '7ee73b6340e5779b7169120b7f0aa96b19f5e85ff1bc16729e6c20c4d7789cd6',
+         'tools/prepare_game_loopback_source.py': '9e87a894bc0fa9cc65f1dafb0c43c441d7f1cbd39de895ba883018cbd48a2b26',
+         'tools/prepare_kings_row_beacon_generator_source.py': '65952a362e70a6ccc53efea870b8274792b9ce6428e874d922b8adb0541676cb',
+         'tools/prepare_map_startup_observer_source.py': 'e0e3bd7eb44e7949eca473f5611ae5def3a86a24b37aa6ab04ebbda9eb9bc88d',
+         'tools/prepare_map_startup_source.py': '87ddbe3bfdbd2c951102386e6c074736671ccf674c865eefb81503636dde8b23',
+         'tools/prepare_mapserver_progress_source.py': 'b832acb6a12db70e6f8a29d2d86fb990f1ef5fd5b11fd8c1f0149151942c2f5f',
+         'tools/prepare_monorail_source.py': '3c45235024690fe970b820af827aa2606bc5bea2329b1821a2d46dcb67f20c6d',
+         'tools/prepare_native_cg_profile_source.py': 'c9d7f045aa9ab47371b1bafab7633dd7c46004deea10e1d02edcac36f59f9b15',
+         'tools/prepare_native_startup_profile_source.py': '67f6a161a340c070a36f7b31dbb9dc63bdfeb115c310096c882ff24d568643f9',
+         'tools/prepare_pg_source.py': '6462aa2aa19c2c9019e5c6d9473892a54150bca82a917e782458f8e3587f9f69',
+         'tools/prepare_resume_client_source.py': '95c59a12085d2dcffa16396d923f9baad3e3bd53a0ac48edc2453a4ddb5cfc7b',
+         'tools/prepare_runtime.py': '20f97eddb239bda51ab7fee816407069daa74fd6122f6b2612e5269f5cfc7433',
+         'tools/prepare_schema_source.py': 'b4874d063c4f69e98120bc52a5611b213ed5d54af3926fca7fa9ab93a3e39b91',
+         'tools/prepare_server_fx_catalog_observer_source.py': '2a678d0624be0da893186a601247ba3ecac990dcbebcb8eedc0586991cabbe65',
+         'tools/prepare_wine_dbserver_source.py': '59b8a8518cdc0d2a6c2e9a5c73cebe8724932a26d3eeba6cb887597eb9d793f9',
+         'tools/qualify_map_startup_prerequisites.py': 'c5d168244b7699b36335384d8c4c13cebeb0b73202fa333a15cc344889b37228',
+         'tools/qualify_native_startup_profile.py': '60e265372e5a21d90a2b429d362123c0f8e42c0a6be7e88b8af2666bec8232d4',
+         'tools/run_schema_generation.py': '42724e7b53a9f476307f19f2faf9fd171c0d1047ab64870c30ede2b0ec42d638',
+         'tools/runtime_asset_bundle.py': 'd87817154581a2a92db2a4dded914a6f63b4811d962b0283b278bc72757a3d3e',
+         'tools/test_animation_format.py': '900bce6107fd1c1157d08eaac80f4b77d1a4f5d2649aed3264b9188ab9ccc76b',
+         'tools/test_compare_reference_templates.py': 'fbea6de596ae531a7ab99bd2ea93d0dab21b6b3b13094e0e46eb3335c4718b55',
+         'tools/test_fetch_runtime_asset_bundle.py': '59e52ed33970eccfca0213bef7c96ff7e677052c1db53582a5cdeca1ab1caf27',
+         'tools/test_generate_runtime_data.py': 'e7a8d2761b2ea8b489ecda6973fcfdd394be359cf31d34f2616f6a609c6289bb',
+         'tools/test_inspect_asset_formats.py': 'cd4c60ab4e4f56ad1728935b4a8bcf327669453c5527c8cd31cb799a2f443509',
+         'tools/test_inspect_piggs.py': 'c30236879562eacfda6e16f3f55d3f51dd5d9a51a2385d060aa1110142fc6698',
+         'tools/test_map_startup_animation_certificate.py': '3e049a1aaf4de92e9fdb16f70ea25273378cc82a87b7dd3fd69cb1bbbc239ded',
+         'tools/test_map_startup_bounded_stream.py': 'c35256b60867233737bed7653076d97aab76eacfdc7efd6e9bab45b51ce58fb4',
+         'tools/test_map_startup_monorail_budget.py': '49f10f459a5e85592cd5c98ddf149c683ab32377b1810d544328abd050e34483',
+         'tools/test_map_startup_namespace_certificate.py': 'f7adaa0c2d35fe776acae9758aff2fbe624d128a9e62c1778c06d236e0124e93',
+         'tools/test_map_startup_observer_source.py': '2c57904476b974eea971dd23279b2d85e7b27933acdf192e5d34a771e053ae1d',
+         'tools/test_native_cg_profile_source.py': '182ed8b62da1d5e05f5d00a49531e7267f0c9dc052627df5d685e4c383eb0392',
+         'tools/test_native_startup_profile_source.py': '335b51db4699d6b27cfab2227e390d9cecee23e7d1cda6e6423cfe3062110b8e',
+         'tools/test_package_reference_runtime.py': '0c2bcbd951073a9d04aa15daca91102e36b6c449b36c6362efa18210801825a8',
+         'tools/test_package_resume_client.py': '9bf13bebfe79669936cf1cd291b4685cf327ac1c320bfb0cbc6ee7626c687ff1',
+         'tools/test_prepare_atlas_beacon_generator_source.py': 'c7720cc146ea8ab71a24e969d0c2a04331ab1aa8b3e431a428b5b7c386ab1c3c',
+         'tools/test_prepare_character_events_source.py': 'b99706eb72a6b8639d04fa857920a2b71c3ed6fc09082be99547f4f67ddf73b4',
+         'tools/test_prepare_client_texture_source.py': '3e6c92a1d3eabdb326c80e36f523f8a07b832eab3c6182bc962df9ded8a70ee4',
+         'tools/test_prepare_game_loopback_source.py': 'a553a20d55be15ac1e341e86de10cfb6deddf9136f535e1c01ba04f1638d41b9',
+         'tools/test_prepare_kings_row_beacon_generator_source.py': 'ba5aa0d0f5ccfeacb23de4b679adb4881b11cc8c4322ae834145a07af77057a4',
+         'tools/test_prepare_mapserver_progress_source.py': 'd941a03d76305c66668a2102fac215394b5b283c5918358a72b0ee3e98f8a30a',
+         'tools/test_prepare_resume_client_source.py': '83341eaf6a28e0e68819848e7825460b327360edd61a8b8a2f29fe599119b8cb',
+         'tools/test_prepare_runtime.py': 'd5350e8e2108519bb71238d501a033e6ff07e08c91d4deff2bd100ea428da82f',
+         'tools/test_prepare_schema_source.py': '3ec8db1844ddb183eee9b7fce826a2a9a0d45027ec5101a6406f48c71baeae95',
+         'tools/test_prepare_server_fx_catalog_observer_source.py': 'c1fdc130a57a1195877e06bff91eeed6ec37d108fa80bd2be6bf66fcce995df6',
+         'tools/test_prepare_wine_dbserver_source.py': '909aad04686ead5d55f35a9f9b9dd009a70bf6a2241fa15c970ee0f5ee58769a',
+         'tools/test_qualify_map_startup_prerequisites.py': '5481748f161c5ba4b2f4c7f84a99799bbd035dac52b35bd7f07bf3bf12ff4314',
+         'tools/test_qualify_native_startup_profile.py': '02908263525c56f9578ae12f6459e0cd7988edf250d0eb14cc4c558fe7fa7685',
+         'tools/test_run_schema_generation.py': 'ea134ee9781877ccdb26a1108f877453011c3027b943e75086de8fd8ca7fd21a',
+         'tools/test_runtime_asset_bundle.py': '5f92d6a13153446ce9be70836306e49bdfaffb948d850e1fa5669b9c800ac207',
+         'tools/test_texture_format.py': '8f79f7c7d205b997effd28b31573d32f1a5a27edf07586b082d6644563d023aa',
+         'tools/texture_format.py': 'bdb6d5a4eb8681ed956e38c21a4173c9cca711aaf48ceb7a4f7bc1f95b966a78',
+         'tools/verify_source.py': '81c658f88a8aef1eba5c4b17b14fcef415f83808cd38e4edc898c245fd42e5c4',
+         'upstream/ouroboros/AccountServer/src/AccountDb.cpp': '743193935f25a5c466aaaf11cb36a6972b6700374dfa273bfd44ee06495d9585',
+         'upstream/ouroboros/AccountServer/src/AccountServer.cpp': '91070c652c6796f2dc38fd50b3985febc627e7e96201ad6f71fe2de3888847d7',
+         'upstream/ouroboros/Common/account/AccountCatalog.c': '7db49f91412ed60af05988e5997b04689d309f3f4948ad8fc003aff249f2e0bc',
+         'upstream/ouroboros/Common/account/AccountCatalog.h': '1af30fae332485099feeeb02ee218b14eda4bc5815f51e9353d2918674cfff75',
+         'upstream/ouroboros/Common/account/AccountData.c': '038259178820f9a78040d39b4d8810933e31a67a798676fb37a0ca658682c391',
+         'upstream/ouroboros/Common/account/AccountData.h': 'f1c82f2f428cf4e2ddeb8fe856bc5b76ca74fd55d72738bd7bff8ea6a89ed3b3',
+         'upstream/ouroboros/Common/account/AccountTypes.cpp': '626d7e1264a39bce5d649c38a835227f85d3fcd33011ad0d959d189027ed1d13',
+         'upstream/ouroboros/Common/account/AccountTypes.h': '5f0ab67fc6405d28cb1e5c0649a4d72fbbef81dae7ebfc2adae0f276c12e6bdd',
+         'upstream/ouroboros/Common/auth/auth.h': '6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe',
+         'upstream/ouroboros/Common/comm_backend.h': '9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c',
+         'upstream/ouroboros/Common/comm_game.h': 'ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12',
+         'upstream/ouroboros/Common/entity/character_base.h': 'd14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee',
+         'upstream/ouroboros/Common/entity/entity.c': '07b6666d673757cd8e9f4d377ec58fb2988fc09db8abc2e212e29788b84fbd8f',
+         'upstream/ouroboros/Common/entity/entity.h': 'cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d',
+         'upstream/ouroboros/Common/entity/entity_enum.h': '52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d',
+         'upstream/ouroboros/Common/entity/gametypes.h': '8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6',
+         'upstream/ouroboros/Common/group/group.c': 'dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7',
+         'upstream/ouroboros/Common/group/groupProperties.c': '88975a6c74122a64ded79a860d60592814cdf79579b6a39357bbca79066673a1',
+         'upstream/ouroboros/Common/group/groupProperties.h': '5522e0e664baab38fb369b59a8d68afd806083cb28c11bda6d58c26d475ab74e',
+         'upstream/ouroboros/Common/seq/anim.c': 'adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc',
+         'upstream/ouroboros/DBServer/src/accountservercomm.c': '17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae',
+         'upstream/ouroboros/DBServer/src/clientcomm.c': '8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c',
+         'upstream/ouroboros/DBServer/src/container.h': '7c7ec25139a9923864081c6a399eae7d22ec3cc28bebd7ea61c734fac0ea2c86',
+         'upstream/ouroboros/Game/src/UI/uiServerTransfer.c': 'b2f4e5667b519b511ee9dfb6780f299f5489266470ec904d9f53a8f1c847da3b',
+         'upstream/ouroboros/Game/src/clientcomm/clientcomm.c': '9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd',
+         'upstream/ouroboros/Game/src/clientcomm/dbclient.c': '81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b',
+         'upstream/ouroboros/Game/src/clientcomm/dbclient.h': '8ea7ca9abf646f290278e68292d00ef13520de6a9b80768566332780f624f58b',
+         'upstream/ouroboros/Game/src/edit/edit_net.c': '66989849b4217d893404a6e9451adb3c3af7e12cf2a9a3958d8ce2ad3e12dcb2',
+         'upstream/ouroboros/Game/src/edit/edit_select.c': 'a8913ed87fc83543d32d761247d7d45b50c8ebdd798c69f8526d8a4f69e86b55',
+         'upstream/ouroboros/Game/src/group/groupnetrecv.c': 'f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d',
+         'upstream/ouroboros/MapServer/src/container/containercallbacks.c': '56b484eded5a1ac2148369c4fac51084cad6ad9c55de6cfec4cbcb2dda90fb73',
+         'upstream/ouroboros/MapServer/src/dbcomm/dbmapxfer.c': '14799001b028608bf940b631b73ba6af02ed869915b09ec000547e3aa0106663',
+         'upstream/ouroboros/MapServer/src/entity/entIncludeServer.h': 'bebba4c2ab7102debd043817a9d30abf4699f3af9d0d8dca612700df1fb52029',
+         'upstream/ouroboros/MapServer/src/entity/entsend.c': '045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054',
+         'upstream/ouroboros/MapServer/src/group/groupnetdb.c': 'b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3',
+         'upstream/ouroboros/MapServer/src/group/groupnetsend.c': 'cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9',
+         'upstream/ouroboros/MapServer/src/player/parseClientInput.c': '6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313',
+         'upstream/ouroboros/MapServer/src/svr/svr_base.h': 'c0ffc24f22c1ebff3452697787dbcaaeb17fda278abd06a2fdf2e871fcbd2e64',
+         'upstream/ouroboros/MapServer/src/svr/svr_init.c': '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d',
+         'upstream/ouroboros/MapServer/src/svr/svr_player.c': '82fee142cd2a0d37f2ec8cb62c91b54ee34d5bb31655d1d33961187868a667a8',
+         'upstream/ouroboros/MapServer/src/svr/svr_tick.c': '790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0',
+         'upstream/ouroboros/QueueServer/src/QueueServer_Passthrough.c': '49f71c51e7d4a95e616455359752b7cca8d37c15f8bc0ddf86bbccdb70408d5c',
+         'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/ArrayOld.h': '52f889750b03c07f52896ca9a569ed4acfeb93f0b5bdbb09072de9d2a343da30',
+         'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_packet_common.h': '822e3698ab8cf76a7344ed3effe607dcda542099382e8ed1a63c2c1d1df4257c',
+         'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h': '116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9',
+         'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h': 'fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f',
+         'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h': '05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111',
+         'upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c': '69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4',
+         'upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp': 'cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60',
+         'upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c': '4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039',
+         'upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c': '11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5',
+         'upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c': '02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212',
+         'upstream/ouroboros/libs/UtilitiesLib/src/network/netcomp.c': 'cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370',
+         'upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c': '93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c',
+         'upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c': '77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f'}
+
+        workflow='.github/workflows/native-fresh-groups-observation.yml'
+        p=root/workflow
+        need(p.resolve()==p and p.is_file() and not p.is_symlink() and p.stat().st_size<1024**2,'WORKFLOW_REGULAR_SOURCE')
+        pins[workflow]=hashlib.sha256(p.read_bytes()).hexdigest()
+        need(0<len(pins)<=512,'BOUNDED_SOURCE_CLOSURE')
+        tree=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)]);blobs={}
+        for row in tree.split(b'\0'):
+            if not row:continue
+            meta,name=row.split(b'\t',1);mode,kind,digest=meta.split()
+            need(kind==b'blob' and mode in (b'100644',b'100755'),'TRACKED_SOURCE_MODE');blobs[name.decode()]=digest.decode()
+        need(set(blobs)==set(pins),'ALL_FROZEN_SOURCES_COMMITTED')
+        for name,digest in pins.items():
+            rel=pathlib.PurePosixPath(name)
+            need(not rel.is_absolute() and all(part not in ('','.','..') for part in rel.parts) and chr(92) not in name and ':' not in name,'RELATIVE_SOURCE_NAME')
+            p=root/name
+            need(p.resolve()==p and p.is_file() and not p.is_symlink() and 0<p.stat().st_size<8*1024**2,'BOUNDED_CANONICAL_SOURCE')
+            raw=p.read_bytes()
+            need(hashlib.sha256(raw).hexdigest()==digest and hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==blobs[name],'EXACT_REVIEWED_SOURCE_AND_ARTIFACT')
+        binding=json.loads((root/BINDING).read_bytes());mock=json.loads((root/MOCK).read_bytes());meta=json.loads((root/MAP_METADATA).read_bytes())
+        need(binding['schema']=='coh-inventory-initial-owner-destination-preflight-actual-metadata-binding-v1' and binding['passed'] is True and binding['final_helper_sha256']==pins[HELPER] and binding['test_sha256']==pins[TEST] and binding['mocked_proof_sha256']==pins[MOCK] and binding['other_AST_equal'] is True and binding['pending_helper_sha256']=='99f47dd7d3e6e9a0475a83d498a7c3318bcfc1e40c9140d89948c28942e4c553' and binding['exact_AST_changes']==['OBSERVER_BUILD_SHA','OBSERVER_BUILD_BYTES'] and binding['final_helper']==HELPER and binding['test_file']==TEST,'ACTUAL_METADATA_BINDING')
+        need(all(binding[k] is False for k in ('destination_platform_qualified','destination_helper_or_loader_or_native_executed','mock_controls_reexecuted','runtime_executed','source_generation_admitted','world_authority')),'SOURCE_ONLY_TWO_CONSTANT_BINDING')
+        need(binding['Git_read_only_subprocesses_executed'] is True,'READ_ONLY_GIT_BINDING_SCOPE')
+        need(type(binding['current_receiver_dependency_count']) is int and binding['current_receiver_dependency_count']==46 and len(binding['current_receiver_dependencies_sha256'])==46 and all(pins.get(k)==v for k,v in binding['current_receiver_dependencies_sha256'].items()) and type(binding['evidence_artifact_pin_count']) is int and binding['evidence_artifact_pin_count']==len(binding['evidence_artifact_sha256'])==143 and all(pins.get(k)==v for k,v in binding['evidence_artifact_sha256'].items()),'CURRENT46_AND_QUALIFIED_EVIDENCE')
+        need(mock['schema']=='coh-inventory-initial-owner-receiver-focused-mocks-v1' and mock['passed'] is True and mock['helper_sha256']==binding['pending_helper_sha256'] and mock['test_sha256']==pins[TEST] and type(mock['methods']) is int and mock['methods']==5 and type(mock['cases']) is int and mock['cases']==73 and isinstance(mock['case_names'],list) and len(mock['case_names'])==len(set(mock['case_names']))==73 and all(type(k) is str for k in mock['case_names']) and all(type(mock[k]) is int and mock[k]==0 for k in ('errors','failures','skipped')) and mock['source_inputs_unchanged'] is True and mock['retained_elf_read_for_hash_only'] is True and mock['new_inventory_a13_metadata_controls_only'] is True and mock['old49_or54_mock_suites_reexecuted'] is False and mock['observer_receipt_is_explicit_mock'] is True and mock['actual_new_map_receipt_admitted'] is False and mock['actual_destination_preflight_executed'] is False and mock['project_imports_compiler_loader_native_registry_services_or_network_executed'] is False and mock['source_generation_admitted'] is False and mock['actor_publication'] is False and mock['world_authority'] is False,'NEW_MOCK_CONTROLS_ONLY')
+        actual=json.loads((root/meta['source_admission_path']).read_bytes())
+        need(meta['schema']=='coh-inventory-initial-owner-scene-map-input-v1' and meta['passed'] is True and meta['actual_source_and_PE_admitted'] is True and meta['runtime_executed'] is False and all(meta[k] is False for k in ('actor_authority','actual_sleeping_state_established','source_generation_admitted','world_authority')) and actual['schema']=='coh-fresh-initial-owner-build-source-admission-v1' and actual['passed'] is True and actual['source_revision']==meta['source_revision'] and actual['compile_only'] is True and actual['runtime_executed'] is False and len(actual['source_sha256'])==255 and all(pins.get(k)==v for k,v in actual['source_sha256'].items()),'ACTUAL_NEW_MAP255_SUBSET')
+        review=json.loads((root/HELPER_REVIEW).read_bytes())
+        need(review['schema']=='coh-f-inventory-initial-owner-receiver-actual-binding-review-v1' and review['passed'] is True and review['helper_sha256']==pins[HELPER] and review['binding_sha256']==pins[BINDING] and review['test_sha256']==pins[TEST] and review['current_receiver_dependencies_sha256']==binding['current_receiver_dependencies_sha256'] and review['evidence_artifact_sha256']==binding['evidence_artifact_sha256'],'INDEPENDENT_HELPER_REVIEW')
+
+        adapter_binding=json.loads((root/'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/adapter-mocks-binding.json').read_bytes())
+        adapter_counts=json.loads((root/'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/adapter-mocks.json').read_bytes())
+        adapter_reuse=json.loads((root/'native-android/engine/scenecatalog-server/evidence/snapshot-status-adapter-20261018/projection-reuse.json').read_bytes())
+        adapter_review=json.loads((root/'native-android/combined-client/diagnostics/continuation-f-20261017/snapshot-status-adapter-review-20261018/review.json').read_bytes())
+        need(adapter_binding['schema']=='coh-snapshot-status-adapter-mock-binding-v1' and adapter_binding['passed'] is True and adapter_binding['attempt_count']==2 and adapter_binding['segmented_qualification'] is True and adapter_binding['reused_unchanged_methods']==25 and adapter_binding['corrected_method_cases']==3 and adapter_binding['returncode']==0 and adapter_binding['source_inputs_unchanged'] is True and all(pins.get(k)==v for k,v in adapter_binding['source_sha256'].items()),'SEGMENTED_NEW_ADAPTER_MOCK_BINDING')
+        need(adapter_counts=={'compiler_or_native_executed': False, 'controlled_subtest_cases': 93, 'corrected_method_cases': 3, 'execution_invocations': 2, 'first_invocation_test_oracle_errors': 1, 'followup_is_only_corrected_method': True, 'mock_only': True, 'old_projection_tests_reexecuted': False, 'passed': True, 'reused_unchanged_methods': 25, 'schema': 'coh-snapshot-status-adapter-mocks-v1', 'segmented_qualification': True, 'test_methods': 26},'EXACT_NEW_ADAPTER_MOCK_COUNTS')
+        need(adapter_reuse['schema']=='coh-snapshot-status-adapter-projection-reuse-v1' and adapter_reuse['passed'] is True and adapter_reuse['original_core_sha256']==pins['native-android/engine/scenecatalog-server/check_source_snapshot_verifier.py'] and adapter_reuse['wrapper_sha256']==pins['native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py'] and adapter_reuse['five_projection_helpers_AST_identical'] is True and adapter_reuse['old_projection_tests_reexecuted'] is False and all(pins.get(k)==v for k,v in adapter_reuse['qualified_historical_inputs'].items()) and all(pins.get(k)==v for k,v in adapter_binding['retained_execution_and_derivation_inputs'].items()) and len(adapter_reuse['recorded_native_source_sha256'])==36 and all(pins.get(k)==v for k,v in adapter_reuse['recorded_native_source_sha256'].items()),'QUALIFIED_PROJECTION_REUSE_ORIGINAL_CORE_UNCHANGED')
+        need(adapter_review['passed'] is True and adapter_review['wrapper_sha256']==pins['native-android/engine/scenecatalog-server/check_source_snapshot_verifier_status.py'] and adapter_review['test_sha256']==pins['native-android/engine/scenecatalog-server/test_snapshot_status_adapter.py'] and adapter_review['reviewer_reexecuted_controls'] is False,'INDEPENDENT_STATUS_ADAPTER_REVIEW')
+
+        need(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')
+        receipt={'schema':'coh-inventory-initial-owner-fresh-groups-live-source-admission-v1','passed':True,'source_revision':head,'source_sha256':pins,'host_controls_reexecuted':False,'historical_worker_commit_replayed_in_CI':False,'source_preflight_only':True,'runtime_executed':False,'accepted_observer_equivalence':False,'source_generation_admitted':False,'world_authority':False,'observer_compile_receipt_sha256':meta['receipt_sha256'],'receiver_build_receipt_sha256':'09320ce3c78ccbf9af46de9b09c7bd1f551375fad39dc4e2b44eb3e962779216','source_profile_proof_sha256':'550d600596e2939f73de076fac5fce859ce18248a0866e1b1d19795393dc03fb'}
+        need(set(receipt)==GATE_KEYS,'EXACT_FOURTEEN_KEY_GATE')
+        path=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json'
+        with path.open('xb') as stream:stream.write((json.dumps(receipt,indent=2,sort_keys=True)+'\n').encode())
+        print(json.dumps({'source_admission_passed':True,'frozen_pins':len(pins),'host_controls_reexecuted':False,'runtime_executed':False}))
+        PYINVENTORYINITIALSOURCE
+    - name: Verify successful original fixture provenance and exact ZIP before extraction
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
+        python3 - <<'PY'
+        import hashlib,json,os,pathlib,re,shutil,stat,subprocess,zipfile
+        assert os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.geteuid()!=0
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'
+        assert os.environ['GITHUB_REF']=='refs/heads/native-android'
+        for name in ('FIXTURE_ARTIFACT_ID','FIXTURE_ZIP_BYTES','FIXTURE_RUN_ID'):
+            assert re.fullmatch('[1-9][0-9]*',os.environ[name])
+        for name in ('FIXTURE_ZIP_SHA256','FIXTURE_RECEIPT_SHA256'):
+            assert re.fullmatch('[0-9a-f]{64}',os.environ[name])
+        assert re.fullmatch('[0-9a-f]{40}',os.environ['FIXTURE_REVISION'])
+        maximum=560*1024**2;size=int(os.environ['FIXTURE_ZIP_BYTES']);assert 0<size<=maximum
+        os.umask(0o077)
+        base=pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs';base.mkdir(mode=0o700)
+        def api(suffix):
+            return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))
+        run=api('actions/runs/'+os.environ['FIXTURE_RUN_ID'])
+        assert run['status']=='completed' and run['conclusion']=='success'
+        assert run['head_sha']==os.environ['FIXTURE_REVISION'] and run['head_branch']=='native-android'
+        assert run['path']=='.github/workflows/native-graphical-fixture.yml'
+        assert run['repository']['id']==run['head_repository']['id']==1368730125
+        remote=api('actions/artifacts/'+os.environ['FIXTURE_ARTIFACT_ID'])
+        assert remote['id']==int(os.environ['FIXTURE_ARTIFACT_ID']) and remote['expired'] is False
+        assert remote['name']=='source-created-graphical-fixture-'+os.environ['FIXTURE_REVISION']
+        assert remote['size_in_bytes']==size and remote['digest']=='sha256:'+os.environ['FIXTURE_ZIP_SHA256']
+        origin=remote['workflow_run'];assert origin['id']==int(os.environ['FIXTURE_RUN_ID'])
+        assert origin['head_sha']==os.environ['FIXTURE_REVISION']
+        assert origin['repository_id']==origin['head_repository_id']==1368730125
+        archive=base/'fixture.zip'
+        with archive.open('xb') as output:
+            subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/'+os.environ['FIXTURE_ARTIFACT_ID']+'/zip'],stdout=output,check=True,timeout=600)
+        with archive.open('rb') as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()
+        assert archive.stat().st_size==size and actual==os.environ['FIXTURE_ZIP_SHA256']
+        target=base/'fixture';target.mkdir(mode=0o700)
+        expected={'fixture.pgdump','account.txt','original-guest-report.json','external-observer.json',
+                  'backup-request.json','backup-receipt.json','fixture-capture.json'}
+        with zipfile.ZipFile(archive) as z:
+            infos=z.infolist();assert len(infos)==len(expected) and {i.filename for i in infos}==expected
+            assert sum(i.file_size for i in infos)<=maximum
+            for item in infos:
+                assert item.filename in expected and not item.is_dir() and not item.flag_bits&1
+                assert stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG)
+                assert 0<item.file_size<=(512*1024**2 if item.filename=='fixture.pgdump' else 16*1024**2)
+            for item in infos:
+                with z.open(item) as source,(target/item.filename).open('xb') as output:
+                    shutil.copyfileobj(source,output,1024**2)
+                assert (target/item.filename).stat().st_size==item.file_size
+        archive.unlink()
+        # Only exact fixture test data is retained; no caller supplies a user DB.
+        print('Exact successful source fixture artifact admitted for byte-level receipt checks')
+        PY
+    - name: Admit exact source-created fixture receipt before installing or launching runtime
+      run: |
+        export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
+        python3 native-android/engine/scenecatalog-server/admit_graphical_fixture.py --fixture "$RUNNER_TEMP/groups-inputs/fixture" --receipt-sha256 "$FIXTURE_RECEIPT_SHA256" > "$RUNNER_TEMP/groups-inputs/fixture-admission.json"
+        python3 - <<'PY'
+        import json,os,pathlib,re
+        base=pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs';value=json.loads((base/'fixture-admission.json').read_bytes())
+        assert value['passed'] is True and value['fixture_only'] is True
+        assert value['source_generation_admitted'] is False and value['world_authority'] is False
+        assert type(value['wire_slot']) is int and value['wire_slot']==0
+        assert re.fullmatch('[0-9a-f]{64}',value['database_dump_sha256'])
+        assert pathlib.Path(value['database_dump'])==base/'fixture/fixture.pgdump'
+        assert pathlib.Path(value['account_file'])==base/'fixture/account.txt'
+        for name in ('fixture.pgdump','account.txt'):(base/'fixture'/name).chmod(0o600)
+        with pathlib.Path(os.environ['GITHUB_ENV']).open('a') as output:
+            output.write('GROUPS_DUMP_SHA256='+value['database_dump_sha256']+'\n')
+        PY
+    - name: Reuse exact retained observer ZIP and recover only the missing unchanged DbServer donor
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
+        python3 - <<'PY'
+        import hashlib,json,os,pathlib,shutil,stat,subprocess,zipfile
+        os.umask(0o077);base=pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs'
+        specs=[
+          (int(os.environ['FRESH_OBSERVER_ARTIFACT_ID']),int(os.environ['FRESH_OBSERVER_RUN_ID']),os.environ['FRESH_OBSERVER_REVISION'],
+           'fresh-groups-initial-owner-build-'+os.environ['FRESH_OBSERVER_REVISION'],int(os.environ['FRESH_OBSERVER_ZIP_BYTES']),
+           os.environ['FRESH_OBSERVER_ZIP_SHA256'],'observer',64*1024**2),
+          (11772107531,38302653186,'46904ced3d7efb6218ecf92d9e44ad597d3146d0',
+           None,50269915,'9c4ba6faafb1a62cbdd0cda45b435de1ee8358b25dc65ef4842bfa2189b70d3b','donor',64*1024**2)]
+        def api(suffix):return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))
+        for ident,run,revision,name,size,digest,directory,limit in specs:
+            if directory=='observer':
+                actual=api('actions/runs/'+str(run));assert actual['status']=='completed' and actual['conclusion']=='success'
+                assert actual['head_sha']==revision and actual['head_branch']=='native-android'
+                assert actual['path']=='.github/workflows/native-fresh-groups-build.yml'
+                assert actual['repository']['id']==actual['head_repository']['id']==1368730125
+            remote=api('actions/artifacts/'+str(ident));origin=remote['workflow_run']
+            assert remote['id']==ident and remote['expired'] is False and remote['size_in_bytes']==size
+            assert remote['digest']=='sha256:'+digest and (name is None or remote['name']==name)
+            assert origin['id']==run and origin['head_sha']==revision
+            assert origin['repository_id']==origin['head_repository_id']==1368730125
+            archive=base/(str(ident)+'.zip')
+            if directory=='observer':
+                retained=pathlib.Path('native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/fresh-map-initial-owner-build-39099315295.zip').absolute()
+                assert retained.resolve()==retained and retained.is_file() and not retained.is_symlink() and retained.stat().st_size==size
+                with retained.open('rb') as source,archive.open('xb') as output:shutil.copyfileobj(source,output,1024**2)
+            else:
+                with archive.open('xb') as output:
+                    subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=600)
+            with archive.open('rb') as source:actual=hashlib.file_digest(source,'sha256').hexdigest()
+            assert archive.stat().st_size==size and actual==digest
+            target=base/directory;target.mkdir(mode=0o700)
+            with zipfile.ZipFile(archive) as z:
+                infos=z.infolist();assert 0<len(infos)<=256 and len({i.filename for i in infos})==len(infos)
+                assert sum(i.file_size for i in infos)<=limit
+                for item in infos:
+                    path=pathlib.PurePosixPath(item.filename)
+                    assert path.as_posix()==item.filename and not path.is_absolute()
+                    assert path.parts and all(p not in ('','.','..') for p in path.parts)
+                    assert '\\' not in item.filename and ':' not in item.filename
+                    assert not item.flag_bits&1 and stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG,stat.S_IFDIR)
+                for item in infos:
+                    target_path=target/item.filename
+                    if item.is_dir():target_path.mkdir(mode=0o700,parents=True,exist_ok=True);continue
+                    target_path.parent.mkdir(mode=0o700,parents=True,exist_ok=True)
+                    with z.open(item) as source,target_path.open('xb') as output:shutil.copyfileobj(source,output,1024**2)
+                    assert target_path.stat().st_size==item.file_size
+            archive.unlink()
+        PY
+    - name: Admit exact new observer source role and PE before runtime
+      run: |
+        export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
+        python3 native-android/engine/scenecatalog-server/admit_groups_capture.py --compile-directory "$RUNNER_TEMP/groups-inputs/observer/fresh-groups-compile" --source-root . --compile-receipt-sha256 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91
+    - name: Install x86 hosted runtime with PG18 and source-qualified classic Wine10
+      run: |
+        export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
+        test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+        test "$(id -u)" != 0
+        sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
+        sudo dpkg --add-architecture i386
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends ca-certificates curl gnupg xvfb xauth gcc g++ libssl-dev zlib1g-dev postgresql-common
+        # Prevent creation/startup of an unrelated default main cluster.
+        echo 'create_main_cluster = false' | sudo tee -a /etc/postgresql-common/createcluster.conf
+        sudo install -d /usr/share/postgresql-common/pgdg
+        sudo curl --fail --silent --show-error https://www.postgresql.org/media/keys/ACCC4CF8.asc -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+        test "$(gpg --show-keys --with-colons /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc | awk -F: '$1=="fpr" {print $10; exit}')" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
+        printf '%s\n' 'Types: deb' 'URIs: https://apt.postgresql.org/pub/repos/apt' 'Suites: noble-pgdg' 'Architectures: amd64' 'Components: main' 'Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc' | sudo tee /etc/apt/sources.list.d/coh-groups-pgdg.sources
+        sudo apt-get update -qq
+        # Exact signed noble-pgdg index exposes this18.6 packaging revision.
+        # Pin server, matching client and libpq together, then verify full bytes.
+        mkdir -p "$RUNNER_TEMP/groups-pg-packages"
+        (
+          cd "$RUNNER_TEMP/groups-pg-packages"
+          apt-get download postgresql-18:amd64=18.6-1.pgdg24.04+2 postgresql-client-18:amd64=18.6-1.pgdg24.04+2 libpq5:amd64=18.6-1.pgdg24.04+2
+          cat > packages.sha256 <<'EOF'
+        c0773357df8769abb70e92722196d9b53422d71c0f29a4f39c834b94276cfa3d  postgresql-18_18.6-1.pgdg24.04+2_amd64.deb
+        b9d10d99a73bf7aa375be2fe36626c40499cfdf553d0ad174674a88a1b256b43  postgresql-client-18_18.6-1.pgdg24.04+2_amd64.deb
+        b487c5ed2ceb9244c6a9d6ae65818ed6707c3c44a2e14488394ae4194c52c53b  libpq5_18.6-1.pgdg24.04+2_amd64.deb
+        EOF
+          sha256sum -c packages.sha256
+          sudo apt-get install -y --no-install-recommends ./*.deb
+        )
+        test "$(/usr/lib/postgresql/18/bin/postgres --version)" = 'postgres (PostgreSQL) 18.6 (Ubuntu 18.6-1.pgdg24.04+2)'
+        mkdir -p "$RUNNER_TEMP/groups-wine-packages"
+        curl --fail --silent --show-error --location https://dl.winehq.org/wine-builds/winehq.key -o "$RUNNER_TEMP/groups-wine-packages/winehq.key"
+        echo "d965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8  $RUNNER_TEMP/groups-wine-packages/winehq.key" | sha256sum -c -
+        test "$(gpg --show-keys --with-colons "$RUNNER_TEMP/groups-wine-packages/winehq.key" | awk -F: '$1=="fpr" {print $10; exit}')" = D43F640145369C51D786DDEA76F1A20FF987672F
+        gpg --dearmor --output "$RUNNER_TEMP/groups-wine-packages/winehq.gpg" "$RUNNER_TEMP/groups-wine-packages/winehq.key"
+        sudo install -d -m 0755 /etc/apt/keyrings
+        sudo install -m 0644 "$RUNNER_TEMP/groups-wine-packages/winehq.gpg" /etc/apt/keyrings/coh-groups-winehq.gpg
+        echo 'deb [arch=amd64,i386 signed-by=/etc/apt/keyrings/coh-groups-winehq.gpg] https://dl.winehq.org/wine-builds/ubuntu noble main' | sudo tee /etc/apt/sources.list.d/coh-groups-winehq.list
+        sudo apt-get update -qq
+        cd "$RUNNER_TEMP/groups-wine-packages"
+        apt-get download winehq-stable:amd64=10.0.0.0~noble-1 wine-stable:amd64=10.0.0.0~noble-1 wine-stable-amd64:amd64=10.0.0.0~noble-1 wine-stable-i386:i386=10.0.0.0~noble-1
+        cat > packages.sha256 <<'EOF'
+        794ed19f7fc8319d005c10da60833fd0925e2cd2587355b3b97fafdb9e95d368  winehq-stable_10.0.0.0~noble-1_amd64.deb
+        31e6eb2e15ae2e38ef72c9865c0d01da4bc587e554e7db46fe1a75b4420878e1  wine-stable_10.0.0.0~noble-1_amd64.deb
+        393d545040fe5c029eadeb31fcea52126714473e6c11b3cd851447b2dcbf1f72  wine-stable-amd64_10.0.0.0~noble-1_amd64.deb
+        5ba523409f013b12953f577bc3322aeae599bb16afac66c59ebe2dde7b337bfa  wine-stable-i386_10.0.0.0~noble-1_i386.deb
+        EOF
+        sha256sum -c packages.sha256
+        sudo apt-get install -y --install-recommends ./*.deb
+        df -h "$RUNNER_TEMP"
+    - name: Record only fixed public pre-runtime tooling facts
+      run: |
+        mkdir -p out/groups-public
+        python3 - <<'PY'
+        import hashlib,json,os,pathlib,platform,re,subprocess
+        def version(command,expression):
+            value=subprocess.check_output(command,text=True,timeout=15).strip()
+            assert re.fullmatch(expression,value);return value
+        pg=pathlib.Path('/usr/lib/postgresql/18/bin')
+        value={'schema':'coh-groups-public-tooling-v1','orchestration_revision':os.environ['GITHUB_SHA'],
+               'machine':platform.machine(),'wine_version':version(['/opt/wine-stable/bin/wine','--version'],r'wine-10\.0(?: \([^\r\n]{1,120}\))?'),
+               'postgres_version':version([str(pg/'postgres'),'--version'],r'postgres \(PostgreSQL\) 18\.[0-9]+(?: \([^\r\n]{1,120}\))?'),
+               'restore_version':version([str(pg/'pg_restore'),'--version'],r'pg_restore \(PostgreSQL\) 18\.[0-9]+(?: \([^\r\n]{1,120}\))?'),
+               'runtime_started':False,'private_state_included':False}
+        assert value['machine']=='x86_64'
+        with pathlib.Path('out/groups-public/tooling.json').open('x') as output:json.dump(value,output,indent=2);output.write('\n')
+        PY
+      working-directory: current
+    - name: Admit retained193216B progress ELF and actual current51 plus245 Git source closure without rebuild or execution
+      id: progress_input_admission
+      working-directory: current
+      run: |
+        python3 - <<'PYNEWNATIVE'
+        import gzip,hashlib,json,os,pathlib,sys
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_NATIVE_ADMISSION_REFUSED')
+        root=pathlib.Path.cwd().resolve();gate_path=pathlib.Path(os.environ['RUNNER_TEMP'])/'initial-progress-current-source-admission.json'
+        gate=json.loads(gate_path.read_bytes())
+        assert gate['schema']=='coh-initial-progress-current-source-gate-v1' and gate['passed'] is True and gate['source_revision']==os.environ['GITHUB_SHA']
+        # Every project source is byte-admitted before imports. Actual native admission
+        # below independently runs the new source-owned dependency query and Git guard.
+        for name,digest in gate['source_sha256'].items():
+         path=root/name;assert path.resolve()==path and path.is_file() and not path.is_symlink() and hashlib.sha256(path.read_bytes()).hexdigest()==digest
+        os.umask(0o077);out=pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs/initial-progress';out.mkdir(mode=0o700)
+        compressed=root/'native-android/engine/initial-capture/qualification/post-queue-progress-20261018/coh-capture-initial-progress.gz';receipt=root/'native-android/engine/initial-capture/qualification/post-queue-progress-20261018/qualification.json'
+        with gzip.open(compressed,'rb') as source:
+         raw=source.read(193217);assert len(raw)==193216 and source.read(1)==b''
+        assert hashlib.sha256(raw).hexdigest()=='5e423e0255a4b0dcab09b12d875c4a8090ba5c20e16ea0c8cdc189e11471f89a'
+        binary=out/'coh-capture-initial-progress'
+        fd=os.open(binary,os.O_WRONLY|os.O_CREAT|os.O_EXCL|getattr(os,'O_NOFOLLOW',0),0o700)
+        with os.fdopen(fd,'wb') as stream:stream.write(raw);stream.flush();os.fsync(stream.fileno())
+        build=out/'build.json';fd=os.open(build,os.O_WRONLY|os.O_CREAT|os.O_EXCL|getattr(os,'O_NOFOLLOW',0),0o600)
+        with os.fdopen(fd,'wb') as stream:stream.write(receipt.read_bytes());stream.flush();os.fsync(stream.fileno())
+        sys.path.insert(0,str(root/'native-android/engine/scenecatalog-server'))
+        import capture_groups_transaction as core
+        import initial_progress_admission as progress
+        native=core.native_input(binary,build,gate['source_sha256']['native-android/engine/initial-capture/qualification/post-queue-progress-20261018/qualification.json'],root)
+        assert native['build_schema']=='coh-initial-progress-focused-v1' and native['diagnostic_role']=='command_unattributed_post_queue_progress'
+        assert native['binary']['bytes']==193216 and native['project_dependencies']==51 and native['historical_receiver_equivalence_established'] is False
+        assert all(gate['source_sha256'].get(name)==digest for name,digest in native['dependencies_sha256'].items())
+        closure=json.loads((root/'native-android/engine/scenecatalog-server/evidence/progress-role-admission-20261018/current-source-closure.json').read_bytes())
+        source_paths=core.orchestration_source_paths({'build_role':'nonshipping_fresh_callback_sealed_groups_observer'},native)
+        assert source_paths==set(closure['source_sha256'])
+        pins={name:core.d.hash_file(root/name,8*1024**2)[1] for name in sorted(source_paths)}
+        assert pins==closure['source_sha256']
+        core.verify_orchestration(root,pins,os.environ['GITHUB_SHA'])
+        # Re-admit the retained original Map against CURRENT source helpers independently.
+        # This keeps all original source/PE guards and never touches the old native ELF.
+        original,_=core.admit.inspect(pathlib.Path(os.environ['RUNNER_TEMP'])/'groups-inputs/observer/fresh-groups-compile',root,os.environ['FRESH_OBSERVER_RECEIPT_SHA256'])
+        assert original['build_role']=='nonshipping_fresh_callback_sealed_groups_observer'
+        assert original['artifacts']['MapServer.exe']=={'bytes':7508480,'sha256':'73e6c724fcdd9b1caaa03bd675d38d075cc452575539cb99b19b6d1124113aba'}
+        result={'schema':'coh-initial-progress-current-input-admission-v1','passed':True,'source_revision':gate['source_revision'],
+         'current_orchestration_inputs':len(pins),'native_source_inputs':51,'native_build_schema':native['build_schema'],
+         'retained_new_native_bytes':193216,'historical_receiver_equivalence_claimed':False,'preprocessor_dependency_queries_only':True,
+         'old_native_receiver_consumed':False,'native_or_original_server_executed':False,'compiler_or_native_rebuilt':False,
+         'source_generation_admitted':False,'actor_publication':False,'world_authority':False}
+        path=pathlib.Path(os.environ['RUNNER_TEMP'])/'initial-progress-current-input-admission.json'
+        with path.open('x') as stream:json.dump(result,stream,sort_keys=True,indent=2);stream.write('\n')
+        with pathlib.Path(os.environ['GITHUB_ENV']).open('a') as stream:stream.write('INITIAL_PROGRESS_BUILD_SHA256='+gate['source_sha256']['native-android/engine/initial-capture/qualification/post-queue-progress-20261018/qualification.json']+'\n')
+        print(json.dumps(result,sort_keys=True))
+        PYNEWNATIVE
+    - name: Prepare original control runtime files without SQL or any capture startup
+      run: |
+        export GITHUB_SHA=9c29e08c8d7e0ab38cff00f2997c39738a56ad07
+        python3 tools/android/interactive/map_startup_inputs.py --output out/groups-native-inputs --cache out/groups-asset-cache
+        PYTHONPATH=tools/android/interactive python3 -c "import qualify_runtime_asset_preflight as p;p.ensure_assets('out/groups-asset-cache')"
+        python3 tools/android/atlasgame/prepare_server_fx_control_fixture.py --donor-apk out/groups-native-inputs/COH-Atlas-Gameplay-0.13.31.apk --payloads out/groups-asset-cache/payloads --output out/groups-control
+        python3 - <<'PY'
+        import shutil
+        assert shutil.disk_usage('.').free>=16*1024**3
+        PY
+    - name: Observe exactly one fresh original transaction with current native progress role and unchanged prepared runtime
+      run: |
+        CONTROL_FIXTURE="$GITHUB_WORKSPACE/runtime/out/groups-control/control-fixture.json"
+        CONTROL_RUNTIME=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['runtime_host_path'])" "$CONTROL_FIXTURE")
+        xvfb-run -a python3 native-android/engine/scenecatalog-server/capture_groups_transaction.py \
+          --runtime "$CONTROL_RUNTIME" --control-fixture "$CONTROL_FIXTURE" \
+          --db-donor-apk "$RUNNER_TEMP/groups-inputs/donor/COH-Atlas-Gameplay-0.13.34.apk" \
+          --compile-directory "$RUNNER_TEMP/groups-inputs/observer/fresh-groups-compile" \
+          --compile-receipt-sha256 28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91 \
+          --database-dump "$RUNNER_TEMP/groups-inputs/fixture/fixture.pgdump" --database-dump-sha256 "$GROUPS_DUMP_SHA256" \
+          --account-file "$RUNNER_TEMP/groups-inputs/fixture/account.txt" --wire-slot 0 \
+          --native-capture "$RUNNER_TEMP/groups-inputs/initial-progress/coh-capture-initial-progress" \
+          --native-build-receipt "$RUNNER_TEMP/groups-inputs/initial-progress/build.json" \
+          --native-build-receipt-sha256 "$INITIAL_PROGRESS_BUILD_SHA256" \
+          --pg-bin /usr/lib/postgresql/18/bin --wine /opt/wine-stable/bin/wine --wineserver /opt/wine-stable/bin/wineserver \
+          --work "$RUNNER_TEMP/groups-private-work" --output "$RUNNER_TEMP/groups-private-result" --timeout-seconds 1200
+      id: original_transaction
+      working-directory: current
+    - name: Extract only fixed public booleans and coarse source-defined failure enum
+      if: always() && steps.progress_input_admission.outcome == 'success'
+      run: |
+        mkdir -p out/groups-public
+        python3 native-android/engine/scenecatalog-server/summarize_groups_capture.py --private-output "$RUNNER_TEMP/groups-private-result" --output out/groups-public/summary.json
+      working-directory: current
+    - name: Export only new fixed command-unattributed progress projection after matching pair and owned cleanup
+      if: always() && steps.original_transaction.outcome == 'success'
+      working-directory: current
+      run: |
+        python3 native-android/engine/scenecatalog-server/initial_progress_admission.py \
+         --private-output "$RUNNER_TEMP/groups-private-result" \
+         --output out/groups-public/progress.json > out/groups-public/progress-status.json
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: fresh-initial-progress-public-${{ github.sha }}
+        path: |
+          current/out/groups-public/summary.json
+          current/out/groups-public/tooling.json
+          current/out/groups-public/progress.json
+          current/out/groups-public/progress-status.json
+        if-no-files-found: warn
+        retention-days: 90

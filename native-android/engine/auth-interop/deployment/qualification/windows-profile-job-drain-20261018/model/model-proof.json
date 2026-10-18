@@ -1,0 +1,16 @@
+{
+  "schema": "coh-job-drain-source-extracted-model-v1",
+  "source_sha256": "7f20e0ac15c8dcde5b05d9c9bed2a9cb11f77192482cd807998f5de329e54bbf",
+  "generated_CSharp_sha256": "c233058cffa60584f7bd8dccaee7add700ba1a8c9480ab775289edbaad52d820",
+  "only_translation": "Stopwatch declaration type -> Watch",
+  "compiler_sha256": "52f1ddb33fe78b9441e0f42e9cd22c571f1101938e046c8a26582494e041cc73",
+  "ELF_sha256": "b3124bf765de68abf5ebe42069189a047e13ca0c83781933b4892da8a7b47a0a",
+  "result": {
+    "passed": true,
+    "scenarios": 6,
+    "checks": 530,
+    "Windows_API": false,
+    "original_owner_or_probe": false
+  },
+  "CSharp_or_Windows_API_or_old_model_execution": false
+}

@@ -1,0 +1,31 @@
+{
+  "schema": "coh-initial-progress-admission-focused-v1",
+  "passed": true,
+  "checks": 14,
+  "refusals": 79,
+  "source_sha256": {
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "35d840f2ca04b320c462cc016f44910c4100e1210e203845df62ffc8de0527a4",
+    "native-android/engine/scenecatalog-server/initial_progress_admission.py": "194a21eac53e752de662114c1cb653cf56e75046665327b781b9046da7bce44c",
+    "native-android/engine/scenecatalog-server/test_initial_progress_admission.py": "7803add15da5f279a97cfd1b991f0d40499798b37aa5fdeae8d02ec0cc8dfc86",
+    "native-android/engine/scenecatalog-server/PROGRESS_ROLE_ADMISSION.md": "47b92bd3ebe0d047f6ed3dceeef8126fbcba33dc403e0593f62330a06897b4f5"
+  },
+  "native_build_receipt_sha256": "f4f568e518c58f5ae3e127b07d3534c04466fba51d68d34b0657e3f2f29aed97",
+  "real_retained_native_ELF_admitted_read_only": true,
+  "real51_current_source_pins_and_compiler_dependency_closure_checked": true,
+  "legacy_capture_source_restoration": {
+    "old_capture_sha256": "78a18536289ad03ed77c314c4bcd889a6dd7002faa735d923f39f059263d2639",
+    "new_capture_sha256": "35d840f2ca04b320c462cc016f44910c4100e1210e203845df62ffc8de0527a4",
+    "six_reversible_source_edits_only": true,
+    "legacy_native_input_and_NativeBuilds_unchanged": true
+  },
+  "new_retention_owner_predicate_explicit_double": true,
+  "new_private_file_and_public_projection_IO_executed": true,
+  "old_suites_or_native_qualifier_replayed": false,
+  "original_server_or_native_binary_executed": false,
+  "current_orchestration_required": "all51nativeinputs+newadapter enter existing committed Git source check before runtime",
+  "historical9c29_receiver_equivalence_claimed": false,
+  "source_generation_admitted": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

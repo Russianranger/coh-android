@@ -1,0 +1,14 @@
+{
+  "schema": "coh-focused-execution-retention-v1",
+  "qualification_sha256": "1161ed11ba63278e65a14ca9823c5741d7725ad112429e0e88d14bb1a4150df0",
+  "exact_stdout_retained": true,
+  "stdout_path": "focused-stdout.json",
+  "stdout_sha256": "e41d6d30f39749c1fdc74d9ce71bc41fcc500723ee827e47a2bf49f237f5b11f",
+  "stderr_path": "focused-stderr.txt",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "returncode": 0,
+  "reason_for_focused_rerun": "Maintained exact reversal test now pins immutable pre-bridge revision rather than moving HEAD. Production capture and adapter are unchanged.",
+  "prior_tool_only_stdout_disclosure": "pre-stable-revision-execution-retention.json",
+  "same_groups_owner_retainer_explicit_double": true,
+  "native_binary_or_original_server_executed": false
+}

@@ -59,6 +59,7 @@ DIAGNOSTIC_SOURCE_SHA256 = '3f556f65fa8a6182797c2d42bc0d1ea1c0a57aa54b5de058fe1f
 FILE_OWNER_SOURCE_SHA256 = '53add195056ce87c445de347bd6d0fa8996ff3c5842a59a69172587b649ec933'
 IDENTITY_SOURCE_SHA256 = '5420ba944a4b933d1067f0997ebd2f96b0c8581768cd885976e7042b415ff48e'
 PROFILE_SOURCE_SHA256 = 'ad25eb3dc6202df2bf4b1a271770e3c6555796c32174a083f90568af4a3c5b6b'
+JOB_DRAIN_SOURCE_SHA256 = 'c233058cffa60584f7bd8dccaee7add700ba1a8c9480ab775289edbaad52d820'
 IDENTITY_FILE_PHASES = FILE_PHASES | frozenset('''ACCOUNT_INTENT_JOURNAL ACCOUNT_CREATED_JOURNAL
 ACCOUNT_SID_JOURNAL ACCOUNT_PROFILE_JOURNAL TARGET_CREATE TARGET_PIN COPY_SOURCE COPY_IMAGE_CREATE
 COPY_IMAGE_PIN COPY_IMAGE_BYTES INPUT_CREATE INPUT_PIN RESULT_CREATE RESULT_PIN
@@ -298,6 +299,32 @@ def admit_profile_path(directory):
     return image, expected['sha256']
 
 
+def admit_job_drain(directory):
+    directory = Path(directory)/'job-drain'
+    receipt = decode_json(regular(directory/'job-drain-build.json', 65536).read_bytes())
+    need(receipt.get('schema') == 'coh-wpp-job-drain-build-v1' and
+         receipt.get('passed') is True and receipt.get('compiler_invocations') == 1 and
+         receipt.get('original_source_sha256') == SOURCE_PINS['OwnedProfileProcess.cs'] and
+         receipt.get('observed_source_sha256') == DIAGNOSTIC_SOURCE_SHA256 and
+         receipt.get('owner_source_sha256') == FILE_OWNER_SOURCE_SHA256 and
+         receipt.get('identity_source_sha256') == IDENTITY_SOURCE_SHA256 and
+         receipt.get('profile_source_sha256') == PROFILE_SOURCE_SHA256 and
+         receipt.get('generated_source_sha256') == JOB_DRAIN_SOURCE_SHA256 and
+         receipt.get('generated_source_bytes') == 50561 and
+         all(receipt.get(name) is True for name in ('exact_reverse_verified',
+             'selected_compiler_files_match_accepted_build', 'explicit_file_security_at_create',
+             'existing_owner_acl_identity_guards_preserved', 'bounded_job_drain_repair')) and
+         all(receipt.get(name) is False for name in ('accepted_inert_probe_recompiled',
+             'accepted_model_recompiled_or_executed', 'helper_executed',
+             'source_generation_admitted', 'world_authority')), 'JOB_DRAIN_BUILD')
+    image = regular(directory/'OwnedProfileProcess.exe', 16*1024*1024)
+    expected = receipt.get('helper_image', {})
+    need(type(expected.get('bytes')) is int and image.stat().st_size == expected['bytes'] and
+         re.fullmatch('[0-9a-f]{64}', expected.get('sha256', '')) is not None and
+         sha(image) == expected['sha256'], 'JOB_DRAIN_IMAGE')
+    return image, expected['sha256']
+
+
 class Native:
     """New outer supervisor, System32 APIs only; no account/profile operations."""
     def __init__(self):
@@ -430,7 +457,7 @@ class BoundedPipe:
             self.failed = True
 
 
-def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identity_diagnostic=False, profile_diagnostic=False, profile_system_drive=False):
+def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identity_diagnostic=False, profile_diagnostic=False, profile_system_drive=False, job_drain=False):
     status = dict(schema='coh-owned-profile-inert-supervision-v1', passed=False,
                   first_failure='NONE', first_cleanup_failure='NONE',
                   accepted_build_reused=False, compiler_or_model_reexecuted=False,
@@ -447,10 +474,15 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
                   explicit_file_owner_requested=file_owner,
                   identity_diagnostic_requested=identity_diagnostic,
                   profile_path_diagnostic_requested=profile_diagnostic,
-                  system_drive_environment_requested=profile_system_drive,
+                  system_drive_environment_requested=profile_system_drive or job_drain,
+                  job_drain_successor_requested=job_drain,
                   retained_profile_helper_reused=False,
                   changed_helper_compiled_only=False,
                   accepted_probe_or_model_reexecuted=False,
+                  accepted_model_qualifier_reexecuted=False,
+                  accepted_inert_probe_recompiled=False,
+                  inert_probe_resume_observed=False,
+                  inert_hkcu_result_verified=False,
                   new_helper_compiler_invocations=0)
     native_receipt = None
     native = None
@@ -461,9 +493,15 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
     parent_created = False
     stage = 'ARTIFACT_ADMISSION'
     try:
-        need(sum(bool(mode) for mode in (file_diagnostic, file_owner, identity_diagnostic, profile_diagnostic, profile_system_drive)) <= 1, 'HELPER_MODE')
+        need(sum(bool(mode) for mode in (file_diagnostic, file_owner, identity_diagnostic, profile_diagnostic, profile_system_drive, job_drain)) <= 1, 'HELPER_MODE')
         images = admit_artifact(artifact)
         status['accepted_build_reused'] = True
+        if job_drain:
+            stage = 'JOB_DRAIN_ADMISSION'
+            images['OwnedProfileProcess.exe'] = admit_job_drain(artifact)
+            status['changed_helper_compiled_only'] = True
+            status['compiler_or_model_reexecuted'] = True
+            status['new_helper_compiler_invocations'] = 1
         if profile_system_drive:
             stage = 'RETAINED_PROFILE_ADMISSION'
             images['OwnedProfileProcess.exe'] = admit_profile_path(artifact)
@@ -506,7 +544,7 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
         stage = 'HELPER_LAUNCH'
         helper, _ = images['OwnedProfileProcess.exe']
         probe, probe_hash = images['InertProfileProbe.exe']
-        environment = helper_environment(os.environ, system_drive=profile_system_drive)
+        environment = helper_environment(os.environ, system_drive=profile_system_drive or job_drain)
         process = subprocess.Popen([str(helper), '--qualify-inert', str(probe), probe_hash,
                                     str(Path(parent).absolute())], cwd=str(helper.parent),
                                    stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
@@ -537,8 +575,10 @@ def execute(artifact, parent, *, file_diagnostic=False, file_owner=False, identi
         stage = 'HELPER_RECEIPT'
         native_receipt = parse_receipt(bytes(pipes[0].data), file_diagnostic=file_diagnostic or file_owner,
                                        identity_diagnostic=identity_diagnostic,
-                                       profile_diagnostic=profile_diagnostic or profile_system_drive)
+                                       profile_diagnostic=profile_diagnostic or profile_system_drive or job_drain)
         status['helper_receipt_valid'] = True
+        status['inert_probe_resume_observed'] = native_receipt['resume_previous_count_one']
+        status['inert_hkcu_result_verified'] = native_receipt['inert_hkcu_probe_verified']
         status['inner_cleanup_observed'] = native_receipt['cleanup_complete']
         status['private_journal_may_remain'] = not native_receipt['cleanup_complete']
         need(process.returncode == (0 if native_receipt['passed'] else 1), 'HELPER_EXIT')
@@ -631,6 +671,7 @@ def main():
     mode.add_argument('--file-identity-diagnostic', action='store_true')
     mode.add_argument('--profile-path-diagnostic', action='store_true')
     mode.add_argument('--profile-system-drive', action='store_true')
+    mode.add_argument('--profile-job-drain', action='store_true')
     args = parser.parse_args()
     # Before mutation, require the explicit disposable CI host and a fresh
     # public directory. No username/SID/profile/packet/log selector is accepted.
@@ -643,7 +684,7 @@ def main():
                                      file_diagnostic=args.file_diagnostic, file_owner=args.file_owner,
                                      identity_diagnostic=args.file_identity_diagnostic,
                                      profile_diagnostic=args.profile_path_diagnostic,
-                                     profile_system_drive=args.profile_system_drive)
+                                     profile_system_drive=args.profile_system_drive, job_drain=args.profile_job_drain)
     (args.public_out/'supervision.json').write_text(json.dumps(status, indent=2)+'\n', encoding='utf-8')
     if native_receipt is not None:
         (args.public_out/'inert-result.json').write_text(json.dumps(native_receipt, indent=2)+'\n', encoding='utf-8')

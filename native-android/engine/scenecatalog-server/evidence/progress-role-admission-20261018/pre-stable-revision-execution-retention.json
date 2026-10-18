@@ -1,0 +1,9 @@
+{
+  "schema": "coh-focused-execution-retention-v1",
+  "qualification_sha256": "ceb02c0c188e8d1e1e78914b260449855f8f5bdb4962608e67ea08f493228ad5",
+  "exact_stdout_retained": false,
+  "qualification_receipt_retained": true,
+  "execution_record": "The focused run returned passed=true, checks=14, refusals=80, actual_source_pins=51 to the tool session. No separate exact stdout file was saved. No stdout file was reconstructed and no test was rerun to fill this retention gap.",
+  "same_groups_owner_retainer_explicit_double": true,
+  "native_binary_or_original_server_executed": false
+}

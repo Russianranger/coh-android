@@ -1,0 +1,10 @@
+test_actual_job_refusal_keeps_observed_progress_and_cleanup_scope (__main__.JobDrainControls.test_actual_job_refusal_keeps_observed_progress_and_cleanup_scope) ... ok
+test_exact_one_replacement_preserves_query_and_result_guards (__main__.JobDrainControls.test_exact_one_replacement_preserves_query_and_result_guards) ... ok
+test_new_helper_admission_refuses_source_or_scope_mutations (__main__.JobDrainControls.test_new_helper_admission_refuses_source_or_scope_mutations) ... ok
+test_other_modes_conflict_before_artifact_or_windows_calls (__main__.JobDrainControls.test_other_modes_conflict_before_artifact_or_windows_calls) ... ok
+test_source_extracted_poll_model_bounds_and_query_refusals (__main__.JobDrainControls.test_source_extracted_poll_model_bounds_and_query_refusals) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.232s
+
+OK

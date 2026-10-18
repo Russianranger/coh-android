@@ -1,0 +1,122 @@
+name: Qualify bounded Windows profile job drain
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-owned-profile-job-drain.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-owned-profile-job-drain-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  actual-profile-job-drain:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+      && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[windows-profile-job-drain]'))
+    runs-on: windows-2025
+    timeout-minutes: 12
+    steps:
+    - name: Preserve exact checkout bytes
+      shell: pwsh
+      run: git config --global core.autocrlf false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 1
+    - name: Admit exact supervisor sources
+      shell: pwsh
+      run: "@'\nimport hashlib,json,os,pathlib,subprocess\nif not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise\
+        \ ValueError('OPTIMIZED_SOURCE_ADMISSION_REFUSED')\nassert os.environ['RUNNER_ENVIRONMENT']=='github-hosted'\
+        \ and os.environ['RUNNER_OS']=='Windows' and os.environ['RUNNER_ARCH']=='X64'\nassert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
+        \ and os.environ['GITHUB_REF']=='refs/heads/native-android'\nhead=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip();assert\
+        \ head==os.environ['GITHUB_SHA']\npins={'native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py':\
+        \ '66cb09b31e5277b03909cf12c734ebc5365889d3817c93b7cfe81a53d30f58ec', 'native-android/engine/auth-interop/deployment/windows-profile-process/prepare_profile_diagnostic.py':\
+        \ '80e0e561954a9350c2926543ac0018eae6cee139b7936fa2067ad7b9bd3316a8', 'native-android/engine/auth-interop/deployment/windows-profile-process/prepare_identity_diagnostic.py':\
+        \ '4ee58db014ee8f602534cd0be0b97afed4fca34890ca8e6c09a74dcd150ca113', 'native-android/engine/auth-interop/deployment/windows-profile-process/prepare_file_owner.py':\
+        \ '7e98a8ced01d6b68774a9ff8f6b636b2236df74114718ea4cba9eb75a01738ad', 'native-android/engine/auth-interop/deployment/windows-profile-process/prepare_file_diagnostic.py':\
+        \ '825ef01636c34f87b4350a861b343a8be12a6a6cbc03da5be5eff9b5a3a3a3bc', 'native-android/engine/auth-interop/deployment/windows_suspended_thread.py':\
+        \ '5c5306850d5c1abeab5f70682ce54f35240127f67a54f90393598421caef5a11', 'native-android/engine/auth-interop/deployment/windows-profile-process/prepare_job_drain.py':\
+        \ '01a090ee5b15cb8545d09ed68f72c3ad7ae8b3d58430ea558a4274ad047340a4', 'native-android/engine/auth-interop/deployment/windows-profile-process/build-job-drain.ps1':\
+        \ '846fd521f5b2006806aec6df29d27b19fff1dec1fe4e3283ce897ee5242d501a', 'native-android/engine/auth-interop/deployment/windows-profile-process/OwnedProfileProcess.cs':\
+        \ '6d01645e4df2db0564b6b9db3924c4cebb3ff9a590c1d73b422c5e9cce7ef474', 'native-android/engine/auth-interop/deployment/windows-profile-process/as-invoker.manifest':\
+        \ '3a462ffbbe724bd1c520e85696599d057e3d2a8f0bb0270d5ec712be20e27331'}\nfor name,pin in pins.items():\n\
+        \ p=pathlib.Path(name);raw=p.read_bytes();assert not p.is_symlink() and 0<len(raw)<1048576 and\
+        \ hashlib.sha256(raw).hexdigest()==pin\n assert subprocess.check_output(['git','show',head+':'+name])==raw\n\
+        self_name='.github/workflows/native-owned-profile-job-drain.yml'\nassert subprocess.check_output(['git','show',head+':'+self_name])==pathlib.Path(self_name).read_bytes()\n\
+        print(json.dumps({'source_admission_passed':True,'runtime_executed':False,'pinned_sources':len(pins)}))\n\
+        '@ | python -\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\n"
+    - name: Reuse exact accepted compiler and model artifact
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: "@'\nimport hashlib,json,os,pathlib,stat,urllib.request,urllib.parse,zipfile,io\nclass SafeRedirect(urllib.request.HTTPRedirectHandler):\n\
+        \ def redirect_request(self,req,fp,code,msg,headers,newurl):\n  out=super().redirect_request(req,fp,code,msg,headers,newurl)\n\
+        \  if out is not None and urllib.parse.urlsplit(req.full_url).netloc!=urllib.parse.urlsplit(newurl).netloc:out.remove_header('Authorization')\n\
+        \  return out\nopener=urllib.request.build_opener(SafeRedirect())\nbase='https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12128507472'\n\
+        headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}\n\
+        def get(url,maximum):\n with opener.open(urllib.request.Request(url,headers=headers),timeout=60)\
+        \ as r:raw=r.read(maximum+1)\n assert 0<len(raw)<=maximum\n return raw\nmeta=json.loads(get(base,65536));assert\
+        \ meta['id']==12128507472 and not meta['expired'] and meta['size_in_bytes']==43251\nassert meta['name']=='owned-profile-build-model-362f10cc71148c32b3b84e6c6cbe7ce59ac94480'\n\
+        assert meta['digest']=='sha256:8d8dfbe59ed5349e1c8468445e7b8b1c005f9e9f189a665a0a96cc67fba9bebc'\n\
+        assert meta['workflow_run']['id']==39106023132 and meta['workflow_run']['head_sha']=='362f10cc71148c32b3b84e6c6cbe7ce59ac94480'\n\
+        raw=get(base+'/zip',43251);assert len(raw)==43251 and hashlib.sha256(raw).hexdigest()=='8d8dfbe59ed5349e1c8468445e7b8b1c005f9e9f189a665a0a96cc67fba9bebc'\n\
+        destination=pathlib.Path(os.environ['RUNNER_TEMP'])/'wpp-accepted';destination.mkdir()\nexpected={'source-admission.json','compiler-status.json','build.json','model-status.json','model-execution.json','summary.json','OwnedProfileProcess.exe','InertProfileProbe.exe','TestOwnedProfileProcess.exe'}\n\
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:\n entries=z.infolist();assert len(entries)==len(expected)\
+        \ and {x.filename for x in entries}==expected and z.testzip() is None\n assert all(not x.is_dir()\
+        \ and not x.flag_bits&1 and stat.S_IFMT(x.external_attr>>16) in (0,stat.S_IFREG) and 0<x.file_size<1048576\
+        \ for x in entries)\n for x in entries:\n  with (destination/x.filename).open('xb') as f:f.write(z.read(x))\n\
+        print(json.dumps({'accepted_artifact_admitted':True,'compiler_or_model_reexecuted':False}))\n\
+        '@ | python -\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\n"
+    - name: Compile one bounded job-drain helper retaining accepted probe and model
+      id: diagnostic_build
+      shell: pwsh
+      run: "$ErrorActionPreference='Stop'\n$driverLog=Join-Path $env:RUNNER_TEMP 'wpp-file-build-driver.private.txt'\n\
+        $stage='PREPARATION';$ok=$false\ntry {\n & python native-android/engine/auth-interop/deployment/windows-profile-process/prepare_job_drain.py\
+        \ --out-dir \"$env:RUNNER_TEMP/wpp-accepted/job-drain\" *> $driverLog\n if($LASTEXITCODE -ne 0){throw\
+        \ 'PREPARATION_REFUSED'}\n $stage='NEW_HELPER_COMPILE'\n $ps=Join-Path $env:WINDIR 'System32/WindowsPowerShell/v1.0/powershell.exe'\n\
+        \ & $ps -NoProfile -NonInteractive -File native-android/engine/auth-interop/deployment/windows-profile-process/build-job-drain.ps1\
+        \ -AcceptedArtifactDir \"$env:RUNNER_TEMP/wpp-accepted\" -OutDir \"$env:RUNNER_TEMP/wpp-accepted/job-drain\"\
+        \ *> $driverLog\n if($LASTEXITCODE -ne 0){throw 'BUILD_REFUSED'}\n $ok=$true\n} catch {$ok=$false}\n\
+        Write-Output ('{\"new_job_drain_helper_compiled\":'+$ok.ToString().ToLowerInvariant()+',\"stage\"\
+        :\"'+$stage+'\",\"accepted_probe_or_model_rebuilt_or_model_qualifier_replayed\":false}')\nif(-not\
+        \ $ok){exit 2}\n"
+    - name: Execute owned profile helper with bounded post-exit job drain
+      shell: pwsh
+      run: 'New-Item -ItemType Directory -Path out -Force | Out-Null
+
+        python native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py
+        --profile-job-drain --artifact-dir "$env:RUNNER_TEMP/wpp-accepted" --private-parent "$env:RUNNER_TEMP/wpp-job-drain-private"
+        --public-out out/wpp-job-drain-public
+
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+        '
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: owned-job-drain-observation-${{ github.sha }}
+        path: 'out/wpp-job-drain-public/supervision.json
+
+          out/wpp-job-drain-public/inert-result.json
+
+          '
+        if-no-files-found: warn
+        retention-days: 90
+    - uses: actions/upload-artifact@v4
+      if: always() && steps.diagnostic_build.outcome == 'success'
+      with:
+        name: owned-job-drain-helper-${{ github.sha }}
+        path: '${{ runner.temp }}/wpp-accepted/job-drain/OwnedProfileProcess.exe
+
+          ${{ runner.temp }}/wpp-accepted/job-drain/OwnedProfileProcessJobDrain.cs
+
+          ${{ runner.temp }}/wpp-accepted/job-drain/preparation.json
+
+          ${{ runner.temp }}/wpp-accepted/job-drain/job-drain-build.json
+
+          '
+        if-no-files-found: error
+        retention-days: 90

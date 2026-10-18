@@ -1,0 +1,11 @@
+test_changed_observation_source_refused_before_any_generation (__main__.FileOwnerControls.test_changed_observation_source_refused_before_any_generation) ... ok
+test_conflicting_modes_refused_before_artifact_or_windows_actions (__main__.FileOwnerControls.test_conflicting_modes_refused_before_artifact_or_windows_actions) ... ok
+test_new_artifact_identity_provenance_and_scope_refuse_mutations (__main__.FileOwnerControls.test_new_artifact_identity_provenance_and_scope_refuse_mutations) ... ok
+test_original_owner_acl_identity_launch_and_cleanup_guards_byte_exact (__main__.FileOwnerControls.test_original_owner_acl_identity_launch_and_cleanup_guards_byte_exact) ... ok
+test_preserved_actual_failure_retains_first_cause_and_cleanup_scope (__main__.FileOwnerControls.test_preserved_actual_failure_retains_first_cause_and_cleanup_scope) ... ok
+test_successor_reverses_to_exact_actually_observed_helper (__main__.FileOwnerControls.test_successor_reverses_to_exact_actually_observed_helper) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.010s
+
+OK

@@ -1,0 +1,41 @@
+{
+  "schema": "coh-wpp-job-drain-source-freeze-v1",
+  "source": {
+    "native-android/engine/auth-interop/deployment/windows-profile-process/prepare_job_drain.py": {
+      "bytes": 2290,
+      "sha256": "01a090ee5b15cb8545d09ed68f72c3ad7ae8b3d58430ea558a4274ad047340a4"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/build-job-drain.ps1": {
+      "bytes": 4551,
+      "sha256": "846fd521f5b2006806aec6df29d27b19fff1dec1fe4e3283ce897ee5242d501a"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/supervise_inert.py": {
+      "bytes": 39991,
+      "sha256": "66cb09b31e5277b03909cf12c734ebc5365889d3817c93b7cfe81a53d30f58ec"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/test_job_drain.py": {
+      "bytes": 8189,
+      "sha256": "824af0183b339d66a4cde1af002bd2f1c377e3f55acca4c7b813836e10a57053"
+    },
+    "native-android/engine/auth-interop/deployment/windows-profile-process/JOB-DRAIN.md": {
+      "bytes": 3375,
+      "sha256": "ffe7f80004e0087b543e3c0d69a0f8859b08e79203c7867f6c498d1b8611d02b"
+    }
+  },
+  "preparation": {
+    "schema": "coh-wpp-job-drain-preparation-v1",
+    "passed": true,
+    "profile_source_sha256": "ad25eb3dc6202df2bf4b1a271770e3c6555796c32174a083f90568af4a3c5b6b",
+    "generated_source_sha256": "c233058cffa60584f7bd8dccaee7add700ba1a8c9480ab775289edbaad52d820",
+    "generated_source_bytes": 50561,
+    "replacements": 1,
+    "exact_reverse_verified": true,
+    "bounded_job_drain_repair": true,
+    "existing_owner_acl_identity_guards_preserved": true,
+    "compiler_or_helper_or_model_executed": false
+  },
+  "actual_successor_windows_execution": false,
+  "query_vs_valid_nonempty_reason_observed": false,
+  "service_readiness_qualified": false,
+  "world_authority": false
+}
