@@ -1,0 +1,105 @@
+{
+  "Android_ABI_or_RSS_or_available_capacity_measured": false,
+  "all_remaining_old_candidate_provider_body_destination_runtime_peaks_require_parent_charge": true,
+  "authentic_body_count": 22,
+  "authentic_body_input_bytes_total": 1343668,
+  "authentic_cohort_fixed_configured_floor_bytes": 34668544,
+  "authentic_fixture_external_field_is_not_complete_actual_memory_admission": true,
+  "authentic_fixture_external_reservation_bytes": 1048576,
+  "authentic_fixture_source_payload_lower_bound_exceeds_external_by_bytes": 295092,
+  "authentic_fixture_source_payloads_simultaneously_calloc_loaded": true,
+  "bounded_count_configuration_is_not_actual_inventory": true,
+  "capture_additional_host_owner_bytes": 2352,
+  "capture_growth_from_990": 0,
+  "capture_owner_bytes": 1072,
+  "compiler_qualifier_or_runtime_replayed": false,
+  "controlled_path_projection_rows": 8936,
+  "current_global_parent_adapter_admission": false,
+  "current_provider_generation": false,
+  "embedded_fields_already_in_owner_total": true,
+  "historical_parent_cap_bytes": 100663296,
+  "known_predecessor_owned_plus_full_loader_enforced_before_callbacks": true,
+  "namespace_aggregate_reserved_bytes": null,
+  "namespace_basic_count_bound": 65536,
+  "namespace_body_lease_count_bound": 256,
+  "namespace_complete": false,
+  "namespace_control_reserve_bytes": 65536,
+  "namespace_exact_cohort_owner_and_aggregate_totals_retained": false,
+  "namespace_existing_host_frame_sum_bytes": 18408,
+  "namespace_owned_bytes": null,
+  "namespace_peak_owned_bytes": null,
+  "namespace_record_and_node_count_bounds_each": 262144,
+  "namespace_root_and_pigg_count_bounds_each": 32768,
+  "new_RGBA32_codec_included": false,
+  "note_sha256": "531926c24a7342111b58236d2aa5dce3d27d22a21446a61b966b7dbbaabfe825",
+  "ordinary_local_map_and_callback_lease_separate": [
+    1040,
+    2536,
+    1344
+  ],
+  "private_map_wrapper_bytes": 1280,
+  "projection_cohort_fixed_configured_floor_bytes": 100728832,
+  "projection_configuration_floor_exceeds_parent_cap_before_owned_and_inputs": true,
+  "retirement_credit_taken": false,
+  "schema": "coh-f-namespace-capture-budget-source-update-v1",
+  "source_and_existing_receipts_only": true,
+  "source_sha256": {
+    "native-android/engine/initial-capture/coh_initial_capture.h": {
+      "bytes": 7161,
+      "commit": "30f9a3a6282d771c907d26d418aca22a0c9c1917",
+      "sha256": "e0eca8b11819d3d57bb53861d52a975f59a643e2aedf39cef235c551e2e3bc8f"
+    },
+    "native-android/engine/initial-capture/coh_initial_capture_private.h": {
+      "bytes": 927,
+      "commit": "30f9a3a6282d771c907d26d418aca22a0c9c1917",
+      "sha256": "6638a085be28d42648a075b4aa5e6389408d1ec63d5577f9faf74d64c608188a"
+    },
+    "native-android/engine/initial-capture/coh_initial_local.c": {
+      "bytes": 7223,
+      "commit": "30f9a3a6282d771c907d26d418aca22a0c9c1917",
+      "sha256": "c10545b32441b1ad0c90c845e023b6d178271d5062554aa3a8035b723e1e4ea8"
+    },
+    "native-android/engine/initial-capture/coh_initial_map.c": {
+      "bytes": 14998,
+      "commit": "30f9a3a6282d771c907d26d418aca22a0c9c1917",
+      "sha256": "0bdeaf772d6f861d42e6b24f2054331b15ec1ff976636433d69b6e68f08c9543"
+    },
+    "native-android/engine/initial-capture/qualification/initial-capture-explicit-deadline-30f9a3a62.json.gz": {
+      "bytes": 5487,
+      "commit": "9f3dcfb17e99a7d35608d4a389583a1997057b90",
+      "sha256": "9debb4fa590473ed56068342639f454ee8157ac86eaec337cdfc38ee38433e1a"
+    },
+    "native-android/engine/initial-capture/qualification/initial-capture-explicit-deadline-binding-20261017.json": {
+      "bytes": 2718,
+      "commit": "9f3dcfb17e99a7d35608d4a389583a1997057b90",
+      "sha256": "abce21d732575110abbc32a2211765ae0be85517551878ed26ec016b661d7d3b"
+    },
+    "native-android/engine/world-render-adapter/coh_wr_tex_namespace.c": {
+      "bytes": 38461,
+      "commit": "28b7f6d23f6dc42f3a40513b80105d0c1cd318a9",
+      "sha256": "067bb8c1e3794ff86bf36e3b3ea90fd0cbda4c5cad3ece2f88c3b08435dd5a37"
+    },
+    "native-android/engine/world-render-adapter/coh_wr_tex_namespace.h": {
+      "bytes": 6885,
+      "commit": "28b7f6d23f6dc42f3a40513b80105d0c1cd318a9",
+      "sha256": "aa9cf127384f18f96f3a0ebb0938ed403c2884a2630101824716a71cbcfb7e1c"
+    },
+    "native-android/engine/world-render-adapter/qualification/texture-namespace-provider-20261017/HANDOFF.md": {
+      "bytes": 8968,
+      "commit": "28b7f6d23f6dc42f3a40513b80105d0c1cd318a9",
+      "sha256": "4ec9914f94505cef870dd9e518f89aaa9f1a0806bfd52f90ee87de1a28afdd88"
+    },
+    "native-android/engine/world-render-adapter/qualification/texture-namespace-provider-20261017/host.json": {
+      "bytes": 16413,
+      "commit": "28b7f6d23f6dc42f3a40513b80105d0c1cd318a9",
+      "sha256": "d700887edb408c67ab42a4bfbc786f9de8073758fb6b9e4d39713959273d47f0"
+    },
+    "native-android/engine/world-render-adapter/tests/test_tex_namespace.c": {
+      "bytes": 28177,
+      "commit": "28b7f6d23f6dc42f3a40513b80105d0c1cd318a9",
+      "sha256": "83080451f04f63636578105a1b4ebe5f18175beb7b98f5e44ab2981318156a92"
+    }
+  },
+  "test_local_aggregate_limit_bytes": 201326592,
+  "world_authority": false
+}

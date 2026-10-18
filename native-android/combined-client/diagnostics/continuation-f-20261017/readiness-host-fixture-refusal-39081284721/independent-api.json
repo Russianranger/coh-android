@@ -1,0 +1,101 @@
+{
+  "schema": "coh-f-independent-readiness-host-refusal-api-v1",
+  "run": {
+    "id": 39081284721,
+    "head_sha": "bd7b16b6ae188f9e8e1aa90542eb86287f38c312",
+    "tree_id": "4f40ba43112cea2c86c453191a2d49c787f28cb2",
+    "path": ".github/workflows/native-db-threadname-readiness.yml",
+    "status": "completed",
+    "conclusion": "failure",
+    "repository_id": 1368730125,
+    "head_repository_id": 1368730125
+  },
+  "jobs": [
+    {
+      "id": 117538552052,
+      "name": "new-db-registration",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 39081284721,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Preserve exact source line endings",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Check only new candidate readiness and generated metadata admission controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 5
+        },
+        {
+          "name": "Recover exact accepted AuthServer and independently admitted new DbServer build",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6
+        },
+        {
+          "name": "Observe new DbServer registration with unchanged Auth SQL profile and cleanup",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        }
+      ]
+    }
+  ],
+  "artifacts": [],
+  "public_pre_service_log_checks": {
+    "expected_call_mismatch": true,
+    "executed_checkout_refusal": true,
+    "Windows_short_temp_alias_present": true,
+    "Windows_resolved_temp_alias_present": true,
+    "seven_tests_reported": true,
+    "one_failure_one_error": true
+  },
+  "raw_job_log_or_temporary_paths_exported": false
+}

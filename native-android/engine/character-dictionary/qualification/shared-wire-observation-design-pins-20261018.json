@@ -1,0 +1,147 @@
+{
+  "accepted_source_or_global_changed": false,
+  "ack_permitted": false,
+  "actor_publication": false,
+  "coordinated_dynamic_design": {
+    "bytes": 9811,
+    "equal_committed_blob": true,
+    "implemented_or_executed": false,
+    "path": "native-android/engine/scenecatalog-server/dynamic-observer/DESIGN.md",
+    "sha256": "d12234d3c39f07472b0ac32863e525df99b919813276826f27f1c01583134450",
+    "source_commit": "cc056230c1628ed5a82da1df05d91b3a3792c888"
+  },
+  "current_costume_epoch_admitted": false,
+  "current_dictionary_semantics_admitted": false,
+  "default_build_changed": false,
+  "design_only": true,
+  "implementation_added": false,
+  "new_capture_run": false,
+  "proposed_final_source_seam": {
+    "after": "pktSendBitsPack(e->entityPacket, 1, 0 );",
+    "before": "pktSend(&e->entityPacket,client->link);",
+    "file": "MapServer/src/entity/entsend.c",
+    "function": "entFinishUpdate",
+    "internal_keys": [
+      "Entity",
+      "Packet",
+      "Client",
+      "link"
+    ],
+    "native_final_payload_and_logical_bits_must_equal": true,
+    "same_source_GROUPS_run_and_owned_native_handoff_required": true,
+    "serialized_raw_pointers": false
+  },
+  "proposed_ledger": {
+    "decoded_packet_bytes_cap_unchanged": 4194304,
+    "eager_dictionary_graph": false,
+    "eight_row_bytes": 160,
+    "max_build_rows": 8,
+    "measured_C_ABI_or_aggregate_budget_admitted": false,
+    "new_packet_copy": false,
+    "row_fields": [
+      "actual_build",
+      "actual_first_set",
+      "actual_total_sets",
+      "begin_bit",
+      "end_bit"
+    ],
+    "row_u32_bytes": 20,
+    "serialized_bytes_cap": 512,
+    "total_sets_and_first_set_cap_unchanged": 256
+  },
+  "review_date": "2026-10-18",
+  "reviewed_baseline": "9f3dcfb17e99a7d35608d4a389583a1997057b90",
+  "schema": "coh-shared-wire-observation-design-pins-v1",
+  "server_executed": false,
+  "source_generation_admitted": false,
+  "source_overlay_added": false,
+  "source_sha256": {
+    "native-android/engine/character-data/coh_character_data.h": {
+      "bytes": 4472,
+      "equal_committed_baseline": true,
+      "sha256": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0"
+    },
+    "native-android/engine/character-dictionary/WHOLE_INITIAL_INPUTS.md": {
+      "bytes": 9978,
+      "equal_committed_baseline": true,
+      "sha256": "bb17a552fc10a21f4c214171402a16fea1ee265d0d48531af6452688988ac558"
+    },
+    "native-android/engine/costume-export/source_costume_export.inc": {
+      "bytes": 3721,
+      "equal_committed_baseline": true,
+      "sha256": "55bc3ed600f1052fb953ecce1a4c28fca60249d6bd39c584d4ab987c054c9529"
+    },
+    "native-android/engine/costume-export/stage.py": {
+      "bytes": 3826,
+      "equal_committed_baseline": true,
+      "sha256": "66d5f63da01ddc551aa73128f06316efa440e36c9f31d0eda35bd74cc804adbd"
+    },
+    "upstream/ouroboros/Common/entity/character_base.h": {
+      "bytes": 34656,
+      "equal_committed_baseline": true,
+      "sha256": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee"
+    },
+    "upstream/ouroboros/Common/entity/character_net.c": {
+      "bytes": 35661,
+      "equal_committed_baseline": true,
+      "sha256": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091"
+    },
+    "upstream/ouroboros/Common/entity/entPlayer.h": {
+      "bytes": 29710,
+      "equal_committed_baseline": true,
+      "sha256": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e"
+    },
+    "upstream/ouroboros/Common/entity/load_def.c": {
+      "bytes": 58505,
+      "equal_committed_baseline": true,
+      "sha256": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5"
+    },
+    "upstream/ouroboros/Common/entity/powers.h": {
+      "bytes": 63127,
+      "equal_committed_baseline": true,
+      "sha256": "9618cc4050e1002d9ea2c7d3a237ce0996f7c0036e21becf73ebdb11b75d112f"
+    },
+    "upstream/ouroboros/Common/entity/powers_load.c": {
+      "bytes": 131442,
+      "equal_committed_baseline": true,
+      "sha256": "c5b7bbf32621922a36ba097d566840bdd9d4afc692d8e3baacd0e207dc1e12b8"
+    },
+    "upstream/ouroboros/MapServer/src/entity/entsend.c": {
+      "bytes": 171294,
+      "equal_committed_baseline": true,
+      "sha256": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+    }
+  },
+  "whole_original_function_sha256_lf": {
+    "Common/entity/character_net.c:character_SendPowers": {
+      "bytes_lf": 4301,
+      "first_line_lf": 614,
+      "sha256_lf": "09180c33c2458de745e770fe71c6f8aee09ffcbb76bd304eed0b7f4361297585"
+    },
+    "Common/entity/load_def.c:load_AllDefsReload": {
+      "bytes_lf": 2480,
+      "first_line_lf": 1516,
+      "sha256_lf": "a5429b2e4bf56dea05c3728473451feda73fa1bb71240db5c8639e84655ee22e"
+    },
+    "Common/entity/powers_load.c:ReloadPowers": {
+      "bytes_lf": 6689,
+      "first_line_lf": 2766,
+      "sha256_lf": "a225bd5bf3e5c1eb160407c4fdedfbb00577788c13d0da646ea4543ced2efc15"
+    },
+    "Common/entity/powers_load.c:load_PowerDictionary": {
+      "bytes_lf": 2860,
+      "first_line_lf": 2696,
+      "sha256_lf": "d40438d23f16e14a4da30ad6277603e049e3ab37117820981c21897e669080a8"
+    },
+    "Common/entity/powers_load.c:powerdict_FindSharedPowersets": {
+      "bytes_lf": 657,
+      "first_line_lf": 1580,
+      "sha256_lf": "c189107add6f5772292f35b166e9c69c714be22709f8e60e4e01c0796f8abad6"
+    },
+    "MapServer/src/entity/entsend.c:entFinishUpdate": {
+      "bytes_lf": 7222,
+      "first_line_lf": 1656,
+      "sha256_lf": "043259c9a6cfd91b4e89f80dfe08ab607433c84d14d3bf4ea080acfd212e0c98"
+    }
+  }
+}

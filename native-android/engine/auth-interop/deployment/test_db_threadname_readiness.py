@@ -38,7 +38,7 @@ class ReadinessTests(unittest.TestCase):
 
     def test_candidate_pins_are_admitted_before_copy_and_rechecked(self):
         with tempfile.TemporaryDirectory() as temp:
-            directory=Path(temp)/'stage';directory.mkdir();binary=directory/stage.candidate.BINARY;binary.write_bytes(b'new candidate fixture')
+            directory=Path(temp).resolve()/'stage';directory.mkdir();binary=directory/stage.candidate.BINARY;binary.write_bytes(b'new candidate fixture')
             pin=stage.candidate.digest(binary.read_bytes());receipt=directory/'receipt.json'
             receipt.write_text(json.dumps({'repository_commit':'b'*40,'source_file_map_sha256':'c'*64}))
             receipt_pin=stage.candidate.digest(receipt.read_bytes())
@@ -170,7 +170,7 @@ class ReadinessTests(unittest.TestCase):
 
     def test_new_runtime_sources_require_real_tracked_commit_ownership(self):
         with tempfile.TemporaryDirectory() as temp:
-            root=Path(temp)
+            root=Path(temp).resolve()
             for name in stage.RUNTIME_INPUTS:
                 path=root/name;path.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/name,path)
             def git(*args):return subprocess.check_output(['git','-C',str(root),*args],stderr=subprocess.PIPE).decode().strip()

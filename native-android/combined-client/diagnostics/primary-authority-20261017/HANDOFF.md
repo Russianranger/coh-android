@@ -7,18 +7,18 @@ Git links, existing bundles, accepted APKs and user profiles were preserved.
 
 ## Current qualification checkpoint
 
-Last verified remote publication: `2729bfc16c9f757fd850c24a0bc6df366a2e40ab`
-(tree `a03b37a7765413548a7cff4a12ffaea4378e5842`). New reviewed source below
+Last verified remote publication: `bd7b16b6ae188f9e8e1aa90542eb86287f38c312`
+(tree `4f40ba43112cea2c86c453191a2d49c787f28cb2`). New reviewed source below
 is integrated locally for guarded publication. Chronological sections preserve
 their original pending states; this checkpoint supersedes those fields.
 
 | Scope | Established result | Still required |
 |---|---|---|
-| Live scene | Actual39078874753 passed fixture/PE/PG/Wine/new receiver/staging gates and reached NATIVE_CAPTURE. Matching transaction was refused; all owned cleanup and source/private/compiled byte checks passed | Fixed first-failure diagnostics now source-qualified; one justified narrow capture attempt is prepared; no point-in-time source token, raw initial packet or current world/player admission |
+| Live scene | Actual39078874753 passed fixture/PE/PG/Wine/new receiver/staging gates and reached NATIVE_CAPTURE. Matching transaction was refused; all owned cleanup and source/private/compiled byte checks passed | Fixed first-failure diagnostics source-qualified; justified narrow capture39081284657 is in progress; no point-in-time source token, raw initial packet or current world/player admission |
 | Graphical backup | Actual ARM run39074781817 succeeded using unchanged retained PRoot. Artifact12117765534 is580,433B SHA5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b; complete PG18 dump2,766,533B SHA2a35bd9224e32dbdbfbb5e0d4331afd780745d2a6504a783101bc6742044c4e6. A/root independently admitted fresh fixture, ordinary save, full same-snapshot TOC, cleanup and unchanged source | Use this exact fresh fixture once in the matching scene/initial transaction; fixture identity is not a live source or character authority token |
 | Geometry/materials | Actual39078874753 admitted all seven exact default source bodies. Six existing parser results OK; grey is authentic8x8 RGBA32/mip DDS and explicitly unsupported. Historical LOD/trick/constructor qualifications preserved | Complete source-selected namespace/provider/default/composite/swaps/LOD semantics and supported codec families; new immutable namespace owner28b7f6d23 is source-qualified with202,426checks/mode and callback/predecessor rollback; actual complete ordered provider remains absent |
 | Gameplay dictionaries | Compact IDs/joins/shared sets/source schedules, fresh power and boost-slot constructors qualified. Whole ReceivePowers ordering and exact pre-READY snapshot request dependencies documented | Current loader/cache/shared layout and costume/dynamic owners, whole state application and exact actual initial update; no actor/ACK |
-| Encrypted authentication | Actual39078358178 identified quick_sprintf.c101 exact source assertion with full predicate/line/file match; all cleanup passed. Exact PE/source chain supports130-byte taskthread filename exceeding128-byte diagnostic-name buffer. Existing qualified repair recovered and source-only7-control MSSQL/checksum composition prepared | New isolated Win32 candidate build39080037562 succeeded and exact raw artifact/PE admission passed; real readiness test remains; exact caller inference is not an exported runtime stack, no AC_PLAY_OK/authenticated DB/Map/version/checksum acceptance claimed |
+| Encrypted authentication | Actual39078358178 identified quick_sprintf.c101 exact source assertion with full predicate/line/file match; all cleanup passed. Exact PE/source chain supports130-byte taskthread filename exceeding128-byte diagnostic-name buffer. Existing qualified repair recovered and source-only7-control MSSQL/checksum composition prepared | New isolated Win32 candidate build39080037562 succeeded and exact raw artifact/PE admission passed. Readiness39081284721 stopped in new tests before any artifact recovery/service; two canonical-path fixture lines are corrected; exact caller inference is not an exported runtime stack, no AC_PLAY_OK/authenticated DB/Map/version/checksum acceptance claimed |
 | Presentation | Actual39078874776 built NDKr28c ARM64+x86_64 standalone binaries and passed Android13 x86_64 SwiftShader602 native checks:4uploads/37readbacks,3deletes+1verified dead-context disposal, all context/Surface/registry cleanup. E/F bound exact2,715,767B artifact12118162266 SHA30cb09f882e82f7dd2e2dbb6e438d96fced96edaeb2bf5b2da06567c7eb859ce | ARM64 execution/Thor, real application window/exclusive-context producer, complete current world/player prerequisites and atomic publication. Qualification uses private pbuffers; declared platform file hashes do not prove loaded driver mappings |
 | Memory/startup | Prior optional B/C owner total3,824,536B already puts historical retained estimate at103,899,217B,3,235,921B over96MiB before newer owners/omits. New initial wrapper adds2,352B after typed first-failure snapshot (+56B), plus separate1,344B callerlease; no global fit inferred | Actual source-backed aggregate/provider retirement, old/candidate/CPU/GPU/process overlap and timing. Accepted startup remains387,340ms; no measured speedup |
 
@@ -65,7 +65,11 @@ the view. Original artifact12118334160 is1,130,748B
 SHA8d139b6b229742b9b1274e985c26e1847edca821bcc3836a367dd9e96be1c1c1;
 original receipt SHA6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912.
 The new narrow readiness workflow reuses accepted AuthServer and unchanged
-SQL/profile/deadline/cleanup. No service has yet run with this candidate and no
+SQL/profile/deadline/cleanup. Readiness39081284721 stopped before recovery or services because two new test
+fixtures compared Windows8.3 temporary paths to resolved paths. Five new methods
+passed; one failed and one errored. The exact two-line test-only normalization
+fix passes all7 new host methods; production guards, PE and profile are unchanged.
+One narrow retry is prepared. No service has yet run with this candidate and no
 readiness/AC_PLAY_OK/authenticated DB/Map result is claimed.
 
 Existing full initial parsers, costume/taskforce dictionary and attributes variant
@@ -73,6 +77,15 @@ are retained. Current costume/cache/shared startup state and exact actual dynami
 tracker occurrence order remain missing; definition DAG preorder cannot supply
 those values. The isolated dynamic observer design records exact actual array/path
 and final ALLENTS association rather than rebuilding hypothetical tracker state.
+
+Independent namespace budget review retains the functional proof but refuses a
+complete fixture/global memory admission. The22 authentic body payloads alone
+sum1,343,668B versus declared1,048,576B external allowance, undercharging295,092B
+before fixture arrays/runtime. Exact namespace cohort owner totals were not
+retained. The8,936 controlled projection config separately charges64MiB external,
+32MiB full loader and64KiB own control:100,728,832B before borrowed inputs/new
+heap, already65,536B above the historical96MiB policy; its test limit is192MiB.
+No actual current provider, RSS, global fit or retirement subtraction follows.
 
 Gates25–27 remain open. No new APK, authoritative rendered world/player,
 complete character update, application ACK or AYN Thor result is claimed.

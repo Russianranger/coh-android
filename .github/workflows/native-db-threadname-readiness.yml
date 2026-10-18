@@ -20,7 +20,7 @@ jobs:
         with: {persist-credentials: false, fetch-depth: 0}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - name: Check only new candidate readiness and generated metadata admission controls
+      - name: Check canonical Windows paths and new candidate metadata admission controls
         run: |
           python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_threadname_readiness.py -v
           if ($LASTEXITCODE -ne 0) { throw 'New candidate readiness controls failed' }

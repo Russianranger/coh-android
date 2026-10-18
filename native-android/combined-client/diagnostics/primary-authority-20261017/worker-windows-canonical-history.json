@@ -1,0 +1,25 @@
+{
+  "schema": "coh-preserved-windows-canonical-history-v1",
+  "workers": {
+    "C": {
+      "ref": "refs/recovery/windows-canonical-20261018/c",
+      "tip": "93b8d5daf372030d4f7166f17cd6247a7ef280a7",
+      "prerequisite": "9f3dcfb17e99a7d35608d4a389583a1997057b90"
+    },
+    "D": {
+      "ref": "refs/recovery/windows-canonical-20261018/d",
+      "tip": "aff1daa835cbd38fce1c92911b702c5628b8c1b9",
+      "prerequisite": "b0bb6aae4fcf0ddf5bb500938c9994803b3589ca"
+    },
+    "F": {
+      "ref": "refs/recovery/windows-canonical-20261018/f",
+      "tip": "e2d1a83c9ae5ce48535fc521da198f084204e928",
+      "prerequisite": "8e21cb894be29860d63b04c3fac43ac2cd3d495a"
+    }
+  },
+  "bundle": "worker-windows-canonical-history.bundle",
+  "bytes": 21713,
+  "sha256": "849ead49b730e8590d687917a61bf446d47c3513969db7fb36fa2d4508e27600",
+  "verification": "The bundle contains these 3 refs:\n93b8d5daf372030d4f7166f17cd6247a7ef280a7 refs/recovery/windows-canonical-20261018/c\naff1daa835cbd38fce1c92911b702c5628b8c1b9 refs/recovery/windows-canonical-20261018/d\ne2d1a83c9ae5ce48535fc521da198f084204e928 refs/recovery/windows-canonical-20261018/f\nThe bundle requires these 3 refs:\n9f3dcfb17e99a7d35608d4a389583a1997057b90 \n8e21cb894be29860d63b04c3fac43ac2cd3d495a \nb0bb6aae4fcf0ddf5bb500938c9994803b3589ca \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-windows-canonical-history.bundle is okay\n",
+  "scope": "Test-only canonical Windows temporary-path identity fix after pre-service refusal, exact failure/proof review; shared wire observer design only; explicit source-only namespace budget limits. Production helper, accepted binaries and profiles unchanged. Windows followup not yet executed; no actor/world/ACK/global fit."
+}

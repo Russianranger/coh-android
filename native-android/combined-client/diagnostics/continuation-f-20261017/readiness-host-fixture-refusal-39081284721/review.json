@@ -1,0 +1,27 @@
+{
+  "actual_Windows_followup_verified": false,
+  "actual_new_candidate_readiness_verified": false,
+  "all_20_builder_pins_equal_original_build_commit_and_worker": true,
+  "all_three_runtime_pins_equal_exact_commit_and_worker": true,
+  "artifact_count": 0,
+  "changed_files": [
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py"
+  ],
+  "concrete_blockers": [],
+  "exactly_two_fixture_Path_resolve_changes": true,
+  "failure_sha256": "87b8cbc562f4b874ff7a8982fa3fdbd1e60195029dda8ed12d4dd5ec56947fa7",
+  "fix_proof_sha256": "4bdad3468d471b0a324bc85b2501d4e9cb9adbd6b98b81e8a157259b717cfe99",
+  "followup_owner_reported_methods": 7,
+  "followup_owner_reported_platform": "Linux",
+  "independent_API_and_public_pre_service_log_failure_confirmed": true,
+  "production_guards_profiles_workflow_and_binary_unchanged": true,
+  "proof_commit": "aff1daa835cbd38fce1c92911b702c5628b8c1b9",
+  "raw_job_log_or_temp_paths_exported": false,
+  "recovery_and_service_steps_skipped": true,
+  "reviewer_tests_compiler_Auth_SQL_or_service_replayed": false,
+  "schema": "coh-f-readiness-host-path-fixture-fix-review-v1",
+  "source_commit": "b6dac3355e8007aa31622764dca3c5a4cffd491e",
+  "source_review_passed": true,
+  "test_source_sha256": "103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7",
+  "world_authority": false
+}

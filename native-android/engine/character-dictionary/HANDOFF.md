@@ -1,5 +1,14 @@
 # Character dictionary recovery continuation — 2026-10-17
 
+Next source observation proposal (2026-10-18):
+`SHARED_WIRE_OBSERVATION_PROPOSAL.md` and its11-file/six-function design pins
+describe a <=512-byte ledger of the original producer's actual per-build
+`iFirstPowerset`/`iSets` and bit spans, bound through A's one final
+`entFinishUpdate` packet association to exact native ALLENTS. This could close
+the unsent framing count for that diagnostic packet without guessing26/52.
+Ordered global dictionary identity, costume epoch and gameplay/actor/ACK remain
+unadmitted. Design only: no observer/hook/build/global change or new capture.
+
 Latest whole-initial input inventory: `WHOLE_INITIAL_INPUTS.md` and
 `qualification/whole-initial-input-review-20261017.json` bind42 existing native
 source/handoff files,15 original source files/18 whole functions and7 exact donor
