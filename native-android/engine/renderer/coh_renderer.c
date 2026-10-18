@@ -109,6 +109,8 @@ CohStatus coh_renderer_create(const CohRendererConfig *c,
       !mul_size(c->shader_capacity, sizeof(Shader), &s) ||
       d > SIZE_MAX - s - sizeof(*r))
     return COH_LIMIT;
+  if (*out)
+    return COH_STATE;
   r = calloc(1, sizeof(*r));
   if (!r)
     return COH_LIMIT;

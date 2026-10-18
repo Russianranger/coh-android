@@ -284,6 +284,8 @@ CohStatus coh_renderer_gles_create(size_t v, size_t i, CohGlesRenderer **out,
   if (!out || !backend || !v || !i || v > INT_MAX / sizeof(CohRenderVertex) ||
       i > INT_MAX / sizeof(uint32_t))
     return COH_INVALID;
+  if (*out)
+    return COH_STATE;
   g = calloc(1, sizeof *g);
   if (!g)
     return COH_LIMIT;

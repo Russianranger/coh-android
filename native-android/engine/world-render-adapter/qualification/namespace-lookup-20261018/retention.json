@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "first_and_only_new_qualifier_attempt": true,
+  "source_and_original_identity_in": "host.json",
+  "retained_files": {
+    "build-run-logs.json.gz": {
+      "bytes": 4340,
+      "sha256": "f7054b097a4d845c8f0df84262b269267e049932e1a12bf6ededa8078a1b91f3"
+    },
+    "executed-artifacts.tar.gz": {
+      "bytes": 233465,
+      "sha256": "f132baf3a0cc9dfefce4555ec5f373e3c3077be50ab240f71c0ffe7f6383cac4"
+    },
+    "host.json": {
+      "bytes": 9416,
+      "sha256": "bbcfef0ad9660a46929688926c82f48e24a8a260e09e7e0f040bc4203e67fa8e"
+    }
+  },
+  "full_scratch_output": "/workspace/scratch/743e465dbb79/b-namespace-lookup-1",
+  "private_packets_or_credentials": false,
+  "existing_default_zip_duplicated": false,
+  "artifact_archive_includes_executed_release_asan_ubsan_cpp_and_actual_C_object": true,
+  "failed_semantic_mutations_are_expected_test_results": true
+}

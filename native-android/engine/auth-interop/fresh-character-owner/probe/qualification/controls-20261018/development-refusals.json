@@ -1,0 +1,23 @@
+{
+  "development_run_01": {
+    "command": "python native-android/engine/auth-interop/fresh-character-owner/probe/check_fresh_probe_controls.py --source-root . --output /workspace/scratch/743e465dbb79/worker-c-probe-dev-01 --sanitize",
+    "failure": "coh_native_core.h not found because new checker omitted native-android/include",
+    "original_owner_or_server_executed": false,
+    "stage": "compiler dependency query before native compilation",
+    "stderr_retained_only_in_tool_transcript": true
+  },
+  "development_run_02": {
+    "actual_cli_output_retained": "development-test-expectation-refusal-traces.json.gz",
+    "failure": "checker expected DB failure7; actual header enum is DB6 and LIST7",
+    "original_owner_or_server_executed": false,
+    "production_source_changed_to_satisfy_test": false,
+    "stage": "new CLI test first-failure expectation"
+  },
+  "final_qualified_run": "worker-c-probe-final-03",
+  "historical_successful_runs": [
+    "worker-c-probe-dev-03",
+    "worker-c-probe-final-01",
+    "worker-c-probe-final-02"
+  ],
+  "schema": "coh-fresh-probe-development-refusals-v1"
+}

@@ -1,0 +1,89 @@
+{
+  "artifacts": [
+    {
+      "id": 12135640309,
+      "name": "owned-profile-inert-4f189f980189cf3b5750b6efa52f2f23fa3b9d1a",
+      "size_in_bytes": 1129,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12135640309",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12135640309/zip",
+      "expired": false,
+      "created_at": "2026-10-18T11:33:06Z",
+      "expires_at": "2027-01-16T11:31:53Z",
+      "updated_at": "2026-10-18T11:33:06Z",
+      "digest": "sha256:4cdc63d62a440233969a57a7a33142530088d21204cdc3fb55603b92a180ddf0",
+      "workflow_run": {
+        "id": 39123610452,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "4f189f980189cf3b5750b6efa52f2f23fa3b9d1a"
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "id": 117664072840,
+      "name": "actual-inert-profile",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 39123610452,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Preserve exact checkout bytes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Admit exact supervisor sources",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Reuse exact accepted compiler and model artifact",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Execute inert helper once with owned process and profile cleanup",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ]
+    }
+  ]
+}

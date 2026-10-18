@@ -91,6 +91,8 @@ typedef struct {
 typedef struct CohRenderer CohRenderer;
 CohRendererConfig coh_renderer_default_config(void);
 CohRenderMaterial coh_renderer_default_material(CohMaterialFamily);
+/* *out must be NULL. An occupied output refuses with COH_STATE before any
+ * allocation or backend callback; failure leaves the original owner intact. */
 CohStatus coh_renderer_create(const CohRendererConfig *,
                               const CohRenderBackend *, CohRenderer **);
 void coh_renderer_destroy(CohRenderer *);

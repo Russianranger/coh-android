@@ -1,0 +1,51 @@
+{
+  "schema": "coh-independent-fresh-probe-source-review-v1",
+  "passed": true,
+  "checks": {
+    "before_after17_exact": true,
+    "only_two_narrow_changes_and_exact_inverse_to_final01": true,
+    "withheld_provider_destruction_under_live_owner": true,
+    "cli-asan_host_identity": true,
+    "cli-release_host_identity": true,
+    "cli-ubsan_host_identity": true,
+    "policy-asan_host_identity": true,
+    "policy-release_host_identity": true,
+    "policy-ubsan_host_identity": true,
+    "104_records_per_mode": true,
+    "668_policy_checks_per_mode": true,
+    "source_scope_explicit": true,
+    "fixed_public_authority_false": true,
+    "local_buffers_wiped": true,
+    "first_failure_not_rollback": true,
+    "live_owner_refusal_reports_both_incomplete": true
+  },
+  "reviewed_source_sha256": {
+    "native-android/engine/auth-interop/fresh-character-owner/fresh_character_owner.h": "d6782335567105f9179fe3684acc900afecf2299ea4b520c1bafad57913d5abf",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/check_fresh_probe_controls.py": "badad76d277379c1d0b28116228b3c02c907b82562f857c2c76ed860365961cc",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_character_probe.c": "996fb6e3b446b201e11f7f1d870d4717b74aa6742bc64f2a8b5c565c4e011fca",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_platform.h": "7ddffff6edb69506917a19446e041b453014fc80dce3ed7f13aeb3b86b2179ba",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.c": "1048e1156dae2bf94b20808fb8ca47905f6a02135565bb21ec87aff4af6b9cbc",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_probe_policy.h": "b89809c03c1bb64bd0d697433d6fdee632b6c3a424e1fafc1c1698e6f1cac7e2",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/test_fresh_probe_platform.c": "481e7f0fbd2e9f0c8c12c8fe3ab3397c371e4a2f73ff4d8a25898bd93bf86466",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/test_fresh_probe_policy.c": "703dd929add6ed1d01c48ff20d1a24663215d1b928d363fa3d8f1360b6047ec0",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_session.h": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+  },
+  "control_receipt_sha256": "69b52421a9e3ff6f41e0bb4b96434126209ee1fe5e16b90ebb076f24e8e2f9d3",
+  "supersedes_final01": true,
+  "narrow_followup_changed_sources": [
+    "native-android/engine/auth-interop/fresh-character-owner/probe/fresh_character_probe.c",
+    "native-android/engine/auth-interop/fresh-character-owner/probe/test_fresh_probe_platform.c"
+  ],
+  "scope": "Final02 read-only source/data review. Exact inverse proves only live-owner provider-lifetime guard and its test assertion changed since final01. Original first error survives cleanup; provider lease is retained on owner consuming-destroy refusal. Explicit platform/owner doubles only. No original controller, Windows backend, Map readiness, authenticated allocation, persistent SQL, Android or world qualification; no reviewer rerun.",
+  "source_generation_admitted": false,
+  "world_authority": false,
+  "superseded_by_final03_stdin_error_guard": true
+}

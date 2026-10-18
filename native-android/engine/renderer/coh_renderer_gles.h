@@ -10,7 +10,8 @@ typedef struct CohGlesRenderer CohGlesRenderer;
  * Texture names remain caller-owned. Uploads caller vertices/indices with
  * glBufferSubData, no readback/fence/glFinish. Immutable GPU mesh cache is
  * future work; this initial adapter prioritizes bounded storage over draw
- * throughput. */
+ * throughput. *out must be NULL. Occupied output refuses with COH_STATE before
+ * allocation or GL calls, preserving both the owner and backend descriptor. */
 CohStatus coh_renderer_gles_create(size_t max_vertices, size_t max_indices,
                                    CohGlesRenderer **out,
                                    CohRenderBackend *backend);

@@ -56,6 +56,13 @@ The GLES adapter owns one fixed-capacity streaming VBO, one IBO, VAO and three s
 
 ## Lifecycle and rollback
 
+Both core and GLES creation require an initially NULL output owner. Recreating
+an occupied output previously replaced its pointer and lost the original CPU/GL
+ownership. The occupied-output check now refuses with `COH_STATE` before any
+allocation, backend callback or GL call; GLES also preserves the supplied
+backend descriptor. The caller may continue using or explicitly destroy the
+original owner. Reinitialization uses the existing Surface-loss/recreate APIs.
+
 On Surface/context loss, stop submissions, call `coh_renderer_surface_lost(renderer, new_generation, context_alive)` and `coh_renderer_gles_recreate(gles, context_alive)`. With a lost context, stale GPU names are dropped without deleting unrelated names in the replacement context. Reupload caller-owned textures and submit with the new generation. Logical assets/animation/UI state remain outside this renderer. Destroy the core first, then the GLES backend; null destroy arguments are safe. Do not reuse a freed pointer.
 
 The module is not in any accepted APK path. Integration order is loader-resolved geometry/material bridge, isolated Android GLES pass, cross-module regression, consolidated test APK, emulator qualification, then Thor acceptance. The coordinator must restore GL state explicitly when alternating with an older renderer; no interleaved callback or external GL state mutation is supported inside a flush. UI can use a separate orthographic pass, but scissor/clipped UI rendering needs an adapter extension.
@@ -77,3 +84,21 @@ The corpus directory contains accepted `world.bin`, `world-fixture.json` and `ma
 The checked-in receipt records strict C99 host tests, 6,000 binary64 independent scalar comparisons, negative/failure/lifecycle/cache tests, 20,000 sustained frames with constant module-owned storage, ASan/UBSan, actual software Mesa GLES FBO comparisons and both ESSL3.00/3.20 transform-feedback profiles. It also records real EGL context destruction/recreation and a successful NDK ARM64 API26 shared-library build. LeakSanitizer cannot inspect `/proc` tasks in this traced runtime and is explicitly **not** qualified. Re-run LSan in a compatible host environment.
 
 Remaining acceptance: Android emulator execution, physical Thor/Adreno source/GPU comparison and lifecycle tests; dynamic loader-to-renderer integration; authentic declared ADDGLOW pairing; general skeletal rendering bridge; original full mip/LOD/material catalog; HQ/bump/normal-mapping, cubemaps/reflection, shadows, MULTI, water, particles and CgFX postprocessing. Shader families absent from this API are unsupported and must be rejected by the material resolver rather than silently mapped to one of these families.
+
+The narrow `check_create_ownership.py` check needs the five existing pinned
+Khronos headers and actual host EGL/GLES dispatch library files. It executes only
+the occupied-owner regression in release/ASan/UBSan, verifies unchanged original
+owners/backend/GL bindings and an unconsumed deliberate GL error, then renders
+through the retained owners before and after actual GLES resource recreation.
+It removes each refusal independently to prove the regression test fails.
+Project-owned allocation/free counts must balance. These controls use an explicit
+triangle and two one-pixel textures; they do not requalify original materials,
+server state, Android, driver allocations, process RSS or the broader renderer.
+
+```sh
+python3 native-android/engine/renderer/check_create_ownership.py \
+  --source-root . --host-headers /absolute/pinned-khronos-headers \
+  --host-egl /lib/x86_64-linux-gnu/libEGL.so.1 \
+  --host-gles /lib/x86_64-linux-gnu/libGL.so.1 \
+  --output /absolute/fresh-owner-qualification
+```

@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "reviewer": "worker-b independent read-only review",
+  "checks": 25,
+  "source_changes": {
+    "native-android/engine/renderer/coh_renderer.c": {
+      "before_sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+      "after_sha256": "74937e66a91e30f9405800f4014648c33a7a3640474f20edef3cca736d3427e1",
+      "exact_occupied_output_guard_only": true
+    },
+    "native-android/engine/renderer/coh_renderer_gles.c": {
+      "before_sha256": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c",
+      "after_sha256": "36c042739518eac84cd47c7842d76b950f6d726069db4c1566752cc014063b46",
+      "exact_occupied_output_guard_only": true
+    }
+  },
+  "qualification_sha256": "244ffd7ed54d6877d289c5717d2574d4265cdb289a430286c82c12041e7e857d",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/renderer/README.md": "9d0cee63b619c4e508a5b80a29c9d3394686a05481fefb4c546b5b68ff8ac64e",
+    "native-android/engine/renderer/check_create_ownership.py": "c412ef1f79ece22a57a152221c9d28a4bf3895df2554382887cb86da717fce9c",
+    "native-android/engine/renderer/coh_renderer.c": "74937e66a91e30f9405800f4014648c33a7a3640474f20edef3cca736d3427e1",
+    "native-android/engine/renderer/coh_renderer.h": "c88bf809b2379f7909f87090edea90b5ac898774055c1307e377983cdf62eb46",
+    "native-android/engine/renderer/coh_renderer_gles.c": "36c042739518eac84cd47c7842d76b950f6d726069db4c1566752cc014063b46",
+    "native-android/engine/renderer/coh_renderer_gles.h": "4c89e112e55e28984e8d3a65210b9790249265c53efe3d997d35de946394d888",
+    "native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "native-android/engine/renderer/tests/create_ownership.c": "7f0a07e355fd1cbe73f485624586d9b3abff7691a82e4bfc4df0ff73bc12f318",
+    "native-android/engine/world-render-adapter/egl-host-header-pins.json": "dd66d5737f403d859dbf1d5a863f4dd3815005facb27e7bee3a911df5bbb07cd"
+  },
+  "inspected_full_sources_and_new_test_checker": true,
+  "existing_callers_inspected_for_null_initialized_or_calloc_owners_and_surface_reset": true,
+  "qualified_suite_rerun": false,
+  "new_suite_rerun": false,
+  "guard_before_allocation_callbacks_and_GL": true,
+  "existing_input_overflow_error_precedence_preserved": true,
+  "original_owner_backend_dirty_GL_error_and_bindings_preserved": true,
+  "retained_owner_used_for_two_actual_GL_frames_and_resource_recreation": true,
+  "project_calloc_free_balance_only_not_driver_leak_or_RSS": true,
+  "actual_host_GLES_scope": true,
+  "Android_or_ARM64_or_server_or_world_qualification": false,
+  "blockers": []
+}

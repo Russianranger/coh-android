@@ -1,0 +1,29 @@
+{
+  "schema": "coh-independent-inert-runtime-failure-review-v1",
+  "passed": true,
+  "run_id": 39123610452,
+  "job_id": 117664072840,
+  "artifact_id": 12135640309,
+  "source_revision": "4f189f980189cf3b5750b6efa52f2f23fa3b9d1a",
+  "artifact_sha256": "4cdc63d62a440233969a57a7a33142530088d21204cdc3fb55603b92a180ddf0",
+  "retained_receipt_sha256": {
+    "supervision.json": "6fd91cadab7108b3835cedbf82d5ad16ba553a2261f15e7f97019128a2625762",
+    "inert-result.json": "68460c58cd2759e884dafe2faae5c0c847f20e0f7089cffcf7065904b68950a6"
+  },
+  "checks": {
+    "exact_api_artifact": true,
+    "zip_digest_size": true,
+    "zip_members_safe_exact": true,
+    "zip_members_match_retained": true,
+    "strict_native_receipt_fixed_fields": true,
+    "actual_failure_before_account": true,
+    "outer_actual_lifecycle_observed": true,
+    "actual_cleanup_without_authority": true,
+    "api_job_steps_scoped": true
+  },
+  "outcome": "Actual Windows helper refused FILES before account acquisition. Both reported inner and observed outer cleanup completed. Exact failed files subcall remains unobserved; success/probe/service readiness is not qualified.",
+  "reviewer_helper_test_compiler_model_or_service_reexecution": false,
+  "additional_zip_copy_created": false,
+  "source_generation_admitted": false,
+  "world_authority": false
+}

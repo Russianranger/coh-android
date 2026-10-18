@@ -1,5 +1,17 @@
 # Primary native authority continuation — 2026-10-17
 
+## Reviewed resource / character adapter / renderer integration — 2026-10-18
+
+Focused original scene39123610374 and actual Windows inert39123610452 were launched from4f189f980189cf3b5750b6efa52f2f23fa3b9d1a. Windows source and exact artifact admission passed; the real helper then refused FILES before account creation. Fixed receipt validates actual native API execution, full inner cleanup and observed outer process/job/parent cleanup. Its sole1129B ZIP12135640309 SHA2564cdc63d62a440233969a57a7a33142530088d21204cdc3fb55603b92a180ddf0 and F independentAPI/proof are retained once under windows-profile-inert-20261018/run-39123610452. The specific file operation is unobserved. D/E are adding narrow diagnostics; no ACL/path relaxation or service success is inferred. Scene diagnostic remains active at its immutable source.
+
+B adds Basic texFind over a real immutable namespace: each release/ASan/UBSan mode11789 checks,1336 queries and1315 whole-original comparisons, seven authentic default bodies plus five controlled rows, actual C-object/C++ linkage and four mutations. E/F independently reviewed. No query callback/I/O/allocation occurs; full supplied owner reservation is charged. The namespace's historical256MiB child ceiling and supplied caller budget are explicitly distinct from unqualified global96MiB/RSS/GPU fit. No current CLIENT/material/world authority.
+
+C implements the nonshipping fixed96B private-policy parser, concrete CLI and platform contract. Final03: each of three modes668 parser checks plus104 CLI controls with explicit owner/platform doubles,315 records total; six actual hostELFs and17 source pins retained. It refuses malformed/private input and read errors, wipes actual local buffers, preserves first failure, independently attempts safe cleanup and retains a provider lease when an owner cannot retire. Prior successful02/01, source predecessors and development failures remain separately labeled. F reviews exact final source and lifetime/I/O followups. No real owner/platform backend, original Auth/Db/Map, allocation or persistent character acceptance occurred. Same-realm Map readiness and a real private backend remain prerequisites.
+
+E repairs occupied output-owner replacement in core/GLES creation. Guards preserve prior overflow-validation precedence and refuse before allocation/GL calls. Focused actual private host EGL/GLES release/ASan/UBSan each44 checks, two frames, four allocations/frees and two rejected guard-removal mutations. B independently reviewed exact changes/callers. This is host lifetime qualification, not Android/Thor/current authoritative world acceptance. Accepted APKs are unchanged.
+
+All Gates25–27 remain OPEN. Next priority is the actual stage2 operation witness and justified repair; normal checksum/version policy, full character state, Map handoff and authoritative actor/update/rendering remain pending.
+
 ## Primary recovery and focused scene / Windows execution — 2026-10-18
 
 Remote was independently verified at362f10cc71148c32b3b84e6c6cbe7ce59ac94480 with no queued/running workflows. Old worktree pointers and their common object store are missing; original source bytes and all9 unique bundles remain untouched. F verified7 bundles/13 recovered refs in an isolated store;2 historical prerequisites are unavailable from origin. No confirmed useful unpublished source was found. Exact limitations are in recovery-20261018/recovery.txt.
