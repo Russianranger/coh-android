@@ -1,0 +1,282 @@
+{
+  "C50_all50_unchanged": true,
+  "all47_current_raw_equals_qualified_Git": true,
+  "development_history": {
+    "all_four_retained_logs_rehashed": true,
+    "events": [
+      {
+        "cause": "-Werror misleading-indentation on a provider-admission line; corrected before6bc0761c7",
+        "limit": "This initial compiler output was visible during development but no standalone raw file was preserved.",
+        "raw_log_retained": false,
+        "result": "failed",
+        "stage": "native-initial-compile"
+      },
+      {
+        "cause": "New host adapter: overlapping StructLinkOffset extraction, devassert return type and static-define CRC declaration ordering. Corrected inaa4a541af; no prior qualifier invoked.",
+        "log": "salvage-development-1.log",
+        "result": "failed",
+        "source_revision": "58f0d8a55",
+        "stage": "original-build-1"
+      },
+      {
+        "cause": "New original library unresolved stricmp; B added explicit case-insensitive host alias and completed bounded Vec/link observer adapters.",
+        "log": "salvage-development-2.log",
+        "result": "failed",
+        "source_revision": "3d1ed2ec4",
+        "stage": "original-load-2"
+      },
+      {
+        "checks": 169393,
+        "fixtures": 17,
+        "limit": "Development release-only result; final boundary additions supersede its checker/test/doc pins.",
+        "log": "salvage-development-3.log",
+        "result": "passed",
+        "source_revision": "33e2d924f",
+        "stage": "first-whole-source-release-3"
+      },
+      {
+        "checks_per_mode": 194490,
+        "fixtures": 25,
+        "log": "salvage-development-4.log",
+        "modes": [
+          "release",
+          "asan",
+          "ubsan"
+        ],
+        "result": "passed",
+        "scope": "Only this new complete Salvage/ID/Details-name qualifier. No prior parser/receiver/production/network qualifiers.",
+        "source_revision": "ff2cadb2ae4184c7351d4c68defa05858fea585f",
+        "stage": "final-whole-source-and-native-4"
+      }
+    ],
+    "first_native_warning_output_not_retained_explicit": true,
+    "first_two_new_oracle_failures_retained": true,
+    "release_only_development_and_final_three_modes_both_preserved": true
+  },
+  "evidence": {
+    "native-android/engine/character-dictionary/qualification/salvage-development-history.json": {
+      "bytes": 3103,
+      "sha256": "b89fdd8f6cb706a911c067df04a064979c24adca0687b51ddef7f5ea5ac2eb26"
+    },
+    "native-android/engine/character-dictionary/qualification/salvage-development-logs.json.gz": {
+      "bytes": 2027,
+      "sha256": "3c51eb082cdee775561f28fe49b6073c7f69eb2e5d36cccae16f32ae80e43eed"
+    },
+    "native-android/engine/character-dictionary/qualification/salvage-ff2cadb2a-binding.json": {
+      "bytes": 10634,
+      "sha256": "d424064a2f1e1379592112718fb506258eb97313380baa974ffeb7a704ba830c"
+    },
+    "native-android/engine/character-dictionary/qualification/salvage-ff2cadb2a.json.gz": {
+      "bytes": 11202,
+      "sha256": "b539a826eeacd56d8da7373a92f6f3b254637a9c03d7f849904ec73150e04131"
+    }
+  },
+  "independent_authentic_data_walk": {
+    "Details_names": 1045,
+    "Details_serialized_array_values": 2232,
+    "ID_rows": 412,
+    "Salvage_definitions": 356,
+    "all_segments_rows_fields_and_file_ends_consumed": true,
+    "all_workshops_resolve_to_full_Details_name_array": true,
+    "body_or_archive_copied_into_review": false,
+    "existing_archive_rehashed_and_reused_in_place": true,
+    "full_Details_fields": 47,
+    "tabs": 6,
+    "three_complete_inputs": [
+      {
+        "body_bytes": 70568,
+        "complete_records": 356,
+        "dependencies": 1,
+        "schema_crc": "5b9c4ac0"
+      },
+      {
+        "body_bytes": 11284,
+        "complete_records": 412,
+        "dependencies": 1,
+        "schema_crc": "6f0830ea"
+      },
+      {
+        "body_bytes": 401216,
+        "complete_records": 1045,
+        "dependencies": 20,
+        "schema_crc": "326ad4e9"
+      }
+    ],
+    "unique_workshop_names": 7,
+    "workshop_references": 413
+  },
+  "lifetime_and_budget": {
+    "authentic_inputs_bytes": 483068,
+    "callbacks_only_declared_context_and_digest32B_output": true,
+    "complete_copied_owner_independent_of_wiped_freed_three_source_bodies": true,
+    "configured_authentic_minimum_including_declared_provider_reserves": 1700424,
+    "immutable_disjoint_inputs_provider_control_context_output_workspace_contract": true,
+    "no_parser_heap_allocations": true,
+    "own_stack_reserve": 16384,
+    "own_stack_sum": 872,
+    "owner_bytes": 598192,
+    "owner_commits_only_after_hashes_and_final_cancel": true,
+    "policy_budget": 16777216,
+    "provider_scratch_or_stack_declared_not_full_runtime_measured": true,
+    "retained_old_is_caller_bookkeeping_not_observed_global_overlap": true,
+    "retained_old_reservation_boundary_test": 6628948,
+    "whole_process_RSS_or_Android_fit_admitted": false,
+    "workspace_bytes": 598192
+  },
+  "native_scope": {
+    "Details_NAME_identity_only": true,
+    "Details_all47_serialized_fields_walked_other_data_discarded": true,
+    "F_imports_tests_compiler_native_or_qualifier_execution": false,
+    "current_cache_family_runtime_generation_character_actor_ACK_world_or_rendering_authority": false,
+    "historical_complete_CLIENT_Salvage_ID_dictionary": true,
+    "new_download": false,
+    "strict_native_domain": "ASCII nonempty bounded keys, alphanumeric/underscore Salvage names; nonempty Salvage expressions and unresolved workshops refuse whole candidate; source limits and exact digests mandatory"
+  },
+  "original_source_review": {
+    "CLIENT_chareval_is_source_noop": true,
+    "Details_prepost_and_gameplay_geometry_resource_finalizers_not_executed": true,
+    "F_did_not_execute_original_functions_or_CRC": true,
+    "StructLink_leaf_does_not_split_dots_reverse_array_last_matching_name": true,
+    "bounded_SimpleBuf_tokenstore_earray_stash_crypto_host_adapters_explicit": true,
+    "first_positive_case_insensitive_ID_name_and_max_including_failed_duplicates": true,
+    "forward_item_ID_assignment_and_reverse_first_definition_wins_ID_collision": true,
+    "full_original_CRC_functions_and_static_define_lists_executed_by_qualification": true,
+    "full_original_readers_writers_Pascal_arrays_structs_executed_by_new_qualification": true,
+    "original_oracle_sanitized": false,
+    "original_pointer_join_and_getters_preserved": true,
+    "original_stash_allocator_hash_iteration_shared_memory_not_executed": true,
+    "stored_and_checked_CRCs": [
+      "5b9c4ac0",
+      "6f0830ea",
+      "326ad4e9"
+    ],
+    "tab_members_preserve_source_order_private_tab_ordinals_not_stash_iteration": true,
+    "whole_original_function_spans_independently_rehashed": 54,
+    "whole_schema_table_blocks_independently_rehashed": 6,
+    "workshop_raw_spelling_observer_only_at_actual_link_reader_Pascal_boundary": true
+  },
+  "passed": true,
+  "proof_commit": "dd32d2115945f369888c24436e78197a0b6e83f4",
+  "qualification": {
+    "LeakSanitizer_enabled": false,
+    "binary_and_fixture_source_prepost_checks": true,
+    "fixtures_total": 25,
+    "fixtures_with_original_projection": 17,
+    "modes": {
+      "asan": {
+        "actor_authority": false,
+        "authentic_minimum_budget": 1700424,
+        "authentic_poll_count": 9293,
+        "cancellations": 28,
+        "checks": 194490,
+        "configured_old_reservation": 6628948,
+        "control_bytes": 32,
+        "cuts": 72,
+        "fixtures": 25,
+        "mutations": 72,
+        "owner_bytes": 598192,
+        "passed": true,
+        "reader_heap_allocations": 0,
+        "runtime_generation": false,
+        "sources_bytes": 152,
+        "workspace_bytes": 598192
+      },
+      "release": {
+        "actor_authority": false,
+        "authentic_minimum_budget": 1700424,
+        "authentic_poll_count": 9293,
+        "cancellations": 28,
+        "checks": 194490,
+        "configured_old_reservation": 6628948,
+        "control_bytes": 32,
+        "cuts": 72,
+        "fixtures": 25,
+        "mutations": 72,
+        "owner_bytes": 598192,
+        "passed": true,
+        "reader_heap_allocations": 0,
+        "runtime_generation": false,
+        "sources_bytes": 152,
+        "workspace_bytes": 598192
+      },
+      "ubsan": {
+        "actor_authority": false,
+        "authentic_minimum_budget": 1700424,
+        "authentic_poll_count": 9293,
+        "cancellations": 28,
+        "checks": 194490,
+        "configured_old_reservation": 6628948,
+        "control_bytes": 32,
+        "cuts": 72,
+        "fixtures": 25,
+        "mutations": 72,
+        "owner_bytes": 598192,
+        "passed": true,
+        "reader_heap_allocations": 0,
+        "runtime_generation": false,
+        "sources_bytes": 152,
+        "workspace_bytes": 598192
+      }
+    },
+    "old_qualifier_entrypoints_reexecuted": false,
+    "optimized_Python_refusals": 3,
+    "original_policy_out_of_domain_projection_omissions_explicit": true,
+    "sampled_cuts_mutations_and_poll_stages_not_exhaustive_all_input_positions": true,
+    "whole_output_projection_hash_and_original_roundtrip_comparisons": true
+  },
+  "raw_receipt": {
+    "bytes": 50931,
+    "sha256": "ded4e21f322c21b7b8ff58db6a1c1d59c406b59e37106843a6c1f2932f3ee40f"
+  },
+  "schema": "coh-f-complete-salvage-source-review-v1",
+  "source_inputs_sha256": {
+    "native-android/engine/character-dictionary/SALVAGE.md": "dd31814baec76b1649a89bda30797b2555f9e1b3044422efdb552e2d454137d7",
+    "native-android/engine/character-dictionary/check_salvage.py": "1627d2709807e3e88cae90473ea7354dff6c7b25a04e9c77bc00a6e3aac12a74",
+    "native-android/engine/character-dictionary/coh_salvage.c": "a8f3cd9853e19d72a17ab340ffac4052f5a9ff886a58a69655a0fc696ed690e0",
+    "native-android/engine/character-dictionary/coh_salvage.h": "3f1ad1e0443187015bab716f44b7412a52e1fb2741565fa2739a31ef9ff02c0d",
+    "native-android/engine/character-dictionary/salvage-source-pins.json": "88cbb9f6fabc48855cbee8c3c2a6823bd48d06beb1d2052671cadac23a7b18ba",
+    "native-android/engine/character-dictionary/salvage_details_schema.inc": "dcfb4729d0c15c7a5029f89ee383bcefe45376b675dc8e6952f580b630fcdbd0",
+    "native-android/engine/character-dictionary/salvage_oracle.py": "ab55e4bfe7b821214299468569e1372fd7ceeebc2edd069934220046a1703ecc",
+    "native-android/engine/character-dictionary/test_salvage.c": "ad149e9ccc4db7087a3400ed48dc451507da27c8ec8f4a68b45bbc5b68e40b4b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/costume-inputs/oracle.py": "eb0ab305dcf14f100bae5cdac917de705c340075dd5ab2b2c8cb05d6456d69d6",
+    "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+    "native-android/engine/costume-tree/crc_provider.py": "7ee991803d9e2d303fab436d8fc4d446e9318e6c8fc60e0915d17cca18f73ff1",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "upstream/ouroboros/Common/bases/basedata.c": "5ed4a51d3936a194b8c03d46768184e94d38a827e681c683c43fbb9712785709",
+    "upstream/ouroboros/Common/bases/basedata.h": "0cf3b228ae74e27d467d564cbe4faca820c2902cff787d4d0ba7770238fa7799",
+    "upstream/ouroboros/Common/bases/baseparse.c": "623d916d5a00fac854218db0d632ccab9790c5da10e8ae0043df0f34197f6695",
+    "upstream/ouroboros/Common/entity/RewardItemType.c": "b30b444d707c3237b43e23509f343f5469a37de904ce00a85680fa0effa1f670",
+    "upstream/ouroboros/Common/entity/TokenizerUiWidget.h": "9ce16cdbc2956023565252409599cc97f8e5b769a66eaafc63fd2772035ab35f",
+    "upstream/ouroboros/Common/entity/character_eval.c": "7c3fc628c90378f1466ce9f7a4fd6426b2ff003c92dad2801bf4b9e0c60d8c39",
+    "upstream/ouroboros/Common/entity/character_inventory.c": "efe22c554a15a782af4f4e0175c3396f84e0ba3f2f2a63d41e2be8460224af89",
+    "upstream/ouroboros/Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+    "upstream/ouroboros/Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+    "upstream/ouroboros/Common/entity/salvage.c": "88b6d66c051aebf85ac5397525047f1073045d6fc7cafe7a00f69cf20407cc7f",
+    "upstream/ouroboros/Common/entity/salvage.h": "5609a8ec2eb62e4cdec5a51408f3db0d6944c1239185cc36bfc8667ded1e1d21",
+    "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+    "upstream/ouroboros/Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+    "upstream/ouroboros/Common/gameData/costume_data.h": "dad6d8ba83925800f47b26cc0b3575dcd759d0e56a3ef9e0eced9fe56474f2f4",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/StashTable.h": "9df42de3e42ae4a721cabbd846c88b478b6c9121c54dde36eec349ba36aaae22",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/StashTable.c": "d806f2a68c37fd3c9806d4924fb97219adc0401a75afc3523cd2efb4347396f9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2"
+  },
+  "source_revision": "ff2cadb2ae4184c7351d4c68defa05858fea585f"
+}

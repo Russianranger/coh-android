@@ -1,0 +1,81 @@
+{
+  "schema": "coh-salvage-development-history-v1",
+  "source_revision": "ff2cadb2ae4184c7351d4c68defa05858fea585f",
+  "focused_development_only": true,
+  "old_qualifier_entrypoints_executed": false,
+  "events": [
+    {
+      "stage": "native-initial-compile",
+      "result": "failed",
+      "cause": "-Werror misleading-indentation on a provider-admission line; corrected before6bc0761c7",
+      "raw_log_retained": false,
+      "limit": "This initial compiler output was visible during development but no standalone raw file was preserved."
+    },
+    {
+      "stage": "original-build-1",
+      "result": "failed",
+      "source_revision": "58f0d8a55",
+      "log": "salvage-development-1.log",
+      "cause": "New host adapter: overlapping StructLinkOffset extraction, devassert return type and static-define CRC declaration ordering. Corrected inaa4a541af; no prior qualifier invoked."
+    },
+    {
+      "stage": "original-load-2",
+      "result": "failed",
+      "source_revision": "3d1ed2ec4",
+      "log": "salvage-development-2.log",
+      "cause": "New original library unresolved stricmp; B added explicit case-insensitive host alias and completed bounded Vec/link observer adapters."
+    },
+    {
+      "stage": "first-whole-source-release-3",
+      "result": "passed",
+      "source_revision": "33e2d924f",
+      "log": "salvage-development-3.log",
+      "checks": 169393,
+      "fixtures": 17,
+      "limit": "Development release-only result; final boundary additions supersede its checker/test/doc pins."
+    },
+    {
+      "stage": "final-whole-source-and-native-4",
+      "result": "passed",
+      "source_revision": "ff2cadb2ae4184c7351d4c68defa05858fea585f",
+      "log": "salvage-development-4.log",
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "checks_per_mode": 194490,
+      "fixtures": 25,
+      "scope": "Only this new complete Salvage/ID/Details-name qualifier. No prior parser/receiver/production/network qualifiers."
+    }
+  ],
+  "retained_logs": {
+    "path": "native-android/engine/character-dictionary/qualification/salvage-development-logs.json.gz",
+    "bytes": 2027,
+    "sha256": "3c51eb082cdee775561f28fe49b6073c7f69eb2e5d36cccae16f32ae80e43eed"
+  },
+  "log_raw_bytes": 8207,
+  "log_raw_sha256": "81a087512804ac7136f955911b027a778ea1b3c7b2bca9c01217f23dba3435c7",
+  "log_entries": {
+    "salvage-development-1.log": {
+      "bytes": 4828,
+      "sha256": "0bedce69e0bdff363dd16a1e1498ea4d0cbf1c885a9ec37b1999d56b52948927"
+    },
+    "salvage-development-2.log": {
+      "bytes": 692,
+      "sha256": "5f2dd33f278c60712614421bb9bbff8a27bb4fac9b35cc3ea063cff0fc18a043"
+    },
+    "salvage-development-3.log": {
+      "bytes": 446,
+      "sha256": "786f58a19f67562b5432a5a7c6bd9a658aad66900c70df43b5b634189d7e8a66"
+    },
+    "salvage-development-4.log": {
+      "bytes": 1235,
+      "sha256": "f705e24a911118fde0cab0f8300428c0f708995766d8d307806f61effb73a2b9"
+    }
+  },
+  "no_replay_free_claim": true,
+  "original_oracle_sanitized": false,
+  "asan_leak_detector_enabled": false,
+  "actual_captures_or_services_executed": false
+}

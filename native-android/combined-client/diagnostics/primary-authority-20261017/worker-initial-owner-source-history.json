@@ -1,0 +1,43 @@
+{
+  "schema": "coh-preserved-initial-owner-source-history-v1",
+  "workers": {
+    "A": {
+      "ref": "refs/recovery/initial-owner-source-20261018/a",
+      "tip": "ee86798b5ba073de4d38a732bf157d17d9c5b648",
+      "prerequisite": "a97a8c78000fc0e597ccaf9bffdf394e998de415"
+    },
+    "B": {
+      "ref": "refs/recovery/initial-owner-source-20261018/b",
+      "tip": "c1257d06170db302137bcc9d5b1abd0579343f03",
+      "prerequisite": "ca7e7e1d4d61374e65faa77f1a5ad47728fbd686"
+    },
+    "C": {
+      "ref": "refs/recovery/initial-owner-source-20261018/c",
+      "tip": "9b1b8cb71e886cc29647973846e0ca691a2ecdfa",
+      "prerequisite": "2621fb84e2eb2c074bdb6d78b311b5c1699ed895"
+    },
+    "D": {
+      "ref": "refs/recovery/initial-owner-source-20261018/d",
+      "tip": "0dd5f1663271a61dbb7a2c4b03e9debc85aec413",
+      "prerequisite": "7e43c47d6ecca01f8e64ed3033c7a411ef8d117c"
+    },
+    "F": {
+      "ref": "refs/recovery/initial-owner-source-20261018/f",
+      "tip": "c2e0d5bbae1d852fa07bdb32d9d796c4306d8d0a",
+      "prerequisite": "98aff746216ecb145d79e7a96583694db5329743"
+    },
+    "coordinator": {
+      "ref": "refs/recovery/initial-owner-source-20261018/coordinator",
+      "tip": "050263f063dce6bf3e7cbecbc07da9d010748fce",
+      "prerequisite": "79d6f56124edeb4d740956baa493a7ce732beada"
+    }
+  },
+  "public_source_excluded_to_avoid_duplicate_artifact_payloads": "d9adf2b431a039357f8bfe878d3d0da991a81b19",
+  "bundle": "worker-initial-owner-source-history.bundle",
+  "bytes": 49030,
+  "sha256": "6288cd796005a7bf2146a9348e62f8abcb7ec2bdb51dd017d2e61d6c8aec25a5",
+  "verification": "/workspace/scratch/7ed1da2a7e55/coh-android/native-android/combined-client/diagnostics/primary-authority-20261017/worker-initial-owner-source-history.bundle is okay\nThe bundle contains these 6 refs:\nee86798b5ba073de4d38a732bf157d17d9c5b648 refs/recovery/initial-owner-source-20261018/a\nc1257d06170db302137bcc9d5b1abd0579343f03 refs/recovery/initial-owner-source-20261018/b\n9b1b8cb71e886cc29647973846e0ca691a2ecdfa refs/recovery/initial-owner-source-20261018/c\n0dd5f1663271a61dbb7a2c4b03e9debc85aec413 refs/recovery/initial-owner-source-20261018/d\nc2e0d5bbae1d852fa07bdb32d9d796c4306d8d0a refs/recovery/initial-owner-source-20261018/f\n050263f063dce6bf3e7cbecbc07da9d010748fce refs/recovery/initial-owner-source-20261018/coordinator\nThe bundle requires these 8 refs:\n2621fb84e2eb2c074bdb6d78b311b5c1699ed895 \n79d6f56124edeb4d740956baa493a7ce732beada \n98aff746216ecb145d79e7a96583694db5329743 \nca7e7e1d4d61374e65faa77f1a5ad47728fbd686 \n7e43c47d6ecca01f8e64ed3033c7a411ef8d117c \na97a8c78000fc0e597ccaf9bffdf394e998de415 \nd9adf2b431a039357f8bfe878d3d0da991a81b19 \nf3ee9db6bc8a323c896769f0952dd242fc79e2f4 \nThe bundle uses this hash algorithm: sha1\n",
+  "prior_history_index": "worker-owner-scene-inventory-history.json",
+  "unchanged_already_preserved_E": "4d6ba1733a3a32fca96beb844507cddd407d2b90",
+  "scope": "A initial sleeping-owner focused source/proof and both compiler-failure corrections/logs; B final TexWord and failed development history; C Proficiency, optimization guard, Inventory peer source; D actual Auth-DB success/source audit plus two-path unimplemented empty-creation interface proposal; F all actual/source/workflow reviews including corrected TexWord successor; coordinator new Inventory receiver29 qualification and exact255 Map gate/publication. All new qualified file contents are already public in excluded d9ad. C/B active Salvage draft is excluded and unadmitted. D interface proposal is preserved only, not implemented/qualified. No current world/player/ACK/full encrypted handoff/Android/Thor/global memory acceptance."
+}

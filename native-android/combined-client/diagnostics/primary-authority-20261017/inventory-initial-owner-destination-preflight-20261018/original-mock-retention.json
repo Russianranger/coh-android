@@ -1,0 +1,30 @@
+{
+  "schema": "coh-inventory-receiver-focused-mock-retention-v1",
+  "passed": true,
+  "scope": "one new five-method 73-case data/mock-only suite; no failed initial attempt",
+  "files": {
+    "proof.json": {
+      "bytes": 12950,
+      "sha256": "26aea5a5d5177b572d33ed49eef12d7eb7d18b456b020a68faa3df93e7d59324"
+    },
+    "source/admit_initial_inventory_receiver.py": {
+      "bytes": 51830,
+      "sha256": "99f47dd7d3e6e9a0475a83d498a7c3318bcfc1e40c9140d89948c28942e4c553"
+    },
+    "source/test_admit_initial_inventory_receiver.py": {
+      "bytes": 22592,
+      "sha256": "897488f2cdfbb4614966c344fb9dde562c6093dc0c9d31e8616534925d849336"
+    },
+    "stderr.txt": {
+      "bytes": 751,
+      "sha256": "71ce14417d22d239d128b13a21fb1cca83c86c75b214dea3d85f0214c7b8affc"
+    },
+    "stdout.json": {
+      "bytes": 44,
+      "sha256": "4cebde5378814edacc5917e7f199aeb226841a2c106ea08849023a41fd52d4b5"
+    }
+  },
+  "source_inputs_unchanged_scope": "helper and new test source exact before/after; fixed read input hashes are read-only evidence, not full current global source or Git/host admission",
+  "actual_new_Map_receipt_admitted": false,
+  "loader_native_compiler_services_executed": false
+}

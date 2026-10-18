@@ -1,0 +1,10 @@
+test_a13_original15_gate_and_eight_exact_native_overrides (__main__.Controls.test_a13_original15_gate_and_eight_exact_native_overrides) ... ok
+test_current29_status_binding_and_compiled_map_mock (__main__.Controls.test_current29_status_binding_and_compiled_map_mock) ... ok
+test_current_c50_three_supersessions_and_c79_history (__main__.Controls.test_current_c50_three_supersessions_and_c79_history) ... ok
+test_frozen_core_and_pending_before_evidence_or_copy (__main__.Controls.test_frozen_core_and_pending_before_evidence_or_copy) ... ok
+test_peer_checker_and_all_current46_values (__main__.Controls.test_peer_checker_and_all_current46_values) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.213s
+
+OK

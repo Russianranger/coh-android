@@ -1,0 +1,83 @@
+{
+  "A13_and_original15_composition_independently_reconstructed_as_data": true,
+  "A_added_source_count": 3,
+  "A_existing_supersession_count": 6,
+  "A_local_source_count": 13,
+  "A_original_raw_source_count": 15,
+  "F_effective_source_map_count": 253,
+  "Map_receipt_still_PENDING": true,
+  "actual_Map_receipt_admitted": false,
+  "base_helper": {
+    "bytes": 41142,
+    "sha256": "c5a49d446423ac76ab2977a75a5e8bcb3a817daeb55c1d2dd30092933238c01e"
+  },
+  "current_native_dependency_count": 46,
+  "current_native_map_sha256": "0c144dbb754959267b73902832b988468f34b4324393803450c3b9d28dce39b3",
+  "explicit_changed_native_paths": [
+    "native-android/combined-client/tools/check_local_initial_capture.py",
+    "native-android/engine/dbclient/coh_db_account_controls.c",
+    "native-android/engine/dbclient/coh_db_account_controls.h",
+    "native-android/engine/dbclient/coh_db_account_inventory.h",
+    "native-android/engine/dbclient/coh_db_session.c",
+    "native-android/engine/dbclient/coh_db_session.h",
+    "native-android/engine/initial-capture/coh_initial_capture.h",
+    "native-android/engine/initial-capture/coh_initial_map.c"
+  ],
+  "explicit_mock_evidence_artifact": "native-android/engine/scenecatalog-server/evidence/fresh-callback-profile-20261018/compile-initial-owner-20261018/compile-only-receipt.json",
+  "extra_gate_artifacts_rehashed": 5,
+  "first_run_cases": 73,
+  "first_run_methods": 5,
+  "first_run_proof": {
+    "bytes": 12950,
+    "sha256": "26aea5a5d5177b572d33ed49eef12d7eb7d18b456b020a68faa3df93e7d59324"
+  },
+  "first_run_retention": {
+    "bytes": 1200,
+    "sha256": "eff164bfa28a1843e152d573ea84865b17e86207c9dfe81feace9a51b8e4bcf1"
+  },
+  "first_run_scope": "D-reported one new metadata/mock suite; reviewer inspected exact source/log/proof and independently rehashed retained inputs only.",
+  "fixed_read_input_count": 51,
+  "fixed_source_import_subprocess_prohibitions_reviewed": true,
+  "helper": {
+    "bytes": 51830,
+    "sha256": "99f47dd7d3e6e9a0475a83d498a7c3318bcfc1e40c9140d89948c28942e4c553"
+  },
+  "historical_1860_not_relabeled_current46": true,
+  "passed": true,
+  "pending_refusal_precedes_evidence_and_output_creation": true,
+  "real_evidence_artifacts_rehashed": 142,
+  "reviewed_root_revision": "53aa97bc0e8f1b47c389c99e029d9c77acc3d63e",
+  "reviewer_executed_loader_native_compiler_or_services": false,
+  "reviewer_executed_tests": false,
+  "reviewer_imported_helper_or_test": false,
+  "schema": "coh-a-inventory-receiver-focused-static-review-v1",
+  "source_copy_and_retention_members_exact": true,
+  "source_generation_admitted": false,
+  "supplement": {
+    "bytes": 29670,
+    "sha256": "168dfaf9295d31c8f732a3598ee91945797d55275d94b11bb0cb367377cba059"
+  },
+  "test": {
+    "bytes": 22592,
+    "sha256": "897488f2cdfbb4614966c344fb9dde562c6093dc0c9d31e8616534925d849336"
+  },
+  "unchanged_core_AST_names": [
+    "Refused",
+    "need",
+    "digest",
+    "raw",
+    "child",
+    "git",
+    "committed",
+    "fixed",
+    "static_elf",
+    "system_files",
+    "loader_checks",
+    "imported_sources",
+    "write_new",
+    "unlink_owned",
+    "export_env",
+    "main"
+  ],
+  "world_authority": false
+}
