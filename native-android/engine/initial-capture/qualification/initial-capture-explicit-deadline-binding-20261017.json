@@ -1,0 +1,62 @@
+{
+  "schema": "coh-initial-capture-explicit-deadline-binding-v1",
+  "source_revision": "30f9a3a6282d771c907d26d418aca22a0c9c1917",
+  "receipt": "initial-capture-explicit-deadline-30f9a3a62.json.gz",
+  "receipt_bytes": 5487,
+  "receipt_sha256": "9debb4fa590473ed56068342639f454ee8157ac86eaec337cdfc38ee38433e1a",
+  "uncompressed_receipt_bytes": 15796,
+  "uncompressed_receipt_sha256": "45c84c0ef3c587a6ee530a00fd9165983eeea0a49750b40a94f8b8e5dc0dd5ce",
+  "all_68_source_hashes_equal_committed_qualified_revision": true,
+  "only_four_capture_source_test_inputs_changed_since_9901002fc": [
+    "native-android/engine/initial-capture/coh_initial_capture.h",
+    "native-android/engine/initial-capture/coh_initial_local.c",
+    "native-android/engine/initial-capture/test_initial_capture.c",
+    "native-android/engine/initial-capture/test_initial_capture_owner.c"
+  ],
+  "ordinary_map_local_db_sources_and_helpers_unchanged": true,
+  "controls": [
+    "Explicit DB outer deadline while module is still DB_WAIT_PLAYERS and its request deadline is in the future; typed first record COH_STATE/TIMEOUT, LocalDB_CONNECTING/DBWAIT_PLAYERS/MapIDLE.",
+    "Explicit Map outer deadline immediately after genuine controlled GROUPS inspection and REQALLENTS, before application deadline; typed first record COH_STATE/TIMEOUT and MapSCENE_INCOMPLETE, prior GROUPS metadata retained.",
+    "Null/idle/callback-busy/captured/failed/cancelled/plainclosed owners reject the timeout action with no diagnostic mutation.",
+    "Prior first status/reason/phase record remains byte-identical through repeated diagnostics, rejected service, timeout, close/cancel/close/cancel.",
+    "Existing module timeout remains distinct: DB_TIMED_OUT is preserved when the original DB module deadline expires."
+  ],
+  "modes": {
+    "release": {
+      "public_scenarios": 19,
+      "public_checks": 5178,
+      "owner_scenarios": 5,
+      "owner_checks": 1544
+    },
+    "asan": {
+      "public_scenarios": 19,
+      "public_checks": 5178,
+      "owner_scenarios": 5,
+      "owner_checks": 1544
+    },
+    "ubsan": {
+      "public_scenarios": 19,
+      "public_checks": 5178,
+      "owner_scenarios": 5,
+      "owner_checks": 1544
+    }
+  },
+  "measured_host_owner_bytes_unchanged": {
+    "capture": 1072,
+    "map_wrapper": 1280,
+    "sum": 2352,
+    "diagnostics": 1016,
+    "first_failure_snapshot": 24,
+    "private_map_failure_phase": 8,
+    "ordinary_local": 1040,
+    "ordinary_map": 2536,
+    "lease": 1344
+  },
+  "global_aggregate_budget_admitted": false,
+  "synthetic_peers_only": true,
+  "real_server": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false
+}

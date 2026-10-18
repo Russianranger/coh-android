@@ -83,3 +83,55 @@ A newly admitted PE still requires separately authorized disposable startup and
 Auth/Db registration. It establishes neither a selected-shard grant nor an
 authenticated DB/Map handoff, a normal client/version/checksum acceptance, or a
 shipping runtime replacement.
+
+`hosted_db_threadname_readiness.py` is the distinct disposable registration
+adapter for a caller-pinned, independently admitted new build. Its CLI retains
+the prior Auth qualification archive and exact accepted Auth candidate, and adds
+`--db-candidate-stage`, `--expected-db-receipt-sha256` and
+`--expected-db-binary-sha256`. No new service invocation is authorized by a
+source-only or compile-only receipt.
+
+The adapter admits the new artifact before entering the shared owned stage,
+re-admits it immediately before copying the PE, and checks it again after all
+service/firewall/SQL/private-file teardown. New readiness/helper bytes must be
+tracked by the exact runtime commit. The shared activation driver receives only
+narrow DB recovery/identity hooks; the default checksum-only path is preserved.
+Auth identity cannot be overridden by the new DB hash. The same recovered
+schema, fake-auth-disabled profiles, SQL scope, 300-second readiness deadline,
+actual registration/status/channel/listener and 99-table gates remain.
+
+The derivative uses its own receipt schema and never attempts client login or
+selected-shard play. Its failure-only SQL/process observer remains bounded by
+the exact new DB process generation and binary hash. The old modal classifier
+is explicitly not run: its compiled filename aliases and source map are pinned
+to the prior checksum-only PE, so they cannot establish attribution for this
+derivative. A later failure would require a separately admitted modal policy.
+Seven new host methods exercise artifact admission, recovery, real-shaped service
+identity, generation/path/pin refusal, runtime source ownership, wrapper
+stability and actual shared-stage late cleanup using nonnetwork process/SQL
+shells. They establish no real Windows service or DB readiness.
+
+The first new build passed in `39080037562`, source
+`2729bfc16c9f757fd850c24a0bc6df366a2e40ab`. Its exact raw receipt is
+`6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912`;
+its distinct 1,654,784-byte PE is
+`e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c`.
+This is compile/admission evidence, not a service readiness result.
+
+The unchanged Windows preparer writes three generated text files with native
+line endings: `candidate-manifest.json`, `threadname-manifest.json` and
+`checksum-failclosed.patch`. Strict admission on Linux initially refused their
+whole-file CRLF representation. The readiness adapter's `admit_candidate`
+prefers unchanged strict admission, which should pass natively on Windows.
+Only that exact prepared-metadata mismatch enables a bounded external metadata
+view: first verify the caller-pinned original receipt and every raw file, permit
+only whole-file LF or CRLF for those three known files, convert to native text
+endings, update only their corresponding file records in a separately hashed
+verification receipt, and run unchanged strict admission on the view. Mixed or
+bare CR, unexpected files, rehashed content changes, source-map changes and PE
+changes refuse. The view is removed and the original raw artifact rechecked.
+No source, PE, policy proof or original build receipt is transformed. The result
+returns the original receipt/PE pins and explicitly distinguishes the view's
+receipt hash; that verification receipt is not an original build-output claim.
+All twenty admitted builder inputs remain unchanged, so no rebuild is needed
+to resolve this metadata-only portability issue.

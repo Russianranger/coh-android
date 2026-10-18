@@ -135,9 +135,10 @@ jobs:
                       assert target_path.stat().st_size==item.file_size
               archive.unlink()
           PY
-      - name: Check unchanged retained original PE against current exact source without building
+      - name: Check retained PE and fixed first-failure diagnostic source before runtime
         run: |
           python3 native-android/engine/scenecatalog-server/admit_groups_capture.py --compile-directory "$RUNNER_TEMP/groups-inputs/observer/groups-compile" --source-root . --compile-receipt-sha256 698da0508b0849f1e5c95f2ea2198f56a6664a6c893b0e33f7243c038491b235
+          python3 native-android/engine/scenecatalog-server/test_groups_native_status.py
           python3 native-android/engine/scenecatalog-server/test_groups_public_summary.py
       - name: Install x86 hosted runtime with PG18 and source-qualified classic Wine10
         run: |

@@ -1,0 +1,23 @@
+{
+  "A_reports_42_current_compiler_dependencies_equal_600": true,
+  "all_1750_recorded_source_pins_previously_independently_checked_against_exact_600_Git_blobs": true,
+  "all_nine_A_and_enum_pins_equal_exact_commit_and_current_worker": true,
+  "all_three_binary_records_equal_independently_rehashed_root_600_ELFs": true,
+  "all_twelve_stdout_bytes_and_terminal_values_equal_independently_preserved_root_600_receipt": true,
+  "concrete_blockers": [],
+  "historical_fe9_false_IDLE_timeout_evidence_preserved_separately": true,
+  "later_nonconsumer_D_activation_audit_difference_recorded_precisely": true,
+  "parser_bytes_unchanged_from_reviewed_579_source": true,
+  "proof_bytes": 10196,
+  "proof_path": "native-android/engine/scenecatalog-server/evidence/live-groups-capture-20261017/native-deadline-stdout-compatibility.json",
+  "proof_sha256": "4cfdfba79985003d25a50eb4f668fa084855a1236f2f8a4f849f114710680880",
+  "retroactive_live_child_or_stdout_ownership_claimed": false,
+  "reviewer_did_not_regenerate_compiler_dependency_map": true,
+  "reviewer_tests_or_parser_or_CLI_or_compiler_or_runtime_replayed": false,
+  "root_600_timeout_terminal_true_DB9_Map5_preserved": true,
+  "schema": "coh-f-deadline-stdout-parser-compatibility-review-v1",
+  "source_commit": "5fc7141a15cdb195eca0e41c3f52933c6da2cbfb",
+  "source_generation_admitted": false,
+  "source_review_passed": true,
+  "world_authority": false
+}

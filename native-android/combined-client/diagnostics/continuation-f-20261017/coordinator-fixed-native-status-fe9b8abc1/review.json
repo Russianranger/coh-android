@@ -1,0 +1,88 @@
+{
+  "actor_identity_verified": false,
+  "actual_os_sockets_scripted_peers_only": true,
+  "all_three_x86_64_elf_hashes_verified": true,
+  "all_twelve_retained_fixed_stdout_json_hashes_and_schemas_verified": true,
+  "android_built": false,
+  "android_executed": false,
+  "artifact_pins": {
+    "coh-capture-local-initial": {
+      "bytes": 172080,
+      "sha256": "ef04e1aff02b133b6757c7dc929808072d7d233085894d8f472c8ab175613370"
+    },
+    "coh-capture-local-initial-address": {
+      "bytes": 899760,
+      "sha256": "9886a1189904b6f9307b6c06f54da9f037978829336b8310e3c47098264da44c"
+    },
+    "coh-capture-local-initial-undefined": {
+      "bytes": 799944,
+      "sha256": "ece5c98b9977a8d8579b95ce8ce8721aa80033bbcd9c4dc6c73e230e5ef90125"
+    },
+    "status-address/badheader.json": {
+      "bytes": 449,
+      "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32"
+    },
+    "status-address/captured.json": {
+      "bytes": 447,
+      "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6"
+    },
+    "status-address/none.json": {
+      "bytes": 451,
+      "sha256": "582c06b23e91fadb5cbbabee83b97642a05d6eedf8967e41bc08ab809dba3781"
+    },
+    "status-address/unknown.json": {
+      "bytes": 450,
+      "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5"
+    },
+    "status-release/badheader.json": {
+      "bytes": 449,
+      "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32"
+    },
+    "status-release/captured.json": {
+      "bytes": 447,
+      "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6"
+    },
+    "status-release/none.json": {
+      "bytes": 451,
+      "sha256": "582c06b23e91fadb5cbbabee83b97642a05d6eedf8967e41bc08ab809dba3781"
+    },
+    "status-release/unknown.json": {
+      "bytes": 450,
+      "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5"
+    },
+    "status-undefined/badheader.json": {
+      "bytes": 449,
+      "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32"
+    },
+    "status-undefined/captured.json": {
+      "bytes": 447,
+      "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6"
+    },
+    "status-undefined/none.json": {
+      "bytes": 451,
+      "sha256": "582c06b23e91fadb5cbbabee83b97642a05d6eedf8967e41bc08ab809dba3781"
+    },
+    "status-undefined/unknown.json": {
+      "bytes": 450,
+      "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5"
+    }
+  },
+  "build_receipt_gzip_bytes": 84161,
+  "build_receipt_gzip_sha256": "85fc9b6806b3ff8627cc8db94b80dc62ee61629cd5e42671314868eb993d94ac",
+  "build_receipt_raw_bytes": 238291,
+  "build_receipt_raw_sha256": "da078ddb45fa8c0b6c7785a90ec2218514e2332788a96e553cd2074affce3c32",
+  "consumed_source_equals_committed_head": true,
+  "exact_git_source_pins_verified": 1744,
+  "gzip_recipe": "gzip level9 mtime0 emptyfilename",
+  "new_first_failure_cause_and_phases_serialized_together": true,
+  "owner_reported_checks_each_release_asan_ubsan": 127,
+  "parse_compatibility_is_not_retroactive_child_fd_ownership": true,
+  "real_server_capture": false,
+  "reviewer_qualifier_test_or_runtime_replay": false,
+  "schema": "coh-f-coordinator-fixed-native-status-review-v1",
+  "source_dirty_at_start": false,
+  "source_generation_admitted": false,
+  "source_pins_different_from_current_root": [],
+  "source_revision": "fe9b8abc14156ca76d27bd8a3d5d25eee9e391b9",
+  "world_authority": false
+}

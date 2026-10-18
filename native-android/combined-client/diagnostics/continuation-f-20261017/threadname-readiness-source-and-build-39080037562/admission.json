@@ -1,0 +1,37 @@
+{
+  "admitted": true,
+  "schema": "coh-hosted-mssql-dbserver-threadname-build-v1-admission",
+  "binary": {
+    "sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c",
+    "bytes": 1654784,
+    "machine": "I386",
+    "format": "PE32",
+    "subsystem": 3,
+    "header_identity_only": true,
+    "executed": false
+  },
+  "receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+  "changed_source_paths": [
+    "Common/ClientLogin/clientcommLogin.c",
+    "libs/UtilitiesLib/src/utils/utils.c"
+  ],
+  "old_candidate_binary_sha256": "9dd91e456484c3fde1d9832163c2bbdad97d6a3f4db4db6a7773fddffe3319c3",
+  "service_executed": false,
+  "accepted_runtime_replaced": false,
+  "live_authenticated_db_login_verified": false,
+  "normal_version_or_checksum_acceptance_verified": false,
+  "generated_metadata_admission": {
+    "mode": "native_generated_metadata_view",
+    "original_receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+    "view_receipt_sha256": "670292be3ce286aa2e728bde4108ab6ce86fb926d504ee9d6993d92646d5dab1",
+    "changed_files": [
+      "candidate-manifest.json",
+      "checksum-failclosed.patch",
+      "threadname-manifest.json"
+    ],
+    "temporary_view_removed": true,
+    "content_changes_other_than_line_endings": false,
+    "original_build_receipt_replaced": false,
+    "original_pe_sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c"
+  }
+}

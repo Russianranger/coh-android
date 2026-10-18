@@ -2,6 +2,7 @@
 #define COH_INITIAL_CAPTURE_PRIVATE_H
 #include "coh_initial_capture.h"
 typedef struct CohInitialMap CohInitialMap;
+typedef struct {unsigned valid;CohMapPhase phase;} CohInitialMapFailurePhase;
 typedef CohStatus (*CohInitialMapObserver)(void *,const CohInitialCaptureEvent *);
 CohInitialMap *coh_initial_map_create(CohMapClient *);
 void coh_initial_map_destroy(CohInitialMap *);
@@ -11,4 +12,5 @@ CohStatus coh_initial_map_lease(const CohInitialMap *,const CohInitialCaptureEve
  CohInitialCaptureLease *);
 int coh_initial_map_output_disjoint(const CohInitialMap *,const void *,size_t);
 void coh_initial_map_diagnostics(const CohInitialMap *,CohInitialCaptureDiagnostics *);
+CohInitialMapFailurePhase coh_initial_map_failure_phase(const CohInitialMap *);
 #endif

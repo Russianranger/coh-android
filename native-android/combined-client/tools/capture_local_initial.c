@@ -85,6 +85,12 @@ static const char *failure_name(CohInitialCaptureFailure failure) {
         "COMMAND","HEADER","OBSERVER","RELEASE","TIMEOUT","CANCELLED","MEMORY"};
     return (unsigned)failure<sizeof(names)/sizeof(names[0])?names[failure]:"UNKNOWN";
 }
+static CohInitialCaptureFailure diagnostic_failure(const CohInitialCaptureDiagnostics *d) {
+    return d->first_failure.valid?d->first_failure.failure:d->failure;
+}
+static CohStatus diagnostic_status(const CohInitialCaptureDiagnostics *d) {
+    return d->first_failure.valid?d->first_failure.status:d->status;
+}
 static int initial_report(InitialOutput *out,const CohInitialCaptureDiagnostics *d,unsigned passed) {
     Capture *g=&out->groups;
     int fd=openat(g->directory,"initial-observation.json",O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,0600);
@@ -107,7 +113,8 @@ static int initial_report(InitialOutput *out,const CohInitialCaptureDiagnostics 
         "\"message_generation\":%llu,\"packet_sha256\":\"%s\","
         "\"accessible_commands\":%zu,\"shortcuts\":[",
         passed?"true":"false",d->reqallents_sent,passed?"NONE":
-            d->failure==COH_INITIAL_CAPTURE_FAILURE_NONE?"TIMEOUT":failure_name(d->failure),(unsigned)d->status,
+            diagnostic_failure(d)==COH_INITIAL_CAPTURE_FAILURE_NONE?"TIMEOUT":failure_name(diagnostic_failure(d)),
+        (unsigned)diagnostic_status(d),
         g->sha256,(unsigned long long)out->groups_message_generation,g->message_id,g->connection_id,g->version,
         g->map_generation,g->selection_generation,g->selected_slot,g->selected_dbid,g->map_id,g->map_link_id,
         g->db_generation,g->receipt_generation,(unsigned long long)d->local.opened_sockets,
@@ -170,12 +177,20 @@ int main(int argc,char **argv) {
         success=!interrupted&&out.groups.calls==1&&out.groups.captured&&out.groups.status==COH_OK&&
             d.groups_observed&&d.groups_observations==1&&d.groups_message_generation==out.groups_message_generation;
     }
+    /* Retire an active caller deadline/signal through the diagnostic owner so
+     * its actual phases are latched before close overwrites them. */
+    if(!initial_passed&&out.groups.directory>=0){
+        if(interrupted)coh_initial_capture_cancel(owner);
+        else if(status==COH_OK)coh_initial_capture_timeout(owner);
+    }
     coh_db_wipe(account,sizeof(account));coh_initial_capture_close(owner);coh_initial_capture_diagnostics(owner,&d);
     success=success&&d.local.opened_sockets==2&&d.local.closed_sockets==2;
     initial_passed=initial_passed&&success;
-    if(success&&!initial_passed&&d.failure==COH_INITIAL_CAPTURE_FAILURE_NONE){
-        d.failure=COH_INITIAL_CAPTURE_FAILURE_TIMEOUT;
-        d.status=COH_STATE;
+    if(!initial_passed&&!d.first_failure.valid&&d.failure==COH_INITIAL_CAPTURE_FAILURE_NONE){
+        d.failure=out.groups.directory<0?COH_INITIAL_CAPTURE_FAILURE_INPUT:
+            interrupted?COH_INITIAL_CAPTURE_FAILURE_CANCELLED:
+            status==COH_OK?COH_INITIAL_CAPTURE_FAILURE_TIMEOUT:COH_INITIAL_CAPTURE_FAILURE_PROTOCOL;
+        d.status=interrupted?COH_CANCELLED:status==COH_OK?COH_STATE:status;
     }
     coh_initial_capture_destroy(owner);
     if(!initial_passed&&out.initial_owned){(void)unlinkat(out.groups.directory,"initial-update.bin",0);out.initial_owned=0;}
@@ -193,10 +208,16 @@ int main(int argc,char **argv) {
     }
     if(out.groups.directory>=0)(void)close(out.groups.directory);
     if(!success&&directory_created)(void)rmdir(argv[4]);
-    printf("{\"passed\":%s,\"initial_packet_observed\":%s,\"status\":%u,"
+    printf("{\"schema\":\"coh-local-initial-capture-status-v1\",\"passed\":%s,\"initial_packet_observed\":%s,\"status\":%u,"
         "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"source_generation_admitted\":false,"
-        "\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false}\n",
-        success?"true":"false",initial_passed?"true":"false",(unsigned)status,
-        (unsigned long long)d.local.opened_sockets,(unsigned long long)d.local.closed_sockets);
+        "\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,"
+        "\"diagnostic_failure_code\":\"%s\",\"groups_observed\":%s,\"reqallents_sent\":%u,\"local_phase\":%u,"
+        "\"terminal_failure\":%s,\"terminal_db_phase\":%u,\"terminal_map_phase\":%u}\n",
+        success?"true":"false",initial_passed?"true":"false",(unsigned)diagnostic_status(&d),
+        (unsigned long long)d.local.opened_sockets,(unsigned long long)d.local.closed_sockets,
+        failure_name(diagnostic_failure(&d)),d.groups_observed?"true":"false",d.reqallents_sent,(unsigned)d.local.phase,
+        (d.first_failure.valid||d.local.terminal_failure)?"true":"false",
+        (unsigned)(d.first_failure.valid?d.first_failure.db_phase:d.local.terminal_db_phase),
+        (unsigned)(d.first_failure.valid?d.first_failure.map_phase:d.local.terminal_map_phase));
     return success?0:1;
 }

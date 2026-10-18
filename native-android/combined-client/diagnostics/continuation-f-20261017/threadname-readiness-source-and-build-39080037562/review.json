@@ -1,0 +1,120 @@
+{
+  "Auth_SHA_override_refused": true,
+  "accepted_runtime_replaced": false,
+  "actual_admission_sha256": "b604ab830b3431ada80b71faeb8767549298aa7e197c21bbf95f7cd0b5091429",
+  "actual_new_candidate_readiness_verified": false,
+  "actual_read_only_admission_independently_executed": true,
+  "all_16_raw_member_records_independently_verified": true,
+  "all_20_builder_inputs_equal_original_build_commit_current_worker_and_integrated_main": true,
+  "all_teardown_preserved_and_final_candidate_source_stability_required": true,
+  "all_three_runtime_sources_equal_exact_source_commit_current_worker_and_integrated_main": true,
+  "artifact_already_preserved_exact_in_D_evidence_commit": "b0bb6aae4fcf0ddf5bb500938c9994803b3589ca",
+  "artifact_bytes": 1130748,
+  "artifact_id": 12118334160,
+  "artifact_sha256": "8d139b6b229742b9b1274e985c26e1847edca821bcc3836a367dd9e96be1c1c1",
+  "authenticated_db_map_handoff_verified": false,
+  "build_commit": "2729bfc16c9f757fd850c24a0bc6df366a2e40ab",
+  "build_run": 39080037562,
+  "concrete_blockers": [],
+  "expected_metadata_bytes_regenerated_and_compared_exactly": true,
+  "metadata_transformation_only_three_fixed_files_whole_LF_or_CRLF": true,
+  "mixed_or_bare_CR_refused": true,
+  "new_DB_generation_path_hash_lifetime_checked_before_after": true,
+  "old_builder_inputs_and_old_modal_policy_unchanged": true,
+  "old_modal_policy_not_applied_to_derivative_PE": true,
+  "original_directory_file_bytes_and_admitter_sources_unchanged_before_after": true,
+  "original_receipt_and_PE_returned_unchanged": true,
+  "owner_reported_affected_common_prior_methods": 6,
+  "owner_reported_new_methods": 7,
+  "proof_bytes": 4712,
+  "proof_commit": "b0bb6aae4fcf0ddf5bb500938c9994803b3589ca",
+  "proof_path": "native-android/engine/auth-interop/qualification/threadname-readiness-20261017/host.json",
+  "proof_sha256": "4fff9be4ecbd6ade868e8ebae65202367d78d79a8a900d50b3f4207e7b829d39",
+  "raw_artifact_member_count": 17,
+  "raw_member_pins": {
+    "DbServer-threadname-candidate.exe": {
+      "bytes": 1654784,
+      "sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c"
+    },
+    "archive-original-source.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build-db-candidate.log": {
+      "bytes": 13809,
+      "sha256": "d322eed564237ff058839e7401060d0a317ebd20aeefb1edabfe9364a220440f"
+    },
+    "candidate-CMakeCache.txt": {
+      "bytes": 36652,
+      "sha256": "4a98106db21ee21f66bb91e56426fc02c6dfe38c457c324a5f200a3c0a756542"
+    },
+    "candidate-clientcommLogin.c": {
+      "bytes": 3759,
+      "sha256": "3bbe098330617b1410d73c7335356c8721c10690bfcb799d1d2001a9b85a4f7d"
+    },
+    "candidate-manifest.json": {
+      "bytes": 765,
+      "sha256": "37d630a2f92496f1b6a9f3706e96c173bf708ae07befd74964a335994ab9f4cc"
+    },
+    "candidate-utils.c": {
+      "bytes": 60665,
+      "sha256": "ebcb8d4a08f752abc9f7e9e4cbf7434f977f4144e93f269ee15402bf62353cff"
+    },
+    "checksum-failclosed.patch": {
+      "bytes": 659,
+      "sha256": "d31341f948fc5c3fce36b46461f7348a9cc8e5e6321e8ae13a9e5bf178e50bb1"
+    },
+    "composition-qualification.json": {
+      "bytes": 3686,
+      "sha256": "394a3d000fd70843e201397e99c8da0326db6f3f912669787150a935ff912364"
+    },
+    "configure-db-candidate.log": {
+      "bytes": 13398,
+      "sha256": "855ec83356a3697a0f220ca17666e3616341f3416c850bd302454cd051e125fe"
+    },
+    "original-clientcommLogin.c": {
+      "bytes": 3733,
+      "sha256": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea"
+    },
+    "original-utils.c": {
+      "bytes": 60404,
+      "sha256": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf"
+    },
+    "retained-policy-matrix.json": {
+      "bytes": 12422,
+      "sha256": "c17afbf163cccb5c924138efffe25e3d788c4f851cbc64b2a7988ccb42fd0503"
+    },
+    "retained-threadname.patch": {
+      "bytes": 814,
+      "sha256": "a1fb86bbf9e02cf048ced2d3f2f4c295fbab2f7eb3b9a227e30573bbed1aa04c"
+    },
+    "source-file-map.json": {
+      "bytes": 705563,
+      "sha256": "2b07f6c6b7c1b95b072a46f947cc9190ca5e32fc2b17b5c149c50f20222913a3"
+    },
+    "threadname-manifest.json": {
+      "bytes": 3127,
+      "sha256": "4dd1e04932810249a6b3043077b5d479c23a0b3d478e7aad6ab9c6d54155542d"
+    }
+  },
+  "raw_receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+  "readiness_initial_source_commit": "1966cf91cf90963802b507de41af6530cf1e6e17",
+  "readiness_scope_rechecks_exact_receipt_on_second_read": true,
+  "reviewer_compiler_or_test_suite_or_service_or_SQL_executed": false,
+  "schema": "coh-f-threadname-readiness-and-build-review-v1",
+  "selected_shard_play_verified": false,
+  "separate_view_receipt_sha256": "670292be3ce286aa2e728bde4108ab6ce86fb926d504ee9d6993d92646d5dab1",
+  "source_commit": "a1f5ef799f1d126a2f71e9488f4aab3dab550d6c",
+  "source_review_passed": true,
+  "source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "296421db5500c456b10ad803c9871d04f92000401405a9d4f223787c596b15f3",
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py": "7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py": "b8272551e46591b5788f340edfd37711b871b857f0f9acf05fbd2f39b54b9ebb"
+  },
+  "temporary_verification_view_removed": true,
+  "workflow_exact_raw_artifact_and_receipt_PE_pins_match": true,
+  "workflow_only_fixed_sanitized_readiness_receipt_uploaded": true,
+  "workflow_static_review_passed": true,
+  "workflow_static_review_sha256": "f359f36cc1aa48110b749b5ebf3adf82c32681d4f1f6241000838c59ff03c149",
+  "world_authority": false
+}

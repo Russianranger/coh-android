@@ -1,0 +1,43 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "all_68_sources_equal_exact_commit_current_worker_integrated_main": true,
+  "binding_path": "native-android/engine/initial-capture/qualification/initial-capture-explicit-deadline-binding-20261017.json",
+  "binding_sha256": "abce21d732575110abbc32a2211765ae0be85517551878ed26ec016b661d7d3b",
+  "callback_storage_budgeted_by_caller": true,
+  "complete_initial_character": false,
+  "concrete_blockers": [],
+  "embedded_snapshot_and_diagnostic_bytes_not_additional_owners": true,
+  "global_aggregate_budget_admitted": false,
+  "host_additional_owner_bytes": 2352,
+  "increase_from_990": 0,
+  "live_initial_packet_captured": false,
+  "only_changed_sources_since_first_failure_990": [
+    "native-android/engine/initial-capture/coh_initial_capture.h",
+    "native-android/engine/initial-capture/coh_initial_local.c",
+    "native-android/engine/initial-capture/test_initial_capture.c",
+    "native-android/engine/initial-capture/test_initial_capture_owner.c"
+  ],
+  "ordinary_and_helper_sources_unchanged": true,
+  "owner_reported_controls_each_release_address_undefined": {
+    "owner_fault_checks": 1544,
+    "owner_fault_scenarios": 5,
+    "public_checks": 5178,
+    "public_scenarios": 19
+  },
+  "prior_first_failure_preserved": true,
+  "proof_bytes": 5487,
+  "proof_commit": "9f3dcfb17e99a7d35608d4a389583a1997057b90",
+  "proof_path": "native-android/engine/initial-capture/qualification/initial-capture-explicit-deadline-30f9a3a62.json.gz",
+  "proof_sha256": "9debb4fa590473ed56068342639f454ee8157ac86eaec337cdfc38ee38433e1a",
+  "reviewer_qualifier_or_test_or_runtime_replayed": false,
+  "schema": "coh-f-initial-explicit-deadline-source-review-v1",
+  "source_commit": "30f9a3a6282d771c907d26d418aca22a0c9c1917",
+  "source_generation_admitted": false,
+  "source_review_passed": true,
+  "synthetic_layout_peers_only": true,
+  "timeout_inactive_success_closed_failed_cancelled_and_callback_busy_noop": true,
+  "timeout_only_begun_active_nonbusy_owner": true,
+  "timeout_records_fixed_COH_STATE_TIMEOUT_before_Local_close": true,
+  "world_authority": false
+}

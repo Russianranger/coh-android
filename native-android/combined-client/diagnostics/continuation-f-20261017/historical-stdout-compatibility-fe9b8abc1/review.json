@@ -1,0 +1,18 @@
+{
+  "A_source_and_enum_maps_equal_exact_commit": true,
+  "all_12_stdout_hashes_and_terminal_fields_equal_preserved_F_baseline": true,
+  "baseline_source_commit": "fe9b8abc14156ca76d27bd8a3d5d25eee9e391b9",
+  "historical_not_current_deadline_admission": true,
+  "known_gap": "Outer total deadline precedes module timeout; plain close leaves TIMEOUT/status7 but terminal false and phases IDLE. Explicit deadline API/root wiring requires separate qualification.",
+  "native_cli_or_tests_replayed": false,
+  "proof_bytes": 9176,
+  "proof_path": "native-android/engine/scenecatalog-server/evidence/live-groups-capture-20261017/native-first-failure-stdout-compatibility.json",
+  "proof_sha256": "419f336e8e5c8eba3d65f45dad80d3e50c6ba9024f004189b3a78dc9f2335953",
+  "retroactive_live_child_or_stdout_ownership_claimed": false,
+  "root_build_receipt_equal_preserved_F_baseline": true,
+  "schema": "coh-f-historical-stdout-compatibility-review-v1",
+  "source_commit": "d7a7acfa1a42dd2bcc5bd136488222f131a28d96",
+  "source_generation_admitted": false,
+  "source_review_passed": true,
+  "world_authority": false
+}

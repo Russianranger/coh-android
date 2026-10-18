@@ -1,0 +1,29 @@
+{
+  "ack_permitted": false,
+  "actor_publication": false,
+  "actual_source_enum_maps_verified": true,
+  "actual_tiny_linux_python_children_only": true,
+  "collection_after_cleanup_attempts_not_aggregate_cleanup_authority": true,
+  "exact_root_stdout_fields": 18,
+  "fixed_public_constructor_private_canaries_absent": true,
+  "legacy_and_groups_admission_unchanged": true,
+  "native_capture_executed": false,
+  "new_test_methods": 10,
+  "passed": true,
+  "postgres_executed": false,
+  "related_test_methods": 61,
+  "same_owned_child_stdout_identity_and_bytes_verified": true,
+  "schema": "coh-native-fixed-failure-diagnostics-host-v1",
+  "source_generation_admitted": false,
+  "source_sha256": {
+    "NATIVE_FAILURE_DIAGNOSTICS.md": "97c9b5d460b755ecb3bc333ac938d4d45d96d0aee1dc97cbafc4d2404caf9a78",
+    "admit_source_snapshot.py": "390245d7ee4113a776e7a92fda5e3a24345891614446fb3eea8a028ed34d4256",
+    "capture_groups_transaction.py": "fdaf8a9c60478244d47daa7e6a6db6fac90654eeb23a7e05d3a2be36b7693569",
+    "groups_native_status.py": "cc0e6a10144e9e0eb9bed06c04f825b2d49ffabc3697ca91b1581dc75f76eb0c",
+    "summarize_groups_capture.py": "8daa513aa8a45b905d764be7b0d658a0b4b34b117bbfac922841311fb2992beb",
+    "test_groups_native_status.py": "e21db4e27678f9688fa4b71abd9d19abe73ef21570e9b9055207758d6f3d0741"
+  },
+  "stdout_limit_bytes": 16384,
+  "wine_executed": false,
+  "world_authority": false
+}

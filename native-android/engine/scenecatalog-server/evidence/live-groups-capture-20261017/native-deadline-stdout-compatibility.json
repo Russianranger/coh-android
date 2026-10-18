@@ -1,0 +1,257 @@
+{
+  "a_source_sha256": {
+    "native-android/engine/scenecatalog-server/NATIVE_FAILURE_DIAGNOSTICS.md": "57557b7230ba5d23b1e69604dd55aa3dbbac6e4bbe7f8baa796c1bcf9f480677",
+    "native-android/engine/scenecatalog-server/capture_groups_transaction.py": "fdaf8a9c60478244d47daa7e6a6db6fac90654eeb23a7e05d3a2be36b7693569",
+    "native-android/engine/scenecatalog-server/delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "native-android/engine/scenecatalog-server/groups_native_status.py": "cc0e6a10144e9e0eb9bed06c04f825b2d49ffabc3697ca91b1581dc75f76eb0c",
+    "native-android/engine/scenecatalog-server/test_groups_native_status.py": "af7ac93aca4b9dc2faf8ee67dbb5a031d7927f4d2091a718badc169e28c8e23f"
+  },
+  "a_unit_tests": {
+    "command": "python3 -m unittest -v test_groups_native_status.py",
+    "methods": 11,
+    "passed": true
+  },
+  "enum_source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+    "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+    "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9"
+  },
+  "historical_baseline": {
+    "compatibility_proof_sha256": "419f336e8e5c8eba3d65f45dad80d3e50c6ba9024f004189b3a78dc9f2335953",
+    "source_revision": "fe9b8abc14156ca76d27bd8a3d5d25eee9e391b9"
+  },
+  "passed": true,
+  "root_qualification": {
+    "binaries": {
+      "address": {
+        "bytes": 900336,
+        "file": "coh-capture-local-initial-address",
+        "sha256": "ee9a35d1ed45ebbce1b6cbb27f0185ef1b85fbebad3971aad884bed5a498c787"
+      },
+      "release": {
+        "bytes": 172168,
+        "file": "coh-capture-local-initial",
+        "sha256": "b066ea020a6dbc9d5cf0c179228a60ffb9deae47c882d6ca92ba8ad5a8337fb9"
+      },
+      "undefined": {
+        "bytes": 804664,
+        "file": "coh-capture-local-initial-undefined",
+        "sha256": "aca471a5431ddd7c03ff0d63e1323f7041516fc8ee649b805aba1497f7bd1ba5"
+      }
+    },
+    "build_receipt": {
+      "bytes": 239286,
+      "sha256": "fd544078ac3eff49e1f249b1644e7edf3a84f203dd77c945d3febaa8f5d2ef96"
+    },
+    "build_source_bytes_checked": 15771759,
+    "build_source_files_checked": 1750,
+    "checks_per_mode": 139,
+    "current_project_consumer_closure_matches_recorded_build": true,
+    "current_source_bytes_match_recorded_hashes": false,
+    "later_unrelated_nonconsumer_audit_mismatches": [
+      {
+        "current_sha256": "296421db5500c456b10ad803c9871d04f92000401405a9d4f223787c596b15f3",
+        "path": "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py",
+        "recorded_sha256": "247b5c0ec6e926bc9385aff02210495076295f835c89e8cdfe4e4ae9180961a7"
+      }
+    ],
+    "project_consumer_dependencies": 42,
+    "project_consumer_dependency_map_sha256": "8daa457a620cb5764cc614e46a4802d41b826766e72704b3cb5edac2c73d0045",
+    "retained_stdout_files": 12,
+    "source_blobs_match_recorded_committed_revision": true,
+    "source_checkout_dirty_at_start": true,
+    "source_revision": "600dbb67a0f90195698cadb8220487b76bf045e1"
+  },
+  "schema": "coh-native-deadline-stdout-compatibility-v1",
+  "scope": {
+    "ack_permitted": false,
+    "actor_publication": false,
+    "compiler_dependency_preprocessing_only": true,
+    "live_capture_admitted": false,
+    "native_cli_reexecuted": false,
+    "original_server_transaction_executed": false,
+    "postgres_wine_or_graphics_executed": false,
+    "pure_parser_and_source_checks_only": true,
+    "retained_scripted_stdout_only": true,
+    "retroactive_child_or_stdout_ownership_claimed": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "stdout_compatibility": {
+    "address": {
+      "badheader": {
+        "bytes": 449,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-address/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 447,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-address/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 450,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-address/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "258f709458a04db60863f04154d7cc41130aa10fa22ded44977118ca2f0c846b",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "unknown": {
+        "bytes": 450,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-address/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    },
+    "release": {
+      "badheader": {
+        "bytes": 449,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-release/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 447,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-release/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 450,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-release/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "258f709458a04db60863f04154d7cc41130aa10fa22ded44977118ca2f0c846b",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "unknown": {
+        "bytes": 450,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-release/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    },
+    "undefined": {
+      "badheader": {
+        "bytes": 449,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-undefined/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 447,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-undefined/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 450,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-undefined/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "258f709458a04db60863f04154d7cc41130aa10fa22ded44977118ca2f0c846b",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "unknown": {
+        "bytes": 450,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-undefined/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    }
+  }
+}

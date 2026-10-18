@@ -1,0 +1,240 @@
+{
+  "a_source_sha256": {
+    "native-android/engine/scenecatalog-server/NATIVE_FAILURE_DIAGNOSTICS.md": "cb6c7bddf24367b06bf3eabd0d984cb84a5d4dbdafddbfe96c8fe51fb1294559",
+    "native-android/engine/scenecatalog-server/delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "native-android/engine/scenecatalog-server/groups_native_status.py": "cc0e6a10144e9e0eb9bed06c04f825b2d49ffabc3697ca91b1581dc75f76eb0c",
+    "native-android/engine/scenecatalog-server/test_groups_native_status.py": "23a45ac38b0cdc391d53e67a276050db613848a4a9cce8eea0139e4f6f43a636"
+  },
+  "a_unit_tests": {
+    "command": "python3 -m unittest -v test_groups_native_status.py",
+    "methods": 11,
+    "passed": true
+  },
+  "enum_source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_session.h": "9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4",
+    "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+    "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9"
+  },
+  "passed": true,
+  "root_qualification": {
+    "binaries": {
+      "address": {
+        "bytes": 899760,
+        "file": "coh-capture-local-initial-address",
+        "sha256": "9886a1189904b6f9307b6c06f54da9f037978829336b8310e3c47098264da44c"
+      },
+      "release": {
+        "bytes": 172080,
+        "file": "coh-capture-local-initial",
+        "sha256": "ef04e1aff02b133b6757c7dc929808072d7d233085894d8f472c8ab175613370"
+      },
+      "undefined": {
+        "bytes": 799944,
+        "file": "coh-capture-local-initial-undefined",
+        "sha256": "ece5c98b9977a8d8579b95ce8ce8721aa80033bbcd9c4dc6c73e230e5ef90125"
+      }
+    },
+    "build_receipt": {
+      "bytes": 238291,
+      "sha256": "da078ddb45fa8c0b6c7785a90ec2218514e2332788a96e553cd2074affce3c32"
+    },
+    "build_source_bytes_checked": 15668777,
+    "build_source_files_checked": 1744,
+    "checks_per_mode": 127,
+    "current_source_bytes_match_recorded_hashes": true,
+    "retained_stdout_files": 12,
+    "source_blobs_match_recorded_committed_revision": true,
+    "source_revision": "fe9b8abc14156ca76d27bd8a3d5d25eee9e391b9"
+  },
+  "schema": "coh-native-first-failure-stdout-compatibility-v1",
+  "scope": {
+    "ack_permitted": false,
+    "actor_publication": false,
+    "live_capture_admitted": false,
+    "native_cli_reexecuted": false,
+    "original_server_transaction_executed": false,
+    "postgres_wine_or_graphics_executed": false,
+    "pure_parser_and_source_checks_only": true,
+    "retained_scripted_stdout_only": true,
+    "retroactive_child_or_stdout_ownership_claimed": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "stdout_compatibility": {
+    "address": {
+      "badheader": {
+        "bytes": 449,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-address/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 447,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-address/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 451,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-address/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "582c06b23e91fadb5cbbabee83b97642a05d6eedf8967e41bc08ab809dba3781",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "unknown": {
+        "bytes": 450,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-address/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    },
+    "release": {
+      "badheader": {
+        "bytes": 449,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-release/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 447,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-release/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 451,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-release/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "582c06b23e91fadb5cbbabee83b97642a05d6eedf8967e41bc08ab809dba3781",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "unknown": {
+        "bytes": 450,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-release/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    },
+    "undefined": {
+      "badheader": {
+        "bytes": 449,
+        "coh_status": 1,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "HEADER",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-undefined/badheader.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      },
+      "captured": {
+        "bytes": 447,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "NONE",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-undefined/captured.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": true,
+        "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "none": {
+        "bytes": 451,
+        "coh_status": 7,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "TIMEOUT",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-undefined/none.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "582c06b23e91fadb5cbbabee83b97642a05d6eedf8967e41bc08ab809dba3781",
+        "terminal_db_phase": 0,
+        "terminal_failure": false,
+        "terminal_map_phase": 0
+      },
+      "unknown": {
+        "bytes": 450,
+        "coh_status": 2,
+        "current_local_phase": 5,
+        "diagnostic_failure_code": "COMMAND",
+        "exact_18_key_schema_compatible": true,
+        "file": "status-undefined/unknown.json",
+        "groups_result_preserved": true,
+        "initial_packet_observed": false,
+        "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+        "terminal_db_phase": 9,
+        "terminal_failure": true,
+        "terminal_map_phase": 5
+      }
+    }
+  }
+}

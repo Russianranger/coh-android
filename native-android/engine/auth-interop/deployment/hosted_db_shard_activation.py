@@ -219,7 +219,7 @@ def admit_service_process(value, pid, expected_path, previous=None):
     return result
 
 
-def service_process_snapshot(child, expected_path, previous=None):
+def service_process_snapshot(child, expected_path, previous=None, expected_binary_sha256=None):
     pid=child.pid
     expected=service_image_path(expected_path)
     if type(pid) is not int or not 1<=pid<=0xffffffff or child.poll() is not None:
@@ -230,6 +230,12 @@ def service_process_snapshot(child, expected_path, previous=None):
     value=json.loads(prior.capture(['pwsh','-NoProfile','-NonInteractive','-Command',code]))
     result=admit_service_process(value,pid,expected_path,previous)
     binary_sha=service.BINARY_SHA if ntpath.basename(expected)=='authserver.exe' else DB_BINARY_SHA
+    if expected_binary_sha256 is not None:
+        if (ntpath.basename(expected)!='dbserver.exe'
+                or type(expected_binary_sha256) is not str
+                or not re.fullmatch('[a-f0-9]{64}',expected_binary_sha256)):
+            raise ValueError('shard_db_candidate_binary_pin')
+        binary_sha=expected_binary_sha256
     if child.poll() is not None or prior.sha(expected_path)!=binary_sha:
         raise ValueError('shard_service_process_or_binary_changed')
     return result
@@ -243,7 +249,7 @@ def close_streams(handles):
     return complete
 
 
-def run(args, selected_scope=None):
+def run(args, selected_scope=None, db_candidate=None):
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = prior.require_hosted(root, output, args.expected_commit)
     prerequisite = authenticated_handoff_prerequisite(root, args.auth_success_archive.resolve())
@@ -263,14 +269,24 @@ def run(args, selected_scope=None):
         original_interserver_shard_activation_verified=False,private_console_exported=False)
     created=False;localdb=sqlcmd=None;children=[];rules=[];handles=[];pending_jobs=[]
     db_child=db=db_start=sql=None
+    def observe_db(child,path,previous=None):
+        if db_candidate is None:return service_process_snapshot(child,path,previous)
+        return service_process_snapshot(child,path,previous,expected_binary_sha256=db_binary_sha)
     try:
+        db_binary_name=db_build.BINARY if db_candidate is None else db_candidate.binary_name
+        db_binary_sha=DB_BINARY_SHA if db_candidate is None else db_candidate.binary_sha256
+        if db_candidate is not None:
+            proof.update(schema=db_candidate.receipt_schema,accepted_runtime_replaced=False,
+                         new_db_candidate_admission=db_candidate.admission)
+            if selected_scope is not None:raise ValueError('shard_new_candidate_selected_scope_unqualified')
         if selected_scope is not None:
             proof['schema']='coh-owned-original-selected-shard-play-v1'
         schema_dir = temporary/'accepted-schema'
         schema_manifest = recover_schema(root,schema_dir)
         proof['accepted_schema'] = {'manifest_sha256':SCHEMA_SHA,'files':len(schema_manifest['files']),
             'source_commit':schema_manifest['source_commit'],'data_commit':schema_manifest['data_commit']}
-        proof['db_build_admission'] = recover_db(root,temporary/'db-build')
+        proof['db_build_admission'] = (recover_db(root,temporary/'db-build') if db_candidate is None
+                                      else db_candidate.recover(root,temporary/'db-build'))
         localdb,sqlcmd,proof['x86_odbc_driver'] = service.tools()
         if instance.casefold() in {s.strip().casefold() for s in prior.capture([localdb,'info']).splitlines()}:
             raise ValueError('shard_instance_already_exists')
@@ -297,8 +313,8 @@ def run(args, selected_scope=None):
         shutil.copytree(schema_dir,db_runtime);(db_runtime/'tools').mkdir();(db_runtime/'logs').mkdir()
         auth=auth_runtime/'AuthServer.exe';db=db_runtime/'DbServer.exe'
         shutil.copy2(args.auth_candidate_stage/service.candidate.BINARY,auth)
-        shutil.copy2(temporary/'db-build'/db_build.BINARY,db)
-        if prior.sha(auth)!=service.BINARY_SHA or prior.sha(db)!=DB_BINARY_SHA:raise ValueError('shard_runtime_binary_copy')
+        shutil.copy2(temporary/'db-build'/db_binary_name,db)
+        if prior.sha(auth)!=service.BINARY_SHA or prior.sha(db)!=db_binary_sha:raise ValueError('shard_runtime_binary_copy')
         ports,reservations=login.reserve_ports()
         try:
             (auth_runtime/'etc/config.txt').write_text(auth_configuration(instance,ports,auth_runtime/'logs'),encoding='ascii')
@@ -327,7 +343,7 @@ def run(args, selected_scope=None):
         db_job=login.OwnedJob();pending_jobs.append(db_job)
         db_child=subprocess.Popen([str(db),'-start','0'],cwd=db_runtime,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT)
         children.append((db_child,db_job));pending_jobs.remove(db_job);db_job.assign(db_child)
-        db_start=service_process_snapshot(db_child,db)
+        db_start=observe_db(db_child,db)
         proof['owned_service_generations_start']['db']=db_start
         deadline=time.monotonic()+300;ready=False
         while time.monotonic()<deadline:
@@ -350,7 +366,7 @@ def run(args, selected_scope=None):
             selected_result=selected_scope.exercise(temporary,proof,sql,ports,
                 auth_child,db_child,auth,db,auth_start,db_start,sql_pid,sql_start)
         proof['owned_processes_before_stop']={'auth':service_process_snapshot(auth_child,auth,auth_start),
-            'db':service_process_snapshot(db_child,db,db_start),'sql':login.owned_process_snapshot(sql_pid)}
+            'db':observe_db(db_child,db,db_start),'sql':login.owned_process_snapshot(sql_pid)}
         if proof['owned_processes_before_stop']['sql']!=sql_start:raise ValueError('shard_sql_process_generation_changed')
         proof['original_interserver_shard_activation_verified']=True
         if selected_scope is not None:
@@ -364,20 +380,27 @@ def run(args, selected_scope=None):
         if db_child is not None and db_start is not None and sql is not None:
             diagnostic={'read_only':True,'raw_console_or_sql_exported':False}
             try:
-                diagnostic['generation_before']=service_process_snapshot(db_child,db,db_start)
+                diagnostic['generation_before']=observe_db(db_child,db,db_start)
                 diagnostic['sql']=db_startup_diagnostic.observe_sql(sql,database,db_child.pid,temporary)
                 diagnostic['process']=db_startup_diagnostic.observe_process(db_child.pid)
-                diagnostic['generation_after']=service_process_snapshot(db_child,db,db_start)
+                diagnostic['generation_after']=observe_db(db_child,db,db_start)
                 diagnostic['complete']=True
             except Exception as observed:
                 diagnostic['complete']=False;diagnostic['failure']=service.safe_failure(observed)
             proof['owned_db_startup_diagnostic']=diagnostic
             modal={'read_only':True,'raw_titles_controls_or_stacks_exported':False}
             try:
-                modal['generation_before']=service_process_snapshot(db_child,db,db_start)
-                modal['observation']=db_modal_diagnostic.observe(root,db_child.pid,temporary)
-                modal['generation_after']=service_process_snapshot(db_child,db,db_start)
-                modal['complete']=True
+                modal['generation_before']=observe_db(db_child,db,db_start)
+                if db_candidate is None:
+                    modal['observation']=db_modal_diagnostic.observe(root,db_child.pid,temporary)
+                    modal['complete']=True
+                else:
+                    # The old classifier's filename aliases/source map are tied
+                    # to its old PE. A derivative needs a separately admitted
+                    # modal policy before those matches can be attributed.
+                    modal['complete']=False
+                    modal['not_run']='modal_policy_bound_to_prior_checksum_only_pe'
+                modal['generation_after']=observe_db(db_child,db,db_start)
             except Exception as observed:
                 modal['complete']=False;modal['failure']=service.safe_failure(observed)
             proof['owned_db_modal_diagnostic']=modal

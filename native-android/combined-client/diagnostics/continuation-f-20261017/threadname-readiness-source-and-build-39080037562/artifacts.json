@@ -1,0 +1,42 @@
+{
+  "artifacts": [
+    {
+      "id": 12118691678,
+      "name": "source-threadname-composition-2729bfc16c9f757fd850c24a0bc6df366a2e40ab",
+      "size_in_bytes": 1764,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12118691678",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12118691678/zip",
+      "expired": false,
+      "created_at": "2026-10-17T23:42:46Z",
+      "expires_at": "2027-01-15T23:42:13Z",
+      "updated_at": "2026-10-17T23:42:46Z",
+      "digest": "sha256:75ab07f582601400ca8339e17d3caec28908224b662681fab317f67e91b6e906",
+      "workflow_run": {
+        "id": 39080037562,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "2729bfc16c9f757fd850c24a0bc6df366a2e40ab"
+      }
+    },
+    {
+      "id": 12118334160,
+      "name": "original-db-threadname-compile-only-2729bfc16c9f757fd850c24a0bc6df366a2e40ab",
+      "size_in_bytes": 1130748,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12118334160",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12118334160/zip",
+      "expired": false,
+      "created_at": "2026-10-17T23:49:13Z",
+      "expires_at": "2027-01-15T23:42:13Z",
+      "updated_at": "2026-10-17T23:49:13Z",
+      "digest": "sha256:8d139b6b229742b9b1274e985c26e1847edca821bcc3836a367dd9e96be1c1c1",
+      "workflow_run": {
+        "id": 39080037562,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "2729bfc16c9f757fd850c24a0bc6df366a2e40ab"
+      }
+    }
+  ]
+}

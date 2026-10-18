@@ -1,0 +1,28 @@
+{
+  "schema": "coh-independent-threadname-db-build-admission-v1",
+  "build_run_id": 39080037562,
+  "build_commit": "2729bfc16c9f757fd850c24a0bc6df366a2e40ab",
+  "build_tree": "a03b37a7765413548a7cff4a12ffaea4378e5842",
+  "admission_source_commit": "a1f5ef799f1d126a2f71e9488f4aab3dab550d6c",
+  "runtime_admission_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py": "7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8",
+    "native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py": "b8272551e46591b5788f340edfd37711b871b857f0f9acf05fbd2f39b54b9ebb",
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": "296421db5500c456b10ad803c9871d04f92000401405a9d4f223787c596b15f3"
+  },
+  "builder_inputs_unchanged": true,
+  "artifact_id": 12118334160,
+  "artifact_bytes": 1130748,
+  "artifact_sha256": "8d139b6b229742b9b1274e985c26e1847edca821bcc3836a367dd9e96be1c1c1",
+  "original_receipt_bytes": 12743,
+  "original_receipt_sha256": "6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912",
+  "pe_bytes": 1654784,
+  "pe_sha256": "e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c",
+  "admission_sha256": "b604ab830b3431ada80b71faeb8767549298aa7e197c21bbf95f7cd0b5091429",
+  "readiness_host_proof_sha256": "4fff9be4ecbd6ade868e8ebae65202367d78d79a8a900d50b3f4207e7b829d39",
+  "compiler_or_services_run_by_admitter": false,
+  "original_build_receipt_or_PE_modified": false,
+  "shipping_profile_or_accepted_runtime_replaced": false,
+  "actual_new_candidate_readiness_verified": false,
+  "selected_shard_play_verified": false,
+  "authenticated_db_map_handoff_verified": false
+}

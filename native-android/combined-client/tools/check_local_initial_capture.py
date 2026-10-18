@@ -54,11 +54,13 @@ def source_module(path):
     return module
 
 
-def tool_tests(binary, peer, work, environment):
+def tool_tests(binary, peer, work, environment, evidence):
     account = work / 'account'
     account.write_text('Fixture\n')
     account.chmod(0o600)
     checks = 0
+    evidence.mkdir(mode=0o700)
+    stdout_files = {}
     for mode in ('captured', 'unknown', 'badheader', 'none'):
         report = work / (mode + '-peer.json')
         child = subprocess.Popen([str(peer), '--serve', '--report', str(report), '--mode', mode],
@@ -70,10 +72,34 @@ def tool_tests(binary, peer, work, environment):
                     raise TimeoutError('scripted initial peer did not become ready')
                 port = json.loads(child.stdout.readline())['db_port']
             target = work / mode
-            completed = require([binary, port, 0, account, target, 1000, 5, 0, 0], env=environment)
+            completed = subprocess.run(list(map(str, [binary, port, 0, account, target, 1000, 5, 0, 0])),
+                capture_output=True, timeout=120, env=environment)
+            if completed.returncode:
+                raise RuntimeError('scripted initial receiver refused')
             public = json.loads(completed.stdout)
             groups = json.loads((target / 'capture.json').read_bytes())
             initial = json.loads((target / 'initial-observation.json').read_bytes())
+            assert set(public) == {'schema', 'passed', 'initial_packet_observed', 'status',
+                'opened_sockets', 'closed_sockets', 'source_generation_admitted', 'complete_initial_character',
+                'actor_publication', 'ack_permitted', 'world_authority', 'diagnostic_failure_code',
+                'groups_observed', 'reqallents_sent', 'local_phase', 'terminal_failure',
+                'terminal_db_phase', 'terminal_map_phase'}
+            assert public['schema'] == 'coh-local-initial-capture-status-v1'
+            assert public['groups_observed'] is True and public['reqallents_sent'] == 1
+            assert type(public['terminal_failure']) is bool
+            for name, maximum in (('status', 7), ('local_phase', 10), ('terminal_db_phase', 12), ('terminal_map_phase', 10)):
+                assert type(public[name]) is int and 0 <= public[name] <= maximum
+            assert public['diagnostic_failure_code'] == {'captured': 'NONE', 'unknown': 'COMMAND',
+                'badheader': 'HEADER', 'none': 'TIMEOUT'}[mode]
+            assert public['terminal_failure'] is (mode != 'captured')
+            assert public['terminal_db_phase'] == (0 if mode == 'captured' else 9)
+            assert public['terminal_map_phase'] == (0 if mode == 'captured' else 5)
+            stdout_path = evidence / (mode + '.json')
+            stdout_path.write_bytes(completed.stdout)
+            stdout_path.chmod(0o600)
+            stdout_files[mode] = {'file': str(Path(evidence.name) / stdout_path.name),
+                'bytes': stdout_path.stat().st_size, 'sha256': digest(stdout_path)}
+            checks += 12
             assert public['passed'] and groups['passed'] and groups['cleanup_verified']
             assert groups['packet_sha256'] == digest(target / 'groups.bin')
             assert initial['groups_packet_sha256'] == groups['packet_sha256']
@@ -112,7 +138,7 @@ def tool_tests(binary, peer, work, environment):
     for args in ([], ['0'] * 8, ['7000', '64', account, work / 'invalid', '100', '5', '0', '0']):
         assert run([binary, *args], env=environment).returncode == 2
         checks += 1
-    return {'passed': True, 'checks': checks, 'actual_os_sockets': True,
+    return {'passed': True, 'checks': checks, 'fixed_status_stdout': stdout_files, 'actual_os_sockets': True,
             'scripted_peers_only': True, 'groups_survives_initial_refusal': True,
             'real_server_capture': False, 'complete_initial_character': False,
             'actor_publication': False, 'ack_permitted': False, 'world_authority': False}
@@ -200,7 +226,8 @@ def main():
             mode_work = work / label
             mode_work.mkdir()
             results[label] = {'binary': binary.name, 'sha256': digest(binary), 'built': True,
-                              'tests': tool_tests(binary, peer, mode_work, environment)}
+                              'tests': tool_tests(binary, peer, mode_work, environment,
+                                  args.output.resolve() / ('status-' + label))}
     assert pins == {str(p.relative_to(ROOT)): digest(p) for p in inputs}
     assert require(['git', '-C', ROOT, 'rev-parse', 'HEAD']).stdout.strip() == revision
     proof = {'schema': 'coh-local-initial-capture-build-v1', 'passed': True,

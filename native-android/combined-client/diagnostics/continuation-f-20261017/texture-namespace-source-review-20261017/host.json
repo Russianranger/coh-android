@@ -1,0 +1,284 @@
+{
+  "passed": true,
+  "source_revision": "404915b0dc2bac19e170171ccca77269e59f4f42",
+  "source_sha256": {
+    "native-android/engine/world-render-adapter/coh_wr_tex_namespace.c": "067bb8c1e3794ff86bf36e3b3ea90fd0cbda4c5cad3ece2f88c3b08435dd5a37",
+    "native-android/engine/world-render-adapter/coh_wr_tex_namespace.h": "aa9cf127384f18f96f3a0ebb0938ed403c2884a2630101824716a71cbcfb7e1c",
+    "native-android/engine/world-render-adapter/tex_namespace_oracle.py": "5edc2f1eb6015a99e8bfd7af8e7949c41f4f4d7f693f70a0877ec5b0bfb94a43",
+    "native-android/engine/world-render-adapter/check_tex_namespace.py": "7fae67925b1501994aff94f44f8e8828765c947d3954fa528c1f6c2ece2e9470",
+    "native-android/engine/world-render-adapter/tests/test_tex_namespace.c": "83080451f04f63636578105a1b4ebe5f18175beb7b98f5e44ab2981318156a92",
+    "native-android/engine/world-render-adapter/tests/test_tex_namespace_cpp.cpp": "84f5e91acca5bb3d6dc9e45f1668561c8786057531def5c874dea89f3f74c28c",
+    "native-android/engine/world-render-adapter/tests/tex_namespace_fixture.h": "f6ebc47c2ebedcccdd8aceb0d3c9d3cb468d794a60377b32ec9ce4f5344736a4",
+    "native-android/engine/world-render-adapter/check_texname.py": "1e853cff9ed69f474987933da76902313b7f7b4f2c299425a9da4f88d589cf8f",
+    "native-android/engine/world-render-adapter/qualification/texture-seed-eligibility-20261017/required-default-inputs.json": "21b428e876e537fff374fbd6a17baaed5ad0457f04b7ae2833fc62c9ad8bf787",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/fileutil.c": "6d3991db4e8c1a1b7f55280c7ea69711d765e01009022172a2c90eccd759fdd7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/piglib.c": "786ea2c5e9b8cf14fe4dfd4880b9cfe85a138afbccd56759e59b30b7663ed528",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h": "42f1b9c5555abdc93afe7029cdf02bb551d572c18557fed00d7610d6c58e177c",
+    "upstream/ouroboros/Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+    "upstream/ouroboros/Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+    "upstream/ouroboros/Game/src/render/texEnums.h": "6e96499b08adcfdf2a788286da086aead8e17d2b05ae8c31ee50752b7de778de",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "native-android/src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "native-android/engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1",
+    "assets/character-avatar-defaults-manifest.json": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+    "assets/character-avatar-defaults.zip": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+    "assets/reference-inputs-manifest.json": "cf96742b1b65306356df69d065fcfb5bda0986ec8700d47ae1422452a1c0db7f"
+  },
+  "actual_default_artifact": {
+    "run": 39078874753,
+    "artifact": 12118720382,
+    "bytes": 12308,
+    "sha256": "87a999e6c1c003b96a9fa169ce11637b61eb696766517e063fafce73fdc39c24"
+  },
+  "authentic_header_bodies": [
+    {
+      "path": "texture_library/world/filler/white.texture",
+      "bytes": 327,
+      "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9"
+    },
+    {
+      "path": "texture_library/world/filler/grey.texture",
+      "bytes": 894,
+      "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013"
+    },
+    {
+      "path": "texture_library/world/world_fx/portal/invisible.texture",
+      "bytes": 5828,
+      "sha256": "7a0e37f76eba451debca99f50f2907e556dba55dbb45468a415d55b480b103df"
+    },
+    {
+      "path": "texture_library/world/filler/black.texture",
+      "bytes": 327,
+      "sha256": "62c947f06b7ca5c08e0e9bda98d4ae3d72aa5c7dab4557ae87ff4b48f1764f5a"
+    },
+    {
+      "path": "texture_library/btest/dummy_bump.texture",
+      "bytes": 437,
+      "sha256": "021f8a4ccfdb334f9ec336a8275b336890440bf8700ef593b7cd9d4ca374ee3d"
+    },
+    {
+      "path": "texture_library/static_cubemaps/dummy_dynamic/dummy_dynamic_cubemap_face0.texture",
+      "bytes": 302,
+      "sha256": "cd06cf02ffa62c7e5a35d39e5d5d06632c970382640645304584c19ddb70b4f6"
+    },
+    {
+      "path": "texture_library/btest/buildinglightpattern.texture",
+      "bytes": 8399,
+      "sha256": "c2996a5d0b402dba4ee2722797fdc486e48bc773e99761b659b0c1219aecaa06"
+    },
+    {
+      "path": "texture_library/players/avatar/male/chest/leather/chest_leather_03.texture",
+      "bytes": 175127,
+      "sha256": "7e2bb5c59107528291ff3831e0cff9525e610ea72ef3b16de749cad7a78de7f4"
+    },
+    {
+      "path": "texture_library/players/avatar/male/chest/leather/chest_leather_03_mask.texture",
+      "bytes": 175132,
+      "sha256": "8ee6bb5d97e1b4cc5b01b5c3c26ba19092102fb7c63d1014f13db3ce30e49524"
+    },
+    {
+      "path": "texture_library/players/avatar/male/chest/tights/chest_tights.texture",
+      "bytes": 175122,
+      "sha256": "ef660db028f4bf7138ad43701190ef8ece8937cc57d8573efcab262a96070cb4"
+    },
+    {
+      "path": "texture_library/players/avatar/male/hips/leather/hips_leather_03.texture",
+      "bytes": 87765,
+      "sha256": "fad0d3d62bfbf6082628ecebc69efd6c70dc4eb660391f433a32c5811adbc6e8"
+    },
+    {
+      "path": "texture_library/players/avatar/male/hips/leather/hips_leather_03_mask.texture",
+      "bytes": 44010,
+      "sha256": "de99856a5548e19fb498f0de0869e2ed5f84c623e72beb099536d8f42cbbfc18"
+    },
+    {
+      "path": "texture_library/players/avatar/male/hips/tights/hips_tights.texture",
+      "bytes": 87760,
+      "sha256": "cf440577f6fd90e9ea287dab99ff0dc48e438d86203d45bf8844be5aa8cb950f"
+    },
+    {
+      "path": "texture_library/players/avatar/super_shared/boots/boot_leather_03.texture",
+      "bytes": 87766,
+      "sha256": "b6a43115b54051ca52e410c9e7126254fce3da8cb2d8e6fd9003cf1c9c741862"
+    },
+    {
+      "path": "texture_library/players/avatar/super_shared/boots/boot_leather_03_mask.texture",
+      "bytes": 87771,
+      "sha256": "e5bf27a331ca60864a5a71c877c534e5b85a1ba5c0a35e972d344d8e11bb87a2"
+    },
+    {
+      "path": "texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture",
+      "bytes": 87765,
+      "sha256": "7916525785ffb2bd8c49fcf594031a1b98b114fbefe848772f35e082b3d1e5e6"
+    },
+    {
+      "path": "texture_library/players/avatar/super_shared/gloves/glove_leather_03.texture",
+      "bytes": 87768,
+      "sha256": "5faea4292552aef8b8d3a41ac9f09663ae21ad05c1dc88a8e6fddaa8b9a44fd7"
+    },
+    {
+      "path": "texture_library/players/avatar/super_shared/gloves/glove_leather_03_mask.texture",
+      "bytes": 87773,
+      "sha256": "b8df4147c6d62a006fcd0e5020da7de0b3b44c4eb16b414ed4d6bf92a06c261b"
+    },
+    {
+      "path": "texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture",
+      "bytes": 87767,
+      "sha256": "f202b49d35c92c943d1a9852985e68d6d762f49cec87cdbd7170c3ba8cd88363"
+    },
+    {
+      "path": "texture_library/players/avatar/super_shared/hair/hair_style_01a.texture",
+      "bytes": 22228,
+      "sha256": "b6321e1a282ec99986e21e83af49167d67b5a831fdff0ccbd2627d1ec8f0989d"
+    },
+    {
+      "path": "texture_library/players/avatar/super_shared/hair/hair_style_01b.texture",
+      "bytes": 11236,
+      "sha256": "fd7786d3379b51ad11c5aeb40f23bc9db60472f7ca2bfeb4fda61ef279d8bba6"
+    },
+    {
+      "path": "texture_library/v_players/avatar/super_shared/patterns/face/face_v_asym_eyes_01.texture",
+      "bytes": 22164,
+      "sha256": "650274105f4b980b762053f49ad9434dd67baef0012d4ec42f96ea1786e66cf9"
+    }
+  ],
+  "authentic_body_count": 22,
+  "authentic_bodies_are_not_a_complete_provider_namespace": true,
+  "reference_paths": 8936,
+  "reference_path_headers_are_controlled_projections_not_authentic_bodies": true,
+  "original_function_sha256_lf": {
+    "FolderNodeAdd": "cff8c355de795411442b0f624d70024af84bac3d765bf5cac9fdf32fa1532da8",
+    "FolderNodeFind": "093a663bedbb0cf95994c4ecde2d1de1d0af0e0bf99757f4162aff21837d4823",
+    "FolderNodeRecurseEx": "6e573646efa13c5df84fa6a421c1fbd96689879985e5207667c97b281ffbc453",
+    "FolderCacheMatchesIgnorePrefixAnywhere": "94e2f92db58f91114b448813c4dc64f77aa9209350b2e7163c00de028fd70193",
+    "fileScanAllDataDirsHelper": "79c69424697454ab7b5cf231342302c9591a6d365d28e56a5005a038b6ab7af9",
+    "texFixName": "940ef057ef069227a30687807b77623708162f3dc441f6a1b7f66235a363beed",
+    "texFillInBind": "8a296f5b73ec82741f5c9294614fbcd9ad96e194d72e4df92d4c33df25ba9685",
+    "texLoadHeaderProcessor": "65ee73e54aff2a79c3588c6b893145ee13584171f5df95bf6bf07c18b8db7521"
+  },
+  "original_functions_unchanged": true,
+  "original_wire_type_sha256_lf": "959864776cef02f9eed3887e79d0324d04bfa84bb644996369c396d627e07196",
+  "original_flags_sha256_lf": "714bd991408177f9cfe9f3bc4b7b938aa7908553d4114ead66b46fcdee445f4c",
+  "generated_oracle_sha256": "e99cc89bf10fc7172bdadebbc1f778f7ca04908ee182ddfe5764b9cf431b8bd0",
+  "generated_authentic_fixture_sha256": "78aecc5b33ee28b272ab525eeae56fe754bf490fffb3b0baf37797a41a5acc98",
+  "generated_path_projection_sha256": "4305cc8f615c846af9a90038e9436019ea714af4fc54f8d6904780b5841ae522",
+  "modes": {
+    "release": {
+      "passed": true,
+      "checks": 202426,
+      "original_row_comparisons": 11071,
+      "authentic_cached_header_bodies": 22,
+      "reference_path_only_projected_rows": 8936,
+      "calloc_failure_points": 46,
+      "source_read_failure_points": 32,
+      "digest_failure_points": 6,
+      "cancellation_points": 84,
+      "reentry_refusal_callbacks": 105,
+      "actual_current_provider": false
+    },
+    "address": {
+      "passed": true,
+      "checks": 202426,
+      "original_row_comparisons": 11071,
+      "authentic_cached_header_bodies": 22,
+      "reference_path_only_projected_rows": 8936,
+      "calloc_failure_points": 46,
+      "source_read_failure_points": 32,
+      "digest_failure_points": 6,
+      "cancellation_points": 84,
+      "reentry_refusal_callbacks": 105,
+      "actual_current_provider": false
+    },
+    "undefined": {
+      "passed": true,
+      "checks": 202426,
+      "original_row_comparisons": 11071,
+      "authentic_cached_header_bodies": 22,
+      "reference_path_only_projected_rows": 8936,
+      "calloc_failure_points": 46,
+      "source_read_failure_points": 32,
+      "digest_failure_points": 6,
+      "cancellation_points": 84,
+      "reentry_refusal_callbacks": 105,
+      "actual_current_provider": false
+    }
+  },
+  "binary_sha256": {
+    "release": "63c1de08a0def64aa585f03ede2a7ee93ec6e5163d31785dcd6c1698853af2bc",
+    "address": "a8018162193eccde7f48f0716266ad6c3bf8c8a8de007eef1fac5684f5cc8f27",
+    "undefined": "c24fba4e484887f2769fbc4d79cd82b15d8dabe5c7f1a5e6e7c72c5113864869"
+  },
+  "standalone_C_object_sha256": {
+    "release": "44f467ea4a02f7513e72f2100495074b25ae4ae9fbef0603618105b9347218d1",
+    "address": "28ffcbc57958c6d5b3d70e9b440230308737a6e7aea88cb2ba09a30c724941b7",
+    "undefined": "7cd00fa28d86bb217d34fdd7e0a1ed936ddc586349f1ded053ef5c25f00b93d6"
+  },
+  "actual_C_object_CPP_call_link": {
+    "passed": true,
+    "binary_sha256": "65cf1aa0a3252aa7fbb60959951c31f2c868f9d63f3073a574a63b96fc6418cf"
+  },
+  "release_host_stack_usage": [
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:58:12:compare\t8\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:133:18:node_slot\t40\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:212:18:basic_slot\t32\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:87:12:output_ok\t48\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:149:17:find_node\t336\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:347:13:dispose\t16\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:62:18:text.part.0\t8\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:111:12:record_less.isra\t8\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:112:13:sift\t80\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:80:14:take\t32\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:95:12:ignored\t592\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:63:18:path\t8\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:354:11:coh_wr_tex_namespace_build\t16640\tdynamic,bounded",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:405:11:coh_wr_tex_namespace_destroy\t32\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:412:11:coh_wr_tex_namespace_report\t32\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:416:11:coh_wr_tex_namespace_basic\t208\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:423:11:coh_wr_tex_namespace_find\t64\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:430:11:coh_wr_tex_namespace_acquire\t144\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:443:11:coh_wr_tex_namespace_body\t32\tstatic",
+    "/workspace/scratch/7ed1da2a7e55/worker-b/native-android/engine/world-render-adapter/coh_wr_tex_namespace.c:444:11:coh_wr_tex_namespace_release\t48\tstatic"
+  ],
+  "release_module_frame_sum_conservative_bytes": 18408,
+  "module_own_preparation_reserve_bytes": 65536,
+  "native_scanner_iterative_fixed_frames": 130,
+  "maximum_258_byte_path_control_executed": true,
+  "module_stack_claim_excludes_loader_provider_callbacks_libc_and_Android": true,
+  "production_mutations_refused": [
+    "reverse_directional_pig_DST",
+    "reverse_PIG_priority",
+    "drop_duplicate_rows",
+    "disable_LWC_skip",
+    "bypass_aggregate_limit",
+    "omit_provider_retirement",
+    "bypass_reacquired_body_hash"
+  ],
+  "provider_fixture_is_declared_immutable_native_snapshot": true,
+  "historical_original_mount_order_or_timestamp_reconstructed": false,
+  "original_directory_OS_enumerator_or_watcher_executed": false,
+  "original_full_provider_outer_functions_not_executed": [
+    "fileLoadDataDirs",
+    "FolderCacheAddFolderToNode",
+    "FolderCacheAddPig",
+    "fileScanAllDataDirs"
+  ],
+  "original_TexOpt_lookup_observed_as_NULL": true,
+  "original_file_stash_storage_and_pool_observers": true,
+  "existing_loader_actual_PIGG_uncompressed_and_zlib_body_pins": true,
+  "old_qualifiers_rerun": false,
+  "current_provider_generation": false,
+  "namespace_complete": false,
+  "default_identity": false,
+  "material_authority": false,
+  "GPU": false,
+  "world_authority": false,
+  "Android_execution": false,
+  "RSS_or_global_budget_claim": false
+}

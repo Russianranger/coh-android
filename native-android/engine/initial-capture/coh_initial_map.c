@@ -4,6 +4,7 @@
 struct CohInitialMap {
  CohMapClient *map;CohDbHandoffMetadata bound;
  CohInitialCaptureDiagnostics d;
+ CohInitialMapFailurePhase first_failure_phase;
  const CohInitialCaptureEvent *event;const CohMapSceneObservation *scene;
  const CohNetOwnedMessage *message;CohRepReader reader;CohRepUpdatePrefix update;
  const void *owner;size_t owner_bytes;const void *context;size_t context_bytes;
@@ -34,6 +35,7 @@ CohInitialMap *coh_initial_map_create(CohMapClient*m){
 }
 void coh_initial_map_destroy(CohInitialMap*x){if(x&&!x->busy){wipe(x,sizeof(*x));free(x);}}
 static CohStatus ic_fail(CohInitialMap*x,CohStatus s,CohInitialCaptureFailure why){
+ if(!x->first_failure_phase.valid)x->first_failure_phase=(CohInitialMapFailurePhase){1,x->map->diag.phase};
  x->d.status=s;x->d.failure=why;x->d.phase=s==COH_CANCELLED?COH_INITIAL_CAPTURE_CANCELLED:COH_INITIAL_CAPTURE_FAILED;
  x->map->diag.last_status=s;coh_map_client_close(x->map);return s;
 }
@@ -136,3 +138,4 @@ int coh_initial_map_output_disjoint(const CohInitialMap*x,const void*out,size_t 
  return 1;
 }
 void coh_initial_map_diagnostics(const CohInitialMap*x,CohInitialCaptureDiagnostics*out){if(x&&out&&coh_initial_map_output_disjoint(x,out,sizeof(*out)))*out=x->d;}
+CohInitialMapFailurePhase coh_initial_map_failure_phase(const CohInitialMap*x){return x?x->first_failure_phase:(CohInitialMapFailurePhase){0};}

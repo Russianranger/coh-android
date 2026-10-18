@@ -1,0 +1,83 @@
+name: Isolated repaired MSSQL DbServer registration readiness
+'on':
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-db-threadname-readiness.yml]
+  workflow_dispatch: {}
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-db-threadname-readiness-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  new-db-registration:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[db-threadname-readiness]'))
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 20
+    steps:
+      - name: Preserve exact source line endings
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Check only new candidate readiness and generated metadata admission controls
+        run: |
+          python -m unittest discover -s native-android/engine/auth-interop/deployment -p test_db_threadname_readiness.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'New candidate readiness controls failed' }
+      - name: Recover exact accepted AuthServer and independently admitted new DbServer build
+        shell: bash
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,pathlib,shutil,stat,subprocess,zipfile
+          assert os.environ['RUNNER_ENVIRONMENT']=='github-hosted'
+          assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'
+          assert os.environ['GITHUB_REF']=='refs/heads/native-android'
+          base=pathlib.Path(os.environ['RUNNER_TEMP'])
+          def api(suffix):return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))
+          specs=[
+            (12085517046,427525,'da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d','auth-candidate',None,None,None),
+            (12118334160,1130748,'8d139b6b229742b9b1274e985c26e1847edca821bcc3836a367dd9e96be1c1c1','db-candidate',39080037562,'2729bfc16c9f757fd850c24a0bc6df366a2e40ab','.github/workflows/native-db-threadname-build.yml')]
+          for ident,size,digest,directory,run_id,revision,workflow in specs:
+              remote=api('actions/artifacts/'+str(ident))
+              assert remote['id']==ident and remote['expired'] is False
+              assert remote['size_in_bytes']==size and remote['digest']=='sha256:'+digest
+              if run_id is not None:
+                  origin=remote['workflow_run'];assert origin['id']==run_id and origin['head_sha']==revision
+                  assert origin['repository_id']==origin['head_repository_id']==1368730125
+                  assert remote['name']=='original-db-threadname-compile-only-'+revision
+                  run=api('actions/runs/'+str(run_id))
+                  assert run['head_sha']==revision and run['head_branch']=='native-android'
+                  assert run['path']==workflow and run['status']=='completed' and run['conclusion']=='success'
+                  assert run['repository']['id']==run['head_repository']['id']==1368730125
+              archive=base/(directory+'.zip')
+              with archive.open('xb') as output:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=180)
+              assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==digest
+              target=base/directory;target.mkdir()
+              with zipfile.ZipFile(archive) as z:
+                  infos=z.infolist();assert 0<len(infos)<=128 and len({i.filename for i in infos})==len(infos)
+                  assert sum(i.file_size for i in infos)<=32*1024**2 and z.testzip() is None
+                  for item in infos:
+                      path=pathlib.PurePosixPath(item.filename)
+                      assert path.as_posix()==item.filename and not path.is_absolute() and path.parts
+                      assert all(p not in ('','.','..') for p in path.parts)
+                      assert '\\' not in item.filename and ':' not in item.filename and not item.flag_bits&1
+                      assert stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG)
+                      assert 0<=item.file_size<=16*1024**2 and not item.is_dir()
+                  for item in infos:
+                      destination=target/item.filename;destination.parent.mkdir(parents=True,exist_ok=True)
+                      with z.open(item) as source,destination.open('xb') as output:shutil.copyfileobj(source,output,1024**2)
+                      assert destination.stat().st_size==item.file_size
+              archive.unlink()
+          PY
+      - name: Observe new DbServer registration with unchanged Auth SQL profile and cleanup
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py --source-root . --expected-commit $env:GITHUB_SHA --output "$env:RUNNER_TEMP/db-threadname-readiness" --auth-success-archive native-android/engine/auth-interop/evidence/auth-success-38996587760/artifact.zip --auth-candidate-stage "$env:RUNNER_TEMP/auth-candidate" --db-candidate-stage "$env:RUNNER_TEMP/db-candidate" --expected-db-receipt-sha256 6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912 --expected-db-binary-sha256 e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c
+          if ($LASTEXITCODE -ne 0) { throw 'Repaired candidate registration refused; preserve fixed diagnostics and cleanup' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: db-threadname-readiness-${{ github.sha }}
+          path: ${{ runner.temp }}/db-threadname-readiness/receipt.json
+          if-no-files-found: error
+          retention-days: 90

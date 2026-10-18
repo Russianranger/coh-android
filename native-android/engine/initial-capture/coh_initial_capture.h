@@ -35,6 +35,16 @@ typedef struct {
  unsigned source_generation_admitted,complete_initial_character,actor_publication,
   ack_permitted,world_authority; /* always zero */
 } CohInitialCaptureLease;
+/* First diagnostic failure/cancellation, latched before diagnostic cleanup.
+ * These are actual typed module phases, not reconstructed progress. An inner
+ * ordinary module may already have reached its own terminal phase. Cause and
+ * phases stay together through later close/cancel/service attempts. This does
+ * not modify or reinterpret CohLocalDiagnostics.terminal_* fields. */
+typedef struct {
+ unsigned valid;
+ CohLocalPhase local_phase;CohDbSessionPhase db_phase;CohMapPhase map_phase;
+ CohStatus status;CohInitialCaptureFailure failure;
+} CohInitialCaptureFailureSnapshot;
 /* Immutable numeric observation survives later ALLENTS refusal/close. It does
  * not retain packet pointers, schemas, secrets or a semantic authority permit. */
 typedef struct {
@@ -48,6 +58,7 @@ typedef struct {
  unsigned groups_observed,raw_allents_observed;
  unsigned source_generation_admitted,complete_initial_character,actor_publication,
   ack_permitted,world_authority; /* always zero */
+ CohInitialCaptureFailureSnapshot first_failure;
  CohLocalDiagnostics local;
 } CohInitialCaptureDiagnostics;
 /* Observer may return a refusal to abort (e.g. file write failure). COH_OK means
@@ -88,6 +99,11 @@ CohStatus coh_initial_capture_service(CohInitialCapture *,uint64_t now_ms,CohCan
 CohStatus coh_initial_capture_lease(const CohInitialCapture *,const CohInitialCaptureEvent *,
  CohInitialCaptureLease *);
 void coh_initial_capture_diagnostics(const CohInitialCapture *,CohInitialCaptureDiagnostics *);
+/* Explicit enclosing diagnostic deadline, independent of module deadlines.
+ * Only a begun active CONNECTING..WAIT_ALLENTS owner can time out. Null,
+ * callback-busy and all inactive/terminal owners are unchanged. Records typed
+ * first failure as COH_STATE/TIMEOUT before closing; no generic failure input. */
+void coh_initial_capture_timeout(CohInitialCapture *);
 void coh_initial_capture_cancel(CohInitialCapture *);
 void coh_initial_capture_close(CohInitialCapture *);
 void coh_initial_capture_destroy(CohInitialCapture *);

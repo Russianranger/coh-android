@@ -16,6 +16,7 @@ import capture_resources as retained
 import admit_groups_capture as admit
 import inspect_groups_capture as envelope
 import stage_groups_capture as stage
+import groups_native_status as native_status
 from groups_capture_stages import advance
 ROOT=d.ROOT;HERE=Path(__file__).resolve().parent
 PRIVATE_DUMP_MAX=512*1024**2
@@ -254,12 +255,12 @@ def finish_initial_observation(report,native,received,target):
  report['initial_observation']=result
 def capture(args):
  account,account_identity,dump_identity,compiled,native,modules,files,schema,dbdoc,donor,source,work,output=preflight(args);fx,db,pg,pe=modules
- source_paths=set((*base.SOURCE_PATHS,*retained.SOURCE_PATHS,*('native-android/engine/scenecatalog-server/'+name for name in ('capture_groups_transaction.py','groups_capture_stages.py','admit_groups_capture.py','inspect_groups_capture.py','stage_groups_capture.py','source_groups_capture_sink.inc'))))
+ source_paths=set((*base.SOURCE_PATHS,*retained.SOURCE_PATHS,*native_status.ENUM_SOURCE_PATHS,*('native-android/engine/scenecatalog-server/'+name for name in ('capture_groups_transaction.py','groups_capture_stages.py','groups_native_status.py','admit_groups_capture.py','inspect_groups_capture.py','stage_groups_capture.py','source_groups_capture_sink.inc'))))
  pins={name:d.hash_file(ROOT/name,8*1024**2)[1] for name in sorted(source_paths)}
  revision=verify_orchestration(ROOT,pins,os.environ.get('GITHUB_SHA'))
  for port,kind in ((15437,socket.SOCK_STREAM),(6997,socket.SOCK_STREAM),(7000,socket.SOCK_DGRAM),(7001,socket.SOCK_DGRAM)):
   with socket.socket(socket.AF_INET,kind) as probe:probe.bind(('127.0.0.1',port))
- work.mkdir(mode=0o700);output.mkdir(mode=0o700);children=[];handles=[];logs=[];cluster=environment=None;deadline=time.monotonic()+args.timeout_seconds;source_inventory=None;source_capture=None;native_directory=work/'native-received';private_dump=work/'existing-database.dump'
+ work.mkdir(mode=0o700);output.mkdir(mode=0o700);children=[];handles=[];logs=[];cluster=environment=None;deadline=time.monotonic()+args.timeout_seconds;source_inventory=None;source_capture=None;native_process=native_stdout_owner=None;native_directory=work/'native-received';private_dump=work/'existing-database.dump'
  report={'schema':'coh-private-original-native-groups-run-v1','passed':False,'private_character_state':True,'public_upload_permitted':False,'existing_database_dump':dump_identity,'existing_character_rows_seeded':False,'new_character_created':False,'native_tool':native,'original_map_binary':compiled['artifacts']['MapServer.exe'],'compile_receipt_sha256':args.compile_receipt_sha256,'source_sha256':pins,'local_development_auth':True,'authserver_authenticated':False,'runtime_executed':False,'matching_groups_transaction_captured':False,'cleanup_verified':False,'source_generation_admitted':False,'world_authority':False,
          'capture_stage':'INPUT_COPY','failure_stage':'NONE',
          'timeout_policy':{'supervised_child_deadline_seconds':args.timeout_seconds,'strict_whole_run_deadline':False,'reused_pg_helper_timeout_seconds':180,'reused_pg_dump_restore_timeout_seconds':900,'health_polling_pauses_during_pg_helpers':True},'log_limits_polled_not_kernel_enforced':True,'hard_process_memory_cap_established':False}
@@ -316,6 +317,8 @@ def capture(args):
   native_env={key:value for key,value in os.environ.items() if not key.startswith(('PG','COH_'))}
   d.require(compiled_inputs_unchanged(args,native,compiled) and identity(runtime/'MapServer.exe',16*1024**2)==compiled['artifacts']['MapServer.exe'],'COMPILED_INPUTS_CHANGED');health()
   advance(report,'NATIVE_CAPTURE');left=max(1,min(600000,int((deadline-time.monotonic())*1000)));native_process,native_out,native_err=start('native',[args.native_capture,'7000',str(args.wire_slot),args.account_file,native_directory,str(left),'5','1','0'],work,native_env)
+  try:native_stdout_owner=native_status.latch(native_process,native_out,handles[-2],children,handles)
+  except Exception:native_stdout_owner=None
   while native_process.poll() is None:health();d.require(process.poll() is None and map_process.poll() is None,'SERVER_EXITED');time.sleep(.05)
   d.require(native_process.returncode==0 and source_capture.is_file(),'ACTUAL_PAIR_NOT_CAPTURED')
   d.require(not source_capture.with_name(source_capture.name+'.partial').exists(),'PARTIAL_SOURCE_CAPTURE')
@@ -356,6 +359,7 @@ def capture(args):
    cleanup.extend((report['private_input_bytes_unchanged'],report['restored_private_copy_unchanged'],report['source_runtime_unchanged'],report['compiled_inputs_unchanged'],pins=={name:d.hash_file(ROOT/name,8*1024**2)[1] for name in pins}))
   except Exception:cleanup.append(False)
   report['cleanup_verified']=bool(cleanup) and all(cleanup);report['passed']=report['passed'] and report['cleanup_verified'];report['raw_logs_exported']=False
+  native_status.record(report,native_process,native_stdout_owner,children,source_capture,native.get('build_schema')==INITIAL_BUILD_SCHEMA,ROOT)
   finish_initial_observation(report,native,native_directory,output/'native')
   if report['passed']:advance(report,'COMPLETE')
   elif report['failure_stage']=='NONE':report['failure_stage']='CLEANUP'

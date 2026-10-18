@@ -7,8 +7,15 @@ struct CohInitialCapture {
  unsigned busy,observing,begun;
 };
 static int il_disjoint(const void*a,size_t an,const void*b,size_t bn){uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;if(!an||!bn)return 1;if(!a||!b||an>UINTPTR_MAX-x||bn>UINTPTR_MAX-y)return 0;return x+an<=y||y+bn<=x;}
-static void il_snapshot(CohInitialCapture*x){if(x->map){CohLocalDiagnostics local=x->d.local;coh_initial_map_diagnostics(x->map,&x->d);x->d.local=local;}coh_local_diagnostics(x->local,&x->d.local);}
+static void il_snapshot(CohInitialCapture*x){if(x->map){CohLocalDiagnostics local=x->d.local;CohInitialCaptureFailureSnapshot first=x->d.first_failure;coh_initial_map_diagnostics(x->map,&x->d);x->d.local=local;x->d.first_failure=first;}coh_local_diagnostics(x->local,&x->d.local);}
+static void il_first_failure(CohInitialCapture*x,CohStatus status,CohInitialCaptureFailure why){
+ if(x->d.first_failure.valid)return;
+ snapshot(x->local);CohLocalDiagnostics local={0};coh_local_diagnostics(x->local,&local);
+ CohInitialMapFailurePhase map=coh_initial_map_failure_phase(x->map);
+ x->d.first_failure=(CohInitialCaptureFailureSnapshot){1,local.phase,local.db_phase,map.valid?map.phase:local.map_phase,status,why};
+}
 static CohStatus il_stop(CohInitialCapture*x,CohStatus status,CohInitialCaptureFailure why){
+ il_first_failure(x,status,why);
  il_snapshot(x);x->d.status=status;x->d.failure=why;x->d.phase=status==COH_CANCELLED?COH_INITIAL_CAPTURE_CANCELLED:COH_INITIAL_CAPTURE_FAILED;
  coh_local_close(x->local);coh_local_diagnostics(x->local,&x->d.local);return status;
 }
@@ -75,6 +82,7 @@ CohStatus coh_initial_capture_lease(const CohInitialCapture*x,const CohInitialCa
 void coh_initial_capture_diagnostics(const CohInitialCapture*x,CohInitialCaptureDiagnostics*out){
  if(x&&out&&il_disjoint(out,sizeof(*out),x,sizeof(*x))&&il_disjoint(out,sizeof(*out),x->local,sizeof(*x->local))&&(!x->map||coh_initial_map_output_disjoint(x->map,out,sizeof(*out))))*out=x->d;
 }
-void coh_initial_capture_cancel(CohInitialCapture*x){if(x&&!x->busy){coh_local_cancel(x->local);il_snapshot(x);x->d.phase=COH_INITIAL_CAPTURE_CANCELLED;x->d.failure=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;x->d.status=COH_CANCELLED;}}
+void coh_initial_capture_timeout(CohInitialCapture*x){if(x&&!x->busy&&x->begun&&x->d.phase>=COH_INITIAL_CAPTURE_CONNECTING&&x->d.phase<=COH_INITIAL_CAPTURE_WAIT_ALLENTS)il_stop(x,COH_STATE,COH_INITIAL_CAPTURE_FAILURE_TIMEOUT);}
+void coh_initial_capture_cancel(CohInitialCapture*x){if(x&&!x->busy){if(x->begun&&x->d.phase>=COH_INITIAL_CAPTURE_CONNECTING&&x->d.phase<=COH_INITIAL_CAPTURE_WAIT_ALLENTS)il_first_failure(x,COH_CANCELLED,COH_INITIAL_CAPTURE_FAILURE_CANCELLED);coh_local_cancel(x->local);il_snapshot(x);x->d.phase=COH_INITIAL_CAPTURE_CANCELLED;x->d.failure=COH_INITIAL_CAPTURE_FAILURE_CANCELLED;x->d.status=COH_CANCELLED;}}
 void coh_initial_capture_close(CohInitialCapture*x){if(x&&!x->busy){coh_local_close(x->local);il_snapshot(x);if(x->d.phase!=COH_INITIAL_CAPTURED&&x->d.phase!=COH_INITIAL_CAPTURE_FAILED&&x->d.phase!=COH_INITIAL_CAPTURE_CANCELLED)x->d.phase=COH_INITIAL_CAPTURE_CLOSED;}}
 void coh_initial_capture_destroy(CohInitialCapture*x){if(x&&!x->busy){coh_local_close(x->local);coh_initial_map_destroy(x->map);coh_local_destroy(x->local);coh_db_wipe(x,sizeof(*x));free(x);}}

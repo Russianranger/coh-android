@@ -51,9 +51,9 @@ def inventory(value):
             and type(value['bytes']) is int and 0<value['bytes']<=12*1024**3,'SOURCE_RUNTIME_INVENTORY')
     d.sha(value['ordered_inventory_sha256']);return value
 def source_pins():
-    paths=set((*capture.base.SOURCE_PATHS,*capture.retained.SOURCE_PATHS,
+    paths=set((*capture.base.SOURCE_PATHS,*capture.retained.SOURCE_PATHS,*capture.native_status.ENUM_SOURCE_PATHS,
         *('native-android/engine/scenecatalog-server/'+name for name in (
-        'capture_groups_transaction.py','groups_capture_stages.py','admit_groups_capture.py',
+        'capture_groups_transaction.py','groups_capture_stages.py','groups_native_status.py','admit_groups_capture.py',
         'inspect_groups_capture.py','stage_groups_capture.py','source_groups_capture_sink.inc'))))
     return {name:d.hash_file(ROOT/name,8*1024**2)[1] for name in sorted(paths)}
 def admission_source_pins(root=ROOT):

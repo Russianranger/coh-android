@@ -1,0 +1,194 @@
+{
+  "Android_built_or_executed": false,
+  "accepted_GROUPS_survives_initial_refusal": true,
+  "actor_identity_verified": false,
+  "all_1750_source_audit_pins_equal_recorded_commit": true,
+  "all_three_ELF_files_independently_rehashed_not_executed": true,
+  "all_twelve_safe_stdout_files_independently_rehashed_and_preserved": true,
+  "application_character_acceptance": false,
+  "build_receipt_raw_bytes": 239286,
+  "build_receipt_raw_sha256": "fd544078ac3eff49e1f249b1644e7edf3a84f203dd77c945d3febaa8f5d2ef96",
+  "concrete_blockers": [],
+  "consumed_source_equals_committed_head": true,
+  "first_status_cause_and_terminal_phases_use_same_snapshot": true,
+  "later_current_source_audit_differences": {
+    "native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py": {
+      "current_sha256": "296421db5500c456b10ad803c9871d04f92000401405a9d4f223787c596b15f3",
+      "qualified_sha256": "247b5c0ec6e926bc9385aff02210495076295f835c89e8cdfe4e4ae9180961a7"
+    }
+  },
+  "later_difference_is_D_readiness_Python_outside_native_CLI_compilation": true,
+  "modes": {
+    "address": {
+      "binary": {
+        "ELF64_x86_64": true,
+        "bytes": 900336,
+        "sha256": "ee9a35d1ed45ebbce1b6cbb27f0185ef1b85fbebad3971aad884bed5a498c787"
+      },
+      "stdout": {
+        "badheader": {
+          "bytes": 449,
+          "failure": "HEADER",
+          "file": "status-address/badheader.json",
+          "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+          "status": 1,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        },
+        "captured": {
+          "bytes": 447,
+          "failure": "NONE",
+          "file": "status-address/captured.json",
+          "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+          "status": 2,
+          "terminal_db_phase": 0,
+          "terminal_failure": false,
+          "terminal_map_phase": 0
+        },
+        "none": {
+          "bytes": 450,
+          "failure": "TIMEOUT",
+          "file": "status-address/none.json",
+          "sha256": "258f709458a04db60863f04154d7cc41130aa10fa22ded44977118ca2f0c846b",
+          "status": 7,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        },
+        "unknown": {
+          "bytes": 450,
+          "failure": "COMMAND",
+          "file": "status-address/unknown.json",
+          "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+          "status": 2,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        }
+      }
+    },
+    "release": {
+      "binary": {
+        "ELF64_x86_64": true,
+        "bytes": 172168,
+        "sha256": "b066ea020a6dbc9d5cf0c179228a60ffb9deae47c882d6ca92ba8ad5a8337fb9"
+      },
+      "stdout": {
+        "badheader": {
+          "bytes": 449,
+          "failure": "HEADER",
+          "file": "status-release/badheader.json",
+          "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+          "status": 1,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        },
+        "captured": {
+          "bytes": 447,
+          "failure": "NONE",
+          "file": "status-release/captured.json",
+          "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+          "status": 2,
+          "terminal_db_phase": 0,
+          "terminal_failure": false,
+          "terminal_map_phase": 0
+        },
+        "none": {
+          "bytes": 450,
+          "failure": "TIMEOUT",
+          "file": "status-release/none.json",
+          "sha256": "258f709458a04db60863f04154d7cc41130aa10fa22ded44977118ca2f0c846b",
+          "status": 7,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        },
+        "unknown": {
+          "bytes": 450,
+          "failure": "COMMAND",
+          "file": "status-release/unknown.json",
+          "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+          "status": 2,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        }
+      }
+    },
+    "undefined": {
+      "binary": {
+        "ELF64_x86_64": true,
+        "bytes": 804664,
+        "sha256": "aca471a5431ddd7c03ff0d63e1323f7041516fc8ee649b805aba1497f7bd1ba5"
+      },
+      "stdout": {
+        "badheader": {
+          "bytes": 449,
+          "failure": "HEADER",
+          "file": "status-undefined/badheader.json",
+          "sha256": "16cda67f683387ea8cfa5704164b0b95e9cf67ecde23817ed2a650ccd89a0f32",
+          "status": 1,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        },
+        "captured": {
+          "bytes": 447,
+          "failure": "NONE",
+          "file": "status-undefined/captured.json",
+          "sha256": "2d91b00e9254f0d80ce7e25a293f540d7bf58a7348b8b1fa62c42d0e0247a2e6",
+          "status": 2,
+          "terminal_db_phase": 0,
+          "terminal_failure": false,
+          "terminal_map_phase": 0
+        },
+        "none": {
+          "bytes": 450,
+          "failure": "TIMEOUT",
+          "file": "status-undefined/none.json",
+          "sha256": "258f709458a04db60863f04154d7cc41130aa10fa22ded44977118ca2f0c846b",
+          "status": 7,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        },
+        "unknown": {
+          "bytes": 450,
+          "failure": "COMMAND",
+          "file": "status-undefined/unknown.json",
+          "sha256": "93441e9001f344021c4de6d24516fa8331fe9b0d66c1ca576ae2388c03c572a5",
+          "status": 2,
+          "terminal_db_phase": 9,
+          "terminal_failure": true,
+          "terminal_map_phase": 5
+        }
+      }
+    }
+  },
+  "owner_reported_checks_per_release_address_undefined": 139,
+  "preserved_gzip_bytes": 84537,
+  "preserved_gzip_sha256": "08b22ef999ff7c9d473c726eee3f4e04910b9f33272619966327e42ada1c7f39",
+  "real_original_server_capture": false,
+  "recorded_nonconsumed_checkout_changes": " M .github/workflows/native-live-groups-fixture.yml\n M native-android/combined-client/diagnostics/primary-authority-20261017/HANDOFF.md\n",
+  "recorded_source_audit_pin_count": 1750,
+  "retroactive_live_child_or_stdout_ownership_claimed": false,
+  "reviewer_compiler_or_test_or_native_CLI_replayed": false,
+  "root_signal_path_calls_cancel_before_close": true,
+  "root_timeout_path_calls_typed_timeout_only_status_OK_and_initial_not_passed": true,
+  "schema": "coh-f-coordinator-explicit-deadline-review-v1",
+  "scripted_peers_only": true,
+  "sends_full_update_ack": false,
+  "sends_ready": false,
+  "sends_received_character": false,
+  "source_bytes_checked": 15771759,
+  "source_commit": "600dbb67a0f90195698cadb8220487b76bf045e1",
+  "source_dirty_at_start": true,
+  "source_generation_admitted": false,
+  "source_hashes_authoritative_for_build_bytes": true,
+  "source_review_passed": true,
+  "status_key_count": 18,
+  "timeout_now_terminal_true_DB9_Map5": true,
+  "world_authority": false
+}

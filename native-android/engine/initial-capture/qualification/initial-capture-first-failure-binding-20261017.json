@@ -1,0 +1,67 @@
+{
+  "schema": "coh-initial-capture-first-failure-binding-v1",
+  "source_revision": "9901002fc0edc93c26720c0a6f0027ae3985ec60",
+  "source_receipt": "initial-capture-first-failure-9901002fc.json.gz",
+  "source_receipt_bytes": 5470,
+  "source_receipt_sha256": "c2bdb38e5179ac61f5802d690523ca49152ef60f34441adda5deeb56323f2618",
+  "uncompressed_receipt_bytes": 15652,
+  "uncompressed_receipt_sha256": "d829c1d120e08bda27244410521b547cc147dc4c4ffdf600cf0d3a5591c4ad2a",
+  "all_68_source_hashes_equal_committed_qualified_revision": true,
+  "existing_ordinary_source_and_helper_inputs_unchanged_against_d603351ff_receipt": true,
+  "changed_qualified_inputs": [
+    "native-android/engine/initial-capture/coh_initial_capture.h",
+    "native-android/engine/initial-capture/coh_initial_capture_private.h",
+    "native-android/engine/initial-capture/coh_initial_local.c",
+    "native-android/engine/initial-capture/coh_initial_map.c",
+    "native-android/engine/initial-capture/test_initial_capture.c",
+    "native-android/engine/initial-capture/test_initial_capture_owner.c"
+  ],
+  "modes": {
+    "release": {
+      "public_scenarios": 17,
+      "public_checks": 4756,
+      "owner_scenarios": 5,
+      "owner_checks": 1537
+    },
+    "asan": {
+      "public_scenarios": 17,
+      "public_checks": 4756,
+      "owner_scenarios": 5,
+      "owner_checks": 1537
+    },
+    "ubsan": {
+      "public_scenarios": 17,
+      "public_checks": 4756,
+      "owner_scenarios": 5,
+      "owner_checks": 1537
+    }
+  },
+  "first_failure_controls": [
+    "DB genuine pinned server-error framing: COH_STATE, actual DB_FAILED, MapIDLE before diagnostic close.",
+    "DB request timeout: actual DB_TIMED_OUT before diagnostic close.",
+    "DB service cancellation and explicit cancellation: actual DB_WAIT_PLAYERS before diagnostic close.",
+    "Map protocol/header/group/observer/owner failures and Map timeout/cancellation: actual live Map phase before diagnostic Mapclose.",
+    "First status/failure/local/db/map record byte-identical through repeated diagnostics, rejected service, close/cancel/close/cancel and Mapdiagnostics copies.",
+    "Successful raw capture and plain close plus repeated cancel do not mint a first failure.",
+    "Ordinary Local terminal_failure and terminal phases stay unchanged; current post-close module phases prove cleanup."
+  ],
+  "measured_host_bytes": {
+    "capture_owner": 1072,
+    "map_wrapper": 1280,
+    "additional_fixed_owners_sum": 2352,
+    "additional_fixed_owners_growth_from_prior": 56,
+    "diagnostics": 1016,
+    "first_failure_snapshot": 24,
+    "private_map_failure_phase": 8,
+    "ordinary_local": 1040,
+    "ordinary_map": 2536,
+    "caller_lease": 1344
+  },
+  "global_aggregate_budget_admitted": false,
+  "synthetic_peers_only": true,
+  "real_server": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false
+}

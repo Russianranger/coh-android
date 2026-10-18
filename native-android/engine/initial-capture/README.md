@@ -26,6 +26,25 @@ full-update ACK, actor, current dictionary generation or acceptance is granted.
 An earlier valid GROUPS observation and numeric metadata survive later initial
 failure, allowing the separate GROUPS capture scope to remain useful.
 
+`diagnostics.first_failure` records the first diagnostic failure/cancellation
+with typed Local/DB/Map phases, status and failure reason before diagnostic
+cleanup closes the controller. The private Map wrapper latches its actual phase
+before its own failure close; the outer owner combines it with current Local/DB
+phases. If an ordinary inner module has already reached a terminal phase, that
+actual phase is retained; no earlier progress is reconstructed. Later diagnostic
+copies, rejected service, close and cancellation preserve this snapshot and its
+first cause. Successful raw capture, rejected inputs/reentry and plain close do
+not create it. Ordinary `local.terminal_failure`/`terminal_*` fields retain their
+existing meanings and bytes; callers choose the new snapshot explicitly.
+
+An enclosing tool deadline can expire before the DB/Map module deadlines.
+`coh_initial_capture_timeout` explicitly records `COH_STATE` / `FAILURE_TIMEOUT`
+with the actual active phases, then closes the diagnostic attempt. It accepts
+only begun active CONNECTING..WAIT_ALLENTS owners and has no caller-supplied
+failure/status input. Null, callback-busy, idle, captured, failed, cancelled and
+closed owners are unchanged. A tool whose total deadline expires while service
+still returns OK must call this API before plain close; interruption uses cancel.
+
 Callbacks may call only the exact-event lease getter and diagnostics. Mutations
 and service reentry refuse or no-op. All pointers expire on return; the observer
 copies/streams privately and returns COH_IO or another refusal on failed I/O.
@@ -73,7 +92,51 @@ unknown emits normalized command 15; none acknowledges only at transport level.
 The peer refuses READY or any other unexpected application request and reports
 all authority flags false. It is never shipped or an authentic server witness.
 
-## Qualified source and fixed host sizes
+## First-failure snapshot qualification
+
+The explicit enclosing-deadline follow-up is source
+`30f9a3a6282d771c907d26d418aca22a0c9c1917`. Release/ASan/UBSan each passed19
+public UDP scenarios /5,178 checks and five owner faults /1,544 checks. The added
+DB and post-GROUPS Map cases call the timeout API while module deadlines remain
+in the future, preserving actual DB_WAIT_PLAYERS/Map_SCENE_INCOMPLETE phases.
+Callback-busy/null/idle/terminal rejection and first-cause preservation controls
+passed; native allocation balance, descriptors and all owner sizes are unchanged.
+All68 source hashes match the committed qualified revision; only four capture
+source/test inputs changed from the previous snapshot proof, with all ordinary
+and helper bytes unchanged. Receipt
+`qualification/initial-capture-explicit-deadline-30f9a3a62.json.gz` is5,487 bytes,
+SHA256 `9debb4fa590473ed56068342639f454ee8157ac86eaec337cdfc38ee38433e1a`.
+The associated deadline binding JSON records exact controls and source changes.
+
+Source `9901002fc0edc93c26720c0a6f0027ae3985ec60` includes the typed snapshot
+and its focused controls. Release/ASan/UBSan each passed17 public UDP scenarios /
+4,756 checks and five owner-fault scenarios /1,537 checks. Four added DB cases
+use the pinned original server-error framing, request timeout, service
+cancellation and explicit cancellation before Map handoff. Existing Map cases
+now check actual pre-cleanup phases for protocol/header/GROUPS/observer/owner
+failure, timeout and cancellation. Every first record remains byte-identical
+through rejected service and repeated close/cancel; successful capture and plain
+close followed by repeated cancel keep it invalid. Ordinary terminal fields
+remain untouched and post-close phases/socket counts still prove cleanup.
+
+All68 frozen compiled/header/helper input hashes equal the qualified committed
+revision and remained unchanged. Only six isolated capture source/test files
+differ from the prior seam receipt; every ordinary source/helper hash is equal.
+No old qualifier entrypoint or server was run. Receipt
+`qualification/initial-capture-first-failure-9901002fc.json.gz` is5,470 bytes,
+SHA256 `c2bdb38e5179ac61f5802d690523ca49152ef60f34441adda5deeb56323f2618`.
+The accompanying first-failure binding JSON records controls and exact sizes.
+
+Measured host capture owner is1,072 bytes and its Map wrapper is1,280 bytes:
+2,352 additional fixed owner bytes,56 more than the original seam. The public
+first-failure snapshot is24 bytes, private Map phase latch8 bytes and diagnostics
+value1,016 bytes. Ordinary Local/Map remain1,040/2,536 bytes and the borrowed
+caller lease remains1,344 bytes. Caller diagnostic copies and every transitive
+owner/callback/loan still add to the aggregate. This remains a separately bounded
+diagnostic seam without global aggregate admission, process-RSS, original server,
+whole character, source generation, actor or ACK qualification.
+
+## Historical initial seam qualification
 
 Implementation `d603351ff5db02a6377ca323aaf2046edb041265` passed the focused
 release/ASan/UBSan suite: 13 public controlled UDP scenarios / 4,281 checks plus
