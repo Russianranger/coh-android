@@ -5,6 +5,39 @@ Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical
 Git links, existing bundles, accepted APKs and user profiles were preserved.
 
+## Bounded DB received-header checkpoint — 2026-10-18
+
+Publication parent is independently verified remote
+`5b9aef227c36c82b3f2bdca800037e33b5fd98af`, tree
+`e15aedb03a2dfb5586e916dd56a76806882b3fbc`. All six worker histories and accepted
+milestones below remain preserved. New D source439f5d0a2 and proof11a4ef491 are
+integrated with F source19bed701 and workflow844e482b reviews; E independently
+cleared the final workflow. A/B/C/E sources are unchanged from that parent.
+
+The additive DB observer copies no packet or text body. It records at most16
+received header scalars with fixed original names/phases through the same
+ordinary receive/decode path. Original main/session/owner source, positive
+admission, crypto/profile/protocol/timeouts and runtime command are unchanged.
+The first unsupported command is not attributed by source qualification.
+The new targeted proof has6 Python methods,827 C checks/30 cases in release and
+combined ASan+UBSan, and3 main-overlay cases per mode. It executes no Windows
+API, socket or server. Its106 source pins, proof and independent review form108
+fixed nonself workflow pins; the current committed workflow is the109th.
+The final gate checks the frozen exact six-name list and zero errors/failures/
+skips; all7 proof/review pure-data predicates were evaluated against the saved
+JSON before publication. No host guards, old suites or live runtime were
+executed for that check. Public upload remains the same receipt-only path.
+
+One fresh Windows attempt is justified to identify actual received headers
+following failed run39090126094; its outcome is pending. Matching scene run
+[39091755344](https://github.com/Russianranger/coh-android/actions/runs/39091755344)
+at the publication parent has passed351 source pins, same fixture/observer
+admission and the new receiver's actual destination loader/noargs preflight.
+It is in the actual GROUPS/initial transaction, with no result accepted yet.
+No complete DB player list, normal version/checksum reference, new source
+generation/initial character, world/player/ACK/APK/ARM64 execution/Thor result is
+inferred. Gates25–27 stay open; startup387340ms and96MiB policy are unchanged.
+
 ## EDITMSG scene checkpoint — 2026-10-18
 
 Publication parent is independently verified remote

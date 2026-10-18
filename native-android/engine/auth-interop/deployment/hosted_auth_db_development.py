@@ -23,6 +23,7 @@ import tarfile
 import tempfile
 import time
 
+import db_received_prefix as received_prefix
 import hosted_db_threadname_readiness as readiness
 import hosted_selected_shard_play as selected
 
@@ -115,7 +116,7 @@ def admit_probe(value,preflight=False):
     return value
 
 
-def observation(child,output,preflight=False):
+def observation(child,output,preflight=False,*,received=False):
     result={'schema':'coh-auth-db-development-fixed-observation-v1','child_state':'NOT_STARTED',
         'json_state':'UNAVAILABLE','stdout_bytes_bounded':0,'stage':'UNAVAILABLE','phase':'UNAVAILABLE',
         'failure':'UNAVAILABLE','status':'UNAVAILABLE','auth_phase':'UNAVAILABLE','db_phase':'UNAVAILABLE',
@@ -135,7 +136,10 @@ def observation(child,output,preflight=False):
         if code is None:return result
         result['json_state']='REFUSED'
         if type(code) is not int or code not in (0,1):return result
-        output.seek(0);value=native_shape(private_json(output.read(8193)),preflight)
+        output.seek(0);value=private_json(output.read(8193))
+        if received:
+            value,prefix=received_prefix.native(value,preflight)
+        value=native_shape(value,preflight)
         if value['passed'] is not (code==0):return result
         result.update(json_state='VALID',stage=STAGES[value['probe_stage']],phase=PHASES[value['phase']],
             failure=FAILURES[value['failure']],status=STATUSES[value['status']],
@@ -144,6 +148,9 @@ def observation(child,output,preflight=False):
             complete_matching_list=value['complete_matching_list']==1,
             local_sensitive_buffers_wiped=value['local_sensitive_buffers_wiped'],socket_cleanup_complete=value['socket_cleanup_complete'])
         result.update({k:value[k] for k in counters})
+        if received:
+            result['native_producer_schema']=value['schema'][:-1]+'2'
+            result['db_received_prefix']=prefix
     except Exception:pass
     return result
 
@@ -210,7 +217,9 @@ def committed_inputs(root,commit):
             if path in result and result[path]!=expected:raise ValueError('development_source_pin_conflict')
             result[path]=hashlib.sha256(raw).hexdigest()
     own=['hosted_auth_db_development.py','hosted_auth_db_development_stage.py','test_auth_db_development_driver.py',
-        'AUTH-DB-DEVELOPMENT-DRIVER.md','windows_registry_lease.py','test_windows_registry_lease.py',
+        'AUTH-DB-DEVELOPMENT-DRIVER.md','db_received_prefix.py','test_db_received_prefix.py',
+        'DB-RECEIVED-PREFIX.md','windows/db_received_prefix.h','windows/wrapped_db_received_prefix.c',
+        'windows/db_development_received_probe.c','windows/test_db_received_prefix.c','windows_registry_lease.py','test_windows_registry_lease.py',
         'hosted_selected_shard_play.py','password_fixture.py','auth_service_profile.py']
     for name in own:
         path=PREFIX+'deployment/'+name;raw=_committed_file(root,path)
@@ -239,6 +248,9 @@ def committed_inputs(root,commit):
             PREFIX+'deployment/windows_suspended_thread.py']).items():
         if name in result and result[name]!=digest:raise ValueError('development_local_import_pin_conflict')
         result[name]=digest
+    for name,digest in received_prefix.SOURCE_PINS.items():
+        if name in result and result[name]!=digest:raise ValueError('development_received_source_pin_conflict')
+        result[name]=hashlib.sha256(_committed_file(root,name,digest)).hexdigest()
     return result
 
 
@@ -339,9 +351,9 @@ def recover_zlib(root,destination):
 
 def prepare_project(root,project,crypto,zlib):
     project.mkdir();native=root/'native-android';windows=HERE/'windows'
-    sources=[windows/p for p in ('db_development_probe.c','auth_db_development_owner.c','winsock_compat.c',
-        'wrapped_login.c','db_udp_winsock.c','wrapped_db_udp.c')]
-    sources += [native/p for p in ('engine/dbclient/coh_db_session.c','engine/dbclient/coh_dbclient.c',
+    sources=[windows/p for p in ('db_development_received_probe.c','auth_db_development_owner.c','winsock_compat.c',
+        'wrapped_login.c','db_udp_winsock.c','wrapped_db_udp.c','wrapped_db_received_prefix.c')]
+    sources += [native/p for p in ('engine/dbclient/coh_dbclient.c',
         'engine/auth/coh_auth.c','engine/auth/coh_auth_openssl.c','engine/session/coh_session_crypto.c',
         'engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c',
         'protocol/coh_protocol.c','src/coh_blowfish.c')]
@@ -521,7 +533,7 @@ def private_probe(binary,port,temporary,preflight=False,failure_observation=None
         raise ValueError('development_private_probe_arguments')
     if failure_observation is not None and (type(failure_observation) is not dict or failure_observation):
         raise ValueError('development_observation_sink')
-    if failure_observation is not None:failure_observation.update(observation(None,None,preflight))
+    if failure_observation is not None:failure_observation.update(observation(None,None,preflight,received=True))
     credentials=bytearray() if preflight else bytearray((selected.password_fixture.ACCOUNT+'\n'+selected.password_fixture.PASSWORD+'\n').encode('ascii'))
     child=None;job=None;clean=False;primary=None;result=None
     try:
@@ -533,9 +545,14 @@ def private_probe(binary,port,temporary,preflight=False,failure_observation=None
                 job.assign(child);child.communicate(input=credentials,timeout=12 if preflight else 37)
                 if child.returncode!=0 or os.fstat(output.fileno()).st_size>8192:
                     raise ValueError('development_private_probe_refused')
-                output.seek(0);result=admit_probe(private_json(output.read(8193)),preflight)
+                output.seek(0);base,prefix=received_prefix.native(private_json(output.read(8193)),preflight)
+                result=admit_probe(base,preflight)
+                result['normalized_policy_schema']=result['schema']
+                result['native_producer_schema']=result['schema'][:-1]+'2'
+                result['schema']='coh-auth-db-development-policy-result-projection-v2'
+                result['db_received_prefix']=received_prefix.completion(prefix,preflight)
             finally:
-                if failure_observation is not None:failure_observation.update(observation(child,output,preflight))
+                if failure_observation is not None:failure_observation.update(observation(child,output,preflight,received=True))
     except BaseException as error:
         primary=error;raise
     finally:
