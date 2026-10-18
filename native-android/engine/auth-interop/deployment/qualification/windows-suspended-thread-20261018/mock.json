@@ -1,0 +1,24 @@
+{
+  "actual_windows_or_native_api_executed": false,
+  "compiler_or_service_executed": false,
+  "controlled_api_calls": 197264,
+  "controlled_failure_sites": 19,
+  "controlled_max_owned_handles": 2,
+  "driver_integration_qualified": false,
+  "errors": 0,
+  "failures": 0,
+  "host_platform": "linux",
+  "passed": true,
+  "process_or_thread_created": false,
+  "python_version": "3.12.14",
+  "schema": 1,
+  "scope": "suspended_primary_thread_source_and_api_doubles_only",
+  "snapshot_entries_limit_per_pass": 65536,
+  "snapshot_passes": 2,
+  "source_sha256": {
+    "native-android/engine/auth-interop/deployment/WINDOWS-SUSPENDED-THREAD.md": "75e3c0cf3eaccfa5e0dadffcb36e952aa2be2eba264c55d8327426045907c172",
+    "native-android/engine/auth-interop/deployment/test_windows_suspended_thread.py": "c31c5e59e10d780dcf5e68bc5739672a82bfc05a88307910989d5db04fa56e5b",
+    "native-android/engine/auth-interop/deployment/windows_suspended_thread.py": "5c5306850d5c1abeab5f70682ce54f35240127f67a54f90393598421caef5a11"
+  },
+  "test_methods": 12
+}

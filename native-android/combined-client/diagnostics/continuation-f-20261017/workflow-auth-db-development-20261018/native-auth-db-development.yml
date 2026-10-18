@@ -1,0 +1,329 @@
+name: Fresh real Auth to DB empty-list provisional development experiment
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-auth-db-development.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-auth-db-development-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  fresh-real-auth-db-development:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && (github.event_name
+      == 'workflow_dispatch' || contains(github.event.head_commit.message, '[auth-db-development]'))
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 30
+    steps:
+    - name: Preserve exact source line endings
+      run: git config --global core.autocrlf false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Admit final independently reviewed source closure before repository imports or runtime recovery
+      shell: bash
+      run: "python - <<'PYDEVSOURCE'\nimport hashlib,json,os,pathlib,subprocess,sys\n\ndef need(ok,code):\n    if not ok:raise\
+        \ ValueError(code)\nneed(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'ASSERTIONS_REQUIRED')\nneed(os.name=='nt'\
+        \ and os.environ['RUNNER_ENVIRONMENT']=='github-hosted' and os.environ['RUNNER_OS']=='Windows' and os.environ['RUNNER_ARCH']=='X64','HOSTED_WINDOWS_X64_ONLY')\n\
+        need(os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android','OWNED_NATIVE_BRANCH_ONLY')\n\
+        root=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\nneed(head==os.environ['GITHUB_SHA'],'EXACT_HEAD')\n\
+        pins={'native-android/engine/auth-interop/deployment/AUTH-DB-DEVELOPMENT-DRIVER.md': 'd69e37a0e01b117723b80f8d33c1607dccc1be0542630ecbf6d36b0b73212d01',\
+        \ 'native-android/engine/auth-interop/deployment/DB-DEVELOPMENT-PROBE.md': 'd0785247746207a187cca7c4612524f7177f5795f430631b3e338475705d5ddb',\
+        \ 'native-android/engine/auth-interop/deployment/DB-UDP-WINDOWS-ADAPTER.md': 'a0d5482ac2a621ccfb3860511fa21355b9f7969403ad8f5c0ec40d77931ae9ae',\
+        \ 'native-android/engine/auth-interop/deployment/WINDOWS-SUSPENDED-THREAD.md': '75e3c0cf3eaccfa5e0dadffcb36e952aa2be2eba264c55d8327426045907c172',\
+        \ 'native-android/engine/auth-interop/deployment/admit_schema.py': 'c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686',\
+        \ 'native-android/engine/auth-interop/deployment/auth_readiness.py': '814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438',\
+        \ 'native-android/engine/auth-interop/deployment/auth_service_profile.py': '6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4',\
+        \ 'native-android/engine/auth-interop/deployment/candidate_service.py': '07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe',\
+        \ 'native-android/engine/auth-interop/deployment/candidate_sql_memory.py': 'b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde',\
+        \ 'native-android/engine/auth-interop/deployment/checksum_candidate.py': '27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86',\
+        \ 'native-android/engine/auth-interop/deployment/db_modal_diagnostic.py': '3cfb9b5e1eacc02ba9b79cda41e8cbf505743c0e5cc7ebfefe98f0a13bdba4c7',\
+        \ 'native-android/engine/auth-interop/deployment/db_startup_diagnostic.py': '585378d5241ea6b7b571e034f340b2aea3f78bf0d2856b1a63e6f840ee81600b',\
+        \ 'native-android/engine/auth-interop/deployment/generate_odbc.py': '82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_auth_db_development.py': '72a25f34427f2e32d4fcd6bea2052f09af0767b76e865665f918a29e7f94d822',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_auth_db_development_stage.py': 'e028d3368e3e34f2fd5e999391d3bbcdfe320c4445d0eee25e45310b90a05ade',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_auth_login.py': '0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_auth_stage.py': 'bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_candidate_login.py': '23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py': '020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py': '17e58a3fb06bb3e364e529b4a6c4992747bd34ee4f7c8beb510edbdb0d7a4d5d',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_db_threadname_candidate.py': '630b4b46c7aa5c68bb2ac7afa44a1587e3f9289c95c49c92da3a8c062b938ec0',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py': '7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_receive_candidate.py': '581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a',\
+        \ 'native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py': '58b8f4d672e81d6f5b3aa56d2afb06dd7162efd4f9f31f4b35735cedcccb8794',\
+        \ 'native-android/engine/auth-interop/deployment/manual_runtime_preflight.py': '1755c1613430c9e43d64c151e38a94ec34fce08c99ef37c88eafdf8e0cdf4d67',\
+        \ 'native-android/engine/auth-interop/deployment/password_fixture.py': '0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd',\
+        \ 'native-android/engine/auth-interop/deployment/qualification/windows-suspended-thread-20261018/HANDOFF.md': '4a4edb1c8cf50199bb2c6f16ff8e24c26df2a660cb661b52d5194e9ad68d41ba',\
+        \ 'native-android/engine/auth-interop/deployment/qualification/windows-suspended-thread-20261018/mock.json': '2a94e518de3e53a55123012a73c5b7eaed4482cf9fe4cad336cfae0b4c724267',\
+        \ 'native-android/engine/auth-interop/deployment/qualify_auth_db_development_owner.py': 'aa58020f335e60553e06941c7adb9a0b905c81c5ba84c5f0c3207b295e738637',\
+        \ 'native-android/engine/auth-interop/deployment/receive_candidate.py': 'cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78',\
+        \ 'native-android/engine/auth-interop/deployment/source_audit.py': 'bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f',\
+        \ 'native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py': '948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2',\
+        \ 'native-android/engine/auth-interop/deployment/test_auth_db_development_driver.py': '2a5d6e08815f2ea1b44111920f2c2355c700f525e12b03a4e09dcb465b1b8027',\
+        \ 'native-android/engine/auth-interop/deployment/test_db_development_probe.py': '72f4c499b25fe3731b5f260c7a1fbaa336c47bdde5305b11022634c43d0661f5',\
+        \ 'native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py': '103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7',\
+        \ 'native-android/engine/auth-interop/deployment/test_db_udp_winsock.py': 'd4a7eefee1d3e7d45a0ef4cb0b03fb18c22cc719d2f95f77be2da7ab4c3d9f27',\
+        \ 'native-android/engine/auth-interop/deployment/test_windows_registry_lease.py': '976e882f453fdd459de7cb23241d45460a8a2b77a641e8e3a8f2c20254e31a5c',\
+        \ 'native-android/engine/auth-interop/deployment/test_windows_suspended_thread.py': 'c31c5e59e10d780dcf5e68bc5739672a82bfc05a88307910989d5db04fa56e5b',\
+        \ 'native-android/engine/auth-interop/deployment/verify_auth_acceptance.py': '67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8',\
+        \ 'native-android/engine/auth-interop/deployment/windows/AUTH-DB-DEVELOPMENT-OWNER.md': '3ee0303492b09ff944e66826902e5b1a474e656c371fa665bf5b19c3f4c76c92',\
+        \ 'native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c': '36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6',\
+        \ 'native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h': '2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20',\
+        \ 'native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h': '34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8',\
+        \ 'native-android/engine/auth-interop/deployment/windows/compat/fcntl.h': '7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402',\
+        \ 'native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h': '34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8',\
+        \ 'native-android/engine/auth-interop/deployment/windows/compat/unistd.h': '29690125951c12f239a664848651c83b438132252037e959c67a00581d588646',\
+        \ 'native-android/engine/auth-interop/deployment/windows/db_development_probe.c': 'fab9f9bbf4d79d6fdf00982d8f516e40d8b0ed85fe30190bca2879ed8dbd4354',\
+        \ 'native-android/engine/auth-interop/deployment/windows/db_udp_winsock.c': 'abfede788fe3f7c566a028178e05caeb21a2db24fb7c233b90bd64fc5fa0e8aa',\
+        \ 'native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h': 'ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb',\
+        \ 'native-android/engine/auth-interop/deployment/windows/test_auth_db_development_owner.c': 'efc8adb4b4db3dc2e3931f5752563386d78dc1e6b1727abe6a5084ce874e9bcd',\
+        \ 'native-android/engine/auth-interop/deployment/windows/test_db_development_probe.c': '83e470934604b5d1ddf9e3e6e234bbde9cf10a79a56151d713b95ae974c2301a',\
+        \ 'native-android/engine/auth-interop/deployment/windows/test_db_development_probe_api.h': 'cea1dc2ab4c5dae38bc20d7fb86587ac44c20f57a571ca56e4c7397445dbecbf',\
+        \ 'native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock.c': '966c9026cd54281a0a597670c389634fa276a817176b2fc552a8954ff0b78174',\
+        \ 'native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock_api.h': 'a1b19b67b9b7ab96bb800c368d6c5cd064d1466f27e4c6666c299ae1fa1bc15c',\
+        \ 'native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c': '14b125f2649babdc9a310bf757676f551279214d4a7e4e65869129d10ad9d651',\
+        \ 'native-android/engine/auth-interop/deployment/windows_registry_lease.py': '4f7bcbdb79dc3dc8cbe0d4744810bea0b18a56655b26a89b9e6bb32701f5636b',\
+        \ 'native-android/engine/auth-interop/deployment/windows_suspended_thread.py': '5c5306850d5c1abeab5f70682ce54f35240127f67a54f90393598421caef5a11',\
+        \ 'native-android/engine/auth-interop/evidence/auth-db-development-owner-20261018/host-1642051b3.json.gz': 'b3c0b382202be509748fe5a70b289b35a02e5069f136e779f16358df5ddfe066',\
+        \ 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/Zlib.cmake': 'dbabf749271e73e4bb5eb62c5d914ace1259520f6e8b52bbcf2600371b5d50be',\
+        \ 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/admission.json': 'd104eafafe30e26d63072adef5a454e86d83d7280513c1add3d8478b1feebfd6',\
+        \ 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/admit.py': 'acb28d1cbf5f7eb8d1484face6ea3b18925679eda6c72344a1e134c2b00c934b',\
+        \ 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/chromium-zlib-cmake.patch': '55273bf390fd1093718d28f1141979fa97d23d1f071a1d90653f801cd425a107',\
+        \ 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/commit.json': 'f27da76043e1ffc76c0da5f07d36adc3b34b659cf98ae092ae897ef1d9317eda',\
+        \ 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/source.tar.gz': '2f776d3abe636e302a98216fc81410622feb1be958315223d0d3442496365938',\
+        \ 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/tree.json': '2b03a4e4d7edd236b5e1185b5a76013af77135355cd4342e8f347a5cbe7bb527',\
+        \ 'native-android/engine/auth-interop/qualification/db-development-probe-source-20261018/host.json': '6325c41dd124f5c97ba91897ab33117ed347aeb1c8545f25e80f04336ef25223',\
+        \ 'native-android/engine/auth-interop/qualification/db-udp-windows-source-20261018/host.json': 'dc3018ebc0e853ddfd8ffc2071c6d30b05f115edbfde01d3b8d9e736a0c8e419',\
+        \ 'native-android/engine/auth/coh_auth.c': '637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d', 'native-android/engine/auth/coh_auth.h':\
+        \ '0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d', 'native-android/engine/auth/coh_auth_openssl.c':\
+        \ 'f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1', 'native-android/engine/coh_contracts.h': '2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832',\
+        \ 'native-android/engine/dbclient/coh_db_handoff_owner.h': 'd4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45',\
+        \ 'native-android/engine/dbclient/coh_db_handoff_private.h': '6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd',\
+        \ 'native-android/engine/dbclient/coh_db_session.c': 'ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9',\
+        \ 'native-android/engine/dbclient/coh_db_session.h': '9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4',\
+        \ 'native-android/engine/dbclient/coh_dbclient.c': 'f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd',\
+        \ 'native-android/engine/dbclient/coh_dbclient.h': 'ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb',\
+        \ 'native-android/engine/login/coh_login.c': '7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e', 'native-android/engine/login/coh_login.h':\
+        \ '2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f', 'native-android/engine/network/coh_net.c': 'e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1',\
+        \ 'native-android/engine/network/coh_net.h': 'fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb', 'native-android/engine/network/coh_net_frame.c':\
+        \ '44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc', 'native-android/engine/network/coh_net_udp.c':\
+        \ 'c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d', 'native-android/engine/network/coh_net_udp.h':\
+        \ '7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4', 'native-android/engine/network/coh_net_zip.c':\
+        \ '40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747', 'native-android/engine/network/coh_net_zip_internal.h':\
+        \ 'a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd', 'native-android/engine/session/coh_session_crypto.c':\
+        \ 'c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1', 'native-android/engine/session/coh_session_crypto.h':\
+        \ '8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57', 'native-android/include/coh_native_core.h':\
+        \ '48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106', 'native-android/protocol/coh_protocol.c': '6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea',\
+        \ 'native-android/protocol/coh_protocol.h': '61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4', 'native-android/src/byte_reader.h':\
+        \ 'c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1', 'native-android/src/coh_blowfish.c': 'ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470',\
+        \ 'upstream/ouroboros/Common/ClientLogin/clientcommLogin.c': '19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea',\
+        \ 'upstream/ouroboros/Common/comm_backend.h': '9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c',\
+        \ 'upstream/ouroboros/DBServer/src/authcomm.c': 'a3a4349047e08fc3285c22d231fe9d467ee26f6360e125db3845ede50f1fc1b2',\
+        \ 'upstream/ouroboros/DBServer/src/clientcomm.c': '8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c',\
+        \ 'upstream/ouroboros/Game/src/clientcomm/authclient.c': 'd1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015',\
+        \ 'native-android/combined-client/diagnostics/continuation-f-20261017/auth-db-development-driver-20261018/review.json':\
+        \ '503ea530202c5908196395301b55b0c20459a19d21ea8b4444b2117ac9e8ff61', 'native-android/engine/auth-interop/deployment/qualification/auth-db-development-driver-20261018/host.json':\
+        \ 'da243b8067edcfae46ff5cb4fa01cf479d7d894154a4118408b87a3551dff116'}\nsource={'native-android/engine/auth-interop/deployment/AUTH-DB-DEVELOPMENT-DRIVER.md':\
+        \ 'd69e37a0e01b117723b80f8d33c1607dccc1be0542630ecbf6d36b0b73212d01', 'native-android/engine/auth-interop/deployment/DB-DEVELOPMENT-PROBE.md':\
+        \ 'd0785247746207a187cca7c4612524f7177f5795f430631b3e338475705d5ddb', 'native-android/engine/auth-interop/deployment/DB-UDP-WINDOWS-ADAPTER.md':\
+        \ 'a0d5482ac2a621ccfb3860511fa21355b9f7969403ad8f5c0ec40d77931ae9ae', 'native-android/engine/auth-interop/deployment/WINDOWS-SUSPENDED-THREAD.md':\
+        \ '75e3c0cf3eaccfa5e0dadffcb36e952aa2be2eba264c55d8327426045907c172', 'native-android/engine/auth-interop/deployment/admit_schema.py':\
+        \ 'c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686', 'native-android/engine/auth-interop/deployment/auth_readiness.py':\
+        \ '814cdeaf6948139896b2898b72e3c2f7e4edefba6a1b4074c04f6064cce85438', 'native-android/engine/auth-interop/deployment/auth_service_profile.py':\
+        \ '6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4', 'native-android/engine/auth-interop/deployment/candidate_service.py':\
+        \ '07b707b91fd419f82490759a6d333445c6a063d9536e01039497d1a3d4261ebe', 'native-android/engine/auth-interop/deployment/candidate_sql_memory.py':\
+        \ 'b1caf9adf77d604ca1797727437910ce0a4f86373a4c486d9a034e2edc2d6fde', 'native-android/engine/auth-interop/deployment/checksum_candidate.py':\
+        \ '27ee0a1700854f4a555a5b9240bbd5fc77fc981809dbda199235b2e59cd46f86', 'native-android/engine/auth-interop/deployment/db_modal_diagnostic.py':\
+        \ '3cfb9b5e1eacc02ba9b79cda41e8cbf505743c0e5cc7ebfefe98f0a13bdba4c7', 'native-android/engine/auth-interop/deployment/db_startup_diagnostic.py':\
+        \ '585378d5241ea6b7b571e034f340b2aea3f78bf0d2856b1a63e6f840ee81600b', 'native-android/engine/auth-interop/deployment/generate_odbc.py':\
+        \ '82c70c83143a4ce49d0928a826253b84264f02b1034373776b91e23a1eabd424', 'native-android/engine/auth-interop/deployment/hosted_auth_db_development.py':\
+        \ '72a25f34427f2e32d4fcd6bea2052f09af0767b76e865665f918a29e7f94d822', 'native-android/engine/auth-interop/deployment/hosted_auth_db_development_stage.py':\
+        \ 'e028d3368e3e34f2fd5e999391d3bbcdfe320c4445d0eee25e45310b90a05ade', 'native-android/engine/auth-interop/deployment/hosted_auth_login.py':\
+        \ '0cb68705c33bb12f6020aa34f9095dd24f9ef98aecc113f75f8e9e6daccd25a2', 'native-android/engine/auth-interop/deployment/hosted_auth_stage.py':\
+        \ 'bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155', 'native-android/engine/auth-interop/deployment/hosted_candidate_login.py':\
+        \ '23ffc91f8e76522cdb44e233cce4db5d15e6ae725b561f00e9fd11a0e8f9137d', 'native-android/engine/auth-interop/deployment/hosted_db_checksum_candidate.py':\
+        \ '020e7f0659738079f9e652e6309c0d0385309109443896d7dfa9a13103d4bdc6', 'native-android/engine/auth-interop/deployment/hosted_db_shard_activation.py':\
+        \ '17e58a3fb06bb3e364e529b4a6c4992747bd34ee4f7c8beb510edbdb0d7a4d5d', 'native-android/engine/auth-interop/deployment/hosted_db_threadname_candidate.py':\
+        \ '630b4b46c7aa5c68bb2ac7afa44a1587e3f9289c95c49c92da3a8c062b938ec0', 'native-android/engine/auth-interop/deployment/hosted_db_threadname_readiness.py':\
+        \ '7cd278d54a30125923f819cf8ceb223383ed64e25fe0694062ef1826e56471d8', 'native-android/engine/auth-interop/deployment/hosted_receive_candidate.py':\
+        \ '581adfffd53fe7c4d1a8abdfa03c4303fdfa51b65ed1b0ba9da2f9891ccb326a', 'native-android/engine/auth-interop/deployment/hosted_selected_shard_play.py':\
+        \ '58b8f4d672e81d6f5b3aa56d2afb06dd7162efd4f9f31f4b35735cedcccb8794', 'native-android/engine/auth-interop/deployment/manual_runtime_preflight.py':\
+        \ '1755c1613430c9e43d64c151e38a94ec34fce08c99ef37c88eafdf8e0cdf4d67', 'native-android/engine/auth-interop/deployment/password_fixture.py':\
+        \ '0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd', 'native-android/engine/auth-interop/deployment/qualification/windows-suspended-thread-20261018/HANDOFF.md':\
+        \ '4a4edb1c8cf50199bb2c6f16ff8e24c26df2a660cb661b52d5194e9ad68d41ba', 'native-android/engine/auth-interop/deployment/qualification/windows-suspended-thread-20261018/mock.json':\
+        \ '2a94e518de3e53a55123012a73c5b7eaed4482cf9fe4cad336cfae0b4c724267', 'native-android/engine/auth-interop/deployment/qualify_auth_db_development_owner.py':\
+        \ 'aa58020f335e60553e06941c7adb9a0b905c81c5ba84c5f0c3207b295e738637', 'native-android/engine/auth-interop/deployment/receive_candidate.py':\
+        \ 'cf53bf9265ea42d5d0e41af12afb8f7b54de9ca832ac5b698e6b899802fe0a78', 'native-android/engine/auth-interop/deployment/source_audit.py':\
+        \ 'bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f', 'native-android/engine/auth-interop/deployment/sql_readiness_diagnostic.py':\
+        \ '948be913b6e13020c5f308c6c9e81c4345dee18bc6413c19be8cfef42a462dc2', 'native-android/engine/auth-interop/deployment/test_auth_db_development_driver.py':\
+        \ '2a5d6e08815f2ea1b44111920f2c2355c700f525e12b03a4e09dcb465b1b8027', 'native-android/engine/auth-interop/deployment/test_db_development_probe.py':\
+        \ '72f4c499b25fe3731b5f260c7a1fbaa336c47bdde5305b11022634c43d0661f5', 'native-android/engine/auth-interop/deployment/test_db_threadname_readiness.py':\
+        \ '103dd41e9d765d0fe09a967d3ed3d7f8fc8356cf067dbb536ee0f7eb24c6cba7', 'native-android/engine/auth-interop/deployment/test_db_udp_winsock.py':\
+        \ 'd4a7eefee1d3e7d45a0ef4cb0b03fb18c22cc719d2f95f77be2da7ab4c3d9f27', 'native-android/engine/auth-interop/deployment/test_windows_registry_lease.py':\
+        \ '976e882f453fdd459de7cb23241d45460a8a2b77a641e8e3a8f2c20254e31a5c', 'native-android/engine/auth-interop/deployment/test_windows_suspended_thread.py':\
+        \ 'c31c5e59e10d780dcf5e68bc5739672a82bfc05a88307910989d5db04fa56e5b', 'native-android/engine/auth-interop/deployment/verify_auth_acceptance.py':\
+        \ '67e70c95ba3332697b1c5af3596faf13356c7a68577218479dc5471707fb82e8', 'native-android/engine/auth-interop/deployment/windows/AUTH-DB-DEVELOPMENT-OWNER.md':\
+        \ '3ee0303492b09ff944e66826902e5b1a474e656c371fa665bf5b19c3f4c76c92', 'native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.c':\
+        \ '36f1dd4c58294f750839625829df91e7283fb63039dc88ea5e17a2ed61de80c6', 'native-android/engine/auth-interop/deployment/windows/auth_db_development_owner.h':\
+        \ '2ba16463b1e8ceb77a27d0b2424eb1c3fec0cf2c3146d473e1b1377ff8d7ef20', 'native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h':\
+        \ '34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8', 'native-android/engine/auth-interop/deployment/windows/compat/fcntl.h':\
+        \ '7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402', 'native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h':\
+        \ '34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8', 'native-android/engine/auth-interop/deployment/windows/compat/unistd.h':\
+        \ '29690125951c12f239a664848651c83b438132252037e959c67a00581d588646', 'native-android/engine/auth-interop/deployment/windows/db_development_probe.c':\
+        \ 'fab9f9bbf4d79d6fdf00982d8f516e40d8b0ed85fe30190bca2879ed8dbd4354', 'native-android/engine/auth-interop/deployment/windows/db_udp_winsock.c':\
+        \ 'abfede788fe3f7c566a028178e05caeb21a2db24fb7c233b90bd64fc5fa0e8aa', 'native-android/engine/auth-interop/deployment/windows/db_udp_winsock.h':\
+        \ 'ba06a25fe7bf2c9b5a777dab150dad711d204bd9fda9891a2209f02718edbabb', 'native-android/engine/auth-interop/deployment/windows/test_auth_db_development_owner.c':\
+        \ 'efc8adb4b4db3dc2e3931f5752563386d78dc1e6b1727abe6a5084ce874e9bcd', 'native-android/engine/auth-interop/deployment/windows/test_db_development_probe.c':\
+        \ '83e470934604b5d1ddf9e3e6e234bbde9cf10a79a56151d713b95ae974c2301a', 'native-android/engine/auth-interop/deployment/windows/test_db_development_probe_api.h':\
+        \ 'cea1dc2ab4c5dae38bc20d7fb86587ac44c20f57a571ca56e4c7397445dbecbf', 'native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock.c':\
+        \ '966c9026cd54281a0a597670c389634fa276a817176b2fc552a8954ff0b78174', 'native-android/engine/auth-interop/deployment/windows/test_db_udp_winsock_api.h':\
+        \ 'a1b19b67b9b7ab96bb800c368d6c5cd064d1466f27e4c6666c299ae1fa1bc15c', 'native-android/engine/auth-interop/deployment/windows/wrapped_db_udp.c':\
+        \ '14b125f2649babdc9a310bf757676f551279214d4a7e4e65869129d10ad9d651', 'native-android/engine/auth-interop/deployment/windows_registry_lease.py':\
+        \ '4f7bcbdb79dc3dc8cbe0d4744810bea0b18a56655b26a89b9e6bb32701f5636b', 'native-android/engine/auth-interop/deployment/windows_suspended_thread.py':\
+        \ '5c5306850d5c1abeab5f70682ce54f35240127f67a54f90393598421caef5a11', 'native-android/engine/auth-interop/evidence/auth-db-development-owner-20261018/host-1642051b3.json.gz':\
+        \ 'b3c0b382202be509748fe5a70b289b35a02e5069f136e779f16358df5ddfe066', 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/Zlib.cmake':\
+        \ 'dbabf749271e73e4bb5eb62c5d914ace1259520f6e8b52bbcf2600371b5d50be', 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/admission.json':\
+        \ 'd104eafafe30e26d63072adef5a454e86d83d7280513c1add3d8478b1feebfd6', 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/admit.py':\
+        \ 'acb28d1cbf5f7eb8d1484face6ea3b18925679eda6c72344a1e134c2b00c934b', 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/chromium-zlib-cmake.patch':\
+        \ '55273bf390fd1093718d28f1141979fa97d23d1f071a1d90653f801cd425a107', 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/commit.json':\
+        \ 'f27da76043e1ffc76c0da5f07d36adc3b34b659cf98ae092ae897ef1d9317eda', 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/source.tar.gz':\
+        \ '2f776d3abe636e302a98216fc81410622feb1be958315223d0d3442496365938', 'native-android/engine/auth-interop/evidence/exact-zlib-cf333892-20261018/tree.json':\
+        \ '2b03a4e4d7edd236b5e1185b5a76013af77135355cd4342e8f347a5cbe7bb527', 'native-android/engine/auth-interop/qualification/db-development-probe-source-20261018/host.json':\
+        \ '6325c41dd124f5c97ba91897ab33117ed347aeb1c8545f25e80f04336ef25223', 'native-android/engine/auth-interop/qualification/db-udp-windows-source-20261018/host.json':\
+        \ 'dc3018ebc0e853ddfd8ffc2071c6d30b05f115edbfde01d3b8d9e736a0c8e419', 'native-android/engine/auth/coh_auth.c': '637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d',\
+        \ 'native-android/engine/auth/coh_auth.h': '0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d', 'native-android/engine/auth/coh_auth_openssl.c':\
+        \ 'f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1', 'native-android/engine/coh_contracts.h': '2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832',\
+        \ 'native-android/engine/dbclient/coh_db_handoff_owner.h': 'd4c59607530221c6daab9f86dcee893bed64faf36b285c84cea63de12e5bcc45',\
+        \ 'native-android/engine/dbclient/coh_db_handoff_private.h': '6d6dc4a657165663e40be57351152dc840434a470ba80cb9951100c1cfd5cfbd',\
+        \ 'native-android/engine/dbclient/coh_db_session.c': 'ca8ee6130ebdccb3072f0ec0c279e4c044fac88f463144db7ef1caa7202f36b9',\
+        \ 'native-android/engine/dbclient/coh_db_session.h': '9fe7adf5261a4c871e571b7a6e4df81513116dd978f4344e42d9c407234a80d4',\
+        \ 'native-android/engine/dbclient/coh_dbclient.c': 'f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd',\
+        \ 'native-android/engine/dbclient/coh_dbclient.h': 'ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb',\
+        \ 'native-android/engine/login/coh_login.c': '7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e', 'native-android/engine/login/coh_login.h':\
+        \ '2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f', 'native-android/engine/network/coh_net.c': 'e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1',\
+        \ 'native-android/engine/network/coh_net.h': 'fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb', 'native-android/engine/network/coh_net_frame.c':\
+        \ '44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc', 'native-android/engine/network/coh_net_udp.c':\
+        \ 'c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d', 'native-android/engine/network/coh_net_udp.h':\
+        \ '7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4', 'native-android/engine/network/coh_net_zip.c':\
+        \ '40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747', 'native-android/engine/network/coh_net_zip_internal.h':\
+        \ 'a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd', 'native-android/engine/session/coh_session_crypto.c':\
+        \ 'c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1', 'native-android/engine/session/coh_session_crypto.h':\
+        \ '8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57', 'native-android/include/coh_native_core.h':\
+        \ '48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106', 'native-android/protocol/coh_protocol.c': '6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea',\
+        \ 'native-android/protocol/coh_protocol.h': '61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4', 'native-android/src/byte_reader.h':\
+        \ 'c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1', 'native-android/src/coh_blowfish.c': 'ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470',\
+        \ 'upstream/ouroboros/Common/ClientLogin/clientcommLogin.c': '19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea',\
+        \ 'upstream/ouroboros/Common/comm_backend.h': '9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c',\
+        \ 'upstream/ouroboros/DBServer/src/authcomm.c': 'a3a4349047e08fc3285c22d231fe9d467ee26f6360e125db3845ede50f1fc1b2',\
+        \ 'upstream/ouroboros/DBServer/src/clientcomm.c': '8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c',\
+        \ 'upstream/ouroboros/Game/src/clientcomm/authclient.c': 'd1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015'}\n\
+        workflow='.github/workflows/native-auth-db-development.yml'\np=root/workflow\nneed(p.resolve()==p and p.is_file()\
+        \ and not p.is_symlink() and p.stat().st_size<1024**2,'WORKFLOW_REGULAR_SOURCE')\npins[workflow]=hashlib.sha256(p.read_bytes()).hexdigest()\n\
+        tree=subprocess.check_output(['git','ls-tree','-r','-z','HEAD','--',*sorted(pins)]);blobs={}\nfor row in tree.split(b'\\\
+        0'):\n    if not row:continue\n    meta,name=row.split(b'\\t',1);mode,kind,digest=meta.split()\n    need(kind==b'blob'\
+        \ and mode in (b'100644',b'100755'),'TRACKED_SOURCE_MODE')\n    blobs[name.decode()]=digest.decode()\nneed(set(blobs)==set(pins),'ALL_FROZEN_SOURCES_COMMITTED')\n\
+        for name,digest in pins.items():\n    p=root/name\n    need(p.resolve()==p and p.is_file() and not p.is_symlink()\
+        \ and p.stat().st_size<2*1024**2,'BOUNDED_CANONICAL_SOURCE')\n    raw=p.read_bytes()\n    need(hashlib.sha256(raw).hexdigest()==digest\
+        \ and hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\\0'+raw).hexdigest()==blobs[name],'EXACT_INDEPENDENTLY_REVIEWED_SOURCE')\n\
+        review=json.loads((root/'native-android/combined-client/diagnostics/continuation-f-20261017/auth-db-development-driver-20261018/review.json').read_bytes());proof=json.loads((root/'native-android/engine/auth-interop/deployment/qualification/auth-db-development-driver-20261018/host.json').read_bytes())\n\
+        need(review['schema']=='coh-f-auth-db-development-driver-review-v1' and review['passed'] is True and review['actual_windows']\
+        \ is False and review['runtime'] is False,'INDEPENDENT_SOURCE_ONLY_REVIEW')\nneed(review['driver_proof_path']=='native-android/engine/auth-interop/deployment/qualification/auth-db-development-driver-20261018/host.json'\
+        \ and review['driver_proof_sha256']==pins['native-android/engine/auth-interop/deployment/qualification/auth-db-development-driver-20261018/host.json']\
+        \ and review['source_inputs_sha256']==source,'REVIEW_PROOF_AND_SOURCE_BINDING')\nneed(proof['schema']=='coh-auth-db-development-driver-source-v1'\
+        \ and proof['passed'] is True and proof['source_inputs_sha256']==source,'FROZEN_TARGETED_DRIVER_PROOF')\nneed(proof['explicit_provisional_policy_required']\
+        \ is True and proof['selected_scope_impersonation_refused'] is True and proof['accepted_selected_scope_entire_file_unchanged']\
+        \ is True,'ISOLATED_PROVISIONAL_SCOPE')\nneed(proof['source_bytes_owned_by_head_before_and_after'] is True and proof['source_input_count']==len(source),'COMPLETE_EXACT_CURRENT_SOURCE_CLOSURE')\n\
+        need(subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head,'SOURCE_HEAD_CHANGED')\nreceipt={'schema':'coh-fresh-auth-db-development-source-admission-v1','source_revision':head,'passed':True,'source_sha256':pins,'frozen_independent_review_sha256':pins['native-android/combined-client/diagnostics/continuation-f-20261017/auth-db-development-driver-20261018/review.json'],'host_controls_reexecuted':False,'historical_worker_commit_replayed_in_CI':False,'runtime_executed':False,'normal_version_or_checksum_reference_admitted':False,'db_or_map_interoperability_verified':False}\n\
+        out=pathlib.Path(os.environ['RUNNER_TEMP'])/'auth-db-development-source-admission.json'\nwith out.open('xb') as stream:stream.write((json.dumps(receipt,indent=2,sort_keys=True)+'\\\
+        n').encode())\nprint(json.dumps({'source_admission_passed':True,'frozen_pins':len(pins),'old_tests_replayed':False,'runtime_executed':False}))\n\
+        PYDEVSOURCE\n"
+    - name: Recover exact accepted AuthServer and independently admitted new DbServer build
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: "python - <<'PY'\nimport hashlib,json,os,pathlib,shutil,stat,subprocess,zipfile\nassert os.environ['RUNNER_ENVIRONMENT']=='github-hosted'\n\
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\nassert os.environ['GITHUB_REF']=='refs/heads/native-android'\n\
+        base=pathlib.Path(os.environ['RUNNER_TEMP'])\ndef api(suffix):return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))\n\
+        specs=[\n  (12085517046,427525,'da7fa3172867eabd9a652d36a4545cb78e91983123f85d894d18a9b3bac8d04d','auth-candidate',None,None,None),\n\
+        \  (12118334160,1130748,'8d139b6b229742b9b1274e985c26e1847edca821bcc3836a367dd9e96be1c1c1','db-candidate',39080037562,'2729bfc16c9f757fd850c24a0bc6df366a2e40ab','.github/workflows/native-db-threadname-build.yml')]\n\
+        for ident,size,digest,directory,run_id,revision,workflow in specs:\n    remote=api('actions/artifacts/'+str(ident))\n\
+        \    assert remote['id']==ident and remote['expired'] is False\n    assert remote['size_in_bytes']==size and remote['digest']=='sha256:'+digest\n\
+        \    if run_id is not None:\n        origin=remote['workflow_run'];assert origin['id']==run_id and origin['head_sha']==revision\n\
+        \        assert origin['repository_id']==origin['head_repository_id']==1368730125\n        assert remote['name']=='original-db-threadname-compile-only-'+revision\n\
+        \        run=api('actions/runs/'+str(run_id))\n        assert run['head_sha']==revision and run['head_branch']=='native-android'\n\
+        \        assert run['path']==workflow and run['status']=='completed' and run['conclusion']=='success'\n        assert\
+        \ run['repository']['id']==run['head_repository']['id']==1368730125\n    archive=base/(directory+'.zip')\n    with\
+        \ archive.open('xb') as output:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=180)\n\
+        \    assert archive.stat().st_size==size and hashlib.sha256(archive.read_bytes()).hexdigest()==digest\n    target=base/directory;target.mkdir()\n\
+        \    with zipfile.ZipFile(archive) as z:\n        infos=z.infolist();assert 0<len(infos)<=128 and len({i.filename\
+        \ for i in infos})==len(infos)\n        assert sum(i.file_size for i in infos)<=32*1024**2 and z.testzip() is None\n\
+        \        for item in infos:\n            path=pathlib.PurePosixPath(item.filename)\n            assert path.as_posix()==item.filename\
+        \ and not path.is_absolute() and path.parts\n            assert all(p not in ('','.','..') for p in path.parts)\n\
+        \            assert '\\\\' not in item.filename and ':' not in item.filename and not item.flag_bits&1\n          \
+        \  assert stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG)\n            assert 0<=item.file_size<=16*1024**2\
+        \ and not item.is_dir()\n        for item in infos:\n            destination=target/item.filename;destination.parent.mkdir(parents=True,exist_ok=True)\n\
+        \            with z.open(item) as source,destination.open('xb') as output:shutil.copyfileobj(source,output,1024**2)\n\
+        \            assert destination.stat().st_size==item.file_size\n    archive.unlink()\nPY\n"
+    - name: Recover only exact immutable x64 crypto headers library and ownership manifest
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: "python - <<'PYCRYPTO'\nimport hashlib,json,os,pathlib,re,shutil,stat,subprocess,zipfile\nbase=pathlib.Path(os.environ['RUNNER_TEMP'])\n\
+        def api(suffix):return json.loads(subprocess.check_output(['gh','api','repos/Russianranger/coh-android/'+suffix],timeout=60))\n\
+        ident=12078663003;revision='cacc6273834142cf8c8f902018eb13cb8f9b5271'\nremote=api('actions/artifacts/'+str(ident));origin=remote['workflow_run']\n\
+        assert remote['id']==ident and remote['expired'] is False and remote['size_in_bytes']==71999000\nassert remote['name']=='native-original-authserver-encrypted-login'\n\
+        assert remote['digest']=='sha256:aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b'\nassert origin['id']==38974164017\
+        \ and origin['head_sha']==revision\nassert origin['repository_id']==origin['head_repository_id']==1368730125\nrun=api('actions/runs/38974164017')\n\
+        assert run['status']=='completed' and run['head_sha']==revision and run['head_branch']=='native-android'\nassert run['path']=='.github/workflows/native-auth-login.yml'\n\
+        assert run['repository']['id']==run['head_repository']['id']==1368730125\n# Only the immutable crypto subgroup is\
+        \ reused, not the old Auth outcome.\narchive=base/'retained-intact.zip'\nwith archive.open('xb') as output:subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{ident}/zip'],stdout=output,check=True,timeout=300)\n\
+        with archive.open('rb') as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest()\nassert archive.stat().st_size==71999000\
+        \ and digest=='aa7a1badbeb8926cec15009f7f87ebb797aa2345c0c97a183cd1e23866a3499b'\ntarget=base/'retained-intact';target.mkdir()\n\
+        with zipfile.ZipFile(archive) as z:\n    infos=z.infolist();assert 0<len(infos)<=2048 and len({i.filename for i in\
+        \ infos})==len(infos)\n    assert sum(i.file_size for i in infos)<=128*1024**2 and z.testzip() is None\n    for item\
+        \ in infos:\n        name=item.filename[:-1] if item.is_dir() else item.filename\n        path=pathlib.PurePosixPath(name)\n\
+        \        assert path.as_posix()==name and not path.is_absolute() and path.parts\n        assert all(p not in ('','.','..')\
+        \ for p in path.parts)\n        assert chr(92) not in name and ':' not in name and not item.flag_bits&1\n        assert\
+        \ stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG,stat.S_IFDIR)\n        assert 0<=item.file_size<=64*1024**2\n\
+        \    prefix='intact-openssl-reuse/'\n    name=prefix+'manifest.json';manifest=z.read(name)\n    assert len(manifest)==58665\
+        \ and hashlib.sha256(manifest).hexdigest()=='1c1c05eb10132e4d1d172d29a04d36311981e6c7023c7ee388348339c460896b'\n \
+        \   value=json.loads(manifest)\n    assert value['schema']=='coh-intact-openssl-build-ownership-v1'\n    assert len(value['files'])==384\
+        \ and value['total_bytes']==105629748\n    assert value['files']['libcrypto.lib']['sha256']=='95aec97b796992a58f8745e1bbbc6eac634931420f13b0763d2db57537543698'\n\
+        \    selected={name:{'bytes':len(manifest),'sha256':hashlib.sha256(manifest).hexdigest()}}\n    for relative,pin in\
+        \ value['files'].items():\n        path=pathlib.PurePosixPath(relative)\n        assert path.as_posix()==relative\
+        \ and not path.is_absolute() and path.parts\n        assert all(p not in ('','.','..') for p in path.parts) and chr(92)\
+        \ not in relative and ':' not in relative\n        assert set(pin)=={'bytes','sha256'} and type(pin['bytes']) is int\
+        \ and 0<=pin['bytes']<=64*1024**2\n        assert re.fullmatch('[a-f0-9]{64}',pin['sha256'])\n        selected[prefix+relative]=pin\n\
+        \    assert sum(x['bytes'] for x in value['files'].values())==105629748\n    members={i.filename:i for i in infos}\n\
+        \    for name,pin in selected.items():\n        item=members[name];assert not item.is_dir() and item.file_size==pin['bytes']\n\
+        \        destination=target/name;destination.parent.mkdir(parents=True,exist_ok=True)\n        with z.open(item) as\
+        \ source,destination.open('xb') as output:shutil.copyfileobj(source,output,1024**2)\n        with destination.open('rb')\
+        \ as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()\n        assert destination.stat().st_size==pin['bytes']\
+        \ and actual==pin['sha256']\nassert {p.relative_to(target).as_posix() for p in target.rglob('*') if p.is_file()}==set(selected)\n\
+        archive.unlink()\nPYCRYPTO\n"
+    - name: Observe one fresh real Auth grant and complete original provisional DB empty list, then cancel and destroy
+      run: 'python native-android/engine/auth-interop/deployment/hosted_auth_db_development_stage.py --source-root . --expected-commit
+        $env:GITHUB_SHA --output "$env:RUNNER_TEMP/auth-db-development-public" --auth-success-archive native-android/engine/auth-interop/evidence/auth-success-38996587760/artifact.zip
+        --auth-candidate-stage "$env:RUNNER_TEMP/auth-candidate" --db-candidate-stage "$env:RUNNER_TEMP/db-candidate" --retained-intact-stage
+        "$env:RUNNER_TEMP/retained-intact" --expected-db-receipt-sha256 6b0ca58a18c5899f1fae4a353cd4eec7e770b308d1bd512f052b2306e34c6912
+        --expected-db-binary-sha256 e14a11d8cb9f5419ec641455f45326fdf64c7ace3e254f333ae110069a185d3c --allow-provisional-development-policy
+
+        if ($LASTEXITCODE -ne 0) { throw ''Provisional Auth to DB experiment refused; preserve fixed diagnostics and cleanup''
+        }
+
+        '
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: auth-db-development-${{ github.sha }}
+        path: ${{ runner.temp }}/auth-db-development-public/receipt.json
+        if-no-files-found: error
+        retention-days: 90

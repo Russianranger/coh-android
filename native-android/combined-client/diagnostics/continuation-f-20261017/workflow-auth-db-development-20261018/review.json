@@ -1,0 +1,76 @@
+{
+  "F_driver_review_path": "native-android/combined-client/diagnostics/continuation-f-20261017/auth-db-development-driver-20261018/review.json",
+  "F_driver_review_sha256": "503ea530202c5908196395301b55b0c20459a19d21ea8b4444b2117ac9e8ff61",
+  "actual_windows": false,
+  "driver_proof_path": "native-android/engine/auth-interop/deployment/qualification/auth-db-development-driver-20261018/host.json",
+  "driver_proof_sha256": "da243b8067edcfae46ff5cb4fa01cf479d7d894154a4118408b87a3551dff116",
+  "embedded_python_AST_blocks": [
+    {
+      "bytes": 31366,
+      "sha256": "6179b5a49f954d06ffb691817933faa839137a702ba1d45a27903d766a3020ac",
+      "step": 4
+    },
+    {
+      "bytes": 2993,
+      "sha256": "4f2377a65a805384bf08e615416ec0f756b40585cc5274b6a6907ebe160067b6",
+      "step": 5
+    },
+    {
+      "bytes": 4119,
+      "sha256": "6ae15ab7ba4c7a7428dccfa3e4a6bdda9a550a41c04699b8c2c0055465e7f6f8",
+      "step": 6
+    }
+  ],
+  "immutable_recovery_and_CLI_and_output_steps_equal_initial_reviewed_draft_except_gate": true,
+  "limitations": {
+    "no_RSS_Android_parent_budget_or_full_system_toolchain_loader_closure": true,
+    "normal_version_reference_checksum_creation_selection_Map_actor_world_ACK_admitted": false,
+    "registry_exclusive_writer_and_suspended_process_exclusion_preconditions_retained": true,
+    "workflow_review_is_static_and_actual_Windows_or_interoperability_is_unqualified": true
+  },
+  "passed": true,
+  "review_actions": {
+    "artifact_redownload": false,
+    "dispatch_or_rerun": false,
+    "only_YAML_AST_Git_source_byte_hash_and_fixed_metadata_reads": true,
+    "project_import_test_compiler_native_WinAPI_registry_or_service_execution": false
+  },
+  "reviewed_coordinator_HEAD": "a07308c4f78d484a1f8246b8c219edaf797b6645",
+  "runtime": false,
+  "schema": "coh-f-auth-db-development-workflow-review-v1",
+  "scope": {
+    "contents_and_actions_read_only": true,
+    "explicit_provisional_development_policy_required": true,
+    "native_branch_and_explicit_marker_or_dispatch_only": true,
+    "new_build_16_native_plus_exact21_zlib_translation_units_only": true,
+    "no_accepted_Auth_or_native_or_old_source_qualifier_replay": true,
+    "no_concurrent_cancellation_of_existing_run": true,
+    "no_private_intermediate_receipt_credentials_grant_logs_or_profile_upload": true,
+    "no_server_or_crypto_rebuild": true,
+    "one_Windows_2025_VS2026_job": true,
+    "one_normal_case_only": true,
+    "only_final_public_receipt_upload_even_on_failure": true,
+    "platform_preflight_before_SQL_services": true,
+    "real_Auth_to_one_matching_empty_unlocked_DB_list_then_cancel_destroy_only": true,
+    "retained_Auth_newDb_and_384_member_crypto_subgroup_recovery_byte_identical_to_previously_reviewed_draft": true
+  },
+  "source_gate": {
+    "all_100_current_raw_SHA_and_review_time_HEAD_Git_blob_modes_verified": true,
+    "driver_source_count": 98,
+    "fixed_nonself_pin_count": 100,
+    "head_unchanged_during_independent_check": true,
+    "host_controls_reexecuted": false,
+    "map_exactly_matches_F_review": true,
+    "map_sha256": "7259763db890c158bb2f97af185c8d6c08eaa7582ff63851cc837fd57da4b98c",
+    "no_project_import_before_complete_source_gate": true,
+    "only_stdlib_imports_in_gate": true,
+    "plus_exact_driver_proof_and_independent_review": true,
+    "schema_scope_source_map_and_proof_bindings_checked_before_runtime": true,
+    "workflow_current_canonical_file_and_current_HEAD_blob_identity_added_as_101st_pin_at_CI": true
+  },
+  "workflow": {
+    "bytes": 44386,
+    "sha256": "653932298e9946879a174e7bf965d9212d4350d29e7a5425ff7f54239989378c",
+    "target_path": ".github/workflows/native-auth-db-development.yml"
+  }
+}

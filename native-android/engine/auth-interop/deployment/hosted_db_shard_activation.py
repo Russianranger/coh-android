@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Run exact original Auth/DB shard activation with recovered accepted schema.
 
-No client login, checksum reference alias, version override or MapServer is used.
-This experiment establishes the actual original interserver registration step.
+The default establishes only original interserver registration. Separate typed
+scopes may admit selected-grant or provisional development DB-list probes. No
+checksum reference alias, version override or MapServer is supplied.
 """
 import argparse
 from dataclasses import asdict, dataclass
@@ -65,6 +66,19 @@ def admit_selected_candidate(selected_scope, db_candidate):
             or generation!=DbCandidateGeneration(db_candidate.binary_sha256,
                                                 db_candidate.admission.get('receipt_sha256'))):
         raise ValueError('shard_new_candidate_selected_scope_unqualified')
+    return generation
+
+
+def admit_development_candidate(development_scope,db_candidate):
+    # This explicit new scope cannot impersonate the selected-grant scope.
+    from hosted_auth_db_development import DevelopmentScope
+    from hosted_db_threadname_readiness import DbCandidate
+    generation=getattr(development_scope,'db_candidate_generation',None)
+    if (type(db_candidate) is not DbCandidate or type(development_scope) is not DevelopmentScope
+            or type(generation) is not DbCandidateGeneration
+            or generation!=DbCandidateGeneration(db_candidate.binary_sha256,
+                                                db_candidate.admission.get('receipt_sha256'))):
+        raise ValueError('shard_development_candidate_scope_unqualified')
     return generation
 
 
@@ -275,7 +289,11 @@ def close_streams(handles):
     return complete
 
 
-def run(args, selected_scope=None, db_candidate=None):
+def run(args, selected_scope=None, db_candidate=None, *, development_scope=None):
+    if development_scope is not None:
+        if selected_scope is not None:raise ValueError('shard_client_scopes_mutually_exclusive')
+        admit_development_candidate(development_scope,db_candidate)
+    operation_scope=selected_scope if development_scope is None else development_scope
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = prior.require_hosted(root, output, args.expected_commit)
     prerequisite = authenticated_handoff_prerequisite(root, args.auth_success_archive.resolve())
@@ -304,11 +322,17 @@ def run(args, selected_scope=None, db_candidate=None):
         if db_candidate is not None:
             proof.update(schema=db_candidate.receipt_schema,accepted_runtime_replaced=False,
                          new_db_candidate_admission=db_candidate.admission)
-            if selected_scope is not None:
+            if development_scope is not None:
+                proof['development_db_candidate_generation']=asdict(admit_development_candidate(development_scope,db_candidate))
+            elif selected_scope is not None:
                 proof['selected_db_candidate_generation']=asdict(admit_selected_candidate(selected_scope,db_candidate))
         elif selected_scope is not None and getattr(selected_scope,'db_candidate_generation',None) is not None:
             raise ValueError('shard_selected_candidate_without_candidate')
-        if selected_scope is not None:
+        if development_scope is not None:
+            proof.update(schema='coh-owned-mssql-db-threadname-development-player-list-v1',
+                provisional_development_db_player_list_verified=False,
+                source_inferred_development_exception_used=False,server_development_skip_observed=False)
+        elif selected_scope is not None:
             proof['schema']=('coh-owned-original-selected-shard-play-v1' if db_candidate is None
                              else 'coh-owned-mssql-db-threadname-selected-shard-play-v1')
         schema_dir = temporary/'accepted-schema'
@@ -331,8 +355,8 @@ def run(args, selected_scope=None, db_candidate=None):
         seed=temporary/'public-shard.sql'
         seed.write_text("USE cohauth;SET NOCOUNT ON;INSERT dbo.server(id,name,ip,inner_ip,ageLimit,pk_flag,server_group_id,client_port) VALUES(1,'Owned actual DbServer','127.0.0.1','127.0.0.1',0,0,1,7000);INSERT dbo.worldstatus(idx,status) VALUES(1,0);",encoding='ascii')
         sql_runner.run('seed-owned-shard',[*sql,'-i',seed],timeout=150)
-        if selected_scope is not None:
-            selected_scope.prepare(root,temporary,output,runner,proof,sql,sql_runner)
+        if operation_scope is not None:
+            operation_scope.prepare(root,temporary,output,runner,proof,sql,sql_runner)
         sql_pid=sql_runner.numeric('localdb-pid',[*sql,'-h','-1','-W','-Q',"SET NOCOUNT ON;SELECT CONVERT(int,SERVERPROPERTY('ProcessID'));"],kind='pid')
         proof['x86_sql_readiness']=auth_readiness.observe(instance,sql_pid)
         if proof['x86_sql_readiness']['healthy'] is not True:raise ValueError('shard_x86_sql_not_ready')
@@ -357,8 +381,9 @@ def run(args, selected_scope=None, db_candidate=None):
                     firewall(runner,name,binary,direction,True)
         finally:
             for reservation in reservations:reservation.close()
-        job=login.OwnedJob();pending_jobs.append(job)
-        auth_child=subprocess.Popen([str(auth)],cwd=auth_runtime,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        job=(login.OwnedJob() if development_scope is None else development_scope.new_service_job());pending_jobs.append(job)
+        auth_launch=subprocess.Popen if development_scope is None else job.popen
+        auth_child=auth_launch([str(auth)],cwd=auth_runtime,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
         children.append((auth_child,job));pending_jobs.remove(job);job.assign(auth_child)
         auth_start=service_process_snapshot(auth_child,auth)
         proof['owned_service_generations_start']={'auth':auth_start,'sql':sql_start}
@@ -370,8 +395,9 @@ def run(args, selected_scope=None, db_candidate=None):
         if scalar(sql,status_query,temporary)!=0:raise ValueError('shard_active_before_db_process')
         proof['shard_inactive_before_db_process']=True
         log_path=temporary/'private-db-console.log';log=log_path.open('wb');handles.append(log)
-        db_job=login.OwnedJob();pending_jobs.append(db_job)
-        db_child=subprocess.Popen([str(db),'-start','0'],cwd=db_runtime,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT)
+        db_job=(login.OwnedJob() if development_scope is None else development_scope.new_service_job());pending_jobs.append(db_job)
+        db_launch=subprocess.Popen if development_scope is None else db_job.popen
+        db_child=db_launch([str(db),'-start','0'],cwd=db_runtime,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT)
         children.append((db_child,db_job));pending_jobs.remove(db_job);db_job.assign(db_child)
         db_start=observe_db(db_child,db)
         proof['owned_service_generations_start']['db']=db_start
@@ -392,16 +418,19 @@ def run(args, selected_scope=None, db_candidate=None):
         proof['actual_game_database_user_tables']=tables
         if tables!=99:raise ValueError('shard_game_database_table_count')
         selected_result=None
-        if selected_scope is not None:
-            selected_result=selected_scope.exercise(temporary,proof,sql,ports,
+        if operation_scope is not None:
+            selected_result=operation_scope.exercise(temporary,proof,sql,ports,
                 auth_child,db_child,auth,db,auth_start,db_start,sql_pid,sql_start)
         proof['owned_processes_before_stop']={'auth':service_process_snapshot(auth_child,auth,auth_start),
             'db':observe_db(db_child,db,db_start),'sql':login.owned_process_snapshot(sql_pid)}
         if proof['owned_processes_before_stop']['sql']!=sql_start:raise ValueError('shard_sql_process_generation_changed')
         proof['original_interserver_shard_activation_verified']=True
-        if selected_scope is not None:
+        if operation_scope is not None:
             if selected_result is not True:raise ValueError('shard_selected_scope_not_complete')
             proof['selected_shard_play_verified']=True
+            if development_scope is not None:
+                proof.update(provisional_development_db_player_list_verified=True,
+                    source_inferred_development_exception_used=True)
         proof['passed']=True
     except Exception as error:
         proof['failure']=service.safe_failure(error)
@@ -440,7 +469,10 @@ def run(args, selected_scope=None, db_candidate=None):
             try:cleanup=job.stop(child) and not login.inspect_listeners(child.pid) and cleanup
             except Exception:cleanup=False
         for job in pending_jobs:
-            try:cleanup=bool(job.kernel.CloseHandle(job.handle)) and cleanup;job.handle=None
+            try:
+                if development_scope is None:
+                    cleanup=bool(job.kernel.CloseHandle(job.handle)) and cleanup;job.handle=None
+                else:cleanup=job.close_unassigned() and cleanup
             except Exception:cleanup=False
         cleanup=close_streams(handles) and cleanup
         proof['owned_service_cleanup_complete']=cleanup

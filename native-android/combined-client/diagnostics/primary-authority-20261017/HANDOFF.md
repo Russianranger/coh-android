@@ -5,7 +5,71 @@ Integration/publication target is `native-android` only. All six independent
 workers used new Git worktrees from that pin. Old source trees, broken historical
 Git links, existing bundles, accepted APKs and user profiles were preserved.
 
-## Current continuation checkpoint — 2026-10-18
+## Development-driver checkpoint — 2026-10-18
+
+Publication parent is independently verified remote
+`77af974e93324fadc61b4d3fb3f5b4ca15636ba7` (tree
+`bad4805f0be8c723e6d1c47710e055908d39df01`). This tranche integrates the
+separate provisional Auth-to-DB driver, its final source proof and the actual
+fresh scene failure evidence. The new Windows experiment is prepared, not yet
+executed at the time of this source checkpoint.
+
+D source `98a12bd080bb451069519a89c721d5008b1c8a53` and proof
+`4ce8e8b420d3efc2047b3be24257c7671fd0f979` bind98 exact inputs/35 local
+Python files and16 focused controlled methods. B's new verified-thread helper
+adds12 controlled methods; none execute actual Windows APIs. B/E/F independent
+source reviews are clear. All new build/native/Auth/Db children now start
+suspended, bind successful assignment to their exact owned job, and resume only
+a verified primary thread once. Empty-job completion, root wait/close and
+independent failed-assignment child cleanup precede the strict registry cleanup
+conjunction. Accepted default/selected launch branches are unchanged.
+
+The separate `.github/workflows/native-auth-db-development.yml` freezes100
+source/proof/review pins plus the committed workflow before repository imports.
+It reuses the exact qualified AuthServer, thread-name-fixed DbServer and384
+immutable crypto members. It recovers existing admitted zlib source privately,
+builds only the new native DB-list probe and required zlib library, and performs
+a no-socket platform preflight before SQL/services. Then it may obtain one fresh
+real Auth grant and one complete UID-matching empty/unlocked DB player list,
+under explicitly required original provisional development policy, before
+cancel/destroy. Only the final public receipt is eligible for upload after all
+source/candidate/registry/process/private-file cleanup gates. No old Auth-only,
+readiness, source-owner or native qualification suite is replayed. Real Windows
+build/API/registry/DB-list success remains unestablished. Normal installed-version
+provider and original Ouroboros checksum reference remain missing.
+
+Actual scene run [39088537547](https://github.com/Russianranger/coh-android/actions/runs/39088537547)
+passed278 source pins, exact new observer PE/fixture admission and the real
+retained receiver destination loader/no-argument preflight. Its original/native
+transaction reached GROUPS, sent one REQALLENTS, then refused the genuinely
+observed `SERVER_EDITMSG` with COMMAND/COH_UNSUPPORTED2. Initial capture is false;
+DB9/Map5 and native sockets are closed. Final/partial source envelopes are absent.
+The optional source-profile diagnostic is UNAVAILABLE: its zero placeholders do
+not prove hook execution or a particular envelope cause. All owned cleanup and
+unchanged-input checks pass. Exact artifact12121358807 is1568B SHA
+`e9c61d5ce7aee72626facfb2808664ccca3f20e602244f8c334efa655224fbf9`,
+preserved once in `../continuation-f-20261017/fresh-scene-39088537547/` with strict
+public metadata and independent review.
+
+A separately qualified next-scene probe alias fix (`a78f1c2a1`/`61c6d15b6`)
+uses the existing private C-drive capture alias rather than the rejected Wine
+Z-drive alias. Three focused methods pass; LOCAL6/PE are unchanged. That source
+is retained separately for the next scene tranche. C is implementing exact,
+bounded standalone EDITMSG consumption with a typed handled-control result;
+it must never be mistaken for ALLENTS, publish an actor, or trigger any ACK.
+No later source/runtime result is implied by this checkpoint.
+
+B's full current CLIENT/material generation, C's whole initial state/current
+dictionaries, E's app-owned context/world/actor integration and physical Thor
+remain open. Existing typed Android qualification remains ARM64 build only and
+Android13 x86 SwiftShader execution, not ARM64 execution or app-world rendering.
+F has no new global memory/RSS/headroom or startup measurement: accepted startup
+remains387340ms and96MiB remains a named policy. Gates25–27 and genuine world/player
+authority remain open. Accepted Session0.3.0, Combined0.1.7 and Support0.2.0/code201,
+all profiles/characters/signatures and protected gameplay source are preserved;
+no new APK is justified yet.
+
+## Prior continuation checkpoint — fe5 (historical)
 
 Last verified remote is `fe5efb4bb211a15791149f75822791be17a3677f`, tree
 `8d6b8a1c2cd08d16f003b8252e8dc72bd5297de2`. The source changes below are

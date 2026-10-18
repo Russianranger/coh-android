@@ -1,0 +1,5 @@
+Static review of the one-case provisional Auth to DB-list workflow. Its first repository-code gate pins the final98 driver inputs, the exact20767-byte driver proof and the independent F review, then checks the workflow current/Git identity as the101st pin. All100 fixed pins match review-time coordinator Git and files before publication. Only standard-library code runs in this gate.
+
+The immutable Auth/newDb/crypto recovery, CLI and public output steps are unchanged from the reviewed draft. The driver builds only its new16 native and exact21 zlib units, performs the no-socket platform preflight before SQL/services, then requests one real Auth grant and matching complete empty/unlocked provisional DB list followed by cancel/destroy. Only the final public receipt is uploaded.
+
+This review executed no project modules, tests, compiler, native program, Windows API, registry or service and dispatched no run. Actual Windows/API/interoperability remain unqualified here; normal version/reference checksum, creation/selection, Map and world authority remain blocked.

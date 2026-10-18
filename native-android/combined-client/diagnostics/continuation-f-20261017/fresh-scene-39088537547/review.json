@@ -1,0 +1,86 @@
+{
+  "actual_job_id": 117560104772,
+  "actual_observation": {
+    "all_outer_cleanup_and_stability_flags_true": true,
+    "coh_status": 2,
+    "coh_status_name": "UNSUPPORTED",
+    "command_valid": true,
+    "failure_code": "SOURCE_CAPTURE_NOT_ACCEPTED",
+    "failure_stage": "NATIVE_CAPTURE",
+    "first_refused_command": "SERVER_EDITMSG",
+    "initial_packet_observed": false,
+    "native_exit_code": 0,
+    "native_groups_result_passed": true,
+    "native_stdout_validated": true,
+    "outer_passed": false,
+    "reqallents_sent": 1,
+    "retained_receiver_reuse_CI_step_conclusion": "success",
+    "source_capture_present": false,
+    "source_partial_present": false,
+    "source_profile_probe_state": "UNAVAILABLE",
+    "source_profile_probe_validated": false
+  },
+  "actual_run_id": 39088537547,
+  "api_coordinator_sha256": "e8a99add9e684757ce618608926a6762e420efca30ef5518c38de683ba5a9d08",
+  "api_independent_sha256": "30bdf2da86253a997d933882b24ea93467999fa077bb949cd6a12c16db354bb1",
+  "artifact": {
+    "bytes": 1568,
+    "name": "fresh-scene-status-39088537547.zip",
+    "sha256": "e9c61d5ce7aee72626facfb2808664ccca3f20e602244f8c334efa655224fbf9"
+  },
+  "artifact_id": 12121358807,
+  "authority": {
+    "ACK_permitted": false,
+    "actor_identity_verified": false,
+    "actual_native_owned_receive_verified": false,
+    "exact_logical_packet_verified": false,
+    "matching_groups_transaction_captured": false,
+    "same_source_selected_dbid_verified": false,
+    "source_generation_admitted": false,
+    "world_authority": false
+  },
+  "independent_E_review": {
+    "all_15_equal_Git77af_and_review_time_files": true,
+    "exact_members_strict_types_and_keysets_verified": true,
+    "native_keys": 25,
+    "producer_and_enum_source_closure_files": 15,
+    "profile_keys": 42,
+    "summary_keys": 26,
+    "tooling_keys": 8
+  },
+  "interpretation": {
+    "SERVER_EDITMSG_body_subtype_text_length_not_observed": true,
+    "native_exit_zero_is_diagnostic_groups_success_not_overall_capture_success": true,
+    "pre_runtime_tooling_runtime_started_false_is_not_the_later_runtime_executed_flag": true,
+    "source_envelope_first_failure_cause_not_identified": true,
+    "unavailable_probe_values_are_placeholders_not_quiescence_or_milestone_evidence": true
+  },
+  "members": {
+    "summary.json": {
+      "bytes": 3174,
+      "sha256": "e9c77d5b883d2a875d8b377d99f8d5534c3db4f4869ca431da033dccb2315328"
+    },
+    "tooling.json": {
+      "bytes": 397,
+      "sha256": "930d76d97fcff861d7392dfe26d67614f9f1a8136a112c76519547c4f2b557ce"
+    }
+  },
+  "passed": true,
+  "previous_workflow_review": {
+    "all_278_were_executed_claimed": false,
+    "current_278_pin_map_rehashed_against_actual_run_Git": true,
+    "path": "native-android/combined-client/diagnostics/continuation-f-20261017/workflow-fresh-groups-observation-20261018/review.json",
+    "sha256": "ba53d4ef8070bf7d642fe6424d0c6dce7fcc808382b66a77103407616cd0e0bb"
+  },
+  "review_actions": {
+    "artifact_downloaded_by_F": false,
+    "old_or_new_native_or_loader_or_compiler_executed_by_F": false,
+    "private_logs_profiles_packets_accounts_or_receipts_exported": false,
+    "runtime_dispatched_or_retried_by_F": false,
+    "tests_or_qualifiers_replayed_by_F": false
+  },
+  "schema": "coh-f-fresh-scene-refusal-review-v1",
+  "scope": "independent_public_artifact_API_and_recorded_source_byte_review_only",
+  "source_revision": "77af974e93324fadc61b4d3fb3f5b4ca15636ba7",
+  "source_tree": "bad4805f0be8c723e6d1c47710e055908d39df01"
+}
