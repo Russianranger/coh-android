@@ -5,6 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 import fragment_interop_emulator_check as driver
+from package_check import BUILD_PROFILES, check_build_identity
 from fragment_fixture import produce
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -21,6 +22,38 @@ def sample():
 
 
 class FragmentDriver(unittest.TestCase):
+    def memory_report(self):
+        phases = []
+        for i, phase in enumerate(sorted(driver.MEMORY_PHASES)):
+            phases.append(dict(phase=phase, requested_elapsed_ms=i, sampled_elapsed_ms=10, sequence=i+1,
+                system_sample_valid=False, process_rss_bytes=None, process_pss_bytes=None,
+                process_rss_source='unavailable', process_pss_source='unavailable'))
+        value = dict(schema='coh-combined-phase-memory-v1', phase_limit=9, sample_interval_ms=1000,
+            admission_authority=False, server_policy_thresholds_changed=False, snapshot_elapsed_ms=20,
+            latest_sample_elapsed_ms=10, latest_sample_age_ms=10, samples=9, phases=phases,
+            owned_guest_process_memory='unavailable', native_owner_memory='unavailable', graphics_memory='unavailable')
+        return dict(memory_diagnostics=value, diagnostic_states=dict(catalog='MISSING_CATALOG_GENERATION',
+            world_resource='UNRESOLVED_RESOURCE_IDENTITY', character='INCOMPLETE_CHARACTER_DATA',
+            world_authority=False, application_ack_permitted=False))
+
+    def test_memory_unknowns_bounds_age_and_authority_controls(self):
+        value = self.memory_report()
+        self.assertEqual(len(driver.memory_snapshot(value)), 9)
+        for key, bad in [('latest_sample_age_ms', 0), ('admission_authority', True),
+                         ('phase_limit', 10), ('owned_guest_process_memory', 'zero'), ('extra', 'x' * 24576)]:
+            with self.subTest(key=key):
+                changed = self.memory_report(); changed['memory_diagnostics'][key] = bad
+                with self.assertRaises(ValueError): driver.memory_snapshot(changed)
+        for key, bad in [('process_rss_bytes', 0), ('process_pss_source', 'proc_self_status_VmRSS'),
+                         ('available_bytes', 0), ('requested_elapsed_ms', 11), ('sequence', 10)]:
+            with self.subTest(row=key):
+                changed = self.memory_report(); changed['memory_diagnostics']['phases'][0][key] = bad
+                with self.assertRaises(ValueError): driver.memory_snapshot(changed)
+        value = self.memory_report(); value['memory_diagnostics']['phases'].append(value['memory_diagnostics']['phases'][0])
+        with self.assertRaises(ValueError): driver.memory_snapshot(value)
+        value = self.memory_report(); value['diagnostic_states']['world_authority'] = True
+        with self.assertRaises(ValueError): driver.memory_snapshot(value)
+
     def test_retained_physical_projection_with_explicit_new_numeric_extension(self):
         value = sample()
         self.assertIs(driver.current_snapshot(value), value)
@@ -71,11 +104,24 @@ class FragmentDriver(unittest.TestCase):
     def test_exact_upgrade_identity_source(self):
         source = (ROOT / 'native-android/combined-client/app/build.gradle').read_text()
         self.assertIn("applicationId 'org.coh.nativecombined'", source)
-        self.assertIn('versionCode 10', source)
-        self.assertIn("versionName '0.1.9-gates25-27-test'", source)
+        code, name = BUILD_PROFILES['memory-diagnostic']
+        self.assertIn('versionCode ' + code, source)
+        self.assertIn("versionName '" + name + "'", source)
         self.assertIn("storeFile file('../../session-client/app/test-signing/session-test.p12')", source)
         activity = (ROOT / 'native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java').read_text()
         self.assertIn('private volatile String interopReport = "{\\"schema\\":\\"coh-native-initial-interop-numeric-v1\\",\\"phase\\":\\"IDLE\\",\\"world_authority\\":false}";', activity)
+
+    def test_explicit_memory_profile_preserves_exact_historical_default(self):
+        self.assertEqual(BUILD_PROFILES['original-fragment'], ('10', '0.1.9-gates25-27-test'))
+        self.assertEqual(BUILD_PROFILES['memory-diagnostic'], ('11', '0.1.10-memory-diagnostic-test'))
+        for profile, identity in BUILD_PROFILES.items():
+            check_build_identity(*identity, profile)
+            for rejected in (('10', '0.1.10-memory-diagnostic-test'), ('11', '0.1.9-gates25-27-test'), ('12', identity[1])):
+                with self.subTest(profile=profile, rejected=rejected), self.assertRaises(AssertionError):
+                    check_build_identity(*rejected, profile)
+        old_code, old_name = BUILD_PROFILES['original-fragment']
+        with self.assertRaises(AssertionError):
+            check_build_identity(old_code, old_name, 'memory-diagnostic')
 
 
 if __name__ == '__main__':

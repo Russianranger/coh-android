@@ -48,6 +48,7 @@ public final class ServerService extends Service {
     private final Runnable ticker=new Runnable(){public void run(){save();main.postDelayed(this,2000);}};
     @Override public void onCreate(){
         super.onCreate();stateDir=new File(getFilesDir(),"combined-server");stateDir.mkdirs();
+        MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.COLD_STARTUP);
         try{android.content.pm.PackageInfo p=getPackageManager().getPackageInfo(getPackageName(),0);appVersion=p.versionName;appVersionCode=p.versionCode;}catch(Exception ignored){}
         NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         nm.createNotificationChannel(new NotificationChannel("server","Native COH local runtime",NotificationManager.IMPORTANCE_LOW));
@@ -82,6 +83,8 @@ public final class ServerService extends Service {
                 .put("guest_resources",guestResources)
                 .put("storage_available_bytes",getFilesDir().getUsableSpace()).put("server_start_available_bytes",startFreeBytes)
                 .put("server_memory",new JSONObject(serverMemory.snapshot())).put("android_process_exits",processExits).put("android_exit_history_status",exitHistoryStatus)
+                .put("memory_diagnostics",MemoryTelemetry.snapshot())
+                .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states(false,(String)serverMemory.snapshot().get("reason"))))
                 .put("imports",importStatus).put("message",message).put("progress_done",progressDone).put("progress_total",progressTotal)
                 .put("server",new JSONObject().put("phase",phase).put("ready",ready).put("session_id",session).put("guest_exit_code",guestExit).put("owned_process_alive",guest!=null&&guest.isAlive())
                     .put("failure_code",d.failure).put("last_stage",d.stage).put("elapsed_ms",d.elapsedMs).put("stage_elapsed_ms",d.stageElapsedMs).put("stages",stages))
@@ -102,7 +105,7 @@ public final class ServerService extends Service {
         busy=true;ready=false;phase=name;stopRequested=false;progressDone=progressTotal=0;control=new ImportContract.Control();final ImportContract.Control operationControl=control;revoke();event(name);foreground();save();
         owner.execute(()->{
             try{initialize();if(prior!=null)archiveAttempt(prior);operation.run(operationControl);if(!name.equals("starting")){phase="stopped";message="Operation complete. Start the server when ready.";}}
-            catch(Exception e){if(name.equals("starting"))diagnostics.failure(session,"SERVER_ADMISSION_FAILED");fail(e);}finally{if(name.equals("starting"))diagnostics.finish(SystemClock.elapsedRealtime());ready=false;revoke();try{refresh();}catch(Exception ignored){}releaseWake();synchronized(this){if(control==operationControl)control=null;busy=false;}save();}
+            catch(Exception e){if(name.equals("starting"))diagnostics.failure(session,"SERVER_ADMISSION_FAILED");fail(e);}finally{if(name.equals("starting")){diagnostics.finish(SystemClock.elapsedRealtime());if(guest==null||!guest.isAlive())MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.SERVER_STOPPED);}ready=false;revoke();try{refresh();}catch(Exception ignored){}releaseWake();synchronized(this){if(control==operationControl)control=null;busy=false;}save();}
         });
     }
     public void importDocuments(String kind,List<Uri> documents){
@@ -204,12 +207,7 @@ public final class ServerService extends Service {
         }catch(Exception failure){ready=false;revoke();if(guest!=null&&guest.isAlive()){try{write(stop,"stop\n".getBytes(StandardCharsets.US_ASCII));if(cleanupDeadline==0)cleanupDeadline=SystemClock.elapsedRealtime()+120000;awaitCleanup(guest,cleanupDeadline);}catch(Exception ignored){/* Marker blocks reuse until explicit recovery. */}}throw failure;}finally{diagnostics.finish(SystemClock.elapsedRealtime());ready=false;revoke();if(guest!=null&&!guest.isAlive())guest=null;}
     }
     private ServerMemoryPolicy.Sample memorySample(){
-        try{
-            ActivityManager manager=(ActivityManager)getSystemService(ACTIVITY_SERVICE);
-            ActivityManager.MemoryInfo info=new ActivityManager.MemoryInfo();manager.getMemoryInfo(info);
-            Runtime java=Runtime.getRuntime();
-            return new ServerMemoryPolicy.Sample(info.availMem,info.totalMem,info.threshold,info.lowMemory,java.totalMemory()-java.freeMemory(),java.maxMemory());
-        }catch(RuntimeException unavailable){return null;}
+        return MemoryTelemetry.systemSample(this);
     }
     private void admitServerMemory()throws IOException{
         if(!serverMemory.admit(memorySample(),SystemClock.elapsedRealtime())){
@@ -270,7 +268,7 @@ public final class ServerService extends Service {
             .put("account",r.getString("account")).put("net_version",5).put("encryption_required",false).put("outbound_compressed",false)
             .put("server_session_id",session).put("import_generation",generation.substring(11)).put("ready_elapsed_ms",SystemClock.elapsedRealtime());
         write(policyFile(),policy.toString().getBytes(StandardCharsets.UTF_8));
-        if(!ready)event("server_ready");ready=true;phase="ready";message="Server ready. Launch the native client manually.";
+        if(!ready){event("server_ready");MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.SERVER_READY);}ready=true;phase="ready";message="Server ready. Launch the native client manually.";
     }
     private void readOutput(java.lang.Process process){
         try(Reader reader=new InputStreamReader(process.getInputStream(),StandardCharsets.UTF_8)){

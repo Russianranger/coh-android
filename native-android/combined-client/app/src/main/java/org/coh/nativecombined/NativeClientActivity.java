@@ -53,6 +53,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private final ExecutorService reportWorker = Executors.newSingleThreadExecutor();
     private final AtomicReference<byte[]> pendingReport = new AtomicReference<>();
     private final AtomicBoolean writerQueued = new AtomicBoolean();
+    private final AtomicBoolean networkRetired=new AtomicBoolean(),rendererRetired=new AtomicBoolean();
     private final JSONArray events = new JSONArray();
     private volatile long handle;
     private volatile boolean destroying, writeFailed;
@@ -68,7 +69,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private SurfaceHolder currentHolder;
     private SurfaceView view;
     private FrameLayout scene;
-    private TextView status;
+    private TextView status, memoryStatus;
     private InputAdapter adapter;
     private InputManager inputManager;
     private int keys;
@@ -161,6 +162,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         controlsLayout.addView(buttons);
         controlsLayout.addView(distance);
         status = new TextView(this); status.setText("Preparing native scene…"); controlsLayout.addView(status);
+        memoryStatus=new TextView(this);memoryStatus.setText("Memory observation pending");controlsLayout.addView(memoryStatus);
+        Button sampleMemory=new Button(this);sampleMemory.setText("Sample memory");
+        sampleMemory.setOnClickListener(v->MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.DIAGNOSTIC));controlsLayout.addView(sampleMemory);
         scene = new FrameLayout(this); layout.addView(scene, new LinearLayout.LayoutParams(-1, 0, 1));
         setContentView(layout);
         adapter = new InputAdapter(new InputAdapter.Sink() {
@@ -232,6 +236,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         main.postDelayed(returnDeadline,2000);
         networkWorker.execute(() -> {
             if(networkHandle!=0){suspendNetwork();publishNetwork();}
+            MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.RETURN);
             main.post(() -> finishReturnToLauncher(false));
         });
     }
@@ -272,6 +277,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private void connectLocalServer(NetworkMode mode) {
         if(destroying||returningToLauncher||networkConnecting||!networkForeground)return;
         final long attempt=++networkAttempt;networkRequested=true;
+        MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.NATIVE_CONNECTION);
         networkConnecting=true;connectButton.setEnabled(false);handoffButton.setEnabled(false);
         characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);
         networkStatus.setText(mode==NetworkMode.WORLD_HANDOFF
@@ -368,6 +374,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         String next=networkMode==NetworkMode.WORLD_HANDOFF?InteropNative.report(networkHandle):LocalNative.report(networkHandle);
         if(!next.equals(networkReport)) {
             storeNetworkReport(next);
+            if(next.contains("\"phase\":\"INITIAL_OBSERVED\""))MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.DIAGNOSTIC);
             main.post(() -> {if(!destroying)updateNetworkUi();});
         }
     }
@@ -391,7 +398,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                         : "SUSPENDED".equals(phase)?"Suspended; tap Test world handoff for a fresh attempt."
                         : "CLOSED".equals(phase)||"CANCELLED".equals(phase)?"Handoff test stopped."
                         : "Real DB/Map diagnostic progress only.";
-                networkStatus.setText("World handoff test: "+phase+" • "+detail+"\nWorld authority: false. The scene remains a local preview.");
+                networkStatus.setText("World handoff test: "+phase+" • "+detail+"\nWorld authority: false. The scene remains a local preview."
+                        +("INITIAL_OBSERVED".equals(phase)?"\nMISSING_CATALOG_GENERATION • INCOMPLETE_CHARACTER_DATA • UNRESOLVED_RESOURCE_IDENTITY":""));
                 if(!"CHARACTERS_READY".equals(phase)){characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);}
                 return;
             }
@@ -514,8 +522,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if (destroying || holder!=currentHolder) return;
         epoch++; currentSurface=null; if(handle!=0)SessionNative.state(handle,epoch,false); event("surface_destroyed");
     }
-    @Override protected void onResume() { super.onResume(); networkForeground=true; resumed=true; epoch++; if(handle!=0)SessionNative.state(handle,epoch,true); event("resume"); updateNetworkUi(); requestRender(); }
+    @Override protected void onResume() { super.onResume(); networkForeground=true; resumed=true; epoch++; if(handle!=0)SessionNative.state(handle,epoch,true); event("resume");MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.RESUME); updateNetworkUi(); requestRender(); }
     @Override protected void onPause() {
+        if(!returningToLauncher)MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.PAUSE);
         event("pause_requested");
         networkForeground=false;networkRequested=false;networkAttempt++;
         networkWorker.execute(() -> {
@@ -552,6 +561,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 .put("scope","Local development DB/Map protocol progress plus separate accepted offline scene preview. No AuthServer authentication, server-authoritative rendering, full map or complete entity replication")
                 .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
                 .put("server_protocol",new JSONObject(localNetworkReport)).put("world_handoff",new JSONObject(interopReport))
+                .put("memory_diagnostics",MemoryTelemetry.snapshot())
+                .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states(new JSONObject(interopReport).optBoolean("raw_allents_observed"),false)))
                 .put("connection_mode",networkMode.name()).put("preview_is_server_world",false)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
@@ -576,6 +587,12 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if(destroying)return;
         try {
             JSONObject j=report(); pendingReport.set(j.toString(2).getBytes(StandardCharsets.UTF_8)); queueWriter();
+            JSONObject memory=j.getJSONObject("memory_diagnostics");JSONArray phases=memory.getJSONArray("phases");JSONObject latest=null;
+            for(int i=0;i<phases.length();i++){JSONObject row=phases.getJSONObject(i);if(latest==null||row.getLong("sequence")>latest.getLong("sequence"))latest=row;}
+            memoryStatus.setText(latest==null?"Memory observation pending":"Memory • system headroom "+memoryMiB(latest,"system_headroom_bytes")
+                    +" • Java free "+memoryMiB(latest,"java_heap_headroom_bytes")+" • app RSS "+memoryMiB(latest,"process_rss_bytes")
+                    +" • PSS "+memoryMiB(latest,"process_pss_bytes")+" • "+latest.optString("phase")
+                    +" • sampled "+Math.max(0,(SystemClock.elapsedRealtime()-latest.optLong("sampled_elapsed_ms"))/1000)+"s ago");
             JSONObject n=j.optJSONObject("native");
             JSONObject stream=n==null ? null : n.optJSONObject("stream");
             String move=n==null ? "starting" : n.optString("animation_move","starting");
@@ -599,6 +616,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             } finally { writerQueued.set(false); if(!reportWorker.isShutdown() && pendingReport.get()!=null)queueWriter(); }
         }); } catch(RejectedExecutionException retired) { writerQueued.set(false); }
     }
+    private static String memoryMiB(JSONObject row,String field){return row.isNull(field)?"unavailable":row.optLong(field)/(1024*1024)+" MiB";}
     private void exportReport() {
         if(destroying || exporting)return;
         try {
@@ -641,14 +659,15 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     }
     @Override protected void onDestroy() {
         networkForeground=false;networkRequested=false;networkAttempt++;
-        networkWorker.execute(this::retireNetworkOwner);
+        networkWorker.execute(()->{retireNetworkOwner();networkRetired.set(true);sampleFinalCleanup();});
         networkWorker.shutdown();
         destroying=true;resumed=false;epoch++;main.removeCallbacks(poll);main.removeCallbacks(returnDeadline);
         if(currentHolder!=null)currentHolder.removeCallback(this);
         currentHolder=null;currentSurface=null;
         if(adapter!=null)adapter.clear();if(inputManager!=null)inputManager.unregisterInputDeviceListener(adapter);
         if(handle!=0)SessionNative.state(handle,epoch,false);
-        renderWorker.execute(() -> {long previous=handle;handle=0;if(previous!=0)SessionNative.destroy(previous);});
+        renderWorker.execute(() -> {long previous=handle;handle=0;if(previous!=0)SessionNative.destroy(previous);rendererRetired.set(true);sampleFinalCleanup();});
         renderWorker.shutdown();reportWorker.shutdown();super.onDestroy();
     }
+    private void sampleFinalCleanup(){if(networkRetired.get()&&rendererRetired.get())MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.FINAL_CLEANUP);}
 }

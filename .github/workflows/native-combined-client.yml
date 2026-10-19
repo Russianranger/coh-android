@@ -5,13 +5,16 @@ on:
     paths:
       - native-android/combined-client/**
       - "!native-android/combined-client/evidence/**"
+      - "!native-android/combined-client/diagnostics/**"
       - "!native-android/combined-client/tools/analyze_startup_resources.py"
       - "!native-android/combined-client/tools/test_startup_resources.py"
       - "!native-android/combined-client/tools/bench_startup_console.py"
       - "!native-android/combined-client/tools/read_startup_receipts.py"
       - "!native-android/combined-client/tools/test_startup_receipts.py"
       - native-android/engine/local/**
+      - native-android/engine/perf/**
       - .github/workflows/native-combined-client.yml
+      - .github/workflows/native-combined-memory-diagnostic.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,97 +23,6 @@ concurrency:
   group: native-combined-client-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  package:
-    if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[combined-requalify]') && !contains(github.event.head_commit.message, '[combined-017-requalify]') && !contains(github.event.head_commit.message, '[native-contracts-only]')
-    runs-on: ubuntu-24.04
-    timeout-minutes: 35
-    steps:
-      - uses: actions/checkout@v4
-        with: {persist-credentials: false}
-      - uses: actions/setup-java@v4
-        with: {distribution: temurin, java-version: '17'}
-      - uses: android-actions/setup-android@v3
-        with:
-          packages: platform-tools
-          log-accepted-android-sdk-licenses: false
-      - name: Install pinned Android build components
-        run: |
-          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
-          python3 -m pip install --disable-pip-version-check Pillow==12.3.0
-      - name: Reuse unchanged qualified public crypto libraries
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p native-android/results/combined-client
-          gh api repos/Russianranger/coh-android/actions/artifacts/11980774730/zip > /tmp/qualified-session-crypto.zip
-          python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/qualified-session-crypto.zip --crypto-root /tmp/combined-crypto --output native-android/results/combined-client/crypto-reuse.json
-      - name: Prepare verified small scene and donor import contracts
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 native-android/combined-client/tools/prepare.py
-      - name: Source, import and local-session host qualification
-        run: python3 native-android/combined-client/tools/host_check.py --output native-android/results/combined-client/host
-      - name: Build and lint consolidated ARM64 APK
-        run: |
-          python3 native-android/combined-client/gradle.py -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
-          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-client/CoH-Native-Combined-0.1.7-arm64.apk
-          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-client/CoH-Native-Combined-0.1.7-arm64.apk --abi arm64-v8a --require-clean --output native-android/results/combined-client/arm64-package.json
-      - name: Build and audit emulator integration package
-        run: |
-          python3 native-android/combined-client/gradle.py -PprobeAbis=x86_64 -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug
-          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-client/CoH-Native-Combined-0.1.7-emulator-x86_64.apk
-          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-client/CoH-Native-Combined-0.1.7-emulator-x86_64.apk --abi x86_64 --require-clean --output native-android/results/combined-client/x86_64-package.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: native-combined-client-packages
-          path: native-android/results/combined-client/
-          if-no-files-found: error
-          retention-days: 90
-  android13-framework:
-    needs: package
-    if: github.ref == 'refs/heads/native-android'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-        with: {persist-credentials: false}
-      - uses: actions/download-artifact@v4
-        with:
-          name: native-combined-client-packages
-          path: native-android/results/combined-client
-      - uses: actions/setup-java@v4
-        with: {distribution: temurin, java-version: '17'}
-      - uses: android-actions/setup-android@v3
-        with:
-          packages: platform-tools
-          log-accepted-android-sdk-licenses: false
-      - name: Install scene image qualification dependency in this job
-        run: python3 -m pip install --disable-pip-version-check Pillow==12.3.0
-      - name: Fetch the exact external donor for Android SAF import qualification
-        run: |
-          curl --fail --silent --show-error --location --retry 2 --output /tmp/combined-donor.apk https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk
-          echo '14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f  /tmp/combined-donor.apk' | sha256sum -c -
-      - name: Enable hosted Android emulator acceleration
-        run: |
-          test -c /dev/kvm
-          sudo chmod 666 /dev/kvm
-      - name: Qualify actual import picker, admission and native preview boundaries
-        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
-        with:
-          api-level: 33
-          emulator-build: '16428233'
-          channel: stable
-          target: google_apis
-          arch: x86_64
-          profile: pixel_2
-          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
-          disable-animations: true
-          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-client/CoH-Native-Combined-0.1.7-emulator-x86_64.apk --output native-android/results/combined-client/android13 --donor-apk /tmp/combined-donor.apk --ui-peer-binary native-android/results/combined-client/host/local-android/coh-local-peer-x86_64 --protocol-binary native-android/results/combined-client/host/local-android/coh-local-x86_64 --protocol-receipt native-android/results/combined-client/host/local-android/android-build.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: native-combined-client-android13-framework
-          path: native-android/results/combined-client/android13/
-          if-no-files-found: error
-          retention-days: 90
+  memory-diagnostic-candidate:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[combined-requalify]') && !contains(github.event.head_commit.message, '[combined-017-requalify]') && !contains(github.event.head_commit.message, '[native-contracts-only]')
+    uses: ./.github/workflows/native-combined-memory-diagnostic.yml

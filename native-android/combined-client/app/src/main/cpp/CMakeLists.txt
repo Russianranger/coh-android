@@ -22,7 +22,8 @@ if(NOT VERIFY_CRYPTO EQUAL 0)
     message(FATAL_ERROR "Public Android crypto provenance/hash verification failed")
 endif()
 set(ENGINE "${NATIVE_ROOT}/engine")
-add_library(coh_combined_network SHARED combined_network.c
+add_library(coh_combined_network SHARED combined_network.c process_memory_jni.c
+    "${ENGINE}/perf/coh_process_memory.c" "${ENGINE}/perf/coh_perf_bridge.c" "${ENGINE}/perf/coh_perf.c"
     "${ENGINE}/local/coh_local.c"
     "${ENGINE}/dbclient/coh_dbclient.c" "${ENGINE}/dbclient/coh_db_session.c"
     "${ENGINE}/dbclient/coh_db_account_controls.c"
@@ -35,7 +36,7 @@ add_library(coh_combined_network SHARED combined_network.c
     "${ENGINE}/session/coh_session_crypto.c"
     "${NATIVE_ROOT}/protocol/coh_protocol.c" "${NATIVE_ROOT}/src/coh_blowfish.c")
 target_include_directories(coh_combined_network PRIVATE "${ENGINE}/local" "${ENGINE}/session"
-    "${NATIVE_ROOT}/include" "${CRYPTO_ABI_ROOT}/include")
+    "${NATIVE_ROOT}/include" "${CRYPTO_ABI_ROOT}/include" "${ENGINE}/perf")
 target_compile_features(coh_combined_network PRIVATE c_std_11)
 target_compile_options(coh_combined_network PRIVATE -Wall -Wextra -Werror -ffp-contract=off)
 target_link_options(coh_combined_network PRIVATE -Wl,--no-undefined -Wl,-z,defs)

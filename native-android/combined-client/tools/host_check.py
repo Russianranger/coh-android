@@ -35,6 +35,8 @@ def main():
         ('lease-admission', [sys.executable, native / 'combined-client/qualification/check_lease.py']),
         ('guest-diagnostics', [sys.executable, native / 'combined-client/qualification/check_diagnostics.py']),
         ('server-memory-policy', [sys.executable, native / 'combined-client/qualification/check_server_memory.py']),
+        ('phase-memory-diagnostics', [sys.executable, native / 'combined-client/qualification/check_phase_memory.py']),
+        ('memory-jni', [sys.executable, native / 'combined-client/qualification/check_memory_jni.py']),
         ('viewport-policy', [sys.executable, native / 'combined-client/qualification/check_viewport.py']),
         ('imports', [sys.executable, native / 'combined-client/imports/tests/check_imports.py', '--donor-apk', args.donor_apk.resolve()]),
         ('server-runtime', [sys.executable, native / 'combined-client/runtime/check.py', '--source-root', args.source_root.resolve(), '--donor', args.donor_apk.resolve(), '--output', args.output / 'server-runtime.json']),

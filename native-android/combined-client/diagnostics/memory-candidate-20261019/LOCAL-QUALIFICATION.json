@@ -1,0 +1,102 @@
+{
+  "schema": "coh-combined-memory-candidate-local-v1",
+  "passed_local_focused": true,
+  "source_parent_revision": "1079b39607ac100aed33fadc9860f81d912c34d5",
+  "source_sha256": {
+    "native-android/combined-client/app/build.gradle": "56ef7ed252c4454055a4c1eaa96538c7368bc3867dec0788a9a89779b82cf74f",
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt": "8dec3e5da110a3ea7d6d8bcf03c9ad4f2c360d4534faf0c1333b80eae1b8282a",
+    "native-android/combined-client/app/src/main/cpp/process_memory_jni.c": "cb1539b1748faf6edf0971a1a9aee758bd758ecc860915c4440a4f15e980fa2f",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerMemoryPolicy.java": "54e62b9ff65dffe30dfb564582bc4438eecf3cc4102f33bc823193eb33501f3a",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/PhaseMemoryDiagnostics.java": "9d1df320480ddda5673c4445289621df21a258b0de6d81a424a009bac058f4fa",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/MemoryTelemetry.java": "4a864544163d27e364616283ce88849e9bb4b22f1c3d8c3f7debf86839f6d69f",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java": "59191bbe77a4efe39b719eb572221ef231f0cc90eacdf6081f2166da1fb3053b",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerService.java": "e19d46332397dd7dfbe3b58046399b1dda2aee0f149cf26fefdbfb78aaf45a2a",
+    "native-android/combined-client/qualification/check_phase_memory.py": "08c063662647b5099fe0e7496a1b1091ad06fa97abfcab72e72950ed78e1ebe0",
+    "native-android/combined-client/qualification/check_memory_jni.py": "03d1ec3e5743187e88f0566f3bc458badc652d2ff18844ad5584e4193eb10408",
+    "native-android/combined-client/tools/fragment_interop_emulator_check.py": "6271472b6057088c26961ab472e128452979967392e7fb1474f0580005c521c4",
+    "native-android/combined-client/tools/test_fragment_driver.py": "f815b29dbb759f784d3cd5fde6618ad5017356f531afeb0d11adf4c24994394d"
+  },
+  "checks": {
+    "phase": {
+      "status": "passed",
+      "checks": 46,
+      "retained_phase_limit": 9,
+      "repeated_records": 9000,
+      "world_authority": false
+    },
+    "server_policy": {
+      "status": "passed",
+      "checks": 2710,
+      "retained_samples": 64,
+      "cooperative_only": true,
+      "actual_server_interoperability_verified": false
+    },
+    "jni": {
+      "schema": "coh-combined-memory-jni-host-v1",
+      "passed": true,
+      "modes": [
+        {
+          "status": "passed",
+          "checks": 186,
+          "repeated_calls": 100,
+          "JSON_capacity": 1024,
+          "JNI_allocation_refusal_checked": true,
+          "mode": "release"
+        },
+        {
+          "status": "passed",
+          "checks": 186,
+          "repeated_calls": 100,
+          "JSON_capacity": 1024,
+          "JNI_allocation_refusal_checked": true,
+          "mode": "asan"
+        },
+        {
+          "status": "passed",
+          "checks": 186,
+          "repeated_calls": 100,
+          "JSON_capacity": 1024,
+          "JNI_allocation_refusal_checked": true,
+          "mode": "ubsan"
+        }
+      ],
+      "sources_sha256": {
+        "native-android/combined-client/app/src/main/cpp/process_memory_jni.c": "cb1539b1748faf6edf0971a1a9aee758bd758ecc860915c4440a4f15e980fa2f",
+        "native-android/engine/perf/coh_process_memory.c": "565a59b9788b9be0c338ac0ce6280628c24f56741c10bcd2d9cfb380fbe962f2",
+        "native-android/engine/perf/coh_perf_bridge.c": "5af98cd1bad62a43c5b8f577178d895236b90999b007ba1d91b60ceb1e57ad01",
+        "native-android/engine/perf/coh_perf.c": "63fbfb006497e897f80373c56dc45444ae7630db9c004bb04674314c5cd44970"
+      },
+      "JNI_table": "host minimal shim; actual Android ABI/build/execution are separate gates",
+      "leak_sanitizer_enabled": false,
+      "leak_sanitizer_blocker": "Host denies LeakSanitizer /proc/PID/task inspection; AddressSanitizer passed with leak detection disabled",
+      "physical_Thor_qualified": false,
+      "world_authority": false
+    },
+    "fragment_driver_controls": {
+      "passed": true,
+      "tests": 7,
+      "stdout": "",
+      "stderr": ".......\n----------------------------------------------------------------------\nRan 7 tests in 0.026s\n\nOK\n"
+    }
+  },
+  "server_memory_policy_byte_identical_to": "7030870ebce6fe441d0b0369e87fc337ffb81a52",
+  "memory_limits": {
+    "retained_phase_slots": 9,
+    "minimum_sampling_interval_ms": 1000,
+    "native_JSON_capacity": 1024,
+    "native_proc_file_text_limit": 16384,
+    "native_proc_read_attempts_per_file": 32,
+    "native_direct_heap_allocations": 0
+  },
+  "new_heavy_owner_integration_enabled": false,
+  "Android_ABI_builds": "pending hosted SDK/NDK",
+  "Android13_execution": "pending hosted emulator; current driver now requires actual button/JNI observation, SAF schema/size, Home/resume and Return/final owner sample",
+  "physical_Thor_qualified": false,
+  "complete_initial_character": false,
+  "world_authority": false,
+  "report_bounds": {
+    "phase_memory_pretty_JSON_bytes": 24576,
+    "combined_app_persisted_startup_reader_bytes": 131072,
+    "native_client_export_reader_bytes": 2097152
+  }
+}

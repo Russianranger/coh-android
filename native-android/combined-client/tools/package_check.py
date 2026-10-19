@@ -7,10 +7,38 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 import zipfile
 from prepare import DONOR_SHA, DONOR_BYTES, SCENE_SHA, SCENE_ASSETS, safe_zip, pin
 
 PACKAGE = 'org.coh.nativecombined'
+BUILD_PROFILES = {
+    'original-fragment': ('10', '0.1.9-gates25-27-test'),
+    'memory-diagnostic': ('11', '0.1.10-memory-diagnostic-test'),
+}
+
+
+def check_build_identity(version_code, version_name, profile):
+    assert (version_code, version_name) == BUILD_PROFILES[profile], 'APK version differs from the selected build profile'
+
+
+def process_memory_jni(raw, readelf):
+    """Require the additive memory sampler on the production network DSO."""
+    if readelf is None or not readelf.is_file():
+        raise ValueError('Memory diagnostic profile requires pinned --readelf')
+    with tempfile.TemporaryDirectory(prefix='combined-memory-jni-') as directory:
+        library = Path(directory) / 'libcoh_combined_network.so'
+        library.write_bytes(raw)
+        symbols = run([readelf, '--dyn-syms', '--wide', library])
+    exported = set()
+    for line in symbols.splitlines():
+        fields = line.split()
+        if len(fields) >= 8 and fields[0].rstrip(':').isdigit() and fields[6] != 'UND' and fields[4] in ('GLOBAL', 'WEAK') and fields[5] in ('DEFAULT', 'PROTECTED'):
+            exported.add(fields[7].split('@', 1)[0])
+    entrypoint = 'Java_org_coh_nativecombined_LocalNative_processMemory'
+    assert entrypoint in exported, 'Production process-memory JNI entrypoint absent'
+    assert not any(name.startswith('Java_org_coh_nativecombined_InteropNative_') for name in exported), 'Diagnostic interop JNI leaked into the production network DSO'
+    return entrypoint
 
 
 def run(command):
@@ -30,6 +58,8 @@ def tool(args, name):
 
 
 def audit(args):
+    if args.build_profile == 'memory-diagnostic' and not args.require_interop:
+        raise ValueError('Memory diagnostic build must retain the independent interop library audit')
     if args.apk.stat().st_size > 25 << 20:
         raise ValueError('Combined APK exceeds bounded 25MiB small-core policy')
     with zipfile.ZipFile(args.apk) as z:
@@ -67,6 +97,7 @@ def audit(args):
         asset_bytes = sum(z.getinfo(n).file_size for n in actual_assets)
         assert asset_bytes < 12 << 20, 'Uncompressed embedded assets exceed bounded scene/metadata scope'
         libraries = {}
+        memory_entrypoint = None
         native_abis = set()
         for i in z.infolist():
             if not i.filename.startswith('lib/') or i.is_dir():
@@ -85,6 +116,8 @@ def audit(args):
                 assert abi == 'arm64-v8a' and pin(data) == receipt['proot_cores'][filename], 'PRoot core changed'
             if filename == 'libcoh_combined_network.so':
                 native_abis.add(abi)
+                if args.build_profile == 'memory-diagnostic':
+                    memory_entrypoint = process_memory_jni(data, args.readelf)
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}
         assert 'lib/' + args.abi + '/libcoh_session_client.so' in libraries
@@ -100,7 +133,7 @@ def audit(args):
     identity = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", metadata, re.M)
     assert identity and identity.group(1) == PACKAGE
     if args.require_interop:
-        assert identity.group(2) == '10' and identity.group(3) == '0.1.9-gates25-27-test'
+        check_build_identity(identity.group(2), identity.group(3), args.build_profile)
     assert "launchable-activity: name='org.coh.nativecombined.MainActivity'" in metadata
     signer = run([tool(args, 'apksigner'), 'verify', '--print-certs', args.apk])
     certificates = re.findall(r'Signer #\d+ certificate SHA-256 digest: (\S+)', signer)
@@ -108,10 +141,12 @@ def audit(args):
     if args.require_interop:
         assert certificates[0] == '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522', 'Test upgrade signer differs from accepted Combined builds'
     source = run(['git', '-C', args.source_root, 'rev-parse', 'HEAD']).strip()
+    if os.environ.get('GITHUB_SHA'):
+        assert source == os.environ['GITHUB_SHA'], 'APK qualification is not checking the workflow source revision'
     dirty = run(['git', '-C', args.source_root, 'status', '--porcelain', '--untracked-files=no'])
     if args.require_clean and dirty.strip():
         raise ValueError('Qualification source has tracked modifications')
-    return {'format': 1, 'status': 'passed', 'apk': {'name': args.apk.name, **pin(args.apk.read_bytes())}, 'package': PACKAGE, 'version_code': identity.group(2), 'version_name': identity.group(3), 'abi': args.abi, 'source_commit': source, 'tracked_source_clean': not bool(dirty.strip()), 'signer_certificate_sha256': certificates[0], 'embedded_asset_bytes': asset_bytes, 'embedded_asset_files': len(actual_assets), 'native_libraries': libraries, 'large_runtime_game_payloads_embedded': False, 'donor_apk_sha256': DONOR_SHA, 'accepted_scene_apk_sha256': SCENE_SHA, 'actual_server_interoperability_verified': False, 'scope': 'Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.'}
+    return {'format': 1, 'status': 'passed', 'apk': {'name': args.apk.name, **pin(args.apk.read_bytes())}, 'package': PACKAGE, 'version_code': identity.group(2), 'version_name': identity.group(3), 'build_profile': args.build_profile if args.require_interop else None, 'process_memory_jni_entrypoint': memory_entrypoint, 'abi': args.abi, 'source_commit': source, 'tracked_source_clean': not bool(dirty.strip()), 'signer_certificate_sha256': certificates[0], 'embedded_asset_bytes': asset_bytes, 'embedded_asset_files': len(actual_assets), 'native_libraries': libraries, 'large_runtime_game_payloads_embedded': False, 'donor_apk_sha256': DONOR_SHA, 'accepted_scene_apk_sha256': SCENE_SHA, 'actual_server_interoperability_verified': False, 'scope': 'Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.'}
 
 
 def main():
@@ -124,6 +159,8 @@ def main():
     p.add_argument('--build-tools', type=Path)
     p.add_argument('--require-clean', action='store_true')
     p.add_argument('--require-interop', action='store_true', help='Require the separate Gates 25-27 diagnostic library and test version')
+    p.add_argument('--build-profile', choices=BUILD_PROFILES, default='original-fragment', help='Exact admitted version pair; historical default remains unchanged')
+    p.add_argument('--readelf', type=Path, help='Pinned NDK llvm-readelf, required for the memory diagnostic production JNI audit')
     p.add_argument('--output', type=Path, required=True)
     args = p.parse_args()
     value = audit(args)

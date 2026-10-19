@@ -13,6 +13,7 @@ import time
 import zipfile
 from interop_emulator_check import InteropCheck, numeric_snapshot, unchanged_observations, IDLE_REPORT, sha, need, ROOT
 from emulator_check import PACKAGE, MAIN, installed_apk_contract
+from package_check import BUILD_PROFILES, check_build_identity
 
 COUNTERS = ('udp_datagrams_received udp_peer_rejects udp_truncated udp_empty udp_malformed udp_unsupported '
             'udp_receive_budget_exhausted link_received link_duplicates link_malformed link_unsupported '
@@ -21,6 +22,35 @@ GAUGES = ('rx_pending fragment_groups decode_failure_kind decode_compressed_byte
           'decode_output_budget sample_count max_rx_pending_sampled max_fragment_groups_sampled').split()
 REFUSED_AUTHORITY = ('command_specific_emission_proved server_receipt_proved source_generation_admitted '
                     'complete_initial_character actor_publication ack_permitted world_authority').split()
+MEMORY_PHASES = {'COLD_STARTUP', 'SERVER_READY', 'NATIVE_CONNECTION', 'DIAGNOSTIC', 'RETURN', 'PAUSE', 'RESUME', 'FINAL_CLEANUP', 'SERVER_STOPPED'}
+
+
+def memory_snapshot(report):
+    value = report.get('memory_diagnostics')
+    need(isinstance(value, dict) and value.get('schema') == 'coh-combined-phase-memory-v1', 'phase memory schema absent')
+    report_limit = 128 * 1024 if report.get('schema') == 'coh-native-combined-app-v1' else 2 * 1024 * 1024
+    need(len(json.dumps(value, indent=2).encode()) < 24 * 1024 and len(json.dumps(report, indent=2).encode()) < report_limit, 'phase/app report exceeds preserved readers')
+    need(value.get('phase_limit') == 9 and value.get('sample_interval_ms') == 1000 and value.get('admission_authority') is False and value.get('server_policy_thresholds_changed') is False, 'observation claimed policy authority')
+    need(type(value.get('snapshot_elapsed_ms')) is int and type(value.get('latest_sample_elapsed_ms')) is int and 0 <= value['latest_sample_elapsed_ms'] <= value['snapshot_elapsed_ms'], 'sample timestamp absent/stale ordering')
+    need(value.get('latest_sample_age_ms') == value['snapshot_elapsed_ms'] - value['latest_sample_elapsed_ms'], 'sample age differs')
+    rows = value.get('phases')
+    need(isinstance(rows, list) and 0 < len(rows) <= 9 and len({x.get('phase') for x in rows}) == len(rows), 'unbounded or duplicate phase rows')
+    for row in rows:
+        need(row.get('phase') in MEMORY_PHASES and 0 <= row['requested_elapsed_ms'] <= row['sampled_elapsed_ms'] <= value['latest_sample_elapsed_ms'], 'phase timestamp or identity differs')
+        need(type(row.get('sequence')) is int and 0 < row['sequence'] <= value['samples'], 'phase sample sequence differs')
+        for field, source in [('process_rss_bytes', 'process_rss_source'), ('process_pss_bytes', 'process_pss_source')]:
+            metric = row.get(field)
+            need(metric is None or type(metric) is int and metric >= 0, 'negative or fabricated process measurement')
+            need((metric is None) == (row.get(source) == 'unavailable'), 'unknown process value mislabeled known')
+        need(row['process_pss_source'] in ('unavailable', 'proc_self_smaps_rollup'), 'guessed PSS fallback')
+        if not row.get('system_sample_valid'):
+            need(all(row.get(k) is None for k in ('available_bytes', 'total_bytes', 'threshold_bytes', 'android_low_memory', 'java_heap_used_bytes', 'java_heap_limit_bytes', 'system_headroom_bytes', 'java_heap_headroom_bytes')), 'unknown system measurement exposed as numeric')
+    for key in ('owned_guest_process_memory', 'native_owner_memory', 'graphics_memory'):
+        need('unavailable' in value.get(key, ''), 'unmeasured owner total fabricated')
+    states = report.get('diagnostic_states', {})
+    need(states.get('catalog') == 'MISSING_CATALOG_GENERATION' and states.get('world_resource') == 'UNRESOLVED_RESOURCE_IDENTITY' and states.get('character') == 'INCOMPLETE_CHARACTER_DATA', 'unsupported state mislabeled admitted')
+    need(states.get('world_authority') is False and states.get('application_ack_permitted') is False, 'typed diagnostics granted authority')
+    return {row['phase']: row for row in rows}
 
 
 def current_snapshot(value):
@@ -42,6 +72,15 @@ def current_snapshot(value):
 
 
 class FragmentCheck(InteropCheck):
+    def memory_phase(self, phase, after=0, filename='native-client-report.json'):
+        def ready(report):
+            rows = report.get('memory_diagnostics', {}).get('phases', [])
+            return any(row.get('phase') == phase and row.get('sequence', 0) > after for row in rows)
+        report = self.wait_report(filename, ready, 'bounded memory phase ' + phase, seconds=45)
+        rows = memory_snapshot(report)
+        (self.args.output / ('memory-' + phase.lower() + '.json')).write_text(json.dumps(report['memory_diagnostics'], indent=2) + '\n')
+        return report, rows[phase]
+
     def world(self, phase, label, seconds=60):
         report = self.wait_report('native-client-report.json', lambda x: x.get('connection_mode') == 'WORLD_HANDOFF' and x.get('world_handoff', {}).get('phase') in phase, label, seconds=seconds)
         need(report.get('preview_is_server_world') is False, 'preview became authoritative')
@@ -72,6 +111,13 @@ class FragmentCheck(InteropCheck):
         self.tap('Launch native client')
         native = self.wait_report('native-client-report.json', lambda x: x.get('assets_verified') is True and x.get('native', {}).get('frames', 0) >= 30, 'native Activity available')
         need(native['world_handoff'] == IDLE_REPORT, 'handoff began without explicit action')
+        if self.args.build_profile == 'memory-diagnostic':
+            before = max((row.get('sequence', 0) for row in native.get('memory_diagnostics', {}).get('phases', [])), default=0)
+            self.tap('Sample memory')
+            sampled, row = self.memory_phase('DIAGNOSTIC', before)
+            need(row['process_observer_status'] == 'native_observer_returned', 'actual processMemory JNI did not return a bounded observation')
+            need(row['system_sample_valid'] is True, 'emulator ActivityManager/Java memory unavailable')
+            self.record('actual Android memory button, system/heap and bounded self-process JNI observation', phase='DIAGNOSTIC', rss_available=row['process_rss_bytes'] is not None, pss_available=row['process_pss_bytes'] is not None, total_guest_memory_measured=False)
         for label in ('fragment-multi', 'fragment-single'):
             expected = self.peer_receipt['fragment_fixture']['cases'][label]
             with self.peer(label, label):
@@ -87,6 +133,8 @@ class FragmentCheck(InteropCheck):
                     exported = json.loads((self.args.output / 'exported-native-report.json').read_bytes())
                     current_snapshot(exported['world_handoff'])
                     unchanged_observations(captured['world_handoff'], exported['world_handoff'])
+                    if self.args.build_profile == 'memory-diagnostic':
+                        memory_snapshot(exported)
                     need(exported['world_handoff']['receive_diagnostics'] == receive, 'SAF export changed new receive observation')
                     self.record('new receive projection survives actual SAF export', numeric_only=True, world_authority=False)
                 self.tap('Disconnect client')
@@ -94,6 +142,20 @@ class FragmentCheck(InteropCheck):
                 unchanged_observations(captured['world_handoff'], closed['world_handoff'])
                 need(closed['world_handoff']['cleanup_verified'] is True, 'new fragment owner left transport open')
             self.fragment_receipt(label, expected)
+        if self.args.build_profile == 'memory-diagnostic':
+            connected, connection = self.memory_phase('NATIVE_CONNECTION')
+            session = connected['session_id']
+            before = connected['memory_diagnostics']['samples']
+            self.adb('shell', 'input', 'keyevent', 'KEYCODE_HOME')
+            paused, pause = self.memory_phase('PAUSE', before, 'combined-report.json')
+            self.resume_recents(session)
+            resumed, resume = self.memory_phase('RESUME', pause['sequence'])
+            need(resumed['world_handoff']['phase'] == 'CLOSED', 'Home resume silently reconnected')
+            self.tap('Return to launcher')
+            returned, ret = self.memory_phase('RETURN', resume['sequence'], 'combined-report.json')
+            cleaned, cleanup = self.memory_phase('FINAL_CLEANUP', resume['sequence'], 'combined-report.json')
+            need(ret['requested_elapsed_ms'] <= cleanup['requested_elapsed_ms'], 'final owner sample preceded Return')
+            self.record('event memory observations survive Home/resume and explicit Return after both owner retirements', phases=['NATIVE_CONNECTION', 'PAUSE', 'RESUME', 'RETURN', 'FINAL_CLEANUP'], sample_bytes=len(json.dumps(cleaned['memory_diagnostics'], indent=2).encode()), runtime_stop_not_exercised_on_x86_64=True)
         self.native_fault_evidence('fragments-final')
         receipt = {'schema': 'coh-android-fragment-interop-focused-v1', 'passed': True, 'checks': self.proofs,
             'apk': self.package_receipt['apk'], 'package_receipt': self.package_receipt,
@@ -103,7 +165,7 @@ class FragmentCheck(InteropCheck):
             'original_Auth_Db_Map_service_execution': False, 'whole_original_ALLENTS_producer': False,
             'normal_version_checksum_policy_qualified': False, 'complete_initial_character': False, 'actor_publication': False,
             'ACK_authority': False, 'world_authority': False, 'physical_Thor_qualified': False,
-            'whole_process_memory_measured': False, 'old_framework_suite_executed': False}
+            'whole_process_memory_measured': False, 'app_self_process_memory_observer_executed': self.args.build_profile == 'memory-diagnostic', 'old_framework_suite_executed': False}
         (self.args.output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
 
 
@@ -112,6 +174,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--adb', default='adb')
     parser.add_argument('--serial', required=True)
+    parser.add_argument('--build-profile', choices=BUILD_PROFILES, default='original-fragment', help='Exact APK version pair; preserve the canonical 0.1.9 default')
     for name in ('apk', 'peer', 'peer-receipt', 'package-receipt', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     args = parser.parse_args()
@@ -123,7 +186,10 @@ def main():
     for name, digest in peer['source_sha256'].items():
         need(sha((ROOT / name).read_bytes()) == digest, 'peer source changed')
     package = json.loads(args.package_receipt.read_bytes())
-    need(package['status'] == 'passed' and package['abi'] == 'x86_64' and package['package'] == PACKAGE and package['version_code'] == '10' and package['version_name'] == '0.1.9-gates25-27-test' and package['source_commit'] == head, 'new APK identity differs')
+    need(package['status'] == 'passed' and package['abi'] == 'x86_64' and package['package'] == PACKAGE and package['source_commit'] == head, 'new APK identity differs')
+    check_build_identity(package['version_code'], package['version_name'], args.build_profile)
+    if args.build_profile == 'memory-diagnostic':
+        need(package.get('build_profile') == args.build_profile and package.get('process_memory_jni_entrypoint') == 'Java_org_coh_nativecombined_LocalNative_processMemory', 'memory diagnostic package audit absent')
     need(package['apk']['bytes'] == args.apk.stat().st_size and package['apk']['sha256'] == sha(args.apk.read_bytes()), 'APK receipt differs')
     need(package['signer_certificate_sha256'] == '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522', 'accepted signer changed')
     with zipfile.ZipFile(args.apk) as archive:

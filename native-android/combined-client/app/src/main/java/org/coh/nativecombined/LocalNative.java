@@ -6,6 +6,8 @@ package org.coh.nativecombined;
 public final class LocalNative {
     static { System.loadLibrary("coh_combined_network"); }
     private LocalNative() { }
+    /** Optional bounded self-RSS/PSS; call only from a diagnostic control worker. */
+    public static native String processMemory();
     public static native long begin(int dbPort, String account, int networkVersion,
             boolean encryptionRequired, boolean outboundCompressed, long nowMs);
     public static native int service(long handle, long nowMs);
