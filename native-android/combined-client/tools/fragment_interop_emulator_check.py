@@ -14,6 +14,7 @@ import zipfile
 from interop_emulator_check import InteropCheck, numeric_snapshot, unchanged_observations, IDLE_REPORT, sha, need, ROOT
 from emulator_check import PACKAGE, MAIN, installed_apk_contract
 from package_check import BUILD_PROFILES, check_build_identity
+from interop_probe_contract import separate_current_probes
 
 COUNTERS = ('udp_datagrams_received udp_peer_rejects udp_truncated udp_empty udp_malformed udp_unsupported '
             'udp_receive_budget_exhausted link_received link_duplicates link_malformed link_unsupported '
@@ -25,12 +26,25 @@ REFUSED_AUTHORITY = ('command_specific_emission_proved server_receipt_proved sou
 MEMORY_PHASES = {'COLD_STARTUP', 'SERVER_READY', 'NATIVE_CONNECTION', 'DIAGNOSTIC', 'RETURN', 'PAUSE', 'RESUME', 'FINAL_CLEANUP', 'SERVER_STOPPED'}
 
 
+def admit_runtime_revision(head, candidate, proof_path):
+    if candidate is None and proof_path is None:
+        return head, None
+    need(candidate is not None and proof_path is not None and re.fullmatch('[0-9a-f]{40}', candidate) is not None, 'exact package reuse requires candidate revision and source admission')
+    raw = proof_path.read_bytes()
+    need(len(raw) <= 16 * 1024 * 1024, 'source admission exceeds bound')
+    proof = json.loads(raw)
+    need(proof.get('schema') == 'coh-combined-exact-apk-requalification-v1' and proof.get('passed') is True, 'source admission schema/status differs')
+    need(proof.get('candidate_source_revision') == candidate and proof.get('qualification_source_revision') == head and proof.get('runtime_and_build_inputs_unchanged') is True, 'source admission does not bind exact unchanged runtime and current driver')
+    return candidate, sha(raw)
+
+
 def memory_snapshot(report):
     value = report.get('memory_diagnostics')
     need(isinstance(value, dict) and value.get('schema') == 'coh-combined-phase-memory-v1', 'phase memory schema absent')
     report_limit = 128 * 1024 if report.get('schema') == 'coh-native-combined-app-v1' else 2 * 1024 * 1024
     need(len(json.dumps(value, indent=2).encode()) < 24 * 1024 and len(json.dumps(report, indent=2).encode()) < report_limit, 'phase/app report exceeds preserved readers')
     need(value.get('phase_limit') == 9 and value.get('sample_interval_ms') == 1000 and value.get('admission_authority') is False and value.get('server_policy_thresholds_changed') is False, 'observation claimed policy authority')
+    need(type(value.get('sampler_failures')) is int and 0 <= value['sampler_failures'] <= (1 << 63) - 1, 'sampler failure counter absent or invalid')
     need(type(value.get('snapshot_elapsed_ms')) is int and type(value.get('latest_sample_elapsed_ms')) is int and 0 <= value['latest_sample_elapsed_ms'] <= value['snapshot_elapsed_ms'], 'sample timestamp absent/stale ordering')
     need(value.get('latest_sample_age_ms') == value['snapshot_elapsed_ms'] - value['latest_sample_elapsed_ms'], 'sample age differs')
     rows = value.get('phases')
@@ -53,10 +67,11 @@ def memory_snapshot(report):
     return {row['phase']: row for row in rows}
 
 
-def current_snapshot(value):
+def current_snapshot(value, require_current_probes=False):
     need(isinstance(value, dict) and 'receive_diagnostics' in value, 'new receive observation absent')
     legacy = dict(value)
     receive = legacy.pop('receive_diagnostics')
+    legacy = separate_current_probes(legacy, required=require_current_probes)
     numeric_snapshot(legacy)
     booleans = ['diagnostic_only', 'valid', 'observation_retired', 'cleanup_transport_counters_equal', *REFUSED_AUTHORITY]
     need(isinstance(receive, dict) and set(receive) == set(COUNTERS + GAUGES + booleans + ['schema', 'refusal']), 'receive observation fields differ')
@@ -78,17 +93,18 @@ class FragmentCheck(InteropCheck):
             return any(row.get('phase') == phase and row.get('sequence', 0) > after for row in rows)
         report = self.wait_report(filename, ready, 'bounded memory phase ' + phase, seconds=45)
         rows = memory_snapshot(report)
+        need(report['memory_diagnostics']['sampler_failures'] == 0, 'normal Android candidate recorded a sampler failure')
         (self.args.output / ('memory-' + phase.lower() + '.json')).write_text(json.dumps(report['memory_diagnostics'], indent=2) + '\n')
         return report, rows[phase]
 
     def world(self, phase, label, seconds=60):
         report = self.wait_report('native-client-report.json', lambda x: x.get('connection_mode') == 'WORLD_HANDOFF' and x.get('world_handoff', {}).get('phase') in phase, label, seconds=seconds)
         need(report.get('preview_is_server_world') is False, 'preview became authoritative')
-        current_snapshot(report['world_handoff'])
+        current_snapshot(report['world_handoff'], self.args.build_profile == 'memory-diagnostic')
         return report
 
     def record_snapshot(self, label, report):
-        value = current_snapshot(report['world_handoff'])
+        value = current_snapshot(report['world_handoff'], self.args.build_profile == 'memory-diagnostic')
         (self.args.output / (label + '-world-handoff.json')).write_text(json.dumps(value, indent=2) + '\n')
         return value
 
@@ -131,7 +147,7 @@ class FragmentCheck(InteropCheck):
                 if label == 'fragment-multi':
                     self.export_native()
                     exported = json.loads((self.args.output / 'exported-native-report.json').read_bytes())
-                    current_snapshot(exported['world_handoff'])
+                    current_snapshot(exported['world_handoff'], self.args.build_profile == 'memory-diagnostic')
                     unchanged_observations(captured['world_handoff'], exported['world_handoff'])
                     if self.args.build_profile == 'memory-diagnostic':
                         memory_snapshot(exported)
@@ -160,6 +176,7 @@ class FragmentCheck(InteropCheck):
         receipt = {'schema': 'coh-android-fragment-interop-focused-v1', 'passed': True, 'checks': self.proofs,
             'apk': self.package_receipt['apk'], 'package_receipt': self.package_receipt,
             'peer_receipt_sha256': sha(self.args.peer_receipt.read_bytes()), 'source_revision': self.source_revision,
+            'candidate_runtime_source_revision': self.runtime_revision, 'source_admission_sha256': self.source_admission_sha,
             'driver_sha256': sha(Path(__file__).read_bytes()), 'device': {'api': 33, 'abi': 'x86_64', 'emulator': True, 'build_fingerprint': self.text('shell', 'getprop', 'ro.build.fingerprint').strip()},
             'actual_Android_JNI_and_OS_UDP': True, 'new_fragment_scenarios_only': True, 'source_compatible_envelopes_synthetic_ALLENTS_body': True,
             'original_Auth_Db_Map_service_execution': False, 'whole_original_ALLENTS_producer': False,
@@ -175,18 +192,21 @@ def main():
     parser.add_argument('--adb', default='adb')
     parser.add_argument('--serial', required=True)
     parser.add_argument('--build-profile', choices=BUILD_PROFILES, default='original-fragment', help='Exact APK version pair; preserve the canonical 0.1.9 default')
+    parser.add_argument('--candidate-source-revision', help='Exact audited package revision, only with source admission proof')
+    parser.add_argument('--source-admission', type=Path, help='Bound proof that current driver changes leave candidate runtime/build inputs byte-identical')
     for name in ('apk', 'peer', 'peer-receipt', 'package-receipt', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     args = parser.parse_args()
     need(not args.output.exists(), 'fresh output required')
     head = subprocess.check_output(['git', '-C', ROOT, 'rev-parse', 'HEAD'], text=True).strip()
+    runtime_revision, source_admission_sha = admit_runtime_revision(head, args.candidate_source_revision, args.source_admission)
     peer = json.loads(args.peer_receipt.read_bytes())
-    need(peer['passed'] is True and peer['abi'] == 'x86_64' and peer['fragment_compatibility_role'] is True and peer['scripted_source_layout'] is True and peer['real_server_interoperability'] is False and peer['source_revision'] == head, 'unadmitted fragment peer role')
+    need(peer['passed'] is True and peer['abi'] == 'x86_64' and peer['fragment_compatibility_role'] is True and peer['scripted_source_layout'] is True and peer['real_server_interoperability'] is False and peer['source_revision'] == runtime_revision, 'unadmitted fragment peer role')
     need(peer['peer'] == {'file': args.peer.name, 'bytes': args.peer.stat().st_size, 'sha256': sha(args.peer.read_bytes())}, 'peer executable differs')
     for name, digest in peer['source_sha256'].items():
         need(sha((ROOT / name).read_bytes()) == digest, 'peer source changed')
     package = json.loads(args.package_receipt.read_bytes())
-    need(package['status'] == 'passed' and package['abi'] == 'x86_64' and package['package'] == PACKAGE and package['source_commit'] == head, 'new APK identity differs')
+    need(package['status'] == 'passed' and package['abi'] == 'x86_64' and package['package'] == PACKAGE and package['source_commit'] == runtime_revision, 'new APK identity differs')
     check_build_identity(package['version_code'], package['version_name'], args.build_profile)
     if args.build_profile == 'memory-diagnostic':
         need(package.get('build_profile') == args.build_profile and package.get('process_memory_jni_entrypoint') == 'Java_org_coh_nativecombined_LocalNative_processMemory', 'memory diagnostic package audit absent')
@@ -197,6 +217,7 @@ def main():
     need(data[:6] == b'\x7fELF\x02\x01' and int.from_bytes(data[18:20], 'little') == 62, 'wrong JNI ABI')
     driver = FragmentCheck(args)
     driver.package_receipt, driver.peer_receipt, driver.source_revision = package, peer, head
+    driver.runtime_revision, driver.source_admission_sha = runtime_revision, source_admission_sha
     driver.interop_sha, driver.interop_bytes = sha(data), len(data)
     try:
         driver.run_fragments()

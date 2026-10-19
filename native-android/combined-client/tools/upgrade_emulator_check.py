@@ -66,7 +66,7 @@ def package_receipt(receipt, raw, profile, revision):
 def sentinels():
     """Small synthetic fixtures in representative private storage locations."""
     return {
-        'files/combined-import/profile.pgdump': b'PGDMP\0SYNTHETIC STORAGE SENTINEL; NEVER RESTORE\n' + bytes(range(256)) * 16,
+        'files/combined-import/upgrade-profile-sentinel.pgdump': b'PGDMP\0SYNTHETIC STORAGE SENTINEL; NEVER RESTORE\n' + bytes(range(256)) * 16,
         'files/combined-import/upgrade-import-sentinel.bin': bytes((i * 13 + 7) & 255 for i in range(65536)),
         'files/combined-server/diagnostic/state/upgrade-save-sentinel.json': b'{"synthetic":true,"not_a_game_save":true,"character":"StorageFixture","level":1}\n',
         'shared_prefs/upgrade-qualification.xml': b'<?xml version="1.0" encoding="utf-8"?><map><string name="profile">synthetic-disposable</string></map>\n',
@@ -112,24 +112,68 @@ class UpgradeCheck:
         return uid.group(1)
 
     def launch_and_quiesce(self, receipt, label):
+        # Retain the pre-launch report rather than clearing persisted app data.
+        # An explicit stopped process plus uptime requires a fresh report epoch.
+        self.capture(label + '-before')
+        self.adb('shell', 'am', 'force-stop', PACKAGE)
+        start_elapsed_ms = int(float(self.text('shell', 'cat', '/proc/uptime').split()[0]) * 1000)
         result = self.text('shell', 'am', 'start', '-W', '-n', PACKAGE + '/.MainActivity')
+        (self.args.output / (label + '-am-start.txt')).write_text(result)
         need('Error:' not in result, 'launcher start refused')
         deadline = time.monotonic() + 45
+        observations = {'start_elapsed_ms': start_elapsed_ms, 'read_attempts': 0, 'last_read_returncode': None, 'last_report_bytes': None, 'json_decode_failures': 0}
         while time.monotonic() < deadline:
             result = self.adb('exec-out', 'run-as', PACKAGE, 'cat', 'files/combined-report.json', check=False)
-            if result.returncode == 0 and len(result.stdout) <= 2 * 1024 * 1024:
+            observations.update(read_attempts=observations['read_attempts'] + 1, last_read_returncode=result.returncode, last_report_bytes=len(result.stdout))
+            (self.args.output / (label + '-report-read.stderr')).write_bytes(result.stderr[:8192])
+            if result.returncode == 0:
+                need(len(result.stdout) <= 128 * 1024, 'combined launcher report exceeds existing 128KiB bound')
+                (self.args.output / (label + '-last-combined-report.json')).write_bytes(result.stdout)
                 try:
                     report = json.loads(result.stdout)
-                    if (str(report.get('version_code')) == receipt['version_code'] and report.get('version_name') == receipt['version_name'] and report.get('installed_apk_status') == 'ready'):
-                        need(report['installed_apk'] == {k: receipt['apk'][k] for k in ('bytes', 'sha256')}, 'launcher report APK identity differs')
-                        need(report.get('busy') is False and report['server']['owned_process_alive'] is False and report['server']['ready'] is False, 'guest unexpectedly started')
-                        self.adb('shell', 'am', 'force-stop', PACKAGE)
-                        self.record(label, launcher_opened=True, guest_started=False)
-                        return
-                except (ValueError, KeyError, TypeError):
-                    pass
+                except json.JSONDecodeError:
+                    observations['json_decode_failures'] += 1
+                    report = None
+                if isinstance(report, dict):
+                    observations['last_observed_identity'] = {key: report.get(key) for key in ('version_code', 'version_name', 'installed_apk_status', 'updated_elapsed_ms')}
+                    fresh = type(report.get('updated_elapsed_ms')) is int and report['updated_elapsed_ms'] >= start_elapsed_ms
+                    if fresh and str(report.get('version_code')) == receipt['version_code'] and report.get('version_name') == receipt['version_name']:
+                        if report.get('installed_apk_status') == 'ready':
+                            need(report['installed_apk'] == {k: receipt['apk'][k] for k in ('bytes', 'sha256')}, 'launcher report APK identity differs')
+                            server = report.get('server')
+                            need(isinstance(server, dict), 'fresh launcher report server fields absent')
+                            need(report.get('busy') is False and server.get('owned_process_alive') is False and server.get('ready') is False, 'guest unexpectedly started')
+                            need(server.get('phase') == 'stopped' and server.get('failure_code') == '', 'idle launcher initialization failed')
+                            (self.args.output / (label + '-report-observations.json')).write_text(json.dumps(observations, indent=2) + '\n')
+                            self.capture(label + '-after')
+                            self.assert_no_app_fault(label)
+                            self.adb('shell', 'am', 'force-stop', PACKAGE)
+                            self.record(label, launcher_opened=True, guest_started=False, fresh_report_epoch=True)
+                            return
+            (self.args.output / (label + '-report-observations.json')).write_text(json.dumps(observations, indent=2) + '\n')
             time.sleep(.25)
+        self.capture(label + '-timeout')
+        self.assert_no_app_fault(label)
         raise ValueError('launcher did not produce the exact installed idle package identity')
+
+    def capture(self, label):
+        for name, command, limit in (
+            ('combined-report.json', ('exec-out', 'run-as', PACKAGE, 'cat', 'files/combined-report.json'), 128 * 1024),
+            ('activity.txt', ('shell', 'dumpsys', 'activity', 'activities'), 2 * 1024 * 1024),
+            ('lastanr.txt', ('shell', 'dumpsys', 'activity', 'lastanr'), 256 * 1024),
+            ('crash.txt', ('logcat', '-d', '-b', 'crash', '-t', '200'), 256 * 1024),
+            ('app-logcat.txt', ('logcat', '-d', '-t', '400', '-s', 'AndroidRuntime', 'ActivityManager', 'coh-memory-observer'), 512 * 1024),
+        ):
+            try:
+                result = self.adb(*command, check=False, timeout=15)
+                (self.args.output / (label + '-' + name)).write_bytes(result.stdout[:limit])
+            except Exception as failure:
+                (self.args.output / (label + '-' + name + '.capture-error')).write_text(type(failure).__name__)
+
+    def assert_no_app_fault(self, label):
+        lastanr = self.text('shell', 'dumpsys', 'activity', 'lastanr')
+        crashes = self.text('logcat', '-d', '-b', 'crash', '-t', '200')
+        need(re.search(r'ANR in ' + re.escape(PACKAGE) + r'(?:[\s(/]|$)', lastanr) is None and PACKAGE not in crashes, 'app crash or ANR observed during ' + label)
 
     def seed(self):
         for index, (name, raw) in enumerate(sentinels().items()):
@@ -160,7 +204,13 @@ class UpgradeCheck:
         head = subprocess.check_output(['git', '-C', ROOT, 'rev-parse', 'HEAD'], text=True).strip()
         need(not os.environ.get('GITHUB_SHA') or head == os.environ['GITHUB_SHA'], 'workflow revision differs')
         candidate = json.loads(self.args.package_receipt.read_bytes())
-        package_receipt(candidate, self.args.apk.read_bytes(), 'memory-diagnostic', head)
+        candidate_revision = self.args.candidate_source_revision or head
+        if candidate_revision != head:
+            need(self.args.source_admission is not None and self.args.source_admission.stat().st_size <= 128 * 1024, 'exact-package source admission required')
+            admission = json.loads(self.args.source_admission.read_bytes())
+            need(admission['schema'] == 'coh-combined-exact-apk-requalification-v1' and admission['passed'] is True and admission['candidate_source_revision'] == candidate_revision and admission['qualification_source_revision'] == head and admission['runtime_and_build_inputs_unchanged'] is True, 'current source is not admitted for the exact candidate APK')
+            need(admission['candidate_apks']['x86_64'] == pin(self.args.apk.read_bytes()), 'admitted candidate APK bytes differ')
+        package_receipt(candidate, self.args.apk.read_bytes(), 'memory-diagnostic', candidate_revision)
         self.install(previous, 'previous')
         uid = self.identity(previous, old_receipt, 'previous-installed')
         self.launch_and_quiesce(old_receipt, 'previous-launch')
@@ -182,7 +232,10 @@ class UpgradeCheck:
             self.preserved('after-candidate-reinstall')
         receipt = {'schema': 'coh-android-package-update-storage-v1', 'passed': True, 'source_revision': head,
             'previous': {'run_id': PREVIOUS_RUN, 'artifact_id': PREVIOUS_ARTIFACT, 'source_revision': PREVIOUS_REVISION, 'archive_bytes': PREVIOUS_ARCHIVE_BYTES, 'archive_sha256': PREVIOUS_ARCHIVE_SHA, 'apk_bytes': PREVIOUS_APK_BYTES, 'apk_sha256': PREVIOUS_APK_SHA},
-            'candidate_apk': candidate['apk'], 'checks': self.proofs, 'synthetic_sentinel_bytes': sum(map(len, sentinels().values())),
+            'candidate_apk': candidate['apk'], 'candidate_source_revision': candidate_revision,
+            'source_admission_sha256': hashlib.sha256(self.args.source_admission.read_bytes()).hexdigest() if self.args.source_admission else None,
+            'checks': self.proofs, 'synthetic_sentinel_bytes': sum(map(len, sentinels().values())),
+            'synthetic_profile_uses_active_import_filename': False, 'initial_failed_upgrade_launch_root_cause_established': False,
             'android_api': 33, 'abi': 'x86_64', 'debuggable_package_downgrade_exercised': self.args.exercise_debuggable_downgrade,
             'package_data_preservation_only': True, 'real_game_save_migration_qualified': False, 'guest_started': False,
             'physical_Thor_qualified': False, 'world_authority': False}
@@ -197,13 +250,18 @@ def main():
     for name in ('apk', 'package-receipt', 'previous-archive', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--exercise-debuggable-downgrade', action='store_true')
+    parser.add_argument('--candidate-source-revision', help='Exact reused APK revision; requires an independent current-source admission when different from HEAD')
+    parser.add_argument('--source-admission', type=Path)
     args = parser.parse_args()
+    need((args.candidate_source_revision is None) == (args.source_admission is None), 'candidate revision and current-source admission must be supplied together')
+    need(args.candidate_source_revision is None or re.fullmatch('[0-9a-f]{40}', args.candidate_source_revision) is not None, 'candidate revision must be an exact Git SHA')
     need(not args.output.exists(), 'fresh output required')
     args.output.mkdir(parents=True)
     driver = UpgradeCheck(args)
     try:
         driver.run()
     except Exception as failure:
+        driver.capture('failure')
         (args.output / 'failure.json').write_text(json.dumps({'type': type(failure).__name__, 'message': str(failure)[:3000], 'package_data_preservation_only': True, 'real_game_save_migration_qualified': False}, indent=2) + '\n')
         raise
 

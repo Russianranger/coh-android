@@ -1,0 +1,58 @@
+{
+  "schema": "coh-combined-memory-fresh-unknown-regression-v1",
+  "passed_local_focused": true,
+  "source_parent_revision": "ed84e02e60febec127520c8d5f543f2d765f4c81",
+  "source_sha256": {
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/PhaseMemoryDiagnostics.java": "2b12c77795fb799e29f476a2c27df82e65ae95b27f2dfbd4424d6557a8afcc28",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/MemoryTelemetry.java": "05d7389b962531de2b90c9fe318cc1e121638c6600a0f17a26272af21dbe193b",
+    "native-android/combined-client/qualification/check_phase_memory.py": "de3b8227f997b4d8245eb54b9ce7283953e3c97addc0dd46347d6074ccd15f7d",
+    "native-android/combined-client/qualification/check_memory_worker.py": "a0f1e13efd0d9489db7461f51ea2b7ce185e6892e415041f11093405fea08521",
+    "native-android/combined-client/tools/host_check.py": "b4612fba26202a991bde4c5576aedd2f0b8312a01ff91e08593134919d798c06"
+  },
+  "checks": {
+    "phase": {
+      "status": "passed",
+      "checks": 2895,
+      "retained_phase_limit": 9,
+      "repeated_records": 10407,
+      "fresh_first_unknown_partial_forged_cases": 7,
+      "world_authority": false
+    },
+    "worker": {
+      "status": "passed",
+      "checks": 34,
+      "queued_phase_requests": 9000,
+      "nonfatal_failures_recovered": 2,
+      "fresh_first_unavailable": true,
+      "Android_stubs_only": true
+    },
+    "policy": {
+      "status": "passed",
+      "checks": 2710,
+      "retained_samples": 64,
+      "cooperative_only": true,
+      "actual_server_interoperability_verified": false
+    },
+    "original_bug_reproduced": {
+      "source": "d4aff288c",
+      "source_sha256": "9d1df320480ddda5673c4445289621df21a258b0de6d81a424a009bac058f4fa",
+      "first_sample": "COLD_STARTUP with unavailable system and process telemetry",
+      "error": [
+        "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"java.lang.Long.longValue()\" because \"<parameter1>\" is null",
+        "\tat org.coh.nativecombined.PhaseMemoryDiagnostics.maximum(PhaseMemoryDiagnostics.java:52)",
+        "\tat org.coh.nativecombined.PhaseMemoryDiagnostics.record(PhaseMemoryDiagnostics.java:81)",
+        "\tat org.coh.nativecombined.PhaseMemoryTest.main(PhaseMemoryTest.java:19)"
+      ]
+    }
+  },
+  "server_memory_policy_byte_identical_to": "7030870ebce6fe441d0b0369e87fc337ffb81a52",
+  "candidate_version_code": 11,
+  "candidate_version_name": "0.1.10-memory-diagnostic-test",
+  "previous_7929_APK_qualified_for_delivery": false,
+  "requires_new_APK_build": true,
+  "scope": "Explicit nullable peak branches and sampler failure/finally recovery only; no heavy integration",
+  "Android_ABI_builds": "pending new candidate build",
+  "Android13_execution": "pending new candidate APK",
+  "physical_Thor_qualified": false,
+  "world_authority": false
+}

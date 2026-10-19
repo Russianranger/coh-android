@@ -13,8 +13,10 @@ import json
 import re
 import selectors
 import subprocess
+import sys
 import threading
 import time
+import uuid
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -24,6 +26,36 @@ NATIVE = PACKAGE + '/.NativeClientActivity'
 # AOSP DumpCommand reports these exact failures before writing a hierarchy.
 CAPTURE_TRANSIENTS = frozenset(('ERROR: could not get idle state.',
     'ERROR: null root node returned by UiTestAutomationBridge.'))
+CAPTURE_HELPER_PACKAGE = 'org.coh.qualification.capture'
+
+
+def fresh_active_root_capture(raw, diagnostic, nonce):
+    """Admit only a complete, hash-bound fresh test-helper hierarchy."""
+    assert re.fullmatch('[0-9a-f]{32}', nonce)
+    assert 0 < len(raw) < 8 << 20, 'Fresh active-root capture is empty or unbounded'
+    pairs = re.findall(r'^INSTRUMENTATION_RESULT: ([a-z0-9_]+)=(.*)$', diagnostic, re.M)
+    assert len(pairs) == len(dict(pairs)), 'Duplicate instrumentation result field'
+    result = dict(pairs)
+    assert re.search(r'^INSTRUMENTATION_CODE: -1\s*$', diagnostic, re.M), 'Snapshot instrumentation failed'
+    assert result.get('status') == 'passed' and result.get('nonce') == nonce
+    assert result.get('file') == 'snapshot-' + nonce + '.xml'
+    assert result.get('sha256') == hashlib.sha256(raw).hexdigest(), 'Snapshot digest differs'
+    assert result.get('bytes') == str(len(raw)), 'Snapshot byte receipt differs'
+    assert re.fullmatch('[0-9]+', result.get('nodes', '')) and 0 < int(result['nodes']) <= 8192
+    assert all(re.fullmatch('[0-9]+', result.get(k, '')) for k in ('started_elapsed_ms', 'completed_elapsed_ms'))
+    assert int(result['started_elapsed_ms']) <= int(result['completed_elapsed_ms'])
+    root = ET.fromstring(raw)
+    assert root.tag == 'hierarchy' and root.get('capture-nonce') == nonce
+    assert root.get('capture-method') == 'fresh-ui-automation-active-root-without-global-idle'
+    assert root.get('rotation') in ('0', '1', '2', '3')
+    nodes = list(root.iter('node'))
+    assert len(nodes) == int(result['nodes']), 'Snapshot node receipt differs'
+    pending = [(root, -1)]
+    while pending:
+        node, depth = pending.pop()
+        assert depth <= 64, 'Snapshot depth limit exceeded'
+        pending.extend((child, depth + 1) for child in node)
+    return root, result
 SCENE_INSPECTION_FIELDS = ('new_world files present_files defs removed_defs children roots removed_roots '
     'properties swaps raw_matrices packed_matrices strings string_bytes work_units max_def_id max_root_id '
     'footer_file_count footer_active_roots footer_defs_crc footer_refs_crc prefix_bits consumed_bits').split()
@@ -413,6 +445,8 @@ class Check:
                 if transient and attempt < 3:
                     time.sleep(.5)
                     continue
+                if diagnostic == 'ERROR: could not get idle state.':
+                    return self.capture_active_root(prefix)
                 raise RuntimeError('UI capture failed; raw stdout/stderr preserved: ' + prefix
                     + '; returncode=' + str(result.returncode) + '; diagnostic=' + diagnostic)
             read = self.capture_command(prefix, 'read', 'exec-out', 'cat', remote)
@@ -429,6 +463,54 @@ class Check:
             (self.args.output / 'last-ui.xml').write_bytes(raw)
             return raw, root
         raise RuntimeError('UI capture retry bound exhausted')
+
+    def capture_active_root(self, prefix):
+        """Fresh bounded accessibility capture when changing labels prevent idle.
+
+        The separate instrumentation targets its own disposable package, never
+        CoH. Failed shell XML is never read. All original viewport/UI assertions
+        still run against the new actual AccessibilityNodeInfo hierarchy.
+        """
+        self.native_fault_evidence(prefix + '-active-root-before')
+        if not getattr(self, '_capture_helper_ready', False):
+            existing = self.text('shell', 'pm', 'list', 'packages', '--user', '0', CAPTURE_HELPER_PACKAGE).strip()
+            assert not existing, 'Refuse to replace an existing capture helper package'
+            folder = self.args.output / 'ui-snapshot-helper'
+            builder = Path(__file__).with_name('build_ui_snapshot_helper.py')
+            built = subprocess.run([sys.executable, str(builder), '--output', str(folder)], capture_output=True, timeout=180)
+            (self.args.output / (prefix + '-helper-build.stdout')).write_bytes(built.stdout)
+            (self.args.output / (prefix + '-helper-build.stderr')).write_bytes(built.stderr)
+            assert built.returncode == 0, 'Separate test-helper build failed; logs retained'
+            receipt = json.loads((folder / 'build.json').read_bytes())
+            assert receipt.get('passed') is True and receipt.get('package') == CAPTURE_HELPER_PACKAGE
+            assert receipt.get('target_package') == CAPTURE_HELPER_PACKAGE and receipt.get('candidate_APK_rebuilt_or_modified') is False
+            helper = folder / 'ui-snapshot-helper.apk'
+            assert receipt['apk'] == {'bytes': helper.stat().st_size, 'sha256': hashlib.sha256(helper.read_bytes()).hexdigest()}
+            for name, key in [('UiSnapshotInstrumentation.java', 'source'), ('build_ui_snapshot_helper.py', 'builder')]:
+                value = Path(__file__).with_name(name).read_bytes()
+                assert receipt[key] == {'bytes': len(value), 'sha256': hashlib.sha256(value).hexdigest()}
+            install = self.capture_command(prefix, 'helper-install', 'install', '-g', str(helper))
+            assert install.returncode == 0 and re.search(rb'^Success\s*$', install.stdout, re.M), 'Separate test-helper install failed'
+            self._capture_helper_ready = True
+        nonce = uuid.uuid4().hex
+        request = self.capture_command(prefix, 'active-root', 'shell', 'am', 'instrument', '-w', '-r', '-e', 'nonce', nonce,
+            CAPTURE_HELPER_PACKAGE + '/.UiSnapshotInstrumentation')
+        assert request.returncode == 0, 'Fresh active-root instrumentation failed'
+        diagnostic = request.stdout.decode(errors='replace')
+        filename = 'snapshot-' + nonce + '.xml'
+        read = self.capture_command(prefix, 'active-root-read', 'exec-out', 'run-as', CAPTURE_HELPER_PACKAGE, 'cat', 'files/' + filename)
+        assert read.returncode == 0, 'Fresh private active-root capture unavailable'
+        root, receipt = fresh_active_root_capture(read.stdout, diagnostic, nonce)
+        self.native_fault_evidence(prefix + '-active-root-after')
+        removed = self.capture_command(prefix, 'active-root-remove', 'shell', 'run-as', CAPTURE_HELPER_PACKAGE, 'rm', 'files/' + filename)
+        assert removed.returncode == 0, 'Fresh helper snapshot cleanup failed'
+        (self.args.output / 'last-ui.xml').write_bytes(read.stdout)
+        self.record('fresh bounded accessibility capture without global idle after three recorded shell idle failures',
+            source='separate self-targeted UiAutomation instrumentation', nonce=nonce, sha256=receipt['sha256'],
+            bytes=len(read.stdout), nodes=int(receipt['nodes']), node_limit=8192, depth_limit=64,
+            byte_limit=8 << 20, stale_xml_used=False, global_idle_required=False,
+            candidate_APK_rebuilt=False, raw_command_results_preserved=True)
+        return read.stdout, root
 
     def dump(self):
         for unused in range(4):

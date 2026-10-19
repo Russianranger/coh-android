@@ -49,7 +49,11 @@ final class PhaseMemoryDiagnostics {
                 &&sample.threshold>=0&&sample.threshold<=sample.total&&sample.heapLimit>0
                 &&sample.heapUsed>=0&&sample.heapUsed<=sample.heapLimit;
     }
-    private static Long maximum(Long a,Long b) { return b==null?a:a==null?b:Math.max(a,b); }
+    private static Long maximum(Long a,Long b) {
+        if(a==null)return b;
+        if(b==null)return a;
+        return Long.valueOf(Math.max(a.longValue(),b.longValue()));
+    }
     private static Long minimum(Long a,long b) { return a==null?b:Math.min(a,b); }
     private static String source(Long value,String source) {
         return value==null?"unavailable":"proc_self_smaps_rollup".equals(source)

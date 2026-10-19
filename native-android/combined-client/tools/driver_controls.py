@@ -10,13 +10,15 @@ from types import SimpleNamespace
 import json
 import copy
 import tempfile
+import hashlib
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
 from emulator_check import (Check, PACKAGE, scene_pixels, settled_preview, viewport_contract,
                             map_report_contract, installed_apk_contract, guest_resources_contract,
                             activity_inventory, retained_launcher, large_scene_contract,
                             complete_scene_contract, SCENE_INSPECTION_FIELDS,
-                            idle_preview_contract, initial_map_contract)
+                            idle_preview_contract, initial_map_contract,
+                            fresh_active_root_capture, CAPTURE_HELPER_PACKAGE)
 
 FILE = 'native-test-donor.apk'
 BACKGROUND = f'<node package="com.google.android.documentsui" text="{FILE}" bounds="[189,899][583,956]"/>'
@@ -56,13 +58,18 @@ class AnrDriver(Check):
 
 
 class CaptureDriver(Check):
-    def __init__(self, path, captures, lastanr='', events='', crashes='', clear_code=0):
+    def __init__(self, path, captures, lastanr='', events='', crashes='', clear_code=0, helper=None):
         super().__init__(SimpleNamespace(output=path))
         self.captures=iter(captures)
         self.lastanr,self.events,self.crashes=lastanr,events,crashes
         self.clear_code=clear_code
         self.remote=b'<hierarchy><node text="stale"/></hierarchy>'
         self.dump_count=self.read_count=self.clear_count=0
+        self.helper=helper;self.helper_count=self.helper_read_count=0
+        if helper is not None:self._capture_helper_ready=True
+    def capture_active_root(self,prefix):
+        if self.helper is None:raise RuntimeError('Host fixture has no fresh helper capture')
+        return super().capture_active_root(prefix)
     def text(self, *args, check=True):
         if 'lastanr' in args:return self.lastanr
         if 'events' in args:return self.events
@@ -82,6 +89,14 @@ class CaptureDriver(Check):
         if args[:2]==('exec-out','cat'):
             self.read_count+=1
             return SimpleNamespace(returncode=int(self.remote is None),stdout=self.remote or b'',stderr=b'')
+        if args[:4]==('shell','am','instrument','-w'):
+            self.helper_count+=1
+            return SimpleNamespace(returncode=self.helper.get('returncode',0),stdout=self.helper['diagnostic'].encode(),stderr=b'')
+        if args[:3]==('exec-out','run-as',CAPTURE_HELPER_PACKAGE):
+            self.helper_read_count+=1
+            return SimpleNamespace(returncode=self.helper.get('readcode',0),stdout=self.helper['raw'],stderr=b'')
+        if args[:4]==('shell','run-as',CAPTURE_HELPER_PACKAGE,'rm'):
+            return SimpleNamespace(returncode=self.helper.get('removecode',0),stdout=b'',stderr=b'')
         raise AssertionError('Unexpected fixture command: '+repr(args))
 
 
@@ -126,6 +141,38 @@ def capture_controls(path):
         assert value.read_count==1
         value=driver('malformed-fresh-file',[(0,b'',b'',b'<broken')]);rejected(value,ET.ParseError)
         assert value.dump_count==1
+        nonce='a'*32
+        raw=('<hierarchy rotation="0" capture-nonce="'+nonce+'" capture-method="fresh-ui-automation-active-root-without-global-idle"><node text="fresh"/></hierarchy>').encode()
+        fields={'status':'passed','nonce':nonce,'file':'snapshot-'+nonce+'.xml','sha256':hashlib.sha256(raw).hexdigest(),
+                'bytes':str(len(raw)),'nodes':'1','started_elapsed_ms':'10','completed_elapsed_ms':'11'}
+        def diagnostic(values):return '\n'.join('INSTRUMENTATION_RESULT: '+k+'='+v for k,v in values.items())+'\nINSTRUMENTATION_CODE: -1\n'
+        helper={'raw':raw,'diagnostic':diagnostic(fields)}
+        with patch('emulator_check.uuid.uuid4',return_value=SimpleNamespace(hex=nonce)):
+            value=driver('fresh-without-idle',[idle]*3,helper=helper)
+            captured,root=value.capture_ui()
+            assert captured==raw and root.find('node').get('text')=='fresh'
+            assert (value.dump_count,value.clear_count,value.read_count,value.helper_count,value.helper_read_count)==(3,3,0,1,1)
+            assert value.proofs[-1]['stale_xml_used'] is False and value.proofs[-1]['global_idle_required'] is False
+            count+=1
+            for key,bad in [('nonce','b'*32),('sha256','0'*64),('file','snapshot-old.xml'),('bytes','1'),('nodes','8193'),('started_elapsed_ms','12'),('status','failed')]:
+                changed=dict(fields);changed[key]=bad
+                value=driver('helper-'+key,[idle]*3,helper={'raw':raw,'diagnostic':diagnostic(changed)})
+                rejected(value,AssertionError)
+                assert value.read_count==0 and value.helper_count==1
+            value=driver('helper-command-failure',[idle]*3,helper={**helper,'returncode':1});rejected(value,AssertionError)
+            assert value.helper_read_count==0
+            value=driver('helper-read-failure',[idle]*3,helper={**helper,'readcode':1});rejected(value,AssertionError)
+            value=driver('helper-xml-stale-nonce',[idle]*3,helper={**helper,'raw':raw.replace(nonce.encode(),b'b'*32)})
+            rejected(value,AssertionError)
+            value=driver('helper-late-app-crash',[idle]*3,helper=helper)
+            value.crashes=lambda:'Process: '+PACKAGE if value.helper_count else ''
+            rejected(value);assert not value.proofs
+        fresh_active_root_capture(raw,diagnostic(fields),nonce);count+=1
+        for value in [raw.replace(b'rotation="0"',b'rotation="9"'),b'',b'x'*(8<<20)]:
+            mutated=dict(fields);mutated['sha256']=hashlib.sha256(value).hexdigest();mutated['bytes']=str(len(value))
+            try:fresh_active_root_capture(value,diagnostic(mutated),nonce)
+            except AssertionError:count+=1
+            else:raise AssertionError('Invalid active-root hierarchy admitted')
     return count
 
 

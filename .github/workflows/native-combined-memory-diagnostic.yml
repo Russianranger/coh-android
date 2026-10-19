@@ -133,8 +133,10 @@ jobs:
       with:
         packages: platform-tools
         log-accepted-android-sdk-licenses: false
-    - name: Install scene image qualification dependency in this job
-      run: python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+    - name: Install pinned SDK tools for the separate UI capture test helper
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
     - name: Fetch the exact external donor for Android SAF import qualification
       run: |
         curl --fail --silent --show-error --location --retry 2 --output /tmp/combined-donor.apk https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk
@@ -214,6 +216,7 @@ jobs:
         log-accepted-android-sdk-licenses: false
     - name: Prepare the focused framework test
       run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
         python3 -m pip install --disable-pip-version-check Pillow==12.3.0
         test -c /dev/kvm
         sudo chmod 666 /dev/kvm
@@ -290,6 +293,7 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
         gh api repos/Russianranger/coh-android/actions/artifacts/12159047135/zip > /tmp/combined-previous019.zip
         python3 - <<'PYPIN'
         import hashlib,pathlib

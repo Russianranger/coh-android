@@ -1,0 +1,41 @@
+{
+  "schema": "coh-combined-fragment-driver-schema-qualification-v1",
+  "passed": true,
+  "runtime_source_revision": "7929bdb7b9fbed4007df7a913d9c8d4d5e22660f",
+  "qualification_source_parent_revision": "d4aff288c81e3e30f61a6c27681d84d3203f024c",
+  "focused_tests": 10,
+  "actual_failed_Android_numeric_report_replayed": true,
+  "unchanged_C_JSON_formatters_executed_for_all_existing_probe_stages": true,
+  "packet_parsers_executed_by_new_tests": false,
+  "strict_legacy_core_validator_unchanged": true,
+  "new_probe_keys": [
+    "create",
+    "pose",
+    "sequence",
+    "triggered",
+    "aianim",
+    "netfx",
+    "costume",
+    "reward"
+  ],
+  "controls": "exact complete schema, stage enums, scalar-only keys, bit/numeric/bool bounds, null unexecuted probes, privacy/authority mutations, source-admission binding; historical default stays strict",
+  "source_sha256": {
+    "native-android/combined-client/tools/fragment_interop_emulator_check.py": "1e89b7cc18916ef7e29f76c8cf34e37c9fc4a5e58e495142dbee0eeda66a9341",
+    "native-android/combined-client/tools/interop_probe_contract.py": "d908869a23b9e548b6ff5333dc99ed5fa35cea51ec64980610d2784e7e3505c2",
+    "native-android/combined-client/tools/test_fragment_driver.py": "aae14330875dba7659002a9b8a054d1794a95b0923ecdb6acd3a9526460dc8e3",
+    "native-android/engine/initial-capture/coh_initial_create_probe.c": "309a0c5ab98879a20090e5a757897d7a20a994374dc941d1c92cb668adb8dd87",
+    "native-android/engine/initial-capture/coh_initial_pose_probe.c": "166fccd602670388ac777419ca9091295d82cea54335d5ba06083d8e8f0172b7",
+    "native-android/engine/initial-capture/coh_initial_sequence_probe.c": "b58c2e689b1bef1f4a5967d5ea85553b85020c662232352f2f0fa2d4eb478738",
+    "native-android/engine/initial-capture/coh_initial_triggered_probe.c": "4b1789f1ddb58707b3849147d0b4874e224c997ca393b36a2740daa59f39032b",
+    "native-android/engine/initial-capture/coh_initial_aianim_probe.c": "860346f35204177998bf7c5e64a1b5c8f7247def0658ca9c928f64b597740658",
+    "native-android/engine/initial-capture/coh_initial_netfx_probe.c": "69b0db75f0e5bb2408794ef181eb4246f1dcd4cd146a5b2020e72c4e5f74e9b7",
+    "native-android/engine/initial-capture/coh_initial_costume_probe.c": "a16f03ccfaa0993090bcb79fa55da048eab6185c7ccc41a6aa4de76c6ce29d60",
+    "native-android/engine/initial-capture/coh_initial_reward_probe.c": "0b25e8fc275d62e6640a6a6401c13ce78f1f8ff1383a09a48c147a896cb3a62c"
+  },
+  "test_stderr": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.719s\n\nOK\n",
+  "APK_rebuilt": false,
+  "runtime_changed": false,
+  "Android_requalification": "pending exact audited package continuation",
+  "physical_Thor_qualified": false,
+  "world_authority": false
+}

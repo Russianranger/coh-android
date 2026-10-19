@@ -19,6 +19,31 @@ public final class PhaseMemoryTest {
  static ServerMemoryPolicy.Sample healthy(){return new ServerMemoryPolicy.Sample(8L<<30,16L<<30,256L<<20,false,32L<<20,256L<<20);}
  static PhaseMemoryDiagnostics.ProcessSample proc(Long r,Long p){return new PhaseMemoryDiagnostics.ProcessSample(r,p,"proc_self_smaps_rollup","proc_self_smaps_rollup");}
  public static void main(String[]args)throws Exception{
+  // Fresh-first unavailable values must remain boxed nulls. Seeding a measured
+  // zero before this case would hide the nullable maximum regression.
+  PhaseMemoryDiagnostics.ProcessSample[] first={null,proc(null,null),proc(5L,null),proc(null,7L),
+   proc(0L,null),new PhaseMemoryDiagnostics.ProcessSample(5L,7L,"forged","forged"),proc(-1L,-1L)};
+  for(int c=0;c<first.length;c++){
+   PhaseMemoryDiagnostics fresh=new PhaseMemoryDiagnostics();
+   fresh.record(PhaseMemoryDiagnostics.Phase.COLD_STARTUP,0,1,null,first[c]);
+   need(number(fresh.snapshot(),"samples")==1);need(rows(fresh).size()==1);
+   need(rows(fresh).get(0).get("available_bytes")==null);
+   Long expectedRss=null,expectedPss=null;
+   if(c==2)expectedRss=5L;if(c==4)expectedRss=0L;if(c==3)expectedPss=7L;
+   need(java.util.Objects.equals(fresh.snapshot().get("sampled_peak_process_rss_bytes"),expectedRss));
+   need(java.util.Objects.equals(fresh.snapshot().get("sampled_peak_process_pss_bytes"),expectedPss));
+   // Every unavailable/partial start must recover repeatedly, including
+   // replacing the latest row with unknown while preserving measured peaks.
+   for(int i=1;i<=100;i++){
+    fresh.record(PhaseMemoryDiagnostics.Phase.DIAGNOSTIC,2*i,2*i,healthy(),proc(100L+i,200L+i));
+    fresh.record(PhaseMemoryDiagnostics.Phase.DIAGNOSTIC,2*i+1,2*i+1,null,null);
+    need(rows(fresh).get(1).get("process_rss_bytes")==null);
+    need(rows(fresh).get(1).get("process_pss_bytes")==null);
+    need(number(fresh.snapshot(),"sampled_peak_process_rss_bytes")==100+i);
+    need(number(fresh.snapshot(),"sampled_peak_process_pss_bytes")==200+i);
+   }
+   need(number(fresh.snapshot(),"samples")==201);need(rows(fresh).size()==2);
+  }
   PhaseMemoryDiagnostics p=new PhaseMemoryDiagnostics();need(rows(p).isEmpty());need(p.snapshot().get("sampled_peak_process_rss_bytes")==null);
   need(p.snapshot().get("latest_sample_elapsed_ms")==null);
   p.record(PhaseMemoryDiagnostics.Phase.COLD_STARTUP,0,1,healthy(),proc(0L,0L));
@@ -47,7 +72,7 @@ public final class PhaseMemoryTest {
   for(String reason:new String[]{"SERVER_MEMORY_TELEMETRY_UNAVAILABLE","SERVER_MEMORY_NOT_ADMITTED"})need(PhaseMemoryDiagnostics.states(false,reason).get("memory").equals("MEMORY_TELEMETRY_UNAVAILABLE"));
   for(String reason:new String[]{"ANDROID_LOW_MEMORY","SERVER_START_SYSTEM_MEMORY_PRESSURE","SERVER_START_JAVA_HEAP_PRESSURE","SERVER_SUSTAINED_MEMORY_PRESSURE"})need(PhaseMemoryDiagnostics.states(false,reason).get("memory").equals("MEMORY_PRESSURE_REFUSAL"));
   need(p.snapshot().get("owned_guest_process_memory").toString().contains("unavailable"));need(p.snapshot().get("admission_authority").equals(false));need(p.snapshot().get("server_policy_thresholds_changed").equals(false));
-  System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"retained_phase_limit\":9,\"repeated_records\":9000,\"world_authority\":false}");
+  System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"retained_phase_limit\":9,\"repeated_records\":10407,\"fresh_first_unknown_partial_forged_cases\":7,\"world_authority\":false}");
  }
 }
 '''

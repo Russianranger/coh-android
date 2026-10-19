@@ -36,6 +36,7 @@ def main():
         ('guest-diagnostics', [sys.executable, native / 'combined-client/qualification/check_diagnostics.py']),
         ('server-memory-policy', [sys.executable, native / 'combined-client/qualification/check_server_memory.py']),
         ('phase-memory-diagnostics', [sys.executable, native / 'combined-client/qualification/check_phase_memory.py']),
+        ('memory-worker-failure-recovery', [sys.executable, native / 'combined-client/qualification/check_memory_worker.py']),
         ('memory-jni', [sys.executable, native / 'combined-client/qualification/check_memory_jni.py']),
         ('viewport-policy', [sys.executable, native / 'combined-client/qualification/check_viewport.py']),
         ('imports', [sys.executable, native / 'combined-client/imports/tests/check_imports.py', '--donor-apk', args.donor_apk.resolve()]),
