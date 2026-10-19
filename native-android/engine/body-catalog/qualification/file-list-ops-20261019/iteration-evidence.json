@@ -1,0 +1,86 @@
+{
+  "schema": "coh-file-list-ops-iteration-evidence-v1",
+  "failed_iterations": [
+    {
+      "attempt": 1,
+      "passed": false,
+      "reason": "Compiler Werror rejected misleading indentation in wrapper identity guard; split statements into lines without semantic changes.",
+      "full_scratch_evidence_directory": "/workspace/scratch/0484ad305122/worker-b-attempt1",
+      "retained_files": {
+        "source-identity.json": {
+          "bytes": 1898,
+          "sha256": "dc754867ed05715e456d8363f455248fa91903e69ba976f6f8154069c9d55f65"
+        },
+        "file-list-ops-provider.c": {
+          "bytes": 11220,
+          "sha256": "860d67c1029b8945b8d5826e354fd16a3b4b7a0fe93f36e3f78f4232d1b8506d"
+        },
+        "release-compile.command.json": {
+          "bytes": 621,
+          "sha256": "641fc3c282534714212d853ac455e62caebc274d827c18d02c33c7e071943579"
+        },
+        "release-compile.stderr": {
+          "bytes": 838,
+          "sha256": "0c4eed6d57f7fc4733149533d56877e58c83a99f758e28aadbf0f21496259ac6"
+        }
+      }
+    },
+    {
+      "attempt": 2,
+      "passed": false,
+      "reason": "ASan LeakSanitizer cannot inspect /proc task under host ptrace; final established ASan profile disables LeakSanitizer and makes no leak/allocator closure claim. Release passed before this host instrumentation refusal.",
+      "full_scratch_evidence_directory": "/workspace/scratch/0484ad305122/worker-b-attempt2",
+      "retained_files": {
+        "source-identity.json": {
+          "bytes": 1898,
+          "sha256": "275f4fc8db6ea2e8d2c3ff3d093594ba621cc1839e0785864e8271f5b7b055ae"
+        },
+        "file-list-ops-provider.c": {
+          "bytes": 11224,
+          "sha256": "866c5a1b6889f3b6bc230edcafdda97d9a385fcf60bbc113559ed9e38497ef01"
+        },
+        "release-native.stdout": {
+          "bytes": 1333,
+          "sha256": "a8bf754e0dd5f3c1d5358aa83437503474fcc5964dc8bd3fe0d71dab768df5b8"
+        },
+        "release-build.json": {
+          "bytes": 1975,
+          "sha256": "7e7c5aaedd4ead8d3de7755812a2a655fafe3d05620843ce46387f5e250a551f"
+        },
+        "asan-compile.command.json": {
+          "bytes": 661,
+          "sha256": "e9b0ec1029cae836cfa35df1117eae7d142ade492a3a86119efae3885159b922"
+        },
+        "asan-build.json": {
+          "bytes": 2059,
+          "sha256": "e1d3a673f0177911585461d05efbf18bbe3740b49b3cd567f0ef4af6792041c7"
+        },
+        "asan-native.command.json": {
+          "bytes": 386,
+          "sha256": "d6e39b778ae37d77accc3910e5538307a5b2465371c34c4218ee9c5ca1997f57"
+        },
+        "asan-native.stderr": {
+          "bytes": 266,
+          "sha256": "59c50e7ca61e3c27b759485bb51232e6e7b4dd7caf4919b9d6d550b3f7657f62"
+        }
+      }
+    }
+  ],
+  "passing_iterations": [
+    {
+      "attempt": 3,
+      "full_scratch_evidence_directory": "/workspace/scratch/0484ad305122/worker-b-attempt3",
+      "host_receipt_sha256": "cf55e79534421b51f8cf6dde633157ab0945676027d5b10a4e1cc357e7c9a162",
+      "checks_each_mode": 1761
+    },
+    {
+      "attempt": 4,
+      "full_scratch_evidence_directory": "/workspace/scratch/0484ad305122/worker-b-attempt4",
+      "host_receipt": "host.json",
+      "host_receipt_sha256": "72fe3ea8a3726dda396662cf4a64979c30f59fc233cd35304c1e1077be82ab18",
+      "checks_each_mode": 1761,
+      "final_frozen_sources": true
+    }
+  ],
+  "review": "Independent read-only agent found no material correctness gap in final four source files. Source Create/Search/Insert/Find unchanged; source earray, allocator, forwardSlashes implementation and real filesystem closure explicitly unqualified. No source OOM recovery claim."
+}

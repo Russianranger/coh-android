@@ -1,0 +1,8 @@
+/workspace/scratch/0484ad305122/worker-b-attempt1/file-list-ops-provider.c: In function ‘fileops_apply’:
+/workspace/scratch/0484ad305122/worker-b-attempt1/file-list-ops-provider.c:161:2: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+  161 |  if(memcmp(observed,expected,sizeof(*expected)))status=COH_STATE;if(status!=COH_OK)goto refused;r.identity_matched=1;
+      |  ^~
+/workspace/scratch/0484ad305122/worker-b-attempt1/file-list-ops-provider.c:161:66: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  161 |  if(memcmp(observed,expected,sizeof(*expected)))status=COH_STATE;if(status!=COH_OK)goto refused;r.identity_matched=1;
+      |                                                                  ^~
+cc1: all warnings being treated as errors
