@@ -254,7 +254,7 @@ packed or40 byte-aligned bits. Formatter rejects invalid domains/context before
 packing. The first-literal's five fields,192-byte child,7,168-byte report,
 existing overflow guard and cleanup are preserved.
 
-The current addition, `coh_initial_costume_body_probe`, enters the FIRST body
+The accepted `coh_initial_costume_body_probe` enters the FIRST body
 at `slots.end_bit` in that same loan after complete initial self/full-list
 framing. Exact-end slot completion still invokes it to diagnose a missing first
 body flag. Its only scope is the optional `entTypeFile` and `costumeFilePrefix`
@@ -307,6 +307,42 @@ At most2 literal leaves,4168 packed/4224 compressed body-prefix bits are read;
 total delta including slots is at most4264. Formatter validates ranges and
 same-boundary context before packing. The first-literal five fields,192-byte
 child,7,168-byte total cap, existing overflow guard and cleanup stay intact.
+
+The current addition, `coh_initial_appearance_probe`, starts at that verified
+body prefix's `end_bit` in the SAME loan. It also runs at exact prefix end to
+diagnose a missing bodytype. It reads/discards raw Pack6 bodytype, skin32,
+converted Boolean, supergroup color selector3 and extra-info Boolean, then
+stops BEFORE the first SG color word. It supplies no dictionary or catalog count.
+Pack6 is escaped U32 syntax (6/18/42/74 total bits), not a six-bit value ceiling.
+The native dictionary's64-entry catalog ceiling is not substituted for genuine
+membership evidence. Even wide bodytype syntax grants no resource/type admission.
+
+Rounded converted/extra flags must0/1 and the selector must0..7. The initial
+self/full-list source calls `costume_send(...,1)`, so extra0 is UNSUPPORTED/EXTRA
+for this profile, not malformed source syntax in general. Extra1 records only
+`scalars_validated` and stops at COLORS: UNSUPPORTED with following bits, INVALID
+at exact end with scalar syntax retained. Truncated Pack preserves its first
+scalar cursor, matching the existing transactional reader; later malformed or
+shortened scalars report their own first field/cursor. Values are discarded;
+no raw bodytype, skin/color, converted, selector or extra value is retained in
+the controller or exported. This helper never returns COH_OK or complete costume.
+
+Prior reward/slot/body failures keep their accepted tuple. New appearance
+stages27..32 use the same7 positions [status,stage,done0,done1,list_end,total_delta,
+metadata]. Stages are BODYTYPE,SKIN,CONVERTED,SUPERSET,EXTRA,COLORS respectively.
+Metadata bits0..3 current;4..11 additional;12 deferred;13..16 stored count;
+17..18 body present mask;19 second-field cached;20 compressed;21..27 consumed
+appearance bits. Full-list/slot-framed1 and body seen/complete masks3,prefix1,
+first cached0 are implicit. Body prefix end is list_end+total_delta-consumed;
+slot end is list_end+(compressed?40:22); exact failure is list_end+total_delta.
+Thus previous boundaries/context remain recoverable without adding report fields.
+
+Only5 fields and at most111 packed/88 compressed bits are inspected; maximum
+combined delta is4301 packed/4352 compressed bits. Existing first-literal fields,
+4MiB input,192-byte child,7,168-byte report cap, overflow guard and cleanup remain.
+No SG colors/scales/part count/parts, unresolved indexed string or later record
+is read. No body/catalog membership, generation, ownership, actor, world or
+application ACK acceptance is granted.
 
 ## Original protocol evidence
 
@@ -395,6 +431,13 @@ indexed string versus one-entry zero-bit cache reference. Source sender uses
 case-insensitive cache matching. A prefix literal or cache reference does not
 establish actual filesystem/resource identity or dictionary generation.
 
+Original `costume_send` at `Common/entity/costume.c:1541..1547` and
+`costume_receive:1438..1442` agree on Pack6/skin/converted/selector/extra order,
+then6×12 SG color U32s. The consumer checks bodytype membership only later,
+after scales/part count. The self branch in `entsend.c:2831` passes send_names1;
+the other-player branch can pass0. The new probe qualifies raw scalar syntax
+under that initial self profile without inventing a runtime catalog.
+
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
 against the owned local-development handoff; it does not establish whole-list
@@ -408,40 +451,38 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_costume_body_probe.py --sanitize --output NEW.json` executes
-unchanged whole original `costume_send`, `sendCachedIndexedString`,
-`pktSendIndexedString`, `defaultBitsPack` and `log2i` with original bit writers.
-Explicit fixture costume shells and stash hit/miss/capacity adapters qualify
-this two-field prefix. They do not admit a real resource catalog or generation.
-The original consumer is inspected, not applied. Accepted slot source/receipt
-hashes are checked; old checker mains and source/native suites are not replayed.
+`check_initial_appearance_probe.py --sanitize --output NEW.json` executes
+unchanged whole original `costume_send` and its actual cache/indexed-string and
+bit-writing helpers. Fixture shells and stash adapters remain explicit and
+establish no actual catalog membership/generation. Extra0 source fixtures use
+the original quantized-scale writer on their later tail. Original consumer
+ordering is inspected, not applied. Accepted body-prefix source/receipt hashes
+are checked; no old checker mains or native suites are replayed.
 
-Release, ASan and UBSan each pass5,649,273 checks across277 fixtures, including
-180,105 shortened extents,180,105 prefix mutations,730,230 unread-tail/index
-controls,10 API/alias controls and50 formatter-domain controls. The maximum is
-2 completed literals/518 text bytes, with4168 packed/4224 compressed bits read.
-Cache observations include empty/case-fold hits; all54 indexed refusals stop
-before Pack. The native prefix frame is256 bytes plus the accepted176-byte
-literal frame; formatter frames64/96 bytes are bounded. These figures are host
-stack evidence, not device RSS qualification.
+Release, ASan and UBSan each pass2,876,348 checks across191 fixtures, including
+11,763 shortened extents,11,763 bit mutations,545,341 unread SG/suffix controls,
+10 API/alias controls and60 formatter-domain controls. Source fixtures use
+bodytypes0..INT_MAX; full-U32/overflow endpoints are labeled native wire controls.
+No valid catalog membership is inferred. Maxima111 packed/88 compressed bits and
+24 extra0 profile refusals are verified. Native parser stack is224 bytes;
+formatter frames80/144 bytes are bounded host evidence, not device RSS proof.
 
-Affected JNI release/ASan/UBSan each pass4,053 checks across73 scenarios with85
+Affected JNI release/ASan/UBSan each pass4,833 checks across86 scenarios with98
 wiped frees. Observed maximum report is7,153 bytes. Bounded projection checks
 reach7,167 bytes plus NUL (159-byte child), preserving all other observed fixture
 fields. This does not qualify every possible transport-counter combination;
-the existing report overflow guard remains. No caps are increased.
+the existing report overflow guard remains. No limits are increased.
 
-The JNI fixture keeps the accepted source-qualified prefix through1717, then
-uses an original literal `FixtureEntity` followed by case-insensitive cache
-reuse `fixtureentity`. Its prefix ends at1835 before bodytype Pack6; that field and
-later appearance bytes remain unread. JNI doubles exercise empty-cache refusal,
-indexed storage before Pack, malformed nested presence, shortened scalars and
-NUL, exact literal/prefix end, absent fields and unchanged unread body tails.
-All authority/application ACK fields remain false and cleanup remains verified.
+The JNI fixture preserves accepted bytes through1835, then uses source-produced
+bodytype1,skin0xffeeddcc,converted1,selector5,extra1. These scalars end1878 BEFORE
+the first SG color word. JNI controls cover each truncated scalar, extra0,
+exact scalar end, discarded-value changes, unchanged unread tail and preserved
+unresolved indexed-string stops. Raw capture/cleanup and authority-false fields
+remain intact; scalar refusals do not create a terminal transport failure.
 
-Receipts/source hashes are in `qualification/initial-costume-body-20261019/`;
-focused CI is `Native initial ALLENTS costume-body prefix`. Exactly ONE prefix
-milestone ends here. No renderer/compiler/network/Android13 suites, original
+Receipts/source hashes are in `qualification/initial-appearance-20261019/`;
+focused CI is `Native initial ALLENTS appearance scalars`. Exactly ONE scalar
+milestone ends here. No renderer/compiler/network/Android13 suites, live original
 server transaction, new Thor run or APK is claimed. Complete costume/character,
 dictionary-generation and session-ownership qualification remain blocked.
 

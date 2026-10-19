@@ -1,0 +1,273 @@
+{
+  "schema": "coh-initial-appearance-qualification-v1",
+  "passed": true,
+  "source_revision": "494dd6054e041ed92b7e0746a9ae1437ce8a9c55",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/costume_oracle.py": "d24379c691fd02152819fe8fe7a08556c6a5545c8bbdab0860dfd93ddba41785",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/initial-capture/check_initial_appearance_probe.py": "36d5fa55aa0c7f520c33393eb2a9fa4a530e0e6543850916a457793f01fe77e4",
+    "native-android/engine/initial-capture/check_initial_costume_body_probe.py": "70bd389c7e690f0dd542cd22bd08c520306bd5ec15b41d851da8f664d47d352e",
+    "native-android/engine/initial-capture/coh_initial_appearance_probe.c": "0738edb10afe8f9056957401360bbc10f11d4e3086e6976df5f19c868a25e723",
+    "native-android/engine/initial-capture/coh_initial_appearance_probe.h": "705d417e1ea17eac5d974ace56b41680e8d0ef48e0109a438b3164026c4ca4df",
+    "native-android/engine/initial-capture/coh_initial_costume_body_probe.h": "d054d71d1bce6cbd7a18dbb586d0a15bf2d74df3db7d47527c62d274d7cb3a26",
+    "native-android/engine/initial-capture/coh_initial_costume_slots_probe.h": "3997ebc44aa37949ec0aae32b471e504f8b33191189b83a935acfdd56162994b",
+    "native-android/engine/initial-capture/coh_initial_reward_list_probe.h": "3e9e5778d60a53473ccaf07ef592f3692ecc454e955ac4702d7262cceb996632",
+    "native-android/engine/initial-capture/coh_initial_reward_probe.h": "7cd20aa2c3401d9e5f14658f0089ce508269bcbde2b7b24374e21d8df074f686",
+    "native-android/engine/initial-capture/qualification/initial-costume-body-20261019/host.json": "e2444ef92875ba6055914c42e93de1e62b3c8d0bf18608d5fcb130711a7fd38e",
+    "native-android/engine/initial-capture/qualification/initial-costume-body-20261019/jni-fixture.h": "0729634a3ac6227ad5eb0f7a6342e215e304b3d2d6accc7009f4df3214916601",
+    "native-android/engine/initial-capture/test_initial_appearance_probe.c": "8910e9ecbb43b92cd9957e9de8fd0cd59b59443e7dcf895389c46072a2e82730",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_scalar_producer": {
+    "original_source_sha256_lf": {
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34"
+    },
+    "whole_functions_sha256_lf": {
+      "pktSendF": "dc4bb7cb17a40785b8efa1b9dbfd039c6b06992a1f937f0c981374973088eb26",
+      "log2i": "38a335660e4b9e2355c0ae036af92e2b43b0f29269b57dfbe1e12bd8c801a8eb",
+      "defaultBitsPack": "f5ca7cef3a4e7c8cc6c2acfee869591fca30c7013bafc9fae9bc65edb073df0a",
+      "pktSendIndexedString": "ec43ed9a083e4781ac87f4bde24a4583e9279d24aaddc912a657d62531512ca3",
+      "sendCachedIndexedString": "1fdfc42b992f90c7ee36e5a94525bcd7e4cca279b63182900b2d241bfd3e05d3",
+      "costume_send": "013ab264512eb599490ad448cb3ef3f03ad306f2e8c01b4d948dbf69be281344"
+    },
+    "consumer_source_function_sha256_lf": "b95b51d167699363b3f8548df9d9de5c305666400a08e2951618cbc4ab4c504d",
+    "generated_oracle_sha256": "bcf4d40d11df8eff985e9aae97778ae7d052a23442dffec8126d5ff099085ddf",
+    "shim_sha256": "f22cbb7d174429c0d2c013b4163883356ab429fa57b645a7f5ec6d3b5589e40e",
+    "observer_sha256": "de25de4cc23a515224afba9b6defbbe78339ab6f4a38ee07c2ad3418b5d8950d",
+    "wrapper_sha256": "fab26773be1df471bfd6a81382ff715097444279b6053ace2f5c0f885e64223d",
+    "fixture_stash_capacity": 8,
+    "stash_and_member_subset_are_fixture_adapters": true,
+    "source_bodytype_inputs_limited_to_int_max": true,
+    "catalog_count_supplied": false,
+    "bodytype_catalog_admitted": false,
+    "original_consumer_executed": false,
+    "packet_debug_profile": 0,
+    "oracle_sanitized": false
+  },
+  "retained_costume_body": {
+    "host_sha256": "e2444ef92875ba6055914c42e93de1e62b3c8d0bf18608d5fcb130711a7fd38e",
+    "header_sha256": "0729634a3ac6227ad5eb0f7a6342e215e304b3d2d6accc7009f4df3214916601",
+    "payload_sha256": "a445d2c1f302e488b5d3db3233c5f19fb13f4af1f2bd410774ad70f32a700a3b",
+    "prefix_bits": 1835,
+    "source_inputs_verified": 18,
+    "old_checker_mains_executed": false,
+    "old_native_suites_executed": false
+  },
+  "fixtures": {
+    "count": 191,
+    "sha256": "bfea10f2b7a73004ea6eeccdd1c928309f6b98b577048814cf5ee5210dd4ee67",
+    "whole_original_projection_checks": 191,
+    "case_manifest_sha256": "56b62a74e1cf36426c15e1669a778b26f23b3181a1ab85907550c400611ad685",
+    "source_bodytype_values": [
+      1,
+      0,
+      1,
+      8,
+      9,
+      62,
+      63,
+      64,
+      4157,
+      4158,
+      4159,
+      16781372,
+      16781373,
+      16781374,
+      2147483647,
+      1,
+      63
+    ],
+    "synthetic_native_bodytype_values": [
+      2147483648,
+      4294967295
+    ],
+    "synthetic_pack_overflow_control": true,
+    "packed_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "compressed_offsets": [
+      0,
+      8
+    ],
+    "maximum_scalar_bits": [
+      111,
+      88
+    ],
+    "supergroup_colors_consumed": false
+  },
+  "source_generated_jni_fixture": {
+    "payload_bits": 5147,
+    "payload_sha256": "8c7414153092a066abc44a877e1ef7f702ee93ee2faa5ec8c7583f7a950447bc",
+    "appearance_begin_bit": 1835,
+    "bodytype_end_bit": 1841,
+    "scalars_end_bit": 1878,
+    "accepted_body_prefix_matched": true,
+    "values_discarded": true,
+    "bodytype_catalog_admitted": false,
+    "device_packet": false,
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "sequence_end_bit": 475,
+    "triggered_end_bit": 560,
+    "ai_end_bit": 658,
+    "netfx_end_bit": 1440,
+    "list_begin_bit": 1444,
+    "reward_begin_bit": 1477,
+    "reward_end_bit": 1591,
+    "first_group_end_bit": 1592,
+    "late_reward_begin_bit": 1625,
+    "list_end_bit": 1695,
+    "slots_begin_bit": 1695,
+    "current_begin_bit": 1696,
+    "additional_begin_bit": 1704,
+    "multiple_begin_bit": 1712,
+    "count_begin_bit": 1713,
+    "slots_end_bit": 1717,
+    "body_begin_bit": 1717,
+    "first_flag_begin_bit": 1717,
+    "first_cache_begin_bit": 1718,
+    "first_presence_begin_bit": 1719,
+    "first_storage_begin_bit": 1720,
+    "first_text_begin_bit": 1721,
+    "prefix_flag_begin_bit": 1833,
+    "prefix_cache_begin_bit": 1834,
+    "bodytype_begin_bit": 1835,
+    "prefix_end_bit": 1835,
+    "header_sha256": "a737e22ca8cd830d64e0ab9da6e1fc5a8e23121fa5d18704300449d644543cce"
+  },
+  "checks": {
+    "release": {
+      "checks": 2876348,
+      "fixtures": 191,
+      "complete_scalar_observations": 161,
+      "maximum_consumed_bits": [
+        111,
+        88
+      ],
+      "other_profile_refusals": 24,
+      "value_discard_controls": 2,
+      "truncated_extents": 11763,
+      "mutations": 11763,
+      "unread_tail_controls": 545341,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 191,
+      "formatter_domain_checks": 60,
+      "dictionary_admitted": false,
+      "bodytype_catalog_admitted": false,
+      "supergroup_colors_consumed": false,
+      "complete_costume": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 2876348,
+      "fixtures": 191,
+      "complete_scalar_observations": 161,
+      "maximum_consumed_bits": [
+        111,
+        88
+      ],
+      "other_profile_refusals": 24,
+      "value_discard_controls": 2,
+      "truncated_extents": 11763,
+      "mutations": 11763,
+      "unread_tail_controls": 545341,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 191,
+      "formatter_domain_checks": 60,
+      "dictionary_admitted": false,
+      "bodytype_catalog_admitted": false,
+      "supergroup_colors_consumed": false,
+      "complete_costume": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 2876348,
+      "fixtures": 191,
+      "complete_scalar_observations": 161,
+      "maximum_consumed_bits": [
+        111,
+        88
+      ],
+      "other_profile_refusals": 24,
+      "value_discard_controls": 2,
+      "truncated_extents": 11763,
+      "mutations": 11763,
+      "unread_tail_controls": 545341,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 191,
+      "formatter_domain_checks": 60,
+      "dictionary_admitted": false,
+      "bodytype_catalog_admitted": false,
+      "supergroup_colors_consumed": false,
+      "complete_costume": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "b0c093074228cec18c0c411d83046756a0f207433719165e4554e428d32c9080",
+    "asan": "8321fbaea6b5d0c97b208af6db602744966319d4e4e1e8f49eac2f477ee73c77",
+    "ubsan": "ec30f7dadf8c184e3a8b9ea28d2cc6f7e4ec47bb07a68517b8d50afa338cb3c3"
+  },
+  "native_probe_stack_frames": [
+    {
+      "function": "valid.part.0",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_appearance_probe",
+      "bytes": 224,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_appearance_probe_json",
+      "bytes": 80,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_initial_appearance_progress_json",
+      "bytes": 144,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "scope": "Whole unchanged original costume_send with original cached/indexed-string and pktSendF/bit writers, under explicit member-subset/stash adapters. Only raw five-scalar syntax is accepted; values are discarded, extra0 refuses the initial-self profile, and all SG colors/suffix remain unread. Raw bodytype decoding establishes no catalog identity or complete costume. No original consumer application or server transaction qualified.",
+  "old_checker_mains_executed": false,
+  "old_native_suites_executed": false,
+  "physical_device_executed": false,
+  "dictionary_admitted": false,
+  "bodytype_catalog_admitted": false,
+  "supergroup_colors_consumed": false,
+  "complete_costume": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}
