@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "review_kind": "independent read-only agent audit, not CI or physical acceptance",
+  "source_sha256": {
+    "native-android/engine/scenecatalog/coh_source_placement.c": "83411d7506bd23d4d5f8ddd095e8713ab32683b7694a0fdb627b6b39880cafc6",
+    "native-android/engine/scenecatalog/coh_source_placement.h": "50f77283774f1dd10e272bd8f8799486209dc5dae8dd2dd2b36f89b596dbf7f5",
+    "native-android/engine/scenegraph/coh_runtime_candidates.c": "2eabd2456f52912eef9620da1fdbb2f598d9cdec4677f9617304d47b5f12d77c",
+    "native-android/engine/scenegraph/coh_runtime_candidates.h": "50af6b3e7f9ad7c49844f5a6a534ba91eb02c31007530c249002527d6379d319"
+  },
+  "qualification_sha256": "39b92531c10174c3a0cd52962f85ad4291ff96b4dac4486e46c82fa1b9989bc8",
+  "findings": [
+    "Actual join/catalog/snapshot/graph owner identity, full source record identity, indexed root validation and unchanged-on-refusal output accepted.",
+    "Named retained-owner arithmetic and known alias/endpoint guards accepted under the explicit external-lease/caller-retained contract.",
+    "No allocation/callback/retain/GPU/material/authority path.",
+    "Unmodified source-candidate precondition remains necessary; arbitrary changed descendant matrices or walk identifiers are not independently authenticated."
+  ],
+  "world_authority": false,
+  "android_executed": false,
+  "physical_thor_accepted": false
+}

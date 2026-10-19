@@ -39,6 +39,8 @@ CohStatus coh_runtime_candidates_create(const CohRuntimeGraph*g,CohResourceJoin*
  failure:free(c->map);free(c);return status;
 }
 CohStatus coh_runtime_candidates_report(const CohRuntimeCandidates*c,CohRuntimeCandidateOwnerReport*out){if(!c||!out||!output_disjoint(c,out,sizeof(*out)))return COH_INVALID;*out=c->report;return COH_OK;}
+CohStatus coh_runtime_candidates_identity(const CohRuntimeCandidates*c,CohRuntimeCandidateIdentity*out){if(!c||!out||!output_disjoint(c,out,sizeof(*out)))return COH_INVALID;*out=(CohRuntimeCandidateIdentity){c->join,c->identity};return COH_OK;}
+CohStatus coh_runtime_candidates_check_span(const CohRuntimeCandidates*c,const void*p,size_t n){if(!c||(n&&!p)||n>UINTPTR_MAX-(uintptr_t)p||!output_disjoint(c,p,n))return COH_INVALID;return COH_OK;}
 CohStatus coh_runtime_candidates_node(const CohRuntimeCandidates*c,uint32_t node,uint32_t*out){if(!c||!out||!output_disjoint(c,out,sizeof(*out)))return COH_INVALID;if(node>=c->report.nodes||c->map[node]==UINT32_MAX)return COH_NOT_FOUND;*out=c->map[node];return COH_OK;}
 CohStatus coh_runtime_candidates_source(const CohRuntimeCandidates*c,uint32_t ordinal,CohResourceSource*out){if(!c||!out||!output_disjoint(c,out,sizeof(*out)))return COH_INVALID;if(ordinal>=c->count)return COH_NOT_FOUND;*out=c->sources[ordinal];return COH_OK;}
 CohStatus coh_runtime_candidates_begin(CohRuntimeCandidates*c,const CohRuntimeInstances*walk,

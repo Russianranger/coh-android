@@ -43,6 +43,16 @@ CohStatus coh_runtime_candidates_create(const CohRuntimeGraph *,CohResourceJoin 
 CohStatus coh_runtime_candidates_retain(CohRuntimeCandidates *);
 void coh_runtime_candidates_free(CohRuntimeCandidates *);
 CohStatus coh_runtime_candidates_report(const CohRuntimeCandidates *,CohRuntimeCandidateOwnerReport *);
+typedef struct {const CohResourceJoin *join_identity;CohResourceJoinIdentity join;} CohRuntimeCandidateIdentity;
+/* Actual borrowed owner correlation for synchronous preparation joins. No
+ * retain, allocation or authority transition. Output remains disjoint from the
+ * private context/map and retained source spans; unchanged on refusal. Graph
+ * and context leases still must outlive the consumer. */
+CohStatus coh_runtime_candidates_identity(const CohRuntimeCandidates *,CohRuntimeCandidateIdentity *);
+/* Read-only control-span guard for composed synchronous consumers. Validates
+ * known context/map/source spans and endpoint arithmetic; never dereferences
+ * supplied span. Other opaque dependency allocations remain caller-disjoint. */
+CohStatus coh_runtime_candidates_check_span(const CohRuntimeCandidates *,const void *,size_t);
 /* Borrowed immutable exact source bytes through last context/pager release.
  * Source metadata only; no file-body/material/LOD/live-generation admission.
  * Query outputs must be disjoint from controls/private/source allocations. */

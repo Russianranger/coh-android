@@ -1,0 +1,98 @@
+{
+  "passed": true,
+  "capture_artifact_sha256": "572d5cde08f698173cce4c9a0860902a2da91841b22dbdd124501e1e601e192d",
+  "body_sha256": "80e8e7530ab9d42ad98a6ddd065a0e40ba1cc1a999558241c3aebc17eb89db9a",
+  "body_bytes": 1104239,
+  "body_acquisition": {
+    "schema": 1,
+    "passed": true,
+    "candidate_report_sha256": "a52d6470847fc01a677cfa2822c0cf5eae23eecefcb52edb7e2789ecd5c637a6",
+    "helper_sha256": "12fad465c6c087fa0a2bdb6917d1c6fd619926f83378efd86e3f6ddcabcc95da",
+    "script_sha256": "1dbce191b1fc4e07cf5dd68f3c2d8b6fb0247f961bd9c58bc953b4a9ae6d099a",
+    "source_capture_identity": {
+      "catalog.cohcat": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+      "source-identity.json": "9b74823a341fe565a978f81516b3b13ea8741ec8ecc57bb2b8bfb40130943eaa",
+      "run-identity.json": "e6a25d7e6429fbb856fad617c5f8eeab75325c0fb7c0083be7f91348e5765ced",
+      "resource-binding.json": "7c42a9612e4e08ee6463c3a8f87d2cf0749ff2baa8183d6b3c58281ec004c39c",
+      "runtime.cohrts": "c262be9797ad03ce0dfe02ec5afd7d44bae8144d19f2a25dacdc310ada33bb02",
+      "resources.cohres": "8500764939215b576e5ff88056ec85b475785038e09600019846ff5a06eb1cd6"
+    },
+    "manifest_sha256": {
+      "client-visual-manifest.json": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+      "atlas-world-supplement-manifest.json": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+    },
+    "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+    "outer_expected_bytes": 1630092780,
+    "outer_full_sha_verified": false,
+    "inner_full_sha_verified": false,
+    "selected_payload_sha_verified": true,
+    "same_source_generation_established": false,
+    "assets_admitted": false,
+    "records": [
+      {
+        "source_geo_name": "object_library/city_zones/Atlas_Park_makeover/ap_cityhall_makeover_01.geo",
+        "asset_path": "data/object_library/city_zones/atlas_park_makeover/ap_cityhall_makeover_01.geo",
+        "manifest": "atlas-world-supplement-manifest.json",
+        "bytes": 1104239,
+        "sha256": "80e8e7530ab9d42ad98a6ddd065a0e40ba1cc1a999558241c3aebc17eb89db9a",
+        "zip_crc32": "0bbfc27e",
+        "zip_header_offset": 7565594,
+        "zip_method": 0,
+        "zip_compressed_bytes": 1104239,
+        "payload_sha_verified": true,
+        "same_source_generation_established": false
+      }
+    ],
+    "requested_source_geos": [
+      "object_library/city_zones/Atlas_Park_makeover/ap_cityhall_makeover_01.geo"
+    ],
+    "resume_verified_files": 0,
+    "archive_expected_sha256": {
+      "atlas-world-supplement-manifest.json": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f",
+      "client-visual-manifest.json": "5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60"
+    },
+    "payload_bytes": 1104239,
+    "range_bytes": 3358188,
+    "ranges": [
+      [
+        1630076928,
+        1630092779
+      ],
+      [
+        357695488,
+        357761023
+      ],
+      [
+        565510144,
+        565575679
+      ],
+      [
+        565116928,
+        565575679
+      ],
+      [
+        594411520,
+        594477055
+      ],
+      [
+        1453522944,
+        1453588479
+      ],
+      [
+        1452146688,
+        1453588479
+      ],
+      [
+        365232128,
+        365297663
+      ],
+      [
+        365297664,
+        366411775
+      ]
+    ],
+    "etag": "\"0x8DF27B1DA04C5EA\""
+  },
+  "current_live_generation_admitted": false,
+  "world_authority": false
+}

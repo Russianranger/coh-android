@@ -1,0 +1,52 @@
+name: Native bounded source world resource integration
+'on':
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-world-resource-integration.yml
+      - native-android/engine/scenecatalog/coh_source_placement.*
+      - native-android/engine/scenecatalog/check_source_placement.py
+      - native-android/engine/scenecatalog/prepare_source_placement.py
+      - native-android/engine/scenecatalog/tests/test_source_placement.c
+      - native-android/engine/scenegraph/coh_runtime_candidates.*
+      - native-android/engine/scenegraph/coh_runtime_instances.*
+      - native-android/engine/scenegraph/runtime_snapshot.*
+      - native-android/engine/scenecatalog/coh_source_sealed.*
+      - native-android/engine/scenecatalog/coh_source_mesh_batch.*
+      - native-android/engine/scenecatalog/coh_source_mesh.*
+      - native-android/engine/scenecatalog/coh_source_selection.*
+      - native-android/engine/scenecatalog/coh_resource_join.*
+      - native-android/engine/scenecatalog/coh_resource_index.*
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-world-resource-integration-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  bounded-source-placement:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install focused native dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc libssl-dev zlib1g-dev
+      - name: Reuse exact capture and acquire one bounded authenticated GEO body
+        run: |
+          python3 native-android/engine/scenecatalog/prepare_source_placement.py --source-root . --output "$RUNNER_TEMP/source-placement"
+      - name: Qualify source instances and sealed geometry in release ASan and UBSan
+        run: |
+          mkdir -p out/source-placement
+          python3 native-android/engine/scenecatalog/check_source_placement.py --capture-directory "$RUNNER_TEMP/source-placement/capture" --body-directory "$RUNNER_TEMP/source-placement/bodies" --dictionary-source-root . --dictionary-cache "$RUNNER_TEMP/source-placement/tricks.bin" --output out/source-placement/host.json
+          cp "$RUNNER_TEMP/source-placement/preparation.json" out/source-placement/preparation.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-world-resource-integration-${{ github.sha }}
+          path: out/source-placement/
+          if-no-files-found: error
+          retention-days: 90
