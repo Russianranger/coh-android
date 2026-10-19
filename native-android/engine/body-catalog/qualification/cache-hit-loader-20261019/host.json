@@ -1,0 +1,2376 @@
+{
+  "schema": "coh-original-cache-hit-loader-qualification-v1",
+  "passed": true,
+  "source_revision": "2b0e0b6afaa76ac17eea0a9a80066ed1a748287d",
+  "source_sha256": {
+    "native-android/engine/body-catalog/body-part-loader-source-pins.json": "c4b6d90edeba28f074b8206bb07a1487a3e44ff29fafe32a9935cd70a12d2486",
+    "native-android/engine/body-catalog/body-read-source-pins.json": "e53fd70d9e2ba26921c07c76b688a39d512115ca5d75bc4cbd28ae2bc63e55cf",
+    "native-android/engine/body-catalog/body_part_loader_provider.py": "eab3d0ee944707e9a5a51f7fac9d22f04744aaf2592c3f6dd59a1caf52aa6056",
+    "native-android/engine/body-catalog/body_read_provider.py": "33a1eaf977505be27cdeb46b66d4d8cca1c3140afb091e40f4baf0a5bcde08f4",
+    "native-android/engine/body-catalog/cache-hit-loader-source-pins.json": "ba192350cbd17d68fde2b440e43d54aa967529a73612926cdca834fcbfd32159",
+    "native-android/engine/body-catalog/cache_hit_loader_provider.py": "4d58bdc8af32de99655b500df799d68a260d8d919cc8a553984adb13eaf4e398",
+    "native-android/engine/body-catalog/check_cache_hit_loader.py": "c5261e2ce9fd1af8344e98e1aef6644735304da4de9474d110e1c2e46720fb4d",
+    "native-android/engine/body-catalog/check_schema_crc.py": "bde9f1fdd11841d01d73945bb08888ad751bf8327620f2325d01d3586d52d2e2",
+    "native-android/engine/body-catalog/cryptopp_adler_source.py": "9f247cae057d3ce3f065a7b423fbbb85cec186c29ece7704df6fb60aaa363aa7",
+    "native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.json": "b18e582cd1b6ad15cc924c2a95bf6072538f3e4b87eba43ce3ae55d9a44f0d20",
+    "native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.zip": "7bb26369ae06a19836694df00dad2b4eb8e2f1046ddf3366747bdf6393b1cf15",
+    "native-android/engine/body-catalog/schema-crc-source-pins.json": "bc2275735ab9a4ef13384e372ba2c5c5caf2425abe1a37447d7ccc7c0b50f349",
+    "native-android/engine/body-catalog/schema_crc_provider.py": "3ebced81378b2c96c0cb63138c87cbb32723752d28a8b86b326bc7c027c6ece1",
+    "native-android/engine/body-catalog/test_cache_hit_loader.c": "d903260a7cebc10e87a63f0d70b29eca4b78448b8845a9e75da470230991b66f",
+    "native-android/engine/body-catalog/unopened-binary-source-pins.json": "677fa702d9a94871452ab286b95d974fcaf5a7d4fdcabdaff6055e6d2f66b8a9",
+    "native-android/engine/body-catalog/unopened_binary_provider.py": "0f604fd2f6b006c53fa67ea8788280ad81a8c7fd617ac10ea081ada92ec57e20",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+    "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+    "upstream/ouroboros/cmake/dependencies/CryptoPP.cmake": "4477f15cb07e42366770f9990afd7cf94f2fd1ef7b08337a9ae0426033dadc67",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/SharedMemory.h": "38ea76f0858ee9aaa5070f522a08e942161999ad6aba1caf6760bd84fcd9f6cf",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/crypt.h": "d06eb01ec68ebfa8083d6c46120ed3d5a3a33ed60f6e1b517b16a3f6bcc4d9b9",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structoldnames.h": "00a8a969e854ffd8b195e5e3860a1fed87e874065895cac2fcca5ed9f739bfb1",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser_types.h": "619b55838fe91840e0ab6b8b2e3f23f0c91cfc1e70525ebc8e59566ce2480c10",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2"
+  },
+  "source_stable_before_after": true,
+  "host_environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "byteorder": "little",
+    "python_pointer_bytes": 8,
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "python_executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "reference_zlib_version": "1.3.2",
+    "reference_zlib_runtime_version": "1.3.2",
+    "reference_zlib_builtin_to_measured_python": true,
+    "reference_zlib_module_or_python_binary": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "reference_zlib_module_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "original_engine_Win32_or_Android_ABI_qualified": false
+  },
+  "host_python_and_reference_zlib_module_stable_before_after": true,
+  "host_compiler_identities": {
+    "cc": {
+      "command": "cc",
+      "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+      "executable_bytes": 1023032,
+      "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+      "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+      "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+    },
+    "c++": {
+      "command": "c++",
+      "resolved_path": "/usr/bin/x86_64-linux-gnu-g++-13",
+      "executable_bytes": 1027128,
+      "executable_sha256": "52f1ddb33fe78b9441e0f42e9cd22c571f1101938e046c8a26582494e041cc73",
+      "version_first_line": "x86_64-linux-gnu-g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+      "version_stdout_sha256": "157c487727541da0ef84bfa12dd6715a793e3af550a457cce01452003a94d34e"
+    }
+  },
+  "host_compilers_stable_before_after": true,
+  "original_cache_hit_loader_provider": {
+    "schema": "coh-original-cache-hit-loader-provider-v1",
+    "source_baseline_revision": "2b0e0b6afaa76ac17eea0a9a80066ed1a748287d",
+    "source_sha256": {
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+      "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser_types.h": "619b55838fe91840e0ab6b8b2e3f23f0c91cfc1e70525ebc8e59566ce2480c10",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structoldnames.h": "00a8a969e854ffd8b195e5e3860a1fed87e874065895cac2fcca5ed9f739bfb1",
+      "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/crypt.h": "d06eb01ec68ebfa8083d6c46120ed3d5a3a33ed60f6e1b517b16a3f6bcc4d9b9",
+      "upstream/ouroboros/cmake/dependencies/CryptoPP.cmake": "4477f15cb07e42366770f9990afd7cf94f2fd1ef7b08337a9ae0426033dadc67",
+      "native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.json": "b18e582cd1b6ad15cc924c2a95bf6072538f3e4b87eba43ce3ae55d9a44f0d20",
+      "native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.zip": "7bb26369ae06a19836694df00dad2b4eb8e2f1046ddf3366747bdf6393b1cf15",
+      "native-android/engine/body-catalog/cryptopp_adler_source.py": "9f247cae057d3ce3f065a7b423fbbb85cec186c29ece7704df6fb60aaa363aa7",
+      "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/SharedMemory.h": "38ea76f0858ee9aaa5070f522a08e942161999ad6aba1caf6760bd84fcd9f6cf"
+    },
+    "source_pins_sha256": "ba192350cbd17d68fde2b440e43d54aa967529a73612926cdca834fcbfd32159",
+    "whole_function_sha256_lf": {
+      "SimpleBufRead": "fcbb82d64aa901e21d62fae5a7f8d3c59428fa536e442fd41d7b3ec67e407285",
+      "SimpleBufSeek": "ff8f9b9ec22564f3320544e003ca57a4320966d9f2d804e7d50f7c5cfa998cc8",
+      "SimpleBufTell": "5de14603768abbe12b42b49f2c01057afa14401d1eaae9674f4655d58318afbb",
+      "ReadPascalString": "8e5c06d8977d22c4c32cace64f5f474f09b2b2a6ff05a6355418ee9ee7dbef0b",
+      "SkipPascalString": "bf066cd4d0c06e10822ab3c06832a58e7fe00380aec4efea453f10ff552f0277",
+      "SerializeSkipStruct": "ba8d6c0f4ae4d819b8adc20c58f5be173587497c4f1f30b2f3f3d9229578e9d8",
+      "SerializeReadOpen": "b52a034532ab1db0808945606cd539dee0882338eb0a276cff7c6e471372554e",
+      "SerializeReadHeader": "444e28f04b62d8b39960dfd6719ea7f1e69890cafc39b8b5ac6b6ec7c45e8bc9",
+      "SerializeReadData": "21cf7e6a8545cb1a8f40002dd72a44a09e13cc7764bb4bdaa11772b303a52541",
+      "SerializeClose": "afe82e16b73d5d2f29f1a773ddded8f48e4a11453ac3df0b313e911599f44558",
+      "SimpleBufReadU16": "7c4979e99d2eec352c91d4ef60a82149888177dd15d687ba717df735be40be25",
+      "SimpleBufReadU32": "36c44bff8f70a85d5267ca766d4e44d8801b9e51e44dee33718f7786739d01f7",
+      "FileListCreate": "c01af04b087e22046ecfabd3c987838484ac7397dd72f2e0e0cc630bdc5f0a77",
+      "FileListRead": "de4245100e155cbf02535976ce703e4a25cd6708a818226ccd7946bc85b4c719",
+      "TokenStoreGetStorageType": "b644e9d3853ca77ef350f09c300a94ebfc7d92d6f0be00d9b7e93750d0778e7e",
+      "u8_readbin": "f6e207203b154a10bf6e58af4932b54595f6801073bfcd266e87a0e0531b41c9",
+      "int_readbin": "c238a40328a4038c7dd6fc3c514a1995e4d2d28448d79b23b2cb0fc027da0309",
+      "string_readbin": "76ffbd052edf28541cd46033f3f7504e2200da68dce3b37d824c916074f900e7",
+      "struct_readbin": "1b947073cc930213e1bb4e626df52b6bebed738c0f14aa9d1a3be2fa04b8e4fb",
+      "nonarray_readbin": "c1a3f4bebf449519c366f2c121967ceee34720feae238b69fd84314be19fc691",
+      "earray_readbin": "fc956669f78356b5bd26580bb099c69492e5f9a0837c66d5840ff51178a14c7c",
+      "ParserReadBinaryTable": "29ed6e9a69228519dcc65a14a577045978dc5f4ee3959d796381b3302f001deb",
+      "ParserReadBinaryFile": "68b58811cc075da60b4f458e67d72499259ce32e9f4a104f05a7cd509772a23f",
+      "ignore_interpretfield": "05447cd715742cbb4ccc77f0294f81ab57fc4f520c5f528ee75e8ab72ee9f73e",
+      "number_interpretfield": "679b0e1c8919f35a2f3c62d467ba748dc56d9f31c5c6651315d114209850069d",
+      "string_interpretfield": "eba3d0e0fe711fc687a4b749209a52bae594db1caf656b2740a4affcdcb85ff7",
+      "struct_interpretfield": "f1321b8b246205ea80948f24b57ba7954740a2377cde3a68b0358f96a02e2edd",
+      "UpdateCRCFromParseInfo": "c0cc8bfac9270cc0ac939b0c6504d22f9ab999e38cdb1954ea6672a5b257942f",
+      "ParseTableCRC": "7b630b5ff49eaa5096875b7ad96926bfbd9667b0eaa49c97a611224ff1157019",
+      "cryptAdler32Init": "783a36e63cd9b012a7fa836c1171e0d00bde822935372c399006fcc0d7acdf4c",
+      "cryptAdler32Update": "cc44951ab4db2017a94c1ca751814d071a7c2c4f54d6103aab9b3b668a8a5464",
+      "cryptAdler32Final": "44b88328e772a0c46770e25174d05f26032d91ce671b0b423f0439a20cf82481",
+      "ParserIsPersistNewer": "748ee1471e7904721ef23a4c237a8d232f7ea09d548311e25c126d5902eb23b4",
+      "ParserLoadFiles": "baccdbc31625c793281f61b8a56c3f91741537e6f3593b0589ce611e87100ccb",
+      "sharedMemoryAllocAdapter": "80e14ed4dfc9bb2f3685c22f7959794a7b04a09fc74e0eca418ae1765b58dced",
+      "ParserLoadFilesShared": "2d6db0faaf0a3fe0d7913475e7ac79039f26eb6d01da93521e1b90ec50b0201f",
+      "bpReadBodyPartFiles": "cfae2131f6a845feb6040043c30305086ed5a128c535d2e4bedc70909b8ee3a8",
+      "GetBodyPartCount": "7657fea302b88e54666818cd1e7302b6b167db7a35f23d5fb595f23c5df8d677"
+    },
+    "source_stable_before_after": true,
+    "original_dependency_composition": {
+      "body_dependency_source_audits": {
+        "whole_function_sha256_lf": {
+          "SimpleBufRead": "fcbb82d64aa901e21d62fae5a7f8d3c59428fa536e442fd41d7b3ec67e407285",
+          "SimpleBufSeek": "ff8f9b9ec22564f3320544e003ca57a4320966d9f2d804e7d50f7c5cfa998cc8",
+          "SimpleBufTell": "5de14603768abbe12b42b49f2c01057afa14401d1eaae9674f4655d58318afbb",
+          "ReadPascalString": "8e5c06d8977d22c4c32cace64f5f474f09b2b2a6ff05a6355418ee9ee7dbef0b",
+          "SkipPascalString": "bf066cd4d0c06e10822ab3c06832a58e7fe00380aec4efea453f10ff552f0277",
+          "SerializeSkipStruct": "ba8d6c0f4ae4d819b8adc20c58f5be173587497c4f1f30b2f3f3d9229578e9d8",
+          "SerializeReadOpen": "b52a034532ab1db0808945606cd539dee0882338eb0a276cff7c6e471372554e",
+          "SerializeReadHeader": "444e28f04b62d8b39960dfd6719ea7f1e69890cafc39b8b5ac6b6ec7c45e8bc9",
+          "SerializeReadData": "21cf7e6a8545cb1a8f40002dd72a44a09e13cc7764bb4bdaa11772b303a52541",
+          "SerializeClose": "afe82e16b73d5d2f29f1a773ddded8f48e4a11453ac3df0b313e911599f44558",
+          "SimpleBufReadU16": "7c4979e99d2eec352c91d4ef60a82149888177dd15d687ba717df735be40be25",
+          "SimpleBufReadU32": "36c44bff8f70a85d5267ca766d4e44d8801b9e51e44dee33718f7786739d01f7",
+          "FileListCreate": "c01af04b087e22046ecfabd3c987838484ac7397dd72f2e0e0cc630bdc5f0a77",
+          "FileListRead": "de4245100e155cbf02535976ce703e4a25cd6708a818226ccd7946bc85b4c719",
+          "TokenStoreGetStorageType": "b644e9d3853ca77ef350f09c300a94ebfc7d92d6f0be00d9b7e93750d0778e7e",
+          "u8_readbin": "f6e207203b154a10bf6e58af4932b54595f6801073bfcd266e87a0e0531b41c9",
+          "int_readbin": "c238a40328a4038c7dd6fc3c514a1995e4d2d28448d79b23b2cb0fc027da0309",
+          "string_readbin": "76ffbd052edf28541cd46033f3f7504e2200da68dce3b37d824c916074f900e7",
+          "struct_readbin": "1b947073cc930213e1bb4e626df52b6bebed738c0f14aa9d1a3be2fa04b8e4fb",
+          "nonarray_readbin": "c1a3f4bebf449519c366f2c121967ceee34720feae238b69fd84314be19fc691",
+          "earray_readbin": "fc956669f78356b5bd26580bb099c69492e5f9a0837c66d5840ff51178a14c7c",
+          "ParserReadBinaryTable": "29ed6e9a69228519dcc65a14a577045978dc5f4ee3959d796381b3302f001deb",
+          "ParserReadBinaryFile": "68b58811cc075da60b4f458e67d72499259ce32e9f4a104f05a7cd509772a23f"
+        },
+        "original_declaration_sha256_lf": {
+          "SimpleBuffer": "689c1023aab54266898115400af5df373c1f5cb9c5945b453b71bf7371188abd",
+          "SimpleBufHandle": "c4118829f15145679bcdf98551224f139d6e981ddd03cbe61bb36ba3cf402427",
+          "FileEntry": "a8daff72158e71bba068c384f0f62c1fad664a67997ae0565d933b70a6d8b74e",
+          "FileList": "71eb0298cc8801285580f32e716b88f278547504f689f666275c85edb9eaf288",
+          "BodyPart": "1e74839e69e89db702fd6d92ee677f87f0a0b17bb1f08ef70b0f7773e8180a8a",
+          "BodyPartList": "6a5496ff6028c0db6eb0b05cdee63f47c2d0fcc876ebf17b5245f7ca79285434",
+          "ParseTable": "e813787ecd572a4bdf829769c5742a9fe16d68c4d6cf8917f0f58e4f6ebf41e6",
+          "StructTypeField": "3504feb37e71cc0e6a51bb8579efe22cd21edf58728f42eaec366fdf7c6d6ad2",
+          "StructFormatField": "85f9627423a0837ba1bc985e406a690a0e0b28c19db2da11b5a9404e2086cc65",
+          "StructTokenType": "08594fac518c9ea9d9e2218710b2dd6471c3430c109788ee01b150210c0be320"
+        },
+        "original_macro_sha256_lf": {
+          "SIZEOF2": "c28be2f785bb0820df347c6ab26274a0861777f16ae193a69bc1e467f120cfcc",
+          "SIZEOF2_DEREF": "448dea263248da1df5a90de7440b234a2065ed0142a285817f0dc9fee3cd1131",
+          "SIZEOF2_DEREF2": "320c4bed055cf73c3f703e3879c69d7985ea40fdcd176326fee611ffbc4a7033",
+          "TOK_INT": "3fb616b11bcff6b7be4c15b5153c973e29986c66d0483c992a2de94dd3018c9c",
+          "TOK_STRING": "8610b530a3de200adc173437bbc05fec16fa4b43c6a2611106153905e949a302",
+          "TOK_CURRENTFILE": "cdd2e9e37291f50aaa348b1d7fc45016ddf570ffa10efa73659fa507842f7ba2",
+          "TOK_BOOLFLAG": "8eb9d807eea78a519a42bef2407d868e1b7e620477c5343ed1c9315adf61d996",
+          "TOK_STRUCT": "231ba2568ab07ae6f787abc0a0a40ad90c178c28863b0354ea98d5a16e9b638f",
+          "TOK_TYPE_MASK": "c63d8de81697650d2625ba5441ff93dad5670e62ec8eb1932f299987186d229a",
+          "TOK_GET_TYPE": "2606b3f4e5fa8857bbc2c94e056596c2fec54e85a2701676975bf6e4f8b9d6dc",
+          "TOK_REDUNDANTNAME": "576b79f23e07f81e5acfad0523ff35517e7fe64e47c123f7c6da519a5e30999f",
+          "TOK_EARRAY": "24658c58cd2ef3d6bd65230c8cbf44bb11f2029e11a9f782a56d31347011be4c",
+          "TOK_FIXED_ARRAY": "d8c665156fb0305a0aa3b04ac2730607701d7a2807294539b155a14d54ea69a6",
+          "TOK_INDIRECT": "f658cae86cb87bb02ebe68e7924b32edbb74c68b227b0614a02dc6fb8b4d980b",
+          "FORALL_PARSETABLE": "d7d86155e673ecb62ef1b5e7c29b4882e210d931bcd98bbd392d05b2790541ee",
+          "PARSE_SIG": "a3613b656c98752be7b7ea6046484171a580d9c9ea9f75cddb6c777cb3cb023c",
+          "TOK_STORAGE_DIRECT_SINGLE": "8f7e964b6abe1963a31a4055f402b14f3d46b426a2020fdf9a818648ad7b3571",
+          "TOK_STORAGE_DIRECT_FIXEDARRAY": "df2e5a002d8ebb50b242a1fc90da478f45da44c8318210f030d7c362b9a1a71c",
+          "TOK_STORAGE_DIRECT_EARRAY": "ac24ee5b627c0843fb56c0859a72851678201570e372f221217500df27ef1b7d",
+          "TOK_STORAGE_INDIRECT_SINGLE": "7b57e1bc3d5489f5e23ce580ff36079af18da80f5c5700c8d1769e64573503c9",
+          "FORALL_PARSEINFO": "7d7a96fe631b21d067bb2daeb774e0b5ff2a98c5660cdd0ab5d107ff6cbc5d49",
+          "TokenizerParseInfo": "f291a4a5f7398c2f01d062580439dd3f01e1fdceaf34ac0137dc89f68c867bbb",
+          "MAX_TOKEN_LENGTH": "e21c21f0921318a400e100820c1739264f1dfcdc893fcbc4efd725a899847783",
+          "MAX_STRING_LENGTH": "e561b1c82adba249228fc3073398a1b9ea983945727cafb392ce1209960347cb",
+          "TOKARRAY_INFO": "87c71097dc016f18a566300ab1c2c93c755b0529ebb57a1cc1c37f45074935d4",
+          "TYPE_INFO": "c436251dc2b1ffc48c0b0708717c858a2229b112e6facfc67a5a109d53c1eb6f",
+          "FILELIST_SIG": "0a6af7a55ff4e451175b4a7a3922011904f4f2ecce90417d85d2440cea4cd38e",
+          "MAX_FILETYPE_LEN": "a398123e79ce13159abc4e6dc325b33cfb429a695babd8249ff7bf3d8366ef71",
+          "cryptic_sig_len": "8176ad665343c557affb7b632471c957500f2b68cc32f28ad543f848b872e33b"
+        },
+        "original_table_sha256_lf": {
+          "ParseBodyPart": "917ea73873135a786ef3697485878c23414061596a7235aa1efd1bc83d027d91",
+          "ParseBodyPartBegin": "9960f419f158a95589f7795558c13333f8bd452728e73c92e29f98f8df0a41fc"
+        },
+        "dispatch_source_audit": {
+          "g_tokentable_sha256_lf": "21b6d1be0dc5e91cb4635aeb192890f86345a547bfeee8a23aa33fd014a7278f",
+          "g_arraytable_sha256_lf": "99923c9af2d3a07f704fe658304041569261ec4a7dab3656e66e75eb22a5caae",
+          "readbin_tokens": {
+            "TOK_END": "0",
+            "TOK_INT_X": "int_readbin",
+            "TOK_STRING_X": "string_readbin",
+            "TOK_CURRENTFILE_X": "string_readbin",
+            "TOK_BOOLFLAG_X": "u8_readbin",
+            "TOK_STRUCT_X": "struct_readbin"
+          },
+          "readbin_array_order": [
+            "nonarray_readbin",
+            "fixedarray_readbin",
+            "earray_readbin"
+          ],
+          "emitted_holders": "Explicit immutable readbin-only member holders; original TYPE_INFO/TOKARRAY_INFO selectors execute. No complete handler-table ABI or other engine operation claimed."
+        },
+        "raw_loaded_fields": "All five C-string prefixes/NULL masks, seven raw numeric words, last BoneCount overwrite, raw cached bone/index words and source low8 U8 truncation retained. No ParseBoneNames/recalculation."
+      },
+      "schema_dependency_source_audits": {
+        "whole_function_sha256_lf": {
+          "ignore_interpretfield": "05447cd715742cbb4ccc77f0294f81ab57fc4f520c5f528ee75e8ab72ee9f73e",
+          "number_interpretfield": "679b0e1c8919f35a2f3c62d467ba748dc56d9f31c5c6651315d114209850069d",
+          "string_interpretfield": "eba3d0e0fe711fc687a4b749209a52bae594db1caf656b2740a4affcdcb85ff7",
+          "struct_interpretfield": "f1321b8b246205ea80948f24b57ba7954740a2377cde3a68b0358f96a02e2edd",
+          "UpdateCRCFromParseInfo": "c0cc8bfac9270cc0ac939b0c6504d22f9ab999e38cdb1954ea6672a5b257942f",
+          "ParseTableCRC": "7b630b5ff49eaa5096875b7ad96926bfbd9667b0eaa49c97a611224ff1157019",
+          "cryptAdler32Init": "783a36e63cd9b012a7fa836c1171e0d00bde822935372c399006fcc0d7acdf4c",
+          "cryptAdler32Update": "cc44951ab4db2017a94c1ca751814d071a7c2c4f54d6103aab9b3b668a8a5464",
+          "cryptAdler32Final": "44b88328e772a0c46770e25174d05f26032d91ce671b0b423f0439a20cf82481"
+        },
+        "original_declaration_sha256_lf": {
+          "StructTypeField": "3504feb37e71cc0e6a51bb8579efe22cd21edf58728f42eaec366fdf7c6d6ad2",
+          "StructFormatField": "85f9627423a0837ba1bc985e406a690a0e0b28c19db2da11b5a9404e2086cc65",
+          "ParseTable": "e813787ecd572a4bdf829769c5742a9fe16d68c4d6cf8917f0f58e4f6ebf41e6",
+          "BodyPart": "1e74839e69e89db702fd6d92ee677f87f0a0b17bb1f08ef70b0f7773e8180a8a",
+          "BodyPartList": "6a5496ff6028c0db6eb0b05cdee63f47c2d0fcc876ebf17b5245f7ca79285434",
+          "StructTokenType": "08594fac518c9ea9d9e2218710b2dd6471c3430c109788ee01b150210c0be320",
+          "ParseInfoField": "51e9c40395b6b624563ad3dc56537e06735df5231b2b24fffec13cfb14e953ef",
+          "ParseInfoFieldUsage": "34c5df62a1fa921aa88c9bae9a1d23c297e9ab073672c2b05b160d81b646f920",
+          "adler32_global": "26c93f9d5b3df6ef2f2bff00ac2aa34afdfaeb4f065351c369a8c61d7a76a7e8"
+        },
+        "original_macro_sha256_lf": {
+          "SIZEOF2": "c28be2f785bb0820df347c6ab26274a0861777f16ae193a69bc1e467f120cfcc",
+          "SIZEOF2_DEREF": "448dea263248da1df5a90de7440b234a2065ed0142a285817f0dc9fee3cd1131",
+          "SIZEOF2_DEREF2": "320c4bed055cf73c3f703e3879c69d7985ea40fdcd176326fee611ffbc4a7033",
+          "TOK_INT": "3fb616b11bcff6b7be4c15b5153c973e29986c66d0483c992a2de94dd3018c9c",
+          "TOK_STRING": "8610b530a3de200adc173437bbc05fec16fa4b43c6a2611106153905e949a302",
+          "TOK_CURRENTFILE": "cdd2e9e37291f50aaa348b1d7fc45016ddf570ffa10efa73659fa507842f7ba2",
+          "TOK_BOOLFLAG": "8eb9d807eea78a519a42bef2407d868e1b7e620477c5343ed1c9315adf61d996",
+          "TOK_STRUCT": "231ba2568ab07ae6f787abc0a0a40ad90c178c28863b0354ea98d5a16e9b638f",
+          "TOK_TYPE_MASK": "c63d8de81697650d2625ba5441ff93dad5670e62ec8eb1932f299987186d229a",
+          "TOK_GET_TYPE": "2606b3f4e5fa8857bbc2c94e056596c2fec54e85a2701676975bf6e4f8b9d6dc",
+          "TOK_REDUNDANTNAME": "576b79f23e07f81e5acfad0523ff35517e7fe64e47c123f7c6da519a5e30999f",
+          "TOK_STRUCTPARAM": "1b7ff10f5c0349122d956203237a2ef4c34e36495c62489738dcf8019e95c0c3",
+          "TOK_EARRAY": "24658c58cd2ef3d6bd65230c8cbf44bb11f2029e11a9f782a56d31347011be4c",
+          "TOK_FIXED_ARRAY": "d8c665156fb0305a0aa3b04ac2730607701d7a2807294539b155a14d54ea69a6",
+          "TOK_INDIRECT": "f658cae86cb87bb02ebe68e7924b32edbb74c68b227b0614a02dc6fb8b4d980b",
+          "FORALL_PARSETABLE": "d7d86155e673ecb62ef1b5e7c29b4882e210d931bcd98bbd392d05b2790541ee",
+          "FORALL_PARSEINFO": "7d7a96fe631b21d067bb2daeb774e0b5ff2a98c5660cdd0ab5d107ff6cbc5d49",
+          "TokenizerParseInfo": "f291a4a5f7398c2f01d062580439dd3f01e1fdceaf34ac0137dc89f68c867bbb",
+          "TYPE_INFO": "c436251dc2b1ffc48c0b0708717c858a2229b112e6facfc67a5a109d53c1eb6f",
+          "THREADSAFE_STATIC": "6cf800997c4045496097a03b2427958aa1ddd3ccce9648946c25480b4e3d0456"
+        },
+        "original_table_sha256_lf": {
+          "ParseBodyPart": "917ea73873135a786ef3697485878c23414061596a7235aa1efd1bc83d027d91",
+          "ParseBodyPartBegin": "9960f419f158a95589f7795558c13333f8bd452728e73c92e29f98f8df0a41fc"
+        },
+        "dispatch_source_audit": {
+          "g_tokentable_sha256_lf": "21b6d1be0dc5e91cb4635aeb192890f86345a547bfeee8a23aa33fd014a7278f",
+          "interpretfield_tokens": {
+            "TOK_END": "ignore_interpretfield",
+            "TOK_INT_X": "number_interpretfield",
+            "TOK_STRING_X": "string_interpretfield",
+            "TOK_CURRENTFILE_X": "string_interpretfield",
+            "TOK_BOOLFLAG_X": "number_interpretfield",
+            "TOK_STRUCT_X": "struct_interpretfield"
+          },
+          "holder_scope": "Immutable interpretfield-only holder with counting wrappers invoking exact source handlers; no complete handler-table ABI."
+        },
+        "source_semantics": "Source names/types/int32 default bytes/default C-string bytes CRC; offsets/format/substruct sizeof ignored. Redundant fields skipped. Actual CryptoPP Final digest bytes returned through unchanged original little-endian U32 wrapper, never forced to retained header."
+      },
+      "allocation_failure_scope": "Fixed arena and crypto object reservation refusal before source, plus owned open refusal after original CRC. Original struct_readbin does not check NULL TokenStoreAlloc; no recoverable source heap/new failure is claimed.",
+      "cleanup": "Source closes every opened handle; actual CryptoPP object deleted/TLS reset; owned body/CRC/trace buffers volatile-wiped before atomic snapshot commit. Complete entered-extent typed preflight, caller/context spans disjoint, overflow-safe owner+stack+actual object+caller/context/digest/retained charge."
+    },
+    "composition": "Unchanged bpReadBodyPartFiles -> ParserLoadFilesShared SMAR_Error -> ParserLoadFiles -> actual ParserIsPersistNewer/source CRC/CryptoPP/SerializeReadOpen ignoreCRC1 -> SAME supplied live handle ParserReadBinaryFile -> FileListRead(NULL)/body/SerializeClose. One original open and one source close, no native DTO or fixture-token bridges.",
+    "explicit_environment_shells": "Immutable production1/SMAR_Error/fileLocateRead fixture path; safe owned StructClear only on production return0. No filesystem selection, mode helper or original shared memory/allocator qualification. Text/preprocessor/dev/shared-generation helpers trap.",
+    "source_token_flags": {
+      "TOK_SERVER_ONLY": "original extracted macro",
+      "TOK_CLIENT_ONLY": "original extracted macro",
+      "xcase": "original extracted break;case macro"
+    },
+    "global_cleanup": "Permanent oldmask arena survives original static pointer; normal return resets recursive_call. All exposed globals and arena wiped; actual CryptoPP delete/TLS reset; source closes handle. Atomic output after cleanup.",
+    "preflight_and_reservations": "Complete typed source-entered extents, span/context and overflow-safe budget preflight inherited. Fixed row/crypto reservation refusals before source; no unsafe original NULL/new failure simulated.",
+    "call_order_trace": {
+      "1": "bp entry",
+      "2": "shared loader",
+      "3": "SMAR_Error acquisition shell",
+      "4": "ParserLoadFiles",
+      "5": "production mode shell query",
+      "6": "fixture locate shell",
+      "7": "ParserIsPersistNewer",
+      "8": "actual CRC",
+      "9": "original open attempt",
+      "10": "selected live handle",
+      "11": "reader supplied SAME live handle",
+      "12": "original close",
+      "13": "safe owned clear shell",
+      "14": "FileListRead(NULL)",
+      "15": "original root binary table",
+      "16": "shared source return"
+    },
+    "mutable_static_charge": "Owner/CRC/global/mask storage plus exact sizeof(char*) old_filemask, sizeof(bool) recursive_call and sizeof(void*) C++ TLS Adler pointer; old_filemask intentionally retains only the permanent wiped owned arena.",
+    "stack_reserve_bytes": 98304,
+    "actual_ParseTableCRC_computed": true,
+    "production_ignoreCRC1_preserved": true,
+    "current_Map_runtime_observed": false,
+    "runtime_body_catalog_admitted": false,
+    "source_generation_admitted": false,
+    "authority_or_application_ack": false,
+    "crypto_dependency": {
+      "revision": "b5242667a24e3db8e4600e77b2e502ef204e5280",
+      "tree": "eed51ff8304991b27331b26a670885575ae90021",
+      "Git_commit_tree_selected_blob_membership_verified": true,
+      "retained_source_file_count": 47,
+      "compiled_dependency_translation_units": 6,
+      "source_snapshot_count": 48,
+      "source_snapshot_manifest_sha256": "c01655cc388abe50aa9db7a40421f36afe28a960f36221946a1c0b987f409598",
+      "source_stable_before_after": true,
+      "full_provenance": {
+        "path": "cryptopp-provenance.json",
+        "bytes": 11381,
+        "sha256": "b240ead30dce9771a34fc1545308ec38092a3fb7eb70be2c4303d981eefb81e2"
+      },
+      "original_backend_not_alternate_Adler": true,
+      "system_cpp_runtime_allocator_or_platform_closure": false
+    }
+  },
+  "source_schema_and_body_fixtures": {
+    "archive_path": "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip",
+    "archive_bytes": 2253704,
+    "archive_sha256": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "archive_git_blob_sha1": "606fd1e17751fbdf6d7c903dee4eaea40c2014f3",
+    "member": "data/bin/BodyParts.bin",
+    "member_bytes": 2584,
+    "member_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+    "primary_input_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+    "authentic_header_end": 20,
+    "authentic_dependency_end": 64,
+    "authentic_body_end": 2584,
+    "authentic_rows": 28,
+    "fixture_bytes": 254812,
+    "fixture_sha256": "f25050bdcabc50ba7884adcce035ccde8a7d792fb41db1700d689508d47e89d5",
+    "independent_expectations": "Exact retained bytes projected using original source schema order independently: all five strings and seven words, duplicate overwrite/U8 narrowing/cached raw bones/index. New loader fixtures only; no prior checker/main/native decoder executes. Mode and shared/path shells are explicit fixture profile conditions, never FS selection or runtime provenance.",
+    "NULL_dependency_count_and_paths_unobserved": true,
+    "current_server_consumption_verified": false,
+    "case_count": 52,
+    "full_fixture_reference": {
+      "path": "fixture-reference.json",
+      "bytes": 34729,
+      "sha256": "9a8a454fac04835be075906b85bf5d7f7195dcb9e4c9968b624a72f9190366a6"
+    },
+    "full_input_ledger": {
+      "path": "input-ledger.json",
+      "bytes": 34729,
+      "sha256": "9a8a454fac04835be075906b85bf5d7f7195dcb9e4c9968b624a72f9190366a6"
+    },
+    "full_schema_stream_reference": {
+      "path": "schema-stream-reference.json",
+      "bytes": 539,
+      "sha256": "6eece46e7143eac8e06f80ce2a72724565b76a00f6d6185073cbd4a50c975547"
+    }
+  },
+  "fixture_source_identity": {
+    "schema": "coh-cache-hit-loader-fixture-source-v1",
+    "source_sha256": {
+      "native-android/engine/body-catalog/body-part-loader-source-pins.json": "c4b6d90edeba28f074b8206bb07a1487a3e44ff29fafe32a9935cd70a12d2486",
+      "native-android/engine/body-catalog/body-read-source-pins.json": "e53fd70d9e2ba26921c07c76b688a39d512115ca5d75bc4cbd28ae2bc63e55cf",
+      "native-android/engine/body-catalog/body_part_loader_provider.py": "eab3d0ee944707e9a5a51f7fac9d22f04744aaf2592c3f6dd59a1caf52aa6056",
+      "native-android/engine/body-catalog/body_read_provider.py": "33a1eaf977505be27cdeb46b66d4d8cca1c3140afb091e40f4baf0a5bcde08f4",
+      "native-android/engine/body-catalog/cache-hit-loader-source-pins.json": "ba192350cbd17d68fde2b440e43d54aa967529a73612926cdca834fcbfd32159",
+      "native-android/engine/body-catalog/cache_hit_loader_provider.py": "4d58bdc8af32de99655b500df799d68a260d8d919cc8a553984adb13eaf4e398",
+      "native-android/engine/body-catalog/check_cache_hit_loader.py": "c5261e2ce9fd1af8344e98e1aef6644735304da4de9474d110e1c2e46720fb4d",
+      "native-android/engine/body-catalog/check_schema_crc.py": "bde9f1fdd11841d01d73945bb08888ad751bf8327620f2325d01d3586d52d2e2",
+      "native-android/engine/body-catalog/cryptopp_adler_source.py": "9f247cae057d3ce3f065a7b423fbbb85cec186c29ece7704df6fb60aaa363aa7",
+      "native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.json": "b18e582cd1b6ad15cc924c2a95bf6072538f3e4b87eba43ce3ae55d9a44f0d20",
+      "native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.zip": "7bb26369ae06a19836694df00dad2b4eb8e2f1046ddf3366747bdf6393b1cf15",
+      "native-android/engine/body-catalog/schema-crc-source-pins.json": "bc2275735ab9a4ef13384e372ba2c5c5caf2425abe1a37447d7ccc7c0b50f349",
+      "native-android/engine/body-catalog/schema_crc_provider.py": "3ebced81378b2c96c0cb63138c87cbb32723752d28a8b86b326bc7c027c6ece1",
+      "native-android/engine/body-catalog/test_cache_hit_loader.c": "d903260a7cebc10e87a63f0d70b29eca4b78448b8845a9e75da470230991b66f",
+      "native-android/engine/body-catalog/unopened-binary-source-pins.json": "677fa702d9a94871452ab286b95d974fcaf5a7d4fdcabdaff6055e6d2f66b8a9",
+      "native-android/engine/body-catalog/unopened_binary_provider.py": "0f604fd2f6b006c53fa67ea8788280ad81a8c7fd617ac10ea081ada92ec57e20",
+      "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+      "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+      "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+      "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+      "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+      "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+      "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "upstream/ouroboros/cmake/dependencies/CryptoPP.cmake": "4477f15cb07e42366770f9990afd7cf94f2fd1ef7b08337a9ae0426033dadc67",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/SharedMemory.h": "38ea76f0858ee9aaa5070f522a08e942161999ad6aba1caf6760bd84fcd9f6cf",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/crypt.h": "d06eb01ec68ebfa8083d6c46120ed3d5a3a33ed60f6e1b517b16a3f6bcc4d9b9",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h": "a9990ca55c6bd07cc812036c8f7d29ba8f81092e94ff550ef5ce63707a7dfa71",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structoldnames.h": "00a8a969e854ffd8b195e5e3860a1fed87e874065895cac2fcca5ed9f739bfb1",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser_types.h": "619b55838fe91840e0ab6b8b2e3f23f0c91cfc1e70525ebc8e59566ce2480c10",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h": "392527dcb0db8e85e412bc3dc1f1f55476783d7273638722e30721647b351e92",
+      "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c": "6701e2ce7f7d6efaf49863f73c7708db8426e2a84057d7113ff5ebc4b5c8d7a2"
+    },
+    "generated_native_source_sha256": {
+      "body-read-provider.c": "b3c15a48205ff7065f524a717e8dd28b4f7aadaa3dbcffce974b868c88cdc30e",
+      "body-read-provider.h": "dc4d0703df0508494c6ddaba5e6d39ef9776ee17c3023ee20546f08a35cabc38",
+      "cache-hit-loader-provider.c": "3d01a4b2198cabe8ab1aec007a966ec4a11061abc53f35cff0000d198cb9eebc",
+      "cache-hit-loader-provider.h": "348cf16224ad47ca357b7ca05c871375b3c1df1dd69c8d96e6b91d1f4b423fdf",
+      "cryptopp-int-to-string.cpp": "d5e06a918dc6235ef79abf0eaff9961846ae962f3a38301d66f90d3d4130cd3d",
+      "schema-crc-adler.cpp": "b3260f85c66ed0b5287f84faebb81412cb405e978ae72824c9d1128d6b8a8aa6",
+      "schema-crc-provider.c": "753d20678121ed0d35f9c5f062296b8c701e42abc1bc9e267ad021d6dc9e4d35",
+      "schema-crc-provider.h": "e236e827ca992214e7a03f5698e7d75dc572d2989d54b47158341cd8779d5fdd",
+      "unopened-binary-provider.c": "da5ea1bce19069e2c4b260c26d7c5ac8688b8a9c57bde608c96e1b5f0f0365f2",
+      "unopened-binary-provider.h": "115050d7c23510a79e93488ffd04a48094d4f35297dbc53d15fd386b3fa7000a"
+    },
+    "dependency_snapshot_sha256": {
+      "cryptopp/License.txt": "78e4010b682cb94187fe0b57e50116d0ba271ef81104d1ddb35c80c3d81e3169",
+      "cryptopp/adler32.cpp": "957a7578004a497a39f31728ffc4951b8a8fb4c093daedf800cc3ebaef1da104",
+      "cryptopp/adler32.h": "d76cc75fa2d11ce6b8c9faf1aa0c7afc3dee472f0c85b1216d3d13ef20026f75",
+      "cryptopp/aes.h": "fbd98402a8ddab54389a433c5685356bf3d3ad2ae37747c242a593667379a683",
+      "cryptopp/algparam.h": "a0c1352f81ca19aee1329e00af0e8e298131851a5449ecd042e370a73d8d09d4",
+      "cryptopp/allocate.cpp": "1a933d1ec1a8245817464c28c00762371039d0caf210e76cdbeff16a626948b2",
+      "cryptopp/allocate.h": "6fbcf40f97fb72c1523bb597d28337623997bc5610f235b9d440b22289b6f970",
+      "cryptopp/argnames.h": "4fa6995e67001c2b744d64e2f7f36629cf489be21f1ff242fbc13da43df59769",
+      "cryptopp/config.h": "641a512721c40a6778dfcc143b611c6204f38916bae55d391e2c74c18b70b2f6",
+      "cryptopp/config_align.h": "3a3f596ac05567c75b79d736319e561cf5ea01e06573d78bd479fb8673492bb3",
+      "cryptopp/config_asm.h": "d9215cd770e26923a18c61b641d56a485500d7c52fa8d45aa4611220eb27e758",
+      "cryptopp/config_cpu.h": "89b1dd39c3c479a590f2ca7fc2e9832f9d50f3b4fac01128a0b89acae88cbd71",
+      "cryptopp/config_cxx.h": "0a5042e6ea886e2c38a9626585deb1409a56dbcd35a522e877b648fb9042a366",
+      "cryptopp/config_dll.h": "5f5f25287fc9a0bd49230edebaf6377b64f8020aa04d843cdd1a5449dd34c5e4",
+      "cryptopp/config_int.h": "99a41cf87cb25c898fe438f4ba1e9dbe209e652a0328bacc1adf5d6e4ff848b6",
+      "cryptopp/config_misc.h": "1918df9919402f747b862bffd1235f4087be76d48d34d4e3b9ee2820ed526823",
+      "cryptopp/config_ns.h": "c4bc5ebf250efea647afb1873fb89f6b9dc540485f6f569f8b868cd9e8994ef9",
+      "cryptopp/config_os.h": "7a876d8032295b3e813dcafd2ea6788c527985c8464273e23d7c4d07c6b5c0c6",
+      "cryptopp/config_ver.h": "fc8ecd03f66cea3e8c99db529cb023e13405defcc511ece1877801281d2aabb2",
+      "cryptopp/cryptlib.cpp": "8969994d41454d0691fff848fbb77a8afdae0f16e04fb3f6d16dfa1469fe3051",
+      "cryptopp/cryptlib.h": "12eb02d2bdf953ffd90d0c8ddcaf800dcb3e1890b8f0ea93b533b4087e82785c",
+      "cryptopp/filters.h": "783038cf6411bcddcd92c0b900cbfbb4c9038dbfe828ae8fda444313215cf4a9",
+      "cryptopp/fips140.cpp": "fbf6cc4cf9b53828828c2de7e9963c9a82ef4f43fcf8819b61c0f2369774eae1",
+      "cryptopp/fips140.h": "cb4042de79c44789f6730c331dab5cb2ad6d10730e24557084f363c0daf71f34",
+      "cryptopp/fltrimpl.h": "a985b68b2480dfeeaf9d6eb39baf117191fb1d9cbbe42199f33b7a00a851dce6",
+      "cryptopp/hkdf.h": "1ccedcd401635ac077d895f147ef142645ad7216205d4adf46899e35e8222b5b",
+      "cryptopp/hmac.h": "f8becd33fc708ac1bbcc1929d34fb0f8f7f7b7592f52bc5d8e985d862c0e8cbb",
+      "cryptopp/integer.cpp": "defb6877bddbdaaeab9c67e693d17899c5b7e222ba776e7fa916224247a20fe3",
+      "cryptopp/integer.h": "524baaeae6f5d23b9c07c13c3b34f1c89971d40357385a40b6346886f8b40d84",
+      "cryptopp/iterhash.h": "397298f1eadcfe7165f8b86670a7879641244e7a48aab62fe910dd3fc6eb3ff5",
+      "cryptopp/misc.cpp": "a3728752463001070a44838ad61e9aa651d29770422148125665a5c5dd720307",
+      "cryptopp/misc.h": "13de68cfefceff3cc97f980a61b56931cff5bccac9eece0a6d6ab2bc98daa44d",
+      "cryptopp/osrng.h": "eba8e5d21f62a4b2f4ff0b5b94c93d7b7ff95d54e15dd082f19a1f2cf4e331cb",
+      "cryptopp/pch.h": "d629cfec26c9317f637137f137550f6f8138292acfd677baf0a986a1db80056b",
+      "cryptopp/queue.h": "7a223d51a78bea39e6a7bdd02ae58cabfdda561e81e461550d240c47f8bd0264",
+      "cryptopp/randpool.h": "1d29d8662ebab0da03dc7782e886df16656549ae7c89983c53d89f4779e6785b",
+      "cryptopp/rijndael.h": "d82187fd5e08a45a74e9aac8a0b9197856ff879d072cdad8b204e6915fbabb4a",
+      "cryptopp/rng.h": "40f2532cf14e950080bb1ba1383c52a2e5af0ab09779de89524f066735b6fa2b",
+      "cryptopp/secblock.h": "7d83f568a249e674772fddeea33d4c1bf7b403a880aac82298ebf4729f597d7d",
+      "cryptopp/secblockfwd.h": "472e5d0fa333257c3b8254e5fddbcbaa803dae920f65d64542219c0b3b8400cf",
+      "cryptopp/seckey.h": "54204f1ae34214150d0087043c19e25e83abe010837ef214a232891598501cfa",
+      "cryptopp/sha.h": "9d9cb08b466b520a21a9549ce438aba5f4c0479e46240a4c4f9160a930962d7c",
+      "cryptopp/simple.h": "41a165d3b4ffce87755b28b878e08503d571558cffe5877b7e00cb84226ef373",
+      "cryptopp/smartptr.h": "a2d6f834c9e2890943a203ce7397976d8618e62c3d56f6a6afa456ffdc22e879",
+      "cryptopp/stdcpp.h": "35f068b2521c8ee31eeb1ea2810a352148a2854f47683363f914be4f090ef750",
+      "cryptopp/trap.h": "a82a30348451a7d113ddea392d03b834085802dd05c12c265546d3b90599403f",
+      "cryptopp/words.h": "1b90ca646c5fa044f4b6c43a998bd5a65aca0963dcd94295b7cf642cb98eef64",
+      "cryptopp-int-to-string.cpp": "d5e06a918dc6235ef79abf0eaff9961846ae962f3a38301d66f90d3d4130cd3d"
+    },
+    "excluded_circular_derived_files": [
+      "cache-hit-loader-qualification-identity.h",
+      "per-mode compile/build receipts",
+      "object files/native executables",
+      "run ledgers"
+    ]
+  },
+  "fixture_source_identity_sha256": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09",
+  "fixture_profile": {
+    "schema": "coh-cache-hit-loader-fixture-profile-v1",
+    "scope": "whole original ParserLoadFiles production cache hit with actual source selector and supplied handle reader, exact BodyPart schemas, definesNULL",
+    "original_functions": "bpReadBodyPartFiles/ParserLoadFilesShared SMAR_Error/ParserLoadFiles/ParserIsPersistNewer -> ParserReadBinaryFile(SUPPLIED live handle) + ParseTableCRC/UpdateCRCFromParseInfo/interpretfield/CryptoPP + SerializeReadOpen/FileListRead(NULL)/ParserReadBinaryTable/readbin/SerializeClose",
+    "source_crc_never_caller_supplied": true,
+    "production_mode": 1,
+    "production_ignoreCRC1_preserved": true,
+    "shared_acquisition_shell": "SMAR_Error only",
+    "source_ParseBoneNames_calls": 0,
+    "filesystem_selection_or_mode_helpers_qualified": false,
+    "complete_entered_header_dependency_body_preflight": true,
+    "all_authentic_prefix_truncations_tested": 2584,
+    "failure_profiles": "fixed row arena and actual crypto object reservation refusal before source; owned open refusal after actual CRC; fixture missing path; original production return0 via safe owned StructClear shell. Original malloc/new/StructClear/destructor recovery unqualified",
+    "input_max": 65536,
+    "positive_count_policy_max": 30,
+    "declared_string_policy_max": 259,
+    "declared_type_max": 4095,
+    "complete_header_preflight": true,
+    "source_embedded_NUL_and_arbitrary_padding_semantics_preserved": true,
+    "fixed_owned_buffer_no_filesystem": true,
+    "trace_max": 512,
+    "update_max": 64,
+    "child_fixture_max": 1048576,
+    "child_input_ledger_max": 131072,
+    "child_build_receipt_max": 65536,
+    "child_stdout_max": 4096,
+    "int32_intptr64_size64_little_endian_host_only": true,
+    "fixture_only": true,
+    "development_mode_executed": false,
+    "filesystem_freshness_executed": false,
+    "date_comparison_executed": false,
+    "current_Map_selection_provenance_verified": false,
+    "runtime_body_catalog_admitted": false,
+    "runtime_default_admitted": false,
+    "dictionary_imported": false,
+    "source_generation_admitted": false,
+    "complete_initial_character": false,
+    "server_identity_bound": false,
+    "selected_owner_bound": false,
+    "actor_publication": false,
+    "ack_permitted": false,
+    "world_authority": false
+  },
+  "fixture_profile_sha256": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d",
+  "child_measured_fixture_bindings": {
+    "release": {
+      "source_id": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09",
+      "build_id": "db3d45a915fc55468ea065290738e1505f04962b99fdcc2baac13d86e8904e26",
+      "profile_id": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d",
+      "run_id": "c0cf2763448218fb1c97b2f35f8a2bdd101fc5757105158c843610908913921f",
+      "input_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "fixture_sha256": "f25050bdcabc50ba7884adcce035ccde8a7d792fb41db1700d689508d47e89d5",
+      "executable_sha256": "c1684ba2cbfd090ccb33ef523a1e51488ae08b6dfca5ee793ccab80b12645e90",
+      "input_ledger_sha256": "9a8a454fac04835be075906b85bf5d7f7195dcb9e4c9968b624a72f9190366a6",
+      "compile_profile_sha256": "3cbca864f989c9905e3127fee7ef550e51c036769ff3bdc9d7f63e63b7a9603d",
+      "run_ledger_sha256": "2dd20fadf304e9c9cd6f95323958b4769322bdbc786ee737c96a8255f50e3e4a"
+    },
+    "asan": {
+      "source_id": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09",
+      "build_id": "306f5dfb39d1e0b1e53f2a47d1b6e7726a34b6288a9036b8d1909567512f550d",
+      "profile_id": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d",
+      "run_id": "6a6d51201dcbfe84652687cd7d178c7b0e05c62038ac387ed5a29155862a67ee",
+      "input_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "fixture_sha256": "f25050bdcabc50ba7884adcce035ccde8a7d792fb41db1700d689508d47e89d5",
+      "executable_sha256": "1eec72bcc57939f96980588dce87a2b0f083d3383421961322aefada3d2207a5",
+      "input_ledger_sha256": "9a8a454fac04835be075906b85bf5d7f7195dcb9e4c9968b624a72f9190366a6",
+      "compile_profile_sha256": "21c43a4064a0e4c3ea0f7afe599094064ab4bb36dbff69d90a2b9a63562b66c8",
+      "run_ledger_sha256": "f94d015d05a8a507505d74a0bda38b976d4531c784d8ec16bc8774ec490e59da"
+    },
+    "ubsan": {
+      "source_id": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09",
+      "build_id": "5e04005ce1e1c7078da89a695f8718d726f72886952dbbac7d5069b1ce021bb7",
+      "profile_id": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d",
+      "run_id": "182d8f5f93a502fb972be83effc129209b188bd15156a406610c72d563581de7",
+      "input_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "fixture_sha256": "f25050bdcabc50ba7884adcce035ccde8a7d792fb41db1700d689508d47e89d5",
+      "executable_sha256": "8b5a415777951b31c3f3709d6d6ebb94d16f934fff461b672b24d233ce7dd815",
+      "input_ledger_sha256": "9a8a454fac04835be075906b85bf5d7f7195dcb9e4c9968b624a72f9190366a6",
+      "compile_profile_sha256": "1262a4be76ae03882bab148a974f620e9c121bfb1788b7a70f7ae6bed56f26ce",
+      "run_ledger_sha256": "bede9a95931791c5259c1a97cf0ca2569372bd8cf43da3945df9e14027b86646"
+    }
+  },
+  "checks": {
+    "release": {
+      "checks": 45522,
+      "provider_owner_bytes": 109960,
+      "crypto_object_bytes": 16,
+      "authentic_CLIENT_loader_successes": 1,
+      "authentic_header_end": 20,
+      "authentic_dependency_end": 64,
+      "authentic_body_end": 2584,
+      "authentic_rows": 28,
+      "production_CRC_mismatch_full_body_successes": 34,
+      "source_loader_successes": 36,
+      "source_loader_transactions": 42,
+      "safe_production_header_refusals": 3,
+      "safe_production_body_refusals": 2,
+      "safe_missing_cache_refusals": 1,
+      "bounded_refusals": 16,
+      "all_authentic_prefix_preflight_refusals": 2584,
+      "fixed_reservation_refusals": 2,
+      "cleaned_actual_CRC_contexts": 41,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 5,
+      "budget_overflow_controls": 6,
+      "same_live_handle_open_close_once_verified": true,
+      "source_call_order_verified": true,
+      "source_ParseBoneNames_calls": 0,
+      "nativeDTO_or_fixture_token_bridge_emitted": false,
+      "NULL_dependency_contents_observed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "runtime_default_admitted": false,
+      "dictionary_imported": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "server_identity_bound": false,
+      "selected_owner_bound": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 45522,
+      "provider_owner_bytes": 109960,
+      "crypto_object_bytes": 16,
+      "authentic_CLIENT_loader_successes": 1,
+      "authentic_header_end": 20,
+      "authentic_dependency_end": 64,
+      "authentic_body_end": 2584,
+      "authentic_rows": 28,
+      "production_CRC_mismatch_full_body_successes": 34,
+      "source_loader_successes": 36,
+      "source_loader_transactions": 42,
+      "safe_production_header_refusals": 3,
+      "safe_production_body_refusals": 2,
+      "safe_missing_cache_refusals": 1,
+      "bounded_refusals": 16,
+      "all_authentic_prefix_preflight_refusals": 2584,
+      "fixed_reservation_refusals": 2,
+      "cleaned_actual_CRC_contexts": 41,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 5,
+      "budget_overflow_controls": 6,
+      "same_live_handle_open_close_once_verified": true,
+      "source_call_order_verified": true,
+      "source_ParseBoneNames_calls": 0,
+      "nativeDTO_or_fixture_token_bridge_emitted": false,
+      "NULL_dependency_contents_observed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "runtime_default_admitted": false,
+      "dictionary_imported": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "server_identity_bound": false,
+      "selected_owner_bound": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 45522,
+      "provider_owner_bytes": 109960,
+      "crypto_object_bytes": 16,
+      "authentic_CLIENT_loader_successes": 1,
+      "authentic_header_end": 20,
+      "authentic_dependency_end": 64,
+      "authentic_body_end": 2584,
+      "authentic_rows": 28,
+      "production_CRC_mismatch_full_body_successes": 34,
+      "source_loader_successes": 36,
+      "source_loader_transactions": 42,
+      "safe_production_header_refusals": 3,
+      "safe_production_body_refusals": 2,
+      "safe_missing_cache_refusals": 1,
+      "bounded_refusals": 16,
+      "all_authentic_prefix_preflight_refusals": 2584,
+      "fixed_reservation_refusals": 2,
+      "cleaned_actual_CRC_contexts": 41,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 5,
+      "budget_overflow_controls": 6,
+      "same_live_handle_open_close_once_verified": true,
+      "source_call_order_verified": true,
+      "source_ParseBoneNames_calls": 0,
+      "nativeDTO_or_fixture_token_bridge_emitted": false,
+      "NULL_dependency_contents_observed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "runtime_default_admitted": false,
+      "dictionary_imported": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "server_identity_bound": false,
+      "selected_owner_bound": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "builds": {
+    "release": {
+      "schema": "coh-cache-hit-loader-fixture-build-v1",
+      "compile_profile_sha256": "3cbca864f989c9905e3127fee7ef550e51c036769ff3bdc9d7f63e63b7a9603d",
+      "commands_sha256": "b19fc611eb5a3a1c999e6c90f2e3855e4ce3cca910e21a6bfd7b7de674196f9e",
+      "source_identity_sha256": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09",
+      "profile_sha256": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d",
+      "fixture_run_nonce": "c0cf2763448218fb1c97b2f35f8a2bdd101fc5757105158c843610908913921f",
+      "generated_identity_header_sha256": "ed83a94f343eac3ac0fa47bc436eb55aa5300acbbd2bfbe0bbf743a9677440a5",
+      "executable_bytes": 99136,
+      "executable_sha256": "c1684ba2cbfd090ccb33ef523a1e51488ae08b6dfca5ee793ccab80b12645e90",
+      "build_receipt_path": "release/build.json",
+      "build_receipt_sha256": "db3d45a915fc55468ea065290738e1505f04962b99fdcc2baac13d86e8904e26",
+      "compile_profile": {
+        "schema": "coh-cache-hit-loader-fixture-compile-profile-v1",
+        "mode": "release",
+        "compilers": {
+          "cc": {
+            "command": "cc",
+            "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+            "executable_bytes": 1023032,
+            "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+            "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+            "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+          },
+          "c++": {
+            "command": "c++",
+            "resolved_path": "/usr/bin/x86_64-linux-gnu-g++-13",
+            "executable_bytes": 1027128,
+            "executable_sha256": "52f1ddb33fe78b9441e0f42e9cd22c571f1101938e046c8a26582494e041cc73",
+            "version_first_line": "x86_64-linux-gnu-g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+            "version_stdout_sha256": "157c487727541da0ef84bfa12dd6715a793e3af550a457cce01452003a94d34e"
+          }
+        },
+        "c_flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-missing-field-initializers",
+          "-Wno-parentheses",
+          "-Wno-unused-parameter",
+          "-Wno-unused-value",
+          "-Wno-unused-but-set-variable",
+          "-Wno-pointer-sign",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O2",
+          "-fstack-usage"
+        ],
+        "cpp_flags": [
+          "-std=c++11",
+          "-DCRYPTOPP_DISABLE_ASM",
+          "-ffunction-sections",
+          "-fdata-sections",
+          "-Wall",
+          "-Wextra",
+          "-O2",
+          "-fstack-usage"
+        ],
+        "link_flags": [
+          "-Wl,--gc-sections",
+          "-O2",
+          "-fstack-usage"
+        ],
+        "generated_native_source_sha256": {
+          "body-read-provider.c": "b3c15a48205ff7065f524a717e8dd28b4f7aadaa3dbcffce974b868c88cdc30e",
+          "body-read-provider.h": "dc4d0703df0508494c6ddaba5e6d39ef9776ee17c3023ee20546f08a35cabc38",
+          "cache-hit-loader-provider.c": "3d01a4b2198cabe8ab1aec007a966ec4a11061abc53f35cff0000d198cb9eebc",
+          "cache-hit-loader-provider.h": "348cf16224ad47ca357b7ca05c871375b3c1df1dd69c8d96e6b91d1f4b423fdf",
+          "cryptopp-int-to-string.cpp": "d5e06a918dc6235ef79abf0eaff9961846ae962f3a38301d66f90d3d4130cd3d",
+          "schema-crc-adler.cpp": "b3260f85c66ed0b5287f84faebb81412cb405e978ae72824c9d1128d6b8a8aa6",
+          "schema-crc-provider.c": "753d20678121ed0d35f9c5f062296b8c701e42abc1bc9e267ad021d6dc9e4d35",
+          "schema-crc-provider.h": "e236e827ca992214e7a03f5698e7d75dc572d2989d54b47158341cd8779d5fdd",
+          "unopened-binary-provider.c": "da5ea1bce19069e2c4b260c26d7c5ac8688b8a9c57bde608c96e1b5f0f0365f2",
+          "unopened-binary-provider.h": "115050d7c23510a79e93488ffd04a48094d4f35297dbc53d15fd386b3fa7000a"
+        },
+        "test_source_sha256": "d903260a7cebc10e87a63f0d70b29eca4b78448b8845a9e75da470230991b66f",
+        "dependency_snapshot_manifest_sha256": "c01655cc388abe50aa9db7a40421f36afe28a960f36221946a1c0b987f409598"
+      }
+    },
+    "asan": {
+      "schema": "coh-cache-hit-loader-fixture-build-v1",
+      "compile_profile_sha256": "21c43a4064a0e4c3ea0f7afe599094064ab4bb36dbff69d90a2b9a63562b66c8",
+      "commands_sha256": "a0f765f2b03f0ae58db901aede2858f3bbf6885445382b55c45c07336484c57c",
+      "source_identity_sha256": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09",
+      "profile_sha256": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d",
+      "fixture_run_nonce": "6a6d51201dcbfe84652687cd7d178c7b0e05c62038ac387ed5a29155862a67ee",
+      "generated_identity_header_sha256": "3c0e8c0b4690242eec1c145759e7d4be561a68e354dd6c96cef6fe27b4140083",
+      "executable_bytes": 1155800,
+      "executable_sha256": "1eec72bcc57939f96980588dce87a2b0f083d3383421961322aefada3d2207a5",
+      "build_receipt_path": "asan/build.json",
+      "build_receipt_sha256": "306f5dfb39d1e0b1e53f2a47d1b6e7726a34b6288a9036b8d1909567512f550d",
+      "compile_profile": {
+        "schema": "coh-cache-hit-loader-fixture-compile-profile-v1",
+        "mode": "asan",
+        "compilers": {
+          "cc": {
+            "command": "cc",
+            "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+            "executable_bytes": 1023032,
+            "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+            "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+            "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+          },
+          "c++": {
+            "command": "c++",
+            "resolved_path": "/usr/bin/x86_64-linux-gnu-g++-13",
+            "executable_bytes": 1027128,
+            "executable_sha256": "52f1ddb33fe78b9441e0f42e9cd22c571f1101938e046c8a26582494e041cc73",
+            "version_first_line": "x86_64-linux-gnu-g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+            "version_stdout_sha256": "157c487727541da0ef84bfa12dd6715a793e3af550a457cce01452003a94d34e"
+          }
+        },
+        "c_flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-missing-field-initializers",
+          "-Wno-parentheses",
+          "-Wno-unused-parameter",
+          "-Wno-unused-value",
+          "-Wno-unused-but-set-variable",
+          "-Wno-pointer-sign",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O1",
+          "-g",
+          "-fsanitize=address",
+          "-fno-omit-frame-pointer",
+          "-no-pie"
+        ],
+        "cpp_flags": [
+          "-std=c++11",
+          "-DCRYPTOPP_DISABLE_ASM",
+          "-ffunction-sections",
+          "-fdata-sections",
+          "-Wall",
+          "-Wextra",
+          "-O1",
+          "-g",
+          "-fsanitize=address",
+          "-fno-omit-frame-pointer",
+          "-no-pie"
+        ],
+        "link_flags": [
+          "-Wl,--gc-sections",
+          "-O1",
+          "-g",
+          "-fsanitize=address",
+          "-fno-omit-frame-pointer",
+          "-no-pie"
+        ],
+        "generated_native_source_sha256": {
+          "body-read-provider.c": "b3c15a48205ff7065f524a717e8dd28b4f7aadaa3dbcffce974b868c88cdc30e",
+          "body-read-provider.h": "dc4d0703df0508494c6ddaba5e6d39ef9776ee17c3023ee20546f08a35cabc38",
+          "cache-hit-loader-provider.c": "3d01a4b2198cabe8ab1aec007a966ec4a11061abc53f35cff0000d198cb9eebc",
+          "cache-hit-loader-provider.h": "348cf16224ad47ca357b7ca05c871375b3c1df1dd69c8d96e6b91d1f4b423fdf",
+          "cryptopp-int-to-string.cpp": "d5e06a918dc6235ef79abf0eaff9961846ae962f3a38301d66f90d3d4130cd3d",
+          "schema-crc-adler.cpp": "b3260f85c66ed0b5287f84faebb81412cb405e978ae72824c9d1128d6b8a8aa6",
+          "schema-crc-provider.c": "753d20678121ed0d35f9c5f062296b8c701e42abc1bc9e267ad021d6dc9e4d35",
+          "schema-crc-provider.h": "e236e827ca992214e7a03f5698e7d75dc572d2989d54b47158341cd8779d5fdd",
+          "unopened-binary-provider.c": "da5ea1bce19069e2c4b260c26d7c5ac8688b8a9c57bde608c96e1b5f0f0365f2",
+          "unopened-binary-provider.h": "115050d7c23510a79e93488ffd04a48094d4f35297dbc53d15fd386b3fa7000a"
+        },
+        "test_source_sha256": "d903260a7cebc10e87a63f0d70b29eca4b78448b8845a9e75da470230991b66f",
+        "dependency_snapshot_manifest_sha256": "c01655cc388abe50aa9db7a40421f36afe28a960f36221946a1c0b987f409598"
+      }
+    },
+    "ubsan": {
+      "schema": "coh-cache-hit-loader-fixture-build-v1",
+      "compile_profile_sha256": "1262a4be76ae03882bab148a974f620e9c121bfb1788b7a70f7ae6bed56f26ce",
+      "commands_sha256": "d4642431e7c9da8f5b51be9b84168f570714e5f99a158a70392b091d3c59fa7f",
+      "source_identity_sha256": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09",
+      "profile_sha256": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d",
+      "fixture_run_nonce": "182d8f5f93a502fb972be83effc129209b188bd15156a406610c72d563581de7",
+      "generated_identity_header_sha256": "ccec3c667d32fae4872142d8d58fc7a0d56de93659f3cf1b95dbb02d1f22e57b",
+      "executable_bytes": 1165336,
+      "executable_sha256": "8b5a415777951b31c3f3709d6d6ebb94d16f934fff461b672b24d233ce7dd815",
+      "build_receipt_path": "ubsan/build.json",
+      "build_receipt_sha256": "5e04005ce1e1c7078da89a695f8718d726f72886952dbbac7d5069b1ce021bb7",
+      "compile_profile": {
+        "schema": "coh-cache-hit-loader-fixture-compile-profile-v1",
+        "mode": "ubsan",
+        "compilers": {
+          "cc": {
+            "command": "cc",
+            "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+            "executable_bytes": 1023032,
+            "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+            "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+            "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+          },
+          "c++": {
+            "command": "c++",
+            "resolved_path": "/usr/bin/x86_64-linux-gnu-g++-13",
+            "executable_bytes": 1027128,
+            "executable_sha256": "52f1ddb33fe78b9441e0f42e9cd22c571f1101938e046c8a26582494e041cc73",
+            "version_first_line": "x86_64-linux-gnu-g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+            "version_stdout_sha256": "157c487727541da0ef84bfa12dd6715a793e3af550a457cce01452003a94d34e"
+          }
+        },
+        "c_flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-missing-field-initializers",
+          "-Wno-parentheses",
+          "-Wno-unused-parameter",
+          "-Wno-unused-value",
+          "-Wno-unused-but-set-variable",
+          "-Wno-pointer-sign",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O1",
+          "-g",
+          "-fsanitize=undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "cpp_flags": [
+          "-std=c++11",
+          "-DCRYPTOPP_DISABLE_ASM",
+          "-ffunction-sections",
+          "-fdata-sections",
+          "-Wall",
+          "-Wextra",
+          "-O1",
+          "-g",
+          "-fsanitize=undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "link_flags": [
+          "-Wl,--gc-sections",
+          "-O1",
+          "-g",
+          "-fsanitize=undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "generated_native_source_sha256": {
+          "body-read-provider.c": "b3c15a48205ff7065f524a717e8dd28b4f7aadaa3dbcffce974b868c88cdc30e",
+          "body-read-provider.h": "dc4d0703df0508494c6ddaba5e6d39ef9776ee17c3023ee20546f08a35cabc38",
+          "cache-hit-loader-provider.c": "3d01a4b2198cabe8ab1aec007a966ec4a11061abc53f35cff0000d198cb9eebc",
+          "cache-hit-loader-provider.h": "348cf16224ad47ca357b7ca05c871375b3c1df1dd69c8d96e6b91d1f4b423fdf",
+          "cryptopp-int-to-string.cpp": "d5e06a918dc6235ef79abf0eaff9961846ae962f3a38301d66f90d3d4130cd3d",
+          "schema-crc-adler.cpp": "b3260f85c66ed0b5287f84faebb81412cb405e978ae72824c9d1128d6b8a8aa6",
+          "schema-crc-provider.c": "753d20678121ed0d35f9c5f062296b8c701e42abc1bc9e267ad021d6dc9e4d35",
+          "schema-crc-provider.h": "e236e827ca992214e7a03f5698e7d75dc572d2989d54b47158341cd8779d5fdd",
+          "unopened-binary-provider.c": "da5ea1bce19069e2c4b260c26d7c5ac8688b8a9c57bde608c96e1b5f0f0365f2",
+          "unopened-binary-provider.h": "115050d7c23510a79e93488ffd04a48094d4f35297dbc53d15fd386b3fa7000a"
+        },
+        "test_source_sha256": "d903260a7cebc10e87a63f0d70b29eca4b78448b8845a9e75da470230991b66f",
+        "dependency_snapshot_manifest_sha256": "c01655cc388abe50aa9db7a40421f36afe28a960f36221946a1c0b987f409598"
+      }
+    }
+  },
+  "resource_bounds": {
+    "profile_input_max": 65536,
+    "profile_type_max": 4095,
+    "fixture_file_bytes": 254812,
+    "fixture_file_max": 1048576,
+    "input_ledger_bytes": 34729,
+    "input_ledger_max": 131072,
+    "native_stdout_max": 4096,
+    "per_build_receipt_max": 65536,
+    "provider_owned_static_bytes": 109960,
+    "actual_Adler_object_bytes": 16,
+    "wrapper_stack_charge_reserve": 98304,
+    "wrapper_total_budget_max": 1048576,
+    "digest_scratch_reserve_fixture": 65536,
+    "retained_reserve_fixture": 65536,
+    "selected_release_max_frame": 41488,
+    "selected_release_frame_count": 73,
+    "stack_scope": "new C provider/test and actual wrapper/Adler core only; every selected frame must fit98,304B own reserve; every dependency .su retained. No aggregate/external stack closure",
+    "whole_process_or_aggregate_stack_bound_claimed": false
+  },
+  "native_stack_frames": [
+    {
+      "function": "void cryptAdler32Init()",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/cpp-wrapper.su"
+    },
+    {
+      "function": "void cryptAdler32Update(const U8*, int)",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/cpp-wrapper.su"
+    },
+    {
+      "function": "U32 cryptAdler32Final()",
+      "bytes": 48,
+      "bound": "static",
+      "report": "release/cpp-wrapper.su"
+    },
+    {
+      "function": "int schema_adler_is_idle()",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/cpp-wrapper.su"
+    },
+    {
+      "function": "std::size_t schema_adler_object_bytes()",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/cpp-wrapper.su"
+    },
+    {
+      "function": "void schema_adler_cleanup()",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/cpp-wrapper.su"
+    },
+    {
+      "function": "virtual void CryptoPP::Adler32::Update(const CryptoPP::byte*, size_t)",
+      "bytes": 40,
+      "bound": "static",
+      "report": "release/crypto-1-adler32.su"
+    },
+    {
+      "function": "CryptoPP::Adler32::~Adler32()",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/crypto-1-adler32.su"
+    },
+    {
+      "function": "virtual void CryptoPP::Adler32::TruncatedFinal(CryptoPP::byte*, size_t)",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/crypto-1-adler32.su"
+    },
+    {
+      "function": "virtual CryptoPP::Adler32::~Adler32()",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/crypto-1-adler32.su"
+    },
+    {
+      "function": "loader_forbidden",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ParseBoneNames",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_printf",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_update",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "loader_trace.part.0",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "nonarray_readbin",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "isProductionMode.part.0",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "loader_easize.part.0",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_ignore_interpretfield",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_struct_interpretfield",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "UpdateCRCFromParseInfo",
+      "bytes": 96,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "unqualified_eacreate.isra",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_number_interpretfield",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_string_interpretfield",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_seek.isra",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_read",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "u8_readbin",
+      "bytes": 64,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "int_readbin",
+      "bytes": 96,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "earray_readbin",
+      "bytes": 80,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "unopened_original_crc",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SimpleBufClose",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "verbose_printf",
+      "bytes": 112,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "cache_hit_loader_is_idle",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SimpleBufRead",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SimpleBufSeek",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SimpleBufTell",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ReadPascalString",
+      "bytes": 96,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "string_readbin",
+      "bytes": 12096,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SerializeSkipStruct",
+      "bytes": 64,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SerializeReadOpen",
+      "bytes": 4208,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SerializeReadHeader",
+      "bytes": 48,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SerializeReadData",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "SerializeClose",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "FileListCreate",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "FileListRead",
+      "bytes": 368,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "TokenStoreGetStorageType",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ParserReadBinaryTable",
+      "bytes": 96,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_table.constprop",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "struct_readbin",
+      "bytes": 96,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ignore_interpretfield",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "number_interpretfield",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "string_interpretfield",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "struct_interpretfield",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ParseTableCRC",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ParserReadBinaryFile",
+      "bytes": 80,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ParserIsPersistNewer",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ParserLoadFiles",
+      "bytes": 656,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "observed_ParserLoadFiles",
+      "bytes": 96,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "ParserLoadFilesShared",
+      "bytes": 96,
+      "bound": "dynamic,bounded",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "bpReadBodyPartFiles",
+      "bytes": 80,
+      "bound": "dynamic,bounded",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "GetBodyPartCount",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "cache_hit_loader_owner_bytes",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "cache_hit_loader_crypto_object_bytes",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "cache_hit_loader_apply",
+      "bytes": 41488,
+      "bound": "static",
+      "report": "release/provider.su"
+    },
+    {
+      "function": "fail_digest",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/test.su"
+    },
+    {
+      "function": "hex",
+      "bytes": 8,
+      "bound": "static",
+      "report": "release/test.su"
+    },
+    {
+      "function": "digest",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/test.su"
+    },
+    {
+      "function": "diagnostic",
+      "bytes": 80,
+      "bound": "static",
+      "report": "release/test.su"
+    },
+    {
+      "function": "binding.part.0",
+      "bytes": 304,
+      "bound": "static",
+      "report": "release/test.su"
+    },
+    {
+      "function": "word",
+      "bytes": 32,
+      "bound": "static",
+      "report": "release/test.su"
+    },
+    {
+      "function": "hash",
+      "bytes": 16,
+      "bound": "static",
+      "report": "release/test.su"
+    },
+    {
+      "function": "file_hash",
+      "bytes": 48,
+      "bound": "static",
+      "report": "release/test.su"
+    },
+    {
+      "function": "main",
+      "bytes": 3216,
+      "bound": "dynamic,bounded",
+      "report": "release/test.su"
+    }
+  ],
+  "full_dependency_stack_reports": [
+    {
+      "path": "release/cpp-wrapper.su",
+      "bytes": 1116,
+      "sha256": "53837961420254a7154d20e406ff6c840d2c94f92734625be4a3f4cd9919f181"
+    },
+    {
+      "path": "release/crypto-1-adler32.su",
+      "bytes": 3514,
+      "sha256": "0db6066446bce9dbd41b31ec81a999f063eb0b4083373fd9f2af4923b364a6d8"
+    },
+    {
+      "path": "release/crypto-2-cryptlib.su",
+      "bytes": 40307,
+      "sha256": "b969625d25dbc1df96e340ae6826f1ecfc19a1bcc499b066363bb5561bab18d6"
+    },
+    {
+      "path": "release/crypto-3-misc.su",
+      "bytes": 2144,
+      "sha256": "d44b809148a8c770ac72cfdeb8b4d7b3ee681c7ac1bece199e8a93dd514ab7ac"
+    },
+    {
+      "path": "release/crypto-4-fips140.su",
+      "bytes": 1067,
+      "sha256": "c87d6e9bf34d1db314ec9a0f2be1cfc7de2bb1cf4e39bb9db8c900c9fb44a3c8"
+    },
+    {
+      "path": "release/crypto-5-allocate.su",
+      "bytes": 619,
+      "sha256": "31dd39f3a21a895fd7e5e8c627e08c33ecc2dc65891101ebec42fbc13ed4c93f"
+    },
+    {
+      "path": "release/crypto-6-cryptopp-int-to-string.su",
+      "bytes": 171,
+      "sha256": "f646c87005f2af888b7403f4a97cf7efb35a00f9f9e7ca7ebb9454e91313bdf5"
+    },
+    {
+      "path": "release/provider.su",
+      "bytes": 6103,
+      "sha256": "7ee50d5befd74139711dd249ca2266e40abb5be61ff2a8dd925e84fc0cad64c7"
+    },
+    {
+      "path": "release/test.su",
+      "bytes": 1228,
+      "sha256": "b39758469fbefaa5ecc16cc11f8ba2decabda9f2b76dfc56c6ca9ad9d56f6c89"
+    }
+  ],
+  "evidence_files": {
+    "BodyParts.bin": {
+      "bytes": 2584,
+      "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb"
+    },
+    "asan/build.json": {
+      "bytes": 9270,
+      "sha256": "306f5dfb39d1e0b1e53f2a47d1b6e7726a34b6288a9036b8d1909567512f550d"
+    },
+    "asan/cache-hit-loader": {
+      "bytes": 1155800,
+      "sha256": "1eec72bcc57939f96980588dce87a2b0f083d3383421961322aefada3d2207a5"
+    },
+    "asan/cache-hit-loader-qualification-identity.h": {
+      "bytes": 1253,
+      "sha256": "3c0e8c0b4690242eec1c145759e7d4be561a68e354dd6c96cef6fe27b4140083"
+    },
+    "asan/commands.json": {
+      "bytes": 5972,
+      "sha256": "a0f765f2b03f0ae58db901aede2858f3bbf6885445382b55c45c07336484c57c"
+    },
+    "asan/compile-cpp-wrapper.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-cpp-wrapper.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-1-adler32.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-1-adler32.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-2-cryptlib.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-2-cryptlib.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-3-misc.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-3-misc.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-4-fips140.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-4-fips140.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-5-allocate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-5-allocate.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-6-cryptopp-int-to-string.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-crypto-6-cryptopp-int-to-string.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-provider.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-provider.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-test.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile-test.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/cpp-wrapper.d": {
+      "bytes": 1217,
+      "sha256": "3f4848c3c852d672315949c015410223116d321d257eb0e96831b79f7e10b77b"
+    },
+    "asan/cpp-wrapper.o": {
+      "bytes": 116264,
+      "sha256": "0c8bb3c4c3a0f53a3c3875b7073cd653ddf59f9c210121139fa8822f5ac0a945"
+    },
+    "asan/crypto-1-adler32.d": {
+      "bytes": 1288,
+      "sha256": "dafee345a7f34a07ae9b7d9a82a041620b661a16b73f6dc4a59624133f241d94"
+    },
+    "asan/crypto-1-adler32.o": {
+      "bytes": 192848,
+      "sha256": "e4fc04964ed15dde4caebb49c52f8f02345bb4a1998c7c4ac69058be55bae16a"
+    },
+    "asan/crypto-2-cryptlib.d": {
+      "bytes": 2816,
+      "sha256": "ad5bd14920a1a6922f2bde1a86e18edbe18d695aab9b9e62218080ceaa32f070"
+    },
+    "asan/crypto-2-cryptlib.o": {
+      "bytes": 1421104,
+      "sha256": "a9571084e6c12122e5fa8a546bb1427561c0adebb6a9d6c52c65dccca09dc294"
+    },
+    "asan/crypto-3-misc.d": {
+      "bytes": 1704,
+      "sha256": "9da7fe980144d3a0c8c664cfb786b406d490dc4261e961c0663b02bed72d5044"
+    },
+    "asan/crypto-3-misc.o": {
+      "bytes": 290592,
+      "sha256": "e52392b88e490d7837f253255aba6354740f07b2ac2ee9eb0d34d63414dd3962"
+    },
+    "asan/crypto-4-fips140.d": {
+      "bytes": 1642,
+      "sha256": "5da5d424130bb753b2746a010614375b70df4a39fceaa2ad5edf1400653a9eae"
+    },
+    "asan/crypto-4-fips140.o": {
+      "bytes": 95256,
+      "sha256": "61b8a45b31054d64b61fa43ccb4ec25c991df909191b85b522875f0d39295714"
+    },
+    "asan/crypto-5-allocate.d": {
+      "bytes": 1503,
+      "sha256": "1fcf4753edcb927542a5e6c8651b73d40a956600dc3c2e0d6fc2af5bc64f7313"
+    },
+    "asan/crypto-5-allocate.o": {
+      "bytes": 96560,
+      "sha256": "de8d03159aae2cbdc520fa8154ea7442639c02758fbcbaefc0a32969eae52d92"
+    },
+    "asan/crypto-6-cryptopp-int-to-string.d": {
+      "bytes": 1385,
+      "sha256": "644381a36adca0373dc5f749aa4a063742f3896a81acf040757da7d09d008203"
+    },
+    "asan/crypto-6-cryptopp-int-to-string.o": {
+      "bytes": 155984,
+      "sha256": "3295f83795381940355608df7f848efcea868c46a6d052bcab4f44dafdff5c9c"
+    },
+    "asan/link.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/link.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/native.stdout": {
+      "bytes": 2063,
+      "sha256": "af98bb5cfb759523bee82121c467a7f15a9ecff04df986e64f3c02284992eb9d"
+    },
+    "asan/provider.d": {
+      "bytes": 921,
+      "sha256": "7e8ee1e736692463a7f7b40652e4c834495e822701d250e6725f8daac508b3ed"
+    },
+    "asan/provider.o": {
+      "bytes": 303136,
+      "sha256": "23e48948f1ede9b05e935c96ba87f1eeb6d1e88f085a28046e3ca156ba8ae6dd"
+    },
+    "asan/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "f94d015d05a8a507505d74a0bda38b976d4531c784d8ec16bc8774ec490e59da"
+    },
+    "asan/test.d": {
+      "bytes": 977,
+      "sha256": "8ffcd73d92efa71ad1d0d713e5e4b91d51233ba898f5941c498232d0694a484a"
+    },
+    "asan/test.o": {
+      "bytes": 208200,
+      "sha256": "c011fee845b7b2ead1f9a61e29c09c0d45025096d29075c80e72d0101cb5fb31"
+    },
+    "body-field-reference.json": {
+      "bytes": 38137,
+      "sha256": "ca6955bca339dcd1e541dd7fcd94b091033653ac03566e44854ef4016658da9a"
+    },
+    "body-read-provider.c": {
+      "bytes": 36307,
+      "sha256": "b3c15a48205ff7065f524a717e8dd28b4f7aadaa3dbcffce974b868c88cdc30e"
+    },
+    "body-read-provider.h": {
+      "bytes": 2480,
+      "sha256": "dc4d0703df0508494c6ddaba5e6d39ef9776ee17c3023ee20546f08a35cabc38"
+    },
+    "cache-hit-loader-fixtures.bin": {
+      "bytes": 254812,
+      "sha256": "f25050bdcabc50ba7884adcce035ccde8a7d792fb41db1700d689508d47e89d5"
+    },
+    "cache-hit-loader-provider.c": {
+      "bytes": 71565,
+      "sha256": "3d01a4b2198cabe8ab1aec007a966ec4a11061abc53f35cff0000d198cb9eebc"
+    },
+    "cache-hit-loader-provider.h": {
+      "bytes": 3542,
+      "sha256": "348cf16224ad47ca357b7ca05c871375b3c1df1dd69c8d96e6b91d1f4b423fdf"
+    },
+    "cache-hit-loader-qualification-identity.h": {
+      "bytes": 32,
+      "sha256": "7330dc8601276c721a2ba74cc3aa9093df5b12c5e0b3624452b411815f4eb272"
+    },
+    "cc-version.stdout": {
+      "bytes": 264,
+      "sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+    },
+    "cryptopp/License.txt": {
+      "bytes": 4032,
+      "sha256": "78e4010b682cb94187fe0b57e50116d0ba271ef81104d1ddb35c80c3d81e3169"
+    },
+    "cryptopp/adler32.cpp": {
+      "bytes": 1382,
+      "sha256": "957a7578004a497a39f31728ffc4951b8a8fb4c093daedf800cc3ebaef1da104"
+    },
+    "cryptopp/adler32.h": {
+      "bytes": 835,
+      "sha256": "d76cc75fa2d11ce6b8c9faf1aa0c7afc3dee472f0c85b1216d3d13ef20026f75"
+    },
+    "cryptopp/aes.h": {
+      "bytes": 1174,
+      "sha256": "fbd98402a8ddab54389a433c5685356bf3d3ad2ae37747c242a593667379a683"
+    },
+    "cryptopp/algparam.h": {
+      "bytes": 18968,
+      "sha256": "a0c1352f81ca19aee1329e00af0e8e298131851a5449ecd042e370a73d8d09d4"
+    },
+    "cryptopp/allocate.cpp": {
+      "bytes": 2501,
+      "sha256": "1a933d1ec1a8245817464c28c00762371039d0caf210e76cdbeff16a626948b2"
+    },
+    "cryptopp/allocate.h": {
+      "bytes": 3513,
+      "sha256": "6fbcf40f97fb72c1523bb597d28337623997bc5610f235b9d440b22289b6f970"
+    },
+    "cryptopp/argnames.h": {
+      "bytes": 5650,
+      "sha256": "4fa6995e67001c2b744d64e2f7f36629cf489be21f1ff242fbc13da43df59769"
+    },
+    "cryptopp/config.h": {
+      "bytes": 1141,
+      "sha256": "641a512721c40a6778dfcc143b611c6204f38916bae55d391e2c74c18b70b2f6"
+    },
+    "cryptopp/config_align.h": {
+      "bytes": 3281,
+      "sha256": "3a3f596ac05567c75b79d736319e561cf5ea01e06573d78bd479fb8673492bb3"
+    },
+    "cryptopp/config_asm.h": {
+      "bytes": 21010,
+      "sha256": "d9215cd770e26923a18c61b641d56a485500d7c52fa8d45aa4611220eb27e758"
+    },
+    "cryptopp/config_cpu.h": {
+      "bytes": 10320,
+      "sha256": "89b1dd39c3c479a590f2ca7fc2e9832f9d50f3b4fac01128a0b89acae88cbd71"
+    },
+    "cryptopp/config_cxx.h": {
+      "bytes": 11487,
+      "sha256": "0a5042e6ea886e2c38a9626585deb1409a56dbcd35a522e877b648fb9042a366"
+    },
+    "cryptopp/config_dll.h": {
+      "bytes": 8208,
+      "sha256": "5f5f25287fc9a0bd49230edebaf6377b64f8020aa04d843cdd1a5449dd34c5e4"
+    },
+    "cryptopp/config_int.h": {
+      "bytes": 12044,
+      "sha256": "99a41cf87cb25c898fe438f4ba1e9dbe209e652a0328bacc1adf5d6e4ff848b6"
+    },
+    "cryptopp/config_misc.h": {
+      "bytes": 8697,
+      "sha256": "1918df9919402f747b862bffd1235f4087be76d48d34d4e3b9ee2820ed526823"
+    },
+    "cryptopp/config_ns.h": {
+      "bytes": 3066,
+      "sha256": "c4bc5ebf250efea647afb1873fb89f6b9dc540485f6f569f8b868cd9e8994ef9"
+    },
+    "cryptopp/config_os.h": {
+      "bytes": 6387,
+      "sha256": "7a876d8032295b3e813dcafd2ea6788c527985c8464273e23d7c4d07c6b5c0c6"
+    },
+    "cryptopp/config_ver.h": {
+      "bytes": 4619,
+      "sha256": "fc8ecd03f66cea3e8c99db529cb023e13405defcc511ece1877801281d2aabb2"
+    },
+    "cryptopp/cryptlib.cpp": {
+      "bytes": 33700,
+      "sha256": "8969994d41454d0691fff848fbb77a8afdae0f16e04fb3f6d16dfa1469fe3051"
+    },
+    "cryptopp/cryptlib.h": {
+      "bytes": 181761,
+      "sha256": "12eb02d2bdf953ffd90d0c8ddcaf800dcb3e1890b8f0ea93b533b4087e82785c"
+    },
+    "cryptopp/filters.h": {
+      "bytes": 70660,
+      "sha256": "783038cf6411bcddcd92c0b900cbfbb4c9038dbfe828ae8fda444313215cf4a9"
+    },
+    "cryptopp/fips140.cpp": {
+      "bytes": 2310,
+      "sha256": "fbf6cc4cf9b53828828c2de7e9963c9a82ef4f43fcf8819b61c0f2369774eae1"
+    },
+    "cryptopp/fips140.h": {
+      "bytes": 5679,
+      "sha256": "cb4042de79c44789f6730c331dab5cb2ad6d10730e24557084f363c0daf71f34"
+    },
+    "cryptopp/fltrimpl.h": {
+      "bytes": 2087,
+      "sha256": "a985b68b2480dfeeaf9d6eb39baf117191fb1d9cbbe42199f33b7a00a851dce6"
+    },
+    "cryptopp/hkdf.h": {
+      "bytes": 5967,
+      "sha256": "1ccedcd401635ac077d895f147ef142645ad7216205d4adf46899e35e8222b5b"
+    },
+    "cryptopp/hmac.h": {
+      "bytes": 2607,
+      "sha256": "f8becd33fc708ac1bbcc1929d34fb0f8f7f7b7592f52bc5d8e985d862c0e8cbb"
+    },
+    "cryptopp/integer.cpp": {
+      "bytes": 135602,
+      "sha256": "defb6877bddbdaaeab9c67e693d17899c5b7e222ba776e7fa916224247a20fe3"
+    },
+    "cryptopp/integer.h": {
+      "bytes": 38735,
+      "sha256": "524baaeae6f5d23b9c07c13c3b34f1c89971d40357385a40b6346886f8b40d84"
+    },
+    "cryptopp/iterhash.h": {
+      "bytes": 9112,
+      "sha256": "397298f1eadcfe7165f8b86670a7879641244e7a48aab62fe910dd3fc6eb3ff5"
+    },
+    "cryptopp/misc.cpp": {
+      "bytes": 10519,
+      "sha256": "a3728752463001070a44838ad61e9aa651d29770422148125665a5c5dd720307"
+    },
+    "cryptopp/misc.h": {
+      "bytes": 126868,
+      "sha256": "13de68cfefceff3cc97f980a61b56931cff5bccac9eece0a6d6ab2bc98daa44d"
+    },
+    "cryptopp/osrng.h": {
+      "bytes": 11557,
+      "sha256": "eba8e5d21f62a4b2f4ff0b5b94c93d7b7ff95d54e15dd082f19a1f2cf4e331cb"
+    },
+    "cryptopp/pch.h": {
+      "bytes": 758,
+      "sha256": "d629cfec26c9317f637137f137550f6f8138292acfd677baf0a986a1db80056b"
+    },
+    "cryptopp/queue.h": {
+      "bytes": 9634,
+      "sha256": "7a223d51a78bea39e6a7bdd02ae58cabfdda561e81e461550d240c47f8bd0264"
+    },
+    "cryptopp/randpool.h": {
+      "bytes": 4699,
+      "sha256": "1d29d8662ebab0da03dc7782e886df16656549ae7c89983c53d89f4779e6785b"
+    },
+    "cryptopp/rijndael.h": {
+      "bytes": 4778,
+      "sha256": "d82187fd5e08a45a74e9aac8a0b9197856ff879d072cdad8b204e6915fbabb4a"
+    },
+    "cryptopp/rng.h": {
+      "bytes": 4293,
+      "sha256": "40f2532cf14e950080bb1ba1383c52a2e5af0ab09779de89524f066735b6fa2b"
+    },
+    "cryptopp/secblock.h": {
+      "bytes": 53781,
+      "sha256": "7d83f568a249e674772fddeea33d4c1bf7b403a880aac82298ebf4729f597d7d"
+    },
+    "cryptopp/secblockfwd.h": {
+      "bytes": 896,
+      "sha256": "472e5d0fa333257c3b8254e5fddbcbaa803dae920f65d64542219c0b3b8400cf"
+    },
+    "cryptopp/seckey.h": {
+      "bytes": 20694,
+      "sha256": "54204f1ae34214150d0087043c19e25e83abe010837ef214a232891598501cfa"
+    },
+    "cryptopp/sha.h": {
+      "bytes": 10811,
+      "sha256": "9d9cb08b466b520a21a9549ce438aba5f4c0479e46240a4c4f9160a930962d7c"
+    },
+    "cryptopp/simple.h": {
+      "bytes": 26288,
+      "sha256": "41a165d3b4ffce87755b28b878e08503d571558cffe5877b7e00cb84226ef373"
+    },
+    "cryptopp/smartptr.h": {
+      "bytes": 6652,
+      "sha256": "a2d6f834c9e2890943a203ce7397976d8618e62c3d56f6a6afa456ffdc22e879"
+    },
+    "cryptopp/stdcpp.h": {
+      "bytes": 2485,
+      "sha256": "35f068b2521c8ee31eeb1ea2810a352148a2854f47683363f914be4f090ef750"
+    },
+    "cryptopp/trap.h": {
+      "bytes": 7689,
+      "sha256": "a82a30348451a7d113ddea392d03b834085802dd05c12c265546d3b90599403f"
+    },
+    "cryptopp/words.h": {
+      "bytes": 6636,
+      "sha256": "1b90ca646c5fa044f4b6c43a998bd5a65aca0963dcd94295b7cf642cb98eef64"
+    },
+    "cryptopp-int-to-string.cpp": {
+      "bytes": 554,
+      "sha256": "d5e06a918dc6235ef79abf0eaff9961846ae962f3a38301d66f90d3d4130cd3d"
+    },
+    "cryptopp-provenance.json": {
+      "bytes": 11381,
+      "sha256": "b240ead30dce9771a34fc1545308ec38092a3fb7eb70be2c4303d981eefb81e2"
+    },
+    "cxx-version.stdout": {
+      "bytes": 264,
+      "sha256": "157c487727541da0ef84bfa12dd6715a793e3af550a457cce01452003a94d34e"
+    },
+    "fixture-profile.json": {
+      "bytes": 2055,
+      "sha256": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d"
+    },
+    "fixture-reference.json": {
+      "bytes": 34729,
+      "sha256": "9a8a454fac04835be075906b85bf5d7f7195dcb9e4c9968b624a72f9190366a6"
+    },
+    "input-ledger.json": {
+      "bytes": 34729,
+      "sha256": "9a8a454fac04835be075906b85bf5d7f7195dcb9e4c9968b624a72f9190366a6"
+    },
+    "release/build.json": {
+      "bytes": 8763,
+      "sha256": "db3d45a915fc55468ea065290738e1505f04962b99fdcc2baac13d86e8904e26"
+    },
+    "release/cache-hit-loader": {
+      "bytes": 99136,
+      "sha256": "c1684ba2cbfd090ccb33ef523a1e51488ae08b6dfca5ee793ccab80b12645e90"
+    },
+    "release/cache-hit-loader-qualification-identity.h": {
+      "bytes": 1252,
+      "sha256": "ed83a94f343eac3ac0fa47bc436eb55aa5300acbbd2bfbe0bbf743a9677440a5"
+    },
+    "release/commands.json": {
+      "bytes": 5602,
+      "sha256": "b19fc611eb5a3a1c999e6c90f2e3855e4ce3cca910e21a6bfd7b7de674196f9e"
+    },
+    "release/compile-cpp-wrapper.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-cpp-wrapper.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-1-adler32.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-1-adler32.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-2-cryptlib.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-2-cryptlib.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-3-misc.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-3-misc.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-4-fips140.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-4-fips140.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-5-allocate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-5-allocate.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-6-cryptopp-int-to-string.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-crypto-6-cryptopp-int-to-string.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-provider.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-provider.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-test.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile-test.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/cpp-wrapper.d": {
+      "bytes": 1220,
+      "sha256": "85cc38cec23901aefdd8afa2f3a2041663e0322920d4621509a0ad255c2487c9"
+    },
+    "release/cpp-wrapper.o": {
+      "bytes": 6296,
+      "sha256": "bba0d89df4ac313fde842a578130114d5852d6f647eb747a7c1a844a9b11c207"
+    },
+    "release/cpp-wrapper.su": {
+      "bytes": 1116,
+      "sha256": "53837961420254a7154d20e406ff6c840d2c94f92734625be4a3f4cd9919f181"
+    },
+    "release/crypto-1-adler32.d": {
+      "bytes": 1291,
+      "sha256": "8e19edfe95d44090d9f8c1499cbd92304aab8d7da8969c1f2676378e19e6c55d"
+    },
+    "release/crypto-1-adler32.o": {
+      "bytes": 17976,
+      "sha256": "345ec26153f17c775345f64b2304d31ff4d4167bd30f29998b02f0a48c69263a"
+    },
+    "release/crypto-1-adler32.su": {
+      "bytes": 3514,
+      "sha256": "0db6066446bce9dbd41b31ec81a999f063eb0b4083373fd9f2af4923b364a6d8"
+    },
+    "release/crypto-2-cryptlib.d": {
+      "bytes": 2819,
+      "sha256": "7ddf54749491735ddd12ecc4ef889b3de0843e5a65cd1edbb8bee7e6814d6bca"
+    },
+    "release/crypto-2-cryptlib.o": {
+      "bytes": 258160,
+      "sha256": "228790899ccdda398ccbdac7fb6bbe6a47be7e5966743b0eb608578acdf3df9d"
+    },
+    "release/crypto-2-cryptlib.su": {
+      "bytes": 40307,
+      "sha256": "b969625d25dbc1df96e340ae6826f1ecfc19a1bcc499b066363bb5561bab18d6"
+    },
+    "release/crypto-3-misc.d": {
+      "bytes": 1707,
+      "sha256": "6725e330f67fa532516ede5e045478e5c3577a1a0e68d30b25113854f9f27945"
+    },
+    "release/crypto-3-misc.o": {
+      "bytes": 17064,
+      "sha256": "b915681481603b382b00dbcd17f27188749d3253ee126a95e62acaf8526ef189"
+    },
+    "release/crypto-3-misc.su": {
+      "bytes": 2144,
+      "sha256": "d44b809148a8c770ac72cfdeb8b4d7b3ee681c7ac1bece199e8a93dd514ab7ac"
+    },
+    "release/crypto-4-fips140.d": {
+      "bytes": 1645,
+      "sha256": "100000491c02fdbc23934ae50f06d571c111ae7f00429e70966ea2026cdbc3cc"
+    },
+    "release/crypto-4-fips140.o": {
+      "bytes": 3592,
+      "sha256": "9b1a0450d752a835ea7eb23bb18bd7b20b5bcbbac6404f5f2af022b0d6bb4854"
+    },
+    "release/crypto-4-fips140.su": {
+      "bytes": 1067,
+      "sha256": "c87d6e9bf34d1db314ec9a0f2be1cfc7de2bb1cf4e39bb9db8c900c9fb44a3c8"
+    },
+    "release/crypto-5-allocate.d": {
+      "bytes": 1506,
+      "sha256": "46eb40c149dbce613f38c525d650751797d43a99e68c4541ec3821115494b22a"
+    },
+    "release/crypto-5-allocate.o": {
+      "bytes": 3896,
+      "sha256": "f47a17002eb34b254bb64c6e1ecb16558da6223d2868c95c2553bc614b45aebe"
+    },
+    "release/crypto-5-allocate.su": {
+      "bytes": 619,
+      "sha256": "31dd39f3a21a895fd7e5e8c627e08c33ecc2dc65891101ebec42fbc13ed4c93f"
+    },
+    "release/crypto-6-cryptopp-int-to-string.d": {
+      "bytes": 1388,
+      "sha256": "04dae6a5322b422ee0ef6574c382fb43f44b1c77edece05454e4e823b488c5fa"
+    },
+    "release/crypto-6-cryptopp-int-to-string.o": {
+      "bytes": 4776,
+      "sha256": "cd54293ed056437d4faf9ac8e71efa3b69c477d055ce1646d6b5219e0a0381e7"
+    },
+    "release/crypto-6-cryptopp-int-to-string.su": {
+      "bytes": 171,
+      "sha256": "f646c87005f2af888b7403f4a97cf7efb35a00f9f9e7ca7ebb9454e91313bdf5"
+    },
+    "release/link.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/link.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/native.stdout": {
+      "bytes": 2063,
+      "sha256": "a5e2ace49ddce9fcc8124dcb9b8c2bef883239a33567b1d9fffe100922da3f34"
+    },
+    "release/provider.d": {
+      "bytes": 924,
+      "sha256": "6822ccfe33efde7e27d70c9e53f5d380b9668750dd41490eecbc0440ab83aaf7"
+    },
+    "release/provider.o": {
+      "bytes": 57688,
+      "sha256": "135dd28a164a070569fbca2b9aaa94729eb23546e3c7a4afcee5def7aca7ddb3"
+    },
+    "release/provider.su": {
+      "bytes": 6103,
+      "sha256": "7ee50d5befd74139711dd249ca2266e40abb5be61ff2a8dd925e84fc0cad64c7"
+    },
+    "release/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "2dd20fadf304e9c9cd6f95323958b4769322bdbc786ee737c96a8255f50e3e4a"
+    },
+    "release/test.d": {
+      "bytes": 983,
+      "sha256": "d68dd3559f8ced347696d375b375a122b31d44dd54b33edb9fe4572704a48d77"
+    },
+    "release/test.o": {
+      "bytes": 39520,
+      "sha256": "45090911d67ee152adbe867fe315621d847cd31c279a6c9661edc676b7595442"
+    },
+    "release/test.su": {
+      "bytes": 1228,
+      "sha256": "b39758469fbefaa5ecc16cc11f8ba2decabda9f2b76dfc56c6ca9ad9d56f6c89"
+    },
+    "resource-bounds.json": {
+      "bytes": 740,
+      "sha256": "85de14f38ab2c0ab4d39d61f7eea2b10f871e6fa3e758e2b5eece40b6ae77957"
+    },
+    "schema-crc-adler.cpp": {
+      "bytes": 911,
+      "sha256": "b3260f85c66ed0b5287f84faebb81412cb405e978ae72824c9d1128d6b8a8aa6"
+    },
+    "schema-crc-provider.c": {
+      "bytes": 22422,
+      "sha256": "753d20678121ed0d35f9c5f062296b8c701e42abc1bc9e267ad021d6dc9e4d35"
+    },
+    "schema-crc-provider.h": {
+      "bytes": 2237,
+      "sha256": "e236e827ca992214e7a03f5698e7d75dc572d2989d54b47158341cd8779d5fdd"
+    },
+    "schema-stream-reference.json": {
+      "bytes": 539,
+      "sha256": "6eece46e7143eac8e06f80ce2a72724565b76a00f6d6185073cbd4a50c975547"
+    },
+    "source-identity.json": {
+      "bytes": 11100,
+      "sha256": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09"
+    },
+    "ubsan/build.json": {
+      "bytes": 9223,
+      "sha256": "5e04005ce1e1c7078da89a695f8718d726f72886952dbbac7d5069b1ce021bb7"
+    },
+    "ubsan/cache-hit-loader": {
+      "bytes": 1165336,
+      "sha256": "8b5a415777951b31c3f3709d6d6ebb94d16f934fff461b672b24d233ce7dd815"
+    },
+    "ubsan/cache-hit-loader-qualification-identity.h": {
+      "bytes": 1247,
+      "sha256": "ccec3c667d32fae4872142d8d58fc7a0d56de93659f3cf1b95dbb02d1f22e57b"
+    },
+    "ubsan/commands.json": {
+      "bytes": 5942,
+      "sha256": "d4642431e7c9da8f5b51be9b84168f570714e5f99a158a70392b091d3c59fa7f"
+    },
+    "ubsan/compile-cpp-wrapper.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-cpp-wrapper.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-1-adler32.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-1-adler32.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-2-cryptlib.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-2-cryptlib.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-3-misc.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-3-misc.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-4-fips140.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-4-fips140.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-5-allocate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-5-allocate.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-6-cryptopp-int-to-string.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-crypto-6-cryptopp-int-to-string.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-provider.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-provider.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-test.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile-test.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/cpp-wrapper.d": {
+      "bytes": 1218,
+      "sha256": "67e3d0343689e8b5a4277f86af2eb6fae3b46c19c2b5b508beceac8d7404706c"
+    },
+    "ubsan/cpp-wrapper.o": {
+      "bytes": 126496,
+      "sha256": "e0ec00b7a3bbbccb9ec31e3376f80c0a8c1947fa04f16ee8a1d8c1df9277c66e"
+    },
+    "ubsan/crypto-1-adler32.d": {
+      "bytes": 1289,
+      "sha256": "d8c23dc4e0d9b1f87d2750874d17586cde0b4c13d66526734b4e09687ddabb53"
+    },
+    "ubsan/crypto-1-adler32.o": {
+      "bytes": 292624,
+      "sha256": "f5b426c143a9a323ffc3eb4e7d1a34c96e021ff77dd576597f8ae499a3744d69"
+    },
+    "ubsan/crypto-2-cryptlib.d": {
+      "bytes": 2817,
+      "sha256": "132a4f95c025130b6a6f178a2ea2b942768108bff1f042be081c25d4f3338c69"
+    },
+    "ubsan/crypto-2-cryptlib.o": {
+      "bytes": 2075680,
+      "sha256": "51286c705036eabcc30c785a83dabb58f1440464e549ecf490f9e8437dbb0a08"
+    },
+    "ubsan/crypto-3-misc.d": {
+      "bytes": 1705,
+      "sha256": "b3ff45d2a494d1eaed52fe4aa28f262ca1a928dd90a3bc6ea6e7253b7001f74b"
+    },
+    "ubsan/crypto-3-misc.o": {
+      "bytes": 325912,
+      "sha256": "f255ae8c6d5539b83b0804cf6bf30dcce5dff5551f3f7dd62a3b7078db01a38c"
+    },
+    "ubsan/crypto-4-fips140.d": {
+      "bytes": 1643,
+      "sha256": "3f2f924a344e34c6bb9c991ca7a699ad87a07be4009b7a23e14c46420a8c442e"
+    },
+    "ubsan/crypto-4-fips140.o": {
+      "bytes": 93616,
+      "sha256": "f0714479f2cdca7b4480d44642236b54a438031a4b87ff18d09a0e2535d11bfa"
+    },
+    "ubsan/crypto-5-allocate.d": {
+      "bytes": 1504,
+      "sha256": "3333b65c55083f1bb624e68633733256d2b2226a8a58ff53474f2a049c8bef01"
+    },
+    "ubsan/crypto-5-allocate.o": {
+      "bytes": 98064,
+      "sha256": "14971257081c9babe4f4c70d6651ec6b7e042b3c1c9e790224dd09743a25e884"
+    },
+    "ubsan/crypto-6-cryptopp-int-to-string.d": {
+      "bytes": 1386,
+      "sha256": "0961f3589464e0342026861c1611e02611e6ae62c01ab7e024b3b427a585b627"
+    },
+    "ubsan/crypto-6-cryptopp-int-to-string.o": {
+      "bytes": 148864,
+      "sha256": "e0e51e5c2c9c97866d48acd122526fe97821839a53f7752ec7ee373547a59423"
+    },
+    "ubsan/link.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/link.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/native.stdout": {
+      "bytes": 2063,
+      "sha256": "9b03eb073d3d7f2ae26cf95bb7e5d72fd3b68896ab6712ea17b30d41906e37dc"
+    },
+    "ubsan/provider.d": {
+      "bytes": 922,
+      "sha256": "a88f8fac97fba54f0ba334c12f3af0ebabf68a9c2b7309f7bb9edd1fc22f3585"
+    },
+    "ubsan/provider.o": {
+      "bytes": 306920,
+      "sha256": "2905aa6edaf9f63a974f1ed5fed451d8c77cdfcdf79d40ad82a089c6cdb1a3d4"
+    },
+    "ubsan/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "bede9a95931791c5259c1a97cf0ca2569372bd8cf43da3945df9e14027b86646"
+    },
+    "ubsan/test.d": {
+      "bytes": 979,
+      "sha256": "4f1de4ab1f32de8bb66ca7e99d90c9936683056273d251a1cf29ada1d901edaa"
+    },
+    "ubsan/test.o": {
+      "bytes": 177016,
+      "sha256": "1d24bdfc5eb8e4a33c2eb0db655d5a752de674afe80e1ef12792185111bfd358"
+    },
+    "unopened-binary-provider.c": {
+      "bytes": 44367,
+      "sha256": "da5ea1bce19069e2c4b260c26d7c5ac8688b8a9c57bde608c96e1b5f0f0365f2"
+    },
+    "unopened-binary-provider.h": {
+      "bytes": 3221,
+      "sha256": "115050d7c23510a79e93488ffd04a48094d4f35297dbc53d15fd386b3fa7000a"
+    }
+  },
+  "scope": "Whole unchanged original bpReadBodyPartFiles/ParserLoadFilesShared SMAR_Error/ParserLoadFiles invokes actual ParserIsPersistNewer actual CRC/CryptoPP/SerializeReadOpen ignoreCRC1, hands SAME live handle to original ParserReadBinaryFile, executes FileListRead(NULL)/body and source close. Source cache-hit early return preserves cached words and never preprocesses; production rejection reaches safe owned StructClear. Environment shells do not prove filesystem selection. Every authentic field compared independently; production CRC mismatch acceptance preserved. Every authentic-prefix truncation refuses before source entry. Fixed allocation reservation and open refusals are separately qualified; unsafe original NULL/new failures are not simulated. Source/input/ELF/build/profile/random labels are measured fixture associations, never current Map attestation.",
+  "actual_original_ParserLoadFiles_executed": true,
+  "actual_original_ParserLoadFilesShared_SMAR_Error_executed": true,
+  "actual_original_ParserIsPersistNewer_executed": true,
+  "actual_original_ParserReadBinaryFile_SUPPLIED_handle_executed": true,
+  "actual_original_ParseTableCRC_executed": true,
+  "actual_original_SerializeReadOpen_executed": true,
+  "actual_original_CryptoPP_Adler32_executed": true,
+  "production_ignoreCRC1_preserved": true,
+  "shared_acquisition_shell": "SMAR_Error only",
+  "source_ParseBoneNames_calls": 0,
+  "filesystem_selection_or_mode_helpers_qualified": false,
+  "development_mode_executed": false,
+  "date_or_filesystem_freshness_executed": false,
+  "original_FileListRead_NULL_executed": true,
+  "full_original_body_reader_executed": true,
+  "old_checker_mains_executed": false,
+  "old_native_suites_executed": false,
+  "external_Cpp_OpenSSL_libc_allocator_sanitizer_or_total_stack_closure": false,
+  "current_Map_runtime_executed": false,
+  "current_Map_selection_provenance_verified": false,
+  "runtime_body_catalog_admitted": false,
+  "runtime_default_admitted": false,
+  "dictionary_imported": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "server_identity_bound": false,
+  "selected_owner_bound": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

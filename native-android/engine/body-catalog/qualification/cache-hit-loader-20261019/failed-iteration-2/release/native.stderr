@@ -1,0 +1,2 @@
+trace wanted13 got14: 1,2,3,4,5,6,7,8,5,9,12,5,13,16,
+check failed line 49: r->trace_count==n&&!memcmp(r->trace,want,n*4)

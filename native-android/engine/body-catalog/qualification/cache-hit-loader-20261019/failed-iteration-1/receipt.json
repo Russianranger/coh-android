@@ -1,0 +1,12 @@
+{
+  "schema": "coh-cache-hit-loader-iteration-v1",
+  "passed": false,
+  "stage": "release native harness budget control",
+  "reason": "Harness expected COH_LIMIT for NULL digest context with nonzero context_bytes. Wrapper correctly refused malformed context span COH_INVALID before budget entry. Control corrected to use valid spans with a restrictive 256KiB budget.",
+  "source_identity_sha256": "7df8de9531c4955f3b2ae08fe5025d53dec9734f01262363f89dad67ed339731",
+  "generated_provider_sha256": "acffc8bf107592b847aaf6b37eae27f8472ea1dc6582e9b99b3a9c71ae5f24cc",
+  "test_source_sha256": "99c6eac94e178cc0c826d8e3b6bb1b8143bd6fbd68d9b56c42357ffe52a0395b",
+  "native_stderr": "check failed line 90: cache_hit_loader_apply(raw,&observed,&expected,&limited,0,1,out,r,budget,retained)==COH_LIMIT&&r->stage==CACHE_HIT_LOADER_STAGE_INPUT&&!r->entry_calls&&!memcmp(out,saved,sizeof(*out))\n",
+  "sources_qualified": false,
+  "prior_accepted_sources_modified": false
+}

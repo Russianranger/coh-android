@@ -1,0 +1,85 @@
+{
+  "schema": "coh-cache-hit-loader-frozen-handoff-v1",
+  "passed": true,
+  "source_files_frozen": true,
+  "source_revision": "2b0e0b6afaa76ac17eea0a9a80066ed1a748287d",
+  "source_identity_sha256": "217b181e2babb28385e2d23edff1c43f1a28c3543c280e9c2bb872f51ea56a09",
+  "profile_sha256": "3a6c0cb1b10bd950c1c5960a2dd5826f6e28b63e22aea49b9fcb62e90344271d",
+  "source_files": {
+    "cache_hit_loader_provider.py": {
+      "bytes": 19883,
+      "sha256": "4d58bdc8af32de99655b500df799d68a260d8d919cc8a553984adb13eaf4e398"
+    },
+    "cache-hit-loader-source-pins.json": {
+      "bytes": 5129,
+      "sha256": "ba192350cbd17d68fde2b440e43d54aa967529a73612926cdca834fcbfd32159"
+    },
+    "check_cache_hit_loader.py": {
+      "bytes": 38517,
+      "sha256": "c5261e2ce9fd1af8344e98e1aef6644735304da4de9474d110e1c2e46720fb4d"
+    },
+    "test_cache_hit_loader.c": {
+      "bytes": 18042,
+      "sha256": "d903260a7cebc10e87a63f0d70b29eca4b78448b8845a9e75da470230991b66f"
+    }
+  },
+  "host_receipt_sha256": "230f01a3cedeeacddc7fc095967e9bf3100efb4b3da81b42f24213fa9be1a193",
+  "fresh_final_evidence_directory": "/workspace/scratch/0484ad305122/loader-a-final2",
+  "final_modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "checks_each_mode": 45522,
+  "principal_fixtures": 52,
+  "repo_inputs_stable": 42,
+  "dependency_snapshots_stable": 48,
+  "compiler_and_runtime_stderr_empty": true,
+  "selected_release_max_frame": 41488,
+  "provider_owner_bytes": 109960,
+  "crypto_object_bytes": 16,
+  "stack_reserve_bytes": 98304,
+  "aggregate_budget_bytes": 1048576,
+  "independent_review": "Read-only source/qualification audit found no blockers after exact hidden statics/TLS charges, native64 guard, proof compaction and selected-frame reserve guard.",
+  "prior_iterations": [
+    {
+      "directory": "failed-iteration-1",
+      "passed": false,
+      "reason": "harness malformed-context budget expectation corrected"
+    },
+    {
+      "directory": "failed-iteration-2",
+      "passed": false,
+      "reason": "harness closed-header trace expectation corrected; provider unchanged"
+    },
+    {
+      "directory": "passing-iteration-3",
+      "passed": true,
+      "final": false
+    },
+    {
+      "receipt": "passing-iteration-4.json",
+      "passed": true,
+      "final": false
+    }
+  ],
+  "interface": "cache_hit_loader_apply(CohBytes, observed identity, expected identity, digest API, fault selector, production mode1, atomic CacheHitLoaderResult*, CacheHitLoaderReceipt*, budget, retained). fault0 normal,1 owned open refusal,2 row reservation refusal,3 crypto reservation refusal,4 missing fixture path. Generated cache-hit-loader-provider.h exposes complete typed API.",
+  "composition": "Whole original bpReadBodyPartFiles/ParserLoadFilesShared(SMAR_Error)/ParserLoadFiles/ParserIsPersistNewer -> SAME supplied live handle ParserReadBinaryFile/FileListRead(NULL)/body/SerializeClose. Original source CRC1/open1/close1 on supported hit; no callback, fixture token or DTO bridge.",
+  "qualified_environment_shells": "Immutable production1 and SMAR_Error, fixed owned fileLocateRead path/open/TokenStore and safe owned StructClear. Those helpers themselves and real FS/mode/shared-memory/allocator/runtime selection are unqualified.",
+  "cleanup": "Original regular return resets recursive_call; static old_filemask retains only permanent wiped arena. Globals/owned rows/input/trace wiped, actual CryptoPP delete and TLS reset; atomic output after cleanup.",
+  "preserved_stops": [
+    "runtime body/default catalog",
+    "dictionary import/generation",
+    "complete character",
+    "server identity/selected ownership",
+    "actor publication",
+    "application ACK/world authority",
+    "currentMap loaded-input/source/build/profile/run provenance",
+    "ALLENTS41/43 and dictionary-index restrictions",
+    "Gates1-24 preserved and Gates25-27 OPEN",
+    "existing application limits/socket cleanup/Combined0.1.9/signing/imports/profiles/saves"
+  ],
+  "next_independent_A_leaf": "Original StructClear exact BodyPart schema destruction route; bounded owned TokenStore destroy/free adapters and original nonarray/earray/struct/string destructor dependencies. This replaces the explicit safe production-return0 clear shell without claiming real allocator/Map/catalog authority.",
+  "git_index_commit_branch_mutations_by_worker": false,
+  "other_workers_or_existing_qualified_sources_edited": false
+}

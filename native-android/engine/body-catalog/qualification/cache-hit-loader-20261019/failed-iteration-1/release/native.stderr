@@ -1,0 +1,1 @@
+check failed line 90: cache_hit_loader_apply(raw,&observed,&expected,&limited,0,1,out,r,budget,retained)==COH_LIMIT&&r->stage==CACHE_HIT_LOADER_STAGE_INPUT&&!r->entry_calls&&!memcmp(out,saved,sizeof(*out))

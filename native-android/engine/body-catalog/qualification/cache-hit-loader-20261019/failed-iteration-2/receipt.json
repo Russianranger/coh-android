@@ -1,0 +1,12 @@
+{
+  "schema": "coh-cache-hit-loader-iteration-v1",
+  "passed": false,
+  "stage": "release native call-order expectation",
+  "reason": "Independent harness header-rejection trace omitted the original SerializeReadOpen close before selector failure diagnostics. Corrected explicit closed-header trace, retaining separate open-refusal trace with no close. Provider unchanged.",
+  "source_identity_sha256": "1e989b66e3496c2c24e13dabeb755ad937d260f770ab8f65db32a1c251ce2e2d",
+  "generated_provider_sha256": "acffc8bf107592b847aaf6b37eae27f8472ea1dc6582e9b99b3a9c71ae5f24cc",
+  "test_source_sha256": "c571ac38d5daa756bbc0d701a570c00ea163260679a5c48be7e6b544a21e9234",
+  "native_stderr": "trace wanted13 got14: 1,2,3,4,5,6,7,8,5,9,12,5,13,16,\ncheck failed line 49: r->trace_count==n&&!memcmp(r->trace,want,n*4)\n",
+  "sources_qualified": false,
+  "prior_accepted_sources_modified": false
+}
