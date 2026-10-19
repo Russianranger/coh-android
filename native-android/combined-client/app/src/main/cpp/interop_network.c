@@ -17,6 +17,7 @@
 #include "coh_initial_netfx_probe.h"
 #include "coh_initial_costume_probe.h"
 #include "coh_initial_reward_probe.h"
+#include "coh_initial_reward_list_probe.h"
 #include "coh_session_crypto.h"
 #include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
 #ifdef COH_INTEROP_REQUEST_TX
@@ -37,6 +38,7 @@ typedef struct {
     CohInitialNetFxProbe initial_netfx;
     CohInitialCostumeProbe initial_costume;
     CohInitialRewardProbe initial_reward;
+    CohInitialRewardListProbe initial_reward_list;
     CohReceiveProjection receive;
 #ifdef COH_INTEROP_REQUEST_TX
     CohRequestTxWitness *request;
@@ -192,6 +194,13 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                     CohRepReader reward=lease.reader;reward.cursor=h->initial_costume.prefix_end_bit;
                                     (void)coh_initial_reward_probe(&reward,&h->initial_reward);
                                     coh_db_wipe(&reward,sizeof(reward));
+                                    if(h->initial_reward.literal_validated&&h->initial_reward.stage==COH_INITIAL_REWARD_CONTINUATION&&
+                                       h->initial_costume.type==1&&h->initial_costume.self_seen&&h->initial_costume.self_wire_consistent&&h->initial_create.is_self) {
+                                        CohRepReader rewards=lease.reader;
+                                        rewards.cursor=h->initial_costume.selector_end_bit+(lease.reader.compressed?8u:1u);
+                                        (void)coh_initial_reward_list_probe(&rewards,&h->initial_reward_list);
+                                        coh_db_wipe(&rewards,sizeof(rewards));
+                                    }
                                 }
                             }
                         }
@@ -300,6 +309,15 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     if(costume_written<=0||(size_t)costume_written>=sizeof(first_costume))strcpy(first_costume,"null");
     int reward_written=coh_initial_reward_probe_json(&h->initial_reward,first_reward,sizeof(first_reward));
     if(reward_written<=0||(size_t)reward_written>=sizeof(first_reward))strcpy(first_reward,"null");
+    if(h->initial_reward_list.stage&&reward_written>1&&(size_t)reward_written<sizeof(first_reward)&&first_reward[reward_written-1]=='}') {
+        char progress[COH_INITIAL_REWARD_LIST_REPORT_MAX];
+        int progress_written=coh_initial_reward_list_probe_json(&h->initial_reward_list,progress,sizeof(progress));
+        if(progress_written>0&&(size_t)progress_written<sizeof(progress)) {
+            size_t at=(size_t)reward_written-1,room=sizeof(first_reward)-at;
+            int appended=snprintf(first_reward+at,room,",\"progress\":%s}",progress);
+            if(appended<0||(size_t)appended>=room){first_reward[at]='}';first_reward[at+1]=0;}
+        }
+    }
     int receive_written=coh_receive_json(&h->receive,terminal,cleanup,receive,sizeof(receive));
     if(receive_written<=0||(size_t)receive_written>=sizeof(receive))strcpy(receive,"null");
 #ifdef COH_INTEROP_REQUEST_TX

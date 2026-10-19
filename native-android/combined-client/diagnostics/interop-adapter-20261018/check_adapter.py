@@ -14,7 +14,7 @@ def main():
  root,out=args.source_root.resolve(),args.output.resolve();need(not out.exists()and root not in out.parents,'fresh external output required');out.mkdir()
  compiler=Path(shutil.which(os.environ.get('CC','cc'))).resolve();flags=[str(compiler),'-std=c11','-Wall','-Wextra','-Werror','-pedantic','-fno-pie','-no-pie','-fstack-usage','-DCOH_INTEROP_REQUEST_TX=1',
   '-I',str(BASE/'test-include'),'-I','native-android/engine/initial-capture','-I','native-android/engine/session','-I','native-android/include']
- sources=[SOURCE,BASE/'test_interop_adapter.c',Path('native-android/engine/initial-capture/coh_initial_create_probe.c'),Path('native-android/engine/initial-capture/coh_initial_pose_probe.c'),Path('native-android/engine/initial-capture/coh_initial_sequence_probe.c'),Path('native-android/engine/initial-capture/coh_initial_triggered_probe.c'),Path('native-android/engine/initial-capture/coh_initial_aianim_probe.c'),Path('native-android/engine/initial-capture/coh_initial_netfx_probe.c'),Path('native-android/engine/initial-capture/coh_initial_costume_probe.c'),Path('native-android/engine/initial-capture/coh_initial_reward_probe.c'),Path('native-android/engine/entities/coh_entities.c'),Path('native-android/engine/replication/coh_replication.c')];dep=run([*flags,'-M',*sources],root);(out/'dependencies.stdout').write_bytes(dep.stdout);(out/'dependencies.stderr').write_bytes(dep.stderr);need(dep.returncode==0 and not dep.stderr,'dependencies refused')
+ sources=[SOURCE,BASE/'test_interop_adapter.c',Path('native-android/engine/initial-capture/coh_initial_create_probe.c'),Path('native-android/engine/initial-capture/coh_initial_pose_probe.c'),Path('native-android/engine/initial-capture/coh_initial_sequence_probe.c'),Path('native-android/engine/initial-capture/coh_initial_triggered_probe.c'),Path('native-android/engine/initial-capture/coh_initial_aianim_probe.c'),Path('native-android/engine/initial-capture/coh_initial_netfx_probe.c'),Path('native-android/engine/initial-capture/coh_initial_costume_probe.c'),Path('native-android/engine/initial-capture/coh_initial_reward_probe.c'),Path('native-android/engine/initial-capture/coh_initial_reward_list_probe.c'),Path('native-android/engine/entities/coh_entities.c'),Path('native-android/engine/replication/coh_replication.c')];dep=run([*flags,'-M',*sources],root);(out/'dependencies.stdout').write_bytes(dep.stdout);(out/'dependencies.stderr').write_bytes(dep.stderr);need(dep.returncode==0 and not dep.stderr,'dependencies refused')
  project={BASE/'check_adapter.py',JAVA};system={compiler}
  for line in dep.stdout.decode().replace('\\\n',' ').splitlines():
   for token in shlex.split(line.split(':',1)[1]):
@@ -46,7 +46,18 @@ def main():
  need(before=={str(p):sha(root/p)for p in sorted(project)},'source changed');need(sysbefore=={str(p):sha(p)for p in sorted(system)},'compiler/header changed')
  need(all(sha(out/('adapter-'+m))==v['sha256']for m,v in binaries.items()),'binary changed');need(all(sha(Path(p))==v for p,v in libraries.items()),'linked dependency changed')
  methods=re.findall(r'public static native ([^;]+);',(root/JAVA).read_text());need(len(methods)==8,'Java API shape');need('System.loadLibrary("coh_combined_interop")'in(root/JAVA).read_text(),'DSO name')
+ projection_bound={}
+ sample=results['release']['sample_report'];first=sample.get('first_reward_string')
+ if isinstance(first,dict)and'progress'in first:
+  # Bound the newly added progress and first-literal scalar domains while
+  # preserving all other observed full-report fields. Not a claim about every
+  # possible transport-counter combination or global RSS.
+  worst=json.loads(json.dumps(sample));child=worst['first_reward_string']
+  child.update(bit=4*1024*1024*8,bytes=259,progress=[4,6,2,255,256,256,4*1024*1024*8,1,6])
+  full_bytes=len(json.dumps(worst,separators=(',',':')).encode());child_bytes=len(json.dumps(child,separators=(',',':')).encode())
+  need(full_bytes<7168 and child_bytes<192,'bounded continuation projection exceeds existing report limits')
+  projection_bound={'full_report_bytes_with_new_projection_bounds':full_bytes,'child_bytes':child_bytes,'total_limit_including_nul':7168,'child_limit_including_nul':192,'other_fields_are_observed_fixture_values':True}
  receipt={'schema':'coh-new-interop-jni-adapter-host-qualification-v1','passed':True,'head_read':head,'project_source_sha256':before,'compiler_and_headers_sha256':sysbefore,'ldd_resolved_dependency_sha256':libraries,'commands':commands,'results':results,'executables':binaries,'host_stack_frames':stacks,'Java_native_declarations':methods,
-  'JNI_initial_controller_crypto_provider_and_request_witness_explicit_doubles':True,'original_native_qualifiers_or_fixture_entrypoints_replayed':False,'Android_NDK_JNI_ABI_or_Thor_execution':False,'actual_socket_or_original_server_transaction':False,'packet_copy_or_private_identity_export':False,'global_memory_or_RSS_fit':False,'LeakSanitizer_enabled':False,'world_authority':False}
+  'JNI_initial_controller_crypto_provider_and_request_witness_explicit_doubles':True,'original_native_qualifiers_or_fixture_entrypoints_replayed':False,'Android_NDK_JNI_ABI_or_Thor_execution':False,'actual_socket_or_original_server_transaction':False,'packet_copy_or_private_identity_export':False,'global_memory_or_RSS_fit':False,'LeakSanitizer_enabled':False,'reward_list_projection_bound':projection_bound,'world_authority':False}
  (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n');print(json.dumps({'passed':True,'source_inputs':len(before),'system_inputs':len(sysbefore),'modes':list(results),'checks_each':results['release']['checks'],'scenarios_each':results['release']['scenarios']}))
 if __name__=='__main__':main()

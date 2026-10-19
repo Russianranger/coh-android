@@ -53,6 +53,7 @@ add_library(coh_combined_interop SHARED interop_network.c
     "${ENGINE}/initial-capture/coh_initial_netfx_probe.c"
     "${ENGINE}/initial-capture/coh_initial_costume_probe.c"
     "${ENGINE}/initial-capture/coh_initial_reward_probe.c"
+    "${ENGINE}/initial-capture/coh_initial_reward_list_probe.c"
     "${ENGINE}/entities/coh_entities.c"
     "${ENGINE}/initial-capture/coh_initial_local.c"
     "${ENGINE}/initial-capture/coh_request_tx_map.c"

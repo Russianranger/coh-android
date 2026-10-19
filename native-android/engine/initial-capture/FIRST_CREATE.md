@@ -138,7 +138,7 @@ nested fields, or reach translucency. The fixed7168-byte total report limit,
 cleanup and prior observations remain intact. Complete costume/character,
 actor, ownership, generation and application ACK acceptance remain false.
 
-The current addition, `coh_initial_reward_probe`, decodes exactly ONE nested
+The accepted first-literal observer, `coh_initial_reward_probe`, decodes exactly ONE nested
 `pktSendIndexedString` leaf. The receiver calls it from the same loan only when
 the accepted costume-prefix stage reaches a present reward. Its input cursor is
 that prefix's `prefix_end_bit`, immediately after the outer reward flag. No
@@ -164,6 +164,50 @@ stop bit, text-byte count and literal validation under the parent report's
 unchanged authority-false fields. It remains null if no present reward is
 reached. This one leaf grants no reward-list, costume, character, ownership,
 source-generation, actor or application ACK acceptance.
+
+The current addition, `coh_initial_reward_list_probe`, continues the bounded
+reward-list syntax after that first literal. In the same synchronous loan, the
+receiver derives the first count cursor from validated type1/self1 selector
+framing: `selector_end_bit + (compressed ? 8 : 1)`. The new parser independently
+re-reads BOTH actual U32 counts and every entry; it never accepts saved counts,
+indexes or a previous report as resume context. Existing prefix and first-leaf
+implementations/results remain unchanged.
+
+Each group keeps the native256-entry cap, so at most512 flags/literals are
+inspected. Absent flags count as complete entries. Every present entry reuses
+the accepted literal parser, including strict flags, nested-null refusal and
+the260-byte NUL-inclusive cap. Only complete literals advance the scratch reader
+and entry count; an indexed or partial string preserves the current group,
+zero-based entry index and precise child failure cursor/stage. Indexed storage
+stops immediately before Pack, including in the compressed profile.
+
+A complete literal at exact packet end is still counted. The enclosing parser
+then distinguishes a missing next flag/count from both groups being complete.
+Both groups complete sets `list_validated` for syntax only and stops BEFORE
+original deferred/slot framing at `COH_INITIAL_REWARD_LIST_SLOTS` (stage6).
+An exact end there returns INVALID with list completion preserved; otherwise
+this diagnostic boundary returns UNSUPPORTED. Slot values, costume bodies,
+reward eligibility/catalog membership and all authority remain unaccepted.
+
+The five existing `first_reward_string` fields remain intact. A compact
+`progress` array is appended inside that same child only after continuation
+runs, preserving its192-byte limit and the7,168-byte total report cap:
+
+| Position | Meaning |
+| --- | --- |
+| 0 | Continuation status:1 INVALID,2 UNSUPPORTED,4 LIMIT |
+| 1 | Stage:2 COUNT,3 FLAG,4 STRING,5 DICTIONARY,6 SLOTS |
+| 2 | Reward group1 or2 |
+| 3 | Zero-based active entry index;0 for count/empty group |
+| 4 | Completed entries in group1 |
+| 5 | Completed entries in group2 |
+| 6 | Absolute first-failure/next-boundary bit |
+| 7 | Both groups' syntax complete:0 or1 |
+| 8 | Child leaf stage on STRING/DICTIONARY failure; otherwise0 |
+
+The unchanged leaf stage enum maps2 PRESENCE,3 STORAGE,4 TEXT,5 DICTIONARY,
+6 CONTINUATION. Partial/indexed entries never increment completion. A complete
+reward list is not a complete character record or a session ownership proof.
 
 ## Original protocol evidence
 
@@ -234,6 +278,16 @@ reward count or populated entries. The diagnostic never consumes that index.
 Fixture stash capacities/hits are explicit adapters and establish no real
 runtime dictionary, manifest or resource identity.
 
+The current two-group continuation follows the unchanged whole
+`ent_SendCostumeRewards` and `ent_ReceiveCostumeRewards` at
+`Common/entity/costume.c:3271..3355`: U32 count/flags/indexed strings, then the
+second independent U32 count/flags/indexed strings. Original dynamic lists are
+not capped256; this is the deliberately preserved native profile limit. The
+return to `entSendCostume` is immediately before deferred/current/additional
+slot metadata. The new parser stops at that return boundary and never reads
+those following fields. A fixture reward predicate or stash adapter cannot
+establish actual reward eligibility or a genuine resource generation.
+
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
 against the owned local-development handoff; it does not establish whole-list
@@ -247,32 +301,37 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_reward_probe.py --sanitize --output NEW.json` executes unchanged
-`pktSendIndexedString`, `defaultBitsPack` and `log2i` with original bit writers
-and explicit fixture stash adapters in the non-debug profile. Independent
-projection checks125 leaves, including capacities2/3/8/16/65536, literal lengths
-0/3/13/259/260, packed starts0..7, compressed starts0/8 and malformed flags.
-These capacities are qualification controls; none is an admitted generation.
+`check_initial_reward_list_probe.py --sanitize --output NEW.json` executes the
+unchanged whole `ent_SendCostumeRewards`, `pktSendIndexedString`,
+`defaultBitsPack` and `log2i`, with original bit writers, explicit fixture reward
+arrays/predicate and one fixed fixture stash per transaction. Independent
+projection checks both full groups and all source-derived boundaries. No
+actual catalog, dictionary or resource identity is admitted.
 
-Release, ASan and UBSan each pass310,590 checks, including43,738 shortened
-extents,6,146 mutations,2,612 unread-index controls and10 API/alias controls.
-The new JNI fixture verifies the accepted costume-prefix source/header receipt,
-executes one unchanged original prefix case through its first present-reward
-callsite, and appends the exact original literal leaf plus an opaque
-continuation witness. The leaf spans bits1477..1591. Remaining reward framing,
-indexed resolution and costume bodies are neither produced nor parsed here.
-Accepted prefix native sources/receipts remain unchanged; their suites and
-broader renderer/compiler/network/Android13 qualification are not replayed.
+Release, ASan and UBSan each pass604,551 checks across146 fixtures, including
+87,250 shortened extents,12,396 mutations,2,350 unread-index controls and10
+API/alias controls. Maximum completed entries is512. Cases include group2's
+first literal, late indexed/null/partial entries, counts256/257, empty/max-length
+literals, missing second counts, and exact final-list end. The retained
+prefix/leaf source/header hashes are verified; old suite mains are not replayed.
 
-The affected JNI adapter uses explicit controller/JNI doubles for same-loan
-composition, nested null, truncated/exact-end literals, indexed refusal before
-payload, result preservation and cleanup. Release/ASan/UBSan each pass2,253
-checks across43 scenarios. Its maximum composed report is7,113 of7,168 bytes;
-the existing report-limit guard remains intact. Receipts and source hashes are
-in `qualification/initial-reward-20261019/`; focused CI is
-`Native initial ALLENTS reward string`. Exactly ONE nested-string milestone
-ends here. No real server transaction, Thor execution or complete server-backed
-character acceptance is claimed.
+The new JNI fixture matches accepted first-literal bytes exactly, then uses
+whole-producer continuation through both groups. First count begins at1444;
+first literal spans1477..1591; group1 ends1592; list ends1695 before an opaque
+slot witness. JNI doubles verify preserved first-leaf fields, complete lists,
+second-count truncation, partial final literal, exact-list end, late indexed
+refusal before Pack and cleanup. Release/ASan/UBSan each pass2,553 checks across
+48 scenarios. Observed maximum report is7,147 bytes. A bounded-value check for
+new progress/first-literal scalars reaches7,161 bytes (153-byte child); other
+full-report fields stay at observed fixture values. This is not a claim about
+all possible transport-counter combinations or global RSS. Existing report
+limits/overflow guard remain intact.
+
+Receipts/source hashes are in `qualification/initial-reward-list-20261019/`;
+focused CI is `Native initial ALLENTS reward-list continuation`. Exactly ONE
+reward-list milestone ends here. Accepted source/receipts and broader renderer/
+compiler/network/Android13 suites are untouched. No original-server transaction,
+new Thor execution, APK or complete server-backed character acceptance is claimed.
 
 The previously reported unsupported Map count is the ordinary successful GROUPS
 inspector's deliberate UNSUPPORTED boundary (command6, exact consumed end), which
