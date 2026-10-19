@@ -1,9 +1,10 @@
-# Body-part bounded FileListRead stage
+# Body-part bounded original body-read composition
 
 The accepted callback milestone executes unchanged original `ParseBoneNames`
 using the generated enum provider. The accepted loader milestone qualifies an original
-cache-hit route and fixture-scoped provenance. The accepted binary-open milestone qualifies SerializeReadOpen. The current
-milestone qualifies one original FileListRead dependency-list stage. None admits a runtime
+cache-hit route and fixture-scoped provenance. Accepted binary-open and dependency-list
+milestones qualify SerializeReadOpen and FileListRead. The current milestone composes
+the original binary file/table readers with bounded body-record readers. None admits a runtime
 body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
 The source body-type table/count was already qualified by costume-import work.
@@ -249,7 +250,7 @@ limits and every catalog/generation/character/ownership/actor/authority/applicat
 ACK prohibition remain unchanged. This milestone stops before FileListRead.
 
 
-## Current original FileListRead dependency-list stage
+## Accepted original FileListRead dependency-list stage
 
 `file_list_read_provider.py` executes whole unchanged original FileListRead with
 its required source serialize/read helpers. The accepted SerializeReadOpen runs
@@ -331,3 +332,92 @@ dependency stage CI; compact receipt: qualification/file-list-read-20261019/host
 ALLENTS41/43 and earlier dictionary-index stops remain. Catalog/default/source
 generation, complete character, ownership, actor, authority and application ACK
 admission remain false. This milestone stops before ParserReadBinaryTable/body.
+
+## Current bounded original body-read composition
+
+`body_read_provider.py` composes the unchanged original ParserReadBinaryFile and
+ParserReadBinaryTable with their array, record, string, int and U8 readbin
+functions. SerializeReadOpen and FileListRead(NULL) execute as dependencies on
+the same owned input; their earlier checker/test mains are not replayed. The
+original file reader receives the opened handle. Its alternative open/actual
+ParseTableCRC path remains unexecuted and guarded. The raw header comparison
+CRC is fixture data, not a dictionary generation or executable build identity.
+
+The actual source ParseBodyPartBegin and ParseBodyPart tables, authoring macros,
+full six-field ParseTable and BodyPart/BodyPartList declarations determine this
+profile. Source FORALL_PARSEINFO/FORALL_PARSETABLE and TYPE_INFO/TOKARRAY_INFO
+macros preserve iteration/selection. Readbin-only dispatch holders are explicit
+adapters whose relevant original g_tokentable/g_arraytable mappings are pinned
+and audited; no complete original dispatch-table layout or engine ABI is claimed.
+TokenStore capacity/allocation/setter and filename-pool adapters use fresh owned
+storage and admit only this exact schema. They do not qualify the original
+general allocator, string pool or dynamic-array implementation.
+
+The retained CLIENT BodyParts.bin is2,584B with SHA256
+b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb.
+Header end20 and opaque dependency end64 lead to a2,516B body segment with28
+records, ending exactly at2,584. Every record's five strings and seven scalar
+reads are compared with independent fixture expectations. Later BoneCount
+overwrites the earlier value; both raw reads remain observable. Original U8
+conversion keeps the low8 bits of DontClear. Cached bones/index remain input
+fields; ParseBoneNames and generated enum lookup do not run on this profile.
+
+The indirect string setter profile preserves C-string prefixes and NULL for
+empty strings, alongside arbitrary padding and source order. It performs no
+path normalization, resource lookup or freshness check. A negative signed array
+count enters no rows in the original reader; raw count and loaded row count are
+distinct observations, and source acceptance establishes no catalog validity.
+FileListRead(NULL) still observes no dependency tag/count/path/date semantics.
+
+Complete source-entered scalar/string/padding preflight precedes original reads.
+The isolated native profile bounds input to64KiB, rows to30 and declared string
+payloads to259 bytes; these are policy limits, not original grammar maxima.
+The accepted application DTO's29-row limit is unchanged. Source record/table
+accounting failures and exact file-end comparison execute within owned scratch;
+partial records and strings never commit on refusal. Output commits only after
+source success and owned cleanup. Fixed buffer/open/close/growth, host endian/
+time32/BoneId and storage adapters remain explicit qualification boundaries.
+
+Numeric stages are1 INPUT/spans/budget,2 IDENTITY,3 PROFILE,4 HEADER,
+5 TYPE_LENGTH,6 HEADER_EXTENT,7 DEPENDENCY_HEADER,8 DEPENDENCY_SIZE,
+9 BODY_LENGTH,10 COUNT,11 ROW_LENGTH,12 STRING,13 SCALAR,14 DIGEST,
+15 HEADER_REJECT,16 SOURCE_REJECT and17 COMPLETE. Truncation identifies the
+first unavailable input byte. Policy refusals identify their length/count/skip
+field; other failures use byte0. Source rejection is aggregate accounting,
+not an exact failed-predicate offset. header_end/dependency_end/body_end retain
+actual source cursors; body_end is the consumed cursor before SEEK_END, not
+necessarily the input length. Invalid/aliased diagnostic sinks stay unchanged.
+Known original accounting warnings are observed as bounded numeric counts<=4;
+their raw printf output is suppressed by an explicit fixed-format adapter.
+
+Release/ASan/UBSan each pass6,930 checks over44 new fixtures: one authentic and
+9 synthetic source successes,8 body rejections/partial-state rollbacks,
+1 header rejection and25 framing/profile refusals. There are18 numeric source
+warnings, two negative-count source-empty successes,10 identity,9 child-ledger,
+5 alias and5 budget/overflow controls. All24 source inputs and compiler/Python
+binaries remain stable;14 original pins cover23 unchanged functions. The
+authentic transaction executes29 table reads/28 allocations,140 string,
+168 int and28 U8 setters,512 reads/144 seeks, one capacity call and one original
+close. No old qualifier, native body decoder or ParseBoneNames executes.
+
+The profile charges96KiB stack reserve. Measured release bodyread_apply is
+41,248B static and original string_readbin is12,096B static; these individual
+frames do not establish external libc/crypto/sanitizer or aggregate stack/RSS
+closure. Child output is1,934B per mode. Source/input/executable/build/profile/
+run self-measurements bind only the controlled fixture transaction.
+
+Run only `check_body_read.py --sanitize --output NEW.json`, optionally with
+`--evidence-directory NEW_DIRECTORY`. Full evidence belongs in Native original
+body-read composition CI; compact receipt: qualification/body-read-20261019/host.json.
+
+This is retained CLIENT fixture evidence. Original current-Map loaded-input,
+source/build/profile/run selection and ownership are still unavailable. No
+runtime catalog/default, dictionary import/generation, complete character,
+actor, authority or application ACK admission follows from these loaded fields.
+ALLENTS41/43, earlier dictionary-index stops, application4MiB input/192B child/
+7,168B report, overflow guard and socket cleanup remain unchanged. No APK,
+current Map transaction or new physical Thor run is part of this stage.
+
+Next ONE is bounded original ParseTableCRC/UpdateCRCFromParseInfo on these exact
+schemas, with original interpretfield/Adler32 dependencies. A retained CLIENT
+schema-CRC match would still supply no current-Map selection or generation.

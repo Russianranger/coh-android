@@ -1,4 +1,4 @@
-name: Native FileListRead dependency stage
+name: Native original body-read composition
 on:
   push:
     branches: [native-android]
@@ -9,10 +9,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: native-file-list-read-${{ github.ref }}
+  group: native-body-read-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  file-list-read:
+  body-read:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -21,17 +21,17 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 1
-      - name: Install dependency-list test digest headers
+      - name: Install body-read test digest headers
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev
-      - name: Qualify bounded original FileListRead stage
+      - name: Qualify bounded original body-read composition
         run: |
-          python3 native-android/engine/body-catalog/check_file_list_read.py --sanitize --output "$RUNNER_TEMP/file-list-read-host.json" --evidence-directory "$RUNNER_TEMP/file-list-read-evidence"
+          python3 native-android/engine/body-catalog/check_body_read.py --sanitize --output "$RUNNER_TEMP/body-read-host.json" --evidence-directory "$RUNNER_TEMP/body-read-evidence"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-file-list-read-${{ github.sha }}
+          name: native-body-read-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/file-list-read-host.json
-            ${{ runner.temp }}/file-list-read-evidence/
+            ${{ runner.temp }}/body-read-host.json
+            ${{ runner.temp }}/body-read-evidence/
           if-no-files-found: error
           retention-days: 90

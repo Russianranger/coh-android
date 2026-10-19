@@ -639,55 +639,57 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-The current focused qualifier is ../body-catalog/check_file_list_read.py.
-It executes unchanged whole original FileListRead with source serialization
-helpers and the accepted original header-open leaf as a composition dependency.
-Accepted checker/native suites are not replayed. The audited ParserLoadFiles
-NULL-list argument and ParserReadBinaryFile call order are pinned but their
-callers are not executed. Actual ParseTableCRC remains unqualified.
+The current focused qualifier is ../body-catalog/check_body_read.py. It composes
+whole original ParserReadBinaryFile/Table with array/struct/string/int/U8 readbin
+functions, original TokenStoreGetStorageType and source serialization helpers.
+SerializeReadOpen and FileListRead(NULL) are dependencies; accepted checker/test
+mains and the native full-body decoder are not replayed. The original file reader
+receives an already-open owned handle; actual ParseTableCRC and its alternative
+open/cache-selection path remain unexecuted and guarded.
 
-The exact retained CLIENT BodyParts.bin remains2,584B,
-SHA256b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb.
-The authentic segment starts20, contains Files1/size32/count1,
-Defs/UI/bodyparts.bp/rawdate1767225600, and ends64 BEFORE body size/records.
-Metadata proves no file freshness, resource ownership or current Map consumption.
+The exact source ParseBodyPartBegin/ParseBodyPart schemas, full six-field
+ParseTable and BodyPart/List declarations are emitted unchanged. Original
+iteration/selection macros use explicit immutable readbin-only dispatch holders
+whose relevant engine mappings are pinned/audited. Fixed fresh TokenStore storage,
+filename-pool, buffer/open/close/growth and host/endian/time32/BoneId adapters are
+fixture boundaries, not a qualified original general allocator or engine ABI.
 
-The actual NULL-list route skips the bounded segment without inspecting its tag,
-count, paths or dates. Its result marks entries unobserved; diagnostic count0
-never means a verified empty list. Nonnegative skip extents must be complete;
-negative skips refuse as an unsupported wrapper profile. The explicit fresh-list
-COLLECT inspection profile separately exposes source-ordered metadata under
-native cap16, preserving duplicates, separators, raw dates, seen0, embedded-NUL
-prefixes and arbitrary padding. Original oversized Pascal-path behavior is empty
-path after skip, not an invented format rejection. No FileListInsert normalization,
-filesystem/date lookup, freshness check or source generation is introduced.
+Release/ASan/UBSan each pass6,930 checks over44 new fixtures. Eight body rejects
+roll back partial owned state; exact EOF, all raw/final fields, duplicate overwrite,
+U8 conversion, NULL strings and two negative-count source behaviors are covered.
+All24 source inputs and compiler/Python binaries stay stable. Fourteen original
+pins cover23 unchanged functions; no broader accepted suite is replayed.
 
-Complete source-entered field preflight precedes every original read. Staged
-partial lists never publish; source rejection may allocate partial owned nodes,
-which are wiped with other scratch storage. Fixed owned buffer/open/close/growth/
-allocation/earray and host/endian/time32 adapters remain explicit. Outputs commit
-atomically; numeric first failure/cleanup stays bounded. Fixture input/source/
-compiler/build/profile/run associations are not server/session attestation.
-See ../body-catalog/CONTRACT.md for exact API, bounds and adapter semantics.
+The retained CLIENT BodyParts.bin is2,584B, SHA256
+b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb.
+Header end20/dependency end64 lead to body size2,516/count28 and exact end2,584.
+Every record's five string fields, seven raw scalar reads and final loaded fields
+are compared independently. Later BoneCount overwrites the first; source U8 keeps
+DontClear's low8 bits. Empty indirect strings become NULL; C-string prefixes,
+padding and cached bones/index stay source-derived. ParseBoneNames/enum lookup,
+normalization, freshness and resource membership are not inferred.
 
-Release/ASan/UBSan each pass4,917 checks over124 new fixtures:25 source successes,
-3 header rejects,9 list rejects and87 framing/profile refusals, including two
-partial-node rollbacks and3 bounded numeric warnings. Identity/ledger/alias/
-budget controls pass; all16 source inputs and compiler/Python binaries stay
-stable. This executes only the new affected source/native qualification.
+NULL-list dependencies remain unobserved. Negative signed array counts can enter
+no rows in original code; raw count and loaded row count stay distinct. Complete
+source-entered field preflight respects accounting short-circuits. Native limits
+of64KiB input/30 rows/259-byte strings are isolated fixture policy; the accepted
+application DTO limit29 is unchanged. Source record/table/file-end failures stay
+atomic scratch; opened handles close and partial rows/strings are wiped.
 
-Full evidence belongs in Native FileListRead dependency stage CI; compact receipt:
-../body-catalog/qualification/file-list-read-20261019/host.json. No original full
-body reader/Parse6 initialization, current Map transaction, runtime catalog,
-dictionary generation, new Thor run or APK is claimed.
+See ../body-catalog/CONTRACT.md for exact diagnostics, bounds and qualification
+results. Full evidence belongs in Native original body-read composition CI;
+compact receipt: ../body-catalog/qualification/body-read-20261019/host.json.
+Fixture source/input/compiler/build/profile/run bindings are consistency evidence,
+not server/session or current-Map attestation. No new Thor run or APK is claimed.
 
-Exactly ONE FileListRead stage ends here. ALLENTS catalog stops41/43 and earlier
-dictionary-index stops remain. Existing4MiB input/192B child/7,168B report,
+Exactly ONE body-read composition stage ends here. ALLENTS catalog stops41/43 and
+earlier dictionary-index stops remain. Existing4MiB input/192B child/7,168B report,
 overflow guard and transport cleanup remain unchanged. Runtime catalog/default,
-dictionary import/generation, complete character, ownership, actor, authority and
-application ACK admission remain false. Combined0.1.9/imports/signing/profiles/
-saves and Gates1–24 are preserved; Gates25–27 remain open.
+dictionary import/generation, complete character, server identity/selected owner,
+actor, authority and application ACK admission remain false. Combined0.1.9/imports/
+signing/profiles/saves and Gates1–24 are preserved; Gates25–27 remain open.
 
-NextONE: bounded original body-read composition after this dependency boundary.
-Current-Map loaded-input/source/build/profile/run and branch provenance remain
-required before catalog admission. Do not substitute this CLIENT fixture for it.
+Next ONE: bounded original ParseTableCRC/UpdateCRCFromParseInfo on the exact
+source schemas with original interpretfield/Adler32 dependencies. Actual cache
+selection and current-Map loaded-input/source/build/profile/run provenance remain
+required before admission; even a retained CLIENT CRC match supplies no generation.
