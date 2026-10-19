@@ -1,0 +1,8 @@
+/* SOURCE-GENERATED FIXTURE: retained qualified initial prefix plus complete original triggered-move producer and synthetic AI witness. Never device packet data. */
+static const unsigned char coh_triggered_jni_fixture[]={253,180,7,0,0,128,28,0,0,240,221,22,152,200,119,163,9,0,0,0,0,0,0,112,163,52,60,186,58,185,50,40,182,176,188,50,57,0,247,0,0,0,0,126,14,50,0,8,231,255,7,0,2,248,0,1,3,60,36,153,10,134,21,142,255,255,1,0,0,0,223,125,91,189,1};
+#define COH_TRIGGERED_JNI_FIXTURE_BITS 593u
+#define COH_TRIGGERED_JNI_FIXTURE_POST_COMMAND 3u
+#define COH_TRIGGERED_JNI_FIXTURE_CREATE_END 345u
+#define COH_TRIGGERED_JNI_FIXTURE_POSE_END 459u
+#define COH_TRIGGERED_JNI_FIXTURE_SEQUENCE_END 475u
+#define COH_TRIGGERED_JNI_FIXTURE_TRIGGERED_END 560u

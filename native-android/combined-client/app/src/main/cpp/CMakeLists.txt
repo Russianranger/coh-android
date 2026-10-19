@@ -48,6 +48,7 @@ add_library(coh_combined_interop SHARED interop_network.c
     "${ENGINE}/initial-capture/coh_initial_create_probe.c"
     "${ENGINE}/initial-capture/coh_initial_pose_probe.c"
     "${ENGINE}/initial-capture/coh_initial_sequence_probe.c"
+    "${ENGINE}/initial-capture/coh_initial_triggered_probe.c"
     "${ENGINE}/entities/coh_entities.c"
     "${ENGINE}/initial-capture/coh_initial_local.c"
     "${ENGINE}/initial-capture/coh_request_tx_map.c"

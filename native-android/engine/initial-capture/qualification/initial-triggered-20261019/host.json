@@ -1,0 +1,172 @@
+{
+  "schema": "coh-initial-triggered-probe-qualification-v1",
+  "passed": true,
+  "source_revision": "9ff1f6e6585f822844bd40861f799ea6b4ae97ad",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/rare_fixture.c.inc": "a0d754e64045062018d41d35815dbcb4e352d45b3921247f0a99500ba5d80040",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/initial-capture/check_initial_triggered_probe.py": "03227a6c988a5c32024f7fdfa6bf87767c2cc7f388252cb8717dc03f68a8cdbe",
+    "native-android/engine/initial-capture/coh_initial_triggered_probe.c": "4b1789f1ddb58707b3849147d0b4874e224c997ca393b36a2740daa59f39032b",
+    "native-android/engine/initial-capture/coh_initial_triggered_probe.h": "568e121c4f6ebb82ba7b84534afb82eac449afcfaec9c84edae7f8b8e33bf6ea",
+    "native-android/engine/initial-capture/qualification/initial-sequence-20261019/host.json": "e7045c50ecb5ee7900647030b6eea717f5ee962137ef5e6f99cd1581c1bea0f3",
+    "native-android/engine/initial-capture/qualification/initial-sequence-20261019/jni-fixture.h": "becdf10e9985d5a74aada60ac0df69d2f186e14e451bd8bfc6c294341c663d3d",
+    "native-android/engine/initial-capture/test_initial_triggered_probe.c": "1c18dc9edf0560507ac8db4e6796f3f7b362c77150327c2c0fd8c83362c0df38",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_component": {
+    "executed_component_producer": "entSendSeqTriggeredMoves",
+    "whole_function_sha256_lf": "8d75e81b3837ce001cf08b08a223012f7332a6a206682aeb41e83339cfa502ca",
+    "source_pin_manifest_sha256": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "triggered_move_header_sha256": "82499d5298f2da605a1efc64d2281cc6ccaf48fba0fdc1feb5ad5e35b7bdc175",
+    "triggered_move_field_domains_verified": true,
+    "all_original_source_pins_verified": true,
+    "generated_original_oracle_sha256": "77d3f199e13f7d25b8947f0a021641650ed121f13e736596b44f1a451a992857",
+    "wrapper_sha256": "25c2d6dc74ee6868c307d58602258718558f797e375b31500db35fe3091eb31f",
+    "source_count_max": 20,
+    "native_diagnostic_count_max": 16,
+    "fixture_shell_capacity": 16,
+    "packet_delay_source_cases": [
+      "negative difference clamps0",
+      "fractional6.75 then integer truncation",
+      "large difference clamps15",
+      "nonzero FX bypasses delay"
+    ],
+    "high_tick_scope": "2147483520 is exactly representable in F32 below INT32 overflow; raw INT32_MAX endpoint tested synthetically.",
+    "original_consumer_executed": false,
+    "oracle_sanitized": false
+  },
+  "retained_sequence_prefix": {
+    "host_sha256": "e7045c50ecb5ee7900647030b6eea717f5ee962137ef5e6f99cd1581c1bea0f3",
+    "header_sha256": "becdf10e9985d5a74aada60ac0df69d2f186e14e451bd8bfc6c294341c663d3d",
+    "payload_sha256": "d185d5444491e17e469d9f389fe735b80538c1ede200a1ed9f34a9958c9a9ed7",
+    "verified_source_inputs": 20,
+    "accepted_prefix_end": 475,
+    "old_sequence_or_pose_ranges_reexecuted": false
+  },
+  "fixtures": {
+    "count": 131,
+    "sha256": "fa7c650cfc5c598594ec250a5a672f01d31eae919590979878aa60281e877d99",
+    "original_triggered_projection_checks": 115,
+    "packed_start_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "byte_aligned_start_offsets": [
+      0,
+      8
+    ],
+    "source_scenarios": 11,
+    "source_counts": [
+      0,
+      1,
+      2,
+      16
+    ],
+    "synthetic_count_overflow_controls": [
+      17,
+      4294967295
+    ],
+    "source_high_safe_tick": 2147483520,
+    "case_manifest_sha256": "6d654ef14fe83e954e360d134ebeb22323bda627faff0d1b287e3e48812a3d84"
+  },
+  "source_generated_jni_fixture": {
+    "payload_bits": 593,
+    "payload_sha256": "30ca96dc3b4db10a7a9736ebadbc7578d0870bc4be037f03671568217841b157",
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "sequence_end_bit": 475,
+    "triggered_end_bit": 560,
+    "trigger_count": 2,
+    "fx_entries": 1,
+    "device_packet": false,
+    "header_sha256": "beeaed10415b4b9fe2a5c2058056b8a78ea3dd1f732f0dccff20daecdaa6d485"
+  },
+  "checks": {
+    "release": {
+      "checks": 84189,
+      "fixtures": 131,
+      "complete_triggered_observations": 117,
+      "truncated_extents": 11381,
+      "mutations": 1978,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 131,
+      "ai_animation_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 84189,
+      "fixtures": 131,
+      "complete_triggered_observations": 117,
+      "truncated_extents": 11381,
+      "mutations": 1978,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 131,
+      "ai_animation_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 84189,
+      "fixtures": 131,
+      "complete_triggered_observations": 117,
+      "truncated_extents": 11381,
+      "mutations": 1978,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 131,
+      "ai_animation_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "9aa02cbb4de8729c43a434e13ca31eee878c6ed9d8685c936895467950a6a0e9",
+    "asan": "bbc027796fa0b3ad1d675edf8c0d0a474010bccafb11e377c8e99a46e838ea20",
+    "ubsan": "fd1a632d72ba372fd42212bf4c20ebbbb4b341aa31cbf24744c5cc9e8d620a0d"
+  },
+  "probe_stack_frames": [
+    {
+      "function": "coh_initial_triggered_probe",
+      "bytes": 192,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_triggered_probe_json",
+      "bytes": 192,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "fixture_join": "Exact complete original triggered-move leaf with explicit fixture entity/offsets and opaque AI witness. JNI fixture reuses hashed qualified sequence prefix with matching bit alignment.",
+  "physical_packet_body_retained_in_evidence": false,
+  "ai_animation_produced_or_parsed": false,
+  "old_sequence_or_pose_ranges_reexecuted": false,
+  "whole_original_allents_producer_executed": false,
+  "actual_server_transaction": false,
+  "physical_device_executed": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

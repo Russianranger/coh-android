@@ -56,6 +56,23 @@ reports INVALID. Unvalidated create/pose prefixes leave the sequence report null
 This raw sequence observation neither resolves animation resources nor applies
 character/actor state, packet ordering, an ACK or any authority.
 
+The next exact-loan stage, `coh_initial_triggered_probe`, now starts at the
+validated `sequence_end_bit`. It reads Pack1 count, then each Pack10 index,
+Pack6 delayed timing and Boolean/optional Pack16 FX ID. Zero entries are valid,
+including the original `set_triggered_moves` branch. The existing native cap16
+is preserved although original `MAX_TRIGGEREDMOVES` is20; count17+ reports LIMIT
+at this deliberately narrower profile boundary. Index/timing keep signed32
+bounds; optional FX retains the fullU32 wire domain. Pack widths are minima,
+not scalar maxima, and rounded compressed Booleans must still be0 or1.
+
+`world_handoff.first_record_triggered_moves` retains only count, complete-entry
+progress, end bits and the first failing stage/entry. Partial records do not
+increment complete-entry progress. No entry values, FX/resource identities or
+event/actor state are retained or applied. Successful syntax stops before the
+AI-animation outer flag at `UNSUPPORTED / FIRST_AI_ANIMATION_REQUIRED`; no next
+bits reports INVALID there with completed-list diagnostics preserved. An
+unvalidated sequence leaves this report null. No animation string is read.
+
 ## Original protocol evidence
 
 In `upstream/ouroboros/MapServer/src/entity/entsend.c`, `entSendUpdate` initializes
@@ -77,11 +94,19 @@ by the private selected-record kernel without its later dictionary prerequisites
 `entSendSeqMoveUpdate` at `entsend.c:2582` and its original Game consumer agree
 on update/optional-index/optional-timing/optional-movement order, with
 `NEXTMOVEBIT_COUNT=11`. Full-create forces movement update1. The next medium-rare
-call is `entSendSeqTriggeredMoves`, which remains unread. Original server
+call is `entSendSeqTriggeredMoves`, now handled by its separate bounded probe. Original server
 `Entity.net_move_change_time` is U8; the original consumer receives U16. Fixtures
 above255 therefore qualify the established consumer range only and must not be
 claimed as representable original server object state. The bounded fixture
 stance shells likewise do not establish live power/animation lookup or ownership.
+
+`entSendSeqTriggeredMoves` at `entsend.c:2655..2684` and the corresponding Game
+consumer use the same count/index/timing/FX order. The original producer adds a
+delay clamped to0..15 only without FX, and uses zero added delay with FX. Its
+timing expression converts through F32; original-producer high-timing fixtures
+use safe representable values. INT32_MAX timing and overflow endpoints are
+synthetic wire controls, avoiding out-of-range source float-to-int conversion.
+The immediately following source call is `entSendAiAnimList`, deliberately unread.
 
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
@@ -96,15 +121,16 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_sequence_probe.py --sanitize --output NEW.json` executes only the
-sequence leaf of the pinned original producer on explicit fixture shells, then
-tests this added stage in release, ASan and UBSan. The generated JNI fixture
-verifies the retained pose-prefix header and its source-bound receipt, appends
-actual original sequence output and an opaque triggered-move witness. It does
-not execute a complete original ALLENTS transaction or new Thor session.
+`check_initial_triggered_probe.py --sanitize --output NEW.json` executes only the
+pinned original triggered-move producer on explicit fixture shells, then tests
+this added stage in release, ASan and UBSan. Over-limit count controls do not
+overrun the retained16-slot fixture shell. The generated JNI fixture verifies
+the retained sequence-prefix header and its source-bound receipt, appends actual
+original triggered-move output and an opaque AI-animation witness. It does not
+execute a complete original ALLENTS transaction or new Thor session.
 The affected JNI adapter is checked with explicit controller/JNI doubles for
 same-loan composition, refusal reporting and cleanup. Accepted first-create and
-pose tests, plus general renderer/compiler/network/Android13 suites, are not
+pose/sequence tests, plus general renderer/compiler/network/Android13 suites, are not
 repeated. Their previous receipts remain source-bound.
 
 The previously reported unsupported Map count is the ordinary successful GROUPS
