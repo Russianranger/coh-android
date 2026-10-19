@@ -46,9 +46,15 @@ jobs failed test-harness observation: upgrade left a notification-permission
 Activity open across replacement; fragment capture raced the active window
 after SAF; slow global-idle capture exhausted the unchanged 30-second transport
 idle timeout before character selection. No stale report/tree was accepted.
-Reviewed harness-only fixes will replay all three gates against the exact C2
-bytes without rebuilding the app. Full Android qualification remains PENDING:
-https://github.com/Russianranger/coh-android/actions/runs/39334606957
+Exact-package replay 39336618905 passed archive/source admission and the
+Android update/rollback/reinstall gate: 14 checks, unchanged UID and four
+synthetic files totaling 69,863 B. Fragment export capture rejected a transient
+missing child; framework Return search reversed before reaching the top button.
+Both gates remain incomplete. New bounded whole-tree retry and toward-start
+Return regressions pass 229 host controls. They alter only qualification tools;
+the next replay still uses the exact C2 APKs. Full Android qualification remains
+PENDING; no APK is offered before both remaining lifecycle/export gates pass.
+https://github.com/Russianranger/coh-android/actions/runs/39336618905
 Package artifact 12226012507, 17,868,604 B, archive SHA-256
 `0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04`.
 ARM64 APK 13,929,833 B, SHA-256

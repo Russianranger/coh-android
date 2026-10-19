@@ -15,7 +15,7 @@ concurrency:
 jobs:
   reuse-qualified-package:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message,
-      '[combined-requalify]')
+      '[combined-memory-requalify]')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -102,6 +102,14 @@ jobs:
         (out/'current-source-admission.json').write_text(json.dumps(proof,indent=2,sort_keys=True)+'\n')
         print(json.dumps({'exact_candidate_APKs_reused':True,'runtime_and_build_inputs_unchanged':True,'candidate_source_revision':base,'qualification_source_revision':head}))
         PYADMIT
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - name: Qualify the current UI capture and framework driver controls
+      run: |
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+        python3 native-android/combined-client/tools/driver_controls.py
     - name: Qualify notification permission setup and strict upgrade report gates
       run: |
         python3 native-android/combined-client/tools/test_upgrade_driver.py

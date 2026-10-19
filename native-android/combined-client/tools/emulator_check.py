@@ -47,11 +47,18 @@ def fresh_active_root_capture(raw, diagnostic, nonce):
     assert re.fullmatch('[0-9]+', result.get('root_attempts', '')) and 1 <= int(result['root_attempts']) <= 32
     assert re.fullmatch('[0-9]+', result.get('root_wait_ms', '')) and 0 <= int(result['root_wait_ms']) <= 3000
     assert int(result['root_wait_ms']) <= int(result['completed_elapsed_ms']) - int(result['started_elapsed_ms'])
+    assert re.fullmatch('[0-9]+', result.get('snapshot_attempts', '')) and 1 <= int(result['snapshot_attempts']) <= 3
+    assert result.get('discarded_partial_trees') == str(int(result['snapshot_attempts']) - 1)
+    assert result.get('partial_xml_reused') == 'false'
+    assert re.fullmatch('[0-9]+', result.get('total_nodes_visited', ''))
+    assert int(result['nodes']) <= int(result['total_nodes_visited']) <= int(result['snapshot_attempts']) * 8192
     root = ET.fromstring(raw)
     assert root.tag == 'hierarchy' and root.get('capture-nonce') == nonce
     assert root.get('capture-method') == 'fresh-ui-automation-active-root-without-global-idle'
     assert root.get('capture-root-attempts') == result['root_attempts']
     assert root.get('capture-root-wait-ms') == result['root_wait_ms']
+    assert root.get('capture-snapshot-attempts') == result['snapshot_attempts']
+    assert root.get('capture-discarded-partial-trees') == result['discarded_partial_trees']
     assert root.get('rotation') in ('0', '1', '2', '3')
     nodes = list(root.iter('node'))
     assert len(nodes) == int(result['nodes']), 'Snapshot node receipt differs'
@@ -525,6 +532,8 @@ class Check:
             byte_limit=8 << 20, stale_xml_used=False, global_idle_required=False,
             root_attempts=int(receipt['root_attempts']), root_wait_ms=int(receipt['root_wait_ms']),
             root_attempt_limit=32, root_wait_limit_ms=3000,
+            snapshot_attempts=int(receipt['snapshot_attempts']), discarded_partial_trees=int(receipt['discarded_partial_trees']),
+            total_nodes_visited=int(receipt['total_nodes_visited']), snapshot_attempt_limit=3, partial_xml_reused=False,
             shell_idle_starvation_previously_verified=getattr(self, '_capture_idle_starvation_verified', False),
             capture_mode='direct_after_verified_idle_starvation' if getattr(self, '_capture_helper_preferred', False) else 'fallback_after_three_recorded_idle_failures',
             candidate_APK_rebuilt=False, raw_command_results_preserved=True)
@@ -570,7 +579,11 @@ class Check:
         candidates = [v for v in candidates if v]
         return self.bounds(control) if control is not None else (max(candidates, key=lambda v:(v[2]-v[0])*(v[3]-v[1])) if candidates else None)
 
-    def tap(self, label, prefix=False, activate=True):
+    def tap(self, label, prefix=False, activate=True, toward_start=None):
+        if toward_start is None:
+            # This exact control is first in the qualified native panel; both
+            # framework and interop callers must search toward its real start.
+            toward_start = not prefix and label.lower() == 'return to launcher'
         deadline = time.monotonic() + 30
         swipes = 0
         while time.monotonic() < deadline:
@@ -600,7 +613,7 @@ class Check:
                 break
             x = (clip[0]+clip[2])//2
             low, high = clip[1]+(clip[3]-clip[1])//5, clip[3]-(clip[3]-clip[1])//5
-            start, end = (high, low) if swipes % 6 < 3 else (low, high)
+            start, end = (low, high) if toward_start else (high, low) if swipes % 6 < 3 else (low, high)
             self.adb('shell', 'input', 'swipe', x, start, x, end, '250')
             swipes += 1
             time.sleep(.3)
@@ -641,7 +654,7 @@ class Check:
         holder = None
         try:
             if held_input:
-                node = self.tap('Return to launcher',activate=False)
+                node = self.tap('Return to launcher',activate=False,toward_start=True)
                 xy = self.bounds(node)
                 holder = subprocess.Popen([self.args.adb,'-s',self.args.serial,'shell','input','keyboard',
                     'keycombination','-t','6000','KEYCODE_W','KEYCODE_SHIFT_LEFT'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -650,7 +663,7 @@ class Check:
                 (self.args.output/(label+'-held-native-report.json')).write_text(json.dumps(held,indent=2)+'\n')
                 assert holder.poll() is None, 'Held input ended before the Return click'
                 self.adb('shell','input','tap',(xy[0]+xy[2])//2,(xy[1]+xy[3])//2)
-            else:self.tap('Return to launcher')
+            else:self.tap('Return to launcher',toward_start=True)
         finally:
             if holder:
                 stdout,stderr = holder.communicate(timeout=12)

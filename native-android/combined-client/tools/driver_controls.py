@@ -144,9 +144,10 @@ def capture_controls(path):
         value=driver('malformed-fresh-file',[(0,b'',b'',b'<broken')]);rejected(value,ET.ParseError)
         assert value.dump_count==1
         nonce='a'*32
-        raw=('<hierarchy rotation="0" capture-nonce="'+nonce+'" capture-method="fresh-ui-automation-active-root-without-global-idle" capture-root-attempts="2" capture-root-wait-ms="50"><node text="fresh"/></hierarchy>').encode()
+        raw=('<hierarchy rotation="0" capture-nonce="'+nonce+'" capture-method="fresh-ui-automation-active-root-without-global-idle" capture-root-attempts="2" capture-root-wait-ms="50" capture-snapshot-attempts="2" capture-discarded-partial-trees="1"><node text="fresh"/></hierarchy>').encode()
         fields={'status':'passed','nonce':nonce,'file':'snapshot-'+nonce+'.xml','sha256':hashlib.sha256(raw).hexdigest(),
-                'bytes':str(len(raw)),'nodes':'1','started_elapsed_ms':'10','completed_elapsed_ms':'100','root_attempts':'2','root_wait_ms':'50'}
+                'bytes':str(len(raw)),'nodes':'1','started_elapsed_ms':'10','completed_elapsed_ms':'100','root_attempts':'2','root_wait_ms':'50',
+                'snapshot_attempts':'2','discarded_partial_trees':'1','total_nodes_visited':'4','partial_xml_reused':'false'}
         def diagnostic(values):return '\n'.join('INSTRUMENTATION_RESULT: '+k+'='+v for k,v in values.items())+'\nINSTRUMENTATION_CODE: -1\n'
         helper={'raw':raw,'diagnostic':diagnostic(fields)}
         with patch('emulator_check.uuid.uuid4',return_value=SimpleNamespace(hex=nonce)):
@@ -156,7 +157,7 @@ def capture_controls(path):
             assert (value.dump_count,value.clear_count,value.read_count,value.helper_count,value.helper_read_count)==(3,3,0,1,1)
             assert value.proofs[-1]['stale_xml_used'] is False and value.proofs[-1]['global_idle_required'] is False
             count+=1
-            for key,bad in [('nonce','b'*32),('sha256','0'*64),('file','snapshot-old.xml'),('bytes','1'),('nodes','8193'),('started_elapsed_ms','101'),('status','failed'),('root_attempts','0'),('root_attempts','33'),('root_wait_ms','3001'),('root_wait_ms','91'),('root_attempts','1')]:
+            for key,bad in [('nonce','b'*32),('sha256','0'*64),('file','snapshot-old.xml'),('bytes','1'),('nodes','8193'),('started_elapsed_ms','101'),('status','failed'),('root_attempts','0'),('root_attempts','33'),('root_wait_ms','3001'),('root_wait_ms','91'),('root_attempts','1'),('snapshot_attempts','4'),('discarded_partial_trees','0'),('total_nodes_visited','0'),('total_nodes_visited','16385'),('partial_xml_reused','true')]:
                 changed=dict(fields);changed[key]=bad
                 value=driver('helper-'+key,[idle]*3,helper={'raw':raw,'diagnostic':diagnostic(changed)})
                 rejected(value,AssertionError)
@@ -197,8 +198,8 @@ def root_acquisition_controls(path):
     """Execute the exact helper acquisition block with bounded clock/root stubs."""
     source=Path(__file__).with_name('UiSnapshotInstrumentation.java').read_text()
     constants=re.search(r'private static final int ROOT_ATTEMPTS=\d+, ROOT_WAIT_MS=\d+;',source).group()
-    begin=source.index('            int rootAttempts=0;')
-    end=source.index('            Display display=',begin)
+    begin=source.index('            // ROOT_ACQUISITION_BEGIN')
+    end=source.index('            // ROOT_ACQUISITION_END',begin)
     block=source[begin:end]
     harness=r'''
 import java.io.IOException;
@@ -214,7 +215,7 @@ public final class RootAcquisitionTest {
   Object getRootInActiveWindow(){calls++;SystemClock.now+=perCall;if(failure)throw new IllegalStateException("unavailable fixture");return calls>=available&&available>0?new Object():null;}
  }
  static long[] run(Automation automation)throws Exception {
-  long started=0;Object root=null;
+  long started=0;Object root=null;int rootAttempts=0;long rootWait=0;
   BLOCK
   return new long[]{rootAttempts,rootWait};
  }
@@ -236,6 +237,95 @@ public final class RootAcquisitionTest {
     result=subprocess.run(['java','-cp',str(path),'RootAcquisitionTest'],capture_output=True,text=True,timeout=10)
     assert result.returncode==0,result.stderr
     return int(result.stdout)
+
+
+def snapshot_retry_controls(path):
+    """Execute the exact whole-tree retry loop; Android traversal is stubbed."""
+    source=Path(__file__).with_name('UiSnapshotInstrumentation.java').read_text()
+    constants='\n'.join(re.findall(r'private static final int (?:MAX_NODES|ROOT_ATTEMPTS|SNAPSHOT_ATTEMPTS)=[^;]+;',source))
+    begin=source.index('            for(snapshotAttempts=1;')
+    end=source.index('            if(raw==null)',begin)
+    block=source[begin:end]
+    assert 'if(child==null)throw new SnapshotChangedException();' in source
+    harness=r'''
+import java.io.*;
+public final class SnapshotRetryTest {
+ CONSTANTS
+ int nodes,totalNodes,failures;boolean unexpected;long work;
+ static int buffers,recycled;static BoundedOutput lastBuffer;
+ static final class SnapshotChangedException extends IOException {}
+ static final class AccessibilityNodeInfo {void recycle(){recycled++;}}
+ static final class UiAutomation {AccessibilityNodeInfo getRootInActiveWindow(){return new AccessibilityNodeInfo();}}
+ static final class SystemClock {static long now;static long elapsedRealtime(){return now;}static void sleep(long t){now+=t;}}
+ static final class BoundedOutput extends OutputStream {final ByteArrayOutputStream bytes=new ByteArrayOutputStream();BoundedOutput(){buffers++;lastBuffer=this;}public void write(int n){bytes.write(n);}}
+ static final class Point {int x=1080,y=1920;}
+ static final class Rect {void set(int a,int b,int c,int d){}}
+ static final class Display {void getRealSize(Point p){}int getRotation(){return 0;}}
+ static final class WindowManager {Display getDefaultDisplay(){return new Display();}}
+ static final class Context {static final String WINDOW_SERVICE="window";Object getSystemService(String n){return new WindowManager();}}
+ static final class XmlSerializer {BoundedOutput output;void setOutput(BoundedOutput o,String e){output=o;}void startDocument(String e,boolean b){}void startTag(String n,String t){}void endTag(String n,String t){}void endDocument(){}void flush(){}}
+ static final class Xml {static XmlSerializer newSerializer(){return new XmlSerializer();}}
+ final Rect displayBounds=new Rect();Context getTargetContext(){return new Context();}String nonce="fixture";
+ void attr(XmlSerializer x,String k,Object v){}
+ void node(XmlSerializer xml,AccessibilityNodeInfo root,int index,int depth)throws Exception {
+  nodes++;totalNodes++;SystemClock.now+=work;
+  xml.output.write((failures>0?"partial":"complete").getBytes("UTF-8"));
+  if(unexpected)throw new IOException("not a traversal-change fixture");
+  if(failures>0){failures--;throw new SnapshotChangedException();}
+ }
+ byte[] run()throws Exception {
+  SystemClock.now=0;buffers=recycled=0;long started=0;AccessibilityNodeInfo root=null;UiAutomation automation=new UiAutomation();
+  int rootAttempts=0,snapshotAttempts=0;long rootWait=0;BoundedOutput output=new BoundedOutput();byte[] raw=null;
+  BLOCK
+  if(raw==null)throw new AssertionError();
+  if(buffers!=1||recycled!=snapshotAttempts||totalNodes!=snapshotAttempts)throw new AssertionError("ownership/attempts");
+  return raw;
+ }
+ static SnapshotRetryTest fixture(int failures,boolean unexpected,long work){SnapshotRetryTest t=new SnapshotRetryTest();t.failures=failures;t.unexpected=unexpected;t.work=work;return t;}
+ public static void main(String[]args)throws Exception {
+  int checks=0;
+  for(int failures=0;failures<3;failures++){SnapshotRetryTest t=fixture(failures,false,0);String value=new String(t.run(),"UTF-8");if(!value.equals("complete")||recycled!=failures+1)throw new AssertionError("partial tree retained");checks++;}
+  try{fixture(3,false,0).run();throw new AssertionError();}catch(SnapshotChangedException expected){if(recycled!=3||buffers!=1||lastBuffer.bytes.size()!=0)throw new AssertionError();}checks++;
+  try{fixture(1,false,3001).run();throw new AssertionError();}catch(SnapshotChangedException expected){if(recycled!=1||buffers!=1)throw new AssertionError();}checks++;
+  try{fixture(0,true,0).run();throw new AssertionError();}catch(IOException expected){if(recycled!=1||buffers!=1)throw new AssertionError();}checks++;
+  System.out.print(checks);
+ }
+}
+'''.replace('CONSTANTS',constants).replace('BLOCK',block)
+    path.mkdir(parents=True);java=path/'SnapshotRetryTest.java';java.write_text(harness)
+    built=subprocess.run(['java','com.sun.tools.javac.Main','-d',str(path),str(java)],capture_output=True,text=True,timeout=30)
+    assert built.returncode==0,built.stderr
+    result=subprocess.run(['java','-cp',str(path),'SnapshotRetryTest'],capture_output=True,text=True,timeout=10)
+    assert result.returncode==0,result.stderr
+    return int(result.stdout)
+
+
+def return_locator_controls(path):
+    """Replay the captured landscape clip and Return-above-viewport case."""
+    class Locator(Check):
+        def __init__(self,name,frames):
+            super().__init__(SimpleNamespace(output=path/name));self.frames=iter(frames);self.commands=[]
+        def dump(self):return ET.fromstring(next(self.frames))
+        def adb(self,*args,check=True):self.commands.append(args)
+    clip='<node package="'+PACKAGE+'" class="android.widget.ScrollView" content-desc="Native client controls" bounds="[0,63][1920,635]">BODY</node>'
+    def frame(body):return '<hierarchy>'+clip.replace('BODY',body)+'</hierarchy>'
+    missing=frame('<node package="'+PACKAGE+'" text="Connect local server" enabled="true" bounds="[0,68][495,194]"/>')
+    partial=frame('<node package="'+PACKAGE+'" text="Return to launcher" enabled="true" bounds="[0,0][1920,123]"/>')
+    visible=frame('<node package="'+PACKAGE+'" text="Return to launcher" enabled="true" bounds="[0,63][1920,189]"/>')
+    with patch('emulator_check.time.sleep'):
+        value=Locator('found-start',[missing,visible]);node=value.tap('Return to launcher',activate=False,toward_start=True)
+        assert node.get('bounds')=='[0,63][1920,189]'
+        assert value.commands==[('shell','input','swipe',960,177,960,521,'250')]
+        value=Locator('direct-interop-default',[missing,visible]);value.tap('Return to launcher',activate=False)
+        assert value.commands==[('shell','input','swipe',960,177,960,521,'250')]
+        value=Locator('partial-center-outside',[partial,visible]);value.tap('Return to launcher',toward_start=True)
+        assert value.commands==[('shell','input','swipe',960,177,960,521,'250'),('shell','input','tap',960,126)]
+        value=Locator('bounded-missing',[missing]*11)
+        try:value.tap('Return to launcher',activate=False,toward_start=True)
+        except RuntimeError:pass
+        else:raise AssertionError('Missing Return accepted')
+        assert len(value.commands)==10 and all(c==('shell','input','swipe',960,177,960,521,'250') for c in value.commands)
+    return 4
 
 
 def viewport_protocol_controls(path):
@@ -563,11 +653,14 @@ def main():
         native['static_renderer']['gpu_bytes']=1;assert settled_preview(ready,310) is False
         capture_checks=capture_controls(Path(temp)/'captures')
         acquisition_checks=root_acquisition_controls(Path(temp)/'root-acquisition')
+        retry_checks=snapshot_retry_controls(Path(temp)/'snapshot-retry')
+        return_checks=return_locator_controls(Path(temp)/'return-locator')
         viewport_protocol_checks=viewport_protocol_controls(Path(temp)/'viewport-protocol')
         identity_resource_checks=identity_resource_controls()
         activity_checks=activity_controls()
-    print(json.dumps({'passed':True,'checks':17+capture_checks+acquisition_checks+viewport_protocol_checks+identity_resource_checks+activity_checks,'capture_controls':capture_checks,
+    print(json.dumps({'passed':True,'checks':17+capture_checks+acquisition_checks+retry_checks+return_checks+viewport_protocol_checks+identity_resource_checks+activity_checks,'capture_controls':capture_checks,
         'exact_helper_root_acquisition_stub_controls':acquisition_checks,
+        'exact_helper_whole_snapshot_retry_stub_controls':retry_checks,'return_toward_start_controls':return_checks,
         'activity_inventory_controls':activity_checks,
         'identity_resource_controls':identity_resource_checks,
         'viewport_protocol_controls':viewport_protocol_checks,'scope':'Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded scrolling, exact APK identity and numeric protocol/resource privacy; no Android execution claim.'}))
