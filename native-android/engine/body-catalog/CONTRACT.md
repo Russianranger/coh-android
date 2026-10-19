@@ -1,4 +1,4 @@
-# Body-part bounded original file and dependency operations
+# Body-part bounded original loader and dependency traversal
 
 The accepted callback milestone executes unchanged original `ParseBoneNames`
 using the generated enum provider. The accepted loader milestone qualifies an original
@@ -7,7 +7,9 @@ milestones qualify SerializeReadOpen and FileListRead. The accepted body-read mi
 composes original file/table and record readers. The accepted checksum milestone computes
 the original checksum for the exact source schemas. Accepted production cache-header
 selection composes that checksum with the original opener. The two new independent
-milestones qualify unopened file composition and dependency-list operations. None admits a runtime
+milestones qualify unopened file composition and dependency-list operations. The latest
+bounded milestones compose the original cache-hit loader and owned callback traversal.
+None admits a runtime
 body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
 The source body-type table/count was already qualified by costume-import work.
@@ -710,13 +712,137 @@ selection provenance remain unqualified. Gates1–24, ALLENTS41/43, dictionary-i
 stops, application limits/socket cleanup, Combined0.1.9/signing/imports/profiles/
 saves are preserved. Gates25–27 remain open. No APK rebuild or Thor run occurs.
 
-Next TWO, independently bounded:
-1. Original ParserLoadFiles production cache-hit branch with actual
-   ParserIsPersistNewer -> supplied-handle ParserReadBinaryFile composition in
-   place of the older fixture-token/DTO bridges. Preserve original handle handoff:
-   no duplicate opener or substitution of the already-closed NULL-handle route.
-   Keep SMAR_Error/production-only, no callback/text/FS/Map provenance claims.
-2. Original FileListForEach on bounded owned lists with a fixed owned callback;
-   preserve source ordering/path/date and callback lifetime/cleanup. Original
-   Length/Destroy may be scoped separately if needed; do not repeat the already
-   accepted standalone FileListRead COLLECT branch or infer filesystem freshness.
+Those two independent continuations are qualified below. Existing accepted
+providers remain unchanged; new compositions own separate implementation files.
+
+## Accepted original production cache-hit loader (Worker A)
+
+`cache_hit_loader_provider.py` composes unchanged bpReadBodyPartFiles,
+ParserLoadFilesShared, ParserLoadFiles, ParserIsPersistNewer and supplied-handle
+ParserReadBinaryFile, with accepted original CRC/CryptoPP/header/dependency/body
+readers and SerializeClose. Whole emitted original C bodies are re-extracted and
+checked byte-for-byte. The retained CLIENT2,584B fixture yields28 exact rows,
+header/dependency/body ends20/64/2584 and actual source CRCcf27aba3. There is no
+fixture-token/native-DTO bridge in this emitted chain. The original NULL-handle
+reader route is not substituted into the selector handoff.
+
+The fixed shared-memory acquisition shell returns SMAR_Error. Original production
+control flow selects one actual owned open handle, passes that same live handle
+to the source reader and closes it exactly once in source. Successful calls use
+one CRC/open/close and three production queries. Bounded trace/identity counters
+verify outer/shared/acquire/loader/selector/CRC/open/selection/read/body/close/
+return ordering and selected-reader results. Original production ignoreCRC1
+preserves34 full-body mismatch acceptances. Preprocessor/postprocessor callbacks,
+text fallback, development paths and filesystem scanning never execute.
+
+Complete entered spans are preflighted before original entry. Missing-cache,
+header/open and body failures follow genuine production return0 paths with a
+safe owned StructClear shell; original StructClear/destructor/engine allocator
+closure is not qualified. Each normal return resets the original recursive-call
+guard. The original function-static mask pointer refers only to a permanent
+fixture-owned arena; mask bytes and borrowed globals are wiped after return.
+Source close, parser_relpath reset, owned row/input/trace wipes and actual CryptoPP
+delete/TLS reset precede atomic pointer-free results. Unsafe original NULL/new
+failure recovery is excluded; row/crypto reservation refusals precede source.
+
+Release/ASan/UBSan each pass45,522 checks/52 principal fixtures:36 source loader
+successes,3 safe header/open refusals,2 body refusals and1 missing-cache refusal.
+All42 source transactions clean up;41 actual CRC contexts clean up (missing cache
+never enters CRC). All2,584 authentic-prefix truncations refuse before source,
+plus2 fixed-reservation,10 identity,9 child-ledger,5 alias and6 budget/overflow
+controls. All28 rows are independently compared; callbacks stay0. Final compiler/
+runtime stderr is empty. All42 repository inputs,48 dependency snapshots and
+compiler/Python identities remain stable. Owned/static charge109,960B includes
+hidden mask/recursive globals and the8B crypto TLS pointer; actual Adler16B plus
+98,304B own-stack reserve and caller/digest/retained spans fit1MiB. Intptr/size64
+and little-endian host assumptions are enforced; largest selected frame41,488B
+fits the reserve. External/aggregate stack, allocator and RSS closure are excluded.
+
+Commit149fe9c0af49dc6556f8bfbaef7f98406477be9c follows Worker B. Dedicated CI
+39325134434/job118308882438 passes all modes with identical local counters:
+https://github.com/Russianranger/coh-android/actions/runs/39325134434
+Artifact12221863117 is2,738,924B, SHA256
+cff64f153b9165d8c4f6adf5f724133c306e643055ee12552bf5e2fa521a8ecc.
+Receipts/snapshots: qualification/cache-hit-loader-20261019/ (host.json,ci.json,
+evidence-manifest.json,frozen-handoff.json and failed/passing attempts). Earlier
+harness expectations for invalid digest context and rejected-opener close order
+failed and are retained; final fresh qualification passes. Native source bodies
+were not rewritten to satisfy those expectations.
+
+## Accepted original FileListForEach traversal (Worker B)
+
+`file_list_foreach_provider.py` executes unchanged FileListForEach after unchanged
+Create/Search/Insert/Find construct a bounded owned list. Exact FileEntry/FileList/
+FileListCallback declarations and all five function bodies are pinned/re-extracted.
+ASCII comparison, slash conversion, data-directory, earray and calloc remain the
+accepted explicit shells. No old checker/test main or COLLECT qualifier executes;
+Length/Destroy are not needed or qualified by this transaction.
+
+A single fixed private callback accepts no caller-supplied function pointer or
+context. It verifies each exact node.path address belongs to the owned node arena,
+matches source pointer ordering and carries the same signed32 date bits. Only
+path/date values are copied. Before/after node and pointer snapshots prove the
+callback did not change list contents/order. Callback context closes and all
+owned request/list/snapshot/trace storage is wiped before atomic output. No
+borrowed pointer or callback context escapes. Empty lists invoke no callback.
+Duplicate suppression retains first spelling/date; source normalization and
+case-insensitive insertion semantics remain unchanged.
+
+Preflight computes exact unique callback capacity using separate bounded scratch
+before any original list function. Exact capacity and duplicate-suppressed smaller
+capacity succeed; insufficient/overmax capacity and invalid inputs refuse before
+source/callback entry. Whole typed request, nonzero fixture dates, path limits,
+span/context/identity/digest, reservation and overflow-safe budget checks retain
+existing bounds:32 operations,16 INSERT calls, raw519B, directory259B and post-
+strip/lookup259B. No real timestamp lookup or scanning executes. Fixed reservation
+faults qualify allocation admission, not unchecked source calloc OOM recovery.
+
+Release/ASan/UBSan each pass2,387 checks/100 fixtures:46 source traversals,
+201 callback invocations,54 principal pre-source refusals including6 capacity
+and20 reservation refusals;10 identity/9 ledger/7 alias/5 budget controls also
+pass. All14 repository inputs and compiler/Python identities remain stable;
+final stderr is empty. Owned30,480B plus caller/digest/retained spans fit1MiB.
+Wrapper9,072B, source ForEach48B and all-provider frame sum9,896B fit16KiB own
+reserve. Host ASan uses detect_leaks0; allocator/leak/aggregate stack/RSS and
+original Win32/Android ABI closure remain unqualified.
+
+Commit396984fe699f8211b5a572904a21708659b6dafb; dedicated CI39324714472/
+job118307440857 passes with identical local counters:
+https://github.com/Russianranger/coh-android/actions/runs/39324714472
+Artifact12221777625 is200,475B, SHA256
+757ab5913afe89c4f9938d61d3a4a8f1fc9d57b0fcba8f77c22c764e36b97ba5.
+Receipts/snapshots: qualification/file-list-foreach-20261019/ (host.json,ci.json,
+iteration-evidence.json and failed/passing evidence directories). Earlier generated
+literal and copied ledger-magic failures remain retained as failures, not successes.
+
+## Current boundaries and next independent work
+
+Both workers used separate detached sparse local worktrees, read the live2b0e0b6
+baseline and changed only their new files. Root verified copied source hashes,
+published B then A with expected-parent fast-forward updates, compared hosted
+counters/artifact bindings and updated shared handoffs once after both CI passes.
+Existing providers, Gates1–24 and accepted APK/application code are unchanged.
+Unrelated native-core/authentic-catalog workflows were skipped; no broad suite or
+APK rebuild occurs. Both temporary worker trees retain already-published source
+copies and failed/passing evidence; they are not additional unmerged feature work.
+
+This removes loader-token/DTO substitutes within the bounded source profile and
+provides safe dependency value traversal. It enables future authentic catalog
+binding and cleanup qualification, but supplies no real MapServer file selection,
+loaded-input/source/build/profile/run attestation, runtime catalog/default owner,
+dictionary/source generation, character identity/selected owner, actor publication,
+application ACK or server/world authority. Environment/path/shared-memory/clear
+shells and current-Map provenance remain explicit stops. ALLENTS41/43, dictionary
+index restrictions, transport/input/report/socket cleanup, Combined0.1.9/signing/
+imports/profiles/saves are preserved. Gates25–27 remain open; no Thor run is claimed.
+
+Next TWO independent bounded tasks:
+1. Original StructClear exact BodyPart-schema destruction and its supported
+   nonarray/earray/struct/string/TokenStore free leaves, replacing the current safe
+   production-failure clear shell. Keep owned bounded storage; scope the smallest
+   destructor leaf first if full closure is too large. No original allocator or
+   runtime catalog/generation admission follows from fixture destruction.
+2. Original FileListIsBinUpToDate on two bounded fixture-owned lists, reusing
+   original Find and exact spelling/date rules. Test size/missing-name/raw32-date
+   equality and source diagnostics. This is a pure synthetic list comparison;
+   its function name grants no real disk/current dependency freshness proof.
