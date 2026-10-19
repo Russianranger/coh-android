@@ -1,0 +1,154 @@
+{
+  "schema": "coh-bounded-two-worker-ci-evidence-v1",
+  "worker": "B",
+  "repository": "Russianranger/coh-android",
+  "branch": "native-android",
+  "qualified_commit": "0d173e1d5655b59a618651db2ae95005a892207a",
+  "qualified_tree": "8760e9a9b69c0f19c71df5b6c719a287d10f9586",
+  "local_tested_tree_matches_published_tree": true,
+  "local_receipt": "host.json",
+  "local_receipt_sha256": "72fe3ea8a3726dda396662cf4a64979c30f59fc233cd35304c1e1077be82ab18",
+  "workflow_run_id": 39321651438,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/39321651438",
+  "job": {
+    "id": 118296935059,
+    "name": "file-list-ops",
+    "status": "completed",
+    "conclusion": "success",
+    "run_id": 39321651438,
+    "logs_url": null,
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Install focused qualifier digest headers",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Qualify bounded original file-list-ops",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5
+      },
+      {
+        "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11
+      }
+    ]
+  },
+  "artifact": {
+    "id": 12220965782,
+    "name": "native-file-list-ops-0d173e1d5655b59a618651db2ae95005a892207a",
+    "size_in_bytes": 188677,
+    "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12220965782",
+    "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12220965782/zip",
+    "expired": false,
+    "created_at": "2026-10-19T20:43:57Z",
+    "expires_at": "2027-01-17T20:43:09Z",
+    "updated_at": "2026-10-19T20:43:57Z",
+    "digest": "sha256:d4eb7a3e3b2ccaf049d6fb90f2c3e81d9429c974194170281f805baddbbc83c2",
+    "workflow_run": {
+      "id": 39321651438,
+      "repository_id": 1368730125,
+      "head_repository_id": 1368730125,
+      "head_branch": "native-android",
+      "head_sha": "0d173e1d5655b59a618651db2ae95005a892207a"
+    }
+  },
+  "ci_summary": {
+    "passed": true,
+    "checks": {
+      "release": {
+        "checks": 1761,
+        "fixture_cases": 84,
+        "owned_fixed_bytes": 21800,
+        "source_transactions": 39,
+        "pre_source_refusals": 45,
+        "owned_reservation_faults": 17,
+        "identity_controls": 10,
+        "child_ledger_controls": 9,
+        "alias_controls": 7,
+        "budget_overflow_controls": 5,
+        "real_filesystem_calls": 0,
+        "original_allocator_OOM_recovery_claimed": false,
+        "current_Map_runtime_executed": false,
+        "runtime_body_catalog_admitted": false,
+        "source_generation_admitted": false,
+        "actor_publication": false,
+        "ack_permitted": false,
+        "world_authority": false
+      },
+      "asan": {
+        "checks": 1761,
+        "fixture_cases": 84,
+        "owned_fixed_bytes": 21800,
+        "source_transactions": 39,
+        "pre_source_refusals": 45,
+        "owned_reservation_faults": 17,
+        "identity_controls": 10,
+        "child_ledger_controls": 9,
+        "alias_controls": 7,
+        "budget_overflow_controls": 5,
+        "real_filesystem_calls": 0,
+        "original_allocator_OOM_recovery_claimed": false,
+        "current_Map_runtime_executed": false,
+        "runtime_body_catalog_admitted": false,
+        "source_generation_admitted": false,
+        "actor_publication": false,
+        "ack_permitted": false,
+        "world_authority": false
+      },
+      "ubsan": {
+        "checks": 1761,
+        "fixture_cases": 84,
+        "owned_fixed_bytes": 21800,
+        "source_transactions": 39,
+        "pre_source_refusals": 45,
+        "owned_reservation_faults": 17,
+        "identity_controls": 10,
+        "child_ledger_controls": 9,
+        "alias_controls": 7,
+        "budget_overflow_controls": 5,
+        "real_filesystem_calls": 0,
+        "original_allocator_OOM_recovery_claimed": false,
+        "current_Map_runtime_executed": false,
+        "runtime_body_catalog_admitted": false,
+        "source_generation_admitted": false,
+        "actor_publication": false,
+        "ack_permitted": false,
+        "world_authority": false
+      }
+    }
+  },
+  "ci_all_mode_counts_equal_local": true,
+  "failed_local_iterations_retained": "iteration-evidence.json and failed-attempt1/failed-attempt2 snapshots",
+  "other_native_suites_and_APK_rebuilds_executed": false,
+  "gates25_27_open": true,
+  "next_independent_leaf": "Original FileListForEach with fixed owned callback; no filesystem freshness or runtime admission."
+}

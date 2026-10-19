@@ -1,12 +1,13 @@
-# Body-part bounded original production cache-header selection
+# Body-part bounded original file and dependency operations
 
 The accepted callback milestone executes unchanged original `ParseBoneNames`
 using the generated enum provider. The accepted loader milestone qualifies an original
 cache-hit route and fixture-scoped provenance. Accepted binary-open and dependency-list
 milestones qualify SerializeReadOpen and FileListRead. The accepted body-read milestone
 composes original file/table and record readers. The accepted checksum milestone computes
-the original checksum for the exact source schemas. The current milestone composes that
-checksum with original production cache-header selection. None admits a runtime
+the original checksum for the exact source schemas. Accepted production cache-header
+selection composes that checksum with the original opener. The two new independent
+milestones qualify unopened file composition and dependency-list operations. None admits a runtime
 body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
 The source body-type table/count was already qualified by costume-import work.
@@ -512,7 +513,7 @@ and Gates1–24 remain unchanged; Gates25–27 stay open. No APK or Thor run occ
 The next caller composition is qualified separately below; the checksum-only
 receipt above does not claim that caller executed.
 
-## Bounded original production cache-header selection
+## Accepted bounded original production cache-header selection
 
 `persist_newer_provider.py` composes the unchanged complete original
 `ParserIsPersistNewer` with the accepted original `ParseTableCRC`/schema/handler/
@@ -588,8 +589,134 @@ dictionary-index restrictions, application cleanup/resource limits, Gates1–24,
 accepted Thor APKs, Combined0.1.9/imports/signing/profiles/saves remain unchanged.
 Gates25–27 remain open. No APK is rebuilt and no Thor acceptance run is claimed.
 
-Next ONE: original `ParserReadBinaryFile(NULL, ...)` unopened-handle branch,
-using actual source CRC, original header open and accepted file-list/body-read
-dependencies in one owned-input transaction. The accepted body-read provider
-currently traps this branch. This stage must retain production ignoreCRC1 and
-must not imply filesystem selection, development freshness or current-Map proof.
+The next unopened branch is independently qualified below. Its new provider
+leaves the previously accepted body-read provider and its original trap intact.
+
+## Accepted original unopened binary-file composition (Worker A)
+
+`unopened_binary_provider.py` emits unchanged whole `ParserReadBinaryFile` and
+executes its NULL-handle branch: actual original ParseTableCRC/interpretfield/
+CryptoPP calculation, SerializeReadOpen with immutable fixture production1,
+FileListRead(NULL), ParserReadBinaryTable/readbin dependencies and SerializeClose.
+Every emitted original C function is checked byte-for-byte; original crypto
+wrappers and the pinned CryptoPP backend remain separately compiled. Explicit
+combined readbin/interpretfield dispatch holders, fixed TokenStore arenas,
+open/close/path shells and host ABI/endian assumptions are adapters, not complete
+engine handler/storage/allocator or Win32/Android ABI closure.
+
+The actual source CRC cf27aba3 feeds the opener; the retained header is not a CRC
+input. Production ignoreCRC1 accepts all32 changed CRC bits and zero/all-one words
+while still decoding the full body. Exact CLIENT input is2,584B: header end20,
+NULL dependency-skip end64, body end2,584 and28 rows. Every source-loaded string,
+raw numeric/default overwrite, U8 truncation, cached bone/index and NULL/C-string
+field is independently compared. FileListRead(NULL) observes no dependency count,
+path, date or freshness, and its skipped bytes must not imply an empty list.
+ParseBoneNames remains unexecuted. Negative-count source empty successes are
+fixture observations only; they admit no runtime catalog or complete character.
+
+Complete source-entered header, dependency-skip and body extents are preflighted
+before original entry. Source short-circuit behavior and final length accounting
+are preserved. Source close occurs on success or header/body rejection; no wrapper
+close or handle escape is used. Atomic results follow owned row/string/input/
+trace cleanup, parser_relpath reset and actual CryptoPP delete/TLS reset. All
+caller/context spans are disjoint and budget arithmetic is overflow checked.
+Faults distinguish original open refusal after actual CRC from pre-source row/
+crypto reservation refusal. Original struct/new callsites do not safely recover
+from NULL; original allocator/new failure recovery is explicitly unqualified.
+
+Release/ASan/UBSan each pass68,219 checks/85 principal fixtures, plus all2,584
+CLIENT prefix truncations,140 string-length controls,112 row-length controls
+and4 header/dependency-length controls. All168 actual CRC contexts per mode clean
+up; eight partial body rollbacks and18 bounded source warnings are observed.
+Ten identity,9 child-ledger,5 alias and5 budget controls also pass. Final compiler/
+runtime stderr is empty and stdout2,235B per mode. All35 repository inputs,
+48 dependency snapshots, compiler identities and Python/reference identity remain
+stable. Owned109,296B+actual Adler16B+98,304B own stack reserve are charged with
+caller/digest/retained spans under1MiB. Selected release frames include41,296B
+apply,12,096B string reader and4,208B opener; external/aggregate stack/RSS and
+allocator closure remain unqualified.
+
+Implementation84f2a64dd1a86eab68671aa7733b052d87b4dc4d follows Worker B by fast
+forward. Dedicated CI39321801909/job118297448812 passes with the same counters:
+https://github.com/Russianranger/coh-android/actions/runs/39321801909
+Artifact12220401790 is2,704,268B, SHA256
+c1ec639e48bc0e943a81ac4f66a2e8c29b12281f2f8d82685d42382aedf17621.
+Local/CI receipts: qualification/unopened-binary-20261019/{host.json,ci.json}.
+An earlier qualifier rejected a truncated external stack report after all three
+native modes passed. Its failed-iteration.json/log are retained; final fresh
+qualification passes the unchanged strict stack-report parser.
+
+## Accepted original dependency-list operations (Worker B)
+
+`file_list_ops_provider.py` emits unchanged whole FileListCreate, FileListSearch,
+FileListInsert and FileListFind from pinned structInternals.c, with exact source
+FileEntry/FileList declarations. Fixed owned calloc/earray, fixture fileDataDir,
+ASCII comparison and slash conversion are explicit shells. The pinned snapshot
+contains the forwardSlashes declaration/calls but not its implementation; its
+backslash-to-slash adapter is not original helper qualification. Actual allocator,
+earray, platform CRT and engine/device ABI closure remain unqualified.
+
+Original case-insensitive sorting/search and duplicate suppression preserve first
+spelling/date. INSERT strips a literal raw case-insensitive data-directory prefix
+before slash conversion, without a component-boundary test; prefix collisions and
+separator mismatches retain source behavior. FIND converts slashes but does not
+strip the directory. SEARCH takes literal separators. Dots/repeated separators
+are not canonicalized. Dates are explicit nonzero signed32 fixture bits; zero
+refuses before all originals even for duplicates. fileLastChanged is a trap.
+
+A transaction permits32 operations and16 INSERT calls, including duplicates.
+Raw strings<=519B and directory<=259B are bounded; the post-strip INSERT string
+and supplied FIND/SEARCH string must each fit original MAX_PATH260 including NUL.
+Every path/selector/date, span/identity/digest and budget is preflighted before
+source entry. Immutable requests, atomic rows/per-operation outputs and volatile
+owned cleanup prevent borrowed pointers escaping. Reservation fault profiles
+refuse before FileListCreate; source unchecked calloc never receives injected
+NULL. These tests establish allocation admission and cleanup, not source OOM
+recovery or current filesystem/dependency freshness.
+
+Release/ASan/UBSan each pass1,761 checks/84 synthetic fixtures:39 source
+transactions,45 principal pre-source refusals and17 owned reservation faults.
+Ten identity,9 child-ledger,7 alias and5 budget controls pass. All12 repository
+inputs, compiler and Python identities remain stable; final stderr is empty.
+Owned21,800B plus caller/digest/retained spans are charged under1MiB. Wrapper
+frame5,328B and conservative sum6,088B of all provider frames fit16KiB own reserve.
+LeakSanitizer is disabled consistently with the established host sanitizer profile;
+external allocator/leak/RSS and aggregate stack closure are not claimed.
+
+Implementation0d173e1d5655b59a618651db2ae95005a892207a; dedicated CI39321651438/
+job118296935059 passes with identical counters:
+https://github.com/Russianranger/coh-android/actions/runs/39321651438
+Artifact12220965782 is188,677B, SHA256
+d4eb7a3e3b2ccaf049d6fb90f2c3e81d9429c974194170281f805baddbbc83c2.
+Receipts: qualification/file-list-ops-20261019/{host.json,ci.json}. Earlier Werror
+formatting and host ptrace/LeakSanitizer refusals retain source snapshots,
+commands/logs and iteration-evidence.json. Final fresh runs pass in all modes.
+FileListDestroy, FileListLength and FileListForEach do not execute here.
+
+## Shared limits and next independent tasks
+
+These two isolated worker contexts owned disjoint new files, ran concurrently,
+and integrated sequentially on native-android. Existing providers, accepted APKs
+and application code remain unchanged. Both dedicated CI runs pass; unrelated
+portable-core/authentic-catalog workflows were skipped. Shared handoffs update
+once after integration; documentation-only publication does not replay either
+focused qualifier. Source/build/input/profile/run/ELF self-measurements remain
+fixture consistency evidence, never current-Map attestation.
+
+No runtime catalog/default, dictionary import/generation, complete character,
+server identity/selected owner, actor publication, application ACK or world
+authority is admitted. Development/date/filesystem/current-Map loaded-input and
+selection provenance remain unqualified. Gates1–24, ALLENTS41/43, dictionary-index
+stops, application limits/socket cleanup, Combined0.1.9/signing/imports/profiles/
+saves are preserved. Gates25–27 remain open. No APK rebuild or Thor run occurs.
+
+Next TWO, independently bounded:
+1. Original ParserLoadFiles production cache-hit branch with actual
+   ParserIsPersistNewer -> supplied-handle ParserReadBinaryFile composition in
+   place of the older fixture-token/DTO bridges. Preserve original handle handoff:
+   no duplicate opener or substitution of the already-closed NULL-handle route.
+   Keep SMAR_Error/production-only, no callback/text/FS/Map provenance claims.
+2. Original FileListForEach on bounded owned lists with a fixed owned callback;
+   preserve source ordering/path/date and callback lifetime/cleanup. Original
+   Length/Destroy may be scoped separately if needed; do not repeat the already
+   accepted standalone FileListRead COLLECT branch or infer filesystem freshness.
