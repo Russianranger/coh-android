@@ -1,9 +1,9 @@
-# Body-part bounded binary-read leaf
+# Body-part bounded FileListRead stage
 
 The accepted callback milestone executes unchanged original `ParseBoneNames`
 using the generated enum provider. The accepted loader milestone qualifies an original
-cache-hit route and fixture-scoped provenance. The current milestone qualifies
-one original SerializeReadOpen header leaf beneath it. None admits a runtime
+cache-hit route and fixture-scoped provenance. The accepted binary-open milestone qualifies SerializeReadOpen. The current
+milestone qualifies one original FileListRead dependency-list stage. None admits a runtime
 body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
 The source body-type table/count was already qualified by costume-import work.
@@ -176,7 +176,7 @@ by the current leaf qualification. No general compiler, renderer, transport, JNI
 Android13 or APK qualification is replayed.
 
 
-## Current original binary-read header leaf
+## Accepted original binary-read header leaf
 
 `binary_read_open_provider.py` executes the unchanged whole original
 SerializeReadOpen from UtilitiesLib/src/utils/serialize.c. The original
@@ -242,10 +242,92 @@ individual frame. External libc/crypto stack and sanitizer closure, total RSS an
 original Win32/Android ABI remain unproved. These fixture resource measurements
 do not change existing application input/report/transport limits.
 
-Run only `check_binary_read_open.py --sanitize --output NEW.json`, optionally
-with `--evidence-directory NEW_DIRECTORY`. Full evidence belongs in the focused
-Native binary-read header leaf workflow artifact; the repository retains a
-compact host receipt under qualification/binary-read-open-20261019/host.json.
+The accepted header qualifier and qualification/binary-read-open-20261019/host.json
+remain retained. Its test main is not replayed by the new stage.
 The ALLENTS41/43 catalog stops, dictionary-index stops, report/input/cleanup
 limits and every catalog/generation/character/ownership/actor/authority/application
 ACK prohibition remain unchanged. This milestone stops before FileListRead.
+
+
+## Current original FileListRead dependency-list stage
+
+`file_list_read_provider.py` executes whole unchanged original FileListRead with
+its required source serialize/read helpers. The accepted SerializeReadOpen runs
+as a composition dependency on the same owned immutable input; no old checker
+or native suite runs. Caller source audits pin ParserLoadFiles' NULL file-list
+argument and ParserReadBinaryFile's FileListRead call before ParserReadBinaryTable.
+Those callers are not executed, and actual ParseTableCRC remains unavailable.
+
+The exact retained CLIENT BodyParts.bin starts this segment at20. Its Files1
+header carries payload size32, then count1, path Defs/UI/bodyparts.bp and raw
+32-bit date1767225600. The source stage ends at64 BEFORE the body size or records.
+That proves metadata in this fixture only, never current-server selection,
+filesystem ownership, file contents, date freshness or dictionary generation.
+
+The actual loader's NULL-list branch calls SerializeSkipStruct and returns1
+without checking its return, segment tag, count, paths or dates. The wrapper
+bounds the complete nonnegative skip extent before source execution. A complete
+opaque segment may therefore be skipped with any tag, including a zero payload;
+negative skip sizes refuse as an unsupported wrapper profile. Successful skip
+reports entries unobserved, not a verified empty list or dependency count0.
+
+The separate fresh-list COLLECT inspection profile executes the source materializing
+branch using owned calloc/eaCreate/eaPush adapters and original FileEntry/list
+structure declarations. Existing dependency cap16 is a narrower native policy,
+not an original dynamic maximum. Original order, duplicates and slash spellings
+are preserved. FileListInsert, its normalization/sorted insertion/date lookup,
+filesystem access and freshness checks are not executed. Raw signed32 date bits
+are copied without interpretation; calloc leaves seen0.
+
+COLLECT checks only source-entered fields. An invalid source tag or size<=0 can
+reject after a safe complete structure header without reading a count. Positive
+counts beyond16 refuse before original execution. Complete count/path/padding/
+date preflight prevents original ignored short-read results from exposing
+uninitialized scalar bytes. Partial lists and nodes remain owned scratch and
+never commit. Count/size accounting errors may reject in original code after
+partial allocation; all storage is wiped on return.
+
+Original Pascal strings retain C-string prefix and arbitrary-padding behavior.
+A declared path length>=260 makes the original helper skip to an empty path;
+it is not automatically malformed. A Files1 tag length>=20 similarly becomes
+empty for the source comparison and rejects COLLECT; NULL skipping never checks
+that signature. These source semantics grant no path/resource admission.
+
+Fixed owned buffer/open/close/growth and allocation/earray adapters remain
+explicit. Native little-endian, int/time32/host layouts are qualification profiles,
+not original Win32/Android ABI. Input stays<=64KiB under a bounded aggregate
+budget. Source and wrapper closes are tracked, owned temporary storage is wiped,
+output commits atomically and safe numeric first failures remain bounded.
+Original oversized-Pascal printf warnings are captured by a fixed-text observer
+as warning_calls<=16; raw warning output is excluded from the numeric receipt.
+Existing application4MiB input,192B child,7,168B report, overflow guard and
+transport/socket cleanup are unchanged. External stack/sanitizer/RSS closure
+and current MapServer runtime provenance remain unproved.
+
+Numeric first-failure stages are1 INPUT/spans/budget,2 IDENTITY,3 PROFILE,
+4 HEADER,5 TYPE_LENGTH,6 HEADER_EXTENT,7 DEPENDENCY_HEADER,8 DEPENDENCY_SIZE,
+9 COUNT,10 ROW,11 DIGEST,12 OPEN,13 HEADER_REJECT,14 SOURCE_REJECT and15 COMPLETE.
+Truncation reports the first unavailable input byte. Policy type/count/negative
+skip refusals report their scalar field offset. Other stages use byte0;
+source rejection is an aggregate comparison/accounting result, not an exact
+failed-predicate offset. Actual header_end/dependency_end and bounded source
+allocation/read/seek/close counters distinguish execution from preflight refusal.
+Invalid or aliased diagnostic sinks stay unchanged.
+
+Release/ASan/UBSan each pass4,917 checks across124 new fixtures. They include
+both authentic modes,25 source successes,3 header rejects,9 list rejects and
+87 framing/profile refusals. Two partial-node rollbacks,3 numeric warnings,
+10 identity,9 child-ledger,5 alias and5 budget/overflow controls pass. All16
+source inputs and compiler/Python binaries remain stable. Full per-case reference
+and measured source/input/build/profile/run evidence remain in the CI artifact;
+these fixture associations establish no runtime or current-Map attestation.
+The measured release wrapper frame is4,704B static; largest original helper
+SerializeReadOpen is4,208B static. Harness main is15,312B dynamic bounded.
+These individual host frames do not establish aggregate/external stack closure.
+
+Run only `check_file_list_read.py --sanitize --output NEW.json`, optionally with
+`--evidence-directory NEW_DIRECTORY`. Full evidence belongs in Native FileListRead
+dependency stage CI; compact receipt: qualification/file-list-read-20261019/host.json.
+ALLENTS41/43 and earlier dictionary-index stops remain. Catalog/default/source
+generation, complete character, ownership, actor, authority and application ACK
+admission remain false. This milestone stops before ParserReadBinaryTable/body.

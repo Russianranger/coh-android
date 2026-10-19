@@ -1,0 +1,834 @@
+{
+  "schema": "coh-original-file-list-read-qualification-v1",
+  "passed": true,
+  "source_revision": "aae9920808c660701af7a5f701ea5509b98abc46",
+  "source_sha256": {
+    "native-android/engine/body-catalog/check_file_list_read.py": "99a7264db9ce5b2e11f3ec83fcedda69fb5a9133b52a3e001d303c27333faa4e",
+    "native-android/engine/body-catalog/file-list-read-source-pins.json": "86874300c1d238afe8ceadbcdf1cf0939ed833dcb3ee92c3b6b7c1768b1568d3",
+    "native-android/engine/body-catalog/file_list_read_provider.py": "df0a3bceb19a0a86f19700ca5ff155d18849fb13ca3b54632fc40c62658f690b",
+    "native-android/engine/body-catalog/test_file_list_read.c": "911ac74bd524c406dbcab25ea438019fcc3450f16aa3b5d6ff299356548ad55e",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+  },
+  "source_stable_before_after": true,
+  "host_environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "byteorder": "little",
+    "python_pointer_bytes": 8,
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "python_executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "original_Win32_or_Android_ABI_qualified": false
+  },
+  "host_python_binary_stable_before_after": true,
+  "host_compiler_identity": {
+    "command": "cc",
+    "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+    "executable_bytes": 1023032,
+    "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+    "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+    "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+  },
+  "host_compiler_stable_before_after": true,
+  "original_file_list_provider": {
+    "schema": "coh-original-file-list-read-provider-v1",
+    "source_baseline_revision": "aae9920808c660701af7a5f701ea5509b98abc46",
+    "source_sha256": {
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81"
+    },
+    "source_pins_sha256": "86874300c1d238afe8ceadbcdf1cf0939ed833dcb3ee92c3b6b7c1768b1568d3",
+    "source_stable_before_after": true,
+    "whole_function_sha256_lf": {
+      "SimpleBufRead": "fcbb82d64aa901e21d62fae5a7f8d3c59428fa536e442fd41d7b3ec67e407285",
+      "SimpleBufSeek": "ff8f9b9ec22564f3320544e003ca57a4320966d9f2d804e7d50f7c5cfa998cc8",
+      "SimpleBufTell": "5de14603768abbe12b42b49f2c01057afa14401d1eaae9674f4655d58318afbb",
+      "ReadPascalString": "8e5c06d8977d22c4c32cace64f5f474f09b2b2a6ff05a6355418ee9ee7dbef0b",
+      "SkipPascalString": "bf066cd4d0c06e10822ab3c06832a58e7fe00380aec4efea453f10ff552f0277",
+      "SerializeSkipStruct": "ba8d6c0f4ae4d819b8adc20c58f5be173587497c4f1f30b2f3f3d9229578e9d8",
+      "SerializeReadOpen": "b52a034532ab1db0808945606cd539dee0882338eb0a276cff7c6e471372554e",
+      "SerializeReadHeader": "444e28f04b62d8b39960dfd6719ea7f1e69890cafc39b8b5ac6b6ec7c45e8bc9",
+      "SerializeReadData": "21cf7e6a8545cb1a8f40002dd72a44a09e13cc7764bb4bdaa11772b303a52541",
+      "SimpleBufReadU16": "7c4979e99d2eec352c91d4ef60a82149888177dd15d687ba717df735be40be25",
+      "SimpleBufReadU32": "36c44bff8f70a85d5267ca766d4e44d8801b9e51e44dee33718f7786739d01f7",
+      "FileListCreate": "c01af04b087e22046ecfabd3c987838484ac7397dd72f2e0e0cc630bdc5f0a77",
+      "FileListRead": "de4245100e155cbf02535976ce703e4a25cd6708a818226ccd7946bc85b4c719"
+    },
+    "original_declaration_sha256_lf": {
+      "SimpleBuffer": "689c1023aab54266898115400af5df373c1f5cb9c5945b453b71bf7371188abd",
+      "SimpleBufHandle": "c4118829f15145679bcdf98551224f139d6e981ddd03cbe61bb36ba3cf402427",
+      "FileEntry": "a8daff72158e71bba068c384f0f62c1fad664a67997ae0565d933b70a6d8b74e",
+      "FileList": "71eb0298cc8801285580f32e716b88f278547504f689f666275c85edb9eaf288",
+      "MAX_FILETYPE_LEN": "a398123e79ce13159abc4e6dc325b33cfb429a695babd8249ff7bf3d8366ef71",
+      "cryptic_sig": "d7d50c98d94a52f7cee18deb15780529cf787750d5c7f2f29ae43961a1194c13",
+      "cryptic_sig_len": "d73361255161268bbdee0f574a57cd3df7ad0df83068a04b98ff2b7ac93804d5",
+      "PARSE_SIG": "a3613b656c98752be7b7ea6046484171a580d9c9ea9f75cddb6c777cb3cb023c",
+      "FILELIST_SIG": "0a6af7a55ff4e451175b4a7a3922011904f4f2ecce90417d85d2440cea4cd38e"
+    },
+    "original_caller_source_audit": {
+      "source_path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c",
+      "whole_function_sha256_lf": {
+        "ParserReadBinaryFile": "68b58811cc075da60b4f458e67d72499259ce32e9f4a104f05a7cd509772a23f",
+        "ParserLoadFiles": "baccdbc31625c793281f61b8a56c3f91741537e6f3593b0589ce611e87100ccb"
+      },
+      "FileListRead_call": "if (!FileListRead(filelist, file))",
+      "loader_NULL_call": "ParserReadBinaryFile(binfile, persistfilepath, pti, structptr, NULL, globaldefines)",
+      "compiled": false,
+      "executed": false
+    },
+    "profile": "<=64KiB input, fresh collect list, native positive-count cap16, full entered scalar/name/padding/date preflight; NULL skip requires complete nonnegative extent; no body parsed",
+    "NULL_skip_semantics": "Unchanged FileListRead(NULL) calls SerializeSkipStruct and returns1 unconditionally. No Files1/count/path validation or count observation; not equivalent to an empty collected list.",
+    "collect_semantics": "Source C-string paths, order, duplicates, separators and raw32 date preserved; seen0 from fixed zeroed nodes. Oversized path>=260 becomes source empty path after safe skip; oversized signature>=20 becomes source empty signature/rejection. No FileListInsert/normalization/filesystem/date freshness.",
+    "header_prefix": "Unchanged SerializeReadOpen and dependencies, expected Parse6 from PARSE_SIG. Raw comparison CRC fixture argument, not actual ParseTableCRC or ELF/build_id. Authentic header end20 and dependency end64, before body.",
+    "host_adapters": [
+      "Exact full SimpleBuffer/handle/FileEntry/FileList declarations with explicit MAX_PATH260 and signed32 time/int little-endian host shell; no Win32/Android ABI claim",
+      "Fixed owned64KiB open/close/no-growth adapters; source-header versus wrapper close counters distinct",
+      "Fixed owned calloc/FileEntry and eaCreate/eaPush adapters limited16; not original memory allocator/earray implementation",
+      "Original fixed oversized-Pascal warning observed as bounded numeric warning_calls; raw printf output suppressed by explicit adapter, all other warning branches excluded by complete preflight",
+      "Original Read/Seek/Tell scalar/Pascal/header/data/skip functions unchanged with counting wrappers"
+    ],
+    "cleanup": "Every opened accepted-header handle closes through wrapper, original header reject closes through source adapter. Partial original collected nodes remain owned and are wiped on rejection. Volatile arena/nodes/pointers/staging cleanup; safe numeric receipt and atomic output.",
+    "original_caller_executed": false,
+    "original_FileListInsert_executed": false,
+    "original_ParserReadBinaryTable_executed": false,
+    "actual_ParseTableCRC_computed": false,
+    "current_Map_runtime_observed": false,
+    "runtime_body_catalog_admitted": false,
+    "source_generation_admitted": false,
+    "authority_or_application_ack": false,
+    "evidence_paths": {
+      "file_list_header": "/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/file-list-read-provider.h",
+      "file_list_provider": "/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/file-list-read-provider.c"
+    }
+  },
+  "retained_authentic_CLIENT_input": {
+    "archive_path": "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip",
+    "archive_bytes": 2253704,
+    "archive_sha256": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "archive_git_blob_sha1": "606fd1e17751fbdf6d7c903dee4eaea40c2014f3",
+    "member": "data/bin/BodyParts.bin",
+    "member_bytes": 2584,
+    "member_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+    "retained_origin_run_id": 36707839624,
+    "retained_origin_artifact_id": 11092897979,
+    "authentic_input": 1,
+    "authentic_profiles": 2,
+    "authentic_header_end": 20,
+    "authentic_dependency_begin": 20,
+    "authentic_dependency_end": 64,
+    "authentic_collect_count": 1,
+    "authentic_collect_path": "Defs/UI/bodyparts.bp",
+    "authentic_collect_date_bits": 1767225600,
+    "NULL_count_unobserved": true,
+    "unused_suffix_bound_by_whole_input_hash": true,
+    "fixture_bytes": 170024,
+    "fixture_sha256": "b1ae1c3f13019caf08d8bfbcb99f5928fe5e00c40d645e1539a79c7cca0c84b4",
+    "independent_expectations": "Entered little-endian scalar/Pascal extent projection and source NULL skip versus fresh COLLECT semantics. NULL does not inspect tag/count/paths. COLLECT independently preserves order/duplicates/slashes/raw dates/seen0/C-string prefix, oversized path becomes empty. No old main/full-body decoder/freshness/normalization. Raw comparison CRC is not ParseTableCRC provenance.",
+    "current_server_consumption_verified": false,
+    "case_count": 124,
+    "full_fixture_reference": {
+      "path": "fixture-reference.json",
+      "bytes": 61152,
+      "sha256": "9160db2e8ac180896b39609416e807ca292b2f6c0f9093c80321bad5f91b801f"
+    },
+    "full_input_ledger": {
+      "path": "input-ledger.json",
+      "bytes": 61152,
+      "sha256": "9160db2e8ac180896b39609416e807ca292b2f6c0f9093c80321bad5f91b801f"
+    }
+  },
+  "fixture_source_identity": {
+    "schema": "coh-file-list-read-fixture-source-v1",
+    "source_sha256": {
+      "native-android/engine/body-catalog/check_file_list_read.py": "99a7264db9ce5b2e11f3ec83fcedda69fb5a9133b52a3e001d303c27333faa4e",
+      "native-android/engine/body-catalog/file-list-read-source-pins.json": "86874300c1d238afe8ceadbcdf1cf0939ed833dcb3ee92c3b6b7c1768b1568d3",
+      "native-android/engine/body-catalog/file_list_read_provider.py": "df0a3bceb19a0a86f19700ca5ff155d18849fb13ca3b54632fc40c62658f690b",
+      "native-android/engine/body-catalog/test_file_list_read.c": "911ac74bd524c406dbcab25ea438019fcc3450f16aa3b5d6ff299356548ad55e",
+      "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+      "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+      "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+      "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+      "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+    },
+    "generated_provider_sha256": "076e94c4d962e1d6a4fc2968716cceea9797c99564c4632a5dbd04fb314fdd21",
+    "generated_header_sha256": "7259adc7134650be2040b8413239b771c0f5bfe6efe71945f3f0e407bd724792",
+    "excluded_circular_derived_files": [
+      "file-list-qualification-identity.h",
+      "per-mode build receipts",
+      "native executables",
+      "run ledgers"
+    ]
+  },
+  "fixture_source_identity_sha256": "69dddab19369d98b18431cc2d927c1cf22ffd0c3b16f63b10b7d918b626f8509",
+  "fixture_profile": {
+    "schema": "coh-file-list-read-fixture-profile-v1",
+    "leaf": "unchanged whole original FileListRead + dependency scalar/Pascal/header/data/skip functions",
+    "header_dependency": "SerializeReadOpen original functions only; prior header checker/test main not replayed",
+    "caller": "ParserReadBinaryFile + actual ParserLoadFiles NULL tuple source audit only",
+    "modes": {
+      "0": "actual-loader NULL skip; count/path/tag unobserved",
+      "1": "explicit fresh collect inspection; not actual loader branch"
+    },
+    "fixed_source_header_type": "Parse6",
+    "fixed_source_list_signature": "Files1 only inspected in COLLECT",
+    "binary_backend": "explicit fixed-buffer open/close/no-growth and owned calloc/earray adapters",
+    "input_max": 65536,
+    "positive_count_policy_max": 16,
+    "source_path_width": 260,
+    "complete_entered_fields_preflight": true,
+    "source_Cstring_prefix_oversized_empty_path_padding_order_duplicates_slashes_datebits_seen0_preserved": true,
+    "body_or_FileListInsert_calls": 0,
+    "child_fixture_max": 262144,
+    "child_input_ledger_max": 131072,
+    "child_build_receipt_max": 65536,
+    "child_stdout_max": 4096,
+    "fixture_only": true,
+    "current_Map_runtime_admitted": false
+  },
+  "fixture_profile_sha256": "c0f5b3e2f513ffe777d1e1bc2af3c2fab0740cbb564c15b3b2bd1d776e662dfa",
+  "child_measured_fixture_bindings": {
+    "release": {
+      "source_id": "69dddab19369d98b18431cc2d927c1cf22ffd0c3b16f63b10b7d918b626f8509",
+      "build_id": "6476f59588034abf7b158dfd091611634fffba11440a870f9c77cae6b8a5473e",
+      "profile_id": "c0f5b3e2f513ffe777d1e1bc2af3c2fab0740cbb564c15b3b2bd1d776e662dfa",
+      "run_id": "9024baf45001d50071abcc51fd484bdf6d01dfd8099d5b3801b662d3eefe08d4",
+      "input_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "fixture_sha256": "b1ae1c3f13019caf08d8bfbcb99f5928fe5e00c40d645e1539a79c7cca0c84b4",
+      "executable_sha256": "42b946e99294f6551ceec0e32738fcffacd1e26ceb05a9e94ba0421d8896a0c7",
+      "input_ledger_sha256": "9160db2e8ac180896b39609416e807ca292b2f6c0f9093c80321bad5f91b801f",
+      "compile_profile_sha256": "633b673cc9b52b75de587c5befe37812affa4b58857144a964ce4104694132db",
+      "run_ledger_sha256": "afb48ec80432991678ea85c070fa3da7106252f83284b5de76bf29018ede9de0"
+    },
+    "asan": {
+      "source_id": "69dddab19369d98b18431cc2d927c1cf22ffd0c3b16f63b10b7d918b626f8509",
+      "build_id": "a039a4a0cc661754ecfff06b3f422555cab909bd693e492ed768c8b092a43298",
+      "profile_id": "c0f5b3e2f513ffe777d1e1bc2af3c2fab0740cbb564c15b3b2bd1d776e662dfa",
+      "run_id": "3d09c487a7c1b94785d6365677a6f0b2f18ae12b8d2f269e616676adc967b926",
+      "input_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "fixture_sha256": "b1ae1c3f13019caf08d8bfbcb99f5928fe5e00c40d645e1539a79c7cca0c84b4",
+      "executable_sha256": "41b65199804dd6af6902f7f8e43c44d06ac8056ba151be66b8676b1f1903407b",
+      "input_ledger_sha256": "9160db2e8ac180896b39609416e807ca292b2f6c0f9093c80321bad5f91b801f",
+      "compile_profile_sha256": "44e3e10d998775b4e948a558d6b290fb9103db197eed7d26876b0cf876c780b1",
+      "run_ledger_sha256": "df23442da2e50e80bd5183ca915b5b3ef9f727fc44fdf41e141667104256f1d9"
+    },
+    "ubsan": {
+      "source_id": "69dddab19369d98b18431cc2d927c1cf22ffd0c3b16f63b10b7d918b626f8509",
+      "build_id": "9ac44bcee983ddedd81f94f489dc7fb991a3526dc4c9de8f7cde93bdf0825856",
+      "profile_id": "c0f5b3e2f513ffe777d1e1bc2af3c2fab0740cbb564c15b3b2bd1d776e662dfa",
+      "run_id": "65a8c5c184fadeff82d974945d4a2d0de5f5ccf9ba0118a9cd21c05fb6545179",
+      "input_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "fixture_sha256": "b1ae1c3f13019caf08d8bfbcb99f5928fe5e00c40d645e1539a79c7cca0c84b4",
+      "executable_sha256": "eaec44c667f7f2f43704d1fba7cbb9976296ea32fcda56bcba02070dc3f08869",
+      "input_ledger_sha256": "9160db2e8ac180896b39609416e807ca292b2f6c0f9093c80321bad5f91b801f",
+      "compile_profile_sha256": "2bc9d2b6df1072db137e62b129af74623fea909d61d85a303493b9656c908f1b",
+      "run_ledger_sha256": "bd59bb53486be8aa361f13719803bc8597398730fdcdfa6448984777a123f638"
+    }
+  },
+  "builds": {
+    "release": {
+      "schema": "coh-file-list-read-fixture-build-v1",
+      "compile_profile": {
+        "schema": "coh-file-list-read-fixture-compile-profile-v1",
+        "mode": "release",
+        "compiler": {
+          "command": "cc",
+          "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+          "executable_bytes": 1023032,
+          "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+          "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+          "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+        },
+        "flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-missing-field-initializers",
+          "-Wno-unused-parameter",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O2",
+          "-fstack-usage"
+        ],
+        "generated_provider_sha256": "076e94c4d962e1d6a4fc2968716cceea9797c99564c4632a5dbd04fb314fdd21",
+        "test_source_sha256": "911ac74bd524c406dbcab25ea438019fcc3450f16aa3b5d6ff299356548ad55e"
+      },
+      "compile_profile_sha256": "633b673cc9b52b75de587c5befe37812affa4b58857144a964ce4104694132db",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-missing-field-initializers",
+        "-Wno-unused-parameter",
+        "-pedantic",
+        "-fno-strict-aliasing",
+        "-O2",
+        "-fstack-usage",
+        "-I/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/release",
+        "-I/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03",
+        "-I/workspace/scratch/1d0c7dd153fe/coh-android/native-android/engine/costume-import",
+        "/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/file-list-read-provider.c",
+        "/workspace/scratch/1d0c7dd153fe/coh-android/native-android/engine/body-catalog/test_file_list_read.c",
+        "-lcrypto",
+        "-o",
+        "/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/release/file-list"
+      ],
+      "source_identity_sha256": "69dddab19369d98b18431cc2d927c1cf22ffd0c3b16f63b10b7d918b626f8509",
+      "profile_sha256": "c0f5b3e2f513ffe777d1e1bc2af3c2fab0740cbb564c15b3b2bd1d776e662dfa",
+      "fixture_run_nonce": "9024baf45001d50071abcc51fd484bdf6d01dfd8099d5b3801b662d3eefe08d4",
+      "generated_identity_header_sha256": "ece6bcb54083a99bd215b7176f63036fd1d04337b8a64f12ae08d8c09538e89b",
+      "executable_bytes": 43568,
+      "executable_sha256": "42b946e99294f6551ceec0e32738fcffacd1e26ceb05a9e94ba0421d8896a0c7"
+    },
+    "asan": {
+      "schema": "coh-file-list-read-fixture-build-v1",
+      "compile_profile": {
+        "schema": "coh-file-list-read-fixture-compile-profile-v1",
+        "mode": "asan",
+        "compiler": {
+          "command": "cc",
+          "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+          "executable_bytes": 1023032,
+          "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+          "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+          "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+        },
+        "flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-missing-field-initializers",
+          "-Wno-unused-parameter",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O1",
+          "-g",
+          "-fsanitize=address",
+          "-fno-omit-frame-pointer",
+          "-no-pie"
+        ],
+        "generated_provider_sha256": "076e94c4d962e1d6a4fc2968716cceea9797c99564c4632a5dbd04fb314fdd21",
+        "test_source_sha256": "911ac74bd524c406dbcab25ea438019fcc3450f16aa3b5d6ff299356548ad55e"
+      },
+      "compile_profile_sha256": "44e3e10d998775b4e948a558d6b290fb9103db197eed7d26876b0cf876c780b1",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-missing-field-initializers",
+        "-Wno-unused-parameter",
+        "-pedantic",
+        "-fno-strict-aliasing",
+        "-O1",
+        "-g",
+        "-fsanitize=address",
+        "-fno-omit-frame-pointer",
+        "-no-pie",
+        "-I/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/asan",
+        "-I/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03",
+        "-I/workspace/scratch/1d0c7dd153fe/coh-android/native-android/engine/costume-import",
+        "/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/file-list-read-provider.c",
+        "/workspace/scratch/1d0c7dd153fe/coh-android/native-android/engine/body-catalog/test_file_list_read.c",
+        "-lcrypto",
+        "-o",
+        "/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/asan/file-list"
+      ],
+      "source_identity_sha256": "69dddab19369d98b18431cc2d927c1cf22ffd0c3b16f63b10b7d918b626f8509",
+      "profile_sha256": "c0f5b3e2f513ffe777d1e1bc2af3c2fab0740cbb564c15b3b2bd1d776e662dfa",
+      "fixture_run_nonce": "3d09c487a7c1b94785d6365677a6f0b2f18ae12b8d2f269e616676adc967b926",
+      "generated_identity_header_sha256": "309782b3f04e2e641e9c0e13a7c54582dc23756da3548425f414725d316f0f14",
+      "executable_bytes": 189984,
+      "executable_sha256": "41b65199804dd6af6902f7f8e43c44d06ac8056ba151be66b8676b1f1903407b"
+    },
+    "ubsan": {
+      "schema": "coh-file-list-read-fixture-build-v1",
+      "compile_profile": {
+        "schema": "coh-file-list-read-fixture-compile-profile-v1",
+        "mode": "ubsan",
+        "compiler": {
+          "command": "cc",
+          "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+          "executable_bytes": 1023032,
+          "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+          "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+          "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+        },
+        "flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-missing-field-initializers",
+          "-Wno-unused-parameter",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O1",
+          "-g",
+          "-fsanitize=undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "generated_provider_sha256": "076e94c4d962e1d6a4fc2968716cceea9797c99564c4632a5dbd04fb314fdd21",
+        "test_source_sha256": "911ac74bd524c406dbcab25ea438019fcc3450f16aa3b5d6ff299356548ad55e"
+      },
+      "compile_profile_sha256": "2bc9d2b6df1072db137e62b129af74623fea909d61d85a303493b9656c908f1b",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-missing-field-initializers",
+        "-Wno-unused-parameter",
+        "-pedantic",
+        "-fno-strict-aliasing",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "-I/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/ubsan",
+        "-I/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03",
+        "-I/workspace/scratch/1d0c7dd153fe/coh-android/native-android/engine/costume-import",
+        "/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/file-list-read-provider.c",
+        "/workspace/scratch/1d0c7dd153fe/coh-android/native-android/engine/body-catalog/test_file_list_read.c",
+        "-lcrypto",
+        "-o",
+        "/workspace/scratch/1d0c7dd153fe/file-list-read-evidence-03/ubsan/file-list"
+      ],
+      "source_identity_sha256": "69dddab19369d98b18431cc2d927c1cf22ffd0c3b16f63b10b7d918b626f8509",
+      "profile_sha256": "c0f5b3e2f513ffe777d1e1bc2af3c2fab0740cbb564c15b3b2bd1d776e662dfa",
+      "fixture_run_nonce": "65a8c5c184fadeff82d974945d4a2d0de5f5ccf9ba0118a9cd21c05fb6545179",
+      "generated_identity_header_sha256": "a48e97f9c9feeca29346c117f3d8e8098b261edfda642f6ee49a3e12819f435d",
+      "executable_bytes": 163280,
+      "executable_sha256": "eaec44c667f7f2f43704d1fba7cbb9976296ea32fcda56bcba02070dc3f08869"
+    }
+  },
+  "checks": {
+    "release": {
+      "checks": 4917,
+      "authentic_CLIENT_NULL_skips": 1,
+      "authentic_CLIENT_collect_inspections": 1,
+      "authentic_header_end": 20,
+      "authentic_dependency_end": 64,
+      "authentic_collect_count": 1,
+      "authentic_collect_date_bits": 1767225600,
+      "NULL_count_unobserved": true,
+      "synthetic_NULL_skips": 12,
+      "synthetic_collects": 11,
+      "source_header_rejections": 3,
+      "source_list_rejections": 9,
+      "framing_profile_refusals": 87,
+      "partial_node_rollbacks": 2,
+      "numeric_source_warnings": 3,
+      "source_successes": 25,
+      "bounded_refusals": 120,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 5,
+      "budget_overflow_controls": 5,
+      "body_records_or_FileListInsert_calls": 0,
+      "freshness_or_normalization_executed": false,
+      "ParseTableCRC_executed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 4917,
+      "authentic_CLIENT_NULL_skips": 1,
+      "authentic_CLIENT_collect_inspections": 1,
+      "authentic_header_end": 20,
+      "authentic_dependency_end": 64,
+      "authentic_collect_count": 1,
+      "authentic_collect_date_bits": 1767225600,
+      "NULL_count_unobserved": true,
+      "synthetic_NULL_skips": 12,
+      "synthetic_collects": 11,
+      "source_header_rejections": 3,
+      "source_list_rejections": 9,
+      "framing_profile_refusals": 87,
+      "partial_node_rollbacks": 2,
+      "numeric_source_warnings": 3,
+      "source_successes": 25,
+      "bounded_refusals": 120,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 5,
+      "budget_overflow_controls": 5,
+      "body_records_or_FileListInsert_calls": 0,
+      "freshness_or_normalization_executed": false,
+      "ParseTableCRC_executed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 4917,
+      "authentic_CLIENT_NULL_skips": 1,
+      "authentic_CLIENT_collect_inspections": 1,
+      "authentic_header_end": 20,
+      "authentic_dependency_end": 64,
+      "authentic_collect_count": 1,
+      "authentic_collect_date_bits": 1767225600,
+      "NULL_count_unobserved": true,
+      "synthetic_NULL_skips": 12,
+      "synthetic_collects": 11,
+      "source_header_rejections": 3,
+      "source_list_rejections": 9,
+      "framing_profile_refusals": 87,
+      "partial_node_rollbacks": 2,
+      "numeric_source_warnings": 3,
+      "source_successes": 25,
+      "bounded_refusals": 120,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 5,
+      "budget_overflow_controls": 5,
+      "body_records_or_FileListInsert_calls": 0,
+      "freshness_or_normalization_executed": false,
+      "ParseTableCRC_executed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "native_stack_frames": [
+    {
+      "function": "SimpleBufClose",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "observed_printf",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "observed_seek.constprop.isra",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "observed_read",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "filelist_is_idle",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "SimpleBufRead",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "SimpleBufSeek",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "SimpleBufTell",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "ReadPascalString",
+      "bytes": 96,
+      "bound": "static"
+    },
+    {
+      "function": "SerializeSkipStruct",
+      "bytes": 64,
+      "bound": "static"
+    },
+    {
+      "function": "SerializeReadOpen",
+      "bytes": 4208,
+      "bound": "static"
+    },
+    {
+      "function": "SerializeReadHeader",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "SerializeReadData",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "FileListCreate",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "FileListRead",
+      "bytes": 416,
+      "bound": "static"
+    },
+    {
+      "function": "filelist_apply",
+      "bytes": 4704,
+      "bound": "static"
+    },
+    {
+      "function": "fail_digest",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "hex",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "digest",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "diagnostic",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "call",
+      "bytes": 5168,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "binding.part.0",
+      "bytes": 304,
+      "bound": "static"
+    },
+    {
+      "function": "word",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "hash",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "file_hash",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "main",
+      "bytes": 15312,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "evidence_files": {
+    "BodyParts.bin": {
+      "bytes": 2584,
+      "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb"
+    },
+    "asan/build.json": {
+      "bytes": 2187,
+      "sha256": "a039a4a0cc661754ecfff06b3f422555cab909bd693e492ed768c8b092a43298"
+    },
+    "asan/compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/file-list": {
+      "bytes": 189984,
+      "sha256": "41b65199804dd6af6902f7f8e43c44d06ac8056ba151be66b8676b1f1903407b"
+    },
+    "asan/file-list-qualification-identity.h": {
+      "bytes": 1262,
+      "sha256": "309782b3f04e2e641e9c0e13a7c54582dc23756da3548425f414725d316f0f14"
+    },
+    "asan/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/native.stdout": {
+      "bytes": 1774,
+      "sha256": "aede91a00eb816f978eb6931d3feb67e96608327f0cc5fe62dd6746a1dd5b147"
+    },
+    "asan/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "df23442da2e50e80bd5183ca915b5b3ef9f727fc44fdf41e141667104256f1d9"
+    },
+    "cc-version.stdout": {
+      "bytes": 264,
+      "sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+    },
+    "file-list-fixtures.bin": {
+      "bytes": 170024,
+      "sha256": "b1ae1c3f13019caf08d8bfbcb99f5928fe5e00c40d645e1539a79c7cca0c84b4"
+    },
+    "file-list-qualification-identity.h": {
+      "bytes": 32,
+      "sha256": "7330dc8601276c721a2ba74cc3aa9093df5b12c5e0b3624452b411815f4eb272"
+    },
+    "file-list-read-provider.c": {
+      "bytes": 18463,
+      "sha256": "076e94c4d962e1d6a4fc2968716cceea9797c99564c4632a5dbd04fb314fdd21"
+    },
+    "file-list-read-provider.h": {
+      "bytes": 2241,
+      "sha256": "7259adc7134650be2040b8413239b771c0f5bfe6efe71945f3f0e407bd724792"
+    },
+    "fixture-profile.json": {
+      "bytes": 1103,
+      "sha256": "c0f5b3e2f513ffe777d1e1bc2af3c2fab0740cbb564c15b3b2bd1d776e662dfa"
+    },
+    "fixture-reference.json": {
+      "bytes": 61152,
+      "sha256": "9160db2e8ac180896b39609416e807ca292b2f6c0f9093c80321bad5f91b801f"
+    },
+    "input-ledger.json": {
+      "bytes": 61152,
+      "sha256": "9160db2e8ac180896b39609416e807ca292b2f6c0f9093c80321bad5f91b801f"
+    },
+    "release/build.json": {
+      "bytes": 2103,
+      "sha256": "6476f59588034abf7b158dfd091611634fffba11440a870f9c77cae6b8a5473e"
+    },
+    "release/compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/file-list": {
+      "bytes": 43568,
+      "sha256": "42b946e99294f6551ceec0e32738fcffacd1e26ceb05a9e94ba0421d8896a0c7"
+    },
+    "release/file-list-file-list-read-provider.su": {
+      "bytes": 1890,
+      "sha256": "7ac9b26a6aacaba5be9bed32d2811c6b053e22d77df753093436e9967db91881"
+    },
+    "release/file-list-qualification-identity.h": {
+      "bytes": 1247,
+      "sha256": "ece6bcb54083a99bd215b7176f63036fd1d04337b8a64f12ae08d8c09538e89b"
+    },
+    "release/file-list-test_file_list_read.su": {
+      "bytes": 1270,
+      "sha256": "fa4baa6d90087caa351f5e4ce92497d64959c9dab35d7dc068848bcb0a4122b0"
+    },
+    "release/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/native.stdout": {
+      "bytes": 1774,
+      "sha256": "c4a511bfcd8ddc746a2df17ffedd0a2093ff9d3e61578b40dcadc455205d28bc"
+    },
+    "release/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "afb48ec80432991678ea85c070fa3da7106252f83284b5de76bf29018ede9de0"
+    },
+    "source-identity.json": {
+      "bytes": 2499,
+      "sha256": "69dddab19369d98b18431cc2d927c1cf22ffd0c3b16f63b10b7d918b626f8509"
+    },
+    "ubsan/build.json": {
+      "bytes": 2178,
+      "sha256": "9ac44bcee983ddedd81f94f489dc7fb991a3526dc4c9de8f7cde93bdf0825856"
+    },
+    "ubsan/compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/file-list": {
+      "bytes": 163280,
+      "sha256": "eaec44c667f7f2f43704d1fba7cbb9976296ea32fcda56bcba02070dc3f08869"
+    },
+    "ubsan/file-list-qualification-identity.h": {
+      "bytes": 1259,
+      "sha256": "a48e97f9c9feeca29346c117f3d8e8098b261edfda642f6ee49a3e12819f435d"
+    },
+    "ubsan/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/native.stdout": {
+      "bytes": 1774,
+      "sha256": "60babfb2414a67c59fe32c8fe3c5b3412e02e5203573c890c63ceb71dfb7fc39"
+    },
+    "ubsan/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "bd59bb53486be8aa361f13719803bc8597398730fdcdfa6448984777a123f638"
+    }
+  },
+  "scope": "Bounded unchanged original FileListRead, actual-loader NULL skip versus explicit fresh COLLECT inspection. Authentic retained CLIENT header end20/dependency end64; NULL only skips opaque extent and does not validate tag/count/paths. COLLECT returns one path/date/seen0; no freshness or runtime admission. Only original SerializeReadOpen prefix/dependencies composed; prior checker/test mains never replayed. Whole2584-byte input hash binds unused body suffix, which remains unparsed. Whole ParserReadBinaryFile and ParserLoadFiles NULL call tuple pinned/audited, not executed. Child self-measured source/input/ELF/build/profile/random fixture-run labels are controlled fixture associations, not runtime attestation or current Map consumption.",
+  "original_FileListRead_executed": true,
+  "original_header_dependency_executed": true,
+  "NULL_dependency_count_or_paths_validated": false,
+  "collect_is_explicit_inspection_profile": true,
+  "original_ParserReadBinaryFile_executed": false,
+  "original_ParserReadBinaryTable_executed": false,
+  "original_full_Parse6_reader_executed": false,
+  "native_fullbody_decoder_executed": false,
+  "ParseTableCRC_executed": false,
+  "original_FileListInsert_executed": false,
+  "filesystem_normalization_or_freshness_executed": false,
+  "old_checker_mains_executed": false,
+  "old_native_suites_executed": false,
+  "external_crypto_libc_sanitizer_or_stack_closure": false,
+  "current_Map_runtime_executed": false,
+  "runtime_body_catalog_admitted": false,
+  "dictionary_imported": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

@@ -639,56 +639,55 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-The current focused qualifier is ../body-catalog/check_binary_read_open.py.
-It executes unchanged original SerializeReadOpen beneath the accepted body-part
-loader route, with its original scalar/Pascal/buffer read dependencies and
-explicit fixed owned open/close/growth and host/endian adapters. The original
-ParserIsPersistNewer callsite passes PARSE_SIG, ParseTableCRC and productionmode;
-that full caller, real filesystem selection and actual ParseTableCRC remain
-unqualified. The CRC comparison argument is fixture data, never a generation.
+The current focused qualifier is ../body-catalog/check_file_list_read.py.
+It executes unchanged whole original FileListRead with source serialization
+helpers and the accepted original header-open leaf as a composition dependency.
+Accepted checker/native suites are not replayed. The audited ParserLoadFiles
+NULL-list argument and ParserReadBinaryFile call order are pinned but their
+callers are not executed. Actual ParseTableCRC remains unqualified.
 
-The authentic retained CLIENT BodyParts.bin remains2,584B,
+The exact retained CLIENT BodyParts.bin remains2,584B,
 SHA256b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb.
-Only its20-byte header is consumed by the original leaf. It stops BEFORE
-Files1/FileListRead, dependencies, body segments and records. Whole-file hashing
-binds the input; it does not turn unconsumed bytes into decoded evidence.
+The authentic segment starts20, contains Files1/size32/count1,
+Defs/UI/bodyparts.bp/rawdate1767225600, and ends64 BEFORE body size/records.
+Metadata proves no file freshness, resource ownership or current Map consumption.
 
-Complete bounded header preflight prevents original ignored short reads from
-reaching undefined scalar bytes. The profile remains64KiB input, with file-type
-length below original4096 and complete payload/padding. Original production
-ignore_crc_difference1 permits a differing build/CRC word; strict0 rejects it.
-Neither result verifies actual schema CRC or runtime catalog provenance. Original
-C-string embedded-NUL and arbitrary-padding semantics remain explicit.
+The actual NULL-list route skips the bounded segment without inspecting its tag,
+count, paths or dates. Its result marks entries unobserved; diagnostic count0
+never means a verified empty list. Nonnegative skip extents must be complete;
+negative skips refuse as an unsupported wrapper profile. The explicit fresh-list
+COLLECT inspection profile separately exposes source-ordered metadata under
+native cap16, preserving duplicates, separators, raw dates, seen0, embedded-NUL
+prefixes and arbitrary padding. Original oversized Pascal-path behavior is empty
+path after skip, not an invented format rejection. No FileListInsert normalization,
+filesystem/date lookup, freshness check or source generation is introduced.
 
-The wrapper closes accepted source handles; the source closes rejected handles.
-Owned storage is wiped, snapshots are atomic and safe numeric first failures
-remain bounded. Fixture source/input/compiler/build/profile/run consistency is
-not current MapServer attestation or selected-character/session ownership.
-See ../body-catalog/CONTRACT.md for the exact supported API and adapter scope.
+Complete source-entered field preflight precedes every original read. Staged
+partial lists never publish; source rejection may allocate partial owned nodes,
+which are wiped with other scratch storage. Fixed owned buffer/open/close/growth/
+allocation/earray and host/endian/time32 adapters remain explicit. Outputs commit
+atomically; numeric first failure/cleanup stays bounded. Fixture input/source/
+compiler/build/profile/run associations are not server/session attestation.
+See ../body-catalog/CONTRACT.md for exact API, bounds and adapter semantics.
 
-Release/ASan/UBSan each pass1,539 checks over54 fixtures: one authentic header,
-9 synthetic accepts,15 source comparison rejects,28 framing/profile refusals
-and one open refusal, plus identity/ledger/alias/budget controls. All14 source
-inputs and compiler/Python binaries remain stable. Source close and wrapper
-close paths are separate; no handle escapes. Child measurements bind fixture
-ELF/input/build/profile/run only, never current MapServer attestation.
-Original SerializeReadOpen's4,208B static frame is the largest measured frame;
-external stack/sanitizer closure, total RSS and device ABI remain unproved.
+Release/ASan/UBSan each pass4,917 checks over124 new fixtures:25 source successes,
+3 header rejects,9 list rejects and87 framing/profile refusals, including two
+partial-node rollbacks and3 bounded numeric warnings. Identity/ledger/alias/
+budget controls pass; all16 source inputs and compiler/Python binaries stay
+stable. This executes only the new affected source/native qualification.
 
-Full evidence belongs in Native binary-read header leaf CI; compact receipt:
-../body-catalog/qualification/binary-read-open-20261019/host.json. Accepted enum,
-callback, input-reader and loader suites are retained and not replayed. No
-original FileListRead/full Parse6/ParseTable CRC, body-parser initialization,
-shared-memory generation, current Map transaction or new Thor run/APK is claimed.
+Full evidence belongs in Native FileListRead dependency stage CI; compact receipt:
+../body-catalog/qualification/file-list-read-20261019/host.json. No original full
+body reader/Parse6 initialization, current Map transaction, runtime catalog,
+dictionary generation, new Thor run or APK is claimed.
 
-Exactly ONE original binary-read leaf milestone ends here. ALLENTS catalog
-stops41/43 and earlier dictionary-index stops remain. Existing4MiB input/192B
-child/7,168B report, overflow guard and transport cleanup remain unchanged.
-Runtime catalog/default, dictionary import/generation, complete character,
-ownership, actor, authority and application ACK admission remain false.
-Combined0.1.9/imports/signing/profiles/saves and Gates1–24 are preserved;
-Gates25–27 remain open.
+Exactly ONE FileListRead stage ends here. ALLENTS catalog stops41/43 and earlier
+dictionary-index stops remain. Existing4MiB input/192B child/7,168B report,
+overflow guard and transport cleanup remain unchanged. Runtime catalog/default,
+dictionary import/generation, complete character, ownership, actor, authority and
+application ACK admission remain false. Combined0.1.9/imports/signing/profiles/
+saves and Gates1–24 are preserved; Gates25–27 remain open.
 
-NextONE: bounded original FileListRead/dependency-list stage. Current-Map input/
-source/build/profile/run and branch provenance remain required before catalog
-admission. Do not substitute this isolated CLIENT header fixture for that proof.
+NextONE: bounded original body-read composition after this dependency boundary.
+Current-Map loaded-input/source/build/profile/run and branch provenance remain
+required before catalog admission. Do not substitute this CLIENT fixture for it.
