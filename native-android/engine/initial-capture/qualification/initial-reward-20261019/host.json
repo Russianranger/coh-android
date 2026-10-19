@@ -1,0 +1,221 @@
+{
+  "schema": "coh-initial-reward-string-qualification-v1",
+  "passed": true,
+  "source_revision": "20137feb7537fa08265f0563a132057189388a1e",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/initial-capture/check_initial_costume_probe.py": "9c0050d076e659227966d40b7d34427149c1c19e77665f91283dcabf7e7fc7f9",
+    "native-android/engine/initial-capture/check_initial_reward_probe.py": "9dab48522d0218d507735d15b3cac653ececf67ce87888651a205d85687f26bd",
+    "native-android/engine/initial-capture/coh_initial_reward_probe.c": "0b25e8fc275d62e6640a6a6401c13ce78f1f8ff1383a09a48c147a896cb3a62c",
+    "native-android/engine/initial-capture/coh_initial_reward_probe.h": "7cd20aa2c3401d9e5f14658f0089ce508269bcbde2b7b24374e21d8df074f686",
+    "native-android/engine/initial-capture/qualification/initial-costume-20261019/host.json": "624efdbc7a5f5d23149e11bd491ec15377221a37c43c6e062498bfbd24e3355f",
+    "native-android/engine/initial-capture/qualification/initial-costume-20261019/jni-fixture.h": "09497a584e16e721e185169b4b238d7b4f8e61a8e97ab1f1bb01023f2bb4f6ae",
+    "native-android/engine/initial-capture/test_initial_reward_probe.c": "2ab491c39db552c8ba23e52989e685fe7139f5579e2f41454942c2fd77ef9a41",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_reward_producer": {
+    "original_source_sha256_lf": {
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f"
+    },
+    "whole_functions_sha256_lf": {
+      "log2i": "38a335660e4b9e2355c0ae036af92e2b43b0f29269b57dfbe1e12bd8c801a8eb",
+      "defaultBitsPack": "f5ca7cef3a4e7c8cc6c2acfee869591fca30c7013bafc9fae9bc65edb073df0a",
+      "pktSendIndexedString": "ec43ed9a083e4781ac87f4bde24a4583e9279d24aaddc912a657d62531512ca3"
+    },
+    "generated_oracle_sha256": "8696a6fe3d1cab21a3291d69f68cca2a0e9bd04de2e829a972d3ea7929fc6f16",
+    "shim_sha256": "7de46e9d28860ed8ee747d699a362ab2e5c3dfefd856ab23a3766121e00f6d67",
+    "wrapper_sha256": "4d14fb60331a87a1f8a7f9df4c1b689324afca7b7096a3eab633a7785f2975bd",
+    "stash_capacity_cases": [
+      2,
+      3,
+      8,
+      16,
+      65536
+    ],
+    "stash_is_explicit_fixture_only": true,
+    "packet_debug_profile": 0,
+    "original_consumer_executed": false,
+    "oracle_sanitized": false
+  },
+  "retained_costume_prefix": {
+    "host_sha256": "624efdbc7a5f5d23149e11bd491ec15377221a37c43c6e062498bfbd24e3355f",
+    "header_sha256": "09497a584e16e721e185169b4b238d7b4f8e61a8e97ab1f1bb01023f2bb4f6ae",
+    "payload_sha256": "f9bdabc29db0e9eaef3e24c95fbe5f160064c38f6343ef06020a67c2b54c2241",
+    "source_inputs_verified": 14,
+    "old_checker_main_executed": false,
+    "old_native_suites_executed": false
+  },
+  "fixtures": {
+    "count": 125,
+    "sha256": "a014796f47c0304433a4d5df8977f9110c791976aa303830e599aa5a22edff2f",
+    "original_projection_checks": 125,
+    "index_capacity_width_cases": [
+      [
+        0,
+        2,
+        1
+      ],
+      [
+        0,
+        3,
+        2
+      ],
+      [
+        0,
+        8,
+        3
+      ],
+      [
+        0,
+        16,
+        4
+      ],
+      [
+        0,
+        65536,
+        16
+      ],
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        1,
+        3,
+        2
+      ],
+      [
+        1,
+        8,
+        3
+      ],
+      [
+        1,
+        16,
+        4
+      ],
+      [
+        1,
+        65536,
+        16
+      ]
+    ],
+    "literal_lengths": [
+      0,
+      3,
+      13,
+      259,
+      260
+    ],
+    "cap_including_nul": 260,
+    "case_manifest_sha256": "aa90901441cc3761481684a5f658ad56f6f3b61dfb88d503eacf5ee140b6d6de"
+  },
+  "source_generated_jni_fixture": {
+    "payload_bits": 1624,
+    "payload_sha256": "5096054a47bf18f25ab55a8b07bc6a6c488e1b0e88a0b561887e817c8102438f",
+    "reward_begin_bit": 1477,
+    "reward_end_bit": 1591,
+    "present_reward_source_callsite_bit": 37,
+    "one_accepted_prefix_producer_case_executed": true,
+    "accepted_prefix_oracle_sha256": "819181e7419fe9fcb1d565f1c3473e0e2c120b078fa126a425ed4dd1176e7531",
+    "device_packet": false,
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "sequence_end_bit": 475,
+    "triggered_end_bit": 560,
+    "ai_end_bit": 658,
+    "netfx_end_bit": 1440,
+    "header_sha256": "d08e4c18c67eecd94dc8c1ad966433087ea4dce614bb24f90b60b1f75a4f4269"
+  },
+  "checks": {
+    "release": {
+      "checks": 310590,
+      "fixtures": 125,
+      "literal_observations": 47,
+      "dictionary_boundaries": 54,
+      "truncated_extents": 43738,
+      "mutations": 6146,
+      "unread_index_controls": 2612,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 125,
+      "dictionary_admitted": false,
+      "remaining_reward_loop_parsed": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 310590,
+      "fixtures": 125,
+      "literal_observations": 47,
+      "dictionary_boundaries": 54,
+      "truncated_extents": 43738,
+      "mutations": 6146,
+      "unread_index_controls": 2612,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 125,
+      "dictionary_admitted": false,
+      "remaining_reward_loop_parsed": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 310590,
+      "fixtures": 125,
+      "literal_observations": 47,
+      "dictionary_boundaries": 54,
+      "truncated_extents": 43738,
+      "mutations": 6146,
+      "unread_index_controls": 2612,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 125,
+      "dictionary_admitted": false,
+      "remaining_reward_loop_parsed": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "db62ab7169e8fd200bd4cc2aa2748547358d41d482232779df5b77f77e0b157c",
+    "asan": "d14a628567779c6c96a9eadf8fa03a7e932109fbad0b05f90255dc387707829e",
+    "ubsan": "63f2defeb52242da6d9ac14f0e6fd5621cd61f9f4bb3d9da2305bcdf7fd37872"
+  },
+  "probe_stack_frames": [
+    {
+      "function": "coh_initial_reward_probe",
+      "bytes": 176,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_reward_probe_json",
+      "bytes": 48,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "scope": "Exactly one original pktSendIndexedString leaf under explicit fixture stash/capacity adapters and debug0. Literal text is discarded; indexed profile stops before its pack. One existing prefix producer case supplies JNI callsite. Opaque continuation is not remaining reward framing or a costume body.",
+  "old_native_suites_executed": false,
+  "physical_device_executed": false,
+  "dictionary_admitted": false,
+  "remaining_reward_loop_parsed": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

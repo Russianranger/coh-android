@@ -104,7 +104,7 @@ reported as `cross_prefix_in_phase_verified:false`; no whole-record acceptance
 or ownership follows from these separate syntax observations. Existing report
 capacity7168 bytes and all transport cleanup/resource limits are preserved.
 
-The current bounded addition, `coh_initial_costume_probe`, starts at that exact
+The accepted costume-prefix observer, `coh_initial_costume_probe`, starts at that exact
 `netfx_end_bit` in the same loan. It validates the optional Boolean/Pack2
 appearance selector. Full-create requires a nonzero selector; type0 and unknown
 types refuse. Entire-costume type1 compares its self bit with this same first
@@ -137,6 +137,33 @@ costume-envelope parser, supply any generation, resolve names/resources, skip
 nested fields, or reach translucency. The fixed7168-byte total report limit,
 cleanup and prior observations remain intact. Complete costume/character,
 actor, ownership, generation and application ACK acceptance remain false.
+
+The current addition, `coh_initial_reward_probe`, decodes exactly ONE nested
+`pktSendIndexedString` leaf. The receiver calls it from the same loan only when
+the accepted costume-prefix stage reaches a present reward. Its input cursor is
+that prefix's `prefix_end_bit`, immediately after the outer reward flag. No
+other record is scanned and the prior numeric prefix result is preserved.
+
+Under this non-debug profile, nested presence must1: nested0 inside a present
+reward is INVALID, matching the existing native envelope rule. The storage
+flag is a strict Boolean. For `inTable=0`, raw bytes stream through NUL with the
+existing `CohEntCostumeText.value` cap260 INCLUDING NUL:259 text bytes fit;
+260 nonzero bytes return LIMIT. Nonnull empty literals are valid, and high-byte
+text needs no invented UTF-8 restriction. No name or buffer is retained.
+
+A complete literal sets only `literal_validated` and stops at
+`FIRST_REWARD_CONTINUATION_REQUIRED` BEFORE remaining rewards or costume
+framing. It neither accepts nor resumes the enclosing list. `inTable=1` stops at
+`FIRST_REWARD_DICTIONARY_REQUIRED` immediately after that flag, BEFORE any
+packed index even in the byte-aligned profile. No dictionary/generation argument
+is supplied. Exact end at either boundary reports INVALID; a completed literal
+remains observed. Malformed/truncated fields preserve their first scalar cursor.
+
+The compact `world_handoff.first_reward_string` child reports status, stage,
+stop bit, text-byte count and literal validation under the parent report's
+unchanged authority-false fields. It remains null if no present reward is
+reached. This one leaf grants no reward-list, costume, character, ownership,
+source-generation, actor or application ACK acceptance.
 
 ## Original protocol evidence
 
@@ -194,9 +221,18 @@ branch writes deferred, flag0 and one body. `entReceiveCostume` at
 `entrecv.c:1931` confirms the framing. `ent_SendCostumeRewards` and its consumer
 at `Common/entity/costume.c:3271..3355` define both count/flag groups. The next
 `pktSendIndexedString` at `net_packetutil.c:191..217` can emit a literal or a
-stash index; this observer stops before those choice bits. No original nested
+stash index; the accepted costume-prefix observer stops before those choice bits. No original nested
 serializer/consumer behavior or dictionary identity is qualified by opaque
 callsite witnesses.
+
+For the new leaf, unchanged `pktSendIndexedString` at
+`net_packetutil.c:191..217` and `pktGetIndexedString` at219..259 agree on nested
+presence/storage/literal order. `str` is tested for null, not empty. The
+non-debug profile excludes the optional debug string. `defaultBitsPack` uses
+original `log2i(stashGetMaxSize(table))`: original storage-slot capacity, not
+reward count or populated entries. The diagnostic never consumes that index.
+Fixture stash capacities/hits are explicit adapters and establish no real
+runtime dictionary, manifest or resource identity.
 
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
@@ -211,32 +247,32 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_costume_probe.py --sanitize --output NEW.json` executes only
-unchanged `entSendCostume` and `ent_SendCostumeRewards` framing on explicit
-fixture shells, with original scalar/packed writers. Nested costume and indexed
-string serializers are explicit OPAQUE witnesses that record their first call
-cursor; they do not manufacture qualified nested bytes. An independent bit
-projection checks the exact prefix and its boundary, including packed starts
-0..7 and compressed starts0/8. Over-limit reward arrays have257 safe fixture
-slots; invalid slot/list controls remain outside admitted native profiles.
+`check_initial_reward_probe.py --sanitize --output NEW.json` executes unchanged
+`pktSendIndexedString`, `defaultBitsPack` and `log2i` with original bit writers
+and explicit fixture stash adapters in the non-debug profile. Independent
+projection checks125 leaves, including capacities2/3/8/16/65536, literal lengths
+0/3/13/259/260, packed starts0..7, compressed starts0/8 and malformed flags.
+These capacities are qualification controls; none is an admitted generation.
 
-Release, ASan and UBSan each pass194,289 checks across208 fixtures, including
-24,746 shortened extents,6,727 mutations and11 invalid API/alias controls.
-The generated JNI fixture verifies the retained NetFX header/source receipt,
-then joins the original self/full-list costume prefix with an opaque body
-witness. The verified prefix ends at bit1530, before that witness. No original
-costume body, indexed reward field, consumer or whole server transaction runs.
+Release, ASan and UBSan each pass310,590 checks, including43,738 shortened
+extents,6,146 mutations,2,612 unread-index controls and10 API/alias controls.
+The new JNI fixture verifies the accepted costume-prefix source/header receipt,
+executes one unchanged original prefix case through its first present-reward
+callsite, and appends the exact original literal leaf plus an opaque
+continuation witness. The leaf spans bits1477..1591. Remaining reward framing,
+indexed resolution and costume bodies are neither produced nor parsed here.
+Accepted prefix native sources/receipts remain unchanged; their suites and
+broader renderer/compiler/network/Android13 qualification are not replayed.
 
 The affected JNI adapter uses explicit controller/JNI doubles for same-loan
-composition, self mismatch, truncated stored count, exact boundary, prior result
-preservation, report capacity and cleanup. Release/ASan/UBSan each pass1,956
-checks across38 scenarios; maximum composed report is6,982 of7,168 bytes.
-Receipts/source hashes are in `qualification/initial-costume-20261019/`; focused
-CI is `Native initial ALLENTS costume prefix`. Earlier create/pose/sequence/
-triggered/AI/NetFX receipts remain source-bound and their accepted suites are
-not replayed. General renderer/compiler/network/Android13 suites are not rerun.
-Exactly ONE costume-prefix milestone ends here. No Thor session or complete
-server-backed character acceptance is claimed.
+composition, nested null, truncated/exact-end literals, indexed refusal before
+payload, result preservation and cleanup. Release/ASan/UBSan each pass2,253
+checks across43 scenarios. Its maximum composed report is7,113 of7,168 bytes;
+the existing report-limit guard remains intact. Receipts and source hashes are
+in `qualification/initial-reward-20261019/`; focused CI is
+`Native initial ALLENTS reward string`. Exactly ONE nested-string milestone
+ends here. No real server transaction, Thor execution or complete server-backed
+character acceptance is claimed.
 
 The previously reported unsupported Map count is the ordinary successful GROUPS
 inspector's deliberate UNSUPPORTED boundary (command6, exact consumed end), which

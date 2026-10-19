@@ -1,31 +1,28 @@
-# CoH native ARM64: costume-prefix milestone
+# CoH native ARM64: first nested reward-string milestone
 
-Branch native-android only; baseline4e8b8e4. Thor Android13/ARM64.
-Physical Combined0.1.9 received GROUPS42889B, ALLENTS37712 decodedB/7721
-compressedB,31UDP, zero decode failures; both sockets closed. ZIP CLOSED was
-cleanup. No raw body retained. Do not repeat network/compiler/renderer suites.
+Branch native-android only; baseline 20137fe. Thor Android13/ARM64.
+Physical Combined0.1.9 received GROUPS42,889B, ALLENTS37,712 decoded/7,721
+compressed bytes,31UDP, zero decode failures; both sockets closed. ZIP CLOSED
+was cleanup. No raw body retained. Do not repeat accepted network/compiler/renderer suites.
 
-Exact ALLENTS loan composes create, fullpose, sequence, triggered moves, AI and
-NetFX. New first_record_costume_prefix starts at netfx_end_bit. Selector1..4;
-initial type0 refuses. Entire type1 compares its self flag with same-create raw
-self (wire consistency only). Self reads2 reward counts<=256 and absent flags;
-first present reward stops BEFORE pktSendIndexedString at
-FIRST_COSTUME_REWARD_STRING_REQUIRED. Literal/index branch still unread.
-If rewards absent, validate slot/full-list framing: current<10, count1..10,
-current<count. Initial self requires multiple1; other-player requires0.
-Full/owned bodies stop at FIRST_COSTUME_DICTIONARY_REQUIRED. NPC/sequence
-classify and stop before nested body; these variants need no dictionary merely
-to decode syntax. No nested bytes skipped. Exact next-boundary end is INVALID.
+Accepted exact-loan chain: create/fullpose/sequence/triggered/AI/NetFX/costume
+prefix. First present costume reward stops at FIRST_COSTUME_REWARD_STRING_REQUIRED.
+New coh_initial_reward_probe runs there in SAME loan. Require nested presence1;
+null0 is INVALID, not absent reward. Strict inTable0 streams one raw NUL literal
+with260-byte cap INCLUDING NUL (259 text bytes), discards text and stops at
+FIRST_REWARD_CONTINUATION_REQUIRED. Empty nonnull literal is valid. inTable1
+stops at FIRST_REWARD_DICTIONARY_REQUIRED BEFORE any packed index. No counter substitutes for stash capacity or dictionary generation.
 
-Qualified original entSendCostume and ent_SendCostumeRewards prefixes use
-explicit OPAQUE nested-leaf witnesses, not dictionary generations. Focused
-release/ASan/UBSan and affected JNI evidence: engine/initial-capture/
-qualification/initial-costume-20261019. CI: Native initial ALLENTS costume prefix.
-Earlier prefix hashes verified, accepted old suites not rerun. Report7168B cap,
-cleanup, Combined0.1.9 signing/imports/profiles/saves unchanged. No APK/new Thor
-run or original-server transaction claimed.
+first_reward_string retains status/stage/bit/byte count/literal validation.
+Remaining rewards/slots/costume bodies stay unread; prior results survive. Complete character/owner/generation/actor/
+ACK/world remain false. Existing4MiB input,7,168B report and cleanup limits hold.
 
-ONE milestone only. Next: appropriate nested costume/reward branch and genuine
-immutable dictionary/manifest admission where needed. Repeated create/envelope
-inPhase unproved; owner/character/generation/actor/ACK/world false. Gates25–27
-open. Read FIRST_CREATE.md and fetch latest HEAD before continuing.
+Focused evidence: engine/initial-capture/qualification/initial-reward-20261019.
+CI: Native initial ALLENTS reward string. Exact original pktSendIndexedString,
+defaultBitsPack/log2i with EXPLICIT FIXTURE stash adapters; no real dictionary
+admission. One accepted prefix case supplies JNI callsite; old suites not replayed. No original-server transaction, Thor execution or APK claimed.
+Combined0.1.9 imports/signing/profiles/saves and Gates1–24 unchanged.
+
+ONE milestone only. Next: bounded continuation of remaining reward framing,
+or genuine immutable dictionary/manifest admission for indexed values. Full-record/list/ownership work remains; Gates25–27 open.
+Read FIRST_CREATE.md and fetch latest HEAD before continuing.
