@@ -1,11 +1,12 @@
-# Body-part bounded original schema checksum
+# Body-part bounded original production cache-header selection
 
 The accepted callback milestone executes unchanged original `ParseBoneNames`
 using the generated enum provider. The accepted loader milestone qualifies an original
 cache-hit route and fixture-scoped provenance. Accepted binary-open and dependency-list
 milestones qualify SerializeReadOpen and FileListRead. The accepted body-read milestone
-composes original file/table and record readers. The current milestone computes the
-original checksum for the exact source schemas. None admits a runtime
+composes original file/table and record readers. The accepted checksum milestone computes
+the original checksum for the exact source schemas. The current milestone composes that
+checksum with original production cache-header selection. None admits a runtime
 body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
 The source body-type table/count was already qualified by costume-import work.
@@ -423,7 +424,7 @@ Next ONE is bounded original ParseTableCRC/UpdateCRCFromParseInfo on these exact
 schemas, with original interpretfield/Adler32 dependencies. A retained CLIENT
 schema-CRC match would still supply no current-Map selection or generation.
 
-## Current bounded original schema checksum
+## Accepted bounded original schema checksum
 
 `schema_crc_provider.py` executes unchanged original ParseTableCRC and
 UpdateCRCFromParseInfo with original ignore/number/string/struct interpretfield
@@ -508,6 +509,74 @@ or application ACK admission is granted. ALLENTS41/43, dictionary-index stops,
 existing application limits/cleanup, Combined0.1.9/imports/signing/profiles/saves
 and Gates1–24 remain unchanged; Gates25–27 stay open. No APK or Thor run occurs.
 
-Next ONE: original ParserIsPersistNewer production branch using actual source
-CRC and original header open. Its ignoreCRC1 behavior must remain explicit;
-development/date/filesystem and current-Map selection provenance remain blocked.
+The next caller composition is qualified separately below; the checksum-only
+receipt above does not claim that caller executed.
+
+## Bounded original production cache-header selection
+
+`persist_newer_provider.py` composes the unchanged complete original
+`ParserIsPersistNewer` with the accepted original `ParseTableCRC`/schema/handler/
+CryptoPP dependencies and original `SerializeReadOpen`/header-read dependencies.
+The fixed source schemas and defines=NULL profile remain unchanged. The original
+production caller computes the source CRC before attempting to open the header,
+passes production mode directly as ignoreCRC=1, and returns the open handle before
+any dependency-list, date or filesystem-freshness code. Its returned handle stays
+inside the owned transaction and is closed before publishing the numeric result.
+
+Production CRC mismatch acceptance is original behavior. A matching CRC is not a
+freshness, body-content, ownership or dictionary-generation check. Separate
+strict-CRC controls execute only the header dependency with the actual computed
+source CRC; they never execute the caller in development mode. An immutable
+production-mode fixture adapter records mode queries. It does not qualify the
+original mode helper, engine globals, current executable profile or filesystem.
+All excluded development/date/filesystem dependency adapters trap if entered.
+
+The complete header extent is preflighted before any original source function;
+short scalar reads, truncated type/padding, excessive type/input lengths and
+unsupported profiles refuse without source entry. The wrapper retains the
+original C-string and ignored-padding semantics. Whole-input hashing binds even
+unused body suffix bytes without qualifying their contents. Caller inputs,
+identity labels, digest context, result and diagnostic sink remain disjoint;
+unsupported/invalid diagnostic sinks stay unchanged. Owned input/schema/trace
+storage and the actual CryptoPP context are cleaned before atomic result commit.
+Source refusal, open refusal and wrapper preflight refusal remain distinguishable.
+
+Release/ASan/UBSan each pass3,022 checks across97 fixtures:45 production
+acceptances,15 production header/open refusals,2 strict-header acceptances,
+4 strict-header refusals and31 preflight/profile refusals. All66 actual CRC
+contexts clean up. The independently source-derived CRC cf27aba3 agrees with
+actual original computation; measured totals remain171 bytes/35 updates/
+14 fields/15 interpret calls. This composition compares CRC and totals; the
+accepted schema-only qualification retains byte-for-byte stream evidence.
+All32 CRC-bit changes, zero/all-one words, C-string suffixes, padding and ignored
+body suffixes preserve original behavior. Source failure diagnostics validate
+the original format/constant filename and fire once on caller refusal, never
+on acceptance or dependency-only strict controls. Ten identity,9 child-ledger,
+7 alias and5 budget/overflow controls also pass.
+
+All32 repository inputs,48 dependency snapshots, both compiler binaries and
+Python/reference-zlib remain stable. Every compiler/runtime stderr is empty;
+child stdout is1,702B per mode. The fixture is165,877B under262,144B and the
+input ledger42,885B under65,536B. Owned globals charge67,868B, actual Adler32
+object16B and own stack reserve16KiB, with all caller/context/digest-scratch/
+retained spans under1MiB. Measured release frames are384B persist_newer_apply,
+32B ParserIsPersistNewer,32B ParseTableCRC and4,208B SerializeReadOpen, all static.
+External runtime/allocator, sanitizer and aggregate stack/RSS closure remain
+unqualified. Complete build/input/profile/run evidence belongs in the dedicated
+Native original persist-newer production CI artifact. Local receipt:
+qualification/persist-newer-20261019/host.json (worktree above063f4ea14);
+no prior checker main or unrelated suite runs.
+
+This bounded host composition grants no runtime catalog/default, dictionary
+import/generation, selected-character/owner, actor, application ACK or world
+authority. Development/date/filesystem freshness and current-Map loaded-input,
+source/build/profile/run provenance remain unqualified. ALLENTS41/43 and
+dictionary-index restrictions, application cleanup/resource limits, Gates1–24,
+accepted Thor APKs, Combined0.1.9/imports/signing/profiles/saves remain unchanged.
+Gates25–27 remain open. No APK is rebuilt and no Thor acceptance run is claimed.
+
+Next ONE: original `ParserReadBinaryFile(NULL, ...)` unopened-handle branch,
+using actual source CRC, original header open and accepted file-list/body-read
+dependencies in one owned-input transaction. The accepted body-read provider
+currently traps this branch. This stage must retain production ignoreCRC1 and
+must not imply filesystem selection, development freshness or current-Map proof.
