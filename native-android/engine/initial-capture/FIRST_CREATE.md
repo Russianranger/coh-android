@@ -622,8 +622,9 @@ or paired name_geoR/name_geoL through bone_IdFromName. Common/seq/bones.c uses
 BoneIdEnum through StaticDefineIntGetInt; bones.h declares the AUTO_ENUM source.
 The repository's StructParser generates the real enum rows/aliases. Generated
 source symbols are distinct from costume dictionary generation and loaded
-body-part catalog provenance. This prerequisite executes that generated provider,
-not the original body-part callback or its ParserLoadFilesShared inputs.
+body-part catalog provenance. The enum prerequisite executes that generated provider; the accepted callback
+profile composes it with ParseBoneNames. The current cache-hit loader profile
+does not rerun either qualification or infer actual MapServer inputs.
 
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
@@ -638,35 +639,50 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-The current focused qualifier is ../body-catalog/check_parse_bone_names.py.
-It verifies the exact committed CLIENT subset ZIP (2,253,704B,
-SHA256350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241)
-and BodyParts.bin (2,584B,
-SHA256b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb).
-No new donor generation or substitute cache is produced. Each native mode
-compares every decoded raw field of28 rows with an independent trusted projection
-before invoking the original callback through the owned bounded profile.
+The current focused qualifier is ../body-catalog/check_body_part_loader.py.
+It composes unchanged whole original bpReadBodyPartFiles, ParserLoadFilesShared
+and ParserLoadFiles in one controlled SMAR_Error → exact binary-cache-hit route.
+The original entry passes ParseBoneNames as preprocessor, not postprocessor.
+The successful original binary branch returns before preprocessing, so cached
+bone/index words must remain unchanged and the callback must not execute.
 
-Release/ASan/UBSan each pass2,019 checks:28 authentic rows,30 original lookups,
-70 successful callback transactions,23 bounded-profile refusals,29 derived-field
-mutation controls,28 ASCII case controls and6 alias controls. Single-part second
-bones, unknown/sentinel source semantics, source60-versus-policy29, paired126/127,
-single259/260, late preflight atomicity, ordering and idle cleanup are exercised.
-All57 source inputs and resolved C/C++ compiler identities remain stable.
+The native binary-reader bridge and shared/freshness/filesystem selection leaves
+are explicit adapters. The exact retained CLIENT BodyParts.bin remains2,584B,
+SHA256b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb,
+inside the unchanged2,253,704B subset archive. Original full Parse6/ParseTable CRC
+computation, text/fallback loading, shared creation/reuse, original ABI and actual
+MapServer cache consumption are unqualified. The guarded callback symbol proves
+only the expected source call slot, never callback execution on this route.
 
-Original callback stack208B and sourceparts_apply10,400B are static host frames;
-the harness main6,384B is bounded. External libc/crypto sanitizer/stack closure,
-original earray/Win32/Android ABI and global/device RSS are not established.
-Full tool/native evidence is in Native body-catalog ParseBoneNames callback CI;
-compact receipt: ../body-catalog/qualification/parse-bone-names-20261019/host.json.
-Accepted enum generation is a dependency; its old checker/native suite is not
-replayed. Accepted input-reader, compiler, JNI, renderer, transport and Android13
-suites are not replayed; only the affected source/native composition is tested.
+The exact entry argument tuple (with an explicit opaque table-token adapter)
+and owned original BodyPart/getter snapshot are
+verified against raw decoded rows, preserving the last duplicate BoneCount and
+serialized derived values. Fixture provenance associates input, pinned source,
+compiler/build, branch profile and per-run identity. It is not authenticated
+server/session ownership, current runtime catalog evidence or a generation.
+The accepted generated enum/callback qualifiers are not replayed.
 
-Exactly ONE callback milestone ends here. No original full Parse6/
-ParserLoadFilesShared initialization, current Map runtime transaction, runtime
-catalog/default, dictionary import/generation, actor or authority/application ACK
-admission is claimed. No new Thor run/APK. Next work must qualify an original
-body-part loader/runtime snapshot with genuine loaded-input/source/build/profile/
-run provenance before catalog admission. Gates25–27 remain open; character,
-source-generation, actor, authority and application ACK permissions remain false.
+Release/ASan/UBSan each pass1,812 checks:28 authentic rows, one authentic and
+two synthetic cache hits,4 decode/representation refusals,28 bounded refusals,
+10 identity/9 child-ledger/3 alias/5 budget controls and zero preprocessor calls.
+All21 source inputs and compiler identities remain stable. The child measures
+its own ELF, exact fixture/build/input ledger and matches compiled source/profile/
+random fixture-run/compiler-profile labels; this is not runtime attestation.
+Maximum individual measured host frame2,720B; external stack/sanitizer/device RSS
+closure remains unproved. Only affected source/native qualification ran.
+
+Full evidence belongs in Native body-part loader provenance CI; compact receipt:
+../body-catalog/qualification/body-part-loader-20261019/host.json. See the exact
+bounded API, adapters, failure diagnostics and cleanup in ../body-catalog/CONTRACT.md.
+The accepted callback receipt and its2,019 checks per mode remain retained.
+
+Exactly ONE loader-provenance milestone ends here. ALLENTS catalog stops41/43,
+earlier dictionary-index stops,4MiB input/192B child/7,168B report, overflow guard
+and transport cleanup remain unchanged. Runtime catalog/default, dictionary
+import/generation, complete character, ownership, actor, authority and application
+ACK admission remain false. No new Thor run/APK; Combined0.1.9/imports/signing/
+profiles/saves and Gates1–24 are preserved. Gates25–27 remain open.
+
+NextONE: qualify a bounded original binary-read leaf beneath this loader route.
+Current-Map loaded-input/source/build/profile/run and branch provenance remain
+required before catalog admission. Do not substitute the isolated CLIENT fixture.

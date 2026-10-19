@@ -1,16 +1,17 @@
-# Body-catalog bounded callback qualification
+# Body-part bounded loader provenance
 
-This milestone executes the unchanged original `ParseBoneNames` callback in a
-bounded source profile using the accepted generated enum provider. It does not
-admit a runtime body catalog or advance the initial ALLENTS parser past
-`FIRST_BODY_CATALOG_REQUIRED`.
+The accepted callback milestone executes unchanged original `ParseBoneNames`
+using the generated enum provider. The current milestone qualifies one original
+cache-hit loader route and fixture-scoped provenance. Neither admits a runtime
+body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
 The source body-type table/count was already qualified by costume-import work.
 The accepted enum prerequisite is `BoneIdEnum`: original `bones.h`
 marks `BoneId` with AUTO_ENUM, and the original `bone_IdFromName` uses that
 generated table through the original StaticDefine lookup functions.
 
-The provider builds the repository's StructParser target from pinned source,
+The accepted bone_enum_provider.py builds the repository's StructParser target
+from pinned source,
 runs it over an isolated exact copy of the original header, and consumes its
 actual emitted table. No lookup rows are handwritten. Original enum values,
 row order, prefix handling and aliases remain source-derived. The generator's
@@ -37,10 +38,11 @@ storage. These are qualification bounds, not new original lookup grammar.
 The generated table file is checked against64KiB. None of these limits changes
 the existing packet, report, dictionary or cleanup limits.
 
-The current callback input is the exact retained authentic CLIENT BodyParts.bin:
+The accepted callback input is the exact retained authentic CLIENT BodyParts.bin:
 2,584 bytes, SHA256 b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb,
 from the committed deterministic subset archive whose origin/recovery was
-previously verified. This qualifier verifies that exact archive/blob and member
+previously verified. The accepted callback qualifier verifies that archive/blob
+and member
 again; it does not regenerate or substitute caches. Each native mode uses the
 unchanged qualified native decoder and compares every raw field of all28 rows
 against an independent projection of these trusted bytes. Derived expectations
@@ -78,11 +80,10 @@ Exact source pins, compiler identities, stable inputs and bounded native frames
 are recorded. External libc/crypto sanitizer/stack closure and global/device RSS
 are not established by those frame measurements.
 
-Qualification still stops before original Parse6/ParserLoadFilesShared loading,
-full initialization, the costume importer or a MapServer transaction. CLIENT
-callback results cannot substitute for current server postprocessing or complete
-loaded-input/source/build/profile/run association. A runtime catalog/default,
-dictionary generation and application acceptance remain unavailable.
+That accepted callback qualification stops before original loader routing.
+CLIENT callback results cannot substitute for current server postprocessing or
+complete loaded-input/source/build/profile/run association. A runtime catalog/
+default, dictionary generation and application acceptance remain unavailable.
 
 The generated enum is an executable source prerequisite, not a costume
 dictionary generation or an authenticated runtime dictionary. No packet, Map,
@@ -91,8 +92,86 @@ admission, complete character, selected ownership, source generation, actor
 publication, application ACK and world authority remain false. Existing
 dictionary-index stops, cleanup and resource limits are unchanged.
 
-Run only `check_parse_bone_names.py --sanitize --output NEW.json`, optionally
+The current loader profile composes unchanged whole original
+`bpReadBodyPartFiles`, `ParserLoadFilesShared` and `ParserLoadFiles`. The selected
+outer route is an explicitly controlled `SMAR_Error`, then an exact binary-cache
+hit. Observer wrappers check each source call tuple and immediately delegate to
+the unchanged function; preprocessing macros select those wrappers at callsites. The original entry passes `ParseBoneNames` as a **preprocessor**. Original
+`ParserLoadFiles` returns immediately on successful binary read, before that
+preprocessor. This route must preserve cached bone/index words; invoking the
+accepted callback again would qualify a different route.
+
+The shared acquisition, filesystem freshness/selection and binary-read leaves
+are explicit qualification adapters. The binary bridge uses the unchanged
+already-qualified native reader on the exact retained CLIENT cache. Original
+full Parse6/ParseTable CRC computation, filesystem selection, text fallback,
+shared creation/reuse, original allocation/object ABI, full initialization and
+current MapServer consumption remain unqualified. The guarded callback symbol
+is an adapter and must never execute on the supported route. The already
+qualified enum/callback tests are not replayed as a cache-hit prerequisite.
+
+The source entry's exact shared name, directory, mask, persisted filename,
+flags, opaque table-token/root identity, size and callback positions must match.
+The token checks the call slot only; it is not a compiled original ParseTable or
+its CRC. Owned
+original BodyPart rows retain the last duplicate BoneCount value; their fields
+and the original getter are checked against the decoder snapshot. Raw words are
+bit-copied into the qualified host32 signed/enum fields. The original U8 field
+requires DontClear<=255 in this narrower fixture profile; wider serialized words
+refuse without changing the existing native reader or claiming original BOOLFLAG
+conversion semantics. The first
+serialized duplicate remains raw decoder evidence, rather than an invented
+additional original struct field. A fixture getter count is never a current
+MapServer/default count.
+
+A fixture provenance ledger binds the exact input, pinned source closure,
+compiler/build, explicit branch profile and per-run identity. Those are measured
+qualification associations, never server authentication, selected-character
+ownership or dictionary generation. A matching fixture ledger cannot prove that
+the current MapServer selected the same bytes or shared state. First failures
+remain bounded; unsuccessful transactions publish no partial snapshot. All
+owned temporary state and exposed original loader metadata are cleared after
+each normal return using volatile byte stores. The unchanged function-static
+old_filemask pointer still points to the permanent, wiped fixture-owned mask
+arena; it never retains a borrowed input or heap allocation. Repeated success/
+failure calls exercise normal source reset of its internal recursive_call flag.
+No longjmp skips that reset.
+
+The provider accepts at most64KiB of cache bytes and29 rows under the existing
+input-reader aggregate budget<=1MiB. It charges fixed owner storage, caller spans,
+16KiB native stack reserve, digest scratch/context and retained allocations
+before entry. These fixture limits do not change the application's4MiB input,
+192B child or7,168B report limits. Global/device RSS and external libc/crypto
+stack or sanitizer closure remain unproved.
+
+The isolated fixture's COH_OK means this supported cache-hit transaction
+completed, never complete packet/catalog/character acceptance. A safe numeric
+receipt carries status, first stage, bounded call counters, cache-hit/return,
+loaded-field progress and cleanup. Stage1 is input/spans/budget,2 identity,
+3 unsupported requested profile,8 missing cache,9 freshness refusal,10 binary
+leaf refusal,11 native decode and12 source-object representation/snapshot.
+Successful fixture completion is13. Aliased/invalid receipt storage stays
+unchanged; other refusals may update only a safe numeric receipt and never the
+snapshot. Excluded text/shared/CRC branches and changed source call invariants
+trap as qualification failures; they are not production runtime branches.
+
+Release, ASan and UBSan each pass1,812 checks:28 authentic CLIENT rows,
+one authentic and two synthetic cache hits,4 decode/representation refusals,
+28 bounded refusals,10 identity/9 child-ledger/3 alias/5 budget controls, and
+zero preprocessor calls. All21 source inputs and the compiler identity remain
+stable. The child hashes its own ELF, exact fixture, build receipt and input
+ledger and compares compiled source/profile/random fixture-run/compiler-profile
+bindings; derived self-hash files are explicitly excluded from circular source
+identity. These checks establish fixture consistency, not runtime attestation.
+
+Eight original source files are pinned, including actual stdtypes.h xcase macro.
+Original host frames: ParserLoadFiles672B, ParserLoadFilesShared96B and
+bpReadBodyPartFiles80B, all bounded; wrapper304B static; maximum individual
+measured frame2,720B. This does not prove total external stack, sanitizer closure
+or device RSS. Compact evidence: qualification/body-part-loader-20261019/host.json.
+
+Run only `check_body_part_loader.py --sanitize --output NEW.json`, optionally
 with `--evidence-directory NEW_DIRECTORY`. Full evidence belongs in the focused
-workflow artifact; the repository retains its compact receipt. Accepted enum
-generation is reused as a dependency; its old checker/native suite is not replayed.
-No general compiler, renderer, transport, JNI or Android13 suite is replayed.
+Native body-part loader provenance workflow artifact; the repository retains a
+compact host receipt. No accepted enum/callback/native suite, general compiler,
+renderer, transport, JNI, Android13 or APK qualification is replayed.

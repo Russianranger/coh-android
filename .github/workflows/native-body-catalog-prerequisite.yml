@@ -1,4 +1,4 @@
-name: Native body-catalog ParseBoneNames callback
+name: Native body-part loader provenance
 on:
   push:
     branches: [native-android]
@@ -9,10 +9,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: native-parse-bones-${{ github.ref }}
+  group: native-body-loader-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  parse-bone-names:
+  body-part-loader:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -21,17 +21,17 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 1
-      - name: Install callback test digest headers
+      - name: Install loader test digest headers
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev
-      - name: Qualify bounded original ParseBoneNames callback
+      - name: Qualify bounded original body-part cache-hit loader
         run: |
-          python3 native-android/engine/body-catalog/check_parse_bone_names.py --sanitize --output "$RUNNER_TEMP/parse-bones-host.json" --evidence-directory "$RUNNER_TEMP/parse-bones-evidence"
+          python3 native-android/engine/body-catalog/check_body_part_loader.py --sanitize --output "$RUNNER_TEMP/body-loader-host.json" --evidence-directory "$RUNNER_TEMP/body-loader-evidence"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-parse-bones-${{ github.sha }}
+          name: native-body-loader-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/parse-bones-host.json
-            ${{ runner.temp }}/parse-bones-evidence/
+            ${{ runner.temp }}/body-loader-host.json
+            ${{ runner.temp }}/body-loader-evidence/
           if-no-files-found: error
           retention-days: 90

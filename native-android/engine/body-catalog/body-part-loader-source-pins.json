@@ -1,0 +1,46 @@
+{
+  "schema": "coh-body-part-loader-provider-source-pins-v1",
+  "baseline_revision": "b235b932f2a1f0fa95ee27e834ed1911277c3115",
+  "files": {
+    "upstream/ouroboros/Common/gameData/BodyPart.c": {
+      "blob_sha1": "08120a0491aeb3eebc915380585d4ff343640f7f",
+      "sha256": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "bytes": 4246
+    },
+    "upstream/ouroboros/Common/gameData/BodyPart.h": {
+      "blob_sha1": "9f6520ca88fcd8603f72b4b9376cad7795366b49",
+      "sha256": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+      "bytes": 1457
+    },
+    "upstream/ouroboros/Common/entity/costume.h": {
+      "blob_sha1": "2e64e05c52d978de07bb4353ca6742d8d76079e9",
+      "sha256": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "bytes": 23092
+    },
+    "upstream/ouroboros/Common/seq/bones.h": {
+      "blob_sha1": "1c58b91aea72e40ed66511d6f8ba80d671a658f7",
+      "sha256": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "bytes": 3012
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": {
+      "blob_sha1": "a80f0aa356e6d7f9422ad5ab501f1be2763a4c69",
+      "sha256": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "bytes": 264080
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": {
+      "blob_sha1": "9231f1c3fa383e499488ecbf0192becf0aee9d46",
+      "sha256": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "bytes": 30934
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/SharedMemory.h": {
+      "blob_sha1": "f64790a5c01966a56aa82b5652736c5eb4dd5d48",
+      "sha256": "38ea76f0858ee9aaa5070f522a08e942161999ad6aba1caf6760bd84fcd9f6cf",
+      "bytes": 5801
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": {
+      "blob_sha1": "f398b138191f7c9d8234b93ebcb9d3f2afb84c26",
+      "sha256": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f",
+      "bytes": 28228
+    }
+  }
+}
