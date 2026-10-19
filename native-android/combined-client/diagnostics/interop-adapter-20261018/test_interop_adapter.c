@@ -16,9 +16,11 @@
 #include "../../../engine/initial-capture/qualification/initial-costume-20261019/jni-fixture.h"
 #include "../../../engine/initial-capture/qualification/initial-reward-20261019/jni-fixture.h"
 #include "../../../engine/initial-capture/qualification/initial-reward-list-20261019/jni-fixture.h"
+#include "../../../engine/initial-capture/qualification/initial-costume-slots-20261019/jni-fixture.h"
 static unsigned pose_fixture;
 static unsigned sequence_fixture;
-static unsigned triggered_fixture,aianim_fixture,netfx_fixture,costume_fixture,reward_fixture,reward_list_fixture;
+static unsigned triggered_fixture,aianim_fixture,netfx_fixture,costume_fixture,reward_fixture,reward_list_fixture,slots_fixture;
+static unsigned char slots_packet[sizeof(coh_costume_slots_jni_fixture)];
 static unsigned char reward_list_packet[sizeof(coh_reward_list_jni_fixture)];
 static unsigned char reward_packet[sizeof(coh_reward_jni_fixture)];
 static unsigned char costume_packet[sizeof(coh_costume_jni_fixture)];
@@ -70,6 +72,15 @@ CohStatus coh_initial_capture_service(CohInitialCapture*c,uint64_t now,CohCancel
  if(costume_fixture&&c->step){loan.reader.bytes=(CohBytes){costume_packet,sizeof(costume_packet)};loan.reader.bits=costume_fixture==3?COH_COSTUME_JNI_FIXTURE_PREFIX_END-1:costume_fixture==4?COH_COSTUME_JNI_FIXTURE_PREFIX_END:COH_COSTUME_JNI_FIXTURE_BITS;loan.reader.cursor=COH_COSTUME_JNI_FIXTURE_POST_COMMAND;loan.message_id=17;}
  if(reward_fixture&&c->step){loan.reader.bytes=(CohBytes){reward_packet,sizeof(reward_packet)};loan.reader.bits=reward_fixture==3?COH_REWARD_JNI_FIXTURE_REWARD_END-1:reward_fixture==4?COH_REWARD_JNI_FIXTURE_REWARD_END:COH_REWARD_JNI_FIXTURE_BITS;loan.reader.cursor=COH_REWARD_JNI_FIXTURE_POST_COMMAND;loan.message_id=17;}
  if(reward_list_fixture&&c->step){loan.reader.bytes=(CohBytes){reward_list_packet,sizeof(reward_list_packet)};loan.reader.bits=reward_list_fixture==2?COH_REWARD_LIST_JNI_FIXTURE_LIST_END-1:reward_list_fixture==3?COH_REWARD_LIST_JNI_FIXTURE_FIRST_GROUP_END+31:reward_list_fixture==4?COH_REWARD_LIST_JNI_FIXTURE_LIST_END:COH_REWARD_LIST_JNI_FIXTURE_BITS;loan.reader.cursor=COH_REWARD_LIST_JNI_FIXTURE_POST_COMMAND;loan.message_id=17;}
+ if(slots_fixture&&c->step){
+  size_t bits=COH_COSTUME_SLOTS_JNI_FIXTURE_BITS;
+  if(slots_fixture==2)bits=COH_COSTUME_SLOTS_JNI_FIXTURE_CURRENT_BEGIN+7;
+  if(slots_fixture==3)bits=COH_COSTUME_SLOTS_JNI_FIXTURE_ADDITIONAL_BEGIN+7;
+  if(slots_fixture==4)bits=COH_COSTUME_SLOTS_JNI_FIXTURE_MULTIPLE_BEGIN;
+  if(slots_fixture==6)bits=COH_COSTUME_SLOTS_JNI_FIXTURE_COUNT_BEGIN+3;
+  if(slots_fixture==10)bits=COH_COSTUME_SLOTS_JNI_FIXTURE_SLOTS_END;
+  loan.reader.bytes=(CohBytes){slots_packet,sizeof(slots_packet)};loan.reader.bits=bits;loan.reader.cursor=COH_COSTUME_SLOTS_JNI_FIXTURE_POST_COMMAND;loan.message_id=17;
+ }
  live_event=&event;CohStatus status=observer(context,c,&event);live_event=NULL;
  if(status!=COH_OK){c->d.first_failure=(CohInitialCaptureFailureSnapshot){1,c->d.local.phase,COH_DB_HANDOFF_READY,COH_MAP_SCENE_INCOMPLETE,status,COH_INITIAL_CAPTURE_FAILURE_OBSERVER};c->d.failure=COH_INITIAL_CAPTURE_FAILURE_OBSERVER;c->d.phase=COH_INITIAL_CAPTURE_FAILED;c->d.status=status;closed(c);return status;}
  if(!c->step++){c->d.groups_observed=1;c->d.groups_observations=1;c->d.reqallents_sent=1;c->d.phase=COH_INITIAL_CAPTURE_WAIT_ALLENTS;return COH_OK;}
@@ -90,7 +101,7 @@ void coh_request_tx_retire(CohRequestTxWitness*w){if(w){CHECK(!w->retired);w->re
 void coh_request_tx_diagnostics(const CohRequestTxWitness*w,CohRequestTxDiagnostics*out){CHECK(w);memset(out,0,sizeof(*out));out->diagnostic_only=1;out->valid=w->retired;out->witness_retired=w->retired;out->queue_attempted=out->queue_succeeded=capture.d.reqallents_sent;out->queue_status=COH_OK;out->first_send_attempts=out->first_send_accepted=capture.d.reqallents_sent;out->peer_transport_ack_observed=capture.d.raw_allents_observed;}
 void coh_request_tx_destroy(CohRequestTxWitness*w){if(w)CHECK(w->retired&&!w->owner);}
 #endif
-static void fixture(void){CHECK(!live);pose_fixture=0;sequence_fixture=0;triggered_fixture=aianim_fixture=netfx_fixture=costume_fixture=reward_fixture=reward_list_fixture=0;memcpy(reward_list_packet,coh_reward_list_jni_fixture,sizeof(reward_list_packet));memcpy(reward_packet,coh_reward_jni_fixture,sizeof(reward_packet));memcpy(costume_packet,coh_costume_jni_fixture,sizeof(costume_packet));memcpy(aianim_packet,coh_aianim_jni_fixture,sizeof(aianim_packet));memcpy(sequence_packet,coh_sequence_jni_fixture,sizeof(sequence_packet));fault=exception_pending=0;alloc_calls=fail_alloc=0;memset(&input,0,sizeof(input));const char*n="PRIVATE_USER";input.length=(jsize)strlen(n);for(jsize i=0;i<input.length;i++)input.data[i]=(jchar)n[i];}
+static void fixture(void){CHECK(!live);pose_fixture=0;sequence_fixture=0;triggered_fixture=aianim_fixture=netfx_fixture=costume_fixture=reward_fixture=reward_list_fixture=slots_fixture=0;memcpy(slots_packet,coh_costume_slots_jni_fixture,sizeof(slots_packet));memcpy(reward_list_packet,coh_reward_list_jni_fixture,sizeof(reward_list_packet));memcpy(reward_packet,coh_reward_jni_fixture,sizeof(reward_packet));memcpy(costume_packet,coh_costume_jni_fixture,sizeof(costume_packet));memcpy(aianim_packet,coh_aianim_jni_fixture,sizeof(aianim_packet));memcpy(sequence_packet,coh_sequence_jni_fixture,sizeof(sequence_packet));fault=exception_pending=0;alloc_calls=fail_alloc=0;memset(&input,0,sizeof(input));const char*n="PRIVATE_USER";input.length=(jsize)strlen(n);for(jsize i=0;i<input.length;i++)input.data[i]=(jchar)n[i];}
 static void start(void){current=JNI(begin)(&env,NULL,7000,&input,5,JNI_FALSE,JNI_FALSE,100);CHECK(current>0&&live==1);}
 static const char*report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"packet_copy_retained\":false"));return report_text;}
 static void finish(void){JNI(close)(&env,NULL,current);CHECK(!live);CHECK(JNI(service)(&env,NULL,current,101)==COH_INVALID);current=0;scenarios++;}
@@ -202,13 +213,41 @@ int main(void){
   const char*body=strstr(report_text,"\"first_reward_string\":{");CHECK(body);
   CHECK(strstr(body,"FIRST_REWARD_CONTINUATION_REQUIRED")&&strstr(body,"\"bytes\":13")&&strstr(body,"\"bit\":1591")&&strstr(body,"\"literal_validated\":true"));
   char expected[96];
-  if(v==1||v==4)snprintf(expected,sizeof(expected),"\"progress\":[%u,6,2,2,2,3,%u,1,0]",v==1?2u:1u,COH_REWARD_LIST_JNI_FIXTURE_LIST_END);
+  if(v==1)snprintf(expected,sizeof(expected),"\"progress\":[4,9,2,3,%u,9,479]",COH_REWARD_LIST_JNI_FIXTURE_LIST_END);
+  else if(v==4)snprintf(expected,sizeof(expected),"\"progress\":[1,8,2,3,%u,0,0]",COH_REWARD_LIST_JNI_FIXTURE_LIST_END);
   else if(v==2)snprintf(expected,sizeof(expected),"\"progress\":[1,4,2,2,2,2,%u,0,4]",COH_REWARD_LIST_JNI_FIXTURE_LIST_END-8u);
   else if(v==3)snprintf(expected,sizeof(expected),"\"progress\":[1,2,2,0,2,0,%u,0,0]",COH_REWARD_LIST_JNI_FIXTURE_FIRST_GROUP_END);
   else snprintf(expected,sizeof(expected),"\"progress\":[2,5,2,0,2,0,%u,0,5]",COH_REWARD_LIST_JNI_FIXTURE_LATE_REWARD_BEGIN+2u);
   CHECK(strstr(body,expected));CHECK(!strstr(body,"\"text\"")&&!strstr(body,"\"name\"")&&!strstr(body,"\"generation\"")&&!strstr(body,"\"index\""));
   if(v==1)strcpy(sample_report,report_text);
   JNI(disconnect)(&env,NULL,current);CHECK(strstr(report(),"CLOSED")&&strstr(report_text,expected)&&strstr(report_text,"\"source_generation_admitted\":false")&&strstr(report_text,"\"ack_permitted\":false")&&strstr(report_text,"\"world_authority\":false"));finish();
+ }
+ /* Source-qualified self/full-list framing; all body witnesses stay opaque. */
+ for(unsigned v=1;v<=12;v++){
+  fixture();slots_fixture=v;
+  if(v==5){unsigned b=COH_COSTUME_SLOTS_JNI_FIXTURE_MULTIPLE_BEGIN;slots_packet[b/8]&=(unsigned char)~(1u<<(b%8));}
+  if(v==7||v==8){unsigned value=v==7?0:15;for(unsigned i=0;i<4;i++){unsigned b=COH_COSTUME_SLOTS_JNI_FIXTURE_COUNT_BEGIN+i;slots_packet[b/8]=(unsigned char)((slots_packet[b/8]&~(1u<<(b%8)))|(((value>>i)&1u)<<(b%8)));}}
+  if(v==9){for(unsigned i=0;i<8;i++){unsigned b=COH_COSTUME_SLOTS_JNI_FIXTURE_CURRENT_BEGIN+i;slots_packet[b/8]=(unsigned char)((slots_packet[b/8]&~(1u<<(b%8)))|(((2u>>i)&1u)<<(b%8)));}}
+  if(v==11){for(unsigned b=COH_COSTUME_SLOTS_JNI_FIXTURE_SLOTS_END;b<COH_COSTUME_SLOTS_JNI_FIXTURE_BITS;b++)slots_packet[b/8]^=(unsigned char)(1u<<(b%8));}
+  if(v==12){unsigned b=COH_COSTUME_SLOTS_JNI_FIXTURE_SLOTS_BEGIN;slots_packet[b/8]&=(unsigned char)~(1u<<(b%8));}
+  start();CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);CHECK(JNI(service)(&env,NULL,current,104)==COH_UNSUPPORTED);
+  CHECK(strstr(report(),"INITIAL_OBSERVED")&&strstr(report_text,"\"cleanup_verified\":true")&&strstr(report_text,"FIRST_COSTUME_REWARD_STRING_REQUIRED"));
+  const char*body=strstr(report_text,"\"first_reward_string\":{");CHECK(body);
+  CHECK(strstr(body,"FIRST_REWARD_CONTINUATION_REQUIRED")&&strstr(body,"\"bit\":1591")&&strstr(body,"\"bytes\":13")&&strstr(body,"\"literal_validated\":true"));
+  unsigned status=2,stage=13,delta=22,metadata=1u|(1u<<1)|(255u<<9)|(1u<<17)|(2u<<18)|(1u<<22);
+  if(v==2){status=1;stage=9;delta=1;metadata=1;}
+  if(v==3){status=1;stage=10;delta=9;metadata=3;}
+  if(v==4){status=1;stage=11;delta=17;metadata=3u|(255u<<9);}
+  if(v==5){stage=11;delta=18;metadata=3u|(255u<<9);}
+  if(v==6){status=1;stage=12;delta=18;metadata=3u|(255u<<9)|(1u<<17);}
+  if(v==7||v==8){status=4;stage=12;metadata=3u|(255u<<9)|(1u<<17)|((v==7?0u:15u)<<18);}
+  if(v==9){status=4;stage=12;metadata=1u|(2u<<1)|(255u<<9)|(1u<<17)|(2u<<18);}
+  if(v==10)status=1;
+  if(v==12)metadata&=~1u;
+  char expected[96];snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_COSTUME_SLOTS_JNI_FIXTURE_SLOTS_BEGIN,delta,metadata);CHECK(strstr(body,expected));
+  CHECK(!strstr(body,"\"text\"")&&!strstr(body,"\"name\"")&&!strstr(body,"\"generation\"")&&!strstr(body,"\"packet\""));
+  if(v==1)strcpy(sample_report,report_text);
+  JNI(disconnect)(&env,NULL,current);CHECK(strstr(report(),"CLOSED")&&strstr(report_text,expected)&&strstr(report_text,"\"server_identity_bound\":false")&&strstr(report_text,"\"selected_owner_bound\":false")&&strstr(report_text,"\"complete_initial_character\":false")&&strstr(report_text,"\"actor_publication\":false")&&strstr(report_text,"\"source_generation_admitted\":false")&&strstr(report_text,"\"ack_permitted\":false")&&strstr(report_text,"\"world_authority\":false"));finish();
  }
  CHECK(freed==wiped&&!live&&deleted_refs==1&&release_chars>0&&lease_calls>0&&creates&&begins&&chooses&&services&&closes&&destroys&&cancels);
  printf("{\"schema\":\"coh-new-interop-jni-adapter-double-controls-v1\",\"passed\":true,\"checks\":%u,\"scenarios\":%u,\"wiped_frees\":%u,\"max_report_bytes\":%zu,\"JNI_and_initial_capture_explicit_doubles\":true,\"actual_Android_or_protocol_or_original_server\":false,\"world_authority\":false,\"sample_report\":%s}\n",checks,scenarios,wiped,max_report_bytes,sample_report);return 0;

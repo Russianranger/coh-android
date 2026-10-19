@@ -165,7 +165,7 @@ unchanged authority-false fields. It remains null if no present reward is
 reached. This one leaf grants no reward-list, costume, character, ownership,
 source-generation, actor or application ACK acceptance.
 
-The current addition, `coh_initial_reward_list_probe`, continues the bounded
+The accepted `coh_initial_reward_list_probe` continues the bounded
 reward-list syntax after that first literal. In the same synchronous loan, the
 receiver derives the first count cursor from validated type1/self1 selector
 framing: `selector_end_bit + (compressed ? 8 : 1)`. The new parser independently
@@ -186,8 +186,9 @@ then distinguishes a missing next flag/count from both groups being complete.
 Both groups complete sets `list_validated` for syntax only and stops BEFORE
 original deferred/slot framing at `COH_INITIAL_REWARD_LIST_SLOTS` (stage6).
 An exact end there returns INVALID with list completion preserved; otherwise
-this diagnostic boundary returns UNSUPPORTED. Slot values, costume bodies,
-reward eligibility/catalog membership and all authority remain unaccepted.
+this diagnostic boundary returns UNSUPPORTED. That accepted helper remains unchanged. A separate bounded slot observer now
+consumes this boundary as described below; reward eligibility/catalog membership
+and all authority remain unaccepted.
 
 The five existing `first_reward_string` fields remain intact. A compact
 `progress` array is appended inside that same child only after continuation
@@ -208,6 +209,50 @@ runs, preserving its192-byte limit and the7,168-byte total report cap:
 The unchanged leaf stage enum maps2 PRESENCE,3 STORAGE,4 TEXT,5 DICTIONARY,
 6 CONTINUATION. Partial/indexed entries never increment completion. A complete
 reward list is not a complete character record or a session ownership proof.
+
+The current addition, `coh_initial_costume_slots_probe`, starts at that exact
+`list.end_bit` in the same immutable loan, only for validated type1/self1 initial
+framing. It also runs after exact-end list completion, diagnosing the missing
+deferred field rather than losing completed reward syntax. It reads strictly:
+
+`deferred Boolean → current8 → additional8 → full-list Boolean → stored count4`
+
+Each scalar has its own first-failure stage. Current must be<10; the full-list
+flag must1 for this source initial profile; count must1..10 and current<count.
+Current>=10 is LIMIT immediately after current, before additional slots. The
+additional field admits all0..255 as raw syntax: original `num_costume_slots`
+means additional slots, not total entitlement or ownership. The deferred bit is
+observed without applying a timer policy. Rounded byte-aligned Boolean/count
+values are width checked. Full-list0 returns UNSUPPORTED/MULTIPLE; no count or
+body is read. Count0/11..15 and current>=count return LIMIT/COUNT.
+
+Complete framing records only `framing_validated` and stops at
+`COH_INITIAL_COSTUME_SLOTS_BODY`, BEFORE the first `costume_send` byte. It returns
+UNSUPPORTED if bits remain, INVALID at exact end; framing completion survives.
+No body dictionary flag/index, resource, translucency or following costume is
+inspected. It never returns COH_OK. The old prefix, literal and reward-list
+implementations/results remain unchanged; no dictionary/generation argument,
+allocation, retained text/pointer or authority/application ACK is added.
+
+Reward failures retain the accepted9-value `progress` tuple above. After both
+lists complete, stage8..13 discriminates this compact7-value projection:
+
+| Position | Meaning |
+| --- | --- |
+| 0 | Slot status:1 INVALID,2 UNSUPPORTED,4 LIMIT |
+| 1 | 8 DEFERRED,9 CURRENT,10 ADDITIONAL,11 MULTIPLE,12 COUNT,13 FIRST_COSTUME_BODY_REQUIRED |
+| 2,3 | Completed reward entries for groups1,2 |
+| 4 | Reward-list end / slot begin bit |
+| 5 | First-failure offset from slot begin; absolute cursor=position4+5 |
+| 6 | Packed numeric slot metadata, described below |
+
+Metadata bits:0 deferred;1..8 current;9..16 additional;17 full-list flag;
+18..21 stored count;22 framing complete. Fields not yet read remain0. Completed
+lists imply group2 and no reward-leaf failure; the prior final index is
+`max(done1-1,0)`. No progress information is discarded. Maximum framing is22
+packed or40 byte-aligned bits. Formatter rejects invalid domains/context before
+packing. The first-literal's five fields,192-byte child,7,168-byte report,
+existing overflow guard and cleanup are preserved.
 
 ## Original protocol evidence
 
@@ -301,37 +346,43 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_reward_list_probe.py --sanitize --output NEW.json` executes the
-unchanged whole `ent_SendCostumeRewards`, `pktSendIndexedString`,
-`defaultBitsPack` and `log2i`, with original bit writers, explicit fixture reward
-arrays/predicate and one fixed fixture stash per transaction. Independent
-projection checks both full groups and all source-derived boundaries. No
-actual catalog, dictionary or resource identity is admitted.
+`check_initial_costume_slots_probe.py --sanitize --output NEW.json` executes
+unchanged whole original `entSendCostume` and original bit writers. Explicit
+member-subset fixture shells, a reward-call adapter and opaque `costume_send`
+observers isolate the framing between reward return and first body call. It
+does not claim original reward/catalog lookup, body serialization or a live
+server transaction. The Game consumer is inspected, not executed. Initial
+full-create requirements are qualified against source; native10-slot bounds
+remain deliberate. Accepted source/receipt hashes are checked; old checker
+mains and source/native suites are not replayed.
 
-Release, ASan and UBSan each pass604,551 checks across146 fixtures, including
-87,250 shortened extents,12,396 mutations,2,350 unread-index controls and10
-API/alias controls. Maximum completed entries is512. Cases include group2's
-first literal, late indexed/null/partial entries, counts256/257, empty/max-length
-literals, missing second counts, and exact final-list end. The retained
-prefix/leaf source/header hashes are verified; old suite mains are not replayed.
+Release, ASan and UBSan each pass193,303 checks across158 fixtures, including
+3,206 shortened extents,3,206 mutations,29,219 unread-tail controls,10 API/alias
+controls and25 formatter-domain controls. Compressed malformed Boolean/count
+values are synthetic controls: original `bsWriteBits` masks nominal width
+before rounding; source count16 writes0 in both profiles. Native probe stack
+is176 bytes; formatter frames are48/64 bytes, bounded.
 
-The new JNI fixture matches accepted first-literal bytes exactly, then uses
-whole-producer continuation through both groups. First count begins at1444;
-first literal spans1477..1591; group1 ends1592; list ends1695 before an opaque
-slot witness. JNI doubles verify preserved first-leaf fields, complete lists,
-second-count truncation, partial final literal, exact-list end, late indexed
-refusal before Pack and cleanup. Release/ASan/UBSan each pass2,553 checks across
-48 scenarios. Observed maximum report is7,147 bytes. A bounded-value check for
-new progress/first-literal scalars reaches7,161 bytes (153-byte child); other
-full-report fields stay at observed fixture values. This is not a claim about
-all possible transport-counter combinations or global RSS. Existing report
-limits/overflow guard remain intact.
+Affected JNI release/ASan/UBSan each pass3,273 checks across60 scenarios, with
+72 wiped frees. Observed maximum report is7,151 bytes. Bounded projection checks
+reach7,163 bytes (155-byte child), preserving all other observed fixture fields.
+This does not qualify every possible transport-counter combination or global
+RSS; the existing overflow guard remains. All authority/application ACK fields
+remain false.
 
-Receipts/source hashes are in `qualification/initial-reward-list-20261019/`;
-focused CI is `Native initial ALLENTS reward-list continuation`. Exactly ONE
-reward-list milestone ends here. Accepted source/receipts and broader renderer/
-compiler/network/Android13 suites are untouched. No original-server transaction,
-new Thor execution, APK or complete server-backed character acceptance is claimed.
+The JNI fixture keeps the accepted two-list prefix bit-for-bit through1695,
+then uses source-generated framing: deferred1,current1,additional255,full-list1,
+count2. Framing ends1717 before opaque costume body witnesses. Mutating those
+unread body bits cannot change the observation. Existing reward/list failures
+remain explicit; exact-list end now identifies missing deferred. New controls
+exercise each shortened scalar, full-list0, count0/15/current>=count and exact
+body end, preserving authority-false fields and wiped cleanup.
+
+Receipts/source hashes are in `qualification/initial-costume-slots-20261019/`;
+focused CI is `Native initial ALLENTS costume-slot framing`. Exactly ONE slot
+framing milestone ends here, before bodies. No renderer/compiler/network/
+Android13 suites, original-server transaction, new Thor run or APK is claimed.
+No complete server-backed costume/character acceptance is claimed.
 
 The previously reported unsupported Map count is the ordinary successful GROUPS
 inspector's deliberate UNSUPPORTED boundary (command6, exact consumed end), which

@@ -1,29 +1,34 @@
-# CoH native ARM64: reward-list continuation
+# CoH native ARM64: costume-slot framing
 
-native-android only; baseline0d91bcd. Thor Android13/ARM64.
+native-android only; baseline1f54d850. Thor Android13/ARM64.
 Physical Combined0.1.9: GROUPS42,889B; ALLENTS37,712 decoded/7,721 compressedB;
-31UDP, zero decode failures, both sockets closed. ZIP CLOSED was cleanup. No
-raw body retained. Do not repeat accepted network/compiler/renderer suites.
+31UDP, zero decode failures, both sockets closed. ZIP CLOSED was cleanup.
+No raw body retained. Do not repeat accepted network/compiler/renderer suites.
 
-After the first verified literal, coh_initial_reward_list_probe independently reparses BOTH groups from actual
-first U32 count, derived from validated type1/self1 selector+self framing.
-Reparse counts/indexes. Bound256 entries/group,512 total;
-reuse accepted260-byte-including-NUL literal leaf. Never retain reward text.
-Count only absent entries or complete literals. Count exact-end literals before diagnosing the next boundary.
-Indexed storage stops BEFORE Pack at DICTIONARY stage. No generation supplied.
+After BOTH independently reparsed reward groups, the same ALLENTS loan calls
+coh_initial_costume_slots_probe at list.end_bit for type1/self1.
+Read deferred Bool,current8,additional8,full-list Bool,count4. Current<10;
+full-list must1; count1..10,current<count. Additional0..255 is raw extra-slot
+syntax, not entitlement. First failures are explicit.
+Strict rounded fields; no allocation; at most22 packed/40 compressed bits.
 
-After both groups, list_validated means syntax only. Stop BEFORE deferred/slot
-framing (SLOTS stage); exact end INVALID there preserves list completion.
-first_reward_string retains its5 accepted fields and adds progress array:
-[status,stage,group,index,done0,done1,bit,complete,leaf_stage]. Mapping in FIRST_CREATE.md; partial/indexed entries never counted.
-No costume/character/owner/generation/actor/ACK/world acceptance. Existing4MiB
-input,192B child/7,168B report and cleanup limits remain.
+Stop BEFORE first costume_send byte. BODY retains framing_validated;
+UNSUPPORTED with following bits, INVALID at exact end. Never COH_OK or complete
+costume. Exact-list end diagnoses missing deferred. No body/index is inspected
+and no dictionary generation supplied.
 
-Evidence: engine/initial-capture/qualification/initial-reward-list-20261019.
-CI: Native initial ALLENTS reward-list continuation. Original reward producer, explicit fixture predicate/stash adapters; no real
-catalog/dictionary admission. Accepted sources/receipts unchanged; old suites not replayed.
-No server transaction, new Thor run or APK. Combined0.1.9 signing/imports/
-profiles/saves and Gates1–24 unchanged.
+Prior prefix/leaf/list sources/results unchanged. Reward failures retain9-value
+progress. Completed lists use7 values [status,6+slot_stage,done0,done1,list_end,
+delta,metadata]; failure=list_end+delta. Stages8..13; metadata in FIRST_CREATE.md.
+First-literal fields preserved. Caps4MiB input,192B child,7,168B report and
+cleanup unchanged. Bounded projection7,163B; observed7,151B.
 
-ONE milestone only. Next: bounded original deferred/slot/full-list framing,
-stopping before dictionary-dependent costume bodies. Full-record/ownership work remains; Gates25–27 open. Fetch latest HEAD and read FIRST_CREATE.md.
+Evidence: engine/initial-capture/qualification/initial-costume-slots-20261019.
+Release+ASan+UBSan: source/native193,303checks/158fixtures; affected JNI
+3,273checks/60scenarios each,72wipedfrees. CI: Native initial ALLENTS costume-slot
+framing. Original entSendCostume with fixture adapters.
+No server transaction/new Thor run/APK. No ownership/generation/character/actor/
+ACK/world acceptance. Combined0.1.9/Gates1–24 preserved; Gates25–27 open.
+
+ONE milestone complete. Next: source-qualified first costume-body prefix,
+stopping before unresolved dictionary indices. Fetch latest; read FIRST_CREATE.md.

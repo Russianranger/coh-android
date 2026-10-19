@@ -1,0 +1,209 @@
+{
+  "schema": "coh-initial-costume-slots-qualification-v1",
+  "passed": true,
+  "source_revision": "1f54d85067827001694e90a458ab24ce82963189",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/initial-capture/check_initial_costume_probe.py": "9c0050d076e659227966d40b7d34427149c1c19e77665f91283dcabf7e7fc7f9",
+    "native-android/engine/initial-capture/check_initial_costume_slots_probe.py": "6bb8a7210db5caf1dbd847c42a2e972fe3fe432fabf08a9ae186c655c1490182",
+    "native-android/engine/initial-capture/coh_initial_costume_slots_probe.c": "c9c9e60f16f014bd19bdf4bc5a414fd6a6cb4cfe96746d5405d6e27433881d2f",
+    "native-android/engine/initial-capture/coh_initial_costume_slots_probe.h": "3997ebc44aa37949ec0aae32b471e504f8b33191189b83a935acfdd56162994b",
+    "native-android/engine/initial-capture/coh_initial_reward_list_probe.h": "3e9e5778d60a53473ccaf07ef592f3692ecc454e955ac4702d7262cceb996632",
+    "native-android/engine/initial-capture/coh_initial_reward_probe.h": "7cd20aa2c3401d9e5f14658f0089ce508269bcbde2b7b24374e21d8df074f686",
+    "native-android/engine/initial-capture/qualification/initial-reward-list-20261019/host.json": "d3063c66c83af5bc9c9dece445a17f31fe5a915f4fe0f6fd6df8ec9da2ee8a5e",
+    "native-android/engine/initial-capture/qualification/initial-reward-list-20261019/jni-fixture.h": "e6c6523a2229b6f573441d9b11b31622be98972b0876eaf68079981ad8c63516",
+    "native-android/engine/initial-capture/test_initial_costume_slots_probe.c": "38e490ac0710130a945a34de8bc34aa3cfe651c6113c7015e5319917383c1bcd",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_slot_producer": {
+    "original_source_sha256_lf": {
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+      "Common/entity/entity_enum.h": "52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d",
+      "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e"
+    },
+    "whole_producer_sha256_lf": "0c1a4863c943e88947173302cb0107c5e5c3d5bcd43e4d26dc5cd2c37127c41a",
+    "original_consumer_function_sha256_lf": "40457b9aba2007d31e0b14f3b28909d776aa4a7a25d19f34a44c0d9d39ee7af7",
+    "generated_oracle_sha256": "b2bce748270685e73bbb3f456dbab73422a3da5fefcb4006358d1b288291a24b",
+    "member_subset_and_opaque_shim_sha256": "b32aeb2774486c6a5c51684dc3d1098c073c3fd56b3ea6b1fbcf4a8eb479fdb8",
+    "reward_adapter_sha256": "1d0febefca936a8c23e6dd9298c9f5ce05807081a8e1816d416825cb61f617ac",
+    "wrapper_sha256": "6af450b2ba9ac7098eafbd72d3e40f4b8d2d582a4f411486a8e368b3a46d4f10",
+    "reward_lists_and_costume_bodies_are_adapters": true,
+    "original_consumer_executed": false,
+    "oracle_sanitized": false
+  },
+  "retained_reward_list": {
+    "host_sha256": "d3063c66c83af5bc9c9dece445a17f31fe5a915f4fe0f6fd6df8ec9da2ee8a5e",
+    "header_sha256": "e6c6523a2229b6f573441d9b11b31622be98972b0876eaf68079981ad8c63516",
+    "payload_sha256": "c28854c6814b31a67cc3759ee00074f44b9c6d39c07bdc963eff9166698e2428",
+    "prefix_bits": 1695,
+    "source_inputs_verified": 16,
+    "old_checker_mains_executed": false,
+    "old_native_suites_executed": false
+  },
+  "fixtures": {
+    "count": 158,
+    "sha256": "880104bfffca38014a677329cca0005b424bd4d15c6cf8c60f6aa2e54add23f3",
+    "whole_original_projection_checks": 158,
+    "case_manifest_sha256": "4451f67a518639e4e81f1f5354d0ffc3158ef1ef499060476dcf6d2db3196fb1",
+    "native_body_limit": 10,
+    "source_stored_counts": [
+      0,
+      1,
+      2,
+      10,
+      11,
+      15,
+      16,
+      255
+    ],
+    "packed_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "compressed_offsets": [
+      0,
+      8
+    ],
+    "original_writer_masks_before_byte_rounding": true,
+    "synthetic_compressed_high_count_bits_refused": true
+  },
+  "source_generated_jni_fixture": {
+    "payload_bits": 1784,
+    "payload_sha256": "a8f501496f2f7dc3df1c6c929cb1301f0a8540281d7ea4cb46cf26e2c8bd6fa7",
+    "slots_begin_bit": 1695,
+    "slots_end_bit": 1717,
+    "deferred": 1,
+    "current": 1,
+    "additional": 255,
+    "multiple": 1,
+    "body_count": 2,
+    "accepted_reward_list_prefix_matched": true,
+    "device_packet": false,
+    "bodies_opaque": true,
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "sequence_end_bit": 475,
+    "triggered_end_bit": 560,
+    "ai_end_bit": 658,
+    "netfx_end_bit": 1440,
+    "list_begin_bit": 1444,
+    "reward_begin_bit": 1477,
+    "reward_end_bit": 1591,
+    "first_group_end_bit": 1592,
+    "late_reward_begin_bit": 1625,
+    "list_end_bit": 1695,
+    "header_sha256": "e44b9a9e52d7ce3197f8a2b871b5837126584b43b0406e34fc2f97dbdc66773d"
+  },
+  "checks": {
+    "release": {
+      "checks": 193303,
+      "fixtures": 158,
+      "complete_framing_observations": 47,
+      "maximum_consumed_bits": 40,
+      "truncated_extents": 3206,
+      "mutations": 3206,
+      "unread_tail_controls": 29219,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 158,
+      "formatter_domain_checks": 25,
+      "dictionary_admitted": false,
+      "costume_body_parsed": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 193303,
+      "fixtures": 158,
+      "complete_framing_observations": 47,
+      "maximum_consumed_bits": 40,
+      "truncated_extents": 3206,
+      "mutations": 3206,
+      "unread_tail_controls": 29219,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 158,
+      "formatter_domain_checks": 25,
+      "dictionary_admitted": false,
+      "costume_body_parsed": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 193303,
+      "fixtures": 158,
+      "complete_framing_observations": 47,
+      "maximum_consumed_bits": 40,
+      "truncated_extents": 3206,
+      "mutations": 3206,
+      "unread_tail_controls": 29219,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 158,
+      "formatter_domain_checks": 25,
+      "dictionary_admitted": false,
+      "costume_body_parsed": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "09483a3fafbac014c82e76681187523263987e2378fd97a4ebba08793486c25c",
+    "asan": "e60b77807ba8aca570b9e2e72ca43c3350f4ef93e100921e2e27ae0b0e5c6a11",
+    "ubsan": "829675a48c33ce234b88aa5ac638854a8c7a39c001545ebb1c905862089b53e4"
+  },
+  "native_probe_stack_frames": [
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_costume_slots_probe",
+      "bytes": 176,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_costume_slots_probe_json",
+      "bytes": 48,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_initial_costume_slots_progress_json",
+      "bytes": 64,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "scope": "Whole unchanged original entSendCostume executes with explicit member-subset objects, empty reward-list adapter and opaque costume leaves. Only bounded initial self full-list slot framing is compared. Retained source-qualified nonempty reward lists are composed unchanged for JNI. No costume body, dictionary, consumer application or server transaction is qualified.",
+  "old_checker_mains_executed": false,
+  "old_native_suites_executed": false,
+  "physical_device_executed": false,
+  "dictionary_admitted": false,
+  "costume_body_parsed": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}
