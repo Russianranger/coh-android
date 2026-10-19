@@ -1,0 +1,19 @@
+{
+  "schema": "coh-withheld-memory-candidate-v1",
+  "candidate_source": "7929bdb7b9fbed4007df7a913d9c8d4d5e22660f",
+  "candidate_arm64_sha256": "09b6b1c759d19996b348761ccceb2347c33954f5337e55b9133859560d4721e3",
+  "delivered_to_user": false,
+  "physical_Thor_installed": false,
+  "build_and_package_audit": "passed",
+  "Android_jobs": "failed; source schema/observation/capture driver evidence retained in original run39331803146",
+  "additional_primary_bug_reproduction": {
+    "fresh_observer": true,
+    "first_sample": "record(COLD_STARTUP,0,1,null,null)",
+    "returncode": 1,
+    "exception": "NullPointerException: Long.longValue on null parameter1",
+    "location": "PhaseMemoryDiagnostics.maximum:52 -> record:81",
+    "old_tests_masked_case": "known zero seeded before unavailable sample"
+  },
+  "required_action": "fix nullable accounting and sampler failure cleanup; add fresh-first unavailable/recovery tests; build new APK; prior exact APK reuse insufficient after app change",
+  "existing_runtime_import_profiles_policy_signer_unchanged": true
+}

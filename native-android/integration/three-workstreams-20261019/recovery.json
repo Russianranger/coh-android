@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "recovered_head": "7030870ebce6fe441d0b0369e87fc337ffb81a52",
+  "initial_tracked_changes": "",
+  "scope": "repository recovery and policy baseline; no device observation",
+  "unpublished_prior_worktrees_available": false,
+  "device_memory_measurements": null,
+  "host_memory_is_not_device_memory": true,
+  "accepted_gates": "1-24 within documented scope",
+  "open_gates": [
+    25,
+    26,
+    27
+  ],
+  "shipping_runtime_modified": false,
+  "protected_input_sha256": {
+    "source-target.json": "042ea89d24d116981602b543c8d17eda8a97f518cac79a33688eefcc15222c5f",
+    "upstream-lock.json": "d03802849f6b6991cfded7b442bd41b333e1174e53fbb6665a085d84b9530978",
+    "content-lock.json": "2a9b86137d26a8befabe0435bc69dbd8350490532e8693426312edf75b4f33c7",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerMemoryPolicy.java": "54e62b9ff65dffe30dfb564582bc4438eecf3cc4102f33bc823193eb33501f3a",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportContract.java": "0346a774afeb86285141474feca391f0dda6795bfc36493baaa843dc46f42aa5",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportStore.java": "a141c78d54fdd0673e73afc7a1d2a2cf43c426a0bbb64cfef7e163ee374b97f8",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/RuntimeSetup.java": "e0da46ddb160300792170de392e75c3e7611ee36ebe3d872656dacf4b078bbfd",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/LeaseRules.java": "2f8c9325ee3f29d7074b0716044774a5313aaf90dde316bd5e741edbc9d00eb8",
+    "native-android/session-client/app/test-signing/session-test.p12": "2c5a771d7a3989726d475a64471a1cf8bffafb62193a3a98a49ed7070ab2ee05"
+  },
+  "memory_policy": {
+    "startup_system_reserve": "max(512MiB,min(1024MiB,total/16))",
+    "running_system_reserve": "max(64MiB,min(256MiB,total/64))",
+    "java_heap_reserve": "min(16MiB,max(2MiB,heapLimit/8))",
+    "sample_interval_ms": 1000,
+    "pressure_span_ms": 3000,
+    "pressure_samples": 3,
+    "retained_samples": 64,
+    "unavailable": "block start or request cooperative owned cleanup"
+  },
+  "separate_module_limits": {
+    "decoded_message_bytes": 4194304,
+    "ordinary_semantic_transport_bytes": 16384,
+    "initial_update_aggregate_bytes": 8388608,
+    "scene_transaction_bytes": 100663296
+  },
+  "authority_allowed": false
+}

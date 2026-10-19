@@ -1,0 +1,188 @@
+{
+  "schema": "coh-three-product-workstreams-integration-v1",
+  "branch": "native-android",
+  "recovery_head": "7030870ebce6fe441d0b0369e87fc337ffb81a52",
+  "source_integration": [
+    {
+      "worker": "A",
+      "local_commit": "7aec80efec32761a247c69a2a01782a82d09e93c",
+      "remote_commit": "11026bf7ab283a5e959343c29472e93dd7a129a4",
+      "workflow_run": 39331558734,
+      "status": "success",
+      "artifact_id": 12224697337,
+      "artifact_sha256": "3695a1804ffa3f44bee4f00b0c96f90b68777038f11b50fbe45daab55a1c347d",
+      "hosted_receipt_independently_downloaded": true,
+      "input_and_original_source_pins_match_local": true,
+      "checks_per_mode": 2542,
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "memory": {
+        "owned_static_bytes": 65860,
+        "new_heap_bytes": 0,
+        "selected_frames_bytes": 432,
+        "stack_reserve_bytes": 4096
+      },
+      "source_Map_target_compiled": false,
+      "source_Map_runtime_executed": false
+    },
+    {
+      "worker": "B",
+      "local_commit": "070aad6b66caa0c5eed07277c6242fe6f44a43ca",
+      "remote_commit": "0a1668ee6121a8f77c0551a06544b022d47b85a7",
+      "workflow_run": 39331622054,
+      "status": "success",
+      "artifact_id": 12224478363,
+      "artifact_sha256": "f14876a06c05e66b7f2790509f3441fa27cc1e4178d22b4635f635d3b6f53373",
+      "hosted_receipt_independently_downloaded": true,
+      "normalized_named_source_hashes_match": 67,
+      "normalized_named_input_hashes_match": 15,
+      "checks_per_mode": 312809,
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "source_occurrences": 76192,
+      "prepared_models": 2,
+      "partitions": 21,
+      "explicit_not_prepared": 47227,
+      "explicit_no_model": 28963,
+      "memory": {
+        "placement_named_aggregate_bytes": 57403703,
+        "earlier_seal_transition_bytes": 93228133,
+        "query_allocations": 0,
+        "call_reserve_bytes": 16384
+      },
+      "rendered": false
+    },
+    {
+      "worker": "C",
+      "local_head": "d4aff288c81e3e30f61a6c27681d84d3203f024c",
+      "remote_commit": "7929bdb7b9fbed4007df7a913d9c8d4d5e22660f",
+      "workflow_run": 39331803146,
+      "status": "original_run_failed_android_drivers",
+      "local_checks": {
+        "policy": 2710,
+        "phase": 46,
+        "phase_repeated_records": 9000,
+        "driver": 7,
+        "jni_per_mode": 186
+      },
+      "apk_delivery_status": "withheld pending exact-package Android requalification",
+      "package_build_lint_audits": "passed",
+      "package_job": 118331575586,
+      "package_artifact": {
+        "id": 12224379012,
+        "bytes": 17866922,
+        "sha256": "e74fa3ad796e733d51aaee27d465c895cdcbb0f6577dd286cd2d9c7b9a261767"
+      },
+      "independent_package_review": "passed",
+      "original_failed_jobs": [
+        {
+          "job": 118333668302,
+          "kind": "upgrade_idle_launcher_observation",
+          "artifact": 12224534860
+        },
+        {
+          "job": 118333668341,
+          "kind": "strict_report_schema_validator_mismatch",
+          "artifact": 12225217514
+        },
+        {
+          "job": 118333668308,
+          "kind": "uiautomator_global_idle_capture_starvation",
+          "artifact": 12225431664
+        }
+      ],
+      "actual_Android_self_memory_observed": true,
+      "original_button_sample": {
+        "scope": "Android13 x86_64 emulator app process; NOT physical Thor or total server memory",
+        "rss_bytes": 90103808,
+        "pss_bytes": 28797952,
+        "system_headroom_bytes": 649818112,
+        "java_heap_headroom_bytes": 189395568
+      }
+    },
+    {
+      "worker": "C2",
+      "local_head": "47c61f4917d57ac1b5410635ad74312704798b5f",
+      "remote_commit": "ae5a11d0c0be5098d0aec66370dda99c055167ee",
+      "workflow_run": 39334606957,
+      "status": "fresh_build_and_Android_qualification_pending",
+      "reason_for_rebuild": "fixed real first-unavailable null-unboxing and sampler recovery bug; old candidate withheld",
+      "local_checks": {
+        "policy": 2710,
+        "phase": 2895,
+        "phase_records": 10407,
+        "fresh_first_edge_cases": 7,
+        "worker": 34,
+        "worker_queued_requests": 9000,
+        "worker_nonfatal_failures": 2,
+        "fragment_driver": 10,
+        "framework_driver": 201,
+        "jni_per_native_mode": 186
+      },
+      "server_policy_thresholds_changed": false,
+      "heavy_world_integration_enabled": false,
+      "APK_delivered": false
+    }
+  ],
+  "protected_baseline_hashes_unchanged": true,
+  "device_memory_measurements": null,
+  "host_named_bytes_are_not_device_RSS_or_PSS": true,
+  "live_runtime_catalog_admitted": false,
+  "complete_authoritative_character": false,
+  "rendered_server_world": false,
+  "READY": false,
+  "RECEIVED_CHARACTER": false,
+  "application_full_update_ACK": false,
+  "physical_Thor_candidate_accepted": false,
+  "gates_25_27": "open",
+  "source_changed_paths": [
+    ".github/workflows/native-body-provenance-witness.yml",
+    ".github/workflows/native-combined-client.yml",
+    ".github/workflows/native-combined-memory-diagnostic.yml",
+    ".github/workflows/native-world-resource-integration.yml",
+    "native-android/combined-client/app/build.gradle",
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+    "native-android/combined-client/app/src/main/cpp/process_memory_jni.c",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/LocalNative.java",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/MemoryTelemetry.java",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/PhaseMemoryDiagnostics.java",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerService.java",
+    "native-android/combined-client/diagnostics/memory-candidate-20261019/LOCAL-QUALIFICATION.json",
+    "native-android/combined-client/diagnostics/memory-candidate-20261019/THOR-TEST.md",
+    "native-android/combined-client/qualification/check_memory_jni.py",
+    "native-android/combined-client/qualification/check_phase_memory.py",
+    "native-android/combined-client/tools/fragment_interop_emulator_check.py",
+    "native-android/combined-client/tools/host_check.py",
+    "native-android/combined-client/tools/package_check.py",
+    "native-android/combined-client/tools/test_fragment_driver.py",
+    "native-android/combined-client/tools/upgrade_emulator_check.py",
+    "native-android/engine/costume-export/BODY_RUNTIME_WITNESS.md",
+    "native-android/engine/costume-export/check_body_witness.py",
+    "native-android/engine/costume-export/qualification/body-runtime-witness-20261019/failed-try1-native.stderr",
+    "native-android/engine/costume-export/qualification/body-runtime-witness-20261019/failures.json",
+    "native-android/engine/costume-export/qualification/body-runtime-witness-20261019/host.json",
+    "native-android/engine/costume-export/source_body_witness.inc",
+    "native-android/engine/costume-export/source_body_witness_sink.inc",
+    "native-android/engine/costume-export/stage_body_witness.py",
+    "native-android/engine/costume-export/test_body_witness.c",
+    "native-android/engine/scenecatalog/SOURCE_PLACEMENT.md",
+    "native-android/engine/scenecatalog/check_source_placement.py",
+    "native-android/engine/scenecatalog/coh_source_placement.c",
+    "native-android/engine/scenecatalog/coh_source_placement.h",
+    "native-android/engine/scenecatalog/evidence/source-placement-host.json",
+    "native-android/engine/scenecatalog/evidence/source-placement-independent-review.json",
+    "native-android/engine/scenecatalog/evidence/source-placement-preparation.json",
+    "native-android/engine/scenecatalog/prepare_source_placement.py",
+    "native-android/engine/scenecatalog/tests/test_source_placement.c",
+    "native-android/engine/scenegraph/coh_runtime_candidates.c",
+    "native-android/engine/scenegraph/coh_runtime_candidates.h"
+  ],
+  "production_upstream_guest_database_asset_files_changed": false
+}
