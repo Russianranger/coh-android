@@ -21,6 +21,13 @@ static unsigned initial_inventory_controls_sent,initial_inventory_sent;
 static const char *initial_mode;
 static unsigned initial_requests,initial_responses,initial_replays,forbidden_commands;
 static uint8_t initial_bytes[65536];
+#ifdef COH_INITIAL_FRAGMENT_PEER
+#include "fragment-fixtures.h"
+static unsigned initial_fragment_parts,initial_fragment_zero_order_ids;
+static unsigned initial_fragment_part_zero_sent_last,initial_fragment_single_sibling;
+static size_t initial_fragment_wire_bytes;
+static void initial_fragment_packet(Peer*,CohNetEndpoint,uint32_t);
+#endif
 #ifdef COH_INITIAL_EDITMSG_PEER
 static void initial_editmsg(Peer*p,CohNetEndpoint target,uint32_t ack,unsigned malformed,unsigned overlong){
  /* Fixture 17: packed type3,257 bytes, from whole original sendEditMessage. */
@@ -32,6 +39,9 @@ static void initial_editmsg(Peer*p,CohNetEndpoint target,uint32_t ack,unsigned m
 }
 #endif
 static void initial_packet(Peer*p,CohNetEndpoint target,uint32_t ack){
+#ifdef COH_INITIAL_FRAGMENT_PEER
+ if(!strncmp(initial_mode,"fragment-",9)){initial_fragment_packet(p,target,ack);return;}
+#endif
  memset(initial_bytes,0,sizeof(initial_bytes));
  /* Explicit synthetic byte-aligned ALLENTS header plus opaque raw tail.
   * This does not execute or claim a whole original ALLENTS producer. */
@@ -53,12 +63,18 @@ static void initial_report(const UiPeer*u){
  #ifdef COH_INITIAL_INVENTORY_PEER
  ",\"account_controls_sent\":%u,\"account_inventory_sent\":%u"
  #endif
+ #ifdef COH_INITIAL_FRAGMENT_PEER
+ ",\"fragment_parts\":%u,\"fragment_later_zero_order_ids\":%u,\"fragment_part_zero_sent_last\":%u,\"fragment_single_sibling\":%u,\"fragment_wire_bytes\":%zu,\"fragment_ordered\":true,\"fragment_fixture_decoded_bytes\":65536"
+ #endif
  "}\n",u->failed?"true":"false",(long)getpid(),u->db.endpoint.port,u->map.endpoint.port,u->db_phase,u->map_phase,u->lists,u->choices,u->handoffs,u->connects,u->catalogs,SOURCE_ACCESSIBLE_COMMAND_COUNT,u->scenes,u->scene_decoded_bytes,u->scene_compressed_bytes,u->scene_decoded_bytes*8,u->scenes?"true":"false",COH_NET_DECODED_MAX,SOURCE_GROUPS_EXPECTED_JSON,u->selected_slot,u->closed,initial_mode,initial_requests,initial_responses,initial_replays,forbidden_commands
  #ifdef COH_INITIAL_ACCOUNT_PEER
  ,initial_account_controls_sent
  #endif
  #ifdef COH_INITIAL_INVENTORY_PEER
  ,initial_inventory_controls_sent,initial_inventory_sent
+ #endif
+ #ifdef COH_INITIAL_FRAGMENT_PEER
+ ,initial_fragment_parts,initial_fragment_zero_order_ids,initial_fragment_part_zero_sent_last,initial_fragment_single_sibling,initial_fragment_wire_bytes
  #endif
  )>0);CHECK(!fclose(f));CHECK(!rename(temporary,u->report));
 }
@@ -93,6 +109,9 @@ static void initial_handle(UiPeer*u,unsigned map){
 int main(int argc,char**argv){
  if(argc!=6||strcmp(argv[1],"--serve")||strcmp(argv[2],"--report")||strcmp(argv[4],"--mode"))return 2;
  initial_mode=argv[5];if(strcmp(initial_mode,"captured")&&strcmp(initial_mode,"unknown")&&strcmp(initial_mode,"badheader")&&strcmp(initial_mode,"none")
+ #ifdef COH_INITIAL_FRAGMENT_PEER
+ &&strcmp(initial_mode,"fragment-multi")&&strcmp(initial_mode,"fragment-single")
+ #endif
  #ifdef COH_INITIAL_EDITMSG_PEER
  &&strcmp(initial_mode,"editmsg-captured")&&strcmp(initial_mode,"editmsg-unknown")&&strcmp(initial_mode,"editmsg-malformed")&&strcmp(initial_mode,"editmsg-limit")&&strcmp(initial_mode,"editmsg-none")
  #endif

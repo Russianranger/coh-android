@@ -1,0 +1,47 @@
+{
+  "actual_GitHub_API_or_download": false,
+  "actual_compiler_or_original_server": false,
+  "controls": {
+    "extra-origin-field": {
+      "expected_refusal": "ValueError: ORIGIN_FIELDS"
+    },
+    "failed-compile": {
+      "expected_refusal": "ValueError: COMPILE_JOB_SUCCESS"
+    },
+    "positive": {
+      "passed": true,
+      "separate_origin_and_execution_revisions": true
+    },
+    "symlink-member": {
+      "expected_refusal": "ValueError: MEMBER_KIND"
+    },
+    "traversal-member": {
+      "expected_refusal": "ValueError: MEMBER_PATH"
+    },
+    "wrong-artifact-digest": {
+      "expected_refusal": "ValueError: ARTIFACT_DIGEST"
+    },
+    "wrong-branch": {
+      "expected_refusal": "ValueError: RUN_IDENTITY"
+    },
+    "wrong-download-bytes": {
+      "expected_refusal": "ValueError: ZIP_DIGEST"
+    },
+    "wrong-origin-attempt": {
+      "expected_refusal": "ValueError: RUN_ATTEMPT"
+    },
+    "wrong-origin-receipt": {
+      "expected_refusal": "ValueError: COMPILE_RECEIPT"
+    },
+    "wrong-origin-revision": {
+      "expected_refusal": "ValueError: RUN_IDENTITY"
+    }
+  },
+  "passed": true,
+  "privacy": "Fixed source/artifact/run IDs, hashes and byte/member counts only; no account, character, payload or private server data.",
+  "schema": "coh-independent-historical-map-downloader-review-v1",
+  "supplier_sha256": "08c675492af48e1bbe22c7ae3569cbb6e40c33a291a143646effb3c42762c45a",
+  "unchanged_validator_sha256": "bb91d24fabb858ee706e1d007168bd25eeec2075cba360d31dc5950d35d7e04f",
+  "workflow_dependency": "Current raw/Git source gate must pin downloader, unchanged validator and immutable origin file before import. Successful download is still separate from full historical/current Map recipe admission.",
+  "world_authority": false
+}

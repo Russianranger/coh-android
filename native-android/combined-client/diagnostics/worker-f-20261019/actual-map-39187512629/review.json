@@ -1,0 +1,66 @@
+{
+  "actual_PE_cache_sources_stage_full_inventory_verified": true,
+  "actual_original_verifier_executed_in_clean_detached_exact_revision_worktree": true,
+  "api_run_job_artifact_identity_verified": true,
+  "artifact_compile_members_exact": 28,
+  "artifact_diagnostic_members_exact": 5,
+  "artifacts": {
+    "12157884954": {
+      "bytes": 3493065,
+      "sha256": "397cd6e78b1c0ba97d858ee579f0cfd1735b55344851b2875a30ef263eb02921"
+    },
+    "12158852165": {
+      "bytes": 41646,
+      "sha256": "e28d22b617bcc6514a612e6547bf97284b5c2419ac941f6f712b891e0038323c"
+    }
+  },
+  "both_ZIP_CRCs_pass": true,
+  "build_log_C2124_present": false,
+  "build_log_existing_MSVC_warning_count": 43,
+  "compile_job_id": 117852941245,
+  "compile_receipt": {
+    "bytes": 31008,
+    "sha256": "6e55c7364623f4c81d784b9a8d96375d5bdf9da5a8059241b213cfad60409ed7"
+  },
+  "compiler_reexecuted_by_reviewer": false,
+  "compiler_supplier_current_raw_Git_and_historical_Git_equal": 191,
+  "decoded_API_job_log_saved_with_LF_normalization": true,
+  "diagnostic_source_admission_exact_historical_Git_pins_verified": 777,
+  "exact_successful_build_log_and_configure_log_preserved": true,
+  "gates25_27": "OPEN",
+  "map_PE": {
+    "bytes": 7514624,
+    "sha256": "b404766a94898bfa3987a0e79c1d017acf87225fba0e732fa726118f761fb753"
+  },
+  "normal_authentication_qualified": false,
+  "original_Map_runtime_executed_by_reviewer": false,
+  "original_initial_entity_or_world_receipt_qualified": false,
+  "original_receipt_bytes_and_source_revision_preserved": true,
+  "passed": true,
+  "retained_metadata": {
+    "api-artifacts.json": {
+      "bytes": 1778,
+      "sha256": "0317b980bddc4b16344f371df4b549f385ee42017c84f00f859aa9b41c99590f"
+    },
+    "api-jobs.json": {
+      "bytes": 6960,
+      "sha256": "ae280d6cbfc9f2ffbdd3e6b1c65c13bec34d744a47c6de59a2ea2331790bbcc9"
+    },
+    "api-run.json": {
+      "bytes": 14631,
+      "sha256": "b9cdaa3fca5e34c8abc3daff9809d7de5f64ac64356b303300b40150d43e8bed"
+    },
+    "compile-job-117852941245.log": {
+      "bytes": 140089,
+      "sha256": "ff67e0c71aedb2111e07caf8bb8ec376d540401b6d2930069bce3d01676f8c91"
+    }
+  },
+  "run_attempt": 1,
+  "schema": "coh-independent-actual-Map-compiler-review-v1",
+  "scope": "Actual completed successful Win32 MapServer compiler job; overall run original transaction was still running at metadata capture.",
+  "source_revision": "cf1ab9f7e872467473bc50da822ee6cfc041d639",
+  "whole_original_input_files_unchanged_before_after_and_prior_failure": 6,
+  "whole_process_memory_qualified": false,
+  "workflow_run_id": 39187512629,
+  "world_authority": false
+}

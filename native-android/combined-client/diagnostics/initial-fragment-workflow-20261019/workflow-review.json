@@ -1,0 +1,54 @@
+{
+  "Android_execution_required": {
+    "abi": "x86_64",
+    "api": 33,
+    "emulator": true
+  },
+  "actual_hosted_result_pending": true,
+  "all_current_raw_pins_verified": 972,
+  "changed_native_receiver": "qualified03-fragment-20261019",
+  "current_checkout_has_ancestry_history": true,
+  "every_job_has_exact_raw_Git_manifest_gate_before_project_imports": true,
+  "gates25_27": "OPEN",
+  "generator_or_reviewer_executed_server_Android_or_release": false,
+  "historical_map_origin": {
+    "artifact_id": 12157884954,
+    "attempt": 1,
+    "receipt_sha256": "6e55c7364623f4c81d784b9a8d96375d5bdf9da5a8059241b213cfad60409ed7",
+    "revision": "cf1ab9f7e872467473bc50da822ee6cfc041d639",
+    "run_id": 39187512629,
+    "zip_sha256": "397cd6e78b1c0ba97d858ee579f0cfd1735b55344851b2875a30ef263eb02921"
+  },
+  "immutable_historical_receipt_and_original_verifier_required": true,
+  "manifest": {
+    "bytes": 170569,
+    "sha256": "719e2b9de4c7b58e11d878d292de09d734c2de795ba7e776c4943592a4d18f92"
+  },
+  "new_Android_driver": "fragment_interop_emulator_check.py",
+  "new_Android_peer_flag": "--fragment-compat",
+  "new_test_release": {
+    "accepted_signer_unchanged": true,
+    "tag": "coh-native-combined-v0.1.9-gates25-27-test",
+    "version_code": 10,
+    "version_name": "0.1.9-gates25-27-test"
+  },
+  "original_Map_compile_requested": false,
+  "original_transaction_count": 1,
+  "passed": true,
+  "prior_releases_modified": false,
+  "publish_requires_package_and_Android_success": true,
+  "publish_revalidates_current_ARM64_APK_and_DSO_identity": true,
+  "reviewed_jobs": [
+    "original_transaction",
+    "package",
+    "android13",
+    "publish-test"
+  ],
+  "schema": "coh-independent-initial-fragment-workflow-review-v1",
+  "source_supersessions_exact_inherited_diffs": 7,
+  "workflow": {
+    "bytes": 134033,
+    "sha256": "72c595f3c5241407dfed239496517274c9ee1e948b81b43cfa78e036cf0467e3"
+  },
+  "world_authority": false
+}

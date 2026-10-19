@@ -1,0 +1,34 @@
+{
+  "actual_compiler_or_original_server_executed": false,
+  "actual_original_Map_artifact_admitted_in_this_review": false,
+  "actual_temporary_Git_checkouts_used": true,
+  "admission_checks_reviewed": [
+    "Pinned historical recovery sidecar has separate old/current revisions, artifact API IDs/archive hash and compiler receipt hash; same-execution flag must stay false.",
+    "Exact original historical recipe executes in isolated -I -B subprocess from distinct clean checkout, requires original artifact/PE/cache/reversible staged bytes.",
+    "Current recipe closure must equal historical receipt closure; both raw historical/current bytes and original historical committed Git bytes are checked. Current closure itself requires tracked current Git supplier bytes.",
+    "Both checked revisions must remain fixed and historical revision must be ancestor of current execution. Receipt/sidecar/supplier/binary bytes revalidated after historical verifier.",
+    "Reuse proof enters exact original run identity before Map startup and must match report/projection; every new helper joins current raw/Git orchestration pins.",
+    "Scoped Bridge replaces verification dispatch and restores all methods even on exception; actual original receipt is returned unchanged, preserving original supervisor cleanup and lifecycle.",
+    "Public projection admits only fixed fields/counts/digests with original 16KiB total cap, rejects extra fields or authority flags and never exports account/character/payload/log content."
+  ],
+  "gates25_27": "OPEN",
+  "historical_verifier_PE_and_lifecycle_are_synthetic_doubles": true,
+  "independent_focused_controls": 23,
+  "original_compile_receipt_bytes_or_revision_rewritten": false,
+  "original_recipe_source_modified": false,
+  "passed": true,
+  "required_workflow_preconditions": [
+    "Pin downloader, old validator, immutable origin and new helper sources in current raw/Git gate before import.",
+    "Fetch sufficient history for current-checkout ancestor validation.",
+    "Admit actual successful compile artifact and preserve its original receipt/log identities; synthetic controls alone do not qualify original Map reuse."
+  ],
+  "resolved_integration_issue": "Draft old same-run admission sidecar expectation was corrected to directly consume new historical recovery sidecar without synthesizing an old receipt.",
+  "schema": "coh-independent-historical-map-reuse-helper-review-v1",
+  "source_sha256": {
+    "check_reuse.py": "3d489464466f2c58af6c938d4a99b196224b02e48930f596fe862a9c0a4bc1d3",
+    "reuse.py": "8ce11a5e9b6221d662879824903e5807bda70803a31907d959aec02fc31f0247",
+    "runtime.py": "56eebdae1a69bca26bd54b9a5b7dbecb7a4559bf53d7d550ae6dedc2f43c869d"
+  },
+  "worker_proof_sha256": "aaaa40b665ac95408db0d5edb63547666f86a4ae61a54b561b70699b0c4c196d",
+  "world_authority": false
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "coh-fragment-019-driver-preparation-v1",
+  "passed": true,
+  "source_sha256": {
+    "native-android/combined-client/app/build.gradle": "e7eac053c166bead0cd3384c201c24e834163e6eed6b6982f3b647c40ea29ecf",
+    "native-android/combined-client/tools/package_check.py": "5e061ce3d2a8e42147690c8c702d2c44cb69d81bf2d1b50d74fc54f5453cc5fe",
+    "native-android/combined-client/tools/build_interop_peer.py": "0bbf8300e882351e92ecee127a2a9e1ca93e0ad2496e3d5e70e74f3f383407fb",
+    "native-android/combined-client/tools/fragment_fixture.py": "4d6f2a073320746322c555142ddb1856d4448cb260ddd060ff55f92f267ae0f9",
+    "native-android/combined-client/tools/fragment_interop_emulator_check.py": "ed1f47bd2b8020c20e756b7e42c0dae5f1394946fa5b735a652fece3d845fd7f",
+    "native-android/combined-client/tools/check_fragment_peer.py": "9d9b06454e6c401e2b099a953be0051f07287be7c20a669c9a3c76e790a9d521",
+    "native-android/combined-client/tools/test_fragment_driver.py": "c9743d65159eb150f80b9a30368e30726badbdc2742921aa0080b3752d3adbb5",
+    "native-android/combined-client/tools/interop_emulator_check.py": "bacce4771827a66284cd7058461148a02116c6756b5dfc8246861c9872d0be51",
+    "native-android/combined-client/tools/emulator_check.py": "dec5282697720fb5c6d380b52d917647f6478b8a94f66164135433597f7c52fe",
+    "native-android/engine/initial-capture/test_initial_peer.c": "2890410de6536feece1751227ce445918db3bf10bbe4203c9d5cb7ec80f65408",
+    "native-android/engine/initial-capture/test_initial_fragment_peer.c": "248b039ae0967333bd44192ab21bd915492f1db427d096ab22cea122a52c7b69",
+    "native-android/engine/initial-capture/test_initial_inventory_peer.c": "6d4bf3f56aaec6428c53195bdda10335d2ba41bfe1de5d17ea5914416f1e053c",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java": "2187f323b27818a7b6b2a8dbf04a96fa9ea055ee994efe5291a0cc2d37f7dec6",
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261019-fragments/RELEASE-NOTES.md": "00ae9652e5bc02f928a8d20235a5c69fd5de5baec914cc653af36696e64f0ba8",
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261019-fragments/QUALIFICATION.md": "50e33059465641974bb97f4ecf6e4a3730ee5a312cc577074a605d49344263ce"
+  },
+  "host_smoke_proof": {
+    "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/qualification.json",
+    "sha256": "3a0328192506baf1ccf1be13463f1dfa1beff36570387b98255915c156a96b4a",
+    "new_scenarios": 2,
+    "full_synthetic_decoded_body_sha_verified": true,
+    "actual_host_os_udp": true
+  },
+  "python_controls": {
+    "command": "python3 -m unittest discover -s native-android/combined-client/tools -p test_fragment_driver.py -v",
+    "methods": 5,
+    "malformed_privacy_authority_bounds_refusals": 14,
+    "result": "OK",
+    "historical_peer_reversal_sha256": "e5d91921f6ba9547680e0551be91fe63b6de69474fcebb1d9257bdaa84d8a512",
+    "preliminary_wrong_expected_hash_correction_retained": "fragment-driver-preliminary-failure.json"
+  },
+  "upgrade_identity": {
+    "package": "org.coh.nativecombined",
+    "version_code": 10,
+    "version_name": "0.1.9-gates25-27-test",
+    "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "signing_source_changed": false,
+    "imports_settings_or_java_changed": false
+  },
+  "android_driver": {
+    "new_file": "native-android/combined-client/tools/fragment_interop_emulator_check.py",
+    "old_framework_run_focused_executed": false,
+    "transactions": 2,
+    "multiple_fragment_order": "reverse; part zero last; logical ID1 only on part zero",
+    "single_sibling_compressed_bytes": 1200,
+    "SAF_receive_export_required": true,
+    "actual_Android_JNI_and_OS_UDP_required": true
+  },
+  "actual_android_build_or_execution_local": false,
+  "original_server_transaction_local": false,
+  "new_apk_published": false,
+  "whole_original_allents_producer": false,
+  "physical_thor_retest_run": false,
+  "world_authority": false,
+  "gates25_27_open": true
+}

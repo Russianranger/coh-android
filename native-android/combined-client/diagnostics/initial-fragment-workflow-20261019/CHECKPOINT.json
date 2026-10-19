@@ -1,0 +1,32 @@
+{
+  "first_original_transaction": {
+    "job": 117855375436,
+    "status": "in_progress"
+  },
+  "gates25_27": "OPEN",
+  "integration_branch": "native-android",
+  "map_compile": {
+    "artifact": 12157884954,
+    "job": 117852941245,
+    "run": 39187512629,
+    "source": "cf1ab9f7e872467473bc50da822ee6cfc041d639",
+    "status": "success"
+  },
+  "next_actions": [
+    "Inspect first original server ledger and native receive counters",
+    "Run changed receiver against unchanged Map binary",
+    "Compile/lint/audit APK and execute new Android13 fragment scenarios",
+    "Publish only qualified test release and retain actual evidence"
+  ],
+  "remote_commit_before_publication": "cecfdfb60a0b99ca02fd063b906d0cc085799339",
+  "schema": "coh-primary-checkpoint-v1",
+  "workers": {
+    "A": "monitoring original transaction",
+    "B": "source checkpoint; genuine current CLIENT producer missing",
+    "C": "fragment source and rebuilt receiver qualified/integrated",
+    "D": "historical/current Map reuse helper reviewed",
+    "E": "0.1.9 and focused Android test source reviewed; hosted execution pending",
+    "F": "independent source/artifact qualification"
+  },
+  "world_authority": false
+}

@@ -1,0 +1,17 @@
+{
+  "accepted_qualifiers_reexecuted": false,
+  "historical_verifier_and_PE_are_explicit_synthetic_doubles": true,
+  "inherited_runtime_lifecycle_and_projector_are_explicit_doubles": true,
+  "original_compiler_executed": false,
+  "original_server_executed": false,
+  "passed": false,
+  "real_temporary_Git_checkouts": true,
+  "schema": "coh-server-initial-map-reuse-controls-v1",
+  "source_sha256": {
+    "check_reuse.py": "3b6a97a47d9a2801375ba0e0d38aa43ee2871f2bbd963f92bc81ddb72b096e86",
+    "reuse.py": "8ce11a5e9b6221d662879824903e5807bda70803a31907d959aec02fc31f0247",
+    "runtime.py": "d716d4a738cab577e157e5b3c94be503d79939a0a625bf9aaf6742d024a909a8"
+  },
+  "test_methods": 22,
+  "world_authority": false
+}

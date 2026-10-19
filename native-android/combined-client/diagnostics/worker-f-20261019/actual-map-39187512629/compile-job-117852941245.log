@@ -1,0 +1,2008 @@
+﻿2026-10-19T01:55:11.5209850Z Current runner version: '2.337.0'
+2026-10-19T01:55:11.5288678Z ##[group]Runner Image Provisioner
+2026-10-19T01:55:11.5290033Z Hosted Compute Agent
+2026-10-19T01:55:11.5291080Z Version: 20261002.596
+2026-10-19T01:55:11.5292103Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-19T01:55:11.5293359Z Build Date: 2026-10-02T22:28:27Z
+2026-10-19T01:55:11.5294764Z Worker ID: {e01ceced-af06-4fff-bab3-715ea6f09927}
+2026-10-19T01:55:11.5295876Z Region: canadaeast
+2026-10-19T01:55:11.5296758Z Cloud: Azure
+2026-10-19T01:55:11.5297524Z ##[endgroup]
+2026-10-19T01:55:11.5300197Z ##[group]Operating System
+2026-10-19T01:55:11.5301291Z Microsoft Windows Server 2025
+2026-10-19T01:55:11.5302608Z 10.0.26100
+2026-10-19T01:55:11.5303975Z Datacenter
+2026-10-19T01:55:11.5304893Z ##[endgroup]
+2026-10-19T01:55:11.5306033Z ##[group]Runner Image
+2026-10-19T01:55:11.5307146Z Image: windows-2025-vs2026
+2026-10-19T01:55:11.5308094Z Version: 20261007.264.1
+2026-10-19T01:55:11.5310645Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261007.264/images/windows/Windows2025-VS2026-Readme.md
+2026-10-19T01:55:11.5313606Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261007.264
+2026-10-19T01:55:11.5315342Z ##[endgroup]
+2026-10-19T01:55:11.5317237Z ##[group]GITHUB_TOKEN Permissions
+2026-10-19T01:55:11.5319995Z Actions: read
+2026-10-19T01:55:11.5320861Z Contents: read
+2026-10-19T01:55:11.5321784Z Metadata: read
+2026-10-19T01:55:11.5323134Z ##[endgroup]
+2026-10-19T01:55:11.5326854Z Secret source: Actions
+2026-10-19T01:55:11.5328396Z Cache mode: write
+2026-10-19T01:55:11.5329507Z Prepare workflow directory
+2026-10-19T01:55:11.5770299Z Prepare all required actions
+2026-10-19T01:55:11.5819361Z Getting action download info
+2026-10-19T01:55:11.7825647Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-19T01:55:11.9442815Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-19T01:55:12.1111938Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-19T01:55:12.4852912Z Complete job name: compile
+2026-10-19T01:55:12.6855010Z ##[group]Run git config --global core.autocrlf false
+2026-10-19T01:55:12.6855944Z [36;1mgit config --global core.autocrlf false[0m
+2026-10-19T01:55:12.8055652Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-19T01:55:12.8056775Z ##[endgroup]
+2026-10-19T01:55:13.7421019Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-19T01:55:13.7422169Z with:
+2026-10-19T01:55:13.7422786Z   persist-credentials: false
+2026-10-19T01:55:13.7423454Z   fetch-depth: 0
+2026-10-19T01:55:13.7424070Z   repository: Russianranger/coh-android
+2026-10-19T01:55:13.7428353Z   token: ***
+2026-10-19T01:55:13.7428811Z   ssh-strict: true
+2026-10-19T01:55:13.7429270Z   ssh-user: git
+2026-10-19T01:55:13.7429744Z   clean: true
+2026-10-19T01:55:13.7430197Z   sparse-checkout-cone-mode: true
+2026-10-19T01:55:13.7430742Z   fetch-tags: false
+2026-10-19T01:55:13.7431245Z   show-progress: true
+2026-10-19T01:55:13.7431704Z   lfs: false
+2026-10-19T01:55:13.7432511Z   submodules: false
+2026-10-19T01:55:13.7433032Z   set-safe-directory: true
+2026-10-19T01:55:13.7433636Z   allow-unsafe-pr-checkout: false
+2026-10-19T01:55:13.7434173Z ##[endgroup]
+2026-10-19T01:55:13.8897568Z Syncing repository: Russianranger/coh-android
+2026-10-19T01:55:13.8899760Z ##[group]Getting Git version info
+2026-10-19T01:55:13.8900527Z Working directory is 'D:\a\coh-android\coh-android'
+2026-10-19T01:55:13.9759771Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-19T01:55:14.0121295Z git version 2.56.0.windows.2
+2026-10-19T01:55:14.0170341Z ##[endgroup]
+2026-10-19T01:55:14.0186161Z Copying 'C:\Users\runneradmin\.gitconfig' to 'D:\a\_temp\49312e86-cb13-49ca-9a5b-9afd58a3b56c\.gitconfig'
+2026-10-19T01:55:14.0207414Z Temporarily overriding HOME='D:\a\_temp\49312e86-cb13-49ca-9a5b-9afd58a3b56c' before making global git config changes
+2026-10-19T01:55:14.0210995Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-19T01:55:14.0217991Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\coh-android\coh-android
+2026-10-19T01:55:14.0605292Z Deleting the contents of 'D:\a\coh-android\coh-android'
+2026-10-19T01:55:14.0612004Z ##[group]Initializing the repository
+2026-10-19T01:55:14.0621637Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\coh-android\coh-android
+2026-10-19T01:55:14.1552674Z Initialized empty Git repository in D:/a/coh-android/coh-android/.git/
+2026-10-19T01:55:14.1602186Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Russianranger/coh-android
+2026-10-19T01:55:14.2271458Z ##[endgroup]
+2026-10-19T01:55:14.2272866Z ##[group]Disabling automatic garbage collection
+2026-10-19T01:55:14.2281417Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-19T01:55:14.2669697Z ##[endgroup]
+2026-10-19T01:55:14.2670530Z ##[group]Setting up auth
+2026-10-19T01:55:14.2685572Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-19T01:55:14.3097506Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-19T01:55:15.7523300Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-19T01:55:15.7903549Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-19T01:55:16.3842374Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-19T01:55:16.4234853Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-19T01:55:16.9976914Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-19T01:55:17.0414208Z ##[endgroup]
+2026-10-19T01:55:17.0415008Z ##[group]Fetching the repository
+2026-10-19T01:55:17.0433028Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-19T01:55:30.8129262Z From https://github.com/Russianranger/coh-android
+2026-10-19T01:55:30.8130398Z  * [new branch]          archive/volume2-assessment-2026-09-23 -> origin/archive/volume2-assessment-2026-09-23
+2026-10-19T01:55:30.8131581Z  * [new branch]          codex/atlas-recovery-20260928 -> origin/codex/atlas-recovery-20260928
+2026-10-19T01:55:30.8133012Z  * [new branch]          codex/beacon-preflight-historical-fixtures-035 -> origin/codex/beacon-preflight-historical-fixtures-035
+2026-10-19T01:55:30.8134976Z  * [new branch]          codex/character-persistence-continuation -> origin/codex/character-persistence-continuation
+2026-10-19T01:55:30.8136494Z  * [new branch]          codex/folder-cache-census-producer-037 -> origin/codex/folder-cache-census-producer-037
+2026-10-19T01:55:30.8137705Z  * [new branch]          codex/manual-report-cleanup-037 -> origin/codex/manual-report-cleanup-037
+2026-10-19T01:55:30.8138962Z  * [new branch]          codex/native-client-folder-sort-037 -> origin/codex/native-client-folder-sort-037
+2026-10-19T01:55:30.8140313Z  * [new branch]          codex/native-client-folder-sort-wine-037 -> origin/codex/native-client-folder-sort-wine-037
+2026-10-19T01:55:30.8141871Z  * [new branch]          codex/native-client-live-directory-research-037 -> origin/codex/native-client-live-directory-research-037
+2026-10-19T01:55:30.8145047Z  * [new branch]          codex/native-client-live-directory-sdk-037 -> origin/codex/native-client-live-directory-sdk-037
+2026-10-19T01:55:30.8148367Z  * [new branch]          codex/native-client-metadata-036 -> origin/codex/native-client-metadata-036
+2026-10-19T01:55:30.8150083Z  * [new branch]          codex/native-client-metadata-capture-037 -> origin/codex/native-client-metadata-capture-037
+2026-10-19T01:55:30.8151742Z  * [new branch]          codex/native-client-metadata-capture-reuse-wine-037 -> origin/codex/native-client-metadata-capture-reuse-wine-037
+2026-10-19T01:55:30.8153427Z  * [new branch]          codex/native-client-metadata-capture-wine-037 -> origin/codex/native-client-metadata-capture-wine-037
+2026-10-19T01:55:30.8155101Z  * [new branch]          codex/native-client-metadata-census-prototype-037 -> origin/codex/native-client-metadata-census-prototype-037
+2026-10-19T01:55:30.8156733Z  * [new branch]          codex/native-client-metadata-probe-bound-037 -> origin/codex/native-client-metadata-probe-bound-037
+2026-10-19T01:55:30.8158033Z  * [new branch]          codex/native-client-startup-037 -> origin/codex/native-client-startup-037
+2026-10-19T01:55:30.8158770Z  * [new branch]          codex/native-live-ancestor-candidate-037 -> origin/codex/native-live-ancestor-candidate-037
+2026-10-19T01:55:30.8159586Z  * [new branch]          codex/native-live-client-fixture-research-037 -> origin/codex/native-live-client-fixture-research-037
+2026-10-19T01:55:30.8160499Z  * [new branch]          codex/native-live-client-operation-research-037 -> origin/codex/native-live-client-operation-research-037
+2026-10-19T01:55:30.8161295Z  * [new branch]          codex/native-live-directory-arm-037 -> origin/codex/native-live-directory-arm-037
+2026-10-19T01:55:30.8161969Z  * [new branch]          codex/native-map-prefetch-036 -> origin/codex/native-map-prefetch-036
+2026-10-19T01:55:30.8162690Z  * [new branch]          codex/native-map-prefetch-reuse-036 -> origin/codex/native-map-prefetch-reuse-036
+2026-10-19T01:55:30.8163314Z  * [new branch]          codex/native-map-world-037  -> origin/codex/native-map-world-037
+2026-10-19T01:55:30.8164303Z  * [new branch]          codex/native-startup-profile-036 -> origin/codex/native-startup-profile-036
+2026-10-19T01:55:30.8165537Z  * [new branch]          codex/native-startup-profile-reuse-036 -> origin/codex/native-startup-profile-reuse-036
+2026-10-19T01:55:30.8167537Z  * [new branch]          codex/startup-recovery-20261014 -> origin/codex/startup-recovery-20261014
+2026-10-19T01:55:30.8168429Z  * [new branch]          main                        -> origin/main
+2026-10-19T01:55:30.8169461Z  * [new branch]          native-android              -> origin/native-android
+2026-10-19T01:55:30.8170175Z  * [new tag]             coh-assets-v1.0.0           -> coh-assets-v1.0.0
+2026-10-19T01:55:30.8170953Z  * [new tag]             coh-atlas-gameplay-v0.11.0  -> coh-atlas-gameplay-v0.11.0
+2026-10-19T01:55:30.8171803Z  * [new tag]             coh-atlas-gameplay-v0.11.1  -> coh-atlas-gameplay-v0.11.1
+2026-10-19T01:55:30.8172676Z  * [new tag]             coh-atlas-gameplay-v0.11.2  -> coh-atlas-gameplay-v0.11.2
+2026-10-19T01:55:30.8173532Z  * [new tag]             coh-atlas-gameplay-v0.11.3  -> coh-atlas-gameplay-v0.11.3
+2026-10-19T01:55:30.8174375Z  * [new tag]             coh-atlas-gameplay-v0.11.4  -> coh-atlas-gameplay-v0.11.4
+2026-10-19T01:55:30.8175218Z  * [new tag]             coh-atlas-gameplay-v0.11.5  -> coh-atlas-gameplay-v0.11.5
+2026-10-19T01:55:30.8176087Z  * [new tag]             coh-atlas-gameplay-v0.11.6  -> coh-atlas-gameplay-v0.11.6
+2026-10-19T01:55:30.8176963Z  * [new tag]             coh-atlas-gameplay-v0.12.0  -> coh-atlas-gameplay-v0.12.0
+2026-10-19T01:55:30.8177840Z  * [new tag]             coh-atlas-gameplay-v0.12.1  -> coh-atlas-gameplay-v0.12.1
+2026-10-19T01:55:30.8178657Z  * [new tag]             coh-atlas-gameplay-v0.13.0  -> coh-atlas-gameplay-v0.13.0
+2026-10-19T01:55:30.8179744Z  * [new tag]             coh-atlas-gameplay-v0.13.1  -> coh-atlas-gameplay-v0.13.1
+2026-10-19T01:55:30.8180571Z  * [new tag]             coh-atlas-gameplay-v0.13.10 -> coh-atlas-gameplay-v0.13.10
+2026-10-19T01:55:30.8181397Z  * [new tag]             coh-atlas-gameplay-v0.13.11 -> coh-atlas-gameplay-v0.13.11
+2026-10-19T01:55:30.8182211Z  * [new tag]             coh-atlas-gameplay-v0.13.12 -> coh-atlas-gameplay-v0.13.12
+2026-10-19T01:55:30.8183018Z  * [new tag]             coh-atlas-gameplay-v0.13.13 -> coh-atlas-gameplay-v0.13.13
+2026-10-19T01:55:30.8183814Z  * [new tag]             coh-atlas-gameplay-v0.13.14 -> coh-atlas-gameplay-v0.13.14
+2026-10-19T01:55:30.8184613Z  * [new tag]             coh-atlas-gameplay-v0.13.15 -> coh-atlas-gameplay-v0.13.15
+2026-10-19T01:55:30.8185418Z  * [new tag]             coh-atlas-gameplay-v0.13.16 -> coh-atlas-gameplay-v0.13.16
+2026-10-19T01:55:30.8186222Z  * [new tag]             coh-atlas-gameplay-v0.13.17 -> coh-atlas-gameplay-v0.13.17
+2026-10-19T01:55:30.8187109Z  * [new tag]             coh-atlas-gameplay-v0.13.18 -> coh-atlas-gameplay-v0.13.18
+2026-10-19T01:55:30.8187758Z  * [new tag]             coh-atlas-gameplay-v0.13.19 -> coh-atlas-gameplay-v0.13.19
+2026-10-19T01:55:30.8188223Z  * [new tag]             coh-atlas-gameplay-v0.13.2  -> coh-atlas-gameplay-v0.13.2
+2026-10-19T01:55:30.8188707Z  * [new tag]             coh-atlas-gameplay-v0.13.20 -> coh-atlas-gameplay-v0.13.20
+2026-10-19T01:55:30.8189676Z  * [new tag]             coh-atlas-gameplay-v0.13.21 -> coh-atlas-gameplay-v0.13.21
+2026-10-19T01:55:30.8190531Z  * [new tag]             coh-atlas-gameplay-v0.13.22 -> coh-atlas-gameplay-v0.13.22
+2026-10-19T01:55:30.8191262Z  * [new tag]             coh-atlas-gameplay-v0.13.23 -> coh-atlas-gameplay-v0.13.23
+2026-10-19T01:55:30.8191729Z  * [new tag]             coh-atlas-gameplay-v0.13.24 -> coh-atlas-gameplay-v0.13.24
+2026-10-19T01:55:30.8192219Z  * [new tag]             coh-atlas-gameplay-v0.13.25 -> coh-atlas-gameplay-v0.13.25
+2026-10-19T01:55:30.8192697Z  * [new tag]             coh-atlas-gameplay-v0.13.26 -> coh-atlas-gameplay-v0.13.26
+2026-10-19T01:55:30.8193158Z  * [new tag]             coh-atlas-gameplay-v0.13.27 -> coh-atlas-gameplay-v0.13.27
+2026-10-19T01:55:30.8193615Z  * [new tag]             coh-atlas-gameplay-v0.13.28 -> coh-atlas-gameplay-v0.13.28
+2026-10-19T01:55:30.8194072Z  * [new tag]             coh-atlas-gameplay-v0.13.29 -> coh-atlas-gameplay-v0.13.29
+2026-10-19T01:55:30.8194536Z  * [new tag]             coh-atlas-gameplay-v0.13.3  -> coh-atlas-gameplay-v0.13.3
+2026-10-19T01:55:30.8195166Z  * [new tag]             coh-atlas-gameplay-v0.13.30 -> coh-atlas-gameplay-v0.13.30
+2026-10-19T01:55:30.8195637Z  * [new tag]             coh-atlas-gameplay-v0.13.31 -> coh-atlas-gameplay-v0.13.31
+2026-10-19T01:55:30.8196091Z  * [new tag]             coh-atlas-gameplay-v0.13.32 -> coh-atlas-gameplay-v0.13.32
+2026-10-19T01:55:30.8196546Z  * [new tag]             coh-atlas-gameplay-v0.13.33 -> coh-atlas-gameplay-v0.13.33
+2026-10-19T01:55:30.8197002Z  * [new tag]             coh-atlas-gameplay-v0.13.34 -> coh-atlas-gameplay-v0.13.34
+2026-10-19T01:55:30.8197450Z  * [new tag]             coh-atlas-gameplay-v0.13.35 -> coh-atlas-gameplay-v0.13.35
+2026-10-19T01:55:30.8197904Z  * [new tag]             coh-atlas-gameplay-v0.13.36 -> coh-atlas-gameplay-v0.13.36
+2026-10-19T01:55:30.8198365Z  * [new tag]             coh-atlas-gameplay-v0.13.4  -> coh-atlas-gameplay-v0.13.4
+2026-10-19T01:55:30.8198818Z  * [new tag]             coh-atlas-gameplay-v0.13.5  -> coh-atlas-gameplay-v0.13.5
+2026-10-19T01:55:30.8199267Z  * [new tag]             coh-atlas-gameplay-v0.13.6  -> coh-atlas-gameplay-v0.13.6
+2026-10-19T01:55:30.8199710Z  * [new tag]             coh-atlas-gameplay-v0.13.7  -> coh-atlas-gameplay-v0.13.7
+2026-10-19T01:55:30.8200150Z  * [new tag]             coh-atlas-gameplay-v0.13.8  -> coh-atlas-gameplay-v0.13.8
+2026-10-19T01:55:30.8200593Z  * [new tag]             coh-atlas-gameplay-v0.13.9  -> coh-atlas-gameplay-v0.13.9
+2026-10-19T01:55:30.8201263Z  * [new tag]             coh-native-combined-v0.1.8-gates25-27-test -> coh-native-combined-v0.1.8-gates25-27-test
+2026-10-19T01:55:30.8203919Z [command]"C:\Program Files\Git\bin\git.exe" branch --list --remote origin/native-android
+2026-10-19T01:55:30.8666859Z   origin/native-android
+2026-10-19T01:55:30.8718653Z [command]"C:\Program Files\Git\bin\git.exe" rev-parse refs/remotes/origin/native-android
+2026-10-19T01:55:30.9126779Z cf1ab9f7e872467473bc50da822ee6cfc041d639
+2026-10-19T01:55:30.9163569Z ##[endgroup]
+2026-10-19T01:55:30.9163989Z ##[group]Determining the checkout info
+2026-10-19T01:55:30.9166006Z ##[endgroup]
+2026-10-19T01:55:30.9175154Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-19T01:55:30.9650513Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-19T01:55:31.0038311Z ##[group]Checking out the ref
+2026-10-19T01:55:31.0047490Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B native-android refs/remotes/origin/native-android
+2026-10-19T01:55:32.8982088Z Updating files:   1% (2114/171689)
+2026-10-19T01:55:33.2238913Z Updating files:   2% (3434/171689)
+2026-10-19T01:55:33.3800414Z Updating files:   2% (4575/171689)
+2026-10-19T01:55:34.1018103Z Updating files:   3% (5151/171689)
+2026-10-19T01:55:34.2249278Z Updating files:   4% (6868/171689)
+2026-10-19T01:55:34.6555781Z Updating files:   4% (7327/171689)
+2026-10-19T01:55:35.3466764Z Updating files:   5% (8585/171689)
+2026-10-19T01:55:35.4452219Z Updating files:   5% (9934/171689)
+2026-10-19T01:55:35.8674677Z Updating files:   6% (10302/171689)
+2026-10-19T01:55:36.2495015Z Updating files:   7% (12019/171689)
+2026-10-19T01:55:36.3387313Z Updating files:   7% (13445/171689)
+2026-10-19T01:55:36.8072488Z Updating files:   8% (13736/171689)
+2026-10-19T01:55:37.2497833Z Updating files:   9% (15453/171689)
+2026-10-19T01:55:37.5657923Z Updating files:   9% (16014/171689)
+2026-10-19T01:55:38.0824570Z Updating files:  10% (17169/171689)
+2026-10-19T01:55:38.2611185Z Updating files:  11% (18886/171689)
+2026-10-19T01:55:38.5374479Z Updating files:  11% (19770/171689)
+2026-10-19T01:55:38.9322755Z Updating files:  12% (20603/171689)
+2026-10-19T01:55:39.2618306Z Updating files:  13% (22320/171689)
+2026-10-19T01:55:39.3130481Z Updating files:  13% (23799/171689)
+2026-10-19T01:55:39.8564459Z Updating files:  14% (24037/171689)
+2026-10-19T01:55:40.2428070Z Updating files:  15% (25754/171689)
+2026-10-19T01:55:40.2737427Z Updating files:  16% (27471/171689)
+2026-10-19T01:55:40.6519754Z Updating files:  16% (27581/171689)
+2026-10-19T01:55:41.1526989Z Updating files:  17% (29188/171689)
+2026-10-19T01:55:41.2891351Z Updating files:  18% (30905/171689)
+2026-10-19T01:55:41.6280281Z Updating files:  18% (31162/171689)
+2026-10-19T01:55:42.0332861Z Updating files:  19% (32621/171689)
+2026-10-19T01:55:42.2902984Z Updating files:  20% (34338/171689)
+2026-10-19T01:55:42.4253445Z Updating files:  20% (35455/171689)
+2026-10-19T01:55:43.0513578Z Updating files:  21% (36055/171689)
+2026-10-19T01:55:43.2906574Z Updating files:  22% (37772/171689)
+2026-10-19T01:55:43.4519608Z Updating files:  22% (38790/171689)
+2026-10-19T01:55:43.8458556Z Updating files:  23% (39489/171689)
+2026-10-19T01:55:44.2907358Z Updating files:  24% (41206/171689)
+2026-10-19T01:55:44.4556216Z Updating files:  24% (42174/171689)
+2026-10-19T01:55:44.8700135Z Updating files:  25% (42923/171689)
+2026-10-19T01:55:45.2776398Z Updating files:  26% (44640/171689)
+2026-10-19T01:55:45.2914018Z Updating files:  27% (46357/171689)
+2026-10-19T01:55:45.9401350Z Updating files:  27% (46404/171689)
+2026-10-19T01:55:46.2915261Z Updating files:  28% (48073/171689)
+2026-10-19T01:55:46.3599841Z Updating files:  28% (49491/171689)
+2026-10-19T01:55:46.7586754Z Updating files:  29% (49790/171689)
+2026-10-19T01:55:47.2917006Z Updating files:  30% (51507/171689)
+2026-10-19T01:55:47.3408799Z Updating files:  30% (53009/171689)
+2026-10-19T01:55:47.7353854Z Updating files:  31% (53224/171689)
+2026-10-19T01:55:48.1362601Z Updating files:  32% (54941/171689)
+2026-10-19T01:55:48.3879639Z Updating files:  33% (56658/171689)
+2026-10-19T01:55:48.7435673Z Updating files:  33% (56793/171689)
+2026-10-19T01:55:49.1433812Z Updating files:  34% (58375/171689)
+2026-10-19T01:55:49.3015560Z Updating files:  35% (60092/171689)
+2026-10-19T01:55:49.8065873Z Updating files:  35% (60768/171689)
+2026-10-19T01:55:50.1964516Z Updating files:  36% (61809/171689)
+2026-10-19T01:55:50.3016256Z Updating files:  37% (63525/171689)
+2026-10-19T01:55:50.5848646Z Updating files:  37% (63990/171689)
+2026-10-19T01:55:51.1878609Z Updating files:  38% (65242/171689)
+2026-10-19T01:55:51.3137436Z Updating files:  39% (66959/171689)
+2026-10-19T01:55:51.5900239Z Updating files:  39% (67491/171689)
+2026-10-19T01:55:52.0183800Z Updating files:  40% (68676/171689)
+2026-10-19T01:55:52.3916551Z Updating files:  41% (70393/171689)
+2026-10-19T01:55:52.6023834Z Updating files:  41% (71449/171689)
+2026-10-19T01:55:53.0095629Z Updating files:  42% (72110/171689)
+2026-10-19T01:55:53.3245986Z Updating files:  43% (73827/171689)
+2026-10-19T01:55:53.4216798Z Updating files:  43% (75136/171689)
+2026-10-19T01:55:54.0299729Z Updating files:  44% (75544/171689)
+2026-10-19T01:55:54.3248852Z Updating files:  45% (77261/171689)
+2026-10-19T01:55:54.4105915Z Updating files:  45% (78607/171689)
+2026-10-19T01:55:54.7994128Z Updating files:  46% (78977/171689)
+2026-10-19T01:55:55.3273692Z Updating files:  47% (80694/171689)
+2026-10-19T01:55:55.3397371Z Updating files:  48% (82411/171689)
+2026-10-19T01:55:56.2595649Z Updating files:  48% (82468/171689)
+2026-10-19T01:55:56.3424804Z Updating files:  49% (84128/171689)
+2026-10-19T01:55:57.2429989Z Updating files:  49% (84252/171689)
+2026-10-19T01:55:57.3544232Z Updating files:  50% (85845/171689)
+2026-10-19T01:55:58.3724353Z Updating files:  50% (86166/171689)
+2026-10-19T01:55:58.5155953Z Updating files:  50% (87351/171689)
+2026-10-19T01:55:59.3821407Z Updating files:  51% (87562/171689)
+2026-10-19T01:55:59.5855605Z Updating files:  51% (88672/171689)
+2026-10-19T01:56:00.3861850Z Updating files:  52% (89279/171689)
+2026-10-19T01:56:00.7825716Z Updating files:  52% (90400/171689)
+2026-10-19T01:56:01.3865275Z Updating files:  53% (90996/171689)
+2026-10-19T01:56:01.6426617Z Updating files:  53% (91894/171689)
+2026-10-19T01:56:02.2918875Z Updating files:  54% (92713/171689)
+2026-10-19T01:56:02.3863998Z Updating files:  55% (94429/171689)
+2026-10-19T01:56:02.7756894Z Updating files:  55% (94796/171689)
+2026-10-19T01:56:03.1977927Z Updating files:  56% (96146/171689)
+2026-10-19T01:56:03.3935095Z Updating files:  57% (97863/171689)
+2026-10-19T01:56:03.5897246Z Updating files:  57% (98717/171689)
+2026-10-19T01:56:03.9769973Z Updating files:  58% (99580/171689)
+2026-10-19T01:56:04.3937157Z Updating files:  59% (101297/171689)
+2026-10-19T01:56:04.4023421Z Updating files:  59% (102986/171689)
+2026-10-19T01:56:05.1096028Z Updating files:  60% (103014/171689)
+2026-10-19T01:56:05.4050922Z Updating files:  61% (104731/171689)
+2026-10-19T01:56:05.7471640Z Updating files:  61% (105423/171689)
+2026-10-19T01:56:06.1914126Z Updating files:  62% (106448/171689)
+2026-10-19T01:56:06.4069675Z Updating files:  63% (108165/171689)
+2026-10-19T01:56:06.6400670Z Updating files:  63% (108939/171689)
+2026-10-19T01:56:07.0421284Z Updating files:  64% (109881/171689)
+2026-10-19T01:56:07.4179013Z Updating files:  65% (111598/171689)
+2026-10-19T01:56:07.4464324Z Updating files:  65% (113186/171689)
+2026-10-19T01:56:07.8624189Z Updating files:  66% (113315/171689)
+2026-10-19T01:56:08.2783859Z Updating files:  67% (115032/171689)
+2026-10-19T01:56:08.4202894Z Updating files:  68% (116749/171689)
+2026-10-19T01:56:08.7144554Z Updating files:  68% (117368/171689)
+2026-10-19T01:56:09.1182774Z Updating files:  69% (118466/171689)
+2026-10-19T01:56:09.4287551Z Updating files:  70% (120183/171689)
+2026-10-19T01:56:09.5448551Z Updating files:  70% (121436/171689)
+2026-10-19T01:56:09.9499189Z Updating files:  71% (121900/171689)
+2026-10-19T01:56:10.3558963Z Updating files:  72% (123617/171689)
+2026-10-19T01:56:10.4300262Z Updating files:  73% (125333/171689)
+2026-10-19T01:56:10.7555399Z Updating files:  73% (125653/171689)
+2026-10-19T01:56:11.1644746Z Updating files:  74% (127050/171689)
+2026-10-19T01:56:11.4385228Z Updating files:  75% (128767/171689)
+2026-10-19T01:56:11.6068123Z Updating files:  75% (129755/171689)
+2026-10-19T01:56:12.0242174Z Updating files:  76% (130484/171689)
+2026-10-19T01:56:12.4188618Z Updating files:  77% (132201/171689)
+2026-10-19T01:56:12.4388550Z Updating files:  78% (133918/171689)
+2026-10-19T01:56:12.8194446Z Updating files:  78% (134004/171689)
+2026-10-19T01:56:13.2223568Z Updating files:  79% (135635/171689)
+2026-10-19T01:56:13.4397714Z Updating files:  80% (137352/171689)
+2026-10-19T01:56:13.6332053Z Updating files:  80% (138245/171689)
+2026-10-19T01:56:14.0248576Z Updating files:  81% (139069/171689)
+2026-10-19T01:56:14.4282575Z Updating files:  82% (140785/171689)
+2026-10-19T01:56:14.4482923Z Updating files:  83% (142502/171689)
+2026-10-19T01:56:14.8497826Z Updating files:  83% (142590/171689)
+2026-10-19T01:56:15.2597252Z Updating files:  84% (144219/171689)
+2026-10-19T01:56:15.4495249Z Updating files:  85% (145936/171689)
+2026-10-19T01:56:15.6751711Z Updating files:  85% (146707/171689)
+2026-10-19T01:56:16.1124081Z Updating files:  86% (147653/171689)
+2026-10-19T01:56:16.4618903Z Updating files:  87% (149370/171689)
+2026-10-19T01:56:16.5411726Z Updating files:  87% (150745/171689)
+2026-10-19T01:56:16.9577076Z Updating files:  88% (151087/171689)
+2026-10-19T01:56:17.3563651Z Updating files:  89% (152804/171689)
+2026-10-19T01:56:17.4624545Z Updating files:  90% (154521/171689)
+2026-10-19T01:56:17.7746646Z Updating files:  90% (154950/171689)
+2026-10-19T01:56:18.1876248Z Updating files:  91% (156237/171689)
+2026-10-19T01:56:18.4734831Z Updating files:  92% (157954/171689)
+2026-10-19T01:56:18.6181479Z Updating files:  92% (159086/171689)
+2026-10-19T01:56:19.0995259Z Updating files:  93% (159671/171689)
+2026-10-19T01:56:19.4736818Z Updating files:  94% (161388/171689)
+2026-10-19T01:56:19.7063921Z Updating files:  94% (162519/171689)
+2026-10-19T01:56:20.2807555Z Updating files:  95% (163105/171689)
+2026-10-19T01:56:20.4755505Z Updating files:  96% (164822/171689)
+2026-10-19T01:56:20.8379328Z Updating files:  96% (165413/171689)
+2026-10-19T01:56:21.4764870Z Updating files:  97% (166539/171689)
+2026-10-19T01:56:21.6159257Z Updating files:  97% (167800/171689)
+2026-10-19T01:56:22.1808317Z Updating files:  98% (168256/171689)
+2026-10-19T01:56:22.4796954Z Updating files:  99% (169973/171689)
+2026-10-19T01:56:22.7309710Z Updating files:  99% (170820/171689)
+2026-10-19T01:56:22.7310285Z Updating files: 100% (171689/171689)
+2026-10-19T01:56:22.7310734Z Updating files: 100% (171689/171689), done.
+2026-10-19T01:56:22.9646105Z Switched to a new branch 'native-android'
+2026-10-19T01:56:22.9665046Z branch 'native-android' set up to track 'origin/native-android'.
+2026-10-19T01:56:23.0292052Z ##[endgroup]
+2026-10-19T01:56:23.0718031Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-19T01:56:23.1068185Z cf1ab9f7e872467473bc50da822ee6cfc041d639
+2026-10-19T01:56:23.1115129Z ##[group]Removing auth
+2026-10-19T01:56:23.1124327Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-19T01:56:23.1618956Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-19T01:56:23.7415283Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-19T01:56:23.7757767Z http.https://github.com/.extraheader
+2026-10-19T01:56:23.7800990Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-19T01:56:23.8192092Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-19T01:56:24.3822826Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-19T01:56:24.4212590Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-19T01:56:25.0005191Z ##[endgroup]
+2026-10-19T01:56:25.0388081Z ##[group]Run actions/setup-python@v5
+2026-10-19T01:56:25.0388414Z with:
+2026-10-19T01:56:25.0388609Z   python-version: 3.12
+2026-10-19T01:56:25.0388851Z   check-latest: false
+2026-10-19T01:56:25.0391506Z   token: ***
+2026-10-19T01:56:25.0391710Z   update-environment: true
+2026-10-19T01:56:25.0391935Z   allow-prereleases: false
+2026-10-19T01:56:25.0392143Z   freethreaded: false
+2026-10-19T01:56:25.0392357Z ##[endgroup]
+2026-10-19T01:56:25.2074744Z ##[group]Installed versions
+2026-10-19T01:56:25.2321612Z (node:2004) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-19T01:56:25.2322892Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-19T01:56:25.2323636Z Successfully set up CPython (3.12.10)
+2026-10-19T01:56:25.2324385Z ##[endgroup]
+2026-10-19T01:56:25.2634779Z ##[group]Run python - <<'PYSOURCE'
+2026-10-19T01:56:25.2635194Z [36;1mpython - <<'PYSOURCE'[0m
+2026-10-19T01:56:25.2635510Z [36;1mimport hashlib,json,os,pathlib,subprocess[0m
+2026-10-19T01:56:25.2636050Z [36;1mif not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')[0m
+2026-10-19T01:56:25.2636840Z [36;1massert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android'[0m
+2026-10-19T01:56:25.2637657Z [36;1mroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()[0m
+2026-10-19T01:56:25.2638217Z [36;1massert head==os.environ['GITHUB_SHA'][0m
+2026-10-19T01:56:25.2638786Z [36;1mmanifest=root/'native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json'[0m
+2026-10-19T01:56:25.2639704Z [36;1mraw=manifest.read_bytes();assert hashlib.sha256(raw).hexdigest()=='8f83f7549497d5f8314107b6d99d35dae91fbe14a0adfa3ef58c5dae4c1d271e'[0m
+2026-10-19T01:56:25.2640495Z [36;1mvalue=json.loads(raw);assert value['schema']=='coh-server-initial-workflow-source-pins-v1'[0m
+2026-10-19T01:56:25.2640971Z [36;1mpins=dict(value['source_sha256'])[0m
+2026-10-19T01:56:25.2641718Z [36;1mfor name in ['native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json','.github/workflows/native-server-initial-observer.yml']:[0m
+2026-10-19T01:56:25.2642544Z [36;1m pins[name]=hashlib.sha256((root/name).read_bytes()).hexdigest()[0m
+2026-10-19T01:56:25.2643019Z [36;1mentries=subprocess.check_output(['git','ls-tree','-r','-z','HEAD'])[0m
+2026-10-19T01:56:25.2643405Z [36;1massert len(entries)<=64*1024**2[0m
+2026-10-19T01:56:25.2643650Z [36;1mblobs={}[0m
+2026-10-19T01:56:25.2643852Z [36;1mfor row in entries.split(b'\0'):[0m
+2026-10-19T01:56:25.2644467Z [36;1m if row:[0m
+2026-10-19T01:56:25.2644692Z [36;1m  meta,name=row.split(b'\t',1)[0m
+2026-10-19T01:56:25.2644985Z [36;1m  if name.decode() not in pins:continue[0m
+2026-10-19T01:56:25.2645523Z [36;1m  mode,kind,blob=meta.split();assert mode in (b'100644',b'100755') and kind==b'blob';blobs[name.decode()]=blob.decode()[0m
+2026-10-19T01:56:25.2646038Z [36;1massert set(blobs)==set(pins)[0m
+2026-10-19T01:56:25.2646296Z [36;1mfor name,digest in pins.items():[0m
+2026-10-19T01:56:25.2646730Z [36;1m path=root/name;assert path.resolve()==path and path.is_file() and not path.is_symlink()[0m
+2026-10-19T01:56:25.2647273Z [36;1m raw=path.read_bytes();assert hashlib.sha256(raw).hexdigest()==digest[0m
+2026-10-19T01:56:25.2648006Z [36;1m assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==blobs[name][0m
+2026-10-19T01:56:25.2648584Z [36;1massert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==head[0m
+2026-10-19T01:56:25.2649478Z [36;1mreceipt={'schema':'coh-server-initial-current-source-gate-v1','passed':True,'source_revision':head,'source_sha256':pins,'runtime_executed':False,'world_authority':False}[0m
+2026-10-19T01:56:25.2650414Z [36;1mfor name in ('server-initial-source-admission.json', 'fresh-groups-source-admission.json'):[0m
+2026-10-19T01:56:25.2650951Z [36;1m path=pathlib.Path(os.environ['RUNNER_TEMP'])/name[0m
+2026-10-19T01:56:25.2651458Z [36;1m with path.open('x') as stream:json.dump(receipt,stream,sort_keys=True,indent=2);stream.write('\n')[0m
+2026-10-19T01:56:25.2652189Z [36;1mprint(json.dumps({'raw_and_Git_sources_admitted':len(pins),'old_qualifiers_replayed':False,'runtime_executed':False}))[0m
+2026-10-19T01:56:25.2652712Z [36;1mPYSOURCE[0m
+2026-10-19T01:56:25.2674247Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-19T01:56:25.2674634Z env:
+2026-10-19T01:56:25.2674901Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:56:25.2675357Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-10-19T01:56:25.2677720Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:56:25.2678218Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:56:25.2678654Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:56:25.2678984Z ##[endgroup]
+2026-10-19T01:56:27.4318637Z {"raw_and_Git_sources_admitted": 777, "old_qualifiers_replayed": false, "runtime_executed": false}
+2026-10-19T01:56:27.4644390Z ##[group]Run python tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+2026-10-19T01:56:27.4645340Z [36;1mpython tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache[0m
+2026-10-19T01:56:27.4645980Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Exact published input admission failed' }[0m
+2026-10-19T01:56:27.4646948Z [36;1mpython tools/prepare_map_startup_source.py --output C:/isrc --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest out/native-inputs/server-animation-manifest.json[0m
+2026-10-19T01:56:27.4647877Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Private original source staging failed' }[0m
+2026-10-19T01:56:27.4648541Z [36;1mpython native-android/engine/scenecatalog-server/stage_groups_capture.py --source-root . --already-staged C:/isrc[0m
+2026-10-19T01:56:27.4649276Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'New transaction sink source staging failed' }[0m
+2026-10-19T01:56:27.4649998Z [36;1mpython native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py --source-root . --already-staged C:/isrc[0m
+2026-10-19T01:56:27.4650720Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Fresh callback-sealed source staging failed' }[0m
+2026-10-19T01:56:27.4651404Z [36;1mCopy-Item -LiteralPath out/native-inputs/map-startup-inputs.json -Destination C:/isrc/map-startup-inputs.json[0m
+2026-10-19T01:56:27.4652286Z [36;1mpython native-android/engine/scenecatalog-server/fresh_callback_observer/stage.py --verify --source-root . --already-staged C:/isrc[0m
+2026-10-19T01:56:27.4653083Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Full inherited and fresh staged source verification failed' }[0m
+2026-10-19T01:56:27.4653512Z [36;1m[0m
+2026-10-19T01:56:27.4653996Z [36;1mpython native-android/tools/server-initial-observer-20261018/recipe.py stage --source-root . --already-staged C:/isrc[0m
+2026-10-19T01:56:27.4654670Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Initial observer staging refused' }[0m
+2026-10-19T01:56:27.4655348Z [36;1mpython native-android/tools/server-initial-observer-20261018/recipe.py verify-stage --source-root . --already-staged C:/isrc[0m
+2026-10-19T01:56:27.4656828Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Initial observer staged byte verification refused' }[0m
+2026-10-19T01:56:27.4731484Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-19T01:56:27.4731813Z env:
+2026-10-19T01:56:27.4732086Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:56:27.4732535Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-10-19T01:56:27.4732989Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:56:27.4733410Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:56:27.4733805Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:56:27.4734111Z ##[endgroup]
+2026-10-19T01:56:45.7064041Z {"status": "exact_published_inputs_staged", "donor_rebuilt": false, "asset_release": "coh-assets-v1.0.0"}
+2026-10-19T01:56:47.6964662Z PASS: 5,995 files, 173,081,714 bytes; snapshot 0b75ade0c801735e10c5798f641948a45cc50488
+2026-10-19T01:57:18.3526335Z Prepared PostgreSQL source: C:\isrc
+2026-10-19T01:57:27.6619374Z {"status": "staged_mapserver_only", "build_targets": ["MapServer"], "certificate_tracks": 5878}
+2026-10-19T01:57:29.8265753Z {"passed": true, "build_role": "nonshipping_actual_world_send_update_transaction_capture", "runtime_executed": false, "receipt": "native-groups-transaction-server-build-input.json"}
+2026-10-19T01:57:33.6348766Z {"passed": true, "build_role": "nonshipping_fresh_callback_sealed_groups_observer", "runtime_executed": false, "receipt": "native-fresh-groups-server-build-input.json"}
+2026-10-19T01:57:35.6468981Z {"passed": true, "build_role": "nonshipping_fresh_callback_sealed_groups_observer", "runtime_executed": false, "receipt": "native-fresh-groups-server-build-input.json"}
+2026-10-19T01:57:41.1491213Z {"build_role": "nonshipping_same_owner_initial_send_observer", "compile_only": true, "passed": true, "runtime_executed": false, "source_revision": null, "world_authority": false}
+2026-10-19T01:57:43.6249102Z {"build_role": "nonshipping_same_owner_initial_send_observer", "compile_only": true, "passed": true, "runtime_executed": false, "source_revision": null, "world_authority": false}
+2026-10-19T01:57:43.6913333Z ##[group]Run python - <<'PYINPUTS'
+2026-10-19T01:57:43.6913908Z [36;1mpython - <<'PYINPUTS'[0m
+2026-10-19T01:57:43.6914540Z [36;1mimport hashlib,importlib.util,json,os,pathlib,subprocess,sys[0m
+2026-10-19T01:57:43.6915659Z [36;1mroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()[0m
+2026-10-19T01:57:43.6916790Z [36;1mif head!=os.environ['GITHUB_SHA']:raise ValueError('INPUT_CHECKOUT_CHANGED')[0m
+2026-10-19T01:57:43.6917974Z [36;1madmission=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json').read_bytes())[0m
+2026-10-19T01:57:43.6919058Z [36;1mfor name,digest in admission['source_sha256'].items():[0m
+2026-10-19T01:57:43.6919635Z [36;1m    path=root/name[0m
+2026-10-19T01:57:43.6920539Z [36;1m    if path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest()!=digest:raise ValueError('SOURCE_CHANGED_AROUND_BUILD')[0m
+2026-10-19T01:57:43.6921723Z [36;1mpath=root/'tools/android/interactive/map_startup_inputs.py'[0m
+2026-10-19T01:57:43.6923085Z [36;1mspec=importlib.util.spec_from_file_location('fresh_original_map_inputs',path);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)[0m
+2026-10-19T01:57:43.6924573Z [36;1msys.path.insert(0,str(root/'native-android/engine/scenecatalog-qualification'))[0m
+2026-10-19T01:57:43.6925407Z [36;1mfrom record_export_compile import validate_inputs[0m
+2026-10-19T01:57:43.6926491Z [36;1mfolder=root/'out/native-inputs';receipt=validate_inputs(json.loads((folder/'map-startup-inputs.json').read_bytes()),module)[0m
+2026-10-19T01:57:43.6927723Z [36;1mmodule.checked(folder/'COH-Atlas-Gameplay-0.13.31.apk',module.DONOR)[0m
+2026-10-19T01:57:43.6929208Z [36;1mfor name,pin in receipt['files'].items():module.checked(folder/name,pin)[0m
+2026-10-19T01:57:43.6930442Z [36;1mfiles={name:module.pin(folder/name) for name in ('COH-Atlas-Gameplay-0.13.31.apk',*receipt['files'],'map-startup-inputs.json')}[0m
+2026-10-19T01:57:43.6932127Z [36;1mresult={'schema':'coh-fresh-groups-original-inputs-v1','source_revision':head,'files':files,'donor_rebuilt':False,'runtime_executed':False}[0m
+2026-10-19T01:57:43.6933516Z [36;1mreport=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-inputs-before.json'[0m
+2026-10-19T01:57:43.6934236Z [36;1m[0m
+2026-10-19T01:57:43.6934812Z [36;1moutput=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-inputs-before.json'[0m
+2026-10-19T01:57:43.6935942Z [36;1mwith output.open('xb') as stream:stream.write((json.dumps(result,indent=2,sort_keys=True)+'\n').encode())[0m
+2026-10-19T01:57:43.6937181Z [36;1mprint(json.dumps({'passed':True,'whole_input_files_reverified':len(files),'runtime_executed':False}))[0m
+2026-10-19T01:57:43.6938014Z [36;1mPYINPUTS[0m
+2026-10-19T01:57:43.6963527Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-19T01:57:43.6964178Z env:
+2026-10-19T01:57:43.6964616Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:57:43.6965399Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-10-19T01:57:43.6966167Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:57:43.6966858Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:57:43.6967586Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:57:43.6968136Z ##[endgroup]
+2026-10-19T01:57:44.5463847Z {"passed": true, "whole_input_files_reverified": 6, "runtime_executed": false}
+2026-10-19T01:57:44.5840204Z ##[group]Run New-Item -ItemType Directory -Path "$env:RUNNER_TEMP/fresh-groups-build-logs" -Force | Out-Null
+2026-10-19T01:57:44.5841719Z [36;1mNew-Item -ItemType Directory -Path "$env:RUNNER_TEMP/fresh-groups-build-logs" -Force | Out-Null[0m
+2026-10-19T01:57:44.5843665Z [36;1mcmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF 2>&1 | Tee-Object "$env:RUNNER_TEMP/fresh-groups-build-logs/configure.log"[0m
+2026-10-19T01:57:44.5845739Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Private observer configure failed' }[0m
+2026-10-19T01:57:44.5847281Z [36;1mcmake --build out/build/vs2026 --config OptDebug --parallel 4 --target MapServer 2>&1 | Tee-Object "$env:RUNNER_TEMP/fresh-groups-build-logs/build.log"[0m
+2026-10-19T01:57:44.5848838Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Private observer compile failed' }[0m
+2026-10-19T01:57:44.5969397Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-19T01:57:44.5970326Z env:
+2026-10-19T01:57:44.5970894Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:57:44.5971820Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-10-19T01:57:44.5972771Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:57:44.5973280Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:57:44.5973760Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T01:57:44.5974141Z ##[endgroup]
+2026-10-19T01:58:21.4325225Z -- The C compiler identification is MSVC 19.51.36260.0
+2026-10-19T01:58:23.4757380Z -- The CXX compiler identification is MSVC 19.51.36260.0
+2026-10-19T01:58:23.5768070Z -- Detecting C compiler ABI info
+2026-10-19T01:58:24.7012970Z -- Detecting C compiler ABI info - done
+2026-10-19T01:58:24.7394886Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x86/cl.exe - skipped
+2026-10-19T01:58:24.7409672Z -- Detecting C compile features
+2026-10-19T01:58:24.7423016Z -- Detecting C compile features - done
+2026-10-19T01:58:24.7940829Z -- Detecting CXX compiler ABI info
+2026-10-19T01:58:25.5803141Z -- Detecting CXX compiler ABI info - done
+2026-10-19T01:58:25.6030296Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x86/cl.exe - skipped
+2026-10-19T01:58:25.6037013Z -- Detecting CXX compile features
+2026-10-19T01:58:25.6047668Z -- Detecting CXX compile features - done
+2026-10-19T01:58:25.6621541Z -- CPM: Adding package chromium_zlib@0 (cf333892c34ab6dbaed37c38a1d5aa6da7b2f99d to C:/isrc/out/build/CPM/chromium_zlib/e178274f6957bed849d95e329ea774b710347594)
+2026-10-19T01:58:29.3459633Z -- CPM: Adding package cryptopp@0 (b5242667a24e3db8e4600e77b2e502ef204e5280 to C:/isrc/out/build/CPM/cryptopp/f3b70b34e3407df85576818284db00962675998b)
+2026-10-19T01:58:34.6586174Z -- The ASM_MASM compiler identification is MSVC
+2026-10-19T01:58:34.6636466Z -- Found assembler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x86/ml.exe
+2026-10-19T01:58:34.6987196Z -- CPM: Adding package sparsehash@2.0.4 (f93c0c69e959c1c77611d0ba8d107aa971338811 to C:/isrc/out/build/CPM/sparsehash/08118a44f42bd4298b1a21089773f2d91879ae9e)
+2026-10-19T01:58:34.6996613Z -- Populating sparsehash
+2026-10-19T01:58:35.1925750Z -- Configuring done (0.5s)
+2026-10-19T01:58:35.2252931Z -- Generating done (0.0s)
+2026-10-19T01:58:35.2266498Z -- Build files have been written to: C:/isrc/out/build/vs2026/_deps/sparsehash-subbuild
+2026-10-19T01:58:35.3487021Z MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+2026-10-19T01:58:35.3832310Z 
+2026-10-19T01:58:35.6572011Z   1>Checking Build System
+2026-10-19T01:58:35.7886830Z   1>Creating directories for 'sparsehash-populate'
+2026-10-19T01:58:35.8670433Z   Performing download step (git clone) for 'sparsehash-populate'
+2026-10-19T01:58:35.9409684Z   Cloning into '08118a44f42bd4298b1a21089773f2d91879ae9e'...
+2026-10-19T01:58:36.5729078Z   HEAD is now at f93c0c6 Merge pull request #153 from howsiwei/memaccess
+2026-10-19T01:58:37.1831946Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/sparsehash-subbuild/CMakeLists.txt
+2026-10-19T01:58:37.2104787Z   Performing update step for 'sparsehash-populate'
+2026-10-19T01:58:37.3512566Z   -- Already at requested ref: f93c0c69e959c1c77611d0ba8d107aa971338811
+2026-10-19T01:58:37.3577758Z   No patch step for 'sparsehash-populate'
+2026-10-19T01:58:37.4020123Z   No configure step for 'sparsehash-populate'
+2026-10-19T01:58:37.4466552Z   No build step for 'sparsehash-populate'
+2026-10-19T01:58:37.4959630Z   No install step for 'sparsehash-populate'
+2026-10-19T01:58:37.5427987Z   No test step for 'sparsehash-populate'
+2026-10-19T01:58:37.5898216Z   Completed 'sparsehash-populate'
+2026-10-19T01:58:37.7235157Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/sparsehash-subbuild/CMakeLists.txt
+2026-10-19T01:58:37.8407336Z -- CPM: Adding package lua51@5.1.5 (5.1.5 to C:/isrc/out/build/CPM/lua51/8d0861328a20f7d6882af44ec4edc72eb3f6bbba)
+2026-10-19T01:58:41.2151031Z -- CPM: Adding package yajl@2.1.1 (5e3a7856e643b4d6410ddc3f84bc2f38174f2872 to C:/isrc/out/build/CPM/yajl/d564feb079a0d0756f3a238a084c40b7ea96c460)
+2026-10-19T01:58:41.2162831Z -- Populating yajl
+2026-10-19T01:58:41.6944779Z -- Configuring done (0.4s)
+2026-10-19T01:58:41.7308046Z -- Generating done (0.0s)
+2026-10-19T01:58:41.7323307Z -- Build files have been written to: C:/isrc/out/build/vs2026/_deps/yajl-subbuild
+2026-10-19T01:58:41.8492111Z MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+2026-10-19T01:58:41.8826612Z 
+2026-10-19T01:58:42.1560863Z   1>Checking Build System
+2026-10-19T01:58:42.2888527Z   1>Creating directories for 'yajl-populate'
+2026-10-19T01:58:42.3609357Z   Performing download step (git clone) for 'yajl-populate'
+2026-10-19T01:58:42.4344216Z   Cloning into 'd564feb079a0d0756f3a238a084c40b7ea96c460'...
+2026-10-19T01:58:43.2016463Z   HEAD is now at 5e3a785 Merge pull request #157 from setempler/bugfix-configure
+2026-10-19T01:58:43.8264357Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/yajl-subbuild/CMakeLists.txt
+2026-10-19T01:58:43.8546883Z   Performing update step for 'yajl-populate'
+2026-10-19T01:58:43.9967919Z   -- Already at requested ref: 5e3a7856e643b4d6410ddc3f84bc2f38174f2872
+2026-10-19T01:58:44.0035940Z   No patch step for 'yajl-populate'
+2026-10-19T01:58:44.0481301Z   No configure step for 'yajl-populate'
+2026-10-19T01:58:44.0960657Z   No build step for 'yajl-populate'
+2026-10-19T01:58:44.1464701Z   No install step for 'yajl-populate'
+2026-10-19T01:58:44.1977245Z   No test step for 'yajl-populate'
+2026-10-19T01:58:44.2508303Z   Completed 'yajl-populate'
+2026-10-19T01:58:44.3931528Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/yajl-subbuild/CMakeLists.txt
+2026-10-19T01:58:44.5132536Z -- CPM: Adding package freetype@2.1.9 (2.1.9 to C:/isrc/out/build/CPM/freetype/362453cd58070a4f5f4dc02cb06d0680df4c1b7a)
+2026-10-19T01:58:44.5154008Z -- Populating freetype
+2026-10-19T01:58:44.9839511Z -- Configuring done (0.4s)
+2026-10-19T01:58:45.0175809Z -- Generating done (0.0s)
+2026-10-19T01:58:45.0190622Z -- Build files have been written to: C:/isrc/out/build/vs2026/_deps/freetype-subbuild
+2026-10-19T01:58:45.1383199Z MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+2026-10-19T01:58:45.1790284Z 
+2026-10-19T01:58:45.4499689Z   1>Checking Build System
+2026-10-19T01:58:45.5822856Z   1>Creating directories for 'freetype-populate'
+2026-10-19T01:58:45.6544848Z   Performing download step (download, verify and extract) for 'freetype-populate'
+2026-10-19T01:58:45.6746830Z   -- Downloading...
+2026-10-19T01:58:45.6747844Z      dst='C:/isrc/out/build/vs2026/_deps/freetype-subbuild/freetype-populate-prefix/src/archive.tar'
+2026-10-19T01:58:45.6748679Z      timeout='none'
+2026-10-19T01:58:45.6749838Z      inactivity timeout='none'
+2026-10-19T01:58:45.6752469Z   -- Using src='https://codeload.github.com/freetype/freetype/tar.gz/9f182c1fe07d067cd7a6a1b74f53792cc7d203cd'
+2026-10-19T01:58:46.0602990Z   -- verifying file...
+2026-10-19T01:58:46.0604003Z          file='C:/isrc/out/build/vs2026/_deps/freetype-subbuild/freetype-populate-prefix/src/archive.tar'
+2026-10-19T01:58:46.0681892Z   -- Downloading... done
+2026-10-19T01:58:46.1123773Z   -- extracting...
+2026-10-19T01:58:46.1124839Z        src='C:/isrc/out/build/vs2026/_deps/freetype-subbuild/freetype-populate-prefix/src/archive.tar'
+2026-10-19T01:58:46.1126021Z        dst='C:/isrc/out/build/CPM/freetype/362453cd58070a4f5f4dc02cb06d0680df4c1b7a'
+2026-10-19T01:58:46.1148127Z   -- extracting... [tar xf]
+2026-10-19T01:58:46.5018818Z   -- extracting... [analysis]
+2026-10-19T01:58:46.5019523Z   -- extracting... [rename]
+2026-10-19T01:58:46.5041891Z   -- extracting... [clean up]
+2026-10-19T01:58:46.5058774Z   -- extracting... done
+2026-10-19T01:58:46.5330220Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/freetype-subbuild/CMakeLists.txt
+2026-10-19T01:58:46.5601989Z   No update step for 'freetype-populate'
+2026-10-19T01:58:46.6052109Z   No patch step for 'freetype-populate'
+2026-10-19T01:58:46.6486158Z   No configure step for 'freetype-populate'
+2026-10-19T01:58:46.6937374Z   No build step for 'freetype-populate'
+2026-10-19T01:58:46.7380869Z   No install step for 'freetype-populate'
+2026-10-19T01:58:46.7838466Z   No test step for 'freetype-populate'
+2026-10-19T01:58:46.8304687Z   Completed 'freetype-populate'
+2026-10-19T01:58:46.9529418Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/freetype-subbuild/CMakeLists.txt
+2026-10-19T01:58:47.0442392Z -- CPM: Adding package glew@2.1.0 (2.1.0 to C:/isrc/out/build/CPM/glew/019f3459c8fc2ff054c55c7f01acf02046ddcad3)
+2026-10-19T01:58:49.9057253Z -- Found OpenGL: opengl32
+2026-10-19T01:58:49.9099464Z -- CPM: Adding package jpeg@0 (ec32420f6b5dfa4e86883d42b209e8371e55aeb5 to C:/isrc/out/build/CPM/jpeg/965a02abfef22e34833d842643718b01d831856b)
+2026-10-19T01:58:49.9115695Z -- Populating jpeg
+2026-10-19T01:58:50.3968792Z -- Configuring done (0.5s)
+2026-10-19T01:58:50.4310913Z -- Generating done (0.0s)
+2026-10-19T01:58:50.4326230Z -- Build files have been written to: C:/isrc/out/build/vs2026/_deps/jpeg-subbuild
+2026-10-19T01:58:50.5509342Z MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+2026-10-19T01:58:50.5846560Z 
+2026-10-19T01:58:50.8584607Z   1>Checking Build System
+2026-10-19T01:58:50.9909847Z   1>Creating directories for 'jpeg-populate'
+2026-10-19T01:58:51.0640733Z   Performing download step (git clone) for 'jpeg-populate'
+2026-10-19T01:58:51.1386622Z   Cloning into '965a02abfef22e34833d842643718b01d831856b'...
+2026-10-19T01:58:53.4984757Z   HEAD is now at ec32420f example.c: Fix 12-bit PPM write w/ big endian CPUs
+2026-10-19T01:58:54.1547252Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/jpeg-subbuild/CMakeLists.txt
+2026-10-19T01:58:54.1816822Z   Performing update step for 'jpeg-populate'
+2026-10-19T01:58:54.3341026Z   -- Already at requested ref: ec32420f6b5dfa4e86883d42b209e8371e55aeb5
+2026-10-19T01:58:54.3423671Z   No patch step for 'jpeg-populate'
+2026-10-19T01:58:54.3905314Z   No configure step for 'jpeg-populate'
+2026-10-19T01:58:54.4459110Z   No build step for 'jpeg-populate'
+2026-10-19T01:58:54.4986976Z   No install step for 'jpeg-populate'
+2026-10-19T01:58:54.5563850Z   No test step for 'jpeg-populate'
+2026-10-19T01:58:54.6151023Z   Completed 'jpeg-populate'
+2026-10-19T01:58:54.7845202Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/jpeg-subbuild/CMakeLists.txt
+2026-10-19T01:58:54.8958715Z -- CPM: Adding package jpgd@0 (a385a2045aa01584987a6bafc0f7e0c420d28c82 to C:/isrc/out/build/CPM/jpgd/5249511edf59d7f47d6340186f82a56a027c3121)
+2026-10-19T01:58:58.5028152Z -- CPM: Adding package ogg@0 (be05b13e98b048f0b5a0f5fa8ce514d56db5f822 to C:/isrc/out/build/CPM/ogg/5f983e8b826e9cab42f6a79ea99eb9195474783f)
+2026-10-19T01:59:01.7259173Z [31;1mCMake Warning (deprecated) at out/build/CPM/ogg/5f983e8b826e9cab42f6a79ea99eb9195474783f/CMakeLists.txt:1 (cmake_minimum_required):[0m
+2026-10-19T01:59:01.7265155Z [31;1m  Compatibility with CMake < 3.10 will be removed from a future version of[0m
+2026-10-19T01:59:01.7289201Z [31;1m  CMake.[0m
+2026-10-19T01:59:01.7295219Z [31;1m[0m
+2026-10-19T01:59:01.7302496Z [31;1m  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax[0m
+2026-10-19T01:59:01.7315738Z [31;1m  to tell CMake that the project requires at least <min> but has been updated[0m
+2026-10-19T01:59:01.7316798Z [31;1m  to work with policies introduced by <max> or earlier.[0m
+2026-10-19T01:59:01.7322381Z [31;1mThis warning is for project developers.  Use -Wno-author or -Wno-deprecated[0m
+2026-10-19T01:59:01.7327854Z [31;1mto suppress it.[0m
+2026-10-19T01:59:01.7334382Z [31;1m[0m
+2026-10-19T01:59:01.7335649Z -- Configuring ogg 1.3.6
+2026-10-19T01:59:01.7336324Z -- Looking for include file inttypes.h
+2026-10-19T01:59:04.2209255Z -- Looking for include file inttypes.h - found
+2026-10-19T01:59:04.2211654Z -- Looking for include file stdint.h
+2026-10-19T01:59:05.0541936Z -- Looking for include file stdint.h - found
+2026-10-19T01:59:05.0542882Z -- Looking for include file sys/types.h
+2026-10-19T01:59:05.8949144Z -- Looking for include file sys/types.h - found
+2026-10-19T01:59:05.9114716Z -- Looking for sys/types.h
+2026-10-19T01:59:06.7505912Z -- Looking for sys/types.h - found
+2026-10-19T01:59:06.7506576Z -- Looking for stdint.h
+2026-10-19T01:59:07.5863724Z -- Looking for stdint.h - found
+2026-10-19T01:59:07.5864214Z -- Looking for stddef.h
+2026-10-19T01:59:08.4350158Z -- Looking for stddef.h - found
+2026-10-19T01:59:08.4350690Z -- Check size of int16_t
+2026-10-19T01:59:09.3029960Z -- Check size of int16_t - done
+2026-10-19T01:59:09.3033007Z -- Check size of uint16_t
+2026-10-19T01:59:10.1761270Z -- Check size of uint16_t - done
+2026-10-19T01:59:10.1763913Z -- Check size of u_int16_t
+2026-10-19T01:59:11.1594257Z -- Check size of u_int16_t - failed
+2026-10-19T01:59:11.1598236Z -- Check size of int32_t
+2026-10-19T01:59:12.0407238Z -- Check size of int32_t - done
+2026-10-19T01:59:12.0410366Z -- Check size of uint32_t
+2026-10-19T01:59:12.8987101Z -- Check size of uint32_t - done
+2026-10-19T01:59:12.8990097Z -- Check size of u_int32_t
+2026-10-19T01:59:13.4248621Z -- Check size of u_int32_t - failed
+2026-10-19T01:59:13.4251392Z -- Check size of int64_t
+2026-10-19T01:59:14.2979332Z -- Check size of int64_t - done
+2026-10-19T01:59:14.2981771Z -- Check size of short
+2026-10-19T01:59:15.1601826Z -- Check size of short - done
+2026-10-19T01:59:15.1603988Z -- Check size of int
+2026-10-19T01:59:16.0594720Z -- Check size of int - done
+2026-10-19T01:59:16.0595604Z -- Check size of long
+2026-10-19T01:59:16.9218846Z -- Check size of long - done
+2026-10-19T01:59:16.9220519Z -- Check size of long long
+2026-10-19T01:59:17.7981845Z -- Check size of long long - done
+2026-10-19T01:59:17.8354269Z -- CPM: Adding package vorbis@0 (0657aee69dec8508a0011f47f3b69d7538e9d262 to C:/isrc/out/build/CPM/vorbis/f6981c429a00c75522179014d81683794a8ced78)
+2026-10-19T01:59:21.8985849Z -- Configuring vorbis 1.3.7
+2026-10-19T01:59:21.8986316Z -- Looking for floor in m
+2026-10-19T01:59:22.5738834Z -- Looking for floor in m - not found
+2026-10-19T01:59:22.5875862Z -- CPM: Adding package cubemapgen@1.4 (1.4 to C:/isrc/out/build/CPM/cubemapgen/2fad961f9a70b8a710554da937d0fe29444871f8)
+2026-10-19T01:59:22.5888029Z -- Populating cubemapgen
+2026-10-19T01:59:23.0356815Z -- Configuring done (0.4s)
+2026-10-19T01:59:23.0673521Z -- Generating done (0.0s)
+2026-10-19T01:59:23.0687724Z -- Build files have been written to: C:/isrc/out/build/vs2026/_deps/cubemapgen-subbuild
+2026-10-19T01:59:23.1915977Z MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+2026-10-19T01:59:23.2252333Z 
+2026-10-19T01:59:23.4923164Z   1>Checking Build System
+2026-10-19T01:59:23.6256368Z   1>Creating directories for 'cubemapgen-populate'
+2026-10-19T01:59:23.7039871Z   Performing download step (download, verify and extract) for 'cubemapgen-populate'
+2026-10-19T01:59:23.7264321Z   -- Downloading...
+2026-10-19T01:59:23.7266311Z      dst='C:/isrc/out/build/vs2026/_deps/cubemapgen-subbuild/cubemapgen-populate-prefix/src/CubeMapGen-1.4-Source.zip'
+2026-10-19T01:59:23.7267848Z      timeout='none'
+2026-10-19T01:59:23.7268251Z      inactivity timeout='none'
+2026-10-19T01:59:23.7268991Z   -- Using src='https://gpuopen.com/download/CubeMapGen-1.4-Source.zip'
+2026-10-19T01:59:23.9510004Z   -- [download 0% complete]
+2026-10-19T01:59:23.9842479Z   -- [download 1% complete]
+2026-10-19T01:59:24.0061890Z   -- [download 2% complete]
+2026-10-19T01:59:24.0174159Z   -- [download 3% complete]
+2026-10-19T01:59:24.0257940Z   -- [download 4% complete]
+2026-10-19T01:59:24.0313895Z   -- [download 5% complete]
+2026-10-19T01:59:24.0357729Z   -- [download 6% complete]
+2026-10-19T01:59:24.0422563Z   -- [download 7% complete]
+2026-10-19T01:59:24.0558544Z   -- [download 8% complete]
+2026-10-19T01:59:24.0578722Z   -- [download 9% complete]
+2026-10-19T01:59:24.0593711Z   -- [download 10% complete]
+2026-10-19T01:59:24.0611267Z   -- [download 11% complete]
+2026-10-19T01:59:24.0634717Z   -- [download 12% complete]
+2026-10-19T01:59:24.0650352Z   -- [download 13% complete]
+2026-10-19T01:59:24.0666139Z   -- [download 14% complete]
+2026-10-19T01:59:24.0681573Z   -- [download 15% complete]
+2026-10-19T01:59:24.0731423Z   -- [download 16% complete]
+2026-10-19T01:59:24.0749057Z   -- [download 17% complete]
+2026-10-19T01:59:24.0764887Z   -- [download 18% complete]
+2026-10-19T01:59:24.0781339Z   -- [download 19% complete]
+2026-10-19T01:59:24.0793284Z   -- [download 20% complete]
+2026-10-19T01:59:24.0810768Z   -- [download 21% complete]
+2026-10-19T01:59:24.0821627Z   -- [download 22% complete]
+2026-10-19T01:59:24.0831596Z   -- [download 23% complete]
+2026-10-19T01:59:24.0846554Z   -- [download 24% complete]
+2026-10-19T01:59:24.1051185Z   -- [download 25% complete]
+2026-10-19T01:59:24.1058901Z   -- [download 26% complete]
+2026-10-19T01:59:24.1625992Z   -- [download 27% complete]
+2026-10-19T01:59:24.1630354Z   -- [download 28% complete]
+2026-10-19T01:59:24.2406223Z   -- [download 29% complete]
+2026-10-19T01:59:24.2408894Z   -- [download 30% complete]
+2026-10-19T01:59:24.2625180Z   -- [download 31% complete]
+2026-10-19T01:59:24.2626830Z   -- [download 32% complete]
+2026-10-19T01:59:24.2810155Z   -- [download 33% complete]
+2026-10-19T01:59:24.2856300Z   -- [download 34% complete]
+2026-10-19T01:59:24.2865609Z   -- [download 35% complete]
+2026-10-19T01:59:24.2873363Z   -- [download 36% complete]
+2026-10-19T01:59:24.2881773Z   -- [download 37% complete]
+2026-10-19T01:59:24.2888983Z   -- [download 38% complete]
+2026-10-19T01:59:24.2897188Z   -- [download 39% complete]
+2026-10-19T01:59:24.2902842Z   -- [download 40% complete]
+2026-10-19T01:59:24.2909428Z   -- [download 41% complete]
+2026-10-19T01:59:24.2917864Z   -- [download 42% complete]
+2026-10-19T01:59:24.2923560Z   -- [download 43% complete]
+2026-10-19T01:59:24.2929860Z   -- [download 44% complete]
+2026-10-19T01:59:24.2936178Z   -- [download 45% complete]
+2026-10-19T01:59:24.2943043Z   -- [download 46% complete]
+2026-10-19T01:59:24.2949044Z   -- [download 47% complete]
+2026-10-19T01:59:24.2956849Z   -- [download 48% complete]
+2026-10-19T01:59:24.2964987Z   -- [download 49% complete]
+2026-10-19T01:59:24.2970524Z   -- [download 50% complete]
+2026-10-19T01:59:24.2978217Z   -- [download 51% complete]
+2026-10-19T01:59:24.2988212Z   -- [download 52% complete]
+2026-10-19T01:59:24.2994801Z   -- [download 53% complete]
+2026-10-19T01:59:24.3001086Z   -- [download 54% complete]
+2026-10-19T01:59:24.3006227Z   -- [download 55% complete]
+2026-10-19T01:59:24.3013021Z   -- [download 56% complete]
+2026-10-19T01:59:24.3019168Z   -- [download 57% complete]
+2026-10-19T01:59:24.3025277Z   -- [download 58% complete]
+2026-10-19T01:59:24.3032512Z   -- [download 59% complete]
+2026-10-19T01:59:24.3039856Z   -- [download 60% complete]
+2026-10-19T01:59:24.3043411Z   -- [download 61% complete]
+2026-10-19T01:59:24.3048826Z   -- [download 62% complete]
+2026-10-19T01:59:24.3052628Z   -- [download 63% complete]
+2026-10-19T01:59:24.3589544Z   -- [download 64% complete]
+2026-10-19T01:59:24.3591275Z   -- [download 65% complete]
+2026-10-19T01:59:24.3999724Z   -- [download 66% complete]
+2026-10-19T01:59:24.4004233Z   -- [download 67% complete]
+2026-10-19T01:59:24.4355491Z   -- [download 68% complete]
+2026-10-19T01:59:24.4358893Z   -- [download 69% complete]
+2026-10-19T01:59:24.4589848Z   -- [download 70% complete]
+2026-10-19T01:59:24.4595752Z   -- [download 71% complete]
+2026-10-19T01:59:24.4780071Z   -- [download 72% complete]
+2026-10-19T01:59:24.4782875Z   -- [download 73% complete]
+2026-10-19T01:59:24.4933478Z   -- [download 74% complete]
+2026-10-19T01:59:24.4981200Z   -- [download 75% complete]
+2026-10-19T01:59:24.4993254Z   -- [download 76% complete]
+2026-10-19T01:59:24.4998808Z   -- [download 77% complete]
+2026-10-19T01:59:24.5007929Z   -- [download 78% complete]
+2026-10-19T01:59:24.5012491Z   -- [download 79% complete]
+2026-10-19T01:59:24.5019461Z   -- [download 80% complete]
+2026-10-19T01:59:24.5031258Z   -- [download 81% complete]
+2026-10-19T01:59:24.5034060Z   -- [download 82% complete]
+2026-10-19T01:59:24.5039159Z   -- [download 83% complete]
+2026-10-19T01:59:24.5045022Z   -- [download 84% complete]
+2026-10-19T01:59:24.5052078Z   -- [download 85% complete]
+2026-10-19T01:59:24.5056798Z   -- [download 86% complete]
+2026-10-19T01:59:24.5060575Z   -- [download 87% complete]
+2026-10-19T01:59:24.5078659Z   -- [download 88% complete]
+2026-10-19T01:59:24.5088410Z   -- [download 89% complete]
+2026-10-19T01:59:24.5133321Z   -- [download 90% complete]
+2026-10-19T01:59:24.5149928Z   -- [download 91% complete]
+2026-10-19T01:59:24.5161087Z   -- [download 92% complete]
+2026-10-19T01:59:24.5169545Z   -- [download 93% complete]
+2026-10-19T01:59:24.5174820Z   -- [download 94% complete]
+2026-10-19T01:59:24.5180576Z   -- [download 95% complete]
+2026-10-19T01:59:24.5184620Z   -- [download 96% complete]
+2026-10-19T01:59:24.5188711Z   -- [download 97% complete]
+2026-10-19T01:59:24.5193248Z   -- [download 98% complete]
+2026-10-19T01:59:24.5198314Z   -- [download 99% complete]
+2026-10-19T01:59:24.5201731Z   -- [download 100% complete]
+2026-10-19T01:59:24.5215726Z   -- verifying file...
+2026-10-19T01:59:24.5217277Z          file='C:/isrc/out/build/vs2026/_deps/cubemapgen-subbuild/cubemapgen-populate-prefix/src/CubeMapGen-1.4-Source.zip'
+2026-10-19T01:59:24.6020697Z   -- Downloading... done
+2026-10-19T01:59:24.6477950Z   -- extracting...
+2026-10-19T01:59:24.6478983Z        src='C:/isrc/out/build/vs2026/_deps/cubemapgen-subbuild/cubemapgen-populate-prefix/src/CubeMapGen-1.4-Source.zip'
+2026-10-19T01:59:24.6480253Z        dst='C:/isrc/out/build/CPM/cubemapgen/2fad961f9a70b8a710554da937d0fe29444871f8'
+2026-10-19T01:59:24.6559370Z   -- extracting... [tar xf]
+2026-10-19T01:59:25.0344423Z   -- extracting... [analysis]
+2026-10-19T01:59:25.0345271Z   -- extracting... [rename]
+2026-10-19T01:59:25.0364573Z   -- extracting... [clean up]
+2026-10-19T01:59:25.0365285Z   -- extracting... done
+2026-10-19T01:59:25.0652451Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/cubemapgen-subbuild/CMakeLists.txt
+2026-10-19T01:59:25.0934824Z   No update step for 'cubemapgen-populate'
+2026-10-19T01:59:25.1395924Z   No patch step for 'cubemapgen-populate'
+2026-10-19T01:59:25.1831835Z   No configure step for 'cubemapgen-populate'
+2026-10-19T01:59:25.2290614Z   No build step for 'cubemapgen-populate'
+2026-10-19T01:59:25.2878552Z   No install step for 'cubemapgen-populate'
+2026-10-19T01:59:25.3365548Z   No test step for 'cubemapgen-populate'
+2026-10-19T01:59:25.3831445Z   Completed 'cubemapgen-populate'
+2026-10-19T01:59:25.6607051Z   Building Custom Rule C:/isrc/out/build/vs2026/_deps/cubemapgen-subbuild/CMakeLists.txt
+2026-10-19T01:59:25.8846465Z -- Configuring done (96.4s)
+2026-10-19T01:59:27.9187162Z -- Generating done (2.0s)
+2026-10-19T01:59:27.9210794Z -- Build files have been written to: C:/isrc/out/build/vs2026
+2026-10-19T01:59:28.2293181Z MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+2026-10-19T01:59:28.2772889Z 
+2026-10-19T01:59:28.7818185Z   1>Checking Build System
+2026-10-19T01:59:29.3993933Z   Building Custom Rule C:/isrc/libs/UtilitiesLib/CMakeLists.txt
+2026-10-19T01:59:29.4574142Z   Building Custom Rule C:/isrc/CMakeLists.txt
+2026-10-19T01:59:29.6290483Z   precise_floating_point.cpp
+2026-10-19T01:59:32.4867998Z   cox_precise_floating_point_test.vcxproj -> C:\isrc\out\build\vs2026\bin\OptDebug\cox_precise_floating_point_test.exe
+2026-10-19T01:59:32.6522209Z   1>Verifying precise floating-point behavior
+2026-10-19T01:59:33.7704145Z   Precise floating-point behavior verified.
+2026-10-19T01:59:33.8172563Z   Building Custom Rule C:/isrc/CMakeLists.txt
+2026-10-19T01:59:34.1568233Z   1>Staging PhysX runtime
+2026-10-19T01:59:34.2007407Z   Building Custom Rule C:/isrc/Utilities/StructParser/CMakeLists.txt
+2026-10-19T01:59:35.1583533Z   Building Custom Rule C:/isrc/MapServer/CMakeLists.txt
+2026-10-19T01:59:35.9742888Z   AutoRunManager.cpp
+2026-10-19T01:59:45.8636010Z   AutoTestManager.cpp
+2026-10-19T01:59:46.7155789Z   AutoTransactionManager.cpp
+2026-10-19T01:59:47.5585216Z   GenerationIO.cpp
+2026-10-19T01:59:50.0546818Z   IdentifierDictionary.cpp
+2026-10-19T01:59:50.8819991Z   LateLinkManager.cpp
+2026-10-19T01:59:51.6948829Z   MagicCommandManager.cpp
+2026-10-19T01:59:52.5957868Z   main.cpp
+2026-10-19T01:59:53.7436800Z   Platform.cpp
+2026-10-19T01:59:54.7912025Z   SourceParser.cpp
+2026-10-19T01:59:55.6319054Z   SourceParserBaseClass.cpp
+2026-10-19T01:59:56.4473997Z   StructParser.cpp
+2026-10-19T01:59:57.3180065Z   strutils.cpp
+2026-10-19T01:59:58.1316156Z   Tokenizer.cpp
+2026-10-19T01:59:58.9854533Z   utils.cpp
+2026-10-19T01:59:59.8035190Z   Generating Code...
+2026-10-19T02:00:07.0315349Z   StructParser.vcxproj -> C:\isrc\out\build\vs2026\bin\OptDebug\StructParser.exe
+2026-10-19T02:00:07.1555208Z   1>Running StructParser on MapServer
+2026-10-19T02:00:07.6958343Z   Building Custom Rule C:/isrc/MapServer/CMakeLists.txt
+2026-10-19T02:00:07.8796367Z   Building Custom Rule C:/isrc/libs/crashrpt/CMakeLists.txt
+2026-10-19T02:00:07.8830547Z   Building Custom Rule C:/isrc/out/build/CPM/chromium_zlib/e178274f6957bed849d95e329ea774b710347594/CMakeLists.txt
+2026-10-19T02:00:07.9240406Z   1>Running StructParser on AILib
+2026-10-19T02:00:08.0846508Z   1>Running StructParser on UtilitiesLib
+2026-10-19T02:00:08.0950285Z   adler32.c
+2026-10-19T02:00:08.2001735Z   compress.c
+2026-10-19T02:00:08.2070699Z   cmake_pch.cxx
+2026-10-19T02:00:08.2396580Z   Generating OptDebug/rdrand.asm.obj
+2026-10-19T02:00:08.2614141Z   cpu_features.c
+2026-10-19T02:00:08.2713158Z   Building Custom Rule C:/isrc/libs/AILib/CMakeLists.txt
+2026-10-19T02:00:08.2943928Z   Building Custom Rule C:/isrc/out/build/CPM/lua51/8d0861328a20f7d6882af44ec4edc72eb3f6bbba/CMakeLists.txt
+2026-10-19T02:00:08.3950411Z    Assembling: C:/isrc/out/build/CPM/cryptopp/f3b70b34e3407df85576818284db00962675998b/rdrand.asm
+2026-10-19T02:00:08.4494101Z   lapi.c
+2026-10-19T02:00:08.4560229Z   Generating OptDebug/rdseed.asm.obj
+2026-10-19T02:00:08.5401299Z   lauxlib.c
+2026-10-19T02:00:08.5656108Z    Assembling: C:/isrc/out/build/CPM/cryptopp/f3b70b34e3407df85576818284db00962675998b/rdseed.asm
+2026-10-19T02:00:08.5686681Z   Building Custom Rule C:/isrc/out/build/CPM/cryptopp/f3b70b34e3407df85576818284db00962675998b/CMakeLists.txt
+2026-10-19T02:00:08.5696423Z   Building Custom Rule C:/isrc/libs/UtilitiesLib/CMakeLists.txt
+2026-10-19T02:00:08.5984417Z   lbaselib.c
+2026-10-19T02:00:08.6816658Z   lcode.c
+2026-10-19T02:00:08.7299134Z   ldblib.c
+2026-10-19T02:00:08.7564043Z   cryptlib.cpp
+2026-10-19T02:00:08.7851579Z   ldebug.c
+2026-10-19T02:00:08.8243678Z   ldo.c
+2026-10-19T02:00:08.8746985Z   ldump.c
+2026-10-19T02:00:08.9020787Z   lfunc.c
+2026-10-19T02:00:08.9348092Z   lgc.c
+2026-10-19T02:00:08.9666189Z   CrashHandler.cpp
+2026-10-19T02:00:08.9800709Z   linit.c
+2026-10-19T02:00:09.0142397Z   liolib.c
+2026-10-19T02:00:09.0731038Z   llex.c
+2026-10-19T02:00:09.1121793Z   lmathlib.c
+2026-10-19T02:00:09.1612114Z   lmem.c
+2026-10-19T02:00:09.1826866Z   loadlib.c
+2026-10-19T02:00:09.7477848Z   cpu.cpp
+2026-10-19T02:00:09.8193451Z   CrashRpt.cpp
+2026-10-19T02:00:09.8342732Z   pch.cpp
+2026-10-19T02:00:09.8406249Z   Stackwalk.cpp
+2026-10-19T02:00:10.2867893Z   crc32.c
+2026-10-19T02:00:10.2900225Z   lobject.c
+2026-10-19T02:00:10.3313247Z   deflate.c
+2026-10-19T02:00:10.3880412Z   lopcodes.c
+2026-10-19T02:00:10.3978499Z   gzclose.c
+2026-10-19T02:00:10.4496448Z   loslib.c
+2026-10-19T02:00:10.4627497Z   lparser.c
+2026-10-19T02:00:10.4799114Z   gzlib.c
+2026-10-19T02:00:10.5154551Z   integer.cpp
+2026-10-19T02:00:10.5232638Z   Generating Code...
+2026-10-19T02:00:10.6414869Z   gzread.c
+2026-10-19T02:00:10.6857822Z   gzwrite.c
+2026-10-19T02:00:10.8229876Z   infback.c
+2026-10-19T02:00:10.9528181Z   inffast.c
+2026-10-19T02:00:11.0419045Z   inftrees.c
+2026-10-19T02:00:11.1026979Z   trees.c
+2026-10-19T02:00:11.1522312Z   uncompr.c
+2026-10-19T02:00:11.1840658Z   zutil.c
+2026-10-19T02:00:11.2047309Z   Generating Code...
+2026-10-19T02:00:11.3849009Z   adler32_simd.c
+2026-10-19T02:00:11.5008997Z   crc32_simd.c
+2026-10-19T02:00:11.5860675Z   crc_folding.c
+2026-10-19T02:00:11.7551935Z   fill_window_sse.c
+2026-10-19T02:00:11.8928449Z   inffast_chunk.c
+2026-10-19T02:00:11.9436713Z   Generating Code...
+2026-10-19T02:00:12.1666133Z   Compiling...
+2026-10-19T02:00:12.1715586Z   lstate.c
+2026-10-19T02:00:12.1891875Z   lstring.c
+2026-10-19T02:00:12.2442280Z   lstrlib.c
+2026-10-19T02:00:12.3506745Z   ltable.c
+2026-10-19T02:00:12.5386093Z   ltablib.c
+2026-10-19T02:00:12.5386781Z   ltm.c
+2026-10-19T02:00:12.5387306Z   lundump.c
+2026-10-19T02:00:12.5610326Z   lvm.c
+2026-10-19T02:00:12.6454090Z   lzio.c
+2026-10-19T02:00:12.6580004Z   3way.cpp
+2026-10-19T02:00:12.7447903Z   Generating Code...
+2026-10-19T02:00:12.9120802Z      Creating library C:/isrc/out/build/vs2026/libs/crashrpt/OptDebug/CrashRpt.lib and object C:/isrc/out/build/vs2026/libs/crashrpt/OptDebug/CrashRpt.exp
+2026-10-19T02:00:13.2455716Z   CrashRpt.vcxproj -> C:\isrc\out\build\vs2026\bin\OptDebug\CrashRpt.dll
+2026-10-19T02:00:13.5052340Z   Compiling...
+2026-10-19T02:00:13.5056723Z   inflate.c
+2026-10-19T02:00:13.5600310Z   Generating Code...
+2026-10-19T02:00:13.7401271Z   lua51.vcxproj -> C:\isrc\out\build\vs2026\_deps\lua51-build\OptDebug\lua51.lib
+2026-10-19T02:00:13.7754030Z   adler32.cpp
+2026-10-19T02:00:14.0516683Z   chromium_zlib.vcxproj -> C:\isrc\out\build\vs2026\_deps\chromium_zlib-build\OptDebug\chromium_zlib.lib
+2026-10-19T02:00:14.3474614Z   algebra.cpp
+2026-10-19T02:00:14.8784855Z   algparam.cpp
+2026-10-19T02:00:15.3989408Z   allocate.cpp
+2026-10-19T02:00:15.9018791Z   arc4.cpp
+2026-10-19T02:00:16.4297332Z   aria.cpp
+2026-10-19T02:00:16.9556149Z   ariatab.cpp
+2026-10-19T02:00:17.2516184Z   asn.cpp
+2026-10-19T02:00:17.9960930Z   authenc.cpp
+2026-10-19T02:00:18.5149106Z   base32.cpp
+2026-10-19T02:00:19.1261963Z   base64.cpp
+2026-10-19T02:00:19.7477356Z   basecode.cpp
+2026-10-19T02:00:20.3756613Z   bfinit.cpp
+2026-10-19T02:00:20.9242733Z   blake2.cpp
+2026-10-19T02:00:21.5223167Z   blake2b_simd.cpp
+2026-10-19T02:00:22.1787463Z   blake2s_simd.cpp
+2026-10-19T02:00:22.7364451Z   Generating Code...
+2026-10-19T02:00:26.8674183Z   Compiling...
+2026-10-19T02:00:26.8674556Z   blowfish.cpp
+2026-10-19T02:00:27.3999738Z   blumshub.cpp
+2026-10-19T02:00:27.9244530Z   camellia.cpp
+2026-10-19T02:00:28.4608596Z   cast.cpp
+2026-10-19T02:00:29.0003766Z   casts.cpp
+2026-10-19T02:00:29.5312661Z   cbcmac.cpp
+2026-10-19T02:00:30.0595519Z   ccm.cpp
+2026-10-19T02:00:30.6233821Z   chacha.cpp
+2026-10-19T02:00:31.1710835Z   chacha_simd.cpp
+2026-10-19T02:00:31.7133277Z   chachapoly.cpp
+2026-10-19T02:00:32.2875494Z   cham.cpp
+2026-10-19T02:00:32.8527176Z   cham_simd.cpp
+2026-10-19T02:00:33.4119803Z   channels.cpp
+2026-10-19T02:00:33.9834852Z   cmac.cpp
+2026-10-19T02:00:34.5079115Z   crc.cpp
+2026-10-19T02:00:35.0113247Z   crc_simd.cpp
+2026-10-19T02:00:35.5124613Z   darn.cpp
+2026-10-19T02:00:36.0244994Z   default.cpp
+2026-10-19T02:00:36.7280521Z   des.cpp
+2026-10-19T02:00:37.2684939Z   dessp.cpp
+2026-10-19T02:00:37.7925929Z   Generating Code...
+2026-10-19T02:00:40.1885240Z   Compiling...
+2026-10-19T02:00:40.1886127Z   dh.cpp
+2026-10-19T02:00:41.0005666Z   dh2.cpp
+2026-10-19T02:00:41.5057758Z   dll.cpp
+2026-10-19T02:00:42.9888476Z   donna_32.cpp
+2026-10-19T02:00:43.6385789Z   donna_64.cpp
+2026-10-19T02:00:44.2378289Z   donna_sse.cpp
+2026-10-19T02:00:44.7823310Z   dsa.cpp
+2026-10-19T02:00:45.5815449Z   eax.cpp
+2026-10-19T02:00:46.1463489Z   ec2n.cpp
+2026-10-19T02:00:46.8366206Z   eccrypto.cpp
+2026-10-19T02:00:47.9203776Z   ecp.cpp
+2026-10-19T02:00:48.7568917Z   elgamal.cpp
+2026-10-19T02:00:49.5683838Z   emsa2.cpp
+2026-10-19T02:00:50.2047957Z   eprecomp.cpp
+2026-10-19T02:00:50.8354551Z   esign.cpp
+2026-10-19T02:00:51.5391757Z   files.cpp
+2026-10-19T02:00:52.2439845Z   filters.cpp
+2026-10-19T02:00:52.9335736Z   fips140.cpp
+2026-10-19T02:00:53.4728727Z   fipstest.cpp
+2026-10-19T02:00:55.1166876Z   gcm.cpp
+2026-10-19T02:00:55.6919613Z   Generating Code...
+2026-10-19T02:01:03.3706724Z   Compiling...
+2026-10-19T02:01:03.3707166Z   gcm_simd.cpp
+2026-10-19T02:01:03.8936608Z   gf256.cpp
+2026-10-19T02:01:04.4087133Z   gf2_32.cpp
+2026-10-19T02:01:04.9216437Z   gf2n.cpp
+2026-10-19T02:01:05.6653340Z   gf2n_simd.cpp
+2026-10-19T02:01:06.3168120Z   gfpcrypt.cpp
+2026-10-19T02:01:07.1485707Z   gost.cpp
+2026-10-19T02:01:07.6788055Z   gzip.cpp
+2026-10-19T02:01:08.3078850Z   hc128.cpp
+2026-10-19T02:01:08.8691830Z   hc256.cpp
+2026-10-19T02:01:09.4284437Z   hex.cpp
+2026-10-19T02:01:10.0814410Z   hight.cpp
+2026-10-19T02:01:10.6317314Z   hmac.cpp
+2026-10-19T02:01:11.1508055Z   hrtimer.cpp
+2026-10-19T02:01:11.8535812Z   ida.cpp
+2026-10-19T02:01:12.7129897Z   idea.cpp
+2026-10-19T02:01:13.2443836Z   iterhash.cpp
+2026-10-19T02:01:13.7903197Z   kalyna.cpp
+2026-10-19T02:01:14.3569805Z   kalynatab.cpp
+2026-10-19T02:01:14.8946524Z   keccak.cpp
+2026-10-19T02:01:15.4086254Z   Generating Code...
+2026-10-19T02:01:19.2074921Z   Compiling...
+2026-10-19T02:01:19.2075371Z   keccak_core.cpp
+2026-10-19T02:01:19.7371468Z   keccak_simd.cpp
+2026-10-19T02:01:20.3680136Z   lea.cpp
+2026-10-19T02:01:20.9936951Z   lea_simd.cpp
+2026-10-19T02:01:21.5759540Z   lsh256.cpp
+2026-10-19T02:01:22.0965557Z   lsh256_sse.cpp
+2026-10-19T02:01:22.6184390Z   lsh512.cpp
+2026-10-19T02:01:23.1442966Z   lsh512_sse.cpp
+2026-10-19T02:01:23.6588759Z   luc.cpp
+2026-10-19T02:01:24.5533695Z   mars.cpp
+2026-10-19T02:01:25.0933528Z   marss.cpp
+2026-10-19T02:01:25.6193383Z   md2.cpp
+2026-10-19T02:01:26.1312287Z   md4.cpp
+2026-10-19T02:01:26.6651343Z   md5.cpp
+2026-10-19T02:01:27.1925165Z   misc.cpp
+2026-10-19T02:01:27.7099317Z   modes.cpp
+2026-10-19T02:01:28.2832286Z   mqueue.cpp
+2026-10-19T02:01:29.0045578Z   mqv.cpp
+2026-10-19T02:01:29.9843224Z   nbtheory.cpp
+2026-10-19T02:01:30.5650330Z   neon_simd.cpp
+2026-10-19T02:01:31.0293145Z   Generating Code...
+2026-10-19T02:01:34.4347199Z   Compiling...
+2026-10-19T02:01:34.4347647Z   oaep.cpp
+2026-10-19T02:01:35.1059518Z   osrng.cpp
+2026-10-19T02:01:35.9494431Z   padlkrng.cpp
+2026-10-19T02:01:36.4833744Z   panama.cpp
+2026-10-19T02:01:37.0380848Z   pkcspad.cpp
+2026-10-19T02:01:37.6542718Z   poly1305.cpp
+2026-10-19T02:01:38.2690676Z   polynomi.cpp
+2026-10-19T02:01:38.8269061Z   ppc_simd.cpp
+2026-10-19T02:01:39.2870519Z   primetab.cpp
+2026-10-19T02:01:39.5842420Z   pssr.cpp
+2026-10-19T02:01:40.2237996Z   pubkey.cpp
+2026-10-19T02:01:40.8797025Z   queue.cpp
+2026-10-19T02:01:41.4942273Z   rabbit.cpp
+2026-10-19T02:01:42.0398745Z   rabin.cpp
+2026-10-19T02:01:42.7413283Z   randpool.cpp
+2026-10-19T02:01:43.4855032Z   rc2.cpp
+2026-10-19T02:01:44.0298569Z   rc5.cpp
+2026-10-19T02:01:44.5548832Z   rc6.cpp
+2026-10-19T02:01:45.0740150Z   rdrand.cpp
+2026-10-19T02:01:45.5788593Z   rdtables.cpp
+2026-10-19T02:01:46.0953162Z   Generating Code...
+2026-10-19T02:01:49.4926052Z   Compiling...
+2026-10-19T02:01:49.4928099Z   rijndael.cpp
+2026-10-19T02:01:50.0349453Z   rijndael_simd.cpp
+2026-10-19T02:01:50.5423496Z   ripemd.cpp
+2026-10-19T02:01:51.0910042Z   rng.cpp
+2026-10-19T02:01:51.6906402Z   rsa.cpp
+2026-10-19T02:01:52.4339636Z   rw.cpp
+2026-10-19T02:01:53.1143428Z   safer.cpp
+2026-10-19T02:01:53.6453848Z   salsa.cpp
+2026-10-19T02:01:54.2014449Z   scrypt.cpp
+2026-10-19T02:01:54.9201605Z   seal.cpp
+2026-10-19T02:01:55.4812779Z   seed.cpp
+2026-10-19T02:01:55.9988306Z   serpent.cpp
+2026-10-19T02:01:56.5233463Z   sha.cpp
+2026-10-19T02:01:57.0963356Z   sha3.cpp
+2026-10-19T02:01:57.6098352Z   sha_simd.cpp
+2026-10-19T02:01:58.1440640Z   shacal2.cpp
+2026-10-19T02:01:58.7306243Z   shacal2_simd.cpp
+2026-10-19T02:01:59.2700012Z   shake.cpp
+2026-10-19T02:01:59.7828553Z   shark.cpp
+2026-10-19T02:02:00.3670213Z   sharkbox.cpp
+2026-10-19T02:02:00.9053490Z   Generating Code...
+2026-10-19T02:02:04.7580606Z   Compiling...
+2026-10-19T02:02:04.7581198Z   simeck.cpp
+2026-10-19T02:02:05.3183351Z   simon.cpp
+2026-10-19T02:02:05.8850883Z   simon128_simd.cpp
+2026-10-19T02:02:06.4365591Z   skipjack.cpp
+2026-10-19T02:02:06.9802776Z   sm3.cpp
+2026-10-19T02:02:07.5370972Z   sm4.cpp
+2026-10-19T02:02:08.1036463Z   sm4_simd.cpp
+2026-10-19T02:02:09.6035821Z   sosemanuk.cpp
+2026-10-19T02:02:10.6419163Z   speck.cpp
+2026-10-19T02:02:11.4401229Z   speck128_simd.cpp
+2026-10-19T02:02:12.2122890Z   square.cpp
+2026-10-19T02:02:12.8468113Z   squaretb.cpp
+2026-10-19T02:02:13.3664805Z   sse_simd.cpp
+2026-10-19T02:02:13.8522800Z   strciphr.cpp
+2026-10-19T02:02:14.4092619Z   tea.cpp
+2026-10-19T02:02:14.9522261Z   tftables.cpp
+2026-10-19T02:02:15.4956118Z   threefish.cpp
+2026-10-19T02:02:16.1364624Z   tiger.cpp
+2026-10-19T02:02:16.6723886Z   tigertab.cpp
+2026-10-19T02:02:17.2303866Z   ttmac.cpp
+2026-10-19T02:02:17.7818762Z   Generating Code...
+2026-10-19T02:02:23.8180165Z   Compiling...
+2026-10-19T02:02:23.8180682Z   tweetnacl.cpp
+2026-10-19T02:02:24.4979150Z   twofish.cpp
+2026-10-19T02:02:25.0795510Z   vmac.cpp
+2026-10-19T02:02:25.6302922Z   wake.cpp
+2026-10-19T02:02:26.1732652Z   whrlpool.cpp
+2026-10-19T02:02:26.7071650Z   xed25519.cpp
+2026-10-19T02:02:27.4189038Z   xtr.cpp
+2026-10-19T02:02:28.0914945Z   xtrcrypt.cpp
+2026-10-19T02:02:28.7498901Z   xts.cpp
+2026-10-19T02:02:29.3118079Z   zdeflate.cpp
+2026-10-19T02:02:30.0358263Z   zinflate.cpp
+2026-10-19T02:02:30.7030053Z   zlib.cpp
+2026-10-19T02:02:31.3399036Z   Generating Code...
+2026-10-19T02:02:35.3547180Z   chacha_avx.cpp
+2026-10-19T02:02:35.9192740Z   lsh256_avx.cpp
+2026-10-19T02:02:36.4333819Z   lsh512_avx.cpp
+2026-10-19T02:02:36.9850793Z   Generating Code...
+2026-10-19T02:02:37.7281231Z   cryptopp.vcxproj -> C:\isrc\out\build\vs2026\_deps\cryptopp-build\OptDebug\cryptopp.lib
+2026-10-19T02:02:37.8089549Z   Building Custom Rule C:/isrc/libs/UtilitiesLib/CMakeLists.txt
+2026-10-19T02:02:38.0093714Z   ArrayOld.c
+2026-10-19T02:02:38.1341269Z   AssociationList.c
+2026-10-19T02:02:38.2294142Z   AutoStructSupport.c
+2026-10-19T02:02:38.3212166Z   BinarySearchTree.c
+2026-10-19T02:02:38.4141008Z   BitArray.c
+2026-10-19T02:02:39.0278219Z   bitfield.c
+2026-10-19T02:02:39.1156205Z   BitStream.c
+2026-10-19T02:02:39.4970509Z   BloomFilter.c
+2026-10-19T02:02:39.5964441Z   datalist.c
+2026-10-19T02:02:39.6952203Z   datapool.c
+2026-10-19T02:02:39.7853666Z   earray.c
+2026-10-19T02:02:40.1763437Z   EString.c
+2026-10-19T02:02:40.2763602Z   FilespecMap.c
+2026-10-19T02:02:40.3710243Z   Frustum.c
+2026-10-19T02:02:40.4712197Z   genericlist.c
+2026-10-19T02:02:40.5631874Z   GenericMesh.c
+2026-10-19T02:02:40.6679262Z   GenericPoly.c
+2026-10-19T02:02:40.7676664Z   gridpoly.c
+2026-10-19T02:02:40.8686849Z   HashFunctions.c
+2026-10-19T02:02:40.9608978Z   HashTableStack.c
+2026-10-19T02:02:41.0538039Z   Generating Code...
+2026-10-19T02:02:42.0529431Z   Compiling...
+2026-10-19T02:02:42.0529902Z   mailbox.c
+2026-10-19T02:02:42.1455344Z   MemAlloc.c
+2026-10-19T02:02:42.5226166Z   MemoryBank.c
+2026-10-19T02:02:42.6177272Z   MemoryPool.c
+2026-10-19T02:02:42.9910557Z   MemRef.c
+2026-10-19T02:02:43.3521987Z   metadictionary.c
+2026-10-19T02:02:43.4424068Z   MRUList.c
+2026-10-19T02:02:43.5389948Z   MultiVal.c
+2026-10-19T02:02:43.6575390Z   NamedBitArray.c
+2026-10-19T02:02:43.7065766Z C:\isrc\libs\UtilitiesLib\src\components\MultiVal.c(412,27): warning C5286: implicit conversion from enum type 'MMType' to enum type 'MMArray'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:02:43.7068898Z C:\isrc\libs\UtilitiesLib\src\components\MultiVal.c(422,27): warning C5286: implicit conversion from enum type 'MMType' to enum type 'MMArray'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:02:43.7579064Z   Octree.c
+2026-10-19T02:02:43.8623470Z   PerformanceCounter.c
+2026-10-19T02:02:44.2508249Z   Queue.c
+2026-10-19T02:02:44.3492584Z   ReferenceList.c
+2026-10-19T02:02:44.4410167Z   ReferenceSystem.c
+2026-10-19T02:02:44.5376370Z   RingBuffer.c
+2026-10-19T02:02:44.6277544Z   SharedHeap.c
+2026-10-19T02:02:44.9938690Z C:\isrc\libs\UtilitiesLib\src\components\SharedHeap.c(526,18): warning C5287: operands are different enum types 'SM_AcquireResult' and 'SharedHeapAcquireResult'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:02:45.0029912Z   sharedmalloc.c
+2026-10-19T02:02:45.3665403Z C:\isrc\libs\UtilitiesLib\src\components\sharedmalloc.c(1537,18): warning C5287: operands are different enum types 'SM_AcquireResult' and 'SharedHeapAcquireResult'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:02:45.3667916Z C:\isrc\libs\UtilitiesLib\src\components\sharedmalloc.c(1547,18): warning C5287: operands are different enum types 'SM_AcquireResult' and 'SharedHeapAcquireResult'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:02:45.3867998Z   SharedMemory.c
+2026-10-19T02:02:45.7586698Z   SharedQueue.c
+2026-10-19T02:02:45.8574757Z   SimpleSet.c
+2026-10-19T02:02:45.9497933Z   Generating Code...
+2026-10-19T02:02:46.5760617Z   Compiling...
+2026-10-19T02:02:46.5760987Z   StashTable.c
+2026-10-19T02:02:46.9758989Z   StringCache.c
+2026-10-19T02:02:47.3510590Z   StringTable.c
+2026-10-19T02:02:47.7471794Z   fpcube.c
+2026-10-19T02:02:47.8423843Z   pcube.c
+2026-10-19T02:02:47.8607833Z   WorkerThread.c
+2026-10-19T02:02:48.2391879Z   AppLocale.c
+2026-10-19T02:02:48.3317053Z   MessageStore.c
+2026-10-19T02:02:48.7331678Z   MessageStoreUtil.c
+2026-10-19T02:02:48.8324660Z   MultiMessageStore.c
+2026-10-19T02:02:48.9287277Z   bignum.c
+2026-10-19T02:02:49.3228344Z   bindiff.c
+2026-10-19T02:02:49.4226843Z   blowfish.c
+2026-10-19T02:02:49.5127967Z   fingerprint.c
+2026-10-19T02:02:49.6026253Z   ftpclient.c
+2026-10-19T02:02:49.9903580Z   netcomp.c
+2026-10-19T02:02:50.3732573Z   netio_core.c
+2026-10-19T02:02:50.7658545Z   netio_receive.c
+2026-10-19T02:02:51.1452724Z   netio_send.c
+2026-10-19T02:02:51.5272703Z   netio_stats.c
+2026-10-19T02:02:51.9201586Z   Generating Code...
+2026-10-19T02:02:54.0308077Z   Compiling...
+2026-10-19T02:02:54.0308671Z   NetworkSpecifier.c
+2026-10-19T02:02:54.4035305Z   net_link.c
+2026-10-19T02:02:54.7952000Z   net_linklist.c
+2026-10-19T02:02:55.1738688Z   net_masterlist.c
+2026-10-19T02:02:55.5628987Z   net_masterlistref.c
+2026-10-19T02:02:55.9494150Z   net_packet.c
+2026-10-19T02:02:56.3183517Z   net_packetutil.c
+2026-10-19T02:02:56.6988420Z   net_profile.c
+2026-10-19T02:02:57.0801789Z   net_socket.c
+2026-10-19T02:02:57.4623400Z   net_version.c
+2026-10-19T02:02:57.8296737Z   rsa.c
+2026-10-19T02:02:57.9380205Z   sock.c
+2026-10-19T02:02:58.3365362Z   utilitiesLib.c
+2026-10-19T02:02:58.7193517Z   array.c
+2026-10-19T02:02:58.9424306Z   Bits.c
+2026-10-19T02:02:59.1628924Z   lookup3.c
+2026-10-19T02:02:59.3845444Z   lock.c
+2026-10-19T02:02:59.6234870Z   meta.c
+2026-10-19T02:02:59.8673718Z   ncstd.c
+2026-10-19T02:03:00.0930598Z   ntapiext.c
+2026-10-19T02:03:00.4719388Z   Generating Code...
+2026-10-19T02:03:01.3309636Z   Compiling...
+2026-10-19T02:03:01.3309993Z   profiler.c
+2026-10-19T02:03:01.5306678Z   Str.c
+2026-10-19T02:03:01.7536350Z   Stream.c
+2026-10-19T02:03:01.9801735Z   timer.c
+2026-10-19T02:03:02.1978826Z   Breakpoint.c
+2026-10-19T02:03:02.5661327Z   buildVersion.c
+2026-10-19T02:03:02.5740882Z   cmdoldparse.c
+2026-10-19T02:03:02.9823728Z   Color.c
+2026-10-19T02:03:03.0835881Z   CommandFileParser.c
+2026-10-19T02:03:03.1794994Z   ConsoleDebug.c
+2026-10-19T02:03:03.5583834Z   contextQsort.c
+2026-10-19T02:03:03.6682831Z   ConvertUtf.c
+2026-10-19T02:03:04.0458691Z   cpu_count.c
+2026-10-19T02:03:04.4125111Z   dds.c
+2026-10-19T02:03:04.7833665Z   DebugState.c
+2026-10-19T02:03:05.1675512Z   DirMonitor.c
+2026-10-19T02:03:05.5420965Z   dobbs_hash.c
+2026-10-19T02:03:05.5501234Z   endian.c
+2026-10-19T02:03:05.6487635Z   error.c
+2026-10-19T02:03:06.0380029Z   eval.c
+2026-10-19T02:03:06.1440477Z   Generating Code...
+2026-10-19T02:03:06.6366879Z   Compiling...
+2026-10-19T02:03:06.6367292Z   file.c
+2026-10-19T02:03:07.0712849Z   fileutil.c
+2026-10-19T02:03:07.4484127Z   fileWatch.c
+2026-10-19T02:03:07.8316419Z   FolderCache.c
+2026-10-19T02:03:08.2257536Z   FolderCacheNode.c
+2026-10-19T02:03:08.6000707Z   genericDialog.c
+2026-10-19T02:03:10.4332655Z   hoglib.c
+2026-10-19T02:03:10.8535859Z   hogutil.c
+2026-10-19T02:03:10.9527665Z   LineDist.c
+2026-10-19T02:03:11.0724598Z   ListView.c
+2026-10-19T02:03:11.4686311Z C:\isrc\libs\UtilitiesLib\src\utils\ListView.c(314,41): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:03:11.4702542Z C:\isrc\libs\UtilitiesLib\src\utils\ListView.c(492,24): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:03:11.4812522Z   log.c
+2026-10-19T02:03:11.8736556Z   mathutil.c
+2026-10-19T02:03:11.9759486Z   memcheck.c
+2026-10-19T02:03:12.3467866Z   memlog.c
+2026-10-19T02:03:12.7146561Z   MemoryMonitor.c
+2026-10-19T02:03:13.1043931Z   memtrack.c
+2026-10-19T02:03:13.1122338Z   mutex.c
+2026-10-19T02:03:13.5053666Z   osdependent.c
+2026-10-19T02:03:13.8617797Z   PigDir.c
+2026-10-19T02:03:13.9592719Z   PigFileWrapper.c
+2026-10-19T02:03:14.1993895Z   Generating Code...
+2026-10-19T02:03:15.7894934Z   Compiling...
+2026-10-19T02:03:15.7895574Z   piglib.c
+2026-10-19T02:03:16.1132753Z   process_util.c
+2026-10-19T02:03:16.5847486Z   qsortG.c
+2026-10-19T02:03:16.5997076Z   Quat.c
+2026-10-19T02:03:16.7379559Z   quick_sprintf.c
+2026-10-19T02:03:16.8673514Z   rand.c
+2026-10-19T02:03:17.0030106Z   RegistryReader.c
+2026-10-19T02:03:17.4476649Z   rgb_hsv.c
+2026-10-19T02:03:17.5441950Z   scriptvars.c
+2026-10-19T02:03:17.6533713Z   serialize.c
+2026-10-19T02:03:18.0327530Z   SimpleParser.c
+2026-10-19T02:03:18.1265824Z   ssemath.c
+2026-10-19T02:03:18.2247789Z   Stackdump.c
+2026-10-19T02:03:18.6148767Z   strings_opt.c
+2026-10-19T02:03:18.7414395Z   StringUtil.c
+2026-10-19T02:03:19.1148635Z   structDefines.c
+2026-10-19T02:03:19.2067290Z   structHist.c
+2026-10-19T02:03:19.3149993Z   structInternals.c
+2026-10-19T02:03:19.4206103Z   structNet.c
+2026-10-19T02:03:19.8077844Z   structTokenizer.c
+2026-10-19T02:03:20.1956329Z   Generating Code...
+2026-10-19T02:03:20.8327230Z   Compiling...
+2026-10-19T02:03:20.8327576Z   SuperAssert.c
+2026-10-19T02:03:21.2621660Z   sysutil.c
+2026-10-19T02:03:21.6475930Z   textparser.c
+2026-10-19T02:03:22.0651846Z C:\isrc\libs\UtilitiesLib\src\utils\textparser.c(6510,52): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:03:22.0845160Z   textparserReg.c
+2026-10-19T02:03:22.1811891Z   textparserUtils.c
+2026-10-19T02:03:22.2952000Z C:\isrc\libs\UtilitiesLib\src\utils\textparserUtils.c(1594,16): warning C4090: '=': different 'const' qualifiers [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:03:22.2993365Z   tga.c
+2026-10-19T02:03:22.3927978Z   threadedFileCopy.c
+2026-10-19T02:03:22.7748642Z   tiff.c
+2026-10-19T02:03:22.8700323Z C:\isrc\libs\UtilitiesLib\src\utils\tiff.c(442,20): warning C4018: '<': signed/unsigned mismatch [C:\isrc\out\build\vs2026\libs\UtilitiesLib\UtilitiesLib.vcxproj]
+2026-10-19T02:03:22.8736889Z   timing.c
+2026-10-19T02:03:23.2784411Z   tokenstore.c
+2026-10-19T02:03:23.6689501Z   UnitSpec.c
+2026-10-19T02:03:23.7590320Z   utils.c
+2026-10-19T02:03:24.2834712Z   utils_opt.c
+2026-10-19T02:03:24.6643825Z   winfiletime.c
+2026-10-19T02:03:25.0403066Z   WinTabUtil.c
+2026-10-19T02:03:25.4307698Z   winutil.c
+2026-10-19T02:03:25.8157546Z   AppRegCache.c
+2026-10-19T02:03:26.1923511Z   AppVersion.c
+2026-10-19T02:03:26.5627080Z   Generating Code...
+2026-10-19T02:03:28.7714644Z   crc32c.cpp
+2026-10-19T02:03:28.9472429Z   crypt.cpp
+2026-10-19T02:03:30.4181169Z   ringchain.cpp
+2026-10-19T02:03:30.9911227Z   threadedpoolallocator.cpp
+2026-10-19T02:03:31.5907841Z   ncHash.cpp
+2026-10-19T02:03:32.4670608Z   ncutils.cpp
+2026-10-19T02:03:32.8068888Z   MemoryHeap.cpp
+2026-10-19T02:03:32.9734773Z   Generating Code...
+2026-10-19T02:03:34.0523316Z   UtilitiesLib.vcxproj -> C:\isrc\out\build\vs2026\libs\UtilitiesLib\OptDebug\UtilitiesLib.lib
+2026-10-19T02:03:34.1404870Z   Building Custom Rule C:/isrc/libs/AILib/CMakeLists.txt
+2026-10-19T02:03:34.3192930Z   aiBehaviorDebug.c
+2026-10-19T02:03:34.3193404Z   aiBehaviorInterface.c
+2026-10-19T02:03:34.3194509Z   aiBehaviorProcess.c
+2026-10-19T02:03:34.3196029Z   aiBScript.c
+2026-10-19T02:03:34.9833816Z   aiExpression.c
+2026-10-19T02:03:35.1255138Z   aiLib.c
+2026-10-19T02:03:35.1905559Z   aiMessages.c
+2026-10-19T02:03:35.4714071Z   AILib.vcxproj -> C:\isrc\out\build\vs2026\libs\AILib\OptDebug\AILib.lib
+2026-10-19T02:03:35.5333503Z   Building Custom Rule C:/isrc/MapServer/CMakeLists.txt
+2026-10-19T02:03:35.8393844Z   AccountCatalog.c
+2026-10-19T02:03:35.8395323Z   AccountData.c
+2026-10-19T02:03:35.8397844Z   AccountInventory.c
+2026-10-19T02:03:35.8401136Z   Auction.c
+2026-10-19T02:03:36.5970164Z   AuctionClient.c
+2026-10-19T02:03:36.6183913Z   AuctionData.c
+2026-10-19T02:03:36.6567400Z   Xact.c
+2026-10-19T02:03:36.8096554Z   authUserData.c
+2026-10-19T02:03:37.3489390Z   basedata.c
+2026-10-19T02:03:37.6618336Z C:\isrc\Common\auction\AuctionClient.c(1084,16): warning C5287: operands are different enum types 'InventoryType' and 'TrayItemType'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:03:37.7109923Z   BaseEntry.c
+2026-10-19T02:03:37.8056986Z   basefromgroup.c
+2026-10-19T02:03:37.8508772Z   baseinv.c
+2026-10-19T02:03:37.8734925Z   baselegal.c
+2026-10-19T02:03:37.9904382Z   baseparse.c
+2026-10-19T02:03:38.0084081Z   baseRaid.c
+2026-10-19T02:03:38.2090670Z   bases.c
+2026-10-19T02:03:38.2633641Z   basesend.c
+2026-10-19T02:03:38.3129032Z   basestorage.c
+2026-10-19T02:03:38.4190624Z C:\isrc\Common\bases\basedata.c(602,64): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:03:38.4845072Z   basesystems.c
+2026-10-19T02:03:38.9719367Z   basetogroup.c
+2026-10-19T02:03:39.2757597Z   basetrim.c
+2026-10-19T02:03:39.3708557Z   baseupkeep.c
+2026-10-19T02:03:39.5689955Z   DetailRecipe.c
+2026-10-19T02:03:39.6160092Z   AppServerCmd.c
+2026-10-19T02:03:39.7823152Z   cmdaccountserver.c
+2026-10-19T02:03:40.1905553Z   cmdauction.c
+2026-10-19T02:03:40.2605425Z   cmdcommon.c
+2026-10-19T02:03:40.6398299Z   cmdstatserver.c
+2026-10-19T02:03:40.6806812Z   container_store.c
+2026-10-19T02:03:41.0291706Z   container_util.c
+2026-10-19T02:03:41.0740996Z   containerEventHistory.c
+2026-10-19T02:03:41.2403147Z   dbcontainerpack.c
+2026-10-19T02:03:41.3887155Z   DoorStrings.c
+2026-10-19T02:03:41.4361718Z   attrib_description.c
+2026-10-19T02:03:41.5726203Z   attrib_names.c
+2026-10-19T02:03:41.7536226Z   attrib_net.c
+2026-10-19T02:03:41.8310377Z   attribmod.c
+2026-10-19T02:03:42.0045439Z   boost.c
+2026-10-19T02:03:42.1074150Z   boostset.c
+2026-10-19T02:03:42.3450937Z   buddy.c
+2026-10-19T02:03:42.5294452Z   character_attribs.c
+2026-10-19T02:03:42.9612761Z   character_base.c
+2026-10-19T02:03:43.0505281Z C:\isrc\Common\entity\boostset.c(287,63): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:03:43.0841876Z   character_eval.c
+2026-10-19T02:03:43.1255371Z   character_inventory.c
+2026-10-19T02:03:44.5229531Z C:\isrc\Common\entity\character_inventory.c(1938,41): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:03:44.6964068Z   character_karma.c
+2026-10-19T02:03:44.7301798Z   character_level.c
+2026-10-19T02:03:44.7948801Z   character_mods.c
+2026-10-19T02:03:45.2167562Z   character_net.c
+2026-10-19T02:03:45.5785636Z C:\isrc\Common\entity\character_karma.c(141,40): warning C5287: operands are different enum types 'EffectArea' and 'TargetType'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:03:45.6654360Z   character_target.c
+2026-10-19T02:03:45.7475371Z   character_tick.c
+2026-10-19T02:03:46.1691630Z   character_workshop.c
+2026-10-19T02:03:46.6322720Z   chatSettings.c
+2026-10-19T02:03:46.7721268Z   classes.c
+2026-10-19T02:03:46.9597195Z   Concept.c
+2026-10-19T02:03:46.9919103Z   costume.c
+2026-10-19T02:03:47.0990681Z   CustomVillainGroup.c
+2026-10-19T02:03:47.1703598Z   entity.c
+2026-10-19T02:03:47.3584531Z   entityRef.c
+2026-10-19T02:03:47.4417503Z   entStrings.c
+2026-10-19T02:03:47.5150477Z   entVarUpdate.c
+2026-10-19T02:03:48.2578890Z   entworldcoll.c
+2026-10-19T02:03:48.3809556Z   friendCommon.c
+2026-10-19T02:03:48.5570227Z   incarnate.c
+2026-10-19T02:03:48.6591582Z   Invention.c
+2026-10-19T02:03:48.6927989Z   load_def.c
+2026-10-19T02:03:48.9344424Z   LoadDefCommon.c
+2026-10-19T02:03:49.1381117Z   motion.c
+2026-10-19T02:03:49.2708906Z   origins.c
+2026-10-19T02:03:49.3881241Z   PCC_Critter.c
+2026-10-19T02:03:49.5035449Z   power_customization.c
+2026-10-19T02:03:49.7034766Z   power_system.c
+2026-10-19T02:03:49.8754260Z   PowerInfo.c
+2026-10-19T02:03:50.3239633Z   powers_load.c
+2026-10-19T02:03:50.3856322Z   powers.c
+2026-10-19T02:03:50.4347211Z   Proficiency.c
+2026-10-19T02:03:50.6892061Z   ragdoll.c
+2026-10-19T02:03:50.7676751Z   RewardItemType.c
+2026-10-19T02:03:50.9234949Z   RewardSlot.c
+2026-10-19T02:03:51.0958049Z C:\isrc\Common\entity\powers_load.c(1777,43): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:03:51.4950693Z   RewardToken.c
+2026-10-19T02:03:51.5962924Z   salvage.c
+2026-10-19T02:03:51.6134280Z   SgrpBasePermissions.c
+2026-10-19T02:03:51.8276245Z   supergroup_eval.c
+2026-10-19T02:03:51.8612285Z   Supergroup.c
+2026-10-19T02:03:52.2151826Z   tailor.c
+2026-10-19T02:03:52.3575263Z   TaskforceParams.c
+2026-10-19T02:03:52.4828222Z   teamup.c
+2026-10-19T02:03:52.5976332Z   profanity.c
+2026-10-19T02:03:52.7800893Z   titles.c
+2026-10-19T02:03:53.0022511Z   validate_name.c
+2026-10-19T02:03:53.2720454Z   fxbhvr.c
+2026-10-19T02:03:53.3937922Z   fxinfo.c
+2026-10-19T02:03:53.5331325Z   dooranimcommon.c
+2026-10-19T02:03:53.6858000Z   initCommon.c
+2026-10-19T02:03:53.8143715Z   NPC.c
+2026-10-19T02:03:54.0597004Z   trayCommon.c
+2026-10-19T02:03:54.2709694Z   VillainDef.c
+2026-10-19T02:03:54.3956351Z   wdwbase.c
+2026-10-19T02:03:54.5648877Z   arenaschedule.c
+2026-10-19T02:03:54.9084506Z   arenastruct.c
+2026-10-19T02:03:55.3121414Z   badgestats_db.c
+2026-10-19T02:03:55.3302097Z   BodyPart.c
+2026-10-19T02:03:55.3588874Z   costume_data.c
+2026-10-19T02:03:55.4827621Z   iopdata.c
+2026-10-19T02:03:55.8571986Z   miningaccumulator.c
+2026-10-19T02:03:56.0232611Z   raidstruct.c
+2026-10-19T02:03:56.2522293Z   sgrpstatsstruct.c
+2026-10-19T02:03:56.3298673Z   statgroupstruct.c
+2026-10-19T02:03:56.4841694Z   store_data.c
+2026-10-19T02:03:56.6274433Z   store_net.c
+2026-10-19T02:03:56.7545661Z   store.c
+2026-10-19T02:03:56.8536841Z   ctri.c
+2026-10-19T02:03:56.9920292Z   grid.c
+2026-10-19T02:03:57.2217768Z   gridcache.c
+2026-10-19T02:03:57.2953401Z   gridcoll.c
+2026-10-19T02:03:57.4332226Z   gridcollobj.c
+2026-10-19T02:03:57.5423413Z   gridcollperftest.c
+2026-10-19T02:03:57.5578000Z   gridfind.c
+2026-10-19T02:03:57.8094445Z   gridstats.c
+2026-10-19T02:03:57.8700569Z   megaGrid.c
+2026-10-19T02:03:57.8929092Z   megaGridDebug.c
+2026-10-19T02:03:57.9587587Z   tritri_isectline.c
+2026-10-19T02:03:58.0673629Z   group.c
+2026-10-19T02:03:58.1116526Z   groupdyn.c
+2026-10-19T02:03:58.1609161Z C:\isrc\Common\gridcoll\tritri_isectline.c(491,51): warning C5333: backslash and newline separated by space is treated as a line continuation in C++23 and later [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:03:58.3732961Z   groupfilelib.c
+2026-10-19T02:03:58.4027460Z   groupfileload.c
+2026-10-19T02:03:58.4363133Z   groupfileloadutil.c
+2026-10-19T02:03:59.3521354Z   groupfilesave.c
+2026-10-19T02:03:59.3782537Z   groupgrid.c
+2026-10-19T02:03:59.3863572Z   groupMetaMinimap.c
+2026-10-19T02:03:59.5977841Z   groupnovodex.c
+2026-10-19T02:03:59.6350098Z   groupProperties.c
+2026-10-19T02:04:00.2000603Z   groupscene.c
+2026-10-19T02:04:00.2241441Z   grouptrack.c
+2026-10-19T02:04:00.4146501Z   grouputil.c
+2026-10-19T02:04:00.4765893Z C:\isrc\Common\group\grouptrack.c(104,22): warning C4090: '=': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:00.5016397Z   imageServer.c
+2026-10-19T02:04:00.5639146Z   commonLangUtil.c
+2026-10-19T02:04:00.9297880Z   LWC_common.c
+2026-10-19T02:04:01.1301600Z   MissionSearch.c
+2026-10-19T02:04:01.2033248Z C:\isrc\Common\imageServer.c(550,41): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:01.3590827Z   missionserver_meta.c
+2026-10-19T02:04:01.4064560Z   MissionControl.c
+2026-10-19T02:04:01.7527332Z   badges.c
+2026-10-19T02:04:01.9200936Z   pmotion.c
+2026-10-19T02:04:02.0824862Z   pophelp.c
+2026-10-19T02:04:02.3871619Z   Properties.c
+2026-10-19T02:04:02.4633020Z C:\isrc\Common\player\badges.c(257,42): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:02.5345815Z   anim.c
+2026-10-19T02:04:02.5917901Z   AnimBitList.c
+2026-10-19T02:04:02.8066412Z   animtrack.c
+2026-10-19T02:04:02.9153751Z   animtrackanimate.c
+2026-10-19T02:04:03.4832518Z   AutoLOD.c
+2026-10-19T02:04:03.6660035Z   bones.c
+2026-10-19T02:04:03.8883735Z   gfxtree.c
+2026-10-19T02:04:03.9238705Z   modelReload.c
+2026-10-19T02:04:04.2014624Z   seq.c
+2026-10-19T02:04:04.4380347Z   seqanimate.c
+2026-10-19T02:04:04.6713077Z   seqload.c
+2026-10-19T02:04:04.8049889Z   seqregistration.c
+2026-10-19T02:04:05.0924260Z   seqsequence.c
+2026-10-19T02:04:05.1141090Z   seqskeleton.c
+2026-10-19T02:04:05.2531896Z   seqstate.c
+2026-10-19T02:04:05.4740214Z C:\isrc\Common\seq\seqstate.c(187,22): warning C4090: 'initializing': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:05.5132042Z C:\isrc\Common\seq\seqstate.c(188,22): warning C4090: 'initializing': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:05.5391003Z   seqtype.c
+2026-10-19T02:04:05.5649838Z   tricks.c
+2026-10-19T02:04:05.9733808Z   contactCommon.c
+2026-10-19T02:04:06.1026479Z   missiongeoCommon.c
+2026-10-19T02:04:06.1325660Z   missionMapCommon.c
+2026-10-19T02:04:06.2611198Z   playerCreatedStoryarc.c
+2026-10-19T02:04:06.3693273Z   playerCreatedStoryarcValidate.c
+2026-10-19T02:04:06.5381473Z   pnpcCommon.c
+2026-10-19T02:04:07.0523593Z   storyarcCommon.c
+2026-10-19T02:04:07.0792825Z C:\isrc\Common\storyarc\playerCreatedStoryarc.c(425,21): warning C5286: implicit conversion from enum type 'PlayerCreatedDetailType' to enum type 'PlayerCreatedStoryarcValidation'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:07.0999608Z C:\isrc\Common\storyarc\playerCreatedStoryarc.c(444,50): warning C5286: implicit conversion from enum type 'PlayerCreatedDetailType' to enum type 'PlayerCreatedStoryarcValidation'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:07.1734224Z   zowieCommon.c
+2026-10-19T02:04:07.3453612Z   TurnstileCommon.c
+2026-10-19T02:04:07.4570731Z   TurnstileServerCommon.c
+2026-10-19T02:04:07.4903211Z   debugUtils.c
+2026-10-19T02:04:07.6286986Z   EVAL.C
+2026-10-19T02:04:07.8144677Z   Position.c
+2026-10-19T02:04:07.8617096Z   varutils.c
+2026-10-19T02:04:07.9671129Z   container_diff.c
+2026-10-19T02:04:08.0002870Z   container_tplt_utils.c
+2026-10-19T02:04:08.2079531Z   entai.c
+2026-10-19T02:04:08.6305589Z   entaiBehaviorAlias.c
+2026-10-19T02:04:08.7061074Z   entaiBehaviorCoh.c
+2026-10-19T02:04:08.7618169Z   entaiBehaviorPet.c
+2026-10-19T02:04:09.0981013Z   entaiCar.c
+2026-10-19T02:04:09.4096197Z   entaicritter.c
+2026-10-19T02:04:09.7693376Z   entaiCritterActivityCombat.c
+2026-10-19T02:04:09.9221024Z   entaiCritterActivityMisc.c
+2026-10-19T02:04:10.0689542Z   entaiCritterActivityWander.c
+2026-10-19T02:04:10.7134908Z   entaiCritterArachnos.c
+2026-10-19T02:04:10.7792688Z   entaiCritterBanishedPantheon.c
+2026-10-19T02:04:10.9091687Z   entaiCritterCOT.c
+2026-10-19T02:04:10.9452550Z   entaiCritterDevouringEarth.c
+2026-10-19T02:04:11.4545195Z   entaiCritterTsoo.c
+2026-10-19T02:04:11.5607402Z   entaiCritterUtils.c
+2026-10-19T02:04:11.6351233Z   entaiDebug.c
+2026-10-19T02:04:11.6851145Z   entaiDoor.c
+2026-10-19T02:04:12.2910791Z   entaiEvent.c
+2026-10-19T02:04:12.3345901Z   entaiExecute.c
+2026-10-19T02:04:12.4652744Z   entaiFeeling.c
+2026-10-19T02:04:13.2649806Z   entaiInstance.c
+2026-10-19T02:04:13.4426990Z   entaiLog.c
+2026-10-19T02:04:13.4748752Z   entaiMessage.c
+2026-10-19T02:04:14.1967212Z   entaiMovement.c
+2026-10-19T02:04:14.2914108Z   entaiNPC.c
+2026-10-19T02:04:14.3384065Z   entaiPath.c
+2026-10-19T02:04:15.2592893Z   entaiPlayer.c
+2026-10-19T02:04:15.2662673Z   entaiPower.c
+2026-10-19T02:04:15.2944869Z   entaiPriority.c
+2026-10-19T02:04:16.0097242Z   entaiProximity.c
+2026-10-19T02:04:16.0589734Z   entaiScript.c
+2026-10-19T02:04:16.2727655Z   entaiTeam.c
+2026-10-19T02:04:16.3145281Z   baseserver.c
+2026-10-19T02:04:16.8342761Z   baseserverrecv.c
+2026-10-19T02:04:16.8717376Z   beacon.c
+2026-10-19T02:04:17.1985427Z   beaconAStar.c
+2026-10-19T02:04:17.2607568Z   beaconClient.c
+2026-10-19T02:04:17.2646540Z   beaconClientServer.c
+2026-10-19T02:04:17.8506317Z   beaconConnection.c
+2026-10-19T02:04:17.9173678Z   beaconDebug.c
+2026-10-19T02:04:18.2917070Z   beaconFile.c
+2026-10-19T02:04:18.3336834Z   beaconGenerate.c
+2026-10-19T02:04:19.3891267Z   beaconGenerateSwap.c
+2026-10-19T02:04:19.5005124Z   beaconPath.c
+2026-10-19T02:04:19.6533477Z   beaconServer.c
+2026-10-19T02:04:19.7609032Z   beaconServerFileThread.c
+2026-10-19T02:04:19.9691770Z   autoCommands.c
+2026-10-19T02:04:20.7415110Z   chat_emote.c
+2026-10-19T02:04:20.8126494Z   cmdchat.c
+2026-10-19T02:04:21.0741966Z   cmdserver.c
+2026-10-19T02:04:21.2004667Z   cmdservercsr.c
+2026-10-19T02:04:21.6416008Z   cmdserverdebug.c
+2026-10-19T02:04:22.3646072Z   entcon.c
+2026-10-19T02:04:22.6382466Z   baseloadsave.c
+2026-10-19T02:04:23.2202840Z   containerArena.c
+2026-10-19T02:04:23.4314606Z   containerbroadcast.c
+2026-10-19T02:04:23.9188977Z   containercallbacks.c
+2026-10-19T02:04:24.0236104Z   containerDump.c
+2026-10-19T02:04:24.2112992Z   containerEmail.c
+2026-10-19T02:04:24.7727984Z   containerInventory.c
+2026-10-19T02:04:24.8598744Z   containerloadsave.c
+2026-10-19T02:04:25.0925050Z   containerSupergroup.c
+2026-10-19T02:04:25.4946593Z   EventHistory.c
+2026-10-19T02:04:26.0385512Z   league.c
+2026-10-19T02:04:26.0973375Z   mapgroup.c
+2026-10-19T02:04:26.3274885Z   team.c
+2026-10-19T02:04:26.6798105Z   characterHTML.c
+2026-10-19T02:04:26.7269712Z   characterInfo.c
+2026-10-19T02:04:26.8593794Z   characterRestore.c
+2026-10-19T02:04:27.3319592Z   characterTransfer.c
+2026-10-19T02:04:27.6713011Z   dbbackup.c
+2026-10-19T02:04:27.7489518Z   dbcomm.c
+2026-10-19T02:04:28.0015799Z   dbcontainer.c
+2026-10-19T02:04:28.1585652Z   dbdoor.c
+2026-10-19T02:04:28.3786152Z   dbmapxfer.c
+2026-10-19T02:04:28.9006508Z   dbnamecache.c
+2026-10-19T02:04:28.9531980Z   dbquery.c
+2026-10-19T02:04:29.2150889Z   logcomm.c
+2026-10-19T02:04:29.3596761Z   shardcomm.c
+2026-10-19T02:04:29.6283262Z   shardcommtest.c
+2026-10-19T02:04:29.8484395Z   staticMapInfo.c
+2026-10-19T02:04:30.0237346Z   dbghelper.c
+2026-10-19T02:04:30.3296531Z   door.c
+2026-10-19T02:04:30.4712847Z   alignment_shift.c
+2026-10-19T02:04:30.6387403Z   buddy_server.c
+2026-10-19T02:04:30.8137886Z   character_animfx.c
+2026-10-19T02:04:31.5900617Z   character_combat_eval.c
+2026-10-19T02:04:31.6219647Z   character_combat.c
+2026-10-19T02:04:31.7527099Z   character_db.c
+2026-10-19T02:04:31.7797052Z   character_net_server.c
+2026-10-19T02:04:32.3642297Z   character_pet.c
+2026-10-19T02:04:32.9163653Z   character_respec.c
+2026-10-19T02:04:33.0290024Z   combat_mod.c
+2026-10-19T02:04:33.2130329Z   costume_db.c
+2026-10-19T02:04:33.6336038Z   entGameActions.c
+2026-10-19T02:04:33.7325025Z   entity_power.c
+2026-10-19T02:04:33.8771236Z   entsend.c
+2026-10-19T02:04:34.0302317Z   entserver.c
+2026-10-19T02:04:34.5072965Z   friends.c
+2026-10-19T02:04:34.7491236Z   incarnate_server.c
+2026-10-19T02:04:35.4554276Z   keybinds.c
+2026-10-19T02:04:35.6623809Z   mapHistory.c
+2026-10-19T02:04:35.7869412Z   power_customization_server.c
+2026-10-19T02:04:36.0185974Z   pvillain.c
+2026-10-19T02:04:36.2211425Z   pvp.c
+2026-10-19T02:04:36.4136219Z   SgrpBadges.c
+2026-10-19T02:04:36.5203307Z   SgrpRewards.c
+2026-10-19T02:04:36.7477074Z   SgrpServer.c
+2026-10-19T02:04:37.0702723Z   SgrpStats.c
+2026-10-19T02:04:37.1844045Z   timer_callback.c
+2026-10-19T02:04:37.2620614Z   reserved_names.c
+2026-10-19T02:04:37.9878685Z   automapServer.c
+2026-10-19T02:04:38.0767474Z   gift.c
+2026-10-19T02:04:38.1024607Z   NewFeatures.c
+2026-10-19T02:04:38.2271866Z   NpcChatter.c
+2026-10-19T02:04:38.6524042Z   NpcNames.c
+2026-10-19T02:04:38.8050526Z   NpcServer.c
+2026-10-19T02:04:38.8570532Z   pet.c
+2026-10-19T02:04:38.9067960Z   search.c
+2026-10-19T02:04:39.0689955Z   sendToClient.c
+2026-10-19T02:04:39.4896025Z   svr_chat.c
+2026-10-19T02:04:39.6285303Z   trading.c
+2026-10-19T02:04:39.8220766Z   trayServer.c
+2026-10-19T02:04:39.9138803Z   arenakiosk.c
+2026-10-19T02:04:40.4886394Z   arenamap.c
+2026-10-19T02:04:40.6004939Z   arenamapserver.c
+2026-10-19T02:04:40.7324407Z   cutScene.c
+2026-10-19T02:04:40.7700936Z   DayJob.c
+2026-10-19T02:04:41.3611313Z   dooranim.c
+2026-10-19T02:04:41.6939573Z   EndGameRaid.c
+2026-10-19T02:04:41.8461197Z   petarena.c
+2026-10-19T02:04:41.9566574Z   raidmapserver.c
+2026-10-19T02:04:42.3389621Z   sgraid_V2.c
+2026-10-19T02:04:42.5654549Z   sgraid.c
+2026-10-19T02:04:42.5991377Z   Turnstile.c
+2026-10-19T02:04:42.9162397Z   encounter.c
+2026-10-19T02:04:43.3156180Z   entgen.c
+2026-10-19T02:04:43.5792366Z   entgenLoader.c
+2026-10-19T02:04:43.6292657Z   patrol.c
+2026-10-19T02:04:43.8649595Z C:\isrc\MapServer\src\generator\encounter.c(4035,68): warning C5287: operands are different enum types 'EGState' and 'ENCOUNTERSTATE'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:43.8793486Z C:\isrc\MapServer\src\generator\encounter.c(4035,101): warning C5287: operands are different enum types 'EGState' and 'ENCOUNTERSTATE'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:43.9506037Z C:\isrc\MapServer\src\generator\encounter.c(4046,68): warning C5287: operands are different enum types 'EGState' and 'ENCOUNTERSTATE'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:44.0341049Z C:\isrc\MapServer\src\generator\encounter.c(4046,101): warning C5287: operands are different enum types 'EGState' and 'ENCOUNTERSTATE'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:44.1035552Z C:\isrc\MapServer\src\generator\encounter.c(6633,89): warning C5287: operands are different enum types 'EGState' and 'ENCOUNTERSTATE'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:44.4112821Z   groupdb_util.c
+2026-10-19T02:04:44.6652789Z   groupdbmodify.c
+2026-10-19T02:04:44.6732812Z   groupdynsend.c
+2026-10-19T02:04:44.6999279Z   groupjournal.c
+2026-10-19T02:04:44.7317652Z   groupnetdb.c
+2026-10-19T02:04:44.9529564Z   groupnetsend.c
+2026-10-19T02:04:45.4481967Z   kiosk.c
+2026-10-19T02:04:45.4917963Z   langServerUtil.c
+2026-10-19T02:04:45.8280328Z   MARTY.c
+2026-10-19T02:04:46.4883977Z   missionMapInit.c
+2026-10-19T02:04:46.5466145Z   plaque.c
+2026-10-19T02:04:46.5712144Z   badges_db.c
+2026-10-19T02:04:46.9388547Z   badges_load.c
+2026-10-19T02:04:47.2510677Z   badges_server.c
+2026-10-19T02:04:47.3626024Z   clientEntityLink.c
+2026-10-19T02:04:47.4388842Z   inventory_server.c
+2026-10-19T02:04:47.7434163Z   parseClientInput.c
+2026-10-19T02:04:48.1956936Z   pl_stats.c
+2026-10-19T02:04:48.2460685Z   stats_base.c
+2026-10-19T02:04:48.2719594Z   Reward.c
+2026-10-19T02:04:49.0142452Z   FFARaid.c
+2026-10-19T02:04:49.1517163Z   IOPRaid.c
+2026-10-19T02:04:49.2155468Z C:\isrc\MapServer\src\Reward.c(1203,22): warning C4090: '=': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:49.9104915Z   MayhemRaid.c
+2026-10-19T02:04:49.9624627Z   AuctionNPC.c
+2026-10-19T02:04:50.1639749Z   Bartender.c
+2026-10-19T02:04:50.2457602Z   ContactNPC.c
+2026-10-19T02:04:50.3573238Z   ConvertibleFirebase.c
+2026-10-19T02:04:50.4503790Z   CotSummonSpawn.c
+2026-10-19T02:04:50.5395993Z   CoVWarburgScientist.c
+2026-10-19T02:04:50.7533367Z   DataNPC.c
+2026-10-19T02:04:50.7766181Z   EncounterAlert.c
+2026-10-19T02:04:50.7896206Z   EntityScriptStart.c
+2026-10-19T02:04:50.9186602Z   GhostTrap.c
+2026-10-19T02:04:50.9218952Z   InfoNPC.c
+2026-10-19T02:04:50.9882674Z   MultiTriggeredBehavior.c
+2026-10-19T02:04:51.1603609Z   StoreNPC.c
+2026-10-19T02:04:51.2035586Z   TimedEncounter.c
+2026-10-19T02:04:51.2276297Z   TradeNPC.c
+2026-10-19T02:04:51.3524928Z   TriggeredBehavior.c
+2026-10-19T02:04:51.3864566Z   baseraidscript.c
+2026-10-19T02:04:51.4500266Z   misc.c
+2026-10-19T02:04:51.5506988Z   TestScript.c
+2026-10-19T02:04:51.6449727Z   ScriptLuaAI.c
+2026-10-19T02:04:51.7975016Z   ScriptLuaCallback.c
+2026-10-19T02:04:51.8492324Z   ScriptLuaCommon.c
+2026-10-19T02:04:51.8690271Z   ScriptLuaEncounter.c
+2026-10-19T02:04:52.0050279Z   ScriptLuaEntity.c
+2026-10-19T02:04:52.0388430Z   ScriptLuaGlowie.c
+2026-10-19T02:04:52.0906712Z   ScriptLuaKarma.c
+2026-10-19T02:04:52.2693560Z   ScriptLuaLocation.c
+2026-10-19T02:04:52.2815467Z   ScriptLuaMessage.c
+2026-10-19T02:04:52.3295107Z   ScriptLuaMission.c
+2026-10-19T02:04:52.3701135Z   ScriptLuaReward.c
+2026-10-19T02:04:52.4727667Z   ScriptLuaScript.c
+2026-10-19T02:04:52.4790278Z   ScriptLuaTeam.c
+2026-10-19T02:04:52.5589462Z   ScriptLuaUI.c
+2026-10-19T02:04:52.6992578Z   ScriptLuaVar.c
+2026-10-19T02:04:52.7870734Z   ScriptLuaWaypoint.c
+2026-10-19T02:04:52.9172903Z   ChattyBoss.c
+2026-10-19T02:04:52.9809398Z   CompetitiveSearch.c
+2026-10-19T02:04:53.0248096Z   DefeatAll.c
+2026-10-19T02:04:53.1278763Z   DefeatCounter.c
+2026-10-19T02:04:53.1802207Z   DefeatList.c
+2026-10-19T02:04:53.2322338Z   EscortToPlace.c
+2026-10-19T02:04:53.3415804Z   HealthBarScript.c
+2026-10-19T02:04:53.4438784Z   HealthObjective.c
+2026-10-19T02:04:53.4717113Z   HolidayEventMission.c
+2026-10-19T02:04:53.5113618Z   KickAllFromMap.c
+2026-10-19T02:04:53.5244810Z   LeadToPlace.c
+2026-10-19T02:04:53.6958660Z   MapTokenTrigger.c
+2026-10-19T02:04:53.7667880Z   MissionTeleportGlowie.c
+2026-10-19T02:04:53.9233267Z   MultiLeadToPlace.c
+2026-10-19T02:04:53.9890637Z   ObjectiveTrigger.c
+2026-10-19T02:04:54.1568224Z   OnEnterGrantPower.c
+2026-10-19T02:04:54.3157192Z   OnEnterObjectiveComplete.c
+2026-10-19T02:04:54.3593359Z   PlayTogetherMission.c
+2026-10-19T02:04:54.4482836Z   ProximityTrigger.c
+2026-10-19T02:04:54.5142745Z   PvPMission.c
+2026-10-19T02:04:54.5479421Z   RunningBoss.c
+2026-10-19T02:04:54.6329785Z   SafeGuard.c
+2026-10-19T02:04:54.7111190Z   SafeGuardVandals.c
+2026-10-19T02:04:54.7563977Z   SendText.c
+2026-10-19T02:04:54.8297744Z   SetLevelMission.c
+2026-10-19T02:04:54.8501632Z   SetObjectiveText.c
+2026-10-19T02:04:54.9180932Z   StartMissionTimer.c
+2026-10-19T02:04:54.9914512Z   StealthCamera.c
+2026-10-19T02:04:55.0623302Z   StopEscape.c
+2026-10-19T02:04:55.0774164Z   StopExplosions.c
+2026-10-19T02:04:55.1361850Z   StrigaBossFightAndEscape.c
+2026-10-19T02:04:55.2079274Z   StrigaRobotsWakeUp.c
+2026-10-19T02:04:55.3211519Z   Tether.c
+2026-10-19T02:04:55.3521451Z   TimedObjective.c
+2026-10-19T02:04:55.3671575Z   WaveAttackEncounter.c
+2026-10-19T02:04:55.4294307Z   WaveAttacks.c
+2026-10-19T02:04:55.5572732Z   scriptdebug.c
+2026-10-19T02:04:55.6402101Z   scriptengine.c
+2026-10-19T02:04:55.6683836Z   scripthook.c
+2026-10-19T02:04:56.1143679Z   ScriptHookAI.c
+2026-10-19T02:04:56.2671038Z   ScriptHookCallbacks.c
+2026-10-19T02:04:56.5329929Z   ScriptHookContact.c
+2026-10-19T02:04:56.6932098Z   ScriptHookEncounter.c
+2026-10-19T02:04:57.0672581Z   ScriptHookEntityTeam.c
+2026-10-19T02:04:57.2711437Z   ScriptHookLocation.c
+2026-10-19T02:04:57.4825197Z   ScriptHookMission.c
+2026-10-19T02:04:57.6191118Z C:\isrc\MapServer\src\script\Scripthook\ScriptHookEncounter.c(759,5): warning C5286: implicit conversion from enum type 'EGState' to enum type 'ENCOUNTERSTATE'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:57.6556945Z C:\isrc\MapServer\src\script\Scripthook\ScriptHookEncounter.c(772,5): warning C5286: implicit conversion from enum type 'EGState' to enum type 'ENCOUNTERSTATE'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:57.6912254Z C:\isrc\MapServer\src\script\Scripthook\ScriptHookEncounter.c(785,5): warning C5286: implicit conversion from enum type 'EGState' to enum type 'ENCOUNTERSTATE'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:04:57.7280362Z   ScriptHookReward.c
+2026-10-19T02:04:58.1660952Z   ScriptHookWaypoint.c
+2026-10-19T02:04:58.2891564Z   scriptlua.c
+2026-10-19T02:04:58.3912258Z   scriptstring.c
+2026-10-19T02:04:58.5841295Z   scripttable.c
+2026-10-19T02:04:58.6610044Z   scriptutil.c
+2026-10-19T02:04:58.8240295Z   CathedralOfPain.c
+2026-10-19T02:04:58.8789913Z   CathedralOfPainRularuu.c
+2026-10-19T02:04:59.0019710Z   CathedralOfPainWillForge.c
+2026-10-19T02:04:59.1409201Z   CavernOfTranscendence.c
+2026-10-19T02:04:59.2144738Z   CoVSkyRaiders.c
+2026-10-19T02:04:59.2877021Z   CoVThornTree.c
+2026-10-19T02:04:59.3804618Z   Eden.c
+2026-10-19T02:04:59.4001088Z   TerraVolta.c
+2026-10-19T02:04:59.4069924Z   BetaNPC.c
+2026-10-19T02:04:59.5483374Z   ClockWorkPaladin.c
+2026-10-19T02:04:59.5965386Z   CouncilVs5thColumn.c
+2026-10-19T02:04:59.6148408Z   CoVBloodyBayOreGame.c
+2026-10-19T02:04:59.6525505Z   CovHeavyPet.c
+2026-10-19T02:04:59.8196039Z   CoVPvPMap.c
+2026-10-19T02:04:59.8346510Z   CoVReclusesVictory.c
+2026-10-19T02:04:59.8755279Z   CoVSirensCallHunterGame.c
+2026-10-19T02:04:59.8833427Z   CovSnakePit.c
+2026-10-19T02:05:00.1097187Z   CoVWarburgFootball.c
+2026-10-19T02:05:00.1395429Z   CoVZoneKillX.c
+2026-10-19T02:05:00.2011090Z   CroatoaBattle.c
+2026-10-19T02:05:00.3401116Z   DeadlyApocalypse.c
+2026-10-19T02:05:00.3782406Z   ForbiddenZones.c
+2026-10-19T02:05:00.4623894Z   GenericBadgeGrant.c
+2026-10-19T02:05:00.5904381Z   GenericDoNothing.c
+2026-10-19T02:05:00.6480943Z   GenericInvasion.c
+2026-10-19T02:05:00.8017273Z   GhostShip.c
+2026-10-19T02:05:00.8354519Z   HalloweenEvent.c
+2026-10-19T02:05:00.8971132Z   HamidonZone.c
+2026-10-19T02:05:01.0389047Z   HellionsFire.c
+2026-10-19T02:05:01.1456277Z   HolidayEvent.c
+2026-10-19T02:05:01.2918765Z   HolidayEventZone.c
+2026-10-19T02:05:01.3341510Z   KeepPopulated.c
+2026-10-19T02:05:01.5720339Z   MalaiseEvent.c
+2026-10-19T02:05:01.6728298Z   MinerStrike.c
+2026-10-19T02:05:01.9160213Z   NemesisPlot.c
+2026-10-19T02:05:01.9585722Z   OctopusAttack.c
+2026-10-19T02:05:02.1397290Z   PlayTogether.c
+2026-10-19T02:05:02.1562275Z   PocketDMonkeyFight.c
+2026-10-19T02:05:02.2191513Z   PocketDSkiResort.c
+2026-10-19T02:05:02.3224128Z   RiktiInvasion.c
+2026-10-19T02:05:02.3888616Z   RiktiPylon.c
+2026-10-19T02:05:02.4267230Z   ScriptedZoneEvent.c
+2026-10-19T02:05:02.4621594Z   ScriptedZoneEventKarma.c
+2026-10-19T02:05:02.6600976Z   ScriptUI.c
+2026-10-19T02:05:02.6773891Z   SeeNewTrainer.c
+2026-10-19T02:05:02.8337832Z   SetLevelZoneScript.c
+2026-10-19T02:05:02.9122471Z   SetMapToken.c
+2026-10-19T02:05:03.0186792Z   ShadowShardInvasion.c
+2026-10-19T02:05:03.1028287Z   SkiChaletSlalom.c
+2026-10-19T02:05:03.2412199Z   SpringFlingEvent.c
+2026-10-19T02:05:03.4244985Z   TestCapeBug.c
+2026-10-19T02:05:03.6201679Z   TestZoneScript.c
+2026-10-19T02:05:03.6675512Z   TrainingRoomRVEvent.c
+2026-10-19T02:05:03.6913309Z   TrollsRave.c
+2026-10-19T02:05:03.9075160Z   WeddingEvent.c
+2026-10-19T02:05:03.9310972Z   WinterEvent.c
+2026-10-19T02:05:04.1417016Z   ZombieApocalypse.c
+2026-10-19T02:05:04.1611873Z   serverError.c
+2026-10-19T02:05:04.1722265Z   clue.c
+2026-10-19T02:05:04.3953333Z   contact.c
+2026-10-19T02:05:04.4549370Z   contactdef.c
+2026-10-19T02:05:04.8870016Z   contactDialog.c
+2026-10-19T02:05:05.1348186Z   contactInteraction.c
+2026-10-19T02:05:05.4567090Z   contactIntro.c
+2026-10-19T02:05:05.5493402Z   ContactStore.c
+2026-10-19T02:05:06.3906100Z   dialogdef.c
+2026-10-19T02:05:06.4281156Z   locationTask.c
+2026-10-19T02:05:06.5014856Z   mission.c
+2026-10-19T02:05:06.5040210Z   missiondef.c
+2026-10-19T02:05:07.1766586Z C:\isrc\MapServer\src\storyarc\dialogdef.c(947,45): warning C4090: 'function': different 'const' qualifiers [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:07.3714781Z   missionobjective.c
+2026-10-19T02:05:07.4193636Z   missionplacement.c
+2026-10-19T02:05:07.4573206Z   missionscript.c
+2026-10-19T02:05:07.5047715Z   missionServerMapTest.c
+2026-10-19T02:05:08.2427858Z   missionset.c
+2026-10-19T02:05:08.2929899Z C:\isrc\MapServer\src\storyarc\missionServerMapTest.c(243,87): warning C5287: operands are different enum types 'PlayerCreatedDetailType' and 'PlayerCreatedStoryarcValidation'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:08.2967576Z   missionspec.c
+2026-10-19T02:05:08.3361997Z   missionteamup.c
+2026-10-19T02:05:08.3698601Z   notoriety.c
+2026-10-19T02:05:09.1263621Z   playerCreatedStoryarcServer.c
+2026-10-19T02:05:09.3768076Z   pnpc.c
+2026-10-19T02:05:09.4659680Z   skillobj.c
+2026-10-19T02:05:09.4707420Z   SouvenirClue.c
+2026-10-19T02:05:09.6385151Z   storyarc.c
+2026-10-19T02:05:10.1263574Z C:\isrc\MapServer\src\storyarc\playerCreatedStoryarcServer.c(1956,68): warning C5287: operands are different enum types 'PlayerCreatedDetailType' and 'PlayerCreatedStoryarcValidation'; use an explicit cast to silence this warning [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:10.3418550Z   storyarcutil.c
+2026-10-19T02:05:10.4455308Z   storyinfo.c
+2026-10-19T02:05:10.8678206Z   storySend.c
+2026-10-19T02:05:11.0022015Z   storytaskinfo.c
+2026-10-19T02:05:11.5704673Z   task.c
+2026-10-19T02:05:11.6270409Z   taskdef.c
+2026-10-19T02:05:12.0796621Z   taskdetail.c
+2026-10-19T02:05:12.1147890Z   TeamTask.c
+2026-10-19T02:05:12.8265416Z   gloophook.c
+2026-10-19T02:05:12.9653728Z   svr_base.c
+2026-10-19T02:05:13.1498540Z   svr_bug.c
+2026-10-19T02:05:13.1615937Z   svr_init.c
+2026-10-19T02:05:13.7342910Z   svr_player.c
+2026-10-19T02:05:14.0031427Z   svr_tick.c
+2026-10-19T02:05:14.0921758Z C:\isrc\MapServer\src\svr\svr_init.c(1950,17): warning C4133: 'function': incompatible types - from 'FILE *' to 'FileWrapper *' [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:14.2008788Z C:\isrc\MapServer\src\svr\svr_init.c(1951,9): warning C4133: 'function': incompatible types - from 'FILE *' to 'FileWrapper *' [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:14.2467330Z C:\isrc\MapServer\src\svr\svr_init.c(2022,17): warning C4133: 'function': incompatible types - from 'FILE *' to 'FileWrapper *' [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:14.2807183Z C:\isrc\MapServer\src\svr\svr_init.c(2023,9): warning C4133: 'function': incompatible types - from 'FILE *' to 'FileWrapper *' [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:14.3105296Z C:\isrc\MapServer\src\svr\svr_init.c(2033,17): warning C4133: 'function': incompatible types - from 'FILE *' to 'FileWrapper *' [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:14.3162370Z C:\isrc\MapServer\src\svr\svr_init.c(2034,9): warning C4133: 'function': incompatible types - from 'FILE *' to 'FileWrapper *' [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:14.3284456Z C:\isrc\MapServer\src\svr\svr_init.c(2039,17): warning C4133: 'function': incompatible types - from 'FILE *' to 'FileWrapper *' [C:\isrc\out\build\vs2026\MapServer\MapServer.vcxproj]
+2026-10-19T02:05:14.3459481Z   wine_map_progress.c
+2026-10-19T02:05:14.5287719Z   wine_character_events.c
+2026-10-19T02:05:14.9217051Z   wine_monorail.c
+2026-10-19T02:05:15.0158067Z   taskforce.c
+2026-10-19T02:05:15.3409080Z   taskpvp.c
+2026-10-19T02:05:15.5714431Z   taskRandom.c
+2026-10-19T02:05:15.6279192Z   TeamReward.c
+2026-10-19T02:05:15.7940752Z   zowie.c
+2026-10-19T02:05:18.9856721Z   AccountTypes.cpp
+2026-10-19T02:05:18.9857237Z   NwRagdoll.cpp
+2026-10-19T02:05:18.9860820Z   NwSharedStream.cpp
+2026-10-19T02:05:18.9861230Z   NwStream.cpp
+2026-10-19T02:05:19.3366907Z   NwWrapper.cpp
+2026-10-19T02:05:24.9471576Z   MapServer.vcxproj -> C:\isrc\out\build\vs2026\bin\OptDebug\MapServer.exe
+2026-10-19T02:05:25.2563582Z ##[group]Run python - <<'PYINPUTS'
+2026-10-19T02:05:25.2564283Z [36;1mpython - <<'PYINPUTS'[0m
+2026-10-19T02:05:25.2564663Z [36;1mimport hashlib,importlib.util,json,os,pathlib,subprocess,sys[0m
+2026-10-19T02:05:25.2565323Z [36;1mroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()[0m
+2026-10-19T02:05:25.2565985Z [36;1mif head!=os.environ['GITHUB_SHA']:raise ValueError('INPUT_CHECKOUT_CHANGED')[0m
+2026-10-19T02:05:25.2566663Z [36;1madmission=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-source-admission.json').read_bytes())[0m
+2026-10-19T02:05:25.2567276Z [36;1mfor name,digest in admission['source_sha256'].items():[0m
+2026-10-19T02:05:25.2567601Z [36;1m    path=root/name[0m
+2026-10-19T02:05:25.2568134Z [36;1m    if path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest()!=digest:raise ValueError('SOURCE_CHANGED_AROUND_BUILD')[0m
+2026-10-19T02:05:25.2568825Z [36;1mpath=root/'tools/android/interactive/map_startup_inputs.py'[0m
+2026-10-19T02:05:25.2569608Z [36;1mspec=importlib.util.spec_from_file_location('fresh_original_map_inputs',path);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)[0m
+2026-10-19T02:05:25.2570446Z [36;1msys.path.insert(0,str(root/'native-android/engine/scenecatalog-qualification'))[0m
+2026-10-19T02:05:25.2570925Z [36;1mfrom record_export_compile import validate_inputs[0m
+2026-10-19T02:05:25.2571547Z [36;1mfolder=root/'out/native-inputs';receipt=validate_inputs(json.loads((folder/'map-startup-inputs.json').read_bytes()),module)[0m
+2026-10-19T02:05:25.2572249Z [36;1mmodule.checked(folder/'COH-Atlas-Gameplay-0.13.31.apk',module.DONOR)[0m
+2026-10-19T02:05:25.2572766Z [36;1mfor name,pin in receipt['files'].items():module.checked(folder/name,pin)[0m
+2026-10-19T02:05:25.2573460Z [36;1mfiles={name:module.pin(folder/name) for name in ('COH-Atlas-Gameplay-0.13.31.apk',*receipt['files'],'map-startup-inputs.json')}[0m
+2026-10-19T02:05:25.2574396Z [36;1mresult={'schema':'coh-fresh-groups-original-inputs-v1','source_revision':head,'files':files,'donor_rebuilt':False,'runtime_executed':False}[0m
+2026-10-19T02:05:25.2575184Z [36;1mreport=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-inputs-before.json'[0m
+2026-10-19T02:05:25.2575795Z [36;1mif json.loads(report.read_bytes())!=result:raise ValueError('ORIGINAL_INPUT_BYTES_CHANGED')[0m
+2026-10-19T02:05:25.2576689Z [36;1mif (pathlib.Path('C:/isrc')/'map-startup-inputs.json').read_bytes()!=(folder/'map-startup-inputs.json').read_bytes():raise ValueError('STAGED_INPUT_RECEIPT_CHANGED')[0m
+2026-10-19T02:05:25.2577534Z [36;1moutput=pathlib.Path(os.environ['RUNNER_TEMP'])/'fresh-groups-inputs-after.json'[0m
+2026-10-19T02:05:25.2578186Z [36;1mwith output.open('xb') as stream:stream.write((json.dumps(result,indent=2,sort_keys=True)+'\n').encode())[0m
+2026-10-19T02:05:25.2578891Z [36;1mprint(json.dumps({'passed':True,'whole_input_files_reverified':len(files),'runtime_executed':False}))[0m
+2026-10-19T02:05:25.2579364Z [36;1mPYINPUTS[0m
+2026-10-19T02:05:25.2597575Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-19T02:05:25.2597976Z env:
+2026-10-19T02:05:25.2598243Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:25.2598703Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-10-19T02:05:25.2599160Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:25.2599561Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:25.2599963Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:25.2600317Z ##[endgroup]
+2026-10-19T02:05:25.9727471Z {"passed": true, "whole_input_files_reverified": 6, "runtime_executed": false}
+2026-10-19T02:05:26.0091726Z ##[group]Run python native-android/tools/server-initial-observer-20261018/recipe.py record --source-root . --already-staged C:/isrc --binary C:/isrc/out/build/vs2026/bin/OptDebug/MapServer.exe --cmake-cache C:/isrc/out/build/vs2026/CMakeCache.txt --output "$RUNNER_TEMP/server-initial-compile"
+2026-10-19T02:05:26.0094148Z [36;1mpython native-android/tools/server-initial-observer-20261018/recipe.py record --source-root . --already-staged C:/isrc --binary C:/isrc/out/build/vs2026/bin/OptDebug/MapServer.exe --cmake-cache C:/isrc/out/build/vs2026/CMakeCache.txt --output "$RUNNER_TEMP/server-initial-compile"[0m
+2026-10-19T02:05:26.0095308Z [36;1mpython - <<'PYRECEIPT'[0m
+2026-10-19T02:05:26.0095569Z [36;1mimport hashlib,os,pathlib[0m
+2026-10-19T02:05:26.0096037Z [36;1mp=pathlib.Path(os.environ['RUNNER_TEMP'])/'server-initial-compile/compile-only-receipt.json'[0m
+2026-10-19T02:05:26.0096916Z [36;1mwith pathlib.Path(os.environ['GITHUB_OUTPUT']).open('a') as out:out.write('receipt_sha256='+hashlib.sha256(p.read_bytes()).hexdigest()+'\n')[0m
+2026-10-19T02:05:26.0097522Z [36;1mPYRECEIPT[0m
+2026-10-19T02:05:26.0115755Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-19T02:05:26.0116157Z env:
+2026-10-19T02:05:26.0116423Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:26.0116884Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-10-19T02:05:26.0117339Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:26.0117743Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:26.0118162Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:26.0118484Z ##[endgroup]
+2026-10-19T02:05:34.5490818Z {"build_role": "nonshipping_same_owner_initial_send_observer", "compile_only": true, "passed": true, "runtime_executed": false, "source_revision": "cf1ab9f7e872467473bc50da822ee6cfc041d639", "world_authority": false}
+2026-10-19T02:05:34.6512115Z ##[group]Run actions/upload-artifact@v4
+2026-10-19T02:05:34.6512604Z with:
+2026-10-19T02:05:34.6513242Z   name: server-initial-compile-cf1ab9f7e872467473bc50da822ee6cfc041d639-attempt-1
+2026-10-19T02:05:34.6514363Z   path: D:\a\_temp/server-initial-compile/
+2026-10-19T02:05:34.6514824Z   if-no-files-found: error
+2026-10-19T02:05:34.6515225Z   retention-days: 90
+2026-10-19T02:05:34.6515539Z   compression-level: 6
+2026-10-19T02:05:34.6515843Z   overwrite: false
+2026-10-19T02:05:34.6516152Z   include-hidden-files: false
+2026-10-19T02:05:34.6516495Z env:
+2026-10-19T02:05:34.6516888Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:34.6517643Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-10-19T02:05:34.6518378Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:34.6519078Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:34.6519833Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:34.6520369Z ##[endgroup]
+2026-10-19T02:05:34.8797407Z (node:372) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-19T02:05:34.8798712Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-19T02:05:34.9018511Z With the provided path, there will be 28 files uploaded
+2026-10-19T02:05:34.9024924Z Artifact name is valid!
+2026-10-19T02:05:34.9026506Z Root directory input is valid!
+2026-10-19T02:05:35.2001206Z Beginning upload of artifact content to blob storage
+2026-10-19T02:05:35.5180642Z (node:372) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-19T02:05:35.9776327Z Uploaded bytes 3493065
+2026-10-19T02:05:36.0187799Z Finished uploading artifact content to blob storage!
+2026-10-19T02:05:36.0189579Z SHA256 digest of uploaded artifact zip is 397cd6e78b1c0ba97d858ee579f0cfd1735b55344851b2875a30ef263eb02921
+2026-10-19T02:05:36.0192602Z Finalizing artifact upload
+2026-10-19T02:05:36.2687612Z Artifact server-initial-compile-cf1ab9f7e872467473bc50da822ee6cfc041d639-attempt-1.zip successfully finalized. Artifact ID 12157884954
+2026-10-19T02:05:36.2689329Z Artifact server-initial-compile-cf1ab9f7e872467473bc50da822ee6cfc041d639-attempt-1 has been successfully uploaded! Final size is 3493065 bytes. Artifact ID is 12157884954
+2026-10-19T02:05:36.2699567Z Artifact download URL: https://github.com/Russianranger/coh-android/actions/runs/39187512629/artifacts/12157884954
+2026-10-19T02:05:36.3049825Z ##[group]Run actions/upload-artifact@v4
+2026-10-19T02:05:36.3050171Z with:
+2026-10-19T02:05:36.3050583Z   name: server-initial-build-diagnostics-cf1ab9f7e872467473bc50da822ee6cfc041d639-attempt-1
+2026-10-19T02:05:36.3051606Z   path: D:\a\_temp/fresh-groups-build-logs/
+D:\a\_temp/fresh-groups-source-admission.json
+D:\a\_temp/fresh-groups-inputs-before.json
+D:\a\_temp/fresh-groups-inputs-after.json
+
+2026-10-19T02:05:36.3052375Z   if-no-files-found: warn
+2026-10-19T02:05:36.3052616Z   retention-days: 90
+2026-10-19T02:05:36.3052826Z   compression-level: 6
+2026-10-19T02:05:36.3053026Z   overwrite: false
+2026-10-19T02:05:36.3053223Z   include-hidden-files: false
+2026-10-19T02:05:36.3053447Z env:
+2026-10-19T02:05:36.3053906Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:36.3054445Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-10-19T02:05:36.3054934Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:36.3055542Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:36.3055958Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-10-19T02:05:36.3056275Z ##[endgroup]
+2026-10-19T02:05:36.5084183Z (node:3724) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-19T02:05:36.5085452Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-19T02:05:36.5189523Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-19T02:05:36.5195293Z The least common ancestor is D:\a\_temp. This will be the root directory of the artifact
+2026-10-19T02:05:36.5196595Z With the provided path, there will be 5 files uploaded
+2026-10-19T02:05:36.5204097Z Artifact name is valid!
+2026-10-19T02:05:36.5206099Z Root directory input is valid!
+2026-10-19T02:05:36.8023497Z Beginning upload of artifact content to blob storage
+2026-10-19T02:05:36.8418484Z (node:3724) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-19T02:05:36.9954133Z Uploaded bytes 41646
+2026-10-19T02:05:37.0462134Z Finished uploading artifact content to blob storage!
+2026-10-19T02:05:37.0463565Z SHA256 digest of uploaded artifact zip is e28d22b617bcc6514a612e6547bf97284b5c2419ac941f6f712b891e0038323c
+2026-10-19T02:05:37.0466336Z Finalizing artifact upload
+2026-10-19T02:05:37.3436048Z Artifact server-initial-build-diagnostics-cf1ab9f7e872467473bc50da822ee6cfc041d639-attempt-1.zip successfully finalized. Artifact ID 12158852165
+2026-10-19T02:05:37.3437923Z Artifact server-initial-build-diagnostics-cf1ab9f7e872467473bc50da822ee6cfc041d639-attempt-1 has been successfully uploaded! Final size is 41646 bytes. Artifact ID is 12158852165
+2026-10-19T02:05:37.3447825Z Artifact download URL: https://github.com/Russianranger/coh-android/actions/runs/39187512629/artifacts/12158852165
+2026-10-19T02:05:37.3819813Z Post job cleanup.
+2026-10-19T02:05:37.5551402Z (node:3396) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-19T02:05:37.5552269Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-19T02:05:37.6018048Z Post job cleanup.
+2026-10-19T02:05:37.8629967Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-19T02:05:37.9004053Z git version 2.56.0.windows.2
+2026-10-19T02:05:37.9067124Z Copying 'C:\Users\runneradmin\.gitconfig' to 'D:\a\_temp\33d126ca-842c-4bbb-bad0-b8c0e237e619\.gitconfig'
+2026-10-19T02:05:37.9088916Z Temporarily overriding HOME='D:\a\_temp\33d126ca-842c-4bbb-bad0-b8c0e237e619' before making global git config changes
+2026-10-19T02:05:37.9090224Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-19T02:05:37.9101542Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\coh-android\coh-android
+2026-10-19T02:05:37.9510170Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-19T02:05:37.9922446Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-19T02:05:38.6165074Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-19T02:05:38.6600358Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-19T02:05:39.3134207Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-19T02:05:39.3631481Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-19T02:05:40.0019561Z Evaluate and set job outputs
+2026-10-19T02:05:40.0025848Z Set output 'artifact_id'
+2026-10-19T02:05:40.0027566Z Set output 'artifact_digest'
+2026-10-19T02:05:40.0028269Z Set output 'receipt_sha256'
+2026-10-19T02:05:40.0028948Z Cleaning up orphan processes
+2026-10-19T02:05:40.0247261Z Terminate orphan process: pid (4692) (vctip)
+2026-10-19T02:05:40.0577306Z Terminate orphan process: pid (5764) (MSBuild)
+2026-10-19T02:05:40.0642350Z Terminate orphan process: pid (7932) (MSBuild)
+2026-10-19T02:05:40.0744895Z Terminate orphan process: pid (9388) (MSBuild)
+2026-10-19T02:05:40.0920481Z Terminate orphan process: pid (3756) (mspdbsrv)
+2026-10-19T02:05:40.0945029Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

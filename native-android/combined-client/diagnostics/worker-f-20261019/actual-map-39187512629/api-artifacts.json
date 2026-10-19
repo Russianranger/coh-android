@@ -1,0 +1,42 @@
+{
+  "artifacts": [
+    {
+      "id": 12158852165,
+      "name": "server-initial-build-diagnostics-cf1ab9f7e872467473bc50da822ee6cfc041d639-attempt-1",
+      "size_in_bytes": 41646,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12158852165",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12158852165/zip",
+      "expired": false,
+      "created_at": "2026-10-19T02:05:37Z",
+      "expires_at": "2027-01-17T01:55:07Z",
+      "updated_at": "2026-10-19T02:05:37Z",
+      "digest": "sha256:e28d22b617bcc6514a612e6547bf97284b5c2419ac941f6f712b891e0038323c",
+      "workflow_run": {
+        "id": 39187512629,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "cf1ab9f7e872467473bc50da822ee6cfc041d639"
+      }
+    },
+    {
+      "id": 12157884954,
+      "name": "server-initial-compile-cf1ab9f7e872467473bc50da822ee6cfc041d639-attempt-1",
+      "size_in_bytes": 3493065,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12157884954",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/12157884954/zip",
+      "expired": false,
+      "created_at": "2026-10-19T02:05:36Z",
+      "expires_at": "2027-01-17T01:55:07Z",
+      "updated_at": "2026-10-19T02:05:36Z",
+      "digest": "sha256:397cd6e78b1c0ba97d858ee579f0cfd1735b55344851b2875a30ef263eb02921",
+      "workflow_run": {
+        "id": 39187512629,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "native-android",
+        "head_sha": "cf1ab9f7e872467473bc50da822ee6cfc041d639"
+      }
+    }
+  ]
+}

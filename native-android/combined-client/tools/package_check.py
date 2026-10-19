@@ -100,7 +100,7 @@ def audit(args):
     identity = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", metadata, re.M)
     assert identity and identity.group(1) == PACKAGE
     if args.require_interop:
-        assert identity.group(2) == '9' and identity.group(3) == '0.1.8-gates25-27-test'
+        assert identity.group(2) == '10' and identity.group(3) == '0.1.9-gates25-27-test'
     assert "launchable-activity: name='org.coh.nativecombined.MainActivity'" in metadata
     signer = run([tool(args, 'apksigner'), 'verify', '--print-certs', args.apk])
     certificates = re.findall(r'Signer #\d+ certificate SHA-256 digest: (\S+)', signer)

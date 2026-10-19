@@ -1,0 +1,10 @@
+test_exact_upgrade_identity_source (test_fragment_driver.FragmentDriver.test_exact_upgrade_identity_source) ... ok
+test_new_peer_role_reverses_to_unchanged_historical_peer (test_fragment_driver.FragmentDriver.test_new_peer_role_reverses_to_unchanged_historical_peer) ... ok
+test_new_streaming_fixtures_are_repeatable_and_hit_both_original_forms (test_fragment_driver.FragmentDriver.test_new_streaming_fixtures_are_repeatable_and_hit_both_original_forms) ... ok
+test_privacy_authority_bounds_and_producer_mismatch_refuse (test_fragment_driver.FragmentDriver.test_privacy_authority_bounds_and_producer_mismatch_refuse) ... ok
+test_retained_physical_projection_with_explicit_new_numeric_extension (test_fragment_driver.FragmentDriver.test_retained_physical_projection_with_explicit_new_numeric_extension) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.012s
+
+OK

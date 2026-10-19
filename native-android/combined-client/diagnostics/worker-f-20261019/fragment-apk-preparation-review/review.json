@@ -1,0 +1,36 @@
+{
+  "APK_published": false,
+  "actual_Android_build_or_execution_in_this_review": false,
+  "exact_retained_host_archive_verified": {
+    "bytes": 219050,
+    "sha256": "d3d85b2c07fdf91ef69559f112698dc8c589f68b50fc3e9cf063ed037077940d"
+  },
+  "gates25_27": "OPEN",
+  "host_OS_UDP_proof_source_pins_verified": 54,
+  "host_OS_UDP_replayed_by_reviewer": false,
+  "independent_driver_control_methods_passed": 5,
+  "independent_fixture_regeneration_byte_equal": true,
+  "negative_driver_subcases": 14,
+  "original_server_executed": false,
+  "passed": true,
+  "preparation_proof_sha256": "e1717d2ef7a09feafbab78990085e24f9f385f04e0dff9bf2854f50c93b7187f",
+  "preparation_source_pins_verified": 15,
+  "retained_host_ELFs": {
+    "peer": {
+      "bytes": 688576,
+      "sha256": "1692720fc7580e38adc2a129904a1d738498259872115e0720ef18c43db37535"
+    },
+    "receiver": {
+      "bytes": 184896,
+      "sha256": "72e87a85e15ebd5e9d3a5683b751e3d2f88d582242d4cd5f5bfc808b96b5f3f9"
+    }
+  },
+  "review": [
+    "Version10/name0.1.9 retains package and exact original test signer source; imports/settings and Java producer remain unchanged.",
+    "Peer compile-time hooks reverse to historical original when disabled; new host fixture exactly1200B single sibling and6295B six siblings intentionally use synthetic65536B body, later orderedID0, part zero last.",
+    "New-only Android driver requires actual API33 x86_64 JNI mapped DSO, both scenarios, receive producer counter equality, no malformed/bound/timeout reports, SAF numeric export equality, owned socket cleanup and no ANR/crash.",
+    "Every legacy and new authority field remains false; original Auth/DB/Map, whole original character serialization, physical Thor and whole-process memory remain unqualified."
+  ],
+  "schema": "coh-independent-fragment-APK-preparation-review-v1",
+  "world_authority": false
+}
