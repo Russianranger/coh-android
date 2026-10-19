@@ -1,33 +1,35 @@
-# CoH native ARM64: supergroup color array
+# CoH native ARM64: scales
 
-native-android only; baseline79002c0. Thor Android13/ARM64.
+native-android only; baselinedf2b23e. Thor Android13/ARM64.
 Physical Combined0.1.9: GROUPS42,889B/ALLENTS37,712B (7,721compressed);
 31UDP/0decodefailures; both sockets closed. ZIP CLOSED=cleanup. No raw body.
 Do not repeat accepted broad suites.
 
-After verified FIRST body appearance scalars, same immutable loan calls
-coh_initial_sgcolors_probe at appearance.end_bit. Exactly6slots*12rawU32words
-(72total/2304bits), discarded without interpretation, retention or application.
-Count only complete words. WORD/INVALID points at first bit of shortened word;
-slot=words_read/12,channel=words_read%12. Exact scalar end diagnoses missing
-first word. Array completion stops BEFORE first scale F32 at SCALES;
-UNSUPPORTED with tail, INVALID at exact end, array_validated retained.
-No allocation, dictionary, fabricated generation or COH_OK/complete costume.
+After FIRST body SG array, same immutable loan calls coh_initial_scales_probe
+at SG.end_bit. Initial self/extra1 means30F32words, not quantized scales.
+Discard values; reject exponent255 as existing native finite policy without FP
+evaluation. Original sender can emit nonfinite bits. All finite values fit,
+including±0/subnormals/max magnitudes/outside[-1,1]; no new range/clamp.
 
-All prior prefix/leaf/list/slot/body/appearance sources/results unchanged.
-Unresolved indexed strings still stop BEFORE Pack. New33..34 progress preserves
-prior boundaries using compact slot pair/Pack-width selector/word count;
-mapping in FIRST_CREATE.md. First-literal fields,4MiB input,192B child/7,168B
-report, overflow guard and wiped cleanup preserved.
-Release/ASan/UBSan each2,753,937native checks/109fixtures; JNI5,613/99scenarios,
-111wipedfrees. Report observed7,155B; bounded7,167B+NUL. Fixture stops4182.
+Only complete finite scales count. Short VALUE/INVALID points at currentword;
+NONFINITE/INVALID consumes32bits with countunchanged/nonfinite_seen1. All30finite
+stop BEFORE part-countflag/default/Pack4 at PART_COUNT; UNSUPPORTED with tail,
+INVALID at exact end retaining scales_validated. Max30reads/960bits. No allocation,
+retained values, dictionary/generation or COH_OK/complete costume.
 
-Evidence: engine/initial-capture/qualification/initial-sgcolors-20261019.
-CI: Native initial ALLENTS supergroup color array. Whole original costume_send,
-ordered source-produced word patterns, explicit fixture adapters. No live server
-transaction/new Thor run/APK. No complete character/ownership/generation/actor/
-ACK/world acceptance. Combined0.1.9/Gates1–24 preserved; Gates25–27 open.
+All prior sources/results and indexed-string stops BEFORE Pack unchanged.
+New35..37 progress preserves boundaries via finitecount/nonfiniteflag; mapping
+in FIRST_CREATE.md. First-literal fields,4MiB input,192B child/7,168B report,
+overflow guard and wiped cleanup preserved.
+Release/ASan/UBSan:2,062,160native checks/257fixtures; JNI6,453/113scenarios,
+125wipedfrees. Observed7,155B; bounded7,167B+NUL. Fixture ends5142.
 
-ONE milestone only. Next: bounded source-qualified scale stage before parts,
-preserving unresolved dictionary-index stops. Fetch latest/read both handoffs;
+Evidence: engine/initial-capture/qualification/initial-scales-20261019.
+CI: Native initial ALLENTS scale array. Whole original costume_send/F32writers,
+explicit fixture adapters. No live server transaction/new Thor run/APK.
+No complete character/ownership/generation/actor/ACK/world acceptance.
+Combined0.1.9/Gates1–24 preserved; Gates25–27 open.
+
+ONE milestone only. Next: bounded source-qualified part-count framing, stopping
+before unresolved catalog/default/part indices. Fetch latest/read both handoffs;
 do not enable authority/application ACKs.

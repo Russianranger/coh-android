@@ -344,7 +344,7 @@ No SG colors/scales/part count/parts, unresolved indexed string or later record
 is read. No body/catalog membership, generation, ownership, actor, world or
 application ACK acceptance is granted.
 
-The current addition, `coh_initial_sgcolors_probe`, starts at verified
+The accepted `coh_initial_sgcolors_probe` starts at verified
 `appearance.end_bit` in the SAME immutable loan. Exact-end scalar completion
 still invokes it, reporting the missing first color word. It reads/discards
 exactly72 raw U32 bitset words:6 slots ×12 words. Within each slot the source
@@ -381,6 +381,43 @@ scalar widths before packing. Maximum combined delta6605 packed/6656 compressed
 still fits4 digits. Fixed4MiB input,192-byte child,7,168-byte report, overflow
 guard and wiped cleanup remain. Scales, part count, parts and later records
 remain unread; no dictionary or fabricated generation is supplied.
+
+The current addition, `coh_initial_scales_probe`, starts at verified SG
+`end_bit` in the SAME immutable loan, including exact SG end to diagnose a
+missing first scale. The accepted initial self profile requires extra1, so all
+30 source scales are F32 words. The other extra0 profile (first F32 then29
+quantized values) remains refused at the existing appearance boundary.
+
+Each full32-bit word is inspected using its IEEE754 exponent bits, without
+floating-point evaluation. Exponent255 is INVALID/NONFINITE, matching existing
+native `coh_ent_costume` isfinite policy. This is a native bounded acceptance
+rule, not an assertion that the original sender cannot emit NaN/infinity. All
+finite values remain syntax-valid, including signed zero, subnormals, largest
+finite magnitudes and values outside[-1,1]. No new numeric range or clamp is
+invented. Values are discarded without retention, application or publication.
+
+Only complete finite words increment `scales_read`. A shortened VALUE reports
+its first bit, preserving the count. A full nonfinite word consumes32 bits,
+sets `nonfinite_seen` and fails AFTER that word without incrementing finite count;
+zero-based bad index is scales_read. After all30 finite words, scales_validated
+means syntax plus the existing finite policy only. Stop BEFORE part-count
+presence/default/Pack4: UNSUPPORTED with tail, INVALID at exact end, retaining
+scale completion. No COH_OK or complete costume/character/authority follows.
+Maximum30 reads/960bits in either profile; no allocation or dictionary supplied.
+
+Prior failure projections remain unchanged. New stages35 VALUE,36 NONFINITE,
+37 FIRST_PART_COUNT_REQUIRED keep7 positions [status,stage,done0,done1,list_end,
+total_delta,metadata]. Bits0..20 retain the accepted SG complete-context layout;
+bits21..25 finite count0..30;bit26 nonfinite (1 only at stage36). Prior SG72-word
+completion is implicit. Exact failure=list_end+total_delta; SG end=failure-
+32*(finite_count+nonfinite), and SG begin=SG end-2304. Earlier body/scalar/slot
+boundaries remain recoverable via the retained Pack selector and slot pair.
+The formatter validates stage/count/cursor consistency and completed SG context
+using the accepted parent formatter. Maximum combined delta7565 packed/7616
+compressed still fits4 digits. Existing first-literal fields,4MiB input,192-byte
+child,7,168-byte report, overflow guard, cleanup and earlier indexed-string
+stops remain intact. Part counts/defaults, parts and later records stay unread;
+no fabricated generation or authority/application ACK permission is introduced.
 
 ## Original protocol evidence
 
@@ -481,6 +518,12 @@ Original `costume.h:136` fixes NUM_SG_COLOR_SLOTS at6. The unchanged
 12 low/high words per slot, then the scale loop. These words are raw bitsets,
 not cached/palette indices. No runtime color/resource membership is inferred.
 
+Original `costume.h:83..113` enumerates30 scale entries. `costume_send:1565..1570`
+and `costume_receive:1462..1467` select F32 for every entry under extra1, then
+immediately send/read the part-count flag. Existing native `coh_costume.c:86`
+requires finite F32 values without another numeric range. No runtime resource
+or body-part count is invented by this bounded scale observer.
+
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
 against the owned local-development handoff; it does not establish whole-list
@@ -494,41 +537,46 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_sgcolors_probe.py --sanitize --output NEW.json` executes unchanged
-whole original `costume_send` with actual source cache/index/bit-writing helpers.
-Explicit fixture shells fill ordered per-slot/channel U32 patterns; independent
-projection checks all72 source words and the exact first-scale boundary. Fixture
-adapters establish no actual resource/catalog membership or generation. Original
-consumer order is inspected, not applied. Accepted appearance source/receipt
-hashes are checked; no old checker mains or native suites are replayed. The
-accepted parent formatter is reused for numeric context validation only.
+`check_initial_scales_probe.py --sanitize --output NEW.json` executes unchanged
+whole original `costume_send`, `pktSendF32` and `bsWriteF32`, with source
+cache/index/bit helpers. The pinned non-debug packet bridge uses hasDebugInfo0;
+the typed debug branch is excluded explicitly. Original F32 alias code executes
+unsanitized at O0 without source modification. Explicit
+fixture shells supply ordered raw float-bit patterns; independent projection
+checks each of30 source F32s and the exact part-count flag boundary. QuietNaN
+and infinities are source-produced native-policy refusal controls; signalingNaN
+is labeled post-source wire mutation to avoid ABI quieting assumptions. Fixture
+adapters establish no real catalog/generation or complete character state.
+Original consumer ordering is inspected, not applied. Accepted SG source/receipt
+hashes are checked; no old checker mains/native suites are replayed. Accepted
+parent formatters are reused for bounded numeric context validation only.
 
-Release, ASan and UBSan each pass2,753,937 checks across109 fixtures, including
-209,664 shortened word extents,209,664 color-bit discard controls,88,445 unread
-scale/part-tail controls,50 whole-pattern equivalences,10 API/alias controls,
-48 formatter-domain controls and all55 triangular slot-pair roundtrips. The
-source fixture has72 distinct words, including zero, all ones and high-bit
-patterns. Native parser frame is176 bytes; formatters64/240 bytes are bounded,
-with the latter reusing the accepted parent formatter. These are host stack
-figures, not device RSS qualification.
+Release, ASan and UBSan each pass2,062,160 checks across257 fixtures, including
+146,240 shortened extents,146,240 bit-mutation classifications,58,845 unread
+later-scale/part controls,50 finite and90 nonfinite value-discard equivalences,
+10 API/alias controls and44 formatter-domain controls. The257 source/wire cases
+produce109 finite completions and148 bounded NaN/Inf refusals. Source packet and
+bitstream F32 functions are pinned, including the original non-debug packet
+bridge; the accepted shared pin manifest is unchanged. Native parser frame is
+176 bytes; formatters80/208 bytes are bounded host evidence, not device RSS proof.
 
-Affected JNI release/ASan/UBSan each pass5,613 checks across99 scenarios with111
+Affected JNI release/ASan/UBSan each pass6,453 checks across113 scenarios with125
 wiped frees. Observed maximum report is7,155 bytes. Bounded projection checks
 reach7,167 bytes plus NUL (159-byte child), preserving all other observed fixture
 fields. This does not qualify every possible transport-counter combination;
 the existing overflow guard remains. No limits are increased.
 
-The JNI fixture preserves accepted bytes through1878, then uses original
-producer SG words. Array end4182 is immediately BEFORE the first source F32
-scale. JNI doubles cover missing/partial first and later words, slot boundaries,
-last-word truncation, exact array end, discarded word changes, unread scale-tail
-mutations and preserved dictionary/extra-profile refusals. Raw observation,
-cleanup and all authority/application ACK false fields remain intact.
+The JNI fixture preserves accepted bytes through4182, then source-produced
+scale words end5142 BEFORE part-count flag. Controls cover missing/partial
+first/middle/last scales, signed zeros/finite extremes, quiet/signalingNaN and
+infinities at bounded indices, exact scale end, unread part-tail mutations and
+preserved dictionary/extra-profile refusals. Raw capture, cleanup and authority/
+application ACK false fields remain intact.
 
-Receipts/source hashes are in `qualification/initial-sgcolors-20261019/`;
-focused CI is `Native initial ALLENTS supergroup color array`. Exactly ONE array
-milestone ends here. No renderer/compiler/network/Android13 suites, live original
-server transaction, new Thor run or APK is claimed. Complete costume/character,
+Receipts/source hashes are in `qualification/initial-scales-20261019/`;
+focused CI is `Native initial ALLENTS scale array`. Exactly ONE scale milestone
+ends here. No renderer/compiler/network/Android13 suites, live original-server
+transaction, new Thor run or APK is claimed. Complete costume/character,
 dictionary-generation and session-ownership qualification remain blocked.
 
 The previously reported unsupported Map count is the ordinary successful GROUPS
