@@ -1,0 +1,87 @@
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c: In function ‘FileListSearch’:
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:134:32: error: expected ‘)’ before ‘;’ token
+  134 |     int back = eaSize(list) - 1;
+      |                                ^
+      |                                )
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:36:51: note: to match this ‘(’
+   36 | #define eaSize(handle)                            (EAPtrTest(handle), eaSizeUnsafe(handle))
+      |                                                   ^
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:134:16: note: in expansion of macro ‘eaSize’
+  134 |     int back = eaSize(list) - 1;
+      |                ^~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:178:1: error: expected ‘,’ or ‘;’ before ‘}’ token
+  178 | }
+      | ^
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:180:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  180 | static int observed_search(FileList*list,char*path,int*found){owner.receipt.search_calls++;int index=FileListSearch(list,path,found);assert(index>=0&&(unsigned)index<=owner.count);owner.last_index=(uint32_t)index;owner.last_found=(uint32_t)*found;return index;}
+      | ^~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:180:12: error: invalid storage class for function ‘observed_search’
+  180 | static int observed_search(FileList*list,char*path,int*found){owner.receipt.search_calls++;int index=FileListSearch(list,path,found);assert(index>=0&&(unsigned)index<=owner.count);owner.last_index=(uint32_t)index;owner.last_found=(uint32_t)*found;return index;}
+      |            ^~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:182:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  182 | FileEntry* FileListFind(FileList* list, char* path)
+      | ^~~~~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:194:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  194 | void FileListInsert(FileList* list, const char* path, __time32_t date)
+      | ^~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:223:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  223 | int FileListLength(FileList *list)
+      | ^~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c: In function ‘FileListLength’:
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:225:24: error: expected ‘)’ before ‘;’ token
+  225 |     return eaSize(list);
+      |                        ^
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:36:51: note: to match this ‘(’
+   36 | #define eaSize(handle)                            (EAPtrTest(handle), eaSizeUnsafe(handle))
+      |                                                   ^
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:225:12: note: in expansion of macro ‘eaSize’
+  225 |     return eaSize(list);
+      |            ^~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:225:25: error: expected ‘;’ before ‘}’ token
+  225 |     return eaSize(list);
+      |                         ^
+      |                         ;
+  226 | }
+      | ~                        
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c: In function ‘FileListSearch’:
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:227:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  227 | void FileListDestroy(FileList* list)
+      | ^~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:239:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  239 | static int valid(Span s){return s.p?(uintptr_t)s.p<=UINTPTR_MAX-s.n:!s.n;}
+      | ^~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:239:12: error: invalid storage class for function ‘valid’
+  239 | static int valid(Span s){return s.p?(uintptr_t)s.p<=UINTPTR_MAX-s.n:!s.n;}
+      |            ^~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:240:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  240 | static int apart(Span a,Span b){return !a.n||!b.n||(uintptr_t)a.p+a.n<=(uintptr_t)b.p||(uintptr_t)b.p+b.n<=(uintptr_t)a.p;}
+      | ^~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:240:12: error: invalid storage class for function ‘apart’
+  240 | static int apart(Span a,Span b){return !a.n||!b.n||(uintptr_t)a.p+a.n<=(uintptr_t)b.p||(uintptr_t)b.p+b.n<=(uintptr_t)a.p;}
+      |            ^~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:241:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  241 | static int ascii_path(const char*p,size_t n,size_t cap){if(n>=cap||p[n])return 0;for(size_t i=0;i<n;i++)if(!p[i]||(unsigned char)p[i]>127)return 0;return 1;}
+      | ^~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:241:12: error: invalid storage class for function ‘ascii_path’
+  241 | static int ascii_path(const char*p,size_t n,size_t cap){if(n>=cap||p[n])return 0;for(size_t i=0;i<n;i++)if(!p[i]||(unsigned char)p[i]>127)return 0;return 1;}
+      |            ^~~~~~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:242:1: error: ISO C forbids nested functions [-Werror=pedantic]
+  242 | CohStatus filelifecycle_apply(const FileLifecycleRequest*request,const FileLifecycleIdentity*observed,const FileLifecycleIdentity*expected,const CohCostumeImportDigest*digest,FileLifecycleResult*out,FileLifecycleReceipt*receipt,size_t budget,size_t retained){
+      | ^~~~~~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:309:1: error: expected declaration or statement at end of input
+  309 | }
+      | ^
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:134:9: error: unused variable ‘back’ [-Werror=unused-variable]
+  134 |     int back = eaSize(list) - 1;
+      |         ^~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:133:9: error: unused variable ‘front’ [-Werror=unused-variable]
+  133 |     int front = 0;
+      |         ^~~~~
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:309:1: error: no return statement in function returning non-void [-Werror=return-type]
+  309 | }
+      | ^
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c: At top level:
+/workspace/scratch/0484ad305122/lifecycle-attempt1/file-list-lifecycle-provider.c:242:11: error: ‘filelifecycle_apply’ defined but not used [-Werror=unused-function]
+  242 | CohStatus filelifecycle_apply(const FileLifecycleRequest*request,const FileLifecycleIdentity*observed,const FileLifecycleIdentity*expected,const CohCostumeImportDigest*digest,FileLifecycleResult*out,FileLifecycleReceipt*receipt,size_t budget,size_t retained){
+      |           ^~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors

@@ -1,0 +1,26 @@
+{
+  "attempts": [
+    {
+      "command": "failed-attempt1/release/compile.command.json",
+      "diagnostics": "failed-attempt1/release/compile.stderr",
+      "name": "failed-attempt1",
+      "passed": false,
+      "reason": "New extraction regex captured GNU EAPtrTest without its final closing parenthesis. Unchanged original bodies were not modified; corrected extraction includes exact entire source macro.",
+      "stage": "release compile"
+    },
+    {
+      "name": "attempt2",
+      "passed": true,
+      "scope": "Release/ASan/UBSan passed; later comments corrected and final rerun performed. Full intermediate evidence remains scratch/lifecycle-attempt2; final accepted source/run evidence is passing-final."
+    },
+    {
+      "final_stderr_empty": true,
+      "name": "passing-final",
+      "passed": true,
+      "receipt": "host.json",
+      "stage": "release,ASan,UBSan"
+    }
+  ],
+  "original_allocator_failure_recovery_claimed": false,
+  "schema": "coh-file-list-lifecycle-iteration-evidence-v1"
+}

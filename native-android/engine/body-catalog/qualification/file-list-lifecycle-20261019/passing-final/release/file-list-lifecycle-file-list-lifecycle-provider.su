@@ -1,0 +1,15 @@
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:54:12:ascii_ncompare	8	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:60:13:forwardSlashes.part.0	16	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:80:13:reservation_cleanup	32	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:180:12:observed_search	32	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:50:5:filelifecycle_is_idle	8	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:51:8:filelifecycle_owned_bytes	8	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:86:6:eaClearExDbg	80	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:108:6:eaDestroyDbg	16	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:122:6:eaDestroyExDbg	16	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:127:6:FileListCreate	16	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:182:12:FileListFind	304	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:194:6:FileListInsert	352	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:223:5:FileListLength	8	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:227:6:FileListDestroy	16	static
+/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c:242:11:filelifecycle_apply	9088	static

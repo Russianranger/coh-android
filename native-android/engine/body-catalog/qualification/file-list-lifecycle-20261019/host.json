@@ -1,0 +1,839 @@
+{
+  "schema": "coh-original-file-list-lifecycle-qualification-v1",
+  "passed": true,
+  "source_revision": "2b37d604806caf7fbc34395d35517cc444afe604",
+  "source_sha256": {
+    "native-android/engine/body-catalog/check_file_list_lifecycle.py": "4e35a1753d6cbbca20b9b4dca070f67179e660657a162ceb402abace388019a7",
+    "native-android/engine/body-catalog/file-list-lifecycle-source-pins.json": "7e6ee0a626967411266c0964aa0bc05351184c75106d01b13c1e9fd752d08194",
+    "native-android/engine/body-catalog/file-list-ops-source-pins.json": "ffe1abc044d8742f55056134a3ea09d9749d5f4f26805aa1e0781857f8b9c721",
+    "native-android/engine/body-catalog/file_list_lifecycle_provider.py": "7acc7de1f7887db7a3b9ac05ea3a24fadf742bbb353b5b05104d56dad87c19db",
+    "native-android/engine/body-catalog/file_list_ops_provider.py": "3f9265b326565cd412e61f864e8c94688cd8eaa70b214ef81cdc2a688cf784f3",
+    "native-android/engine/body-catalog/test_file_list_lifecycle.c": "abff24b0776dbcd22dcee08f879a7a0b1f204e0e6055448ad658b85e123f8a32",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/earray.h": "b8a47a959058f936f1a72f8dd66fc0004c0bb07ee9ca685e284c217c99376466",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/utils.h": "36eab864c8dfeda46f6b9f57b20abe2378db976943e04de6b5e8b461b69c56a3",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7"
+  },
+  "source_stable_before_after": true,
+  "host_environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "byteorder": "little",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "python_executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "original_Win32_or_Android_ABI_qualified": false
+  },
+  "host_compiler_identity": {
+    "command": "cc",
+    "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+    "executable_bytes": 1023032,
+    "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+    "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+    "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+  },
+  "compiler_and_python_stable_before_after": true,
+  "original_provider": {
+    "schema": "coh-original-file-list-lifecycle-provider-v1",
+    "source_baseline_revision": "2b37d604806caf7fbc34395d35517cc444afe604",
+    "source_sha256": {
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/utils.h": "36eab864c8dfeda46f6b9f57b20abe2378db976943e04de6b5e8b461b69c56a3",
+      "upstream/ouroboros/libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/earray.h": "b8a47a959058f936f1a72f8dd66fc0004c0bb07ee9ca685e284c217c99376466"
+    },
+    "source_pins_sha256": "7e6ee0a626967411266c0964aa0bc05351184c75106d01b13c1e9fd752d08194",
+    "whole_function_sha256_lf": {
+      "FileListCreate": "c01af04b087e22046ecfabd3c987838484ac7397dd72f2e0e0cc630bdc5f0a77",
+      "FileListSearch": "180f1613c322f35f02dc4e53e75b574de0307983781ef3a2c78d4d8b12c6939b",
+      "FileListInsert": "e3a66df3bd1d81df9f19a116b9ea797dfa4a6ffa9695ae6f9e72ccf1ad305884",
+      "FileListFind": "0553fb7d9aac38f41c8a42c7f8e051a2c6273874f398c719d5c6ac624b556cee",
+      "FileListLength": "206a765b0fcc34a962f6cc04e646462882ec19c6d515c33ea0b0f3c0effbe80c",
+      "FileListDestroy": "a57edd71a409cf7248c3d703f277f7507c7e3e1be34179e7a8f2621e0ce07136",
+      "eaClearExDbg": "d58a64110b6f7f6b7b4c12a3a8b0621495d23d6ed693cd20c6202863aa41c68e",
+      "eaDestroyDbg": "0acf89edcc4d01a76a778d7676d5a45a939180a0d62b3736d6c49bb56095d4b6",
+      "eaDestroyExDbg": "481bf1332c588b40f1da0e8425f54eff3528b5a083ea839c3c897b97942edd56"
+    },
+    "original_declaration_sha256_lf": {
+      "FileEntry": "a8daff72158e71bba068c384f0f62c1fad664a67997ae0565d933b70a6d8b74e",
+      "FileList": "71eb0298cc8801285580f32e716b88f278547504f689f666275c85edb9eaf288",
+      "EArray": "38c0bfbe6ed0a36b69fcf6d8a3a4a3d307ec9468000ee5fc54fa3e7166c17fd7",
+      "PRIVATE_EARRAY_HEAP": "845114f5a2f1093b3468eba40ec48e43b389a6a2337318067d816ea85987aac5",
+      "EARRAY_FLAG_CUSTOMALLOC": "5a648ed450fc33b10ee334d4dd7a10f0f47de70c940c503a63bd7a99afa6b076",
+      "EARRAY_FLAG_SHAREDMEMORY": "634fb1161627610739da6937804900da02150e67d8b95b88d925fb04199061d0",
+      "EARRAY_HEADER_SIZE": "fe1e002d1aa91a922688d9acc19d815fc49d46b72f44ff3f0fbf6057bfee3b70",
+      "HandleFromEArray": "ad873ce0b3684b51b73966d6d36330b63b28aca128620f65b02f1b64f62061df",
+      "mEACast": "8359bda792d502c0b30d4d7b3a9af158d7df0e081cda0a00904447ca5180b305",
+      "eaSize": "c6a61abce44ba9e21e5291ad90f1d573a14b2418bf4f704d2a1907268569e28b",
+      "eaSizeUnsafe": "0e9bb880fe849c7c6a378620118ca33a02ea82ebf59e7a0dabc8f5700d5ea24b",
+      "eaClearEx": "a204f56201d095286aa6a21353b591467745bf0233fc446d6fa0ddd5eb5dc96b",
+      "eaDestroyEx": "85477f3144768927afa334d230670465ccfd7da29d783b003606a4be63311aa9",
+      "EArrayFromHandle": "cd88db79e0a1aa43a888b7dc3502f47372f6cb9d6c9339a4450d32a089bf6481",
+      "EAPtrTest": "78cd14e807221c832aaf0159dfa13270dfb114a918ab0ff1b884f0551e97e9c4",
+      "mEArrayHandle": "bc47a6caee6261b3fb1f790204380689eb3e94d33593803ac6cef55b778083f7",
+      "EArrayItemDestructor": "324e9feae0cde3d4831e4b69c4e4d565c6086d868d3d7c38c72cdb95ceabcfb9"
+    },
+    "source_stable_before_after": true,
+    "original_functions_emitted": [
+      "FileListCreate",
+      "FileListSearch",
+      "FileListInsert",
+      "FileListFind",
+      "FileListLength",
+      "FileListDestroy",
+      "eaClearExDbg",
+      "eaDestroyDbg",
+      "eaDestroyExDbg"
+    ],
+    "accepted_ops_provider_reused_as_source_dependency": true,
+    "NULL_destructor_semantics": "Original eaClearExDbg calls free for each non-null element in ascending source array order, nulls slots, count0. Original eaDestroyDbg uses selected PRIVATE_EARRAY_HEAP0 _free_dbg branch, then sets caller handleNULL. Repeated NULL handle destruction safe; handle address NULL excluded.",
+    "compile_profile": {
+      "PRIVATE_EARRAY_HEAP": 0,
+      "EARRAY_CRAZY_DEBUGGING": false,
+      "CUSTOMALLOC_or_SHARED_flags_admitted": false
+    },
+    "host_adapters": [
+      "Pre-reserved host malloc blocks; original calloc returns unique owned node reservation",
+      "Checked original free and _free_dbg call adapters invoke actual host free and clear reservation pointers",
+      "Fixed eaCreate/eaInsert fixture constructors, exact EArray layout/macros",
+      "Accepted ASCII,slash,directory adapters; nonzero signed32 fixture dates; timestamp trap"
+    ],
+    "ownership": "No borrowed storage or element pointers; malformed modes refuse before all originals. NULL slots supported. Source node frees/order, count0, slotNULL before header release; nullhandle and second destruction verified. Unused reservations released before owner wipe/atomic pointer-free output.",
+    "source_allocator_OOM_recovery_claimed": false,
+    "engine_allocator_closure": false,
+    "standalone_COLLECT_repeated": false,
+    "filesystem_access": false,
+    "freshness_checked": false,
+    "current_Map_runtime_executed": false,
+    "runtime_body_catalog_admitted": false,
+    "source_generation_admitted": false,
+    "authority_or_application_ack": false,
+    "evidence_paths": {
+      "provider": "/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c",
+      "header": "/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.h"
+    }
+  },
+  "fixture_source_identity": {
+    "schema": "coh-file-list-lifecycle-source-v1",
+    "source_sha256": {
+      "native-android/engine/body-catalog/check_file_list_lifecycle.py": "4e35a1753d6cbbca20b9b4dca070f67179e660657a162ceb402abace388019a7",
+      "native-android/engine/body-catalog/file-list-lifecycle-source-pins.json": "7e6ee0a626967411266c0964aa0bc05351184c75106d01b13c1e9fd752d08194",
+      "native-android/engine/body-catalog/file-list-ops-source-pins.json": "ffe1abc044d8742f55056134a3ea09d9749d5f4f26805aa1e0781857f8b9c721",
+      "native-android/engine/body-catalog/file_list_lifecycle_provider.py": "7acc7de1f7887db7a3b9ac05ea3a24fadf742bbb353b5b05104d56dad87c19db",
+      "native-android/engine/body-catalog/file_list_ops_provider.py": "3f9265b326565cd412e61f864e8c94688cd8eaa70b214ef81cdc2a688cf784f3",
+      "native-android/engine/body-catalog/test_file_list_lifecycle.c": "abff24b0776dbcd22dcee08f879a7a0b1f204e0e6055448ad658b85e123f8a32",
+      "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+      "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+      "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+      "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/earray.h": "b8a47a959058f936f1a72f8dd66fc0004c0bb07ee9ca685e284c217c99376466",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/utils.h": "36eab864c8dfeda46f6b9f57b20abe2378db976943e04de6b5e8b461b69c56a3",
+      "upstream/ouroboros/libs/UtilitiesLib/src/components/earray.c": "c4b39d58a5403dbc59d47dfe1cf2ef60df9aa7ef1d92ce66c41b5ec41128a739",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7"
+    },
+    "generated_provider_sha256": "de5ef516a098677a2f466cda9f40baab2e55153c8c3a922a7bcc3b95eaa9880f",
+    "generated_header_sha256": "1594f7c6335fb6702dbb97afffbf0e67f8c029d1fed821ac4d4ec9f62cb7ba27",
+    "excluded_circular_derived_files": [
+      "file-list-lifecycle-identity.h",
+      "per-mode build receipts",
+      "native executables",
+      "run ledgers"
+    ]
+  },
+  "fixture_source_identity_sha256": "58b5de609bca52e6ccc7f1f18dac4b2ed535c99568c7c0d131d3ac4372a424af",
+  "fixture_profile": {
+    "schema": "coh-file-list-lifecycle-profile-v1",
+    "original_functions": [
+      "FileListCreate",
+      "FileListSearch",
+      "FileListInsert",
+      "FileListFind",
+      "FileListLength",
+      "FileListDestroy",
+      "eaClearExDbg",
+      "eaDestroyExDbg",
+      "eaDestroyDbg"
+    ],
+    "exact_original_EArray_layout_and_macros": true,
+    "PRIVATE_EARRAY_HEAP": 0,
+    "EARRAY_CRAZY_DEBUGGING": false,
+    "fixture_modes": {
+      "0": "owned allocated header",
+      "1": "NULL handle with zero operations",
+      "2": "append one NULL slot",
+      "3..7": "borrowed/compressed/bad count/capacity pre-source refusals"
+    },
+    "original_NULL_destructor_frees_nodes_in_source_order": true,
+    "actual_host_free_called_from_checked_adapters": true,
+    "source_allocator_and_engine_heap_closure": false,
+    "reservation_faults_before_all_originals_cleanup_partial_host_allocations": true,
+    "output_pointer_free_atomic_after_cleanup": true,
+    "operation_max": 32,
+    "INSERT_call_max": 16,
+    "node_and_capacity_max": 16,
+    "raw_path_max": 519,
+    "directory_and_poststrip_max": 259,
+    "nonzero_signed32_fixture_dates_only": true,
+    "typed_request_bytes": 17300,
+    "typed_result_bytes": 4228,
+    "budget_max": 1048576,
+    "own_stack_reserve": 16384,
+    "all_paths_preflight_before_source": true,
+    "old_checker_mains_or_broad_suites_executed": false,
+    "filesystem_access": false,
+    "current_Map_runtime_admitted": false
+  },
+  "fixture_profile_sha256": "0e10909b72e6cd2d9bc1cc860c53471d9f529cda393e6a36f8b0030fd87949ab",
+  "inputs": {
+    "schema": "coh-file-list-lifecycle-input-v1",
+    "fixture_bytes": 1056500,
+    "fixture_sha256": "e0c64238b044e37da7ef491a7a46aa6f2a55ac9d94dd92056f9acdc14017b281",
+    "first_input_sha256": "e592ed2e94ff8192677e43d7493ad4e6c5868da05bc486fdd1b510df3933e896",
+    "request_bytes": 17300,
+    "result_bytes": 4228,
+    "case_count": 55,
+    "independent_expectations": "Python first lowercase normalized key retains original spelling/date; sorted unique keys specify original free order; optional final NULL slot contributes length but no node free. Empty allocated and NULL-handle lists distinct. All synthetic, no FS/freshness."
+  },
+  "full_fixture_reference": {
+    "bytes": 25029,
+    "sha256": "0377f227122d66f0397f286fdbb29550f96e7311bf4cdc0d0bf0aafab99d6ee3"
+  },
+  "child_measured_fixture_bindings": {
+    "release": {
+      "source_id": "58b5de609bca52e6ccc7f1f18dac4b2ed535c99568c7c0d131d3ac4372a424af",
+      "build_id": "f810c66e62e5e8a8863f5a3b49f769286d342e33da47ad974fada01921588385",
+      "profile_id": "0e10909b72e6cd2d9bc1cc860c53471d9f529cda393e6a36f8b0030fd87949ab",
+      "run_id": "02d4d920cd301ec4d89a9e83def5b4c00a5459679534d3c68421d11a1eba8640",
+      "input_sha256": "e592ed2e94ff8192677e43d7493ad4e6c5868da05bc486fdd1b510df3933e896",
+      "fixture_sha256": "e0c64238b044e37da7ef491a7a46aa6f2a55ac9d94dd92056f9acdc14017b281",
+      "executable_sha256": "adf23115dce44b956adfc1b5cdca6a8a58f2fee1a19fde29955255750a3544be",
+      "input_ledger_sha256": "0377f227122d66f0397f286fdbb29550f96e7311bf4cdc0d0bf0aafab99d6ee3",
+      "compile_profile_sha256": "9e463e37024423a99e08379620b0bcebf71538677e6e7dc2fef4a0fb1bd4c446",
+      "run_ledger_sha256": "48946a9e9ef453bae4a40054c1645fa14dd7715f33f19adbdf18f99a591ec75e"
+    },
+    "asan": {
+      "source_id": "58b5de609bca52e6ccc7f1f18dac4b2ed535c99568c7c0d131d3ac4372a424af",
+      "build_id": "4255d4458f9bccf0ad5f447ea8700a1da1c499b05cac7498cfe786b52b45a757",
+      "profile_id": "0e10909b72e6cd2d9bc1cc860c53471d9f529cda393e6a36f8b0030fd87949ab",
+      "run_id": "8b37cfa347d5a9849b110cbf5d8c7f4f2746903c096037f20785212876b78826",
+      "input_sha256": "e592ed2e94ff8192677e43d7493ad4e6c5868da05bc486fdd1b510df3933e896",
+      "fixture_sha256": "e0c64238b044e37da7ef491a7a46aa6f2a55ac9d94dd92056f9acdc14017b281",
+      "executable_sha256": "200e750260cc6fc06d1502d2043da99f7a060f79b53fc1165a43e1487ba2968d",
+      "input_ledger_sha256": "0377f227122d66f0397f286fdbb29550f96e7311bf4cdc0d0bf0aafab99d6ee3",
+      "compile_profile_sha256": "b90189b1847238809ce4778e17c36576a00df88754752bb5cdb8e674b094850c",
+      "run_ledger_sha256": "36c92b9e532022bb2e469e4c3772f8caa78acc94c71f65df288969c22ac6c2db"
+    },
+    "ubsan": {
+      "source_id": "58b5de609bca52e6ccc7f1f18dac4b2ed535c99568c7c0d131d3ac4372a424af",
+      "build_id": "a60e8d41bddb66a560dc1bf813c5fd3bd05b1362792061a30bfce419a08bbc47",
+      "profile_id": "0e10909b72e6cd2d9bc1cc860c53471d9f529cda393e6a36f8b0030fd87949ab",
+      "run_id": "baa8b890dcaea9ae6994db3e5359a7c5f87f30f8cec97d9a538ddf1b5ff4c0e8",
+      "input_sha256": "e592ed2e94ff8192677e43d7493ad4e6c5868da05bc486fdd1b510df3933e896",
+      "fixture_sha256": "e0c64238b044e37da7ef491a7a46aa6f2a55ac9d94dd92056f9acdc14017b281",
+      "executable_sha256": "0a41cf3499e74a52bd6327b76f0463e11717261212c778775b980ce45bc1dc85",
+      "input_ledger_sha256": "0377f227122d66f0397f286fdbb29550f96e7311bf4cdc0d0bf0aafab99d6ee3",
+      "compile_profile_sha256": "fd8be5a09aa4e75d95a255b87efcd403688333865cd7d798cbf86d5303c0e4ed",
+      "run_ledger_sha256": "d7413db8c43a526983db801d43accc307e30dc9eaaa197872da0333dcdbee32e"
+    }
+  },
+  "builds": {
+    "release": {
+      "schema": "coh-file-list-lifecycle-build-v1",
+      "compile_profile": {
+        "schema": "coh-file-list-lifecycle-compile-v1",
+        "mode": "release",
+        "compiler": {
+          "command": "cc",
+          "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+          "executable_bytes": 1023032,
+          "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+          "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+          "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+        },
+        "flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-unused-parameter",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O2",
+          "-fstack-usage"
+        ],
+        "generated_provider_sha256": "de5ef516a098677a2f466cda9f40baab2e55153c8c3a922a7bcc3b95eaa9880f",
+        "test_source_sha256": "abff24b0776dbcd22dcee08f879a7a0b1f204e0e6055448ad658b85e123f8a32"
+      },
+      "compile_profile_sha256": "9e463e37024423a99e08379620b0bcebf71538677e6e7dc2fef4a0fb1bd4c446",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-pedantic",
+        "-fno-strict-aliasing",
+        "-O2",
+        "-fstack-usage",
+        "-I/workspace/scratch/0484ad305122/lifecycle-final/release",
+        "-I/workspace/scratch/0484ad305122/lifecycle-final",
+        "-I/workspace/scratch/0484ad305122/coh-lifecycle-worktree/native-android/engine/costume-import",
+        "/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c",
+        "/workspace/scratch/0484ad305122/coh-lifecycle-worktree/native-android/engine/body-catalog/test_file_list_lifecycle.c",
+        "-lcrypto",
+        "-o",
+        "/workspace/scratch/0484ad305122/lifecycle-final/release/file-list-lifecycle"
+      ],
+      "source_identity_sha256": "58b5de609bca52e6ccc7f1f18dac4b2ed535c99568c7c0d131d3ac4372a424af",
+      "profile_sha256": "0e10909b72e6cd2d9bc1cc860c53471d9f529cda393e6a36f8b0030fd87949ab",
+      "fixture_run_nonce": "02d4d920cd301ec4d89a9e83def5b4c00a5459679534d3c68421d11a1eba8640",
+      "generated_identity_header_sha256": "ac364a47450e1c55f9c1338e1fd9c5f09ef7e2ee3009e60b8f65ed7d6a03a95a",
+      "executable_bytes": 43792,
+      "executable_sha256": "adf23115dce44b956adfc1b5cdca6a8a58f2fee1a19fde29955255750a3544be"
+    },
+    "asan": {
+      "schema": "coh-file-list-lifecycle-build-v1",
+      "compile_profile": {
+        "schema": "coh-file-list-lifecycle-compile-v1",
+        "mode": "asan",
+        "compiler": {
+          "command": "cc",
+          "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+          "executable_bytes": 1023032,
+          "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+          "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+          "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+        },
+        "flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-unused-parameter",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O1",
+          "-g",
+          "-fsanitize=address",
+          "-fno-omit-frame-pointer",
+          "-no-pie"
+        ],
+        "generated_provider_sha256": "de5ef516a098677a2f466cda9f40baab2e55153c8c3a922a7bcc3b95eaa9880f",
+        "test_source_sha256": "abff24b0776dbcd22dcee08f879a7a0b1f204e0e6055448ad658b85e123f8a32"
+      },
+      "compile_profile_sha256": "b90189b1847238809ce4778e17c36576a00df88754752bb5cdb8e674b094850c",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-pedantic",
+        "-fno-strict-aliasing",
+        "-O1",
+        "-g",
+        "-fsanitize=address",
+        "-fno-omit-frame-pointer",
+        "-no-pie",
+        "-I/workspace/scratch/0484ad305122/lifecycle-final/asan",
+        "-I/workspace/scratch/0484ad305122/lifecycle-final",
+        "-I/workspace/scratch/0484ad305122/coh-lifecycle-worktree/native-android/engine/costume-import",
+        "/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c",
+        "/workspace/scratch/0484ad305122/coh-lifecycle-worktree/native-android/engine/body-catalog/test_file_list_lifecycle.c",
+        "-lcrypto",
+        "-o",
+        "/workspace/scratch/0484ad305122/lifecycle-final/asan/file-list-lifecycle"
+      ],
+      "source_identity_sha256": "58b5de609bca52e6ccc7f1f18dac4b2ed535c99568c7c0d131d3ac4372a424af",
+      "profile_sha256": "0e10909b72e6cd2d9bc1cc860c53471d9f529cda393e6a36f8b0030fd87949ab",
+      "fixture_run_nonce": "8b37cfa347d5a9849b110cbf5d8c7f4f2746903c096037f20785212876b78826",
+      "generated_identity_header_sha256": "5a3486f0e82767eab6784c9ebfadcf34b3fbc870ff1f8759ff19a774f124f7d2",
+      "executable_bytes": 175192,
+      "executable_sha256": "200e750260cc6fc06d1502d2043da99f7a060f79b53fc1165a43e1487ba2968d"
+    },
+    "ubsan": {
+      "schema": "coh-file-list-lifecycle-build-v1",
+      "compile_profile": {
+        "schema": "coh-file-list-lifecycle-compile-v1",
+        "mode": "ubsan",
+        "compiler": {
+          "command": "cc",
+          "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+          "executable_bytes": 1023032,
+          "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+          "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+          "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+        },
+        "flags": [
+          "-std=c99",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-unused-parameter",
+          "-pedantic",
+          "-fno-strict-aliasing",
+          "-O1",
+          "-g",
+          "-fsanitize=undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "generated_provider_sha256": "de5ef516a098677a2f466cda9f40baab2e55153c8c3a922a7bcc3b95eaa9880f",
+        "test_source_sha256": "abff24b0776dbcd22dcee08f879a7a0b1f204e0e6055448ad658b85e123f8a32"
+      },
+      "compile_profile_sha256": "fd8be5a09aa4e75d95a255b87efcd403688333865cd7d798cbf86d5303c0e4ed",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-pedantic",
+        "-fno-strict-aliasing",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "-I/workspace/scratch/0484ad305122/lifecycle-final/ubsan",
+        "-I/workspace/scratch/0484ad305122/lifecycle-final",
+        "-I/workspace/scratch/0484ad305122/coh-lifecycle-worktree/native-android/engine/costume-import",
+        "/workspace/scratch/0484ad305122/lifecycle-final/file-list-lifecycle-provider.c",
+        "/workspace/scratch/0484ad305122/coh-lifecycle-worktree/native-android/engine/body-catalog/test_file_list_lifecycle.c",
+        "-lcrypto",
+        "-o",
+        "/workspace/scratch/0484ad305122/lifecycle-final/ubsan/file-list-lifecycle"
+      ],
+      "source_identity_sha256": "58b5de609bca52e6ccc7f1f18dac4b2ed535c99568c7c0d131d3ac4372a424af",
+      "profile_sha256": "0e10909b72e6cd2d9bc1cc860c53471d9f529cda393e6a36f8b0030fd87949ab",
+      "fixture_run_nonce": "baa8b890dcaea9ae6994db3e5359a7c5f87f30f8cec97d9a538ddf1b5ff4c0e8",
+      "generated_identity_header_sha256": "83cbffcded5500a60bba2553d5d99c5e91c2d6bd5fd1f64d467384b294795923",
+      "executable_bytes": 165632,
+      "executable_sha256": "0a41cf3499e74a52bd6327b76f0463e11717261212c778775b980ce45bc1dc85"
+    }
+  },
+  "checks": {
+    "release": {
+      "checks": 1385,
+      "fixture_cases": 55,
+      "owned_fixed_and_reserved_heap_bytes": 22120,
+      "source_transactions": 24,
+      "pre_source_refusals": 31,
+      "owned_reservation_faults": 9,
+      "original_NULL_destructor_node_free_calls": 67,
+      "original_header_free_calls": 23,
+      "NULL_slot_transactions": 4,
+      "NULL_handle_transactions": 1,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 7,
+      "budget_overflow_controls": 5,
+      "real_filesystem_calls": 0,
+      "original_allocator_OOM_recovery_claimed": false,
+      "engine_heap_closure": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 1385,
+      "fixture_cases": 55,
+      "owned_fixed_and_reserved_heap_bytes": 22120,
+      "source_transactions": 24,
+      "pre_source_refusals": 31,
+      "owned_reservation_faults": 9,
+      "original_NULL_destructor_node_free_calls": 67,
+      "original_header_free_calls": 23,
+      "NULL_slot_transactions": 4,
+      "NULL_handle_transactions": 1,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 7,
+      "budget_overflow_controls": 5,
+      "real_filesystem_calls": 0,
+      "original_allocator_OOM_recovery_claimed": false,
+      "engine_heap_closure": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 1385,
+      "fixture_cases": 55,
+      "owned_fixed_and_reserved_heap_bytes": 22120,
+      "source_transactions": 24,
+      "pre_source_refusals": 31,
+      "owned_reservation_faults": 9,
+      "original_NULL_destructor_node_free_calls": 67,
+      "original_header_free_calls": 23,
+      "NULL_slot_transactions": 4,
+      "NULL_handle_transactions": 1,
+      "identity_controls": 10,
+      "child_ledger_controls": 9,
+      "alias_controls": 7,
+      "budget_overflow_controls": 5,
+      "real_filesystem_calls": 0,
+      "original_allocator_OOM_recovery_claimed": false,
+      "engine_heap_closure": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "native_stack_frames": [
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "ascii_ncompare",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "forwardSlashes.part.0",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "reservation_cleanup",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "observed_search",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "filelifecycle_is_idle",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "filelifecycle_owned_bytes",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "eaClearExDbg",
+      "bytes": 80,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "eaDestroyDbg",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "eaDestroyExDbg",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "FileListCreate",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "FileListFind",
+      "bytes": 304,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "FileListInsert",
+      "bytes": 352,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "FileListLength",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "FileListDestroy",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-file-list-lifecycle-provider.su",
+      "function": "filelifecycle_apply",
+      "bytes": 9088,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "fail_digest",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "hex",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "digest",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "diagnostic",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "binding.part.0",
+      "bytes": 304,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "word",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "hash",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "file_hash",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "translation_unit": "file-list-lifecycle-test_file_list_lifecycle.su",
+      "function": "main",
+      "bytes": 49680,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "conservative_sum_of_all_measured_provider_frames": 10000,
+  "evidence_files": {
+    "asan/build.json": {
+      "bytes": 2103,
+      "sha256": "4255d4458f9bccf0ad5f447ea8700a1da1c499b05cac7498cfe786b52b45a757"
+    },
+    "asan/compile.command.json": {
+      "bytes": 693,
+      "sha256": "20a14d6335045dfa51348b22040efa8c40e268e887babfc844e4113ccf1b02aa"
+    },
+    "asan/compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/file-list-lifecycle": {
+      "bytes": 175192,
+      "sha256": "200e750260cc6fc06d1502d2043da99f7a060f79b53fc1165a43e1487ba2968d"
+    },
+    "asan/file-list-lifecycle-identity.h": {
+      "bytes": 1254,
+      "sha256": "5a3486f0e82767eab6784c9ebfadcf34b3fbc870ff1f8759ff19a774f124f7d2"
+    },
+    "asan/native.command.json": {
+      "bytes": 388,
+      "sha256": "b8fe2fdc7bfeee77c2786f05858f5f97abc22c2d3711955fd30ceb66f844ebca"
+    },
+    "asan/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan/native.stdout": {
+      "bytes": 1538,
+      "sha256": "f8f0943d14fbc6e830396553b9837a764138a8bdd636967b5b9916700fcae86f"
+    },
+    "asan/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "36c92b9e532022bb2e469e4c3772f8caa78acc94c71f65df288969c22ac6c2db"
+    },
+    "cc-version.command.json": {
+      "bytes": 73,
+      "sha256": "01b5445f2d83b5ea452f70ef4e90f90a76d7d926a997a456215b694591cb5a6e"
+    },
+    "cc-version.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cc-version.stdout": {
+      "bytes": 264,
+      "sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+    },
+    "file-list-lifecycle-fixtures.bin": {
+      "bytes": 1056500,
+      "sha256": "e0c64238b044e37da7ef491a7a46aa6f2a55ac9d94dd92056f9acdc14017b281"
+    },
+    "file-list-lifecycle-identity.h": {
+      "bytes": 32,
+      "sha256": "7330dc8601276c721a2ba74cc3aa9093df5b12c5e0b3624452b411815f4eb272"
+    },
+    "file-list-lifecycle-provider.c": {
+      "bytes": 17556,
+      "sha256": "de5ef516a098677a2f466cda9f40baab2e55153c8c3a922a7bcc3b95eaa9880f"
+    },
+    "file-list-lifecycle-provider.h": {
+      "bytes": 2579,
+      "sha256": "1594f7c6335fb6702dbb97afffbf0e67f8c029d1fed821ac4d4ec9f62cb7ba27"
+    },
+    "fixture-profile.json": {
+      "bytes": 1211,
+      "sha256": "0e10909b72e6cd2d9bc1cc860c53471d9f529cda393e6a36f8b0030fd87949ab"
+    },
+    "fixture-reference.json": {
+      "bytes": 25029,
+      "sha256": "0377f227122d66f0397f286fdbb29550f96e7311bf4cdc0d0bf0aafab99d6ee3"
+    },
+    "input-ledger.json": {
+      "bytes": 25029,
+      "sha256": "0377f227122d66f0397f286fdbb29550f96e7311bf4cdc0d0bf0aafab99d6ee3"
+    },
+    "release/build.json": {
+      "bytes": 2019,
+      "sha256": "f810c66e62e5e8a8863f5a3b49f769286d342e33da47ad974fada01921588385"
+    },
+    "release/compile.command.json": {
+      "bytes": 653,
+      "sha256": "808c8de7485d7850877098f1ef48140c4e0903eea42c384fb3ed27a176ef15c6"
+    },
+    "release/compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/file-list-lifecycle": {
+      "bytes": 43792,
+      "sha256": "adf23115dce44b956adfc1b5cdca6a8a58f2fee1a19fde29955255750a3544be"
+    },
+    "release/file-list-lifecycle-file-list-lifecycle-provider.su": {
+      "bytes": 1681,
+      "sha256": "8c86ae428189b84ca02527a24e6d843282f8146dc919975893eba2bad857de2e"
+    },
+    "release/file-list-lifecycle-identity.h": {
+      "bytes": 1252,
+      "sha256": "ac364a47450e1c55f9c1338e1fd9c5f09ef7e2ee3009e60b8f65ed7d6a03a95a"
+    },
+    "release/file-list-lifecycle-test_file_list_lifecycle.su": {
+      "bytes": 1281,
+      "sha256": "aadf96d3a8810886cb630f33f912c8045817c1421a1dd886161fbc3d46e4b2d8"
+    },
+    "release/native.command.json": {
+      "bytes": 397,
+      "sha256": "5ea0dbdb9f8eee9d617931de058d8463fe853c2534425d7c2e3779c2ea80c012"
+    },
+    "release/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release/native.stdout": {
+      "bytes": 1538,
+      "sha256": "4005a52c0b7cdd54e912e01999e730838c4898cd37122af996ebb86a1514076e"
+    },
+    "release/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "48946a9e9ef453bae4a40054c1645fa14dd7715f33f19adbdf18f99a591ec75e"
+    },
+    "source-identity.json": {
+      "bytes": 2476,
+      "sha256": "58b5de609bca52e6ccc7f1f18dac4b2ed535c99568c7c0d131d3ac4372a424af"
+    },
+    "ubsan/build.json": {
+      "bytes": 2094,
+      "sha256": "a60e8d41bddb66a560dc1bf813c5fd3bd05b1362792061a30bfce419a08bbc47"
+    },
+    "ubsan/compile.command.json": {
+      "bytes": 689,
+      "sha256": "5e0352c65134e22844bdcefeee561fb13436a9e59bcfc315884d4e71e1251e36"
+    },
+    "ubsan/compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/file-list-lifecycle": {
+      "bytes": 165632,
+      "sha256": "0a41cf3499e74a52bd6327b76f0463e11717261212c778775b980ce45bc1dc85"
+    },
+    "ubsan/file-list-lifecycle-identity.h": {
+      "bytes": 1264,
+      "sha256": "83cbffcded5500a60bba2553d5d99c5e91c2d6bd5fd1f64d467384b294795923"
+    },
+    "ubsan/native.command.json": {
+      "bytes": 391,
+      "sha256": "4efc7ee42c285ca5b4a313b1f4938aaef63dff1fdd25c31023bfee7e21467fe5"
+    },
+    "ubsan/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan/native.stdout": {
+      "bytes": 1538,
+      "sha256": "30efa14faf38f48eddb0d6487eef48efa20ae278b024e24871ea33991a42ee71"
+    },
+    "ubsan/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "d7413db8c43a526983db801d43accc307e30dc9eaaa197872da0333dcdbee32e"
+    }
+  },
+  "scope": "Original FileListLength/FileListDestroy with exact original EArray layout/macros and original eaClearExDbg/eaDestroyExDbg/eaDestroyDbg. Supported host free adapters own every node and header; source frees nodes in ascending list order, nulls slots/count, releases header and nulls caller handle. NULL handle and NULL slots tested. Partial reservation cleanup and malformed borrowed/compressed profiles refuse before all originals. Constructor/ASCII/slash adapters remain explicit. Engine allocator, heap, platform ABI, filesystem scanning/freshness and runtime admission unqualified.",
+  "ASan_LeakSanitizer_enabled": false,
+  "LeakSanitizer_exclusion_reason": "Established host ptrace limitation; detect_leaks=0. No leak closure claim.",
+  "external_libc_crypto_sanitizer_stack_or_device_RSS_qualified": false,
+  "original_Win32_or_Android_ABI_qualified": false,
+  "current_Map_runtime_executed": false,
+  "runtime_body_catalog_admitted": false,
+  "dictionary_generation_admitted": false,
+  "complete_initial_character": false,
+  "selected_owner_admitted": false,
+  "actor_publication": false,
+  "application_ACK": false,
+  "world_authority": false,
+  "gates_1_through_24_preserved": true,
+  "gates_25_through_27_open": true,
+  "ALLENTS_41_43_and_dictionary_index_stops_unchanged": true
+}
