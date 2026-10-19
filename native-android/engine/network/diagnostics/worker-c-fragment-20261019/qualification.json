@@ -1,0 +1,151 @@
+{
+  "android_compiled": false,
+  "android_executed": false,
+  "executed_proof": {
+    "bytes": 380752,
+    "sha256": "379219e40ac690b8170ec929b5e914cbd078281d9f530eae431b38448c4a62b1"
+  },
+  "explicit_original_dependencies": [
+    "zeroed packet/bit-buffer allocator",
+    "bounded host queue",
+    "owned dummy UDP link",
+    "no-op OS locking/timing/flush",
+    "zlib Adler32 wire checksum"
+  ],
+  "fixture_sha256": "5b9d6a46abe6cce9536bfbbaa6a9418021453b006e8df1210932ece26cadf80f",
+  "gates25_27_open": true,
+  "modes": {
+    "asan": {
+      "checks": 134879,
+      "independent_streaming_deliveries": 2,
+      "negative_cases": 11,
+      "original_frames": 32,
+      "original_reassembled_deliveries": 48,
+      "original_server_executed": false,
+      "passed": true,
+      "world_authority": false
+    },
+    "release": {
+      "checks": 134879,
+      "independent_streaming_deliveries": 2,
+      "negative_cases": 11,
+      "original_frames": 32,
+      "original_reassembled_deliveries": 48,
+      "original_server_executed": false,
+      "passed": true,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 134879,
+      "independent_streaming_deliveries": 2,
+      "negative_cases": 11,
+      "original_frames": 32,
+      "original_reassembled_deliveries": 48,
+      "original_server_executed": false,
+      "passed": true,
+      "world_authority": false
+    }
+  },
+  "original_compression_executed": false,
+  "original_function_bytes_unchanged": true,
+  "original_function_sha256_lf": {
+    "blowfishPad": "126fd2d7c52612db2dc64378f092f9900155a876109139efb2de98c16a83fa52",
+    "bsAlignByte": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40",
+    "bsGetBitLength": "a26f9d1c05f15c55fca9d270d8d741e14d01583cd48675dafa319087ece14728",
+    "bsGetCursorBitPosition": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac",
+    "bsGetLength": "68c87d492235bcf50a5c0b94551b5e681185416731e810b05d005befd274b6ab",
+    "bsGetLengthWriteBits": "8101f7caf75188134b0d461d4e1a1bfb039205aa089fafcab5ad308eccd20568",
+    "bsGetLengthWriteBitsPack": "4f17e953b6ef957bd191071aa8d2be4721857ae3e73cf8ae25d24a7695d35f11",
+    "bsReadBits": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea",
+    "bsReadBitsPack": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620",
+    "bsRewind": "24fb46019b614e4b81f0718ec6ec26d415028ecca2a30ffebc6a1d3300658a3a",
+    "bsSetByteAlignment": "c5f01d08b819d093574461b0b256c93f8c1e686e939a91e64566630acfbba965",
+    "bsSetCursorBitPosition": "38771cfc1baa74b33b5a7bcc8c59ad5cab7907a31c96c11dabaab13c1c38e627",
+    "bsSetEndOfStreamPosition": "09f8030a838952b5fdca5e26808ba3765b58ef2b00fddafaefabe1824c5870f6",
+    "bsWriteBits": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0",
+    "bsWriteBitsArray": "d1f563ac0460441027cdda2892d89e3612cbd13154c68a6470e3777dcac46e82",
+    "bsWriteBitsPack": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb",
+    "initBitStream": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3",
+    "lnkAddToSendQueue": "5905b3245fad9507e0acc23c26e03d0f5fb251fb270a85cddc1832504f60837b",
+    "pktGetBitsPack": "beaeef547f7c85066be17d8c878abe86acc9068a155df977484234f51f2ee617",
+    "pktGetSize": "deaa346393e0a8884b2fcc42498055df92c6628d268365f263efc62416a758c4",
+    "pktMakeCompatible": "01afb0c9ca6b810eb996de3cc0bff44f71355207f5c19031129e568f5819fc4b",
+    "pktSendAcks": "3a5d8d1ed47374d8e8e7d251964323d91a82d9f9f05f7d7dcc6155b7a63a70bb",
+    "pktSendBits": "417040312877e0288d45ada572d2f2a6d7a6ca42f08f501fae315d503be1abc5",
+    "pktSendBitsArray": "50d95c26f722973120211fcb71862abe1f9d813148e426a24e341dccb9e4f795",
+    "pktSendBitsAuto": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa",
+    "pktSendBitsPack": "8746bc145e72c7cfe59e4cde7081348032e11ed2275d6336bd48a7fa0a007abd",
+    "pktSendDbg": "fb844fa63210a18376756f8dfb64bb915bfbd36303bf055b59f2c56af0ff65cf",
+    "pktSetByteAlignment": "039804cf64e15f616e2c1ba200be92d7e92cb62204d24af64a4b85a23673cb76",
+    "pktWrap": "29c8cb2dd66c4ba33a72015665de31599b2f778b89eeb94b512179bfd627580c"
+  },
+  "original_send_cases": 12,
+  "original_server_transaction_executed": false,
+  "original_source_sha256_lf": {
+    "upstream/ouroboros/Game/src/clientcomm/authclient.c": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015",
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_receive.c": "d24464295fefbb90f2a356f3ea3bfa4bbf6b47863a602d6cc63c63c46cdb1047",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+  },
+  "original_uncompressed_send_queue_and_wrap_executed": true,
+  "passed": true,
+  "request_tx_preservation": {
+    "map": {
+      "exact_original_bytes_after_marker_and_include_reversal": true,
+      "marked_insertions": 3,
+      "original_path": "native-android/engine/initial-capture/coh_initial_map.c",
+      "original_sha256": "d41597e6761998d4228f3a95f89a08250d35d63d2138cc6124e7bdac676b41d4",
+      "replacement_sha256": "400b58f478de5774222d95520fc6a990306022bd5f79ab9ccd50108b1629fc70"
+    },
+    "net": {
+      "exact_original_bytes_after_marker_and_include_reversal": true,
+      "marked_insertions": 11,
+      "original_path": "native-android/engine/network/coh_net.c",
+      "original_sha256": "85466433e372b9194f0652e8dd08a4a99bdfe97d3a4c1bc149b418ac1a5fc57f",
+      "replacement_sha256": "2dbc3e00c92fe57d9984da1993a01896b9ba281cc1c7505478089701cee50796"
+    },
+    "udp": {
+      "exact_original_bytes_after_marker_and_include_reversal": true,
+      "marked_insertions": 2,
+      "original_path": "native-android/engine/network/coh_net_udp.c",
+      "original_sha256": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+      "replacement_sha256": "b70ea47358423fe504541d2a890b3cedcd80c6ba5f788537dba6bb78c7516318"
+    }
+  },
+  "schema": "coh-original-fragment-focused-v1",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/initial-capture/check_request_tx.py": "0db324d71e2b7dc5a7e90a7b79b4bb35dda14ad0f6561b8bc5ed1679944ff6d4",
+    "native-android/engine/initial-capture/coh_request_tx_net.c": "2dbc3e00c92fe57d9984da1993a01896b9ba281cc1c7505478089701cee50796",
+    "native-android/engine/network/check.py": "ddff8cb0111083471ed3586689deb1624daa32fda8f14bac36efe5fcb57df15d",
+    "native-android/engine/network/check_fragment_compat.py": "f576b19e9098fac093df821fd4f5615113698c615cb582312c24e804fdb3aa43",
+    "native-android/engine/network/coh_net.c": "85466433e372b9194f0652e8dd08a4a99bdfe97d3a4c1bc149b418ac1a5fc57f",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_frame.c": "3731cd11edd507b2567db8bbb160bcc33c3b354fe08dcac1c797834a26063dfa",
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "native-android/engine/network/source-pins.json": "5115caad2e5e409e76dfdece18c5806da0a26e3707d03137dbcb46b1e3204aa5",
+    "native-android/engine/network/tests/test_fragment_compat.c": "5932fed818f7fe39d4273efd367b152a3ae92f897af81f5dce3138c73b2e8a27",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "transport_ack_is_application_ack": false,
+  "unchanged_limits": {
+    "decoded": 4194304,
+    "fragments": 16,
+    "wire_reassembly": 16384
+  },
+  "whole_process_memory_measured": false,
+  "world_authority": false
+}

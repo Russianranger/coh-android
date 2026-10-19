@@ -14,11 +14,15 @@ static void adler(const uint8_t *p,size_t n,uint8_t out[4]) {
 static int valid(const CohNetPacket *p,unsigned ver) {
     if(!p||ver>5||!p->payload_bits||p->payload_bits>COH_NET_PAYLOAD_MAX*8||
        p->ack_count>COH_NET_ACK_MAX||p->compressed>1||p->ordered>1||p->connect>1) return 0;
-    if(p->sibling_count && (p->sibling_count<2||p->sibling_count>COH_NET_FRAGMENT_MAX||
+    /* Original pktSendDbg also splits an exact-size packet into one sibling.
+     * Only the first ordered sibling receives an ordered_id at queue admission;
+     * subsequent siblings retain zero until mergeSibs adopts part zero. */
+    if(p->sibling_count && (p->sibling_count>COH_NET_FRAGMENT_MAX||
        !p->sibling_id||p->sibling_part>=p->sibling_count)) return 0;
     if(!p->sibling_count&&(p->sibling_id||p->sibling_part)) return 0;
     if((p->connect&&(p->compressed||p->ordered||p->sibling_count))||
-       (p->compressed&&(!ver||(p->payload_bits&7)))||(p->ordered&&(ver<5||!p->ordered_id))) return 0;
+       (p->compressed&&(!ver||(p->payload_bits&7)))||
+       (p->ordered&&(ver<5||(!p->ordered_id&&(!p->sibling_count||!p->sibling_part))))) return 0;
     for(uint32_t i=1;i<p->ack_count;i++) if(p->acks[i]<=p->acks[i-1]) return 0;
     return 1;
 }

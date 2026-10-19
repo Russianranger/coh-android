@@ -1,0 +1,10 @@
+coh_session_crypto.o: \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/session/coh_session_crypto.c \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/session/coh_session_crypto.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/session/../auth/coh_auth.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/session/../auth/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/session/../auth/../../include/coh_native_core.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/session/../network/coh_net.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/session/../network/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/session/../network/../../protocol/coh_protocol.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/include/coh_native_core.h

@@ -1,0 +1,30 @@
+coh_initial_local.o: \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/coh_initial_local.c \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/coh_local.c \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/coh_local.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/coh_db_session.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/coh_dbclient.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/../auth/coh_auth.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/../auth/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/../auth/../../include/coh_native_core.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/../network/coh_net_udp.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/../network/coh_net.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/../network/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../dbclient/../network/../../protocol/coh_protocol.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/include/coh_native_core.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/coh_mapclient.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/../auth/coh_auth.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/../network/coh_net_udp.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/../replication/coh_replication.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/../replication/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/../replication/coh_groups.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/../replication/coh_replication.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/coh_mapclient_owned.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/coh_mapclient.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/../dbclient/coh_db_handoff_owner.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/../mapclient/../dbclient/coh_db_session.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/coh_initial_capture_private.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/coh_initial_capture.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/../local/coh_local.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/coh_initial_command_kinds.inc

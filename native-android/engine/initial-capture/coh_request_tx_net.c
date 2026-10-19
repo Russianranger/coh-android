@@ -285,7 +285,8 @@ static CohStatus retain(CohNet *n,const CohNetPacket *p,uint64_t now) {
     }
     if(g->count!=p->sibling_count||(g->mask&(1u<<p->sibling_part)))return COH_INVALID;
     for(unsigned i=0;i<g->count;i++)if(g->mask&(1u<<i)) {
-        if(g->parts[i].ordered!=p->ordered||g->parts[i].compressed!=p->compressed||g->parts[i].ordered_id!=p->ordered_id)return COH_INVALID;
+        if(g->parts[i].ordered!=p->ordered||g->parts[i].compressed!=p->compressed||
+           (g->parts[i].ordered_id&&p->ordered_id&&g->parts[i].ordered_id!=p->ordered_id))return COH_INVALID;
     }
     uint32_t retained_bits=p->payload_bits;
     for(unsigned i=0;i<g->count;i++)if(g->mask&(1u<<i))retained_bits+=g->parts[i].payload_bits;
@@ -296,7 +297,9 @@ static CohStatus retain(CohNet *n,const CohNetPacket *p,uint64_t now) {
     }
     g->parts[p->sibling_part]=*p;g->mask|=1u<<p->sibling_part;
     if(g->mask!=((1u<<g->count)-1))return COH_OK;
-    size_t offset=0;m.id=g->parts[0].id;
+    /* Match original mergeSibs: delivery metadata belongs to part zero,
+     * independent of arrival order and later fragments' zero ordered IDs. */
+    size_t offset=0;m.id=g->parts[0].id;m.ordered_id=g->parts[0].ordered_id;
     for(unsigned i=0;i<g->count;i++) {
         size_t size=(g->parts[i].payload_bits+7)/8;
         if(offset+size>sizeof(m.payload)){n->diagnostics.queue_limits++;clear_queues(n);forget_key(n);n->state=COH_NET_FAILED;return COH_LIMIT;}

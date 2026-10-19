@@ -1,5 +1,16 @@
 # Primary native authority continuation — 2026-10-17
 
+## Native original-fragment compatibility qualified — 2026-10-19
+
+C's source-backed correction admits the original exact-size one-sibling envelope and ordered continuation siblings whose orderID is zero. Part zero still requires a nonzero ordered ID, conflicting nonzero IDs/flags refuse, and completion derives order identity from part zero regardless of arrival order. Both the normal network source and reversible request-Tx diagnostic copy receive the same bounded change. Existing16-sibling/16KiB wire/reassembly/4MiB decoded limits, authentication, ownership, timeout and application-authority rules remain unchanged.
+
+The new focused qualifier executes29 unchanged original send/queue/wrap/bit functions with explicit host providers. Twelve original cases produce32 exact source frames; each native release/ASan/UBSan mode passes134879 checks including48 reassemblies across arrival orders,11 refusals and two independent zlib-stream deliveries. F's four independent reverted-repair mutations fail and E verifies lifecycle/presentation inputs remain unchanged. These are source/host results, not an original server or Android session. Original full-update source uses ordered packets pending full-update acknowledgment; the finding does not alone diagnose the prior Thor timeout.
+
+A separate changed receiver role is compiled in all three modes; each passes30 projection/86 JNI-double and102 parser controls. Exact release ELF185984B SHA25676cc9e3246ba1d4fa7db42187f41f4e5b4683b98a8e446712ed51cfc06f4fe0c is admitted against60 current raw inputs. Its explicit successor receipt records exactly two changed transport inputs and58 unchanged ones; cf1ab9 is the checker checkout base and does not claim raw worktree equality. The inherited checker’s static unchanged-source field is explicitly not used as diff evidence. F verifies236 retained files, nine ELF identities, actual admission/refusals and unchanged dynamic ABI requirements. Qualified02 and accepted releases remain untouched.
+
+Observer source repair cf1ab9f7 is under actual Windows compilation in run39187512629. That immutable run uses the original qualified02 receiver and is unaffected by this source integration. A follow-on focused transaction will reuse the successful Map artifact with historical/current compiler-source equality and the newly compiled receiver. No workflow rerun, APK publication or Gates25–27 promotion follows from this source checkpoint. Gates25–27 remain OPEN.
+
+
 ## MapServer formatter compilation repair — 2026-10-19
 
 Recovery confirmed remote `c624352e889749f293a559003d5ae9b01a258b1c`. The accessible prior workspace has no Git metadata and its original source files were cleaned; surviving artifacts are preserved, and a clean checkout supplies current source. Six independent A–F workstreams are assigned. Existing releases, Combined0.1.8 signing/update identity, imports, saves and Gates1–24 remain unchanged.

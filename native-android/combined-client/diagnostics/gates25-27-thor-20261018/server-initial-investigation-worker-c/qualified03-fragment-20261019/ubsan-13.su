@@ -1,0 +1,9 @@
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:69:18:digest	128	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:83:18:sha512	32	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:80:18:md5	32	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:10:12:group	32	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:15:12:peer_valid	80	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:86:18:rsa	688	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:46:18:shared	176	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:22:18:keypair	240	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c:137:22:coh_auth_openssl_provider	8	static

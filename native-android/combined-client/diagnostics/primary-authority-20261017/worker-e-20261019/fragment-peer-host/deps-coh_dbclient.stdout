@@ -1,0 +1,9 @@
+coh_dbclient.o: \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_dbclient.c \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_dbclient.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../auth/coh_auth.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../auth/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../auth/../../include/coh_native_core.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../../protocol/coh_protocol.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/include/coh_native_core.h

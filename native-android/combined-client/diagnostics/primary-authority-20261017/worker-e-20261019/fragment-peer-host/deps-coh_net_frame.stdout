@@ -1,0 +1,6 @@
+coh_net_frame.o: \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/network/coh_net_frame.c \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/network/coh_net.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/network/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/network/../../protocol/coh_protocol.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/include/coh_native_core.h

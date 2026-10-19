@@ -83,11 +83,24 @@
     "96 MiB is a named aggregate reservation policy; platform, allocator, RSS and GPU fit are not established by these records."
   ],
   "next_actions": [
-    "Independently review the frozen C fragment compatibility changes for retained compressed-buffer ownership, observer callback lifetime and unchanged Android mode/cleanup/report boundaries.",
+    "Complete the single real Windows MapServer observer build and one original focused transaction; interpret dispatch/character/pktSend and native receipt as separate stages.",
+    "Integrate the separately qualified C fragment repair after the first Map compile checkpoint; do not infer that fragment compatibility alone diagnoses the Thor timeout.",
     "After original ALLENTS receipt and complete actor/resource production are admitted, root must supply the typed app exclusive-mode/window producer; then implement the isolated app-EGL owner described by the existing proposal.",
     "Only root should coordinate a new Thor package when a meaningful integrated protocol/world change exists; preserve accepted Combined 0.1.8 and physical reports."
   ],
   "gate25_passed": false,
   "gate26_passed": false,
-  "gate27_passed": false
+  "gate27_passed": false,
+  "completed_independent_reviews": [
+    {
+      "file": "formatter-independent-review.json",
+      "passed": true,
+      "scope": "Exact minimal formatter macro bypass, fixed schema/bounds and retained evidence"
+    },
+    {
+      "file": "fragment-independent-review.json",
+      "passed": true,
+      "scope": "Original fragment source compatibility, no new allocation/renderer activation and retained cleanup/borrowed callback lifetimes"
+    }
+  ]
 }

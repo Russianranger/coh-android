@@ -1,0 +1,7 @@
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_controls.c:13:18:scalar	256	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_controls.c:33:18:string	160	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_controls.c:25:18:automatic	176	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_controls.c:41:11:coh_db_account_control_parse	336	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_controls.c:68:11:coh_db_account_inventory_parse	352	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_controls.c:108:1:_sub_D_00099_0	16	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_controls.c:108:1:_sub_I_00099_1	16	static

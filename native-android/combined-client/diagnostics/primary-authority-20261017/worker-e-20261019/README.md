@@ -6,4 +6,6 @@ The latest physical Thor record already establishes bounded client socket cleanu
 
 The next new world-renderer implementation requires the typed exclusive application EGL display/window/mode producer and genuinely admitted immutable world, current resource and selected-actor inputs. The existing `APP_EGL_PRODUCER_PROPOSAL.md` records this boundary; creating another private pbuffer or asserted lifetime token cannot satisfy it. Current borrowed-renderer identity and occupied output-owner repairs retain their accepted host scopes.
 
-E remains available for independent review of A's compiler repair and C's fragment path. Gates 25–27 remain open.
+Independent formatter and fragment reviews are now complete and preserved beside the checkpoint. The formatter review verifies the exact minimal bypass, actual retained failure/configuration logs, five source pins and nine host variants without rerunning them. The fragment review verifies 17 source pins, 12 original sources, 29 original functions, the six-member proof archive and all three identical mode receipts; callback and presentation ownership remain unchanged.
+
+Next: the real Windows observer compilation and one focused original transaction, followed by separately coordinated fragment integration. Gates 25–27 remain open.

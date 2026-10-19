@@ -1,0 +1,95 @@
+{
+  "allocation_owner_changes": false,
+  "android_execution_or_Thor_qualification": false,
+  "archive_hash_verified": true,
+  "bounds_unchanged": {
+    "decoded": 4194304,
+    "fragments": 16,
+    "wire_reassembly": 16384
+  },
+  "gates25_27": "OPEN",
+  "mutation_refusals": {
+    "reject-single-sibling": {
+      "binary": {
+        "bytes": 167992,
+        "sha256": "4a8f104c02bc29fe577f079972ca3f23826bdb574e085ab307405ecd08d0b6ee"
+      },
+      "expected_assertion_refusal": true,
+      "mutated_frame_sha256": "7641c73ea7b43ca7aa0331770f61345c79539b404b218c5c98da399edef14723",
+      "mutated_net_sha256": "85466433e372b9194f0652e8dd08a4a99bdfe97d3a4c1bc149b418ac1a5fc57f",
+      "runtime_returncode": 1,
+      "stderr_sha256": "7e3848df6c576ae4ff4bec99139fedbcb7f18999036dd4476516db2d8e8af93c"
+    },
+    "reject-zero-continuation": {
+      "binary": {
+        "bytes": 167968,
+        "sha256": "1aa62426f3fa92dac4ca1d333bf03f06acbf7ede150ece6493345c587c106f7c"
+      },
+      "expected_assertion_refusal": true,
+      "mutated_frame_sha256": "0a072d76b3db1972073e8258f272e47f890056fdcb1fe7d7666a64b03063d5a2",
+      "mutated_net_sha256": "85466433e372b9194f0652e8dd08a4a99bdfe97d3a4c1bc149b418ac1a5fc57f",
+      "runtime_returncode": 1,
+      "stderr_sha256": "7e3848df6c576ae4ff4bec99139fedbcb7f18999036dd4476516db2d8e8af93c"
+    },
+    "require-identical-fragment-order": {
+      "binary": {
+        "bytes": 167992,
+        "sha256": "2ca0a08050f2aee815fcc37612d822f3437eef90615f7ebd5ca220aa9395dc18"
+      },
+      "expected_assertion_refusal": true,
+      "mutated_frame_sha256": "3731cd11edd507b2567db8bbb160bcc33c3b354fe08dcac1c797834a26063dfa",
+      "mutated_net_sha256": "2e0a8984cd507277670da65b922618252bfa7fc80bf1a4b5c3bbf216eb3b703d",
+      "runtime_returncode": 1,
+      "stderr_sha256": "311bbb6c691fe3d7cb412b313abf73d728164e1e90a6c0bdc8c420e436ea4efe"
+    },
+    "use-last-arriving-order": {
+      "binary": {
+        "bytes": 167984,
+        "sha256": "95db9f907d3f47988ee1578e79f57c3728380f50f4ad16c8f19e4c5472115b83"
+      },
+      "expected_assertion_refusal": true,
+      "mutated_frame_sha256": "3731cd11edd507b2567db8bbb160bcc33c3b354fe08dcac1c797834a26063dfa",
+      "mutated_net_sha256": "a2393fb0f9254a541e1cb527f66cc4d593f9e89cf32906516a16c91aeed74214",
+      "runtime_returncode": 1,
+      "stderr_sha256": "311bbb6c691fe3d7cb412b313abf73d728164e1e90a6c0bdc8c420e436ea4efe"
+    }
+  },
+  "original_server_transaction_executed": false,
+  "original_source_facts": {
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/MemoryPool.h": {
+      "bytes": 6320,
+      "facts": "Default = ZERO_MEMORY_BIT",
+      "sha256": "e3843eb8eb213dfcf8c6f6c81e6632a6b3144b20afb78e56a9626d62f856c0a1"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/components/MemoryPool.c": {
+      "bytes": 35697,
+      "facts": "initMemoryPoolOffset sets Default, mpAlloc_dbg zeroes pool->structSize when zeroMemory set",
+      "sha256": "5d9db8f7a27d9fea371e7b948b02433ce2846f6e029dc24b1803623ddab01e83"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c": {
+      "bytes": 17605,
+      "facts": "PacketMemoryPool keeps Default; pktCreateImp uses mpAlloc(PacketMemoryPool); pktMakeCompatible copies flags, not ordered_id",
+      "sha256": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c": {
+      "bytes": 46672,
+      "facts": "lnkAddToSendQueue assigns ordered_id only !sibling_packet; pktWrap writes zero when ordered; mergeSibs sorts and copies part0 ordered_id",
+      "sha256": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c": {
+      "bytes": 30356,
+      "facts": "pktSendDbg splits stream.size >= maxPacketDataSize and passes i!=0 into lnkAddToSendQueue",
+      "sha256": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    }
+  },
+  "passed": true,
+  "review": "All three edits match exact original source behavior: one-sibling exact-size split, later ordered siblings zero ID, complete message metadata from part zero. Existing repeated same nonzero IDs remain valid; mismatched nonzero IDs still refuse. Existing bounded fragments, reassembly, timeout, owned-message release and authority policies remain.",
+  "reviewed_proof": {
+    "bytes": 9485,
+    "sha256": "35cbda8c0fe11228f59117874ad356bce9c16e2d15d5334ee314a48f3764986b"
+  },
+  "schema": "coh-independent-fragment-review-v1",
+  "source_pins_verified": 17,
+  "transport_ACK_is_application_ACK": false,
+  "whole_process_memory_measured": false
+}

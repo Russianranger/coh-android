@@ -1,0 +1,52 @@
+{
+  "schema": "coh-worker-e-fragment-lifecycle-independent-review-v1",
+  "passed": true,
+  "review_basis": "Independent read-only source/original-function/archive/ELF/receipt inspection; no native execution or compiler replay",
+  "qualification_path": "native-android/engine/network/diagnostics/worker-c-fragment-20261019/qualification.json",
+  "qualification_sha256": "35cbda8c0fe11228f59117874ad356bce9c16e2d15d5334ee314a48f3764986b",
+  "source_inputs_verified": 17,
+  "original_sources_verified": 12,
+  "original_functions_verified": 29,
+  "archive_sha256": "379219e40ac690b8170ec929b5e914cbd078281d9f530eae431b38448c4a62b1",
+  "archive_member_sha256": {
+    "release/test-fragment": "d33ce1577456979fc9191d83fc785663e60e3208e081435ac848afa6d1713a06",
+    "asan/test-fragment": "d8c6551a5ef63c174f968c015a6a9fc89f1f5123d0b3020de1f8110324383d06",
+    "ubsan/test-fragment": "c3f45a0ad8943b12ed94557f0313c1c7ea77d6ca2ce01868ae82b660d713538f",
+    "original-fragments.c": "29ef642cdc2d352e449ea1cf71ef74361b423a960d8f18bd31bfd19123cf65d8",
+    "original-fragments.so": "c682ce98e212aca0f3280e3589cd32b72622905753ad413dc107287297aa4864",
+    "fragment_goldens.h": "5b9d6a46abe6cce9536bfbbaa6a9418021453b006e8df1210932ece26cadf80f"
+  },
+  "modes_identical": true,
+  "checks_per_mode": 134879,
+  "exact_original_frames": 32,
+  "whole_message_deliveries": 48,
+  "request_tx_marked_hook_and_include_reversal_verified": true,
+  "unchanged_android_presentation_sources": [
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java",
+    "native-android/combined-client/app/src/main/cpp/interop_network.c",
+    "native-android/engine/world-render-adapter/coh_world_render.c",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.inc",
+    "native-android/engine/world-render-adapter/coh_wr_presentation.h",
+    "native-android/engine/renderer/coh_renderer.c",
+    "native-android/engine/renderer/coh_renderer_gles.c"
+  ],
+  "findings": [
+    "Later ordered sibling zero is admitted only when sibling_count and sibling_part are nonzero. First part and unfragmented ordered messages retain mandatory nonzero IDs.",
+    "One-sibling source envelope cannot skip part zero; original packet/sibling/count flags and packet-tail/checksum validation remain.",
+    "Reassembly checks uniform compressed/ordered flags and rejects conflicting nonzero ordered IDs before retaining. Complete logical message takes packet and order IDs from part zero regardless of arrival order.",
+    "No message is published from a partial group. Existing queue-capacity retry, 16KiB fail-close, timeout cancellation and owned decoded-message release paths are unchanged.",
+    "No allocation, retained owner, JNI callback or renderer code was added. Numeric synchronous observer still refuses authority and wipes borrowed lease metadata; no world snapshot or EGL mode is activated.",
+    "Original uncompressed send/queue/wrap source-function fixtures and independent zlib streaming fixtures are separate evidence. Original live transaction, Android compile/execution, physical Thor and world authority remain unqualified."
+  ],
+  "fragment_limit": 16,
+  "compressed_wire_reassembly_bytes": 16384,
+  "opt_in_decoded_bytes": 4194304,
+  "actual_original_server_transaction": false,
+  "android_compiled_by_reviewer": false,
+  "android_executed": false,
+  "accepted_apk_rebuilt": false,
+  "physical_thor_retest_requested": false,
+  "application_ack": false,
+  "world_authority": false,
+  "gates25_27_open": true
+}

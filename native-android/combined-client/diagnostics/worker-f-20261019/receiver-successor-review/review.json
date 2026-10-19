@@ -1,0 +1,83 @@
+{
+  "actual_Android_or_Thor_executed": false,
+  "actual_server_protocol_executed": false,
+  "checkout_base_differences": [
+    "native-android/engine/network/coh_net.c",
+    "native-android/engine/network/coh_net_frame.c"
+  ],
+  "current_source_actual_ELF_admission_passed": true,
+  "expected_receipt_refusals": {
+    "prior-receipt": "INITIAL_RECEIVE_BINARY",
+    "wrong-receipt-hash": "INITIAL_RECEIVE_RECEIPT_PIN"
+  },
+  "explicit_changed_compiler_inputs": {
+    "native-android/engine/network/coh_net.c": {
+      "after": "85466433e372b9194f0652e8dd08a4a99bdfe97d3a4c1bc149b418ac1a5fc57f",
+      "before": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1"
+    },
+    "native-android/engine/network/coh_net_frame.c": {
+      "after": "3731cd11edd507b2567db8bbb160bcc33c3b354fe08dcac1c797834a26063dfa",
+      "before": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+    }
+  },
+  "gates25_27": "OPEN",
+  "nine_retained_ELFs_decompressed_and_bound": {
+    "asan-coh-capture-initial-receive": {
+      "bytes": 1022512,
+      "sha256": "925987a33234d8f9675557b9db557165016332bdbedd73c51e9900031330b563"
+    },
+    "receive-jni-asan": {
+      "bytes": 232944,
+      "sha256": "f120c56082f1369444eaba1e1ea3a27428b0bd9e12ab4706365d884cf11279bd"
+    },
+    "receive-jni-release": {
+      "bytes": 49304,
+      "sha256": "b55911f03aa2fdaf31fb65b8117ec7aa9d04eed4c364314979268df4404c8eda"
+    },
+    "receive-jni-ubsan": {
+      "bytes": 204768,
+      "sha256": "48932f884ac6ea9e335f26d7d655c6787182f1599d9e21b722a344e62c8d41f0"
+    },
+    "receive-unit-asan": {
+      "bytes": 85096,
+      "sha256": "741215d17c29b12849a8f4f87ec5d4ed80eb2f15f54397c2684bf3903e3e7ef0"
+    },
+    "receive-unit-release": {
+      "bytes": 21136,
+      "sha256": "c9c132b7c83d478208dae3e524d24db26d72fd6eea649cdede8016299981ea9d"
+    },
+    "receive-unit-ubsan": {
+      "bytes": 68936,
+      "sha256": "b78df685d02af5600238e584dc99fd8cc6f33a6afc17228b31806c843bf2ef57"
+    },
+    "release-coh-capture-initial-receive": {
+      "bytes": 185984,
+      "sha256": "76cc9e3246ba1d4fa7db42187f41f4e5b4683b98a8e446712ed51cfc06f4fe0c"
+    },
+    "ubsan-coh-capture-initial-receive": {
+      "bytes": 817872,
+      "sha256": "048a4a38a8c088fdf8a2b6b8f9625b2719f5ab83fabb0e507d161f979915ea51"
+    }
+  },
+  "original_compiler_receipt_rewritten": false,
+  "passed": true,
+  "retained_files_verified": 236,
+  "retention_binding": {
+    "bytes": 33250,
+    "sha256": "20d6b8c27d96c512276185aac403618203b9badec05fcc398722ef6196c45a21"
+  },
+  "schema": "coh-independent-receiver-successor-review-v1",
+  "scope_note": "Qualified03 is a fresh three-mode compile with two changed underlying transport TUs, not equivalence/reuse of unchanged qualified02. Historical false checker field is explicitly superseded by scope receipt. Noargs, numeric projection doubles, JNI doubles and source-generated fragment tests remain distinct from real source-service or Android runtime execution.",
+  "source_pins_current_raw_verified": 60,
+  "source_pins_equal_checkout_base": 58,
+  "successor_receipt": {
+    "bytes": 224431,
+    "sha256": "72d78cfc646adb027175d7870b83576c95c4e32c4df11528826b91aafcbf323c"
+  },
+  "successor_scope_receipt": {
+    "bytes": 13862,
+    "sha256": "26263202b282afd8c1c8975b9b3c263d41be2ff85d47f629b44ee1d2ce14ed4e"
+  },
+  "whole_process_memory_fit": false,
+  "world_authority": false
+}

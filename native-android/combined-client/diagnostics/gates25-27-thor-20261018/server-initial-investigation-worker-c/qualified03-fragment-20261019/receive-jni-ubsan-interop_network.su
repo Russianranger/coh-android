@@ -1,0 +1,16 @@
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h:27:20:coh_receive_sample	16	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:54:17:owner	16	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:36:13:retire_request	16	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:172:12:append	48	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:176:12:append_string	80	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:32:13:sample_receive	1056	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:43:13:close_capture	16	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:126:18:observe	1408	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:93:25:Java_org_coh_nativecombined_InteropNative_begin	2384	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:149:24:Java_org_coh_nativecombined_InteropNative_service	1088	dynamic,bounded
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:165:24:Java_org_coh_nativecombined_InteropNative_choose	32	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:188:30:Java_org_coh_nativecombined_InteropNative_characters	320	dynamic,bounded
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:212:27:Java_org_coh_nativecombined_InteropNative_report	12832	dynamic,bounded
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:280:24:Java_org_coh_nativecombined_InteropNative_suspend	16	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:292:24:Java_org_coh_nativecombined_InteropNative_disconnect	16	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/app/src/main/cpp/interop_network.c:296:24:Java_org_coh_nativecombined_InteropNative_close	16	static

@@ -1,0 +1,9 @@
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/capture_local_initial_receive.c:317:13:receive_destroy	8	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h:48:19:coh_receive_json	384	dynamic,bounded
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h:27:20:coh_receive_sample.part.0	56	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/test_receive.c:11:13:reset	8	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/test_receive.c:8:11:coh_initial_capture_begin	8	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/test_receive.c:9:6:coh_initial_capture_diagnostics	8	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/capture_local_initial_receive.c:311:13:receive_diagnostics	16	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/test_receive.c:10:6:coh_initial_capture_destroy	8	static
+/workspace/scratch/6400a2d75800/coh-android/native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/test_receive.c:12:5:main	5728	static

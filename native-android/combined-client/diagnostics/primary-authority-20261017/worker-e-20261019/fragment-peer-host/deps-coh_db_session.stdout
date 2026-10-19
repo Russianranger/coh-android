@@ -1,0 +1,17 @@
+coh_db_session.o: \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_session.c \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_session.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_dbclient.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../auth/coh_auth.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../auth/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../auth/../../include/coh_native_core.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../network/coh_net_udp.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../network/coh_net.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../network/../coh_contracts.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/../network/../../protocol/coh_protocol.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/include/coh_native_core.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_controls.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_account_inventory.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_handoff_private.h \
+ /workspace/scratch/6400a2d75800/coh-android/native-android/engine/dbclient/coh_db_handoff_owner.h
