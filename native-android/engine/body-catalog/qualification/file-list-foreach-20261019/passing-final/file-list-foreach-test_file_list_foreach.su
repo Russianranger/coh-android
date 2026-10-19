@@ -1,0 +1,9 @@
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:56:18:fail_digest	8	static
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:76:13:hex	8	static
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:15:18:digest	16	static
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:39:13:diagnostic	16	static
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:24:17:binding.part.0	304	static
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:13:17:word	32	static
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:14:13:hash	16	static
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:16:13:file_hash	48	static
+/workspace/scratch/0484ad305122/coh-traversal-worktree/native-android/engine/body-catalog/test_file_list_foreach.c:77:5:main	49648	dynamic,bounded

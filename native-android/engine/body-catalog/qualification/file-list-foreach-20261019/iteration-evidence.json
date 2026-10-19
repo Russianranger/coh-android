@@ -1,0 +1,60 @@
+{
+  "schema": "coh-file-list-foreach-iterations-v1",
+  "failed_attempts": [
+    {
+      "attempt": 1,
+      "scratch_directory": "/workspace/scratch/0484ad305122/traversal-b-attempt1",
+      "outcome": "release compile refused",
+      "reason": "Generated wrapper had invalid C escaped-backslash character literals; fixed literal escaping without changing original bodies.",
+      "persistent_directory": "failed-attempt1"
+    },
+    {
+      "attempt": 2,
+      "scratch_directory": "/workspace/scratch/0484ad305122/traversal-b-attempt2",
+      "outcome": "native association refused before source execution",
+      "reason": "Copied Python ledger magic COHFLO1 disagreed with standalone native COHFFE1; corrected fixed protocol magic.",
+      "persistent_directory": "failed-attempt2"
+    }
+  ],
+  "passing_attempts": [
+    {
+      "attempt": 3,
+      "scratch_directory": "/workspace/scratch/0484ad305122/traversal-b-attempt3",
+      "persistent_directory": "passing-attempt3",
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "checks_each": 2387,
+      "fixtures_each": 100,
+      "subsequent_changes": "Expanded Python raw string formatting for review; added reporting of callback invocations and capacity refusal totals, preserving test conditions."
+    },
+    {
+      "attempt": "final",
+      "scratch_directory": "/workspace/scratch/0484ad305122/traversal-b-final",
+      "persistent_directory": "passing-final",
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "checks_each": 2387,
+      "fixtures_each": 100,
+      "callback_invocations_each": 201,
+      "capacity_pre_source_refusals_each": 6
+    }
+  ],
+  "final_source_sha256": {
+    "file_list_foreach_provider.py": "41e3593913566cbc2175cf8ae090679021b5098a6d9d03c3d592f55472daf213",
+    "file-list-foreach-source-pins.json": "a4727b8ef948c93a42d7e5123fe33b30c1464077d534212cb6faeafac5f2abb6",
+    "check_file_list_foreach.py": "398d2df8bad0f0dcdf21e2615893cda20a3a4552a3a9a1b6fd5877de6ec4b8ca",
+    "test_file_list_foreach.c": "faeab7947486bee7906b4caa2391e0eb541829badad35b18f6826ddaecf38dd1"
+  },
+  "ASAN_OPTIONS": "detect_leaks=0:halt_on_error=1",
+  "LeakSanitizer_exclusion": "Established host ptrace limitation; no leak closure claimed.",
+  "static_review": "Independent read-only reviewer checked exact original extraction, private callback ownership/lifetime, unique-capacity admission before originals and independent sorted dictionary expectations; no substantive defects after the two corrected early blockers.",
+  "source_frozen_after_final_tests": true,
+  "no_git_index_commit_branch_or_push_mutations": true,
+  "next_independent_B_leaf": "Whole original FileListIsBinUpToDate on two bounded fixture-owned lists; distinguish length/name/date equality from real filesystem/current-Map freshness; preserve stops."
+}

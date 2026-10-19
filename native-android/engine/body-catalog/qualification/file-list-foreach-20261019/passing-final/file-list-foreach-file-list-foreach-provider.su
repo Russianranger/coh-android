@@ -1,0 +1,11 @@
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:27:12:ascii_ncompare	8	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:155:13:owned_callback	16	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:33:13:forwardSlashes.part.0	16	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:97:12:observed_search	32	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:23:5:fileforeach_is_idle	8	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:24:8:fileforeach_owned_bytes	8	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:44:6:FileListCreate	16	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:99:12:FileListFind	304	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:111:6:FileListInsert	368	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:140:6:FileListForEach	48	static
+/workspace/scratch/0484ad305122/traversal-b-final/file-list-foreach-provider.c:179:11:fileforeach_apply	9072	static
