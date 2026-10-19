@@ -1,83 +1,104 @@
-# CoH native: bounded integration and corrected memory candidate
+# CoH native: bounded integration and Combined 0.1.10 diagnostic
 
-Use `native-android` only. Recovered `7030870e`; three isolated implementation
-worktrees, sequential expected-parent non-force publications. Gates 1–24 remain
-accepted within their documented scopes. Gates 25–27 remain OPEN.
+Use `native-android` only. Recovered `7030870e`; three independent worktrees and
+sequential expected-parent, non-force publication. Gates 1–24 remain accepted
+within their documented scopes. Gates 25–27 remain OPEN.
 
 A — `11026bf7ab283a5e959343c29472e93dd7a129a4`
-Prepared a disabled nonshipping BodyPart runtime witness: exact ordered values,
-real loader-route hooks and startup comparison in a fresh disposable overlay.
-No original allocator/runtime changes; no generation admission. Release/ASan/
-UBSan each passed 2,542 checks, 291 synthetic loads and 256 cleanup cycles.
+Disabled nonshipping BodyPart runtime witness: complete ordered values, actual
+loader-route hooks and startup comparison in a disposable source overlay.
+Release/ASan/UBSan each: 2,542 checks, 291 synthetic loads, 256 cleanup cycles.
 Own static storage 65,860 B; new heap 0; selected frames 432 B < 4 KiB reserve.
-Target MapServer compilation/execution/current-Map provenance remain unqualified.
-CI 39331558734 PASS, artifact 12224697337 independently verified against inputs.
-https://github.com/Russianranger/coh-android/actions/runs/39331558734
-See native-android/engine/costume-export/BODY_RUNTIME_WITNESS.md.
+No target MapServer compile/execution or current-Map catalog admission yet.
+https://github.com/Russianranger/coh-android/actions/runs/39331558734 PASS.
+Reproduce: native-android/engine/costume-export/BODY_RUNTIME_WITNESS.md.
 
 B — `0a1668ee6121a8f77c0551a06544b022d47b85a7`
-Joined streamed source occurrences to authenticated sealed CityHall/Plaza meshes.
-Exact actual owner identity and synchronous borrowed lifetimes required. Trusted,
-unmodified candidate input remains a precondition. Of 76,192 occurrences: two
-prepared models/21 parts, 47,227 NOT_PREPARED and 28,963 NO_MODEL retained.
-Release/ASan/UBSan each passed 312,809 checks. Query allocates nothing. Named
-placement aggregate 57,403,703 B; prior seal transition 93,228,133 B < 96 MiB.
-No CLIENT materials, renderer readiness, live generation, actor or ACK grant.
-CI 39331622054 PASS, artifact 12224478363 independently verified: 67 source and
-15 input hashes match after normalizing only storage roots.
-https://github.com/Russianranger/coh-android/actions/runs/39331622054
-See native-android/engine/scenecatalog/SOURCE_PLACEMENT.md.
+Streamed authentic source occurrences join to sealed CityHall/Plaza geometry:
+76,192 occurrences; 2 prepared models/21 parts; 47,227 NOT_PREPARED and 28,963
+NO_MODEL remain explicit. Exact actual owner identity/borrowed lifetime required;
+trusted unmodified historical candidate input is a precondition.
+Release/ASan/UBSan each: 312,809 checks. Query allocates nothing. Named placement
+aggregate 57,403,703 B; earlier seal transition 93,228,133 B < 96 MiB.
+Nonrendered: CLIENT materials, concrete live owner adapter and generation remain
+unqualified. Offline preview preserved.
+https://github.com/Russianranger/coh-android/actions/runs/39331622054 PASS.
+Reproduce: native-android/engine/scenecatalog/SOURCE_PLACEMENT.md.
 
-C — original `7929bdb7` candidate WITHHELD; corrected source is
-`ae5a11d0c0be5098d0aec66370dda99c055167ee`.
-Original build/lint/both ABI/package audits passed, but Android drivers failed
-(schema mismatch, launcher observation, global-idle capture). Primary then
-reproduced a real NPE when the first RSS/PSS sample was unavailable. Existing
-tests had seeded a known zero. The old APK must not be delivered or reused.
-Corrected boxed-null accounting and finally-based worker recovery now pass
-2,895 phase checks/10,407 records and 34 production-worker checks/9,000 queued
-requests/two injected failures. Policy 2,710 checks unchanged. Strict fragment
-controls: 10; framework/UI controls: 201. Independent source review passes.
-A separate bounded test-helper APK obtains fresh accessibility trees when global
-idle is unavailable; it does not modify the candidate APK or skip assertions.
-Fresh package qualification passed: both ABI builds/lint, 17 host suites,
-package/DSO audits and independent 2,226-source-pin review. All three Android
-jobs failed test-harness observation: upgrade left a notification-permission
-Activity open across replacement; fragment capture raced the active window
-after SAF; slow global-idle capture exhausted the unchanged 30-second transport
-idle timeout before character selection. No stale report/tree was accepted.
-Exact-package replay 39336618905 passed archive/source admission and the
-Android update/rollback/reinstall gate: 14 checks, unchanged UID and four
-synthetic files totaling 69,863 B. Fragment export capture rejected a transient
-missing child; framework Return search reversed before reaching the top button.
-Both gates remain incomplete. New bounded whole-tree retry and toward-start
-Return regressions pass 229 host controls. They alter only qualification tools;
-the next replay still uses the exact C2 APKs. Full Android qualification remains
-PENDING; no APK is offered before both remaining lifecycle/export gates pass.
-https://github.com/Russianranger/coh-android/actions/runs/39336618905
-Package artifact 12226012507, 17,868,604 B, archive SHA-256
+C — APK runtime source `ae5a11d0c0be5098d0aec66370dda99c055167ee`.
+Combined 0.1.10-memory-diagnostic-test/code 11, `org.coh.nativecombined`.
+Signer SHA-256 `9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522`.
+Build/lint/both ABI/package+DSO audits and 17 host suites passed:
+https://github.com/Russianranger/coh-android/actions/runs/39334606957
+Independent package audit verifies exact APKs, 74 assets, 2,226 source pins.
+Corrected first-unavailable null history and sampler recovery: 2,895 phase checks,
+10,407 records; 34 production-worker checks/9,000 requests/two injected failures.
+Policy 2,710 checks unchanged; JNI release/ASan/UBSan each 186.
+Original `7929bdb7` APK is permanently WITHHELD for the reproduced null bug.
+
+Exact-package Android qualification source:
+`22ae9d770fb4d0e6c6550103a896d5f0f59243c0`.
+https://github.com/Russianranger/coh-android/actions/runs/39338244800
+All four jobs PASS: immutable admission, Android13 framework/import (65 checks),
+fragment/memory/lifecycle (25), update/rollback/reinstall (14). CI also passes
+229 UI controls and four upgrade controls. Package was NOT rebuilt: all 51
+original package members are identical; 2,221 non-driver source pins unchanged.
+Same UID and four synthetic files/69,863 B survived update, launch, debuggable
+rollback and reinstall. This does not claim real game-save migration or guest
+startup on x86. Renderer contexts, held input, sockets and retained bodies retire
+under actual Android Return tests; no app crash/ANR was accepted.
+Final independent execution audit: PASS; qualified for Thor TEST delivery only.
+Audit SHA-256 `f8f2725c33d487e9594b49b2fa29cfb8e4215c1d850cb4968cd1528c75409d57`.
+ARM64 test artifact is delivered; physical acceptance remains PENDING.
+
+ARM64 APK: CoH-Native-Combined-0.1.10-memory-diagnostic-arm64.apk, 13,929,833 B.
+SHA-256 `7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf`.
+Original package artifact 12226012507, archive 17,868,604 B, SHA-256
 `0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04`.
-ARM64 APK 13,929,833 B, SHA-256
-`7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf`.
-Version remains proposed 0.1.10/code 11 because no prior candidate was delivered.
-Package/signing identity unchanged. Do not offer a test APK until all required
-build, package, independent review and Android jobs pass. Physical Thor is pending.
 
-Preserved: source/upstream/content locks, ServerMemoryPolicy, ImportContract,
-ImportStore, RuntimeSetup, LeaseRules and signing key are byte-identical. Existing
-imports, profiles, database, Wine/FEX, rootfs, assets and saves were not modified.
-Combined 0.1.9 INITIAL_OBSERVED evidence remains accepted within its scope.
-No live catalog/default/dictionary generation, complete selected character,
-actor, READY, RECEIVED_CHARACTER or application full-update ACK is admitted.
-Existing 4 MiB decoded/16 KiB ordinary/8 MiB initial/96 MiB scene caps remain.
-Host named reservations and emulator samples are not physical Thor RAM proof.
-The generic working-set ledger remains uninstalled; no guessed owner tickets.
+Memory: nine fixed phase slots, event/control-worker sampling at most once per
+second, explicit unknown guest/native-owner/GPU totals. Android13 x86 emulator
+fragment run: 13 samples, sampler failures 0, system samples valid; sampled peak
+app RSS 144,199,680 B/PSS 71,669,760 B. FINAL_CLEANUP phase app RSS 91,340,800 B/
+PSS 30,082,048 B. Minimum observed system headroom 499,650,560 B; Java headroom
+160,623,520 B. These are sampled app observations, not total server RAM, absolute
+peaks, physical Thor fit or leak proof. Genuine SERVER_READY/SERVER_STOPPED
+measurements await the physical test. Host reservations are not device RSS/PSS.
 
-Exact recovery, publication, failure and package-review receipts:
-native-android/integration/three-workstreams-20261019/.
-Next: finish corrected candidate qualification, independently audit its exact
-bytes, then provide the existing-profile Thor memory/Return/Home/export test.
-Afterward: target-qualify and execute the nonshipping provenance witness;
-advance bounded CLIENT materials and concrete owner lifetimes for the two-model
-subset; retain genuine bounded ALLENTS/whole-diagnostic evidence at the exact
-admitted-input boundary. No guessed generation or incomplete-character ACK.
+Preserved: all nine protected locks/policy/import/runtime/signing inputs match
+baseline hashes. Database, Wine/FEX, rootfs, assets, profiles and saves were not
+changed. Existing 4 MiB decoded/16 KiB ordinary/8 MiB initial/96 MiB scene limits
+remain. Generic parent ledger is not an installed concrete owner adapter.
+No live catalog/default generation, complete authoritative character, actor,
+world READY, RECEIVED_CHARACTER or application full-update ACK is admitted.
+Combined 0.1.9 physical INITIAL_OBSERVED evidence retains its original scope.
+
+Thor test (physical acceptance PENDING; installation belongs to the user):
+1. Stop the existing server, keep accepted 0.1.9 for rollback, and install the
+   qualified ARM64 APK over Combined. Never uninstall, clear storage or reimport.
+2. Start the same server, launch native client, Test world handoff and choose the
+   existing character. Missing catalog/character/resource states are expected;
+   the image remains the accepted offline preview.
+3. Sample memory and export native JSON. Home/resume; confirm no automatic
+   reconnect. Return to launcher; confirm the same server remains available.
+4. Export launcher ZIP, stop the server cleanly, then export another ZIP. Retain
+   APK identity and exports. Genuine server-ready/stopped memory remains pending
+   until these real-device observations exist.
+5. Rollback, if needed, uses the retained debuggable 0.1.9 APK with a data-preserving
+   `adb install -r -d` update. The normal installer may refuse version downgrade;
+   do not replace it with uninstall/clear. No remote Thor installation was done.
+
+Next three independent tasks:
+1. Target-qualify the disabled provenance witness, then obtain independently
+   attested executable/profile/run/current-Map and original cache/generation
+   ownership from a separately qualified diagnostic runtime. Never auto-deploy
+   instrumentation into the accepted server.
+2. Authenticate CLIENT materials and install concrete owner/lifetime admission
+   for the two-model subset, reserving old + candidate + scratch + retained
+   assets before exposing any renderer candidate.
+3. Retain genuine bounded ALLENTS/whole-initial diagnostics at the exact admitted
+   input boundary. Preserve first unsupported dictionary/size/provenance states,
+   existing caps and every actor/READY/ACK restriction.
+
+Exact recovery, historical failures, package audits and final execution evidence:
+native-android/integration/three-workstreams-20261019/integration.json.

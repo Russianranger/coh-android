@@ -111,7 +111,7 @@
       "local_head": "47c61f4917d57ac1b5410635ad74312704798b5f",
       "remote_commit": "ae5a11d0c0be5098d0aec66370dda99c055167ee",
       "workflow_run": 39334606957,
-      "status": "package and immutable source audit passed; Android qualification pending bounded whole-tree/Return test-harness repair",
+      "status": "qualified signed diagnostic test APK; physical Thor acceptance pending",
       "reason_for_rebuild": "fixed real first-unavailable null-unboxing and sampler recovery bug; old candidate withheld",
       "local_checks": {
         "policy": 2710,
@@ -127,7 +127,7 @@
       },
       "server_policy_thresholds_changed": false,
       "heavy_world_integration_enabled": false,
-      "APK_delivered": false,
+      "APK_delivered": true,
       "package_build_lint_audits": "passed",
       "package_job": 118340814357,
       "host_suites": 17,
@@ -142,7 +142,7 @@
         "bytes": 13929833,
         "sha256": "7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf"
       },
-      "runtime_Android_jobs": "all three original jobs failed test-harness observations; exact-package replay pending",
+      "runtime_Android_jobs": "all three exact-package C4 Android13 gates passed",
       "physical_Thor": "pending",
       "failed_Android_harness_jobs": [
         {
@@ -633,7 +633,7 @@
         }
       },
       "next_exact_package_harness_repair": {
-        "status": "independently reviewed; actual Android replay pending",
+        "status": "integrated and qualified by C4 run 39338244800",
         "UI_local_commit": "ce02a23889c9b483d5dbff6dcf970cba5800804b",
         "workflow_local_commit": "e43725a3de453b05514160efdc80ae4824a7cd08",
         "host_control_checks": 229,
@@ -700,6 +700,458 @@
         },
         "trigger_marker": "[combined-memory-requalify]",
         "canonical_APK_build_skipped_by": "[native-contracts-only]"
+      },
+      "latest_exact_package_Android_requalification": {
+        "source_commit": "22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+        "workflow_run": 39338244800,
+        "status": "success",
+        "package_admission_job": 118353034702,
+        "Android_jobs": {
+          "framework": {
+            "id": 118353379272,
+            "status": "success",
+            "checks": 65
+          },
+          "fragment_interop": {
+            "id": 118353379208,
+            "status": "success",
+            "checks": 25
+          },
+          "package_upgrade": {
+            "id": 118353379243,
+            "status": "success",
+            "checks": 14
+          }
+        },
+        "CI_UI_control_checks": 229,
+        "CI_upgrade_control_tests": 4,
+        "artifacts": [
+          {
+            "id": 12228033025,
+            "name": "combined-memory-c2-requalification-android13-framework-22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+            "bytes": 2025721,
+            "sha256": "dfe4a70a3e8fb8bac5d3a1f69945270b13be70a263587b66e881bc5a80b94b59"
+          },
+          {
+            "id": 12227806863,
+            "name": "combined-memory-c2-requalification-android13-package-upgrade-22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+            "bytes": 7181331,
+            "sha256": "09bdf563c5b315e5e8afae8359e5239a86337de8eab99e5aee106015ff9f7773"
+          },
+          {
+            "id": 12227313605,
+            "name": "combined-memory-c2-requalification-android13-fragment-interop-22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+            "bytes": 161877,
+            "sha256": "eacbfd64ec935f88f769f576edd691d8d3600b0980078871c4bb1f82c395346a"
+          },
+          {
+            "id": 12227138095,
+            "name": "combined-memory-c2-requalification-inputs-22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+            "bytes": 17870138,
+            "sha256": "44dc4e6023839a893b903bedcb1683395c51c2aa02273975aa6e997a4769409c"
+          }
+        ],
+        "APK_rebuilt": false,
+        "unchanged_candidate_runtime_and_build_source_pins": 2221,
+        "permitted_driver_and_document_changes": 13,
+        "source_admission_sha256": "68b209f41648514ca4dba2e54bc15ab1469b877613bc08b613d193d78bb5946b",
+        "independent_execution_review_sha256": "f8f2725c33d487e9594b49b2fa29cfb8e4215c1d850cb4968cd1528c75409d57",
+        "independent_execution_review": {
+          "ARM64_guest_server_execution_qualified_by_x86_64_Android": false,
+          "application_ACK_authority": false,
+          "candidate_APKs": {
+            "arm64-v8a": {
+              "bytes": 13929833,
+              "sha256": "7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf"
+            },
+            "x86_64": {
+              "bytes": 13233003,
+              "sha256": "4cba32800790112c22146f6f6f8f773436a816de44c3e83d1c9503b0e9ec4d49"
+            }
+          },
+          "candidate_source_revision": "ae5a11d0c0be5098d0aec66370dda99c055167ee",
+          "fragment": {
+            "FINAL_CLEANUP_source_order_after_network_and_renderer_destroy_return": true,
+            "Home_resume_no_silent_reconnect": true,
+            "SAF_export_matches_observed_numeric_projection": true,
+            "archive": {
+              "bytes": 161877,
+              "sha256": "eacbfd64ec935f88f769f576edd691d8d3600b0980078871c4bb1f82c395346a"
+            },
+            "artifact_id": "12227313605",
+            "checks": 25,
+            "final_memory_snapshot": {
+              "bytes": 6370,
+              "sha256": "816cb8b07205c688b86fbdc59e79c093f01954ec025be740f074f25ae659ec8d"
+            },
+            "final_sample_PSS_bytes": 30082048,
+            "final_sample_RSS_bytes": 91340800,
+            "fragment_siblings": [
+              6,
+              1
+            ],
+            "fresh_helper": {
+              "build_receipt": {
+                "bytes": 2395,
+                "sha256": "76f5cad17e253da4ac4f5631b5603ff79a7c6c70d3a7a75cd49a412111542b57"
+              },
+              "captures": 12,
+              "discarded_partial_trees": 0,
+              "failed_shell_captures_not_read": 4,
+              "fault_evidence_files": 126,
+              "max_XML_bytes": 15091,
+              "max_depth": 14,
+              "max_duration_ms": 1451,
+              "max_nodes": 40,
+              "max_root_attempts": 8,
+              "max_root_wait_ms": 881,
+              "partial_XML_reused": false,
+              "self_targeted_helper_APK": {
+                "bytes": 16787,
+                "sha256": "231508280cd44239aad1c918fbc5bb3d5bb3c1bb4630c46245db6a9d7f0eb361"
+              },
+              "shell_captures": 2,
+              "snapshot_attempts_max": 1,
+              "source_and_public_signer_matched": true
+            },
+            "guest_server_start_or_stop_exercised": false,
+            "initial_observed_bytes_each": 65536,
+            "job_id": "118353379208",
+            "native_private_report_scope": "Last Activity snapshot precedes Return; final launcher phase is source-ordered after both destroy calls return. Framework independently qualifies detailed native retirement.",
+            "passed": true,
+            "peer_opened_and_closed_sockets_each": 2,
+            "phase_sequences": {
+              "DIAGNOSTIC": 3,
+              "FINAL_CLEANUP": 13,
+              "NATIVE_CONNECTION": 8,
+              "PAUSE": 10,
+              "RESUME": 11,
+              "RETURN": 12
+            },
+            "receipt": {
+              "bytes": 18715,
+              "sha256": "1bdf005eb2d2674e7a6e29b0b922268f4301161da0277df460b34a50f731bb41"
+            },
+            "reports": {
+              "combined-report.json": {
+                "bytes": 9273,
+                "memory_phases": 7,
+                "preserved_reader_limit_bytes": 131072,
+                "sampler_failures": 0,
+                "samples": 13,
+                "sha256": "a546b849c890c4ba387ee480073643cd393fbf25a94fccfc0845dbb1410d6a28"
+              },
+              "exported-native-report.json": {
+                "bytes": 46101,
+                "memory_phases": 4,
+                "preserved_reader_limit_bytes": 2097152,
+                "sampler_failures": 0,
+                "samples": 5,
+                "sha256": "c728f090ec4565caa25415d0cb6aa5c307bc14aee04831d64ce6a342df590a5e"
+              },
+              "native-client-report.json": {
+                "bytes": 179295,
+                "memory_phases": 5,
+                "preserved_reader_limit_bytes": 2097152,
+                "sampler_failures": 0,
+                "samples": 11,
+                "sha256": "8eca983d30ffcfb91599ede76339b18fa2dd29549cf6e0cf28d4796e4444713b"
+              }
+            },
+            "sampled_peak_PSS_bytes": 71669760,
+            "sampled_peak_RSS_bytes": 144199680,
+            "sampler_failures": 0,
+            "workflow_run": "39338244800"
+          },
+          "framework": {
+            "Android_native_controller_checks": 1106,
+            "Android_native_controller_socket_scenarios": 9,
+            "Return_native_reports": {
+              "active-character-picker-return-native-report.json": {
+                "GPU_bytes": 0,
+                "bytes": 107108,
+                "contexts_completed": 2,
+                "contexts_started": 2,
+                "held_dirs": 0,
+                "input_pending_edges": 0,
+                "sha256": "0295a3727421e84968133606ede748760a6f6a5909d8288d2f5dc288b243d84d",
+                "sockets_closed": 1,
+                "sockets_opened": 1
+              },
+              "before-launcher-zip-export-return-native-report.json": {
+                "GPU_bytes": 0,
+                "bytes": 240740,
+                "contexts_completed": 4,
+                "contexts_started": 4,
+                "held_dirs": 0,
+                "input_pending_edges": 0,
+                "sha256": "4c473517bef637c5af94a4c22235d00997499eb88d0c578ab350db58fae283bf",
+                "sockets_closed": 2,
+                "sockets_opened": 2
+              }
+            },
+            "actual_JSON_export": {
+              "bytes": 129245,
+              "sha256": "0a9825f392cf22e9c23bb3f3798b2ff613ebc76cb635882e4eb74c4cfca975fa"
+            },
+            "actual_launcher_ZIP_export": {
+              "bytes": 15120,
+              "current_report_exact_version11": true,
+              "expanded_bytes": 255748,
+              "historical_native_scripted_version3_labeled_separately": true,
+              "members": {
+                "combined-report.json": {
+                  "bytes": 9062,
+                  "sha256": "4b770fd715a0a4fa5cc34c4cce390fbe70dccd894320b28ef0f4684eabf34d74"
+                },
+                "combined-server-previous-attempts.json": {
+                  "bytes": 5843,
+                  "sha256": "b7cbe2808ac364758d0c827fab265fe20721082259b9ea24514980ed6bf7a444"
+                },
+                "previous-app-native-client-report.json": {
+                  "bytes": 240843,
+                  "sha256": "6393a98f15f900e533745b827a7212d31fa52e4af4de8b2b9b527cb11dfba228"
+                }
+              },
+              "original_native_report_restored": true,
+              "sha256": "3bad8ecfe5f846dae1d6141a484b4b84d4b426c3d7a8914955131a6a2cd33730"
+            },
+            "actual_reports_with_zero_sampler_failures": 15,
+            "app_descriptor_counts": [
+              115,
+              115,
+              115
+            ],
+            "archive": {
+              "bytes": 2025721,
+              "sha256": "dfe4a70a3e8fb8bac5d3a1f69945270b13be70a263587b66e881bc5a80b94b59"
+            },
+            "artifact_id": "12228033025",
+            "checks": 65,
+            "donor_FX_bytes": 3380680,
+            "donor_FX_sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890",
+            "donor_complete_imports": 2,
+            "donor_payload_files_sealed": 71,
+            "exact_installed_APK": {
+              "bytes": 13233003,
+              "sha256": "4cba32800790112c22146f6f6f8f773436a816de44c3e83d1c9503b0e9ec4d49"
+            },
+            "explicit_reconnect_required": true,
+            "final_launcher_phase_sequences": {
+              "COLD_STARTUP": 1,
+              "FINAL_CLEANUP": 14,
+              "NATIVE_CONNECTION": 8,
+              "PAUSE": 11,
+              "RESUME": 12,
+              "RETURN": 13
+            },
+            "foreground_scene": {
+              "actual_GPU_bytes": 557056,
+              "bright_pixels": 388630,
+              "distinct_colors": 10694,
+              "screenshot_sha256": "b88806ba704f4a41749a467677acb4dd54c3a97fc9a45f8fbef5c5055e7b4be7"
+            },
+            "fresh_helper": {
+              "build_receipt": {
+                "bytes": 2395,
+                "sha256": "5139dc252fad0569320b0f2094572741500b39037a8a2b85da4e9c8704f0134b"
+              },
+              "captures": 31,
+              "discarded_partial_trees": 0,
+              "failed_shell_captures_not_read": 3,
+              "fault_evidence_files": 291,
+              "max_XML_bytes": 30777,
+              "max_depth": 18,
+              "max_duration_ms": 235,
+              "max_nodes": 82,
+              "max_root_attempts": 2,
+              "max_root_wait_ms": 193,
+              "partial_XML_reused": false,
+              "self_targeted_helper_APK": {
+                "bytes": 16787,
+                "sha256": "24fa80b8ec1bd93c5a0566ad9e318aef57f2bbafc6fd4bcde36716eff458db24"
+              },
+              "shell_captures": 18,
+              "snapshot_attempts_max": 1,
+              "source_and_public_signer_matched": true
+            },
+            "held_input_before_Return": {
+              "held_dirs": 1,
+              "input_pending_edges": 1
+            },
+            "job_id": "118353379272",
+            "native_retirement_scope": "Fresh pause/render-return snapshots prove EGL contexts completed and GPU/input/socket release; exported current launcher FINAL_CLEANUP follows network and renderer destroy return. No direct post-destruction native snapshot is claimed.",
+            "passed": true,
+            "peer_sockets_opened_and_closed_each": 2,
+            "receipt": {
+              "bytes": 43015,
+              "sha256": "4413a4cf0a12c88f5db237a25f42e97eb948920e83a99abedd7f39f7449282ec"
+            },
+            "report_reader_bounds": {
+              "all_observed_reports_within_respective_readers": true,
+              "export_ZIP_bytes_max": 8388608,
+              "launcher_bytes_max": 131072,
+              "memory_snapshot_bytes_max": 24576,
+              "native_bytes_max": 2097152
+            },
+            "retained_attempts": 1,
+            "retained_single_launcher_PID": 6033,
+            "sampler_failures": 0,
+            "scene_body_owned_retained_bytes": 0,
+            "scripted_GROUPS_decoded_bytes": 139794,
+            "scripted_GROUPS_exact_consumed_bits": 1118352,
+            "untrusted_donor_preserves_accepted_payload": true,
+            "workflow_run": "39338244800",
+            "world_or_authenticated_server_authority": false
+          },
+          "latest_repair_host_controls": {
+            "Android_execution_claimed": false,
+            "Return_locator_controls": 4,
+            "capture_controls": 41,
+            "checks": 229,
+            "root_acquisition_stub_controls": 6,
+            "whole_tree_retry_stub_controls": 6
+          },
+          "native_authority": false,
+          "physical_Thor_accepted": false,
+          "qualified_for_Thor_TEST_delivery": true,
+          "reviewed_qualification_source_revision": "22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+          "runtime_and_build_inputs_unchanged_in_reviewed_replay": true,
+          "schema": "coh-independent-Android-delivery-review-v1",
+          "scope": "Qualified for diagnostic Thor TEST APK delivery only. Exact C2 ARM64 package and signer/source identity are audited; Android 13 x86_64 execution qualifies the stated UI/import/update/JNI/UDP/memory/export/lifecycle scenarios. Physical Thor operation/endurance, ARM64 guest server READY/STOPPED and memory, real save migration, authenticated original server, resolved live world, complete initial character, actor publication and application ACK remain unqualified.",
+          "source_admission": {
+            "bytes": 3486,
+            "original_C2_archive_members_byte_identical": 51,
+            "permitted_changes_checked": 13,
+            "scope": "Immutable qualification22ae receipt and candidate ae5 pins. Later coordinator documentation-only drafts are not claimed byte-identical to qualification source.",
+            "sha256": "68b209f41648514ca4dba2e54bc15ab1469b877613bc08b613d193d78bb5946b",
+            "unchanged_candidate_pins_independently_checked": 2221
+          },
+          "status": "PASS: exact C2 packages and immutable C4 source admission plus all three Android gates independently audited",
+          "upgrade": {
+            "archive": {
+              "bytes": 7181331,
+              "sha256": "09bdf563c5b315e5e8afae8359e5239a86337de8eab99e5aee106015ff9f7773"
+            },
+            "artifact_id": "12227806863",
+            "candidate_actual_launch_reports": [
+              {
+                "bytes": 4608,
+                "pss_peak": 25776128,
+                "report": "candidate-launch-last-combined-report.json",
+                "rss_peak": 95154176,
+                "samples": 1,
+                "sha256": "cf7cfa8abab93de0327740e16fdd5afa4c72a055ae66de7e0572d9b5f31b54b7"
+              },
+              {
+                "bytes": 4976,
+                "pss_peak": 24666112,
+                "report": "candidate-reinstall-launch-last-combined-report.json",
+                "rss_peak": 95285248,
+                "samples": 1,
+                "sha256": "8a6563f7661d1bfa5cc2d65bdadc26c82ce254ee8b6a45754b75fdf0d2a3b3b2"
+              }
+            ],
+            "checks": 14,
+            "job_id": "118353379243",
+            "matching_preservation_observations": 6,
+            "passed": true,
+            "preserved_UID": 10174,
+            "real_game_save_migration_qualified": false,
+            "receipt": {
+              "bytes": 8925,
+              "sha256": "9fe7a828a376812d6d24fa842c13b4f6e81f1baa7006bb0d5273af09ba5307ac"
+            },
+            "synthetic_bytes": 69863,
+            "synthetic_sentinels": 4,
+            "workflow_run": "39338244800"
+          }
+        },
+        "fragment_memory_observations": {
+          "qualification_source_revision": "22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+          "candidate_source_revision": "ae5a11d0c0be5098d0aec66370dda99c055167ee",
+          "raw_file": "/workspace/scratch/323f8ab90ab6/c4-monitor/fragment/memory-final_cleanup.json",
+          "raw_sha256": "816cb8b07205c688b86fbdc59e79c093f01954ec025be740f074f25ae659ec8d",
+          "scope": "current Android app process lifetime; bounded phase observations, not total device or guest memory",
+          "android_api": 33,
+          "abi": "x86_64",
+          "emulator": true,
+          "samples": 13,
+          "sampler_failures": 0,
+          "rss_pss_source": "proc_self_smaps_rollup",
+          "phases": {
+            "COLD_STARTUP": {
+              "process_rss_bytes": 95449088,
+              "process_pss_bytes": 28888064,
+              "system_headroom_bytes": 584007680,
+              "java_heap_headroom_bytes": 198680464
+            },
+            "NATIVE_CONNECTION": {
+              "process_rss_bytes": 106000384,
+              "process_pss_bytes": 43201536,
+              "system_headroom_bytes": 499650560,
+              "java_heap_headroom_bytes": 188058496
+            },
+            "DIAGNOSTIC": {
+              "process_rss_bytes": 105537536,
+              "process_pss_bytes": 42470400,
+              "system_headroom_bytes": 541356032,
+              "java_heap_headroom_bytes": 189156728
+            },
+            "RETURN": {
+              "process_rss_bytes": 104230912,
+              "process_pss_bytes": 43431936,
+              "system_headroom_bytes": 526635008,
+              "java_heap_headroom_bytes": 188045768
+            },
+            "PAUSE": {
+              "process_rss_bytes": 101261312,
+              "process_pss_bytes": 40144896,
+              "system_headroom_bytes": 595038208,
+              "java_heap_headroom_bytes": 190042776
+            },
+            "RESUME": {
+              "process_rss_bytes": 96550912,
+              "process_pss_bytes": 36019200,
+              "system_headroom_bytes": 536182784,
+              "java_heap_headroom_bytes": 184670696
+            },
+            "FINAL_CLEANUP": {
+              "process_rss_bytes": 91340800,
+              "process_pss_bytes": 30082048,
+              "system_headroom_bytes": 533921792,
+              "java_heap_headroom_bytes": 189216824
+            }
+          },
+          "sampled_peak_process_rss_bytes": 144199680,
+          "sampled_peak_process_pss_bytes": 71669760,
+          "minimum_observed_system_headroom_bytes": 499650560,
+          "minimum_observed_java_heap_headroom_bytes": 160623520,
+          "owned_guest_process_memory": "unavailable: no installed verified process-owner adapter; shared RSS is never summed",
+          "native_owner_memory": "unavailable as an aggregate; existing native module ownership receipts remain separate",
+          "graphics_memory": "unavailable as a process total; accepted renderer allocation estimates remain in native snapshot",
+          "physical_Thor_qualified": false,
+          "world_authority": false
+        },
+        "real_guest_start_stop_on_x86_64_qualified": false,
+        "physical_Thor_accepted": false,
+        "world_authority": false
+      },
+      "delivery": {
+        "qualified_for_Thor_TEST_only": true,
+        "filename": "CoH-Native-Combined-0.1.10-memory-diagnostic-arm64.apk",
+        "bytes": 13929833,
+        "sha256": "7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf",
+        "candidate_runtime_source_revision": "ae5a11d0c0be5098d0aec66370dda99c055167ee",
+        "qualification_source_revision": "22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+        "package": "org.coh.nativecombined",
+        "version_code": 11,
+        "version_name": "0.1.10-memory-diagnostic-test",
+        "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "retained_0_1_9_required_for_rollback": true,
+        "unqualified_original_0_1_10_candidate_withheld": true,
+        "installation_on_user_device_performed": false,
+        "production_release_published": false
       }
     }
   ],
@@ -717,8 +1169,11 @@
   "source_changed_paths": [
     ".github/workflows/native-body-provenance-witness.yml",
     ".github/workflows/native-combined-client.yml",
+    ".github/workflows/native-combined-memory-c2-requalification.yml",
     ".github/workflows/native-combined-memory-diagnostic.yml",
+    ".github/workflows/native-combined-memory-requalification.yml",
     ".github/workflows/native-world-resource-integration.yml",
+    "SHORT-HANDOFF.md",
     "native-android/combined-client/app/build.gradle",
     "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
     "native-android/combined-client/app/src/main/cpp/process_memory_jni.c",
@@ -727,14 +1182,24 @@
     "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java",
     "native-android/combined-client/app/src/main/java/org/coh/nativecombined/PhaseMemoryDiagnostics.java",
     "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerService.java",
+    "native-android/combined-client/diagnostics/memory-candidate-20261019/FRESH-UNKNOWN-REGRESSION.json",
     "native-android/combined-client/diagnostics/memory-candidate-20261019/LOCAL-QUALIFICATION.json",
     "native-android/combined-client/diagnostics/memory-candidate-20261019/THOR-TEST.md",
+    "native-android/combined-client/diagnostics/memory-candidate-20261019/fragment-driver-schema-failure.json",
+    "native-android/combined-client/diagnostics/memory-candidate-20261019/fragment-driver-schema-qualification.json",
     "native-android/combined-client/qualification/check_memory_jni.py",
+    "native-android/combined-client/qualification/check_memory_worker.py",
     "native-android/combined-client/qualification/check_phase_memory.py",
+    "native-android/combined-client/tools/UiSnapshotInstrumentation.java",
+    "native-android/combined-client/tools/build_ui_snapshot_helper.py",
+    "native-android/combined-client/tools/driver_controls.py",
+    "native-android/combined-client/tools/emulator_check.py",
     "native-android/combined-client/tools/fragment_interop_emulator_check.py",
     "native-android/combined-client/tools/host_check.py",
+    "native-android/combined-client/tools/interop_probe_contract.py",
     "native-android/combined-client/tools/package_check.py",
     "native-android/combined-client/tools/test_fragment_driver.py",
+    "native-android/combined-client/tools/test_upgrade_driver.py",
     "native-android/combined-client/tools/upgrade_emulator_check.py",
     "native-android/engine/costume-export/BODY_RUNTIME_WITNESS.md",
     "native-android/engine/costume-export/check_body_witness.py",
@@ -755,7 +1220,12 @@
     "native-android/engine/scenecatalog/prepare_source_placement.py",
     "native-android/engine/scenecatalog/tests/test_source_placement.c",
     "native-android/engine/scenegraph/coh_runtime_candidates.c",
-    "native-android/engine/scenegraph/coh_runtime_candidates.h"
+    "native-android/engine/scenegraph/coh_runtime_candidates.h",
+    "native-android/integration/three-workstreams-20261019/independent-package-review.json",
+    "native-android/integration/three-workstreams-20261019/integration.json",
+    "native-android/integration/three-workstreams-20261019/recovery.json",
+    "native-android/integration/three-workstreams-20261019/withheld-candidate.json",
+    "native-android/integration/three-workstreams-20261019/withheld-package-review.json"
   ],
   "production_upstream_guest_database_asset_files_changed": false,
   "excluded_historical_workflows": [
@@ -768,5 +1238,8 @@
       "reason": "expected source-closure refusal at app/build.gradle because candidate version and implementation advanced since 0.1.2",
       "counted_as_current_candidate_pass": false
     }
-  ]
+  ],
+  "protected_baseline_file_count_rechecked_before_delivery": 9,
+  "final_qualification_source_revision": "22ae9d770fb4d0e6c6550103a896d5f0f59243c0",
+  "subsequent_coordinator_changes_are_documentation_only": true
 }
