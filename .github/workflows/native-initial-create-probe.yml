@@ -1,13 +1,13 @@
-name: Native initial ALLENTS costume-slot framing
+name: Native initial ALLENTS costume-body prefix
 on:
   push:
     branches: [native-android]
     paths:
       - .github/workflows/native-initial-create-probe.yml
-      - native-android/engine/initial-capture/coh_initial_costume_slots_probe.*
-      - native-android/engine/initial-capture/check_initial_costume_slots_probe.py
-      - native-android/engine/initial-capture/test_initial_costume_slots_probe.c
-      - native-android/engine/initial-capture/qualification/initial-costume-slots-20261019/jni-fixture.h
+      - native-android/engine/initial-capture/coh_initial_costume_body_probe.*
+      - native-android/engine/initial-capture/check_initial_costume_body_probe.py
+      - native-android/engine/initial-capture/test_initial_costume_body_probe.c
+      - native-android/engine/initial-capture/qualification/initial-costume-body-20261019/jni-fixture.h
       - native-android/combined-client/app/src/main/cpp/interop_network.c
       - native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py
       - native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c
@@ -15,10 +15,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: native-costume-slots-${{ github.ref }}
+  group: native-costume-body-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  costume-slots:
+  costume-body:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -29,18 +29,18 @@ jobs:
           fetch-depth: 1
       - name: Install native test headers
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
-      - name: Qualify original costume framing fixtures
+      - name: Qualify original costume body-prefix fixtures
         run: |
-          python3 native-android/engine/initial-capture/check_initial_costume_slots_probe.py --sanitize --output "$RUNNER_TEMP/costume-slots-host.json" --fixture-output "$RUNNER_TEMP/costume-slots-jni-fixture.h"
-          cmp "$RUNNER_TEMP/costume-slots-jni-fixture.h" native-android/engine/initial-capture/qualification/initial-costume-slots-20261019/jni-fixture.h
+          python3 native-android/engine/initial-capture/check_initial_costume_body_probe.py --sanitize --output "$RUNNER_TEMP/costume-body-host.json" --fixture-output "$RUNNER_TEMP/costume-body-jni-fixture.h"
+          cmp "$RUNNER_TEMP/costume-body-jni-fixture.h" native-android/engine/initial-capture/qualification/initial-costume-body-20261019/jni-fixture.h
       - name: Qualify affected JNI observation and cleanup
-        run: python3 native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py --source-root . --output "$RUNNER_TEMP/costume-slots-adapter"
+        run: python3 native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py --source-root . --output "$RUNNER_TEMP/costume-body-adapter"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-costume-slots-${{ github.sha }}
+          name: native-costume-body-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/costume-slots-host.json
-            ${{ runner.temp }}/costume-slots-adapter/
+            ${{ runner.temp }}/costume-body-host.json
+            ${{ runner.temp }}/costume-body-adapter/
           if-no-files-found: error
           retention-days: 90

@@ -210,7 +210,7 @@ The unchanged leaf stage enum maps2 PRESENCE,3 STORAGE,4 TEXT,5 DICTIONARY,
 6 CONTINUATION. Partial/indexed entries never increment completion. A complete
 reward list is not a complete character record or a session ownership proof.
 
-The current addition, `coh_initial_costume_slots_probe`, starts at that exact
+The accepted `coh_initial_costume_slots_probe` starts at that exact
 `list.end_bit` in the same immutable loan, only for validated type1/self1 initial
 framing. It also runs after exact-end list completion, diagnosing the missing
 deferred field rather than losing completed reward syntax. It reads strictly:
@@ -253,6 +253,60 @@ lists imply group2 and no reward-leaf failure; the prior final index is
 packed or40 byte-aligned bits. Formatter rejects invalid domains/context before
 packing. The first-literal's five fields,192-byte child,7,168-byte report,
 existing overflow guard and cleanup are preserved.
+
+The current addition, `coh_initial_costume_body_probe`, enters the FIRST body
+at `slots.end_bit` in that same loan after complete initial self/full-list
+framing. Exact-end slot completion still invokes it to diagnose a missing first
+body flag. Its only scope is the optional `entTypeFile` and `costumeFilePrefix`
+pair, before the following bodytype scalar and all later appearance fields.
+
+Original `costume_send` and `costume_receive` reset string caches per body. Each
+field starts with a strict optional flag. Absent fields complete without a cache
+entry. Present fields read a strict cached flag. A miss reuses the accepted
+non-debug indexed-string literal leaf: nested presence must1, literals stream
+through NUL with260 bytes including NUL, and no text/pointer is retained. Empty
+and high-byte literals remain valid. A hit requires a prior complete literal;
+only field2 can validly hit this local one-entry cache, consuming ZERO index bits
+in both profiles. A hit with empty cache is INVALID/CACHE. It never uses cache
+state from reward strings, previous bodies or packets. Cache matching performed
+by the source sender is case insensitive; observing a reference requires no
+retained string or new identity claim.
+
+Only completed literals populate this local numeric cache. Exact-end field1
+literal completion proceeds to the missing field2 flag; exact-end field2
+completion preserves `prefix_validated`. At indexed storage, stop at DICTIONARY
+immediately AFTER inTable1 and BEFORE any packed index, including in compressed
+mode. After both optional fields, stop at BODYTYPE BEFORE Pack6. That next scalar
+is simply outside this bounded prefix; its unread bits are not themselves a
+claim that a dictionary was needed to inspect syntax. Both boundaries return
+UNSUPPORTED when more bits remain, INVALID at exact end. No COH_OK, complete
+costume, resource resolution, generation, ownership, actor or application ACK
+permission follows. Existing prefix/leaf/list/slot sources/results are unchanged.
+
+Prior reward and slot failures retain their accepted tuples. Only after slots
+complete does stage14..26 discriminate a new7-value `progress` projection:
+
+| Position | Meaning |
+| --- | --- |
+| 0 | Body-prefix status:1 INVALID,2 UNSUPPORTED,4 LIMIT |
+| 1 | 14..19 field1 FLAG/CACHE/PRESENCE/STORAGE/TEXT/DICTIONARY;20..25 same for field2;26 FIRST_BODYTYPE_REQUIRED |
+| 2,3 | Completed reward entries for groups1,2 |
+| 4 | Reward-list end / slot begin bit |
+| 5 | Body-prefix failure offset from position4 |
+| 6 | Packed context below |
+
+Metadata: bits0..3 current;4..11 additional;12 deferred;13..16 stored count;
+17..18 body present mask;19..20 complete mask;21..22 cached mask;23 body-prefix
+complete;24..25 outer-flag seen mask;26 compressed. Each pair's low bit is
+field1, high bit field2. Full-list1/slot-framed1 are implicit in these stages.
+Slot end is position4+(compressed?40:22); failure is position4+5. Completed-list
+group/index/leaf-stage remain derivable as above. Local cache count is the
+population count of present & complete & ~cached. No prior diagnostic is lost.
+
+At most2 literal leaves,4168 packed/4224 compressed body-prefix bits are read;
+total delta including slots is at most4264. Formatter validates ranges and
+same-boundary context before packing. The first-literal five fields,192-byte
+child,7,168-byte total cap, existing overflow guard and cleanup stay intact.
 
 ## Original protocol evidence
 
@@ -333,6 +387,14 @@ slot metadata. The new parser stops at that return boundary and never reads
 those following fields. A fixture reward predicate or stash adapter cannot
 establish actual reward eligibility or a genuine resource generation.
 
+The bounded body-prefix grammar comes from `costume_send` at
+`Common/entity/costume.c:1520` and `costume_receive` at1419. Their cache reset,
+optional entTypeFile/prefix fields and following Pack6 bodytype agree. Original
+`sendCachedIndexedString`/`getCachedIndexedString` at1273..1325 confirm miss/new
+indexed string versus one-entry zero-bit cache reference. Source sender uses
+case-insensitive cache matching. A prefix literal or cache reference does not
+establish actual filesystem/resource identity or dictionary generation.
+
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
 against the owned local-development handoff; it does not establish whole-list
@@ -346,43 +408,42 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_costume_slots_probe.py --sanitize --output NEW.json` executes
-unchanged whole original `entSendCostume` and original bit writers. Explicit
-member-subset fixture shells, a reward-call adapter and opaque `costume_send`
-observers isolate the framing between reward return and first body call. It
-does not claim original reward/catalog lookup, body serialization or a live
-server transaction. The Game consumer is inspected, not executed. Initial
-full-create requirements are qualified against source; native10-slot bounds
-remain deliberate. Accepted source/receipt hashes are checked; old checker
-mains and source/native suites are not replayed.
+`check_initial_costume_body_probe.py --sanitize --output NEW.json` executes
+unchanged whole original `costume_send`, `sendCachedIndexedString`,
+`pktSendIndexedString`, `defaultBitsPack` and `log2i` with original bit writers.
+Explicit fixture costume shells and stash hit/miss/capacity adapters qualify
+this two-field prefix. They do not admit a real resource catalog or generation.
+The original consumer is inspected, not applied. Accepted slot source/receipt
+hashes are checked; old checker mains and source/native suites are not replayed.
 
-Release, ASan and UBSan each pass193,303 checks across158 fixtures, including
-3,206 shortened extents,3,206 mutations,29,219 unread-tail controls,10 API/alias
-controls and25 formatter-domain controls. Compressed malformed Boolean/count
-values are synthetic controls: original `bsWriteBits` masks nominal width
-before rounding; source count16 writes0 in both profiles. Native probe stack
-is176 bytes; formatter frames are48/64 bytes, bounded.
+Release, ASan and UBSan each pass5,649,273 checks across277 fixtures, including
+180,105 shortened extents,180,105 prefix mutations,730,230 unread-tail/index
+controls,10 API/alias controls and50 formatter-domain controls. The maximum is
+2 completed literals/518 text bytes, with4168 packed/4224 compressed bits read.
+Cache observations include empty/case-fold hits; all54 indexed refusals stop
+before Pack. The native prefix frame is256 bytes plus the accepted176-byte
+literal frame; formatter frames64/96 bytes are bounded. These figures are host
+stack evidence, not device RSS qualification.
 
-Affected JNI release/ASan/UBSan each pass3,273 checks across60 scenarios, with
-72 wiped frees. Observed maximum report is7,151 bytes. Bounded projection checks
-reach7,163 bytes (155-byte child), preserving all other observed fixture fields.
-This does not qualify every possible transport-counter combination or global
-RSS; the existing overflow guard remains. All authority/application ACK fields
-remain false.
+Affected JNI release/ASan/UBSan each pass4,053 checks across73 scenarios with85
+wiped frees. Observed maximum report is7,153 bytes. Bounded projection checks
+reach7,167 bytes plus NUL (159-byte child), preserving all other observed fixture
+fields. This does not qualify every possible transport-counter combination;
+the existing report overflow guard remains. No caps are increased.
 
-The JNI fixture keeps the accepted two-list prefix bit-for-bit through1695,
-then uses source-generated framing: deferred1,current1,additional255,full-list1,
-count2. Framing ends1717 before opaque costume body witnesses. Mutating those
-unread body bits cannot change the observation. Existing reward/list failures
-remain explicit; exact-list end now identifies missing deferred. New controls
-exercise each shortened scalar, full-list0, count0/15/current>=count and exact
-body end, preserving authority-false fields and wiped cleanup.
+The JNI fixture keeps the accepted source-qualified prefix through1717, then
+uses an original literal `FixtureEntity` followed by case-insensitive cache
+reuse `fixtureentity`. Its prefix ends at1835 before bodytype Pack6; that field and
+later appearance bytes remain unread. JNI doubles exercise empty-cache refusal,
+indexed storage before Pack, malformed nested presence, shortened scalars and
+NUL, exact literal/prefix end, absent fields and unchanged unread body tails.
+All authority/application ACK fields remain false and cleanup remains verified.
 
-Receipts/source hashes are in `qualification/initial-costume-slots-20261019/`;
-focused CI is `Native initial ALLENTS costume-slot framing`. Exactly ONE slot
-framing milestone ends here, before bodies. No renderer/compiler/network/
-Android13 suites, original-server transaction, new Thor run or APK is claimed.
-No complete server-backed costume/character acceptance is claimed.
+Receipts/source hashes are in `qualification/initial-costume-body-20261019/`;
+focused CI is `Native initial ALLENTS costume-body prefix`. Exactly ONE prefix
+milestone ends here. No renderer/compiler/network/Android13 suites, original
+server transaction, new Thor run or APK is claimed. Complete costume/character,
+dictionary-generation and session-ownership qualification remain blocked.
 
 The previously reported unsupported Map count is the ordinary successful GROUPS
 inspector's deliberate UNSUPPORTED boundary (command6, exact consumed end), which
