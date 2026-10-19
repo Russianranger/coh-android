@@ -1,4 +1,4 @@
-# Body-part bounded original loader and dependency traversal
+# Body-part original loading, destruction and dependency lifecycle
 
 The accepted callback milestone executes unchanged original `ParseBoneNames`
 using the generated enum provider. The accepted loader milestone qualifies an original
@@ -9,6 +9,7 @@ the original checksum for the exact source schemas. Accepted production cache-he
 selection composes that checksum with the original opener. The two new independent
 milestones qualify unopened file composition and dependency-list operations. The latest
 bounded milestones compose the original cache-hit loader and owned callback traversal.
+The current additions qualify original destruction, list comparison and lifecycle.
 None admits a runtime
 body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
@@ -815,34 +816,165 @@ Receipts/snapshots: qualification/file-list-foreach-20261019/ (host.json,ci.json
 iteration-evidence.json and failed/passing evidence directories). Earlier generated
 literal and copied ledger-magic failures remain retained as failures, not successes.
 
-## Current boundaries and next independent work
+## Accepted original BodyPart resource destruction (Worker A)
 
-Both workers used separate detached sparse local worktrees, read the live2b0e0b6
-baseline and changed only their new files. Root verified copied source hashes,
-published B then A with expected-parent fast-forward updates, compared hosted
-counters/artifact bindings and updated shared handoffs once after both CI passes.
-Existing providers, Gates1–24 and accepted APK/application code are unchanged.
-Unrelated native-core/authentic-catalog workflows were skipped; no broad suite or
-APK rebuild occurs. Both temporary worker trees retain already-published source
-copies and failed/passing evidence; they are not additional unmerged feature work.
+`struct_clear_provider.py` composes the immutable accepted cache-hit provider
+with unchanged original `StructClear`, `nonarray_destroystruct`,
+`earray_destroystruct`, `string_destroystruct`, `struct_destroystruct`,
+`TokenStoreGetPointerConst`, `TokenStoreGetPointer`, `TokenStoreGetNumElems`,
+`TokenStoreFreeString`, `TokenStoreFree` and `TokenStoreDestroyEArray`.
+The existing original GetStorageType and body/checksum/header/read dependencies
+are reused. All49 emitted original functions and11 added destruction leaves are
+verified against exact pins. The original array/token destructor dispatch tables
+and exact BodyPart/BodyPartList schemas select the supported handlers; the small
+readbin/destroystruct holder is an explicit fixture ABI projection.
 
-This removes loader-token/DTO substitutes within the bounded source profile and
-provides safe dependency value traversal. It enables future authentic catalog
-binding and cleanup qualification, but supplies no real MapServer file selection,
-loaded-input/source/build/profile/run attestation, runtime catalog/default owner,
-dictionary/source generation, character identity/selected owner, actor publication,
-application ACK or server/world authority. Environment/path/shared-memory/clear
-shells and current-Map provenance remain explicit stops. ALLENTS41/43, dictionary
-index restrictions, transport/input/report/socket cleanup, Combined0.1.9/signing/
-imports/profiles/saves are preserved. Gates25–27 remain open; no Thor run is claimed.
+Within this new independently qualified composition, original production failure
+now reaches source StructClear at its actual ParserLoadFiles call site. Successful
+body values are copied into a pointer-free candidate before original destruction.
+The earlier accepted cache-hit provider remains an immutable historical dependency.
+Source reverse earray row order, source string-before-row destruction, untouched
+numeric fields, pointer invalidation and repeat clear are verified. Partial rows,
+NULL slots, all32five-string masks, allocated empty strings and the30row bound
+execute. Borrowed descriptors and unsupported masks refuse before source entry;
+pooled strings, fixed arrays and direct32earrays do not execute. An unsupported
+mask refusal does not qualify pooled-string behavior.
 
-Next TWO independent bounded tasks:
-1. Original StructClear exact BodyPart-schema destruction and its supported
-   nonarray/earray/struct/string/TokenStore free leaves, replacing the current safe
-   production-failure clear shell. Keep owned bounded storage; scope the smallest
-   destructor leaf first if full closure is too large. No original allocator or
-   runtime catalog/generation admission follows from fixture destruction.
-2. Original FileListIsBinUpToDate on two bounded fixture-owned lists, reusing
-   original Find and exact spelling/date rules. Test size/missing-name/raw32-date
-   equality and source diagnostics. This is a pure synthetic list comparison;
-   its function name grants no real disk/current dependency freshness proof.
+StructFree, StructFreeString and eaDestroy remain checked owned-arena release
+adapters which retire and wipe exact registered slots. They do not establish the
+original allocator, engine heap or earray storage ABI. A partial/failed read cannot
+free borrowed storage or release a slot twice. Final cleanup wipes arena/global/
+crypto state before atomic output publication. The authentic retained CLIENT
+BodyParts2,584B/28rows fixture, exact independent field projection, actual source CRC,
+production ignoreCRC1, SMAR_Error route and same-live-handle single-close behavior
+remain qualified. Preprocessor callbacks, text fallback, filesystem scanning and
+development selection remain excluded; the old broad prefix suite is not replayed.
+
+Release/ASan/UBSan each pass930checks/55principal fixtures(8loader+47direct),
+including2loader/39direct successes,14bounded refusals,165rows/710strings retired,
+10identity/9ledger/11alias-wrap/5budget controls. All44repository inputs and compiler/
+Python identities are stable; final runtime stderr is empty. Ownstatic110,376B plus
+actualAdler16B and98,304B stack reserve are charged with caller spans/digest scratch/
+retained bytes under1MiB. Max selected frame41,632B; conservative own-C frame sum
+plus schema reentry62,720B. External aggregate stack/RSS/allocator/device ABI and
+LeakSanitizer closure are not claimed.
+
+Commit e5115c629854e4ba1d95ba692b2ee43cbc521031.
+Dedicated workflow39328431779/job118320167082 PASS:
+https://github.com/Russianranger/coh-android/actions/runs/39328431779
+Evidence: qualification/struct-clear-20261019/; check_struct_clear.py --sanitize.
+Failed prototype compilation and superseded unsafe-span/review receipts remain
+separate from the final pass. The descriptor-span fix has explicit wrap controls.
+
+## Accepted original dependency-list comparison (Worker B)
+
+`file_list_compare_provider.py` executes unchanged original FileListCreate,
+FileListSearch, FileListInsert, FileListFind and FileListIsBinUpToDate using two
+independently owned lists. The original comparator first checks lengths, then
+looks up each sorted bin name using original Find and compares signed32date bits.
+Empty lists, order/case/slash spelling, duplicate-first spelling/date, unequal
+lengths, missing names, unequal dates and first-diagnostic precedence are checked
+against an independent Python mapping/sorted-key reference. Both complete node/
+pointer lists remain unchanged. The two exact source diagnostic formats and owned
+bin path address are observed; only numeric kind and sorted index escape cleanup.
+
+This reuses the accepted explicit ASCII/slash/directory/earray adapters. Sixteen
+INSERT calls per list include duplicates; raw paths519/directory259/poststrip259
+fit the original260byte buffers. Dates are explicit nonzero fixture values,
+including negative signed32patterns. All paths/identities/spans/capacities and
+reservations preflight before originals; no unchecked source calloc NULL failure
+is fabricated. Only copied path/date values publish after owner wipe.
+No FileListRead(COLLECT) suite is repeated, no Length/Destroy is claimed here,
+and the function's name proves no actual disk/current dependency freshness.
+
+Release/ASan/UBSan each pass2,408checks/102fixtures:39comparisons(19equal/20unequal),
+81originalFind calls,9missing+8date diagnostics,63pre-source refusals including
+34reservation controls,10identity/9ledger/7alias/5budget controls. All14source
+inputs and compiler/Python identities are stable; final stderr empty. Owned35,232B,
+wrapper8,912B, originalcomparison64B, conservative providerframes9,880B<16KiB
+reserve; caller/digest/retained charges stay within1MiB. External stack/RSS/engine
+allocator/earray and Win32/Android ABI closure remain unqualified.
+
+Commit31826cea6cb80bb18e50bf5a8ed64fed39fa5c48.
+Dedicated workflow39327830727/job118318151482 PASS:
+https://github.com/Russianranger/coh-android/actions/runs/39327830727
+Evidence: qualification/file-list-compare-20261019/; check_file_list_compare.py
+--sanitize. No failed attempts occurred; earlier passing comment-freeze evidence
+is retained distinctly from final qualification.
+
+## Accepted original FileList lifecycle (Worker C)
+
+`file_list_lifecycle_provider.py` executes unchanged FileListLength/FileListDestroy
+with original EArray layout, eaSize/eaSizeUnsafe/cast/header macros and unchanged
+eaClearExDbg/eaDestroyExDbg/eaDestroyDbg. Original source selects
+PRIVATE_EARRAY_HEAP0 and the supported non-crazy-debugging header conversion.
+The original NULL destructor branch frees each non-NULL element in ascending
+array order, clears its slot, resets count, releases the EArray header and nulls
+the caller handle. It does not merely release pointer storage.
+
+Fixture construction reuses original Create/Search/Insert/Find with explicit
+bounded constructors and independently owned pre-reserved real host allocations.
+Checked original free/_free_dbg adapters verify release order, previous NULL slots,
+zero count, registered ownership and exactly one release, then call actual host
+free. Unused duplicate reservations and every partial reservation are released
+before owner wipe. Empty/single/multiple/duplicate lists, an actual NULL handle,
+repeated destroy and appended NULL slots execute. Borrowed/compressed/malformed
+descriptors refuse before originals. NULL handle address, arbitrary borrowed
+pointers, real filesystem timestamps and original allocator OOM recovery are
+excluded. Outputs copy only values and publish after source destruction/cleanup.
+
+Release/ASan/UBSan each pass1,385checks/55fixtures:24source transactions,
+31pre-source refusals,9partial reservation controls,67original node frees,
+23header frees,4NULL-slot and1NULL-handle transactions;10identity/9ledger/7alias/
+5budget controls. All16source inputs and compiler/Python identities stable;
+final stderr empty. Owned metadata+maximum reserved host payload22,120B,
+wrapper9,088B/provider frame sum10,000B<16KiB reserve; full charges under1MiB.
+This proves supported adapter ownership, not original engine/host allocator or
+device heap closure. LeakSanitizer remains disabled in this host environment.
+
+Commit97ec231dd0e32e00cf27968c5ecd3bc513abeb85.
+Dedicated workflow39328162912/job118319252834 PASS:
+https://github.com/Russianranger/coh-android/actions/runs/39328162912
+Evidence: qualification/file-list-lifecycle-20261019/;
+check_file_list_lifecycle.py --sanitize. Failed EAPtrTest extraction evidence
+is retained separately from passing-final receipts.
+
+## Current boundaries and next three independent tasks
+
+Root fetched live2b37d604 before changes and recovered only already-published
+untracked loader/traversal copies. Three workers ran concurrently in independent
+detached sparse worktrees, owning separate new files. Root copied frozen outputs,
+reverified all source hashes, published B then C then A with expected-parent
+fast-forward updates, and verified each remote tree equals its tested local tree.
+All three dedicated CI runs pass. Hosted counters equal local in every mode;
+artifact head and digest bindings are checked. ci.json plus host/frozen/manifests
+retain exact commit/build/compiler/source/input/profile/run/cleanup associations.
+Full executable/build evidence is retained in hosted artifacts; compact snapshots
+and failed/superseded attempts remain in git. Shared handoffs were updated once
+after all integrations and CI passes. No unrelated suite/APK/physical Thor replay.
+
+These changes enable dependency comparison and deterministic original destruction
+within source-qualified loading. They do not prove a real current MapServer-loaded
+catalog, filesystem selection/freshness, runtime catalog/default ownership,
+dictionary/source generation, selected-character identity/ownership, actor
+publication, application ACK or server/world authority. Gates1–24, ALLENTS41/43,
+dictionary-index stops, transport/input/report/resource/socket cleanup,
+Combined0.1.9/signing/imports/profiles/saves remain unchanged; Gates25–27 OPEN.
+
+Next three independent implementation increments toward runtime integration:
+1. Original StructAllocRawDbg/StructFree and StructAllocStringLenDbg/
+   StructFreeString under pinned PRIVATE_PARSER_HEAPS0 with bounded owned
+   allocation adapters. Replace arena retirement only after matching source
+   ownership/free semantics and partial failure cleanup are demonstrated.
+2. Dependency-bearing original ParserReadBinaryFile with supplied handle and
+   non-NULL FileListRead(COLLECT), then accepted Length/ForEach/Destroy. Atomically
+   publish body/dependency value copies after original close and cleanup; test
+   rejection after collection. IsBinUpToDate may be an explicitly synthetic
+   postcondition; ParserIsPersistNewer uses its own fileDatesEqual loop.
+3. Original bounded EArray creation/insertion/growth helpers, including exact
+   header ownership and registered allocation/reallocation/release semantics.
+   Replace fixture storage constructors only after supported helpers qualify.
+
+Authentic current-Map loaded-input/source/build/profile/run provenance remains
+a separate required blocker for runtime catalog admission and authoritative native
+world entry. None of these next bounded source tasks substitutes for that proof.
