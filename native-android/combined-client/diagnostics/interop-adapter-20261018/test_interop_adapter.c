@@ -21,9 +21,12 @@
 #include "../../../engine/initial-capture/qualification/initial-appearance-20261019/jni-fixture.h"
 #include "../../../engine/initial-capture/qualification/initial-sgcolors-20261019/jni-fixture.h"
 #include "../../../engine/initial-capture/qualification/initial-scales-20261019/jni-fixture.h"
+#include "../../../engine/initial-capture/qualification/initial-partcount-20261019/jni-fixture.h"
 static unsigned pose_fixture;
 static unsigned sequence_fixture;
-static unsigned triggered_fixture,aianim_fixture,netfx_fixture,costume_fixture,reward_fixture,reward_list_fixture,slots_fixture,body_fixture,appearance_fixture,sgcolors_fixture,scales_fixture;
+static unsigned triggered_fixture,aianim_fixture,netfx_fixture,costume_fixture,reward_fixture,reward_list_fixture,slots_fixture,body_fixture,appearance_fixture,sgcolors_fixture,scales_fixture,partcount_fixture;
+static unsigned partcount_bits;
+static unsigned char partcount_packet[sizeof(coh_partcount_jni_fixture)+16];
 static unsigned char scales_packet[sizeof(coh_scales_jni_fixture)];
 static unsigned char sgcolors_packet[sizeof(coh_sgcolors_jni_fixture)];
 static unsigned char appearance_packet[sizeof(coh_appearance_jni_fixture)];
@@ -38,6 +41,21 @@ static unsigned char sequence_packet[sizeof(coh_sequence_jni_fixture)];
 static unsigned checks,scenarios,alloc_calls,fail_alloc,freed,wiped,live,release_chars,deleted_refs;
 static int fault,exception_pending;static jlong current;
 #define CHECK(x) do {++checks;if(!(x)){fprintf(stderr,"interop test line %u: %s\n",(unsigned)__LINE__,#x);exit(1);}}while(0)
+/* Synthetic packed suffix controls only; the normal prefix/framing is retained
+ * from the qualified original sender fixture, never a device packet. */
+static void partcount_scalar(unsigned at,unsigned n,uint32_t value){
+ for(unsigned i=0;i<n;i++){unsigned b=at+i;partcount_packet[b/8]=(unsigned char)((partcount_packet[b/8]&~(1u<<(b%8)))|(((value>>i)&1u)<<(b%8)));}
+}
+static void partcount_explicit(uint32_t count){
+ unsigned at=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_BEGIN;
+ partcount_scalar(at++,1,1);
+ for(unsigned width=4;;width*=2){
+  if(width==32){partcount_scalar(at,32,count);partcount_bits=at+32;return;}
+  uint32_t max=(1u<<width)-1u;
+  if(count<max){partcount_scalar(at,width,count);partcount_bits=at+width;return;}
+  partcount_scalar(at,width,max);at+=width;count-=max;
+ }
+}
 #define JNI(name) Java_org_coh_nativecombined_InteropNative_##name
 jlong JNI(begin)(JNIEnv*,jclass,jint,jstring,jint,jboolean,jboolean,jlong);
 jint JNI(service)(JNIEnv*,jclass,jlong,jlong);jint JNI(choose)(JNIEnv*,jclass,jlong,jint,jlong);
@@ -120,6 +138,7 @@ CohStatus coh_initial_capture_service(CohInitialCapture*c,uint64_t now,CohCancel
   if(sgcolors_fixture==8)bits=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_END;
   loan.reader.bytes=(CohBytes){sgcolors_packet,sizeof(sgcolors_packet)};loan.reader.bits=bits;loan.reader.cursor=COH_SGCOLORS_JNI_FIXTURE_POST_COMMAND;loan.message_id=17;
  }
+ if(partcount_fixture&&c->step){loan.reader.bytes=(CohBytes){partcount_packet,sizeof(partcount_packet)};loan.reader.bits=partcount_bits;loan.reader.cursor=COH_PARTCOUNT_JNI_FIXTURE_POST_COMMAND;loan.message_id=17;}
  if(scales_fixture&&c->step){
   size_t bits=COH_SCALES_JNI_FIXTURE_BITS;
   if(scales_fixture==2)bits=COH_SCALES_JNI_FIXTURE_SCALES_BEGIN;
@@ -149,7 +168,7 @@ void coh_request_tx_retire(CohRequestTxWitness*w){if(w){CHECK(!w->retired);w->re
 void coh_request_tx_diagnostics(const CohRequestTxWitness*w,CohRequestTxDiagnostics*out){CHECK(w);memset(out,0,sizeof(*out));out->diagnostic_only=1;out->valid=w->retired;out->witness_retired=w->retired;out->queue_attempted=out->queue_succeeded=capture.d.reqallents_sent;out->queue_status=COH_OK;out->first_send_attempts=out->first_send_accepted=capture.d.reqallents_sent;out->peer_transport_ack_observed=capture.d.raw_allents_observed;}
 void coh_request_tx_destroy(CohRequestTxWitness*w){if(w)CHECK(w->retired&&!w->owner);}
 #endif
-static void fixture(void){CHECK(!live);pose_fixture=0;sequence_fixture=0;triggered_fixture=aianim_fixture=netfx_fixture=costume_fixture=reward_fixture=reward_list_fixture=slots_fixture=body_fixture=appearance_fixture=sgcolors_fixture=scales_fixture=0;memcpy(scales_packet,coh_scales_jni_fixture,sizeof(scales_packet));memcpy(sgcolors_packet,coh_sgcolors_jni_fixture,sizeof(sgcolors_packet));memcpy(appearance_packet,coh_appearance_jni_fixture,sizeof(appearance_packet));memcpy(body_packet,coh_costume_body_jni_fixture,sizeof(body_packet));memcpy(slots_packet,coh_costume_slots_jni_fixture,sizeof(slots_packet));memcpy(reward_list_packet,coh_reward_list_jni_fixture,sizeof(reward_list_packet));memcpy(reward_packet,coh_reward_jni_fixture,sizeof(reward_packet));memcpy(costume_packet,coh_costume_jni_fixture,sizeof(costume_packet));memcpy(aianim_packet,coh_aianim_jni_fixture,sizeof(aianim_packet));memcpy(sequence_packet,coh_sequence_jni_fixture,sizeof(sequence_packet));fault=exception_pending=0;alloc_calls=fail_alloc=0;memset(&input,0,sizeof(input));const char*n="PRIVATE_USER";input.length=(jsize)strlen(n);for(jsize i=0;i<input.length;i++)input.data[i]=(jchar)n[i];}
+static void fixture(void){CHECK(!live);pose_fixture=0;sequence_fixture=0;triggered_fixture=aianim_fixture=netfx_fixture=costume_fixture=reward_fixture=reward_list_fixture=slots_fixture=body_fixture=appearance_fixture=sgcolors_fixture=scales_fixture=partcount_fixture=0;partcount_bits=COH_PARTCOUNT_JNI_FIXTURE_BITS;memset(partcount_packet,0,sizeof(partcount_packet));memcpy(partcount_packet,coh_partcount_jni_fixture,sizeof(coh_partcount_jni_fixture));memcpy(scales_packet,coh_scales_jni_fixture,sizeof(scales_packet));memcpy(sgcolors_packet,coh_sgcolors_jni_fixture,sizeof(sgcolors_packet));memcpy(appearance_packet,coh_appearance_jni_fixture,sizeof(appearance_packet));memcpy(body_packet,coh_costume_body_jni_fixture,sizeof(body_packet));memcpy(slots_packet,coh_costume_slots_jni_fixture,sizeof(slots_packet));memcpy(reward_list_packet,coh_reward_list_jni_fixture,sizeof(reward_list_packet));memcpy(reward_packet,coh_reward_jni_fixture,sizeof(reward_packet));memcpy(costume_packet,coh_costume_jni_fixture,sizeof(costume_packet));memcpy(aianim_packet,coh_aianim_jni_fixture,sizeof(aianim_packet));memcpy(sequence_packet,coh_sequence_jni_fixture,sizeof(sequence_packet));fault=exception_pending=0;alloc_calls=fail_alloc=0;memset(&input,0,sizeof(input));const char*n="PRIVATE_USER";input.length=(jsize)strlen(n);for(jsize i=0;i<input.length;i++)input.data[i]=(jchar)n[i];}
 static void start(void){current=JNI(begin)(&env,NULL,7000,&input,5,JNI_FALSE,JNI_FALSE,100);CHECK(current>0&&live==1);}
 static const char*report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"packet_copy_retained\":false"));return report_text;}
 static void finish(void){JNI(close)(&env,NULL,current);CHECK(!live);CHECK(JNI(service)(&env,NULL,current,101)==COH_INVALID);current=0;scenarios++;}
@@ -337,7 +356,7 @@ int main(void){
    stop+=consumed;
    metadata=1u|(255u<<4)|(1u<<12)|(2u<<13)|(present<<17)|((cached>>1)<<19)|(consumed<<21);
   }
-  if(v==1){status=2;stage=37;stop=5142;metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(30u<<21);}
+  if(v==1){status=2;stage=43;stop=5147;metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(1u<<26);}
   char expected[96];snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_COSTUME_BODY_JNI_FIXTURE_LIST_END,stop-COH_COSTUME_BODY_JNI_FIXTURE_LIST_END,metadata);CHECK(strstr(body,expected));
   CHECK(!strstr(body,"FixtureEntity")&&!strstr(body,"fixtureentity")&&!strstr(body,"\"text\"")&&!strstr(body,"\"name\"")&&!strstr(body,"\"generation\"")&&!strstr(body,"\"packet\""));
   if(v==1)strcpy(sample_report,report_text);
@@ -370,7 +389,8 @@ int main(void){
    unsigned words=v==8?0u:72u,finite=v==8||v==9?0u:30u,bad=v==9?1u:0u;
    metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(finite<<21)|(bad<<26);
    unsigned stop=COH_APPEARANCE_JNI_FIXTURE_SCALARS_END+words*32u+(finite+bad)*32u;
-   snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",v==8||v==9?1u:2u,v==8?33u:v==9?36u:37u,COH_APPEARANCE_JNI_FIXTURE_LIST_END,stop-COH_APPEARANCE_JNI_FIXTURE_LIST_END,metadata);
+   if(v!=8&&v!=9){metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(1u<<26);stop+=5u;}
+   snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",v==8||v==9?1u:2u,v==8?33u:v==9?36u:43u,COH_APPEARANCE_JNI_FIXTURE_LIST_END,stop-COH_APPEARANCE_JNI_FIXTURE_LIST_END,metadata);
   }else snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_APPEARANCE_JNI_FIXTURE_LIST_END,COH_APPEARANCE_JNI_FIXTURE_APPEARANCE_BEGIN-COH_APPEARANCE_JNI_FIXTURE_LIST_END+consumed,metadata);
   CHECK(strstr(body,expected));CHECK(!strstr(body,"\"body_type\"")&&!strstr(body,"\"skin_color\"")&&!strstr(body,"\"text\"")&&!strstr(body,"\"generation\""));
   if(v==1)strcpy(sample_report,report_text);
@@ -396,13 +416,15 @@ int main(void){
   else if(v==13)snprintf(expected,sizeof(expected),"\"progress\":[2,31,2,3,1695,183,%u]",1u|(255u<<4)|(1u<<12)|(2u<<13)|(3u<<17)|(1u<<19)|(43u<<21));
   else if(v==1||v==8||v==9||v==10||v==11){
    unsigned finite=v==8?0u:30u;metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(finite<<21);
-   snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",v==8?1u:2u,v==8?35u:37u,COH_SGCOLORS_JNI_FIXTURE_LIST_END,COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_END-COH_SGCOLORS_JNI_FIXTURE_LIST_END+finite*32u,metadata);
+   unsigned stop=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_END+finite*32u;
+   if(v!=8){metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(v==9?0u:1u<<26);stop+=v==9?1u:5u;}
+   snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",v==8?1u:2u,v==8?35u:v==9?41u:43u,COH_SGCOLORS_JNI_FIXTURE_LIST_END,stop-COH_SGCOLORS_JNI_FIXTURE_LIST_END,metadata);
   }else snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_SGCOLORS_JNI_FIXTURE_LIST_END,COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN-COH_SGCOLORS_JNI_FIXTURE_LIST_END+words*32u,metadata);
   CHECK(strstr(body,expected));CHECK(!strstr(body,"\"colors\"")&&!strstr(body,"\"values\"")&&!strstr(body,"\"generation\"")&&!strstr(body,"\"packet\""));
   if(v==1)strcpy(sample_report,report_text);
   JNI(disconnect)(&env,NULL,current);CHECK(strstr(report(),"CLOSED")&&strstr(report_text,expected)&&strstr(report_text,"\"server_identity_bound\":false")&&strstr(report_text,"\"selected_owner_bound\":false")&&strstr(report_text,"\"complete_initial_character\":false")&&strstr(report_text,"\"actor_publication\":false")&&strstr(report_text,"\"source_generation_admitted\":false")&&strstr(report_text,"\"ack_permitted\":false")&&strstr(report_text,"\"world_authority\":false"));finish();
  }
- /* Thirty finite F32 words only; no part-count flag or default is consumed. */
+ /* Thirty finite F32 words; completed scales now reach only part-count framing. */
  for(unsigned v=1;v<=14;v++){
   fixture();scales_fixture=v;
   if(v>=6&&v<=9){unsigned at=v==6?0u:v==7?15u:v==8?29u:7u;uint32_t value=v==6?0x7f800000u:v==7?0xff800000u:v==8?0x7fc12345u:0x7f800001u;
@@ -423,8 +445,53 @@ int main(void){
   char expected[96];
   if(v==13)snprintf(expected,sizeof(expected),"\"progress\":[2,19,2,3,1695,26,16932849]");
   else if(v==14)snprintf(expected,sizeof(expected),"\"progress\":[2,31,2,3,1695,183,%u]",1u|(255u<<4)|(1u<<12)|(2u<<13)|(3u<<17)|(1u<<19)|(43u<<21));
-  else snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_SCALES_JNI_FIXTURE_LIST_END,COH_SCALES_JNI_FIXTURE_SCALES_BEGIN-COH_SCALES_JNI_FIXTURE_LIST_END+(finite+nonfinite)*32u,metadata);
+  else {
+   unsigned stop=COH_SCALES_JNI_FIXTURE_SCALES_BEGIN+(finite+nonfinite)*32u;
+   if(v==1||v==10||v==11||v==12){stage=v==10?39u:v==11?41u:43u;metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(v==10||v==11?0u:1u<<26);stop+=v==10?0u:v==11?1u:5u;}
+   snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_SCALES_JNI_FIXTURE_LIST_END,stop-COH_SCALES_JNI_FIXTURE_LIST_END,metadata);
+  }
   CHECK(strstr(body,expected));CHECK(!strstr(body,"\"scales\"")&&!strstr(body,"\"values\"")&&!strstr(body,"\"generation\"")&&!strstr(body,"\"packet\""));
+  if(v==1)strcpy(sample_report,report_text);
+  JNI(disconnect)(&env,NULL,current);CHECK(strstr(report(),"CLOSED")&&strstr(report_text,expected)&&strstr(report_text,"\"server_identity_bound\":false")&&strstr(report_text,"\"selected_owner_bound\":false")&&strstr(report_text,"\"complete_initial_character\":false")&&strstr(report_text,"\"actor_publication\":false")&&strstr(report_text,"\"source_generation_admitted\":false")&&strstr(report_text,"\"ack_permitted\":false")&&strstr(report_text,"\"world_authority\":false"));finish();
+ }
+ /* Source framing only: unresolved default/body catalogs and all parts remain
+  * unaccepted. Synthetic tails cannot affect the framing boundary. */
+ for(unsigned v=1;v<=18;v++){
+  fixture();partcount_fixture=v;
+  if(v==2)partcount_bits=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_BEGIN;
+  if(v==3)partcount_bits=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_COUNT_BEGIN;
+  if(v==4)partcount_bits=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_END-1;
+  if(v==5||v==17){partcount_scalar(COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_BEGIN,1,0);partcount_bits=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_COUNT_BEGIN;}
+  if(v==6)partcount_explicit(0);
+  if(v==7||v==18)partcount_explicit(30);
+  if(v==8)partcount_explicit(31);
+  if(v==9)partcount_explicit(INT32_MAX);
+  if(v==10||v==11)partcount_explicit(UINT32_MAX);
+  if(v==11)partcount_scalar(partcount_bits-32,32,UINT32_MAX);
+  if(v==12)partcount_scalar(COH_PARTCOUNT_JNI_FIXTURE_FIRST_STORAGE_BEGIN,1,1);
+  if(v==13)partcount_scalar(COH_PARTCOUNT_JNI_FIXTURE_EXTRA_BEGIN,1,0);
+  if(v==14)partcount_scalar(COH_PARTCOUNT_JNI_FIXTURE_SCALES_BEGIN,32,0x7f800000u);
+  if(v==15||v==16||v==17){partcount_scalar(partcount_bits,16,v==15?0:65535);partcount_bits+=16;}
+  if(v==18)partcount_bits--;
+  start();CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);CHECK(JNI(service)(&env,NULL,current,104)==COH_UNSUPPORTED);
+  CHECK(strstr(report(),"INITIAL_OBSERVED")&&strstr(report_text,"\"cleanup_verified\":true")&&strstr(report_text,"FIRST_COSTUME_REWARD_STRING_REQUIRED"));
+  const char*body=strstr(report_text,"\"first_reward_string\":{");CHECK(body);
+  CHECK(strstr(body,"FIRST_REWARD_CONTINUATION_REQUIRED")&&strstr(body,"\"bit\":1591")&&strstr(body,"\"bytes\":13")&&strstr(body,"\"literal_validated\":true"));
+  unsigned base=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17);
+  unsigned status=2,stage=43,count=2,selector=1,stop=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_END;
+  if(v==2){status=1;stage=39;count=selector=0;stop=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_BEGIN;}
+  if(v==3||v==4||v==11||v==18){status=1;stage=40;count=selector=0;stop=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_COUNT_BEGIN;}
+  if(v==5||v==17){stage=41;count=selector=0;stop=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_COUNT_BEGIN;}
+  if(v==6)count=0;
+  if(v==7){count=30;selector=2;stop=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_COUNT_BEGIN+12;}
+  if(v==8){status=4;stage=42;count=31;selector=2;stop=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_COUNT_BEGIN+12;}
+  if(v==9||v==10){status=4;stage=42;count=31;selector=4;stop=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_COUNT_BEGIN+60;}
+  char expected[96];
+  if(v==12)snprintf(expected,sizeof(expected),"\"progress\":[2,19,2,3,1695,26,16932849]");
+  else if(v==13)snprintf(expected,sizeof(expected),"\"progress\":[2,31,2,3,1695,183,%u]",1u|(255u<<4)|(1u<<12)|(2u<<13)|(3u<<17)|(1u<<19)|(43u<<21));
+  else if(v==14)snprintf(expected,sizeof(expected),"\"progress\":[1,36,2,3,1695,%u,%u]",COH_PARTCOUNT_JNI_FIXTURE_SCALES_BEGIN+32u-1695u,base|(1u<<26));
+  else snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_PARTCOUNT_JNI_FIXTURE_LIST_END,stop-COH_PARTCOUNT_JNI_FIXTURE_LIST_END,base|(count<<21)|(selector<<26));
+  CHECK(strstr(body,expected));CHECK(!strstr(body,"\"part_count\"")&&!strstr(body,"\"default_parts\"")&&!strstr(body,"\"generation\"")&&!strstr(body,"\"packet\""));
   if(v==1)strcpy(sample_report,report_text);
   JNI(disconnect)(&env,NULL,current);CHECK(strstr(report(),"CLOSED")&&strstr(report_text,expected)&&strstr(report_text,"\"server_identity_bound\":false")&&strstr(report_text,"\"selected_owner_bound\":false")&&strstr(report_text,"\"complete_initial_character\":false")&&strstr(report_text,"\"actor_publication\":false")&&strstr(report_text,"\"source_generation_admitted\":false")&&strstr(report_text,"\"ack_permitted\":false")&&strstr(report_text,"\"world_authority\":false"));finish();
  }

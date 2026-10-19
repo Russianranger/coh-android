@@ -1,0 +1,4489 @@
+{
+  "Android_NDK_JNI_ABI_or_Thor_execution": false,
+  "JNI_initial_controller_crypto_provider_and_request_witness_explicit_doubles": true,
+  "Java_native_declarations": [
+    "long begin(int dbPort, String account, int networkVersion,\n            boolean encryptionRequired, boolean outboundCompressed, long nowMs)",
+    "int service(long handle, long nowMs)",
+    "byte[] characters(long handle)",
+    "int choose(long handle, int wireSlot, long nowMs)",
+    "String report(long handle)",
+    "void disconnect(long handle)",
+    "void suspend(long handle)",
+    "void close(long handle)"
+  ],
+  "LeakSanitizer_enabled": false,
+  "actual_socket_or_original_server_transaction": false,
+  "commands": [
+    [
+      "/usr/bin/x86_64-linux-gnu-gcc-13",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-pedantic",
+      "-fno-pie",
+      "-no-pie",
+      "-fstack-usage",
+      "-DCOH_INTEROP_REQUEST_TX=1",
+      "-I",
+      "native-android/combined-client/diagnostics/interop-adapter-20261018/test-include",
+      "-I",
+      "native-android/engine/initial-capture",
+      "-I",
+      "native-android/engine/session",
+      "-I",
+      "native-android/include",
+      "-O2",
+      "native-android/combined-client/app/src/main/cpp/interop_network.c",
+      "native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c",
+      "native-android/engine/initial-capture/coh_initial_create_probe.c",
+      "native-android/engine/initial-capture/coh_initial_pose_probe.c",
+      "native-android/engine/initial-capture/coh_initial_sequence_probe.c",
+      "native-android/engine/initial-capture/coh_initial_triggered_probe.c",
+      "native-android/engine/initial-capture/coh_initial_aianim_probe.c",
+      "native-android/engine/initial-capture/coh_initial_netfx_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_probe.c",
+      "native-android/engine/initial-capture/coh_initial_reward_probe.c",
+      "native-android/engine/initial-capture/coh_initial_reward_list_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_slots_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_body_probe.c",
+      "native-android/engine/initial-capture/coh_initial_appearance_probe.c",
+      "native-android/engine/initial-capture/coh_initial_sgcolors_probe.c",
+      "native-android/engine/initial-capture/coh_initial_scales_probe.c",
+      "native-android/engine/initial-capture/coh_initial_partcount_probe.c",
+      "native-android/engine/entities/coh_entities.c",
+      "native-android/engine/replication/coh_replication.c",
+      "-Wl,--wrap=calloc",
+      "-Wl,--wrap=free",
+      "-lm",
+      "-o",
+      "/workspace/scratch/1d0c7dd153fe/partcount-adapter-r3/adapter-release"
+    ],
+    [
+      "/usr/bin/x86_64-linux-gnu-gcc-13",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-pedantic",
+      "-fno-pie",
+      "-no-pie",
+      "-fstack-usage",
+      "-DCOH_INTEROP_REQUEST_TX=1",
+      "-I",
+      "native-android/combined-client/diagnostics/interop-adapter-20261018/test-include",
+      "-I",
+      "native-android/engine/initial-capture",
+      "-I",
+      "native-android/engine/session",
+      "-I",
+      "native-android/include",
+      "-O1",
+      "-g",
+      "-fsanitize=address",
+      "native-android/combined-client/app/src/main/cpp/interop_network.c",
+      "native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c",
+      "native-android/engine/initial-capture/coh_initial_create_probe.c",
+      "native-android/engine/initial-capture/coh_initial_pose_probe.c",
+      "native-android/engine/initial-capture/coh_initial_sequence_probe.c",
+      "native-android/engine/initial-capture/coh_initial_triggered_probe.c",
+      "native-android/engine/initial-capture/coh_initial_aianim_probe.c",
+      "native-android/engine/initial-capture/coh_initial_netfx_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_probe.c",
+      "native-android/engine/initial-capture/coh_initial_reward_probe.c",
+      "native-android/engine/initial-capture/coh_initial_reward_list_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_slots_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_body_probe.c",
+      "native-android/engine/initial-capture/coh_initial_appearance_probe.c",
+      "native-android/engine/initial-capture/coh_initial_sgcolors_probe.c",
+      "native-android/engine/initial-capture/coh_initial_scales_probe.c",
+      "native-android/engine/initial-capture/coh_initial_partcount_probe.c",
+      "native-android/engine/entities/coh_entities.c",
+      "native-android/engine/replication/coh_replication.c",
+      "-Wl,--wrap=calloc",
+      "-Wl,--wrap=free",
+      "-lm",
+      "-o",
+      "/workspace/scratch/1d0c7dd153fe/partcount-adapter-r3/adapter-asan"
+    ],
+    [
+      "/usr/bin/x86_64-linux-gnu-gcc-13",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-pedantic",
+      "-fno-pie",
+      "-no-pie",
+      "-fstack-usage",
+      "-DCOH_INTEROP_REQUEST_TX=1",
+      "-I",
+      "native-android/combined-client/diagnostics/interop-adapter-20261018/test-include",
+      "-I",
+      "native-android/engine/initial-capture",
+      "-I",
+      "native-android/engine/session",
+      "-I",
+      "native-android/include",
+      "-O1",
+      "-g",
+      "-fsanitize=undefined",
+      "-fno-sanitize-recover=all",
+      "native-android/combined-client/app/src/main/cpp/interop_network.c",
+      "native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c",
+      "native-android/engine/initial-capture/coh_initial_create_probe.c",
+      "native-android/engine/initial-capture/coh_initial_pose_probe.c",
+      "native-android/engine/initial-capture/coh_initial_sequence_probe.c",
+      "native-android/engine/initial-capture/coh_initial_triggered_probe.c",
+      "native-android/engine/initial-capture/coh_initial_aianim_probe.c",
+      "native-android/engine/initial-capture/coh_initial_netfx_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_probe.c",
+      "native-android/engine/initial-capture/coh_initial_reward_probe.c",
+      "native-android/engine/initial-capture/coh_initial_reward_list_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_slots_probe.c",
+      "native-android/engine/initial-capture/coh_initial_costume_body_probe.c",
+      "native-android/engine/initial-capture/coh_initial_appearance_probe.c",
+      "native-android/engine/initial-capture/coh_initial_sgcolors_probe.c",
+      "native-android/engine/initial-capture/coh_initial_scales_probe.c",
+      "native-android/engine/initial-capture/coh_initial_partcount_probe.c",
+      "native-android/engine/entities/coh_entities.c",
+      "native-android/engine/replication/coh_replication.c",
+      "-Wl,--wrap=calloc",
+      "-Wl,--wrap=free",
+      "-lm",
+      "-o",
+      "/workspace/scratch/1d0c7dd153fe/partcount-adapter-r3/adapter-ubsan"
+    ]
+  ],
+  "compiler_and_headers_sha256": {
+    "/usr/bin/x86_64-linux-gnu-gcc-13": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+    "/usr/include/features-time64.h": "345acb98767d04277e413c4951fbb199b0500be23d43cddf17c6cd9fb319a8da",
+    "/usr/include/features.h": "940d486d050fc87420d8ffc008e17f31ffb04467534ad1b039ed25abc52382f9",
+    "/usr/include/inttypes.h": "0070668ad665de2a164c82f370161f8e238ab03188ed51f99b08981f8027527f",
+    "/usr/include/limits.h": "1d445b989a1c583a9c55264776bb5c425fa03658de004275fbfdc720383bb085",
+    "/usr/include/math.h": "9d4c8fb59d888255c41cbd29fe98bce22721c9610f252f621f0b1ce1afebe59e",
+    "/usr/include/openssl/asn1.h": "1e4dff52ea00008bf161a1e19271f77b852b170af5b3d416d6f2cad73c19aa22",
+    "/usr/include/openssl/asn1err.h": "75c4b045fef75587c0df5c658b7466b74ad42755368a56cf6ff43581aa5768c6",
+    "/usr/include/openssl/bio.h": "9dde507c18007338ee90517748b2b468cf416b4738f56a68baab0b4bb362cbc0",
+    "/usr/include/openssl/bioerr.h": "348571893bca9600b9f790af5c6a02b40bffd83a718450a54a8022c70fef1a14",
+    "/usr/include/openssl/bn.h": "8141d04fc871e83308921c290fea380ce92db4a1e2647c985d2f9dcc2bedb08d",
+    "/usr/include/openssl/bnerr.h": "f0dfac26985a7ae40174e90173df9f95b15bba4d3768290746d7258ff1b0ae64",
+    "/usr/include/openssl/core.h": "2981b182ac8930f17b136665b61f1c34c0cfdb4e122f19bd75d7ff552ff5e736",
+    "/usr/include/openssl/core_dispatch.h": "c736175338055b9ba8811d16db30aa5d3e5f9e2f09000706348a5ba06df44c30",
+    "/usr/include/openssl/crypto.h": "99ecb185a5a40dcd7d46f40f7772191a9aa0ca314481cc3998af8c9375f9898d",
+    "/usr/include/openssl/cryptoerr.h": "4e7759de28d9f389122c9f5adc93fc20eef7b6619594b1c96c7904b421450d4b",
+    "/usr/include/openssl/cryptoerr_legacy.h": "870042252331e89723d31079469104cafd676f0fedcbe0d99f56f3e8862fff8d",
+    "/usr/include/openssl/e_os2.h": "a5c404e815f8ea17c46ed1b78118f32c2e31fd3ce42f761af2bf8fb5a5864550",
+    "/usr/include/openssl/evp.h": "21f9783955cd806e69b09ad6fbc956e7f2dc18f8804a4132e2ea0f37492d0c59",
+    "/usr/include/openssl/evperr.h": "7fab5bade4441300fa7ffe721ca2eb361835998db7d386f8f1be7db5b7596c3f",
+    "/usr/include/openssl/macros.h": "e480df214285bb3225da7549c0468590f7156ca399591167ee41360936264c46",
+    "/usr/include/openssl/obj_mac.h": "c1d31f32a3dbc9dea1db10f322b4b46a24c3d4411fe54630df59fa46fc2b583a",
+    "/usr/include/openssl/objects.h": "5fc6f3f0dd5e46fd409cb51ae1b331fec799fb6ef4b5efdc8ffbe264e5e83997",
+    "/usr/include/openssl/objectserr.h": "e17a8d7f62a1ef257fd90e604d4293bf02d5f81ae8198efe1e197c5b27baeb8c",
+    "/usr/include/openssl/opensslv.h": "724c362124239abc4b77decaf5d5f70af61476ea0fa84b1cb7a97c15957c1415",
+    "/usr/include/openssl/params.h": "10d8e0157e339ee01f3b9c60c4b5bc60e6d4edce1084f0c9589ff75bf3a9f693",
+    "/usr/include/openssl/rand.h": "85bda3b0a72aedb08cb8b75bb49366e4f8e07599f9dae5df8d688ce57073033f",
+    "/usr/include/openssl/randerr.h": "80260d41625b9ed9f727e8553a65a111645b3c013df8cc8fa6a718d32b643c88",
+    "/usr/include/openssl/safestack.h": "bcd1a766d9043cf69f93414f8f5f7460a7f8b380c983ba986284ed5ad7947a0e",
+    "/usr/include/openssl/stack.h": "69f94382a15a3c4cfd1dda32108db5234727b36ed0e25f1fb12e0993c7b5ac95",
+    "/usr/include/openssl/symhacks.h": "68b54776fa15943f3f018be6c7dc7a8847c9f512fb5eeec4f093804197dc2dfa",
+    "/usr/include/openssl/types.h": "4986b31300621b35ddd0e2220fd9943eabc264003d73364282869fbb5c1d4a84",
+    "/usr/include/pthread.h": "26eb5331384b27347c5d60d466c82e4fbbf91d920383ecddc479b29fd98dc22b",
+    "/usr/include/sched.h": "7a22b2f60b4140563dc6613a398a4030f53a30042c3cc9390aaf2e0aedd2f861",
+    "/usr/include/stdc-predef.h": "8db4f65e62cade8ae4d9b77960ee6aee093255acc1b637e3fb37d79179733b15",
+    "/usr/include/stdint.h": "c26c51b07feadd45ca25e9c95e393b6783d580ab318a567c119828191a80bbed",
+    "/usr/include/stdio.h": "b4f6709d12c8493e2a42f740845abe2994deb27fc78fb85fcaa6e27228a87d62",
+    "/usr/include/stdlib.h": "21500d5cb6062df47d6507baef6111cc951ceece4e2df26289a420fcf05ebec4",
+    "/usr/include/string.h": "c64819b091b17d7fcf14a10da129793f2499879eacb1b361610cbec5162fc24b",
+    "/usr/include/time.h": "dba6d309d4b1ca0006342a7a1e08cfc6cb0a210610ff5ad1577d232ddaa10431",
+    "/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h": "ed3a79c28629d75907ef498b30f8db2b6a433d7a49be3a752bad01007599b976",
+    "/usr/include/x86_64-linux-gnu/bits/cpu-set.h": "99270c57646f3410998ca958496e64c40648be3f429134d00ed8a2f3e7bbeadb",
+    "/usr/include/x86_64-linux-gnu/bits/endian.h": "0add7af26d2f4529d28506f0af6506ef687e507e4eddc946171d3e6805e9b9fe",
+    "/usr/include/x86_64-linux-gnu/bits/endianness.h": "659a7060004eda113671a38852c4d1e9cb97a35932bcd1d8540f98c09c180747",
+    "/usr/include/x86_64-linux-gnu/bits/floatn-common.h": "b31050f2b142f1b5bedfa97158b1baa06575dd0d12dde4531b3815b57069e3da",
+    "/usr/include/x86_64-linux-gnu/bits/floatn.h": "273e3eac154e0fd777b8e7c6edd9cd64af69a0d215370da12243d5b22378c2dc",
+    "/usr/include/x86_64-linux-gnu/bits/flt-eval-method.h": "61b9223ce4641088a5c7e5c00c99c5337f27184e0399dc6eaeb6f964f575fc01",
+    "/usr/include/x86_64-linux-gnu/bits/fp-fast.h": "fdfbdd785f66fbfb1c09cff9be1268eba9e380333741f6fa2818f3c3cb87fa29",
+    "/usr/include/x86_64-linux-gnu/bits/fp-logb.h": "712626c5021725ef9619d3fa39f67069f2f49029b19454b69d68444b3bb74794",
+    "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h": "e86638082f9ce98c82e3022018fa5be175473445c824fe17bd32bf9668582368",
+    "/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h": "b00b3abd4ea49834f00c91f6f81b645a0b306a13f20ca0f8f4f2c7cc54809c61",
+    "/usr/include/x86_64-linux-gnu/bits/long-double.h": "40367287cd437d78a05313f6ec52cb0f0a711e1b6711fdcc3699bf2bf28e810f",
+    "/usr/include/x86_64-linux-gnu/bits/math-vector.h": "2e61d60a40caeb9aae5842dfec8d674239b81c0477d2212a5afe801e4be7bf24",
+    "/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h": "929a6ea9df8f8201c7a4bad2e1860fe7d839c84e4d72b91d49c29eb7af840f4f",
+    "/usr/include/x86_64-linux-gnu/bits/mathcalls.h": "9c334a3ae196c1d619c46433e45e0a1266784f9cf7cd23461f1910c0f2d742dc",
+    "/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h": "adf5a36ccf71cf7252c97627b133285f53d3d66b499838bb717845dcd8d93571",
+    "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h": "c47d28c26504ebda1e15d82b9ae74d288c9d68e757c7f37456dc39b131131035",
+    "/usr/include/x86_64-linux-gnu/bits/sched.h": "043d2683a24e16399bcfca1423ef0090151172dfe761af4464f0a9c8d6844a07",
+    "/usr/include/x86_64-linux-gnu/bits/setjmp.h": "5fde1724c630063303aa2aae694e758c012616f94910907e909a99d0e15a58d5",
+    "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h": "94286e42e4970304da5cbef69de6695c84132ff8fbd4b6d72d29aeb7406dc5ff",
+    "/usr/include/x86_64-linux-gnu/bits/stdint-least.h": "5bf66871bfc18ae6d22c91d03e392c1a4cc5969ca74c5fa31b7510703a496844",
+    "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h": "aeee224a19434556ef4a9a4afad553736789274656ca12463122300b557ce78c",
+    "/usr/include/x86_64-linux-gnu/bits/stdio_lim.h": "509fc0d1fba9f06fe85d61b6b9c0b2208c8fe8e63af55fcfdd7e4ad5eabe6927",
+    "/usr/include/x86_64-linux-gnu/bits/stdlib-float.h": "ba3d25100d93a324122c4c8121759c689607656aedf0efa148f0bfe8826c9794",
+    "/usr/include/x86_64-linux-gnu/bits/struct_mutex.h": "ec8b2058d4ac8e98ebaf6bdcb078000dd4df92b584e2ce6ae79546fb4219cde2",
+    "/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h": "4b55d768919e8183816e4cdf910f62c7ac5313e70e370b287157e503bd2c26d1",
+    "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h": "21f6f60e8a28e6e0166f0b3685d939774b553a27d1f221559f2d8176b8fb2358",
+    "/usr/include/x86_64-linux-gnu/bits/time.h": "458eb529d0a451d27dfa294b6da982be2f1300f46884da2fa9bee5ad8efc7063",
+    "/usr/include/x86_64-linux-gnu/bits/time64.h": "2be9170ce3621ea6062f10edef68bbc2db09bb454ec4397534263dd37b8f1f6a",
+    "/usr/include/x86_64-linux-gnu/bits/timesize.h": "8b686ad5fec2c4d6f759a6594d7c216337774d059623677547b7e182cc5269ae",
+    "/usr/include/x86_64-linux-gnu/bits/types.h": "371847ed3adab1c19db392034f6a22407d321b1dc5f2440563f4b0b8b6c5386b",
+    "/usr/include/x86_64-linux-gnu/bits/types/FILE.h": "37515f78be386f2edad4746f2947c928f480728c56d9a94e25302ebbdaef3c96",
+    "/usr/include/x86_64-linux-gnu/bits/types/__FILE.h": "26c909942e8a6bc82725e9c402f393aed9e32d94190257ddf71e1b5f819b4e5e",
+    "/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h": "8afae3abf006beb39fd9d4d4bae38745cdf08a91e6217ddf25833c8d4b04751b",
+    "/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h": "603e58ab31ed75b7e0ab09a2ca94e99955f7fbc63310466321ce27c906227eb4",
+    "/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h": "c561df72d5b987ccbd022059fdb1bcb6899c3e94b403997a0576ef3e1afb0f94",
+    "/usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h": "05291a7d38bb1d0da1ed01c09fe85fa2b1f4d5bc708e06bb930efec672db08d5",
+    "/usr/include/x86_64-linux-gnu/bits/types/clock_t.h": "81e60e8a8d99b28bc723c14b156d7f7fc8ff663d98a857a3f5aea90431f577e3",
+    "/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h": "79ad5bbe87e2be78d83990f8e28e0b20163e7ee03b733dc7cbea4eed94b8314f",
+    "/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h": "e54be99f52cb6e0b8ffacb2a91db83b8129863381f45c952582faf30a7fce6c5",
+    "/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h": "737a8707aef29fbf80889e4a4411aff93d66dfe46b89b5d25fbc79c1f383fbdc",
+    "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h": "8e7e964087b9c7638be2b5fb0fa01ceab43e4af8393b805b54ac2bd8642a1b98",
+    "/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h": "e7bdda3f42eb0633850ed150fef0a0cf6193cbba8fa740e7505925424a595566",
+    "/usr/include/x86_64-linux-gnu/bits/types/time_t.h": "721a557cff3ed308c69719a44ba8f7cd9536f6c602fb8f1b1eea8ed6749ee37d",
+    "/usr/include/x86_64-linux-gnu/bits/typesizes.h": "047ee5ab17a95364c4b0f14c3eb0750e84e457c408f9a65a6c225ece585e0c14",
+    "/usr/include/x86_64-linux-gnu/bits/wchar.h": "893fa450527ce645f17922788097d5fe331e2a53012bab4e724d8a1f63e21aa2",
+    "/usr/include/x86_64-linux-gnu/bits/wordsize.h": "716d8459074e2a082d65a28192b32eddbfd7587348372395b1c283a723ae4c18",
+    "/usr/include/x86_64-linux-gnu/gnu/stubs-64.h": "0b6ab3e2ed3ba79b30fe6ba81a68fc41f57965b8d56662763633431b703c9289",
+    "/usr/include/x86_64-linux-gnu/gnu/stubs.h": "ef444295a0a9e8f5c40918399a00cc91ba0bd79774110cdf6e652baa6cfadb2e",
+    "/usr/include/x86_64-linux-gnu/openssl/configuration.h": "eee44bb7885f6e6b9a2a139100a7751c2564f1b83090ed237f178c1470737046",
+    "/usr/include/x86_64-linux-gnu/openssl/opensslconf.h": "890184233890bacd52fd420fef07befad411b9a318b97efbf36f46673d3e7841",
+    "/usr/include/x86_64-linux-gnu/sys/cdefs.h": "173afb522c6877dda3be1c93742c2061cd6e748ce395d2b3ae833fb49bfbfc4f",
+    "/usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h": "1c6beac959e966424f81278b354d035bf354c735bb6cffa35ef2c42f6c899ff8",
+    "/usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h": "5a443943e67d7bab17203591b4ccb508757587d9b955ee883a053d755ed09321",
+    "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h": "9efc696d6c7eb8bb1831b149c6a92f88a775809cd63e4007312b617915f81188",
+    "/usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h": "86a7914ab7d6a18465a6fb9a7b54f945cad604fdbf3ca0d10e4e0254e0037911",
+    "/usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h": "22dd0ab81baadd5a8d455b445855f341d419c7b0267beca235de00b7ec78e529"
+  },
+  "executables": {
+    "asan": {
+      "bytes": 958784,
+      "retained_gzip": "adapter-asan.gz",
+      "sha256": "db43ddbc5ddf57d4bba16c1d260eb0a1c4c2b9724687fe8729abc005090d4d16"
+    },
+    "release": {
+      "bytes": 183904,
+      "retained_gzip": "adapter-release.gz",
+      "sha256": "814bbec292286578937963ba5418517ff6fbc644ce46e4fc561305ad8643b01c"
+    },
+    "ubsan": {
+      "bytes": 750480,
+      "retained_gzip": "adapter-ubsan.gz",
+      "sha256": "90a10b6298e22976ff44f37239286a1cc63bd83b8f3d1d347f0d39df1ead7296"
+    }
+  },
+  "global_memory_or_RSS_fit": false,
+  "head_read": "9d61ba8c9725b85785c51bd5e5966e9ab689c706",
+  "host_stack_frames": {
+    "asan": [
+      {
+        "bytes": 16,
+        "function": "coh_receive_sample",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "owner",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "retire_request",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "append",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "append_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 1312,
+        "function": "sample_receive",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "close_capture",
+        "kind": "static"
+      },
+      {
+        "bytes": 2736,
+        "function": "observe",
+        "kind": "static"
+      },
+      {
+        "bytes": 2704,
+        "function": "Java_org_coh_nativecombined_InteropNative_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 1344,
+        "function": "Java_org_coh_nativecombined_InteropNative_service",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 48,
+        "function": "Java_org_coh_nativecombined_InteropNative_choose",
+        "kind": "static"
+      },
+      {
+        "bytes": 496,
+        "function": "Java_org_coh_nativecombined_InteropNative_characters",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 21760,
+        "function": "Java_org_coh_nativecombined_InteropNative_report",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 32,
+        "function": "Java_org_coh_nativecombined_InteropNative_suspend",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "Java_org_coh_nativecombined_InteropNative_disconnect",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "Java_org_coh_nativecombined_InteropNative_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 400,
+        "function": "coh_initial_aianim_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_initial_aianim_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 352,
+        "function": "coh_initial_reward_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "coh_initial_reward_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "partcount_scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "partcount_explicit",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "has_exception",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "delete_ref",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "new_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "release",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "get_chars",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "get_length",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "new_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "set_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "start",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "report",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "fixture",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "__wrap_calloc",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "__wrap_free",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_db_wipe",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_auth_openssl_provider",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "RAND_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_session_key_exchange",
+        "kind": "static"
+      },
+      {
+        "bytes": 400,
+        "function": "coh_local_default_config",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_local_login_policy",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_initial_capture_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_initial_capture_characters",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_choose_character",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_initial_capture_service",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_lease",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_diagnostics",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_destroy",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_cancel",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_initial_capture_command_name",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_request_tx_service",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_cancel",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_retire",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_request_tx_diagnostics",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_destroy",
+        "kind": "static"
+      },
+      {
+        "bytes": 1408,
+        "function": "main",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 1008,
+        "function": "coh_initial_create_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "coh_initial_create_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_rep_reader",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_rep_reader_bounded",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_rep_read",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "f32",
+        "kind": "static"
+      },
+      {
+        "bytes": 256,
+        "function": "auto_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "boolean",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_rep_pack",
+        "kind": "static"
+      },
+      {
+        "bytes": 592,
+        "function": "coh_rep_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 576,
+        "function": "coh_rep_connect",
+        "kind": "static"
+      },
+      {
+        "bytes": 1792,
+        "function": "coh_rep_shortcuts",
+        "kind": "static"
+      },
+      {
+        "bytes": 1264,
+        "function": "coh_rep_scene_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 448,
+        "function": "coh_rep_update_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_position_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 480,
+        "function": "coh_rep_position",
+        "kind": "static"
+      },
+      {
+        "bytes": 416,
+        "function": "coh_rep_physics",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_session_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_session_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_session_disconnect",
+        "kind": "static"
+      },
+      {
+        "bytes": 2272,
+        "function": "session_message",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_rep_session_message",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_rep_session_message_bounded",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 464,
+        "function": "coh_initial_costume_body_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_costume_body_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_initial_costume_body_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 784,
+        "function": "coh_initial_pose_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_pose_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 528,
+        "function": "coh_initial_reward_list_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_reward_list_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 384,
+        "function": "coh_initial_triggered_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_initial_triggered_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 352,
+        "function": "coh_initial_sgcolors_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_sgcolors_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 368,
+        "function": "coh_initial_sgcolors_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 400,
+        "function": "coh_initial_sequence_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_sequence_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "require",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "fail",
+        "kind": "static"
+      },
+      {
+        "bytes": 128,
+        "function": "list_table",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "check_reader",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "read_n",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "string",
+        "kind": "static"
+      },
+      {
+        "bytes": 1264,
+        "function": "discard_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "optional_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "auto_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "opt_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "float32",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "pack",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "opt_pack",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "clear_failure",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "orientation",
+        "kind": "static"
+      },
+      {
+        "bytes": 272,
+        "function": "inventory_sizes",
+        "kind": "static"
+      },
+      {
+        "bytes": 384,
+        "function": "target",
+        "kind": "static"
+      },
+      {
+        "bytes": 1488,
+        "function": "appearance",
+        "kind": "static"
+      },
+      {
+        "bytes": 144,
+        "function": "character_stats",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "netfx",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "creation",
+        "kind": "static"
+      },
+      {
+        "bytes": 2384,
+        "function": "status_effects",
+        "kind": "static"
+      },
+      {
+        "bytes": 736,
+        "function": "coh_ent_titles",
+        "kind": "static"
+      },
+      {
+        "bytes": 1840,
+        "function": "coh_ent_rare_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_ent_next_index",
+        "kind": "static"
+      },
+      {
+        "bytes": 688,
+        "function": "coh_ent_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_ent_orientation_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 304,
+        "function": "coh_ent_orientation",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_ent_slot_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 3600,
+        "function": "coh_ent_netfx",
+        "kind": "static"
+      },
+      {
+        "bytes": 496,
+        "function": "coh_ent_character_stats",
+        "kind": "static"
+      },
+      {
+        "bytes": 912,
+        "function": "coh_ent_appearance",
+        "kind": "static"
+      },
+      {
+        "bytes": 464,
+        "function": "coh_ent_target",
+        "kind": "static"
+      },
+      {
+        "bytes": 2448,
+        "function": "coh_ent_status_effects",
+        "kind": "static"
+      },
+      {
+        "bytes": 336,
+        "function": "coh_ent_inventory_sizes",
+        "kind": "static"
+      },
+      {
+        "bytes": 8080,
+        "function": "coh_ent_record",
+        "kind": "static"
+      },
+      {
+        "bytes": 4544,
+        "function": "coh_ent_list",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 2512,
+        "function": "coh_ent_deletes",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_ent_stage_deletes",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_ent_full_update_tail",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "boundary",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 480,
+        "function": "coh_initial_costume_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_initial_costume_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 3680,
+        "function": "coh_initial_netfx_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "coh_initial_netfx_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 336,
+        "function": "coh_initial_partcount_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "coh_initial_partcount_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 384,
+        "function": "coh_initial_partcount_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "metadata",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 336,
+        "function": "coh_initial_costume_slots_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_initial_costume_slots_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_initial_costume_slots_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 432,
+        "function": "coh_initial_appearance_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_appearance_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_initial_appearance_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 336,
+        "function": "coh_initial_scales_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_scales_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 352,
+        "function": "coh_initial_scales_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_D_00099_0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "_sub_I_00099_1",
+        "kind": "static"
+      }
+    ],
+    "release": [
+      {
+        "bytes": 160,
+        "function": "coh_initial_aianim_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "coh_initial_aianim_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 688,
+        "function": "coh_initial_create_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_initial_create_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "coh_initial_costume_slots_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_initial_costume_slots_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 64,
+        "function": "coh_initial_costume_slots_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_costume_body_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "coh_initial_costume_body_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_costume_body_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 32,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_partcount_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "coh_initial_partcount_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_partcount_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "partcount_scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "has_exception",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "new_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "report",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "delete_ref",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "set_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "new_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "release",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "get_chars",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "get_length",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "fixture",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "start",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_close.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 24,
+        "function": "partcount_explicit",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "__wrap_calloc",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "__wrap_free",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_db_wipe",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_auth_openssl_provider",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "RAND_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_session_key_exchange",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_local_default_config",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_local_login_policy",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_initial_capture_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_characters",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_choose_character",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_initial_capture_service",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_lease",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_diagnostics",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_destroy",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_cancel",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_initial_capture_command_name",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_service",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_cancel",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_retire",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_diagnostics",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_destroy",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "main",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 160,
+        "function": "coh_initial_reward_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_initial_reward_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_session_disconnect.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_reader",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_reader_bounded",
+        "kind": "static"
+      },
+      {
+        "bytes": 24,
+        "function": "coh_rep_read",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "f32",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "auto_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "boolean",
+        "kind": "static"
+      },
+      {
+        "bytes": 384,
+        "function": "coh_rep_string.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_rep_pack",
+        "kind": "static"
+      },
+      {
+        "bytes": 1456,
+        "function": "coh_rep_shortcuts.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 960,
+        "function": "coh_rep_scene_prefix.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 368,
+        "function": "coh_rep_connect",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_shortcuts",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_scene_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "coh_rep_update_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 1216,
+        "function": "session_message",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_position_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 304,
+        "function": "coh_rep_position",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_rep_physics",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_session_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_session_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_session_disconnect",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_rep_session_message",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_rep_session_message_bounded",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 56,
+        "function": "coh_receive_sample.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 2080,
+        "function": "observe",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "append.constprop",
+        "kind": "static"
+      },
+      {
+        "bytes": 1072,
+        "function": "sample_receive",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "close_capture.constprop",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "append_string.constprop",
+        "kind": "static"
+      },
+      {
+        "bytes": 2384,
+        "function": "Java_org_coh_nativecombined_InteropNative_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 1088,
+        "function": "Java_org_coh_nativecombined_InteropNative_service",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "Java_org_coh_nativecombined_InteropNative_choose",
+        "kind": "static"
+      },
+      {
+        "bytes": 320,
+        "function": "Java_org_coh_nativecombined_InteropNative_characters",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 19888,
+        "function": "Java_org_coh_nativecombined_InteropNative_report",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "Java_org_coh_nativecombined_InteropNative_suspend",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "Java_org_coh_nativecombined_InteropNative_disconnect",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "Java_org_coh_nativecombined_InteropNative_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "coh_initial_scales_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_initial_scales_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 208,
+        "function": "coh_initial_scales_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "valid.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "coh_initial_appearance_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_initial_appearance_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 144,
+        "function": "coh_initial_appearance_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_reward_list_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_initial_reward_list_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 3408,
+        "function": "coh_initial_netfx_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_initial_netfx_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 448,
+        "function": "coh_initial_pose_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_initial_pose_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 40,
+        "function": "list_table",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "clear_failure.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_ent_slot_init.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 1088,
+        "function": "discard_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "auto_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 2176,
+        "function": "status_effects",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "optional_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "opt_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "opt_pack",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "orientation",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "inventory_sizes",
+        "kind": "static"
+      },
+      {
+        "bytes": 128,
+        "function": "character_stats",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "netfx",
+        "kind": "static"
+      },
+      {
+        "bytes": 272,
+        "function": "target",
+        "kind": "static"
+      },
+      {
+        "bytes": 912,
+        "function": "appearance",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "creation.part.0",
+        "kind": "static"
+      },
+      {
+        "bytes": 560,
+        "function": "coh_ent_titles",
+        "kind": "static"
+      },
+      {
+        "bytes": 1616,
+        "function": "coh_ent_rare_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_ent_next_index",
+        "kind": "static"
+      },
+      {
+        "bytes": 512,
+        "function": "coh_ent_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_ent_orientation_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_ent_orientation",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_ent_slot_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 3360,
+        "function": "coh_ent_netfx",
+        "kind": "static"
+      },
+      {
+        "bytes": 336,
+        "function": "coh_ent_character_stats",
+        "kind": "static"
+      },
+      {
+        "bytes": 688,
+        "function": "coh_ent_appearance",
+        "kind": "static"
+      },
+      {
+        "bytes": 288,
+        "function": "coh_ent_target",
+        "kind": "static"
+      },
+      {
+        "bytes": 2208,
+        "function": "coh_ent_status_effects",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_ent_inventory_sizes",
+        "kind": "static"
+      },
+      {
+        "bytes": 7680,
+        "function": "coh_ent_record",
+        "kind": "static"
+      },
+      {
+        "bytes": 4176,
+        "function": "coh_ent_list",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 2240,
+        "function": "coh_ent_deletes",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_ent_stage_deletes",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "coh_ent_full_update_tail",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "coh_initial_sgcolors_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "coh_initial_sgcolors_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_sgcolors_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_sequence_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "coh_initial_sequence_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 48,
+        "function": "scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_initial_costume_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_initial_costume_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_triggered_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_triggered_probe_json",
+        "kind": "dynamic,bounded"
+      }
+    ],
+    "ubsan": [
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 3424,
+        "function": "coh_initial_netfx_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "coh_initial_netfx_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_costume_body_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_initial_costume_body_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_costume_body_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_initial_partcount_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_partcount_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_partcount_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_initial_sequence_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_sequence_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "boundary",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_initial_costume_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_costume_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_initial_triggered_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_initial_triggered_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "coh_initial_appearance_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_initial_appearance_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_initial_appearance_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 688,
+        "function": "coh_initial_create_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 208,
+        "function": "coh_initial_create_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_scales_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_initial_scales_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_initial_scales_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "has_exception",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "closed",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "partcount_scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "partcount_explicit",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "delete_ref",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "set_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "new_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "release",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "get_chars",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "get_length",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "new_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "start",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "report",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "fixture",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "__wrap_calloc",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "__wrap_free",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_db_wipe",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_auth_openssl_provider",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "RAND_bytes",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_session_key_exchange",
+        "kind": "static"
+      },
+      {
+        "bytes": 224,
+        "function": "coh_local_default_config",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_local_login_policy",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_initial_capture_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_initial_capture_characters",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_choose_character",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "coh_initial_capture_service",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_lease",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_diagnostics",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_destroy",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_initial_capture_cancel",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_initial_capture_command_name",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_request_tx_service",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_cancel",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_retire",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_diagnostics",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_request_tx_destroy",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "main",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 304,
+        "function": "coh_initial_reward_list_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_reward_list_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_reader",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_reader_bounded",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_rep_read",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "f32",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "auto_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "boolean",
+        "kind": "static"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_rep_pack",
+        "kind": "static"
+      },
+      {
+        "bytes": 384,
+        "function": "coh_rep_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 368,
+        "function": "coh_rep_connect",
+        "kind": "static"
+      },
+      {
+        "bytes": 1456,
+        "function": "coh_rep_shortcuts",
+        "kind": "static"
+      },
+      {
+        "bytes": 960,
+        "function": "coh_rep_scene_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_rep_update_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_position_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 352,
+        "function": "coh_rep_position",
+        "kind": "static"
+      },
+      {
+        "bytes": 192,
+        "function": "coh_rep_physics",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "coh_rep_session_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_session_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_rep_session_disconnect",
+        "kind": "static"
+      },
+      {
+        "bytes": 1216,
+        "function": "session_message",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_rep_session_message",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 48,
+        "function": "coh_rep_session_message_bounded",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "stage",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "require",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "fail",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "list_table",
+        "kind": "static"
+      },
+      {
+        "bytes": 96,
+        "function": "check_reader",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "read_n",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "string",
+        "kind": "static"
+      },
+      {
+        "bytes": 1056,
+        "function": "discard_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "optional_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "pack",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "opt_pack",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "target",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "inventory_sizes",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "opt_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "float32",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "auto_bits",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "creation",
+        "kind": "static"
+      },
+      {
+        "bytes": 2160,
+        "function": "status_effects",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "clear_failure",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "orientation",
+        "kind": "static"
+      },
+      {
+        "bytes": 848,
+        "function": "appearance",
+        "kind": "static"
+      },
+      {
+        "bytes": 128,
+        "function": "character_stats",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "netfx",
+        "kind": "static"
+      },
+      {
+        "bytes": 512,
+        "function": "coh_ent_titles",
+        "kind": "static"
+      },
+      {
+        "bytes": 1584,
+        "function": "coh_ent_rare_prefix",
+        "kind": "static"
+      },
+      {
+        "bytes": 112,
+        "function": "coh_ent_next_index",
+        "kind": "static"
+      },
+      {
+        "bytes": 496,
+        "function": "coh_ent_create",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_ent_orientation_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 160,
+        "function": "coh_ent_orientation",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_ent_slot_init",
+        "kind": "static"
+      },
+      {
+        "bytes": 3344,
+        "function": "coh_ent_netfx",
+        "kind": "static"
+      },
+      {
+        "bytes": 320,
+        "function": "coh_ent_character_stats",
+        "kind": "static"
+      },
+      {
+        "bytes": 672,
+        "function": "coh_ent_appearance",
+        "kind": "static"
+      },
+      {
+        "bytes": 272,
+        "function": "coh_ent_target",
+        "kind": "static"
+      },
+      {
+        "bytes": 2192,
+        "function": "coh_ent_status_effects",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_ent_inventory_sizes",
+        "kind": "static"
+      },
+      {
+        "bytes": 7680,
+        "function": "coh_ent_record",
+        "kind": "static"
+      },
+      {
+        "bytes": 4160,
+        "function": "coh_ent_list",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 2256,
+        "function": "coh_ent_deletes",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_ent_stage_deletes",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "coh_ent_full_update_tail",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_reward_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "coh_initial_reward_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 448,
+        "function": "coh_initial_pose_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_pose_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_sgcolors_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "coh_initial_sgcolors_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 240,
+        "function": "coh_initial_sgcolors_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "valid",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "metadata",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "scalar",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_costume_slots_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 64,
+        "function": "coh_initial_costume_slots_probe_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 96,
+        "function": "coh_initial_costume_slots_progress_json",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "coh_receive_sample",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "owner",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "retire_request",
+        "kind": "static"
+      },
+      {
+        "bytes": 48,
+        "function": "append",
+        "kind": "static"
+      },
+      {
+        "bytes": 80,
+        "function": "append_string",
+        "kind": "static"
+      },
+      {
+        "bytes": 1056,
+        "function": "sample_receive",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "close_capture",
+        "kind": "static"
+      },
+      {
+        "bytes": 2080,
+        "function": "observe",
+        "kind": "static"
+      },
+      {
+        "bytes": 2384,
+        "function": "Java_org_coh_nativecombined_InteropNative_begin",
+        "kind": "static"
+      },
+      {
+        "bytes": 1088,
+        "function": "Java_org_coh_nativecombined_InteropNative_service",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 32,
+        "function": "Java_org_coh_nativecombined_InteropNative_choose",
+        "kind": "static"
+      },
+      {
+        "bytes": 320,
+        "function": "Java_org_coh_nativecombined_InteropNative_characters",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 19872,
+        "function": "Java_org_coh_nativecombined_InteropNative_report",
+        "kind": "dynamic,bounded"
+      },
+      {
+        "bytes": 16,
+        "function": "Java_org_coh_nativecombined_InteropNative_suspend",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "Java_org_coh_nativecombined_InteropNative_disconnect",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "Java_org_coh_nativecombined_InteropNative_close",
+        "kind": "static"
+      },
+      {
+        "bytes": 8,
+        "function": "overlap",
+        "kind": "static"
+      },
+      {
+        "bytes": 16,
+        "function": "finish",
+        "kind": "static"
+      },
+      {
+        "bytes": 32,
+        "function": "flag",
+        "kind": "static"
+      },
+      {
+        "bytes": 176,
+        "function": "coh_initial_aianim_probe",
+        "kind": "static"
+      },
+      {
+        "bytes": 128,
+        "function": "coh_initial_aianim_probe_json",
+        "kind": "dynamic,bounded"
+      }
+    ]
+  },
+  "ldd_resolved_dependency_sha256": {
+    "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": "6222a16be7f2d458d6870efe6e715fc0c8d45766fb79cf7dcc3125538d703e28",
+    "/usr/lib/x86_64-linux-gnu/libasan.so.8.0.0": "8d5845bdf056b5db4cfb9fff40ad5eeea8f6da05a8ca6f5935a7d1c138ed2558",
+    "/usr/lib/x86_64-linux-gnu/libc.so.6": "511f825ee075610ac9c0f7f91e2c13de2000d0f7b859f6461137e809a0a009d0",
+    "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1": "d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb",
+    "/usr/lib/x86_64-linux-gnu/libm.so.6": "f06f2ce1f1833df5f41cf13b6447ff07bea993ad9b27297d3428c2f70ab3f0e7",
+    "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33": "1fd75fe70354a416d75aef22bcae68c47bd25d20e2d0568c30b1a9838cf62f11",
+    "/usr/lib/x86_64-linux-gnu/libubsan.so.1.0.0": "f4a999fcf8392a200e9d93fb066ddb9e89daab8cd94a62137f4506472240a2e8"
+  },
+  "original_native_qualifiers_or_fixture_entrypoints_replayed": false,
+  "packet_copy_or_private_identity_export": false,
+  "passed": true,
+  "project_source_sha256": {
+    "native-android/combined-client/app/src/main/cpp/interop_network.c": "8c2256ec28f151afdb86863f902379410d00e8f8d1809b3ae99343382dd8dd54",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/InteropNative.java": "0ffb0269afedc4d69cf24dcf02065be11393dccae0f790a901640efb006860d5",
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h": "232cf9ac21de2afaaaff8825f627f1a9219c9d08de4c5a0b8538ab7641a43c05",
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py": "424fd15b26cd4397bf4e221355d6bf6fbf4799fdb74f6d47971203c69dc8a9a5",
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/test-include/jni.h": "87690d05d5b23781408b9802725cb744957d60185b46637e07070190355cdd76",
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c": "67d595f2a39c43b216e166651ab010dd82c517cd50d7effa3896a2da976988c1",
+    "native-android/engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/dbclient/coh_db_session.h": "ebf21796eb116e3de2355d45c008147526b6359013bc778c9d0087099148f711",
+    "native-android/engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.c": "730e09df080c26efa240844bbea707a88138ea966864006fa26487249e18d1e3",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/initial-capture/coh_initial_aianim_probe.c": "860346f35204177998bf7c5e64a1b5c8f7247def0658ca9c928f64b597740658",
+    "native-android/engine/initial-capture/coh_initial_aianim_probe.h": "4e9d891f62a434bbb4f72b2d1c23b1cb85dca73ec685e421588be52c5734679f",
+    "native-android/engine/initial-capture/coh_initial_appearance_probe.c": "0738edb10afe8f9056957401360bbc10f11d4e3086e6976df5f19c868a25e723",
+    "native-android/engine/initial-capture/coh_initial_appearance_probe.h": "705d417e1ea17eac5d974ace56b41680e8d0ef48e0109a438b3164026c4ca4df",
+    "native-android/engine/initial-capture/coh_initial_capture.h": "4e34321c6f36b8112c621b2155d031c27a091dcfad4ff3ca68fcb5a65599bf0a",
+    "native-android/engine/initial-capture/coh_initial_command_kinds.inc": "1a2ed87e6db1920a78e924bb1d371075ace7eb6a0369b90a0de954ed2bc0291e",
+    "native-android/engine/initial-capture/coh_initial_costume_body_probe.c": "714d45b0a2b080126968c048188bb65cd4bb7fad050bc93f2043a51640122b41",
+    "native-android/engine/initial-capture/coh_initial_costume_body_probe.h": "d054d71d1bce6cbd7a18dbb586d0a15bf2d74df3db7d47527c62d274d7cb3a26",
+    "native-android/engine/initial-capture/coh_initial_costume_probe.c": "a16f03ccfaa0993090bcb79fa55da048eab6185c7ccc41a6aa4de76c6ce29d60",
+    "native-android/engine/initial-capture/coh_initial_costume_probe.h": "3d666be3becc6f34b8a6aa10804bd3b259a730ea5442f3e863f70d6d20cb3ea3",
+    "native-android/engine/initial-capture/coh_initial_costume_slots_probe.c": "c9c9e60f16f014bd19bdf4bc5a414fd6a6cb4cfe96746d5405d6e27433881d2f",
+    "native-android/engine/initial-capture/coh_initial_costume_slots_probe.h": "3997ebc44aa37949ec0aae32b471e504f8b33191189b83a935acfdd56162994b",
+    "native-android/engine/initial-capture/coh_initial_create_probe.c": "309a0c5ab98879a20090e5a757897d7a20a994374dc941d1c92cb668adb8dd87",
+    "native-android/engine/initial-capture/coh_initial_create_probe.h": "306bf3a18a2713debde08261f8b2cdebf397871a5bde32936d45faa5c243a20a",
+    "native-android/engine/initial-capture/coh_initial_netfx_probe.c": "69b0db75f0e5bb2408794ef181eb4246f1dcd4cd146a5b2020e72c4e5f74e9b7",
+    "native-android/engine/initial-capture/coh_initial_netfx_probe.h": "43255f993137e9dd77099952f31eda833a24396e32895022fd4915bb3d9c0a78",
+    "native-android/engine/initial-capture/coh_initial_partcount_probe.c": "97835106365ed10a9404dfc65951b7b723558dbe1ff57c129985d5dbbf5f5aa0",
+    "native-android/engine/initial-capture/coh_initial_partcount_probe.h": "fa3d69aff0d28a606771536001737d115fde11b3e7ac159cd7a86365b5df5e50",
+    "native-android/engine/initial-capture/coh_initial_pose_probe.c": "166fccd602670388ac777419ca9091295d82cea54335d5ba06083d8e8f0172b7",
+    "native-android/engine/initial-capture/coh_initial_pose_probe.h": "d6c529b7b674183c9641b47d8043d4fa043d86e113d7f9f1cf2da593fe3c34f8",
+    "native-android/engine/initial-capture/coh_initial_reward_list_probe.c": "c61fc27772f1029d54e74209cb62bd83c485fa1af085700b1570ca87f67a218a",
+    "native-android/engine/initial-capture/coh_initial_reward_list_probe.h": "3e9e5778d60a53473ccaf07ef592f3692ecc454e955ac4702d7262cceb996632",
+    "native-android/engine/initial-capture/coh_initial_reward_probe.c": "0b25e8fc275d62e6640a6a6401c13ce78f1f8ff1383a09a48c147a896cb3a62c",
+    "native-android/engine/initial-capture/coh_initial_reward_probe.h": "7cd20aa2c3401d9e5f14658f0089ce508269bcbde2b7b24374e21d8df074f686",
+    "native-android/engine/initial-capture/coh_initial_scales_probe.c": "407cdc8f5750230865114a32890fd4fbef89fd6583fe040e41a04fb6d51fdd97",
+    "native-android/engine/initial-capture/coh_initial_scales_probe.h": "e716e5fd04ec4525f9ad32e1ca771112c50a6edc578dee986b29121ee9aec05a",
+    "native-android/engine/initial-capture/coh_initial_sequence_probe.c": "b58c2e689b1bef1f4a5967d5ea85553b85020c662232352f2f0fa2d4eb478738",
+    "native-android/engine/initial-capture/coh_initial_sequence_probe.h": "8558044f826b4ce951782033f4cff6fcd00d2db93d214246eaf62d8155f6212b",
+    "native-android/engine/initial-capture/coh_initial_sgcolors_probe.c": "0687bf10ecdbcf136ded95069e53aa3276d74b2397e38f85c98b90cd701f2bad",
+    "native-android/engine/initial-capture/coh_initial_sgcolors_probe.h": "0038fc60ead934b3c4d4252ff652a8798725d534b252ec7d06ccec6e3ef24bfe",
+    "native-android/engine/initial-capture/coh_initial_triggered_probe.c": "4b1789f1ddb58707b3849147d0b4874e224c997ca393b36a2740daa59f39032b",
+    "native-android/engine/initial-capture/coh_initial_triggered_probe.h": "568e121c4f6ebb82ba7b84534afb82eac449afcfaec9c84edae7f8b8e33bf6ea",
+    "native-android/engine/initial-capture/coh_request_tx.h": "72a47c0a6cb157a1f705812600f2bd0ade47095ab0b018ecba1cfd483a850c79",
+    "native-android/engine/initial-capture/qualification/initial-aianim-20261019/jni-fixture.h": "6720fc59fce726a9a028d82b46448d78cea23103b3c89c92927de62f9c4d5960",
+    "native-android/engine/initial-capture/qualification/initial-appearance-20261019/jni-fixture.h": "a737e22ca8cd830d64e0ab9da6e1fc5a8e23121fa5d18704300449d644543cce",
+    "native-android/engine/initial-capture/qualification/initial-costume-20261019/jni-fixture.h": "09497a584e16e721e185169b4b238d7b4f8e61a8e97ab1f1bb01023f2bb4f6ae",
+    "native-android/engine/initial-capture/qualification/initial-costume-body-20261019/jni-fixture.h": "0729634a3ac6227ad5eb0f7a6342e215e304b3d2d6accc7009f4df3214916601",
+    "native-android/engine/initial-capture/qualification/initial-costume-slots-20261019/jni-fixture.h": "e44b9a9e52d7ce3197f8a2b871b5837126584b43b0406e34fc2f97dbdc66773d",
+    "native-android/engine/initial-capture/qualification/initial-netfx-20261019/jni-fixture.h": "de4bbaf21a3e3c9d51b1a386e955bd85ad4ec921b4684e1b35ae88e09808553d",
+    "native-android/engine/initial-capture/qualification/initial-partcount-20261019/jni-fixture.h": "9c658f2c50a14e008662d6b8a88823f48e1c2072252465154faa5ed5f76fe1db",
+    "native-android/engine/initial-capture/qualification/initial-pose-20261019/jni-fixture.h": "e4bd2b5878f823f8a120ff4698f3669c7c5a7f231d56f1fbc7a7f8361619026a",
+    "native-android/engine/initial-capture/qualification/initial-reward-20261019/jni-fixture.h": "d08e4c18c67eecd94dc8c1ad966433087ea4dce614bb24f90b60b1f75a4f4269",
+    "native-android/engine/initial-capture/qualification/initial-reward-list-20261019/jni-fixture.h": "e6c6523a2229b6f573441d9b11b31622be98972b0876eaf68079981ad8c63516",
+    "native-android/engine/initial-capture/qualification/initial-scales-20261019/jni-fixture.h": "6417521a682985ebd4b8f97ff8f9cee2ab5064322c5b333fefada7277176753a",
+    "native-android/engine/initial-capture/qualification/initial-sequence-20261019/jni-fixture.h": "becdf10e9985d5a74aada60ac0df69d2f186e14e451bd8bfc6c294341c663d3d",
+    "native-android/engine/initial-capture/qualification/initial-sgcolors-20261019/jni-fixture.h": "18907e2961ace0f92967ba9013422575fa71d7b2af6bc8cac357b95503e665cf",
+    "native-android/engine/initial-capture/qualification/initial-triggered-20261019/jni-fixture.h": "beeaed10415b4b9fe2a5c2058056b8a78ea3dd1f732f0dccff20daecdaa6d485",
+    "native-android/engine/local/coh_local.h": "f756d449989e1b618952ee1af9114dd44987d684073f0b2852304b071cc5c95f",
+    "native-android/engine/mapclient/coh_mapclient.h": "cc06d4d4485d7503d1211fa79570a1a1f739dd0234507dc2f6e63742fef39de9",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "native-android/engine/replication/coh_groups.h": "7c1a5657b6da1c74a95289978317b35bedda4d4bf748f52f3c1fc9e7f7794dfc",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4"
+  },
+  "results": {
+    "asan": {
+      "JNI_and_initial_capture_explicit_doubles": true,
+      "actual_Android_or_protocol_or_original_server": false,
+      "checks": 7533,
+      "max_report_bytes": 7155,
+      "passed": true,
+      "sample_report": {
+        "ack_permitted": false,
+        "actor_publication": false,
+        "allents_observations": 1,
+        "attempts": 1,
+        "authserver_authenticated": false,
+        "capture_phase": 4,
+        "character_choices": 1,
+        "character_lists": 1,
+        "checksum_reference_admitted": false,
+        "cleanup_scope": "owned_transport_counters",
+        "cleanup_verified": true,
+        "closed_sockets": 2,
+        "complete_initial_character": false,
+        "db_phase": 0,
+        "diagnostic_only": true,
+        "disconnect_requested": false,
+        "edit_message_last_bytes": 0,
+        "edit_message_last_type": 0,
+        "edit_messages_handled": 0,
+        "failure": 0,
+        "failure_code": "NONE",
+        "first_create": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "complete_initial_character": false,
+          "create_end_bit": 345,
+          "create_validated": true,
+          "diagnostic_only": true,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "entity_index": 17,
+          "entity_type": 2,
+          "failure_bit": 345,
+          "header_end_bit": 77,
+          "header_validated": true,
+          "is_self": true,
+          "schema": "coh-initial-first-create-v1",
+          "selected_owner_bound": false,
+          "self_dbid_matches_handoff": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_RECORD_BODY_REQUIRED",
+          "stage_id": 5,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_failure": {
+          "db_phase": 0,
+          "failure": 0,
+          "local_phase": 0,
+          "map_phase": 0,
+          "status": 0,
+          "valid": false
+        },
+        "first_record_ai_animation": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "ai_animation_validated": true,
+          "ai_end_bit": 658,
+          "begin_bit": 560,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "failure_bit": 658,
+          "schema": "coh-initial-first-aianim-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_NETFX_REQUIRED",
+          "stage_id": 5,
+          "status": 2,
+          "string_bytes": 11,
+          "string_present": true,
+          "text_limit_including_nul": 1000,
+          "update_seen": true,
+          "world_authority": false
+        },
+        "first_record_costume_prefix": {
+          "absent_rewards": [
+            0,
+            0
+          ],
+          "ack_permitted": false,
+          "begin_bit": 1440,
+          "body_count": 0,
+          "failure_bit": 1477,
+          "framing_validated": false,
+          "prefix_end_bit": 1477,
+          "reward_counts": [
+            2,
+            0
+          ],
+          "reward_index": 0,
+          "reward_list": 1,
+          "schema": "coh-initial-costume-prefix-v1",
+          "selector_validated": true,
+          "self_wire_consistent": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_COSTUME_REWARD_STRING_REQUIRED",
+          "status": 2,
+          "type": 1,
+          "world_authority": false
+        },
+        "first_record_netfx": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 658,
+          "body_present": true,
+          "complete_initial_character": false,
+          "cross_prefix_in_phase_verified": false,
+          "diagnostic_only": true,
+          "effect_count": 3,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "failure_bit": 1440,
+          "flags_end_bit": 660,
+          "in_phase": true,
+          "netfx_end_bit": 1440,
+          "netfx_validated": true,
+          "pchar_things": true,
+          "schema": "coh-initial-first-netfx-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_COSTUME_BODY_REQUIRED",
+          "stage_id": 4,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_record_pose": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 345,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "failure_bit": 459,
+          "flags_end_bit": 348,
+          "flags_validated": true,
+          "mode_end_bit": 353,
+          "mode_validated": true,
+          "orientation_validated": true,
+          "pose_end_bit": 459,
+          "pose_validated": true,
+          "position_end_bit": 428,
+          "position_validated": true,
+          "schema": "coh-initial-first-pose-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_SEQUENCE_BODY_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_record_sequence": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 459,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "failure_bit": 475,
+          "index_end_bit": 469,
+          "index_present": true,
+          "movement_bits_present": false,
+          "schema": "coh-initial-first-sequence-v1",
+          "selected_owner_bound": false,
+          "sequence_end_bit": 475,
+          "sequence_validated": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_TRIGGERED_MOVES_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "ticks_end_bit": 474,
+          "ticks_present": true,
+          "update_seen": true,
+          "world_authority": false
+        },
+        "first_record_triggered_moves": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 475,
+          "complete_initial_character": false,
+          "count": 2,
+          "count_end_bit": 478,
+          "count_validated": true,
+          "current_entry": 2,
+          "diagnostic_only": true,
+          "entries_validated": 2,
+          "failure_bit": 560,
+          "fx_entries": 1,
+          "local_trigger_limit": 16,
+          "schema": "coh-initial-first-triggered-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_AI_ANIMATION_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "triggered_end_bit": 560,
+          "triggered_moves_validated": true,
+          "world_authority": false
+        },
+        "first_reward_string": {
+          "bit": 1591,
+          "bytes": 13,
+          "literal_validated": true,
+          "progress": [
+            2,
+            43,
+            2,
+            3,
+            1695,
+            3452,
+            71565250
+          ],
+          "stage": "FIRST_REWARD_CONTINUATION_REQUIRED",
+          "status": 2
+        },
+        "groups_bits": 512,
+        "groups_bytes": 64,
+        "groups_lease_callbacks": 1,
+        "groups_observations": 1,
+        "groups_observed": true,
+        "initial_bits": 5147,
+        "initial_bytes": 660,
+        "initial_lease_callbacks": 1,
+        "initial_post_command_cursor": 3,
+        "last_status": 2,
+        "live_world_rendered": false,
+        "local_development_auth": true,
+        "map_handoffs": 1,
+        "map_phase": 0,
+        "map_protocol": {
+          "last_status": 0,
+          "phase": 0,
+          "scene_structures": 0,
+          "stage": 0,
+          "udp": {
+            "datagrams_received": 0,
+            "datagrams_sent": 0,
+            "interrupted": 0,
+            "io_errors": 0,
+            "link": {
+              "acknowledged": 0,
+              "received": 0,
+              "retransmits": 0,
+              "sent": 0,
+              "tx_pending": 0
+            },
+            "send_would_block": 0,
+            "state": 0
+          }
+        },
+        "normal_version_admitted": false,
+        "observer_status": 0,
+        "opened_sockets": 2,
+        "packet_copy_retained": false,
+        "phase": "INITIAL_OBSERVED",
+        "raw_allents_observed": true,
+        "receive_diagnostics": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "cleanup_transport_counters_equal": true,
+          "command_specific_emission_proved": false,
+          "complete_initial_character": false,
+          "decode_compressed_bytes": 0,
+          "decode_declared_raw_bytes": 0,
+          "decode_failure_kind": 0,
+          "decode_output_budget": 0,
+          "diagnostic_only": true,
+          "fragment_groups": 0,
+          "link_duplicates": 0,
+          "link_fragment_expirations": 0,
+          "link_malformed": 0,
+          "link_queue_limits": 0,
+          "link_received": 0,
+          "link_timeouts": 0,
+          "link_unsupported": 0,
+          "max_fragment_groups_sampled": 0,
+          "max_rx_pending_sampled": 0,
+          "observation_retired": true,
+          "refusal": "NONE",
+          "rx_pending": 0,
+          "sample_count": 3,
+          "schema": "coh-initial-receive-counters-v1",
+          "server_receipt_proved": false,
+          "source_generation_admitted": false,
+          "udp_datagrams_received": 0,
+          "udp_empty": 0,
+          "udp_malformed": 0,
+          "udp_peer_rejects": 0,
+          "udp_receive_budget_exhausted": 0,
+          "udp_truncated": 0,
+          "udp_unsupported": 0,
+          "valid": true,
+          "world_authority": false
+        },
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "reqallents_sent": 1,
+        "request_tx": {
+          "ack_permitted": false,
+          "command_specific_emission_proved": false,
+          "deferred_send_callbacks": 0,
+          "diagnostic_only": true,
+          "failed_send_callbacks": 0,
+          "first_send_accepted": true,
+          "first_send_attempts": 1,
+          "first_send_offset_ms": 0,
+          "last_send_offset_ms": 0,
+          "peer_transport_ack_observed": true,
+          "queue_attempted": true,
+          "queue_offset_ms": 0,
+          "queue_status": 0,
+          "queue_succeeded": true,
+          "refusal": 0,
+          "retirement": 0,
+          "retirement_offset_ms": 0,
+          "retry_send_attempts": 0,
+          "server_receipt_proved": false,
+          "successful_retries": 0,
+          "valid": true,
+          "witness_retired": true,
+          "world_authority": false
+        },
+        "request_tx_available": true,
+        "schema": "coh-native-initial-interop-numeric-v1",
+        "selected_owner_bound": false,
+        "sends_full_update_ack": false,
+        "sends_ready": false,
+        "sends_received_character": false,
+        "server_identity_bound": false,
+        "source_generation_admitted": false,
+        "status": 2,
+        "suspend_requested": false,
+        "world_authority": false
+      },
+      "scenarios": 131,
+      "schema": "coh-new-interop-jni-adapter-double-controls-v1",
+      "wiped_frees": 143,
+      "world_authority": false
+    },
+    "release": {
+      "JNI_and_initial_capture_explicit_doubles": true,
+      "actual_Android_or_protocol_or_original_server": false,
+      "checks": 7533,
+      "max_report_bytes": 7155,
+      "passed": true,
+      "sample_report": {
+        "ack_permitted": false,
+        "actor_publication": false,
+        "allents_observations": 1,
+        "attempts": 1,
+        "authserver_authenticated": false,
+        "capture_phase": 4,
+        "character_choices": 1,
+        "character_lists": 1,
+        "checksum_reference_admitted": false,
+        "cleanup_scope": "owned_transport_counters",
+        "cleanup_verified": true,
+        "closed_sockets": 2,
+        "complete_initial_character": false,
+        "db_phase": 0,
+        "diagnostic_only": true,
+        "disconnect_requested": false,
+        "edit_message_last_bytes": 0,
+        "edit_message_last_type": 0,
+        "edit_messages_handled": 0,
+        "failure": 0,
+        "failure_code": "NONE",
+        "first_create": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "complete_initial_character": false,
+          "create_end_bit": 345,
+          "create_validated": true,
+          "diagnostic_only": true,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "entity_index": 17,
+          "entity_type": 2,
+          "failure_bit": 345,
+          "header_end_bit": 77,
+          "header_validated": true,
+          "is_self": true,
+          "schema": "coh-initial-first-create-v1",
+          "selected_owner_bound": false,
+          "self_dbid_matches_handoff": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_RECORD_BODY_REQUIRED",
+          "stage_id": 5,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_failure": {
+          "db_phase": 0,
+          "failure": 0,
+          "local_phase": 0,
+          "map_phase": 0,
+          "status": 0,
+          "valid": false
+        },
+        "first_record_ai_animation": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "ai_animation_validated": true,
+          "ai_end_bit": 658,
+          "begin_bit": 560,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "failure_bit": 658,
+          "schema": "coh-initial-first-aianim-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_NETFX_REQUIRED",
+          "stage_id": 5,
+          "status": 2,
+          "string_bytes": 11,
+          "string_present": true,
+          "text_limit_including_nul": 1000,
+          "update_seen": true,
+          "world_authority": false
+        },
+        "first_record_costume_prefix": {
+          "absent_rewards": [
+            0,
+            0
+          ],
+          "ack_permitted": false,
+          "begin_bit": 1440,
+          "body_count": 0,
+          "failure_bit": 1477,
+          "framing_validated": false,
+          "prefix_end_bit": 1477,
+          "reward_counts": [
+            2,
+            0
+          ],
+          "reward_index": 0,
+          "reward_list": 1,
+          "schema": "coh-initial-costume-prefix-v1",
+          "selector_validated": true,
+          "self_wire_consistent": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_COSTUME_REWARD_STRING_REQUIRED",
+          "status": 2,
+          "type": 1,
+          "world_authority": false
+        },
+        "first_record_netfx": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 658,
+          "body_present": true,
+          "complete_initial_character": false,
+          "cross_prefix_in_phase_verified": false,
+          "diagnostic_only": true,
+          "effect_count": 3,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "failure_bit": 1440,
+          "flags_end_bit": 660,
+          "in_phase": true,
+          "netfx_end_bit": 1440,
+          "netfx_validated": true,
+          "pchar_things": true,
+          "schema": "coh-initial-first-netfx-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_COSTUME_BODY_REQUIRED",
+          "stage_id": 4,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_record_pose": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 345,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "failure_bit": 459,
+          "flags_end_bit": 348,
+          "flags_validated": true,
+          "mode_end_bit": 353,
+          "mode_validated": true,
+          "orientation_validated": true,
+          "pose_end_bit": 459,
+          "pose_validated": true,
+          "position_end_bit": 428,
+          "position_validated": true,
+          "schema": "coh-initial-first-pose-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_SEQUENCE_BODY_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_record_sequence": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 459,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "failure_bit": 475,
+          "index_end_bit": 469,
+          "index_present": true,
+          "movement_bits_present": false,
+          "schema": "coh-initial-first-sequence-v1",
+          "selected_owner_bound": false,
+          "sequence_end_bit": 475,
+          "sequence_validated": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_TRIGGERED_MOVES_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "ticks_end_bit": 474,
+          "ticks_present": true,
+          "update_seen": true,
+          "world_authority": false
+        },
+        "first_record_triggered_moves": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 475,
+          "complete_initial_character": false,
+          "count": 2,
+          "count_end_bit": 478,
+          "count_validated": true,
+          "current_entry": 2,
+          "diagnostic_only": true,
+          "entries_validated": 2,
+          "failure_bit": 560,
+          "fx_entries": 1,
+          "local_trigger_limit": 16,
+          "schema": "coh-initial-first-triggered-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_AI_ANIMATION_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "triggered_end_bit": 560,
+          "triggered_moves_validated": true,
+          "world_authority": false
+        },
+        "first_reward_string": {
+          "bit": 1591,
+          "bytes": 13,
+          "literal_validated": true,
+          "progress": [
+            2,
+            43,
+            2,
+            3,
+            1695,
+            3452,
+            71565250
+          ],
+          "stage": "FIRST_REWARD_CONTINUATION_REQUIRED",
+          "status": 2
+        },
+        "groups_bits": 512,
+        "groups_bytes": 64,
+        "groups_lease_callbacks": 1,
+        "groups_observations": 1,
+        "groups_observed": true,
+        "initial_bits": 5147,
+        "initial_bytes": 660,
+        "initial_lease_callbacks": 1,
+        "initial_post_command_cursor": 3,
+        "last_status": 2,
+        "live_world_rendered": false,
+        "local_development_auth": true,
+        "map_handoffs": 1,
+        "map_phase": 0,
+        "map_protocol": {
+          "last_status": 0,
+          "phase": 0,
+          "scene_structures": 0,
+          "stage": 0,
+          "udp": {
+            "datagrams_received": 0,
+            "datagrams_sent": 0,
+            "interrupted": 0,
+            "io_errors": 0,
+            "link": {
+              "acknowledged": 0,
+              "received": 0,
+              "retransmits": 0,
+              "sent": 0,
+              "tx_pending": 0
+            },
+            "send_would_block": 0,
+            "state": 0
+          }
+        },
+        "normal_version_admitted": false,
+        "observer_status": 0,
+        "opened_sockets": 2,
+        "packet_copy_retained": false,
+        "phase": "INITIAL_OBSERVED",
+        "raw_allents_observed": true,
+        "receive_diagnostics": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "cleanup_transport_counters_equal": true,
+          "command_specific_emission_proved": false,
+          "complete_initial_character": false,
+          "decode_compressed_bytes": 0,
+          "decode_declared_raw_bytes": 0,
+          "decode_failure_kind": 0,
+          "decode_output_budget": 0,
+          "diagnostic_only": true,
+          "fragment_groups": 0,
+          "link_duplicates": 0,
+          "link_fragment_expirations": 0,
+          "link_malformed": 0,
+          "link_queue_limits": 0,
+          "link_received": 0,
+          "link_timeouts": 0,
+          "link_unsupported": 0,
+          "max_fragment_groups_sampled": 0,
+          "max_rx_pending_sampled": 0,
+          "observation_retired": true,
+          "refusal": "NONE",
+          "rx_pending": 0,
+          "sample_count": 3,
+          "schema": "coh-initial-receive-counters-v1",
+          "server_receipt_proved": false,
+          "source_generation_admitted": false,
+          "udp_datagrams_received": 0,
+          "udp_empty": 0,
+          "udp_malformed": 0,
+          "udp_peer_rejects": 0,
+          "udp_receive_budget_exhausted": 0,
+          "udp_truncated": 0,
+          "udp_unsupported": 0,
+          "valid": true,
+          "world_authority": false
+        },
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "reqallents_sent": 1,
+        "request_tx": {
+          "ack_permitted": false,
+          "command_specific_emission_proved": false,
+          "deferred_send_callbacks": 0,
+          "diagnostic_only": true,
+          "failed_send_callbacks": 0,
+          "first_send_accepted": true,
+          "first_send_attempts": 1,
+          "first_send_offset_ms": 0,
+          "last_send_offset_ms": 0,
+          "peer_transport_ack_observed": true,
+          "queue_attempted": true,
+          "queue_offset_ms": 0,
+          "queue_status": 0,
+          "queue_succeeded": true,
+          "refusal": 0,
+          "retirement": 0,
+          "retirement_offset_ms": 0,
+          "retry_send_attempts": 0,
+          "server_receipt_proved": false,
+          "successful_retries": 0,
+          "valid": true,
+          "witness_retired": true,
+          "world_authority": false
+        },
+        "request_tx_available": true,
+        "schema": "coh-native-initial-interop-numeric-v1",
+        "selected_owner_bound": false,
+        "sends_full_update_ack": false,
+        "sends_ready": false,
+        "sends_received_character": false,
+        "server_identity_bound": false,
+        "source_generation_admitted": false,
+        "status": 2,
+        "suspend_requested": false,
+        "world_authority": false
+      },
+      "scenarios": 131,
+      "schema": "coh-new-interop-jni-adapter-double-controls-v1",
+      "wiped_frees": 143,
+      "world_authority": false
+    },
+    "ubsan": {
+      "JNI_and_initial_capture_explicit_doubles": true,
+      "actual_Android_or_protocol_or_original_server": false,
+      "checks": 7533,
+      "max_report_bytes": 7155,
+      "passed": true,
+      "sample_report": {
+        "ack_permitted": false,
+        "actor_publication": false,
+        "allents_observations": 1,
+        "attempts": 1,
+        "authserver_authenticated": false,
+        "capture_phase": 4,
+        "character_choices": 1,
+        "character_lists": 1,
+        "checksum_reference_admitted": false,
+        "cleanup_scope": "owned_transport_counters",
+        "cleanup_verified": true,
+        "closed_sockets": 2,
+        "complete_initial_character": false,
+        "db_phase": 0,
+        "diagnostic_only": true,
+        "disconnect_requested": false,
+        "edit_message_last_bytes": 0,
+        "edit_message_last_type": 0,
+        "edit_messages_handled": 0,
+        "failure": 0,
+        "failure_code": "NONE",
+        "first_create": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "complete_initial_character": false,
+          "create_end_bit": 345,
+          "create_validated": true,
+          "diagnostic_only": true,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "entity_index": 17,
+          "entity_type": 2,
+          "failure_bit": 345,
+          "header_end_bit": 77,
+          "header_validated": true,
+          "is_self": true,
+          "schema": "coh-initial-first-create-v1",
+          "selected_owner_bound": false,
+          "self_dbid_matches_handoff": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_RECORD_BODY_REQUIRED",
+          "stage_id": 5,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_failure": {
+          "db_phase": 0,
+          "failure": 0,
+          "local_phase": 0,
+          "map_phase": 0,
+          "status": 0,
+          "valid": false
+        },
+        "first_record_ai_animation": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "ai_animation_validated": true,
+          "ai_end_bit": 658,
+          "begin_bit": 560,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "failure_bit": 658,
+          "schema": "coh-initial-first-aianim-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_NETFX_REQUIRED",
+          "stage_id": 5,
+          "status": 2,
+          "string_bytes": 11,
+          "string_present": true,
+          "text_limit_including_nul": 1000,
+          "update_seen": true,
+          "world_authority": false
+        },
+        "first_record_costume_prefix": {
+          "absent_rewards": [
+            0,
+            0
+          ],
+          "ack_permitted": false,
+          "begin_bit": 1440,
+          "body_count": 0,
+          "failure_bit": 1477,
+          "framing_validated": false,
+          "prefix_end_bit": 1477,
+          "reward_counts": [
+            2,
+            0
+          ],
+          "reward_index": 0,
+          "reward_list": 1,
+          "schema": "coh-initial-costume-prefix-v1",
+          "selector_validated": true,
+          "self_wire_consistent": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_COSTUME_REWARD_STRING_REQUIRED",
+          "status": 2,
+          "type": 1,
+          "world_authority": false
+        },
+        "first_record_netfx": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 658,
+          "body_present": true,
+          "complete_initial_character": false,
+          "cross_prefix_in_phase_verified": false,
+          "diagnostic_only": true,
+          "effect_count": 3,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "failure_bit": 1440,
+          "flags_end_bit": 660,
+          "in_phase": true,
+          "netfx_end_bit": 1440,
+          "netfx_validated": true,
+          "pchar_things": true,
+          "schema": "coh-initial-first-netfx-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_COSTUME_BODY_REQUIRED",
+          "stage_id": 4,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_record_pose": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 345,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "entity_failure": {
+            "bit": 0,
+            "stage": 0,
+            "status": 0
+          },
+          "failure_bit": 459,
+          "flags_end_bit": 348,
+          "flags_validated": true,
+          "mode_end_bit": 353,
+          "mode_validated": true,
+          "orientation_validated": true,
+          "pose_end_bit": 459,
+          "pose_validated": true,
+          "position_end_bit": 428,
+          "position_validated": true,
+          "schema": "coh-initial-first-pose-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_SEQUENCE_BODY_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "world_authority": false
+        },
+        "first_record_sequence": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 459,
+          "complete_initial_character": false,
+          "diagnostic_only": true,
+          "failure_bit": 475,
+          "index_end_bit": 469,
+          "index_present": true,
+          "movement_bits_present": false,
+          "schema": "coh-initial-first-sequence-v1",
+          "selected_owner_bound": false,
+          "sequence_end_bit": 475,
+          "sequence_validated": true,
+          "source_generation_admitted": false,
+          "stage": "FIRST_TRIGGERED_MOVES_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "ticks_end_bit": 474,
+          "ticks_present": true,
+          "update_seen": true,
+          "world_authority": false
+        },
+        "first_record_triggered_moves": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "begin_bit": 475,
+          "complete_initial_character": false,
+          "count": 2,
+          "count_end_bit": 478,
+          "count_validated": true,
+          "current_entry": 2,
+          "diagnostic_only": true,
+          "entries_validated": 2,
+          "failure_bit": 560,
+          "fx_entries": 1,
+          "local_trigger_limit": 16,
+          "schema": "coh-initial-first-triggered-v1",
+          "selected_owner_bound": false,
+          "source_generation_admitted": false,
+          "stage": "FIRST_AI_ANIMATION_REQUIRED",
+          "stage_id": 6,
+          "status": 2,
+          "triggered_end_bit": 560,
+          "triggered_moves_validated": true,
+          "world_authority": false
+        },
+        "first_reward_string": {
+          "bit": 1591,
+          "bytes": 13,
+          "literal_validated": true,
+          "progress": [
+            2,
+            43,
+            2,
+            3,
+            1695,
+            3452,
+            71565250
+          ],
+          "stage": "FIRST_REWARD_CONTINUATION_REQUIRED",
+          "status": 2
+        },
+        "groups_bits": 512,
+        "groups_bytes": 64,
+        "groups_lease_callbacks": 1,
+        "groups_observations": 1,
+        "groups_observed": true,
+        "initial_bits": 5147,
+        "initial_bytes": 660,
+        "initial_lease_callbacks": 1,
+        "initial_post_command_cursor": 3,
+        "last_status": 2,
+        "live_world_rendered": false,
+        "local_development_auth": true,
+        "map_handoffs": 1,
+        "map_phase": 0,
+        "map_protocol": {
+          "last_status": 0,
+          "phase": 0,
+          "scene_structures": 0,
+          "stage": 0,
+          "udp": {
+            "datagrams_received": 0,
+            "datagrams_sent": 0,
+            "interrupted": 0,
+            "io_errors": 0,
+            "link": {
+              "acknowledged": 0,
+              "received": 0,
+              "retransmits": 0,
+              "sent": 0,
+              "tx_pending": 0
+            },
+            "send_would_block": 0,
+            "state": 0
+          }
+        },
+        "normal_version_admitted": false,
+        "observer_status": 0,
+        "opened_sockets": 2,
+        "packet_copy_retained": false,
+        "phase": "INITIAL_OBSERVED",
+        "raw_allents_observed": true,
+        "receive_diagnostics": {
+          "ack_permitted": false,
+          "actor_publication": false,
+          "cleanup_transport_counters_equal": true,
+          "command_specific_emission_proved": false,
+          "complete_initial_character": false,
+          "decode_compressed_bytes": 0,
+          "decode_declared_raw_bytes": 0,
+          "decode_failure_kind": 0,
+          "decode_output_budget": 0,
+          "diagnostic_only": true,
+          "fragment_groups": 0,
+          "link_duplicates": 0,
+          "link_fragment_expirations": 0,
+          "link_malformed": 0,
+          "link_queue_limits": 0,
+          "link_received": 0,
+          "link_timeouts": 0,
+          "link_unsupported": 0,
+          "max_fragment_groups_sampled": 0,
+          "max_rx_pending_sampled": 0,
+          "observation_retired": true,
+          "refusal": "NONE",
+          "rx_pending": 0,
+          "sample_count": 3,
+          "schema": "coh-initial-receive-counters-v1",
+          "server_receipt_proved": false,
+          "source_generation_admitted": false,
+          "udp_datagrams_received": 0,
+          "udp_empty": 0,
+          "udp_malformed": 0,
+          "udp_peer_rejects": 0,
+          "udp_receive_budget_exhausted": 0,
+          "udp_truncated": 0,
+          "udp_unsupported": 0,
+          "valid": true,
+          "world_authority": false
+        },
+        "refused_command_kind": "NONE",
+        "refused_command_valid": false,
+        "reqallents_sent": 1,
+        "request_tx": {
+          "ack_permitted": false,
+          "command_specific_emission_proved": false,
+          "deferred_send_callbacks": 0,
+          "diagnostic_only": true,
+          "failed_send_callbacks": 0,
+          "first_send_accepted": true,
+          "first_send_attempts": 1,
+          "first_send_offset_ms": 0,
+          "last_send_offset_ms": 0,
+          "peer_transport_ack_observed": true,
+          "queue_attempted": true,
+          "queue_offset_ms": 0,
+          "queue_status": 0,
+          "queue_succeeded": true,
+          "refusal": 0,
+          "retirement": 0,
+          "retirement_offset_ms": 0,
+          "retry_send_attempts": 0,
+          "server_receipt_proved": false,
+          "successful_retries": 0,
+          "valid": true,
+          "witness_retired": true,
+          "world_authority": false
+        },
+        "request_tx_available": true,
+        "schema": "coh-native-initial-interop-numeric-v1",
+        "selected_owner_bound": false,
+        "sends_full_update_ack": false,
+        "sends_ready": false,
+        "sends_received_character": false,
+        "server_identity_bound": false,
+        "source_generation_admitted": false,
+        "status": 2,
+        "suspend_requested": false,
+        "world_authority": false
+      },
+      "scenarios": 131,
+      "schema": "coh-new-interop-jni-adapter-double-controls-v1",
+      "wiped_frees": 143,
+      "world_authority": false
+    }
+  },
+  "reward_slot_body_appearance_sg_scales_partcount_projection_bound": {
+    "child_limit_including_nul": 192,
+    "other_fields_are_observed_fixture_values": true,
+    "total_limit_including_nul": 7168,
+    "variants": [
+      {
+        "child_bytes": 153,
+        "full_report_bytes": 7161,
+        "progress": [
+          4,
+          6,
+          2,
+          255,
+          256,
+          256,
+          33554432,
+          1,
+          6
+        ]
+      },
+      {
+        "child_bytes": 155,
+        "full_report_bytes": 7163,
+        "progress": [
+          4,
+          13,
+          256,
+          256,
+          33554432,
+          40,
+          8388607
+        ]
+      },
+      {
+        "child_bytes": 159,
+        "full_report_bytes": 7167,
+        "progress": [
+          4,
+          26,
+          256,
+          256,
+          33554432,
+          4264,
+          134217727
+        ]
+      },
+      {
+        "child_bytes": 159,
+        "full_report_bytes": 7167,
+        "progress": [
+          2,
+          32,
+          256,
+          256,
+          33554432,
+          4352,
+          268435455
+        ]
+      },
+      {
+        "child_bytes": 159,
+        "full_report_bytes": 7167,
+        "progress": [
+          2,
+          34,
+          256,
+          256,
+          33554432,
+          6656,
+          268435455
+        ]
+      },
+      {
+        "child_bytes": 159,
+        "full_report_bytes": 7167,
+        "progress": [
+          2,
+          37,
+          256,
+          256,
+          33554432,
+          7616,
+          134217727
+        ]
+      },
+      {
+        "child_bytes": 159,
+        "full_report_bytes": 7167,
+        "progress": [
+          4,
+          42,
+          256,
+          256,
+          33554432,
+          7656,
+          536870911
+        ]
+      }
+    ]
+  },
+  "schema": "coh-new-interop-jni-adapter-host-qualification-v1",
+  "world_authority": false
+}

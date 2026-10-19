@@ -382,7 +382,7 @@ still fits4 digits. Fixed4MiB input,192-byte child,7,168-byte report, overflow
 guard and wiped cleanup remain. Scales, part count, parts and later records
 remain unread; no dictionary or fabricated generation is supplied.
 
-The current addition, `coh_initial_scales_probe`, starts at verified SG
+The accepted `coh_initial_scales_probe` starts at verified SG
 `end_bit` in the SAME immutable loan, including exact SG end to diagnose a
 missing first scale. The accepted initial self profile requires extra1, so all
 30 source scales are F32 words. The other extra0 profile (first F32 then29
@@ -418,6 +418,43 @@ compressed still fits4 digits. Existing first-literal fields,4MiB input,192-byte
 child,7,168-byte report, overflow guard, cleanup and earlier indexed-string
 stops remain intact. Part counts/defaults, parts and later records stay unread;
 no fabricated generation or authority/application ACK permission is introduced.
+
+The current addition, `coh_initial_partcount_probe`, starts at verified scale
+`end_bit` in the SAME immutable loan, including exact scale end to diagnose a
+missing flag. It reads one strict Boolean. Flag0 stops immediately after the
+flag at DEFAULT_CATALOG_REQUIRED: the implicit `GetBodyPartCount()` is unknown.
+The diagnostic zero count in this branch means unresolved, never default0.
+Flag1 transactionally reads one U32 Pack4. Shortened or overflowing Pack reports
+INVALID/COUNT at its first bit, after the accepted flag, with no partial count.
+Malformed compressed Boolean consumes8bits and refuses at FLAG; missing flag
+consumes nothing. Reader and borrowed input remain unchanged in every case.
+
+Explicit counts0..30 validate framing only and stop UNSUPPORTED at
+BODY_CATALOG_REQUIRED, including0 and exact packet end. The original receiver
+must validate bodytype and count against runtime catalogs before ANY part.
+Neither catalog is supplied here. Values over30 report LIMIT after the entire
+scalar under the existing native capacity policy;30 is NOT the source runtime
+catalog size. Their actual value is discarded; diagnostic31 is only an excess
+sentinel. No default, membership, part cache/index choice or costume completion
+is inferred. Maximum framing61bits packed or40 compressed, no allocation/scan,
+no dictionary/generation, COH_OK, ownership, actor or authority/application ACK.
+
+Earlier failures keep their existing projections. New stages39 FLAG,40 COUNT,
+41 FIRST_DEFAULT_CATALOG_REQUIRED,42 COUNT_LIMIT and43 FIRST_BODY_CATALOG_REQUIRED
+use7 positions [status,stage,done0,done1,list_end,total_delta,metadata]. Bits0..20
+retain accepted SG/scales complete context;21..25 contain bounded count0..30 or
+31 excess. Bits26..28 encode width selector0 none,1=4,2=12,3=28,4=60,5=32 or6
+malformed compressed flag consumed. The stage distinguishes unresolved default,
+missing/partial explicit count and catalog stop; no unknown default is exported.
+
+Exact failure=list_end+total_delta. Subtract flagwidth plus completed Pack width
+to recover partcount begin; FLAG subtracts0, or8 for malformed selector6. COUNT
+and DEFAULT subtract only flagwidth. SG end=partcount begin-960; SG begin=SG end-
+2304; earlier boundaries recover via the retained slot pair and scalar selector.
+Parent formatter reuse validates completed30 scales/72 SG words and every earlier
+context. Max combined delta7626 packed/7656 compressed and29-bit metadata still
+fit4/9decimal digits. Existing4MiB input,192-byte child,7,168-byte report, overflow
+guard, wiped cleanup and every earlier indexed-string stop remain unchanged.
 
 ## Original protocol evidence
 
@@ -524,6 +561,16 @@ immediately send/read the part-count flag. Existing native `coh_costume.c:86`
 requires finite F32 values without another numeric range. No runtime resource
 or body-part count is invented by this bounded scale observer.
 
+Original `costume_send:1573..1578` writes flag0 exactly when iNumParts equals
+`GetBodyPartCount()`, otherwise flag1/Pack4. `costume_receive:1469..1489` reads
+that framing, then checks bodytype against `getBodyTypeCount()` and count against
+`GetBodyPartCount()` before the first `getCachedIndexedString` part. Runtime
+catalog checks are distinct from raw framing and the native capacity30. A
+fixture `GetBodyPartCount` adapter establishes no genuine catalog/default.
+Packed Pack4 widths are4/12/28/60; byte-aligned mode uses one32-bit count. The
+original signed iNumParts field supports source cases only through INT32_MAX;
+U32 wire endpoints above that and arithmetic overflow are synthetic controls.
+
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
 against the owned local-development handoff; it does not establish whole-list
@@ -537,49 +584,40 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_scales_probe.py --sanitize --output NEW.json` executes unchanged
-whole original `costume_send`, `pktSendF32` and `bsWriteF32`, with source
-cache/index/bit helpers. The pinned non-debug packet bridge uses hasDebugInfo0;
-the typed debug branch is excluded explicitly. Original F32 alias code executes
-unsanitized at O0 without source modification. Explicit
-fixture shells supply ordered raw float-bit patterns; independent projection
-checks each of30 source F32s and the exact part-count flag boundary. QuietNaN
-and infinities are source-produced native-policy refusal controls; signalingNaN
-is labeled post-source wire mutation to avoid ABI quieting assumptions. Fixture
-adapters establish no real catalog/generation or complete character state.
-Original consumer ordering is inspected, not applied. Accepted SG source/receipt
-hashes are checked; no old checker mains/native suites are replayed. Accepted
-parent formatters are reused for bounded numeric context validation only.
+Current part-count qualification executes unchanged whole original costume_send,
+pktSendBits/pktSendBitsPack/pktSendF32 and original bit writers, with fixture
+member/stash/default-catalog adapters. An observer stops execution AFTER the
+actual original flag or explicit Pack call finishes, BEFORE any part body can
+run. Storage and offsets read after the handoff are static, respecting C setjmp
+rules. This qualifies only framing; it does not qualify a complete source
+costume or original consumer application. Independent projection verifies the
+flag/count bits, widths and callsite boundaries. The accepted original alias/
+Pack shift idioms execute unsanitized at O0; the new native parser and affected
+JNI adapter are checked in release/ASan/UBSan. No old checker mains or old native
+suites are replayed. Accepted source pins and retained scale prefix are unchanged.
 
-Release, ASan and UBSan each pass2,062,160 checks across257 fixtures, including
-146,240 shortened extents,146,240 bit-mutation classifications,58,845 unread
-later-scale/part controls,50 finite and90 nonfinite value-discard equivalences,
-10 API/alias controls and44 formatter-domain controls. The257 source/wire cases
-produce109 finite completions and148 bounded NaN/Inf refusals. Source packet and
-bitstream F32 functions are pinned, including the original non-debug packet
-bridge; the accepted shared pin manifest is unchanged. Native parser frame is
-176 bytes; formatters80/208 bytes are bounded host evidence, not device RSS proof.
+Release/ASan/UBSan each pass66,493 native checks across234 fixtures:119 explicit
+catalog boundaries,44 default boundaries,68 native-cap refusals and3 invalid
+framing controls. Coverage includes3,805 shortened extents,3,805 bit-mutation
+classifications,1,422 unread-tail controls,32 excess-value and30 default-value
+discard equivalences,10 API/alias,234 formatter and44 formatter-domain controls.
+The native fixed maximum remains61 packed/40 compressed bits. Parser stack192B
+static; formatters112/240B bounded host evidence, not device RSS proof.
 
-Affected JNI release/ASan/UBSan each pass6,453 checks across113 scenarios with125
-wiped frees. Observed maximum report is7,155 bytes. Bounded projection checks
-reach7,167 bytes plus NUL (159-byte child), preserving all other observed fixture
-fields. This does not qualify every possible transport-counter combination;
-the existing overflow guard remains. No limits are increased.
+Affected JNI release/ASan/UBSan each pass7,533 checks across131 scenarios and143
+wiped frees. Observed maximum report7,155B; bounded projection7,167B plus NUL
+(159B child). Other report fields remain observed fixture values, not a claim
+about every transport-counter combination or global RSS. Limits are unchanged.
+Receipts/source hashes: qualification/initial-partcount-20261019/host.json and
+adapter-host.json. The source-generated JNI fixture keeps
+all5142 accepted prefix bits, then source flag1/explicit2 ends5147 before parts.
+Default-catalog, explicit0, missing flag/count, Pack width/capacity/overflow,
+unread tail and earlier dictionary/profile refusals are distinct controls.
+No genuine catalog, dictionary generation or server-owned character is supplied.
 
-The JNI fixture preserves accepted bytes through4182, then source-produced
-scale words end5142 BEFORE part-count flag. Controls cover missing/partial
-first/middle/last scales, signed zeros/finite extremes, quiet/signalingNaN and
-infinities at bounded indices, exact scale end, unread part-tail mutations and
-preserved dictionary/extra-profile refusals. Raw capture, cleanup and authority/
-application ACK false fields remain intact.
-
-Receipts/source hashes are in `qualification/initial-scales-20261019/`;
-focused CI is `Native initial ALLENTS scale array`. Exactly ONE scale milestone
-ends here. No renderer/compiler/network/Android13 suites, live original-server
-transaction, new Thor run or APK is claimed. Complete costume/character,
-dictionary-generation and session-ownership qualification remain blocked.
-
-The previously reported unsupported Map count is the ordinary successful GROUPS
-inspector's deliberate UNSUPPORTED boundary (command6, exact consumed end), which
-the capture wrapper continues past. It is not an unidentified failed message.
-Gates 25–27 remain open. No new APK is produced for this bounded source step.
+Focused CI is Native initial ALLENTS part-count framing. Exactly ONE milestone
+ends here. No renderer/compiler/network/Android13 suites, original-server
+transaction, new Thor run or APK is claimed. Next work must qualify runtime
+body-type/body-part catalog evidence before advancing past that boundary.
+Complete costume/character, session ownership and Gates25–27 remain blocked;
+all source-generation/actor/authority/application ACK permissions remain false.

@@ -1,13 +1,13 @@
-name: Native initial ALLENTS scale array
+name: Native initial ALLENTS part-count framing
 on:
   push:
     branches: [native-android]
     paths:
       - .github/workflows/native-initial-create-probe.yml
-      - native-android/engine/initial-capture/coh_initial_scales_probe.*
-      - native-android/engine/initial-capture/check_initial_scales_probe.py
-      - native-android/engine/initial-capture/test_initial_scales_probe.c
-      - native-android/engine/initial-capture/qualification/initial-scales-20261019/jni-fixture.h
+      - native-android/engine/initial-capture/coh_initial_partcount_probe.*
+      - native-android/engine/initial-capture/check_initial_partcount_probe.py
+      - native-android/engine/initial-capture/test_initial_partcount_probe.c
+      - native-android/engine/initial-capture/qualification/initial-partcount-20261019/jni-fixture.h
       - native-android/combined-client/app/src/main/cpp/interop_network.c
       - native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py
       - native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c
@@ -15,10 +15,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: native-scales-${{ github.ref }}
+  group: native-partcount-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  scales:
+  partcount:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -29,18 +29,18 @@ jobs:
           fetch-depth: 1
       - name: Install native test headers
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
-      - name: Qualify original scale-array fixtures
+      - name: Qualify original part-count fixtures
         run: |
-          python3 native-android/engine/initial-capture/check_initial_scales_probe.py --sanitize --output "$RUNNER_TEMP/scales-host.json" --fixture-output "$RUNNER_TEMP/scales-jni-fixture.h"
-          cmp "$RUNNER_TEMP/scales-jni-fixture.h" native-android/engine/initial-capture/qualification/initial-scales-20261019/jni-fixture.h
+          python3 native-android/engine/initial-capture/check_initial_partcount_probe.py --sanitize --output "$RUNNER_TEMP/partcount-host.json" --fixture-output "$RUNNER_TEMP/partcount-jni-fixture.h"
+          cmp "$RUNNER_TEMP/partcount-jni-fixture.h" native-android/engine/initial-capture/qualification/initial-partcount-20261019/jni-fixture.h
       - name: Qualify affected JNI observation and cleanup
-        run: python3 native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py --source-root . --output "$RUNNER_TEMP/scales-adapter"
+        run: python3 native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py --source-root . --output "$RUNNER_TEMP/partcount-adapter"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-scales-${{ github.sha }}
+          name: native-partcount-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/scales-host.json
-            ${{ runner.temp }}/scales-adapter/
+            ${{ runner.temp }}/partcount-host.json
+            ${{ runner.temp }}/partcount-adapter/
           if-no-files-found: error
           retention-days: 90
