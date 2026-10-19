@@ -1,0 +1,50 @@
+{
+  "schema": "coh-thor-initial-observation-review-v1",
+  "inputs_sha256": {
+    "standalone_json": "a9cc35ec701dc4da715a337860db97fa9f3881af2fd2895f878fc732f5108e32",
+    "diagnostic_zip": "252ea982b0117cd10faec5a9f82e1ba2582e11da082cb55061de644973f23f34"
+  },
+  "reports": [
+    {
+      "origin": "standalone",
+      "phase": "INITIAL_OBSERVED",
+      "failure": "NONE",
+      "groups_bytes": 42889,
+      "initial_bytes": 37712,
+      "initial_bits": 301696,
+      "post_command_cursor": 32,
+      "compressed_initial_bytes": 7721,
+      "udp_datagrams_received": 31,
+      "decode_failure_kind": 0,
+      "owned_sockets_opened": 2,
+      "owned_sockets_closed": 2,
+      "cleanup_verified": true,
+      "raw_body_available": false
+    },
+    {
+      "origin": "zip_native_client",
+      "phase": "CLOSED",
+      "failure": "NONE",
+      "groups_bytes": 42889,
+      "initial_bytes": 37712,
+      "initial_bits": 301696,
+      "post_command_cursor": 32,
+      "compressed_initial_bytes": 7721,
+      "udp_datagrams_received": 31,
+      "decode_failure_kind": 0,
+      "owned_sockets_opened": 2,
+      "owned_sockets_closed": 2,
+      "cleanup_verified": true,
+      "raw_body_available": false
+    }
+  ],
+  "earlier_timeout_superseded": true,
+  "zip_closed_is_launcher_return_cleanup": true,
+  "unsupported_map_counter": "ordinary GROUPS structural inspector refusal boundary, not unidentified failed ALLENTS",
+  "new_parser_physical_execution_claimed": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

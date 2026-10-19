@@ -14,7 +14,7 @@ def main():
  root,out=args.source_root.resolve(),args.output.resolve();need(not out.exists()and root not in out.parents,'fresh external output required');out.mkdir()
  compiler=Path(shutil.which(os.environ.get('CC','cc'))).resolve();flags=[str(compiler),'-std=c11','-Wall','-Wextra','-Werror','-pedantic','-fno-pie','-no-pie','-fstack-usage','-DCOH_INTEROP_REQUEST_TX=1',
   '-I',str(BASE/'test-include'),'-I','native-android/engine/initial-capture','-I','native-android/engine/session','-I','native-android/include']
- sources=[SOURCE,BASE/'test_interop_adapter.c'];dep=run([*flags,'-M',*sources],root);(out/'dependencies.stdout').write_bytes(dep.stdout);(out/'dependencies.stderr').write_bytes(dep.stderr);need(dep.returncode==0 and not dep.stderr,'dependencies refused')
+ sources=[SOURCE,BASE/'test_interop_adapter.c',Path('native-android/engine/initial-capture/coh_initial_create_probe.c'),Path('native-android/engine/entities/coh_entities.c'),Path('native-android/engine/replication/coh_replication.c')];dep=run([*flags,'-M',*sources],root);(out/'dependencies.stdout').write_bytes(dep.stdout);(out/'dependencies.stderr').write_bytes(dep.stderr);need(dep.returncode==0 and not dep.stderr,'dependencies refused')
  project={BASE/'check_adapter.py',JAVA};system={compiler}
  for line in dep.stdout.decode().replace('\\\n',' ').splitlines():
   for token in shlex.split(line.split(':',1)[1]):
@@ -27,7 +27,7 @@ def main():
  head=run(['git','rev-parse','HEAD'],root).stdout.decode().strip();commands=[];results={};binaries={};libraries={};stacks={}
  environment={**os.environ,'ASAN_OPTIONS':'detect_leaks=0:halt_on_error=1','UBSAN_OPTIONS':'halt_on_error=1:print_stacktrace=1'}
  for mode,options in [('release',['-O2']),('asan',['-O1','-g','-fsanitize=address']),('ubsan',['-O1','-g','-fsanitize=undefined','-fno-sanitize-recover=all'])]:
-  binary=out/('adapter-'+mode);command=[*flags,*options,*sources,'-Wl,--wrap=calloc','-Wl,--wrap=free','-o',binary];commands.append(list(map(str,command)));c=run(command,root)
+  binary=out/('adapter-'+mode);command=[*flags,*options,*sources,'-Wl,--wrap=calloc','-Wl,--wrap=free','-lm','-o',binary];commands.append(list(map(str,command)));c=run(command,root)
   (out/(mode+'-compile.stdout')).write_bytes(c.stdout);(out/(mode+'-compile.stderr')).write_bytes(c.stderr);need(c.returncode==0 and not c.stderr,'compile refused '+mode)
   binaries[mode]={'bytes':binary.stat().st_size,'sha256':sha(binary),'retained_gzip':binary.name+'.gz'}
   (out/(binary.name+'.gz')).write_bytes(gzip.compress(binary.read_bytes(),mtime=0))

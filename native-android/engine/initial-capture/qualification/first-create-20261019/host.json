@@ -1,0 +1,123 @@
+{
+  "schema": "coh-first-create-probe-qualification-v1",
+  "passed": true,
+  "source_revision": "d439f56ba05c3051e50c630c40afe796a9c2ec4e",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/coh_entities.c": "730e09df080c26efa240844bbea707a88138ea966864006fa26487249e18d1e3",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/rare_fixture.c.inc": "a0d754e64045062018d41d35815dbcb4e352d45b3921247f0a99500ba5d80040",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/initial-capture/check_initial_create_probe.py": "817502cbd81eb813902dd0dca41ea2c71cf5dcd4b6fd6b00f1429f0511b19d97",
+    "native-android/engine/initial-capture/coh_initial_create_probe.c": "309a0c5ab98879a20090e5a757897d7a20a994374dc941d1c92cb668adb8dd87",
+    "native-android/engine/initial-capture/coh_initial_create_probe.h": "306bf3a18a2713debde08261f8b2cdebf397871a5bde32936d45faa5c243a20a",
+    "native-android/engine/initial-capture/test_initial_create_probe.c": "b8d975f303ee1f6931dfb67671f188fb7481cf464639e7e1f584fdea3a6baaaa",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_components": {
+    "executed_entrypoints": [
+      "original_create",
+      "original_fields"
+    ],
+    "entSendCreate_sha256_lf": "940e8378468290ba8e88a2f58513af0d36e751ae27f95580db15f0ec826d0ec3",
+    "source_pin_manifest_sha256": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "all_original_source_pins_verified": true,
+    "generated_original_oracle_sha256": "fdf082f9f14061639a9c524e0405c5981a04fe8d5543e5e82dd9d103f8e528ae",
+    "oracle_sanitized": false
+  },
+  "fixtures": {
+    "count": 96,
+    "sha256": "5fc554a000f0ef49ab5a5e027972d6d721e0615a2f006c000fa8046f84486817",
+    "packed_start_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "byte_aligned_start_offsets": [
+      0,
+      8
+    ],
+    "original_create_scenarios": 7,
+    "synthetic_control_variants": 14,
+    "case_manifest_sha256": "e652dd39e967677fa9965fb6cff9c4ccc64aa2df7a6443e5875f486273c879c6"
+  },
+  "checks": {
+    "release": {
+      "checks": 525567,
+      "fixtures": 96,
+      "complete_create_observations": 74,
+      "truncated_extents": 73664,
+      "mutations": 880,
+      "invalid_argument_checks": 13,
+      "formatter_checks": 96,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 525567,
+      "fixtures": 96,
+      "complete_create_observations": 74,
+      "truncated_extents": 73664,
+      "mutations": 880,
+      "invalid_argument_checks": 13,
+      "formatter_checks": 96,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 525567,
+      "fixtures": 96,
+      "complete_create_observations": 74,
+      "truncated_extents": 73664,
+      "mutations": 880,
+      "invalid_argument_checks": 13,
+      "formatter_checks": 96,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "e32c84c9049795597091ce705f0acfdef24f236511f09b1c669706d212161611",
+    "asan": "16649eb2936320f0b775b077318e60915fdcd467aca9dfab103ef2b8789b43c2",
+    "ubsan": "7e43e4145db44e07dce7989e12fbe218ab507b23b8c32a218b78f101d12c12b4"
+  },
+  "probe_stack_frames": [
+    {
+      "function": "coh_initial_create_probe",
+      "bytes": 704,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_create_probe_json",
+      "bytes": 208,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "fixture_join": "Synthetic header/index framing plus complete unchanged original entSendCreate output; no complete sendEntity or entSendUpdate execution.",
+  "raw_packet_body_retained_in_evidence": false,
+  "whole_original_allents_producer_executed": false,
+  "actual_server_transaction": false,
+  "physical_device_executed": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

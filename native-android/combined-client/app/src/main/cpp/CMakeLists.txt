@@ -45,6 +45,8 @@ target_link_libraries(coh_combined_network PRIVATE "${CRYPTO_ABI_ROOT}/lib/libcr
 # replacements keep the original production sources separate from the default
 # client; an observed initial packet grants no actor, ACK or world authority.
 add_library(coh_combined_interop SHARED interop_network.c
+    "${ENGINE}/initial-capture/coh_initial_create_probe.c"
+    "${ENGINE}/entities/coh_entities.c"
     "${ENGINE}/initial-capture/coh_initial_local.c"
     "${ENGINE}/initial-capture/coh_request_tx_map.c"
     "${ENGINE}/initial-capture/coh_request_tx_net.c"
@@ -66,4 +68,4 @@ target_compile_definitions(coh_combined_interop PRIVATE COH_INTEROP_REQUEST_TX=1
 target_compile_options(coh_combined_interop PRIVATE -Wall -Wextra -Werror -ffp-contract=off)
 target_link_options(coh_combined_interop PRIVATE -Wl,--no-undefined -Wl,-z,defs
     -Wl,--exclude-libs,ALL)
-target_link_libraries(coh_combined_interop PRIVATE "${CRYPTO_ABI_ROOT}/lib/libcrypto.a" z dl)
+target_link_libraries(coh_combined_interop PRIVATE "${CRYPTO_ABI_ROOT}/lib/libcrypto.a" z dl m)
