@@ -1,34 +1,35 @@
-# CoH native: original body-read composition
+# CoH native: original schema checksum
 
-native-android ONLY; baseline 992c0e74. Thor 13/ARM64.
+native-android ONLY; baseline 5cfcabb6. Thor 13/ARM64.
 Thor 0.1.9 INITIAL_OBSERVED; sockets closed. ZIP CLOSED means cleanup.
 Gates 1–24 preserved; 25–27 open. No broad suites replayed.
 
-ONE: original ParserReadBinaryFile/Table + array/struct/string/int/U8 readers.
-Header open and FileListRead(NULL) compose as dependencies; old mains not run.
-Exact source tables, six-field ParseTable and BodyPart declarations; explicit
-readbin-only dispatch and owned TokenStore/filename/buffer adapters.
-Already-open handle profile only; actual ParseTableCRC/open branch unexecuted.
+ONE: original ParseTableCRC/UpdateCRCFromParseInfo, four interpretfield handlers
+and three cryptAdler32 wrappers. Exact two BodyPart source schemas, six-field
+ParseTable/macros; fixed acyclic links/defines=NULL. Interpretfield-only holders
+are explicit adapters. Pinned CryptoPP b5242667 backend; 47 source files
+and Git commit/tree/blob proofs retained. Native endian/TLS/ABI shells explicit.
 
-CLIENT BodyParts.bin 2584B/b0955c...: header20, opaque dependency64,
-body size2516/count28, exact end2584. All five strings/seven scalar reads and
-final loaded fields compared. Later BoneCount overwrites first; DontClear
-narrows to low8 bits; empty indirect strings become NULL. Cached bones/index
-are input, not generated enum evidence. Negative signed count can load no rows.
+Baseline171 bytes/35updates/14fields/15interpret calls yields cf27aba3, matching
+the separately retained CLIENT header naturally. Header CRC is never an input.
+Offsets/format/struct sizeof ignored; numeric defaults narrow to32bits;
+redundant fields skipped; default C-strings and duplicate BoneCount retained.
+Matching CRC supplies no content/ownership/freshness/current-Map/generation proof.
 
-Entered-field preflight; source size/EOF rejects remain atomic scratch.
-Input<=64KiB, rows<=30, strings<=259 are isolated fixture policies; accepted
-app DTO cap29 unchanged. Owned storage wiped and source handles closed.
+SCR1 wire<=356B,4 mutations/text<=63B,trace<=512B/64updates. Typed preflight,
+atomic output, volatile owned cleanup; actual CryptoPP delete/TLS reset and
+object sizeof budget charge. No allocator/RSS/external stack closure.
 
-Release/ASan/UBSan each 6,930 checks/44 fixtures; 24 source inputs and
-compiler/Python stable. Measured fixture bindings only.
-Qualifier: engine/body-catalog/check_body_read.py.
-Receipt: qualification/body-read-20261019/host.json.
-CI: Native original body-read composition. No current Map/Thor run or APK.
+Release/ASan/UBSan each 2,494 checks/55 fixtures; 25 repo/48 dependency inputs and cc/c++/
+Python stable. Fixture bindings only; accepted mains/body/cache code not run.
+Qualifier: engine/body-catalog/check_schema_crc.py.
+Receipt: qualification/schema-crc-20261019/host.json.
+CI: Native original schema checksum. No current Map/Thor run or APK.
 
 ALLENTS41/43 and dictionary-index stops intact. Catalog/default/generation/
-character/ownership/actor/ACK/world false. Existing input/report/overflow guard/
-socket cleanup and Combined0.1.9/imports/signing/profiles/saves preserved.
+character/identity/owner/actor/ACK/world false. Existing app limits/cleanup,
+Combined0.1.9/imports/signing/profiles/saves preserved.
 
-Next ONE: original ParseTableCRC/schema-checksum prerequisite. Current Map loaded-input/source/build/profile/run
-provenance required before admission. Fetch latest/read both handoffs; keep bans.
+Next ONE: original ParserIsPersistNewer production branch with actual CRC and
+header open; preserve ignoreCRC1. Development/date/FS/current-Map loaded-input/
+source/build/profile/run provenance remain blocked. Fetch latest/read both.

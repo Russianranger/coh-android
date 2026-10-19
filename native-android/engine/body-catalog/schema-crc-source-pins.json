@@ -1,0 +1,66 @@
+{
+  "schema": "coh-schema-crc-provider-source-pins-v1",
+  "baseline_revision": "5cfcabb6fb39b6922f94a6ec6bcad23bcd395b66",
+  "files": {
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": {
+      "blob_sha1": "a80f0aa356e6d7f9422ad5ab501f1be2763a4c69",
+      "sha256": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "bytes": 264080
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": {
+      "blob_sha1": "9231f1c3fa383e499488ecbf0192becf0aee9d46",
+      "sha256": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "bytes": 30934
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": {
+      "blob_sha1": "4e2c9c88fe886074c6a258032645f9f5f78542c1",
+      "sha256": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "bytes": 34279
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": {
+      "blob_sha1": "dae60b152c8b1067a57aa9e3f961720d109aac0a",
+      "sha256": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+      "bytes": 14186
+    },
+    "upstream/ouroboros/Common/gameData/BodyPart.c": {
+      "blob_sha1": "08120a0491aeb3eebc915380585d4ff343640f7f",
+      "sha256": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "bytes": 4246
+    },
+    "upstream/ouroboros/Common/gameData/BodyPart.h": {
+      "blob_sha1": "9f6520ca88fcd8603f72b4b9376cad7795366b49",
+      "sha256": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+      "bytes": 1457
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser_types.h": {
+      "blob_sha1": "cde5c90952598225a45e9600e2fda298cb5188e2",
+      "sha256": "619b55838fe91840e0ab6b8b2e3f23f0c91cfc1e70525ebc8e59566ce2480c10",
+      "bytes": 3229
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": {
+      "blob_sha1": "f398b138191f7c9d8234b93ebcb9d3f2afb84c26",
+      "sha256": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f",
+      "bytes": 28228
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structoldnames.h": {
+      "blob_sha1": "e7af045053ac5f0ba64ed01dec2fc28fbe522e25",
+      "sha256": "00a8a969e854ffd8b195e5e3860a1fed87e874065895cac2fcca5ed9f739bfb1",
+      "bytes": 3857
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": {
+      "blob_sha1": "9bbfa3c491861cd52ee1f5c9eb243ce406374092",
+      "sha256": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+      "bytes": 8684
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/crypt.h": {
+      "blob_sha1": "eb6a3676d3fcfdbe00e1a573a8c9efc335e9aa59",
+      "sha256": "d06eb01ec68ebfa8083d6c46120ed3d5a3a33ed60f6e1b517b16a3f6bcc4d9b9",
+      "bytes": 1191
+    },
+    "upstream/ouroboros/cmake/dependencies/CryptoPP.cmake": {
+      "blob_sha1": "eea105dab8b4e09503bae6781083022d58fff92f",
+      "sha256": "4477f15cb07e42366770f9990afd7cf94f2fd1ef7b08337a9ae0426033dadc67",
+      "bytes": 315
+    }
+  }
+}

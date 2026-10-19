@@ -1,4 +1,4 @@
-name: Native original body-read composition
+name: Native original schema checksum
 on:
   push:
     branches: [native-android]
@@ -9,10 +9,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: native-body-read-${{ github.ref }}
+  group: native-schema-crc-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  body-read:
+  schema-crc:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -21,17 +21,17 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 1
-      - name: Install body-read test digest headers
+      - name: Install schema-checksum test digest headers
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev
-      - name: Qualify bounded original body-read composition
+      - name: Qualify bounded original schema checksum
         run: |
-          python3 native-android/engine/body-catalog/check_body_read.py --sanitize --output "$RUNNER_TEMP/body-read-host.json" --evidence-directory "$RUNNER_TEMP/body-read-evidence"
+          python3 native-android/engine/body-catalog/check_schema_crc.py --sanitize --output "$RUNNER_TEMP/schema-crc-host.json" --evidence-directory "$RUNNER_TEMP/schema-crc-evidence"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-body-read-${{ github.sha }}
+          name: native-schema-crc-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/body-read-host.json
-            ${{ runner.temp }}/body-read-evidence/
+            ${{ runner.temp }}/schema-crc-host.json
+            ${{ runner.temp }}/schema-crc-evidence/
           if-no-files-found: error
           retention-days: 90

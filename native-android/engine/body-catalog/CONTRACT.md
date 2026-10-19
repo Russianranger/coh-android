@@ -1,10 +1,11 @@
-# Body-part bounded original body-read composition
+# Body-part bounded original schema checksum
 
 The accepted callback milestone executes unchanged original `ParseBoneNames`
 using the generated enum provider. The accepted loader milestone qualifies an original
 cache-hit route and fixture-scoped provenance. Accepted binary-open and dependency-list
-milestones qualify SerializeReadOpen and FileListRead. The current milestone composes
-the original binary file/table readers with bounded body-record readers. None admits a runtime
+milestones qualify SerializeReadOpen and FileListRead. The accepted body-read milestone
+composes original file/table and record readers. The current milestone computes the
+original checksum for the exact source schemas. None admits a runtime
 body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
 The source body-type table/count was already qualified by costume-import work.
@@ -333,7 +334,7 @@ ALLENTS41/43 and earlier dictionary-index stops remain. Catalog/default/source
 generation, complete character, ownership, actor, authority and application ACK
 admission remain false. This milestone stops before ParserReadBinaryTable/body.
 
-## Current bounded original body-read composition
+## Accepted bounded original body-read composition
 
 `body_read_provider.py` composes the unchanged original ParserReadBinaryFile and
 ParserReadBinaryTable with their array, record, string, int and U8 readbin
@@ -421,3 +422,92 @@ current Map transaction or new physical Thor run is part of this stage.
 Next ONE is bounded original ParseTableCRC/UpdateCRCFromParseInfo on these exact
 schemas, with original interpretfield/Adler32 dependencies. A retained CLIENT
 schema-CRC match would still supply no current-Map selection or generation.
+
+## Current bounded original schema checksum
+
+`schema_crc_provider.py` executes unchanged original ParseTableCRC and
+UpdateCRCFromParseInfo with original ignore/number/string/struct interpretfield
+functions. It emits the exact two BodyPart source schemas, authoring/iteration
+macros, full six-field ParseTable and BodyPart/List declarations. Immutable
+interpretfield-only dispatch holders follow pinned original g_tokentable mappings;
+they do not qualify the complete original handler-table ABI. Dynamic/static
+define branches, external table pointers and recursive graphs remain guarded
+and unexecuted. Defines are NULL and the root/child links are fixed and acyclic.
+
+Original cryptAdler32Init/Update/Final and its THREADSAFE_STATIC declaration
+execute in a separate C++ translation unit. The native little-endian/thread_local
+shell is explicit. The repository pins CryptoPP revision
+b5242667a24e3db8e4600e77b2e502ef204e5280. cryptopp_adler_source.py verifies its
+retained commit/root-tree objects and selected blob membership before extracting
+47 unchanged source/header/license files. The actual Adler32 class and five
+original core translation units are compiled with ASM disabled and section GC;
+an unchanged standalone IntToString<word64> specialization is emitted from the
+pinned full integer.cpp. No alternate Adler algorithm or handwritten class/base
+is substituted. Standard C++ runtime/allocator/platform closure is not claimed.
+
+The baseline schema contributes171 bytes in35 Update calls, including three
+zero-length unnamed-field calls. Fourteen fields and15 interpretfield calls
+include the source End token. Standard Adler32 is a3ab27cf; CryptoPP writes its
+big-endian digest bytes, which the unchanged original wrapper returns as the
+little-endian U32 cf27aba3. This naturally matches the retained CLIENT
+BodyParts.bin header. The retained header is a separate comparison: its CRC is
+never supplied as an argument to the schema calculation, and no body reader,
+cache-selection routine or current-Map transaction executes.
+
+Source checksum inputs are names, complete type words, int32 numeric defaults
+and non-NULL default C-string bytes. Original code ignores storeoffset, format
+and struct sizeof, narrows numeric params to32 bits and skips redundant fields.
+A non-NULL empty default string adds a zero-length Update without changing the
+checksum. Duplicate BoneCount entries remain separate checksum contributions.
+A schema checksum match proves neither record contents nor resource ownership,
+freshness, runtime selection or dictionary generation.
+
+The canonical SCR1 request is an isolated qualification profile: at most four
+mutations, text<=63B, wire<=356B, trace<=512B and<=64 updates. Mutations address
+only original non-sentinel rows in owned copies. Primitive types/subtable links
+remain fixed; only REDUNDANTNAME/STRUCTPARAM option flags are permitted. String
+defaults use owned text; arbitrary string/define pointers are excluded. Names,
+offsets, format and numeric/default fields have explicit typed rules. Complete
+wire/profile preflight precedes original entry; unknown/truncated/trailing fields
+refuse with bounded numeric first-failure diagnostics. All caller spans and
+digest context are disjoint; invalid diagnostic sinks stay unchanged.
+
+Numeric stages are1 INPUT/spans/budget,2 IDENTITY,3 PROFILE,4 WIRE,5 MUTATION,
+6 DIGEST,7 SOURCE and8 COMPLETE. Missing input reports the first unavailable
+byte; field-specific mutation refusals report their wire-field offset. Host
+profile and other non-field stages use0.
+Owned schemas/text/trace/staging are volatile-wiped, and the actual CryptoPP
+context is deleted with its source TLS pointer reset. Its actual sizeof and
+16KiB own stack reserve are charged to the bounded aggregate budget. Result
+commits atomically after cleanup. Allocator byte zeroization, heap-failure,
+external C++/crypto/sanitizer stack and aggregate RSS closure remain unproved.
+
+Release/ASan/UBSan each pass2,494 checks across55 new fixtures. Two exact-schema
+runs and27 synthetic source runs match independent full stream/update-boundary
+expectations;26 wire/profile cases refuse before source entry. All29 source
+contexts clean up,83 zero-length source updates are retained, and16 ignored/
+prefix/redundant controls pass. Additional10 identity,9 child-ledger,5 alias
+and5 budget/overflow controls pass. Nine unchanged original checksum/handler/
+wrapper functions execute with the pinned backend; no accepted main is replayed.
+All25 repository inputs,48 dependency snapshots, C/C++ compilers and Python/
+reference-zlib identity remain stable. Both compiler stderr streams are empty.
+
+Measured release frames include schema_crc_apply1,280B, UpdateCRCFromParseInfo96B,
+ParseTableCRC32B and actual Adler32 Update40B/Final32B, all static. Largest
+selected harness frame is4,720B dynamic bounded. Every compiled dependency stack
+report is retained; only the new C/wrapper/actual Adler core frames are selected
+for this receipt. Child stdout is1,867B per mode. Unused generic CryptoPP methods
+and external/aggregate stack or allocator closure remain unqualified.
+
+Full evidence belongs in Native original schema checksum CI; compact receipt:
+qualification/schema-crc-20261019/host.json. Pinned CryptoPP source/proofs are
+retained alongside it. Fixture source/input/build/profile/run self-measurements
+remain consistency evidence. No runtime catalog/default, dictionary import/
+generation, complete character, server identity/selected owner, actor, authority
+or application ACK admission is granted. ALLENTS41/43, dictionary-index stops,
+existing application limits/cleanup, Combined0.1.9/imports/signing/profiles/saves
+and Gates1–24 remain unchanged; Gates25–27 stay open. No APK or Thor run occurs.
+
+Next ONE: original ParserIsPersistNewer production branch using actual source
+CRC and original header open. Its ignoreCRC1 behavior must remain explicit;
+development/date/filesystem and current-Map selection provenance remain blocked.

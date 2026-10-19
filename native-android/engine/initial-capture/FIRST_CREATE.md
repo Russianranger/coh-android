@@ -639,57 +639,65 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-The current focused qualifier is ../body-catalog/check_body_read.py. It composes
-whole original ParserReadBinaryFile/Table with array/struct/string/int/U8 readbin
-functions, original TokenStoreGetStorageType and source serialization helpers.
-SerializeReadOpen and FileListRead(NULL) are dependencies; accepted checker/test
-mains and the native full-body decoder are not replayed. The original file reader
-receives an already-open owned handle; actual ParseTableCRC and its alternative
-open/cache-selection path remain unexecuted and guarded.
+The current focused qualifier is ../body-catalog/check_schema_crc.py. It executes
+whole original ParseTableCRC/UpdateCRCFromParseInfo and ignore/number/string/
+struct interpretfield functions using exact source BodyPart tables, authoring/
+iteration macros and full six-field ParseTable/BodyPart declarations. Fixed
+acyclic root/child copies use defines=NULL and immutable source-mapped
+interpretfield-only holders. Dynamic/static defines, external pointers,
+primitive-type changes and recursive graphs remain guarded and unqualified.
 
-The exact source ParseBodyPartBegin/ParseBodyPart schemas, full six-field
-ParseTable and BodyPart/List declarations are emitted unchanged. Original
-iteration/selection macros use explicit immutable readbin-only dispatch holders
-whose relevant engine mappings are pinned/audited. Fixed fresh TokenStore storage,
-filename-pool, buffer/open/close/growth and host/endian/time32/BoneId adapters are
-fixture boundaries, not a qualified original general allocator or engine ABI.
+Original cryptAdler32Init/Update/Final and its source TLS pointer declaration
+execute against the actual repository-pinned CryptoPP backend, revision
+b5242667a24e3db8e4600e77b2e502ef204e5280. The retained dependency archive verifies
+public Git commit/tree objects and selected blob membership for47 original
+source/header/license files. Five core C++ translation units and an unchanged
+standalone word64 IntToString leaf use explicit ASM-disabled/section-GC flags.
+Native little-endian/thread_local and int32/intptr64/size64 shells are explicit;
+no original engine/Win32/Android or standard-library/allocator closure is claimed.
 
-Release/ASan/UBSan each pass6,930 checks over44 new fixtures. Eight body rejects
-roll back partial owned state; exact EOF, all raw/final fields, duplicate overwrite,
-U8 conversion, NULL strings and two negative-count source behaviors are covered.
-All24 source inputs and compiler/Python binaries stay stable. Fourteen original
-pins cover23 unchanged functions; no broader accepted suite is replayed.
+Release/ASan/UBSan each pass2,494 checks over55 new fixtures. Exact source streams,
+all update boundaries, ignored metadata, default/option/name changes and source
+cleanup match independently;26 wire/profile cases refuse before entry. All29
+contexts clean up. All25 repository inputs,48 dependency snapshots and measured
+C/C++ compilers/Python/reference-zlib identities stay stable. No broad accepted
+suite is replayed.
 
-The retained CLIENT BodyParts.bin is2,584B, SHA256
-b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb.
-Header end20/dependency end64 lead to body size2,516/count28 and exact end2,584.
-Every record's five string fields, seven raw scalar reads and final loaded fields
-are compared independently. Later BoneCount overwrites the first; source U8 keeps
-DontClear's low8 bits. Empty indirect strings become NULL; C-string prefixes,
-padding and cached bones/index stay source-derived. ParseBoneNames/enum lookup,
-normalization, freshness and resource membership are not inferred.
+The baseline contributes171 bytes in35 Update calls, including three zero-length
+unnamed fields;14 fields/15 interpretfield calls include End. Standard Adler32
+is a3ab27cf; original digest-byte conversion returns cf27aba3, naturally matching
+the separately retained CLIENT BodyParts.bin header. That header is never a CRC
+argument. The provider's input identity binds canonical mutation wire, not a Map
+packet or generation. Neither body reading nor cache-selection executes here.
 
-NULL-list dependencies remain unobserved. Negative signed array counts can enter
-no rows in original code; raw count and loaded row count stay distinct. Complete
-source-entered field preflight respects accounting short-circuits. Native limits
-of64KiB input/30 rows/259-byte strings are isolated fixture policy; the accepted
-application DTO limit29 is unchanged. Source record/table/file-end failures stay
-atomic scratch; opened handles close and partial rows/strings are wiped.
+Source names/types/int32 defaults/default C-string bytes affect the checksum.
+Offsets, format and struct sizeof are ignored; numeric params narrow to32 bits;
+redundant fields are skipped. Duplicate BoneCount rows remain distinct. Empty
+non-NULL default strings add zero-length updates. These semantics establish no
+record-content, file freshness, ownership or current-Map selection evidence.
 
-See ../body-catalog/CONTRACT.md for exact diagnostics, bounds and qualification
-results. Full evidence belongs in Native original body-read composition CI;
-compact receipt: ../body-catalog/qualification/body-read-20261019/host.json.
-Fixture source/input/compiler/build/profile/run bindings are consistency evidence,
-not server/session or current-Map attestation. No new Thor run or APK is claimed.
+The bounded SCR1 profile permits at most4 owned schema mutations/text<=63B,
+wire<=356B, trace<=512B/64updates and fixed source links. Complete typed-wire
+preflight precedes source entry. Atomic output follows volatile schema/text/
+trace cleanup and deletion/reset of the actual CryptoPP context/TLS pointer.
+Actual object sizeof, own16KiB stack, caller spans/digest/context/retained bytes
+are charged. Safe numeric first failures are bounded; aliased sinks stay unchanged.
 
-Exactly ONE body-read composition stage ends here. ALLENTS catalog stops41/43 and
-earlier dictionary-index stops remain. Existing4MiB input/192B child/7,168B report,
-overflow guard and transport cleanup remain unchanged. Runtime catalog/default,
-dictionary import/generation, complete character, server identity/selected owner,
-actor, authority and application ACK admission remain false. Combined0.1.9/imports/
-signing/profiles/saves and Gates1–24 are preserved; Gates25–27 remain open.
+See ../body-catalog/CONTRACT.md for exact diagnostics and qualification results.
+Full evidence belongs in Native original schema checksum CI; compact receipt:
+../body-catalog/qualification/schema-crc-20261019/host.json. Exact CryptoPP source
+and Git proofs are retained alongside it. Measured fixture source/input/compiler/
+executable/build/profile/run bindings are consistency evidence, not attestation.
+No prior checker/native suite, current Map transaction, Thor run or APK is claimed.
 
-Next ONE: bounded original ParseTableCRC/UpdateCRCFromParseInfo on the exact
-source schemas with original interpretfield/Adler32 dependencies. Actual cache
-selection and current-Map loaded-input/source/build/profile/run provenance remain
-required before admission; even a retained CLIENT CRC match supplies no generation.
+Exactly ONE checksum stage ends here. ALLENTS stops41/43 and dictionary-index
+stops remain. Application4MiB input/192B child/7,168B report, overflow guard and
+socket cleanup stay unchanged. Runtime catalog/default, dictionary import/
+generation, complete character, server identity/selected owner, actor, authority
+and application ACK admission remain false. Combined0.1.9/imports/signing/
+profiles/saves and Gates1–24 are preserved; Gates25–27 remain open.
+
+Next ONE: original ParserIsPersistNewer production branch composing actual CRC
+and original SerializeReadOpen. Production ignoreCRC1 behavior must be preserved
+explicitly. Development/date/filesystem and actual current-Map loaded-input/
+source/build/profile/run provenance remain unqualified; no generation is inferred.
