@@ -1,0 +1,35 @@
+{
+  "schema": "coh-worker-e-formatter-review-20261019-v1",
+  "passed": true,
+  "review_basis": "Independent byte/source/retained-host-executable/evidence inspection; no compilation or native execution replayed",
+  "source_sha256": {
+    "native-android/engine/initial-capture/server-initial-observer/check_formatter_compatibility.py": "381ee9f88c4b24852d26d4556d44dd296cffbf2909ae40823d8bf86f0cd987c1",
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.c": "e3d8dde6158cfb30c9f30f4b62f1c0dd297831dd209a965bbf458d7b40b744c1",
+    "native-android/engine/initial-capture/server-initial-observer/coh_server_initial_ledger.h": "ccd911e409dffa3849fac45473178b88aaee26c37fbf2b9ad85aa700b5d90953",
+    "native-android/engine/initial-capture/server-initial-observer/test_ledger.c": "39b7f1c4b35f3e449980d0ce03407fdf93f9ac165121cc286949655d5e616076",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h": "fd0f3b98fc25f215de383593a4e5b9912084066a15471ea49e48a64b8576980f"
+  },
+  "proof_sha256": "bea918138580b780e3ddc94cfcf398d3c5faecc112d064a3d75ac69e3aa3c3fb",
+  "original_error": "C:\\isrc\\MapServer\\src\\group\\coh_server_initial_ledger.c(54,4): error C2124: divide or mod by zero [C:\\isrc\\out\\build\\vs2026\\MapServer\\MapServer.vcxproj]",
+  "error_logs": {
+    "build.log": {
+      "bytes": 28356,
+      "sha256": "199eec9e344c2e9721b4cd63f6a5eb4e6ac6ff49724923a439fe29f311b8ab55"
+    },
+    "configure.log": {
+      "bytes": 13921,
+      "sha256": "91a2cf7bf35ba4fece8f72d6fd06b1deb90bc91fc0daaca168b1a1ee928177be"
+    }
+  },
+  "normalized_diff_only_parenthesized_formatter_and_comment": true,
+  "all_nine_retained_elf_and_stdout_hashes_verified": true,
+  "old_new_standalone_and_exact_original_macro_outputs_identical": true,
+  "fixed_schema_format_and_arguments_unchanged": true,
+  "explicit_capacity_and_return_value_bounds_unchanged": true,
+  "original_containing_tu_array_macro_preserved": true,
+  "private_ledger_keys_state_machine_hooks_and_original_server_semantics_unchanged": true,
+  "actual_msvc_executed_by_reviewer": false,
+  "actual_original_map_executed": false,
+  "world_authority": false,
+  "windows_rebuild_still_required": true
+}

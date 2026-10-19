@@ -1,0 +1,11 @@
+/tmp/coh-f-ledger-l5x_leui/checkpoint-original-macro.c: In function ‘coh_sio_json’:
+/tmp/coh-f-ledger-l5x_leui/checkpoint-original-macro.c:3:42: error: division by zero [-Werror=div-by-zero]
+    3 | #define ARRAY_SIZE_CHECKED(n) (sizeof(n) / ((sizeof(n)==sizeof(void*) || sizeof(n)==0)?0:sizeof((n)[0])))
+      |                                          ^
+/tmp/coh-f-ledger-l5x_leui/checkpoint-original-macro.c:5:58: note: in expansion of macro ‘ARRAY_SIZE_CHECKED’
+    5 | #define snprintf(buffer, maxlen, ...) snprintf_s(buffer, ARRAY_SIZE_CHECKED(buffer), maxlen, __VA_ARGS__)
+      |                                                          ^~~~~~~~~~~~~~~~~~
+/tmp/coh-f-ledger-l5x_leui/checkpoint-original-macro.c:59:4: note: in expansion of macro ‘snprintf’
+   59 |  n=snprintf(out,cap,"{\"schema\":\"coh-server-initial-ledger-v1\",\"refusal\":\"%s\",\"stop\":\"%s\",\"stage\":%u,\"reached_mask\":%u,\"last_ready\":%u,\"ready_seen_mask\":%u,\"pkt_send_result\":%d,\"final_packet_bits\":%u,"
+      |    ^~~~~~~~
+cc1: some warnings being treated as errors

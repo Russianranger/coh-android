@@ -1,0 +1,93 @@
+{
+  "schema": "coh-worker-e-renderer-lifecycle-recovery-20261019-v1",
+  "base_revision": "c624352e889749f293a559003d5ae9b01a258b1c",
+  "review_basis": "Read-only current source and retained qualification/physical-report review; no native/device execution or qualifier replay",
+  "files": {
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java": {
+      "bytes": 41700,
+      "sha256": "2187f323b27818a7b6b2a8dbf04a96fa9ea055ee994efe5291a0cc2d37f7dec6"
+    },
+    "native-android/combined-client/app/src/main/cpp/interop_network.c": {
+      "bytes": 20469,
+      "sha256": "4475c85955f998f58a52aa5c1c67da7674e2259482a99558fd49044ace1dbb63"
+    },
+    "native-android/engine/world-render-adapter/coh_world_render.c": {
+      "bytes": 23733,
+      "sha256": "36541b0561cc236dcf323598f50329414a8eed4876f58d2ec451b7b3cafc94d7"
+    },
+    "native-android/engine/world-render-adapter/coh_world_render.h": {
+      "bytes": 9852,
+      "sha256": "a79ffff0fb0743436193bb3371adde449e03ac7c7b06eb06e2fa3576e461c130"
+    },
+    "native-android/engine/world-render-adapter/coh_wr_presentation.inc": {
+      "bytes": 12495,
+      "sha256": "f34fd5a3e9d80071597de16d84294f8eb252c28f5bdd63fbef8b82241317beda"
+    },
+    "native-android/engine/world-render-adapter/coh_wr_presentation.h": {
+      "bytes": 5279,
+      "sha256": "d7a74752cbff13a19825064fbc797ab48b66c35bc7165e1c45e2c32727d7518d"
+    },
+    "native-android/engine/world-render-adapter/coh_wr_gpu_lease.c": {
+      "bytes": 10737,
+      "sha256": "097a49697a915ae2becdccd4ddf859d9dc0ef4644d05b7b381c47e64bcbd65f4"
+    },
+    "native-android/engine/world-render-adapter/coh_wr_gpu_lease.h": {
+      "bytes": 4583,
+      "sha256": "5130f196fd98b60c5ef0e6fd799698423349a85842af33d82d5d5169dcb2bba4"
+    },
+    "native-android/engine/world-render-adapter/APP_EGL_PRODUCER_PROPOSAL.md": {
+      "bytes": 9504,
+      "sha256": "c61089020d7ef0c42f008405d534381f5f96d6d01a838675843011b851ce41ee"
+    },
+    "native-android/engine/world-render-adapter/PRESENTATION_RENDERER_IDENTITY.md": {
+      "bytes": 2226,
+      "sha256": "8ce2fac5956986b1efcfe11ce4a3adb3d4ff2604f5ec8cfd58d13a486016b2ed"
+    },
+    "native-android/engine/renderer/coh_renderer.c": {
+      "bytes": 15879,
+      "sha256": "74937e66a91e30f9405800f4014648c33a7a3640474f20edef3cca736d3427e1"
+    },
+    "native-android/engine/renderer/coh_renderer_gles.c": {
+      "bytes": 9806,
+      "sha256": "36c042739518eac84cd47c7842d76b950f6d726069db4c1566752cc014063b46"
+    },
+    "native-android/engine/renderer/qualification/occupied-owner-20261018/qualification.json": {
+      "bytes": 6520,
+      "sha256": "244ffd7ed54d6877d289c5717d2574d4265cdb289a430286c82c12041e7e857d"
+    },
+    "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/qualification.json": {
+      "bytes": 4098,
+      "sha256": "a4284cd575bb715d346b6ca5bfff5aac3e0cc3534a3d17b6ccc69fc4b836c1a5"
+    },
+    "native-android/combined-client/diagnostics/gates25-27-thor-20261018/thor-20261018-user-report-review.json": {
+      "bytes": 7713,
+      "sha256": "a63f5e2a73813b3140ed6446eb05650cbc3c0f22101f9d6abce2fe145c88c39f"
+    }
+  },
+  "source_changes": [],
+  "accepted_scope": {
+    "physical_thor_combined_018_transport_socket_cleanup": true,
+    "physical_thor_initial_world_response_observed": false,
+    "physical_thor_authoritative_world_rendered": false,
+    "borrowed_renderer_identity_host_qualified": true,
+    "occupied_renderer_output_guard_host_gles_qualified": true,
+    "accepted_apk_rebuilt": false,
+    "old_qualifiers_replayed": false
+  },
+  "current_boundaries": [
+    "NativeClientActivity network handle operations run on the separate networkWorker; preview render remains on renderWorker and has no InteropNative result-to-world publication path.",
+    "An INITIAL_OBSERVED terminal report only stops protocol service; it does not provide a production snapshot or switch the local preview to world mode.",
+    "Presentation binds the actual borrowed CohRenderer pointer; the caller must keep it alive through Stop. This cannot authenticate physical EGL display/context/window/thread or prevent reused-address identity.",
+    "The application EGL proposal requires a genuine root-supplied exclusive display/mode lease plus TAKE-owned ANativeWindow and completed prior fallback cleanup before physical driver operations.",
+    "Current material/current-generation and complete selected-actor production inputs remain missing; renderer fixture attestations cannot supply the nine world prerequisites.",
+    "96 MiB is a named aggregate reservation policy; platform, allocator, RSS and GPU fit are not established by these records."
+  ],
+  "next_actions": [
+    "Independently review the frozen C fragment compatibility changes for retained compressed-buffer ownership, observer callback lifetime and unchanged Android mode/cleanup/report boundaries.",
+    "After original ALLENTS receipt and complete actor/resource production are admitted, root must supply the typed app exclusive-mode/window producer; then implement the isolated app-EGL owner described by the existing proposal.",
+    "Only root should coordinate a new Thor package when a meaningful integrated protocol/world change exists; preserve accepted Combined 0.1.8 and physical reports."
+  ],
+  "gate25_passed": false,
+  "gate26_passed": false,
+  "gate27_passed": false
+}

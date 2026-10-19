@@ -33,7 +33,7 @@ jobs:
         \ ValueError('OPTIMIZED_SOURCE_GATE')\nassert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
         \ and os.environ['GITHUB_REF']=='refs/heads/native-android'\nroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\n\
         assert head==os.environ['GITHUB_SHA']\nmanifest=root/'native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json'\n\
-        raw=manifest.read_bytes();assert hashlib.sha256(raw).hexdigest()=='a74966b21aa044d87bd1ffd73e017295a0521e65a4088edac354779c47d244fa'\n\
+        raw=manifest.read_bytes();assert hashlib.sha256(raw).hexdigest()=='8f83f7549497d5f8314107b6d99d35dae91fbe14a0adfa3ef58c5dae4c1d271e'\n\
         value=json.loads(raw);assert value['schema']=='coh-server-initial-workflow-source-pins-v1'\npins=dict(value['source_sha256'])\n\
         for name in ['native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json','.github/workflows/native-server-initial-observer.yml']:\n\
         \ pins[name]=hashlib.sha256((root/name).read_bytes()).hexdigest()\nentries=subprocess.check_output(['git','ls-tree','-r','-z','HEAD'])\n\
@@ -221,7 +221,7 @@ jobs:
         \ ValueError('OPTIMIZED_SOURCE_GATE')\nassert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
         \ and os.environ['GITHUB_REF']=='refs/heads/native-android'\nroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\n\
         assert head==os.environ['GITHUB_SHA']\nmanifest=root/'native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json'\n\
-        raw=manifest.read_bytes();assert hashlib.sha256(raw).hexdigest()=='a74966b21aa044d87bd1ffd73e017295a0521e65a4088edac354779c47d244fa'\n\
+        raw=manifest.read_bytes();assert hashlib.sha256(raw).hexdigest()=='8f83f7549497d5f8314107b6d99d35dae91fbe14a0adfa3ef58c5dae4c1d271e'\n\
         value=json.loads(raw);assert value['schema']=='coh-server-initial-workflow-source-pins-v1'\npins=dict(value['source_sha256'])\n\
         for name in ['native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json','.github/workflows/native-server-initial-observer.yml']:\n\
         \ pins[name]=hashlib.sha256((root/name).read_bytes()).hexdigest()\nentries=subprocess.check_output(['git','ls-tree','-r','-z','HEAD'])\n\
@@ -1050,7 +1050,7 @@ jobs:
         \ ValueError('OPTIMIZED_SOURCE_GATE')\nassert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android'\
         \ and os.environ['GITHUB_REF']=='refs/heads/native-android'\nroot=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()\n\
         assert head==os.environ['GITHUB_SHA']\nmanifest=root/'native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json'\n\
-        raw=manifest.read_bytes();assert hashlib.sha256(raw).hexdigest()=='a74966b21aa044d87bd1ffd73e017295a0521e65a4088edac354779c47d244fa'\n\
+        raw=manifest.read_bytes();assert hashlib.sha256(raw).hexdigest()=='8f83f7549497d5f8314107b6d99d35dae91fbe14a0adfa3ef58c5dae4c1d271e'\n\
         value=json.loads(raw);assert value['schema']=='coh-server-initial-workflow-source-pins-v1'\npins=dict(value['source_sha256'])\n\
         for name in ['native-android/combined-client/diagnostics/server-initial-workflow-20261018/source-pins.json','.github/workflows/native-server-initial-observer.yml']:\n\
         \ pins[name]=hashlib.sha256((root/name).read_bytes()).hexdigest()\nentries=subprocess.check_output(['git','ls-tree','-r','-z','HEAD'])\n\

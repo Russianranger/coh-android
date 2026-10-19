@@ -1,0 +1,131 @@
+{
+  "accepted_qualifiers_reexecuted": false,
+  "claim_limits": [
+    "FINAL_RETURN proves original synchronous pktSend return only; raw zero may accompany fragmentation and cannot establish queue or socket transmission.",
+    "ACTIVE identifies the last persisted checkpoint only; absence of a later persisted event does not prove no later code executed.",
+    "Server ledger and native receiver artifacts establish their named roles only; neither is device Map equivalence or ordinary authenticated world acceptance.",
+    "Windows inert profile/HKCU qualification remains separate from same-realm original service readiness."
+  ],
+  "compiler_reexecuted": false,
+  "current_runtime_recipe": {
+    "compile_target": "MapServer",
+    "compile_workflow_trigger": "[server-initial-observer]",
+    "configuration": "OptDebug",
+    "current_runtime_wrapper_used": true,
+    "generator": "Visual Studio 18 2026",
+    "historical_runtime_revision": "9c29e08c8d7e0ab38cff00f2997c39738a56ad07",
+    "new_PE_i386_required": true,
+    "new_compile_same_run_attempt_required": true,
+    "no_object_or_static_library_closure_available_for_relink_only": true,
+    "push_path_filter": [
+      ".github/workflows/native-server-initial-observer.yml"
+    ],
+    "push_requires_workflow_bytes_change_in_addition_to_markers": true,
+    "raw_manifest_sources": 775,
+    "skip_unchanged_Android_trigger": "[server-initial-map-only]",
+    "source_files": {
+      ".github/workflows/native-server-initial-observer.yml": {
+        "bytes": 134890,
+        "sha256": "5f52ec8ffef966eb0d7c9eba1a6a03ac68df5b8079613cffb92ddfc576e13e07"
+      },
+      "native-android/combined-client/diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/receive_admission.py": {
+        "bytes": 10896,
+        "sha256": "5e66af1f9a56ee38e0073cf6a1b5cf707d84845d1549fb1545802a104d05bb39"
+      },
+      "native-android/combined-client/diagnostics/server-initial-workflow-20261018/admit_workflow_artifact.py": {
+        "bytes": 6247,
+        "sha256": "bb91d24fabb858ee706e1d007168bd25eeec2075cba360d31dc5950d35d7e04f"
+      },
+      "native-android/tools/server-initial-observer-20261018/recipe.py": {
+        "bytes": 21612,
+        "sha256": "c4173c0e7f092c97a9af39b2b1600076a982d36e3e3cc4a23d7ba8d01e599f43"
+      },
+      "native-android/tools/server-initial-runtime-20261018/ledger.py": {
+        "bytes": 7020,
+        "sha256": "296e93cce85e02b4242f4205b55edb6a55a70dc33a5ed393d94d3584369e1aca"
+      },
+      "native-android/tools/server-initial-runtime-20261018/runtime.py": {
+        "bytes": 21164,
+        "sha256": "7788bf2c1dd8211d387a7beae79e517477efe9eb5ffae6b1f1c804061053a601"
+      }
+    },
+    "source_raw_and_Git_admission_before_compile_and_runtime": true,
+    "whole_original_input_admission_before_and_after_compile": true
+  },
+  "next_actions": [
+    "Integrate smallest observer macro-compatible repair and successor source-pins.",
+    "Push native-android with regenerated workflow digest bytes and server-initial-observer plus server-initial-map-only commit markers; push paths matches only the workflow itself.",
+    "Admit changed compiler PE and run one same-owner private original-server transaction.",
+    "Inspect fixed server ledger and native receive counters; preserve actual result before selecting next correction."
+  ],
+  "retained_failure": {
+    "artifact_id": 12154344394,
+    "column": 4,
+    "compiler": "MSVC 19.51.36260.0",
+    "configure_completed": true,
+    "error_code": "C2124",
+    "error_count": 1,
+    "files": {
+      "fresh-groups-build-logs/build.log": {
+        "bytes": 28356,
+        "sha256": "199eec9e344c2e9721b4cd63f6a5eb4e6ac6ff49724923a439fe29f311b8ab55"
+      },
+      "fresh-groups-build-logs/configure.log": {
+        "bytes": 13921,
+        "sha256": "91a2cf7bf35ba4fece8f72d6fd06b1deb90bc91fc0daaca168b1a1ee928177be"
+      },
+      "fresh-groups-inputs-before.json": {
+        "bytes": 1073,
+        "sha256": "3cff6183885dc1a466299ace89e7a8fc49b568beb83fdc73579a87ab6b41e81e"
+      },
+      "fresh-groups-source-admission.json": {
+        "bytes": 125406,
+        "sha256": "a6f21d8aaf9dd45a4c882fa2b77eac389b2505f097fadf3275f8f41d57bff66e"
+      }
+    },
+    "line": 54,
+    "platform": "Win32",
+    "run_id": 39177526093,
+    "source": "MapServer/src/group/coh_server_initial_ledger.c",
+    "source_staging_not_reopened": true
+  },
+  "review_kind": "source-and-retained-compiler-log-review",
+  "reviewer": "worker-D",
+  "runtime_executed": false,
+  "schema": "coh-server-initial-deployment-recovery-review-v1",
+  "source_revision": "c624352e889749f293a559003d5ae9b01a258b1c",
+  "unchanged_reuse": {
+    "db_donor": {
+      "artifact_id": 11772107531,
+      "run_id": 38302653186,
+      "source_revision": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+      "zip_bytes": 50269915,
+      "zip_sha256": "9c4ba6faafb1a62cbdd0cda45b435de1ee8358b25dc65ef4842bfa2189b70d3b"
+    },
+    "fixture": {
+      "FIXTURE_ARTIFACT_ID": "12117765534",
+      "FIXTURE_RECEIPT_SHA256": "ecd51a26955f8462e6c1644b065f11fc6d018d39b96633110a36698a4cbf7b51",
+      "FIXTURE_REVISION": "fd213266f1b6665acece877dabb7dab6663e647c",
+      "FIXTURE_RUN_ID": "39074781817",
+      "FIXTURE_ZIP_BYTES": "580433",
+      "FIXTURE_ZIP_SHA256": "5ba50e1620a64a0a4be971f6481bb1d1af7e841200873058f58f3e301d0ce45b",
+      "FRESH_OBSERVER_ARTIFACT_ID": "12125997958",
+      "FRESH_OBSERVER_RECEIPT_SHA256": "28d61fc30718391fc5dd1a269f468b0f2aa83c33abe5d60413104dafd0b28f91",
+      "FRESH_OBSERVER_REVISION": "d9adf2b431a039357f8bfe878d3d0da991a81b19",
+      "FRESH_OBSERVER_RUN_ID": "39099315295",
+      "FRESH_OBSERVER_ZIP_BYTES": "6784966",
+      "FRESH_OBSERVER_ZIP_SHA256": "cd27cda26fae3bf5ab76889f82c2b467cc97423c260e69c997a62cff9756156b"
+    },
+    "native_receive": {
+      "current_compiler_dependency_closure_must_remain_equal": true,
+      "fragment_source_changes_require_new_native_receive_role_before_runtime": true,
+      "native_receipt": {
+        "bytes": 207920,
+        "sha256": "304860cd0fc52743c3e81f977bc7043f59e6fbff5689d41d79719b564058080b"
+      },
+      "qualified_folder": "qualified02"
+    },
+    "published_Thor_APK_preserved": true
+  },
+  "world_authority": false
+}

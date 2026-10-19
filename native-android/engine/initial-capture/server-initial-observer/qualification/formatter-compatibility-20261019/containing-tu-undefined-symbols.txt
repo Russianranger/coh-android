@@ -1,0 +1,4 @@
+                 U __stack_chk_fail
+                 U memset
+                 U quick_snprintf
+                 U snprintf

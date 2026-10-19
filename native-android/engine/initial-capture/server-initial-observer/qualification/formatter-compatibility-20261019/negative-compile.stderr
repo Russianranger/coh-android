@@ -1,0 +1,12 @@
+In file included from <command-line>:
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/server-initial-observer/qualification/formatter-compatibility-20261019/unparenthesized-ledger.c: In function ‘coh_sio_json’:
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/server-initial-observer/qualification/formatter-compatibility-20261019/exact-original-format-macros.h:4:61: error: division by zero [-Werror=div-by-zero]
+    4 | #define ARRAY_SIZE_CHECKED(n)                    (sizeof(n) / ((sizeof(n)==sizeof(void*) || sizeof(n)==0)?0:sizeof((n)[0])))
+      |                                                             ^
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/server-initial-observer/qualification/formatter-compatibility-20261019/exact-original-format-macros.h:7:28: note: in expansion of macro ‘ARRAY_SIZE_CHECKED’
+    7 |         snprintf_s(buffer, ARRAY_SIZE_CHECKED(buffer), maxlen, __VA_ARGS__)
+      |                            ^~~~~~~~~~~~~~~~~~
+/workspace/scratch/6400a2d75800/coh-android/native-android/engine/initial-capture/server-initial-observer/qualification/formatter-compatibility-20261019/unparenthesized-ledger.c:57:4: note: in expansion of macro ‘snprintf’
+   57 |  n=snprintf(out,cap,"{\"schema\":\"coh-server-initial-ledger-v1\",\"refusal\":\"%s\",\"stop\":\"%s\",\"stage\":%u,\"reached_mask\":%u,\"last_ready\":%u,\"ready_seen_mask\":%u,\"pkt_send_result\":%d,\"final_packet_bits\":%u,"
+      |    ^~~~~~~~
+cc1: all warnings being treated as errors

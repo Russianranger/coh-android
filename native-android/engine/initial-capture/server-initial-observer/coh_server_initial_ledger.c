@@ -51,7 +51,10 @@ static const char*coh_sio_core_boolean(unsigned v){return v?"true":"false";}
 int coh_sio_json(const CohSIOReport*r,char*out,size_t cap){
  static const char*refusals[]={"NONE","OWNER","THREAD","ORDER","LIMIT","VALUE","PACKET","SINK"};static const char*stops[]={"ACTIVE","FINAL_RETURN","REFUSED"};int n;
  if(!r||!out||cap<COH_SIO_MAX_JSON||(unsigned)r->refusal>COH_SIO_SINK||(unsigned)r->stop>COH_SIO_REFUSED)return 0;
- n=snprintf(out,cap,"{\"schema\":\"coh-server-initial-ledger-v1\",\"refusal\":\"%s\",\"stop\":\"%s\",\"stage\":%u,\"reached_mask\":%u,\"last_ready\":%u,\"ready_seen_mask\":%u,\"pkt_send_result\":%d,\"final_packet_bits\":%u,"
+ /* Original stdtypes.h wraps snprintf with an array-only size check. This
+  * API has an explicit pointer/capacity pair, so call the C99 CRT function
+  * without expanding that function-like macro in the containing server TU. */
+ n=(snprintf)(out,cap,"{\"schema\":\"coh-server-initial-ledger-v1\",\"refusal\":\"%s\",\"stop\":\"%s\",\"stage\":%u,\"reached_mask\":%u,\"last_ready\":%u,\"ready_seen_mask\":%u,\"pkt_send_result\":%d,\"final_packet_bits\":%u,"
  "\"diagnostic_only\":true,\"valid\":%s,\"groups_owner_bound\":%s,\"owner_retired\":%s,\"dispatch_entered\":%s,\"dispatch_state_written\":%s,\"full_sender_entered\":%s,\"full_update_argument\":%s,\"viewed_entity_matches_owner\":%s,\"allents_header_written\":%s,\"character_entered\":%s,\"character_core_entered\":%s,\"character_core_returned\":%s,\"character_returned\":%s,\"packet_attached\":%s,\"finish_entity_seen\":%s,\"final_packet_same\":%s,\"pkt_send_called\":%s,\"pkt_send_returned\":%s,\"last_sent_self\":%s,\"final_packet_compress\":%s,\"final_packet_ordered\":%s,\"final_packet_reliable\":%s,"
  "\"tick_seen\":%u,\"tick_selected\":%u,\"backpressure_entered\":%u,\"backpressure_passed\":%u,\"backpressure_blocked\":%u,\"mapxfer_entered\":%u,\"mapxfer_returned\":%u,"
  "\"packet_queue_acceptance_established\":false,\"socket_send_established\":false,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false}\n",

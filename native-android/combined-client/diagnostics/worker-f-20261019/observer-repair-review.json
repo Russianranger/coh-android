@@ -1,0 +1,87 @@
+{
+  "accepted_release_modified": false,
+  "artifact": {
+    "bytes": 40990,
+    "sha256": "7ec7ccc40f8162a1dd6d8812305ae62e53b0c98b0a0a3b0a03fd9e9d440d0fde"
+  },
+  "artifact_CRC_pass": true,
+  "artifact_id": 12154344394,
+  "artifact_members": [
+    {
+      "bytes": 28356,
+      "name": "fresh-groups-build-logs/build.log",
+      "sha256": "199eec9e344c2e9721b4cd63f6a5eb4e6ac6ff49724923a439fe29f311b8ab55"
+    },
+    {
+      "bytes": 13921,
+      "name": "fresh-groups-build-logs/configure.log",
+      "sha256": "91a2cf7bf35ba4fece8f72d6fd06b1deb90bc91fc0daaca168b1a1ee928177be"
+    },
+    {
+      "bytes": 125406,
+      "name": "fresh-groups-source-admission.json",
+      "sha256": "a6f21d8aaf9dd45a4c882fa2b77eac389b2505f097fadf3275f8f41d57bff66e"
+    },
+    {
+      "bytes": 1073,
+      "name": "fresh-groups-inputs-before.json",
+      "sha256": "3cff6183885dc1a466299ace89e7a8fc49b568beb83fdc73579a87ab6b41e81e"
+    }
+  ],
+  "changed_runtime_semantics": "Function-like snprintf macro bypass only; formatter, explicit pointer/capacity, minimum 4096 bound, return-length check, schema, refusal flags, and original server hook semantics are unchanged. No global macro is undefined.",
+  "checkpoint": "c624352e889749f293a559003d5ae9b01a258b1c",
+  "compiler_failure_cause": "Original stdtypes.h snprintf expands ARRAY_SIZE_CHECKED(out), whose sizeof(pointer)==sizeof(void*) branch produces denominator 0. No original intentional arithmetic exists at the ledger source call.",
+  "failed_workflow": 39177526093,
+  "gates_25_27": "OPEN",
+  "original_server_runtime_executed": false,
+  "original_world_state_accepted": false,
+  "passed": true,
+  "portable_ledger_controls": 105,
+  "portable_macro_model_runs": {
+    "checkpoint-original-macro": {
+      "build_returncode": 1,
+      "build_stderr_sha256": "276a0a97097655bc7a8f183373242f06812679a4db598c65c6359a8dbc3b0175"
+    },
+    "checkpoint-portable": {
+      "binary": {
+        "bytes": 21080,
+        "sha256": "2391a0b1a7dd4dccdcff75568f03c8e670ab2c071d55469aa416a451c76c8eab"
+      },
+      "build_returncode": 0,
+      "build_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runtime_returncode": 0,
+      "stdout_sha256": "e62bc8b3790caf6043ed534b6be97f40aa0efa3aa52c626c5fe9cb3f396c4452"
+    },
+    "repair-original-macro": {
+      "binary": {
+        "bytes": 21080,
+        "sha256": "6b272921d91e6a03d085b33e7fd568446599593ceed83aac1ad0454cd8f71ca0"
+      },
+      "build_returncode": 0,
+      "build_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runtime_returncode": 0,
+      "stdout_sha256": "e62bc8b3790caf6043ed534b6be97f40aa0efa3aa52c626c5fe9cb3f396c4452"
+    },
+    "repair-portable": {
+      "binary": {
+        "bytes": 21080,
+        "sha256": "236fcada2add7025ca1bc72c0e062e90dfdb6d0dacf65bfed247fff64f5ee4a1"
+      },
+      "build_returncode": 0,
+      "build_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runtime_returncode": 0,
+      "stdout_sha256": "e62bc8b3790caf6043ed534b6be97f40aa0efa3aa52c626c5fe9cb3f396c4452"
+    }
+  },
+  "portable_output_byte_equal_to_checkpoint": true,
+  "real_Windows_compilation_executed_by_this_review": false,
+  "repair_source": {
+    "bytes": 9016,
+    "sha256": "e3d8dde6158cfb30c9f30f4b62f1c0dd297831dd209a965bbf458d7b40b744c1"
+  },
+  "schema": "coh-independent-observer-repair-review-v1",
+  "source_gate_claims_runtime": false,
+  "source_gate_exact_checkpoint_git_pins_verified": 777,
+  "source_gate_source_mismatches": [],
+  "whole_process_RSS_or_GPU_fit_verified": false
+}

@@ -1,0 +1,139 @@
+{
+  "schema": "coh-worker-b-resource-recovery-checkpoint-v1",
+  "passed": true,
+  "checkpoint_head": "c624352e889749f293a559003d5ae9b01a258b1c",
+  "integration_branch": "native-android",
+  "scope": "Read-only recovery and existing resource-proof source/retention admission; no native, original-server, Android or GPU tests executed",
+  "previous_source_comparison": [
+    {
+      "root": "native-android/engine/world-render-adapter",
+      "previous_regular_files_checked": 0,
+      "differing_paths": [],
+      "old_only_paths": [],
+      "previous_root_exists": true,
+      "comparison_available": false
+    },
+    {
+      "root": "native-android/engine/scenecatalog",
+      "previous_regular_files_checked": 0,
+      "differing_paths": [],
+      "old_only_paths": [],
+      "previous_root_exists": true,
+      "comparison_available": false
+    },
+    {
+      "root": "native-android/engine/basedetail-resources",
+      "previous_regular_files_checked": 0,
+      "differing_paths": [],
+      "old_only_paths": [],
+      "previous_root_exists": true,
+      "comparison_available": false
+    },
+    {
+      "root": "native-android/engine/costume-inputs",
+      "previous_regular_files_checked": 0,
+      "differing_paths": [],
+      "old_only_paths": [],
+      "previous_root_exists": true,
+      "comparison_available": false
+    },
+    {
+      "root": "native-android/engine/costume-export",
+      "previous_regular_files_checked": 0,
+      "differing_paths": [],
+      "old_only_paths": [],
+      "previous_root_exists": true,
+      "comparison_available": false
+    },
+    {
+      "root": "native-android/engine/costume-import",
+      "previous_regular_files_checked": 0,
+      "differing_paths": [],
+      "old_only_paths": [],
+      "previous_root_exists": true,
+      "comparison_available": false
+    },
+    {
+      "root": "native-android/engine/costume-tree",
+      "previous_regular_files_checked": 0,
+      "differing_paths": [],
+      "old_only_paths": [],
+      "previous_root_exists": true,
+      "comparison_available": false
+    },
+    {
+      "root": "native-android/engine/costume-builder",
+      "previous_regular_files_checked": 0,
+      "differing_paths": [],
+      "old_only_paths": [],
+      "previous_root_exists": true,
+      "comparison_available": false
+    }
+  ],
+  "proof_source_and_retention_admission": [
+    {
+      "receipt": "native-android/engine/world-render-adapter/qualification/namespace-lookup-20261018/host.json",
+      "receipt_bytes": 9416,
+      "receipt_sha256": "bbcfef0ad9660a46929688926c82f48e24a8a260e09e7e0f040bc4203e67fa8e",
+      "current_raw_source_pins_checked": 22,
+      "current_raw_source_pin_mismatches": [],
+      "retained_files": [
+        {
+          "path": "native-android/engine/world-render-adapter/qualification/namespace-lookup-20261018/build-run-logs.json.gz",
+          "bytes": 4340,
+          "sha256": "f7054b097a4d845c8f0df84262b269267e049932e1a12bf6ededa8078a1b91f3",
+          "recorded_bytes_and_sha256_match": true
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/qualification/namespace-lookup-20261018/executed-artifacts.tar.gz",
+          "bytes": 233465,
+          "sha256": "f132baf3a0cc9dfefce4555ec5f373e3c3077be50ab240f71c0ffe7f6383cac4",
+          "recorded_bytes_and_sha256_match": true
+        },
+        {
+          "path": "native-android/engine/world-render-adapter/qualification/namespace-lookup-20261018/host.json",
+          "bytes": 9416,
+          "sha256": "bbcfef0ad9660a46929688926c82f48e24a8a260e09e7e0f040bc4203e67fa8e",
+          "recorded_bytes_and_sha256_match": true
+        }
+      ]
+    },
+    {
+      "receipt": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/qualification.json",
+      "receipt_bytes": 39767,
+      "receipt_sha256": "32d6fb38051889b0ee2bd1a98229891d0f602662bcfc57ee746e30886c0a3cf1",
+      "current_raw_source_pins_checked": 50,
+      "current_raw_source_pin_mismatches": [],
+      "retained_files": [
+        {
+          "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/pre-cache-branch-experiment.tar.gz",
+          "bytes": 527658,
+          "sha256": "86e407388d803b177a3a43fafcf0acb8afea0fbc4b5da756f989c952ba74bf79",
+          "recorded_bytes_and_sha256_match": true
+        },
+        {
+          "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/cache-guard-mutation-compile-development.tar.gz",
+          "bytes": 6263,
+          "sha256": "d3d0b81b68c7af7bdce3ea6cf2d1681af44c00890a5d181b3c11bfac41c17be6",
+          "recorded_bytes_and_sha256_match": true
+        },
+        {
+          "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/executed-native-artifacts.tar.gz",
+          "bytes": 224966,
+          "sha256": "b49068734dc4c6163ee59cc4febec0a26cccd47419846d49e36d496069366b73",
+          "recorded_bytes_and_sha256_match": true
+        }
+      ]
+    }
+  ],
+  "new_shipping_source_changes": false,
+  "qualified_suites_reexecuted": false,
+  "new_resource_archive_downloaded": false,
+  "original_current_CLIENT_namespace_observed": false,
+  "complete_material_or_player_appearance_producer_observed": false,
+  "whole_process_RAM_fit_claimed": false,
+  "gates_25_26_27_promoted": false,
+  "decision": "Preserve current qualified bounded resource sources. Prior directory skeletons provide no resource bytes to compare or recover. Current CLIENT inventory/generation and complete effective TexBind/material/appearance producer remain absent from available resource evidence; do not fabricate these inputs or activate shipping publication.",
+  "prior_source_recovery_available": false,
+  "previous_source_comparison_scope": "Compared roots currently contain directory skeletons only, zero regular files. No byte equality or absence of unpublished changes is inferred."
+}
