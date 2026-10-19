@@ -1,0 +1,280 @@
+{
+  "schema": "coh-body-runtime-provenance-witness-host-v1",
+  "source_head": "7030870ebce6fe441d0b0369e87fc337ffb81a52",
+  "scope": "Host new read-only producer, exact original BodyPart/BoneId declarations + getter + staged entry, fixture loader routing and POSIX sink. Prepared original Map overlay is NOT target compiled/executed.",
+  "source_overlay": {
+    "schema": "coh-nonshipping-body-witness-overlay-v1",
+    "source_sha256": {
+      "Common/gameComm/initCommon.c": "96b7796fa49be78144b6ff5014422dc8067c9931dcf7717e39d8d1a7008f04a8",
+      "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+      "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+      "Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+      "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+    },
+    "source_closure_id": "e1ed5b23acbafb6f66fd77a6cd51d1a5de900d8b263422e60c5425859c0d304f",
+    "metadata": {
+      "build_sha256": "0101010101010101010101010101010101010101010101010101010101010101",
+      "profile_sha256": "0202020202020202020202020202020202020202020202020202020202020202",
+      "run_sha256": "0303030303030303030303030303030303030303030303030303030303030303"
+    },
+    "overlay_sha256": {
+      "Common/gameData/BodyPart.c": "48fea600984138d10af4354a35c3a700314c51528616ddc9930d44f23868028b",
+      "libs/UtilitiesLib/src/utils/textparser.c": "1a81b2e710ae6a5d45a1cf609f98c2faddbc4298e2e83b650782122230222cc2",
+      "MapServer/src/svr/svr_init.c": "3ee53a2a90e3d4ce1a845edbeaeda223d3240e95348fed71d8cff10b3bc1ccd0",
+      "Common/gameData/coh_body_witness_configuration.inc": "9027267e1ee5028ff2fb1ab406b8771f2ad290c660af52857376fe8570bb4e3f",
+      "Common/gameData/coh_source_body_witness.inc": "8d1b2f55b149f720451ec5136ecdc8e43f2f03672c771fdebaaea6ba9818e44d",
+      "Common/gameData/coh_source_body_witness_sink.inc": "99d88ecaaa9f5e7c4dbc903cbe13e77d42282a6d22731930f355aae98bbb4a2e"
+    },
+    "runtime_executed": false,
+    "server_compiled": false,
+    "runtime_generation_admitted": false,
+    "actor_or_ack_authority": false,
+    "enabled_by_default": false,
+    "source_unchanged": true,
+    "maximum_body_witness_payload_bytes": 65536,
+    "stack_reserve_bytes": 4096,
+    "allocations": 0,
+    "missing_boundary": "Actual instrumented source-process execution, executable/profile/run attestation, coherent selected Map/session and original load-generation owner; exact selected cache bytes/freshness or shared-segment provenance remain independently required."
+  },
+  "overlay_composition": {
+    "existing_costume_export_composed": true,
+    "body_snapshot_before_costume_export": true,
+    "generation_in_body_metadata": false,
+    "negative_stage_controls": 9
+  },
+  "original_getter_sha256_lf": "7657fea302b88e54666818cd1e7302b6b167db7a35f23d5fb595f23c5df8d677",
+  "original_entry_sha256_lf": "cfae2131f6a845feb6040043c30305086ed5a128c535d2e4bedc70909b8ee3a8",
+  "native": {
+    "release": {
+      "passed": true,
+      "checks": 2542,
+      "source_load_transactions": 291,
+      "repeated_create_destroy": 256,
+      "owned_static_bytes": 65860,
+      "owned_heap_bytes": 0,
+      "stack_reserve_bytes": 4096,
+      "open_calls": 269,
+      "write_calls": 310,
+      "close_calls": 267,
+      "unlink_calls": 3,
+      "cleanup_complete": true,
+      "current_map_observed": false,
+      "generation_admitted": false,
+      "actor_or_ack_authority": false,
+      "binary_sha256": "d943f2136077731a3400d63d9f667b553f55c6c858bbf1e8e81052753346f7f7",
+      "intentional_unlink_failure_marker_verified": true,
+      "independent_payloads": {
+        "min": {
+          "bytes": 280,
+          "sha256": "257c67e64f1c3a073e59acd057a1785e403712ab8992a583cc6feb7c5c7dd004",
+          "rows": 1,
+          "all_fields_independently_matched": true
+        },
+        "max": {
+          "bytes": 38748,
+          "sha256": "0b30532207551177060560f905a316b44fe5bf2f544f4386062db6beb170694d",
+          "rows": 29,
+          "all_fields_independently_matched": true
+        }
+      }
+    },
+    "asan": {
+      "passed": true,
+      "checks": 2542,
+      "source_load_transactions": 291,
+      "repeated_create_destroy": 256,
+      "owned_static_bytes": 65860,
+      "owned_heap_bytes": 0,
+      "stack_reserve_bytes": 4096,
+      "open_calls": 269,
+      "write_calls": 310,
+      "close_calls": 267,
+      "unlink_calls": 3,
+      "cleanup_complete": true,
+      "current_map_observed": false,
+      "generation_admitted": false,
+      "actor_or_ack_authority": false,
+      "binary_sha256": "b9de85c59423253e3bfbf3a87403087bde057416dff95409cafa50323ac6dd02",
+      "intentional_unlink_failure_marker_verified": true,
+      "independent_payloads": {
+        "min": {
+          "bytes": 280,
+          "sha256": "257c67e64f1c3a073e59acd057a1785e403712ab8992a583cc6feb7c5c7dd004",
+          "rows": 1,
+          "all_fields_independently_matched": true
+        },
+        "max": {
+          "bytes": 38748,
+          "sha256": "0b30532207551177060560f905a316b44fe5bf2f544f4386062db6beb170694d",
+          "rows": 29,
+          "all_fields_independently_matched": true
+        }
+      }
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 2542,
+      "source_load_transactions": 291,
+      "repeated_create_destroy": 256,
+      "owned_static_bytes": 65860,
+      "owned_heap_bytes": 0,
+      "stack_reserve_bytes": 4096,
+      "open_calls": 269,
+      "write_calls": 310,
+      "close_calls": 267,
+      "unlink_calls": 3,
+      "cleanup_complete": true,
+      "current_map_observed": false,
+      "generation_admitted": false,
+      "actor_or_ack_authority": false,
+      "binary_sha256": "1ab5d5126d65f82b0067046d2f09165294e060ab8bd9cd9a83e3728e3909ef7d",
+      "intentional_unlink_failure_marker_verified": true,
+      "independent_payloads": {
+        "min": {
+          "bytes": 280,
+          "sha256": "257c67e64f1c3a073e59acd057a1785e403712ab8992a583cc6feb7c5c7dd004",
+          "rows": 1,
+          "all_fields_independently_matched": true
+        },
+        "max": {
+          "bytes": 38748,
+          "sha256": "0b30532207551177060560f905a316b44fe5bf2f544f4386062db6beb170694d",
+          "rows": 29,
+          "all_fields_independently_matched": true
+        }
+      }
+    }
+  },
+  "compiler_sha256": "e412d6c932acaaea35c743bc158d4ba2400ca0e3df66df406a872b2ce0f8601b",
+  "memory": {
+    "producer_owned_static_bytes": 65860,
+    "producer_heap_allocations": 0,
+    "producer_stack_reserve_bytes": 4096,
+    "all_selected_frame_sum_conservative_bytes": 432,
+    "frames": [
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:163:12:ParseBoneNames",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:199:13:unchanged",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:201:13:filename",
+        "bytes": 32,
+        "kind": "dynamic,bounded"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:187:13:fixture_init",
+        "bytes": 160,
+        "kind": "dynamic,bounded"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness.inc:30:13:coh_body_witness_put.part.0",
+        "bytes": 32,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:202:13:setoutput",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness.inc:76:13:coh_body_witness_begin.constprop",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness.inc:38:13:coh_body_witness_string",
+        "bytes": 48,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness.inc:39:17:coh_body_witness_serialize",
+        "bytes": 176,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness.inc:99:13:coh_body_witness_end",
+        "bytes": 32,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:147:5:GetBodyPartCount",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness.inc:85:6:coh_source_body_witness_route",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness.inc:93:5:coh_source_body_witness_binary",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness.inc:94:6:coh_source_body_witness_located",
+        "bytes": 8,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/coh_source_body_witness_sink.inc:40:5:coh_source_body_witness_snapshot_startup",
+        "bytes": 80,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:218:13:startup_expect",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:166:6:bpReadBodyPartFiles",
+        "bytes": 16,
+        "kind": "static"
+      },
+      {
+        "function": "/tmp/body-witness-frozen/producer-fixture.c:219:5:main",
+        "bytes": 66256,
+        "kind": "dynamic,bounded"
+      }
+    ],
+    "borrowed_engine_body_owner_not_measured": true,
+    "whole_Map_RSS_or_PSS": "unavailable",
+    "device_RSS_or_PSS": "unavailable",
+    "external_libc_sanitizer_stack_or_allocator_closure": false,
+    "leak_sanitizer_executed": false
+  },
+  "passed": true,
+  "source_stable_before_after": true,
+  "input_sha256": {
+    "native-android/engine/costume-export/test_body_witness.c": "736ccef64daab633a402f3b469930e30efa18d249155b10098b60a69039e86c5",
+    "native-android/engine/costume-export/source_body_witness_sink.inc": "99d88ecaaa9f5e7c4dbc903cbe13e77d42282a6d22731930f355aae98bbb4a2e",
+    "native-android/engine/costume-export/source_body_witness.inc": "8d1b2f55b149f720451ec5136ecdc8e43f2f03672c771fdebaaea6ba9818e44d",
+    "native-android/engine/costume-export/check_body_witness.py": "4cfeca9cd2f5fc385dd96c6837ca7cc1fe6a04a1ec2f71a0753eb6922582ef50",
+    "native-android/engine/costume-export/stage_body_witness.py": "133ca9877e554f5c2d135458708c8b8c7c9906aad2f097780ba55350f158a99e",
+    "native-android/engine/costume-export/BODY_RUNTIME_WITNESS.md": "44796f7fc0a9a4c20629d571566eab9c69565879834c9a7c0b4d87eb0ac39806",
+    ".github/workflows/native-body-provenance-witness.yml": "235fcddfaff4c40711465cd8e362787e82edbc2d462533fb8e73d3097928e9b5",
+    "native-android/engine/costume-export/stage.py": "66d5f63da01ddc551aa73128f06316efa440e36c9f31d0eda35bd74cc804adbd",
+    "native-android/engine/costume-export/source-pins.json": "cad5176eb14c4753db7cf670be1f48ef26c524b44ca4f2783074d932b2fa29b4",
+    "native-android/engine/costume-export/../body-catalog/struct-clear-source-pins.json": "1613722d1f313ce9e1de5a19a4182ce90e75ea7c986fbebec5eb9f2dafdbc87c",
+    "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17"
+  },
+  "current_Map_runtime_observed": false,
+  "actual_Map_target_compiled": false,
+  "actual_Map_runtime_executed": false,
+  "runtime_body_catalog_admitted": false,
+  "dictionary_generation_admitted": false,
+  "complete_character": false,
+  "actor_authority": false,
+  "application_ACK": false,
+  "android_built": false,
+  "physical_Thor_test": false
+}

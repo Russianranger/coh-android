@@ -1,0 +1,46 @@
+name: Native nonshipping BodyPart provenance witness
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-body-provenance-witness.yml
+      - native-android/engine/costume-export/*body_witness*
+      - native-android/engine/costume-export/stage.py
+      - native-android/engine/costume-export/source-pins.json
+      - native-android/engine/body-catalog/body_part_loader_provider.py
+      - native-android/engine/body-catalog/struct-clear-source-pins.json
+      - upstream/ouroboros/Common/gameData/BodyPart.c
+      - upstream/ouroboros/Common/gameData/BodyPart.h
+      - upstream/ouroboros/Common/seq/bones.h
+      - upstream/ouroboros/Common/gameData/costume_data.c
+      - upstream/ouroboros/Common/gameComm/initCommon.c
+      - upstream/ouroboros/MapServer/src/svr/svr_init.c
+      - upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-body-provenance-witness-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  body-provenance-witness:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Qualify host producer and fresh nonshipping overlay only
+        run: |
+          python3 native-android/engine/costume-export/check_body_witness.py --output "$RUNNER_TEMP/body-witness-host.json" --work "$RUNNER_TEMP/body-witness-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-body-provenance-witness-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/body-witness-host.json
+            ${{ runner.temp }}/body-witness-evidence/
+          if-no-files-found: error
+          retention-days: 90

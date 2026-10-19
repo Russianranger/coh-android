@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "failed_prototypes": [
+    {
+      "attempt": "try1",
+      "reason": "Test expectation miscounted actual located path35 versus37 bytes; implementation output correct. No sanitizer runtime or source failure.",
+      "receipt_retained": true
+    }
+  ],
+  "passing_receipt": "host.json"
+}
