@@ -1,0 +1,144 @@
+{
+  "schema": "coh-initial-pose-probe-qualification-v1",
+  "passed": true,
+  "source_revision": "c7aa898273a02b933d578f7e9785c813140d54e5",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/coh_entities.c": "730e09df080c26efa240844bbea707a88138ea966864006fa26487249e18d1e3",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/rare_fixture.c.inc": "a0d754e64045062018d41d35815dbcb4e352d45b3921247f0a99500ba5d80040",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/initial-capture/check_initial_pose_probe.py": "2e22c6eeebe49aa9d78200f8cbd92f0770bc1d1c6c44c093026696d624874442",
+    "native-android/engine/initial-capture/coh_initial_pose_probe.c": "166fccd602670388ac777419ca9091295d82cea54335d5ba06083d8e8f0172b7",
+    "native-android/engine/initial-capture/coh_initial_pose_probe.h": "d6c529b7b674183c9641b47d8043d4fa043d86e113d7f9f1cf2da593fe3c34f8",
+    "native-android/engine/initial-capture/test_initial_pose_probe.c": "8058b04d01712646dd510c7440addaad2794b950c9ed15663d82a2af48fe770b",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_components": {
+    "executed_component_producers": [
+      "entSendModes",
+      "entSendPosUpdate",
+      "entSendQrotUpdate"
+    ],
+    "component_sha256_lf": {
+      "entSendModes": "556d2fd9744363586792d16649150ab3fe5b284f499205e8309e0fcf2a720900",
+      "entSendPosUpdate": "ef11701cc76a0038a59b3986317fc6bfe1a7c43f0fcb35f8c52e2cf03a7a7b77",
+      "entSendQrotUpdate": "11fd97da882dfc24e482a938c40f55331d6108b722208d6861f707aa3c143df1"
+    },
+    "source_pin_manifest_sha256": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "all_original_source_pins_verified": true,
+    "generated_original_oracle_sha256": "35e8b4fa539fee3dc3c6afd7e07a054dfea6f40cb8cd720250c9b67a3dd286c8",
+    "wrapper_sha256": "14a6ca6086942ea2e4b21d993a85e2b849499df806a46f5239e8bab4828cbd43",
+    "oracle_sanitized": false
+  },
+  "fixtures": {
+    "count": 91,
+    "sha256": "948d8561bb62e0ebeb057250099cc505c02a26c4999a7d20b4000b1f9a3c97fa",
+    "original_leaf_scenarios": 6,
+    "packed_start_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "byte_aligned_start_offsets": [
+      0,
+      8
+    ],
+    "synthetic_control_variants": 20,
+    "case_manifest_sha256": "2a7e89f0e5142de10920c5da7966a8682cfa3803acd5002a6c394d5e57b50874"
+  },
+  "source_generated_jni_fixture": {
+    "header_sha256": "e4bd2b5878f823f8a120ff4698f3669c7c5a7f231d56f1fbc7a7f8361619026a",
+    "payload_sha256": "9f86f23b1320abe40f6fcb7ca460d5e40a6909ed9903f87f8a3450420ed279c7",
+    "payload_bits": 492,
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "synthetic_selected_dbid": 909090,
+    "unchanged_original_create_producer": true,
+    "device_packet": false
+  },
+  "checks": {
+    "release": {
+      "checks": 63597,
+      "fixtures": 91,
+      "complete_pose_observations": 62,
+      "truncated_extents": 8712,
+      "mutations": 1389,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 91,
+      "sequence_body_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 63597,
+      "fixtures": 91,
+      "complete_pose_observations": 62,
+      "truncated_extents": 8712,
+      "mutations": 1389,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 91,
+      "sequence_body_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 63597,
+      "fixtures": 91,
+      "complete_pose_observations": 62,
+      "truncated_extents": 8712,
+      "mutations": 1389,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 91,
+      "sequence_body_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "9a026e2ca1bb1c10784a9b39d28d695052444f0bf9b55a3203b9e2a6a62e6cd4",
+    "asan": "af502ced03a9ea584769b29632e14145c83d9bdd4d35d5cf42cd9f06fcef06f6",
+    "ubsan": "56e087e503f77e7e4b9e2ffff2629c7d9626098131cdf57914147b0bf712f8ae"
+  },
+  "probe_stack_frames": [
+    {
+      "function": "coh_initial_pose_probe",
+      "bytes": 464,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_pose_probe_json",
+      "bytes": 240,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "fixture_join": "Explicit synthetic outer flags, fixture objects and opaque remaining-body witness around complete unchanged original mode/position/quaternion producers; no sendEntity or entSendUpdate execution.",
+  "physical_packet_body_retained_in_evidence": false,
+  "sequence_body_produced_or_parsed": false,
+  "whole_original_allents_producer_executed": false,
+  "actual_server_transaction": false,
+  "physical_device_executed": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

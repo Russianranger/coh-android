@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../../../engine/initial-capture/qualification/initial-pose-20261019/jni-fixture.h"
+static unsigned pose_fixture;
 static unsigned checks,scenarios,alloc_calls,fail_alloc,freed,wiped,live,release_chars,deleted_refs;
 static int fault,exception_pending;static jlong current;
 #define CHECK(x) do {++checks;if(!(x)){fprintf(stderr,"interop test line %u: %s\n",(unsigned)__LINE__,#x);exit(1);}}while(0)
@@ -48,7 +50,7 @@ CohStatus coh_initial_capture_choose_character(CohInitialCapture*c,uint32_t slot
 static void closed(CohInitialCapture*c){c->d.local.closed_sockets=c->d.local.opened_sockets;c->d.local.phase=COH_LOCAL_CLOSED;}
 CohStatus coh_initial_capture_service(CohInitialCapture*c,uint64_t now,CohCancel cancel,CohInitialCaptureObserver observer,void*context,size_t bytes){CHECK(c==&capture&&now>=101&&!cancel.poll&&observer&&context&&bytes);services++;if(fault==14){CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_STATE);JNI(close)(&env,NULL,current);JNI(suspend)(&env,NULL,current);JNI(disconnect)(&env,NULL,current);CHECK(JNI(characters)(&env,NULL,current)==NULL);CHECK(JNI(report)(&env,NULL,current));}
  if(!c->chosen){c->d.local.phase=COH_LOCAL_CHARACTERS_READY;c->d.local.character_lists=1;return COH_OK;}
- CohInitialCaptureEvent event={c->step?COH_INITIAL_CAPTURE_ALLENTS:COH_INITIAL_CAPTURE_GROUPS};memset(&loan,0,sizeof(loan));loan.kind=event.kind;loan.reader.bytes=(CohBytes){packet,sizeof(packet)};loan.reader.bits=sizeof(packet)*8;loan.reader.cursor=16;loan.reader.max_bytes=COH_REP_BOUNDED_MESSAGE_MAX;loan.message_generation=c->step?2:1;loan.groups_message_generation=c->step?1:0;loan.local_development_authorized=loan.selected_dbid_owner_bound=1;loan.selected_dbid=909090;loan.update.command=COH_REP_ALLENTS;if(fault==15)loan.world_authority=1;if(fault==16)loan.groups_message_generation=55;live_event=&event;CohStatus status=observer(context,c,&event);live_event=NULL;
+ CohInitialCaptureEvent event={c->step?COH_INITIAL_CAPTURE_ALLENTS:COH_INITIAL_CAPTURE_GROUPS};memset(&loan,0,sizeof(loan));loan.kind=event.kind;loan.reader.bytes=(CohBytes){packet,sizeof(packet)};loan.reader.bits=sizeof(packet)*8;loan.reader.cursor=16;loan.reader.max_bytes=COH_REP_BOUNDED_MESSAGE_MAX;loan.message_generation=c->step?2:1;loan.groups_message_generation=c->step?1:0;loan.local_development_authorized=loan.selected_dbid_owner_bound=1;loan.selected_dbid=909090;loan.update.command=COH_REP_ALLENTS;if(fault==15)loan.world_authority=1;if(fault==16)loan.groups_message_generation=55;if(pose_fixture&&c->step){loan.reader.bytes=(CohBytes){coh_pose_jni_fixture,sizeof(coh_pose_jni_fixture)};loan.reader.bits=pose_fixture==3?COH_POSE_JNI_FIXTURE_POSE_END-1:pose_fixture==4?COH_POSE_JNI_FIXTURE_POSE_END:COH_POSE_JNI_FIXTURE_BITS;loan.reader.cursor=COH_POSE_JNI_FIXTURE_POST_COMMAND;loan.message_id=pose_fixture==2?0:17;}live_event=&event;CohStatus status=observer(context,c,&event);live_event=NULL;
  if(status!=COH_OK){c->d.first_failure=(CohInitialCaptureFailureSnapshot){1,c->d.local.phase,COH_DB_HANDOFF_READY,COH_MAP_SCENE_INCOMPLETE,status,COH_INITIAL_CAPTURE_FAILURE_OBSERVER};c->d.failure=COH_INITIAL_CAPTURE_FAILURE_OBSERVER;c->d.phase=COH_INITIAL_CAPTURE_FAILED;c->d.status=status;closed(c);return status;}
  if(!c->step++){c->d.groups_observed=1;c->d.groups_observations=1;c->d.reqallents_sent=1;c->d.phase=COH_INITIAL_CAPTURE_WAIT_ALLENTS;return COH_OK;}
  c->d.raw_allents_observed=1;c->d.allents_observations=1;c->d.phase=COH_INITIAL_CAPTURED;c->d.status=COH_UNSUPPORTED;closed(c);return COH_UNSUPPORTED;}
@@ -68,7 +70,7 @@ void coh_request_tx_retire(CohRequestTxWitness*w){if(w){CHECK(!w->retired);w->re
 void coh_request_tx_diagnostics(const CohRequestTxWitness*w,CohRequestTxDiagnostics*out){CHECK(w);memset(out,0,sizeof(*out));out->diagnostic_only=1;out->valid=w->retired;out->witness_retired=w->retired;out->queue_attempted=out->queue_succeeded=capture.d.reqallents_sent;out->queue_status=COH_OK;out->first_send_attempts=out->first_send_accepted=capture.d.reqallents_sent;out->peer_transport_ack_observed=capture.d.raw_allents_observed;}
 void coh_request_tx_destroy(CohRequestTxWitness*w){if(w)CHECK(w->retired&&!w->owner);}
 #endif
-static void fixture(void){CHECK(!live);fault=exception_pending=0;alloc_calls=fail_alloc=0;memset(&input,0,sizeof(input));const char*n="PRIVATE_USER";input.length=(jsize)strlen(n);for(jsize i=0;i<input.length;i++)input.data[i]=(jchar)n[i];}
+static void fixture(void){CHECK(!live);pose_fixture=0;fault=exception_pending=0;alloc_calls=fail_alloc=0;memset(&input,0,sizeof(input));const char*n="PRIVATE_USER";input.length=(jsize)strlen(n);for(jsize i=0;i<input.length;i++)input.data[i]=(jchar)n[i];}
 static void start(void){current=JNI(begin)(&env,NULL,7000,&input,5,JNI_FALSE,JNI_FALSE,100);CHECK(current>0&&live==1);}
 static const char*report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"packet_copy_retained\":false"));return report_text;}
 static void finish(void){JNI(close)(&env,NULL,current);CHECK(!live);CHECK(JNI(service)(&env,NULL,current,101)==COH_INVALID);current=0;scenarios++;}
@@ -87,6 +89,16 @@ int main(void){
  #ifdef COH_INTEROP_REQUEST_TX
  fixture();fault=18;start();CHECK(strstr(report(),"\"request_tx_available\":false"));finish();
 #endif
+ for(unsigned v=1;v<=4;v++){
+  fixture();pose_fixture=v;start();CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);CHECK(JNI(service)(&env,NULL,current,104)==COH_UNSUPPORTED);
+  CHECK(strstr(report(),"INITIAL_OBSERVED")&&strstr(report_text,"\"cleanup_verified\":true")&&strstr(report_text,"\"create_validated\":true"));
+  const char*body=strstr(report_text,"\"first_record_pose\":{");CHECK(body);
+  if(v==1||v==4){CHECK(strstr(body,"FIRST_SEQUENCE_BODY_REQUIRED")&&strstr(body,"\"pose_validated\":true")&&strstr(body,"\"pose_end_bit\":459"));CHECK(strstr(body,v==1?"\"status\":2":"\"status\":1"));}
+  else if(v==2)CHECK(strstr(body,"\"stage\":\"INPUT\"")&&strstr(body,"\"status\":7")&&strstr(body,"\"pose_validated\":false"));
+  else CHECK(strstr(body,"\"stage\":\"ORIENTATION\"")&&strstr(body,"\"position_validated\":true")&&strstr(body,"\"pose_validated\":false"));
+  CHECK(!strstr(body,"\"packet_id\"")&&!strstr(body,"\"position\"")&&!strstr(body,"\"quaternion\"")&&!strstr(body,"\"mode_value\""));
+  JNI(disconnect)(&env,NULL,current);CHECK(strstr(report(),"CLOSED")&&strstr(report_text,"\"create_validated\":true")&&strstr(report_text,"\"first_record_pose\":{")&&strstr(report_text,"\"world_authority\":false"));finish();
+ }
  CHECK(freed==wiped&&!live&&deleted_refs==1&&release_chars>0&&lease_calls>0&&creates&&begins&&chooses&&services&&closes&&destroys&&cancels);
  printf("{\"schema\":\"coh-new-interop-jni-adapter-double-controls-v1\",\"passed\":true,\"checks\":%u,\"scenarios\":%u,\"wiped_frees\":%u,\"JNI_and_initial_capture_explicit_doubles\":true,\"actual_Android_or_protocol_or_original_server\":false,\"world_authority\":false,\"sample_report\":%s}\n",checks,scenarios,wiped,sample_report);return 0;
 }

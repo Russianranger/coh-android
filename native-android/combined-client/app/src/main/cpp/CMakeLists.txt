@@ -46,6 +46,7 @@ target_link_libraries(coh_combined_network PRIVATE "${CRYPTO_ABI_ROOT}/lib/libcr
 # client; an observed initial packet grants no actor, ACK or world authority.
 add_library(coh_combined_interop SHARED interop_network.c
     "${ENGINE}/initial-capture/coh_initial_create_probe.c"
+    "${ENGINE}/initial-capture/coh_initial_pose_probe.c"
     "${ENGINE}/entities/coh_entities.c"
     "${ENGINE}/initial-capture/coh_initial_local.c"
     "${ENGINE}/initial-capture/coh_request_tx_map.c"
