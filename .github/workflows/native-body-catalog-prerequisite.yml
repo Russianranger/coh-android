@@ -1,4 +1,4 @@
-name: Native body-part loader provenance
+name: Native binary-read header leaf
 on:
   push:
     branches: [native-android]
@@ -9,10 +9,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: native-body-loader-${{ github.ref }}
+  group: native-binary-read-open-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  body-part-loader:
+  binary-read-open:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -21,17 +21,17 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 1
-      - name: Install loader test digest headers
+      - name: Install binary-leaf test digest headers
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev
-      - name: Qualify bounded original body-part cache-hit loader
+      - name: Qualify bounded original SerializeReadOpen leaf
         run: |
-          python3 native-android/engine/body-catalog/check_body_part_loader.py --sanitize --output "$RUNNER_TEMP/body-loader-host.json" --evidence-directory "$RUNNER_TEMP/body-loader-evidence"
+          python3 native-android/engine/body-catalog/check_binary_read_open.py --sanitize --output "$RUNNER_TEMP/binary-read-open-host.json" --evidence-directory "$RUNNER_TEMP/binary-read-open-evidence"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-body-loader-${{ github.sha }}
+          name: native-binary-read-open-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/body-loader-host.json
-            ${{ runner.temp }}/body-loader-evidence/
+            ${{ runner.temp }}/binary-read-open-host.json
+            ${{ runner.temp }}/binary-read-open-evidence/
           if-no-files-found: error
           retention-days: 90

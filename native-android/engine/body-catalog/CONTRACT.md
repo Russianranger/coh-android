@@ -1,8 +1,9 @@
-# Body-part bounded loader provenance
+# Body-part bounded binary-read leaf
 
 The accepted callback milestone executes unchanged original `ParseBoneNames`
-using the generated enum provider. The current milestone qualifies one original
-cache-hit loader route and fixture-scoped provenance. Neither admits a runtime
+using the generated enum provider. The accepted loader milestone qualifies an original
+cache-hit route and fixture-scoped provenance. The current milestone qualifies
+one original SerializeReadOpen header leaf beneath it. None admits a runtime
 body catalog or advances ALLENTS past `FIRST_BODY_CATALOG_REQUIRED`.
 
 The source body-type table/count was already qualified by costume-import work.
@@ -92,7 +93,7 @@ admission, complete character, selected ownership, source generation, actor
 publication, application ACK and world authority remain false. Existing
 dictionary-index stops, cleanup and resource limits are unchanged.
 
-The current loader profile composes unchanged whole original
+The accepted loader profile composes unchanged whole original
 `bpReadBodyPartFiles`, `ParserLoadFilesShared` and `ParserLoadFiles`. The selected
 outer route is an explicitly controlled `SMAR_Error`, then an exact binary-cache
 hit. Observer wrappers check each source call tuple and immediately delegate to
@@ -170,8 +171,81 @@ bpReadBodyPartFiles80B, all bounded; wrapper304B static; maximum individual
 measured frame2,720B. This does not prove total external stack, sanitizer closure
 or device RSS. Compact evidence: qualification/body-part-loader-20261019/host.json.
 
-Run only `check_body_part_loader.py --sanitize --output NEW.json`, optionally
+The accepted loader receipt and qualifier remain retained. They are not replayed
+by the current leaf qualification. No general compiler, renderer, transport, JNI,
+Android13 or APK qualification is replayed.
+
+
+## Current original binary-read header leaf
+
+`binary_read_open_provider.py` executes the unchanged whole original
+SerializeReadOpen from UtilitiesLib/src/utils/serialize.c. The original
+ParserIsPersistNewer callsite passes PARSE_SIG, a ParseTableCRC result and
+isProductionMode(). An audit-only source pin and exact call-tuple check record that association;
+the executable profile does not run the caller or compute ParseTableCRC. Its comparison argument
+is a raw fixture header word, distinct from the qualifier's compiler/build hash.
+
+The exact retained CLIENT BodyParts.bin supplies one authentic header:
+CrypticS8, raw build/CRC4, U16 length6 and Parse6 bytes. The original return cursor
+is20, before Files1/FileListRead, dependencies, body lengths or records. Hashing
+all2,584 bytes binds the fixture without claiming those later bytes were decoded.
+The accepted full-body native decoder and loader/enum/callback test mains do not
+execute in this qualifier.
+
+Original ReadPascalString, SimpleBufRead/Seek/Tell and source scalar read helpers
+are dependencies. Fixed owned buffer/open/close/growth and explicit host/endian
+adapters are disclosed. No real filesystem selection, original heap allocator,
+file ownership, MapServer runtime or original device ABI is established.
+
+Complete-header preflight precedes every original read. The source ignores
+short-read results, and its inline scalar helpers leave unread bytes undefined;
+partial scalars must never be passed to them. The bounded profile requires the
+full signature/build/length/payload/padding extent, at most64KiB input and a
+Pascal file-type length below the original MAX_FILETYPE_LEN4096. Unsupported
+or incomplete extents refuse before source execution. These are wrapper safety
+bounds, not a rewritten legacy parser or new application grammar.
+
+Production ignore_crc_difference1 accepts a different raw build/CRC word.
+Strict0 compares it and closes rejected files. Even a strict match establishes
+only comparison to the fixture argument, never schema CRC, dictionary generation
+or current-server provenance. The original C-string type comparison and ignored
+padding bytes retain their source semantics, including an embedded NUL suffix;
+this header leaf cannot imply full Parse6/body acceptance.
+
+Caller snapshots commit only after a supported source result. Requested CRC
+ignore and fault selectors have explicit bounded0/1 profiles. Bounded numeric
+first-failure/offset, source read/open/close counts and cleanup diagnostics stay
+separate from source header acceptance. A successful source open is explicitly
+closed by the wrapper; rejection closes in source; owned buffers are wiped and
+no handle or borrowed pointer escapes. Fixture source/input/build/profile/run
+binding remains consistency evidence, never runtime attestation.
+
+Numeric stages are1 INPUT/spans/budget,2 IDENTITY,3 PROFILE,4 FRAMING before
+14 complete fixed bytes,5 TYPE_LENGTH,6 PAYLOAD/padding,7 DIGEST,8 OPEN,
+9 SOURCE_REJECT and10 COMPLETE. For4/6, failure_byte is the first unavailable
+input byte; stage5 reports length-field byte12. Other stages use0. In particular,
+stage9 denotes the aggregate source header comparison at header start, not an
+exact failed-predicate byte; header_end retains the actual source cursor.
+Invalid/aliased diagnostic sinks stay unchanged; safe numeric diagnostics may
+change on refusal. Success is isolated header acceptance, never packet authority.
+
+Release/ASan/UBSan each pass1,539 checks over54 fixtures: one authentic
+20-byte header,9 synthetic accepts,15 source comparison rejects,28 framing/
+profile refusals and one open refusal. Additional controls cover10 identity,
+9 child-ledger,4 alias and5 budget cases. All14 source inputs plus compiler and
+Python binaries remain stable. The child measures its own ELF and fixture/build/
+input ledger against compiled fixture source/profile/run/compiler labels.
+The caller pin is audit-only; no caller or ParseTableCRC execution is claimed.
+
+Original SerializeReadOpen has a4,208B static host frame, the largest measured
+individual frame. External libc/crypto stack and sanitizer closure, total RSS and
+original Win32/Android ABI remain unproved. These fixture resource measurements
+do not change existing application input/report/transport limits.
+
+Run only `check_binary_read_open.py --sanitize --output NEW.json`, optionally
 with `--evidence-directory NEW_DIRECTORY`. Full evidence belongs in the focused
-Native body-part loader provenance workflow artifact; the repository retains a
-compact host receipt. No accepted enum/callback/native suite, general compiler,
-renderer, transport, JNI, Android13 or APK qualification is replayed.
+Native binary-read header leaf workflow artifact; the repository retains a
+compact host receipt under qualification/binary-read-open-20261019/host.json.
+The ALLENTS41/43 catalog stops, dictionary-index stops, report/input/cleanup
+limits and every catalog/generation/character/ownership/actor/authority/application
+ACK prohibition remain unchanged. This milestone stops before FileListRead.

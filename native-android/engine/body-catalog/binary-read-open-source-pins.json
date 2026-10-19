@@ -1,0 +1,27 @@
+{
+  "schema": "coh-binary-read-open-provider-source-pins-v1",
+  "baseline_revision": "1b8d1d25fe6da4a0fd08fb632ad513815ea1d943",
+  "files": {
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c": {
+      "blob_sha1": "0c2076fd2444f91d27c154b116b59ff208d38314",
+      "sha256": "11e10da37766cd5329fbabe86dbae378c7f4f99a02b9a3e334d6411e3adb0f56",
+      "bytes": 13895
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h": {
+      "blob_sha1": "75238006848b1f74f713244abb8bb99785178d75",
+      "sha256": "832ce8447d1b71afcc030cce90bbc1a10123b9ec90dee392bea4b446525be4ee",
+      "bytes": 4970
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": {
+      "blob_sha1": "9231f1c3fa383e499488ecbf0192becf0aee9d46",
+      "sha256": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "bytes": 30934
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": {
+      "blob_sha1": "a80f0aa356e6d7f9422ad5ab501f1be2763a4c69",
+      "sha256": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "bytes": 264080,
+      "role": "Audit-only whole ParserIsPersistNewer source and exact ParseTableCRC/SerializeReadOpen call tuple; never compiled or executed by this leaf qualifier."
+    }
+  }
+}

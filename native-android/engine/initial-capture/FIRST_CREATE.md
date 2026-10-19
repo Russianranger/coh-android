@@ -639,50 +639,56 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-The current focused qualifier is ../body-catalog/check_body_part_loader.py.
-It composes unchanged whole original bpReadBodyPartFiles, ParserLoadFilesShared
-and ParserLoadFiles in one controlled SMAR_Error → exact binary-cache-hit route.
-The original entry passes ParseBoneNames as preprocessor, not postprocessor.
-The successful original binary branch returns before preprocessing, so cached
-bone/index words must remain unchanged and the callback must not execute.
+The current focused qualifier is ../body-catalog/check_binary_read_open.py.
+It executes unchanged original SerializeReadOpen beneath the accepted body-part
+loader route, with its original scalar/Pascal/buffer read dependencies and
+explicit fixed owned open/close/growth and host/endian adapters. The original
+ParserIsPersistNewer callsite passes PARSE_SIG, ParseTableCRC and productionmode;
+that full caller, real filesystem selection and actual ParseTableCRC remain
+unqualified. The CRC comparison argument is fixture data, never a generation.
 
-The native binary-reader bridge and shared/freshness/filesystem selection leaves
-are explicit adapters. The exact retained CLIENT BodyParts.bin remains2,584B,
-SHA256b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb,
-inside the unchanged2,253,704B subset archive. Original full Parse6/ParseTable CRC
-computation, text/fallback loading, shared creation/reuse, original ABI and actual
-MapServer cache consumption are unqualified. The guarded callback symbol proves
-only the expected source call slot, never callback execution on this route.
+The authentic retained CLIENT BodyParts.bin remains2,584B,
+SHA256b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb.
+Only its20-byte header is consumed by the original leaf. It stops BEFORE
+Files1/FileListRead, dependencies, body segments and records. Whole-file hashing
+binds the input; it does not turn unconsumed bytes into decoded evidence.
 
-The exact entry argument tuple (with an explicit opaque table-token adapter)
-and owned original BodyPart/getter snapshot are
-verified against raw decoded rows, preserving the last duplicate BoneCount and
-serialized derived values. Fixture provenance associates input, pinned source,
-compiler/build, branch profile and per-run identity. It is not authenticated
-server/session ownership, current runtime catalog evidence or a generation.
-The accepted generated enum/callback qualifiers are not replayed.
+Complete bounded header preflight prevents original ignored short reads from
+reaching undefined scalar bytes. The profile remains64KiB input, with file-type
+length below original4096 and complete payload/padding. Original production
+ignore_crc_difference1 permits a differing build/CRC word; strict0 rejects it.
+Neither result verifies actual schema CRC or runtime catalog provenance. Original
+C-string embedded-NUL and arbitrary-padding semantics remain explicit.
 
-Release/ASan/UBSan each pass1,812 checks:28 authentic rows, one authentic and
-two synthetic cache hits,4 decode/representation refusals,28 bounded refusals,
-10 identity/9 child-ledger/3 alias/5 budget controls and zero preprocessor calls.
-All21 source inputs and compiler identities remain stable. The child measures
-its own ELF, exact fixture/build/input ledger and matches compiled source/profile/
-random fixture-run/compiler-profile labels; this is not runtime attestation.
-Maximum individual measured host frame2,720B; external stack/sanitizer/device RSS
-closure remains unproved. Only affected source/native qualification ran.
+The wrapper closes accepted source handles; the source closes rejected handles.
+Owned storage is wiped, snapshots are atomic and safe numeric first failures
+remain bounded. Fixture source/input/compiler/build/profile/run consistency is
+not current MapServer attestation or selected-character/session ownership.
+See ../body-catalog/CONTRACT.md for the exact supported API and adapter scope.
 
-Full evidence belongs in Native body-part loader provenance CI; compact receipt:
-../body-catalog/qualification/body-part-loader-20261019/host.json. See the exact
-bounded API, adapters, failure diagnostics and cleanup in ../body-catalog/CONTRACT.md.
-The accepted callback receipt and its2,019 checks per mode remain retained.
+Release/ASan/UBSan each pass1,539 checks over54 fixtures: one authentic header,
+9 synthetic accepts,15 source comparison rejects,28 framing/profile refusals
+and one open refusal, plus identity/ledger/alias/budget controls. All14 source
+inputs and compiler/Python binaries remain stable. Source close and wrapper
+close paths are separate; no handle escapes. Child measurements bind fixture
+ELF/input/build/profile/run only, never current MapServer attestation.
+Original SerializeReadOpen's4,208B static frame is the largest measured frame;
+external stack/sanitizer closure, total RSS and device ABI remain unproved.
 
-Exactly ONE loader-provenance milestone ends here. ALLENTS catalog stops41/43,
-earlier dictionary-index stops,4MiB input/192B child/7,168B report, overflow guard
-and transport cleanup remain unchanged. Runtime catalog/default, dictionary
-import/generation, complete character, ownership, actor, authority and application
-ACK admission remain false. No new Thor run/APK; Combined0.1.9/imports/signing/
-profiles/saves and Gates1–24 are preserved. Gates25–27 remain open.
+Full evidence belongs in Native binary-read header leaf CI; compact receipt:
+../body-catalog/qualification/binary-read-open-20261019/host.json. Accepted enum,
+callback, input-reader and loader suites are retained and not replayed. No
+original FileListRead/full Parse6/ParseTable CRC, body-parser initialization,
+shared-memory generation, current Map transaction or new Thor run/APK is claimed.
 
-NextONE: qualify a bounded original binary-read leaf beneath this loader route.
-Current-Map loaded-input/source/build/profile/run and branch provenance remain
-required before catalog admission. Do not substitute the isolated CLIENT fixture.
+Exactly ONE original binary-read leaf milestone ends here. ALLENTS catalog
+stops41/43 and earlier dictionary-index stops remain. Existing4MiB input/192B
+child/7,168B report, overflow guard and transport cleanup remain unchanged.
+Runtime catalog/default, dictionary import/generation, complete character,
+ownership, actor, authority and application ACK admission remain false.
+Combined0.1.9/imports/signing/profiles/saves and Gates1–24 are preserved;
+Gates25–27 remain open.
+
+NextONE: bounded original FileListRead/dependency-list stage. Current-Map input/
+source/build/profile/run and branch provenance remain required before catalog
+admission. Do not substitute this isolated CLIENT header fixture for that proof.
