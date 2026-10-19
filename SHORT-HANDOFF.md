@@ -24,7 +24,10 @@ Source diagnostic format/path+count checked. External allocator/RSS/stack unprov
 
 Qualifier: engine/body-catalog/check_persist_newer.py --sanitize.
 Receipt: qualification/persist-newer-20261019/host.json (worktree above063f4ea14).
-CI: Native original persist-newer production; publication evidence follows.
+Qualified commit5733bf4da8a3f8ed126dec2b7d4b8a9dd7a917d2 (same tested tree).
+CI39318000774 PASS; job118284395203; artifact12218089033 (full evidence).
+https://github.com/Russianranger/coh-android/actions/runs/39318000774
+CI release/ASan/UBSan counters match local. Publication receipt: same dir/ci.json.
 Full sources/commands/ELF/input/profile/run/stack artifacts retained in CI.
 Fixture bindings only; current-Map selection/loaded-source/build/profile/run,
 date/FS freshness, catalog/default/dictionary/generation/character/owner/actor/

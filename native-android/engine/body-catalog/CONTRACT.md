@@ -567,6 +567,19 @@ Native original persist-newer production CI artifact. Local receipt:
 qualification/persist-newer-20261019/host.json (worktree above063f4ea14);
 no prior checker main or unrelated suite runs.
 
+Published implementation5733bf4da8a3f8ed126dec2b7d4b8a9dd7a917d2 has the
+identical tested file tree4912c1b27ddd8c0631cce128b9ddccba47d6dbf7. Dedicated
+CI run39318000774/job118284395203 passes all release/ASan/UBSan checks with
+the same97 fixtures/3,022 checks and cleanup counters as local qualification:
+https://github.com/Russianranger/coh-android/actions/runs/39318000774
+Artifact12218089033 is2,480,413B, SHA256
+3addface94b7e3910b4fc42e0c6e8175a9284ff0c4eab8ef2a05c0aa88db3bb3;
+its name binds the exact qualified commit. Job steps, artifact metadata and
+parsed CI summary are retained in qualification/persist-newer-20261019/ci.json.
+The ordinary portable-core/authentic-catalog workflows were skipped; no broad
+suite or APK build ran. Documentation-only publication does not replay this
+focused qualification.
+
 This bounded host composition grants no runtime catalog/default, dictionary
 import/generation, selected-character/owner, actor, application ACK or world
 authority. Development/date/filesystem freshness and current-Map loaded-input,
