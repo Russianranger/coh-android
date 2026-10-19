@@ -3,21 +3,36 @@
   "Android_execution_accepted": false,
   "Thor_physical_accepted": false,
   "archive": {
-    "bytes": 17866922,
-    "sha256": "e74fa3ad796e733d51aaee27d465c895cdcbb0f6577dd286cd2d9c7b9a261767"
+    "bytes": 17868604,
+    "sha256": "0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04"
+  },
+  "corrected_candidate_comparison": {
+    "APK_signatures_changed_and_current_signer_identity_rechecked": true,
+    "all_native_ELFs_and_74_asset_payloads_byte_identical_to_prior_candidate": true,
+    "current_runtime_source_includes_explicit_null_branches_and_sampler_finally_recovery": true,
+    "member_changes": {
+      "CoH-Native-Combined-0.1.10-memory-diagnostic-arm64.apk": [
+        "classes2.dex"
+      ],
+      "CoH-Native-Combined-0.1.10-memory-diagnostic-x86_64.apk": [
+        "classes2.dex"
+      ]
+    },
+    "prior_candidate_status": "WITHHELD: nullable first-unavailable observation bug",
+    "prior_source_revision": "7929bdb7b9fbed4007df7a913d9c8d4d5e22660f"
   },
   "delivery_status": "PENDING three Android13 jobs and physical Thor acceptance",
-  "host_suites_zero_exit": 16,
-  "outer_members_crc_checked": 50,
+  "host_suites_zero_exit": 17,
+  "outer_members_crc_checked": 51,
   "packages": [
     {
       "CI_apksigner_verification_receipt_bound": true,
       "ELF64_libraries_checked": 5,
       "abi": "arm64-v8a",
       "apk": {
-        "bytes": 13929429,
+        "bytes": 13929833,
         "name": "CoH-Native-Combined-0.1.10-memory-diagnostic-arm64.apk",
-        "sha256": "09b6b1c759d19996b348761ccceb2347c33954f5337e55b9133859560d4721e3"
+        "sha256": "7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf"
       },
       "asset_bytes": 9540457,
       "assets_checked": 74,
@@ -31,16 +46,16 @@
       "signer_certificates_extracted_from_APK_v2": [
         "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
       ],
-      "source_subset_pins_checked": 273
+      "source_subset_pins_checked": 276
     },
     {
       "CI_apksigner_verification_receipt_bound": true,
       "ELF64_libraries_checked": 3,
       "abi": "x86_64",
       "apk": {
-        "bytes": 13232599,
+        "bytes": 13233003,
         "name": "CoH-Native-Combined-0.1.10-memory-diagnostic-x86_64.apk",
-        "sha256": "a7a6e4cd52dce3f1579244247fe7c4e71e5b93ffd799c20cd6889e682e8628a1"
+        "sha256": "4cba32800790112c22146f6f6f8f773436a816de44c3e83d1c9503b0e9ec4d49"
       },
       "asset_bytes": 9540457,
       "assets_checked": 74,
@@ -54,7 +69,7 @@
       "signer_certificates_extracted_from_APK_v2": [
         "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
       ],
-      "source_subset_pins_checked": 273
+      "source_subset_pins_checked": 276
     }
   ],
   "passed": true,
@@ -67,9 +82,9 @@
     "phase_snapshot_checked_by_Android_driver_bytes": 24576
   },
   "schema": "coh-independent-combined-package-review-v1",
-  "source_commit_and_current_checkout_pins_checked": 2223,
-  "source_revision": "7929bdb7b9fbed4007df7a913d9c8d4d5e22660f",
+  "source_commit_and_current_checkout_pins_checked": 2226,
+  "source_revision": "ae5a11d0c0be5098d0aec66370dda99c055167ee",
   "whole_process_memory_fit_claimed": false,
-  "workflow_run": "https://github.com/Russianranger/coh-android/actions/runs/39331803146",
+  "workflow_run": "https://github.com/Russianranger/coh-android/actions/runs/39334606957",
   "world_authority": false
 }

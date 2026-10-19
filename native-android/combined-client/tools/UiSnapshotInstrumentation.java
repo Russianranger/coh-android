@@ -23,6 +23,7 @@ import org.xmlpull.v1.XmlSerializer;
 /** Disposable qualification tool. It never starts, instruments or stops CoH. */
 public final class UiSnapshotInstrumentation extends Instrumentation {
     private static final int MAX_NODES=8192, MAX_DEPTH=64, MAX_BYTES=8*1024*1024;
+    private static final int ROOT_ATTEMPTS=32, ROOT_WAIT_MS=3000;
     private String nonce;
     private int nodes;
     private final Rect displayBounds=new Rect();
@@ -82,8 +83,21 @@ public final class UiSnapshotInstrumentation extends Instrumentation {
             long started=SystemClock.elapsedRealtime();
             // Dynamic frame/age labels need not become globally idle to expose
             // their current accessibility layout. No previous tree is reused.
-            root=automation.getRootInActiveWindow();
-            if(root==null)throw new IOException("Fresh active root unavailable");
+            int rootAttempts=0;
+            long rootWait=0;
+            // A newly connected accessibility service can temporarily have no
+            // active root while a document picker restores the foreground
+            // window. Poll only for a NEW root; never wait for global idle or
+            // substitute a previous tree. The host also caps instrumentation.
+            while(rootAttempts<ROOT_ATTEMPTS) {
+                rootAttempts++;root=automation.getRootInActiveWindow();
+                rootWait=SystemClock.elapsedRealtime()-started;
+                if(rootWait>ROOT_WAIT_MS)throw new IOException("Fresh active root deadline exceeded");
+                if(root!=null)break;
+                if(rootAttempts==ROOT_ATTEMPTS||rootWait==ROOT_WAIT_MS)break;
+                SystemClock.sleep(Math.min(100,ROOT_WAIT_MS-rootWait));
+            }
+            if(root==null)throw new IOException("Fresh active root unavailable after bounded acquisition");
             Display display=((WindowManager)getTargetContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             Point size=new Point();display.getRealSize(size);
             if(size.x<=0||size.y<=0||size.x>16384||size.y>16384)throw new IOException("Display bounds invalid");
@@ -92,6 +106,7 @@ public final class UiSnapshotInstrumentation extends Instrumentation {
             xml.setOutput(output,"UTF-8");xml.startDocument("UTF-8",true);xml.startTag("","hierarchy");
             attr(xml,"rotation",display.getRotation());attr(xml,"capture-nonce",nonce);
             attr(xml,"capture-method","fresh-ui-automation-active-root-without-global-idle");
+            attr(xml,"capture-root-attempts",rootAttempts);attr(xml,"capture-root-wait-ms",rootWait);
             node(xml,root,0,0);xml.endTag("","hierarchy");xml.endDocument();xml.flush();
             byte[] raw=output.bytes.toByteArray();
             try(FileOutputStream file=new FileOutputStream(target)){file.write(raw);file.getFD().sync();}
@@ -99,6 +114,7 @@ public final class UiSnapshotInstrumentation extends Instrumentation {
             result.putString("status","passed");result.putString("nonce",nonce);
             result.putString("file",target.getName());result.putString("sha256",digest.toString());
             result.putInt("bytes",raw.length);result.putInt("nodes",nodes);
+            result.putInt("root_attempts",rootAttempts);result.putLong("root_wait_ms",rootWait);
             result.putLong("started_elapsed_ms",started);result.putLong("completed_elapsed_ms",SystemClock.elapsedRealtime());
             finish(-1,result);
         }catch(Exception failure){result.putString("status","failed");result.putString("error",failure.getClass().getSimpleName()+": "+failure.getMessage());finish(0,result);}

@@ -40,8 +40,19 @@ requests/two injected failures. Policy 2,710 checks unchanged. Strict fragment
 controls: 10; framework/UI controls: 201. Independent source review passes.
 A separate bounded test-helper APK obtains fresh accessibility trees when global
 idle is unavailable; it does not modify the candidate APK or skip assertions.
-Fresh full qualification is PENDING:
+Fresh package qualification passed: both ABI builds/lint, 17 host suites,
+package/DSO audits and independent 2,226-source-pin review. All three Android
+jobs failed test-harness observation: upgrade left a notification-permission
+Activity open across replacement; fragment capture raced the active window
+after SAF; slow global-idle capture exhausted the unchanged 30-second transport
+idle timeout before character selection. No stale report/tree was accepted.
+Reviewed harness-only fixes will replay all three gates against the exact C2
+bytes without rebuilding the app. Full Android qualification remains PENDING:
 https://github.com/Russianranger/coh-android/actions/runs/39334606957
+Package artifact 12226012507, 17,868,604 B, archive SHA-256
+`0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04`.
+ARM64 APK 13,929,833 B, SHA-256
+`7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf`.
 Version remains proposed 0.1.10/code 11 because no prior candidate was delivered.
 Package/signing identity unchanged. Do not offer a test APK until all required
 build, package, independent review and Android jobs pass. Physical Thor is pending.

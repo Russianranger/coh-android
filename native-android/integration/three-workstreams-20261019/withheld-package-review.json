@@ -1,0 +1,75 @@
+{
+  "Android_driver_bounds_are_pending_execution": true,
+  "Android_execution_accepted": false,
+  "Thor_physical_accepted": false,
+  "archive": {
+    "bytes": 17866922,
+    "sha256": "e74fa3ad796e733d51aaee27d465c895cdcbb0f6577dd286cd2d9c7b9a261767"
+  },
+  "delivery_status": "PENDING three Android13 jobs and physical Thor acceptance",
+  "host_suites_zero_exit": 16,
+  "outer_members_crc_checked": 50,
+  "packages": [
+    {
+      "CI_apksigner_verification_receipt_bound": true,
+      "ELF64_libraries_checked": 5,
+      "abi": "arm64-v8a",
+      "apk": {
+        "bytes": 13929429,
+        "name": "CoH-Native-Combined-0.1.10-memory-diagnostic-arm64.apk",
+        "sha256": "09b6b1c759d19996b348761ccceb2347c33954f5337e55b9133859560d4721e3"
+      },
+      "asset_bytes": 9540457,
+      "assets_checked": 74,
+      "independent_cryptographic_signature_verification_performed": false,
+      "interop_exact_exports_checked": 8,
+      "manifest": {
+        "package": "org.coh.nativecombined",
+        "versionCode": 11,
+        "versionName": "0.1.10-memory-diagnostic-test"
+      },
+      "signer_certificates_extracted_from_APK_v2": [
+        "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
+      ],
+      "source_subset_pins_checked": 273
+    },
+    {
+      "CI_apksigner_verification_receipt_bound": true,
+      "ELF64_libraries_checked": 3,
+      "abi": "x86_64",
+      "apk": {
+        "bytes": 13232599,
+        "name": "CoH-Native-Combined-0.1.10-memory-diagnostic-x86_64.apk",
+        "sha256": "a7a6e4cd52dce3f1579244247fe7c4e71e5b93ffd799c20cd6889e682e8628a1"
+      },
+      "asset_bytes": 9540457,
+      "assets_checked": 74,
+      "independent_cryptographic_signature_verification_performed": false,
+      "interop_exact_exports_checked": 8,
+      "manifest": {
+        "package": "org.coh.nativecombined",
+        "versionCode": 11,
+        "versionName": "0.1.10-memory-diagnostic-test"
+      },
+      "signer_certificates_extracted_from_APK_v2": [
+        "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
+      ],
+      "source_subset_pins_checked": 273
+    }
+  ],
+  "passed": true,
+  "preserved_report_bounds": {
+    "ZIP_per_input_JSON_reader_bytes": 2097152,
+    "launcher_report_reader_bytes": 131072,
+    "native_proc_JSON_bytes": 1024,
+    "native_report_checked_by_Android_driver_bytes": 131072,
+    "phase_slots": 9,
+    "phase_snapshot_checked_by_Android_driver_bytes": 24576
+  },
+  "schema": "coh-independent-combined-package-review-v1",
+  "source_commit_and_current_checkout_pins_checked": 2223,
+  "source_revision": "7929bdb7b9fbed4007df7a913d9c8d4d5e22660f",
+  "whole_process_memory_fit_claimed": false,
+  "workflow_run": "https://github.com/Russianranger/coh-android/actions/runs/39331803146",
+  "world_authority": false
+}

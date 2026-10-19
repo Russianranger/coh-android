@@ -11,6 +11,8 @@ import json
 import copy
 import tempfile
 import hashlib
+import subprocess
+import re
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
 from emulator_check import (Check, PACKAGE, scene_pixels, settled_preview, viewport_contract,
@@ -142,9 +144,9 @@ def capture_controls(path):
         value=driver('malformed-fresh-file',[(0,b'',b'',b'<broken')]);rejected(value,ET.ParseError)
         assert value.dump_count==1
         nonce='a'*32
-        raw=('<hierarchy rotation="0" capture-nonce="'+nonce+'" capture-method="fresh-ui-automation-active-root-without-global-idle"><node text="fresh"/></hierarchy>').encode()
+        raw=('<hierarchy rotation="0" capture-nonce="'+nonce+'" capture-method="fresh-ui-automation-active-root-without-global-idle" capture-root-attempts="2" capture-root-wait-ms="50"><node text="fresh"/></hierarchy>').encode()
         fields={'status':'passed','nonce':nonce,'file':'snapshot-'+nonce+'.xml','sha256':hashlib.sha256(raw).hexdigest(),
-                'bytes':str(len(raw)),'nodes':'1','started_elapsed_ms':'10','completed_elapsed_ms':'11'}
+                'bytes':str(len(raw)),'nodes':'1','started_elapsed_ms':'10','completed_elapsed_ms':'100','root_attempts':'2','root_wait_ms':'50'}
         def diagnostic(values):return '\n'.join('INSTRUMENTATION_RESULT: '+k+'='+v for k,v in values.items())+'\nINSTRUMENTATION_CODE: -1\n'
         helper={'raw':raw,'diagnostic':diagnostic(fields)}
         with patch('emulator_check.uuid.uuid4',return_value=SimpleNamespace(hex=nonce)):
@@ -154,19 +156,34 @@ def capture_controls(path):
             assert (value.dump_count,value.clear_count,value.read_count,value.helper_count,value.helper_read_count)==(3,3,0,1,1)
             assert value.proofs[-1]['stale_xml_used'] is False and value.proofs[-1]['global_idle_required'] is False
             count+=1
-            for key,bad in [('nonce','b'*32),('sha256','0'*64),('file','snapshot-old.xml'),('bytes','1'),('nodes','8193'),('started_elapsed_ms','12'),('status','failed')]:
+            for key,bad in [('nonce','b'*32),('sha256','0'*64),('file','snapshot-old.xml'),('bytes','1'),('nodes','8193'),('started_elapsed_ms','101'),('status','failed'),('root_attempts','0'),('root_attempts','33'),('root_wait_ms','3001'),('root_wait_ms','91'),('root_attempts','1')]:
                 changed=dict(fields);changed[key]=bad
                 value=driver('helper-'+key,[idle]*3,helper={'raw':raw,'diagnostic':diagnostic(changed)})
                 rejected(value,AssertionError)
                 assert value.read_count==0 and value.helper_count==1
             value=driver('helper-command-failure',[idle]*3,helper={**helper,'returncode':1});rejected(value,AssertionError)
             assert value.helper_read_count==0
+            failed='INSTRUMENTATION_RESULT: status=failed\nINSTRUMENTATION_RESULT: error=IOException: Fresh active root unavailable\nINSTRUMENTATION_CODE: 0\n'
+            value=driver('helper-root-unavailable',[idle]*3,helper={**helper,'diagnostic':failed})
+            rejected(value,AssertionError);assert value.helper_read_count==0 and not value.proofs
             value=driver('helper-read-failure',[idle]*3,helper={**helper,'readcode':1});rejected(value,AssertionError)
             value=driver('helper-xml-stale-nonce',[idle]*3,helper={**helper,'raw':raw.replace(nonce.encode(),b'b'*32)})
             rejected(value,AssertionError)
             value=driver('helper-late-app-crash',[idle]*3,helper=helper)
             value.crashes=lambda:'Process: '+PACKAGE if value.helper_count else ''
             rejected(value);assert not value.proofs
+        next_nonce='b'*32;next_raw=raw.replace(nonce.encode(),next_nonce.encode())
+        next_fields={**fields,'nonce':next_nonce,'file':'snapshot-'+next_nonce+'.xml','sha256':hashlib.sha256(next_raw).hexdigest(),'bytes':str(len(next_raw))}
+        with patch('emulator_check.uuid.uuid4',side_effect=[SimpleNamespace(hex=nonce),SimpleNamespace(hex=next_nonce)]):
+            value=driver('direct-only-after-verified-idle',[idle]*3,helper=helper)
+            value.capture_ui();value.helper={'raw':next_raw,'diagnostic':diagnostic(next_fields)}
+            actual,root=value.capture_ui()
+            assert actual==next_raw and root.get('capture-nonce')==next_nonce
+            assert value.dump_count==3 and value.helper_count==2 and value.helper_read_count==2
+            assert value.proofs[0]['capture_mode']=='fallback_after_three_recorded_idle_failures'
+            assert value.proofs[1]['capture_mode']=='direct_after_verified_idle_starvation'
+            assert all(row['shell_idle_starvation_previously_verified'] and not row['stale_xml_used'] for row in value.proofs)
+            count+=1
         fresh_active_root_capture(raw,diagnostic(fields),nonce);count+=1
         for value in [raw.replace(b'rotation="0"',b'rotation="9"'),b'',b'x'*(8<<20)]:
             mutated=dict(fields);mutated['sha256']=hashlib.sha256(value).hexdigest();mutated['bytes']=str(len(value))
@@ -174,6 +191,51 @@ def capture_controls(path):
             except AssertionError:count+=1
             else:raise AssertionError('Invalid active-root hierarchy admitted')
     return count
+
+
+def root_acquisition_controls(path):
+    """Execute the exact helper acquisition block with bounded clock/root stubs."""
+    source=Path(__file__).with_name('UiSnapshotInstrumentation.java').read_text()
+    constants=re.search(r'private static final int ROOT_ATTEMPTS=\d+, ROOT_WAIT_MS=\d+;',source).group()
+    begin=source.index('            int rootAttempts=0;')
+    end=source.index('            Display display=',begin)
+    block=source[begin:end]
+    harness=r'''
+import java.io.IOException;
+public final class RootAcquisitionTest {
+ CONSTANTS
+ static final class SystemClock {
+  static long now;static boolean frozen;
+  static long elapsedRealtime(){return now;}
+  static void sleep(long value){if(!frozen)now+=value;}
+ }
+ static final class Automation {
+  int calls,available;long perCall;boolean failure;
+  Object getRootInActiveWindow(){calls++;SystemClock.now+=perCall;if(failure)throw new IllegalStateException("unavailable fixture");return calls>=available&&available>0?new Object():null;}
+ }
+ static long[] run(Automation automation)throws Exception {
+  long started=0;Object root=null;
+  BLOCK
+  return new long[]{rootAttempts,rootWait};
+ }
+ static Automation fixture(int available,long delay,boolean frozen){SystemClock.now=0;SystemClock.frozen=frozen;Automation a=new Automation();a.available=available;a.perCall=delay;return a;}
+ public static void main(String[]args)throws Exception {
+  int checks=0;long[] got=run(fixture(1,0,false));if(got[0]!=1||got[1]!=0)throw new AssertionError();checks++;
+  got=run(fixture(4,0,false));if(got[0]!=4||got[1]!=300)throw new AssertionError();checks++;
+  Automation missing=fixture(0,0,false);try{run(missing);throw new AssertionError();}catch(IOException e){if(missing.calls>32||SystemClock.now>3000)throw new AssertionError();}checks++;
+  Automation frozen=fixture(0,0,true);try{run(frozen);throw new AssertionError();}catch(IOException e){if(frozen.calls!=32)throw new AssertionError();}checks++;
+  try{run(fixture(1,3001,false));throw new AssertionError();}catch(IOException expected){}checks++;
+  Automation broken=fixture(1,0,false);broken.failure=true;try{run(broken);throw new AssertionError();}catch(IllegalStateException expected){if(broken.calls!=1)throw new AssertionError();}checks++;
+  System.out.print(checks);
+ }
+}
+'''.replace('CONSTANTS',constants).replace('BLOCK',block)
+    path.mkdir(parents=True);java=path/'RootAcquisitionTest.java';java.write_text(harness)
+    compiled=subprocess.run(['java','com.sun.tools.javac.Main','-d',str(path),str(java)],capture_output=True,text=True,timeout=30)
+    assert compiled.returncode==0,compiled.stderr
+    result=subprocess.run(['java','-cp',str(path),'RootAcquisitionTest'],capture_output=True,text=True,timeout=10)
+    assert result.returncode==0,result.stderr
+    return int(result.stdout)
 
 
 def viewport_protocol_controls(path):
@@ -500,10 +562,12 @@ def main():
         native['objects_released']=False;native['static_renderer']['gpu_bytes']=0;assert settled_preview(ready,290) is False
         native['static_renderer']['gpu_bytes']=1;assert settled_preview(ready,310) is False
         capture_checks=capture_controls(Path(temp)/'captures')
+        acquisition_checks=root_acquisition_controls(Path(temp)/'root-acquisition')
         viewport_protocol_checks=viewport_protocol_controls(Path(temp)/'viewport-protocol')
         identity_resource_checks=identity_resource_controls()
         activity_checks=activity_controls()
-    print(json.dumps({'passed':True,'checks':17+capture_checks+viewport_protocol_checks+identity_resource_checks+activity_checks,'capture_controls':capture_checks,
+    print(json.dumps({'passed':True,'checks':17+capture_checks+acquisition_checks+viewport_protocol_checks+identity_resource_checks+activity_checks,'capture_controls':capture_checks,
+        'exact_helper_root_acquisition_stub_controls':acquisition_checks,
         'activity_inventory_controls':activity_checks,
         'identity_resource_controls':identity_resource_checks,
         'viewport_protocol_controls':viewport_protocol_checks,'scope':'Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded scrolling, exact APK identity and numeric protocol/resource privacy; no Android execution claim.'}))

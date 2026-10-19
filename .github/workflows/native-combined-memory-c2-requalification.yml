@@ -1,0 +1,318 @@
+name: Requalify exact Combined C2 memory diagnostic candidate
+'on':
+  push:
+    branches:
+    - native-android
+    paths:
+    - .github/workflows/native-combined-memory-c2-requalification.yml
+  workflow_dispatch: null
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: combined-memory-c2-requalification-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  reuse-qualified-package:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message,
+      '[combined-requalify]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - name: Fetch only the exact already built and independently audited candidate artifact
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh api repos/Russianranger/coh-android/actions/artifacts/12226012507/zip > /tmp/combined-memory-candidate.zip
+    - name: Reject runtime/build source changes and admit the original exact candidate packages
+      run: |
+        python3 - <<'PYADMIT'
+        import hashlib,json,os,pathlib,subprocess,zipfile
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')
+        assert os.environ['GITHUB_REPOSITORY']=='Russianranger/coh-android' and os.environ['GITHUB_REF']=='refs/heads/native-android'
+        root=pathlib.Path.cwd().resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        base='ae5a11d0c0be5098d0aec66370dda99c055167ee'
+        assert head==os.environ['GITHUB_SHA'] and not subprocess.check_output(['git','status','--porcelain','--untracked-files=no']).strip()
+        archive=pathlib.Path('/tmp/combined-memory-candidate.zip')
+        assert archive.stat().st_size==17868604 and hashlib.sha256(archive.read_bytes()).hexdigest()=='0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04'
+        allowed={
+         'native-android/combined-client/tools/upgrade_emulator_check.py',
+         'native-android/combined-client/tools/test_upgrade_driver.py',
+         'native-android/combined-client/tools/emulator_check.py',
+         'native-android/combined-client/tools/driver_controls.py',
+         'native-android/combined-client/tools/UiSnapshotInstrumentation.java',
+         'native-android/combined-client/tools/build_ui_snapshot_helper.py',
+         '.github/workflows/native-combined-memory-c2-requalification.yml',
+         'native-android/integration/three-workstreams-20261019/independent-package-review.json',
+         'native-android/integration/three-workstreams-20261019/integration.json',
+         'native-android/integration/three-workstreams-20261019/recovery.json',
+         'native-android/integration/three-workstreams-20261019/withheld-candidate.json',
+         'native-android/integration/three-workstreams-20261019/withheld-package-review.json',
+        }
+        changes={}
+        for row in subprocess.check_output(['git','diff','--name-status','--no-renames',base,head],text=True).splitlines():
+         status,name=row.split('\t',1)
+         assert status in ('A','M') and (name in allowed or name.endswith('.md')), 'UNREVIEWED_REQUALIFICATION_SOURCE_CHANGE: '+name
+         path=root/name;assert path.resolve()==path and path.is_file() and not path.is_symlink()
+         raw=path.read_bytes();assert raw==subprocess.check_output(['git','show',head+':'+name])
+         changes[name]={'status':status,'sha256':hashlib.sha256(raw).hexdigest()}
+        from sys import path as pythonpath
+        pythonpath.insert(0,str(root/'native-android/combined-client/tools'))
+        from prepare import safe_zip
+        out=root/'native-android/results/combined-memory-c2-requalification'
+        assert not out.exists();out.mkdir(parents=True)
+        with zipfile.ZipFile(archive) as z:
+         safe_zip(z);assert len(z.infolist())<=4096 and sum(i.file_size for i in z.infolist())<=128*1024**2
+         manifest_raw=z.read('source-admission.json');manifest=json.loads(manifest_raw)
+         assert manifest['passed'] is True and manifest['source_revision']==base and manifest['world_authority'] is False
+         pins=manifest['reviewed_raw_and_committed_source_sha256'];assert len(pins)>=2200
+         unchanged=0
+         for name,digest in pins.items():
+          original=subprocess.check_output(['git','show',base+':'+name]);assert hashlib.sha256(original).hexdigest()==digest
+          path=root/name;assert path.resolve()==path and path.is_file() and not path.is_symlink()
+          raw=path.read_bytes();assert raw==subprocess.check_output(['git','show',head+':'+name])
+          if name not in allowed:
+           assert hashlib.sha256(raw).hexdigest()==digest, 'CANDIDATE_RUNTIME_OR_BUILD_SOURCE_CHANGED: '+name
+           unchanged+=1
+         # The immutable archive binds exact APKs, original independent audits and peer.
+         apks={}
+         expected_apks={
+          'arm64-v8a':{'bytes':13929833,'sha256':'7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf'},
+          'x86_64':{'bytes':13233003,'sha256':'4cba32800790112c22146f6f6f8f773436a816de44c3e83d1c9503b0e9ec4d49'},
+         }
+         for abi,label in [('arm64-v8a','arm64'),('x86_64','x86_64')]:
+          receipt=json.loads(z.read(label+'-package.json'));audit=json.loads(z.read(label+'-interop-dso.json'))
+          apk=receipt['apk'];raw=z.read(apk['name']);actual={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+          assert actual=={k:apk[k] for k in ('bytes','sha256')}==audit['apk']==expected_apks[abi]
+          assert receipt['status']=='passed' and receipt['source_commit']==audit['source_revision']==base and receipt['tracked_source_clean'] is True
+          assert receipt['abi']==audit['abi']==abi and (receipt['version_code'],receipt['version_name'])==('11','0.1.10-memory-diagnostic-test')
+          assert receipt['signer_certificate_sha256']=='9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522'
+          assert audit['passed'] is True and audit['internal_core_and_static_archive_exports_hidden'] is True and audit['world_authority'] is False
+          apks[abi]=actual
+         for info in z.infolist():
+          assert info.file_size<=32*1024**2
+          path=out/info.filename;assert path.resolve().is_relative_to(out)
+          if info.is_dir():path.mkdir(parents=True,exist_ok=True)
+          else:path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(z.read(info))
+        proof={'schema':'coh-combined-exact-apk-requalification-v1','passed':True,'candidate_source_revision':base,'qualification_source_revision':head,'runtime_and_build_inputs_unchanged':True,'candidate_manifest_sha256':hashlib.sha256(manifest_raw).hexdigest(),'unchanged_candidate_source_files':unchanged,'reviewed_driver_or_document_changes':changes,'candidate_archive':{'artifact_id':'12226012507','run_id':'39334606957','bytes':17868604,'sha256':'0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04'},'candidate_apks':apks,'APK_rebuilt':False,'historical_qualifier_mains_replayed':False,'physical_Thor_qualified':False,'world_authority':False}
+        (out/'current-source-admission.json').write_text(json.dumps(proof,indent=2,sort_keys=True)+'\n')
+        print(json.dumps({'exact_candidate_APKs_reused':True,'runtime_and_build_inputs_unchanged':True,'candidate_source_revision':base,'qualification_source_revision':head}))
+        PYADMIT
+    - name: Qualify notification permission setup and strict upgrade report gates
+      run: |
+        python3 native-android/combined-client/tools/test_upgrade_driver.py
+    - uses: actions/upload-artifact@v4
+      with:
+        name: combined-memory-c2-requalification-inputs-${{ github.sha }}
+        path: native-android/results/combined-memory-c2-requalification/
+        if-no-files-found: error
+        retention-days: 90
+  android13-framework:
+    needs: reuse-qualified-package
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-memory-c2-requalification-inputs-${{ github.sha }}
+        path: native-android/results/combined-memory-c2-requalification
+    - name: Admit the immutable candidate package and current qualification source
+      run: |
+        python3 - <<'PYPROOF'
+        import json,os,pathlib,subprocess
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')
+        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        v=json.loads(pathlib.Path('native-android/results/combined-memory-c2-requalification/current-source-admission.json').read_bytes())
+        assert head==os.environ['GITHUB_SHA']==v['qualification_source_revision']
+        assert v['schema']=='coh-combined-exact-apk-requalification-v1' and v['passed'] is True and v['runtime_and_build_inputs_unchanged'] is True
+        assert v['candidate_source_revision']=='ae5a11d0c0be5098d0aec66370dda99c055167ee'
+        assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=no']).strip()
+        PYPROOF
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Install pinned public SDK tools for the separate UI capture test helper
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+    - name: Fetch the exact external donor for Android SAF import qualification
+      run: |
+        curl --fail --silent --show-error --location --retry 2 --output /tmp/combined-donor.apk https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk
+        echo '14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f  /tmp/combined-donor.apk' | sha256sum -c -
+    - name: Enable hosted Android emulator acceleration
+      run: |
+        test -c /dev/kvm
+        sudo chmod 666 /dev/kvm
+    - name: Qualify actual import picker, admission and native preview boundaries
+      uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+      with:
+        api-level: 33
+        emulator-build: '16428233'
+        channel: stable
+        target: google_apis
+        arch: x86_64
+        profile: pixel_2
+        emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front
+          none
+        disable-animations: true
+        script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial
+          emulator-5554 --apk native-android/results/combined-memory-c2-requalification/CoH-Native-Combined-0.1.10-memory-diagnostic-x86_64.apk
+          --output native-android/results/combined-memory-c2-requalification/android13-framework --donor-apk /tmp/combined-donor.apk
+          --ui-peer-binary native-android/results/combined-memory-c2-requalification/host/local-android/coh-local-peer-x86_64
+          --protocol-binary native-android/results/combined-memory-c2-requalification/host/local-android/coh-local-x86_64
+          --protocol-receipt native-android/results/combined-memory-c2-requalification/host/local-android/android-build.json
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-memory-c2-requalification-android13-framework-${{ github.sha }}
+        path: native-android/results/combined-memory-c2-requalification/android13-framework/
+        if-no-files-found: error
+        retention-days: 90
+  android13-fragment-interop:
+    needs: reuse-qualified-package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 1
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-memory-c2-requalification-inputs-${{ github.sha }}
+        path: native-android/results/combined-memory-c2-requalification
+    - name: Admit the immutable candidate package and current qualification source
+      run: |
+        python3 - <<'PYPROOF'
+        import json,os,pathlib,subprocess
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')
+        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        v=json.loads(pathlib.Path('native-android/results/combined-memory-c2-requalification/current-source-admission.json').read_bytes())
+        assert head==os.environ['GITHUB_SHA']==v['qualification_source_revision']
+        assert v['schema']=='coh-combined-exact-apk-requalification-v1' and v['passed'] is True and v['runtime_and_build_inputs_unchanged'] is True
+        assert v['candidate_source_revision']=='ae5a11d0c0be5098d0aec66370dda99c055167ee'
+        assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=no']).strip()
+        PYPROOF
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Prepare the focused framework test
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+        test -c /dev/kvm
+        sudo chmod 666 /dev/kvm
+    - name: Test new diagnostic JNI, sockets, report and lifecycle on Android 13
+      uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+      with:
+        api-level: 33
+        emulator-build: '16428233'
+        channel: stable
+        target: google_apis
+        arch: x86_64
+        profile: pixel_2
+        emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front
+          none
+        disable-animations: true
+        script: python3 native-android/combined-client/tools/fragment_interop_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb"
+          --serial emulator-5554 --apk native-android/results/combined-memory-c2-requalification/CoH-Native-Combined-0.1.10-memory-diagnostic-x86_64.apk
+          --package-receipt native-android/results/combined-memory-c2-requalification/x86_64-package.json --peer native-android/results/combined-memory-c2-requalification/interop-peer/coh-initial-interop-peer-x86_64
+          --peer-receipt native-android/results/combined-memory-c2-requalification/interop-peer/build.json --build-profile
+          memory-diagnostic --output native-android/results/combined-memory-c2-requalification/android13-fragment-interop
+          --candidate-source-revision ae5a11d0c0be5098d0aec66370dda99c055167ee --source-admission native-android/results/combined-memory-c2-requalification/current-source-admission.json
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-memory-c2-requalification-android13-fragment-interop-${{ github.sha }}
+        path: native-android/results/combined-memory-c2-requalification/android13-fragment-interop/
+        if-no-files-found: error
+        retention-days: 90
+  android13-package-upgrade:
+    needs: reuse-qualified-package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 1
+    - uses: actions/download-artifact@v4
+      with:
+        name: combined-memory-c2-requalification-inputs-${{ github.sha }}
+        path: native-android/results/combined-memory-c2-requalification
+    - name: Admit the immutable candidate package and current qualification source
+      run: |
+        python3 - <<'PYPROOF'
+        import json,os,pathlib,subprocess
+        if not __debug__ or os.environ.get('PYTHONOPTIMIZE'):raise ValueError('OPTIMIZED_SOURCE_GATE')
+        head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+        v=json.loads(pathlib.Path('native-android/results/combined-memory-c2-requalification/current-source-admission.json').read_bytes())
+        assert head==os.environ['GITHUB_SHA']==v['qualification_source_revision']
+        assert v['schema']=='coh-combined-exact-apk-requalification-v1' and v['passed'] is True and v['runtime_and_build_inputs_unchanged'] is True
+        assert v['candidate_source_revision']=='ae5a11d0c0be5098d0aec66370dda99c055167ee'
+        assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=no']).strip()
+        PYPROOF
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Fetch the exact previous qualified x86_64 package archive and enable KVM
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        gh api repos/Russianranger/coh-android/actions/artifacts/12159047135/zip > /tmp/combined-previous019.zip
+        python3 - <<'PYPIN'
+        import hashlib,pathlib
+        p=pathlib.Path('/tmp/combined-previous019.zip')
+        assert p.stat().st_size==17073074
+        assert hashlib.sha256(p.read_bytes()).hexdigest()=='af0aaa0afe0d50cbedb54a7a8ea7dcda4dab3462516a71f5d49051230c9e152a'
+        PYPIN
+        test -c /dev/kvm
+        sudo chmod 666 /dev/kvm
+    - name: Qualify 0.1.9 update, debuggable rollback and synthetic private data preservation
+      uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+      with:
+        api-level: 33
+        emulator-build: '16428233'
+        channel: stable
+        target: google_apis
+        arch: x86_64
+        profile: pixel_2
+        emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front
+          none
+        disable-animations: true
+        script: python3 native-android/combined-client/tools/upgrade_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb"
+          --serial emulator-5554 --apk native-android/results/combined-memory-c2-requalification/CoH-Native-Combined-0.1.10-memory-diagnostic-x86_64.apk
+          --package-receipt native-android/results/combined-memory-c2-requalification/x86_64-package.json --previous-archive
+          /tmp/combined-previous019.zip --exercise-debuggable-downgrade --output native-android/results/combined-memory-c2-requalification/android13-package-upgrade
+          --candidate-source-revision ae5a11d0c0be5098d0aec66370dda99c055167ee --source-admission native-android/results/combined-memory-c2-requalification/current-source-admission.json
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-memory-c2-requalification-android13-package-upgrade-${{ github.sha }}
+        path: native-android/results/combined-memory-c2-requalification/android13-package-upgrade/
+        if-no-files-found: error
+        retention-days: 90

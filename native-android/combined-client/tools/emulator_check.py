@@ -44,9 +44,14 @@ def fresh_active_root_capture(raw, diagnostic, nonce):
     assert re.fullmatch('[0-9]+', result.get('nodes', '')) and 0 < int(result['nodes']) <= 8192
     assert all(re.fullmatch('[0-9]+', result.get(k, '')) for k in ('started_elapsed_ms', 'completed_elapsed_ms'))
     assert int(result['started_elapsed_ms']) <= int(result['completed_elapsed_ms'])
+    assert re.fullmatch('[0-9]+', result.get('root_attempts', '')) and 1 <= int(result['root_attempts']) <= 32
+    assert re.fullmatch('[0-9]+', result.get('root_wait_ms', '')) and 0 <= int(result['root_wait_ms']) <= 3000
+    assert int(result['root_wait_ms']) <= int(result['completed_elapsed_ms']) - int(result['started_elapsed_ms'])
     root = ET.fromstring(raw)
     assert root.tag == 'hierarchy' and root.get('capture-nonce') == nonce
     assert root.get('capture-method') == 'fresh-ui-automation-active-root-without-global-idle'
+    assert root.get('capture-root-attempts') == result['root_attempts']
+    assert root.get('capture-root-wait-ms') == result['root_wait_ms']
     assert root.get('rotation') in ('0', '1', '2', '3')
     nodes = list(root.iter('node'))
     assert len(nodes) == int(result['nodes']), 'Snapshot node receipt differs'
@@ -430,6 +435,9 @@ class Check:
 
     def capture_ui(self):
         self.capture_id += 1
+        if getattr(self, '_capture_helper_preferred', False):
+            assert getattr(self, '_capture_idle_starvation_verified', False)
+            return self.capture_active_root('ui-capture-' + str(self.capture_id) + '-direct')
         remote = '/data/local/tmp/combined-ui.xml'
         for attempt in range(1, 4):
             prefix = 'ui-capture-' + str(self.capture_id) + '-attempt-' + str(attempt)
@@ -446,7 +454,10 @@ class Check:
                     time.sleep(.5)
                     continue
                 if diagnostic == 'ERROR: could not get idle state.':
-                    return self.capture_active_root(prefix)
+                    self._capture_idle_starvation_verified = True
+                    raw, root = self.capture_active_root(prefix)
+                    self._capture_helper_preferred = True
+                    return raw, root
                 raise RuntimeError('UI capture failed; raw stdout/stderr preserved: ' + prefix
                     + '; returncode=' + str(result.returncode) + '; diagnostic=' + diagnostic)
             read = self.capture_command(prefix, 'read', 'exec-out', 'cat', remote)
@@ -495,8 +506,11 @@ class Check:
         nonce = uuid.uuid4().hex
         request = self.capture_command(prefix, 'active-root', 'shell', 'am', 'instrument', '-w', '-r', '-e', 'nonce', nonce,
             CAPTURE_HELPER_PACKAGE + '/.UiSnapshotInstrumentation')
+        self.native_fault_evidence(prefix + '-active-root-command')
         assert request.returncode == 0, 'Fresh active-root instrumentation failed'
         diagnostic = request.stdout.decode(errors='replace')
+        assert re.search(r'^INSTRUMENTATION_CODE: -1\s*$', diagnostic, re.M), 'Snapshot instrumentation failed before file read'
+        assert re.search(r'^INSTRUMENTATION_RESULT: status=passed\s*$', diagnostic, re.M), 'Snapshot helper did not complete a fresh tree'
         filename = 'snapshot-' + nonce + '.xml'
         read = self.capture_command(prefix, 'active-root-read', 'exec-out', 'run-as', CAPTURE_HELPER_PACKAGE, 'cat', 'files/' + filename)
         assert read.returncode == 0, 'Fresh private active-root capture unavailable'
@@ -505,10 +519,14 @@ class Check:
         removed = self.capture_command(prefix, 'active-root-remove', 'shell', 'run-as', CAPTURE_HELPER_PACKAGE, 'rm', 'files/' + filename)
         assert removed.returncode == 0, 'Fresh helper snapshot cleanup failed'
         (self.args.output / 'last-ui.xml').write_bytes(read.stdout)
-        self.record('fresh bounded accessibility capture without global idle after three recorded shell idle failures',
+        self.record('fresh bounded accessibility capture without global idle',
             source='separate self-targeted UiAutomation instrumentation', nonce=nonce, sha256=receipt['sha256'],
             bytes=len(read.stdout), nodes=int(receipt['nodes']), node_limit=8192, depth_limit=64,
             byte_limit=8 << 20, stale_xml_used=False, global_idle_required=False,
+            root_attempts=int(receipt['root_attempts']), root_wait_ms=int(receipt['root_wait_ms']),
+            root_attempt_limit=32, root_wait_limit_ms=3000,
+            shell_idle_starvation_previously_verified=getattr(self, '_capture_idle_starvation_verified', False),
+            capture_mode='direct_after_verified_idle_starvation' if getattr(self, '_capture_helper_preferred', False) else 'fallback_after_three_recorded_idle_failures',
             candidate_APK_rebuilt=False, raw_command_results_preserved=True)
         return read.stdout, root
 

@@ -92,7 +92,10 @@ class UpgradeCheck:
         (self.args.output / 'progress.json').write_text(json.dumps(self.proofs, indent=2) + '\n')
 
     def install(self, apk, label, replace=False, downgrade=False):
-        flags = (['-r'] if replace else []) + (['-d'] if downgrade else [])
+        # This package/data test runs with notifications already granted, like
+        # the main framework suite. Leaving Android's permission Activity open
+        # while replacing the requesting package can strand an orphan task.
+        flags = ['-g'] + (['-r'] if replace else []) + (['-d'] if downgrade else [])
         result = self.adb('install', *flags, apk, timeout=120)
         need(re.search(rb'^Success\s*$', result.stdout, re.M) is not None, 'package installation did not report Success')
         (self.args.output / (label + '-install.txt')).write_bytes(result.stdout + result.stderr)
@@ -112,6 +115,8 @@ class UpgradeCheck:
         return uid.group(1)
 
     def launch_and_quiesce(self, receipt, label):
+        permissions = self.text('shell', 'dumpsys', 'package', PACKAGE)
+        need(re.search(r'^\s*android\.permission\.POST_NOTIFICATIONS:\s+granted=true(?:,|$)', permissions, re.M) is not None, 'test installation must grant notifications before launcher lifecycle checks')
         # Retain the pre-launch report rather than clearing persisted app data.
         # An explicit stopped process plus uptime requires a fresh report epoch.
         self.capture(label + '-before')
@@ -148,7 +153,7 @@ class UpgradeCheck:
                             self.capture(label + '-after')
                             self.assert_no_app_fault(label)
                             self.adb('shell', 'am', 'force-stop', PACKAGE)
-                            self.record(label, launcher_opened=True, guest_started=False, fresh_report_epoch=True)
+                            self.record(label, launcher_opened=True, guest_started=False, fresh_report_epoch=True, notification_permission_granted=True)
                             return
             (self.args.output / (label + '-report-observations.json')).write_text(json.dumps(observations, indent=2) + '\n')
             time.sleep(.25)
@@ -236,6 +241,7 @@ class UpgradeCheck:
             'source_admission_sha256': hashlib.sha256(self.args.source_admission.read_bytes()).hexdigest() if self.args.source_admission else None,
             'checks': self.proofs, 'synthetic_sentinel_bytes': sum(map(len, sentinels().values())),
             'synthetic_profile_uses_active_import_filename': False, 'initial_failed_upgrade_launch_root_cause_established': False,
+            'notification_permission_pregranted_by_test_installer': True,
             'android_api': 33, 'abi': 'x86_64', 'debuggable_package_downgrade_exercised': self.args.exercise_debuggable_downgrade,
             'package_data_preservation_only': True, 'real_game_save_migration_qualified': False, 'guest_started': False,
             'physical_Thor_qualified': False, 'world_authority': False}

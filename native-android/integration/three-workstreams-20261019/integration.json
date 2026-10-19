@@ -71,7 +71,7 @@
         "driver": 7,
         "jni_per_mode": 186
       },
-      "apk_delivery_status": "withheld pending exact-package Android requalification",
+      "apk_delivery_status": "WITHHELD permanently: first-unavailable nullable memory-history bug; superseded by corrected source",
       "package_build_lint_audits": "passed",
       "package_job": 118331575586,
       "package_artifact": {
@@ -111,7 +111,7 @@
       "local_head": "47c61f4917d57ac1b5410635ad74312704798b5f",
       "remote_commit": "ae5a11d0c0be5098d0aec66370dda99c055167ee",
       "workflow_run": 39334606957,
-      "status": "fresh_build_and_Android_qualification_pending",
+      "status": "package_qualified_independent_audit_passed_Android_harness_recovery_pending",
       "reason_for_rebuild": "fixed real first-unavailable null-unboxing and sampler recovery bug; old candidate withheld",
       "local_checks": {
         "policy": 2710,
@@ -127,7 +127,99 @@
       },
       "server_policy_thresholds_changed": false,
       "heavy_world_integration_enabled": false,
-      "APK_delivered": false
+      "APK_delivered": false,
+      "package_build_lint_audits": "passed",
+      "package_job": 118340814357,
+      "host_suites": 17,
+      "independent_package_review": "passed",
+      "independent_package_review_sha256": "deaacf4c9031c53add86de1f338f03a865a8c7de0ffe0effd4f1d6a37c10c17c",
+      "candidate_package_artifact": {
+        "id": 12226012507,
+        "bytes": 17868604,
+        "sha256": "0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04"
+      },
+      "arm64_apk": {
+        "bytes": 13929833,
+        "sha256": "7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf"
+      },
+      "runtime_Android_jobs": "all three original jobs failed test-harness observations; exact-package replay pending",
+      "physical_Thor": "pending",
+      "failed_Android_harness_jobs": [
+        {
+          "id": 118342577118,
+          "kind": "notification permission controller task left open by previous-version launch; fresh code11 report blocked",
+          "artifact": 12226502580,
+          "artifact_bytes": 7147835,
+          "artifact_sha256": "65761699f9f1079cf86824265fb9dcd919c12c74b959305d3b739399d57f9de0",
+          "candidate_version_UID_and_synthetic_sentinels_preserved_before_launch": true,
+          "app_crash_or_ANR_observed": false
+        },
+        {
+          "id": 118342577301,
+          "kind": "one-shot accessibility root unavailable following actual SAF export; no stale tree accepted",
+          "artifact": 12226298799,
+          "artifact_bytes": 111254,
+          "artifact_sha256": "d8ce076077d255d803dd4f0e1b51f4ea94f5cef3a363b79cba8b2f300366ec3e",
+          "new_JNI_memory_fragmented_65536_byte_receive_and_JSON_export_checks_passed": true
+        },
+        {
+          "id": 118342577298,
+          "kind": "slow global-idle captures exceeded unchanged 30000ms native transport idle timeout before observed character selection",
+          "artifact": 12225728733,
+          "artifact_bytes": 553095,
+          "artifact_sha256": "9a1bb58083f17ad2bcdf3c3902132d37758d798fe306548baa4d30cb200a98d9",
+          "CHARACTERS_READY_observed_before_timeout": true,
+          "scripted_peer_character_choice_packets": 0,
+          "scripted_peer_closed_sockets": 2
+        }
+      ],
+      "harness_independent_review": {
+        "schema": "coh-combined-c2-harness-independent-review-v1",
+        "review_status": "passed_for_harness_only_requalification",
+        "reviewed_commit": "1f76c6c777dc2d754a41f2b6608c77636640e719",
+        "candidate_runtime_source_revision": "ae5a11d0c0be5098d0aec66370dda99c055167ee",
+        "candidate_artifact": {
+          "id": "12226012507",
+          "bytes": 17868604,
+          "sha256": "0d38981d31781a0e2d24adc579017e335ecb80cef547e45e5d0ee915d44ddd04"
+        },
+        "candidate_apks": {
+          "arm64": {
+            "bytes": 13929833,
+            "sha256": "7d74d9824fd80f08ca9a77a9d8ee68746d36dcfe9e74920ee864ffe2065880cf"
+          },
+          "x86_64": {
+            "bytes": 13233003,
+            "sha256": "4cba32800790112c22146f6f6f8f773436a816de44c3e83d1c9503b0e9ec4d49"
+          }
+        },
+        "actual_archive_and_all_Gitbase_source_pins_verified": 2226,
+        "current_primary_unchanged_non_driver_source_pins_verified": 2221,
+        "reviewed_paths_sha256": {
+          ".github/workflows/native-combined-memory-c2-requalification.yml": "46acd94817fa30ada01da6045a78eae79dfda32da7c4438232d8c323559076f1",
+          "native-android/combined-client/tools/test_upgrade_driver.py": "23b368e48203c4dc3122335f933c34e521e6fd60cb9275c085fb316ac3a3884b",
+          "native-android/combined-client/tools/upgrade_emulator_check.py": "2b27625b5e122adc1a06f15f2e6dea88f5886976a968168c42891bb1c23d7bc8"
+        },
+        "focused_controls": {
+          "tests": 4,
+          "passed": true,
+          "scenarios": [
+            "all_install_stages_use_runtime_permission_pregrant",
+            "permission_ungranted_rejected_before_launch",
+            "stale_report_cannot_satisfy_fresh_epoch",
+            "wrong_APK_or_failed_initialization_still_rejected"
+          ]
+        },
+        "runtime_or_build_sources_modified_by_reviewed_commit": false,
+        "ELFs_or_assets_modified": false,
+        "signer_UID_data_fresh_report_cleanup_rollback_guards_weakened": false,
+        "workflow": "exact immutable packages; package/source admission plus framework, fragment and update/rollback Android13 gates; no rebuild/release commands",
+        "trigger_scope": "tagged [combined-requalify] push required; bare workflow_dispatch has no head_commit tag and skips admission",
+        "scope": "Test harness pregrants notifications on a fresh disposable emulator; no runtime permission behavior or game-save migration claim",
+        "Android_execution": "pending C2 requalification",
+        "physical_Thor_qualified": false,
+        "world_authority": false
+      }
     }
   ],
   "protected_baseline_hashes_unchanged": true,
