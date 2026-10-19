@@ -308,7 +308,7 @@ total delta including slots is at most4264. Formatter validates ranges and
 same-boundary context before packing. The first-literal five fields,192-byte
 child,7,168-byte total cap, existing overflow guard and cleanup stay intact.
 
-The current addition, `coh_initial_appearance_probe`, starts at that verified
+The accepted `coh_initial_appearance_probe` starts at that verified
 body prefix's `end_bit` in the SAME loan. It also runs at exact prefix end to
 diagnose a missing bodytype. It reads/discards raw Pack6 bodytype, skin32,
 converted Boolean, supergroup color selector3 and extra-info Boolean, then
@@ -343,6 +343,44 @@ combined delta is4301 packed/4352 compressed bits. Existing first-literal fields
 No SG colors/scales/part count/parts, unresolved indexed string or later record
 is read. No body/catalog membership, generation, ownership, actor, world or
 application ACK acceptance is granted.
+
+The current addition, `coh_initial_sgcolors_probe`, starts at verified
+`appearance.end_bit` in the SAME immutable loan. Exact-end scalar completion
+still invokes it, reporting the missing first color word. It reads/discards
+exactly72 raw U32 bitset words:6 slots ×12 words. Within each slot the source
+order is Primary low/high, Secondary low/high, Primary2 low/high, Secondary2
+low/high, Tertiary low/high and Quaternary low/high. No color values or bitsets
+are retained, interpreted, looked up or applied.
+
+Only completed words increment `words_read`. A shortened word reports
+INVALID/WORD at its first bit, leaving the count intact; zero-based slot and
+channel are words_read/12 and words_read%12. Both packed and byte-aligned
+profiles consume32 bits per word, so the fixed maximum is72 reads/2304 bits.
+After all72, `array_validated` means syntax only and stops BEFORE the first
+scale F32: UNSUPPORTED with remaining bits, INVALID at exact end, preserving
+array completion. No COH_OK, complete costume/character, catalog membership,
+generation, ownership, actor, world or application ACK admission follows.
+Existing source/receipt implementations remain unchanged, including every
+unresolved indexed-string stop before its Pack.
+
+Prior failure projections are preserved. New stages33 WORD and34
+FIRST_SCALES_REQUIRED use the same7 positions [status,stage,done0,done1,list_end,
+total_delta,metadata]. Metadata bits0..5 encode slot pair
+`count*(count-1)/2+current` (0..54); recover count1..10 and current<count from
+its triangular interval. Bits6..13 additional;14 deferred;15..16 body present;
+17 second cached;18 compressed;19..20 appearance Pack selector;21..27 completed
+SG words0..72. Packed selectors0..3 represent Pack widths6/18/42/74, so appearance
+widths43/55/79/111. Compressed selector0 gives appearance width88. Completed
+parents imply their existing full-list/validation flags and masks as above.
+
+Exact failure=list_end+total_delta; SG begin=failure-32*words_read; previous body
+prefix end=SG begin-appearance width; slot end=list_end+(compressed?40:22).
+Thus all previous projected context and boundaries remain recoverable. The new
+formatter reuses accepted parent context validation and checks actual Pack and
+scalar widths before packing. Maximum combined delta6605 packed/6656 compressed
+still fits4 digits. Fixed4MiB input,192-byte child,7,168-byte report, overflow
+guard and wiped cleanup remain. Scales, part count, parts and later records
+remain unread; no dictionary or fabricated generation is supplied.
 
 ## Original protocol evidence
 
@@ -438,6 +476,11 @@ after scales/part count. The self branch in `entsend.c:2831` passes send_names1;
 the other-player branch can pass0. The new probe qualifies raw scalar syntax
 under that initial self profile without inventing a runtime catalog.
 
+Original `costume.h:136` fixes NUM_SG_COLOR_SLOTS at6. The unchanged
+`costume_send:1549..1563` and `costume_receive:1444..1458` write/read the same
+12 low/high words per slot, then the scale loop. These words are raw bitsets,
+not cached/palette indices. No runtime color/resource membership is inferred.
+
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
 against the owned local-development handoff; it does not establish whole-list
@@ -451,37 +494,39 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_appearance_probe.py --sanitize --output NEW.json` executes
-unchanged whole original `costume_send` and its actual cache/indexed-string and
-bit-writing helpers. Fixture shells and stash adapters remain explicit and
-establish no actual catalog membership/generation. Extra0 source fixtures use
-the original quantized-scale writer on their later tail. Original consumer
-ordering is inspected, not applied. Accepted body-prefix source/receipt hashes
-are checked; no old checker mains or native suites are replayed.
+`check_initial_sgcolors_probe.py --sanitize --output NEW.json` executes unchanged
+whole original `costume_send` with actual source cache/index/bit-writing helpers.
+Explicit fixture shells fill ordered per-slot/channel U32 patterns; independent
+projection checks all72 source words and the exact first-scale boundary. Fixture
+adapters establish no actual resource/catalog membership or generation. Original
+consumer order is inspected, not applied. Accepted appearance source/receipt
+hashes are checked; no old checker mains or native suites are replayed. The
+accepted parent formatter is reused for numeric context validation only.
 
-Release, ASan and UBSan each pass2,876,348 checks across191 fixtures, including
-11,763 shortened extents,11,763 bit mutations,545,341 unread SG/suffix controls,
-10 API/alias controls and60 formatter-domain controls. Source fixtures use
-bodytypes0..INT_MAX; full-U32/overflow endpoints are labeled native wire controls.
-No valid catalog membership is inferred. Maxima111 packed/88 compressed bits and
-24 extra0 profile refusals are verified. Native parser stack is224 bytes;
-formatter frames80/144 bytes are bounded host evidence, not device RSS proof.
+Release, ASan and UBSan each pass2,753,937 checks across109 fixtures, including
+209,664 shortened word extents,209,664 color-bit discard controls,88,445 unread
+scale/part-tail controls,50 whole-pattern equivalences,10 API/alias controls,
+48 formatter-domain controls and all55 triangular slot-pair roundtrips. The
+source fixture has72 distinct words, including zero, all ones and high-bit
+patterns. Native parser frame is176 bytes; formatters64/240 bytes are bounded,
+with the latter reusing the accepted parent formatter. These are host stack
+figures, not device RSS qualification.
 
-Affected JNI release/ASan/UBSan each pass4,833 checks across86 scenarios with98
-wiped frees. Observed maximum report is7,153 bytes. Bounded projection checks
+Affected JNI release/ASan/UBSan each pass5,613 checks across99 scenarios with111
+wiped frees. Observed maximum report is7,155 bytes. Bounded projection checks
 reach7,167 bytes plus NUL (159-byte child), preserving all other observed fixture
 fields. This does not qualify every possible transport-counter combination;
-the existing report overflow guard remains. No limits are increased.
+the existing overflow guard remains. No limits are increased.
 
-The JNI fixture preserves accepted bytes through1835, then uses source-produced
-bodytype1,skin0xffeeddcc,converted1,selector5,extra1. These scalars end1878 BEFORE
-the first SG color word. JNI controls cover each truncated scalar, extra0,
-exact scalar end, discarded-value changes, unchanged unread tail and preserved
-unresolved indexed-string stops. Raw capture/cleanup and authority-false fields
-remain intact; scalar refusals do not create a terminal transport failure.
+The JNI fixture preserves accepted bytes through1878, then uses original
+producer SG words. Array end4182 is immediately BEFORE the first source F32
+scale. JNI doubles cover missing/partial first and later words, slot boundaries,
+last-word truncation, exact array end, discarded word changes, unread scale-tail
+mutations and preserved dictionary/extra-profile refusals. Raw observation,
+cleanup and all authority/application ACK false fields remain intact.
 
-Receipts/source hashes are in `qualification/initial-appearance-20261019/`;
-focused CI is `Native initial ALLENTS appearance scalars`. Exactly ONE scalar
+Receipts/source hashes are in `qualification/initial-sgcolors-20261019/`;
+focused CI is `Native initial ALLENTS supergroup color array`. Exactly ONE array
 milestone ends here. No renderer/compiler/network/Android13 suites, live original
 server transaction, new Thor run or APK is claimed. Complete costume/character,
 dictionary-generation and session-ownership qualification remain blocked.

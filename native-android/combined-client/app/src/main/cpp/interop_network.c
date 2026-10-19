@@ -21,6 +21,7 @@
 #include "coh_initial_costume_slots_probe.h"
 #include "coh_initial_costume_body_probe.h"
 #include "coh_initial_appearance_probe.h"
+#include "coh_initial_sgcolors_probe.h"
 #include "coh_session_crypto.h"
 #include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
 #ifdef COH_INTEROP_REQUEST_TX
@@ -45,6 +46,7 @@ typedef struct {
     CohInitialCostumeSlotsProbe initial_costume_slots;
     CohInitialCostumeBodyProbe initial_costume_body;
     CohInitialAppearanceProbe initial_appearance;
+    CohInitialSgcolorsProbe initial_sgcolors;
     CohReceiveProjection receive;
 #ifdef COH_INTEROP_REQUEST_TX
     CohRequestTxWitness *request;
@@ -218,6 +220,11 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                                     CohRepReader appearance=lease.reader;appearance.cursor=h->initial_costume_body.end_bit;
                                                     (void)coh_initial_appearance_probe(&appearance,&h->initial_appearance);
                                                     coh_db_wipe(&appearance,sizeof(appearance));
+                                                    if(h->initial_appearance.scalars_validated&&h->initial_appearance.stage==COH_INITIAL_APPEARANCE_COLORS) {
+                                                        CohRepReader sgcolors=lease.reader;sgcolors.cursor=h->initial_appearance.end_bit;
+                                                        (void)coh_initial_sgcolors_probe(&sgcolors,&h->initial_sgcolors);
+                                                        coh_db_wipe(&sgcolors,sizeof(sgcolors));
+                                                    }
                                                 }
                                             }
                                         }
@@ -332,7 +339,9 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     if(reward_written<=0||(size_t)reward_written>=sizeof(first_reward))strcpy(first_reward,"null");
     if(h->initial_reward_list.stage&&reward_written>1&&(size_t)reward_written<sizeof(first_reward)&&first_reward[reward_written-1]=='}') {
         char progress[COH_INITIAL_REWARD_LIST_REPORT_MAX];
-        int progress_written=h->initial_appearance.stage?
+        int progress_written=h->initial_sgcolors.stage?
+            coh_initial_sgcolors_progress_json(&h->initial_reward_list,&h->initial_costume_slots,&h->initial_costume_body,&h->initial_appearance,&h->initial_sgcolors,progress,sizeof(progress)):
+            h->initial_appearance.stage?
             coh_initial_appearance_progress_json(&h->initial_reward_list,&h->initial_costume_slots,&h->initial_costume_body,&h->initial_appearance,progress,sizeof(progress)):
             h->initial_costume_body.stage?
             coh_initial_costume_body_progress_json(&h->initial_reward_list,&h->initial_costume_slots,&h->initial_costume_body,progress,sizeof(progress)):

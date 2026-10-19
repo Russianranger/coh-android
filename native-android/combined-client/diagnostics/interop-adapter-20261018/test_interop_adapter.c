@@ -19,9 +19,11 @@
 #include "../../../engine/initial-capture/qualification/initial-costume-slots-20261019/jni-fixture.h"
 #include "../../../engine/initial-capture/qualification/initial-costume-body-20261019/jni-fixture.h"
 #include "../../../engine/initial-capture/qualification/initial-appearance-20261019/jni-fixture.h"
+#include "../../../engine/initial-capture/qualification/initial-sgcolors-20261019/jni-fixture.h"
 static unsigned pose_fixture;
 static unsigned sequence_fixture;
-static unsigned triggered_fixture,aianim_fixture,netfx_fixture,costume_fixture,reward_fixture,reward_list_fixture,slots_fixture,body_fixture,appearance_fixture;
+static unsigned triggered_fixture,aianim_fixture,netfx_fixture,costume_fixture,reward_fixture,reward_list_fixture,slots_fixture,body_fixture,appearance_fixture,sgcolors_fixture;
+static unsigned char sgcolors_packet[sizeof(coh_sgcolors_jni_fixture)];
 static unsigned char appearance_packet[sizeof(coh_appearance_jni_fixture)];
 static unsigned char body_packet[sizeof(coh_costume_body_jni_fixture)];
 static unsigned char slots_packet[sizeof(coh_costume_slots_jni_fixture)];
@@ -105,6 +107,17 @@ CohStatus coh_initial_capture_service(CohInitialCapture*c,uint64_t now,CohCancel
   if(appearance_fixture==8)bits=COH_APPEARANCE_JNI_FIXTURE_SCALARS_END;
   loan.reader.bytes=(CohBytes){appearance_packet,sizeof(appearance_packet)};loan.reader.bits=bits;loan.reader.cursor=COH_APPEARANCE_JNI_FIXTURE_POST_COMMAND;loan.message_id=17;
  }
+ if(sgcolors_fixture&&c->step){
+  size_t bits=COH_SGCOLORS_JNI_FIXTURE_BITS;
+  if(sgcolors_fixture==2)bits=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN;
+  if(sgcolors_fixture==3)bits=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN+31;
+  if(sgcolors_fixture==4)bits=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN+63;
+  if(sgcolors_fixture==5)bits=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN+12*32;
+  if(sgcolors_fixture==6)bits=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN+17*32+17;
+  if(sgcolors_fixture==7)bits=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_END-1;
+  if(sgcolors_fixture==8)bits=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_END;
+  loan.reader.bytes=(CohBytes){sgcolors_packet,sizeof(sgcolors_packet)};loan.reader.bits=bits;loan.reader.cursor=COH_SGCOLORS_JNI_FIXTURE_POST_COMMAND;loan.message_id=17;
+ }
  live_event=&event;CohStatus status=observer(context,c,&event);live_event=NULL;
  if(status!=COH_OK){c->d.first_failure=(CohInitialCaptureFailureSnapshot){1,c->d.local.phase,COH_DB_HANDOFF_READY,COH_MAP_SCENE_INCOMPLETE,status,COH_INITIAL_CAPTURE_FAILURE_OBSERVER};c->d.failure=COH_INITIAL_CAPTURE_FAILURE_OBSERVER;c->d.phase=COH_INITIAL_CAPTURE_FAILED;c->d.status=status;closed(c);return status;}
  if(!c->step++){c->d.groups_observed=1;c->d.groups_observations=1;c->d.reqallents_sent=1;c->d.phase=COH_INITIAL_CAPTURE_WAIT_ALLENTS;return COH_OK;}
@@ -125,7 +138,7 @@ void coh_request_tx_retire(CohRequestTxWitness*w){if(w){CHECK(!w->retired);w->re
 void coh_request_tx_diagnostics(const CohRequestTxWitness*w,CohRequestTxDiagnostics*out){CHECK(w);memset(out,0,sizeof(*out));out->diagnostic_only=1;out->valid=w->retired;out->witness_retired=w->retired;out->queue_attempted=out->queue_succeeded=capture.d.reqallents_sent;out->queue_status=COH_OK;out->first_send_attempts=out->first_send_accepted=capture.d.reqallents_sent;out->peer_transport_ack_observed=capture.d.raw_allents_observed;}
 void coh_request_tx_destroy(CohRequestTxWitness*w){if(w)CHECK(w->retired&&!w->owner);}
 #endif
-static void fixture(void){CHECK(!live);pose_fixture=0;sequence_fixture=0;triggered_fixture=aianim_fixture=netfx_fixture=costume_fixture=reward_fixture=reward_list_fixture=slots_fixture=body_fixture=appearance_fixture=0;memcpy(appearance_packet,coh_appearance_jni_fixture,sizeof(appearance_packet));memcpy(body_packet,coh_costume_body_jni_fixture,sizeof(body_packet));memcpy(slots_packet,coh_costume_slots_jni_fixture,sizeof(slots_packet));memcpy(reward_list_packet,coh_reward_list_jni_fixture,sizeof(reward_list_packet));memcpy(reward_packet,coh_reward_jni_fixture,sizeof(reward_packet));memcpy(costume_packet,coh_costume_jni_fixture,sizeof(costume_packet));memcpy(aianim_packet,coh_aianim_jni_fixture,sizeof(aianim_packet));memcpy(sequence_packet,coh_sequence_jni_fixture,sizeof(sequence_packet));fault=exception_pending=0;alloc_calls=fail_alloc=0;memset(&input,0,sizeof(input));const char*n="PRIVATE_USER";input.length=(jsize)strlen(n);for(jsize i=0;i<input.length;i++)input.data[i]=(jchar)n[i];}
+static void fixture(void){CHECK(!live);pose_fixture=0;sequence_fixture=0;triggered_fixture=aianim_fixture=netfx_fixture=costume_fixture=reward_fixture=reward_list_fixture=slots_fixture=body_fixture=appearance_fixture=sgcolors_fixture=0;memcpy(sgcolors_packet,coh_sgcolors_jni_fixture,sizeof(sgcolors_packet));memcpy(appearance_packet,coh_appearance_jni_fixture,sizeof(appearance_packet));memcpy(body_packet,coh_costume_body_jni_fixture,sizeof(body_packet));memcpy(slots_packet,coh_costume_slots_jni_fixture,sizeof(slots_packet));memcpy(reward_list_packet,coh_reward_list_jni_fixture,sizeof(reward_list_packet));memcpy(reward_packet,coh_reward_jni_fixture,sizeof(reward_packet));memcpy(costume_packet,coh_costume_jni_fixture,sizeof(costume_packet));memcpy(aianim_packet,coh_aianim_jni_fixture,sizeof(aianim_packet));memcpy(sequence_packet,coh_sequence_jni_fixture,sizeof(sequence_packet));fault=exception_pending=0;alloc_calls=fail_alloc=0;memset(&input,0,sizeof(input));const char*n="PRIVATE_USER";input.length=(jsize)strlen(n);for(jsize i=0;i<input.length;i++)input.data[i]=(jchar)n[i];}
 static void start(void){current=JNI(begin)(&env,NULL,7000,&input,5,JNI_FALSE,JNI_FALSE,100);CHECK(current>0&&live==1);}
 static const char*report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"packet_copy_retained\":false"));return report_text;}
 static void finish(void){JNI(close)(&env,NULL,current);CHECK(!live);CHECK(JNI(service)(&env,NULL,current,101)==COH_INVALID);current=0;scenarios++;}
@@ -313,6 +326,7 @@ int main(void){
    stop+=consumed;
    metadata=1u|(255u<<4)|(1u<<12)|(2u<<13)|(present<<17)|((cached>>1)<<19)|(consumed<<21);
   }
+  if(v==1){status=2;stage=34;stop=4182;metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(72u<<21);}
   char expected[96];snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_COSTUME_BODY_JNI_FIXTURE_LIST_END,stop-COH_COSTUME_BODY_JNI_FIXTURE_LIST_END,metadata);CHECK(strstr(body,expected));
   CHECK(!strstr(body,"FixtureEntity")&&!strstr(body,"fixtureentity")&&!strstr(body,"\"text\"")&&!strstr(body,"\"name\"")&&!strstr(body,"\"generation\"")&&!strstr(body,"\"packet\""));
   if(v==1)strcpy(sample_report,report_text);
@@ -341,8 +355,34 @@ int main(void){
   unsigned metadata=1u|(255u<<4)|(1u<<12)|(2u<<13)|(3u<<17)|(1u<<19)|(consumed<<21);
   char expected[96];
   if(v==13)snprintf(expected,sizeof(expected),"\"progress\":[2,19,2,3,1695,26,16932849]");
-  else snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_APPEARANCE_JNI_FIXTURE_LIST_END,COH_APPEARANCE_JNI_FIXTURE_APPEARANCE_BEGIN-COH_APPEARANCE_JNI_FIXTURE_LIST_END+consumed,metadata);
+  else if(v==1||v==8||v==9||v==10||v==11||v==12){
+   unsigned words=v==8?0u:72u;metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(words<<21);
+   snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",v==8?1u:2u,v==8?33u:34u,COH_APPEARANCE_JNI_FIXTURE_LIST_END,COH_APPEARANCE_JNI_FIXTURE_SCALARS_END-COH_APPEARANCE_JNI_FIXTURE_LIST_END+words*32u,metadata);
+  }else snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_APPEARANCE_JNI_FIXTURE_LIST_END,COH_APPEARANCE_JNI_FIXTURE_APPEARANCE_BEGIN-COH_APPEARANCE_JNI_FIXTURE_LIST_END+consumed,metadata);
   CHECK(strstr(body,expected));CHECK(!strstr(body,"\"body_type\"")&&!strstr(body,"\"skin_color\"")&&!strstr(body,"\"text\"")&&!strstr(body,"\"generation\""));
+  if(v==1)strcpy(sample_report,report_text);
+  JNI(disconnect)(&env,NULL,current);CHECK(strstr(report(),"CLOSED")&&strstr(report_text,expected)&&strstr(report_text,"\"server_identity_bound\":false")&&strstr(report_text,"\"selected_owner_bound\":false")&&strstr(report_text,"\"complete_initial_character\":false")&&strstr(report_text,"\"actor_publication\":false")&&strstr(report_text,"\"source_generation_admitted\":false")&&strstr(report_text,"\"ack_permitted\":false")&&strstr(report_text,"\"world_authority\":false"));finish();
+ }
+ /* Exactly72 raw SG bitset words; no word values or scales are accepted. */
+ for(unsigned v=1;v<=13;v++){
+  fixture();sgcolors_fixture=v;
+  if(v==9)for(unsigned b=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_END;b<COH_SGCOLORS_JNI_FIXTURE_BITS;b++)sgcolors_packet[b/8]^=(unsigned char)(1u<<(b%8));
+  if(v==10||v==11)for(unsigned b=COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN;b<(v==10?COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN+32:COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_END);b++)sgcolors_packet[b/8]^=(unsigned char)(1u<<(b%8));
+  if(v==12){unsigned b=COH_SGCOLORS_JNI_FIXTURE_FIRST_STORAGE_BEGIN;sgcolors_packet[b/8]|=(unsigned char)(1u<<(b%8));}
+  if(v==13){unsigned b=COH_SGCOLORS_JNI_FIXTURE_EXTRA_BEGIN;sgcolors_packet[b/8]&=(unsigned char)~(1u<<(b%8));}
+  start();CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);CHECK(JNI(service)(&env,NULL,current,104)==COH_UNSUPPORTED);
+  CHECK(strstr(report(),"INITIAL_OBSERVED")&&strstr(report_text,"\"cleanup_verified\":true")&&strstr(report_text,"FIRST_COSTUME_REWARD_STRING_REQUIRED"));
+  const char*body=strstr(report_text,"\"first_reward_string\":{");CHECK(body);
+  CHECK(strstr(body,"FIRST_REWARD_CONTINUATION_REQUIRED")&&strstr(body,"\"bit\":1591")&&strstr(body,"\"bytes\":13")&&strstr(body,"\"literal_validated\":true"));
+  unsigned words=72,status=2,stage=34;
+  if(v>=2&&v<=7){status=1;stage=33;words=v==2||v==3?0u:v==4?1u:v==5?12u:v==6?17u:71u;}
+  if(v==8)status=1;
+  unsigned metadata=2u|(255u<<6)|(1u<<14)|(3u<<15)|(1u<<17)|(words<<21);
+  char expected[96];
+  if(v==12)snprintf(expected,sizeof(expected),"\"progress\":[2,19,2,3,1695,26,16932849]");
+  else if(v==13)snprintf(expected,sizeof(expected),"\"progress\":[2,31,2,3,1695,183,%u]",1u|(255u<<4)|(1u<<12)|(2u<<13)|(3u<<17)|(1u<<19)|(43u<<21));
+  else snprintf(expected,sizeof(expected),"\"progress\":[%u,%u,2,3,%u,%u,%u]",status,stage,COH_SGCOLORS_JNI_FIXTURE_LIST_END,COH_SGCOLORS_JNI_FIXTURE_SGCOLORS_BEGIN-COH_SGCOLORS_JNI_FIXTURE_LIST_END+words*32u,metadata);
+  CHECK(strstr(body,expected));CHECK(!strstr(body,"\"colors\"")&&!strstr(body,"\"values\"")&&!strstr(body,"\"generation\"")&&!strstr(body,"\"packet\""));
   if(v==1)strcpy(sample_report,report_text);
   JNI(disconnect)(&env,NULL,current);CHECK(strstr(report(),"CLOSED")&&strstr(report_text,expected)&&strstr(report_text,"\"server_identity_bound\":false")&&strstr(report_text,"\"selected_owner_bound\":false")&&strstr(report_text,"\"complete_initial_character\":false")&&strstr(report_text,"\"actor_publication\":false")&&strstr(report_text,"\"source_generation_admitted\":false")&&strstr(report_text,"\"ack_permitted\":false")&&strstr(report_text,"\"world_authority\":false"));finish();
  }
