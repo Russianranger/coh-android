@@ -1,0 +1,17 @@
+{
+  "schema": "coh-file-list-compare-iterations-v1",
+  "failed_attempts": [],
+  "successful_attempts": [
+    {
+      "evidence_directory": "/workspace/scratch/0484ad305122/compare-b-attempt1",
+      "result": "release/ASan/UBSan passed all2408checks/102fixtures; final snapshot changes only stale copied Ccomment",
+      "host_sha256": "863926e265e1be97b0b2f9bb41fbf90c4d3428664f78623f13b4f2f74a9d21ad"
+    },
+    {
+      "evidence_directory": "passing",
+      "result": "final frozen release/ASan/UBSan passed identical counters",
+      "host_sha256": "5d4f52185a846659e69141dbc23ef2ab86da7589e54d40edd74ef3e12b10d998"
+    }
+  ],
+  "retention": "No failed build or test attempts occurred. No synthetic failed attempt is invented. Large reconstructible binary fixture/ELFs and run-ledger bytes omitted from git; complete hash-bound evidence is retained in dedicated CI artifacts; Python generator plus copied source snapshots deterministically regenerates inputs; run nonce remains receipt-bound."
+}

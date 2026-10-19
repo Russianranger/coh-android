@@ -1,0 +1,12 @@
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:30:12:ascii_ncompare	8	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:43:13:verbose_printf	112	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:35:13:forwardSlashes.part.0	16	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:38:18:owned_list	16	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:107:12:observed_search	48	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:27:5:filecompare_is_idle	8	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:28:8:filecompare_owned_bytes	8	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:54:6:FileListCreate	16	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:109:12:FileListFind	304	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:121:6:FileListInsert	368	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:160:5:FileListIsBinUpToDate	64	static
+/workspace/scratch/0484ad305122/compare-b-final/file-list-compare-provider.c:201:11:filecompare_apply	8912	static

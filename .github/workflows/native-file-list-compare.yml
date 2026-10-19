@@ -1,0 +1,48 @@
+name: Native original dependency list comparison
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-file-list-compare.yml
+      - native-android/engine/body-catalog/file_list_compare_provider.py
+      - native-android/engine/body-catalog/file-list-compare-source-pins.json
+      - native-android/engine/body-catalog/test_file_list_compare.c
+      - native-android/engine/body-catalog/check_file_list_compare.py
+      - native-android/engine/body-catalog/file_list_ops_provider.py
+      - native-android/engine/body-catalog/file-list-ops-source-pins.json
+      - native-android/engine/coh_contracts.h
+      - native-android/engine/costume-import/coh_costume_import.h
+      - native-android/engine/entities/coh_costume.h
+      - native-android/engine/entities/coh_entities.h
+      - native-android/engine/replication/coh_replication.h
+      - upstream/ouroboros/libs/UtilitiesLib/**
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-file-list-compare-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  file-list-compare:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Install focused qualifier digest headers
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev
+      - name: Qualify bounded original file-list-compare
+        run: |
+          python3 native-android/engine/body-catalog/check_file_list_compare.py --sanitize --output "$RUNNER_TEMP/file-list-compare-host.json" --evidence-directory "$RUNNER_TEMP/file-list-compare-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-file-list-compare-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/file-list-compare-host.json
+            ${{ runner.temp }}/file-list-compare-evidence/
+          if-no-files-found: error
+          retention-days: 90

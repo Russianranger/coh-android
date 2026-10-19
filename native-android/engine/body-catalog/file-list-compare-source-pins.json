@@ -1,0 +1,21 @@
+{
+  "schema": "coh-file-list-compare-provider-source-pins-v1",
+  "baseline_revision": "2b37d604806caf7fbc34395d35517cc444afe604",
+  "files": {
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": {
+      "bytes": 34279,
+      "sha256": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+      "blob_sha1": "4e2c9c88fe886074c6a258032645f9f5f78542c1"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h": {
+      "bytes": 14186,
+      "sha256": "9d591b637cf3e46b913df2224e6767c4e9d8c97d35a8bf0688911a510864ae81",
+      "blob_sha1": "dae60b152c8b1067a57aa9e3f961720d109aac0a"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/utils.h": {
+      "bytes": 17337,
+      "sha256": "36eab864c8dfeda46f6b9f57b20abe2378db976943e04de6b5e8b461b69c56a3",
+      "blob_sha1": "9393ea7babf9345e47e1a89b704b2e284c18150f"
+    }
+  }
+}
