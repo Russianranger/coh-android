@@ -1,28 +1,30 @@
-# CoH native ARM64: initial mode/pose milestone
+# CoH native ARM64: initial sequence milestone
 
-Branch native-android only; baseline c7aa898. Target Thor Android13/ARM64.
+Branch native-android only; baseline53ae8df. Target Thor Android13/ARM64.
 
-Physical Combined0.1.9 already observed GROUPS42889B and ALLENTS37712 decodedB,
+Physical Combined0.1.9 already captured GROUPS42889B and ALLENTS37712 decodedB/
 7721 compressedB;31 UDP datagrams, zero decode failures, both sockets closed.
-ZIP CLOSED was launcher-return cleanup. No raw body retained; do not repeat
-connection/compiler/fragment/renderer qualification.
+ZIP CLOSED was cleanup. No raw body retained; do not repeat network/compiler/
+fragment/renderer qualification.
 
-Current stage: exact ALLENTS loan first validates header/index/entSendCreate.
-New body probe uses real lease.message_id and fresh scratch to validate rare
-flags, mode, absolute position and full quaternion. No interpolation-extra bit
-exists for create position. Require full initial flags, mode update and masks7.
-Stop BEFORE sequence: FIRST_SEQUENCE_BODY_REQUIRED. Raw pose/mode/packet IDs
-are not retained. Numeric world_handoff.first_record_pose is separate from
-first_create; missing/partial/malformed bodies report the first bounded refusal.
+Exact ALLENTS loan validates header/index/create then rare/mode/absolute pose
+using real message_id. New sequence probe starts exactly at pose_end_bit and
+reads update1, optional Pack8 index, optional Pack4 timing, optional11-bit flags.
+Stop BEFORE triggered moves: FIRST_TRIGGERED_MOVES_REQUIRED. Numeric
+world_handoff.first_record_sequence retains offsets/presence, no raw values or
+resource identities. Earlier create/pose observations survive later refusal.
+No scanning, state application, invented baselines or dictionary generations.
 
-Qualification: only added original mode/position/quaternion fixtures and affected
-JNI adapter in release/ASan/UBSan. Receipts: engine/initial-capture/qualification/
-initial-pose-20261019; workflow Native initial ALLENTS first-pose probe.
-No whole server transaction/new physical execution or APK claimed. Combined0.1.9
-version/signing/imports/saves remain unchanged. No default parser source edits.
+Qualification: only original sequence leaf fixtures and affected JNI adapter in
+release/ASan/UBSan. Receipts: engine/initial-capture/qualification/
+initial-sequence-20261019; workflow Native initial ALLENTS sequence probe.
+Actual source timing storage is U8, consumer U16: fixture timings>255 qualify
+consumer syntax only. Retained pose prefix verified, its suite not rerun.
+No complete server transaction/new physical execution/APK claimed. Combined0.1.9
+version/signing/imports/profiles/saves and default parsers remain unchanged.
 
-Next: one source-qualified sequence body stage, then stop. Whole selected/list/
-control/deletes/character/global/tail and authentic dictionary/resource generation
-associations remain. Never substitute Map/session/message counters for dictionary
-generation. All character/owner/actor/ACK/world flags false; Gates25–27 open.
-Read FIRST_CREATE.md and actual latest remote before another implementation.
+Next: one bounded source-qualified triggered-move stage, then stop. AI animation,
+NetFX/costume/rest of record, complete list/control/deletes/character/global/tail
+and genuine dictionary/resource/session associations remain. All owner/character/
+actor/ACK/world flags false; Gates25–27 open. Read FIRST_CREATE.md and fetch
+actual latest remote before another implementation.

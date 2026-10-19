@@ -1,0 +1,165 @@
+{
+  "schema": "coh-initial-sequence-probe-qualification-v1",
+  "passed": true,
+  "source_revision": "53ae8df7779aa5c591fac5c525d1f2c373ac55b9",
+  "source_sha256": {
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/host-leaf-proof.json": "75cf7ced3610cc3a7b7d255ef9d8c9e84973c07459b24bf9618c53c66a3631ba",
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/leaf-source-pins.json": "44e49dc9f1474e2ee90091f28a957bd32443c0de4acc9fe756b2ece4d42fd93b",
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/leaf_adapters.h": "c971528dc88b9d5047d50b37c2df4018b378494b0529926d13b1ea0c07164d92",
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/leaf_oracle.py": "f328244df491b079689bf40d63cfe31554ab1a794759df9d5d57f23169a3e855",
+    "native-android/combined-client/diagnostics/selected-record-order-20261017/leaf_wrapper.h": "a462575fbe500f2089a559f04e63e547119c99937205dcc7915dc5aaffe1ab3b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/rare_fixture.c.inc": "a0d754e64045062018d41d35815dbcb4e352d45b3921247f0a99500ba5d80040",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/initial-capture/check_initial_sequence_probe.py": "6be9a0d4850076d5d50a1731c8d984fec817d6543933778f3b374bf878cdc2a6",
+    "native-android/engine/initial-capture/coh_initial_sequence_probe.c": "b58c2e689b1bef1f4a5967d5ea85553b85020c662232352f2f0fa2d4eb478738",
+    "native-android/engine/initial-capture/coh_initial_sequence_probe.h": "8558044f826b4ce951782033f4cff6fcd00d2db93d214246eaf62d8155f6212b",
+    "native-android/engine/initial-capture/qualification/initial-pose-20261019/host.json": "45522b04585552df2af8d644331b116a3593a0d7a69a23b5cfbaf181469f3fc6",
+    "native-android/engine/initial-capture/qualification/initial-pose-20261019/jni-fixture.h": "e4bd2b5878f823f8a120ff4698f3669c7c5a7f231d56f1fbc7a7f8361619026a",
+    "native-android/engine/initial-capture/test_initial_sequence_probe.c": "bb72b4bec7e7968181f60da2c62592830dca7320c34e33d8881e884fbff7a1d6",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_component": {
+    "executed_component_producer": "entSendSeqMoveUpdate",
+    "executed_provider_kinds": [
+      3
+    ],
+    "whole_function_sha256_lf": "a81ca0d1d829317460c978ef43cb4153ed83e07a23267fcbc1574f2f34bfe145",
+    "constant_definitions_sha256": "88b882517d6bd1c0ba96ee70e199355aed2cf08bdab7ac70c94035a6cb5a86e5",
+    "source_pin_manifest_sha256": "44e49dc9f1474e2ee90091f28a957bd32443c0de4acc9fe756b2ece4d42fd93b",
+    "retained_leaf_host_proof_sha256": "75cf7ced3610cc3a7b7d255ef9d8c9e84973c07459b24bf9618c53c66a3631ba",
+    "all_original_source_pins_verified": true,
+    "generated_original_oracle_sha256": "60a03786273601ec537ba3c46d5f5b9a8abbe01f7db36472bf1a11bba172168f",
+    "legal255_wrapper_sha256": "79bc52a97248f54915eca7573c562f0c468c737b0c709a77f0b47b9d52cc75bf",
+    "scenario3_scope": "Consumer U16-range shell extreme65535; original Entity timer is U8, so this is not representable actual server entity state.",
+    "scenario4_scope": "Complete unchanged original producer with timer255, representable by the original U8 field; explicit fixture shell, not Win32 ABI or real session.",
+    "stance_branch_executed": false,
+    "oracle_sanitized": false,
+    "original_consumer_executed": false
+  },
+  "retained_pose_prefix": {
+    "host_sha256": "45522b04585552df2af8d644331b116a3593a0d7a69a23b5cfbaf181469f3fc6",
+    "header_sha256": "e4bd2b5878f823f8a120ff4698f3669c7c5a7f231d56f1fbc7a7f8361619026a",
+    "payload_sha256": "9f86f23b1320abe40f6fcb7ca460d5e40a6909ed9903f87f8a3450420ed279c7",
+    "verified_source_inputs": 15,
+    "accepted_prefix_end": 459,
+    "old_pose_range_reexecuted": false
+  },
+  "fixtures": {
+    "count": 66,
+    "sha256": "91afdb0ba22869febbb7c24923039cb60590f26e222bb8ad96ff118da28ba3a8",
+    "original_sequence_projection_checks": 53,
+    "packed_start_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "byte_aligned_start_offsets": [
+      0,
+      8
+    ],
+    "source_leaf_scenarios": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "added_source_value_legal_ticks255_scenario": 4,
+    "synthetic_control_variants": 10,
+    "case_manifest_sha256": "f01ef5feef41ab3bf86fd8ad90f653c313b3189dec37a0a32aaf10b7f87e5a8a"
+  },
+  "source_generated_jni_fixture": {
+    "payload_bits": 508,
+    "payload_sha256": "d185d5444491e17e469d9f389fe735b80538c1ede200a1ed9f34a9958c9a9ed7",
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "sequence_end_bit": 475,
+    "device_packet": false,
+    "header_sha256": "becdf10e9985d5a74aada60ac0df69d2f186e14e451bd8bfc6c294341c663d3d"
+  },
+  "checks": {
+    "release": {
+      "checks": 16148,
+      "fixtures": 66,
+      "complete_sequence_observations": 47,
+      "truncated_extents": 1832,
+      "mutations": 434,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 66,
+      "triggered_moves_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 16148,
+      "fixtures": 66,
+      "complete_sequence_observations": 47,
+      "truncated_extents": 1832,
+      "mutations": 434,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 66,
+      "triggered_moves_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 16148,
+      "fixtures": 66,
+      "complete_sequence_observations": 47,
+      "truncated_extents": 1832,
+      "mutations": 434,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 66,
+      "triggered_moves_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "55aa50869b21e8ba26352cd14f7c422b6124fe4a53954fd335488c5a542577c2",
+    "asan": "8dc139e458b3e42f9c2ff349091d5c2839823fde6d30474959f0a402389242cd",
+    "ubsan": "578915616e5006ea872c4af993884da4e6bf5a526523ad43f4a08189006fc4ad"
+  },
+  "probe_stack_frames": [
+    {
+      "function": "coh_initial_sequence_probe",
+      "bytes": 192,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_sequence_probe_json",
+      "bytes": 176,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "fixture_join": "Exact original sequence leaves plus explicit synthetic outer offsets and opaque triggered-move witness. JNI fixture reuses hashed qualified pose prefix, with matching bit alignment.",
+  "physical_packet_body_retained_in_evidence": false,
+  "triggered_moves_produced_or_parsed": false,
+  "old_pose_range_reexecuted": false,
+  "whole_original_allents_producer_executed": false,
+  "actual_server_transaction": false,
+  "physical_device_executed": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}
