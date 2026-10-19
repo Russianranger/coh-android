@@ -71,7 +71,38 @@ increment complete-entry progress. No entry values, FX/resource identities or
 event/actor state are retained or applied. Successful syntax stops before the
 AI-animation outer flag at `UNSUPPORTED / FIRST_AI_ANIMATION_REQUIRED`; no next
 bits reports INVALID there with completed-list diagnostics preserved. An
-unvalidated sequence leaves this report null. No animation string is read.
+unvalidated sequence leaves this report null. Its result stays separate from the
+following AI-animation observation.
+
+After the triggered list validates, `coh_initial_aianim_probe` starts at its
+exact `triggered_end_bit`. Full-create requires the outer update flag1. The
+inner optional-string flag may0 (NULL/empty), otherwise raw bytes are streamed
+through NUL without copying, UTF-8 assumptions or animation assignment. The
+native selected-record limit1000 includes NUL:999 characters plus terminator
+fit;1000 nonzero bytes refuse with LIMIT. Compressed rounded flags remain
+strict Booleans. Only byte count, presence and first failure are retained in
+`world_handoff.first_record_ai_animation`. Success stops at
+`UNSUPPORTED / FIRST_NETFX_REQUIRED`; exact end reports INVALID there with the
+AI prefix still validated. No string or resource identity survives the loan.
+
+The second milestone composes `coh_initial_netfx_probe` at `ai_end_bit`. It
+reads `pchar_things` and `inPhase`; only both1 introduce a NetFX list, while the
+other three combinations have no count. The existing transactional
+`coh_ent_netfx` parser consumes the complete bounded list into local scratch,
+then discards it. Its32-effect cap, command/ID, finite-float, reference, bone
+and timer bounds remain intact. Original server lists are dynamically sized;
+the native32 cap is explicitly a narrower supported profile. Effect count is
+published only after the complete list validates. No effect is executed or
+resolved, and no FX ID, handle, coordinates or borrowed reference is retained.
+
+`world_handoff.first_record_netfx` retains flags, count, offsets and the exact
+child parser's first failure. It stops at
+`UNSUPPORTED / FIRST_COSTUME_BODY_REQUIRED`; exact end reports INVALID there
+with the NetFX prefix validated. An unvalidated AI prefix leaves it null.
+Repeated create/envelope `inPhase` consistency remains unproved, explicitly
+reported as `cross_prefix_in_phase_verified:false`; no whole-record acceptance
+or ownership follows from these separate syntax observations. Existing report
+capacity7168 bytes and all transport cleanup/resource limits are preserved.
 
 ## Original protocol evidence
 
@@ -106,7 +137,19 @@ delay clamped to0..15 only without FX, and uses zero added delay with FX. Its
 timing expression converts through F32; original-producer high-timing fixtures
 use safe representable values. INT32_MAX timing and overflow endpoints are
 synthetic wire controls, avoiding out-of-range source float-to-int conversion.
-The immediately following source call is `entSendAiAnimList`, deliberately unread.
+The immediately following `entSendAiAnimList` at `entsend.c:2642..2652` writes
+outer update then `pktSendIfSetString`: Boolean nonempty string followed by
+raw NUL-terminated bytes. `send_appearance` is forced by create/full-update at
+`entsend.c:3423..3431`. The original Game consumer assigns the animation list;
+this diagnostic never calls that assignment. Original strings are not bounded
+by1000; that limit comes from the existing private native selected-record.
+
+`entsend.c:3582..3595` writes both NetFX envelope flags and conditionally calls
+`entSendNetFx`, followed by costume in the already-required medium-rare branch.
+The original Game consumer at `entrecv.c:3209..3227` confirms that ordering and
+condition. Unchanged whole original producer `entSendNetFx` at `entsend.c:480`
+and consumer `entReceiveNetFx` at `entrecv.c:1166` qualify the leaf grammar.
+Framing shells do not establish actual server character state.
 
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
@@ -121,17 +164,30 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_triggered_probe.py --sanitize --output NEW.json` executes only the
-pinned original triggered-move producer on explicit fixture shells, then tests
-this added stage in release, ASan and UBSan. Over-limit count controls do not
-overrun the retained16-slot fixture shell. The generated JNI fixture verifies
-the retained sequence-prefix header and its source-bound receipt, appends actual
-original triggered-move output and an opaque AI-animation witness. It does not
-execute a complete original ALLENTS transaction or new Thor session.
-The affected JNI adapter is checked with explicit controller/JNI doubles for
-same-loan composition, refusal reporting and cleanup. Accepted first-create and
-pose/sequence tests, plus general renderer/compiler/network/Android13 suites, are not
-repeated. Their previous receipts remain source-bound.
+`check_initial_aianim_probe.py --sanitize --output NEW.json` executes the
+unchanged original AI producer on explicit source fixture shells and verifies
+raw string boundaries, optional fields and rounded Booleans. Its generated JNI
+fixture verifies the retained triggered-prefix header/source receipt, appends
+the original AI leaf and an opaque NetFX witness. Release/ASan/UBSan each pass
+1,083,959 checks across89 fixtures,162,778 shortened extents and20,752 mutations.
+
+`check_initial_netfx_probe.py --sanitize --output NEW.json` executes only the
+unchanged original NetFX producer/consumer entrypoints:6 comparisons, including
+full-send, nonforce and empty lists in packed and compressed modes. Its JNI
+fixture verifies the retained AI prefix, appends explicit two-flag framing,
+original full-send3-effect output and an opaque costume witness. The enclosing
+`sendEntity` framing is source-qualified; the complete original producer
+transaction is not executed. Release/ASan/UBSan each pass103,857 checks across
+95 fixtures,14,806 bit truncations and2,156 mutations.
+
+The affected JNI adapter uses explicit controller/JNI doubles for same-loan
+composition, both newly added projections/refusals, fixed report capacity and
+cleanup. Receipts and reproducible source hashes are in
+`qualification/initial-aianim-20261019/` and `initial-netfx-20261019/`; focused CI
+is `Native initial ALLENTS AI and NetFX probes`. Accepted earlier-stage suites
+and general renderer/compiler/network/Android13 qualification are not repeated.
+No new original-server transaction, physical packet body or Thor run is claimed.
+Exactly two milestones finish here; costume is the next session's boundary.
 
 The previously reported unsupported Map count is the ordinary successful GROUPS
 inspector's deliberate UNSUPPORTED boundary (command6, exact consumed end), which

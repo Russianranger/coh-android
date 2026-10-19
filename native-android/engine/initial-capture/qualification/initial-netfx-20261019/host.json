@@ -1,0 +1,311 @@
+{
+  "schema": "coh-initial-netfx-probe-qualification-v1",
+  "passed": true,
+  "source_revision": "f33851afd42142825b3472b44d23e358d421ecb4",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/buffs_fixture.c.inc": "355ddd71a324c9bdd37d95a19b43fbd95c0ae27db9c6cf3cb2bfc63f8902ae75",
+    "native-android/engine/entities/buffs_oracle_shim.h": "f439daf190a9f9682bd1f6378b16da0682fbdff67c8a47fc75e648d078508729",
+    "native-android/engine/entities/character_tail_test_writer.h": "ff9aec7b36841ccec5aae219efc5926c7673a01e9cbe821364019b3cc6e16400",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/coh_character_creation.h": "5281769a276e3853b66cefa250511e82381fe5d29845b50c33a8a057dbb5722e",
+    "native-android/engine/entities/coh_character_initial.h": "081204665a475a1dcc0056bf1dffcd1b9ad147f4eb780a971dfb52687535ee99",
+    "native-android/engine/entities/coh_character_options_schema.h": "48a9c41ac2c28d5aa4de299714d39be848220ad23351e3dd451a60d7e4f4e732",
+    "native-android/engine/entities/coh_character_outer.h": "4261a314b5757f50f2273917ee7bab495511fea61d21e9ab1409b29db84e9bd6",
+    "native-android/engine/entities/coh_character_prefix.h": "7416d5cfca7a5e8bbf6f25443b9ddc592df6fc9252c29810ec52a311c7352b3d",
+    "native-android/engine/entities/coh_character_tail.h": "925bc44fb27d5095f0fe2f1093bf0dc697a0debafc0e252539b6d61e887f14cf",
+    "native-android/engine/entities/coh_character_ui.h": "acc7cd1a94cfd75ebccfcecd666febaf9e0733a68113c955fe63ecf1d62487ac",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.c": "730e09df080c26efa240844bbea707a88138ea966864006fa26487249e18d1e3",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/coh_power_ranges.h": "199d35f40a3eac1d8882d088006bfae7c1335bf8a88721f353f202e7af081b80",
+    "native-android/engine/entities/coh_taskforce.h": "0580284849d5027d27cb386ee17dc6ab27c7395c493863694bf799410755d73e",
+    "native-android/engine/entities/coh_teammate_buffs.h": "44df43e89339d0fec73d7dc75c728c16f8917a851f5a6cbaa9f32146a3e7f85e",
+    "native-android/engine/entities/coh_very_rare_tail.h": "6f1fc81912aac0690db7331a0d95f89015b0df6e34f0574aaefe82b7a32b2c36",
+    "native-android/engine/entities/costume_envelope_fixture.c.inc": "e360c69290027ef37cd162a3a157c38dafe44c3e9afdb4273d5a52db2f2265aa",
+    "native-android/engine/entities/costume_envelope_oracle.c.inc": "c13ded81f1c909e34832676e76ab6607e415a2a30498c65489db5fff7868d9f5",
+    "native-android/engine/entities/costume_envelope_oracle_shim.h": "5591deb9492e6cfecaea26d572e8a0bb290ff8a90a76b248d47668810269bd7d",
+    "native-android/engine/entities/costume_oracle_shim.h": "3e442ef49b35482e5b446efd1fa293d96f1949138d3f9a2be05f9b5bacb7aac0",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/power_custom_fixture.c.inc": "07aa0b398575e0300a29c31c1500aef81cecbdd29b7e0955b3966a86019bdc22",
+    "native-android/engine/entities/power_custom_observer.c.inc": "8128511c251f5818a28b4a2906230d9d7eb57f6b587d084021460caa965ad8b0",
+    "native-android/engine/entities/power_custom_oracle_shim.h": "dc1c24aa7b003a1a4c8b83bc6b86c628b2a75cb3ae6ec51386d61ec72b4f99ec",
+    "native-android/engine/entities/power_ranges_fixture.c.inc": "a5d5bad60c01444860e8d8fc33eeaf3135708e38ca83190fcb3f65558adf8f33",
+    "native-android/engine/entities/power_ranges_oracle.c.inc": "b2e420209ec1a55321a6417911dafc7c505bcceb3c56cf5d254e233645ddc04e",
+    "native-android/engine/entities/rare_fixture.c.inc": "a0d754e64045062018d41d35815dbcb4e352d45b3921247f0a99500ba5d80040",
+    "native-android/engine/entities/rare_oracle_shim.h": "04fa3ec89865c7c5f1473c526e64b4329f41e4cd0b21bc0d0bff30588f70df6d",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/entities/tail_fixture.c.inc": "e6bc9fe0f2b2aeb9808e5354b54853db890a149a67b0148f773366b960125bd7",
+    "native-android/engine/entities/tail_observation.h": "990fa40a03879ff1a592f6f10a8bc2139c171c39727cff77536afac81e28f4eb",
+    "native-android/engine/entities/tail_oracle_shim.h": "94c0cf23e01432312019c1e936e457a68c303530c5985c394c6e0c1a0910fb4e",
+    "native-android/engine/entities/taskforce_fixture.c.inc": "61b7a520b528426e0fd9888a2124b15280b89c425f9b9f9df31561871061ae61",
+    "native-android/engine/entities/taskforce_oracle_shim.h": "0dc37b98a6c19d333fff0d2dde98fb0da7093d499c68be1db4d2e1291cb6fa09",
+    "native-android/engine/entities/test_rare.c.inc": "53606d4173b9cfde69834c4dec87d81787161417de1d4aaafa911891e1a7ca8c",
+    "native-android/engine/entities/test_taskforce.c.inc": "1025365a63a6288de46af9e441380cd3a61322307a31f9293f96f5c8fbac6c9a",
+    "native-android/engine/entities/test_titles.c.inc": "128b261a892be50ac766fa97e9467350f3ade86ee1d5b7cf4d2c774ef4600b80",
+    "native-android/engine/entities/titles_fixture.c.inc": "39d062b156340ad34b525d70382d9ee961e7e5d2c4079283f65a62d2ec6b0992",
+    "native-android/engine/entities/titles_oracle_shim.h": "b553a29e61060dedd35c8bdcf1ac64e4956321475a9d464b9308f56db2db565e",
+    "native-android/engine/initial-capture/check_initial_netfx_probe.py": "c8f50579a28e239fd18d41354f8faebe9c65d1f7cd808b346ed6b2765726c6b9",
+    "native-android/engine/initial-capture/coh_initial_netfx_probe.c": "69b0db75f0e5bb2408794ef181eb4246f1dcd4cd146a5b2020e72c4e5f74e9b7",
+    "native-android/engine/initial-capture/coh_initial_netfx_probe.h": "43255f993137e9dd77099952f31eda833a24396e32895022fd4915bb3d9c0a78",
+    "native-android/engine/initial-capture/qualification/initial-aianim-20261019/host.json": "33e6e7002e0844e4bccc35ce244eae8cb2dbad5373ab3c0f921a3987bcc16a01",
+    "native-android/engine/initial-capture/qualification/initial-aianim-20261019/jni-fixture.h": "6720fc59fce726a9a028d82b46448d78cea23103b3c89c92927de62f9c4d5960",
+    "native-android/engine/initial-capture/test_initial_netfx_probe.c": "7590c2a5a3118a103207108ce1185bae5f4e63c41e23321ec34ebb7fce6e2db6",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_component": {
+    "executed_entrypoints": [
+      "original_netfx",
+      "original_receive_netfx",
+      "original_fields"
+    ],
+    "whole_producer_sha256_lf": "f91f139dafb624be425e9384924fccc28a430ae9c687aab66af59c4abec622d3",
+    "whole_consumer_sha256_lf": "6912b33bf80fabe7a810093f26f77200199221f5465d2e8f0ce65f48013a04eb",
+    "source_pin_manifest_sha256": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "all_original_source_pins_verified": true,
+    "generated_original_oracle_sha256": "fdf082f9f14061639a9c524e0405c5981a04fe8d5543e5e82dd9d103f8e528ae",
+    "original_dynamic_effect_array": true,
+    "native_effect_count_limit": 32,
+    "source_MAX_NETFX_30_is_commented_out": true,
+    "oracle_sanitized": false
+  },
+  "retained_ai_prefix": {
+    "host_sha256": "33e6e7002e0844e4bccc35ce244eae8cb2dbad5373ab3c0f921a3987bcc16a01",
+    "header_sha256": "6720fc59fce726a9a028d82b46448d78cea23103b3c89c92927de62f9c4d5960",
+    "payload_sha256": "0e7e1202ea1b33ad8cd1d1f4ed7cccd4d850d086f3cbd31f052908a72c74219d",
+    "verified_source_inputs": 15,
+    "accepted_prefix_end": 658,
+    "old_AI_or_earlier_ranges_reexecuted": false
+  },
+  "fixtures": {
+    "count": 95,
+    "sha256": "b9af4f1540f5265aea43e63c26395d5ed29cc45529eace35bd97ec89fb241193",
+    "original_producer_consumer_comparisons": 6,
+    "source_leaf_cases": [
+      {
+        "mode": 0,
+        "scenario": 0,
+        "bits": 780,
+        "payload_sha256": "787307f6d6696ba6fdde4191b0e7eb94ac6e623c135aceba10bd0481f96bd20d",
+        "count": 3,
+        "original_consumer_projection_sha256": "eca5aee0649065280023111489c4646c11ed05c38f755319dab15e30329cb87c"
+      },
+      {
+        "mode": 0,
+        "scenario": 1,
+        "bits": 400,
+        "payload_sha256": "79857ed3640f2b7e392a64281327b0dafc4ea9ade1ad05076580705501bd91af",
+        "count": 2,
+        "original_consumer_projection_sha256": "df2e4b5d39299b589bb4102580feae993f771ed288df208937143e48c8c9f543"
+      },
+      {
+        "mode": 0,
+        "scenario": 2,
+        "bits": 1,
+        "payload_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "count": 0,
+        "original_consumer_projection_sha256": "c37fd0da367e1b9e954c51c769893e47c19c0b816ccfd2a80fd2b13e538fff48"
+      },
+      {
+        "mode": 1,
+        "scenario": 0,
+        "bits": 1352,
+        "payload_sha256": "c741098da2f8757f9bdc3ab1d7a6fce34ec862812268a5bcc9fc1ec4cbe4f3bb",
+        "count": 3,
+        "original_consumer_projection_sha256": "eca5aee0649065280023111489c4646c11ed05c38f755319dab15e30329cb87c"
+      },
+      {
+        "mode": 1,
+        "scenario": 1,
+        "bits": 760,
+        "payload_sha256": "eb09c3747374aefd3a304a2e9a8dd412a42de33e6cda15523b7efd2662429710",
+        "count": 2,
+        "original_consumer_projection_sha256": "df2e4b5d39299b589bb4102580feae993f771ed288df208937143e48c8c9f543"
+      },
+      {
+        "mode": 1,
+        "scenario": 2,
+        "bits": 32,
+        "payload_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+        "count": 0,
+        "original_consumer_projection_sha256": "c37fd0da367e1b9e954c51c769893e47c19c0b816ccfd2a80fd2b13e538fff48"
+      }
+    ],
+    "outer_flag_combinations": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "packed_start_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "byte_aligned_start_offsets": [
+      0,
+      8
+    ],
+    "synthetic_native_count_controls": [
+      32,
+      33
+    ],
+    "case_manifest_sha256": "274156f69b5f9892316aa94913690658495b6bde8076b697b85840f8477aedd6"
+  },
+  "source_generated_jni_fixture": {
+    "payload_bits": 1473,
+    "payload_sha256": "d08abb4150cbb946c2197af8b5e392fb9bed4a69bc6807b6e4e7d90ca345b41d",
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "sequence_end_bit": 475,
+    "triggered_end_bit": 560,
+    "ai_end_bit": 658,
+    "netfx_end_bit": 1440,
+    "effect_count": 3,
+    "device_packet": false,
+    "header_sha256": "de4bbaf21a3e3c9d51b1a386e955bd85ad4ec921b4684e1b35ae88e09808553d"
+  },
+  "checks": {
+    "release": {
+      "checks": 103857,
+      "fixtures": 95,
+      "complete_netfx_observations": 73,
+      "truncated_extents": 14806,
+      "mutations": 2156,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 95,
+      "costume_parsed": false,
+      "cross_prefix_in_phase_verified": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 103857,
+      "fixtures": 95,
+      "complete_netfx_observations": 73,
+      "truncated_extents": 14806,
+      "mutations": 2156,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 95,
+      "costume_parsed": false,
+      "cross_prefix_in_phase_verified": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 103857,
+      "fixtures": 95,
+      "complete_netfx_observations": 73,
+      "truncated_extents": 14806,
+      "mutations": 2156,
+      "invalid_argument_checks": 10,
+      "formatter_checks": 95,
+      "costume_parsed": false,
+      "cross_prefix_in_phase_verified": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "04270ef5c5cb51f0440d46fb1f4218ace04b0561426aba6e228ca6ef79b4a4c6",
+    "asan": "5fce453a097c1e6f33f78e203d22f1ac98e2f5507eaad3b1b7f86ae514bf27ba",
+    "ubsan": "1e9db752e033273f4b54368c5b99d01039f0496e5792d1272f822815c258b866"
+  },
+  "probe_stack_frames": [
+    {
+      "function": "coh_initial_netfx_probe",
+      "bytes": 3424,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_netfx_probe_json",
+      "bytes": 208,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "child_native_stack_frames": [
+    {
+      "function": "flag",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "opt_bits",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "opt_pack",
+      "bytes": 64,
+      "bound": "static"
+    },
+    {
+      "function": "netfx",
+      "bytes": 80,
+      "bound": "static"
+    },
+    {
+      "function": "coh_ent_netfx",
+      "bytes": 3360,
+      "bound": "static"
+    },
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_read",
+      "bytes": 24,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_pack",
+      "bytes": 144,
+      "bound": "static"
+    }
+  ],
+  "conservative_sum_native_envelope_and_child_frames": 7392,
+  "external_libc_stack_measured": false,
+  "source_stable_before_after": true,
+  "fixture_join": "Synthetic two-flag envelope and immutable scalar-bit relocation of complete original NetFX leaves; JNI fixture reuses hashed qualified AI prefix plus an opaque costume witness. Original enclosing sendEntity/entSendUpdate not executed.",
+  "physical_packet_body_retained_in_evidence": false,
+  "costume_produced_or_parsed": false,
+  "old_AI_or_earlier_ranges_reexecuted": false,
+  "whole_original_allents_producer_executed": false,
+  "actual_server_transaction": false,
+  "physical_device_executed": false,
+  "cross_prefix_in_phase_verified": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

@@ -1,30 +1,30 @@
-# CoH native ARM64: initial triggered-move milestone
+# CoH native ARM64: AI-animation and NetFX milestones
 
-Branch native-android only; baseline9ff1f6e. Target Thor Android13/ARM64.
+Branch native-android only; baselinef33851a. Target Thor Android13/ARM64.
 
 Physical Combined0.1.9 captured GROUPS42889B and ALLENTS37712 decodedB/7721
 compressedB;31 UDP datagrams, zero decode failures, both sockets closed. ZIP
 CLOSED was cleanup. No raw body retained; do not repeat network/compiler/
 fragment/renderer qualification.
 
-Same ALLENTS loan validates header/index/create, full mode/pose using actual
-message_id, then sequence. New triggered probe starts at sequence_end_bit:
-Pack1 count, per-entry Pack10 index, Pack6 ticks, Boolean/optionalPack16 FX.
-Preserve native16-entry bound (original server20), idx/ticks<=INTMAX, FX fullU32.
-Stop BEFORE AI animation: FIRST_AI_ANIMATION_REQUIRED. Numeric
-world_handoff.first_record_triggered_moves retains count/complete-entry progress
-and first refusal, no entry values/resources. Prior observations survive later
-refusal. No event dispatch, state application, scanning or fabricated generations.
+Exact ALLENTS loan validates create/fullpose/sequence/triggered list. AI stage
+starts at triggered_end_bit: initial outer update1, optional raw NUL string,
+native1000-byte cap including NUL; text never retained or assigned. Then NetFX
+stage reads pchar_things and inPhase. Both1 invoke existing bounded NetFX parser;
+other combinations have no count. Preserve32-effect and all child bounds. Retain
+only flags/count/first failure, discard scratch effects, never execute them.
+Stop BEFORE costume: FIRST_COSTUME_BODY_REQUIRED. Repeated create/envelope
+inPhase consistency remains UNPROVED; no dictionary generation is invented.
 
-Qualification: only original triggered producer fixtures and affected JNI in
-release/ASan/UBSan; engine/initial-capture/qualification/initial-triggered-20261019;
-workflow Native initial ALLENTS triggered-move probe. Retained sequence prefix
-verified, prior suites not rerun. Original float delay tested with safe values;
-INTMAX tick boundary uses synthetic wire to avoid source float-conversion UB.
-No complete server transaction/new Thor execution/APK claimed. Combined0.1.9
-version/signing/imports/profiles/saves and default parsers unchanged.
+Qualification: separate original AI and NetFX fixtures plus affected JNI in
+release/ASan/UBSan. Receipts: engine/initial-capture/qualification/
+initial-aianim-20261019 and initial-netfx-20261019. Workflow Native initial
+ALLENTS AI and NetFX probes. Earlier prefix fixtures source/hash verified;
+previous suites not rerun. No whole server transaction/new Thor execution/APK
+claimed. Combined0.1.9 version/signing/imports/profiles/saves unchanged.
 
-Next: one bounded source-qualified AI animation stage, then stop. NetFX/costume/
-remaining record, complete list/control/deletes/character/global/tail and genuine
-resource/dictionary/session associations remain. Owner/character/actor/ACK/world
-flags false; Gates25–27 open. Read FIRST_CREATE.md and fetch actual latest HEAD.
+Exactly TWO milestones completed this session. Next: source-qualified costume
+boundary under genuine immutable dictionary/resource generations; remaining
+record/list/control/deletes/character/global/tail and ownership associations
+still pending. Owner/character/actor/ACK/world flags false; Gates25–27 open.
+Read FIRST_CREATE.md and fetch actual latest HEAD before continuing.

@@ -1,0 +1,163 @@
+{
+  "schema": "coh-initial-aianim-probe-qualification-v1",
+  "passed": true,
+  "source_revision": "f33851afd42142825b3472b44d23e358d421ecb4",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/oracle_shim.h": "8dc9fd5d5b60ede82c2b8198d803cdb0013913b60e62bbf11d33ce450d8501ab",
+    "native-android/engine/entities/rare_fixture.c.inc": "a0d754e64045062018d41d35815dbcb4e352d45b3921247f0a99500ba5d80040",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/entities/stats_oracle_shim.h": "f88c32422de903de65c875a7fa952fdba11fbe02773c46c6c657d92f09d44566",
+    "native-android/engine/initial-capture/check_initial_aianim_probe.py": "5a72e68b09830be71ce818cce63b37d01473202ed3eec801ade1ec1830d251c3",
+    "native-android/engine/initial-capture/coh_initial_aianim_probe.c": "860346f35204177998bf7c5e64a1b5c8f7247def0658ca9c928f64b597740658",
+    "native-android/engine/initial-capture/coh_initial_aianim_probe.h": "4e9d891f62a434bbb4f72b2d1c23b1cb85dca73ec685e421588be52c5734679f",
+    "native-android/engine/initial-capture/qualification/initial-triggered-20261019/host.json": "4a1f471640cae23e43c9b2108bb41ccff5dbc6efd9dfb9f59f8b4fe45a5a1d59",
+    "native-android/engine/initial-capture/qualification/initial-triggered-20261019/jni-fixture.h": "beeaed10415b4b9fe2a5c2058056b8a78ea3dd1f732f0dccff20daecdaa6d485",
+    "native-android/engine/initial-capture/test_initial_aianim_probe.c": "665bb393d996d933c3f9e2892673986a933d926168fbf84d07f07740af78c8b7",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_component": {
+    "executed_component_producer": "entSendAiAnimList",
+    "whole_function_sha256_lf": "603d744f4794a74c67f7bf7738ffe19e0c8aea31476b92ae8c12243a6cb7539a",
+    "source_pin_manifest_sha256": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "all_original_source_pins_verified": true,
+    "generated_original_oracle_sha256": "f77ea69bdd78f9a63a21b27754b0069c61822cf375b95bae33dc6fda33529702",
+    "wrapper_sha256": "19be9f435ea02c46331c87648f7be0b4953ee6f04bc3e75f051269fd19204ac7",
+    "native_string_max_including_nul": 1000,
+    "original_string_pointer_has_this_bound": false,
+    "initial_outer_update_required": true,
+    "producer_predicates_exercised": [
+      "appearance1",
+      "appearance0 updated1",
+      "appearance0 updated0"
+    ],
+    "original_consumer_executed": false,
+    "oracle_sanitized": false
+  },
+  "retained_triggered_prefix": {
+    "host_sha256": "4a1f471640cae23e43c9b2108bb41ccff5dbc6efd9dfb9f59f8b4fe45a5a1d59",
+    "header_sha256": "beeaed10415b4b9fe2a5c2058056b8a78ea3dd1f732f0dccff20daecdaa6d485",
+    "payload_sha256": "30ca96dc3b4db10a7a9736ebadbc7578d0870bc4be037f03671568217841b157",
+    "verified_source_inputs": 16,
+    "accepted_prefix_end": 560,
+    "old_triggered_sequence_or_pose_ranges_reexecuted": false
+  },
+  "fixtures": {
+    "count": 89,
+    "sha256": "5de12ca61088dd0b9eaadad37568330cb160d8d2e5622b6ebef0174ce237cce8",
+    "original_ai_projection_checks": 87,
+    "packed_start_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "byte_aligned_start_offsets": [
+      0,
+      8
+    ],
+    "source_scenarios": 8,
+    "string_length_cases": [
+      0,
+      3,
+      11,
+      999,
+      1000
+    ],
+    "native_max_including_nul": 1000,
+    "case_manifest_sha256": "6b7273859a28b25ad3875d8b80c6e8fc1ff462efdf78ed1463d9f2c29b31cd21"
+  },
+  "source_generated_jni_fixture": {
+    "payload_bits": 691,
+    "payload_sha256": "0e7e1202ea1b33ad8cd1d1f4ed7cccd4d850d086f3cbd31f052908a72c74219d",
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "sequence_end_bit": 475,
+    "triggered_end_bit": 560,
+    "ai_end_bit": 658,
+    "device_packet": false,
+    "header_sha256": "6720fc59fce726a9a028d82b46448d78cea23103b3c89c92927de62f9c4d5960"
+  },
+  "checks": {
+    "release": {
+      "checks": 1083959,
+      "fixtures": 89,
+      "complete_ai_observations": 65,
+      "truncated_extents": 162778,
+      "mutations": 20752,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 89,
+      "netfx_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 1083959,
+      "fixtures": 89,
+      "complete_ai_observations": 65,
+      "truncated_extents": 162778,
+      "mutations": 20752,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 89,
+      "netfx_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 1083959,
+      "fixtures": 89,
+      "complete_ai_observations": 65,
+      "truncated_extents": 162778,
+      "mutations": 20752,
+      "invalid_argument_checks": 9,
+      "formatter_checks": 89,
+      "netfx_parsed": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "e390d82d6a09d18280e63da6b6931f179e8d5901f257ac9b2f8e688f39026297",
+    "asan": "7525da91cb643b7963fc0bec19b3fb9fd91be48f3c20bd79d3a4707e8363f779",
+    "ubsan": "2952e2e5ac2a561ee52c2b384f02a622e5cf55b502996781241c64db8fa62a98"
+  },
+  "probe_stack_frames": [
+    {
+      "function": "coh_initial_aianim_probe",
+      "bytes": 176,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_aianim_probe_json",
+      "bytes": 128,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "fixture_join": "Exact complete original AI-animation leaf with explicit fixture entity/offsets and opaque next-field witness. JNI reuses hashed qualified triggered prefix with matching bit alignment.",
+  "physical_packet_body_retained_in_evidence": false,
+  "netfx_produced_or_parsed": false,
+  "old_triggered_sequence_or_pose_ranges_reexecuted": false,
+  "whole_original_allents_producer_executed": false,
+  "actual_server_transaction": false,
+  "physical_device_executed": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

@@ -1,13 +1,17 @@
-name: Native initial ALLENTS triggered-move probe
+name: Native initial ALLENTS AI and NetFX probes
 on:
   push:
     branches: [native-android]
     paths:
       - .github/workflows/native-initial-create-probe.yml
-      - native-android/engine/initial-capture/coh_initial_triggered_probe.*
-      - native-android/engine/initial-capture/check_initial_triggered_probe.py
-      - native-android/engine/initial-capture/test_initial_triggered_probe.c
-      - native-android/engine/initial-capture/qualification/initial-triggered-20261019/jni-fixture.h
+      - native-android/engine/initial-capture/coh_initial_aianim_probe.*
+      - native-android/engine/initial-capture/check_initial_aianim_probe.py
+      - native-android/engine/initial-capture/test_initial_aianim_probe.c
+      - native-android/engine/initial-capture/qualification/initial-aianim-20261019/jni-fixture.h
+      - native-android/engine/initial-capture/coh_initial_netfx_probe.*
+      - native-android/engine/initial-capture/check_initial_netfx_probe.py
+      - native-android/engine/initial-capture/test_initial_netfx_probe.c
+      - native-android/engine/initial-capture/qualification/initial-netfx-20261019/jni-fixture.h
       - native-android/combined-client/app/src/main/cpp/interop_network.c
       - native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py
       - native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c
@@ -15,10 +19,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: native-first-triggered-${{ github.ref }}
+  group: native-ai-netfx-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  first-triggered:
+  ai-and-netfx:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -29,18 +33,23 @@ jobs:
           fetch-depth: 1
       - name: Install native test headers
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
-      - name: Qualify original triggered-move fixtures
+      - name: Qualify original AI-animation fixtures
         run: |
-          python3 native-android/engine/initial-capture/check_initial_triggered_probe.py --sanitize --output "$RUNNER_TEMP/first-triggered-host.json" --fixture-output "$RUNNER_TEMP/first-triggered-jni-fixture.h"
-          cmp "$RUNNER_TEMP/first-triggered-jni-fixture.h" native-android/engine/initial-capture/qualification/initial-triggered-20261019/jni-fixture.h
+          python3 native-android/engine/initial-capture/check_initial_aianim_probe.py --sanitize --output "$RUNNER_TEMP/aianim-host.json" --fixture-output "$RUNNER_TEMP/aianim-jni-fixture.h"
+          cmp "$RUNNER_TEMP/aianim-jni-fixture.h" native-android/engine/initial-capture/qualification/initial-aianim-20261019/jni-fixture.h
+      - name: Qualify original NetFX fixtures
+        run: |
+          python3 native-android/engine/initial-capture/check_initial_netfx_probe.py --sanitize --output "$RUNNER_TEMP/netfx-host.json" --fixture-output "$RUNNER_TEMP/netfx-jni-fixture.h"
+          cmp "$RUNNER_TEMP/netfx-jni-fixture.h" native-android/engine/initial-capture/qualification/initial-netfx-20261019/jni-fixture.h
       - name: Qualify affected JNI observation and cleanup
-        run: python3 native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py --source-root . --output "$RUNNER_TEMP/first-triggered-adapter"
+        run: python3 native-android/combined-client/diagnostics/interop-adapter-20261018/check_adapter.py --source-root . --output "$RUNNER_TEMP/ai-netfx-adapter"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-first-triggered-${{ github.sha }}
+          name: native-ai-netfx-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/first-triggered-host.json
-            ${{ runner.temp }}/first-triggered-adapter/
+            ${{ runner.temp }}/aianim-host.json
+            ${{ runner.temp }}/netfx-host.json
+            ${{ runner.temp }}/ai-netfx-adapter/
           if-no-files-found: error
           retention-days: 90
