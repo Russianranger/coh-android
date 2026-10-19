@@ -1,0 +1,201 @@
+{
+  "schema": "coh-bone-enum-provider-source-pins-v1",
+  "baseline_revision": "d912fd1f90c1100c261f63769d479f01b67c6922",
+  "files": {
+    "upstream/ouroboros/Common/seq/bones.c": {
+      "blob_sha1": "3032532b7ceda6f98e0961315b508562ecf3c9b2",
+      "sha256": "6aa2eccca9852d7d35f4170629de8f263a22f0fadf83a3a2d7639de9d300c073",
+      "bytes": 1331
+    },
+    "upstream/ouroboros/Common/seq/bones.h": {
+      "blob_sha1": "1c58b91aea72e40ed66511d6f8ba80d671a658f7",
+      "sha256": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "bytes": 3012
+    },
+    "upstream/ouroboros/Utilities/StructParser/CMakeLists.txt": {
+      "blob_sha1": "0bdd7c6053bd519ac544179c6601dc56c1fae6e1",
+      "sha256": "887d186c9c8eb435b6b9686fccbc1a7ddfd43fafca50d7229110608201942120",
+      "bytes": 2890
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/AutoRunManager.cpp": {
+      "blob_sha1": "bc77c16d73edb45ded97994d7c9760eaffa6b684",
+      "sha256": "98c9d1335d815529cabab24d36277e05d4008098cb25fb00575f15366ba131d9",
+      "bytes": 11393
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/AutoRunManager.h": {
+      "blob_sha1": "e0e58e41f8104b55b0376e5138f24ddee35f34f1",
+      "sha256": "390cc20d40fc1d6c7bbf1ee640bcd1a4f12bbb40e9abac2d3e1b227aed1f8e90",
+      "bytes": 2385
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/AutoTestManager.cpp": {
+      "blob_sha1": "46a23688225fa3b5bd4982b21bf17d5f21147f18",
+      "sha256": "5373e14cd44bf9f90d883e6eed068cff70104a92ee824b5b4874f4e411c05f83",
+      "bytes": 20389
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/AutoTestManager.h": {
+      "blob_sha1": "2f6c9ed50118356bfdda5c5bc76a61585b9529fa",
+      "sha256": "661edf94e86a7643c4ba906af3909288450409a749f7a698112356a7429a89dd",
+      "bytes": 2488
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/AutoTransactionManager.cpp": {
+      "blob_sha1": "4cfe5ae157cfd323079737687bd7219a6ab53d4c",
+      "sha256": "630d29694cedaa61a85ece019b3a33ac7b5b6a0a0d3b2bc5898bc1b04a6e1218",
+      "bytes": 65140
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/AutoTransactionManager.h": {
+      "blob_sha1": "0de0821ef3a4bb89e490cea63152878a26df725f",
+      "sha256": "211593f768f6ad3a774df0d937e4d026d15f57951d291e8b0e65ce4287b953f2",
+      "bytes": 7538
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/GenerationIO.cpp": {
+      "blob_sha1": "f961617bfb0c99bced2686927dee51e65ef8f6e8",
+      "sha256": "92965131eef02f487f49fe43e7500947fa3e1b4ac8254b214ce83274dfc15057",
+      "bytes": 3819
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/GenerationIO.h": {
+      "blob_sha1": "3c412a36895d3d27e422c350b2423e85d7edf1c6",
+      "sha256": "89c1d63552f997064c54787d79f5379776ddd4b3927370fe150a3354d63314e5",
+      "bytes": 1102
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/IdentifierDictionary.cpp": {
+      "blob_sha1": "3e6798350a8ea0c3c140e49935ad8c9b781f1a8d",
+      "sha256": "c88e929c6a501367462ed0e79d6ea3b4040416e7c3605c6fa20e567a717b6167",
+      "bytes": 3564
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/IdentifierDictionary.h": {
+      "blob_sha1": "e23b25ffe45af566f1f078fea176e76da1151de5",
+      "sha256": "d22170d606889d0d0f21551a446827a636312028f4401527c482b4a9d407dd93",
+      "bytes": 1536
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/LateLinkManager.cpp": {
+      "blob_sha1": "0710f3dfbf2786b6de28308b9de4230df8493dd3",
+      "sha256": "ecf4ce810457b3cdf1b5feb0b5368da88f6a74114662dd899df57f43dc91f569",
+      "bytes": 17504
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/LateLinkManager.h": {
+      "blob_sha1": "5596af3aa18a16ee44ac21b74827dd7969f8eccc",
+      "sha256": "c29162e8b34f48284c3e0c8defd2ae695a95952c5bdb1ca0796585384274b584",
+      "bytes": 2167
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/MagicCommandManager.cpp": {
+      "blob_sha1": "1b726177dc5651e32058c8ed18c6fe8c39adf63a",
+      "sha256": "5b94524f321bfffcf9587dc8308ecbf340911be762ac145f64602a2c48e94460",
+      "bytes": 192605
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/MagicCommandManager.h": {
+      "blob_sha1": "36ced9f3bccf391f700344b59080e26bd1958c85",
+      "sha256": "68154bfedf1227d8bbf2024eb4d4b49563a06420b9c9c9b514f57162961129c0",
+      "bytes": 19125
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/ParserLimits.h": {
+      "blob_sha1": "18e649a5cf501ad4f935949c09123dbdf3be09c2",
+      "sha256": "11fe7359899432d9d3d2654c96fcb1cd92ca32f7352496d58dda467c52dda98f",
+      "bytes": 131
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/Platform.cpp": {
+      "blob_sha1": "6ceee1f6bad4c7975a79c923ccf4cf59e0df84f3",
+      "sha256": "e10807ed970835efb133c4447561321fc87da7f5444c8455f7dcb45c49de823a",
+      "bytes": 1190
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/Platform.h": {
+      "blob_sha1": "a2cf138f1c36d9c6863a87d24f21d6b2985bbf99",
+      "sha256": "6ef4b432771fb1f4478805c704273166a648aae9e92837a92492f69e0553781a",
+      "bytes": 835
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/SourceParser.cpp": {
+      "blob_sha1": "80eeb980ca118ac92a90730fdb3e700213e7b70a",
+      "sha256": "91255cdae78773ee1a0387df96657c16f015ef9471621a413c5e841e20efb88e",
+      "bytes": 13373
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/SourceParser.h": {
+      "blob_sha1": "2217d7a421fa3d4c049c8d2c446bdd13a712417f",
+      "sha256": "1b38e69fadec4457cbca35035f834da045f25b7ca3c389312b197993a0c32da2",
+      "bytes": 3545
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/SourceParserBaseClass.cpp": {
+      "blob_sha1": "0232a1f86cc070235cc3fb9c3cb8220f93bce636",
+      "sha256": "136d0392bf39f513bc72e405636f7f530cd988c89fd8eff8c7b25ead1eb625c7",
+      "bytes": 177
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/SourceParserBaseClass.h": {
+      "blob_sha1": "29061e68fb1e41e957b248cb428c35631cde287c",
+      "sha256": "0b74aa73e957b45d68e0328d3288e9bcd41284c27576b7df032104974a2f45d2",
+      "bytes": 1145
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/StructParser.cpp": {
+      "blob_sha1": "5a3a7a34642e5cbb5a4880541593891df6829cc9",
+      "sha256": "682ec9d4860e63873bd8848ecc10f3c24f9ec0ece800997588cbf6c5a31b1932",
+      "bytes": 164131
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/Tokenizer.cpp": {
+      "blob_sha1": "5fa392605458ef8cd1e04100c7f7a8b9301c4167",
+      "sha256": "d72149db2cf6254e49de8e7ad8e6d21c1ebc6c71c8477e3d57fa9c3e011ad3fc",
+      "bytes": 22762
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/main.cpp": {
+      "blob_sha1": "cdee6e8cacfbdab102bfe09a69c5f0e89b9775b0",
+      "sha256": "12e659b01a4bfbfee592608275fc60eca9afd7afb486ecaf7abbf7c7b4ce5aaa",
+      "bytes": 8516
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/pch.cpp": {
+      "blob_sha1": "6f0b2a913022337b1847deb6a9b6c1056a3c654b",
+      "sha256": "1031c83e8ec025a2a81919e2e18fc601dbb06159a113a1eb239dcc30676a7b48",
+      "bytes": 279
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/pch.h": {
+      "blob_sha1": "807f2efe75874544fd979e4f902e4ded5c235e74",
+      "sha256": "3f6dde744dafcb9cfa163838ecbfb24d68ed6c10864ce42ebbe5f2d97f178281",
+      "bytes": 281
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/structparser.h": {
+      "blob_sha1": "5f8e0c82ca755b4fdc00e815db15d9b059818485",
+      "sha256": "940db832618cbbe9cbb5645dc17266724b0a89aeeda56478f9ded6363e7561c5",
+      "bytes": 16905
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/strutils.cpp": {
+      "blob_sha1": "d0797250666a2d976c817d2d42e32b74d3138f61",
+      "sha256": "2f0864d363e1c083dcdda395be1ff1fce7aef1366885c2e80060034cd985c0fa",
+      "bytes": 14537
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/strutils.h": {
+      "blob_sha1": "dd7580cbd0dfcf41f12094d2a090fc5b28fdc26a",
+      "sha256": "10624a5cba4ddb87f5b4c7c64a85afc5ca37f8f7e269dea741aa6ef30b3f6ce6",
+      "bytes": 3972
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/tokenizer.h": {
+      "blob_sha1": "642c47031e071fe85441f056ec37236643698c2b",
+      "sha256": "d8c4683ef0a8b016953f0cedfcab364cc5dd6fd68ad4a5f1acbf4dc849d50451",
+      "bytes": 7239
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/utils.cpp": {
+      "blob_sha1": "485c8db441825e272238ed014528e1144965c799",
+      "sha256": "9f83ede02f65f383fe8e4965463c800e21c54e38f2facd6da04f0d7f5ddeb9d5",
+      "bytes": 410
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/utils.h": {
+      "blob_sha1": "a462fa9f7f2e44598480cddf11897b0a69b46989",
+      "sha256": "24c590fd1268239dfeb19b928822d0ed9cfea550ec6ef2c74287102bba9c2ea9",
+      "bytes": 358
+    },
+    "upstream/ouroboros/Utilities/StructParser/src/version.cpp": {
+      "blob_sha1": "bb30970612aba2caddb180e7dbd23cf9899070a8",
+      "sha256": "23f3a37135aeacfde6e8d87468ef2e43ea9f7de52f6b631c38dbdbd2b6662898",
+      "bytes": 60
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": {
+      "blob_sha1": "78aed909922ee194378b1c5cc9a5c56ec92cf8fd",
+      "sha256": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+      "bytes": 4050
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structDefines.c": {
+      "blob_sha1": "747f5c86e358fc38b62470661a8e0ac00db01d5f",
+      "sha256": "746909e7de5c82baef0e3c8738bc245f94e8d5b1f00af5abc4be63a2517a8320",
+      "bytes": 10187
+    },
+    "upstream/ouroboros/Common/gameData/BodyPart.c": {
+      "blob_sha1": "08120a0491aeb3eebc915380585d4ff343640f7f",
+      "sha256": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "bytes": 4246
+    }
+  }
+}

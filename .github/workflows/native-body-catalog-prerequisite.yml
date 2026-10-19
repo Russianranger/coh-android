@@ -1,0 +1,35 @@
+name: Native body-catalog bone enum prerequisite
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-body-catalog-prerequisite.yml
+      - native-android/engine/body-catalog/**
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-body-enum-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  bone-enum:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Qualify original generated bone enum provider
+        run: |
+          python3 native-android/engine/body-catalog/check_bone_enum_provider.py --sanitize --output "$RUNNER_TEMP/bone-enum-host.json" --evidence-directory "$RUNNER_TEMP/bone-enum-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-body-enum-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/bone-enum-host.json
+            ${{ runner.temp }}/bone-enum-evidence/
+          if-no-files-found: error
+          retention-days: 90
