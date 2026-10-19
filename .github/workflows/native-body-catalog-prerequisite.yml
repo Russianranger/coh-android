@@ -1,4 +1,4 @@
-name: Native body-catalog bone enum prerequisite
+name: Native body-catalog ParseBoneNames callback
 on:
   push:
     branches: [native-android]
@@ -9,10 +9,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: native-body-enum-${{ github.ref }}
+  group: native-parse-bones-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  bone-enum:
+  parse-bone-names:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -21,15 +21,17 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 1
-      - name: Qualify original generated bone enum provider
+      - name: Install callback test digest headers
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev
+      - name: Qualify bounded original ParseBoneNames callback
         run: |
-          python3 native-android/engine/body-catalog/check_bone_enum_provider.py --sanitize --output "$RUNNER_TEMP/bone-enum-host.json" --evidence-directory "$RUNNER_TEMP/bone-enum-evidence"
+          python3 native-android/engine/body-catalog/check_parse_bone_names.py --sanitize --output "$RUNNER_TEMP/parse-bones-host.json" --evidence-directory "$RUNNER_TEMP/parse-bones-evidence"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-body-enum-${{ github.sha }}
+          name: native-parse-bones-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/bone-enum-host.json
-            ${{ runner.temp }}/bone-enum-evidence/
+            ${{ runner.temp }}/parse-bones-host.json
+            ${{ runner.temp }}/parse-bones-evidence/
           if-no-files-found: error
           retention-days: 90

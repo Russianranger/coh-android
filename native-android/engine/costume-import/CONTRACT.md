@@ -82,9 +82,10 @@ Actual dictionary inputs required, all from ONE matching source/profile/runtime:
 - `GetBodyPartCount()` after `bpReadBodyPartFiles`: source loads
   `Defs\\UI/*.bp`, `BodyParts.bin`, shared name `SM_BodyParts.bin`. Capture actual
   parsed ordered body-part identity/count, not an offline preview's part count.
-  ParseBoneNames refuses counts >=MAX_BODYPARTS (=MAX_COSTUME_PARTS=30);
-  this import therefore refuses30 despite the existing generic loader's <=30
-  storage ceiling. This is a source admission restriction, not a raised cap.
+  ParseBoneNames refuses counts >=MAX_BODYPARTS (=MAX_COSTUME_PARTS=60 in the
+  pinned source). This import's unchanged1..29 bound is a conservative native
+  admission policy, narrower than both that source threshold and the generic
+  loader's <=30 storage ceiling. It is not the original callback's limit.
 - `getBodyTypeCount()` and ordered `g_BodyTypeInfos` (pinned source has9 entries).
 - Exact loaded costume/supergroup palette bin and source/cache identities,
   runtime profile, source revision/build/ABI, generation and capture/run receipt.

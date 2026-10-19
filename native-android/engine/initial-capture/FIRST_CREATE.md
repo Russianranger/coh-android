@@ -456,8 +456,8 @@ context. Max combined delta7626 packed/7656 compressed and29-bit metadata still
 fit4/9decimal digits. Existing4MiB input,192-byte child,7,168-byte report, overflow
 guard, wiped cleanup and every earlier indexed-string stop remain unchanged.
 
-The current milestone qualifies one prerequisite to that runtime catalog
-boundary: the source-generated BoneIdEnum provider used by original
+The accepted enum prerequisite to that runtime catalog boundary is the
+source-generated BoneIdEnum provider used by original
 ParseBoneNames. Existing costume-import work already executes the body-type
 table/count; this work does not repeat that result. The repository's original
 StructParser target runs over exact original bones.h in isolation. Its actual
@@ -465,13 +465,42 @@ emitted enum table feeds unchanged original bone_IdFromName and StaticDefine
 lookup functions. No lookup rows, dictionary generation or runtime catalog
 count are substituted.
 
-This source-provider qualification stops BEFORE ParseBoneNames, body-part file
-loading and a current MapServer runtime capture. COUNT is an out-of-range source
+That provider alone establishes no body-part loading or current MapServer
+runtime capture. COUNT is an out-of-range source
 sentinel; INVALID/unknown return-1; DEFAULT is the source alias for0/HIPS, not
 the costume's unresolved default part count. The ALLENTS observer, numeric39..43
 boundaries and dictionary-index stops are unchanged. Runtime catalog/default
 admission, character/ownership/source-generation/actor/ACK/world authority remain
 false. Details and executable provider contract are in ../body-catalog/CONTRACT.md.
+
+The current callback stage composes the accepted actual generated enum with
+unchanged whole original ParseBoneNames/GetBodyPartCount. Its input is28 rows
+from the exact retained authentic CLIENT BodyParts.bin, decoded by the unchanged
+qualified native reader and independently checked against the trusted raw bytes.
+Derived bone/index expectations use the independent original enum rather than
+cached derived fields. Source callback completion is not runtime catalog admission.
+
+Complete bounded preflight precedes every original mutation. The qualification
+policy is29 rows,1or2 bones per row, ASCII single names<=259 and paired names<=126;
+126+R/L+NUL fits the original128-byte buffer. The exact pinned original source
+MAX_BODYPARTS aliases MAX_COSTUME_PARTS60, not30. The existing import1..29 and
+native capacity30 remain unchanged narrower policies. The old import contract's
+source-threshold wording is corrected without changing code or limits.
+
+Original callback behavior preserves unknown-1 and sentinel results: its bone
+validity fatal checks are commented out. It sets row indices, resolves one/two
+names and preserves a single-part row's second raw bone. All28 CLIENT rows
+complete30 lookups, including6 unknown first-bone results; those are neither
+new failures nor catalog acceptance. The observed getter count is adapter-owned
+row count, never current MapServer/default part-count evidence.
+
+Full original struct declarations are used, with callback-relevant input fields
+and neutral unused fixture fields. Explicit fixed earray/global adapters and
+host ABI limits remain disclosed. Preflight refuses atomically; completion
+clears global metadata and uses volatile stores to wipe owned temporary storage.
+The ALLENTS observer, catalog stops41/43, dictionary-index stops, cleanup/report/
+input limits and every generation/authority/application ACK prohibition remain
+unchanged. See ../body-catalog/CONTRACT.md for the exact callback profile.
 
 ## Original protocol evidence
 
@@ -609,37 +638,35 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-The current focused qualifier is ../body-catalog/check_bone_enum_provider.py.
-It builds the actual original StructParser source target and invokes it on an
-isolated exact original header, then checks the actual generated table and
-original lookup closure in release/ASan/UBSan. Original declarations preserve
-all three StaticDefine/StaticDefineInt fields and intptr_t. Optimized aliasing,
-platform adapters and excluded profiles are recorded rather than silently
-replacing the lookup. Independent original enum expectations check row order,
-values, aliases, ASCII case variants, unknown names and bounded input controls.
-This does not qualify a Map executable/Android ABI or the generator under every
-possible input. The precise bounded source-provider profile is in its contract.
+The current focused qualifier is ../body-catalog/check_parse_bone_names.py.
+It verifies the exact committed CLIENT subset ZIP (2,253,704B,
+SHA256350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241)
+and BodyParts.bin (2,584B,
+SHA256b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb).
+No new donor generation or substitute cache is produced. Each native mode
+compares every decoded raw field of28 rows with an independent trusted projection
+before invoking the original callback through the owned bounded profile.
 
-Release/ASan/UBSan each pass7,996 checks across102 generated rows and920 query
-controls, including204 ASCII case variants,500 query mutations and112 unknown
-controls. Ten Python refusals cover independent-reference and exact-source-pin
-mutations; native tests add8 invalid profiles and1 alias control. All43 source
-inputs and resolved C/C++ compiler identities remain stable before/after.
-Original StaticDefineLookup stack32B and bounded profile304B are static host
-frames; the harness main1056B is bounded. This is not device/global RSS evidence.
-The original C++ generator itself is compiled/executed without sanitizers; the
-source lookup/profile tests run in all three native modes.
+Release/ASan/UBSan each pass2,019 checks:28 authentic rows,30 original lookups,
+70 successful callback transactions,23 bounded-profile refusals,29 derived-field
+mutation controls,28 ASCII case controls and6 alias controls. Single-part second
+bones, unknown/sentinel source semantics, source60-versus-policy29, paired126/127,
+single259/260, late preflight atomicity, ordering and idle cleanup are exercised.
+All57 source inputs and resolved C/C++ compiler identities remain stable.
 
-Full generator output, generated/native source, compiler commands and results
-are retained by the focused Native body-catalog bone enum prerequisite workflow.
-The compact source/hash receipt is ../body-catalog/qualification/bone-enum-
-20261019/host.json. Previously accepted part-count source/native and JNI receipts
-remain in qualification/initial-partcount-20261019; those suites are not replayed.
+Original callback stack208B and sourceparts_apply10,400B are static host frames;
+the harness main6,384B is bounded. External libc/crypto sanitizer/stack closure,
+original earray/Win32/Android ABI and global/device RSS are not established.
+Full tool/native evidence is in Native body-catalog ParseBoneNames callback CI;
+compact receipt: ../body-catalog/qualification/parse-bone-names-20261019/host.json.
+Accepted enum generation is a dependency; its old checker/native suite is not
+replayed. Accepted input-reader, compiler, JNI, renderer, transport and Android13
+suites are not replayed; only the affected source/native composition is tested.
 
-Exactly ONE prerequisite milestone ends here. No original ParseBoneNames,
-body-part loading, server transaction, dictionary import, packet advancement,
-JNI/renderer/compiler/network/Android13 suite, new Thor run or APK is claimed.
-Next work can qualify the bounded original body-part callback with appropriate
-input provenance; genuine current Map runtime/catalog/profile association is
-still required before catalog admission. Gates25–27 remain open. Character, source-generation, actor, authority and
-application ACK permissions remain false.
+Exactly ONE callback milestone ends here. No original full Parse6/
+ParserLoadFilesShared initialization, current Map runtime transaction, runtime
+catalog/default, dictionary import/generation, actor or authority/application ACK
+admission is claimed. No new Thor run/APK. Next work must qualify an original
+body-part loader/runtime snapshot with genuine loaded-input/source/build/profile/
+run provenance before catalog admission. Gates25–27 remain open; character,
+source-generation, actor, authority and application ACK permissions remain false.

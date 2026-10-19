@@ -1,0 +1,924 @@
+{
+  "schema": "coh-original-parse-bone-names-qualification-v1",
+  "passed": true,
+  "source_revision": "7300ad4c478f9edc0103d6fbc1bcb234abffd187",
+  "source_sha256": {
+    "native-android/engine/body-catalog/bone_enum_provider.py": "3a1270b300ccb3bcf1d01f2bac63201998f8279a2e69eeaea4edcc8978552844",
+    "native-android/engine/body-catalog/check_parse_bone_names.py": "e1fa7801cfa55ccef4f8ccf514e2c64ec644723ee66afda584aa4eb0c4e5de8a",
+    "native-android/engine/body-catalog/parse-bone-names-source-pins.json": "8a0223265c187ef95077d11efa9b4d6bb325e80cd2ddb6170ff3a9dd0496e906",
+    "native-android/engine/body-catalog/parse_bone_names_provider.py": "a8e3e1c3dffb877400c96ccac9f5a08ab4359b231ee4b9f5e92bff75f7e43415",
+    "native-android/engine/body-catalog/qualification/bone-enum-20261019/host.json": "e9a67e42cff57f75a102d3cabb35faeb89822a6ae793d027842289b7916bf2a5",
+    "native-android/engine/body-catalog/source-pins.json": "9bcb4a9d89ae169b8453cd50d0ca9f84f12eeb8f4fbad5d25ce3faa35df1f56b",
+    "native-android/engine/body-catalog/test_parse_bone_names.c": "f2a0797f7e060841248d34eec009d69037aaf37018fc0c37d86bb6189e7b4083",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-inputs/coh_costume_inputs.c": "194f3ef8a38e77db0e86ce16ed8caa18772952715ea9c13d1c26382bee7c3255",
+    "native-android/engine/costume-inputs/coh_costume_inputs.h": "7e11f5ceceb5c82085a0d7dcd5b9be49827581e74230c60a2ba563c62ec0ebca",
+    "native-android/engine/costume-inputs/source-pins.json": "e23cb68127cc6413e5f8f7183b75302ef705cb7460ab3764149d5f4ec6a1bf4f",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+    "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+    "upstream/ouroboros/Common/seq/bones.c": "6aa2eccca9852d7d35f4170629de8f263a22f0fadf83a3a2d7639de9d300c073",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+    "upstream/ouroboros/Utilities/StructParser/CMakeLists.txt": "887d186c9c8eb435b6b9686fccbc1a7ddfd43fafca50d7229110608201942120",
+    "upstream/ouroboros/Utilities/StructParser/src/AutoRunManager.cpp": "98c9d1335d815529cabab24d36277e05d4008098cb25fb00575f15366ba131d9",
+    "upstream/ouroboros/Utilities/StructParser/src/AutoRunManager.h": "390cc20d40fc1d6c7bbf1ee640bcd1a4f12bbb40e9abac2d3e1b227aed1f8e90",
+    "upstream/ouroboros/Utilities/StructParser/src/AutoTestManager.cpp": "5373e14cd44bf9f90d883e6eed068cff70104a92ee824b5b4874f4e411c05f83",
+    "upstream/ouroboros/Utilities/StructParser/src/AutoTestManager.h": "661edf94e86a7643c4ba906af3909288450409a749f7a698112356a7429a89dd",
+    "upstream/ouroboros/Utilities/StructParser/src/AutoTransactionManager.cpp": "630d29694cedaa61a85ece019b3a33ac7b5b6a0a0d3b2bc5898bc1b04a6e1218",
+    "upstream/ouroboros/Utilities/StructParser/src/AutoTransactionManager.h": "211593f768f6ad3a774df0d937e4d026d15f57951d291e8b0e65ce4287b953f2",
+    "upstream/ouroboros/Utilities/StructParser/src/GenerationIO.cpp": "92965131eef02f487f49fe43e7500947fa3e1b4ac8254b214ce83274dfc15057",
+    "upstream/ouroboros/Utilities/StructParser/src/GenerationIO.h": "89c1d63552f997064c54787d79f5379776ddd4b3927370fe150a3354d63314e5",
+    "upstream/ouroboros/Utilities/StructParser/src/IdentifierDictionary.cpp": "c88e929c6a501367462ed0e79d6ea3b4040416e7c3605c6fa20e567a717b6167",
+    "upstream/ouroboros/Utilities/StructParser/src/IdentifierDictionary.h": "d22170d606889d0d0f21551a446827a636312028f4401527c482b4a9d407dd93",
+    "upstream/ouroboros/Utilities/StructParser/src/LateLinkManager.cpp": "ecf4ce810457b3cdf1b5feb0b5368da88f6a74114662dd899df57f43dc91f569",
+    "upstream/ouroboros/Utilities/StructParser/src/LateLinkManager.h": "c29162e8b34f48284c3e0c8defd2ae695a95952c5bdb1ca0796585384274b584",
+    "upstream/ouroboros/Utilities/StructParser/src/MagicCommandManager.cpp": "5b94524f321bfffcf9587dc8308ecbf340911be762ac145f64602a2c48e94460",
+    "upstream/ouroboros/Utilities/StructParser/src/MagicCommandManager.h": "68154bfedf1227d8bbf2024eb4d4b49563a06420b9c9c9b514f57162961129c0",
+    "upstream/ouroboros/Utilities/StructParser/src/ParserLimits.h": "11fe7359899432d9d3d2654c96fcb1cd92ca32f7352496d58dda467c52dda98f",
+    "upstream/ouroboros/Utilities/StructParser/src/Platform.cpp": "e10807ed970835efb133c4447561321fc87da7f5444c8455f7dcb45c49de823a",
+    "upstream/ouroboros/Utilities/StructParser/src/Platform.h": "6ef4b432771fb1f4478805c704273166a648aae9e92837a92492f69e0553781a",
+    "upstream/ouroboros/Utilities/StructParser/src/SourceParser.cpp": "91255cdae78773ee1a0387df96657c16f015ef9471621a413c5e841e20efb88e",
+    "upstream/ouroboros/Utilities/StructParser/src/SourceParser.h": "1b38e69fadec4457cbca35035f834da045f25b7ca3c389312b197993a0c32da2",
+    "upstream/ouroboros/Utilities/StructParser/src/SourceParserBaseClass.cpp": "136d0392bf39f513bc72e405636f7f530cd988c89fd8eff8c7b25ead1eb625c7",
+    "upstream/ouroboros/Utilities/StructParser/src/SourceParserBaseClass.h": "0b74aa73e957b45d68e0328d3288e9bcd41284c27576b7df032104974a2f45d2",
+    "upstream/ouroboros/Utilities/StructParser/src/StructParser.cpp": "682ec9d4860e63873bd8848ecc10f3c24f9ec0ece800997588cbf6c5a31b1932",
+    "upstream/ouroboros/Utilities/StructParser/src/Tokenizer.cpp": "d72149db2cf6254e49de8e7ad8e6d21c1ebc6c71c8477e3d57fa9c3e011ad3fc",
+    "upstream/ouroboros/Utilities/StructParser/src/main.cpp": "12e659b01a4bfbfee592608275fc60eca9afd7afb486ecaf7abbf7c7b4ce5aaa",
+    "upstream/ouroboros/Utilities/StructParser/src/pch.cpp": "1031c83e8ec025a2a81919e2e18fc601dbb06159a113a1eb239dcc30676a7b48",
+    "upstream/ouroboros/Utilities/StructParser/src/pch.h": "3f6dde744dafcb9cfa163838ecbfb24d68ed6c10864ce42ebbe5f2d97f178281",
+    "upstream/ouroboros/Utilities/StructParser/src/structparser.h": "940db832618cbbe9cbb5645dc17266724b0a89aeeda56478f9ded6363e7561c5",
+    "upstream/ouroboros/Utilities/StructParser/src/strutils.cpp": "2f0864d363e1c083dcdda395be1ff1fce7aef1366885c2e80060034cd985c0fa",
+    "upstream/ouroboros/Utilities/StructParser/src/strutils.h": "10624a5cba4ddb87f5b4c7c64a85afc5ca37f8f7e269dea741aa6ef30b3f6ce6",
+    "upstream/ouroboros/Utilities/StructParser/src/tokenizer.h": "d8c4683ef0a8b016953f0cedfcab364cc5dd6fd68ad4a5f1acbf4dc849d50451",
+    "upstream/ouroboros/Utilities/StructParser/src/utils.cpp": "9f83ede02f65f383fe8e4965463c800e21c54e38f2facd6da04f0d7f5ddeb9d5",
+    "upstream/ouroboros/Utilities/StructParser/src/utils.h": "24c590fd1268239dfeb19b928822d0ed9cfea550ec6ef2c74287102bba9c2ea9",
+    "upstream/ouroboros/Utilities/StructParser/src/version.cpp": "23f3a37135aeacfde6e8d87468ef2e43ea9f7de52f6b631c38dbdbd2b6662898",
+    "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structDefines.c": "746909e7de5c82baef0e3c8738bc245f94e8d5b1f00af5abc4be63a2517a8320"
+  },
+  "source_stable_before_after": true,
+  "host_compiler_identities": {
+    "cc": {
+      "command": "cc",
+      "resolved_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+      "executable_bytes": 1023032,
+      "executable_sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234",
+      "version_first_line": "x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+      "version_stdout_sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+    },
+    "c++": {
+      "command": "c++",
+      "resolved_path": "/usr/bin/x86_64-linux-gnu-g++-13",
+      "executable_bytes": 1027128,
+      "executable_sha256": "52f1ddb33fe78b9441e0f42e9cd22c571f1101938e046c8a26582494e041cc73",
+      "version_first_line": "x86_64-linux-gnu-g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+      "version_stdout_sha256": "157c487727541da0ef84bfa12dd6715a793e3af550a457cce01452003a94d34e"
+    }
+  },
+  "host_compilers_stable_before_after": true,
+  "original_callback_provider": {
+    "schema": "coh-original-parse-bone-names-provider-v1",
+    "source_baseline_revision": "7300ad4c478f9edc0103d6fbc1bcb234abffd187",
+    "source_sha256": {
+      "upstream/ouroboros/Common/seq/bones.c": "6aa2eccca9852d7d35f4170629de8f263a22f0fadf83a3a2d7639de9d300c073",
+      "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "upstream/ouroboros/Utilities/StructParser/CMakeLists.txt": "887d186c9c8eb435b6b9686fccbc1a7ddfd43fafca50d7229110608201942120",
+      "upstream/ouroboros/Utilities/StructParser/src/AutoRunManager.cpp": "98c9d1335d815529cabab24d36277e05d4008098cb25fb00575f15366ba131d9",
+      "upstream/ouroboros/Utilities/StructParser/src/AutoRunManager.h": "390cc20d40fc1d6c7bbf1ee640bcd1a4f12bbb40e9abac2d3e1b227aed1f8e90",
+      "upstream/ouroboros/Utilities/StructParser/src/AutoTestManager.cpp": "5373e14cd44bf9f90d883e6eed068cff70104a92ee824b5b4874f4e411c05f83",
+      "upstream/ouroboros/Utilities/StructParser/src/AutoTestManager.h": "661edf94e86a7643c4ba906af3909288450409a749f7a698112356a7429a89dd",
+      "upstream/ouroboros/Utilities/StructParser/src/AutoTransactionManager.cpp": "630d29694cedaa61a85ece019b3a33ac7b5b6a0a0d3b2bc5898bc1b04a6e1218",
+      "upstream/ouroboros/Utilities/StructParser/src/AutoTransactionManager.h": "211593f768f6ad3a774df0d937e4d026d15f57951d291e8b0e65ce4287b953f2",
+      "upstream/ouroboros/Utilities/StructParser/src/GenerationIO.cpp": "92965131eef02f487f49fe43e7500947fa3e1b4ac8254b214ce83274dfc15057",
+      "upstream/ouroboros/Utilities/StructParser/src/GenerationIO.h": "89c1d63552f997064c54787d79f5379776ddd4b3927370fe150a3354d63314e5",
+      "upstream/ouroboros/Utilities/StructParser/src/IdentifierDictionary.cpp": "c88e929c6a501367462ed0e79d6ea3b4040416e7c3605c6fa20e567a717b6167",
+      "upstream/ouroboros/Utilities/StructParser/src/IdentifierDictionary.h": "d22170d606889d0d0f21551a446827a636312028f4401527c482b4a9d407dd93",
+      "upstream/ouroboros/Utilities/StructParser/src/LateLinkManager.cpp": "ecf4ce810457b3cdf1b5feb0b5368da88f6a74114662dd899df57f43dc91f569",
+      "upstream/ouroboros/Utilities/StructParser/src/LateLinkManager.h": "c29162e8b34f48284c3e0c8defd2ae695a95952c5bdb1ca0796585384274b584",
+      "upstream/ouroboros/Utilities/StructParser/src/MagicCommandManager.cpp": "5b94524f321bfffcf9587dc8308ecbf340911be762ac145f64602a2c48e94460",
+      "upstream/ouroboros/Utilities/StructParser/src/MagicCommandManager.h": "68154bfedf1227d8bbf2024eb4d4b49563a06420b9c9c9b514f57162961129c0",
+      "upstream/ouroboros/Utilities/StructParser/src/ParserLimits.h": "11fe7359899432d9d3d2654c96fcb1cd92ca32f7352496d58dda467c52dda98f",
+      "upstream/ouroboros/Utilities/StructParser/src/Platform.cpp": "e10807ed970835efb133c4447561321fc87da7f5444c8455f7dcb45c49de823a",
+      "upstream/ouroboros/Utilities/StructParser/src/Platform.h": "6ef4b432771fb1f4478805c704273166a648aae9e92837a92492f69e0553781a",
+      "upstream/ouroboros/Utilities/StructParser/src/SourceParser.cpp": "91255cdae78773ee1a0387df96657c16f015ef9471621a413c5e841e20efb88e",
+      "upstream/ouroboros/Utilities/StructParser/src/SourceParser.h": "1b38e69fadec4457cbca35035f834da045f25b7ca3c389312b197993a0c32da2",
+      "upstream/ouroboros/Utilities/StructParser/src/SourceParserBaseClass.cpp": "136d0392bf39f513bc72e405636f7f530cd988c89fd8eff8c7b25ead1eb625c7",
+      "upstream/ouroboros/Utilities/StructParser/src/SourceParserBaseClass.h": "0b74aa73e957b45d68e0328d3288e9bcd41284c27576b7df032104974a2f45d2",
+      "upstream/ouroboros/Utilities/StructParser/src/StructParser.cpp": "682ec9d4860e63873bd8848ecc10f3c24f9ec0ece800997588cbf6c5a31b1932",
+      "upstream/ouroboros/Utilities/StructParser/src/Tokenizer.cpp": "d72149db2cf6254e49de8e7ad8e6d21c1ebc6c71c8477e3d57fa9c3e011ad3fc",
+      "upstream/ouroboros/Utilities/StructParser/src/main.cpp": "12e659b01a4bfbfee592608275fc60eca9afd7afb486ecaf7abbf7c7b4ce5aaa",
+      "upstream/ouroboros/Utilities/StructParser/src/pch.cpp": "1031c83e8ec025a2a81919e2e18fc601dbb06159a113a1eb239dcc30676a7b48",
+      "upstream/ouroboros/Utilities/StructParser/src/pch.h": "3f6dde744dafcb9cfa163838ecbfb24d68ed6c10864ce42ebbe5f2d97f178281",
+      "upstream/ouroboros/Utilities/StructParser/src/structparser.h": "940db832618cbbe9cbb5645dc17266724b0a89aeeda56478f9ded6363e7561c5",
+      "upstream/ouroboros/Utilities/StructParser/src/strutils.cpp": "2f0864d363e1c083dcdda395be1ff1fce7aef1366885c2e80060034cd985c0fa",
+      "upstream/ouroboros/Utilities/StructParser/src/strutils.h": "10624a5cba4ddb87f5b4c7c64a85afc5ca37f8f7e269dea741aa6ef30b3f6ce6",
+      "upstream/ouroboros/Utilities/StructParser/src/tokenizer.h": "d8c4683ef0a8b016953f0cedfcab364cc5dd6fd68ad4a5f1acbf4dc849d50451",
+      "upstream/ouroboros/Utilities/StructParser/src/utils.cpp": "9f83ede02f65f383fe8e4965463c800e21c54e38f2facd6da04f0d7f5ddeb9d5",
+      "upstream/ouroboros/Utilities/StructParser/src/utils.h": "24c590fd1268239dfeb19b928822d0ed9cfea550ec6ef2c74287102bba9c2ea9",
+      "upstream/ouroboros/Utilities/StructParser/src/version.cpp": "23f3a37135aeacfde6e8d87468ef2e43ea9f7de52f6b631c38dbdbd2b6662898",
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+      "upstream/ouroboros/libs/UtilitiesLib/src/utils/structDefines.c": "746909e7de5c82baef0e3c8738bc245f94e8d5b1f00af5abc4be63a2517a8320",
+      "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "upstream/ouroboros/Common/gameData/BodyPart.h": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+      "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "native-android/engine/body-catalog/bone_enum_provider.py": "3a1270b300ccb3bcf1d01f2bac63201998f8279a2e69eeaea4edcc8978552844",
+      "native-android/engine/body-catalog/source-pins.json": "9bcb4a9d89ae169b8453cd50d0ca9f84f12eeb8f4fbad5d25ce3faa35df1f56b",
+      "native-android/engine/body-catalog/qualification/bone-enum-20261019/host.json": "e9a67e42cff57f75a102d3cabb35faeb89822a6ae793d027842289b7916bf2a5"
+    },
+    "source_pins_sha256": "8a0223265c187ef95077d11efa9b4d6bb325e80cd2ddb6170ff3a9dd0496e906",
+    "source_stable_before_after": true,
+    "accepted_enum_provider": {
+      "schema": "coh-original-bone-enum-provider-v1",
+      "source_sha256": {
+        "upstream/ouroboros/Common/seq/bones.c": "6aa2eccca9852d7d35f4170629de8f263a22f0fadf83a3a2d7639de9d300c073",
+        "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+        "upstream/ouroboros/Utilities/StructParser/CMakeLists.txt": "887d186c9c8eb435b6b9686fccbc1a7ddfd43fafca50d7229110608201942120",
+        "upstream/ouroboros/Utilities/StructParser/src/AutoRunManager.cpp": "98c9d1335d815529cabab24d36277e05d4008098cb25fb00575f15366ba131d9",
+        "upstream/ouroboros/Utilities/StructParser/src/AutoRunManager.h": "390cc20d40fc1d6c7bbf1ee640bcd1a4f12bbb40e9abac2d3e1b227aed1f8e90",
+        "upstream/ouroboros/Utilities/StructParser/src/AutoTestManager.cpp": "5373e14cd44bf9f90d883e6eed068cff70104a92ee824b5b4874f4e411c05f83",
+        "upstream/ouroboros/Utilities/StructParser/src/AutoTestManager.h": "661edf94e86a7643c4ba906af3909288450409a749f7a698112356a7429a89dd",
+        "upstream/ouroboros/Utilities/StructParser/src/AutoTransactionManager.cpp": "630d29694cedaa61a85ece019b3a33ac7b5b6a0a0d3b2bc5898bc1b04a6e1218",
+        "upstream/ouroboros/Utilities/StructParser/src/AutoTransactionManager.h": "211593f768f6ad3a774df0d937e4d026d15f57951d291e8b0e65ce4287b953f2",
+        "upstream/ouroboros/Utilities/StructParser/src/GenerationIO.cpp": "92965131eef02f487f49fe43e7500947fa3e1b4ac8254b214ce83274dfc15057",
+        "upstream/ouroboros/Utilities/StructParser/src/GenerationIO.h": "89c1d63552f997064c54787d79f5379776ddd4b3927370fe150a3354d63314e5",
+        "upstream/ouroboros/Utilities/StructParser/src/IdentifierDictionary.cpp": "c88e929c6a501367462ed0e79d6ea3b4040416e7c3605c6fa20e567a717b6167",
+        "upstream/ouroboros/Utilities/StructParser/src/IdentifierDictionary.h": "d22170d606889d0d0f21551a446827a636312028f4401527c482b4a9d407dd93",
+        "upstream/ouroboros/Utilities/StructParser/src/LateLinkManager.cpp": "ecf4ce810457b3cdf1b5feb0b5368da88f6a74114662dd899df57f43dc91f569",
+        "upstream/ouroboros/Utilities/StructParser/src/LateLinkManager.h": "c29162e8b34f48284c3e0c8defd2ae695a95952c5bdb1ca0796585384274b584",
+        "upstream/ouroboros/Utilities/StructParser/src/MagicCommandManager.cpp": "5b94524f321bfffcf9587dc8308ecbf340911be762ac145f64602a2c48e94460",
+        "upstream/ouroboros/Utilities/StructParser/src/MagicCommandManager.h": "68154bfedf1227d8bbf2024eb4d4b49563a06420b9c9c9b514f57162961129c0",
+        "upstream/ouroboros/Utilities/StructParser/src/ParserLimits.h": "11fe7359899432d9d3d2654c96fcb1cd92ca32f7352496d58dda467c52dda98f",
+        "upstream/ouroboros/Utilities/StructParser/src/Platform.cpp": "e10807ed970835efb133c4447561321fc87da7f5444c8455f7dcb45c49de823a",
+        "upstream/ouroboros/Utilities/StructParser/src/Platform.h": "6ef4b432771fb1f4478805c704273166a648aae9e92837a92492f69e0553781a",
+        "upstream/ouroboros/Utilities/StructParser/src/SourceParser.cpp": "91255cdae78773ee1a0387df96657c16f015ef9471621a413c5e841e20efb88e",
+        "upstream/ouroboros/Utilities/StructParser/src/SourceParser.h": "1b38e69fadec4457cbca35035f834da045f25b7ca3c389312b197993a0c32da2",
+        "upstream/ouroboros/Utilities/StructParser/src/SourceParserBaseClass.cpp": "136d0392bf39f513bc72e405636f7f530cd988c89fd8eff8c7b25ead1eb625c7",
+        "upstream/ouroboros/Utilities/StructParser/src/SourceParserBaseClass.h": "0b74aa73e957b45d68e0328d3288e9bcd41284c27576b7df032104974a2f45d2",
+        "upstream/ouroboros/Utilities/StructParser/src/StructParser.cpp": "682ec9d4860e63873bd8848ecc10f3c24f9ec0ece800997588cbf6c5a31b1932",
+        "upstream/ouroboros/Utilities/StructParser/src/Tokenizer.cpp": "d72149db2cf6254e49de8e7ad8e6d21c1ebc6c71c8477e3d57fa9c3e011ad3fc",
+        "upstream/ouroboros/Utilities/StructParser/src/main.cpp": "12e659b01a4bfbfee592608275fc60eca9afd7afb486ecaf7abbf7c7b4ce5aaa",
+        "upstream/ouroboros/Utilities/StructParser/src/pch.cpp": "1031c83e8ec025a2a81919e2e18fc601dbb06159a113a1eb239dcc30676a7b48",
+        "upstream/ouroboros/Utilities/StructParser/src/pch.h": "3f6dde744dafcb9cfa163838ecbfb24d68ed6c10864ce42ebbe5f2d97f178281",
+        "upstream/ouroboros/Utilities/StructParser/src/structparser.h": "940db832618cbbe9cbb5645dc17266724b0a89aeeda56478f9ded6363e7561c5",
+        "upstream/ouroboros/Utilities/StructParser/src/strutils.cpp": "2f0864d363e1c083dcdda395be1ff1fce7aef1366885c2e80060034cd985c0fa",
+        "upstream/ouroboros/Utilities/StructParser/src/strutils.h": "10624a5cba4ddb87f5b4c7c64a85afc5ca37f8f7e269dea741aa6ef30b3f6ce6",
+        "upstream/ouroboros/Utilities/StructParser/src/tokenizer.h": "d8c4683ef0a8b016953f0cedfcab364cc5dd6fd68ad4a5f1acbf4dc849d50451",
+        "upstream/ouroboros/Utilities/StructParser/src/utils.cpp": "9f83ede02f65f383fe8e4965463c800e21c54e38f2facd6da04f0d7f5ddeb9d5",
+        "upstream/ouroboros/Utilities/StructParser/src/utils.h": "24c590fd1268239dfeb19b928822d0ed9cfea550ec6ef2c74287102bba9c2ea9",
+        "upstream/ouroboros/Utilities/StructParser/src/version.cpp": "23f3a37135aeacfde6e8d87468ef2e43ea9f7de52f6b631c38dbdbd2b6662898",
+        "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structDefines.h": "165e0fdd248520c1a59a7f435054f1332a20cde985ef6a7d608fb32d26b69d34",
+        "upstream/ouroboros/libs/UtilitiesLib/src/utils/structDefines.c": "746909e7de5c82baef0e3c8738bc245f94e8d5b1f00af5abc4be63a2517a8320",
+        "upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24"
+      },
+      "source_pins_sha256": "9bcb4a9d89ae169b8453cd50d0ca9f84f12eeb8f4fbad5d25ce3faa35df1f56b",
+      "source_baseline_revision": "d912fd1f90c1100c261f63769d479f01b67c6922",
+      "source_stable_before_after": true,
+      "original_tool_target_sources": [
+        "src/AutoRunManager.cpp",
+        "src/AutoTestManager.cpp",
+        "src/AutoTransactionManager.cpp",
+        "src/GenerationIO.cpp",
+        "src/IdentifierDictionary.cpp",
+        "src/LateLinkManager.cpp",
+        "src/MagicCommandManager.cpp",
+        "src/main.cpp",
+        "src/Platform.cpp",
+        "src/SourceParser.cpp",
+        "src/SourceParserBaseClass.cpp",
+        "src/StructParser.cpp",
+        "src/strutils.cpp",
+        "src/Tokenizer.cpp",
+        "src/utils.cpp"
+      ],
+      "original_tool_target_build": "Direct C++17 compilation of exact source list from pinned original CMake target; CMake not invoked. No tool source modifications.",
+      "tool_compiler_command": [
+        "c++",
+        "-std=c++17",
+        "-O2",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/AutoRunManager.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/AutoTestManager.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/AutoTransactionManager.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/GenerationIO.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/IdentifierDictionary.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/LateLinkManager.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/MagicCommandManager.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/main.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/Platform.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/SourceParser.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/SourceParserBaseClass.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/StructParser.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/strutils.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/Tokenizer.cpp",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/original-tool/src/utils.cpp",
+        "-o",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/StructParser"
+      ],
+      "tool_binary_sha256": "2f4bdc4028810113ec82a41e53a95e6476c67ee2e54cc0babc90a2886b81580c",
+      "generator_command": [
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/StructParser",
+        "--target",
+        "BoneProvider",
+        "--source-dir",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/isolated-input/BoneProvider/src",
+        "--common-dir",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/isolated-input/Common",
+        "--project-dir",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/isolated-input/BoneProvider",
+        "--kind",
+        "library",
+        "--sources-file",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/isolated-input/sources.txt",
+        "--state-dir",
+        "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/parser-state",
+        "--force"
+      ],
+      "generated_table_sha256": "f5add955da25f98fd109c81f33130eec2660d0e3f8de8e4893da621cdcfa085e",
+      "generated_table_bytes": 3136,
+      "generated_row_count": 102,
+      "provider_c_sha256": "781c266325f25ee2dcf24baa4ed78a29693dd1f54665f8efbb10d558452938c4",
+      "whole_function_sha256_lf": {
+        "bone_IdFromName": "91063863ff9072a200dc8f215b81a0bd2e9d7aa955808751ad0a1bbf71471cd0",
+        "bone_IdIsValid": "12e8118b570854109c8351af7d69555cb7f0628c2c33bdbd0c5d2bd60261309c",
+        "StaticDefineLookup": "24b23db2feeb6090cabfccaf3a51cc1bc8c230bee4374574f4aef5fed29cefe6",
+        "StaticDefineIntLookup": "33b2a99df6003c4623b3a78e42915d312aa210bd1a20e232e68c14af045d5fdc",
+        "StaticDefineIntGetInt": "d9b4bd31aa1f5b5cd6441ce5f113fac94b33d63dd22265e8bf899b730ae44744"
+      },
+      "original_BoneIdEnum_table_extracted_unchanged": true,
+      "original_enum_lookup_requires_no_stash": true,
+      "host_adapters": [
+        "intptr_t/char* source StaticDefine view with asserted three-field offsets/size; compile -fno-strict-aliasing",
+        "stricmp uses host strcasecmp under C locale; ASCII queries only",
+        "itoa decimal signed enum result uses bounded snprintf200",
+        "unreachable dynamic-list and fatal profile branches trap"
+      ],
+      "query_max_is_wrapper_policy": 259,
+      "row_max_is_wrapper_policy": 256,
+      "generated_native_lookup_sanitizable": true,
+      "original_generator_sanitized": false,
+      "ParseBoneNames_executed": false,
+      "current_Map_runtime_observed": false,
+      "body_catalog_admitted": false,
+      "source_generation_admitted": false,
+      "authority_or_application_ack": false,
+      "evidence_paths": {
+        "generated_table": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/isolated-input/BoneProvider/src/AutoGen/bones_h_ast.c",
+        "provider_c": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/bone-enum-provider.c",
+        "compile_stdout": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/compile.stdout",
+        "compile_stderr": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/compile.stderr",
+        "generator_stdout": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/generator.stdout",
+        "generator_stderr": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/generator.stderr",
+        "commands": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/commands.json"
+      },
+      "audited_not_executed_callback": {
+        "path": "upstream/ouroboros/Common/gameData/BodyPart.c",
+        "function": "ParseBoneNames",
+        "sha256_lf": "88820c6af887214608f51dd1adba3bdb8663de4fecd8f6901f0e109be62a92a7",
+        "bone_IdFromName_callsites": 3,
+        "relationship": "Original postload callback resolves name_geo or name_geoR/L through this provider. Callback/runtime initialization is NOT executed or admitted."
+      }
+    },
+    "original_declaration_sha256_lf": {
+      "BodyPart": "1e74839e69e89db702fd6d92ee677f87f0a0b17bb1f08ef70b0f7773e8180a8a",
+      "BodyPartList": "6a5496ff6028c0db6eb0b05cdee63f47c2d0fcc876ebf17b5245f7ca79285434",
+      "MAX_BODYPARTS_alias": "bcfb9b256cb2bd55b9858f23fecc925b6b84a7d4f998193d7937d3cb0ac5983a",
+      "MAX_COSTUME_PARTS": "1620836f51d64c0514de929517fd3d9feb642bf87ef8eb4522a042c963048740"
+    },
+    "whole_function_sha256_lf": {
+      "ParseBoneNames": "88820c6af887214608f51dd1adba3bdb8663de4fecd8f6901f0e109be62a92a7",
+      "GetBodyPartCount": "7657fea302b88e54666818cd1e7302b6b167db7a35f23d5fb595f23c5df8d677"
+    },
+    "original_callback_source_count_max_exclusive": 60,
+    "wrapper_part_max_policy": 29,
+    "paired_name_max": 126,
+    "paired_buffer_arithmetic": "126 bytes + R/L suffix1 + NUL1 = original tmp128;127 bytes refuses before original callback",
+    "single_name_max_policy": 259,
+    "source_unknown_minus_one_and_sentinels_preserved": true,
+    "single_part_second_bone_preserved": true,
+    "full_original_BodyPart_and_BodyPartList_declarations": true,
+    "host_adapters": [
+      "U8=unsigned char; bool=int; opaque unused ParseTable; cpp_const_cast C cast",
+      "Fixed29 owned full BodyPart rows, pointer array and 260-byte name buffers replace original earray allocation; eaSize checks global/argument ownership metadata",
+      "Observed lookup wrapper calls unchanged actual bone_IdFromName once; callback source text unchanged",
+      "Original source MAX_BODYPARTS=MAX_COSTUME_PARTS60;29 is only this qualification/native profile limit",
+      "Original fatal branches unreachable after complete bounded preflight; source bone-validity checks are commented out, so no new validity filter",
+      "Accepted enum provider three-field aliasing/platform adapters and -fno-strict-aliasing remain required"
+    ],
+    "original_callback_executed_by_provider_build": false,
+    "original_full_parser_executed": false,
+    "current_Map_runtime_observed": false,
+    "runtime_body_catalog_admitted": false,
+    "source_generation_admitted": false,
+    "authority_or_application_ack": false,
+    "evidence_paths": {
+      "enum_generated_table": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/isolated-input/BoneProvider/src/AutoGen/bones_h_ast.c",
+      "enum_provider_c": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/bone-enum-provider.c",
+      "enum_compile_stdout": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/compile.stdout",
+      "enum_compile_stderr": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/compile.stderr",
+      "enum_generator_stdout": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/generator.stdout",
+      "enum_generator_stderr": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/generator.stderr",
+      "enum_commands": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/enum-provider/commands.json",
+      "callback_header": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/parse-bone-names-provider.h",
+      "callback_provider": "/workspace/scratch/1d0c7dd153fe/parse-bone-names-evidence/parse-bone-names-provider.c"
+    },
+    "source_count_scope": "Original GetBodyPartCount executes over adapter-owned callback rows only; this is not a genuine current MapServer or costume default part count.",
+    "neutral_owned_field_profile": "Exact full BodyPart declarations are retained, but input carries only callback-relevant fields. Unused owned fields remain neutral zero; diagnostic name aliases the owned geometry name. No full-record roundtrip or original ABI is claimed.",
+    "cleanup": "Original global/list metadata reset before output commit; owned row/pointer/name/candidate/receipt staging is cleared through volatile byte stores. No input pointer survives."
+  },
+  "retained_authentic_CLIENT_input": {
+    "archive_path": "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip",
+    "archive_bytes": 2253704,
+    "archive_sha256": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "archive_git_blob_sha1": "606fd1e17751fbdf6d7c903dee4eaea40c2014f3",
+    "member": "data/bin/BodyParts.bin",
+    "member_bytes": 2584,
+    "member_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+    "retained_origin_run_id": 36707839624,
+    "retained_origin_artifact_id": 11092897979,
+    "scope": "Exact committed subset of independently retained authentic CLIENT caches. No regeneration or claim current MapServer consumed these bytes.",
+    "new_donor_generation": false,
+    "current_server_consumption_verified": false
+  },
+  "trusted_fixture_projection": {
+    "bytes": 5412,
+    "sha256": "aa2130b4d2847f758bdcd6440c9c4eec1930cbf235515f9ad63652daf64f0e2e",
+    "authentic_rows": 28,
+    "paired_rows": 2,
+    "expected_lookup_calls": 30,
+    "unknown_first_bone_results": 6,
+    "dependency_timestamp": 1767225600,
+    "expectation_origin": "Independent field projection of only the exact SHA-pinned trusted CLIENT cache; derived names and indices evaluated using independently parsed original enum reference. Each native mode separately decodes full bytes using the unchanged already-qualified native input reader and checks every retained raw field.",
+    "raw_cached_bones_are_not_callback_proof": true,
+    "duplicate_BoneCount_callback_uses_last": true
+  },
+  "checks": {
+    "release": {
+      "checks": 2019,
+      "authentic_CLIENT_rows": 28,
+      "authentic_lookup_calls": 30,
+      "authentic_unknown_first_bones": 6,
+      "successful_callback_transactions": 70,
+      "bounded_profile_refusals": 23,
+      "derived_field_mutation_controls": 29,
+      "ASCII_case_controls": 28,
+      "alias_controls": 6,
+      "qualification_part_max": 29,
+      "original_source_count_max_exclusive": 60,
+      "paired_name_max": 126,
+      "single_name_max": 259,
+      "unknown_minus_one_preserved": true,
+      "single_second_bone_preserved": true,
+      "original_ParseBoneNames_executed": true,
+      "original_GetBodyPartCount_executed": true,
+      "original_full_Parse6_executed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "dictionary_imported": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 2019,
+      "authentic_CLIENT_rows": 28,
+      "authentic_lookup_calls": 30,
+      "authentic_unknown_first_bones": 6,
+      "successful_callback_transactions": 70,
+      "bounded_profile_refusals": 23,
+      "derived_field_mutation_controls": 29,
+      "ASCII_case_controls": 28,
+      "alias_controls": 6,
+      "qualification_part_max": 29,
+      "original_source_count_max_exclusive": 60,
+      "paired_name_max": 126,
+      "single_name_max": 259,
+      "unknown_minus_one_preserved": true,
+      "single_second_bone_preserved": true,
+      "original_ParseBoneNames_executed": true,
+      "original_GetBodyPartCount_executed": true,
+      "original_full_Parse6_executed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "dictionary_imported": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 2019,
+      "authentic_CLIENT_rows": 28,
+      "authentic_lookup_calls": 30,
+      "authentic_unknown_first_bones": 6,
+      "successful_callback_transactions": 70,
+      "bounded_profile_refusals": 23,
+      "derived_field_mutation_controls": 29,
+      "ASCII_case_controls": 28,
+      "alias_controls": 6,
+      "qualification_part_max": 29,
+      "original_source_count_max_exclusive": 60,
+      "paired_name_max": 126,
+      "single_name_max": 259,
+      "unknown_minus_one_preserved": true,
+      "single_second_bone_preserved": true,
+      "original_ParseBoneNames_executed": true,
+      "original_GetBodyPartCount_executed": true,
+      "original_full_Parse6_executed": false,
+      "current_Map_runtime_executed": false,
+      "runtime_body_catalog_admitted": false,
+      "dictionary_imported": false,
+      "source_generation_admitted": false,
+      "complete_initial_character": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "f37ab22bb499c96bd13b0fde95070bbe9d383ed280815ef1140c8b0defceec14",
+    "asan": "c2a3b1fef206ce4897fffc143d6bc185c6a70c1e37f64dd4c09460a84a4d67e4",
+    "ubsan": "c57438ce2c437641753d205c6f2700084935e6fd1616e6033232a0f21a1b37cb"
+  },
+  "native_stack_frames": [
+    {
+      "function": "StaticDefineLookup",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "sourceparts_observed_lookup",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "bone_IdFromName",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "sourcebone_lookup",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "sourcebone_is_valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "sourcebone_row_count",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "sourcebone_row_name",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "sourcebone_row_value",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "ParseBoneNames",
+      "bytes": 208,
+      "bound": "static"
+    },
+    {
+      "function": "GetBodyPartCount",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "sourceparts_is_idle",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "sourceparts_apply",
+      "bytes": 10400,
+      "bound": "static"
+    },
+    {
+      "function": "digest",
+      "bytes": 16,
+      "bound": "static"
+    },
+    {
+      "function": "baseline",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "refused",
+      "bytes": 480,
+      "bound": "static"
+    },
+    {
+      "function": "word",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "applied",
+      "bytes": 1008,
+      "bound": "static"
+    },
+    {
+      "function": "main",
+      "bytes": 6384,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "word",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "text",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "segment",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_costume_input_read",
+      "bytes": 784,
+      "bound": "static"
+    }
+  ],
+  "evidence_files": {
+    "BodyParts.bin": {
+      "bytes": 2584,
+      "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb"
+    },
+    "asan-compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan-compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asan.stdout": {
+      "bytes": 803,
+      "sha256": "97a49547c18084d538dd0fab2b6ef4c937e374fc180389af9265c29b4d939047"
+    },
+    "c++-version.stdout": {
+      "bytes": 264,
+      "sha256": "157c487727541da0ef84bfa12dd6715a793e3af550a457cce01452003a94d34e"
+    },
+    "callback-asan": {
+      "bytes": 172944,
+      "sha256": "c2a3b1fef206ce4897fffc143d6bc185c6a70c1e37f64dd4c09460a84a4d67e4"
+    },
+    "callback-fixtures.bin": {
+      "bytes": 5412,
+      "sha256": "aa2130b4d2847f758bdcd6440c9c4eec1930cbf235515f9ad63652daf64f0e2e"
+    },
+    "callback-release": {
+      "bytes": 41704,
+      "sha256": "f37ab22bb499c96bd13b0fde95070bbe9d383ed280815ef1140c8b0defceec14"
+    },
+    "callback-release-coh_costume_inputs.su": {
+      "bytes": 512,
+      "sha256": "5bee5b3c3cf1230680a1ae6057e488c07107136d1da2499aa799ed53daa30a09"
+    },
+    "callback-release-parse-bone-names-provider.su": {
+      "bytes": 1460,
+      "sha256": "3867f460bc3993812f89914470c1bf2691f6341acb9565108178650e14e61888"
+    },
+    "callback-release-test_parse_bone_names.su": {
+      "bytes": 768,
+      "sha256": "1dc115ea856263199bd601b02bb1e8aa4f9b15705cc616b50b46cb2e682acad5"
+    },
+    "callback-ubsan": {
+      "bytes": 172056,
+      "sha256": "c57438ce2c437641753d205c6f2700084935e6fd1616e6033232a0f21a1b37cb"
+    },
+    "cc-version.stdout": {
+      "bytes": 264,
+      "sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+    },
+    "enum-provider/StructParser": {
+      "bytes": 431048,
+      "sha256": "2f4bdc4028810113ec82a41e53a95e6476c67ee2e54cc0babc90a2886b81580c"
+    },
+    "enum-provider/bone-enum-provider.c": {
+      "bytes": 9540,
+      "sha256": "781c266325f25ee2dcf24baa4ed78a29693dd1f54665f8efbb10d558452938c4"
+    },
+    "enum-provider/commands.json": {
+      "bytes": 2702,
+      "sha256": "24ea4cd020119fbf9c76e61d6b2a2449372d46e44fbecf4610f003445ae8b045"
+    },
+    "enum-provider/compile.stderr": {
+      "bytes": 38676,
+      "sha256": "b66b73ff56292a6dc3e65ded4e3e64013920ef0de836289822bfb98b253a2686"
+    },
+    "enum-provider/compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "enum-provider/generator.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "enum-provider/generator.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_AutoTest.c": {
+      "bytes": 121,
+      "sha256": "2b28aa374e9fe7174056198fceb13ff2032a254e13f5a7855d48bb943f2e8efa"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_autogen_QueuedFuncs.c": {
+      "bytes": 178,
+      "sha256": "12168458fe85cae207c1e5f6d0c53d96f832159c64fe3de80e50c72179b397e7"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_autogen_QueuedFuncs.h": {
+      "bytes": 211,
+      "sha256": "69080ded40bb62808ef2b28e8f972748b894c13b21e6119e720c2d6e41429b2f"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_autorun_autogen.cpp": {
+      "bytes": 1077,
+      "sha256": "4389896fe51dcfd5909b09f92a3961cba48913d6845c5b27e3d3f1bb50e91088"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_autorun_extrafunc_autogen.c": {
+      "bytes": 120,
+      "sha256": "930b515a64911002de0339a6530fab56a6e7637dc365d0ce9241c972455b71ff"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_autotransactions_autogen.c": {
+      "bytes": 128,
+      "sha256": "f72dfb59c36360a32bc3c8f4b55df2ed9ac5a37149a5c2c9bb6403dc80b48b91"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_commands_autogen.c": {
+      "bytes": 358,
+      "sha256": "ca0e26352f72ea8abe279e06b47348e676faf63b59bbe990aaf95b50eadf32cb"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_commands_autogen_CommandFuncs.c": {
+      "bytes": 221,
+      "sha256": "6edc703bca22b2ef7d650ab3517979ad368be4a9ddb8349b6c88f7ce15fc6710"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_commands_autogen_CommandFuncs.h": {
+      "bytes": 190,
+      "sha256": "7ed369861dcf2b1c46ce77f98cc6573667f34c25675589d2f65d26dcc7f7f185"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/BoneProvider_latelink_autogen.c": {
+      "bytes": 121,
+      "sha256": "a2b5fc2fa278da2c4a8f8ffa3b7759b6c7bf764f9ae901077033f0dc8b0e6b84"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/bones_h_ast.c": {
+      "bytes": 3136,
+      "sha256": "f5add955da25f98fd109c81f33130eec2660d0e3f8de8e4893da621cdcfa085e"
+    },
+    "enum-provider/isolated-input/BoneProvider/src/AutoGen/bones_h_ast.h": {
+      "bytes": 322,
+      "sha256": "ad1ff68553afbcd1776500b10c77b4f318a8c87457482cb395926d0521d40973"
+    },
+    "enum-provider/isolated-input/Common/AutoGen/BoneProvider_autogen_RemoteFuncs.c": {
+      "bytes": 292,
+      "sha256": "32bb63090c81670605e7077da455715216dea7f7ae8644d82473c0938b28169d"
+    },
+    "enum-provider/isolated-input/Common/AutoGen/BoneProvider_autogen_RemoteFuncs.h": {
+      "bytes": 231,
+      "sha256": "38d6dc353f7a125f6762583add0700d2684eb4f78e1e3cf04daf8d44949a5844"
+    },
+    "enum-provider/isolated-input/Common/AutoGen/BoneProvider_autogen_SlowFuncs.c": {
+      "bytes": 292,
+      "sha256": "2187fae6cb4f3d9a2d372e80c64d159095d73a7fbb3cb09c32b5f03f3d88d607"
+    },
+    "enum-provider/isolated-input/Common/AutoGen/BoneProvider_autogen_SlowFuncs.h": {
+      "bytes": 305,
+      "sha256": "6e20ec0a96195e5663b3b6394528f55c4943abec8912e1a3edf250b322537e5d"
+    },
+    "enum-provider/isolated-input/Common/seq/bones.h": {
+      "bytes": 3012,
+      "sha256": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17"
+    },
+    "enum-provider/isolated-input/sources.txt": {
+      "bytes": 106,
+      "sha256": "d271a115f6981430141c9cb0fcb81bdf90c18205765b2461b997fc83bd92cb7a"
+    },
+    "enum-provider/original-tool/CMakeLists.txt": {
+      "bytes": 2890,
+      "sha256": "887d186c9c8eb435b6b9686fccbc1a7ddfd43fafca50d7229110608201942120"
+    },
+    "enum-provider/original-tool/src/AutoRunManager.cpp": {
+      "bytes": 11393,
+      "sha256": "98c9d1335d815529cabab24d36277e05d4008098cb25fb00575f15366ba131d9"
+    },
+    "enum-provider/original-tool/src/AutoRunManager.h": {
+      "bytes": 2385,
+      "sha256": "390cc20d40fc1d6c7bbf1ee640bcd1a4f12bbb40e9abac2d3e1b227aed1f8e90"
+    },
+    "enum-provider/original-tool/src/AutoTestManager.cpp": {
+      "bytes": 20389,
+      "sha256": "5373e14cd44bf9f90d883e6eed068cff70104a92ee824b5b4874f4e411c05f83"
+    },
+    "enum-provider/original-tool/src/AutoTestManager.h": {
+      "bytes": 2488,
+      "sha256": "661edf94e86a7643c4ba906af3909288450409a749f7a698112356a7429a89dd"
+    },
+    "enum-provider/original-tool/src/AutoTransactionManager.cpp": {
+      "bytes": 65140,
+      "sha256": "630d29694cedaa61a85ece019b3a33ac7b5b6a0a0d3b2bc5898bc1b04a6e1218"
+    },
+    "enum-provider/original-tool/src/AutoTransactionManager.h": {
+      "bytes": 7538,
+      "sha256": "211593f768f6ad3a774df0d937e4d026d15f57951d291e8b0e65ce4287b953f2"
+    },
+    "enum-provider/original-tool/src/GenerationIO.cpp": {
+      "bytes": 3819,
+      "sha256": "92965131eef02f487f49fe43e7500947fa3e1b4ac8254b214ce83274dfc15057"
+    },
+    "enum-provider/original-tool/src/GenerationIO.h": {
+      "bytes": 1102,
+      "sha256": "89c1d63552f997064c54787d79f5379776ddd4b3927370fe150a3354d63314e5"
+    },
+    "enum-provider/original-tool/src/IdentifierDictionary.cpp": {
+      "bytes": 3564,
+      "sha256": "c88e929c6a501367462ed0e79d6ea3b4040416e7c3605c6fa20e567a717b6167"
+    },
+    "enum-provider/original-tool/src/IdentifierDictionary.h": {
+      "bytes": 1536,
+      "sha256": "d22170d606889d0d0f21551a446827a636312028f4401527c482b4a9d407dd93"
+    },
+    "enum-provider/original-tool/src/LateLinkManager.cpp": {
+      "bytes": 17504,
+      "sha256": "ecf4ce810457b3cdf1b5feb0b5368da88f6a74114662dd899df57f43dc91f569"
+    },
+    "enum-provider/original-tool/src/LateLinkManager.h": {
+      "bytes": 2167,
+      "sha256": "c29162e8b34f48284c3e0c8defd2ae695a95952c5bdb1ca0796585384274b584"
+    },
+    "enum-provider/original-tool/src/MagicCommandManager.cpp": {
+      "bytes": 192605,
+      "sha256": "5b94524f321bfffcf9587dc8308ecbf340911be762ac145f64602a2c48e94460"
+    },
+    "enum-provider/original-tool/src/MagicCommandManager.h": {
+      "bytes": 19125,
+      "sha256": "68154bfedf1227d8bbf2024eb4d4b49563a06420b9c9c9b514f57162961129c0"
+    },
+    "enum-provider/original-tool/src/ParserLimits.h": {
+      "bytes": 131,
+      "sha256": "11fe7359899432d9d3d2654c96fcb1cd92ca32f7352496d58dda467c52dda98f"
+    },
+    "enum-provider/original-tool/src/Platform.cpp": {
+      "bytes": 1190,
+      "sha256": "e10807ed970835efb133c4447561321fc87da7f5444c8455f7dcb45c49de823a"
+    },
+    "enum-provider/original-tool/src/Platform.h": {
+      "bytes": 835,
+      "sha256": "6ef4b432771fb1f4478805c704273166a648aae9e92837a92492f69e0553781a"
+    },
+    "enum-provider/original-tool/src/SourceParser.cpp": {
+      "bytes": 13373,
+      "sha256": "91255cdae78773ee1a0387df96657c16f015ef9471621a413c5e841e20efb88e"
+    },
+    "enum-provider/original-tool/src/SourceParser.h": {
+      "bytes": 3545,
+      "sha256": "1b38e69fadec4457cbca35035f834da045f25b7ca3c389312b197993a0c32da2"
+    },
+    "enum-provider/original-tool/src/SourceParserBaseClass.cpp": {
+      "bytes": 177,
+      "sha256": "136d0392bf39f513bc72e405636f7f530cd988c89fd8eff8c7b25ead1eb625c7"
+    },
+    "enum-provider/original-tool/src/SourceParserBaseClass.h": {
+      "bytes": 1145,
+      "sha256": "0b74aa73e957b45d68e0328d3288e9bcd41284c27576b7df032104974a2f45d2"
+    },
+    "enum-provider/original-tool/src/StructParser.cpp": {
+      "bytes": 164131,
+      "sha256": "682ec9d4860e63873bd8848ecc10f3c24f9ec0ece800997588cbf6c5a31b1932"
+    },
+    "enum-provider/original-tool/src/Tokenizer.cpp": {
+      "bytes": 22762,
+      "sha256": "d72149db2cf6254e49de8e7ad8e6d21c1ebc6c71c8477e3d57fa9c3e011ad3fc"
+    },
+    "enum-provider/original-tool/src/main.cpp": {
+      "bytes": 8516,
+      "sha256": "12e659b01a4bfbfee592608275fc60eca9afd7afb486ecaf7abbf7c7b4ce5aaa"
+    },
+    "enum-provider/original-tool/src/pch.cpp": {
+      "bytes": 279,
+      "sha256": "1031c83e8ec025a2a81919e2e18fc601dbb06159a113a1eb239dcc30676a7b48"
+    },
+    "enum-provider/original-tool/src/pch.h": {
+      "bytes": 281,
+      "sha256": "3f6dde744dafcb9cfa163838ecbfb24d68ed6c10864ce42ebbe5f2d97f178281"
+    },
+    "enum-provider/original-tool/src/structparser.h": {
+      "bytes": 16905,
+      "sha256": "940db832618cbbe9cbb5645dc17266724b0a89aeeda56478f9ded6363e7561c5"
+    },
+    "enum-provider/original-tool/src/strutils.cpp": {
+      "bytes": 14537,
+      "sha256": "2f0864d363e1c083dcdda395be1ff1fce7aef1366885c2e80060034cd985c0fa"
+    },
+    "enum-provider/original-tool/src/strutils.h": {
+      "bytes": 3972,
+      "sha256": "10624a5cba4ddb87f5b4c7c64a85afc5ca37f8f7e269dea741aa6ef30b3f6ce6"
+    },
+    "enum-provider/original-tool/src/tokenizer.h": {
+      "bytes": 7239,
+      "sha256": "d8c4683ef0a8b016953f0cedfcab364cc5dd6fd68ad4a5f1acbf4dc849d50451"
+    },
+    "enum-provider/original-tool/src/utils.cpp": {
+      "bytes": 410,
+      "sha256": "9f83ede02f65f383fe8e4965463c800e21c54e38f2facd6da04f0d7f5ddeb9d5"
+    },
+    "enum-provider/original-tool/src/utils.h": {
+      "bytes": 358,
+      "sha256": "24c590fd1268239dfeb19b928822d0ed9cfea550ec6ef2c74287102bba9c2ea9"
+    },
+    "enum-provider/original-tool/src/version.cpp": {
+      "bytes": 60,
+      "sha256": "23f3a37135aeacfde6e8d87468ef2e43ea9f7de52f6b631c38dbdbd2b6662898"
+    },
+    "enum-provider/parser-state/ownership": {
+      "bytes": 4258,
+      "sha256": "4ed0102c65840361d13d03eec9897a03ab3cd71ad177c87a0fc43fb743ae9cd2"
+    },
+    "enum-provider/parser-state/state": {
+      "bytes": 4258,
+      "sha256": "4ed0102c65840361d13d03eec9897a03ab3cd71ad177c87a0fc43fb743ae9cd2"
+    },
+    "native-commands.json": {
+      "bytes": 2517,
+      "sha256": "5b18e24a390d34c7c110e9a3cfcf7fd92b8bbd26bbcc048b0656cd8d6e61d949"
+    },
+    "parse-bone-names-provider.c": {
+      "bytes": 16678,
+      "sha256": "019dd40489724b6270e9ece4d12697c27554ce1d70b50e809adb884ecc10d016"
+    },
+    "parse-bone-names-provider.h": {
+      "bytes": 1345,
+      "sha256": "b82f7b1f00aed11eb28301aec40b46e950888de87604121e160b1dae9bad6654"
+    },
+    "release-compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release-compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release.stdout": {
+      "bytes": 803,
+      "sha256": "97a49547c18084d538dd0fab2b6ef4c937e374fc180389af9265c29b4d939047"
+    },
+    "trusted-row-reference.json": {
+      "bytes": 6710,
+      "sha256": "b0d7ffbf564aba856fe9dbaadfe1cd7ec7c5acf2c5446a9c51ab475c94a41963"
+    },
+    "ubsan-compile.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan-compile.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ubsan.stdout": {
+      "bytes": 803,
+      "sha256": "97a49547c18084d538dd0fab2b6ef4c937e374fc180389af9265c29b4d939047"
+    }
+  },
+  "scope": "Original ParseBoneNames callback on 28 rows decoded from exact retained authentic CLIENT cache by the unchanged already-qualified native reader, plus explicit synthetic bounded profile controls. Accepted actual generated BoneIdEnum provider rebuilt only as a dependency; no old checker/native suite replay. No original full Parse6 parser/loader, full startup, current Map/runtime catalog, dictionary generation/import, character, authority or application ACK acceptance. Original MAX_BODYPARTS is60;29 is narrower qualification/native policy. Unknown -1 and COUNT results are preserved rather than newly rejected.",
+  "external_crypto_sanitizer_or_stack_closure": false,
+  "old_checker_mains_executed": false,
+  "old_native_suites_executed": false,
+  "original_full_parse6_executed": false,
+  "current_map_runtime_executed": false,
+  "runtime_catalog_admitted": false,
+  "dictionary_imported": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}

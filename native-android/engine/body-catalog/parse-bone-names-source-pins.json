@@ -1,0 +1,36 @@
+{
+  "schema": "coh-parse-bone-names-provider-source-pins-v1",
+  "baseline_revision": "7300ad4c478f9edc0103d6fbc1bcb234abffd187",
+  "files": {
+    "upstream/ouroboros/Common/gameData/BodyPart.c": {
+      "blob_sha1": "08120a0491aeb3eebc915380585d4ff343640f7f",
+      "sha256": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "bytes": 4246
+    },
+    "upstream/ouroboros/Common/gameData/BodyPart.h": {
+      "blob_sha1": "9f6520ca88fcd8603f72b4b9376cad7795366b49",
+      "sha256": "493e83f39d2f833b529281aee2e9833bf2415def57efbaf1d39da89642a4b4a8",
+      "bytes": 1457
+    },
+    "upstream/ouroboros/Common/entity/costume.h": {
+      "blob_sha1": "2e64e05c52d978de07bb4353ca6742d8d76079e9",
+      "sha256": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "bytes": 23092
+    },
+    "native-android/engine/body-catalog/bone_enum_provider.py": {
+      "blob_sha1": "5f1982045f170e525d9ec5f46fc89a90e75027d0",
+      "sha256": "3a1270b300ccb3bcf1d01f2bac63201998f8279a2e69eeaea4edcc8978552844",
+      "bytes": 12646
+    },
+    "native-android/engine/body-catalog/source-pins.json": {
+      "blob_sha1": "c2e2dd23ac4fa5f5289237c8cf038d1f3bdf4194",
+      "sha256": "9bcb4a9d89ae169b8453cd50d0ca9f84f12eeb8f4fbad5d25ce3faa35df1f56b",
+      "bytes": 9668
+    },
+    "native-android/engine/body-catalog/qualification/bone-enum-20261019/host.json": {
+      "blob_sha1": "c03ae979845bf7431c65838281da4fb6bd9fdc32",
+      "sha256": "e9a67e42cff57f75a102d3cabb35faeb89822a6ae793d027842289b7916bf2a5",
+      "bytes": 38242
+    }
+  }
+}
