@@ -1,0 +1,67 @@
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c: In function ‘string_destroystruct’:
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:981:5: error: implicit declaration of function ‘TokenStoreFreeString’; did you mean ‘TokenStoreSetString’? [-Werror=implicit-function-declaration]
+  981 |     TokenStoreFreeString(tpi, column, structptr, index);
+      |     ^~~~~~~~~~~~~~~~~~~~
+      |     TokenStoreSetString
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c: In function ‘struct_destroystruct’:
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:985:23: error: implicit declaration of function ‘TokenStoreGetPointer’; did you mean ‘TokenStoreGetPointerConst’? [-Werror=implicit-function-declaration]
+  985 |     void* substruct = TokenStoreGetPointer(tpi, column, structptr, index);
+      |                       ^~~~~~~~~~~~~~~~~~~~
+      |                       TokenStoreGetPointerConst
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:985:23: error: initialization of ‘void *’ from ‘int’ makes pointer from integer without a cast [-Werror=int-conversion]
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:989:9: error: implicit declaration of function ‘TokenStoreFree’; did you mean ‘TokenStoreSetU8’? [-Werror=implicit-function-declaration]
+  989 |         TokenStoreFree(tpi, column, structptr, index);
+      |         ^~~~~~~~~~~~~~
+      |         TokenStoreSetU8
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c: In function ‘earray_destroystruct’:
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:999:23: error: implicit declaration of function ‘TokenStoreGetNumElems’ [-Werror=implicit-function-declaration]
+  999 |     int i, numelems = TokenStoreGetNumElems(tpi, column, structptr);
+      |                       ^~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1004:5: error: implicit declaration of function ‘TokenStoreDestroyEArray’ [-Werror=implicit-function-declaration]
+ 1004 |     TokenStoreDestroyEArray(tpi, column, structptr);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c: At top level:
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1006:6: error: conflicting types for ‘TokenStoreFreeString’; have ‘void(ParseTable *, int,  void *, int)’ [-Werror]
+ 1006 | void TokenStoreFreeString(ParseTable tpi[], int column, void* structptr, int index)
+      |      ^~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:981:5: note: previous implicit declaration of ‘TokenStoreFreeString’ with type ‘void(ParseTable *, int,  void *, int)’
+  981 |     TokenStoreFreeString(tpi, column, structptr, index);
+      |     ^~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1040:6: error: conflicting types for ‘TokenStoreFree’; have ‘void(ParseTable *, int,  void *, int)’ [-Werror]
+ 1040 | void TokenStoreFree(ParseTable tpi[], int column, void* structptr, int index)
+      |      ^~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:989:9: note: previous implicit declaration of ‘TokenStoreFree’ with type ‘void(ParseTable *, int,  void *, int)’
+  989 |         TokenStoreFree(tpi, column, structptr, index);
+      |         ^~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1089:7: error: conflicting types for ‘TokenStoreGetPointer’; have ‘void *(ParseTable *, int,  void *, int)’
+ 1089 | void* TokenStoreGetPointer(ParseTable tpi[], int column, void* structptr, int index)
+      |       ^~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:985:23: note: previous implicit declaration of ‘TokenStoreGetPointer’ with type ‘int()’
+  985 |     void* substruct = TokenStoreGetPointer(tpi, column, structptr, index);
+      |                       ^~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1093:6: error: conflicting types for ‘TokenStoreDestroyEArray’; have ‘void(ParseTable *, int,  void *)’ [-Werror]
+ 1093 | void TokenStoreDestroyEArray(ParseTable tpi[], int column, void* structptr)
+      |      ^~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1004:5: note: previous implicit declaration of ‘TokenStoreDestroyEArray’ with type ‘void(ParseTable *, int,  void *)’
+ 1004 |     TokenStoreDestroyEArray(tpi, column, structptr);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c: In function ‘struct_clear_fixture’:
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1780:2: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+ 1780 |  if(memcmp(observed,expected,sizeof(*expected)))status=COH_STATE;if(status!=COH_OK)goto refused;r.fixture_identity_matched=1;
+      |  ^~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1780:66: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1780 |  if(memcmp(observed,expected,sizeof(*expected)))status=COH_STATE;if(status!=COH_OK)goto refused;r.fixture_identity_matched=1;
+      |                                                                  ^~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1788:2: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+ 1788 |  if(status==COH_OK&&memcmp(hash,expected->input_sha256,32))status=COH_STATE;body_wipe(hash,sizeof(hash));if(status!=COH_OK)goto refused;
+      |  ^~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1788:77: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1788 |  if(status==COH_OK&&memcmp(hash,expected->input_sha256,32))status=COH_STATE;body_wipe(hash,sizeof(hash));if(status!=COH_OK)goto refused;
+      |                                                                             ^~~~~~~~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1795:3: error: this ‘for’ clause does not guard... [-Werror=misleading-indentation]
+ 1795 |   for(unsigned k=0;k<7;k++)owner.raw[n][k]=0x80000000u+n*17u+k;row->num_parts=(int)owner.raw[n][2];row->influenceCost=(int)owner.raw[n][1];memcpy(row->bone_num,owner.raw[n]+4,8);memcpy(&row->bodyPartIndex,owner.raw[n]+6,4);row->dont_clear=(U8)owner.raw[n][3];
+      |   ^~~
+/workspace/scratch/0484ad305122/clear-a-attempt1/struct-clear-provider.c:1795:64: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
+ 1795 |   for(unsigned k=0;k<7;k++)owner.raw[n][k]=0x80000000u+n*17u+k;row->num_parts=(int)owner.raw[n][2];row->influenceCost=(int)owner.raw[n][1];memcpy(row->bone_num,owner.raw[n]+4,8);memcpy(&row->bodyPartIndex,owner.raw[n]+6,4);row->dont_clear=(U8)owner.raw[n][3];
+      |                                                                ^~~
+cc1: all warnings being treated as errors

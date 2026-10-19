@@ -1,0 +1,1803 @@
+
+#include "struct-clear-provider.h"
+#include <assert.h>
+#include <limits.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+typedef uint32_t U32;typedef uint16_t U16;typedef uint8_t U8;typedef int BoneId;typedef int32_t __time32_t;
+#define INLINEDBG inline
+#define endianSwapIfBig(type,value) (value)
+#define devassert assert
+#define SAFESTR(x) x,sizeof(x)
+#define MAX_PATH 260
+typedef char host32[(sizeof(int)==4&&sizeof(BoneId)==4&&sizeof(__time32_t)==4)?1:-1];
+typedef struct _SimpleBufHandle *SimpleBufHandle;
+typedef struct SimpleBuffer {
+    char* data;
+    int filesize;    // logical size of file
+    int memsize;    // allocated size
+    int curposition;
+    int writing;    // are we writing or reading?
+    int forcewrite;
+    char filename[MAX_PATH];
+} SimpleBuffer;
+typedef struct FileEntry {
+    char path[MAX_PATH];
+    __time32_t date;
+    int seen;            // just used for compare ops
+} FileEntry;
+typedef FileEntry** FileList;
+typedef struct BodyPart
+{
+    char*    name;            // Reference name
+    BoneId    bone_num[2];    // Bone ID in animation system, only 2 values if the Body part is really representing a left AND right value
+    int        bodyPartIndex;    // Bone index in the BodyParts array
+    int        num_parts;        // How many animation bones should be treated as one unit?
+    int        influenceCost;    // How much does this cost in the tailor screen
+    char*    name_geo;        // 
+    char*    name_tex;        // 
+    char*    base_var;        //
+    char*   sourceFile;     // source file
+    U8        dont_clear;        // when applying a new costume, don't clear this part if it isn't in the new costume.  could be dont_override instead.
+} BodyPart;
+typedef struct{
+    const BodyPart** bodyParts;
+} BodyPartList;
+typedef U32 StructTypeField;
+typedef U32 StructFormatField;
+typedef struct ParseTable
+{
+    char const* name;
+    StructTypeField type;
+    size_t storeoffset;
+    intptr_t param; // default to ints, but pointers must fit here
+    void* subtable;
+    StructFormatField format;
+} ParseTable;
+typedef enum
+{
+    TOK_IGNORE,            // do nothing with this token, ignores remainder of line during parse
+    TOK_START,            // not required, but used as the open brace for a structure
+    TOK_END,            // terminate the structure described by the parse table
+
+    // primitives - param=default value
+    TOK_U8_X,            // U8 (unsigned char)
+    TOK_INT16_X,        // 16 bit integer
+    TOK_INT_X,            // int
+    TOK_INT64_X,        // 64 bit integer
+    TOK_F32_X,            // F32 (float), can be initialized with <param> but you only get an integer value
+    TOK_DEGREES_X,        // As F32. Radians in binary but degrees in text. DefineLists in radians.
+    TOK_STRING_X,        // char*
+    TOK_CHAR_X,            // non-null terminated char*
+    TOK_RAW_X,            // specify size as parameter, this many bytes will be written to binary as is        
+    TOK_POINTER_X,        // void*, param is offset to size in bytes
+
+    // built-ins
+    TOK_CURRENTFILE_X,    // stored as char*, filled with filename of currently parsed text file
+    TOK_TIMESTAMP_X,    // stored as int, filled with fileLastChanged() of currently parsed text file
+    TOK_LINENUM_X,        // stored as int, filled with line number of the currently parsed text file
+    TOK_USEDFIELD_X,    // stored as pointer, allocated by textparser, any fields given in text file will set corresponding bits
+    TOK_BOOL_X,            // stored as u8, restricted to 0 or 1
+    TOK_FLAGS_X,        // unsigned int, list of integers as parameter, result is the values OR'd together (0, 129, 5 => 133), can't have default value
+    TOK_FLAGARRAY_X,    // int[], list of integers as parameter, result is turning on the bits in the int array for the values (0, 1, 32, 34, 63 => { 0x00000003, 0x80000005 }), can't have default value
+    TOK_BOOLFLAG_X,        // int, no parameters in script file, if token exists, field is set to 1
+    TOK_QUATPYR_X,        // F32[4], quaternion, read in as a pyr
+    TOK_MATPYR_X,        // F32[3][3] in memory turns into F32[3] (PYR) when serialized
+    TOK_CONDRGB_X,        // U8[4], conditional RGB. Alpha is 255 if the parameter is parsed, 0 otherwise.
+    TOK_FILENAME_X,        // same as string, passed through forwardslashes & _strupr
+
+    // complex types
+    TOK_LINK_X,            // link to another object in a different parse file
+    TOK_REFERENCE_X,    // YourStruct*, subtable is dictionary name
+    TOK_FUNCTIONCALL_X,    // StructFunctionCall**, parenthesis in input signals hierarchal organization
+    TOK_UNPARSED_X,        // StructParams**, getting almost unparsed tokens
+    TOK_STRUCT_X,        // YourStruct**, pass size as parameter, use eaSize to get number of items
+    TOK_STASHTABLE_X,    // StashTable
+    TOK_BIT,            // A bitfield... only generated by AUTOSTRUCT
+    TOK_DEPRECATED,        // A field that is no longer used. TODO: won't work on sub structs, but that might be nice one day
+
+    NUM_TOK_TYPE_TOKENS,
+} StructTokenType;
+#define SIZEOF2(typeName, fieldname)            (sizeof(((typeName*)0)->fieldname))
+#define SIZEOF2_DEREF(typeName, fieldname)        (sizeof(*((typeName*)0)->fieldname))
+#define SIZEOF2_DEREF2(typeName, fieldname)        (sizeof(**((typeName*)0)->fieldname))
+#define TOK_INT(s,m,d)            TOK_INT_X, (SIZEOF2(s,m)==sizeof(int))? offsetof(s,m):(5,5,5,5,5,5,5), d
+#define TOK_STRING(s,m,d)        TOK_INDIRECT | TOK_STRING_X, (SIZEOF2_DEREF(s,m)==sizeof(char))? offsetof(s,m):(5,5,5,5,5,5,5), (intptr_t)d
+#define TOK_CURRENTFILE(s,m)    TOK_INDIRECT | TOK_CURRENTFILE_X, (SIZEOF2_DEREF(s,m)==sizeof(char))? offsetof(s,m):(5,5,5,5,5,5,5), 0
+#define TOK_BOOLFLAG(s,m,d)        TOK_BOOLFLAG_X, (SIZEOF2(s,m)==sizeof(U8))? offsetof(s,m):(5,5,5,5,5,5,5), d
+#define TOK_STRUCT(s,m,tpi)        TOK_INDIRECT | TOK_EARRAY | TOK_STRUCT_X, (SIZEOF2(s,m)==sizeof(void*))? offsetof(s,m):(5,5,5,5,5,5,5), SIZEOF2_DEREF2(s,m), tpi
+#define TOK_TYPE_MASK        ((1 << 8)-1)
+#define TOK_GET_TYPE(type)    ((type) & TOK_TYPE_MASK)
+#define TOK_REDUNDANTNAME    (1 << 8)
+#define TOK_EARRAY            (1 << 20)
+#define TOK_FIXED_ARRAY        (1 << 21)
+#define TOK_INDIRECT        (1 << 22)
+#define FORALL_PARSETABLE(pti, i) for (i = 0; (pti[i].name && pti[i].name[0]) || pti[i].type; i++)
+#define PARSE_SIG                "Parse6"    // should stay at 6 characters
+#define TOK_STORAGE_DIRECT_SINGLE        (1 << 0)        // int member;
+#define TOK_STORAGE_DIRECT_FIXEDARRAY    (1 << 1)        // int members[3];
+#define TOK_STORAGE_DIRECT_EARRAY        (1 << 2)        // int* members;
+#define TOK_STORAGE_INDIRECT_SINGLE        (1 << 3)        // char* str;
+#define FORALL_PARSEINFO        FORALL_PARSETABLE
+#define TokenizerParseInfo ParseTable
+#define MAX_TOKEN_LENGTH 300    // need to allow space for a full filename after #include
+#define MAX_STRING_LENGTH (MAX_TOKEN_LENGTH * 40) // 12k seems like enough, but this can certainly be changed
+#define TOKARRAY_INFO(type) (g_arraytable[(type & TOK_EARRAY)? 2: (type & TOK_FIXED_ARRAY)? 1: 0])
+#define TYPE_INFO(type) (devassert(TOK_GET_TYPE(type) < NUM_TOK_TYPE_TOKENS), g_tokentable[TOK_GET_TYPE(type)])
+#define FILELIST_SIG "Files1"
+#define MAX_FILETYPE_LEN    4096
+#define cryptic_sig_len 8
+static char cryptic_sig[] = "CrypticS";
+TokenizerParseInfo ParseBodyPart[] =
+{
+    { "Name",            TOK_STRING(BodyPart, name, 0)            },
+    { "SourceFile",        TOK_CURRENTFILE(BodyPart,sourceFile)    },
+    { "BoneCount",        TOK_INT(BodyPart, num_parts, 0)            },
+    { "InfluenceCost",    TOK_INT(BodyPart, influenceCost, 0)        },
+    { "GeoName",        TOK_STRING(BodyPart, name_geo, 0)        },
+    { "TexName",        TOK_STRING(BodyPart, name_tex, 0)        },
+    { "BaseName",        TOK_STRING(BodyPart, base_var, 0)        },
+    { "BoneCount",        TOK_INT(BodyPart, num_parts, 0)            },
+    { "DontClear",        TOK_BOOLFLAG(BodyPart, dont_clear, 0)    },
+
+    // these are calculated, but have parser entries for copying to shared memory
+    { "",                TOK_INT(BodyPart, bone_num[0], 0)        },
+    { "",                TOK_INT(BodyPart, bone_num[1], 0)        },
+    { "",                TOK_INT(BodyPart, bodyPartIndex, -1)    },
+
+    { "End",            TOK_END                                    },
+    { "", 0, 0 }
+};
+TokenizerParseInfo ParseBodyPartBegin[] =
+{
+    { "BodyPart",        TOK_STRUCT(BodyPartList, bodyParts, ParseBodyPart)    },
+    { "", 0, 0 }
+};
+
+
+#include "schema-crc-provider.h"
+typedef enum ParseInfoField {
+    ParamField,
+    SubtableField,
+} ParseInfoField;
+typedef enum ParseInfoFieldUsage {
+    // correct response for either field
+    NoFieldUsage = 0,
+
+    // param field
+    SizeOfSubstruct,
+    NumberOfElements,
+    DefaultValue,
+    EmbeddedStringLength,
+    PointerToDefaultString,
+    OffsetOfSizeField,
+    SizeOfRawField,
+    
+    // subtable field
+    StaticDefineList,
+    PointerToSubtable,
+    PointerToLinkDictionary,
+    PointerToDictionaryName,
+} ParseInfoFieldUsage;
+#define TOK_STRUCTPARAM        (1 << 9)
+typedef struct{int active;SchemaCrcResult candidate;}UnopenedCrcOwner;
+static UnopenedCrcOwner crc_owner;
+int schema_adler_is_idle(void);
+typedef int(*readbin_f)(SimpleBufHandle,ParseTable*,int,void*,int,int*);
+/* Explicit readbin-only holders; not original complete engine handler ABI. */
+typedef ParseInfoFieldUsage(*interpretfield_f)(ParseTable*,int,ParseInfoField);
+
+typedef void(*destroy_f)(ParseTable*,int,void*,int);
+void StructClear(ParseTable*,void*);
+void string_destroystruct(ParseTable*,int,void*,int);
+void struct_destroystruct(ParseTable*,int,void*,int);
+void nonarray_destroystruct(ParseTable*,int,void*,int);
+void earray_destroystruct(ParseTable*,int,void*,int);
+const void*TokenStoreGetPointerConst(ParseTable*,int,const void*,int);
+typedef struct{readbin_f readbin;interpretfield_f interpretfield;destroy_f destroystruct;}BodyHandler;
+static const BodyHandler g_arraytable[3],g_tokentable[NUM_TOK_TYPE_TOKENS];
+typedef struct{
+ int active,opened;uint32_t fault;size_t input_size;uint32_t capacity,nodes,strings;
+ unsigned char data[STRUCT_CLEAR_INPUT_MAX];SimpleBuffer buffer;BodyPartList root;
+ BodyPart parts[STRUCT_CLEAR_PART_MAX];const BodyPart*pointers[STRUCT_CLEAR_PART_MAX];
+ char text[STRUCT_CLEAR_PART_MAX][5][STRUCT_CLEAR_STRING_MAX];uint32_t raw[STRUCT_CLEAR_PART_MAX][7];
+ uint32_t raw_written[STRUCT_CLEAR_PART_MAX],string_written[STRUCT_CLEAR_PART_MAX];
+ uint32_t body_start;StructClearReceipt receipt;
+}BodyOwner;
+static BodyOwner owner;
+static char*parser_relpath;
+static void body_wipe(void*p,size_t n){volatile unsigned char*c=p;while(n--)*c++=0;}
+static int zeros(const void*p,size_t n){const unsigned char*c=p;for(size_t i=0;i<n;i++)if(c[i])return 0;return 1;}
+static int clear_idle(void);
+static int loader_globals_idle(void);
+static void loader_globals_cleanup(void);
+static void loader_trace(uint32_t);
+int struct_clear_is_idle(void){return !parser_relpath&&zeros(&owner,sizeof(owner))&&zeros(&crc_owner,sizeof(crc_owner))&&schema_adler_is_idle()&&loader_globals_idle()&&clear_idle();}
+int SimpleBufTell(SimpleBufHandle);
+int ParserReadBinaryTable(SimpleBufHandle,ParseTable*,void*,int*);
+static int observed_table(SimpleBufHandle,ParseTable*,void*,int*);
+static SimpleBufHandle SimpleBufOpenRead(const char*name){
+ assert(owner.active&&!owner.opened&&!strcmp(name,"bin/BodyParts.bin"));owner.receipt.open_calls++;loader_trace(9);
+ if(owner.fault==1)return NULL;
+ owner.buffer.data=(char*)owner.data;owner.buffer.filesize=(int)owner.input_size;
+ owner.buffer.memsize=(int)sizeof(owner.data);memcpy(owner.buffer.filename,name,sizeof("bin/BodyParts.bin"));
+ owner.opened=1;return(SimpleBufHandle)&owner.buffer;
+}
+static void SimpleBufClose(SimpleBufHandle file){
+ assert(owner.active&&owner.opened&&file==(SimpleBufHandle)&owner.buffer);
+ owner.receipt.source_close_calls++;loader_trace(12);if(!owner.receipt.header_accepted)owner.receipt.header_end=(uint32_t)SimpleBufTell(file);
+ owner.opened=0;body_wipe(&owner.buffer,sizeof(owner.buffer));body_wipe(owner.data,sizeof(owner.data));
+}
+static void SimpleBufResizeEx(SimpleBufHandle file,int bytes){
+ assert(owner.active&&owner.opened&&file==(SimpleBufHandle)&owner.buffer&&bytes>=0&&bytes<=owner.buffer.filesize);
+}
+/* FileListRead(NULL) must not enter its collect allocators. */
+static void*unqualified_calloc(size_t a,size_t b){(void)a;(void)b;assert(!"unqualified collected FileList allocation");return NULL;}
+static void unqualified_eacreate(FileList*p){(void)p;assert(!"unqualified collected FileList creation");}
+static void unqualified_eapush(FileList*p,FileEntry*n){(void)p;(void)n;assert(!"unqualified collected FileList push");}
+#define calloc unqualified_calloc
+#define eaCreate unqualified_eacreate
+#define eaPush unqualified_eapush
+static uint32_t part_index(void*p){
+ for(uint32_t i=0;i<owner.nodes;i++)if(p==&owner.parts[i])return i;
+ assert(!"unowned original BodyPart");return 0;
+}
+static void TokenStoreSetCapacity(ParseTable*t,int c,void*p,int n){
+ assert(owner.active&&t==ParseBodyPartBegin&&c==0&&p==&owner.root&&n>0&&n<=(int)STRUCT_CLEAR_PART_MAX&&!owner.capacity);
+ owner.capacity=(uint32_t)n;owner.root.bodyParts=owner.pointers;owner.receipt.capacity_calls++;
+}
+static void*TokenStoreAlloc(ParseTable*t,int c,void*p,int index,U32 size,void*a,void*b){
+ assert(owner.active&&t==ParseBodyPartBegin&&c==0&&p==&owner.root&&index==(int)owner.nodes&&owner.nodes<owner.capacity&&size==sizeof(BodyPart)&&!a&&!b);
+ BodyPart*part=&owner.parts[owner.nodes];owner.pointers[owner.nodes++]=part;owner.receipt.allocation_calls++;return part;
+}
+static void TokenStoreSetInt(ParseTable*t,int c,void*p,int index,int value){
+ assert(owner.active&&t==ParseBodyPart&&index==0&&(c==2||c==3||c==7||c==9||c==10||c==11));
+ uint32_t n=part_index(p),slot=c==2?0:c==3?1:c==7?2:(uint32_t)c-5;
+ assert(!(owner.raw_written[n]&(1u<<slot)));owner.raw_written[n]|=1u<<slot;
+ memcpy(&owner.raw[n][slot],&value,4);memcpy((char*)p+t[c].storeoffset,&value,4);owner.receipt.int_calls++;
+}
+static void TokenStoreSetU8(ParseTable*t,int c,void*p,int index,U8 value){
+ assert(owner.active&&t==ParseBodyPart&&c==8&&index==0);uint32_t n=part_index(p);
+ assert(owner.raw_written[n]&(1u<<3));*((U8*)p+t[c].storeoffset)=value;owner.receipt.u8_calls++;
+}
+static char*TokenStoreSetString(ParseTable*t,int c,void*p,int index,const char*s,void*a,void*b){
+ assert(owner.active&&t==ParseBodyPart&&index==0&&!a&&!b&&(c==0||c==1||c==4||c==5||c==6));
+ uint32_t n=part_index(p),slot=c<2?(uint32_t)c:(uint32_t)c-2;size_t len=strlen(s);assert(len<STRUCT_CLEAR_STRING_MAX);
+ assert(!(owner.string_written[n]&(1u<<slot)));owner.string_written[n]|=1u<<slot;owner.receipt.string_calls++;
+ char*value=NULL;if(len){memcpy(owner.text[n][slot],s,len+1);value=owner.text[n][slot];owner.strings++;}
+ memcpy((char*)p+t[c].storeoffset,&value,sizeof(value));return value;
+}
+typedef void DefineContext;
+static char*allocAddString(const char*s){assert(owner.active&&!strcmp(s,"bin/BodyParts.bin"));return owner.buffer.filename;}
+int SimpleBufRead(void* data, int size, SimpleBufHandle handle)
+{
+    SimpleBuffer* buf = (SimpleBuffer*)handle;
+    
+    if (buf->curposition + size > buf->filesize) size = buf->filesize - buf->curposition;
+    memcpy(data, buf->data + buf->curposition, size);
+    buf->curposition += size;
+    return size;
+}
+int SimpleBufSeek(SimpleBufHandle handle, long offset, int origin)
+{
+    SimpleBuffer* buf = (SimpleBuffer*)handle;
+
+    if(origin == SEEK_END)
+        buf->curposition = buf->filesize;
+    else if (origin == SEEK_SET)
+        buf->curposition = 0;
+    // SEEK_CUR ok
+
+    buf->curposition += offset;
+    if (buf->curposition < 0)
+        buf->curposition = 0;
+    SimpleBufResizeEx(handle, buf->curposition);
+    if (buf->curposition > buf->filesize)
+        buf->filesize = buf->curposition;
+    return 0;
+}
+int SimpleBufTell(SimpleBufHandle handle)
+{
+    SimpleBuffer* buf = (SimpleBuffer*)handle;
+    return buf->curposition;
+}
+
+static int observed_read(void*data,int bytes,SimpleBufHandle file){
+ assert(owner.active&&owner.opened&&file==(SimpleBufHandle)&owner.buffer&&bytes>=0);
+ int at=SimpleBufTell(file);owner.receipt.read_calls++;int result=SimpleBufRead(data,bytes,file);
+ if(owner.body_start&&bytes==4&&result==4){
+  if(at==(int)owner.body_start)memcpy(&owner.receipt.body_declared_size,data,4);
+  if(at==(int)owner.body_start+4)memcpy(&owner.receipt.raw_array_count,data,4);
+ }
+ /* Source u8_readbin reads raw32 before narrowing at its setter. */
+ if(bytes==4&&result==4&&owner.nodes&&owner.string_written[owner.nodes-1]==31u&&owner.raw_written[owner.nodes-1]==7u){
+  memcpy(&owner.raw[owner.nodes-1][3],data,4);owner.raw_written[owner.nodes-1]|=8u;
+ }
+ return result;
+}
+static int observed_seek(SimpleBufHandle file,long offset,int origin){
+ assert(owner.active&&owner.opened&&file==(SimpleBufHandle)&owner.buffer);owner.receipt.seek_calls++;
+ if(origin==SEEK_END)owner.receipt.body_end=(uint32_t)SimpleBufTell(file);
+ return SimpleBufSeek(file,offset,origin);
+}
+static int observed_printf(const char*format,...){
+ assert(owner.active&&format&&(!strcmp(format,"ParserReadBinaryTable: unexpected end of file\n")||!strcmp(format,"ParserReadBinaryTable: datasum length not correct\n")||!strcmp(format,"ParserReadBinaryFile: unexpected end of file\n")));
+ owner.receipt.warning_calls++;assert(owner.receipt.warning_calls<=4);return 0;
+}
+#define SimpleBufRead observed_read
+#define SimpleBufSeek observed_seek
+#define printf observed_printf
+static INLINEDBG int SimpleBufReadU16(U16* val, SimpleBufHandle handle) { U16 x; int ret = SimpleBufRead(&x, sizeof(U16), handle); *val = endianSwapIfBig(U16, x); return ret; }
+static INLINEDBG int SimpleBufReadU32(U32* val, SimpleBufHandle handle) { U32 x; int ret = SimpleBufRead(&x, sizeof(U32), handle); *val = endianSwapIfBig(U32, x); return ret; }
+int ReadPascalString(SimpleBufHandle file, char* str, int strsize) // read a corresponding string, returns bytes read
+{
+    int re;
+    unsigned short len;
+    int paddingreq;
+
+    str[0] = 0;
+    re = SimpleBufReadU16(&len, file);
+    if (!re) 
+    { 
+        printf("ReadPascalString: couldn't read len\n"); 
+        return re; 
+    }
+    paddingreq = (4 - (len + sizeof(unsigned short)) % 4) % 4;
+    if (len >= strsize) 
+    { 
+        printf("ReadPascalString: string read too long for size\n");
+        SimpleBufSeek(file, paddingreq + len, SEEK_CUR);
+        return sizeof(unsigned short) + paddingreq + len;
+    }
+    re = SimpleBufRead(str, sizeof(char) * len, file);
+    str[len] = 0;
+    if (re != len)
+    {
+        printf("ReadPascalString: couldn't read entire string\n");
+        return sizeof(unsigned short) + paddingreq + len;
+    }
+    SimpleBufSeek(file, paddingreq, SEEK_CUR);
+    return sizeof(unsigned short) + paddingreq + len;
+}
+static int SkipPascalString(SimpleBufHandle file) // returns bytes skipped
+{
+    int paddingreq;
+    unsigned short len = 0;
+    SimpleBufReadU16(&len, file);
+    paddingreq = (4 - (len + sizeof(unsigned short)) % 4) % 4;
+    SimpleBufSeek(file, len + paddingreq, SEEK_CUR);
+    return sizeof(unsigned short) + len + paddingreq;
+}
+int SerializeSkipStruct(SimpleBufHandle sfile)            // returns length skipped
+{
+    int size;
+    int re;
+    int sum;
+
+    sum = SkipPascalString(sfile);
+    re = SimpleBufReadU32((U32*)&size, sfile);
+    if (!re)
+        return sum; // end of file
+    SimpleBufSeek(sfile, size, SEEK_CUR);
+    return sum + sizeof(int) + size;
+}
+SimpleBufHandle SerializeReadOpen(const char* filename, const char* filetype, int build, int ignore_crc_difference)
+{
+    SimpleBufHandle result;
+    int readbuild = 0;
+    char readsig[cryptic_sig_len+1];
+    char readtype[MAX_FILETYPE_LEN];
+
+    result = SimpleBufOpenRead(filename);
+    if (!result) 
+    { 
+        //printf("SerializeReadOpen: failed to open %s\n", filename); 
+        return NULL; 
+    }
+
+    // signature
+    readsig[0] = 0;
+    SimpleBufRead(readsig, cryptic_sig_len, result);
+    readsig[cryptic_sig_len] = 0;
+    SimpleBufReadU32((U32*)&readbuild, result);
+    readtype[0] = 0;
+    ReadPascalString(result, readtype, MAX_FILETYPE_LEN);
+    if (strcmp(cryptic_sig, readsig) != 0 ||
+        strcmp(readtype, filetype) != 0 ||
+        (!ignore_crc_difference && (readbuild != build)))
+    {
+        //printf("SerializeReadOpen: invalid signature on file %s\n", filename);
+        SimpleBufClose(result);
+        return 0;
+    }
+
+    return result;
+}
+int SerializeReadHeader(SimpleBufHandle sfile, char* structname, int namesize, int* size) // loads name, size. returns success
+{
+    int re;
+
+    // header
+    if (!ReadPascalString(sfile, structname, namesize))
+        return 0;
+    if (size)
+    {
+        re = SimpleBufReadU32((U32*)size, sfile);
+        if (!re)
+        {
+            printf("SerializeReadHeader: failed reading size\n");
+            return 0;
+        }
+    }
+    else
+    {
+        SimpleBufSeek(sfile, sizeof(int), SEEK_CUR); // skip size
+    }
+    return 1;
+}
+int SerializeReadData(SimpleBufHandle sfile, int size, void* dataptr)                    // returns length read
+{
+    int re = SimpleBufRead(dataptr, sizeof(char) * size, sfile);
+    if (re != size)
+        printf("SerializeReadData: failed reading data\n");
+    return re;
+}
+void SerializeClose(SimpleBufHandle sfile)
+{
+    SimpleBufClose(sfile);
+}
+void FileListCreate(FileList* list)
+{
+    eaCreate(list);
+}
+int FileListRead(FileList* list, SimpleBufHandle file)
+{
+    char readsig[20];
+    int size;
+    int i, n, re;
+
+    if (!list) // if we don't care about reading the file list
+    {
+        SerializeSkipStruct(file);
+        return 1;
+    }
+
+    // verify header
+    if (!SerializeReadHeader(file, readsig, 20, &size))
+        return 0;
+    if (strcmp(readsig, FILELIST_SIG) || size <= 0)
+        return 0;
+
+    // read in entries
+    if (!(*list)) FileListCreate(list);
+    size -= SerializeReadData(file, sizeof(n), &n);
+    for (i = 0; i < n; i++)
+    {
+        char filepath[MAX_PATH];
+        __time32_t filedate;
+        FileEntry* node;
+
+        size -= re = ReadPascalString(file, filepath, MAX_PATH);
+        if (!re) break;
+        size -= re = SerializeReadData(file, sizeof(__time32_t), &filedate);
+        if (!re) break;
+        if (size < 0) break;
+
+        node = calloc(sizeof(FileEntry), 1);
+        strcpy(node->path, filepath);
+        node->date = filedate;
+        eaPush(list, node);
+    }
+    if (i != n || size != 0)
+        return 0; // didn't get correct amount of information, something's screwed
+    return 1; // a-ok
+}
+int TokenStoreGetStorageType(StructTypeField type)
+{
+    U32 compat_value = 0;
+    if (type & TOK_FIXED_ARRAY)
+        compat_value = TOK_STORAGE_DIRECT_FIXEDARRAY;
+    else if (type & TOK_EARRAY)
+        compat_value = TOK_STORAGE_DIRECT_EARRAY;
+    else 
+        compat_value = TOK_STORAGE_DIRECT_SINGLE;
+
+    // HACK
+    if (type & TOK_INDIRECT)
+        compat_value <<= 3; // shift up to the INDIRECT values
+
+    return compat_value;
+}
+#define ParserReadBinaryTable observed_table
+int u8_readbin(SimpleBufHandle file, ParseTable tpi[], int column, void* structptr, int index, int* datasum)
+{
+    int ok = 1;
+    int value = 0;
+    ok = ok && SimpleBufReadU32((U32*)&value, file);
+    *datasum += sizeof(int);
+    TokenStoreSetU8(tpi, column, structptr, index, (U8)value);
+    return ok;
+}
+int int_readbin(SimpleBufHandle file, ParseTable tpi[], int column, void* structptr, int index, int* datasum)
+{
+    int ok = 1;
+    int value = 0;
+    ok = ok && SimpleBufReadU32((U32*)&value, file);
+    *datasum += sizeof(int);
+    TokenStoreSetInt(tpi, column, structptr, index, value);
+    return ok;
+}
+int string_readbin(SimpleBufHandle file, ParseTable tpi[], int column, void* structptr, int index, int* datasum)
+{
+    char tempstr[MAX_STRING_LENGTH];
+    int re, ok = 1;
+    re = ReadPascalString(file, SAFESTR(tempstr));
+    TokenStoreSetString(tpi, column, structptr, index, tempstr, NULL, NULL);
+    ok = ok && re;
+    *datasum += re;
+    return ok;
+}
+int struct_readbin(SimpleBufHandle file, ParseTable tpi[], int column, void* structptr, int index, int* datasum)
+{
+    int ok = 1;
+    int subsum = 0;
+    void* substruct;
+    U32 storage = TokenStoreGetStorageType(tpi[column].type);
+
+    if (storage == TOK_STORAGE_INDIRECT_SINGLE) // optional struct
+    {
+        U32 hassub = 0;
+        ok = ok && SimpleBufReadU32(&hassub, file);
+        *datasum += sizeof(int);
+        if (!hassub || !ok)
+            return ok;
+    }
+
+    // if here, then we have a struct
+    substruct = TokenStoreAlloc(tpi, column, structptr, index, tpi[column].param, NULL, NULL);
+    ok = ok && ParserReadBinaryTable(file, tpi[column].subtable, substruct, &subsum);
+    *datasum += subsum;
+    return ok;
+}
+int nonarray_readbin(SimpleBufHandle file, ParseTable tpi[], int column, void* structptr, int index, int* datasum)
+{
+    if (TYPE_INFO(tpi[column].type).readbin)
+        return TYPE_INFO(tpi[column].type).readbin(file, tpi, column, structptr, index, datasum);
+    return 1;
+}
+int earray_readbin(SimpleBufHandle file, ParseTable tpi[], int column, void* structptr, int index, int* datasum)
+{
+    int ok = 1;
+    int s, size = 0;
+    int type = TOK_GET_TYPE(tpi[column].type);
+
+    if (type == TOK_FUNCTIONCALL_X)
+        return nonarray_readbin(file, tpi, column, structptr, 0, datasum);
+
+    ok = ok && SimpleBufReadU32((U32*)&size, file);
+    *datasum += sizeof(int);
+    if (size > 0)
+        TokenStoreSetCapacity(tpi, column, structptr, size);
+    for (s = 0; s < size; s++)
+    {
+        ok = ok && nonarray_readbin(file, tpi, column, structptr, s, datasum);
+    }
+    return ok;
+}
+#undef ParserReadBinaryTable
+int ParserReadBinaryTable(SimpleBufHandle file, ParseTable pti[], void* structptr, int* sum) // returns success
+{
+    int succeeded = 1;
+    long dataloc;
+    int i, datasum;
+    int readdatasum;
+
+    if (!structptr) return 0; // fail out
+
+    // read data segment length
+    if (!SimpleBufReadU32((U32*)&readdatasum, file)) return 0;
+    *sum += sizeof(int);
+    dataloc = SimpleBufTell(file);
+    datasum = 0;
+
+    // read data segment
+    FORALL_PARSEINFO(pti, i)
+    {
+        if (pti[i].type & TOK_REDUNDANTNAME) continue; // don't allow TOK_REDUNDANTNAME
+        succeeded = succeeded && TOKARRAY_INFO(pti[i].type).readbin(file, pti, i, structptr, 0, &datasum);
+        if (!succeeded)
+        {
+            printf("ParserReadBinaryTable: unexpected end of file\n");
+            return 0;
+        }
+    } // each data token
+
+    // check data segment length
+    if (datasum != readdatasum)
+    {
+        printf("ParserReadBinaryTable: datasum length not correct\n");
+        return 0;
+    }
+    *sum += readdatasum;
+
+    return succeeded;
+}
+
+static void UpdateCrcFromDefineList(DefineContext*p){(void)p;assert(!"unqualified dynamic defines");}
+static void UpdateCrcFromStaticDefines(void*p){(void)p;assert(!"unqualified static defines");}
+void cryptAdler32Init(void);void cryptAdler32Update(const U8*,int);U32 cryptAdler32Final(void);
+int schema_adler_is_idle(void);void schema_adler_cleanup(void);size_t schema_adler_object_bytes(void);
+static void observed_update(const U8*data,int len){
+ assert(owner.active&&crc_owner.active&&len>=0&&(data||!len));SchemaCrcResult*r=&crc_owner.candidate;
+ assert(r->update_calls<SCHEMA_CRC_UPDATE_MAX&&(uint32_t)len<=SCHEMA_CRC_TRACE_MAX-r->stream_bytes);
+ r->update_lengths[r->update_calls++]=(uint32_t)len;
+ if(len)memcpy(r->stream+r->stream_bytes,data,(size_t)len);
+ r->stream_bytes+=(uint32_t)len;
+ if(len==4){
+  for(unsigned i=0;i<1;i++)if(data==(const U8*)&ParseBodyPartBegin[i].type)r->visited_fields++;
+  for(unsigned i=0;i<13;i++)if(data==(const U8*)&ParseBodyPart[i].type)r->visited_fields++;
+ }
+ cryptAdler32Update(data,len);
+}
+#define cryptAdler32Update observed_update
+ParseInfoFieldUsage ignore_interpretfield(ParseTable tpi[], int column, ParseInfoField field)
+{
+    return NoFieldUsage;
+}
+ParseInfoFieldUsage number_interpretfield(ParseTable tpi[], int column, ParseInfoField field)
+{
+    switch (field)
+    {
+    case ParamField:
+        if (tpi[column].type & TOK_FIXED_ARRAY)
+            return NumberOfElements;
+        if (tpi[column].type & TOK_EARRAY)
+            return NoFieldUsage;
+        return DefaultValue;
+    case SubtableField:
+        return StaticDefineList;
+    }
+    return NoFieldUsage;
+}
+ParseInfoFieldUsage string_interpretfield(ParseTable tpi[], int column, ParseInfoField field)
+{
+    switch (field)
+    {
+    case ParamField:
+        if (tpi[column].type & TOK_FIXED_ARRAY)
+            return NumberOfElements;
+        if (tpi[column].type & TOK_EARRAY)
+            return NoFieldUsage;
+        if (tpi[column].type & TOK_INDIRECT)
+            return PointerToDefaultString;
+        return EmbeddedStringLength; // otherwise direct, single
+    case SubtableField:
+        return StaticDefineList;
+    }
+    return NoFieldUsage;
+}
+ParseInfoFieldUsage struct_interpretfield(ParseTable tpi[], int column, ParseInfoField field)
+{
+    switch (field)
+    {
+    case ParamField:
+        return SizeOfSubstruct;
+    case SubtableField:
+        return PointerToSubtable;
+    }
+    return NoFieldUsage;
+}
+static ParseInfoFieldUsage observed_ignore_interpretfield(ParseTable*t,int c,ParseInfoField f){assert(owner.active&&crc_owner.active);crc_owner.candidate.interpret_calls++;return ignore_interpretfield(t,c,f);}
+static ParseInfoFieldUsage observed_number_interpretfield(ParseTable*t,int c,ParseInfoField f){assert(owner.active&&crc_owner.active);crc_owner.candidate.interpret_calls++;return number_interpretfield(t,c,f);}
+static ParseInfoFieldUsage observed_string_interpretfield(ParseTable*t,int c,ParseInfoField f){assert(owner.active&&crc_owner.active);crc_owner.candidate.interpret_calls++;return string_interpretfield(t,c,f);}
+static ParseInfoFieldUsage observed_struct_interpretfield(ParseTable*t,int c,ParseInfoField f){assert(owner.active&&crc_owner.active);crc_owner.candidate.interpret_calls++;return struct_interpretfield(t,c,f);}
+static const BodyHandler g_arraytable[3]={{nonarray_readbin,NULL,nonarray_destroystruct},{NULL,NULL,NULL},{earray_readbin,NULL,earray_destroystruct}};
+static const BodyHandler g_tokentable[NUM_TOK_TYPE_TOKENS]={[TOK_END]={NULL,observed_ignore_interpretfield,NULL},[TOK_INT_X]={int_readbin,observed_number_interpretfield,NULL},[TOK_STRING_X]={string_readbin,observed_string_interpretfield,string_destroystruct},[TOK_CURRENTFILE_X]={string_readbin,observed_string_interpretfield,string_destroystruct},[TOK_BOOLFLAG_X]={u8_readbin,observed_number_interpretfield,NULL},[TOK_STRUCT_X]={struct_readbin,observed_struct_interpretfield,struct_destroystruct}};
+
+static int observed_table(SimpleBufHandle file,ParseTable*t,void*p,int*sum){
+ assert(owner.active&&owner.opened&&((t==ParseBodyPartBegin&&p==&owner.root)||(t==ParseBodyPart&&owner.nodes&&p==&owner.parts[owner.nodes-1])));
+ if(t==ParseBodyPartBegin){assert(!owner.body_start);owner.body_start=(uint32_t)SimpleBufTell(file);loader_trace(15);}
+ owner.receipt.table_calls++;return ParserReadBinaryTable(file,t,p,sum);
+}
+static int observed_filelist(FileList*list,SimpleBufHandle file){
+ assert(owner.active&&!list);owner.receipt.header_accepted=1;owner.receipt.header_end=(uint32_t)SimpleBufTell(file);owner.receipt.filelist_calls++;loader_trace(14);int result=FileListRead(list,file);
+ owner.receipt.dependency_end=(uint32_t)SimpleBufTell(file);return result;
+}
+#define FileListRead observed_filelist
+#define ParserReadBinaryTable observed_table
+static void UpdateCRCFromParseInfo(ParseTable pti[], ParseTable parent[] )    // get crc to use as build number based on parse tree
+{
+    int i;
+    FORALL_PARSEINFO(pti, i)
+    {
+        int usage;
+        int type = TOK_GET_TYPE(pti[i].type);
+        if (pti[i].type & TOK_REDUNDANTNAME) 
+            continue; // ignore redundant fields
+
+        // name field
+        if (pti[i].name) 
+            cryptAdler32Update(pti[i].name, (int)strlen(pti[i].name));
+        cryptAdler32Update((void*)&pti[i].type, sizeof(int));
+
+        // default value field 
+        usage = TYPE_INFO(type).interpretfield(pti, i, ParamField);
+        switch (usage)
+        {
+        case OffsetOfSizeField: break; // don't care about offset reposition
+        case SizeOfSubstruct: break; // don't care about size of struct changing
+        case NumberOfElements: // fall
+        case DefaultValue: // fall
+        case EmbeddedStringLength: // fall
+        case SizeOfRawField: 
+            {
+                int param = (int)pti[i].param; // make ourselves insensitive to 64-bit while crc'ing
+                cryptAdler32Update((U8*)&param, sizeof(int));
+            }
+            break;
+        case PointerToDefaultString:
+            {
+                char* str = (char*)pti[i].param;
+                if (str) 
+                    cryptAdler32Update(str, (int)strlen(str));
+            }
+            break;
+        }
+
+        // subtable
+        if (type == TOK_STRUCT_X && pti[i].subtable != pti && // ignore simple recursion
+            (!parent || parent != pti[i].subtable) ) // also ignore slightly more complicated recursion
+        {
+            UpdateCRCFromParseInfo(pti[i].subtable, pti );
+        }// Note: recursion can still cause this to go on forever if its re-entrant more than two levels deep.
+        
+
+        // static defines
+        if (pti[i].subtable)
+        {
+            usage = TYPE_INFO(type).interpretfield(pti, i, SubtableField);
+            if (usage == StaticDefineList)
+            {
+                UpdateCrcFromStaticDefines(pti[i].subtable);
+            }
+        }
+    }
+}
+int ParseTableCRC(ParseTable pti[], DefineContext* defines)
+{
+    cryptAdler32Init();
+    UpdateCRCFromParseInfo(pti, 0);
+    if (defines) 
+        UpdateCrcFromDefineList(defines);
+    return (int)cryptAdler32Final();
+}
+
+#undef cryptAdler32Update
+static int unopened_original_crc(ParseTable*t,DefineContext*d){
+ assert(owner.active&&t==ParseBodyPartBegin&&!d&&!crc_owner.active);
+ owner.receipt.crc_calls++;loader_trace(8);crc_owner.active=1;int value=ParseTableCRC(t,d);
+ memcpy(&owner.receipt.source_crc,&value,4);return value;
+}
+/* Immutable fixture shell, not the production helper or engine globals. */
+static int isProductionMode(void){assert(owner.active);owner.receipt.mode_calls++;loader_trace(5);return 1;}
+#define ParseTableCRC unopened_original_crc
+int ParserReadBinaryFile(SimpleBufHandle binfile, char *filename, ParseTable pti[], void* structptr, FileList* filelist, DefineContext* defines)    // returns success
+{
+    SimpleBufHandle file;
+    int size = 0;
+    int success;
+    long loc, endloc;
+
+    if (binfile) {
+        file = binfile;
+    } else {
+        int crc = ParseTableCRC(pti, defines);
+        file = SerializeReadOpen(filename, PARSE_SIG, crc, isProductionMode());
+    }
+
+    if (!file) return 0;  // no file, or failed crc number
+    if (!FileListRead(filelist, file)) {
+        SerializeClose(file);
+        return 0; // couldn't read file table
+    }
+    loc = SimpleBufTell(file);
+
+    parser_relpath = filename ? allocAddString(filename) : 0;
+    success = ParserReadBinaryTable(file, pti, structptr, &size);
+    parser_relpath = 0;
+
+    SimpleBufSeek(file, 0, SEEK_END);
+    endloc = SimpleBufTell(file);
+    if (endloc - loc != size)
+    {
+        printf("ParserReadBinaryFile: unexpected end of file\n");
+        success = 0;
+    }
+    SerializeClose(file);
+    return success;
+}
+
+#undef ParseTableCRC
+
+#undef FileListRead
+#undef ParserReadBinaryTable
+#undef SimpleBufRead
+#undef SimpleBufSeek
+#undef printf
+#undef calloc
+#undef eaCreate
+#undef eaPush
+typedef enum SM_AcquireResult {
+    SMAR_DataAcquired,
+    SMAR_FirstCaller,
+    SMAR_Error,
+} SM_AcquireResult;
+typedef enum SharedMemoryMode {
+    SMM_DISABLED, // Has been disabled, either because it can't get at the shared memory, or because the user said so
+    SMM_UNINITED, // Hasn't been initialized yet
+    SMM_ENABLED,  // Enabled and functioning
+} SharedMemoryMode;
+typedef struct PLFSHeader {
+    U32 crc;
+} PLFSHeader;
+#define TOK_SERVER_ONLY        (1 << 16) // Ignore this field on the client
+#define TOK_CLIENT_ONLY     (1 << 17) // Ignore this field on the server
+#define xcase                                    break;case
+#define PARSER_ERRFLAG (1)                // @todo -AB: just for testing, remove
+#define PARSER_SERVERONLY    (1 << 2)    // create the .bin in the server only bin directory
+#define PARSER_FORCEREBUILD (1 << 3)    // force a rebuild of .bin file
+#define PARSER_EXACTFILE    (1 << 4)    // Do not auto-load v_ files, etc
+#define PARSER_DONTFREE        (1 << 5)    // Do not free when copying to shared memory
+#define PARSER_OPTIONALFLAG (1 << 6)    // It is not an error if no files are loaded
+#define PARSER_EMPTYOK        (1 << 7)    // It is not an error if a file is empty
+#define PARSER_SERVERSIDE    (1 << 8)    // We're on the server
+#define PARSER_CLIENTSIDE    (1 << 9)    // We're on the client
+
+/* Explicit immutable production/SMAR_Error/path shells, never FS selection. */
+#include <stdarg.h>
+#include <stdlib.h>
+typedef char loader_host64[(sizeof(intptr_t)==8&&sizeof(size_t)==8)?1:-1];
+typedef int bool;
+#define false 0
+#define true 1
+#define SHARED_MEMORY_PARAM
+#define PERFINFO_AUTO_START(a,b) ((void)0)
+#define PERFINFO_AUTO_STOP() ((void)0)
+#define PERFINFO_AUTO_STOP_START(a,b) ((void)0)
+#define OUTPUT_DEBUG 0
+#define OUTPUT_VERBOSE 1
+#define TODO() ((void)0)
+typedef struct{int updated;}ParserLoadInfo;
+typedef int(*ParserLoadPreProcessFunc)(ParseTable*,void*);
+typedef int(*ParserLoadPostProcessFunc)(ParseTable*,void*);
+typedef int(*ParserLoadFinalProcessFunc)(ParseTable*,void*,bool);
+typedef struct SharedMemoryHandle{int unused;}SharedMemoryHandle;
+static char*lf_filemasks[16];static ParseTable*lf_pti;static void*lf_structptr;
+static DefineContext*lf_globaldefines;static int lf_loadedok,lf_ignoreempty;
+static int lf_loadedonefile,lf_forcebincreate;static FileList g_parselist,lf_filedates;
+static const char*g_StdAdditionalFilePrefixes[]={""};
+/* The source's function-static old_filemask has this permanent owned lifetime. */
+static char oldmask_arena[MAX_PATH];
+static int same(const char*a,const char*b){return a&&b&&!strcmp(a,b);}
+static void loader_forbidden(void){assert(!"unqualified loader/development/shared/text branch");abort();}
+static void loader_trace(uint32_t value){assert(owner.active&&owner.receipt.trace_count<32);owner.receipt.trace[owner.receipt.trace_count++]=value;}
+static int loader_globals_idle(void){
+ return !lf_pti&&!lf_structptr&&!lf_globaldefines&&!lf_loadedok&&!lf_ignoreempty&&!lf_loadedonefile&&!lf_forcebincreate&&!g_parselist&&!lf_filedates&&zeros(lf_filemasks,sizeof(lf_filemasks))&&zeros(oldmask_arena,sizeof(oldmask_arena));
+}
+static void loader_globals_cleanup(void){
+ lf_pti=NULL;lf_structptr=NULL;lf_globaldefines=NULL;lf_loadedok=lf_ignoreempty=lf_loadedonefile=lf_forcebincreate=0;
+ g_parselist=lf_filedates=NULL;body_wipe(lf_filemasks,sizeof(lf_filemasks));body_wipe(oldmask_arena,sizeof(oldmask_arena));
+}
+static void loader_free(void*p){assert(!p||p==oldmask_arena);body_wipe(oldmask_arena,sizeof(oldmask_arena));}
+static char*loader_strdup(const char*s){assert(same(s,".bp"));memcpy(oldmask_arena,s,4);return oldmask_arena;}
+static char*strtok_quoted(char*s,const char*a,const char*b){assert(same(a,";")&&same(b,";"));if(s){assert(s==oldmask_arena&&same(s,".bp"));return s;}return NULL;}
+static int loader_easize(const void*p){
+ assert(owner.active);if(p==&owner.root.bodyParts){assert(!owner.nodes||owner.root.bodyParts==owner.pointers);return(int)owner.nodes;}loader_forbidden();return 0;
+}
+#define eaSize(p) loader_easize((const void*)(p))
+static void loader_table(ParseTable*t){assert(owner.active&&t==ParseBodyPartBegin);}
+#define TEST_PARSE_TABLE(p) loader_table(p)
+static bool ParseBoneNames(ParseTable*t,void*r){(void)t;(void)r;owner.receipt.callback_calls++;loader_forbidden();return 0;}
+static void writeConsole(int level,const char*format,...){assert(owner.active&&level==OUTPUT_DEBUG&&same(format,"\tParsing %s from %s"));}
+static void verbose_printf(const char*format,...){
+ assert(owner.active);va_list args;va_start(args,format);const char*name=va_arg(args,const char*);
+ if(same(format,"bin file %s is incorrect version\n")){assert(same(name,"bin/BodyParts.bin"));owner.receipt.selector_diagnostics++;}
+ else{assert(same(name,"BodyParts.bin")&&(same(format,"ParserLoadFiles: error loading %s, loading text files instead\n")||same(format,"ParserLoadFiles: %s outdated, loading text files instead\n")||same(format,"ParserLoadFiles: couldn't find %s, loading text files instead\n")));owner.receipt.loader_diagnostics++;}
+ va_end(args);
+}
+static SM_AcquireResult sharedMemoryAcquire(SharedMemoryHandle**h,const char*n){assert(owner.active&&same(n,"SM_BodyParts.bin"));loader_trace(3);owner.receipt.acquire_calls++;*h=NULL;return SMAR_Error;}
+static char*fileLocateRead(const char*n,char*b){assert(owner.active&&same(n,"bin/BodyParts.bin"));loader_trace(6);owner.receipt.locate_calls++;if(owner.fault==4)return NULL;memcpy(b,n,18);return b;}
+/* Qualified safe owned clear dependency for the production return0 branch.
+ * This is not original StructClear or engine allocator/destructor qualification. */
+#define TOK_STORAGE_INDIRECT_FIXEDARRAY (1 << 4)        // char* strs[3];
+#define TOK_STORAGE_INDIRECT_EARRAY        (1 << 5)        // char** strs;
+#define TokenStoreIsCompatible(type, type_compat_bits) (TokenStoreGetStorageType(type) & (type_compat_bits))
+#define TOK_POOL_STRING        (1 << 23)
+#define TS_REQUIRE(compat_bits) devassert(TokenStoreIsCompatible(tpi[column].type, compat_bits) && "internal textparser error")
+
+/* These releases retire only exact registered owned arena slots. They do not
+ * invoke or qualify engine StructFree/StringFree, heap ownership or ea ABI. */
+typedef struct{uint32_t nodes,strings,arrays,order_count,order[30],numeric_preserved,root_null,repeat_no_releases,node_mask,string_mask[30];}ClearState;
+static ClearState clear_state;
+static int clear_idle(void){return zeros(&clear_state,sizeof(clear_state));}
+static int clear_easize(const void*p){
+ assert(owner.active&&p==(const void*)&owner.root.bodyParts);
+ assert(!owner.root.bodyParts||owner.root.bodyParts==owner.pointers);
+ return owner.root.bodyParts?(int)owner.nodes:0;
+}
+#define eaSizeUnsafe(p) clear_easize((const void*)(p))
+static int clear_ea32size(const void*p){(void)p;assert(!"BodyPart has no direct32 earray");return 0;}
+#define ea32Size(p) clear_ea32size((const void*)(p))
+static void StructFreeString(char*p){
+ assert(owner.active&&p);int found=0;
+ for(uint32_t n=0;n<owner.nodes;n++)for(uint32_t k=0;k<5;k++)if(p==owner.text[n][k]){
+  for(uint32_t later=n+1;later<owner.nodes;later++)assert(!owner.pointers[later]);
+  BodyPart*row=&owner.parts[n];char*fields[5]={row->name,row->sourceFile,row->name_geo,row->name_tex,row->base_var};
+  for(uint32_t earlier=0;earlier<k;earlier++)assert(!fields[earlier]);
+  assert(!(clear_state.string_mask[n]&(1u<<k)));clear_state.string_mask[n]|=1u<<k;
+  clear_state.strings++;body_wipe(owner.text[n][k],sizeof(owner.text[n][k]));found++;
+ }
+ assert(found==1);
+}
+static void StructFree(void*p){
+ assert(owner.active&&p);uint32_t n=part_index(p);assert(!(clear_state.node_mask&(1u<<n)));
+ for(uint32_t later=n+1;later<owner.nodes;later++)assert(!owner.pointers[later]);
+ BodyPart*row=p;assert(!row->name&&!row->sourceFile&&!row->name_geo&&!row->name_tex&&!row->base_var);
+ uint32_t words[6];memcpy(words,&row->num_parts,4);memcpy(words+1,&row->influenceCost,4);memcpy(words+2,row->bone_num,8);memcpy(words+4,&row->bodyPartIndex,4);words[5]=row->dont_clear;
+ assert(words[0]==owner.raw[n][2]&&words[1]==owner.raw[n][1]&&words[2]==owner.raw[n][4]&&words[3]==owner.raw[n][5]&&words[4]==owner.raw[n][6]&&words[5]==(owner.raw[n][3]&255u));
+ clear_state.numeric_preserved++;clear_state.node_mask|=1u<<n;clear_state.order[clear_state.order_count++]=n;clear_state.nodes++;
+ body_wipe(p,sizeof(BodyPart));body_wipe(words,sizeof(words));
+}
+static void clear_eadestroy(void*p){
+ assert(owner.active&&p==(void*)&owner.root.bodyParts);
+ if(owner.root.bodyParts){assert(owner.root.bodyParts==owner.pointers);for(uint32_t i=0;i<owner.nodes;i++)assert(!owner.pointers[i]);clear_state.arrays++;}
+ body_wipe(owner.pointers,sizeof(owner.pointers));owner.root.bodyParts=NULL;clear_state.root_null=1;
+}
+#define eaDestroy(p) clear_eadestroy((void*)(p))
+static void clear_ea32destroy(void*p){(void)p;assert(!"BodyPart has no direct32 earray");}
+#define ea32Destroy(p) clear_ea32destroy((void*)(p))
+static void clear_receipt(void){
+ owner.receipt.clear_nodes=clear_state.nodes;owner.receipt.clear_strings=clear_state.strings;owner.receipt.clear_arrays=clear_state.arrays;
+ owner.receipt.clear_order_count=clear_state.order_count;memcpy(owner.receipt.clear_order,clear_state.order,sizeof(clear_state.order));
+ owner.receipt.clear_numeric_preserved=clear_state.numeric_preserved;owner.receipt.clear_root_null=clear_state.root_null;
+}
+static void observed_StructClear(ParseTable*t,void*r){
+ assert(owner.active&&!owner.opened&&!parser_relpath&&t==ParseBodyPartBegin&&r==&owner.root);
+ loader_trace(13);owner.receipt.struct_clear_calls++;StructClear(t,r);
+}
+
+void StructClear(ParseTable pti[], void* structptr)
+{
+    int i;
+    FORALL_PARSEINFO(pti, i)
+    {
+        TOKARRAY_INFO(pti[i].type).destroystruct(pti, i, structptr, 0);
+    }
+}
+void string_destroystruct(ParseTable tpi[], int column, void* structptr, int index)
+{
+    TokenStoreFreeString(tpi, column, structptr, index);
+}
+void struct_destroystruct(ParseTable tpi[], int column, void* structptr, int index)
+{
+    void* substruct = TokenStoreGetPointer(tpi, column, structptr, index);
+    if (substruct)
+    {
+        StructClear(tpi[column].subtable, substruct);
+        TokenStoreFree(tpi, column, structptr, index);
+    }
+}
+void nonarray_destroystruct(ParseTable tpi[], int column, void* structptr, int index)
+{
+    if (TYPE_INFO(tpi[column].type).destroystruct)
+        TYPE_INFO(tpi[column].type).destroystruct(tpi, column, structptr, index);
+}
+void earray_destroystruct(ParseTable tpi[], int column, void* structptr, int index)
+{
+    int i, numelems = TokenStoreGetNumElems(tpi, column, structptr);
+    for (i = numelems-1; i >= 0; i--)
+    {
+        nonarray_destroystruct(tpi, column, structptr, i);
+    }
+    TokenStoreDestroyEArray(tpi, column, structptr);
+}
+void TokenStoreFreeString(ParseTable tpi[], int column, void* structptr, int index)
+{
+    U32 storage = TokenStoreGetStorageType(tpi[column].type);
+    char* str;
+    char** pstr;
+    char*** parray;
+
+    TS_REQUIRE(TOK_STORAGE_DIRECT_SINGLE | TOK_STORAGE_INDIRECT_SINGLE | TOK_STORAGE_INDIRECT_EARRAY);
+    switch (storage) {
+    case TOK_STORAGE_DIRECT_SINGLE:
+        str = (char*)((intptr_t)structptr + tpi[column].storeoffset);
+        str[0] = 0;
+        break; // don't need to free
+    case TOK_STORAGE_INDIRECT_SINGLE:
+        if (tpi[column].type & TOK_POOL_STRING)
+        {
+            pstr = (char**)((intptr_t)structptr + tpi[column].storeoffset);
+            *pstr = 0; // don't need to free
+        }
+        else
+        {
+            pstr = (char**)((intptr_t)structptr + tpi[column].storeoffset);
+            if (*pstr) StructFreeString(*pstr);
+            *pstr = 0;
+        }
+        break;
+    case TOK_STORAGE_INDIRECT_EARRAY:
+        parray = (char***)((intptr_t)structptr + tpi[column].storeoffset);
+        if ((*parray)[index] && !(tpi[column].type & TOK_POOL_STRING))
+            StructFreeString((*parray)[index]);
+        (*parray)[index] = 0;
+        break;
+    };
+}
+void TokenStoreFree(ParseTable tpi[], int column, void* structptr, int index)
+{
+    U32 storage = TokenStoreGetStorageType(tpi[column].type);
+    void** pp;
+    void*** eap;
+
+    TS_REQUIRE(TOK_STORAGE_DIRECT_SINGLE | TOK_STORAGE_INDIRECT_SINGLE | TOK_STORAGE_INDIRECT_EARRAY);
+    switch (storage) {
+    case TOK_STORAGE_DIRECT_SINGLE: return; // do nothing
+    case TOK_STORAGE_INDIRECT_SINGLE:
+        pp = (void**)((intptr_t)structptr + tpi[column].storeoffset);
+        if (*pp) 
+            StructFree(*pp);
+        *pp = NULL;
+        return;
+    case TOK_STORAGE_INDIRECT_EARRAY:
+        eap = (void***)((intptr_t)structptr + tpi[column].storeoffset);
+        if ((*eap)[index])
+            StructFree((*eap)[index]);
+        (*eap)[index] = 0;
+        return;
+    };
+}
+const void* TokenStoreGetPointerConst(ParseTable tpi[], int column, const void* structptr, int index)
+{
+    U32 storage = TokenStoreGetStorageType(tpi[column].type);
+    const void* const* pp;
+    const void* const* const* ea;
+
+    TS_REQUIRE(TOK_STORAGE_DIRECT_SINGLE | TOK_STORAGE_DIRECT_FIXEDARRAY | TOK_STORAGE_INDIRECT_SINGLE | TOK_STORAGE_INDIRECT_EARRAY);
+
+    switch (storage) {
+    case TOK_STORAGE_DIRECT_SINGLE:
+    case TOK_STORAGE_DIRECT_FIXEDARRAY:
+        return (const void*)((intptr_t)structptr + tpi[column].storeoffset);
+    case TOK_STORAGE_INDIRECT_SINGLE:
+        pp = (const void* const*)((intptr_t)structptr + tpi[column].storeoffset);
+        return *pp;
+    case TOK_STORAGE_INDIRECT_EARRAY:
+        ea = (const void* const* const*)((intptr_t)structptr + tpi[column].storeoffset);
+        if (index >= eaSizeUnsafe(ea))
+        {
+            // fine, it's valid for clients to ask for a pointer and get NULL back
+            return 0;
+        }
+        return (*ea)[index];
+    };
+    return 0;
+}
+void* TokenStoreGetPointer(ParseTable tpi[], int column, void* structptr, int index)
+{
+    return (void*)TokenStoreGetPointerConst(tpi, column, structptr, index);
+}
+void TokenStoreDestroyEArray(ParseTable tpi[], int column, void* structptr)
+{
+    int** ea32;
+    void*** ea;
+    U32 storage = TokenStoreGetStorageType(tpi[column].type);
+    TS_REQUIRE(TOK_STORAGE_DIRECT_EARRAY | TOK_STORAGE_INDIRECT_EARRAY);
+
+    switch (storage) {
+    case TOK_STORAGE_DIRECT_EARRAY: // int** or F32**
+        ea32 = (int**)((intptr_t)structptr + tpi[column].storeoffset);
+        ea32Destroy(ea32);
+        break;
+    case TOK_STORAGE_INDIRECT_EARRAY:
+        ea = (void***)((intptr_t)structptr + tpi[column].storeoffset);
+        eaDestroy(ea);
+        break;
+    }
+}
+int TokenStoreGetNumElems(ParseTable tpi[], int column, const void* structptr)
+{
+    const int* const* ea32;
+    const void* const* const* ea;
+    U32 storage = TokenStoreGetStorageType(tpi[column].type);
+
+    switch (storage) {
+    case TOK_STORAGE_INDIRECT_SINGLE: // fall
+    case TOK_STORAGE_DIRECT_SINGLE: return 1;
+    case TOK_STORAGE_INDIRECT_FIXEDARRAY: // fall
+    case TOK_STORAGE_DIRECT_FIXEDARRAY:    return tpi[column].param;
+    case TOK_STORAGE_DIRECT_EARRAY: // const int* const* or const F32* const* - HACK - consider const int* const* because memory layout won't differ
+        ea32 = (const int* const*)((intptr_t)structptr + tpi[column].storeoffset);
+        return ea32Size(ea32);
+    case TOK_STORAGE_INDIRECT_EARRAY:
+        ea = (const void* const* const*)((intptr_t)structptr + tpi[column].storeoffset);
+        return eaSizeUnsafe(ea);
+    }
+    return 0;
+}
+
+static void FileListDestroy(FileList*p){(void)p;loader_forbidden();}
+static void FileListInsert(FileList*p,const char*n,__time32_t d){(void)p;(void)n;(void)d;loader_forbidden();}
+static FileEntry*FileListFind(FileList*p,const char*n){(void)p;(void)n;loader_forbidden();return NULL;}
+static int fileDatesEqual(__time32_t a,__time32_t b,int n){(void)a;(void)b;(void)n;loader_forbidden();return 0;}
+static __time32_t fileLastChanged(const char*n){(void)n;loader_forbidden();return 0;}
+static void DateCheckCallback(void){loader_forbidden();}
+static char*addFilePrefix(const char*n,const char*p){(void)n;(void)p;loader_forbidden();return NULL;}
+static int fileExists(const char*n){(void)n;loader_forbidden();return 0;}
+static void fileScanAllDataDirs(const char*n,void(*callback)(void)){(void)n;(void)callback;loader_forbidden();}
+static int ParserLoadFile(const char*n,int e){(void)n;(void)e;loader_forbidden();return 0;}
+static void ParserLoadCallback(void){loader_forbidden();}
+static char*fileLocateWrite(const char*n,char*b){(void)n;(void)b;loader_forbidden();return NULL;}
+static void mkdirtree(const char*n){(void)n;loader_forbidden();}
+static int ParserWriteBinaryFile(const char*n,ParseTable*t,void*r,FileList*l,DefineContext*d,int v,StructTypeField f){(void)n;(void)t;(void)r;(void)l;(void)d;(void)v;(void)f;loader_forbidden();return 0;}
+static void Errorf(const char*format,...){(void)format;loader_forbidden();}
+static void FatalErrorf(const char*format,...){(void)format;loader_forbidden();}
+static int loader_printf_forbidden(const char*format,...){(void)format;loader_forbidden();return 0;}
+#define printf loader_printf_forbidden
+static void*sharedMemoryGetDataPtr(SharedMemoryHandle*h){(void)h;loader_forbidden();return NULL;}
+static void sharedMemorySetMode(SharedMemoryMode m){(void)m;loader_forbidden();}
+static size_t StructGetMemoryUsage(ParseTable*t,void*r,size_t n){(void)t;(void)r;(void)n;loader_forbidden();return 0;}
+static void sharedMemorySetSize(SharedMemoryHandle*h,size_t n){(void)h;(void)n;loader_forbidden();}
+static void*sharedMemoryAlloc(SharedMemoryHandle*h,size_t n){(void)h;(void)n;loader_forbidden();return NULL;}
+static void*StructCompress(ParseTable*t,void*r,size_t n,void*a,void*(*alloc)(void*,size_t),void*h){(void)t;(void)r;(void)n;(void)a;(void)alloc;(void)h;loader_forbidden();return NULL;}
+static void sharedMemoryCommit(SharedMemoryHandle*h){(void)h;loader_forbidden();}
+static void sharedMemoryUnlock(SharedMemoryHandle*h){(void)h;loader_forbidden();}
+static void sharedHeapMemoryManagerLock(void){loader_forbidden();}
+static void sharedHeapMemoryManagerUnlock(void){loader_forbidden();}
+#define ParseTableCRC unopened_original_crc
+SimpleBufHandle ParserIsPersistNewer(const char* dir, const char* filemask, const char* persistfile, ParseTable pti[], DefineContext* defines)
+{
+    FileList binlist = NULL;
+    SimpleBufHandle binfile;
+    int crc, i, n;
+    int savedpos;
+    int haveFalseFiles = 0;        // do I have files in lf_filedates that don't exist?
+
+    // open the bin file
+    crc = ParseTableCRC(pti, defines);
+    binfile = SerializeReadOpen(persistfile, PARSE_SIG, crc, isProductionMode());
+    if (!binfile)
+    {
+        verbose_printf("bin file %s is incorrect version\n", persistfile);
+        return 0; // don't have bin file or crc wrong
+    }
+
+    savedpos = SimpleBufTell(binfile);
+
+    // always assume .bin file is ok if not in development mode
+    if(isProductionMode())
+        return binfile;
+
+    // read the file table from the bin file first
+    if (!FileListRead(&binlist, binfile))
+        goto IsPersist_Fail;
+
+    // assemble file list from directories
+    FileListCreate(&lf_filedates);
+    if (dir) // prefixes are handled just by mask matching
+        fileScanAllDataDirs(dir, DateCheckCallback);
+    else if (filemask)
+    {
+        const char** prefix;
+
+        // load basic file
+        FileListInsert(&lf_filedates, filemask, 0);
+
+        // load each of the optional versions
+        haveFalseFiles = 1;    // I need to check later if these actually exist
+        prefix = g_StdAdditionalFilePrefixes;
+        while (**prefix)
+        {
+            char* withPrefix = addFilePrefix(filemask, *prefix);
+            FileListInsert(&lf_filedates, withPrefix, 0);
+            prefix++;
+        }
+    }
+    // OK if dir and filemask are both NULL, we just compare to files on disk then
+
+    // compare lists -
+    // iterate through files in .bin
+    n = eaSize(&binlist);
+    for (i = 0; i < n; i++)
+    {
+        FileEntry* binfile = binlist[i];
+        FileEntry* scanfile = FileListFind(&lf_filedates, binfile->path);
+        if (scanfile) // if scanned for
+        {
+            if (!fileDatesEqual(scanfile->date, binfile->date, true))
+            {
+                verbose_printf("%s in bin file has different date than %s scanned for\n",
+                    binfile->path, scanfile->path);
+                goto IsPersist_Fail;
+            }
+            scanfile->seen = 1; // color the scanned files
+        }
+        else // file wasn't scanned for specifically
+        {
+            __time32_t diskdate = fileLastChanged(binfile->path);
+            if (!diskdate && binfile->date)
+            {
+                verbose_printf("%s in bin file no longer exists on disk\n", binfile->path);
+                goto IsPersist_Fail;
+            }
+            else if (!fileDatesEqual(diskdate,binfile->date, true))
+            {
+                verbose_printf("%s in bin file has different date than one on disk\n",
+                    binfile->path);
+                goto IsPersist_Fail;
+            }
+        }
+    }
+    // so, every file in bin has same date as one on disk
+
+    // check that top-level files are in or not in bin file appropriately
+    n = eaSize(&lf_filedates);
+    for (i = 0; i < n; i++)
+    {
+        FileEntry* scanfile = lf_filedates[i];
+        if (!haveFalseFiles || fileExists(scanfile->path)) // small optimization
+        {
+            if (!scanfile->seen)
+            {
+                assert(!FileListFind(&binlist, scanfile->path));
+                verbose_printf("%s on disk isn't in bin file\n", scanfile->path);
+                goto IsPersist_Fail;
+            }
+        }
+        else // not on disk, and shouldn't be in bin file
+        {
+            if (scanfile->seen)
+            {
+                assert(FileListFind(&binlist, scanfile->path));
+                verbose_printf("%s is in bin file, but should not be\n", scanfile->path);
+                goto IsPersist_Fail;
+            }
+        }
+    }
+
+    // ok then..
+    FileListDestroy(&lf_filedates);
+    FileListDestroy(&binlist);
+    SimpleBufSeek(binfile, savedpos, SEEK_SET);
+    return binfile;
+IsPersist_Fail:
+    FileListDestroy(&lf_filedates);
+    FileListDestroy(&binlist);
+    SerializeClose(binfile);
+    return 0;
+}
+
+static SimpleBufHandle observed_ParserIsPersistNewer(const char*d,const char*m,const char*n,ParseTable*t,DefineContext*defs){
+ assert(owner.active&&same(d,"Defs\\UI")&&same(m,".bp")&&same(n,"bin/BodyParts.bin")&&t==ParseBodyPartBegin&&!defs);loader_trace(7);owner.receipt.persist_calls++;
+ SimpleBufHandle h=ParserIsPersistNewer(d,m,n,t,defs);
+ if(h){assert(owner.opened&&h==(SimpleBufHandle)&owner.buffer&&SimpleBufTell(h)>0);owner.receipt.selected_handle=1;owner.receipt.header_end=(uint32_t)SimpleBufTell(h);loader_trace(10);}
+ return h;
+}
+#define ParserIsPersistNewer observed_ParserIsPersistNewer
+static int observed_ParserReadBinaryFile(SimpleBufHandle h,char*n,ParseTable*t,void*r,FileList*l,DefineContext*d){
+ assert(owner.active&&owner.opened&&owner.receipt.selected_handle==1&&h==(SimpleBufHandle)&owner.buffer&&same(n,"bin/BodyParts.bin")&&t==ParseBodyPartBegin&&r==&owner.root&&!l&&!d);
+ loader_trace(11);owner.receipt.binary_calls++;owner.receipt.supplied_handle_matched=1;int accepted=ParserReadBinaryFile(h,n,t,r,l,d);
+ owner.receipt.source_result=(uint32_t)accepted;return accepted;
+}
+#define ParserReadBinaryFile observed_ParserReadBinaryFile
+#define free loader_free
+#define strdup loader_strdup
+#define StructClear observed_StructClear
+bool ParserLoadFiles(const char* dir, const char* filemask, const char* persistfile, int flags, ParseTable pti[], void* structptr, DefineContext* globaldefines, ParserLoadInfo* pli, ParserLoadPreProcessFunc preprocessor)
+{
+    static char *old_filemask;
+    char persistfilepath[MAX_PATH], buf[MAX_PATH];
+    int forcerebuild = flags & PARSER_FORCEREBUILD;
+    static bool recursive_call = false;
+    int i;
+    StructTypeField excludeFlags = 0;
+
+    if (flags & PARSER_SERVERSIDE || flags & PARSER_SERVERONLY)
+    {
+        excludeFlags = TOK_SERVER_ONLY;
+    }
+    else if (flags & PARSER_CLIENTSIDE)
+    {
+        excludeFlags = TOK_CLIENT_ONLY;
+    }
+
+    TEST_PARSE_TABLE(pti);
+
+    if (isProductionMode())
+    {
+        forcerebuild = false;
+    }
+
+    PERFINFO_AUTO_START("ParserLoadFiles", 1);
+
+    assert(!(flags & PARSER_ERRFLAG)); // ab: testing if I missed anything
+    assert(!recursive_call); // Does not support being called recursively!  (Or from multiple threads)
+    recursive_call = true;
+
+    // we know the client doesn't actually mean a non-relative path
+    if (dir && (dir[0] == '/' || dir[0] == '\\')) 
+        dir++;
+    if (filemask && (filemask[0] == '/' || filemask[0] == '\\')) 
+        filemask++;
+    if (persistfile && (persistfile[0] == '/' || persistfile[0] == '\\')) 
+        persistfile++;
+
+    // init info
+    i = 0;
+    free(old_filemask);
+    old_filemask = strdup(filemask);
+    lf_filemasks[i++] = strtok_quoted(old_filemask, ";", ";");
+    while (lf_filemasks[i] = strtok_quoted(NULL, ";", ";"))
+        i++;
+
+    lf_pti = pti;
+    lf_structptr = structptr;
+    lf_loadedonefile = 0;
+    lf_loadedok = 1;
+    lf_globaldefines = globaldefines;
+    if (pli)
+        pli->updated = 0;
+
+    // build the path to the bin file
+    if (persistfile)
+    {
+        if (flags & PARSER_SERVERONLY)
+            strcpy(persistfilepath, "server/bin/");
+        else
+            strcpy(persistfilepath, "bin/");
+        strcat(persistfilepath, persistfile);
+    }
+    else
+    {
+        *persistfilepath = 0;
+    }
+
+    if (persistfile && !lf_forcebincreate && !forcerebuild)
+    {
+        char *path=NULL;
+
+        writeConsole(OUTPUT_DEBUG, "\tParsing %s from %s", filemask, persistfile);
+        path = fileLocateRead(persistfilepath, buf);
+        if (path)
+        {
+            SimpleBufHandle binfile = ParserIsPersistNewer(dir,filemask,persistfilepath,pti,globaldefines);
+            if (binfile)
+            {
+                // try loading persist file
+                if (ParserReadBinaryFile(binfile, persistfilepath, pti, structptr, NULL, globaldefines)) {
+                    recursive_call = false;
+                    PERFINFO_AUTO_STOP();
+                    return 1;
+                } else verbose_printf("ParserLoadFiles: error loading %s, loading text files instead\n", persistfile);
+            }
+            else
+            {
+                verbose_printf("ParserLoadFiles: %s outdated, loading text files instead\n", persistfile);
+            }
+        }
+        else
+        {
+            verbose_printf("ParserLoadFiles: couldn't find %s, loading text files instead\n", persistfile);
+        }
+    }
+
+    // Do not attempt to parse data files for any reason if the program is running in production mode.
+    //  unless we weren't given a persistfile (bin file) name, then they must want to parse the source
+    //  files (used to load config files)
+    if( isProductionMode() && persistfile) 
+    {
+        recursive_call = false;
+        PERFINFO_AUTO_STOP();
+        StructClear(pti, structptr);
+        return false;
+    }
+
+    // otherwise, we have to load from text files
+    if (pli)
+        pli->updated = 1;
+    FileListCreate(&g_parselist);
+    lf_ignoreempty = !!(flags & PARSER_EMPTYOK);
+    if (!dir)
+    {
+        // load basic file
+        if(persistfile)
+            parser_relpath = allocAddString(persistfile);
+        else if(filemask)
+            parser_relpath = allocAddString(filemask);
+        else
+            parser_relpath = 0;
+        ParserLoadFile(filemask, lf_ignoreempty);
+
+        if (!(flags & PARSER_EXACTFILE)) {
+            const char** prefix;
+            // load each of the optional versions
+            prefix = g_StdAdditionalFilePrefixes;
+            while (**prefix)
+            {
+                char* withPrefix = addFilePrefix(filemask, *prefix);
+                if (fileExists(withPrefix))
+                    ParserLoadFile(withPrefix, lf_ignoreempty);
+                prefix++;
+            }
+        }
+        parser_relpath = 0;
+    }
+    else // recurse subdirs, optional prefixes are handled just by mask matching
+    {
+        parser_relpath = persistfile ? allocAddString(persistfile) : 0;
+        fileScanAllDataDirs(dir, ParserLoadCallback);
+        parser_relpath = 0;
+    }
+    lf_ignoreempty = 0;
+    // run the preprocessor to edit data loaded
+    if (preprocessor)
+    {
+        if (!preprocessor(pti, structptr))
+            lf_loadedok = 0;
+    }
+
+    // don't write out persist file if we had an error during load
+    if (!lf_loadedonefile) {
+        if (persistfile && !(flags & PARSER_OPTIONALFLAG)) {
+            Errorf("ParserLoadFiles: couldn't find any files while creating %s", persistfile);
+        } else {
+            writeConsole(OUTPUT_VERBOSE, "ParserLoadFiles: couldn't find any files in directory %s", dir);
+        }
+    }
+    if (persistfile)
+    {
+        if (!lf_loadedok) verbose_printf("ParserLoadFiles: error during parsing, not creating binary\n");
+        if ((lf_loadedonefile || flags & PARSER_OPTIONALFLAG) && lf_loadedok) {
+            mkdirtree(fileLocateWrite(persistfilepath, buf));
+            ParserWriteBinaryFile(persistfilepath, pti, structptr, &g_parselist, globaldefines,0,excludeFlags);
+        }
+        else if (lf_forcebincreate)
+        {
+            FatalErrorf("Failed creation of %s file\n", persistfilepath);
+        }
+    }
+    FileListDestroy(&g_parselist);
+    recursive_call = false;
+
+    PERFINFO_AUTO_STOP();
+
+    return (lf_loadedonefile || flags & PARSER_OPTIONALFLAG) && lf_loadedok;
+}
+#undef StructClear
+
+#undef free
+#undef strdup
+static bool observed_ParserLoadFiles(const char*d,const char*m,const char*n,int f,ParseTable*t,void*r,DefineContext*defs,ParserLoadInfo*i,ParserLoadPreProcessFunc pre){
+ assert(owner.active&&same(d,"Defs\\UI")&&same(m,".bp")&&same(n,"BodyParts.bin")&&!f&&t==ParseBodyPartBegin&&r==&owner.root&&!defs&&!i&&pre==ParseBoneNames);loader_trace(4);owner.receipt.load_calls++;return ParserLoadFiles(d,m,n,f,t,r,defs,i,pre);
+}
+#define ParserLoadFiles observed_ParserLoadFiles
+static void* sharedMemoryAllocAdapter(void* arg0, size_t arg1)
+{
+    return sharedMemoryAlloc((SharedMemoryHandle *)arg0, (size_t)arg1);
+}
+bool ParserLoadFilesShared(const char* sharedMemoryName, const char* dir, const char* filemask, const char* persistfile, int flags, ParseTable pti[], SHARED_MEMORY_PARAM void* sm_structptr, size_t iSize, DefineContext* globaldefines, ParserLoadInfo* pli, ParserLoadPreProcessFunc preprocessor, ParserLoadPostProcessFunc postprocessor, ParserLoadFinalProcessFunc finalprocessor)
+{
+    void *structptr = (void*)sm_structptr;
+    void *pTemp;
+    SharedMemoryHandle *shared_memory=NULL;
+    SM_AcquireResult shared_memory_status;
+    int forcerebuild = flags & PARSER_FORCEREBUILD;
+    bool ret = false;
+    PLFSHeader header;
+
+    PERFINFO_AUTO_START("ParserLoadFilesShared", 1);
+
+#define DefaultAction ParserLoadFiles(dir, filemask, persistfile, flags, pti, structptr, globaldefines, pli, preprocessor)
+
+    PERFINFO_AUTO_START("top", 1);
+
+    if (!persistfile || forcerebuild) {
+        int ret = DefaultAction;
+        if (postprocessor)
+            ret &= postprocessor(pti, structptr) && ret;
+        if (finalprocessor)
+            ret &= finalprocessor(pti, structptr, false) && ret;
+
+        PERFINFO_AUTO_STOP();
+        PERFINFO_AUTO_STOP();
+
+        return ret;
+    }
+
+    PERFINFO_AUTO_STOP_START("middle", 1);
+
+    shared_memory_status = sharedMemoryAcquire(&shared_memory, sharedMemoryName);
+
+    PERFINFO_AUTO_STOP_START("middle2", 1);
+
+    switch (shared_memory_status) {
+        xcase SMAR_DataAcquired:
+        {
+            U32 crc;
+    
+            PERFINFO_AUTO_STOP_START("middle3", 1);
+    
+            header = *(PLFSHeader*)sharedMemoryGetDataPtr(shared_memory);
+            crc = ParseTableCRC(pti, globaldefines);
+            if (crc!=header.crc) {
+                printf("WARNING: Detected data in shared memory (%s) from a different version.  Restarting the game/mapserver/tools should fix this.", sharedMemoryName);
+                shared_memory_status = SMAR_Error;
+                sharedMemorySetMode(SMM_DISABLED);
+            } else {
+                // Data there already, just need to point to it!
+                memcpy(structptr, (char*)sharedMemoryGetDataPtr(shared_memory) + sizeof(PLFSHeader), iSize);
+                ret = true;
+            }
+        }
+        xcase SMAR_Error:
+        {
+            PERFINFO_AUTO_STOP_START("middle4", 1);
+
+            // An error occurred with the shared memory, just do what we would normally do
+            ret = DefaultAction;
+            if (postprocessor)
+                ret &= postprocessor(pti, structptr);
+            if (finalprocessor)
+                ret &= finalprocessor(pti, structptr, false);
+        }
+        xcase SMAR_FirstCaller:
+        {
+            // Load data and copy to shared memory
+            size_t size;
+
+            PERFINFO_AUTO_STOP_START("middle5", 1);
+
+            // Load data
+            ret = DefaultAction;
+            if (postprocessor) {
+                ret &= postprocessor(pti, structptr);
+            }
+
+            PERFINFO_AUTO_STOP_START("middle6", 1);
+
+            // Copy to shared memory
+            header.crc = ParseTableCRC(pti, globaldefines);
+            size = StructGetMemoryUsage(pti, structptr, iSize) + sizeof(PLFSHeader);
+            sharedMemorySetSize(shared_memory, size);
+
+            PERFINFO_AUTO_STOP_START("middle7", 1);
+
+            memcpy(sharedMemoryAlloc(shared_memory, sizeof(PLFSHeader)), &header, sizeof(PLFSHeader));
+
+            PERFINFO_AUTO_STOP_START("middle8", 1);
+
+            pTemp = StructCompress(pti, structptr, iSize, NULL, sharedMemoryAllocAdapter, shared_memory);
+
+            PERFINFO_AUTO_STOP_START("middle9", 1);
+
+            if (!(flags & PARSER_DONTFREE))
+            {            
+                StructClear(pti, structptr);
+            }
+
+            sharedMemoryCommit(shared_memory);
+            memcpy(structptr, pTemp, iSize);
+
+            if (finalprocessor) {
+                // Allow shared heap usage in the final processor
+                sharedHeapMemoryManagerLock();
+
+                ret &= finalprocessor(pti, structptr, true);
+
+                sharedHeapMemoryManagerUnlock();
+
+                TODO(); // if we fix up shared memory segments to work, this copy is no longer needed
+#if 1 //ndef DISABLE_SHARED_MEMORY_SEGMENT
+                // Make sure the shared memory blocks are in sync
+                memcpy(pTemp, structptr, iSize);
+#endif
+            }
+
+            PERFINFO_AUTO_STOP_START("middle10", 1);
+
+            sharedMemoryUnlock(shared_memory);
+        }
+    }
+
+    PERFINFO_AUTO_STOP();
+    PERFINFO_AUTO_STOP();
+
+    return ret;
+}
+
+#undef ParserLoadFiles
+static bool observed_ParserLoadFilesShared(const char*s,const char*d,const char*m,const char*n,int f,ParseTable*t,void*r,size_t size,DefineContext*defs,ParserLoadInfo*i,ParserLoadPreProcessFunc pre,ParserLoadPostProcessFunc post,ParserLoadFinalProcessFunc final){
+ assert(owner.active&&same(s,"SM_BodyParts.bin")&&same(d,"Defs\\UI")&&same(m,".bp")&&same(n,"BodyParts.bin")&&!f&&t==ParseBodyPartBegin&&r==&owner.root&&size==sizeof(BodyPartList)&&!defs&&!i&&pre==ParseBoneNames&&!post&&!final);loader_trace(2);owner.receipt.shared_calls++;
+ int result=ParserLoadFilesShared(s,d,m,n,f,t,r,size,defs,i,pre,post,final);owner.receipt.loader_return=(uint32_t)result;loader_trace(16);return result;
+}
+#define ParserLoadFilesShared observed_ParserLoadFilesShared
+#define bodyPartList owner.root
+void bpReadBodyPartFiles(void)
+{
+    // Load up all bone definitions.
+    ParserLoadFilesShared("SM_BodyParts.bin", "Defs\\UI", ".bp", "BodyParts.bin", 0, ParseBodyPartBegin, &bodyPartList, sizeof(bodyPartList), NULL, NULL, ParseBoneNames, NULL, NULL);
+}
+
+#undef ParserLoadFilesShared
+int GetBodyPartCount(void)
+{
+    return eaSize(&bodyPartList.bodyParts);
+}
+
+#undef bodyPartList
+#undef ParseTableCRC
+#undef ParserReadBinaryFile
+#undef ParserIsPersistNewer
+
+size_t struct_clear_owner_bytes(void){return sizeof(clear_state)+sizeof(owner)+sizeof(crc_owner)+sizeof(parser_relpath)+sizeof(lf_filemasks)+sizeof(lf_pti)+sizeof(lf_structptr)+sizeof(lf_globaldefines)+sizeof(lf_loadedok)+sizeof(lf_ignoreempty)+sizeof(lf_loadedonefile)+sizeof(lf_forcebincreate)+sizeof(g_parselist)+sizeof(lf_filedates)+sizeof(g_StdAdditionalFilePrefixes)+sizeof(oldmask_arena)+sizeof(char*)+sizeof(bool)+sizeof(void*);}
+size_t struct_clear_crypto_object_bytes(void){return schema_adler_object_bytes();}
+
+#undef FileListRead
+#undef ParserReadBinaryTable
+#undef SimpleBufRead
+#undef SimpleBufSeek
+#undef printf
+#undef calloc
+#undef eaCreate
+#undef eaPush
+typedef struct{const void*p;size_t n;}BodySpan;
+static int valid_span(BodySpan s){return s.p?(uintptr_t)s.p<=UINTPTR_MAX-s.n:!s.n;}
+static int apart(BodySpan a,BodySpan b){return !a.n||!b.n||(uintptr_t)a.p+a.n<=(uintptr_t)b.p||(uintptr_t)b.p+b.n<=(uintptr_t)a.p;}
+static uint32_t read16(const uint8_t*p){return(uint32_t)p[0]|(uint32_t)p[1]<<8;}
+static uint32_t read32(const uint8_t*p){return(uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
+static int32_t signed32(uint32_t word){int32_t value;memcpy(&value,&word,4);return value;}
+static int cstring_matches(const uint8_t*p,size_t n,const char*expected){size_t used=0;while(used<n&&p[used])used++;return used==strlen(expected)&&!memcmp(p,expected,used);}
+static CohStatus framing(CohBytes bytes,uint32_t build_crc,uint32_t ignore_crc,StructClearReceipt*r){
+ r->stage=STRUCT_CLEAR_STAGE_HEADER;
+ if(bytes.size<14){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}
+ uint32_t len=read16(bytes.data+12);r->stage=STRUCT_CLEAR_STAGE_TYPE_LENGTH;
+ if(len>=MAX_FILETYPE_LEN){r->failure_byte=12;return COH_LIMIT;}
+ size_t at=14u+len+(4u-(len+2u)%4u)%4u;r->stage=STRUCT_CLEAR_STAGE_HEADER_EXTENT;
+ if(at>bytes.size){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}
+ if(memcmp(bytes.data,"CrypticS",8)||!cstring_matches(bytes.data+14,len,PARSE_SIG)||(!ignore_crc&&read32(bytes.data+8)!=build_crc))return COH_OK;
+ r->stage=STRUCT_CLEAR_STAGE_DEPENDENCY_HEADER;
+ if(bytes.size-at<2){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}
+ uint32_t siglen=read16(bytes.data+at);size_t end=at+2u+siglen+(4u-(siglen+2u)%4u)%4u;
+ if(end>bytes.size||bytes.size-end<4){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}
+ int32_t skip=signed32(read32(bytes.data+end));at=end+4;r->stage=STRUCT_CLEAR_STAGE_DEPENDENCY_SIZE;
+ if(skip<0){r->failure_byte=(uint32_t)end;return COH_UNSUPPORTED;}
+ if((uint32_t)skip>bytes.size-at){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}at+=(uint32_t)skip;
+ r->stage=STRUCT_CLEAR_STAGE_BODY_LENGTH;
+ if(bytes.size-at<4){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}at+=4;
+ r->stage=STRUCT_CLEAR_STAGE_COUNT;
+ if(bytes.size-at<4){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}
+ int32_t count=signed32(read32(bytes.data+at));
+ if(count>(int32_t)STRUCT_CLEAR_PART_MAX){r->failure_byte=(uint32_t)at;return COH_LIMIT;}at+=4;
+ for(int32_t n=0;n<count;n++){
+  r->stage=STRUCT_CLEAR_STAGE_ROW_LENGTH;
+  if(bytes.size-at<4){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}
+  int32_t declared=signed32(read32(bytes.data+at));at+=4;size_t begin=at;int c;
+  FORALL_PARSEINFO(ParseBodyPart,c){
+   int type=TOK_GET_TYPE(ParseBodyPart[c].type);
+   if(type==TOK_CURRENTFILE_X||type==TOK_STRING_X){
+    r->stage=STRUCT_CLEAR_STAGE_STRING;
+    if(bytes.size-at<2){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}
+    uint32_t stringlen=read16(bytes.data+at);
+    if(stringlen>=STRUCT_CLEAR_STRING_MAX){r->failure_byte=(uint32_t)at;return COH_LIMIT;}
+    size_t amount=2u+stringlen+(4u-(stringlen+2u)%4u)%4u;
+    if(amount>bytes.size-at){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}at+=amount;
+   }else if(type==TOK_INT_X||type==TOK_BOOLFLAG_X){
+    r->stage=STRUCT_CLEAR_STAGE_SCALAR;
+    if(bytes.size-at<4){r->failure_byte=(uint32_t)bytes.size;return COH_INVALID;}at+=4;
+   }else assert(type==TOK_END);
+  }
+  if((int64_t)(at-begin)!=(int64_t)declared)break; /* Source short-circuits later rows. */
+ }
+ return COH_OK;
+}
+static void copy_part(StructClearPart*out,const BodyPart*part,uint32_t n){
+ const char*strings[5]={part->name,part->sourceFile,part->name_geo,part->name_tex,part->base_var};
+ char*dest[5]={out->name,out->source_file,out->geometry_name,out->texture_name,out->base_name};
+ for(unsigned k=0;k<5;k++){if(strings[k]){size_t len=strlen(strings[k]);assert(len<STRUCT_CLEAR_STRING_MAX);memcpy(dest[k],strings[k],len+1);}else out->string_null_mask|=1u<<k;}
+ assert(owner.raw_written[n]==127u&&owner.string_written[n]==31u);memcpy(out->raw,owner.raw[n],sizeof(out->raw));
+ memcpy(&out->final_num_parts,&part->num_parts,4);memcpy(&out->final_influence_cost,&part->influenceCost,4);
+ out->final_dont_clear=part->dont_clear;memcpy(out->final_bones,part->bone_num,8);memcpy(&out->final_index,&part->bodyPartIndex,4);
+}
+CohStatus struct_clear_apply(CohBytes bytes,const StructClearIdentity*observed,const StructClearIdentity*expected,
+ const CohCostumeImportDigest*digest,uint32_t fault,uint32_t production_mode,
+ StructClearResult*out,StructClearReceipt*receipt,size_t budget,size_t retained){
+ if(!bytes.data||!observed||!expected||!digest||!out||!receipt)return COH_INVALID;
+ BodySpan spans[7]={{bytes.data,bytes.size},{observed,sizeof(*observed)},{expected,sizeof(*expected)},
+  {digest,sizeof(*digest)},{out,sizeof(*out)},{receipt,sizeof(*receipt)},{NULL,0}};
+ for(unsigned i=0;i<6;i++){if(!valid_span(spans[i]))return COH_INVALID;for(unsigned j=0;j<i;j++)if(!apart(spans[i],spans[j]))return COH_INVALID;}
+ spans[6]=(BodySpan){digest->context,digest->context_bytes};if(!valid_span(spans[6]))return COH_INVALID;
+ for(unsigned j=0;j<6;j++)if(!apart(spans[6],spans[j]))return COH_INVALID;
+ StructClearReceipt result;memset(&result,0,sizeof(result));result.stage=STRUCT_CLEAR_STAGE_INPUT;result.cleanup_complete=(uint32_t)struct_clear_is_idle();result.crypto_cleanup_complete=(uint32_t)schema_adler_is_idle();CohStatus status=COH_OK;
+ if(!result.cleanup_complete)status=COH_STATE;
+ else if(bytes.size>STRUCT_CLEAR_INPUT_MAX||!budget||budget>STRUCT_CLEAR_BUDGET_MAX)status=COH_LIMIT;
+ else if(!digest->sha256)status=COH_STATE;
+ size_t charge=struct_clear_owner_bytes()+STRUCT_CLEAR_STACK_RESERVE+schema_adler_object_bytes();
+ if(status==COH_OK)for(unsigned i=0;i<7;i++){if(spans[i].n>budget||charge>budget-spans[i].n){status=COH_LIMIT;break;}charge+=spans[i].n;}
+ if(status==COH_OK){if(digest->scratch_reserve>budget||charge>budget-digest->scratch_reserve)status=COH_LIMIT;else charge+=digest->scratch_reserve;}
+ if(status==COH_OK&&(retained>budget||charge>budget-retained))status=COH_LIMIT;
+ if(status!=COH_OK){result.status=(uint32_t)status;*receipt=result;return status;}
+ result.stage=STRUCT_CLEAR_STAGE_IDENTITY;const unsigned char*labels=(const unsigned char*)expected;
+ for(unsigned i=0;i<5;i++)if(zeros(labels+i*32u,32))status=COH_STATE;
+ if(memcmp(observed,expected,sizeof(*expected)))status=COH_STATE;
+ if(status!=COH_OK){result.status=(uint32_t)status;*receipt=result;return status;}
+ result.fixture_identity_matched=1;result.stage=STRUCT_CLEAR_STAGE_PROFILE;uint16_t host_endian=1;
+ if(production_mode!=1||fault>4||*(const unsigned char*)&host_endian!=1){result.status=COH_UNSUPPORTED;*receipt=result;return COH_UNSUPPORTED;}
+ status=framing(bytes,0,1,&result);
+ if(status!=COH_OK){result.status=(uint32_t)status;*receipt=result;return status;}
+ if(fault==2||fault==3){result.stage=STRUCT_CLEAR_STAGE_RESERVATION;result.status=COH_LIMIT;*receipt=result;return COH_LIMIT;}
+ result.stage=STRUCT_CLEAR_STAGE_DIGEST;uint8_t hash[32];memset(hash,0,sizeof(hash));status=digest->sha256(digest->context,bytes,hash);
+ if(status==COH_OK&&memcmp(hash,expected->input_sha256,32))status=COH_STATE;
+ body_wipe(hash,sizeof(hash));
+ if(status!=COH_OK){result.status=(uint32_t)status;*receipt=result;return status;}
+ owner.active=1;owner.fault=fault;owner.input_size=bytes.size;owner.receipt=result;owner.receipt.cleanup_complete=0;memcpy(owner.data,bytes.data,bytes.size);
+
+ StructClearResult candidate;memset(&candidate,0,sizeof(candidate));
+ owner.receipt.source_calls++;
+ {
+  owner.receipt.entry_calls++;loader_trace(1);bpReadBodyPartFiles();
+  int accepted=(int)owner.receipt.loader_return;
+  owner.receipt.getter_count=accepted?(uint32_t)GetBodyPartCount():0;owner.receipt.source_node_count=owner.nodes;
+  if(accepted){
+   candidate.source_crc=owner.receipt.source_crc;
+   candidate.header_end=owner.receipt.header_end;candidate.dependency_end=owner.receipt.dependency_end;candidate.body_end=owner.receipt.body_end;
+   candidate.part_count=owner.nodes;candidate.raw_array_count=owner.receipt.raw_array_count;candidate.body_declared_size=owner.receipt.body_declared_size;
+   assert(owner.nodes==owner.capacity);for(uint32_t n=0;n<owner.nodes;n++){assert(owner.root.bodyParts[n]==&owner.parts[n]);copy_part(&candidate.parts[n],owner.root.bodyParts[n],n);}
+   owner.receipt.stage=STRUCT_CLEAR_STAGE_COMPLETE;status=COH_OK;
+  }else{owner.receipt.stage=!owner.receipt.header_accepted?STRUCT_CLEAR_STAGE_HEADER_REJECT:STRUCT_CLEAR_STAGE_SOURCE_REJECT;status=COH_UNSUPPORTED;}
+ }
+ owner.receipt.update_calls=crc_owner.candidate.update_calls;owner.receipt.stream_bytes=crc_owner.candidate.stream_bytes;owner.receipt.visited_fields=crc_owner.candidate.visited_fields;owner.receipt.interpret_calls=crc_owner.candidate.interpret_calls;
+ schema_adler_cleanup();owner.receipt.crypto_cleanup_complete=(uint32_t)schema_adler_is_idle();if(owner.root.bodyParts)StructClear(ParseBodyPartBegin,&owner.root);clear_receipt();
+ owner.receipt.status=(uint32_t)status;result=owner.receipt;assert(!owner.opened&&!parser_relpath);loader_globals_cleanup();body_wipe(&clear_state,sizeof(clear_state));body_wipe(&owner,sizeof(owner));body_wipe(&crc_owner,sizeof(crc_owner));result.cleanup_complete=(uint32_t)struct_clear_is_idle();
+ if(status==COH_OK)*out=candidate;
+ *receipt=result;body_wipe(&candidate,sizeof(candidate));body_wipe(&result,sizeof(result));return status;
+}
+
+CohStatus struct_clear_fixture(const StructClearRequest*request,const StructClearIdentity*observed,const StructClearIdentity*expected,const CohCostumeImportDigest*digest,StructClearFixtureResult*out,StructClearReceipt*receipt,size_t budget,size_t retained){
+ if(!request||!observed||!expected||!digest||!out||!receipt)return COH_INVALID;
+ BodySpan spans[7]={{request,sizeof(*request)},{observed,sizeof(*observed)},{expected,sizeof(*expected)},{digest,sizeof(*digest)},{out,sizeof(*out)},{receipt,sizeof(*receipt)},{digest->context,digest->context_bytes}};
+ for(unsigned i=0;i<7;i++){if(!valid_span(spans[i]))return COH_INVALID;for(unsigned j=0;j<i;j++)if(!apart(spans[i],spans[j]))return COH_INVALID;}
+ StructClearReceipt r;memset(&r,0,sizeof(r));r.stage=1;r.cleanup_complete=(uint32_t)struct_clear_is_idle();CohStatus status=COH_OK;
+ if(!r.cleanup_complete)status=COH_STATE;else if(!budget||budget>1048576u)status=COH_LIMIT;else if(!digest->sha256)status=COH_STATE;
+ size_t charge=struct_clear_owner_bytes()+98304u;
+ if(status==COH_OK)for(unsigned i=0;i<7;i++){if(spans[i].n>budget||charge>budget-spans[i].n){status=COH_LIMIT;break;}charge+=spans[i].n;}
+ if(status==COH_OK){if(digest->scratch_reserve>budget||charge>budget-digest->scratch_reserve)status=COH_LIMIT;else charge+=digest->scratch_reserve;}
+ if(status==COH_OK&&(retained>budget||charge>budget-retained))status=COH_LIMIT;
+ if(status!=COH_OK)goto refused;
+ r.stage=2;for(unsigned i=0;i<5;i++)if(zeros((const unsigned char*)expected+i*32u,32))status=COH_STATE;
+ if(memcmp(observed,expected,sizeof(*expected)))status=COH_STATE;if(status!=COH_OK)goto refused;r.fixture_identity_matched=1;
+ r.stage=3;if(request->count>30){status=COH_LIMIT;goto refused;}
+ if(request->array_present>1||request->borrowed||request->reserve_fault>1||(!request->array_present&&request->count)){status=COH_UNSUPPORTED;goto refused;}
+ for(uint32_t i=0;i<request->count;i++){
+  const StructClearRow*row=&request->rows[i];if(row->present>1||row->string_mask>31){status=COH_UNSUPPORTED;goto refused;}
+  for(unsigned k=0;k<5;k++)if(row->length[k]>=260){status=COH_LIMIT;goto refused;}
+ }
+ r.stage=14;uint8_t hash[32];memset(hash,0,sizeof(hash));status=digest->sha256(digest->context,(CohBytes){(const unsigned char*)request,sizeof(*request)},hash);
+ if(status==COH_OK&&memcmp(hash,expected->input_sha256,32))status=COH_STATE;body_wipe(hash,sizeof(hash));if(status!=COH_OK)goto refused;
+ if(request->reserve_fault){r.stage=17;status=COH_LIMIT;goto refused;}
+ owner.active=1;owner.nodes=request->count;owner.capacity=request->count;owner.root.bodyParts=request->array_present?owner.pointers:NULL;
+ for(uint32_t n=0;n<request->count;n++)if(request->rows[n].present){
+  BodyPart*row=&owner.parts[n];owner.pointers[n]=row;const StructClearRow*input=&request->rows[n];
+  char**fields[5]={&row->name,&row->sourceFile,&row->name_geo,&row->name_tex,&row->base_var};
+  for(unsigned k=0;k<5;k++)if(input->string_mask&(1u<<k)){memset(owner.text[n][k],(int)('A'+n%26),input->length[k]);*fields[k]=owner.text[n][k];}
+  for(unsigned k=0;k<7;k++)owner.raw[n][k]=0x80000000u+n*17u+k;row->num_parts=(int)owner.raw[n][2];row->influenceCost=(int)owner.raw[n][1];memcpy(row->bone_num,owner.raw[n]+4,8);memcpy(&row->bodyPartIndex,owner.raw[n]+6,4);row->dont_clear=(U8)owner.raw[n][3];
+ }
+ StructClear(ParseBodyPartBegin,&owner.root);ClearState first=clear_state;StructClear(ParseBodyPartBegin,&owner.root);
+ clear_state.repeat_no_releases=(uint32_t)!memcmp(&first,&clear_state,sizeof(first));body_wipe(&first,sizeof(first));
+ StructClearFixtureResult candidate;memset(&candidate,0,sizeof(candidate));candidate.rows=clear_state.nodes;candidate.strings=clear_state.strings;candidate.arrays=clear_state.arrays;candidate.order_count=clear_state.order_count;memcpy(candidate.order,clear_state.order,sizeof(candidate.order));candidate.numeric_preserved=clear_state.numeric_preserved;candidate.root_null=clear_state.root_null;candidate.repeat_no_releases=clear_state.repeat_no_releases;
+ clear_receipt();r=owner.receipt;r.status=COH_OK;r.stage=18;r.fixture_identity_matched=1;body_wipe(&owner,sizeof(owner));body_wipe(&clear_state,sizeof(clear_state));r.cleanup_complete=(uint32_t)struct_clear_is_idle();r.crypto_cleanup_complete=1;
+ assert(r.cleanup_complete);*out=candidate;*receipt=r;body_wipe(&candidate,sizeof(candidate));body_wipe(&r,sizeof(r));return COH_OK;
+refused:r.status=(uint32_t)status;r.crypto_cleanup_complete=1;r.cleanup_complete=(uint32_t)struct_clear_is_idle();*receipt=r;body_wipe(&r,sizeof(r));return status;
+}

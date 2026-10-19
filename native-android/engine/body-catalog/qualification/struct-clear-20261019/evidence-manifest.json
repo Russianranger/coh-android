@@ -1,0 +1,422 @@
+{
+  "schema": "coh-struct-clear-retained-evidence-v1",
+  "files": {
+    "cryptopp-provenance.json": {
+      "bytes": 11381,
+      "sha256": "b240ead30dce9771a34fc1545308ec38092a3fb7eb70be2c4303d981eefb81e2"
+    },
+    "failed/attempt1-missing-prototypes/compile-provider.stderr": {
+      "bytes": 7380,
+      "sha256": "b4c85f7e9d2db8f06187199460ca686bcb04be626347546afcefa1a716f796d8"
+    },
+    "failed/attempt1-missing-prototypes/compile-provider.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "failed/attempt1-missing-prototypes/source-identity.json": {
+      "bytes": 11533,
+      "sha256": "88b42f30525ae149b130460429547fd23aea1dee3a9fb32bc9f484eaba38c187"
+    },
+    "failed/attempt1-missing-prototypes/struct-clear-provider.c": {
+      "bytes": 86269,
+      "sha256": "7d3253baee2e15b1c6092d950c00b0e36373c39f2a88c5b70106f1c6e3d91df6"
+    },
+    "failed/attempt1-missing-prototypes/struct-clear-provider.h": {
+      "bytes": 4367,
+      "sha256": "7dfb2596d3f045f9531a398aa4747cdad6fdd4b4c9d3ecb389123f6f0fea8b48"
+    },
+    "failed-attempts.json": {
+      "bytes": 1527,
+      "sha256": "3be155090d45ea434c95b2a430ac4d739c9f40c1942a5f1928594bfbacadb45c"
+    },
+    "fixture-profile.json": {
+      "bytes": 2370,
+      "sha256": "bb52cae6504bc4e6305c25c77cba566211b2c677c8b2d1478870d39433b0aaa9"
+    },
+    "fixture-reference.json": {
+      "bytes": 15614,
+      "sha256": "5406f86d0e27151311c8e40a27e8409f100f56dbe4c40f4d13a03dc67b0ce123"
+    },
+    "frozen-handoff.json": {
+      "bytes": 4823,
+      "sha256": "9dd1b38ec827a3bc7093a319721f8f9b8a5fdac8348bc70fde71be1e67047816"
+    },
+    "host.json": {
+      "bytes": 118515,
+      "sha256": "7b57178b7be6294ac1c860861353592b7e5b727d3f3b7956872c0ac86ef08c20"
+    },
+    "input-ledger.json": {
+      "bytes": 15614,
+      "sha256": "5406f86d0e27151311c8e40a27e8409f100f56dbe4c40f4d13a03dc67b0ce123"
+    },
+    "passing/asan/build.json": {
+      "bytes": 9339,
+      "sha256": "9c84378d1e73e4e4f8cf5fdd8b8c7b71a8099c6de170ba1a76b497682b13e084"
+    },
+    "passing/asan/commands.json": {
+      "bytes": 5863,
+      "sha256": "0985e379196b68b997fa08ac63800d235e99d8d3f72c4b8478291f324ff07b97"
+    },
+    "passing/asan/compile-cpp-wrapper.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-cpp-wrapper.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-1-adler32.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-1-adler32.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-2-cryptlib.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-2-cryptlib.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-3-misc.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-3-misc.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-4-fips140.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-4-fips140.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-5-allocate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-5-allocate.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-6-cryptopp-int-to-string.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-crypto-6-cryptopp-int-to-string.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-provider.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-provider.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-test.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/compile-test.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/link.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/link.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/asan/native.stdout": {
+      "bytes": 1375,
+      "sha256": "c5610b41ee03ef7acf37c09b2fd8383810311c5d57150b4f75538b9e54f7cb52"
+    },
+    "passing/asan/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "b626ed159be0b776ed6e331499f9225f8ea9f68c1bb2988d46ef1856721f411f"
+    },
+    "passing/asan/struct-clear-qualification-identity.h": {
+      "bytes": 1253,
+      "sha256": "0f728e5d289888a312717ef5d0a7195f9248b246cb4939b7d84d55cb0ac6cc78"
+    },
+    "passing/release/build.json": {
+      "bytes": 8833,
+      "sha256": "b6515bb70d89e4480d6d26b241308a2e02b1579cff613e807fe651a301d1dc00"
+    },
+    "passing/release/commands.json": {
+      "bytes": 5493,
+      "sha256": "c85ec709857df82f8c15c429fcd52d65cc380d30d36cc61c797a1e945c8e89c6"
+    },
+    "passing/release/compile-cpp-wrapper.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-cpp-wrapper.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-1-adler32.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-1-adler32.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-2-cryptlib.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-2-cryptlib.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-3-misc.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-3-misc.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-4-fips140.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-4-fips140.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-5-allocate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-5-allocate.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-6-cryptopp-int-to-string.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-crypto-6-cryptopp-int-to-string.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-provider.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-provider.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-test.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/compile-test.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/cpp-wrapper.su": {
+      "bytes": 1098,
+      "sha256": "c190a46a078eaa6a824e40b78b0ca66d3bb0857fc461b8c29946ae2fef363c50"
+    },
+    "passing/release/crypto-1-adler32.su": {
+      "bytes": 3468,
+      "sha256": "f9f3c6efeeab7f25df68adc35a259864a22dbcadb841a22c375de6deb9da0e79"
+    },
+    "passing/release/crypto-2-cryptlib.su": {
+      "bytes": 39845,
+      "sha256": "5d695851f7aa2744d5e78b4336812fc9e8e933f0c0b206fe3c3dd19ba7deda51"
+    },
+    "passing/release/crypto-3-misc.su": {
+      "bytes": 2116,
+      "sha256": "3c0d1498efef16655de35f60ffde0a5f509b07e13d570bd1ff7ca94d289e1a68"
+    },
+    "passing/release/crypto-4-fips140.su": {
+      "bytes": 1053,
+      "sha256": "5db3f2e8d21c07e4f5766cfd5a3626d208e0176edc98a5f2afb24edd6d4954eb"
+    },
+    "passing/release/crypto-5-allocate.su": {
+      "bytes": 609,
+      "sha256": "dcdb0b8f46476653b6a49de4afda182ef358078e2afbb59bb81765b011b2d925"
+    },
+    "passing/release/crypto-6-cryptopp-int-to-string.su": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/link.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/link.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/release/native.stdout": {
+      "bytes": 1375,
+      "sha256": "dada877a51a249f999b01bb78c4454deac92bc941e5de804ea863b31f6871fbc"
+    },
+    "passing/release/provider.su": {
+      "bytes": 7464,
+      "sha256": "239b10586c3dd5e527a61774d836c40288d13ade76e72d0783bdb8a8b4a33a85"
+    },
+    "passing/release/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "5d7feea2406fe3604db0bc07bd6bb6bd0db9fb8284e47a6fe6160f7b66fa2af4"
+    },
+    "passing/release/struct-clear-qualification-identity.h": {
+      "bytes": 1250,
+      "sha256": "cc2a4b44e2604ecb3ab67229e27f240d2010cf2c220b7c0e661abe2d26b90d28"
+    },
+    "passing/release/test.su": {
+      "bytes": 1182,
+      "sha256": "507cb0069d378d42d9972dc26ceec19c43bcc39c82e885bf3a2aa9e59726c956"
+    },
+    "passing/ubsan/build.json": {
+      "bytes": 9292,
+      "sha256": "3c9c99e8784c8af64bd9fdd04765bebae2ce57688ee08675a81b5c1ec1633fab"
+    },
+    "passing/ubsan/commands.json": {
+      "bytes": 5833,
+      "sha256": "ed588354c5768454051763015b1d7388533e3570156f1126247b7b20dfe3f17e"
+    },
+    "passing/ubsan/compile-cpp-wrapper.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-cpp-wrapper.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-1-adler32.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-1-adler32.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-2-cryptlib.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-2-cryptlib.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-3-misc.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-3-misc.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-4-fips140.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-4-fips140.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-5-allocate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-5-allocate.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-6-cryptopp-int-to-string.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-crypto-6-cryptopp-int-to-string.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-provider.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-provider.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-test.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/compile-test.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/link.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/link.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/native.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "passing/ubsan/native.stdout": {
+      "bytes": 1375,
+      "sha256": "e7d10d940b467f0693ad0bfb6e49e05e48d84779017fce6e6c5a81909d7cf64c"
+    },
+    "passing/ubsan/run-ledger.bin": {
+      "bytes": 264,
+      "sha256": "73f5f4b1fc2eb089aaa5125e0c7a15fe38286614d1ebf9858e91e6ef6f8aaf74"
+    },
+    "passing/ubsan/struct-clear-qualification-identity.h": {
+      "bytes": 1245,
+      "sha256": "d8cfc2726070b79813f19906067b890ba8e281751482f5581f4decdd2df3915f"
+    },
+    "resource-bounds.json": {
+      "bytes": 849,
+      "sha256": "abcf8f8c52ceae9e0e456036e3b86c8d9115ad23cab910d1378c7244cf937972"
+    },
+    "schema-stream-reference.json": {
+      "bytes": 126,
+      "sha256": "96eb33d7b7129075056259e43afe57932877a42d1c45e150149479229528dcee"
+    },
+    "source-identity.json": {
+      "bytes": 11533,
+      "sha256": "61628f17b1c9dce6ad523f4bc95a1ca41e2305bb00f17f093cea68504a2f9c9e"
+    },
+    "struct-clear-provider.c": {
+      "bytes": 86692,
+      "sha256": "8fd6f5230aeb0d8732a75673a78939497809c7e77db7260ef0de4e9e69b2781d"
+    },
+    "struct-clear-provider.h": {
+      "bytes": 4367,
+      "sha256": "7dfb2596d3f045f9531a398aa4747cdad6fdd4b4c9d3ecb389123f6f0fea8b48"
+    }
+  },
+  "full_builds_and_inputs": "Native ELF/object files, complete generated dependency closure and fixture wire remain in full dedicated-CI artifact and local final evidence directory; compact committed receipts retain hashes, flags, source proof, measured identities, run ledgers and stack reports."
+}

@@ -1,0 +1,23 @@
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:191:14:virtual const char* CryptoPP::Exception::what() const	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1140:17:virtual CryptoPP::byte* CryptoPP::HashTransformation::CreateUpdateSpace(size_t&)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1170:23:virtual unsigned int CryptoPP::HashTransformation::BlockSize() const	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1177:23:virtual unsigned int CryptoPP::HashTransformation::OptimalBlockSize() const	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1243:15:virtual void CryptoPP::HashTransformation::CalculateTruncatedDigest(CryptoPP::byte*, size_t, const CryptoPP::byte*, size_t)	32	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1274:15:virtual bool CryptoPP::HashTransformation::VerifyTruncatedDigest(const CryptoPP::byte*, size_t, const CryptoPP::byte*, size_t)	32	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/adler32.h:21:15:virtual unsigned int CryptoPP::Adler32::DigestSize() const	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/adler32.cpp:8:6:virtual void CryptoPP::Adler32::Update(const CryptoPP::byte*, size_t)	40	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/adler32.h:14:7:CryptoPP::Adler32::~Adler32()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/adler32.cpp:56:6:virtual void CryptoPP::Adler32::TruncatedFinal(CryptoPP::byte*, size_t)	32	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/adler32.h:14:7:virtual CryptoPP::Adler32::~Adler32()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1205:15:virtual bool CryptoPP::HashTransformation::Verify(const CryptoPP::byte*)	32	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1147:15:virtual void CryptoPP::HashTransformation::Final(CryptoPP::byte*)	32	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1152:15:virtual void CryptoPP::HashTransformation::Restart()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:599:20:virtual CryptoPP::Clonable* CryptoPP::Clonable::Clone() const	96	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:641:22:virtual std::string CryptoPP::Algorithm::AlgorithmProvider() const	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/adler32.h:23:17:virtual std::string CryptoPP::Adler32::AlgorithmName() const	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1221:15:virtual bool CryptoPP::HashTransformation::VerifyDigest(const CryptoPP::byte*, const CryptoPP::byte*, size_t)	32	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1193:15:virtual void CryptoPP::HashTransformation::CalculateDigest(CryptoPP::byte*, const CryptoPP::byte*, size_t)	32	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:185:10:CryptoPP::Exception::~Exception()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:237:20:CryptoPP::NotImplemented::~NotImplemented()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:185:10:virtual CryptoPP::Exception::~Exception()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:237:20:virtual CryptoPP::NotImplemented::~NotImplemented()	16	static

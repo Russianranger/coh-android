@@ -1,0 +1,5 @@
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/allocate.cpp:28:6:void CryptoPP::CallNewHandler()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/allocate.cpp:40:8:void* CryptoPP::AlignedAllocate(size_t)	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/allocate.cpp:69:6:void CryptoPP::AlignedDeallocate(void*)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/allocate.cpp:89:8:void* CryptoPP::UnalignedAllocate(size_t)	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/allocate.cpp:97:6:void CryptoPP::UnalignedDeallocate(void*)	8	static

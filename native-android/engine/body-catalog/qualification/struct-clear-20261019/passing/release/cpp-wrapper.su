@@ -1,0 +1,9 @@
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1152:15:virtual void CryptoPP::HashTransformation::Restart()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/adler32.h:21:15:virtual unsigned int CryptoPP::Adler32::DigestSize() const	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:1147:15:virtual void CryptoPP::HashTransformation::Final(CryptoPP::byte*)	32	static
+/workspace/scratch/0484ad305122/clear-a-final/schema-crc-adler.cpp:12:6:void cryptAdler32Init()	32	static
+/workspace/scratch/0484ad305122/clear-a-final/schema-crc-adler.cpp:19:6:void cryptAdler32Update(const U8*, int)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/schema-crc-adler.cpp:23:5:U32 cryptAdler32Final()	48	static
+/workspace/scratch/0484ad305122/clear-a-final/schema-crc-adler.cpp:31:5:int schema_adler_is_idle()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/schema-crc-adler.cpp:32:13:std::size_t schema_adler_object_bytes()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/schema-crc-adler.cpp:33:6:void schema_adler_cleanup()	16	static

@@ -1,0 +1,7 @@
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/fips140.cpp:24:6:bool CryptoPP::FIPS_140_2_ComplianceEnabled()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/fips140.cpp:29:6:void CryptoPP::SimulatePowerUpSelfTestFailure()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/fips140.cpp:34:36:CryptoPP::PowerUpSelfTestStatus CryptoPP::GetPowerUpSelfTestStatus()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/fips140.cpp:46:6:bool CryptoPP::PowerUpSelfTestInProgressOnThisThread()	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/fips140.cpp:55:6:void CryptoPP::SetPowerUpSelfTestInProgressOnThisThread(bool)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/fips140.cpp:64:6:void CryptoPP::EncryptionPairwiseConsistencyTest_FIPS_140_Only(const PK_Encryptor&, const PK_Decryptor&)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/fips140.cpp:73:6:void CryptoPP::SignaturePairwiseConsistencyTest_FIPS_140_Only(const PK_Signer&, const PK_Verifier&)	8	static

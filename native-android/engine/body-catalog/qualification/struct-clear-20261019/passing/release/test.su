@@ -1,0 +1,9 @@
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:43:13:hex	8	static
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:44:18:fail_digest	8	static
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:14:18:digest	16	static
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:38:13:diagnostics	16	static
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:23:17:binding.part.0	304	static
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:12:17:word	32	static
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:13:13:hash	16	static
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:15:13:file_hash	48	static
+/workspace/scratch/0484ad305122/coh-clear-worktree/native-android/engine/body-catalog/test_struct_clear.c:71:5:main	4640	dynamic,bounded

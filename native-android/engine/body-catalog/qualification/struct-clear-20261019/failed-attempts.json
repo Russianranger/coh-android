@@ -1,0 +1,30 @@
+{
+  "schema": "coh-struct-clear-failed-attempts-v1",
+  "attempts": [
+    {
+      "stage": "Python compile",
+      "passed": false,
+      "reason": "Initial new checker used else0 instead of else 0; corrected syntax before qualification."
+    },
+    {
+      "directory": "failed/attempt1-missing-prototypes",
+      "passed": false,
+      "stage": "release compilation",
+      "reason": "New original destructor functions emitted before required TokenStore prototypes. Compiler rejected; no native test executed. Added prototype declarations, unchanged original source bodies."
+    },
+    {
+      "stage": "read-only adversarial review after preliminary success",
+      "passed": false,
+      "qualification_not_final": true,
+      "reason": "Direct digest context dereferenced before descriptor wrapping-span validation; reordered validation and added six wrapping typed-descriptor controls. Preliminary passing counts924 omitted these controls and are superseded.",
+      "superseded_host_sha256": "49330d28d0accdb09de6ce5a1361cbbf6bce4a61322a1b5e628a23a4f2eb7a1f"
+    },
+    {
+      "stage": "wording/resource finalization",
+      "passed": false,
+      "qualification_not_final": true,
+      "reason": "Corrected mask63 testcase label to unsupported descriptor rather than pooled-token execution; added enforceable conservative own-C stack sum. Intermediate passing930 run superseded by final source-stable run.",
+      "superseded_host_sha256": "50612052b822872a5e4e7ae678620eec54e55a00f0afacfc846e658dba089d02"
+    }
+  ]
+}

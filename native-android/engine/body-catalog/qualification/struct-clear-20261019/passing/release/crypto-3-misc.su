@@ -1,0 +1,15 @@
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:191:14:virtual const char* CryptoPP::Exception::what() const	8	static
+/usr/include/c++/13/bits/basic_string.h:641:7:std::__cxx11::basic_string<_CharT, _Traits, _Alloc>::basic_string(const _CharT*, const _Alloc&) [with _CharT = char; _Traits = std::char_traits<char>; _Alloc = std::allocator<char>]	48	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:185:10:CryptoPP::Exception::~Exception()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:207:20:CryptoPP::InvalidArgument::~InvalidArgument()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:185:10:virtual CryptoPP::Exception::~Exception()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:207:20:virtual CryptoPP::InvalidArgument::~InvalidArgument()	16	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/cryptlib.h:188:11:CryptoPP::Exception::Exception(ErrorType, const std::string&)	48	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/misc.cpp:47:7:CryptoPP::byte* CryptoPP::BytePtr(SecByteBlock&)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/misc.cpp:57:13:const CryptoPP::byte* CryptoPP::ConstBytePtr(const SecByteBlock&)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/misc.cpp:64:8:size_t CryptoPP::BytePtrSize(const SecByteBlock&)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/misc.cpp:70:6:void CryptoPP::xorbuf(byte*, const byte*, size_t)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/misc.cpp:144:6:void CryptoPP::xorbuf(byte*, const byte*, const byte*, size_t)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/misc.cpp:218:6:bool CryptoPP::VerifyBufsEqual(const byte*, const byte*, size_t)	8	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/misc.cpp:264:13:std::string CryptoPP::StringNarrow(const wchar_t*, bool)	144	static
+/workspace/scratch/0484ad305122/clear-a-final/cryptopp/misc.cpp:328:14:std::wstring CryptoPP::StringWiden(const char*, bool)	144	static

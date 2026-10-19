@@ -1,0 +1,82 @@
+name: Native original BodyPart resource destruction
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-struct-clear.yml
+      - native-android/engine/body-catalog/body-part-loader-source-pins.json
+      - native-android/engine/body-catalog/body-read-source-pins.json
+      - native-android/engine/body-catalog/body_part_loader_provider.py
+      - native-android/engine/body-catalog/body_read_provider.py
+      - native-android/engine/body-catalog/cache-hit-loader-source-pins.json
+      - native-android/engine/body-catalog/cache_hit_loader_provider.py
+      - native-android/engine/body-catalog/check_cache_hit_loader.py
+      - native-android/engine/body-catalog/check_schema_crc.py
+      - native-android/engine/body-catalog/check_struct_clear.py
+      - native-android/engine/body-catalog/cryptopp_adler_source.py
+      - native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.json
+      - native-android/engine/body-catalog/qualification/schema-crc-20261019/cryptopp-adler-source.zip
+      - native-android/engine/body-catalog/schema-crc-source-pins.json
+      - native-android/engine/body-catalog/schema_crc_provider.py
+      - native-android/engine/body-catalog/struct-clear-source-pins.json
+      - native-android/engine/body-catalog/struct_clear_provider.py
+      - native-android/engine/body-catalog/test_cache_hit_loader.c
+      - native-android/engine/body-catalog/test_struct_clear.c
+      - native-android/engine/body-catalog/unopened-binary-source-pins.json
+      - native-android/engine/body-catalog/unopened_binary_provider.py
+      - native-android/engine/coh_contracts.h
+      - native-android/engine/costume-import/coh_costume_import.h
+      - native-android/engine/entities/coh_costume.h
+      - native-android/engine/entities/coh_entities.h
+      - native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip
+      - native-android/engine/replication/coh_replication.h
+      - upstream/ouroboros/Common/entity/costume.h
+      - upstream/ouroboros/Common/gameData/BodyPart.c
+      - upstream/ouroboros/Common/gameData/BodyPart.h
+      - upstream/ouroboros/Common/seq/bones.h
+      - upstream/ouroboros/cmake/dependencies/CryptoPP.cmake
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/SharedMemory.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/crypt.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/stdtypes.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/serialize.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structInternals.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structTokenizer.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/structoldnames.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser_types.h
+      - upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/tokenstore.h
+      - upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp
+      - upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c
+      - upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c
+      - upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c
+      - upstream/ouroboros/libs/UtilitiesLib/src/utils/tokenstore.c
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-struct-clear-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  struct-clear:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Install focused qualifier digest headers
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev
+      - name: Qualify bounded original struct-clear
+        run: |
+          python3 native-android/engine/body-catalog/check_struct_clear.py --sanitize --output "$RUNNER_TEMP/struct-clear-host.json" --evidence-directory "$RUNNER_TEMP/struct-clear-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-struct-clear-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/struct-clear-host.json
+            ${{ runner.temp }}/struct-clear-evidence/
+          if-no-files-found: error
+          retention-days: 90
