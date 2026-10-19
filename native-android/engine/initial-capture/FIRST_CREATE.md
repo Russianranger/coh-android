@@ -85,7 +85,7 @@ strict Booleans. Only byte count, presence and first failure are retained in
 `UNSUPPORTED / FIRST_NETFX_REQUIRED`; exact end reports INVALID there with the
 AI prefix still validated. No string or resource identity survives the loan.
 
-The second milestone composes `coh_initial_netfx_probe` at `ai_end_bit`. It
+The accepted NetFX stage composes `coh_initial_netfx_probe` at `ai_end_bit`. It
 reads `pchar_things` and `inPhase`; only both1 introduce a NetFX list, while the
 other three combinations have no count. The existing transactional
 `coh_ent_netfx` parser consumes the complete bounded list into local scratch,
@@ -103,6 +103,40 @@ Repeated create/envelope `inPhase` consistency remains unproved, explicitly
 reported as `cross_prefix_in_phase_verified:false`; no whole-record acceptance
 or ownership follows from these separate syntax observations. Existing report
 capacity7168 bytes and all transport cleanup/resource limits are preserved.
+
+The current bounded addition, `coh_initial_costume_probe`, starts at that exact
+`netfx_end_bit` in the same loan. It validates the optional Boolean/Pack2
+appearance selector. Full-create requires a nonzero selector; type0 and unknown
+types refuse. Entire-costume type1 compares its self bit with this same first
+create's raw self observation. A mismatch reports STATE before rewards; a match
+is only wire consistency, never selected-player ownership.
+
+For self type1, it reads both U32 reward counts with the existing256-per-group
+cap and streams absent reward flags. At the first present reward it stops
+BEFORE `pktSendIndexedString`, reporting
+`FIRST_COSTUME_REWARD_STRING_REQUIRED`. That field can select a literal or a
+stash index; no dictionary dependency is asserted before its branch is read.
+When both lists contain only absent entries, it reads deferred/current-slot/
+additional-slot and stored-list framing. Initial creates force
+`send_all_costume=1`, so self single-current updates refuse at MULTIPLE rather
+than being admitted as an initial profile. Preserve10 stored bodies, nonzero
+list count, current-slot bounds and current<count for full lists. Other-player
+costumes require single-body framing. Slot/deferred values are never applied.
+
+Complete type1 framing and owned type2 stop BEFORE the first raw costume body
+at `FIRST_COSTUME_DICTIONARY_REQUIRED`: the existing full-body native decoder
+requires a separately verified immutable dictionary/manifest. NPC type3 and
+sequence type4 are classified at `FIRST_NPC_COSTUME_BODY_REQUIRED` and
+`FIRST_SEQUENCE_COSTUME_BODY_REQUIRED`; their dictionary-free nested bodies
+remain unread in this one milestone. Exact end at a next-body/string boundary
+reports INVALID there, while any completed framing diagnostics survive.
+
+`world_handoff.first_record_costume_prefix` retains only numeric progress,
+counts, wire-self consistency and first failure. It does not call the complete
+costume-envelope parser, supply any generation, resolve names/resources, skip
+nested fields, or reach translucency. The fixed7168-byte total report limit,
+cleanup and prior observations remain intact. Complete costume/character,
+actor, ownership, generation and application ACK acceptance remain false.
 
 ## Original protocol evidence
 
@@ -151,6 +185,19 @@ condition. Unchanged whole original producer `entSendNetFx` at `entsend.c:480`
 and consumer `entReceiveNetFx` at `entrecv.c:1166` qualify the leaf grammar.
 Framing shells do not establish actual server character state.
 
+For the current prefix, `entSendCostume` at `entsend.c:2757..2900` defines the
+selector/variant order. The original `sendEntity` create/full-update branch at
+`entsend.c:3383..3388` forces `send_all_costume=1`, independently of the forced
+appearance flag. The self branch writes rewards, deferred/current/additional
+slots, full-list flag/count and then nested `costume_send`; the other-player
+branch writes deferred, flag0 and one body. `entReceiveCostume` at
+`entrecv.c:1931` confirms the framing. `ent_SendCostumeRewards` and its consumer
+at `Common/entity/costume.c:3271..3355` define both count/flag groups. The next
+`pktSendIndexedString` at `net_packetutil.c:191..217` can emit a literal or a
+stash index; this observer stops before those choice bits. No original nested
+serializer/consumer behavior or dictionary identity is qualified by opaque
+callsite witnesses.
+
 `e->id` is a raw server entity generation, distinct from entity slot, DBID,
 packet ID and Map generation. A matching self create is only wire consistency
 against the owned local-development handoff; it does not establish whole-list
@@ -164,30 +211,32 @@ source-generation, actor, ACK and world-authority flags remain false.
 
 ## Qualification scope
 
-`check_initial_aianim_probe.py --sanitize --output NEW.json` executes the
-unchanged original AI producer on explicit source fixture shells and verifies
-raw string boundaries, optional fields and rounded Booleans. Its generated JNI
-fixture verifies the retained triggered-prefix header/source receipt, appends
-the original AI leaf and an opaque NetFX witness. Release/ASan/UBSan each pass
-1,083,959 checks across89 fixtures,162,778 shortened extents and20,752 mutations.
+`check_initial_costume_probe.py --sanitize --output NEW.json` executes only
+unchanged `entSendCostume` and `ent_SendCostumeRewards` framing on explicit
+fixture shells, with original scalar/packed writers. Nested costume and indexed
+string serializers are explicit OPAQUE witnesses that record their first call
+cursor; they do not manufacture qualified nested bytes. An independent bit
+projection checks the exact prefix and its boundary, including packed starts
+0..7 and compressed starts0/8. Over-limit reward arrays have257 safe fixture
+slots; invalid slot/list controls remain outside admitted native profiles.
 
-`check_initial_netfx_probe.py --sanitize --output NEW.json` executes only the
-unchanged original NetFX producer/consumer entrypoints:6 comparisons, including
-full-send, nonforce and empty lists in packed and compressed modes. Its JNI
-fixture verifies the retained AI prefix, appends explicit two-flag framing,
-original full-send3-effect output and an opaque costume witness. The enclosing
-`sendEntity` framing is source-qualified; the complete original producer
-transaction is not executed. Release/ASan/UBSan each pass103,857 checks across
-95 fixtures,14,806 bit truncations and2,156 mutations.
+Release, ASan and UBSan each pass194,289 checks across208 fixtures, including
+24,746 shortened extents,6,727 mutations and11 invalid API/alias controls.
+The generated JNI fixture verifies the retained NetFX header/source receipt,
+then joins the original self/full-list costume prefix with an opaque body
+witness. The verified prefix ends at bit1530, before that witness. No original
+costume body, indexed reward field, consumer or whole server transaction runs.
 
 The affected JNI adapter uses explicit controller/JNI doubles for same-loan
-composition, both newly added projections/refusals, fixed report capacity and
-cleanup. Receipts and reproducible source hashes are in
-`qualification/initial-aianim-20261019/` and `initial-netfx-20261019/`; focused CI
-is `Native initial ALLENTS AI and NetFX probes`. Accepted earlier-stage suites
-and general renderer/compiler/network/Android13 qualification are not repeated.
-No new original-server transaction, physical packet body or Thor run is claimed.
-Exactly two milestones finish here; costume is the next session's boundary.
+composition, self mismatch, truncated stored count, exact boundary, prior result
+preservation, report capacity and cleanup. Release/ASan/UBSan each pass1,956
+checks across38 scenarios; maximum composed report is6,982 of7,168 bytes.
+Receipts/source hashes are in `qualification/initial-costume-20261019/`; focused
+CI is `Native initial ALLENTS costume prefix`. Earlier create/pose/sequence/
+triggered/AI/NetFX receipts remain source-bound and their accepted suites are
+not replayed. General renderer/compiler/network/Android13 suites are not rerun.
+Exactly ONE costume-prefix milestone ends here. No Thor session or complete
+server-backed character acceptance is claimed.
 
 The previously reported unsupported Map count is the ordinary successful GROUPS
 inspector's deliberate UNSUPPORTED boundary (command6, exact consumed end), which

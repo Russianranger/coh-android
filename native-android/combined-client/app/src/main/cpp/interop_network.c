@@ -15,6 +15,7 @@
 #include "coh_initial_triggered_probe.h"
 #include "coh_initial_aianim_probe.h"
 #include "coh_initial_netfx_probe.h"
+#include "coh_initial_costume_probe.h"
 #include "coh_session_crypto.h"
 #include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
 #ifdef COH_INTEROP_REQUEST_TX
@@ -33,6 +34,7 @@ typedef struct {
     CohInitialTriggeredProbe initial_triggered;
     CohInitialAiAnimProbe initial_aianim;
     CohInitialNetFxProbe initial_netfx;
+    CohInitialCostumeProbe initial_costume;
     CohReceiveProjection receive;
 #ifdef COH_INTEROP_REQUEST_TX
     CohRequestTxWitness *request;
@@ -180,6 +182,11 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                             CohRepReader fx=lease.reader;fx.cursor=h->initial_aianim.ai_end_bit;
                             (void)coh_initial_netfx_probe(&fx,&h->initial_netfx);
                             coh_db_wipe(&fx,sizeof(fx));
+                            if(h->initial_netfx.netfx_validated&&h->initial_netfx.stage==COH_INITIAL_NETFX_COSTUME) {
+                                CohRepReader costume=lease.reader;costume.cursor=h->initial_netfx.netfx_end_bit;
+                                (void)coh_initial_costume_probe(&costume,h->initial_create.is_self,&h->initial_costume);
+                                coh_db_wipe(&costume,sizeof(costume));
+                            }
                         }
                     }
                 }
@@ -268,6 +275,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     char first_sequence[COH_INITIAL_SEQUENCE_REPORT_MAX]="null";
     char first_triggered[COH_INITIAL_TRIGGERED_REPORT_MAX]="null";
     char first_aianim[COH_INITIAL_AIANIM_REPORT_MAX]="null",first_netfx[COH_INITIAL_NETFX_REPORT_MAX]="null";
+    char first_costume[COH_INITIAL_COSTUME_REPORT_MAX]="null";
     int create_written=coh_initial_create_probe_json(&h->initial_create,first_create,sizeof(first_create));
     if(create_written<=0||(size_t)create_written>=sizeof(first_create))strcpy(first_create,"null");
     int pose_written=coh_initial_pose_probe_json(&h->initial_pose,first_pose,sizeof(first_pose));
@@ -280,6 +288,8 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
     if(ai_written<=0||(size_t)ai_written>=sizeof(first_aianim))strcpy(first_aianim,"null");
     int fx_written=coh_initial_netfx_probe_json(&h->initial_netfx,first_netfx,sizeof(first_netfx));
     if(fx_written<=0||(size_t)fx_written>=sizeof(first_netfx))strcpy(first_netfx,"null");
+    int costume_written=coh_initial_costume_probe_json(&h->initial_costume,first_costume,sizeof(first_costume));
+    if(costume_written<=0||(size_t)costume_written>=sizeof(first_costume))strcpy(first_costume,"null");
     int receive_written=coh_receive_json(&h->receive,terminal,cleanup,receive,sizeof(receive));
     if(receive_written<=0||(size_t)receive_written>=sizeof(receive))strcpy(receive,"null");
 #ifdef COH_INTEROP_REQUEST_TX
@@ -318,7 +328,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s,\"first_create\":%s,\"first_record_pose\":%s,\"first_record_sequence\":%s,\"first_record_triggered_moves\":%s,\"first_record_ai_animation\":%s,\"first_record_netfx\":%s}",
+        "\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s,\"first_create\":%s,\"first_record_pose\":%s,\"first_record_sequence\":%s,\"first_record_triggered_moves\":%s,\"first_record_ai_animation\":%s,\"first_record_netfx\":%s,\"first_record_costume_prefix\":%s}",
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
         d.groups_observed&&h->groups_callbacks==1?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
@@ -331,7 +341,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        request_available?"true":"false",request,receive,first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx);
+        request_available?"true":"false",request,receive,first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume);
 #undef U64
     coh_db_wipe(&d,sizeof(d));
     if(written<0||(size_t)written>=sizeof(json))return (*env)->NewStringUTF(env,"{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"REPORT_LIMIT\",\"world_authority\":false}");

@@ -1,30 +1,31 @@
-# CoH native ARM64: AI-animation and NetFX milestones
+# CoH native ARM64: costume-prefix milestone
 
-Branch native-android only; baselinef33851a. Target Thor Android13/ARM64.
+Branch native-android only; baseline4e8b8e4. Thor Android13/ARM64.
+Physical Combined0.1.9 received GROUPS42889B, ALLENTS37712 decodedB/7721
+compressedB,31UDP, zero decode failures; both sockets closed. ZIP CLOSED was
+cleanup. No raw body retained. Do not repeat network/compiler/renderer suites.
 
-Physical Combined0.1.9 captured GROUPS42889B and ALLENTS37712 decodedB/7721
-compressedB;31 UDP datagrams, zero decode failures, both sockets closed. ZIP
-CLOSED was cleanup. No raw body retained; do not repeat network/compiler/
-fragment/renderer qualification.
+Exact ALLENTS loan composes create, fullpose, sequence, triggered moves, AI and
+NetFX. New first_record_costume_prefix starts at netfx_end_bit. Selector1..4;
+initial type0 refuses. Entire type1 compares its self flag with same-create raw
+self (wire consistency only). Self reads2 reward counts<=256 and absent flags;
+first present reward stops BEFORE pktSendIndexedString at
+FIRST_COSTUME_REWARD_STRING_REQUIRED. Literal/index branch still unread.
+If rewards absent, validate slot/full-list framing: current<10, count1..10,
+current<count. Initial self requires multiple1; other-player requires0.
+Full/owned bodies stop at FIRST_COSTUME_DICTIONARY_REQUIRED. NPC/sequence
+classify and stop before nested body; these variants need no dictionary merely
+to decode syntax. No nested bytes skipped. Exact next-boundary end is INVALID.
 
-Exact ALLENTS loan validates create/fullpose/sequence/triggered list. AI stage
-starts at triggered_end_bit: initial outer update1, optional raw NUL string,
-native1000-byte cap including NUL; text never retained or assigned. Then NetFX
-stage reads pchar_things and inPhase. Both1 invoke existing bounded NetFX parser;
-other combinations have no count. Preserve32-effect and all child bounds. Retain
-only flags/count/first failure, discard scratch effects, never execute them.
-Stop BEFORE costume: FIRST_COSTUME_BODY_REQUIRED. Repeated create/envelope
-inPhase consistency remains UNPROVED; no dictionary generation is invented.
+Qualified original entSendCostume and ent_SendCostumeRewards prefixes use
+explicit OPAQUE nested-leaf witnesses, not dictionary generations. Focused
+release/ASan/UBSan and affected JNI evidence: engine/initial-capture/
+qualification/initial-costume-20261019. CI: Native initial ALLENTS costume prefix.
+Earlier prefix hashes verified, accepted old suites not rerun. Report7168B cap,
+cleanup, Combined0.1.9 signing/imports/profiles/saves unchanged. No APK/new Thor
+run or original-server transaction claimed.
 
-Qualification: separate original AI and NetFX fixtures plus affected JNI in
-release/ASan/UBSan. Receipts: engine/initial-capture/qualification/
-initial-aianim-20261019 and initial-netfx-20261019. Workflow Native initial
-ALLENTS AI and NetFX probes. Earlier prefix fixtures source/hash verified;
-previous suites not rerun. No whole server transaction/new Thor execution/APK
-claimed. Combined0.1.9 version/signing/imports/profiles/saves unchanged.
-
-Exactly TWO milestones completed this session. Next: source-qualified costume
-boundary under genuine immutable dictionary/resource generations; remaining
-record/list/control/deletes/character/global/tail and ownership associations
-still pending. Owner/character/actor/ACK/world flags false; Gates25–27 open.
-Read FIRST_CREATE.md and fetch actual latest HEAD before continuing.
+ONE milestone only. Next: appropriate nested costume/reward branch and genuine
+immutable dictionary/manifest admission where needed. Repeated create/envelope
+inPhase unproved; owner/character/generation/actor/ACK/world false. Gates25–27
+open. Read FIRST_CREATE.md and fetch latest HEAD before continuing.

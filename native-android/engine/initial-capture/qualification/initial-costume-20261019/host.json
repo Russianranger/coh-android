@@ -1,0 +1,172 @@
+{
+  "schema": "coh-initial-costume-prefix-qualification-v1",
+  "passed": true,
+  "source_revision": "4e8b8e48af665b8ce68890abb8efcad6901a9f74",
+  "source_sha256": {
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/check.py": "82255d5d37a312451173a8463a7187403922a63a37d8e68eb382afc490a9f716",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/initial-capture/check_initial_costume_probe.py": "9c0050d076e659227966d40b7d34427149c1c19e77665f91283dcabf7e7fc7f9",
+    "native-android/engine/initial-capture/coh_initial_costume_probe.c": "a16f03ccfaa0993090bcb79fa55da048eab6185c7ccc41a6aa4de76c6ce29d60",
+    "native-android/engine/initial-capture/coh_initial_costume_probe.h": "3d666be3becc6f34b8a6aa10804bd3b259a730ea5442f3e863f70d6d20cb3ea3",
+    "native-android/engine/initial-capture/qualification/initial-netfx-20261019/host.json": "6a2f74903558eb57135f3ad2b52fe7c65fad661078851e8593e291c61afb03bb",
+    "native-android/engine/initial-capture/qualification/initial-netfx-20261019/jni-fixture.h": "de4bbaf21a3e3c9d51b1a386e955bd85ad4ec921b4684e1b35ae88e09808553d",
+    "native-android/engine/initial-capture/test_initial_costume_probe.c": "7a3b1d54367878af604baab7b4f67dccd97614bc2b5dc8dfceccf97007ef0392",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "original_prefix_producers": {
+    "original_source_sha256_lf": {
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+      "Common/entity/entity_enum.h": "52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d",
+      "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e"
+    },
+    "whole_functions": {
+      "entSendCostume": "0c1a4863c943e88947173302cb0107c5e5c3d5bcd43e4d26dc5cd2c37127c41a",
+      "ent_SendCostumeRewards": "4db9184d5d65573a121093eb26681d19bb7acb58ed3e904293d79a2648ceabbf"
+    },
+    "generated_oracle_sha256": "819181e7419fe9fcb1d565f1c3473e0e2c120b078fa126a425ed4dd1176e7531",
+    "shim_sha256": "070ca0b81184f992c539587e072fd8e2f6e2731b753df65c2862ad15b3066fea",
+    "wrapper_sha256": "7e6d6a5760e8a64ba46c29720c32416a715830fadcff6034bc1c522c6c5fb34c",
+    "nested_costume_and_indexed_string_serializers_opaque": true,
+    "original_consumer_executed": false,
+    "oracle_sanitized": false
+  },
+  "retained_netfx_prefix": {
+    "header_sha256": "de4bbaf21a3e3c9d51b1a386e955bd85ad4ec921b4684e1b35ae88e09808553d",
+    "payload_sha256": "d08abb4150cbb946c2197af8b5e392fb9bed4a69bc6807b6e4e7d90ca345b41d",
+    "host_sha256": "6a2f74903558eb57135f3ad2b52fe7c65fad661078851e8593e291c61afb03bb",
+    "accepted_prefix_end": 1440,
+    "old_suites_reexecuted": false
+  },
+  "fixtures": {
+    "count": 208,
+    "sha256": "3d32399143fff42ec940335d6f396352eb8a7c41edf357fb35817c7d43fe4280",
+    "source_prefix_comparisons": 208,
+    "case_manifest_sha256": "c64597691cd94003d0de5f306a4d678ed366a011c4d91c9e19af4ff42f5535e6",
+    "source_reward_counts": [
+      0,
+      2,
+      3,
+      256,
+      257
+    ],
+    "native_reward_limit": 256,
+    "packed_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "compressed_offsets": [
+      0,
+      8
+    ],
+    "nested_body_or_dictionary_produced": false
+  },
+  "source_generated_jni_fixture": {
+    "payload_bits": 1565,
+    "payload_sha256": "f9bdabc29db0e9eaef3e24c95fbe5f160064c38f6343ef06020a67c2b54c2241",
+    "prefix_end_bit": 1530,
+    "device_packet": false,
+    "framing_only": true,
+    "post_command_bit": 3,
+    "create_end_bit": 345,
+    "pose_end_bit": 459,
+    "sequence_end_bit": 475,
+    "triggered_end_bit": 560,
+    "ai_end_bit": 658,
+    "netfx_end_bit": 1440,
+    "header_sha256": "09497a584e16e721e185169b4b238d7b4f8e61a8e97ab1f1bb01023f2bb4f6ae"
+  },
+  "checks": {
+    "release": {
+      "checks": 194289,
+      "fixtures": 208,
+      "framing_observations": 67,
+      "truncated_extents": 24746,
+      "mutations": 6727,
+      "invalid_argument_checks": 11,
+      "formatter_checks": 208,
+      "nested_bodies_parsed": false,
+      "dictionary_supplied": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "asan": {
+      "checks": 194289,
+      "fixtures": 208,
+      "framing_observations": 67,
+      "truncated_extents": 24746,
+      "mutations": 6727,
+      "invalid_argument_checks": 11,
+      "formatter_checks": 208,
+      "nested_bodies_parsed": false,
+      "dictionary_supplied": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    },
+    "ubsan": {
+      "checks": 194289,
+      "fixtures": 208,
+      "framing_observations": 67,
+      "truncated_extents": 24746,
+      "mutations": 6727,
+      "invalid_argument_checks": 11,
+      "formatter_checks": 208,
+      "nested_bodies_parsed": false,
+      "dictionary_supplied": false,
+      "source_generation_admitted": false,
+      "actor_publication": false,
+      "ack_permitted": false,
+      "world_authority": false
+    }
+  },
+  "binary_sha256": {
+    "release": "6acbee27971bcd984a27fa47c5500846e7069f5343a82e57a8f37295c26411d6",
+    "asan": "770c9e38af1f3c8657f47aee7eb68ae14ebbdec471449f1641150fa52302a781",
+    "ubsan": "0e8ffb05ed5693a1195b5fe9da2f1c967da3c9d19948274fedcc93bff7ae894e"
+  },
+  "probe_stack_frames": [
+    {
+      "function": "scalar",
+      "bytes": 48,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_costume_probe",
+      "bytes": 240,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_costume_probe_json",
+      "bytes": 224,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "source_stable_before_after": true,
+  "scope": "Whole original costume and reward framing executes with synthetic engine objects and opaque nested indexed-string/costume adapters; only bounded prefix compared. Original nested bodies, dictionaries, consumer, complete record and server transaction are not qualified.",
+  "old_suites_reexecuted": false,
+  "physical_device_executed": false,
+  "dictionary_captured": false,
+  "source_generation_admitted": false,
+  "complete_initial_character": false,
+  "actor_publication": false,
+  "ack_permitted": false,
+  "world_authority": false
+}
