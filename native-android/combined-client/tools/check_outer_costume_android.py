@@ -78,7 +78,16 @@ def main():
                Path('native-android/engine/entities/coh_original_rare_receive.c'),
                Path('native-android/engine/entities/coh_very_rare_tail.c'),
                Path('native-android/engine/entities/coh_teammate_buffs.c'),
+               Path('native-android/engine/entities/coh_original_command_tail.c'),
                Path('native-android/engine/entities/coh_entities.c'), Path('native-android/engine/replication/coh_replication.c')]
+    tail_sources = {
+        'entities': ['coh_original_initial_tail.c', 'coh_character_outer.c', 'coh_character_tail.c', 'coh_character_creation.c', 'coh_character_initial.c', 'coh_character_prefix.c', 'coh_character_ui.c'],
+        'character-data': ['coh_character_data.c'], 'entity-control': ['coh_entity_control.c'],
+        'entity-globals': ['coh_power_info.c', 'coh_entity_globals.c', 'coh_badges.c'],
+        'entity-inventory': ['coh_inventory.c', 'coh_invention.c', 'coh_inventory_phase.c'],
+        'entity-team': ['coh_team.c'], 'entity-superstats': ['coh_superstats.c'], 'entity-social': ['coh_social.c'],
+        'entity-attributes': ['coh_attrib_monitor.c'], 'entity-dynamic': ['coh_dynamic.c'], 'entity-view': ['coh_view.c']}
+    sources += [Path('native-android/engine') / directory / name for directory, names in tail_sources.items() for name in names]
     dependency = subprocess.run([*flags, '-M', *map(str, sources)], cwd=ROOT, capture_output=True, text=True, check=True)
     frozen = {Path(__file__).resolve(), ROOT / TOOLS / 'report_diagnostic_contract.py', ROOT / TOOLS / 'client_slots_input.py', ROOT / metadata['source'], ROOT / 'native-android/combined-client/app/src/main/java/org/coh/nativecombined/InteropNative.java'}
     for line in dependency.stdout.replace('\\\n', ' ').splitlines():
@@ -93,7 +102,7 @@ def main():
     env = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1:print_stacktrace=1'}
     for mode, options in [('release', ['-O2']), ('asan', ['-O1', '-g', '-fsanitize=address']), ('ubsan', ['-O1', '-g', '-fsanitize=undefined', '-fno-sanitize-recover=all'])]:
         binary = work / mode
-        command = [*flags, *options, *map(str, sources), '-Wl,--wrap=calloc,--wrap=free,--wrap=open,--wrap=close,--wrap=read,--wrap=__read_chk,--wrap=mmap,--wrap=munmap', '-lcrypto', '-lm', '-o', str(binary)]
+        command = [*flags, *options, *map(str, sources), '-Wl,--wrap=calloc,--wrap=free,--wrap=open,--wrap=close,--wrap=read,--wrap=__read_chk,--wrap=mmap,--wrap=munmap', '-lcrypto', '-lm', '-lz', '-o', str(binary)]
         with (work / (mode + '-compile.log')).open('wb') as log:
             subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
         execution = subprocess.run([binary, original, suffix], cwd=ROOT, env=env, capture_output=True, text=True, timeout=90)

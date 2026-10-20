@@ -96,7 +96,20 @@ if(COH_FRAME_CAPTURE_DIAGNOSTIC)
         "${ENGINE}/entities/coh_original_taskforce_receive.c"
         "${ENGINE}/entities/coh_original_rare_receive.c"
         "${ENGINE}/entities/coh_very_rare_tail.c"
-        "${ENGINE}/entities/coh_teammate_buffs.c")
+        "${ENGINE}/entities/coh_teammate_buffs.c"
+        "${ENGINE}/entities/coh_original_initial_tail.c"
+        "${ENGINE}/entities/coh_original_command_tail.c"
+        "${ENGINE}/initial-capture/coh_initial_send.c"
+        "${ENGINE}/entities/coh_character_outer.c" "${ENGINE}/entities/coh_character_tail.c"
+        "${ENGINE}/entities/coh_character_creation.c" "${ENGINE}/entities/coh_character_initial.c"
+        "${ENGINE}/entities/coh_character_prefix.c" "${ENGINE}/entities/coh_character_ui.c"
+        "${ENGINE}/character-data/coh_character_data.c" "${ENGINE}/entity-control/coh_entity_control.c"
+        "${ENGINE}/entity-globals/coh_power_info.c" "${ENGINE}/entity-globals/coh_entity_globals.c"
+        "${ENGINE}/entity-globals/coh_badges.c" "${ENGINE}/entity-inventory/coh_inventory.c"
+        "${ENGINE}/entity-inventory/coh_invention.c" "${ENGINE}/entity-inventory/coh_inventory_phase.c"
+        "${ENGINE}/entity-team/coh_team.c" "${ENGINE}/entity-superstats/coh_superstats.c"
+        "${ENGINE}/entity-social/coh_social.c" "${ENGINE}/entity-attributes/coh_attrib_monitor.c"
+        "${ENGINE}/entity-dynamic/coh_dynamic.c" "${ENGINE}/entity-view/coh_view.c")
     target_compile_definitions(coh_combined_interop PRIVATE COH_FRAME_CAPTURE_DIAGNOSTIC=1)
 endif()
 

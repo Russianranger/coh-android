@@ -9,6 +9,9 @@ static const char *asset_file;
 static unsigned asset_fault,asset_opens,asset_closes,maps,unmaps,map_live,map_peak,fail_map;
 static size_t map_bytes_peak;
 static off_t asset_prefix=37;
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+static void *tail_mapping;static size_t tail_mapping_bytes;
+#endif
 static unsigned char multi_packet[8192];static size_t multi_bits;
 AAssetManager *AAssetManager_fromJava(JNIEnv *e,jobject value){(void)e;return value==&manager&&asset_fault!=1?&manager:NULL;}
 AAsset *AAssetManager_open(AAssetManager *m,const char *name,int mode){CHECK(m==&manager&&!strcmp(name,"combined/client-slots.bin")&&mode==AASSET_MODE_RANDOM);if(asset_fault==2)return NULL;asset_opens++;return &asset;}
@@ -16,11 +19,19 @@ int AAsset_openFileDescriptor(AAsset *a,off_t *start,off_t *length){CHECK(a==&as
 void AAsset_close(AAsset *a){CHECK(a==&asset);asset_closes++;}
 void *__real_mmap(void *,size_t,int,int,int,off_t);int __real_munmap(void *,size_t);
 void *__wrap_mmap(void *at,size_t bytes,int protection,int flags,int fd,off_t offset){
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+ if(fd==-1){CHECK(!at&&protection==(PROT_READ|PROT_WRITE)&&(flags&MAP_PRIVATE)&&!(flags&MAP_SHARED)&&!offset&&!tail_mapping);void*p=__real_mmap(at,bytes,protection,flags,fd,offset);if(p!=MAP_FAILED){tail_mapping=p;tail_mapping_bytes=bytes;}return p;}
+#endif
  CHECK(!at&&protection==PROT_READ&&flags==MAP_PRIVATE&&offset%sysconf(_SC_PAGESIZE)==0);
  if(fail_map){errno=ENOMEM;return MAP_FAILED;}
  void *p=__real_mmap(at,bytes,protection,flags,fd,offset);if(p!=MAP_FAILED){maps++;map_live++;if(map_live>map_peak)map_peak=map_live;if(bytes*map_live>map_bytes_peak)map_bytes_peak=bytes*map_live;}return p;
 }
-int __wrap_munmap(void *p,size_t bytes){int status=__real_munmap(p,bytes);CHECK(!status&&map_live);unmaps++;map_live--;return status;}
+int __wrap_munmap(void *p,size_t bytes){
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+ if(p==tail_mapping){CHECK(bytes==tail_mapping_bytes);int status=__real_munmap(p,bytes);CHECK(!status);tail_mapping=NULL;tail_mapping_bytes=0;return status;}
+#endif
+ int status=__real_munmap(p,bytes);CHECK(!status&&map_live);unmaps++;map_live--;return status;
+}
 static CohStatus slots_configure(const char *path){asset_file=path;return(CohStatus)JNI(configureClientSlots)(&env,NULL,&manager);}
 static void slot_begin(void){current=JNI(begin)(&env,NULL,7000,&input,5,0,0,100);CHECK(current>0&&live==2&&map_live==1&&active->client_slots.view.raw.size==641477&&!configured_client_slots.mapping);}
 static void first_index_capture(const char *path){

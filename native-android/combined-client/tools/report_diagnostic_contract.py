@@ -26,7 +26,7 @@ REPORT_KEYS = {'owner_present', 'owner_terminal', 'initial_observation_known',
     'report_truncated', 'report_omitted_mask', 'report_invalid_mask', 'report_omitted_fields'}
 JAVA_REPORT_KEYS = {'last_observed_phase', 'control_observation', 'report_serialization_unknown'}
 JAVA_PHASES = {'UNKNOWN', 'IDLE', 'DB_CONNECTING', 'CHARACTERS_READY', 'MAP_CONNECTING',
-    'SCENE_INCOMPLETE', 'WAIT_GROUPS', 'WAIT_ALLENTS', 'INITIAL_OBSERVED', 'TIMED_OUT', 'SUSPENDED',
+    'SCENE_INCOMPLETE', 'WAIT_GROUPS', 'WAIT_ALLENTS', 'WAIT_UPDATES', 'INITIAL_OBSERVED', 'TIMED_OUT', 'SUSPENDED',
     'CANCELLED', 'CLOSED', 'FAILED', 'UNSUPPORTED', 'OWNER_BUSY', 'POLICY_UNAVAILABLE'}
 
 
@@ -93,6 +93,46 @@ def separate_catalog_boundary(value):
 
 def separate_report_extension(value, required=False):
     value = separate_catalog_boundary(separate_java_extension(value))
+    flow_keys = {'initial_command_tail', 'initial_packet_complete', 'initial_continuation', 'completion_status', 'post_position', 'initial_next', 'post_commands'}
+    if flow_keys.intersection(value):
+        need(flow_keys <= value.keys(), 'partial initial continuation source report')
+        command, flow, position = value['initial_command_tail'], value['initial_continuation'], value['post_position']
+        for row, count in ((command, 7), (flow, 10), (position, 7)):
+            need(isinstance(row, list) and len(row) == count and all(type(item) is int and item >= 0 for item in row), 'initial continuation numeric shape')
+        need(command[0] <= 7 and command[1] <= command[2] <= 33554432 and command[4] <= 1 and command[5] <= 1 and command[6] <= 0xffffffff, 'initial command source domains')
+        complete = value['initial_packet_complete']
+        need(type(complete) is bool and (not complete or command[0] == 0 and command[4:6] == [1, 1]
+             and ('initial_bits' not in value or command[2] == value['initial_bits'])), 'initial exact logical end')
+        need(all(item <= 1 for item in flow[:7]) and flow[7] <= 128 and flow[8] <= 1 and flow[9] <= 128
+             and flow[3] <= flow[1] and flow[4] <= flow[2] and (not flow[0] or complete)
+             and not flow[6], 'original queued/sent/wait ordering')
+        need(position[1] == position[2] + position[3] and position[0] == position[1] + position[4] + position[5]
+             and position[6] <= 7 and position[0] <= 128, 'position observation counts')
+        need(type(value['completion_status']) is int and 0 <= value['completion_status'] <= 7
+             and isinstance(value['initial_next'], str) and len(value['initial_next']) <= 64, 'initial continuation state')
+        rows = value['post_commands']
+        need(isinstance(rows, list) and len(rows) <= 16, 'post command category bound')
+        kinds = set()
+        for row in rows:
+            need(isinstance(row, list) and len(row) == 6 and all(type(item) is int and item >= 0 for item in row)
+                 and row[0] not in kinds and row[1] <= 128 and row[4] <= row[5] <= 4194304
+                 and row[2] <= 536870912 and row[3] <= 4294967296, 'post command metadata domains')
+            kinds.add(row[0])
+        need(sum(row[1] for row in rows) + flow[9] == flow[7], 'post command aggregate count')
+        value = {key: item for key, item in value.items() if key not in flow_keys}
+    if 'initial_packet_tail' in value or 'initial_packet_next' in value:
+        tail = value.get('initial_packet_tail')
+        need(isinstance(tail, list) and len(tail) == 11 and all(type(item) is int and item >= 0 for item in tail), 'initial packet tail shape')
+        status, stage, begin, end, character_end, count, entities, character, complete, mapped, aggregate = tail
+        source = Path(__file__).resolve().parents[2] / 'engine/entities/coh_original_initial_tail.c'
+        table = re.search(r'coh_original_initial_field_name\(uint32_t \w+\).*?n\[\]\s*=\s*\{(.*?)\};', source.read_text(), re.S)
+        need(table is not None, 'initial packet source names absent')
+        names = json.loads('[' + ','.join(re.findall(r'"(?:\\.|[^"\\])*"', table[1])) + ']')
+        need(status <= 7 and stage < len(names) and begin <= end <= 33554432 and character_end <= end and count <= 13
+             and entities <= 1 and character <= 1 and complete <= 1 and mapped <= aggregate <= 8388608
+             and (not complete or status == 0 and stage == 14 and count == 13 and entities == character == 1), 'initial packet source domains')
+        need(value.get('initial_packet_next') == names[stage], 'initial packet source next field')
+        value = {key: item for key, item in value.items() if key not in ('initial_packet_tail', 'initial_packet_next')}
     if 'rare_suffix' in value or 'initial_suffix_next' in value:
         rare = value.get('rare_suffix')
         need('costume_outer' in value and isinstance(rare, list) and len(rare) == 7
