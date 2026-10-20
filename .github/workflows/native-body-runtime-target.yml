@@ -76,13 +76,28 @@ jobs:
         run: |
           python native-android/engine/costume-export/body_witness_target.py record --source-root . --already-staged C:/bwsrc --inputs "$env:RUNNER_TEMP/body-inputs" --output "$env:RUNNER_TEMP/body-target-qualified"
           if ($LASTEXITCODE -ne 0) { throw 'Witness target receipt refused' }
+      - name: Retain accepted proof and raw candidate failures under one evidence root
+        if: always()
+        shell: pwsh
+        run: |
+          $evidence = "$env:RUNNER_TEMP/body-target-evidence"
+          New-Item -ItemType Directory -Path "$evidence/raw-unqualified" -Force | Out-Null
+          foreach ($source in @('C:/bwsrc/body-witness-target-stage.json','C:/bwsrc/out/build/vs2026/bin/OptDebug/MapServer.exe','C:/bwsrc/out/build/vs2026/CMakeCache.txt')) {
+            if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination "$evidence/raw-unqualified" }
+          }
+          foreach ($pattern in @('C:/bwsrc/out/build/vs2026/CMakeFiles/*/CMakeCCompiler.cmake','C:/bwsrc/out/build/vs2026/CMakeFiles/*/CMakeCXXCompiler.cmake','C:/bwsrc/out/build/vs2026/MapServer/MapServer.vcxproj')) {
+            Get-ChildItem -Path $pattern -ErrorAction SilentlyContinue | Copy-Item -Destination "$evidence/raw-unqualified"
+          }
+          if (Test-Path -LiteralPath "$env:RUNNER_TEMP/body-target-logs") {
+            Copy-Item -LiteralPath "$env:RUNNER_TEMP/body-target-logs" -Destination "$evidence/logs" -Recurse
+          }
+          if (Test-Path -LiteralPath "$env:RUNNER_TEMP/body-target-qualified") {
+            Copy-Item -LiteralPath "$env:RUNNER_TEMP/body-target-qualified" -Destination "$evidence/qualified" -Recurse
+          }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: body-runtime-target-${{ github.sha }}
-          path: |
-            ${{ runner.temp }}/body-target-qualified/
-            ${{ runner.temp }}/body-target-logs/
-            C:/bwsrc/body-witness-target-stage.json
-          if-no-files-found: warn
+          path: ${{ runner.temp }}/body-target-evidence/
+          if-no-files-found: error
           retention-days: 90

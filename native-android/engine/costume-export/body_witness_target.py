@@ -251,10 +251,41 @@ def dependency_manifest(staged):
             'scope': 'Actual CPM source cache; external SDK/compiler identities recorded separately'}
 
 
-def toolchain_manifest(project, cache_fields, selected_sdk):
+def msbuild_identity(cache_fields, compiler_files):
+    """VS generators may omit CMAKE_MAKE_PROGRAM: use their selected instance.
+
+    Never search PATH or an unrelated installed Visual Studio. The selected
+    compiler driver must belong to the same instance's MSVC tool directory.
+    """
+    def field(name):
+        values = [v for k, v in cache_fields.items() if k.split(':', 1)[0] == name]
+        require(len(values) <= 1, 'TARGET_CMAKE_TOOL_ALIAS')
+        return values[0] if values else None
+    instance = field('CMAKE_GENERATOR_INSTANCE')
+    require(instance and ',version=' not in instance, 'TARGET_VS_INSTANCE_MISSING')
+    instance = safe(instance)
+    require(instance.is_dir(), 'TARGET_VS_INSTANCE_MISSING')
+    for item in compiler_files.values():
+        compiler = safe(item['path'])
+        require(instance / 'VC/Tools/MSVC' in compiler.parents, 'TARGET_COMPILER_INSTANCE_MISMATCH')
+    configured = field('CMAKE_MAKE_PROGRAM') or field('CMAKE_VS_MSBUILD_COMMAND')
+    if configured:
+        selected = safe(configured)
+        require(instance / 'MSBuild' in selected.parents, 'TARGET_MSBUILD_INSTANCE_MISMATCH')
+    else:
+        candidates = [instance / 'MSBuild/Current/Bin/amd64/MSBuild.exe',
+                      instance / 'MSBuild/Current/Bin/MSBuild.exe']
+        selected = next((p for p in candidates if p.is_file()), None)
+        require(selected is not None, 'TARGET_MSBUILD_IDENTITY')
+    return {'path': str(selected), **pin(selected), 'selected_vs_instance': str(instance),
+            'resolution': 'explicit_cmake_tool' if configured else 'selected_cmake_vs_instance'}
+
+
+def toolchain_manifest(project, cache_fields, selected_sdk, compiler_files):
     """Evaluate this actual generated target, then hash selected SDK/tool inputs."""
-    name = cache_fields.get('CMAKE_MAKE_PROGRAM:FILEPATH')
-    require(name and os.name == 'nt', 'TARGET_MSBUILD_IDENTITY')
+    require(os.name == 'nt', 'TARGET_WINDOWS_TOOLCHAIN_REQUIRED')
+    build_tool = msbuild_identity(cache_fields, compiler_files)
+    name = build_tool['path']
     command = [name, str(project), '-nologo', '-verbosity:quiet',
         '-p:Configuration=OptDebug', '-p:Platform=Win32',
         '-getProperty:WindowsSdkDir,WindowsTargetPlatformVersion,VCToolsInstallDir,UniversalCRTSdkDir,UCRTVersion,PlatformToolset']
@@ -280,7 +311,7 @@ def toolchain_manifest(project, cache_fields, selected_sdk):
                 path = Path(current) / leaf; item = pin(path); total += item['bytes']
                 require(len(files) < MAX_MANIFEST and total <= MAX_TOTAL, 'TARGET_TOOLCHAIN_BUDGET')
                 files[label + '/' + path.relative_to(base).as_posix()] = item
-    return {'evaluated_properties': value, 'msbuild': {'path': name, **pin(safe(name))},
+    return {'evaluated_properties': value, 'msbuild': build_tool,
         'query_command': command, 'files': files, 'total_bytes': total,
         'scope': 'Actual generated MapServer target evaluated SDK include/Win32 libraries and MSVC include/Win32 libraries; no runtime launch'}
 
@@ -313,7 +344,7 @@ def record(root, staged, input_dir, output):
     sdk_versions = sorted(set(v.decode() for v in re.findall(rb'<WindowsTargetPlatformVersion>([^<]+)</WindowsTargetPlatformVersion>', project)))
     require(len(sdk_versions) == 1 and re.fullmatch(r'10\.[0-9.]+', sdk_versions[0]), 'TARGET_WINDOWS_SDK_SELECTION')
     dependencies = dependency_manifest(staged)
-    toolchain = toolchain_manifest(projects[0], cache_fields, sdk_versions[0])
+    toolchain = toolchain_manifest(projects[0], cache_fields, sdk_versions[0], compiler_files)
     files = {'MapServer.exe': binary, 'CMakeCache.txt': cache, STAGE: staged / STAGE,
         'map-startup-inputs.json': safe(input_dir) / 'map-startup-inputs.json',
         'map-startup-build-input.json': staged / 'map-startup-build-input.json'}

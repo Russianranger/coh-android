@@ -96,6 +96,28 @@ class TargetControls(unittest.TestCase):
         source.write_bytes(b'int b;\n')
         self.assertNotEqual(target.dependency_manifest(self.directory), manifest)
 
+    def test_msbuild_uses_actual_selected_instance_without_path_guess(self):
+        instance = self.directory / 'selected-vs'
+        driver = instance / 'VC/Tools/MSVC/14.50/bin/Hostx64/x86/cl.exe'
+        driver.parent.mkdir(parents=True); driver.write_bytes(b'explicit synthetic preflight driver')
+        build = instance / 'MSBuild/Current/Bin/amd64/MSBuild.exe'
+        build.parent.mkdir(parents=True); build.write_bytes(b'explicit synthetic preflight build tool')
+        fields = {'CMAKE_GENERATOR_INSTANCE:INTERNAL': str(instance)}
+        compiler = {'C': {'path': str(driver)}, 'CXX': {'path': str(driver)}}
+        observed = target.msbuild_identity(fields, compiler)
+        self.assertEqual(observed['path'], str(build))
+        self.assertEqual(observed['resolution'], 'selected_cmake_vs_instance')
+        self.assertEqual(observed['sha256'], target.sha(build.read_bytes()))
+        explicit = dict(fields, **{'CMAKE_MAKE_PROGRAM:FILEPATH': str(build)})
+        self.assertEqual(target.msbuild_identity(explicit, compiler)['resolution'], 'explicit_cmake_tool')
+        foreign = {'C': {'path': str(self.directory / 'other/cl.exe')}}
+        self.refuses('TARGET_COMPILER_INSTANCE_MISMATCH', lambda: target.msbuild_identity(fields, foreign))
+        self.refuses('TARGET_VS_INSTANCE_MISSING', lambda: target.msbuild_identity({}, compiler))
+        aliases = dict(fields, **{'CMAKE_GENERATOR_INSTANCE:STRING': str(instance)})
+        self.refuses('TARGET_CMAKE_TOOL_ALIAS', lambda: target.msbuild_identity(aliases, compiler))
+        build.unlink()
+        self.refuses('TARGET_MSBUILD_IDENTITY', lambda: target.msbuild_identity(fields, compiler))
+
     def test_workflow_never_invokes_a_server(self):
         text = (ROOT / '.github/workflows/native-body-runtime-target.yml').read_text()
         self.assertIn('--parallel 2 --target MapServer', text)
@@ -104,6 +126,9 @@ class TargetControls(unittest.TestCase):
         self.assertNotIn('./MapServer', text)
         self.assertIn('contents: read', text)
         self.assertIn('cancel-in-progress: false', text)
+        self.assertIn('$evidence/raw-unqualified', text)
+        self.assertIn('path: ${{ runner.temp }}/body-target-evidence/', text)
+        self.assertNotIn('C:/bwsrc/body-witness-target-stage.json\n', text)
 
 
 if __name__ == '__main__':
