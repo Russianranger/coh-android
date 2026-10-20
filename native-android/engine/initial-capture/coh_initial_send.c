@@ -6,7 +6,9 @@ CohStatus coh_initial_input_serialize(CohMapProfile profile,uint32_t id,unsigned
  CohMapPacket packet={0},commands={0};CohProtocolBits p,c;CohStatus status=COH_LIMIT;
  if(!out||profile.legacy_commands>1||profile.byte_aligned>1||received>1)return COH_INVALID;
  if(coh_protocol_bits_init(&p,packet.data,sizeof(packet.data),0,1)||coh_protocol_bits_init(&c,commands.data,sizeof(commands.data),0,1))return COH_INVALID;
- if(pack(&p,profile,1,COH_MAP_INPUT+(profile.legacy_commands?5u:0u))||scalar(&p,profile,1,0)||scalar(&p,profile,1,0)||pack(&p,profile,14,0)||scalar(&p,profile,1,0)||pack(&p,profile,1,0))goto done;
+ /* commSendInput writes CLIENT_INPUT directly; unlike pktCreateEx(READY),
+  * this statement does not route through the legacy command remapper. */
+ if(pack(&p,profile,1,COH_MAP_INPUT)||scalar(&p,profile,1,0)||scalar(&p,profile,1,0)||pack(&p,profile,14,0)||scalar(&p,profile,1,0)||pack(&p,profile,1,0))goto done;
  /* clientcomm.c ALLENTS branch appends ACK before entReceiveUpdate can append
   * RECEIVED_CHARACTER. These are CLIENTINP values, never top-level commands. */
  if(pack(&c,profile,1,4)||pack(&c,profile,1,id)||(received&&pack(&c,profile,1,3)))goto done;
