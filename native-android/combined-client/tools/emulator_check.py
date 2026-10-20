@@ -383,6 +383,41 @@ def settled_preview(value, minimum_frames):
                 'world_occludes_actor_pixels', 'actor_occludes_world_pixels', 'actor_changed_pixels')))
 
 
+class ResizedPreview:
+    """Wait for a coherent new Surface epoch, then fresh frames in that epoch.
+
+    Frame counts are cumulative: frames drawn while finding the UI control must
+    not satisfy a resize. Snapshot state can expose the new epoch before EGL
+    startup publishes its dimensions, so keep viewport_contract authoritative.
+    """
+    def __init__(self,before,fullscreen):
+        self.before=before;self.fullscreen=fullscreen;self.anchor=None
+
+    def __call__(self,value):
+        native=value.get('native',{});previous=self.before.get('native',{})
+        epoch=native.get('epoch');contexts=native.get('contexts_started')
+        stamp=value.get('updated_at');elapsed=native.get('total_ms')
+        if (not settled_preview(value,previous.get('frames',0))
+                or value.get('session_id')!=self.before.get('session_id')
+                or not isinstance(value.get('session_id'),str) or not value['session_id']
+                or value.get('viewport_policy',{}).get('fullscreen') is not self.fullscreen
+                or type(epoch)is not int or epoch<=previous.get('epoch',-1)
+                or type(contexts)is not int or contexts<=previous.get('contexts_started',0)
+                or not isinstance(stamp,str) or not stamp
+                or type(elapsed)is not int or elapsed<0):
+            self.anchor=None;return False
+        try:proof=viewport_contract(value)
+        except AssertionError:self.anchor=None;return False
+        if self.fullscreen and (proof['surface_width']<640 or proof['surface_width']<=proof['surface_height']
+                or proof['surface_height']*100<proof['host_height']*95):
+            self.anchor=None;return False
+        key=(epoch,contexts,proof['surface_width'],proof['surface_height'])
+        if self.anchor is None or key!=self.anchor[0]:
+            self.anchor=(key,native['frames'],elapsed,stamp);return False
+        return (native['frames']>self.anchor[1]+12 and elapsed>self.anchor[2]
+                and stamp!=self.anchor[3])
+
+
 def scene_pixels(raw, area):
     from io import BytesIO
     from PIL import Image
@@ -685,11 +720,7 @@ class Check:
     def fullscreen_preview(self, before):
         """Real Android layout/lifecycle only; this preview has no server pose."""
         self.tap('Full screen')
-        def ready(value):
-            return (settled_preview(value,before['native']['frames']+12)
-                and value.get('viewport_policy',{}).get('fullscreen') is True
-                and value.get('input_area',{}).get('width',0)>=640)
-        first=self.wait_report('native-client-report.json',ready,'full-screen actual Surface and EGL resize',seconds=60)
+        first=self.wait_report('native-client-report.json',ResizedPreview(before,True),'full-screen fresh epoch, EGL resize and current frames',seconds=60)
         proof=viewport_contract(first)
         assert proof['surface_height']*100>=proof['host_height']*95
         nodes=list(self.dump().iter('node'))
@@ -700,22 +731,20 @@ class Check:
         assert first['native']['frame_capture']['frame']==0 and first.get('scene_frame_capture') is None
         (self.args.output/'fullscreen-preview-native-report.json').write_text(json.dumps(first,indent=2)+'\n')
         self.adb('shell','input','keyevent','KEYCODE_BACK')
-        restored=self.wait_report('native-client-report.json',lambda value:
-            value.get('viewport_policy',{}).get('fullscreen') is False and settled_preview(value,first['native']['frames']+12),
+        restored=self.wait_report('native-client-report.json',ResizedPreview(first,False),
             'Back restores native controls and resized EGL viewport',seconds=60)
         self.viewport('fullscreen-back-controls',restored['native']['frames'])
         self.tap('Full screen')
-        second=self.wait_report('native-client-report.json',lambda value:
-            value.get('viewport_policy',{}).get('fullscreen') is True and settled_preview(value,restored['native']['frames']+12),
+        second=self.wait_report('native-client-report.json',ResizedPreview(restored,True),
             'second full-screen Surface epoch',seconds=60)
         assert second['native']['contexts_started']>first['native']['contexts_started']
         self.tap('Return to controls')
-        final=self.wait_report('native-client-report.json',lambda value:
-            value.get('viewport_policy',{}).get('fullscreen') is False and settled_preview(value,second['native']['frames']+12),
+        final=self.wait_report('native-client-report.json',ResizedPreview(second,False),
             'corner return restores native controls',seconds=60)
         self.viewport('fullscreen-corner-controls',final['native']['frames'])
         self.record('Android full-screen Surface, Back, corner return and context recreation',**proof,
-            actual_observed_entity=False,scene_capture_published=False,fixture_scope='offline source preview only')
+            actual_observed_entity=False,scene_capture_published=False,fixture_scope='offline source preview only',
+            fullscreen_epoch=first['native']['epoch'],fullscreen_frame=first['native']['frames'],fullscreen_report_time=first['updated_at'])
         return final
 
     def activity_state(self, label):
