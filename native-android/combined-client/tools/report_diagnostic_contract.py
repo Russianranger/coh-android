@@ -75,6 +75,29 @@ def separate_catalog_boundary(value):
 
 def separate_report_extension(value, required=False):
     value = separate_catalog_boundary(separate_java_extension(value))
+    outer_keys = {'costume_outer', 'selected_costume', 'costume_next'}
+    outer_present = outer_keys.intersection(value)
+    need(not outer_present or outer_present == outer_keys, 'partial original outer costume extension')
+    if outer_present:
+        outer, selected = value['costume_outer'], value['selected_costume']
+        need(isinstance(outer, list) and len(outer) == 10
+             and all(type(item) is int and item >= 0 for item in outer), 'outer costume numeric shape')
+        need(outer[0] <= 7 and outer[1] <= 16
+             and all(item <= 33554432 for item in outer[2:6])
+             and all(item in (0, 1) for item in outer[6:])
+             and outer[8:] == [0, 0], 'outer costume source domains/transaction scope')
+        need(isinstance(selected, list) and len(selected) == 5
+             and all(type(item) is int and item >= 0 for item in selected)
+             and selected[0] <= 1 and selected[1] < 10 and selected[2] < 9
+             and selected[3] <= 30 and selected[4] <= 33554432, 'selected decoded costume shape')
+        need(selected[0] or selected[2:] == [0, 0, 0], 'absent selected costume fabricated values')
+        names = ('NOT_ATTEMPTED', 'Appearance selector', 'Costume rewards', 'Costume body',
+                 'SupergroupCostume presence', 'SupergroupCostume body', 'SupergroupCostume mode',
+                 'SupergroupCostume hide emblem', 'Special costume FX presence', 'Special costume FX string',
+                 'NPC fallthrough presence', 'NPC appearance fields', 'NPC custom colors',
+                 'Appearance complete', 'Translucency', 'Entity suffix', 'NPC definitions')
+        need(value['costume_next'] == names[outer[1]], 'outer source field name mismatch')
+        value = {key: item for key, item in value.items() if key not in outer_keys}
     if 'costume_bodies' in value:
         bodies = value['costume_bodies']
         need(isinstance(bodies, list) and len(bodies) == 2

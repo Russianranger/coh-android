@@ -67,7 +67,10 @@ static void multiple_bodies(const char *path,unsigned count,unsigned truncate){
  if(!truncate)CHECK(active->initial_costume_continuation.end_bit==multi_bits);
  CHECK(strstr(report(),"\"costume_bodies\":")!=NULL);finish();CHECK(!map_live&&!live);
 }
-int main(int argc,char **argv){
+#ifndef COH_CLIENT_SLOTS_TEST_MAIN
+#define COH_CLIENT_SLOTS_TEST_MAIN main
+#endif
+int COH_CLIENT_SLOTS_TEST_MAIN(int argc,char **argv){
  CHECK(argc==3);fixture();CHECK(JNI(configureClientSlots)(&env,NULL,NULL)==COH_INVALID);
  CHECK(slots_configure(argv[1])==COH_OK&&map_live==1&&live==1);
  CHECK(configured_client_slots.view.present[0]==13209&&configured_client_slots.view.present[1]==156&&configured_client_slots.view.present[2]==224);

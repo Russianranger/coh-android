@@ -36,6 +36,9 @@
 #include "coh_initial_partcount_probe.h"
 #include "coh_local_bodypart_default.h"
 #include "coh_original_costume_receive.h"
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+#include "coh_original_ent_costume.h"
+#endif
 #include "coh_client_costume_slots.h"
 #include "coh_session_crypto.h"
 #include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
@@ -73,6 +76,10 @@ typedef struct {
     CohOriginalCostumeReport initial_costume_continuation;
     unsigned costume_continuation_attempted;
     unsigned costume_bodies_expected,costume_bodies_read;
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+    CohOriginalCostumeSnapshot selected_costume;
+    CohOriginalEntCostumeReport initial_outer;
+#endif
     ClientSlotsOwner client_slots;CohStatus client_slots_status;
     CohReceiveProjection receive;
 #ifdef COH_INTEROP_REQUEST_TX
@@ -103,6 +110,28 @@ static void client_slots_release(ClientSlotsOwner *slots) {
 #else
 #define CLIENT_SLOTS_FORMAT ""
 #define CLIENT_SLOTS_ARGS(h)
+#endif
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+#define OUTER_COSTUME_FORMAT ",\"costume_outer\":[%u,%u,%llu,%llu,%llu,%llu,%u,%u,%u,%u],\"selected_costume\":[%u,%u,%u,%u,%llu],\"costume_next\":\"%s\""
+#define OUTER_COSTUME_ARGS(h) ,status_number((h)->initial_outer.status),(h)->initial_outer.field, \
+    (unsigned long long)(h)->initial_outer.begin_bit,(unsigned long long)(h)->initial_outer.end_bit, \
+    (unsigned long long)(h)->initial_outer.failure_bit,(unsigned long long)(h)->initial_outer.appearance_end_bit, \
+    (h)->initial_outer.appearance_complete,(h)->initial_outer.xlucency_complete, \
+    (h)->initial_outer.entity_complete,(h)->initial_outer.message_complete, \
+    (h)->initial_outer.selected_complete,(h)->initial_outer.selected_body, \
+    (h)->initial_outer.selected_complete?(h)->selected_costume.bodytype:0, \
+    (h)->initial_outer.selected_complete?(h)->selected_costume.part_count:0, \
+    (unsigned long long)(h)->initial_outer.selected_body_end_bit,outer_field_name((h)->initial_outer.field)
+static const char *outer_field_name(uint32_t field) {
+    static const char *const names[]={"NOT_ATTEMPTED","Appearance selector","Costume rewards","Costume body",
+        "SupergroupCostume presence","SupergroupCostume body","SupergroupCostume mode","SupergroupCostume hide emblem",
+        "Special costume FX presence","Special costume FX string","NPC fallthrough presence","NPC appearance fields",
+        "NPC custom colors","Appearance complete","Translucency","Entity suffix","NPC definitions"};
+    return field<sizeof(names)/sizeof(names[0])?names[field]:"Unknown source field";
+}
+#else
+#define OUTER_COSTUME_FORMAT ""
+#define OUTER_COSTUME_ARGS(h)
 #endif
 static void sample_receive(Interop*h){
     CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
@@ -355,6 +384,27 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                                                 (void)coh_initial_partcount_probe(&partcount,&h->initial_partcount);
                                                                 coh_db_wipe(&partcount,sizeof(partcount));
                                                                 if(h->pinned_bodyparts&&h->initial_partcount.framing_validated) {
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+                                                                    CohRepReader original=lease.reader;original.cursor=h->initial_costume.begin_bit;
+                                                                    h->costume_continuation_attempted=1;
+                                                                    /* All fixed Interop fields (including selected capture),
+                                                                     * borrowed decoded packet, retained slot mapping/index,
+                                                                     * live lease and the original outer source stack reserve
+                                                                     * belong to the existing initial-observer8MiB domain.
+                                                                     * Guest process RSS/PSS is observed separately. */
+                                                                    size_t named=sizeof(*h)+sizeof(lease)+COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE+client_slots_owned(&h->client_slots);
+                                                                    if(named<=8u*1024u*1024u&&lease.reader.bytes.size<=8u*1024u*1024u-named) {
+                                                                        (void)coh_original_ent_costume_receive(&original,h->pinned_bodyparts,h->initial_costume_slots.current,
+                                                                            h->client_slots.view.raw.data?&h->client_slots.view:NULL,&h->costume_workspace,
+                                                                            &h->selected_costume,&h->initial_outer);
+                                                                        h->initial_costume_continuation=h->initial_outer.body;
+                                                                        h->costume_bodies_expected=h->initial_outer.bodies_expected;h->costume_bodies_read=h->initial_outer.bodies_read;
+                                                                    } else {
+                                                                        h->initial_outer=(CohOriginalEntCostumeReport){.status=COH_LIMIT,.begin_bit=original.cursor,.end_bit=original.cursor,.failure_bit=original.cursor,.packet_bits=original.bits};
+                                                                        h->initial_costume_continuation=(CohOriginalCostumeReport){.status=COH_LIMIT,.begin_bit=original.cursor,.failure_bit=original.cursor};
+                                                                    }
+                                                                    coh_db_wipe(&original,sizeof(original));
+#else
                                                                     CohRepReader original=lease.reader;original.cursor=h->initial_costume_slots.end_bit;
                                                                     h->costume_continuation_attempted=1;
                                                                     h->costume_bodies_expected=h->initial_costume_slots.body_count;
@@ -379,6 +429,7 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                                                     }
                                                                     else h->initial_costume_continuation=(CohOriginalCostumeReport){.status=COH_LIMIT,.begin_bit=original.cursor,.failure_bit=original.cursor};
                                                                     coh_db_wipe(&original,sizeof(original));
+#endif
                                                                 }
                                                             }
                                                         }
@@ -637,7 +688,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"bodyparts_default\":[%u,%u],\"bodyparts_server_cache_status\":%u,\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s" CLIENT_SLOTS_FORMAT,
+        "\"bodyparts_default\":[%u,%u],\"bodyparts_server_cache_status\":%u,\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s" CLIENT_SLOTS_FORMAT OUTER_COSTUME_FORMAT,
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
         terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
@@ -651,7 +702,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        status_number(COH_OK),h->pinned_bodyparts,status_number(h->bodyparts_cache_status),continuation,catalog_boundary,request_available?"true":"false",request,receive CLIENT_SLOTS_ARGS(h));
+        status_number(COH_OK),h->pinned_bodyparts,status_number(h->bodyparts_cache_status),continuation,catalog_boundary,request_available?"true":"false",request,receive CLIENT_SLOTS_ARGS(h) OUTER_COSTUME_ARGS(h));
     const char *const details[8]={first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume,first_reward};
     size_t used=written>0?(size_t)written:sizeof(json);
     int complete=written>0&&(size_t)written<sizeof(json)&&report_details(json,&used,details,invalid);
@@ -665,13 +716,13 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"reqallents_sent\":%u,\"raw_allents_observed\":%s,\"initial_bytes\":%llu,\"initial_bits\":%llu,\"initial_post_command_cursor\":%llu,"
         "\"status\":%u,\"failure\":%u,\"failure_code\":\"%s\",\"first_failure\":{\"valid\":%s,\"local_phase\":%u,\"db_phase\":%u,\"map_phase\":%u,\"status\":%u,\"failure\":%u},"
         "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"cleanup_verified\":%s,\"packet_copy_retained\":false,"
-        "\"costume_continuation\":%s,\"catalog_boundary\":%s,\"report_limit_bytes\":7168,\"report_truncated\":true,\"report_core_limit\":true,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false" CLIENT_SLOTS_FORMAT "}",
+        "\"costume_continuation\":%s,\"catalog_boundary\":%s,\"report_limit_bytes\":7168,\"report_truncated\":true,\"report_core_limit\":true,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false" CLIENT_SLOTS_FORMAT OUTER_COSTUME_FORMAT "}",
         phase_name(h,&d),(unsigned)d.phase,terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         d.groups_observed?"true":"false",d.groups.present_files,d.groups.roots,U64(h->groups_bytes),U64(h->groups_bits),d.reqallents_sent,
         d.raw_allents_observed?"true":"false",U64(h->initial_bytes),U64(h->initial_bits),U64(h->initial_cursor),
         status_number(first->valid?first->status:d.status),(unsigned)failure,failure_name(failure),first->valid?"true":"false",
         (unsigned)first->local_phase,(unsigned)first->db_phase,(unsigned)first->map_phase,status_number(first->status),(unsigned)first->failure,
-        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false",continuation,catalog_boundary CLIENT_SLOTS_ARGS(h));
+        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false",continuation,catalog_boundary CLIENT_SLOTS_ARGS(h) OUTER_COSTUME_ARGS(h));
 #undef U64
     coh_db_wipe(&d,sizeof(d));return (*env)->NewStringUTF(env,json);
 }
