@@ -114,7 +114,7 @@ final class MemoryTelemetry {
         snapshot.put("snapshot_elapsed_ms",now);snapshot.put("latest_sample_age_ms",latest==null||latest>now?null:now-latest);
         synchronized(MemoryTelemetry.class){snapshot.put("sampler_failures",sampleFailures);}
         snapshot.put("android_memory_callbacks",pressureSnapshot());
-        Map<String,Object> group=processSet.snapshot();Object end=group.get("end_elapsed_ms");
+        Map<String,Object> group=processSet.exportSnapshot();Object end=group.get("end_elapsed_ms");
         group.put("snapshot_age_ms",end instanceof Long&&((Long)end)<=now?now-((Long)end):null);
         snapshot.put("same_uid_process_set",group);
         return new JSONObject(snapshot);

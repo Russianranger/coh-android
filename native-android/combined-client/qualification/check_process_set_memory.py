@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run shipping process-set observer over bounded proc fixtures and real host proc."""
 from pathlib import Path
-import hashlib,json,subprocess,tempfile
+import hashlib,json,os,subprocess,tempfile,time
 SOURCE=Path(__file__).resolve().parents[1]/'app/src/main/java/org/coh/nativecombined/ProcessSetMemory.java'
 HARNESS=r'''
 package org.coh.nativecombined;
@@ -36,6 +36,15 @@ public final class ProcessSetMemoryTest {
   write(root.resolve("20/smaps_rollup"),"Pss:\t999999999999999999999999 kB\n");need(sample(observer,root,true).get("total_pss_bytes")==null);
   write(root.resolve("20/smaps_rollup"),"Pss:\t4 MB\n");need(sample(observer,root,true).get("total_pss_bytes")==null);
   write(root.resolve("20/smaps_rollup"),"Pss:\t4 kB\n");
+  // A stable zombie has no address space. This is explicit stat-derived
+  // zero, not an invented successful smaps read for an inaccessible live VM.
+  process(root,45,1000,"winedevice.exe","",0,0);write(root.resolve("45/status"),"Name:\twinedevice.exe\nUid:\t1000\t1000\t1000\t1000\n");
+  write(root.resolve("45/stat"),stat(45,1045).replace(") S ",") Z "));Files.delete(root.resolve("45/smaps_rollup"));
+  Map<String,Object> zombie=sample(observer,root,true);Map<String,Object> z=rows(zombie).stream().filter(r->Long.valueOf(45).equals(r.get("pid"))).findFirst().get();
+  need(Boolean.TRUE.equals(z.get("zombie_no_address_space"))&&n(z,"rss_bytes")==0&&n(z,"pss_bytes")==0&&n(zombie,"total_pss_bytes")==12288);
+  write(root.resolve("45/stat"),stat(45,1045));Map<String,Object> liveUnknown=sample(observer,root,true);Map<String,Object> u=rows(liveUnknown).stream().filter(r->Long.valueOf(45).equals(r.get("pid"))).findFirst().get();
+  need(u.get("rss_bytes")==null&&u.get("pss_bytes")==null&&((Integer)u.get("unavailable"))==5&&liveUnknown.get("total_pss_bytes")==null);
+  for(Path f:Files.newDirectoryStream(root.resolve("45")))Files.delete(f);Files.delete(root.resolve("45"));
   AtomicInteger statReads=new AtomicInteger();ProcessSetMemory reused=new ProcessSetMemory((path,cap)->{
    if(path.equals(root.resolve("20/stat"))&&statReads.incrementAndGet()==2)return stat(20,99999);
    return new String(Files.readAllBytes(path),StandardCharsets.US_ASCII);
@@ -48,9 +57,17 @@ public final class ProcessSetMemoryTest {
   need(sample(observer,root,false).get("total_pss_bytes")!=null);
   write(root.resolve("31/status"),"invalid status");need(Boolean.FALSE.equals(sample(observer,root,false).get("scan_complete")));
   Files.delete(root.resolve("31/status"));Files.delete(root.resolve("31"));
+  process(root,30,1000,"postgres","postgres",12,6);
   for(int i=50;i<84;i++)process(root,i,1000,"helper","helper",1,1);
-  Map<String,Object> bounded=sample(observer,root,true);need(n(bounded,"process_count")==32&&!Boolean.TRUE.equals(bounded.get("scan_complete"))&&bounded.get("total_pss_bytes")==null);
-  need(rows(bounded).size()==32&&rows(bounded).get(0).get("pid").equals(10L));
+  Map<String,Object> expanded=sample(observer,root,true);need(n(expanded,"process_count")==37&&Boolean.TRUE.equals(expanded.get("scan_complete"))&&expanded.get("total_pss_bytes")!=null);
+  for(int i=84;i<122;i++)process(root,i,1000,"helper","helper",1,1);
+  process(root,120,1000,"MapServer.exe","wine\0MapServer.exe",2,1);process(root,121,1000,"postgres","postgres",2,1);
+  Map<String,Object> bounded=sample(observer,root,true);need(n(bounded,"process_count")==64&&!Boolean.TRUE.equals(bounded.get("scan_complete"))&&bounded.get("total_pss_bytes")==null);
+  need(n(bounded,"omitted_same_uid_processes")>0&&n(bounded,"wine_processes")>=1&&n(bounded,"postgresql_processes")>=1);
+  need(rows(bounded).stream().anyMatch(r->Long.valueOf(120).equals(r.get("pid")))&&rows(bounded).stream().anyMatch(r->Long.valueOf(121).equals(r.get("pid"))));
+  need(rows(bounded).size()==64&&rows(bounded).get(0).get("pid").equals(10L));
+  Map<String,Object> exported=observer.exportSnapshot();need(((List<?>)exported.get("process_row_fields")).size()==8&&((List<?>)exported.get("processes")).size()==64);
+  need(((List<?>)((List<?>)exported.get("processes")).get(0)).get(0).equals(10L));
   AtomicInteger clock=new AtomicInteger();observer.sample(root,1000,10,true,()->clock.getAndAdd(2000),123456L);need(!Boolean.TRUE.equals(observer.snapshot().get("scan_complete")));
   ProcessSetMemory missing=new ProcessSetMemory();Map<String,Object> absent=sample(missing,root.resolve("absent"),true);need(absent.get("total_pss_bytes")==null&&absent.get("total_rss_bytes")==null);
   // Actual host proc read validates deployed parser/UID handling, not Android visibility.
@@ -58,7 +75,9 @@ public final class ProcessSetMemoryTest {
   String self=new String(Files.readAllBytes(Paths.get("/proc/self/status")),StandardCharsets.US_ASCII);long uid=-1;for(String line:self.split("\n"))if(line.startsWith("Uid:"))uid=Long.parseLong(line.substring(4).trim().split("\\s+")[0]);
   ProcessSetMemory live=new ProcessSetMemory();live.sample(Paths.get("/proc"),uid,pid,false,()->System.nanoTime()/1000000,System.currentTimeMillis());
   Map<String,Object> actual=live.snapshot();if(!Boolean.TRUE.equals(rows(actual).get(0).get("identity_stable")))throw new AssertionError("host self observation "+pid+" "+rows(actual).get(0));need(rows(actual).stream().anyMatch(r->Long.valueOf(pid).equals(r.get("pid"))&&Boolean.TRUE.equals(r.get("identity_stable"))&&r.get("rss_bytes")!=null));
-  need(n(actual,"process_count")<=32);System.out.println("{\"passed\":true,\"checks\":"+checks+",\"process_limit\":32,\"host_proc_observed\":true,\"Android_or_Thor_measured\":false,\"authority\":false}");
+  if(args.length>1){long zombiePid=Long.parseLong(args[1]);Map<String,Object> realZombie=rows(actual).stream().filter(r->Long.valueOf(zombiePid).equals(r.get("pid"))).findFirst().get();
+   need(Boolean.TRUE.equals(realZombie.get("zombie_no_address_space"))&&n(realZombie,"rss_bytes")==0&&n(realZombie,"pss_bytes")==0);}
+  need(n(actual,"process_count")<=64);System.out.println("{\"passed\":true,\"checks\":"+checks+",\"process_limit\":64,\"host_proc_observed\":true,\"Android_or_Thor_measured\":false,\"authority\":false}");
  }
 }
 '''
@@ -68,7 +87,20 @@ def main():
   proc=out/'proc';proc.mkdir()
   build=subprocess.run(['java','com.sun.tools.javac.Main','--release','8','-d',str(out),str(SOURCE),str(test)],capture_output=True,text=True)
   if build.returncode:raise RuntimeError(build.stderr)
-  run=subprocess.run(['java','-Xmx128m','-cp',str(out),'org.coh.nativecombined.ProcessSetMemoryTest',str(proc)],capture_output=True,text=True,timeout=30)
+  reader,writer=os.pipe();child=os.fork()
+  if child==0:
+   os.close(reader)
+   # /proc may expose outer PID numbers in the build sandbox.
+   os.write(writer,Path('/proc/self/stat').read_text().split(' ',1)[0].encode());os.close(writer);os._exit(0)
+  os.close(writer)
+  try:
+   with os.fdopen(reader,'rb') as pipe:zombie=int(pipe.read(64))
+   for _ in range(100):
+    if Path(f'/proc/{zombie}/stat').read_text().split(') ',1)[1].startswith('Z '):break
+    time.sleep(.005)
+   else:raise RuntimeError('host zombie observation did not settle')
+   run=subprocess.run(['java','-Xmx128m','-cp',str(out),'org.coh.nativecombined.ProcessSetMemoryTest',str(proc),str(zombie)],capture_output=True,text=True,timeout=30)
+  finally:os.waitpid(child,0)
   if run.returncode:raise RuntimeError(run.stdout+run.stderr)
   receipt=json.loads(run.stdout);receipt['source_sha256']=hashlib.sha256(SOURCE.read_bytes()).hexdigest();print(json.dumps(receipt))
 if __name__=='__main__':main()

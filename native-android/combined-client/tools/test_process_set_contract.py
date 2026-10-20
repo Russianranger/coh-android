@@ -46,5 +46,32 @@ class ProcessSetContract(unittest.TestCase):
             value['observed_'+metric+'_sum_bytes']=32<<50;value['total_'+metric+'_bytes']=32<<50;value['sampled_peak_total_'+metric+'_bytes']=32<<50
         process_set_snapshot(value);self.assertLess(len(json.dumps(value,indent=2).encode()),12*1024)
 
+    def test_compact_64_complete_unknown_and_overflow(self):
+        value=sample();value['process_limit']=64
+        fields=['pid','start_ticks','role','rss_bytes','pss_bytes','identity_stable','unavailable','zombie_no_address_space']
+        value['process_row_fields']=fields
+        value['processes']=[[i+1,1<<50,'ANDROID_APP_AND_NATIVE_CLIENT' if i==9 else 'OTHER_APP_UID',1<<50,1<<50,True,0,False] for i in range(64)]
+        value.update(process_count=64,wine_processes=0,postgresql_processes=0,expected_roles_observed=True,server_process_expected=False)
+        for metric in ('rss','pss'):
+            value['observed_'+metric+'_sum_bytes']=64<<50;value['total_'+metric+'_bytes']=64<<50;value['sampled_peak_total_'+metric+'_bytes']=64<<50
+        process_set_snapshot(value)
+        # Leave more than 10 KiB for all nine existing phase records and headers.
+        self.assertLess(len(json.dumps(value,indent=2).encode()),14*1024)
+        unknown=copy.deepcopy(value)
+        for row in unknown['processes']:row[3:8]=[None,None,True,5,False]
+        for metric in ('rss','pss'):unknown['observed_'+metric+'_sum_bytes']=0;unknown['total_'+metric+'_bytes']=None
+        unknown['incomplete_process_metrics']=64;unknown['unavailable_codes']={'1':'RSS_FIELD_UNAVAILABLE','4':'PSS_READ_FAILED'}
+        process_set_snapshot(unknown);self.assertLess(len(json.dumps(unknown,indent=2).encode()),14*1024)
+        overflow=copy.deepcopy(value);overflow['scan_complete']=False
+        overflow['omitted_same_uid_processes']=1;overflow['total_rss_bytes']=overflow['total_pss_bytes']=None
+        process_set_snapshot(overflow)
+        for change in ('width','legend','status','zombie'):
+            invalid=copy.deepcopy(value)
+            if change=='width':invalid['processes'][0].pop()
+            if change=='legend':invalid['process_row_fields'][1]='private'
+            if change=='status':invalid['processes'][0][6]=True
+            if change=='zombie':invalid['processes'][0][7]=True
+            with self.subTest(change=change),self.assertRaises(ValueError):process_set_snapshot(invalid)
+
 
 if __name__=='__main__':unittest.main()

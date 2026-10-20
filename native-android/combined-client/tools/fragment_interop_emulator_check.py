@@ -45,7 +45,19 @@ def process_set_snapshot(value):
         need(value.get('total_rss_bytes') is None and value.get('total_pss_bytes') is None, 'unobserved process total fabricated')
         return value
     rows = value.get('processes')
-    need(isinstance(rows, list) and 1 <= len(rows) <= 32 and value.get('process_limit') == 32
+    fields = value.get('process_row_fields')
+    if fields is not None:
+        need(fields == ['pid', 'start_ticks', 'role', 'rss_bytes', 'pss_bytes', 'identity_stable', 'unavailable', 'zombie_no_address_space']
+             and isinstance(rows, list) and all(isinstance(row, list) and len(row) == len(fields) for row in rows), 'compact process row shape')
+        rows = [dict(zip(fields, row)) for row in rows]
+        for row in rows:
+            need(type(row['unavailable']) is int and 0 <= row['unavailable'] <= 31
+                 and type(row['zombie_no_address_space']) is bool, 'compact process status type')
+            if row['unavailable'] == 0:
+                del row['unavailable']
+            if row['zombie_no_address_space'] is False:
+                del row['zombie_no_address_space']
+    need(value.get('process_limit') in (32, 64) and isinstance(rows, list) and 1 <= len(rows) <= value['process_limit']
          and value.get('process_count') == len(rows), 'process-set bound')
     need(all(type(value.get(k)) is int and value[k] >= 0 for k in
              ('begin_elapsed_ms', 'end_elapsed_ms', 'sample_window_ms', 'uid', 'self_pid', 'process_count',
@@ -57,13 +69,17 @@ def process_set_snapshot(value):
          and type(value.get('server_process_expected')) is bool, 'process-set boolean')
     pids = set()
     for row in rows:
-        need(isinstance(row, dict) and set(row) == {'pid', 'start_ticks', 'role', 'rss_bytes', 'pss_bytes', 'identity_stable'}, 'process-set private/unknown fields')
+        need(isinstance(row, dict) and {'pid', 'start_ticks', 'role', 'rss_bytes', 'pss_bytes', 'identity_stable'} <= set(row) <= {'pid', 'start_ticks', 'role', 'rss_bytes', 'pss_bytes', 'identity_stable', 'unavailable', 'zombie_no_address_space'}, 'process-set private/unknown fields')
         need(type(row['pid']) is int and 0 < row['pid'] <= 0x7fffffff and row['pid'] not in pids, 'process-set PID duplicate/domain')
         pids.add(row['pid'])
         need(row['role'] in ('ANDROID_APP_AND_NATIVE_CLIENT', 'WINE_SERVERS', 'POSTGRESQL', 'OTHER_APP_UID')
              and type(row['identity_stable']) is bool, 'process-set role/identity')
         need(all(row[k] is None or type(row[k]) is int and 0 <= row[k] <= 1 << 50
                  for k in ('start_ticks', 'rss_bytes', 'pss_bytes')), 'process-set metric domain')
+        if 'unavailable' in row:
+            need(type(row['unavailable']) is int and 1 <= row['unavailable'] <= 31, 'process metric failure reason')
+        if 'zombie_no_address_space' in row:
+            need(row['zombie_no_address_space'] is True and row['identity_stable'] and row['rss_bytes'] == 0 and row['pss_bytes'] == 0 and 'unavailable' not in row, 'zombie zero is not source-state derived')
         if not row['identity_stable']:
             need(all(row[k] is None for k in ('start_ticks', 'rss_bytes', 'pss_bytes')), 'unstable process supplied old metrics')
         else:
@@ -81,7 +97,7 @@ def process_set_snapshot(value):
         else:
             need(total is None, 'partial process set fabricated complete total')
         peak = value.get('sampled_peak_total_' + metric + '_bytes')
-        need(peak is None or type(peak) is int and 0 <= peak <= 32 << 50, 'process-set peak domain')
+        need(peak is None or type(peak) is int and 0 <= peak <= value['process_limit'] << 50, 'process-set peak domain')
         need(total is None or peak is not None and peak >= total, 'sampled process peak lost')
     need(value.get('atomic_snapshot') is False and value.get('rss_sum_includes_repeated_shared_pages') is True
          and value.get('pss_is_proportional') is True, 'process memory scope mislabeled')

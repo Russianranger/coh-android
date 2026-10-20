@@ -8,7 +8,7 @@ import java.util.function.LongSupplier;
 
 /** Read-only OS observations, never process ownership, cleanup or admission. */
 final class ProcessSetMemory {
-    static final int PROCESS_LIMIT=32, DIRECTORY_LIMIT=8192, FILE_LIMIT=16384;
+    static final int PROCESS_LIMIT=64, DIRECTORY_LIMIT=8192, FILE_LIMIT=16384;
     static final long INTERVAL_MS=5000, WINDOW_LIMIT_MS=1500, METRIC_LIMIT=1L<<50;
     interface ProcReader {String read(Path path,int cap)throws IOException;}
     private final ProcReader reader;
@@ -72,25 +72,48 @@ final class ProcessSetMemory {
     }
     private static Map<String,Object> unknown(long pid,String role) {
         Map<String,Object> row=new LinkedHashMap<>();row.put("pid",pid);row.put("start_ticks",null);row.put("role",role);
-        row.put("rss_bytes",null);row.put("pss_bytes",null);row.put("identity_stable",false);return row;
+        row.put("rss_bytes",null);row.put("pss_bytes",null);row.put("identity_stable",false);row.put("unavailable",8);return row;
+    }
+    private static boolean emptyZombie(String raw,long pid) {
+        if(startTicks(raw,pid)==null)return false;
+        int close=raw.lastIndexOf(") ");String[] fields=raw.substring(close+2).trim().split("\\s+");
+        // Linux stat fields 3/state, 23/vsize and 24/rss. No page-size guess:
+        // a stable zombie with no address space contributes zero resident/PSS.
+        return fields.length>21&&"Z".equals(fields[0])&&Long.valueOf(0).equals(number(fields[20]))
+                &&Long.valueOf(0).equals(number(fields[21]));
+    }
+    private String command(Path dir) {
+        try{return read(dir.resolve("cmdline"),4096);}catch(IOException unavailable){return null;}
     }
     private Map<String,Object> process(Path root,long pid,Values info,boolean self) {
         Path dir=root.resolve(Long.toString(pid));Map<String,Object> row=unknown(pid,self?"ANDROID_APP_AND_NATIVE_CLIENT":"OTHER_APP_UID");
         try {
-            Long before=startTicks(read(dir.resolve("stat"),FILE_LIMIT),pid);if(before==null)return row;
+            String beforeRaw=read(dir.resolve("stat"),FILE_LIMIT);Long before=startTicks(beforeRaw,pid);if(before==null)return row;
             Values stable=status(read(dir.resolve("status"),FILE_LIMIT));if(stable.uid!=info.uid)return row;
-            String command=null;try{command=read(dir.resolve("cmdline"),4096);}catch(IOException unavailable){/* comm remains usable, other roles stay unknown. */}
-            String role=role(stable.name,command,self);Long pss=null;
-            try{pss=kib(read(dir.resolve("smaps_rollup"),FILE_LIMIT),"Pss:");}catch(IOException unavailable){/* No guessed fallback or full smaps walk. */}
-            Long after=startTicks(read(dir.resolve("stat"),FILE_LIMIT),pid);
+            String role=role(stable.name,command(dir),self);Long pss=null;int unavailable=stable.rss==null?1:0;
+            boolean zombie=emptyZombie(beforeRaw,pid);
+            if(!zombie)try{pss=kib(read(dir.resolve("smaps_rollup"),FILE_LIMIT),"Pss:");if(pss==null)unavailable|=2;}
+            catch(IOException missing){unavailable|=4;}
+            String afterRaw=read(dir.resolve("stat"),FILE_LIMIT);Long after=startTicks(afterRaw,pid);
             if(!before.equals(after))return row;
-            row.put("start_ticks",before);row.put("role",role);row.put("rss_bytes",stable.rss);row.put("pss_bytes",pss);row.put("identity_stable",true);
-        }catch(IOException|RuntimeException unavailable){/* Vanished/reused/inaccessible processes stay explicitly unknown. */}
+            zombie=zombie&&emptyZombie(afterRaw,pid);
+            if(!zombie&&pss==null&&(unavailable&6)==0)unavailable|=2;
+            row.put("start_ticks",before);row.put("role",role);row.put("rss_bytes",zombie?Long.valueOf(0):stable.rss);row.put("pss_bytes",zombie?Long.valueOf(0):pss);row.put("identity_stable",true);
+            row.remove("unavailable");
+            if(zombie)row.put("zombie_no_address_space",true);
+            else if(unavailable!=0)row.put("unavailable",unavailable);
+        }catch(IOException|RuntimeException unavailable){row.put("unavailable",24);}
         return row;
+    }
+    private static Map<String,String> unavailableCodes(List<Map<String,Object>> rows) {
+        int flags=0;for(Map<String,Object> row:rows)if(row.get("unavailable") instanceof Integer)flags|=(Integer)row.get("unavailable");
+        Map<String,String> codes=new LinkedHashMap<>();
+        for(int i=0;i<5;i++)if((flags&(1<<i))!=0)codes.put(Integer.toString(1<<i),new String[]{"RSS_FIELD_UNAVAILABLE","PSS_FIELD_UNAVAILABLE","PSS_READ_FAILED","PROCESS_IDENTITY_UNAVAILABLE","PROCESS_READ_FAILED"}[i]);
+        return codes;
     }
     private static Long add(Long sum,Long value){return sum==null||value==null||value>Long.MAX_VALUE-sum?null:sum+value;}
     void sample(Path root,long uid,long self,boolean expectServer,LongSupplier clock,long utc) {
-        long begin=clock.getAsLong(),unreadable=0,scanned=0;boolean complete=true;
+        long begin=clock.getAsLong(),unreadable=0,scanned=0,omitted=0;boolean complete=true;
         List<Map<String,Object>> rows=new ArrayList<>();Set<Long> seen=new HashSet<>();
         Map<String,Object> selfRow=unknown(self,"ANDROID_APP_AND_NATIVE_CLIENT");
         try{Values values=status(read(root.resolve(Long.toString(self)).resolve("status"),FILE_LIMIT));
@@ -105,8 +128,17 @@ final class ProcessSetMemory {
                 Values values;
                 try{values=status(read(path.resolve("status"),FILE_LIMIT));}catch(IOException|RuntimeException unavailable){unreadable++;complete=false;continue;}
                 if(values.uid<0){unreadable++;complete=false;continue;}if(values.uid!=uid)continue;
-                if(rows.size()==PROCESS_LIMIT){complete=false;break;}
-                seen.add(pid);rows.add(process(root,pid,values,false));
+                seen.add(pid);
+                if(rows.size()==PROCESS_LIMIT){
+                    complete=false;omitted++;
+                    // Keep scanning within the same directory/time bounds so
+                    // late Wine/PostgreSQL children displace unrelated helpers.
+                    if(!"OTHER_APP_UID".equals(role(values.name,command(path),false))) {
+                        for(int i=rows.size()-1;i>0;i--)if("OTHER_APP_UID".equals(rows.get(i).get("role"))){rows.set(i,process(root,pid,values,false));break;}
+                    }
+                    continue;
+                }
+                rows.add(process(root,pid,values,false));
             }
         }catch(IOException|RuntimeException unavailable){complete=false;}
         long end=clock.getAsLong();if(end<begin||end-begin>WINDOW_LIMIT_MS)complete=false;
@@ -125,12 +157,13 @@ final class ProcessSetMemory {
         out.put("begin_elapsed_ms",begin);out.put("end_elapsed_ms",end);out.put("sample_window_ms",Math.max(0,end-begin));
         out.put("uid",uid);out.put("self_pid",self);out.put("server_process_expected",expectServer);
         out.put("scan_complete",complete);out.put("expected_roles_observed",roles);out.put("unreadable_status_count",unreadable);
+        out.put("omitted_same_uid_processes",omitted);out.put("unavailable_codes",unavailableCodes(rows));
         out.put("process_limit",PROCESS_LIMIT);out.put("process_count",rows.size());out.put("wine_processes",wine);out.put("postgresql_processes",postgres);out.put("incomplete_process_metrics",missing);
         out.put("observed_rss_sum_bytes",observedRss);out.put("observed_pss_sum_bytes",observedPss);
         out.put("total_rss_bytes",rss);out.put("total_pss_bytes",pss);
         out.put("rss_sum_includes_repeated_shared_pages",true);out.put("pss_is_proportional",true);
-        out.put("atomic_snapshot",false);out.put("deduplication","one row per PID/start_ticks; native client and launcher share the Android app row");
-        out.put("scope","observed same-Android-UID processes; Wine/PostgreSQL identified by bounded kernel comm/argv; unavailable values are null; no GPU or whole-device total");
+        out.put("atomic_snapshot",false);out.put("deduplication","PID/start_ticks; app and native client share one row");
+        out.put("scope","same UID; Wine/PostgreSQL by comm/argv; null means unknown; zombie zeros use stable stat Z/vsize/rss=0; no GPU/device total");
         out.put("source","proc PID status/stat/smaps_rollup; no full smaps scan");out.put("processes",rows);
         synchronized(this){
             if(rss!=null)peakRss=peakRss==null?rss:Math.max(peakRss,rss);
@@ -138,6 +171,19 @@ final class ProcessSetMemory {
             out.put("sampled_peak_total_rss_bytes",peakRss);out.put("sampled_peak_total_pss_bytes",peakPss);
             if(samples<Long.MAX_VALUE)samples++;out.put("samples",samples);latest=out;
         }
+    }
+    Map<String,Object> exportSnapshot() {
+        Map<String,Object> copy=snapshot();
+        @SuppressWarnings("unchecked") List<Map<String,Object>> rows=(List<Map<String,Object>>)copy.get("processes");
+        if(rows==null||rows.size()<=32)return copy;
+        List<String> fields=Arrays.asList("pid","start_ticks","role","rss_bytes","pss_bytes","identity_stable","unavailable","zombie_no_address_space");
+        List<List<Object>> compact=new ArrayList<>();
+        for(Map<String,Object> row:rows){List<Object> values=new ArrayList<>();for(String field:fields){
+            Object value=row.get(field);if(field.equals("unavailable")&&value==null)value=0;if(field.equals("zombie_no_address_space")&&value==null)value=false;values.add(value);
+        }compact.add(values);}
+        // Preserve every measured row while fitting the existing 24 KiB phase
+        // export reader. No truncation, guessed totals or larger report limit.
+        copy.put("process_row_fields",fields);copy.put("processes",compact);return copy;
     }
     synchronized Map<String,Object> snapshot() {
         if(latest==null){Map<String,Object> unknown=new LinkedHashMap<>();unknown.put("schema","coh-same-uid-process-memory-v1");unknown.put("status","not_sampled");unknown.put("total_rss_bytes",null);unknown.put("total_pss_bytes",null);return unknown;}
