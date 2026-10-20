@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run shipping process-set observer over bounded proc fixtures and real host proc."""
 from pathlib import Path
-import hashlib,json,os,subprocess,tempfile,time
+import hashlib,importlib.util,json,os,subprocess,sys,tempfile,time
 SOURCE=Path(__file__).resolve().parents[1]/'app/src/main/java/org/coh/nativecombined/ProcessSetMemory.java'
 HARNESS=r'''
 package org.coh.nativecombined;
@@ -52,6 +52,90 @@ public final class ProcessSetMemoryTest {
  @SuppressWarnings("unchecked") static Map<String,Object> aggregate(Map<String,Object> v){return (Map<String,Object>)v.get("aggregation");}
  @SuppressWarnings("unchecked") static Map<String,Object> total(Map<String,Object> v){return (Map<String,Object>)aggregate(v).get("total");}
  static Map<String,Object> sample(ProcessSetMemory observer,Path root,boolean server){observer.sample(root,1000,10,server,()->100L,123456L);return observer.snapshot();}
+ @SuppressWarnings("unchecked") static List<List<Object>> identities(Map<String,Object> v){return (List<List<Object>>)v.get("process_identities");}
+ static List<Object> identity(Map<String,Object> v,long pid){return identities(v).stream().filter(r->Long.valueOf(pid).equals(r.get(0))).findFirst().get();}
+ static String json(Object value){
+  if(value==null)return "null";if(value instanceof Number||value instanceof Boolean)return value.toString();
+  if(value instanceof Map){StringJoiner out=new StringJoiner(",","{","}");for(Object item:((Map<?,?>)value).entrySet()){Map.Entry<?,?> e=(Map.Entry<?,?>)item;out.add(json(e.getKey())+":"+json(e.getValue()));}return out.toString();}
+  if(value instanceof List){StringJoiner out=new StringJoiner(",","[","]");for(Object item:(List<?>)value)out.add(json(item));return out.toString();}
+  StringBuilder out=new StringBuilder("\"");for(char c:value.toString().toCharArray()){if(c=='\\'||c=='\"')out.append('\\');if(c<32)out.append(String.format("\\u%04x",(int)c));else out.append(c);}return out.append('"').toString();
+ }
+ static void executable(Path proc,int pid,String path)throws Exception{Files.createSymbolicLink(proc.resolve(pid+"/exe"),Paths.get(path));}
+ static void identities(Path root)throws Exception{
+  Path proc=root.resolveSibling("identity-proc");process(proc,10,1000,"coh.nativecombined","app_process",4,2);
+  for(int i=100;i<181;i++)process(proc,i,1000,"postgres","postgres",1,1);
+  for(int i=200;i<270;i++)process(proc,i,1000,"MapServer.exe","wine\0MapServer.exe",2,1);
+  String chain="/runtime/FEXInterpreter\0/opt/wine/bin/wine64\0C:\\coh\\MapServer.exe\0--password=PRIVATE_EQUALS\0--cookie\0PRIVATE_NEXT\0-pPRIVATE_ATTACHED\0/connect:PRIVATE_URI\0--db\0postgresql://user:PRIVATE_URL@host/db\0-c\0echo PRIVATE_SHELL";
+  process(proc,9000,1000,"FEXInterpreter",chain,6000,5000);executable(proc,9000,"/runtime/FEXInterpreter");
+  process(proc,9001,1000,"DbServer.exe","wine\0DbServer.exe\0-auth\0PRIVATE_AUTH",4000,3000);executable(proc,9001,"/runtime/wine64");
+  process(proc,9002,1000,"FEXInterpreter","FEXInterpreter\0wine64\0other.exe",2000000,1785470);executable(proc,9002,"/runtime/FEXInterpreter");
+  process(proc,9003,1000,"wineboot.exe","wineboot.exe\0--secret\0PRIVATE_BOOT",2500000,20);executable(proc,9003,"/runtime/wine64");
+  ProcessSetMemory observer=new ProcessSetMemory();Map<String,Object> measured=sample(observer,proc,true),exported=observer.exportSnapshot();
+  need(n(total(measured),"process_count")==156&&Boolean.TRUE.equals(total(measured).get("pss_complete"))&&n(measured,"process_count")==64);
+  need(n(exported,"process_count")==32&&identities(exported).size()==4&&n(exported,"wine_identity_rows_omitted")==70);
+  for(long pid:new long[]{9000,9001,9002,9003}){need(rows(measured).stream().anyMatch(r->Long.valueOf(pid).equals(r.get("pid"))));need(identity(exported,pid).get(1).equals(1000L+pid));}
+  need(n(exported,"total_pss_bytes")==n(measured,"total_pss_bytes")&&n(exported,"detail_rows_omitted")==124);
+  List<Object> map=identity(exported,9000);need(map.get(2).equals("FEXInterpreter")&&map.get(3).equals("/runtime/FEXInterpreter"));
+  @SuppressWarnings("unchecked") List<String> argv=(List<String>)map.get(4);
+  need(argv.subList(0,3).equals(Arrays.asList("/runtime/FEXInterpreter","/opt/wine/bin/wine64","C:\\coh\\MapServer.exe"))&&argv.contains("--cookie")&&(((Integer)map.get(5))&128)!=0);
+  need(!json(exported).contains("PRIVATE_")&&((List<?>)exported.get("process_row_fields")).size()==8);
+  // Long original cmdline is a bounded prefix, not a failed/lost executable.
+  write(proc.resolve("9000/cmdline"),chain+"\0"+String.join("",Collections.nCopies(5000,"x")));sample(observer,proc,true);map=identity(observer.exportSnapshot(),9000);
+  need((((Integer)map.get(5))&4)!=0&&map.get(3).equals("/runtime/FEXInterpreter")&&!json(observer.exportSnapshot()).contains("PRIVATE_"));
+  // Worst bounded strings, including JSON escapes, retain the same32 rows.
+  for(int pid:new int[]{9000,9001,9002,9003}){
+   String state=file(proc.resolve(pid+"/status"),16384);write(proc.resolve(pid+"/status"),"Name:\t"+String.join("",Collections.nCopies(100,"\""))+state.substring(state.indexOf('\n')));
+   Files.delete(proc.resolve(pid+"/exe"));executable(proc,pid,"/"+String.join("",Collections.nCopies(220,"\\\"")));
+   String program=pid==9000?"MapServer.exe":pid==9001?"DbServer.exe":pid==9002?"other.exe":"wineboot.exe";
+   String prefix="/"+String.join("",Collections.nCopies(100,"\\\""));
+   write(proc.resolve(pid+"/cmdline"),prefix+"/FEXInterpreter\0"+prefix+"/FEXLoader\0"+prefix+"/wine64\0"+prefix+"/"+program);
+  }
+  sample(observer,proc,true);Map<String,Object> worst=observer.exportSnapshot();need(identities(worst).size()==4&&n(worst,"total_pss_bytes")==n(measured,"total_pss_bytes"));
+  for(List<Object> row:identities(worst)){need(((String)row.get(3)).length()<=192&&(((Integer)row.get(5))&2)!=0);@SuppressWarnings("unchecked") List<String> args=(List<String>)row.get(4);need(args.size()<=16&&args.stream().mapToInt(String::length).sum()<=384);}
+  Files.write(root.resolveSibling("identity-export.json"),json(worst).getBytes(StandardCharsets.UTF_8));
+  PhaseMemoryDiagnostics phases=new PhaseMemoryDiagnostics();for(PhaseMemoryDiagnostics.Phase p:PhaseMemoryDiagnostics.Phase.values())phases.record(p,Long.MAX_VALUE,Long.MAX_VALUE,
+   new ServerMemoryPolicy.Sample(Long.MAX_VALUE,Long.MAX_VALUE,Long.MAX_VALUE/2,false,Long.MAX_VALUE/2,Long.MAX_VALUE),new PhaseMemoryDiagnostics.ProcessSample(Long.MAX_VALUE,Long.MAX_VALUE,"proc_self_smaps_rollup","proc_self_smaps_rollup"));
+  Map<String,Object> phase=phases.snapshot();phase.put("same_uid_process_set",worst);phase.put("sampler_failures",Long.MAX_VALUE);phase.put("snapshot_elapsed_ms",Long.MAX_VALUE);phase.put("latest_sample_age_ms",0);
+  Files.write(root.resolveSibling("identity-phase.json"),json(phase).getBytes(StandardCharsets.UTF_8));
+  // Exercise the production complete-memory emitter, not a hand-trimmed map.
+  // The Android JSON formatting shim is independently compared with Python's
+  // indent2 writer below; OS/JNI services remain explicit host test doubles.
+  java.lang.reflect.Field field=ProcessSetMemory.class.getDeclaredField("latest");field.setAccessible(true);
+  @SuppressWarnings("unchecked") Map<String,Object> live=(Map<String,Object>)field.get(observer);
+  @SuppressWarnings("unchecked") Map<String,Object> cg=(Map<String,Object>)live.get("app_uid_cgroup");
+  String part=String.join("",Collections.nCopies(120,"\\\"")),point="/"+part+"/"+part,sourceRoot="/"+part+"/"+part;
+  cg.put("status","observed");cg.put("reason","");cg.put("charge_bytes",Long.MAX_VALUE);cg.put("hierarchical_accounting",true);cg.put("counter","memory.current");
+  cg.put("counter_path",point+"/uid_1000/memory.current");cg.put("membership_path",sourceRoot+"/uid_1000/pid_10");cg.put("mount_point",point);cg.put("mount_root",sourceRoot);cg.put("counter_semantics","v2_hierarchical_charge_bytes");
+  @SuppressWarnings("unchecked") Map<String,Object> cats=(Map<String,Object>)aggregate(live).get("categories");
+  long base=(1L<<50)-1000;
+  for(Object raw:cats.values()){@SuppressWarnings("unchecked") Map<String,Object> category=(Map<String,Object>)raw;for(String m:new String[]{"rss","pss"}){category.put(m+"_bytes",n(category,"process_count")*base);category.put("observed_"+m+"_bytes",n(category,"process_count")*base);}}
+  for(Map<String,Object> row:rows(live)){
+   long pid=n(row,"pid"),pss=pid==9000?(1L<<50)-4:pid==9001?(1L<<50)-5:pid==9002?1L<<50:pid==9003?(1L<<50)-6:base,rss=pid==9003?1L<<50:pid==9002?(1L<<50)-1:base;
+   row.put("rss_bytes",rss);row.put("pss_bytes",pss);row.put("start_ticks",1L<<50);
+   @SuppressWarnings("unchecked") Map<String,Object> category=(Map<String,Object>)cats.get(row.get("role"));for(String m:new String[]{"rss","pss"}){long delta=n(row,m+"_bytes")-base;category.put(m+"_bytes",n(category,m+"_bytes")+delta);category.put("observed_"+m+"_bytes",n(category,"observed_"+m+"_bytes")+delta);}
+  }
+  for(String m:new String[]{"rss","pss"}){long bytes=0;for(Object raw:cats.values()){@SuppressWarnings("unchecked") Map<String,Object> category=(Map<String,Object>)raw;bytes+=n(category,m+"_bytes");}total(live).put(m+"_bytes",bytes);total(live).put("observed_"+m+"_bytes",bytes);live.put("total_"+m+"_bytes",bytes);live.put("observed_"+m+"_sum_bytes",bytes);live.put("sampled_peak_total_"+m+"_bytes",bytes);}
+  live.put("begin_elapsed_ms",Long.MAX_VALUE);live.put("end_elapsed_ms",Long.MAX_VALUE);live.put("sample_window_ms",0L);live.put("samples",Long.MAX_VALUE);
+  Map<String,Object> pressure=new LinkedHashMap<>();pressure.put("source","Android onTrimMemory/onLowMemory callbacks");pressure.put("trim_callbacks",Long.MAX_VALUE);pressure.put("low_memory_callbacks",Long.MAX_VALUE);pressure.put("last_trim_level",100);pressure.put("last_callback_elapsed_ms",Long.MAX_VALUE);pressure.put("callback_is_oom_kill_proof",false);phase.put("android_memory_callbacks",pressure);
+  org.json.JSONObject emitted=MemoryTelemetry.boundedSnapshot(phase,observer,Long.MAX_VALUE);String emittedText=emitted.toString(2);
+  @SuppressWarnings("unchecked") Map<String,Object> retained=(Map<String,Object>)emitted.toMap().get("same_uid_process_set");
+  need(emittedText.getBytes(StandardCharsets.UTF_8).length<24576&&identities(retained).size()==4&&Boolean.TRUE.equals(emitted.toMap().get("process_detail_budget_omission")));
+  need(n(total(retained),"process_count")==156&&n(retained,"total_pss_bytes")==n(live,"total_pss_bytes")&&rows(observer.snapshot()).size()==64);
+  for(long pid:new long[]{9000,9001,9002,9003})need(identity(retained,pid).get(1).equals(1L<<50));
+  Files.write(root.resolveSibling("identity-bounded-phase.json"),emittedText.getBytes(StandardCharsets.UTF_8));
+  Path mini=root.resolveSibling("identity-mini");process(mini,10,1000,"app","app_process",4,2);process(mini,20,1000,"MapServer.exe","wine\0MapServer.exe",8,4);process(mini,30,1000,"postgres","postgres",12,6);
+  ProcessSetMemory denied=new ProcessSetMemory(new ProcessSetMemory.ProcReader(){
+   public String read(Path p,int cap)throws java.io.IOException{if(p.equals(mini.resolve("20/cmdline")))throw new AccessDeniedException(p.toString());return new String(Files.readAllBytes(p),StandardCharsets.US_ASCII);}
+   public String link(Path p)throws java.io.IOException{throw new AccessDeniedException(p.toString());}
+  });sample(denied,mini,true);Map<String,Object> noAccess=denied.exportSnapshot();List<Object> absent=identity(noAccess,20);
+  need(absent.get(3)==null&&absent.get(4)==null&&(((Integer)absent.get(5))&80)==80&&noAccess.get("total_pss_bytes")!=null);
+  AtomicInteger links=new AtomicInteger();ProcessSetMemory execChanged=new ProcessSetMemory(new ProcessSetMemory.ProcReader(){
+   public String read(Path p,int cap)throws java.io.IOException{return new String(Files.readAllBytes(p),StandardCharsets.US_ASCII);}
+   public String link(Path p)throws java.io.IOException{return p.equals(mini.resolve("20/exe"))?(links.incrementAndGet()==1?"/runtime/wine64":"/runtime/replaced"):"/runtime/other";}
+  });sample(execChanged,mini,true);List<Object> moved=identity(execChanged.exportSnapshot(),20);need(moved.get(2).equals("")&&moved.get(3)==null&&moved.get(4)==null&&(((Integer)moved.get(5))&1024)!=0);
+  AtomicInteger stats=new AtomicInteger();ProcessSetMemory reused=new ProcessSetMemory((p,cap)->p.equals(mini.resolve("20/stat"))&&stats.incrementAndGet()==2?stat(20,99999):new String(Files.readAllBytes(p),StandardCharsets.US_ASCII));
+  sample(reused,mini,true);need(identities(reused.exportSnapshot()).isEmpty());
+ }
  public static void main(String[] args)throws Exception{
   Path root=Paths.get(args[0]);process(root,10,1000,"coh.nativecombined","app_process",4,2);
   process(root,20,1000,"MapServer.exe","/opt/wine/bin/wine\0MapServer.exe\0--db\0postgres",8,4);
@@ -120,6 +204,7 @@ public final class ProcessSetMemoryTest {
   AtomicInteger clock=new AtomicInteger();observer.sample(root,1000,10,true,()->clock.getAndAdd(2000),123456L);need(!Boolean.TRUE.equals(observer.snapshot().get("scan_complete")));
   ProcessSetMemory missing=new ProcessSetMemory();Map<String,Object> absent=sample(missing,root.resolve("absent"),true);need(absent.get("total_pss_bytes")==null&&absent.get("total_rss_bytes")==null);
   cgroups(root);
+  identities(root);
   // Actual host proc read validates deployed parser/UID handling, not Android visibility.
   String ownStat=new String(Files.readAllBytes(Paths.get("/proc/self/stat")),StandardCharsets.US_ASCII);long pid=Long.parseLong(ownStat.substring(0,ownStat.indexOf(' ')));
   String self=new String(Files.readAllBytes(Paths.get("/proc/self/status")),StandardCharsets.US_ASCII);long uid=-1;for(String line:self.split("\n"))if(line.startsWith("Uid:"))uid=Long.parseLong(line.substring(4).trim().split("\\s+")[0]);
@@ -136,8 +221,12 @@ public final class ProcessSetMemoryTest {
 def main():
  with tempfile.TemporaryDirectory(prefix='coh-process-set-') as tmp:
   out=Path(tmp);test=out/'ProcessSetMemoryTest.java';test.write_text(HARNESS)
+  spec=importlib.util.spec_from_file_location('memory_identity_worker_stubs',Path(__file__).with_name('check_memory_worker.py'));worker=importlib.util.module_from_spec(spec);spec.loader.exec_module(worker)
+  stubs=[]
+  for name,text in worker.STUBS.items():
+   path=out/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text);stubs.append(str(path))
   proc=out/'proc';proc.mkdir()
-  build=subprocess.run(['java','com.sun.tools.javac.Main','--release','8','-d',str(out),str(SOURCE),str(SOURCE.with_name('AppCgroupMemory.java')),str(test)],capture_output=True,text=True)
+  build=subprocess.run(['java','com.sun.tools.javac.Main','--release','8','-d',str(out),str(SOURCE),str(SOURCE.with_name('AppCgroupMemory.java')),str(SOURCE.with_name('PhaseMemoryDiagnostics.java')),str(SOURCE.with_name('ServerMemoryPolicy.java')),str(SOURCE.with_name('MemoryTelemetry.java')),str(test),*stubs],capture_output=True,text=True)
   if build.returncode:raise RuntimeError(build.stderr)
   reader,writer=os.pipe();child=os.fork()
   if child==0:
@@ -154,5 +243,15 @@ def main():
    run=subprocess.run(['java','-Xmx128m','-cp',str(out),'org.coh.nativecombined.ProcessSetMemoryTest',str(proc),str(zombie)],capture_output=True,text=True,timeout=30)
   finally:os.waitpid(child,0)
   if run.returncode:raise RuntimeError(run.stdout+run.stderr)
-  receipt=json.loads(run.stdout);receipt['source_sha256']=hashlib.sha256(SOURCE.read_bytes()).hexdigest();print(json.dumps(receipt))
+  exported=json.loads((out/'identity-export.json').read_text())
+  assert len(exported['process_identities'])==4 and len(json.dumps(exported,indent=2).encode())<14*1024
+  sys.path.insert(0,str(SOURCE.parents[7]/'tools'))
+  from fragment_interop_emulator_check import process_set_snapshot
+  process_set_snapshot(exported)
+  phase=json.loads((out/'identity-phase.json').read_text());phase_bytes=len(json.dumps(phase,indent=2).encode());assert phase_bytes<24*1024,phase_bytes
+  text=(out/'identity-bounded-phase.json').read_text();bounded=json.loads(text);group=bounded['same_uid_process_set'];process_set_snapshot(group)
+  assert text==json.dumps(bounded,indent=2) and len(text.encode())<24*1024
+  assert bounded['process_detail_budget_omission'] and len(group['process_identities'])==4 and len(group['processes'])>=5
+  assert group['detail_rows_omitted']==156-len(group['processes']) and group['total_pss_bytes']==156*((1<<50)-1000)+3985
+  receipt=json.loads(run.stdout);receipt.update(source_sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),bounded_identity_rows=4,worst_fixture_phase_bytes=phase_bytes,maximum_metadata_phase_bytes=len(text.encode()),maximum_metadata_detail_rows=len(group['processes']),memory_export_limit=24576,JSON_writer='Android-shaped host shim; indent2 independently checked');print(json.dumps(receipt))
 if __name__=='__main__':main()

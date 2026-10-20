@@ -116,6 +116,38 @@ def process_aggregation(value, rows):
     return aggregate
 
 
+def process_identities(value, rows, aggregate):
+    fields = value.get('process_identity_fields')
+    identities = value.get('process_identities')
+    if fields is None and identities is None:
+        return  # Older numeric-only reports remain readable.
+    need(fields == ['pid', 'start_ticks', 'comm', 'exe', 'argv', 'reason_flags']
+         and value.get('identity_detail_limit') == 4 and isinstance(identities, list) and len(identities) <= 4,
+         'process identity table bound/legend')
+    detail = {(row['pid'], row['start_ticks']): row for row in rows}
+    seen = set()
+    def text(item, cap):
+        return isinstance(item, str) and len(item) <= cap and all(32 <= ord(c) <= 126 for c in item)
+    for raw in identities:
+        need(isinstance(raw, list) and len(raw) == len(fields), 'process identity row width')
+        row = dict(zip(fields, raw));key = (row['pid'], row['start_ticks'])
+        need(key in detail and key not in seen and detail[key]['identity_stable']
+             and detail[key]['role'] == 'WINE_SERVERS', 'process identity missing/stale numeric row')
+        seen.add(key)
+        flags = row['reason_flags']
+        need(type(flags) is int and 0 <= flags <= 2047 and text(row['comm'], 64)
+             and (row['exe'] is None or text(row['exe'], 192)), 'process identity string/reason bound')
+        args = row['argv']
+        need(args is None or isinstance(args, list) and len(args) <= 16
+             and all(text(arg, 96) for arg in args) and sum(map(len, args)) <= 384, 'process identity argv bound')
+        need(row['exe'] is not None or flags & (32 | 64 | 1024), 'missing executable reason')
+        need(args is not None or flags & (8 | 16 | 1024), 'missing cmdline reason')
+        if flags & 1024:
+            need(row['comm'] == '' and row['exe'] is None and args is None, 'changed executable retained a label')
+    count = aggregate['categories']['WINE_SERVERS']['process_count'] if aggregate is not None else value['wine_processes']
+    need(value.get('wine_identity_rows_omitted') == count-len(identities), 'identity detail omission count')
+
+
 def process_set_snapshot(value):
     need(isinstance(value, dict) and value.get('schema') == 'coh-same-uid-process-memory-v1', 'process-set schema')
     if value.get('status') == 'not_sampled':
@@ -166,6 +198,7 @@ def process_set_snapshot(value):
     need(value['wine_processes'] == sum(row['role'] == 'WINE_SERVERS' for row in rows)
          and value['postgresql_processes'] == sum(row['role'] == 'POSTGRESQL' for row in rows), 'role counts differ')
     aggregate=process_aggregation(value,rows) if 'aggregation' in value else None
+    process_identities(value,rows,aggregate)
     if 'app_uid_cgroup' in value:app_uid_cgroup(value['app_uid_cgroup'],value['uid'])
     for metric in ('rss', 'pss'):
         if aggregate is None:

@@ -25,7 +25,8 @@ public class SystemClock {private static final long start=System.nanoTime();
  public static final java.util.concurrent.atomic.AtomicBoolean failWorkerOnce=new java.util.concurrent.atomic.AtomicBoolean();
  public static long elapsedRealtime(){if(Thread.currentThread().getName().equals("coh-memory-observer")&&failWorkerOnce.compareAndSet(true,false))throw new IllegalStateException("observation fixture failure");return 1+(System.nanoTime()-start)/1000000L;}}
 ''',
-    'org/json/JSONObject.java': '''package org.json;
+    'org/json/JSONException.java': 'package org.json; public final class JSONException extends Exception {public JSONException(String x){super(x);}}',
+    'org/json/JSONObject.java': r'''package org.json;
 public class JSONObject {private java.util.Map<String,Object> value;
  public JSONObject(java.util.Map<String,Object> x){value=x;}
  public JSONObject(String x){throw new IllegalArgumentException("JSON observation unavailable fixture");}
@@ -34,7 +35,18 @@ public class JSONObject {private java.util.Map<String,Object> value;
  public long getLong(String x){throw new IllegalArgumentException();}
  public boolean getBoolean(String x){throw new IllegalArgumentException();}
  public String getString(String x){throw new IllegalArgumentException();}
- public JSONObject getJSONObject(String x){throw new IllegalArgumentException();}}
+ public JSONObject getJSONObject(String x){throw new IllegalArgumentException();}
+ private static String spaces(int n){StringBuilder s=new StringBuilder();while(n-->0)s.append(' ');return s.toString();}
+ private static String quote(String value){StringBuilder s=new StringBuilder("\"");for(char c:value.toCharArray()){
+  if(c=='\\'||c=='\"')s.append('\\');if(c<32||c>126)s.append(String.format("\\u%04x",(int)c));else s.append(c);}return s.append('"').toString();}
+ private static String emit(Object v,int depth,int step){
+  if(v==null)return "null";if(v instanceof String)return quote((String)v);if(v instanceof Number||v instanceof Boolean)return v.toString();
+  StringBuilder s=new StringBuilder();boolean map=v instanceof java.util.Map;Iterable<?> items=map?((java.util.Map<?,?>)v).entrySet():(java.util.List<?>)v;
+  s.append(map?'{':'[');int count=0;for(Object item:items){if(count++>0)s.append(',');s.append('\n').append(spaces(depth+step));
+   if(map){java.util.Map.Entry<?,?> e=(java.util.Map.Entry<?,?>)item;s.append(quote(e.getKey().toString())).append(": ").append(emit(e.getValue(),depth+step,step));}
+   else s.append(emit(item,depth+step,step));}
+  if(count>0)s.append('\n').append(spaces(depth));return s.append(map?'}':']').toString();}
+ public String toString(int indent)throws JSONException{return emit(value,0,indent);}}
 ''',
     'org/coh/nativecombined/LocalNative.java': '''package org.coh.nativecombined;
 public class LocalNative {public static volatile int mode,calls;public static volatile boolean wrongThread;

@@ -114,9 +114,24 @@ final class MemoryTelemetry {
         snapshot.put("snapshot_elapsed_ms",now);snapshot.put("latest_sample_age_ms",latest==null||latest>now?null:now-latest);
         synchronized(MemoryTelemetry.class){snapshot.put("sampler_failures",sampleFailures);}
         snapshot.put("android_memory_callbacks",pressureSnapshot());
-        Map<String,Object> group=processSet.exportSnapshot();Object end=group.get("end_elapsed_ms");
-        group.put("snapshot_age_ms",end instanceof Long&&((Long)end)<=now?now-((Long)end):null);
-        snapshot.put("same_uid_process_set",group);
-        return new JSONObject(snapshot);
+        return boundedSnapshot(snapshot,processSet,now);
+    }
+    /** Only optional numeric detail shrinks. Every scanned-process aggregate,
+     * all phase slots and four PID/start_ticks identity joins remain present.
+     * At most six bounded candidates are encoded; no proc rescan occurs. */
+    static JSONObject boundedSnapshot(Map<String,Object> snapshot,ProcessSetMemory observer,long now){
+        JSONObject encoded=null;
+        for(int limit:new int[]{32,24,16,8,5,0}){
+            Map<String,Object> group=observer.exportSnapshot(limit==0?5:limit,limit==0);Object end=group.get("end_elapsed_ms");
+            group.put("snapshot_age_ms",end instanceof Long&&((Long)end)<=now?now-((Long)end):null);
+            snapshot.put("same_uid_process_set",group);snapshot.put("process_detail_budget_omission",limit<32);
+            encoded=new JSONObject(snapshot);
+            try{if(encoded.toString(2).getBytes(java.nio.charset.StandardCharsets.UTF_8).length<24*1024)return encoded;}
+            catch(org.json.JSONException unavailable){/* All candidate values are bounded observation scalars. */}
+        }
+        // The minimum candidate includes the app and every priority identity.
+        // Its complete emitter bound is exercised with maximum source paths,
+        // JSON escapes, counters and all nine phase records by the host check.
+        return encoded;
     }
 }

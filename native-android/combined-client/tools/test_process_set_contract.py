@@ -16,6 +16,28 @@ def sample():
 
 
 class ProcessSetContract(unittest.TestCase):
+    def test_bounded_identity_join_and_legacy_numeric_reader(self):
+        value=sample();value.update(process_identity_fields=['pid','start_ticks','comm','exe','argv','reason_flags'],
+            process_identities=[[20,2000,'FEXInterpreter','/runtime/FEXInterpreter',['FEXInterpreter','wine64','MapServer.exe','--password=<redacted>'],128]],
+            identity_detail_limit=4,wine_identity_rows_omitted=0)
+        process_set_snapshot(value)
+        for change in ('pid','ticks','role','duplicate','exe_limit','arg_limit','argc','reason','missing_exe','missing_cmdline','changed'):
+            bad=copy.deepcopy(value);row=bad['process_identities'][0]
+            if change=='pid':row[0]=40
+            if change=='ticks':row[1]=3000
+            if change=='role':row[0:2]=[10,1000]
+            if change=='duplicate':bad['process_identities'].append(list(row))
+            if change=='exe_limit':row[3]='x'*193
+            if change=='arg_limit':row[4]=['x'*97]
+            if change=='argc':row[4]=['x']*17
+            if change=='reason':row[5]=2048
+            if change=='missing_exe':row[3]=None
+            if change=='missing_cmdline':row[4]=None
+            if change=='changed':row[5]=1024
+            with self.subTest(change=change),self.assertRaises(ValueError):process_set_snapshot(bad)
+        value['process_identities'][0][3:6]=[None,None,80];process_set_snapshot(value)
+        value['process_identities'][0][2:6]=['',None,None,1024];process_set_snapshot(value)
+
     def test_known_group_and_unknown_before_observation(self):
         value=sample();self.assertIs(process_set_snapshot(value),value)
         process_set_snapshot(dict(schema=value['schema'],status='not_sampled',total_rss_bytes=None,total_pss_bytes=None))

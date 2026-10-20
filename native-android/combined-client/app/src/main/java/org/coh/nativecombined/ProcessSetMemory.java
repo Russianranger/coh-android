@@ -9,10 +9,28 @@ import java.util.function.LongSupplier;
 /** Read-only OS observations, never process ownership, cleanup or admission. */
 final class ProcessSetMemory {
     static final int PROCESS_LIMIT=64, DIRECTORY_LIMIT=8192, FILE_LIMIT=16384;
+    static final int IDENTITY_LIMIT=4, COMMAND_LIMIT=4096, COMM_LIMIT=64, EXE_LIMIT=192, ARGV_LIMIT=384, ARGUMENT_LIMIT=16;
     static final long INTERVAL_MS=5000, WINDOW_LIMIT_MS=1500, METRIC_LIMIT=1L<<50;
-    interface ProcReader {String read(Path path,int cap)throws IOException;}
+    private static final class Prefix {
+        final String text;final boolean truncated;
+        Prefix(String text,int cap){this.truncated=text.length()>cap;this.text=truncated?text.substring(0,cap):text;}
+    }
+    interface ProcReader {
+        String read(Path path,int cap)throws IOException;
+        default Prefix prefix(Path path,int cap)throws IOException{return new Prefix(read(path,cap+1),cap);}
+        default String link(Path path)throws IOException{return Files.readSymbolicLink(path).toString();}
+    }
     private final ProcReader reader;
-    ProcessSetMemory(){this(ProcessSetMemory::readFile);}
+    ProcessSetMemory(){this(new ProcReader(){
+        public String read(Path path,int cap)throws IOException{return readFile(path,cap);}
+        public Prefix prefix(Path path,int cap)throws IOException {
+            try(InputStream input=Files.newInputStream(path);ByteArrayOutputStream out=new ByteArrayOutputStream()){
+                byte[] buffer=new byte[1024];int n;
+                while(out.size()<=cap&&(n=input.read(buffer,0,Math.min(buffer.length,cap+1-out.size())))>0)out.write(buffer,0,n);
+                return new Prefix(new String(out.toByteArray(),StandardCharsets.US_ASCII),cap);
+            }
+        }
+    });}
     ProcessSetMemory(ProcReader reader){this.reader=Objects.requireNonNull(reader);}
     private String read(Path path,int cap)throws IOException {String value=reader.read(path,cap);if(value==null||value.length()>cap)throw new IOException("PROC_FILE_LIMIT");return value;}
     private Map<String,Object> latest;
@@ -55,19 +73,93 @@ final class ProcessSetMemory {
         return fields.length>19?number(fields[19]):null;
     }
     private static String namedRole(String word) {
-        String base=word.replace('\\','/');int at=base.lastIndexOf('/');base=base.substring(at+1).toLowerCase(Locale.ROOT);
+        String base=basename(word);
         if(base.equals("postgres")||base.startsWith("postgres:"))return "POSTGRESQL";
         if(Arrays.asList("wine","wine64","wine-preloader","wine64-preloader","wineserver","dbserver.exe","mapserver.exe","wineboot.exe","services.exe","explorer.exe","rpcss.exe","winedevice.exe").contains(base))return "WINE_SERVERS";
         return null;
+    }
+    private static String basename(String word){String base=word.replace('\\','/');return base.substring(base.lastIndexOf('/')+1).toLowerCase(Locale.ROOT);}
+    private static boolean launcher(String word){return Arrays.asList("fexinterpreter","fexloader","wine","wine64","wine-preloader","wine64-preloader").contains(basename(word));}
+    private static List<String> arguments(String command,int limit){
+        List<String> args=new ArrayList<>();int begin=0;
+        while(begin<command.length()&&args.size()<limit){int end=command.indexOf('\0',begin);if(end<0)end=command.length();args.add(command.substring(begin,end));begin=end+1;}
+        return args;
+    }
+    private static String serverName(String name,String command){
+        String known=basename(name);if(known.equals("mapserver.exe")||known.equals("dbserver.exe"))return known;
+        if(command!=null)for(String arg:arguments(command,4)){
+            known=basename(arg);if(known.equals("mapserver.exe")||known.equals("dbserver.exe"))return known;
+            if(!launcher(arg))break;
+        }
+        return "";
+    }
+    private static String boundedText(String value,int cap){
+        StringBuilder out=new StringBuilder(Math.min(value.length(),cap));
+        for(int i=0;i<value.length()&&i<cap;i++){char c=value.charAt(i);out.append(c>=32&&c<=126?c:'?');}
+        return out.toString();
+    }
+    private static String boundedPath(String value,int cap){
+        if(value.length()<=cap)return boundedText(value,cap);
+        int at=Math.max(value.lastIndexOf('/'),value.lastIndexOf('\\'));String base=value.substring(at+1);
+        if(base.length()>cap-3)return "..."+boundedText(base.substring(base.length()-(cap-3)),cap-3);
+        return boundedText(value,cap-base.length()-3)+"..."+boundedText(base,base.length());
+    }
+    private static boolean executableArgument(String arg){
+        String base=basename(arg);
+        return launcher(arg)||namedRole(arg)!=null||base.endsWith(".exe");
+    }
+    private static List<String> compactArguments(List<String> args){
+        List<String> compact=new ArrayList<>();int chars=0;
+        for(String arg:args){String name=arg;
+            if(executableArgument(arg)){String path=arg.replace('\\','/');name=path.substring(path.lastIndexOf('/')+1);}
+            if(name.length()>64)name=boundedPath(name,64);if(chars+name.length()>128)break;
+            compact.add(name);chars+=name.length();
+        }
+        return compact;
+    }
+    private static String optionName(String arg){
+        int end=arg.length();for(char separator:new char[]{'=',':'}){int at=arg.indexOf(separator,1);if(at>=0)end=Math.min(end,at);}
+        String key=arg.substring(0,end);
+        // Attached short values (-pSECRET, -Uname) are never option names.
+        if(key.length()>2&&key.charAt(0)=='-'&&"pPUu".indexOf(key.charAt(1))>=0)return key.substring(0,2)+"=<redacted>";
+        if(!key.matches("(?:--?|/)[A-Za-z][A-Za-z0-9_-]{0,47}"))return "<redacted>";
+        return end<arg.length()?key+"=<redacted>":key;
+    }
+    private static Map<String,Object> identity(String name,String exe,Prefix command,int initialFlags){
+        int flags=initialFlags;Map<String,Object> out=new LinkedHashMap<>();
+        if(name.length()>COMM_LIMIT)flags|=1;if(exe!=null&&exe.length()>EXE_LIMIT)flags|=2;
+        out.put("comm",boundedText(name,COMM_LIMIT));out.put("exe",exe==null?null:boundedPath(exe,EXE_LIMIT));
+        List<String> clean=new ArrayList<>();int chars=0;
+        if(command!=null){
+            if(command.truncated)flags|=4;if(command.text.isEmpty())flags|=512;
+            List<String> args=arguments(command.text,ARGUMENT_LIMIT+1);boolean chain=true;
+            for(int i=0;i<args.size();i++){
+                if(i==ARGUMENT_LIMIT){flags|=256;break;}
+                String arg=args.get(i),safe;
+                // Keep executable argv only through a genuine FEX/Wine chain.
+                // Every other positional/option value (including shell text,
+                // credentials, URIs and SQL) is redacted, not denylist-scanned.
+                if(chain&&i<4&&executableArgument(arg)&&arg.indexOf('=')<0&&arg.indexOf("://")<0){safe=arg;chain=launcher(arg);}
+                else{chain=false;safe=optionName(arg);if(safe.equals("<redacted>")||!safe.equals(arg))flags|=128;}
+                if(safe.length()>96){safe=boundedPath(safe,96);flags|=256;}
+                if(chars+safe.length()>ARGV_LIMIT){flags|=256;break;}
+                clean.add(boundedText(safe,96));chars+=safe.length();
+            }
+        }
+        out.put("argv",command==null?null:clean);out.put("reason_flags",flags);return out;
+    }
+    private static Map<String,String> identityCodes(){
+        String[] names={"COMM_TRUNCATED","EXE_TRUNCATED","CMDLINE_TRUNCATED","CMDLINE_READ_FAILED","CMDLINE_PERMISSION_DENIED","EXE_READ_FAILED","EXE_PERMISSION_DENIED","ARGUMENT_VALUES_REDACTED","ARGV_OUTPUT_TRUNCATED","CMDLINE_EMPTY","EXE_CHANGED_DURING_SAMPLE"};
+        Map<String,String> codes=new LinkedHashMap<>();for(int i=0;i<names.length;i++)codes.put(Integer.toString(1<<i),names[i]);return codes;
     }
     private static String role(String name,String command,boolean self) {
         if(self)return "ANDROID_APP_AND_NATIVE_CLIENT";
         String known=namedRole(name);if(known!=null)return known;
         // Only executable positions; an arbitrary SQL/password argument must
         // never turn another process into PostgreSQL or Wine.
-        if(command!=null){String[] args=command.split("\\x00",3);for(int i=0;i<Math.min(args.length,2);i++){
-            known=namedRole(args[i]);if(known!=null)return known;
-        }}
+        if(command!=null)for(String arg:arguments(command,4)){
+            known=namedRole(arg);if(known!=null)return known;if(!launcher(arg))break;
+        }
         return "OTHER_APP_UID";
     }
     private static Map<String,Object> unknown(long pid,String role) {
@@ -82,24 +174,28 @@ final class ProcessSetMemory {
         return fields.length>21&&"Z".equals(fields[0])&&Long.valueOf(0).equals(number(fields[20]))
                 &&Long.valueOf(0).equals(number(fields[21]));
     }
-    private String command(Path dir) {
-        try{return read(dir.resolve("cmdline"),4096);}catch(IOException unavailable){return null;}
-    }
     private Map<String,Object> process(Path root,long pid,Values info,boolean self) {
         Path dir=root.resolve(Long.toString(pid));Map<String,Object> row=unknown(pid,self?"ANDROID_APP_AND_NATIVE_CLIENT":"OTHER_APP_UID");
         try {
             String beforeRaw=read(dir.resolve("stat"),FILE_LIMIT);Long before=startTicks(beforeRaw,pid);if(before==null)return row;
             Values stable=status(read(dir.resolve("status"),FILE_LIMIT));if(stable.uid!=info.uid)return row;
-            String command=command(dir),role=role(stable.name,command,self);Long pss=null;int unavailable=stable.rss==null?1:0;
-            if(!self&&namedRole(stable.name)==null&&(command==null||command.isEmpty()))unavailable|=32;
+            Prefix command=null;String exe=null;int identityFlags=0;
+            try{command=reader.prefix(dir.resolve("cmdline"),COMMAND_LIMIT);}catch(AccessDeniedException|SecurityException denied){identityFlags|=16;}catch(IOException unavailable){identityFlags|=8;}
+            try{exe=reader.link(dir.resolve("exe"));}catch(AccessDeniedException|SecurityException denied){identityFlags|=64;}catch(IOException unavailable){identityFlags|=32;}
+            String raw=command==null?null:command.text,role=role(stable.name,raw,self);Long pss=null;int unavailable=stable.rss==null?1:0;
+            if(!self&&namedRole(stable.name)==null&&(raw==null||raw.isEmpty()))unavailable|=32;
             boolean zombie=emptyZombie(beforeRaw,pid);
             if(!zombie)try{pss=kib(read(dir.resolve("smaps_rollup"),FILE_LIMIT),"Pss:");if(pss==null)unavailable|=2;}
             catch(IOException missing){unavailable|=4;}
+            boolean executableChanged=false;
+            if(exe!=null)try{executableChanged=!exe.equals(reader.link(dir.resolve("exe")));if(executableChanged){exe=null;command=null;identityFlags|=1024;}}
+            catch(AccessDeniedException|SecurityException denied){identityFlags|=64;}catch(IOException unreadableExe){identityFlags|=32;}
             String afterRaw=read(dir.resolve("stat"),FILE_LIMIT);Long after=startTicks(afterRaw,pid);
             if(!before.equals(after))return row;
             zombie=zombie&&emptyZombie(afterRaw,pid);
             if(!zombie&&pss==null&&(unavailable&6)==0)unavailable|=2;
             row.put("start_ticks",before);row.put("role",role);row.put("rss_bytes",zombie?Long.valueOf(0):stable.rss);row.put("pss_bytes",zombie?Long.valueOf(0):pss);row.put("identity_stable",true);
+            row.put("_server_name",executableChanged?"":serverName(stable.name,raw));row.put("_identity",identity(executableChanged?"":stable.name,exe,command,identityFlags));
             row.remove("unavailable");
             if(zombie){row.put("zombie_no_address_space",true);if((unavailable&32)!=0)row.put("unavailable",32);}
             else if(unavailable!=0)row.put("unavailable",unavailable);
@@ -114,6 +210,37 @@ final class ProcessSetMemory {
     private static Long add(Long sum,Long value){return sum==null||value==null||value>Long.MAX_VALUE-sum?null:sum+value;}
     private static final String[] ROLES={"ANDROID_APP_AND_NATIVE_CLIENT","WINE_SERVERS","POSTGRESQL","OTHER_APP_UID"};
     private static int roleIndex(Map<String,Object> row){for(int i=0;i<ROLES.length;i++)if(ROLES[i].equals(row.get("role")))return i;return 3;}
+    private static long metric(Map<String,Object> row,String key){Object n=row.get(key);return n instanceof Long?(Long)n:-1;}
+    private static int priority(Map<String,Object> row){int role=roleIndex(row);return role==0?0:!"".equals(row.getOrDefault("_server_name",""))?1:role==1?2:role==2?3:4;}
+    private static int compareDetail(Map<String,Object>a,Map<String,Object>b){
+        int rank=Integer.compare(priority(a),priority(b));if(rank!=0)return rank;
+        rank=Long.compare(metric(b,"pss_bytes"),metric(a,"pss_bytes"));if(rank!=0)return rank;
+        rank=Long.compare(metric(b,"rss_bytes"),metric(a,"rss_bytes"));return rank!=0?rank:Long.compare((Long)a.get("pid"),(Long)b.get("pid"));
+    }
+    private static Map<String,Object> champion(List<Map<String,Object>> rows,Map<String,Object> candidate,String server,String metric){
+        Map<String,Object> best=null;
+        for(int i=0;i<=rows.size();i++){
+            Map<String,Object> row=i==rows.size()?candidate:rows.get(i);if(row==null||roleIndex(row)!=1||(server!=null&&!server.equals(row.get("_server_name"))))continue;
+            if(best==null||metric(row,metric)>metric(best,metric)||(metric(row,metric)==metric(best,metric)&&compareDetail(row,best)<0))best=row;
+        }
+        return best;
+    }
+    private static void retain(List<Map<String,Object>> rows,Map<String,Object> candidate){
+        if(rows.size()<PROCESS_LIMIT){rows.add(candidate);return;}
+        // These four bounded champions survive discovery order and the64-row
+        // detail cap. Aggregate accounting has already consumed every row.
+        Map<String,Object> map=champion(rows,candidate,"mapserver.exe","pss_bytes"),db=champion(rows,candidate,"dbserver.exe","pss_bytes"),
+            pss=champion(rows,candidate,null,"pss_bytes"),rss=champion(rows,candidate,null,"rss_bytes");
+        int worst=-1;
+        for(int i=1;i<rows.size();i++){Map<String,Object> row=rows.get(i);if(row==map||row==db||row==pss||row==rss)continue;if(worst<0||compareDetail(row,rows.get(worst))>0)worst=i;}
+        if(worst>=0&&(candidate==map||candidate==db||candidate==pss||candidate==rss||compareDetail(candidate,rows.get(worst))<0))rows.set(worst,candidate);
+    }
+    private static void unique(List<Map<String,Object>> rows,Map<String,Object> row){if(row!=null&&!rows.contains(row))rows.add(row);}
+    private static List<Map<String,Object>> identityRows(List<Map<String,Object>> rows){
+        List<Map<String,Object>> chosen=new ArrayList<>();unique(chosen,champion(rows,null,"mapserver.exe","pss_bytes"));unique(chosen,champion(rows,null,"dbserver.exe","pss_bytes"));
+        unique(chosen,champion(rows,null,null,"pss_bytes"));unique(chosen,champion(rows,null,null,"rss_bytes"));
+        for(Map<String,Object> row:rows)if(chosen.size()<IDENTITY_LIMIT&&roleIndex(row)==1)unique(chosen,row);return chosen;
+    }
     static final class Aggregate {
         long count,missingRss,missingPss,zombies,unstable,unclassified;Long rss=0L,pss=0L;
         void accept(Map<String,Object> row){
@@ -165,11 +292,7 @@ final class ProcessSetMemory {
                 seen.add(pid);Map<String,Object> measured=process(root,pid,values,false);
                 total.accept(measured);groups[roleIndex(measured)].accept(measured);
                 if(measured.get("unavailable") instanceof Integer)unavailableFlags|=(Integer)measured.get("unavailable");
-                if(rows.size()==PROCESS_LIMIT){
-                    omitted++;
-                    // Detail retention is independent of streaming accounting.
-                    if(roleIndex(measured)!=3)for(int i=rows.size()-1;i>0;i--)if(roleIndex(rows.get(i))==3){rows.set(i,measured);break;}
-                }else rows.add(measured);
+                if(rows.size()==PROCESS_LIMIT)omitted++;retain(rows,measured);
             }
         }catch(IOException|RuntimeException unavailable){complete=false;}
         long end=clock.getAsLong();if(end<begin||end-begin>WINDOW_LIMIT_MS)complete=false;
@@ -202,13 +325,18 @@ final class ProcessSetMemory {
             if(samples<Long.MAX_VALUE)samples++;out.put("samples",samples);latest=out;
         }
     }
-    Map<String,Object> exportSnapshot() {
+    Map<String,Object> exportSnapshot(){return exportSnapshot(32,false);}
+    Map<String,Object> exportSnapshot(int requestedRows){return exportSnapshot(requestedRows,false);}
+    Map<String,Object> exportSnapshot(int requestedRows,boolean compactArgv) {
         Map<String,Object> copy=snapshot();
         @SuppressWarnings("unchecked") List<Map<String,Object>> rows=(List<Map<String,Object>>)copy.get("processes");
         if(rows==null)return copy;
         // Aggregates preserve every measurement; optional PID detail is bounded
         // separately so category and cgroup metadata fit the unchanged reader.
-        List<Map<String,Object>> detail=new ArrayList<>();for(int category=0;category<ROLES.length;category++)for(Map<String,Object> row:rows)if(roleIndex(row)==category&&detail.size()<32)detail.add(row);
+        int detailLimit=Math.max(5,Math.min(32,requestedRows));
+        rows.sort(ProcessSetMemory::compareDetail);List<Map<String,Object>> identities=identityRows(rows),detail=new ArrayList<>();
+        for(Map<String,Object> row:rows)if(roleIndex(row)==0)unique(detail,row);for(Map<String,Object> row:identities)unique(detail,row);
+        for(Map<String,Object> row:rows)if(detail.size()<detailLimit)unique(detail,row);
         int limit=detail.size(),wine=0,postgres=0,missing=0;
         List<String> fields=Arrays.asList("pid","start_ticks","role","rss_bytes","pss_bytes","identity_stable","unavailable","zombie_no_address_space");
         List<List<Object>> compact=new ArrayList<>();
@@ -220,8 +348,23 @@ final class ProcessSetMemory {
         @SuppressWarnings("unchecked") Map<String,Object> aggregate=(Map<String,Object>)copy.get("aggregation");
         @SuppressWarnings("unchecked") Map<String,Object> total=(Map<String,Object>)aggregate.get("total");
         long omitted=((Number)total.get("process_count")).longValue()-limit;
-        copy.put("detail_selection","app_then_wine_then_postgresql_then_other");copy.put("detail_export_limit",32);copy.put("detail_rows_omitted",omitted);copy.put("omitted_same_uid_processes",omitted);
+        copy.put("detail_selection","app_map_db_largest_wine_pss_rss_then_role_pss");copy.put("detail_export_limit",detailLimit);copy.put("detail_rows_omitted",omitted);copy.put("omitted_same_uid_processes",omitted);
         copy.put("process_count",limit);copy.put("wine_processes",wine);copy.put("postgresql_processes",postgres);copy.put("incomplete_process_metrics",missing);
+        // Keep the original8-field table intact for existing report readers.
+        // Only four joined rows carry strings, so the24KiB export ceiling is
+        // unchanged even with64 retained rows and all aggregate categories.
+        List<String> identityFields=Arrays.asList("pid","start_ticks","comm","exe","argv","reason_flags");List<List<Object>> identityValues=new ArrayList<>();
+        for(Map<String,Object> row:identities){
+            @SuppressWarnings("unchecked") Map<String,Object> value=(Map<String,Object>)row.get("_identity");if(value==null)continue;
+            Object args=value.get("argv");int flags=(Integer)value.get("reason_flags");
+            if(compactArgv&&args!=null){@SuppressWarnings("unchecked") List<String> original=(List<String>)args;List<String> compactNames=compactArguments(original);if(!compactNames.equals(original))flags|=256;args=compactNames;}
+            identityValues.add(Arrays.asList(row.get("pid"),row.get("start_ticks"),value.get("comm"),value.get("exe"),args,flags));
+        }
+        copy.put("process_identity_fields",identityFields);copy.put("process_identities",identityValues);copy.put("identity_detail_limit",IDENTITY_LIMIT);
+        copy.put("identity_reason_codes",identityCodes());copy.put("identity_source","proc status comm, exe readlink, redacted cmdline; PID/start_ticks checked; non-atomic");
+        @SuppressWarnings("unchecked") Map<String,Object> categories=(Map<String,Object>)aggregate.get("categories");
+        @SuppressWarnings("unchecked") Map<String,Object> allWine=(Map<String,Object>)categories.get("WINE_SERVERS");
+        copy.put("wine_identity_rows_omitted",((Number)allWine.get("process_count")).longValue()-identityValues.size());
         copy.put("process_row_fields",fields);copy.put("processes",compact);return copy;
     }
     private static Object detached(Object value){
