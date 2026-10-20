@@ -60,6 +60,11 @@ def main():
  legacy=module('original_receiver_checker',HERE/'check_original_costume_receive.py');gen=module('original_receiver_source',HERE/'prepare_original_costume_receive.py');generated,source=gen.generate(a.source_root);assert generated==(HERE/'original_costume_receive.inc').read_text()
  archive=HERE/'qualification/costume-builder-20261017/offline-primary-slots.bin.gz';raw=gzip.decompress(archive.read_bytes());assert len(raw)==641477 and sha(raw)==RAW_SHA;rawfile=work/'client-primary-slots.bin';rawfile.write_bytes(raw);expected,tables=projection(raw)
  inputs=[HERE/n for n in ['coh_original_costume_receive.c','coh_original_costume_receive.h','coh_client_costume_slots.h','original_costume_receive.inc','test_client_costume_slots.c','test_original_costume_receive.c','check_client_costume_slots.py','check_original_costume_receive.py','costume_oracle_shim.h']]+[archive]
+ dependency_text=subprocess.check_output(['cc','-std=c99','-MM',str(HERE/'coh_original_costume_receive.c'),str(HERE/'../replication/coh_replication.c'),str(HERE/'test_client_costume_slots.c')],text=True)
+ for rule in dependency_text.replace('\\\n',' ').splitlines():
+  for name in rule.split(':',1)[1].split():
+   path=Path(name).resolve()
+   if path not in inputs:inputs.append(path)
  before={str(p.relative_to(ROOT)):sha(p.read_bytes())for p in inputs}
  literal,producer=legacy.fixtures(a.source_root,work,gen.extract);fixture,indexed=indexed_sender(work,legacy,tables)
  result={'schema':'coh-client-costume-slot-consumer-v1','source':source,'raw_sha256':RAW_SHA,'raw_bytes':len(raw),'index_bytes':len(expected),'independent_offset_index_sha256':sha(expected),'original_sender':producer,'indexed_sender':indexed,'inputs_sha256':before,'native':{}}
@@ -71,7 +76,7 @@ def main():
  for path in(work/'release').glob('*.su'):
   for line in path.read_text().splitlines():
    name,size,kind=line.split('\t')
-   if 'coh_original_costume_receive.c:'in name or 'original_costume_receive.inc:'in name:frames.append({'name':name,'bytes':int(size),'kind':kind})
+   if 'coh_original_costume_receive.c:'in name or 'original_costume_receive.inc:'in name or name.rsplit(':',1)[-1]in('valid','coh_rep_read','coh_rep_pack'):frames.append({'name':name,'bytes':int(size),'kind':kind})
  assert sum(x['bytes']for x in frames)<4096
  result['memory']={'raw_bytes':641477,'index_bytes':134144,'retained_payload_and_index':775621,'workspace_bytes':65536,'call_stack_reserve':4096,'prepare_stack_reserve':1024,'conservative_native_frame_sum':sum(x['bytes']for x in frames),'frames':frames,'initial_aggregate_limit':8388608,'device_RSS_PSS':None}
  assert before=={str(p.relative_to(ROOT)):sha(p.read_bytes())for p in inputs}
