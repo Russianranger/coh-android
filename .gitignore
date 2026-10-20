@@ -11,3 +11,33 @@ __pycache__/
 
 # Reproduced from selected verified public donor ranges.
 /assets/client-visual-assets.zip
+
+# Build and diagnostic outputs. Existing checker-pinned tracked evidence stays.
+*.stdout
+*.stderr
+*.log
+*.su
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.class
+.gradle/
+.cxx/
+.externalNativeBuild/
+**/build/
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+
+# Raw evidence archives belong in the evidence manifest unless a checker pins them.
+*.gz
+*.zip
+
+# Generated packages and local qualification outputs.
+*.apk
+*.aab
+*.dex
+*.hprof
+/native-android/results/

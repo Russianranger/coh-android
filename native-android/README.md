@@ -1,4 +1,9 @@
-# Native Android experiments - Phase 2
+# Native Android development
+
+See [the current roadmap](../ROADMAP.md) for the accepted Combined 0.1.14
+stage, current indexed geometry string blocker, and next three steps. The
+sections below retain the original experiment and qualification history.
+
 
 > Gates 22–24 are physically accepted on AYN Thor for Session Client 0.3.0. See [the acceptance receipt](evidence/phases22-24/thor-acceptance-20261015.json). No repeat of this test is required. Historical qualification sections below retain their original timing.
 

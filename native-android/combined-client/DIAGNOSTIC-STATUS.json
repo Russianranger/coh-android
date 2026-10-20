@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "series": "Combined Android diagnostic",
+  "updated_date": "2026-10-20",
+  "integration_branch": "native-android",
+  "accepted_version": "0.1.14",
+  "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
+  "stage41_passed": true,
+  "rendered": "diagnostic box at selected entity real pose",
+  "blocker": "first ordinary indexed geometry string, part 0, bit 5864; index not yet read",
+  "planned_steps_to_source_world_with_entity": 3,
+  "next_steps": [
+    "Bind retained original CLIENT ordinary, extra and palette slots and continue original receivers.",
+    "Resolve and render one genuine costume model and materials at the observed pose.",
+    "Render bounded authentic Atlas Park geometry/materials at that pose and validate on Thor."
+  ],
+  "working_rules": [
+    "Update this diagnostic series status in place.",
+    "Commit raw outputs only when a checker pins them.",
+    "Keep accepted physical evidence, APK receipts, source locks and inputs unchanged."
+  ],
+  "cleanup": {
+    "baseline_commit": "8f776dc375f2e2c624aa06de42289ee315ea4368",
+    "archive_branch": "archive/native-evidence-2026-10-20",
+    "manifest": "EVIDENCE-MANIFEST.json",
+    "raw_files_archived": 213,
+    "failed_copy_files_archived": 7,
+    "raw_failed_overlap": 2,
+    "files_removed": 228,
+    "workflow_files_removed": 10,
+    "workflow_files_added": 1,
+    "workflows_before": 185,
+    "workflows_after": 176,
+    "referenced_gameplay_testing_documents_retained": 47,
+    "checker_changes": [],
+    "behavior_changes": false,
+    "commits": {
+      "archive": "4e89b54804505ca1ed5c61b16ffdefcedad85f1b",
+      "workflow": "76d6e5a057df33757a8315f5b13ebef6db375480"
+    },
+    "tracked_bytes_before": 2525536910
+  },
+  "validation": {
+    "before": {
+      "check_all": "passed with sanitizers and combined host build",
+      "body_catalog_checkers": 8,
+      "combined_source_checkers": 9
+    },
+    "after": {
+      "check_all": "passed with sanitizers and combined host build",
+      "body_catalog_checkers": 8,
+      "combined_source_checkers": 9,
+      "workflow_contract_and_selectors": "passed",
+      "archive_byte_identity": "228 original files verified",
+      "protected_inputs": "unchanged",
+      "locally_tested_tree": "cf7303afddb85ca85e3562e1e0f10ae37b6bcd64"
+    },
+    "corpus": "Five exact authentic supported-format assets, pinned codecs, audio fixture and accepted world.bin. A broad-corpus ARGB8888 texture failure was observed before cleanup; uncompressed DDS is documented unsupported. Its source bytes were preserved outside the admitted test subset.",
+    "android_or_device_retest": "Not required for cleanup; no app code, APK or runtime inputs changed."
+  },
+  "ci": {
+    "workflow": ".github/workflows/native-qualification.yml",
+    "purpose": "combined-source",
+    "status": "pending one workflow_dispatch after publication",
+    "publishes_apk_or_release": false
+  }
+}
