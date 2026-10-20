@@ -94,6 +94,7 @@ name: Native source qualification
         - body-catalog
         - combined-source
         - combined-diagnostic
+        - combined-framework
         default: body-catalog
       diagnostic_profile:
         description: Signed local diagnostic profile; ignored outside combined-diagnostic
@@ -143,10 +144,26 @@ jobs:
         test "$(gh api repos/Russianranger/coh-android/branches/native-android --jq .commit.sha)" = "$EXPECTED_SHA"
         gh api --method POST repos/Russianranger/coh-android/actions/workflows/native-qualification.yml/dispatches \
           -f ref=native-android -f inputs[purpose]=combined-source -f inputs[qualifier]=all
+  dispatch-fullscreen-framework:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name == 'push' && contains(github.event.head_commit.message, '[fullscreen-framework-dispatch]') && github.run_attempt == '1'
+    permissions:
+      contents: read
+      actions: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+    - name: Dispatch exact fullscreen framework qualification once
+      env:
+        GH_TOKEN: ${{ github.token }}
+        EXPECTED_SHA: ${{ github.sha }}
+      run: |
+        test "$(gh api repos/Russianranger/coh-android/branches/native-android --jq .commit.sha)" = "$EXPECTED_SHA"
+        gh api --method POST repos/Russianranger/coh-android/actions/workflows/native-qualification.yml/dispatches \
+          -f ref=native-android -f inputs[purpose]=combined-framework
   body-plan:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && ((github.event_name
       == 'workflow_dispatch' && inputs.purpose == 'body-catalog') || (github.event_name == 'push' && !contains(github.event.head_commit.message,
-      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]')
+      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-framework-dispatch]')
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
@@ -423,5 +440,196 @@ jobs:
       with:
         name: combined-${{ env.DIAGNOSTIC_PROFILE }}-${{ github.sha }}
         path: native-android/results/combined-neighborhood-diagnostic/
+        retention-days: 14
+        if-no-files-found: error
+
+  combined-framework:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name == 'workflow_dispatch' && inputs.purpose == 'combined-framework'
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+        sparse-checkout: |
+          .github
+          native-android
+          tools
+          android
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools
+        log-accepted-android-sdk-licenses: false
+    - name: Install existing framework-only build tools
+      run: |
+        sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+    - name: Fetch the exact original fullscreen packages
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh api repos/Russianranger/coh-android/actions/artifacts/12298379427/zip > "$RUNNER_TEMP/combined-fullscreen-candidate.zip"
+    - name: Admit exact APK bytes and unchanged shipping source
+      run: |
+        python3 - <<'PYFRAMEWORK'
+        import hashlib,json,os,pathlib,re,stat,subprocess,zipfile
+        BASE='81a47f8ccef15c26e02b5cbf2feb4b99ac465139'
+        TREE='c2f7bb34cfcbbcb98f91d4b2653dacc24c577b0c'
+        ARCHIVE_BYTES=25677911
+        ARCHIVE_SHA='794c6c45ee0bde9002d7dcc5d02956137bc427171f3a6496f879f4b3a02c7d6d'
+        ALLOWED={'native-android/combined-client/tools/emulator_check.py',
+         'native-android/combined-client/tools/test_fullscreen_readiness.py',
+         'native-android/combined-client/tools/test_framework_requalification.py',
+         '.github/workflows/native-qualification.yml','ROADMAP.md',
+         'native-android/combined-client/DIAGNOSTIC-STATUS.json'}
+        PINS={
+         'CoH-Native-Combined-0.1.17-fullscreen-diagnostic-arm64.apk':(15219799,'7167f6268e9c73e182535edd53717cd576fb8708fff1e79d8bb21118c3a47bc0'),
+         'CoH-Native-Combined-0.1.17-fullscreen-diagnostic-x86_64.apk':(14519689,'e53ea539d718c85ae4c2046119da9a7cf07f83f9945e2fed97611b6f18739846'),
+         'arm64-package.json':(2127,'ffcfbc2a53441339d87c83cafe43c2709d0d138130ab5ebae58068b1c351d176'),
+         'x86_64-package.json':(1814,'6356aaa9174c98dc456dcf80d224db2b9df781fd00de840dde2a3ca3d17f07a2'),
+         'arm64-interop-dso.json':(78829,'4ae91509530a62b9c3e3240820501ee88b14f092e4ab248705a5cc768af01a3a'),
+         'x86_64-interop-dso.json':(78826,'ab9cb3f9ea5b8826c376afe28a5daab6df2400627e3106eee5dead05554d00ea')}
+        SIGNER='9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522'
+
+        def need(ok,why):
+         if not ok:raise ValueError(why)
+        def git(root,*args):return subprocess.check_output(['git','-C',str(root),*args])
+        def digest(path):
+         h=hashlib.sha256()
+         with path.open('rb') as stream:
+          for chunk in iter(lambda:stream.read(1024*1024),b''):h.update(chunk)
+         return h.hexdigest()
+        def source_equivalence(root,base=BASE,tree=TREE):
+         head=git(root,'rev-parse','HEAD').decode().strip()
+         need(head==os.environ['GITHUB_SHA'],'qualification HEAD differs')
+         need(not git(root,'status','--porcelain','--untracked-files=all').strip(),'qualification checkout is not clean')
+         git(root,'merge-base','--is-ancestor',base,head)
+         need(git(root,'rev-parse',base+'^{tree}').decode().strip()==tree,'candidate tree differs')
+         changes={}
+         for row in git(root,'diff','--name-status','--no-renames',base,head).decode().splitlines():
+          status,name=row.split('\t',1)
+          need(status in ('A','M') and name in ALLOWED,'shipping or unreviewed change: '+name)
+          path=root/name
+          need(path.is_file() and not path.is_symlink() and path.resolve()==path,'unsafe changed source')
+          raw=path.read_bytes();need(raw==git(root,'show',head+':'+name),'raw source differs from committed source')
+          changes[name]={'status':status,'sha256':hashlib.sha256(raw).hexdigest()}
+         manifests=[]
+         for revision in (base,head):
+          rows=git(root,'ls-tree','-r','-z',revision).split(b'\0')
+          kept=[row for row in rows if row and row.split(b'\t',1)[1].decode() not in ALLOWED]
+          manifests.append({'files':len(kept),'sha256':hashlib.sha256(b'\0'.join(kept)+b'\0').hexdigest()})
+         need(manifests[0]==manifests[1],'whole shipping/build source tree differs')
+         return head,changes,manifests[0]
+        def restore_candidate(archive,out):
+         need(archive.is_file() and not archive.is_symlink() and archive.stat().st_size==ARCHIVE_BYTES,'candidate archive size/type differs')
+         need(digest(archive)==ARCHIVE_SHA,'candidate archive SHA256 differs')
+         import sys
+         sys.path.insert(0,str(pathlib.Path.cwd()/'native-android/combined-client/tools'))
+         from prepare import safe_zip
+         selected={}
+         with zipfile.ZipFile(archive) as z:
+          safe_zip(z)
+          infos=z.infolist();names=[i.filename for i in infos]
+          need(len(infos)<=4096 and len(names)==len(set(names)) and sum(i.file_size for i in infos)<=128*1024**2,'candidate ZIP bounds/duplicate paths')
+          for name,(length,sha) in PINS.items():
+           info=z.getinfo(name)
+           need(not info.is_dir() and stat.S_IFMT(info.external_attr>>16) in (0,stat.S_IFREG) and info.file_size==length,'candidate member size/type differs: '+name)
+           raw=z.read(info);need(len(raw)==length and hashlib.sha256(raw).hexdigest()==sha,'candidate member pin differs: '+name)
+           selected[name]=raw
+         apks={}
+         for abi,label in [('arm64-v8a','arm64'),('x86_64','x86_64')]:
+          name='CoH-Native-Combined-0.1.17-fullscreen-diagnostic-'+label+'.apk'
+          receipt=json.loads(selected[label+'-package.json']);audit=json.loads(selected[label+'-interop-dso.json'])
+          expected={'bytes':PINS[name][0],'sha256':PINS[name][1]}
+          need(receipt['status']=='passed' and receipt['package']=='org.coh.nativecombined' and receipt['build_profile']=='fullscreen-diagnostic','candidate package identity/status differs')
+          need(receipt['source_commit']==audit['source_revision']==BASE and receipt['tracked_source_clean'] is True,'candidate source identity differs')
+          need(receipt['abi']==audit['abi']==abi and (receipt['version_code'],receipt['version_name'])==('18','0.1.17-fullscreen-diagnostic-test'),'candidate ABI/version differs')
+          need(receipt['apk']==dict(name=name,**expected) and audit['apk']==expected and receipt['signer_certificate_sha256']==SIGNER,'candidate APK/certificate identity differs')
+          need(audit['passed'] is True and audit['internal_core_and_static_archive_exports_hidden'] is True and audit['world_authority'] is False,'original DSO audit differs')
+          apks[abi]=expected
+         need(not out.exists(),'refuse replacing qualification output')
+         out.mkdir(parents=True)
+         for name,raw in selected.items():(out/name).write_bytes(raw)
+         return apks
+
+        def main():
+         need(__debug__ and not os.environ.get('PYTHONOPTIMIZE'),'optimized admission refused')
+         root=pathlib.Path.cwd().resolve()
+         head,changes,manifest=source_equivalence(root)
+         out=root/'native-android/results/combined-framework-requalification'
+         apks=restore_candidate(pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-fullscreen-candidate.zip',out)
+         # Preserve the original package/audit source and bytes; only this new CI proof
+         # associates them with the current nonshipping framework driver.
+         proof={'schema':'coh-combined-exact-apk-requalification-v1','passed':True,
+          'candidate_source_revision':BASE,'candidate_source_tree':TREE,'qualification_source_revision':head,
+          'runtime_and_build_inputs_unchanged':True,'unchanged_runtime_build_tree':manifest,
+          'reviewed_driver_or_document_changes':changes,'nonshipping_allowlist':sorted(ALLOWED),
+          'candidate_archive':{'artifact_id':'12298379427','run_id':'39498990230','bytes':ARCHIVE_BYTES,'sha256':ARCHIVE_SHA},
+          'candidate_apks':apks,'original_package_audit_files':{n:{'bytes':v[0],'sha256':v[1]} for n,v in PINS.items() if n.endswith('.json')},
+          'APK_rebuilt':False,'Android_executed_by_admission':False,'physical_Thor_qualified':False,'world_authority':False}
+         raw=json.dumps(proof,indent=2,sort_keys=True)+'\n';need(len(raw.encode())<=128*1024,'source proof bound')
+         (out/'current-source-admission.json').write_text(raw)
+         print(json.dumps({'exact_candidate_APKs_reused':True,'candidate_source_revision':BASE,'qualification_source_revision':head,'APK_rebuilt':False}))
+        if __name__=='__main__':main()
+        PYFRAMEWORK
+    - name: Qualify only the corrected framework helper controls
+      run: |
+        python3 native-android/combined-client/tools/test_fullscreen_readiness.py
+        python3 native-android/combined-client/tools/test_framework_requalification.py
+        python3 native-android/combined-client/tools/driver_controls.py
+    - name: Preserve the exact 0.1.16 donor and enable emulator acceleration
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh api repos/Russianranger/coh-android/actions/artifacts/12289656309/zip > "$RUNNER_TEMP/combined-fullscreen-previous.zip"
+        python3 - <<'PYPREV'
+        import os,pathlib,sys
+        sys.path.insert(0,'native-android/combined-client/tools')
+        from upgrade_emulator_check import previous_inputs
+        output=pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-fullscreen-previous-preflight'
+        output.mkdir()
+        previous_inputs(pathlib.Path(os.environ['RUNNER_TEMP'])/'combined-fullscreen-previous.zip',output,'capture-diagnostic')
+        PYPREV
+        test -c /dev/kvm
+        sudo chmod 666 /dev/kvm
+    - name: Requalify the exact APK on Android 13 without rebuilding
+      uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+      with:
+        api-level: 33
+        emulator-build: '16428233'
+        channel: stable
+        target: google_apis
+        arch: x86_64
+        profile: pixel_2
+        emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+        disable-animations: true
+        script: |
+          python3 native-android/combined-client/tools/upgrade_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-framework-requalification/CoH-Native-Combined-0.1.17-fullscreen-diagnostic-x86_64.apk --package-receipt native-android/results/combined-framework-requalification/x86_64-package.json --previous-archive "$RUNNER_TEMP/combined-fullscreen-previous.zip" --previous-profile capture-diagnostic --build-profile fullscreen-diagnostic --exercise-debuggable-downgrade --candidate-source-revision 81a47f8ccef15c26e02b5cbf2feb4b99ac465139 --source-admission native-android/results/combined-framework-requalification/current-source-admission.json --output native-android/results/combined-framework-requalification/android13-update
+          "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 uninstall org.coh.nativecombined
+          python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-framework-requalification/CoH-Native-Combined-0.1.17-fullscreen-diagnostic-x86_64.apk --output native-android/results/combined-framework-requalification/android13
+          "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell am force-stop org.coh.nativecombined
+          "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 uninstall org.coh.nativecombined
+          test -z "$("$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell pm list packages org.coh.nativecombined | tr -d '\r')"
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: combined-framework-fullscreen-${{ github.sha }}
+        path: |
+          native-android/results/combined-framework-requalification/android13/
+          native-android/results/combined-framework-requalification/android13-update/*.json
+          native-android/results/combined-framework-requalification/android13-update/*.txt
+          native-android/results/combined-framework-requalification/arm64-package.json
+          native-android/results/combined-framework-requalification/x86_64-package.json
+          native-android/results/combined-framework-requalification/arm64-interop-dso.json
+          native-android/results/combined-framework-requalification/x86_64-interop-dso.json
+          native-android/results/combined-framework-requalification/current-source-admission.json
+          !native-android/results/combined-framework-requalification/**/*.apk
         retention-days: 14
         if-no-files-found: error
