@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "source_HEAD": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6",
+  "project_pin_groups_raw_and_git_matched": {
+    "candidate_source_admission": 2268,
+    "arm64_DSO_reviewed_subset": 292,
+    "x86_64_DSO_reviewed_subset": 292,
+    "native_report_compiled_inputs": 71,
+    "protected9": 9
+  },
+  "unique_project_files": 2289,
+  "mismatches": [],
+  "report_modes": {
+    "asan": {
+      "checks": 341,
+      "native_recorded_max_report_bytes": 6887,
+      "reencoded_report_max_bytes": 6886,
+      "retained_reports": 9,
+      "essential_default_explicit_omission_cleanup_refusal_cases": true
+    },
+    "release": {
+      "checks": 341,
+      "native_recorded_max_report_bytes": 6887,
+      "reencoded_report_max_bytes": 6886,
+      "retained_reports": 9,
+      "essential_default_explicit_omission_cleanup_refusal_cases": true
+    },
+    "ubsan": {
+      "checks": 341,
+      "native_recorded_max_report_bytes": 6887,
+      "reencoded_report_max_bytes": 6886,
+      "retained_reports": 9,
+      "essential_default_explicit_omission_cleanup_refusal_cases": true
+    }
+  },
+  "phase_exactActivity_checks": 85,
+  "protected9_match_baseline": true,
+  "compiler_system_header_pins_not_locally_reauthenticated": 97,
+  "scope": "Independent exact-byte manifest/signature/ELF/receipt and project-source audit only; no app/native/server/Android execution or complete compiler dependency closure."
+}

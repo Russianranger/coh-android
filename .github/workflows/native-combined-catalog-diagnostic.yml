@@ -15,6 +15,7 @@ env:
   CMAKE_BUILD_PARALLEL_LEVEL: '1'
 jobs:
   accepted-contracts:
+    if: ${{ !contains(github.event.head_commit.message, '[catalog-retention-only]') }}
     uses: ./.github/workflows/native-five-milestone-qualification.yml
   package:
     needs: accepted-contracts
@@ -386,6 +387,7 @@ jobs:
       run: |
         gh release create coh-native-combined-v0.1.12-catalog-diagnostic-test --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title 'CoH Native Combined 0.1.12 — Thor Catalog Diagnostic' --notes-file qualified-release/RELEASE-NOTES.md qualified-release/CoH-Native-Combined-0.1.12-catalog-diagnostic-arm64.apk qualified-release/CoH-Native-Combined-0.1.12-catalog-diagnostic-arm64.apk.sha256 qualified-release/arm64-package.json qualified-release/arm64-interop-dso.json qualified-release/qualification-summary.json
     - uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: combined-catalog-diagnostic-qualified-release-${{ github.sha }}
         path: qualified-release/

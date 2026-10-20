@@ -50,7 +50,7 @@
   "actual_runtime_executed": false,
   "runtime_catalog_admitted": false,
   "dictionary_generation_admitted": false,
-  "exact_local_blocker": "Linux build host has GCC; VS2026 MSVC Win32, Windows SDK, CMake and Wine/qualified target executable are absent. Hosted target compile must actually pass before target qualification.",
+  "exact_local_blocker": "The local Linux host lacks VS2026 MSVC Win32, Windows SDK, CMake and Wine. Actual hosted original MapServer target compilation passed twice. Complete target executable qualification remains refused at TARGET_EVALUATED_SDK_MISMATCH; the original evaluated SDK/UCRT operands were not retained, so effective UCRT selection cannot be authenticated from the retained raw candidate.",
   "runtime_blocker": "No isolated disposable runtime/database or independently established coherent selected Map/session/load-generation owner and exact selected cache/shared-segment provenance is available.",
   "memory": {
     "unchanged_producer_host_x64_static_bytes": 65860,

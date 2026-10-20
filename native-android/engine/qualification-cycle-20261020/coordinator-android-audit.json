@@ -1,0 +1,82 @@
+{
+  "passed": true,
+  "source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6",
+  "candidate_x86_apk": {
+    "bytes": 13240035,
+    "name": "CoH-Native-Combined-0.1.12-catalog-diagnostic-x86_64.apk",
+    "sha256": "0a7c590c13a984e523e5aee8713cf92224dc4e8b5e273a7f2c1ab01066196d57"
+  },
+  "checks": {
+    "framework": 66,
+    "fragment": 22,
+    "upgrade": 14
+  },
+  "framework_source_admission_equals_package": true,
+  "fragment_upgrade_source_revision_match": true,
+  "fragment_upgrade_optional_source_admission_sha256": [
+    null,
+    null
+  ],
+  "all_recorded_checks_passed": true,
+  "actual_installed_candidate_hash_and_UID_verified": true,
+  "fragment_actual_mapped_DSO_matches_package": true,
+  "fragment_scenarios": [
+    {
+      "name": "fragment-single-world-handoff.json",
+      "initial_bytes": 65536,
+      "sockets_open_closed": [
+        2,
+        2
+      ],
+      "catalog_boundary": null
+    },
+    {
+      "name": "fragment-multi-world-handoff.json",
+      "initial_bytes": 65536,
+      "sockets_open_closed": [
+        2,
+        2
+      ],
+      "catalog_boundary": null
+    }
+  ],
+  "closed_observation_and_two_sockets_cleanup": true,
+  "memory": {
+    "samples": 13,
+    "sampler_failures": 0,
+    "sampled_peak_process_rss_bytes": 128086016,
+    "sampled_peak_process_pss_bytes": 55702528,
+    "minimum_observed_system_headroom_bytes": 584089600,
+    "minimum_observed_java_heap_headroom_bytes": 182330200,
+    "final_cleanup_RSS_PSS_bytes": [
+      91508736,
+      30011392
+    ],
+    "scope": "Android13 x86_64 sampled current-app observations only; not absolute peaks, guest/native/GPU totals, ARM64 or Thor."
+  },
+  "retained_renderer_snapshot": {
+    "retained_snapshot_contexts_started": 3,
+    "retained_snapshot_contexts_completed": 2,
+    "objects_released": true,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "held_dirs": 0,
+    "complete_final_renderer_teardown_claimed": false
+  },
+  "update_rollback_reinstall": {
+    "same_UID": 10174,
+    "synthetic_files": 4,
+    "synthetic_bytes": 69863,
+    "sentinel_bytes_independently_pinned": true,
+    "previous011_APK_independently_pinned": true,
+    "install_command_outputs_success": true,
+    "real_save_migration_qualified": false,
+    "guest_started": false
+  },
+  "positive_Android_catalog_boundary_exercised": false,
+  "original_Auth_DB_Map_executed": false,
+  "physical_Thor_qualified": false,
+  "world_authority": false,
+  "public_release_present": false,
+  "workflow_overall": "FAILURE; five qualification jobs SUCCESS; only publish-test gh-release step FAILURE (403 per root log evidence)"
+}

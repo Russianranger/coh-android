@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6",
+  "verification": {
+    "a": {
+      "verified_project_pins": 31,
+      "external_artifact_pins": 0
+    },
+    "a-binary_sha256": {
+      "verified_project_pins": 0,
+      "external_artifact_pins": 3
+    },
+    "c": {
+      "verified_project_pins": 16,
+      "external_artifact_pins": 0
+    },
+    "d": {
+      "verified_project_pins": 70,
+      "external_artifact_pins": 1
+    },
+    "d-reused": {
+      "verified_project_pins": 30,
+      "external_artifact_pins": 0
+    },
+    "e": {
+      "verified_project_pins": 71,
+      "external_artifact_pins": 0
+    }
+  }
+}

@@ -12,27 +12,44 @@
   },
   "host_memory_limit_bytes": 8589934592,
   "integration_ci": {
-    "source_qualification_first": true,
-    "state": "PENDING_PUBLICATION",
-    "workflow": ".github/workflows/native-combined-catalog-diagnostic.yml"
+    "overall_state": "FAILURE_PUBLICATION_ONLY",
+    "publication_audit_passed": true,
+    "publication_error": "HTTP403 Resource not accessible by integration",
+    "qualification_jobs_passed": 5,
+    "run": 39364218500,
+    "source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6",
+    "summary": "native-android/engine/qualification-cycle-20261020/coordinator-ci.json"
   },
   "new_apk": {
+    "GitHub_release_created": false,
+    "bytes": 13936213,
     "candidate_version": "0.1.12-catalog-diagnostic-test",
-    "reason": "Essential catalog marker and human refusal survive optional progress omission; exact package requires CI.",
+    "file_name": "CoH-Native-Combined-0.1.12-catalog-diagnostic-arm64.apk",
+    "physical_Thor_test": "PENDING",
+    "reason": "Essential catalog marker and human refusal survive optional omission; exact package and Android 13 candidate qualification passed.",
+    "sha256": "0fbe39effa0a608e683eed5ee788daf856099be46ad108d6ccc8bbafb75ad849",
     "signer_must_equal": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
-    "state": "NOT_BUILT",
+    "source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6",
+    "state": "QUALIFIED_TEST_APK_DELIVERED_DIRECTLY",
     "version_code": 13
   },
   "next_five_tasks": [
-    "Authenticate disabled witness target compile, then establish isolated disposable source execution and actual loader/cache/shared generation ownership.",
+    "Retain effective SDK/UCRT/IncludePath/LibraryPath in compatible Windows preflight before another full build; then qualify target provenance and isolated disposable runtime/load-generation ownership.",
     "Capture coherent complete runtime BodyPart and costume tables; authenticate full row-to-slot/source/session/load-generation relationship.",
     "Install authentic producer-backed immutable lease and conditionally advance stage41 until the next genuinely supported part/index boundary.",
-    "Acquire only the37 finite CLIENT layer requests and resolve actual ordered namespace/default/texture identities before concrete GPU lifetime admission.",
-    "After exact package qualification, run Thor diagnostic procedure and retain JSON/ZIP/hash plus lifecycle and sampled memory evidence."
+    "Resolve 37 distinct raw CLIENT names/133 occurrences through original filtering and ordered namespace/defaults to establish actual texture bodies before concrete GPU lifetime admission.",
+    "Run the qualified diagnostic APK on Thor over 0.1.11 without clearing data; retain JSON/ZIP/hash, lifecycle and sampled memory evidence."
   ],
+  "observed_Android13_x86_app_memory": {
+    "peak_PSS_bytes": 55702528,
+    "peak_RSS_bytes": 128086016,
+    "sampler_failures": 0,
+    "samples": 13,
+    "scope": "Sampled exact x86 emulator app only; not guest, ARM64/Thor totals or absolute peak/leak proof."
+  },
   "observed_host_peak_RSS_bytes": {
     "asan": 564649984,
-    "measurement": "D fresh native child high-water RSS; not source reservation or Android process measurement",
+    "measurement": "Worker-local D fresh native child high-water RSS; distinct from hosted CI measurements, source reservations and Android process measurements.",
     "release": 61173760,
     "ubsan": 62619648
   },
@@ -52,6 +69,7 @@
     "body_witness_payload_cap": 65536,
     "candidate_cap": 8388608,
     "candidate_construction_peak": 4249484,
+    "candidate_measurement_scope": "Synthetic two-row immutable dictionary/BodyPart fixture only; not arbitrary full/current runtime dictionaries or process RSS/PSS.",
     "candidate_owner_owned": 1365,
     "earlier_seal_transition_peak": 93228133,
     "material_query_peak": 57113279,
@@ -59,6 +77,7 @@
     "report_host_max": 6887,
     "scene_cap": 100663296
   },
+  "worker_receipts_are_immutable_host_checkpoints": true,
   "workers": {
     "a": {
       "accepted_scope": "Nonshipping exact source-framing/default/count admission consumer; only test query supplies positive counts. Real immutable C candidates remain unsupported; strict generation/identity/alias/refusal composition qualified. No existing probe/report changes.",
@@ -67,8 +86,14 @@
         "actual_owner_composition": 13953,
         "conditional_adapter": 51868
       },
-      "ci": null,
-      "commit": null,
+      "ci": {
+        "job": 118437167806,
+        "result": "success",
+        "run": 39364218500,
+        "source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6"
+      },
+      "commit": "fe31a4e039e32a200da7c5316c5c95d937e26f3c",
+      "integrated_ci_tested_tree": "a5cbf41644248da3ebe68f85927d05095f468c21",
       "next_action": "Bind actual target-qualified runtime BodyPart and dictionary evidence to a coherent current source/generation/session owner before introducing any positive production query. Keep stage41 refusal meanwhile.",
       "qualified_commit": "fe31a4e039e32a200da7c5316c5c95d937e26f3c",
       "receipt": "native-android/engine/qualification-cycle-20261020/a-status.json",
@@ -78,33 +103,49 @@
       "tested_tree": "242403ebbcec53ad3e32d53750169a706688d551"
     },
     "b": {
-      "accepted_scope": "Source-authentic disabled-witness target composition, reversible inherited startup preservation, strict original-loader and target preflight; compile-only hosted recipe prepared.",
-      "blocker": "No isolated disposable runtime/database or independently established coherent selected Map/session/load-generation owner and exact selected cache/shared-segment provenance is available.",
+      "accepted_scope": "Original MapServer diagnostic target compiled twice; raw PE/source/artifact integrity audited. SDK/UCRT executable qualification refused. Future bounded property-query retention and source-only guard pass 10 host tests.",
+      "blocker": "Target recorder refused TARGET_EVALUATED_SDK_MISMATCH; no authenticated SDK/UCRT target receipt. Runtime/process/currentMap/generation ownership also absent.",
       "ci": {
-        "run": 39363378870,
-        "runtime_execution_permitted": false,
-        "source_revision": "c66071fd35a6f2bd76a43476b106c7f2e91e16bc",
-        "state": "IN_PROGRESS"
+        "compile_steps": "success",
+        "corrected_run": 39365299854,
+        "first_run": 39363378870,
+        "latest_preflight_change": "10 host tests pass; no third full target rebuild this cycle",
+        "raw_artifact": 12239377919,
+        "raw_artifact_bytes": 3265351,
+        "raw_artifact_sha256": "a5bbcbfa859e0cd66cd7a70c0759c3c9fb505fd31f36f40d0ac5555943c2f037",
+        "target_receipts": "refused"
       },
-      "commit": null,
-      "next_action": "Coordinator publishes implementation commit to native-android; inspect actual target build artifact/receipt, fixing only qualified compile/recorder failures. Runtime observation remains a separate future admission.",
-      "qualified_commit": "c66071fd35a6f2bd76a43476b106c7f2e91e16bc",
+      "commit": "38909a04a4797c43db28ab169d5c37b1ca2a8775",
+      "host_preflight_tests": 10,
+      "next_action": "Authenticate effective SDK/UCRT/IncludePath/LibraryPath with retained property preflight; fresh-host queries cannot reattest old compilation. Qualify any future target before isolated disposable execution; never use the working database.",
+      "qualified_commit": "38909a04a4797c43db28ab169d5c37b1ca2a8775",
+      "raw_unqualified_PE32_i386": {
+        "bytes": 7472640,
+        "runtime_executed": false,
+        "sha256": "fe244f0256b2a45f07050c576f837c9bc69f36b39339db685f1ba32fa21b8df6"
+      },
       "receipt": "native-android/engine/qualification-cycle-20261020/b-status.json",
-      "receipt_sha256": "2cf9827c2bea812a9235a35de726d38c46ea45405412a5f1d3246d5edf5c1044",
+      "receipt_sha256": "404ca4acf804e30fc08a9b55926bcca116d9a5e2363b3bbe2d097eeb93ff18a0",
+      "runtime_executed": false,
       "status": "PARTIAL WITH EXACT BLOCKER",
+      "target_compilation_fully_qualified": false,
+      "target_compile_step_passed": true,
       "test_command_record": "native-android/engine/qualification-cycle-20261020/b-status.json",
-      "tested_tree": null
+      "tested_tree": "63be7ef237017ada78fc16757ebbafd599739973"
     },
     "c": {
       "accepted_scope": "Complete immutable candidate COHCDI1 slot/COHBW1 row integrity, exact pinned original bodytype definitions, fixed offline data leases, retire/replacement/cleanup and stage41 output-overlap/query refusal contract. No active owner constructor.",
       "blocker": "No authenticated runtime producer ties loaded ordered rows, full slot contents, source executable/profile/load generation and current packet.",
       "checks_per_mode": 18195,
       "ci": {
-        "next": "root cycle CI runs focused checker",
-        "status": "not_run_locally"
+        "job": 118437167806,
+        "result": "success",
+        "run": 39364218500,
+        "source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6"
       },
-      "commit": null,
-      "next_action": "Integrate real A+C refusal fixture; B target compile is preflight only. Build source runtime producer lease before adding any live owner constructor.",
+      "commit": "45ae1409396b46c9f55e3dab07f57a5e4c2e5bd0",
+      "integrated_ci_tested_tree": "a5cbf41644248da3ebe68f85927d05095f468c21",
+      "next_action": "Real A+C refusal fixture passed. Obtain authenticated runtime producer lease before adding a live owner constructor.",
       "qualified_commit": "45ae1409396b46c9f55e3dab07f57a5e4c2e5bd0",
       "receipt": "native-android/engine/qualification-cycle-20261020/c-status.json",
       "receipt_commit": "0807f8a7b",
@@ -112,40 +153,50 @@
       "source_implementation_commit": "52574b93c",
       "status": "PARTIAL WITH EXACT BLOCKER",
       "test_command_record": "native-android/engine/qualification-cycle-20261020/c-status.json",
-      "tested_tree": null
+      "tested_tree": "a5cbf41644248da3ebe68f85927d05095f468c21"
     },
     "d": {
-      "accepted_scope": "Actual sealed SOURCE21 partitions associate with14 exact-key immutable historical CLIENT TexOpt table owners;37 raw postprocessed layer strings copied with independent historical identities. No effective material/texture/GPU permission.",
+      "accepted_scope": "Actual sealed SOURCE21 partitions associate with 14 exact-key immutable historical CLIENT TexOpt table owners; 37 distinct raw postprocessed layer names/133 occurrences retain independent historical identities. No effective material/texture/GPU permission.",
       "blocker": "Effective CLIENT TexBind/Basic namespace/defaults, texture bodies, current generation and concrete GPU ownership unavailable.",
       "checks_per_mode": 313744,
       "ci": {
-        "next": "Coordinator dedicated cycle CI",
-        "status": "NOT_RUN_BY_WORKER"
+        "job": 118437167806,
+        "result": "success",
+        "run": 39364218500,
+        "source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6"
       },
-      "commit": null,
+      "commit": "b00faf61d5fdbe167add2b095c17c504295ab328",
+      "integrated_ci_tested_tree": "a5cbf41644248da3ebe68f85927d05095f468c21",
       "next_action": "Hash/acquire only37 raw requests after source-defined filtering; bind finite bodies to an authentic ordered CLIENT namespace/default owner, then preflight actual old/new/borrowed/GPU/scratch lifetimes before publication.",
       "qualified_commit": "b00faf61d5fdbe167add2b095c17c504295ab328",
       "receipt": "native-android/engine/qualification-cycle-20261020/d-status.json",
       "receipt_sha256": "7c9349978d4e9a60fab1e021618911571b3d730caa275fd90bbccc4f7e58b050",
       "status": "PARTIAL WITH EXACT BLOCKER",
       "test_command_record": "native-android/engine/qualification-cycle-20261020/d-status.json",
-      "tested_tree": null
+      "tested_tree": "a5cbf41644248da3ebe68f85927d05095f468c21"
     },
     "e": {
-      "accepted_scope": "Essential validated stage41/43 numeric source progress; bounded human refusal retained within same attempt; no catalog admission",
-      "android13_candidate_qualified": false,
-      "blocker": "Exact Android13 candidate framework/lifecycle/update and physical Thor stage41 positive validation pending; live catalog generation absent.",
+      "accepted_scope": "Signed 0.1.12 ARM64 diagnostic APK; positive host boundary tests and exact Android 13 null-boundary/import/preview/lifecycle/update/rollback qualification. Physical Thor acceptance pending.",
+      "android13_candidate_qualified": true,
+      "blocker": "Current runtime catalog absent; positive stage41 on physical Thor untested. GitHub release creation denied HTTP 403; qualified APK delivered directly.",
       "checks_per_mode": 341,
-      "ci": null,
-      "commit": null,
+      "ci": {
+        "GitHub_release_upload": "HTTP403",
+        "package_and_Android_jobs": "success",
+        "publication_audit": "success",
+        "run": 39364218500,
+        "source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6"
+      },
+      "commit": "054fdafb6faabd59add1f73151765aac6c8071d6",
       "host_qualified": true,
-      "next_action": "Coordinator review/integrate accepted five-worker tree; run new candidate qualification once. Positive catalog boundary remains host-only until Thor test; runtime stage41 still refuses.",
+      "integrated_ci_tested_tree": "a5cbf41644248da3ebe68f85927d05095f468c21",
+      "next_action": "Test exact qualified APK on physical Thor; preserve stage41 refusal until real current runtime inputs exist.",
       "qualified_commit": "054fdafb6faabd59add1f73151765aac6c8071d6",
       "receipt": "native-android/engine/qualification-cycle-20261020/e-status.json",
       "receipt_sha256": "475f0c8690b120438fc5f3a01660d18c008e8648807d49c383b33ceb8e4e9824",
-      "status": "PARTIAL WITH EXACT BLOCKER",
+      "status": "QUALIFIED",
       "test_command_record": "native-android/engine/qualification-cycle-20261020/e-status.json",
-      "tested_tree": null
+      "tested_tree": "a5cbf41644248da3ebe68f85927d05095f468c21"
     }
   }
 }

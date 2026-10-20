@@ -1,0 +1,90 @@
+{
+  "apk": {
+    "bytes": 13936213,
+    "file_name": "CoH-Native-Combined-0.1.12-catalog-diagnostic-arm64.apk",
+    "sha256": "0fbe39effa0a608e683eed5ee788daf856099be46ad108d6ccc8bbafb75ad849",
+    "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "version_code": 13,
+    "version_name": "0.1.12-catalog-diagnostic-test"
+  },
+  "apk_source_revision": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6",
+  "application_full_update_ACK": false,
+  "gates25_27": "OPEN",
+  "overall_conclusion": "failure",
+  "positive_catalog_boundary_exercised_on_Android": false,
+  "publication": {
+    "exact_package_and_completed_receipt_audit_passed": true,
+    "failure_step": "Publish only the qualified ARM64 diagnostic update",
+    "http_status": 403,
+    "job_id": 118441236102,
+    "qualified_apk_delivered_directly": true,
+    "reason": "Resource not accessible by integration",
+    "release_created": false,
+    "service_failure_is_not_a_test_pass": true,
+    "token_reported_contents_permission": "write"
+  },
+  "qualification_jobs": {
+    "accepted-contracts": {
+      "conclusion": "success",
+      "id": 118437167806
+    },
+    "android13-fragment-interop": {
+      "checks": 22,
+      "conclusion": "success",
+      "id": 118438890755
+    },
+    "android13-framework": {
+      "checks": 66,
+      "conclusion": "success",
+      "id": 118438890722
+    },
+    "android13-package-upgrade": {
+      "checks": 14,
+      "conclusion": "success",
+      "id": 118438890682
+    },
+    "package": {
+      "conclusion": "success",
+      "id": 118437543059
+    }
+  },
+  "renderer_retained_snapshot": {
+    "EGL_cleanup_errors": 0,
+    "GL_cleanup_errors": 0,
+    "complete_final_renderer_retirement_proven_by_this_snapshot": false,
+    "contexts_completed": 2,
+    "contexts_started": 3,
+    "held_directions": 0,
+    "objects_released": true
+  },
+  "run_id": 39364218500,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/39364218500",
+  "runtime_MapServer_executed": false,
+  "runtime_catalog_generation_admitted": false,
+  "sampled_android13_x86_app_observations": {
+    "FINAL_CLEANUP_PSS_bytes": 30011392,
+    "FINAL_CLEANUP_RSS_bytes": 91508736,
+    "minimum_Java_headroom_bytes": 182330200,
+    "minimum_system_headroom_bytes": 584089600,
+    "peak_PSS_bytes": 55702528,
+    "peak_RSS_bytes": 128086016,
+    "physical_Thor_or_guest_or_complete_process_measurement": false,
+    "sampler_failures": 0,
+    "samples": 13
+  },
+  "schema": "coh-five-milestone-integrated-ci-v1",
+  "stage41_positive_host_source_fixture_qualified": true,
+  "synthetic_upgrade_storage": {
+    "UID": 10174,
+    "actual_user_save_migration_proven": false,
+    "all_sentinel_hashes_unchanged": true,
+    "bytes": 69863,
+    "files": 4,
+    "versions": [
+      12,
+      13,
+      12,
+      13
+    ]
+  }
+}

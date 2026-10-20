@@ -1,0 +1,63 @@
+{
+  "head": "2cb7d999534ac79cb0f0e756f8a4da5702dd28d6",
+  "source_clean": true,
+  "packages": {
+    "arm64": {
+      "apk": {
+        "bytes": 13936213,
+        "name": "CoH-Native-Combined-0.1.12-catalog-diagnostic-arm64.apk",
+        "sha256": "0fbe39effa0a608e683eed5ee788daf856099be46ad108d6ccc8bbafb75ad849"
+      },
+      "manifest": {
+        "package": "org.coh.nativecombined",
+        "versionCode": 13,
+        "versionName": "0.1.12-catalog-diagnostic-test"
+      },
+      "signature": {
+        "scheme": 2,
+        "algorithm": "0x103",
+        "certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "signature_and_chunked_content_digest_verified": true,
+        "chunks": 16
+      },
+      "assets": {
+        "files": 74,
+        "bytes": 9540457
+      },
+      "ELF64_libraries": 5,
+      "exact_interop_JNI_exports": 9,
+      "actual_DSO_matches_hosted_receipt": true,
+      "memory_JNI_present": true
+    },
+    "x86_64": {
+      "apk": {
+        "bytes": 13240035,
+        "name": "CoH-Native-Combined-0.1.12-catalog-diagnostic-x86_64.apk",
+        "sha256": "0a7c590c13a984e523e5aee8713cf92224dc4e8b5e273a7f2c1ab01066196d57"
+      },
+      "manifest": {
+        "package": "org.coh.nativecombined",
+        "versionCode": 13,
+        "versionName": "0.1.12-catalog-diagnostic-test"
+      },
+      "signature": {
+        "scheme": 2,
+        "algorithm": "0x103",
+        "certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "signature_and_chunked_content_digest_verified": true,
+        "chunks": 15
+      },
+      "assets": {
+        "files": 74,
+        "bytes": 9540457
+      },
+      "ELF64_libraries": 3,
+      "exact_interop_JNI_exports": 9,
+      "actual_DSO_matches_hosted_receipt": true,
+      "memory_JNI_present": true
+    }
+  },
+  "SDK_aapt_apksigner_available": false,
+  "signature_verifier": "Independent bounded Python v2 verifier using cryptography; AOSP scheme specification",
+  "app_or_native_execution": false
+}
