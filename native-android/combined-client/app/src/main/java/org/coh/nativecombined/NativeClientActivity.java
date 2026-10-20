@@ -96,7 +96,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private volatile String networkReport = "{\"phase\":\"IDLE\"}";
     private volatile String localNetworkReport = networkReport;
     private volatile String interopReport = "{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"IDLE\",\"world_authority\":false}";
-    private final HandoffState handoffState=new HandoffState();
+    private final HandoffState handoffState=new HandoffState(BuildConfig.FULLSCREEN_DIAGNOSTIC);
     private boolean captureTelemetryPublished;
     private volatile boolean networkForeground, networkConnecting, networkRequested;
     private volatile long networkAttempt;
