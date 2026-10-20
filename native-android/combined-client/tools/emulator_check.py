@@ -717,15 +717,55 @@ class Check:
         self.record('bounded native viewport: '+label, **proof, controls_height=controls_height)
         return value
 
+    def dismiss_immersive_education(self, root):
+        """Acknowledge only Android's first-immersive education, once."""
+        nodes=list(root.iter('node'))
+        titles=[n for n in nodes if n.attrib.get('package')=='android'
+                and n.attrib.get('class')=='android.widget.TextView'
+                and n.attrib.get('resource-id')=='android:id/immersive_cling_title'
+                and n.attrib.get('text')=='Viewing full screen']
+        if not titles:return root
+        assert len(titles)==1 and not getattr(self,'immersive_education_dismissed',False), 'Unexpected repeated immersive education'
+        assert any(n.attrib.get('package')=='android' and n.attrib.get('class')=='android.widget.TextView'
+                and n.attrib.get('resource-id')=='android:id/immersive_cling_description'
+                and n.attrib.get('text')=='To exit, swipe down from the top.' for n in nodes), 'Unknown immersive education description'
+        buttons=[n for n in nodes if n.attrib.get('package')=='android'
+                and n.attrib.get('class')=='android.widget.Button' and n.attrib.get('resource-id')=='android:id/ok'
+                and n.attrib.get('text')=='Got it' and n.attrib.get('enabled')=='true'
+                and n.attrib.get('clickable')=='true']
+        assert len(buttons)==1, 'Missing unambiguous immersive education acknowledgement'
+        bounds=self.bounds(buttons[0]);assert bounds, 'Immersive acknowledgement has no clickable bounds'
+        self.adb('shell','input','tap',(bounds[0]+bounds[2])//2,(bounds[1]+bounds[3])//2)
+        self.immersive_education_dismissed=True
+        self.record('actual Android first-immersive education acknowledged',system_package='android',resource_id='android:id/ok')
+        for attempt in range(3):
+            current=self.dump()
+            if any(n.attrib.get('package')==PACKAGE for n in current.iter('node')):return current
+            if attempt<2:time.sleep(.2)
+        raise AssertionError('App hierarchy did not return after immersive education')
+
+    def fullscreen_corner(self,root,value):
+        """Identify the actual app Return control, independent of textAllCaps."""
+        nodes=list(root.iter('node'))
+        candidates=[n for n in nodes if n.attrib.get('package')==PACKAGE
+                and n.attrib.get('class')=='android.widget.Button'
+                and n.attrib.get('content-desc')=='Return to native client controls'
+                and n.attrib.get('enabled')=='true' and n.attrib.get('clickable')=='true']
+        assert len(candidates)==1, 'Actual unique fullscreen Return corner is absent'
+        bounds=self.bounds(candidates[0]);assert bounds, 'Fullscreen Return corner has no clickable bounds'
+        area=value['input_area'];left,top=area['left'],area['top'];width,height=area['width'],area['height']
+        assert left<=bounds[0]<bounds[2]<=left+width and top<=bounds[1]<bounds[3]<=top+height
+        assert bounds[0]+bounds[2]>2*left+width and bounds[1]<top+height//4, 'Return control is outside the top-right corner'
+        assert not any(n.attrib.get('content-desc')=='Native client controls' for n in nodes)
+        return bounds
+
     def fullscreen_preview(self, before):
         """Real Android layout/lifecycle only; this preview has no server pose."""
         self.tap('Full screen')
         first=self.wait_report('native-client-report.json',ResizedPreview(before,True),'full-screen fresh epoch, EGL resize and current frames',seconds=60)
         proof=viewport_contract(first)
         assert proof['surface_height']*100>=proof['host_height']*95
-        nodes=list(self.dump().iter('node'))
-        assert any(n.attrib.get('text')=='Return to controls' for n in nodes)
-        assert not any(n.attrib.get('content-desc')=='Native client controls' for n in nodes)
+        corner=self.fullscreen_corner(self.dismiss_immersive_education(self.dump()),first)
         assert first['native'].get('direction_mask')==0 and first['native'].get('held_dirs')==0
         assert not first['native'].get('observed_server_entity',{}).get('active')
         assert first['native']['frame_capture']['frame']==0 and first.get('scene_frame_capture') is None
@@ -738,7 +778,8 @@ class Check:
         second=self.wait_report('native-client-report.json',ResizedPreview(restored,True),
             'second full-screen Surface epoch',seconds=60)
         assert second['native']['contexts_started']>first['native']['contexts_started']
-        self.tap('Return to controls')
+        corner=self.fullscreen_corner(self.dismiss_immersive_education(self.dump()),second)
+        self.adb('shell','input','tap',(corner[0]+corner[2])//2,(corner[1]+corner[3])//2)
         final=self.wait_report('native-client-report.json',ResizedPreview(second,False),
             'corner return restores native controls',seconds=60)
         self.viewport('fullscreen-corner-controls',final['native']['frames'])
