@@ -107,3 +107,19 @@ charge its complete old/candidate owner, immutable raw/index spans, 65,536-byte 
 workspace, optional 48,352-byte snapshot and 8,192-byte stack reserve inside the
 existing 8 MiB aggregate; no heap allocation occurs in the adapter. Source payload
 and compiler stack measurements are separate from device RSS/PSS observations.
+
+The same source adapter now runs whole `entReceivePowerCust` and
+`powerCustList_receive`. Absent and empty source lists continue. A nonempty list
+stops at the original `powerdict_GetBasePowerByCRC` callback when Combined has no
+supplied BasePower dictionary; the actual CRC and post-CRC cursor are retained,
+and no following tint/token is consumed. The existing streamed PowerDictionary
+importer is available; this diagnostic has no packaged/indexed owner for it.
+This is a concrete missing caller input, not an invented producer requirement.
+
+The additive `_initial` entry accepts the actual earlier `pchar_things` flag in
+the already validated selected-self/all-rare initial profile. Empty power paths
+continue through whole original titles, ragdoll-ignore and character-stat receive
+functions, reusing the existing source-qualified `SendBasicCharacter` parser.
+Current bounded source implementation then leaves vision phases unread. That is
+remaining implementation work, not a claim that their table is unavailable.
+No live receipt establishes which power branch the Thor packet will take.

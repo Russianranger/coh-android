@@ -443,4 +443,218 @@ static int entReceiveXlucency(Packet *pak, Entity *e, bool oo_packet)
 
     return 1;
 }
+int powerCustList_receive(Packet *pak, Entity *e, PowerCustomizationList *powerCustList)
+{
+    if (pktGetBits(pak, 1))
+    {
+        int numCusts = pktGetBitsAuto(pak);
+        int i;
+        PowerCustomizationList *tempList = StructAllocRaw(sizeof(PowerCustomizationList));
+        StructInit(tempList, sizeof(PowerCustomizationList), ParsePowerCustomizationList);
+        for (i = 0; i < numCusts; ++i)
+        {
+            PowerCustomization *cust = StructAllocRaw(sizeof(PowerCustomization));
+            int crcValue = pktGetBitsAuto(pak);
+            cust->power = powerdict_GetBasePowerByCRC(&g_PowerDictionary, crcValue);
+            cust->powerFullName = cust->power ? cust->power->pchFullName : "none";
+            cust->customTint.primary.integer = pktGetBitsAuto(pak);
+            cust->customTint.secondary.integer = pktGetBitsAuto(pak);
+            cust->token = StructAllocString(pktGetString(pak));
+            eaPush(&tempList->powerCustomizations, cust);
+        }
+        eaQSort(tempList->powerCustomizations, comparePowerCustomizations);
+
+#if SERVER
+        //    validate
+        if (!powerCustList_validate(tempList, e, 1))
+        {
+            StructDestroy(ParsePowerCustomizationList, tempList);
+            return 1;
+        }
+#endif
+        StructCopy(ParsePowerCustomizationList, tempList, powerCustList, 0, 0);
+        StructDestroy(ParsePowerCustomizationList, tempList);
+    }
+    return 1;
+}
+static int entReceivePowerCust(Packet *pak, Entity *e, bool oo_packet)
+{
+    AppearanceType type;
+    int current_powerCust;
+    int num_costume_slots;
+    type = pktGetIfSetBitsPack(pak, 2);
+    switch (type)
+    {
+        case AT_ENTIRE_COSTUME:
+            START_BIT_COUNT(pak, "FullCostume");
+            if (pktGetBits(pak, 1))
+            {
+                //    recieving self
+                current_powerCust = pktGetBits( pak, 8 );
+                num_costume_slots = pktGetBits( pak, 8 );
+                if (!oo_packet)
+                {
+                    e->pl->current_powerCust = current_powerCust;
+                    e->pl->num_costume_slots = num_costume_slots;
+                }
+
+                if (pktGetBits(pak, 1))        //    multiple powerCust
+                {
+                    int i;
+                    int numSlots = pktGetBits(pak, 4);
+                    for( i = 0; (i < numSlots) && i < MAX_COSTUMES; i++ )
+                    {
+                        powerCustList_receive( pak, e, oo_packet ? dummy_ent_powerCust : e->pl->powerCustomizationLists[i] );
+                    }
+                }
+                else                        //    just one
+                {
+                    powerCustList_receive(pak, e, oo_packet ? dummy_ent_powerCust : e->pl->powerCustomizationLists[e->pl->current_powerCust] );
+                }
+                if( (e != playerPtr() || menuCanSetCostumeAndPowerCust()) && !oo_packet)
+                {
+                    e->powerCust = e->pl->powerCustomizationLists[e->pl->current_powerCust];
+                }
+            }
+            STOP_BIT_COUNT(pak);
+            break;
+        case AT_OWNED_COSTUME:
+            START_BIT_COUNT(pak, "PCCCostume");            
+            if (!oo_packet)
+            {
+                if (!e->ownedPowerCustomizationList)    e->ownedPowerCustomizationList = StructAllocRaw(sizeof(PowerCustomizationList));
+                powerCustList_receive(pak, e, e->ownedPowerCustomizationList);
+                if (e->ownedPowerCustomizationList && (e != playerPtr()))
+                {
+                    e->powerCust = e->ownedPowerCustomizationList;
+                    costume_Apply(e);
+                }
+            }
+            STOP_BIT_COUNT(pak);
+            break;
+    }
+    return 1;
+}
+static int entReceiveTitles(Packet *pak, Entity *e, bool oo_packet)
+{
+    if(pktGetBits(pak, 1))
+    {
+        char name[MAX_NAME_LEN];
+        int titleThe;
+        char titleTheText[10];
+        char titleCommon[32];
+        char titleOrigin[32];
+        int titleBadge;
+        char titleSpecial[128];
+        int glowieUnlocked;
+        int gender;
+        int name_gender;
+        int attachArticle;
+        int respecTokens;
+        int lastTurnstileEventID;
+        int lastTurnstileMissionID;
+        int helperStatus;
+        int titleColors[2] = {0};
+
+
+        strncpyt( name, pktGetString(pak), ARRAY_SIZE(e->name) );
+        titleThe = pktGetBitsPack( pak, 5 );
+        strncpyt( titleTheText, pktGetIfSetString( pak ), 10);
+        strncpyt( titleCommon, pktGetIfSetString( pak ), 32);
+        strncpyt( titleOrigin, pktGetIfSetString( pak ), 32);
+        titleColors[0] = pktGetBitsAuto(pak);
+        titleColors[1] = pktGetBitsAuto(pak);
+        titleBadge = pktGetBits( pak, 32 );
+        strncpyt( titleSpecial, pktGetIfSetString( pak ), 128);
+        glowieUnlocked = pktGetBits(pak, 1);
+        gender = pktGetBits(pak, 2);
+        name_gender = pktGetBits( pak, 2 );
+        attachArticle = pktGetBits(pak, 1);
+        respecTokens = pktGetBits( pak, 32 );
+        lastTurnstileEventID = pktGetBits(pak, 32);
+        lastTurnstileMissionID = pktGetBits(pak,32);
+        helperStatus = pktGetBitsAuto(pak);
+        if(e && e->pl && !oo_packet)
+        {
+            strncpyt( e->name, name, ARRAY_SIZE(e->name) );
+            e->pl->titleThe = titleThe;
+            strncpyt( e->pl->titleTheText, titleTheText, 10);
+            strncpyt( e->pl->titleCommon, titleCommon, 32);
+            strncpyt( e->pl->titleOrigin, titleOrigin, 32);
+            e->pl->titleColors[0] = titleColors[0];
+            e->pl->titleColors[1] = titleColors[1];
+            e->pl->titleBadge = titleBadge;
+            strncpyt( e->pl->titleSpecial, titleSpecial, 128);
+            e->pl->glowieUnlocked = glowieUnlocked;
+            e->gender = gender;
+            e->name_gender = name_gender;
+            e->pl->attachArticle = attachArticle;
+            e->pl->respecTokens = respecTokens;
+            e->pl->lastTurnstileEventID = lastTurnstileEventID;
+            e->pl->lastTurnstileMissionID = lastTurnstileMissionID;
+            e->pl->helperStatus = helperStatus;
+        }
+
+        return 1;
+    }
+
+    return 0;
+}
+static int entGetRagdollIgnore(Packet *pak,Entity *e)
+{
+    U8     num_bones;
+
+    START_BIT_COUNT(pak, "ragdoll_num_bones");
+    num_bones = pktGetIfSetBits(pak,5);
+    STOP_BIT_COUNT(pak);
+
+    if (num_bones)
+    {
+        START_BIT_COUNT(pak, "ragdollQuats");
+        {
+            int j;
+            for (j=0; j<num_bones*3;++j)
+            {
+                pktGetBits(pak,NUM_BITS_PER_RAGDOLL_QUAT_ELEM);
+            }
+        }
+        STOP_BIT_COUNT(pak);
+        return 1;
+    }
+    return 0;
+}
+static int entReceiveCharacterStats(Packet *pak, Entity *e, int oo_packet)
+{
+    // Receive basic entity stat updates here.
+
+    Character* pchar = e->pchar;
+    int hasNewStats;
+
+    if (!pktGetBits(pak, 1)) {
+        // This is the general case, which means:
+        //  we have a pchar (don't really care here)
+        //  we don't have a sidekick (gotta clear it if it's there)
+        //  our stats haven't changed (do nothing)
+        return 1;
+    }
+
+    hasNewStats = pktGetBits(pak, 1);
+
+    if(hasNewStats)
+    {
+        // Stats
+        START_BIT_COUNT(pak, "basic stats");
+        sdUnpackDiff(SendBasicCharacter, pak, e->pchar, &e->pkt_id_basicAttrDef, true);
+        STOP_BIT_COUNT(pak);
+
+        if(pchar)
+        {
+            // JE: Removed oo_packet check because it could cause this code to never get
+            //     ran (i.e. when the XP was received in order, yet this packet was out of
+            //   order, since stats oop checking is done on a per-channel basis)
+            character_LevelFinalize(e->pchar, false); // Must be after getting XP
+        }
+    }
+    return hasNewStats;
+}
 #endif
