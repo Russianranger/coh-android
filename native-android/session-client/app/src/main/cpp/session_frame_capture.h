@@ -17,7 +17,12 @@ typedef struct {
     float pose[3];
 } CohFrameCaptureInfo;
 /* Actual render owner only. Reserve includes old/candidate pixels, FBO, JNI and
- * export copies, bounded zip/hash buffers and charged stack/driver allowance.
+ * export copies, bounded zip/hash buffers and a charged64KiB native stack.
+ * Known worst-case overlap: two83072B records +owner metadata,82944B FBO,
+ *83072B JNI array,83200B Java export snapshot,2*16KiB I/O/hash scratch,
+ *3*4KiB JSON/string copies and64KiB native stack: less than600KiB.
+ * The1MiB policy reservation rounds this source inventory upward. GL driver
+ * overhead and actual Java/native RSS/PSS are not measured by this inventory.
  * Existing scene owners remain charged separately; no reservation ticket. */
 CohFrameCapture *coh_frame_capture_create(uint64_t base_charge);
 void coh_frame_capture_destroy(CohFrameCapture **);
