@@ -619,6 +619,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                                 :"Decoded "+decoded+"/"+expected+" original costume bodies. "+detail;
                     }
                 }
+                if(BuildConfig.FULLSCREEN_DIAGNOSTIC)detail=initialContinuationDetail(report,detail);
                 if(observedEntityAttempt==networkAttempt)detail+=" Box requested for observed server entity #"+observedEntityIndex+".";
                 networkStatus.setText("World handoff test: "+phase+" • "+detail+"\nFull character/world decoding remains pending.");
                 if(!handoffState.charactersReady()){characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);}
@@ -697,6 +698,33 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 | ((keys & (1<<22))!=0 || axisX<-.5f ? 4 : 0)
                 | ((keys & (1<<23))!=0 || axisX>.5f ? 8 : 0);
         SessionNative.controls(handle, directions, dead(axisZ)*2f, dead(axisRz)*2f);
+    }
+    /** Numeric source progress only; queued work is distinct from actual sends. */
+    private static String initialContinuationDetail(JSONObject report,String fallback){
+        if(!report.has("initial_packet_complete"))return fallback;
+        boolean complete=Boolean.TRUE.equals(report.opt("initial_packet_complete"));
+        JSONArray tail=report.optJSONArray("initial_command_tail");
+        String detail=complete?"Initial packet reached exact EOF"
+                +(tail!=null&&tail.length()==7&&tail.optLong(2,-1)>=0?" at bit "+tail.optLong(2):"")+".":"Initial packet remains incomplete.";
+        if(!complete){String next=report.optString("initial_next","");
+            if(next.matches("[A-Za-z0-9_ .:-]{1,120}"))detail+=" Next: "+next+".";}
+        JSONArray power=report.optJSONArray("power_unresolved");
+        if(power!=null&&power.length()==5&&power.optLong(1,0)>0)
+            detail+=" Original receiver tolerated "+power.optLong(1)+" unmapped power entries.";
+        JSONArray progress=report.optJSONArray("initial_continuation");
+        if(progress!=null&&progress.length()==10){
+            String ack=progress.optInt(1,0)==1?(progress.optInt(3,0)==1?"sent":"queued"):"not queued";
+            String ready=progress.optInt(2,0)==1?(progress.optInt(4,0)==1?"sent":"queued"):"not queued";
+            detail+=" Full-update ACK "+ack+"; client READY "+ready+".";
+            if(progress.optInt(3,0)==1&&progress.optInt(4,0)==1){
+                detail+=" Later messages "+progress.optLong(7,0)+".";
+                JSONArray position=report.optJSONArray("post_position");
+                if(position!=null&&position.length()==7)detail+=" Position changes "+position.optLong(2,0)
+                        +", stationary "+position.optLong(3,0)+", unsupported "+position.optLong(5,0)+".";
+                detail+=progress.optInt(8,0)==1?" Bounded observation ended.":" Observing bounded updates.";
+            }
+        }
+        return detail;
     }
     private void applyFullscreenBars(){
         if(!sceneFullscreen)return;

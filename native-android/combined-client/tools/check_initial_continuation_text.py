@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+"""Exercise shipped progress text against explicit numeric JSON controls.
+
+No Android, transport, live server, decoded game input or authority is simulated.
+"""
+import importlib.util,json,subprocess,tempfile
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[3]
+JAVA=r'''
+import org.json.*;
+public class InitialContinuationTextTest {
+/*METHOD*/
+static int checks;static void check(boolean x){checks++;if(!x)throw new AssertionError();}
+public static void main(String[]args){
+ JSONObject old=new JSONObject();check(initialContinuationDetail(old,"old scope").equals("old scope"));
+ JSONObject value=new JSONObject().put("initial_packet_complete",false).put("initial_next","original unknown field");
+ String text=initialContinuationDetail(value,"");check(text.contains("remains incomplete")&&text.contains("original unknown field")&&!text.contains("ACK sent"));
+ value.put("initial_next","raw\\nvalue");check(!initialContinuationDetail(value,"").contains("raw"));
+ value.put("initial_packet_complete",true).put("initial_command_tail",new JSONArray(0,298736,301656,3,0,1,0)).put("power_unresolved",new JSONArray(343,343,1,2,100));
+ value.put("initial_continuation",new JSONArray(1,0,0,0,0,1,0,0,0,0));text=initialContinuationDetail(value,"");check(text.contains("exact EOF at bit 301656")&&text.contains("343 unmapped")&&text.contains("ACK not queued; client READY not queued"));
+ value.put("initial_continuation",new JSONArray(1,1,1,0,0,1,0,0,0,0));text=initialContinuationDetail(value,"");check(text.contains("ACK queued; client READY queued")&&!text.contains("ACK sent")&&!text.contains("Later messages"));
+ value.put("initial_continuation",new JSONArray(1,1,1,1,0,1,0,0,0,0));check(initialContinuationDetail(value,"").contains("ACK sent; client READY queued"));
+ value.put("initial_continuation",new JSONArray(1,1,1,1,1,1,0,4,0,0)).put("post_position",new JSONArray(2,2,1,1,0,1,0));text=initialContinuationDetail(value,"");check(text.contains("ACK sent; client READY sent")&&text.contains("Later messages 4")&&text.contains("Position changes 1, stationary 1, unsupported 1")&&text.contains("Observing bounded updates"));
+ value.put("initial_continuation",new JSONArray(1,1,1,1,1,1,0,4,1,0));check(initialContinuationDetail(value,"").contains("Bounded observation ended"));
+ System.out.println("{\"passed\":true,\"checks\":"+checks+",\"android_executed\":false}");}
+}'''
+JSON=r'''package org.json;import java.util.*;public class JSONObject {Map<String,Object>v=new HashMap<>();public JSONObject put(String k,Object o){v.put(k,o);return this;}public boolean has(String k){return v.containsKey(k);}public Object opt(String k){return v.get(k);}public JSONArray optJSONArray(String k){Object o=v.get(k);return o instanceof JSONArray?(JSONArray)o:null;}public String optString(String k,String d){Object o=v.get(k);return o instanceof String?(String)o:d;}}'''
+ARRAY=r'''package org.json;public class JSONArray {long[]v;public JSONArray(long...x){v=x;}public int length(){return v.length;}public long optLong(int i){return optLong(i,0);}public long optLong(int i,long d){return i>=0&&i<v.length?v[i]:d;}public int optInt(int i,int d){return(int)optLong(i,d);}}'''
+def main():
+ spec=importlib.util.spec_from_file_location('initial_text_extract',ROOT/'native-android/session-client/tools/lifecycle_host_check.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+ source=(ROOT/'native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java').read_text();method=m.method(source,'private static String initialContinuationDetail(')
+ assert 'if(BuildConfig.FULLSCREEN_DIAGNOSTIC)detail=initialContinuationDetail(report,detail);' in source
+ with tempfile.TemporaryDirectory(prefix='coh-initial-text-')as tmp:
+  w=Path(tmp);(w/'org/json').mkdir(parents=True)
+  files=[]
+  for name,text in [('org/json/JSONObject.java',JSON),('org/json/JSONArray.java',ARRAY),('InitialContinuationTextTest.java',JAVA.replace('/*METHOD*/',method))]:
+   p=w/name;p.write_text(text);files.append(str(p))
+  subprocess.run(['java','-Xmx128m','com.sun.tools.javac.Main','--release','8','-d',str(w),*files],check=True,timeout=60)
+  r=subprocess.run(['java','-Xmx64m','-cp',str(w),'InitialContinuationTextTest'],check=True,capture_output=True,text=True,timeout=30);print(json.dumps(json.loads(r.stdout)))
+if __name__=='__main__':main()
