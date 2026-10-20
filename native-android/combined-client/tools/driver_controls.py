@@ -325,7 +325,42 @@ def return_locator_controls(path):
         except RuntimeError:pass
         else:raise AssertionError('Missing Return accepted')
         assert len(value.commands)==10 and all(c==('shell','input','swipe',960,177,960,521,'250') for c in value.commands)
-    return 4
+        # Android13 report-diagnostic run: three shell idle failures plus the
+        # first fresh-helper build/install took >57s. Sample memory was below
+        # the portrait controls viewport, so the old 30s deadline expired after
+        # one swipe and before any post-scroll capture. Keep a fresh-tree-only
+        # 30s search budget after that independently bounded capture bootstrap.
+        portrait='<hierarchy><node package="'+PACKAGE+'" class="android.widget.ScrollView" content-desc="Native client controls" bounds="[0,63][1080,1139]">BODY</node></hierarchy>'
+        top=portrait.replace('BODY','<node text="Memory observation" enabled="true" bounds="[0,1081][1080,1139]"/>')
+        sample=portrait.replace('BODY','<node text="SAMPLE MEMORY" enabled="true" bounds="[0,900][1080,1026]"/>')
+        clock=[0.0]
+        class SlowCapture(Locator):
+            def __init__(self):super().__init__('slow-first-capture',[top,sample]);self.captures=0
+            def dump(self):
+                self.captures+=1;clock[0]+=61 if self.captures==1 else 1
+                return super().dump()
+        value=SlowCapture()
+        with patch('emulator_check.time.monotonic',side_effect=lambda:clock[0]):
+            value.tap('Sample memory')
+        assert value.captures==2 and value.commands==[('shell','input','swipe',540,924,540,278,'250'),('shell','input','tap',540,963)]
+        class SlowScroll(SlowCapture):
+            def adb(self,*args,check=True):
+                super().adb(*args,check=check)
+                if args[:3]==('shell','input','swipe'):clock[0]+=31
+        value=SlowScroll();clock[0]=0.0
+        with patch('emulator_check.time.monotonic',side_effect=lambda:clock[0]):
+            value.tap('Sample memory')
+        assert value.captures==2 and value.commands[-1]==('shell','input','tap',540,963)
+        class DisabledCapture(Locator):
+            def __init__(self):super().__init__('disabled-search-timeout',[portrait.replace('BODY','<node text="SAMPLE MEMORY" enabled="false" bounds="[0,900][1080,1026]"/>')]*8);self.captures=0
+            def dump(self):self.captures+=1;clock[0]+=61 if self.captures==1 else 10;return super().dump()
+        value=DisabledCapture();clock[0]=0.0
+        with patch('emulator_check.time.monotonic',side_effect=lambda:clock[0]):
+            try:value.tap('Sample memory')
+            except RuntimeError:pass
+            else:raise AssertionError('Disabled control accepted')
+        assert value.captures==4 and not value.commands
+    return 7
 
 
 def viewport_protocol_controls(path):

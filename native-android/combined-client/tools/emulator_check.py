@@ -584,10 +584,16 @@ class Check:
             # This exact control is first in the qualified native panel; both
             # framework and interop callers must search toward its real start.
             toward_start = not prefix and label.lower() == 'return to launcher'
-        deadline = time.monotonic() + 30
+        # The first fresh capture may perform the independently bounded shell
+        # idle retries and one-time accessibility-helper build/install. That
+        # recovery must not spend the entire control-search budget before an
+        # offscreen control can receive its first post-scroll capture.
+        deadline = None
         swipes = 0
-        while time.monotonic() < deadline:
+        while True:
             root = self.dump()
+            if deadline is None:
+                deadline = time.monotonic() + 30
             clip = self.controls_bounds(root)
             disabled = False
             for node in root.iter('node'):
@@ -607,9 +613,11 @@ class Check:
                     self.adb('shell', 'input', 'tap', x, y)
                 return node
             if disabled:
+                if time.monotonic() >= deadline:
+                    break
                 time.sleep(.2)
                 continue
-            if clip is None or swipes >= 10:
+            if clip is None or swipes >= 10 or time.monotonic() >= deadline:
                 break
             x = (clip[0]+clip[2])//2
             low, high = clip[1]+(clip[3]-clip[1])//5, clip[3]-(clip[3]-clip[1])//5
@@ -617,6 +625,9 @@ class Check:
             self.adb('shell', 'input', 'swipe', x, start, x, end, '250')
             swipes += 1
             time.sleep(.3)
+            # Inspect one fresh result of every issued scroll, even if the ADB
+            # command/capture crosses the deadline; do not issue another scroll
+            # after the deadline or the unchanged ten-scroll limit.
         raise RuntimeError('UI control not found: ' + label)
 
     def viewport(self, label, minimum_frames=0):

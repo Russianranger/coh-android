@@ -22,7 +22,8 @@ permissions:
   actions: read
 concurrency:
   group: native-combined-client-${{ github.ref }}
-  cancel-in-progress: false
+  # Retain ordinary runs; explicitly supersede an unqualified test candidate.
+  cancel-in-progress: ${{ contains(github.event.head_commit.message, '[replace-report-candidate]') }}
 jobs:
   report-diagnostic-candidate:
     permissions:

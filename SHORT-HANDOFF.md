@@ -43,6 +43,11 @@ detail projection runs every old deep assertion: release/ASan/UBSan each
 12,913 checks/131 scenarios, 248 shipping reports, maximum 6,774 bytes. The
 Android driver also strictly validates the three new Java control metadata
 fields before applying the unchanged numeric/privacy contract.
+The Android driver now starts its 30-second control-search budget after its
+first independently bounded fresh accessibility capture, then inspects every
+issued scroll before enforcing the unchanged ten-scroll cap. This fixes the
+observed 57-second helper-bootstrap/portrait offscreen Sample memory locator
+failure without bypassing the real widget. All 232 driver controls pass.
 
 The qualified 0.1.10 build and earlier integration evidence below remain
 historical acceptance records; they do not qualify the 0.1.11 candidate.
