@@ -81,19 +81,32 @@
   "validation": {
     "integrated_source_checks": "passed: receiver, JNI, report ceiling, neighborhood release/ASan/UBSan and actual Mesa GLES, packaging",
     "integrated_memory_checks": "passed: sampler, worker, export, diagnostics and runtime; two existing platform skips",
-    "android_build_and_emulator": "pending"
+    "android_build_and_emulator": "Signed ARM64/x86 and actual Android 13 upgrade/rollback/profile preservation passed in initial run. Corrected candidate-only neighborhood asset integrity lookup passed 10 packaging tests including 18 executed Java legacy/new/missing-pin checks; emulator recheck pending."
   },
   "ci": {
     "workflow": ".github/workflows/native-qualification.yml",
     "purpose": "combined-diagnostic",
-    "status": "pending",
-    "publishes_release": false
+    "status": "pending corrected candidate build",
+    "publishes_release": false,
+    "attempts": [
+      {
+        "run_id": 39455548802,
+        "qualified_commit": "38eda7f9a859302cfefb58932e4e66e95dbb258f",
+        "source": "passed",
+        "signed_arm64_and_x86_builds": "passed",
+        "upgrade_rollback_profiles": "passed",
+        "emulator": "failed before native createSession: neighborhood-map.bin pin was looked up in historical asset-manifest instead of existing combined/build-inputs metadata",
+        "artifact_id": 12281157374,
+        "artifact_sha256": "c08b9c7f9a58043255a519a0517895ef334acc373b5fccffd02b63bbfcf60092",
+        "delivered": false
+      }
+    ]
   },
   "candidate": {
     "version": "0.1.15",
     "version_code": 16,
     "profile": "neighborhood-diagnostic",
-    "state": "source qualified; Android build pending",
+    "state": "source qualified; candidate-only asset pin lookup fixed; Android recheck pending",
     "receiver": {
       "original_receiver_unchanged": true,
       "raw_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
@@ -133,8 +146,12 @@
       "raw_stream_cap_bytes": 524288,
       "named_child_source_peak_bytes": 2633629,
       "gpu_buffer_bytes": 557060,
-      "memory_scope": "Child source/bridge/map/stack accounting; parent session and driver/process RSS/PSS remain separate.",
-      "thor_confirmed": false
+      "memory_scope": "Conservative named source inventory includes old and candidate retained source, JNI arrays and readbacks, CPU geometry and owners, bridge scratch, textures/GPU buffers/FBO, charged 64KiB stack per owner, and two existing 8MiB initial observer budgets. Actual driver/process RSS/PSS remains separate and unmeasured on Thor.",
+      "thor_confirmed": false,
+      "parent_candidate_named_peak_bytes": 29491460,
+      "parent_old_plus_candidate_named_peak_bytes": 58982920,
+      "parent_including_two_initial_budgets_bytes": 75760136,
+      "parent_scene_cap_bytes": 100663296
     },
     "memory": {
       "process_rows_max": 64,
