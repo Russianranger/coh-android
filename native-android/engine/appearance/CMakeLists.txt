@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 # Opt-in only; accepted APKs do not include this directory.
-add_library(coh_appearance STATIC coh_appearance.c)
+add_library(coh_appearance STATIC coh_appearance.c coh_appearance_costume.c)
 target_compile_features(coh_appearance PUBLIC c_std_11)
 target_include_directories(coh_appearance PUBLIC .)
 target_compile_options(coh_appearance PRIVATE -Wall -Wextra -Werror -pedantic)
