@@ -81,12 +81,12 @@
   "validation": {
     "integrated_source_checks": "passed: receiver, JNI, report ceiling, neighborhood release/ASan/UBSan and actual Mesa GLES, packaging",
     "integrated_memory_checks": "passed: sampler, worker, export, diagnostics and runtime; two existing platform skips",
-    "android_build_and_emulator": "Signed ARM64/x86 and actual Android 13 upgrade/rollback/profile preservation passed in initial run. Corrected candidate-only neighborhood asset integrity lookup passed 10 packaging tests including 18 executed Java legacy/new/missing-pin checks; emulator recheck pending."
+    "android_build_and_emulator": "passed: signed ARM64 build/lint/package + 12 JNI exports, signed x86 package + 12 JNI exports, Android 13 emulator 33 checks and update/rollback/profile preservation 14 checks. No ARM64 guest execution or physical Thor result inferred."
   },
   "ci": {
     "workflow": ".github/workflows/native-qualification.yml",
     "purpose": "combined-diagnostic",
-    "status": "pending corrected candidate build",
+    "status": "passed",
     "publishes_release": false,
     "attempts": [
       {
@@ -99,14 +99,40 @@
         "artifact_id": 12281157374,
         "artifact_sha256": "c08b9c7f9a58043255a519a0517895ef334acc373b5fccffd02b63bbfcf60092",
         "delivered": false
+      },
+      {
+        "run_id": 39458357172,
+        "qualified_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
+        "status": "passed",
+        "android13_checks": 33,
+        "android13_upgrade_rollback_checks": 14,
+        "artifact_id": 12281882751
       }
-    ]
+    ],
+    "event": "workflow_dispatch",
+    "run_id": 39458357172,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/39458357172",
+    "qualified_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
+    "qualified_tree": "02a8cee650ec58725b38babdbcb5cf8c20449d58",
+    "artifact_id": 12281882751,
+    "artifact_bytes": 24794957,
+    "artifact_sha256": "11f065c1f5ff8611f1dada84b30f9887666bf53f9e3e28bdfde5992f37e1949f",
+    "source_artifact_id": 12281073935,
+    "source_artifact_sha256": "40c2f525413599f5ffabc53474f5efc4b92938c986a5dce311c498eaac8df072",
+    "routing": {
+      "legacy_push_run": 39457970021,
+      "legacy_push_status": "cancelled",
+      "corrected_dispatch_push_run": 39458341805,
+      "corrected_dispatch_status": "passed",
+      "legacy_candidate_published": false,
+      "fix": "Dedicated marker excludes legacy report builder and requires native-contracts-only on bootstrap."
+    }
   },
   "candidate": {
     "version": "0.1.15",
     "version_code": 16,
     "profile": "neighborhood-diagnostic",
-    "state": "source qualified; candidate-only asset pin lookup fixed; Android recheck pending",
+    "state": "CI qualified signed test APK; physical Thor validation pending",
     "receiver": {
       "original_receiver_unchanged": true,
       "raw_sha256": "2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81",
@@ -170,7 +196,14 @@
       "source_sql_connections": 65,
       "ordinary_spare_connections": 4,
       "new_thor_measurements": null,
-      "old_missing_wine_metrics_cause": "Not established; retained reports lack kernel state."
+      "old_missing_wine_metrics_cause": "Not established; retained reports lack kernel state.",
+      "android13_x86_emulator": {
+        "samples": 27,
+        "sampled_peak_process_rss_bytes": 133447680,
+        "sampled_peak_process_pss_bytes": 62913536,
+        "minimum_observed_system_headroom_bytes": 532905984,
+        "scope": "Actual emulator native-client report; Wine/PostgreSQL guest was not running. These are not Thor or ARM64 combined-server observations."
+      }
     },
     "limits": {
       "decoded_message": 4194304,
@@ -178,6 +211,16 @@
       "initial_observer_aggregate": 8388608,
       "scene_transaction": 100663296
     },
-    "thor_procedure": "native-android/combined-client/THOR-TEST.md"
+    "thor_procedure": "native-android/combined-client/THOR-TEST.md",
+    "apk": {
+      "name": "CoH-Native-Combined-0.1.15-neighborhood-diagnostic-arm64.apk",
+      "bytes": 15101128,
+      "sha256": "9b15b3139a5d3a5dc9d4aada5d9766cffdc2138f423fb3bc6fd70cb821f4e349",
+      "abi": "arm64-v8a",
+      "package": "org.coh.nativecombined",
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+      "build_source_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
+      "update_from_accepted_baseline": "same application id and public test signer; version code16 replaces15 with data preserved"
+    }
   }
 }

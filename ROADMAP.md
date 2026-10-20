@@ -5,8 +5,9 @@ Updated 2026-10-20.
 Combined 0.1.14 physically passed stage 41 on Thor and drew a box at the
 selected entity's real Atlas Park pose. It remains the accepted baseline.
 
-Candidate 0.1.15 connects the verified CLIENT ordinary, extra and palette
-slots to the unchanged original costume receiver. Host tests complete stored
+Candidate 0.1.15 passed source and Android 13 CI. Its signed ARM64 test APK
+connects the verified CLIENT ordinary, extra and palette slots to the unchanged
+original costume receiver. Host tests complete stored
 costume lists of up to ten bodies. After those bodies the next unconsumed outer
 field is the SupergroupCostume presence bit; no missing table is established
 there. The actual Thor cursor remains to be observed.
