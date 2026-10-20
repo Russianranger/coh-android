@@ -57,6 +57,16 @@ CohStatus coh_bridge_acquire(CohAssetRenderBridge *,CohAssetId geo,
                              const char *model_name,uint32_t resolver_generation,
                              CohBridgeResolveMaterial,void *,CohCancel,
                              const CohBridgeMesh **);
+/* Explicit bounded source subset. Bit p selects original material partition p;
+ * UINT32_MAX retains the existing all-partition behavior. Zero/out-of-range
+ * masks refuse. The mask is part of the immutable mesh cache identity; retained
+ * source vertices/indices are unchanged and output partitions keep source order.
+ * Unselected material bodies are neither resolved nor acquired. */
+CohStatus coh_bridge_acquire_parts(CohAssetRenderBridge *,CohAssetId geo,
+                                   const char *model_name,uint32_t resolver_generation,
+                                   uint32_t source_part_mask,
+                                   CohBridgeResolveMaterial,void *,CohCancel,
+                                   const CohBridgeMesh **);
 void coh_bridge_release(CohAssetRenderBridge *,const CohBridgeMesh *);
 /* Packet pointers remain immutable while mesh is pinned. One packet per source
  * material partition; positions/normals remain model local (no hidden scale or

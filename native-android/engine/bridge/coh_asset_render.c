@@ -17,7 +17,7 @@ typedef struct {
 struct CohBridgeMesh {
     CohAssetRenderBridge *owner;
     char path[COH_ASSET_PATH_MAX+1],name[COH_ASSET_PATH_MAX+1];
-    uint32_t generation,resolver_generation,pins,part_count;
+    uint32_t generation,resolver_generation,pins,part_count,source_part_mask;
     uint64_t last; Part parts[];
 };
 struct CohAssetRenderBridge {
@@ -262,12 +262,18 @@ static int valid_material(const CohBridgeMaterial *r) {
 CohStatus coh_bridge_acquire(CohAssetRenderBridge *b,CohAssetId id,const char *model,
     uint32_t resolver_generation,CohBridgeResolveMaterial resolve,void *context,CohCancel cancel,
     const CohBridgeMesh **out) {
-    if(!b||!model||!resolve||!out)return COH_INVALID;
+    return coh_bridge_acquire_parts(b,id,model,resolver_generation,UINT32_MAX,resolve,context,cancel,out);
+}
+CohStatus coh_bridge_acquire_parts(CohAssetRenderBridge *b,CohAssetId id,const char *model,
+    uint32_t resolver_generation,uint32_t source_part_mask,CohBridgeResolveMaterial resolve,
+    void *context,CohCancel cancel,const CohBridgeMesh **out) {
+    if(!b||!model||!resolve||!out||!source_part_mask)return COH_INVALID;
     if(cancelled(cancel))return COH_CANCELLED;
     CohAssetInfo info;CohStatus s=coh_asset_lookup(b->loader,id,&info);if(s!=COH_OK)return s;
     for(uint32_t i=0;i<b->limits.meshes;i++) {
         CohBridgeMesh *m=b->meshes[i];
         if(m&&m->generation==info.id.generation&&m->resolver_generation==resolver_generation&&
+           m->source_part_mask==source_part_mask&&
            same(m->path,info.id.path)&&same(m->name,model)) {
             if(m->pins==UINT32_MAX||b->stats.pins==UINT32_MAX)return COH_LIMIT;
             m->pins++;m->last=++b->clock;b->stats.pins++;b->stats.mesh_hits++;*out=m;return COH_OK;
@@ -296,14 +302,18 @@ CohStatus coh_bridge_acquire(CohAssetRenderBridge *b,CohAssetId id,const char *m
             if(same(gm.name,model)){s=COH_OK;break;}
         }
     }
+    uint32_t selected_parts=0;
     if(s==COH_OK) {
         if(gm.vertex_count>b->limits.max_vertices||gm.triangle_count>b->limits.max_triangles||
-           gm.material_count>b->limits.max_materials)s=COH_LIMIT;
+           gm.material_count>b->limits.max_materials||gm.material_count>32)s=COH_LIMIT;
         else if(gm.bone_info_offset||gm.scale[0]!=1.f||gm.scale[1]!=1.f||gm.scale[2]!=1.f||
                 gm.packs[4].unpacked_bytes||gm.packs[5].unpacked_bytes||gm.packs[6].unpacked_bytes)s=COH_UNSUPPORTED;
+        else if(source_part_mask!=UINT32_MAX&&gm.material_count<32&&
+                (source_part_mask>>gm.material_count))s=COH_INVALID;
+        else for(uint32_t p=0;p<gm.material_count;p++)if(source_part_mask&(UINT32_C(1)<<p))selected_parts++;
     }
     if(s==COH_OK) {
-        built=room(b,sizeof(*built)+(size_t)gm.material_count*sizeof(Part));
+        built=room(b,sizeof(*built)+(size_t)selected_parts*sizeof(Part));
         positions=room(b,(size_t)gm.vertex_count*3*sizeof(float));
         normals=room(b,(size_t)gm.vertex_count*3*sizeof(float));
         uv=room(b,(size_t)gm.vertex_count*2*sizeof(float));
@@ -311,7 +321,7 @@ CohStatus coh_bridge_acquire(CohAssetRenderBridge *b,CohAssetId id,const char *m
         if(!built||!positions||!normals||!uv||!indices||!scratch)s=COH_LIMIT;
     }
     if(built) {
-        built->owner=b;built->part_count=gm.material_count;
+        built->owner=b;built->part_count=selected_parts;
         for(uint32_t i=0;i<built->part_count;i++)for(unsigned j=0;j<3;j++)built->parts[i].textures[j]=NO_TEXTURE;
     }
     if(s==COH_OK)s=stream(b,&geo,&gm,0,scratch,indices,gm.triangle_count,3,1);
@@ -319,13 +329,15 @@ CohStatus coh_bridge_acquire(CohAssetRenderBridge *b,CohAssetId id,const char *m
     if(s==COH_OK)s=stream(b,&geo,&gm,2,scratch,normals,gm.vertex_count,3,0);
     if(s==COH_OK)s=stream(b,&geo,&gm,3,scratch,uv,gm.vertex_count,2,0);
     if(s==COH_OK)for(size_t i=0;i<(size_t)gm.triangle_count*3;i++)if(indices[i]>=gm.vertex_count){s=COH_INVALID;break;}
+    uint32_t target_part=0;
     for(uint32_t p=0;s==COH_OK&&p<gm.material_count;p++) {
+        if(!(source_part_mask&(UINT32_C(1)<<p)))continue;
         if(cancelled(cancel)){s=COH_CANCELLED;break;}
         CohAssetGeoMaterial original;s=coh_asset_geo_material(&geo,&gm,p,&original);if(s!=COH_OK)break;
         CohBridgeMaterial r;memset(&r,0,sizeof(r));s=resolve(context,original.texture_name,&r);
         if(s!=COH_OK)break;
         if(!valid_material(&r)){s=COH_UNSUPPORTED;break;}
-        Part *part=built->parts+p;part->material=r.material;
+        Part *part=built->parts+target_part++;part->material=r.material;
         part->texture_count=r.material.family==COH_MAT_ADDGLOW?3:2;
         char paths[3][COH_ASSET_PATH_MAX+1];
         for(uint32_t j=0;j<part->texture_count;j++) {
@@ -358,6 +370,7 @@ CohStatus coh_bridge_acquire(CohAssetRenderBridge *b,CohAssetId id,const char *m
     deallocate(b,scratch);deallocate(b,workspace);coh_asset_release(b->loader,blob);
     if(s!=COH_OK){mesh_free(b,built);b->stats.rejections++;return s;}
     built->generation=info.id.generation;built->resolver_generation=resolver_generation;
+    built->source_part_mask=source_part_mask;
     built->pins=1;built->last=++b->clock;b->meshes[slot]=built;
     b->stats.meshes++;b->stats.pins++;b->stats.mesh_loads++;*out=built;return COH_OK;
 }

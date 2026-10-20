@@ -170,6 +170,35 @@ int main(int argc,char **argv) {
     coh_bridge_trim(bridge,1);
     CHECK(coh_bridge_stats(bridge).allocated_bytes==bounded_baseline&&coh_bridge_stats(bridge).peak_allocated_bytes<=limits.total_bytes);
     CHECK(coh_bridge_destroy(&bridge,1)==COH_OK&&coh_asset_destroy(&loader)==COH_OK);
+    /* A source partition is a real subset, with a separate cache identity and
+     * byte-identical packet data. Invalid masks preserve caller output/pins. */
+    CHECK(coh_asset_create(&al,&loader)==COH_OK);
+    for(unsigned i=0;i<8;i++)CHECK(coh_asset_mount_file(loader,paths[i],(CohAssetSource){read_at,file+i,file[i].size,1})==COH_OK);
+    limits=coh_bridge_default_limits();CHECK(coh_bridge_create(loader,&limits,&tb,&bridge)==COH_OK);
+    CHECK(coh_bridge_acquire(bridge,bench_id,"modern_bench_2wide__mbench",1,resolve,NULL,cancel,&bench)==COH_OK);
+    for(uint32_t mask=1;mask<=2;mask++) {
+        const CohBridgeMesh *subset=NULL;CohRenderGeometry full_geometry,part_geometry;CohRenderMaterial full_material,part_material;
+        CHECK(coh_bridge_acquire_parts(bridge,bench_id,"modern_bench_2wide__mbench",1,mask,resolve,NULL,cancel,&subset)==COH_OK);
+        CHECK(subset!=bench&&coh_bridge_mesh_parts(subset)==1);
+        CHECK(coh_bridge_mesh_part(bench,mask-1,&full_geometry,&full_material)==COH_OK);
+        CHECK(coh_bridge_mesh_part(subset,0,&part_geometry,&part_material)==COH_OK);
+        CHECK(part_geometry.vertex_count==full_geometry.vertex_count&&part_geometry.index_count==full_geometry.index_count);
+        CHECK(!memcmp(part_geometry.vertices,full_geometry.vertices,(size_t)full_geometry.vertex_count*sizeof(CohRenderVertex)));
+        CHECK(!memcmp(part_geometry.indices,full_geometry.indices,(size_t)full_geometry.index_count*sizeof(uint32_t)));
+        CHECK(!memcmp(&part_material,&full_material,sizeof part_material));
+        CHECK(coh_bridge_acquire_parts(bridge,bench_id,"modern_bench_2wide__mbench",1,mask,resolve,NULL,cancel,&again)==COH_OK&&again==subset);
+        coh_bridge_release(bridge,again);coh_bridge_release(bridge,subset);
+    }
+    uint32_t pins_before=coh_bridge_stats(bridge).pins;
+    for(unsigned i=0;i<3;i++) {
+        const uint32_t invalid[]={0,4,UINT32_C(0x80000000)};
+        CHECK(coh_bridge_acquire_parts(bridge,bench_id,"modern_bench_2wide__mbench",1,invalid[i],resolve,NULL,cancel,&sentinel)==COH_INVALID);
+        CHECK(sentinel==(const CohBridgeMesh *)(uintptr_t)1&&coh_bridge_stats(bridge).pins==pins_before);
+    }
+    CHECK(coh_bridge_acquire_parts(bridge,bench_id,"modern_bench_2wide__mbench",1,1,resolve,NULL,(CohCancel){yes,NULL},&sentinel)==COH_CANCELLED);
+    coh_bridge_release(bridge,bench);coh_bridge_trim(bridge,1);
+    CHECK(coh_bridge_stats(bridge).meshes==0&&coh_bridge_stats(bridge).textures==0&&coh_asset_stats(loader).pinned_blobs==0);
+    CHECK(coh_bridge_destroy(&bridge,1)==COH_OK&&coh_asset_destroy(&loader)==COH_OK);
     for(unsigned i=0;i<8;i++)free(file[i].bytes);
     printf("{\"passed\":true,\"assertions\":%u,\"authentic_meshes\":3,\"material_parts\":6,\"unique_textures\":6,\"texture_loads\":%llu,\"sustained_cache_cycles\":1000,\"peak_counted_bytes\":%zu,\"android_execution\":false}\n",checks,(unsigned long long)steady.texture_loads,steady.peak_allocated_bytes);
     return 0;
