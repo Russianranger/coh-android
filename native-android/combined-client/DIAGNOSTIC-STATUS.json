@@ -536,7 +536,7 @@
         "tree": "e1612ec3d9adbf60a98662d01daf237bb7175fc2"
       }
     ],
-    "ci": "Pending capture-diagnostic workflow_dispatch; serial source then ARM64/x86 builds and Android13 lifecycle/update/rollback.",
+    "ci": "Source-check include-path failure repaired locally; rerunning qualification before the single APK build.",
     "next_diagnostic": {
       "version": "0.1.16",
       "version_code": 17,
@@ -567,7 +567,8 @@
       "live_world": "233 controls each release/ASan/UBSan; actual Mesa draws two nearby source instances at two distant poses with0 GL errors; Android FD integration not claimed",
       "outer_android": "Final integrated check at 18b95b288 passed 10832249 checks in each release/ASan/UBSan mode,165 body selection/truncation cases, actual BasePower callback, replay bounds/alias/JNI/cleanup. Report peak 6855/7168 bytes.",
       "initial_replay_store": "82 Java storage/lifecycle/export controls",
-      "integrated_capture": "All checks passed at cbede103272b09d1f1d980a44e09d30a79419dad: wiring50 per mode+27 assertions, packaging11, neighborhood39 per mode and actual Mesa source capture/ZIP"
+      "integrated_capture": "All checks passed at cbede103272b09d1f1d980a44e09d30a79419dad: wiring50 per mode+27 assertions, packaging11, neighborhood39 per mode and actual Mesa source capture/ZIP",
+      "observed_session_dependency_fix": "Added the public asset-header include path; focused source pose15282 and observed-session135 checks pass per release/ASan/UBSan. No app behavior change."
     },
     "housekeeping": {
       "readme_points_to_roadmap": true,
@@ -609,6 +610,18 @@
       "runtime_world_gpu_payload_bytes": 1867780,
       "process_rss_pss": "Separate physical measurements; no new physical peak inferred from source sizes.",
       "initial_observed_host_frames_bytes": 28944
-    }
+    },
+    "ci_attempts": [
+      {
+        "run_id": 39472595623,
+        "qualified_commit": "3f4413d2c321a08a06060929817369aff8e04d54",
+        "status": "failed before Android build",
+        "blocker": "Observed-entity host checker lacked the engine/assets include path required by the runtime archive source header.",
+        "apk_produced": false,
+        "source_artifact_id": 12288430279,
+        "source_artifact_bytes": 14106,
+        "source_artifact_sha256": "2f3116573c30818d3b40e99e88f21e2e934f3a9ae21db1a178499f4f3ae03eaa"
+      }
+    ]
   }
 }
