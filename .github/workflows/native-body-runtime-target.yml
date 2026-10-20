@@ -1,0 +1,88 @@
+name: Compile disabled BodyPart original MapServer witness
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-body-runtime-target.yml
+      - native-android/engine/costume-export/body_witness_target.py
+      - native-android/engine/costume-export/test_body_witness_target.py
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-body-runtime-target-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  compile-only:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 50
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+      _CL_: '/MP1'
+      MSBUILDDISABLENODEREUSE: '1'
+    steps:
+      - name: Preserve exact source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Focused refusal and reversible-composition controls
+        shell: pwsh
+        run: |
+          python native-android/engine/costume-export/test_body_witness_target.py
+          if ($LASTEXITCODE -ne 0) { throw 'Target preflight controls failed' }
+      - name: Acquire only exact retained startup inputs and stage private original source
+        shell: pwsh
+        run: |
+          python tools/android/interactive/map_startup_inputs.py --output "$env:RUNNER_TEMP/body-inputs" --cache "$env:RUNNER_TEMP/body-cache"
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned original inputs unavailable' }
+          python tools/prepare_map_startup_source.py --output C:/bwsrc --animations-pigg "$env:RUNNER_TEMP/body-inputs/server-animations.pigg" --animation-manifest "$env:RUNNER_TEMP/body-inputs/server-animation-manifest.json"
+          if ($LASTEXITCODE -ne 0) { throw 'Inherited original source staging refused' }
+      - name: Stage disabled witness and verify original loader/source dependencies
+        shell: pwsh
+        run: |
+          @'
+          import hashlib,json,os,pathlib
+          def h(s):return hashlib.sha256(s.encode()).hexdigest()
+          # Labels only; none purports to identify a runtime load generation.
+          labels={"build_sha256":h(os.environ["GITHUB_SHA"]+":body-target"),
+            "profile_sha256":h("compile-only:Win32:OptDebug:body-witness-disabled"),
+            "run_sha256":h(os.environ["GITHUB_RUN_ID"]+":"+os.environ["GITHUB_RUN_ATTEMPT"])}
+          target=pathlib.Path(os.environ["RUNNER_TEMP"])/"body-target-labels.json"
+          target.write_text(json.dumps(labels))
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Compile labels unavailable' }
+          python native-android/engine/costume-export/body_witness_target.py stage --source-root . --already-staged C:/bwsrc --metadata "$env:RUNNER_TEMP/body-target-labels.json"
+          if ($LASTEXITCODE -ne 0) { throw 'Witness target composition refused' }
+          python native-android/engine/costume-export/body_witness_target.py verify --source-root . --already-staged C:/bwsrc
+          if ($LASTEXITCODE -ne 0) { throw 'Witness target source preflight refused' }
+      - name: Compile MapServer only with two build workers; never run it
+        working-directory: C:/bwsrc
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path "$env:RUNNER_TEMP/body-target-logs" -Force | Out-Null
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF 2>&1 | Tee-Object "$env:RUNNER_TEMP/body-target-logs/configure.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Witness target configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel 2 --target MapServer 2>&1 | Tee-Object "$env:RUNNER_TEMP/body-target-logs/build.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Witness target compile failed' }
+      - name: Record actual PE, compiler, source, dependencies and original input identities
+        shell: pwsh
+        run: |
+          python native-android/engine/costume-export/body_witness_target.py record --source-root . --already-staged C:/bwsrc --inputs "$env:RUNNER_TEMP/body-inputs" --output "$env:RUNNER_TEMP/body-target-qualified"
+          if ($LASTEXITCODE -ne 0) { throw 'Witness target receipt refused' }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: body-runtime-target-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/body-target-qualified/
+            ${{ runner.temp }}/body-target-logs/
+            C:/bwsrc/body-witness-target-stage.json
+          if-no-files-found: warn
+          retention-days: 90
