@@ -111,7 +111,8 @@ def prepare(args):
     # These generated directories are exclusively owned by this preparer.
     for name in ('runtime', 'combined', 'atlas'):
         shutil.rmtree(assets / name, ignore_errors=True)
-    (assets / 'neighborhood-map.bin').unlink(missing_ok=True)
+    for name in ('neighborhood-map.bin','live-world.bin'):
+        (assets / name).unlink(missing_ok=True)
     bundled = {}
     donor_files = {}
     receipt = {'format': 1, 'donor_apk': {'name': DONOR_NAME, **pin(donor.read_bytes())}, 'scene_apk': {'name': SCENE_NAME, **pin(scene.read_bytes())}, 'large_runtime_payloads_bundled': False, 'actual_server_interoperability_verified': False}

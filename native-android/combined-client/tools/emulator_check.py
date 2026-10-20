@@ -682,6 +682,42 @@ class Check:
         self.record('bounded native viewport: '+label, **proof, controls_height=controls_height)
         return value
 
+    def fullscreen_preview(self, before):
+        """Real Android layout/lifecycle only; this preview has no server pose."""
+        self.tap('Full screen')
+        def ready(value):
+            return (settled_preview(value,before['native']['frames']+12)
+                and value.get('viewport_policy',{}).get('fullscreen') is True
+                and value.get('input_area',{}).get('width',0)>=640)
+        first=self.wait_report('native-client-report.json',ready,'full-screen actual Surface and EGL resize',seconds=60)
+        proof=viewport_contract(first)
+        assert proof['surface_height']*100>=proof['host_height']*95
+        nodes=list(self.dump().iter('node'))
+        assert any(n.attrib.get('text')=='Return to controls' for n in nodes)
+        assert not any(n.attrib.get('content-desc')=='Native client controls' for n in nodes)
+        assert first['native'].get('direction_mask')==0 and first['native'].get('held_dirs')==0
+        assert not first['native'].get('observed_server_entity',{}).get('active')
+        assert first['native']['frame_capture']['frame']==0 and first.get('scene_frame_capture') is None
+        (self.args.output/'fullscreen-preview-native-report.json').write_text(json.dumps(first,indent=2)+'\n')
+        self.adb('shell','input','keyevent','KEYCODE_BACK')
+        restored=self.wait_report('native-client-report.json',lambda value:
+            value.get('viewport_policy',{}).get('fullscreen') is False and settled_preview(value,first['native']['frames']+12),
+            'Back restores native controls and resized EGL viewport',seconds=60)
+        self.viewport('fullscreen-back-controls',restored['native']['frames'])
+        self.tap('Full screen')
+        second=self.wait_report('native-client-report.json',lambda value:
+            value.get('viewport_policy',{}).get('fullscreen') is True and settled_preview(value,restored['native']['frames']+12),
+            'second full-screen Surface epoch',seconds=60)
+        assert second['native']['contexts_started']>first['native']['contexts_started']
+        self.tap('Return to controls')
+        final=self.wait_report('native-client-report.json',lambda value:
+            value.get('viewport_policy',{}).get('fullscreen') is False and settled_preview(value,second['native']['frames']+12),
+            'corner return restores native controls',seconds=60)
+        self.viewport('fullscreen-corner-controls',final['native']['frames'])
+        self.record('Android full-screen Surface, Back, corner return and context recreation',**proof,
+            actual_observed_entity=False,scene_capture_published=False,fixture_scope='offline source preview only')
+        return final
+
     def activity_state(self, label):
         raw = self.text('shell','dumpsys','-t','5','activity','-a','activities')
         (self.args.output/(label+'-activities.txt')).write_text(raw)
@@ -1256,10 +1292,13 @@ class Check:
             frame = native.get('frame_capture', {})
             assert frame.get('frame') == 0 and frame.get('pose_generation') == 0
             assert frame.get('source_charge_bytes') == 0 and frame.get('failures') == 0
-            assert frame.get('reserve_bytes') == 1 << 20 and frame.get('startup_witness') is False
+            expected_reserve=5667858 if 'fullscreen-diagnostic' in current.get('app',{}).get('version_name','') else 1<<20
+            assert frame.get('reserve_bytes') == expected_reserve and frame.get('startup_witness') is False
             assert current.get('scene_frame_capture') is None
             self.record('startup pixel witnesses do not create a real-pose scene capture', actual_observed_entity=False, frame=0)
         self.viewport('initial-preview', native['frames'])
+        if 'fullscreen-diagnostic' in current.get('app',{}).get('version_name',''):
+            current=self.fullscreen_preview(current);native=current['native']
         self.tap('Connect local server')
         unavailable = self.wait_report('native-client-report.json', lambda x: x.get('server_protocol', {}).get('phase') == 'POLICY_UNAVAILABLE', 'native connect refuses missing owned server lease')
         absent_policy_report_contract(unavailable['server_protocol'])

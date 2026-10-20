@@ -20,6 +20,7 @@ BUILD_PROFILES = {
     'entity-diagnostic': ('15', '0.1.14-entity-diagnostic-test'),
     'neighborhood-diagnostic': ('16', '0.1.15-neighborhood-diagnostic-test'),
     'capture-diagnostic': ('17', '0.1.16-capture-diagnostic-test'),
+    'fullscreen-diagnostic': ('18', '0.1.17-fullscreen-diagnostic-test'),
 }
 CLIENT_SLOT_ASSET = 'combined/client-slots.bin'
 CLIENT_SLOT_PIN = {'bytes': 641477, 'sha256': '2e69212432d1b16a38f307aca16ac892cca56cf59128d5d8d25e71386da4af81'}
@@ -28,7 +29,7 @@ NEIGHBORHOOD_ASSETS = {'neighborhood-map.bin': {'bytes': 491565, 'sha256': 'fcd3
 
 def neighborhood_assets(archive, receipt, profile):
     """Keep the accepted scene intact and admit the separate source subset."""
-    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic'):
+    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic'):
         assert 'neighborhood' not in receipt, 'Neighborhood assets require the neighborhood diagnostic profile'
         return set()
     assert receipt['neighborhood']['assets'] == NEIGHBORHOOD_ASSETS
@@ -42,9 +43,23 @@ def neighborhood_assets(archive, receipt, profile):
     return result
 
 
+LIVE_WORLD_ASSETS = {'live-world.bin': {'bytes': 10144, 'sha256': '585cd024ec0438bcbece6bd59b64cc12d89557e35d271c3a73900358c04fb6af'}}
+
+def live_world_assets(archive, receipt, profile):
+    if profile != 'fullscreen-diagnostic':
+        assert 'live_world' not in receipt, 'Live source index requires the fullscreen diagnostic profile'
+        return set()
+    assert receipt['live_world']['assets'] == LIVE_WORLD_ASSETS
+    for name, expected in LIVE_WORLD_ASSETS.items():
+        info = archive.getinfo('assets/' + name)
+        assert info.file_size == expected['bytes'] and info.compress_type == zipfile.ZIP_STORED, 'Runtime source index must expose its exact direct descriptor span'
+        assert pin(archive.read(info)) == expected, 'Runtime placement source bytes differ'
+    return {'assets/' + name for name in LIVE_WORLD_ASSETS}
+
+
 def client_slot_assets(archive, receipt, profile):
     """Only the explicit next diagnostic embeds the exact retained slot table."""
-    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic'):
+    if profile not in ('neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic'):
         assert 'client_slots' not in receipt, 'Client slots require the neighborhood diagnostic profile'
         return set()
     metadata = receipt['client_slots']
@@ -80,7 +95,7 @@ def process_memory_jni(raw, readelf):
     return entrypoint
 
 
-def frame_capture_jni(raw, readelf):
+def frame_capture_jni(raw, readelf, fullscreen=False):
     """Require the current-frame JNI on the actual session DSO in this profile."""
     if readelf is None or not readelf.is_file():
         raise ValueError('Capture diagnostic requires pinned --readelf')
@@ -94,7 +109,10 @@ def frame_capture_jni(raw, readelf):
         fields = line.split()
         if len(fields) >= 8 and fields[0].rstrip(':').isdigit() and fields[6] != 'UND' and fields[4] in ('GLOBAL', 'WEAK') and fields[5] in ('DEFAULT', 'PROTECTED'):
             exported.add(fields[7].split('@', 1)[0])
-    assert entrypoint in exported, 'Current gameSurface capture JNI absent'
+    required = {entrypoint}
+    if fullscreen:
+        required.update('Java_org_coh_sessionclient_SessionNative_' + name for name in ('captureViewport', 'runtimeWorld'))
+    assert required <= exported, 'Current gameSurface capture or runtime source JNI absent'
     return entrypoint
 
 
@@ -115,7 +133,7 @@ def tool(args, name):
 
 
 def audit(args):
-    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic') and not args.require_interop:
+    if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic') and not args.require_interop:
         raise ValueError('Memory diagnostic build must retain the independent interop library audit')
     if args.apk.stat().st_size > 25 << 20:
         raise ValueError('Combined APK exceeds bounded 25MiB small-core policy')
@@ -133,6 +151,7 @@ def audit(args):
         expected_assets = {'assets/combined/import-contract.json', 'assets/combined/build-inputs.json', 'assets/atlas/atlas-import.properties'}
         expected_assets.update(client_slot_assets(z, receipt, args.build_profile))
         expected_assets.update(neighborhood_assets(z, receipt, args.build_profile))
+        expected_assets.update(live_world_assets(z, receipt, args.build_profile))
         assert pin(z.read('assets/combined/OPENSSL-LICENSE.txt')) == receipt['public_crypto']['license']
         assert receipt['public_crypto']['license']['sha256'] == '7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a'
         expected_assets.add('assets/combined/OPENSSL-LICENSE.txt')
@@ -176,10 +195,10 @@ def audit(args):
                 assert abi == 'arm64-v8a' and pin(data) == receipt['proot_cores'][filename], 'PRoot core changed'
             if filename == 'libcoh_combined_network.so':
                 native_abis.add(abi)
-                if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic'):
+                if args.build_profile in ('memory-diagnostic', 'report-diagnostic', 'catalog-diagnostic', 'entity-diagnostic', 'neighborhood-diagnostic', 'capture-diagnostic', 'fullscreen-diagnostic'):
                     memory_entrypoint = process_memory_jni(data, args.readelf)
-            if filename == 'libcoh_session_client.so' and args.build_profile == 'capture-diagnostic':
-                capture_entrypoint = frame_capture_jni(data, args.readelf)
+            if filename == 'libcoh_session_client.so' and args.build_profile in ('capture-diagnostic', 'fullscreen-diagnostic'):
+                capture_entrypoint = frame_capture_jni(data, args.readelf, args.build_profile == 'fullscreen-diagnostic')
             libraries[i.filename] = pin(data)
         assert native_abis == {args.abi}
         assert 'lib/' + args.abi + '/libcoh_session_client.so' in libraries

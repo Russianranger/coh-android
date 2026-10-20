@@ -10,7 +10,7 @@ import unittest
 from unittest.mock import patch
 import zipfile
 from audit_catalog_publication import admit_framework_package
-from package_check import BUILD_PROFILES, check_build_identity, client_slot_assets, CLIENT_SLOT_ASSET, CLIENT_SLOT_PIN, neighborhood_assets, NEIGHBORHOOD_ASSETS, frame_capture_jni
+from package_check import BUILD_PROFILES, check_build_identity, client_slot_assets, CLIENT_SLOT_ASSET, CLIENT_SLOT_PIN, neighborhood_assets, NEIGHBORHOOD_ASSETS, LIVE_WORLD_ASSETS, live_world_assets, frame_capture_jni
 from interop_package_audit import required_methods
 from upgrade_emulator_check import PREVIOUS_INPUTS, package_receipt, pin, SIGNER, PACKAGE
 
@@ -26,6 +26,11 @@ class CatalogPackagingTests(unittest.TestCase):
             symbol = '  7: 00000001 20 FUNC GLOBAL DEFAULT 12 ' + entry + '\n'
             with patch('package_check.run', return_value=symbol):
                 self.assertEqual(frame_capture_jni(b'explicit ELF symbol-audit control', readelf), entry)
+            all_symbols=symbol+''.join(symbol.replace(entry,'Java_org_coh_sessionclient_SessionNative_'+name) for name in ('captureViewport','runtimeWorld'))
+            with patch('package_check.run',return_value=all_symbols):
+                self.assertEqual(frame_capture_jni(b'host symbol control',readelf,True),entry)
+            with patch('package_check.run',return_value=symbol),self.assertRaises(AssertionError):
+                frame_capture_jni(b'host symbol control',readelf,True)
             for missing in ('', symbol.replace('DEFAULT', 'HIDDEN'), symbol.replace('12 ', 'UND ')):
                 with patch('package_check.run', return_value=missing), self.assertRaises(AssertionError):
                     frame_capture_jni(b'explicit ELF symbol-audit control', readelf)
@@ -35,7 +40,7 @@ class CatalogPackagingTests(unittest.TestCase):
     def test_preview_uses_additive_neighborhood_pins_without_replacing_historical_manifest(self):
         source = (ROOT / 'native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java').read_text()
         self.assertIn('readAsset("combined/build-inputs.json")', source)
-        self.assertIn('.getJSONObject("neighborhood").getJSONObject("assets") : null;', source)
+        self.assertIn('buildInputs.getJSONObject("neighborhood").getJSONObject("assets");', source)
         self.assertIn('sceneAssetPin(records, neighborhoodRecords, names[i])', source)
         start = source.index('    private static JSONObject sceneAssetPin(')
         end = source.index('    private byte[] readAsset(', start)
@@ -82,6 +87,8 @@ public final class SceneAssetPinTest {
         self.assertEqual(BUILD_PROFILES['entity-diagnostic'], ('15', '0.1.14-entity-diagnostic-test'))
         self.assertEqual(BUILD_PROFILES['neighborhood-diagnostic'], ('16', '0.1.15-neighborhood-diagnostic-test'))
         self.assertEqual(BUILD_PROFILES['capture-diagnostic'], ('17', '0.1.16-capture-diagnostic-test'))
+        self.assertEqual(BUILD_PROFILES['fullscreen-diagnostic'], ('18', '0.1.17-fullscreen-diagnostic-test'))
+        self.assertEqual(required_methods(fullscreen_diagnostic=True), required_methods(capture_diagnostic=True))
         self.assertEqual(required_methods(capture_diagnostic=True), required_methods(neighborhood_diagnostic=True) | {'exportInitialReplay'})
         self.assertEqual(len(required_methods()), 9)
         self.assertEqual(len(required_methods(entity_diagnostic=True)), 11)
@@ -118,6 +125,20 @@ public final class SceneAssetPinTest {
         for payload, compression in [(raw[:-1], zipfile.ZIP_STORED), (b'X' + raw[1:], zipfile.ZIP_STORED), (raw, zipfile.ZIP_DEFLATED)]:
             with archive(payload, compression) as zipped, self.assertRaises(AssertionError):
                 client_slot_assets(zipped, receipt, 'neighborhood-diagnostic')
+
+    def test_runtime_world_index_keeps_direct_span_and_profile_scope(self):
+        source=ROOT/'native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java'
+        self.assertIn('getJSONObject("live_world").getJSONObject("assets").getJSONObject("live-world.bin")',source.read_text())
+        self.assertEqual(LIVE_WORLD_ASSETS['live-world.bin']['bytes'],10144)
+        self.assertEqual(LIVE_WORLD_ASSETS['live-world.bin']['sha256'],'585cd024ec0438bcbece6bd59b64cc12d89557e35d271c3a73900358c04fb6af')
+        receipt={'live_world':{'assets':copy.deepcopy(LIVE_WORLD_ASSETS)}}
+        raw=io.BytesIO()
+        with zipfile.ZipFile(raw,'w') as archive:archive.writestr('assets/live-world.bin',b'bad')
+        with zipfile.ZipFile(io.BytesIO(raw.getvalue())) as archive:
+            self.assertEqual(live_world_assets(archive,{},'capture-diagnostic'),set())
+            with self.assertRaises(AssertionError):live_world_assets(archive,receipt,'capture-diagnostic')
+            with self.assertRaises(AssertionError):live_world_assets(archive,receipt,'fullscreen-diagnostic')
+            with self.assertRaises(KeyError):live_world_assets(archive,{},'fullscreen-diagnostic')
 
     def test_neighborhood_asset_admission_keeps_historical_scene_separate(self):
         result = io.BytesIO()

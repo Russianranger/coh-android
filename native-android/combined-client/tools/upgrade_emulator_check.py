@@ -29,6 +29,11 @@ SIGNER = '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522'
 # Historical pins remain the default. The report regression must additionally
 # exercise the exact installed 0.1.10 donor, not infer that path from 0.1.9.
 PREVIOUS_INPUTS = {
+    'capture-diagnostic': dict(revision='f311bebfa9bdf33916fefcaaacd546282e17b534',artifact='12289656309',
+        run='39474180919',archive_bytes=24919187,
+        archive_sha256='db4151cd32c6140b9e116b3ee6479d1e14d4dda6a097f8a46f400887a86f9814',
+        apk='CoH-Native-Combined-0.1.16-capture-diagnostic-x86_64.apk',apk_bytes=14452858,
+        apk_sha256='b02a302a0754d9c40841992a83ce500d74f930fecd043c3bcd509cdc07a97109'),
     'original-fragment': dict(revision=PREVIOUS_REVISION, artifact=PREVIOUS_ARTIFACT,
         run=PREVIOUS_RUN, archive_bytes=PREVIOUS_ARCHIVE_BYTES, archive_sha256=PREVIOUS_ARCHIVE_SHA,
         apk=PREVIOUS_APK, apk_bytes=PREVIOUS_APK_BYTES, apk_sha256=PREVIOUS_APK_SHA),

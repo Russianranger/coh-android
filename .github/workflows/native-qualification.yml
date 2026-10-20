@@ -99,6 +99,7 @@ name: Native source qualification
         options:
         - neighborhood-diagnostic
         - capture-diagnostic
+        - fullscreen-diagnostic
         default: neighborhood-diagnostic
       qualifier:
         description: BodyPart qualifier; ignored for combined-source
@@ -143,7 +144,7 @@ jobs:
   body-plan:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && ((github.event_name
       == 'workflow_dispatch' && inputs.purpose == 'body-catalog') || (github.event_name == 'push' && !contains(github.event.head_commit.message,
-      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]')
+      '[cleanup-source-dispatch]'))) && !contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && !contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]')
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
@@ -225,10 +226,15 @@ jobs:
         python3 native-android/combined-client/tools/check_client_slots_android.py --work /tmp/client-slots-android-ci --output native-android/results/combined-neighborhood-diagnostic/client-slots-android.json
         python3 native-android/engine/entities/check_original_ent_costume.py --work /tmp/original-ent-costume-ci --output native-android/results/combined-neighborhood-diagnostic/original-ent-costume.json
         python3 native-android/engine/entities/check_original_taskforce_receive.py --work /tmp/original-taskforce-ci --output native-android/results/combined-neighborhood-diagnostic/original-taskforce.json
+        python3 native-android/engine/entities/check_original_initial_tail.py --work /tmp/original-initial-tail-ci --output native-android/results/combined-neighborhood-diagnostic/original-initial-tail.json
         python3 native-android/engine/appearance/check_costume_input.py --work /tmp/costume-input-ci --output native-android/results/combined-neighborhood-diagnostic/costume-input.json
         python3 native-android/session-client/tools/check_frame_capture.py --work /tmp/current-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/current-frame-owner.json
         python3 native-android/combined-client/tools/check_frame_capture_store.py
         python3 native-android/combined-client/tools/check_frame_capture_wiring.py
+        python3 native-android/session-client/tools/check_frame_capture.py --fullscreen --work /tmp/fullscreen-frame-owner-ci --output native-android/results/combined-neighborhood-diagnostic/fullscreen-frame-owner.json
+        python3 native-android/combined-client/tools/check_fullscreen_capture.py
+        python3 native-android/combined-client/tools/check_runtime_world_wiring.py
+        python3 native-android/combined-client/imports/tests/check_runtime_world_inputs.py --work /tmp/runtime-world-inputs-ci --output native-android/results/combined-neighborhood-diagnostic/runtime-world-inputs.json
         python3 native-android/combined-client/tools/check_outer_costume_android.py --work /tmp/outer-costume-android-ci --output native-android/results/combined-neighborhood-diagnostic/outer-costume-android.json
         python3 native-android/combined-client/tools/check_initial_replay_store.py --work /tmp/initial-replay-store-ci --output native-android/results/combined-neighborhood-diagnostic/initial-replay-store.json
         python3 native-android/combined-client/qualification/check_diagnostics.py
@@ -245,7 +251,7 @@ jobs:
         retention-days: 90
   dispatch-neighborhood-diagnostic:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && github.event_name
-      == 'push' && (contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]')) && contains(github.event.head_commit.message, '[native-contracts-only]') && github.run_attempt
+      == 'push' && (contains(github.event.head_commit.message, '[neighborhood-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') || contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]')) && contains(github.event.head_commit.message, '[native-contracts-only]') && github.run_attempt
       == '1'
     permissions:
       contents: read
@@ -257,7 +263,7 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         EXPECTED_SHA: ${{ github.sha }}
-        DIAGNOSTIC_PROFILE: ${{ contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && 'capture-diagnostic' || 'neighborhood-diagnostic' }}
+        DIAGNOSTIC_PROFILE: ${{ contains(github.event.head_commit.message, '[fullscreen-diagnostic-dispatch]') && 'fullscreen-diagnostic' || contains(github.event.head_commit.message, '[capture-diagnostic-dispatch]') && 'capture-diagnostic' || 'neighborhood-diagnostic' }}
       run: |
         test "$(gh api repos/Russianranger/coh-android/branches/native-android --jq .commit.sha)" = "$EXPECTED_SHA"
         gh api --method POST repos/Russianranger/coh-android/actions/workflows/native-qualification.yml/dispatches \
@@ -273,7 +279,7 @@ jobs:
     timeout-minutes: 60
     env:
       DIAGNOSTIC_PROFILE: ${{ inputs.diagnostic_profile || 'neighborhood-diagnostic' }}
-      DIAGNOSTIC_VERSION: ${{ inputs.diagnostic_profile == 'capture-diagnostic' && '0.1.16' || '0.1.15' }}
+      DIAGNOSTIC_VERSION: ${{ inputs.diagnostic_profile == 'fullscreen-diagnostic' && '0.1.17' || inputs.diagnostic_profile == 'capture-diagnostic' && '0.1.16' || '0.1.15' }}
     steps:
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
@@ -295,7 +301,7 @@ jobs:
         python3 -m pip install --disable-pip-version-check Pillow==12.3.0
     - name: Check the selected bounded diagnostic profile
       run: |
-        case "$DIAGNOSTIC_PROFILE" in neighborhood-diagnostic|capture-diagnostic) ;; *) exit 1 ;; esac
+        case "$DIAGNOSTIC_PROFILE" in neighborhood-diagnostic|capture-diagnostic|fullscreen-diagnostic) ;; *) exit 1 ;; esac
     - name: Reuse pinned crypto, accepted scene, dictionary and neighborhood inputs
       env:
         GH_TOKEN: ${{ github.token }}
@@ -305,29 +311,39 @@ jobs:
         python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/combined-crypto.zip --crypto-root /tmp/combined-crypto --output native-android/results/combined-neighborhood-diagnostic/crypto-reuse.json
         python3 native-android/combined-client/tools/prepare.py --client-slots --evidence native-android/results/combined-neighborhood-diagnostic/build-inputs.json
         python3 native-android/combined-client/tools/prepare_neighborhood.py --source-root . --assets native-android/combined-client/app/src/main/assets --cache /tmp/combined-neighborhood-inputs --output native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json
+        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic; then
+          python3 native-android/combined-client/tools/prepare_live_world.py --source-root . --assets native-android/combined-client/app/src/main/assets --cache /tmp/combined-neighborhood-inputs --output native-android/results/combined-neighborhood-diagnostic/live-world-inputs.json
+        fi
         python3 - <<'PYASSETS'
-        import json, pathlib
+        import json, pathlib, os
         folder = pathlib.Path('native-android/results/combined-neighborhood-diagnostic')
         embedded = pathlib.Path('native-android/combined-client/app/src/main/assets/combined/build-inputs.json')
         receipt = json.loads(embedded.read_bytes())
         scene_files = receipt['scene_files'].copy()
         neighborhood = json.loads((folder / 'neighborhood-inputs.json').read_bytes())
         receipt['neighborhood'] = {key: value for key, value in neighborhood.items() if key not in ('fixture', 'instances')}
+        if os.environ['DIAGNOSTIC_PROFILE'] == 'fullscreen-diagnostic':
+            live = json.loads((folder / 'live-world-inputs.json').read_bytes())
+            receipt['live_world'] = {key: value for key, value in live.items() if key != 'instances'}
         assert receipt['scene_files'] == scene_files
         raw = json.dumps(receipt, indent=2, sort_keys=True) + '\n'
         embedded.write_text(raw)
         (folder / 'build-inputs.json').write_text(raw)
         PYASSETS
-        gh api repos/Russianranger/coh-android/actions/artifacts/12259140776/zip > /tmp/combined-previous014.zip
+        PREVIOUS_ARTIFACT=12259140776; PREVIOUS_PROFILE=entity-diagnostic
+        if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic; then PREVIOUS_ARTIFACT=12289656309; PREVIOUS_PROFILE=capture-diagnostic; fi
+        export PREVIOUS_PROFILE
+        echo "PREVIOUS_PROFILE=$PREVIOUS_PROFILE" >> "$GITHUB_ENV"
+        gh api repos/Russianranger/coh-android/actions/artifacts/$PREVIOUS_ARTIFACT/zip > /tmp/combined-previous.zip
         python3 - <<'PYPREV'
-        import pathlib, sys
+        import pathlib, sys, os
         sys.path.insert(0, 'native-android/combined-client/tools')
         from upgrade_emulator_check import previous_inputs
-        output = pathlib.Path('/tmp/combined-previous014-preflight')
+        output = pathlib.Path('/tmp/combined-previous-preflight')
         output.mkdir()
-        previous_inputs(pathlib.Path('/tmp/combined-previous014.zip'), output, 'entity-diagnostic')
+        previous_inputs(pathlib.Path('/tmp/combined-previous.zip'), output, os.environ.get('PREVIOUS_PROFILE','capture-diagnostic' if os.environ['DIAGNOSTIC_PROFILE']=='fullscreen-diagnostic' else 'entity-diagnostic'))
         PYPREV
-    - name: Qualify authentic near-pose geometry and frame capture with isolated host GLES headers
+    - name: Qualify source geometry, full-surface capture and runtime archive format with isolated GLES headers
       env:
         LIBGL_ALWAYS_SOFTWARE: '1'
         EGL_PLATFORM: surfaceless
@@ -335,12 +351,24 @@ jobs:
       run: |
         python3 native-android/session-client/tools/check_neighborhood.py --assets native-android/combined-client/app/src/main/assets --metadata native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json --world-bin native-android/combined-client/app/src/main/assets/world.bin --source-root . --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/neighborhood-check" --output native-android/results/combined-neighborhood-diagnostic/neighborhood-host.json
         cp "$RUNNER_TEMP/neighborhood-check/world-and-box.png" native-android/results/combined-neighborhood-diagnostic/host-world-and-box.png
-        if test "$DIAGNOSTIC_PROFILE" = capture-diagnostic; then
-          python3 native-android/session-client/tools/check_frame_capture_gl.py --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/current-frame-gl" --output native-android/results/combined-neighborhood-diagnostic/current-frame-gl.json
-          python3 native-android/session-client/tools/check_frame_capture_scene.py --stream-library "$RUNNER_TEMP/neighborhood-check/stream.so" --assets native-android/combined-client/app/src/main/assets --world-bin native-android/combined-client/app/src/main/assets/world.bin --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/current-frame-scene" --output native-android/results/combined-neighborhood-diagnostic/current-frame-scene.json
+        if test "$DIAGNOSTIC_PROFILE" != neighborhood-diagnostic; then
+          CAPTURE_FLAGS=
+          if test "$DIAGNOSTIC_PROFILE" = fullscreen-diagnostic; then CAPTURE_FLAGS=--fullscreen; fi
+          python3 native-android/session-client/tools/check_frame_capture_gl.py $CAPTURE_FLAGS --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/current-frame-gl" --output native-android/results/combined-neighborhood-diagnostic/current-frame-gl.json
+          python3 native-android/session-client/tools/check_frame_capture_scene.py $CAPTURE_FLAGS --stream-library "$RUNNER_TEMP/neighborhood-check/stream.so" --assets native-android/combined-client/app/src/main/assets --world-bin native-android/combined-client/app/src/main/assets/world.bin --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/current-frame-scene" --output native-android/results/combined-neighborhood-diagnostic/current-frame-scene.json
           cp "$RUNNER_TEMP/current-frame-scene/captured-world-and-box.png" native-android/results/combined-neighborhood-diagnostic/captured-world-and-box.png
           cp "$RUNNER_TEMP/current-frame-scene/scene-capture.zip" native-android/results/combined-neighborhood-diagnostic/host-scene-capture.zip
         fi
+    - name: Qualify imported-archive streaming with explicitly generated ZIP format fixtures
+      if: inputs.diagnostic_profile == 'fullscreen-diagnostic'
+      env:
+        LIBGL_ALWAYS_SOFTWARE: '1'
+        EGL_PLATFORM: surfaceless
+        LP_NUM_THREADS: '2'
+      run: |
+        python3 native-android/session-client/tools/check_runtime_zip_fixtures.py --cache /tmp/combined-neighborhood-inputs
+        python3 native-android/session-client/tools/prepare_runtime_zip_fixtures.py --cache /tmp/combined-neighborhood-inputs --output "$RUNNER_TEMP/runtime-format-fixtures"
+        python3 native-android/session-client/tools/check_live_world.py --assets native-android/combined-client/app/src/main/assets --metadata native-android/results/combined-neighborhood-diagnostic/neighborhood-inputs.json --live-assets native-android/combined-client/app/src/main/assets --live-metadata native-android/results/combined-neighborhood-diagnostic/live-world-inputs.json --archives "$RUNNER_TEMP/runtime-format-fixtures" --world-bin native-android/combined-client/app/src/main/assets/world.bin --source-root . --gles-headers "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include" --work "$RUNNER_TEMP/runtime-world-check" --output native-android/results/combined-neighborhood-diagnostic/runtime-world-host.json
     - name: Build and inspect the signed ARM64 diagnostic
       run: |
         python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PcohBuildProfile="$DIAGNOSTIC_PROFILE" -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
@@ -372,7 +400,7 @@ jobs:
           none
         disable-animations: true
         script: |
-          python3 native-android/combined-client/tools/upgrade_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-${DIAGNOSTIC_VERSION}-${DIAGNOSTIC_PROFILE}-x86_64.apk --package-receipt native-android/results/combined-neighborhood-diagnostic/x86_64-package.json --previous-archive /tmp/combined-previous014.zip --previous-profile entity-diagnostic --build-profile "$DIAGNOSTIC_PROFILE" --exercise-debuggable-downgrade --output native-android/results/combined-neighborhood-diagnostic/android13-update
+          python3 native-android/combined-client/tools/upgrade_emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-${DIAGNOSTIC_VERSION}-${DIAGNOSTIC_PROFILE}-x86_64.apk --package-receipt native-android/results/combined-neighborhood-diagnostic/x86_64-package.json --previous-archive /tmp/combined-previous.zip --previous-profile "$PREVIOUS_PROFILE" --build-profile "$DIAGNOSTIC_PROFILE" --exercise-debuggable-downgrade --output native-android/results/combined-neighborhood-diagnostic/android13-update
           "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 uninstall org.coh.nativecombined
           python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-neighborhood-diagnostic/CoH-Native-Combined-${DIAGNOSTIC_VERSION}-${DIAGNOSTIC_PROFILE}-x86_64.apk --output native-android/results/combined-neighborhood-diagnostic/android13
           "$ANDROID_HOME/platform-tools/adb" -s emulator-5554 shell am force-stop org.coh.nativecombined
