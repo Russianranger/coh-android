@@ -1,8 +1,11 @@
 # Body-part original loading, destruction and dependency lifecycle
 
-The current local diagnostic uses the offline cache/source comparison and the
-actual common-file content hash to supply the default count directly. That path
-requires no runtime producer lease or loaded-generation witness. See
+The verified CLIENT cache, decoded with the original ParseBodyPart grammar and
+compared to the original .bp, supplies the authoritative default count28 directly.
+The retained running-server count also agrees28, as a consistency observation.
+A server-file hash/count comparison is advisory; its absence or mismatch cannot
+block this client default. No runtime producer lease or loaded-generation witness.
+See
 `OFFLINE_CACHE_TEXT_COMPARISON.md` and `../entities/ORIGINAL_COSTUME_RECEIVE.md`.
 The historical loader qualification below retains its original bounded scope.
 

@@ -1,0 +1,78 @@
+{
+  "authoritative_default": {
+    "count": 28,
+    "owner": "client",
+    "server_comparison_role": "consistency-only; never default-count admission",
+    "stages": [
+      41,
+      43
+    ]
+  },
+  "baseline": "d4460a1240a1d3648727c60b34052e19d8bcc41f",
+  "consumer_correction": {
+    "Interop_bytes": 66944,
+    "JNI_report_peak_bytes": 6760,
+    "captures_each": 42,
+    "client_default_report": [
+      0,
+      28
+    ],
+    "current_compiler_input_pins_verified": 76,
+    "delivered_0_1_13_unchanged": true,
+    "file_opens_closes_each": [
+      43,
+      43
+    ],
+    "new_APK_built": false,
+    "optional_server_comparison_field": "bodyparts_server_cache_status",
+    "qualified_report_worker_commit": "0f3ea065e2672262ae68a5dbf100081750f207cb",
+    "qualified_worker_commit": "620f20098424796494a0e15c3d3c7bb9864bbdfb",
+    "receipt": "native-android/engine/body-catalog/qualification/offline-cache-text-20261020/client-authority-jni.json",
+    "release_ASan_UBSan_checks_each": 3494,
+    "report_cap_bytes": 7168,
+    "report_regression_checks_per_mode": 397,
+    "report_regression_peak_bytes": 6902,
+    "unchanged_deep_assertions_per_mode": 12637
+  },
+  "original_ParseBodyPart_grammar": {
+    "checks_by_mode": {
+      "asan": 6930,
+      "release": 6930,
+      "ubsan": 6930
+    },
+    "current_source_pins_verified": 24,
+    "full_engine_runtime_or_ParseBoneNames_execution_claimed": false,
+    "original_tables_executed": true,
+    "qualification": "native-android/engine/body-catalog/qualification/body-read-20261019/host.json",
+    "qualification_sha256": "a4e86ffad8fd9ba0453d274072f522a395e848e2c8deb0346143f7af20be6b1a"
+  },
+  "retained_client": {
+    "archive": "native-android/engine/entities/qualification/costume-export-20261017/exact-client-dictionary-bins.zip",
+    "archive_sha256": "350c7ad531209a7e3959cb2f4ae044d8551820cc03e9d40ce17c3aae2a5e3241",
+    "bytes": 2584,
+    "member": "data/bin/BodyParts.bin",
+    "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb"
+  },
+  "schema": "coh-client-bodypart-authority-confirmation-v1",
+  "server_consistency": {
+    "artifact": 11270589574,
+    "count": 28,
+    "count_offset": 68,
+    "fresh_current_Thor_process_observed": false,
+    "full_server_cache_hash_or_row_order_claimed": false,
+    "prefix_matches_client": true,
+    "receipt": "native-android/engine/body-catalog/qualification/offline-cache-text-20261020/server-input-search.json",
+    "receipt_sha256": "4ad50f22306c7839e4c3bbd452dace15a40bf28487eff24dba7ea76b15224852",
+    "retained_prefix_bytes": 128,
+    "run": 37116009802,
+    "trace_member": "evidence/consumption/trace.4703"
+  },
+  "source_comparison": {
+    "all_source_fields_match": true,
+    "bodyparts_bp": "upstream/i24/data/defs/ui/bodyparts.bp",
+    "count": 28,
+    "focused_comparison_tests_passed": 5,
+    "ordered_names_match": true,
+    "sha256": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d"
+  }
+}

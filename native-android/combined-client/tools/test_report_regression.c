@@ -53,7 +53,14 @@ static void emit(const char *label) {
     CHECK(!strstr(json,"REPORT_LIMIT")&&!strstr(json,"report_core_limit"));
     CHECK(strstr(json,"\"request_tx\":{")&&strstr(json,"\"receive_diagnostics\":{"));
     CHECK(strstr(json,"\"initial_observation_known\":true"));
-    CHECK(strstr(json,"\"catalog_boundary\":"));
+    CHECK(strstr(json,"\"catalog_boundary\":null"));
+    CHECK(strstr(json,"\"bodyparts_default\":[0,28]"));
+    CHECK(strstr(json,"\"bodyparts_server_cache_status\":3"));
+    CHECK(strstr(json,"\"costume_continuation\":["));
+    CHECK(active->costume_continuation_attempted);
+    CHECK(active->initial_costume_continuation.bodytype_validated&&active->initial_costume_continuation.count_validated);
+    CHECK(active->initial_costume_continuation.part_count==(active->initial_partcount.explicit_count?active->initial_partcount.part_count:28u));
+    CHECK(!active->initial_costume_continuation.costume_complete);
     printf("{\"label\":\"%s\",\"bytes\":%zu,\"unbounded_detail_bytes\":%zu,\"report\":%s}\n",label,strlen(json),full_details_bytes(),json);
 }
 static void captured(unsigned default_path) {
@@ -87,7 +94,7 @@ int main(void) {
     captured(0);capture.d.groups.present_files=508;capture.d.groups.roots=33;
     active->groups_bytes=42889;active->groups_bits=343112;
     emit("source-layout-initial-observed");strcpy(sample_report,report_text);
-    CHECK(strstr(report_text,"\"catalog_boundary\":[2,4"));
+    CHECK(strstr(report_text,"\"catalog_boundary\":null"));
     unsigned allocation_before=alloc_calls;CHECK(!strcmp(report(),sample_report));CHECK(alloc_calls==allocation_before);
     receive_maximum();maximum_request=1;emit("source-layout-maximum-receive");
     /* Saturate legal fixed diagnostic scalar widths separately from authentic
@@ -124,8 +131,8 @@ int main(void) {
     memset(u,0,sizeof(*u));JNI(disconnect)(&env,NULL,current);
     CHECK(JNI(controlState)(&env,NULL,current)==7);emit("closed-initial-sticky");
     finish();CHECK(JNI(controlState)(&env,NULL,current)==0);
-    captured(1);emit("catalog-boundary-default");JNI(disconnect)(&env,NULL,current);emit("catalog-boundary-closed");
-    CHECK(strstr(report_text,"\"catalog_boundary\":[2,4"));finish();
+    captured(1);emit("client-default-admitted");JNI(disconnect)(&env,NULL,current);emit("client-default-closed");
+    CHECK(strstr(report_text,"\"catalog_boundary\":null"));finish();
     fixture();start();CHECK(strstr(report(),"\"catalog_boundary\":null"));finish();
     fixture();start();active->busy=1;
     CHECK(JNI(controlState)(&env,NULL,current)==0);

@@ -13,6 +13,14 @@ def check_report(row):
     r=row['report'];need(row['bytes']<7168,'report bound')
     need('catalog_boundary' in r,'essential catalog projection absent')
     separate_catalog_boundary(r)
+    need(r['catalog_boundary'] is None, 'obsolete catalog refusal after client admission')
+    need(r.get('bodyparts_default') == [0, 28], 'client default unavailable')
+    need(r.get('bodyparts_server_cache_status') == 3, 'absent advisory server check invented')
+    continuation = r.get('costume_continuation')
+    need(isinstance(continuation, list) and len(continuation) == 12
+         and all(type(item) is int and item >= 0 for item in continuation), 'continuation numeric shape')
+    need(continuation[8] == 1 and continuation[3] in (2, 28)
+         and continuation[1] == 3 and continuation[9] == 0, 'client-admitted incomplete geometry continuation')
     need(r['phase']!='REPORT_LIMIT' and 'report_core_limit' not in r,'phase lost')
     need(r['report_limit_bytes']==7168 and r['report_invalid_mask']&~r['report_omitted_mask']==0,'metadata')
     omitted=[name for i,name in enumerate(NAMES) if r['report_omitted_mask']&(1<<i)]
@@ -56,13 +64,23 @@ def main():
         failure=named['first-failure-retained']['report']['first_failure']
         need(failure['failure']==8 and named['closed-initial-sticky']['report']['first_failure']==failure,'first failure preserved')
         need(named['reward-progress-local-refusal']['report']['report_invalid_mask']&256,'nested local omission')
-        boundary = named['source-layout-initial-observed']['report']['catalog_boundary']
-        need(boundary == named['source-layout-initial-observed']['report']['first_reward_string']['progress'], 'essential boundary exact producer')
+        first = named['source-layout-initial-observed']['report']
+        continuation = first['costume_continuation']
+        need(first['first_reward_string']['progress'][1] == 43 and continuation[3] == 2,
+             'explicit original framing and admitted count differ')
         omitted = named['maximum-width-scalars']['report']
-        need(omitted['catalog_boundary'] == boundary and omitted['report_omitted_mask'] & 128, 'essential boundary lost with optional reward')
-        need(named['catalog-boundary-default']['report']['catalog_boundary'][1] == 41, 'default catalog boundary absent')
-        need(named['catalog-boundary-closed']['report']['catalog_boundary'] == named['catalog-boundary-default']['report']['catalog_boundary'], 'catalog boundary lost at close')
-        need(named['reward-progress-local-refusal']['report']['catalog_boundary'] is None, 'malformed source probe exposed boundary')
+        need(omitted['costume_continuation'] == continuation and omitted['report_omitted_mask'] & 128,
+             'essential admitted continuation lost with optional reward')
+        need(named['closed-initial-sticky']['report']['costume_continuation'] == continuation,
+             'explicit admitted continuation lost at close')
+        default = named['client-default-admitted']['report']
+        need(default['first_reward_string']['progress'][1] == 41 and default['costume_continuation'][3] == 28
+             and default['costume_continuation'][8] == 1, 'client default did not pass original count validation')
+        need(named['client-default-closed']['report']['costume_continuation'] == default['costume_continuation'],
+             'client default continuation lost at close')
+        need(named['reward-progress-local-refusal']['report']['catalog_boundary'] is None
+             and named['reward-progress-local-refusal']['report']['costume_continuation'] == continuation,
+             'malformed optional source probe replaced admitted continuation')
         tx=named['maximum-width-scalars']['report']['request_tx']
         for key in ['first_send_attempts','retry_send_attempts','successful_retries','deferred_send_callbacks','failed_send_callbacks']:need(tx[key]==2**32-1,'maximum request count '+key)
         for key in ['queue_offset_ms','first_send_offset_ms','last_send_offset_ms','retirement_offset_ms']:need(tx[key]==2**64-1,'maximum request offset '+key)

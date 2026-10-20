@@ -14,12 +14,27 @@ Actual retained server reads use COMMON `data/bin/BodyParts.bin`, not server/bin
 trace shows 2584 bytes/count28 and the same 128-byte prefix. Full server bytes were
 not retained, so no full host/server comparison receipt is invented.
 
-Before handoff the app reads the actual imported common file once. It must match
-raw SHA-256 b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb,
-or canonical SHA-256 965964f4e58eb24dbb8b85672fb0bdb9631bfc98d938d3d4444aa09a44c67c83
-with ONLY dependency timestamp bytes60..63 zeroed. Every other byte remains
-compared. A match supplies 28 directly; no runtime generation or producer lease.
-Original bodytype 9/count validation and flag 1 Pack4 framing remain unchanged.
+Follow-up clarification: the CLIENT count28 is authoritative for stage41/43;
+server count/hash is a consistency check only. Original ParseBodyPart table/readers
+already decoded this exact retained client cache to28 in release/ASan/UBSan
+(6930 checks/mode); all24 receipt pins still match. Five offline comparison tests
+rerun PASS. Genuine retained server trace also reads count28; no fresh current
+Thor process observation is claimed. See client-authority-confirmation.json in
+body-catalog/qualification/offline-cache-text-20261020/.
+
+The source follow-up removes server-file hash admission from the client default;
+missing/mismatched server comparisons remain advisory. Original bodytype/count
+validation, explicit flag1 Pack4 framing and dictionary-index stops are unchanged.
+The already built0.1.13 APK predates this correction and has not been rebuilt.
+Its exact producer/source/hash and Android13 results below remain historical.
+
+Source correction: client[0,28] is independent of optional server-cache status,
+reported separately as bodyparts_server_cache_status. JNI release/ASan/UBSan:
+3494 checks/mode,42 captures,43 opens/43 closes,max6760B. Report regression:
+397 checks/mode,max6902B<7168B; all76 current compiled source pins verified.
+Unchanged deep assertions:12637/mode,248 bounded reports,206 with omissions.
+Interop allocation remains66944B. Missing/invalid/mismatched server comparisons
+are advisory for both default and explicit framing. No new APK/build profile.
 
 Whole original costume_receive/cache/indexed functions compile unchanged with
 thin bounded storage/packet shims. Source/JNI tests pass stage41/default and

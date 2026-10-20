@@ -7,6 +7,22 @@
   },
   "base_revision": "8170fc0d222ec154b19b0caf2616040004d4b2e7",
   "blocker": "actual Thor cache match and live parser/draw observation pending; first source-fixture unknown is indexed geometry string dictionary",
+  "bodypart_authority_followup": {
+    "APK_rebuilt": false,
+    "Interop_bytes": 66944,
+    "JNI_checks_per_mode": 3494,
+    "client_count_authoritative": 28,
+    "existing_0_1_13_contains_followup": false,
+    "fresh_current_Thor_count_observed": false,
+    "max_report_bytes": 6902,
+    "proof": "native-android/engine/body-catalog/qualification/offline-cache-text-20261020/client-authority-confirmation.json",
+    "qualified_report_worker_commit": "0f3ea065e2672262ae68a5dbf100081750f207cb",
+    "qualified_source_worker_commit": "620f20098424796494a0e15c3d3c7bb9864bbdfb",
+    "report_cap_bytes": 7168,
+    "report_checks_per_mode": 397,
+    "retained_server_trace_count": 28,
+    "server_comparison_advisory": true
+  },
   "branch": "native-android",
   "build": {
     "APK_artifact_id": 12241562542,
