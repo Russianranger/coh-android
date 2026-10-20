@@ -15,7 +15,7 @@ execute_process(COMMAND "${Python3_EXECUTABLE}" "${WORLD_SHADER_ROOT}/embed_worl
 if(NOT EMBED_RESULT EQUAL 0)
     message(FATAL_ERROR "Could not embed accepted source world shaders")
 endif()
-add_library(coh_session_client SHARED session_renderer.c session_stream_world.c session_stream_qualify.c session_frame_capture.c session_frame_capture_gl.c
+add_library(coh_session_client SHARED session_renderer.c session_stream_world.c session_world_imports.c session_stream_qualify.c session_frame_capture.c session_frame_capture_gl.c
     "${CORE_ROOT}/engine/assets/coh_asset_zip.c" "${CORE_ROOT}/engine/world/coh_world_live.c"
     "${CORE_ROOT}/engine/assets/coh_asset_loader.c" "${CORE_ROOT}/engine/assets/coh_asset_geo.c"
     "${CORE_ROOT}/engine/bridge/coh_asset_render.c" "${CORE_ROOT}/engine/world/coh_world_stream.c"

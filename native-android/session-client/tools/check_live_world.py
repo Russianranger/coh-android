@@ -32,11 +32,12 @@ def offline_archives(work):
                 source.seek(block['offset']); assert sha(source.read(block['bytes'])) == block['sha256']
     return result
 
-def render_runtime(library, bundle, index, world_bin, live, archives, work):
+def render_runtime(library, bundle, index, world_bin, live, archives, work, use_fds=False):
     """Drive the production stream owner at two poses using the same disk index."""
     F, U, Q, Z, V3, M4 = gpu.F, gpu.U, gpu.Q, gpu.Z, gpu.V3, gpu.M4
     ReadAt = C.CFUNCTYPE(C.c_int, C.c_void_p, Q, C.c_void_p, Z)
     class AssetSource(C.Structure): _fields_ = [('read_at', ReadAt), ('context', C.c_void_p), ('size', Q), ('generation', U)]
+    class Fd(C.Structure): _fields_ = [('fd', C.c_int), ('offset', Q), ('bytes', Q)]
     class Sources(C.Structure): _fields_ = [('placements', AssetSource), ('atlas_zip', AssetSource), ('client_zip', AssetSource), ('parent_retained_bytes', Q)]
     retained = []; reads = [0]
     def source(path):
@@ -51,6 +52,8 @@ def render_runtime(library, bundle, index, world_bin, live, archives, work):
         retained.append((stream, read)); return AssetSource(read, None, path.stat().st_size, 1)
     sources = Sources(source(index), source(archives / 'atlas.sparse.zip'), source(archives / 'client.sparse.zip'), 64 << 20)
     e = gpu.EGL(); g = e.g; lib = C.CDLL(str(library)); world = C.c_void_p(); stats = gpu.WorldStats(); error = C.create_string_buffer(1024)
+    lib.coh_session_world_create_fds.argtypes = [C.c_void_p, Z, C.POINTER(Fd), Q, C.POINTER(C.c_void_p), C.c_void_p, Z]
+    lib.coh_session_world_source_io.argtypes = [C.c_void_p, C.POINTER(Q), C.POINTER(Q)]
     lib.coh_session_world_create_archives.argtypes = [C.c_void_p, Z, C.POINTER(Sources), C.POINTER(C.c_void_p), C.c_void_p, Z]
     lib.coh_session_world_live_reservation_bytes.restype = Q
     lib.coh_session_world_parent_bytes.argtypes = [C.c_void_p, Q, C.c_void_p, Z]
@@ -92,11 +95,29 @@ def render_runtime(library, bundle, index, world_bin, live, archives, work):
         invoke('coh_session_world_draw_observed', pose); raw = pixels()
         visible = sum(any(abs(raw[i + j] - c) > 3 for j, c in enumerate((17, 19, 23))) for i in range(0, len(raw), 4))
         return visible, raw
+    fd_inputs = None; permissions = []; original_fds = []
+    if use_fds:
+        envelope = work / 'gles-index-envelope.bin'; envelope.write_bytes(bytes(37) + index.read_bytes() + bytes(37))
+        fd_paths = [envelope, archives / 'atlas.sparse.zip', archives / 'client.sparse.zip']
+        permissions = [(path, path.stat().st_mode & 0o777) for path in fd_paths]
+        for path in fd_paths: path.chmod(0o444)
+        original_fds = [os.open(path, os.O_RDONLY) for path in fd_paths]
+        fd_inputs = (Fd * 3)(*[Fd(fd, 37 if i == 0 else 0, index.stat().st_size if i == 0 else fd_paths[i].stat().st_size) for i, fd in enumerate(original_fds)])
+    def create(parent):
+        if use_fds: return lib.coh_session_world_create_fds(data, len(raw), fd_inputs, parent, C.byref(world), error, len(error))
+        sources.parent_retained_bytes = parent
+        return lib.coh_session_world_create_archives(data, len(raw), C.byref(sources), C.byref(world), error, len(error))
+    def byte_reads():
+        if not use_fds: return reads[0]
+        calls, count = Q(), Q(); assert lib.coh_session_world_source_io(world, C.byref(calls), C.byref(count)); return count.value
     try:
         before = reads[0]; sources.parent_retained_bytes = 96 << 20
-        assert not lib.coh_session_world_create_archives(data, len(raw), C.byref(sources), C.byref(world), error, len(error)) and not world.value and reads[0] == before
+        assert not create(96 << 20) and not world.value and reads[0] == before
         sources.parent_retained_bytes = 64 << 20
-        assert lib.coh_session_world_create_archives(data, len(raw), C.byref(sources), C.byref(world), error, len(error)), error.value.decode()
+        assert create(64 << 20), error.value.decode()
+        if use_fds:
+            for fd in original_fds: os.close(fd)
+            original_fds = []
         invoke('coh_session_world_surface', [582.5, 74, -1380]); assert stats.selected_instances == 6
         first = [131.453125, .25, -114.953125]; visible_first, _ = draw(first); assert stats.selected_instances == 2 and visible_first > 64
         # Same original local sidewalk point, placed at another source occurrence.
@@ -104,30 +125,35 @@ def render_runtime(library, bundle, index, world_bin, live, archives, work):
         local = [sum(original[j * 3 + i] * relative[i] for i in range(3)) for j in range(3)]
         second = [sum(target[j * 3 + i] * local[j] for j in range(3)) + target[9 + i] for i in range(3)]
         visible_second, image = draw(second); second_count = stats.selected_instances; assert second_count > 0 and visible_second > 64
-        stationary_reads = reads[0]
+        stationary_reads = byte_reads()
         for _ in range(32): draw(second)
-        assert reads[0] == stationary_reads, 'Stationary frames performed archive/index I/O'
+        assert byte_reads() == stationary_reads, 'Stationary frames performed archive/index I/O'
         from PIL import Image
         Image.frombytes('RGBA', (256, 256), image).transpose(Image.Transpose.FLIP_TOP_BOTTOM).save(work / 'runtime-second-pose.png')
         cpu, gpu_bytes = Q(), Q(); assert lib.coh_session_world_owned_bytes(world, C.byref(cpu), C.byref(gpu_bytes)); owned = {'cpu': cpu.value, 'gpu_payload': gpu_bytes.value}
         reservation = lib.coh_session_world_live_reservation_bytes()
         assert reservation < 16 << 20
+        if use_fds:
+            lib.coh_session_world_imports_allocation_bytes.restype = Q
+            reservation += lib.coh_session_world_imports_allocation_bytes()
         limit = (96 << 20) - reservation
         assert lib.coh_session_world_parent_bytes(world, limit, error, len(error))
         assert not lib.coh_session_world_parent_bytes(world, limit + 1, error, len(error))
         expected_errors[0] += 1
         # A failed parent update preserves the previously valid parent charge.
         visible_second, _ = draw(second); assert visible_second > 64
-        before = reads[0]; empty_pixels, _ = draw([5000, 0, 5000]); assert stats.selected_instances == 0 and stats.resident_bytes == 0 and empty_pixels == 0
+        before = byte_reads(); empty_pixels, _ = draw([5000, 0, 5000]); assert stats.selected_instances == 0 and stats.resident_bytes == 0 and empty_pixels == 0
         assert gpu.values(lib.coh_stream_test_bridge_stats(world))['meshes'] == 0
         assert lib.coh_session_world_owned_bytes(world, C.byref(cpu), C.byref(gpu_bytes)) and gpu_bytes.value == stats.gpu_bytes
-        visible_revisit, _ = draw(second); assert visible_revisit > 64 and reads[0] > before and stats.selected_instances == second_count
+        visible_revisit, _ = draw(second); assert visible_revisit > 64 and byte_reads() > before and stats.selected_instances == second_count
         for _ in range(16): draw(first); draw(second)
-        return {'passed': True, 'scope': 'Actual host Mesa GLES, not Thor; same index reused at changed pose', 'first_pose': first, 'first_pose_visible_pixels': visible_first, 'second_pose': second, 'second_pose_instances': second_count, 'second_pose_visible_pixels': visible_second, 'stationary_32_frames_no_io': True, 'empty_window_evicted_raw_meshes_textures': True, 'revisit_archive_reload': True, 'owned_scene': owned, 'named_old_candidate_reservation_bytes': reservation, 'peak_resident_bytes': stats.peak_resident_bytes, 'gl_errors': 0, 'source_reads_bytes': reads[0], 'identity': e.identity}
+        return {'passed': True, 'scope': 'Actual host Mesa GLES, not Thor; same index reused at changed pose', 'first_pose': first, 'first_pose_visible_pixels': visible_first, 'second_pose': second, 'second_pose_instances': second_count, 'second_pose_visible_pixels': visible_second, 'stationary_32_frames_no_io': True, 'empty_window_evicted_raw_meshes_textures': True, 'revisit_archive_reload': True, 'owned_scene': owned, 'named_old_candidate_reservation_bytes': reservation, 'peak_resident_bytes': stats.peak_resident_bytes, 'gl_errors': 0, 'source_reads_bytes': byte_reads(), 'source_backend': 'owned dup FDs + bounded pread' if use_fds else 'source callbacks', 'identity': e.identity}
     finally:
         if world: lib.coh_session_world_surface_lost(world, 1, C.byref(stats)); lib.coh_session_world_destroy(C.byref(world)); assert not world.value
         g.glDeleteFramebuffers(1, C.byref(fbo)); g.glDeleteTextures(1, C.byref(texture)); e.close()
         for stream, callback in retained: stream.close()
+        for fd in original_fds: os.close(fd)
+        for path, mode in permissions: path.chmod(mode)
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -141,8 +167,8 @@ def main():
     bundle = a.assets / 'neighborhood-map.bin'; index = a.live_assets / 'live-world.bin'
     for path, pin in [(bundle, metadata['assets']['neighborhood-map.bin']), (index, live['assets']['live-world.bin'])]: assert path.stat().st_size == pin['bytes'] and sha(path.read_bytes()) == pin['sha256']
     archive_dir = a.archives; transport = offline_archives(archive_dir)
-    core = [NATIVE / path for path in ['engine/world/coh_world_stream.c', 'engine/world/coh_world_live.c', 'engine/assets/coh_asset_zip.c', 'engine/bridge/coh_asset_render.c', 'engine/assets/coh_asset_loader.c', 'engine/assets/coh_asset_geo.c', 'engine/renderer/coh_renderer.c', 'src/coh_assets.c', 'src/coh_dds.c']]
-    flags = ['-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic', '-ffp-contract=off', '-I', NATIVE / 'include']
+    core = [NATIVE / path for path in ['session-client/app/src/main/cpp/session_world_imports.c', 'engine/world/coh_world_stream.c', 'engine/world/coh_world_live.c', 'engine/assets/coh_asset_zip.c', 'engine/bridge/coh_asset_render.c', 'engine/assets/coh_asset_loader.c', 'engine/assets/coh_asset_geo.c', 'engine/renderer/coh_renderer.c', 'src/coh_assets.c', 'src/coh_dds.c']]
+    flags = ['-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic', '-ffp-contract=off', '-I', NATIVE / 'include', '-I', NATIVE / 'engine/assets']
     modes = {}
     for mode, extra in [('release', ['-O2']), ('asan', ['-O1', '-g', '-fsanitize=address', '-no-pie']), ('ubsan', ['-O1', '-g', '-fsanitize=undefined', '-fno-sanitize-recover=all'])]:
         output = a.work / mode; output.mkdir(exist_ok=True); executable = output / 'test'
@@ -150,6 +176,17 @@ def main():
         run([executable, bundle, index, archive_dir / 'atlas.sparse.zip', archive_dir / 'client.sparse.zip', output, output / 'result.json', transport['archives'][0]['members'][live['inputs'][0]['path']]['data_offset']], env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1'})
         for i, item in enumerate(live['inputs']): assert sha((output / (str(i) + '.body')).read_bytes()) == item['sha256']
         modes[mode] = json.loads((output / 'result.json').read_text())
+        envelope = output / 'index-envelope.bin'; envelope.write_bytes(bytes(37) + index.read_bytes() + bytes(37))
+        fixture_paths = [envelope, archive_dir / 'atlas.sparse.zip', archive_dir / 'client.sparse.zip']
+        permissions = [path.stat().st_mode & 0o777 for path in fixture_paths]
+        imports = output / 'imports'
+        run(['cc', *flags, *extra, NATIVE / 'session-client/tools/test_world_imports.c', *core, '-lz', '-lm', '-o', imports])
+        try:
+            for path in fixture_paths: path.chmod(0o444)
+            modes[mode]['imports'] = json.loads(run([imports, *fixture_paths], env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1'}))
+        finally:
+            for path, permission in zip(fixture_paths, permissions): path.chmod(permission)
+
     includes = a.work / 'include'; includes.mkdir(exist_ok=True)
     for sub in ('GLES3', 'KHR'):
         link = includes / sub
@@ -158,7 +195,7 @@ def main():
     library = a.work / 'runtime-stream.so'
     source = [NATIVE / n for n in ['session-client/tools/stream_gpu_fixture.c', 'session-client/app/src/main/cpp/session_stream_qualify.c', 'engine/renderer/coh_debug_entity.c', 'engine/renderer/coh_renderer_gles.c']]
     run(['cc', *flags, '-O2', '-fPIC', '-shared', '-I', includes, '-I', NATIVE / 'engine/assets', '-I', NATIVE / 'engine/world', '-I', NATIVE / 'engine/bridge', '-I', NATIVE / 'engine/renderer', *source, *core, camera, '-l:libGL.so.1', '-lz', '-lm', '-o', library])
-    result = {'passed': True, 'transport': transport, 'modes': modes, 'gpu': render_runtime(library, bundle, index, a.world_bin, live, archive_dir, a.work), 'live_index': live['assets'], 'scope': 'Native runtime source path; APK archive FD/import wiring follows separately'}
+    result = {'passed': True, 'transport': transport, 'modes': modes, 'gpu': render_runtime(library, bundle, index, a.world_bin, live, archive_dir, a.work), 'fd_gpu': render_runtime(library, bundle, index, a.world_bin, live, archive_dir, a.work, use_fds=True), 'live_index': live['assets'], 'scope': 'Native runtime source path; APK archive FD/import wiring follows separately'}
     assert offline_archives(archive_dir) == transport
     a.output.parent.mkdir(parents=True, exist_ok=True); a.output.write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps({'passed': True, 'modes': modes, 'gpu': result['gpu'], 'transport_bytes': transport.get('network_range_bytes')}, indent=2))

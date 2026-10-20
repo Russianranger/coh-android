@@ -23,9 +23,12 @@ typedef struct {
     CohAssetSource placements,atlas_zip,client_zip;
     uint64_t parent_retained_bytes;
 } CohSessionWorldSources;
+typedef struct {int fd;uint64_t offset,bytes;} CohSessionWorldFd;
+int coh_session_world_create_fds(const void *,size_t,const CohSessionWorldFd inputs[3],uint64_t parent_retained_bytes,CohSessionWorld **,char *,size_t);
 int coh_session_world_create_archives(const void *,size_t,const CohSessionWorldSources *,CohSessionWorld **,char *,size_t);
 int coh_session_world_parent_bytes(CohSessionWorld *,uint64_t,char *,size_t);
 uint64_t coh_session_world_live_reservation_bytes(void);
+int coh_session_world_source_io(const CohSessionWorld *,uint64_t *reads,uint64_t *bytes);
 void coh_session_world_destroy(CohSessionWorld **);
 /* Query on the render owner thread between draws. CPU includes concrete owned
  * allocations; input bundle bytes borrow Session assets and are counted by the
