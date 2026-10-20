@@ -1,0 +1,23 @@
+#define _GNU_SOURCE
+#include "coh_original_initial_tail.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+static unsigned checks,allocations,releases,live,fail_allocation,fail_release;static size_t mapped;
+static unsigned char packet[65536];static CohOriginalInitialTailReport out,saved;
+#define CHECK(x) do{checks++;if(!(x)){fprintf(stderr,"check%u line%u\n",checks,(unsigned)__LINE__);return 1;}}while(0)
+void *__real_mmap(void*,size_t,int,int,int,off_t);int __real_munmap(void*,size_t);
+void *__wrap_mmap(void*a,size_t n,int p,int f,int fd,off_t o){allocations++;if(allocations==fail_allocation)return MAP_FAILED;void*v=__real_mmap(a,n,p,f,fd,o);if(v!=MAP_FAILED){if(live)abort();live++;mapped=n;}return v;}
+int __wrap_munmap(void*p,size_t n){releases++;if(live!=1||n!=mapped)abort();for(size_t i=0;i<n;i++)if(((unsigned char*)p)[i])abort();int s=__real_munmap(p,n);if(!s)live--;if(fail_release){fail_release=0;return -1;}return s;}
+static void reset(void){allocations=releases=live=fail_allocation=fail_release=0;mapped=0;}
+static uint32_t le32(const unsigned char*p){return(uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
+static uint64_t le64(const unsigned char*p){return(uint64_t)le32(p)|(uint64_t)le32(p+4)<<32;}
+int main(int argc,char**argv){CHECK(argc==1||argc==2);memset(packet,0,sizeof(packet));packet[4]=packet[5]=1;CohRepReader r={{packet,512},4096,0,1,4194304},before=r;reset();CHECK(coh_original_initial_tail(&r,127,1,&out,8388608,1000000)==COH_INVALID);CHECK(out.stage==COH_ORIGINAL_INITIAL_CHARACTER&&out.stage_count==3&&out.end_bit==128);CHECK(out.entity_list_complete&&out.list_end_bit==48&&out.control_end_bit==96&&out.deletes_end_bit==128);CHECK(!live&&allocations==4&&releases==4&&!memcmp(&r,&before,sizeof(r)));saved=out;
+ CHECK(coh_original_initial_tail(NULL,127,1,&out,8388608,0)==COH_INVALID);CHECK(coh_original_initial_tail(&r,10240,1,&out,8388608,0)==COH_INVALID);CHECK(coh_original_initial_tail(&r,127,0,&out,8388608,0)==COH_INVALID);CHECK(coh_original_initial_tail(&r,127,1,(void*)&r,8388608,0)==COH_INVALID);CHECK(!memcmp(&r,&before,sizeof(r)));CHECK(coh_original_initial_tail(&r,127,1,(void*)packet,8388608,0)==COH_INVALID);CHECK(coh_original_initial_tail(&r,127,1,&out,1,0)==COH_LIMIT);CHECK(coh_original_initial_tail(&r,127,1,&out,8388608,SIZE_MAX)==COH_LIMIT);CHECK(!memcmp(&out,&saved,sizeof(out)));CHECK(coh_original_initial_tail(&r,127,1,&out,8388609,0)==COH_INVALID);
+ if(argc==2){FILE*f=fopen(argv[1],"rb");unsigned char h[88];CHECK(f&&fread(h,1,88,f)==88);CHECK(!memcmp(h,"COHIRP01",8)&&le32(h+8)==88&&le32(h+12)<=sizeof(packet));size_t n=le32(h+12);CHECK(fread(packet,1,n,f)==n&&fgetc(f)==EOF);fclose(f);r=(CohRepReader){{packet,n},le64(h+16),41696,le32(h+40),4194304};before=r;reset();CHECK(coh_original_initial_tail(&r,127,1,&out,8388608,1000000)==COH_OK);CHECK(out.status==COH_OK&&out.source_tail_complete&&out.character_complete&&out.entity_list_complete);CHECK(out.end_bit==298736&&out.packet_bits==301656&&out.stage_count==13&&out.source_shared_count==26);CHECK(out.list_end_bit==41744&&out.control_end_bit==42656&&out.deletes_end_bit==42688&&out.character_end_bit==128856);CHECK(out.spans[3].values[0]==8&&out.spans[3].values[1]==58&&out.spans[3].values[2]==10);CHECK(out.dynamic_count_from_wire&&out.dynamic_count==9&&out.spans[11].values[0]==UINT32_MAX);CHECK(out.peak_mapped_bytes>=5993408&&out.peak_aggregate_bytes<=8388608);CHECK(allocations==13&&releases==13&&!live&&!memcmp(&r,&before,sizeof(r)));saved=out;
+  for(unsigned i=1;i<=13;i++){reset();fail_allocation=i;CHECK(coh_original_initial_tail(&r,127,1,&out,8388608,1000000)==COH_LIMIT);CHECK(allocations==i&&releases==i-1&&!live&&out.stage==i);CHECK(!memcmp(&r,&before,sizeof(r)));}
+  const size_t ends[]={41743,42655,42687,128855,128871,128879,298271,298351,298439,298527,298535,298719,298735};for(unsigned i=0;i<13;i++){reset();r.bits=ends[i];CHECK(coh_original_initial_tail(&r,127,1,&out,8388608,1000000)!=COH_OK);CHECK(!live&&allocations==releases&&out.stage==i+1);}r=before;
+  reset();CHECK(coh_original_initial_tail(&r,127,1,&out,8388608,8388608)==COH_LIMIT);CHECK(!allocations);reset();CHECK(coh_original_initial_tail(&r,127,1,&out,4194304,1000000)==COH_LIMIT);CHECK(out.stage==4&&out.stage_count==3&&!live);reset();fail_release=1;CHECK(coh_original_initial_tail(&r,127,1,&out,8388608,1000000)==COH_IO);CHECK(!live&&allocations==1&&releases==1);
+ }
+ printf("{\"checks\":%u,\"actual_replay\":%s,\"end_bit\":%zu,\"peak_mapped_bytes\":%zu,\"peak_aggregate_bytes\":%zu,\"report_bytes\":%zu}\n",checks,argc==2?"true":"false",argc==2?saved.end_bit:0,argc==2?saved.peak_mapped_bytes:0,argc==2?saved.peak_aggregate_bytes:0,sizeof(out));return 0;}
