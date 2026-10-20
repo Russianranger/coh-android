@@ -38,7 +38,11 @@ static CohNetPacket application(Peer*p,unsigned cmd){CohNetPacket n={0};n.id=++p
 static CohProtocolBits append(CohNetPacket*n){CohProtocolBits b;CHECK(!coh_protocol_bits_init(&b,n->payload,sizeof(n->payload),n->payload_bits,1));b.cursor=b.bit_length;return b;}
 static void app_send(Peer*p,CohNetEndpoint to,CohNetPacket n,CohProtocolBits*b,uint32_t ack){if(b)n.payload_bits=(uint32_t)b->bit_length;n.ack_count=1;n.acks[0]=ack;frame_send(p,to,5,&n);}
 static CohNetPacket db_setup(Observation*o,Peer*db,CohNetEndpoint*target){
- CohLocalConfig config=coh_local_default_config();config.db.transport.peer=db->endpoint;config.local_development_enabled=1;config.db.request_timeout_ms=2000;config.map.application_timeout_ms=2000;o->owner=coh_initial_capture_create(&config);CHECK(o->owner);CohDbLogin policy;CHECK(coh_local_login_policy(&policy)==COH_OK);CHECK(coh_initial_capture_begin(o->owner,&policy,"Fixture",101,102,100)==COH_OK);
+ CohLocalConfig config=coh_local_default_config();config.db.transport.peer=db->endpoint;config.local_development_enabled=1;config.db.request_timeout_ms=2000;config.map.application_timeout_ms=2000;o->owner=coh_initial_capture_create(&config);CHECK(o->owner);
+#ifdef COH_INITIAL_CONTINUATION_TEST
+ static const uint8_t empty_md5[16]={0xd4,0x1d,0x8c,0xd9,0x8f,0x00,0xb2,0x04,0xe9,0x80,0x09,0x98,0xec,0xf8,0x42,0x7e};CHECK(coh_initial_capture_local_password_digest(o->owner,empty_md5)==COH_OK);
+#endif
+ CohDbLogin policy;CHECK(coh_local_login_policy(&policy)==COH_OK);CHECK(coh_initial_capture_begin(o->owner,&policy,"Fixture",101,102,100)==COH_OK);
  ok(o,100);CohNetEndpoint dbto;CohNetPacket first=read_target(db,&dbto,1);CohNetPacket reply=control(5,100,2,1,0);reply.ack_count=1;reply.acks[0]=first.id;frame_send(db,dbto,5,&reply);ok(o,101);CohNetPacket ack=frame_read(db,5,0);CHECK(command(&ack,5,1)==3);reply=control(5,101,4,0,0);reply.ack_count=1;reply.acks[0]=ack.id;frame_send(db,dbto,5,&reply);ok(o,102);drain_ack(db,5);ok(o,103);CohNetPacket request=frame_read(db,5,0);CHECK(command(&request,5,0)==COH_DB_LOGIN);
  *target=dbto;CHECK(!diagnostic(o->owner).first_failure.valid);return request;
 }

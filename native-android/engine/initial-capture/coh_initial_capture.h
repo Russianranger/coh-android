@@ -10,9 +10,12 @@ typedef struct CohInitialCapture CohInitialCapture;
 typedef enum { COH_INITIAL_CAPTURE_IDLE,COH_INITIAL_CAPTURE_CONNECTING,
  COH_INITIAL_CAPTURE_WAIT_GROUPS,COH_INITIAL_CAPTURE_WAIT_ALLENTS,
  COH_INITIAL_CAPTURED,COH_INITIAL_CAPTURE_FAILED,COH_INITIAL_CAPTURE_CANCELLED,
- COH_INITIAL_CAPTURE_CLOSED } CohInitialCapturePhase;
+ COH_INITIAL_CAPTURE_CLOSED,COH_INITIAL_CAPTURE_WAIT_UPDATES } CohInitialCapturePhase;
 typedef enum { COH_INITIAL_CAPTURE_NONE,COH_INITIAL_CAPTURE_GROUPS,
- COH_INITIAL_CAPTURE_ALLENTS } CohInitialCaptureKind;
+ COH_INITIAL_CAPTURE_ALLENTS,COH_INITIAL_CAPTURE_UPDATE } CohInitialCaptureKind;
+#define COH_INITIAL_POST_COMMAND_ROWS 16u
+#define COH_INITIAL_POST_MESSAGES_MAX 128u
+#define COH_INITIAL_POST_DURATION_MS 10000u
 /* Explicit diagnostic domain, not limits asserted by the original sender. */
 #define COH_INITIAL_EDIT_MESSAGE_BYTES_MAX 16384u /* includes terminating NUL */
 #define COH_INITIAL_EDIT_MESSAGES_MAX 16u
@@ -35,6 +38,14 @@ typedef enum { COH_INITIAL_CAPTURE_COMMAND_NONE,COH_INITIAL_CAPTURE_COMMAND_UNKN
 #undef COH_INITIAL_CAPTURE_COMMAND
 } CohInitialCaptureCommandKind;
 const char *coh_initial_capture_command_name(CohInitialCaptureCommandKind);
+typedef struct {CohInitialCaptureCommandKind kind;uint32_t count,min_bytes,max_bytes;uint64_t total_bytes,total_bits;} CohInitialPostCommand;
+typedef struct {
+ uint32_t initial_complete,full_update_ack_queued,client_ready_queued,
+  waiting_for_full_update,received_character_queued,post_messages,post_rows,
+  post_row_overflow,post_window_complete,full_update_ack_sent,client_ready_sent;
+ uint64_t post_begin_ms,post_end_ms;
+ CohInitialPostCommand post[COH_INITIAL_POST_COMMAND_ROWS];
+} CohInitialContinuation;
 /* Exact event ADDRESS is a synchronous loan key, not caller-populated labels.
  * No pointer inside this value grants ownership or durable session authority. */
 typedef struct { CohInitialCaptureKind kind; } CohInitialCaptureEvent;
@@ -48,7 +59,7 @@ typedef struct {
  uint32_t map_id,map_link_id,db_session_generation,db_receipt_generation;
  unsigned ordered,local_development_authorized,selected_dbid_owner_bound;
  unsigned source_generation_admitted,complete_initial_character,actor_publication,
-  ack_permitted,world_authority; /* always zero */
+  ack_permitted,world_authority; /* observation loans always zero */
 } CohInitialCaptureLease;
 /* First diagnostic failure/cancellation, latched before diagnostic cleanup.
  * These are actual typed module phases, not reconstructed progress. An inner
@@ -78,7 +89,10 @@ typedef struct {
  CohInitialCaptureEditMessageType edit_message_last_type;
  unsigned refused_command_valid;CohInitialCaptureCommandKind refused_command_kind;
  unsigned source_generation_admitted,complete_initial_character,actor_publication,
-  ack_permitted,world_authority; /* always zero */
+  ack_permitted,world_authority; /* actor/world remain zero; exact source completion may permit ACK */
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+ CohInitialContinuation continuation;
+#endif
  CohInitialCaptureFailureSnapshot first_failure;
  CohLocalDiagnostics local;
 } CohInitialCaptureDiagnostics;
@@ -86,13 +100,15 @@ typedef struct {
  * only successful diagnostic I/O, never application validation or authority.
  * All event/client/reader/payload pointers expire on return. No mutation or
  * reentrant service/close/destroy is permitted; such calls refuse/no-op. Only
- * lease and diagnostics may be called during observation. Output/copies and
+ * lease and diagnostics may be called during observation; the opt-in capture
+ * profile may also finish its completely parsed INITIAL event. Output/copies and
  * callback stack/allocation/retention require the caller's aggregate budget. */
 typedef CohStatus (*CohInitialCaptureObserver)(void *,const CohInitialCapture *,
  const CohInitialCaptureEvent *);
 /* Owns its Local and underlying DB/Map/UDP modules. Loopback local development
  * config only; this does not run an AuthServer login. One begin/transaction per
- * owner; create a new owner for an explicit new attempt. */
+ * owner; create a new owner for an explicit new attempt. The capture profile
+ * uses the explicit local empty-password policy for original READY fields. */
 CohInitialCapture *coh_initial_capture_create(const CohLocalConfig *);
 CohStatus coh_initial_capture_begin(CohInitialCapture *,const CohDbLogin *,
  const char *account,uint32_t db_connect_id,uint32_t map_connect_id,uint64_t now_ms);
@@ -112,7 +128,11 @@ CohStatus coh_initial_capture_choose_character(CohInitialCapture *,uint32_t slot
  * phase CAPTURED. Admitted protocol/I/O/cancel/timeout refusals close both sockets
  * and preserve prior GROUPS numeric
  * evidence. Invalid inputs and rejected reentry preserve the active owner.
- * Owner itself allocates no packet copy or observer workspace. */
+ * Owner itself allocates no packet copy or observer workspace. In the opt-in
+ * capture profile, finish_initial after a complete source transaction queues
+ * original ACK/READY after payload release, then observes metadata for at most
+ * 10 seconds/128 messages. Raw post-initial payloads never survive the callback.
+ * A later unparsed update cannot cause RECEIVED_CHARACTER or another ACK. */
 CohStatus coh_initial_capture_service(CohInitialCapture *,uint64_t now_ms,CohCancel,
  CohInitialCaptureObserver,void *context,size_t context_bytes);
 /* Valid only for the current owner's EXACT event address. Derives all values
@@ -121,6 +141,20 @@ CohStatus coh_initial_capture_service(CohInitialCapture *,uint64_t now_ms,CohCan
  * payload; error preserves output. Reader bytes expire on observer return. */
 CohStatus coh_initial_capture_lease(const CohInitialCapture *,const CohInitialCaptureEvent *,
  CohInitialCaptureLease *);
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+/* Account-only local diagnostic explicitly uses an empty password, hashed by
+ * the same MD5 algorithm as original authLogin before its direct-DB branch.
+ * This private digest never asserts an AuthServer login. Supply before begin. */
+CohStatus coh_initial_capture_local_password_digest(CohInitialCapture *,const uint8_t digest[16]);
+/* Called only after the caller executes the complete source transaction for
+ * this exact active ALLENTS event. The end must equal its logical packet end.
+ * This schedules original ACK/READY after payload release; it is not an actor
+ * or resource approval and accepts no caller cookie or full-update ID. */
+CohStatus coh_initial_capture_finish_initial(const CohInitialCapture *,const CohInitialCaptureEvent *,size_t consumed_bits);
+/* Additional concrete fixed continuation owners, separate from historical
+ * capture/transport storage. Charge alongside every new receiver allocation. */
+size_t coh_initial_capture_continuation_bytes(const CohInitialCapture *);
+#endif
 void coh_initial_capture_diagnostics(const CohInitialCapture *,CohInitialCaptureDiagnostics *);
 /* Explicit enclosing diagnostic deadline, independent of module deadlines.
  * Only a begun active CONNECTING..WAIT_ALLENTS owner can time out. Null,

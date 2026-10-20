@@ -50,10 +50,16 @@ void coh_request_tx_hook_begin(const void*owner,const void*udp,uint64_t now){
  w->bracket=1;w->udp=udp;w->d.queue_attempted=1;
 }
 void coh_request_tx_hook_link(const void*udp,const void*net){
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+ coh_initial_tx_link(udp,net);
+#endif
  CohRequestTxWitness*w=live();if(!w||!w->bracket)return;
  if(udp!=w->udp||!net||w->linked){refuse(w,COH_REQUEST_TX_OWNER);return;}w->net=net;w->linked=1;
 }
 void coh_request_tx_hook_queue(const void*net,uint32_t id,unsigned parts,int reliable,int ordered,int compressed,int connect,int sent,uint64_t now){
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+ coh_initial_tx_queue(net,id,parts,reliable,ordered,compressed,connect,sent);
+#endif
  CohRequestTxWitness*w=live();if(!w||!w->bracket)return;
  if(!w->linked||net!=w->net||!id||parts!=1||reliable!=1||ordered||compressed||connect||sent||w->queue_events){refuse(w,COH_REQUEST_TX_STATE);return;}
  if(!event_time(w,now))return;
@@ -74,6 +80,9 @@ void coh_request_tx_hook_send_begin(const void*net,uint32_t id,int sent,uint64_t
  w->inflight=1;w->inflight_sent=(unsigned)sent;
 }
 void coh_request_tx_hook_send(const void*net,uint32_t id,int sent,CohStatus status,uint64_t now){
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+ coh_initial_tx_send(net,id,status);
+#endif
  CohRequestTxWitness*w=live();if(!w||!w->d.queue_succeeded||net!=w->net||id!=w->id)return;
  if(!w->inflight||sent!=(int)w->inflight_sent){refuse(w,COH_REQUEST_TX_STATE);return;}
  w->inflight=0;

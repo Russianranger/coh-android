@@ -13,4 +13,10 @@ CohStatus coh_initial_map_lease(const CohInitialMap *,const CohInitialCaptureEve
 int coh_initial_map_output_disjoint(const CohInitialMap *,const void *,size_t);
 void coh_initial_map_diagnostics(const CohInitialMap *,CohInitialCaptureDiagnostics *);
 CohInitialMapFailurePhase coh_initial_map_failure_phase(const CohInitialMap *);
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+CohStatus coh_initial_map_local_password_digest(CohInitialMap *,const uint8_t[16]);
+CohStatus coh_initial_map_finish_initial(CohInitialMap *,const CohInitialCaptureEvent *,size_t);
+void coh_initial_map_forget_ready(CohInitialMap *);
+size_t coh_initial_map_continuation_bytes(void);
+#endif
 #endif
