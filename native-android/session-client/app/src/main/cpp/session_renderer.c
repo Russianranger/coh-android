@@ -54,7 +54,7 @@ typedef struct {
     CohCharacterMorph morph; CohLocomotion locomotion; CohLocomotionState animation;
     CohLocomotionBlend blend; CohWalkableScene walkable; CohWalkWorld walk_world; CohWalkState walking;
     CohSessionWorld *stream_world; CohSessionWorldStats stream_stats; float view_radius;
-    int runtime_world_status; uint64_t runtime_world_parent_bytes; char runtime_world_failure[128];
+    int runtime_world_status; uint64_t runtime_world_parent_bytes,runtime_world_reads,runtime_world_bytes; char runtime_world_failure[128];
     float render_dt_frames,benchmark_spawn[3],benchmark_yaw,obstacle_min[3],obstacle_max[3];
     uint64_t walkable_tf_components,walkable_tf_mismatches,walkable_visible_pixels;
     Geometry walkable_geometry[COH_WALKABLE_PARTS];
@@ -475,6 +475,7 @@ static void startup_commit(Session *s,const Session *copy) {
     s->depth_codec_float_precision=copy->depth_codec_float_precision;
     s->world_occludes_actor_pixels=copy->world_occludes_actor_pixels;s->actor_occludes_world_pixels=copy->actor_occludes_world_pixels;s->actor_changed_pixels=copy->actor_changed_pixels;
     s->observed_entity_draws=copy->observed_entity_draws;
+    s->runtime_world_reads=copy->runtime_world_reads;s->runtime_world_bytes=copy->runtime_world_bytes;
     s->startup_checked=copy->startup_checked;s->skin_samples=copy->skin_samples;s->world_draws=copy->world_draws;s->actor_draws=copy->actor_draws;
     s->egl_error=copy->egl_error;s->width=copy->width;s->height=copy->height;s->frames=copy->frames;
     s->expected_cancel_surface_errors=copy->expected_cancel_surface_errors;s->expected_cancel_egl_error=copy->expected_cancel_egl_error;
@@ -535,8 +536,9 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_runtimeWorld(JNI
         capture_add(&parent,(uint64_t)SIZE*SIZE*4u*4u)&&capture_add(&parent,COH_CAPTURE_RESERVE);
     if(ok)ok=coh_session_world_create_fds(s->assets[6].p,s->assets[6].n,inputs,parent,&candidate,reason,sizeof reason);
     else snprintf(reason,sizeof reason,"Runtime source candidate exceeds unchanged scene inventory");
+    uint64_t reads=0,read_bytes=0;if(ok)coh_session_world_source_io(candidate,&reads,&read_bytes);
     pthread_mutex_lock(&s->mutex);CohSessionWorld*old=NULL;
-    if(ok){old=s->stream_world;s->stream_world=candidate;candidate=NULL;memset(&s->stream_stats,0,sizeof s->stream_stats);}
+    if(ok){old=s->stream_world;s->stream_world=candidate;candidate=NULL;s->runtime_world_reads=reads;s->runtime_world_bytes=read_bytes;memset(&s->stream_stats,0,sizeof s->stream_stats);}
     s->runtime_world_status=ok?1:-1;s->runtime_world_parent_bytes=parent;
     snprintf(s->runtime_world_failure,sizeof s->runtime_world_failure,"%s",reason);
     s->running=0;pthread_mutex_unlock(&s->mutex);
@@ -549,6 +551,7 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
     Session *startup=malloc(sizeof *startup);if(!startup)return -1;
     pthread_mutex_lock(&s->mutex);if(s->running||s->failed||!s->foreground||s->epoch!=(uint64_t)epoch){pthread_mutex_unlock(&s->mutex);free(startup);return 0;}s->cancel=0;s->running=1;s->contexts_started++;*startup=*s;pthread_mutex_unlock(&s->mutex);
     g.window=ANativeWindow_fromSurface(e,surface);if(!g.window)fail(startup,"Native Surface retention failed");else graphics_create(startup,&g);
+    if(COH_FULLSCREEN_DIAGNOSTIC)coh_session_world_source_io(startup->stream_world,&startup->runtime_world_reads,&startup->runtime_world_bytes);
     pthread_mutex_lock(&s->mutex);
     /* A destroyed stale Surface is orderly cancellation. Source/GL arithmetic
      * failures stay sticky even if cancellation happened at the same time. */
@@ -608,6 +611,7 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
                 }
             }
         }
+        if(COH_FULLSCREEN_DIAGNOSTIC)coh_session_world_source_io(startup->stream_world,&startup->runtime_world_reads,&startup->runtime_world_bytes);
         pthread_mutex_lock(&s->mutex);
         if(!s->frame_capture)s->frame_capture=startup->frame_capture;
         if(s->observed_entity_updates==startup->observed_entity_updates&&s->observed_entity_index==startup->observed_entity_index){
@@ -723,7 +727,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SessionNative_snapshot(JNIE
         jappend(&j,",\"depth_sampler_controls_passed\":%s,\"depth_codec_float_precision\":%d,\"raw_changed_pixels\":%"PRIu64",\"qualified_equal_depth_ties\":%"PRIu64",\"non_tie_mismatches\":%"PRIu64",\"depth_sampler_controls\":{\"clear\":",s->depth_sampler_controls_passed?"true":"false",s->depth_codec_float_precision,s->depth_order_color_differences,s->depth_order_ties,s->depth_order_mismatches);
         depth_json(&j,&s->clear_control,0);jappend(&j,",\"world_front\":");depth_json(&j,&s->world_front_control,0);jappend(&j,",\"actor_front\":");depth_json(&j,&s->actor_front_control,0);jappend(&j,"},\"depth_tie_diagnostics\":[");
         for(unsigned i=0;i<s->depth_diagnostics_count;i++){if(i)jappend(&j,",");depth_json(&j,&s->depth_diagnostics[i],1);}jappend(&j,"]");
-        if(COH_FULLSCREEN_DIAGNOSTIC){uint64_t reads=0,bytes=0;char reason[256];escaped(reason,sizeof reason,s->runtime_world_failure);coh_session_world_source_io(s->stream_world,&reads,&bytes);jappend(&j,",\"runtime_world\":{\"status\":%d,\"source\":\"%s\",\"parent_reservation_bytes\":%"PRIu64",\"archive_reads\":%"PRIu64",\"archive_bytes\":%"PRIu64",\"fallback_reason\":\"%s\"}",s->runtime_world_status,s->runtime_world_status==1?"verified_imported_archives":"accepted_fixture_fallback",s->runtime_world_parent_bytes,reads,bytes,reason);}
+        if(COH_FULLSCREEN_DIAGNOSTIC){char reason[256];escaped(reason,sizeof reason,s->runtime_world_failure);jappend(&j,",\"runtime_world\":{\"status\":%d,\"source\":\"%s\",\"parent_reservation_bytes\":%"PRIu64",\"archive_reads\":%"PRIu64",\"archive_bytes\":%"PRIu64",\"fallback_reason\":\"%s\"}",s->runtime_world_status,s->runtime_world_status==1?"verified_imported_archives":"accepted_fixture_fallback",s->runtime_world_parent_bytes,s->runtime_world_reads,s->runtime_world_bytes,reason);}
         if(COH_FRAME_CAPTURE_DIAGNOSTIC)jappend(&j,",\"frame_capture\":{\"frame\":%"PRIu64",\"pose_generation\":%"PRIu64",\"source_charge_bytes\":%"PRIu64",\"reserve_bytes\":%u,\"failures\":%"PRIu64",\"startup_witness\":false}",s->capture_frame,s->capture_generation,s->capture_charge,COH_CAPTURE_RESERVE,s->capture_failures);
         jappend(&j,"}");n=j.ok?(int)j.n:-1;
     }
