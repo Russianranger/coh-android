@@ -64,7 +64,19 @@ typedef struct{
  const CohClientCostumeSlots *client_slots;
  uint32_t body_parts;int hasDebugInfo;unsigned cache_mode,cache_first,cache_index,cache_count;
 } CohOriginalCostumeState;
+/* Discard-only original power customization storage reuses the same exclusive
+ * 64KiB body workspace after a complete costume. All unavailable BasePower
+ * references are NULL; tokens/colors are consumed by the original receiver.
+ * The source comparator observes only power pointers, so a single streaming
+ * NULL entry plus the complete pointer list has identical sorting semantics.
+ * Nothing in this scratch is published as a semantic customization owner. */
+#define COH_ORIGINAL_POWER_POINTER_CAPACITY ((COH_ORIGINAL_COSTUME_WORKSPACE_BYTES-128u)/sizeof(void*))
+typedef struct{uint32_t crcFullName;const char *pchFullName;}CohOriginalPowerDef;
+typedef struct{const CohOriginalPowerDef *power;const char *powerFullName;struct{CohOriginalCostumeColor primary,secondary;}customTint;const char *token;}CohOriginalPowerCustomization;
+typedef struct{CohOriginalPowerCustomization **powerCustomizations;}CohOriginalPowerCustomizationList;
+typedef struct{CohOriginalPowerCustomizationList list;CohOriginalPowerCustomization entry;uint32_t count;CohOriginalPowerCustomization *pointers[COH_ORIGINAL_POWER_POINTER_CAPACITY];}CohOriginalPowerScratch;
 typedef union{
+ CohOriginalPowerScratch power;
  CohOriginalCostumeState state;uint8_t bytes[COH_ORIGINAL_COSTUME_WORKSPACE_BYTES];
  long double alignment;void *pointer_alignment;
 } CohOriginalCostumeWorkspace;

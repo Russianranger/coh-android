@@ -15,9 +15,9 @@ typedef struct{unsigned dummy;} SeqInst;
 typedef CohOriginalCostumeColor Color;
 typedef struct{const char *regionName;Color color[2];} CustomNPCCostumePart;
 typedef struct{char *originalNPCName;CustomNPCCostumePart **parts;Color skinColor;} CustomNPCCostume;
-typedef struct{const char *pchFullName;} BasePower;
-typedef struct{const BasePower *power;const char *powerFullName;struct{Color primary,secondary;}customTint;const char *token;unsigned padding[5];}PowerCustomization;
-typedef struct{PowerCustomization **powerCustomizations;unsigned padding[5];}PowerCustomizationList;
+typedef CohOriginalPowerDef BasePower;
+typedef CohOriginalPowerCustomization PowerCustomization;
+typedef CohOriginalPowerCustomizationList PowerCustomizationList;
 typedef struct{CohEntCharacterStats stats;uint32_t iCombatModShift;}Character;
 typedef struct{
  int titleThe,titleColors[2],titleBadge,glowieUnlocked,attachArticle,respecTokens,lastTurnstileEventID,lastTurnstileMissionID,helperStatus;char titleTheText[10],titleCommon[32],titleOrigin[32],titleSpecial[128];
@@ -37,7 +37,7 @@ typedef struct{
  union{CohEntTarget target;CohEntStatusEffects status;CohEntInventorySizes inventory;}suffix;Entity entity;Player player;Character character;Costume dummy;unsigned initial,pchar_things;
  CustomNPCCostume custom;CustomNPCCostumePart npc_parts[63];
  CustomNPCCostumePart *npc_pointers[63];unsigned npc_count;
- int hasDebugInfo;PowerCustomizationList power_list;PowerCustomization power_entry;PowerCustomization *power_pointers[1];
+ int hasDebugInfo;PowerCustomizationList power_list;unsigned power_count_pending;
  char literal[260];unsigned in_power,power_prefix;unsigned in_rewards,reward_groups,in_sg,npc_field,prefix_step,self;
 } Packet;
 typedef struct{unsigned kind;} Table;typedef const Table *cStashTable;
@@ -59,9 +59,9 @@ static const Table ordinary={1};
 static const int g_PowerDictionary;
 #define ParsePowerCustomizationList 0
 #define StructAllocString(s) (s)
-#define StructInit(p,n,s) ((void)(n),(void)(s),memset((p),0,sizeof(*(p))))
+#define StructInit(p,n,s) ((void)(n),(void)(s),source_power_init(pak,(p)))
 #define StructCopy(s,a,b,c,d) ((void)(s),(void)(c),(void)(d),*(b)=*(a))
-#define eaQSort(a,b) ((void)(a),(void)sizeof(#b))
+#define eaQSort(a,b) source_power_sort(pak,(a),(b))
 #define powerdict_GetBasePowerByCRC(d,c) source_power_lookup(pak,(d),(c))
 #define pktGetIndexedString outerGetIndexedString
 #define START_BIT_COUNT(pak,label) source_field((pak),(label))
@@ -145,7 +145,7 @@ static U32 pktGetBits(Packet *pak,int n){
  }
  return value;
 }
-static U32 pktGetBitsAuto(Packet *pak){static const unsigned bins[]={2,10,24,32};U32 bin=pktGetBits(pak,2),value=pktGetBits(pak,(int)bins[bin]);if(pak->in_power&&pak->report.field==COH_ENT_COSTUME_POWER_LIST){if(value>INT_MAX)fail(pak,COH_LIMIT);pak->report.power_entry_count=value;}return value;}
+static U32 pktGetBitsAuto(Packet *pak){static const unsigned bins[]={2,10,24,32};U32 bin=pktGetBits(pak,2),value=pktGetBits(pak,(int)bins[bin]);if(pak->in_power&&pak->power_count_pending){if(value>INT_MAX||value>COH_ORIGINAL_POWER_POINTER_CAPACITY)fail(pak,COH_LIMIT);pak->report.power_entry_count=value;pak->power_count_pending=0;}return value;}
 static U32 pktGetBitsPack(Packet *pak,int n){
  U32 value=0;CohStatus s=coh_rep_pack(&pak->reader,(unsigned)n,&value);if(s!=COH_OK)fail(pak,s);if(value>INT_MAX)fail(pak,COH_LIMIT);
  if(pak->report.field==COH_ENT_COSTUME_NPC_FIELDS){if(!pak->npc_field&&n==12){pak->report.npc_index=value;pak->npc_field=1;}else if(pak->npc_field==1&&n==1){pak->report.npc_costume_index=value;pak->npc_field=2;}}
@@ -164,10 +164,13 @@ static int source_index(Packet *pak,cStashTable table,uint32_t index,const char 
 #define stashFindIndexByKey(t,s,o) ((void)(t),(void)(s),(void)(o),0)
 static const int g_bAssertOnBitStreamError=0,do_not_assert_on_bad_indexed_string_read=0;
 #define assert(v) do{if(!(v))fail(pak,COH_INVALID);}while(0)
-static void *source_alloc(Packet *pak,size_t n){if(pak->in_power){if(n==sizeof(PowerCustomizationList)){pak->report.power_lists_read++;return &pak->power_list;}if(n==sizeof(PowerCustomization)){pak->report.field=COH_ENT_COSTUME_POWER_CRC;return &pak->power_entry;}fail(pak,COH_INVALID);}if(n==sizeof(CustomNPCCostume)){memset(&pak->custom,0,sizeof(pak->custom));return &pak->custom;}if(n==sizeof(CustomNPCCostumePart)){if(pak->npc_count>=63)fail(pak,COH_LIMIT);return &pak->npc_parts[pak->npc_count];}fail(pak,COH_UNSUPPORTED);return NULL;}
+static void *source_alloc(Packet *pak,size_t n){if(pak->in_power){if(n==sizeof(PowerCustomizationList))return &pak->workspace->power.list;if(n==sizeof(PowerCustomization)){pak->report.field=COH_ENT_COSTUME_POWER_CRC;memset(&pak->workspace->power.entry,0,sizeof(pak->workspace->power.entry));return &pak->workspace->power.entry;}fail(pak,COH_INVALID);}if(n==sizeof(CustomNPCCostume)){memset(&pak->custom,0,sizeof(pak->custom));return &pak->custom;}if(n==sizeof(CustomNPCCostumePart)){if(pak->npc_count>=63)fail(pak,COH_LIMIT);return &pak->npc_parts[pak->npc_count];}fail(pak,COH_UNSUPPORTED);return NULL;}
 static void source_npc_init(Packet *pak,CustomNPCCostume *c){memset(c,0,sizeof(*c));memset(pak->npc_pointers,0,sizeof(pak->npc_pointers));c->parts=pak->npc_pointers;pak->npc_count=0;pak->report.field=COH_ENT_COSTUME_NPC_CUSTOM;}
-static void source_push(Packet *pak,void *array,void *p){if(pak->in_power)fail(pak,COH_UNSUPPORTED);CustomNPCCostumePart ***a=array;if(pak->npc_count>=63)fail(pak,COH_LIMIT);(*a)[pak->npc_count++]=p;}
-static const BasePower *source_power_lookup(Packet *pak,const int *ignored,int crc){(void)ignored;pak->report.field=COH_ENT_COSTUME_POWER_CRC;pak->report.power_crc=(uint32_t)crc;pak->report.required_table=1;fail(pak,COH_UNSUPPORTED);return NULL;}
+static void source_push(Packet *pak,void *array,void *p){if(pak->in_power){CohOriginalPowerScratch *s=&pak->workspace->power;PowerCustomization ***a=array;if(s->count>=COH_ORIGINAL_POWER_POINTER_CAPACITY)fail(pak,COH_LIMIT);if(((PowerCustomization*)p)->power||strcmp(((PowerCustomization*)p)->powerFullName,"none"))fail(pak,COH_INVALID);(*a)[s->count++]=p;pak->report.power_entries_read++;return;}CustomNPCCostumePart ***a=array;if(pak->npc_count>=63)fail(pak,COH_LIMIT);(*a)[pak->npc_count++]=p;}
+static const BasePower *source_power_lookup(Packet *pak,const int *ignored,int crc){(void)ignored;pak->report.field=COH_ENT_COSTUME_POWER_CRC;pak->report.power_crc=(uint32_t)crc;if(!pak->report.power_unresolved_count)pak->report.power_first_unresolved_crc=(uint32_t)crc;pak->report.power_last_unresolved_crc=(uint32_t)crc;pak->report.power_unresolved_count++;return NULL;}
+static void source_power_init(Packet *pak,PowerCustomizationList *list){CohOriginalPowerScratch *s=&pak->workspace->power;memset(s,0,sizeof(*s));list->powerCustomizations=s->pointers;pak->report.power_scratch_bytes=sizeof(*s);}
+static void source_power_sort(Packet *pak,PowerCustomization **array,int(*compare)(const void*,const void*)){uint32_t count=pak->workspace->power.count;for(uint32_t i=1;i<count;i++){PowerCustomization *value=array[i];uint32_t j=i;while(j&&compare(&array[j-1],&value)>0){array[j]=array[j-1];j--;}array[j]=value;}}
+static int observed_power_list(Packet *,Entity *,PowerCustomizationList *);
 static const Costume *npcDefsGetCostume(int npc,int index){(void)npc;(void)index;return NULL;}
 static int costume_receive(Packet *pak,Costume *costume){
  CohStatus s;CohOriginalCostumeSnapshot *capture=NULL;(void)costume;
@@ -198,8 +201,10 @@ static void observed_rewards(Packet *,Entity *);
 #pragma GCC diagnostic ignored "-Wswitch"
 #include "original_ent_costume_receive.inc"
 #pragma GCC diagnostic pop
+#undef powerCustList_receive
 #undef ent_ReceiveCostumeRewards
 static void observed_rewards(Packet *pak,Entity *e){pak->in_rewards=1;pak->report.field=COH_ENT_COSTUME_REWARDS;ent_ReceiveCostumeRewards(pak,e);pak->in_rewards=0;pak->prefix_step=2;pak->report.field=COH_ENT_COSTUME_BODY;}
+static int observed_power_list(Packet *pak,Entity *e,PowerCustomizationList *list){pak->report.field=COH_ENT_COSTUME_POWER_LIST;pak->power_count_pending=1;int result=powerCustList_receive(pak,e,list);pak->power_count_pending=0;pak->report.power_lists_read++;return result;}
 static void run(Packet *volatile pak){if(!setjmp(pak->trap)){if(!entReceiveCostume(pak,&pak->entity,1))fail(pak,COH_UNSUPPORTED);pak->report.appearance_complete=1;pak->report.appearance_end_bit=pak->reader.cursor;pak->report.field=COH_ENT_COSTUME_XLUCENCY;(void)entReceiveXlucency(pak,&pak->entity,1);pak->report.xlucency_complete=1;pak->report.field=COH_ENT_COSTUME_POWER_SELECTOR;pak->report.power_begin_bit=pak->reader.cursor;pak->in_power=1;(void)entReceivePowerCust(pak,&pak->entity,1);pak->report.power_complete=1;pak->report.power_end_bit=pak->reader.cursor;pak->report.field=COH_ENT_COSTUME_TITLES;if(pak->initial){pak->in_power=0;(void)entReceiveTitles(pak,&pak->entity,1);pak->report.titles_complete=1;pak->report.field=COH_ENT_COSTUME_RAGDOLL;(void)entGetRagdollIgnore(pak,&pak->entity);pak->report.ragdoll_complete=1;pak->report.field=COH_ENT_COSTUME_BASIC_STATS;if(pak->pchar_things)(void)entReceiveCharacterStats(pak,&pak->entity,1);pak->report.basic_stats_complete=1;pak->report.field=COH_ENT_COSTUME_VISION;receive_vision(pak);CohStatus tf=coh_original_taskforce_receive(&pak->reader,pak->body_parts,pak->slots,pak->workspace,&pak->report.taskforce);pak->reader.cursor=tf==COH_OK?pak->report.taskforce.end_bit:pak->report.taskforce.failure_bit;if(tf!=COH_OK)fail(pak,tf);pak->report.taskforce_complete=1;pak->report.field=COH_ENT_COSTUME_RARE_PREFIX;}}}
 static int span(const void*p,size_t n){return p&&(uintptr_t)p<=UINTPTR_MAX-n;}
 static int apart(const void*a,size_t an,const void*b,size_t bn){return(uintptr_t)a+an<=(uintptr_t)b||(uintptr_t)b+bn<=(uintptr_t)a;}
@@ -213,7 +218,7 @@ static CohStatus receive_component(const CohRepReader *reader,uint32_t parts,uin
  {size_t cap=reader->max_bytes?reader->max_bytes:COH_REP_MESSAGE_MAX;if(cap>COH_REP_BOUNDED_MESSAGE_MAX||reader->bytes.size>cap||reader->cursor>reader->bits||reader->bits>reader->bytes.size*8||reader->compressed>1||(reader->compressed&&(reader->cursor&7)))return COH_INVALID;}
  if(slots&&(!slots->raw.data||slots->raw.size!=COH_CLIENT_COSTUME_RAW_BYTES||!slots->index||slots->capacity[0]!=32768||slots->capacity[1]!=256||slots->capacity[2]!=512))return COH_INVALID;
  memset(&state,0,sizeof(state));state.reader=*reader;state.report.begin_bit=reader->cursor;state.report.packet_bits=reader->bits;state.report.field=COH_ENT_COSTUME_SELECTOR;state.report.selected_body=selected;state.body_parts=parts;state.selected_index=selected;state.slots=slots;state.workspace=workspace;state.capture=capture;state.initial=initial;state.pchar_things=pchar_things;state.entity.pchar=&state.character;state.entity.pl=&state.player;state.player.current_costume=(int)selected;
- run(&state);state.report.end_bit=state.reader.cursor;state.report.failure_bit=state.reader.cursor;*out=state.report;
+ run(&state);{volatile unsigned char *w=workspace->bytes;size_t bytes=sizeof(*workspace);while(bytes--)*w++=0;}state.report.end_bit=state.reader.cursor;state.report.failure_bit=state.reader.cursor;*out=state.report;
  {volatile unsigned char *v=(volatile unsigned char*)&state;size_t bytes=sizeof(state);while(bytes--)*v++=0;}
  return out->status;
 }

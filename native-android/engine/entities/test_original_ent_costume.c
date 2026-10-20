@@ -27,22 +27,22 @@ static void initial_suffix(CohRepReader base,size_t end){
 }
 static void fixtures(const char *path){FILE*f=fopen(path,"rb");CHECK(f);unsigned count=word(f);
  for(unsigned row=0;row<count;row++){
-  unsigned mode=word(f),start=word(f),bodies=word(f),sg=word(f),fx=word(f),npc=word(f),custom=word(f),powerkind=word(f),appearance=word(f),powerbegin=word(f),powerboundary=word(f),end=word(f);(void)custom;CHECK((end+7)/8<=sizeof(packet));CHECK(fread(packet,1,(end+7)/8,f)==(end+7)/8);
+  unsigned mode=word(f),start=word(f),bodies=word(f),sg=word(f),fx=word(f),npc=word(f),custom=word(f),powerkind=word(f),appearance=word(f),powerbegin=word(f),powerboundary=word(f),end=word(f);(void)custom;(void)powerboundary;CHECK((end+7)/8<=sizeof(packet));CHECK(fread(packet,1,(end+7)/8,f)==(end+7)/8);
   CohRepReader r={{packet,(end+7)/8},end,start,mode,COH_REP_BOUNDED_MESSAGE_MAX},before=r;
-  CHECK(coh_original_ent_costume_receive(&r,28,0,&slots,&workspace,&capture,&outer)==(powerkind==3?COH_UNSUPPORTED:COH_OK));
-  if(!(outer.appearance_complete&&outer.xlucency_complete&&outer.appearance_end_bit==appearance&&outer.end_bit==powerboundary&&outer.packet_bits==end))fprintf(stderr,"row%u kind%u app%zu/%u end%zu/%u packet%zu/%u status%u field%u crc%x count%u\n",row,powerkind,outer.appearance_end_bit,appearance,outer.end_bit,powerboundary,outer.packet_bits,end,outer.status,outer.field,outer.power_crc,outer.power_entry_count);
-  CHECK(outer.appearance_complete&&outer.xlucency_complete&&outer.appearance_end_bit==appearance&&outer.end_bit==powerboundary&&outer.packet_bits==end);
+  CHECK(coh_original_ent_costume_receive(&r,28,0,&slots,&workspace,&capture,&outer)==COH_OK);
+  if(!(outer.appearance_complete&&outer.xlucency_complete&&outer.appearance_end_bit==appearance&&outer.end_bit==end&&outer.packet_bits==end))fprintf(stderr,"row%u kind%u app%zu/%u end%zu/%u packet%zu/%u status%u field%u crc%x count%u\n",row,powerkind,outer.appearance_end_bit,appearance,outer.end_bit,powerboundary,outer.packet_bits,end,outer.status,outer.field,outer.power_crc,outer.power_entry_count);
+  CHECK(outer.appearance_complete&&outer.xlucency_complete&&outer.appearance_end_bit==appearance&&outer.end_bit==end&&outer.packet_bits==end);
   CHECK(outer.bodies_expected==bodies&&outer.bodies_read==bodies&&outer.selected_complete&&capture.part_count==28&&capture.bodytype==1);
   CHECK(outer.supergroup_present==sg&&outer.supergroup_complete==sg&&outer.fx_present==fx&&outer.fx_bytes==(fx?6u:0u)&&outer.npc_fallthrough==npc);
-  CHECK(!outer.entity_complete&&!outer.message_complete&&outer.field==(powerkind==3?COH_ENT_COSTUME_POWER_CRC:COH_ENT_COSTUME_TITLES)&&!memcmp(&r,&before,sizeof(r))&&!memcmp(&workspace,&zero_workspace,sizeof(workspace)));
+  CHECK(!outer.entity_complete&&!outer.message_complete&&outer.field==COH_ENT_COSTUME_TITLES&&!memcmp(&r,&before,sizeof(r))&&!memcmp(&workspace,&zero_workspace,sizeof(workspace)));
   if(npc)CHECK(outer.npc_index==123&&outer.npc_costume_index==2);
-  CHECK(outer.power_begin_bit==powerbegin&&outer.power_complete==(powerkind!=3)&&outer.required_table==(powerkind==3));if(powerkind==3)CHECK(outer.power_crc==0x12345678&&outer.power_entry_count==1&&outer.failure_bit==powerboundary);
+  CHECK(outer.power_begin_bit==powerbegin&&outer.power_complete&&outer.required_table==0);if(powerkind>=3)CHECK(outer.power_crc==0x12345678&&outer.power_entry_count==(powerkind==4?343u:1u)&&outer.power_entries_read==bodies*(powerkind==4?343u:1u)&&outer.power_unresolved_count==outer.power_entries_read&&outer.power_first_unresolved_crc==0x12345678&&outer.power_last_unresolved_crc==0x12345678&&outer.power_scratch_bytes==sizeof(CohOriginalPowerScratch));
   CHECK(outer.selected_body_end_bit<=outer.main_body_end_bit&&outer.main_body_end_bit<appearance);
-  r.bits=end+32;r.bytes.size=(r.bits+7)/8;CHECK(coh_original_ent_costume_receive(&r,28,0,&slots,&workspace,&capture,&outer)==(powerkind==3?COH_UNSUPPORTED:COH_OK));CHECK(outer.end_bit==powerboundary&&outer.packet_bits==end+32&&!outer.entity_complete&&!outer.message_complete);r=before;
+  r.bits=end+32;r.bytes.size=(r.bits+7)/8;CHECK(coh_original_ent_costume_receive(&r,28,0,&slots,&workspace,&capture,&outer)==COH_OK);CHECK(outer.end_bit==end&&outer.packet_bits==end+32&&!outer.entity_complete&&!outer.message_complete);r=before;
   for(unsigned trim=1;trim<=64&&end-trim>=start;trim++){
    r.bits=end-trim;CHECK(coh_original_ent_costume_receive(&r,28,0,&slots,&workspace,&capture,&outer)!=COH_OK);CHECK(!outer.message_complete&&!outer.entity_complete&&!memcmp(&workspace,&zero_workspace,sizeof(workspace)));CHECK(outer.failure_bit<=r.bits&&outer.packet_bits==r.bits);
   }
-  if(powerkind!=3)initial_suffix(before,end);
+  initial_suffix(before,end);
   r.bits=appearance;CHECK(coh_original_ent_costume_receive(&r,28,0,&slots,&workspace,&capture,&outer)!=COH_OK);CHECK(outer.appearance_complete&&!outer.xlucency_complete&&outer.end_bit==appearance);
  }
  CHECK(fgetc(f)==EOF);CHECK(fclose(f)==0);

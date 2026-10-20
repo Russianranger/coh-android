@@ -19,12 +19,13 @@ enum {COH_ENT_COSTUME_SELECTOR=1,COH_ENT_COSTUME_REWARDS=2,
  COH_ENT_COSTUME_BASIC_STATS=22,COH_ENT_COSTUME_VISION=23,COH_ENT_COSTUME_TARGET=24,
  COH_ENT_COSTUME_STATUS=25,COH_ENT_COSTUME_INVENTORY=26,COH_ENT_COSTUME_TASKFORCE=27,COH_ENT_COSTUME_RARE_PREFIX=28};
 typedef struct {
- CohStatus status;size_t begin_bit,end_bit,failure_bit,packet_bits,appearance_end_bit,main_body_end_bit,selected_body_end_bit,power_begin_bit,power_end_bit;
+ CohStatus status;size_t begin_bit,end_bit,failure_bit,packet_bits,appearance_end_bit,main_body_end_bit,selected_body_end_bit,power_begin_bit,power_end_bit,power_scratch_bytes;
  uint32_t field,selector,bodies_expected,bodies_read,selected_body,
   selected_complete,supergroup_present,supergroup_complete,supergroup_mode,
   hide_emblem,fx_present,fx_bytes,npc_fallthrough,npc_index,npc_costume_index,
   appearance_complete,xlucency_complete,entity_complete,message_complete,
   power_selector,power_complete,power_lists_read,power_entry_count,power_crc,required_table,
+  power_entries_read,power_unresolved_count,power_first_unresolved_crc,power_last_unresolved_crc,
   titles_complete,ragdoll_complete,basic_stats_complete,vision_complete,taskforce_complete;
  CohOriginalCostumeReport body;CohOriginalTaskforceReport taskforce;
 } CohOriginalEntCostumeReport;
@@ -36,8 +37,9 @@ typedef struct {
  * supplied, publishes only the selected complete main body (not an SG costume).
  * NPC appearance identifiers/custom colors are decoded without publishing a
  * model or consulting a cosmetic NPC definition while in the discard profile.
- * Nonempty power customization needs the original BasePower CRC lookup, absent
- * from this caller; stop at that actual callback and retain its requested CRC.
+ * Original power customization tolerates an unavailable BasePower: NULL plus
+ * fullname "none". Consume its original tints/token, retain unresolved CRC
+ * counts, and never fabricate a BasePower or publish customization state.
  * COH_OK means this bounded appearance component completed, never end-of-entity
  * or end-of-message; unknown suffix bits stay unread.
  * The caller charges all owner/source/index/message resources, capture and this

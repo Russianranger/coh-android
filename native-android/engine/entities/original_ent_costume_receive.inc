@@ -481,6 +481,21 @@ static int entReceiveXlucency(Packet *pak, Entity *e, bool oo_packet)
 
     return 1;
 }
+int comparePowerCustomizations(const void* lhsData, const void* rhsData)
+{
+    const PowerCustomization** lhs = (const PowerCustomization**)lhsData;
+    const PowerCustomization** rhs = (const PowerCustomization**)rhsData;
+    if (!lhs || !(*lhs)->power)
+        return 1;
+    else if (!rhs || !(*rhs)->power)
+        return -1;
+    else if ((*lhs)->power->crcFullName < (*rhs)->power->crcFullName)
+        return -1;
+    else if ((*lhs)->power->crcFullName > (*rhs)->power->crcFullName)
+        return 1;
+    else
+        return 0;
+}
 int powerCustList_receive(Packet *pak, Entity *e, PowerCustomizationList *powerCustList)
 {
     if (pktGetBits(pak, 1))
@@ -515,6 +530,7 @@ int powerCustList_receive(Packet *pak, Entity *e, PowerCustomizationList *powerC
     }
     return 1;
 }
+#define powerCustList_receive(p,e,c) observed_power_list((p),(e),(c))
 static int entReceivePowerCust(Packet *pak, Entity *e, bool oo_packet)
 {
     AppearanceType type;

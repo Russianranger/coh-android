@@ -109,11 +109,13 @@ and compiler stack measurements are separate from device RSS/PSS observations.
 
 The same source adapter now runs whole `entReceivePowerCust` and
 `powerCustList_receive`. Absent and empty source lists continue. A nonempty list
-stops at the original `powerdict_GetBasePowerByCRC` callback when Combined has no
-supplied BasePower dictionary; the actual CRC and post-CRC cursor are retained,
-and no following tint/token is consumed. The existing streamed PowerDictionary
-importer is available; this diagnostic has no packaged/indexed owner for it.
-This is a concrete missing caller input, not an invented producer requirement.
+follows the original NULL-tolerant BasePower lookup: missing definitions yield
+NULL and fullname "none"; both tint Autos and the literal token are still read.
+The original NULL-last comparator runs over bounded discard-only storage. Its
+result never publishes a semantic customization list. Unresolved CRC counts and
+first/last CRCs remain visible; no dictionary is required to determine framing.
+The same exclusive 64KiB body workspace holds typed pointer-list scratch after
+the main costume; its size does not grow, and it is wiped on every parser exit.
 
 The additive `_initial` entry accepts the actual earlier `pchar_things` flag in
 the already validated selected-self/all-rare initial profile. Empty power paths
@@ -130,3 +132,12 @@ function alone retains a narrowly scoped shift-sanitizer exclusion for its
 existing signed `1 << 31`; all adapter reads remain instrumented, and bit31 is
 covered by the independent original-sender fixture.
 No live receipt establishes which power branch the Thor packet will take.
+
+`check_original_ent_costume.py --replay <saved-initial-replay.bin>` additionally
+verifies the actual user-exported88-byte header/payload hashes and replays that
+packet in release/ASan/UBSan. No raw packet or decoded snapshot is committed.
+The retained301656-bit packet consumes all343 unresolved customizations through
+bit39216; its first CRC is0x80443357 and last0x7e9e7869. The initial source path
+continues through titles/ragdoll/basic statistics, then encounters the older
+inventory parser's signed-value limit at41008. This is a parser implementation
+restriction to fix, not a missing dictionary or full-packet completion claim.
