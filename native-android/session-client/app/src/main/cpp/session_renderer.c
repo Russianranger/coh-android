@@ -66,7 +66,8 @@ typedef struct {
     uint32_t observed_entity_index;float observed_entity_position[3];
     uint64_t observed_entity_updates,observed_entity_draws;
     CohFrameCapture *frame_capture;
-    uint64_t capture_lock_frame,capture_draws,capture_frame,capture_generation,capture_failures,capture_charge;
+    uint64_t capture_lock_frame,capture_draws,capture_frame,capture_generation,capture_failures,capture_charge,capture_view_epoch;
+    uint32_t capture_view_width,capture_view_height;
     uint32_t held_dirs,direction_mask;
     uint64_t frames,world_draws,actor_draws,skin_samples,contexts_started,contexts_completed;
     uint64_t tf_components,tf_mismatches,depth_order_mismatches,world_visible_pixels,actor_visible_pixels;
@@ -544,7 +545,10 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
                 if(scene_draw(startup,&g,0,width,height,0,0,NULL)){
                     uint64_t packets=startup->stream_stats.draw_packets>=packets_before?startup->stream_stats.draw_packets-packets_before:0;
                     uint64_t entities=startup->observed_entity_draws>=entity_before?startup->observed_entity_draws-entity_before:0;
-                    if(COH_FRAME_CAPTURE_DIAGNOSTIC&&startup->observed_entity_index&&packets&&entities&&++startup->capture_draws==COH_CAPTURE_WAIT){
+                    if(COH_FRAME_CAPTURE_DIAGNOSTIC&&startup->observed_entity_index&&packets&&entities
+                       &&(!COH_FULLSCREEN_DIAGNOSTIC||(startup->capture_view_epoch==startup->epoch
+                           &&startup->capture_view_width==(uint32_t)width&&startup->capture_view_height==(uint32_t)height))
+                       &&++startup->capture_draws==COH_CAPTURE_WAIT){
                         uint64_t charge=0;
                         if(capture_scene_charge(startup,&g,&charge)){
                             if(!startup->frame_capture)startup->frame_capture=coh_frame_capture_create(charge);
@@ -619,6 +623,18 @@ JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_observedEntity(J
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_clearObservedEntity(JNIEnv*e,jclass c,jlong handle){
     (void)e;(void)c;Session*s=(Session*)(intptr_t)handle;if(!s)return;
     pthread_mutex_lock(&s->mutex);s->observed_entity_index=0;memset(s->observed_entity_position,0,sizeof s->observed_entity_position);clear_input(s);pthread_mutex_unlock(&s->mutex);
+}
+/* UI geometry for the current fullscreen Surface only. This controls optional
+ * capture timing, never scene/entity admission or transport state. */
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_captureViewport(JNIEnv*e,jclass c,jlong handle,jlong epoch,jint width,jint height){
+    (void)e;(void)c;Session*s=(Session*)(intptr_t)handle;
+    if(!s||epoch<0||width<0||height<0||width>16384||height>16384)return;
+    pthread_mutex_lock(&s->mutex);
+    if(s->epoch==(uint64_t)epoch&&(s->capture_view_epoch!=(uint64_t)epoch||s->capture_view_width!=(uint32_t)width||s->capture_view_height!=(uint32_t)height)){
+        s->capture_view_epoch=(uint64_t)epoch;s->capture_view_width=(uint32_t)width;s->capture_view_height=(uint32_t)height;
+        s->capture_lock_frame=s->frames;s->capture_draws=0;
+    }
+    pthread_mutex_unlock(&s->mutex);
 }
 JNIEXPORT jbyteArray JNICALL Java_org_coh_sessionclient_SessionNative_frameCapture(JNIEnv*e,jclass c,jlong handle,jlong after){
     (void)c;Session*s=(Session*)(intptr_t)handle;if(!s||after<0)return NULL;

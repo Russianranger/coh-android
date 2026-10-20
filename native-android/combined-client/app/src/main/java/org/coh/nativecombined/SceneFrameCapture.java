@@ -32,6 +32,8 @@ public final class SceneFrameCapture {
     private static final int HEADER = 128;
     private static final int MAX_RAW = HEADER + 192 * 108 * 4;
     private static final int MAX_STORE = HEADER + MAX_RAW;
+    private static final int MAX_LARGE_RAW = HEADER + 640 * 360 * 4;
+    private static final int MAX_LARGE_STORE = HEADER + MAX_LARGE_RAW;
     private static final int CHUNK = 16 * 1024;
     private static final int MAX_JSON = 4 * 1024;
     private static final long SCENE_CAP = 96L * 1024 * 1024;
@@ -45,11 +47,17 @@ public final class SceneFrameCapture {
      */
     public static synchronized String save(File directory, byte[] raw,
             long appVersion, String activitySession) throws IOException {
-        Frame frame = frame(raw, raw == null ? 0 : raw.length);
+        return save(directory,raw,appVersion,activitySession,false);
+    }
+    public static synchronized String saveLarge(File directory,byte[] raw,long appVersion,String activitySession) throws IOException {
+        return save(directory,raw,appVersion,activitySession,true);
+    }
+    private static String save(File directory,byte[] raw,long appVersion,String activitySession,boolean large) throws IOException {
+        Frame frame = frame(raw, raw == null ? 0 : raw.length,large);
         String session = session(activitySession);
         if (frame == null || appVersion <= 0 || session == null || directory == null)
             throw new IOException("Scene capture input rejected");
-        Capture previous = optional(directory, false, false);
+        Capture previous = optional(directory, false, false,large);
         if (previous != null && previous.session.equals(session)
                 && frame.frame <= previous.frame.frame)
             throw new IOException("Scene capture frame already stored");
@@ -95,18 +103,27 @@ public final class SceneFrameCapture {
 
     /** Return metadata for a complete validated historical record, or null. */
     public static synchronized String metadata(File directory) {
-        Capture capture = optional(directory, false, true);
+        Capture capture = optional(directory, false, true,false);
         return capture == null ? null : capture.json;
+    }
+    public static synchronized String metadataLarge(File directory) {
+        Capture capture=optional(directory,false,true,true);
+        return capture==null?null:capture.json;
     }
 
     /** Validate before touching ZIP output. Absent/invalid storage returns false;
      * an actual ZIP sink failure propagates because a partial ZIP is not valid.
      * A bounded snapshot prevents a later disk mutation changing exported bytes.
      */
-    public static synchronized boolean append(File directory, ZipOutputStream zip)
-            throws IOException {
+    public static synchronized boolean append(File directory, ZipOutputStream zip) throws IOException {
+        return append(directory,zip,false);
+    }
+    public static synchronized boolean appendLarge(File directory,ZipOutputStream zip) throws IOException {
+        return append(directory,zip,true);
+    }
+    private static boolean append(File directory,ZipOutputStream zip,boolean large) throws IOException {
         if (zip == null) throw new IOException("Scene capture ZIP unavailable");
-        Capture capture = optional(directory, true, true);
+        Capture capture = optional(directory, true, true,large);
         if (capture == null) return false;
         zip.putNextEntry(new ZipEntry("scene-capture.rgba"));
         for (int offset = 0; offset < capture.raw.length; offset += CHUNK)
@@ -122,10 +139,15 @@ public final class SceneFrameCapture {
      * construct a Deflater or close the caller's output. Invalid storage returns
      * false before writing; actual output failures propagate to the caller.
      */
-    public static synchronized boolean writeZip(File directory, OutputStream output)
-            throws IOException {
+    public static synchronized boolean writeZip(File directory, OutputStream output) throws IOException {
+        return writeZip(directory,output,false);
+    }
+    public static synchronized boolean writeZipLarge(File directory,OutputStream output) throws IOException {
+        return writeZip(directory,output,true);
+    }
+    private static boolean writeZip(File directory,OutputStream output,boolean large) throws IOException {
         if (output == null) throw new IOException("Scene capture ZIP unavailable");
-        Capture capture = optional(directory, true, true);
+        Capture capture = optional(directory, true, true,large);
         if (capture == null) return false;
         byte[] json = capture.json.getBytes(StandardCharsets.UTF_8);
         byte[] header = new byte[46];
@@ -173,18 +195,18 @@ public final class SceneFrameCapture {
         output.write(header, 0, 46); output.write(name);
     }
 
-    private static Capture optional(File directory, boolean retainRaw, boolean makeJson) {
+    private static Capture optional(File directory, boolean retainRaw, boolean makeJson,boolean large) {
         if (directory == null) return null;
         try {
-            return read(new File(directory, STORE), retainRaw, makeJson);
+            return read(new File(directory, STORE), retainRaw, makeJson,large);
         } catch (IOException | SecurityException invalid) {
             return null;
         }
     }
 
-    private static Capture read(File file, boolean retainRaw, boolean makeJson) throws IOException {
+    private static Capture read(File file, boolean retainRaw, boolean makeJson,boolean large) throws IOException {
         long bytes = file.length(), modified = file.lastModified();
-        if (!file.isFile() || bytes < HEADER * 2 + 4 || bytes > MAX_STORE) return null;
+        if (!file.isFile() || bytes < HEADER * 2 + 4 || bytes > (large?MAX_LARGE_STORE:MAX_STORE)) return null;
         try (FileInputStream input = new FileInputStream(file)) {
             if (input.getChannel().size() != bytes) return null;
             byte[] wrapper = new byte[HEADER];
@@ -192,7 +214,7 @@ public final class SceneFrameCapture {
             long length = u32(wrapper, 12), version = u64(wrapper, 16);
             int sessionLength = (int) u32(wrapper, 24);
             if (!magic(wrapper, STORE_MAGIC) || u32(wrapper, 8) != HEADER
-                    || length < HEADER + 4 || length > MAX_RAW
+                    || length < HEADER + 4 || length > (large?MAX_LARGE_RAW:MAX_RAW)
                     || bytes != HEADER + length || version <= 0
                     || sessionLength < 1 || sessionLength > 32 || u32(wrapper, 28) != 0)
                 return null;
@@ -201,7 +223,7 @@ public final class SceneFrameCapture {
             if (!session.equals(session(session))) return null;
             byte[] nativeHeader = new byte[HEADER];
             exact(input, nativeHeader, 0, HEADER);
-            Frame frame = frame(nativeHeader, (int) length);
+            Frame frame = frame(nativeHeader, (int) length,large);
             if (frame == null) return null;
 
             byte[] raw = retainRaw ? new byte[(int) length] : null;
@@ -240,8 +262,8 @@ public final class SceneFrameCapture {
         }
     }
 
-    private static Frame frame(byte[] raw, int length) {
-        if (raw == null || raw.length < HEADER || length < HEADER + 4 || length > MAX_RAW
+    private static Frame frame(byte[] raw, int length,boolean large) {
+        if (raw == null || raw.length < HEADER || length < HEADER + 4 || length > (large?MAX_LARGE_RAW:MAX_RAW)
                 || !magic(raw, RAW_MAGIC) || u32(raw, 8) != HEADER) return null;
         long width = u32(raw, 12), height = u32(raw, 16);
         long viewportWidth = u32(raw, 20), viewportHeight = u32(raw, 24);
@@ -252,7 +274,7 @@ public final class SceneFrameCapture {
         float x = Float.intBitsToFloat((int) u32(raw, 88));
         float y = Float.intBitsToFloat((int) u32(raw, 92));
         float z = Float.intBitsToFloat((int) u32(raw, 96));
-        if (width < 1 || width > 192 || height < 1 || height > 108
+        if (width < 1 || width > (large?640:192) || height < 1 || height > (large?360:108)
                 || viewportWidth < width || viewportWidth > 16384
                 || viewportHeight < height || viewportHeight > 16384
                 || pixelBytes != width * height * 4 || length != HEADER + pixelBytes

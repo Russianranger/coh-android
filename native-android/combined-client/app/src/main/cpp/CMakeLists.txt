@@ -96,3 +96,7 @@ if(COH_FRAME_CAPTURE_DIAGNOSTIC)
         "${ENGINE}/entities/coh_original_taskforce_receive.c")
     target_compile_definitions(coh_combined_interop PRIVATE COH_FRAME_CAPTURE_DIAGNOSTIC=1)
 endif()
+
+if(COH_FULLSCREEN_DIAGNOSTIC)
+    target_compile_definitions(coh_combined_interop PRIVATE COH_FULLSCREEN_DIAGNOSTIC=1)
+endif()

@@ -43,3 +43,7 @@ target_link_libraries(coh_session_client PRIVATE android EGL GLESv3 z m)
 if(COH_FRAME_CAPTURE_DIAGNOSTIC)
     target_compile_definitions(coh_session_client PRIVATE COH_FRAME_CAPTURE_DIAGNOSTIC=1)
 endif()
+
+if(COH_FULLSCREEN_DIAGNOSTIC)
+    target_compile_definitions(coh_session_client PRIVATE COH_FULLSCREEN_DIAGNOSTIC=1)
+endif()

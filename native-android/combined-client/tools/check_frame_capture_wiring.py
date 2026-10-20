@@ -35,7 +35,7 @@ typedef struct { uint64_t cpu,gpu; int candidate; } CohSessionWorld;
 typedef struct { uint64_t owned; } WalkWorld;
 struct CohFrameCapture { const uint8_t *bytes; size_t size; uint64_t frame; };
 typedef struct {
- int mutex; struct { size_t n; } assets[7];
+ int mutex; uint64_t epoch,frames,capture_view_epoch,capture_lock_frame,capture_draws; uint32_t capture_view_width,capture_view_height; struct { size_t n; } assets[7];
  Scene world,actor,walkable; Geometry world_geometry[3],actor_geometry[3],walkable_geometry[3];
  CohSessionWorld *stream_world; WalkWorld walk_world; CohFrameCapture *frame_capture;
 } Session;
@@ -66,6 +66,7 @@ const uint8_t *coh_frame_capture_data(const CohFrameCapture*c,size_t*size,uint64
 }
 typedef int64_t jlong;
 typedef int32_t jsize;
+typedef int32_t jint;
 typedef signed char jbyte;
 typedef void *jclass;
 typedef uint8_t *jbyteArray;
@@ -176,7 +177,20 @@ static void jni(void){
  }
  check(!outstanding&&!lock_depth);
 }
-int main(void){accounting();jni();printf("{\"checks\":%u,\"thin_host_types\":true}\n",checks);return 0;}
+static void viewport(void){
+ reset_jni();Session s={0};s.epoch=3;s.frames=70;s.capture_draws=11;jlong h=(jlong)(intptr_t)&s;
+ Java_org_coh_sessionclient_SessionNative_captureViewport(NULL,NULL,0,3,640,360);check(!locks);
+ Java_org_coh_sessionclient_SessionNative_captureViewport(NULL,NULL,h,-1,640,360);check(!locks);
+ Java_org_coh_sessionclient_SessionNative_captureViewport(NULL,NULL,h,3,16385,360);check(!locks);
+ Java_org_coh_sessionclient_SessionNative_captureViewport(NULL,NULL,h,2,640,360);check(!s.capture_view_epoch&&s.capture_draws==11);
+ Java_org_coh_sessionclient_SessionNative_captureViewport(NULL,NULL,h,3,640,360);
+ check(s.capture_view_epoch==3&&s.capture_view_width==640&&s.capture_view_height==360&&s.capture_draws==0&&s.capture_lock_frame==70);
+ s.capture_draws=5;s.frames=75;
+ Java_org_coh_sessionclient_SessionNative_captureViewport(NULL,NULL,h,3,640,360);check(s.capture_draws==5&&s.capture_lock_frame==70);
+ Java_org_coh_sessionclient_SessionNative_captureViewport(NULL,NULL,h,3,0,0);check(s.capture_draws==0&&s.capture_lock_frame==75&&!s.capture_view_width&&!s.capture_view_height);
+ check(!lock_depth&&locks==unlocks&&!outstanding);
+}
+int main(void){accounting();jni();viewport();printf("{\"checks\":%u,\"thin_host_types\":true}\n",checks);return 0;}
 '''
 
 
@@ -187,7 +201,10 @@ def compact(value):
 def source_checks(sources, method):
     renderer = sources["renderer"]
     render = compact(method(renderer, "JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render("))
-    assert "COH_FRAME_CAPTURE_DIAGNOSTIC&&startup->observed_entity_index&&packets&&entities&&++startup->capture_draws==COH_CAPTURE_WAIT" in render
+    assert "COH_FRAME_CAPTURE_DIAGNOSTIC&&startup->observed_entity_index&&packets&&entities" in render
+    assert "startup->capture_view_epoch==startup->epoch" in render
+    assert "startup->capture_view_width==(uint32_t)width&&startup->capture_view_height==(uint32_t)height" in render
+    assert render.index("startup->capture_view_epoch==startup->epoch")<render.index("++startup->capture_draws==COH_CAPTURE_WAIT")
     assert "packets_before=startup->stream_stats.draw_packets,entity_before=startup->observed_entity_draws" in render
     assert "startup->stream_stats.draw_packets-packets_before" in render
     assert "startup->observed_entity_draws-entity_before" in render
@@ -215,11 +232,11 @@ def source_checks(sources, method):
     assert "SceneFrameCapture.writeZip(getFilesDir(),output)" in compact(activity)
     assert "SceneFrameCapture.append(getFilesDir(),zip)" in compact(sources["main"])
     assert "buildConfigField 'boolean', 'FRAME_CAPTURE_DIAGNOSTIC'" in sources["gradle"]
-    assert "buildConfigField'boolean','FRAME_CAPTURE_DIAGNOSTIC',(candidateProfile=='capture-diagnostic').toString()" in compact(sources["gradle"])
+    assert "buildConfigField'boolean','FULLSCREEN_DIAGNOSTIC',(candidateProfile=='fullscreen-diagnostic').toString()" in compact(sources["gradle"])
     assert "-DCOH_FRAME_CAPTURE_DIAGNOSTIC=" in sources["gradle"]
     assert "if(COH_FRAME_CAPTURE_DIAGNOSTIC)" in sources["cmake"]
     assert "COH_FRAME_CAPTURE_DIAGNOSTIC=1" in sources["cmake"]
-    return 27
+    return 30
 
 
 def run(root, work):
@@ -247,7 +264,8 @@ def run(root, work):
     assertions = source_checks(sources, extractor.method)
     bodies = [extractor.method(sources["renderer"], signature) for signature in (
         "static int capture_add(", "static int capture_scene_charge(",
-        "JNIEXPORT jbyteArray JNICALL Java_org_coh_sessionclient_SessionNative_frameCapture(")]
+        "JNIEXPORT jbyteArray JNICALL Java_org_coh_sessionclient_SessionNative_frameCapture(",
+        "JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_captureViewport(")]
     source = work / "capture-wiring.c"
     source.write_text(HARNESS.replace("/* SHIPPED_METHODS */", "\n".join(bodies)))
     include = root / "native-android/session-client/app/src/main/cpp"

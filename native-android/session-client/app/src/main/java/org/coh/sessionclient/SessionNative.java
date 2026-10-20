@@ -20,6 +20,7 @@ public final class SessionNative {
     public static native void observedEntity(long handle, int index, float x, float y, float z);
     public static native void clearObservedEntity(long handle);
     /** One bounded full game-surface frame after real pose/world drawing; never startup witnesses. */
+    public static native void captureViewport(long handle,long epoch,int width,int height);
     public static native byte[] frameCapture(long handle, long afterFrame);
     public static native String snapshot(long handle);
     public static native void destroy(long handle);

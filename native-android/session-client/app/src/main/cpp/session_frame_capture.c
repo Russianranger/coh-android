@@ -5,11 +5,27 @@
 struct CohFrameCapture {
     uint8_t data[2][COH_CAPTURE_BYTES];
     CohFrameCaptureInfo pending;
-    uint64_t published_frame,published_generation;
+    uint64_t published_frame,published_generation,published_epoch;
     size_t published_size;
     uint32_t width,height;
     unsigned published,candidate,writing;
 };
+uint32_t coh_frame_capture_reserve_bytes(void){
+#if COH_FULLSCREEN_DIAGNOSTIC
+    /* sizeof includes both immutable/candidate raw records and owner controls.
+     * Other terms are concrete maximum requested payloads, not driver guesses.
+     * The last two rows charge future streaming PNG scanline/header scratch and
+     * JNI/renderer stack independently of the existing source scene owner. */
+    const size_t named=sizeof(CohFrameCapture)+COH_CAPTURE_PIXELS+
+        2u*COH_CAPTURE_BYTES+(COH_CAPTURE_HEADER+COH_CAPTURE_BYTES)+
+        4u*COH_CAPTURE_HEADER+2u*16u*1024u+3u*8u*1024u+
+        2u*(1u+COH_CAPTURE_WIDTH*4u)+128u+64u*1024u;
+    _Static_assert(sizeof(CohFrameCapture)+6u*COH_CAPTURE_BYTES+256u*1024u<COH_CAPTURE_SCENE_LIMIT,"Capture source inventory exceeds scene cap");
+    return (uint32_t)named;
+#else
+    return 1024u*1024u;
+#endif
+}
 static int alias(const void *a,size_t n,const void *b,size_t m){uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;return n>UINTPTR_MAX-x||m>UINTPTR_MAX-y||(x<y+m&&y<x+n);}
 static void u32(uint8_t *p,uint32_t v){for(unsigned i=0;i<4;i++)p[i]=(uint8_t)(v>>(i*8));}
 static void u64(uint8_t *p,uint64_t v){for(unsigned i=0;i<8;i++)p[i]=(uint8_t)(v>>(i*8));}
@@ -23,10 +39,12 @@ int coh_frame_capture_begin(CohFrameCapture *c,const CohFrameCaptureInfo *m,uint
     if(!c||!m||!pixels||!width||!height||alias(c,sizeof *c,m,sizeof *m)||alias(c,sizeof *c,pixels,sizeof *pixels)||alias(c,sizeof *c,width,sizeof *width)||alias(c,sizeof *c,height,sizeof *height)||alias(m,sizeof *m,pixels,sizeof *pixels)||alias(m,sizeof *m,width,sizeof *width)||alias(m,sizeof *m,height,sizeof *height)||alias(pixels,sizeof *pixels,width,sizeof *width)||alias(pixels,sizeof *pixels,height,sizeof *height)||alias(width,sizeof *width,height,sizeof *height)||c->writing||!m->entity_index||m->entity_index>10239||
        !m->pose_generation||!m->world_packets||!m->entity_draws||!m->viewport_width||!m->viewport_height||
        m->viewport_width>16384||m->viewport_height>16384||m->pose_lock_frame>UINT64_MAX-COH_CAPTURE_WAIT||
-       m->frame<m->pose_lock_frame+COH_CAPTURE_WAIT||m->pose_generation==c->published_generation||
+       m->frame<m->pose_lock_frame+COH_CAPTURE_WAIT||(m->pose_generation==c->published_generation&&(!COH_FULLSCREEN_DIAGNOSTIC||m->epoch==c->published_epoch))||
        m->base_charge>COH_CAPTURE_SCENE_LIMIT-COH_CAPTURE_RESERVE)return 0;
     for(unsigned i=0;i<3;i++)if(!isfinite(m->pose[i]))return 0;
-    uint32_t w=COH_CAPTURE_WIDTH,h=(uint32_t)(((uint64_t)m->viewport_height*w+m->viewport_width/2)/m->viewport_width);
+    uint32_t w=COH_CAPTURE_WIDTH;
+    if(COH_FULLSCREEN_DIAGNOSTIC&&w>m->viewport_width)w=m->viewport_width;
+    uint32_t h=(uint32_t)(((uint64_t)m->viewport_height*w+m->viewport_width/2)/m->viewport_width);
     if(h>COH_CAPTURE_HEIGHT){h=COH_CAPTURE_HEIGHT;w=(uint32_t)(((uint64_t)m->viewport_width*h+m->viewport_height/2)/m->viewport_height);}
     if(!w)w=1;
     if(!h)h=1;
@@ -47,7 +65,7 @@ void coh_frame_capture_publish(CohFrameCapture *c,int presented){
     for(unsigned i=0;i<3;i++){uint32_t v;memcpy(&v,m->pose+i,4);u32(p+88+i*4,v);}
     u64(p+104,m->base_charge+COH_CAPTURE_RESERVE);u64(p+112,COH_CAPTURE_SCENE_LIMIT);u32(p+120,COH_CAPTURE_WAIT);u32(p+124,1);
     c->published=c->candidate;c->published_size=COH_CAPTURE_HEADER+(size_t)c->width*c->height*4u;
-    c->published_frame=m->frame;c->published_generation=m->pose_generation;
+    c->published_frame=m->frame;c->published_generation=m->pose_generation;c->published_epoch=m->epoch;
 }
 const uint8_t *coh_frame_capture_data(const CohFrameCapture *c,size_t *size,uint64_t after){
     if(!c||!size||alias(c,sizeof *c,size,sizeof *size)||!c->published_size||c->published_frame<=after)return NULL;

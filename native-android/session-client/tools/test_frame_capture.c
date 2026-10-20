@@ -25,14 +25,20 @@ int main(void){
         CHECK(!coh_frame_capture_begin(c,&bad,&p,&w,&h));CHECK(p==NULL&&w==0&&h==0);
     }
     CHECK(!coh_frame_capture_begin(c,&m,&p,&w,&w));CHECK(!coh_frame_capture_begin(c,&m,(uint8_t**)&m,&w,&h));
-    CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));CHECK(w==192&&h==108);memset(p,123,w*h*4u);
+    CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));CHECK(w==COH_CAPTURE_WIDTH&&h==COH_CAPTURE_HEIGHT);memset(p,123,w*h*4u);
     CHECK(!coh_frame_capture_begin(c,&m,&p,&w,&h));coh_frame_capture_publish(c,0);CHECK(!coh_frame_capture_data(c,&n,0));
     CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));memset(p,42,w*h*4u);coh_frame_capture_publish(c,1);
-    const uint8_t*first=coh_frame_capture_data(c,&n,0);CHECK(first&&n==COH_CAPTURE_BYTES);CHECK(!memcmp(first,"COHFB001",8));CHECK(u32(first+12)==192&&u32(first+16)==108);CHECK(first[128]==42);CHECK(!coh_frame_capture_data(c,&n,112));CHECK(!coh_frame_capture_begin(c,&m,&p,&w,&h));
+    const uint8_t*first=coh_frame_capture_data(c,&n,0);CHECK(first&&n==COH_CAPTURE_BYTES);CHECK(!memcmp(first,"COHFB001",8));CHECK(u32(first+12)==COH_CAPTURE_WIDTH&&u32(first+16)==COH_CAPTURE_HEIGHT);CHECK(first[128]==42);CHECK(!coh_frame_capture_data(c,&n,112));CHECK(!coh_frame_capture_begin(c,&m,&p,&w,&h));
+#if COH_FULLSCREEN_DIAGNOSTIC
+    m.epoch++;m.frame++;
+    CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));memset(p,42,w*h*4u);coh_frame_capture_publish(c,1);
+    first=coh_frame_capture_data(c,&n,0);CHECK(first&&n==COH_CAPTURE_BYTES);
+    CHECK(!coh_frame_capture_begin(c,&m,&p,&w,&h));
+#endif
     m.pose_generation++;m.frame++;m.viewport_width=1080;m.viewport_height=1920;
-    CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));CHECK(w==61&&h==108);memset(p,17,w*h*4u);CHECK(first[128]==42);coh_frame_capture_publish(c,0);CHECK(coh_frame_capture_data(c,&n,0)==first);
+    CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));CHECK(w==(1080u*COH_CAPTURE_HEIGHT+960u)/1920u&&h==COH_CAPTURE_HEIGHT);memset(p,17,w*h*4u);CHECK(first[128]==42);coh_frame_capture_publish(c,0);CHECK(coh_frame_capture_data(c,&n,0)==first);
     CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));memset(p,99,w*h*4u);coh_frame_capture_publish(c,1);CHECK(coh_frame_capture_data(c,&n,112)[128]==99);
-    for(uint32_t x=1;x<=8;x++){m.pose_generation++;m.frame++;m.viewport_width=100*x;m.viewport_height=100;CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));CHECK(w<=192&&h<=108&&w&&h);CHECK(fabs((double)w*m.viewport_height-(double)h*m.viewport_width)<=.51*fmax(m.viewport_width,m.viewport_height));memset(p,3,w*h*4u);coh_frame_capture_publish(c,1);}
+    for(uint32_t x=1;x<=8;x++){m.pose_generation++;m.frame++;m.viewport_width=100*x;m.viewport_height=100;CHECK(coh_frame_capture_begin(c,&m,&p,&w,&h));CHECK(w<=COH_CAPTURE_WIDTH&&h<=COH_CAPTURE_HEIGHT&&w&&h);CHECK(fabs((double)w*m.viewport_height-(double)h*m.viewport_width)<=.51*fmax(m.viewport_width,m.viewport_height));memset(p,3,w*h*4u);coh_frame_capture_publish(c,1);}
     coh_frame_capture_destroy(&c);CHECK(!c);coh_frame_capture_destroy(&c);CHECK(!coh_frame_capture_owned_bytes(c));CHECK(live_allocations==0);
     printf("{\"passed\":true,\"checks\":%u,\"capture_reserve_bytes\":%u,\"maximum_raw_bytes\":%u}\n",checks,COH_CAPTURE_RESERVE,COH_CAPTURE_BYTES);return 0;
 }

@@ -2,12 +2,24 @@
 #define COH_SESSION_FRAME_CAPTURE_H
 #include <stddef.h>
 #include <stdint.h>
+#ifndef COH_FULLSCREEN_DIAGNOSTIC
+#define COH_FULLSCREEN_DIAGNOSTIC 0
+#endif
+#if COH_FULLSCREEN_DIAGNOSTIC
+#define COH_CAPTURE_WIDTH 640u
+#define COH_CAPTURE_HEIGHT 360u
+#else
 #define COH_CAPTURE_WIDTH 192u
 #define COH_CAPTURE_HEIGHT 108u
+#endif
 #define COH_CAPTURE_HEADER 128u
 #define COH_CAPTURE_PIXELS (COH_CAPTURE_WIDTH*COH_CAPTURE_HEIGHT*4u)
 #define COH_CAPTURE_BYTES (COH_CAPTURE_HEADER+COH_CAPTURE_PIXELS)
+#if COH_FULLSCREEN_DIAGNOSTIC
+#define COH_CAPTURE_RESERVE (coh_frame_capture_reserve_bytes())
+#else
 #define COH_CAPTURE_RESERVE (1024u*1024u)
+#endif
 #define COH_CAPTURE_SCENE_LIMIT (96u*1024u*1024u)
 #define COH_CAPTURE_WAIT 12u
 typedef struct CohFrameCapture CohFrameCapture;
@@ -16,14 +28,13 @@ typedef struct {
     uint64_t frame,epoch,pose_generation,pose_lock_frame,world_packets,entity_draws,base_charge;
     float pose[3];
 } CohFrameCaptureInfo;
-/* Actual render owner only. Reserve includes old/candidate pixels, FBO, JNI and
- * export copies, bounded zip/hash buffers and a charged 64 KiB native stack.
- * Known worst-case overlap: two 83,072 B records +owner metadata, 82,944 B FBO,
- * 2 * 83,072 B native/JNI copies, 83,200 B Java export snapshot, 2 * 16 KiB I/O/hash scratch,
- * 3 * 8 KiB JSON/string copies and 64 KiB native stack: less than 650 KiB.
- * The 1 MiB policy reservation rounds this source inventory upward. GL driver
- * overhead and actual Java/native RSS/PSS are not measured by this inventory.
- * Existing scene owners remain charged separately; no reservation ticket. */
+/* Source payload inventory, separate from driver/JVM/provider overhead and
+ * observed RSS/PSS. The fullscreen reserve is derived in the concrete owner:
+ * old+candidate records/control, FBO pixels, native JNI temporary +Java JNI
+ * array, Java export snapshot, fixed headers, I/O/hash scratch, bounded JSON
+ * copies and64KiB charged native stack. It does not enlarge the96MiB ceiling.
+ * Historical0.1.16 keeps its192x108/1MiB subpolicy unchanged. */
+uint32_t coh_frame_capture_reserve_bytes(void);
 CohFrameCapture *coh_frame_capture_create(uint64_t base_charge);
 void coh_frame_capture_destroy(CohFrameCapture **);
 int coh_frame_capture_begin(CohFrameCapture *,const CohFrameCaptureInfo *,uint8_t **,uint32_t *,uint32_t *);

@@ -69,7 +69,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private volatile boolean destroying, writeFailed;
     private volatile boolean resumed;
     private boolean renderQueued, assetsVerified, exporting;
-    private boolean returningToLauncher;
+    private boolean returningToLauncher,sceneFullscreen;
+    private android.widget.ScrollView controlsPanel;
+    private Button fullscreenReturn;
+    private int previousOrientation,previousSystemUi;
+
     private final Runnable returnDeadline = () -> finishReturnToLauncher(true);
     private long sequence, sessionStarted;
     private volatile long epoch;
@@ -125,9 +129,14 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 super.onMeasure(widthSpec, heightSpec);
             }
         };
+        controlsPanel=controlsScroll;
         controlsScroll.setContentDescription("Native client controls");
         controlsScroll.addView(controlsLayout);
         layout.addView(controlsScroll, new LinearLayout.LayoutParams(-1, -2));
+        if(BuildConfig.FULLSCREEN_DIAGNOSTIC){
+            Button full=new Button(this);full.setText("Full screen");
+            full.setOnClickListener(v->setSceneFullscreen(true));controlsLayout.addView(full);
+        }
         Button launcher = new Button(this); launcher.setText("Return to launcher");
         launcher.setOnClickListener(v -> returnToLauncher());
         controlsLayout.addView(launcher, new LinearLayout.LayoutParams(-1, -2));
@@ -173,7 +182,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC){
             Button capture=new Button(this);capture.setText("Export scene ZIP");
             capture.setOnClickListener(v->exportSceneCapture());controlsLayout.addView(capture);
-            reportWorker.execute(()->captureMetadata=SceneFrameCapture.metadata(getFilesDir()));
+            reportWorker.execute(()->captureMetadata=BuildConfig.FULLSCREEN_DIAGNOSTIC?SceneFrameCapture.metadataLarge(getFilesDir()):SceneFrameCapture.metadata(getFilesDir()));
         }
         Button distance = new Button(this); distance.setText("View distance");
         distance.setOnClickListener(v -> {
@@ -187,7 +196,16 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         Button sampleMemory=new Button(this);sampleMemory.setText("Sample memory");
         sampleMemory.setOnClickListener(v->MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.DIAGNOSTIC));controlsLayout.addView(sampleMemory);
         scene = new FrameLayout(this); layout.addView(scene, new LinearLayout.LayoutParams(-1, 0, 1));
-        setContentView(layout);
+        FrameLayout screen=new FrameLayout(this);
+        screen.addView(layout,new FrameLayout.LayoutParams(-1,-1));
+        fullscreenReturn=new Button(this);fullscreenReturn.setText("Return to controls");
+        fullscreenReturn.setContentDescription("Return to native client controls");
+        fullscreenReturn.setOnClickListener(v->setSceneFullscreen(false));
+        FrameLayout.LayoutParams corner=new FrameLayout.LayoutParams(-2,-2,Gravity.TOP|Gravity.END);
+        int inset=(int)(8*getResources().getDisplayMetrics().density);corner.setMargins(inset,inset,inset,inset);
+        screen.addView(fullscreenReturn,corner);fullscreenReturn.setVisibility(android.view.View.GONE);
+        scene.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,oright,ob)->publishCaptureViewport());
+        setContentView(screen);
         adapter = new InputAdapter(new InputAdapter.Sink() {
             public void focus(boolean focused) {
                 if(destroying)return;
@@ -435,6 +453,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             if(destroying||!networkRequested||!networkForeground||attempt!=networkAttempt||handle==0
                     ||sourceHandle!=networkHandle||attempt!=networkOwnerAttempt
                     ||networkMode!=NetworkMode.WORLD_HANDOFF||observedEntityAttempt==attempt)return;
+            if(BuildConfig.FULLSCREEN_DIAGNOSTIC)setSceneFullscreen(true);
             SessionNative.observedEntity(handle,index,x,y,z);
             observedEntityIndex=index;observedEntityAttempt=attempt;
             event("observed_server_entity_box_requested");updateNetworkUi();saveReport();
@@ -668,6 +687,46 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 | ((keys & (1<<23))!=0 || axisX>.5f ? 8 : 0);
         SessionNative.controls(handle, directions, dead(axisZ)*2f, dead(axisRz)*2f);
     }
+    private void applyFullscreenBars(){
+        if(!sceneFullscreen)return;
+        getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                |android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                |android.view.View.SYSTEM_UI_FLAG_FULLSCREEN|android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                |android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    }
+    private void setSceneFullscreen(boolean enabled){
+        if(!BuildConfig.FULLSCREEN_DIAGNOSTIC||destroying||sceneFullscreen==enabled)return;
+        if(adapter!=null)adapter.clear();
+        if(enabled){previousOrientation=getRequestedOrientation();previousSystemUi=getWindow().getDecorView().getSystemUiVisibility();}
+        sceneFullscreen=enabled;
+        epoch++;if(handle!=0){SessionNative.state(handle,epoch,resumed);SessionNative.captureViewport(handle,epoch,0,0);}
+        controlsPanel.setVisibility(enabled?android.view.View.GONE:android.view.View.VISIBLE);
+        fullscreenReturn.setVisibility(enabled?android.view.View.VISIBLE:android.view.View.GONE);
+        if(enabled){
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);applyFullscreenBars();
+        }else{
+            getWindow().getDecorView().setSystemUiVisibility(previousSystemUi);setRequestedOrientation(previousOrientation);
+        }
+        scene.requestLayout();publishCaptureViewport();
+        event(enabled?"fullscreen_entered":"fullscreen_controls_restored");saveReport();requestRender();
+    }
+    private void publishCaptureViewport(){
+        if(!BuildConfig.FULLSCREEN_DIAGNOSTIC||destroying||view==null)return;
+        final long ticket=epoch;
+        view.post(()->{
+            if(destroying||handle==0||epoch!=ticket)return;
+            int width=0,height=0;
+            if(sceneFullscreen&&currentHolder!=null&&currentSurface!=null&&currentSurface.isValid()){
+                android.graphics.Rect frame=currentHolder.getSurfaceFrame();
+                if(frame.width()==scene.getWidth()&&frame.height()==scene.getHeight()
+                        &&view.getWidth()==frame.width()&&view.getHeight()==frame.height()){
+                    width=frame.width();height=frame.height();
+                }
+            }
+            SessionNative.captureViewport(handle,ticket,width,height);
+        });
+    }
+    @Override public void onBackPressed(){if(sceneFullscreen)setSceneFullscreen(false);else super.onBackPressed();}
     private void newSurface() {
         epoch++;
         if (handle != 0) SessionNative.state(handle,epoch,resumed);
@@ -708,13 +767,13 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     @Override public void surfaceChanged(SurfaceHolder holder,int format,int width,int height) {
         if (destroying || holder!=currentHolder) return;
         epoch++; if (handle!=0) SessionNative.state(handle,epoch,resumed);
-        currentSurface=holder.getSurface(); event("surface_changed"); requestRender();
+        currentSurface=holder.getSurface(); publishCaptureViewport(); event("surface_changed"); requestRender();
     }
     @Override public void surfaceDestroyed(SurfaceHolder holder) {
         if (destroying || holder!=currentHolder) return;
         epoch++; currentSurface=null; if(handle!=0)SessionNative.state(handle,epoch,false); event("surface_destroyed");
     }
-    @Override protected void onResume() { super.onResume(); networkForeground=true; resumed=true; epoch++; if(handle!=0)SessionNative.state(handle,epoch,true); event("resume");MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.RESUME); updateNetworkUi(); requestRender(); }
+    @Override protected void onResume() { super.onResume(); networkForeground=true; resumed=true; epoch++; if(handle!=0)SessionNative.state(handle,epoch,true);applyFullscreenBars();publishCaptureViewport(); event("resume");MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.RESUME); updateNetworkUi(); requestRender(); }
     @Override protected void onPause() {
         if(!returningToLauncher)MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.PAUSE);
         event("pause_requested");
@@ -727,9 +786,10 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if(handle!=0)SessionNative.state(handle,epoch,false); event("pause"); saveReport(); super.onPause();
     }
     @Override public void onWindowFocusChanged(boolean focused) {
-        super.onWindowFocusChanged(focused); if(!destroying && adapter!=null)adapter.onWindowFocusChanged(focused);
+        super.onWindowFocusChanged(focused);if(focused)applyFullscreenBars(); if(!destroying && adapter!=null)adapter.onWindowFocusChanged(focused);
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
+        if(sceneFullscreen&&event.getKeyCode()==KeyEvent.KEYCODE_BACK){if(event.getAction()==KeyEvent.ACTION_UP)setSceneFullscreen(false);return true;}
         return !destroying && adapter!=null && adapter.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
     }
     @Override public boolean dispatchGenericMotionEvent(MotionEvent event) {
@@ -765,7 +825,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 .put("viewport_policy",new JSONObject().put("schema","coh-native-viewport-v1")
                     .put("maximum_controls_percent",60).put("minimum_aspect",0.25).put("maximum_aspect",8)
                     .put("maximum_dimension",16384).put("host_width",scene==null?0:scene.getWidth())
-                    .put("host_height",scene==null?0:scene.getHeight()));
+                    .put("host_height",scene==null?0:scene.getHeight()).put("fullscreen",sceneFullscreen));
         if(BuildConfig.FRAME_CAPTURE_DIAGNOSTIC)j.put("scene_frame_capture",captureMetadata==null?JSONObject.NULL:new JSONObject(captureMetadata))
                 .put("scene_frame_capture_error",captureFailure==null?JSONObject.NULL:captureFailure)
                 .put("initial_replay",initialReplayMetadata==null?JSONObject.NULL:new JSONObject(initialReplayMetadata))
@@ -812,7 +872,10 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 byte[] raw;
                 synchronized(captureLife){if(destroying||handle==0)return;raw=SessionNative.frameCapture(handle,captureSavedFrame);}
                 if(raw==null)return;
-                String saved=SceneFrameCapture.save(getFilesDir(),raw,getPackageManager().getPackageInfo(getPackageName(),0).versionCode,Long.toHexString(sessionStarted));
+                long version=getPackageManager().getPackageInfo(getPackageName(),0).versionCode;
+                String saved=BuildConfig.FULLSCREEN_DIAGNOSTIC
+                        ?SceneFrameCapture.saveLarge(getFilesDir(),raw,version,Long.toHexString(sessionStarted))
+                        :SceneFrameCapture.save(getFilesDir(),raw,version,Long.toHexString(sessionStarted));
                 JSONObject metadata=new JSONObject(saved);captureSavedFrame=metadata.getLong("frame");captureMetadata=saved;captureFailure=null;
             }catch(Exception ex){captureFailure=ex.getClass().getSimpleName();}
             catch(OutOfMemoryError optionalCapture){captureFailure="Capture memory unavailable";}
@@ -857,7 +920,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             reportWorker.execute(()->{
                 String error=null;
                 try(OutputStream output=getContentResolver().openOutputStream(data.getData(),"wt")){
-                    if(output==null||!SceneFrameCapture.writeZip(getFilesDir(),output))error="No saved real-pose game frame";
+                    if(output==null||!(BuildConfig.FULLSCREEN_DIAGNOSTIC?SceneFrameCapture.writeZipLarge(getFilesDir(),output):SceneFrameCapture.writeZip(getFilesDir(),output)))error="No saved real-pose game frame";
                 }catch(Exception ex){error=ex.getClass().getSimpleName();}
                 final String problem=error;main.post(()->{if(destroying)return;captureFailure=problem;event(problem==null?"capture_export_complete":"capture_export_failed");saveReport();});
             });return;
