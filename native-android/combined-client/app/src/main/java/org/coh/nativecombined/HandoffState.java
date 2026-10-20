@@ -8,6 +8,9 @@ final class HandoffState {
     private String lastPhase="UNKNOWN";
     private long[] firstFailure;
     private long[] catalogBoundary;
+    private final boolean observeUpdates;
+    HandoffState() {this(false);}
+    HandoffState(boolean observeUpdates) {this.observeUpdates=observeUpdates;}
 
     synchronized void begin() {
         ownerPresent=true;controlKnown=false;terminal=false;initialKnown=false;
@@ -20,7 +23,7 @@ final class HandoffState {
         }
         ownerPresent=true;controlKnown=true;initialKnown=true;
         initialObserved|=(value&INITIAL_OBSERVED)!=0;
-        terminal|=(value&TERMINAL)!=0||initialObserved;
+        terminal|=(value&TERMINAL)!=0||initialObserved&&!observeUpdates;
         charactersReady=!terminal&&(value&CHARACTERS_READY)!=0;
     }
     synchronized void stopped() {terminal=true;charactersReady=false;}
@@ -30,12 +33,12 @@ final class HandoffState {
                 ||"REPORT_UNAVAILABLE".equals(phase)||"UNKNOWN".equals(phase)||phase.isEmpty())return;
         lastPhase=phase;
         if("INITIAL_OBSERVED".equals(phase)) {
-            initialKnown=true;initialObserved=true;terminal=true;charactersReady=false;
+            initialKnown=true;initialObserved=true;terminal|=!observeUpdates;charactersReady=false;
         }
     }
     synchronized void initial(boolean observed) {
         initialKnown=true;initialObserved|=observed;
-        if(initialObserved){terminal=true;charactersReady=false;}
+        if(initialObserved){terminal|=!observeUpdates;charactersReady=false;}
     }
     synchronized Boolean initialObserved() {return initialObserved?Boolean.TRUE:initialKnown?Boolean.FALSE:null;}
     synchronized boolean shouldService() {return ownerPresent&&controlKnown&&!terminal;}

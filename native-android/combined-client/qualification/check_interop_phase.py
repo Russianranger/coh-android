@@ -59,6 +59,7 @@ final class InteropPhaseTest {
  private long observedEntityAttempt=-1;private int observedEntityIndex=-1;
  // JNI/render callout is an explicit collaborator; the eight production phase methods remain exact.
  private void publishObservedSelf(long sourceHandle,long attempt){}
+ private void saveInitialReplay(){}
  private JSONObject networkPolicy;
  private boolean policyFailure;
  private int policyCalls,pickerCalls;
@@ -86,6 +87,11 @@ TESTS = r'''
   s.control(7);need(!s.shouldService()&&!s.blocksNewAttempt()&&Boolean.TRUE.equals(s.initialObserved()),"captured terminal");
   s.control(1);need(!s.shouldService()&&Boolean.TRUE.equals(s.initialObserved()),"terminal/captured state sticky");
   s.control(0);s.retired();need(Boolean.TRUE.equals(s.initialObserved()),"capture survives cleanup");
+  HandoffState post=new HandoffState(true);post.begin();post.control(5);post.initial(true);post.phase("INITIAL_OBSERVED");
+  need(post.shouldService()&&post.blocksNewAttempt()&&!post.terminal()&&Boolean.TRUE.equals(post.initialObserved()),"new diagnostic keeps observed INITIAL active until native terminal");
+  post.phase("WAIT_UPDATES");post.control(5);need(post.shouldService()&&post.lastPhase().equals("WAIT_UPDATES"),"post-READY polling stays active");
+  post.control(7);need(!post.shouldService()&&!post.blocksNewAttempt()&&post.terminal(),"native window completion terminates new diagnostic");
+  post.begin();post.control(5);post.stopped();need(!post.shouldService()&&Boolean.TRUE.equals(post.initialObserved()),"explicit cancellation remains terminal after INITIAL");
   s.begin();need(s.initialObserved()==null&&s.firstFailure()==null,"new explicit begin resets attempt evidence");
   s.firstFailure(1,2,3,4,5);s.firstFailure(6,7,8,9,10);long[] saved=s.firstFailure();need(saved[4]==5,"first failure sticky");
   saved[4]=99;need(s.firstFailure()[4]==5,"failure snapshot detached");
@@ -159,6 +165,7 @@ final class Handler {final ArrayDeque<Runnable> q=new ArrayDeque<>();void post(R
 final class Ui {boolean enabled;int removals;String text;void setEnabled(boolean value){enabled=value;}void setText(String text){this.text=text;}void removeAllViews(){removals++;}void setVisibility(int value){}}
 final class SystemClock {static long now;static long elapsedRealtime(){return now;}}
 final class JSONArray {
+ int optInt(int at){return optInt(at,0);}
  final List<Object> values=new ArrayList<>();JSONArray(){}JSONArray(String raw){}
  JSONArray put(Object value){values.add(value);return this;}int length(){return values.size();}Object opt(int i){return i>=0&&i<values.size()?values.get(i):null;}
  int optInt(int i,int fallback){Object value=opt(i);return value instanceof Number?((Number)value).intValue():fallback;}
@@ -214,13 +221,13 @@ def main():
         view = out / 'android/view/View.java'
         view.parent.mkdir(parents=True)
         view.write_text('package android.view; public final class View {public static final int GONE=8;}')
-        command = ['java', 'com.sun.tools.javac.Main', '--release', '8', '-d', str(out),
+        command = ['java', '-Xmx128m', 'com.sun.tools.javac.Main', '--release', '8', '-d', str(out),
                    str(SOURCE / 'HandoffState.java'), str(SOURCE / 'ServerMemoryPolicy.java'),
                    str(SOURCE / 'PhaseMemoryDiagnostics.java'), str(view), str(harness)]
         compile_result = subprocess.run(command, capture_output=True, text=True)
         if compile_result.returncode:
             raise RuntimeError(compile_result.stderr)
-        result = subprocess.run(['java', '-cp', str(out), 'org.coh.nativecombined.InteropPhaseTest'],
+        result = subprocess.run(['java', '-Xmx64m', '-cp', str(out), 'org.coh.nativecombined.InteropPhaseTest'],
                                 capture_output=True, text=True)
         if result.returncode:
             raise RuntimeError(result.stdout + result.stderr)
