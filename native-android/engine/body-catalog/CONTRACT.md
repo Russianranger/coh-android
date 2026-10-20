@@ -1,5 +1,11 @@
 # Body-part original loading, destruction and dependency lifecycle
 
+The current local diagnostic uses the offline cache/source comparison and the
+actual common-file content hash to supply the default count directly. That path
+requires no runtime producer lease or loaded-generation witness. See
+`OFFLINE_CACHE_TEXT_COMPARISON.md` and `../entities/ORIGINAL_COSTUME_RECEIVE.md`.
+The historical loader qualification below retains its original bounded scope.
+
 The accepted callback milestone executes unchanged original `ParseBoneNames`
 using the generated enum provider. The accepted loader milestone qualifies an original
 cache-hit route and fixture-scoped provenance. Accepted binary-open and dependency-list

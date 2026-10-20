@@ -33,6 +33,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,9 +45,9 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-/** Reuses the accepted 0.3.0 renderer/controller Activity behavior.
- * Local preview and real server protocol progress remain separate.
- * Source: session-client MainActivity at 132a813 (qualified renderer unchanged). */
+/** Reuses the accepted renderer/controller behavior and adds a crude visual
+ * marker for a selected-self pose decoded from the real initial packet.
+ * A position box does not complete costume or world replication. */
 public final class NativeClientActivity extends Activity implements SurfaceHolder.Callback {
     private static final int EXPORT = 18;
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -86,6 +88,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private boolean captureTelemetryPublished;
     private volatile boolean networkForeground, networkConnecting, networkRequested;
     private volatile long networkAttempt;
+    private volatile long networkOwnerAttempt=-1;
+    private volatile long observedEntityAttempt=-1;
+    private volatile int observedEntityIndex=-1;
     // Transport handle and policy identity are owned exclusively by networkWorker.
     private long networkHandle, policyCheckedAt;
     private JSONObject networkPolicy;
@@ -123,7 +128,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         title.setTextSize(18); controlsLayout.addView(title);
         TextView controls = new TextView(this);
         controls.setText("Local scene preview • Left stick / WASD / D-pad: move • Right stick / drag: look\n"
-                + "The scene below is the accepted offline preview. Server character/world rendering is pending.");
+                + "The Atlas preview can show one observed server entity as an orange position box. Full costume/world rendering is pending.");
         controlsLayout.addView(controls);
         LinearLayout networkButtons = new LinearLayout(this);
         connectButton = new Button(this); connectButton.setText("Connect local server");
@@ -131,6 +136,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         Button disconnect = new Button(this); disconnect.setText("Disconnect client");
         disconnect.setOnClickListener(v -> {
             networkRequested=false;networkAttempt++;
+            clearObservedBox();
             characterButtons.removeAllViews(); charactersScroll.setVisibility(android.view.View.GONE);
             networkWorker.execute(() -> {
                 if(networkHandle!=0){disconnectNetwork();publishNetwork();}
@@ -280,11 +286,12 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if(destroying||returningToLauncher||networkConnecting||!networkForeground)return;
         if(mode==NetworkMode.WORLD_HANDOFF&&networkMode==mode&&handoffState.blocksNewAttempt())return;
         final long attempt=++networkAttempt;networkRequested=true;
+        clearObservedBox();
         MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.NATIVE_CONNECTION);
         networkConnecting=true;connectButton.setEnabled(false);handoffButton.setEnabled(false);
         characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);
         networkStatus.setText(mode==NetworkMode.WORLD_HANDOFF
-                ? "World handoff test: connecting to the local development server… The scene remains a local preview."
+                ? "World handoff test: connecting… An observed server entity will appear as a crude box."
                 : "Server protocol: connecting to the local development server…");
         event(mode==NetworkMode.WORLD_HANDOFF?"world_handoff_requested":"local_connect_requested");
         networkWorker.execute(() -> {
@@ -295,11 +302,20 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 if(!networkForeground||!networkRequested||attempt!=networkAttempt)return;
                 networkPolicy=policy;
                 policyCheckedAt=SystemClock.elapsedRealtime();
+                if(mode==NetworkMode.WORLD_HANDOFF) {
+                    String cachePath=null;
+                    try {
+                        File data=new ImportStore(this,(phase,done,total)->{}).gameDataDirectory();
+                        if(data!=null)cachePath=new File(data,"bin/BodyParts.bin").getCanonicalPath();
+                    } catch(Exception unavailable) { /* A missing cache does not prevent pose observation. */ }
+                    InteropNative.configureBodyPartsCache(cachePath);
+                }
                 networkHandle=mode==NetworkMode.WORLD_HANDOFF
                         ? InteropNative.begin(policy.getInt("db_port"),policy.getString("account"),policy.getInt("net_version"),
                             policy.getBoolean("encryption_required"),policy.getBoolean("outbound_compressed"),policyCheckedAt)
                         : LocalNative.begin(policy.getInt("db_port"),policy.getString("account"),policy.getInt("net_version"),
                             policy.getBoolean("encryption_required"),policy.getBoolean("outbound_compressed"),policyCheckedAt);
+                networkOwnerAttempt=attempt;
                 if(networkHandle==0)throw new IllegalStateException("Local owner rejected policy");
                 if(mode==NetworkMode.WORLD_HANDOFF){handoffState.begin();captureTelemetryPublished=false;}
                 publishNetwork();
@@ -337,16 +353,18 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 if(mode==NetworkMode.WORLD_HANDOFF)InteropNative.close(retiring);
                 else LocalNative.close(retiring);
             }
-        } finally {networkHandle=0;networkPolicy=null;if(mode==NetworkMode.WORLD_HANDOFF)handoffState.retired();}
+        } finally {networkHandle=0;networkOwnerAttempt=-1;networkPolicy=null;if(mode==NetworkMode.WORLD_HANDOFF)handoffState.retired();}
     }
     private void networkTick() {
         if(destroying||!networkForeground||!networkRequested||networkHandle==0)return;
+        final long tickHandle=networkHandle,tickAttempt=networkOwnerAttempt;
+        if(tickAttempt!=networkAttempt)return;
         try {
             // JSON is diagnostic output. Completion and ownership come from the
             // same serialized native executor even if a report is unavailable.
             if(networkMode==NetworkMode.WORLD_HANDOFF) {
                 handoffState.control(InteropNative.controlState(networkHandle));
-                if(!handoffState.shouldService())return;
+                if(!handoffState.shouldService()){publishObservedSelf(tickHandle,tickAttempt);return;}
             }
             long now=SystemClock.elapsedRealtime();
             if(now-policyCheckedAt>=1000) {
@@ -360,6 +378,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     ||"INITIAL_OBSERVED".equals(phase)||"POLICY_UNAVAILABLE".equals(phase)))return;
             if(networkMode==NetworkMode.WORLD_HANDOFF)InteropNative.service(networkHandle,now);
             else LocalNative.service(networkHandle,now);
+            if(networkMode==NetworkMode.WORLD_HANDOFF)publishObservedSelf(tickHandle,tickAttempt);
             publishNetwork();
             if(!charactersPublished&&(networkMode==NetworkMode.WORLD_HANDOFF?handoffState.charactersReady():
                     "CHARACTERS_READY".equals(new JSONObject(networkReport).optString("phase")))) {
@@ -375,6 +394,28 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             suspendNetwork();publishNetwork();
             main.post(() -> {if(!destroying)networkStatus.setText("Client suspended • Start/verify the local server, then connect again.");});
         }
+    }
+    private void publishObservedSelf(final long sourceHandle,final long attempt) {
+        if(sourceHandle!=networkHandle||attempt!=networkAttempt||attempt!=networkOwnerAttempt
+                ||observedEntityAttempt==attempt)return;
+        byte[] raw=InteropNative.observedSelfPose(sourceHandle);
+        if(raw==null||raw.length!=16)return;
+        ByteBuffer pose=ByteBuffer.wrap(raw).order(ByteOrder.LITTLE_ENDIAN);
+        final int index=pose.getInt();
+        final float x=pose.getFloat(),y=pose.getFloat(),z=pose.getFloat();
+        if(index<=0||index>10239||!Float.isFinite(x)||!Float.isFinite(y)||!Float.isFinite(z))return;
+        main.post(() -> {
+            if(destroying||!networkRequested||!networkForeground||attempt!=networkAttempt||handle==0
+                    ||sourceHandle!=networkHandle||attempt!=networkOwnerAttempt
+                    ||networkMode!=NetworkMode.WORLD_HANDOFF||observedEntityAttempt==attempt)return;
+            SessionNative.observedEntity(handle,index,x,y,z);
+            observedEntityIndex=index;observedEntityAttempt=attempt;
+            event("observed_server_entity_box_requested");updateNetworkUi();saveReport();
+        });
+    }
+    private void clearObservedBox() {
+        observedEntityAttempt=-1;observedEntityIndex=-1;
+        if(handle!=0)SessionNative.clearObservedEntity(handle);
     }
     private String checkedHandoffReport(String next) {
         JSONObject report;
@@ -475,8 +516,22 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                         : "SUSPENDED".equals(phase)?"Suspended; tap Test world handoff for a fresh attempt."
                         : "CLOSED".equals(phase)||"CANCELLED".equals(phase)?"Handoff test stopped."
                         : "Real DB/Map diagnostic progress only.";
-                networkStatus.setText("World handoff test: "+phase+" • "+detail+"\nWorld authority: false. The scene remains a local preview."
-                        +("INITIAL_OBSERVED".equals(phase)?"\nMISSING_CATALOG_GENERATION • INCOMPLETE_CHARACTER_DATA • UNRESOLVED_RESOURCE_IDENTITY":""));
+                JSONArray continuation=report.optJSONArray("costume_continuation");
+                JSONArray defaults=report.optJSONArray("bodyparts_default");
+                if(defaults!=null&&defaults.length()==2&&defaults.optInt(0,-1)!=0
+                        &&Boolean.TRUE.equals(handoffState.initialObserved()))
+                    detail="The common BodyParts.bin file could not be matched. Export the report; its earlier entity pose can still be drawn.";
+                if(continuation!=null&&continuation.length()==12&&continuation.optInt(8,0)==1) {
+                    int field=continuation.optInt(1,-1),dictionary=continuation.optInt(7,0);
+                    String fieldName=field==3?"geometry":field==4?"first texture":field==5?"second texture"
+                            :field==6?"FX":field==7?"color":field==8?"region":field==9?"body set":"header";
+                    String dependency=dictionary==3?"the costume palette":dictionary==2?"the extra costume strings":"the costume strings";
+                    detail=continuation.optInt(9,0)==1?"Original costume body decoded."
+                            : "BodyPart count verified; costume "+fieldName
+                              +(dictionary!=0?" requires "+dependency:" remains incomplete")+".";
+                }
+                if(observedEntityAttempt==networkAttempt)detail+=" Box requested for observed server entity #"+observedEntityIndex+".";
+                networkStatus.setText("World handoff test: "+phase+" • "+detail+"\nFull character/world decoding remains pending.");
                 if(!handoffState.charactersReady()){characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);}
                 return;
             }
@@ -605,6 +660,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         if(!returningToLauncher)MemoryTelemetry.request(this,PhaseMemoryDiagnostics.Phase.PAUSE);
         event("pause_requested");
         networkForeground=false;networkRequested=false;networkAttempt++;
+        clearObservedBox();
         networkWorker.execute(() -> {
             if(networkHandle!=0) { suspendNetwork(); publishNetwork(); }
         });
@@ -636,12 +692,14 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 .put("version_code",getPackageManager().getPackageInfo(getPackageName(),0).versionCode).put("installed_apk",apkIdentity);
         JSONObject j=new JSONObject().put("schema","coh-native-combined-client-v1")
                 .put("session_id",Long.toHexString(sessionStarted)).put("updated_at",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",Locale.US).format(new Date()))
-                .put("scope","Local development DB/Map protocol progress plus separate accepted offline scene preview. No AuthServer authentication, server-authoritative rendering, full map or complete entity replication")
+                .put("scope","Local DB/Map progress and Atlas preview with a crude box at the observed selected-self server pose. No full costume, complete entity replication or application ACK")
                 .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
                 .put("server_protocol",new JSONObject(localNetworkReport)).put("world_handoff",new JSONObject(interopReport))
                 .put("memory_diagnostics",MemoryTelemetry.snapshot())
                 .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states(handoffState.initialObserved(),false)))
                 .put("connection_mode",networkMode.name()).put("preview_is_server_world",false)
+                .put("observed_entity_box_requested",observedEntityAttempt==networkAttempt)
+                .put("observed_entity_index",observedEntityAttempt==networkAttempt?observedEntityIndex:JSONObject.NULL)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
                 .put("input_adapter",adapter==null?JSONObject.NULL:adapter.report())
@@ -735,6 +793,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         try(InputStream input=new FileInputStream(path)){byte[] chunk=new byte[65536];int n;while((n=input.read(chunk))!=-1)digest.update(chunk,0,n);}
         return new JSONObject().put("bytes",path.length()).put("sha256",hex(digest.digest()));
     }
+    @Override public void onTrimMemory(int level) {super.onTrimMemory(level);MemoryTelemetry.memoryPressure(this,level,false);}
+    @Override public void onLowMemory() {super.onLowMemory();MemoryTelemetry.memoryPressure(this,-1,true);}
     @Override protected void onDestroy() {
         networkForeground=false;networkRequested=false;networkAttempt++;
         networkWorker.execute(()->{retireNetworkOwner();networkRetired.set(true);sampleFinalCleanup();});

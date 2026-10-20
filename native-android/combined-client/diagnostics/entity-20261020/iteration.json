@@ -1,0 +1,67 @@
+{
+  "authority": {
+    "full_character": false,
+    "full_update_ACK": false,
+    "gates25_27": "OPEN"
+  },
+  "base_revision": "8170fc0d222ec154b19b0caf2616040004d4b2e7",
+  "branch": "native-android",
+  "build": {
+    "profile": "entity-diagnostic",
+    "state": "CI_PENDING",
+    "version_code": 14,
+    "version_name": "0.1.13-entity-diagnostic-test"
+  },
+  "memory": {
+    "Interop_bytes_including_workspace": 66944,
+    "box_static_bytes": 592,
+    "native_report_cap_bytes": 7168,
+    "new_Android_Thor_group_measurement": null,
+    "original_source_frame_sum_bytes": 680,
+    "original_stack_reserve_bytes": 4096,
+    "process_cap": 32,
+    "scan_window_cap_ms": 1500,
+    "simultaneous_process_set_cadence_ms": 5000,
+    "stressed_native_report_max_bytes": 6726,
+    "typed_original_workspace_bytes": 65536,
+    "white_texture_payload_bytes": 4
+  },
+  "next_source_dependency": "ordinary indexed geometry string dictionary; source fixture stops before its index Pack; actual Thor cursor awaits test",
+  "observed_entity": {
+    "actual_Thor_draw_proven": false,
+    "code_connected": true,
+    "planned_remaining_step": "Install/run signed diagnostic on Thor and inspect active/box_draws",
+    "source": "actual selected-self index/raw DBID match and decoded absolute initial pose",
+    "visual": "fixed orange 2x6x2 diagnostic box"
+  },
+  "schema": "coh-local-entity-iteration-v1",
+  "stage41": {
+    "actual_Thor_passed": false,
+    "actual_server_common_file_hash_check": "performed locally once before handoff; device observation pending",
+    "canonical_hash_ignores_only_dependency_timestamp_bytes": [
+      60,
+      61,
+      62,
+      63
+    ],
+    "count": 28,
+    "runtime_producer_lease_required": false,
+    "source_JNI_tests_passed": true
+  },
+  "tests": {
+    "Activity_race_bridge": 49,
+    "JNI_continuation_per_mode": 2665,
+    "Session_exact_bodies_per_mode": 135,
+    "memory_worker": 39,
+    "original_receiver_per_mode": 27587,
+    "pose_box_per_mode": 15282,
+    "process_set": 24
+  },
+  "worker_source_commits": {
+    "A": "dc5d6e96428310ba6ca76ca35d72498c90b61ef1",
+    "B": "a9ab1055a381d82700f360ea730e3404a7a976f2",
+    "C": "51f43ffcf3291c53ba2723ee9eac79d7b6d8e10a",
+    "D": "d870b7082f77acc7124215badbb895518aed823c",
+    "E": "a78cff4518c26da94edbc9f50f54699a2aa122d1"
+  }
+}

@@ -38,7 +38,8 @@ def audit(args):
             fields = line.split()
             if len(fields) >= 8 and fields[0].rstrip(':').isdigit() and fields[6] != 'UND' and fields[4] in ('GLOBAL', 'WEAK') and fields[5] in ('DEFAULT', 'PROTECTED'):
                 exported.add(fields[7].split('@', 1)[0])
-    expected = {JNI + name for name in METHODS}
+    methods=METHODS|{'configureBodyPartsCache','observedSelfPose'} if args.entity_diagnostic else METHODS
+    expected = {JNI + name for name in methods}
     assert expected <= exported, 'Missing JNI entrypoint'
     assert not {name for name in exported if name.startswith('coh_')}, 'Core symbols could interpose the default client'
     assert exported <= expected | {'_init', '_fini'}, 'Unintended interop exports: ' + repr(sorted(exported - expected))
@@ -76,6 +77,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--apk', type=Path, required=True)
     parser.add_argument('--abi', choices=('arm64-v8a', 'x86_64'), required=True)
+    parser.add_argument('--entity-diagnostic', action='store_true', help='Include the two local-catalog/pose JNI methods; preserve historical nine-method audits')
     parser.add_argument('--readelf', type=Path, required=True)
     parser.add_argument('--source-root', type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument('--output', type=Path, required=True)

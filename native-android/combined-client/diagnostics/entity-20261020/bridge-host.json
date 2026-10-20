@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "checks": 49,
+  "exact_activity_methods": 3,
+  "Android_or_native_execution": false,
+  "collaborators_are_doubles": true,
+  "activity_sha256": "f95e97a50019e6df45f324d710e9596104aa3d14bee1a9989481c2aff19a76c6",
+  "exact_method_sha256": {
+    "networkTick": "f6fe20906f7a6c33bd8c02b2da51d1c41b009eb8315f10fd1875381ab74392da",
+    "publishObservedSelf": "6289978f72b8711f801089704ec6e797d68197970b9090cfbeabd8b6bebd3718",
+    "clearObservedBox": "2aaf7db6363cfc4e9b7f4cecb21215957170c35792923bf8de4f20fa48f0b4bc"
+  },
+  "source_unchanged_during_test": true,
+  "scope": "Exact Java Activity owner-tuple/posted-callback bridge only; Android/JNI/render/network collaborators are explicit doubles."
+}

@@ -1,0 +1,91 @@
+name: Native Combined single-entity diagnostic
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-combined-entity-diagnostic.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-entity-diagnostic-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: '1'
+jobs:
+  diagnostic:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install the existing pinned build components
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+          python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+      - name: Test the changed original receiver, entity bridge and memory sampler
+        run: |
+          python3 native-android/engine/entities/check_original_costume_receive.py --work /tmp/original-costume-ci --output native-android/results/combined-entity-diagnostic/original-costume.json
+          python3 native-android/combined-client/tools/check_bodypart_continuation.py --work /tmp/bodypart-continuation-ci --output native-android/results/combined-entity-diagnostic/bodypart-continuation.json
+          python3 native-android/engine/renderer/check_debug_entity.py --source-root . --work /tmp/observed-entity-ci --output native-android/results/combined-entity-diagnostic/observed-entity.json
+          python3 native-android/session-client/tools/check_observed_entity.py --fixtures /tmp/observed-entity-ci/fixtures.bin --work /tmp/observed-session-ci --output native-android/results/combined-entity-diagnostic/observed-session.json
+          python3 native-android/combined-client/tools/check_observed_bridge.py --source-root . --work /tmp/observed-bridge-ci --output native-android/results/combined-entity-diagnostic/observed-bridge.json
+          python3 native-android/combined-client/qualification/check_process_set_memory.py
+          python3 native-android/combined-client/qualification/check_memory_worker.py
+          python3 native-android/combined-client/tools/test_process_set_contract.py
+      - name: Reuse pinned crypto and prepare existing scene inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p native-android/results/combined-entity-diagnostic
+          gh api repos/Russianranger/coh-android/actions/artifacts/11980774730/zip > /tmp/combined-crypto.zip
+          python3 native-android/combined-client/tools/reuse_crypto.py --archive /tmp/combined-crypto.zip --crypto-root /tmp/combined-crypto --output native-android/results/combined-entity-diagnostic/crypto-reuse.json
+          python3 native-android/combined-client/tools/prepare.py --evidence native-android/results/combined-entity-diagnostic/build-inputs.json
+      - name: Build and inspect the signed ARM64 diagnostic
+        run: |
+          python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PcohBuildProfile=entity-diagnostic -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
+          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk
+          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk --abi arm64-v8a --require-clean --require-interop --build-profile entity-diagnostic --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-entity-diagnostic/arm64-package.json
+          python3 native-android/combined-client/tools/interop_package_audit.py --entity-diagnostic --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk --abi arm64-v8a --readelf "$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" --output native-android/results/combined-entity-diagnostic/arm64-interop-dso.json
+          sha256sum native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-arm64.apk > native-android/results/combined-entity-diagnostic/arm64.sha256
+      - name: Build the separate emulator APK sequentially
+        run: |
+          python3 native-android/combined-client/gradle.py --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1536m -Dfile.encoding=UTF-8' -PprobeAbis=x86_64 -PcohBuildProfile=entity-diagnostic -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug
+          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-x86_64.apk
+          python3 native-android/combined-client/gradle.py --stop
+      - name: Enable emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Exercise existing Android 13 preview and lifecycle checks
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-entity-diagnostic/CoH-Native-Combined-0.1.13-entity-diagnostic-x86_64.apk --output native-android/results/combined-entity-diagnostic/android13
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: combined-entity-diagnostic-${{ github.sha }}
+          path: native-android/results/combined-entity-diagnostic/
+          retention-days: 14
+          if-no-files-found: error
