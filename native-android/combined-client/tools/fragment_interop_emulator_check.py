@@ -39,6 +39,32 @@ def admit_runtime_revision(head, candidate, proof_path):
     return candidate, sha(raw)
 
 
+def app_uid_cgroup(value, uid):
+    need(isinstance(value,dict) and value.get('uid')==uid and value.get('status') in ('observed','unavailable'), 'UID cgroup observation')
+    need(value.get('source')=='proc/self/cgroup and proc/self/mountinfo'
+         and value.get('scope')=='kernel UID-named cgroup charge; not same-UID RSS/PSS or whole-device RAM', 'cgroup accounting scope')
+    if value['status']=='unavailable':
+        need(value.get('charge_bytes') is None and type(value.get('reason')) is str
+             and re.fullmatch('[A-Z_]{1,80}',value['reason']) is not None, 'unknown cgroup charge invented')
+        return
+    need(type(value.get('charge_bytes')) is int and 0 <= value['charge_bytes'] < 1<<63, 'cgroup charge units/domain')
+    need(value.get('counter') in ('memory.current','memory.usage_in_bytes')
+         and (value.get('hierarchical_accounting') is None or type(value['hierarchical_accounting']) is bool), 'cgroup memory controller')
+    paths={}
+    for key in ('counter_path','membership_path','mount_point','mount_root'):
+        item=value.get(key);need(type(item) is str and item.startswith('/') and len(item)<=512
+             and all(32<=ord(c)<=126 for c in item) and '..' not in Path(item).parts and '.' not in item.split('/'), 'cgroup source path')
+        paths[key]=Path(item)
+    prefixes=paths['membership_path'].parents
+    group=paths['membership_path'] if paths['membership_path'].name=='uid_'+str(uid) else next((p for p in prefixes if p.name=='uid_'+str(uid)),None)
+    need(group is not None and (group==paths['mount_root'] or paths['mount_root'] in group.parents), 'UID cgroup root association')
+    expected=paths['mount_point']/group.relative_to(paths['mount_root'])/value['counter']
+    need(paths['counter_path']==expected, 'cgroup mount mapping')
+    if value['counter']=='memory.current':
+        need(value.get('counter_semantics')=='v2_hierarchical_charge_bytes' and value['hierarchical_accounting'] is True, 'v2 cgroup semantics')
+    else:need(value.get('counter_semantics')=='v1_approximate_charge_bytes', 'v1 cgroup semantics')
+
+
 def process_aggregation(value, rows):
     aggregate=value.get('aggregation')
     need(isinstance(aggregate,dict) and aggregate.get('scope')=='all_scanned_same_uid_processes', 'process aggregation scope')
@@ -140,6 +166,7 @@ def process_set_snapshot(value):
     need(value['wine_processes'] == sum(row['role'] == 'WINE_SERVERS' for row in rows)
          and value['postgresql_processes'] == sum(row['role'] == 'POSTGRESQL' for row in rows), 'role counts differ')
     aggregate=process_aggregation(value,rows) if 'aggregation' in value else None
+    if 'app_uid_cgroup' in value:app_uid_cgroup(value['app_uid_cgroup'],value['uid'])
     for metric in ('rss', 'pss'):
         if aggregate is None:
             known = [row[metric + '_bytes'] for row in rows if row[metric + '_bytes'] is not None]

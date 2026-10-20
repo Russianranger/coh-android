@@ -145,6 +145,7 @@ final class ProcessSetMemory {
     }
     void sample(Path root,long uid,long self,boolean expectServer,LongSupplier clock,long utc) {
         long begin=clock.getAsLong(),unreadable=0,scanned=0,omitted=0;boolean complete=true;int unavailableFlags=0;
+        Map<String,Object> cgroup=AppCgroupMemory.observe(root,uid,reader);
         Aggregate total=new Aggregate();Aggregate[] groups={new Aggregate(),new Aggregate(),new Aggregate(),new Aggregate()};
         List<Map<String,Object>> rows=new ArrayList<>();Set<Long> seen=new HashSet<>();
         Map<String,Object> selfRow=unknown(self,"ANDROID_APP_AND_NATIVE_CLIENT");
@@ -184,7 +185,7 @@ final class ProcessSetMemory {
         Map<String,Object> out=new LinkedHashMap<>();
         out.put("schema","coh-same-uid-process-memory-v1");out.put("sampled_utc_ms",utc);
         out.put("begin_elapsed_ms",begin);out.put("end_elapsed_ms",end);out.put("sample_window_ms",Math.max(0,end-begin));
-        out.put("uid",uid);out.put("self_pid",self);out.put("server_process_expected",expectServer);
+        out.put("app_uid_cgroup",cgroup);out.put("uid",uid);out.put("self_pid",self);out.put("server_process_expected",expectServer);
         out.put("scan_complete",complete);out.put("expected_roles_observed",roles);out.put("unreadable_status_count",unreadable);
         out.put("omitted_same_uid_processes",omitted);out.put("detail_rows_omitted",omitted);out.put("unavailable_codes",unavailableCodes(unavailableFlags));out.put("aggregation",aggregate);
         out.put("process_limit",PROCESS_LIMIT);out.put("process_count",rows.size());out.put("wine_processes",wine);out.put("postgresql_processes",postgres);out.put("incomplete_process_metrics",missing);

@@ -124,7 +124,7 @@ def main():
             sources.append(path)
         test = root / 'org/coh/nativecombined/MemoryWorkerTest.java'
         test.write_text(HARNESS)
-        sources += [test, *(SOURCE / name for name in ('ServerMemoryPolicy.java', 'PhaseMemoryDiagnostics.java', 'ProcessSetMemory.java', 'MemoryTelemetry.java'))]
+        sources += [test, *(SOURCE / name for name in ('ServerMemoryPolicy.java', 'PhaseMemoryDiagnostics.java', 'ProcessSetMemory.java', 'AppCgroupMemory.java', 'MemoryTelemetry.java'))]
         build = subprocess.run(['java', 'com.sun.tools.javac.Main', '-d', str(root), *map(str, sources)], capture_output=True, text=True)
         if build.returncode:
             raise RuntimeError(build.stderr)

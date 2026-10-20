@@ -14,6 +14,39 @@ public final class ProcessSetMemoryTest {
   Path p=root.resolve(""+pid);write(p.resolve("status"),"Name:\t"+name+"\nUid:\t"+uid+"\t"+uid+"\t"+uid+"\t"+uid+"\nVmRSS:\t"+rss+" kB\n");
   write(p.resolve("stat"),stat(pid,1000+pid));write(p.resolve("cmdline"),cmd);write(p.resolve("smaps_rollup"),"Pss:\t"+pss+" kB\n");
  }
+ static String escape(Path path){return path.toString().replace("\\","\\134").replace(" ","\\040");}
+ static String file(Path path,int cap)throws Exception{return new String(Files.readAllBytes(path),StandardCharsets.US_ASCII);}
+ static Map<String,Object> cgroup(Path proc){return AppCgroupMemory.observe(proc,1000,(path,cap)->new String(Files.readAllBytes(path),StandardCharsets.US_ASCII));}
+ static void cgroups(Path proc)throws Exception{
+  Path cg=proc.getParent().resolve("cg space");Path current=cg.resolve("apps/uid_1000/memory.current");write(current,"4096\n");
+  String member="0::/apps/uid_1000/pid_10\n",mount="1 0 0:1 / "+escape(cg)+" rw - cgroup2 cgroup rw\n";
+  write(proc.resolve("self/cgroup"),member);write(proc.resolve("self/mountinfo"),mount);
+  Map<String,Object> v=cgroup(proc);need("observed".equals(v.get("status"))&&n(v,"charge_bytes")==4096&&Boolean.TRUE.equals(v.get("hierarchical_accounting")));
+  need(current.toString().equals(v.get("counter_path"))&&"v2_hierarchical_charge_bytes".equals(v.get("counter_semantics")));
+  for(String invalid:new String[]{"max","-1","9223372036854775808","12 kB"}){write(current,invalid);need(cgroup(proc).get("charge_bytes")==null);}
+  write(current,"0\n");need(n(cgroup(proc),"charge_bytes")==0);write(current,"4096\n");
+  AtomicInteger membershipReads=new AtomicInteger();Map<String,Object> moved=AppCgroupMemory.observe(proc,1000,(path,cap)->{
+   if(path.equals(proc.resolve("self/cgroup"))&&membershipReads.incrementAndGet()>1)return "0::/apps/uid_1001/pid_10\n";
+   return new String(Files.readAllBytes(path),StandardCharsets.US_ASCII);
+  });need("CGROUP_MEMBERSHIP_CHANGED".equals(moved.get("reason"))&&moved.get("charge_bytes")==null);
+  AtomicInteger mountReads=new AtomicInteger();Map<String,Object> remounted=AppCgroupMemory.observe(proc,1000,(path,cap)->{
+   if(path.equals(proc.resolve("self/mountinfo"))&&mountReads.incrementAndGet()>1)return mount.replace("1 0 0:1","2 0 0:2");
+   return new String(Files.readAllBytes(path),StandardCharsets.US_ASCII);
+  });need("CGROUP_MOUNT_CHANGED".equals(remounted.get("reason"))&&remounted.get("charge_bytes")==null);
+  Files.delete(current);Files.createSymbolicLink(current,cg.resolve("real-counter"));write(cg.resolve("real-counter"),"7000\n");
+  need("CGROUP_PATH_ALIAS_OR_LIMIT".equals(cgroup(proc).get("reason"))&&cgroup(proc).get("charge_bytes")==null);Files.delete(current);write(current,"4096\n");
+  write(proc.resolve("self/cgroup"),"0::/apps/uid_1001/pid_10\n");need("NO_APP_UID_MEMORY_CGROUP".equals(cgroup(proc).get("reason")));
+  write(proc.resolve("self/cgroup"),member);write(proc.resolve("self/mountinfo"),"1 0 0:1 /apps/uid_1000/pid_10 "+escape(cg)+" rw - cgroup2 cgroup rw\n");need(cgroup(proc).get("charge_bytes")==null);
+  Path usage=cg.resolve("uid_1000/memory.usage_in_bytes");write(usage,"8192\n");write(cg.resolve("uid_1000/memory.use_hierarchy"),"0\n");
+  write(proc.resolve("self/cgroup"),"5:cpu,memory:/apps/uid_1000/pid_10\n");write(proc.resolve("self/mountinfo"),"1 0 0:1 /apps "+escape(cg)+" rw - cgroup memory rw,memory\n");
+  v=cgroup(proc);need(n(v,"charge_bytes")==8192&&Boolean.FALSE.equals(v.get("hierarchical_accounting"))&&"v1_approximate_charge_bytes".equals(v.get("counter_semantics")));
+  write(cg.resolve("uid_1000/memory.use_hierarchy"),"1\n");need(Boolean.TRUE.equals(cgroup(proc).get("hierarchical_accounting")));
+  Map<String,Object> oversized=AppCgroupMemory.observe(proc,1000,(path,cap)->new String(new char[cap+1]));need(oversized.get("charge_bytes")==null);
+  AtomicInteger reads=new AtomicInteger();ProcessSetMemory first=new ProcessSetMemory((path,cap)->{
+   if(reads.getAndIncrement()==0)need(path.equals(proc.resolve("self/cgroup")));
+   return new String(Files.readAllBytes(path),StandardCharsets.US_ASCII);
+  });Map<String,Object> measured=sample(first,proc,true);need(n(total(measured),"process_count")==75&&n(measured,"total_pss_bytes")==86016);
+ }
  @SuppressWarnings("unchecked") static List<Map<String,Object>> rows(Map<String,Object> v){return (List<Map<String,Object>>)v.get("processes");}
  static long n(Map<String,Object> v,String key){return ((Number)v.get(key)).longValue();}
  @SuppressWarnings("unchecked") static Map<String,Object> aggregate(Map<String,Object> v){return (Map<String,Object>)v.get("aggregation");}
@@ -86,10 +119,13 @@ public final class ProcessSetMemoryTest {
 
   AtomicInteger clock=new AtomicInteger();observer.sample(root,1000,10,true,()->clock.getAndAdd(2000),123456L);need(!Boolean.TRUE.equals(observer.snapshot().get("scan_complete")));
   ProcessSetMemory missing=new ProcessSetMemory();Map<String,Object> absent=sample(missing,root.resolve("absent"),true);need(absent.get("total_pss_bytes")==null&&absent.get("total_rss_bytes")==null);
+  cgroups(root);
   // Actual host proc read validates deployed parser/UID handling, not Android visibility.
   String ownStat=new String(Files.readAllBytes(Paths.get("/proc/self/stat")),StandardCharsets.US_ASCII);long pid=Long.parseLong(ownStat.substring(0,ownStat.indexOf(' ')));
   String self=new String(Files.readAllBytes(Paths.get("/proc/self/status")),StandardCharsets.US_ASCII);long uid=-1;for(String line:self.split("\n"))if(line.startsWith("Uid:"))uid=Long.parseLong(line.substring(4).trim().split("\\s+")[0]);
   ProcessSetMemory live=new ProcessSetMemory();live.sample(Paths.get("/proc"),uid,pid,false,()->System.nanoTime()/1000000,System.currentTimeMillis());
+  Map<String,Object> liveCgroup=AppCgroupMemory.observe(Paths.get("/proc"),uid,(path,readCap)->new String(Files.readAllBytes(path),StandardCharsets.US_ASCII));
+  need("observed".equals(liveCgroup.get("status"))?liveCgroup.get("charge_bytes")!=null:liveCgroup.get("charge_bytes")==null);
   Map<String,Object> actual=live.snapshot();if(!Boolean.TRUE.equals(rows(actual).get(0).get("identity_stable")))throw new AssertionError("host self observation "+pid+" "+rows(actual).get(0));need(rows(actual).stream().anyMatch(r->Long.valueOf(pid).equals(r.get("pid"))&&Boolean.TRUE.equals(r.get("identity_stable"))&&r.get("rss_bytes")!=null));
   if(args.length>1){long zombiePid=Long.parseLong(args[1]);Map<String,Object> realZombie=rows(actual).stream().filter(r->Long.valueOf(zombiePid).equals(r.get("pid"))).findFirst().get();
    need(Boolean.TRUE.equals(realZombie.get("zombie_no_address_space"))&&n(realZombie,"rss_bytes")==0&&n(realZombie,"pss_bytes")==0);}
@@ -101,7 +137,7 @@ def main():
  with tempfile.TemporaryDirectory(prefix='coh-process-set-') as tmp:
   out=Path(tmp);test=out/'ProcessSetMemoryTest.java';test.write_text(HARNESS)
   proc=out/'proc';proc.mkdir()
-  build=subprocess.run(['java','com.sun.tools.javac.Main','--release','8','-d',str(out),str(SOURCE),str(test)],capture_output=True,text=True)
+  build=subprocess.run(['java','com.sun.tools.javac.Main','--release','8','-d',str(out),str(SOURCE),str(SOURCE.with_name('AppCgroupMemory.java')),str(test)],capture_output=True,text=True)
   if build.returncode:raise RuntimeError(build.stderr)
   reader,writer=os.pipe();child=os.fork()
   if child==0:

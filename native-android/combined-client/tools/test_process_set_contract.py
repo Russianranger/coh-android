@@ -132,5 +132,25 @@ class ProcessSetContract(unittest.TestCase):
         process_set_snapshot(value);self.assertEqual(len(value['processes']),3)
         self.assertLess(len(json.dumps(value,indent=2).encode()),8*1024)
 
+    def test_kernel_cgroup_charge_is_separate_from_pss_and_optional(self):
+        value=self.aggregated();value['app_uid_cgroup']=dict(uid=1000,status='observed',reason='',charge_bytes=1234567,
+            scope='kernel UID-named cgroup charge; not same-UID RSS/PSS or whole-device RAM',
+            source='proc/self/cgroup and proc/self/mountinfo',hierarchical_accounting=True,
+            counter='memory.current',counter_path='/sys/fs/cgroup/apps/uid_1000/memory.current',
+            membership_path='/apps/uid_1000/pid_10',mount_point='/sys/fs/cgroup',mount_root='/',
+            counter_semantics='v2_hierarchical_charge_bytes')
+        process_set_snapshot(value);self.assertNotEqual(value['total_pss_bytes'],value['app_uid_cgroup']['charge_bytes'])
+        for change in ('foreign_uid','counter_mapping','negative','guessed_pss','unknown_zero'):
+            bad=copy.deepcopy(value);cg=bad['app_uid_cgroup']
+            if change=='foreign_uid':cg['uid']=2000
+            if change=='counter_mapping':cg['counter_path']='/sys/fs/cgroup/apps/uid_1001/memory.current'
+            if change=='negative':cg['charge_bytes']=-1
+            if change=='guessed_pss':bad['total_pss_bytes']=cg['charge_bytes']
+            if change=='unknown_zero':cg.update(status='unavailable',reason='CGROUP_COUNTER_UNREADABLE',charge_bytes=0)
+            with self.subTest(change=change),self.assertRaises(ValueError):process_set_snapshot(bad)
+        value['app_uid_cgroup']=dict(uid=1000,status='unavailable',reason='NO_APP_UID_MEMORY_CGROUP',charge_bytes=None,
+            scope='kernel UID-named cgroup charge; not same-UID RSS/PSS or whole-device RAM',source='proc/self/cgroup and proc/self/mountinfo')
+        process_set_snapshot(value)
+
 
 if __name__=='__main__':unittest.main()
