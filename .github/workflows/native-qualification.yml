@@ -5,6 +5,8 @@ name: Native source qualification
     - native-android
     paths:
     - .github/workflows/native-qualification.yml
+    - native-android/combined-client/tools/check_observed_bridge.py
+    - native-android/combined-client/qualification/check_interop_phase.py
     - native-android/engine/body-catalog/persist_newer_provider.py
     - native-android/engine/body-catalog/persist-newer-source-pins.json
     - native-android/engine/body-catalog/test_persist_newer.c
