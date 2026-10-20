@@ -3,6 +3,7 @@
 #include "coh_asset_render.h"
 #include "coh_world_stream.h"
 #include "coh_renderer_gles.h"
+#include "coh_debug_entity.h"
 #include <GLES3/gl3.h>
 #include <math.h>
 #include <stdio.h>
@@ -20,7 +21,7 @@ struct CohSessionWorld {
     CohRenderer *renderer;
     CohGlesRenderer *gles;
     CohRenderDraw draws[STREAM_DRAWS];
-    uint32_t draw_count;
+    uint32_t draw_count,debug_white;
     float last_center[3],last_radius;
     CohSessionWorldStats stats;
 };
@@ -124,13 +125,14 @@ static void release_meshes(CohSessionWorld *w) {
         coh_bridge_release(w->bridge,w->meshes[i]);w->meshes[i]=NULL;
     }
 }
-static int select_world(CohSessionWorld *w,const float center[3],float radius,char *error,size_t cap) {
+static int select_world(CohSessionWorld *w,const float center[3],float radius,int allow_empty,char *error,size_t cap) {
     if(!isfinite(radius)||(radius!=24&&radius!=96))return problem(w,error,cap,"Invalid view distance",COH_INVALID);
     float d=0;for(unsigned i=0;i<3;i++){float v=center[i]-w->last_center[i];if(!isfinite(v))return problem(w,error,cap,"Invalid query center",COH_INVALID);d+=v*v;}
     if(w->selection.count&&radius==w->last_radius&&d<16)return 1;
     uint32_t nodes[COH_WORLD_MAX_INSTANCES],count=0;
     CohStatus status=coh_world_query(w->map,center,radius,nodes,COH_WORLD_MAX_INSTANCES,&count);
-    if(status!=COH_OK||!count)return problem(w,error,cap,"Source map radius selection",status==COH_OK?COH_NOT_FOUND:status);
+    if(status!=COH_OK||(!count&&!allow_empty))return problem(w,error,cap,"Source map radius selection",status==COH_OK?COH_NOT_FOUND:status);
+    if(!count){release_meshes(w);coh_world_release(&w->selection);memcpy(w->last_center,center,sizeof w->last_center);w->last_radius=radius;w->stats.view_radius=radius;w->stats.selection_updates++;return 1;}
     int same=count==w->selection.count;
     for(uint32_t i=0;same&&i<count;i++)same=nodes[i]==w->selection.instances[i].node;
     if(!same||radius!=w->last_radius) {
@@ -196,8 +198,11 @@ int coh_session_world_surface(CohSessionWorld *w,const float view[12],const floa
         status=coh_bridge_surface_lost(w->bridge,w->stats.generation,1);
         if(status!=COH_OK)return problem(w,error,cap,"Static texture generation",status);
     }
-    w->stats.gpu_bytes=coh_renderer_gles_buffer_bytes(w->gles);
-    if(!select_world(w,center,radius,error,cap)||!packets(w,view,projection,error,cap))return 0;
+    const uint8_t white[4]={255,255,255,255};
+    status=upload(w,(CohAssetId){0},1,1,(CohBytes){white,sizeof white},w->stats.generation,&w->debug_white);
+    if(status!=COH_OK)return problem(w,error,cap,"Diagnostic entity white resource",status);
+    w->stats.gpu_bytes=coh_renderer_gles_buffer_bytes(w->gles)+sizeof white;
+    if(!select_world(w,center,radius,0,error,cap)||!packets(w,view,projection,error,cap))return 0;
     CohStreamQualification proof;
     int ok=coh_stream_qualify(w->renderer,w->draws,w->draw_count,&proof,error,cap);
     w->stats.tf_components+=proof.tf_components;w->stats.tf_mismatches+=proof.tf_mismatches;
@@ -206,10 +211,10 @@ int coh_session_world_surface(CohSessionWorld *w,const float view[12],const floa
     restore_accepted_state();publish(w,out);
     if(!ok){w->stats.errors++;return 0;}return 1;
 }
-int coh_session_world_draw(CohSessionWorld *w,const float view[12],const float projection[16],
-                           const float center[3],float radius,CohSessionWorldStats *out,char *error,size_t cap) {
+static int frame(CohSessionWorld *w,const float view[12],const float projection[16],
+                           const float center[3],float radius,int allow_empty,CohSessionWorldStats *out,char *error,size_t cap) {
     if(!w||!w->renderer)return problem(w,error,cap,"Static renderer not admitted",COH_STATE);
-    if(!select_world(w,center,radius,error,cap)||!packets(w,view,projection,error,cap))return 0;
+    if(!select_world(w,center,radius,allow_empty,error,cap)||!packets(w,view,projection,error,cap))return 0;
     CohStatus status=coh_renderer_begin(w->renderer,w->stats.generation);
     for(uint32_t i=0;status==COH_OK&&i<w->draw_count;i++)status=coh_renderer_submit(w->renderer,w->draws+i);
     if(status==COH_OK)status=coh_renderer_flush(w->renderer,(CohCancel){0});
@@ -217,11 +222,29 @@ int coh_session_world_draw(CohSessionWorld *w,const float view[12],const float p
     if(status!=COH_OK)return problem(w,error,cap,"Static renderer frame submission",status);
     w->stats.draws+=w->draw_count;w->stats.draw_packets+=w->draw_count;publish(w,out);return 1;
 }
+int coh_session_world_draw(CohSessionWorld*w,const float view[12],const float projection[16],const float center[3],float radius,CohSessionWorldStats*out,char*error,size_t cap){return frame(w,view,projection,center,radius,0,out,error,cap);}
+int coh_session_world_draw_observed(CohSessionWorld*w,const float view[12],const float projection[16],const float center[3],float radius,CohSessionWorldStats*out,char*error,size_t cap){return frame(w,view,projection,center,radius,1,out,error,cap);}
+int coh_session_world_observed_entity(CohSessionWorld*w,const float view[12],
+ const float projection[16],uint32_t index,const float position[3],CohSessionWorldStats*out,char*error,size_t cap){
+    if(!w||!w->renderer||!position||!w->debug_white)return problem(w,error,cap,"Diagnostic entity draw inputs",COH_STATE);
+    float matrix[16];source_gl_matrix(view,matrix);
+    CohInitialPoseSample sample={.position={position[0],position[1],position[2]},.valid=1};
+    CohRenderTexture white={w->debug_white,COH_WRAP_CLAMP,COH_WRAP_CLAMP,COH_FILTER_NEAREST,COH_FILTER_NEAREST};
+    CohRenderDraw draw={0};CohStatus status=coh_debug_entity_draw(&sample,index,matrix,projection,white,&draw);
+    draw.material.fog_params[2]=1000000.f;
+    if(status==COH_OK)status=coh_renderer_begin(w->renderer,w->stats.generation);
+    if(status==COH_OK)status=coh_renderer_submit(w->renderer,&draw);
+    if(status==COH_OK)status=coh_renderer_flush(w->renderer,(CohCancel){0});
+    restore_accepted_state();
+    if(status!=COH_OK)return problem(w,error,cap,"Observed server entity box draw",status);
+    publish(w,out);return 1;
+}
 void coh_session_world_surface_lost(CohSessionWorld *w,int alive,CohSessionWorldStats *out) {
     if(!w)return;
     if(w->renderer){coh_renderer_surface_lost(w->renderer,w->stats.generation+1,alive);coh_renderer_destroy(w->renderer);w->renderer=NULL;}
     if(w->bridge&&coh_bridge_stats(w->bridge).surface_generation==w->stats.generation)
         (void)coh_bridge_surface_lost(w->bridge,w->stats.generation+1,alive);
+    if(w->debug_white){texture_release(w,w->debug_white,alive);w->debug_white=0;}
     if(w->gles){coh_renderer_gles_destroy(w->gles,alive);w->gles=NULL;}
     w->stats.gpu_bytes=0;if(alive)restore_accepted_state();if(w->bridge&&w->loader)publish(w,out);
 }

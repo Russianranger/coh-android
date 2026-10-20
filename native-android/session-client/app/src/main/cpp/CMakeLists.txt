@@ -18,6 +18,7 @@ endif()
 add_library(coh_session_client SHARED session_renderer.c session_stream_world.c session_stream_qualify.c
     "${CORE_ROOT}/engine/assets/coh_asset_loader.c" "${CORE_ROOT}/engine/assets/coh_asset_geo.c"
     "${CORE_ROOT}/engine/bridge/coh_asset_render.c" "${CORE_ROOT}/engine/world/coh_world_stream.c"
+    "${CORE_ROOT}/engine/renderer/coh_debug_entity.c"
     "${CORE_ROOT}/engine/renderer/coh_renderer.c" "${CORE_ROOT}/engine/renderer/coh_renderer_gles.c"
     "${CORE_ROOT}/src/coh_assets.c" "${CORE_ROOT}/src/coh_dds.c"
     "${WORLD_CPP}/coh_world_scene.c" "${CHARACTER_CPP}/coh_scene.c"

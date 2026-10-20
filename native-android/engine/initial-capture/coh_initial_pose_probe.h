@@ -36,6 +36,15 @@ typedef struct {
  */
 CohStatus coh_initial_pose_probe(const CohRepReader *body_start,
  uint32_t actual_packet_id,CohInitialPoseProbe *);
+/* Raw absolute server observation for a clearly labeled diagnostic marker.
+ * valid=1 only after the same complete position/quaternion prefix validates.
+ * No default position, actor, costume, selected-character or ACK permission.
+ * Sample is cleared on a syntax/profile refusal; invalid API/alias inputs leave
+ * both outputs unchanged. Do not serialize raw coordinates in the old report.
+ */
+typedef struct {CohVec3 position;uint32_t packet_id,valid;} CohInitialPoseSample;
+CohStatus coh_initial_pose_probe_with_sample(const CohRepReader*,uint32_t,
+ CohInitialPoseProbe*,CohInitialPoseSample*);
 #define COH_INITIAL_POSE_REPORT_MAX 1024u
 int coh_initial_pose_probe_json(const CohInitialPoseProbe *,char *,size_t);
 #ifdef __cplusplus

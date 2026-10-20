@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "modes": {
+    "release": {
+      "checks": {
+        "passed": true,
+        "checks": 135,
+        "observed_box_draws": 33,
+        "actual_decoded_coordinate_preserved": true,
+        "offline_actor_suppressed": true,
+        "camera_and_query_center_on_server_sample": true,
+        "clear_restores_offline_preview": true,
+        "GL_calls_observed_not_executed": true
+      },
+      "binary_sha256": "1a32ecbd58d10170b138256119d61c87a6d420196d14258e195ab7515e650532"
+    },
+    "asan": {
+      "checks": {
+        "passed": true,
+        "checks": 135,
+        "observed_box_draws": 33,
+        "actual_decoded_coordinate_preserved": true,
+        "offline_actor_suppressed": true,
+        "camera_and_query_center_on_server_sample": true,
+        "clear_restores_offline_preview": true,
+        "GL_calls_observed_not_executed": true
+      },
+      "binary_sha256": "9cecb874896a7bb60344914e75a234f2fa00d1e8337382c48b31d9c686cfd1ea"
+    },
+    "ubsan": {
+      "checks": {
+        "passed": true,
+        "checks": 135,
+        "observed_box_draws": 33,
+        "actual_decoded_coordinate_preserved": true,
+        "offline_actor_suppressed": true,
+        "camera_and_query_center_on_server_sample": true,
+        "clear_restores_offline_preview": true,
+        "GL_calls_observed_not_executed": true
+      },
+      "binary_sha256": "fb47a5fa4d8de628a52a6661bed9a96f4c1655da12ecd170e2581d3dbea60603"
+    }
+  },
+  "source_sha256": {
+    "/workspace/scratch/1959d9606401/worker-d/native-android/session-client/app/src/main/cpp/session_renderer.c": "b5b3e2be8913a3280207b6a20c0edafbc49ed00b0e91ba6da32336c77ff2478a",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/session-client/tools/check_observed_entity.py": "0aa468edafbb136eae77c1d75a4f6a39cffbe220493dcfc8def8f7cdf98957ac",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/session-client/tools/lifecycle_host_check.py": "508d6008a0c307a97c02eae2004f9f1057c19188fecffa2beab4ec5f624ba90b",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/world/coh_world.c": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/coh_debug_entity.c": "a851582a0c1a3ac86045e313b1347c308ca8eb49817d046404a011666287b4ad",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/coh_renderer.c": "74937e66a91e30f9405800f4014648c33a7a3640474f20edef3cca736d3427e1",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/initial-capture/coh_initial_pose_probe.c": "0a8b02854767fa09de699139bbaf7dd9670d92216cf866f234aee16b08be5bb5",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/entities/coh_entities.c": "730e09df080c26efa240844bbea707a88138ea966864006fa26487249e18d1e3"
+  },
+  "shipped_body_sha256": {
+    "static void multiply(const float *a,const float *b,float *c)": "87ce551eb5e76eb30f18e76f4cda4f1d78fc1a420a39af3bdc7b4a7fdf94a7b3",
+    "static void actor_matrix(const Session *s,float *m)": "c8eca7fbd3d1f44f9d25d31f0f34a468d15f0f44e15b9f6b22b1125df16ad997",
+    "static const float* scene_center(const Session*s)": "b8871c7f04559f5c12bd8a091a5ac9c4023af35581863f29f6708dcf91289309",
+    "static int camera(Session *s,float aspect,float *view,float *projection,float *actor,float *actor_eye,float eye[6][12])": "f150eac8c792e74c7efd50dfaf9b6537b34313f37456c79c389196b3fc41259c",
+    "static int scene_draw(Session *s,Graphics *g,GLuint fbo,int width,int height,int mode,int reverse,uint8_t *image)": "c16bf5054b355dfbaf7eed72062b43ce8cd50a2ccbbe859ec3526d84963f0474",
+    "JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_observedEntity(JNIEnv*e,jclass c,jlong handle,jint index,jfloat x,jfloat y,jfloat z)": "91ac619a71f11f88bc2a71fd6232c2e83b9bb95da3bec609dd87680b5d8670cf",
+    "JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_clearObservedEntity(JNIEnv*e,jclass c,jlong handle)": "2d9f2439f2b74887ab2b227c91acf0a2d04de8ef35c6a1a7ae0c23c88fb30fb8"
+  },
+  "generated_harness_sha256": "d91d7d359a671348ae9a7906abcd603e49ed33d042271c58b915b57267cd2c7c",
+  "fixtures_sha256": "948d8561bb62e0ebeb057250099cc505c02a26c4999a7d20b4000b1f9a3c97fa",
+  "observer_scope": "Exact production setter/camera/draw bodies, actual source camera and decoded-pose helpers; explicit storage/JNI/input/GL/stream call observers, not full Android ABI or GLES execution",
+  "Android_or_actual_server_execution": false,
+  "leak_sanitizer": false
+}

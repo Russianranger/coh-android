@@ -16,6 +16,9 @@ public final class SessionNative {
     public static native void cancel(long handle);
     public static native void reset(long handle);
     public static native void viewDistance(long handle);
+    /** Actual decoded selected-self server coordinate; draws an orange diagnostic box. */
+    public static native void observedEntity(long handle, int index, float x, float y, float z);
+    public static native void clearObservedEntity(long handle);
     public static native String snapshot(long handle);
     public static native void destroy(long handle);
 }

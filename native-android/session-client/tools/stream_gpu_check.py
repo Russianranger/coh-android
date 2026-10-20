@@ -137,7 +137,7 @@ def wrapper(library,prepared,accepted):
 
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--prepared',type=Path,required=True);p.add_argument('--accepted-assets',type=Path,required=True);p.add_argument('--ndk',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.parent.mkdir(parents=True,exist_ok=True)
- source=[NATIVE/'session-client/tools/stream_gpu_fixture.c',NATIVE/'session-client/app/src/main/cpp/session_stream_qualify.c',NATIVE/'engine/world/coh_world_stream.c',NATIVE/'engine/bridge/coh_asset_render.c',NATIVE/'engine/assets/coh_asset_loader.c',NATIVE/'engine/assets/coh_asset_geo.c',NATIVE/'engine/renderer/coh_renderer.c',NATIVE/'engine/renderer/coh_renderer_gles.c',NATIVE/'src/coh_assets.c',NATIVE/'src/coh_dds.c',NATIVE/'world/coh_world.c']
+ source=[NATIVE/'session-client/tools/stream_gpu_fixture.c',NATIVE/'session-client/app/src/main/cpp/session_stream_qualify.c',NATIVE/'engine/world/coh_world_stream.c',NATIVE/'engine/bridge/coh_asset_render.c',NATIVE/'engine/assets/coh_asset_loader.c',NATIVE/'engine/assets/coh_asset_geo.c',NATIVE/'engine/renderer/coh_debug_entity.c',NATIVE/'engine/renderer/coh_renderer.c',NATIVE/'engine/renderer/coh_renderer_gles.c',NATIVE/'src/coh_assets.c',NATIVE/'src/coh_dds.c',NATIVE/'world/coh_world.c']
  flags=['-std=c11','-Wall','-Wextra','-Werror','-pedantic','-ffp-contract=off','-fno-strict-aliasing','-O2','-shared','-fPIC']
  includes=['-I',NATIVE/'include','-I',NATIVE/'engine/world','-I',NATIVE/'engine/bridge','-I',NATIVE/'engine/renderer']
  with tempfile.TemporaryDirectory(prefix='coh-stream-gpu-') as directory:

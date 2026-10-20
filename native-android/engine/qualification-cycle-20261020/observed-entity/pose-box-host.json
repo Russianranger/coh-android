@@ -1,0 +1,130 @@
+{
+  "passed": true,
+  "scope": "Same original-produced full absolute pose retained for explicit diagnostic box, then submitted/flushed through existing renderer against a recording backend; no full costume/actor/ACK or fake spawn",
+  "modes": {
+    "release": {
+      "checks": {
+        "passed": true,
+        "checks": 15282,
+        "source_pose_fixtures": 91,
+        "decoded_pose_box_draws": 62,
+        "truncated_pose_cases": 8712,
+        "new_query_heap_allocations": 0,
+        "complete_actor": false,
+        "application_ack": false,
+        "actual_server_or_Android_execution": false
+      },
+      "binary_sha256": "fbca5d84702470d70557836cbcb7394e3eea76c5dce18590d633b179efc1e4ea"
+    },
+    "asan": {
+      "checks": {
+        "passed": true,
+        "checks": 15282,
+        "source_pose_fixtures": 91,
+        "decoded_pose_box_draws": 62,
+        "truncated_pose_cases": 8712,
+        "new_query_heap_allocations": 0,
+        "complete_actor": false,
+        "application_ack": false,
+        "actual_server_or_Android_execution": false
+      },
+      "binary_sha256": "0340bef04b5898f516e747c1e14306e05fa2b4a927b7b5c48e4b81500e110a94"
+    },
+    "ubsan": {
+      "checks": {
+        "passed": true,
+        "checks": 15282,
+        "source_pose_fixtures": 91,
+        "decoded_pose_box_draws": 62,
+        "truncated_pose_cases": 8712,
+        "new_query_heap_allocations": 0,
+        "complete_actor": false,
+        "application_ack": false,
+        "actual_server_or_Android_execution": false
+      },
+      "binary_sha256": "73bb19c6d27ca3acb03e236fb5f07200f76873728ab25c5b341fb2b1e4fd39db"
+    }
+  },
+  "fixtures": {
+    "count": 91,
+    "sha256": "948d8561bb62e0ebeb057250099cc505c02a26c4999a7d20b4000b1f9a3c97fa",
+    "original_leaf_scenarios": 6,
+    "packed_start_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "byte_aligned_start_offsets": [
+      0,
+      8
+    ],
+    "synthetic_control_variants": 20,
+    "case_manifest_sha256": "2a7e89f0e5142de10920c5da7966a8682cfa3803acd5002a6c394d5e57b50874"
+  },
+  "source_sha256": {
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/entities/coh_entities.c": "730e09df080c26efa240844bbea707a88138ea966864006fa26487249e18d1e3",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/coh_debug_entity.c": "a851582a0c1a3ac86045e313b1347c308ca8eb49817d046404a011666287b4ad",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/check_debug_entity.py": "6816e7b27b68654e4af6b0b01d35a9c139e3669c092da4d25e1d7e62f61aee29",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/tests/test_debug_entity.c": "8adf8162d89fb97538d59cdcafe75f320acdfc6e0960ba8f9b8e57c0e85b49ec",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/initial-capture/check_initial_pose_probe.py": "2e22c6eeebe49aa9d78200f8cbd92f0770bc1d1c6c44c093026696d624874442",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/coh_debug_entity.h": "0762e3cebd598e4872fc5b9f610352c1167066bb77fb71333d9589e0fa6c2216",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/initial-capture/coh_initial_pose_probe.c": "0a8b02854767fa09de699139bbaf7dd9670d92216cf866f234aee16b08be5bb5",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/coh_renderer.h": "c88bf809b2379f7909f87090edea90b5ac898774055c1307e377983cdf62eb46",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/initial-capture/coh_initial_pose_probe.h": "043087440f70dd603c392243b7bc305c1c5bdcb6b9c2065ab35d9facccdb0d82",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/renderer/coh_renderer.c": "74937e66a91e30f9405800f4014648c33a7a3640474f20edef3cca736d3427e1",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "/workspace/scratch/1959d9606401/worker-d/native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b"
+  },
+  "original_source_sha256": {
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/entity_enum.h": "52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/ragdoll.h": "9a93c71d31de0ea319dc1cb7776a4ba5044dc479fa9b7354c85705fa7c6405cd",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/src/utils/Quat.c": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/MapServer/src/entity/entsend.h": "48cb0e645e452ba697051de1fc61c80267934801c636a6b5345d165ae7876a4c",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/src/utils/structNet.c": "59d20f6419e482d0ccd52d119cc07d624ad71826bbcdb37456bb43b5436893b1",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/attrib_net.c": "dc634ef7f142e1f5e1ca9f49b2b99dc82a0455717b0d84250b39d309e309ce90",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/netfx.h": "b86429ca627be5aecf6b993617ae871ab1e3de2eef7a58e9c4c38f1765246e73",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/power_customization.c": "7cad6c8e8184fc45b2457b35da0cc71a3fbb47c92ba003954cb423816baf8883",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/power_customization.h": "f8b5ffca5740b9dbc7e2359d6bbaec9802b5ed39951c31d998ae2baea780be62",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/teamCommon.h": "db0018467ae696e3cd6f6b4183e932560cc427f812850331b69987cda740a0fc",
+    "/workspace/scratch/6e619cef67e1/coh-android/upstream/ouroboros/Common/entity/TaskforceParams.c": "ca5a9331764db9a7d5c5af4738f7ad429f5629cbc3fcd71f30c00b00723d93a1"
+  },
+  "generated_original_sha256": "35e8b4fa539fee3dc3c6afd7e07a054dfea6f40cb8cd720250c9b67a3dd286c8",
+  "source_packet_is_synthetic": true,
+  "box_static_vertex_bytes": 448,
+  "box_static_index_bytes": 144,
+  "new_heap_bytes": 0,
+  "diagnostic_white_RGBA_bytes": 4,
+  "device_execution": false,
+  "actual_server_transaction": false,
+  "leak_sanitizer": false
+}

@@ -21,6 +21,12 @@ int coh_session_world_surface(CohSessionWorld *,const float view[12],
 int coh_session_world_draw(CohSessionWorld *,const float view[12],
                            const float projection[16],const float center[3],
                            float radius,CohSessionWorldStats *,char *,size_t);
+int coh_session_world_draw_observed(CohSessionWorld *,const float view[12],
+ const float projection[16],const float center[3],float radius,
+ CohSessionWorldStats *,char *,size_t);
+int coh_session_world_observed_entity(CohSessionWorld *,const float view[12],
+ const float projection[16],uint32_t index,const float position[3],
+ CohSessionWorldStats *,char *,size_t);
 void coh_session_world_surface_lost(CohSessionWorld *,int context_alive,
                                     CohSessionWorldStats *);
 #endif

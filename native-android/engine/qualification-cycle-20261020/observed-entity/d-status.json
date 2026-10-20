@@ -1,0 +1,38 @@
+{
+  "worker": "D",
+  "goal": "Draw one real selected-self entity at decoded server coordinate as a labeled crude box",
+  "baseline": "8170fc0d2",
+  "pose_hook_commit": "5f8099ff4aba0bdaa97791173814f324dc5eaf73",
+  "session_commit": "c0ca5dc4e743519d84608dcd49fb78d937ea5fb7",
+  "tested_tree": "3a7346d63f89269dc919eadcbd01e2110c2f11b5",
+  "host_tests": {
+    "pose_box": {
+      "release_asan_ubsan_checks_each": 15282,
+      "source_produced_pose_fixtures": 91,
+      "complete_pose_box_draws": 62,
+      "truncated_cases": 8712
+    },
+    "exact_session_bodies": {
+      "release_asan_ubsan_checks_each": 135,
+      "box_draws": 33,
+      "actual_source_camera": true,
+      "GLES_calls": "Observers, not executed"
+    }
+  },
+  "component_bytes": {
+    "static_box_geometry": 592,
+    "parser_sample": 20,
+    "Session_observation_and_counters": 32,
+    "owned_white_RGBA_payload": 4,
+    "new_geometry_heap": 0,
+    "existing_GPU_buffers_or_draw_capacity_enlarged": false
+  },
+  "ci": "PENDING coordinator full CMake/Android build and real Surface validation",
+  "accepted": "Source absolute position retained from same existing full-prefix parser; crude box uses decoded coordinate. Exact Session setter/camera/draw bodies preserve that coordinate, hide offline actor and restore preview on clear. No complete costume/actor/ACK claim.",
+  "remaining": "Coordinator Activity bridge joins actual selected-self/raw-DBID match and new native APIs; build APK and physical Thor observation of observed_server_entity.active and box_draws. No new material/catalog gate needed for diagnostic box.",
+  "receipts": {
+    "pose-box-host.json": "bafdddfc439649ab22c9003955db19cfc6603d6c61a61e0050cda743ccd26181",
+    "session-host.json": "a808c0131a9feb7678e1dec4e59ec60d2e40662055a6490eef27f6836f323ea8"
+  },
+  "rollback": "Revert two implementation commits; data/assets/imports/profiles/server runtime unchanged."
+}

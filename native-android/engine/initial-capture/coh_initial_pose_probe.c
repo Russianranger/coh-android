@@ -12,13 +12,16 @@ static CohStatus flag(CohRepReader*r,uint32_t*out){
  CohStatus status=coh_rep_read(r,1,out);
  return status==COH_OK&&*out>1?COH_INVALID:status;
 }
-CohStatus coh_initial_pose_probe(const CohRepReader*input,uint32_t packet_id,
- CohInitialPoseProbe*out){
- if(!input||!out||!packet_id||overlap(input,sizeof(*input),out,sizeof(*out)))return COH_INVALID;
+static CohStatus probe(const CohRepReader*input,uint32_t packet_id,
+ CohInitialPoseProbe*out,CohInitialPoseSample*sample){
+ if(!input||!out||!packet_id||overlap(input,sizeof(*input),out,sizeof(*out))||
+    (sample&&(overlap(input,sizeof(*input),sample,sizeof(*sample))||overlap(out,sizeof(*out),sample,sizeof(*sample)))))return COH_INVALID;
  CohRepReader r=*input;uint32_t ignored;
  if(coh_rep_read(&r,0,&ignored)!=COH_OK||r.bytes.size>COH_REP_BOUNDED_MESSAGE_MAX||
     overlap(r.bytes.data,r.bytes.size,input,sizeof(*input))||
-    overlap(r.bytes.data,r.bytes.size,out,sizeof(*out)))return COH_INVALID;
+    overlap(r.bytes.data,r.bytes.size,out,sizeof(*out))||
+    (sample&&overlap(r.bytes.data,r.bytes.size,sample,sizeof(*sample))))return COH_INVALID;
+ if(sample)memset(sample,0,sizeof(*sample));
  CohInitialPoseProbe d;memset(&d,0,sizeof(d));d.begin_bit=r.cursor;d.stage=COH_INITIAL_POSE_FLAGS;
  uint32_t rare=0,medium=0,very=0;CohStatus status=flag(&r,&rare);
  if(status!=COH_OK)return finish(out,&d,status,r.cursor);
@@ -51,9 +54,19 @@ CohStatus coh_initial_pose_probe(const CohRepReader*input,uint32_t packet_id,
  if(orientation.valid!=7)return finish(out,&d,COH_UNSUPPORTED,r.cursor);
  for(unsigned i=0;i<3;i++)if(orientation.packet_ids[i]!=packet_id)return finish(out,&d,COH_STATE,r.cursor);
  d.orientation_validated=d.pose_validated=1;d.pose_end_bit=r.cursor;d.stage=COH_INITIAL_POSE_SEQUENCE;
- /* No decoded scratch state or source identity is retained in this report. */
+ if(sample){sample->position=position.position;sample->packet_id=packet_id;sample->valid=1;}
+ /* The old numeric report still retains no raw pose. Only the explicit local
+  * debug sample receives the actual decoded absolute coordinate. */
  memset(&position,0,sizeof(position));memset(&orientation,0,sizeof(orientation));value=0;
  return finish(out,&d,r.cursor<r.bits?COH_UNSUPPORTED:COH_INVALID,r.cursor);
+}
+CohStatus coh_initial_pose_probe(const CohRepReader*input,uint32_t packet_id,CohInitialPoseProbe*out){
+ return probe(input,packet_id,out,NULL);
+}
+CohStatus coh_initial_pose_probe_with_sample(const CohRepReader*input,uint32_t packet_id,
+ CohInitialPoseProbe*out,CohInitialPoseSample*sample){
+ if(!sample)return COH_INVALID;
+ return probe(input,packet_id,out,sample);
 }
 int coh_initial_pose_probe_json(const CohInitialPoseProbe*d,char*out,size_t bytes){
  static const char*const stages[]={"NONE","INPUT","RARE_FLAGS","MODE","POSITION",

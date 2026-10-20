@@ -58,6 +58,8 @@ typedef struct {
     float world_local[6][12],world_matrix[6][12];
     float camera_yaw,camera_pitch,camera_position[3],look_rate[2],look_delta[2];
     float forward,strafe,accumulator,spawn[3],camera_target_height;
+    uint32_t observed_entity_index;float observed_entity_position[3];
+    uint64_t observed_entity_updates,observed_entity_draws;
     uint32_t held_dirs,direction_mask;
     uint64_t frames,world_draws,actor_draws,skin_samples,contexts_started,contexts_completed;
     uint64_t tf_components,tf_mismatches,depth_order_mismatches,world_visible_pixels,actor_visible_pixels;
@@ -96,13 +98,14 @@ static void multiply(const float *a,const float *b,float *c) {
 }
 static void actor_matrix(const Session *s,float *m) { float c=cosf(s->motion.body_yaw),q=sinf(s->motion.body_yaw);
     const float a[12]={c,0,-q,0,1,0,q,0,c,s->motion.position[0],s->motion.position[1],s->motion.position[2]};memcpy(m,a,sizeof a); }
+static const float* scene_center(const Session*s){return s->observed_entity_index?s->observed_entity_position:s->motion.position;}
 static int camera(Session *s,float aspect,float *view,float *projection,float *actor,float *actor_eye,float eye[6][12]) {
     CohWorldInputs inputs=s->world.inputs;CohWorldCamera *c=&inputs.cameras[0];
     c->pyr_degrees[0]=s->camera_pitch*180/PI;c->pyr_degrees[1]=s->camera_yaw*180/PI;c->pyr_degrees[2]=0;
-    float cp=cosf(s->camera_pitch); const float distance=22;
-    c->position[0]=s->motion.position[0]+distance*sinf(s->camera_yaw)*cp;
-    c->position[1]=s->motion.position[1]+s->camera_target_height+distance*sinf(s->camera_pitch);
-    c->position[2]=s->motion.position[2]+distance*cosf(s->camera_yaw)*cp;
+    float cp=cosf(s->camera_pitch); const float distance=22;const float*center=scene_center(s);
+    c->position[0]=center[0]+distance*sinf(s->camera_yaw)*cp;
+    c->position[1]=center[1]+s->camera_target_height+distance*sinf(s->camera_pitch);
+    c->position[2]=center[2]+distance*cosf(s->camera_yaw)*cp;
     c->fovy=60;c->znear=.1f;c->zfar=500;c->flip_x=0;c->flip_y=0;
     memcpy(s->camera_position,c->position,sizeof s->camera_position);
     if(coh_world_camera(&inputs,0,aspect,view,projection)||coh_world_group_eye_matrices(&inputs,view,eye))return fail(s,"Source session camera failed");
@@ -272,12 +275,19 @@ static void draw_actor(Session *s,Graphics *g,const float *model,const float *ey
 static int scene_draw(Session *s,Graphics *g,GLuint fbo,int width,int height,int mode,int reverse,uint8_t *image) {
     float view[12],projection[16],model[12],actor_eye[12],eye[6][12];if(!camera(s,(float)width/height,view,projection,model,actor_eye,eye))return 0;
     glBindFramebuffer(GL_FRAMEBUFFER,fbo);glViewport(0,0,width,height);glEnable(GL_DEPTH_TEST);glDepthMask(GL_TRUE);glDepthFunc(GL_LEQUAL);glClearDepthf(1);glClearColor(17/255.f,19/255.f,23/255.f,1);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);glFrontFace(GL_CW);glCullFace(GL_BACK);
-    if(mode!=1&&reverse)draw_actor(s,g,model,actor_eye,projection,0);
+    int observed=s->observed_entity_index&&fbo==0;
+    if(mode!=1&&reverse&&!observed)draw_actor(s,g,model,actor_eye,projection,0);
     if(mode!=2){if(fbo!=0)draw_world(s,g,eye,projection);else{
-        if(!coh_session_world_draw(s->stream_world,view,projection,s->motion.position,s->view_radius,&s->stream_stats,s->failure,sizeof s->failure))return fail(s,s->failure[0]?s->failure:"Indexed Atlas scene draw failed");
+        int world_ok=observed?coh_session_world_draw_observed(s->stream_world,view,projection,scene_center(s),s->view_radius,&s->stream_stats,s->failure,sizeof s->failure):
+            coh_session_world_draw(s->stream_world,view,projection,scene_center(s),s->view_radius,&s->stream_stats,s->failure,sizeof s->failure);
+        if(!world_ok)return fail(s,s->failure[0]?s->failure:"Indexed Atlas scene draw failed");
     }}
-    if(mode!=1&&!reverse)draw_actor(s,g,model,actor_eye,projection,0);
-    if(mode!=1)draw_actor(s,g,model,actor_eye,projection,1);
+    if(observed&&mode!=1){
+        if(!coh_session_world_observed_entity(s->stream_world,view,projection,s->observed_entity_index,s->observed_entity_position,&s->stream_stats,s->failure,sizeof s->failure))return fail(s,"Observed server entity box draw failed");
+        s->observed_entity_draws++;
+    }
+    if(mode!=1&&!reverse&&!observed)draw_actor(s,g,model,actor_eye,projection,0);
+    if(mode!=1&&!observed)draw_actor(s,g,model,actor_eye,projection,1);
     glDisable(GL_BLEND);if(image)glReadPixels(0,0,width,height,GL_RGBA,GL_UNSIGNED_BYTE,image);
     return glcheck(s,"Integrated source scene draw or controlled readback failed");
 }
@@ -420,6 +430,7 @@ static int graphics_create(Session *s,Graphics *g) {
     if(!depth_program_create(s,g)||!texture(s,&g->pixel_color,1,1,NULL))return 0;glGenFramebuffers(1,&g->pixel_fbo);glBindFramebuffer(GL_FRAMEBUFFER,g->pixel_fbo);glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,g->pixel_color,0);if(glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE)return fail(s,"Actual-depth diagnostic pixel target incomplete");
     /* The accepted benchmark witness uses its original declared pose, on a
      * private startup snapshot. Actual authored WALK state is never recentered. */
+    uint32_t saved_observed=s->observed_entity_index;s->observed_entity_index=0;
     CohMotionState saved_motion=s->motion;CohLocomotionState saved_animation=s->animation;CohLocomotionBlend saved_blend=s->blend;
     float saved_yaw=s->camera_yaw,saved_pitch=s->camera_pitch;
     memcpy(s->motion.position,s->benchmark_spawn,sizeof s->motion.position);s->motion.body_yaw=wrap(s->benchmark_yaw-PI);
@@ -432,7 +443,8 @@ static int graphics_create(Session *s,Graphics *g) {
     if(!walkable_transform_check(s,g))return 0;
     float stream_view[12],stream_projection[16],stream_model[12],stream_eye[12],stream_groups[6][12];
     if(!camera(s,1,stream_view,stream_projection,stream_model,stream_eye,stream_groups))return 0;
-    if(!coh_session_world_surface(s->stream_world,stream_view,stream_projection,s->motion.position,s->view_radius,&s->stream_stats,s->failure,sizeof s->failure))return fail(s,s->failure[0]?s->failure:"Indexed Atlas GPU admission failed");
+    if(!coh_session_world_surface(s->stream_world,stream_view,stream_projection,scene_center(s),s->view_radius,&s->stream_stats,s->failure,sizeof s->failure))return fail(s,s->failure[0]?s->failure:"Indexed Atlas GPU admission failed");
+    s->observed_entity_index=saved_observed;
     return glcheck(s,"Indexed scene admitted and accepted state restored");
 }
 
@@ -452,6 +464,7 @@ static void startup_commit(Session *s,const Session *copy) {
     s->depth_sampler_controls_passed=copy->depth_sampler_controls_passed;s->clear_control=copy->clear_control;s->world_front_control=copy->world_front_control;s->actor_front_control=copy->actor_front_control;
     s->depth_codec_float_precision=copy->depth_codec_float_precision;
     s->world_occludes_actor_pixels=copy->world_occludes_actor_pixels;s->actor_occludes_world_pixels=copy->actor_occludes_world_pixels;s->actor_changed_pixels=copy->actor_changed_pixels;
+    s->observed_entity_draws=copy->observed_entity_draws;
     s->startup_checked=copy->startup_checked;s->skin_samples=copy->skin_samples;s->world_draws=copy->world_draws;s->actor_draws=copy->actor_draws;
     s->egl_error=copy->egl_error;s->width=copy->width;s->height=copy->height;s->frames=copy->frames;
     s->expected_cancel_surface_errors=copy->expected_cancel_surface_errors;s->expected_cancel_egl_error=copy->expected_cancel_egl_error;
@@ -474,7 +487,7 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
     for(;;){pthread_mutex_lock(&s->mutex);if(s->cancel||s->failed){pthread_mutex_unlock(&s->mutex);break;}
         uint64_t current=now_ms();float seconds=bounded((float)(current-previous)/1000,0,.066667f);previous=current;
         s->camera_yaw=wrap(s->camera_yaw+s->look_rate[0]*seconds+s->look_delta[0]);s->camera_pitch=bounded(s->camera_pitch+s->look_rate[1]*seconds+s->look_delta[1],-.5f,.8f);s->look_delta[0]=s->look_delta[1]=0;
-        s->accumulator+=seconds;while(s->accumulator>=1.f/30&&!s->failed){s->accumulator-=1.f/30;float old[3];memcpy(old,s->motion.position,sizeof old);
+        s->accumulator+=seconds;if(s->observed_entity_index)s->accumulator=0;while(s->accumulator>=1.f/30&&!s->failed){s->accumulator-=1.f/30;float old[3];memcpy(old,s->motion.position,sizeof old);
             uint32_t directions=s->held_dirs,previous_bounds=s->walking.bounded_steps;
             if(s->input_edge_count){directions=s->input_edges[s->input_edge_head];s->input_edge_head=(s->input_edge_head+1u)%INPUT_EDGES;s->input_edge_count--;}
             if(!coh_walk_step(&s->walking,&s->walk_world,directions,wrap(s->camera_yaw-PI))){fail(s,"Source grounded WALK movement failed");break;}
@@ -486,12 +499,12 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
             if(s->animation.move<COH_LOCOMOTION_CLIPS)s->animation_move_samples[s->animation.move]++;
             if(s->animation.move==COH_LOCOMOTION_RUN||s->animation.move==COH_LOCOMOTION_PRE||s->animation.move>=COH_LOCOMOTION_BACK_PRE)s->run_samples++;else s->idle_samples++;
         }
-        s->render_dt_frames=seconds*30;if(!s->failed)skin(s);
+        s->render_dt_frames=seconds*30;if(!s->failed&&!s->observed_entity_index)skin(s);
         *startup=*s;pthread_mutex_unlock(&s->mutex);
         /* No shared session mutex is held by any driver call, including swap,
          * readbacks or context teardown. Main-thread focus/tickets stay live. */
         int surface_failed=0;
-        if(!startup->failed){for(unsigned i=0;i<startup->actor.part_count;i++)geometry_upload(&startup->actor_geometry[i],0);EGLint width=0,height=0;
+        if(!startup->failed){for(unsigned i=0;!startup->observed_entity_index&&i<startup->actor.part_count;i++)geometry_upload(&startup->actor_geometry[i],0);EGLint width=0,height=0;
             if(!eglQuerySurface(g.display,g.surface,EGL_WIDTH,&width)||!eglQuerySurface(g.display,g.surface,EGL_HEIGHT,&height)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}
             else if(width<=0||height<=0||width>16384||height>16384)surface_failed=1;
             else {startup->width=width;startup->height=height;if(scene_draw(startup,&g,0,width,height,0,0,NULL)){if(!eglSwapBuffers(g.display,g.surface)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}else startup->frames++;}}
@@ -529,6 +542,17 @@ JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_look(JNIEnv *e,j
     (void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s||!isfinite(dx)||!isfinite(dy))return;pthread_mutex_lock(&s->mutex);if(s->foreground){s->look_delta[0]+=bounded(dx,-.5f,.5f);s->look_delta[1]+=bounded(dy,-.5f,.5f);}pthread_mutex_unlock(&s->mutex);
 }
 static void clear_input(Session *s) {s->input_edge_head=s->input_edge_count=0;s->held_dirs=0;s->forward=s->strafe=0;memset(s->look_rate,0,sizeof s->look_rate);memset(s->look_delta,0,sizeof s->look_delta);coh_walk_clear(&s->walking);s->motion=s->walking.controls;memcpy(s->motion.position,s->walking.position,sizeof s->motion.position);}
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_observedEntity(JNIEnv*e,jclass c,jlong handle,jint index,jfloat x,jfloat y,jfloat z){
+    (void)e;(void)c;Session*s=(Session*)(intptr_t)handle;
+    if(!s||index<=0||index>10239||!isfinite(x)||!isfinite(y)||!isfinite(z))return;
+    pthread_mutex_lock(&s->mutex);clear_input(s);s->observed_entity_index=(uint32_t)index;
+    s->observed_entity_position[0]=x;s->observed_entity_position[1]=y;s->observed_entity_position[2]=z;
+    s->observed_entity_updates++;s->accumulator=0;pthread_mutex_unlock(&s->mutex);
+}
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_clearObservedEntity(JNIEnv*e,jclass c,jlong handle){
+    (void)e;(void)c;Session*s=(Session*)(intptr_t)handle;if(!s)return;
+    pthread_mutex_lock(&s->mutex);s->observed_entity_index=0;memset(s->observed_entity_position,0,sizeof s->observed_entity_position);clear_input(s);pthread_mutex_unlock(&s->mutex);
+}
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_viewDistance(JNIEnv *e,jclass c,jlong handle) {
     (void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;
     pthread_mutex_lock(&s->mutex);s->view_radius=s->view_radius<60?96:24;pthread_mutex_unlock(&s->mutex);
@@ -559,6 +583,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SessionNative_snapshot(JNIE
         jappend(&j,",\"walkable_tf_components\":%"PRIu64",\"walkable_tf_mismatches\":%"PRIu64",\"walkable_visible_pixels\":%"PRIu64",\"animation_move_samples\":[",s->walkable_tf_components,s->walkable_tf_mismatches,s->walkable_visible_pixels);
         for(unsigned i=0;i<COH_LOCOMOTION_CLIPS;i++)jappend(&j,"%s%"PRIu64,i?",":"",s->animation_move_samples[i]);jappend(&j,"]");
         jappend(&j,",\"walk_contact_hits\":%u,\"walk_wall_hits\":%u,\"walk_ground_hits\":%u",s->walking.contact_hits,s->walking.wall_hits,s->walking.ground_hits);
+        jappend(&j,",\"observed_server_entity\":{\"active\":%s,\"entity_index\":%u,\"position\":[%.9g,%.9g,%.9g],\"updates\":%"PRIu64",\"box_draws\":%"PRIu64",\"visual\":\"orange diagnostic box at decoded server coordinate\",\"complete_actor\":false,\"application_ack\":false}",s->observed_entity_index?"true":"false",s->observed_entity_index,s->observed_entity_position[0],s->observed_entity_position[1],s->observed_entity_position[2],s->observed_entity_updates,s->observed_entity_draws);
         const CohSessionWorldStats *t=&s->stream_stats;
         jappend(&j,",\"stream\":{\"catalog_instances\":%"PRIu64",\"selected_instances\":%"PRIu64",\"resident_bytes\":%"PRIu64",\"budget_bytes\":%"PRIu64",\"peak_resident_bytes\":%"PRIu64",\"selection_updates\":%"PRIu64",\"cache_hits\":%"PRIu64",\"cache_misses\":%"PRIu64",\"evictions\":%"PRIu64",\"generation\":%u,\"draws\":%"PRIu64",\"view_radius\":%.9g}",t->catalog_instances,t->selected_instances,t->resident_bytes,t->budget_bytes,t->peak_resident_bytes,t->selection_updates,t->cache_hits,t->cache_misses,t->evictions,t->generation,t->draws,t->view_radius);
         jappend(&j,",\"source_assets\":{\"geo_loads\":%"PRIu64",\"texture_loads\":%"PRIu64",\"errors\":%"PRIu64"},\"static_renderer\":{\"draw_packets\":%"PRIu64",\"tf_components\":%"PRIu64",\"tf_mismatches\":%"PRIu64",\"visible_pixels\":%"PRIu64",\"material_mode_mask\":%u,\"owned_cpu_bytes\":%"PRIu64",\"gpu_bytes\":%"PRIu64",\"tf_max_error\":%.9g}",t->geo_loads,t->texture_loads,t->errors,t->draw_packets,t->tf_components,t->tf_mismatches,t->visible_pixels,t->material_mode_mask,t->owned_cpu_bytes,t->gpu_bytes,t->tf_max_error);
