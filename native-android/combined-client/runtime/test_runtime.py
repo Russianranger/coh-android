@@ -29,6 +29,35 @@ runtime = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runtime)
 
 
+class PostgresMemoryTests(unittest.TestCase):
+    def test_owned_start_reduces_memory_without_changing_durability_or_datadir(self):
+        original=['postgres','-D',Path('/private/profile/pgdata'),'-c','max_connections=80',
+                  '-c','shared_buffers=32MB','-c','listen_addresses=127.0.0.1',
+                  '-c','fsync=on','-c','synchronous_commit=on','-c','full_page_writes=on']
+        before=original.copy();actual=runtime.postgres_memory_argv('postgres_native_combined',original)
+        self.assertEqual(original,before)
+        self.assertEqual(actual[:3],original[:3])
+        settings=dict(actual[i+1].split('=',1) for i,arg in enumerate(actual[:-1]) if arg=='-c')
+        for name,value in runtime.POSTGRES_MEMORY_SETTINGS.items():self.assertEqual(settings[name],value)
+        for name in ('fsync','synchronous_commit','full_page_writes'):self.assertEqual(settings[name],'on')
+        self.assertEqual(settings['listen_addresses'],'127.0.0.1')
+        self.assertGreaterEqual(int(settings['max_connections'])-int(settings['superuser_reserved_connections']),65+1)
+        self.assertEqual(runtime.postgres_memory_argv('postgres_native_combined',actual),actual)
+        self.assertIs(runtime.postgres_memory_argv('other_child',original),original)
+
+    def test_readback_is_observation_and_unavailable_never_fails_startup(self):
+        sql=mock.Mock(return_value='72|3|16MB|1MB|16MB')
+        observed=runtime.postgres_memory_observation(sql)
+        self.assertEqual(observed['observation_status'],'observed')
+        self.assertEqual(observed['observed'],runtime.POSTGRES_MEMORY_SETTINGS)
+        self.assertFalse(observed['rss_pss_change_measured'])
+        self.assertEqual(sql.call_count,1)
+        for value in (None,42,'','private account text','1|'*1000,'72|3|16MB|1MB'):
+            self.assertEqual(runtime.postgres_memory_observation(lambda query:value)['observation_status'],'unavailable')
+        def failed(query):raise RuntimeError('readback unavailable')
+        self.assertEqual(runtime.postgres_memory_observation(failed)['observation_status'],'unavailable')
+
+
 class AdmissionTests(unittest.TestCase):
     def row(self):
         return {'containerid': 1, 'authname': 'COHLOCAL', 'name': 'THORHERO', 'authid': 100,
@@ -301,6 +330,19 @@ class RetainedSourceContractTests(unittest.TestCase):
             raise unittest.SkipTest('Guest sources require COH_COMBINED_GUEST')
         runtime.load_guest_modules(guest)
         cls.Context, cls.Owner = runtime.runtime_classes()
+
+    def test_actual_context_applies_postgresql_arguments_before_owned_start(self):
+        ctx=self.Context(SimpleNamespace(state=Path('/unused'),timeout_seconds=600,session_id='a'*32))
+        original=['/opt/coh/pgsql/bin/postgres','-D','/private/profile/pgdata','-c','max_connections=80','-c','shared_buffers=32MB','-c','fsync=on']
+        with mock.patch.object(runtime.base,'OwnedProcess') as constructor:
+            child=ctx.start('postgres_native_combined',original)
+            self.assertIs(child,constructor.return_value)
+            label,argv,_,_=constructor.call_args.args
+            self.assertEqual(label,'postgres_native_combined')
+            self.assertIn('max_connections=72',argv);self.assertIn('shared_buffers=16MB',argv)
+            self.assertIn('work_mem=1MB',argv);self.assertIn('maintenance_work_mem=16MB',argv)
+            self.assertIn('fsync=on',argv);self.assertEqual(original[4],'max_connections=80')
+            self.assertEqual(ctx.children,[child])
 
     def test_api_closure_is_available(self):
         for name in ('initialize', 'execute', 'cleanup', 'sql', 'publish_ready'):

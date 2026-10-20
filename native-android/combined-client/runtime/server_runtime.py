@@ -404,6 +404,52 @@ def prepare_geometry_before_servers(owner):
     context.passed(geometry_preparation_worker_reaped=True)
 
 
+# The unchanged source DBServer opens SQLCONN_MAX = 64 + 1 connections
+# (Common/sql/sqlconn.h, sqlconn.c and DBServer/src/dbinit.c). Keep 65 ordinary
+# backends, three PostgreSQL reserved slots and four spare ordinary slots.
+# Parent SQL helpers are synchronous; restore precedes DBServer startup.
+POSTGRES_MEMORY_SETTINGS = {
+    'max_connections': '72', 'superuser_reserved_connections': '3',
+    'shared_buffers': '16MB', 'work_mem': '1MB', 'maintenance_work_mem': '16MB',
+}
+
+
+def postgres_memory_argv(label, argv):
+    """Apply only Combined's owned PostgreSQL startup arguments; no data edits."""
+    if label != 'postgres_native_combined':
+        return argv
+    result = list(argv)
+    remaining = dict(POSTGRES_MEMORY_SETTINGS)
+    for i in range(len(result) - 1):
+        if result[i] == '-c' and isinstance(result[i + 1], str):
+            name = result[i + 1].split('=', 1)[0]
+            if name in POSTGRES_MEMORY_SETTINGS:
+                result[i + 1] = name + '=' + POSTGRES_MEMORY_SETTINGS[name]
+                remaining.pop(name, None)
+    for name, value in remaining.items():
+        result.extend(('-c', name + '=' + value))
+    return result
+
+
+def postgres_memory_observation(sql):
+    """Observe configured GUCs in the existing report, without startup refusal."""
+    result = {'requested': dict(POSTGRES_MEMORY_SETTINGS),
+              'source_dbserver_connections': 65, 'ordinary_spare_connections': 4,
+              'observation_status': 'unavailable', 'rss_pss_change_measured': False}
+    keys = list(POSTGRES_MEMORY_SETTINGS)
+    query = "SELECT " + " || '|' || ".join("current_setting('" + key + "')" for key in keys) + ";"
+    try:
+        raw = sql(query)
+        if type(raw) is str and len(raw) <= 128:
+            values = raw.strip().split('|')
+            if len(values) == len(keys) and all(re.fullmatch(r'[0-9]+(?:kB|MB|GB)?', value) for value in values):
+                result.update(observation_status='observed', observed=dict(zip(keys, values)))
+    except Exception:
+        # Optional readback never changes readiness, durability or the database.
+        pass
+    return result
+
+
 def runtime_classes():
     require(base is not None, 'GUEST_MODULES_NOT_LOADED')
 
@@ -454,6 +500,7 @@ def runtime_classes():
             # Match the accepted character-session finite child inventory.
             require(len(self.children) < 512, 'PROCESS_BUDGET_EXCEEDED')
             self.owned_start_attempts += 1
+            argv = postgres_memory_argv(label, argv)
             child = base.OwnedProcess(label, argv, env or os.environ.copy(), input_text)
             self.children.append(child)
             return child
@@ -571,6 +618,7 @@ def runtime_classes():
             d.database_created = False  # Persistent profile is never fixture cleanup.
             self.report.update(profile_reused=reused, database_preserved_by_policy=True)
             d.start_postgres('postgres_native_combined')
+            self.ctx.report['postgresql_memory_settings'] = postgres_memory_observation(d.sql)
             names = self.sql("SELECT datname FROM pg_database WHERE datname NOT IN ('postgres','template0','template1') ORDER BY datname;")
             require(names in ('', login.DATABASE), 'UNEXPECTED_PRIVATE_DATABASE')
             role = self.sql("SELECT count(*) FROM pg_roles WHERE rolname='cohtest';")
