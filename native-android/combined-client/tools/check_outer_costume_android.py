@@ -61,9 +61,9 @@ def main():
         result['modes'][mode] = json.loads(execution.stdout)
     assert len({json.dumps(row, sort_keys=True) for row in result['modes'].values()}) == 1
     for selected in ([0, 0, 0, 0, 0], [1, 9, 8, 28, 10000]):
-        assert separate_report_extension({'costume_outer': [0, 15, 100, 10000, 10000, 9999, 1, 1, 0, 0], 'selected_costume': selected, 'costume_next': 'Entity suffix'}) == {}
+        assert separate_report_extension({'costume_outer': [0, 15, 100, 10000, 10000, 9999, 1, 1, 0, 0], 'selected_costume': selected, 'costume_next': 'entity suffix', 'power_customization': [0, 1, 0, 0, 0, 0, 9999, 10000], 'initial_tail': [0, 0, 0]}) == {}
     for field, value in [('costume_outer', [0, 15, 100, 10000, 10000, 9999, 1, 1, 1, 0]), ('selected_costume', [1, 0, 9, 28, 10000]), ('selected_costume', [0, 0, 1, 28, 10000]), ('costume_next', 'READY')]:
-        row = {'costume_outer': [0, 15, 100, 10000, 10000, 9999, 1, 1, 0, 0], 'selected_costume': [1, 0, 1, 28, 10000], 'costume_next': 'Entity suffix'}
+        row = {'costume_outer': [0, 15, 100, 10000, 10000, 9999, 1, 1, 0, 0], 'selected_costume': [1, 0, 1, 28, 10000], 'costume_next': 'entity suffix', 'power_customization': [0, 1, 0, 0, 0, 0, 9999, 10000], 'initial_tail': [0, 0, 0]}
         row[field] = value
         try:
             separate_report_extension(row)

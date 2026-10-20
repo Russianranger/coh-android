@@ -75,14 +75,21 @@ def separate_catalog_boundary(value):
 
 def separate_report_extension(value, required=False):
     value = separate_catalog_boundary(separate_java_extension(value))
-    outer_keys = {'costume_outer', 'selected_costume', 'costume_next'}
+    if 'initial_replay' in value:
+        replay = value['initial_replay']
+        need(isinstance(replay, list) and len(replay) == 2
+             and all(type(item) is int and item >= 0 for item in replay)
+             and replay[0] <= 65536 and replay[1] <= 3
+             and (not replay[0] or not replay[1]), 'INITIAL replay retention shape')
+        value = {key: item for key, item in value.items() if key != 'initial_replay'}
+    outer_keys = {'costume_outer', 'selected_costume', 'costume_next', 'power_customization', 'initial_tail'}
     outer_present = outer_keys.intersection(value)
     need(not outer_present or outer_present == outer_keys, 'partial original outer costume extension')
     if outer_present:
         outer, selected = value['costume_outer'], value['selected_costume']
         need(isinstance(outer, list) and len(outer) == 10
              and all(type(item) is int and item >= 0 for item in outer), 'outer costume numeric shape')
-        need(outer[0] <= 7 and outer[1] <= 16
+        need(outer[0] <= 7 and outer[1] <= 23
              and all(item <= 33554432 for item in outer[2:6])
              and all(item in (0, 1) for item in outer[6:])
              and outer[8:] == [0, 0], 'outer costume source domains/transaction scope')
@@ -91,11 +98,21 @@ def separate_report_extension(value, required=False):
              and selected[0] <= 1 and selected[1] < 10 and selected[2] < 9
              and selected[3] <= 30 and selected[4] <= 33554432, 'selected decoded costume shape')
         need(selected[0] or selected[2:] == [0, 0, 0], 'absent selected costume fabricated values')
-        names = ('NOT_ATTEMPTED', 'Appearance selector', 'Costume rewards', 'Costume body',
-                 'SupergroupCostume presence', 'SupergroupCostume body', 'SupergroupCostume mode',
-                 'SupergroupCostume hide emblem', 'Special costume FX presence', 'Special costume FX string',
-                 'NPC fallthrough presence', 'NPC appearance fields', 'NPC custom colors',
-                 'Appearance complete', 'Translucency', 'Entity suffix', 'NPC definitions')
+        power, tail = value['power_customization'], value['initial_tail']
+        need(isinstance(power, list) and len(power) == 8
+             and all(type(item) is int and item >= 0 for item in power)
+             and power[0] <= 0x7fffffff and power[1] <= 1 and power[2] <= 10
+             and power[3] <= 0x7fffffff and power[4] <= 1 and power[5] <= 0xffffffff
+             and all(item <= 33554432 for item in power[6:]), 'power customization source domains')
+        need(isinstance(tail, list) and len(tail) == 3
+             and all(type(item) is int and item in (0, 1) for item in tail), 'initial tail source domains')
+        names = ('none', 'appearance selector', 'costume rewards', 'main costume body',
+                 'Supergroup costume presence', 'Supergroup costume body', 'Supergroup mode',
+                 'Supergroup emblem', 'costume FX presence', 'costume FX string',
+                 'NPC costume fallthrough', 'NPC costume fields', 'custom NPC costume',
+                 'appearance end', 'translucency', 'entity suffix', 'NPC definitions',
+                 'power customization selector', 'power customization list', 'BasePower CRC lookup',
+                 'titles', 'ragdoll', 'basic character statistics', 'vision phases')
         need(value['costume_next'] == names[outer[1]], 'outer source field name mismatch')
         value = {key: item for key, item in value.items() if key not in outer_keys}
     if 'costume_bodies' in value:

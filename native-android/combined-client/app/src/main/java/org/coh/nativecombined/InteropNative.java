@@ -20,6 +20,8 @@ public final class InteropNative {
     public static native String report(long handle);
     /** Actual first selected-self wire observation: 16 little-endian bytes: int index,3 floats. */
     public static native byte[] observedSelfPose(long handle);
+    /** Capture profile only: bounded framed INITIAL bytes; query on the network owner before close. */
+    public static native byte[] exportInitialReplay(long handle);
     /** Scalar owner state independent of bounded report serialization.
      * Bits: owner present=1, terminal=2, raw initial observed=4, characters ready=8. */
     public static native int controlState(long handle);

@@ -1,7 +1,8 @@
 /* Separate nonshipping JNI role. Exactly one executor owns all calls.
- * The synchronous lease is observed numerically and wiped, never copied into
- * a packet/file/world owner. No native pointer, account or character identity
- * appears in report(). Core symbols must be hidden in this diagnostic DSO. */
+ * The synchronous loan is released after observation. Only the opt-in capture
+ * diagnostic retains one bounded INITIAL replay; no actor/ACK is published.
+ * No native pointer, account or character identity appears in report(). Core
+ * symbols must be hidden in this diagnostic DSO. */
 #include <jni.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -40,6 +41,7 @@
 #include "coh_original_ent_costume.h"
 #endif
 #include "coh_client_costume_slots.h"
+#include "interop_network.h"
 #include "coh_session_crypto.h"
 #include "../../../../diagnostics/gates25-27-thor-20261018/server-initial-investigation-worker-c/coh_receive_projection.h"
 #ifdef COH_INTEROP_REQUEST_TX
@@ -79,6 +81,8 @@ typedef struct {
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
     CohOriginalCostumeSnapshot selected_costume;
     CohOriginalEntCostumeReport initial_outer;
+    uint32_t replay_bytes,replay_compressed,replay_omitted;
+    uint8_t initial_replay[COH_INITIAL_REPLAY_BYTES];
 #endif
     ClientSlotsOwner client_slots;CohStatus client_slots_status;
     CohReceiveProjection receive;
@@ -92,6 +96,18 @@ static uint64_t next_token=1;
 static CohStatus configured_bodyparts_status=COH_NOT_FOUND;
 static ClientSlotsOwner configured_client_slots;
 static CohStatus configured_client_slots_status=COH_NOT_FOUND;
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+static void clear_replay(Interop *h) {
+    coh_db_wipe(h->initial_replay,sizeof(h->initial_replay));h->replay_bytes=0;h->replay_compressed=0;
+}
+#define PACKET_COPY_RETAINED(h) ((h)->replay_bytes?"true":"false")
+#define REPLAY_REPORT_FORMAT ",\"initial_replay\":[%u,%u]"
+#define REPLAY_REPORT_ARGS(h) ,(h)->replay_bytes,(h)->replay_omitted
+#else
+#define PACKET_COPY_RETAINED(h) "false"
+#define REPLAY_REPORT_FORMAT ""
+#define REPLAY_REPORT_ARGS(h)
+#endif
 static size_t client_slots_owned(const ClientSlotsOwner *slots) {
     return slots->mapped_bytes+(slots->index?COH_CLIENT_COSTUME_INDEX_BYTES:0);
 }
@@ -112,7 +128,7 @@ static void client_slots_release(ClientSlotsOwner *slots) {
 #define CLIENT_SLOTS_ARGS(h)
 #endif
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
-#define OUTER_COSTUME_FORMAT ",\"costume_outer\":[%u,%u,%llu,%llu,%llu,%llu,%u,%u,%u,%u],\"selected_costume\":[%u,%u,%u,%u,%llu],\"costume_next\":\"%s\""
+#define OUTER_COSTUME_FORMAT ",\"costume_outer\":[%u,%u,%llu,%llu,%llu,%llu,%u,%u,%u,%u],\"selected_costume\":[%u,%u,%u,%u,%llu],\"costume_next\":\"%s\",\"power_customization\":[%u,%u,%u,%u,%u,%u,%llu,%llu],\"initial_tail\":[%u,%u,%u]"
 #define OUTER_COSTUME_ARGS(h) ,status_number((h)->initial_outer.status),(h)->initial_outer.field, \
     (unsigned long long)(h)->initial_outer.begin_bit,(unsigned long long)(h)->initial_outer.end_bit, \
     (unsigned long long)(h)->initial_outer.failure_bit,(unsigned long long)(h)->initial_outer.appearance_end_bit, \
@@ -121,14 +137,12 @@ static void client_slots_release(ClientSlotsOwner *slots) {
     (h)->initial_outer.selected_complete,(h)->initial_outer.selected_body, \
     (h)->initial_outer.selected_complete?(h)->selected_costume.bodytype:0, \
     (h)->initial_outer.selected_complete?(h)->selected_costume.part_count:0, \
-    (unsigned long long)(h)->initial_outer.selected_body_end_bit,outer_field_name((h)->initial_outer.field)
-static const char *outer_field_name(uint32_t field) {
-    static const char *const names[]={"NOT_ATTEMPTED","Appearance selector","Costume rewards","Costume body",
-        "SupergroupCostume presence","SupergroupCostume body","SupergroupCostume mode","SupergroupCostume hide emblem",
-        "Special costume FX presence","Special costume FX string","NPC fallthrough presence","NPC appearance fields",
-        "NPC custom colors","Appearance complete","Translucency","Entity suffix","NPC definitions"};
-    return field<sizeof(names)/sizeof(names[0])?names[field]:"Unknown source field";
-}
+    (unsigned long long)(h)->initial_outer.selected_body_end_bit,coh_original_ent_costume_field_name((h)->initial_outer.field), \
+    (h)->initial_outer.power_selector,(h)->initial_outer.power_complete,(h)->initial_outer.power_lists_read, \
+    (h)->initial_outer.power_entry_count,(h)->initial_outer.required_table,(h)->initial_outer.power_crc, \
+    (unsigned long long)(h)->initial_outer.power_begin_bit,(unsigned long long)(h)->initial_outer.power_end_bit, \
+    (h)->initial_outer.titles_complete,(h)->initial_outer.ragdoll_complete,(h)->initial_outer.basic_stats_complete
+
 #else
 #define OUTER_COSTUME_FORMAT ""
 #define OUTER_COSTUME_ARGS(h)
@@ -155,6 +169,9 @@ static void close_capture(Interop *h) {
     retire_request(h);
     sample_receive(h);
     client_slots_release(&h->client_slots);
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+    clear_replay(h);
+#endif
 }
 static Interop *owner(jlong value) {
     return value>0&&active&&active->token==(uint64_t)value?active:NULL;
@@ -319,6 +336,20 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
            lease.message_generation<=h->groups_generation||lease.update.command!=COH_REP_ALLENTS){status=COH_STATE;goto done;}
         h->allents_callbacks=1;h->initial_bytes=lease.reader.bytes.size;
         h->initial_bits=lease.reader.bits;h->initial_cursor=lease.reader.cursor;
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+        /* Optional INITIAL-only copy: oversize or unavailable accounting omits
+         * this artifact and does not refuse the existing packet observation. */
+        {
+            size_t named=sizeof(*h)+sizeof(lease)+COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE+client_slots_owned(&h->client_slots);
+            uintptr_t source=(uintptr_t)lease.reader.bytes.data,owner_begin=(uintptr_t)h;
+            unsigned alias=!source||source>UINTPTR_MAX-lease.reader.bytes.size||
+                !(source+lease.reader.bytes.size<=owner_begin||owner_begin+sizeof(*h)<=source);
+            if(lease.reader.bytes.size>sizeof(h->initial_replay))h->replay_omitted=1;
+            else if(named>8u*1024u*1024u||lease.reader.bytes.size>8u*1024u*1024u-named)h->replay_omitted=2;
+            else if(alias)h->replay_omitted=3;
+            else {memcpy(h->initial_replay,lease.reader.bytes.data,lease.reader.bytes.size);h->replay_bytes=(uint32_t)lease.reader.bytes.size;h->replay_compressed=lease.reader.compressed;}
+        }
+#endif
         /* The exact owned loan supplies the post-command reader, schema and
          * selected DBID. A bounded syntax refusal is retained separately from
          * successful packet observation; it grants no character/ACK permit. */
@@ -394,7 +425,7 @@ static CohStatus observe(void *context,const CohInitialCapture *capture,const Co
                                                                      * Guest process RSS/PSS is observed separately. */
                                                                     size_t named=sizeof(*h)+sizeof(lease)+COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE+client_slots_owned(&h->client_slots);
                                                                     if(named<=8u*1024u*1024u&&lease.reader.bytes.size<=8u*1024u*1024u-named) {
-                                                                        (void)coh_original_ent_costume_receive(&original,h->pinned_bodyparts,h->initial_costume_slots.current,
+                                                                        (void)coh_original_ent_costume_receive_initial(&original,h->pinned_bodyparts,h->initial_costume_slots.current,h->initial_netfx.pchar_things,
                                                                             h->client_slots.view.raw.data?&h->client_slots.view:NULL,&h->costume_workspace,
                                                                             &h->selected_costume,&h->initial_outer);
                                                                         h->initial_costume_continuation=h->initial_outer.body;
@@ -555,6 +586,31 @@ JNIEXPORT jbyteArray JNICALL Java_org_coh_nativecombined_InteropNative_observedS
     if(result)(*env)->SetByteArrayRegion(env,result,0,16,bytes);
     coh_db_wipe(values,sizeof(values));coh_db_wipe(bytes,sizeof(bytes));return result;
 }
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+static void replay_u32(uint8_t *out,uint32_t value){for(unsigned i=0;i<4;i++)out[i]=(uint8_t)(value>>(i*8));}
+static void replay_u64(uint8_t *out,uint64_t value){for(unsigned i=0;i<8;i++)out[i]=(uint8_t)(value>>(i*8));}
+JNIEXPORT jbyteArray JNICALL Java_org_coh_nativecombined_InteropNative_exportInitialReplay(JNIEnv *env,jclass cls,jlong token) {
+    (void)cls;Interop *h=owner(token);uint8_t header[COH_INITIAL_REPLAY_HEADER_BYTES]={0};SHA256_CTX digest;jbyteArray result=NULL;
+    if(!h||h->busy||!h->replay_bytes||h->suspended||h->disconnected||(*env)->ExceptionCheck(env))return NULL;
+    if(h->replay_bytes>sizeof(h->initial_replay)||h->initial_bits>(uint64_t)h->replay_bytes*8||h->initial_cursor>h->initial_bits||h->replay_compressed>1)return NULL;
+    size_t bytes=sizeof(header)+h->replay_bytes;
+    size_t retained=sizeof(*h)+client_slots_owned(&h->client_slots)+sizeof(header)+COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE;
+    if(retained>8u*1024u*1024u||bytes>8u*1024u*1024u-retained)return NULL;
+    memcpy(header,"COHIRP01",8);replay_u32(header+8,sizeof(header));replay_u32(header+12,h->replay_bytes);
+    replay_u64(header+16,h->initial_bits);replay_u64(header+24,h->initial_cursor);
+    replay_u64(header+32,h->costume_continuation_attempted?h->initial_costume.begin_bit:0);
+    replay_u32(header+40,h->replay_compressed);replay_u32(header+44,h->initial_costume_slots.framing_validated?h->initial_costume_slots.current:UINT32_MAX);
+    replay_u32(header+48,h->pinned_bodyparts);replay_u32(header+52,COH_REP_ALLENTS);
+    int hashed=SHA256_Init(&digest)&&SHA256_Update(&digest,h->initial_replay,h->replay_bytes)&&SHA256_Final(header+56,&digest);
+    coh_db_wipe(&digest,sizeof(digest));if(!hashed)goto done;
+    result=(*env)->NewByteArray(env,(jsize)bytes);
+    if(result&&!(*env)->ExceptionCheck(env))(*env)->SetByteArrayRegion(env,result,0,(jsize)sizeof(header),(const jbyte*)header);
+    if(result&&!(*env)->ExceptionCheck(env))(*env)->SetByteArrayRegion(env,result,(jsize)sizeof(header),(jsize)h->replay_bytes,(const jbyte*)h->initial_replay);
+    if(result&&(*env)->ExceptionCheck(env)){(*env)->DeleteLocalRef(env,result);result=NULL;}
+done:
+    coh_db_wipe(header,sizeof(header));return result;
+}
+#endif
 JNIEXPORT jbyteArray JNICALL Java_org_coh_nativecombined_InteropNative_characters(JNIEnv *env,jclass cls,jlong token) {
     (void)cls;Interop *h=owner(token);if(!h||h->busy||h->suspended||h->disconnected||h->terminal)return NULL;
     CohLocalCharacters *list=calloc(1,sizeof(*list));char *json=calloc(1,65536);jbyteArray result=NULL;
@@ -678,7 +734,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"groups_present_files\":%u,\"groups_roots\":%u,\"groups_bytes\":%llu,\"groups_bits\":%llu,\"initial_bytes\":%llu,\"initial_bits\":%llu,\"initial_post_command_cursor\":%llu,"
         "\"db_phase\":%u,\"map_phase\":%u,\"attempts\":%llu,\"character_lists\":%llu,\"character_choices\":%llu,\"map_handoffs\":%llu,"
         "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"cleanup_verified\":%s,\"cleanup_scope\":\"owned_transport_counters\","
-        "\"suspend_requested\":%s,\"disconnect_requested\":%s,\"packet_copy_retained\":false,"
+        "\"suspend_requested\":%s,\"disconnect_requested\":%s,\"packet_copy_retained\":%s,"
         "\"first_failure\":{\"valid\":%s,\"local_phase\":%u,\"db_phase\":%u,\"map_phase\":%u,\"status\":%u,\"failure\":%u},"
         "\"edit_messages_handled\":%u,\"edit_message_last_type\":%u,\"edit_message_last_bytes\":%u,"
         "\"refused_command_valid\":%s,\"refused_command_kind\":\"%s\","
@@ -688,7 +744,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"bodyparts_default\":[%u,%u],\"bodyparts_server_cache_status\":%u,\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s" CLIENT_SLOTS_FORMAT OUTER_COSTUME_FORMAT,
+        "\"bodyparts_default\":[%u,%u],\"bodyparts_server_cache_status\":%u,\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s" CLIENT_SLOTS_FORMAT OUTER_COSTUME_FORMAT REPLAY_REPORT_FORMAT,
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
         terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
@@ -696,13 +752,13 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         d.groups_observations,d.allents_observations,d.reqallents_sent,h->groups_callbacks,h->allents_callbacks,status_number(h->observer_status),
         d.groups.present_files,d.groups.roots,U64(h->groups_bytes),U64(h->groups_bits),U64(h->initial_bytes),U64(h->initial_bits),U64(h->initial_cursor),
         (unsigned)local->db_phase,(unsigned)local->map_phase,U64(local->attempts),U64(local->character_lists),U64(local->character_choices),U64(local->map_handoffs),
-        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false",h->suspended?"true":"false",h->disconnected?"true":"false",
+        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false",h->suspended?"true":"false",h->disconnected?"true":"false",PACKET_COPY_RETAINED(h),
         first->valid?"true":"false",(unsigned)first->local_phase,(unsigned)first->db_phase,(unsigned)first->map_phase,status_number(first->status),(unsigned)first->failure,
         d.edit_messages_handled,(unsigned)d.edit_message_last_type,d.edit_message_last_bytes,d.refused_command_valid?"true":"false",
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        status_number(COH_OK),h->pinned_bodyparts,status_number(h->bodyparts_cache_status),continuation,catalog_boundary,request_available?"true":"false",request,receive CLIENT_SLOTS_ARGS(h) OUTER_COSTUME_ARGS(h));
+        status_number(COH_OK),h->pinned_bodyparts,status_number(h->bodyparts_cache_status),continuation,catalog_boundary,request_available?"true":"false",request,receive CLIENT_SLOTS_ARGS(h) OUTER_COSTUME_ARGS(h) REPLAY_REPORT_ARGS(h));
     const char *const details[8]={first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume,first_reward};
     size_t used=written>0?(size_t)written:sizeof(json);
     int complete=written>0&&(size_t)written<sizeof(json)&&report_details(json,&used,details,invalid);
@@ -715,14 +771,14 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"groups_observed\":%s,\"groups_present_files\":%u,\"groups_roots\":%u,\"groups_bytes\":%llu,\"groups_bits\":%llu,"
         "\"reqallents_sent\":%u,\"raw_allents_observed\":%s,\"initial_bytes\":%llu,\"initial_bits\":%llu,\"initial_post_command_cursor\":%llu,"
         "\"status\":%u,\"failure\":%u,\"failure_code\":\"%s\",\"first_failure\":{\"valid\":%s,\"local_phase\":%u,\"db_phase\":%u,\"map_phase\":%u,\"status\":%u,\"failure\":%u},"
-        "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"cleanup_verified\":%s,\"packet_copy_retained\":false,"
-        "\"costume_continuation\":%s,\"catalog_boundary\":%s,\"report_limit_bytes\":7168,\"report_truncated\":true,\"report_core_limit\":true,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false" CLIENT_SLOTS_FORMAT OUTER_COSTUME_FORMAT "}",
+        "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"cleanup_verified\":%s,\"packet_copy_retained\":%s,"
+        "\"costume_continuation\":%s,\"catalog_boundary\":%s,\"report_limit_bytes\":7168,\"report_truncated\":true,\"report_core_limit\":true,\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,\"world_authority\":false,\"live_world_rendered\":false" CLIENT_SLOTS_FORMAT OUTER_COSTUME_FORMAT REPLAY_REPORT_FORMAT "}",
         phase_name(h,&d),(unsigned)d.phase,terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         d.groups_observed?"true":"false",d.groups.present_files,d.groups.roots,U64(h->groups_bytes),U64(h->groups_bits),d.reqallents_sent,
         d.raw_allents_observed?"true":"false",U64(h->initial_bytes),U64(h->initial_bits),U64(h->initial_cursor),
         status_number(first->valid?first->status:d.status),(unsigned)failure,failure_name(failure),first->valid?"true":"false",
         (unsigned)first->local_phase,(unsigned)first->db_phase,(unsigned)first->map_phase,status_number(first->status),(unsigned)first->failure,
-        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false",continuation,catalog_boundary CLIENT_SLOTS_ARGS(h) OUTER_COSTUME_ARGS(h));
+        U64(local->opened_sockets),U64(local->closed_sockets),cleanup?"true":"false",PACKET_COPY_RETAINED(h),continuation,catalog_boundary CLIENT_SLOTS_ARGS(h) OUTER_COSTUME_ARGS(h) REPLAY_REPORT_ARGS(h));
 #undef U64
     coh_db_wipe(&d,sizeof(d));return (*env)->NewStringUTF(env,json);
 }
@@ -735,7 +791,11 @@ JNIEXPORT void JNICALL Java_org_coh_nativecombined_InteropNative_suspend(JNIEnv 
 #else
     coh_initial_capture_cancel(h->capture);
 #endif
-    retire_request(h);client_slots_release(&h->client_slots);h->terminal=1;h->busy=0;
+    retire_request(h);client_slots_release(&h->client_slots);
+#ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
+    clear_replay(h);
+#endif
+    h->terminal=1;h->busy=0;
     sample_receive(h);
 }
 JNIEXPORT void JNICALL Java_org_coh_nativecombined_InteropNative_disconnect(JNIEnv *env,jclass cls,jlong token) {
