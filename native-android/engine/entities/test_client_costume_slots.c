@@ -6,6 +6,7 @@
 static uint8_t raw_slots[COH_CLIENT_COSTUME_RAW_BYTES];
 static uint32_t slot_index[COH_CLIENT_COSTUME_INDEX_COUNT],saved_index[COH_CLIENT_COSTUME_INDEX_COUNT];
 static CohClientCostumeSlots slots,saved_slots;
+static uint8_t list_raw[131072];
 static unsigned digests;
 static CohStatus digest(void *context,CohBytes bytes,uint8_t out[32]){(void)context;digests++;return SHA256(bytes.data,bytes.size,out)?COH_OK:COH_INVALID;}
 static CohCostumeImportDigest provider={digest,NULL,0,4096};
@@ -48,7 +49,7 @@ static void indexed_cases(unsigned mode){
  for(size_t n=0,end=w.bit;n<end;n++){w.bit=n;CHECK(parse_slots(&w)!=COH_OK);CHECK(!report.costume_complete);w.bit=end;}
 }
 int main(int argc,char **argv){
- FILE *f;unsigned scenarios,complete=0;CHECK(argc==4);f=fopen(argv[1],"rb");CHECK(f!=NULL);CHECK(fread(raw_slots,1,sizeof(raw_slots),f)==sizeof(raw_slots));CHECK(fgetc(f)==EOF);CHECK(fclose(f)==0);
+ FILE *f;unsigned scenarios,lists,complete=0;CHECK(argc==5);f=fopen(argv[1],"rb");CHECK(f!=NULL);CHECK(fread(raw_slots,1,sizeof(raw_slots),f)==sizeof(raw_slots));CHECK(fgetc(f)==EOF);CHECK(fclose(f)==0);
  CHECK(prepare(8u<<20,0)==COH_OK);bad_inputs();
  f=fopen(argv[2],"rb");CHECK(f!=NULL);scenarios=word(f);
  for(unsigned n=0;n<scenarios;n++){
@@ -57,6 +58,31 @@ int main(int argc,char **argv){
   CHECK(coh_original_costume_receive_slots(&r,count,&slots,&workspace,&report)==COH_OK);CHECK(report.costume_complete&&report.end_bit==w.bit&&report.part_count==expected&&report.parts_read==expected&&report.bodytype_validated&&report.count_validated&&report.literal_strings==0);complete++;
  }
  CHECK(fgetc(f)==EOF);CHECK(fclose(f)==0);indexed_cases(0);indexed_cases(1);
- f=fopen(argv[3],"wb");CHECK(f!=NULL);for(unsigned i=0;i<COH_CLIENT_COSTUME_INDEX_COUNT;i++){uint32_t v=slot_index[i];uint8_t b[4]={(uint8_t)v,(uint8_t)(v>>8),(uint8_t)(v>>16),(uint8_t)(v>>24)};CHECK(fwrite(b,1,4,f)==4);}CHECK(fclose(f)==0);
- printf("{\"passed\":true,\"checks\":%u,\"whole_original_indexed_sender_scenarios\":%u,\"raw_bytes\":%u,\"index_bytes\":%zu,\"charged_prepare_bytes\":%zu,\"heap_allocations\":0,\"physical_packet_replayed\":false}\n",checks,complete,COH_CLIENT_COSTUME_RAW_BYTES,(size_t)COH_CLIENT_COSTUME_INDEX_BYTES,slots.charged_bytes);return 0;
+ f=fopen(argv[3],"rb");CHECK(f!=NULL);lists=word(f);
+ for(unsigned n=0;n<lists;n++){
+  CohRepReader reader;unsigned mode=word(f),start=word(f),bodies=word(f),parts=word(f),ends[10],bits=word(f);CHECK(bodies>=2&&bodies<=10&&bits<=sizeof(list_raw)*8);
+  for(unsigned i=0;i<bodies;i++)ends[i]=word(f);
+  CHECK(fread(list_raw,1,(bits+7)/8,f)==(bits+7)/8);
+  reader=(CohRepReader){{list_raw,(bits+7)/8},bits,start,mode,COH_REP_BOUNDED_MESSAGE_MAX};
+  for(unsigned i=0;i<bodies;i++){
+   CohRepReader before=reader;CHECK(coh_original_costume_receive_slots(&reader,28,&slots,&workspace,&report)==COH_OK);
+   CHECK(!memcmp(&reader,&before,sizeof(reader)));CHECK(!memcmp(&workspace,&zero_workspace,sizeof(workspace)));
+   CHECK(report.costume_complete&&report.part_count==parts&&report.parts_read==parts&&report.begin_bit==reader.cursor&&report.end_bit==ends[i]);reader.cursor=report.end_bit;
+  }
+  CHECK(reader.cursor==bits);
+  /* Truncate each later body: earlier complete bodies remain consumed, and
+   * callers must stop on the exact first incomplete body, without skipping. */
+  for(unsigned truncated=0;truncated<bodies;truncated++){
+   unsigned read=0;reader.cursor=start;reader.bits=ends[truncated]-1;
+   for(unsigned i=0;i<bodies;i++){
+    CohStatus status=coh_original_costume_receive_slots(&reader,28,&slots,&workspace,&report);
+    if(status!=COH_OK){CHECK(!report.costume_complete&&report.failure_bit<=reader.bits);break;}
+    CHECK(report.costume_complete&&report.end_bit==ends[i]);read++;reader.cursor=report.end_bit;
+   }
+   CHECK(read==truncated);
+  }
+ }
+ CHECK(fgetc(f)==EOF);CHECK(fclose(f)==0);
+ f=fopen(argv[4],"wb");CHECK(f!=NULL);for(unsigned i=0;i<COH_CLIENT_COSTUME_INDEX_COUNT;i++){uint32_t v=slot_index[i];uint8_t b[4]={(uint8_t)v,(uint8_t)(v>>8),(uint8_t)(v>>16),(uint8_t)(v>>24)};CHECK(fwrite(b,1,4,f)==4);}CHECK(fclose(f)==0);
+ printf("{\"passed\":true,\"checks\":%u,\"whole_original_indexed_sender_scenarios\":%u,\"multiple_body_scenarios\":%u,\"raw_bytes\":%u,\"index_bytes\":%zu,\"charged_prepare_bytes\":%zu,\"heap_allocations\":0,\"physical_packet_replayed\":false}\n",checks,complete,lists,COH_CLIENT_COSTUME_RAW_BYTES,(size_t)COH_CLIENT_COSTUME_INDEX_BYTES,slots.charged_bytes);return 0;
 }

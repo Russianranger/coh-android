@@ -41,6 +41,14 @@ void load_projection(const U8 *raw){unsigned at=0;Table *tables[3]={&strings_tab
  code=code.replace('void fixture(',helper+'void fixture(')
  for before,after in [('names?"FixtureEntity":NULL','names?ordinary_value(0):NULL'),('names?"Male":NULL','names?ordinary_value(1):NULL'),('parts[i].pchGeom="FixtureGeometry"','parts[i].pchGeom=ordinary_value(2+i*4)'),('parts[i].pchTex1="InlineTexture"','parts[i].pchTex1=ordinary_value(3+i*4)'),('parts[i].pchTex2="InlineTexture"','parts[i].pchTex2=ordinary_value(4+i*4)'),('i%2?"GlowFX":NULL','i%2?ordinary_value(5+i*4):NULL'),('parts[i].regionName="Upper"','parts[i].regionName=extra_value(i%4)'),('parts[i].bodySetName="BodySet"','parts[i].bodySetName=extra_value(4+i%4)'),('0x12340000+j','palette_value(j)')]:
   assert before in code,before;code=code.replace(before,after)
+ # The enclosing original entity receiver loops over stored bodies. Exercise
+ # precisely that composition using repeated WHOLE original sender calls on one
+ # Packet, with independent original BitStream end positions for every body.
+ listcode=code[code.index('void fixture('):].replace('void fixture(', 'void list_fixture(unsigned bodies,unsigned *ends,',1)
+ call='costume_send(&p,&c,(int)extra);'
+ assert listcode.count(call)==1
+ listcode=listcode.replace(call,'assert(bodies>=1&&bodies<=10);for(unsigned body=0;body<bodies;body++){costume_send(&p,&c,(int)extra);ends[body]=p.stream.bitLength;}')
+ code+=listcode
  source=work/'indexed-original-sender.c';source.write_text(code);lib=work/'indexed-original-sender.so'
  legacy.run(['cc','-std=c99','-O0','-shared','-fPIC','-w','-I'+str(ROOT/'native-android/include'),'-I'+str(HERE),source,'-lm','-o',lib],work,'indexed-sender-compile')
  dll=C.CDLL(str(lib));raw=gzip.decompress((HERE/'qualification/costume-builder-20261017/offline-primary-slots.bin.gz').read_bytes());buffer=C.create_string_buffer(raw);dll.load_projection.argtypes=[C.c_void_p];dll.load_projection(buffer)
@@ -54,10 +62,23 @@ void load_projection(const U8 *raw){unsigned at=0;Table *tables[3]={&strings_tab
  out=bytearray(struct.pack('<I',len(scenarios)))
  for mode,start,default,count,bits,b in scenarios:out+=struct.pack('<IIIII',mode,start,default,count,bits)+b
  target=work/'indexed-fixtures.bin';target.write_bytes(out)
- return target,{'scenarios':len(scenarios),'fixtures_sha256':sha(out),'whole_original_sender_functions_unchanged':True,'adapter':'Direct original CLIENT primary-slot projection; linear case-insensitive key search only in host sender shim.','source_sha256':sha(code.encode()),'source_oracle_sanitized':False}
+ dll.list_fixture.argtypes=[C.c_uint,C.c_void_p]+[C.c_uint]*6+[C.c_void_p,C.c_void_p];lists=[]
+ for mode in (0,1):
+  for start in ((3,7)if not mode else(0,)):
+   for bodies in range(2,11):
+    for count in (1,28):
+     for extra in (0,1):
+      b=(C.c_uint8*131072)();bits=C.c_uint32();ends=(C.c_uint32*10)();dll.list_fixture(bodies,ends,mode,start,count,28,extra,1,b,C.byref(bits));lists.append((mode,start,bodies,count,bits.value,list(ends[:bodies]),bytes(b[:(bits.value+7)//8])))
+ listout=bytearray(struct.pack('<I',len(lists)))
+ for mode,start,bodies,count,bits,ends,b in lists:listout+=struct.pack('<IIIII',mode,start,bodies,count,bits)+struct.pack('<'+'I'*bodies,*ends)+b
+ listfile=work/'indexed-list-fixtures.bin';listfile.write_bytes(listout)
+ return target,listfile,{'scenarios':len(scenarios),'fixtures_sha256':sha(out),'multiple_body_scenarios':len(lists),'multiple_fixture_sha256':sha(listout),'whole_original_sender_functions_unchanged':True,'adapter':'Direct original CLIENT primary-slot projection; linear case-insensitive key search only in host sender shim.','source_sha256':sha(code.encode()),'source_oracle_sanitized':False}
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('--source-root',type=Path,default=ROOT);parser.add_argument('--work',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);a=parser.parse_args();work=a.work.resolve();work.mkdir(parents=True,exist_ok=False)
  legacy=module('original_receiver_checker',HERE/'check_original_costume_receive.py');gen=module('original_receiver_source',HERE/'prepare_original_costume_receive.py');generated,source=gen.generate(a.source_root);assert generated==(HERE/'original_costume_receive.inc').read_text()
+ enclosing_path=a.source_root/'upstream/ouroboros/Game/src/entity/entrecv.c';enclosing_text=enclosing_path.read_text().replace('\r\n','\n');enclosing_pin=json.loads((HERE/'source-pins.json').read_text())['sha256_lf']['Game/src/entity/entrecv.c'];assert sha(enclosing_text.encode())==enclosing_pin
+ enclosing_function=gen.extract(enclosing_text,'entReceiveCostume');begin=enclosing_function.index('for( i = 0; i < recievingCount; i++ )');end=enclosing_function.index('other_player = 0;',begin);enclosing_loop=enclosing_function[begin:end];assert enclosing_loop.count('costume_receive(')==1 and 'bGotCostume |=' in enclosing_loop
+ enclosing={'source_sha256_lf':enclosing_pin,'whole_function_sha256_lf':sha(enclosing_function.encode()),'stored_body_loop_sha256_lf':sha(enclosing_loop.encode()),'next_unconsumed_field':'SupergroupCostume presence bit','outer_function_executed':False}
  archive=HERE/'qualification/costume-builder-20261017/offline-primary-slots.bin.gz';raw=gzip.decompress(archive.read_bytes());assert len(raw)==641477 and sha(raw)==RAW_SHA;rawfile=work/'client-primary-slots.bin';rawfile.write_bytes(raw);expected,tables=projection(raw)
  inputs=[HERE/n for n in ['coh_original_costume_receive.c','coh_original_costume_receive.h','coh_client_costume_slots.h','original_costume_receive.inc','test_client_costume_slots.c','test_original_costume_receive.c','check_client_costume_slots.py','check_original_costume_receive.py','costume_oracle_shim.h']]+[archive]
  dependency_text=subprocess.check_output(['cc','-std=c99','-MM',str(HERE/'coh_original_costume_receive.c'),str(HERE/'../replication/coh_replication.c'),str(HERE/'test_client_costume_slots.c')],text=True)
@@ -66,12 +87,12 @@ def main():
    path=Path(name).resolve()
    if path not in inputs:inputs.append(path)
  before={str(p.relative_to(ROOT)):sha(p.read_bytes())for p in inputs}
- literal,producer=legacy.fixtures(a.source_root,work,gen.extract);fixture,indexed=indexed_sender(work,legacy,tables)
- result={'schema':'coh-client-costume-slot-consumer-v1','source':source,'raw_sha256':RAW_SHA,'raw_bytes':len(raw),'index_bytes':len(expected),'independent_offset_index_sha256':sha(expected),'original_sender':producer,'indexed_sender':indexed,'inputs_sha256':before,'native':{}}
+ literal,producer=legacy.fixtures(a.source_root,work,gen.extract);fixture,listfixture,indexed=indexed_sender(work,legacy,tables)
+ result={'schema':'coh-client-costume-slot-consumer-v1','source':source,'raw_sha256':RAW_SHA,'raw_bytes':len(raw),'index_bytes':len(expected),'independent_offset_index_sha256':sha(expected),'original_sender':producer,'indexed_sender':indexed,'enclosing_costume_list':enclosing,'inputs_sha256':before,'native':{}}
  for mode,flags in [('release',['-O2','-fstack-usage']),('asan',['-O1','-g','-fsanitize=address','-fno-omit-frame-pointer']),('ubsan',['-O1','-g','-fsanitize=undefined','-fno-sanitize-recover=all'])]:
   target=work/mode;target.mkdir();binary=target/'slots';output_index=target/'offsets.bin'
   legacy.run(['cc','-std=c99','-Wall','-Wextra','-Werror','-pedantic',*flags,HERE/'coh_original_costume_receive.c',HERE/'../replication/coh_replication.c',HERE/'test_client_costume_slots.c','-lcrypto','-lm','-o',binary],target,'compile')
-  env={**os.environ,'ASAN_OPTIONS':'detect_leaks=0:halt_on_error=1','UBSAN_OPTIONS':'halt_on_error=1'};native=json.loads(legacy.run([binary,rawfile,fixture,output_index],target,'native',env));assert output_index.read_bytes()==expected;result['native'][mode]=native
+  env={**os.environ,'ASAN_OPTIONS':'detect_leaks=0:halt_on_error=1','UBSAN_OPTIONS':'halt_on_error=1'};native=json.loads(legacy.run([binary,rawfile,fixture,listfixture,output_index],target,'native',env));assert output_index.read_bytes()==expected;result['native'][mode]=native
  frames=[]
  for path in(work/'release').glob('*.su'):
   for line in path.read_text().splitlines():
