@@ -20,6 +20,11 @@ PostgreSQL settings were not retained. No new LOW_MEMORY exit is recorded;
 two older entries remain. Server exit 0, Wine/PostgreSQL cleanup, native
 resource release and profile preservation are reported.
 
+Development for 0.1.16 has source-tested frame capture, decoded costume
+snapshots, original outer-costume parsing and uncapped category memory sums.
+Application integration, further packet parsing and the diagnostic build are
+in progress. Character rendering and archive-backed world input remain partial.
+
 1. Continue original outer entity receive from the observed boundary.
 2. Resolve and draw one genuine selected-character costume model/material.
 3. Complete process totals and verify actual PostgreSQL memory settings.

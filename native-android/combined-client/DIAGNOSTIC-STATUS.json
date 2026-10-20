@@ -479,5 +479,105 @@
     "result": "QUALIFIED physical costume-body continuation and bounded neighborhood report; PARTIAL aggregate memory because 64 rows omit 27 processes; runtime PostgreSQL settings unverified.",
     "next_action": "Wait for next user prompt."
   },
-  "next_action": "Wait for next user prompt."
+  "next_action": "Finish application capture/export, original packet continuation and replay, then run focused integrated checks and one diagnostic build.",
+  "development_cycle": {
+    "date": "2026-10-20",
+    "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
+    "state": "active implementation; first independently tested source increments integrated",
+    "source_commits": [
+      {
+        "local": "4a12f6c92426cc0e2249330ee69ffa6e6c8ef61b",
+        "remote": "e9578b33793f5b37bddb44f2814872f90f55a11d",
+        "tree": "42986394cd92bdede716aaa884e5d663471baab8"
+      },
+      {
+        "local": "ae5010dd4a2b73104216eebb76564bd9866b9bd9",
+        "remote": "3482867aa6ebc29d89d4652fb1086d64ed6fb343",
+        "tree": "d04671e67a64be63656f0f4f7221d39456951401"
+      },
+      {
+        "local": "2c417be627814f98fbbfebc2255bf4ee1365723b",
+        "remote": "d76f18872f7336bf9136b52ea232bc23b72839a4",
+        "tree": "ef0584e041ad53e5da758a4dc88c6ee6b7216f31"
+      },
+      {
+        "local": "81ccccb51fc9e8976587b43353bbd8d634dcde21",
+        "remote": "65dee81c03eda665761c9908fc30780b4d856727",
+        "tree": "a901be1fcfcc7e202aee28726d2ce907d8119479"
+      },
+      {
+        "local": "afb507b46ff91b4cf5cc6d72a1dbfa68a3cc422b",
+        "remote": "4d65217e4f4e44f2439802f6c848b5e6f6394ce6",
+        "tree": "4fa3eaf0c701cfa8a5b238547b35307534da25c3"
+      },
+      {
+        "local": "d31cd2bed66dd776d28f119d94aec6d7b6f24ebb",
+        "remote": "b463403c6ad1937bf13764adce8942d9d7a5ea62",
+        "tree": "2b4c9b881d454de9dd2de3b87c74ef96696c7d49"
+      },
+      {
+        "local": "216905f598c7d680c62bf68fdbe0c0534985dd84",
+        "remote": "56aeb16b2533489ff082938f0322a89ee051c8d2",
+        "tree": "6251b336a64cb6207c2ba9b22d8d41a8414ce1ae"
+      },
+      {
+        "local": "fc5de9fb1b0eaedd00cceea1354cf3805a73c893",
+        "remote": "ab490f3e001b89f7cc865dce8beddb6fb06c6186",
+        "tree": "30d61566906839995f8cdfe4e2e17d1cb4b9b798"
+      },
+      {
+        "local": "e92e99ffe54ed230fbfd19090bbef375b120cb8a",
+        "remote": "4fc2d4aa86e69885719066772b8794ba0ee8d362",
+        "tree": "81ae6e5a44d252b08d3d55853a93f162994a1847"
+      },
+      {
+        "local": "1be24aafa6fa922473eb9a3ed8799471ef5ceb2d",
+        "remote": "2b62b00ea29608243b47d37fa1a95c2cc473c84d",
+        "tree": "e1612ec3d9adbf60a98662d01daf237bb7175fc2"
+      }
+    ],
+    "ci": "pending final application integration",
+    "next_diagnostic": {
+      "version": "0.1.16",
+      "version_code": 17,
+      "profile": "capture-diagnostic",
+      "build_started": false,
+      "scope": "One meaningful frame-capture and original packet-continuation test APK after integrated qualification."
+    },
+    "increments": {
+      "frame_capture": "Bounded 128-byte header plus at most 192x108 RGBA, double-buffer source owner and full-surface GLES helper qualified; application wiring underway. GL driver overhead remains separate from named source charges.",
+      "capture_store": "One bounded historical frame container with hash/session/pose metadata and atomic replacement qualified in Java; export wiring underway.",
+      "packet": "Whole unchanged original entReceiveCostume/rewards/NPC costume receive/translucency wrappers qualified. Power-customization and later original suffix work underway; entity/message completion and ACK remain false.",
+      "character": "A lossless 48352-byte caller snapshot and original bodytype/changeGeo/texture adapter are qualified across all nine body descriptors. Actual selected bodytype/assets await the next Thor capture; box retained.",
+      "world": "Concrete scene CPU/GPU query integrated for capture. Worker tested archive input and 105 source placements; original CLIENT ZIP ranges and Android import hook are not yet qualified/integrated.",
+      "memory": "All scanned same-UID processes contribute to category and total sums independently of detail retention. A fixture with 75 processes is complete beyond 64 retained and 32 exported rows. Cgroup-first and actual PostgreSQL SHOW retention are underway."
+    },
+    "source_tests": {
+      "capture_owner": "76 controls each release/ASan/UBSan; explicit allocation balance; LeakSanitizer unsupported by this host procfs",
+      "capture_gles": "24 real Mesa controls including surface corners/state restoration",
+      "capture_store": "336 Java controls plus ZIP/hash checks",
+      "outer_costume": "15396 checks each release/ASan/UBSan",
+      "costume_snapshot": "26526 checks each release/ASan/UBSan;70613 slot regression checks per mode",
+      "appearance": "1481 checks each release/ASan/UBSan;48 source sender/client-oracle cases",
+      "memory_aggregates": "39 sampler,39 worker and8 contract checks",
+      "qualification_scope": "Independent worker source trees; final integrated Android source/build qualification pending."
+    },
+    "housekeeping": {
+      "readme_points_to_roadmap": true,
+      "legacy_081_090_marked_historical": true,
+      "obsolete_roadmap_pause_removed": true,
+      "tracked_bundles": 70,
+      "tracked_bundle_bytes": 44564428,
+      "bundles_deleted": 0,
+      "retained_reason": "The requested set of three bundle files totaling about 45MB does not exist. The three largest total 17657653 bytes and are SHA256-pinned by existing receipts; no other cleanup performed."
+    },
+    "world_transport_blocker": {
+      "rejected_action": "Status poll of the original range-qualification process",
+      "automatic_review_reason": "Sparse logical archive sizes were treated as evidence of full retrieval beyond bounded range scope.",
+      "process_ended": true,
+      "further_recovery_requests": false,
+      "offline_scope": "Original Atlas central directory and two selected payloads retained; original CLIENT central/header/compressed ranges missing. Generated CLIENT format fixture is not original-archive execution proof."
+    },
+    "next_action": "Finish application capture/export, original packet continuation and replay, then run focused integrated checks and one diagnostic build."
+  }
 }
