@@ -3,7 +3,7 @@
  * composes the retained original sender header to isolate owner integration. */
 #define COH_CLIENT_SLOTS_TEST_MAIN retained_client_slot_suite_not_executed
 #include "test_client_slots_android.c"
-static unsigned outer_cases;
+static unsigned outer_cases;static size_t last_power_begin;
 static const char *outer_report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"ack_permitted\":false"));return report_text;}
 static unsigned char replay_output[COH_INITIAL_REPLAY_BYTES+COH_INITIAL_REPLAY_HEADER_BYTES];
 static jsize replay_output_bytes;static unsigned replay_fault,replay_sets,replay_deletes;
@@ -44,10 +44,17 @@ static void outer_capture(const char *path,unsigned bodies,unsigned selected,uns
  }
  /* Source SupergroupCostume0, specialFX0, NPCfallthrough0, Xlucency0. */
  for(unsigned i=0;i<4;i++)set_bits(multi_packet,multi_bits++,1,0);
+ last_power_begin=multi_bits;
  /* Original PowerCust absent, titles absent, ragdoll absent, unchanged stats
   * when the earlier authentic pchar flag is present. */
  unsigned pchar=(partcount_packet[COH_PARTCOUNT_JNI_FIXTURE_AI_END/8]>>(COH_PARTCOUNT_JNI_FIXTURE_AI_END%8))&1u;
  for(unsigned i=0;i<3+pchar;i++)set_bits(multi_packet,multi_bits++,1,0);
+ /* The source Auto0 encoding is bin0 + two zero value bits. Exercise empty
+  * vision flags, and the original absent target/status/inventory branches. */
+ for(unsigned i=0;i<3+pchar;i++){set_bits(multi_packet,multi_bits,4,0);multi_bits+=4;}
+ if(pchar)for(unsigned i=0;i<3;i++)set_bits(multi_packet,multi_bits++,1,0);
+ /* Original architect absent, flashback Pack1 zero, parameters absent. */
+ for(unsigned i=0;i<3;i++)set_bits(multi_packet,multi_bits++,1,0);
  if(truncate)multi_bits-=truncate;
  slot_begin();CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);
  active->busy=1;CHECK(coh_initial_capture_service(active->capture,104,(CohCancel){0},multi_observe,active,sizeof(*active))==COH_UNSUPPORTED);active->busy=0;
@@ -55,12 +62,12 @@ static void outer_capture(const char *path,unsigned bodies,unsigned selected,uns
  CHECK(active->costume_bodies_expected==bodies&&active->costume_bodies_read==bodies);
  CHECK(r->begin_bit==active->initial_costume.begin_bit&&r->selected_complete&&r->selected_body==selected);
  CHECK(active->selected_costume.bodytype==selected%9&&active->selected_costume.part_count==0);
- CHECK(!r->entity_complete&&!r->message_complete&&r->end_bit==multi_bits);
+ CHECK(!r->entity_complete&&!r->message_complete&&r->end_bit<=multi_bits);
  CHECK(r->appearance_complete&&r->xlucency_complete&&r->power_complete);
  CHECK(r->status==(truncate?COH_INVALID:COH_OK));
  CHECK(strstr(outer_report(),"\"costume_outer\":")&&strstr(report_text,"\"selected_costume\":[1,"));
  CHECK(strstr(report_text,"\"initial_observed\":true")&&strstr(report_text,"\"ack_permitted\":false")&&!strstr(report_text,"REPORT_LIMIT"));
- if(!truncate)CHECK(strstr(report_text,"\"costume_next\":\"vision phases\"")&&r->titles_complete&&r->ragdoll_complete&&r->basic_stats_complete);
+ if(!truncate)CHECK(strstr(report_text,"\"costume_next\":\"later very-rare entity fields\"")&&strstr(report_text,"\"costume_next_kind\":\"implementation remaining\"")&&r->titles_complete&&r->ragdoll_complete&&r->basic_stats_complete&&r->vision_complete&&r->taskforce_complete&&r->end_bit==multi_bits);
  check_replay();CHECK(strstr(outer_report(),"\"packet_copy_retained\":true")&&strstr(report_text,"\"initial_replay\":[8192,0]"));
  #define RECEIVE_MAX(name,value) active->receive.name=COH_RECEIVE_COUNT_MAX;
  COH_RECEIVE_FIELDS(RECEIVE_MAX)
@@ -83,10 +90,27 @@ static void replay_bounds(const char *path){
  }
  alias_source=0;
 }
+static void missing_power(const char *path){
+ fixture();CHECK(slots_configure(path)==COH_OK);partcount_fixture=1;size_t at=last_power_begin;
+ /* Source full self PowerCust selector, one nonempty customization list. The
+  * actual original receiver must stop on its BasePower callback after CRC. */
+ set_bits(multi_packet,at++,1,1);set_bits(multi_packet,at,2,1);at+=2;set_bits(multi_packet,at++,1,1);
+ set_bits(multi_packet,at,8,0);at+=8;set_bits(multi_packet,at,8,1);at+=8;set_bits(multi_packet,at++,1,0);set_bits(multi_packet,at++,1,1);
+ set_bits(multi_packet,at,4,4);at+=4;set_bits(multi_packet,at,2,3);at+=2;set_bits(multi_packet,at,32,0x12345678u);at+=32;size_t boundary=at;
+ set_bits(multi_packet,at,16,0);multi_bits=at+16;
+ slot_begin();CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);
+ active->busy=1;CHECK(coh_initial_capture_service(active->capture,104,(CohCancel){0},multi_observe,active,sizeof(*active))==COH_UNSUPPORTED);active->busy=0;
+ CHECK(active->initial_outer.status==COH_UNSUPPORTED&&active->initial_outer.field==COH_ENT_COSTUME_POWER_CRC&&active->initial_outer.required_table==1&&active->initial_outer.power_crc==0x12345678u);
+ CHECK(active->initial_outer.end_bit==boundary&&active->initial_outer.failure_bit==boundary&&boundary<multi_bits&&active->initial_outer.selected_complete);
+ CHECK(strstr(outer_report(),"\"costume_next\":\"BasePower CRC lookup\"")&&strstr(report_text,"\"power_customization\":[1,0,1,1,1,305419896,"));
+ CHECK(strstr(report_text,"\"costume_next_kind\":\"required table\""));
+ check_replay();finish();CHECK(!map_live&&!live);
+}
 int main(int argc,char **argv){
  CHECK(argc==3);
  for(unsigned bodies=1;bodies<=10;bodies++)for(unsigned selected=0;selected<bodies;selected++)for(unsigned truncate=0;truncate<3;truncate++)outer_capture(argv[1],bodies,selected,truncate);
  replay_bounds(argv[1]);
+ missing_power(argv[1]);
  CHECK(opens==closed_files&&asset_opens==asset_closes&&maps==unmaps&&!map_live&&!live&&freed==wiped);
- printf("{\"passed\":true,\"checks\":%u,\"outer_cases\":%u,\"interop_owner_bytes\":%zu,\"snapshot_bytes\":%zu,\"report_peak_bytes\":%zu,\"stack_reserve\":8192,\"initial_limit\":8388608,\"physical_packet_replayed\":false,\"entity_or_message_complete\":false}\n",checks,outer_cases,sizeof(Interop),sizeof(CohOriginalCostumeSnapshot),max_report_bytes);return 0;
+ printf("{\"passed\":true,\"checks\":%u,\"outer_cases\":%u,\"interop_owner_bytes\":%zu,\"snapshot_bytes\":%zu,\"report_peak_bytes\":%zu,\"stack_reserve\":%u,\"initial_limit\":8388608,\"physical_packet_replayed\":false,\"entity_or_message_complete\":false}\n",checks,outer_cases,sizeof(Interop),sizeof(CohOriginalCostumeSnapshot),max_report_bytes,COH_ORIGINAL_ENT_COSTUME_STACK_RESERVE);return 0;
 }

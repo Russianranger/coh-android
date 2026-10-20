@@ -36,9 +36,10 @@ def main():
                Path('native-android/engine/initial-capture/coh_local_bodypart_default.c'),
                Path('native-android/engine/entities/coh_original_costume_receive.c'),
                Path('native-android/engine/entities/coh_original_ent_costume.c'),
+               Path('native-android/engine/entities/coh_original_taskforce_receive.c'),
                Path('native-android/engine/entities/coh_entities.c'), Path('native-android/engine/replication/coh_replication.c')]
     dependency = subprocess.run([*flags, '-M', *map(str, sources)], cwd=ROOT, capture_output=True, text=True, check=True)
-    frozen = {Path(__file__).resolve(), ROOT / TOOLS / 'report_diagnostic_contract.py', ROOT / TOOLS / 'client_slots_input.py', ROOT / metadata['source']}
+    frozen = {Path(__file__).resolve(), ROOT / TOOLS / 'report_diagnostic_contract.py', ROOT / TOOLS / 'client_slots_input.py', ROOT / metadata['source'], ROOT / 'native-android/combined-client/app/src/main/java/org/coh/nativecombined/InteropNative.java'}
     for line in dependency.stdout.replace('\\\n', ' ').splitlines():
         for name in shlex.split(line.split(':', 1)[1]):
             path = Path(name)
@@ -60,10 +61,37 @@ def main():
             raise RuntimeError(mode + ' execution failed; see ' + str(work / (mode + '-run.log')))
         result['modes'][mode] = json.loads(execution.stdout)
     assert len({json.dumps(row, sort_keys=True) for row in result['modes'].values()}) == 1
+    frames = []
+    parser_frames = {'valid', 'coh_rep_read', 'coh_rep_pack', 'stats_leaf', 'character_stats',
+                     'coh_ent_character_stats', 'fail', 'check_reader', 'coh_ent_target', 'target',
+                     'coh_ent_status_effects', 'status_effects', 'coh_ent_inventory_sizes', 'inventory_sizes'}
+    observer_frame = 0
+    for path in work.glob('release-*.su'):
+        for line in path.read_text().splitlines():
+            location, size, kind = line.split('\t')
+            function = location.rsplit(':', 1)[-1]
+            if 'interop_network.c:' in location and function == 'observe':
+                observer_frame = int(size)
+            if ('coh_original_ent_costume.c:' in location or 'coh_original_taskforce_receive.c:' in location
+                    or 'coh_original_costume_receive.c:' in location or 'original_ent_costume_receive.inc:' in location
+                    or 'original_taskforce_receive.inc:' in location or 'original_costume_receive.inc:' in location
+                    or function in parser_frames):
+                assert kind in ('static', 'dynamic,bounded')
+                frames.append({'function': function, 'bytes': int(size), 'kind': kind})
+    closure = sum(row['bytes'] for row in frames)
+    reserve = result['modes']['release']['stack_reserve']
+    assert observer_frame and closure + observer_frame <= reserve
+    result['memory'] = {'initial_observer_domain_limit': 8388608,
+                        'interop_owner_bytes': result['modes']['release']['interop_owner_bytes'],
+                        'host_fixture_mapping_index_bytes': 643072 + 134144,
+                        'conservative_parser_frame_sum': closure, 'observer_frame': observer_frame,
+                        'accounted_stack_reserve': reserve, 'frames': frames,
+                        'maximum_java_replay_payload_bytes': 65624, 'device_RSS_PSS': None,
+                        'complete_process_memory_claim': False}
     for selected in ([0, 0, 0, 0, 0], [1, 9, 8, 28, 10000]):
-        assert separate_report_extension({'costume_outer': [0, 15, 100, 10000, 10000, 9999, 1, 1, 0, 0], 'selected_costume': selected, 'costume_next': 'entity suffix', 'power_customization': [0, 1, 0, 0, 0, 0, 9999, 10000], 'initial_tail': [0, 0, 0]}) == {}
+        assert separate_report_extension({'costume_outer': [0, 15, 100, 10000, 10000, 9999, 1, 1, 0, 0], 'selected_costume': selected, 'costume_next': 'entity suffix', 'costume_next_kind': 'source field', 'power_customization': [0, 1, 0, 0, 0, 0, 9999, 10000], 'initial_tail': [0, 0, 0]}) == {}
     for field, value in [('costume_outer', [0, 15, 100, 10000, 10000, 9999, 1, 1, 1, 0]), ('selected_costume', [1, 0, 9, 28, 10000]), ('selected_costume', [0, 0, 1, 28, 10000]), ('costume_next', 'READY')]:
-        row = {'costume_outer': [0, 15, 100, 10000, 10000, 9999, 1, 1, 0, 0], 'selected_costume': [1, 0, 1, 28, 10000], 'costume_next': 'entity suffix', 'power_customization': [0, 1, 0, 0, 0, 0, 9999, 10000], 'initial_tail': [0, 0, 0]}
+        row = {'costume_outer': [0, 15, 100, 10000, 10000, 9999, 1, 1, 0, 0], 'selected_costume': [1, 0, 1, 28, 10000], 'costume_next': 'entity suffix', 'costume_next_kind': 'source field', 'power_customization': [0, 1, 0, 0, 0, 0, 9999, 10000], 'initial_tail': [0, 0, 0]}
         row[field] = value
         try:
             separate_report_extension(row)

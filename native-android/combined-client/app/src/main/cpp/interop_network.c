@@ -128,7 +128,7 @@ static void client_slots_release(ClientSlotsOwner *slots) {
 #define CLIENT_SLOTS_ARGS(h)
 #endif
 #ifdef COH_FRAME_CAPTURE_DIAGNOSTIC
-#define OUTER_COSTUME_FORMAT ",\"costume_outer\":[%u,%u,%llu,%llu,%llu,%llu,%u,%u,%u,%u],\"selected_costume\":[%u,%u,%u,%u,%llu],\"costume_next\":\"%s\",\"power_customization\":[%u,%u,%u,%u,%u,%u,%llu,%llu],\"initial_tail\":[%u,%u,%u]"
+#define OUTER_COSTUME_FORMAT ",\"costume_outer\":[%u,%u,%llu,%llu,%llu,%llu,%u,%u,%u,%u],\"selected_costume\":[%u,%u,%u,%u,%llu],\"costume_next\":\"%s\",\"costume_next_kind\":\"%s\",\"power_customization\":[%u,%u,%u,%u,%u,%u,%llu,%llu],\"initial_tail\":[%u,%u,%u]"
 #define OUTER_COSTUME_ARGS(h) ,status_number((h)->initial_outer.status),(h)->initial_outer.field, \
     (unsigned long long)(h)->initial_outer.begin_bit,(unsigned long long)(h)->initial_outer.end_bit, \
     (unsigned long long)(h)->initial_outer.failure_bit,(unsigned long long)(h)->initial_outer.appearance_end_bit, \
@@ -137,11 +137,16 @@ static void client_slots_release(ClientSlotsOwner *slots) {
     (h)->initial_outer.selected_complete,(h)->initial_outer.selected_body, \
     (h)->initial_outer.selected_complete?(h)->selected_costume.bodytype:0, \
     (h)->initial_outer.selected_complete?(h)->selected_costume.part_count:0, \
-    (unsigned long long)(h)->initial_outer.selected_body_end_bit,coh_original_ent_costume_field_name((h)->initial_outer.field), \
+    (unsigned long long)(h)->initial_outer.selected_body_end_bit,coh_original_ent_costume_field_name((h)->initial_outer.field),outer_next_kind(&(h)->initial_outer), \
     (h)->initial_outer.power_selector,(h)->initial_outer.power_complete,(h)->initial_outer.power_lists_read, \
     (h)->initial_outer.power_entry_count,(h)->initial_outer.required_table,(h)->initial_outer.power_crc, \
     (unsigned long long)(h)->initial_outer.power_begin_bit,(unsigned long long)(h)->initial_outer.power_end_bit, \
     (h)->initial_outer.titles_complete,(h)->initial_outer.ragdoll_complete,(h)->initial_outer.basic_stats_complete
+static const char *outer_next_kind(const CohOriginalEntCostumeReport *r){
+    if(!r->field)return "not observed";
+    if(r->required_table||r->body.dictionary_required)return "required table";
+    return r->field==COH_ENT_COSTUME_RARE_PREFIX?"implementation remaining":"source field";
+}
 
 #else
 #define OUTER_COSTUME_FORMAT ""

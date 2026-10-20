@@ -1,4 +1,22 @@
 """Strict public projection for the bounded 0.1.11 native report extension."""
+import functools
+import json
+from pathlib import Path
+import re
+
+
+@functools.lru_cache(maxsize=1)
+def outer_field_names():
+    """Use the linked source adapter's fixed names as its enum grows."""
+    source = Path(__file__).resolve().parents[2] / 'engine/entities/coh_original_ent_costume.c'
+    text = source.read_text()
+    found = re.search(r'coh_original_ent_costume_field_name\(uint32_t \w+\).*?names\[\]\s*=\s*\{(.*?)\};', text, re.S)
+    if found is None:
+        raise ValueError('original source field-name table unavailable')
+    names = json.loads('[' + ','.join(re.findall(r'"(?:\\.|[^"\\])*"', found[1])) + ']')
+    if not names or len(names) > 128:
+        raise ValueError('original source field-name table unbounded')
+    return names
 
 OMISSION_FIELDS = ('first_create', 'first_record_pose', 'first_record_sequence',
     'first_record_triggered_moves', 'first_record_ai_animation', 'first_record_netfx',
@@ -82,14 +100,15 @@ def separate_report_extension(value, required=False):
              and replay[0] <= 65536 and replay[1] <= 3
              and (not replay[0] or not replay[1]), 'INITIAL replay retention shape')
         value = {key: item for key, item in value.items() if key != 'initial_replay'}
-    outer_keys = {'costume_outer', 'selected_costume', 'costume_next', 'power_customization', 'initial_tail'}
+    outer_keys = {'costume_outer', 'selected_costume', 'costume_next', 'costume_next_kind', 'power_customization', 'initial_tail'}
     outer_present = outer_keys.intersection(value)
     need(not outer_present or outer_present == outer_keys, 'partial original outer costume extension')
     if outer_present:
         outer, selected = value['costume_outer'], value['selected_costume']
         need(isinstance(outer, list) and len(outer) == 10
              and all(type(item) is int and item >= 0 for item in outer), 'outer costume numeric shape')
-        need(outer[0] <= 7 and outer[1] <= 23
+        names = outer_field_names()
+        need(outer[0] <= 7 and outer[1] < len(names)
              and all(item <= 33554432 for item in outer[2:6])
              and all(item in (0, 1) for item in outer[6:])
              and outer[8:] == [0, 0], 'outer costume source domains/transaction scope')
@@ -106,14 +125,15 @@ def separate_report_extension(value, required=False):
              and all(item <= 33554432 for item in power[6:]), 'power customization source domains')
         need(isinstance(tail, list) and len(tail) == 3
              and all(type(item) is int and item in (0, 1) for item in tail), 'initial tail source domains')
-        names = ('none', 'appearance selector', 'costume rewards', 'main costume body',
-                 'Supergroup costume presence', 'Supergroup costume body', 'Supergroup mode',
-                 'Supergroup emblem', 'costume FX presence', 'costume FX string',
-                 'NPC costume fallthrough', 'NPC costume fields', 'custom NPC costume',
-                 'appearance end', 'translucency', 'entity suffix', 'NPC definitions',
-                 'power customization selector', 'power customization list', 'BasePower CRC lookup',
-                 'titles', 'ragdoll', 'basic character statistics', 'vision phases')
         need(value['costume_next'] == names[outer[1]], 'outer source field name mismatch')
+        next_kind = value['costume_next_kind']
+        need(next_kind in ('not observed', 'required table', 'implementation remaining', 'source field'), 'outer source boundary kind')
+        if power[4]:
+            need(next_kind == 'required table', 'actual BasePower dependency mislabeled')
+        elif value['costume_next'] == 'later very-rare entity fields':
+            need(next_kind == 'implementation remaining', 'known source implementation mislabeled as table')
+        elif not outer[1]:
+            need(next_kind == 'not observed', 'absent source observation fabricated')
         value = {key: item for key, item in value.items() if key not in outer_keys}
     if 'costume_bodies' in value:
         bodies = value['costume_bodies']
