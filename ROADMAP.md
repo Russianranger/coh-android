@@ -1,6 +1,6 @@
 # Native Android roadmap
 
-Updated 2026-10-20. Physical 0.1.16 is recorded; 0.1.17 is ready for integrated CI.
+Updated 2026-10-20. Physical 0.1.16 is recorded; signed 0.1.17 passes focused CI.
 
 Combined 0.1.14 passed stage 41. Physical 0.1.16 carries bodytype 4, Huge,
 28 costume parts, 112 strings and 58 colors. The body ends at bit 11648 and
@@ -16,10 +16,11 @@ Two physical captures show textured pavement and the box at
 [131.453125, 0.25, -114.953125]. The new host source-scene capture is 640 by
 360 with a viewable PNG, full-screen controls and a corner return button.
 This is host evidence; a new Thor export remains necessary. The real Huge
-costume resolves to 14 visible draws in 11 GEO files. Eight are package-pinned;
-huge_emblem.geo, huge_uarmr.geo and huge_waist.geo are not in checked manifests.
-Their absence on Thor is not established. Actual texture and rig loading still
-need integration; the box remains the fallback.
+costume resolves to 14 visible records in 11 GEO files; it is not rendered.
+Eight GEO files are package-pinned. Three have no checked manifest entry:
+huge_emblem.geo, huge_uarmr.geo and huge_waist.geo. Their presence on Thor
+is untested. Actual matching texture and rig loading still need integration;
+the box remains the fallback.
 
 Wine accounts for about 2.42 GB PSS. One omitted detail row contributes
 1.83 GB without an executable label; MapServer attribution is unproved.
@@ -27,7 +28,7 @@ Map and DB startup took about 279 and 67 seconds, without a world or collision
 allocation breakdown. PostgreSQL stays unchanged. Recorded physical peaks are
 4021653504 RSS bytes and 2925635584 PSS bytes, separate from source charges.
 
-1. Build the diagnostic, then record Thor ACK/READY traffic and position observations.
+1. Install 0.1.17 and record Thor ACK/READY traffic, positions and full-screen capture.
 2. Draw the decoded Huge costume with its actual rig, GEO and textures.
 3. Verify imported archive streaming at a different pose without rebuilding.
 
