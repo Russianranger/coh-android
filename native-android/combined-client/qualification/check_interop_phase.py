@@ -14,11 +14,12 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'app/src/main/java/org/coh/nativecombined'
 METHODS = ['sameNetworkPolicy', 'disconnectNetwork', 'suspendNetwork', 'networkTick',
-           'checkedHandoffReport', 'storeNetworkReport', 'publishNetwork', 'updateNetworkUi']
+           'checkedHandoffReport', 'storeNetworkReport', 'publishNetwork', 'updateNetworkUi',
+           'initialContinuationDetail']
 
 
 def method(text, name):
-    match = re.search(r'    private (?:void|boolean|String) ' + name + r'\(', text)
+    match = re.search(r'    private (?:static )?(?:void|boolean|String) ' + name + r'\(', text)
     assert match, name
     start = text.index('{', match.end())
     depth = 0
@@ -57,7 +58,7 @@ final class InteropPhaseTest {
  private boolean networkConnecting,returningToLauncher,charactersPublished;
  private long networkHandle=1,networkAttempt,networkOwnerAttempt,policyCheckedAt=1000;
  private long observedEntityAttempt=-1;private int observedEntityIndex=-1;
- // JNI/render callout is an explicit collaborator; the eight production phase methods remain exact.
+ // JNI/render callout is an explicit collaborator; the phase/progress methods remain exact.
  private void publishObservedSelf(long sourceHandle,long attempt){}
  private void saveInitialReplay(){}
  private JSONObject networkPolicy;
@@ -157,8 +158,17 @@ TESTS = r'''
   need(!t.networkStatus.text.contains("default part count"),"verified count is not described as unresolved");
   t.observedEntityAttempt=t.networkAttempt;t.observedEntityIndex=123;t.updateNetworkUi();need(t.networkStatus.text.contains("observed server entity #123"),"observed entity marker independent of later dictionary");
 
+
+  t=active();t.storeNetworkReport("{\"phase\":\"WAIT_UPDATES\",\"initial_packet_complete\":true,\"initial_command_tail\":[0,298736,301656,3,0,1,0],\"power_unresolved\":[343,343,1,1,0],\"initial_continuation\":[1,1,1,0,0,1,0,0,0,0]}");
+  t.updateNetworkUi();need(!t.networkStatus.text.contains("exact EOF"),"old profile does not project new continuation fields");
+  BuildConfig.FULLSCREEN_DIAGNOSTIC=true;t.updateNetworkUi();
+  need(t.networkStatus.text.contains("exact EOF at bit 301656")&&t.networkStatus.text.contains("343 unmapped power entries"),"fullscreen Activity projects complete source packet and tolerated unresolved count");
+  need(t.networkStatus.text.contains("ACK queued; client READY queued")&&!t.networkStatus.text.contains("ACK sent"),"fullscreen UI does not treat queued commands as transmitted");
+  t.storeNetworkReport("{\"phase\":\"WAIT_UPDATES\",\"initial_packet_complete\":true,\"initial_continuation\":[1,1,1,1,1,1,0,4,0,0],\"post_position\":[2,2,1,1,0,1,0]}");t.updateNetworkUi();
+  need(t.networkStatus.text.contains("ACK sent; client READY sent")&&t.networkStatus.text.contains("Later messages 4")&&t.networkStatus.text.contains("Position changes 1"),"fullscreen UI reports actual sends and bounded later counters");
+  BuildConfig.FULLSCREEN_DIAGNOSTIC=false;
   for(String invalid:new String[]{"{\"phase\":\"INITIAL_OBSERVED\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"wrong\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":false,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,\"41\",3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,true,3,1,2424,3416,262144]}"}){t=active();t.storeNetworkReport(invalid);need(t.handoffState.catalogBoundary()==null,"untrusted schema/numeric input refused");}
-  System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"exact_activity_methods\":8,\"native_json_android_collaborators_are_doubles\":true,\"android_execution\":false,\"world_authority\":false}");
+  System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"exact_activity_methods\":9,\"native_json_android_collaborators_are_doubles\":true,\"android_execution\":false,\"world_authority\":false}");
  }
 }
 final class Handler {final ArrayDeque<Runnable> q=new ArrayDeque<>();void post(Runnable r){q.add(r);}void drain(){while(!q.isEmpty())q.remove().run();}}
@@ -168,9 +178,12 @@ final class JSONArray {
  int optInt(int at){return optInt(at,0);}
  final List<Object> values=new ArrayList<>();JSONArray(){}JSONArray(String raw){}
  JSONArray put(Object value){values.add(value);return this;}int length(){return values.size();}Object opt(int i){return i>=0&&i<values.size()?values.get(i):null;}
+ long optLong(int i){return optLong(i,0);}
+ long optLong(int i,long fallback){Object value=opt(i);return value instanceof Number?((Number)value).longValue():fallback;}
  int optInt(int i,int fallback){Object value=opt(i);return value instanceof Number?((Number)value).intValue():fallback;}
  public String toString(){return values.toString();}
 }
+final class BuildConfig {static boolean FULLSCREEN_DIAGNOSTIC;}
 final class InteropNative {
  static int bits,services,reports,suspends,characters;static String text;
  static int controlState(long handle){return bits;}static String report(long handle){reports++;return text;}
@@ -187,6 +200,7 @@ final class MemoryTelemetry {static int calls;static void request(Object activit
 final class JSONObject {
  static final Object NULL=new Object();final Map<String,Object> values=new LinkedHashMap<>();
  JSONObject(){}JSONObject(String raw){Parser p=new Parser(raw);JSONObject parsed=p.object();p.space();if(p.at!=raw.length())throw new IllegalArgumentException();values.putAll(parsed.values);}
+ boolean has(String key){return values.containsKey(key);}
  JSONObject put(String key,Object value){values.put(key,value);return this;}Object opt(String key){return values.get(key);}
  JSONArray optJSONArray(String key){Object value=opt(key);return value instanceof JSONArray?(JSONArray)value:null;}
  JSONObject optJSONObject(String key){Object value=opt(key);return value instanceof JSONObject?(JSONObject)value:null;}
