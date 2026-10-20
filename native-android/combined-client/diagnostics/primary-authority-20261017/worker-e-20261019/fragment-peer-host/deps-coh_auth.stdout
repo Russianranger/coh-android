@@ -1,7 +1,0 @@
-coh_auth.o: \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth.c \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth.h \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/../coh_contracts.h \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/../../include/coh_native_core.h \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/../../protocol/coh_protocol.h \
- /workspace/scratch/6400a2d75800/coh-android/native-android/include/coh_native_core.h

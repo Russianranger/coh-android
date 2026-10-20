@@ -1,1 +1,0 @@
-check failed /home/runner/work/coh-android/coh-android/native-android/engine/scenegraph/tests/test_scenegraph.c:164: coh_scenegraph_metadata(&g,0,&m)==COH_STATE&&memcmp(&m,&old,sizeof(m))==0

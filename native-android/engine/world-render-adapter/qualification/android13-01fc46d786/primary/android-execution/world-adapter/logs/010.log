@@ -1,1 +1,0 @@
-{"passed":true,"checks":16745,"original_matrix_cases":512,"bounded_mutations":5000,"published_generations":2000,"concurrent_readers":3,"max_draws_tested":4096,"render_allocations":0,"render_frees":0,"fixture_only":true,"authentic_world_entry":false}

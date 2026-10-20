@@ -1,4 +1,0 @@
-coh_protocol.o: \
- /workspace/scratch/6400a2d75800/coh-android/native-android/protocol/coh_protocol.c \
- /workspace/scratch/6400a2d75800/coh-android/native-android/protocol/coh_protocol.h \
- /workspace/scratch/6400a2d75800/coh-android/native-android/include/coh_native_core.h

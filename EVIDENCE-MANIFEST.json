@@ -1,0 +1,1323 @@
+{
+  "schema": 1,
+  "archive_branch": "archive/native-evidence-2026-10-20",
+  "archive_commit": "8f776dc375f2e2c624aa06de42289ee315ea4368",
+  "reference_scan_revision": "8f776dc375f2e2c624aa06de42289ee315ea4368",
+  "reference_scan": "Tracked non-upstream checkers, workflows, receipts and documents checked by exact path, current SHA-256, gzip decoded SHA-256 and context-resolved relative basename. Referenced and explicitly protected inputs retained. Unrelated basename collisions are not references.",
+  "scope": "Unreferenced raw evidence, failed-attempt copies and superseded workflows. History is preserved; this reduces the active checkout, not the repository object history.",
+  "retained": {
+    "referenced_raw_files": 1723,
+    "referenced_gameplay_testing_documents": 47,
+    "note": "Pinned workflows, failed copies and test documents remain in place."
+  },
+  "files": [
+    {
+      "path": "docs/android-evidence/host-diagnostic-36331879591.log",
+      "size": 10046,
+      "sha256": "928c62951f2deb865ab484d664baf0befa9db2c3c4d689adad7fcca1fff1359b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/docs/android-evidence/host-diagnostic-36331879591.log"
+    },
+    {
+      "path": "docs/android-evidence/host-diagnostic-36332802885.log",
+      "size": 9442,
+      "sha256": "3c0ba2a1e9a1da8e6e5edbde3b73b9bb5e7bc91082b92def738c5039c6100c6f",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/docs/android-evidence/host-diagnostic-36332802885.log"
+    },
+    {
+      "path": "docs/android-evidence/host-diagnostic-36333868865.log",
+      "size": 9871,
+      "sha256": "bb7e7edbdc143e9d500a6b9e84b290d89a4fb2c908a321afcfa7d162affb9afe",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/docs/android-evidence/host-diagnostic-36333868865.log"
+    },
+    {
+      "path": "docs/android-evidence/host-diagnostic-36334034143.log",
+      "size": 10111,
+      "sha256": "3cd6e400edb2a1e9ac3454d0467ca17ef9432d110ec4853d5bccb3874754ab3b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/docs/android-evidence/host-diagnostic-36334034143.log"
+    },
+    {
+      "path": "docs/android-evidence/host-diagnostic-36334953501.log",
+      "size": 10818,
+      "sha256": "57343d5709ed6479c94dba9ae9c15ff52ec13d5a775d4abe7e0974fb96503934",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/docs/android-evidence/host-diagnostic-36334953501.log"
+    },
+    {
+      "path": "docs/android-evidence/host-diagnostic-36335852159.log",
+      "size": 20575,
+      "sha256": "f200e38d61c8a3f89e1ee952550f2b325611ca86d361129524809b152f2f99e2",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/docs/android-evidence/host-diagnostic-36335852159.log"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/interop-adapter-20261018/development-refusals.json.gz",
+      "size": 4114,
+      "sha256": "a060e1544f06e732992b7f140bbd4efda290409db346fedf8e408b0771f186ad",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/interop-adapter-20261018/development-refusals.json.gz"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/integrated-power-ids.json.gz",
+      "size": 12174,
+      "sha256": "2534d4507c899ad1d351513025aa90e87d8e385673832f44b4f61f27c3d93e0d",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/integrated-power-ids.json.gz"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/integrated-power.json.gz",
+      "size": 12027,
+      "sha256": "75965b49380d851cd216223a00838273e59267f805d935cb202a991825f0f0a0",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/integrated-power.json.gz"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/windows-profile-model-workflow-20261018/build_windows_profile_model_workflow.py.gz",
+      "size": 4696,
+      "sha256": "29e365e511d23909db2c15d8cbde352e992e632d9fb0f745ddf745f94fb0f6a2",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/windows-profile-model-workflow-20261018/build_windows_profile_model_workflow.py.gz"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-capture_local_initial.stdout",
+      "size": 3634,
+      "sha256": "9d7b4cd8480b8fe7257a2141ecb68ce44b9772720c70bd002f7c780d904d02e4",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-capture_local_initial.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_auth.stdout",
+      "size": 573,
+      "sha256": "71735898c9b4857768de0e8de902468ea6b42def096227553d7a19a7880e6549",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_auth.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_auth_openssl.stdout",
+      "size": 397,
+      "sha256": "31a10a72b5ec7cb54c64ab6314728208b5d2056674d08bbe52c73f3785903d11",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_auth_openssl.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_blowfish.stdout",
+      "size": 265,
+      "sha256": "d44f31e3f0971aa034a4faec2f7126b5e43dea9417b0dc1b8727203f9d051d2d",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_blowfish.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_db_account_controls.stdout",
+      "size": 1046,
+      "sha256": "34ec6282aa1143574637d8f95ae1ce0b8064ccf61ee72c9b540ab4bca5c72b69",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_db_account_controls.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_db_session.stdout",
+      "size": 1648,
+      "sha256": "d18f40af94ca40440d80c89dd6fe36885e7abdfcdcb05b5a1ea2df9706d75c85",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_db_session.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_dbclient.stdout",
+      "size": 815,
+      "sha256": "e76254b9c5d9896e8ab183617866d5e3350124f94d613603d2a28db11cbe71b9",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_dbclient.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_groups.stdout",
+      "size": 401,
+      "sha256": "202e065d3a255b7857e56aae4f099afba4f8faaa3d27300c76fa8628264d9a41",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_groups.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_initial_local.stdout",
+      "size": 3650,
+      "sha256": "4d151aaedcdb426c46ff7c9b2f2a18cc8ba0e00431d765aafbfb129e08f0ad74",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_initial_local.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_initial_map.stdout",
+      "size": 3562,
+      "sha256": "0f75f8b6b3109734bba873ee17650441ec6b93c87dab01c6a9e4cea72f23a647",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_initial_map.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_mapclient_owned.stdout",
+      "size": 2611,
+      "sha256": "435b1b5c6431b3871e9daa4f743f6790c30e22db37fb229d85d82588b93a7d9f",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_mapclient_owned.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_net.stdout",
+      "size": 576,
+      "sha256": "77d9e75fbcda66d8f32a5a8a3ff621948014a5671073ac300e51d5debc998bc7",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_net.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_net_frame.stdout",
+      "size": 488,
+      "sha256": "3c02c1f5f51a7204495d9cbe4dbfc01a8e2cf2fd985981187005f46d25295813",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_net_frame.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_net_udp.stdout",
+      "size": 575,
+      "sha256": "cabcfe6a55c33f18ae671fff6ed02a5d235eec84e39b7aca543df78988fa7a24",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_net_udp.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_net_zip.stdout",
+      "size": 584,
+      "sha256": "1a2818fb89a1d18021d7b7355130d905660f29c6cb88d7a9b6f5e3a583be97d3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_net_zip.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_protocol.stdout",
+      "size": 276,
+      "sha256": "31aaea4248bcad9100e985e06f4f8d116f2c4884a52e93703a2adfe1996252c2",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_protocol.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_replication.stdout",
+      "size": 317,
+      "sha256": "018f5f29973ca176c5180ad44ef6b6a170a3f55a426448188ab31ea867f9dacf",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_replication.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_session_crypto.stdout",
+      "size": 946,
+      "sha256": "4ae422e98d75ad4a7d73645c9ffd30fd7f47adce756e5924abedad4d3034d55b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-coh_session_crypto.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-test_initial_fragment_peer.stdout",
+      "size": 3902,
+      "sha256": "7cf233c5e9c486c2b544d09ed258554085ba5aa9ee2a925018873ed2fae86b11",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/primary-authority-20261017/worker-e-20261019/fragment-peer-host/deps-test_initial_fragment_peer.stdout"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/worker-f-20261019/fragment-apk-preparation-review/controls.stderr",
+      "size": 907,
+      "sha256": "24efccd06aff3d1d560bea19576572aa257d35f7b58e055ff9a4e096b7bbf46e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/worker-f-20261019/fragment-apk-preparation-review/controls.stderr"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/worker-f-20261019/map-reuse-helper-review/controls.stderr",
+      "size": 122,
+      "sha256": "b18888728e9762e884cafae355cc95cb9374f8056f42c8716b95ef40cfbd3502",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/worker-f-20261019/map-reuse-helper-review/controls.stderr"
+    },
+    {
+      "path": "native-android/combined-client/diagnostics/worker-f-20261019/map-reuse-helper-review/controls.stdout",
+      "size": 72,
+      "sha256": "65c260a191a7af3457122864bd5de2d51c9afc475d1c72e6e54171a9d17f853b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/diagnostics/worker-f-20261019/map-reuse-helper-review/controls.stdout"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.1/local/framework-driver-controls.log",
+      "size": 166,
+      "sha256": "4c21171a52ca41770fc59b311909f21a4aaf719d109adb85d2ed44f0b7ae6471",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.1/local/framework-driver-controls.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.1/local/guest-diagnostics.log",
+      "size": 86,
+      "sha256": "1d17d8f98f9c9fc2ca8d8935c334d14ba1c92a7bc893fddaa25b96a19e482fa4",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.1/local/guest-diagnostics.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.1/local/imports.log",
+      "size": 152,
+      "sha256": "ae9dbc14ce4b74b248231e964c4c24809a26a68c2bc2a92880edcd9ee59f47c9",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.1/local/imports.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.1/local/server-runtime.log",
+      "size": 7467,
+      "sha256": "50e3ccbfaf4f7db54596387e7c9b90843f0634ef31cf80499421699021c1cb2a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.1/local/server-runtime.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.2/hosted/host/framework-driver-controls.log",
+      "size": 166,
+      "sha256": "4c21171a52ca41770fc59b311909f21a4aaf719d109adb85d2ed44f0b7ae6471",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.2/hosted/host/framework-driver-controls.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.2/hosted/host/guest-diagnostics.log",
+      "size": 86,
+      "sha256": "1d17d8f98f9c9fc2ca8d8935c334d14ba1c92a7bc893fddaa25b96a19e482fa4",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.2/hosted/host/guest-diagnostics.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.2/hosted/host/local-protocol.log",
+      "size": 5309,
+      "sha256": "4380f56709151aed431961e74ce82d461d4d1cc0a55b7c4eccaf3ff42f61c480",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.2/hosted/host/local-protocol.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.2/hosted/host/server-runtime.log",
+      "size": 8615,
+      "sha256": "6fb253bf0c71ec6afc1aa9e826af15676763558050eee43ffeff57d19be183fd",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.2/hosted/host/server-runtime.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.2/local/initial-framework-driver-controls.log",
+      "size": 166,
+      "sha256": "4c21171a52ca41770fc59b311909f21a4aaf719d109adb85d2ed44f0b7ae6471",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.2/local/initial-framework-driver-controls.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.2/local/initial-guest-diagnostics.log",
+      "size": 86,
+      "sha256": "1d17d8f98f9c9fc2ca8d8935c334d14ba1c92a7bc893fddaa25b96a19e482fa4",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.2/local/initial-guest-diagnostics.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.2/local/initial-imports.log",
+      "size": 152,
+      "sha256": "5bc6d269104d458b5e6e59d077bc18147fe4eec87d85d9fdea4aef8d76f3def8",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.2/local/initial-imports.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261015/startup-repair-0.1.2/local/initial-server-runtime.log",
+      "size": 8759,
+      "sha256": "2da1ed2c00484363c5b1042a143e7d04ebf2f44ece59e536b342b933a57bbc57",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261015/startup-repair-0.1.2/local/initial-server-runtime.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/catalog-initial-scenegraph.log",
+      "size": 2141,
+      "sha256": "38720c5774b850bca80e7738ad6291cfe1128e3e9a635f05bd23d3f63550679e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/catalog-initial-scenegraph.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/007.log",
+      "size": 35,
+      "sha256": "dd5676f093c9681b5c7ee89e2fa989fdfd6134ec69760a0864f3b5eeaf03b0d3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/007.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/008.log",
+      "size": 194,
+      "sha256": "138cab9cfec8d595d73297d5677e5af08fdc5e8065092236b0cf94f225a40e64",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/008.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/009.log",
+      "size": 114,
+      "sha256": "5c7a1a429cb4ea6656b97835ce6c45b3a25d61c498e7861c50e00aa229f9212a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/009.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/011.log",
+      "size": 135,
+      "sha256": "c5fc28f0959f00bc5bc6da842afe7aa3beae78f610a49ab15ab3a823c9bfb437",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/011.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/012.log",
+      "size": 189,
+      "sha256": "34381b92b1361372a7f378edb89565cdf9276ce2e8d35c2e31edbe5b081d16fa",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/012.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/013.log",
+      "size": 110,
+      "sha256": "f312696d43fd9a133c2c949531774ce8a51468b7fd7ad9dd28e0644d03a8a72d",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/013.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/015.log",
+      "size": 250,
+      "sha256": "0bd9cebe6a0098d192968a096eab1f0d3ae04fdac5759ab4dd58b5f5808ed612",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/015.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/016.log",
+      "size": 196,
+      "sha256": "452ac6bd257e20aead314720551dd9130c2db7d8c3529b4afa1c322698fce853",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/016.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/017.log",
+      "size": 112,
+      "sha256": "e969cc51579b186692ef761fa4022521d292bc69d733220fcc8749e52a168d3c",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/017.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/019.log",
+      "size": 321,
+      "sha256": "08c06067a6119dc87cadcec653efdcf4b68d3a38f1f47f8e024a98124235a619",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/logs/019.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/world-adapter/logs/006.log",
+      "size": 35,
+      "sha256": "c2ae5a8ab0f50606a256705307c930fee5f177ba463e11c24df542f72d7d4338",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/world-adapter/logs/006.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/world-adapter/logs/007.log",
+      "size": 202,
+      "sha256": "680754d5dd3784cf9ff3b156f1e69579568d05a39bf890a77ef742e12f58268f",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/world-adapter/logs/007.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/world-adapter/logs/008.log",
+      "size": 114,
+      "sha256": "557dfa7c883c05c2770044cfc5a8acfb6687d4428eb8e2cdb9ab4a54c03a3320",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/world-adapter/logs/008.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/world-adapter/logs/010.log",
+      "size": 61,
+      "sha256": "7fa84245ed06a23680d4261318fdfff53f8c887284d1b4fbb5d2063762995c15",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-38939957550/android-initial/world-adapter/logs/010.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-initial-scenegraph.log",
+      "size": 2149,
+      "sha256": "eba5dda580c6b674219cec2b4bfdeadf222be3469a37028c72946896c10352cb",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261016/six-worker-continuation/hosted/primary-initial-scenegraph.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261017/emergency-primary/prior-uncommitted-coordinator-inputs.tar.gz",
+      "size": 2647,
+      "sha256": "ebe86d9dc16ac96d97c83dc9903eda619e69d8feffdf99606e5993ff1530d587",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261017/emergency-primary/prior-uncommitted-coordinator-inputs.tar.gz"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261017/emergency-recovery/auth-1024-source-38996044100/job.log",
+      "size": 20708,
+      "sha256": "f9c269f1308fa540ea601e7cbeba25b3786b07e0408882e94e8fc6cd2085ca79",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261017/emergency-recovery/auth-1024-source-38996044100/job.log"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261017/emergency-recovery/integration9/map-scene-record-host.json.gz",
+      "size": 75217,
+      "sha256": "2097bd816f139e459e5550ddba44e9f0ceaa112408e20e75b836488e71fd765b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261017/emergency-recovery/integration9/map-scene-record-host.json.gz"
+    },
+    {
+      "path": "native-android/combined-client/evidence/20261017/emergency-recovery/world-android-38994607348/job.log",
+      "size": 23932,
+      "sha256": "6b928a43b299b14a4de677adf479b9fc85cf09126d2899481a6c7bb13972f1f4",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/combined-client/evidence/20261017/emergency-recovery/world-android-38994607348/job.log"
+    },
+    {
+      "path": "native-android/engine/auth-interop/deployment/qualification/fresh-platform-compile-generator-20261018/unittest.stderr",
+      "size": 734,
+      "sha256": "a3344fad48fe97c83f60dc4252931ac5ecf301a06c01ce3d7aa214c872384e0f",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/deployment/qualification/fresh-platform-compile-generator-20261018/unittest.stderr"
+    },
+    {
+      "path": "native-android/engine/auth-interop/deployment/qualification/windows-profile-job-drain-20261018/model/model.stdout",
+      "size": 95,
+      "sha256": "ff92b57969f93bc027bcc974028c72ba6f4636a524fffea90f24d3e26a08fb6e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/deployment/qualification/windows-profile-job-drain-20261018/model/model.stdout"
+    },
+    {
+      "path": "native-android/engine/auth-interop/evidence/password-fixture-20261016/deployment-tests.log",
+      "size": 5933,
+      "sha256": "2e7d3f6d8bbfe134ee0b70f01ddc052580ff78b355c614f0724958153c37d8fa",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/evidence/password-fixture-20261016/deployment-tests.log"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/development-test-expectation-refusal-traces.json.gz",
+      "size": 990,
+      "sha256": "9657224ddbf74843a549d0c37edde3afcf29d843693233d982daa34c9c7b6b0f",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/development-test-expectation-refusal-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/final01-source-predecessors.json.gz",
+      "size": 4870,
+      "sha256": "019adfb6e33a4a1e3ac488b7e09c5d3176ab3daf294b058ec11cf424729f86e5",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/final01-source-predecessors.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/final02-source-predecessors.json.gz",
+      "size": 8585,
+      "sha256": "337b87758ded1fffaa421dd876b195f50d9fc0efd9482d332e5d0551fe7534bb",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/final02-source-predecessors.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-dev-03-traces.json.gz",
+      "size": 4380,
+      "sha256": "eb8f6cdcd46f09e60e74228ff0595bfe9e4dd98155d7e62cd3760391ddec0855",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-dev-03-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-dev-03.json.gz",
+      "size": 7923,
+      "sha256": "1a96a1808b972fe8720f927c68613543e4a8724bfb48697801649339d501c0d7",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-dev-03.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-final-01-traces.json.gz",
+      "size": 4386,
+      "sha256": "69b6298639b48fbe708761547f6eb05dcb9594732a606f5636bb372183a0a65b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-final-01-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-final-02-traces.json.gz",
+      "size": 4398,
+      "sha256": "d8092be5c73914ac2b72ad9dc2e89a0c73e7f3603c7aabc80ad560910d4b0428",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-final-02-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-final-03-traces.json.gz",
+      "size": 4422,
+      "sha256": "943250cc1f3b75db3b8fde890c13e55dc2d0e51161207ccac291daa89265ece3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/qualification/controls-20261018/worker-c-probe-final-03-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-01-predecessors.json.gz",
+      "size": 11278,
+      "sha256": "edf751983655a0e50951fce1715e6e314585658c8f475b6a375f901631fc0cda",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-01-predecessors.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-01-receipt.json.gz",
+      "size": 6705,
+      "sha256": "04583efa86ca622bb425356182778585fec0eccbb9bbf026570e20ae867837e5",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-01-receipt.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-01-traces.json.gz",
+      "size": 1839,
+      "sha256": "d842224faeb2fdc63aff7a6e12eb49ff83eb7945e12eb2454bf0c7210763f2cd",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-01-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-02-predecessors.json.gz",
+      "size": 11568,
+      "sha256": "006b0bfcf004405222d2a87ca3486cbfd808d2a11b8414282b216649de9a10f2",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-02-predecessors.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-02-receipt.json.gz",
+      "size": 6699,
+      "sha256": "1c4f59e70aed8b0351096d45c30965ea4e400eabcefe3e3870ccefae20c1e1c4",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-02-receipt.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-02-traces.json.gz",
+      "size": 1835,
+      "sha256": "c3310a543dc0bb662a7a77213cb58f2267c03445e818357863ed1b927325286c",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-02-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-03-traces.json.gz",
+      "size": 1581,
+      "sha256": "ddc996b8bfe69ff959a866fc51ae850922c2a58f2a9c7cec3e4baa3a0719e323",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/development-03-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/final-04-traces.json.gz",
+      "size": 1914,
+      "sha256": "1de4b8afaac8b3a3353115f70377da65d9921fbb64af5a0a75e43e110f452d17",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/auth-interop/fresh-character-owner/probe/windows/qualification/controls-20261018/final-04-traces.json.gz"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/address.stdout",
+      "size": 177,
+      "sha256": "59e5b3e6347a62af76c9297f8673474ea0694eea7dd03721366854326c06d87a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/address.stdout"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/invent-surface.stderr",
+      "size": 39,
+      "sha256": "b907dabcdb6d51ebc3d5e9816fbb45bff9a5589de1985d966196fe41a0c02fb3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/invent-surface.stderr"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/release.stdout",
+      "size": 177,
+      "sha256": "59e5b3e6347a62af76c9297f8673474ea0694eea7dd03721366854326c06d87a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/release.stdout"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/skip-source-hash.stderr",
+      "size": 75,
+      "sha256": "a195c1f1b6491f19c5e2c2078765bd1cc042768d0e1bc3ff41f96bda1b9c7722",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/skip-source-hash.stderr"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/strip-cache-root-escape.stderr",
+      "size": 39,
+      "sha256": "b907dabcdb6d51ebc3d5e9816fbb45bff9a5589de1985d966196fe41a0c02fb3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/strip-cache-root-escape.stderr"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/undefined.stdout",
+      "size": 177,
+      "sha256": "59e5b3e6347a62af76c9297f8673474ea0694eea7dd03721366854326c06d87a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/undefined.stdout"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/unnormalized-provider-status.stderr",
+      "size": 77,
+      "sha256": "601b2e6d7f4b734884bc244c81666b96e4c53d82e524f0024ff3e61106fd9d0c",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/unnormalized-provider-status.stderr"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/wrong-U8-copy.stderr",
+      "size": 39,
+      "sha256": "b907dabcdb6d51ebc3d5e9816fbb45bff9a5589de1985d966196fe41a0c02fb3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/wrong-U8-copy.stderr"
+    },
+    {
+      "path": "native-android/engine/basedetail-resources/qualification/complete-details-20261018/wrong-group-slot.stderr",
+      "size": 39,
+      "sha256": "b907dabcdb6d51ebc3d5e9816fbb45bff9a5589de1985d966196fe41a0c02fb3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/basedetail-resources/qualification/complete-details-20261018/wrong-group-slot.stderr"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt1/compile.command.json",
+      "size": 667,
+      "sha256": "6f971a0a463f1063d429a2bfe649a65dd592573b42afbd6c8806cc529e7ec01b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt1/compile.command.json"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt1/compile.stderr",
+      "size": 2918,
+      "sha256": "795a796a589f5a69c2c9a51b2544b99e01fdbfbd68e951a4e0b6f0d2fb66ea43",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt1/compile.stderr"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt1/source-identity.json",
+      "size": 2187,
+      "sha256": "16c5730969e9bf0a36bc53ca5b1532b3415eee7b74959dae1071440cc6bb165f",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt1/source-identity.json"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt2/build.json",
+      "size": 2029,
+      "sha256": "9cda00ee0894f60393bf0632a5cf07401dc68d71bf2a3baf81364b375aa43803",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt2/build.json"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt2/compile.command.json",
+      "size": 667,
+      "sha256": "56e46caed34e3fd3805f2f0421ed416d574b7037555c265310528252d999b851",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt2/compile.command.json"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt2/native.command.json",
+      "size": 418,
+      "sha256": "e9dc4a0f149f2f08f25d57a1521d33f690de2f2a51141a58abcc3bb0762eb364",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt2/native.command.json"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt2/native.stderr",
+      "size": 76,
+      "sha256": "dab490e818e908e09c864a383b66da687ee05c2852d693a6e2c7fb22e3caee59",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/failed-attempt2/native.stderr"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/passing-attempt3/asan/native.stdout",
+      "size": 1393,
+      "sha256": "47fa6eb7924645313dde399865250f8c00cd81eef61632caefc3640d0d86add3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/passing-attempt3/asan/native.stdout"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/passing-attempt3/release/native.stdout",
+      "size": 1393,
+      "sha256": "315a2e1cef4dfb27faccdf6aab531beee0725fbdfcac7ea0902f119fc9882cb4",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/passing-attempt3/release/native.stdout"
+    },
+    {
+      "path": "native-android/engine/body-catalog/qualification/file-list-foreach-20261019/passing-attempt3/ubsan/native.stdout",
+      "size": 1393,
+      "sha256": "94345520acc88aaf8103f0d59605a4ee64c787c3034d202a992752f915f2ea18",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/body-catalog/qualification/file-list-foreach-20261019/passing-attempt3/ubsan/native.stdout"
+    },
+    {
+      "path": "native-android/engine/initial-capture/qualification/post-queue-progress-20261018/asan-unit.stdout",
+      "size": 251,
+      "sha256": "20afd8ddc1815b3b0fc93e3aca52516dd8e732ecb33c20c83ac6794a6c0a6e84",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/initial-capture/qualification/post-queue-progress-20261018/asan-unit.stdout"
+    },
+    {
+      "path": "native-android/engine/initial-capture/qualification/post-queue-progress-20261018/release-unit.stdout",
+      "size": 251,
+      "sha256": "20afd8ddc1815b3b0fc93e3aca52516dd8e732ecb33c20c83ac6794a6c0a6e84",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/initial-capture/qualification/post-queue-progress-20261018/release-unit.stdout"
+    },
+    {
+      "path": "native-android/engine/initial-capture/qualification/post-queue-progress-20261018/ubsan-unit.stdout",
+      "size": 251,
+      "sha256": "20afd8ddc1815b3b0fc93e3aca52516dd8e732ecb33c20c83ac6794a6c0a6e84",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/initial-capture/qualification/post-queue-progress-20261018/ubsan-unit.stdout"
+    },
+    {
+      "path": "native-android/engine/initial-capture/server-initial-observer/qualification/formatter-compatibility-20261019/negative-compile.stderr",
+      "size": 1591,
+      "sha256": "8c7bc304ffd95f3ea054d18c6b6d5edbca2158c2cbebff0767e13aa4fa2a7bbc",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/initial-capture/server-initial-observer/qualification/formatter-compatibility-20261019/negative-compile.stderr"
+    },
+    {
+      "path": "native-android/engine/local/evidence/owned-local-20261017/bound-host.json.gz",
+      "size": 70365,
+      "sha256": "73dd848950505e3511b3a70255b768b6707b797cfbefa28ef8eaa48dc98f6d4e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/local/evidence/owned-local-20261017/bound-host.json.gz"
+    },
+    {
+      "path": "native-android/engine/local/evidence/owned-local-20261017/host.json.gz",
+      "size": 69551,
+      "sha256": "3597bac5cdf92d97e86d8dddaedf2dcb91c39b11b7066a5697cdb208f84bfc24",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/local/evidence/owned-local-20261017/host.json.gz"
+    },
+    {
+      "path": "native-android/engine/renderer/qualification/occupied-owner-20261018/execute-asan.stdout",
+      "size": 361,
+      "sha256": "58235a2dc7d7683a13229795c5210ce04a38b9d983befdbd0b2e06709243eeb9",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/renderer/qualification/occupied-owner-20261018/execute-asan.stdout"
+    },
+    {
+      "path": "native-android/engine/renderer/qualification/occupied-owner-20261018/execute-mutation-coh_renderer.stderr",
+      "size": 35,
+      "sha256": "0c712a0271f78dcad6b899b32089c4bdac1031e404f6d792ec00aea351bb11ed",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/renderer/qualification/occupied-owner-20261018/execute-mutation-coh_renderer.stderr"
+    },
+    {
+      "path": "native-android/engine/renderer/qualification/occupied-owner-20261018/execute-mutation-coh_renderer_gles.stderr",
+      "size": 35,
+      "sha256": "bcf2f56e314fc52b3d5ab6680fb0938b3f77df4814205d393384ebb080fc136b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/renderer/qualification/occupied-owner-20261018/execute-mutation-coh_renderer_gles.stderr"
+    },
+    {
+      "path": "native-android/engine/renderer/qualification/occupied-owner-20261018/execute-release.stdout",
+      "size": 361,
+      "sha256": "58235a2dc7d7683a13229795c5210ce04a38b9d983befdbd0b2e06709243eeb9",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/renderer/qualification/occupied-owner-20261018/execute-release.stdout"
+    },
+    {
+      "path": "native-android/engine/renderer/qualification/occupied-owner-20261018/execute-ubsan.stdout",
+      "size": 361,
+      "sha256": "58235a2dc7d7683a13229795c5210ce04a38b9d983befdbd0b2e06709243eeb9",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/renderer/qualification/occupied-owner-20261018/execute-ubsan.stdout"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/combined/appearance/stderr.log",
+      "size": 2634,
+      "sha256": "bb7c7db69dcce9d878fafa0a57dea30ae11445d16362ca0c9998e2fa81bb80de",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/combined/appearance/stderr.log"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/combined/appearance/stdout.log",
+      "size": 361,
+      "sha256": "824989c77b26330208003d5c1d25d9921dcc5d5f1c32780da93c8fef3ab283fa",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/combined/appearance/stdout.log"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/combined/audio/stdout.log",
+      "size": 1797,
+      "sha256": "3c7166cc14a188f0e290caa811fee82742f0b3de2af132c125c14af4d43df8b8",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/combined/audio/stdout.log"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/combined/perf/stdout.log",
+      "size": 244,
+      "sha256": "c5bb83ca0f9ae9b1f00cd61c108f4ca71f18d852a3e492507da34645b5779d1e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/combined/perf/stdout.log"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/combined/physics/stdout.log",
+      "size": 432,
+      "sha256": "e0770ceda66a149962514c7307da8a9dc4469d48b2f79148efe6b553b1937cd1",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/combined/physics/stdout.log"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/combined/sequencer/stdout.log",
+      "size": 3340,
+      "sha256": "9bb53f1c9bb8fe0748faac6e55fc37cf3ac20eeb537a0c0cff8c16edbc44edf1",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/combined/sequencer/stdout.log"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/combined/ui/stdout.log",
+      "size": 186,
+      "sha256": "987b3724491c8a14ae5aeef815ac12bb22eccd48b09669226840c0fe6a652f95",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/combined/ui/stdout.log"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/local-emulator-start-6.log",
+      "size": 9758,
+      "sha256": "ead0504d6e56f7fc30e8bccd32fba4f33c6c069ece460d522947fc71f747f48a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/local-emulator-start-6.log"
+    },
+    {
+      "path": "native-android/engine/support-batch/evidence/local-emulator-start-7.log",
+      "size": 7146,
+      "sha256": "e35faaac019ea17451efcfb7cff4189fbc2464decc5192d480b6d43fe026296b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/support-batch/evidence/local-emulator-start-7.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/008.log",
+      "size": 35,
+      "sha256": "95f7e1bf103aea1d394b71b04a4fabdc0ec3df800c27793185c38c201ce50646",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/009.log",
+      "size": 183,
+      "sha256": "c020623e68f6d5c9f1911ffd20b746bf742a89d0e6737a29c1a688b42cf68afc",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/009.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/010.log",
+      "size": 110,
+      "sha256": "547c9ffccbcf701971d7592b426db14ca4e0151e438a134b48edad0d957b7d05",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/010.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/012.log",
+      "size": 486,
+      "sha256": "476d653238b4078ada9db05dad81a7de8194a35e4e993f234794f7670f77c69a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/012.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/013.log",
+      "size": 194,
+      "sha256": "54a0d5d1b96d949b71b2e8c41b41dafcc324dcb1d5076cf9ac3faa8d53a556a0",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/013.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/014.log",
+      "size": 114,
+      "sha256": "f3e04dc3d657d14beb1b97bd1f0ee9de339a1baad2a6d6142fd999b1e1792090",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/014.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/016.log",
+      "size": 308,
+      "sha256": "a1b62cd2b6adc9cf3b9fb2febae360b80e724bf244782992949d452bcf2e118e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/016.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/017.log",
+      "size": 189,
+      "sha256": "bd8481db00c270966a28c4161d8c47fd6185389b119c6e8edd034fac4984e498",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/017.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/018.log",
+      "size": 112,
+      "sha256": "fa77c11feacc41249bad1b59ad8c9db69321a57f72e2807c7fc6167cfd1c5b81",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/018.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/020.log",
+      "size": 374,
+      "sha256": "0679f40e1b2dc04e15b1293fdee6148f84918172445b47a7d8cf108f3a2ae4e2",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/catalog/android-execution/logs/020.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/007.log",
+      "size": 35,
+      "sha256": "544106c662c8ac44a00ae482c3edcf5b20518531e778a24f8bdd2226fddaab75",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/007.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/008.log",
+      "size": 194,
+      "sha256": "48d575708313275e11bed545fb48602fb7d27ad73c2e8b040d2749f12bd49da9",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/009.log",
+      "size": 114,
+      "sha256": "4c2f42a04524a33c7ce88632b8e988918dc83d4cf0da10fe250c002f266341f6",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/009.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/011.log",
+      "size": 135,
+      "sha256": "c5fc28f0959f00bc5bc6da842afe7aa3beae78f610a49ab15ab3a823c9bfb437",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/011.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/012.log",
+      "size": 190,
+      "sha256": "3ce1292531043bf1e2395a25757839eb0893b6ff60b33b4a0c94431984609629",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/012.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/013.log",
+      "size": 110,
+      "sha256": "e8acd8d42ffa561c0a68af36fab646db22492a11b5936a4b8ed9d147948f22b1",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/013.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/015.log",
+      "size": 486,
+      "sha256": "476d653238b4078ada9db05dad81a7de8194a35e4e993f234794f7670f77c69a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/015.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/016.log",
+      "size": 203,
+      "sha256": "aab2c14b6baa185a7f0bdd5a69e410dbde2603be3fec8942d0ae8630cd728983",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/016.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/017.log",
+      "size": 116,
+      "sha256": "5a5c121cd74586ec99369ac16b7d54c940753e29134b2232847526548aeeb058",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/017.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/019.log",
+      "size": 138,
+      "sha256": "16ca30ba99873a60d02440a54515a3b69536385742e6c91b00cf703c7140911c",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/019.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/020.log",
+      "size": 196,
+      "sha256": "51c4d55a524b20501aeed06cac60bcb7920c5f241fdd612e37752d76e949ac1a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/020.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/021.log",
+      "size": 112,
+      "sha256": "836ba736ce24e687e09c0f9acb11868efae670f7b40a1c36ee2701330f3fbd3a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/021.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/023.log",
+      "size": 374,
+      "sha256": "0679f40e1b2dc04e15b1293fdee6148f84918172445b47a7d8cf108f3a2ae4e2",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/logs/023.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/world-adapter/logs/006.log",
+      "size": 35,
+      "sha256": "4fb7d7a2867a24122b76148078022b85ec2ae6d1f2236bec04c2244454535843",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/world-adapter/logs/006.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/world-adapter/logs/007.log",
+      "size": 202,
+      "sha256": "69cbac44cbd70c743eaedb83f5c9708fc217f09363fa8a9fa07651500e8ecec0",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/world-adapter/logs/007.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/world-adapter/logs/008.log",
+      "size": 114,
+      "sha256": "85c412e472b79a884a1a2433a78517494b9163f1e31aea4c372f15467a96766f",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/world-adapter/logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/world-adapter/logs/010.log",
+      "size": 250,
+      "sha256": "995d80cca22c4c948e50e503bacb6d74aa000faefde56625cef068e2eb45e669",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-01fc46d786/primary/android-execution/world-adapter/logs/010.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/008.log",
+      "size": 35,
+      "sha256": "33e078d4beaafe8624ae9a4db0e219374ed4fbf870b74f5067aaaa94d7a06936",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/009.log",
+      "size": 183,
+      "sha256": "40a607d275abc6c629ea2678337ca4f1c18b3cb6ecad090cc826269bfaddeb09",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/009.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/010.log",
+      "size": 110,
+      "sha256": "a455f3148107cbf63545c24b2849eeca83a82a3fce3ed6502ec11b8c3bfcf914",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/010.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/012.log",
+      "size": 486,
+      "sha256": "56d122667a4e9c833e9b6f8507ba8620f819f500d3471c4e4d21967ad69625cc",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/012.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/013.log",
+      "size": 193,
+      "sha256": "933f39773555238be995eac2f248fc6e8d9df22145c794557c396d35ac057d1a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/013.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/014.log",
+      "size": 114,
+      "sha256": "5d2dee67f5eb8165755a2f0fdd5d4f0b860a70e4736ee6f3006d1a95d347793a",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/014.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/016.log",
+      "size": 308,
+      "sha256": "a1b62cd2b6adc9cf3b9fb2febae360b80e724bf244782992949d452bcf2e118e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/016.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/017.log",
+      "size": 189,
+      "sha256": "0a15d35e6f7d140eccd7aa19e278da6b3711c89ab1e8618cf848078dfc832b98",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/017.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/018.log",
+      "size": 112,
+      "sha256": "e71d1ef060ef8d020c303e0f6560dd50756888239bc68f1994c94e2f5791d20d",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/018.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/020.log",
+      "size": 396,
+      "sha256": "08d1b5690ebd4b1f162c05b7735a425e41443e8ad6f083091369c0d386dafbc6",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/catalog/android-execution/logs/020.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/007.log",
+      "size": 35,
+      "sha256": "a2e61c12043beed548c92ceee54f3ab498ee71f64ba95788d42f1f17fdaf6bfa",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/007.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/008.log",
+      "size": 194,
+      "sha256": "be1b054a4188c4aaf08fa74cb2a77b8dc9e177f54d16444029abeb36e20e8b81",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/009.log",
+      "size": 114,
+      "sha256": "b741a25f6c76cee5e36e1ac08a3eaf23b5ef1793eb92de65c19c39875c39cf36",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/009.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/011.log",
+      "size": 135,
+      "sha256": "c5fc28f0959f00bc5bc6da842afe7aa3beae78f610a49ab15ab3a823c9bfb437",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/011.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/012.log",
+      "size": 201,
+      "sha256": "7ee1222557f74aadf80f15b499926f577c6e15754b649872b8de0e7641b17100",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/012.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/013.log",
+      "size": 116,
+      "sha256": "e35fe5bb63a4de121752a7210a789426ccee5892493f0e0e04bca65ad104c2c3",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/013.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/015.log",
+      "size": 162,
+      "sha256": "f4c6afc44532502a29012fa7e0b6400f55d7b1e3230c04462966fe908bd96f8d",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/015.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/016.log",
+      "size": 191,
+      "sha256": "bb15f9d3d3c2cda0c77b52d4dee29767c4f61ad36584ef30bc0e04f3cfee9255",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/016.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/017.log",
+      "size": 110,
+      "sha256": "a33c8dded4145625bb73e08892990527609b6d692d8b6a295eb342f5f812a145",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/017.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/019.log",
+      "size": 486,
+      "sha256": "56d122667a4e9c833e9b6f8507ba8620f819f500d3471c4e4d21967ad69625cc",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/019.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/020.log",
+      "size": 203,
+      "sha256": "d2c93363c4c91b093c53b0d0fdddb57f34232569eaa3e27c0951bac8a97f75f5",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/020.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/021.log",
+      "size": 116,
+      "sha256": "8cf3f1a57aabe12271000df0ae260fd8248c87410417cc88a492b42d9593ec10",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/021.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/023.log",
+      "size": 138,
+      "sha256": "16ca30ba99873a60d02440a54515a3b69536385742e6c91b00cf703c7140911c",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/023.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/024.log",
+      "size": 203,
+      "sha256": "af14e971d3649c7df28c0adf8b22de697dcd9ecf63525b3298be660dc94e8831",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/024.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/025.log",
+      "size": 116,
+      "sha256": "657685508d055450c09ba970e11b092e5305bdcaaf8a7161c29bce48523c67eb",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/025.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/027.log",
+      "size": 199,
+      "sha256": "ee6f705a07459cfb77c55a1e983e3cd750771ab664a832ca332335ba265f7a13",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/027.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/028.log",
+      "size": 196,
+      "sha256": "34e888751a8000ac65e31c541d6688b077529e629f4fa91da379bda6ef692887",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/028.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/029.log",
+      "size": 112,
+      "sha256": "11cdd5f674b5c0824c7c68b0621e66a46e8a835ee60f088a004c51e5a120485b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/029.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/031.log",
+      "size": 396,
+      "sha256": "08d1b5690ebd4b1f162c05b7735a425e41443e8ad6f083091369c0d386dafbc6",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/logs/031.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/world-adapter/logs/006.log",
+      "size": 35,
+      "sha256": "afda65d94faaf1f18a1a5a95d6017d7a86838ecd8e30677440abd884f44c699e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/world-adapter/logs/006.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/world-adapter/logs/007.log",
+      "size": 202,
+      "sha256": "3fa6225105d6eefdcfc0155737c87ec35c01d7d1627f773deb628add33e359ca",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/world-adapter/logs/007.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/world-adapter/logs/008.log",
+      "size": 114,
+      "sha256": "8b08a4c3a675af747ce2a45ced85c643c40d75c5747c923899a2f0f5a349ff0b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/world-adapter/logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/world-adapter/logs/010.log",
+      "size": 250,
+      "sha256": "995d80cca22c4c948e50e503bacb6d74aa000faefde56625cef068e2eb45e669",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-97ba1b823/primary/android-execution/world-adapter/logs/010.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-fd86ff196/adapter-logs/006.log",
+      "size": 35,
+      "sha256": "1eadd14d36252bc99092ba4b248414f4744a4f3dd0d62c76e6ad79d039b982ad",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-fd86ff196/adapter-logs/006.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-fd86ff196/adapter-logs/007.log",
+      "size": 202,
+      "sha256": "a01fecbb6149e491216abe874e48568b96ad5014c61fa310cfcf1b67ac480909",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-fd86ff196/adapter-logs/007.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-fd86ff196/adapter-logs/008.log",
+      "size": 114,
+      "sha256": "fc9926f737ac165cd3371ac24ce69bd6c37d0f9e000e8e1cdd2e3a46ea38efd9",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-fd86ff196/adapter-logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/android13-fd86ff196/adapter-logs/010.log",
+      "size": 250,
+      "sha256": "995d80cca22c4c948e50e503bacb6d74aa000faefde56625cef068e2eb45e669",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/android13-fd86ff196/adapter-logs/010.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/008.log",
+      "size": 35,
+      "sha256": "f97a0d348540543906c6712acd190d2b6bcbcc5432f23b252a981523c0ecdb48",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/009.log",
+      "size": 182,
+      "sha256": "af8843ef535e9edb253bc460b3a9c6372ea12fead9b5b4655c5160c4c65f288c",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/009.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/010.log",
+      "size": 110,
+      "sha256": "782261043ec5983d37acc7f04376c9875e51d9899cd0ca63245aecf44961e48b",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/010.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/012.log",
+      "size": 486,
+      "sha256": "fff1b20c49b7c9bf34649c17538f4c643d5a0a6854d27c16733c64f089f445f6",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/012.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/013.log",
+      "size": 193,
+      "sha256": "a8dd72c1ab1798754ddc83be77e42af47ce7738a630b2b4c9e9129d79669bf41",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/013.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/014.log",
+      "size": 114,
+      "sha256": "4088f7ec4bdbfac850b696b80969b5e119c562a8bc22b92f76edaab19d0d3991",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/014.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/016.log",
+      "size": 308,
+      "sha256": "a1b62cd2b6adc9cf3b9fb2febae360b80e724bf244782992949d452bcf2e118e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/016.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/017.log",
+      "size": 189,
+      "sha256": "8823d0bdb5217e3f5c6b36326912193ac7cdcebdff712b91671bcf0448d3c237",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/017.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/018.log",
+      "size": 112,
+      "sha256": "d641fc4c46f260611890dc49a7ca202e0ead5f1f6904b183a0e63f26c85d8d35",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/018.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/020.log",
+      "size": 374,
+      "sha256": "0679f40e1b2dc04e15b1293fdee6148f84918172445b47a7d8cf108f3a2ae4e2",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/catalog-android13-fd86ff196/android-logs/020.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/hosted-140ee62d7/preceding-scenegraph-failure.log",
+      "size": 191,
+      "sha256": "a43e712bea65d1c425fcde8e534fe2fe64aff81b742830b788a9887c3b5cfb4e",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/hosted-140ee62d7/preceding-scenegraph-failure.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/prefix/logs/006.log",
+      "size": 32,
+      "sha256": "a457a3afc236f7f623a34d4e47976476b757a1845220c7e332400297694e154c",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/prefix/logs/006.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/prefix/logs/007.log",
+      "size": 187,
+      "sha256": "9087d37ce5c8257e32d300c577471ff5de5523d0376d0d90c37553ab55bf7b42",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/prefix/logs/007.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/prefix/logs/008.log",
+      "size": 108,
+      "sha256": "f187b14960c38172c54476e70b9c8142ae57cf3832de6375bc31f12c40f03f54",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/prefix/logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/prefix/logs/010.log",
+      "size": 66,
+      "sha256": "9d7bf5f457a96bd7827fedba3cad3f89145b9f71dcec934b5a62cd622496625c",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/prefix/logs/010.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/ranges/logs/006.log",
+      "size": 32,
+      "sha256": "fb650b7867b4bdbc4a27cf2a9e34eaf90c0d30d08c0bdbf0b4358d7b48c5c327",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/ranges/logs/006.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/ranges/logs/007.log",
+      "size": 185,
+      "sha256": "41b25b22e1d9569017ed846d213257fe081bc79755a17b187193608ce67a7cb8",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/ranges/logs/007.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/ranges/logs/008.log",
+      "size": 108,
+      "sha256": "92e78591064d714d0b7d980cb31db57e39cf65fc119084e7b292b23bb686b910",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/ranges/logs/008.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/ranges/logs/010.log",
+      "size": 63,
+      "sha256": "9309079d55e1ec398febeaa009808ae2a42b2769f848e916d446f7bfb249f956",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/independent-wire-android13-38993564322/ranges/logs/010.log"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/address.stdout",
+      "size": 129,
+      "sha256": "591791feb7147305c61b7cb1ada7975836fcd60f41d65dace263efba06df1124",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/address.stdout"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-pause.stderr",
+      "size": 55,
+      "sha256": "9639c0735d540738c9e661fbb3607fce5441113e59e221aac0f36c9d58037a33",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-pause.stderr"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-render.stderr",
+      "size": 70,
+      "sha256": "1d522a79dfe53d7f1a3e173abf20c6b051d338ecff6e83041c6ccd98a70cf534",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-render.stderr"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-resume.stderr",
+      "size": 58,
+      "sha256": "3093e58494c1d52fd5ba401b6f03a734743db8c598968061b4b43ab1f72285ed",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-resume.stderr"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-stop.stderr",
+      "size": 56,
+      "sha256": "db0b605752fd4d80419d8bc56d038f130835a10f3ac8f0a1c8178e1ca7c16006",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-stop.stderr"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-surface_lost.stderr",
+      "size": 66,
+      "sha256": "42e805d95a07c75c99468686d3df740d63daaf92f0ac0041163c148d9205a2d7",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/mutation-surface_lost.stderr"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/release.stdout",
+      "size": 129,
+      "sha256": "591791feb7147305c61b7cb1ada7975836fcd60f41d65dace263efba06df1124",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/release.stdout"
+    },
+    {
+      "path": "native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/undefined.stdout",
+      "size": 129,
+      "sha256": "591791feb7147305c61b7cb1ada7975836fcd60f41d65dace263efba06df1124",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/engine/world-render-adapter/qualification/presentation-renderer-identity-20261018/undefined.stdout"
+    },
+    {
+      "path": "native-android/evidence/session-continuation-20261015/audio.log",
+      "size": 832,
+      "sha256": "14c6319887306943138599128c1ea488dd2d77f7f6de2c8c38d3bb12a87f3465",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/evidence/session-continuation-20261015/audio.log"
+    },
+    {
+      "path": "native-android/evidence/session-continuation-20261015/combined-arm64.log",
+      "size": 205,
+      "sha256": "d7e58be6ad80c9b39c4546e626fa4b0a2156680dbef9b9a8be9ac376cc16c4b9",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/evidence/session-continuation-20261015/combined-arm64.log"
+    },
+    {
+      "path": "native-android/evidence/session-continuation-20261015/combined-host.log",
+      "size": 207,
+      "sha256": "acd801cf3f04dcc4d3ea5d8d540e5a7d96bc57f01b48e6bac6081d88df01f459",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/evidence/session-continuation-20261015/combined-host.log"
+    },
+    {
+      "path": "native-android/evidence/session-continuation-20261015/first-hosted-audio-corpus-failure.log",
+      "size": 839,
+      "sha256": "3f8c756f68b9fb8bb13615e1f6a8bc08821064577aa68d1fd3ff35ba649ad7ea",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/evidence/session-continuation-20261015/first-hosted-audio-corpus-failure.log"
+    },
+    {
+      "path": "native-android/evidence/session-continuation-20261015/network.log",
+      "size": 2228,
+      "sha256": "01c024d94e7a249a8356d8e6216187401affff67de6f746ead5512f240a8343d",
+      "location": "https://raw.githubusercontent.com/Russianranger/coh-android/8f776dc375f2e2c624aa06de42289ee315ea4368/native-android/evidence/session-continuation-20261015/network.log"
+    }
+  ]
+}

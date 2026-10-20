@@ -1,1 +1,0 @@
-check failed line 84: !binding(ledger,&measured,actual,&observed,&identity)

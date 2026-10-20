@@ -1,1 +1,0 @@
-line 30: coh_bd_resources_read(b,&pins,&dp,&cp,out,w,minimum,0)==COH_STATE

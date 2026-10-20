@@ -1,5 +1,0 @@
-coh_auth_openssl.o: \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth_openssl.c \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/coh_auth.h \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/../coh_contracts.h \
- /workspace/scratch/6400a2d75800/coh-android/native-android/engine/auth/../../include/coh_native_core.h
