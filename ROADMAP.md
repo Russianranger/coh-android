@@ -1,6 +1,6 @@
 # Native Android roadmap
 
-Updated 2026-10-20. Physical 0.1.16 is recorded; 0.1.17 integration is active.
+Updated 2026-10-20. Physical 0.1.16 is recorded; 0.1.17 is ready for integrated CI.
 
 Combined 0.1.14 passed stage 41. Physical 0.1.16 carries bodytype 4, Huge,
 28 costume parts, 112 strings and 58 colors. The body ends at bit 11648 and
@@ -9,7 +9,8 @@ recording 343 unresolved CRCs through the original NULL path, then character,
 globals and original commands through the exact 301656-bit packet terminator.
 Release, ASan and UBSan pass. The independently pinned CLIENT shared count is
 26. The earlier 303112-bit packet is distinct. No further framing table is
-missing for this saved packet; original Android ACK/READY integration is next.
+missing for this saved packet. Android observer replay also passes; original
+ACK/READY and release/cancellation tests pass. Actual Thor traffic is pending.
 
 Two physical captures show textured pavement and the box at
 [131.453125, 0.25, -114.953125]. The new host source-scene capture is 640 by
@@ -26,12 +27,12 @@ Map and DB startup took about 279 and 67 seconds, without a world or collision
 allocation breakdown. PostgreSQL stays unchanged. Recorded physical peaks are
 4021653504 RSS bytes and 2925635584 PSS bytes, separate from source charges.
 
-1. Qualify original ACK/READY, then record Thor traffic and position observations.
+1. Build the diagnostic, then record Thor ACK/READY traffic and position observations.
 2. Draw the decoded Huge costume with its actual rig, GEO and textures.
 3. Verify imported archive streaming at a different pose without rebuilding.
 
 These three steps remain before the requested real character and live world
-are demonstrated. Replay charges peak at 7490373 bytes under 8 MiB; scene cap
+are demonstrated. Android replay charges peak at 7533495 bytes under 8 MiB; scene cap
 remains 96 MiB. Gates 25–27 stay open. Keep the rolling status and pinned raw
 outputs only. All 70 bundles are inventoried there; four unreferenced ones were
 removed, while the 66 receipt or documentation references remain.

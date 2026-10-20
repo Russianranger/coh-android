@@ -7,12 +7,12 @@
   "accepted_physical_evidence": "native-android/combined-client/diagnostics/entity-20261020/physical-0.1.14.json",
   "stage41_passed": true,
   "rendered": "Physical Thor framebuffer: source roadway/pavement and yellow real-pose box in the existing two-instance neighborhood; no genuine costume model yet.",
-  "blocker": "The retained301656-bit packet reaches its exact original zero-command terminator in release/ASan/UBSan. No missing BasePower table remains for framing. Android original ACK/READY/post-update integration and physical0.1.17 validation are in progress; real Huge resources are not yet rendered.",
+  "blocker": "No framing blocker for the retained301656-bit packet: source and actual Android observer reach exact EOF with343 tolerated unresolved CRCs. Original ACK/READY implementation passes source/UDP tests. Integrated APK/emulator and live Thor response remain pending; Huge resource loading remains unfinished.",
   "planned_steps_to_source_world_with_entity": 3,
   "next_steps": [
-    "Finish original initial-packet receive, then source-authentic ACK/READY and bounded post-ACK command/position observations.",
-    "Resolve and draw the decoded Huge costume with its actual rig, GEO and textures.",
-    "Connect original archive imports to the runtime neighborhood adapter and verify a different pose without rebuilding."
+    "Install the qualified0.1.17 diagnostic and record actual ACK/READY traffic and position observations.",
+    "Draw the decoded Huge costume through the existing skinned path using genuine matching rig, GEO and textures.",
+    "Verify imported archive streaming at a different real pose without rebuilding."
   ],
   "working_rules": [
     "Update this diagnostic series status in place.",
@@ -1612,54 +1612,79 @@
     "physical_thor": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete."
   },
   "ci": {
-    "workflow": ".github/workflows/native-qualification.yml",
+    "state": "ready_to_dispatch",
+    "workflow": "native-qualification.yml",
     "purpose": "combined-diagnostic",
-    "profile": "capture-diagnostic",
-    "run_id": 39474180919,
-    "url": "https://github.com/Russianranger/coh-android/actions/runs/39474180919",
-    "qualified_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
-    "qualified_tree": "8eced0a5891778283d24be159ce4e8a531467625",
-    "source": "passed",
-    "host_gles_capture": "passed using actual pinned NDK graphics headers",
-    "signed_arm64_build_lint_package": "passed",
-    "signed_x86_build_package": "passed",
-    "android13": "34 checks passed;14 update/rollback/profile preservation checks passed",
-    "status": "passed",
+    "profile": "fullscreen-diagnostic",
     "publishes_release": false,
-    "artifact_id": 12289656309,
-    "artifact_bytes": 24919187,
-    "artifact_sha256": "db4151cd32c6140b9e116b3ee6479d1e14d4dda6a097f8a46f400887a86f9814",
-    "source_artifact_id": 12288337237,
-    "source_artifact_bytes": 43825,
-    "source_artifact_sha256": "f23005abafe239ba892f5ace59a6aad9a0eeae33131844e0f24be3c4d5baa9f6",
-    "workflow_dispatch_runs": 3,
-    "completed_arm64_candidate_builds": 1,
-    "physical_thor": "Matching physical 0.1.16 observations verified separately: Adreno 740 capture/replay, actual Huge body and BasePower lookup boundary, complete memory totals/SHOW and orderly cleanup."
+    "physical_thor": false
   },
   "candidate": {
-    "version": "0.1.16",
-    "version_code": 17,
-    "profile": "capture-diagnostic",
-    "state": "Matching physical 0.1.16 observations recorded: capture/replay, costume-to-BasePower boundary, complete memory totals and cleanup; full character/gameplay remains pending.",
-    "receiver": "Physical packet: Huge body 4, 28 parts complete at bit 11648; enclosing appearance ends 11672; genuine BasePower CRC 0x80443357 stops at 11832 of 301656 bits. No ACK/READY.",
-    "world": "Physical framebuffer confirms textured pavement and yellow real-pose box from the existing two-instance fixture. Real costume and Android runtime archive stream remain incomplete.",
-    "memory": "Complete 91-process category/RSS/PSS totals despite 59 omitted detail rows; actual PostgreSQL SHOW values retained. App UID cgroup charge remains unavailable.",
+    "version": "0.1.17",
+    "version_code": 18,
+    "profile": "fullscreen-diagnostic",
+    "state": "source_qualified_ready_for_one_apk_ci",
+    "receiver": {
+      "commit": "1f57642bf5941fb4180784e691b22e3d32a3b4a3",
+      "tested_tree": "c90bac85dc9361ee6173ff0f583771055af5e6e6",
+      "modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "checks_per_mode": 446,
+      "cases": 6,
+      "full_original_header_parsed": true,
+      "shortcut_schema": "Whole original25control+10server-visible shortcut initializers; explicit test-owned selected context, no new live authority.",
+      "end_bit": 301656,
+      "bits": 301656,
+      "unresolved_crcs": 343,
+      "source_peak_bytes": 7533495,
+      "owner_bytes": 653872,
+      "new_continuation_owner_bytes": 1228,
+      "actual_report_peak_bytes": 6853,
+      "stress_report_peak_bytes": 6882,
+      "socket_or_send_calls": 0,
+      "wrong_identity_stale_context_truncation_complete": false,
+      "command": "flock /tmp/coh-next-build.lock python3 native-android/combined-client/tools/check_outer_costume_android.py --work <fresh> --output <scratch.json> --replay <saved-initial-replay.bin>"
+    },
+    "world": {
+      "native_fd_controls_per_mode": 163,
+      "native_source_controls_per_mode": 233,
+      "java_controls": 94,
+      "fixture_generator_controls": 18,
+      "source_index_bytes": 10144,
+      "source_index_sha256": "585cd024ec0438bcbece6bd59b64cc12d89557e35d271c3a73900358c04fb6af",
+      "source_placements": 105,
+      "candidate_source_envelope_bytes": 15187220,
+      "fd_owner_bytes": 552,
+      "different_pose_host_gles": true,
+      "different_pose_thor": false,
+      "original_client_archive_header_directory_proof": false,
+      "generated_zip_fixture_is_original_archive_proof": false,
+      "actual_android_hook": "Existing accepted imported read-only archive descriptors plus actual APK index span. Atomic candidate publication and explicit fixture fallback. Review fixed unpublished Session exceptional cleanup and copied render-owner counters."
+    },
+    "memory": {
+      "source_peak_bytes": 7533495,
+      "scene_capture_reserve_bytes": 5667858,
+      "physical_metrics": "Only earlier0.1.16 measurements; Wine dominates, no PostgreSQL tuning."
+    },
     "limits": {
       "decoded_message": 4194304,
-      "ordinary_semantic_message": 16384,
-      "initial_observer_aggregate": 8388608,
-      "scene_transaction": 100663296
+      "ordinary_semantic_transport": 16384,
+      "initial_aggregate": 8388608,
+      "scene_transaction": 100663296,
+      "interop_report": 7168,
+      "memory_export": 24576,
+      "increased": false
     },
-    "thor_procedure": "native-android/combined-client/THOR-TEST.md",
-    "apk": {
-      "name": "CoH-Native-Combined-0.1.16-capture-diagnostic-arm64.apk",
-      "bytes": 15150348,
-      "sha256": "3dfbd3445f9f00178c78d4276b36fa4bc10bd062796756344a2a31f571e91b94",
-      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
-      "source_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
-      "ci_run_id": 39474180919,
-      "artifact_id": 12289656309
-    }
+    "thor_procedure": [
+      "Install0.1.17 as an update; keep app data, imports, profile and saved character.",
+      "Start the existing local server profile, select the same character and wait for automatic full-screen view; allow at least15seconds after pose lock.",
+      "Use the corner button, export the Combined ZIP containing PNG, initial continuation metadata and memory report, then stop the server normally.",
+      "If an existing character/map handoff supplies a different genuine Atlas pose, export that too without rebuilding; do not inject or invent a pose."
+    ],
+    "apk": null
   },
   "latest_physical_version": "0.1.16",
   "latest_physical_results": {
@@ -1928,11 +1953,11 @@
     "result": "Physical framebuffer/replay, genuine Huge body and BasePower stop, complete process totals/SHOW readback and orderly cleanup verified. Initial packet and real character remain incomplete.",
     "next_action": "Development paused at user request after recording these reports."
   },
-  "next_action": "Finish exact-source Android continuation/send tests, then build one0.1.17 fullscreen diagnostic and collect the Thor export.",
+  "next_action": "Run one integrated0.1.17 diagnostic CI, deliver signed ARM64 APK, then record the Thor Combined ZIP.",
   "development_cycle": {
     "date": "2026-10-20",
     "base_commit": "c6ab0ca60dc69872ff0834efc45214d556532652",
-    "state": "Source full replay qualified; Android exact-end send and full-screen packaging integration in progress.",
+    "state": "Source/observer/original-send/lifecycle qualification complete; one integrated0.1.17 APK CI is next.",
     "source_commits": [
       {
         "local": "4a12f6c92426cc0e2249330ee69ffa6e6c8ef61b",
@@ -2245,6 +2270,31 @@
         "build_source_commit": "3ab10b6c3aad7eaa7f317ba0b429197c77737683",
         "update_from_accepted_baseline": "same application id and public test signer; version code16 replaces15 with data preserved"
       }
+    },
+    {
+      "version": "0.1.16",
+      "version_code": 17,
+      "profile": "capture-diagnostic",
+      "state": "Matching physical 0.1.16 observations recorded: capture/replay, costume-to-BasePower boundary, complete memory totals and cleanup; full character/gameplay remains pending.",
+      "receiver": "Physical packet: Huge body 4, 28 parts complete at bit 11648; enclosing appearance ends 11672; genuine BasePower CRC 0x80443357 stops at 11832 of 301656 bits. No ACK/READY.",
+      "world": "Physical framebuffer confirms textured pavement and yellow real-pose box from the existing two-instance fixture. Real costume and Android runtime archive stream remain incomplete.",
+      "memory": "Complete 91-process category/RSS/PSS totals despite 59 omitted detail rows; actual PostgreSQL SHOW values retained. App UID cgroup charge remains unavailable.",
+      "limits": {
+        "decoded_message": 4194304,
+        "ordinary_semantic_message": 16384,
+        "initial_observer_aggregate": 8388608,
+        "scene_transaction": 100663296
+      },
+      "thor_procedure": "native-android/combined-client/THOR-TEST.md",
+      "apk": {
+        "name": "CoH-Native-Combined-0.1.16-capture-diagnostic-arm64.apk",
+        "bytes": 15150348,
+        "sha256": "3dfbd3445f9f00178c78d4276b36fa4bc10bd062796756344a2a31f571e91b94",
+        "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+        "source_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
+        "ci_run_id": 39474180919,
+        "artifact_id": 12289656309
+      }
     }
   ],
   "previous_ci": {
@@ -2543,7 +2593,7 @@
     "profile": "fullscreen-diagnostic",
     "version_name": "0.1.17-fullscreen-diagnostic-test",
     "version_code": 18,
-    "state": "integration_in_progress",
+    "state": "source_qualified_ready_for_one_apk_ci",
     "packet": {
       "input_bytes": 37795,
       "payload_bytes": 37707,
@@ -2589,7 +2639,31 @@
       "original_client_shared_count": 26,
       "shared_source_input_sha256": "649b85493dcd6bdc0ebd7669eed9ce61536d8788755075265b17a0905a83bd11",
       "application_ack_sent_to_user_server_here": false,
-      "ready_sent_to_user_server_here": false
+      "ready_sent_to_user_server_here": false,
+      "android_observer": {
+        "commit": "1f57642bf5941fb4180784e691b22e3d32a3b4a3",
+        "tested_tree": "c90bac85dc9361ee6173ff0f583771055af5e6e6",
+        "modes": [
+          "release",
+          "asan",
+          "ubsan"
+        ],
+        "checks_per_mode": 446,
+        "cases": 6,
+        "full_original_header_parsed": true,
+        "shortcut_schema": "Whole original25control+10server-visible shortcut initializers; explicit test-owned selected context, no new live authority.",
+        "end_bit": 301656,
+        "bits": 301656,
+        "unresolved_crcs": 343,
+        "source_peak_bytes": 7533495,
+        "owner_bytes": 653872,
+        "new_continuation_owner_bytes": 1228,
+        "actual_report_peak_bytes": 6853,
+        "stress_report_peak_bytes": 6882,
+        "socket_or_send_calls": 0,
+        "wrong_identity_stale_context_truncation_complete": false,
+        "command": "flock /tmp/coh-next-build.lock python3 native-android/combined-client/tools/check_outer_costume_android.py --work <fresh> --output <scratch.json> --replay <saved-initial-replay.bin>"
+      }
     },
     "capture": {
       "scope": "Explicit host retained-pose source-scene fixture; not a new Thor screenshot.",
@@ -2673,7 +2747,123 @@
       "source_and_observed_process_memory_kept_separate": true
     },
     "ci": {
-      "state": "not_dispatched"
+      "state": "ready_to_dispatch",
+      "workflow": "native-qualification.yml",
+      "purpose": "combined-diagnostic",
+      "profile": "fullscreen-diagnostic",
+      "publishes_release": false,
+      "physical_thor": false
+    },
+    "continuation": {
+      "implementation_commit": "168d32e822f70d299bb790d464b479f58c3789ba",
+      "lifecycle_commit": "b02d33be4",
+      "original_producer_checks_per_mode": 70543,
+      "udp_checks_per_mode": 3558,
+      "udp_cases": 5,
+      "udp_matching_source_pins": 52,
+      "qualified_modes": [
+        "release",
+        "asan",
+        "ubsan"
+      ],
+      "window_ms": 10000,
+      "message_limit": 128,
+      "command_kind_rows": 16,
+      "post_ack_scope": "Normalized first-command kind/count/decoded-byte totals per message and source-proved first selected entity position prefixes. No payload retention or scans; no complete later transaction claim.",
+      "release_before_sends": true,
+      "real_full_update_id_and_private_handoff_cookie": true,
+      "password_policy": "Explicit local account-only/direct-DB diagnostic uses actual empty plaintext hashed by existing MD5. It sends MD5(empty), not128zero bits; digest and packet credentials are wiped.",
+      "queued_is_sent": false,
+      "actual_send_callbacks_tracked": true,
+      "received_character_sent": false,
+      "live_thor_execution": false,
+      "review": "Independent original-producer/lifetime/cancellation review passed on immutable source pins."
+    },
+    "workers": {
+      "packet_source": {
+        "commit": "9447c49c2",
+        "tested_tree": "5539835c581e9b18cafddb07071aad4cc3421a45",
+        "ci": "pending_final_integrated_run",
+        "accepted_scope": "Original NULL343, source CLIENT shared26, exact retained301656 EOF.",
+        "blocker": "none_for_saved_packet_framing",
+        "next_action": "Collect live continuation evidence."
+      },
+      "android_continuation": {
+        "commit": "168d32e822",
+        "tested_tree": "7a44785b416ec5db6b9a6e5bd70bdb139a110924",
+        "ci": "pending_final_integrated_run",
+        "accepted_scope": "Exact-source EOF callback, payload release before actual ACK/READY, bounded post-update observation.",
+        "blocker": "Physical ACK/server response unmeasured.",
+        "next_action": "Build/test the integrated diagnostic."
+      },
+      "observer_regression": {
+        "commit": "1f57642bf",
+        "tested_tree": "c90bac85dc9361ee6173ff0f583771055af5e6e6",
+        "ci": "pending_final_integrated_run",
+        "accepted_scope": "Actual saved packet through production observer, six positive/negative cases, no socket sends.",
+        "blocker": "none_for_host_scope",
+        "next_action": "Use optional replay on future saved packets."
+      },
+      "fullscreen_delivery": {
+        "commit": "646bf3286",
+        "tested_tree": "d5aa406847f683ad92c4f9b753a32b6533a586dc",
+        "ci": "pending_final_integrated_run",
+        "accepted_scope": "Full-screen controls,640PNG, runtime hook and prepared Android13/update qualification.",
+        "blocker": "Integrated Android13 CI not yet run.",
+        "next_action": "Run one integrated diagnostic workflow."
+      },
+      "runtime_world": {
+        "commit": "bc09e4a5f",
+        "tested_tree": "4e221d95d21854fa27bb0eb7e44fb0846e0c9653",
+        "ci": "pending_final_integrated_run",
+        "accepted_scope": "Actual FD owner/import resolver, source index105, host two-pose streaming and retained offline preview.",
+        "blocker": "Different real pose not tested on Thor; original CLIENT directory/header proof unavailable offline.",
+        "next_action": "Validate imported device archives and another real pose."
+      },
+      "offline_power_names": {
+        "commit": "578f1d147",
+        "tested_tree": "7b8fa9c6245e5d2f43f6b0a901101eea5ea8614c",
+        "ci": "pending_final_integrated_run",
+        "accepted_scope": "Original tokenizer/hash labels for20241 text powers, no receiver dictionary dependency.",
+        "blocker": "No runtime dictionary or character rendering claimed.",
+        "next_action": "Use labels only when useful to diagnostics."
+      }
+    },
+    "limits": {
+      "decoded_message": 4194304,
+      "ordinary_semantic_transport": 16384,
+      "initial_aggregate": 8388608,
+      "scene_transaction": 100663296,
+      "interop_report": 7168,
+      "memory_export": 24576,
+      "increased": false
     }
-  }
+  },
+  "ci_history": [
+    {
+      "workflow": ".github/workflows/native-qualification.yml",
+      "purpose": "combined-diagnostic",
+      "profile": "capture-diagnostic",
+      "run_id": 39474180919,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/39474180919",
+      "qualified_commit": "f311bebfa9bdf33916fefcaaacd546282e17b534",
+      "qualified_tree": "8eced0a5891778283d24be159ce4e8a531467625",
+      "source": "passed",
+      "host_gles_capture": "passed using actual pinned NDK graphics headers",
+      "signed_arm64_build_lint_package": "passed",
+      "signed_x86_build_package": "passed",
+      "android13": "34 checks passed;14 update/rollback/profile preservation checks passed",
+      "status": "passed",
+      "publishes_release": false,
+      "artifact_id": 12289656309,
+      "artifact_bytes": 24919187,
+      "artifact_sha256": "db4151cd32c6140b9e116b3ee6479d1e14d4dda6a097f8a46f400887a86f9814",
+      "source_artifact_id": 12288337237,
+      "source_artifact_bytes": 43825,
+      "source_artifact_sha256": "f23005abafe239ba892f5ace59a6aad9a0eeae33131844e0f24be3c4d5baa9f6",
+      "workflow_dispatch_runs": 3,
+      "completed_arm64_candidate_builds": 1,
+      "physical_thor": "Matching physical 0.1.16 observations verified separately: Adreno 740 capture/replay, actual Huge body and BasePower lookup boundary, complete memory totals/SHOW and orderly cleanup."
+    }
+  ]
 }
