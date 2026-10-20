@@ -138,6 +138,7 @@ verifies the actual user-exported88-byte header/payload hashes and replays that
 packet in release/ASan/UBSan. No raw packet or decoded snapshot is committed.
 The retained301656-bit packet consumes all343 unresolved customizations through
 bit39216; its first CRC is0x80443357 and last0x7e9e7869. The initial source path
-continues through titles/ragdoll/basic statistics, then encounters the older
-inventory parser's signed-value limit at41008. This is a parser implementation
-restriction to fix, not a missing dictionary or full-packet completion claim.
+continues through titles/ragdoll/basic statistics, then uses the whole original inventory receiver to preserve signed row words
+(such as -1) and reaches the later very-rare suffix at41312. The older standalone
+inventory parser remains unchanged in its documented stricter scope. No new
+dictionary requirement or full-packet completion is asserted.

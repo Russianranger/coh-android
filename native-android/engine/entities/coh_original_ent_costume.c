@@ -18,7 +18,7 @@ typedef struct{char *originalNPCName;CustomNPCCostumePart **parts;Color skinColo
 typedef CohOriginalPowerDef BasePower;
 typedef CohOriginalPowerCustomization PowerCustomization;
 typedef CohOriginalPowerCustomizationList PowerCustomizationList;
-typedef struct{CohEntCharacterStats stats;uint32_t iCombatModShift;}Character;
+typedef struct{CohEntCharacterStats stats;uint32_t iCombatModShift;int auctionInvTotalSlots,iNumBoostSlots;}Character;
 typedef struct{
  int titleThe,titleColors[2],titleBadge,glowieUnlocked,attachArticle,respecTokens,lastTurnstileEventID,lastTurnstileMissionID,helperStatus;char titleTheText[10],titleCommon[32],titleOrigin[32],titleSpecial[128];
  int current_costume,num_costume_slots,pendingCostumeIgnoreTime,num_costumes_stored,
@@ -38,7 +38,7 @@ typedef struct{
  CustomNPCCostume custom;CustomNPCCostumePart npc_parts[63];
  CustomNPCCostumePart *npc_pointers[63];unsigned npc_count;
  int hasDebugInfo;PowerCustomizationList power_list;unsigned power_count_pending;
- char literal[260];unsigned in_power,power_prefix;unsigned in_rewards,reward_groups,in_sg,npc_field,prefix_step,self;
+ char literal[260];unsigned in_power,power_prefix,inventory_index;unsigned in_rewards,reward_groups,in_sg,npc_field,prefix_step,self;
 } Packet;
 typedef struct{unsigned kind;} Table;typedef const Table *cStashTable;
 static const Table ordinary={1};
@@ -54,6 +54,9 @@ static const Table ordinary={1};
 #define SendBasicCharacter 0
 #define sdUnpackDiff(s,p,c,id,abs) ((void)(s),(void)(id),(void)(abs),source_stats((p),(c)))
 #define character_LevelFinalize(c,b) ((void)(c),(void)(b))
+#define INV_COUNT_PACKBITS 8
+#define verify(v) ((v)!=NULL)
+#define character_SetInvTotalSize(c,t,n) ((void)(c),(void)(t),(void)(n))
 #define MAX_COSTUMES 10
 #define dummy_ent_powerCust (&pak->power_list)
 static const int g_PowerDictionary;
@@ -147,7 +150,8 @@ static U32 pktGetBits(Packet *pak,int n){
 }
 static U32 pktGetBitsAuto(Packet *pak){static const unsigned bins[]={2,10,24,32};U32 bin=pktGetBits(pak,2),value=pktGetBits(pak,(int)bins[bin]);if(pak->in_power&&pak->power_count_pending){if(value>INT_MAX||value>COH_ORIGINAL_POWER_POINTER_CAPACITY)fail(pak,COH_LIMIT);pak->report.power_entry_count=value;pak->power_count_pending=0;}return value;}
 static U32 pktGetBitsPack(Packet *pak,int n){
- U32 value=0;CohStatus s=coh_rep_pack(&pak->reader,(unsigned)n,&value);if(s!=COH_OK)fail(pak,s);if(value>INT_MAX)fail(pak,COH_LIMIT);
+ U32 value=0;CohStatus s=coh_rep_pack(&pak->reader,(unsigned)n,&value);if(s!=COH_OK)fail(pak,s);if(value>INT_MAX&&pak->report.field!=COH_ENT_COSTUME_INVENTORY)fail(pak,COH_LIMIT);
+ if(pak->report.field==COH_ENT_COSTUME_INVENTORY){if(!pak->inventory_index){pak->inventory_index=1;}else if(pak->inventory_index==1){if(value>INT_MAX)fail(pak,COH_LIMIT);pak->report.inventory_count=value;pak->inventory_index=2;}else{pak->report.inventory_values_read++;if(value>INT_MAX)pak->report.inventory_negative_words++;}}
  if(pak->report.field==COH_ENT_COSTUME_NPC_FIELDS){if(!pak->npc_field&&n==12){pak->report.npc_index=value;pak->npc_field=1;}else if(pak->npc_field==1&&n==1){pak->report.npc_costume_index=value;pak->npc_field=2;}}
  return value;
 }
@@ -185,11 +189,14 @@ static void source_stats(Packet *pak,Character *c){CohEntFailure failure={0};Coh
 static int entReceiveTargetUpdate(Packet *pak,Entity *e,int oo,int self){CohEntFailure f={0};(void)e;(void)oo;memset(&pak->suffix,0,sizeof(pak->suffix));CohStatus s=coh_ent_target(&pak->reader,1,(uint32_t)self,&pak->suffix.target,&f);if(s!=COH_OK){pak->reader.cursor=f.bit;fail(pak,s);}return 1;}
 static void character_ReceiveStatusEffects(Packet *pak,Character *c,int oo){CohEntFailure f={0};(void)c;(void)oo;memset(&pak->suffix,0,sizeof(pak->suffix));CohStatus s=coh_ent_status_effects(&pak->reader,1,&pak->suffix.status,&f);if(s!=COH_OK){pak->reader.cursor=f.bit;fail(pak,s);}}
 static int entReceiveStatusEffects(Packet *,Entity *,bool);
-static void character_ReceiveInventorySizes(Character *c,Packet *pak){CohEntFailure f={0};(void)c;memset(&pak->suffix,0,sizeof(pak->suffix));CohStatus s=coh_ent_inventory_sizes(&pak->reader,&pak->suffix.inventory,&f);if(s!=COH_OK){pak->reader.cursor=f.bit;fail(pak,s);}}
+static void original_native_inventory(Character *,Packet *);
+static void observed_inventory(Character *,Packet *);
 static void receive_vision(Packet *pak){Entity *e=&pak->entity;unsigned pchar_things=pak->pchar_things,isSelf=1;
+#define character_ReceiveInventorySizes(c,p) observed_inventory((c),(p))
 #define COH_ORIGINAL_ENT_INITIAL_FIELDS
 #include "original_ent_costume_receive.inc"
 #undef COH_ORIGINAL_ENT_INITIAL_FIELDS
+#undef character_ReceiveInventorySizes
  pak->report.vision_complete=1;pak->report.field=COH_ENT_COSTUME_TASKFORCE;
 }
 static void observed_rewards(Packet *,Entity *);
@@ -199,11 +206,14 @@ static void observed_rewards(Packet *,Entity *);
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wswitch"
+#define character_ReceiveInventorySizes original_native_inventory
 #include "original_ent_costume_receive.inc"
+#undef character_ReceiveInventorySizes
 #pragma GCC diagnostic pop
 #undef powerCustList_receive
 #undef ent_ReceiveCostumeRewards
 static void observed_rewards(Packet *pak,Entity *e){pak->in_rewards=1;pak->report.field=COH_ENT_COSTUME_REWARDS;ent_ReceiveCostumeRewards(pak,e);pak->in_rewards=0;pak->prefix_step=2;pak->report.field=COH_ENT_COSTUME_BODY;}
+static void observed_inventory(Character *c,Packet *pak){pak->inventory_index=0;pak->report.inventory_begin_bit=pak->reader.cursor;original_native_inventory(c,pak);pak->report.inventory_end_bit=pak->reader.cursor;}
 static int observed_power_list(Packet *pak,Entity *e,PowerCustomizationList *list){pak->report.field=COH_ENT_COSTUME_POWER_LIST;pak->power_count_pending=1;int result=powerCustList_receive(pak,e,list);pak->power_count_pending=0;pak->report.power_lists_read++;return result;}
 static void run(Packet *volatile pak){if(!setjmp(pak->trap)){if(!entReceiveCostume(pak,&pak->entity,1))fail(pak,COH_UNSUPPORTED);pak->report.appearance_complete=1;pak->report.appearance_end_bit=pak->reader.cursor;pak->report.field=COH_ENT_COSTUME_XLUCENCY;(void)entReceiveXlucency(pak,&pak->entity,1);pak->report.xlucency_complete=1;pak->report.field=COH_ENT_COSTUME_POWER_SELECTOR;pak->report.power_begin_bit=pak->reader.cursor;pak->in_power=1;(void)entReceivePowerCust(pak,&pak->entity,1);pak->report.power_complete=1;pak->report.power_end_bit=pak->reader.cursor;pak->report.field=COH_ENT_COSTUME_TITLES;if(pak->initial){pak->in_power=0;(void)entReceiveTitles(pak,&pak->entity,1);pak->report.titles_complete=1;pak->report.field=COH_ENT_COSTUME_RAGDOLL;(void)entGetRagdollIgnore(pak,&pak->entity);pak->report.ragdoll_complete=1;pak->report.field=COH_ENT_COSTUME_BASIC_STATS;if(pak->pchar_things)(void)entReceiveCharacterStats(pak,&pak->entity,1);pak->report.basic_stats_complete=1;pak->report.field=COH_ENT_COSTUME_VISION;receive_vision(pak);CohStatus tf=coh_original_taskforce_receive(&pak->reader,pak->body_parts,pak->slots,pak->workspace,&pak->report.taskforce);pak->reader.cursor=tf==COH_OK?pak->report.taskforce.end_bit:pak->report.taskforce.failure_bit;if(tf!=COH_OK)fail(pak,tf);pak->report.taskforce_complete=1;pak->report.field=COH_ENT_COSTUME_RARE_PREFIX;}}}
 static int span(const void*p,size_t n){return p&&(uintptr_t)p<=UINTPTR_MAX-n;}

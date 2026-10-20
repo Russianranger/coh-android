@@ -720,4 +720,35 @@ static int entReceiveStatusEffects(Packet *pak, Entity *e, bool oo_packet)
     }
     return 0;
 }
+void character_ReceiveInventorySizes(Character *pchar, Packet *pak )
+{
+    if( verify( pak ))
+    {
+        int type;
+        int valid = pktGetBitsPack( pak, 1 );
+
+        if (valid)
+        {
+            int count = pktGetBitsPack( pak, 3 );
+
+            for( type = 0; type < count; ++type ) 
+            {
+                int totalSize = pktGetBitsPack( pak, INV_COUNT_PACKBITS);
+                int size = pktGetBitsPack( pak, INV_COUNT_PACKBITS);
+
+                character_SetInvTotalSize(pchar, type, totalSize);
+            }
+
+            //! @todo pchar can be NULL.  How does this occur?  Should we prevent that from occurring?
+            if (pchar)
+            {
+                pchar->auctionInvTotalSlots = pktGetBitsPack( pak, INV_COUNT_PACKBITS);
+                pchar->iNumBoostSlots = pktGetBitsPack( pak, INV_COUNT_PACKBITS);
+            } else {
+                pktGetBitsPack( pak, INV_COUNT_PACKBITS );
+                pktGetBitsPack( pak, INV_COUNT_PACKBITS );
+            }
+        }
+    }
+}
 #endif
