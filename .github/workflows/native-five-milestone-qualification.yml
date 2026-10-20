@@ -1,0 +1,73 @@
+name: Bounded five-milestone source qualification
+on:
+  workflow_call: {}
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: native-five-milestone-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  bounded-contracts:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+      ASAN_OPTIONS: detect_leaks=0:halt_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          sparse-checkout: |
+            .github
+            native-android
+            upstream/ouroboros
+            tools
+            android
+            patches
+            database
+            docs
+      - name: Install focused native headers
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+      - name: Bind qualification to the exact clean integration revision
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          mkdir -p "$RUNNER_TEMP/cycle-receipts"
+          python3 native-android/combined-client/tools/audit_report_inputs.py --output "$RUNNER_TEMP/cycle-receipts/protected-inputs.json"
+      - name: Qualify nonexecuting original witness target preflight
+        run: python3 native-android/engine/costume-export/test_body_witness_target.py
+      - name: Qualify immutable candidate dictionary ownership
+        run: >-
+          python3 native-android/engine/character-dictionary/check_costume_owner.py
+          --source-root . --work "$RUNNER_TEMP/cycle-costume-owner"
+          --output "$RUNNER_TEMP/cycle-receipts/costume-owner.json"
+      - name: Qualify conditional original default-count continuation
+        run: >-
+          python3 native-android/engine/initial-capture/check_initial_partcount_admission.py
+          --output "$RUNNER_TEMP/cycle-receipts/partcount-admission.json"
+          --work "$RUNNER_TEMP/cycle-partcount"
+      - name: Qualify only the two-model historical CLIENT material inventory
+        run: >-
+          python3 native-android/engine/scenecatalog/check_source_material_plan.py
+          --source-root . --work "$RUNNER_TEMP/cycle-material-plan"
+          --output "$RUNNER_TEMP/cycle-receipts/material-plan.json"
+      - name: Preserve source and protected inputs after sequential qualification
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          python3 native-android/combined-client/tools/audit_report_inputs.py --output "$RUNNER_TEMP/cycle-receipts/protected-inputs-after.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: five-milestone-source-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/cycle-receipts/
+            ${{ runner.temp }}/cycle-costume-owner/
+            ${{ runner.temp }}/cycle-partcount/
+            ${{ runner.temp }}/cycle-material-plan/
+          if-no-files-found: error
+          retention-days: 90
