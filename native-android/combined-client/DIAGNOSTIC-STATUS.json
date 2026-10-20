@@ -536,7 +536,7 @@
         "tree": "e1612ec3d9adbf60a98662d01daf237bb7175fc2"
       }
     ],
-    "ci": "Source-check include-path failure repaired locally; rerunning qualification before the single APK build.",
+    "ci": "Complete source qualification passed; host-only header isolation repaired, rerunning before the single Android APK build.",
     "next_diagnostic": {
       "version": "0.1.16",
       "version_code": 17,
@@ -568,7 +568,8 @@
       "outer_android": "Final integrated check at 18b95b288 passed 10832249 checks in each release/ASan/UBSan mode,165 body selection/truncation cases, actual BasePower callback, replay bounds/alias/JNI/cleanup. Report peak 6855/7168 bytes.",
       "initial_replay_store": "82 Java storage/lifecycle/export controls",
       "integrated_capture": "All checks passed at cbede103272b09d1f1d980a44e09d30a79419dad: wiring50 per mode+27 assertions, packaging11, neighborhood39 per mode and actual Mesa source capture/ZIP",
-      "observed_session_dependency_fix": "Added the public asset-header include path; focused source pose15282 and observed-session135 checks pass per release/ASan/UBSan. No app behavior change."
+      "observed_session_dependency_fix": "Added the public asset-header include path; focused source pose15282 and observed-session135 checks pass per release/ASan/UBSan. No app behavior change.",
+      "capture_host_header_fix": "Both host GLES checkers now import only GLES3/KHR. A poisoned full-root negative control reproduces the old Bionic contamination, while fixed GL24 and source-scene capture pass with unchanged pixels/hash. No renderer/compiler flag changes."
     },
     "housekeeping": {
       "readme_points_to_roadmap": true,
@@ -621,7 +622,27 @@
         "source_artifact_id": 12288430279,
         "source_artifact_bytes": 14106,
         "source_artifact_sha256": "2f3116573c30818d3b40e99e88f21e2e934f3a9ae21db1a178499f4f3ae03eaa"
+      },
+      {
+        "run_id": 39473155975,
+        "qualified_commit": "b6b0d913f0c2c94d03d6f5619bd4ca66b8d3442d",
+        "source": "passed",
+        "diagnostic_status": "failed in host GLES qualification before Gradle",
+        "blocker": "New capture host checkers exposed the full NDK Bionic include tree to host GCC; isolate GLES3/KHR as the existing neighborhood checker does.",
+        "apk_produced": false,
+        "artifact_id": 12289050413,
+        "artifact_bytes": 102038,
+        "artifact_sha256": "2b1e79611dcaa2e06c0486900eae762c64ca48834dc544ed7316876244028f59"
       }
-    ]
+    ],
+    "basepower_input": {
+      "grammar": "Known and already qualified via coh_power_stream_find_crc; 20241 records, first duplicate winner and fullname spans. No new runtime provenance gate.",
+      "source_note": "native-android/engine/character-dictionary/HANDOFF.md",
+      "missing_file": "data/bin/powers.bin",
+      "bytes": 62047164,
+      "sha256": "25641e747c60e066016fcc7d2ce0a2e72f57d7d3953f7b1ff4b18b69e2d49c6d",
+      "retained_exact_client_zip": "Contains BodyParts.bin, costume.bin and supergroupColors.bin only; no powers.bin or compact CRC/name mapping found in current retained inputs.",
+      "effect": "A genuine nonempty power customization stops at its actual CRC callback. Known very-rare and subsequent entity/global integration also remains before exact message completion."
+    }
   }
 }
