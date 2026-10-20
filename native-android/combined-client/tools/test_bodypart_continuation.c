@@ -15,7 +15,7 @@ void coh_request_tx_diagnostics(const CohRequestTxWitness*w,CohRequestTxDiagnost
 #include <fcntl.h>
 #include <unistd.h>
 static unsigned opens,closed_files,short_reads,interrupt_read,fail_read;
-static const char *test_cache_path;
+static unsigned capture_cycles;
 int __real_open(const char*,int,...);int __real_close(int);ssize_t __real_read(int,void*,size_t);
 int __wrap_open(const char*p,int flags,...){int fd=__real_open(p,flags);if(fd>=0)opens++;return fd;}
 int __wrap_close(int fd){int s=__real_close(fd);if(!s)closed_files++;return s;}
@@ -31,21 +31,23 @@ static CohStatus configure(const char*p){
  return(CohStatus)JNI(configureBodyPartsCache)(&local,NULL,file_path);
 }
 static uint32_t load32(const unsigned char*p){return(uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
-static void run_capture(unsigned explicit_count){
- fixture();partcount_fixture=1;CHECK(configure(test_cache_path)==COH_OK);
+static void run_capture(unsigned explicit_count,const char*path,CohStatus consistency){
+ fixture();partcount_fixture=1;capture_cycles++;
+ if(path)CHECK(configure(path)==consistency);
+ else CHECK(configured_bodyparts_status==COH_NOT_FOUND);
  unsigned at=COH_PARTCOUNT_JNI_FIXTURE_PARTCOUNT_BEGIN;
  partcount_scalar(at++,1,explicit_count);if(explicit_count){partcount_scalar(at,4,1);at+=4;}
  /* First actual part geom: cache0,present1,indexed1. Stop BEFORE index Pack. */
  partcount_scalar(at,3,6);partcount_bits=at+3;
- start();CHECK(active->pinned_bodyparts==28&&active->bodyparts_cache_status==COH_OK);
- CHECK(configure(test_cache_path)==COH_STATE);
+ start();CHECK(active->pinned_bodyparts==28&&active->bodyparts_cache_status==consistency);
+ CHECK(configure("/ignored/while-active.bin")==COH_STATE);
  CHECK(JNI(service)(&env,NULL,current,101)==COH_OK);CHECK(JNI(choose)(&env,NULL,current,2,102)==COH_OK);
  CHECK(JNI(service)(&env,NULL,current,103)==COH_OK);CHECK(JNI(service)(&env,NULL,current,104)==COH_UNSUPPORTED);
  const CohOriginalCostumeReport*c=&active->initial_costume_continuation;
  CHECK(active->costume_continuation_attempted&&c->count_validated&&c->bodytype_validated);
  CHECK(c->part_count==(explicit_count?1u:28u)&&c->status==COH_UNSUPPORTED&&c->dictionary_required==COH_ORIGINAL_COSTUME_STRINGS);
  CHECK(c->field==COH_ORIGINAL_COSTUME_GEOM&&!c->parts_read&&c->failure_bit==partcount_bits);
- const char*json=report();if(strlen(json)>report_peak)report_peak=(unsigned)strlen(json);CHECK(strstr(json,"\"bodyparts_default\":[0,28]")&&strstr(json,"\"costume_continuation\":[2,3,0,"));CHECK(strstr(json,"\"catalog_boundary\":null"));CHECK(strlen(json)<7168&&!strstr(json,"REPORT_LIMIT"));
+ const char*json=report();if(strlen(json)>report_peak)report_peak=(unsigned)strlen(json);CHECK(strstr(json,"\"bodyparts_default\":[0,28]")&&strstr(json,"\"costume_continuation\":[2,3,0,"));char expected_server[96];snprintf(expected_server,sizeof(expected_server),"\"bodyparts_server_cache_status\":%u",(unsigned)consistency);CHECK(strstr(json,expected_server));CHECK(strstr(json,"\"catalog_boundary\":null"));CHECK(strlen(json)<7168&&!strstr(json,"REPORT_LIMIT"));
  CHECK(JNI(observedSelfPose)(&env,NULL,current)==private_bytes&&byte_count==16);
  CHECK(load32((const unsigned char*)private_bytes)==active->initial_create.entity_index);
  uint32_t expected[3];memcpy(&expected[0],&active->initial_pose_sample.position.x,4);memcpy(&expected[1],&active->initial_pose_sample.position.y,4);memcpy(&expected[2],&active->initial_pose_sample.position.z,4);
@@ -62,7 +64,7 @@ static void run_capture(unsigned explicit_count){
  JNI(disconnect)(&env,NULL,current);CHECK(JNI(observedSelfPose)(&env,NULL,current));finish();CHECK(!JNI(observedSelfPose)(&env,NULL,current));
 }
 int main(int argc,char**argv){
- CHECK(argc==6);test_cache_path=argv[1];uint32_t count=99;
+ CHECK(argc==6);uint32_t count=99;
  CHECK(coh_local_bodypart_default_file(argv[1],&count)==COH_OK&&count==28);
  count=99;CHECK(coh_local_bodypart_default_file(argv[5],&count)==COH_OK&&count==28);
  for(unsigned i=2;i<5;i++){count=99;CHECK(coh_local_bodypart_default_file(argv[i],&count)==COH_STATE&&count==99);}
@@ -73,8 +75,16 @@ int main(int argc,char**argv){
  CHECK(coh_local_bodypart_default_file(argv[1],(uint32_t*)(void*)argv[1])==COH_INVALID);
  short_reads=interrupt_read=1;CHECK(coh_local_bodypart_default_file(argv[1],&count)==COH_OK&&count==28);short_reads=0;
  fail_read=1;count=99;CohStatus injected=coh_local_bodypart_default_file(argv[1],&count);CHECK(injected==COH_IO&&count==99);fail_read=0;
- for(unsigned i=0;i<16;i++){run_capture(0);run_capture(1);}
- fixture();partcount_fixture=1;CHECK(configure(argv[2])==COH_STATE);start();CHECK(!active->pinned_bodyparts&&active->bodyparts_cache_status==COH_STATE);CHECK(!JNI(observedSelfPose)(&env,NULL,current));finish();
+ for(unsigned i=0;i<16;i++){run_capture(0,argv[1],COH_OK);run_capture(1,argv[1],COH_OK);}
+ /* Optional comparison absent, missing, mismatched, invalid or timestamp-only:
+  * both default and explicit framing still use the same verified CLIENT count. */
+ for(unsigned explicit_count=0;explicit_count<2;explicit_count++){
+  run_capture(explicit_count,NULL,COH_NOT_FOUND);
+  run_capture(explicit_count,"/no-such-cache/bodyparts.bin",COH_NOT_FOUND);
+  run_capture(explicit_count,argv[2],COH_STATE);
+  run_capture(explicit_count,"",COH_INVALID);
+  run_capture(explicit_count,argv[5],COH_OK);
+ }
  CHECK(opens==closed_files&&!live);
- printf("{\"checks\":%u,\"capture_cycles\":32,\"file_opens\":%u,\"file_closes\":%u,\"report_peak_bytes\":%u,\"interop_owned_bytes\":%zu,\"workspace_bytes\":%zu,\"default_count\":28,\"first_real_unknown_dictionary\":1,\"raw_physical_packet_replayed\":false}\n",checks,opens,closed_files,report_peak,sizeof(Interop),sizeof(CohOriginalCostumeWorkspace));return 0;
+ printf("{\"checks\":%u,\"capture_cycles\":%u,\"file_opens\":%u,\"file_closes\":%u,\"report_peak_bytes\":%u,\"interop_owned_bytes\":%zu,\"workspace_bytes\":%zu,\"default_count\":28,\"first_real_unknown_dictionary\":1,\"raw_physical_packet_replayed\":false}\n",checks,capture_cycles,opens,closed_files,report_peak,sizeof(Interop),sizeof(CohOriginalCostumeWorkspace));return 0;
 }

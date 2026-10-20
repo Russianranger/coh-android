@@ -66,7 +66,6 @@ typedef struct {
 } Interop;
 static Interop *active;
 static uint64_t next_token=1;
-static uint32_t configured_bodyparts;
 static CohStatus configured_bodyparts_status=COH_NOT_FOUND;
 static void sample_receive(Interop*h){
     CohInitialCaptureDiagnostics d;memset(&d,0,sizeof(d));coh_initial_capture_diagnostics(h->capture,&d);
@@ -131,7 +130,7 @@ static int account_copy(JNIEnv *env,jstring input,char out[15]) {
 }
 JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_configureBodyPartsCache(JNIEnv *env,jclass cls,jstring input) {
     (void)cls;if(active)return COH_STATE;
-    configured_bodyparts=0;configured_bodyparts_status=COH_INVALID;
+    configured_bodyparts_status=COH_INVALID;uint32_t consistency_count=0;
     if(!input)return COH_INVALID;
     jsize length=(*env)->GetStringLength(env,input);
     if((*env)->ExceptionCheck(env)||length<1||length>=1024)return COH_INVALID;
@@ -140,7 +139,7 @@ JNIEXPORT jint JNICALL Java_org_coh_nativecombined_InteropNative_configureBodyPa
     char path[1024];int valid=1;
     for(jsize i=0;i<length;i++){if(chars[i]<32||chars[i]>126){valid=0;break;}path[i]=(char)chars[i];}
     path[length]=0;(*env)->ReleaseStringChars(env,input,chars);
-    if(valid&&!(*env)->ExceptionCheck(env))configured_bodyparts_status=coh_local_bodypart_default_file(path,&configured_bodyparts);
+    if(valid&&!(*env)->ExceptionCheck(env))configured_bodyparts_status=coh_local_bodypart_default_file(path,&consistency_count);
     coh_db_wipe(path,sizeof(path));return configured_bodyparts_status;
 }
 JNIEXPORT jlong JNICALL Java_org_coh_nativecombined_InteropNative_begin(JNIEnv *env,jclass cls,
@@ -152,8 +151,10 @@ JNIEXPORT jlong JNICALL Java_org_coh_nativecombined_InteropNative_begin(JNIEnv *
     CohLocalConfig config;memset(&config,0,sizeof(config));Interop *h=NULL;
     if(!account_copy(env,account,name))goto failed;
     h=calloc(1,sizeof(*h));if(!h)goto failed;
-    h->pinned_bodyparts=configured_bodyparts;h->bodyparts_cache_status=configured_bodyparts_status;
-    configured_bodyparts=0;configured_bodyparts_status=COH_NOT_FOUND;
+    /* The pinned CLIENT ParseBodyPart catalog defines GetBodyPartCount().
+     * An optional server-cache comparison never controls client admission. */
+    h->pinned_bodyparts=COH_LOCAL_BODYPART_COUNT;h->bodyparts_cache_status=configured_bodyparts_status;
+    configured_bodyparts_status=COH_NOT_FOUND;
     config=coh_local_default_config();config.local_development_enabled=1;
     config.db.transport.peer=(CohNetEndpoint){{127,0,0,1},(uint16_t)port};
     config.db.transport.link.version=config.map.udp.link.version=(unsigned)version;
@@ -530,7 +531,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         "\"authserver_authenticated\":false,\"normal_version_admitted\":false,\"checksum_reference_admitted\":false,"
         "\"source_generation_admitted\":false,\"complete_initial_character\":false,\"actor_publication\":false,\"ack_permitted\":false,"
         "\"sends_ready\":false,\"sends_received_character\":false,\"sends_full_update_ack\":false,\"world_authority\":false,\"live_world_rendered\":false,"
-        "\"bodyparts_default\":[%u,%u],\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s",
+        "\"bodyparts_default\":[%u,%u],\"bodyparts_server_cache_status\":%u,\"costume_continuation\":%s,\"catalog_boundary\":%s,\"request_tx_available\":%s,\"request_tx\":%s,\"receive_diagnostics\":%s",
         phase_name(h,&d),(unsigned)d.phase,status_number(first->valid?first->status:d.status),status_number(h->last_status),failure_name(failure),(unsigned)failure,
         terminal?"true":"false",d.raw_allents_observed&&h->allents_callbacks==1?"true":"false",
         local->local_development_auth?"true":"false",local->server_identity_bound?"true":"false",local->selected_dbid_owner_bound?"true":"false",
@@ -544,7 +545,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_InteropNative_report(JNIEn
         coh_initial_capture_command_name(d.refused_command_kind),(unsigned)map->phase,(unsigned)map->stage,status_number(map->last_status),U64(map->scene_structures),
         (unsigned)udp->state,U64(udp->datagrams_sent),U64(udp->datagrams_received),U64(udp->send_would_block),U64(udp->interrupted),U64(udp->io_errors),
         U64(udp->link.sent),U64(udp->link.received),U64(udp->link.retransmits),U64(udp->link.acknowledged),udp->link.tx_pending,
-        status_number(h->bodyparts_cache_status),h->pinned_bodyparts,continuation,catalog_boundary,request_available?"true":"false",request,receive);
+        status_number(COH_OK),h->pinned_bodyparts,status_number(h->bodyparts_cache_status),continuation,catalog_boundary,request_available?"true":"false",request,receive);
     const char *const details[8]={first_create,first_pose,first_sequence,first_triggered,first_aianim,first_netfx,first_costume,first_reward};
     size_t used=written>0?(size_t)written:sizeof(json);
     int complete=written>0&&(size_t)written<sizeof(json)&&report_details(json,&used,details,invalid);
