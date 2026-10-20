@@ -241,9 +241,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             try {
                 JSONObject manifest = new JSONObject(new String(readAsset("asset-manifest.json"), StandardCharsets.UTF_8));
                 JSONObject records = manifest.getJSONObject("assets");
-                JSONObject neighborhoodRecords = BuildConfig.NEIGHBORHOOD_DIAGNOSTIC
-                        ? new JSONObject(new String(readAsset("combined/build-inputs.json"), StandardCharsets.UTF_8))
-                            .getJSONObject("neighborhood").getJSONObject("assets") : null;
+                JSONObject buildInputs = BuildConfig.NEIGHBORHOOD_DIAGNOSTIC
+                        ? new JSONObject(new String(readAsset("combined/build-inputs.json"), StandardCharsets.UTF_8)) : null;
+                JSONObject neighborhoodRecords = buildInputs == null ? null : buildInputs.getJSONObject("neighborhood").getJSONObject("assets");
                 String[] names = {"world.bin", "character.bin", "rig.bin", "morph.bin", "locomotion.bin", "walkable.bin",
                         BuildConfig.NEIGHBORHOOD_DIAGNOSTIC?"neighborhood-map.bin":"map.bin"};
                 byte[][] bytes = new byte[names.length][];
@@ -255,7 +255,18 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 JSONObject apk = apkIdentity();
                 long result = SessionNative.createSession(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6]);
                 if (result == 0) throw new IllegalStateException("Native scene rejected its fixtures");
-                handle = result;
+                try {
+                if(BuildConfig.FULLSCREEN_DIAGNOSTIC){
+                    try(RuntimeWorldInputs inputs=RuntimeWorldInputs.open(this,new ImportStore(this,(phase,done,total)->{}),
+                            buildInputs.getJSONObject("live_world").getJSONObject("assets").getJSONObject("live-world.bin"),new ImportContract.Control())){
+                        long javaPayload=inputs.stagingPayloadBytes();for(byte[] source:bytes)javaPayload=Math.addExact(javaPayload,source.length);
+                        int admitted=SessionNative.runtimeWorld(result,inputs.fds,inputs.offsets,inputs.lengths,javaPayload);
+                        main.post(()->event(admitted==1?"runtime_world_attached":"runtime_world_fallback"));
+                    }catch(Exception optional){String reason=optional.getClass().getSimpleName()+": "+optional.getMessage();
+                        main.post(()->{if(destroying)return;runtimeWorldFailure=reason.length()>160?reason.substring(0,160):reason;event("runtime_world_import_unavailable");saveReport();});}
+                }
+                handle = result;result=0;
+                }finally{if(result!=0)SessionNative.destroy(result);}
                 main.post(() -> {
                     if (destroying) return;
                     assetManifest=manifest; apkIdentity=apk; assetsVerified=true;
@@ -812,7 +823,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         JSONObject j=new JSONObject().put("schema","coh-native-combined-client-v1")
                 .put("session_id",Long.toHexString(sessionStarted)).put("updated_at",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",Locale.US).format(new Date()))
                 .put("scope","Local DB/Map progress and Atlas preview with a crude box at the observed selected-self server pose. No full costume, complete entity replication or application ACK")
-                .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
+                .put("app",app).put("device",d).put("runtime_world_optional_failure",runtimeWorldFailure).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
                 .put("server_protocol",new JSONObject(localNetworkReport)).put("world_handoff",new JSONObject(interopReport))
                 .put("memory_diagnostics",MemoryTelemetry.snapshot())
                 .put("diagnostic_states",new JSONObject(PhaseMemoryDiagnostics.states(handoffState.initialObserved(),false)))
@@ -938,6 +949,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             main.post(() -> {if(destroying)return;if(problem!=null)failure=problem;event(problem==null?"export_complete":"export_failed");saveReport();});
         });
     }
+    private String runtimeWorldFailure="";
     private static JSONObject sceneAssetPin(JSONObject original, JSONObject neighborhood, String name) throws Exception {
         return ("neighborhood-map.bin".equals(name) ? neighborhood : original).getJSONObject(name);
     }
