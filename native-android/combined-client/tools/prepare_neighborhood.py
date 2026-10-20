@@ -6,9 +6,7 @@ model are retained. The original map.bin and offline preview stay byte exact.
 """
 from pathlib import Path
 import argparse
-import base64
 import copy
-import gzip
 import hashlib
 import importlib.util
 import json
@@ -214,6 +212,8 @@ def prepare(source_root: Path, assets: Path, cache: Path) -> dict:
     temporary.replace(destination)
     require((assets / 'map.bin').read_bytes() == old_raw, 'Original offline map changed')
     fixture.update({'nodes': nodes, 'endpoints': endpoints, 'assets': [{k: v for k, v in row.items() if k != 'raw'} for row in all_assets], 'materials': materials, 'instances': fixture['instances'] + instances, 'bundle': {'bytes': len(bundle), 'sha256': sha(bundle)}, 'index': {'bytes': len(index), 'sha256': sha(index)}, 'catalog': {'nodes': len(nodes), 'endpoints': len(endpoints), 'assets': len(all_assets), 'instances': len(fixture['instances']) + len(instances)}})
+    fixture['offline_spawn'] = fixture['spawn']
+    fixture['spawn'] = list(POSE)
     fixture['radius_queries'] = {str(int(r)): [row['node'] for row in fixture['instances'] if sum((a - b) ** 2 for a, b in zip(row['world_center'], POSE)) <= (r + row['radius']) ** 2] for r in (24.0, RADIUS)}
     return {'assets': {'neighborhood-map.bin': {'bytes': len(bundle), 'sha256': sha(bundle)}}, 'source_files': source_files, 'inputs': [{k: v for k, v in row.items() if k != 'raw'} for row in extra], 'instances': instances, 'observed_pose': POSE, 'selection_radius': RADIUS, 'raw_dependency_bytes': 328539, 'ground_proof': proof, 'source_part_mask': PART_MASK, 'fixture': fixture}
 
