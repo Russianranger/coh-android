@@ -1,0 +1,55 @@
+{
+  "schema": "coh-five-cycle-worker-status-v1",
+  "worker": "A",
+  "milestone": 1,
+  "status": "PARTIAL_WITH_EXACT_BLOCKER",
+  "baseline": "50a80ea29077d16332fb58c6999cc27631448b8d",
+  "qualified_commits": [
+    "36bd1d12adc4ea68d76d7521000b132aa1d74144",
+    "c21a7f775b8fdd35a5c236231518cfffaddb1aef"
+  ],
+  "source_dependency_commit": "52574b93cfb0b6201dcc82c60def8fde9ee2422c",
+  "tested_composite_tree": "242403ebbcec53ad3e32d53750169a706688d551",
+  "tested_tree_recipe": "three-way source tree baseline + A code HEAD + C final source; all compiled input hashes match this tree",
+  "qualification": "native-android/engine/initial-capture/qualification/partcount-admission-20261020/host.json",
+  "qualification_sha256": "86e2c3f93f125bf6f05b075fcebce5c70e005afd90649a1e9dfb59de5480ecf4",
+  "test_command": "flock /tmp/coh-cycle-build.lock python3 native-android/engine/initial-capture/check_initial_partcount_admission.py --output /tmp/count-admission.json --work /tmp/count-admission-evidence",
+  "tests": {
+    "release_standalone": 51868,
+    "asan_standalone": 51868,
+    "ubsan_standalone": 51868,
+    "release_actual_owner_composition": 13953,
+    "asan_actual_owner_composition": 13953,
+    "ubsan_actual_owner_composition": 13953,
+    "unchanged_original_consumer_cases": 720,
+    "actual_owner_lifecycle_cycles_per_mode": 128,
+    "candidate_allocations_per_mode": 384,
+    "candidate_frees_per_mode": 384
+  },
+  "ci": {
+    "status": "PENDING_COORDINATOR_INTEGRATION",
+    "run": null
+  },
+  "accepted_scope": "Nonshipping exact source-framing/default/count admission consumer; only test query supplies positive counts. Real immutable C candidates remain unsupported; strict generation/identity/alias/refusal composition qualified. No existing probe/report changes.",
+  "memory": {
+    "new_direct_allocation_calls": 0,
+    "persistent_A_owner_bytes": 0,
+    "packet_borrow_max": 4194304,
+    "stack_reserve": 16384,
+    "standalone_emitted_frame_sum": 8360,
+    "consumer_and_all_owner_frame_sum": 9664,
+    "candidate_named_construction_peak": 4249484,
+    "candidate_retained_owner_and_dictionary": 1365,
+    "scene_transaction_ceiling": 100663296,
+    "device_RSS_PSS": null
+  },
+  "blocker": "No independently authenticated runtime MapServer BodyPart/costume dictionary/source-run-generation-session-loan producer lease exists; production owner query has no COH_OK path. Live stage41 cannot progress.",
+  "next_action": "Bind actual target-qualified runtime BodyPart and dictionary evidence to a coherent current source/generation/session owner before introducing any positive production query. Keep stage41 refusal meanwhile.",
+  "live_stage41_progressed": false,
+  "shipping_integration": false,
+  "parts_read": 0,
+  "complete_costume": false,
+  "actor": false,
+  "application_ACK": false,
+  "world_authority": false
+}

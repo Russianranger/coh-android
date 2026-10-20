@@ -1,0 +1,412 @@
+{
+  "schema": "coh-initial-partcount-admission-v1",
+  "passed": true,
+  "source_revision": "36bd1d12adc4ea68d76d7521000b132aa1d74144",
+  "source_sha256": {
+    "native-android/engine/character-dictionary/coh_costume_owner.c": "bef04f3b483c8d3bf71684961253b28252562b0523375a8cc2201096bfeec027",
+    "native-android/engine/character-dictionary/coh_costume_owner.h": "4ac9e144a0ef782b73c53f023a997c4a43ee36829366ad82dc8188baf1c8b835",
+    "native-android/engine/character-dictionary/costume_owner_bodytypes.inc": "2f78f65012464758a153d434607dc018fcda26e92e982100a08dbf90ec6c5bfd",
+    "native-android/engine/character-dictionary/test_costume_owner.c": "ddd1b73db17db21a4dc229e029f26b665c69840eda1249cfbf8e7efc61185c19",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/costume-import/coh_costume_import.c": "8b4c76b28a9c42ee0d993163d49d17d14cd4b33dd94af3c621afa73f1607e26c",
+    "native-android/engine/costume-import/coh_costume_import.h": "20fb6b1f3e7937a2eacbbe88d4005f80e2bdb91a432aeeea2ef5b236fe1e0a01",
+    "native-android/engine/costume-import/source_id.h": "e7f0acdbdfb661427834da9a6c46ba270005ee8628fb944f2fbbc58ec47df38f",
+    "native-android/engine/entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_entities.h": "e1f98c47bd0770c0b26769be230f04fc3c807aebe041c633f0e844dfaf61ab3e",
+    "native-android/engine/entities/source-pins.json": "24f69b4395debf3b52e668d1ee46b2bb4a0aa95353dd9022709b8387a3d32bbe",
+    "native-android/engine/initial-capture/check_initial_partcount_admission.py": "56a5d343637f7c234a479e44b0a967c754605a19ec8ab604e2ff5d50fa706b69",
+    "native-android/engine/initial-capture/coh_initial_appearance_probe.c": "0738edb10afe8f9056957401360bbc10f11d4e3086e6976df5f19c868a25e723",
+    "native-android/engine/initial-capture/coh_initial_appearance_probe.h": "705d417e1ea17eac5d974ace56b41680e8d0ef48e0109a438b3164026c4ca4df",
+    "native-android/engine/initial-capture/coh_initial_costume_body_probe.h": "d054d71d1bce6cbd7a18dbb586d0a15bf2d74df3db7d47527c62d274d7cb3a26",
+    "native-android/engine/initial-capture/coh_initial_costume_slots_probe.h": "3997ebc44aa37949ec0aae32b471e504f8b33191189b83a935acfdd56162994b",
+    "native-android/engine/initial-capture/coh_initial_partcount_admission.c": "08b606892c53207e70c2dbca79b168738970564856d0e50cc31cee2319e06161",
+    "native-android/engine/initial-capture/coh_initial_partcount_admission.h": "d1969e5d128d8814354a88dd5742f06d78185672cdf0a978260e75e8a4b050e8",
+    "native-android/engine/initial-capture/coh_initial_partcount_probe.c": "97835106365ed10a9404dfc65951b7b723558dbe1ff57c129985d5dbbf5f5aa0",
+    "native-android/engine/initial-capture/coh_initial_partcount_probe.h": "fa3d69aff0d28a606771536001737d115fde11b3e7ac159cd7a86365b5df5e50",
+    "native-android/engine/initial-capture/coh_initial_reward_list_probe.h": "3e9e5778d60a53473ccaf07ef592f3692ecc454e955ac4702d7262cceb996632",
+    "native-android/engine/initial-capture/coh_initial_reward_probe.h": "7cd20aa2c3401d9e5f14658f0089ce508269bcbde2b7b24374e21d8df074f686",
+    "native-android/engine/initial-capture/coh_initial_scales_probe.c": "407cdc8f5750230865114a32890fd4fbef89fd6583fe040e41a04fb6d51fdd97",
+    "native-android/engine/initial-capture/coh_initial_scales_probe.h": "e716e5fd04ec4525f9ad32e1ca771112c50a6edc578dee986b29121ee9aec05a",
+    "native-android/engine/initial-capture/coh_initial_sgcolors_probe.c": "0687bf10ecdbcf136ded95069e53aa3276d74b2397e38f85c98b90cd701f2bad",
+    "native-android/engine/initial-capture/coh_initial_sgcolors_probe.h": "0038fc60ead934b3c4d4252ff652a8798725d534b252ec7d06ccec6e3ef24bfe",
+    "native-android/engine/initial-capture/partcount_owner_composition.inc": "95f9ab147f474c17b944f8d09959bc3bfdf32b3b23cb692ce9a21f16f320e439",
+    "native-android/engine/initial-capture/test_initial_partcount_admission.c": "c86b87a275638205cefde10109374154b3f3ed7be4b33ed0326e95f4c80c473b",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b"
+  },
+  "checks": {
+    "release": {
+      "checks": 51868,
+      "synthetic_owner_queries": 2717,
+      "parts_read": 0,
+      "direct_allocation_calls": 0
+    },
+    "asan": {
+      "checks": 51868,
+      "synthetic_owner_queries": 2717,
+      "parts_read": 0,
+      "direct_allocation_calls": 0
+    },
+    "ubsan": {
+      "checks": 51868,
+      "synthetic_owner_queries": 2717,
+      "parts_read": 0,
+      "direct_allocation_calls": 0
+    }
+  },
+  "binary_sha256": {
+    "release": "18f1be69b847b29caedeee70fee93b88caad289cef03fe2816a9e044c477bd46",
+    "asan": "7f66cd83f520099ba0027b8a400cbb91e5c53a7dcc224125fffc90bb295f3895",
+    "ubsan": "e1a26d1c6c5e4dabbd13bfeb6ef2f0d7f9638f996ee0ac442d6846019120f2a7"
+  },
+  "actual_owner_composition": {
+    "checks": {
+      "release": {
+        "checks": 13953,
+        "cycles": 128,
+        "candidate_allocations": 384,
+        "candidate_frees": 384,
+        "candidate_charged_peak": 4249484,
+        "candidate_retained_owner_bytes": 1365,
+        "production_query_admissions": 0,
+        "parts_read": 0
+      },
+      "asan": {
+        "checks": 13953,
+        "cycles": 128,
+        "candidate_allocations": 384,
+        "candidate_frees": 384,
+        "candidate_charged_peak": 4249484,
+        "candidate_retained_owner_bytes": 1365,
+        "production_query_admissions": 0,
+        "parts_read": 0
+      },
+      "ubsan": {
+        "checks": 13953,
+        "cycles": 128,
+        "candidate_allocations": 384,
+        "candidate_frees": 384,
+        "candidate_charged_peak": 4249484,
+        "candidate_retained_owner_bytes": 1365,
+        "production_query_admissions": 0,
+        "parts_read": 0
+      }
+    },
+    "binary_sha256": {
+      "release": "9085af5da0eea6bdadfa02422f27cbd5e0991d037338c7afcc8e07908b663937",
+      "asan": "d89128dfe9184b9a59275d3eea8d89d16e6d9f102d2e783e4a1966d09a98cbe3",
+      "ubsan": "30ce6fe5903f3634b24aaf645cec8d92b76c6d65b3c1ffc21e6582f267019178"
+    },
+    "owner_native_frames": [
+      {
+        "function": "string",
+        "bytes": 16,
+        "bound": "static"
+      },
+      {
+        "function": "coh_costume_owner_candidate",
+        "bytes": 688,
+        "bound": "dynamic,bounded"
+      },
+      {
+        "function": "coh_costume_owner_bytes",
+        "bytes": 16,
+        "bound": "static"
+      },
+      {
+        "function": "coh_costume_owner_output_disjoint",
+        "bytes": 48,
+        "bound": "static"
+      },
+      {
+        "function": "coh_costume_owner_borrow",
+        "bytes": 112,
+        "bound": "static"
+      },
+      {
+        "function": "coh_costume_owner_release",
+        "bytes": 48,
+        "bound": "static"
+      },
+      {
+        "function": "coh_costume_owner_retire",
+        "bytes": 8,
+        "bound": "static"
+      },
+      {
+        "function": "coh_costume_owner_destroy",
+        "bytes": 32,
+        "bound": "static"
+      },
+      {
+        "function": "coh_costume_owner_replace",
+        "bytes": 192,
+        "bound": "static"
+      },
+      {
+        "function": "coh_costume_owner_query",
+        "bytes": 144,
+        "bound": "static"
+      }
+    ],
+    "conservative_admission_and_all_owner_frame_sum": 9664,
+    "external_crypto_sanitizer_stack_closure": false,
+    "old_owner_suite_executed": false,
+    "production_query_admitted": false
+  },
+  "original_consumer": {
+    "cases": 720,
+    "whole_unchanged_function_sha256_lf": {
+      "GetBodyPartCount": "7657fea302b88e54666818cd1e7302b6b167db7a35f23d5fb595f23c5df8d677",
+      "getBodyTypeCount": "dde77b905a38c10452542457a5ccc4ad98337bdf1366c5395bfb340b157d1746",
+      "costume_receive": "b95b51d167699363b3f8548df9d9de5c305666400a08e2951618cbc4ab4c504d"
+    },
+    "original_source_sha256_lf": {
+      "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24"
+    },
+    "bodytype_enum_sha256_lf": "cebcaf7e17a52d1aaec1a47a388c7e6c295d158255262a83a80246f73a419085",
+    "bodytype_table_sha256_lf": "4e8861ed9a4f3ff91809adb8424cc38db1521a233c7418aaddfad462df2be462",
+    "generated_oracle_sha256": "3540c4ef8cbd6b442e99f83bda88fbdfcd0022660d385db8032b8ecefb8eccf1",
+    "original_bodytype_rows": 9,
+    "original_consumer_executed": true,
+    "actual_runtime_catalog_executed": false,
+    "packet_helpers": "Independent bounded fixture Bits/Pack/F32 adapters; unchanged whole original receiver and getters. Positive source counts are synthetic earray adapters, not current catalog. Stops before first part/cache read.",
+    "compiled_oracle_sanitized": false
+  },
+  "native_stack_frames": [
+    {
+      "function": "valid.part.0",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_appearance_probe",
+      "bytes": 224,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_appearance_probe_json",
+      "bytes": 80,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_initial_appearance_progress_json",
+      "bytes": 144,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_disconnect.part.0",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_reader",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_reader_bounded",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_read",
+      "bytes": 24,
+      "bound": "static"
+    },
+    {
+      "function": "f32",
+      "bytes": 112,
+      "bound": "static"
+    },
+    {
+      "function": "auto_bits",
+      "bytes": 112,
+      "bound": "static"
+    },
+    {
+      "function": "boolean",
+      "bytes": 112,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string.part.0",
+      "bytes": 384,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_pack",
+      "bytes": 144,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_shortcuts.part.0",
+      "bytes": 1488,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_string",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_scene_prefix.part.0",
+      "bytes": 992,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_connect",
+      "bytes": 384,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_shortcuts",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_scene_prefix",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_update_prefix",
+      "bytes": 224,
+      "bound": "static"
+    },
+    {
+      "function": "session_message",
+      "bytes": 1232,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_position_init",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_position",
+      "bytes": 320,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_physics",
+      "bytes": 208,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_init",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_begin",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_disconnect",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_rep_session_message",
+      "bytes": 48,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_rep_session_message_bounded",
+      "bytes": 48,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_sgcolors_probe",
+      "bytes": 176,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_sgcolors_probe_json",
+      "bytes": 64,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_initial_sgcolors_progress_json",
+      "bytes": 240,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_initial_partcount_admission",
+      "bytes": 448,
+      "bound": "static"
+    },
+    {
+      "function": "valid",
+      "bytes": 32,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_partcount_probe",
+      "bytes": 192,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_partcount_probe_json",
+      "bytes": 112,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_initial_partcount_progress_json",
+      "bytes": 240,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "valid",
+      "bytes": 8,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_scales_probe",
+      "bytes": 176,
+      "bound": "static"
+    },
+    {
+      "function": "coh_initial_scales_probe_json",
+      "bytes": 80,
+      "bound": "dynamic,bounded"
+    },
+    {
+      "function": "coh_initial_scales_progress_json",
+      "bytes": 208,
+      "bound": "dynamic,bounded"
+    }
+  ],
+  "conservative_all_emitted_frame_sum": 8360,
+  "call_stack_reserve": 16384,
+  "new_heap_bytes": 0,
+  "persistent_owner_bytes": 0,
+  "packet_borrow_max": 4194304,
+  "source_stable_before_after": true,
+  "positive_owner_query": "Explicit test-only link replacement; never compiled into production owner",
+  "production_query_admitted": false,
+  "runtime_catalog_admitted": false,
+  "live_stage41_progressed": false,
+  "parts_read": 0,
+  "complete_costume": false,
+  "actor": false,
+  "application_ack": false,
+  "world_authority": false,
+  "scope": "Bounded source-framing/default/count admission consumer. Actual source/run/generation owner remains unavailable. No shipping callsite or cap changes."
+}
