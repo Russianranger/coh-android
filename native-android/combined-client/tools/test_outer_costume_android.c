@@ -4,8 +4,9 @@
 #define COH_CLIENT_SLOTS_TEST_MAIN retained_client_slot_suite_not_executed
 #include "test_client_slots_android.c"
 CohStatus coh_initial_capture_local_password_digest(CohInitialCapture*owner,const uint8_t digest[16]){static const uint8_t empty[]={0xd4,0x1d,0x8c,0xd9,0x8f,0x00,0xb2,0x04,0xe9,0x80,0x09,0x98,0xec,0xf8,0x42,0x7e};CHECK(owner&&digest&&!memcmp(digest,empty,16));return COH_OK;}
-size_t coh_initial_capture_continuation_bytes(const CohInitialCapture*owner){CHECK(owner);return 0;/* This host transport double owns no real continuation allocation. */}
-CohStatus coh_initial_capture_finish_initial(const CohInitialCapture*owner,const CohInitialCaptureEvent*event,size_t bits){CHECK(owner&&event&&event->kind==COH_INITIAL_CAPTURE_ALLENTS&&bits==loan.reader.bits);return COH_OK;}
+static size_t observer_continuation_charge;static unsigned observer_finish_calls;
+size_t coh_initial_capture_continuation_bytes(const CohInitialCapture*owner){CHECK(owner);return observer_continuation_charge;/* Optional replay charges the measured real product owner. */}
+CohStatus coh_initial_capture_finish_initial(const CohInitialCapture*owner,const CohInitialCaptureEvent*event,size_t bits){CHECK(owner&&event&&event->kind==COH_INITIAL_CAPTURE_ALLENTS&&bits==loan.reader.bits);observer_finish_calls++;return COH_OK;}
 static unsigned outer_cases;static size_t last_power_begin,last_full_bits,last_inventory_begin,last_inventory_end;
 static const char *outer_report(void){CHECK(JNI(report)(&env,NULL,current));CHECK(strstr(report_text,"coh-native-initial-interop-numeric-v1")&&!strstr(report_text,"PRIVATE_")&&!strstr(report_text,"909090"));CHECK(strstr(report_text,"\"world_authority\":false")&&strstr(report_text,"\"ack_permitted\":false"));return report_text;}
 static unsigned char replay_output[COH_INITIAL_REPLAY_BYTES+COH_INITIAL_REPLAY_HEADER_BYTES];
@@ -142,7 +143,10 @@ static void inventory_and_rare(const char *path,const char *suffix){
  }
 }
 
-int main(int argc,char **argv){
+#ifndef COH_OUTER_TEST_MAIN
+#define COH_OUTER_TEST_MAIN main
+#endif
+int COH_OUTER_TEST_MAIN(int argc,char **argv){
  CHECK(argc==3);
  for(unsigned bodies=1;bodies<=10;bodies++)for(unsigned selected=0;selected<bodies;selected++)for(unsigned truncate=0;truncate<3;truncate++)outer_capture(argv[1],bodies,selected,truncate);
  replay_bounds(argv[1]);

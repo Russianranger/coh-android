@@ -56,6 +56,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--replay', type=Path, help='Optional retained physical INITIAL replay; no network I/O')
     args = parser.parse_args()
     work = args.work.resolve()
     work.mkdir(parents=True, exist_ok=False)
@@ -63,13 +64,20 @@ def main():
     raw = (work / 'assets' / metadata['asset']).read_bytes()
     original = work / 'offset-asset.bin'
     original.write_bytes(b'P' * 37 + raw)
-    suffix, suffix_source = rare_fixture(work)
+    actual_inputs = set()
+    actual_source = None
+    if args.replay:
+        from actual_initial_fixture import prepare
+        actual_source, actual_inputs = prepare(ROOT, work, args.replay.resolve())
+        suffix, suffix_source = args.replay.resolve(), {'scope': 'Rare suffix is present in the authentic retained INITIAL replay.'}
+    else:
+        suffix, suffix_source = rare_fixture(work)
     flags = ['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic', '-fno-pie', '-no-pie', '-fstack-usage',
              '-DCOH_INTEROP_REQUEST_TX=1', '-DCOH_INTEROP_CLIENT_SLOTS=1', '-DCOH_FRAME_CAPTURE_DIAGNOSTIC=1',
              '-I', str(TOOLS / 'test-include'), '-I', 'native-android/combined-client/diagnostics/interop-adapter-20261018/test-include',
              '-I', 'native-android/engine/initial-capture', '-I', 'native-android/engine/entities',
              '-I', 'native-android/engine/session', '-I', 'native-android/include']
-    sources = [TOOLS / 'test_outer_costume_android.c',
+    sources = [TOOLS / ('test_actual_initial_android.c' if args.replay else 'test_outer_costume_android.c'),
                *[Path('native-android/engine/initial-capture/coh_initial_' + name + '_probe.c') for name in PROBES],
                Path('native-android/engine/initial-capture/coh_local_bodypart_default.c'),
                Path('native-android/engine/entities/coh_original_costume_receive.c'),
@@ -88,8 +96,10 @@ def main():
         'entity-team': ['coh_team.c'], 'entity-superstats': ['coh_superstats.c'], 'entity-social': ['coh_social.c'],
         'entity-attributes': ['coh_attrib_monitor.c'], 'entity-dynamic': ['coh_dynamic.c'], 'entity-view': ['coh_view.c']}
     sources += [Path('native-android/engine') / directory / name for directory, names in tail_sources.items() for name in names]
+    if args.replay:
+        flags += ['-I', str(work)]
     dependency = subprocess.run([*flags, '-M', *map(str, sources)], cwd=ROOT, capture_output=True, text=True, check=True)
-    frozen = {Path(__file__).resolve(), ROOT / TOOLS / 'report_diagnostic_contract.py', ROOT / TOOLS / 'client_slots_input.py', ROOT / metadata['source'], ROOT / 'native-android/combined-client/app/src/main/java/org/coh/nativecombined/InteropNative.java'}
+    frozen = actual_inputs | ({ROOT / TOOLS / 'actual_initial_fixture.py'} if args.replay else set()) | {Path(__file__).resolve(), ROOT / TOOLS / 'report_diagnostic_contract.py', ROOT / TOOLS / 'client_slots_input.py', ROOT / metadata['source'], ROOT / 'native-android/combined-client/app/src/main/java/org/coh/nativecombined/InteropNative.java'}
     for line in dependency.stdout.replace('\\\n', ' ').splitlines():
         for name in shlex.split(line.split(':', 1)[1]):
             path = Path(name)
@@ -98,11 +108,16 @@ def main():
                 frozen.add(path)
     pins = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(frozen)}
     result = {'passed': True, 'modes': {}, 'inputs_sha256': pins, 'rare_source_fixture': suffix_source,
-              'scope': 'Shipping new-profile JNI observer, with Android asset/JNI/transport doubles and source-layout sender header composition; no physical packet, Android ABI, actor or ACK claim.'}
+              'scope': ('Authentic saved Thor packet through shipping JNI observer/owner with original source-static shortcuts, test-owned selection and transport/JNI/Android asset doubles; no live authentication, actual network sends or Android ABI claim.' if args.replay else 'Shipping new-profile JNI observer, with Android asset/JNI/transport doubles and source-layout sender header composition; no physical packet, Android ABI, actor or ACK claim.')}
+    if args.replay:
+        result['actual_source_fixture'] = actual_source
     env = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1:print_stacktrace=1'}
     for mode, options in [('release', ['-O2']), ('asan', ['-O1', '-g', '-fsanitize=address']), ('ubsan', ['-O1', '-g', '-fsanitize=undefined', '-fno-sanitize-recover=all'])]:
         binary = work / mode
-        command = [*flags, *options, *map(str, sources), '-Wl,--wrap=calloc,--wrap=free,--wrap=open,--wrap=close,--wrap=read,--wrap=__read_chk,--wrap=mmap,--wrap=munmap', '-lcrypto', '-lm', '-lz', '-o', str(binary)]
+        wrap = '-Wl,--wrap=calloc,--wrap=free,--wrap=open,--wrap=close,--wrap=read,--wrap=__read_chk,--wrap=mmap,--wrap=munmap'
+        if args.replay:
+            wrap += ',--wrap=socket,--wrap=sendto'
+        command = [*flags, *options, *map(str, sources), wrap, '-lcrypto', '-lm', '-lz', '-o', str(binary)]
         with (work / (mode + '-compile.log')).open('wb') as log:
             subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
         execution = subprocess.run([binary, original, suffix], cwd=ROOT, env=env, capture_output=True, text=True, timeout=90)
