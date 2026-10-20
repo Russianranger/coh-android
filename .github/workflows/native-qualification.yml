@@ -207,7 +207,9 @@ jobs:
         distribution: temurin
         java-version: '17'
     - name: Install existing host headers
-      run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+      run: |
+        sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+        python3 -m pip install --disable-pip-version-check Pillow==12.3.0
     - name: Verify protected inputs and sequential receiver/scene dependencies
       run: |
         test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
