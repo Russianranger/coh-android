@@ -210,11 +210,14 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             try {
                 JSONObject manifest = new JSONObject(new String(readAsset("asset-manifest.json"), StandardCharsets.UTF_8));
                 JSONObject records = manifest.getJSONObject("assets");
+                JSONObject neighborhoodRecords = BuildConfig.NEIGHBORHOOD_DIAGNOSTIC
+                        ? new JSONObject(new String(readAsset("combined/build-inputs.json"), StandardCharsets.UTF_8))
+                            .getJSONObject("neighborhood").getJSONObject("assets") : null;
                 String[] names = {"world.bin", "character.bin", "rig.bin", "morph.bin", "locomotion.bin", "walkable.bin",
                         BuildConfig.NEIGHBORHOOD_DIAGNOSTIC?"neighborhood-map.bin":"map.bin"};
                 byte[][] bytes = new byte[names.length][];
                 for (int i=0; i<names.length; i++) {
-                    bytes[i] = readAsset(names[i]); JSONObject pin = records.getJSONObject(names[i]);
+                    bytes[i] = readAsset(names[i]); JSONObject pin = sceneAssetPin(records, neighborhoodRecords, names[i]);
                     if (pin.getLong("bytes") != bytes[i].length || !pin.getString("sha256").equals(sha(bytes[i])))
                         throw new IllegalStateException("Asset integrity: " + names[i]);
                 }
@@ -794,6 +797,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             final String problem=error;
             main.post(() -> {if(destroying)return;if(problem!=null)failure=problem;event(problem==null?"export_complete":"export_failed");saveReport();});
         });
+    }
+    private static JSONObject sceneAssetPin(JSONObject original, JSONObject neighborhood, String name) throws Exception {
+        return ("neighborhood-map.bin".equals(name) ? neighborhood : original).getJSONObject(name);
     }
     private byte[] readAsset(String name) throws Exception {
         try(InputStream input=getAssets().open(name);ByteArrayOutputStream output=new ByteArrayOutputStream()) {

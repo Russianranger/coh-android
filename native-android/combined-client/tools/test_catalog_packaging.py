@@ -4,6 +4,8 @@ import gzip
 import io
 import json
 from pathlib import Path
+import subprocess
+import tempfile
 import unittest
 import zipfile
 from audit_catalog_publication import admit_framework_package
@@ -15,6 +17,52 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class CatalogPackagingTests(unittest.TestCase):
+    def test_preview_uses_additive_neighborhood_pins_without_replacing_historical_manifest(self):
+        source = (ROOT / 'native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java').read_text()
+        self.assertIn('readAsset("combined/build-inputs.json")', source)
+        self.assertIn('.getJSONObject("neighborhood").getJSONObject("assets") : null;', source)
+        self.assertIn('sceneAssetPin(records, neighborhoodRecords, names[i])', source)
+        start = source.index('    private static JSONObject sceneAssetPin(')
+        end = source.index('    private byte[] readAsset(', start)
+        method = source[start:end]
+        java = '''import java.util.HashMap;
+public final class SceneAssetPinTest {
+    private static class JSONObject {
+        final HashMap<String,JSONObject> entries = new HashMap<>();
+        JSONObject put(String key, JSONObject value) { entries.put(key,value); return this; }
+        JSONObject getJSONObject(String key) throws Exception {
+            if(!entries.containsKey(key)) throw new Exception("missing " + key);
+            return entries.get(key);
+        }
+    }
+''' + method + '''
+    public static void main(String[] args) throws Exception {
+        JSONObject original=new JSONObject(), neighborhood=new JSONObject();
+        JSONObject oldPin=new JSONObject(), newPin=new JSONObject();
+        String[] names={"world.bin","character.bin","rig.bin","morph.bin","locomotion.bin","walkable.bin","map.bin"};
+        for(String name:names) original.put(name,oldPin);
+        neighborhood.put("neighborhood-map.bin",newPin);
+        for(String name:names) {
+            if(sceneAssetPin(original,null,name)!=oldPin) throw new AssertionError("legacy lookup changed");
+            if(sceneAssetPin(original,neighborhood,name)!=oldPin) throw new AssertionError("original pin replaced");
+        }
+        if(sceneAssetPin(original,neighborhood,"neighborhood-map.bin")!=newPin) throw new AssertionError("new map used original manifest");
+        if(original.entries.size()!=7 || original.entries.containsKey("neighborhood-map.bin")) throw new AssertionError("original manifest mutated");
+        try { sceneAssetPin(original,new JSONObject(),"neighborhood-map.bin"); throw new AssertionError("missing neighborhood pin accepted"); }
+        catch(Exception expected) { }
+        try { sceneAssetPin(original,neighborhood,"unknown.bin"); throw new AssertionError("unknown asset accepted"); }
+        catch(Exception expected) { }
+        System.out.println("18 asset pin checks passed");
+    }
+}
+'''
+        with tempfile.TemporaryDirectory(prefix='combined-scene-pin-') as directory:
+            path = Path(directory) / 'SceneAssetPinTest.java'
+            path.write_text(java)
+            subprocess.run(['java', '-Xmx128m', 'com.sun.tools.javac.Main', '--release', '8', '-d', directory, path], check=True, capture_output=True, text=True, timeout=60)
+            result = subprocess.run(['java', '-Xmx64m', '-cp', directory, 'SceneAssetPinTest'], check=True, capture_output=True, text=True, timeout=30)
+            self.assertEqual(result.stdout.strip(), '18 asset pin checks passed')
+
     def test_neighborhood_profile_preserves_historical_identity_and_exports(self):
         self.assertEqual(BUILD_PROFILES['entity-diagnostic'], ('15', '0.1.14-entity-diagnostic-test'))
         self.assertEqual(BUILD_PROFILES['neighborhood-diagnostic'], ('16', '0.1.15-neighborhood-diagnostic-test'))
