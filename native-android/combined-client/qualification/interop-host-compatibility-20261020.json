@@ -1,0 +1,88 @@
+{
+  "schema": "coh-interop-host-closure-compatibility-v1",
+  "shipping_source_head": "ae8e9240b3211e1e87de845ab370f6f6b229e4df",
+  "closure_commit": "d79258fdc3aba9a1b07cd809c470b8e79aeb8541",
+  "shipping_code_workflows_and_historical_C_assertions_modified": false,
+  "unchanged_sha256": {
+    "native-android/combined-client/diagnostics/interop-adapter-20261018/test_interop_adapter.c": "67d595f2a39c43b216e166651ab010dd82c517cd50d7effa3896a2da976988c1",
+    "native-android/combined-client/diagnostics/interop-report-adapter-20261020/test_bounded_adapter.c": "669ec194c85df45e68cf122474e84be93d106ec7f5a1a81d088c572a65b9e86c",
+    "native-android/combined-client/app/src/main/cpp/interop_network.c": "10832224c643782978b709fa9677db4bc8bb381dd339f5833860e38f57c615bc",
+    "native-android/engine/entities/coh_original_costume_receive.c": "976321d4053de8fbb136663671543f90386e2d15242abc0139ae33e45ec129e5",
+    "native-android/engine/initial-capture/coh_local_bodypart_default.c": "b3367f85d50999b933e2dad1e6041132ba3ca1801b97036f4dcc09b8c2072bdc"
+  },
+  "closure_changes": [
+    "entities include directory",
+    "actual original-costume receiver and local BodyParts default C translation units",
+    "libcrypto linked into host harness",
+    "strict current11Java declaration shape including cache configure/raw pose getter",
+    "Java phase collaborators for current observer marker callout/fields and JSONArray.optInt"
+  ],
+  "deep": {
+    "release_checks": 12588,
+    "ASan_checks": 12588,
+    "UBSan_checks": 12588,
+    "scenarios_per_mode": 131,
+    "shipping_reports_per_mode": 248,
+    "reports_with_omissions_per_mode": 206,
+    "historical_assertions_executed_unchanged": true,
+    "native_declarations": [
+      "int configureBodyPartsCache(String absolutePath)",
+      "long begin(int dbPort, String account, int networkVersion,\n            boolean encryptionRequired, boolean outboundCompressed, long nowMs)",
+      "int service(long handle, long nowMs)",
+      "byte[] characters(long handle)",
+      "int choose(long handle, int wireSlot, long nowMs)",
+      "String report(long handle)",
+      "byte[] observedSelfPose(long handle)",
+      "int controlState(long handle)",
+      "void disconnect(long handle)",
+      "void suspend(long handle)",
+      "void close(long handle)"
+    ],
+    "source_inputs": 77,
+    "raw_receipt_sha256": "c6fc0491bb8a4e19d85e7dac4e351262a5e5a12c276ae6a582e6b6a248ec9df9"
+  },
+  "counter_difference": {
+    "prior_checks": 12913,
+    "current_checks": 12588,
+    "scenario_count_unchanged": true,
+    "shipping_report_count_unchanged": true,
+    "prior_omitted_fields": 392,
+    "current_omitted_fields": 397,
+    "prior_nonzero_mask_histogram": {
+      "32": 20,
+      "160": 186
+    },
+    "current_nonzero_mask_histogram": {
+      "32": 15,
+      "96": 191
+    },
+    "reason": "CHECK counter includes data-dependent test-only detail reconstruction. Prior omissions included reward bit7, whose formatter adds nested-progress checks. Current omission mask uses costume-prefix bit6 instead. Reconstruction branches changed while the original C assertion sources,131scenarios,248shipping reports and206omitted reports remain unchanged."
+  },
+  "report": {
+    "release_checks": 341,
+    "ASan_checks": 341,
+    "UBSan_checks": 341,
+    "max_report_bytes": 6889,
+    "report_ceiling": 7168,
+    "source_inputs": 76,
+    "raw_receipt_sha256": "d487bae61989deb9845f0594c27734ba7e9bb2b2380ccc84dda6f04ccd939526"
+  },
+  "phase": {
+    "status": "passed",
+    "checks": 89,
+    "exact_activity_methods": 8,
+    "native_json_android_collaborators_are_doubles": true,
+    "android_execution": false,
+    "world_authority": false,
+    "activity_sha256": "f95e97a50019e6df45f324d710e9596104aa3d14bee1a9989481c2aff19a76c6",
+    "state_sha256": "ba699330d8c1d34fe32c9a933b5a282dfcb099149cd5389d0b3526f746bc87af",
+    "server_only_initial_observation_unknown": true
+  },
+  "commands": [
+    "flock /tmp/coh-cycle-build.lock python3 native-android/combined-client/diagnostics/interop-report-adapter-20261020/check_bounded_adapter.py --source-root . --output FRESH_OUTPUT",
+    "flock /tmp/coh-cycle-build.lock python3 native-android/combined-client/tools/check_report_regression.py --output FRESH_OUTPUT",
+    "flock /tmp/coh-cycle-build.lock python3 native-android/combined-client/qualification/check_interop_phase.py"
+  ],
+  "Android_or_Thor_execution": false,
+  "APK_rebuild_required": false
+}

@@ -30,8 +30,8 @@ def check_report(row):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--output',type=pathlib.Path,required=True);args=p.parse_args();out=args.output.resolve();need(not out.exists(),'fresh output');out.mkdir(parents=True)
     cc=pathlib.Path(shutil.which(os.environ.get('CC','cc'))).resolve()
-    flags=[str(cc),'-std=c11','-Wall','-Wextra','-Werror','-pedantic','-fno-pie','-no-pie','-fstack-usage','-DCOH_INTEROP_REQUEST_TX=1','-I','native-android/combined-client/diagnostics/interop-adapter-20261018/test-include','-I','native-android/engine/initial-capture','-I','native-android/engine/session','-I','native-android/include']
-    sources=[TOOLS/'test_report_regression.c',*[pathlib.Path('native-android/engine/initial-capture/coh_initial_'+x+'_probe.c') for x in PROBES],pathlib.Path('native-android/engine/entities/coh_entities.c'),pathlib.Path('native-android/engine/replication/coh_replication.c')]
+    flags=[str(cc),'-std=c11','-Wall','-Wextra','-Werror','-pedantic','-fno-pie','-no-pie','-fstack-usage','-DCOH_INTEROP_REQUEST_TX=1','-I','native-android/combined-client/diagnostics/interop-adapter-20261018/test-include','-I','native-android/engine/initial-capture','-I','native-android/engine/entities','-I','native-android/engine/session','-I','native-android/include']
+    sources=[TOOLS/'test_report_regression.c',*[pathlib.Path('native-android/engine/initial-capture/coh_initial_'+x+'_probe.c') for x in PROBES],pathlib.Path('native-android/engine/initial-capture/coh_local_bodypart_default.c'),pathlib.Path('native-android/engine/entities/coh_original_costume_receive.c'),pathlib.Path('native-android/engine/entities/coh_entities.c'),pathlib.Path('native-android/engine/replication/coh_replication.c')]
     dep=subprocess.run([*flags,'-M',*map(str,sources)],cwd=ROOT,capture_output=True,check=True,text=True);need(not dep.stderr,'dependency diagnostics');(out/'dependencies.txt').write_text(dep.stdout)
     pins={str(TOOLS/name):sha(ROOT/TOOLS/name) for name in ('check_report_regression.py','report_diagnostic_contract.py')};system={str(cc):sha(cc)}
     for line in dep.stdout.replace('\\\n',' ').splitlines():
@@ -42,7 +42,7 @@ def main():
     env={**os.environ,'ASAN_OPTIONS':'detect_leaks=0:halt_on_error=1','UBSAN_OPTIONS':'halt_on_error=1:print_stacktrace=1'}
     modes={};commands=[]
     for mode,options in [('release',['-O2']),('asan',['-O1','-g','-fsanitize=address']),('ubsan',['-O1','-g','-fsanitize=undefined','-fno-sanitize-recover=all'])]:
-        binary=out/('report-'+mode);cmd=[*flags,*options,*map(str,sources),'-Wl,--wrap=calloc','-Wl,--wrap=free','-lm','-o',str(binary)];commands.append(cmd)
+        binary=out/('report-'+mode);cmd=[*flags,*options,*map(str,sources),'-Wl,--wrap=calloc','-Wl,--wrap=free','-lcrypto','-lm','-o',str(binary)];commands.append(cmd)
         c=subprocess.run(cmd,cwd=ROOT,capture_output=True,timeout=90);(out/(mode+'-compile.stderr')).write_bytes(c.stderr);need(c.returncode==0 and not c.stderr,'compile '+mode)
         run=subprocess.run([str(binary)],cwd=ROOT,env=env,capture_output=True,timeout=40);(out/(mode+'-reports.jsonl')).write_bytes(run.stdout);(out/(mode+'-stderr.txt')).write_bytes(run.stderr);need(run.returncode==0 and not run.stderr,'execution '+mode)
         text=run.stdout.decode();rows=[];decoder=json.JSONDecoder()

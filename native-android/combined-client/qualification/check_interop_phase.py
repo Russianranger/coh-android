@@ -55,7 +55,10 @@ final class InteropPhaseTest {
  private final HandoffState handoffState=new HandoffState();
  private boolean captureTelemetryPublished,destroying,networkForeground=true,networkRequested=true;
  private boolean networkConnecting,returningToLauncher,charactersPublished;
- private long networkHandle=1,networkAttempt,policyCheckedAt=1000;
+ private long networkHandle=1,networkAttempt,networkOwnerAttempt,policyCheckedAt=1000;
+ private long observedEntityAttempt=-1;private int observedEntityIndex=-1;
+ // JNI/render callout is an explicit collaborator; the eight production phase methods remain exact.
+ private void publishObservedSelf(long sourceHandle,long attempt){}
  private JSONObject networkPolicy;
  private boolean policyFailure;
  private int policyCalls,pickerCalls;
@@ -141,6 +144,13 @@ TESTS = r'''
   need(new JSONObject(t.interopReport).optJSONArray("catalog_boundary").length()==7,"partial report preserves boundary numeric evidence");
   t.disconnectNetwork();t.updateNetworkUi();need(t.networkStatus.text.contains("stage 41"),"closed same attempt preserves boundary");
   t.handoffState.begin();need(t.handoffState.catalogBoundary()==null,"fresh attempt does not leak previous boundary");
+  t=active();InteropNative.bits=7;InteropNative.text="{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"INITIAL_OBSERVED\",\"initial_observation_known\":true,\"raw_allents_observed\":true,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}";t.publishNetwork();t.main.drain();
+  need(t.networkStatus.text.contains("default part count"),"unresolved actual stage41 remains visible");
+  InteropNative.text="{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"phase\":\"INITIAL_OBSERVED\",\"initial_observation_known\":true,\"raw_allents_observed\":true,\"bodyparts_default\":[0,28],\"costume_continuation\":[2,3,0,28,0,2,0,1,1,0,5146,5146],\"catalog_boundary\":null}";t.publishNetwork();t.main.drain();
+  need(t.networkStatus.text.contains("BodyPart count verified")&&t.networkStatus.text.contains("geometry")&&t.networkStatus.text.contains("costume strings"),"actual continuation replaces stale41 UI");
+  need(!t.networkStatus.text.contains("default part count"),"verified count is not described as unresolved");
+  t.observedEntityAttempt=t.networkAttempt;t.observedEntityIndex=123;t.updateNetworkUi();need(t.networkStatus.text.contains("observed server entity #123"),"observed entity marker independent of later dictionary");
+
   for(String invalid:new String[]{"{\"phase\":\"INITIAL_OBSERVED\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"wrong\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":false,\"catalog_boundary\":[2,41,3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,\"41\",3,1,2424,3416,262144]}","{\"schema\":\"coh-native-initial-interop-numeric-v1\",\"raw_allents_observed\":true,\"catalog_boundary\":[2,true,3,1,2424,3416,262144]}"}){t=active();t.storeNetworkReport(invalid);need(t.handoffState.catalogBoundary()==null,"untrusted schema/numeric input refused");}
   System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"exact_activity_methods\":8,\"native_json_android_collaborators_are_doubles\":true,\"android_execution\":false,\"world_authority\":false}");
  }
@@ -151,6 +161,7 @@ final class SystemClock {static long now;static long elapsedRealtime(){return no
 final class JSONArray {
  final List<Object> values=new ArrayList<>();JSONArray(){}JSONArray(String raw){}
  JSONArray put(Object value){values.add(value);return this;}int length(){return values.size();}Object opt(int i){return i>=0&&i<values.size()?values.get(i):null;}
+ int optInt(int i,int fallback){Object value=opt(i);return value instanceof Number?((Number)value).intValue():fallback;}
  public String toString(){return values.toString();}
 }
 final class InteropNative {
